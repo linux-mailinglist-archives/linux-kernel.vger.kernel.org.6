@@ -1,172 +1,163 @@
-Return-Path: <linux-kernel+bounces-444571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745909F08EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:59:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE48D9F08D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82ECE1695E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E5A16941A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5F31BAEFD;
-	Fri, 13 Dec 2024 09:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B142C1C3BEA;
+	Fri, 13 Dec 2024 09:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXvSiAeB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5JXQOXl"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A081DE899
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A03B1C1AA9;
+	Fri, 13 Dec 2024 09:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083863; cv=none; b=A97xPnYYhFsYK3ndqXRwtTuZ3zktdio3030nppCpglqWz85WlSY3HCxEImo1nxX8ryPBC7IhBhIbyUzu+NYU35Qvfsd5mnmzdwHVY+U1TCJFWJv3QoszlIlLQ0qqqYSy5C0/1IySJwynoWDQgHiOtS6PoSeIsa2Cj2a/GISh9y0=
+	t=1734083725; cv=none; b=SJ6UnoTfBDM8KriIhb0kCJfT9Han/p+Ny39v0mGADQJyf2Bs7Rjkn9r8PvutPK3OgoZzS0WyDOcCtmR4jnmJ+tHah3Gn3XgClS0hA2g04pbZ5y+DxGtNNkY8n4pz7B05ZhcLtaG6FW0jYusC9q5CVhNQXkvjFTll7DrwOuY/UxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083863; c=relaxed/simple;
-	bh=GH1L5UbCox+/l9a3Rv/+h7MmSzvbSrhCbpBcYNUY9OQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cl4Fzs3GeoJRIJJ+m4pKMMSphd+b+V/PbH3CgwglZMqj796iHmynD2sQSnluEeuOU6hC3Id4H0AQIDP9PfruhhAB4mzV5gdw0qlPv7P7Zi1Z+mGu13RumW8VzxA8cUdd+gvspG1ve6sZgSMeKsAxx2aytXdWIB5ZmO/ATYtAmnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXvSiAeB; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734083861; x=1765619861;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GH1L5UbCox+/l9a3Rv/+h7MmSzvbSrhCbpBcYNUY9OQ=;
-  b=cXvSiAeBc8FkP4yM6kQMs3WEiWaux9naHPZsB8vXCSkcHfFFXQyg/5i+
-   yqrlfuW6cfBrP7LAATotRq/eFqQ5DHkl4KKv4uDtdFeYMI3EtohRK9b3s
-   wgPeiPdImYTynA5+ufI6ebqnuni5qv6Kwx+Ycyj/bZMRxuUoCX0H5obaI
-   K1WYgoIt1aAzc+R/CS1YENP6p4tmKeyVkSsX96RIoP+4kmLaWDDQCx8N+
-   Fy8SnJEDAhIN7fhgMyE1i7oZ1X/8+LbsWFWZ0WI5qRMxSg6qNDYE3vQ3O
-   nfoEN1nP5vY71+qSgHIxSq16WXN1Caz54urSK7FZkbFjTYdTNP5AQyVn5
-   w==;
-X-CSE-ConnectionGUID: 7rQ+DrmYQYuyObSX9oif9w==
-X-CSE-MsgGUID: Bv4eVmaXSkmagJNF/nWr9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34666956"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="34666956"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:57:40 -0800
-X-CSE-ConnectionGUID: CyrDsqVNQpq9aVXhn30Ofw==
-X-CSE-MsgGUID: R2kEnO8rTTKX9eAophPF8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="96262543"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:57:37 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: ebiederm@xmission.com
-Cc: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com,
-	bhe@redhat.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 1/1] kexec_core: Accept unaccepted kexec segments' destination addresses
-Date: Fri, 13 Dec 2024 17:54:49 +0800
-Message-ID: <20241213095449.881-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241213094930.748-1-yan.y.zhao@intel.com>
-References: <20241213094930.748-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1734083725; c=relaxed/simple;
+	bh=rUgmDMTlla3bRCyAWZxXRbJxFwUiKYGnqMqQF22MfHk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IIea9f2I/y+cbT9P7vzyDTFdskuIH9NibwsLzcTXVw/5MBGWQceIvgZcL3v8ulGjDza1MYCIYjeQ0dJkfNaW7MyHIVjbJJpNKqQ0qCfC67+ln2tY5JmhtqqrS5wJK1FKHJm1yOmag15ZKbYvpi9plebHTchFIokstoRDjm5Z/Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5JXQOXl; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso262569866b.1;
+        Fri, 13 Dec 2024 01:55:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734083721; x=1734688521; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jeEYpoT5ymS8tRy1xVLDixRmFAc5fwDD3sDDNeC0nh8=;
+        b=X5JXQOXlCMVqEj5UwFvF4Chk3S3oCWN/Wyv2ZQtfMGrdPfGbDxNuuruJYr1eWWjhf7
+         J28JZct5liGlv88Wv7TQoE6Zqfsr1vipM2gFP6Tv/CoKY0w2C25mTtJTZZqw1IM3mqKo
+         X2EjPgdBwV069+um5pcZP4f8adWp2XqHsWH+zWCBrcghHYdQosz01ptxP9yki2NoBbde
+         4zqLETCNxrTlSyO+UuM5LWZuXhtLFUgQPFjb/6wEeKuylA1nlekuTpyjDS9X/rBIsogq
+         /TNOoVgmuZPEFZAaOLmzi0mDjY+hLXoVP9v3qtwStM11wh2DNeM1lilDg8Btt0Y3FQsF
+         MhwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734083721; x=1734688521;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jeEYpoT5ymS8tRy1xVLDixRmFAc5fwDD3sDDNeC0nh8=;
+        b=KdemYH9DOviA9ANmuzoqROu8IEu4zsvLwtJQJAOD2bRjolOSjnQPZ3d2r4WE2QGNiy
+         dV4MaA/Rm5or1I/oqhTK4ka+gLay5Qy4EwiZAsyW6byVIWzAwON1SIertIwkhgtOJPC9
+         4V4SROYVZItAZBKWx/4RQ25itE4P48hnEZgF+wz52MZz9SN2kxygNHE2tz33vbnXaCE7
+         882Fu8T7RUPnITT/BoIPkapVJqTXWfyw2XJWoZsdCMEHfxUvwrGO/RVi00ERb/HG2dXG
+         i0La2/R+l5Hs0wTIK0SSo9oH3gsVpEmNXYK+Y7F3qYU9Nw620icFIfnxdA68MZxs+PMr
+         1Daw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj3i+9F5oACrLoowKtACNYbZSt6ZBS1rvO+b7yZ53ruC81mEBLKYLmTCCHn12ZeRw78tGPUw8c@vger.kernel.org, AJvYcCXrg7qhpQEMyeUrxTuhkAI6Lfiyb4k9ZiiR4vhBbrXG6s0PjIssd7dVFW9xYPhR5Eq0XCELKUzixCsOfUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw9NL7MWGn+3OULoI0PLBGL9g/ZG5yd7y7LgJdfxn/Hwee7bSG
+	9ragTqRJfRad+TKLrKget3c00iUvy0AwqsA4GnCwCB/KeDL2EajxEiSPr/ij
+X-Gm-Gg: ASbGncvAbMbBJ1m2A5oMUFwVQUPSQQdxkarbCpOk76FCAQ1oCvHj8ARIYGhwoVqLp8M
+	xNh44ZwzuWCyYZrSYIFCmHDmDgxv6u0Zs3O8EmGnqqIJP1XyIItsVsVwis1DdQ40M9Bts9mAZ3D
+	MWwqApbCd7Dn1eCk0KwMVUKv9GIVDmUV0Ur1SWJbHLSTXu6ICdUnsyrvZOaM1r87iakP1Z7yDK7
+	NxAyZxy3nXwHcA3qhArDgjS8Xr9ZakblY1N3f491eDXDdUr2uMwJ9iEvJVthqk2/U2m2H0MCuR+
+	H1q67vMhoQz72UW+YMVPLY7HwQ==
+X-Google-Smtp-Source: AGHT+IHZMHT5CWtXaqVR5si+MBRX4Sk47tkz4p5lH/eSEWo0dRkleARMLltPnuR/+triSY+HnVjWaA==
+X-Received: by 2002:a17:907:1c8b:b0:aa6:7cae:dba7 with SMTP id a640c23a62f3a-aab778c6ef1mr216718366b.4.1734083721229;
+        Fri, 13 Dec 2024 01:55:21 -0800 (PST)
+Received: from opti3050-1.lan (ip092042140082.rev.nessus.at. [92.42.140.82])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6969a7645sm598970866b.16.2024.12.13.01.55.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 01:55:20 -0800 (PST)
+From: Jakob Unterwurzacher <jakobunt@gmail.com>
+X-Google-Original-From: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
+Date: Fri, 13 Dec 2024 10:54:58 +0100
+Subject: [PATCH v4] arm64: dts: rockchip: increase gmac rx_delay on
+ rk3399-puma
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241213-puma_rx_delay-v4-1-8e8e11cc6ed7@cherry.de>
+X-B4-Tracking: v=1; b=H4sIAHEEXGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Nj3YLS3MT4oor4lNScxErdtMSUpOSUNANLcwtjJaCegqLUtMwKsHn
+ RsbW1AFzzeNhfAAAA
+X-Change-ID: 20241213-puma_rx_delay-fadbcdf09783
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Klaus Goger <klaus.goger@theobroma-systems.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>, 
+ Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
+X-Mailer: b4 0.14.2
 
-In TDX, to run a linux guest, TDs (hardware-isolated VMs) must accept
-before accessing private memory. Accessing private memory before acceptance
-is considered a fatal error and may result in the termination of the TD.
+During mass manufacturing, we noticed the mmc_rx_crc_error counter,
+as reported by "ethtool -S eth0 | grep mmc_rx_crc_error", to increase
+above zero during nuttcp speedtests. Most of the time, this did not
+affect the achieved speed, but it prompted this investigation.
 
-The "accepting memory" operation in guest includes the following steps:
-- trigger a VM-exit
-- the host OS allocates a physical page and requests hardware to map the
-  physical page to the GPA.
-- initialize memory content to 0.
-- encrypt the memory
+Cycling through the rx_delay range on six boards (see table below) of
+various ages shows that there is a large good region from 0x12 to 0x35
+where we see zero crc errors on all tested boards.
 
-For a Linux guest, eagerly accepting all memory during kernel boot can slow
-down the boot process and cause unnecessary memory occupation on the host
-for pages that may never be accessed. Therefore, Linux guests usually opt
-for a lazy mode to delay page acceptance operations by not moving the pages
-to the buddy allocator's freelists. Instead, the kernel tracks memory
-in 4M units and places them in a zone->unaccepted_pages list if any page in
-the entire 4M range is in an unaccepted state (even if part of the memory
-range may have been accepted by firmware or the kernel). When the kernel
-does not have enough free pages, it will move memory from the
-zone->unaccepted_pages list and accept it, ensuring that the memory is
-accepted before moving it to the freelists and being available to the buddy
-allocator.
+The old rx_delay value (0x10) seems to have always been on the edge for
+the KSZ9031RNX that is usually placed on Puma.
 
-The kexec segments' destination addresses are not allocated by the buddy
-allocator. Instead, they are searched from normal system RAM (top-down or
-bottom-up) and exclude driver-managed memory, ACPI, persistent, and
-reserved memory... Although these addresses may fall within the memory
-range managed by the buddy allocator (which must be in an accepted state),
-they could also be outside that range and in an unaccepted state.
+Choose "rx_delay = 0x23" to put us smack in the middle of the good
+region. This works fine as well with the KSZ9131RNX PHY that was used
+for a small number of boards during the COVID chip shortages.
 
-Since the kexec code will access the segments' destination addresses during
-the kexec process by swapping their content with the segments' source
-pages, it is necessary to accept the memory before performing the swap
-operations.
+	Board S/N        PHY        rx_delay good region
+	---------        ---        --------------------
+	Puma TT0069903   KSZ9031RNX 0x11 0x35
+	Puma TT0157733   KSZ9031RNX 0x11 0x35
+	Puma TT0681551   KSZ9031RNX 0x12 0x37
+	Puma TT0681156   KSZ9031RNX 0x10 0x38
+	Puma 17496030079 KSZ9031RNX 0x10 0x37 (Puma v1.2 from 2017)
+	Puma TT0681720   KSZ9131RNX 0x02 0x39 (alternative PHY used in very few boards)
 
-Accept the destination addresses during the kexec load, immediately after
-they pass sanity checks. This ensures the code is located in a common place
-shared by both the kexec_load and kexec_file_load system calls.
+	Intersection of good regions = 0x12 0x35
+	Middle of good region = 0x23
 
-This will not conflict with the accounting in try_to_accept_memory_one()
-since the accounting is set during kernel boot and decremented when pages
-are moved to the freelists. There is no harm in invoking accept_memory() on
-a page before making it available to the buddy allocator.
-
-No need to worry about re-accepting memory since accept_memory() checks the
-unaccepted bitmap before accepting a memory page.
-
-Although a user may perform kexec loading without ever triggering the jump,
-it doesn't impact much since kexec loading is not in a performance-critical
-path. Additionally, the destination addresses are always searched and found
-in the same location on a given system.
-
-Changes to the destination address searching logic to locate only memory in
-either unaccepted or accepted status are unnecessary and complicated.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Baoquan He <bhe@redhat.com>
+Fixes: 2c66fc34e945 ("arm64: dts: rockchip: add RK3399-Q7 (Puma) SoM")
+Cc: stable@vger.kernel.org
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # Puma v2.1 and v2.3 with KSZ9031
+Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
 ---
- kernel/kexec_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v4: drop internal Relates-to tag, add Tested-by, rebase to Linus master, send with b4
+v3: use rx_delay = 0x23 instead of 0x11, which was not enough.
+v2: cc stable, add "Fixes:", add omitted "there" to commit msg,
+v1: initial submission
+---
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index c0caa14880c3..f8eee0516bd9 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -210,6 +210,16 @@ int sanity_check_segment_list(struct kimage *image)
- 	}
- #endif
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
+index d12e661dfd9917f820284477a215389c16205f46..995b30a7aae01a0326e9f80d6be930f227968539 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
+@@ -182,7 +182,7 @@ &gmac {
+ 	snps,reset-active-low;
+ 	snps,reset-delays-us = <0 10000 50000>;
+ 	tx_delay = <0x10>;
+-	rx_delay = <0x10>;
++	rx_delay = <0x23>;
+ 	status = "okay";
+ };
  
-+	/*
-+	 * The destination addresses are searched from system RAM rather than
-+	 * being allocated from the buddy allocator, so they are not guaranteed
-+	 * to be accepted by the current kernel.  Accept the destination
-+	 * addresses before kexec swaps their content with the segments' source
-+	 * pages to avoid accessing memory before it is accepted.
-+	 */
-+	for (i = 0; i < nr_segments; i++)
-+		accept_memory(image->segment[i].mem, image->segment[i].memsz);
-+
- 	return 0;
- }
- 
+
+---
+base-commit: f932fb9b40749d1c9a539d89bb3e288c077aafe5
+change-id: 20241213-puma_rx_delay-fadbcdf09783
+
+Best regards,
 -- 
-2.43.2
+Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>
 
 
