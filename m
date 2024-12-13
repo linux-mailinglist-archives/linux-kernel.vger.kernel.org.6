@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-445256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF089F1366
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:14:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EE29F1368
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:15:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36793188D49F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE362842F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6CD1E47AD;
-	Fri, 13 Dec 2024 17:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960891E47BC;
+	Fri, 13 Dec 2024 17:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wglq7siq"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ke3tSXs9"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D5017C21E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1791E377E;
+	Fri, 13 Dec 2024 17:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734110078; cv=none; b=eUIFoqHkfChU8uuo4wKZcRvqzx7DvW6j18nwQQ0Xy9X9tTcQk6ZPyPwBAbYFqbZy7u3B9vyXwKGEPlZwa8gisQsVR2VQsp8T5c39cICRYhoHmGRWRISvNgBfvjC7BZ/BMtsExzd4H/w5lcrIscBNWDoskQhTxXmYy/mGTX7LvIc=
+	t=1734110093; cv=none; b=ZmN+dDHwdWEYi52pP0ad6GPaT4W8JRZ2+DeogHcoNDW5gzKfcGrmqiWESPnOfGQCDMvUVX2vZuG+AkFb73e3JWaeqGOhXltCebaDg4HctmqzmprnwiVVjrdtSO8Uqpgqquj80KQ5fuuVmLkQkwLj1wnyRPpWGP8o0ZOIGnr7o7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734110078; c=relaxed/simple;
-	bh=nEQAJ7tMAVKoPCrSrHaaafwI82XnnJ+HSEY0wGbZcJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTA7qE0Wc6Ew9RGFsWt3S3fsgu/PtQZL7Rblek1hiL0aVHWfEJSH9UmGts/fA9qZKaJGZ6lZ32EN0QQ9xabLcaVSJu1sXmO2vHrFbfV005gOeGCUsLzFZWkkD8NlkXDd+0+nK8KEE/k2G5sR3M+2ODWq35C29ik6E360ejRpnVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wglq7siq; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a8c7b02d68so15821235ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:14:35 -0800 (PST)
+	s=arc-20240116; t=1734110093; c=relaxed/simple;
+	bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J5P0dpMESg0YyVw/joAsKldSz7GUoujlzj4DI7Aixvq7xVA8AZAgwSIidmBGcPGx9/vryRmXp7aWwRvDvfGncNAsu1TYWHX1K4IOXpVFfeunLy+1wKIv0q6Hku2UnA5O4BtFu84N7xmZX9wJxIkrSWqqVbZbsiAinpsTCSLD6so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ke3tSXs9; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef718cb473so241271a91.1;
+        Fri, 13 Dec 2024 09:14:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1734110075; x=1734714875; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HhPL9NYTRXT2OymQSUELSnul5634w4kN0UX4t+krxe8=;
-        b=Wglq7siqvFHpT52GbQe123lMtX7kiFzUhci7nAIi3BvFt18YZVpA3i+KsXoRdnxBKK
-         TLW57Cg4thcGYD+ew1bkEnltRP7/Ga6jxFLcIwj4DUq2aTLqde1opKTe4Fj9oc4fyMQH
-         9AiBDKHpZx0VZmqujmQqpckB8JIInFmVTfl10=
+        d=gmail.com; s=20230601; t=1734110091; x=1734714891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
+        b=Ke3tSXs9JKV1UZe9zGVWUcEYPq+iNGqBaTFhCqQ/44CKn5D6sEFgrO0CR8PTyDFa5k
+         5xKwYtZTQBwiXpn1gfbbHwwGiO+35gGRQhXbTEbJHGdnvZv34KIlLAGjwjh8E/pzsWh+
+         SNA/3g0AflX0k62pS1Bpy0nhaquw/4t6a2nhwY/BnegzrMh+MkbOSg/5HcgijaS92+3A
+         mnWZHmchZg6PO9k+HjEJ1XxcJwsbCDA89qBRDQ8mnpsGmiyez/2AV3l6DHLpWrVMxF1L
+         9YNRRmlKHYtsGMw088y4pMemz7SLT4oarOqJhYPHUS/84GOq8ZcxFawHByoF2R4lR2Mz
+         jH7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734110075; x=1734714875;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HhPL9NYTRXT2OymQSUELSnul5634w4kN0UX4t+krxe8=;
-        b=hiigeHiyjewKBhp7gKmXUQs8bni1bTdSM74gbdICxrL6h6CobWUZmYEHGaQdIA/v5h
-         9bEwWIb5Jw8g5AOpCQZZVWrM9JJZeiKtCDSOHym5mKSOsnLgzBQrY9kogk3ynOSc/4dA
-         F7f6vU6VXAkPz1XFqGOKjU4ZlxBxJxVMxZUpYGLkm+dEh3hGB7lLG/Wf6H2aZ/fT6cZ6
-         PaRsw4J4gOYQHwdqNZ5DCPbHayivo7mhSwKTHVV2XW81C5C/3z/sYbiXBzYe9tbx4XuM
-         6vwjOIBLrfOZRFxMNFRloXibtZAhSvnwtvAyGO7jSc08SmH3cMHyAO47TNIN8z1Bpiyh
-         xMSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnXXhTDNXnRj8gqhKmD3YMLlSwMFSYqyyle2A0XCYg0f5ZaQbRuGNGfKD68SW9cUA5KfqtrXnOs13eDg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFvzkm61ajD2zC6DrVsBfRm1mLuoiOx8y+9wSPb6K4GqVfB2LK
-	+XcpMnp89Y9J3lDU+4WyFHKe5fZgbx6ZvBsFF2wcKpgjX33/BXbBigKsxHdtHlc=
-X-Gm-Gg: ASbGncv1yPw4BBhL4NX5IRzC0ka2tOm8KQ0jXUL3OKvWCY8qSS9RlNn9hqE0bnBaKBa
-	I3CscacBG5LCjuvBbskmFKTdoSNy+i1MT5E0g10fiMRBduE0rYCdJthltuf3EBBonbQsDvittrd
-	6XzSSUlN0mgQ1Y8rFehHD9Y+y116Sr9ESYB2FAYE143D+EH+pPdsVxoETIZc4yOUcymrKxDE0Nj
-	Wm6BZm2mkA5cxjbNtoFvE5hB/OD5R5mb//yptdJQsKf39lBlviGe5kfI+2b5aAWNCdh
-X-Google-Smtp-Source: AGHT+IE787W9PHbVdoivn28P7E8AqG8a0BDD76LSQQ9TR7ermXtOOZEn/BIwAAOAjlwDZ7A+ZBGldA==
-X-Received: by 2002:a05:6e02:1aa8:b0:3a7:d84c:f2b0 with SMTP id e9e14a558f8ab-3aff50b340emr41233965ab.8.1734110074882;
-        Fri, 13 Dec 2024 09:14:34 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2c835a054sm2288061173.77.2024.12.13.09.14.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 09:14:34 -0800 (PST)
-Message-ID: <b71d9339-4b5e-43a7-a728-8016daf4a90f@linuxfoundation.org>
-Date: Fri, 13 Dec 2024 10:14:33 -0700
+        d=1e100.net; s=20230601; t=1734110091; x=1734714891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
+        b=HGnMC7ESZTKCkjILkPfpagvmWE1j8g00YM6pqrn5fWNKShMqRBFAaBmNoE/VFZpwEt
+         aILjuWNuhCtx3ANo26oY0NbLZ0kz9OUMikyroNryDB1ojDIqFDTXVNCq9PP3s/o1VJ6D
+         0DSlEZbuXOhG8cG+gKsxmqbFO7yHnUF8AyYYjdU/xJlxdA9JM1zK93WNjFDWezRMT0qk
+         kIFtY4wtJiBC9z8lwrI5tx9BKKfLdVbvPyvbJCJApEwKThLEWFoHjn/vDaT/9+bcW5pH
+         fDhYEgEApgx3cI75MaXRwjmuX5hKif9rR1mSBOmW04Us1T3NaXLyURmXOaYewXehyEPp
+         7b4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfw5ka7kfXZGxAPdfaPO0Uk36xea6H3GrT9g/tFZhlMw/D4OiMOOcwt3v2Aa3XDT/NQ7ROqFUrvVdyS44=@vger.kernel.org, AJvYcCXSZB3o5dXb6/j4sx1ydSBdMj4S2BQ7KsH6uTM+vekfHtrB83s9xs0YXxUXScjWxv7sHHV2bjfcohwhLcLe@vger.kernel.org, AJvYcCXU1utJuluH5gRXt8lPJjfOxrQWplHjgZ2qXC3+1JyBnsWfLTjivSb0ZO/9uEKQ1GvXOX40LbJ4HG7dC/UrJL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbbKfgr8dfxioK2G2Nl4MBznRKuH0Q0uiP/O/iTRSHIQkrRCAX
+	wTur8Hz7z8w5qCCkqUrjE2tTlesnyFI+WMGoQrsmg0rAFJJFaDWVvpHjuSuiB6KcpHX0UHq3xz9
+	uMvmEi14D4V4roPmt7NtH+Qn4Urcy4Tx1bCg=
+X-Gm-Gg: ASbGncuQqDWYddsb6AGKaCRm7UK9zw4XtIpdB3Jvdx29ZDk2sZvqEsqOADVS/CqcygA
+	1LYCc/nU3WOIM9N7v8JZ8EtT7lXUqmh1c2wxk6g==
+X-Google-Smtp-Source: AGHT+IGuMlGMaI28Ia3NfUCgqkkdjulyORLsN43AgubKIZiZuD2P0LbX/OCkMN4/DrWZOaAh9abxsNe1bfzvL9V4yeM=
+X-Received: by 2002:a17:90b:4ccc:b0:2ee:a558:b6bf with SMTP id
+ 98e67ed59e1d1-2f2904b6227mr1999125a91.8.1734110090755; Fri, 13 Dec 2024
+ 09:14:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/565] 5.15.174-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241212144311.432886635@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241212144311.432886635@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
+ <20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org> <pw5PzA4YGsu7j6ET_-OYE2oq9l7ixtTTGhHtxMxmMP5ggHxLrjzMkNMvcMVjGPhu7FpBb2duDD3bRbtMJZZHIw==@protonmail.internalid>
+ <CANiq72kb2ocNuE6n32vr4xCkZhZN0uPuCN3SFA1+Q5L+Ma4ByQ@mail.gmail.com> <87y10jd8o0.fsf@kernel.org>
+In-Reply-To: <87y10jd8o0.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 13 Dec 2024 18:14:37 +0100
+Message-ID: <CANiq72nBpVy911cVhNFM6teQ0EaE-xs0SB2Qx95O4=nKBdRDuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] rust: add parameter support to the `module!` macro
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
+	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/24 07:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.174 release.
-> There are 565 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.174-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Fri, Dec 13, 2024 at 2:17=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> scheduled for removal. Interior mutability via `SyncUnsafeCell` provides
+> the same functionality and it is my understanding that this feature is
+> on track to be stabilized.
 
-Compiled and booted on my test system. No dmesg regressions.
+I am not sure about the last bit, but even if it is on track, we do
+not want to start using new language features or APIs that could
+potentially change.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+And even if it is a feature that we are sure will not change, we
+should still let upstream Rust know before using it, since we are
+actively discussing with them the remaining unstable items that the
+kernel needs and they are putting the kernel in their roadmap.
 
-thanks,
--- Shuah
+So I suggest we mention it next week in the Rust/Rust for Linux meeting.
+
+> Not sure. `val` being null not supposed to happen in the current
+> configuration. It should be an unreachable state. So BUG is the right thi=
+ng?
+
+Since you can easily return an error in this situation, I would say
+ideally a `WARN_ON_ONCE` + returning an error would be the best
+option, and covers you in case the rest changes and someone forgets to
+update this.
+
+> Not in the current configuration. The parameters can only be declared
+> "read only". It should be impossible for anyone to call this function.
+
+What I meant is, can you avoid writing the function to begin with, by
+leaving a null function pointer in the `kernel_param_ops` struct, i.e.
+`None`?
+
+Thanks!
+
+Cheers,
+Miguel
 
