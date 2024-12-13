@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-444149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959B79F0202
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:20:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEBD9F0201
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:20:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5875016B706
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:19:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9D02885CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927EF3A1DB;
-	Fri, 13 Dec 2024 01:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FD82866;
+	Fri, 13 Dec 2024 01:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hj1nCrmu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G8yQ9iSS"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718EA1426C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C843A42A97
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734052773; cv=none; b=Lu+zOoCul7h5jUb4wufmtxUsT0MVkuJi2ozDtm4SInQISpo/lWkvTrRJD2j9DLOUc3P4WJNAPjAdVvhRrWm/yLGolwi/9/uVoKnb1RKxGzDm4qPLUax8zZKF0tF9eZ0n/FYG1S+Z2Wacmhf7WIfpI0zaVNPzrGrP7JBQHtOlVPg=
+	t=1734052776; cv=none; b=fhD6KHBP24qfWqnl/aPyEStQpcDHvj2ONLJrmZJR5j3xcTVRpAIq2A9/SPTZyK3+kZQRisGT7dc6v2y3MijvXBvFLm97Za/quX9jMYJT13Njz9JYtdK0pmsVv/51NHyFz+3HdyxjSsUFLkcR0XnhL56pOWc/X19nX3D3/2mgmOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734052773; c=relaxed/simple;
-	bh=oFTAE7oILI0nnbHGudLD0dYAdhiiCnQbK/kloxuCPM4=;
+	s=arc-20240116; t=1734052776; c=relaxed/simple;
+	bh=LI4TUKQcvu8NMrFjCnSkKO5OlCTfkkPU/tftsaNGm9Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cl/WwCbDhTwwzPgMvi3yjesWG9nI8le95fNP25AvvklFGMVgsw8BJeaQHrCg+CC121OqtLHzaCPou8NMQ8pk6uudHdDguezewgiC3aoKtZ1RbmTg+hKIUbUh35VUkkP1dcmmmcJN4hf49mNXJ0LJVXN/i58ebtyRVyypl1DGGT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hj1nCrmu; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=PGSBXKdJKy2Qbyg/gNNDqOeOz8/W9z+DliInujSkJkNQeOOcmkk+CsHkxQzAmFu0HMzRwDMU9siXdpJOdMpA791dZELqJyV+MpjQXvdCoAdKscjA4dXMvq8uY4qGiJp+Joi5nmPYUi9Uu3h9gx2P9XkIeXOgcTPeG7ZW3N0SFHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G8yQ9iSS; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734052772; x=1765588772;
+  t=1734052774; x=1765588774;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=oFTAE7oILI0nnbHGudLD0dYAdhiiCnQbK/kloxuCPM4=;
-  b=Hj1nCrmuOfuGm9RFMWK204JyoCQyppsEXDfFrm2RFdAhQN5iCr8M+WAL
-   zmntgoe9XL3fRaHgI+K/MDZjAL+YiS4I8rbp/ZFG/wXJ/V2km4RzblQXs
-   DhQju9pTLI1pLb+JcDUBzq5wSFZ+bU6pPpc2jS/mtAQr3aqA+WqMnY+l0
-   GU4hcDN7LdKqNLQ1XSK9Nxjs7cMd3Ot+KklL6LASCJ24KvUbCrb0CHL8e
-   xqvFnCChLKV6UE0TrhyG69D6ALYtSzAcBtqxwS5w6moeFQtALbXgIp4UB
-   S+iKgNfxlxR5kelFTeTSESMOsXzxWdbLMKHIsHGOjEUN2GeKi5ZFGx9rM
-   Q==;
-X-CSE-ConnectionGUID: BZ9wsG02SQyG8fqp0epb/w==
-X-CSE-MsgGUID: 8pnPFh+GS2mFYu/AtTizqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45510016"
+  bh=LI4TUKQcvu8NMrFjCnSkKO5OlCTfkkPU/tftsaNGm9Y=;
+  b=G8yQ9iSSSoIk0ghk7D+Q6AoyUMrqepnFy/XWGP0xu3DqA4uBSsWK4tBC
+   1TDt7PZPjV/Dmy1beMuUtH5YGAvipkV/KSFdE6KP+C+N6+ZATzF3+eQgO
+   WhZud7mQgySN0asFHGwVmccazDY4kTU1wx7YCOEv+zBYFroni4J9mM7TI
+   I7FBJQ7p0mWDEy4/sLthpUmoL0MV6DEyPJtfv9uCnBMIBHLc4UtBxX/8K
+   tpf78vEYUFNNMDZGPRig/AAzwEHKs/tlM0GEOpkAv/46iDTRhhg0nV6N8
+   4HvnoPwb88wfVMa0zVr2FmI9hZCXZ1THCprAjKHnlHbfqpkZ7lfI5Qv2D
+   A==;
+X-CSE-ConnectionGUID: nX9f1cGPQz69DDw3qIFj8g==
+X-CSE-MsgGUID: 4gmuDOKURWieeBgaPgVaJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45510022"
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45510016"
+   d="scan'208";a="45510022"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:19:31 -0800
-X-CSE-ConnectionGUID: sjSfKWVZSyG+SPkpKWQk6w==
-X-CSE-MsgGUID: FV7igCqmRqCVX/3r1uCpLg==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:19:33 -0800
+X-CSE-ConnectionGUID: cZLgcs2cTW6maeyaHdtyjQ==
+X-CSE-MsgGUID: d3uU5sVFSpSfPRYoNviNZQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96835622"
+   d="scan'208";a="96835641"
 Received: from allen-sbox.sh.intel.com ([10.239.159.30])
-  by orviesa007.jf.intel.com with ESMTP; 12 Dec 2024 17:19:30 -0800
+  by orviesa007.jf.intel.com with ESMTP; 12 Dec 2024 17:19:32 -0800
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>
 Cc: Dan Carpenter <dan.carpenter@linaro.org>,
 	Yi Liu <yi.l.liu@intel.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] iommu/vt-d: Fix qi_batch NULL pointer with nested parent domain
-Date: Fri, 13 Dec 2024 09:17:51 +0800
-Message-ID: <20241213011752.1177061-3-baolu.lu@linux.intel.com>
+Subject: [PATCH 3/3] iommu/vt-d: Avoid draining PRQ in sva mm release path
+Date: Fri, 13 Dec 2024 09:17:52 +0800
+Message-ID: <20241213011752.1177061-4-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241213011752.1177061-1-baolu.lu@linux.intel.com>
 References: <20241213011752.1177061-1-baolu.lu@linux.intel.com>
@@ -77,119 +77,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Yi Liu <yi.l.liu@intel.com>
+When a PASID is used for SVA by a device, it's possible that the PASID
+entry is cleared before the device flushes all ongoing DMA requests and
+removes the SVA domain. This can occur when an exception happens and the
+process terminates before the device driver stops DMA and calls the
+iommu driver to unbind the PASID.
 
-The qi_batch is allocated when assigning cache tag for a domain. While
-for nested parent domain, it is missed. Hence, when trying to map pages
-to the nested parent, NULL dereference occurred. Also, there is potential
-memleak since there is no lock around domain->qi_batch allocation.
+There's no need to drain the PRQ in the mm release path. Instead, the PRQ
+will be drained in the SVA unbind path.
 
-To solve it, add a helper for qi_batch allocation, and call it in both
-the __cache_tag_assign_domain() and __cache_tag_assign_parent_domain().
+Unfortunately, commit c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain
+removed from RID") changed this behavior by unconditionally draining the
+PRQ in intel_pasid_tear_down_entry(). This can lead to a potential
+sleeping-in-atomic-context issue.
 
-  BUG: kernel NULL pointer dereference, address: 0000000000000200
-  #PF: supervisor read access in kernel mode
-  #PF: error_code(0x0000) - not-present page
-  PGD 8104795067 P4D 0
-  Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-  CPU: 223 UID: 0 PID: 4357 Comm: qemu-system-x86 Not tainted 6.13.0-rc1-00028-g4b50c3c3b998-dirty #2632
-  Call Trace:
-   ? __die+0x24/0x70
-   ? page_fault_oops+0x80/0x150
-   ? do_user_addr_fault+0x63/0x7b0
-   ? exc_page_fault+0x7c/0x220
-   ? asm_exc_page_fault+0x26/0x30
-   ? cache_tag_flush_range_np+0x13c/0x260
-   intel_iommu_iotlb_sync_map+0x1a/0x30
-   iommu_map+0x61/0xf0
-   batch_to_domain+0x188/0x250
-   iopt_area_fill_domains+0x125/0x320
-   ? rcu_is_watching+0x11/0x50
-   iopt_map_pages+0x63/0x100
-   iopt_map_common.isra.0+0xa7/0x190
-   iopt_map_user_pages+0x6a/0x80
-   iommufd_ioas_map+0xcd/0x1d0
-   iommufd_fops_ioctl+0x118/0x1c0
-   __x64_sys_ioctl+0x93/0xc0
-   do_syscall_64+0x71/0x140
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Smatch static checker warning:
 
-Fixes: 705c1cdf1e73 ("iommu/vt-d: Introduce batched cache invalidation")
-Cc: stable@vger.kernel.org
-Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
+	drivers/iommu/intel/prq.c:95 intel_iommu_drain_pasid_prq()
+	warn: sleeping in atomic context
+
+To avoid this issue, prevent draining the PRQ in the SVA mm release path
+and restore the previous behavior.
+
+Fixes: c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain removed from RID")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-iommu/c5187676-2fa2-4e29-94e0-4a279dc88b49@stanley.mountain/
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Yi Liu <yi.l.liu@intel.com>
 Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Link: https://lore.kernel.org/r/20241210130322.17175-1-yi.l.liu@intel.com
+Link: https://lore.kernel.org/r/20241212021529.1104745-1-baolu.lu@linux.intel.com
 ---
- drivers/iommu/intel/cache.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ drivers/iommu/intel/pasid.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
-index e5b89f728ad3..09694cca8752 100644
---- a/drivers/iommu/intel/cache.c
-+++ b/drivers/iommu/intel/cache.c
-@@ -105,12 +105,35 @@ static void cache_tag_unassign(struct dmar_domain *domain, u16 did,
- 	spin_unlock_irqrestore(&domain->cache_lock, flags);
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 0f2a926d3bd5..5b7d85f1e143 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -265,7 +265,8 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
+ 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
+ 
+ 	devtlb_invalidation_with_pasid(iommu, dev, pasid);
+-	intel_iommu_drain_pasid_prq(dev, pasid);
++	if (!fault_ignore)
++		intel_iommu_drain_pasid_prq(dev, pasid);
  }
  
-+/* domain->qi_batch will be freed in iommu_free_domain() path. */
-+static int domain_qi_batch_alloc(struct dmar_domain *domain)
-+{
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&domain->cache_lock, flags);
-+	if (domain->qi_batch)
-+		goto out_unlock;
-+
-+	domain->qi_batch = kzalloc(sizeof(*domain->qi_batch), GFP_ATOMIC);
-+	if (!domain->qi_batch)
-+		ret = -ENOMEM;
-+out_unlock:
-+	spin_unlock_irqrestore(&domain->cache_lock, flags);
-+
-+	return ret;
-+}
-+
- static int __cache_tag_assign_domain(struct dmar_domain *domain, u16 did,
- 				     struct device *dev, ioasid_t pasid)
- {
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
- 	int ret;
- 
-+	ret = domain_qi_batch_alloc(domain);
-+	if (ret)
-+		return ret;
-+
- 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_IOTLB);
- 	if (ret || !info->ats_enabled)
- 		return ret;
-@@ -139,6 +162,10 @@ static int __cache_tag_assign_parent_domain(struct dmar_domain *domain, u16 did,
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
- 	int ret;
- 
-+	ret = domain_qi_batch_alloc(domain);
-+	if (ret)
-+		return ret;
-+
- 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_NESTING_IOTLB);
- 	if (ret || !info->ats_enabled)
- 		return ret;
-@@ -190,13 +217,6 @@ int cache_tag_assign_domain(struct dmar_domain *domain,
- 	u16 did = domain_get_id_for_dev(domain, dev);
- 	int ret;
- 
--	/* domain->qi_bach will be freed in iommu_free_domain() path. */
--	if (!domain->qi_batch) {
--		domain->qi_batch = kzalloc(sizeof(*domain->qi_batch), GFP_KERNEL);
--		if (!domain->qi_batch)
--			return -ENOMEM;
--	}
--
- 	ret = __cache_tag_assign_domain(domain, did, dev, pasid);
- 	if (ret || domain->domain.type != IOMMU_DOMAIN_NESTED)
- 		return ret;
+ /*
 -- 
 2.43.0
 
