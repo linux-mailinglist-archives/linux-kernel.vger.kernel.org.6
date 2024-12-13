@@ -1,192 +1,256 @@
-Return-Path: <linux-kernel+bounces-445350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799179F14ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:28:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5B09F14F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A62B16530E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:28:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C34188E570
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CE61E766F;
-	Fri, 13 Dec 2024 18:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BF71E883E;
+	Fri, 13 Dec 2024 18:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBCPTSI6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aeLjx8eZ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55100157E9F;
-	Fri, 13 Dec 2024 18:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E8157E9F;
+	Fri, 13 Dec 2024 18:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114527; cv=none; b=UvJI4w1sehYfkqCxOACt1yvFWmaZnoXZszUEfRkH3TNVpQQU77+aF/WCeEh3dkQCd2VpMOZ8Wyck6oiQcGA9BLG8dn5CWcxRdPXc2gGanU4T2llOhWrERcRtShZ+Unn/cGANTgLHlL/Y1gV53No47p5sSEgit+8OA2XA6WR2BXk=
+	t=1734114566; cv=none; b=YlAZJd58oCCdde/NqZ/MkcoL11fEPzBYXh5SsbcHc7bFcURd0Dw7xpOY8NtDFxYnOor4b5DEYp2+dvVriR1L3LtOMhIOzw2CpVRrl4jtFZxSwDSsAk4lOTX5xw6EHnOnJEurScLEwpja+aqvdads9/PV1dlUwnfJdZsd/X0Rjdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734114527; c=relaxed/simple;
-	bh=LPbXhuBCznWltRrBN0dLQ2P7MlTVMKjZ0PAU60sAtzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=h8u5OKFdCgcXPJVZ+KzKxXdaKcb3L+IibA8H1Fci2BfrNeXN6H8ZPYenyCc5vEZW9OIWgI9SjuKF160/BkpGFc/pf4XZan9XJhDE1o9dWiHfIys62fc3ztGgupCR9+Uh0u3+kGwaFQs9PlbBDFzq6+ZY4psba+Y1BHNi70PnQFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBCPTSI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD7EC4CED0;
-	Fri, 13 Dec 2024 18:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734114526;
-	bh=LPbXhuBCznWltRrBN0dLQ2P7MlTVMKjZ0PAU60sAtzs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=SBCPTSI66ShGmbuj4OWyoEZsKbmGpeGStV1m9uJryWlugTq4GBs5QNDj6WXBoTLCF
-	 WqDig1J91sZLoUOlzA/XEZ6e2qEwqyPAL0Bz3+u81opNHL4u/EelVBPt57e93lAtB4
-	 i4m6AYQkfEuWofvaJp2WOeNZbemHi7TUrx4x5Nvj1m3kY3k1G7DpF4+qUh06wDU03m
-	 ptQ7RLquyfmNpEGSKtvueyr+uzPoD22dJaNNVOeH8joGGtx0IZ5BfjIB2JuZaGLsOk
-	 HLneRreZ6bgKK/uGqRvsqp8RWE3B4A0zsxEErGtwPpO22ll6A/s7Kyz89eONk+tCGY
-	 K9FTLhEc+yRzw==
-Date: Fri, 13 Dec 2024 12:28:45 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jian-Hong Pan <jhp@endlessos.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>
-Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
- child and parent's L1SS configuration
-Message-ID: <20241213182845.GA3423569@bhelgaas>
+	s=arc-20240116; t=1734114566; c=relaxed/simple;
+	bh=JVk5RdH8jUY4kclcX+pZWMZJSGLYenDeELwKRHs+pww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZ7Wte/AvgipTNr3XsVwUHFlSxDGxjc8NCXf+Amn2/3psQ6TGt4b6M1YkOI2hrF4sZfZKrRvBuGcoasi3GOz6//5JMj6TVNpxfGb53ah7DKB5wn+crYHVg/1qrLFbnnfp6dofWhgI0VwReWt6KW4oy6uGWWWqNE+NVZfAuk3EYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aeLjx8eZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDGfHWp013504;
+	Fri, 13 Dec 2024 18:29:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=kBEckMknow7qlqB7AuvJ+bg9JaWDEl
+	7eJi82f+le/Yg=; b=aeLjx8eZE4KR3bM34UExhpQfXWiMz8ttVEL7RURn2gVYZz
+	BHBH6YNXObak7i5IJQtW1ZvMntNj0Ly7O/3YCxICRRPZkQD+CGO3m/nrMJ5/SHec
+	PqVr/C3edGpHI5LjlPuAfl01cHLGKV76iWiuucm0FfkjpegVMA4YLMrVLrd2alK1
+	mLRQmTyexr/V2bdYuNwi79NtrYtB1e1R/pxjhB9IVD4Dnkc9lL8wuw8CeFRIUu0I
+	ZNcAWoN5akCVVKa186EyXFTNs7Ib6z5M6B8w0d5QQcW694o4lZUMfU8ruoRodyM/
+	/LsUkxJjRX+BBueIT1iAUn+7TP8b5hSnXy05I6cw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43atmy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 18:29:17 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDIICvN013542;
+	Fri, 13 Dec 2024 18:29:17 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43atmv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 18:29:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDFoJJu016926;
+	Fri, 13 Dec 2024 18:29:16 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12yqekm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 18:29:16 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDITEo931195732
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 18:29:14 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5DED820040;
+	Fri, 13 Dec 2024 18:29:14 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BE9762004B;
+	Fri, 13 Dec 2024 18:29:12 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.19.196])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 13 Dec 2024 18:29:12 +0000 (GMT)
+Date: Fri, 13 Dec 2024 23:59:08 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dave Chinner <david@fromorbit.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@kernel.org>,
+        John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
+ details
+Message-ID: <Z1x89DDTQBcFenIp@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
+ <20241211181706.GB6678@frogsfrogsfrogs>
+ <Z1oTOUCui9vTgNoM@dread.disaster.area>
+ <20241212161919.GA6657@frogsfrogsfrogs>
+ <Z1tLEQmRiZc7alBo@dread.disaster.area>
+ <20241212210758.GN6678@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPpJ_eeHbQBtNK=0rJG-jzU-jZ=Tc1RknwrQgsFgEjr1qTqyqg@mail.gmail.com>
+In-Reply-To: <20241212210758.GN6678@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YnCrpXNBGC2P26eHjN6KYQ9IC9UU7XIM
+X-Proofpoint-GUID: NGxKQ3L5CjdOOvxeHRaItP2CjJmu3Htd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 adultscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130131
 
-On Fri, Dec 13, 2024 at 12:37:24PM +0800, Jian-Hong Pan wrote:
-> Bjorn Helgaas <helgaas@kernel.org> 於 2024年12月13日 週五 上午7:03寫道：
-> > On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
-> > > PCI devices' parameters on the VMD bus have been programmed properly
-> > > originally. But, cleared after pci_reset_bus() and have not been restored
-> > > correctly. This leads the link's L1.2 between PCIe Root Port and child
-> > > device gets wrong configs.
-> ...
-
-> > I think the important thing here is that currently
-> > pci_save_aspm_l1ss_state() saves only the child L1SS state, but
-> > pci_restore_aspm_l1ss_state() restores both parent and child, and the
-> > parent state is garbage.
-> >
-> > Obviously nothing specific to VMD or NVMe or SATA.
-> >
-> > > To avoid pci_restore_aspm_l1ss_state() restore wrong value to the parent's
-> > > L1SS config like this example, make pci_save_aspm_l1ss_state() save the
-> > > parent's L1SS config, if the PCI device has a parent.
-> >
-> > I tried to simplify the commit log and the patch so it's a little more
-> > parallel with pci_restore_aspm_l1ss_state().  Please comment and test.
-> >
-> > Bjorn
-> >
-> > commit c93935e3ac92 ("PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()")
-> > Author: Jian-Hong Pan <jhp@endlessos.org>
-> > Date:   Fri Nov 15 15:22:02 2024 +0800
-> >
-> >     PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()
-> >
-> >     After 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for
-> >     suspend/resume"), pci_save_aspm_l1ss_state(dev) saves the L1SS state for
-> >     "dev", and pci_restore_aspm_l1ss_state(dev) restores the state for both
-> >     "dev" and its parent.
-> >
-> >     The problem is that unless pci_save_state() has been used in some other
-> >     path and has already saved the parent L1SS state, we will restore junk to
-> >     the parent, which means the L1 Substates likely won't work correctly.
-> >
-> >     Save the L1SS config for both the device and its parent in
-> >     pci_save_aspm_l1ss_state().  When restoring, we need both because L1SS must
-> >     be enabled at the parent (the Downstream Port) before being enabled at the
-> >     child (the Upstream Port).
-> >
-> >     Link: https://lore.kernel.org/r/20241115072200.37509-3-jhp@endlessos.org
-> >     Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
-> >     Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-> >     Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> >     Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> >     [bhelgaas: parallel save/restore structure, simplify commit log]
+On Thu, Dec 12, 2024 at 01:07:58PM -0800, Darrick J. Wong wrote:
+> On Fri, Dec 13, 2024 at 07:44:01AM +1100, Dave Chinner wrote:
+> > On Thu, Dec 12, 2024 at 08:19:19AM -0800, Darrick J. Wong wrote:
+> > > On Thu, Dec 12, 2024 at 09:33:29AM +1100, Dave Chinner wrote:
+> > > > On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
+> > > > > On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
+> > > > > > Currently with stat we only show FS_IOC_FSGETXATTR details
+> > > > > > if the filesystem is XFS. With extsize support also coming
+> > > > > > to ext4 make sure to show these details when -c "stat" or "statx"
+> > > > > > is used.
+> > > > > > 
+> > > > > > No functional changes for filesystems other than ext4.
+> > > > > > 
+> > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > > > ---
+> > > > > >  io/stat.c | 38 +++++++++++++++++++++-----------------
+> > > > > >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/io/stat.c b/io/stat.c
+> > > > > > index 326f2822e276..d06c2186cde4 100644
+> > > > > > --- a/io/stat.c
+> > > > > > +++ b/io/stat.c
+> > > > > > @@ -97,14 +97,14 @@ print_file_info(void)
+> > > > > >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
+> > > > > >  }
+> > > > > >  
+> > > > > > -static void
+> > > > > > -print_xfs_info(int verbose)
+> > > > > > +static void print_extended_info(int verbose)
+> > > > > >  {
+> > > > > > -	struct dioattr	dio;
+> > > > > > -	struct fsxattr	fsx, fsxa;
+> > > > > > +	struct dioattr dio;
+> > > > > > +	struct fsxattr fsx, fsxa;
+> > > > > > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
+> > > > > >  
+> > > > > > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > > > > > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> > > > > > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > > > > > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
+> > > > > 
+> > > > > Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
+> > > > > print whatever is returned, no matter what filesystem we think is
+> > > > > feeding us information?
+> > > > 
+> > > > Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
+> > > > some time, we should treat it the same way for all filesystems.
+> > > > 
+> > > > > e.g.
+> > > > > 
+> > > > > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+> > > > > 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+> > > > > 				  errno != ENOTTY))
+> > > > > 			perror("FS_IOC_GETXATTR");
+> > > > 
+> > > > Why do we even need "is_xfs_fd" there? XFS will never give a
+> > > > EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
+> > > 
+> > > Yeah, in hindsight I don't think it's needed for FS_IOC_FSGETXATTR, but
+> > 
+> > *nod*
+> > 
+> > > it's definitely nice for XFS_IOC_FSGETXATTRA (which is not implemented
+> > > outside xfs) so that you don't get unnecessary error messages on ext4.
+> > 
+> > I don't think we even need it for FS_IOC_GETXATTRA - if the
+> > filesystem does not support that ioctl, we don't print the fields,
+> > nor do we output an error.
+> > 
+> > After all, this "extended info" and it's only ever been printed
+> > for XFS, so we can define whatever semantics we want for foreign
+> > filesystem output right now. As long as XFS always prints the same
+> > info as it always has (i.e. all of it), we can do whatever we want
+> > with the foreign filesystem stuff.
+> > 
+> > Keep in mind that we don't need platform tests for XFS files - that
+> > has already been done when the file was opened and the state stored
+> > in file->flags via the IO_FOREIGN flag. We already use that in the
+> > stat_f() to determine whether we print the "xfs info" or not.
+> > 
+> > IOWs, I think all we need to do is  move where we check the
+> > IO_FOREIGN flag. i.e.:
+> > 
+> > print_extented_info(file)
+> > {
+> > 	struct dioattr  dio = {};
+> >         struct fsxattr  fsx = {}, fsxa = {};
+> > 
+> > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+> > 		perror("FS_IOC_GETXATTR");
+> > 		exitcode = 1;
+> > 		return;
+> > 	}
+> > 
+> > 	printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+> > 	printxattr(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
+> > 	printf(_("fsxattr.projid = %u\n"), fsx.fsx_projid);
+> > 	printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
+> > 	printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
+> > 	printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
+> > 
+> > 	/* Only XFS supports FS_IOC_FSGETXATTRA and XFS_IOC_DIOINFO */
+> > 	if (file->flags & IO_FOREIGN)
+> > 		return;
+> > 
+> > 	if (ioctl(file->fd, FS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> > 		perror("FS_IOC_GETXATTRA");
+> > 		exitcode = 1;
+> > 		return;
+> > 	}
+> > 	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
+> > 		perror("XFS_IOC_DIOINFO");
+> > 		exitcode = 1;
+> > 		return;
+> > 	}
+> > 
+> > 	printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+> > 	printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
+> > 	printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
+> > 	printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
+> > }
+> > 
+> > Thoughts?
 > 
-> Thanks for the simplification!
-> Tested on my Asus B1400CEAE. Both the "dev" (NVMe) and the parent (PCI
-> bridge) keep the correct L1SS config.
+> Seems fine to me, though I'd print the fsxa before trying to call
+> DIOINFO.
 > 
-> Tested-by: Jian-Hong Pan <jhp@endlessos.org>
+> --D
 
-Thanks, I applied this on pci/aspm for v6.14 since this is a pretty
-old problem, and AFAICT it's a power consumption issue, not something
-that is functionally broken.  We might be able to make a case for
-v6.13 if my understanding is incorrect.
+Got it, this makes sense to me as well. I'll do something like this in
+v2. Thanks!
 
-Ilpo, David, I dropped your reviewed-by since I changed the patch
-significantly; let me know if you see any issue or if you want to add
-your reviewed-by.
+Regards,
+ojaswin
 
-> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > index 28567d457613..e0bc90597dca 100644
-> > --- a/drivers/pci/pcie/aspm.c
-> > +++ b/drivers/pci/pcie/aspm.c
-> > @@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
-> >
-> >  void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> >  {
-> > +       struct pci_dev *parent = pdev->bus->self;
-> >         struct pci_cap_saved_state *save_state;
-> > -       u16 l1ss = pdev->l1ss;
-> >         u32 *cap;
-> >
-> > +       /*
-> > +        * If this is a Downstream Port, we never restore the L1SS state
-> > +        * directly; we only restore it when we restore the state of the
-> > +        * Upstream Port below it.
-> > +        */
-> > +       if (pcie_downstream_port(pdev) || !parent)
-> > +               return;
-> > +
-> > +       if (!pdev->l1ss || !parent->l1ss)
-> > +               return;
-> > +
-> >         /*
-> >          * Save L1 substate configuration. The ASPM L0s/L1 configuration
-> >          * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
-> >          */
-> > -       if (!l1ss)
-> > -               return;
-> > -
-> >         save_state = pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
-> >         if (!save_state)
-> >                 return;
-> >
-> >         cap = &save_state->cap.data[0];
-> > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
-> > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
-> > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++);
-> > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++);
-> > +
-> > +       if (parent->state_saved)
-> > +               return;
-> > +
-> > +       /*
-> > +        * Save parent's L1 substate configuration so we have it for
-> > +        * pci_restore_aspm_l1ss_state(pdev) to restore.
-> > +        */
-> > +       save_state = pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L1SS);
-> > +       if (!save_state)
-> > +               return;
-> > +
-> > +       cap = &save_state->cap.data[0];
-> > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, cap++);
-> > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, cap++);
-> >  }
-> >
-> >  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
+> 
+> > -Dave.
+> > -- 
+> > Dave Chinner
+> > david@fromorbit.com
+> > 
 
