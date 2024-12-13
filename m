@@ -1,172 +1,183 @@
-Return-Path: <linux-kernel+bounces-445388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71C99F1561
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:01:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E3E9F155D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20C5188E388
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136E816665C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D41EE021;
-	Fri, 13 Dec 2024 19:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFBD1EBFF7;
+	Fri, 13 Dec 2024 19:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="IiQJDRk9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aTdyCVo0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36031EB9F8;
-	Fri, 13 Dec 2024 19:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734116432; cv=pass; b=KJOCJIZWxDRRVAYpYg67rRv5A33A/rnaP7QImCbifxbrG2/eMPfe+T464ZZPwuTgekS5V1lv0EIwjstjRY9JncyF+RzoiCbQ8HAe5NwVK2SdE/1ngoSgC0vBmi9rUUonnVrLEkFrnFMoATM7do5Po6yS3rP9jB/d3sa3FhvUPE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734116432; c=relaxed/simple;
-	bh=2QLIMmXwq0PC90DcHTuI1EJV9YDPCuFvlKGVyMw45Fs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68671EB9E2;
+	Fri, 13 Dec 2024 19:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734116430; cv=none; b=ZX6VygxdeuBuikbBH/vcpvEcELNTd6fJiJIP1SQUGvq08ythvQEI1p3igQA03v/C7QnIjoQgL7xIw4IDlF+yHy+W5WaaAIZpGVysMrpQ1egxrbgwJ2WtrTDPSM1KxEnFIfqL0RUsVyxe3eRyvPwlJsBdAt3WBYNIbm+Hz1hJAnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734116430; c=relaxed/simple;
+	bh=4cQrfh6BfHc3IlT0NVwr6zi0Zv3UEuEKb0NBjH4L2/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HglxtzScNigufTsimmNO5UTMwyvhXBs4FQgkoUO0I3G0b2JkYv+6T5TN5VkPkOa7QUYalJCy4L1wshT8rxvmakkgaXdTBMxeZGvdQaSw6uvvQcorvPsH9GCb1xXKDpy05oT4cHaJp9UI2YzLbshqBqvjcRqg4LkNKxloFqxS0AU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=IiQJDRk9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734116412; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MFblYMimd0gGPr2HXq9BRBOoZP7EfNJ6KiDCC2SX0s/nPI1wQTXGWD1g/AUoV++6bFO9sZUnOqQqKAnmhInQVFHqWV02QBu9W5yfpTJPArsGT17NokaFuPhDCkQBd+wDd/OhMfDwZAu4xPtwNd2s0jtKIGyLs7ijMa+NLK1fCek=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734116412; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2fQYeZnIEuXaZlLvcxerDjDSXLZNHqNtUkzd6tb+dXs=; 
-	b=LOnNDThME+fROHYnLlRRDIka09DYS+3/PBidnNXLwpoOA2uHwPu2epbqqu8xrwCuplrO/3IlKH2BdvGCzNvtCtDNRfpadKlQZA4DXrRlxyYp1xcJFdDaWW6tnPu6ZGPggZTooqodOfkFHEh1bIp+pGAcRc+oLUi+UtmwvdiY/Ws=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734116412;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=2fQYeZnIEuXaZlLvcxerDjDSXLZNHqNtUkzd6tb+dXs=;
-	b=IiQJDRk9R7OM5mhE4R2KulWaxHilo2bKAn2doQGiVR6h2JhFlfXoDkrDgpg0a/SL
-	zrHB8eKRxw6njrlAGMeo3UPDHSiQf9OsXP70LNiLa/ZWycyE8xumgJ91y9hIUqCGeip
-	1aSnAYe85B65ROzLa8S777tmTZOA1iMMFOYaX5vM=
-Received: by mx.zohomail.com with SMTPS id 1734116409928313.33760806040016;
-	Fri, 13 Dec 2024 11:00:09 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id D7B2610604D3; Fri, 13 Dec 2024 20:00:04 +0100 (CET)
-Date: Fri, 13 Dec 2024 20:00:04 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-Cc: christophe.jaillet@wanadoo.fr, 
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 2/2] power: supply: Add STC3117 fuel gauge unit driver
-Message-ID: <45rho3eswmyqf2ufnbzfbogftqhm7xxe5ylfvs3a4yvu3hrdhi@ljwxpgzzvkge>
-References: <20241213063813.32371-1-bhavin.sharma@siliconsignals.io>
- <20241213063813.32371-3-bhavin.sharma@siliconsignals.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBJU6T4EZvXYpgzUl2xXd4kcifa19KJ71XN5xvZ8Wj55wRT9jAVU2tVsAx3iD21T2hq/EzNAnUiWit9RHqfRYhzjIuULundpBeptUsqN+SJJiSVElX0EwcODsCL8v2F3MUNxY3u/3DCMqnkbRvRXPr8v1lMMBviw+XKuPS7LwNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aTdyCVo0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Q2Hh7i1IvMPkDPyJ+H+GPqol4Inldj3eRd/RH+IyPWA=; b=aTdyCVo0A04ii9Be59koxPyCGw
+	E2Tc3gu9An0oYSw9mHUF4BGt68XuQnuY7+qEv5mkl8S/1Mb8OjHTdPRLU0Y8nSm9EmCuNg7Z3wqqy
+	Gg5gNAXSG5wpcILgrKOSICOswOFwoAOw2xu5W3peK6/AB0NW9WDuFXCZ7pkBtkOFbvrxQ/H/Wso/7
+	vup/1RzSjj5IdPAXwNmGeAuD9eAGVay0ADicmlvi1bgfEe78EBpB3K0vpdptd3ZJgBtpkK/k30Da6
+	mWavV6+5CbolAjztRsfwtkpu703L7ZYCER9Q3dAaS2BVWWPNc2kEPctCfSAxVGrJ7DNTtle0nUDG7
+	bbwW1yNA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMAtg-0000000F6TE-2gCj;
+	Fri, 13 Dec 2024 19:00:20 +0000
+Date: Fri, 13 Dec 2024 19:00:20 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: lsf-pc@lists.linuxfoundation.org, linux-scsi@vger.kernel.org,
+	linux-ide@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: LSF/MM/BPF: 2025: Call for Proposals
+Message-ID: <Z1yERChJxMKlZ5nZ@casper.infradead.org>
+References: <Z1wQcKKw14iei0Va@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d52vomtdu3j4esp6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241213063813.32371-3-bhavin.sharma@siliconsignals.io>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/233.960.20
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1wQcKKw14iei0Va@tiehlicka>
+
+On Fri, Dec 13, 2024 at 11:46:08AM +0100, Michal Hocko wrote:
+> The annual Linux Storage, Filesystem, Memory Management, and BPF
+> (LSF/MM/BPF) Summit for 2025 will be held March 24–26, 2025
+> at the Delta hotel Montreal
+
+I've written an opinionated guide to Montreal.
+Patches accepted, latest version can be found at
+https://www.infradead.org/~willy/linux/lsfmm2025.txt
 
 
---d52vomtdu3j4esp6
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v9 2/2] power: supply: Add STC3117 fuel gauge unit driver
-MIME-Version: 1.0
+Montreal
+========
 
-Hi,
+Montreal is the second-largest French-speaking city in the world.
+Despite that, you can generally manage without speaking any French;
+they are accustomed to tourists.
 
-Thanks for including the test output. Looks like everything is
-returned with the correct units now :)
+Transport
+=========
 
-On Fri, Dec 13, 2024 at 12:08:10PM +0530, Bhavin Sharma wrote:
-> Adds initial support for the STC3117 fuel gauge.
->=20
-> The driver provides functionality to monitor key parameters including:
-> - Voltage
-> - Current
-> - State of Charge (SOC)
-> - Temperature
-> - Status
->=20
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-> Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-> ---
+Montreal primarily uses the metro; it is an entirely underground system.
+Entrances are indicated with a blue downward pointing arrow.  The Delta
+hotel is between McGill and Place-des-Arts metro stops on the green line.
+Train announcements are only in French but signage is bilingual.
 
-You probably want to document Co-authorship? In that case you should
-also add
+Tickets for the STM (https://www.stm.info/en) are valid on both busses
+& metro (but not local rail which is a different system that you won't
+need to care about anyway).  Travel to and from the airport is a special
+$11 fare which includes 24 hours of travel.  You can use a credit card
+to buy fares from a big orange machine; while you can pay on the bus,
+everybody will look askance at you for slowing them down.  You'll get
+a credit-card sized piece of card with an embedded antenna; you can
+break it by folding it, and it is not recyclable.  While you could buy
+a plastic OPUS card, this will not be a wise investment decision.
 
-Co-developed-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+From the airport, you'll want to take the 747 bus to Lionel-Groulx, go
+down into the Metro and catch a green line train towards Honore-Beaugrand,
+getting off at McGill.  For getting back to the airport, you will again
+need to buy an $11 ticket for the 747 bus.  If you're travelling, say,
+Thursday evening, you might want to buy your special $11 ticket on
+Thursday morning, use it to travel around the city and eventually catch
+the 747 in time to catch your plane.
 
-in addition to the Signed-off-by. See Documentation/process/submitting-patc=
-hes.rst
-for details.
+I would not recommend driving in Montreal.  It is confusing and expensive.
+I'm going to take the train from Ottawa, but taking the train from New
+York is a 11+ hour ride.  I'm told it's very pretty!  There are also
+coaches (Flixbus / Greyhound / etc) but I have no experience with those.
 
-> [...]
-> +#define INVALID_TEMPERATURE		250
-> [...]
-> +	/* INIT state, wait for batt_current & temperature value available: */
-> +	if (ram_data.reg.state =3D=3D STC3117_INIT && count_m > 4) {
-> +		data->avg_voltage =3D data->voltage;
-> +		data->avg_current =3D data->batt_current;
-> +		ram_data.reg.state =3D STC3117_RUNNING;
-> +	}
-> +
-> +	if (ram_data.reg.state !=3D STC3117_RUNNING) {
-> +		data->batt_current =3D 0;
-> +		data->temp =3D INVALID_TEMPERATURE;
+You can rent a bicycle by the minute: https://bixi.com/en/
+Scooters are probably not available to rent during winter.
 
-Please don't return arbitrary values when there is no data
-available. We have error codes for this. I suppose in your case
--ENODATA makes most sense.
+Beer
+====
 
-> +	} else {
-> +		if (data->voltage < APP_CUTOFF_VOLTAGE)
-> +			data->soc =3D 0;
-> +
-> +		if (mode & STC3117_VMODE) {
-> +			data->avg_current =3D 0;
-> +			data->batt_current =3D 0;
-> +		}
-> +	}
-> [...]
+The closest brewer to the conference is Benelux.  They don't open until
+mid-afternoon, but the Provigo grocery store across the street sells
+their beer if they're not open.  It's not generally legal to drink on
+the street; take the beer back to the hotel before opening it.
 
-Otherwise looks good to me.
+Other worthwhile breweries include Dieu de Ciel, 4 Origines, Saint Bock,
+Brewsky and McAuslan (aka St Ambroise).  Don't be afraid to use the
+metro to visit them.  There are many pubs on Crescent and de la Montagne
+streets; most will serve local beer.  Cans of beer are readily available
+at corner shops (referred to as "dep", short for Depanneur).
 
-Thanks,
+Molson is headquartered in Montreal.  It is not usually considered
+local beer.
 
--- Sebastian
+Food
+====
 
---d52vomtdu3j4esp6
-Content-Type: application/pgp-signature; name="signature.asc"
+Montreal prides itself on food.  Classic dishes include poutine, smoked
+meat and tourtiere.  As a major city, there is plenty of international
+food.  Montreal and New York have different styles of bagels from each
+other and much ink has been spilled on the subject of which is superior;
+try St Viateur or Fairmont for a fair example of Montreal bagels.
 
------BEGIN PGP SIGNATURE-----
+There is also fierce competition as to whether Quebec, Ontario or
+Vermont produces the best maple syrup.  You should probably find a
+Cabane a Sucre / Sugar Shack to form an opinion of your own, eg
+https://www.parcjeandrapeau.com/en/urban-sugar-shack-spring-restaurant-sainte-helene-bistro-terrace-montreal/
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdchCkACgkQ2O7X88g7
-+pqsqw/+N1Z6Xi+hiucuvTQmAmfWE2R/Y51VSSmXoKd5uQvZnFCRrsQeROUnpNGe
-4pUqHi+bACY9+vMBHYk5pSKLrfbrYg9BGoF+KevwL+XHCgA7KHZNwrZCAEpAZRJV
-rL0yOA4eP6UHcdSq24+3zZ0fKZQt0Zh6N9/nG9HTIFB+W14cKxpDyy1Y1is16EIs
-7d6PYBlTF3pdi5f2ccmpkaoDUEn80rcOEvJXyLzr9BCn6nm5MW6ZYBO/Qw6Ujgs5
-uib+cqYt+Lb7caO350C3e5+LjAuez/iRYoYpjbrPKmn516eIJhnPo/+qyiu+aJEV
-pemKQ03TO5AAfawXzd7smRfKfpuL7jh1AM4tYuhu2OjFfTKLrohkByxIlPMx6v6z
-FceDLesbXeVmT+PTDcuUrYWpWaVI0tAbIzub+EdneWpewox9CaRfg5RzyXJEmxCL
-h4+fliRW6t2aav16KhaYbYfsg5fwQJ76B471bswQtlJCx8W+r7fvfzVJQBUD6Abs
-VCKbgJP3EDVv/xCESnNJRao9D7p0IWuBF2SS4Iav8+nsXjujv9iguN+5pD+DKSl+
-WFw13/TGWm8faWyl3KINsBiNpXFCBNKa/vXvsICerLrWn/pxaTAv+TnxMrgFy776
-Frc8SyfvTk9/lbOpDv2CyOC27J2trErWGxyPNbtWW4jk/ebcJSk=
-=LtuL
------END PGP SIGNATURE-----
+Outside
+=======
 
---d52vomtdu3j4esp6--
+We're going to be there in March.  It could be -30C or +20C.  Montreal
+has an underground city (RESO) which has shops and restaurants, as
+well as being a sheltered route between office towers and the metro.
+There's an entrance at Union street, just two blocks from the hotel.
+https://www.mtl.org/en/experience/guide-underground-city-shopping
+(yes, that is a chunk of the Berlin wall in the picture)
+
+If the weather is clement, Mont Royal is a popular destination, but it
+can be icy and not much fun at this time of year.  The Lachine canal may
+be a better bet, or you can walk or cycle on the Formula 1 circuit on
+Ile Notre Dame.  It's not the Nurburgring; while you can drive on it,
+the speed limit is 30kph.  A more unusual route would be the Samuel
+De Champlain bridge Multiuse Path which is some of the best tarmac in
+the city (but ends on an unsurfaced path that connects to the Formula
+1 circuit).
+
+The local sport is hockey.  The Habs are not having a good year, so you
+may be able to buy tickets to a game.  The Colorado Avalanche are in town
+on Saturday 22nd; otherwise you should be able to watch a game in a pub.
+Women's hockey is gaining in popularity, and the Montreal Victoire are
+playing Toronto at Place Bell at noon on Sunday 23rd.
+
+St Catherine, St Laurent & St Denis are the major shopping streets.
+There are markets at Atwater and Jean Talon.  The Vieux Port area
+is full of tourist tat (but maybe you want a sweatshirt with Montreal
+written on it).
+
+The Biodome and Biosphere are both worth a visit.  There's also a
+planetarium, the Musee des Beaux Arts and the botanic gardens.  I like
+the Archaeology museum.
 
