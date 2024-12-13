@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-444610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E8D9F098A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:32:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BA79F098F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:33:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9614416A1C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADFA160681
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433331BAEFD;
-	Fri, 13 Dec 2024 10:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380951B982C;
+	Fri, 13 Dec 2024 10:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nkRdYOhg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S4bN2vIn"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E025F1BE251;
-	Fri, 13 Dec 2024 10:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC301B3958;
+	Fri, 13 Dec 2024 10:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734085898; cv=none; b=DsR5sBRD0c1MhxhZ6xLR58ZNtCHj9jQf1ht25NSjEcA8Hw8AC/FlPftdShBZXoQ0AlleUXtEftTn/+n56xbv2LR2vB5vWczrfV8VfTTV/tLWhNbMlJ3y/v1fGxsK29dEsNuSLVyJGPs+fOFn2aZg4ou/JjZddesGgwp7Hi31xLU=
+	t=1734085986; cv=none; b=DbsA4Fk2uUWLnC2FcGTfI8VL0Hvv7ZSFRQoQh+/Y3c9a6orkoD5pimcxm8T1x521dmF6IqlJ/sb6t6ZuCwtdqyB7hVZflNpGn5yBQljeETlZIQJUd4NEgHSBBZWOvOcitHsvlNEhENkSKgoGs3hRN/Q6qVB5YTAQThhouY3Scig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734085898; c=relaxed/simple;
-	bh=jdFr0oQs25XV2DlplfS+NxPdPJxBe22JHlJIxZO55U8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JDDiJd0fwVrzYayJyKBIYsZMFyNe7nFrIYIs37CYomy7WUhF41Ta9Gt1bHBRQZ9kreeJwBuOEq0BHDxpPwUsdRyIQxicU6ew9/c+fl+EfejCPUoE2FfgPykYC6TvXsljKucnXFt8GOWzrPo5ApWTcL+9UitfCcWtdzcCL49CTpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nkRdYOhg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD8VoED022852;
-	Fri, 13 Dec 2024 10:31:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D3rNYuytu2BxN4xjDtZx2H8jmlNM1LEWyK6VRpxKEiY=; b=nkRdYOhgG0H810xi
-	xcr15nmES22/10HJP2M0uBbSyDfCqgBW2waIVaTE/06u/Vmda9uFj9nVDIh4/2e5
-	oaMRXueRhbSzYqrd4OJKNZhF8wbI1eBBW3AHdXG1KIwxaWCbvO9DDdHz+pDaRIYk
-	rgoq6OUYpWpvjApIDnX9uYdCx0eXKIvGJ/OIv7MO7y2FIy9FUY/XBlbeMsS+raNn
-	rJsm5dqtWWujWgiBC0pmkF+/aNrVjny0sdCAemy243O4WfqKxYtV7Am7dyrfSG5m
-	x0bqPSHrHJDCOXDUtZnlK6g43j9M8Ww52xK78wshlLmebbxVJ1RjpCfpfbTm6v1G
-	7h/MBA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g4wna4dv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:31:33 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDAVWLE001908
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:31:32 GMT
-Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 02:31:29 -0800
-Message-ID: <f94d9935-885a-49f8-be53-4e218c144206@quicinc.com>
-Date: Fri, 13 Dec 2024 18:31:26 +0800
+	s=arc-20240116; t=1734085986; c=relaxed/simple;
+	bh=ApsrYFswezGftMuwmeTEeSUOM/0FX0NYslGs2NfWs0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9LznlzLJvNAGNvkcjp6AiXXGkLrjc0N4DWLJ/6vqn2eRP+SWO/Fka6se1j3RGT4fpgpdNa/YRkI4K2HMJPoW10k9VRbZvC+RNnk1pUDcJUv1cwuKsRoaXYIroEMXgyTFVoiZaEigmaf/7c6SK/HATCdt4DBSuQlLjqFmhWHLME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S4bN2vIn; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734085982;
+	bh=ApsrYFswezGftMuwmeTEeSUOM/0FX0NYslGs2NfWs0A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S4bN2vIn3fGXb5uMGXT0vcyMbMw3mhQFzQZojR301P8vZS9U28S7S3EUbZnggWInf
+	 ReLSvhnbcbTXwl1X43tNyQSV1AjUFEtU/z1PS4t8rvL/O2htkfPu+WYdbxXue8MTOj
+	 948x6TUMPeUJil2itKHbFYBg79Qve/EdnetOQ+aR3VQ6ezzc/gaosjIxNtH7K6Wyj3
+	 uckNr+NcwYacsFRb4zutjG/sw4YDgoStxcCxAvEc8BrBDPs9Uqnvi6riCNKf7lBfZu
+	 Jnlbh3vEqAEvjsa5OCOYfzPrg3CpUBLI0kM/logl8RF+WL5fO9++Fk1eW56v1BavOx
+	 Lr+tx/BsNwjdQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C203117E360E;
+	Fri, 13 Dec 2024 11:33:01 +0100 (CET)
+Message-ID: <e1909a09-f871-4c8b-825e-835605ff92a5@collabora.com>
+Date: Fri, 13 Dec 2024 11:33:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,215 +56,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: Add DisplayPort support for QCS615
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Fange Zhang
-	<quic_fangez@quicinc.com>,
-        Li Liu <quic_lliu6@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241210-add-displayport-support-to-qcs615-devicetree-v1-0-02f84a92c44b@quicinc.com>
- <20241210-add-displayport-support-to-qcs615-devicetree-v1-1-02f84a92c44b@quicinc.com>
- <5tao3qowqb5av5bhvwn4l3bfdumbfgqcvzxl3doojhjtd4hxsa@yc6wzmx5zets>
-From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
-In-Reply-To: <5tao3qowqb5av5bhvwn4l3bfdumbfgqcvzxl3doojhjtd4hxsa@yc6wzmx5zets>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: q5D3BJphghfrvLJ5EFZ9WEyAoKGVj8ON
-X-Proofpoint-GUID: q5D3BJphghfrvLJ5EFZ9WEyAoKGVj8ON
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
- mlxscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412130072
+Subject: Re: [PATCH v2 2/3] dts: arm64: mediatek: mt8188: Update OVL
+ compatible from MT8183 to MT8195
+To: Pin-yen Lin <treapking@chromium.org>,
+ "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+ Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Fei Shao <fshao@chromium.org>
+References: <20241213095044.23757-1-jason-jh.lin@mediatek.com>
+ <20241213095044.23757-3-jason-jh.lin@mediatek.com>
+ <CAEXTbpcp31oWOCh2c41QbWOc5F_gpD1Bia0NiZeVyDbqKo98Lw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAEXTbpcp31oWOCh2c41QbWOc5F_gpD1Bia0NiZeVyDbqKo98Lw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 12/10/2024 6:38 PM, Dmitry Baryshkov wrote:
-> On Tue, Dec 10, 2024 at 05:11:05PM +0800, Xiangxu Yin wrote:
->> Add DisplayPort controller and phy configuration for QCS615 platform.
+Il 13/12/24 11:26, Pin-yen Lin ha scritto:
+> Hi Jason,
+> 
+> On Fri, Dec 13, 2024 at 5:50 PM Jason-JH.Lin <jason-jh.lin@mediatek.com> wrote:
 >>
->> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+>> The OVL hardware capabilities have changed starting from MT8195,
+>> making the MT8183 compatible no longer applicable.
+>> Therefore, it is necessary to update the OVL compatible from MT8183 to
+>> MT8195.
+> 
+> This probably doesn't need an (immediate) respin, but this patch needs:
+> 
+> Fixes: 7075b21d1a8e ("arm64: dts: mediatek: mt8188: Add display nodes
+> for vdosys0")
+
+No, because the binding must otherwise get a Fixes tag.
+
+This is not a fix anyway, and is technically adding new features to the MT8188
+OVL; without the additional features, the MT8188 is still compatible with the
+MT8183 OVL, as much as MT8195.
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+>>
+>> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 >> ---
->>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 107 ++++++++++++++++++++++++++++++++++-
->>  1 file changed, 105 insertions(+), 2 deletions(-)
+>>   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index 0a629c44e960e38891f48a8a021b86a6c1dadea1..dbd6eae267d7470d9b9a6c303eac03b64c3df3fc 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -17,6 +17,7 @@
->>  #include <dt-bindings/power/qcom-rpmpd.h>
->>  #include <dt-bindings/power/qcom,rpmhpd.h>
->>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->> +#include <dt-bindings/phy/phy-qcom-qmp.h>
->>  
->>  / {
->>  	interrupt-parent = <&intc>;
->> @@ -2889,6 +2890,7 @@ ports {
->>  					port@0 {
->>  						reg = <0>;
->>  						dpu_intf0_out: endpoint {
->> +							remote-endpoint = <&mdss_dp0_in>;
->>  						};
->>  					};
->>  
->> @@ -3002,6 +3004,107 @@ mdss_dsi0_phy: phy@ae94400 {
->>  
->>  				status = "disabled";
->>  			};
->> +
->> +			mdss_dp0: displayport-controller@ae90000 {
-> 
-> Which order should nodes follow in DT?
-> 
-OK, WIll sort by node address.
->> +				compatible = "qcom,sm6150-dp";
->> +
->> +				reg = <0x0 0xae90000 0x0 0x200>,
->> +				      <0x0 0xae90200 0x0 0x200>,
->> +				      <0x0 0xae90400 0x0 0x600>,
->> +				      <0x0 0xae90a00 0x0 0x600>;
-> 
-> 0x0ae90000, etc. If it is not written in your company's "upstreaming"
-> document, please update it. If it is written there, why didn't you
-> follow it?
-> 
-Will fix padding in next patch and update our upstreaming documents.
->> +
->> +				interrupt-parent = <&mdss>;
->> +				interrupts = <12>;
->> +
->> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>;
->> +				clock-names = "core_iface",
->> +					      "core_aux",
->> +					      "ctrl_link",
->> +					      "ctrl_link_iface",
->> +					      "stream_pixel";
->> +
->> +				assigned-clocks = <&dispcc DISP_CC_MDSS_DP_LINK_CLK_SRC>,
->> +						  <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
->> +				assigned-clock-parents = <&mdss_dp_phy QMP_USB43DP_DP_LINK_CLK>,
->> +							 <&mdss_dp_phy QMP_USB43DP_DP_VCO_DIV_CLK>;
->> +
->> +				phys = <&mdss_dp_phy QMP_USB43DP_DP_PHY>;
->> +				phy-names = "dp";
->> +
->> +				operating-points-v2 = <&dp_opp_table>;
->> +				power-domains = <&rpmhpd RPMHPD_CX>;
->> +
->> +				#sound-dai-cells = <0>;
->> +
->> +				status = "disabled";
->> +
->> +				ports {
->> +					#address-cells = <1>;
->> +					#size-cells = <0>;
->> +
->> +					port@0 {
->> +						reg = <0>;
->> +						mdss_dp0_in: endpoint {
->> +							remote-endpoint = <&dpu_intf0_out>;
->> +						};
->> +					};
->> +
->> +					port@1 {
->> +						reg = <1>;
->> +						mdss_dp0_out: endpoint {
->> +						};
->> +					};
->> +				};
->> +
->> +				dp_opp_table: opp-table {
->> +					compatible = "operating-points-v2";
->> +
->> +					opp-160000000 {
->> +						opp-hz = /bits/ 64 <160000000>;
->> +						required-opps = <&rpmhpd_opp_low_svs>;
->> +					};
->> +
->> +					opp-270000000 {
->> +						opp-hz = /bits/ 64 <270000000>;
->> +						required-opps = <&rpmhpd_opp_svs>;
->> +					};
->> +
->> +					opp-540000000 {
->> +						opp-hz = /bits/ 64 <540000000>;
->> +						required-opps = <&rpmhpd_opp_svs_l1>;
->> +					};
->> +				};
->> +			};
->> +
->> +			mdss_dp_phy: phy@88e9000 {
-> 
-> Also misplaced node.
-> 
-Ok, will fix in next patch.
->> +				compatible = "qcom,qcs615-qmp-dp-phy";
->> +
->> +				reg = <0x0 0x88e9000 0x0 0x200>,
->> +				      <0x0 0x88e9400 0x0 0x10c>,
->> +				      <0x0 0x88e9800 0x0 0x10c>,
->> +				      <0x0 0x88e9c00 0x0 0x200>;
-> 
-> 0x088e9000, etc.
-> 
-Ok, will fix address padding.
->> +
->> +				clocks = <&gcc GCC_AHB2PHY_WEST_CLK>,
->> +					 <&gcc GCC_USB3_SEC_CLKREF_CLK>;
->> +				clock-names = "cfg_ahb",
->> +					      "ref";
->> +				clock-output-names = "dp_phy_link_clk",
->> +						     "dp_phy_vco_div_clk";
->> +
->> +				resets = <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
->> +				reset-names = "phy";
->> +
->> +				qcom,tcsr-reg = <&tcsr 0xb24c>;
->> +
->> +				#clock-cells = <1>;
->> +				#phy-cells = <1>;
->> +
->> +				status = "disabled";
->> +			};
->>  		};
->>  
->>  		dispcc: clock-controller@af00000 {
->> @@ -3013,8 +3116,8 @@ dispcc: clock-controller@af00000 {
->>  				 <&mdss_dsi0_phy 0>,
->>  				 <&mdss_dsi0_phy 1>,
->>  				 <0>,
->> -				 <0>,
->> -				 <0>;
->> +				 <&mdss_dp_phy QMP_USB43DP_DP_LINK_CLK>,
->> +				 <&mdss_dp_phy QMP_USB43DP_DP_VCO_DIV_CLK>;
->>  
->>  			#clock-cells = <1>;
->>  			#reset-cells = <1>;
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+>> index faccc7f16259..23ec3ff6cad9 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+>> @@ -2488,7 +2488,7 @@ jpeg_decoder: jpeg-decoder@1a040000 {
+>>                  };
 >>
->> -- 
->> 2.34.1
+>>                  ovl0: ovl@1c000000 {
+>> -                       compatible = "mediatek,mt8188-disp-ovl", "mediatek,mt8183-disp-ovl";
+>> +                       compatible = "mediatek,mt8188-disp-ovl", "mediatek,mt8195-disp-ovl";
+>>                          reg = <0 0x1c000000 0 0x1000>;
+>>                          clocks = <&vdosys0 CLK_VDO0_DISP_OVL0>;
+>>                          interrupts = <GIC_SPI 636 IRQ_TYPE_LEVEL_HIGH 0>;
+>> --
+>> 2.43.0
 >>
 > 
+> Regards,
+> Pin-yen
 
 
