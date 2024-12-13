@@ -1,153 +1,196 @@
-Return-Path: <linux-kernel+bounces-444178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7249F027B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:08:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053079F027C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456DC1663AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:08:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3582E1882E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ECC364D6;
-	Fri, 13 Dec 2024 02:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D302374FF;
+	Fri, 13 Dec 2024 02:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT0brg8b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkOPoXTi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDC1846F;
-	Fri, 13 Dec 2024 02:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67440846F;
+	Fri, 13 Dec 2024 02:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734055699; cv=none; b=eGV0zl9pu9MNoIlEyRRZWreEtj6KmLfWZ0LEmV1pNXGeQblG0w2acZrmQVz9pV1Y3g1VeTUL2fCcDGvILM3hApLenckn6Yic+Yfth4Pf5Bju90KYPONrixXowY3j7pfESK5EISso5MeuZFs8oc1sc5g+qMEIVl7UuTBPruDKh0E=
+	t=1734055781; cv=none; b=oCPE4LSFcFJtCxRmgaBI9C5yyjMsFvtqwiZIoPEAQSEX6j0RkK+8P5ukY8atIzICVv6lpTO+OHQTp2ur9euFArxPbcYhiSLHqoyoVjWdfht9QtJCeJK0IKWZnlvnG0DKPbHqTHSLhPieq2D7qFe+LPf4dLXMI6bptyRd4pF6Lrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734055699; c=relaxed/simple;
-	bh=tm5RF1spERBhNh027vl264Wk2gO7rUaUP/g9RZDDAXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QGPTBNJu/uHKSiQRnZt+2qKzsbBRmG+HYMZiawaXVaTVdUyEenTSpb5V2fKx7STk0icO0lrqrVVxQzhtPocg9QmC1X2HlmkDZ7JWunbBmdJrsofagw5oPxjoka3xC67wUXPFYRaFZLIC9aUZAQAvP64ACbGYSyJdE2OcAbLvUnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT0brg8b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76BF4C4CECE;
-	Fri, 13 Dec 2024 02:08:16 +0000 (UTC)
+	s=arc-20240116; t=1734055781; c=relaxed/simple;
+	bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eR5ZBJn8DeHZ285YvrYg7bqqLdViIWnrhPZc6oC+ERXd6QJLH2aYoSvDTeCdVwR1Gej1dNkHq8qJSZKUklifl1ryGefVVn+Jua+9Rn877WXCOpNo9667f3wJMXjswGEuL5NE9K0B0O+12PPp6p+S0JyJ34r2c3GRx77kA3MHflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkOPoXTi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5602C4CECE;
+	Fri, 13 Dec 2024 02:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734055696;
-	bh=tm5RF1spERBhNh027vl264Wk2gO7rUaUP/g9RZDDAXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iT0brg8b062XiSgLTzCnkQXbfUXFsFggloyJ1Dsqn+tPzzdEBSLP3blO9on5hm5vd
-	 Qu3OsoFFVPk1MACpeQ49v6/Im3AShTZm7Jf3M8HsX91d4CUgWxWx/U43JFsYZibRgs
-	 Mvts1wBEIoLE0wRZay/W9qvDCr5xllIETIV5YDL1Zs93iVUiBikPHhNfk7kpfvX0by
-	 hDis6rc3KOof54Adc6KdptBKo40EIlMcCI7MSC0IDFymVLi5W+VABCBm2qbOlNsX8r
-	 ySIOoVtiOurSrZduxgAC/VOALPnGrNffGAKuAjgxXGRYQf0dn3+TrD2XzrtMNlCygG
-	 ujBbJN9Se1PpQ==
-Date: Thu, 12 Dec 2024 18:08:15 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Howard Chu <howardchu95@gmail.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
-Message-ID: <Z1uXDxdIE4g6BaZB@google.com>
-References: <20241211222110.2430610-1-namhyung@kernel.org>
- <Z1oXs1xjCG1Ee27p@x1>
- <CAP-5=fXYke_n7TDe+mB-webNH7vCvea7ZVPqfqygw7bTNd8G3g@mail.gmail.com>
- <CAH0uvogs8EAzLemVQXq238KGFXJhD2TBhpXHQUnRYaQtcn_HPQ@mail.gmail.com>
- <CAP-5=fXTSZtcrc3hgYHQAHyZVsJ6eLQ_RMzQgVrKFhjvdcwSqw@mail.gmail.com>
+	s=k20201202; t=1734055781;
+	bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EkOPoXTiOH+lSEh1RK4mRrb6GsB3lVZA9LPd/XWhh+XKK1AJ59QfdC5NlHdtLjvKH
+	 +9+18f7TuiUUFDPDFth8v/sIZtGAodUqZNOr3IEuFA/9rooNAS37MXNs/4GHfCM9eM
+	 NUHKPLNEokl8sEGR0WgsbTbI+o+6SGLaJrNnOxvLhPlW2oJUfXKrwVkAACEVfmUUKm
+	 oP7uQRf7mIxLmn+4/spVBYGY9edDwEExX0bl0jp3OeOCtofOI8gRAU7ef4GsamxOF1
+	 IGzaHc651BcHlUli9/AkrNg2mWwkPY3+pgGl+BmaBcTrAkjC28r7jbl7loYTiGVI34
+	 LZ39hE2ZAx7bw==
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Nilay Shroff <nilay@linux.ibm.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	"Qing Zhao" <qing.zhao@oracle.com>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fortify: Hide run-time copy size from value range tracking
+Date: Thu, 12 Dec 2024 18:09:33 -0800
+Message-Id: <20241213020929.work.498-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6060; i=kees@kernel.org; h=from:subject:message-id; bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnR02NmbxateHynujTJ/MZ7Xf6dJ6+l9a5Xkpx9qeDel rDGB1HxHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABOJPcfIsGzrAv5rjifzVtg+ aJgxy/n8uy23v2+TuuzbExj2o/v6nJkMv9k1yta6ml4/6brybuGyXa8n7nvM1HAt3zKgZorYd5d PggwA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXTSZtcrc3hgYHQAHyZVsJ6eLQ_RMzQgVrKFhjvdcwSqw@mail.gmail.com>
 
-On Wed, Dec 11, 2024 at 08:28:33PM -0800, Ian Rogers wrote:
-> On Wed, Dec 11, 2024 at 5:47 PM Howard Chu <howardchu95@gmail.com> wrote:
-> >
-> > Hello Ian,
-> >
-> > On Wed, Dec 11, 2024 at 5:34 PM Ian Rogers <irogers@google.com> wrote:
-> > >
-> > > On Wed, Dec 11, 2024 at 2:52 PM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
-> > > > > This option is to implement the event sampling for system calls.
-> > > > > The period is given in msec as it shows the time in msec.
-> > > > >
-> > > > >   # perf trace -C 0 --syscall-period 100 sleep 1
-> > > > >            ? (         ): fleetspeakd/1828559  ... [continued]: futex())                                            = -1 ETIMEDOUT (Connection timed out)
-> > > > >        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[3355761]>, msg: 0x7ffef8b39d20)                = 40
-> > > > >      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      = 8
-> > > > >      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) = 0
-> > > > >      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, timeout_msecs: 100)            ...
-> > > > >      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-> > > > >      300.876 (100.123 ms): mon/4932  ... [continued]: poll())                                             = 0 (Timeout)
-> > > > >      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-> > > > >      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd40, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-> > > > >      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4240, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
-> > > > >      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WAKE|PRIVATE_FLAG, val: 1)             = 1
-> > > > >      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0)                                      = 0
-> > > > >
-> > > > > The timestamp is kept in a per-cpu array and the allowed task is saved
-> > > > > in a hash map.
-> > > >
-> > > > Interesting concept, and one that is done just on the BPF part, so I
-> > > > think we should at least warn a user that is running this on a build
-> > > > without BPF skels.
-> > > >
-> > > > Will try it tomorrow,
-> > > >
-> > > > - Arnaldo
-> > > >
-> > > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > > > ---
-> > > > >  tools/perf/Documentation/perf-trace.txt       |  6 ++
-> > > > >  tools/perf/builtin-trace.c                    |  5 ++
-> > > > >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
-> > > > >  3 files changed, 76 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-> > > > > index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
-> > > > > --- a/tools/perf/Documentation/perf-trace.txt
-> > > > > +++ b/tools/perf/Documentation/perf-trace.txt
-> > > > > @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
-> > > > >       printing using the existing 'perf trace' syscall arg beautifiers to map integer
-> > > > >       arguments to strings (pid to comm, syscall id to syscall name, etc).
-> > > > >
-> > > > > +--syscall-period::
-> > > > > +     Trace a system call in the given period (in msec).  This implements
-> > > > > +     sampling for syscalls in order to reduce the monitoring overhead.
-> > > > > +     For example, setting the sysall period to 100 (msec) means it will
-> > > > > +     sample a syscall and next one after 100 msec.
-> > >
-> > > Is this similar to the -D/--delay option to perf-record? Perhaps share the name?
-> >
-> > I think this is more like a throttling for the perf trace output,
-> > instead of a one-time delay or a range of enabled time like -D, as the
-> > prev_ts here is continuously updated. This restricts the maximum
-> > sampling frequency to 1 / syscall-period, meaning every syscall is
-> > sampled just after the syscall-period has passed.
-> 
-> Thanks Howard, so it is some kind of "throttle" or "max-per" value.
-> I'd suggest rephrasing the text.
+GCC performs value range tracking for variables as a way to provide better
+diagnostics. One place this is regularly seen is with warnings associated
+with bounds-checking, e.g. -Wstringop-overflow, -Wstringop-overread,
+-Warray-bounds, etc. In order to keep the signal-to-noise ratio high,
+warnings aren't emitted when a value range spans the entire value range
+representable by a given variable. For example:
 
-How about this?
+	unsigned int len;
+	char dst[8];
+	...
+	memcpy(dst, src, len);
 
---syscall-sample=<period>::
-	Enable sampling of system calls with a given period in msec.
-	The sampling frequency would be 1 / period, in other words,
-	it will trace a system call only after the given period of
-	time is passed.  The sampling period is tracked per CPU.
+If len's value is unknown, it has the full "unsigned int" range of [0,
+UINT_MAX], and bounds checks against memcpy() will be ignored. However,
+when a code path has been able to narrow the range:
 
-Thanks,
-Namhyung
+	if (len > 16)
+		return;
+	memcpy(dst, src, len);
+
+Then a range will be updated for the execution path. Above, len is now
+[0, 16], so we might see a -Wstringop-overflow warning like:
+
+	error: '__builtin_memcpy' writing between 9 and 16 bytes from to region of size 8 [-Werror=stringop-overflow]
+
+When building with CONFIG_FORTIFY_SOURCE, the run-time bounds checking
+can appear to narrow value ranges for lengths for memcpy(), depending on
+how the compile constructs the execution paths during optimization
+passes, due to the checks on the size. For example:
+
+	if (p_size_field != SIZE_MAX &&
+	    p_size != p_size_field && p_size_field < size)
+
+As intentionally designed, these checks only affect the kernel warnings
+emitted at run-time and do not block the potentially overflowing memcpy(),
+so GCC thinks it needs to produce a warning about the resulting value
+range that might be reaching the memcpy().
+
+We have seen this manifest a few times now, with the most recent being
+with cpumasks:
+
+In function ‘bitmap_copy’,
+    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+  633 |         __underlying_##op(p, q, __fortify_size);                        \
+      |         ^~~~~~~~~~~~~
+./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+kernel/padata.c: In function ‘__padata_set_cpumasks’:
+kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+  713 |                                  cpumask_var_t pcpumask,
+      |                                  ~~~~~~~~~~~~~~^~~~~~~~
+
+This warning is _not_ emitted when CONFIG_FORTIFY_SOURCE is disabled,
+and with the recent -fdiagnostics-details we can confirm the origin of
+the warning is due to the FORTIFY range checking:
+
+../include/linux/bitmap.h:259:17: note: in expansion of macro 'memcpy'
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+  '__padata_set_cpumasks': events 1-2
+../include/linux/fortify-string.h:613:36:
+  612 |         if (p_size_field != SIZE_MAX &&
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  613 |             p_size != p_size_field && p_size_field < size)
+      |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+      |                                    |
+      |                                    (1) when the condition is evaluated to false
+      |                                    (2) when the condition is evaluated to true
+  '__padata_set_cpumasks': event 3
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+      |                                 |
+      |                                 (3) out of array bounds here
+
+(Note that this warning started appearing since bitmap functions were
+recently marked __always_inline, which allowed GCC to gain visibility
+into the variables as they passed through the FORTIFY implementation.)
+
+In order to silence this false positive but keep deterministic
+compile-time warnings intact, hide the length variable from GCC with
+OPTIMIZE_HIDE_VAR() before calling the builtin memcpy.
+
+Reported-by: "Thomas Weißschuh" <linux@weissschuh.net>
+Closes: https://lore.kernel.org/all/db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de/
+Reported-by: Nilay Shroff <nilay@linux.ibm.com>
+Closes: https://lore.kernel.org/all/20241112124127.1666300-1-nilay@linux.ibm.com/
+Acked-by: Yury Norov <yury.norov@gmail.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: "Qing Zhao" <qing.zhao@oracle.com>
+Cc: linux-hardening@vger.kernel.org
+---
+ include/linux/fortify-string.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+index 0d99bf11d260..cab419f3a05f 100644
+--- a/include/linux/fortify-string.h
++++ b/include/linux/fortify-string.h
+@@ -630,7 +630,16 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
+ 		  __fortify_size,					\
+ 		  "field \"" #p "\" at " FILE_LINE,			\
+ 		  __p_size_field);					\
+-	__underlying_##op(p, q, __fortify_size);			\
++	if (__builtin_constant_p(__fortify_size)) {			\
++		/* Pass through compile-time value for real warnings. */\
++		__underlying_##op(p, q, __fortify_size);		\
++	} else {							\
++		/* Hide the run-time size from compile-time value */	\
++		/* range tracking to silence false positives. */	\
++		size_t ___fortify_size = __fortify_size;		\
++		OPTIMIZER_HIDE_VAR(___fortify_size);			\
++		__underlying_##op(p, q, ___fortify_size);		\
++	}								\
+ })
+ 
+ /*
+-- 
+2.34.1
 
 
