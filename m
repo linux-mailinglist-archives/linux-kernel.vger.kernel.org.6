@@ -1,420 +1,368 @@
-Return-Path: <linux-kernel+bounces-444938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212439F0EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:14:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703A89F0ED8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:16:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D00282439
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A570316BC2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7A1E04B3;
-	Fri, 13 Dec 2024 14:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880C11E22ED;
+	Fri, 13 Dec 2024 14:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="YOz02sLZ"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020077.outbound.protection.outlook.com [52.101.191.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anlJ2Rjt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1D41E00B4;
-	Fri, 13 Dec 2024 14:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734099261; cv=fail; b=tJea8tVCW51P2417DEfQhaGB6o2f7OVq4WkomRyNN5Hn0uaYMV8rC1oZUERMwMoRydZmk4m36G3fgukNRSTRXntWBm5qWGPt8q+tS363dsGjYrQDD2UZpg4FHAP91FUe9qDSINUV9PKsLFfM3D4rWwruDg5Wh1DOsmOPKaKBiiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734099261; c=relaxed/simple;
-	bh=8QGPK4AORhc5ToA2xjd34ZeXeA3DvsXP4HqIxqbuJXg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WL96A3zFF6KA7fQ+2JgE6vI+z8ybaZX4qKYq77Rn/ppBw3mFmG7dwOLyf4E/jkxvr2ZJOM7lPQin17bJPgSHYk3160nQfQSOlakYpqX0IFQjL569G5K1FOzzrUqLp7c8Z8py8fTRhxqDbZ1FXDRmnDIczVYGmUuvWxWgNJF72HA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=YOz02sLZ; arc=fail smtp.client-ip=52.101.191.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r1kXZmku1mLAIEWQK3si9hEvT92OMoNOBFLQ3irdV5YHfGV7h7+hmUG2FH3yBqxnMgmAfPPm5y9E1qlhlkfx7JgIpndoEa9pXk3JBAjeHPvPGiul2hT8bkWY+Yuma7lfzpGGMPoqF9VNL/yLjgXnGiovWQSfvoAeiGutheujryBTrUVEyg+ZfFvY6l30H0FRAsmkYY2HZQWQ4FBhrbO6D0JIAnRfz9tL5wpdx671H/IGXYelQ89/lX72AUmghFNQTKOPc+v1Dlu79ZxkfzCsw4oSA+m5REc4QzCKkh3iRWcPd7ItqKUa/+T12N6wOWNqzDRGyYu2xjIPqvMAoJCrGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=duCLEeJpptsivnIj3bTO2pUkf0z09ZnhRHYKpVshLIU=;
- b=WHlOfYOXkweVTCsr7nqo9jm0KrA5K6vTwEk0WHWZU/VlgxMPWcsKLQmEI8b3IrsXQdsnlW5VGx18FZEj0jx6ablqMAiGQLnOcnGUy/97Gh33FHWlou46Jkp31Z6//srUbprz87PTYvMvpBwExTVn90Us/o46SvhoBF28tS6UM9M7rMuFC3l/BZmB4KteP/al1NWJGZdnXkrcV56K6unSR1CjlSDeFvYDDx7bRGfPn5j7dGD8vv5rn8lW9q1SykyozafLvzI1yn+cayVf2maxK7NRKyNN1AxDpcDjY8khu0+dBb21wxPKvXWY38QON+iC7tn396oHFP4UbaBnkqP3zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=duCLEeJpptsivnIj3bTO2pUkf0z09ZnhRHYKpVshLIU=;
- b=YOz02sLZPDrpsYVukcMnP1wu/AFzbYK+hS3nbTb47vejI4Gnrfst7jBXpyGi0IF/kvNZM7Q8eqHbxK2cn+EQDC0HjIZZ0UM5HjICeabjXpey301uGhK+OLr6GuINUEqSHCLPnBFw13qxFsuQnt4kd8sLDGvqBEq3BPexirNdPKZuwBIKbnpKq6S0jDG0fRjpCMETECptAYNlySU+tB8fOCsV6k31jfZHDZ3LUEKozRAl9nLHhZF5scKPFvXZDvcSgk6Tkk+5GyGXNkXdP014YGnuZYGJWnFQ5Bprjst7owbw203t779pqcCWLulE3xyFn8UJ6838P5nBVUJKH5Hc9A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT3PR01MB5666.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:66::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Fri, 13 Dec
- 2024 14:14:15 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
- 14:14:15 +0000
-Message-ID: <5fe473bd-600e-447a-a321-cae3d838268f@efficios.com>
-Date: Fri, 13 Dec 2024 09:14:14 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] sched: Move task_mm_cid_work to mm delayed work
-To: Gabriele Monaco <gmonaco@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Mel Gorman <mgorman@suse.de>,
- Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-References: <20241213095407.271357-1-gmonaco@redhat.com>
- <20241213095407.271357-2-gmonaco@redhat.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241213095407.271357-2-gmonaco@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0078.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:3::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE441E1C1B;
+	Fri, 13 Dec 2024 14:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734099264; cv=none; b=AR8xrD/0ztBJX+Z1+QbXNTKTOcOziwbQSbmnZ9i3Rp8Yg8iSJ20NgBkrUOtdhQkxs+HaBnAJRj8TOcV3XBKx+BAVzm2gbXkBm7R4TKvKe31usIFfdIYxted4oG20Oi3BC2I6zdEcMiEoVOa/B/5XYedcbms2p3vXZ57ZUgukD9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734099264; c=relaxed/simple;
+	bh=frNpUfZhycsq4lDBTsG4kcxQj55WeZJXP/dagx1MRh4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RLjTFYuozJipFJG4H5l5PWI+BHRRKxebWSS+fCK/Oy49SZFeafrRkvbPzW0KQpT8eK5bACUfNr/xFkcP2mZalKrqfExJ607QG0r0Bjh7ks7bTBdfnsOjD9VAvi1AjeoziQTqhAkRF9zZibgkE/9LeUqUhByt9RijYhMVpedVi+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anlJ2Rjt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2EE2C4CED2;
+	Fri, 13 Dec 2024 14:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734099263;
+	bh=frNpUfZhycsq4lDBTsG4kcxQj55WeZJXP/dagx1MRh4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=anlJ2RjtrilJ/gqfoyGn47dQewB/JHPxlJAuyM1OmBweHG0HADpnVzBfCDWSDWISY
+	 nK1U2u9fjicdkiDVTNBToLLHd1WSIbV/yAqctk+PM7R8E34lSM4u/JVNml5MbUzbA5
+	 jxJkEgboh140aRLz0Q+ZagvklgtZ5GQKe69lvXbMxZFvzGzC+0pg541E3ClJzA6alr
+	 EnZFyn9vEOwQu6Gbn7Dwg8Sq/W5wTMOG5uwUVkeuRw9Ctc0ZFkEw2pI2hkYziKAwRf
+	 kdCp9fWqhkw127L8yDgo8ptz5XQ5QBU/GUW6OM7R2oacW+438BXX0h/fvV10WcHJRU
+	 Bw/zS3rZT6QBQ==
+Message-ID: <f697868bfa7f219d51ba8251db32b22ad942ecd7.camel@kernel.org>
+Subject: Re: [PATCH v5 09/10] nfsd: handle delegated timestamps in SETATTR
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
+ Talpey <tom@talpey.com>, Jonathan Corbet <corbet@lwn.net>, Trond Myklebust
+ <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Date: Fri, 13 Dec 2024 09:14:21 -0500
+In-Reply-To: <2a3c0a1f-0213-4915-a4c0-a2ba31ae1bbc@oracle.com>
+References: <20241209-delstid-v5-0-42308228f692@kernel.org>
+	 <20241209-delstid-v5-9-42308228f692@kernel.org>
+	 <2a3c0a1f-0213-4915-a4c0-a2ba31ae1bbc@oracle.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB5666:EE_
-X-MS-Office365-Filtering-Correlation-Id: aee3afe5-8bfe-4968-2d08-08dd1b806d20
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ajlPN0VOajdYV3ZlUDZvMFV4UHdLc2c5dERrNWFXeUtISlpiQ0dPWXFxbHBi?=
- =?utf-8?B?UEZJNVZpU2tVYkFlQUQ4R29sRi9nNmNEZldyR0tjOGt5YlA5NnlibUlSTmE2?=
- =?utf-8?B?Z3BQdCtsYWZ6TUUxSzROVGxvekVjQVdWVnlVVFk5Nk1vKzdYcG1zWDVpQWlm?=
- =?utf-8?B?N0RuMGNaa0NxUzhHRnRvaHdmamtoeWoxSHNlTVFVM25iSHZ6VitsTUxRRy9Z?=
- =?utf-8?B?T0NTRHNXUG9DME9lbGtaVlRrdUxleXpEbHAvSXhKamJtSzRSNDZVRm9jSWF2?=
- =?utf-8?B?TjZVck93MTR4aXlKb21CdDlnczhmV05HTEZYcWY2QVllMkZTWGFzZkRSTllq?=
- =?utf-8?B?cWo4UkhIT0VJWktTalRHMGp2VVZPTitVeXRBa01zaEhjOXlVcTFWOUpQMEg0?=
- =?utf-8?B?R09nVmRKaTI0azZ2bk41ZnBJQkZjdDFTSHIvWFhTa0VJcjQ1ZG9kNVVlZ3dG?=
- =?utf-8?B?c0N5cUJucEVydExtQW1zN1pqVk5zcklrbmJMS0ozb3VOeis4Y2FvVUZ2dStO?=
- =?utf-8?B?OUlUa0tQQ016bDV1QUF5alM4YmhnTjBQWVIrSWpjNTNyL2F3NzdhTGtzMnNu?=
- =?utf-8?B?R2RsOVJtK0Jmb3V3Uk1ncVRrQ3RRRjFWU0xQQk9kSXhDMlVQcDlGN21FUVB1?=
- =?utf-8?B?eU41dkZ6aUUySEtkY0NMTVdIRDRNLzAzMzQ0RDVCVTFLZ1FJYVdody9uRkZk?=
- =?utf-8?B?VVhjc0VrQXhoRGpLbW8ySUdpT1lUT20yK0JJcHpyVEhEZGJtVWRXSzBTZTcr?=
- =?utf-8?B?MUdyTm5RQWlYTHArTkZTeVRZR0oxajlwdDB0bGx2VFdaY1RPa2k4QTVIUVV4?=
- =?utf-8?B?WXZ2RmJqemc4N0tSN0dwSVVxUzZjOEFWMHFweVBhUHRVN2FBbzU3bmg0c296?=
- =?utf-8?B?anRoZ3hWNkdVdERXOUUzQnF5TnAyeWF2ajVnZG4ralZ3SUFCazcrek1TanVC?=
- =?utf-8?B?ZjNhSk9lYUZKZE9QVFgzZlJ4b2lleXdyOVd0MG82TitNNDF3YVZWOE1LWExL?=
- =?utf-8?B?WFJ4ZEpsV0RsbFQxdEdLMDZUcTA2SmdZdjNGN3N5WTZYMTluL2Y3cko5NC9s?=
- =?utf-8?B?MWdkdG0wZCtSMHd5OEk2SjVnQXEyYmdjVHQ2bldQLzlJSHQvR0IzK3oyTU1H?=
- =?utf-8?B?MnNaSkRLVnZ0QUxTYmJrTllKaVdOV05DUjZOcFFKZmY2aEpOckhqbTQvYU9q?=
- =?utf-8?B?Qlpub0thbkUzaHI1d25velc4WFk3dG1ZY01FYVdjK0R1LzBnOFlJck1sbG41?=
- =?utf-8?B?Y2VSY0ppOVdCSFRUZWJya0NkRXVnOWJzVUhMcS90ckx6SUc5dDRFbUxUQUtE?=
- =?utf-8?B?VzJlbXVqcTdvOHBWcFJVUGl5U0w3ZVNSMUxvZStVOUpid09SMnhVL3lPNGJm?=
- =?utf-8?B?RXZQRzhsdkhrYmdHQ2xEdS8rLzM5UUF0RXo2WEpjblZobVdhL3hTc3FBU0hj?=
- =?utf-8?B?S2dFNmxKUndKVVFPNDNCdGUxVlpzY1hYWDc4OTZFby94cXNnSk1CVUtZa0tK?=
- =?utf-8?B?Zkt4YzJpTUNlRTFobkRkeFdmaGlCUHV2SHNRTXVxNm1EZlRLNVNaVHdHdjRh?=
- =?utf-8?B?L2FSeWdHcGdHRUcxQVJrYVBDOVF5U3ZJUGRuTWhzSWllbk1kclZEaUVzS2hj?=
- =?utf-8?B?aGRUSXdPTGZJVTg3bTVlRTVEUVR0QTN2bCtObWhCcGVqNldianR5MXZPTFJm?=
- =?utf-8?B?ZVRlUWVoY2ZiSCtwcWhNNEY5YkNUdzh6TFZ5ai9oTkZLUElPOFRrRnVwUFRN?=
- =?utf-8?Q?dTb6J3RkTz6Bxu6ulw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VU9ZbXVYNmxBeDlQTWhFcFdsZW5Jc285OTRTdUo3bjAzdWFEbUMxakhXSm5h?=
- =?utf-8?B?RjhJZjFyV0RPYzBVcFd1ME5KeGNqdVhKNm5oeUJod1I0STJ1V0IwRmxFM2RF?=
- =?utf-8?B?V1VLOEV4dHY5QXpScU8zWnpkbWVHM0ZORllFL3AwTFFkcDZuK1hJSmI4US9u?=
- =?utf-8?B?dFVBZkk3NEFQOXMrQmZzQ3dBYzRnQkdhT2hNSW9iV3Mwckp3MUdYenVyOWlX?=
- =?utf-8?B?UTc2bnZkWS92eTVydTVKK29kQmpqZ0krQXlvTWFNdmhLc0xWN0xVb2lBL09i?=
- =?utf-8?B?YnRjL3pTZ3ZGbmFxSXpXYmVSbXBlNjB2NkpsM0F1T1lJNVdJZjBRUW1OWHVn?=
- =?utf-8?B?K2N3bWhIcFVrc1Bnb2ROVXVLYlE1cFJhRDY0QUMvb2tJbC95c3dpQ2JlSzlu?=
- =?utf-8?B?Nk8vd2ZwcHArNXdWaDNuUm1xVC9HM2VQdkdWTlhxZ3lZSVZUNVU4SW1SWGdX?=
- =?utf-8?B?N2RTTUJWa3REQ0l0UmRsMTV1YUpxOEs2OTh5b1VmVm42ZWI2V3JybDF1Lzdx?=
- =?utf-8?B?UDJWSWt3MHdGNWZqeGl0TUNjZE04Mm8xZWMremltaDJDalpOMEoyNVhSNUYx?=
- =?utf-8?B?cGUyN1hvL1dsN1VxcmswMjY3RnhwMlVxZkJmYWJqQWxDZ0R5Y0N0cHJlVGw3?=
- =?utf-8?B?MUdzSXQ5VytMMUlFRWM0R0E4NEN3Y2xxQXgrSDlRS2lQeWFJWjM1QnVYVFBt?=
- =?utf-8?B?Zk1NVGRBeDl3b1hZSzFxOTIzVEFWUERXbzNsYnVSRytrRjZGTTgxUVNhU3hR?=
- =?utf-8?B?ZWQ4YUxHbGVPYmVkN1NaN1U5c2JiK0hXK3Y5WnVNcWFGMGNuU25KN2tpY1Rs?=
- =?utf-8?B?RmxjMVZkSDZoUExIWm9iMnk5ZnI2MWljSVVrdFlFVHJHcnBJL2xpZi85YmN0?=
- =?utf-8?B?K3dHNENIUEcxOEJWTnZiWG9UdUt2NWJ2elJlOUtuNkRkSHY0TERXN3Vrc1ZF?=
- =?utf-8?B?TmRCRkJ4S2dMVDF2TW1kbkJUd0YzcnBiRUN6Tml1dGpRU2VuNnV0TC9PK3Zz?=
- =?utf-8?B?cnIrVEZoclQxRWxiMEVzTXV6VzFhdmNNMW1nM2NHbWJReUdaUTFIc3A2Ty9G?=
- =?utf-8?B?R0ZUTXdrSkRtTEZMZzlka25WNUxYNHl5UHprcXJIQ3I4WGR0NWRGN05vbDhD?=
- =?utf-8?B?dVQ0UUQ4S09VbGZ6NzZBT3F1YmlpWUFuZFBLWUJzSldlYnkwNmcxZmFMdlhm?=
- =?utf-8?B?cWNyYjd4NE1lT1lUZmg5QmhSNEtmeWNvb0N0VUt3VzB2OHdwODFDUUVVbGNO?=
- =?utf-8?B?R0hPT0I3ZnhwdTJ5VWVLZyt1d052dnpUWjNQeDlZUVkvQmtUUGMrRzE0Q2Zv?=
- =?utf-8?B?cmNEeXYvaUZRSkpyZFIvRU56TmdZV2drUWVIcmtsdVJPNktiMWhCRUpDd1I1?=
- =?utf-8?B?MEVoN28xNjZXVEFDcjRVdnhVYUFCNWo3NHdFbWdRWVhsL0hOTjJ6WElFMkZm?=
- =?utf-8?B?eHY0Tk9ianFScmN4VnhJQnAwTHJTVS94dlRhTUhiSnJUOHYvaW1MZ3R3bzNz?=
- =?utf-8?B?cWR6NHY1NFhHblZIL0tLclNpZFIxaVpGRGpuMUp5V3g0NWcrZjFqUVdkR05Q?=
- =?utf-8?B?T09GSTRkekpwZ2tTVSs5MUw1RGg3OFJtcXoxVVJ3RzkveEFqbWpVUEh4T2lM?=
- =?utf-8?B?QjY5UmRabVcrMUd2MmNFcFJHSC9VcXhlcFhtenVTQUlXYVc3UG5sa09FamJk?=
- =?utf-8?B?UjgwUElQaDRMS3pQZHhVaUoyYVlWTU9ReE53YkRqZzVOVFpOb0VqdkY0R2k4?=
- =?utf-8?B?akJjU2Z4dk1abHFKUVFjdEIwVVdEcDhwOXBjcG83bTBwN0plQzEzZUgzUGll?=
- =?utf-8?B?cmoyUm1mSzZTVVFjYmJCbEdwTWg2R0xVMUtQMWNHSTJOdkN2YlZoUFdhVTB1?=
- =?utf-8?B?WmRMWUt3NTEyZHNzQ3ZQdmJnZklaaVA2a0dKNUora3J3YWxiaGpWeTQ3Q0xw?=
- =?utf-8?B?NnY5YjViZ1pmUEdPRWFYNnV0MnZLUmFPd25ybWdDS3dWaE12d01zUGR5THhX?=
- =?utf-8?B?WFY2Q2plMDRFQ3R1MVlPVkNpNHI0cTErN08yMUZJd2VIcDljcWlKTHBIenNJ?=
- =?utf-8?B?S2hzY05NTHkvZ2dDNE44aldNaXFRRG9xbTJ6ZVdQTGhQdkxKNzRxUjJUd2NJ?=
- =?utf-8?B?b3ZFTTh2TmJVajZCMW5xZ3IwT1hwRDQrMTZEVHBxcjlPanFhcUx3YzRuamJ4?=
- =?utf-8?Q?29Dm5Zv1880CqfhJa78r2gs=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aee3afe5-8bfe-4968-2d08-08dd1b806d20
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 14:14:15.8185
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OEnDW2HYVC8HoNvw8HtsZp2TnVVp6qpidClNKPCKSaX8LMi4FKB25kGIuFJ+bGOfIZbckfFYr9eKo2DZo5Umg4F392K/RFx3AngA0ytsKfo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB5666
 
-On 2024-12-13 04:54, Gabriele Monaco wrote:
-> Currently, the task_mm_cid_work function is called in a task work
-> triggered by a scheduler tick. This can delay the execution of the task
-> for the entire duration of the function, negatively affecting the
-> response of real time tasks.
-> 
-> This patch runs the task_mm_cid_work in a new delayed work connected to
-> the mm_struct rather than in the task context before returning to
-> userspace.
-> 
-> This delayed work is initialised while allocating the mm and disabled
-> before freeing it, its execution is no longer triggered by scheduler
-> ticks but run periodically based on the defined MM_CID_SCAN_DELAY.
-> 
-> The main advantage of this change is that the function can be offloaded
-> to a different CPU and even preempted by RT tasks.
-> 
-> Moreover, this new behaviour could be more predictable in some
-> situations since the delayed work is always scheduled with the same
-> periodicity for each mm.
+On Thu, 2024-12-12 at 16:06 -0500, Chuck Lever wrote:
+> On 12/9/24 4:14 PM, Jeff Layton wrote:
+> > Allow SETATTR to handle delegated timestamps. This patch assumes that
+> > only the delegation holder has the ability to set the timestamps in thi=
+s
+> > way, so we allow this only if the SETATTR stateid refers to a
+> > *_ATTRS_DELEG delegation.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/nfsd/nfs4proc.c  | 31 ++++++++++++++++++++++++++++---
+> >   fs/nfsd/nfs4state.c |  2 +-
+> >   fs/nfsd/nfs4xdr.c   | 20 ++++++++++++++++++++
+> >   fs/nfsd/nfsd.h      |  5 ++++-
+> >   4 files changed, 53 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> > index f8a10f90bc7a4b288c20d2733c85f331cc0a8dba..fea171ffed623818c61886b=
+786339b0b73f1053d 100644
+> > --- a/fs/nfsd/nfs4proc.c
+> > +++ b/fs/nfsd/nfs4proc.c
+> > @@ -1135,18 +1135,43 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nf=
+sd4_compound_state *cstate,
+> >   		.na_iattr	=3D &setattr->sa_iattr,
+> >   		.na_seclabel	=3D &setattr->sa_label,
+> >   	};
+> > +	bool save_no_wcc, deleg_attrs;
+> > +	struct nfs4_stid *st =3D NULL;
+> >   	struct inode *inode;
+> >   	__be32 status =3D nfs_ok;
+> > -	bool save_no_wcc;
+> >   	int err;
+> >  =20
+> > -	if (setattr->sa_iattr.ia_valid & ATTR_SIZE) {
+> > +	deleg_attrs =3D setattr->sa_bmval[2] & (FATTR4_WORD2_TIME_DELEG_ACCES=
+S |
+> > +					      FATTR4_WORD2_TIME_DELEG_MODIFY);
+> > +
+> > +	if (deleg_attrs || (setattr->sa_iattr.ia_valid & ATTR_SIZE)) {
+> > +		int flags =3D WR_STATE;
+> > +
+> > +		if (setattr->sa_bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS)
+> > +			flags |=3D RD_STATE;
+> > +
+> >   		status =3D nfs4_preprocess_stateid_op(rqstp, cstate,
+> >   				&cstate->current_fh, &setattr->sa_stateid,
+> > -				WR_STATE, NULL, NULL);
+> > +				flags, NULL, &st);
+> >   		if (status)
+> >   			return status;
+> >   	}
+> > +
+> > +	if (deleg_attrs) {
+> > +		status =3D nfserr_bad_stateid;
+> > +		if (st->sc_type & SC_TYPE_DELEG) {
+> > +			struct nfs4_delegation *dp =3D delegstateid(st);
+> > +
+> > +			/* Only for *_ATTRS_DELEG flavors */
+> > +			if (deleg_attrs_deleg(dp->dl_type))
+> > +				status =3D nfs_ok;
+> > +		}
+> > +	}
+> > +	if (st)
+> > +		nfs4_put_stid(st);
+> > +	if (status)
+> > +		return status;
+> > +
+> >   	err =3D fh_want_write(&cstate->current_fh);
+> >   	if (err)
+> >   		return nfserrno(err);
+> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > index c882eeba7830b0249ccd74654f81e63b12a30f14..a76e35f86021c5657e31e4f=
+ddf08cb5781f01e32 100644
+> > --- a/fs/nfsd/nfs4state.c
+> > +++ b/fs/nfsd/nfs4state.c
+> > @@ -5486,7 +5486,7 @@ nfsd4_process_open1(struct nfsd4_compound_state *=
+cstate,
+> >   static inline __be32
+> >   nfs4_check_delegmode(struct nfs4_delegation *dp, int flags)
+> >   {
+> > -	if ((flags & WR_STATE) && deleg_is_read(dp->dl_type))
+> > +	if (!(flags & RD_STATE) && deleg_is_read(dp->dl_type))
+> >   		return nfserr_openmode;
+> >   	else
+> >   		return nfs_ok;
+> > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > index 0561c99b5def2eccf679bf3ea0e5b1a57d5d8374..ce93a31ac5cec75b0f944d2=
+88e796e7a73641572 100644
+> > --- a/fs/nfsd/nfs4xdr.c
+> > +++ b/fs/nfsd/nfs4xdr.c
+> > @@ -521,6 +521,26 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *arg=
+p, u32 *bmval, u32 bmlen,
+> >   		*umask =3D mask & S_IRWXUGO;
+> >   		iattr->ia_valid |=3D ATTR_MODE;
+> >   	}
+> > +	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
+> > +		fattr4_time_deleg_access access;
+> > +
+> > +		if (!xdrgen_decode_fattr4_time_deleg_access(argp->xdr, &access))
+> > +			return nfserr_bad_xdr;
+> > +		iattr->ia_atime.tv_sec =3D access.seconds;
+> > +		iattr->ia_atime.tv_nsec =3D access.nseconds;
+> > +		iattr->ia_valid |=3D ATTR_ATIME | ATTR_ATIME_SET | ATTR_DELEG;
+> > +	}
+> > +	if (bmval[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
+> > +		fattr4_time_deleg_modify modify;
+> > +
+> > +		if (!xdrgen_decode_fattr4_time_deleg_modify(argp->xdr, &modify))
+> > +			return nfserr_bad_xdr;
+> > +		iattr->ia_mtime.tv_sec =3D modify.seconds;
+> > +		iattr->ia_mtime.tv_nsec =3D modify.nseconds;
+> > +		iattr->ia_ctime.tv_sec =3D modify.seconds;
+> > +		iattr->ia_ctime.tv_nsec =3D modify.seconds;
+> > +		iattr->ia_valid |=3D ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR=
+_DELEG;
+> > +	}
+> >  =20
+> >   	/* request sanity: did attrlist4 contain the expected number of word=
+s? */
+> >   	if (attrlist4_count !=3D xdr_stream_pos(argp->xdr) - starting_pos)
+> > diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+> > index 004415651295891b3440f52a4c986e3a668a48cb..f007699aa397fe39042d80c=
+cd568db4654d19dd5 100644
+> > --- a/fs/nfsd/nfsd.h
+> > +++ b/fs/nfsd/nfsd.h
+> > @@ -531,7 +531,10 @@ static inline bool nfsd_attrs_supported(u32 minorv=
+ersion, const u32 *bmval)
+> >   #endif
+> >   #define NFSD_WRITEABLE_ATTRS_WORD2 \
+> >   	(FATTR4_WORD2_MODE_UMASK \
+> > -	| MAYBE_FATTR4_WORD2_SECURITY_LABEL)
+> > +	| MAYBE_FATTR4_WORD2_SECURITY_LABEL \
+> > +	| FATTR4_WORD2_TIME_DELEG_ACCESS \
+> > +	| FATTR4_WORD2_TIME_DELEG_MODIFY \
+> > +	)
+> >  =20
+> >   #define NFSD_SUPPATTR_EXCLCREAT_WORD0 \
+> >   	NFSD_WRITEABLE_ATTRS_WORD0
+> >=20
+>=20
+> Hi Jeff-
+>=20
+> After this patch is applied, I see failures of the git regression suite
+> on NFSv4.2 mounts.
+>=20
+> Test Summary Report
+> -------------------
+> ./t3412-rebase-root.sh                             (Wstat: 256 (exited=
+=20
+> 1) Tests: 25 Failed: 5)
+>    Failed tests:  6, 19, 21-22, 24
+>    Non-zero exit status: 1
+> ./t3400-rebase.sh                                  (Wstat: 256 (exited=
+=20
+> 1) Tests: 38 Failed: 1)
+>    Failed test:  31
+>    Non-zero exit status: 1
+> ./t3406-rebase-message.sh                          (Wstat: 256 (exited=
+=20
+> 1) Tests: 32 Failed: 2)
+>    Failed tests:  15, 20
+>    Non-zero exit status: 1
+> ./t3428-rebase-signoff.sh                          (Wstat: 256 (exited=
+=20
+> 1) Tests: 7 Failed: 2)
+>    Failed tests:  6-7
+>    Non-zero exit status: 1
+> ./t3418-rebase-continue.sh                         (Wstat: 256 (exited=
+=20
+> 1) Tests: 29 Failed: 1)
+>    Failed test:  7
+>    Non-zero exit status: 1
+> ./t3415-rebase-autosquash.sh                       (Wstat: 256 (exited=
+=20
+> 1) Tests: 27 Failed: 2)
+>    Failed tests:  3-4
+>    Non-zero exit status: 1
+> ./t3404-rebase-interactive.sh                      (Wstat: 256 (exited=
+=20
+> 1) Tests: 131 Failed: 15)
+>    Failed tests:  32, 34-43, 45, 121-123
+>    Non-zero exit status: 1
+> ./t1013-read-tree-submodule.sh                     (Wstat: 256 (exited=
+=20
+> 1) Tests: 68 Failed: 1)
+>    Failed test:  34
+>    Non-zero exit status: 1
+> ./t2013-checkout-submodule.sh                      (Wstat: 256 (exited=
+=20
+> 1) Tests: 74 Failed: 4)
+>    Failed tests:  26-27, 30-31
+>    Non-zero exit status: 1
+> ./t5500-fetch-pack.sh                              (Wstat: 256 (exited=
+=20
+> 1) Tests: 375 Failed: 1)
+>    Failed test:  28
+>    Non-zero exit status: 1
+> ./t5572-pull-submodule.sh                          (Wstat: 256 (exited=
+=20
+> 1) Tests: 67 Failed: 2)
+>    Failed tests:  5, 7
+>    Non-zero exit status: 1
+> Files=3D1007, Tests=3D30810, 1417 wallclock secs (11.18 usr 10.17 sys +=
+=20
+> 1037.05 cusr 6529.12 csys =3D 7587.52 CPU)
+> Result: FAIL
+>=20
+> The NFS client and NFS server under test are running the same v6.13-rc2
+> kernel from my git.kernel.org nfsd-testing branch.
+>=20
+>=20
 
-This last paragraph could be clarified. AFAIR, the problem with
-the preexisting approach based on the scheduler tick is with a mm
-consisting of a set of periodic threads, where none happen to run
-while the scheduler tick is running.
+I'm not seeing these failures. I ran the gitr suite under kdevops with
+your nfsd-testing branch (6.13.0-rc2-ge9a809c5714e):
 
-This would skip mm_cid compaction. So it's not a bug per se, because
-the mm_cid allocation will just be slightly less compact than it should
-be in that case.
+All tests successful.
+Files=3D1007, Tests=3D30695, 10767 wallclock secs (13.87 usr 16.86 sys + 11=
+60.76 cusr 17870.80 csys =3D 19062.29 CPU)
+Result: PASS
 
-The underlying question here is whether eventual convergence of mm_cid
-towards 0 when the number of threads or the allowed CPU mask are reduced
-in a mm should be guaranteed or only best effort.
+...and looking at the results of those specific tests, they did run and
+they did pass.
 
-If best effort, then this corner-case is not worthy of a "Fix" tag.
-Otherwise, we should identify which commit it fixes and introduce a
-"Fix" tag.
-
-Thanks,
-
-Mathieu
-
-
-> 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->   include/linux/mm_types.h | 11 +++++++++
->   include/linux/sched.h    |  1 -
->   kernel/sched/core.c      | 51 ++++++----------------------------------
->   kernel/sched/sched.h     |  7 ------
->   4 files changed, 18 insertions(+), 52 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 7361a8f3ab68..92acb827fee4 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -856,6 +856,7 @@ struct mm_struct {
->   		 * mm nr_cpus_allowed updates.
->   		 */
->   		raw_spinlock_t cpus_allowed_lock;
-> +		struct delayed_work mm_cid_work;
->   #endif
->   #ifdef CONFIG_MMU
->   		atomic_long_t pgtables_bytes;	/* size of all page tables */
-> @@ -1144,11 +1145,16 @@ static inline void vma_iter_init(struct vma_iterator *vmi,
->   
->   #ifdef CONFIG_SCHED_MM_CID
->   
-> +#define SCHED_MM_CID_PERIOD_NS	(100ULL * 1000000)	/* 100ms */
-> +#define MM_CID_SCAN_DELAY	100			/* 100ms */
-> +
->   enum mm_cid_state {
->   	MM_CID_UNSET = -1U,		/* Unset state has lazy_put flag set. */
->   	MM_CID_LAZY_PUT = (1U << 31),
->   };
->   
-> +extern void task_mm_cid_work(struct work_struct *work);
-> +
->   static inline bool mm_cid_is_unset(int cid)
->   {
->   	return cid == MM_CID_UNSET;
-> @@ -1221,12 +1227,17 @@ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *
->   	if (!mm->pcpu_cid)
->   		return -ENOMEM;
->   	mm_init_cid(mm, p);
-> +	INIT_DELAYED_WORK(&mm->mm_cid_work, task_mm_cid_work);
-> +	mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
-> +	schedule_delayed_work(&mm->mm_cid_work,
-> +			      msecs_to_jiffies(MM_CID_SCAN_DELAY));
->   	return 0;
->   }
->   #define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
->   
->   static inline void mm_destroy_cid(struct mm_struct *mm)
->   {
-> +	disable_delayed_work_sync(&mm->mm_cid_work);
->   	free_percpu(mm->pcpu_cid);
->   	mm->pcpu_cid = NULL;
->   }
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index d380bffee2ef..5d141c310917 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1374,7 +1374,6 @@ struct task_struct {
->   	int				last_mm_cid;	/* Most recent cid in mm */
->   	int				migrate_from_cpu;
->   	int				mm_cid_active;	/* Whether cid bitmap is active */
-> -	struct callback_head		cid_work;
->   #endif
->   
->   	struct tlbflush_unmap_batch	tlb_ubc;
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index c6d8232ad9ee..e3b27b73301c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4516,7 +4516,6 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
->   	p->wake_entry.u_flags = CSD_TYPE_TTWU;
->   	p->migration_pending = NULL;
->   #endif
-> -	init_sched_mm_cid(p);
->   }
->   
->   DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
-> @@ -5654,7 +5653,6 @@ void sched_tick(void)
->   		resched_latency = cpu_resched_latency(rq);
->   	calc_global_load_tick(rq);
->   	sched_core_tick(rq);
-> -	task_tick_mm_cid(rq, donor);
->   	scx_tick(rq);
->   
->   	rq_unlock(rq, &rf);
-> @@ -10520,22 +10518,14 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
->   	sched_mm_cid_remote_clear(mm, pcpu_cid, cpu);
->   }
->   
-> -static void task_mm_cid_work(struct callback_head *work)
-> +void task_mm_cid_work(struct work_struct *work)
->   {
->   	unsigned long now = jiffies, old_scan, next_scan;
-> -	struct task_struct *t = current;
->   	struct cpumask *cidmask;
-> -	struct mm_struct *mm;
-> +	struct delayed_work *delayed_work = container_of(work, struct delayed_work, work);
-> +	struct mm_struct *mm = container_of(delayed_work, struct mm_struct, mm_cid_work);
->   	int weight, cpu;
->   
-> -	SCHED_WARN_ON(t != container_of(work, struct task_struct, cid_work));
-> -
-> -	work->next = work;	/* Prevent double-add */
-> -	if (t->flags & PF_EXITING)
-> -		return;
-> -	mm = t->mm;
-> -	if (!mm)
-> -		return;
->   	old_scan = READ_ONCE(mm->mm_cid_next_scan);
->   	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
->   	if (!old_scan) {
-> @@ -10548,9 +10538,9 @@ static void task_mm_cid_work(struct callback_head *work)
->   			old_scan = next_scan;
->   	}
->   	if (time_before(now, old_scan))
-> -		return;
-> +		goto out;
->   	if (!try_cmpxchg(&mm->mm_cid_next_scan, &old_scan, next_scan))
-> -		return;
-> +		goto out;
->   	cidmask = mm_cidmask(mm);
->   	/* Clear cids that were not recently used. */
->   	for_each_possible_cpu(cpu)
-> @@ -10562,35 +10552,8 @@ static void task_mm_cid_work(struct callback_head *work)
->   	 */
->   	for_each_possible_cpu(cpu)
->   		sched_mm_cid_remote_clear_weight(mm, cpu, weight);
-> -}
-> -
-> -void init_sched_mm_cid(struct task_struct *t)
-> -{
-> -	struct mm_struct *mm = t->mm;
-> -	int mm_users = 0;
-> -
-> -	if (mm) {
-> -		mm_users = atomic_read(&mm->mm_users);
-> -		if (mm_users == 1)
-> -			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
-> -	}
-> -	t->cid_work.next = &t->cid_work;	/* Protect against double add */
-> -	init_task_work(&t->cid_work, task_mm_cid_work);
-> -}
-> -
-> -void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
-> -{
-> -	struct callback_head *work = &curr->cid_work;
-> -	unsigned long now = jiffies;
-> -
-> -	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
-> -	    work->next != work)
-> -		return;
-> -	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
-> -		return;
-> -
-> -	/* No page allocation under rq lock */
-> -	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
-> +out:
-> +	schedule_delayed_work(delayed_work, msecs_to_jiffies(MM_CID_SCAN_DELAY));
->   }
->   
->   void sched_mm_cid_exit_signals(struct task_struct *t)
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 76f5f53a645f..21be461ff913 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3581,16 +3581,11 @@ extern void sched_dynamic_update(int mode);
->   
->   #ifdef CONFIG_SCHED_MM_CID
->   
-> -#define SCHED_MM_CID_PERIOD_NS	(100ULL * 1000000)	/* 100ms */
-> -#define MM_CID_SCAN_DELAY	100			/* 100ms */
-> -
->   extern raw_spinlock_t cid_lock;
->   extern int use_cid_lock;
->   
->   extern void sched_mm_cid_migrate_from(struct task_struct *t);
->   extern void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t);
-> -extern void task_tick_mm_cid(struct rq *rq, struct task_struct *curr);
-> -extern void init_sched_mm_cid(struct task_struct *t);
->   
->   static inline void __mm_cid_put(struct mm_struct *mm, int cid)
->   {
-> @@ -3839,8 +3834,6 @@ static inline void switch_mm_cid(struct rq *rq,
->   static inline void switch_mm_cid(struct rq *rq, struct task_struct *prev, struct task_struct *next) { }
->   static inline void sched_mm_cid_migrate_from(struct task_struct *t) { }
->   static inline void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t) { }
-> -static inline void task_tick_mm_cid(struct rq *rq, struct task_struct *curr) { }
-> -static inline void init_sched_mm_cid(struct task_struct *t) { }
->   #endif /* !CONFIG_SCHED_MM_CID */
->   
->   extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+I'm rerunning the tests now. It's possible the underlying fs matters.
+Mine is exporting xfs. Yours?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
