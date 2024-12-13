@@ -1,146 +1,84 @@
-Return-Path: <linux-kernel+bounces-444588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389129F0922
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:10:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D93169E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:09:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7881C3C0C;
-	Fri, 13 Dec 2024 10:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CLFrc/es"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACB79F0930
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:11:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262611BFDFC;
-	Fri, 13 Dec 2024 10:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CB9284F5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:11:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4302E1B6CF8;
+	Fri, 13 Dec 2024 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HwhcA1E/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213721ADFFB;
+	Fri, 13 Dec 2024 10:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734084545; cv=none; b=CSgO758cQgyYMouj4CXMG34BT0Z8fCOsPLf5BHuMsjdYASkQSfpzhSZBxMiezh45n8LdE6GbsveKEsvZ+1EVdpAm2OPZbPlK9RknVyNJB0N5kjsbzG+tUYAclFK+xt/XUtJD90LBPZzUeHkJsF0o5mTl10b57zBU19ABe+HYj7E=
+	t=1734084710; cv=none; b=cZ21NFHszH/IDkbq6DGeG61ngIvAuWmw3ifaH84XiDCLYGWUKbute4NaOcMfmVLiOmPcvNcd/zK7Gh7DFuc8JnutKO/21n38ESm2cbDV6h77Fjy4o4znIT2stpURlJBEVXJ4bZm6Hgfcr9HZXV3fRcgagjcc/+5i8y7hrvEA4Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734084545; c=relaxed/simple;
-	bh=I96TNLP3WDl43yHyi9I3Uh0pTfezJqlLXTL57xJxQFY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XBYv5IYgSiZZr3eOM5NvgDlNNgW8fzlKYCA6tfmuyhqGS9dsgPrYbhEveU9utDSCebVtQzerfAoUjiDGRGQjtKNEXm1TDswSlaDXeBfCwJdq7OQqqzPHMMjqiV2bsbwBnROXbHat9yo0ambe7fLVLygM83vvuwN4whwazBLMwo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CLFrc/es; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD8I4Jj026835;
-	Fri, 13 Dec 2024 10:08:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Cdt/qfXOkx8PKnT8UIkIL4In
-	A88gLWshyiOYSRqUUis=; b=CLFrc/esVRgtnq77/aZur+3Xb4SzSL5I48oPKag0
-	GQFPrFhU2pFgYf+2m+LiD1BDnkt4zTDmNPB80TwipdNdUycfGn0vBuwlpc46BCSL
-	yeY+KjODrJT4QKfEq7kW/CVcXP60N8095XQZPshBIkgLgP55l8YoQYaEl7rKGf/q
-	PApaoPeLGPx/9VtI7y8mUFxRyXK+Sx5Y6tcsybDLHdTiem3+qlaUyuRiVMhQAkV7
-	WtCPyFuq4Ck//c8/SCKpwDC3GZdU2YqjZGcI+XRnrWXNwCY/H+29apPrLNBGScSQ
-	XKeT4+/xEZLJ60HDhGfKrtFmIhoIK90fMcP3soE8wjPPSQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40nx8q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:08:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDA8rqO021276
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:08:53 GMT
-Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 13 Dec 2024 02:08:49 -0800
-From: Tao Zhang <quic_taozha@quicinc.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan
-	<leo.yan@linux.dev>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: Tao Zhang <quic_taozha@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH v7 4/4] coresight-tpda: Optimize the function of reading element size
-Date: Fri, 13 Dec 2024 18:07:31 +0800
-Message-ID: <20241213100731.25914-5-quic_taozha@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241213100731.25914-1-quic_taozha@quicinc.com>
-References: <20241213100731.25914-1-quic_taozha@quicinc.com>
+	s=arc-20240116; t=1734084710; c=relaxed/simple;
+	bh=FhkR2Jy2phECAawNh940FstvyZ2NMMrD1kWzsX/kbS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJuMbCEi6+an1611Nm7SJd0eFoxR7+d8AeG4VaenQJQYX4vTNOywtIduHpH6WTYR7sk3CTYccBF60SHuOgnxDfFMo0uuhMphMGr87yPKAo0XIml7r+gkdVRbj/WvvYHySZwFuT7gjx+KYx4Li2Xf+R+PTLis+n3zKKBJHdKmKho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HwhcA1E/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0c63pzHVbgCDCuCZw1/2piJ3HdBSD8HKGz7PGa5awcw=; b=HwhcA1E/f/yUEA/uToLkSUXSGU
+	SyDE+8R+7jCh8TDwTdEIsxNc5TF8ahtD4WMEQkV1cO4CtPGPswGle4GSwUWop9DNWflrOrjrK2QOI
+	Cgs2kLRCWNCO9uIpvIy2i07Np4KFkaopqjz6uKbuoP2B44c14Ipdpe65cB1wfPzUCSsE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tM2aD-000K1U-TA; Fri, 13 Dec 2024 11:07:41 +0100
+Date: Fri, 13 Dec 2024 11:07:41 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: dimitri.fedrau@liebherr.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH net-next v3 1/2] dt-bindings: net: dp83822: Add support
+ for GPIO2 clock output
+Message-ID: <c8ba4645-d3eb-4f20-b1a2-ecf160e34e85@lunn.ch>
+References: <20241212-dp83822-gpio2-clk-out-v3-0-e4af23490f44@liebherr.com>
+ <20241212-dp83822-gpio2-clk-out-v3-1-e4af23490f44@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FtIhNxdw7RdLKRwoiDBAw72O2QXFwUk-
-X-Proofpoint-ORIG-GUID: FtIhNxdw7RdLKRwoiDBAw72O2QXFwUk-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130069
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212-dp83822-gpio2-clk-out-v3-1-e4af23490f44@liebherr.com>
 
-Since the new funnel device supports multi-port output scenarios,
-there may be more than one TPDM connected to one TPDA. In this
-way, when reading the element size of the TPDM, TPDA driver needs
-to find the expected TPDM corresponding to the filter source.
-When TPDA finds a TPDM or a filter source from a input connection,
-it will read the Devicetree to get the expected TPDM's element
-size.
+On Thu, Dec 12, 2024 at 09:44:06AM +0100, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> 
+> The GPIO2 pin on the DP83822 can be configured as clock output. Add
+> binding to support this feature.
+> 
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
-Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
----
- drivers/hwtracing/coresight/coresight-tpda.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-index ab94067c0ed3..189a4abc2561 100644
---- a/drivers/hwtracing/coresight/coresight-tpda.c
-+++ b/drivers/hwtracing/coresight/coresight-tpda.c
-@@ -110,6 +110,16 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
- 		    csdev->pdata->in_conns[i]->dest_port != inport)
- 			continue;
- 
-+		/*
-+		 * If this port has a hardcoded filter, use the source
-+		 * device directly.
-+		 */
-+		if (csdev->pdata->in_conns[i]->filter_src_fwnode) {
-+			in = csdev->pdata->in_conns[i]->filter_src_dev;
-+			if (!in)
-+				continue;
-+		}
-+
- 		if (coresight_device_is_tpdm(in)) {
- 			if (drvdata->dsb_esize || drvdata->cmb_esize)
- 				return -EEXIST;
-@@ -124,7 +134,6 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
- 		}
- 	}
- 
--
- 	return rc;
- }
- 
--- 
-2.17.1
-
+    Andrew
 
