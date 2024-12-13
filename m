@@ -1,103 +1,194 @@
-Return-Path: <linux-kernel+bounces-444683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7639F0AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:27:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2EE9F0AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40624188B527
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B027C16A9A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB3D1DE893;
-	Fri, 13 Dec 2024 11:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F403F1DE893;
+	Fri, 13 Dec 2024 11:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="HLVfOaZ4"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OUhiPqi7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E1E1A7273;
-	Fri, 13 Dec 2024 11:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B961F1D0E20;
+	Fri, 13 Dec 2024 11:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089230; cv=none; b=e3+ViOg7F06cWSU18PxvHuDhlFgmOajs/iZq1c4LOWRckS5DpGE31yLSAQsa20K7WPsevUJBOg9jKPWdlDCxDIdqZIymA3qLBFtF/PzMnthUHZSyxvaD51l7dmAMr0R0ixdxU1b/Sg31rMFncw+3J3kbogQzCmp2JXso5hdWfZc=
+	t=1734089148; cv=none; b=dGcx6z7Ter+VhBrmgVfMF2p2Lrsiuq3ojjsYF1QCWZh/3dw0Hf2ORUJjDJqa20sHvMX0MGJzbtFcETFHNdG4FsUKShHH4tUN9jkH0z/NqyNyszHdxGKbaEYDw527yeQgKbKe4MUwZwk5eu+hNTsIw0Lo8kXn/nc7NesTZe2VFNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089230; c=relaxed/simple;
-	bh=aecKC1nbFGwMKzZFE60/uPoM9kBBXM5M0QpP3eJbLPk=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IPVCfq+fFLNjsNMvZ/IP7VRMPTLRFvuPXdz++PBearOhZggyhwkuRIfmSozV4WxZZ0t2VVs7RLCtZaoWTKDRShNHc1+33zdgBJFsyeAQ511HY6ZIT9Lu9EfnsVGHt+Hj0iSOkd2dh+G/5dKyFxE4uqUI+7k9YIB6qr12zp0vp3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=HLVfOaZ4; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDAwAZL006431;
-	Fri, 13 Dec 2024 12:26:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	aecKC1nbFGwMKzZFE60/uPoM9kBBXM5M0QpP3eJbLPk=; b=HLVfOaZ4HH/xwZ66
-	2EpBl4mtew7RZOjkKJU/IihLFHHtRWRnnTD5/sWFXR2czRt0RvR+meKQBQy5/WsC
-	J93gzzx1QzjoDbjN2EmMlrgSI0XyzCotviywLLV65Q8IX+q887Hfe+lqiq5BQYuU
-	QqwkEGc5BuVUw5shcuoFnk92f1xDeLA8rXrhqfCQFegMHoV2foZeKA8ccJG2CDhs
-	nF8yJFW1fzdUkERAAeum7KLmfHX6PnfKbczMY/Ns5PGuWQMZ8w/BLsUFXuelX+xm
-	b9JWBpWv0/yAKqdpM5UxccUcj1nEebR9dzdK69bQefMhhN/fEPFWK6cSYJtltXSH
-	XT6Zaw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ggwes10m-1
+	s=arc-20240116; t=1734089148; c=relaxed/simple;
+	bh=AAySlqWRU7tneaj1wMOloOL1qA7eTfg3gG+BsQ+phnw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=L+gcAzwdAYKNxYXD2TBb3NNeypersdvHXtyhSf6WuDyXRaN/oIz216F1ShW14IO5HlhPTUpTS1/LzZfTSqrqGpak2m6eISqVVgIfmxQoGl35LN57nY0CT5/P6dsiAArcxocVLiN2AOTI6vICe7oszkastcUfvCom7M4o6TVutjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OUhiPqi7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9p3tV018631;
+	Fri, 13 Dec 2024 11:25:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=KzcnJU/yNMnn7D6lBfjSk1
+	CYG5+7awuwww2XHLNxjWc=; b=OUhiPqi73GugeSwGZSYExbBeYQT+//vH5mfHt2
+	rlvyLt0tIEv8+ekRctYdYEfuiA4wruiSrV1neE4/764SiQJFWSFP5KX9iQtYvt0O
+	hik1AWS/fInraqRr66n8APr6t5Ymo3YkaGPAteXzVoLmwhdOUARRNCXoweQhMe2L
+	LUA4cv6ZvZ/A+0fI1mgZ+5+vlHBHU3uZRUOHtTt58p0otC0Sb1u7QOpmv5Rt37H5
+	IAyOQZ5ts2PLAp/DniAteo7zHnAi2oVDH5jaoK8oUCfaGh3jHThIUF8rnnK4dL34
+	D7cQlbVKb3zLAw2W7rGOBejviTlIAiJSyfvFyEtcArc136Rg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb09g5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 12:26:47 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D116A40046;
-	Fri, 13 Dec 2024 12:25:35 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ECDA726B635;
-	Fri, 13 Dec 2024 12:24:51 +0100 (CET)
-Received: from [192.168.8.15] (10.48.87.33) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 13 Dec
- 2024 12:24:51 +0100
-Message-ID: <799c111fbae0b707ac76348f4fd8c9c3bbafcdc0.camel@foss.st.com>
-Subject: Re: [PATCH v4] pinctrl: stm32: Add check for clk_enable()
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Mingwei Zheng <zmw12306@gmail.com>, <marex@denx.de>
-CC: <linus.walleij@linaro.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <make24@iscas.ac.cn>,
-        <peng.fan@nxp.com>, <fabien.dessenne@foss.st.com>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Fri, 13 Dec 2024 12:24:47 +0100
-In-Reply-To: <20241213010948.2623382-1-zmw12306@gmail.com>
-References: <20241213010948.2623382-1-zmw12306@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	Fri, 13 Dec 2024 11:25:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDBPXhl000719
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 11:25:33 GMT
+Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 03:25:25 -0800
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Subject: [PATCH RESEND v2 00/26] Devicetree changes for QCS615's GPU
+Date: Fri, 13 Dec 2024 16:54:56 +0530
+Message-ID: <20241213-qcs615-gpu-dt-v2-0-64751d9c3748@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Lijuan Gao <quic_lijuang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        "Qingqing
+ Zhou" <quic_qqzhou@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jie Zhang" <quic_jiezh@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734089124; l=3591;
+ i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
+ bh=AAySlqWRU7tneaj1wMOloOL1qA7eTfg3gG+BsQ+phnw=;
+ b=bMZFKFmg26NUBS+pYVxgFmPOL3DhHhE86SoPClG9/JMRKRMNoEuzcWsMJlyVgNoQR5X+2n/hy
+ yN9AQzrC7w7BXyIZqOX4+Szl/JEtEEiKE72QmdQ04syLWPpJ2U/Qa8t
+X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SOXcy6brp1HZUj8htpvzdJKCsJ2m5C2G
+X-Proofpoint-GUID: SOXcy6brp1HZUj8htpvzdJKCsJ2m5C2G
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1011 phishscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412130079
 
-On Thu, 2024-12-12 at 20:09 -0500, Mingwei Zheng wrote:
-> Convert the driver to clk_bulk*() API.
-> Add check for the return value of clk_bulk_enable() to catch
-> the potential error.
->=20
-> Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled wh=
-en LEVEL IRQ requested")
-> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
+This series adds support for Adreno 612 to QCS615 chipset's devicetree.
+DRM driver's support was posted earlier and can be found here:
+	https://patchwork.freedesktop.org/patch/626066/
 
-Rewiewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Patch#1 & #2 are for Rob Clark and the other 2 for Bjorn
 
-Thanks!
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+---
+Changes in v2:
+- Completely describe RGMU in devicetree and also add necessary binding
+documentation (Konrad, feedback on the driver patch)
+- Remove smmu_vote clk from clock list (Konrad)
+- Add R-b from Dmitry
+- Link to v1: https://lore.kernel.org/r/20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com
+
+---
+Akhil P Oommen (2):
+      dt-bindings: display/msm: gpu: Document A612 GPU
+      dt-bindings: display/msm/gmu: Document RGMU
+
+Jie Zhang (2):
+      arm64: dts: qcom: qcs615: Add gpu and gmu nodes
+      arm64: dts: qcom: qcs615-ride: Enable Adreno 612 GPU
+
+ .../devicetree/bindings/display/msm/gmu.yaml       |  7 +-
+ .../devicetree/bindings/display/msm/gpu.yaml       | 36 +++++++++
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  8 ++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 88 ++++++++++++++++++++++
+ 4 files changed, 137 insertions(+), 2 deletions(-)
+---
+base-commit: 30eb6f0b08b13fd25ea12a3a6fa0a85915190c1c
+change-id: 20241125-qcs615-gpu-dt-facbd8ac318f
+prerequisite-message-id: <20241104-add_initial_support_for_qcs615-v5-4-9dde8d7b80b0@quicinc.com>
+prerequisite-patch-id: 82481c82a20345548e2cb292d3098ed51843b809
+prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
+prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
+prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
+prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
+prerequisite-message-id: <20241022-qcs615-clock-driver-v4-3-3d716ad0d987@quicinc.com>
+prerequisite-patch-id: a57054b890d767b45cca87e71b4a0f6bf6914c2f
+prerequisite-patch-id: 07f2c7378c7bbd560f26b61785b6814270647f1b
+prerequisite-patch-id: cd9fc0a399ab430e293764d0911a38109664ca91
+prerequisite-patch-id: 5a8e9ea15a2c3d60b4dbdf11b4e2695742d6333c
+prerequisite-message-id: <20240924143958.25-2-quic_rlaggysh@quicinc.com>
+prerequisite-patch-id: 0e224a7310d36e9a633d57c4a177ff24c1e8e767
+prerequisite-patch-id: 3c73bafb074ea339d387a6aa39e5362c8775596d
+prerequisite-message-id: <20241108-qcs615-mm-clockcontroller-v3-7-7d3b2d235fdf@quicinc.com>
+prerequisite-patch-id: df8e2fdd997cbf6c0a107f1871ed9e2caaa97582
+prerequisite-patch-id: b3cc42570d5826a4704f7702e7b26af9a0fe57b0
+prerequisite-patch-id: 125bb8cb367109ba22cededf6e78754579e1ed03
+prerequisite-patch-id: 8e2e841401fefbd96d78dd4a7c47514058c83bf2
+prerequisite-patch-id: 807019bedabd47c04f7ac78e9461d0b5a6e9131b
+prerequisite-patch-id: 13b0dbf97ac1865d241791afb4b46a28ca499523
+prerequisite-patch-id: 40b79fe0b9101f5db3bddad23551c1123572aee5
+prerequisite-patch-id: cb93e5798f6bfe8cc3044c4ce973e3ae5f20dc6b
+prerequisite-patch-id: da2b7a74f1afd58833c6a9a4544a0e271720641f
+prerequisite-patch-id: 72a894a3b19fdbd431e1cec9397365bc5b27abfe
+prerequisite-patch-id: 748a4e51bbedae9c6ebdbd642b2fd1badf958788
+prerequisite-message-id: <20241108-qcs615-mm-dt-nodes-v1-1-b2669cac0624@quicinc.com>
+prerequisite-patch-id: 8844a4661902eb44406639a3b7344416a0c88ed9
+prerequisite-patch-id: bcb1328b70868bb9c87c0e4c48e5c9d38853bc60
+prerequisite-message-id: <20241122074922.28153-1-quic_qqzhou@quicinc.com>
+prerequisite-patch-id: c71c7897d6f250b381f7a9ac66ec58f4a10d49d6
+prerequisite-patch-id: 50223f2370a7ae8053b164fa5219a1690d7e4567
+
+Best regards,
+-- 
+Akhil P Oommen <quic_akhilpo@quicinc.com>
+
 
