@@ -1,130 +1,203 @@
-Return-Path: <linux-kernel+bounces-444356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7E79F0560
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:19:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A519F0568
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:22:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A331885872
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:22:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DC218F2F8;
+	Fri, 13 Dec 2024 07:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="r0cHOnhq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464B22825FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:19:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED2318FC84;
-	Fri, 13 Dec 2024 07:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpJfhbGf"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1AB1372;
-	Fri, 13 Dec 2024 07:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDB91552FC;
+	Fri, 13 Dec 2024 07:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734074372; cv=none; b=QkOPZiTq5fblK3oeyY8DJYEFwG6nch/YfIKwv+rcwI9XwMekNL/cOjcs7jLMNB65CIEpk8AueKvsbEr2UVfgDvNa6OglysuM0G/KFA9ETBwx1QsZWaOsQMyOFBarmuLsmd+lck9oN+m3kMqz2usF5SQRaAesYrPQtBquHlRfoVI=
+	t=1734074536; cv=none; b=C+OrtxfMYsrrhDd8TGm0gFzZ5ZCpa1KcVNIQp4pVhIQMgkXfqmAId369EJ8h9XP483zAW6z9KAQ++6QUmQ5PLG2tqPlgw+B7pp7+TW7Z24WScypetiY5T7YWDzSn5yZpNs9/icoyyt00OLXW2lE13yS6fwFELnbxjmy42J8s27M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734074372; c=relaxed/simple;
-	bh=iM/gWRUHht5P+/M5OwNLu+wPaGgz1ftasdaHU95Pv4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EjAbHRTyOeGVRk8GQUb0d3C9rjHbLZPMHZDEx3jaIYEyqhD8UBut/UsRv9E8w0d5rLyd1eD1nqda+1cCaw0NBvFDZykp8PRY9mtvtPXIuHwrFJ0XCXwZWm2UZ2464vEmd0utRt7gZK/eJ30i4xpE8keqHQ9N1SvUwoMHYOPyTj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpJfhbGf; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216401de828so12974965ad.3;
-        Thu, 12 Dec 2024 23:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734074370; x=1734679170; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MvOoodUP+a37JeWh3OKG8OYxz70uWZTWLs1oVtQBXls=;
-        b=KpJfhbGf8V6JSwsLuH+r1L5EPKsYRWBtXAx5Ul8vuXV2YXiBS9EsuSlUp1e8PjhItQ
-         1iHsRI4B1wSSSh8JOcJP4nhGZMFn//UwI1x6mnA1lLKwyH6YHWdNOUKLRy1kh03i/WHJ
-         ImEB/mVy11PtRgsAhNd+TVmQs/Q+bxKdqjIoPNKsECPWHVoiQkBfQZ4Dq5AkhFNS+H9A
-         NfkWqttK7ue+mKwRA7p2CnOM7CKUgj/TrZB8r/5zeybcScxcN/XzJ0ZcLwpDGzVKvofj
-         xHnEc1LKAVFcMLEoJp3ixGSXVEchoylU71GxCZWiU9Zyx1HXTxsqhrEzMvqz7Wukil0H
-         guwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734074370; x=1734679170;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MvOoodUP+a37JeWh3OKG8OYxz70uWZTWLs1oVtQBXls=;
-        b=qBn10K3ZbVgDg8Ljd1kBHQBYOpQcwcWMPcnArtjwMeE561SxnE6pKt7it4Ylqag+9w
-         XlppwwINFhPac/POYEI6IXYJMtJv+FXlzGXV0atzaLgbE4fvOqRmBA/dUp6yHemfsYAI
-         btu+ZqLDG+XgKDx+b/7DgU9wMns5al5nKmnpU0Pw+PTp2xdu2ljc9sZtVbWxIdyIPpBd
-         xkJ3mKTHfRQLVZNtHj8Sy1H2Zz+8+wvlWwsvQ+Tm1Kr9Ub+QF/ku+d25H3M6LrFWZDRO
-         6oOTls3qNQ7qkJG0XoqW9f+tju1cd5kTKUqUq8xELPki/mEUS8pVxhp10nzisW+KBcvd
-         yNBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUoT7bxe3rZqftjfqG0aSs3jI+zRZ9XQn4gt+j+HyRiyJHuWVusb3dEddmMizNKooS9Z/z9uEHPcjFAA==@vger.kernel.org, AJvYcCWWsEb1k1AJqmxCV9y59HX1udTv88GSYE4KxSmJH4JFRtOGLI3XKDDDMeWAn72uDB8Ll+wUxVyb6w8IIs7A@vger.kernel.org
-X-Gm-Message-State: AOJu0YynGsZO1HtuktAHFDCiAP+xhNUHj5WKNfAc718WaMhlSzqKlyuc
-	P9jE9bU+nqCvsZbytrPJ4A+/wdep+4TkAcUdBw+kthVS+XUFatd4OOqS2g==
-X-Gm-Gg: ASbGncsKnSzT9bOegX7me6LxzvndLCLeRw8K5Svpn1G5+3zDdlVmo+qoUSvNxVyyT5b
-	81CyVErEezYEqTeiCI3x29GnsUzmMU8fV6AREnSxyiJlxf5qPOjbEjPyeepcDOcAYCnuq2xeVez
-	5BoQ+YtFMETu6HMCAK4LkzXtq2NwldbiMvxlm+u5ky2DWNrLALuGGSV3C2jZaRkyMcSsZPx+s0N
-	dLyINvL3Xsp9amF7jPc0/ZmIERol6PnedMk7dWDuXLhlzvgZVy2OjopusEJ9Q==
-X-Google-Smtp-Source: AGHT+IG0/z6kwnFGdTdmAJeRWa5IroFTx7HXnD7s1VT1EeLiO1uEY7sPOy/JAzK3XIuS08yLg4EUjA==
-X-Received: by 2002:a17:902:da86:b0:215:4a31:47d8 with SMTP id d9443c01a7336-2189298b83dmr20807325ad.9.1734074369982;
-        Thu, 12 Dec 2024 23:19:29 -0800 (PST)
-Received: from HOME-PC ([223.185.132.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21634f24f78sm95135795ad.32.2024.12.12.23.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 23:19:29 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:49:26 +0530
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: minchan@kernel.org, senozhatsky@chromium.org
-Cc: axboe@kernel.dk, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Clarification on last_comp_len logic in zram_write_page
-Message-ID: <Z1vf/ladGMjeGpfi@HOME-PC>
+	s=arc-20240116; t=1734074536; c=relaxed/simple;
+	bh=mJ1OiMwN2pzdmUnGBHBHWTomtgZRAWVK2IZLrfQzgk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JRWvZom5XrZNsqb7Fr8ZFmzsZ/TWgooFpFCJlnnHBVewDOabcW0skclv6pst+vAJ7mBJKGIAmvYHxsrb1vXCWUSlQQBDl42PohGivfGhoasddeiQQ5zotqn4yoKEmadsYFfRbAaFTVIzcSH0pWjXKtORS+Oqw05DSfkYVDH6aCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=r0cHOnhq; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1734074509; x=1734679309; i=quwenruo.btrfs@gmx.com;
+	bh=Hh2nJXKwAbSNc1ASwtm/H6f9Y0e51clqp0kjErAQ9Y0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=r0cHOnhqmAMWMO57h46MHSsbs+xnYrxIz/cHNhn8ePx5Z3tueRmRY8/uiZBS7/ux
+	 0Q/3mSk/Cs7UGid9Bj/7xJV8kAZdE5A/b46SE1Ibh27GCs3Ln/dAO046lrifMElJE
+	 d+c6teazsgOfo8YfB9AY7YvLw84r5AG4f7ok7YpkaoAp0fm21Uf9bAUOfURUqNmfT
+	 ZSwWmDtp0bMRERMB2/U58Q8WggXvkbRoba6v3USNqHFMhbDIhRSDnUwvMXhblDf9z
+	 TFMCb1kopgurYn6oNV6+dJsF+3OZ+hG3/WfJT4sqnoykSLTK8SKwoQKzfigLOeW/a
+	 oPy0UWPlz7EGKvjtuQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MoO6C-1txFZ70h4K-00q7Gb; Fri, 13
+ Dec 2024 08:21:49 +0100
+Message-ID: <f4d62504-140b-4fde-9b52-65cf3a0ddd0a@gmx.com>
+Date: Fri, 13 Dec 2024 17:51:44 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] rbtree: add rb_find_add_cached() to rbtree.h
+To: "Roger L. Beckermeyer III" <beckerlee3@gmail.com>, dsterba@suse.cz,
+ peterz@infradead.org, oleg@redhat.com, mhiramat@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: josef@toxicpanda.com, linux-btrfs@vger.kernel.org, lkp@intel.com
+References: <cover.1733850317.git.beckerlee3@gmail.com>
+ <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ttZsohH/6G1P1aG583141dt6XkSP4gzDXSAPJLI6xq5jZXwpsR9
+ K6N+3FVgsQEA/x/YmM2oMbJAb9Y2JDHdf/Qu6cYukhePrPumAE01EcAPmY0xjGIViTXWubD
+ IZIxjo4Yc8FlZzyYQzkX28gFG7pjbeZvuVwPHmMkWy+TTaY3pqdhzKavSPSDQ3Bp2qMNBL1
+ Er/IB1r5KtDWPKqaguRnA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ho966R3LCLg=;+2y20v8esE6GnCooNsoV7Qi6kUr
+ Nj84rqZx5J9yx8wwalIxril9a6E6OOW2amoTRMqPAgiSTDdFu4iviGcIf3LPyaFAnNuoD7CEg
+ vlcmudrb2NLSAQjsB1ujSqT740wOqAsxMcwDdzs2D6Oya+pJSryDmDjMDl7VeUwfiZTyPOZjj
+ X5GW2RfefRYt7g23bmtcVE0PG4Tr5nqMbxc39QGwA9mIN/3EfxAI6ftr4pJ42/ZpqCEiyKHZo
+ L12s5k7WaOzEnmp1AjYaNxeap+mdN4MDpj+5zpEmmh9xc6k2aJugzEUJ8HqIQ57X3uircA4VR
+ 8t47a/KuFuVc0zfKJAH6IYzqKQZZ92hqwZzAm5h40s7idgWIklDfCJ0/YJT6sTFimhjXJ5u8Y
+ w/fi2Bo02Zo2iJqZ9LclbZSfAY+cEUcyAuRJBhAaedNgaBDtNga6KcyokEFkZG5CaPJcJ5+iD
+ pGjuPnux7fTlyPqUWI2CBg/KzmAy79rNylADCZmJnF8jlPt/trmCxSRKDiZf9xoq2vpx/83kL
+ 8hC672ArgWaInBAnrUablcTqFtINwhhimCOcmyEoiGOE9Ms32lnLSYzPElhj0k9bs29AZfp5V
+ BeMH9Sy0yVegT8i9C3ggQY8e2ZYigYIO3y0+56cwCjg8MH0OwwvLaaSc0urukFrbl2+Y+o2F2
+ bcet02JoHIUKeMfh1T4L8x5+eQOa2pKIJL6pdJD/o5QmrN4hq9uJOTwis+WhvXSL92QTFPiyC
+ i1gBJ/51HZrGvUq5uzpNBMamkiIYtXU4EsfDxCa/zC6tfVxce28+bZkX47YKnwstH1IOZTHFH
+ /o0OcoviJaFRVKRxyCK1i3/kIvkKE9GJt9RAOHBWCPIE1wHzlR3SLQmedwDkyuPec9a5Qarr0
+ CklPIGxdg8KvNmh5TUgBZtJpaWduM3WTzmN9MW42f5t2hsVXDNY8Pk0nMeF3h38PGVcH9dy1L
+ hUPIfR9W8lTf7AQalaOQdD7uEH7FOkis9bh6AXZe/ppdBVEWtfQJJfzp3/tIdzHculxxNSQv4
+ Vr+s2XnOlRCNK5kK2TWXmHDNvm3FBApSmJDB4WGqyRU5ag4PypXQjInL2LcoGPm65zpkhXr0v
+ I0/teSJw2JqoWLRceQAyfE6V921Y0f
 
-Dear Maintainers,
 
-I am writing to seek clarification regarding the use of last_comp_len
-variable in zram_write_page function. Specifically, Coverity has flagged 
-the issue (CID 1602439) in zram/zram_drv.c
 
-Link to the coverity issue:
-https://scan7.scan.coverity.com/#/project-view/52337/11354?selectedIssue=1602439
+=E5=9C=A8 2024/12/13 03:16, Roger L. Beckermeyer III =E5=86=99=E9=81=93:
+> Adds rb_find_add_cached() as a helper function for use with
+> red-black trees. Used in btrfs to reduce boilerplate code.
 
-Currently, last_comp_len is initialized to 0 but never updated within the
-function. This renders the conditional block shown below as dead code.
+I won't call it boilerplate code though, it's just to utilize the cached
+rb tree feature as an optimization.
 
-	if (last_comp_len && (last_comp_len != comp_len)) {
-    		zs_free(zram->mem_pool, handle);
-    		handle = -ENOMEM;
-	}
+And since rbtree is a tree-wide infrastructure, you need to be more
+persuasive to add a new interface.
 
-From the context, it appears that this variable might be intended to track the
-compression length from a previous iteration for comparison purposes.
+Yes, btrfs is utilizing this cached rb tree, but since you're adding a
+new tree-wide interface, it will be much better to find another
+driver/subsystem that can benefit from the new interface.
 
-I would like to confirm the intended behavior here:
+>
+> Suggested-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Roger L. Beckermeyer III <beckerlee3@gmail.com>
+> ---
+>   include/linux/rbtree.h | 37 +++++++++++++++++++++++++++++++++++++
+>   1 file changed, 37 insertions(+)
+>
+> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
+> index 7c173aa64e1e..0d4444c0cfb3 100644
+> --- a/include/linux/rbtree.h
+> +++ b/include/linux/rbtree.h
+> @@ -210,6 +210,43 @@ rb_add(struct rb_node *node, struct rb_root *tree,
+>   	rb_insert_color(node, tree);
+>   }
+>
+> +/**
+> + * rb_find_add_cached() - find equivalent @node in @tree, or add @node
+> + * @node: node to look-for / insert
+> + * @tree: tree to search / modify
+> + * @cmp: operator defining the node order
+> + *
+> + * Returns the rb_node matching @node, or NULL when no match is found a=
+nd @node
+> + * is inserted.
+> + */
+> +static __always_inline struct rb_node *
+> +rb_find_add_cached(struct rb_node *node, struct rb_root_cached *tree,
+> +	    int (*cmp)(struct rb_node *, const struct rb_node *))
 
-	1. Should last_comp_len be updated to comp_len after every compression
-	 iteration to enable this comparison?
+This function is almost the same as rb_add_cached(), the only difference
+is the extra handling for the cmp function returning 0.
 
-	2. Is this logic necessary for scenarios where compression lengths
-	differ between iterations, or can this block be removed altogether?
+So I'm wondering if it's possible to enhance rb_add_cached(), or even
+refactor it so there can be a shared core function and rb_add_cached()
+and rb_find_add_cached() can reuse the same function.
 
-To address this, I propose a fix where last_comp_len is updated after the
-conditional block as shown below, ensuring it reflects the last compression
-length:
-	if (last_comp_len && (last_comp_len != comp_len)) {
-    		zs_free(zram->mem_pool, handle);
-    		andle = -ENOMEM;
-	}
-	last_comp_len = comp_len;
+Thanks,
+Qu
 
-Could you please clarify whether this approach aligns with the intended
-functionality of the code?
+> +{
+> +	bool leftmost =3D true;
+> +	struct rb_node **link =3D &tree->rb_root.rb_node;
+> +	struct rb_node *parent =3D NULL;
+> +	int c;
+> +
+> +	while (*link) {
+> +		parent =3D *link;
+> +		c =3D cmp(node, parent);
+> +
+> +		if (c < 0) {
+> +			link =3D &parent->rb_left;
+> +		} else if (c > 0) {
+> +			link =3D &parent->rb_right;
+> +			leftmost =3D false;
+> +		} else {
+> +			return parent;
+> +		}
+> +	}
+> +
+> +	rb_link_node(node, parent, link);
+> +	rb_insert_color_cached(node, tree, leftmost);
+> +	return NULL;
+> +}
+> +
+>   /**
+>    * rb_find_add() - find equivalent @node in @tree, or add @node
+>    * @node: node to look-for / insert
 
-Thank you for your time and assistance.
-
--Dheeraj
 
