@@ -1,124 +1,214 @@
-Return-Path: <linux-kernel+bounces-444374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BFE9F05D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:56:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5719F05D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:56:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE733283F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8FD188A5F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845F719CD08;
-	Fri, 13 Dec 2024 07:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E480D19F120;
+	Fri, 13 Dec 2024 07:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwBYMH9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhnqBAQ+"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C9192D9D;
-	Fri, 13 Dec 2024 07:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8103819CC2D;
+	Fri, 13 Dec 2024 07:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076574; cv=none; b=IjZTwIvwkcZv5FH80qcams5m7VB7OY7GnmgCg29pnJ4xNuvBquJ9DYmuQ02Qw7ZON9xvmn7a1a01nt+bL1vVuHsCn5LI3HZiYBm5W3AqkEbOV7qMJGgnWzqk1uW5l0NS3mwK0ibPDRfnH+WuTYj88r4EesRvI3mop0d70uLMkZc=
+	t=1734076592; cv=none; b=qdou898vYnq/KM3zj76ed6HswdDXRjTjr0ybcRn2UfETe00GYyjkx8NIC08bH14ET4E4s4OvmTPufYqAflGq36jH6JGjGdCVIjWRPeQOzsyEnZJHQjNRHCnoY3c2tbciMco3Mfm/H+LndkE+Rz+hU0Lqyo2Wv5sONApmwXGPzgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076574; c=relaxed/simple;
-	bh=hOvik/xLMeZGVKLpPOX0ZfkoCRuOe0+n3RqrbLlA+sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=p+JL7nBVxYhAT+0l190CLIrlsi7VS8ot7gILfg59Fvskj6tGj9/CTT5fBiqK0P3ScE3PCqqCcpHmoAZ8NYGN+E0rfD5aXwq3OkU6AQMSfhptroKvKHmRlR0Eiu0jpVt+fU3Lz+EbeDWdH4a+O84I+QVndCmEBqSTyi+0RUK00XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwBYMH9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFADC4CED0;
-	Fri, 13 Dec 2024 07:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734076573;
-	bh=hOvik/xLMeZGVKLpPOX0ZfkoCRuOe0+n3RqrbLlA+sM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=BwBYMH9n8F+NgtQxz92WnA4jRMRy6UvJdJCb2pxuk9jzGczJ3gBvPWlCtcRyNRzOm
-	 kuHNCDNyfTd+b0dPlkge+opZNo3Z0pczZiDL6SzIetkWEJ3fdnse5j5HQsJvUPHLvS
-	 Pk6atADnpjJdZKVc8kUS+SDbPIiGiSmlLxr4mzyHL0reIr0dLIuP20W7tny+LgvWEN
-	 9u0OGwEXPUG696eLeHUDyTI1e7wg5M6osqvv1xK5LO6Msta4YNkJKnxwTz7N/8qFua
-	 InYsnetroicK78/C86PsEMr8kFGP1BY986ueYikbaMVBZYQGXX3oleV1o8XQIXW699
-	 Wzq24lDa9KRBQ==
-Message-ID: <7aaeacd1-ecff-49ad-828c-1dcb22d11f05@kernel.org>
-Date: Fri, 13 Dec 2024 08:56:04 +0100
+	s=arc-20240116; t=1734076592; c=relaxed/simple;
+	bh=XJayrBBrGiA7eSPtS1cMs980+tUcwNZFD32RdLke+2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T8Sbc1hg0FvEU5duh/dlkyDdGXonlU9v5E2hDARKjrR3HEd9Syfw/+9g7SMtZyzhtY7MkRNMeZayqM+VGLeE5H5/gb7ysN3KR1it07iTuacsQxhTnri6V9hQpAvXlePRuMp8JOEuHoXXsyo56YN2xoFlvQHz5ttA/OnMfxqErPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhnqBAQ+; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5174f298e18so339215e0c.2;
+        Thu, 12 Dec 2024 23:56:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734076589; x=1734681389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QAZFmiTyYiF000hk68Buo6otiAg019Vj2ktyMah92L0=;
+        b=JhnqBAQ+frrxQUUVA0sSsftuFojQDBCGGyuSZ8pqqLDTG3DJ7itmisFfXS9B0DV5dp
+         I1oRAQL1RWrrZ6rOo1QuoRO9DDl+1pMWQs2WQQisejd77t++5+75D1DNb8azDVahP8Ws
+         ekVtO1sdJG5eEP2xB99yEuMWgy/VQGYOvGJHGo96NsxZ/Euwqnl9+n52wSDSyx2Gxk2r
+         1n1ToH7S2h2VY0MmN138MuiwUDOBGX9S7U1Cv+rkK728PnBbd9J5TILSIf7fKIdJHjLk
+         dCIOI3zbsWQHw2rkgpxnpygxHDao920sBdDFgOYSycLEafritVM5juMEo8lJA6zYeC+O
+         g1nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734076589; x=1734681389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QAZFmiTyYiF000hk68Buo6otiAg019Vj2ktyMah92L0=;
+        b=Xr4m3V/wfh22gHz+3CQfJ9wkoyz6UimiruGQ83uHZjzBRvs8kk0OiygTP0gu5pBNLM
+         7qNex+bk5vk13eeFKp+qYGnYhS4Tls5XhUFZHzmqODSAyEPpY51/udjOcqP0JE8bDLA/
+         GZnVNW2g3sPwMK07x2XydYlIlLhp24EdMDQwn5Bf9IKMXl8jccb4YINsh+R8ZPk+3070
+         UJsv3eEj9YIs+rU8S5sNF1j+NYy2DrHldCZogvLAydFfoSP9cyjkBqCJwbwQInMhYMeA
+         +Mpp9IL4F9ILNZ0ISGwDmA1himSmyCbbAS2z0iiQr8PnXS4zA5Ai25rPizBOYH/UWgxG
+         mWNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJsXmM0ciKVEI0SxkVH7XdcNQVP0gpKp/zCINeiqZFZmeN6+0ULh/NSTWVbBuwOHH+accAx0bq@vger.kernel.org, AJvYcCVaHR/QZcFcgakvwMkrcUBqXHsp6HWlDTZy0onWBLMvpRNpx/wQQKxqEObQf3JHa2VlT7y+no8cpdD0iLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaXUJIE3gj1jpl5KP5Yn1nSXuuGvwNVaaGjUsZPYKt+/xstTd
+	VYAzoeQ3fkfU6XMyHHwrofLNz/moBUdj4l1Z3INtJGRHZaB4hGdICt9SBPB6QcM4fG6mA0RWg2H
+	n6o8uB6GbIBsBNMCkrr/+Ltfu758=
+X-Gm-Gg: ASbGncuHhNgTqm6ZTnrMtUastGyk7r8BowBajwmAOQ80nxpW7+3AGq+I0R7GAzPlLdQ
+	LtH1Be7SXu4d+E6DgfeV5DmSs0zYq82+9w41nA7/pVPwYeIaluCzmXx+7P0GN5MDO2dCH1UKg
+X-Google-Smtp-Source: AGHT+IHzjoKLoHgKyyvyCHSY+nRVoq4LKRH2Nv9Zon5WLa5154FhDvAMikc4GqMQWi9syUuz9ZHOhdn71sB9i/U31TU=
+X-Received: by 2002:a05:6122:2a09:b0:518:791a:3462 with SMTP id
+ 71dfb90a1353d-518ca45a40amr1354897e0c.9.1734076589259; Thu, 12 Dec 2024
+ 23:56:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com,
- geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
- konradybcio@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- soc@lists.linux.dev
-References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
- <20241212155237.848336-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241212155237.848336-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <1734075432-14131-1-git-send-email-yangge1116@126.com>
+In-Reply-To: <1734075432-14131-1-git-send-email-yangge1116@126.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 13 Dec 2024 15:56:17 +0800
+Message-ID: <CAGsJ_4yQ5f1Nqu+aw2WRWivcK=PNdghdkYG3OneTJvL9mjdiiQ@mail.gmail.com>
+Subject: Re: [PATCH] mm, compaction: don't use ALLOC_CMA in long term GUP flow
+To: yangge1116@126.com
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, david@redhat.com, 
+	baolin.wang@linux.alibaba.com, vbabka@suse.cz, liuzixing@hygon.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/2024 16:52, Kevin Chen wrote:
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+On Fri, Dec 13, 2024 at 3:37=E2=80=AFPM <yangge1116@126.com> wrote:
+>
+> From: yangge <yangge1116@126.com>
+>
+> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+> in __compaction_suitable()") allow compaction to proceed when free
+> pages required for compaction reside in the CMA pageblocks, it's
+> possible that __compaction_suitable() always returns true, and in
+> some cases, it's not acceptable.
+>
+> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+> of memory. I have configured 16GB of CMA memory on each NUMA node,
+> and starting a 32GB virtual machine with device passthrough is
+> extremely slow, taking almost an hour.
+
+I don't fully understand why each node has a 16GB CMA. As I recall, I desig=
+ned
+the per-NUMA CMA to support devices that are not behind the IOMMU, such as
+the IOMMU itself or certain device drivers which are not having IOMMU and
+need contiguous memory for DMA. These devices don't seem to require that
+much memory.
+
+>
+> During the start-up of the virtual machine, it will call
+> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+> Long term GUP cannot allocate memory from CMA area, so a maximum
+> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+> machine memory. Since there is 16G of free CMA memory on the NUMA
+> node, watermark for order-0 always be met for compaction, so
+> __compaction_suitable() always returns true, even if the node is
+> unable to allocate non-CMA memory for the virtual machine.
+>
+> For costly allocations, because __compaction_suitable() always
+> returns true, __alloc_pages_slowpath() can't exit at the appropriate
+> place, resulting in excessively long virtual machine startup times.
+> Call trace:
+> __alloc_pages_slowpath
+>     if (compact_result =3D=3D COMPACT_SKIPPED ||
+>         compact_result =3D=3D COMPACT_DEFERRED)
+>         goto nopage; // should exit __alloc_pages_slowpath() from here
+>
+> To sum up, during long term GUP flow, we should remove ALLOC_CMA
+> both in __compaction_suitable() and __isolate_free_page().
+
+What=E2=80=99s the outcome after your fix? Will it quickly fall back to rem=
+ote
+NUMA nodes
+for the pin?
+
+>
+> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compact=
+ion_suitable()")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: yangge <yangge1116@126.com>
 > ---
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
-Best regards,
-Krzysztof
+>  mm/compaction.c | 8 +++++---
+>  mm/page_alloc.c | 4 +++-
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index 07bd227..044c2247 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -2384,6 +2384,7 @@ static bool __compaction_suitable(struct zone *zone=
+, int order,
+>                                   unsigned long wmark_target)
+>  {
+>         unsigned long watermark;
+> +       bool pin;
+>         /*
+>          * Watermarks for order-0 must be met for compaction to be able t=
+o
+>          * isolate free pages for migration targets. This means that the
+> @@ -2395,14 +2396,15 @@ static bool __compaction_suitable(struct zone *zo=
+ne, int order,
+>          * even if compaction succeeds.
+>          * For costly orders, we require low watermark instead of min for
+>          * compaction to proceed to increase its chances.
+> -        * ALLOC_CMA is used, as pages in CMA pageblocks are considered
+> -        * suitable migration targets
+> +        * In addition to long term GUP flow, ALLOC_CMA is used, as pages=
+ in
+> +        * CMA pageblocks are considered suitable migration targets
+>          */
+>         watermark =3D (order > PAGE_ALLOC_COSTLY_ORDER) ?
+>                                 low_wmark_pages(zone) : min_wmark_pages(z=
+one);
+>         watermark +=3D compact_gap(order);
+> +       pin =3D !!(current->flags & PF_MEMALLOC_PIN);
+>         return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
+> -                                  ALLOC_CMA, wmark_target);
+> +                                  pin ? 0 : ALLOC_CMA, wmark_target);
+>  }
+>
+>  /*
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index dde19db..9a5dfda 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2813,6 +2813,7 @@ int __isolate_free_page(struct page *page, unsigned=
+ int order)
+>  {
+>         struct zone *zone =3D page_zone(page);
+>         int mt =3D get_pageblock_migratetype(page);
+> +       bool pin;
+>
+>         if (!is_migrate_isolate(mt)) {
+>                 unsigned long watermark;
+> @@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned=
+ int order)
+>                  * exists.
+>                  */
+>                 watermark =3D zone->_watermark[WMARK_MIN] + (1UL << order=
+);
+> -               if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
+> +               pin =3D !!(current->flags & PF_MEMALLOC_PIN);
+> +               if (!zone_watermark_ok(zone, 0, watermark, 0, pin ? 0 : A=
+LLOC_CMA))
+>                         return 0;
+>         }
+>
+> --
+> 2.7.4
+>
+Thanks
+Barry
 
