@@ -1,292 +1,158 @@
-Return-Path: <linux-kernel+bounces-445204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762889F12A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:48:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D379F1288
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4FE16AA98
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A729D188CAEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE721F3D4D;
-	Fri, 13 Dec 2024 16:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9191E883A;
+	Fri, 13 Dec 2024 16:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9YgFjg3"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="kb5Iax3o"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275491F130B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F7D1E3DE7;
+	Fri, 13 Dec 2024 16:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108326; cv=none; b=lO4l89bTM7YvFspyi6Vx5D/Xe7jObLv2K31jdYWFNU9kA8V5sJXPqoF0TTbQzewfRuyUvm9HB7y5hT/OlTYwqyhvYGBT32tUzfDcWritCGgbp4xqh0NVb4kydjgqjWAwzDJGnNqNp6cHlTP2/Se5fYVmxtfuWBlIYSGqvMslXiI=
+	t=1734108312; cv=none; b=VujlATWbXbWMk9fn1SpDf72cIx9Hh0/5jSDPIiCgRNf8X7DAfMRUqNYI7oj2TFvGLBAgskCSVASDQXqLBqIENBFw/xz8j3yAJYmEUyDOYv1O0Azu54SxPs4U9SPaSa4jYX+ZKsx8AwsDIVzXE72V3LJbQkiojukvlTdQcpaVFHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108326; c=relaxed/simple;
-	bh=Qzt6V7MPTnrrL8I4lVzjSwBYmRktc+/YgSPk/GCVFoM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=icjYSJMmoNe+2vAOsmXI54iftoRpJFlBl3l6w/3VrlSQG3qrXEIHK8AidlpR+vEQgn/dJRwjJd/j1DcfuPbot0jYyYb+j5nPgVT7t3jmO52HZr2NkRamsSCGOHM92Wvy5DimuRtsKQNAE/sWEIybzaj0SpLyG8Ct0MeT80RL9bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q9YgFjg3; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso20017875e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:45:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734108322; x=1734713122; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sM+OHiF90yvvBmEBEkw7PlxOYbfepKOCjoVyVikB5ho=;
-        b=Q9YgFjg3iQTshsdTV8yEArHm8lQ6dCnY5W/XslWSWy03jSmZomL6Wl7rM1drnBUqon
-         1OFvW+jkgdqJz+MmbQsg9cAnkUsQ1UwUL7aeHKoqfoN6rdZ4DsQa1dZq3XsMA75tCXOi
-         bXnUey0+MJPpKAghnzJnREc2hy4UPE8SQqYMlCAtWl/ApPluER8oiUnwzJbxelWHw/PK
-         H+DHfyc+PumDvCDIDoSZ2QFwjOUKJ6GHAJ/W8qVTwPpQiipNxOw3HGb2J7+X954QMQrk
-         jpjzeIBCIamwdMkCVV3E54MEhSBMhCBGBUjHtcYX6k5P3EO5pqHGpPlkpLHPHtwpAzWo
-         9Qvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734108322; x=1734713122;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sM+OHiF90yvvBmEBEkw7PlxOYbfepKOCjoVyVikB5ho=;
-        b=QNde6p9BBqdC/NEmsCiKWsyp+ct639BYyCDvFjK83caZ4juo+FoZtZDkou54fDwMoz
-         +mv/xaq4XQTEgP17SS55qR9Gu0+D6iYI29+1mEIQZKrKrPZlq+V+TvUTc1zbtUavtscj
-         weoU+EPJ9v3YHHoXVCq3AWJPzbrCFIQQPVc7w6NGO2vXZaeab7YciqgVRyp+6yWc7Fcp
-         W1iiJcVmCAGiBqF0/enZwC3/NPPIKDu7foQf0agRiGmDeFVU9qEAmXNPGphJUkKxwtfK
-         Gofi+WKIkDI2A5ZZPUYU+9uD7YQReSysH0umWzMrY1YjKoHmSHfdPlccImWOeHbD0KNp
-         JmCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPKdjYaMbVFjnugsN0GxTi16FYMS4bBf0/9jkj4egxbi6XFSOGVE3T4j9hBlOkBgsE7cEXS3B35aiD/Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJaOAkl7idnjjYoRSwYGgTUVP65j37j0cutB0PkvkXtm3P+TsH
-	m9D4JutQmrGtAvj+1E87GHbF/VnKc4TE2tgFHNTP6wt00RLFCMe/5k8xSwGr8AM=
-X-Gm-Gg: ASbGncsUiDdE/KH4LSk/tZbml1SvMoVc9c/kQ/PwmXf4Q4qV9mfDNkTplzUVc7LaG+7
-	h0w+SogX717jUWIi+trUE8ucjIhx76rcwMnaNh53Ed3G14M6mSQGxrIfe8cmjzIUGJaO62bXHGR
-	FuEZ7riVH2Jnj7z34kFHv0SEmACKx8joOCudCZ+ZQ3ci0GLGu33vlbK3FwXxpHSBY/K6FSYfOGP
-	eqIn091rvTHIYm57QqrSk4AqCP5/hFd5eljIKQd8TBJUkLwQB4MKKzl15iGrWyE6PtBYpqqQ5tO
-	CAsxUb5jJA==
-X-Google-Smtp-Source: AGHT+IEwmLAcTh89DX5T/LSijU8z8bvHD+aN33QJxTOiFr0brRxcpM8yH/x7cknLvAOziYYAxWsdSg==
-X-Received: by 2002:a05:600c:b95:b0:434:a0bf:98ea with SMTP id 5b1f17b1804b1-4362aa2e5ffmr33344465e9.9.1734108322380;
-        Fri, 13 Dec 2024 08:45:22 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.83])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550523sm53900665e9.7.2024.12.13.08.45.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 08:45:22 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Dec 2024 16:44:41 +0000
-Subject: [PATCH 4/4] soc: samsung: exynos-pmu: enable CPU hotplug support
- for gs101
+	s=arc-20240116; t=1734108312; c=relaxed/simple;
+	bh=eMG2BjpStBQZ6kNfGHttkYbd8b6oyDb+ilkSNk4X0Oc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nhonNHwAvDS3kJSrTfFA94+tW20OWqTV2BeUjySIIH5yvRYqCLRtnz3L3Rxxhj09p5dLp7JuTkV3zazVo02UyQQWqTxXP/tJgK3IfqcaufCiQ8eAYSU7Ws8CEtqnDuVbbNGyWpYXm9XSXd5oZl1XtG91XyyfMSuBcZykidpqW0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=kb5Iax3o; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDF29j5023473;
+	Fri, 13 Dec 2024 11:45:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=YZ3ys
+	QFRIhbcxVdMEXlJv4yJrar4AQC7nyQoS9vYpaU=; b=kb5Iax3oJrkACiCZ9P76q
+	JSDPRuB0PRbeAoQCaHUjq97OS/JZ/zz9wiQT8vXra3UBdvNKkZymD2zRVzCRwnWT
+	+sEZ/p2bSC2GAWwoIyMwKCdlHLjCeDjDX/rGMl0AItvIOYgTb9pAQao8nyetpKbV
+	+D+HThMZdj2ela+ItGoHQx+la2Vph6sXEUfdFMyQOya6wWjA6mK40zBWzucpCJal
+	nNfykLd8gIPsDdh7MOSz35A8syLDVS+kbSLw1Gt6EmVKCzPDe65fVvkChqvtUwYW
+	/EkPutccxrEfESMyZZ1GEkGmOlIW49XDovwIGceO3qCD5U1/3ioYJPojLjEEhzI/
+	w==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 43gju79jq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 11:45:07 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4BDGj6kB030718
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 13 Dec 2024 11:45:06 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 13 Dec
+ 2024 11:45:05 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 13 Dec 2024 11:45:05 -0500
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.187])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4BDGipcE025509;
+	Fri, 13 Dec 2024 11:45:00 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        David Lechner
+	<dlechner@baylibre.com>
+Subject: [PATCH v8 4/8] iio: adc: adi-axi-adc: add interface type
+Date: Fri, 13 Dec 2024 18:44:41 +0200
+Message-ID: <20241213164445.23195-4-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241213164445.23195-1-antoniu.miclaus@analog.com>
+References: <20241213164445.23195-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-4-c72978f63713@linaro.org>
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
-In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
- kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5667;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=Qzt6V7MPTnrrL8I4lVzjSwBYmRktc+/YgSPk/GCVFoM=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnXGSarmzwM1kbdivF8IkWxg2Uc0310r8V7M0Y7
- F9SFeH1J0SJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ1xkmgAKCRDO6LjWAjRy
- uoG8D/9bBAX5wVe3H5FgKq4xkyJL342x5fcHH0eUNITx4oEvi85oYZbJcJWP3iB46a3KONBjUj7
- dCXDBmtd9AetZ0yLookvweoWbgIqfI/+KUHhDlkA1vSeFJ4ejXs4RvL7t/idl8y++7RMTxh+vhZ
- jbGfrge5R7JfmXvtBUv+lktbLMPes7SOiWJup6x8yCtJq8LyasCPXiUboWeL6NXkMNnGQqGLvi0
- MDWdaa3dP56lRP6fXUNnQ4Tc/8Tm/YkNcHZ3GlHT5b7qpIcEPOx7M/+d0Yt/1+uKqYc4MIMXCIT
- 2ALjVMttEirUpAoYMHcY8WkmxYUSTLMm2scK5q8TPAEJO/JmX5AAk543cQASubnBzqWh/xLClcF
- iQ6QH9wyJk28grdgFIy0oLMWSWz0FiwD5vjwlYpedOskNG/KZw8jxTm2RFmVp43ynUreKmdE7RJ
- S/S79VW/C7gTDViP9gFXJM2+initDuXXUXk3Aacq5fMA27jJUX8DeC95Aaaz1hC/bkk3J92uv8+
- Xw4gxJU9Fum16kGj535EayF1lxdF36fxxfL6hb+fMhUXcUXi93MiXmzvFAEEbmFBoXwwnMBTeHm
- gJ8x/iIlzeFU0LxlKXNbOp77LHxhzoQ13+goTOzYoqS8/s2677uc4Xlh8AZuogv0bmqQ0Ydaewl
- zqg+w0ooJRexZ4g==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: oH_OvZqDM1z0W3y9DXvThyXnTubGdy65
+X-Proofpoint-ORIG-GUID: oH_OvZqDM1z0W3y9DXvThyXnTubGdy65
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130117
 
-Some additional register writes are required when hotplugging CPUs
-on gs101, without these the system hangs when hotplugging.
+Add support for getting the interface (CMOS or LVDS) used by the AXI ADC
+IP.
 
-Specifically a CPU_INFORM register needs to be programmed with
-a hint value which is used by the EL3 firmware (el3mon) and the
-pmu-intr-gen registers need to be programmed.
-
-With this patch applied, and corresponding DT update CPU hotplug
-now works as expected. e.g.
-
-echo 0 > /sys/devices/system/cpu/cpu6/online
-echo 1 > /sys/devices/system/cpu/cpu6/online
-
-Note: to maintain compatibility with older DTs that didn't specify
-pmu-intr-gen register region only a warning is issued if the
-registers can't be mapped, and the old behaviour is maintained.
-
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 ---
- drivers/soc/samsung/exynos-pmu.c            | 73 ++++++++++++++++++++++++++++-
- drivers/soc/samsung/exynos-pmu.h            |  1 +
- include/linux/soc/samsung/exynos-regs-pmu.h | 11 +++++
- 3 files changed, 84 insertions(+), 1 deletion(-)
+no changes in v8.
+ drivers/iio/adc/adi-axi-adc.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index d8c53cec7f37..68eb4eb3813b 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -6,6 +6,7 @@
- // Exynos - CPU PMU(Power Management Unit) support
+diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
+index 5c8c87eb36d1..f6475bc93796 100644
+--- a/drivers/iio/adc/adi-axi-adc.c
++++ b/drivers/iio/adc/adi-axi-adc.c
+@@ -39,6 +39,9 @@
+ #define   ADI_AXI_REG_RSTN_MMCM_RSTN		BIT(1)
+ #define   ADI_AXI_REG_RSTN_RSTN			BIT(0)
  
- #include <linux/arm-smccc.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/mfd/core.h>
-@@ -32,6 +33,7 @@ struct exynos_pmu_context {
- 	struct device *dev;
- 	const struct exynos_pmu_data *pmu_data;
- 	struct regmap *pmureg;
-+	void __iomem *pmuintrgen_base;
- };
++#define ADI_AXI_ADC_REG_CONFIG			0x000c
++#define   ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N	BIT(7)
++
+ #define ADI_AXI_ADC_REG_CTRL			0x0044
+ #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
  
- void __iomem *pmu_base_addr;
-@@ -221,7 +223,8 @@ static const struct regmap_config regmap_smccfg = {
- };
- 
- static const struct exynos_pmu_data gs101_pmu_data = {
--	.pmu_secure = true
-+	.pmu_secure = true,
-+	.pmu_cpuhp = true,
- };
- 
- /*
-@@ -325,6 +328,52 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+@@ -290,6 +293,25 @@ static int axi_adc_chan_disable(struct iio_backend *back, unsigned int chan)
+ 				 ADI_AXI_REG_CHAN_CTRL_ENABLE);
  }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
  
-+/*
-+ * CPU_INFORM register hint values which are used by
-+ * EL3 firmware (el3mon).
-+ */
-+#define CPU_INFORM_CLEAR	0
-+#define CPU_INFORM_C2		1
-+
-+static int cpuhp_pmu_online(unsigned int cpu)
++static int axi_adc_interface_type_get(struct iio_backend *back,
++				      enum iio_backend_interface_type *type)
 +{
-+	void __iomem *base = pmu_context->pmuintrgen_base;
-+	u32 reg;
-+	u32 mask;
++	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
++	unsigned int val;
++	int ret;
 +
-+	/* clear cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu),
-+		     CPU_INFORM_CLEAR);
++	ret = regmap_read(st->regmap, ADI_AXI_ADC_REG_CONFIG, &val);
++	if (ret)
++		return ret;
 +
-+	mask = (1 << cpu);
-+
-+	writel(((0 << cpu) & mask), base + GS101_GRP2_INTR_BID_ENABLE);
-+
-+	reg = readl(base + GS101_GRP2_INTR_BID_UPEND) & mask;
-+	writel(reg & mask, base + GS101_GRP2_INTR_BID_CLEAR);
++	if (val & ADI_AXI_ADC_REG_CONFIG_CMOS_OR_LVDS_N)
++		*type = IIO_BACKEND_INTERFACE_SERIAL_CMOS;
++	else
++		*type = IIO_BACKEND_INTERFACE_SERIAL_LVDS;
 +
 +	return 0;
 +}
 +
-+static int cpuhp_pmu_offline(unsigned int cpu)
-+{
-+	void __iomem *base = pmu_context->pmuintrgen_base;
-+	u32 reg, mask;
-+
-+	/* set cpu inform hint */
-+	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu),
-+		     CPU_INFORM_C2);
-+
-+	writel((1 << cpu), base + GS101_GRP2_INTR_BID_ENABLE);
-+
-+	mask = ((1 << cpu) | (1 << (cpu+8)));
-+
-+	reg = readl(base + GS101_GRP1_INTR_BID_UPEND) & mask;
-+	writel(reg & mask, base + GS101_GRP1_INTR_BID_CLEAR);
-+
-+	return 0;
-+}
-+
- static int exynos_pmu_probe(struct platform_device *pdev)
+ static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
+ 						 struct iio_dev *indio_dev)
  {
- 	struct device *dev = &pdev->dev;
-@@ -377,6 +426,28 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 	pmu_context->pmureg = regmap;
- 	pmu_context->dev = dev;
- 
-+	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_cpuhp) {
-+
-+		pmu_context->pmuintrgen_base =
-+			devm_platform_ioremap_resource_byname(pdev, "pmu-intr-gen");
-+		/*
-+		 * To maintain support for older DTs that didn't specify pmu-intr-gen
-+		 * register region, just issue a warning rather than fail to probe.
-+		 */
-+		if (IS_ERR(pmu_context->pmuintrgen_base)) {
-+			dev_warn(&pdev->dev,
-+				 "failed to map pmu-intr-gen registers\n");
-+		} else {
-+			cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,
-+					"soc/exynos-pmu:prepare",
-+					cpuhp_pmu_online, NULL);
-+
-+			cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+					"soc/exynos-pmu:online",
-+					NULL, cpuhp_pmu_offline);
-+		}
-+	}
-+
- 	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
- 		pmu_context->pmu_data->pmu_init();
- 
-diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-index 0a49a2c9a08e..0938bb4fe15f 100644
---- a/drivers/soc/samsung/exynos-pmu.h
-+++ b/drivers/soc/samsung/exynos-pmu.h
-@@ -22,6 +22,7 @@ struct exynos_pmu_data {
- 	const struct exynos_pmu_conf *pmu_config;
- 	const struct exynos_pmu_conf *pmu_config_extra;
- 	bool pmu_secure;
-+	bool pmu_cpuhp;
- 
- 	void (*pmu_init)(void);
- 	void (*powerdown_conf)(enum sys_powerdown);
-diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-index ce1a3790d6fb..0d5a17ea8fb8 100644
---- a/include/linux/soc/samsung/exynos-regs-pmu.h
-+++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-@@ -658,9 +658,20 @@
- #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
- 
- /* For Tensor GS101 */
-+/* PMU ALIVE */
- #define GS101_SYSIP_DAT0					(0x810)
-+#define GS101_CPU0_INFORM					(0x860)
-+#define GS101_CPU_INFORM(cpu)	\
-+			(GS101_CPU0_INFORM + (cpu*4))
- #define GS101_SYSTEM_CONFIGURATION				(0x3A00)
- #define GS101_PHY_CTRL_USB20					(0x3EB0)
- #define GS101_PHY_CTRL_USBDP					(0x3EB4)
- 
-+/* PMU INTR GEN */
-+#define GS101_GRP1_INTR_BID_UPEND				(0x0108)
-+#define GS101_GRP1_INTR_BID_CLEAR				(0x010c)
-+#define GS101_GRP2_INTR_BID_ENABLE				(0x0200)
-+#define GS101_GRP2_INTR_BID_UPEND				(0x0208)
-+#define GS101_GRP2_INTR_BID_CLEAR				(0x020c)
-+
- #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
-
+@@ -337,6 +359,7 @@ static const struct iio_backend_ops adi_axi_adc_ops = {
+ 	.iodelay_set = axi_adc_iodelays_set,
+ 	.test_pattern_set = axi_adc_test_pattern_set,
+ 	.chan_status = axi_adc_chan_status,
++	.interface_type_get = axi_adc_interface_type_get,
+ 	.debugfs_reg_access = iio_backend_debugfs_ptr(axi_adc_reg_access),
+ 	.debugfs_print_chan_status = iio_backend_debugfs_ptr(axi_adc_debugfs_print_chan_status),
+ };
 -- 
-2.47.1.613.gc27f4b7a9f-goog
+2.47.1
 
 
