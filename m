@@ -1,114 +1,232 @@
-Return-Path: <linux-kernel+bounces-445996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBF39F1E4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:36:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444D49F1E3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA14188654E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565B1167C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA618E37B;
-	Sat, 14 Dec 2024 11:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BF2188733;
+	Sat, 14 Dec 2024 11:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhrnH/pW"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bpE7uABj"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18D2170A13;
-	Sat, 14 Dec 2024 11:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BA026AC3
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734176168; cv=none; b=ZqPjy7Bbm6TyHQPjmT1r7/lxGH+CWabt2T3yg3hKUiH7yTl1Mc8M3598eNgsdDicv+EfvuNgxHIGyhgw5gKNNIbLxglgoES4/zveyl8VKn78aNB4x+KednUNJnqmiZ+OBU+jL2lTS3ZvM5frXyXoqDfYM9HPRhtuwv9wH/qQRs0=
+	t=1734175868; cv=none; b=Gqk6FyfQSUTCao0twH0+TazKEA6mBdMdgPiCbyY5T7XNtrw8IaD8LaDxZhi0yMDGrsAs7rptBw/9JrovchtlDlQRLR0+dSQubYY/wuUHEn9jNHKErg1Wx1ggG6CCK56HCI97QAu9o+yBggIAPZeEwmVOZmD017gFE25O9KflPlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734176168; c=relaxed/simple;
-	bh=w3HeaF2v1sPGKZZGi3apRizueqVTdJOGs3yn14XsZds=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=diIgDHvXpsou1S6J5acOK99i8wmQkFntGp5+KRkGVO2NBtqh14h38kzCYzl9sVwJhlCY/rVYTEwnRU2J9+hBHC84clHNj0GQdPh9KM7wyi1T22IaphV6ccnhW+5O97wHBz3nJ8pYzYBXjV07bGyJ9vyF6ANAoz/6IZBxohAgjOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhrnH/pW; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so2973180a91.0;
-        Sat, 14 Dec 2024 03:36:06 -0800 (PST)
+	s=arc-20240116; t=1734175868; c=relaxed/simple;
+	bh=43KipVF2Pw9z9cbEu8cqB5aRcp1OXj1CCOXfSA/uzxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMewuRbB9HwyLza8RxZI7PFgSLtMFHkRfrwKFRGy3+tgTZKK7gtoWJURHujGIDzN497GpptPd5Y9z59bxhEu89S/m/y+PV2paMuLQ5vSK4ygkkvAHvpyh7J3iCqGimcK+jajGA+pTAdcj2aYeiK5mqgIXiVv3VmGBnXn01hrZBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bpE7uABj; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85c5eb83a7fso1160438241.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 03:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734176166; x=1734780966; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NgMsVx6LalBM3WCUrF4IRtnX3JNL264uu8F1CqpXfck=;
-        b=KhrnH/pW+ANRzudwGub3diIRok/Kq7HyRtKBFpKA5p6FryHsZSlNE4RM9hq6//9saS
-         QR5C9A4O3zNba79lyXBULrshYpVViaP63EmPbKK4rVqIM/fSVg4IuRe1y9RwtG8hZzyE
-         q1D+kN5ECV3pYIw3V6yWSICtbG/ypLjQkS1NMx9/JtlrfgbyWL+LpGkptEUpHqw7x2EM
-         2QhmZ7NeWF5Il5NVEhRcqtLT7Ig4Wy3wV4qq3vmXikKHHWLQlgfA1+WTAM9vrKey3dBn
-         tjPIKc08k28nEFmChBgj3mKk6JpRHfNQCJyqchEoo2pew3dsOO1y+Tr2l0zAxARCyGs8
-         LCEQ==
+        d=linaro.org; s=google; t=1734175865; x=1734780665; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wINs/DBTC9EuYVviwDfcguB0KxOhCrZVx41yGsRcNl4=;
+        b=bpE7uABj+TNsTfSCvSlWunO66JtgwhhCPDxD5gIxsTFVhf+amrwZowE3kQcMPgIOww
+         bYg8DDH7qZH080YdeDBAX4bgHoKjmVizMtOtJnqqkyGz+LbseCblkQaer1hlb59js5Eg
+         ZmqSqD964c4MpzeM5CUvxjxgGL5mK4MCWNnvnQ6YbKyEDlOPXplSa+H4jea5u0WOFTrQ
+         OyDwhLoDXJSgAkAnrMLXOLjkStENTwpwkklnOnLEQROQ3ebNbBfejgh5z8qmYcWIShxw
+         IgpK9Cj8LoVOk9cIldbbgq8OMF2RICW2AL3uwyMDa6fBaTYjkYa1dKur22Gx1Mg3HV0u
+         9rgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734176166; x=1734780966;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NgMsVx6LalBM3WCUrF4IRtnX3JNL264uu8F1CqpXfck=;
-        b=cvLO/Pxwjphp3nss7vYOyzcnT9x0M2zlZ/FItOU2658/ww5EsP7lrnlCaGts6q6EAS
-         dkg1RjWxo4nHik2x1GEqGNiWzZXleLcLvO4cDm9whco7b/n3i2NqSQ+mhNDceGL5Wtro
-         qniwUfWg/XLOmFke1Jz/jd17C1snZ7vyNGqrc5DKkUZyXFXibhQ7pUPJAwqmeWWN3juC
-         XAUYr5Mh3i6UbQ1xK0ti2yNImagJZ0zmUaXNfG3ycmwkHf9j5TkrJNfKaettNtTGe50M
-         D7dFct+lDNNHhHjPsCeGR8IzGZ+kZ1wGwvZ7uLwsrnXuejZjz8Oz08mNADgZNpRvO7ek
-         1zNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZSRYK46bXZi58yvdZEna3ZjkJXmu5j5WD4opFKBXLO0CZ9WlRt4DgR01EHpj9MPPQ2+KVjPJxBRbm2aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz56bYDkFgbyrJ4kd1loT2AIqsRepBS6aQ2yawxlFtJK0C/NIbS
-	nhjo7EneX7u0Iv5X5TrydW+hb08BgCczau+9rZ9lRC4c4w2uDBdt
-X-Gm-Gg: ASbGncs7x7qbg5eqvI/Y/Jozvu+8QGpihWdiNW7G0rysdFLdDjsSorKcUEhT7gCeGN9
-	W0bYa1PUBdCNJLlc7I/PBrfUpGh4aL2ILxkh8K4QIEgbM2TpXmyFcOmpsc0h9+ezlqJy7CtL+6N
-	h5xW8qxiVsAekWAX4qqUuYdQWchIdTh5GS8DXQzrHws4d6Q7DDYbWniRsgQrtdTXd1h1bPMbCk2
-	GicvzqaP6mjoA0DHsEIYDHWaL/jyOyEOKCOO0ONbH+R04ZGeA==
-X-Google-Smtp-Source: AGHT+IHuxCFVFrk8Vz9sT5di4OuvtpoJ5KJwPjtYYcpOUcj42oCLFujWWI/ejP+u2tQbAW68orgrnA==
-X-Received: by 2002:a17:90b:3912:b0:2ee:463d:8e8d with SMTP id 98e67ed59e1d1-2f13ac560dfmr16513874a91.14.1734176166073;
-        Sat, 14 Dec 2024 03:36:06 -0800 (PST)
-Received: from dw-tp ([171.76.83.211])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1e9939fsm1266683a91.13.2024.12.14.03.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 03:36:05 -0800 (PST)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> 
-To: Narayana Murty N <nnmlinux@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org, vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: Re: [PATCH v3] powerpc/pseries/eeh: Fix get PE state translation
-In-Reply-To: <20241213091822.3641-1-nnmlinux@linux.ibm.com>
-Date: Sat, 14 Dec 2024 16:58:12 +0530
-Message-ID: <87v7vm8pwz.fsf@gmail.com>
-References: <20241213091822.3641-1-nnmlinux@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1734175865; x=1734780665;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wINs/DBTC9EuYVviwDfcguB0KxOhCrZVx41yGsRcNl4=;
+        b=rO960C61pzCd/WeIKm9DaC3PtZmfItUuIksPc7KnJc/DlXJzRSTQ6cpboKMBD7suFg
+         gC0RsAuBOXwjv7j8k6mtfDKZSmHEe95nZcgfgJgUVI4f+oH+SAjTSBJPe0uMlasM+PTI
+         HWUTlqXlCIIA+Chh7aMbpEM8+d7GdeutLVnJwnZJ26EVkCKL1aCSBdh5v3zWa5OqyE/t
+         +MQUM2VXgzqlyb5QxOmjDB0ZeaGb8Y/otUe3t8C4dDVpsEbD8+cLgsH06afpno0mtkQj
+         +t7sFpYp+qzwCuBazoT3ruImnIxwnrdvIJIsCReok/S/I/ldusIE/awp/vOWmuXQ7rIT
+         Zr/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVJPNNxJAK3aN8LjQMbG+KEpTSu4ZXA7IcIIrDwjwoK7A4oKX18agWz4TGkSk3jlVgKfUc+yFSCAtQpve4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz56LZShZIEmteQmJLoNklnTgrcjs3cuOj8QCvSane60xfI3DFP
+	3xArREgyKum2oYIgw2qG4eoSFcv/3X+po4mkTFeXjrOPdcukVtYk7f625FVd+D748BJRec19zZq
+	nEQxIE16KJ5llavo5lS74/OBKLRO7JsVzVLDzVw==
+X-Gm-Gg: ASbGncvm+afFAkNkpWFGVD2P1texVAvnB93zvIITbdI9gZIiUi0TR0WL0Aq+wu7d2tK
+	Ft83DgJagq8tuo8LnxybaeI/pVnWgFet6KwPzJq1HrD0ak6QMKq/8RyBivZPRS9O8Xe4HfYE=
+X-Google-Smtp-Source: AGHT+IEwYSeSwQnKxUnjb0hVBvPLVZybDxCStSvKb6yannr0dzdp2jqI6+z05U/J+Az5fkcBa9FGHXcxZrNj9a0n4ck=
+X-Received: by 2002:a05:6102:54a8:b0:4b1:1eb5:8ee5 with SMTP id
+ ada2fe7eead31-4b25db8d319mr6446493137.25.1734175865046; Sat, 14 Dec 2024
+ 03:31:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241213145847.112340475@linuxfoundation.org>
+In-Reply-To: <20241213145847.112340475@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 14 Dec 2024 17:00:53 +0530
+Message-ID: <CA+G9fYvcGBDRDqY7KzM_RrsY+G2n-nj9S5GT6vKYn+MYxNGmGg@mail.gmail.com>
+Subject: Re: [PATCH 5.4 000/316] 5.4.287-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Narayana Murty N <nnmlinux@linux.ibm.com> writes:
-
-> The PE Reset State "0" obtained from RTAS calls
-> ibm_read_slot_reset_[state|state2] indicates that
-> the Reset is deactivated and the PE is not in the MMIO
-> Stopped or DMA Stopped state.
+On Fri, 13 Dec 2024 at 20:33, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> With PE Reset State "0", the MMIO and DMA is allowed for
-> the PE. The function pseries_eeh_get_state() is currently
-> not indicating that to the caller because of  which the
-> drivers are unable to resume the MMIO and DMA activity.
-> The patch fixes that by reflecting what is actually allowed.
+> This is the start of the stable review cycle for the 5.4.287 release.
+> There are 316 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Fixes: 00ba05a12b3c ("powerpc/pseries: Cleanup on pseries_eeh_get_state()")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
+> Anything received after that time might be too late.
 >
-> ---
-> Changelog:
-> V1:https://lore.kernel.org/all/20241107042027.338065-1-nnmlinux@linux.ibm.com/
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.4.287-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-As discussed in v1, powernv already does this and this is needed for
-pseries as well for the callers to know, whether the eeh recovery is
-completed.
 
-This looks good to me. Please feel free to add - 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--ritesh
+## Build
+* kernel: 5.4.287-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: ce5516b3ce83b6b8b6f21d8b972e509420b4b551
+* git describe: v5.4.286-317-gce5516b3ce83
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
+86-317-gce5516b3ce83
+
+## Test Regressions (compared to v5.4.285-68-gc655052e5fd8)
+
+## Metric Regressions (compared to v5.4.285-68-gc655052e5fd8)
+
+## Test Fixes (compared to v5.4.285-68-gc655052e5fd8)
+
+## Metric Fixes (compared to v5.4.285-68-gc655052e5fd8)
+
+## Test result summary
+total: 53416, pass: 36691, fail: 3492, skip: 13211, xfail: 22
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 132 total, 132 passed, 0 failed
+* arm64: 32 total, 30 passed, 2 failed
+* i386: 20 total, 14 passed, 6 failed
+* mips: 25 total, 25 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 26 total, 26 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 6 total, 6 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 28 total, 28 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
