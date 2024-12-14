@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-446061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8329B9F1F5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:36:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702C69F1F60
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062F21886A7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:36:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F376161E43
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01E192B73;
-	Sat, 14 Dec 2024 14:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F54A194A43;
+	Sat, 14 Dec 2024 14:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CEfZRL5T"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NsoF+c5W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9DEDDCD;
-	Sat, 14 Dec 2024 14:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88C3DDCD;
+	Sat, 14 Dec 2024 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734186953; cv=none; b=JOpNAe3pKXgkXYKPkhXZuYK+acpXD/xmS8gRV0J1HSkELJinIIf/HpJv8K2/nr8LEcxmtMJhTUliVTSeUylFXWCTioBaer9M4VRZ/nLbJFIPLS7pxrXiHIMlqhqavkjZhpsBTJ2L2QjiW03b5Ch6IxGT0yrjeiNe9hQbiXGcCgg=
+	t=1734186981; cv=none; b=m5ZQbZX3J24XHJZT9HVhDHa5epkdeMS3/xIWtwXaE1k+eP5n/27d1bOieFoCFqGJXqaqerSzENvrAtMqD0bkoBdeETZ+b3YnRl3bbaDS3Q6S85ftJvOJBhQbNEwHGM0/MevWPvE/gx1XkHeZzcFPlyX1UQi8noLCB5bJ2bOf1/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734186953; c=relaxed/simple;
-	bh=GCemFsEAndIIDDd8VIHsmnrMBKfq1D4UjXgErbA/Kw8=;
+	s=arc-20240116; t=1734186981; c=relaxed/simple;
+	bh=gVANuzFDMvQJwwdQ69e2mepdO3dsfXwf2E5Rfp+9YwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PEiRiDo7conwIZqdgFr12R8eGyaFHAkLVKDs819aelXwJ/+DWuc3KUeyntaSbT3M5aRkUxYoHpOGZQQg9C+9hNHosWIddYnvJds4gHm4rcua4XKDkjuQdDl2uaeRn7WM5wkHqvUS0XANRcZGGQRep2UkOHx87wUEmL6D6+rWnNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CEfZRL5T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B13BC4CED1;
-	Sat, 14 Dec 2024 14:35:52 +0000 (UTC)
+	 Content-Disposition; b=b6fyxmxnH+PqW/MPqVc8bpNlyaDPZjGDtRP3urFfbMuqwu8mz8BslYmgKh5b4SxTatroBokODLQ0Soulle4adZ4cwSv9Jayto6jumYVHjKvA0Rprr6cFde4E2WSA1xtpyl3yZaCIYbaxVsecfwVT86TmDMEZWe7N6QjxJXOg3NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NsoF+c5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C01BC4CED1;
+	Sat, 14 Dec 2024 14:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734186952;
-	bh=GCemFsEAndIIDDd8VIHsmnrMBKfq1D4UjXgErbA/Kw8=;
+	s=korg; t=1734186981;
+	bh=gVANuzFDMvQJwwdQ69e2mepdO3dsfXwf2E5Rfp+9YwY=;
 	h=Date:From:To:Cc:Subject:From;
-	b=CEfZRL5TMbWZyk4CyX97z4Zlam0xCBDL2UQ4PdzJFd2inGVnjIwaYpCu2aOluIYw2
-	 SD9zyB/miIQCBVq6hNyh0aM6U85XNTRsBpIN4ToboHnLBaAloIWX0tF+JflTDY2q/z
-	 E0PJzSQgKDJ39YJHpTs18Hy9iII3QAZRFVEUE4nk=
-Date: Sat, 14 Dec 2024 15:35:49 +0100
+	b=NsoF+c5WInpk4Kd8MpG2RfylYTyCvt11cfITEmkdz01N9ChAkQN2EQs8BOGl8IHLb
+	 qbrJpDRyP2pMg1EWv+aHw09G1g9tcbbX9gTLK+ZLYeLb37YF1gLL3Cn7cLeF327CsL
+	 /T4jW9zgBYWREleFtiND60HnyKvydD7zRJNfVOiY=
+Date: Sat, 14 Dec 2024 15:36:18 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] Serial driver fixes for 6.13-rc3
-Message-ID: <Z12XxW821DZlGNfD@kroah.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB fixes for 6.13-rc3
+Message-ID: <Z12X4vb79DECg-w2@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
 The following changes since commit cdd30ebb1b9f36159d66f088b61aee264e649d7a:
 
@@ -61,33 +60,79 @@ The following changes since commit cdd30ebb1b9f36159d66f088b61aee264e649d7a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.13-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.13-rc3
 
-for you to fetch changes up to 4e450dfd0f968b79204637bf13280892dff287b1:
+for you to fetch changes up to 33ead7e538183b1348ba60af90027240a10de751:
 
-  tty: serial: Work around warning backtrace in serial8250_set_defaults (2024-12-06 08:00:01 +0100)
+  usb: typec: ucsi: Fix connector status writing past buffer size (2024-12-04 16:30:28 +0100)
 
 ----------------------------------------------------------------
-Serial driver fixes for 6.13-rc3
+USB driver fixes for 6.13-rc3
 
-Here are two small serial driver fixes for 6.13-rc3.  They are:
-  - ioport build fallout fix for the 8250 port driver that should
-    resolve Guenter's runtime problems
-  - sh-sci driver bugfix for a reported problem
+Here are some small USB driver fixes for some reported issues.  Included
+in here are:
+  - typec driver bugfixes
+  - u_serial gadget driver bugfix for much reported and discussed issue
+  - dwc2 bugfixes
+  - midi gadget driver bugfix
+  - ehci-hcd driver bugfix
+  - other small bugfixes
 
-Both of these have been in linux-next for a while with no reported
+All of these have been in linux-next for over a week with no reported
 issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Claudiu Beznea (1):
-      serial: sh-sci: Check if TX data was written to device in .tx_empty()
+Joe Hattori (2):
+      usb: typec: anx7411: fix fwnode_handle reference leak
+      usb: typec: anx7411: fix OF node reference leaks in anx7411_typec_switch_probe()
 
-Guenter Roeck (1):
-      tty: serial: Work around warning backtrace in serial8250_set_defaults
+Lianqin Hu (1):
+      usb: gadget: u_serial: Fix the issue that gs_start_io crashed due to accessing null pointer
 
- drivers/tty/serial/8250/8250_port.c |  3 ++-
- drivers/tty/serial/sh-sci.c         | 29 +++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 1 deletion(-)
+Lucas De Marchi (1):
+      usb: typec: ucsi: Fix connector status writing past buffer size
+
+Mark Tomlinson (1):
+      usb: host: max3421-hcd: Correctly abort a USB request.
+
+Neal Frager (1):
+      usb: dwc3: xilinx: make sure pipe clock is deselected in usb2 only mode
+
+Radhey Shyam Pandey (1):
+      usb: misc: onboard_usb_dev: skip suspend/resume sequence for USB5744 SMBus support
+
+Stefan Wahren (3):
+      usb: dwc2: Fix HCD resume
+      usb: dwc2: hcd: Fix GetPortStatus & SetPortFeature
+      usb: dwc2: Fix HCD port connection race
+
+Takashi Iwai (1):
+      usb: gadget: midi2: Fix interpretation of is_midi1 bits
+
+Vitalii Mordan (1):
+      usb: ehci-hcd: fix call balance of clocks handling routines
+
+Xu Yang (3):
+      dt-bindings: phy: imx8mq-usb: correct reference to usb-switch.yaml
+      usb: dwc3: imx8mp: fix software node kernel dump
+      usb: core: hcd: only check primary hcd skip_phy_initialization
+
+Łukasz Bartosik (1):
+      usb: typec: ucsi: Fix completion notifications
+
+ .../bindings/phy/fsl,imx8mq-usb-phy.yaml           |  7 +--
+ drivers/usb/core/hcd.c                             |  8 ++-
+ drivers/usb/dwc2/hcd.c                             | 19 +++----
+ drivers/usb/dwc3/dwc3-imx8mp.c                     | 30 +++++-----
+ drivers/usb/dwc3/dwc3-xilinx.c                     |  5 +-
+ drivers/usb/gadget/function/f_midi2.c              |  6 +-
+ drivers/usb/gadget/function/u_serial.c             |  9 ++-
+ drivers/usb/host/ehci-sh.c                         |  9 ++-
+ drivers/usb/host/max3421-hcd.c                     | 16 ++++--
+ drivers/usb/misc/onboard_usb_dev.c                 |  4 +-
+ drivers/usb/typec/anx7411.c                        | 66 ++++++++++++++--------
+ drivers/usb/typec/ucsi/ucsi.c                      |  9 ++-
+ 12 files changed, 116 insertions(+), 72 deletions(-)
 
