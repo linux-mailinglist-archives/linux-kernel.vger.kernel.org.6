@@ -1,142 +1,380 @@
-Return-Path: <linux-kernel+bounces-446043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0489F1F08
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 322DF9F1F10
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC6A1884821
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767461885A43
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BD8192D8C;
-	Sat, 14 Dec 2024 13:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E826E193064;
+	Sat, 14 Dec 2024 13:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEfcoWpE"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKRdAR8o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D219A191F89
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 13:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32B7D268;
+	Sat, 14 Dec 2024 13:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734183574; cv=none; b=LyKlfjmHi8P2VGKOOJFIEfdpyk8gMqsJai68nL1fSP2Dp53CpjsU0ls2OwPK5kAQMcZo5rxCBNZ1hqFPQ7irs7QKF4KhMJCAAwaMPjGbV+QUlRt/gP6pmOLCKnFR4+cJo0yrgDyqBuKOfbWAI7MjpGeDTw25aS2zKpqCsTMx3Lc=
+	t=1734183815; cv=none; b=F/+jd4L19zHjStg2DM2Lz4sGAW1YSGeI3Razwr5cq54j36vxgKXS1AMqQu7khdc795K6aS+35Lq4/MKMh6fDoOT9Y6Sf/MRHZbeJ2xK+TUplxfDrUzAS0D13T5K0Zn68VeoKiBORFarSURLznHGr+DNotEmRWMgeHcB1x7Y+oII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734183574; c=relaxed/simple;
-	bh=uCCTyowJytqPjeU0yepVW6ZTRMX3ONlee0DNAXnNUZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uebFArBaijgCH31KJQ6YDsRr7Y31j8KHkVmZoMuTy0G6EN1KTisLtipHo7/p2I+5+MFfb6LZ5VIjiKa8JIqtw/DCMZCmZwkZkmZJHtNJOnZms5vy0mFy1p1yw6suNBfUhyCXNNa1sWl8svnWMaVSWjmJttGQ68zidYhJcAa52mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEfcoWpE; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-300392cc4caso31141701fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 05:39:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734183571; x=1734788371; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PyYLiYc+Kz4TS/e32iRPlnuJpX7Gz5eKbfwdorLaoU4=;
-        b=iEfcoWpEi74xTB9YuVx+oaXlc510z+LughYijBiQc41m8PHiJISfTuaJSPaugpVuiH
-         /MFfAkXV663Fr86vxeS9aEUiAavuAakOLIvek3kTF3sKCGnG3HQb45lh6wcEwEEgwDNW
-         Fw/EYfU0tOwfNuNKRZDPapEeQKx1UbpXHNU11GRnGQvxMxsaqApzxsDyw8l9aaBHpMeV
-         nVwLmS1aACTuoRBCoMIKG39N1Yv11Xp0Htnd2fndyBHy9zEKvPSA5fjXS4PbqkDnZb9b
-         XyrQjcQ5zJBbaDxYdCBMjDtx/R79Ze5gB0ib3H5qXHNGO0xVXmPSrfJlHzJZVxUUJC/B
-         x6kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734183571; x=1734788371;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PyYLiYc+Kz4TS/e32iRPlnuJpX7Gz5eKbfwdorLaoU4=;
-        b=UpU3hkIFL+FYcZ7KfLJ3mUzivvitq5GnFQ3FFhwDgkME9O8yyv3ZZNBCWIa3aYGLrq
-         hlhwa/sG/H4/WmRUy1DJJbyQuSAQyuHQXUGT/GR/nlFoDMSP5uYINAtb2bk8dUC5UbqS
-         B+eZQoyVtMRYHB9Di+0AJY+pjIBTuBnOXz95/SnQmQRLoTFscKea9buAUpN2ojCG+7bk
-         mnc9qGC0Z25anxwzDgU6SIjddYULxdT+FGb0ZUF0Yw4ji99t3wDvtXV5cfqN2EHSurZS
-         6OYOqIOQ/yirbI4x6q6R6mfneLEL4ZYOFgEltoOW8jWGzDkIp0T83nXigBYQkdDyNb1x
-         1R9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXPQxAmmR18HnUWhr03Ryb6pnCqj7GXvrMI2M9GcjxpFsMFy+DnfmzUhgY4K7OsTMZeOtyoCPVfkFPoXKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Qm3+vAPegLM+u/+l16PefkoOJyZtMHk+nixAPJ+hveJSjPQi
-	zAsBz+BsZMEL9wXA9qmzGgMI4ptlYQg81KO1IsXfUYOdWN/c6cA1ktfGc9pD3cY=
-X-Gm-Gg: ASbGncsSldsP8KXw/hcbdjfYFNAwHF4OkgzR9qW3QJh0+USnA6ZyaEW6epqlzSeShm3
-	7ERObVfM1QggZH+gE2SknCTjrDOZfaxatnNnEND8Xws4eAB/LcVr0oIieH8INfvit1EUMsnKhAl
-	2bggynFoPI5wpst1Z7IAugQvrKkSAZTJyntG4mPxNwEBRabTUous/phir6PAi0oYnYIHFL7nW+t
-	RuyYcM4WMLDpPgsd3P05fm5Cf6pwcAd8TGdpE+4rrchHcOm6xmr088hElEOG5wFKcLid7G7nkR4
-	STawbFcv+41lncAHUEH9SFsRv1m/cc7bgYxN
-X-Google-Smtp-Source: AGHT+IFiGcfkBdkpjQAPcZxAxvnDue49Lcam66Ov/sQHEPWgB+rp6vC1TwupJiCBCPo5zIatJCwGYw==
-X-Received: by 2002:a05:651c:1544:b0:2ff:d83d:9155 with SMTP id 38308e7fff4ca-302544f9757mr21690611fa.27.1734183571029;
-        Sat, 14 Dec 2024 05:39:31 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30344061e1bsm2427441fa.51.2024.12.14.05.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 05:39:29 -0800 (PST)
-Date: Sat, 14 Dec 2024 15:39:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: andersson@kernel.org, chenxuecong2009@outlook.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, gty0622@gmail.com, johan+linaro@kernel.org, 
-	konrad.dybcio@oss.qualcomm.com, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc8280xp: Add Huawei Matebook E Go
- (sc8280xp)
-Message-ID: <lwhell4z72srw67gj6gpt2uyqzx4k5dzjw5xs7dab6lbya7soi@tsoh2bcn2gwc>
-References: <20241213085100.564547-1-mitltlatltl@gmail.com>
- <20241214122303.653935-1-mitltlatltl@gmail.com>
+	s=arc-20240116; t=1734183815; c=relaxed/simple;
+	bh=E2ylePdLN1j0rhZKi6IRDL0ej5OB44kvves6gas3Rhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gItazMjvZw4yQAWkJQ/vcgdsScwxfuj28dhWIslD9tEfZA8zOfHdVAsmtxVj0+vDBwKVeXs4Wjci4cyVg+iPu9pHtdHE8PBvEHjkumeblnwq/qBVmevTj4tXuQJ2NeDL8O4ELEnfxisNkMtCpfEhP64AHQH7nBwurCTfrtIL740=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKRdAR8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9908AC4CED1;
+	Sat, 14 Dec 2024 13:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734183813;
+	bh=E2ylePdLN1j0rhZKi6IRDL0ej5OB44kvves6gas3Rhg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VKRdAR8o+xn1zPaEINfaXIMhzus6/UBjvuzwr8sYTL/S15GnPGCWNU97TzQtP+AeH
+	 Lm9Uq5Vsygl8YHGanbT/DrNoQmQyRorUTJu55xlCrSLd5WfKB/xrN4Wyt7uPTC7RSs
+	 PBwDGgbugWzBXkDXoSTQU+mB4VDrkkr1Kp/Ku0lnDCpvOpQVsXp/1d4G+tuem53HYs
+	 yAxjrFtU/RkLpLFS1QX0C91ZZGFP5yvm71MZ3f/uCR/PXfogJafrbU2ONA8xqkNX9C
+	 1Eupr0lLJwn+HdbLMmwUsZo8Xy25D7ydbdtUGRqJVbxz22jKya0bweBr0vOiaMnUjp
+	 hMFlk8PQQK7lw==
+Date: Sat, 14 Dec 2024 13:43:25 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH v8 8/8] iio: adc: ad4851: add ad485x driver
+Message-ID: <20241214134325.5aa7c99b@jic23-huawei>
+In-Reply-To: <20241213164445.23195-8-antoniu.miclaus@analog.com>
+References: <20241213164445.23195-1-antoniu.miclaus@analog.com>
+	<20241213164445.23195-8-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241214122303.653935-1-mitltlatltl@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Dec 14, 2024 at 08:23:00PM +0800, Pengyu Luo wrote:
-> On Fri, Dec 13, 2024 at 1:13 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
-> 
-> [...]
-> 
-> >> +
-> >> +		/* /lib/firmware/ath11k/WCN6855/hw2.1/board-2.bin
-> >> +		 * there is no calibrate data for huawei,
-> >> +		 * but they have the same subsystem-device id
-> >> +		 */
-> >> +		qcom,ath11k-calibration-variant = "LE_X13S";
-> > 
-> > Oh, this can be taken care of! See [2], [3].
-> 
-> [...]
-> 
-> Hi, Konrad
-> 
-> I want to distrub you again.
-> 
-> Finally, I found something, after I enabled ath11k boot dbg, I got my
-> id_string='bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255`
-> 
-> With qca-swiss-army-knife (see [1])
-> 
-> $ ./ath11k-bdencoder -e board-2.bin | grep -i "$id_string"
-> bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255.bin created size: 60048
-> 
-> It have already been here. So that means I don't need to extract from
-> Windows. I just extract it from linux-firmware then give it a variant
-> name and send patches to ath11k, right?
+On Fri, 13 Dec 2024 18:44:45 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-No. Usually 255 is an ID that is used by a variety of boards. So,
-basically, you have to extract board data from Windows, add a proper
-calibration variant that is specific to your board and then send the
-resulting data to the ath11k mailing list.
-
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
 > 
-> Pengyu
-> 
-> [1] https://github.com/qca/qca-swiss-army-knife
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
--- 
-With best wishes
-Dmitry
+Hi Antoniu
+
+Whilst David's question needs a clear answer I took a look at this
+version and noticed a few more minor things.
+
+One is a left over from a previous review that got missed.
+
+Thanks,
+
+Jonathan
+
+> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
+> new file mode 100644
+> index 000000000000..a5dbf464a4b0
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad4851.c
+> @@ -0,0 +1,1300 @@
+
+
+...
+
+
+> +static int ad4851_get_calibbias(struct ad4851_state *st, int ch, int *val)
+> +{
+> +	unsigned int lsb, mid, msb;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_MSB(ch),
+> +			  &msb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_MID(ch),
+> +			  &mid);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_LSB(ch),
+> +			  &lsb);
+
+Fits under 80 chars so should be on oneline.
+Check the whole driver for similar cases.  As code evolves and indents
+change it's common to have a few of these but a final check by the author
+before posting should tidy them up.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (st->info->resolution == 16) {
+> +		*val = msb << 8;
+> +		*val |= mid;
+> +		*val = sign_extend32(*val, 15);
+> +	} else {
+> +		*val = msb << 12;
+> +		*val |= mid << 4;
+> +		*val |= lsb >> 4;
+> +		*val = sign_extend32(*val, 19);
+> +	}
+> +
+> +	return IIO_VAL_INT;
+> +}
+
+
+
+
+...
+
+
+> +
+> +static int ad4851_parse_channels(struct iio_dev *indio_dev, struct iio_chan_spec **ad4851_channels,
+> +				 const struct iio_chan_spec ad4851_chan,
+> +				 const struct iio_chan_spec ad4851_chan_diff)
+> +{
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct ad4851_state *st = iio_priv(indio_dev);
+
+See below. I'd get the device via st->spi.dev
+
+> +	struct iio_chan_spec *channels;
+> +	unsigned int num_channels, index = 0, reg;
+Trivial but I'd prefer splitting the elements that are assigned from those that aren't.
+	unsigned int num_channels, reg;
+	unsigned int index = 0;
+
+It can sometimes be a little hard to spot which are assigned and which not if
+they are all in one long line.
+
+> +	int ret;
+> +
+> +	num_channels = device_get_child_node_count(dev);
+> +	if (num_channels > AD4851_MAX_CH_NR)
+> +		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
+> +				     num_channels);
+> +
+> +	channels = devm_kcalloc(dev, num_channels,
+> +				sizeof(*channels), GFP_KERNEL);
+> +	if (!channels)
+> +		return -ENOMEM;
+> +
+> +	indio_dev->channels = channels;
+> +	indio_dev->num_channels = num_channels;
+> +	st->num_channels = num_channels;
+
+Trivial.  Maybe worth avoiding that duplication.
+
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "Missing channel number\n");
+> +		if (fwnode_property_present(child, "bipolar")) {
+
+Bipolar and differential aren't necessarily linked.  You can have
+a differential channel that is not bipolar. Maybe in this case this
+connection is there. Anyhow this really comes back to David's question
+on why these aren't differential channels in DT.
+
+> +			*channels = ad4851_chan_diff;
+> +			channels->scan_index = index++;
+> +			channels->channel = reg;
+> +			channels->channel2 = reg + AD4851_MAX_CH_NR;
+> +
+> +		} else {
+> +			*channels = ad4851_chan;
+> +			channels->scan_index = index++;
+> +			channels->channel = reg;
+> +			ret = regmap_write(st->regmap, AD4851_REG_CHX_SOFTSPAN(reg),
+> +					   AD4851_SOFTSPAN_0V_40V);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +		channels++;
+> +	}
+> +
+> +	*ad4851_channels = channels;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad4857_parse_channels(struct iio_dev *indio_dev)
+> +{
+> +	struct iio_chan_spec *ad4851_channels;
+> +	const struct iio_chan_spec ad4851_chan = AD4857_IIO_CHANNEL(0, 0, 0);
+> +	const struct iio_chan_spec ad4851_chan_diff = AD4857_IIO_CHANNEL(0, 0, 1);
+> +
+> +	return ad4851_parse_channels(indio_dev, &ad4851_channels, ad4851_chan, ad4851_chan_diff);
+> +}
+> +
+> +static int ad4858_parse_channels(struct iio_dev *indio_dev)
+> +{
+> +	struct device *dev = indio_dev->dev.parent;
+
+Whilst true that it's that device, that is kind of an internal detail of IIO.
+	struct ad4851_state *state = iio_priv(indio_dev);
+	struct device *dev = &state->spi.dev;
+is contained entirely in this driver code so perhaps a more resilient path to
+that device.
+
+Same for other places where you need to get to that device.
+
+> +	struct iio_chan_spec *ad4851_channels;
+> +	const struct iio_chan_spec ad4851_chan = AD4858_IIO_CHANNEL(0, 0, 0);
+> +	const struct iio_chan_spec ad4851_chan_diff = AD4858_IIO_CHANNEL(0, 0, 1);
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	ret = ad4851_parse_channels(indio_dev, &ad4851_channels, ad4851_chan, ad4851_chan_diff);
+> +	if (ret)
+> +		return ret;
+> +
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret = fwnode_property_read_u32(child, "reg", &reg);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "Missing channel number\n");
+> +		if (fwnode_property_present(child, "bipolar")) {
+> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_1;
+> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_1);
+> +
+> +		} else {
+> +			ad4851_channels->ext_scan_type = ad4851_scan_type_20_0;
+> +			ad4851_channels->num_ext_scan_type = ARRAY_SIZE(ad4851_scan_type_20_0);
+> +		}
+> +		ad4851_channels++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* parse_channel() function populates of the rest of the chip_info fields */
+
+This comment is confusing. Whilst there are other fields that are filled
+by parsing the channels, they aren't in anything called chip_info.
+
+
+> +static const struct ad4851_chip_info ad4851_info = {
+> +	.name = "ad4851",
+> +	.product_id = 0x67,
+> +	.max_sample_rate_hz = 250 * KILO,
+> +	.resolution = 16,
+> +	.parse_channels = ad4857_parse_channels,
+> +};
+
+> +static int ad4851_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct device *dev = &spi->dev;
+> +	struct ad4851_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +	st->spi = spi;
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev,
+> +					     ARRAY_SIZE(ad4851_power_supplies),
+> +					     ad4851_power_supplies);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to get and enable supplies\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(dev, "vddh");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret, "failed to enable vddh voltage\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(dev, "vddl");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret, "failed to enable vddl voltage\n");
+> +
+> +	st->vrefbuf = devm_regulator_get_optional(dev, "vrefbuf");
+
+Please add a comment here and for vrefio below to say why you don't enable
+these yet.  I assume that's to do with setting device state before enabling
+the regulator. If that ordering isn't actually required, then enabling them
+here probably makes more sense.  Then just store a flag/bool to say if they were
+enodev or not rather than keeping the regulator pointer around. 
+
+In many cases I'd expect these to be provided precision references that are always
+on so I hope the device doesn't need them to be off until it is configured.
+
+> +	if (IS_ERR(st->vrefbuf)) {
+> +		if (PTR_ERR(st->vrefbuf) != -ENODEV)
+> +			return dev_err_probe(dev, PTR_ERR(st->vrefbuf),
+> +					     "Failed to get vrefbuf regulator\n");
+> +	}
+> +
+> +	st->vrefio = devm_regulator_get_optional(dev, "vrefio");
+> +	if (IS_ERR(st->vrefio)) {
+> +		if (PTR_ERR(st->vrefio) != -ENODEV)
+> +			return dev_err_probe(dev, PTR_ERR(st->vrefio),
+> +					     "Failed to get vrefio regulator\n");
+> +	}
+> +
+> +	st->pd_gpio = devm_gpiod_get_optional(dev, "pd", GPIOD_OUT_LOW);
+> +	if (IS_ERR(st->pd_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(st->pd_gpio),
+> +				     "Error on requesting pd GPIO\n");
+> +
+> +	st->cnv = devm_pwm_get(dev, NULL);
+> +	if (IS_ERR(st->cnv))
+> +		return dev_err_probe(dev, PTR_ERR(st->cnv),
+> +				     "Error on requesting pwm\n");
+> +
+> +	ret = devm_add_action_or_reset(&st->spi->dev, ad4851_pwm_disable,
+> +				       st->cnv);
+
+At this point it's not turned on.  So not appropriate to turn it off automatically
+just yet.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->info = spi_get_device_match_data(spi);
+> +	if (!st->info)
+> +		return -ENODEV;
+> +
+> +	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return PTR_ERR(st->regmap);
+> +
+> +	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
+> +	if (ret)
+> +		return ret;
+
+The call above is what enables the PWM I think. So should have
+the devm_add_action_or_reset() to turn it off down here.
+
+Note I gave this feedback on an earlier version.  Please make sure to
+either address all comments in next posting or reply to the review to
+given a reason they are not appropriate / correct etc.
+
+> +
+> +	ret = ad4851_setup(st);
+> +	if (ret)
+> +		return ret;
+
+> +}
 
