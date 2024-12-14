@@ -1,220 +1,335 @@
-Return-Path: <linux-kernel+bounces-445834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DF09F1C0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:13:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A426F9F1C0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE59188E985
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E77161D3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6453415E96;
-	Sat, 14 Dec 2024 02:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+ywKZsi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C97179A3;
+	Sat, 14 Dec 2024 02:15:37 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B8C10A1E
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 02:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483B91C36;
+	Sat, 14 Dec 2024 02:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734142378; cv=none; b=NRVdfRDpn5X+J3U03xigT89QX/HTvRspCPZOU7P+k3l2yDJyuFffISKI9lnsUwBKxbd8lJEktFZ/XrjnyLLrWSjfPBFW974PJi+m+GZbov0L4CjYN1OP9M0vK9IWwkKRjoLOo9hGZFYzo6ph+W921UfyQopT4HjVq88jv0v+vq0=
+	t=1734142537; cv=none; b=Ar0O9ZLdsS8lO/oeghtORdgsW/F+fexC6wv33aX69GdsSROd2Dm2TPuaHFOIE7gRgvmqToRXiVfJZ7v7Ul+knkrtVBxVlgRhIMnwKSFtqGpYUA3SwTz5rycRqFA/2Dy+rF9FoiFE2tVDH92fMsJJTc4j9D+hYkKl/ScxIGaX64I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734142378; c=relaxed/simple;
-	bh=HGMMODJ/4nlo7wIgbPxZU9GVyEgpwvnowEiYXVJgTOU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ktOuW8yqF8ZnSN5ORhs8r4Rx9RkSZKVkqm8CXXcsD1HVrIeI2J8///HPiYpuOsaT/KUO+nhWhcXDBokUuZJXpajO6q0KFXDTR0Op6kcEhrDrk9Al6aNHv2bMSM5zwaczAy70tbYaE+h4aPY3AqVcjZXJMpGJ13Q9CbC4GwErgBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+ywKZsi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B882DC4CED0;
-	Sat, 14 Dec 2024 02:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734142378;
-	bh=HGMMODJ/4nlo7wIgbPxZU9GVyEgpwvnowEiYXVJgTOU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=R+ywKZsiLntVdaRda3mbQ0XlvaPoK3xKxAbS2zHhjDROxnKAOGRe55SZurvEMUMQC
-	 2iyDZA+9MtGgrEz1My8L+peSL9NXiKPAjHGBMuHQq6f/MPRf5bOimC5KL9gR13ioOV
-	 jav60AIKR0P1r91Zr0pxkkuCyCQsDOwqWwBUopcwE32GXIlkvv563/qq0pd7O1HxQG
-	 fiXQWP+0RWlWGEQqZcLttVmWrnnKs/THaRzGUZtyXg/VdCHdHY+pEIezfb6SyeWGxk
-	 BtiY+Oefgj+/1imiwoMmc8PaxsEuS1ZOBbSXt0aeSS4hUlJVO6N/tEeC+an88tdEDh
-	 t2JZboWTT4xOw==
-From: Mark Brown <broonie@kernel.org>
-Date: Sat, 14 Dec 2024 02:12:06 +0000
-Subject: [PATCH v3] arm64/signal: Silence sparse warning storing GCSPR_EL0
+	s=arc-20240116; t=1734142537; c=relaxed/simple;
+	bh=g+HuL+0XzIItvDQt3tpq+CBPvxYJY5YCw4d5QA8Eel4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7xPTEJXkmFNoE304DPnOirnG9UGHsvaCTO0/h6nlHJQqzhYk0gncC0umJkXkM+OljgHXsw1KQZizmOaHilni9m16cH28/W2NUY/5r+qbT+WWMqEJ/XNm5jUpOWSarCeHdJFI+Pr6vBuRe9WRzpXUIhSFFCzwgkaXDoJ3tESqsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21649a7bcdcso22965335ad.1;
+        Fri, 13 Dec 2024 18:15:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734142534; x=1734747334;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4eR1QQCmZ1YyL0J7ehuGJ45Hy8bOAg5ImJY1Jbwufg=;
+        b=Je8ycSA/yUZ48+Wa8KVZ5qEiPGzGVijyJSiOE9ge6jBkb348o5qQiL8w2zeHP13t+w
+         ah3Z2AjMKyHTQ4uJmXcJTo/bOyEQ2MaHkwu4b+Srv0ytHFY+cCTJFDL1Gu74dSEgzVjc
+         ivi3wS6HYXuKviixKEwXqGCyk5dyZTmpiajHsLETl81L2JOtxRl7xDZrUZNoE8cW9M6E
+         uFmE4zkCgYuN49RGmM3/lagHYAkQ4sU5X/QA7JK0EScimaldmS5P3kwl3UES2bUQs1y9
+         KUsD+r3JiFsJX4ChXqyFcKLXtuftzaojaR2lvMlahkc+8dMVL9/5i4gtzP4BeZdyhiKu
+         mFKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNTEgrRTw5p/XuYOGMxdB8NaKPJwLYCtIJNzNzAqVuVtdJczUjCZccOFeXcpwCrNHbxU8PgDpNSdsiItg=@vger.kernel.org, AJvYcCXPeEoJiUL2YTwvlrIta4aFOvDwr1ruBImW4KTvMyp4MdrM4IF4uHwH1QPbKNwY5AKmLOZvaXXV79I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1xtvSnKXOLT2R4IsOuG//YKb0cw3qi/jCY3x/yVvg8omb5oJK
+	fkR+imTB0dNHaonjHXlhCiGGoFr3TvHDf04kjyZvp/UaYw00q/hD
+X-Gm-Gg: ASbGnctR59UiIWguiuYVihDdsFcZlAR8/X/oiCvc7VJqrt+NUBqpGXiAiQSfwZkIXj8
+	je0mXQ84y+wmDoZKSXXjZ7kbpowOMdL2idrCbmXupPZR1RpF6nuIoZNczX4kRZGibFNvwJL8Rox
+	NKINiIQ8W5Ejl7XqM4C3o5Jk2wTMvySTPrryCYHUzQt3r4msJIDgjvPHT5EsJnsUtb4ec46ofh9
+	sm97uG6BEIWQjErmCWTbY8BEoBmj8svJ7hSezXHUhCPHF6txpTsOTHLXpiGhHp5Y8FClnwyhKk=
+X-Google-Smtp-Source: AGHT+IHIcQgXQhQJMCuswOjRYUA99uTtFZHjXNcTKxRLSX2I/ZKpfNQeUkyXvmRu4r3/mCNrHOA5WA==
+X-Received: by 2002:a17:902:ec90:b0:216:2bd7:1c2e with SMTP id d9443c01a7336-218929b780bmr60927435ad.18.1734142534260;
+        Fri, 13 Dec 2024 18:15:34 -0800 (PST)
+Received: from sultan-box.localdomain ([142.147.89.231])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dcb447sm4145825ad.68.2024.12.13.18.15.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 18:15:33 -0800 (PST)
+Date: Fri, 13 Dec 2024 18:15:29 -0800
+From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Beata Michalska <Beata.Michalska@arm.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Lukasz Luba <lukasz.luba@arm.com>
+Subject: Re: [PATCH 2/2] cpufreq: schedutil: Ignore rate limit when scaling
+ up with FIE present
+Message-ID: <Z1zqQaH6aoCsW3UL@sultan-box.localdomain>
+References: <20241212015734.41241-1-sultan@kerneltoast.com>
+ <a383eb2a-7752-4c2c-8792-dda9a05b2a53@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241214-arm64-gcs-signal-sparse-v3-1-5e8d18fffc0c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAHbpXGcC/3XNQQ7CIBCF4as0rMWUoaXUlfcwLpACJVbaMIZom
- t5d2rjQRZf/S+abmaCJ3iA5FTOJJnn0Y8jBDwXRvQrOUN/lJlBCxaBsqYoPUVGnkaJ3QQ0UJxX
- R0Jpb1WrVicY2JF9P0Vj/2uTLNXfv8TnG9/YosXX9mqzcNROjjIKQUt50J6xsz3cTgxmOY3RkR
- RP8QmwfggxpAMsbYILx+g9aluUDavljHwgBAAA=
-X-Change-ID: 20241209-arm64-gcs-signal-sparse-53fa9cad67f7
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4782; i=broonie@kernel.org;
- h=from:subject:message-id; bh=HGMMODJ/4nlo7wIgbPxZU9GVyEgpwvnowEiYXVJgTOU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnXOmnSf/g7yV4Pd1f/zm4TEC01cNPgE+Z3TAYQSj5
- zKVtPbKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ1zppwAKCRAk1otyXVSH0FLlB/
- 9FcHR+AWBemhXx3X5V06faDm5BD8lWMYHMLzVo6WMb+kVN/TCIe7vhenFKOXLVFGCdBewjePGmCZ1g
- 5jMs3YY47iroC5WKyhs3amRx5N2p2x5l2stVPHxzmGEsNcX9ckNpye2VqsvkujTSaR7TwJ2h+1dZo6
- pKWV+7KCZLNIpNJx4ka2wa/vrMPle2Bpscj5C/E+VnEuTndSrVgJSPqavRW2ze2qfer8vzmOETmqA+
- 3IKne8JOPfP7ZBx+0M8XdQfCwcIvSfRhpt20pb8Gp93liLajxxkK3A+Pg+uekTVHxuVECiaPEarUHE
- hildLqXuZ1KcyIWdKMSqa/UZWkr0jp
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a383eb2a-7752-4c2c-8792-dda9a05b2a53@arm.com>
 
-We are seeing a sparse warning in gcs_restore_signal():
+On Thu, Dec 12, 2024 at 12:06:20PM +0000, Christian Loehle wrote:
+> On 12/12/24 01:57, Sultan Alsawaf wrote:
+> > From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+> 
+> Hi Sultan,
+> (Adding further CCs that might be interested in this)
+> Good to see some input here again, if it becomes a regular thing,
+> which I would welcome, you might want to look into git send-email
+> or b4 relay, at least in my inbox this series looks strange.
+> Also no cover letter.
 
-  arch/arm64/kernel/signal.c:1054:9: sparse: sparse: cast removes address space '__user' of expression
+Hi Christian,
 
-when storing the final GCSPR_EL0 value back into the register, caused by
-the fact that write_sysreg_s() casts the value it writes to a u64 which
-sparse sees as discarding the __userness of the pointer.
+Thank you for the encouraging words! :-)
 
-Avoid this by treating the address as an integer, casting to a pointer only
-when using it to write to userspace.
+Sorry about the strangeness. I knew better and should've sent a cover letter;
+when I saw how the series looked on the list a few minutes after sending it, I
+grimaced and realized my mistake. FWIW, I did use git send-email, but I hadn't
+heard about b4; thanks for the tip!
 
-While we're at it also inline gcs_signal_cap_valid() into it's one user
-and make equivalent updates to gcs_signal_entry().
+> > 
+> > When schedutil disregards a frequency transition due to the transition rate
+> > limit, there is no guaranteed deadline as to when the frequency transition
+> > will actually occur after the rate limit expires. For instance, depending
+> > on how long a CPU spends in a preempt/IRQs disabled context, a rate-limited
+> > frequency transition may be delayed indefinitely, until said CPU reaches
+> > the scheduler again. This also hurts tasks boosted via UCLAMP_MIN.
+> 
+> Realistically this will be the tick at worst for the systems you care about,
+> I assume.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412082005.OBJ0BbWs-lkp@intel.com/
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v3:
-- Switch to working with u64 instead of pointers, adding casts to
-  pointers.
-- Inline gcs_signal_cap_valid()
-- Link to v2: https://lore.kernel.org/r/20241211-arm64-gcs-signal-sparse-v2-1-c22f37216135@kernel.org
+Typically, yes, especially so with PREEMPT_RT. It can get quite bad otherwise if
+preempt/IRQs are disabled for a while, e.g. a common offender is zone->lock in
+the page allocator.
 
-Changes in v2:
-- Use __force u64 rather than unsigned long.
-- Tweak commit message.
-- Link to v1: https://lore.kernel.org/r/20241210-arm64-gcs-signal-sparse-v1-1-26888bcd6f89@kernel.org
----
- arch/arm64/kernel/signal.c | 35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
+> > 
+> > For frequency transitions _down_, this only poses a theoretical loss of
+> > energy savings since a CPU may remain at a higher frequency than necessary
+> > for an indefinite period beyond the rate limit expiry.
+> 
+> theoretical?
 
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 14ac6fdb872b9672e4b16a097f1b577aae8dec50..928bdaa51df19583e77b8480e8b9094fe5563c35 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -36,15 +36,8 @@
- #include <asm/traps.h>
- #include <asm/vdso.h>
- 
--#ifdef CONFIG_ARM64_GCS
- #define GCS_SIGNAL_CAP(addr) (((unsigned long)addr) & GCS_CAP_ADDR_MASK)
- 
--static bool gcs_signal_cap_valid(u64 addr, u64 val)
--{
--	return val == GCS_SIGNAL_CAP(addr);
--}
--#endif
--
- /*
-  * Do a signal return; undo the signal stack. These are aligned to 128-bit.
-  */
-@@ -1062,8 +1055,7 @@ static int restore_sigframe(struct pt_regs *regs,
- #ifdef CONFIG_ARM64_GCS
- static int gcs_restore_signal(void)
- {
--	unsigned long __user *gcspr_el0;
--	u64 cap;
-+	u64 gcspr_el0, cap;
- 	int ret;
- 
- 	if (!system_supports_gcs())
-@@ -1072,7 +1064,7 @@ static int gcs_restore_signal(void)
- 	if (!(current->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE))
- 		return 0;
- 
--	gcspr_el0 = (unsigned long __user *)read_sysreg_s(SYS_GCSPR_EL0);
-+	gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
- 
- 	/*
- 	 * Ensure that any changes to the GCS done via GCS operations
-@@ -1087,22 +1079,23 @@ static int gcs_restore_signal(void)
- 	 * then faults will be generated on GCS operations - the main
- 	 * concern is to protect GCS pages.
- 	 */
--	ret = copy_from_user(&cap, gcspr_el0, sizeof(cap));
-+	ret = copy_from_user(&cap, (unsigned long __user *)gcspr_el0,
-+			     sizeof(cap));
- 	if (ret)
- 		return -EFAULT;
- 
- 	/*
- 	 * Check that the cap is the actual GCS before replacing it.
- 	 */
--	if (!gcs_signal_cap_valid((u64)gcspr_el0, cap))
-+	if (cap != GCS_SIGNAL_CAP(gcspr_el0))
- 		return -EINVAL;
- 
- 	/* Invalidate the token to prevent reuse */
--	put_user_gcs(0, (__user void*)gcspr_el0, &ret);
-+	put_user_gcs(0, (unsigned long __user *)gcspr_el0, &ret);
- 	if (ret != 0)
- 		return -EFAULT;
- 
--	write_sysreg_s(gcspr_el0 + 1, SYS_GCSPR_EL0);
-+	write_sysreg_s(gcspr_el0 + 8, SYS_GCSPR_EL0);
- 
- 	return 0;
- }
-@@ -1421,7 +1414,7 @@ static int get_sigframe(struct rt_sigframe_user_layout *user,
- 
- static int gcs_signal_entry(__sigrestore_t sigtramp, struct ksignal *ksig)
- {
--	unsigned long __user *gcspr_el0;
-+	u64 gcspr_el0;
- 	int ret = 0;
- 
- 	if (!system_supports_gcs())
-@@ -1434,18 +1427,20 @@ static int gcs_signal_entry(__sigrestore_t sigtramp, struct ksignal *ksig)
- 	 * We are entering a signal handler, current register state is
- 	 * active.
- 	 */
--	gcspr_el0 = (unsigned long __user *)read_sysreg_s(SYS_GCSPR_EL0);
-+	gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
- 
- 	/*
- 	 * Push a cap and the GCS entry for the trampoline onto the GCS.
- 	 */
--	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
--	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-+	put_user_gcs((unsigned long)sigtramp,
-+		     (unsigned long __user *)(gcspr_el0 - 16), &ret);
-+	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 8),
-+		     (unsigned long __user *)(gcspr_el0 - 8), &ret);
- 	if (ret != 0)
- 		return ret;
- 
--	gcspr_el0 -= 2;
--	write_sysreg_s((unsigned long)gcspr_el0, SYS_GCSPR_EL0);
-+	gcspr_el0 -= 16;
-+	write_sysreg_s(gcspr_el0, SYS_GCSPR_EL0);
- 
- 	return 0;
- }
+I can't think of a realistic way to measure these lost energy savings, much less
+reclaim them.
 
----
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-change-id: 20241209-arm64-gcs-signal-sparse-53fa9cad67f7
+> > 
+> > For frequency transitions _up_, however, this poses a significant hit to
+> > performance when a CPU is stuck at an insufficient frequency for an
+> > indefinitely long time. In latency-sensitive and bursty workloads
+> > especially, a missed frequency transition up can result in a significant
+> > performance loss due to a CPU operating at an insufficient frequency for
+> > too long.
+> 
+> The term significant implies you have some numbers, please go ahead and
+> share them then.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+On a Pixel 9 with fast_switch (that I implemented myself), and AMU-driven FIE:
 
+Test command:
+
+	taskset 40 perf stat --repeat 10 -e cycles,instructions,task-clock perf bench sched messaging -g 50
+
+The last Cortex-A720 core in the PD of three A720 cores is tested, with
+rate_limit_us set to 2000.
+
+Before this patch, schedutil:
+----------------------------
+ Performance counter stats for 'perf bench sched messaging -g 50' (10 runs):
+
+        9121062386      cycles                           #    2.541 GHz                      ( +-  1.17% )
+       10863940366      instructions                     #    1.22  insn per cycle           ( +-  0.20% )
+           3577.62 msec task-clock                       #    0.991 CPUs utilized            ( +-  0.82% )
+
+            3.6108 +- 0.0294 seconds time elapsed  ( +-  0.81% )
+
+After this patch, schedutil:
+----------------------------
+ Performance counter stats for 'perf bench sched messaging -g 50' (10 runs):
+
+        8577233522      cycles                           #    2.538 GHz                      ( +-  0.73% )
+       10514835388      instructions                     #    1.26  insn per cycle           ( +-  0.08% )
+           3533.64 msec task-clock                       #    1.039 CPUs utilized            ( +-  0.67% )
+
+            3.4005 +- 0.0238 seconds time elapsed  ( +-  0.70% )
+
+With performance governor:
+--------------------------
+ Performance counter stats for 'perf bench sched messaging -g 50' (10 runs):
+
+        8712516777      cycles                           #    2.653 GHz                      ( +-  0.84% )
+       10543289262      instructions                     #    1.24  insn per cycle           ( +-  0.10% )
+           3358.74 msec task-clock                       #    1.017 CPUs utilized            ( +-  0.84% )
+
+            3.3028 +- 0.0283 seconds time elapsed  ( +-  0.86% )
+
+There is an improvement of about 6% with schedutil after this patch. These
+results are very consistent across several runs.
+
+> I'm not sure if you're aware of Qais' series that also intends to ignore the
+> rate-limit (in certain cases).
+> https://lore.kernel.org/lkml/20240728184551.42133-1-qyousef@layalina.io/
+
+I was unaware, thanks for the link.
+
+I read through the cover letter and code, and my initial thought is that
+task_tick_fair() is too slow to cover fair tasks' needs. Given that a PELT
+period is ~1 ms, there can be several load updates in between ticks.
+
+I also think that Qais' series permits too many frequency updates too quickly,
+for example when switching from RT/DL to a fair task. On systems with a lot of
+threaded IRQs (or PREEMPT_RT), I can imagine this results in the frequency
+bouncing around a lot.
+
+> I would mostly agree with your below argument regarding FIE and did lean
+> towards dropping it altogether. The main issue I had with Qais' series
+> was !fast_switch platforms and the resulting preemption by the DL task
+> (Often on a remote, possibly idle CPU of the same perf-domain).
+> Unlimited frequency updates can really hurt both power and throughput there.
+> 
+> Fortunately given the low-pass filter nature of PELT, without some special
+> workloads, most calls to cpufreq_update_util() are dropped because there
+> is no resulting frequency change anyway.
+> 
+> You keeping the rate-limit when reducing the frequency might be enough to
+> work around the issue though. I will run some experiments like I did for
+> Qais' series.
+
+Yeah, my thinking is that always allowing updates _only_ when increasing the
+frequency naturally bounds the number of possible updates in a given period. You
+can't keep going up forever, unless you have a CPU with a ridiculously huge
+number of discrete frequency steps. :-)
+
+> I'll also go and check for unintended changes in iowait boost (that
+> interacts with the rate-limit too).
+
+Thanks!
+
+> > 
+> > When support for the Frequency Invariant Engine (FIE) _isn't_ present, a
+> > rate limit is always required for the scheduler to compute CPU utilization
+> > with some semblance of accuracy: any frequency transition that occurs
+> > before the previous transition latches would result in the scheduler not
+> > knowing the frequency a CPU is actually operating at, thereby trashing the
+> > computed CPU utilization.
+> > 
+> > However, when FIE support _is_ present, there's no technical requirement to
+> > rate limit all frequency transitions to a cpufreq driver's reported
+> > transition latency. With FIE, the scheduler's CPU utilization tracking is
+> > unaffected by any frequency transitions that occur before the previous
+> > frequency is latched.
+> > 
+> > Therefore, ignore the frequency transition rate limit when scaling up on
+> > systems where FIE is present. This guarantees that transitions to a higher
+> > frequency cannot be indefinitely delayed, since they simply cannot be
+> > delayed at all.
+> > 
+> > Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
+> > ---
+> >  kernel/sched/cpufreq_schedutil.c | 35 +++++++++++++++++++++++++++-----
+> >  1 file changed, 30 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index e51d5ce730be..563baab89a24 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -59,10 +59,15 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+> >  
+> >  /************************ Governor internals ***********************/
+> >  
+> > -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> > +static bool sugov_should_rate_limit(struct sugov_policy *sg_policy, u64 time)
+> >  {
+> > -	s64 delta_ns;
+> > +	s64 delta_ns = time - sg_policy->last_freq_update_time;
+> > +
+> > +	return delta_ns < sg_policy->freq_update_delay_ns;
+> > +}
+> >  
+> > +static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> > +{
+> >  	/*
+> >  	 * Since cpufreq_update_util() is called with rq->lock held for
+> >  	 * the @target_cpu, our per-CPU data is fully serialized.
+> > @@ -87,17 +92,37 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >  		return true;
+> >  	}
+> >  
+> > -	delta_ns = time - sg_policy->last_freq_update_time;
+> > +	/*
+> > +	 * When frequency-invariant utilization tracking is present, there's no
+> > +	 * rate limit when increasing frequency. Therefore, the next frequency
+> > +	 * must be determined before a decision can be made to rate limit the
+> > +	 * frequency change, hence the rate limit check is bypassed here.
+> > +	 */
+> > +	if (arch_scale_freq_invariant())
+> > +		return true;
+> >  
+> > -	return delta_ns >= sg_policy->freq_update_delay_ns;
+> > +	return !sugov_should_rate_limit(sg_policy, time);
+> >  }
+> >  
+> >  static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+> >  				   unsigned int next_freq)
+> >  {
+> > +	/*
+> > +	 * When a frequency update isn't mandatory (!need_freq_update), the rate
+> > +	 * limit is checked again upon frequency reduction because systems with
+> > +	 * frequency-invariant utilization bypass the rate limit check entirely
+> > +	 * in sugov_should_update_freq(). This is done so that the rate limit
+> > +	 * can be applied only for frequency reduction when frequency-invariant
+> > +	 * utilization is present. Now that the next frequency is known, the
+> > +	 * rate limit can be selectively applied to frequency reduction on such
+> > +	 * systems. A check for arch_scale_freq_invariant() is omitted here
+> > +	 * because unconditionally rechecking the rate limit is cheaper.
+> > +	 */
+> >  	if (sg_policy->need_freq_update)
+> >  		sg_policy->need_freq_update = false;
+> > -	else if (sg_policy->next_freq == next_freq)
+> > +	else if (next_freq == sg_policy->next_freq ||
+> > +		 (next_freq < sg_policy->next_freq &&
+> > +		  sugov_should_rate_limit(sg_policy, time)))
+> >  		return false;
+> >  
+> >  	sg_policy->next_freq = next_freq;
+> 
+> Code seems to match your description FWIW.
+> Maybe the comments could be trimmed somewhat.
+
+How's this for the sugov_update_next_freq() comment?
+	/*
+	 * When a frequency update isn't mandatory, the rate limit is checked
+	 * again upon frequency reduction because systems with frequency
+	 * invariance bypass the rate limit check in sugov_should_update_freq().
+	 * This is done so that the rate limit can be applied only for frequency
+	 * reduction. A check for arch_scale_freq_invariant() is omitted here
+	 * because unconditionally rechecking the rate limit is cheaper.
+	 */
+
+> Regards,
+> Christian
+
+Thanks,
+Sultan
 
