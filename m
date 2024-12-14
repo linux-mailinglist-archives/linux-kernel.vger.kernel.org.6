@@ -1,127 +1,180 @@
-Return-Path: <linux-kernel+bounces-446221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70269F214C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:34:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7ABA9F214E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3063F1885EF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03889165EEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8045819D07C;
-	Sat, 14 Dec 2024 22:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88711B4F1E;
+	Sat, 14 Dec 2024 22:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FGwVLHAx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlclXlT8"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA7A1AA78B
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880DB1AF0DA;
+	Sat, 14 Dec 2024 22:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734215687; cv=none; b=T8dhJrVWgQgNdgcP6FPFd3Brj6r5cLe6lnHv8ZaOdLmHLLQdC1ESyoeHTLvWapCouwWVqXjxA5rWgz9ZatJD3G2p70pHfWLTG5t41O3YrBc1XJg5qqfV0BN5msjTg0Ie79nCTZQvrQXF4/isjCSlRAMvjac4s3Jm19IEsLZoyOg=
+	t=1734216226; cv=none; b=MzYAxxtw3iS6ZvI6YQvgjxbHyY5hTl+WmU6n4TZ+04kPqXu0EOchHbzuekriRwvNQ4VlEmx+1EvYMhlaCWAleizUJJLffi2XfbwPvHOS+6O5YJHf3BRDyfRBN1u4ghTn/ZSety1sLGkZo7fOF26+I1rKZ1zjnTAA6tWJVtX8VUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734215687; c=relaxed/simple;
-	bh=eoKXfq6Hj5SW8j+wkA/iHI2/OaarWoeU1Zy5vKlID1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KPc+7WmW8Qz/FV7F2kpxkC+bPZZcnXZJ3v9qMt847GtuoxDLjf/5y2KoaWFiiAGl/+cG9antaZIjymrRmrvOz9ud2taOhefUeC2L9ewdSjP991SOXPhFsCv7+9KDD9O08ZaTy3x/BRkybmEcTxNp5Rl/Nkb92gwKP6rYdAVQOrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FGwVLHAx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BELRvT4023027
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:34:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zoT/6Ve4wQjNE7DzpC+6ucI6/tFmHxfuNE9Av90lsj4=; b=FGwVLHAxwHE79fiU
-	fJiTlSRTOOwPetAh1rhqbQ48tydFNGPNY74nlVFhlrBtQPAMR8Ve4DscBZznadiT
-	wlW/PdJXylbs1Q4w9h0eQYAMBXqCgm9aGCcukHH3AOfxGL6IF2q7VDCcQw72TZtr
-	FNUIZc2WN/wXwRuJGvhxb4bT9J9bk3NNMCH5o8fMXjjXA7UIzF30vGxG1PTSsDaH
-	lE80w5jryLvPeeoOp5fB4fDsEmHKLMWjN2ykYiEnB7033kKcenrZRZFsdttfndcM
-	WRZcgKKr+AlPcndUrXcTgK9ugCyZpRMf2ltD26pNvcLDmPQGuZXT0BGrlbOY/25F
-	nwk4KQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43h342h3qh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:34:45 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4679ef4565aso6422391cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:34:45 -0800 (PST)
+	s=arc-20240116; t=1734216226; c=relaxed/simple;
+	bh=63py2pnMtgKUYe+UT2S5ELZyC52/xbXvveIXSsBqbuA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eZUr5DTsX6/AR76/UImSn0QmstTnQAR1GTQ6KYF5HTUA4ofhPUP2rzimN5zxBndtOWPyLA/GNptE+wIY29zo1O/GuvudkJnC6ZpVUQ3DNZ3BO58MBSAlhGL24DASBw68kvfVXctLNUO04QIdWWUdiSIRJpBe2N1kFY71L8+AMIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlclXlT8; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467a37a2a53so24104641cf.2;
+        Sat, 14 Dec 2024 14:43:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734216223; x=1734821023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNDbc7G8jzn3foVKj5RIrzXm3mfQTgjskEhNJ1rJRDg=;
+        b=VlclXlT8kKFVRX6yyT2j77mzg3HU+/CKH5OfNZUkuYcqMPcjGa+yy6HDl5f+wN2wTa
+         9KfLnpHWoNRR/esF+/gJ21imJsqXwtaA3zsnQPXFDTqnRF7dP33kJ39c6vt/qzwsOrfp
+         KZz7YNpPqzTWFUBGiok5HR+U10DGowKOFNc2k1PikSynwxYy6/7vW4P4SI6p4wZPXKDx
+         tlW6st9OuOS6cNeAkLwosPy7OzuO5XDqp3TINqmdGZ5igBLKAD6zqP4/CkpUCEm/DfBn
+         aijfLC/wUYuJkF+DGVeWN44F4hsrfaBP9E+Hgd3/uW7rrttOzXZSeBzfc/fqWD38q44J
+         CPVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734215684; x=1734820484;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zoT/6Ve4wQjNE7DzpC+6ucI6/tFmHxfuNE9Av90lsj4=;
-        b=Np6K3ApJIof0+HLJWCOTGqIuaGLHC0THipp88tcwWfw4uYTG8CZU8KRPOzwNANx4uo
-         oSjznyZXh1G22T0hyWOprJKPeDpa6NTMbV0DU9oUO69RZP4bF8GwKJq7DvKcofMzTw9A
-         rt4sGwduf7EgsvtxNMJSuS0mcqTddLx0La3PNbIXp/B96s9lr1kgSehMwNposd+m1JAB
-         R31Vi9jUL8zg2hdk0YMYg7wBXPl6fjbIcCkTXTneaM2TFeQiPftJcKacMRpvfcDxt1hN
-         9zc7RV6j/2cobz1wehvyu0JzU46trHwfXp4uScakOKv2acxhGkVBAZ5n9ig8kd1vCq6N
-         6xCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbi1IDM5ZawfW6CJDc3bbf6vH2VitARKF8VJ1VL42qlTZ9k4hT5YHe1NbLztnI9zoWEQ8tpISAdH7gazk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNpT+pKHGhZiMevcy6vh2596by0jvhxQ+nx3TcGmhLxiE0boMj
-	Ol+m5FlQf11p0KwuJRKGmt8U5bMdjaCZntPWVI4ZiEIYS5W/Ez6GwKIa7cIdxSUH59O4zm+gym6
-	5No4I0mwzR3HEaDFc8pznGgK9jLU9aTxcU3/zexP1HZs8addDjjMysbO+dIl2Qt4=
-X-Gm-Gg: ASbGncthUjkAdgwL6BkplVjcBPOAhbUvaNyl6Txh22elcFCHq3LmO/xzMo4llMO+8BB
-	eDeApL2bQ5TxypewghhhXzLxAknOjebsgAey5hDhM2nQYvlUQTqL92BEuWnsEElmTWJqFkU92Uf
-	tPYU8iegZKd9zsVtP+XEz4KR9rgpS2nr5Lp+OZ0FWwQoES+nCnAkEcZCFTdAxMgysIT9EiamJce
-	N7LKR0Ya/cV1y3nMl6dtMt0JHtQYdo28VE1BrH8puNbMM+8j/ugS1LQV28dcSulvBQ5QYFMfHR3
-	iEo1fLlZdxBKV0WxEzXrZ8ohC3qIYrbWdtg=
-X-Received: by 2002:a05:622a:606:b0:460:9026:6861 with SMTP id d75a77b69052e-467a578e2cemr51306771cf.9.1734215684480;
-        Sat, 14 Dec 2024 14:34:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEGQIFK1+HGT44yFDj67IL1tLQqfEsu3uldzYeFqe8AIQ8wuuDnknJYfqn8obcdvMjeSrZ+OA==
-X-Received: by 2002:a05:622a:606:b0:460:9026:6861 with SMTP id d75a77b69052e-467a578e2cemr51306641cf.9.1734215684091;
-        Sat, 14 Dec 2024 14:34:44 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ad17d7sm1396571a12.25.2024.12.14.14.34.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 14:34:43 -0800 (PST)
-Message-ID: <cf9e3fcd-052c-4ccf-b3fe-a63a95bb2a2c@oss.qualcomm.com>
-Date: Sat, 14 Dec 2024 23:34:42 +0100
+        d=1e100.net; s=20230601; t=1734216223; x=1734821023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PNDbc7G8jzn3foVKj5RIrzXm3mfQTgjskEhNJ1rJRDg=;
+        b=Jjf4SrSsgdoYAx8tuoRRDJbcWGYTF6nFJf0EXpSCDSSxJdHGvAIFDcbUJWdJq5M40d
+         ph2qVLoLCi1CeT70TtOzGqFfeW+LGUhnCqZI8jPDKO4gmNulPrhtHtw5Bp8XKpCLSyvA
+         w58Ad/LXGFiF2IlU4F08r52J4DxMMnVu+UDf0WpmRThXhJV1s18TFjbjlmOHcScjKygb
+         Sj9iMNjTjcywfp1GusG2swxVXnCRiku0FigK0fku+Xi+cUTF+2v99oWRTr+lGD6cTw8X
+         NDGshEoiSE3HH0A2uoQEwpPKW1LNEToh48lFBW1fIvpWzO+PhIJNYZkN/0oO9YgaM5fe
+         nXew==
+X-Forwarded-Encrypted: i=1; AJvYcCW+dBX3kqXiH/Ku4H+Ygmjkg5Aac1VnIdBJQcUSecC3VIcYHhTPQh1IB0i9llQo/r9ljanSCy46fl4K@vger.kernel.org, AJvYcCWmGfTA4WRcWUnGN5+C4UXPbAjn6TagT9KTZHn3DrwtBRufVBKlbbiAMzSMTAx9LRW+z7sivgepPs+hM7mU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYNfYq+GLauRjWEZWRKDesiuVcV6DUsGYzFsnkLWefq9MGSULF
+	9fO8XbrpA7vx3eNGPj88g6IFuw8r778c3K0nQPqaINnPfMCNg+4v
+X-Gm-Gg: ASbGncu/c93UWRG0f/5SiV2etmdRglIgIbJpDAguNUamiYCPG/rn+yqa41oC9T85CIq
+	crAjL4wUixAhp8pQrLdZbK0hZBf4EkZc9p1UIZLUR/3eRuh2ij34vLqvdq3/YUprrLS+YJ7AUpJ
+	8s1L57OoTqz2xNre+fYhm2AWLb4sXA/2ff10y9ZeHa4YPKme4vQb3JJ00yBzGAW3CH3qE24eOrJ
+	5miV3h04XB8bWCFBF+AXrTTxh8BMJflPLv8M6mmsxr+CsT0gs046X2mdhAvGFyYRQ21
+X-Google-Smtp-Source: AGHT+IG7IXU/c0iNtY9MhcZRQQ569PFHhr3zCgYEkNpnGAd30NXOtGTn5aSphWyBODh5sqgfqfsOvg==
+X-Received: by 2002:a05:622a:144e:b0:467:51d7:e15 with SMTP id d75a77b69052e-467a5718d1fmr139468471cf.7.1734216223365;
+        Sat, 14 Dec 2024 14:43:43 -0800 (PST)
+Received: from master-x64.sparksnet ([204.111.53.241])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e8097asm11434201cf.63.2024.12.14.14.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 14:43:42 -0800 (PST)
+From: Peter Geis <pgwipeout@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Peter Geis <pgwipeout@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Alex Bee <knaerzche@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liang Chen <cl@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH] arm64: dts: rockchip: add hevc power domain clock to rk3328
+Date: Sat, 14 Dec 2024 22:43:39 +0000
+Message-Id: <20241214224339.24674-1-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display
- Port
-To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
-        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
-References: <20241114095500.18616-1-quic_mukhopad@quicinc.com>
- <20241114095500.18616-3-quic_mukhopad@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241114095500.18616-3-quic_mukhopad@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: efm8iFVSbUU6JwZknNoMbA0dShb_6XMr
-X-Proofpoint-GUID: efm8iFVSbUU6JwZknNoMbA0dShb_6XMr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=947
- bulkscore=0 mlxscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412140186
+Content-Transfer-Encoding: 8bit
 
-On 14.11.2024 10:55 AM, Soutrik Mukhopadhyay wrote:
-> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
-> sa8775p-ride platform.
-> 
-> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-> ---
+There is a race condition at startup between disabling power domains not
+used and disabling clocks not used on the rk3328. When the clocks are
+disabled first, the hevc power domain fails to shut off leading to a
+splat of failures. Add the hevc core clock to the rk3328 power domain
+node to prevent this condition.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+rcu: INFO: rcu_sched detected expedited stalls on CPUs/tasks: { 3-.... }
+1087 jiffies s: 89 root: 0x8/.
+rcu: blocking rcu_node structures (internal RCU debug):
+Sending NMI from CPU 0 to CPUs 3:
+NMI backtrace for cpu 3
+CPU: 3 UID: 0 PID: 86 Comm: kworker/3:3 Not tainted 6.12.0-rc5+ #53
+Hardware name: Firefly ROC-RK3328-CC (DT)
+Workqueue: pm genpd_power_off_work_fn
+pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : regmap_unlock_spinlock+0x18/0x30
+lr : regmap_read+0x60/0x88
+sp : ffff800081123c00
+x29: ffff800081123c00 x28: ffff2fa4c62cad80 x27: 0000000000000000
+x26: ffffd74e6e660eb8 x25: ffff2fa4c62cae00 x24: 0000000000000040
+x23: ffffd74e6d2f3ab8 x22: 0000000000000001 x21: ffff800081123c74
+x20: 0000000000000000 x19: ffff2fa4c0412000 x18: 0000000000000000
+x17: 77202c31203d2065 x16: 6c6469203a72656c x15: 6c6f72746e6f632d
+x14: 7265776f703a6e6f x13: 2063766568206e69 x12: 616d6f64202c3431
+x11: 347830206f742030 x10: 3430303034783020 x9 : ffffd74e6c7369e0
+x8 : 3030316666206e69 x7 : 205d383738353733 x6 : 332e31202020205b
+x5 : ffffd74e6c73fc88 x4 : ffffd74e6c73fcd4 x3 : ffffd74e6c740b40
+x2 : ffff800080015484 x1 : 0000000000000000 x0 : ffff2fa4c0412000
+Call trace:
+regmap_unlock_spinlock+0x18/0x30
+rockchip_pmu_set_idle_request+0xac/0x2c0
+rockchip_pd_power+0x144/0x5f8
+rockchip_pd_power_off+0x1c/0x30
+_genpd_power_off+0x9c/0x180
+genpd_power_off.part.0.isra.0+0x130/0x2a8
+genpd_power_off_work_fn+0x6c/0x98
+process_one_work+0x170/0x3f0
+worker_thread+0x290/0x4a8
+kthread+0xec/0xf8
+ret_from_fork+0x10/0x20
+rockchip-pm-domain ff100000.syscon:power-controller: failed to get ack on domain 'hevc', val=0x88220
 
-Konrad
+Fixes: 52e02d377a72 ("arm64: dts: rockchip: add core dtsi file for RK3328 SoCs")
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+
+---
+I am pulling this patch out and submitting it standalone. Otherwise
+there are no changes from the first submission.
+
+This was found via educated guessing and extensive testing. This clock
+is sufficient to permit the power domain to function, but additional
+clock work will be needed if the hevc block is ever enabled on rk3328.
+
+For anyone wishing to attempt enabling the hevc or h265 blocks:
+Currently the assigned clocks in downstream are not sufficent and the
+board hard locks if accessed unless clk_ignore_unused is applied.
+Notes from the rk3328 and rk3228h TRMs show the HEVC and H265 blocks
+share common clocks and domains, along with a shared sram block that
+also needs to be enabled.
+
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index 0597de415fe0..7d992c3c01ce 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -333,6 +333,7 @@ power: power-controller {
+ 
+ 			power-domain@RK3328_PD_HEVC {
+ 				reg = <RK3328_PD_HEVC>;
++				clocks = <&cru SCLK_VENC_CORE>;
+ 				#power-domain-cells = <0>;
+ 			};
+ 			power-domain@RK3328_PD_VIDEO {
+-- 
+2.39.5
+
 
