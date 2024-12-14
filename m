@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-446197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ABF9F20F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:32:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48CD19F20F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1EA31656FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C431887429
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8084D1AE003;
-	Sat, 14 Dec 2024 21:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0187F1AF0C6;
+	Sat, 14 Dec 2024 21:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/SyXPoh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kCtJFiQM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E4C1990A2
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8281A8F6A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734211949; cv=none; b=sgMboGZnL0j7SMYOww+rnKLa6xf5fcQ/m1LxdCrTtjI/7ev9PvvDln1zgK5egJJDr1/k3X2WN+xPYg4pQd+4OOxhXTBXRDjrY0mFaz6lbeBPs/15p8z+sVvRXhZABBrrIH65QKe8/XkNEgO5XsMJHJIfQH3uYiWmBdg4cuhl0Jo=
+	t=1734212008; cv=none; b=EZPwD8VXGY0ZAeB5Bwy+D4TMJR5ag0YqNFOp/cWFasNCFD/mkUDtOqY8JffPQqiPtGMwZ4Uz9XJzCjrpZSyyrI5VWMAM8KuxKcvOqqrNwejmL45IQH576tu5H5X1Qw+lJjDoKUtQZm7H3Z3ePcHphsZcnzd8cdCWL3oVAwv+FNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734211949; c=relaxed/simple;
-	bh=Oq6D2KVeN7204X89JSXEcds95W7b2vtvGJFjIa9aRSE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=cVgtxc34Zu9aYajwfZT9K6HvgnyJxoeVnLCF+2wRbtdeRFkvY/v8qDN8aH38rnmNIKGjiXrsTRxMalKrlbmuf6vjYOgKBuiOq5JfZKqgFUYiTgJf7/MGd1lvN33wfMltYLhj15NO0m9nu1QojHBv3tLsumCmekc651V/jdh5YOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/SyXPoh; arc=none smtp.client-ip=198.175.65.12
+	s=arc-20240116; t=1734212008; c=relaxed/simple;
+	bh=SMplJydxt5CTlDxGt7lGtY/1bivuKkqrBUWQl9oPVGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rRHwUj8VD8j5Hg9b1oplNqMzdcF8PHRIT6as4h8Ey3+/S/jrE8cV+poiN+Ziw5IWmr/jkOzf9FMIJgq5uqFfSt5FkNwZqTS4PSKjpBKwFXGEyLipg2iB/OySJIAAmnsQPOZI8h65ofGjHeopFOx1poMh2DRdxl3GBCrxeMeidvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kCtJFiQM; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734211948; x=1765747948;
-  h=date:from:to:cc:subject:message-id;
-  bh=Oq6D2KVeN7204X89JSXEcds95W7b2vtvGJFjIa9aRSE=;
-  b=N/SyXPohzAYvtIxfteiwEDeXnfexJKwKchgzZwC+xc7klNgFvnt/WJQW
-   uvKFN/2oTfy2tLanmR0RQ/9879oUFLqYywkw58iYbjD7HEutwvH9R8jXA
-   vLQolNUQf6FlngCczRa/RmdtmDmZdjXqgQ/q2i0Nq1mBVZ3Zg/GklyONe
-   2d2eDODzLEsyB+OCEWY+IB/cyGHlTyqhmyejCLGnrKE0lynsZkPrLAEhX
-   ZoO4Xz6PeSo7Ank7kyV8+aeDFDavkDKfg3pdkELLqL/QiiVLiAHHELuem
-   Ks9dwn+VvS+hTweraSUNrvNeDl36MVaz+0bmLP7tGEfhl6XiwdJRNFwDT
+  t=1734212006; x=1765748006;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=SMplJydxt5CTlDxGt7lGtY/1bivuKkqrBUWQl9oPVGk=;
+  b=kCtJFiQMhpcKMn4Be+muoYjzBKxqNMYBQxO33ghiM4Ev1LZOrICc7i9t
+   7wiAJQgFvo/ocAF0mOB28gOeqqD7CiZv8dh0mF6D1JgyHC7LxTT1gwuyZ
+   DWrqssFDBme8E2JrLBEcALycvKKwCQcu+ZxlIQf31sVlNDT5gSFhlqrFo
+   oiHRB6cYmxX9HBBm8FGD5W5aYvYtEPW1DbuqGUlUqgmuvposLtg93Terb
+   +iXvPXaUbF9G2yOLwtMOCsCtN+q1LGYic7yH8eHyvYPMwXMSn/rswoDpV
+   rh/UwQv2PkBfYGkIxIIprR4P3qx3GNaSfBIvHLXELFgHpKJ3C0u8nX2qG
    Q==;
-X-CSE-ConnectionGUID: SAxfJzdoSfSVDh+lLNY9BA==
-X-CSE-MsgGUID: eV8ylae8TpOlo4LGCceoSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46032815"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="46032815"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 13:32:27 -0800
-X-CSE-ConnectionGUID: 2j5TH4HFQbumZzGje2nylg==
-X-CSE-MsgGUID: KVV2+kUwRtKY6zw3EOlFNQ==
+X-CSE-ConnectionGUID: ST/CAKvjRBWKMOKyhzzJ8Q==
+X-CSE-MsgGUID: Y4aGiqjeSM2BnvTXqpiyCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34369177"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="34369177"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 13:33:26 -0800
+X-CSE-ConnectionGUID: CQkkYIA2QPG2M5hiFftyfA==
+X-CSE-MsgGUID: DodEdgMwQ963hPNTYI8Fnw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
-   d="scan'208";a="97404827"
+   d="scan'208";a="96595197"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 14 Dec 2024 13:32:24 -0800
+  by fmviesa006.fm.intel.com with ESMTP; 14 Dec 2024 13:33:24 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tMZkM-000DFO-0C;
-	Sat, 14 Dec 2024 21:32:22 +0000
-Date: Sun, 15 Dec 2024 05:32:00 +0800
+	id 1tMZlK-000DFW-19;
+	Sat, 14 Dec 2024 21:33:22 +0000
+Date: Sun, 15 Dec 2024 05:33:12 +0800
 From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cache] BUILD SUCCESS
- faf6ef673787956ec4d33ac8bf56f8ea929abf37
-Message-ID: <202412150554.ZBbvJ1iI-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+To: Abin Joseph <abin.joseph@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: ethernet@10e00000:
+ 'clocks' is a required property
+Message-ID: <202412150534.xaaO8dzc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
-branch HEAD: faf6ef673787956ec4d33ac8bf56f8ea929abf37  x86/resctrl: Document the new "mba_MBps_event" file
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a0e3919a2df29b373b19a8fbd6e4c4c38fc10d87
+commit: 60dbdc6e08d6fe66380598ef8bb857a4474e30d9 dt-bindings: net: emaclite: Add clock support
+date:   9 weeks ago
+config: mips-randconfig-052-20241215 (https://download.01.org/0day-ci/archive/20241215/202412150534.xaaO8dzc-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 2dc22615fd46ab2566d0f26d5ba234ab12dc4bf8)
+dtschema version: 2024.12.dev3+g93ee800
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412150534.xaaO8dzc-lkp@intel.com/reproduce)
 
-elapsed time: 1444m
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412150534.xaaO8dzc-lkp@intel.com/
 
-configs tested: 57
-configs skipped: 1
+dtcheck warnings: (new ones prefixed by >>)
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: /: failed to match any schema with compatible: ['digilent,nexys4ddr']
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: /interrupt-controller@10200000: failed to match any schema with compatible: ['xlnx,xps-intc-1.00.a']
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: gpio@10600000: #gpio-cells: 2 was expected
+   	from schema $id: http://devicetree.org/schemas/gpio/xlnx,gpio-xilinx.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: gpio@10600000: Unevaluated properties are not allowed ('#gpio-cells' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/gpio/xlnx,gpio-xilinx.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: ethernet@10e00000: xlnx,tx-ping-pong: 1 is not of type 'boolean'
+   	from schema $id: http://devicetree.org/schemas/net/xlnx,emaclite.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: ethernet@10e00000: xlnx,rx-ping-pong: 1 is not of type 'boolean'
+   	from schema $id: http://devicetree.org/schemas/net/xlnx,emaclite.yaml#
+>> arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: ethernet@10e00000: 'clocks' is a required property
+   	from schema $id: http://devicetree.org/schemas/net/xlnx,emaclite.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: ethernet@10e00000: 'device_type', 'mdio', 'xlnx,duplex', 'xlnx,include-global-buffers', 'xlnx,include-internal-loopback', 'xlnx,include-mdio', 'xlnx,instance', 'xlnx,s-axi-id-width', 'xlnx,use-internal' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/net/xlnx,emaclite.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: i2c@10a00000: Unevaluated properties are not allowed ('xlnx,clk-freq', 'xlnx,family', 'xlnx,gpo-width', 'xlnx,iic-freq', 'xlnx,scl-inertial-delay', 'xlnx,sda-inertial-delay', 'xlnx,ten-bit-adr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/xlnx,xps-iic-2.00.a.yaml#
+   arch/mips/boot/dts/xilfpga/nexys4ddr.dtb: /i2c@10a00000/ad7420@4b: failed to match any schema with compatible: ['adi,adt7420']
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-arc                  randconfig-001-20241214    gcc-13.2.0
-arc                  randconfig-002-20241214    gcc-13.2.0
-arm                  randconfig-001-20241214    gcc-14.2.0
-arm                  randconfig-002-20241214    clang-15
-arm                  randconfig-003-20241214    gcc-14.2.0
-arm                  randconfig-004-20241214    gcc-14.2.0
-arm64                randconfig-001-20241214    clang-15
-arm64                randconfig-002-20241214    clang-20
-arm64                randconfig-003-20241214    clang-15
-arm64                randconfig-004-20241214    gcc-14.2.0
-csky                 randconfig-001-20241214    gcc-14.2.0
-csky                 randconfig-002-20241214    gcc-14.2.0
-hexagon              randconfig-001-20241214    clang-20
-hexagon              randconfig-002-20241214    clang-14
-i386       buildonly-randconfig-001-20241214    gcc-12
-i386       buildonly-randconfig-002-20241214    gcc-12
-i386       buildonly-randconfig-003-20241214    clang-19
-i386       buildonly-randconfig-004-20241214    clang-19
-i386       buildonly-randconfig-005-20241214    gcc-11
-i386       buildonly-randconfig-006-20241214    gcc-12
-loongarch            randconfig-001-20241214    gcc-14.2.0
-loongarch            randconfig-002-20241214    gcc-14.2.0
-mips                         eyeq5_defconfig    gcc-14.2.0
-nios2                randconfig-001-20241214    gcc-14.2.0
-nios2                randconfig-002-20241214    gcc-14.2.0
-parisc               randconfig-001-20241214    gcc-14.2.0
-parisc               randconfig-002-20241214    gcc-14.2.0
-powerpc              randconfig-001-20241214    clang-20
-powerpc              randconfig-002-20241214    clang-15
-powerpc              randconfig-003-20241214    clang-20
-powerpc64            randconfig-001-20241214    gcc-14.2.0
-powerpc64            randconfig-003-20241214    clang-20
-riscv                randconfig-001-20241214    clang-20
-riscv                randconfig-002-20241214    clang-20
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20241214    gcc-14.2.0
-s390                 randconfig-002-20241214    gcc-14.2.0
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20241214    gcc-14.2.0
-sh                   randconfig-002-20241214    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20241214    gcc-14.2.0
-sparc                randconfig-002-20241214    gcc-14.2.0
-sparc64              randconfig-001-20241214    gcc-14.2.0
-sparc64              randconfig-002-20241214    gcc-14.2.0
-um                   randconfig-001-20241214    clang-20
-um                   randconfig-002-20241214    clang-17
-x86_64     buildonly-randconfig-001-20241214    gcc-11
-x86_64     buildonly-randconfig-002-20241214    clang-19
-x86_64     buildonly-randconfig-003-20241214    gcc-12
-x86_64     buildonly-randconfig-004-20241214    gcc-12
-x86_64     buildonly-randconfig-005-20241214    gcc-12
-x86_64     buildonly-randconfig-006-20241214    clang-19
-xtensa               randconfig-001-20241214    gcc-14.2.0
-xtensa               randconfig-002-20241214    gcc-14.2.0
-
---
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
