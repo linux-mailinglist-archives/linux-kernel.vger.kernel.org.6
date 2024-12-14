@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-446012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65179F1E81
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:16:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5199F1E85
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9DA1889E91
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A48E167476
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D11191F69;
-	Sat, 14 Dec 2024 12:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19A191F6D;
+	Sat, 14 Dec 2024 12:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiUimzaG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCXjNixj"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B72319066D;
-	Sat, 14 Dec 2024 12:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A94170A13;
+	Sat, 14 Dec 2024 12:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734178595; cv=none; b=cn2khBJuWnk09U/RmotuQwGivpwZruoAE6v1dt2YR5dc+O+8gcbXrxs+tCzuWtzLCcNuIbhGczbUI3N4Cl8TK728oTMIAB9DPnOVdGWYbEhfgRVrH9dH6+TbPXIrH/DtnD5LEknau5Nyt6kBhttsrRz7n8olIcpUbk30Coo79fA=
+	t=1734179060; cv=none; b=LWckE4pMPB0axrSRk/ufY66zmpAT/+Yw45XZSwAMPlnEfJ5Owur9zZyEVsHvoC+C1gmLDZHQOIh6O350UPDLVwD1ERjsQeFse+jt80Iyyygh5QmLAuSlv68EXwXYdv8BEu2c2Vm4jXqS2Oe5IA8tUNQlencFWhQaHZBIudYQvQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734178595; c=relaxed/simple;
-	bh=8NbUaoRJSfTiPenvniNAPNrrdotf04coVGY+/+Q7VtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PLEK/VrLqMGcd2GaBBW1y1KZrwguzG3AMe0/TSZpzybFRDI0n/a75i1dxiNHGzaPyrDtHakLIGI5mBGgH3tb+zp611y4D3hadt4zWnpIkvGjo/McePA1/w8XtDA/7J4oGTcdOuCOz4awNESuPMwu40AuHMIBzEQbsFmhMYZSq6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiUimzaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73A2C4CED1;
-	Sat, 14 Dec 2024 12:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734178595;
-	bh=8NbUaoRJSfTiPenvniNAPNrrdotf04coVGY+/+Q7VtI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GiUimzaGHnoL4v1WIXjKZ5yo2PfTkJsTMDRWLVp5jWIxBUz5mbkaz1xOOmFcgVUcD
-	 /XBl46KN86dNRbFmEXDAAJICYBCulMl8PdgRSJpTXY2Nz1SOBZHedAa/HWQsecGZXa
-	 w7v+cS7pn+QtqvujN/Umr7jXZbzQTAgQwmEWB4ER8BPYDdCLJHAxPStkaHQSTh4b95
-	 6SWvRZnId417L+727nw0uWFFLSp/sasUG9V0twVe1SrlnIPMUtxQonAoDwRukCGGOX
-	 COC8yEhKwZ6J2Fj9zF7zAHj+lsuNZpn9LlP3R0lLVhDd/RH74IWkWu4S8LfyANbkKt
-	 TBARNn4u5H1tw==
-Date: Sat, 14 Dec 2024 12:16:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v7 4/7] iio: accel: adxl345: introduce interrupt
- handling
-Message-ID: <20241214121626.4701b84a@jic23-huawei>
-In-Reply-To: <20241213211909.40896-5-l.rubusch@gmail.com>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
-	<20241213211909.40896-5-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734179060; c=relaxed/simple;
+	bh=dBcGXqNBlY9iQ9lZ/OgdfSdPcuxS/3vEiMPaHVTsVts=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fVDlsg519gkCTZHe1gskoR11+0Nvh5Y9NEs8FvuuIQVKSPaEH0KzVx4JHxqhdtIXNlHjcY8Ncyodd4qJKIRKczLts/bjCxnpMr5FuferJtacJJcHDLxA4yehu2aC+HrtrEdLMBgTBSw/d8vb0zznjqQd8a5Z8QyUIaW7OqC8AxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCXjNixj; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-728e729562fso2149294b3a.0;
+        Sat, 14 Dec 2024 04:24:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734179058; x=1734783858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Prp41H60OqHd9hN4QHlGSpjT8TyrfeZeXDfnp+LIFc=;
+        b=HCXjNixjMDRqN4LEQUXoM/V7ltdBIZyJP8Ekgy93csuROf0GDWEifPRdB6KqT7gmYU
+         TUdX8HXlKNwfk4hhzud+jnrYs0UbiW/UWQ6lyOsNP6VyOZMYQU3l/1k82CG+a/rwg7zO
+         aj7Wg1BtRN4FYEXs814nOwpd3fhQtJbSHTse5p2TQNprRas/0fSziALe+TPa2RRDr+8Z
+         qZrQZr3b+FpE4NGu+z7xXKkpMrCSzElJrVL7dj3UDFPC27AWnrhXFEIksqHCOtwc8crS
+         mvddqhD4bX1/xID/WBWgcpp6n7/CNJ3vkUx0tA12Vxtyhn/rM5J+DJ6Xwk8qtqTSomGw
+         OTfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734179058; x=1734783858;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Prp41H60OqHd9hN4QHlGSpjT8TyrfeZeXDfnp+LIFc=;
+        b=cxNidds2t6qmYgCkdijym0yVk5SHWKtjJrvyoVMYZ0audbW0lBy5Aj1YqHMtn1PFZt
+         Tqo6+xMJ2lqXtB+PFUlk8gEdP3QkP1rBsudEZVGRkFL1ErrlHV5McMzYU0/zr1ZKG3u5
+         2bULXC/obaVda4K1Qi9h9t1xXEEB24gg8otMbrTgFVDBqXB+zJ42pxU73L8IN/S+IrcR
+         o96ET1/IIr5ailwJ7C2+EbNRtIECoEq+Xf+wp6jqasA5A/1KhKBbx+pXSbUSnzQjxUBr
+         yrH8MqHvYtmQKsIRS3ytcVfpM3ls/3U/yCMUtkzTfGgctmW7FR4WcCt6VJtQwytsKV9v
+         1u4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUxm+4GP5wJn0hzSgwpusI2XK8XeGLKIQYyp2Yt0ygYVTwlOYgDpd6MXLmaY30pV0Zf13mlo0lHHbeq3gnS@vger.kernel.org, AJvYcCWivYeCnXLBPOWyjgTrT00BHbsLDucbDaPmpsoOKmw5xCVr/GmszygrJJcKO3JbkB5yZr4ar1clnjzbg7CauQ==@vger.kernel.org, AJvYcCXmgkLiXnS7SjjXFVSEMlkNsPc/Amk2cZT1kS+BdVfX2/mnrcukyC2o0doclZCimbXm9ND4yCjB9rpA@vger.kernel.org
+X-Gm-Message-State: AOJu0YylaBNPZfvcPhWzilb/sipVmPopgZXrkxe7IKcnQVD6SpRPHTwF
+	hWNIZ9KnL2AiXmR3TKEFUKFRsuzIJp+E9LqXFahc6SOee0eRliXRVxSSkEWWBCA=
+X-Gm-Gg: ASbGncsk7Ru1VjMalhLaC1sq0yRa5wRoJNIl8Qi/W/j/YMgM1OlcWBbU1FJq/KVE0US
+	RwWQeQEv+FAI5fmG5Jh+iFzVjQ1HzvjlDd5GKchF4RDLqgeSNgYLxLZwtm1J+uo/lGlXpDP7Qkk
+	ht53G7YIrgcdh/zlIoTsOXa97K63248Mj0/uQQ7TN5CSyZ039NinmvWmD+lk6ZPq6V1LEq+E6uX
+	NXygTlmrYomZHa6McDrauom/sa97TUyF5D4YybhpeJ3H6mAp4KPLbE=
+X-Google-Smtp-Source: AGHT+IFdOqidZhv/GlpzUcTzE60l3KDDrUuzpXKksuL3zjIzR6cuR/af//6gGgNABl5BMzkpGlPR0w==
+X-Received: by 2002:a05:6a21:33a0:b0:1e0:c50c:9838 with SMTP id adf61e73a8af0-1e1dfd1c944mr8767144637.6.1734179058345;
+        Sat, 14 Dec 2024 04:24:18 -0800 (PST)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ac5258sm1375622b3a.20.2024.12.14.04.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 04:24:17 -0800 (PST)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: mitltlatltl@gmail.com
+Cc: andersson@kernel.org,
+	chenxuecong2009@outlook.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gty0622@gmail.com,
+	johan+linaro@kernel.org,
+	konrad.dybcio@oss.qualcomm.com,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc8280xp: Add Huawei Matebook E Go (sc8280xp)
+Date: Sat, 14 Dec 2024 20:23:00 +0800
+Message-ID: <20241214122303.653935-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241213085100.564547-1-mitltlatltl@gmail.com>
+References: <20241213085100.564547-1-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Dec 2024 21:19:06 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+On Fri, Dec 13, 2024 at 1:13 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
 
-> Add the possibility to claim an interrupt. Init the state structure
-> with an interrupt line obtained from the DT. The adxl345 can use
-> two different interrupt lines for event handling. Only one is used.
+[...]
+
+>> +
+>> +		/* /lib/firmware/ath11k/WCN6855/hw2.1/board-2.bin
+>> +		 * there is no calibrate data for huawei,
+>> +		 * but they have the same subsystem-device id
+>> +		 */
+>> +		qcom,ath11k-calibration-variant = "LE_X13S";
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345_core.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index b48bc838c..fb3b45d99 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -11,15 +11,22 @@
->  #include <linux/property.h>
->  #include <linux/regmap.h>
->  #include <linux/units.h>
-> +#include <linux/interrupt.h>
+> Oh, this can be taken care of! See [2], [3].
 
-Keep to local style. Headers in alphabetical order (with IIO ones
-separate obviously!)
+[...]
 
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  
->  #include "adxl345.h"
->  
-> +#define ADXL345_INT_NONE		0xff
-> +#define ADXL345_INT1			0
-> +#define ADXL345_INT2			1
-> +
->  struct adxl345_state {
-> +	int irq;
+Hi, Konrad
 
-Whilst it doesn't really matter. I'm not seeing any logic in having this as first
-element and intio as last.  Might as well put them both at the end.
+I want to distrub you again.
 
->  	const struct adxl345_chip_info *info;
->  	struct regmap *regmap;
-> +	u8 intio;
->  };
->  
->  #define ADXL345_CHANNEL(index, axis) {					\
-> @@ -213,6 +220,7 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  
->  	st = iio_priv(indio_dev);
->  	st->regmap = regmap;
-> +
-Check patches for unrelated changes like this and drop them as they are noise.
-If you want to tidy this sort of whitespace up, separate patch.
+Finally, I found something, after I enabled ath11k boot dbg, I got my
+id_string='bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255`
 
->  	st->info = device_get_match_data(dev);
->  	if (!st->info)
->  		return -ENODEV;
-> @@ -263,6 +271,15 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  	if (ret < 0)
->  		return ret;
->  
-> +	st->intio = ADXL345_INT1;
-> +	st->irq = fwnode_irq_get_byname(dev_fwnode(dev), "INT1");
-> +	if (st->irq < 0) {
-> +		st->intio = ADXL345_INT2;
-> +		st->irq = fwnode_irq_get_byname(dev_fwnode(dev), "INT2");
-> +		if (st->irq < 0)
-> +			st->intio = ADXL345_INT_NONE;
+With qca-swiss-army-knife (see [1])
 
-As in the DT binding, maybe we can fall back to an assumption of default.
-So if interrupt names missing we assume INT1.
+$ ./ath11k-bdencoder -e board-2.bin | grep -i "$id_string"
+bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255.bin created size: 60048
 
-> +	}
-> +
->  	return devm_iio_device_register(dev, indio_dev);
->  }
->  EXPORT_SYMBOL_NS_GPL(adxl345_core_probe, IIO_ADXL345);
+It have already been here. So that means I don't need to extract from
+Windows. I just extract it from linux-firmware then give it a variant
+name and send patches to ath11k, right?
 
+Pengyu
+
+[1] https://github.com/qca/qca-swiss-army-knife
 
