@@ -1,199 +1,169 @@
-Return-Path: <linux-kernel+bounces-445839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC16B9F1C20
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:35:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B139F1C21
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306BA1889B06
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8909416586B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2143B18622;
-	Sat, 14 Dec 2024 02:35:49 +0000 (UTC)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F47B17BB6;
+	Sat, 14 Dec 2024 02:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WwiH2gtY"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0693323AD;
-	Sat, 14 Dec 2024 02:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E49FBF6
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 02:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734143748; cv=none; b=HoEAmi5MX+MoJN4/EGGrlhj24XKD597636skRmQ9WSWD7It3pG7YJHtYVrQYyhCKxM5BiEhDPaufHxaRh3QbjE8wFVtRFmWeB5QzmDwq+4SnUKtwLG7iUjeFeQx0caalcGXNUXV5x8sQjKYzmZaXoN+AXeyiDl3oyw7HWSW/Bf0=
+	t=1734144000; cv=none; b=YfKPSyThB5xTrrp/3ykQLZ9Y5N+EWgpGvLDa1A0goDtFWl6s8MvjF+3IXPODKeZ3gTnIEMeXpObnifhREMj3s9sVBlPLZYTBZ/usElWyRR7Iwvexcu/7hXQ4xOMQ6Wzn9/hmDbSBQJftmoUkkNS1RRakEg7doe4YZIJSEquKcvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734143748; c=relaxed/simple;
-	bh=4wqap3t1XSWLu8ztdQ7Cu8789k+uDEU+NcHW1Y8XLuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOMXC4OaDuOlYjpMQ2VSPYMM8dG+jNLD1qPRY6IwvjyzMTFNr1g9CPUceowCuvy9qTuTkbnvpf0oBviZ/wwD0VWAw6/fGhcBwhP8vnSsHRp0vUE3U/jeHzsMEnmiulanLJbeSh8GWGVIyzIIazslRyBkz+DhkiIqS3J5rTDhMIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1764844a12.0;
-        Fri, 13 Dec 2024 18:35:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734143746; x=1734748546;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1734144000; c=relaxed/simple;
+	bh=CpYEd+MHVxlo6UOMuDPZeDAHGP+KjfKsFRmCOZi9ztA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFbEjWLQ8b3ZFdwC7ZeCkd4wXLjLZU8SVteG8pYB2VjP/maUXu4AyWIoos386k+J2S+cgIXlIrFoTiNBnm0iim9bO9Jm5rlpDtUDuAtaNdVEjsmZGVjyLHXxLKXApNs0pqjRpJ/h3Zbc4ugTh/EZI8yfpGFnIgn7JaKuyLxQ3x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WwiH2gtY; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso343504566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734143997; x=1734748797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FPRhjEJVxQTQSLdLSuZF+NUxMFxgovEYaBdCXHPfWoc=;
-        b=PxkK1S8S5VjgRp2h9sCKk/UuEogru7TxYFZHiy9ErEqr1ysU04vA1k0uZxSQ2b/Qc7
-         5bdSkEKNHXjKgFB/8vhEgVKyIdX/+BGWzrwufbzdUv5MccG+tRrhwTk8L3WgzVY4y7hp
-         MOWzkxspLQ8xXeTmCq+j0T1W9SbzvGkVsp2F1KY9eciD9S0H0I3Fc0QGsaCsdlfi6jDq
-         xresfCN+jM4iThmzIg30IjrFbiYKzgIJ0/HaKN4s0ugDDXEA991nQoYnKUTN1OPEb3hL
-         rROMlcTXBo8E6pMyiCG+co0NFGlZKAnWkdLXkkl3XfV9W47mmgC+MZLYS0ji81EmvVBQ
-         ybhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ0oMNKnZACnKBLR2yFrkLWKyCtQfehu/jMbz86zIMU73FKpyfBvNBY28//+grZSWlasO47sWV7MQ=@vger.kernel.org, AJvYcCWG2VI5aSi/xyAG9sh0vADDuqk9bcWnGfKgRcfdhEbXIUi+VUXcpdn56zyRZYwoA9Sjgx3mOBfy+us2m7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9mHaaEx54kUoUt/xxitaxv0Ab9x7pVRGKOI8ONMgawIKY400y
-	g8/bWCbLJulKH5YDjdeWBVtzZRjMaVo1+wMehhED3Xr4tA136Yvupij+g20b
-X-Gm-Gg: ASbGncsy1rRYnHrpHXTWx3tPUNfjo7i9UyjRQPg6uHiX5qUGQ5puy8oUtikYmQQOBlg
-	cWImTh1OG4dw4Tw6aB6zalRuZv4PZsl3DwBUEW4/4nnMKm15RyVuE56CIXddYxxL6ta5U2sbUzY
-	BfAHUue4hcoTQx3hfaOxPif4oklFUaLqhqH7A0VAphjIACRfHCLj6K/N0AZduBto4QWLbHWnv4n
-	dpQhpaAUl4+RaSHQFJnlMUaIk7MeME7mQNVhI8Agr0pf7tNsLAh8VxdqHBfPFN+aRECmtUmZFA=
-X-Google-Smtp-Source: AGHT+IHxR7O4ws5JgiDlhLRgvzI0NMOJdvjjQoVfbkd0GPtBPu+2RIHPfLAM2ibiKTPZXKZpNkfSRQ==
-X-Received: by 2002:a17:90b:3b48:b0:2ee:7415:4768 with SMTP id 98e67ed59e1d1-2f28fd6f5c1mr8909669a91.17.1734143746232;
-        Fri, 13 Dec 2024 18:35:46 -0800 (PST)
-Received: from sultan-box.localdomain ([142.147.89.231])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1e9dfa1sm557652a91.20.2024.12.13.18.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 18:35:45 -0800 (PST)
-Date: Fri, 13 Dec 2024 18:35:42 -0800
-From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cpufreq: schedutil: Fix superfluous updates caused
- by need_freq_update
-Message-ID: <Z1zu_nDQcik0cZLx@sultan-box.localdomain>
-References: <20241212015734.41241-1-sultan@kerneltoast.com>
- <20241212015734.41241-2-sultan@kerneltoast.com>
- <79448239-86df-43ef-9a4f-717802d2c70a@arm.com>
+        bh=acz4a1CtLmHqY0hs65r3J6l3cfn4CQhhkU50yv57948=;
+        b=WwiH2gtYgnDd/LfqWZbFDLmJ8AV3ee24y++ysn6gINYyPk/dSAFaguyKQPChGu0hs6
+         nBXMBG/h9YCWXgPx1Obfv4mFP2h6Lq3N9fUhA56YZEl8SbguS+BRszyF9Q/1cDPJcg5h
+         gwKshJ0yldjNLlJLe1qJ2g5aE2/ml/HGyFB+K29fT4qGpWWxZk28KFRtq5krxXYdMuoC
+         SmnszVLStMFkejUfNBtWnb/0wamJz5cbpNjCjCtfn/Xnr5MzhLRXw9ZfFsxJkgtmzGVE
+         4o4uJZ6Oc1xig2c/AxQCd4lbS5OZekV2YIp5BId5+uqDaNIFQ/gD98jdAjBtSMyNIrCZ
+         Zxew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734143997; x=1734748797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=acz4a1CtLmHqY0hs65r3J6l3cfn4CQhhkU50yv57948=;
+        b=ZIhne1cuLT3YvsM7CnyglAC7hLHKbODnNYo1dgqOSChZllySIA8EP9R+G44BSwHvV9
+         QUc+NJ87uJlcV9xmFmZ7Um33Htj8UcrO7qRf2Hw45MLAxYOUWjX/lyZEHmTxsOVtlTUZ
+         WsMkhS1djMJ0UCDYnceMgAG/7hXqCZ27GMH5wsMxQLwgTrL69qdTMN2Tv5VRLTzbCTwG
+         fBZXBOwiYGnorvIu/K8qq7kWjXSR1KKHjXF74USQUzfd/IlGajTo9/NJYYfNuctN2TY2
+         Ba9cuhM2dLhYv+lTnQFxYs4k6glgiEM/T6XhyLaKB4F5Q9RhtNGyuEP20nPCkof6PfOt
+         vtlg==
+X-Gm-Message-State: AOJu0YylDXHaxwlq21vtEyIGM33KMLYiX2YsOvNQomCbR5I6w1k+ison
+	5GU1RMvDXAxcJHBLlaqzwMmOvbqJpZEBncKIPWfBvZ9BzLlxeCzAwZAI3VNZfRtLaFvGt9fb9nX
+	ZkuE48bCapAldI0hO5LxLT+UP3lyac/6zRik=
+X-Gm-Gg: ASbGncs6khcln+fKIefh4J9KcfSQoR5qCeucB4ur/ZPrLyu5ByH3h4Rdfl8xJXLwYQS
+	vvDhel53wqGY4XJA+/w64HAC1WZVZjQm/Y4twqSRUUG/u50r+uMz/7mEpkB3605Re5u4=
+X-Google-Smtp-Source: AGHT+IFmARx6HH0jMAiu/FoIScFvu6EiOfjpAZvtvt0srcyd8ZEKsrTQwGJ68TMYNTu9Xeqq+u4YwVCsEeEOv3Y6WC4=
+X-Received: by 2002:a17:907:1c0f:b0:aa6:b4b3:5925 with SMTP id
+ a640c23a62f3a-aab77909d61mr407783466b.14.1734143997057; Fri, 13 Dec 2024
+ 18:39:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79448239-86df-43ef-9a4f-717802d2c70a@arm.com>
+References: <20241212222138.2400498-1-jstultz@google.com> <20241213124614.GA12338@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241213124614.GA12338@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 13 Dec 2024 18:39:45 -0800
+X-Gm-Features: AbW1kvaCZ9tVExy_wYYt6Eym76cuFsl5HPs44lJExTzW4jwMQ6IB44otCYPEpGI
+Message-ID: <CANDhNCo0W6cYhVQm7TQso=E9evhYy2oxSLnVz-KxbOdfomZFgQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] locking/rtmutex: Make sure we wake anything on the
+ wake_q when we release the lock->wait_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Bert Karwatzki <spasswolf@web.de>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 01:24:41PM +0000, Christian Loehle wrote:
-> On 12/12/24 01:57, Sultan Alsawaf wrote:
-> > From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
-> > 
-> > A redundant frequency update is only truly needed when there is a policy
-> > limits change with a driver that specifies CPUFREQ_NEED_UPDATE_LIMITS.
-> > 
-> > In spite of that, drivers specifying CPUFREQ_NEED_UPDATE_LIMITS receive a
-> > frequency update _all the time_, not just for a policy limits change,
-> > because need_freq_update is never cleared.
-> > 
-> > Furthermore, ignore_dl_rate_limit()'s usage of need_freq_update also leads
-> > to a redundant frequency update, regardless of whether or not the driver
-> > specifies CPUFREQ_NEED_UPDATE_LIMITS, when the next chosen frequency is the
-> > same as the current one.
-> > 
-> > Fix the superfluous updates by only honoring CPUFREQ_NEED_UPDATE_LIMITS
-> > when there's a policy limits change, and clearing need_freq_update when a
-> > requisite redundant update occurs.
-> > 
-> > This is neatly achieved by moving up the CPUFREQ_NEED_UPDATE_LIMITS test
-> > and instead setting need_freq_update to false in sugov_update_next_freq().
+On Fri, Dec 13, 2024 at 4:46=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Thu, Dec 12, 2024 at 02:21:33PM -0800, John Stultz wrote:
+> > Bert reported seeing occasional boot hangs when running with
+> > PREEPT_RT and bisected it down to commit 894d1b3db41c
+> > ("locking/mutex: Remove wakeups from under mutex::wait_lock").
 > >
-> 
-> Good catch!
-> Fixes:
-> 600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
-> 
-> 
-> > Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
-> 
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-
-Thanks for the review and digging up the bug provenance!
-
+> > It looks like I missed a few spots where we drop the wait_lock and
+> > potentially call into schedule without waking up the tasks on the
+> > wake_q structure. Since the tasks being woken are ww_mutex tasks
+> > they need to be able to run to release the mutex and unblock the
+> > task that currently is planning to wake them. Thus we can deadlock.
+> >
+> > So make sure we wake the wake_q tasks when we unlock the wait_lock.
+> >
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Waiman Long <longman@redhat.com>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Bert Karwatzki <spasswolf@web.de>
+> > Cc: kernel-team@android.com
+> > Reported-by: Bert Karwatzki <spasswolf@web.de>
+> > Closes: https://lore.kernel.org/lkml/20241211182502.2915-1-spasswolf@we=
+b.de
+> > Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::w=
+ait_lock")
+> > Signed-off-by: John Stultz <jstultz@google.com>
 > > ---
-> >  kernel/sched/cpufreq_schedutil.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index 28c77904ea74..e51d5ce730be 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -83,7 +83,7 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-> >  
-> >  	if (unlikely(sg_policy->limits_changed)) {
-> >  		sg_policy->limits_changed = false;
-> > -		sg_policy->need_freq_update = true;
-> > +		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);>  		return true;
-> >  	}
-> >  
-> > @@ -96,7 +96,7 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
-> >  				   unsigned int next_freq)
-> >  {
-> >  	if (sg_policy->need_freq_update)
-> > -		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
-> > +		sg_policy->need_freq_update = false;
-> >  	else if (sg_policy->next_freq == next_freq)
-> >  		return false;
-> 
-> I guess you could rewrite this into just one if like
-> 
-> ---
-> 
-> 	if (sg_policy->next_freq == next_freq && !sg_policy->need_freq_update))
-> 		return false;
-> 
-> 	sg_policy->need_freq_update = false
-> 	sg_policy->next_freq = next_freq;
-> 	sg_policy->last_freq_update_time = time;
+>
+> I don't suppose this actually makes things much better -- but I had to
+> try.
+>
+>
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -1192,6 +1192,17 @@ try_to_take_rt_mutex(struct rt_mutex_bas
+>         return 1;
+>  }
+>
+> +#define WRAP_WAKE(_stmt, _q) \
+> +do { \
+> +       struct wake_q_head *_Q =3D (_q); \
+> +       guard(preempt)(); \
+> +       _stmt; \
+> +       if (_Q && !wake_q_empty(_Q)) { \
+> +               wake_up_q(_Q); \
+> +               wake_q_init(_Q); \
+> +       } \
+> +} while (0)
+> +
+>  /*
+>   * Task blocks on lock.
+>   *
+> @@ -1295,13 +1303,7 @@ static int __sched task_blocks_on_rt_mut
+>          */
+>         get_task_struct(owner);
+>
+> -       preempt_disable();
+> -       raw_spin_unlock_irq(&lock->wait_lock);
+> -       /* wake up any tasks on the wake_q before calling rt_mutex_adjust=
+_prio_chain */
+> -       wake_up_q(wake_q);
+> -       wake_q_init(wake_q);
+> -       preempt_enable();
+> -
+> +       WRAP_WAKE(raw_spin_unlock_irq(&lock->wait_lock), wake_q);
 
-Hmm, asm seems worse since it adds an extra store to one of the branch targets:
+I worry this obscures the _stmt action and makes it a bit harder to read.
 
-Before:
--------
-        00100020 e3 03 00 aa     mov        x3,x0
-        00100024 00 a8 43 39     ldrb       w0,[x0, #0xea]
-        00100028 3f 23 03 d5     paciasp
-        0010002c c0 00 00 36     tbz        w0,#0x0,LAB_00100044
-        00100030 7f a8 03 39     strb       wzr,[x3, #0xea]
-                             LAB_00100034
-        00100034 20 00 80 52     mov        w0,#0x1
-        00100038 61 14 00 f9     str        x1,[x3, #0x28]
-        0010003c 62 38 00 b9     str        w2,[x3, #0x38]
-        00100040 ff 0b 5f d6     retaa
-                             LAB_00100044
-        00100044 64 38 40 b9     ldr        w4,[x3, #0x38]
-        00100048 9f 00 02 6b     cmp        w4,w2
-        0010004c 41 ff ff 54     b.ne       LAB_00100034
-        00100050 ff 0b 5f d6     retaa
+I think all of the calls are tied to the unlock (the one you quoted
+earlier was removed with 82f9cc094975240), so would something like a
+special unlock be reasonable:
+   raw_spin_unlock_irq_and_wake(&lock->wait_lock, wake_q)
+?
 
-After:
-------
-        00100020 e3 03 00 aa     mov        x3,x0
-        00100024 00 38 40 b9     ldr        w0,[x0, #0x38]
-        00100028 3f 23 03 d5     paciasp
-        0010002c 1f 00 02 6b     cmp        w0,w2
-        00100030 c0 00 00 54     b.eq       LAB_00100048
-                             LAB_00100034
-        00100034 20 00 80 52     mov        w0,#0x1
-        00100038 61 14 00 f9     str        x1,[x3, #0x28]
-        0010003c 62 38 00 b9     str        w2,[x3, #0x38]
-        00100040 7f a8 03 39     strb       wzr,[x3, #0xea]
-        00100044 ff 0b 5f d6     retaa
-                             LAB_00100048
-        00100048 60 a8 43 39     ldrb       w0,[x3, #0xea]
-        0010004c 40 ff 07 37     tbnz       w0,#0x0,LAB_00100034
-        00100050 ff 0b 5f d6     retaa
-
-Sultan
+thanks
+-john
 
