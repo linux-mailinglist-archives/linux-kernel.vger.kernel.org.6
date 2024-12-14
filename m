@@ -1,91 +1,115 @@
-Return-Path: <linux-kernel+bounces-445842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B679F1C25
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:43:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CE69F1C27
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E279169871
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B8027A0464
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C171018AE2;
-	Sat, 14 Dec 2024 02:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6nassFL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1293118AFC;
+	Sat, 14 Dec 2024 02:44:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D1810A1E;
-	Sat, 14 Dec 2024 02:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384A13FEE;
+	Sat, 14 Dec 2024 02:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734144175; cv=none; b=nQUryuGr0OYKvGRufWLIjUWg+jHEZ0W0M7ulvNbkgPLY/sfcQldkJYNgWaoMIu81K3CTaOzKkolI2I/2h3TWE/T5hNzB2sPrgSXeY/59jBK6RPeu88E0Tj+fVBDhw45oxxjoNx8KmfdjOQYEI+Lcp7Tf8xMbbQw9L2va9dYy6V8=
+	t=1734144287; cv=none; b=FP8GnsHmyYNeFM3STpeQGf271rUtYeFbYPvvNPtwYdRF8lPtzCwBv1x6bv9Eii1n4ZvQn5DxEOz7h8tQT3xooU3+0BSClpaFPSEHhzK0gloOQScGwh1bOrz4L3sy6atNiE1bXLCaiIRJE2z38JGwKBhqEwTk9EuyiVkhdxoUMOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734144175; c=relaxed/simple;
-	bh=ztEhXcSAyyqNq3L4FS9I/YkZ86zRTO0AYWpbeD09Kgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fpVbC116n7LR9+63nc7XFi80HVE3DrCJvFLMeZFCNbL/DVCiyQ+LVD+8/Ir/4bokMswhjlU/3i8OD3V5uKcccZEsKncceTuxN9treR2BCwvSVwVsdhmaQUf0ou5qUrB16rGunYy+nFgmzYJxgz1K7imJSkvaEtqz7/+ia3yqUYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6nassFL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5037DC4CED0;
-	Sat, 14 Dec 2024 02:42:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734144174;
-	bh=ztEhXcSAyyqNq3L4FS9I/YkZ86zRTO0AYWpbeD09Kgw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V6nassFLbvy+EOuEChJi9YzsJTKmj4kDtoSvCSpUwwx1pedXE/Th+VCvPHlO4r6TJ
-	 b7Dp7bU24wP+5BfBvIAiYVXuiovwRDNAj0xVf6Qpvanj7amEWoBOt+vXusapd+i50L
-	 RgsslmqoLeR/ZXIcNyiyWmW+4UJFuUIb5/S1EepctlExLFh9wVp2yhB1kql1S3x0BS
-	 1jcTaikDNAtKn6aJJPd9tYrmA/h0MVHYQRDkPuZ7jUuzTzG89BfoVxDfcW1nxU3Xpi
-	 fWZBwHq/+8lsv0MAzmWvQKNCwvPTYqx8c9ID4zITZJGGxbiqqGBocMmRRuU9o/Zene
-	 1NXGCSJkLNIEA==
-Date: Fri, 13 Dec 2024 18:42:53 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: <Parthiban.Veerasooran@microchip.com>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
- <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
- <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net v3 2/2] net: ethernet: oa_tc6: fix tx skb race
- condition between reference pointers
-Message-ID: <20241213184253.7c8203ce@kernel.org>
-In-Reply-To: <b7a48bbf-d783-4636-8f75-35c9904ffe05@microchip.com>
-References: <20241204133518.581207-1-parthiban.veerasooran@microchip.com>
-	<20241204133518.581207-3-parthiban.veerasooran@microchip.com>
-	<20241209161140.3b8b5c7b@kernel.org>
-	<5670b4c0-9345-4b11-be7d-1c6426d8db86@microchip.com>
-	<b7a48bbf-d783-4636-8f75-35c9904ffe05@microchip.com>
+	s=arc-20240116; t=1734144287; c=relaxed/simple;
+	bh=LXQ424kNl0hkFT7GE2IZ60/jBTpGcgsKLpzUxMya2PI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bw78ZGDDpMiBuJckfnzhhXyTHo0uQ/gKbLgB4w+nnmWGRzpEEmQtHD0rc8OUZua/ZcAJJGrUYo7GQYYc0Wi3XpPsf+fWr03T7V45tgKjhcnRNj/OruSHEkl6F8Gkutic6J2p/rov8dESRJ4GZFukMCAGez6zTRGsc7d90nwjllo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y99Wy4M3Zz4f3jRC;
+	Sat, 14 Dec 2024 10:44:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EF4FB1A0359;
+	Sat, 14 Dec 2024 10:44:33 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgDHo4cQ8VxnjzcoEg--.42921S3;
+	Sat, 14 Dec 2024 10:44:33 +0800 (CST)
+Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
+ the tag reservation code"
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
+ ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-2-yukuai1@huaweicloud.com>
+ <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+ <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
+ <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
+ <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2562353d-bfe3-a2b1-5427-76426cbda7b4@huaweicloud.com>
+Date: Sat, 14 Dec 2024 10:44:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHo4cQ8VxnjzcoEg--.42921S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw47Gw1xtrWfXr4UWF4UJwb_yoWkWrXEgw
+	4qyryDGw4jqr1fCr47GayrGrZ0qrWDta4UArykKF4UX34IkwsxCF90kryfZa13XFyUKrn3
+	Xw1jyry5AwnF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, 13 Dec 2024 10:35:03 +0000 Parthiban.Veerasooran@microchip.com
-wrote:
-> >> start_xmit runs in BH / softirq context. You can't take sleeping locks.
-> >> The lock has to be a spin lock. You could possibly try to use the
-> >> existing spin lock of the tx queue (__netif_tx_lock()) but that may be
-> >> more challenging to do cleanly from within a library..  
-> > Thanks for the input. Yes, it looks like implementing a spin lock would
-> > be a right choice. I will implement it and do the testing as you
-> > suggested below and share the feedback.  
-> I tried using spin_lock_bh() variants (as the softirq involved) on both 
-> start_xmit() and spi_thread() where the critical regions need to be 
-> protected and tested by enabling the Kconfigs in the 
-> kernel/configs/debug.config. Didn't notice any warnings in the dmesg log.
-> 
-> Note: Prior to the above test, purposefully I tried with spin_lock() 
-> variants on both the sides to check/simulate for the warnings using 
-> Kconfigs kernel/configs/debug.config. Got some warnings in the dmesg 
-> regarding deadlock which clarified the expected behavior. And then I 
-> proceeded with the above fix and it worked as expected.
-> 
-> If you agree, I will prepare the next version with this fix and post.
+Hi, Bart
 
-Go ahead.
+在 2024/12/11 4:33, Bart Van Assche 写道:
+>> If so, following are the options that I can think of to fix this:
+>>
+>> 1) make async_depth read-only, if 75% tags will hurt performance in some
+>> cases, user can increase nr_requests to prevent it.
+>> 2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
+>> with q->sysfs_lock, so deadline_async_depth_store() will be protected
+>> against changing hctxs, and min_shallow_depth can be updated here.
+>> 3) other options?
+> 
+> Another option is to remove the ability to configure async_depth. If it
+> is too much trouble to get the implementation right without causing
+> regressions for existing workloads, one possibility is to remove support
+> for restricting the number of asynchronous requests in flight.
+
+If you agree, I'll use following option in the next version:
+
+4) set min_async_depth to 64 (after treating min_shallow_depth for the
+whole sbitmap instead of one word).
+
+The good thing is that user can still set async_depth without changing
+wake_batch, the side effect is that async_depth can't be used if
+nr_requests <= 64;
+
+Thanks,
+Kuai
+
 
