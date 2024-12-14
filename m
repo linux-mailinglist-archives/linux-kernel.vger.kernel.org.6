@@ -1,268 +1,261 @@
-Return-Path: <linux-kernel+bounces-446070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF029F1F84
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AD49F1F88
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB304166E54
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0C518869E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78B81A724C;
-	Sat, 14 Dec 2024 14:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VorX74xw"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E959195F04;
+	Sat, 14 Dec 2024 15:03:23 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D22F197521;
-	Sat, 14 Dec 2024 14:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5410F191F6F
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734188222; cv=none; b=iOhJ45UCbhBn5RL6rxJ/ud2eihAHAo/lhRZMKMy4Noyo5MGn+i6i6dmuUIxQ/rB9rxbhK8rEaiXDJXCYriSWwDp0XtX+J9fvZA4qykewm+XPX0QYxgdHMKHhm5PHj7QssRgRcBCKXcPzt2nOuqscXl3/oFhwSMye35IilmKRA/s=
+	t=1734188603; cv=none; b=ZKHa1LvzHPFTFM84LUhwk2/cgM3RThA+d6BV0cMpsrQhYccSoVFBbqhTVcFyZ5Ro6f6Jpj1TkHcqDjEqj1JkS3QezCqnYPPAo+dl+MR/8paTrEmdwkzrFxAYCwaAP7URCckHpfbyE2lAsZlXZ72BTAWe7qdk0sGQ/kK8IoKi+oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734188222; c=relaxed/simple;
-	bh=uMCyvBcblST8fT6tpNS3iuyS4bo3Z+mJv8estU8DrRg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=etZX9rexmWLUAlaLzmrupeAHGrWx8CCZXIEWtgH81amSngU0dUXVm5rPQtBTvBHEc1MdzhGnLnnbmcxXMkmRiqGr1aYLbiOIqfJDITM7xAQWJ59SUFCElmOj/AcYyboR3TlnX5lBBLEPQ1MFn04yew6erE1QyFISzXyDcuCIy84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VorX74xw; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso4888810a12.1;
-        Sat, 14 Dec 2024 06:57:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734188219; x=1734793019; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NqF8zkGZ+2VzBoyfd3d5WoB474c43oRczfanBsCjA+g=;
-        b=VorX74xwpyy2X3c2P9CM2DPN9QSPc8dXpxYQNwFBirLQH9OISmtbrH2tipTJCr7I1c
-         XIw2YfA1YheS8QQqIa/qEsU8QWIoihlPiWJi9ifubI0Hkek/A/haBntYp3edgnAr1wCd
-         wSe75XCXVM0wZSY8OByFpd9cBGw0OVnIM7xkmJQpMvKtfKPJjafDb4ZGxA+zS2a2ts/Y
-         VQ9fFgKGngV2nZm9Io8ZFnMsnah2OL3KW89XfJeCGL/E3km6Lyrow0rW2YXYmOEEK5YV
-         fmQXcz+GL9eM6qWPFJ5J7ziEo8j9DaiTOqbTSkFh8nff8xMRj9RvHR9O5lCElY1nAFYA
-         matA==
+	s=arc-20240116; t=1734188603; c=relaxed/simple;
+	bh=DdLOM1qHzPfeoVfGflR2fskNrH89lMWL9H6iCSrftbY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uyY2qAdNi95Of6AheyTn1bKl4UfxsW3jAfmpLAnJUpa02r6JZJ+hN+aKeoMV4of8FaGhm6WUl77IWZHBza5KxhB9Ppy6sgezCMXGjNAGZVkT2NyfJCRd0XWxlGOaCWVOO5Wozk/N7dWddMAVitGUEp6uH326+psSeQBQReTNJzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so24022965ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:03:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734188219; x=1734793019;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NqF8zkGZ+2VzBoyfd3d5WoB474c43oRczfanBsCjA+g=;
-        b=eRkYksdd/wg9ESpeWrBumSrEb0+iNDcgU6xlS5HZnIaw9rszTa1RgmALUJyA5y2SRJ
-         bzgCknDRQtWQTKbwqPlSqlSpXBovzC9jR9RMxRmXbrs3aH1Adr17aEjshnsVal8Oesp9
-         t0DvHH6u+pykYooQlJ+NI8u0zB6wW9UxnxMbWu1mI1oQVOHAbOc5prQYXMP4phKHNIgQ
-         ZKifBrf4hXYEXpfdAhJQW28NIEZLhbyTHsvR7xhqxLPFY5LxYkfQQmwwMaMMDRDZ9zgM
-         hxL6tNUjW6IVEpkGD1SEZpsAzsf+a8Olqf86yRIPUEfhSwIbSrIv04mi6FxBxUJQDjT3
-         CCJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUs6Na5AEzYpT8ZjsuPmkjlXsjS1NzSwflOC5O9uivEB5/jdbcSLBGGr+8geK6O8npQ6iJdCGjJcgzS@vger.kernel.org, AJvYcCVAjnMtmMw47d2/i5trnDeVkB4+9aRDH5uYaUA/DmBtMM+ovCXQLvy2WpMbHfNPYHAOIRVBAjx8tjVfevdP@vger.kernel.org, AJvYcCWIKhdIKEAU7devBdIBZkuGyNmDGynnwk/JjtsYcsgpY7RsXAm/uszYlU1pEyksBXGhBZwwHoJdcnlHEEMlbmcQUgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw4ECbVd8VlxzVBu6bS3iGUckpVJAJbYjevwNzFNfXIZPIiJSg
-	IDudrgyq8YAQuAYo9c5mJYTpl5VbwrK8vNbxDc24ogJ0VWeCOfn0
-X-Gm-Gg: ASbGncu+Zm+5+3c+x4Ex4w5KDrGgt+Cu3Wa9xIFoi79Yl7ZlZyGCkYYw+dhrHCVNBvg
-	rdFkoH4FqXB24FhmFbyv/83hh5b+0GgxhcEuOIsjUMw0NtrFMA7oTYYJ0SSeF7PL/Zn7Ec2OPpv
-	YOZQ2H4HJWkVmV1LziYA9kgK0nTJI4boiAGsReDlM4oF+0/uAOn5s9LWVW6zdU500Jhh4fYKiNd
-	EyvMkRUB4wVwUxXUiQVeQbaHh7RyJx4XTW7+s2hdNPAiE3fEo1WUuWgXeicVTHaIQu8
-X-Google-Smtp-Source: AGHT+IFxNg58c28hScps000IQjmxAmucWih6Giz9E/maqKo2D7cuPoqcCZlJKfOujrTr7vMGJ+DIiw==
-X-Received: by 2002:a05:6402:5189:b0:5d0:d328:3a43 with SMTP id 4fb4d7f45d1cf-5d63c2238f0mr5933372a12.6.1734188219290;
-        Sat, 14 Dec 2024 06:56:59 -0800 (PST)
-Received: from [192.168.31.111] ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f35b5bsm1057698a12.89.2024.12.14.06.56.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 06:56:58 -0800 (PST)
-From: Markuss Broks <markuss.broks@gmail.com>
-Date: Sat, 14 Dec 2024 16:56:47 +0200
-Subject: [PATCH RESEND v4 2/2] arm64: dts: exynos: Add initial support for
- Samsung Galaxy S9 (SM-G960F)
+        d=1e100.net; s=20230601; t=1734188600; x=1734793400;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Cp9X4RABKxUCFpngYxzOhWEwmB3ji+aITki0Zr2D5es=;
+        b=sy+Fj9VecZC4+7C9oE/+EqECIqe7+Ws/H2rbDl8YjaZAZsABa71yuwOJifeJJ2Rk10
+         I65RLDgEhdz1CFMUP1Hv8S4B8R/Fd/ceThDq82Vg4JHySQe3D5s3LwzEv5DywB7s2Y0X
+         k5hpO69gIWjb2Do5iQo3qkzerrMw29kMyHsIrsnkogavHOF0lqNxT0hMQR6OHNQX8uNj
+         v3+DnvnQuy+mHvRM2bgJeZ3tnGpLWQS/yyerc2H5gFytUyw9+cfFHKZTmCjbwnn5e4GK
+         EkdJud27CgabF1g+FFXgYmP8n6EMgYGWTZVNOhr+FPrZHoaOyj5u6WG2HU9qqwl3S2+X
+         M/2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMmiQk8D9sBXo6zLymx6zeFansCqTnc5BSYgJ7PFl5/0hBcFTk5kS9GB/8Px/LdWR8qSUtKAgxT8/5OXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoVp3Y8ZLYZx6CfaqF6CJLsfglFmdW02mSUjmPiHKUfm+Tt47e
+	BXdtdQyx8C4JBtCB9VQxiXFGYGzpGc/A4o2z3gpDMXprbDIcrkfWPXK5HEv3N8BX1xyI85jpoBN
+	yU2U1hcRuh/Tusj/DmbZmuz7pK5Slu6RLtPUmjUg98Iu9p3PZUU9i76I=
+X-Google-Smtp-Source: AGHT+IF9oifGX1EiocYuP6wsmB2qjMZL1qVQ4UWxVJyddk8bmy+bacAicmXcnsdY8cojK3p3VwfR+/hG/GpjO55mWyt4J7iIva2V
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241214-exynos9810-v4-2-4e91fbbc2133@gmail.com>
-References: <20241214-exynos9810-v4-0-4e91fbbc2133@gmail.com>
-In-Reply-To: <20241214-exynos9810-v4-0-4e91fbbc2133@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Maksym Holovach <nergzd@nergzd723.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734188212; l=4455;
- i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
- bh=uMCyvBcblST8fT6tpNS3iuyS4bo3Z+mJv8estU8DrRg=;
- b=AJDcFzYMPwpHeA6CF5N0iaoMpemqx+KpuAauJgSprpU8ee8Y0ttV7ftg2WNTkL6PkWlqwF/+p
- jjrnRhbkW5XCpBmA5WwUsRx7dZJgkWZB+v3pXc5XRJuZagYJ1NmI0Jn
-X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
- pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
+X-Received: by 2002:a05:6e02:1a25:b0:3a7:e528:6ee6 with SMTP id
+ e9e14a558f8ab-3aff039a554mr77439225ab.13.1734188600419; Sat, 14 Dec 2024
+ 07:03:20 -0800 (PST)
+Date: Sat, 14 Dec 2024 07:03:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675d9e38.050a0220.37aaf.00ca.GAE@google.com>
+Subject: [syzbot] [sctp?] possible deadlock in sctp_sock_migrate
+From: syzbot <syzbot+95ba71e75926e4a97806@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Samsung Galaxy S9 (SM-G960F), codenamed starlte, is a mobile phone
-released in 2017. It has 4GB of RAM, 64GB of UFS storage, Exynos9810
-SoC and 1440x2960 Super AMOLED display.
+Hello,
 
-This initial device tree enables the framebuffer pre-initialised
-by bootloader and physical buttons of the device, with more support
-to come in the future.
+syzbot found the following issue on:
 
-Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
-Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
-Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+HEAD commit:    7cb1b4663150 Merge tag 'locking_urgent_for_v6.13_rc3' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1617eb30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=95ba71e75926e4a97806
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d137a327f35/disk-7cb1b466.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/14581a57cb27/vmlinux-7cb1b466.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/22586b0e9bbc/bzImage-7cb1b466.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+95ba71e75926e4a97806@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0 Not tainted
+------------------------------------------------------
+syz.5.1757/14440 is trying to acquire lock:
+ffff88807f80c658 (sk_lock-AF_INET/1){+.+.}-{0:0}, at: sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
+
+but task is already holding lock:
+ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1617 [inline]
+ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: sctp_accept+0x90/0x800 net/sctp/socket.c:4863
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
+       lock_sock include/net/sock.h:1617 [inline]
+       sockopt_lock_sock net/core/sock.c:1126 [inline]
+       sockopt_lock_sock+0x54/0x70 net/core/sock.c:1117
+       do_ip_getsockopt+0x115c/0x2bf0 net/ipv4/ip_sockglue.c:1703
+       ip_getsockopt+0x9c/0x1e0 net/ipv4/ip_sockglue.c:1765
+       raw_getsockopt+0x4d/0x1e0 net/ipv4/raw.c:865
+       do_sock_getsockopt+0x3fe/0x870 net/socket.c:2374
+       __sys_getsockopt+0x12f/0x260 net/socket.c:2403
+       __do_sys_getsockopt net/socket.c:2410 [inline]
+       __se_sys_getsockopt net/socket.c:2407 [inline]
+       __x64_sys_getsockopt+0xbd/0x160 net/socket.c:2407
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (rtnl_mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+       smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1898
+       __smc_connect+0x466/0x4890 net/smc/af_smc.c:1517
+       smc_connect+0x2fc/0x760 net/smc/af_smc.c:1693
+       __sys_connect_file+0x13e/0x1a0 net/socket.c:2055
+       __sys_connect+0x14f/0x170 net/socket.c:2074
+       __do_sys_connect net/socket.c:2080 [inline]
+       __se_sys_connect net/socket.c:2077 [inline]
+       __x64_sys_connect+0x72/0xb0 net/socket.c:2077
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (sk_lock-AF_SMC){+.+.}-{0:0}:
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
+       lock_sock include/net/sock.h:1617 [inline]
+       smc_close_non_accepted+0x80/0x200 net/smc/af_smc.c:1832
+       smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
+       smc_close_active+0xc3c/0x1070 net/smc/smc_close.c:225
+       __smc_release+0x634/0x880 net/smc/af_smc.c:277
+       smc_release+0x1fc/0x5f0 net/smc/af_smc.c:344
+       __sock_release+0xb0/0x270 net/socket.c:640
+       sock_close+0x1c/0x30 net/socket.c:1408
+       __fput+0x3f8/0xb60 fs/file_table.c:450
+       task_work_run+0x14e/0x250 kernel/task_work.c:239
+       exit_task_work include/linux/task_work.h:43 [inline]
+       do_exit+0xadd/0x2d70 kernel/exit.c:938
+       do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+       get_signal+0x2576/0x2610 kernel/signal.c:3017
+       arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sk_lock-AF_INET/1){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
+       sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
+       sctp_accept+0x654/0x800 net/sctp/socket.c:4899
+       inet_accept+0xc4/0x180 net/ipv4/af_inet.c:781
+       do_accept+0x337/0x530 net/socket.c:1941
+       __sys_accept4_file net/socket.c:1981 [inline]
+       __sys_accept4+0xfe/0x1b0 net/socket.c:2010
+       __do_sys_accept net/socket.c:2023 [inline]
+       __se_sys_accept net/socket.c:2020 [inline]
+       __x64_sys_accept+0x74/0xb0 net/socket.c:2020
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  sk_lock-AF_INET/1 --> rtnl_mutex --> sk_lock-AF_INET
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sk_lock-AF_INET);
+                               lock(rtnl_mutex);
+                               lock(sk_lock-AF_INET);
+  lock(sk_lock-AF_INET/1);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.5.1757/14440:
+ #0: ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1617 [inline]
+ #0: ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: sctp_accept+0x90/0x800 net/sctp/socket.c:4863
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 14440 Comm: syz.5.1757 Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+ lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
+ sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
+ sctp_accept+0x654/0x800 net/sctp/socket.c:4899
+ inet_accept+0xc4/0x180 net/ipv4/af_inet.c:781
+ do_accept+0x337/0x530 net/socket.c:1941
+ __sys_accept4_file net/socket.c:1981 [inline]
+ __sys_accept4+0xfe/0x1b0 net/socket.c:2010
+ __do_sys_accept net/socket.c:2023 [inline]
+ __se_sys_accept net/socket.c:2020 [inline]
+ __x64_sys_accept+0x74/0xb0 net/socket.c:2020
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f530297ff19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f530381f058 EFLAGS: 00000246 ORIG_RAX: 000000000000002b
+RAX: ffffffffffffffda RBX: 00007f5302b46080 RCX: 00007f530297ff19
+RDX: 0000000020000140 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007f53029f3cc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f5302b46080 R15: 00007fff22fccd28
+ </TASK>
+can: request_module (can-proto-4) failed.
+
+
 ---
- arch/arm64/boot/dts/exynos/Makefile               |   1 +
- arch/arm64/boot/dts/exynos/exynos9810-starlte.dts | 119 ++++++++++++++++++++++
- 2 files changed, 120 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index ee73e1a2db7ea64a0b8e9067a1a264e366f59bc3..f6f4bc650a94db0bc6bc017432e2e3dbba90e8c3 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
- 	exynos8895-dreamlte.dtb		\
-+	exynos9810-starlte.dtb		\
- 	exynos990-c1s.dtb		\
- 	exynos990-r8s.dtb               \
- 	exynos990-x1s.dtb		\
-diff --git a/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..fc0ddfee4cd63d2fc53cae3d7447f66d39c134e9
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S9 (starlte/SM-G960F) device tree source
-+ *
-+ * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
-+ * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
-+ */
-+
-+/dts-v1/;
-+#include "exynos9810.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "Samsung Galaxy S9 (SM-G960F)";
-+	compatible = "samsung,starlte", "samsung,exynos9810";
-+	chassis-type = "handset";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer@cc000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
-+			width = <1440>;
-+			height = <2960>;
-+			stride = <(1440 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup &key_wink>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		/* In stock firmware used for assistant. Map it as a camera button for now */
-+		wink-key {
-+			label = "Camera";
-+			linux,code = <KEY_CAMERA>;
-+			gpios = <&gpa0 6 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3c800000>,
-+		      <0x0 0xc0000000 0x20000000>,
-+		      <0x0 0xe1900000 0x1e700000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer@cc000000 {
-+			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_wink: key-wink-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.47.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
