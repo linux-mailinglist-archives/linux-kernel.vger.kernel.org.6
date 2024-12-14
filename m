@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-446128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F359F201F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:32:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556B99F2020
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9B11887398
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F0F87A0746
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E66819F410;
-	Sat, 14 Dec 2024 17:32:01 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DF91974EA;
+	Sat, 14 Dec 2024 17:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFdCoRtk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F16118FDBE
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD54193425
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734197521; cv=none; b=fqWWErYobyrLIp0B7wjZ1YNPsVVxWsEqGMOHN3pnO6lp5F0alYzyKbhgYjQJ3YnmPyFZT6t/QVjaBQddvx+anuvuLALwIOqhKH3XG/L1C/6Cz6mfJRxjWjo3FK7/nYmcD4EZlNIWMN/UHIBYSpWYSlJnLZIRZdzRthSruF53Jmo=
+	t=1734197770; cv=none; b=iLTCgO7CijJIlkZMm5jl6LQQOCOCsOoDwcRP4tpyFEuBDhOIdr9axYnvOU5JZ1W8S7e2L4g98QmOlhgpDyPRZ+htLLOT5JZxtQWvXcM0C/OBvx2iV69v8zX22s62Ghat5XcFfCQCQBJ/DwjGzT77XRlsx01LNYaxSGNXykkSqcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734197521; c=relaxed/simple;
-	bh=GdcIoMV9rDgh/h7XI/XexxU3pMPlgPu8UDf7JNbHBG0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dE6q+VEawGVPH4DikWljao2WdkZSDoLc4/+4nP6vWuZ9nOb+6RUW1T7XgUH0+o6e/Hx1FH5tYwgq7bNVTBEcufAbodxoYRH/yzwNU+lC4anS2bwNdi/D/dPrFa+RJELJPSDSxkbQEQBdt/DLH2NQL53Aoe9vqDV5thJcKpoNE5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-312-61ot2vfuOIOCZzeUwr6qww-1; Sat, 14 Dec 2024 17:31:50 +0000
-X-MC-Unique: 61ot2vfuOIOCZzeUwr6qww-1
-X-Mimecast-MFC-AGG-ID: 61ot2vfuOIOCZzeUwr6qww
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 14 Dec
- 2024 17:30:53 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 14 Dec 2024 17:30:53 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>, 'Naresh Kamboju'
-	<naresh.kamboju@linaro.org>, 'Dan Carpenter' <dan.carpenter@linaro.org>,
-	'Julian Anastasov' <ja@ssi.bg>, "'pablo@netfilter.org'"
-	<pablo@netfilter.org>, Andrew Morton <akpm@linux-foundation.org>
-CC: 'open list' <linux-kernel@vger.kernel.org>,
-	"'lkft-triage@lists.linaro.org'" <lkft-triage@lists.linaro.org>, "'Linux
- Regressions'" <regressions@lists.linux.dev>, 'Linux ARM'
-	<linux-arm-kernel@lists.infradead.org>, "'netfilter-devel@vger.kernel.org'"
-	<netfilter-devel@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, "'Anders
- Roxell'" <anders.roxell@linaro.org>, 'Johannes Berg'
-	<johannes.berg@intel.com>, "'toke@kernel.org'" <toke@kernel.org>, 'Al Viro'
-	<viro@zeniv.linux.org.uk>, "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
-	"'kees@kernel.org'" <kees@kernel.org>
-Subject: [PATCH net-next] Fix clamp() of ip_vs_conn_tab on small memory
- systems.
-Thread-Topic: [PATCH net-next] Fix clamp() of ip_vs_conn_tab on small memory
- systems.
-Thread-Index: AdtOTfU+VQ/Jz9m3Sa6gMqrna34atA==
-Date: Sat, 14 Dec 2024 17:30:53 +0000
-Message-ID: <24a6bfd0811b4931b6ef40098b33c9ee@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1734197770; c=relaxed/simple;
+	bh=T0XboCLi33hcXHbovIiOUO3Y6978HPciv6+UKqshpwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXx323XxP0M9zVok8ak5hP9OUoewf1Vk8fTStZyn2Pb23vUUKGkd0rix0AyencbRZAz7WR/AAlPeSGbtWtXesw5GGkFTTP0n/it32JTORd0di60t8fB6xNBHCU8D+3ofugY8F7KsPhcwGSvJL/NSeUj1WwCVswtaQMlwdXxHuG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFdCoRtk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA31C4CED1;
+	Sat, 14 Dec 2024 17:36:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734197769;
+	bh=T0XboCLi33hcXHbovIiOUO3Y6978HPciv6+UKqshpwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eFdCoRtkm/AfEcKwUuQsgEyY05/qvRRnlJ5uLpK93I+YqNJlOMn7ViAyMPDrK4AiP
+	 K0RNgEDTDwxGBE0V7SALWjAVxAlx3BsMdsIz06smxSK4u/2KEojogOBVPs4K2nsFlG
+	 NHUUbFfdLG5ldbUe+xDOhKeSMhWA+z1H5BZpZzJ+E1u+rsoloo2D+T1SH2MaXunTR3
+	 xdErP76VymRLLvWzrElGhqKyahFLfZtU2kh75mPYN+TQlsG0i6EedccV7AH2WPWDx5
+	 L27V93hX6b5Gx+1U2hcK1zG7vHKSGLSPNRVOMFF9bw9A0ogeRDu8kiY9Na6cJPVZQR
+	 uxrXMDcqWf4yA==
+Date: Sat, 14 Dec 2024 12:36:07 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] sched/urgent for v6.13-rc3
+Message-ID: <Z13BzesSJDSuSXRc@lappy>
+References: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Tsw8AdSSkoM4rt4r3-j_5_GYjFfF4pyvwik7aRPnDpw_1734197509
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
 
-The 'max_avail' value is calculated from the system memory
-size using order_base_2().
-order_base_2(x) is defined as '(x) ? fn(x) : 0'.
-The compiler generates two copies of the code that follows
-and then expands clamp(max, min, PAGE_SHIFT - 12) (11 on 32bit).
-This triggers a compile-time assert since min is 5.
+On Mon, Dec 09, 2024 at 10:48:22AM +0100, Borislav Petkov wrote:
+>Hi Linus,
+>
+>please pull the sched/urgent lineup for v6.13-rc3.
 
-In reality a system would have to have less than 512MB memory
-for the bounds passed to clamp to be reversed.
+Hey Boris,
 
-Swap the order of the arguments to clamp() to avoid the warning.
+I'm a bit late to this party, but I've started seeing the following
+warning. I'm not 100% sure that this PR is the culprit because Linus
+ended up pulling it before I could run tests on it, but I haven't seen
+this warning before.
 
-Replace the clamp_val() on the line below with clamp().
-clamp_val() is just 'an accident waiting to happen' and not needed here.
-
-Detected by compile time checks added to clamp(), specifically:
-minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MR=
-LfAbM3f6ke0g@mail.gmail.com/
-Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: David Laight <david.laight@aculab.com>
----
-
-Julian seems to be waiting for a 'v2' from me.
-Changed target tree to 'net-next'.
-I've re-written the commit message.
-Copied Andrew Morton - he might want to take the change through the 'mm' tr=
-ee.
-Plausibly the 'fixes' tag should refer to the minmax.h change?
-This will need back-porting if the minmax set get back-ported.
-
-I'm not sure whether there ought to be an attribution to Dan Carpenter <dan=
-.carpenter@linaro.org>
-
- net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_con=
-n.c
-index 98d7dbe3d787..c0289f83f96d 100644
---- a/net/netfilter/ipvs/ip_vs_conn.c
-+++ b/net/netfilter/ipvs/ip_vs_conn.c
-@@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
- =09max_avail -=3D 2;=09=09/* ~4 in hash row */
- =09max_avail -=3D 1;=09=09/* IPVS up to 1/2 of mem */
- =09max_avail -=3D order_base_2(sizeof(struct ip_vs_conn));
--=09max =3D clamp(max, min, max_avail);
--=09ip_vs_conn_tab_bits =3D clamp_val(ip_vs_conn_tab_bits, min, max);
-+=09max =3D clamp(max_avail, min, max);
-+=09ip_vs_conn_tab_bits =3D clamp(ip_vs_conn_tab_bits, min, max);
- =09ip_vs_conn_tab_size =3D 1 << ip_vs_conn_tab_bits;
- =09ip_vs_conn_tab_mask =3D ip_vs_conn_tab_size - 1;
-=20
---=20
-2.17.1
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+[ 1107.003243] ------------[ cut here ]------------
+[ 1107.010677] WARNING: CPU: 0 PID: 16 at kernel/sched/deadline.c:1995 enqueue_dl_entity+0x4a8/0x570
+[ 1107.021252] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables [last unloaded: ftrace_direct]
+[ 1107.056578] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.13.0-rc2 #1
+[ 1107.064302] Hardware name: linux,dummy-virt (DT)
+[ 1107.071887] pstate: a24020c9 (NzCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+[ 1107.080224] pc : enqueue_dl_entity+0x4a8/0x570
+[ 1107.086456] lr : return_to_handler+0x0/0x48
+[ 1107.093564] sp : ffff8000800d3a40
+[ 1107.098945] x29: ffff8000800d3a40 x28: fff00000ff6e8d80 x27: 0000000000000000
+[ 1107.112664] x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000048
+[ 1107.125440] x23: fff00000ff6c6d80 x22: 0000000000000001 x21: 000000000016e360
+[ 1107.137742] x20: 0000000000000001 x19: fff00000ff6c76e8 x18: 0000000000000000
+[ 1107.150485] x17: 0000000000000000 x16: ffff800080008000 x15: 0000000000000000
+[ 1107.163991] x14: fff00000ff6e8e00 x13: 0000000000000001 x12: 0000000000002229
+[ 1107.174756] x11: ffffb0af24c4a670 x10: ffff8000800d3a70 x9 : ffffb0af227176d0
+[ 1107.187747] x8 : ffff8000800d38d8 x7 : 0000000002d37310 x6 : fff00000c6d27500
+[ 1107.200948] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+[ 1107.215525] x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000001
+[ 1107.228386] Call trace:
+[ 1107.233927]  enqueue_dl_entity+0x4a8/0x570 (P)
+[ 1107.240669]  dl_server_start+0x4c/0x138 (F)
+[ 1107.246980]  enqueue_task_fair+0x128/0x4b0 (F)
+[ 1107.253826]  enqueue_task+0x44/0x80 (F)
+[ 1107.259958]  activate_task+0x70/0x90 (F)
+[ 1107.265928]  attach_task+0x54/0x88 (F)
+[ 1107.272053]  sched_balance_rq+0x714/0xc18 (F)
+[ 1107.278502]  sched_balance_newidle.isra.0+0x1c0/0x408 (F)
+[ 1107.285769]  pick_next_task_fair+0x58/0x310 (F)
+[ 1107.292581]  __schedule+0x13c/0x918 (F)
+[ 1107.298583]  schedule+0x38/0x110
+[ 1107.304448]  smpboot_thread_fn+0x90/0x208 (F)
+[ 1107.310822]  kthread+0x104/0x118
+[ 1107.317269]  ret_from_fork+0x10/0x20
+[ 1107.323922] ---[ end trace 0000000000000000 ]---
+[ 1107.331245] ------------[ cut here ]------------
+[ 1107.337711] WARNING: CPU: 0 PID: 16 at kernel/sched/deadline.c:1971 enqueue_dl_entity+0x4dc/0x570
+[ 1107.346972] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables [last unloaded: ftrace_direct]
+[ 1107.379887] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.13.0-rc2 #1
+[ 1107.388490] Tainted: [W]=WARN
+[ 1107.394103] Hardware name: linux,dummy-virt (DT)
+[ 1107.400895] pstate: a24020c9 (NzCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+[ 1107.410286] pc : enqueue_dl_entity+0x4dc/0x570
+[ 1107.417196] lr : enqueue_dl_entity+0x21c/0x570
+[ 1107.423700] sp : ffff8000800d3a40
+[ 1107.428962] x29: ffff8000800d3a40 x28: fff00000ff6e8d80 x27: 0000000000000000
+[ 1107.441295] x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000048
+[ 1107.453709] x23: fff00000ff6c6d80 x22: 0000000000000001 x21: 000000000016e360
+[ 1107.465918] x20: fff00000ff6c6d80 x19: fff00000ff6c76e8 x18: 0000000000000000
+[ 1107.478257] x17: 0000000000000000 x16: ffff800080008000 x15: 0000000000000000
+[ 1107.490615] x14: fff00000ff6e8e00 x13: 0000000000000001 x12: 0000000000002229
+[ 1107.502996] x11: ffffb0af24c4a670 x10: ffff8000800d3a40 x9 : 0000000000000001
+[ 1107.515024] x8 : 000000003b9aca00 x7 : 00000000000cf95d x6 : 00000000000ee6b2
+[ 1107.527426] x5 : fff00000ff6c76e8 x4 : 000000003b9aca00 x3 : 000000003b9aca00
+[ 1107.541958] x2 : 0000000033e57787 x1 : 0000002000000000 x0 : 0000000000000001
+[ 1107.555125] Call trace:
+[ 1107.560909]  enqueue_dl_entity+0x4dc/0x570 (P)
+[ 1107.568530]  dl_server_start+0x4c/0x138 (F)
+[ 1107.574623]  enqueue_task_fair+0x128/0x4b0 (F)
+[ 1107.580979]  enqueue_task+0x44/0x80 (F)
+[ 1107.586877]  activate_task+0x70/0x90 (F)
+[ 1107.592854]  attach_task+0x54/0x88 (F)
+[ 1107.598655]  sched_balance_rq+0x714/0xc18 (F)
+[ 1107.605092]  sched_balance_newidle.isra.0+0x1c0/0x408 (F)
+[ 1107.612589]  pick_next_task_fair+0x58/0x310 (F)
+[ 1107.619724]  __schedule+0x13c/0x918 (F)
+[ 1107.626871]  schedule+0x38/0x110
+[ 1107.633403]  smpboot_thread_fn+0x90/0x208 (F)
+[ 1107.641197]  kthread+0x104/0x118
+[ 1107.647508]  ret_from_fork+0x10/0x20
+[ 1107.653843] ---[ end trace 0000000000000000 ]---
 
