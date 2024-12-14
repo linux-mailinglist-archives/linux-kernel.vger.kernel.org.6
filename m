@@ -1,235 +1,187 @@
-Return-Path: <linux-kernel+bounces-445888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D7C9F1D1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:13:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111D49F1D22
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F1F188A05C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5D1885BD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D8015383D;
-	Sat, 14 Dec 2024 07:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B09F1422AB;
+	Sat, 14 Dec 2024 07:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ME4DHo67"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="S7jNGMSJ"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932680038
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734160363; cv=none; b=p6ojlrJzgLH0PnIYJesJcheQS/OhKqM3Rc8frKdMSsWLf9dAclyOOIwJnO/KdWUqlJjCH6siW+qmxQcWvp3T3BGL3OJy3fCQRDYf+K/TxOuwfJF5l8f1l9N7/3lc8duhjShLo+Be3PuGMFnvmmzaCZWzNZDoRqwJNcH5+o+CqBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734160363; c=relaxed/simple;
-	bh=xeje1zIesVYbhea+1Gk9yPATo52S7S/74fCyQZoQGQc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G+AyVqKSm94BSqyJ7ivAcQDBqGsaOs1Si5hUWHz5SbULK4tVdrSOIJr2nYBOLgDw6DErcjOPKyDJvhhw1IuWI9WwOewMqvzGwU0G3xlnuLHDlUXBhUcw2mOzRZWiFXosV/FA7JBf/8f5ALwFpY8aslvaKgBYGbyIuu+stbPpqFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ME4DHo67; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BE7AFls004905;
-	Fri, 13 Dec 2024 23:12:33 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
-	AZ+rawhvQ5DFCA3TlQmYMJ6HgyHkUNSWCFpvGQekME=; b=ME4DHo67WOxIBr6nF
-	+emyPp5Mh8yFfv2eEZPZu816lOL1xHsluFrogYcQqLecnanCbxovKa+SSOrz62ox
-	3wCf/nZ7J8wtUBc/Jcp8uyrzVK/gQ2uYrPlt05FvIzS/5vdwktDjfgUELmqYk1AA
-	uVcWEQe8IsXKZbWBklLXa1XcvRzi1mIvbH1ci0w7iMIUAYedPrH9eY5M4ef1aYOB
-	homNrPr8e40tcgtJ2f4la5ZbrQ/FqVU4eQEJr8Q3LppplomXuft6FzM0p9uqhy+z
-	bTpY/2mkuDPUUCweZQz5+S/zx8yLLTd7C1Jjr+OBn0iSnm+/uDe5owzr15wILqrZ
-	oKODA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 43h5d3805s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 23:12:32 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 13 Dec 2024 23:12:27 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 13 Dec 2024 23:12:26 -0800
-Received: from localhost.localdomain (unknown [10.28.34.29])
-	by maili.marvell.com (Postfix) with ESMTP id 594F63F704C;
-	Fri, 13 Dec 2024 23:12:23 -0800 (PST)
-From: Shijith Thotton <sthotton@marvell.com>
-To: <virtualization@lists.linux.dev>, <mst@redhat.com>, <jasowang@redhat.com>,
-        <dan.carpenter@linaro.org>
-CC: Shijith Thotton <sthotton@marvell.com>, <schalla@marvell.com>,
-        <vattunuru@marvell.com>, <ndabilpuram@marvell.com>,
-        <jerinj@marvell.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        =?UTF-8?q?Eugenio=20P=C3=A9rez?=
-	<eperezma@redhat.com>,
-        Satha Rao <skoteshwar@marvell.com>,
-        open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 4/4] vdpa/octeon_ep: read vendor-specific PCI capability
-Date: Sat, 14 Dec 2024 12:36:07 +0530
-Message-ID: <20241214070835.568818-4-sthotton@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241214070835.568818-1-sthotton@marvell.com>
-References: <20241214070835.568818-1-sthotton@marvell.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2E2BE65;
+	Sat, 14 Dec 2024 07:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734160443; cv=pass; b=q+xWRAWpnusZpkxuIfX88EsJQHHFKBA7tXzLbR0b4+4d0DCxDH4RmkWQmG+xcNTf7LbemuIsHO1i9L7PEHXoDv+JaazNOOFLZXLduEeiYuWDdb9ytftiqaDLOSci+jFu8IGA3tBV2rZcn3tFh4WR7bNVr0G7/iKlySp/bUq20Jg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734160443; c=relaxed/simple;
+	bh=vzNbXrzH5ENTMyecgc2wOrRCM3UCXYh0FFnOADAZtiM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MjFDJewP1Gi+oKheIRSgnFUilTzWFlGnhsGZ7KId1xCSS8D8ow+jLKbjmfqKYUdao0LqQihMi+PuobQ6xbSTd23t5MITaaiPVKHY0VAyaFz9NYzu6FHJSDNhuZhQuw8XHqrodJn5rdOdmZMsJIQSbz0aMgpbM6mkfHXUunGGTJk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=S7jNGMSJ; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1734160415; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GOu1rG+202vFzvdYqhjdzM3Cbe/zwQt2oiakhcFLydI4NhoNq8NHQWb/hVhIPxT5lmpK0IF93DZzg9aBMiKJ+vE1WCCQeb+qCn84HOR73sFAjIO0QAlqz3mhsXGWudTVyf1HT/R5RAxNYZRogHNWBLim3YA6YeYkhJwC+lvsYfo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734160415; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vzNbXrzH5ENTMyecgc2wOrRCM3UCXYh0FFnOADAZtiM=; 
+	b=OFe521JuQvKuFmsH9pqR5n98FfqZQiXeEIBjQTTWDe84dYrh/2wypgqx1GeEOqU03D/Ip8PJPWXzzjSBKvoDmrZqnG6+JVRSwJuQmoOtW6HFDM1guRt7L/Mz6sN3LtToeKQaDjCTsNamhZY6deGTO221xf4D4LHtGqoOR2Ga8FA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734160415;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=vzNbXrzH5ENTMyecgc2wOrRCM3UCXYh0FFnOADAZtiM=;
+	b=S7jNGMSJJOIGppb9JYpHVOxQriN8cTDc5ov0UI2eq39dSP6Ujr3Gwa85dIXd088a
+	ynC5U4YZXUGSeJB8IW41x346k0p0HqIiohJzLaYFwn71WeD3B9VE9/Vo09w17Nmozed
+	JBro5v6PIGuYuwO2W7lto0WNn+9/LaHbb6vFgYNJd4OZ2/F5SvEy3beJEX3vgC4J3BJ
+	1gVuMrlojYzu0gqRDjTnoDekMdY0++WHzBv5xr4io8ZLa6Lx9VPxB02zyOjxsetbZGa
+	pVWjly5chiEkND5FspCgMWtvC2HbjkoEwNYZiWjw7XcGb5UvvdNvYVVyaeyj/kGx4Vq
+	Vx/1t7s6eQ==
+Received: by mx.zohomail.com with SMTPS id 1734160413407334.39316723417164;
+	Fri, 13 Dec 2024 23:13:33 -0800 (PST)
+Message-ID: <e61c927a4dfe909f4ede4a07dffd9dcd762875be.camel@icenowy.me>
+Subject: Re: [PATCH v2] ARM: dts: sun8i-r40: remove unused GPIO regulator
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Andre Przywara <andre.przywara@arm.com>, Hermann.Lauer@uni-heidelberg.de
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>,  Samuel Holland <samuel@sholland.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Sat, 14 Dec 2024 15:13:23 +0800
+In-Reply-To: <20241214011612.4fd9e4bf@minigeek.lan>
+References: <20241213195433.GA1568@lemon.iwr.uni-heidelberg.de>
+	 <20241214011612.4fd9e4bf@minigeek.lan>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: -QgUS3gtoAiVdrsLesfd1kfjAfQ4G6b0
-X-Proofpoint-GUID: -QgUS3gtoAiVdrsLesfd1kfjAfQ4G6b0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-ZohoMailClient: External
 
-Added support to read the vendor-specific PCI capability to identify the
-type of device being emulated.
+=E5=9C=A8 2024-12-14=E6=98=9F=E6=9C=9F=E5=85=AD=E7=9A=84 01:16 +0000=EF=BC=
+=8CAndre Przywara=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, 13 Dec 2024 20:54:33 +0100
+> Hermann.Lauer@uni-heidelberg.de=C2=A0wrote:
+>=20
+> Hi,
+>=20
+> CC:ing Icenowy, who added the regulator originally, with commit
+> 0ca12c1ee43c ("ARM: sun8i: r40: add 5V regulator for Banana Pi M2
+> Ultra").
+>=20
+> Icenowy: can you clarify what "newer" version this was referring to
+> in
+> that commit message? That commit in itself doesn't seem to do
+> anything,
+> as the regulator isn't referenced, and it's not always-on. It's only
+> later when the USB nodes were added that it got used?
+> So was PH23 really necessary? As Hermann reports, setting PH23 on a
+> v1.1
+> makes it reboot.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Shijith Thotton <sthotton@marvell.com>
----
- drivers/vdpa/octeon_ep/octep_vdpa.h      | 20 +++++++++++++
- drivers/vdpa/octeon_ep/octep_vdpa_hw.c   | 36 +++++++++++++++++++++++-
- drivers/vdpa/octeon_ep/octep_vdpa_main.c |  4 ++-
- 3 files changed, 58 insertions(+), 2 deletions(-)
+I am not sure, the schematics I have here (which says V1.0) have PH23
+as NC... Well, the M2 Berry schematics have PH23 as 5V EN, maybe I
+messed up M2U and M2B when developing?
 
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_ep/octep_vdpa.h
-index 2cadb878e679..53b020b019f7 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa.h
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
-@@ -8,6 +8,7 @@
- #include <linux/pci_regs.h>
- #include <linux/vdpa.h>
- #include <linux/virtio_pci_modern.h>
-+#include <uapi/linux/virtio_crypto.h>
- #include <uapi/linux/virtio_net.h>
- #include <uapi/linux/virtio_blk.h>
- #include <uapi/linux/virtio_config.h>
-@@ -52,6 +53,24 @@ struct octep_vring_info {
- 	phys_addr_t notify_pa;
- };
- 
-+enum octep_pci_vndr_cfg_type {
-+	OCTEP_PCI_VNDR_CFG_TYPE_VIRTIO_ID,
-+	OCTEP_PCI_VNDR_CFG_TYPE_MAX,
-+};
-+
-+struct octep_pci_vndr_data {
-+	struct virtio_pci_vndr_data hdr;
-+	u8 id;
-+	u8 bar;
-+	union {
-+		u64 data;
-+		struct {
-+			u32 offset;
-+			u32 length;
-+		};
-+	};
-+};
-+
- struct octep_hw {
- 	struct pci_dev *pdev;
- 	u8 __iomem *base[PCI_STD_NUM_BARS];
-@@ -69,6 +88,7 @@ struct octep_hw {
- 	u32 config_size;
- 	int nb_irqs;
- 	int *irqs;
-+	u8 dev_id;
- };
- 
- u8 octep_hw_get_status(struct octep_hw *oct_hw);
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-index d5a599f87e18..74240101c505 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
-@@ -2,6 +2,7 @@
- /* Copyright (C) 2024 Marvell. */
- 
- #include <linux/iopoll.h>
-+#include <linux/build_bug.h>
- 
- #include "octep_vdpa.h"
- 
-@@ -358,7 +359,14 @@ u16 octep_get_vq_size(struct octep_hw *oct_hw)
- 
- static u32 octep_get_config_size(struct octep_hw *oct_hw)
- {
--	return sizeof(struct virtio_net_config);
-+	switch (oct_hw->dev_id) {
-+	case VIRTIO_ID_NET:
-+		return sizeof(struct virtio_net_config);
-+	case VIRTIO_ID_CRYPTO:
-+		return sizeof(struct virtio_crypto_config);
-+	default:
-+		return 0;
-+	}
- }
- 
- static void __iomem *octep_get_cap_addr(struct octep_hw *oct_hw, struct virtio_pci_cap *cap)
-@@ -416,8 +424,25 @@ static int octep_pci_signature_verify(struct octep_hw *oct_hw)
- 	return 0;
- }
- 
-+static void octep_vndr_data_process(struct octep_hw *oct_hw,
-+				    struct octep_pci_vndr_data *vndr_data)
-+{
-+	BUILD_BUG_ON(sizeof(struct octep_pci_vndr_data) % 4 != 0);
-+
-+	switch (vndr_data->id) {
-+	case OCTEP_PCI_VNDR_CFG_TYPE_VIRTIO_ID:
-+		oct_hw->dev_id = (u8)vndr_data->data;
-+		break;
-+	default:
-+		dev_err(&oct_hw->pdev->dev, "Invalid vendor data id %u\n",
-+			vndr_data->id);
-+		break;
-+	}
-+}
-+
- int octep_hw_caps_read(struct octep_hw *oct_hw, struct pci_dev *pdev)
- {
-+	struct octep_pci_vndr_data vndr_data;
- 	struct octep_mbox __iomem *mbox;
- 	struct device *dev = &pdev->dev;
- 	struct virtio_pci_cap cap;
-@@ -466,6 +491,15 @@ int octep_hw_caps_read(struct octep_hw *oct_hw, struct pci_dev *pdev)
- 		case VIRTIO_PCI_CAP_ISR_CFG:
- 			oct_hw->isr = octep_get_cap_addr(oct_hw, &cap);
- 			break;
-+		case VIRTIO_PCI_CAP_VENDOR_CFG:
-+			octep_pci_caps_read(oct_hw, &vndr_data, sizeof(vndr_data), pos);
-+			if (vndr_data.hdr.vendor_id != PCI_VENDOR_ID_CAVIUM) {
-+				dev_err(dev, "Invalid vendor data\n");
-+				return -EINVAL;
-+			}
-+
-+			octep_vndr_data_process(oct_hw, &vndr_data);
-+			break;
- 		}
- 
- 		pos = cap.cap_next;
-diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-index 4d56be64ae56..f3d4dda4e04c 100644
---- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-+++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
-@@ -302,7 +302,9 @@ static u32 octep_vdpa_get_generation(struct vdpa_device *vdpa_dev)
- 
- static u32 octep_vdpa_get_device_id(struct vdpa_device *vdpa_dev)
- {
--	return VIRTIO_ID_NET;
-+	struct octep_hw *oct_hw = vdpa_to_octep_hw(vdpa_dev);
-+
-+	return oct_hw->dev_id;
- }
- 
- static u32 octep_vdpa_get_vendor_id(struct vdpa_device *vdpa_dev)
--- 
-2.25.1
+Sorry but I think the data retention situation of my memory looks bad
+here, maybe it needs a shorter refresh interval ;-)
+
+>=20
+> > Subject: [PATCH v2] ARM: dts: sun8i-r40: remove unused GPIO
+> > regulator
+>=20
+> Hermann, this looks like an extra subject line here?
+>=20
+> > Banana Pi M2 Ultra V1.1 board resets immediately when the usb core
+> > tries
+> > to setup PH23 GPIO. It turned out that the V1.0 board USB-A ports
+> > are
+> > always power supplied and according to the board scheme PH23 is
+> > simply
+> > not connected.
+> >=20
+> > So remove the PH23 setup: Doesn't harm V1.0 (with R40) and let V1.1
+> > (with A40i) start.
+> >=20
+> > Signed-off-by: Hermann Lauer <Hermann.Lauer@uni-heidelberg.de>
+>=20
+> The patch itself looks good to me, but it would be good to clarify
+> the
+> situation with the "older newer" version.
+>=20
+> Just in case:
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+>=20
+> Cheers,
+> Andre
+> =C2=A0
+> > ---
+> > V2: shorten subject, rm dangerous PH23 regulator completely
+> >=20
+> > diff --git a/arch/arm/boot/dts/allwinner/sun8i-r40-bananapi-m2-
+> > ultra.dts b/arch/arm/boot/dts/allwinner/sun8i-r40-bananapi-m2-
+> > ultra.dts
+> > --- a/arch/arm/boot/dts/allwinner/sun8i-r40-bananapi-m2-ultra.dts
+> > +++ b/arch/arm/boot/dts/allwinner/sun8i-r40-bananapi-m2-ultra.dts
+> > @@ -91,15 +91,6 @@
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0};
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0reg_vcc5v0: vcc5v0 {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0compatible =3D "regulator-fixed";
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0regulator-name =3D "vcc5v0";
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0regulator-min-microvolt =3D <5000000>;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0regulator-max-microvolt =3D <5000000>;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0gpio =3D <&pio 7 23 GPIO_ACTIVE_HIGH>; /* PH23 */
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0enable-active-high;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
+> > -
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0wifi_pwrseq: pwrseq {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "mmc-pwrseq-simple";
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0reset-gpios =3D <&pio 6 10 GPIO_ACTIVE_LOW>; /* =
+PG10
+> > WIFI_EN */
+> > @@ -347,7 +338,5 @@
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0&usbphy {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0usb1_vbus-supply =3D <&reg_v=
+cc5v0>;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0usb2_vbus-supply =3D <&reg_v=
+cc5v0>;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D "okay";
+> > =C2=A0};
+> >=20
+>=20
+>=20
 
 
