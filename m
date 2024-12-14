@@ -1,144 +1,126 @@
-Return-Path: <linux-kernel+bounces-446223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598FF9F214F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:45:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E85C9F2152
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE65165ED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AC6188721A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2141B4146;
-	Sat, 14 Dec 2024 22:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0E61B5EBC;
+	Sat, 14 Dec 2024 22:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="O9jqzL6w"
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dizwexfw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08626374FF;
-	Sat, 14 Dec 2024 22:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763D87DA9C;
+	Sat, 14 Dec 2024 22:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734216332; cv=none; b=HOoizLCz246x7MSgfIHGiqF0Cm45htM6adGusT8Wc2CUdejhnbOUyH0QvtystFYXKSNezYJ07JVpDdUs/Jhg/TW9fKfMYf2dK/+4qHHvjUCsjYN+sGz8b0viJVg6RoNfB8wRzv25FczrKLeByk6KhD7Ud5aHq52rtTQJ7JnDbG0=
+	t=1734216459; cv=none; b=Zpz4dFg9dFHg2VEM1ZFMi2E0SZghCjM0YYJO1Fty4rKCp7ZHhnzk02koAGgSHvEMJ2H47069eGTjFfoTsbmQPsVEngPfO2w9qelsLSu4SAcyzXad5qhEd9mhLbDrtaeYS1JJDcpwkWM5/aDAIcMrDkjr4G5zX6np929/Ju2gsEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734216332; c=relaxed/simple;
-	bh=vExFBKYFpDLJb8wWLmXcMEyc2Ufj5kH4bbgxDRfqNbw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oKwbiifg1r82W0rJl6JJYC6FZ+CajeP2Wq5XvzjAFUMjz/hJVmxK9nHvQBjSSsODc+1j+1S5EsEsW3mpLmi5JzUnZa/NVK934Q+OufVGiR4nbwL7Dwt4VTcKq5l2ynMM3pvjCrysEruJxR6GA4svzaSusVtBcSYPzzNjUh2KU2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=O9jqzL6w; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=d/PjcV+jDCKYzSJwV8DzSKIy1c3zEyLabtw0gF3Jwq0=; b=O9jqzL6wF2cCf2IKPhSXMfi9Dw
-	nKkxbRMs1vDBGCK9TXP6BA1ioqngrjSUMXJV6HmdZJJafnI35wq8dB0tw11l+PvlEY++dT6jrGZbc
-	Ji21jmciksTgAcOHUAsEqiV9knQxChDjgHUy+J8je2lMD1PRv+lY3HdclBBO3lgVw57gK/gGd+L5/
-	huqrwdtCKGEO/hUYQ1H8f2coHgSmPg5jUPvuffOpmsMu8Qsy6iMJese5yRFp8MS9jEZWCIlyFhwou
-	FxBZB1lJVMmRhw85Er2qlGHd9wFaxhS1bsxL4ofAVLsPcPq1qotio/YzlJMjDKqnm51g2YKxa8r3U
-	CfKJgOkw==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tMasv-0000k5-2A;
-	Sat, 14 Dec 2024 23:45:18 +0100
-Received: from [77.64.252.106] (helo=framework.lan)
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tMasv-000Hdn-1K;
-	Sat, 14 Dec 2024 23:45:18 +0100
-Message-ID: <8255eb1a877a339a457979c8b4fc831f6fc5cc01.camel@apitzsch.eu>
-Subject: Re: [PATCH v3 07/12] media: i2c: imx214: Add vblank and hblank
- controls
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Ricardo Ribalda Delgado
-	 <ribalda@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Stevenson	
- <dave.stevenson@raspberrypi.com>, Vincent Knecht <vincent.knecht@mailoo.org>
-Date: Sat, 14 Dec 2024 23:45:16 +0100
-In-Reply-To: <Z1g1afPM1RRwD_EH@kekkonen.localdomain>
-References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
-	 <20241207-imx214-v3-7-ab60af7ee915@apitzsch.eu>
-	 <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
-	 <CAPybu_0Nk+p1rikH_t_zpEHx=KGnXfG+npr-XEnwtA4EnfJjuQ@mail.gmail.com>
-	 <Z1g1afPM1RRwD_EH@kekkonen.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1734216459; c=relaxed/simple;
+	bh=AKxRtbsHNV4cXXEwh68zgfEHkimry76rewwLYZhrLjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuTtudvcEQxgNlLfSV+ZpRrV8e8gkzL1KdC6TR/Ol/M/XayeMA2L7rxwab0+qDom4CKI6uqLg3tW8Jbk46KFmhpksu8Z7TBE9Hnm0rvmvAEUBA4g7EEGFSpnOlqPmPAJs8tEDtPiDLfOqifM7T+6CXvTAgBosgnkmMz69J6vmlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dizwexfw; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734216457; x=1765752457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AKxRtbsHNV4cXXEwh68zgfEHkimry76rewwLYZhrLjc=;
+  b=dizwexfwZN8zALBhZUV8ET9Py6Vxoiz5we0qMKOVGj0vabriqSymMU6j
+   KgX9AWKsKGEKdBl7jW8nNb6JgOCiS2QQIqA+9fpVK1FctkFiEtMpZ19LV
+   rw2Y6caS8lvQnpekT54lcigBkP1qKq2B0g5YhO7XNB+A3WOCJWRY2qqJh
+   VjTlx9wLx39bmugAPXJx2x6ijOXiIA+IkdNmszcvCujuxCH0ronT/odiW
+   +u6kJypB/3Zu2pdxnN3X1bHVQqEMch9N3NqWH6g8IswvAqwAHwwtK0nMM
+   Y51PhB4gcWPoJkzP5JN3KFoT0fiq1HgkfyC6r+/qBuRJUzEnb0i1kZRGh
+   A==;
+X-CSE-ConnectionGUID: 9PBOz4MkQmafGexfv94pIA==
+X-CSE-MsgGUID: cG3xQD0tQ7O4ADP2q6I1Rg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="45329652"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="45329652"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 14:47:36 -0800
+X-CSE-ConnectionGUID: GKJobGtzR7membUQCuxeXw==
+X-CSE-MsgGUID: IF8cd/2vSpiSpmThf6WLqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96705256"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 14 Dec 2024 14:47:32 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMav3-000DIU-13;
+	Sat, 14 Dec 2024 22:47:29 +0000
+Date: Sun, 15 Dec 2024 06:46:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: James Houghton <jthoughton@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Yan Zhao <yan.y.zhao@intel.com>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Anish Moorthy <amoorthy@google.com>,
+	Peter Gonda <pgonda@google.com>, Peter Xu <peterx@redhat.com>,
+	David Matlack <dmatlack@google.com>, Wang@google.com,
+	Wei W <wei.w.wang@intel.com>, kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v1 10/13] KVM: selftests: Add KVM Userfault mode to
+ demand_paging_test
+Message-ID: <202412150600.wLk8rmZf-lkp@intel.com>
+References: <20241204191349.1730936-11-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27487/Sat Dec 14 10:38:46 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204191349.1730936-11-jthoughton@google.com>
 
-Hi,
+Hi James,
 
-Am Dienstag, dem 10.12.2024 um 12:34 +0000 schrieb Sakari Ailus:
-> On Sun, Dec 08, 2024 at 10:19:51PM +0100, Ricardo Ribalda Delgado
-> wrote:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 state =3D
-> > > > v4l2_subdev_get_locked_active_state(&imx214->sd);
-> > >=20
-> > > Sakari, I see that other drivers assume that the active is locked
-> > > in
-> > > set_ctrl. Is this correct?
-> >=20
-> > imx214->sd.state_lock =3D imx214->ctrls.lock;
-> >=20
-> > So I guess it is fine :)
->=20
-> Yes, it is.
->=20
-> Please also run this on the set:
->=20
-> $ ./scripts/checkpatch.pl --strict --max-line-length=3D80
->=20
+kernel test robot noticed the following build errors:
 
-there are a few lines that exceed 80 columns:
+[auto build test ERROR on 4d911c7abee56771b0219a9fbf0120d06bdc9c14]
 
-WARNING: line length of 85 exceeds 80 columns
-#163: FILE: drivers/media/i2c/imx214.c:576:
-+	imx214_update_pad_format(imx214, mode, &format->format, format->format.co=
-de);
---
-WARNING: line length of 81 exceeds 80 columns
-#88: FILE: drivers/media/i2c/imx214.c:983:
-+		return dev_err_probe(dev, ret, "failed to set xclk frequency\n");
---
-WARNING: line length of 82 exceeds 80 columns
-#138: FILE: drivers/media/i2c/imx214.c:1039:
-+		dev_err_probe(dev, ret, "failed to register sensor sub-device\n");
---
-WARNING: line length of 86 exceeds 80 columns
-#491: FILE: drivers/media/i2c/imx214.c:359:
-+	{ IMX214_REG_EXCK_FREQ, IMX214_EXCK_FREQ(IMX214_DEFAULT_CLK_FREQ / 100000=
-0) },
---
-WARNING: line length of 83 exceeds 80 columns
-#177: FILE: drivers/media/i2c/imx214.c:730:
-+		exposure_max =3D format->height + ctrl->val - IMX214_EXPOSURE_OFFSET;
---
-WARNING: line length of 85 exceeds 80 columns
-#85: FILE: drivers/media/i2c/imx214.c:1231:
-+		if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LINK_FREQ_LEGACY) =
-{
+url:    https://github.com/intel-lab-lkp/linux/commits/James-Houghton/KVM-Add-KVM_MEM_USERFAULT-memslot-flag-and-bitmap/20241205-032516
+base:   4d911c7abee56771b0219a9fbf0120d06bdc9c14
+patch link:    https://lore.kernel.org/r/20241204191349.1730936-11-jthoughton%40google.com
+patch subject: [PATCH v1 10/13] KVM: selftests: Add KVM Userfault mode to demand_paging_test
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412150600.wLk8rmZf-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412150600.wLk8rmZf-lkp@intel.com/
 
-Is the strict 80 columns limit really necessary, as it would decrease
-readability?
+All errors (new ones prefixed by >>):
 
-Best regards,
-Andr=C3=A9
+>> demand_paging_test.c:220:2: error: address argument to atomic operation must be a pointer to _Atomic type ('unsigned long *' invalid)
+     220 |         atomic_fetch_and_explicit(bitmap_chunk,
+         |         ^                         ~~~~~~~~~~~~
+   /opt/cross/clang-ab51eccf88/lib/clang/19/include/stdatomic.h:169:35: note: expanded from macro 'atomic_fetch_and_explicit'
+     169 | #define atomic_fetch_and_explicit __c11_atomic_fetch_and
+         |                                   ^
+   1 error generated.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
