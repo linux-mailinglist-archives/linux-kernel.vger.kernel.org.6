@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-446000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102769F1E5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:50:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1110D9F1E60
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 102C0167C62
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E7CC7A05DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E2A18EFCC;
-	Sat, 14 Dec 2024 11:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBDF18FDC5;
+	Sat, 14 Dec 2024 11:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="juRtzyi0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/kT1pB5h"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8agEhLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAB8170A13
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BC3154C00;
+	Sat, 14 Dec 2024 11:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734177024; cv=none; b=n/voia3llaNgsm5nKGnpimT4PKMhmXTqvf3Y+FPFJnv22HN22Y1WlFIAip7PhhjYfGmgC4tmkyWgm3nT+3ai9bb8jSoSWzLw4haW+AMET7Q58Nj57hcTHBCLJrlANjgzopv7A5TF6K4CxTPjWR3kOb6dl6utXVpb1kjrBXRs5+4=
+	t=1734177420; cv=none; b=tcl4ZnZs0OIEmmblw3TUdCWA7S42cd3zPOYJkdB9CDCpYjhatkSuq+LgjsXKqMRObSHBzNrQ/z4KyuYbRL/KyqVmh8fZByJqMBHcXojtV5Xs/mZFGQgAeSp74igzunmvP55aUAY61Ez1aS5uS9wxlRLP18P1Rggn4eTD891XudY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734177024; c=relaxed/simple;
-	bh=/mBUerS5XSezqwy29grxEF7QW9CSdXhISx4SRZhtWWQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cey60kcqi3KI6R52E1AK/ETsE5RF55sLvc0PgNX7XJXrzzXqD6MJLHyqyAyvtAaxDuOu2i1F/b+RX9JVTYU3/sBFC4UHxiLcRj5N7YYj0wVjGZvAc/euX8brkh3sD8hS1F6a+ZjdC6OPN7XPJ9NEQFt54U05u3TgTIdjj1KXoFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=juRtzyi0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/kT1pB5h; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734177019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qzhprNUpJd8crZLNLycupfbl2vwMD3GsAtuBolAfNoY=;
-	b=juRtzyi0tetJHjKFjtFzHZG7rWMU4N8Z58M+GYecSxP5OJThN+DFmtm9cO61sR2kWiqmHQ
-	aamdpY7MSgaRK0jejENepHm7pqpbIV8dXvr/b0xNRygbfKV41faD1da+0ZTkahJiz3d6Wq
-	MoxS5DwJOQ65jC2q/A1LDK+Mc5Z2581zOPBbZfG3LPUewGXQt5v6A96GfZvtomJrybn2wP
-	CGCB3gC00aVXPfUwJixgX/ugMNN2SxXIsBUh5dmnwAPX//dbQkAaAMJdEpdkHqSq2Cn2az
-	03VLM3QxmGOrVuCg4HPkkCaAFisP9EJorj4KtmkR8sYQK/REPQTQSCDxsaRTqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734177019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qzhprNUpJd8crZLNLycupfbl2vwMD3GsAtuBolAfNoY=;
-	b=/kT1pB5h9x7NYf+v7YUGm9akGgpE576x1ScHoRdyaND8OyrX8q/cgdov3dsKva4erlJZ2+
-	EcwB2vgCs/C9LpAA==
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>, Sunil V L
- <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>
-Subject: [Patch] PCI/MSI: Handle lack of irqdomain gracefully
-In-Reply-To: <CAHVXubiNMp9chdUdvYjiQC2LMhNMMaGEiLMWZ-4RSV54jakP3g@mail.gmail.com>
-References: <20241213115704.353665-1-alexghiti@rivosinc.com>
- <87v7vn917f.ffs@tglx>
- <CAHVXubiNMp9chdUdvYjiQC2LMhNMMaGEiLMWZ-4RSV54jakP3g@mail.gmail.com>
-Date: Sat, 14 Dec 2024 12:50:18 +0100
-Message-ID: <87ed2a8ow5.ffs@tglx>
+	s=arc-20240116; t=1734177420; c=relaxed/simple;
+	bh=e7CE8+w2lR9vnZnxyFZ5NV1YGU7f5fZ374lTWK4pq4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QUfWJGHbfi8opZEAGoQZA2PTN/8YXBbBsh+vW9k7SEN6FqcG24vANu2PWROTOGKAI6pQBC0pbyZbAMQniICGv6g7AqejnMWcxTnioZWRmWMQqZVY3JFVpTgZiDEKAmb5PHezm2KeLdHTkMJyppRgV89DbKGSWrMESPlOY4JRKpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8agEhLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88ADC4CED1;
+	Sat, 14 Dec 2024 11:56:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734177420;
+	bh=e7CE8+w2lR9vnZnxyFZ5NV1YGU7f5fZ374lTWK4pq4Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L8agEhLGgacEP0x1BMvxbyriJg9sWE51pg4CB71o5iZa2DrL4VEeoOal9kIpY2aV0
+	 XConY2DPuGw8ARUazMiySvi6q+rvrwar5rimRm/btXjFjfylPb5ozLH6mMcqrkda5E
+	 Fq1ltx8UPWxoiZoCyzij/T4QL/zVtrHFeA6towiyfQrZGqzoM+G+iGTsUImXFqpxcd
+	 2PaiHzsk/b+zjcWzEgGU1FBKJ5bSr2nxC7JZBBU5QRn0Gc7fPe6rA2jwTc9hWwqekg
+	 /4Udk0aJUgH1ZRNBXibjiQImH7ZxZADcFlAjxDcZc8NPjgSGTfedYtCzFZVdEkICRz
+	 KoCFFMBoMs4hA==
+Date: Sat, 14 Dec 2024 11:56:50 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Subject: Re: [PATCH v6 3/7] dt-bindings: iio: accel: adxl345: add
+ interrupt-names
+Message-ID: <20241214115650.2b3a7f83@jic23-huawei>
+In-Reply-To: <scybtk2qyy6m55klkj6tsv2snmcqp2zjbkzwfh5dv2p6cjjeud@xjq4vsxjszex>
+References: <20241211230648.205806-1-l.rubusch@gmail.com>
+	<20241211230648.205806-4-l.rubusch@gmail.com>
+	<scybtk2qyy6m55klkj6tsv2snmcqp2zjbkzwfh5dv2p6cjjeud@xjq4vsxjszex>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Alexandre observed a warning emitted from pci_msi_setup_msi_irqs() on a
-RISCV platform which does not provide PCI/MSI support:
+On Thu, 12 Dec 2024 09:08:22 +0100
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
- WARNING: CPU: 1 PID: 1 at drivers/pci/msi/msi.h:121 pci_msi_setup_msi_irqs+0x2c/0x32
- __pci_enable_msix_range+0x30c/0x596
- pci_msi_setup_msi_irqs+0x2c/0x32
- pci_alloc_irq_vectors_affinity+0xb8/0xe2
+> On Wed, Dec 11, 2024 at 11:06:44PM +0000, Lothar Rubusch wrote:
+> > Add interrupt-names INT1 and INT2 for the two interrupt lines of the
+> > sensor. Only one line will be connected for incoming events. The driver
+> > needs to be configured accordingly.
+This is all driver info.  This patch description just needs to say something
+like:
+"
+There are two interrupt lines that may be connected. As the device can
+route each type of interrupt to one or other of those lines, interrupt-names
+is necessary for two reasons.
 
-RISCV uses hierarchical interrupt domains and correctly does not implement
-the legacy fallback. The warning triggers from the legacy fallback stub.
+- One interrupt line is connected, the device has to be configured to send
+  interrupts to that line.
+- Two interrupt lines connected.  The device can route all interrupts to 
+  one line or elect to split them up.
 
-That warning is bogus as the PCI/MSI layer knows whether a PCI/MSI parent
-domain is associated with the device or not. There is a check for MSI-X,
-which has a legacy assumption. But that legacy fallback assumption is only
-valid when legacy support is enabled, but otherwise the check should simply
-return -ENOTSUPP.
+If no interrupt lines are connected, device functionality may be restricted.
+"
 
-Loongarch tripped over the same problem and blindly enabled legacy support
-without implementing the legacy fallbacks. There are weak implementations
-which return an error, so the problem was papered over.
+Note as below, the required interrupts entry should be removed in a precursor
+patch.
 
-Correct pci_msi_domain_supports() to evaluate the legacy mode and add
-the missing supported check into the MSI enable path to complete it.
+> If no interrupt line is set up, the
+> > sensor will fall back to FIFO bypass mode and still measure, but no
+> > interrupt based events are possible.  
+> 
+> There was interrupt before and it was required, so I do not understand
+> last statement. You describe case which is impossible.
 
-Fixes: d2a463b29741 ("PCI/MSI: Reject multi-MSI early")
-Reported-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: stable@vger.kernel.org
----
- drivers/pci/msi/irqdomain.c |    7 +++++--
- drivers/pci/msi/msi.c       |    4 ++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+Binding was wrong. Interrupt isn't required for quite a bit of the functionality.
 
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -350,8 +350,11 @@ bool pci_msi_domain_supports(struct pci_
- 
- 	domain = dev_get_msi_domain(&pdev->dev);
- 
--	if (!domain || !irq_domain_is_hierarchy(domain))
--		return mode == ALLOW_LEGACY;
-+	if (!domain || !irq_domain_is_hierarchy(domain)) {
-+		if (IS_ENABLED(CONFIG_PCI_MSI_ARCH_FALLBACKS))
-+			return mode == ALLOW_LEGACY;
-+		return false;
-+	}
- 
- 	if (!irq_domain_is_msi_parent(domain)) {
- 		/*
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -433,6 +433,10 @@ int __pci_enable_msi_range(struct pci_de
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-+	/* Test for the availability of MSI support */
-+	if (!pci_msi_domain_supports(dev, 0, ALLOW_LEGACY))
-+		return -ENOTSUPP;
-+
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
+I'd like to see an earlier patch removing that required entry and explaining
+why rather than jumping into adding the new interrupt-names part without
+resolving that.  Its a relaxation of constraints so probably no need to backport
+that patch.
+
+Jonathan
+
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
