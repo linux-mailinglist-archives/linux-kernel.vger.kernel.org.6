@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-445869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60B09F1CB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:31:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC0A9F1CDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0805169C04
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 05:31:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF0237A04E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 05:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CF2126BF7;
-	Sat, 14 Dec 2024 05:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E392214884D;
+	Sat, 14 Dec 2024 05:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lp7yjKU6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z/u8ujv6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9D67462;
-	Sat, 14 Dec 2024 05:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BD845023;
+	Sat, 14 Dec 2024 05:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734154307; cv=none; b=CU7Wpopl5/6qBDqJBelBB1Mycokia5WqH9OvZmSO38UZvWzXLvurKfJ4LGHNNyZRMVLWU0j5bLfl6hlWAZrkH+4p3sF9VNlzPt3dWl3mXyG/q/5JFxAKPZJBIzM7t50nUKr8GknuHy9fws+77tFJUgGOih/OrqgKSrloYNzPuMw=
+	t=1734155903; cv=none; b=gYwxzVnQKzEMDxtF52ybnmYXpcOit3ARW81SYxASGeL5bbJGOpxUqoIFNAe3PnOrDLoLxdCMZjkvxkQZ/UULO+NgOvETisC3LNGnbpqoRGJVnbZK8oPTgYVoaerNet670KN8yMuK/rtgk7C+ixrkY8W2LGCL1qnd53E42sFCOOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734154307; c=relaxed/simple;
-	bh=PFyqYIl50ePoUXNgWpbIhnin5m4eHMgjTgOJUkYB4cs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DE1qLfth/6igGsJfE53lSR+31gn3dF7D43eS4Mp8T0XIaDuGykoznNAu4IQEvyvKybVObGjJX6IFo+IYdO8d2g87y1/Zjit2h3JdAudK6EwrIlXfsPKzO0tGckZ9WfmH8ljnfi6z4ZukZ7E0cB1U5kkFu+3D5oeub+oJcY9ZpkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lp7yjKU6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BE50YOD018941;
-	Sat, 14 Dec 2024 05:31:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aA9p1VtOcOs8xIVMJboiS1J717QE4SdWWMDwXuOTHCs=; b=Lp7yjKU6LE4HT/fd
-	IBq5t+tvaY7niOiSJJxHlSiOMMFMdVR+jPbtovWGsAlFN6zKs/QV0iyZA+bE4Sxb
-	paUr09geJBIeFp3jAQnvGK5TBxlEgPJ+ktGKt5gsg0f2HAvvU9KJzpSqYSbHT/9q
-	pREv3YpuEluNIdDFQ4hMQJnJ5duE1sWpQMpf28hwBfHZOsL0ME6jLS6UzdKEeJKE
-	awQD/mVjusYvN1ru+2SMQrVbuwfFyUdRG7FLJUP02qZnyo1bXja2pKdvC68eDDoT
-	kZEEeAjkEXV+vqhA2CvreHWMB+nGqVqx4GIyGazDV8qqM0tCBMXXMsgh2z/SktI6
-	YIWf5Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43h309g23k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Dec 2024 05:31:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BE5VeYc002324
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Dec 2024 05:31:40 GMT
-Received: from [10.216.21.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 21:31:35 -0800
-Message-ID: <1fd62c05-36fe-4059-9277-0946e1e3a933@quicinc.com>
-Date: Sat, 14 Dec 2024 11:01:26 +0530
+	s=arc-20240116; t=1734155903; c=relaxed/simple;
+	bh=+0dmmhWV01xzm3DpkY8gDJOKP6Sg225VSAqBRjFdri0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qs0xSJFqaxhlSMLy08Hm+Zkp0j+za+ekhc74EAkGe3DDRRDR2gS9pu7YNdWvK75gSRDtAGsVk4L54OcQVCl4sD0ECmzS7GGmbv3AFOcr/yWMKxVF+wNtTljSIBWecD7V45tdiJY3r3txJCRw8RfpgFZ384S/qhabOi0z9rt3JmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z/u8ujv6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=wpTwtGXygpmJk2bX9isiar0VjJreV5TrSzR3WoOJIoU=; b=Z/u8ujv6cOH+KzQfByiLAp2Ded
+	fj939a+qCvhp8/eHneXf0/NTUtOtChr2PwtiJzhlVeLqnVOgOKwdBQM06MKj/Az3gOH0vq+C5uwgX
+	zirooIRY/+eyDfumQ+cHW4VKiipjWyVW/VLivtVRWju9t2aOsLKdIcso8bVwdRI9CRT7zopoDXp1x
+	3syaMIDbfpoJTSkCF/ODJG414Ob1ShnS5h2g3icD4NtTXphbYJLy8f4jSMTsnhx1UQkjKnajdzHlK
+	LQGRFCgWvi/ShnNzm5DaZeF389p3BMRInwRV5RXem0Y1EK2E60L9M7J450X+GLRFMDXsMUprfj9A5
+	9ZJh+SOA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMLAK-00000004OqD-3buB;
+	Sat, 14 Dec 2024 05:58:14 +0000
+Message-ID: <97088fc4-04ab-47df-9a43-de2d36679f2d@infradead.org>
+Date: Fri, 13 Dec 2024 21:58:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,91 +53,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/19] arm64: dts: qcom: Disable USB U1/U2 entry for
- SA8775P
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <cros-qcom-dts-watchers@chromium.org>
-References: <20241213095237.1409174-1-quic_prashk@quicinc.com>
- <20241213095237.1409174-9-quic_prashk@quicinc.com>
- <6e9c4ebc-c52e-47ee-b3a5-570e84125e42@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] docs: admin-guide: bring some order to the
+ "everything else" section
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20241213182057.343527-1-corbet@lwn.net>
+ <20241213182057.343527-4-corbet@lwn.net>
 Content-Language: en-US
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <6e9c4ebc-c52e-47ee-b3a5-570e84125e42@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241213182057.343527-4-corbet@lwn.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: whPLY3dvWHcih_X6-buNXCbAVmytZAFT
-X-Proofpoint-GUID: whPLY3dvWHcih_X6-buNXCbAVmytZAFT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- clxscore=1015 malwarescore=0 adultscore=0 bulkscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=320 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412140044
 
 
 
-On 14-12-24 05:36 am, Konrad Dybcio wrote:
-> On 13.12.2024 10:52 AM, Prashanth K wrote:
->> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->>
->> Disable U1 and U2 power-saving states to improve stability of USB.
->> These low-power link states, designed to reduce power consumption
->> during idle periods, can cause issues in latency-sensitive or high
->> throughput use cases. Over the years, some of the issues seen are
->> as follows:
->>
->> 1. In device mode of operation, when UVC is active, enabling U1/U2
->> is sometimes causing packets drops due to delay in entry/exit of
->> intermittent these low power states. These packet drops are often
->> reflected as missed isochronous transfers, as the controller wasn't
->> able to send packet in that microframe interval and hence glitches
->> are seen on the final transmitted video output.
->>
->> 2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
->> when U1/U2 is enabled. Often when link enters U2, there is a re-
->> enumeration seen and device is unusable for many use cases.
->>
->> 3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
->> the cable is disconnected and reconnected to host PC in HS, there
->> is no link status change interrupt seen and the plug-in in HS doesn't
->> show up a bus reset and enumeration failure happens.
->>
->> Disabling these intermittent power states enhances device stability
->> without affecting power usage.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
->> ---
+On 12/13/24 10:20 AM, Jonathan Corbet wrote:
+> The bulk of the admin guide had become a big pile of stuff haphazardly
+> tossed together, mostly in the catch-all "everything else" section.  Split
+> that section into a few broad categories and sort the documents into them
+> as appropriate.
 > 
-> [...]
+> No documents have been added or removed, they are just reordered.  Note
+> that many of these documents are severely obsolete and should be considered
+> for removal.
 > 
->>  
->> @@ -3570,6 +3576,8 @@ tcsr_mutex: hwlock@1f40000 {
->>  			compatible = "qcom,tcsr-mutex";
->>  			reg = <0x0 0x01f40000 0x0 0x20000>;
->>  			#hwlock-cells = <1>;
->> +				snps,dis-u1-entry-quirk;
->> +				snps,dis-u2-entry-quirk;
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  Documentation/admin-guide/index.rst | 161 +++++++++++++++++-----------
+>  1 file changed, 100 insertions(+), 61 deletions(-)
 > 
-> Oh?
-> 
-Thanks for pointing. I messed up, will update and send next version.
 
-Regards,
-Prashanth K
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+-- 
+~Randy
 
