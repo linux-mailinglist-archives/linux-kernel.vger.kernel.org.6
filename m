@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-446146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E974E9F2054
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 659919F2056
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C8E37A1102
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABC47A129B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A9F1A724C;
-	Sat, 14 Dec 2024 18:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oBA5WTgl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63A8199FA4;
+	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585F3D96A;
-	Sat, 14 Dec 2024 18:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA86E3D96A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 18:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734201570; cv=none; b=VoPurDihiSsNUDO2MzPzFtto3rTZZdd8RQ3dXeVC7G8DT6iGJqKH6xoufuN67C3/hm42gKDSBs7at0v/N2PGgoAr4tyU3rNr6jFHe9/o9G5M8gCBeiYQKthmN9c78ha6E+MQ8De7fvoWzNT9TkOFQzzweg8c0AQdyjZT44oBGuA=
+	t=1734201673; cv=none; b=oAu3ZQNq8gjrhEbNMlp8tjUFNGCCds07fJYkjhADatpHSwYUv0VcIQV17TRfOw5WzUaUDmZMlqTyVem0UhJHb3U295V3YjqRMRByc67ynofirPg8sah9iCqdNe8sGYYyVC3FmUP7u+mY9l3Os55HAoRNDeOzT7AUF36H6vpd47o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734201570; c=relaxed/simple;
-	bh=690nWsXz4Lf8yy+mzkl2dnwSFpMN1lTj0VULWgijlAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mggyI7yRoAADiRLCcDrmXV/F6m7HUC45gU/f+EWyi7eRwEw3HA/RoxV67Jy50us8bF3rZH8l8QTjXEWKc9QW+SPGnNbyAFT4tZy/6z1CaAR0WZmgJLd5dF93Z5GZhd9Yt1dl9C0TYir6KrpwkqsdWo3wJ6IpR5UIw761p/PNwwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oBA5WTgl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uEzDBKUgWX6jFkMv5xG4qzSLHSlbdmivdkGAeIJ/mE8=; b=oBA5WTglzbT94FzYbKTyyMZT8O
-	T84h7fLYg9ZWCKUlaCIQX66FGXqejGTz0echBNFiJY8ksiLRqqQ2HUIhzVqRDYQxbkwEZebpQOKdK
-	D04mdZ0KZ2FX7PUpaRlvdifIvv09KnhEJCaE9MOGg/LVdTLmb5JRzGF4CDR1TSDPF2/MtC4v+VFLw
-	emX/qE/CMjVIHztj0rUl9p7qa5HbEvVqq2TKx2SIOEoIKwUdexyDEJEGMPBP0A4RGbMIlIcixTTWm
-	PyP2rf+OeRz2CtbIKzRySrc9c+1xwWLHbMQospqim7cZPdI404VCuwU+W9NPk0jUiiL6OwT5fzDNx
-	JoV7BeIA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tMX2z-00000004OWx-2QfO;
-	Sat, 14 Dec 2024 18:39:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CF0E930035F; Sat, 14 Dec 2024 19:39:24 +0100 (CET)
-Date: Sat, 14 Dec 2024 19:39:24 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ranguvar <ranguvar@ranguvar.io>
-Cc: "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
-	"regressions@leemhuis.info" <regressions@leemhuis.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM
- guest
-Message-ID: <20241214183924.GC10560@noisy.programming.kicks-ass.net>
-References: <nscDY8Zl-c9zxKZ0qGQX8eqpyHf-84yh3mPJWUUWkaNsx5A06rvv6tBOQSXXFjZzXeQl_ZVUbgGvK9yjH6avpoOwmZZkm3FSILtaz2AHgLk=@ranguvar.io>
+	s=arc-20240116; t=1734201673; c=relaxed/simple;
+	bh=g7rTlp2Fy0rmh8iTu37cPNHXE5zBs2vgpiuv/ttvAcM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=nVm5l4Is0qPTlRR7BJ5tM2Dc9J7y+tC7QahN7KCmcx0SOy3DZueXyGJHnykjQq/DzzNcuT1yhHAwp3iK+TqVUlOGK/TvfORcZEBi1UA2RZsql0wcqvrYtq1WOVU7vSrRy0Db+qLCa+9IZzKB5DkgNkotDoOoaly0g044qrNVodI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-280-3Kd5c3ElMVu5EUN2SKtuRQ-1; Sat, 14 Dec 2024 18:41:08 +0000
+X-MC-Unique: 3Kd5c3ElMVu5EUN2SKtuRQ-1
+X-Mimecast-MFC-AGG-ID: 3Kd5c3ElMVu5EUN2SKtuRQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 14 Dec
+ 2024 18:40:11 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 14 Dec 2024 18:40:11 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Arnd Bergmann' <arnd@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>, "Ard
+ Biesheuvel" <ardb@kernel.org>, Clark Williams <clrkwllms@kernel.org>, "Jason
+ Baron" <jbaron@akamai.com>, Josh Poimboeuf <jpoimboe@kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+	Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>,
+	Russell King <linux@armlinux.org.uk>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
+Subject: RE: [PATCH 3/4] ARM: drop CONFIG_HIGHPTE support
+Thread-Topic: [PATCH 3/4] ARM: drop CONFIG_HIGHPTE support
+Thread-Index: AQHbSx10HM4hb1GiOk+xX2rPfGcyA7LmGAAw
+Date: Sat, 14 Dec 2024 18:40:11 +0000
+Message-ID: <d54e11cf3f4d4216b5cecf29b761cd45@AcuMS.aculab.com>
+References: <20241210160556.2341497-1-arnd@kernel.org>
+ <20241210160556.2341497-4-arnd@kernel.org>
+In-Reply-To: <20241210160556.2341497-4-arnd@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nscDY8Zl-c9zxKZ0qGQX8eqpyHf-84yh3mPJWUUWkaNsx5A06rvv6tBOQSXXFjZzXeQl_ZVUbgGvK9yjH6avpoOwmZZkm3FSILtaz2AHgLk=@ranguvar.io>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: griw3fBzfXZmiafbT2O0nxNZ3_0LigrR5nu9qFQykfg_1734201667
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 14, 2024 at 06:30:11AM +0000, Ranguvar wrote:
-> Hello, all,
-> 
-> Any assistance with proper format and process is appreciated as I am
-> new to these lists.  After the commit bd9bbc96e835 "sched: Rework
-> dl_server" I am no longer able to boot my Windows 11 23H2 guest using
-> pinned/exclusive CPU cores and passing a PCIe graphics card.  This
-> setup worked for me since at least 5.10, likely earlier, with minimal
-> changes.
-> 
-> Most or all cores assigned to guest VM report 100% usage, and many
-> tasks on the host hang indefinitely (10min+) until the guest is
-> forcibly stopped.  This happens only once the Windows kernel begins
-> loading - its spinner appears and freezes.
+From: Arnd Bergmann
+> Sent: 10 December 2024 16:06
+...
+> Since Arm is the last architecture remaining that uses this, and almost
+> no 32-bit machines support more than 4GB of RAM, the cost of continuing
+> to maintain HIGHPTE seems unjustified, so remove it here to allow
+> simplifying the generic page table handling.
 
-Do the patches here:
+'Picking at nits' 'highmem' support was needed for systems with 4GB of RAM
+in order to use more than 3GB or 3.5GB (depending on the bios) because
+of the physical addresses that are reserved for PCI (and other MMIO).
 
-  https://lkml.kernel.org/r/20241213032244.877029-1-vineeth@bitbyteword.org
+=09David
 
-help?
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-I'm not really skilled with the whole virt thing, and I definitely do
-not have Windows guests at hand. If the above patches do not work; would
-it be possible to share an image or something?
 
