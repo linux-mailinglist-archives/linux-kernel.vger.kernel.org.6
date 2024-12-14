@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-446077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A0B9F1F98
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:16:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB5F9F1F99
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823A3166EC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:16:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2857A06E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AE9194A66;
-	Sat, 14 Dec 2024 15:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D699199EA2;
+	Sat, 14 Dec 2024 15:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HCjMuodX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fqd1S7z2"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAAA18AE2
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A4A18AE2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734189373; cv=none; b=BCq2CCIkQkNRXBYz/CyyuRqTkSCJxDSKYAqpqVuJvFFwONvRXUC3CRxh7GbDy7DCtkxY76lSXJJRpFVfBB/ZYPqjsjWLXZHmlQdsL8/CrzKAz6Awspafa6qKC1BryoR60mGLrIycxqW4qe/9UttqhP6Eh2o+VUVs8E0Dx3HkydM=
+	t=1734189379; cv=none; b=Hiimqv1sRWUhzlSYxtR8L6+/9R3+5e76kRGAppMy59pjC1jbRgPQfkx188Js21MVYZNsDQxlxqT1aZ6GMHcR1vpAVikVqjB9cTvGZnVU0XJw1ciDYi0nzZVjhCVma/A4QmJHfewVcc3wUVFLeoqQssMnFTRcIj9XtgCKAz+qvQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734189373; c=relaxed/simple;
-	bh=UJEbzQUsyGX9L5ShWN3KaIYn3YGKc0az784D/C357Hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KACs4BRT0kDkTSBwgwZpD2ecLiDeXrB7uw0MaKN9lo6DX36pxV6SkD+sQZzwvm7u6oG2h9UltFO8C8eFC6p3i3Tg+TQJqoCbT/1JfIJW7gcXmtx+Ebez6DPGcIa0/C2Ak6QXaoHtQAzU5UfA6HDj0MlGgkkPElyxR/wBypyhF1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HCjMuodX; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1734189379; c=relaxed/simple;
+	bh=owQmkqaLRIE9GeiR0sm2qoSY/RWQT987XFzzAtkcayY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K2YNF/TMeOdM42wwlemfuI8zZS8iA7BHEyAa26m89ZdXGUQhXcqoobgyxBAQOnC1xdUUjqc5idgpXqX/I/AyLXAh3AQmgMlwGi/ywjt6pEnidrO/7asMi4l7PruzsKedx/hSjTTiuh0Y9lHWLxXC64F6KjOD4qZqzWM5e/QanN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fqd1S7z2; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734189371; x=1765725371;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=UJEbzQUsyGX9L5ShWN3KaIYn3YGKc0az784D/C357Hs=;
-  b=HCjMuodX4yeNrw/IDWRrmt8ON+acO6T3MK2GssyIwNLZkTSHrwFKjPoR
-   616d693Lpx86MrwyXQTtt6a1nTKEDlTBqdYPIcnwV+XG2wh9I0rhJRBqZ
-   CIIjpyjFx4GB59WlTnZtPeSGo04JyNzv4resZdNPr2jfqJa2H7/M6mp0F
-   e+QVC/0l11wNz4Ye3WD3/zKloZL1SDio/v7VozseZov0VN3x0iiEm3rOJ
-   762+iAyuhmvh1ruxUwo/22XaQJuPgUkDQqHyzUhYwGWqasTKvTr3VhlVN
-   nYNGugyPOEF9ayxeNh8iJA6i8aYqro5KVYEcyHgip9Z84DRhJ4LP27TBJ
+  t=1734189378; x=1765725378;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=owQmkqaLRIE9GeiR0sm2qoSY/RWQT987XFzzAtkcayY=;
+  b=fqd1S7z2FVKauwVujV4cJICSpMzT4roAHyqkGzWThPBJKbofwxtA97Yz
+   ryMIgud5OSaVCeT4ZgABmI4SWmHjYu3LtuveMVRgeourClu96XImmQycm
+   EoGYkkRgpIM5vwee2VgOWUUCvVUUG6U7ApkitdOJkHslBIP+Of5uqG07+
+   UTKG0ye8pGsNtoxzCsWJeDCpIKdnX6kB+4LK6XVuC2mzSepxHp950E8Ql
+   BSJXckAAnl8yNL9Mk1SsEok7FZue9rMXbkKGambvQ8NndPvrc1wDEF0KA
+   ufmcVCi9Q9SVkc4+sTTzlA34YpqbCDH9otIZgve3QqMN5fZzsRgOC0lQn
    g==;
-X-CSE-ConnectionGUID: MPN1GtwNREaw+dRDoY6k3Q==
-X-CSE-MsgGUID: oM0YjF6NS4mICmZQsBzWJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45109865"
+X-CSE-ConnectionGUID: OViyRm4wRUKLmpKgRLxSzQ==
+X-CSE-MsgGUID: /Pylb+RmQ9yfeVcRFeIKfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45109877"
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45109865"
+   d="scan'208";a="45109877"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:16:11 -0800
-X-CSE-ConnectionGUID: lzkCSsGuT8eR9uyPhPkb/Q==
-X-CSE-MsgGUID: Ungf8jI+TFOig8L2nEC7/g==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:16:17 -0800
+X-CSE-ConnectionGUID: KxRuVakLSOqJJh9GWhditw==
+X-CSE-MsgGUID: AxjnC7kATRG3GzjHWeAx6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120050120"
+   d="scan'208";a="120050132"
 Received: from bjrankin-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.200])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:16:02 -0800
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:16:10 -0800
 From: Kai Huang <kai.huang@intel.com>
 To: dave.hansen@intel.com,
 	kirill.shutemov@linux.intel.com,
@@ -74,10 +75,12 @@ Cc: x86@kernel.org,
 	adrian.hunter@intel.com,
 	nik.borisov@suse.com,
 	kai.huang@intel.com
-Subject: [PATCH v9 0/6] TDX host: metadata reading tweaks and feature mandate
-Date: Sun, 15 Dec 2024 04:15:41 +1300
-Message-ID: <cover.1734188033.git.kai.huang@intel.com>
+Subject: [PATCH v9 1/6] x86/virt/tdx: Rename 'struct tdx_tdmr_sysinfo' to reflect the spec better
+Date: Sun, 15 Dec 2024 04:15:42 +1300
+Message-ID: <de165d09e0b571cfeb119a368f4be6e2888ebb93.1734188033.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <cover.1734188033.git.kai.huang@intel.com>
+References: <cover.1734188033.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,99 +89,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series replaces the existing TDX module metadata reading code with
-a new auto-generated global metadata infrastructure for basic KVM TDX
-support:
+The TDX module provides a set of "Global Metadata Fields".  They report
+things like TDX module version, supported features, and fields related
+to create/run TDX guests and so on.
 
-1) read "TDX_FEATURES0" field to mandate the "not clobbering RBP when
-   exiting from TDX guest" feature is supported during the module
-   initialization.
+TDX organizes those metadata fields by "Classes" based on the meaning of
+those fields.  E.g., for now the kernel only reads "TD Memory Region"
+(TDMR) related fields for module initialization.  Those fields are
+defined under class "TDMR Info".
 
-   Some old modules can clobber host's RBP when exiting from the TDX
-   guest, and currently they can be initialized successfully.  We don't
-   want to run TDX guests using such modules.  We should just fail to
-   initialize them to avoid memory/CPU cycle cost of initializing TDX
-   module [1].
+Today the kernel reads some of the global metadata to initialize the TDX
+module.  KVM will need to read additional metadata fields to run TDX
+guests.  Move towards having the TDX host core-kernel provide a
+centralized, canonical, and immutable structure for the global metadata
+that comes out from the TDX module for all kernel components to use.
 
-2) provide metadata reading infrastructure which is required to read
-   more metadata fields to support KVM TDX.  The patches which do so
-   can be found at [2][3].
+More specifically, prepare the code to end up with an organization like:
 
-Hi Dave,
+       struct tdx_sys_info {
+	       struct tdx_sys_info_classA a;
+	       struct tdx_sys_info_classB b;
+	       ...
+       };
 
-This series targets x86 tip.  This is the bare minimum pre-work to
-support KVM TDX.  I appreciate if you could review and take this as we
-think we have addressed all the comments.
+Currently the kernel organizes all fields under "TDMR Info" class in
+'struct tdx_tdmr_sysinfo'.  Prepare for the above by renaming the
+structure to 'struct tdx_sys_info_tdmr' to follow the class name better.
 
-This series has dropped all changes that are not required for TDX KVM
-base support.  It includes only:
- - Host metadata infrastructure, which will be used by the KVM patches
-   to get TDX module information to boot a TD.
- - The NO_RBP_MOD enforcement, which is required to avoid clobbering
-   RBP when running TDX guests using old TDX modules.
+No functional change intended.
 
-The script used to auto-generate the metadata reading code in patch 3
-can be found in [4].
-
-History:
-
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+---
 v8 -> v9:
- - Take out the "running out of reserved areas" bugfix:
-   - Remove CMR reading code in patch 3.
-   - Remove patch 7-8.
- - Take out the patch 5 which adds nice-to-have header file inclusions
-   but it is not mandatory for KVM TDX.
- - Minor changelog improvement suggested by Rick and Reinette.
- - Rebase to tip/x86/tdx.
+ - Minor changelog improvement suggested by Rick and Reniette.
 
- v8: https://lore.kernel.org/lkml/cover.1731498635.git.kai.huang@intel.com/
+---
+ arch/x86/virt/vmx/tdx/tdx.c | 36 ++++++++++++++++++------------------
+ arch/x86/virt/vmx/tdx/tdx.h |  2 +-
+ 2 files changed, 19 insertions(+), 19 deletions(-)
 
-v7 -> v8:
- - Address Dave's comments to remove the code to print module version
-   and CMRs:
-   - Remove the code which reads module version in the auto-generated
-     code.
-   - Remove the patch which prints module version (patch 10 in v7)
-   - Remove the code which prints CMRs in patch 7.
-   - Update the changelog of some patches that mentioned "reading module
-     version" and "print CMRs".
- - Collect Nikolay's tag.
-
-Previous versions and more background info please see:
-
- - https://lore.kernel.org/kvm/6ab90fd332bccdec7b64e5909cb4637732d6bb01.1731318868.git.kai.huang@intel.com/T/
-
-[1]: https://lore.kernel.org/fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com/
-[2]: https://git.kernel.org/pub/scm/virt/kvm/kvm.git/commit/?h=kvm-coco-queue&id=594fc3256733fe2c5b8bd9007effea2083431861
-[3]: https://git.kernel.org/pub/scm/virt/kvm/kvm.git/commit/?h=kvm-coco-queue&id=8bb81c97ec53b8a3dea29572cdb6ecfa4ff3a181
-[4]: https://lore.kernel.org/762a50133300710771337398284567b299a86f67.camel@intel.com/
-
-
-
-
-Kai Huang (5):
-  x86/virt/tdx: Rename 'struct tdx_tdmr_sysinfo' to reflect the spec
-    better
-  x86/virt/tdx: Start to track all global metadata in one structure
-  x86/virt/tdx: Use dedicated struct members for PAMT entry sizes
-  x86/virt/tdx: Switch to use auto-generated global metadata reading
-    code
-  x86/virt/tdx: Require the module to assert it has the NO_RBP_MOD
-    mitigation
-
-Paolo Bonzini (1):
-  x86/virt/tdx: Use auto-generated code to read global metadata
-
- arch/x86/virt/vmx/tdx/tdx.c                 | 95 +++++++--------------
- arch/x86/virt/vmx/tdx/tdx.h                 | 40 +--------
- arch/x86/virt/vmx/tdx/tdx_global_metadata.c | 48 +++++++++++
- arch/x86/virt/vmx/tdx/tdx_global_metadata.h | 25 ++++++
- 4 files changed, 108 insertions(+), 100 deletions(-)
- create mode 100644 arch/x86/virt/vmx/tdx/tdx_global_metadata.c
- create mode 100644 arch/x86/virt/vmx/tdx/tdx_global_metadata.h
-
-
-base-commit: 564ea84c8c14b007d7838bfb1327295b873573be
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 4e2b2e2ac9f9..e979bf442929 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -272,7 +272,7 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
+ 
+ static int read_sys_metadata_field16(u64 field_id,
+ 				     int offset,
+-				     struct tdx_tdmr_sysinfo *ts)
++				     struct tdx_sys_info_tdmr *ts)
+ {
+ 	u16 *ts_member = ((void *)ts) + offset;
+ 	u64 tmp;
+@@ -298,9 +298,9 @@ struct field_mapping {
+ 
+ #define TD_SYSINFO_MAP(_field_id, _offset) \
+ 	{ .field_id = MD_FIELD_ID_##_field_id,	   \
+-	  .offset   = offsetof(struct tdx_tdmr_sysinfo, _offset) }
++	  .offset   = offsetof(struct tdx_sys_info_tdmr, _offset) }
+ 
+-/* Map TD_SYSINFO fields into 'struct tdx_tdmr_sysinfo': */
++/* Map TD_SYSINFO fields into 'struct tdx_sys_info_tdmr': */
+ static const struct field_mapping fields[] = {
+ 	TD_SYSINFO_MAP(MAX_TDMRS,	      max_tdmrs),
+ 	TD_SYSINFO_MAP(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr),
+@@ -309,16 +309,16 @@ static const struct field_mapping fields[] = {
+ 	TD_SYSINFO_MAP(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]),
+ };
+ 
+-static int get_tdx_tdmr_sysinfo(struct tdx_tdmr_sysinfo *tdmr_sysinfo)
++static int get_tdx_sys_info_tdmr(struct tdx_sys_info_tdmr *sysinfo_tdmr)
+ {
+ 	int ret;
+ 	int i;
+ 
+-	/* Populate 'tdmr_sysinfo' fields using the mapping structure above: */
++	/* Populate 'sysinfo_tdmr' fields using the mapping structure above: */
+ 	for (i = 0; i < ARRAY_SIZE(fields); i++) {
+ 		ret = read_sys_metadata_field16(fields[i].field_id,
+ 						fields[i].offset,
+-						tdmr_sysinfo);
++						sysinfo_tdmr);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -342,13 +342,13 @@ static int tdmr_size_single(u16 max_reserved_per_tdmr)
+ }
+ 
+ static int alloc_tdmr_list(struct tdmr_info_list *tdmr_list,
+-			   struct tdx_tdmr_sysinfo *tdmr_sysinfo)
++			   struct tdx_sys_info_tdmr *sysinfo_tdmr)
+ {
+ 	size_t tdmr_sz, tdmr_array_sz;
+ 	void *tdmr_array;
+ 
+-	tdmr_sz = tdmr_size_single(tdmr_sysinfo->max_reserved_per_tdmr);
+-	tdmr_array_sz = tdmr_sz * tdmr_sysinfo->max_tdmrs;
++	tdmr_sz = tdmr_size_single(sysinfo_tdmr->max_reserved_per_tdmr);
++	tdmr_array_sz = tdmr_sz * sysinfo_tdmr->max_tdmrs;
+ 
+ 	/*
+ 	 * To keep things simple, allocate all TDMRs together.
+@@ -367,7 +367,7 @@ static int alloc_tdmr_list(struct tdmr_info_list *tdmr_list,
+ 	 * at a given index in the TDMR list.
+ 	 */
+ 	tdmr_list->tdmr_sz = tdmr_sz;
+-	tdmr_list->max_tdmrs = tdmr_sysinfo->max_tdmrs;
++	tdmr_list->max_tdmrs = sysinfo_tdmr->max_tdmrs;
+ 	tdmr_list->nr_consumed_tdmrs = 0;
+ 
+ 	return 0;
+@@ -921,11 +921,11 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
+ /*
+  * Construct a list of TDMRs on the preallocated space in @tdmr_list
+  * to cover all TDX memory regions in @tmb_list based on the TDX module
+- * TDMR global information in @tdmr_sysinfo.
++ * TDMR global information in @sysinfo_tdmr.
+  */
+ static int construct_tdmrs(struct list_head *tmb_list,
+ 			   struct tdmr_info_list *tdmr_list,
+-			   struct tdx_tdmr_sysinfo *tdmr_sysinfo)
++			   struct tdx_sys_info_tdmr *sysinfo_tdmr)
+ {
+ 	int ret;
+ 
+@@ -934,12 +934,12 @@ static int construct_tdmrs(struct list_head *tmb_list,
+ 		return ret;
+ 
+ 	ret = tdmrs_set_up_pamt_all(tdmr_list, tmb_list,
+-			tdmr_sysinfo->pamt_entry_size);
++			sysinfo_tdmr->pamt_entry_size);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, tmb_list,
+-			tdmr_sysinfo->max_reserved_per_tdmr);
++			sysinfo_tdmr->max_reserved_per_tdmr);
+ 	if (ret)
+ 		tdmrs_free_pamt_all(tdmr_list);
+ 
+@@ -1098,7 +1098,7 @@ static int init_tdmrs(struct tdmr_info_list *tdmr_list)
+ 
+ static int init_tdx_module(void)
+ {
+-	struct tdx_tdmr_sysinfo tdmr_sysinfo;
++	struct tdx_sys_info_tdmr sysinfo_tdmr;
+ 	int ret;
+ 
+ 	/*
+@@ -1117,17 +1117,17 @@ static int init_tdx_module(void)
+ 	if (ret)
+ 		goto out_put_tdxmem;
+ 
+-	ret = get_tdx_tdmr_sysinfo(&tdmr_sysinfo);
++	ret = get_tdx_sys_info_tdmr(&sysinfo_tdmr);
+ 	if (ret)
+ 		goto err_free_tdxmem;
+ 
+ 	/* Allocate enough space for constructing TDMRs */
+-	ret = alloc_tdmr_list(&tdx_tdmr_list, &tdmr_sysinfo);
++	ret = alloc_tdmr_list(&tdx_tdmr_list, &sysinfo_tdmr);
+ 	if (ret)
+ 		goto err_free_tdxmem;
+ 
+ 	/* Cover all TDX-usable memory regions in TDMRs */
+-	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &tdmr_sysinfo);
++	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo_tdmr);
+ 	if (ret)
+ 		goto err_free_tdmrs;
+ 
+diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+index b701f69485d3..148f9b4d1140 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.h
++++ b/arch/x86/virt/vmx/tdx/tdx.h
+@@ -100,7 +100,7 @@ struct tdx_memblock {
+ };
+ 
+ /* "TDMR info" part of "Global Scope Metadata" for constructing TDMRs */
+-struct tdx_tdmr_sysinfo {
++struct tdx_sys_info_tdmr {
+ 	u16 max_tdmrs;
+ 	u16 max_reserved_per_tdmr;
+ 	u16 pamt_entry_size[TDX_PS_NR];
 -- 
 2.47.1
 
