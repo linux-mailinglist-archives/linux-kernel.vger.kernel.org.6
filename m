@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-445796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D76F9F1BAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:07:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A879F1BAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D121889DB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1B4162F02
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472E9101DE;
-	Sat, 14 Dec 2024 01:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7359818AFC;
+	Sat, 14 Dec 2024 01:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Um9JNsLA"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p8Igj+q/"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48449D529
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 01:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4894215E90
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 01:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734138445; cv=none; b=qwgjVzcwncKk9MfHMXnyAtlYe9IRUyz3GvojVtklLwR8Bj+2HSfHYl+Vw8aXtNhg8wmy9+btziU6RPwgSU2aPxrQB5xbEWQ9hxWVXpdqZg2maTyzP6KjiySGCAuglTCPkZFvUgQY5JlG1yD6sc5yvqYBvBc+On2w26agPExo/nc=
+	t=1734138448; cv=none; b=JKOdTT+/e4KcI4PyguQNtsQHtEcHgjuwlni4i+PIzyrpxfrSHHlc6nSg48Qx/M4CtitRppD2HOBrB2OIXt3kbT9WnqorRGgxSXB9v6ukOVv8jP+Ehx7eGotv/zNFVq3npfyIjJX74YWVLbVK5RCvmgz6WbY388v8iqsVG4RzIE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734138445; c=relaxed/simple;
-	bh=TEcjPwY8F3+Wd5Us2Ab9oD01qsPrOs6/BjBcJXXFnoE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PuiILRIbGFaZjXYBJ83olI3ZPHRPmwiLnN18PCoDyC2LxE1u2eRIlfGG28+bFiuzfhXF2bNvOX6iveIEFmrEpPh3qROWr4/mFtEvIlyaGG+PovZnbnTgMfjTO//fkj5MZUkOoxdJCQAxY7IyJA4AIdqG4DMa3T/7OGE4vaNnmDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Um9JNsLA; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1734138448; c=relaxed/simple;
+	bh=cSnwUK/2rXGD+rrAuQ2cWaSYdAoHz1OuzoU7A8Ugyzw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MYbF5WxdXCKf4Af8dcd5Y3lzKxl4Jls++FvMpuTa9a3PNY+aRzKhxk70/ugV7K0hl5fp/lEWq426lgcQbyp6r9abQgQ7Wql7o5TtydHprfUdGTLXITFCwtKZy0y7IIGIBcr6x6sPKBsZquThwsAcso6u5JjlB0ZEolXPyunussI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p8Igj+q/; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2166855029eso21138955ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:07:24 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ee6b027a90so3120530a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:07:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734138443; x=1734743243; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rF0QqBz6fmUE/aM7acX0fYib5RzHVuuLEZBaBu3f+Vw=;
-        b=Um9JNsLAJuALkVD/R/J1YgFxo0EfV6I1Z6ydoDVSTxWQNv3AMVSARg4lRFI9ASsB59
-         zlH+SZCTzX5mPMnQCYwzG7W9+lkLTV2wabi8rArGQkiPJTFQemgj7sA+MIrSRRB90XJB
-         +jMZP2hA5BZGHqBAw5qNszs+DojEOUR5bgYfLXuX/fNLts6KqvwOD7uhUeDNnY9cLdC/
-         OrjDUlMX2UQ15Tprg/xX7vJ2XfMn8SQnrKTfQSKt6CYF7e2A5v0IrxlKKaaQezuT/lVr
-         gMejPF5LZwYghRl0q5F9l/DWQ/M/jplgWzopkek48GhA3aLmY8EaKMfcUNS+kveRp+x5
-         wYEg==
+        d=google.com; s=20230601; t=1734138445; x=1734743245; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=FDkeem6MqewIEXRWoJcJJSDt8+RewhtQwmeUHyoVvwQ=;
+        b=p8Igj+q/GB/05CyWdpM+D2gC13AKjgcSTCKkYZvIWWi0G1V97/D/g85yIgBFOAcpUU
+         hxhHAoPvZRGA9JPz8QpFBerjqDtVzZyxYV4sgZaGKu+wZ2qHAQJXzRY/JX/LH8Su0+2+
+         O9A49qfvmxZa0jK/KCh6GFSlVEUB51l0+ojpmJxzD2NPt61dptpZwff0wKpQS7FQS/L0
+         hZgDuY6xJzJP4KgSwuIBeajitheja8I+uhZmzdmMq5B7Vr0GRi5a4MkPjHdw3iA4n1FR
+         VE+XRxO0Z43SB0WepodwIrUu4oOFKhexTLAlN33ahyvdv1sM21CajGimX9DqHg7912Ov
+         Xaqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734138443; x=1734743243;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rF0QqBz6fmUE/aM7acX0fYib5RzHVuuLEZBaBu3f+Vw=;
-        b=bXcxxj4Rd9iMu03nyOv7nIbwC2jzoQlx8HmMwY3c0PHk+/mlAPS2rQJXu059ReZDM2
-         SWdlQeScY/kcP257UhEPUJH+DlvvLwuH77+nHYZAHlyMcYBie21em/l+D8hhdIlgvvDi
-         kNJwgXBuIW5Dm9d749JEqxAuFYcaL3FvH/Uq8QWI/C52LAIcNOP+AYPi9EMlQOKsTJPz
-         nsLax+DrkV/OlA3bb0QnURhvW38Ha0ApyJjt8uZ6wzNvUwsX+95M46p7H330Zp2nZRJa
-         /6yEHxFiVrTiJ85JYf6TZSuYdsMMWwOS6M1+OHl2wV4elG5BDfYmTixAdyaZ90Y4RmPe
-         Jx1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHq0CBEyHAoJoW/sBRb0JR4cQg83p7d9kE3VxQ1swn96yhN05tpcu+5gW/yqZ9G8x8kDyfN98ihCd3zn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8jCdeEhbixVpj9EvehvKh3dser+yU90H5oYoJarYGAUhOD3pQ
-	dsOLMHXgzagJ9uBM3tbVKn4PFVElAmWK5uf2lX0NVmXqnbJsWzQwUD5ur5mqh1dabG+KXM4lJ1a
-	I4w==
-X-Google-Smtp-Source: AGHT+IGMCtcyoBcc8ZgIGCQDeNqNAPncEJv64I/tYQb7qnpKYjRgqHj0C22i46XP4zkRB5BlkxxuJNdzfso=
-X-Received: from pgbbw32.prod.google.com ([2002:a05:6a02:4a0:b0:7fd:40dd:869f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5c9:b0:216:59d4:40e7
- with SMTP id d9443c01a7336-21892a59f57mr54619905ad.55.1734138443620; Fri, 13
- Dec 2024 17:07:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734138445; x=1734743245;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FDkeem6MqewIEXRWoJcJJSDt8+RewhtQwmeUHyoVvwQ=;
+        b=pDOBtoCvK6fKngwv444X5iy8z8aUmjsnT6UTgfg6qpKVNP0JzIYbG/72RCdI4JMcl7
+         byiG+hKODX7xzLoO7TP6Xz/K+zQl2p54RSYzDSO54Zh0PHe8YZuw3QY3XMt/xHIpmVxU
+         yizvOPzPAzG3CuwRP9y/gPatP8zmTl6okjyxzbk1mS+eScI5vCOlyPWRDLRIhk4Is4s7
+         QMHLiUreHOikDPChtnMCNEShntpliA2RkX0K3XYqxEDXUicZ4qgemjNNFMq9yRTbsMpy
+         kpYOqG4Clx20nxu7HwKVOp+R9ETBKjvwcRgZzCqMWXBk/UzUdgE4NbdeCE/5moLuap2t
+         cuQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7+vJneL0nZBklKITO67MKv2Wbac+uhHmj+54QLXjHs+jj88jNnpntV/N6Cl1jxi7jzHLS4WzbHDKro3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5l6lzGA8r2nOzIobD5qtLpRs2OZ+NiSk/922+WtKq3Tcn4Qt4
+	i4iL0ZaleMnDboz8T12VtYzLUQk9BQ0ylzk5yr1FlKCF2GTNMI0BwHNEj4E3Ad1o9sy5LWLZfO6
+	ajg==
+X-Google-Smtp-Source: AGHT+IFK32cTaqoqTJNazGtX5TzExs7AH57kjcR5A7Qc6S14R9Qqh2LtvZ+1ec7OP+laMIvBdbl42YkuaIU=
+X-Received: from pjf15.prod.google.com ([2002:a17:90b:3f0f:b0:2ea:aa56:49c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d450:b0:2ee:d024:e4fc
+ with SMTP id 98e67ed59e1d1-2f2901b3661mr7398519a91.33.1734138445502; Fri, 13
+ Dec 2024 17:07:25 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 13 Dec 2024 17:07:01 -0800
+Date: Fri, 13 Dec 2024 17:07:02 -0800
+In-Reply-To: <20241214010721.2356923-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241214010721.2356923-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241214010721.2356923-1-seanjc@google.com>
-Subject: [PATCH 00/20] KVM: selftests: Fixes and cleanups for dirty_log_test
+Message-ID: <20241214010721.2356923-2-seanjc@google.com>
+Subject: [PATCH 01/20] KVM: selftests: Support multiple write retires in dirty_log_test
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -80,95 +84,109 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix a variety of flaws and false failures/passes in dirty_log_test, and
-drop code/behavior that adds complexity while adding little-to-no benefit.
+From: Maxim Levitsky <mlevitsk@redhat.com>
 
-Lots of details in the changelogs, and a partial list of complaints[1] in
-Maxim's original thread[2].
+If dirty_log_test is run nested, it is possible for entries in the emulated
+PML log to appear before the actual memory write is committed to the RAM,
+due to the way KVM retries memory writes as a response to a MMU fault.
 
-E.g. while not a particular interesting bug, hacking KVM like so doesn't
-elicit a test failure.
+In addition to that in some very rare cases retry can happen more than
+once, which will lead to the test failure because once the write is
+finally committed it may have a very outdated iteration value.
 
+Detect and avoid this case.
+
+Cc: Peter Xu <peterx@redhat.com>
+Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/linux/kvm_host.h | 2 ++
- virt/kvm/kvm_main.c      | 5 +++++
- 2 files changed, 7 insertions(+)
+ tools/testing/selftests/kvm/dirty_log_test.c | 52 +++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 401439bb21e3..bf7797ae2cdc 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -389,6 +389,8 @@ struct kvm_vcpu {
- 	 */
- 	struct kvm_memory_slot *last_used_slot;
- 	u64 last_used_slot_gen;
+diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+index aacf80f57439..cdae103314fc 100644
+--- a/tools/testing/selftests/kvm/dirty_log_test.c
++++ b/tools/testing/selftests/kvm/dirty_log_test.c
+@@ -152,6 +152,7 @@ static atomic_t vcpu_sync_stop_requested;
+  * sem_vcpu_stop and before vcpu continues to run.
+  */
+ static bool dirty_ring_vcpu_ring_full;
 +
-+	bool extra_dirty;
- };
- 
  /*
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index de2c11dae231..9981f1cc2780 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3444,6 +3444,11 @@ void mark_page_dirty_in_slot(struct kvm *kvm,
- 		unsigned long rel_gfn = gfn - memslot->base_gfn;
- 		u32 slot = (memslot->as_id << 16) | memslot->id;
+  * This is only used for verifying the dirty pages.  Dirty ring has a very
+  * tricky case when the ring just got full, kvm will do userspace exit due to
+@@ -166,7 +167,51 @@ static bool dirty_ring_vcpu_ring_full;
+  * dirty gfn we've collected, so that if a mismatch of data found later in the
+  * verifying process, we let it pass.
+  */
+-static uint64_t dirty_ring_last_page;
++static uint64_t dirty_ring_last_page = -1ULL;
++
++/*
++ * In addition to the above, it is possible (especially if this
++ * test is run nested) for the above scenario to repeat multiple times:
++ *
++ * The following can happen:
++ *
++ * - L1 vCPU:        Memory write is logged to PML but not committed.
++ *
++ * - L1 test thread: Ignores the write because its last dirty ring entry
++ *                   Resets the dirty ring which:
++ *                     - Resets the A/D bits in EPT
++ *                     - Issues tlb flush (invept), which is intercepted by L0
++ *
++ * - L0: frees the whole nested ept mmu root as the response to invept,
++ *       and thus ensures that when memory write is retried, it will fault again
++ *
++ * - L1 vCPU:        Same memory write is logged to the PML but not committed again.
++ *
++ * - L1 test thread: Ignores the write because its last dirty ring entry (again)
++ *                   Resets the dirty ring which:
++ *                     - Resets the A/D bits in EPT (again)
++ *                     - Issues tlb flush (again) which is intercepted by L0
++ *
++ * ...
++ *
++ * N times
++ *
++ * - L1 vCPU:        Memory write is logged in the PML and then committed.
++ *                   Lots of other memory writes are logged and committed.
++ * ...
++ *
++ * - L1 test thread: Sees the memory write along with other memory writes
++ *                   in the dirty ring, and since the write is usually not
++ *                   the last entry in the dirty-ring and has a very outdated
++ *                   iteration, the test fails.
++ *
++ *
++ * Note that this is only possible when the write was the last log entry
++ * write during iteration N-1, thus remember last iteration last log entry
++ * and also don't fail when it is reported in the next iteration, together with
++ * an outdated iteration count.
++ */
++static uint64_t dirty_ring_prev_iteration_last_page;
  
-+		if (!vcpu->extra_dirty &&
-+		    gfn_to_memslot(kvm, gfn + 1) == gfn) {
-+			vcpu->extra_dirty = true;
-+			mark_page_dirty_in_slot(kvm, memslot, gfn + 1);
-+		}
- 		if (kvm->dirty_ring_size && vcpu)
- 			kvm_dirty_ring_push(vcpu, slot, rel_gfn);
- 		else if (memslot->dirty_bitmap)
--- 
-
-[1] https://lore.kernel.org/all/Z1vR25ylN5m_DRSy@google.com
-[2] https://lore.kernel.org/all/20241211193706.469817-1-mlevitsk@redhat.com
-
-Maxim Levitsky (2):
-  KVM: selftests: Support multiple write retires in dirty_log_test
-  KVM: selftests: Limit dirty_log_test's s390x workaround to s390x
-
-Sean Christopherson (18):
-  KVM: selftests: Sync dirty_log_test iteration to guest *before*
-    resuming
-  KVM: selftests: Drop signal/kick from dirty ring testcase
-  KVM: selftests: Drop stale srandom() initialization from
-    dirty_log_test
-  KVM: selftests: Precisely track number of dirty/clear pages for each
-    iteration
-  KVM: selftests: Read per-page value into local var when verifying
-    dirty_log_test
-  KVM: selftests: Continuously reap dirty ring while vCPU is running
-  KVM: selftests: Honor "stop" request in dirty ring test
-  KVM: selftests: Keep dirty_log_test vCPU in guest until it needs to
-    stop
-  KVM: selftests: Post to sem_vcpu_stop if and only if vcpu_stop is true
-  KVM: selftests: Use continue to handle all "pass" scenarios in
-    dirty_log_test
-  KVM: selftests: Print (previous) last_page on dirty page value
-    mismatch
-  KVM: selftests: Collect *all* dirty entries in each dirty_log_test
-    iteration
-  KVM: sefltests: Verify value of dirty_log_test last page isn't bogus
-  KVM: selftests: Ensure guest writes min number of pages in
-    dirty_log_test
-  KVM: selftests: Tighten checks around prev iter's last dirty page in
-    ring
-  KVM: selftests: Set per-iteration variables at the start of each
-    iteration
-  KVM: selftests: Fix an off-by-one in the number of dirty_log_test
-    iterations
-  KVM: selftests: Allow running a single iteration of dirty_log_test
-
- tools/testing/selftests/kvm/dirty_log_test.c | 515 +++++++++----------
- 1 file changed, 240 insertions(+), 275 deletions(-)
-
-
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+ enum log_mode_t {
+ 	/* Only use KVM_GET_DIRTY_LOG for logging */
+@@ -316,6 +361,8 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
+ 	struct kvm_dirty_gfn *cur;
+ 	uint32_t count = 0;
+ 
++	dirty_ring_prev_iteration_last_page = dirty_ring_last_page;
++
+ 	while (true) {
+ 		cur = &dirty_gfns[*fetch_index % test_dirty_ring_count];
+ 		if (!dirty_gfn_is_dirtied(cur))
+@@ -613,7 +660,8 @@ static void vm_dirty_log_verify(enum vm_guest_mode mode, unsigned long *bmap)
+ 					 */
+ 					min_iter = iteration - 1;
+ 					continue;
+-				} else if (page == dirty_ring_last_page) {
++				} else if (page == dirty_ring_last_page ||
++					   page == dirty_ring_prev_iteration_last_page) {
+ 					/*
+ 					 * Please refer to comments in
+ 					 * dirty_ring_last_page.
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
