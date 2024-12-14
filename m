@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-445908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F0E9F1D6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:19:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A569F1D79
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727B9188821B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A12161C98
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EA4188587;
-	Sat, 14 Dec 2024 08:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A68F1A8F86;
+	Sat, 14 Dec 2024 08:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QcnFypl/"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1217E015;
-	Sat, 14 Dec 2024 08:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="E1lbLAjv"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191FB18FDDB;
+	Sat, 14 Dec 2024 08:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734164271; cv=none; b=A2+EmLdLT1FDHNOmkrkzZ7bqw0RqNk5ByiHeeNtG7jfHMN7RufYaFOoVuwanzIeKMS3Q6lAN/lN2oXLVUh3T+FffrvXodmZ1opQNhs5uC8sO9zc+Ry7YURzU6/KiHJrmD/p04YNftiWELEWy8cyvXfhzCqWiE+SkzMTENonoMp8=
+	t=1734164276; cv=none; b=pajfFBzwhRvw4n2k0ul3jAfLb8N1cCgBlkhPNEzZw2pJI5U2OX1ho1c/KvIoPTCvb+gguYaw3g6byOgYqB290eupCrHkboRIyxDPUT0OMkVe+DrBUvLPGbheNHfeWMJh6b2y4zJuKPhIjGGM+nvJUxPM8yibWgaDSwgCtJk8hpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734164271; c=relaxed/simple;
-	bh=yztjUXBCdTPkj2Cnqf5RxjLATdfzy7Mio76Oa9RTY6U=;
+	s=arc-20240116; t=1734164276; c=relaxed/simple;
+	bh=HOP5kRF5NKo7MOsQrCPiKx9lrd8Lqs4kcS5osp5H25Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hSP9P8t5TDxDVbwuwW2IoZetBIrAfT0T9ZdtAE0kidxCG9n1H9VdupA/8B3fFD+el0TCJMApoLH+3YoRXfraIGcxeFk/brNEkpeKrr20a4XdlIu7v+XTNq7HCJ21ExcAmryXenrb7zrrdSuNGj0kCL7P60ooK3qkL16+QaOZ69A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QcnFypl/; arc=none smtp.client-ip=117.135.210.3
+	 MIME-Version; b=eLktIifmp5KBqsBYSprJ0Zsv9dNUJUahsRjjSDRH+FU6PAN7KlONpDWig3ojjUu9JRpNGxhb/Rgu6JICoxQ1A5Rdw/HPVVfM+EOFKGRFwzzOnY7JHmCclTnjFoBqMtQaEQX5rRSYWdm6WLOeGzehyGqOM4ySwo2CiYVWl2loHZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=E1lbLAjv; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hnZl0
-	kD0NHFixyUuAcDalCU1UJrY0bC/p+e25gYBb4Y=; b=QcnFypl/blmPl1YtE+4QU
-	EjNX3Qr1Xa3O0OGDgyBaGRXghC78I25jTp/6J2FjAhRzoWfji2kCnj2f8wtBZUMF
-	3fSsuV2VD+k1GallxneZl8/NKUDfk8TOnXKRjV5xWbOsAdKbgdfaEOJO5S7DaJfk
-	X6MqomFz3LGamsH006l8/c=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=w1t+Y
+	xVGo3C7adso2ew9kchvYon/DvfCqltU1uP0Uy4=; b=E1lbLAjvTEGdE190FigXq
+	Biw9iHFhsYzkDwr54hu3651KhnEVEJmN6rjSIS12wn2Ot71ghVV5I4Lv9zvWTAK4
+	IGwYx75Refz3yrqr0ForKVX9QFiTYC/N/c5Gwlj27iT6x6h1lcR87RI00+FD/xlG
+	N5pEoifcZg4I6WcJWodepM=
 Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3fwEQP11ntNLtAQ--.5686S8;
-	Sat, 14 Dec 2024 16:17:29 +0800 (CST)
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3fwEQP11ntNLtAQ--.5686S9;
+	Sat, 14 Dec 2024 16:17:30 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -49,10 +49,11 @@ Cc: hjc@rock-chips.com,
 	linux-rockchip@lists.infradead.org,
 	derek.foreman@collabora.com,
 	detlev.casanova@collabora.com,
+	Min-Hua Chen <minhuadotchen@gmail.com>,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v6 06/16] drm/rockchip: vop2: Add check for 32 bpp format for rk3588
-Date: Sat, 14 Dec 2024 16:17:05 +0800
-Message-ID: <20241214081719.3330518-7-andyshrk@163.com>
+Subject: [PATCH v6 07/16] drm/rockchip: vop2: include rockchip_drm_drv.h
+Date: Sat, 14 Dec 2024 16:17:06 +0800
+Message-ID: <20241214081719.3330518-8-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241214081719.3330518-1-andyshrk@163.com>
 References: <20241214081719.3330518-1-andyshrk@163.com>
@@ -63,51 +64,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3fwEQP11ntNLtAQ--.5686S8
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF45Xw1rCw4DKF4DXw4xJFb_yoWkCwb_K3
-	47Zw13WrZ7CFn8A3W2qa4fGFZFyan29F4rKayvya4rtF1kZ3WvqayIkry7Was8CFW3KFnr
-	Cayjqr1rCF13ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0zBT5UUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQa1XmddM6y0LQAAs4
+X-CM-TRANSID:_____wD3fwEQP11ntNLtAQ--.5686S9
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFyxKw45Wr48JrWfuF4fAFb_yoW8CFW5pF
+	s8AFWUZrWxKFWjqr1DAF9xCr4Fy3ZFkayxGas7G3ZxZF12gF1DGwnrW3s5JrZrXr47ZF42
+	krs3J34UCF42vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjXdbUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMx21XmddNByuUAAAsp
 
-From: Andy Yan <andy.yan@rock-chips.com>
+From: Min-Hua Chen <minhuadotchen@gmail.com>
 
-RK3588 only support DRM_FORMAT_XRGB2101010/XBGR2101010 in afbc mode.
+Move rockchip_drm_drv.h in rockchip_drm_vop2.h to fix the follow
+sparse warning:
 
-Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+ARCH=arm64 LLVM=1 make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+mrproper defconfig all  -j12
+
+drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
+warning: symbol 'vop2_platform_driver' was not declared. Should it
+be static?
+
+It is also beneficial for the upcoming support for rk3576.
+
+Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
 
 ---
 
-Changes in v6:
-- Move 32 bpp check to format_mod_supported() hook
+(no changes since v3)
 
-Changes in v5:
-- Added in V5
+Changes in v3:
+- Split it from 10/15, as it fix a exiting compile warning.
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 1 -
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index 94f77faf14d1..85d281edfbfe 100644
+index 85d281edfbfe..b5f35839d5e8 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -603,6 +603,15 @@ static bool rockchip_vop2_mod_supported(struct drm_plane *plane, u32 format,
- 		}
- 	}
+@@ -35,7 +35,6 @@
+ #include <uapi/linux/videodev2.h>
+ #include <dt-bindings/soc/rockchip,vop2.h>
  
-+	if (format == DRM_FORMAT_XRGB2101010 || format == DRM_FORMAT_XBGR2101010) {
-+		if (vop2->data->soc_id == 3588) {
-+			if (!rockchip_afbc(plane, modifier)) {
-+				drm_dbg_kms(vop2->drm, "Only support 32 bpp format with afbc\n");
-+				return false;
-+			}
-+		}
-+	}
-+
- 	if (modifier == DRM_FORMAT_MOD_LINEAR)
- 		return true;
+-#include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_vop2.h"
+ #include "rockchip_rgb.h"
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+index f4724a402ac2..29cc7fb8f6d8 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+@@ -9,6 +9,7 @@
  
+ #include <linux/regmap.h>
+ #include <drm/drm_modes.h>
++#include "rockchip_drm_drv.h"
+ #include "rockchip_drm_vop.h"
+ 
+ #define VOP2_VP_FEATURE_OUTPUT_10BIT        BIT(0)
 -- 
 2.34.1
 
