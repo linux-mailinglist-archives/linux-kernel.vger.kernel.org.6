@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-445857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2149F1C73
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:47:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8F9F1C74
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8310165248
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:47:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 882307A051A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2854526AC3;
-	Sat, 14 Dec 2024 03:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095C127442;
+	Sat, 14 Dec 2024 03:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLFMXoCq"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUnRPZ04"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AE010E9;
-	Sat, 14 Dec 2024 03:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639FC10E9;
+	Sat, 14 Dec 2024 03:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734148044; cv=none; b=iAeOuElug/Dr00xWvDmG9zQeXQ7aNdD9kPnY4s/5oTgjn0KbE1yNGyQi6XmS3+U1VhX8jicZoigHgbMuoqA4CWksXgn8JksZWN2xZ8Y8l7X6Awoz3EocV8OQlb+oRnhEI/2niKytJn/OAVkP8qFTM30E/MTOj44t+YsSlxmZ7tw=
+	t=1734148301; cv=none; b=r36sh1L6f/tDcYu1T1nQplYkBGOkLINA/qc7d8wangQllNemM7sfcuBjSZYHgNgETKC0bM2KIMFPEIo2TU0KSFMpWIqvNpvFzeE7k/g5vIsLdZJ8XypGCNrpFq9JdFXO9tOYLpoWZUp3A4T51SPd1tm2+j70U5Jgw5/q1PtEAXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734148044; c=relaxed/simple;
-	bh=BbnsaTgN29i2rCUM12KAjmF9g4gSGVFSQbWcIYmMCEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EyKbtV4L+OnQHloJCnU4JpFB/4TFlSPgWO+wHzkEv7iaTTI+I8O0S7I1FBcNi+9yY9IueU451AoiouGrCZJ1wPTy/eNvvrB13kY/IZo74S5dUiGhlr9wXWChgDai+B/1bBlE1PsANXSkI1w8bIfsPGh1akzq7sWTavXgfSrEoeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLFMXoCq; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-728e78c4d7bso1809516b3a.0;
-        Fri, 13 Dec 2024 19:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734148042; x=1734752842; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BbnsaTgN29i2rCUM12KAjmF9g4gSGVFSQbWcIYmMCEQ=;
-        b=GLFMXoCq0W/n9kef6qSguUiIaoq2/640Q/6Yhy8VuX030VBl9weBsyyVQOkwZuq/2F
-         UWeRMLzi0sJWvyI3onUF06IXouJZukL2W3ROMA0lXk9/D3A/HRKydwqHc4+gIVL9znbO
-         m5joFtuER/hj70njR3mHzNG2aoQOSP4xDoIAoD7NeTU3ouyH+RwbjVdWdbw+a2rZVUxZ
-         OiJ1JFuchvrMdXkr4fJYRTqSnaPipdpZjQZePbnDjblwh5TfpgPb9tQcWJOdV0Xbsi0z
-         w1VkyWxHaWGhq9uUeR3Y9jsejciZ0gmSwW7cLiFiUuVmDQtvL2PhO/9rCl2GbX4omVN/
-         uEjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734148042; x=1734752842;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BbnsaTgN29i2rCUM12KAjmF9g4gSGVFSQbWcIYmMCEQ=;
-        b=AMkOvp8MXUpyuXd5NOpVpgzWwWqexHgHPwvm4fXUr9iuG63pYrKIHe7Q2HQ/z6MYNL
-         NdDLy/tzeg884RsbEUNcEigX2yzZoS9p4LV44L9in7YC5cV9+sSmTimk6FmV68g0Glk2
-         423+cHEhyuuX077N4bKlhtn03mylLUrbDVhVB8zy0BnECEWyGaPWBPo51pauDI4k9STT
-         qPjA9XU8O6wQwqszACx8u3aSCQp8J/lcszR04digNRGQYnH4JmqWRzE9u5yYAiR6jPfX
-         +1CcfirsT8exJ6Xkh+mcBhPxP4Ol/DfgkR7fu+Rd2IPSPlMpZFJOkxoTb/KLRN1kqkmd
-         TvVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv7IKVkgQvXn4HPTMwubZOd0jh4xQ2mTcPZ24T8xPwUzYn67j9AFKolesz2qZMdg7kZfuFv/fPaRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykLqsDeQ1wr1FhmfFiMgtjhGPlBhGxToflM8eE3WI24nwmos/f
-	r233B3WH7Jx+DpKH6Gn3Dp+NXRaoN7CoHEC1yC3yazFFhv+0clNO5QMxDg==
-X-Gm-Gg: ASbGncu3FaRxmEu0tDJnjfNQCaJan4NqjCzUAPZDRT//sAaBd0uOtmfYECDFIQlhm7Y
-	u+Pt8ygDZMr1qe9+dt24hgnwZEDWqZbEvd4nfYRBA62x8irYFVFd5cI2pKSIGOQsvnMVkRNo+Z8
-	HpZGiDTnqkqh1PD1YFf/94v9YW+qJPeCEghFtEGA2osQb5CYs3yQ0Bdg0QmboA/Q7pOUvcU0pPn
-	fQaoeJ2Zlfn0kl78GS8xcLzUdAHSR28uLX0CRjGRewdLQbEFytTxaDy
-X-Google-Smtp-Source: AGHT+IGtmAhF3ZuDliJ4haorXTo4WotTtbDlX0Vu+RF6UG1SyjpCKXs7FdWqYuzsoVOuqevgc1Naxg==
-X-Received: by 2002:a05:6a20:3947:b0:1cc:e71d:ea10 with SMTP id adf61e73a8af0-1e1dac4a13amr9690910637.14.1734148042243;
-        Fri, 13 Dec 2024 19:47:22 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5c15245sm359675a12.55.2024.12.13.19.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 19:47:21 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id B00C241F5559; Sat, 14 Dec 2024 10:47:17 +0700 (WIB)
-Date: Sat, 14 Dec 2024 10:47:17 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] docs: admin-guide: add some subsection headings
-Message-ID: <Z1z_xRWhg85N_40m@archie.me>
-References: <20241213182057.343527-1-corbet@lwn.net>
- <20241213182057.343527-3-corbet@lwn.net>
+	s=arc-20240116; t=1734148301; c=relaxed/simple;
+	bh=0pmaogiLIEikg2yJTULUG0Sx3vz2zGE3K9hqF0I2Yc0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=qd1C0xaVGyPBSYS3v6fOuAQrqDb2X7H/cdS+LU88bqJ2O3MDOO+12oqM9OgD93OKBaWrZhV/Kkv2J9zfBiyRoqZNbuU3yu6AGEQFLTy+V02QkSQEJGJESro7JhvC58azFHHi3PMXWvHF2a2AAt1Fo8a7TAp6XC4T3RvDFTqOnWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUnRPZ04; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72328C4CED1;
+	Sat, 14 Dec 2024 03:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734148300;
+	bh=0pmaogiLIEikg2yJTULUG0Sx3vz2zGE3K9hqF0I2Yc0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=kUnRPZ04Ym5w6eYz0dSr2jZjFV4KTbsaXzXRBKvZSkP6BTZ9mn1MaOTGUGgwsnBIi
+	 rvrADzK67xJ4YcszoM2uxSvZD1MojOqmqibnXIWjFYYiMPoWbpcXe4p+8y166IvdyS
+	 ppemb+Cxh99R9OWYgjSE7eTImqcjRP5YWe6/EC3Rz1kQ2vkCftz11eTp6LYEhZmlGf
+	 QaRZ+5UcjnN2X8lNQDu57GiJgzVaMJUOR5Rb6FKzxbvLF1ekwEmMb+FJyc+DNtNnhs
+	 Etl44xCYzJTWv3e1PqfvzQxIxLD1CxBdPdr0d5gGarL3gXSbL8gR7/Nt2ngfzaekIS
+	 oJOWoVVzkoGvw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VqT3Yvjy0BlRZV2N"
-Content-Disposition: inline
-In-Reply-To: <20241213182057.343527-3-corbet@lwn.net>
-
-
---VqT3Yvjy0BlRZV2N
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 14 Dec 2024 05:51:36 +0200
+Message-Id: <D6B49LBSZXN4.3V519030X0YCG@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, "Andy Liang" <andy.liang@hpe.com>,
+ "Takashi Iwai" <tiwai@suse.de>
+Subject: Re: [PATCH] tpm/eventlog: Limit memory allocations for event logs
+ with excessive size
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241210222608.598424-1-stefanb@linux.ibm.com>
+In-Reply-To: <20241210222608.598424-1-stefanb@linux.ibm.com>
 
-On Fri, Dec 13, 2024 at 11:20:53AM -0700, Jonathan Corbet wrote:
-> As part of the goal of bringing some order to this file, add subsection
-> headings to help readers find what they are looking for.
+On Wed Dec 11, 2024 at 12:26 AM EET, Stefan Berger wrote:
+> The TPM2 ACPI BIOS eventlog of a particular machine indicates that the
+> length of the log is 4MB, even though the actual length of its useful dat=
+a,
+> when dumped, are only 69kb. To avoid allocating excessive amounts of memo=
+ry
+> for the event log, limit the size of any eventlog to 128kb. This should b=
+e
+> sufficient memory and also not unnecessarily truncate event logs on any
+> other machine.
+>
+> Reported-by: Andy Liang <andy.liang@hpe.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219495
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/eventlog/acpi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog=
+/acpi.c
+> index 69533d0bfb51..701fd7d4cc28 100644
+> --- a/drivers/char/tpm/eventlog/acpi.c
+> +++ b/drivers/char/tpm/eventlog/acpi.c
+> @@ -26,6 +26,8 @@
+>  #include "../tpm.h"
+>  #include "common.h"
+> =20
+> +#define MAX_TPM_LOG_LEN		(128 * 1024)
 
-Looks good, thanks!
+Instead, to common.h:
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+/*=20
+ * Cap the log size to the given number of bytes. Applied to the TPM2
+ * ACPI logs.
+ */
+#define TPM_MAX_LOG_SIZE (128 * 1024)
 
---=20
-An old man doll... just what I always wanted! - Clara
+>
+> +
+>  struct acpi_tcpa {
+>  	struct acpi_table_header hdr;
+>  	u16 platform_class;
+> @@ -135,6 +137,12 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+>  		return -EIO;
+>  	}
+> =20
+> +	if (len > MAX_TPM_LOG_LEN) {
+> +		dev_warn(&chip->dev, "Excessive TCPA log len %llu truncated to %u byte=
+s\n",
+> +			 len, MAX_TPM_LOG_LEN);
+> +		len =3D MAX_TPM_LOG_LEN;
+> +	}
 
---VqT3Yvjy0BlRZV2N
-Content-Type: application/pgp-signature; name="signature.asc"
+First, you are changing also TPM1 code path. Also in the case of
+TPM2 code path the log message is incorrect as TCPA does not exist.
 
------BEGIN PGP SIGNATURE-----
+Second, this does not make sense as the log ends up to be corrupted
+(i.e. not complete).
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ1z/xQAKCRD2uYlJVVFO
-owyrAQCIQJtkq/Gu02NABsBz1UOkRccoV5GsAsGhG/WPzygzPQEAtGDTDXxbkO/d
-zOsi+RXAOu0boP0VWaA7s3RP17/eKgs=
-=jiIP
------END PGP SIGNATURE-----
+Instead, in the TPM2 code path:
 
---VqT3Yvjy0BlRZV2N--
+		start =3D tpm2_phy->log_area_start_address;
+		if (!start || !len) {
+			acpi_put_table((struct acpi_table_header *)tbl);
+			return -ENODEV;
+		}
+
+		if (len > TPM_MAX_LOG_SIZE) {
+			dev_warn(&chip->dev, "Excessive TPM2 log size of %llu bytes (> %u)\n",
+				 len, MAX_TPM_LOG_LEN);
+			log->bios_event_log =3D start;
+			chip->flags |=3D TPM_CHIP_FLAG_TPM2_ACPI;
+			return 0;
+		}
+
+This can then be used in tpm2.c to create a "slow path" in tpm2.c for
+parsing TPM2 ACPI log directly by mapping IO memory.
+
+BR, Jarkko
 
