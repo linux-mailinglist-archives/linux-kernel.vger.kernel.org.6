@@ -1,111 +1,88 @@
-Return-Path: <linux-kernel+bounces-446105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A7B9F1FEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:54:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AA49F1FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49F1166731
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:54:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80027A063F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2127192B75;
-	Sat, 14 Dec 2024 16:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251AB1A01C3;
+	Sat, 14 Dec 2024 16:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q8Slv0cm"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIbYotUU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F18193094
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A21192B75;
+	Sat, 14 Dec 2024 16:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734195272; cv=none; b=e7VJoW3rsip8H5B1bnav0fesSni2MnGEKA+QiSsGVeou3BMV7BhmP0qh9iVBWl++ETrKMgoJRgpE1Ld+YRBrHoLnkwL/I4j4UYN0fRwzWnB6Fl3r0X6nHrxqmFVkf0/DggYsijoMcYoEoHxm/qfmpXm3iTrMKyLib6R3x/Hlhks=
+	t=1734195375; cv=none; b=VYFRI2pbz6ig3E8j9msyHpdOQITeppAxVWI96ZwqYxCqZAnTX9RBAuR3+eUDdLDszj9eOljS7VJQn4rAXNPZ3siWB73gj3NGuAwT8ZiZw1e/Fxowh5+O1ZjiLl70iRT/KjDIl322mQsbMUIySRMsxJo/DYcMoTZxcfX0O72KOoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734195272; c=relaxed/simple;
-	bh=PgibwtyBOqL+PRLjUN9sePmURkpYK7LM47le0yK1D4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iLi8iQbPnNekZIfG/rKj2RlnrjUAD8M+D4Ye0cAQ7w5YVptOY/a16kEdFelZ9CGqAMrOb9RiT0jRezUUeuqqm8hf5a4CfFAggWDWzDTb136v6IOh8DVf/+cPw7bFEtbgc3nqeEEDF/IekUJRI7NrIMB8OBKupploxOzLLeCq4BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q8Slv0cm; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa67ac42819so452449966b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 08:54:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734195268; x=1734800068; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3BPgW74v84EgngZMaqM6VO7t79ywSu3q8xW0bx365E=;
-        b=Q8Slv0cmz4h+OuN0j4PXKHzwvFxvfF5iDwxXu5N5QMQzdYGPC5QBdKX0IOisxjjG7v
-         wSGqlh5UMg56RvbGZvm/Q5FAFXqybIdxYhegfhhV5kq0DymLLF+Am723dbGp6+QeYGV2
-         laaPzpIzb/2GYj4wYwnrNIl1zr2CeZa08O4mw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734195268; x=1734800068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H3BPgW74v84EgngZMaqM6VO7t79ywSu3q8xW0bx365E=;
-        b=ZygkQPVavR2YEJRyjWzYvWtdWLujUAjnD2IBkO/rSsPOW8zOY5iZ3/RNwd89itXNVr
-         ixVk5P3Xnw9bj7/fnb8xSj4ykKjrKu2umoOJtaQdarJK7z8WcD6LQBdpVT4D4KREp/YI
-         QWjaGWiAydCfLeHVTP+8Sg8eln0yQbjJ0a8pWTbPmnPoieQoD/e+Ky3x/ZMaQASZHFa9
-         ShbVlq/91RDAu928HQcZLtyYfX2NtsBZ9SMTijMJPw20332xRTx6sWyMmnrOrAeE4yb6
-         kfK44Lhugv0tAUzQ56CSXdfm9GzNJgVgVtKuuzUrfcCbrrW4EDxf+zqXHwvtf+yiT6lU
-         sblQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/BITIYKtEJgSsTpkqa4N7uW+dM442KIa9CVhLicVVdAe5tJsgBMOwqpT8wep15UowQXnQWFOfX9zWeps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaiLPrVT1A1eoFycyg3aGT9ZqEiZNjQFFW1KG53dhHzNrzUcAM
-	jfVy/XAivdYF44NsAkIJQDryDOaODZezcf5kRwxEKwqH0WMZFSRIe+7oi+Adg8mq/37nnvFGnxY
-	8u28=
-X-Gm-Gg: ASbGncsnsvXTJvEDwVOtP5+jgFuL1w8Rlja5RcYq4XEZmppivmsW9Jjlrvw1V4N6r2q
-	xLAkRf8yG0EC4sKS8faInHO/8kuZNhe4aVgq0mdXuafx1OICW0jheNPnxDYBtb1PcsyEw1SHjk3
-	9Hht9FRvd4ibNNwKIm+OHLzpcopXwXgdPHC4qnx+rr8/WiiZzN5E+xysw2yjHV/9jsc6aGHul5h
-	VoitmWfRbZRS/rQw9sKxZQws5KJJga1R4KniaPXrjFobBovwo8U7iOE0GNIF+Mk67Cw2tmXc6cb
-	C11fnG0ZfvbIIQT5r/dSmT8LiYtADR0=
-X-Google-Smtp-Source: AGHT+IHkQuR3ZGDOvQoDLBr9qpRH41lwmZ3X8rX90fzj0xkenQJDlkEq4aAxKEn7dVjDLpBRUQ6IxA==
-X-Received: by 2002:a17:906:f585:b0:aa6:5201:7ae3 with SMTP id a640c23a62f3a-aab77ea5c47mr715054466b.40.1734195268286;
-        Sat, 14 Dec 2024 08:54:28 -0800 (PST)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96359b58sm113840366b.103.2024.12.14.08.54.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 08:54:27 -0800 (PST)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa6aee68a57so406441766b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 08:54:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVEq1hSW/O6p9T/AYi2MjkJNwTgkLkXMfS/HazM84uE0K2rcYBB+pUldsHtu4JQKa2DwHzMbqvQ2bRhroo=@vger.kernel.org
-X-Received: by 2002:a17:907:9557:b0:aa6:6276:fe5a with SMTP id
- a640c23a62f3a-aab77ea5907mr622880666b.43.1734195266679; Sat, 14 Dec 2024
- 08:54:26 -0800 (PST)
+	s=arc-20240116; t=1734195375; c=relaxed/simple;
+	bh=078vonmjDPYa7cx+TCBvXwXah+/q/AgStB2Jmt8KH8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pG1TwR+sSYMl/g696qpwyQjnq5u9XxZdyriGeXRekjePbbNHu5PmrBoQYVrLhGoPJzbaXUbxUJDaNqAf5GFPt9+p4eRtZSg2soM8XzVhtuZSx6l/VM2GjtJKehf+ygWnb3rbt+MkhM+niwtuRsRWROt/Oy727PXUfs7RB+Paqi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIbYotUU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EA2C4CED1;
+	Sat, 14 Dec 2024 16:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734195374;
+	bh=078vonmjDPYa7cx+TCBvXwXah+/q/AgStB2Jmt8KH8A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MIbYotUUFwVKEf2qYSM4mnNUDHfpZfczZiPVaYwn9VuJFd0AiuWspO6XuQLgoqLMa
+	 nj1KwAAs+D/QDjW7EuP/zLNpuzTdEKdudNyMPIt9X+lJNDrXcRiHCeTUuT0zXGeHJn
+	 8g1KXwKU7KsalWrTQuWxh1N9LvHKpCHDNXKxrDSuyKyavVi6IZH16D0vBjlZU7RfIU
+	 HkDUjmQ9TMTNXvqeqzVorCh2GCoPBapV8oDY9AKynEzIrmEisa6HBW7zg7RPNCTjBP
+	 S6q6swCoq7GUB3blD9s0Gd5PPsidkf0oIkTAdzpEN0McNYpfG1stDIOtEU9y2la6k8
+	 wRdSrEGqGMKsQ==
+Date: Sat, 14 Dec 2024 16:56:02 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v6 10/17] iio: adc: ad7944: don't use storagebits for
+ sizing
+Message-ID: <20241214165602.781da5db@jic23-huawei>
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
+References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+	<20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214065217.195385-1-ojeda@kernel.org>
-In-Reply-To: <20241214065217.195385-1-ojeda@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Dec 2024 08:54:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgXdJswe7JWZ2G6m11rL4Yxatrz_iFBKpqCO5xHPwMyJA@mail.gmail.com>
-Message-ID: <CAHk-=wgXdJswe7JWZ2G6m11rL4Yxatrz_iFBKpqCO5xHPwMyJA@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust fixes for 6.13
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 13 Dec 2024 at 22:52, Miguel Ojeda <ojeda@kernel.org> wrote:
->
->   https://github.com/Rust-for-Linux/linux.git tags/rust-fixes-6.13
+On Wed, 11 Dec 2024 14:54:47 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-Hmm. Is it just me, or has github become almost unusably slow lately?
+> Replace use of storagebits with realbits for determining the number of
+> bytes needed for SPI transfers.
+> 
+> When adding SPI offload support, storagebits will no longer be
+> guaranteed to be the "best fit" for 16-bit chips so we can no longer
+> rely on storagebits being the correct size expected by the SPI
+> framework. Instead, derive the correct size from realbits since it will
+> always be correct even when SPI offloads are used.
+A more specific example with widths etc might be useful addition to this
+commit message.
 
-It might be time for you to mosey on over to git.kernel.org, and use
-github as a backup rather than as the primary repo?
-
-But I'll see if I can reach out to any github people and see if it's just me.
-
-          Linus
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
