@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-446148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557179F2057
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:41:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52A39F205B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB40018880A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FF41888065
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7FC1ABEAC;
-	Sat, 14 Dec 2024 18:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1027194C61;
+	Sat, 14 Dec 2024 18:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0XHQ6cIM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c7dZwC5V"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489AB1A8F6B;
-	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C828B4C70
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 18:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734201674; cv=none; b=oATuKlt+pvKRK/hILyIbHFxHOQZmG4HlBOPykutu/0ESWKbQKQW17rakmI5nbMbEoBYU+TLnDoNIwnqcHd/l4dzD9nxRCq/kBRYbbu3lLHppkqjkijgkOpsOI5YMHgqXSnmCAupgIGl0CqYXn24/IVqKhBjCmW1kvygpVQN+Fz4=
+	t=1734201998; cv=none; b=akBGKRrRQ1lVHMe8ROdvGdFjz44AiieUYFd0/UH2LaJ0701cAyZjNHHJqiYXVDl86Dwr8mGaEBUGxUbppP7GzXOBIUABeC+aVTFMunH1HY0m3Cq/vcwUfVbBZkvYH6mTaEb6btqzqA+hsJISpLz8BeGi8dGjvo37I6Da25i8Mv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734201674; c=relaxed/simple;
-	bh=qP01awV62yJKZkQCb4OBPUOVVOHgBTtxBBqfvvfobeQ=;
+	s=arc-20240116; t=1734201998; c=relaxed/simple;
+	bh=+/vsE0RTiV0RGezZoK6RYc1wZ1Qg8mhhW+a0HaJN4UU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL+uAui+YegFiwBSYoBzTPaWDsyYaaBke6LO8jo4Nh5tiM6p8B9JvHkwlLVxEJh3/szBpyaoiamaTY0EzaiukKoSOJJGobfvjLW2wl5GQZwkc8uFFc1O73SdxecXrsKskqH4zF6BIYUZi4va8ZzZOoHTO0jNZN0f/QhecRIDx4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0XHQ6cIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C96FC4CED1;
-	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734201673;
-	bh=qP01awV62yJKZkQCb4OBPUOVVOHgBTtxBBqfvvfobeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0XHQ6cIMxKGMSutwtAtSPHjhyFH0Pl7KbeDI8W559wjGW+JnwnFgUSUEXbOggTorh
-	 YvzhD47IwgbZjBsmrhYmNZ7KKDIk7bEYf4F02t8FA/R2aX8xBVQogB1SDNUmTJLUCv
-	 aRBKEL2fg0isiDMMTq3R0wsSXV3O+luKYl+d0ilM=
-Date: Sat, 14 Dec 2024 19:41:10 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com,
-	stable@kernel.org, Sam Bobrowicz <sam@elite-embedded.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v2] media: ov5640: fix get_light_freq on auto
-Message-ID: <2024121425-ended-coastal-0c46@gregkh>
-References: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
- <Z1v2VRzgUVpHZvXR@kekkonen.localdomain>
- <05ce02de-6eed-4f28-8052-56ca9cac4b64@amd.com>
- <2024121303-arrange-hydration-7cf4@gregkh>
- <Z13NZ0lTeTecuC57@kekkonen.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hG42sJMOce0mfrzbtPSgICcwqOI8B/0BttJwhnKsPB1yGKVqViUzHKAseIYJkklvn1lMBJoOFgwCwym0BN4L5pgRH4mWD9W1ZmqYTBxyp/TawhBoNyU7UEHf2sAlXEueAVgAihGjbakTc9X0WmTzZSzV/qpiws4u/ufr6tam8zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c7dZwC5V; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=bYU0gnwwLL8Z6Ths3CBwCaNbHH5loDfzGARUYm9wAAE=; b=c7dZwC5V6aXvheQ7uJdBOTJktP
+	SzG+ZvGzVe0fqzUfZDVKe0S0JjZwxOkefu5farixPs+b33cxrbqczxkBUiMaG87zAZPMTuhRASjSp
+	koAcfvw3vwMh/DPR2AIgtfOcwQ91jgPxV4eaqvKQcw+Zak/9w72pojoFJi7UB4+3eYBht/XUhjKSL
+	S7FLhcehl+yZXWxoBgTsOBcall9pTQJ+5R8Prw0DUSn4QWjxcYrXxRJgYjVrIvZCMu2q/cCTj/ogw
+	ds+HprFQ1igxN4+b9TyxH/4VeGzVDzgM6lVX0L+DRnU3MB0QKJaofhRcvzIsyUgR0uLYdTToCLDX4
+	vzXdwFhg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMX9s-00000004YSh-0lRa;
+	Sat, 14 Dec 2024 18:46:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 808F730035F; Sat, 14 Dec 2024 19:46:31 +0100 (CET)
+Date: Sat, 14 Dec 2024 19:46:31 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bert Karwatzki <spasswolf@web.de>, kernel-team@android.com
+Subject: Re: [RFC][PATCH] locking/rtmutex: Make sure we wake anything on the
+ wake_q when we release the lock->wait_lock
+Message-ID: <20241214184631.GD10560@noisy.programming.kicks-ass.net>
+References: <20241212222138.2400498-1-jstultz@google.com>
+ <20241213124614.GA12338@noisy.programming.kicks-ass.net>
+ <CANDhNCo0W6cYhVQm7TQso=E9evhYy2oxSLnVz-KxbOdfomZFgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z13NZ0lTeTecuC57@kekkonen.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCo0W6cYhVQm7TQso=E9evhYy2oxSLnVz-KxbOdfomZFgQ@mail.gmail.com>
 
-On Sat, Dec 14, 2024 at 06:24:39PM +0000, Sakari Ailus wrote:
-> Hi Greg,
-> 
-> On Fri, Dec 13, 2024 at 12:12:18PM +0100, Greg Kroah-Hartman wrote:
-> > On Fri, Dec 13, 2024 at 11:30:38AM +0100, Michal Simek wrote:
-> > > Hi Ailus, +Greg
-> > > 
-> > > On 12/13/24 09:54, Sakari Ailus wrote:
-> > > > Hi Michal,
-> > > > 
-> > > > Thanks for the patch.
-> > > > 
-> > > > On Fri, Nov 22, 2024 at 09:28:01AM +0100, Michal Simek wrote:
-> > > > > From: Sam Bobrowicz <sam@elite-embedded.com>
-> > > > > 
-> > > > > Light frequency was not properly returned when in auto
-> > > > > mode and the detected frequency was 60Hz.
-> > > > > 
-> > > > > Fixes: 19a81c1426c1 ("[media] add Omnivision OV5640 sensor driver")
-> > > > > Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
-> > > > > Signed-off-by: Michal Simek <michal.simek@amd.com>
-> > > > > Cc: <stable@kernel.org>
-> > 
-> > That address is totally acceptable.
-> 
-> The documentation (Documentation/process/stable-kernel-rules.rst) tells to
-> use stable@vger.kernel.org nevertheless (we're not discussing the latter
-> option here):
-> 
-> To have a patch you submit for mainline inclusion later automatically picked up
-> for stable trees, add this tag in the sign-off area::
-> 
->   Cc: stable@vger.kernel.org
-> 
-> Use ``Cc: stable@kernel.org`` instead when fixing unpublished vulnerabilities:
-> it reduces the chance of accidentally exposing the fix to the public by way of
-> 'git send-email', as mails sent to that address are not delivered anywhere.
+On Fri, Dec 13, 2024 at 06:39:45PM -0800, John Stultz wrote:
+> On Fri, Dec 13, 2024 at 4:46 AM Peter Zijlstra <peterz@infradead.org> wrote:
 
-Yes, either works.  But to keep the "signal" of "hey, look, a security
-bug!" down, feel free to use stable@kernel.oorg also everywhere just to
-make the bad guys have to do more work :)
+> I think all of the calls are tied to the unlock (the one you quoted
+> earlier was removed with 82f9cc094975240), so would something like a
+> special unlock be reasonable:
+>    raw_spin_unlock_irq_and_wake(&lock->wait_lock, wake_q)
+> ?
 
-thanks,
+Ha, that's what I started with :-) Then found there's two irq_restore()
+variants for raisins and it all turned to shit.
 
-greg k-h
+
 
