@@ -1,140 +1,143 @@
-Return-Path: <linux-kernel+bounces-445986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB1B9F1E30
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:03:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A209F1E35
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09C71678D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:03:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3494416787F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED24176AC8;
-	Sat, 14 Dec 2024 11:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64C18DF81;
+	Sat, 14 Dec 2024 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ig5l4dCK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxMEPKsn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2767E1
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5EC168B1;
+	Sat, 14 Dec 2024 11:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734174185; cv=none; b=iGrS2UIEuv1q1OImQ4qbRhl91Ep6oraVFNZwX9PieKXG+8qFZqHvtxe4tj2JvgVhnPhAkIPNbDhSSGreNKQ7lGsaCdqtiI8nK0hN+uaDys79Y5e5zUqbqEdJGQ/+VY62We7hb6Sz6TAj/Gdr6iDxpp6Qnn8NMoGE0ELJK4F1Agg=
+	t=1734174300; cv=none; b=ue64uj9Qm7wcTCV2nCJYMMZPdVxhfN2EHMY7ebh8xiK/ImolbwT1nPWe6LyeGbL5awlIioH3/QNvEJAnkOhu4fN7b+k5d2CDNDUpWi42twxnX/s/t7y0rLzk2zDqJ8veZ16oyAb/cZ2InhmhLiQ0J4l7WfQTo8l059oJLa0hG68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734174185; c=relaxed/simple;
-	bh=QdRw9fPUCPidFKoi1cGdFfjBJVaqNyeFj/S6MN1bIzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CBS7cd2qyzBL5Mc488lJH1054P77Yj7JZ4xDJC2SXNespecUOp7L9JW2kjsJiol2yPiJVpmXzhqLQ2hnaoLRymj/J81ZKngpdXw6MNM/I1z57aJTqS8uy8x3qsKu4tqreKjaU2EZwQ2EV0kM3WbqYXlsrgRZmyrLZIO8nEEY2yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ig5l4dCK; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734174184; x=1765710184;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=QdRw9fPUCPidFKoi1cGdFfjBJVaqNyeFj/S6MN1bIzM=;
-  b=ig5l4dCKjDbwK1oCAWy+awGLCGrjPHitB3qxx8Roz3ecDvHXoWyULinM
-   AVDEAteHHQ2GVuoR3cs4cKttrKfXKUijjUd2eSJkX4a/iUZyjYrpNUxJC
-   vLtYQBOQB7C/VEXfESQa3Yfg9eaMjPUR20ccpVDxnTIvTTlIzHSe882Kh
-   gdRAmZNX0cU0wqDRNBsMMdcoj1mkMs5G9UgnfgKtKy+OPj4nYwCDc/gpt
-   pSLIE/wBQk3Hvm4Tb2tjPjkeHXhDJqGVC6TkgxNqNi1UCa9STZjY2/5hQ
-   TqMxsAcHJxxMC9uMRNaf9IohsV9KKdX8i2aS/xF8JbkyUkmoaWsAcVvcI
-   Q==;
-X-CSE-ConnectionGUID: Y7lM29kXT8uaNwOUK7n24g==
-X-CSE-MsgGUID: GtV+4pObSQ60yVegzzl5jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34494896"
-X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
-   d="scan'208";a="34494896"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 03:03:04 -0800
-X-CSE-ConnectionGUID: ZfQNOrmrTEG+tfuQ7aStrw==
-X-CSE-MsgGUID: +HyV8KuTR8KaMYL+KEGBNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
-   d="scan'208";a="96509774"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 14 Dec 2024 03:03:01 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMPvH-000CrW-1E;
-	Sat, 14 Dec 2024 11:02:59 +0000
-Date: Sat, 14 Dec 2024 19:02:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
-Subject: include/linux/ftrace.h:138:16: error: implicit declaration of
- function 'arch_ftrace_get_regs'; did you mean 'ftrace_get_regs'?
-Message-ID: <202412141827.Xzmgi9eg-lkp@intel.com>
+	s=arc-20240116; t=1734174300; c=relaxed/simple;
+	bh=KWDxX5OXWPfSSueizxZ6W4H8/HL0lvAiNnmq3SPItSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IxZDUB8OWIxJ2IPWiXXLPodw0N1mUXvCmEiTrbS1FdW9Mz+CNevUnyOSHK7AqExeFKsCYd7tMAbk5Ax3GsoP85OYsxLRQoyOAaI/ioYLSoYjLNVMGtWlZY9bU3el2bkN/hEDitR2CgzI2Fs2/pK2EJtW93dMaLDA/Ocgm3NpZno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxMEPKsn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD50C4CED1;
+	Sat, 14 Dec 2024 11:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734174300;
+	bh=KWDxX5OXWPfSSueizxZ6W4H8/HL0lvAiNnmq3SPItSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hxMEPKsno1cI2APeK9LxTqLbpY/Xma5D7eohqge88RYd5ShjoIvJ3SbsnIRCQtFIz
+	 /PBE3NXXzKOk3GmDv7SLFBNuSK8AoY0xj8h5plDAITQ+Vzix8fMkO6ino/RCuJRLaQ
+	 am3jg7D38jmgeufjFzUy+VB4LREwfk66balCf+DQw5EBj+S3xSR/R0xvYXih51WVwq
+	 hfpdl+gjOS7WTSOtfjJpvngQntQ3KHD1CbPHzVdxM3eCy+Vy+trNqk76nnuSHFhpiu
+	 V756xbbiOe6vH3bN22/KMdwOAIhMTwUELdR5c6U8v3ZQMZNTLWxDGPZ0Arq2MthMNi
+	 T4rBDVl1pJwhg==
+Message-ID: <5d3f2604-4851-46c4-80bb-310ef813c32d@kernel.org>
+Date: Sat, 14 Dec 2024 12:04:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/28] Qualcomm iris video decoder driver
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Jianhua Lu <lujianhua000@gmail.com>,
+ Stefan Schmidt <stefan.schmidt@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241212-qcom-video-iris-v9-0-e8c2c6bd4041@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241212-qcom-video-iris-v9-0-e8c2c6bd4041@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Puranjay,
+On 12/12/2024 12:51, Dikshita Agarwal wrote:
+> Introduce support for Qualcomm new video acceleration hardware i.e. 
+> iris, used for video stream decoding.
+> 
+> Iris is a multi pipe based hardware that offloads video stream decoding 
+> from the application processor (AP). It supports H.264 decoding. The AP 
+> communicates with hardware through a well defined protocol, called as 
+> host firmware interface (HFI), which provides fine-grained and 
+> asynchronous control over individual hardware features.
+> 
+> This driver implements upgraded HFI gen2 to communicate with firmware.
+> It supports SM8550 which is based out of HFI gen 2. It also supports 
+> SM8250 which is based out of HFI gen1.
+> 
 
-FYI, the error/warning still remains.
+Thank you for your contributions. This patchset is relatively big, so
+please slow down with sending new versions to one per few days, not one
+per 24h. This gives people more chances to review.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a446e965a188ee8f745859e63ce046fe98577d45
-commit: 7caa9765465f60b6d88e22264892cee12d971888 ftrace: riscv: move from REGS to ARGS
-date:   7 months ago
-config: riscv-randconfig-r133-20241214 (https://download.01.org/0day-ci/archive/20241214/202412141827.Xzmgi9eg-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241214/202412141827.Xzmgi9eg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412141827.Xzmgi9eg-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/riscv/kernel/asm-offsets.c:12:
-   include/linux/ftrace.h: In function 'ftrace_get_regs':
->> include/linux/ftrace.h:138:16: error: implicit declaration of function 'arch_ftrace_get_regs'; did you mean 'ftrace_get_regs'? [-Wimplicit-function-declaration]
-     138 |         return arch_ftrace_get_regs(fregs);
-         |                ^~~~~~~~~~~~~~~~~~~~
-         |                ftrace_get_regs
->> include/linux/ftrace.h:138:16: error: returning 'int' from a function with return type 'struct pt_regs *' makes pointer from integer without a cast [-Wint-conversion]
-     138 |         return arch_ftrace_get_regs(fregs);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:117: arch/riscv/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +138 include/linux/ftrace.h
-
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  132) 
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  133) static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  134) {
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  135) 	if (!fregs)
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  136) 		return NULL;
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  137) 
-02a474ca266a47e Steven Rostedt (VMware  2020-10-27 @138) 	return arch_ftrace_get_regs(fregs);
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  139) }
-d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  140) 
-
-:::::: The code at line 138 was first introduced by commit
-:::::: 02a474ca266a47ea8f4d5a11f4ffa120f83730ad ftrace/x86: Allow for arguments to be passed in to ftrace_regs by default
-
-:::::: TO: Steven Rostedt (VMware) <rostedt@goodmis.org>
-:::::: CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
