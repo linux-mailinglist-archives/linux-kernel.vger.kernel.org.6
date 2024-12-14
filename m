@@ -1,155 +1,101 @@
-Return-Path: <linux-kernel+bounces-446045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073419F1F16
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B600A9F1F1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F2418899AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389C61889A0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22F1946B3;
-	Sat, 14 Dec 2024 13:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A652D18C903;
+	Sat, 14 Dec 2024 13:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aWYCtP9Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDwQsEIZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5FE192D8C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 13:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4037191F60;
+	Sat, 14 Dec 2024 13:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734183899; cv=none; b=j0Jr3E6wHfjT9uYmf0Xe+Fd7PVNpMLXArBp73XQF08oCW7jET2RNjhoVTgk1swKMazBA4OflpDQFMuniyJ4RkG6ooBZRCs+hngMZoM273akTKL/yAKLJicFy8+LcQ6lsc7unkAObrbcHdiJyoBbkYZOE14JVxtbFRodoA7DPt+E=
+	t=1734183916; cv=none; b=RaDCG5yiJuA+qyOVPMk2CFz8H4ObL97Z5KWEW1V+2IuntI/KxnoLLr9VqdHwGv9xkfIJ4gH9yXmzDi3k/6dGvTxlKyuZcMX4sHjlz0C4lrj58t6TnBT9EixyB6H4SuRR2OV03kjvLZqdlP1nB09hYZUkCidwrMjiuaMZLYA+SWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734183899; c=relaxed/simple;
-	bh=13rBSAvaRAo4EyKvH1GGFM98sYucjN0FkZJgyl07oPc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=pqRTNACQK2JeJ4hAX4cq6h2NuLHMxxv6zNy5SLARNRpLKys0FdiUmMvaOoBTDQhgSFjyEIMj0QAEGTCC8HKoEO9Kg4wEgN/Cj+OYqQg7u6lzzOdCi1j/70kYx5lEa7Ml9P8O5Y91DUgBMqccr5LUsde/sY3M8pFbphnDw4qFd1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aWYCtP9Z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734183897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=um83NFh7ZIRRd8ai46akYsrKyJ5hcwaKtVTR9gj1RFE=;
-	b=aWYCtP9ZZTCXqOIoFozZgTu2Auh5MZLG6YMQqcv0caVWvskw1XwfLQy2f5gaWF37C5Ck2v
-	jGP6GnqaIJpGdzhnzXFi9ZJq+kF2QykPsi1tHXnKL8qTKZLdNWVowhIhCVe6hJac/IAOUL
-	ka3IFXZGQQ+EXa/gTOKzFTIMXGiIgmk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-ql_YDdrZOJec0ZI5AmZePg-1; Sat,
- 14 Dec 2024 08:44:52 -0500
-X-MC-Unique: ql_YDdrZOJec0ZI5AmZePg-1
-X-Mimecast-MFC-AGG-ID: ql_YDdrZOJec0ZI5AmZePg
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A2AD4195608C;
-	Sat, 14 Dec 2024 13:44:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EDE4A195394B;
-	Sat, 14 Dec 2024 13:44:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <27fff669-bec4-4255-ba2f-4b154b474d97@gmail.com>
-References: <27fff669-bec4-4255-ba2f-4b154b474d97@gmail.com> <20241213135013.2964079-1-dhowells@redhat.com> <20241213135013.2964079-8-dhowells@redhat.com>
-To: Akira Yokosawa <akiyks@gmail.com>,
-    "Paul E. McKenney" <paulmck@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Max Kellermann <max.kellermann@ionos.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-    Trond Myklebust <trondmy@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    linux-kernel@vger.kernel.org, Zilin Guan <zilin@seu.edu.cn>
-Subject: Re: [PATCH 07/10] netfs: Fix missing barriers by using clear_and_wake_up_bit()
+	s=arc-20240116; t=1734183916; c=relaxed/simple;
+	bh=ZZBbjto7mRCBvgFnDMB6MlCtSuo0xfsRbwidqoAFM8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PjdZ0vEP/747x1SVtMtc+kDMwhn5XPmMTJWDdHu9g1cWaJv/MhCtaXPvWAkuj2C/4GSM3J4DWll2LrLRlyL4+j9ffyyz9F0l25wCC4u3ye47NgNoQi7DK/T7SDWUj+6gWUi1hnYFhEFk/L+gOMrOHxRsZb03oXCQS/IH7z8zt0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDwQsEIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903D9C4CED1;
+	Sat, 14 Dec 2024 13:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734183915;
+	bh=ZZBbjto7mRCBvgFnDMB6MlCtSuo0xfsRbwidqoAFM8o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EDwQsEIZEgJOBZZYtrEp4NsQT4XiffATR80E1yquZ4eu5qcSd4ONAOmylydGW7xyn
+	 Br8TROI9Ohk09POTQwQPbut3vp7tDuHeA24tKVODcWQGO0WzJGfJRoulHGAwL7I6ph
+	 KYI9lWUmaLgNrmM9IaWSm7tewpPJS6kJoxTWEvE948VsiorV+ZKHU73+M3AzV628Ed
+	 ywImbZ0sJ7Wo8hSTZp78T+JGv4ILPVFzPj0IpC0eka3x/4nUVob9CPKqHvPOEke3Jo
+	 RR1qJV+s5nFAgEyDzYvg/yGgMTqdiw6pFxjO2oDpIx5BMegoEEaIs8wUIQ0RL55duy
+	 oz/Zy6Rm3Z0YQ==
+Date: Sat, 14 Dec 2024 13:45:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Darius Berghe <darius.berghe@analog.com>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <corbet@lwn.net>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] dt-bindings: iio: adxl367: add support for
+ adxl366
+Message-ID: <20241214134506.3c09d9a2@jic23-huawei>
+In-Reply-To: <20241213095201.1218145-3-darius.berghe@analog.com>
+References: <20241213095201.1218145-1-darius.berghe@analog.com>
+	<20241213095201.1218145-3-darius.berghe@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3332015.1734183881.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Dec 2024 13:44:41 +0000
-Message-ID: <3332016.1734183881@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[Adding Paul McKenney as he's the expert.]
+On Fri, 13 Dec 2024 11:52:01 +0200
+Darius Berghe <darius.berghe@analog.com> wrote:
 
-Akira Yokosawa <akiyks@gmail.com> wrote:
+> Add support for adxl366 Micropower, 3-Axis, +-/2g, +/-4g, +/-8g
+> Digital Output MEMS Accelerometer into the existing adxl367 iio
+> subsystem driver.
+> 
+> adxl366 supports all the features of adxl367 but has a few
+> additional features for which support is added in this patch:
+>  - built-in step counting (pedometer)
+>  - non-linearity compensation for Z axis
 
-> David Howells wrote:
-> > Use clear_and_wake_up_bit() rather than something like:
-> > =
+That description makes it sound like you could use a fallback
+compatible.  Would it 'work' with those features missing using
+the adxl367 compatible?
 
-> > 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-> > 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
-> > =
-
-> > as there needs to be a barrier inserted between which is present in
-> > clear_and_wake_up_bit().
-> =
-
-> If I am reading the kernel-doc comment of clear_bit_unlock() [1, 2]:
-> =
-
->     This operation is atomic and provides release barrier semantics.
-> =
-
-> correctly, there already seems to be a barrier which should be
-> good enough.
-> =
-
-> [1]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.c=
-lear_bit_unlock
-> [2]: include/asm-generic/bitops/instrumented-lock.h
-> =
-
-> > =
-
-> > Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-> > Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> =
-
-> So I'm not sure this fixes anything.
-> =
-
-> What am I missing?
-
-We may need two barriers.  You have three things to synchronise:
-
- (1) The stuff you did before unlocking.
-
- (2) The lock bit.
-
- (3) The task state.
-
-clear_bit_unlock() interposes a release barrier between (1) and (2).
-
-Neither clear_bit_unlock() nor wake_up_bit(), however, necessarily interpo=
-se a
-barrier between (2) and (3).  I'm not sure it entirely matters, but it see=
-ms
-that since we have a function that combines the two, we should probably us=
-e
-it - though, granted, it might not actually be a fix.
-
-David
+> 
+> Signed-off-by: Darius Berghe <darius.berghe@analog.com>
+> ---
+>  Documentation/devicetree/bindings/iio/accel/adi,adxl367.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl367.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl367.yaml
+> index f10d98d34cb8..272be616e979 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl367.yaml
+> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl367.yaml
+> @@ -27,6 +27,7 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> +      - adi,adxl366
+>        - adi,adxl367
+>  
+>    reg:
 
 
