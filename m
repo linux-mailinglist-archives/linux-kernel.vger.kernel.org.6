@@ -1,181 +1,163 @@
-Return-Path: <linux-kernel+bounces-446072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7DE9F1F8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:07:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63EE9F1F8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB76F188693D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:07:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 034FE7A05E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E46D194C92;
-	Sat, 14 Dec 2024 15:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB73194C92;
+	Sat, 14 Dec 2024 15:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fyMdSbEi"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS8LkW4q"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A883169397
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166AD1E502;
+	Sat, 14 Dec 2024 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734188832; cv=none; b=ZHstnbpbRXxUZ9hyRqhwq40R/GAf5ASdtLiyBm7Ur/+YlJrTOye4PlPlXdVxGZZHUK+/Tbw/SmXf5bv5f8Wnv14MyU4pOOzALhib423y0uiLtR6xlWZKoCcoKMLRwyF0LAker+gVQLnqY3FhQrdafHp8XYh/M+AjR1a+xHdXMjE=
+	t=1734189040; cv=none; b=ItPg/qSOTFq+meElkcCqRV7ILnrFbncGPhusV5D+xkOIKKJ6U6IkPr3i9xk6h7DFbW86V5+O0CJHgW7KB1sAYo2pP3G/t4nap7+o+yyVUK37w9tA8L7qvnriG59PDNhu8enLwKFCabb+PLvRLDFDdteC+p7fvSSh1dVGx95lUAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734188832; c=relaxed/simple;
-	bh=eR+qjQP6KWkz/NJnDcik6zTdH2/VYAHWAYxs3rMv2tA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CCbaxrnvUiyKEGhr+rxEEGiUNpm8hWTLrHFFdAr2mdYxCqR7FvA9t0rVwTKdVn4isajFO9P21qWynBupiy6+k0da9b7pz2n8aMLxAwXdbtHJ+7X2xoVhY2LhWGRZXG0h9thh2MmM5s+DZbKXrndHTlvZ00w5+lL0g6vVw6PHTFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fyMdSbEi; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so1777257f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:07:09 -0800 (PST)
+	s=arc-20240116; t=1734189040; c=relaxed/simple;
+	bh=++lyCknnrByc5PICn6mT5Pj+9Mrp+Y/132YiDXL1BME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNG+WTjsaO+WfhC6ShvB6Bm4k/JNReo/28w8s3mFqExxOxnnsyxLOx6xIk4AaWEUIze05n+YOkiejaHMgtoRU03mleoFs2fSaWz5Rjg8Fg+lmZTFSGSLMLo5Q5St3m+pLEXo5wycsID07nPRvumQ8yXt5hz+8OtCSTOSA0bb/LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS8LkW4q; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21145812538so26490525ad.0;
+        Sat, 14 Dec 2024 07:10:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734188827; x=1734793627; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oIBE+0UlquIsYZozCVFzFEGCR2rC4mOAVUzl7lyv2tM=;
-        b=fyMdSbEiSjOnYQDbIiRCbTfyNHzTeuRtvz5WyB/bRAnB6S54C77moU1JPr3VFs8aLP
-         QkKp+xK7NkpZFvTn5bdZqzdf1KXLsL+Xh1x7HNRwp6+x1OE2umWlZ9jjrqACC3l7AaJV
-         gf06+85pSTn+gsG/kb0ElCx2OhowVSIzwivB0qUpIZXQMNMh0ttu3RUyirC4EyjaqeHY
-         ey48RIhe46CkuIRhFuK8luAG/unj00mIqnAmn/k5d6pqXmh67kG+sKR36cfF91tBskfK
-         YDLSboTXeoBpSb7DxVjj8ck9y+K8UNWKxCCfPKyK74eHzB8W1UkzlKKSqt5GJDxGlPkb
-         r6vg==
+        d=gmail.com; s=20230601; t=1734189037; x=1734793837; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zV2B70S7pLnjROnyTCe5zaBvkKuSEO0PMS+9FZyJN3c=;
+        b=hS8LkW4q/a7Og6uztHfoAxl9sUdcqd3NysJNv8tnHR/bYw4RRBucpBuO5WfhlJrZZj
+         2twY4gU+lW83XXTOySO3Hs8d5sxOzhObq+BdJXJBu9qAYgucmO90D10CwU3qp51Tzioc
+         I60ZCAIHxFud+tPYlMU8Bx3u8I/pdZjYGmppAuTOwbogHDVLMBK4uS//ehor1DelRwtD
+         tnCFFKRW+si1ym+sKufPDSjiZa2bE0q01+JFWnarIKAW/Ny1Cx46w7MrnN6ZJdUKueZh
+         rFWdTcovlsT70LcjkFiAtMhpm2tiZ5E3mSr/CHCNPjkPfM21GXWNErf0zkwhIlxphvji
+         Fh8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734188827; x=1734793627;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIBE+0UlquIsYZozCVFzFEGCR2rC4mOAVUzl7lyv2tM=;
-        b=qt9MOmS09xnNkwTbUyTtCtPVYPfMu1Pu5CfhisSmjoZ7G3RV21/pkjRhobCc1x2F+d
-         xZi01t+i+sRIbdQ9o3z8lDJ9YnvYQdPGuuZoUVUtfoMNvZHb83tIv0SW4kScJt0/JDZm
-         Xch8J54DxOtd6SEaneZ3Hf1skBukQL1EoHhW6D9EKGPEVJ9np80OxlMhxM4EMyJxVGYp
-         8S3ZArT+4ZwYVzV/CvhTxNcbMwFqufBbQBLZ4wZSaoXdfTpHfUx7wWdGxuIPgEjgCZfo
-         VcLihU867Hl/Pln7pAx7rzsIWAtOJgHZJAmL0lG6iL17n02WK1Cx6GNd84T5ll9hTupT
-         AfpQ==
-X-Gm-Message-State: AOJu0YyTM7FwYzs5hRDNVplSnFtgQlWLPORMTArFotZcGypisVVg2BsS
-	PS4qvZmz9UA1EWVOUG+NeMiEDdwjNrz7eng52pM2rBJz3m8zfKEbSGqkC1aY+48=
-X-Gm-Gg: ASbGncvYv5SMzcbfy9J/A3prJ64AVyCFHaSzG9YnlfJST7VTaM6UseLD55BPoDIYj1T
-	M6sqCQN4fH3d+atHKwj+xR7YMbA/Gz8+CJIP2vEh7+cCbRijOAYfj66Rn8Ga8hLz019xPWybl2D
-	TtdOcR5yv51WPfRuSKs2nauSJSHtWHRIPTregzGKUvhFAG2d5DiCHTmpQ95nLM4H2f9SoUFCLvF
-	M9CroO5msXNtQEefzRC3Q2BmuRJfDXC583/GWIZ89LPFw/XiXcBiwSaCB9WsL5Fny8gnGkF2zM=
-X-Google-Smtp-Source: AGHT+IH3w9h+hSebDY0xAQlkYrvUNMYisspX4JRmHSfXW+xfKoY4Y0Tv3CP1sogfkYnfltfymAmF/A==
-X-Received: by 2002:a05:6000:186c:b0:386:1ab3:11f0 with SMTP id ffacd0b85a97d-388c3a92606mr4783755f8f.28.1734188827425;
-        Sat, 14 Dec 2024 07:07:07 -0800 (PST)
-Received: from [192.168.68.114] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c801a7c8sm2854023f8f.49.2024.12.14.07.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 07:07:06 -0800 (PST)
-Message-ID: <488ea6c2-0832-4409-902b-2b6b193daf8c@linaro.org>
-Date: Sat, 14 Dec 2024 15:07:06 +0000
+        d=1e100.net; s=20230601; t=1734189037; x=1734793837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zV2B70S7pLnjROnyTCe5zaBvkKuSEO0PMS+9FZyJN3c=;
+        b=Ll7HD/gVCTHNarKEgNlDaH3lNbm9DUAWTUgDAZxAIljlICl2MHPnsJM5fIY1eebCoD
+         zc9YssG4iO2XcOgeeP/T+HiL28k5rvusOjSq/ff+Dixqgb05qa6Z1kwSiRsspn6aNizY
+         yCE0bwv3UftNzopi06Cgdzi3VjtMtCPIGjZ72wggGLWoFhbgINpxwFHRIh4lbubulQEM
+         TRMzP7ulM0Pl8fxSsn1gTTNRmD7cE9yp4M88kDs1o3BZb1KfoVW6LgMlS2LvQz0KtYs1
+         XEcCmACmHGU/dOFIZjnv5AO+HSeYxOSEdehz0vckKcjVPaIJ4//pUaoiPe1G4Y4VCojb
+         ZM/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWP3hIcbWD41DWxuhRqC7AQFLrkJyB72QCkEuuosyNRhBm4KMN01XdxHx89fr/yjfgYF4l7iX6ZyvzqlA==@vger.kernel.org, AJvYcCXHf3itkbA8dFM65lYi40anhqnfksz8fkwpDXILB5Jb048bSNfsIwzpRZulxBnAv8jrlpWKRx0J+vsmVT+M@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu9Jdn9xG2NA8DCJOCnoNG2oys/MK0JDk3S9EHuiwWBK+5KqGS
+	L51X71nRr4Z7KFcvx+hpFQe6eYV8xn1q5IHM+bPAKvo+Mt3P3wCw
+X-Gm-Gg: ASbGnctB2OX7HP50xzA//eBwaMEGg/CLFeYimF2DGMTi6aTX/5/1SSuqAIrdRIgt1oo
+	tI97iJF7Y08yAw8rtH78ACRP+lM8ZqhuFoWqliCdWhcIIEH8nQGsrNGdww9TdDjToiuh9eEJoD5
+	CxwFNFHB5a1ZeZ1ioZEC1koPZ/YFxI5gH+rKc8I9RW3v6eiGoktysylUqwzTcf31JT3oQP8v+D9
+	JXfxcczX53OoFPny8YiygbBU4Ynk4IxGSDAurG1O1HZ4JfVecZhy+k1E39ap4M1sUvj0g==
+X-Google-Smtp-Source: AGHT+IFOQjHLMR7zWVVYP3VWlTeG0+c5fyzpyZlGUvRMTi2ICPTaWtM3uCP2XBsvL4rnc/z8e1ptMQ==
+X-Received: by 2002:a17:903:41c9:b0:215:3661:747e with SMTP id d9443c01a7336-21892999566mr93292195ad.8.1734189037277;
+        Sat, 14 Dec 2024 07:10:37 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e64161sm13637895ad.221.2024.12.14.07.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 07:10:36 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 14 Dec 2024 07:10:35 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <0f4bb1d6-19f1-4999-b09c-e514c18364b2@roeck-us.net>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] nvmem: core: add nvmem_cell_write_variable_u32()
-To: Jennifer Berringer <jberring@redhat.com>,
- Sebastian Reichel <sre@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Maxime Ripard <mripard@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20241104152312.3813601-1-jberring@redhat.com>
- <20241104152312.3813601-3-jberring@redhat.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20241104152312.3813601-3-jberring@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 
-Thanks for the patch,
-
-On 04/11/2024 15:23, Jennifer Berringer wrote:
-> This function allows nvmem consumers to write values of different sizes
-> (1-4 bytes) to an nvmem cell without knowing the exact size, akin to a
-> write counterpart to nvmem_cell_read_variable_le_32(). It discards the
-> higher order bytes of the passed u32 value based on CPU endianness as
-> necessary before writing to a cell smaller than 4 bytes.
+On Sat, Dec 14, 2024 at 09:58:31AM +0100, Wolfram Sang wrote:
+> There are multiple open coded implementations for getting the parity of
+> a byte in the kernel, even using different approaches. Take the pretty
+> efficient version from SPD5118 driver and make it generally available by
+> putting it into the bitops header. As long as there is just one parity
+> calculation helper, the creation of a distinct 'parity.h' header was
+> discarded. Also, the usage of hweight8() for architectures having a
+> popcnt instruction is postponed until a use case within hot paths is
+> desired. The motivation for this patch is the frequent use of odd parity
+> in the I3C specification and to simplify drivers there.
 > 
-> Signed-off-by: Jennifer Berringer <jberring@redhat.com>
+> Changes compared to the original SPD5118 version are the addition of
+> kernel documentation, switching the return type from bool to int, and
+> renaming the argument of the function.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
->   drivers/nvmem/core.c           | 24 ++++++++++++++++++++++++
->   include/linux/nvmem-consumer.h |  6 ++++++
->   2 files changed, 30 insertions(+)
+>  include/linux/bitops.h | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
 > 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index 4a5a6efe4bab..4c26a5e8c361 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -1815,6 +1815,30 @@ int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len)
->   
->   EXPORT_SYMBOL_GPL(nvmem_cell_write);
->   
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index ba35bbf07798..4ed430934ffc 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -229,6 +229,37 @@ static inline int get_count_order_long(unsigned long l)
+>  	return (int)fls_long(--l);
+>  }
+>  
 > +/**
-> + * nvmem_cell_write_variable_u32() - Write up to 32-bits of data as a host-endian number
-
+> + * get_parity8 - get the parity of an u8 value
+> + * @value: the value to be examined
 > + *
-> + * @cell: nvmem cell to be written.
-> + * @val: Value to be written which may be truncated.
+> + * Determine the parity of the u8 argument.
 > + *
-> + * Return: length of bytes written or negative on failure.
+> + * Returns:
+> + * 0 for even parity, 1 for odd parity
+> + *
+> + * Note: This function informs you about the current parity. Example to bail
+> + * out when parity is odd:
+> + *
+> + *	if (get_parity8(val) == 1)
+> + *		return -EBADMSG;
+> + *
+> + * If you need to calculate a parity bit, you need to draw the conclusion from
+> + * this result yourself. Example to enforce odd parity, parity bit is bit 7:
+> + *
+> + *	if (get_parity8(val) == 0)
+> + *		val |= BIT(7);
 > + */
-> +int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val)
-
-This new API is confusing, as writing to cell should in the same order 
-of the data. Doing any data manipulation within the api is confusing to 
-users.
-
-If the intention is to know the size of cell before writing, then best 
-way to address this is to provide the cell size visibility to the consumer.
-
---srini
-
+> +static inline int get_parity8(u8 val)
 > +{
-> +	struct nvmem_cell_entry *entry = cell->entry;
-> +	u8 *buf = (u8 *) &val;
-> +
-> +	if (!entry || entry->bytes > sizeof(u32))
-> +		return -EINVAL;
-> +
-
-> +#ifdef __BIG_ENDIAN
-> +	buf += sizeof(u32) - entry->bytes;
-> +#endif
-> +
-> +	return __nvmem_cell_entry_write(entry, buf, entry->bytes);
-> +}
-> +EXPORT_SYMBOL_GPL(nvmem_cell_write_variable_u32);
-> +
->   static int nvmem_cell_read_common(struct device *dev, const char *cell_id,
->   				  void *val, size_t count)
->   {
-> diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-> index 34c0e58dfa26..955366a07867 100644
-> --- a/include/linux/nvmem-consumer.h
-> +++ b/include/linux/nvmem-consumer.h
-> @@ -56,6 +56,7 @@ void nvmem_cell_put(struct nvmem_cell *cell);
->   void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
->   void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
->   int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
-> +int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val);
->   int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val);
->   int nvmem_cell_read_u16(struct device *dev, const char *cell_id, u16 *val);
->   int nvmem_cell_read_u32(struct device *dev, const char *cell_id, u32 *val);
-> @@ -128,6 +129,11 @@ static inline int nvmem_cell_write(struct nvmem_cell *cell,
->   	return -EOPNOTSUPP;
->   }
->   
-> +static inline int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val)
-> +{
-> +	return -EOPNOTSUPP;
+> +	/*
+> +	 * One explanation of this algorithm:
+> +	 * https://funloop.org/codex/problem/parity/README.html
+> +	 */
+> +	val ^= val >> 4;
+> +	return (0x6996 >> (val & 0xf)) & 1;
 > +}
 > +
->   static inline int nvmem_cell_read_u8(struct device *dev,
->   				     const char *cell_id, u8 *val)
->   {
+>  /**
+>   * __ffs64 - find first set bit in a 64 bit word
+>   * @word: The 64 bit word
+> -- 
+> 2.45.2
+> 
+> 
 
