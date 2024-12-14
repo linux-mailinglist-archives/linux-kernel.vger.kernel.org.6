@@ -1,178 +1,87 @@
-Return-Path: <linux-kernel+bounces-446113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70B19F2006
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:12:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314049F200C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F289C166811
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B505B1887F16
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409F4195B37;
-	Sat, 14 Dec 2024 17:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69E6195FE3;
+	Sat, 14 Dec 2024 17:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZ1SezrG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSzGYLBW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A012940D;
-	Sat, 14 Dec 2024 17:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9052033A;
+	Sat, 14 Dec 2024 17:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734196331; cv=none; b=eSvGinOveWDInYQn3bPXDUpFTj9iQDgzO5Piz2OE/INdtgmtMwaoGVYOQm4H6LuYxl5iqJemH7QGTDYlqlBF5vuQbfddXNIvhTHO63VPecbTAgy/kG+nSD7asYMkvnZqB3jSq/ysd3feVRZ7k326P2xpn8h1U1kNYKoFyYyPNjc=
+	t=1734196678; cv=none; b=V3ILPjCnFQ+/FIDIy7NEQyVbM61aVaSqjzPR2xwpOHPUxUBdkaBWXfxiOG10J57Zs05TIjSnZmtDt4LSTFOBzfwTthofCuLbfPcnvb5D9vyjYGLr08pmWkH5aKLCpVs/MXUlx92u6R9ptUNbJvld31I5iSFgp386gMXEc+Fi0/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734196331; c=relaxed/simple;
-	bh=OX/8JikVy9D7wArDSU50MyIeKFbcedP/Ztft4uhLWcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TWoKIda/K6TPmJLPwmPkr75UP8B5nzTH626rTQ2ev2Ms4GPdyNS6UkkGSTaDAYIbO10twlDjWsEOLcoTqOBXlfHn/YMulAMB3RTVDDm0WdUDzNcDeFFk+/k0QObmRG7xcgE4QNOObcSGiUMvpqvX9utx27X5VUgxIc7EnR8s5hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZ1SezrG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BF4C4CED1;
-	Sat, 14 Dec 2024 17:12:05 +0000 (UTC)
+	s=arc-20240116; t=1734196678; c=relaxed/simple;
+	bh=SrYSqTYhMAMdYpLDzifSCyAbgsJ3gl3o3iYk0OX5FQE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=E3ZCI9TO98dBKSl3pRV9AVKpE1tCuASaXr1kmMRH92VgVoO1a5zaW+lyuijs43j/8RUkhQKxotzcZvRMP73tdHFyLBFFQHm4m7JxiwW8AndUkIQ+RCRN7jCCoE6jI51aNQ0A7D0M/KzZugpJ5JKnD1dQDk6WmyH1OlHOmBwXq/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSzGYLBW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE21C4CED1;
+	Sat, 14 Dec 2024 17:17:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734196331;
-	bh=OX/8JikVy9D7wArDSU50MyIeKFbcedP/Ztft4uhLWcg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kZ1SezrGdosbitshG6XfFnPYhiXE1XHyslryKnszw0ix11nEwWV4rBqy3C/EyxBWg
-	 xXgutVxu4+XypzKZaLoCgvIczf+zP8naHEjyMKJqiH/6SBRgSIIrUqkTe184b9pW3a
-	 Ro6CS958Z23WBoPj61AMuWCTFPq9FPQhXigGzLWYYIU52paPOyCIEGtImdcncnNv/g
-	 gk1G1WsbqQ0sVgSHJXKFKJ9VolOzR59EEI3Sb8d+BjLzD+vJ4q3R2cWqpZqUmBKLsS
-	 PJqaVl44RpAQUhETP2geovwclZwuQmti/mPUt86pisFqhpQd0cNW1rECJ/bB/ktaVU
-	 8eMltqBWClS6g==
-Date: Sat, 14 Dec 2024 17:12:01 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, Axel Haslam <ahaslam@baylibre.com>
-Subject: Re: [PATCH v6 17/17] iio: dac: ad5791: Add offload support
-Message-ID: <20241214171201.35b166d5@jic23-huawei>
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-17-88ee574d5d03@baylibre.com>
-References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
-	<20241211-dlech-mainline-spi-engine-offload-2-v6-17-88ee574d5d03@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1734196678;
+	bh=SrYSqTYhMAMdYpLDzifSCyAbgsJ3gl3o3iYk0OX5FQE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=rSzGYLBWIKMn73LLVJ/eDK115BLTlqZ5NbZBq9lfAtmRIpeyHcLaMB1II9i3+yySU
+	 yEIqTMv3pa9ct891fohK/JkbUbqquWBgzzZnh9pUiRp+HVjwUr+AqPhYED2Q0qQKSN
+	 KqshyxTWifusjHss9+Ba0LHo9TW/wPFIGL2j4KhF+AG57y+4uzf3vFYqDosppf/Wcv
+	 tEXH9x4nFSsgufpUqHOIrRGOvrSYtRd0xMMKv62QCYjA5Herkpks4N9l3JWGSPeYdb
+	 4XQ1YlFDCjalyh3ojVJOvO5Dm5pA5gHOz4mR4UBhMShLMAac75k60zlRZpvL1YP1vj
+	 9z5NZl9WWCHUg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB363380A959;
+	Sat, 14 Dec 2024 17:18:15 +0000 (UTC)
+Subject: Re: [GIT PULL] Crypto Fixes for 6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z11ODNgZwlA9vhfx@gondor.apana.org.au>
+References: <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
+ <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZbstBewmaIfrFocE@gondor.apana.org.au>
+ <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
+ <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
+ <ZvDbn6lSNdWG9P6f@gondor.apana.org.au> <Z11ODNgZwlA9vhfx@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z11ODNgZwlA9vhfx@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.13-p2
+X-PR-Tracked-Commit-Id: cd26cd65476711e2c69e0a049c0eeef4b743f5ac
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ec2092915d60df2700f7062f171a7fbbad93166b
+Message-Id: <173419669454.3361629.5467310783517180575.pr-tracker-bot@kernel.org>
+Date: Sat, 14 Dec 2024 17:18:14 +0000
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 11 Dec 2024 14:54:54 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+The pull request you sent on Sat, 14 Dec 2024 17:21:16 +0800:
 
-> From: Axel Haslam <ahaslam@baylibre.com>
-> 
-> Add SPI offload support to stream TX buffers using DMA.
-> This allows loading samples to the DAC with a rate of 1 MSPS.
-> 
-> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> v6 changes: new patch in v6
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.13-p2
 
-Nice.   A few formatting micro comments inline.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ec2092915d60df2700f7062f171a7fbbad93166b
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Thank you!
 
-For merging this ultimately I'm kind of assuming Mark Brown (or I) will
-spin an immutable branch with the SPI parts and then I'll pull that into the
-IIO tree and apply patch 8 onwards on top.
-
-Before that point we need DT folk and Mark to be happy of course.
-
-Thanks,
-
-Jonathan
-
-
-> @@ -299,6 +336,24 @@ static const struct ad5791_chip_info _name##_chip_info = {		\
->  			},						\
->  			.ext_info = ad5791_ext_info,			\
->  	},								\
-> +	.channel_offload = {						\
-> +			.type = IIO_VOLTAGE,				\
-
-Reduce indent by 1 tab for these.
-
-> +			.output = 1,					\
-> +			.indexed = 1,					\
-> +			.address = AD5791_ADDR_DAC0,			\
-> +			.channel = 0,					\
-> +			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-> +			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-> +				BIT(IIO_CHAN_INFO_OFFSET),		\
-> +			.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
-> +			.scan_type = {					\
-> +				.sign = 'u',				\
-> +				.realbits = (bits),			\
-> +				.storagebits = 32,			\
-> +				.shift = (_shift),			\
-> +			},						\
-> +			.ext_info = ad5791_ext_info,			\
-> +	},								\
->  }
->  
->  AD5791_DEFINE_CHIP_INFO(ad5760, 16, 4, ad5780_get_lin_comp);
-> @@ -322,16 +377,95 @@ static int ad5791_write_raw(struct iio_dev *indio_dev,
->  
->  		return ad5791_spi_write(st, chan->address, val);
->  
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		if (val < 0 || val2 < 0)
-
-Given you ignore val2, is val2 != 0 more appropriate?
-
-> +			return -EINVAL;
-> +		return ad5791_set_sample_freq(st, val);
->  	default:
->  		return -EINVAL;
->  	}
->  }
-
->  static int ad5791_probe(struct spi_device *spi)
->  {
->  	const struct ad5791_platform_data *pdata = dev_get_platdata(&spi->dev);
-> @@ -416,6 +550,21 @@ static int ad5791_probe(struct spi_device *spi)
->  	indio_dev->channels = &st->chip_info->channel;
->  	indio_dev->num_channels = 1;
->  	indio_dev->name = st->chip_info->name;
-> +
-> +	st->offload = devm_spi_offload_get(&spi->dev, spi, &ad5791_offload_config);
-> +	ret = PTR_ERR_OR_ZERO(st->offload);
-> +	if (ret && ret != -ENODEV)
-> +		return dev_err_probe(&spi->dev, ret, "failed to get offload\n");
-> +
-> +	if (ret != -ENODEV) {
-> +		indio_dev->channels = &st->chip_info->channel_offload;
-> +		indio_dev->setup_ops = &ad5791_buffer_setup_ops;
-> +		ret =  ad5791_offload_setup(indio_dev);
-
-bonus space after =
-
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, ret,
-> +					     "fail to setup offload\n");
-> +	}
-> +
->  	return devm_iio_device_register(&spi->dev, indio_dev);
->  }
->  
-> @@ -452,3 +601,4 @@ module_spi_driver(ad5791_driver);
->  MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD5760/AD5780/AD5781/AD5790/AD5791 DAC");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_IMPORT_NS("IIO_DMAENGINE_BUFFER");
-> 
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
