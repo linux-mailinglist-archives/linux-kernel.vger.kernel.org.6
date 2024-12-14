@@ -1,74 +1,84 @@
-Return-Path: <linux-kernel+bounces-445775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A999F1B73
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:47:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8652C9F1B74
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB117A03F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:47:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63B27A0396
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BCACA64;
-	Sat, 14 Dec 2024 00:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBF2CA6F;
+	Sat, 14 Dec 2024 00:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvQl4Iaj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxbK35Gp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1068BEA;
-	Sat, 14 Dec 2024 00:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80885C2C6
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137247; cv=none; b=u/sqdGJzc7LEjwkbQW1F2WleG4HULDmLQu1YuXLDgmXEoM2rrHybsj1qYWrPo4RmGwheSz2c0hzE784/3c81uxKLBI989c+QD2IFtB0t2otunHtnku8q5xfKPoweW7LhY6QQn6NHZfno4BzIH0D6LzRU5fSYsLCBoDhst7xLwZ4=
+	t=1734137280; cv=none; b=RpPFceBpMahtrRYel5OQ+m1VTLuLgJSP/mA/8g0J3icFQTB8/tIjjMF00D+tideUqF3vkJV/2LrfvuXNS9299iBYEyO04NNP9kGhcIsKKzJizJP8O9n7z27TRqkfzZkadEsHqzKE5hq04Ajy6mUnpdimQTYLqTy7tdXJkl8BD3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137247; c=relaxed/simple;
-	bh=f/cGxHEBgEAswVErS6yOfLz3KX5La9tpLLWKDmDDBTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msD8ZEnF5afXDKfbskRsvV4JWDpnUAQ4hLyoJl1jD/RuL28wMLsIKIXr7CEKuBkXHdx7MLpuuA1G+yRQhJU8xkXFP1NOHFnj6Iot990nrTr5cBYU+nPBI4Q0P5TMdZjpw9g/vUZgOxoPFWX54biemG5ehGYKqMkUwRGYelNQI3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvQl4Iaj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B503C4CED0;
-	Sat, 14 Dec 2024 00:47:27 +0000 (UTC)
+	s=arc-20240116; t=1734137280; c=relaxed/simple;
+	bh=ZWUapzYBfg+yA2O2i7ZrPdQKWk4wYGSt3Gk8wNYzf90=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=IMNewO9hIklS+ur92TL1a/+qvKWEdDgrWaxv3t98x8oU9TXNrRwmN/gMkbBLc7LprjqrziYCkSp7FXPMVJ/m8r/xPhqF2mK5cUIUVOA+7/yd05v2UKcODxFrECeYjKIvd7zV/stYomwCExcozAt0pVxOIRk/mjPYpgFOuvGFngc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxbK35Gp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0CEAC4CED0;
+	Sat, 14 Dec 2024 00:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734137247;
-	bh=f/cGxHEBgEAswVErS6yOfLz3KX5La9tpLLWKDmDDBTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OvQl4IajUd1IvkCmYAOLtCSL5J5lYUk4QKVX/Wxu8h2XzhdvJdpu/we1XRLtWstFx
-	 dHPv7+cwzDS2BwZw/wbGAEzHx3vlZGKVBbtGzQK5dTXbHshhCOz0f+0HggLTQG8X3T
-	 rk212XIk+ss4aVU/cgUIrv0TBralW/+fOtcxN0psolDcZbCvUdf9PHcsGpMSM8GgGS
-	 NRxytRh2imu0ecmpFm7rTkkrX6cSKh8yAzO4zf9Ir7emM8/V/YQCXcwwb7Mu3jZXj7
-	 Ezv2Dx5fUegHQEcIOiCQqBWAcWql6RYI6LI+esS0U5DBluCM1mnWaAyblVoOW8WS9M
-	 7GBuyE2m164Ww==
-Date: Fri, 13 Dec 2024 16:47:23 -0800
-From: Kees Cook <kees@kernel.org>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Yury Norov <yury.norov@gmail.com>, Qing Zhao <qing.zhao@oracle.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"gjoyce@linux.ibm.com" <gjoyce@linux.ibm.com>
-Subject: Re: [PATCH] fortify: Hide run-time copy size from value range
- tracking
-Message-ID: <202412131646.54417C4E6@keescook>
-References: <20241213020929.work.498-kees@kernel.org>
- <3fa35755-f822-4a54-b8fb-4fdc16579c2f@linux.ibm.com>
+	s=k20201202; t=1734137279;
+	bh=ZWUapzYBfg+yA2O2i7ZrPdQKWk4wYGSt3Gk8wNYzf90=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kxbK35GpjDP4X+Zs0ebwZiAInahkFM3mXqb8rqpv7e9kdMhDv7IjGyzEF+WyEXxol
+	 JMDjr0kDzyD08Eg0su74n0jL4Tj5W65R96Q3wv9pJnVzSe5bptk3GIUMDFBw0ColkH
+	 m45KbBPrEQqY+t7p1iNZKNItcUGozy9CoQzVx9LHzAWwLTwnvWZ0DZZYRCLjWjdo2o
+	 wjSpMDGqJVcjOoSdvatTwZcc9TkJSiwWTxlLnkHcj+kArIYxPrLr6NC6DOxkAmRhKd
+	 tld0qnMRyWyuTjDD5M+Q+ZT+d/SVS26m4TQ435SmJaRT4X3nEm2y5vOWBA1LnMBi+/
+	 YgopIMfghZKWQ==
+Message-ID: <9982142531c7617c43646d6e7042267e.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.13-rc2
+Date: Sat, 14 Dec 2024 00:47:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fa35755-f822-4a54-b8fb-4fdc16579c2f@linux.ibm.com>
 
-On Fri, Dec 13, 2024 at 02:49:20PM +0530, Nilay Shroff wrote:
-> ./include/linux/fortify-string.h:620:63: error: void value not ignored as it ought to be
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-Whoops! Thanks, I had only spot-checked padata.o :( I will fix this up
-and send a v2.
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
--- 
-Kees Cook
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.13-rc2
+
+for you to fetch changes up to f07ae52f5cf6a5584fdf7c8c652f027d90bc8b74:
+
+  regulator: axp20x: AXP717: set ramp_delay (2024-12-09 13:06:07 +0000)
+
+----------------------------------------------------------------
+regulator: Fixes for v6.13
+
+A couple of additional changes, one ensuring we give AXP717 enough time
+to stabalise after changing voltages which fixes serious stability
+issues on some platforms and another documenting the DT support required
+for the Qualcomm WCN6750.
+
+----------------------------------------------------------------
+Janaki Ramaiah Thota (1):
+      regulator: dt-bindings: qcom,qca6390-pmu: document wcn6750-pmu
+
+Philippe Simons (1):
+      regulator: axp20x: AXP717: set ramp_delay
+
+ .../bindings/regulator/qcom,qca6390-pmu.yaml       | 27 ++++++++++++++++
+ drivers/regulator/axp20x-regulator.c               | 36 ++++++++++++++--------
+ 2 files changed, 51 insertions(+), 12 deletions(-)
 
