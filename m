@@ -1,121 +1,224 @@
-Return-Path: <linux-kernel+bounces-445759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534D39F1B3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586199F1B3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CF6188EE39
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:10:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EFB188E299
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A374C8E;
-	Sat, 14 Dec 2024 00:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37199BE49;
+	Sat, 14 Dec 2024 00:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcHNUvJz"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MHxoIQO6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7E12FB6;
-	Sat, 14 Dec 2024 00:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7ED3C14
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734134707; cv=none; b=U8oiRd3XNTRymt1EJCXmkyt4lqYnzlOV18fgsqj56maydNfOwM2VCjA8qWQ0YYLX/pnC4z45MBRP2h7sEUjC0zegl94EGq0XTqB9RjYO/UPM3nJO1/CAmQtD6X1UOrWaKJlqW6CVYEPxHLH19HlibCxdouR/w7D+6i5gKZ3+JvQ=
+	t=1734134770; cv=none; b=Nvxc/byiadr2/GYtlqSGPHr3rPWxzqpJKYPTat6bKysy6o+YV1ZIvN4mhvc/rgeML7WgJDwc+dWdVUK/KT9hvL8CWziYjIAH1/vZVsypHKhx7bV252wauNXtispKNSqG4tavdnwXQOh65kndUPBiEolcTYVRkFRQyQs/ZPcoVjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734134707; c=relaxed/simple;
-	bh=q9jxJoysr0c2b6Zm2ABgTq3L0MNm+M4VQ6vhLHnTl08=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=itZp+aE99HHph1DK7Fmhn3yZacarWDEclXVQeyZYvrX/Wze4F0kvExlH4aKFDLKom3vSNc0gYDBBabE6hHdrijjbOdRGk1gbI9zFUHnGBu11aeA5zlprlS9g8+Z5MYaCfrdIH0H8VMn+xrZqlzblnBq+NJ0yrOOrzaCayJyZryM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcHNUvJz; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-300392cc4caso26470541fa.3;
-        Fri, 13 Dec 2024 16:05:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734134704; x=1734739504; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UDay3WHOhRjIjx7Iai3jihzOyTK4g0Ls6xSC3UCPhpc=;
-        b=EcHNUvJzZ1nGiL+smdOOQcd+0kKGf3UlcTvLTzcKDibaWqbyDgtmjSKIqTkMYQCvLZ
-         Yrm5h/oMPepU5DZwTYqSPWQ/RMtdpHSrlew1MHZ0FzUaxJ1up0vrBfAbuydEJaGtswS7
-         gQkTwSmh59BcaSPmrTFYYwBvZRudM+7IQDECIrYJYQWObtqg/+L5TDR1ejTgvIF/8ksN
-         2JB8nLXeRRBlA7mn6znHbsal/tpK0B6GpHwpJsbZ31RozTpEwmon525Ck2qf+aaVYm6R
-         g3RGOIZG+LEAqIsfkTavOIpg/vCcPorb/FalV0SSZ+6jjn2cVMiytzChn5hbEqFFqq3j
-         H6dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734134704; x=1734739504;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UDay3WHOhRjIjx7Iai3jihzOyTK4g0Ls6xSC3UCPhpc=;
-        b=vGBSaXujTeG2Mm9UtKj3QXcYduhK1YhOir4fpzdKVwQpC8BpBoXLdExp/Ew7kOIfCP
-         dpGvQoaTkmZDxcjKAwZ2+zjN205Kisy4x6B1klQqc6FYXPistwtSx+if+3A5wrnHFlGt
-         D3HJ2UDbUHKL5E1pSJgOOPKKsdZjpZffjnY7h7a/5KjGLUY97Pn2fl+DRYnwoCLR3GCn
-         BMhHUBQNc694mX96fL+/jYLrm3ibw81Krbhgvm0R4BhPkLGzuzEtt4tdhmFS/bmhwmhC
-         HNFxLSl1Gu1Y6LjYk8w6aJNDTQ7z3EKt785J55MJSUZJd4SXxFP6f4/MKP0Bz8FAcaOj
-         VreA==
-X-Forwarded-Encrypted: i=1; AJvYcCXArH0BYkQMnm0vkVKON99TuNcCgsI7NzCPDvNBipUiwq6MZtme6vgTV580WthGxjJV7QEcuSe7FYmr598=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ2DG/6+4BiWrt7oHLCyvjeAYa4kbVDiJPSuo2lolqrxeb7Q8b
-	holJ3PiP9uOBwGjSbSGAdHyMsRgb+C+QJyY16H2taov+bjTkMC1rBKPV/iigNNs3LErQxdBJXNJ
-	EMp5e4NHTGfiAwY966W3pmDza0JgTCKDo
-X-Gm-Gg: ASbGncs9YQGrzn3saSC6ZbkffA1DBNInBsX7zy8Z/CKHexC/dShdnxwolqLCvJja5ce
-	QTSKpAE1SCzUm61yGEr2M5r00sn2YTlq3ppLmU6LX+WZnlawLYP41rN17AMuGOHJ7UWwGMC8z
-X-Google-Smtp-Source: AGHT+IEFv++x5tNOGInJhiV1yQUEoGsLZIbI5VFxaphO6y7U4nkFfMeoZLVnF7+JPgU9vngXFybe/z7hSmp+DsxL3W8=
-X-Received: by 2002:a05:6512:e98:b0:540:2122:fae9 with SMTP id
- 2adb3069b0e04-540915e2c9emr1429320e87.46.1734134703691; Fri, 13 Dec 2024
- 16:05:03 -0800 (PST)
+	s=arc-20240116; t=1734134770; c=relaxed/simple;
+	bh=pk9b7aQjULDMsfhCdbV7APXJ9Vk01GgEXcJP7pCPinA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOH+SdMOBWtkN18vYrTKu8uwfJY/i2HBZM/QnTgI9xBvilPYZjFzmk/YLohYMjdYxiTHq3qMS4n8lBJCv80hXryNFdN/cIXB2cEOUV4YgSe5lqLVhsaL8moRs0ESdlmLcck8MIUTFwxuTdTjhV64Ud6lwQnmzINHFp8OR9MPpuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MHxoIQO6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M/oCU0QXpHv5wBTl4rjJLN6MhY5SgrkcuVkrhZ30vWo=; b=MHxoIQO60BVUQzhQzCqX6cS24Q
+	gZLsDe50RESXLkOlPBD0joVURo9tgEDaPKCoFBgkCvHBBlKNQBYhXiCXpyvgUC77GdCHbdcYmfemX
+	4DmgQ5BwJsXGvR6gAHJW23iNUbCQw4Xy/ypjPgVv9lHiRREdrnEtCML3HYdAvtckaxZs/uU842V6c
+	BRj9qFsX/8sBAzmlRiPSbxQSZxIuyZxH4QDenWhPVCtQ5E4Az2V4aQie6MMDvwPRpTVxUALP9oYXV
+	j3aU1Rai33vhjKtA1Ctfx8+Lxqpp86LOwNjYSxMbIWtS84CVGvHD0r9+ssdGsAN6gI/SJPK28lFIK
+	zmTIVu3Q==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMFfU-0000000Gf4s-3pPj;
+	Sat, 14 Dec 2024 00:06:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2D2DC30049D; Sat, 14 Dec 2024 01:06:00 +0100 (CET)
+Date: Sat, 14 Dec 2024 01:05:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
+Subject: Re: [RFC][PATCH v14 5/7] sched: Add an initial sketch of the
+ find_proxy_task() function
+Message-ID: <20241214000559.GC17501@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-6-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 13 Dec 2024 18:04:51 -0600
-Message-ID: <CAH2r5mu+0egy3V0bVRO+OiXbCa+HT5FLA6LKAiJZ2LD85vNvQg@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125195204.2374458-6-jstultz@google.com>
 
-Please pull the following changes since commit
-fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
+On Mon, Nov 25, 2024 at 11:51:59AM -0800, John Stultz wrote:
 
-  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index f8714050b6d0d..b492506d33415 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5052,6 +5052,34 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
+>  	}
+>  }
+>  
+> +/*
+> + * Only called from __schedule context
+> + *
+> + * There are some cases where we are going to re-do the action
+> + * that added the balance callbacks. We may not be in a state
+> + * where we can run them, so just zap them so they can be
+> + * properly re-added on the next time around. This is similar
+> + * handling to running the callbacks, except we just don't call
+> + * them.
+> + */
 
-are available in the Git repository at:
+Which specific callbacks are this? sched_core_balance()?
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc2-smb3-client-fixes
+In general, shooting down all callbacks like this makes me feel somewhat
+uncomfortable.
 
-for you to fetch changes up to 633609c48a358134d3f8ef8241dff24841577f58:
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +
+> +static inline struct task_struct *
+> +proxy_resched_idle(struct rq *rq)
+> +{
+> +	put_prev_task(rq, rq->donor);
+> +	rq_set_donor(rq, rq->idle);
+> +	set_next_task(rq, rq->idle);
+> +	set_tsk_need_resched(rq->idle);
+> +	return rq->idle;
+> +}
+> +
+> +static bool proxy_deactivate(struct rq *rq, struct task_struct *donor)
+> +{
+> +	unsigned long state = READ_ONCE(donor->__state);
+> +
+> +	/* Don't deactivate if the state has been changed to TASK_RUNNING */
+> +	if (state == TASK_RUNNING)
+> +		return false;
+> +	/*
+> +	 * Because we got donor from pick_next_task, it is *crucial*
+> +	 * that we call proxy_resched_idle before we deactivate it.
+> +	 * As once we deactivate donor, donor->on_rq is set to zero,
+> +	 * which allows ttwu to immediately try to wake the task on
+> +	 * another rq. So we cannot use *any* references to donor
+> +	 * after that point. So things like cfs_rq->curr or rq->donor
+> +	 * need to be changed from next *before* we deactivate.
+> +	 */
+> +	proxy_resched_idle(rq);
+> +	return try_to_block_task(rq, donor, state, true);
+> +}
+> +
+> +/*
+> + * Initial simple proxy that just returns the task if it's waking
+> + * or deactivates the blocked task so we can pick something that
+> + * isn't blocked.
+> + */
+> +static struct task_struct *
+> +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+> +{
+> +	struct task_struct *p = donor;
+> +	struct mutex *mutex;
+> +
+> +	mutex = p->blocked_on;
+> +	/* Something changed in the chain, so pick again */
+> +	if (!mutex)
+> +		return NULL;
+> +	/*
+> +	 * By taking mutex->wait_lock we hold off concurrent mutex_unlock()
+> +	 * and ensure @owner sticks around.
+> +	 */
+> +	raw_spin_lock(&mutex->wait_lock);
+> +	raw_spin_lock(&p->blocked_lock);
 
-  smb: client: destroy cfid_put_wq on module exit (2024-12-10 20:47:39 -0600)
+I'm still wondering what this blocked_lock does, that previous patch had
+it mirror wait_mutex too, so far I don't see the point.
 
-----------------------------------------------------------------
-four SMB3 client fixes, most also for stable
-- fix rmmod leak
-- 2 minor cleanups
-- fix for unlink/rename with pending i/o
-----------------------------------------------------------------
-David Howells (1):
-      cifs: Fix rmdir failure due to ongoing I/O on deleted file
-
-Enzo Matsumiya (1):
-      smb: client: destroy cfid_put_wq on module exit
-
-Steve French (1):
-      smb3: fix compiler warning in reparse code
-
-Thorsten Blum (1):
-      cifs: Use str_yes_no() helper in cifs_ses_add_channel()
-
- fs/smb/client/cifsfs.c  | 1 +
- fs/smb/client/inode.c   | 5 ++++-
- fs/smb/client/reparse.c | 2 +-
- fs/smb/client/sess.c    | 4 ++--
- 4 files changed, 8 insertions(+), 4 deletions(-)
-
--- 
-Thanks,
-
-Steve
+> +
+> +	/* Check again that p is blocked with blocked_lock held */
+> +	if (!task_is_blocked(p) || mutex != get_task_blocked_on(p)) {
+> +		/*
+> +		 * Something changed in the blocked_on chain and
+> +		 * we don't know if only at this level. So, let's
+> +		 * just bail out completely and let __schedule
+> +		 * figure things out (pick_again loop).
+> +		 */
+> +		goto out;
+> +	}
+> +	if (!proxy_deactivate(rq, donor))
+> +		/* XXX: This hack won't work when we get to migrations */
+> +		donor->blocked_on_state = BO_RUNNABLE;
+> +
+> +out:
+> +	raw_spin_unlock(&p->blocked_lock);
+> +	raw_spin_unlock(&mutex->wait_lock);
+> +	return NULL;
+> +}
+> +#else /* SCHED_PROXY_EXEC */
+> +static struct task_struct *
+> +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+> +{
+> +	WARN_ONCE(1, "This should never be called in the !SCHED_PROXY_EXEC case\n");
+> +	return donor;
+> +}
+> +#endif /* SCHED_PROXY_EXEC */
+> +
+>  /*
+>   * __schedule() is the main scheduler function.
+>   *
+> @@ -6732,12 +6845,22 @@ static void __sched notrace __schedule(int sched_mode)
+>  			goto picked;
+>  		}
+>  	} else if (!preempt && prev_state) {
+> -		block = try_to_block_task(rq, prev, prev_state);
+> +		block = try_to_block_task(rq, prev, prev_state,
+> +					  !task_is_blocked(prev));
+>  		switch_count = &prev->nvcsw;
+>  	}
+>  
+> -	next = pick_next_task(rq, prev, &rf);
+> +pick_again:
+> +	next = pick_next_task(rq, rq->donor, &rf);
+>  	rq_set_donor(rq, next);
+> +	if (unlikely(task_is_blocked(next))) {
+> +		next = find_proxy_task(rq, next, &rf);
+> +		if (!next) {
+> +			/* zap the balance_callbacks before picking again */
+> +			zap_balance_callbacks(rq);
+> +			goto pick_again;
+> +		}
+> +	}
+>  picked:
+>  	clear_tsk_need_resched(prev);
+>  	clear_preempt_need_resched();
 
