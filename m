@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-446147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659919F2056
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:41:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557179F2057
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABC47A129B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB40018880A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63A8199FA4;
-	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7FC1ABEAC;
+	Sat, 14 Dec 2024 18:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0XHQ6cIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA86E3D96A
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 18:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489AB1A8F6B;
+	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734201673; cv=none; b=oAu3ZQNq8gjrhEbNMlp8tjUFNGCCds07fJYkjhADatpHSwYUv0VcIQV17TRfOw5WzUaUDmZMlqTyVem0UhJHb3U295V3YjqRMRByc67ynofirPg8sah9iCqdNe8sGYYyVC3FmUP7u+mY9l3Os55HAoRNDeOzT7AUF36H6vpd47o=
+	t=1734201674; cv=none; b=oATuKlt+pvKRK/hILyIbHFxHOQZmG4HlBOPykutu/0ESWKbQKQW17rakmI5nbMbEoBYU+TLnDoNIwnqcHd/l4dzD9nxRCq/kBRYbbu3lLHppkqjkijgkOpsOI5YMHgqXSnmCAupgIGl0CqYXn24/IVqKhBjCmW1kvygpVQN+Fz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734201673; c=relaxed/simple;
-	bh=g7rTlp2Fy0rmh8iTu37cPNHXE5zBs2vgpiuv/ttvAcM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=nVm5l4Is0qPTlRR7BJ5tM2Dc9J7y+tC7QahN7KCmcx0SOy3DZueXyGJHnykjQq/DzzNcuT1yhHAwp3iK+TqVUlOGK/TvfORcZEBi1UA2RZsql0wcqvrYtq1WOVU7vSrRy0Db+qLCa+9IZzKB5DkgNkotDoOoaly0g044qrNVodI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-280-3Kd5c3ElMVu5EUN2SKtuRQ-1; Sat, 14 Dec 2024 18:41:08 +0000
-X-MC-Unique: 3Kd5c3ElMVu5EUN2SKtuRQ-1
-X-Mimecast-MFC-AGG-ID: 3Kd5c3ElMVu5EUN2SKtuRQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 14 Dec
- 2024 18:40:11 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 14 Dec 2024 18:40:11 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Arnd Bergmann' <arnd@kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>, "Ard
- Biesheuvel" <ardb@kernel.org>, Clark Williams <clrkwllms@kernel.org>, "Jason
- Baron" <jbaron@akamai.com>, Josh Poimboeuf <jpoimboe@kernel.org>, "Linus
- Walleij" <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>,
-	Russell King <linux@armlinux.org.uk>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
-Subject: RE: [PATCH 3/4] ARM: drop CONFIG_HIGHPTE support
-Thread-Topic: [PATCH 3/4] ARM: drop CONFIG_HIGHPTE support
-Thread-Index: AQHbSx10HM4hb1GiOk+xX2rPfGcyA7LmGAAw
-Date: Sat, 14 Dec 2024 18:40:11 +0000
-Message-ID: <d54e11cf3f4d4216b5cecf29b761cd45@AcuMS.aculab.com>
-References: <20241210160556.2341497-1-arnd@kernel.org>
- <20241210160556.2341497-4-arnd@kernel.org>
-In-Reply-To: <20241210160556.2341497-4-arnd@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1734201674; c=relaxed/simple;
+	bh=qP01awV62yJKZkQCb4OBPUOVVOHgBTtxBBqfvvfobeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rL+uAui+YegFiwBSYoBzTPaWDsyYaaBke6LO8jo4Nh5tiM6p8B9JvHkwlLVxEJh3/szBpyaoiamaTY0EzaiukKoSOJJGobfvjLW2wl5GQZwkc8uFFc1O73SdxecXrsKskqH4zF6BIYUZi4va8ZzZOoHTO0jNZN0f/QhecRIDx4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0XHQ6cIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C96FC4CED1;
+	Sat, 14 Dec 2024 18:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734201673;
+	bh=qP01awV62yJKZkQCb4OBPUOVVOHgBTtxBBqfvvfobeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0XHQ6cIMxKGMSutwtAtSPHjhyFH0Pl7KbeDI8W559wjGW+JnwnFgUSUEXbOggTorh
+	 YvzhD47IwgbZjBsmrhYmNZ7KKDIk7bEYf4F02t8FA/R2aX8xBVQogB1SDNUmTJLUCv
+	 aRBKEL2fg0isiDMMTq3R0wsSXV3O+luKYl+d0ilM=
+Date: Sat, 14 Dec 2024 19:41:10 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+	monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com,
+	stable@kernel.org, Sam Bobrowicz <sam@elite-embedded.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v2] media: ov5640: fix get_light_freq on auto
+Message-ID: <2024121425-ended-coastal-0c46@gregkh>
+References: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
+ <Z1v2VRzgUVpHZvXR@kekkonen.localdomain>
+ <05ce02de-6eed-4f28-8052-56ca9cac4b64@amd.com>
+ <2024121303-arrange-hydration-7cf4@gregkh>
+ <Z13NZ0lTeTecuC57@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: griw3fBzfXZmiafbT2O0nxNZ3_0LigrR5nu9qFQykfg_1734201667
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z13NZ0lTeTecuC57@kekkonen.localdomain>
 
-From: Arnd Bergmann
-> Sent: 10 December 2024 16:06
-...
-> Since Arm is the last architecture remaining that uses this, and almost
-> no 32-bit machines support more than 4GB of RAM, the cost of continuing
-> to maintain HIGHPTE seems unjustified, so remove it here to allow
-> simplifying the generic page table handling.
+On Sat, Dec 14, 2024 at 06:24:39PM +0000, Sakari Ailus wrote:
+> Hi Greg,
+> 
+> On Fri, Dec 13, 2024 at 12:12:18PM +0100, Greg Kroah-Hartman wrote:
+> > On Fri, Dec 13, 2024 at 11:30:38AM +0100, Michal Simek wrote:
+> > > Hi Ailus, +Greg
+> > > 
+> > > On 12/13/24 09:54, Sakari Ailus wrote:
+> > > > Hi Michal,
+> > > > 
+> > > > Thanks for the patch.
+> > > > 
+> > > > On Fri, Nov 22, 2024 at 09:28:01AM +0100, Michal Simek wrote:
+> > > > > From: Sam Bobrowicz <sam@elite-embedded.com>
+> > > > > 
+> > > > > Light frequency was not properly returned when in auto
+> > > > > mode and the detected frequency was 60Hz.
+> > > > > 
+> > > > > Fixes: 19a81c1426c1 ("[media] add Omnivision OV5640 sensor driver")
+> > > > > Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
+> > > > > Signed-off-by: Michal Simek <michal.simek@amd.com>
+> > > > > Cc: <stable@kernel.org>
+> > 
+> > That address is totally acceptable.
+> 
+> The documentation (Documentation/process/stable-kernel-rules.rst) tells to
+> use stable@vger.kernel.org nevertheless (we're not discussing the latter
+> option here):
+> 
+> To have a patch you submit for mainline inclusion later automatically picked up
+> for stable trees, add this tag in the sign-off area::
+> 
+>   Cc: stable@vger.kernel.org
+> 
+> Use ``Cc: stable@kernel.org`` instead when fixing unpublished vulnerabilities:
+> it reduces the chance of accidentally exposing the fix to the public by way of
+> 'git send-email', as mails sent to that address are not delivered anywhere.
 
-'Picking at nits' 'highmem' support was needed for systems with 4GB of RAM
-in order to use more than 3GB or 3.5GB (depending on the bios) because
-of the physical addresses that are reserved for PCI (and other MMIO).
+Yes, either works.  But to keep the "signal" of "hey, look, a security
+bug!" down, feel free to use stable@kernel.oorg also everywhere just to
+make the bad guys have to do more work :)
 
-=09David
+thanks,
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+greg k-h
 
