@@ -1,138 +1,150 @@
-Return-Path: <linux-kernel+bounces-446099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF4C9F1FDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:10:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347819F1FE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B4D18886BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:10:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1B897A0864
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DAA199384;
-	Sat, 14 Dec 2024 16:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8889195FE3;
+	Sat, 14 Dec 2024 16:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BzLaeqFo"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNBK4g9X"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB50522F;
-	Sat, 14 Dec 2024 16:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B06D42A8F;
+	Sat, 14 Dec 2024 16:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734192645; cv=none; b=RVdb6JJys9mVErmOg0xrnK5O6cqjSBY9WkTRh0e5AWYrkv3TAmVOhkeCsraz9Emy3gp9+vKo1TtLxXP2gqXZO6u68l/0KF92jLJ64CsOyI5JgsjZcVeMUS0xagALU3HDhdRvhwPCIj2PgLVyJKxu/dAzMnZByO+tce1WJUWIomg=
+	t=1734192993; cv=none; b=O+icbsR6wKd9dHx3g5WLlh+RRpLEKiOVKJyPRzRfAPYYRLaHCMslfNeh+N3iIATF4zB+R5KhvpklD5xZ+PSODiCxIXpEsuLS9HnwUtczpdMfldRvhe/mNCIlQManLnnzKcMSqkxCAVhNo/W9SjnSFnUoZmJJNdzbBpvnvvR7RCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734192645; c=relaxed/simple;
-	bh=gsOH6S1w/MwM39WRKOA/S1DUzdxAtZxaYQ8CI1SC66U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hrEtw6Z+qJwqQyCBn/0P/LrFGSPCE1vUvNatv+xY31N7CUzKIaeisgTNCO0mSFgy+Q832SNfycLjJ2u1lq1BUh7QIZAR9XWwk/piDwc6+FXZ7afAhG0JoM1ttt/7lR/m11JYoYl5P8G7Kl7ndl5bQqUND6dQbNNfAriyirojWMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BzLaeqFo; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1734192626; x=1734797426; i=markus.elfring@web.de;
-	bh=EMVJcvtYhP8unKke00pjauNVga1ID4yknBL/X2AAzV0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BzLaeqFot7SqhjqDgS7TYRCSfW2eF6CJbmrIrzHSJqP56mw7Sec7y3R8sgvufpzK
-	 YPf+xcZcY5S+KarpCfKQVpUzhNsOoj0qDzN43K/anaVj2G3GIjOhlTSF2r3/7Cg7D
-	 1ff0+q9w1xHtuZsJhO992h4IKeXCOaXhwJPfAqOgcQDWLDJvup2qgbJOtewJRPrGs
-	 nx3JTpI7dwVvffjwy8SmMfFI0ZQ+gyK6CN1kDcBVWnnfrO8dUeCpY2m2t4UQNI8AD
-	 7oaQ9+cGYcCItpcJw81UiCsez65cD4zNhzFgVtoNBEOn2ab8fnf4gZ/zf4wKnUfew
-	 KUI/oQNUzD2nEGFvPQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.70.57]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbkWQ-1tsnGu2dSw-00dujo; Sat, 14
- Dec 2024 17:10:26 +0100
-Message-ID: <cd3fda36-7501-416c-9c02-3163c35a2edf@web.de>
-Date: Sat, 14 Dec 2024 17:10:19 +0100
+	s=arc-20240116; t=1734192993; c=relaxed/simple;
+	bh=QEK45FpIgVz8lykFCUeTYYjcWzewrIcJ3liwvfV/Fts=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GD0Fp35K2FC7Q3niaqEGAldvkJfXiehzAn2I5GZddXCCyLbsqns4MtjZzx58cCsUK5u1PdaGj5/kRxWsVMZTdQ+yfeW7SmrMO+igLBmkphR7bVPptElqGzq7ST04lDji/XvSULmq3L+aUArvt8U6qHxXw+eYffSwaTDGYkz53Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNBK4g9X; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so3908612e87.1;
+        Sat, 14 Dec 2024 08:16:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734192989; x=1734797789; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Mh4b+XcCR46wXDqiSFlZELAzSEKxQH+Xckte12EcJCg=;
+        b=SNBK4g9XVsA6nct4YxFdtZvIC6N4fWu1waXYWOIC9l/7w+00Jv7qHVOcV9mxqal48n
+         o8uKJ1aGEY3ZF2qK7p6WjOAmcjwRi8+1WX8u0mg44V5mH+VXoYHFYdyrBB2GtQH2iUfa
+         NptAfip59hzvDlAgrBPmZHDT3952E3badQpxyxFaZaHpQ3lopVeQgjtZyYayIB6omOH9
+         gjnwXsp/JqLw2+FznrxmUfQynvHD5W7fYsUPtkGntoIlGeiDoHiyZcIh4P2VPonOT9fc
+         3JdGrwkOtfFqJqcMCBcS4xchlTYVfudW6c7lUE1RaFgtF2TFBafNM2WV7U2jdhpCyTIc
+         pMig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734192989; x=1734797789;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mh4b+XcCR46wXDqiSFlZELAzSEKxQH+Xckte12EcJCg=;
+        b=PsvaBqjLlU3WAXmWGM1x1s/h0EUtdOUs8AJnXs1papOt3ciAKMI0hD9zTRPKsVG45b
+         sfR/8P0FY/22IW6GYtsGgMB+cHp0Yh3KMSo5CPKRLfSUgulXlsmHKakVyCDUugaYGuzY
+         zQlTZBLS/A6YhErWzUM8ktYPpjVRmJ8p26epPot/2Wn3r2M+SZ+gZsAcB4PVz4Jf6GVa
+         vrzlF/dimM97buIXRhUWXsnJWQBKJRjcbaO4bjjpq3a/vHTdFCivDGGgRLvEGmhViIMM
+         yIFhGosDpOZ8iVVcyxfv+y4BM/ELsRsu+gSDOxtHnwJ6socRmr84hnnGpARGaua4zZ7N
+         CIuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0LqM+ezEQv4Qk9B92q4U1DsmolPgLCFa4C4wtzKaiHdCPvpg560Oae0qhrdxdkisHTW/e@vger.kernel.org, AJvYcCVlOCKalbLONUQYJwn6vqcWxG3fL0bHn2d+lJwf8k6FN/afSi5mowknJv9d59OXTS/usoMAtHIDAVU0deo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVud5vfeFcARlpoZVYB5L4dGY/316yTj8hEAj8NN+eGOOhCxbs
+	21wIOKWFvyk7Mvw7zr/JMBhjqByw1gRUB7P4d7ib9p7V/HXnPqlj
+X-Gm-Gg: ASbGncvaXw9N5OgOd1WNS7C3yDoEIPl9Rrmj8CHYj4N21tToLlcHV3zoKrTTx7kM1EN
+	1ugf6vRUpRjeHb+MNaWV+sdtZQtBq0+FIL+z8W/e+I7E468nJE0II+9D+S67/mbJiZavCkSMxQB
+	On+OZ8DcTZA5nBj+fquJDXpnlEwnnUbW7k9H7ujmnnoXMLBC35ayQIL5P9PMCm0R/uRNi36RaAL
+	hIr1FQE4J/fHK1GrOP6pXo=
+X-Google-Smtp-Source: AGHT+IG5+RJPZ86OOramJ6CmBHmXc5TVydW50wFZp6Bo0XCn4EowKJSH6Y95I4d4FE4u3BYiHw4SIw==
+X-Received: by 2002:a05:6512:3b2c:b0:540:1ec0:4d86 with SMTP id 2adb3069b0e04-54090557eccmr1986805e87.17.1734192989105;
+        Sat, 14 Dec 2024 08:16:29 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c13a22sm258809e87.189.2024.12.14.08.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 08:16:28 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Sat, 14 Dec 2024 17:16:27 +0100
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH rcu 2/2] rcu/nocb: Fix rcuog wake-up from offline softirq
+Message-ID: <Z12vW37q35hvP5n6@pc636>
+References: <c0daba35-f647-40cd-b556-3a04e03da93c@paulmck-laptop>
+ <20241212184214.2018411-2-paulmck@kernel.org>
+ <Z1y-LbA1UFLb314l@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jackson Lee <jackson.lee@chipsnmedia.com>,
- Nas Chung <nas.chung@chipsnmedia.com>, linux-media@vger.kernel.org,
- Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Robert Beckett <bob.beckett@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Brandon Brnich <b-brnich@ti.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Lafley Kim <lafley.kim@chipsnmedia.com>
-References: <20241209053654.52-4-jackson.lee@chipsnmedia.com>
-Subject: Re: [PATCH 3/5] media: chips-media: wave5: Improve performance of
- decoder
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241209053654.52-4-jackson.lee@chipsnmedia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:J2lHBvqSaEo8ApvS8GzQBSNblCPbJhwlR/J60hvn3HHUklWhfBG
- 2WwJTKqS81szNSN/HJWaeGg9sFWMUS8ovr7iz5KmDalP0QZnk12pGrby/shbTHBdh5T5aJr
- gN4yAkVOoRyslAvOcDwrYwJran4fvUPg+BWbC/FJb/vowWlFRXL94NBc/OOcTKOHPrvTPpO
- YTUgAAEkpIG12umai65ow==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GR4fvji62X8=;CwUb5QPqA3g3eNPQ3gis6K6r3Hl
- CTJwBXuvh5WdNwDeU/DEGCtzgiEpeKBoPl4t+gZCC8spW3kOZGoF+I64kaT+iC9BVsKaB/6di
- pXZ0RuO0Aot/qZfMHXY8dre02EtF+SyV6iVvQOdmb2lq29u9nCoV7tXUfiB6r8qwNTAjnqjwh
- wRkEHGldE+Q9H2BixZvN40yxARwDq8wB1HNP+9ZJMAb04r1YmOTDJoUTsgRXMCwr/KyscKD49
- PDHaK5BTpw4DzwP05U6xFaaBbzoU2LqUZGTk2rRW4aoTT6oMKouFOZK9iVfYIpps/uCwtvcCY
- BN3DouWgRFDiv+Eswf/dKgJWxmd+tSvcxiEWUnFsTHKtLQfd1oUJTImamC5qWJXCCzn3lZTO8
- OWbwK2waUFmBmBty6fQNE/KPB2ZnrUJBN4F26eeYey3vAPJV4A5E0Dr3L5kJmlxc2M5Os4OWq
- nVcDY1B9FJSpjEYR8iwJibTJ3NP/aNvTEK/qZHBHopDmcx7+5db229RRXqm8vyPFnIInxEbAk
- D/9QMslAZKOY5qmqBMGb2C+iZQCn8VfdXDQh+GcJZCCFa8Y409PrcoQZJksjMtGDdgiQoQ3Z5
- JroTYjzqi09wFIKU1OpjXJBCkrEKLeMkwWmTKXGsK1OY/F7yJLLsvJlI8Ywk2JxOntnIkqr0U
- AKzd5Wde8ht0wQ64poCHcqXq6BzBUoYUz3sQHQZ6u/FtTc4v6Mhi2i13xMzE8L+FQ2LIfcAbg
- lA4zNHQZjNp+9CAVb2N2FsandIcu6HZwD4toGXRG0ku8CszFkT2V1e61+cOebtWeVRC4pJr3b
- rRU6JRulDnSLBIqnkw+MGN3BxfTqmw8OjB2oY7lGjMawB/x4wkhEdizDH/e52PwqD/xmH52nu
- dHQ2QZK9Lh1OV0TyKrzjS4VlYQzTdp1xBrM/eIP+2z+WJZQ2ZIQtQc24/IkKApD9578R8MEQG
- xaXp1HZnlvEAFj9sKQruYItZxeiPM0uITjj6/sKa0MezYWE4U5H+h0nhakHREnve2ufsbuvYL
- wX7HKX4/MjHXNyGmZsMJl8kr08l3g+z2oXfgd8P7mUwl7EStdQq9vdnijOJoq88riS7JgSoSf
- KelkopEgk=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1y-LbA1UFLb314l@pavilion.home>
 
-=E2=80=A6
-> Update driver to use an asynchronous approach for decoding and feeding a
-> bitstream in order to achieve full capabilities of the device.
->
-> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-=E2=80=A6
+On Sat, Dec 14, 2024 at 12:07:25AM +0100, Frederic Weisbecker wrote:
+> Le Thu, Dec 12, 2024 at 10:42:14AM -0800, Paul E. McKenney a écrit :
+> > From: Frederic Weisbecker <frederic@kernel.org>
+> > 
+> > After a CPU has set itself offline and before it eventually calls
+> > rcutree_report_cpu_dead(), there are still opportunities for callbacks
+> > to be enqueued, for example from an IRQ. When that happens on NOCB, the
+> > rcuog wake-up is deferred through an IPI to an online CPU in order not
+> > to call into the scheduler and risk arming the RT-bandwidth after
+> > hrtimers have been migrated out and disabled.
+> > 
+> > But performing a synchronized IPI from an IRQ is buggy as reported in
+> > the following scenario:
+> > 
+> > 	WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
+> > 	Modules linked in: rcutorture torture
+> > 	CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
+> > 	Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
+> > 	RIP: 0010:smp_call_function_single
+> > 	<IRQ>
+> > 	swake_up_one_online
+> > 	__call_rcu_nocb_wake
+> > 	__call_rcu_common
+> > 	? rcu_torture_one_read
+> > 	call_timer_fn
+> > 	__run_timers
+> > 	run_timer_softirq
+> > 	handle_softirqs
+> > 	irq_exit_rcu
+> > 	? tick_handle_periodic
+> > 	sysvec_apic_timer_interrupt
+> > 	</IRQ>
+> > 
+> > The periodic tick must be shutdown when the CPU is offline, just like is
+> > done for oneshot tick. This must be fixed but this is not enough:
+> > softirqs can happen on any hardirq tail and reproduce the above scenario.
+> > 
+> > Fix this with introducing a special deferred rcuog wake up mode when the
+> > CPU is offline. This deferred wake up doesn't arm any timer and simply
+> > wait for rcu_report_cpu_dead() to be called in order to flush any
+> > pending rcuog wake up.
+> > 
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202409231644.4c55582d-lkp@intel.com
+> > Fixes: 9139f93209d1 ("rcu/nocb: Fix RT throttling hrtimer armed from offline CPU")
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> You can drop this patch, it has been replaced with another version upstream.
+> 
+Dropped. Thank you!
 
-Does a dot really belong to a personal name (according to the Developer's =
-Certificate of Origin?)
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.13-rc2#n436
-
-
-=E2=80=A6
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-=E2=80=A6
-> +static void wave5_vpu_dec_feed_remaining(struct vpu_instance *inst)
-> +{
-> +	int ret =3D 0;
-
-May the initialisation be omitted for this local variable?
-
-
-> +	struct v4l2_m2m_ctx *m2m_ctx =3D inst->v4l2_fh.m2m_ctx;
-> +	u32 fail_res =3D 0;
-> +
-> +	mutex_lock(&inst->feed_lock);
-> +	ret =3D fill_ringbuffer(inst);
-> +	mutex_unlock(&inst->feed_lock);
-=E2=80=A6
-
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&inst->feed_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/mutex.h#L2=
-01
-
-Regards,
-Markus
+--
+Uladzislau Rezki
 
