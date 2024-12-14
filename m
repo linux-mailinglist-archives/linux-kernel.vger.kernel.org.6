@@ -1,262 +1,338 @@
-Return-Path: <linux-kernel+bounces-446019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABEC9F1E8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:37:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8615D9F1E95
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA037A06BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DA61889EA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286B41922D8;
-	Sat, 14 Dec 2024 12:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964F31922D3;
+	Sat, 14 Dec 2024 12:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZshCCvED"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oBsLNTw5"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C3442A99;
-	Sat, 14 Dec 2024 12:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8249B1922D8
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 12:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734179811; cv=none; b=VqwI7YkyKcXNkzq74jmaslroW6id2oL8wlScInFXgJJgDhsYt1mKL6MCuAH1++0NurOVVpgpVZP/BQL33cYcaTJhMySuQ0/TZ3qXvVB/kE+uCDfwChKuKOHkwpem+BoeMN7jOQUhleWJ9RXmNZqRCEn/eXJYeZlKKnbrNWKSKi4=
+	t=1734179884; cv=none; b=A7bRCdqUVMV0liIfh+I4Zcy2LuYPNZRXTPEqh65McJCj1WIMcJvkX95AOsULHxu4MLgSnVEGtqa1MxosQgClL+0b6PeRZrcTkHUvG7FfOQBfTlsKGyzu/oMKcFD934GrCcUlBurrZL9bACHmfq+KQYoArElNy6fT2YAcZHZHIBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734179811; c=relaxed/simple;
-	bh=iJkWexO+c6fd8qHwLMbKGzqr1jQ4wTinHRscOJfZiJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZ4TuG7IwPqhfkcdQrGWa3Rcfoi+yRnxZOPmzZsm6I6mZRPNs65PcAPpkxrixZFU0hvOxVIFZU2sS9y3ndDWBIvNrgfi9RAiALT+vS6nF93zlebdB1NenjGu8p39SzyWvbfDMNtplNPoQuGPlNOiQP3PykVCe2M3TeGQaSeyhfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZshCCvED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C03C4CED1;
-	Sat, 14 Dec 2024 12:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734179810;
-	bh=iJkWexO+c6fd8qHwLMbKGzqr1jQ4wTinHRscOJfZiJ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZshCCvEDjcrv1qai3L7hA2LU/lVfveTIMBIDcJNpVwy7j4PN2KsIoAAqekPyuPn2o
-	 XKssVBrjDKENB2RuzLAHckBRXpZTH0h2sGeNQCmyyTjftoVJjfLySFEG3EvBecHBtQ
-	 9kZRxuCH2jM6kXSKNwgMTWXQbRngfOpwd1dcCduzTBTd0C5bG2FdtK2qVArM6Y1IUm
-	 rFR6V1G0RcmwC1NQSzex6xxTBsDOH5HCSPCdouz5goRErL7kjJIJ9TbbFUx3BHOh23
-	 xlEoiemiCT8cO8wi0004Z1O/YzgfJCO3Aut+cDIsbPqKTw6RamvkWOSf0qEQTo0GeM
-	 TeKVgMcP0MjyQ==
-Date: Sat, 14 Dec 2024 12:36:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v7 6/7] iio: accel: adxl345: add FIFO with watermark
- events
-Message-ID: <20241214123641.6ab3e4c4@jic23-huawei>
-In-Reply-To: <20241213211909.40896-7-l.rubusch@gmail.com>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
-	<20241213211909.40896-7-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734179884; c=relaxed/simple;
+	bh=+BI/9YwjsHYcz5FBo1iava+AQoqNWdkmlb9ZxVCdqYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JDEKKKVcGoT8onEMwfYPs4ihOgfOLFgAACaqC3x4lAIrD6Bwcre0Q16dotzG+8YN/PRC7fhjuCJ8W7i5VxXEss2rthnYPDB6W/vea2GzS10sClQ67yhxizdTaEM6C0MegOQ3m6X+mBqYBQ3HqeKEIn0BY7gjPjDGOQozT6Uy+Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oBsLNTw5; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <163b6d77-3e26-4789-8e87-50b989701c9c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734179870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OT4PJE5aW1qtMuGZzrImu+KjL/b4C+0J6PXBqXwUoWA=;
+	b=oBsLNTw5XhHF9LO/VM8NlW+Vn9AyQWeI6xjrbNLqpMmZebM54SGvKdG9CPRX6dsvWXapMD
+	kJJKjullEjBKfPW0OkC3l8jbTkdHcxQMo6zlJEViaGqWruHOyU2gCWAWFWjz+BruZTOv4Q
+	T6VBSiuPkvQ1rvYOPQJxbIeyPVvMF8o=
+Date: Sat, 14 Dec 2024 13:37:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH RESEND v2] RDMA/siw: Remove direct link to net_device
+To: Bernard Metzler <bmt@zurich.ibm.com>, linux-rdma@vger.kernel.org
+Cc: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ zyjzyj2000@gmail.com, syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+References: <20241212151848.564872-1-bmt@zurich.ibm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20241212151848.564872-1-bmt@zurich.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 13 Dec 2024 21:19:08 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Add a basic setup for FIFO with configurable watermark. Add a handler
-> for watermark interrupt events and extend the channel for the
-> scan_index needed for the iio channel. The sensor is configurable to use
-> a FIFO_BYPASSED mode or a FIFO_STREAM mode. For the FIFO_STREAM mode now
-> a watermark can be configured, or disabled by setting 0. Further features
-> require a working FIFO setup.
+在 2024/12/12 16:18, Bernard Metzler 写道:
+> Do not manage a per device direct link to net_device. Rely
+> on associated ib_devices net_device management, not doubling
+> the effort locally. A badly managed local link to net_device
+> was causing a 'KASAN: slab-use-after-free' exception during
+> siw_query_port() call.
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-
-I missed a theoretical bug around the dma buffer in previous reviews.
-A few other minor things inline.
-
-Thanks,
-
-Jonathan
-
->  /*
->   * In full-resolution mode, scale factor is maintained at ~4 mg/LSB
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index fc4f89f22..e31a7cb3f 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -15,9 +15,17 @@
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/kfifo_buf.h>
->  
->  #include "adxl345.h"
->  
-> +#define ADXL345_FIFO_BYPASS	0
-> +#define ADXL345_FIFO_FIFO	1
-> +#define ADXL345_FIFO_STREAM	2
+> Fixes: bdcf26bf9b3a ("rdma/siw: network and RDMA core interface")
+> Reported-by: syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=4b87489410b4efd181bf
+> Signed-off-by: Bernard Metzler <bmt@zurich.ibm.com>
+> ---
+>   drivers/infiniband/sw/siw/siw.h       |  7 +++---
+>   drivers/infiniband/sw/siw/siw_cm.c    | 31 +++++++++++++++++++-----
+>   drivers/infiniband/sw/siw/siw_main.c  | 15 +-----------
+>   drivers/infiniband/sw/siw/siw_verbs.c | 35 ++++++++++++++++++---------
+>   4 files changed, 53 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/siw/siw.h b/drivers/infiniband/sw/siw/siw.h
+> index 86d4d6a2170e..ea5eee50dc39 100644
+> --- a/drivers/infiniband/sw/siw/siw.h
+> +++ b/drivers/infiniband/sw/siw/siw.h
+> @@ -46,6 +46,9 @@
+>    */
+>   #define SIW_IRQ_MAXBURST_SQ_ACTIVE 4
+>   
+> +/* There is always only a port 1 per siw device */
+> +#define SIW_PORT 1
 > +
-> +#define ADXL345_DIRS 3
+>   struct siw_dev_cap {
+>   	int max_qp;
+>   	int max_qp_wr;
+> @@ -69,16 +72,12 @@ struct siw_pd {
+>   
+>   struct siw_device {
+>   	struct ib_device base_dev;
+> -	struct net_device *netdev;
+>   	struct siw_dev_cap attrs;
+>   
+>   	u32 vendor_part_id;
+>   	int numa_node;
+>   	char raw_gid[ETH_ALEN];
+>   
+> -	/* physical port state (only one port per device) */
+> -	enum ib_port_state state;
+> -
+>   	spinlock_t lock;
+>   
+>   	struct xarray qp_xa;
+> diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
+> index 86323918a570..b157bd01e70b 100644
+> --- a/drivers/infiniband/sw/siw/siw_cm.c
+> +++ b/drivers/infiniband/sw/siw/siw_cm.c
+> @@ -1759,6 +1759,7 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   {
+>   	struct socket *s;
+>   	struct siw_cep *cep = NULL;
+> +	struct net_device *ndev = NULL;
+>   	struct siw_device *sdev = to_siw_dev(id->device);
+>   	int addr_family = id->local_addr.ss_family;
+>   	int rv = 0;
+> @@ -1779,9 +1780,15 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   		struct sockaddr_in *laddr = &to_sockaddr_in(id->local_addr);
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+> -		if (ipv4_is_zeronet(laddr->sin_addr.s_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> -
+> +		if (ipv4_is_zeronet(laddr->sin_addr.s_addr)) {
+> +			ndev = ib_device_get_netdev(id->device, SIW_PORT);
+> +			if (ndev) {
+> +				s->sk->sk_bound_dev_if = ndev->ifindex;
+> +			} else {
+> +				rv = -ENODEV;
+> +				goto error;
+> +			}
+> +		}
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in));
+>   	} else {
+> @@ -1797,9 +1804,15 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   		}
+>   
+>   		/* For wildcard addr, limit binding to current device only */
+> -		if (ipv6_addr_any(&laddr->sin6_addr))
+> -			s->sk->sk_bound_dev_if = sdev->netdev->ifindex;
+> -
+> +		if (ipv6_addr_any(&laddr->sin6_addr)) {
+> +			ndev = ib_device_get_netdev(id->device, SIW_PORT);
+> +			if (ndev) {
+> +				s->sk->sk_bound_dev_if = ndev->ifindex;
+> +			} else {
+> +				rv = -ENODEV;
+> +				goto error;
+> +			}
+> +		}
+>   		rv = s->ops->bind(s, (struct sockaddr *)laddr,
+>   				  sizeof(struct sockaddr_in6));
+>   	}
+> @@ -1861,6 +1874,9 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   	list_add_tail(&cep->listenq, (struct list_head *)id->provider_data);
+>   	cep->state = SIW_EPSTATE_LISTENING;
+>   
+> +	if (ndev)
+> +		dev_put(ndev);
 > +
->  #define ADXL345_INT_NONE		0xff
->  #define ADXL345_INT1			0
->  #define ADXL345_INT2			1
-> @@ -26,27 +34,68 @@ struct adxl345_state {
->  	int irq;
->  	const struct adxl345_chip_info *info;
->  	struct regmap *regmap;
-> +	__le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1];
 
-Ah.  The old corner case (sorry I missed this in earlier reviews!)
+<...>
 
-In theory at least regmap makes no additional guarantees on how it uses buffers
-on top of those provided by the underlying busses.
-So we need to treat bulk reads the same way we do for those buses.
-That means we need to allow for direct DMA writes into the buffers
-we pass to bulk read.  For that to be safe on all architectures (and not
-accidentally overwrite stuff in the same cacheline) we need to use
-what is known as a DMA safe buffer.
-Long ago we contrived the data layout in IIO to make that easy to
-do.  Just move it down to the end of this structure as...
-
-
->  	bool fifo_delay; /* delay: delay is needed for SPI */
->  	u8 intio;
-> +	u8 int_map;
-> +	u8 watermark;
-> +	u8 fifo_mode;
-this
-	__le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned(IIO_DMA_MINALIGN);
-
-This structure already has the appropriate alignment (there is padding inserted
-in the allocation to make that true) so by doing this for the element we
-ask the compiler to make sure it adds sufficient padding before this element
-to ensure nothing else is in the same cacheline (if required by a particular
-architecture).   C also guarantees that the structure itself is large enough
-to ensure padding is added after this element such that the overall structure
-size is a multiple of it's most aligned element (this one).
-Thus we end up with the buffer in it's own cacheline and none of the mess
-of non coherent DMA can cause us problems. 
-
-If interested in learning more look for Wolfram's talk at ELCE a number
-of years back on trying to do DMA into the buffers passed to I2C calls.
-
-The 'in theory' bit is because last time I checked regmap is always bounce
-buffering the data but there are obvious optimizations that could be made
-so it didn't bounce. A long back we asked the maintainer about this and he
-said definitely don't assume it won't use the buffers directly.
-
-Note on arm64 for instance there is magic code that bounces all small
-DMA transfers, but that is not enabled on all architectures yet.
-
->  };
-
->  
-> +static const unsigned long adxl345_scan_masks[] = {
-> +	BIT(chan_x) | BIT(chan_y) | BIT(chan_z),
-> +	0,
-
-Trivial but drop that trailing comma. It's a terminator so we don't want to make it
-easy for anyone to accidentally put anything after it!
-
-> +};
-
->  static int adxl345_read_raw(struct iio_dev *indio_dev,
->  			    struct iio_chan_spec const *chan,
->  			    int *val, int *val2, long mask)
-> @@ -132,6 +181,25 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  	return -EINVAL;
->  }
->  
-> +static int adxl345_set_watermark(struct iio_dev *indio_dev, unsigned int value)
-> +{
-> +	struct adxl345_state *st = iio_priv(indio_dev);
-> +	unsigned int fifo_mask = 0x1F;
-> +	int ret;
+>   	siw_dbg(id->device, "Listen at laddr %pISp\n", &id->local_addr);
+>   
+>   	return 0;
+> @@ -1880,6 +1896,9 @@ int siw_create_listen(struct iw_cm_id *id, int backlog)
+>   	}
+>   	sock_release(s);
+>   
+> +	if (ndev)
+> +		dev_put(ndev);
 > +
-> +	if (value > ADXL345_FIFO_SIZE)
-> +		value = ADXL345_FIFO_SIZE - 1;
 
-	value = min(value, AD345_FIFO_SIZE - 1);
+dev_put will invoke netdev_put. In netdev_put, dev is checked.
+Thus, no need to check ndev before dev_put function?
 
-Shorter and maybe a tiny bit more readable. (trivial comment!)
+static inline void netdev_put(struct net_device *dev,
+                   netdevice_tracker *tracker)
+{
+     if (dev) {
+         netdev_tracker_free(dev, tracker);
+         __dev_put(dev);
+     }
+}
 
+>   	return rv;
+>   }
+>   
+> diff --git a/drivers/infiniband/sw/siw/siw_main.c b/drivers/infiniband/sw/siw/siw_main.c
+> index 17abef48abcd..14d3103aee6f 100644
+> --- a/drivers/infiniband/sw/siw/siw_main.c
+> +++ b/drivers/infiniband/sw/siw/siw_main.c
+> @@ -287,7 +287,6 @@ static struct siw_device *siw_device_create(struct net_device *netdev)
+>   		return NULL;
+>   
+>   	base_dev = &sdev->base_dev;
+> -	sdev->netdev = netdev;
+>   
+>   	if (netdev->addr_len) {
+>   		memcpy(sdev->raw_gid, netdev->dev_addr,
+> @@ -381,12 +380,10 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   
+>   	switch (event) {
+>   	case NETDEV_UP:
+> -		sdev->state = IB_PORT_ACTIVE;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ACTIVE);
+>   		break;
+>   
+>   	case NETDEV_DOWN:
+> -		sdev->state = IB_PORT_DOWN;
+>   		siw_port_event(sdev, 1, IB_EVENT_PORT_ERR);
+>   		break;
+>   
+> @@ -407,12 +404,8 @@ static int siw_netdev_event(struct notifier_block *nb, unsigned long event,
+>   		siw_port_event(sdev, 1, IB_EVENT_LID_CHANGE);
+>   		break;
+>   	/*
+> -	 * Todo: Below netdev events are currently not handled.
+> +	 * All other events are not handled
+>   	 */
+> -	case NETDEV_CHANGEMTU:
+> -	case NETDEV_CHANGE:
+> -		break;
+> -
+>   	default:
+>   		break;
+>   	}
+> @@ -442,12 +435,6 @@ static int siw_newlink(const char *basedev_name, struct net_device *netdev)
+>   	sdev = siw_device_create(netdev);
+>   	if (sdev) {
+>   		dev_dbg(&netdev->dev, "siw: new device\n");
+> -
+> -		if (netif_running(netdev) && netif_carrier_ok(netdev))
+> -			sdev->state = IB_PORT_ACTIVE;
+> -		else
+> -			sdev->state = IB_PORT_DOWN;
+> -
+>   		ib_mark_name_assigned_by_user(&sdev->base_dev);
+>   		rv = siw_device_register(sdev, basedev_name);
+>   		if (rv)
+> diff --git a/drivers/infiniband/sw/siw/siw_verbs.c b/drivers/infiniband/sw/siw/siw_verbs.c
+> index 986666c19378..7ca0297d68a4 100644
+> --- a/drivers/infiniband/sw/siw/siw_verbs.c
+> +++ b/drivers/infiniband/sw/siw/siw_verbs.c
+> @@ -171,21 +171,29 @@ int siw_query_device(struct ib_device *base_dev, struct ib_device_attr *attr,
+>   int siw_query_port(struct ib_device *base_dev, u32 port,
+>   		   struct ib_port_attr *attr)
+>   {
+> -	struct siw_device *sdev = to_siw_dev(base_dev);
+> +	struct net_device *ndev;
+>   	int rv;
+>   
+>   	memset(attr, 0, sizeof(*attr));
+>   
+>   	rv = ib_get_eth_speed(base_dev, port, &attr->active_speed,
+>   			 &attr->active_width);
+> +	if (rv)
+> +		return rv;
 > +
-> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_FIFO_CTL, fifo_mask, value);
-> +	if (ret)
-> +		return ret;
+> +	ndev = ib_device_get_netdev(base_dev, SIW_PORT);
+> +	if (!ndev)
+> +		return -ENODEV;
 > +
-> +	st->watermark = value;
-> +	st->int_map |= ADXL345_INT_WATERMARK;
+>   	attr->gid_tbl_len = 1;
+>   	attr->max_msg_sz = -1;
+> -	attr->max_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->active_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> -	attr->phys_state = sdev->state == IB_PORT_ACTIVE ?
+> +	attr->max_mtu = ib_mtu_int_to_enum(ndev->max_mtu);
+> +	attr->active_mtu = ib_mtu_int_to_enum(READ_ONCE(ndev->mtu));
+> +	attr->phys_state = (netif_running(ndev) && netif_carrier_ok(ndev)) ?
+>   		IB_PORT_PHYS_STATE_LINK_UP : IB_PORT_PHYS_STATE_DISABLED;
+> +	attr->state = attr->phys_state == IB_PORT_PHYS_STATE_LINK_UP ?
+> +		IB_PORT_ACTIVE : IB_PORT_DOWN;
+>   	attr->port_cap_flags = IB_PORT_CM_SUP | IB_PORT_DEVICE_MGMT_SUP;
+> -	attr->state = sdev->state;
+>   	/*
+>   	 * All zero
+>   	 *
+> @@ -199,6 +207,7 @@ int siw_query_port(struct ib_device *base_dev, u32 port,
+>   	 * attr->subnet_timeout = 0;
+>   	 * attr->init_type_repy = 0;
+>   	 */
+> +	dev_put(ndev);
+>   	return rv;
+>   }
+>   
+> @@ -505,21 +514,24 @@ int siw_query_qp(struct ib_qp *base_qp, struct ib_qp_attr *qp_attr,
+>   		 int qp_attr_mask, struct ib_qp_init_attr *qp_init_attr)
+>   {
+>   	struct siw_qp *qp;
+> -	struct siw_device *sdev;
+> +	struct net_device *ndev;
+>   
+> -	if (base_qp && qp_attr && qp_init_attr) {
+> +	if (base_qp && qp_attr && qp_init_attr)
+>   		qp = to_siw_qp(base_qp);
+> -		sdev = to_siw_dev(base_qp->device);
+> -	} else {
+> +	else
+>   		return -EINVAL;
+> -	}
 > +
-> +	return 0;
-> +}
-
-
-
->  /**
-> @@ -222,6 +499,7 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  					 ADXL345_DATA_FORMAT_JUSTIFY |
->  					 ADXL345_DATA_FORMAT_FULL_RES |
->  					 ADXL345_DATA_FORMAT_SELF_TEST);
-> +	u8 fifo_ctl;
-
-Might as well make this declaration local to where it's used.
-
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-> @@ -242,6 +520,7 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  	indio_dev->channels = adxl345_channels;
->  	indio_dev->num_channels = ARRAY_SIZE(adxl345_channels);
-> +	indio_dev->available_scan_masks = adxl345_scan_masks;
->  
->  	if (setup) {
->  		/* Perform optional initial bus specific configuration */
-> @@ -292,6 +571,25 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  			st->intio = ADXL345_INT_NONE;
->  	}
->  
-> +	if (st->intio != ADXL345_INT_NONE) {
-> +		/* FIFO_STREAM mode is going to be activated later */
-> +		ret = devm_iio_kfifo_buffer_setup(dev, indio_dev, &adxl345_buffer_ops);
-> +		if (ret)
-> +			return ret;
+> +	ndev = ib_device_get_netdev(base_qp->device, SIW_PORT);
+> +	if (!ndev)
+> +		return -ENODEV;
 > +
-> +		ret = devm_request_threaded_irq(dev, st->irq, NULL, &adxl345_irq_handler,
-> +				IRQF_SHARED | IRQF_ONESHOT,
-> +				indio_dev->name, indio_dev);
-		ret = devm_request_threaded_irq(dev, st->irq, NULL,
-						&adxl345_irq_handler,
-						IRQF_SHARED | IRQF_ONESHOT,
-						indio_dev->name, indio_dev);
-
-All under 80 chars (still the preference when no reason to do otherwise) and
-aligned with opening bracket which is preferred kernel style when there
-is no reason to do otherwise.
-
-If you weren't going to be doing a v8 anyway I'd just tweak this whilst applying
-but seeing as you are... :)
-
-
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		/* FIFO_BYPASS mode */
-> +		fifo_ctl = ADXL345_FIFO_CTL_MODE(ADXL345_FIFO_BYPASS);
-> +		ret = regmap_write(st->regmap, ADXL345_REG_FIFO_CTL, fifo_ctl);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	return devm_iio_device_register(dev, indio_dev);
->  }
->  EXPORT_SYMBOL_NS_GPL(adxl345_core_probe, IIO_ADXL345);
+>   	qp_attr->qp_state = siw_qp_state_to_ib_qp_state[qp->attrs.state];
+>   	qp_attr->cap.max_inline_data = SIW_MAX_INLINE;
+>   	qp_attr->cap.max_send_wr = qp->attrs.sq_size;
+>   	qp_attr->cap.max_send_sge = qp->attrs.sq_max_sges;
+>   	qp_attr->cap.max_recv_wr = qp->attrs.rq_size;
+>   	qp_attr->cap.max_recv_sge = qp->attrs.rq_max_sges;
+> -	qp_attr->path_mtu = ib_mtu_int_to_enum(sdev->netdev->mtu);
+> +	qp_attr->path_mtu = ib_mtu_int_to_enum(READ_ONCE(ndev->mtu));
+>   	qp_attr->max_rd_atomic = qp->attrs.irq_size;
+>   	qp_attr->max_dest_rd_atomic = qp->attrs.orq_size;
+>   
+> @@ -534,6 +546,7 @@ int siw_query_qp(struct ib_qp *base_qp, struct ib_qp_attr *qp_attr,
+>   
+>   	qp_init_attr->cap = qp_attr->cap;
+>   
+> +	dev_put(ndev);
+>   	return 0;
+>   }
+>   
 
 
