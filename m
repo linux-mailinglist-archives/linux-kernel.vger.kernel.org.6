@@ -1,152 +1,111 @@
-Return-Path: <linux-kernel+bounces-445972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57099F1E0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:19:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601799F1E0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E86717A059E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF8E188BE4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FE5186294;
-	Sat, 14 Dec 2024 10:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E071186294;
+	Sat, 14 Dec 2024 10:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ghkhk5bo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=maxammann.org header.i=@maxammann.org header.b="rmrxbY8G"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5E618AFC;
-	Sat, 14 Dec 2024 10:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF5B262BE;
+	Sat, 14 Dec 2024 10:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734171568; cv=none; b=CR3CTIfqsNVJBVaBbj3Wq/SYtmE5/g+6If+pYspJZotloaOsBYKi2nCUWggRgLI7wNI4QaBzIiE2VrVbr6QQWGiFG9unFim3rN3JnEmiCU5p9aN6G8YFUbd/EHIr7r8OdMeJj2rTkJ407tF4IA8juapwpt7pVhBkoYh7zG5+XUw=
+	t=1734171747; cv=none; b=tlEUygATUztVr8D1LXV7dzkAEvXplxzFPCr8kCCYmxRgfB0AG+e0ql7jaqXxbf6SdRMmVfV6aSGPg6uSwztKBuz0Ti+FXmnp66UzLltVR1RntD1bxvRi5wLevuJpHNfJugANwmgZuqYFnlvhYgPoXQBzgBY4nsOMO7u58iV4c7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734171568; c=relaxed/simple;
-	bh=FiW+Ism0Q+dNGQGvhc4JOSDyJGCSEQG9pSvyBtps7Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQQYg34r4N8hvk11ymbxXr2JL/m3yMSpX4aCzczSSxEzePIXJCax4GzT45I8cVHx3ywqr9YXIpIPLuuJOGH36Tsz/n3sPXEbdndeAaa8fDkOw+B3SX9Zx5sxtNXfUXhKO06FYXIbyIzVE+vatUZTB4llnuC3vwnebIQPdQy/znE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ghkhk5bo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D89AC4CED1;
-	Sat, 14 Dec 2024 10:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734171567;
-	bh=FiW+Ism0Q+dNGQGvhc4JOSDyJGCSEQG9pSvyBtps7Lc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ghkhk5boB3YVtJwsveR3mGRTX8EtUS/FoM6L9RWYId2OfMr5iro5HTtKubG/DALBu
-	 5VN1m7YwlOFNPbfxnybjYHPkppWSMEkLX6HbUsIF/c1yMwY89UNA4dL2lFD8GwIYdx
-	 4/cU5Qo1NlrYDlJ1crSZqRF9IV9ZM60sTaY33VazapxshP13hh+TDdtBJujxUHGRKR
-	 EnPBo+2odS8ORjObZz7+r5Ji/n0ZXNmTnVzGinv0g6Ta9cOPUhhAHgSed2ZPqzyRHn
-	 IECNW8PgP+O09RyLWgCqetBayyTDUD7HBbuaEZxnRPPbrAOBq3ybVOH40GlR4mAsoG
-	 ap25YWc/vZPzA==
-Message-ID: <392a0cc0-bcd9-48a2-83f2-e520a460d2b8@kernel.org>
-Date: Sat, 14 Dec 2024 11:19:23 +0100
+	s=arc-20240116; t=1734171747; c=relaxed/simple;
+	bh=TI9oprvG7Qgynm0Jsa8YgWjcQmv53gHW7nzqAswmXqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uI7zF5bxM+ecAzL1aQofSFOfNxuvkhNk7f8LxT1twRIXi5mXinFkKOvqC4B+up34L5U3CGT7XYLz+zjB6CGlGRV5UB+F3PhjtKtyWWP/r/ycwIpvVWcYaHL//soH6RBb8t9K3Yixw2h+5Wz4LSRqVJRUW8ML1NEYPDDvoqMbZJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maxammann.org; spf=pass smtp.mailfrom=maxammann.org; dkim=pass (2048-bit key) header.d=maxammann.org header.i=@maxammann.org header.b=rmrxbY8G; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maxammann.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxammann.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Y9MhN3nPKz9spF;
+	Sat, 14 Dec 2024 11:22:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxammann.org;
+	s=MBO0001; t=1734171732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FOcJNEE6Ruq6z82qmua45rResUYjl5YozfkY2UrlkGg=;
+	b=rmrxbY8G6zFFAV1thyGqP8mozjPkV6O2UN9jD++xVVwrEjPHUzAwDkL1c9kNfa3QZkRSSf
+	NGFQNM7pbhetN+Hl7b1+ruPmJOZOxoqyxdiR6QOXp+md3wxr/xVjSz5nKgzLh++uH2+wRH
+	CJU9HHqrqF8KNEm8kTCcTMLctqo9sHVVV7fNZXJVNROd4JVBdnEy9QiRFRJHoSwN5KrC1q
+	Pck+A/oRWCGi4ZdLqoppcIPGOf9KM9RpnCgnry+Zmws1pd0Skq0+bvO44vAQ984tMmdoyw
+	xRadq5E508pspq//LhU0QA2YC0RZw6pZ3mkTQmP8uA4m41M39x7jpcsDk+bqtQ==
+From: Max Ammann <max@maxammann.org>
+To: jdelvare@suse.com
+Cc: linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Max Ammann <max@maxammann.org>
+Subject: [PATCH] hwmon: (nct6683) Add customer ID for ASRock B650 Steel Legend WiFi
+Date: Sat, 14 Dec 2024 11:22:01 +0100
+Message-ID: <20241214102201.122851-1-max@maxammann.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] MAINTAINERS: Add Vincenzo Frascino as Arm Morello
- Maintainer
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
-References: <20241213163221.3626261-1-vincenzo.frascino@arm.com>
- <20241213163221.3626261-9-vincenzo.frascino@arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213163221.3626261-9-vincenzo.frascino@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/12/2024 17:32, Vincenzo Frascino wrote:
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e6e71b05710b..8199e5945fb2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3304,6 +3304,12 @@ F:	drivers/clocksource/timer-versatile.c
->  X:	drivers/cpufreq/vexpress-spc-cpufreq.c
->  X:	Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
->  
-> +ARM MORELLO PLATFORM SUPPORT
+This value was found on an ASRock B650 Steel Legend WiFi with an
+NCT6686D chip.
 
-Wrongly placed, M is not after V, I know people cannot keep order but
-let's try. No need for new Boogaloo.
+Signed-off-by: Max Ammann <max@maxammann.org>
+---
+ Documentation/hwmon/nct6683.rst | 1 +
+ drivers/hwmon/nct6683.c         | 3 +++
+ 2 files changed, 4 insertions(+)
 
-Plus look how all the titles are created and do not come with different
-style.
+diff --git a/Documentation/hwmon/nct6683.rst b/Documentation/hwmon/nct6683.rst
+index 2a7a78eb1b46..f224639229d2 100644
+--- a/Documentation/hwmon/nct6683.rst
++++ b/Documentation/hwmon/nct6683.rst
+@@ -63,6 +63,7 @@ Intel DH87MC	NCT6683D EC firmware version 1.0 build 04/03/13
+ Intel DB85FL	NCT6683D EC firmware version 1.0 build 04/03/13
+ ASRock X570	NCT6683D EC firmware version 1.0 build 06/28/19
+ ASRock X670E	NCT6686D EC firmware version 1.0 build 05/19/22
++ASRock B650 Steel Legend WiFi	NCT6686D EC firmware version 1.0 build 11/09/23
+ MSI B550	NCT6687D EC firmware version 1.0 build 05/07/20
+ MSI X670-P	NCT6687D EC firmware version 0.0 build 09/27/22
+ =============== ===============================================
+diff --git a/drivers/hwmon/nct6683.c b/drivers/hwmon/nct6683.c
+index f71615e06a8f..3d31b8e2c835 100644
+--- a/drivers/hwmon/nct6683.c
++++ b/drivers/hwmon/nct6683.c
+@@ -178,6 +178,7 @@ superio_exit(int ioreg)
+ #define NCT6683_CUSTOMER_ID_ASROCK		0xe2c
+ #define NCT6683_CUSTOMER_ID_ASROCK2	0xe1b
+ #define NCT6683_CUSTOMER_ID_ASROCK3	0x1631
++#define NCT6683_CUSTOMER_ID_ASROCK4	0x163e
+ 
+ #define NCT6683_REG_BUILD_YEAR		0x604
+ #define NCT6683_REG_BUILD_MONTH		0x605
+@@ -1233,6 +1234,8 @@ static int nct6683_probe(struct platform_device *pdev)
+ 		break;
+ 	case NCT6683_CUSTOMER_ID_ASROCK3:
+ 		break;
++	case NCT6683_CUSTOMER_ID_ASROCK4:
++		break;
+ 	default:
+ 		if (!force)
+ 			return -ENODEV;
+-- 
+2.47.0
 
-> +M:	Vincenzo Frascino <vincenzo.frascino@arm.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-
-
-So why you did not bother to Cc this list? You are supposed to develop
-on mainline kernel and then run get_maintainers.pl or b4 prep, so how is
-possible that your Cc list is so empty?
-
-
-
-> +S:	Maintained
-> +F:	arch/arm64/boot/dts/arm/morello*
-
-
-Missing bindings.
-
-
-
-Best regards,
-Krzysztof
 
