@@ -1,112 +1,171 @@
-Return-Path: <linux-kernel+bounces-445981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E98C9F1E24
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:50:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609849F1E26
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286831888B75
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E66166B7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6BD18B483;
-	Sat, 14 Dec 2024 10:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4E318C900;
+	Sat, 14 Dec 2024 10:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cjJI0uiN"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="th5CW7Ny"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08D188587
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 10:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E82415666D;
+	Sat, 14 Dec 2024 10:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734173405; cv=none; b=l9WgHyOaPVr5rp0YmnIi3s4WIcxtxdk6JZkdAq+OPG7mR5JuXcssZMyYzC+pwRR6nz5GTeQ0k8xi0OcBdXrZmFvc6027cSO9qUAGX/tSm+wiYJUcWGk+EnajZOHMn8+M2qjqUNNEDJWflvwJkkSfAnnk2Y5zlr+2LVXhDI0dwTE=
+	t=1734173777; cv=none; b=G/Gswq5XNaqtzz8Tm1yXg4eoarqEBQcfphcNiOJwcpQF1gDipAGIEJ25jhwuWBW+zTakk/jIX1PECTZMYGpsp6DldDf/xmfHKHoDHGGi+IIK1ltemAi13PvWsrKVAAEG9Mw39YZPVVhYNSDDHjW4oGVvuPBEHViIvMvzQuTKslo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734173405; c=relaxed/simple;
-	bh=WgLZ4Sqpo845875rVbQWeq2Ll+Yen4xIdn1IlHpXYyE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MVEPjskTYYpc5Gox/qC4zFylw5tMv3/fuqHrpJII9D+sp1z8WAwgnrUMfqOQ3pnQs1/HHvTOAOmxx3wHaLGWxnIS+dHwDkt6Fv1sr/tkJ6LKbM28NL3NWhs7XaP0ut25Oh0gfr9bk/pDpPPNVbdz4D6oc1RKydUwtr9d4+Ua6oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cjJI0uiN; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385db79aafbso232946f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 02:50:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734173402; x=1734778202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dFeeaOwVLNJyk8KG2PAdcvU43PbcoLuXwqtb4WTqOv8=;
-        b=cjJI0uiNjz7O/fYdAgBrv9ECxsSbgvy+VWaJNIhb4+tgxxoutRIWkLRCQ56V6YQaDA
-         phHZx6T/RcIqIYp9BB6mVzdyqEw6sqIgd12qtOBFYodQ1kLg5D+gULmhJ6NvsTTlARk2
-         jqGv/3fe7+yhkPWmLnJh6jI12hGiskK/XD8Tl/n5IVAdx9kitqdEm0xAed9dSTJLxVAz
-         D9dR9wvkVY46/7eE2IS58PljGEBBv1ue1CcnHSXnieEBehuU3wqL8ap2kEv3YjVaDjQZ
-         MRLnmKhvwycsi0e4KNt05pc72CzNzYPXsEW+BwWnxVDEq5BQU2nwJi7Syu5ZLLUrZDht
-         zdlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734173402; x=1734778202;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dFeeaOwVLNJyk8KG2PAdcvU43PbcoLuXwqtb4WTqOv8=;
-        b=EC5cFylA2HQGUbAj9D7/nCZS3jnRGt4KwY3O7AVTCWya9j9vXt4v5x3AxumqeuI+lR
-         lPl6+NI3EkL4llDGcLOH296jiRlRNcUYSwwylHRdwLEFynPM66G193Rpcegk28NykCAX
-         I1oT4EqgrVXbbFO6+XI30y3amOrie5ICosiEZD9WnXmIARVBC/6jz88iyVoClBrKknpU
-         nGuCVZtYWg+KNqYP/XDDQn5SqWs7v+lws2nnlPhhMvneMFyYydu2BpkmqDhpn98ZfKLg
-         G0c1WyaLgqtDNeBXyROmjs7xf4gI8c1AG7b6PpoXsNA92w6SORl2yF5M8xf5aoykerVS
-         ZFwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNqyj/S7m2/tO0H9kIWbBC5mggMaCuYPtlDF6OI7G5S6K6dFUdoS81nPpnKyB1CzcaZjdItt4SY6Ul65U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoomxsZPw/1l2pj7akQbDNgjiKqYGOOQ8b2zCHJOsvU23Mu7Qf
-	KvL+nm+xYH3EwgHGNuy3phf0VmkhWRTXS+vlQdKnXPgtPUK7jpCugjCyk2Cf5P4=
-X-Gm-Gg: ASbGncvkSSHKOrLkzh7ZiWT6tmXDxlCRNGAAvP9Mt40dRefMu4iED+Q3OMO5cbTY7Ff
-	I2Gie5qwoCQ7eKRaZ37mC/PlmfHwwj0Jj9ejVkqf5FVtMUE2zLozV5fvYDJI7+9YJOz2h1KMgWt
-	i4T+jr7GApTSXQvhhTlw9VoAPJgnuTTR0I+y36NduYC7BzzKWiOsSjyVNcFKiH64qHKsBARwmGs
-	1udNq9a4un3FrzyatDOQ1Hy6iEVXuUY6i2aovtgrr6w5xTolip1FH4SmKzwLPZveZWqi/r9
-X-Google-Smtp-Source: AGHT+IEBLZqoOYrW6nHUXJ7egvcj+Es2bL8Vmn9thwbGb2lLB155RAHbaFGiiw3uqE/wHQ/4XmtxzQ==
-X-Received: by 2002:a05:6000:4b0e:b0:385:ef39:6ce3 with SMTP id ffacd0b85a97d-38875fc35f2mr2104047f8f.0.1734173402032;
-        Sat, 14 Dec 2024 02:50:02 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060848sm2209905f8f.106.2024.12.14.02.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 02:50:01 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: rogerq@kernel.org, tony@atomide.com, krzk@kernel.org, linux@treblig.org
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241211214227.107980-1-linux@treblig.org>
-References: <20241211214227.107980-1-linux@treblig.org>
-Subject: Re: [PATCH v2] memory: omap-gpmc: deadcode a pair of functions
-Message-Id: <173417340096.24704.14642309670774788266.b4-ty@linaro.org>
-Date: Sat, 14 Dec 2024 11:50:00 +0100
+	s=arc-20240116; t=1734173777; c=relaxed/simple;
+	bh=MMR2ErCeRcdYEu0/gbXMrmxEoyPZCFQNk9/Pe021FjY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GoAlsMoM49I21LVfGXUjZh4HOV6X20WMmBewVn2gji6RfZrgtjAUtR2qocRukaCJt/GgNi83G4GevbF6Hk8Pinoj9bXzn6423bK1nBxbL0t8LF08QtjSpdYiRUd3eHCOWaSDh9X9MRGiguOo1X1+jPasGSK6lWBYTsXtqEouOFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=th5CW7Ny; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3940C4CED1;
+	Sat, 14 Dec 2024 10:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734173776;
+	bh=MMR2ErCeRcdYEu0/gbXMrmxEoyPZCFQNk9/Pe021FjY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=th5CW7NyRAO6AsL9GNbhpzvJiKkxS1V55bQYfK0IyALfxQHhYSL09/9hhCK+BGWZ8
+	 i7SuR2nX14gd8AYPjYMKA0yvLgOsdhW+6PjK2qTT41A6qt5wtFqMJzewN//X8hho7T
+	 8rjyRCJ/ehrvGXvUCX/tgGuf2r6sUyqJzZVomH13BJTHwA7XdMRBAjriuQHUC5D450
+	 mWdj5t5xrs0q5RVLgSa7bzuyX0pjaGvwfDwCfp1b3eqf2xkNMXQ0NDHyZOQ6Dip9+K
+	 ML085KJ+qsCFUFtxprICFbA0S4bc9vO5mu/R9Q3mshmHCEbkisIyclqrvsR400VO8V
+	 nzrQm3k7RVCIQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tMPok-003hQI-5a;
+	Sat, 14 Dec 2024 10:56:14 +0000
+Date: Sat, 14 Dec 2024 10:56:13 +0000
+Message-ID: <87a5cysfci.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Collingbourne <pcc@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to __cpuinfo_store_cpu()
+In-Reply-To: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
+References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, pcc@google.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-On Wed, 11 Dec 2024 21:42:27 +0000, linux@treblig.org wrote:
-> gpmc_get_client_irq() last use was removed by
-> commit ac28e47ccc3f ("ARM: OMAP2+: Remove legacy gpmc-nand.c")
+[+ Mark]
+On Sat, 14 Dec 2024 00:52:08 +0000,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> gpmc_ticks_to_ns() last use was removed by
-> commit 2514830b8b8c ("ARM: OMAP2+: Remove gpmc-onenand")
+> In commit 892f7237b3ff ("arm64: Delay initialisation of
+> cpuinfo_arm64::reg_{zcr,smcr}") we moved access to ZCR, SMCR and SMIDR
+> later in the boot process in order to ensure that we don't attempt to
+> interact with them if SVE or SME is disabled on the command line.
+> Unfortunately when initialising the boot CPU in init_cpu_features() we work
+> on a copy of the struct cpuinfo_arm64 for the boot CPU used only during
+> boot, not the percpu copy used by the sysfs code.
 > 
-> Remove them.
+> Fix this by moving the handling for SMIDR_EL1 for the boot CPU to
+> cpuinfo_store_boot_cpu() so it can operate on the percpu copy of the data.
+> This reduces the potential for error that could come from having both the
+> percpu and boot CPU copies in init_cpu_features().
 > 
-> [...]
+> This issue wasn't apparent when testing on emulated platforms that do not
+> report values in this ID register.
+> 
+> Fixes: 892f7237b3ff ("arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/arm64/kernel/cpufeature.c |  6 ------
+>  arch/arm64/kernel/cpuinfo.c    | 11 +++++++++++
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 6ce71f444ed84f9056196bb21bbfac61c9687e30..b88102fd2c20f77e25af6df513fda09a484e882e 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1167,12 +1167,6 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
+>  	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
+>  		unsigned long cpacr = cpacr_save_enable_kernel_sme();
+>  
+> -		/*
+> -		 * We mask out SMPS since even if the hardware
+> -		 * supports priorities the kernel does not at present
+> -		 * and we block access to them.
+> -		 */
+> -		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
+>  		vec_init_vq_map(ARM64_VEC_SME);
+>  
+>  		cpacr_restore(cpacr);
+> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> index d79e88fccdfce427507e7a34c5959ce6309cbd12..b7d403da71e5a01ed3943eb37e7a00af238771a2 100644
+> --- a/arch/arm64/kernel/cpuinfo.c
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -499,4 +499,15 @@ void __init cpuinfo_store_boot_cpu(void)
+>  
+>  	boot_cpu_data = *info;
+>  	init_cpu_features(&boot_cpu_data);
+> +
+> +	/* SMIDR_EL1 needs to be stored in the percpu data for sysfs */
+> +	if (IS_ENABLED(CONFIG_ARM64_SME) &&
+> +	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
+> +		/*
+> +		 * We mask out SMPS since even if the hardware
+> +		 * supports priorities the kernel does not at present
+> +		 * and we block access to them.
+> +		 */
+> +		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
+> +	}
+>  }
 
-Applied, thanks!
+I don't understand the need to single out SMIDR_EL1. It seems to only
+make things even more fragile than they already are by adding more
+synchronisation phases.
 
-[1/1] memory: omap-gpmc: deadcode a pair of functions
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/5119e6b44f8ada5f5cea19935a7f005fee062aef
+Why isn't the following a good enough fix? It makes it plain that
+boot_cpu_data is only a copy of CPU0's initial boot state.
 
-Best regards,
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index d79e88fccdfce..0cbb42fd48850 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -497,6 +497,6 @@ void __init cpuinfo_store_boot_cpu(void)
+ 	struct cpuinfo_arm64 *info = &per_cpu(cpu_data, 0);
+ 	__cpuinfo_store_cpu(info);
+ 
++	init_cpu_features(info);
+ 	boot_cpu_data = *info;
+-	init_cpu_features(&boot_cpu_data);
+ }
+
+
+Thanks,
+
+	M.
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Without deviation from the norm, progress is not possible.
 
