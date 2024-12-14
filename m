@@ -1,233 +1,149 @@
-Return-Path: <linux-kernel+bounces-446089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965C79F1FBC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:32:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74E49F1FC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:36:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5977316562A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2061656D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCC2193070;
-	Sat, 14 Dec 2024 15:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C72193070;
+	Sat, 14 Dec 2024 15:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQdmOI29"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g7h5SyhS"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1293194123
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7004018039
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734190329; cv=none; b=GH6CP3kh68XVzelKPabgn2KalpFHzo8h1I5PTf559OV93SHbWp0hyLxjK4fUqUWbORWG7ibtSRCcFrfeLHLof5OWspmgckf5NaNXgYf8kXFtyWtDdWkXtC9t2xM3Tc+XMxeBzxGbWaPzJJkhuzKzldbJxufNNN2YFUgT3v54NKI=
+	t=1734190551; cv=none; b=j1DdH9wDjbM5VbYYU4C68RqP4o5d86wB8Q97HU6Tb9cWYCBBzkTmu15e69l24fC8AQXZUjI14ROwxzBBSTFcNDjrcf2xhqkEeHrcD6Ig8RNNnqkzPugzxaD4wNkhSy5/wy+FUM+yzS0BSySPdihtwmnp6gYjdz7iqWV1MJ2JCD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734190329; c=relaxed/simple;
-	bh=y6kTT7dJ0Cc65e8AFqV3nF0RvOwhxu5jTy0nO+NKfB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q7HnQBO0pHyur2ULiML1MwCBwXualcQY5cqflrRGueiHACCWuMlvDvCXBzdWwc8hwUvV18IVdjxKrOphQtYuKDCPpZuulYDYM5pzVJMf4U2p7VrJnBfA+rlntlLeVtut0SaYEpgGyImoaW8fL71gwMql8ntDaND2vcz04ZkDWss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NQdmOI29; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734190326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
-	b=NQdmOI29k4VzgE6FvkFv9l5K23SWw4tcMoxTcElILiK4nS+1urVQItGv7u1WlMSfUv+8TK
-	2o4ZIMD3Jq0sUdE9wOg3oTrdgbTQ5clC9l1dkASyLj2YLZ9rrWQE0jf8jxRlPX+kWyokZg
-	Iv689c8xnbSpU4MEnuXjAwlZ2EgwTx8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-575-kqIl1qW1NxKlH5ZMwmYikg-1; Sat, 14 Dec 2024 10:32:05 -0500
-X-MC-Unique: kqIl1qW1NxKlH5ZMwmYikg-1
-X-Mimecast-MFC-AGG-ID: kqIl1qW1NxKlH5ZMwmYikg
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385e4a759e6so1438636f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:32:04 -0800 (PST)
+	s=arc-20240116; t=1734190551; c=relaxed/simple;
+	bh=uSCFLyOzY12sd0P2T5xQn2Moyu/qPWn/YYVBaZf61zk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FjaVgrtCuRb8cOwKY6bSk+W/q7J8o+NgJTq+wC2jitQdfrNjzi4VgjwxWb/Z4H50IE69hgejQelRytbpCPlmccvFeTrJg8c0lmLCLj49unGzvTjJ/cNJzZvyFyGFhmYrLpLO4jK4pXgMRLEc4bFkNvIVxIIbZ+7T55ReoJFIIF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g7h5SyhS; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53f757134cdso3158465e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734190547; x=1734795347; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLbSax+p06VLE36M3XSjU+HJbZ5A9uKBhZ4K6J4wh4s=;
+        b=g7h5SyhScTtiZCbgl7LVTmDXU4JNm3DL98lQaKmO5XMhopjhg7/lv/VUvtfREzTz/Y
+         Wl/J66PbglqWChpkr0m1ea+Cx3MMDTmDsF6ULpj/CaOhM9VlujxnQo7yMZkmv0xQfW8g
+         7DgkqJQBzzVmDPg4lqS0MDJG7dZOSCIBtGI8uDxhUU3Uu6XLouwv6IIDMCkJ5Zgxsuw2
+         uxabkcmldb7fmKok4uQ5Ida2ORij7Za4bbOFnxch69dsgwLeBwN/SEZ85J94hvO1tyda
+         FVUAYGLliAC64/AIw7F8aXS1Sa6Pk2qWvG/QYgmwJpJ057yvFUM2Pfp2TyxQYlIJc+Nu
+         8OVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734190324; x=1734795124;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=03N6Z6LVTWl2BXm3uGhmS6liuy/PRc0F/lQH4ag9wfQ=;
-        b=iCmwG9CkwcufGyGRDnJfoYkUnspamdwI5I0dZIZsuQ66av6B7gTMi0HJfV0i5imtWB
-         t/uKBMg+GQcCXJOw4QJDLUXmagv/2QvNPJ8YvA1VKZ4xhwgCWYoiA9PfKk7wLynVrpdc
-         U83n+t+w9YXfFuzEHbETZcvRArHwJWkAj+VH3f4Ff2OlEWVDYivUnzJMWXfrGg/VeQkA
-         gcfkQEkpud4T61XTuxbBm87aQeOxARdT90nYABc29+NMOTcR4/hGbbhjs1mn77zp+s0N
-         jwLMmriyR56xSqKhzD25cb5/6UQkC/w4OXNEMIjyLKJbuws5ppY539dbdCEsP6/zCEZT
-         Endw==
-X-Forwarded-Encrypted: i=1; AJvYcCUO+MmYFoH08L1Yc12Uv387ntL/Db5PbSGMl4xOj4QDNZSIxWSSjK0ZG+vEH5pkQBw529BSeIDEVKJvOGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNhmh99vuAYvcwne4h33+61E0JkrIfegPbswvkMxblc4EK3HKa
-	9aVdSuSlenW/rqKfpr+iDMSSYEzG7xR2WtB87UO/tdJN5dqnw9HK/IcPp+qJ6hCxkFFgTEWFwSH
-	pGrxfOcyFWavS5gnaTjFL7fcacWLwFdSEZvf5m1KZ5rMTdRkeGDecbTGiGiDuQQ==
-X-Gm-Gg: ASbGncv57HW/wDN7UZcCvU/t7dpFS7w19yheoH98G+vXSDOM5hIEnHsDXl69kKMjMmx
-	WQ50PjkcbeTyl//SMshcp59Ob8wn6tw2LllpPjPyLMXV6/SeFWCM66w1r42tFDY066qyF0GWknt
-	ninlRavlMzlJiEbXYwh+IFd/ixtfv20rZYtLyDbzVEWYaNYzUCz4lyGjh34/0w4/k41O1c8rDUg
-	VaR4epczLUB3t820NLoAjnXZCfWMRwpFMzRv/LZ+f03bRBgzde2unA2s72+nD5rIttyvMAUUpvx
-	E0189eAvP6FE47cbKQJDteCRFW/H/4lfbMgUxndcdj/9FaEwXVWE5rVA2TyTdO++IGeWDKHSPOU
-	KQGigkg3G
-X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273129f8f.1.1734190323871;
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGCAoXGEeWaw7IcCbVrauVtoSu57S5/3Q7OA9u+ckTPTWUXqMKHzSJmCciXfEjs+C07Qo9JLg==
-X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr5273103f8f.1.1734190323507;
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-Received: from ?IPV6:2003:cb:c711:6400:d1b9:21c5:b517:5f4e? (p200300cbc7116400d1b921c5b5175f4e.dip0.t-ipconnect.de. [2003:cb:c711:6400:d1b9:21c5:b517:5f4e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801211dsm2844150f8f.17.2024.12.14.07.32.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 07:32:03 -0800 (PST)
-Message-ID: <fc83a855-bb3f-4374-8896-579420732b25@redhat.com>
-Date: Sat, 14 Dec 2024 16:32:00 +0100
+        d=1e100.net; s=20230601; t=1734190547; x=1734795347;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XLbSax+p06VLE36M3XSjU+HJbZ5A9uKBhZ4K6J4wh4s=;
+        b=DvHxD6wmuarTdE1jS5oeyHwevDd1dSqpLsL6qbSWw4BE6WKPMeefiJwxad7MrDhPTH
+         ra54CPuLmb+8q2wB8hOlVlz9+mVmyplFPdQDPBnpIIK4K/Spd1GTDoU+SLtbVZ6AMOSz
+         NaekXmMingI/elkBtIWt8kWDAHgfmsY2g8vtARV98VN47Rm3tUj8kmM6nlaupZNlm8Jp
+         m8zbVPM0s/oznsHI1CDEJnY3yK+3JiGy65pEpEeDLuby8vJ29kk/egjROGnnKRE2PJhv
+         JjINc4VtwBRpAFPxlkYjvMFGNDMyLJ0NTdOi9WLhtaQS5pFjGm5BOaQVa37f9Y956bHA
+         O7/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWadxbVsVNtZCbD3o/tyy0JlXQ6K6Pr5QDMDmV9DG0i6USTAysh2/5FPol/zph7TViXmrcaHO+KYHiDnE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD3vWdHcagP2bziFCaxHOpV0TQdHKWjbBL4qT4V4qXokAYHVm7
+	Nnd9IIA200bb3W7EIjbeWNoJLjUaC0DqyLwQRJALeUBfLwtHbwQP2E8D/a7AQQ8=
+X-Gm-Gg: ASbGnctNPIsiY6vWn0gn593ONvZAxqdeVV8Xj9hYpM8pHZUUDx9OjB2pJnOHRWK1JtK
+	RDaNVn+HMrOcJY/u/Mi5n4irXX0QBvj09Lr9aEjShWybJaIBTtw90PEA9cqeG++m+OUKJRhzlm/
+	mIKsTyjfdRxRtfotSUUXZcIXFhdcbxoR15cPtMEnRov9EQ8s6lbV4iHXyDiAg8F63j1/oT3BJmZ
+	r3e8hbh09Vd2NA6T8MATmMFRhxMnT6K6SXhh9qfoVSdvrsC9IzSEf01721HDcUT
+X-Google-Smtp-Source: AGHT+IEpdHXgq/AJVIBZFdCRma3KIOfO9gPTKCk88qdhJgKWQyKYuomFP9P2bj2ZCBIJ+C8NUXyj9w==
+X-Received: by 2002:a05:6512:68c:b0:53e:3a73:d05a with SMTP id 2adb3069b0e04-54099b71a9fmr1891769e87.55.1734190547608;
+        Sat, 14 Dec 2024 07:35:47 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c1357csm249821e87.182.2024.12.14.07.35.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 07:35:46 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] drm/nouveau: remove drm_encoder_slave interface
+Date: Sat, 14 Dec 2024 17:35:43 +0200
+Message-Id: <20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/25] huge_memory: Allow mappings of PUD sized pages
-To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
- linux-mm@kvack.org
-Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
- bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
- will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
- djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com
-References: <cover.e1ebdd6cab9bde0d232c1810deacf0bae25e6707.1732239628.git-series.apopple@nvidia.com>
- <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <dd86249dee026991b1a996a8ab551b1b1fdd32a4.1732239628.git-series.apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM+lXWcC/x3MQQqEMAxG4atI1gZsKAN6lWEWwf6OAWmlxSKId
+ 7e4/BbvXVSQDYWm7qKMasVSbHB9R/Oq8Q+20EwyiHfiPMd0VOjBiHMKyFw2rWD9hOBFFvU6Umv
+ 3jMXO9/v93fcDzB/upGcAAAA=
+X-Change-ID: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1945;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=uSCFLyOzY12sd0P2T5xQn2Moyu/qPWn/YYVBaZf61zk=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnXaXQuEDw5ySVoU+n5Nw1LD88fntA/Rrb912KI
+ o4pUz5SayeJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ12l0AAKCRCLPIo+Aiko
+ 1dTwCACID+Vjt7FKREkIANKuhTq731TOGXKSrTAu/XNc9u6SoxQhz1qB1ijxgp+jMjdoV6V0pPR
+ hWTa5yjtgL6MEYGQD2V8x4hNUs3JF16HpKPntJuE3tuVVnZV80Lt5+xIaNnKQIchfgL0W19q6Rr
+ CmRykLXqJiYPb10gUtXWdJpAEWdnoKU+9X9OnYRPJMPxLklckECxcYN7TNqYuH6o1Q1mgvej2Qi
+ qT/OF8QSoZmcF/vLj61gubdL/AqFNLJYF4i/QV+GbDPlEG/2yNy6H9rrumGnQE43oFVrlbr39Yl
+ u3DddD6qx0ggLEWxIhgPW3Zvbrm94+vkP5L/LZfH/FpWgkul
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 22.11.24 02:40, Alistair Popple wrote:
-> Currently DAX folio/page reference counts are managed differently to
-> normal pages. To allow these to be managed the same as normal pages
-> introduce vmf_insert_folio_pud. This will map the entire PUD-sized folio
-> and take references as it would for a normally mapped page.
-> 
-> This is distinct from the current mechanism, vmf_insert_pfn_pud, which
-> simply inserts a special devmap PUD entry into the page table without
-> holding a reference to the page for the mapping.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
+The nouveau driver is the only user of the drm_encoder_slave interface.
+Demote it from KMS helpers module to the nouveau driver itself, moving
+corresponding I2C encoders to be handled by nouveau driver too.
 
-Hi,
+Ideally those two drivers should be converted to the drm_bridge
+interface, but it's unclear if it's worth spending time on that.
 
-The patch subject of this (and especially the next patch) is misleading. 
-Likely you meant to have it as:
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      drm/nouveau: incorporate I2C TV encoder drivers
+      drm/nouveau: vendor in drm_encoder_slave API
 
-"mm/huge_memory: add vmf_insert_folio_pud() for mapping PUD sized pages"
+ drivers/gpu/drm/Makefile                           |   1 -
+ drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+ drivers/gpu/drm/i2c/Makefile                       |   6 --
+ drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+ drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+ drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |   7 +-
+ .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+ .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+ drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+ .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   0
+ .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 108 ++++++++-------------
+ .../gpu/drm/nouveau/include}/i2c/sil164.h          |   0
+ drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+ drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+ 18 files changed, 155 insertions(+), 219 deletions(-)
+---
+base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
 
->   	for (i = 0; i < nr_pages; i++) {
-> @@ -1523,6 +1531,26 @@ void folio_add_file_rmap_pmd(struct folio *folio, struct page *page,
->   #endif
->   }
->   
-> +/**
-> + * folio_add_file_rmap_pud - add a PUD mapping to a page range of a folio
-> + * @folio:	The folio to add the mapping to
-> + * @page:	The first page to add
-> + * @vma:	The vm area in which the mapping is added
-> + *
-> + * The page range of the folio is defined by [page, page + HPAGE_PUD_NR)
-> + *
-> + * The caller needs to hold the page table lock.
-> + */
-> +void folio_add_file_rmap_pud(struct folio *folio, struct page *page,
-> +		struct vm_area_struct *vma)
-> +{
-> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-> +	__folio_add_file_rmap(folio, page, HPAGE_PUD_NR, vma, RMAP_LEVEL_PUD);
-> +#else
-> +	WARN_ON_ONCE(true);
-> +#endif
-> +}
-> +
->   static __always_inline void __folio_remove_rmap(struct folio *folio,
->   		struct page *page, int nr_pages, struct vm_area_struct *vma,
->   		enum rmap_level level)
-> @@ -1552,6 +1580,7 @@ static __always_inline void __folio_remove_rmap(struct folio *folio,
->   		partially_mapped = nr && atomic_read(mapped);
->   		break;
->   	case RMAP_LEVEL_PMD:
-> +	case RMAP_LEVEL_PUD:
->   		atomic_dec(&folio->_large_mapcount);
->   		last = atomic_add_negative(-1, &folio->_entire_mapcount);
->   		if (last) {
-
-If you simply reuse that code (here and on the adding path), you will 
-end up effectively setting nr_pmdmapped to a very large value and 
-passing that into __folio_mod_stat().
-
-There, we will adjust NR_SHMEM_PMDMAPPED/NR_FILE_PMDMAPPED, which is 
-wrong (it's PUD mapped ;) ).
-
-It's probably best to split out the rmap changes from the other things 
-in this patch.
-
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
