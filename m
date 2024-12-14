@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-446225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B679F2155
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:48:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14259F2157
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84FA9165FE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF082165FE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55D1B4F24;
-	Sat, 14 Dec 2024 22:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6971B4135;
+	Sat, 14 Dec 2024 22:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RVuRxEp7"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0XE8byCm"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D5D374FF
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7546B374FF;
+	Sat, 14 Dec 2024 22:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734216510; cv=none; b=esus7CTsI5D2raZnl9O/l/Nq/NvpcXbYm0N6peaLVhGHZWEDmX5F1e7c8HwzCaUAlUUZnqjqVbNo0DRKOK848iALB2cHFPyKAoNTfS2s43pFYzaJ85dfOsJMLQkJ9SRszDknNd7oyfPc1cLbS9zY7qEDgYLOFOZ8Em+ngofkV2k=
+	t=1734216518; cv=none; b=nv1uwGuYWjxWmyssjxDddarnMb9Sm5dJost5j8OMEZlinSkjvdcEv3DAtGnJWaePVfeV8GG+sdjBMhweUq3wgl6wmbEuCWbXstimzzUy9zirjndUYonApBgh7xSmH2KWJ2RRgtZK9i4jeh8AJspBc8M2235w4uh5JW/piqaA0+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734216510; c=relaxed/simple;
-	bh=mN/QbefYvgqpNikuORpa9UwnpfDph9udgK3kqfaxc6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y1j5H5kHScKm9DeFgGyvpSyI1+YLEPJffarwPOPv8Z1ipH+AjLd6u0q+qprS3VGpO9DFrf9ySH/sKirjRWT76MvNnkGt39F8KjfPvzAqmdD3W0fVACr4AxidqSGbZLBK9DZSfrVPB847+EnwOQqXSilcSDWvZFLtxpLHOlJCShM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RVuRxEp7; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e4419a47887so1354765276.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:48:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734216507; x=1734821307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZJ4scXTRmS7RPf8oo625k7m0SKrT5j5fYdKEOC7Hfo=;
-        b=RVuRxEp7sx65p/D2b82jDjFD3msPydiwOlQUQQ5RDh7qpf/fUhldaANB6nhdZSOuXi
-         +bHbdcEmbD71g1bZXcV86PhNBx6KIp2RrCkDPVImcpZ5qIsm8kpaLPKPG42BMviKFcwY
-         xu/JpYA89UfkX3Vw/FqP275O5tqDoEIL1ITtXvmIhWMfSfr6Mi8TQ/BJGp3FEOBKRr44
-         v4HU6PW4hQNmkPtjaDX7KktRcRwQYgATrnt3JVsfgrD45a3OMHvWLnjktgqHkTAJJw3L
-         i+kg7mgZX5Hd3BfKGpqgWUvgndQucCu1W4xbBh2a0Zq4e8gQgm3bV9YT4iyDqenOUBVu
-         YN6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734216507; x=1734821307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZJ4scXTRmS7RPf8oo625k7m0SKrT5j5fYdKEOC7Hfo=;
-        b=avn6/jDzPvyTQSM9K6imGKIk+I8gJj6FRL3oY0pEJeK1qA/NySZEl84zbiFMuXzT21
-         8LqCi2R6Y0m1Gl0J9OKmX8klGfq6cRUKoiahrc5sFZAJMzhagR0cQzmrK8H51IvGDwMW
-         M5fxTK5p2R1nZ3DzJYNBM4QSYtQ4qYMqKwZRV0YP9HPep02gwgtcNP3ai+FqSxc1lYdQ
-         bVg31i3b1j+HjI3oyLZSqHgGxYJ56rSaAQfjfIp87NpqcLzCA2fgYFHRdthh0tiO7VRq
-         roNWLQ2FYT0D2p1gR1C0j9PKJdkN1+jl4kfk+4Sf4hLq09dFC28/0gqsq93H/bsfrHQV
-         xaKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfRiueXSNo+0FGMj9TDlr2TgaBSjIeDaXAnfUQjmlJctPj12DcnNe+QDsH6x92zd/d9j/BEWrADF9Ubfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVDh4iKZecsHD3MHpHyUsD/tsgtdHZ+5oN+12VoRT58hH7xkx2
-	/fOrAddpCIfbygEkJBCxAgKSIRD9D1/KlDmqmPMaEcrCD/C2Lb35jU9107SuwC0vQiwzthO3gn3
-	a8pvS/2wVUtEm1U7+CQI2uAHTs3RFPIZA+096
-X-Gm-Gg: ASbGnct4NVwjDHpX6FviKMAey+aqP7jMBPtpTc3wVppg4MC2A0u5TVvP5qnEPGi2RGB
-	8zNXkO7DRpetc69p0KQ5R1GWSFR+8nn36pexD
-X-Google-Smtp-Source: AGHT+IFbiM++nNw75ntI6RZMI+YfteGrryJVeEm71wShEK1qQgsUqDOT4fhaa7MESeCYL+h3/swZ5JktuRR/PL7IRDs=
-X-Received: by 2002:a05:690c:6388:b0:6ee:a70c:8727 with SMTP id
- 00721157ae682-6f279b9df88mr69827557b3.41.1734216506880; Sat, 14 Dec 2024
- 14:48:26 -0800 (PST)
+	s=arc-20240116; t=1734216518; c=relaxed/simple;
+	bh=cnWMBdJhjRflNaOJVBSpemvy1cg2o3A54r2tYAo/T8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j/eGWDAyxxBpPoXG/od3n+EVksYslooJn4al18AwIjzXkQnEqcf4y0LLEuxd37qmMu4GtqSoBlGhAbuNVKkx/pImSCq6j48BF+JkcN1OgO+yy9V6tTECBLSXfcZns+OAUkX1U1U5nrDXZMd71vuKum0yvyX36xJ/GzSLZz0KQ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0XE8byCm; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=w/mwqlldhdUNZw8mhvNpRd4TsYnOabctYvvTfesFo7E=; b=0XE8byCmo+jmC1INaQjAPTlrus
+	pPgB1W+DtrHXZxckAdQ8tpoNGo63j6EWf5xQYwEE2TzLhZS/5d4tkvPOVm8LlywyT//jfGfw/HXaW
+	T6yDc68rzv5Meia8jIcZREvC4R2K+Lrk1FMeYDMCJGZgCMEAoDmIsbjUS43Elf6h6NRzIkkBXAvoJ
+	avrIKxVO7Luc6zYYSFENDqDRaG0SFx0GuIJvNBGaosdmVFCVH14K1i1RaPSVwU/JhR67ddXf+MK7s
+	yw+xv1oA7FtwI62+Z+jmu9uDogCzzpyBqL+ezXeiqDvn4LC6gYGhEbItOLeCwjP6G2J090ckNAq75
+	TrOJStGw==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tMavv-0000P4-Tk; Sat, 14 Dec 2024 23:48:23 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	quentin.schulz@cherry.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: [PATCH] clk: rockchip: rk3588: make refclko25m_ethX critical
+Date: Sat, 14 Dec 2024 23:48:19 +0100
+Message-ID: <20241214224820.200665-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125110646.50799-1-cgoettsche@seltendoof.de>
- <e43da8418fc54a5eba7cdbb594b24bb9@paul-moore.com> <f7bfbf89d2ac4b929637bbb25f749c96@AcuMS.aculab.com>
- <CAHk-=wgraNfcOCZ4n_C+ircQkD_AhsPM-=z7snt+eLgE-6otkg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgraNfcOCZ4n_C+ircQkD_AhsPM-=z7snt+eLgE-6otkg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 14 Dec 2024 17:48:16 -0500
-Message-ID: <CAHC9VhSDfn5QgQsF9qq6-k67bQB_M6UZoLODDYs4qkwHcr4-gw@mail.gmail.com>
-Subject: Re: [PATCH] selinux: use native iterator types
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 14, 2024 at 4:10=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, 14 Dec 2024 at 13:08, David Laight <David.Laight@aculab.com> wrot=
-e:
-> >
-> > Isn't this an example of why -Wsign-compare is entirely stupid and isn'=
-t enabled
-> > in the normal kernel build?
->
-> Yes. Please don't try to "fix" the warnings pointed out by that
-> completely broken warning.
->
-> I don't understand why some people seem to think "more warnings good".
->
-> -Wsign-compare is actively detrimental, and causes people to write
-> worse code (and often causes mindless type conversions that then
-> result in actual real bugs).
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-I'm not going to argue the usefulness of '-Wsign-compare' in a general
-sense, but I will say that in my opinion the changes proposed by
-Christian in this patch are correct and an improvement which is why I
-merged the code.  If anyone has an objection to this particular path,
-especially if you believe this introduces a bug, please let us know.
+Ethernet phys normally need a 25MHz refclk input. On a lot of boards
+this is done with a dedicated 25MHz crystal. But the rk3588 CRU also
+provides a means for that via the refclko25m_ethX clock outputs that
+can be used for that function.
 
---=20
-paul-moore.com
+The mdio bus normally probes devices on the bus at runtime, by reading
+specific phy registers. This requires the phy to be running and thus
+also being supplied by its reference clock.
+
+While there exist the possibility and dt-binding to declare these
+input clocks for each phy in the phy-dt-node, this is only relevant
+_after_ the phy has been detected and during the drivers probe-run.
+
+This results in a chicken-and-egg-problem. The refclks in the CRU are
+running on boot of course, but phy-probing can very well happen after
+clk_disable_unused has run.
+
+In the past I tried to make clock-handling part of the mdio bus code [0]
+but that wasn't very well received, due to it being specific to OF and
+clocks with the consensus being that resources needed for detection
+need to be enabled before.
+
+So to make probing ethernet phys using the internal refclks possible,
+make those 2 clocks critical.
+
+[0] https://lore.kernel.org/netdev/13590315.F0gNSz5aLb@diego/T/
+
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ drivers/clk/rockchip/clk-rk3588.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index 0ffaf639f807..2f63985a6d07 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -792,10 +792,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE(MCLK_GMAC0_OUT, "mclk_gmac0_out", gpll_cpll_p, 0,
+ 			RK3588_CLKSEL_CON(15), 7, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK3588_CLKGATE_CON(5), 3, GFLAGS),
+-	COMPOSITE(REFCLKO25M_ETH0_OUT, "refclko25m_eth0_out", gpll_cpll_p, 0,
++	COMPOSITE(REFCLKO25M_ETH0_OUT, "refclko25m_eth0_out", gpll_cpll_p, CLK_IS_CRITICAL,
+ 			RK3588_CLKSEL_CON(15), 15, 1, MFLAGS, 8, 7, DFLAGS,
+ 			RK3588_CLKGATE_CON(5), 4, GFLAGS),
+-	COMPOSITE(REFCLKO25M_ETH1_OUT, "refclko25m_eth1_out", gpll_cpll_p, 0,
++	COMPOSITE(REFCLKO25M_ETH1_OUT, "refclko25m_eth1_out", gpll_cpll_p, CLK_IS_CRITICAL,
+ 			RK3588_CLKSEL_CON(16), 7, 1, MFLAGS, 0, 7, DFLAGS,
+ 			RK3588_CLKGATE_CON(5), 5, GFLAGS),
+ 	COMPOSITE(CLK_CIFOUT_OUT, "clk_cifout_out", gpll_cpll_24m_spll_p, 0,
+-- 
+2.45.2
+
 
