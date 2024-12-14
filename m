@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-446120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC2A9F2013
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCF99F2014
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7EC7166A82
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C17161AFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964751A8F6D;
-	Sat, 14 Dec 2024 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860791A8F7F;
+	Sat, 14 Dec 2024 17:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Yzbs6lUF"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="U3eLcTQr"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E9F19A2B0
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D65F19A2B0
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734197194; cv=none; b=QNIKf6sK0Im3FzyycHXeP5wpT66WhX/xZTKm+Y3RgtxJ3el9/JolO2Qk9jPevzmOvkffMzWs16Cq/Z1m3yMPh7JHcEseCkDJiXxCgeHtB7UIBVzBoDpOa9ycVRHmcmd8wtV2umWeYJeHXoZOfWKur1JrnMY5iJOemeZ351ZVsQQ=
+	t=1734197201; cv=none; b=eA5XYUVA6GoB+ckWvAOJbb7AHgtLI8Qlx9yV7KKQnFBNNujH6cM6hU1rZyrNh1rYNblOLW0LWuIoSvqp4avf7RoRGbTnW4rq6mr6L6Kho1mFwj3VnaVKoyT2i6sxU06aUXwH8eq9laEmk9R0xZdMsi91yMizmgmnp2UUWggOxnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734197194; c=relaxed/simple;
-	bh=Mfh/oKVyV/v62tUmOG9j432HyhjKXncy+MsddMkaJpM=;
+	s=arc-20240116; t=1734197201; c=relaxed/simple;
+	bh=6PIAjGaZKQwEt/EjBHyszo+wahqk5t1wsyFIUnbE8YI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o6CCjfJy/0QSL0aNsXUayh4pCWtEH2T52bQY4sCs+NELmZqRoAhjw3BL14aZneVVS4CxHX6VUyB24H9uLV3t3xblOQQVvbPuBC8dtHpwdYtSykDvWXhrpl9gpdQBqWjaXFyshJmZKQ78h/LFpM1eAsUMllwv4myLF8nPwW0D04k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Yzbs6lUF; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=MW38z1lKng4u6Kycd2NIx7KNczT6kxo6aW4DKi0NGrPzewKGuINtIxfTPI7b4Mw3cjBTWzeHpYNcnvzChlu47zsUVbYfH/0r2b5YtZ7RD8Qgz5DK5Ppy/yIaeCOfasNKMlFTeyfN7Vzxm3tb6/Ls7Ww/ryNDYV84dUKOXM4pGQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=U3eLcTQr; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so3084852a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:26:33 -0800 (PST)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1566145a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:26:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1734197193; x=1734801993; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1734197199; x=1734801999; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WTMHZPsDjixID3LZgZypNI5zerTGwhJ3oNH3JU/CG6w=;
-        b=Yzbs6lUFltKMt/QaYfH66ZTlMnbXxkZaLtXcoz7XpRQ5bVsjRws+9GTKr014n13tzq
-         Geh+wq0x1i3zlusju7pHVaZzQnNR1u8hCIt9XK+G4kLQl3fWEbwU0NzTH+lB386OL0iz
-         7IX26MYFYZDL1QCpv07lv88KVh6ypjXaL/l8uuc1jgFwKJi0sRtPiZXSH4D+1hL24Et7
-         BHooeAdHefdYN4vf8d+XrnS+vhrRH3lRyjvl9qlfQoysjAaiLmxVyX1ESGjDpPVH8Tee
-         VV2ZFGvbjP5/e4cI1/BeFdXCFhKfrUCcJL1f9b48x7EIkg9W+TLouxXlpHYILTRC73ir
-         Zcdw==
+        bh=u6payGCmGMW/0vjHgpi/115tsc+b1yXaj6IL2K0q/xw=;
+        b=U3eLcTQrfxzBR1KNMvEpzH/0wtO8gw8YG/rRa3ohfJbxVNQk04+fD0L+hyNxMOxLS8
+         850hysopa4gV//GGNVIHQLFQptWNWbsCHhKVfln97EF2i+atuzw6dvAmf4RQxbp/PlNE
+         LW0wFrsXVC74dMxklcQxm7OSRp/96dlKG7R84qUOiyT9z5zDMbcI6kqlfnuSHT870E5U
+         ma1DJewotlemKzovmjCQ/XDSbB1LG4VE4ZNDaqjEJ6v28OfUS5xTQD2amS398JtJl79E
+         tYXRXerye1BLf38BUtv71uq2odJ10DOrvrieYv5ZcBlncRiabYWHp9sv2HwZIrZeoaDC
+         awgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734197193; x=1734801993;
+        d=1e100.net; s=20230601; t=1734197199; x=1734801999;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WTMHZPsDjixID3LZgZypNI5zerTGwhJ3oNH3JU/CG6w=;
-        b=UzRGCWYW/aK2ofsiDUi1kSrwfz7PURUXhdOrOgWXH3abCs/2F3gIrZrM4SYcokJAYe
-         /5iXrXW1pc/RXELpk4Kd5AlzY3VoQnWDdtqnJIRG5ZJFCZr6wmdTv5Y3C5wN/eKpUyYm
-         uEj4d+KOpOc69pXK2BleARigDTpn4mwT+WJeQQPzZSlLI2yuzQrBl3yo7MXlSil+Nb7T
-         TCTATF6ORhsm3yymD0Q9PLUsQ31izUXsLFbCv4aY0ZGVFoEdAnz9mIk9+UoLlihvZgTY
-         vLWxTRIZqcRH+325ZBiAPs0ryUU4xinyKmtT7bCraivp0xnlxIUrRDnsf0vIoKm7ZTAw
-         q6iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPAcRhFVH8aJbE5rrOcEQ3Kojt6/RYIj2zjtRskCOZFU7QZ+RETC4BigIMBk0bqLj6hXF+MBoRN3qZCDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxprhSsQMfDAfptcGO2zvPT1Ydwt7sxEbWI5M9TmdXF8109+Rza
-	2oyDOPvvgrm3+0PM78edf28TtGtLc1nKTqNXCCaetBgrK7bdn5qWsgwLZBKJ2maUAVGGbdi2Xwk
-	K
-X-Gm-Gg: ASbGnctX0hdMnMCTTVOhCrJofZZC2V6GyNLm+aZgSphylFQA0rzV+N72ZcGnafKPn8o
-	qyYBhW6odytfJ5gqwnly2PWql3GxxhxJ1xSlAxfbCuizkfepEpGX6ZtnRR6jZsXzGMrfDs94dGQ
-	mfdb7X6obj8UVzopf0nlX5yNa45OenjfJptLbbBkvO9Se21jWtyWanQxxp67vi0ktVTi2tN/Nx4
-	LKSIZ/21Uw9CQs20wuEDUwQwOxmpcU9/KGF/7Nf98X2WuRhu/7HWBtbN2d+JnztXJanKVhpcjM4
-	SveZcapQ57ijFSE=
-X-Google-Smtp-Source: AGHT+IH7cEjTQcM+udD/U5XRPprvWKA6NBoe1GlzDD6yjgsEVTNKRYALRcnCyPJucGTbfWHoFFxtSg==
-X-Received: by 2002:a17:90b:4d05:b0:2ef:ad27:7c1a with SMTP id 98e67ed59e1d1-2f13ab74905mr16256697a91.2.1734197192577;
-        Sat, 14 Dec 2024 09:26:32 -0800 (PST)
+        bh=u6payGCmGMW/0vjHgpi/115tsc+b1yXaj6IL2K0q/xw=;
+        b=XP+hK4FThf3ocDRIJFyebJkZr9Llak6bVl8kN/zm6+E0lIWUGzuMRq8VeqWHcp1MNj
+         MIcaJ4ITFx/nCPV5/x6cBa0YRpCJV5q/oYCLC5AUrq7K13jiY09H1c7NY/hwPVM6Xvxv
+         edZ7zteGlC2yDJa+bEDgyixNTxeNfq5WJjJlhG1qLU0eGfIJ5cXyW0ThX164UTAkNzDo
+         2zpJrNcx+GkHKchTh4neplNUTHA8Y6+TusxEbbGP7+xkxZvoa+SHIrVWf/k5xwrPtUgG
+         b8N/9GTkM2vttRZ31tWtTtWuBDklxnZFTmeccvWtXNYe9y9wtZsmFF37dQj3QjQRvABO
+         QZ7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWsPld2PzGFPXxtfBTOTaqQ+5ByQb2Q2JEmmj7v6Bf5ca5KIdmyEWEDvgMcfJxI4molObz8VmwBVW1E/Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTVMFQPB17CJaK7D0GuK3dohm1xlMXQwj4iiXep45be7uaS/kX
+	E9ZwYKGddCzxSVRsIjKijQK9o+iYEILSdP6/7j5TsxhKvWIf2YTzlUI2r7qdeOc=
+X-Gm-Gg: ASbGncsdDMRIdlntDezHuj+usLkhDMStqTxPsxHGD02RMPsYnURoVv1k5x49zFK0PK6
+	Fwb8lmuBGphqpLyeDLE8sORvLNaQG0J4L+JJKMIESq+8KQezhtobptIFJ/8yofrEwlZIh5EMQq7
+	GGPB814R6E4YSjt7gPsHMF61kff3LD40er1rZbB5o/YKfOqrxAYpUsYUlfo1xG2jBYQPk07F3+7
+	o0x/6N/SFTXgZgxgGrX+4Ed1nTN3nkuaCfhdYeuNOVihiA8c8qTHrm5CwwYU53wNrFdB+H5d3Tu
+	drvDqUhjKed5+8o=
+X-Google-Smtp-Source: AGHT+IE4G8tF4t4tobhDLydlOHpy74mKHnjdVddbrMVpE78sNcz73JzvON/bt8jZjW3R+eaoP7P0Vw==
+X-Received: by 2002:a17:90b:2242:b0:2ee:ba0c:1726 with SMTP id 98e67ed59e1d1-2f2901b253dmr8940041a91.34.1734197199504;
+        Sat, 14 Dec 2024 09:26:39 -0800 (PST)
 Received: from localhost.localdomain ([223.185.132.246])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm5049811a91.41.2024.12.14.09.26.25
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm5049811a91.41.2024.12.14.09.26.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 09:26:32 -0800 (PST)
+        Sat, 14 Dec 2024 09:26:39 -0800 (PST)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -92,9 +91,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v2 04/11] irqchip/riscv-imsic: Move to common MSI lib
-Date: Sat, 14 Dec 2024 22:55:42 +0530
-Message-ID: <20241214172549.8842-5-apatel@ventanamicro.com>
+Subject: [PATCH v2 05/11] genirq: Introduce kconfig option GENERIC_PENDING_IRQ_CHIPFLAGS
+Date: Sat, 14 Dec 2024 22:55:43 +0530
+Message-ID: <20241214172549.8842-6-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241214172549.8842-1-apatel@ventanamicro.com>
 References: <20241214172549.8842-1-apatel@ventanamicro.com>
@@ -108,187 +107,156 @@ Content-Transfer-Encoding: 8bit
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-Simplify the leaf MSI domain handling in the RISC-V IMSIC driver by
-using msi_lib_init_dev_msi_info() and msi_lib_irq_domain_select()
-provided by common MSI lib.
+Introduce kconfig option GENERIC_PENDING_IRQ_CHIPFLAGS which allows
+irq core to set IRQD_MOVE_PCNTXT flag based on IRQCHIP_MOVE_DEFERRED
+flag.
+
+This kconfig option will help architectures such as x86 and RISC-V
+to mark top-level irqchip instances where irqs can't be moved in
+the process context.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- drivers/irqchip/Kconfig                    |   8 +-
- drivers/irqchip/irq-riscv-imsic-platform.c | 114 +--------------------
- 2 files changed, 6 insertions(+), 116 deletions(-)
+ include/linux/irq.h    | 10 ++++++++++
+ kernel/irq/Kconfig     |  4 ++++
+ kernel/irq/chip.c      | 39 ++++++++++++++++++++++++++++++++++++---
+ kernel/irq/irqdomain.c |  1 +
+ 4 files changed, 51 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 55d7122121e2..6b767b8c974f 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -587,13 +587,7 @@ config RISCV_IMSIC
- 	select IRQ_DOMAIN_HIERARCHY
- 	select GENERIC_IRQ_MATRIX_ALLOCATOR
- 	select GENERIC_MSI_IRQ
--
--config RISCV_IMSIC_PCI
--	bool
--	depends on RISCV_IMSIC
--	depends on PCI
--	depends on PCI_MSI
--	default RISCV_IMSIC
-+	select IRQ_MSI_LIB
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index fa711f80957b..b689c8fe8d60 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -567,6 +567,7 @@ struct irq_chip {
+  *                                    in the suspend path if they are in disabled state
+  * IRQCHIP_AFFINITY_PRE_STARTUP:      Default affinity update before startup
+  * IRQCHIP_IMMUTABLE:		      Don't ever change anything in this chip
++ * IRQCHIP_MOVE_DEFERRED:             Move the interrupt in actual interrupt context
+  */
+ enum {
+ 	IRQCHIP_SET_TYPE_MASKED			= (1 <<  0),
+@@ -581,6 +582,7 @@ enum {
+ 	IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND	= (1 <<  9),
+ 	IRQCHIP_AFFINITY_PRE_STARTUP		= (1 << 10),
+ 	IRQCHIP_IMMUTABLE			= (1 << 11),
++	IRQCHIP_MOVE_DEFERRED			= (1 << 12),
+ };
  
- config SIFIVE_PLIC
- 	bool
-diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq-riscv-imsic-platform.c
-index dc6f63f657e4..2fab20d2ce3e 100644
---- a/drivers/irqchip/irq-riscv-imsic-platform.c
-+++ b/drivers/irqchip/irq-riscv-imsic-platform.c
-@@ -20,6 +20,7 @@
- #include <linux/spinlock.h>
- #include <linux/smp.h>
- 
-+#include "irq-msi-lib.h"
- #include "irq-riscv-imsic-state.h"
- 
- static bool imsic_cpu_page_phys(unsigned int cpu, unsigned int guest_index,
-@@ -201,22 +202,6 @@ static void imsic_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
- }
- 
--static int imsic_irq_domain_select(struct irq_domain *domain, struct irq_fwspec *fwspec,
--				   enum irq_domain_bus_token bus_token)
--{
--	const struct msi_parent_ops *ops = domain->msi_parent_ops;
--	u32 busmask = BIT(bus_token);
--
--	if (fwspec->fwnode != domain->fwnode || fwspec->param_count != 0)
--		return 0;
--
--	/* Handle pure domain searches */
--	if (bus_token == ops->bus_select_token)
--		return 1;
--
--	return !!(ops->bus_select_mask & busmask);
--}
--
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
- static void imsic_irq_debug_show(struct seq_file *m, struct irq_domain *d,
- 				 struct irq_data *irqd, int ind)
-@@ -233,110 +218,21 @@ static void imsic_irq_debug_show(struct seq_file *m, struct irq_domain *d,
- static const struct irq_domain_ops imsic_base_domain_ops = {
- 	.alloc		= imsic_irq_domain_alloc,
- 	.free		= imsic_irq_domain_free,
--	.select		= imsic_irq_domain_select,
-+	.select		= msi_lib_irq_domain_select,
- #ifdef CONFIG_GENERIC_IRQ_DEBUGFS
- 	.debug_show	= imsic_irq_debug_show,
+ #include <linux/irqdesc.h>
+@@ -634,6 +636,14 @@ static inline void irq_move_masked_irq(struct irq_data *data) { }
+ static inline void irq_force_complete_move(struct irq_desc *desc) { }
  #endif
+ 
++#if defined(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS)
++void irq_update_pcntxt_flag(unsigned int irq, const struct irq_chip *chip);
++#else
++static inline void irq_update_pcntxt_flag(unsigned int irq, const struct irq_chip *chip)
++{
++}
++#endif
++
+ extern int no_irq_affinity;
+ 
+ #ifdef CONFIG_HARDIRQS_SW_RESEND
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 529adb1f5859..6d85a47fbf41 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -31,6 +31,10 @@ config GENERIC_IRQ_EFFECTIVE_AFF_MASK
+ config GENERIC_PENDING_IRQ
+ 	bool
+ 
++# Deduce delayed migration from top-level interrupt chip flags
++config GENERIC_PENDING_IRQ_CHIPFLAGS
++	bool
++
+ # Support for generic irq migrating off cpu before the cpu is offline.
+ config GENERIC_IRQ_MIGRATION
+ 	bool
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 271e9139de77..623959a24464 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -33,6 +33,33 @@ struct irqaction chained_action = {
+ 	.handler = bad_chained_irq,
  };
  
--#ifdef CONFIG_RISCV_IMSIC_PCI
--
--static void imsic_pci_mask_irq(struct irq_data *d)
--{
--	pci_msi_mask_irq(d);
--	irq_chip_mask_parent(d);
--}
--
--static void imsic_pci_unmask_irq(struct irq_data *d)
--{
--	irq_chip_unmask_parent(d);
--	pci_msi_unmask_irq(d);
--}
--
--#define MATCH_PCI_MSI		BIT(DOMAIN_BUS_PCI_MSI)
--
--#else
--
--#define MATCH_PCI_MSI		0
--
--#endif
--
--static bool imsic_init_dev_msi_info(struct device *dev,
--				    struct irq_domain *domain,
--				    struct irq_domain *real_parent,
--				    struct msi_domain_info *info)
--{
--	const struct msi_parent_ops *pops = real_parent->msi_parent_ops;
--
--	/* MSI parent domain specific settings */
--	switch (real_parent->bus_token) {
--	case DOMAIN_BUS_NEXUS:
--		if (WARN_ON_ONCE(domain != real_parent))
--			return false;
--#ifdef CONFIG_SMP
--		info->chip->irq_set_affinity = irq_chip_set_affinity_parent;
--#endif
--		break;
--	default:
--		WARN_ON_ONCE(1);
--		return false;
--	}
--
--	/* Is the target supported? */
--	switch (info->bus_token) {
--#ifdef CONFIG_RISCV_IMSIC_PCI
--	case DOMAIN_BUS_PCI_DEVICE_MSI:
--	case DOMAIN_BUS_PCI_DEVICE_MSIX:
--		info->chip->irq_mask = imsic_pci_mask_irq;
--		info->chip->irq_unmask = imsic_pci_unmask_irq;
--		break;
--#endif
--	case DOMAIN_BUS_DEVICE_MSI:
--		/*
--		 * Per-device MSI should never have any MSI feature bits
--		 * set. It's sole purpose is to create a dumb interrupt
--		 * chip which has a device specific irq_write_msi_msg()
--		 * callback.
--		 */
--		if (WARN_ON_ONCE(info->flags))
--			return false;
--
--		/* Core managed MSI descriptors */
--		info->flags |= MSI_FLAG_ALLOC_SIMPLE_MSI_DESCS |
--			       MSI_FLAG_FREE_MSI_DESCS;
--		break;
--	case DOMAIN_BUS_WIRED_TO_MSI:
--		break;
--	default:
--		WARN_ON_ONCE(1);
--		return false;
--	}
--
--	/* Use hierarchial chip operations re-trigger */
--	info->chip->irq_retrigger = irq_chip_retrigger_hierarchy;
--
--	/*
--	 * Mask out the domain specific MSI feature flags which are not
--	 * supported by the real parent.
--	 */
--	info->flags &= pops->supported_flags;
--
--	/* Enforce the required flags */
--	info->flags |= pops->required_flags;
--
--	return true;
--}
--
--#define MATCH_PLATFORM_MSI		BIT(DOMAIN_BUS_PLATFORM_MSI)
--
- static const struct msi_parent_ops imsic_msi_parent_ops = {
- 	.supported_flags	= MSI_GENERIC_FLAGS_MASK |
- 				  MSI_FLAG_PCI_MSIX,
- 	.required_flags		= MSI_FLAG_USE_DEF_DOM_OPS |
--				  MSI_FLAG_USE_DEF_CHIP_OPS,
-+				  MSI_FLAG_USE_DEF_CHIP_OPS |
-+				  MSI_FLAG_PCI_MSI_MASK_PARENT,
- 	.bus_select_token	= DOMAIN_BUS_NEXUS,
- 	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
--	.init_dev_msi_info	= imsic_init_dev_msi_info,
-+	.init_dev_msi_info	= msi_lib_init_dev_msi_info,
- };
++#ifdef CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS
++static void __irq_update_pcntxt_flag(struct irq_desc *desc,
++				     const struct irq_chip *chip)
++{
++	if (chip) {
++		if (chip->flags & IRQCHIP_MOVE_DEFERRED)
++			irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
++		else
++			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
++	}
++}
++
++void irq_update_pcntxt_flag(unsigned int irq, const struct irq_chip *chip)
++{
++	unsigned long flags;
++	struct irq_desc *desc = irq_get_desc_lock(irq, &flags, 0);
++
++	__irq_update_pcntxt_flag(desc, chip);
++	irq_put_desc_unlock(desc, flags);
++}
++#else
++static inline void __irq_update_pcntxt_flag(struct irq_desc *desc,
++					    const struct irq_chip *chip)
++{
++}
++#endif
++
+ /**
+  *	irq_set_chip - set the irq chip for an irq
+  *	@irq:	irq number
+@@ -47,6 +74,7 @@ int irq_set_chip(unsigned int irq, const struct irq_chip *chip)
+ 		return -EINVAL;
  
- int imsic_irqdomain_init(void)
+ 	desc->irq_data.chip = (struct irq_chip *)(chip ?: &no_irq_chip);
++	__irq_update_pcntxt_flag(desc, chip);
+ 	irq_put_desc_unlock(desc, flags);
+ 	/*
+ 	 * For !CONFIG_SPARSE_IRQ make the irq show up in
+@@ -1114,16 +1142,21 @@ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set)
+ 	trigger = irqd_get_trigger_type(&desc->irq_data);
+ 
+ 	irqd_clear(&desc->irq_data, IRQD_NO_BALANCING | IRQD_PER_CPU |
+-		   IRQD_TRIGGER_MASK | IRQD_LEVEL | IRQD_MOVE_PCNTXT);
++		   IRQD_TRIGGER_MASK | IRQD_LEVEL);
+ 	if (irq_settings_has_no_balance_set(desc))
+ 		irqd_set(&desc->irq_data, IRQD_NO_BALANCING);
+ 	if (irq_settings_is_per_cpu(desc))
+ 		irqd_set(&desc->irq_data, IRQD_PER_CPU);
+-	if (irq_settings_can_move_pcntxt(desc))
+-		irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
+ 	if (irq_settings_is_level(desc))
+ 		irqd_set(&desc->irq_data, IRQD_LEVEL);
+ 
++	/* Keep this around until x86 is converted over */
++	if (!IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS)) {
++		irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
++		if (irq_settings_can_move_pcntxt(desc))
++			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
++	}
++
+ 	tmp = irq_settings_get_trigger_mask(desc);
+ 	if (tmp != IRQ_TYPE_NONE)
+ 		trigger = tmp;
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index ec6d8e72d980..ec5fc1d8cebe 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -1508,6 +1508,7 @@ int irq_domain_set_hwirq_and_chip(struct irq_domain *domain, unsigned int virq,
+ 	irq_data->hwirq = hwirq;
+ 	irq_data->chip = (struct irq_chip *)(chip ? chip : &no_irq_chip);
+ 	irq_data->chip_data = chip_data;
++	irq_update_pcntxt_flag(virq, chip);
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
