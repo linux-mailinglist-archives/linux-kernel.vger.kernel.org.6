@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-446060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34019F1F5B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8329B9F1F5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63BE618867A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062F21886A7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CD81885A5;
-	Sat, 14 Dec 2024 14:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01E192B73;
+	Sat, 14 Dec 2024 14:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nvTkvjat"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CEfZRL5T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C70AEC0;
-	Sat, 14 Dec 2024 14:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9DEDDCD;
+	Sat, 14 Dec 2024 14:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734186914; cv=none; b=WzJVGj1IDChya+WNNXMUylcI1wLBq6JTs0w23ALiiN4vxv+E90XxglaKDG72O44uOla1WvlF+cdgfB36MXhNmXd49r4g9MBEGJBX/fJYoxfyvpAMEdiY3MyvBlmgc8Iso7HSWxaIVdxo7rzUfa+A+HJQD10g3YWfYFMS/+eYk8A=
+	t=1734186953; cv=none; b=JOpNAe3pKXgkXYKPkhXZuYK+acpXD/xmS8gRV0J1HSkELJinIIf/HpJv8K2/nr8LEcxmtMJhTUliVTSeUylFXWCTioBaer9M4VRZ/nLbJFIPLS7pxrXiHIMlqhqavkjZhpsBTJ2L2QjiW03b5Ch6IxGT0yrjeiNe9hQbiXGcCgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734186914; c=relaxed/simple;
-	bh=UVxnbUO8JX+rjSTQQp+2gGGKnFIJqpZ4zXzIXYk4nh4=;
+	s=arc-20240116; t=1734186953; c=relaxed/simple;
+	bh=GCemFsEAndIIDDd8VIHsmnrMBKfq1D4UjXgErbA/Kw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GxCS26s/gx7bNz9SzPufbrsLHoLPgyFh596xPouX+OJ/YoLa6UepYUSKJGRxfwrE4PuHmPer6azPbbq+NBjOia/bX/2ax1IdYhJHKh/keCtSR3Vtr7+3yvgwTHeeoJlEPqx3LWub8BrHyjM+NQvtraee0dpDSQiBPsqBgCtTXsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nvTkvjat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A9DC4CED1;
-	Sat, 14 Dec 2024 14:35:13 +0000 (UTC)
+	 Content-Disposition; b=PEiRiDo7conwIZqdgFr12R8eGyaFHAkLVKDs819aelXwJ/+DWuc3KUeyntaSbT3M5aRkUxYoHpOGZQQg9C+9hNHosWIddYnvJds4gHm4rcua4XKDkjuQdDl2uaeRn7WM5wkHqvUS0XANRcZGGQRep2UkOHx87wUEmL6D6+rWnNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CEfZRL5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B13BC4CED1;
+	Sat, 14 Dec 2024 14:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734186914;
-	bh=UVxnbUO8JX+rjSTQQp+2gGGKnFIJqpZ4zXzIXYk4nh4=;
+	s=korg; t=1734186952;
+	bh=GCemFsEAndIIDDd8VIHsmnrMBKfq1D4UjXgErbA/Kw8=;
 	h=Date:From:To:Cc:Subject:From;
-	b=nvTkvjat/r3TDS1Oz7nZDU0kFmKCJL8pDudugPQKa6wqlDjjZ0MOPjRN2qQO/+EaN
-	 uHis1iq5ArlztdePC+qSa9MwbeiYGV2gvbzFvv5U1KwkKqA48nrbxr8yPZ+grZFsMl
-	 PvQXedQFgookc9IJg7t4tFLxVEqhKdLQtssaOuZU=
-Date: Sat, 14 Dec 2024 15:35:10 +0100
+	b=CEfZRL5TMbWZyk4CyX97z4Zlam0xCBDL2UQ4PdzJFd2inGVnjIwaYpCu2aOluIYw2
+	 SD9zyB/miIQCBVq6hNyh0aM6U85XNTRsBpIN4ToboHnLBaAloIWX0tF+JflTDY2q/z
+	 E0PJzSQgKDJ39YJHpTs18Hy9iII3QAZRFVEUE4nk=
+Date: Sat, 14 Dec 2024 15:35:49 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: [GIT PULL] Staging driver fixes for 6.13-rc3
-Message-ID: <Z12XnpkeQSJZoClu@kroah.com>
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] Serial driver fixes for 6.13-rc3
+Message-ID: <Z12XxW821DZlGNfD@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,35 +61,33 @@ The following changes since commit cdd30ebb1b9f36159d66f088b61aee264e649d7a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.13-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.13-rc3
 
-for you to fetch changes up to 48e8a8160dba523af7074e668b2a458250838a3d:
+for you to fetch changes up to 4e450dfd0f968b79204637bf13280892dff287b1:
 
-  staging: gpib: Fix i386 build issue (2024-12-04 17:29:20 +0100)
+  tty: serial: Work around warning backtrace in serial8250_set_defaults (2024-12-06 08:00:01 +0100)
 
 ----------------------------------------------------------------
-Staging driver fixes for 6.13-rc3
+Serial driver fixes for 6.13-rc3
 
-Here are some small staging gpib driver build and bugfixes for issues
-that have been much-reported (should finally fix Guenter's build
-issues).  There are more of these coming in later -rc releases, but for
-now this should fix the majority of the reported problems.
+Here are two small serial driver fixes for 6.13-rc3.  They are:
+  - ioport build fallout fix for the 8250 port driver that should
+    resolve Guenter's runtime problems
+  - sh-sci driver bugfix for a reported problem
 
-All of these have been in linux-next for a while with no reported
+Both of these have been in linux-next for a while with no reported
 issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Dave Penkler (3):
-      staging: gpib: Workaround for ppc build failure
-      staging: gpib: Fix faulty workaround for assignment in if
-      staging: gpib: Fix i386 build issue
+Claudiu Beznea (1):
+      serial: sh-sci: Check if TX data was written to device in .tx_empty()
 
-Nathan Chancellor (1):
-      staging: gpib: Make GPIB_NI_PCI_ISA depend on HAS_IOPORT
+Guenter Roeck (1):
+      tty: serial: Work around warning backtrace in serial8250_set_defaults
 
- drivers/staging/gpib/Kconfig                       | 7 ++++++-
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 2 +-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_port.c |  3 ++-
+ drivers/tty/serial/sh-sci.c         | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
