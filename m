@@ -1,144 +1,159 @@
-Return-Path: <linux-kernel+bounces-446129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556B99F2020
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:36:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243239F2021
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F0F87A0746
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961AE1887FA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DF91974EA;
-	Sat, 14 Dec 2024 17:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D049719993D;
+	Sat, 14 Dec 2024 17:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFdCoRtk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EFG0CETf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD54193425
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697D1193425
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734197770; cv=none; b=iLTCgO7CijJIlkZMm5jl6LQQOCOCsOoDwcRP4tpyFEuBDhOIdr9axYnvOU5JZ1W8S7e2L4g98QmOlhgpDyPRZ+htLLOT5JZxtQWvXcM0C/OBvx2iV69v8zX22s62Ghat5XcFfCQCQBJ/DwjGzT77XRlsx01LNYaxSGNXykkSqcA=
+	t=1734197918; cv=none; b=a5Eb/whA9F2kFX6FjCMdyKmj/HMZ7snfNR6u/MUfCIAGxDRRUvMkFwuKfvETDnER0ObQzk/Qso4GbGPHmDLcdYzSbbjmTFs1riP8R+1Qhliy6uoHvuo64l9WYoPuvl7RdYq5SyN1Wb+Ub0d1SUpIkEeG9IKAJsFib/dLzbYLxaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734197770; c=relaxed/simple;
-	bh=T0XboCLi33hcXHbovIiOUO3Y6978HPciv6+UKqshpwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXx323XxP0M9zVok8ak5hP9OUoewf1Vk8fTStZyn2Pb23vUUKGkd0rix0AyencbRZAz7WR/AAlPeSGbtWtXesw5GGkFTTP0n/it32JTORd0di60t8fB6xNBHCU8D+3ofugY8F7KsPhcwGSvJL/NSeUj1WwCVswtaQMlwdXxHuG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFdCoRtk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA31C4CED1;
-	Sat, 14 Dec 2024 17:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734197769;
-	bh=T0XboCLi33hcXHbovIiOUO3Y6978HPciv6+UKqshpwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eFdCoRtkm/AfEcKwUuQsgEyY05/qvRRnlJ5uLpK93I+YqNJlOMn7ViAyMPDrK4AiP
-	 K0RNgEDTDwxGBE0V7SALWjAVxAlx3BsMdsIz06smxSK4u/2KEojogOBVPs4K2nsFlG
-	 NHUUbFfdLG5ldbUe+xDOhKeSMhWA+z1H5BZpZzJ+E1u+rsoloo2D+T1SH2MaXunTR3
-	 xdErP76VymRLLvWzrElGhqKyahFLfZtU2kh75mPYN+TQlsG0i6EedccV7AH2WPWDx5
-	 L27V93hX6b5Gx+1U2hcK1zG7vHKSGLSPNRVOMFF9bw9A0ogeRDu8kiY9Na6cJPVZQR
-	 uxrXMDcqWf4yA==
-Date: Sat, 14 Dec 2024 12:36:07 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] sched/urgent for v6.13-rc3
-Message-ID: <Z13BzesSJDSuSXRc@lappy>
-References: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
+	s=arc-20240116; t=1734197918; c=relaxed/simple;
+	bh=9Df8iwC25hzI2S1jmPrXWtDZytyWIQwVzNen4nMI7ok=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=qPvFbQlNmYvUXdNxn10sZPh/mbhjdHEPw8oPYzaKIb5BShRJoWmH3Fvq58OXwvTkRED5KOhQpZ3d41aW9nMDFqOLxkY9EHQY+jCllmaj1UDoK5D6x3O4PiZmvZadKhwL0LQC0xjpS9HCIqZvzNcSLnFav9K93BJFGEl3IS/uHrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EFG0CETf; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734197916; x=1765733916;
+  h=date:from:to:cc:subject:message-id;
+  bh=9Df8iwC25hzI2S1jmPrXWtDZytyWIQwVzNen4nMI7ok=;
+  b=EFG0CETfp1woQZEF7VpKssTbfEnpW20TickHXeRSjVba9jbmBcQ/vruM
+   yy7mAXumI8pgRJ8cUkbm+W+1KJUQItps6PFOJaov6dpFknNgagIABBFIe
+   4mTmZkhqemGuIgZngGDk35QqHbWH1bDB2YA7WXgz29rf6ogsj8SzNIPhe
+   7SzKiv553FoOxot7WYZtbno7BjZd7TPZ92tkqlSr164vTYMo4vbyFghEb
+   uOLXtLMzWSdYPnk9Pp6Qw+ltcxIA6AC9n1wc/TNBlxkSAiIDg6YYSoh2V
+   K4cq6dmaj7jMaqFpqScgmhUnsCG9NHCHtal3nzWi4GTtzyGG7mIGHVCK5
+   Q==;
+X-CSE-ConnectionGUID: FxrPcjfOQvKJUqRkSf5gdw==
+X-CSE-MsgGUID: 8RO3cjoMSPiOAbHmuiK0zg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34867273"
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="34867273"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 09:38:36 -0800
+X-CSE-ConnectionGUID: Tfrog3TvQTaFgrqcHvY+VA==
+X-CSE-MsgGUID: ++ay/12xQYmDYL+NwQD2ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="101908941"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 14 Dec 2024 09:38:35 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMW64-000D6c-1O;
+	Sat, 14 Dec 2024 17:38:32 +0000
+Date: Sun, 15 Dec 2024 01:38:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/urgent] BUILD SUCCESS
+ 773c05f417fa14e1ac94776619e9c978ec001f0b
+Message-ID: <202412150125.okYRVbyb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
 
-On Mon, Dec 09, 2024 at 10:48:22AM +0100, Borislav Petkov wrote:
->Hi Linus,
->
->please pull the sched/urgent lineup for v6.13-rc3.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
+branch HEAD: 773c05f417fa14e1ac94776619e9c978ec001f0b  irqchip/gic-v3: Work around insecure GIC integrations
 
-Hey Boris,
+elapsed time: 1445m
 
-I'm a bit late to this party, but I've started seeing the following
-warning. I'm not 100% sure that this PR is the culprit because Linus
-ended up pulling it before I could run tests on it, but I haven't seen
-this warning before.
+configs tested: 67
+configs skipped: 3
 
-[ 1107.003243] ------------[ cut here ]------------
-[ 1107.010677] WARNING: CPU: 0 PID: 16 at kernel/sched/deadline.c:1995 enqueue_dl_entity+0x4a8/0x570
-[ 1107.021252] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables [last unloaded: ftrace_direct]
-[ 1107.056578] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.13.0-rc2 #1
-[ 1107.064302] Hardware name: linux,dummy-virt (DT)
-[ 1107.071887] pstate: a24020c9 (NzCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
-[ 1107.080224] pc : enqueue_dl_entity+0x4a8/0x570
-[ 1107.086456] lr : return_to_handler+0x0/0x48
-[ 1107.093564] sp : ffff8000800d3a40
-[ 1107.098945] x29: ffff8000800d3a40 x28: fff00000ff6e8d80 x27: 0000000000000000
-[ 1107.112664] x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000048
-[ 1107.125440] x23: fff00000ff6c6d80 x22: 0000000000000001 x21: 000000000016e360
-[ 1107.137742] x20: 0000000000000001 x19: fff00000ff6c76e8 x18: 0000000000000000
-[ 1107.150485] x17: 0000000000000000 x16: ffff800080008000 x15: 0000000000000000
-[ 1107.163991] x14: fff00000ff6e8e00 x13: 0000000000000001 x12: 0000000000002229
-[ 1107.174756] x11: ffffb0af24c4a670 x10: ffff8000800d3a70 x9 : ffffb0af227176d0
-[ 1107.187747] x8 : ffff8000800d38d8 x7 : 0000000002d37310 x6 : fff00000c6d27500
-[ 1107.200948] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-[ 1107.215525] x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000001
-[ 1107.228386] Call trace:
-[ 1107.233927]  enqueue_dl_entity+0x4a8/0x570 (P)
-[ 1107.240669]  dl_server_start+0x4c/0x138 (F)
-[ 1107.246980]  enqueue_task_fair+0x128/0x4b0 (F)
-[ 1107.253826]  enqueue_task+0x44/0x80 (F)
-[ 1107.259958]  activate_task+0x70/0x90 (F)
-[ 1107.265928]  attach_task+0x54/0x88 (F)
-[ 1107.272053]  sched_balance_rq+0x714/0xc18 (F)
-[ 1107.278502]  sched_balance_newidle.isra.0+0x1c0/0x408 (F)
-[ 1107.285769]  pick_next_task_fair+0x58/0x310 (F)
-[ 1107.292581]  __schedule+0x13c/0x918 (F)
-[ 1107.298583]  schedule+0x38/0x110
-[ 1107.304448]  smpboot_thread_fn+0x90/0x208 (F)
-[ 1107.310822]  kthread+0x104/0x118
-[ 1107.317269]  ret_from_fork+0x10/0x20
-[ 1107.323922] ---[ end trace 0000000000000000 ]---
-[ 1107.331245] ------------[ cut here ]------------
-[ 1107.337711] WARNING: CPU: 0 PID: 16 at kernel/sched/deadline.c:1971 enqueue_dl_entity+0x4dc/0x570
-[ 1107.346972] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables [last unloaded: ftrace_direct]
-[ 1107.379887] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.13.0-rc2 #1
-[ 1107.388490] Tainted: [W]=WARN
-[ 1107.394103] Hardware name: linux,dummy-virt (DT)
-[ 1107.400895] pstate: a24020c9 (NzCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
-[ 1107.410286] pc : enqueue_dl_entity+0x4dc/0x570
-[ 1107.417196] lr : enqueue_dl_entity+0x21c/0x570
-[ 1107.423700] sp : ffff8000800d3a40
-[ 1107.428962] x29: ffff8000800d3a40 x28: fff00000ff6e8d80 x27: 0000000000000000
-[ 1107.441295] x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000048
-[ 1107.453709] x23: fff00000ff6c6d80 x22: 0000000000000001 x21: 000000000016e360
-[ 1107.465918] x20: fff00000ff6c6d80 x19: fff00000ff6c76e8 x18: 0000000000000000
-[ 1107.478257] x17: 0000000000000000 x16: ffff800080008000 x15: 0000000000000000
-[ 1107.490615] x14: fff00000ff6e8e00 x13: 0000000000000001 x12: 0000000000002229
-[ 1107.502996] x11: ffffb0af24c4a670 x10: ffff8000800d3a40 x9 : 0000000000000001
-[ 1107.515024] x8 : 000000003b9aca00 x7 : 00000000000cf95d x6 : 00000000000ee6b2
-[ 1107.527426] x5 : fff00000ff6c76e8 x4 : 000000003b9aca00 x3 : 000000003b9aca00
-[ 1107.541958] x2 : 0000000033e57787 x1 : 0000002000000000 x0 : 0000000000000001
-[ 1107.555125] Call trace:
-[ 1107.560909]  enqueue_dl_entity+0x4dc/0x570 (P)
-[ 1107.568530]  dl_server_start+0x4c/0x138 (F)
-[ 1107.574623]  enqueue_task_fair+0x128/0x4b0 (F)
-[ 1107.580979]  enqueue_task+0x44/0x80 (F)
-[ 1107.586877]  activate_task+0x70/0x90 (F)
-[ 1107.592854]  attach_task+0x54/0x88 (F)
-[ 1107.598655]  sched_balance_rq+0x714/0xc18 (F)
-[ 1107.605092]  sched_balance_newidle.isra.0+0x1c0/0x408 (F)
-[ 1107.612589]  pick_next_task_fair+0x58/0x310 (F)
-[ 1107.619724]  __schedule+0x13c/0x918 (F)
-[ 1107.626871]  schedule+0x38/0x110
-[ 1107.633403]  smpboot_thread_fn+0x90/0x208 (F)
-[ 1107.641197]  kthread+0x104/0x118
-[ 1107.647508]  ret_from_fork+0x10/0x20
-[ 1107.653843] ---[ end trace 0000000000000000 ]---
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+arc                  randconfig-001-20241214    gcc-13.2.0
+arc                  randconfig-002-20241214    gcc-13.2.0
+arm                  randconfig-001-20241214    gcc-14.2.0
+arm                  randconfig-002-20241214    clang-15
+arm                  randconfig-003-20241214    gcc-14.2.0
+arm                  randconfig-004-20241214    gcc-14.2.0
+arm64                randconfig-001-20241214    clang-15
+arm64                randconfig-002-20241214    clang-20
+arm64                randconfig-003-20241214    clang-15
+arm64                randconfig-004-20241214    gcc-14.2.0
+csky                 randconfig-001-20241214    gcc-14.2.0
+csky                 randconfig-002-20241214    gcc-14.2.0
+hexagon              randconfig-001-20241214    clang-20
+hexagon              randconfig-002-20241214    clang-14
+i386       buildonly-randconfig-001-20241214    gcc-12
+i386       buildonly-randconfig-002-20241214    gcc-12
+i386       buildonly-randconfig-003-20241214    clang-19
+i386       buildonly-randconfig-004-20241214    clang-19
+i386       buildonly-randconfig-005-20241214    gcc-11
+i386       buildonly-randconfig-006-20241214    gcc-12
+loongarch                       allmodconfig    gcc-14.2.0
+loongarch            randconfig-001-20241214    gcc-14.2.0
+loongarch            randconfig-002-20241214    gcc-14.2.0
+m68k                            allmodconfig    gcc-14.2.0
+m68k                            allyesconfig    gcc-14.2.0
+nios2                randconfig-001-20241214    gcc-14.2.0
+nios2                randconfig-002-20241214    gcc-14.2.0
+openrisc                         allnoconfig    gcc-14.2.0
+openrisc                 or1klitex_defconfig    gcc-14.2.0
+parisc                           allnoconfig    gcc-14.2.0
+parisc               randconfig-001-20241214    gcc-14.2.0
+parisc               randconfig-002-20241214    gcc-14.2.0
+powerpc                          allnoconfig    gcc-14.2.0
+powerpc                    kmeter1_defconfig    gcc-14.2.0
+powerpc              randconfig-001-20241214    clang-20
+powerpc              randconfig-002-20241214    clang-15
+powerpc              randconfig-003-20241214    clang-20
+powerpc64            randconfig-001-20241214    gcc-14.2.0
+powerpc64            randconfig-003-20241214    clang-20
+riscv                            allnoconfig    gcc-14.2.0
+riscv                randconfig-001-20241214    clang-20
+riscv                randconfig-002-20241214    clang-20
+s390                            allmodconfig    clang-19
+s390                             allnoconfig    clang-20
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20241214    gcc-14.2.0
+s390                 randconfig-002-20241214    gcc-14.2.0
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20241214    gcc-14.2.0
+sh                   randconfig-002-20241214    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20241214    gcc-14.2.0
+sparc                randconfig-002-20241214    gcc-14.2.0
+sparc64              randconfig-001-20241214    gcc-14.2.0
+sparc64              randconfig-002-20241214    gcc-14.2.0
+um                               allnoconfig    clang-18
+um                   randconfig-001-20241214    clang-20
+um                   randconfig-002-20241214    clang-17
+x86_64     buildonly-randconfig-001-20241214    gcc-11
+x86_64     buildonly-randconfig-002-20241214    clang-19
+x86_64     buildonly-randconfig-003-20241214    gcc-12
+x86_64     buildonly-randconfig-004-20241214    gcc-12
+x86_64     buildonly-randconfig-005-20241214    gcc-12
+x86_64     buildonly-randconfig-006-20241214    clang-19
+xtensa               randconfig-001-20241214    gcc-14.2.0
+xtensa               randconfig-002-20241214    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
