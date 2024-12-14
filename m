@@ -1,179 +1,121 @@
-Return-Path: <linux-kernel+bounces-445926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD909F1D93
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1BF9F1D96
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413C9168521
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A19168542
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171A113B58E;
-	Sat, 14 Dec 2024 08:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED3B15CD49;
+	Sat, 14 Dec 2024 08:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KguZ/7z/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLIYGXj1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B181611712
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA65411712;
+	Sat, 14 Dec 2024 08:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734166038; cv=none; b=F3ZEoZGhqTJ84l22NpEIZm+HQJr5tNRHn16D0S4lQ0HizIHjsY9sgq3dZovkY4yrlfx1grcCFH9peRaRuID37OczHBiqbkZGZ0M4u272m6ylYFYLJ0+BNIw8khS5r4Qu/gQW0Z6zREV6nNq9qOyeZC0GIBY0Em0J6m5NnwAScsA=
+	t=1734166189; cv=none; b=PonQuI/h5lW3f2okqUA53bm8rjQdGYC8KzVZuo9sNBV2+WktLOzm2/maC55ugvQUkk7b6s/FV57vzbnNicqPSlySXn61WzJ0RzSFIXsja78fhHKPqi5B3Edj+NvujolXn0vQR6wUuc5HQ54nuqz1fhcjGizJrTj+4FsnjSnErBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734166038; c=relaxed/simple;
-	bh=n1ee9IBnPmfq7/Shf20X2zWTYfJuZ7BnyFWM46LP9wI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbuzmZy9n0Hk4AImV0PJYATyd1KvwLgeWKogy9I1SwiWylmQHcF6XQQBQcSrMjhA131p7HyFfn6zE5YaxIdsSp8+PlboNjwxoInW/V0Lb4IrEG/vajDul1tINBAW2V8Dw4lMWEppfcOI7eGS1teWsFpIYQWiA/8IC37JjsDgqUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KguZ/7z/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9e8522445dso500014866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:47:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734166035; x=1734770835; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JEZ0WMqPAm1483QfOwXmJttKh7VNBOs17fK+Ko3h7hM=;
-        b=KguZ/7z/IBaBDSxOoioVXAuR964TPp99yghn4M+fIlHgV0FA1+j6XoQApqZePtdWyw
-         TKWEI6M1VyOAim3dndg/MuU0Pk26bEXntb4PGv2g/Zxs6rDJlFc7w1eTWF8soyuegMXp
-         l1amx891w7scuNRqpWfja5Zym/jqZ0FJiQ3Dp8vw5zkap8eCln6oFEMmcL/AyGes2nl7
-         ysl9YaUHeEVY9p3wfcr8LQXostSUks2JJIW1uNFCpWmLy1eCiCkUxu0xjXD29UW+17cf
-         LlrjDF27rxQS/wBJKRS3hiZ0x+G4DJg0cw9DTBgdBmZb/tQBxPmYEhuijYz3DwLZm7LR
-         FHwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734166035; x=1734770835;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JEZ0WMqPAm1483QfOwXmJttKh7VNBOs17fK+Ko3h7hM=;
-        b=NcKgOJci8YI4BI0EWhMzLnN/F4A8c6jq2UOhZozVuqOeuW7HjqhhqfpFcR6ha1XCPu
-         lzPqHM4HtbO/4Bt/i4/auXD4vGjGLqnHkp2Nwo/lHaLlyCLp9ISRVboQ0O/EToVjpmVt
-         m+LhkDaKt/uFrLnGSG/stNgGlPejwuRFI9z/d3ktoxnoKojabAhjdy3E0cLrQJ7apfXn
-         KTjLreC36QMzmiqL2z6P7oBERvZDNC41gy+xHVB4FMNY1/7RpRsSL+Xz/b8kJG3OMzlD
-         2KP1ZQSR1fq/X1oupZVhI+ZFcb+Op3/PZ9+JZUbQpar2BPV7c06bZurJ+2kPLe5fSGSZ
-         Rj6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWW/PJzN6FOVa44UgC5jpwzUG99r8zxDpDncylb1jWoafObo8PBd1C1HCRH7CG0LLmoEYm6MBhU8thdMuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+l/vyR4yJHYRJmxkxTKHh3e0jzyeS6h5l4kx40olf/zMB1EgO
-	Qy7GyOPuwrjBO241XvCwRsKw5QIuKQCJtbDdyVARXZMDyD8DNPSw
-X-Gm-Gg: ASbGncskvhmcw1A75YtDm+7FpTMfJMSW7HxX+4t3r+34oKbe1GFeT4vYXkuMiEPWtAA
-	e1QhXiQcSP0tQecbF6L0/7VfC8XFJupPGCyL/0tn72dam9iqPAUbGk8jl0MA2kHfcaVoQo3JvjS
-	2NIJMvw6RXBP8ZrobgIXq0NS3P6t6IlcSwSh+YXS+CsUVfeqqFF7BzEaL14Reu+Xlzjeajr9E2y
-	CMXyEKTBz6PWSbb6wuFRJJP5RD2KsGSImx3lYdnA6JjQzlCWESjtbmzTZXgQp50DA==
-X-Google-Smtp-Source: AGHT+IFcgN7dNOuus/q8jsBVrvzVyHNsGFwthZiwtvR8aGkddj0IiyJeHXh2Nq9GOLBCxFX5hoTq8w==
-X-Received: by 2002:a17:907:96a5:b0:aa6:9c08:cd3 with SMTP id a640c23a62f3a-aab77ec88d2mr574788066b.48.1734166034751;
-        Sat, 14 Dec 2024 00:47:14 -0800 (PST)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963913d1sm67719166b.165.2024.12.14.00.47.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 00:47:13 -0800 (PST)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jan Beulich <JBeulich@suse.com>
-Subject: [PATCH RESEND] locking/atomic/x86: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
-Date: Sat, 14 Dec 2024 09:46:37 +0100
-Message-ID: <20241214084700.3684-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1734166189; c=relaxed/simple;
+	bh=4grMQMw6rtH/ZKhgxDacEbqLbGv2ReJBu1YFLbC15og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=beiZE9hjh3SX9GboebIirAgfuVjD9EyiVpU4NxPfda7RTBUIQ8ARJeMbfi0TOrAaeetRWGW2ZOT2UNYuwK0yQiNtCglfHkYuwgnxhwliGSAYAqaHlE9LFlsrIy4j+iJ8U3n9H5mgHGRqS8XI+5ZdBoUWEWnc/Ib4e4buHvzDw2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLIYGXj1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0032FC4CED1;
+	Sat, 14 Dec 2024 08:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734166188;
+	bh=4grMQMw6rtH/ZKhgxDacEbqLbGv2ReJBu1YFLbC15og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SLIYGXj1G8hndfmtTPJSZq6u/mOWI+3A+zOkQwJPSutwXfClqOUdOT3EMlAsvAiju
+	 Yu4PmGxedHoo4JR8ddDYIyAupsfSc4GXnU7osZoh4Jx0T15veHktRIFHlhl8ZzVG61
+	 eYwZ/IZ+a/tU1foTMUDv39AyFD4Bo6i9/0zTJT78L5MUFpZV5NfhU7GbWuPDQUkZMe
+	 52CyJDacoSUPT0vJjJHA5Vj3aHsoesltZU1okQZ5xkZfVqm2+7SZXZHKYXmZHUpT+i
+	 oG/23H2DDtIg4lcU+YvyaMFEMTMcTsHV5hDx5LMmuhoEYKe3ScWQK+8mwSiojQPB7/
+	 Gw8yG1T9dw+4A==
+Date: Sat, 14 Dec 2024 16:49:40 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] usb: cdns3-ti: run HW init at resume() if HW was
+ reset
+Message-ID: <20241214084940.GA4102926@nchen-desktop>
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
 
-percpu_{,try_}cmpxchg{64,128}() macros use CALL instruction inside
-asm statement in one of their alternatives. Use ALT_OUTPUT_SP()
-macro to add required dependence on %esp register.
+On 24-12-10 18:13:36, Théo Lebrun wrote:
+> At runtime_resume(), read the W1 (Wrapper Register 1) register to detect
+> if an hardware reset occurred. If it did, run the hardware init sequence.
+> 
+> This callback will be called at system-wide resume. Previously, if a
+> reset occurred during suspend, we would crash. The wrapper config had
+> not been written, leading to invalid register accesses inside cdns3.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/usb/cdns3/cdns3-ti.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+> index d704eb39820ad08a8774be7f00aa473c3ff267c0..d35be7db7616ef5e5bed7dbd53b78a094809f7cc 100644
+> --- a/drivers/usb/cdns3/cdns3-ti.c
+> +++ b/drivers/usb/cdns3/cdns3-ti.c
+> @@ -188,6 +188,12 @@ static int cdns_ti_probe(struct platform_device *pdev)
+>  	data->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
+>  	data->usb2_only = device_property_read_bool(dev, "ti,usb2-only");
+>  
+> +	/*
+> +	 * The call below to pm_runtime_get_sync() MIGHT reset hardware, if it
+> +	 * detects it as uninitialised. We want to enforce a reset at probe,
+> +	 * and so do it manually here. This means the first runtime_resume()
+> +	 * will be a no-op.
+> +	 */
+>  	cdns_ti_reset_and_init_hw(data);
+>  
+>  	pm_runtime_enable(dev);
+> @@ -232,6 +238,24 @@ static void cdns_ti_remove(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, NULL);
+>  }
+>  
+> +static int cdns_ti_runtime_resume(struct device *dev)
+> +{
+> +	const u32 mask = USBSS_W1_PWRUP_RST | USBSS_W1_MODESTRAP_SEL;
+> +	struct cdns_ti *data = dev_get_drvdata(dev);
+> +	u32 w1;
+> +
+> +	w1 = cdns_ti_readl(data, USBSS_W1);
+> +	if ((w1 & mask) != mask)
+> +		cdns_ti_reset_and_init_hw(data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops cdns_ti_pm_ops = {
+> +	RUNTIME_PM_OPS(NULL, cdns_ti_runtime_resume, NULL)
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Jan Beulich <JBeulich@suse.com>
----
- arch/x86/include/asm/percpu.h | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+Why only runtime resume, but without runtime suspend?
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index e525cd85f999..5496e712c1d5 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -350,9 +350,9 @@ do {									\
- 									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
- 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		  : [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
-+				  "+a" (old__.low),			\
-+				  "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -381,10 +381,10 @@ do {									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
- 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
- 		  CC_SET(z)						\
--		  : CC_OUT(z) (success),				\
--		    [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP (CC_OUT(z) (success),			\
-+				   [var] "+m" (__my_cpu_var(_var)),	\
-+				   "+a" (old__.low),			\
-+				   "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -421,9 +421,9 @@ do {									\
- 									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
- 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
--		  : [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP ([var] "+m" (__my_cpu_var(_var)),	\
-+				   "+a" (old__.low),			\
-+				   "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
-@@ -452,10 +452,10 @@ do {									\
- 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
- 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
- 		  CC_SET(z)						\
--		  : CC_OUT(z) (success),				\
--		    [var] "+m" (__my_cpu_var(_var)),			\
--		    "+a" (old__.low),					\
--		    "+d" (old__.high)					\
-+		  : ALT_OUTPUT_SP (CC_OUT(z) (success),			\
-+				   [var] "+m" (__my_cpu_var(_var)),	\
-+				   "+a" (old__.low),			\
-+				   "+d" (old__.high))			\
- 		  : "b" (new__.low),					\
- 		    "c" (new__.high),					\
- 		    "S" (&(_var))					\
--- 
-2.42.0
-
+Peter
 
