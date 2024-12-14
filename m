@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-445933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CBD9F1DA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:03:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE09F1DB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1031886017
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:03:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619D5188BD2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC4E14D43D;
-	Sat, 14 Dec 2024 09:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6700190696;
+	Sat, 14 Dec 2024 09:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RhE1Xmo5"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="XBT+EA/G"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612577E0FF
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734167014; cv=none; b=LqKSIM/RZloMLfVpt7h/E+W8MnaBi/+MdGLuNfAKRwv89PpFgCkHMg/LfxcHawiNFdgMETonVSoK4r4WxEu2VrbEV64gFO5cg8l9lT1FtqucOmn629dPiCXaFzKS1alY+ITG0GAayxqkJsE218p/lb73A7XK2TZPepkOvIaQrDc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734167014; c=relaxed/simple;
-	bh=sj9HMrayUMHTgoGPDL2h+BYum5j5UdQa3R2Nv8KNGLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrsHpza+CpkJ8hfnWsxFSX1Ok/N6MLeU55gegiwmvzNOJiJROq3q6zmTdH+DBz93Ovs2NN3zWIHqlMadK9WKIQdeZ2aIvdpXCUhfOadGH6Qrc8aLmAxN+/f5bWKr7y7wQlPAYHbHT2SZwwpSzndm+ZcLbua8ZGZry4ZaDGW3kkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RhE1Xmo5; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=gRp7
-	uckktr6KR9/CC8Oa/hiD3So3uJLaZVYSElvE71w=; b=RhE1Xmo52Omc/aN/Fx7L
-	jTIuDx/RS0VMzyELVEaxsV/pdql7AfP5a8oDbFx3Vudu99wsEfTNykiN9Z1DFbK6
-	knWUmFmbOWLSNDciie+GGhAJf9bHBMUDtPKA6ByE+g5TC9O61B+YpeyuoLpla3EU
-	3oZn5edXjjBlSFAD9aoAHBuQ6Joqyru3Zeix0sa/BuxK9iRKQxIXxKlrmduK/Del
-	im/46j99B20mKv5YGD3/0zTWmjM0+g5FfRIynA4vDFZTTz+CK7DY+OhsKc/qUoE9
-	gfC02e0OlqAovaEmn7SyYx2Ypx9cWr9FV4a8BPWkIskDt2YHcnbnsLttiSMt/e54
-	WQ==
-Received: (qmail 3038578 invoked from network); 14 Dec 2024 10:03:30 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Dec 2024 10:03:30 +0100
-X-UD-Smtp-Session: l3s3148p1@f72dODcp/tNehhtJ
-Date: Sat, 14 Dec 2024 10:03:29 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.13-rc3
-Message-ID: <Z11J4d9Y2N1Rh7EU@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-References: <7bg2ioxxplgmmgna5j7a4e5fipg54wq3l4zaxy3gy4uk6ctmi2@ueniip4pkhx5>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B2418D65C;
+	Sat, 14 Dec 2024 09:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734167094; cv=pass; b=eo6tOLHrgFsZ941cMQ7FmxIg+ZaAV0mD0n1Z0q9mM+BCUVTDvF9cnvVXMJjsLjuN4fPAo/jH+bgUxgDurEna6Ok39477X4woYmRqJcD9w2oZ6DSMUA/4lhJJWrxDXJDdkrpnALbrdVjMgJyhHdCZ3iA+yq6L4ifov/dS0VazECc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734167094; c=relaxed/simple;
+	bh=1He9VPyzzGAt/8vkD2zd/BuXMB6nP91bLzaUmhS3Gfo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sCorSkrd+7rJzAAW4PlZfqOV8oi0m+Aazeyie4be7MBq1pQA+ee4EgR9rrB/HvJyiVColyUMbSGedGYYKcfKhYahEylRuGj0K52rBPa/OiID4x72YcU95uFTZ9OZqUHlGkz1l1cX1gOWazdy4NJ1Fjay+Hm9/k6xWMoIaQf/iW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=XBT+EA/G; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734167055; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=B7l1lH1qKwdSNoYCP1SPZLpKmRmu3FjOpXI/6dtV4zLmsfNoMBSWpcxnXd192LTBIxRKOXU6fm1nHeepgQ2Za1SSYqKe0J9cruJgVuWhmYABGrUp3FYDLiEoYclUhbkcrtES3wlzEEzT+Ie46CfOnhaxxDixARkeQBy3v6L3C0Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734167055; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5X/qMK8uWDwJEEr5QG+O2Mwg4z56SzMX6ttnOEu4AiQ=; 
+	b=JCF0d+uM+SxkSKiuf5MSaSpgxT7VU2oD7U2sxGZr9SipGKpJl+kptXHqB7Ob0NIiIwOGKLi1oxMX15+1npbj760nKkeIqPKrbdGZFuW3fQ/lVZkNrQ+kw38+oFQ3RfL0pYfS4Duu6XOd5DRCV0E6ojO58qkh7OA9Os3hcAvmcLg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734167055;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=5X/qMK8uWDwJEEr5QG+O2Mwg4z56SzMX6ttnOEu4AiQ=;
+	b=XBT+EA/GhJNqRH+n5xL/nwcZK+PBSUj7zPCoQmwtIkvMXj/JgnbhKelDkYjo1+Gl
+	rYMka6zMZXG5/mxtqTIzS0OPZsKkaAx1aPDroq7rPsTuE5h9BV6xLohFNWOP0NcOx6a
+	yBOQZtMI/x6fKBVjLVbApcBDZtZT7d4eOAdxpoY0=
+Received: by mx.zohomail.com with SMTPS id 1734167053567164.33484110014615;
+	Sat, 14 Dec 2024 01:04:13 -0800 (PST)
+Message-ID: <73fda05b-a89f-4dbd-988f-487f2fb9c773@collabora.com>
+Date: Sat, 14 Dec 2024 14:04:16 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dMTlckdzwkUf53KU"
-Content-Disposition: inline
-In-Reply-To: <7bg2ioxxplgmmgna5j7a4e5fipg54wq3l4zaxy3gy4uk6ctmi2@ueniip4pkhx5>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/459] 5.10.231-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241212144253.511169641@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241212144253.511169641@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+
+On 12/12/24 7:55 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.231 release.
+> There are 459 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.231-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+Hi,
+
+Please find the KernelCI report below :-
 
 
---dMTlckdzwkUf53KU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OVERVIEW
 
-On Fri, Dec 13, 2024 at 05:23:05PM +0100, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> three fixes for this week; please find the pull request below.
->=20
-> Have a good weekend!
->=20
-> Andi
->=20
-> The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dc=
-a4:
->=20
->   Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
-/i2c-host-fixes-6.13-rc3
->=20
-> for you to fetch changes up to de6b43798d9043a7c749a0428dbb02d5fff156e5:
->=20
->   i2c: riic: Always round-up when calculating bus period (2024-12-12 12:5=
-4:02 +0100)
+    Builds: 28 passed, 0 failed
 
-Thanks, pulled!
+    Boot tests: 154 passed, 0 failed
 
+    CI systems: maestro
 
---dMTlckdzwkUf53KU
-Content-Type: application/pgp-signature; name="signature.asc"
+REVISION
 
------BEGIN PGP SIGNATURE-----
+    Commit
+        name: 
+        hash: 26bbc21725ae44d2b10994af6d0fe6b3a2bb9d8b
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmddSd4ACgkQFA3kzBSg
-KbYRjw//TMpZcnpl2vjjNeg984df2SgeP9lTcS0Qd9T1hdR+1ZO0As2IKgcwszwZ
-inO3vQDkE2sBvuJHE1YQ2Vgi4pjbcdt226Z1oKGEG4lHdd3zplQ4zfdd8XB40hXF
-X+Agilt7slR4oAGkO+9UT5j6kSzzodGB6BMZFDrSNDT0Im+cBFlhkPjpFZC4PU3I
-29VgMu0gX43c9D6GOdV2mE1BX2QmZsf9uh60q4FfWSfUHHLRNzFULQmJWjIN8pdt
-y+O7ezNitQY1OXToy5NoiOCaF2mTbwUbjc2qcGAbwVwzRCwnOwG89jq3AJy754On
-3r6+Jci4967RAbo1LN6kxbfvvmIqKwbwl4ZDP350JC3cf4IC2h3UCcTJsyZkTtxk
-T4yKuB53RM3Qg8mbr/3FLMe1isYBZtUkZqUBPQImlI0oAJlg3M5CqmjSbO/8XWYu
-dheob7mBdvrKjg3oQ+e5SdwDdBDeS49VlVw9G1VljUJJOA3I+SMtaPhPYs/4i1hX
-vIBpJg9Sdw3Qon8x9tExTW6NlPhwrI1Tst3FJELlah3dpFRmSTDN1AuvCmAk+JmE
-OAnHVw2p/4AIh8c5nskGHjXuYjbaR4XTgp02rFi0UGtMFi/mnL6z/HjQ1cTRUA8P
-BGRp0jeEcmgVRHGSQNvWYN0HIXKF+HEMcYA9FuePUOiLBdVtacs=
-=F9NX
------END PGP SIGNATURE-----
+BUILDS
 
---dMTlckdzwkUf53KU--
+    No new build failures found
+
+BOOT TESTS
+
+    No new boot failures found
+
+See complete and up-to-date report at:
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=26bbc21725ae44d2b10994af6d0fe6b3a2bb9d8b&var-patchset_hash=&from=now-100y&to=now&timezone=browser&var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-test_path=boot
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
