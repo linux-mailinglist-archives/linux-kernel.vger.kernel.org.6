@@ -1,261 +1,181 @@
-Return-Path: <linux-kernel+bounces-446071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AD49F1F88
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:03:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7DE9F1F8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0C518869E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB76F188693D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E959195F04;
-	Sat, 14 Dec 2024 15:03:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E46D194C92;
+	Sat, 14 Dec 2024 15:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fyMdSbEi"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5410F191F6F
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A883169397
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734188603; cv=none; b=ZKHa1LvzHPFTFM84LUhwk2/cgM3RThA+d6BV0cMpsrQhYccSoVFBbqhTVcFyZ5Ro6f6Jpj1TkHcqDjEqj1JkS3QezCqnYPPAo+dl+MR/8paTrEmdwkzrFxAYCwaAP7URCckHpfbyE2lAsZlXZ72BTAWe7qdk0sGQ/kK8IoKi+oY=
+	t=1734188832; cv=none; b=ZHstnbpbRXxUZ9hyRqhwq40R/GAf5ASdtLiyBm7Ur/+YlJrTOye4PlPlXdVxGZZHUK+/Tbw/SmXf5bv5f8Wnv14MyU4pOOzALhib423y0uiLtR6xlWZKoCcoKMLRwyF0LAker+gVQLnqY3FhQrdafHp8XYh/M+AjR1a+xHdXMjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734188603; c=relaxed/simple;
-	bh=DdLOM1qHzPfeoVfGflR2fskNrH89lMWL9H6iCSrftbY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uyY2qAdNi95Of6AheyTn1bKl4UfxsW3jAfmpLAnJUpa02r6JZJ+hN+aKeoMV4of8FaGhm6WUl77IWZHBza5KxhB9Ppy6sgezCMXGjNAGZVkT2NyfJCRd0XWxlGOaCWVOO5Wozk/N7dWddMAVitGUEp6uH326+psSeQBQReTNJzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so24022965ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:03:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734188600; x=1734793400;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1734188832; c=relaxed/simple;
+	bh=eR+qjQP6KWkz/NJnDcik6zTdH2/VYAHWAYxs3rMv2tA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CCbaxrnvUiyKEGhr+rxEEGiUNpm8hWTLrHFFdAr2mdYxCqR7FvA9t0rVwTKdVn4isajFO9P21qWynBupiy6+k0da9b7pz2n8aMLxAwXdbtHJ+7X2xoVhY2LhWGRZXG0h9thh2MmM5s+DZbKXrndHTlvZ00w5+lL0g6vVw6PHTFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fyMdSbEi; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so1777257f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:07:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734188827; x=1734793627; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cp9X4RABKxUCFpngYxzOhWEwmB3ji+aITki0Zr2D5es=;
-        b=sy+Fj9VecZC4+7C9oE/+EqECIqe7+Ws/H2rbDl8YjaZAZsABa71yuwOJifeJJ2Rk10
-         I65RLDgEhdz1CFMUP1Hv8S4B8R/Fd/ceThDq82Vg4JHySQe3D5s3LwzEv5DywB7s2Y0X
-         k5hpO69gIWjb2Do5iQo3qkzerrMw29kMyHsIrsnkogavHOF0lqNxT0hMQR6OHNQX8uNj
-         v3+DnvnQuy+mHvRM2bgJeZ3tnGpLWQS/yyerc2H5gFytUyw9+cfFHKZTmCjbwnn5e4GK
-         EkdJud27CgabF1g+FFXgYmP8n6EMgYGWTZVNOhr+FPrZHoaOyj5u6WG2HU9qqwl3S2+X
-         M/2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXMmiQk8D9sBXo6zLymx6zeFansCqTnc5BSYgJ7PFl5/0hBcFTk5kS9GB/8Px/LdWR8qSUtKAgxT8/5OXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoVp3Y8ZLYZx6CfaqF6CJLsfglFmdW02mSUjmPiHKUfm+Tt47e
-	BXdtdQyx8C4JBtCB9VQxiXFGYGzpGc/A4o2z3gpDMXprbDIcrkfWPXK5HEv3N8BX1xyI85jpoBN
-	yU2U1hcRuh/Tusj/DmbZmuz7pK5Slu6RLtPUmjUg98Iu9p3PZUU9i76I=
-X-Google-Smtp-Source: AGHT+IF9oifGX1EiocYuP6wsmB2qjMZL1qVQ4UWxVJyddk8bmy+bacAicmXcnsdY8cojK3p3VwfR+/hG/GpjO55mWyt4J7iIva2V
+        bh=oIBE+0UlquIsYZozCVFzFEGCR2rC4mOAVUzl7lyv2tM=;
+        b=fyMdSbEiSjOnYQDbIiRCbTfyNHzTeuRtvz5WyB/bRAnB6S54C77moU1JPr3VFs8aLP
+         QkKp+xK7NkpZFvTn5bdZqzdf1KXLsL+Xh1x7HNRwp6+x1OE2umWlZ9jjrqACC3l7AaJV
+         gf06+85pSTn+gsG/kb0ElCx2OhowVSIzwivB0qUpIZXQMNMh0ttu3RUyirC4EyjaqeHY
+         ey48RIhe46CkuIRhFuK8luAG/unj00mIqnAmn/k5d6pqXmh67kG+sKR36cfF91tBskfK
+         YDLSboTXeoBpSb7DxVjj8ck9y+K8UNWKxCCfPKyK74eHzB8W1UkzlKKSqt5GJDxGlPkb
+         r6vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734188827; x=1734793627;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIBE+0UlquIsYZozCVFzFEGCR2rC4mOAVUzl7lyv2tM=;
+        b=qt9MOmS09xnNkwTbUyTtCtPVYPfMu1Pu5CfhisSmjoZ7G3RV21/pkjRhobCc1x2F+d
+         xZi01t+i+sRIbdQ9o3z8lDJ9YnvYQdPGuuZoUVUtfoMNvZHb83tIv0SW4kScJt0/JDZm
+         Xch8J54DxOtd6SEaneZ3Hf1skBukQL1EoHhW6D9EKGPEVJ9np80OxlMhxM4EMyJxVGYp
+         8S3ZArT+4ZwYVzV/CvhTxNcbMwFqufBbQBLZ4wZSaoXdfTpHfUx7wWdGxuIPgEjgCZfo
+         VcLihU867Hl/Pln7pAx7rzsIWAtOJgHZJAmL0lG6iL17n02WK1Cx6GNd84T5ll9hTupT
+         AfpQ==
+X-Gm-Message-State: AOJu0YyTM7FwYzs5hRDNVplSnFtgQlWLPORMTArFotZcGypisVVg2BsS
+	PS4qvZmz9UA1EWVOUG+NeMiEDdwjNrz7eng52pM2rBJz3m8zfKEbSGqkC1aY+48=
+X-Gm-Gg: ASbGncvYv5SMzcbfy9J/A3prJ64AVyCFHaSzG9YnlfJST7VTaM6UseLD55BPoDIYj1T
+	M6sqCQN4fH3d+atHKwj+xR7YMbA/Gz8+CJIP2vEh7+cCbRijOAYfj66Rn8Ga8hLz019xPWybl2D
+	TtdOcR5yv51WPfRuSKs2nauSJSHtWHRIPTregzGKUvhFAG2d5DiCHTmpQ95nLM4H2f9SoUFCLvF
+	M9CroO5msXNtQEefzRC3Q2BmuRJfDXC583/GWIZ89LPFw/XiXcBiwSaCB9WsL5Fny8gnGkF2zM=
+X-Google-Smtp-Source: AGHT+IH3w9h+hSebDY0xAQlkYrvUNMYisspX4JRmHSfXW+xfKoY4Y0Tv3CP1sogfkYnfltfymAmF/A==
+X-Received: by 2002:a05:6000:186c:b0:386:1ab3:11f0 with SMTP id ffacd0b85a97d-388c3a92606mr4783755f8f.28.1734188827425;
+        Sat, 14 Dec 2024 07:07:07 -0800 (PST)
+Received: from [192.168.68.114] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c801a7c8sm2854023f8f.49.2024.12.14.07.07.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 07:07:06 -0800 (PST)
+Message-ID: <488ea6c2-0832-4409-902b-2b6b193daf8c@linaro.org>
+Date: Sat, 14 Dec 2024 15:07:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a25:b0:3a7:e528:6ee6 with SMTP id
- e9e14a558f8ab-3aff039a554mr77439225ab.13.1734188600419; Sat, 14 Dec 2024
- 07:03:20 -0800 (PST)
-Date: Sat, 14 Dec 2024 07:03:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675d9e38.050a0220.37aaf.00ca.GAE@google.com>
-Subject: [syzbot] [sctp?] possible deadlock in sctp_sock_migrate
-From: syzbot <syzbot+95ba71e75926e4a97806@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] nvmem: core: add nvmem_cell_write_variable_u32()
+To: Jennifer Berringer <jberring@redhat.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20241104152312.3813601-1-jberring@redhat.com>
+ <20241104152312.3813601-3-jberring@redhat.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20241104152312.3813601-3-jberring@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Thanks for the patch,
 
-syzbot found the following issue on:
+On 04/11/2024 15:23, Jennifer Berringer wrote:
+> This function allows nvmem consumers to write values of different sizes
+> (1-4 bytes) to an nvmem cell without knowing the exact size, akin to a
+> write counterpart to nvmem_cell_read_variable_le_32(). It discards the
+> higher order bytes of the passed u32 value based on CPU endianness as
+> necessary before writing to a cell smaller than 4 bytes.
+> 
+> Signed-off-by: Jennifer Berringer <jberring@redhat.com>
+> ---
+>   drivers/nvmem/core.c           | 24 ++++++++++++++++++++++++
+>   include/linux/nvmem-consumer.h |  6 ++++++
+>   2 files changed, 30 insertions(+)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index 4a5a6efe4bab..4c26a5e8c361 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -1815,6 +1815,30 @@ int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len)
+>   
+>   EXPORT_SYMBOL_GPL(nvmem_cell_write);
+>   
+> +/**
+> + * nvmem_cell_write_variable_u32() - Write up to 32-bits of data as a host-endian number
 
-HEAD commit:    7cb1b4663150 Merge tag 'locking_urgent_for_v6.13_rc3' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1617eb30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=95ba71e75926e4a97806
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> + *
+> + * @cell: nvmem cell to be written.
+> + * @val: Value to be written which may be truncated.
+> + *
+> + * Return: length of bytes written or negative on failure.
+> + */
+> +int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+This new API is confusing, as writing to cell should in the same order 
+of the data. Doing any data manipulation within the api is confusing to 
+users.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d137a327f35/disk-7cb1b466.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14581a57cb27/vmlinux-7cb1b466.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/22586b0e9bbc/bzImage-7cb1b466.xz
+If the intention is to know the size of cell before writing, then best 
+way to address this is to provide the cell size visibility to the consumer.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+95ba71e75926e4a97806@syzkaller.appspotmail.com
+--srini
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0 Not tainted
-------------------------------------------------------
-syz.5.1757/14440 is trying to acquire lock:
-ffff88807f80c658 (sk_lock-AF_INET/1){+.+.}-{0:0}, at: sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
+> +{
+> +	struct nvmem_cell_entry *entry = cell->entry;
+> +	u8 *buf = (u8 *) &val;
+> +
+> +	if (!entry || entry->bytes > sizeof(u32))
+> +		return -EINVAL;
+> +
 
-but task is already holding lock:
-ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1617 [inline]
-ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: sctp_accept+0x90/0x800 net/sctp/socket.c:4863
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
-       lock_sock include/net/sock.h:1617 [inline]
-       sockopt_lock_sock net/core/sock.c:1126 [inline]
-       sockopt_lock_sock+0x54/0x70 net/core/sock.c:1117
-       do_ip_getsockopt+0x115c/0x2bf0 net/ipv4/ip_sockglue.c:1703
-       ip_getsockopt+0x9c/0x1e0 net/ipv4/ip_sockglue.c:1765
-       raw_getsockopt+0x4d/0x1e0 net/ipv4/raw.c:865
-       do_sock_getsockopt+0x3fe/0x870 net/socket.c:2374
-       __sys_getsockopt+0x12f/0x260 net/socket.c:2403
-       __do_sys_getsockopt net/socket.c:2410 [inline]
-       __se_sys_getsockopt net/socket.c:2407 [inline]
-       __x64_sys_getsockopt+0xbd/0x160 net/socket.c:2407
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (rtnl_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1898
-       __smc_connect+0x466/0x4890 net/smc/af_smc.c:1517
-       smc_connect+0x2fc/0x760 net/smc/af_smc.c:1693
-       __sys_connect_file+0x13e/0x1a0 net/socket.c:2055
-       __sys_connect+0x14f/0x170 net/socket.c:2074
-       __do_sys_connect net/socket.c:2080 [inline]
-       __se_sys_connect net/socket.c:2077 [inline]
-       __x64_sys_connect+0x72/0xb0 net/socket.c:2077
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (sk_lock-AF_SMC){+.+.}-{0:0}:
-       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
-       lock_sock include/net/sock.h:1617 [inline]
-       smc_close_non_accepted+0x80/0x200 net/smc/af_smc.c:1832
-       smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
-       smc_close_active+0xc3c/0x1070 net/smc/smc_close.c:225
-       __smc_release+0x634/0x880 net/smc/af_smc.c:277
-       smc_release+0x1fc/0x5f0 net/smc/af_smc.c:344
-       __sock_release+0xb0/0x270 net/socket.c:640
-       sock_close+0x1c/0x30 net/socket.c:1408
-       __fput+0x3f8/0xb60 fs/file_table.c:450
-       task_work_run+0x14e/0x250 kernel/task_work.c:239
-       exit_task_work include/linux/task_work.h:43 [inline]
-       do_exit+0xadd/0x2d70 kernel/exit.c:938
-       do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
-       get_signal+0x2576/0x2610 kernel/signal.c:3017
-       arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
-       do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sk_lock-AF_INET/1){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
-       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
-       sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
-       sctp_accept+0x654/0x800 net/sctp/socket.c:4899
-       inet_accept+0xc4/0x180 net/ipv4/af_inet.c:781
-       do_accept+0x337/0x530 net/socket.c:1941
-       __sys_accept4_file net/socket.c:1981 [inline]
-       __sys_accept4+0xfe/0x1b0 net/socket.c:2010
-       __do_sys_accept net/socket.c:2023 [inline]
-       __se_sys_accept net/socket.c:2020 [inline]
-       __x64_sys_accept+0x74/0xb0 net/socket.c:2020
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  sk_lock-AF_INET/1 --> rtnl_mutex --> sk_lock-AF_INET
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sk_lock-AF_INET);
-                               lock(rtnl_mutex);
-                               lock(sk_lock-AF_INET);
-  lock(sk_lock-AF_INET/1);
-
- *** DEADLOCK ***
-
-1 lock held by syz.5.1757/14440:
- #0: ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1617 [inline]
- #0: ffff88807f80dfd8 (sk_lock-AF_INET){+.+.}-{0:0}, at: sctp_accept+0x90/0x800 net/sctp/socket.c:4863
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 14440 Comm: syz.5.1757 Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- lock_sock_nested+0x3a/0xf0 net/core/sock.c:3622
- sctp_sock_migrate+0x987/0x1270 net/sctp/socket.c:9655
- sctp_accept+0x654/0x800 net/sctp/socket.c:4899
- inet_accept+0xc4/0x180 net/ipv4/af_inet.c:781
- do_accept+0x337/0x530 net/socket.c:1941
- __sys_accept4_file net/socket.c:1981 [inline]
- __sys_accept4+0xfe/0x1b0 net/socket.c:2010
- __do_sys_accept net/socket.c:2023 [inline]
- __se_sys_accept net/socket.c:2020 [inline]
- __x64_sys_accept+0x74/0xb0 net/socket.c:2020
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f530297ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f530381f058 EFLAGS: 00000246 ORIG_RAX: 000000000000002b
-RAX: ffffffffffffffda RBX: 00007f5302b46080 RCX: 00007f530297ff19
-RDX: 0000000020000140 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00007f53029f3cc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f5302b46080 R15: 00007fff22fccd28
- </TASK>
-can: request_module (can-proto-4) failed.
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +#ifdef __BIG_ENDIAN
+> +	buf += sizeof(u32) - entry->bytes;
+> +#endif
+> +
+> +	return __nvmem_cell_entry_write(entry, buf, entry->bytes);
+> +}
+> +EXPORT_SYMBOL_GPL(nvmem_cell_write_variable_u32);
+> +
+>   static int nvmem_cell_read_common(struct device *dev, const char *cell_id,
+>   				  void *val, size_t count)
+>   {
+> diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+> index 34c0e58dfa26..955366a07867 100644
+> --- a/include/linux/nvmem-consumer.h
+> +++ b/include/linux/nvmem-consumer.h
+> @@ -56,6 +56,7 @@ void nvmem_cell_put(struct nvmem_cell *cell);
+>   void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
+>   void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
+>   int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
+> +int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val);
+>   int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val);
+>   int nvmem_cell_read_u16(struct device *dev, const char *cell_id, u16 *val);
+>   int nvmem_cell_read_u32(struct device *dev, const char *cell_id, u32 *val);
+> @@ -128,6 +129,11 @@ static inline int nvmem_cell_write(struct nvmem_cell *cell,
+>   	return -EOPNOTSUPP;
+>   }
+>   
+> +static inline int nvmem_cell_write_variable_u32(struct nvmem_cell *cell, u32 val)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>   static inline int nvmem_cell_read_u8(struct device *dev,
+>   				     const char *cell_id, u8 *val)
+>   {
 
