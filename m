@@ -1,78 +1,106 @@
-Return-Path: <linux-kernel+bounces-445829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F419F1BF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587209F1C00
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17817A03D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24BD188E9B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178321401C;
-	Sat, 14 Dec 2024 01:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRZoRh6u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0981401B;
+	Sat, 14 Dec 2024 01:47:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3ACD531;
-	Sat, 14 Dec 2024 01:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD3DF78;
+	Sat, 14 Dec 2024 01:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734140395; cv=none; b=q4WedWfT8B76kRtcCh1FSv+WEeQSRvO7JhVFv8rSRKGjBVih3Ub1hHi9xILPgIimqWY2l7jcE17CzHUjMkMFsb+A2FZcEdqdAMhb2KJ89MmEYgAuoT63IXEHZMf1hesIvIFv1gFHN8nhRl4kSxyMhY5iuLOSyYtHtH43GKbF1PI=
+	t=1734140852; cv=none; b=XbA0IkT23ANS89KDwTFNBZQxQ3wzeZwQDCW+0OSHOhP8Qd6IIjzFLuxUfkUjYaecvUYsag3liXhjzfsEUKUcUU8Gz1WBHdvsVS3V8b3kWR3epk8D4P3sUImNM6uKWnR4OKNz0nu+kyh4+USvhDUrwglOI7OvlQnfciMRozFqk0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734140395; c=relaxed/simple;
-	bh=pzaB567QgIwrOWKRyuPccND2jrgrQaIvllP8TOxmWhQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aIHmJBGPVgbqhVA2p/ezq/QIlitGARWNf6dbk5gNBPYVEoH6SeNAlOzYOooTvaSj8S+vTPw1HVXbdYxQCFQQam7UL+vB1CvzOAoVgaf8PJ6PFnzza5Q7v6RUdCvQAep76eb04cBj0gyX2LfXd4k8hLV1fCk3ibbYpDyhSNsn3Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRZoRh6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD95C4CED0;
-	Sat, 14 Dec 2024 01:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734140395;
-	bh=pzaB567QgIwrOWKRyuPccND2jrgrQaIvllP8TOxmWhQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GRZoRh6ufLl+NSt9PtTYG0gyLPW3y4UxI1vdDyqTF1lfpb9XPmbWWaWVCdmsLz4Xf
-	 UhQ7l83ABB7xBKfECTsjU3ma/AIBd2OB/CTQpvYSTaEcrE+tV/5Sgjie6JO6bpFAvV
-	 3Fd8398cM5QOu9i+/hfVVQ+FTalDhz9I+Wo82q1+01MpK9EUUXG0UxFesvqP5kFqSs
-	 p5wPzQd8gw0yhkyGAELqS9PdxqUUZTgY4U+aVCUe6tW8Q8DLOQpzYhE1O2kSUsgSvF
-	 UAOADGZJqZOt8j/eqnLnyFyk69eXAyIKufFJCvOrs8NSV6tF6V3Gs70h18wHN/miuB
-	 AO7Cjt5nRpjjA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE6D6380A959;
-	Sat, 14 Dec 2024 01:40:12 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mu+0egy3V0bVRO+OiXbCa+HT5FLA6LKAiJZ2LD85vNvQg@mail.gmail.com>
-References: <CAH2r5mu+0egy3V0bVRO+OiXbCa+HT5FLA6LKAiJZ2LD85vNvQg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mu+0egy3V0bVRO+OiXbCa+HT5FLA6LKAiJZ2LD85vNvQg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc2-smb3-client-fixes
-X-PR-Tracked-Commit-Id: 633609c48a358134d3f8ef8241dff24841577f58
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a446e965a188ee8f745859e63ce046fe98577d45
-Message-Id: <173414041155.3219585.10629172751497157903.pr-tracker-bot@kernel.org>
-Date: Sat, 14 Dec 2024 01:40:11 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1734140852; c=relaxed/simple;
+	bh=rDCnNx2vZgLhjzkNQxr71ZiD4sIPqXRF9rDkNyi3wL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r5mSKa4YmlQDTwa7YNVdhTM8OaukCeXzTzt7RTetplGfOm9e7PiH0P/GFY2ph8qypRDHPhvjKwsNpxoeRip+PGodnH6E1jQVKTla9GcmE4j1p5Cm6aauyDKXO0Lhsyr2sTSPio8oWjralDUKPbtLui8Y/ACL/nlnfW5WUkDRCBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y98G64M5bz4f3jqC;
+	Sat, 14 Dec 2024 09:47:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id EF6D91A058E;
+	Sat, 14 Dec 2024 09:47:24 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgCXKcar41xnluWdEQ--.62887S2;
+	Sat, 14 Dec 2024 09:47:24 +0800 (CST)
+Message-ID: <ac7820cd-513b-478c-9fbb-4bc5ec8f21a2@huaweicloud.com>
+Date: Sat, 14 Dec 2024 09:47:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [next -v1 0/5] Some cleanup for memcg
+To: akpm@linux-foundation.org, mhocko@kernel.org, hannes@cmpxchg.org,
+ yosryahmed@google.com, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, davidf@vimeo.com, vbabka@suse.cz
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <20241206013512.2883617-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgCXKcar41xnluWdEQ--.62887S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrWxGw1kAFWkJrW8Aw15twb_yoWxKwc_CF
+	92vFyxKw4jqFyava4jkr45CFyxKFWUJr1UJF1jqr4rtry7J3sY9F1qqr48Zr1xXayfCF4U
+	Ary5AFs7ur17ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The pull request you sent on Fri, 13 Dec 2024 18:04:51 -0600:
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc2-smb3-client-fixes
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a446e965a188ee8f745859e63ce046fe98577d45
+On 2024/12/6 9:35, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> 
+> Chen Ridong (5):
+>   memcg: use OFP_PEAK_UNSET instead of -1
+>   memcg: call the free function when allocation of pn fails
+>   memcg: simplify the mem_cgroup_update_lru_size function
+>   memcg: factor out the __refill_obj_stock function
+>   memcg: factor out stat(event)/stat_local(event_local) reading
+>     functions
+> 
+>  mm/memcontrol.c | 140 ++++++++++++++++++++++--------------------------
+>  1 file changed, 63 insertions(+), 77 deletions(-)
+> 
 
-Thank you!
+Friendly ping.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I am looking forward to having someone review these patches, with the
+exception of patch 3. I will drop patch 3(NAK by YU) in the next version.
+
+Best regards,
+Ridong
+
 
