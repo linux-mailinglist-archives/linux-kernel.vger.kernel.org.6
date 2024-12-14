@@ -1,295 +1,114 @@
-Return-Path: <linux-kernel+bounces-445994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D169F1E47
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:34:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E123D9F1E52
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79DF6167C77
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0DF1886A5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7898418F2EA;
-	Sat, 14 Dec 2024 11:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496718E76F;
+	Sat, 14 Dec 2024 11:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bii8dE9M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeZufbtC"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E03826AC3;
-	Sat, 14 Dec 2024 11:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A6E186287
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734176049; cv=none; b=o2UYzmtdaxPfj1RcA25qFYS06eRIMI05dZ201rvTqlaixIJng60/F1LiiXVZEoUSE1/OKbwiKMrgPniGKpc3UWcC37rPBX/Kib+BdMZNfDAyKORhKWskj6Jpd0sbzx4MbAWSff896IEx3M1JQP7c0cvRZpieFQITc2g530sg7N0=
+	t=1734176381; cv=none; b=iCegbDnr/ibspAfScfUtYsJQxwrfj4j4UkfXvC3MeLWe1SCbdtE3DX8Hm0bMWv8bEo5j2h+b0KJI4S+5P1iHSHuNypxw/+MtKQAc5rlXarTCtGvo85/JAlvPWhGLEoiy97GWFx0H04+lJOGxQ0IlaLAQ2rryeCCik4sdJSAfiDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734176049; c=relaxed/simple;
-	bh=3quS/XIB7rH26SfSQPeMF1msLJoEeJ017rW8wN32ubI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSy0XaXhNeDsm4D56Gwf3W+Bx/rlPkmRYZ6D43KGLX+VbUJ85C33xNZ/lvZKFnxEOkoUrUPUpHlc/7V3ahUg6Q0aV0Dp5CqrdXgIGpbA2DVI0d0sM5iUe/UBrTMCr+DIQBIpZBnnGZ5N87+Fut6D2IZco+12sHAb0CKu+tGCFwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bii8dE9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E99FC4CED1;
-	Sat, 14 Dec 2024 11:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734176049;
-	bh=3quS/XIB7rH26SfSQPeMF1msLJoEeJ017rW8wN32ubI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bii8dE9M2TQ+vWMBJni9TQfgCH5FuVCqVRqPv+upVRkU0pInhEyDotltTtugofsTa
-	 0KYq2alf+xYCrPkTM/Ej5nFe5Zhu30hCjoqVkTb2klj6tiDCxz2X6E7JxposqqykpL
-	 dPs0PJFuN/THTDrGPZjYoqmNelKQRe6mPdCVYu0NCvFzZJe8AqPflLvU5otaQ8EWEl
-	 LvdemwvbW7H1DBoBNP4k+zMl2HChEfSPgHPq7FMnXRmcXHrv7493FpgYfxvlc+WSag
-	 L3BaDW1UaAJJJ3le+SX985quBAkONR8fbx3lgtlw2WjhVHiDOy5TKLo5a2csHm3q/g
-	 MmoTMQa2ZWyjw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30229d5b1caso24441901fa.2;
-        Sat, 14 Dec 2024 03:34:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+GpzdOwUGeG+5YDg8nEIbadBM7X4CwUa5kvISmawO/kIZY9jIWWGcJ4ELYvKtmxPRxqKqrqJg3Lq5mTE=@vger.kernel.org, AJvYcCVV9IAIR4NuNgi7RAFUADG0UUw2j2/NA4x7OReEeL+EACR/JZM4uH0/F2jyaAWm9wHLCl/t0PdhX4OhjpNHn1E=@vger.kernel.org, AJvYcCW1PhF3lc2f7ZaCsTmQQCE8gSRBIl517yQ4/GzEKnZZneHQwM9uNb5n7a+fmQmsRvHGAOKJikQjricsJyjm@vger.kernel.org, AJvYcCWC5fAR2Hel+BYuvafabZIAvdiaDG9rJrwJ3+Q1jsSS4LZqwCbWNz02bRN0Xku1rIgOkc4lRIGMUAPUvslt0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnxE9QZUzHqrvR/0NBi636bAK/ZaRguI4Vr05A/gEuZW/aEq09
-	Nb2aQh6em0SZd4WqFNoIvwYj2gnVVsgFDSYULI6zRx+7/w3QDMq75194b7sv1yhXMmyfA6ktcpM
-	GmkZ9CseapG/Y0v4ih9PLS/gkgQQ=
-X-Google-Smtp-Source: AGHT+IGs8H5W28XVuuYGgGnFWR7/ocRZiS56OOmZMZFgEsHNDhd7okr5VD2LfcNVVuu4kKqbeTDFIqhjQQ87QXGc3RU=
-X-Received: by 2002:a05:651c:1990:b0:302:4a61:8bd3 with SMTP id
- 38308e7fff4ca-302545206f8mr16701081fa.7.1734176047764; Sat, 14 Dec 2024
- 03:34:07 -0800 (PST)
+	s=arc-20240116; t=1734176381; c=relaxed/simple;
+	bh=Hi0KPvOMo5zpxOsXgD8nXO1azY36Pqum6h29Oow5cDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ph3SiOVhKIkznvNtFCkng3M2yuXoRmsAB3e6u8Q8CHI+Wie9GqgWIusbTF+tV7y2OJcQ7Uv6KYfN3lFTANt9UcRGPl3SLiJ6DfR5MwdOl3rtyZCc/keIBX94DU8zPXLG7XodnR6G7P4dxDnwrJHOvop2nJA4AVxf+aswLkw/CXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jeZufbtC; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30167f4c1deso22456501fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 03:39:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734176377; x=1734781177; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OeCcjkbPl6Xl/41j85MrwKw61kLFoQEu17cYntkW6cA=;
+        b=jeZufbtCrbo/2Sig2gMXZYop9UvtDEK/b2c5mthZIjMgeFD7vhPJlP5NME3ddxqgzd
+         038ZUiIX2CnsVpJs+knAPeXK9olFF8iyEp0FqDAx1nEj9wa5+sXEPnm8Nr6knO+lNPAd
+         FWc5oiRxtpw5+8YU0y2FcgY1Kl9eBs66/AXL3R/RtRyHxaVyj8xDd3yyJQFgN6T5w2LA
+         BlI/tnyJXXcAS7fjLWMSqYR7jXlI0a2ax+zTRI6IFPgHe18gEkFi0V+3sU+U/6dYlM4/
+         miK2vlloKr9FV97+zNBhaTdTepzuoLlj5fLow8hHjfcwFftoG0MBbyxjvv7Mwr3GIzWR
+         MpTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734176377; x=1734781177;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OeCcjkbPl6Xl/41j85MrwKw61kLFoQEu17cYntkW6cA=;
+        b=Xu1x0QiNMd/MYNZDsCJ2AuttYh+TLljPtpM2g4MmfgDnBM3M/Pm8dZ4Q+IhEP8fZ7p
+         OjRczBx/bTk0MQjZ1heAI3wZ2RapyxviOI/0D3SWK1yfIfBDTNBxDANcHNPGnkqENmvw
+         7Ne/klRoPbDggsGBxaXQXgox2QkrrjerKgbhT4NlIvCbU2a7AEdxMwGdHPbI9EfYMCFj
+         cdWHX9rr9o1q82f4lppKuPqt+ys0tsiwlgc1NxZfbfJE9AtWhZA25qNi/YyKDL1K9XbF
+         nB3Rm74pFM701teWae0PYk9+3uRiqC9XYCxZ8BKbtGVhU4MDKGQYQ7EJPVW5ndUhXmkO
+         5ZWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKu+mOWnzcNxq1u2kNr3jl9gXRBeCCw4eefmhN4nz2UORlMICP4YGOtHQ4+hVK2+6uI6Io3dSBTioLk+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIQyMXgfKL7UPkFyxJzsTz1x3yzhVMOvINe6QwKgD/zOlycSiV
+	ZouXuys9VQyN9fUQJwVipSadWcKWbKWF6OclgbnEG+Fu+9fVwHlJJx2ys4RmDkg=
+X-Gm-Gg: ASbGnctevWFG5Wuswc1oSggd4b3ICNdQPnovl+wntDEaOBlDT/GJ6DuGTGlbEjP9QIO
+	kWMgdUxfmkGwKM7z8ps8uo4MD1qusgKk24L5DzeOpLMVDjxaEPKHCdfSQ0zmylVQOMbB8vruXAc
+	YKM2ty+iqn2pRlyim23GqqR5txOjPxDzUIj+yULSqx3wGKxS9SJbIy0vxrwa2os2n5fSb4rHu2B
+	LaUIpa+fMk8ntpTVKIpMySTnylugOkGo0P+FG6WF9MkIneexwCM57gjr2aUO+UV/UQQImbiR36i
+	tsx4Aucuj0zNnG3kaZKDDO1GSg3nA3Awrt+V
+X-Google-Smtp-Source: AGHT+IGqTQ1pNqm/Ngay9AHMNf4hrhRAE2mYmS+Ahol55tRGPvjWEaqYkQ3xCrtSle4klGeWah9+hg==
+X-Received: by 2002:a05:6512:401b:b0:540:1f7d:8bc0 with SMTP id 2adb3069b0e04-54099b6d6afmr1869994e87.49.1734176377364;
+        Sat, 14 Dec 2024 03:39:37 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c20acdsm192457e87.261.2024.12.14.03.39.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 03:39:36 -0800 (PST)
+Date: Sat, 14 Dec 2024 13:39:35 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Julius Werner <jwerner@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] arm64: errata: Add QCOM_KRYO_5XX_GOLD to the
+ spectre_bhb_k24_list
+Message-ID: <2qx75syaojhnsqt256li6sinafml4gohohvld6uw3zhejrayuj@biiep5dvko7t>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.5.I41e227ed809ea607114027209b57d02dc0e98384@changeid>
+ <l5rqbbxn6hktlcxooolkvi5n3arkht6zzhrvdjf6kis322nsup@5hsrak4cgteq>
+ <CAD=FV=WQf+ig21u316WvQh0DoKsdKAmZgqPn5LB-myDXsJtXig@mail.gmail.com>
+ <CAODwPW919K+XdxjUe3aPgxsv0CEWwx0P_Hxvf=VniLhk8eagkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com> <20241121204220.2378181-38-samitolvanen@google.com>
-In-Reply-To: <20241121204220.2378181-38-samitolvanen@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 14 Dec 2024 20:33:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-Message-ID: <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-Subject: Re: [PATCH v6 18/18] Documentation/kbuild: Add DWARF module versioning
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAODwPW919K+XdxjUe3aPgxsv0CEWwx0P_Hxvf=VniLhk8eagkQ@mail.gmail.com>
 
-On Fri, Nov 22, 2024 at 5:43=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> Add documentation for gendwarfksyms changes, and the kABI stability
-> features that can be useful for distributions even though they're not
-> used in mainline kernels.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  Documentation/kbuild/gendwarfksyms.rst | 308 +++++++++++++++++++++++++
->  Documentation/kbuild/index.rst         |   1 +
->  2 files changed, 309 insertions(+)
->  create mode 100644 Documentation/kbuild/gendwarfksyms.rst
->
-> diff --git a/Documentation/kbuild/gendwarfksyms.rst b/Documentation/kbuil=
-d/gendwarfksyms.rst
-> new file mode 100644
-> index 000000000000..7725d7f57131
-> --- /dev/null
-> +++ b/Documentation/kbuild/gendwarfksyms.rst
-> @@ -0,0 +1,308 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +DWARF module versioning
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +1. Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +When CONFIG_MODVERSIONS is enabled, symbol versions for modules
-> +are typically calculated from preprocessed source code using the
-> +**genksyms** tool.  However, this is incompatible with languages such
-> +as Rust, where the source code has insufficient information about
-> +the resulting ABI. With CONFIG_GENDWARFKSYMS (and CONFIG_DEBUG_INFO)
-> +selected, **gendwarfksyms** is used instead to calculate symbol versions
-> +from the DWARF debugging information, which contains the necessary
-> +details about the final module ABI.
-> +
-> +1.1. Usage
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +gendwarfksyms accepts a list of object files on the command line, and a
-> +list of symbol names (one per line) in standard input::
-> +
-> +        Usage: gendwarfksyms [options] elf-object-file ... < symbol-list
-> +
-> +        Options:
-> +          -d, --debug          Print debugging information
-> +              --dump-dies      Dump DWARF DIE contents
-> +              --dump-die-map   Print debugging information about die_map=
- changes
-> +              --dump-types     Dump type strings
-> +              --dump-versions  Dump expanded type strings used for symbo=
-l versions
-> +          -s, --stable         Support kABI stability features
-> +          -T, --symtypes file  Write a symtypes file
-> +          -h, --help           Print this message
-> +
-> +
-> +2. Type information availability
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +While symbols are typically exported in the same translation unit (TU)
-> +where they're defined, it's also perfectly fine for a TU to export
-> +external symbols. For example, this is done when calculating symbol
-> +versions for exports in stand-alone assembly code.
-> +
-> +To ensure the compiler emits the necessary DWARF type information in the
-> +TU where symbols are actually exported, gendwarfksyms adds a pointer
-> +to exported symbols in the `EXPORT_SYMBOL()` macro using the following
-> +macro::
-> +
-> +        #define __GENDWARFKSYMS_EXPORT(sym)                             =
-\
-> +                static typeof(sym) *__gendwarfksyms_ptr_##sym __used    =
-\
-> +                        __section(".discard.gendwarfksyms") =3D &sym;
-> +
-> +
-> +When a symbol pointer is found in DWARF, gendwarfksyms can use its
-> +type for calculating symbol versions even if the symbol is defined
-> +elsewhere. The name of the symbol pointer is expected to start with
-> +`__gendwarfksyms_ptr_`, followed by the name of the exported symbol.
+On Fri, Dec 13, 2024 at 05:28:55PM -0800, Julius Werner wrote:
+> > Interesting. So the Gold/Prime are actually IDing themselves as
+> > straight Cortex A77. The Silver is IDing itself the same as
+> > KRYO_4XX_SILVER. ...so in that sense there's nothing to do here for
+> > those cores.
+> 
+> Should we add some comments to cputype.h to record which other
+> products are matched under the same ID?
 
-I am interested in this sentence.
+I'd say, yes.
 
-__GENDWARFKSYMS_EXPORT() is primarily introduced to handle
-EXPORT_SYMBOL() in *.S files.
-In fact, .discard.gendwarfksyms is always output for EXPORT_SYMBOL()
-from *.c files.
-
-Can we make it faster by processing only symbol references in the
-.dscard.gendwarfksyms section, and skipping all other sections entirely?
-
-
-
-
-> +4.3. Adding structure members
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> +
-> +Perhaps the most common ABI compatible changeis adding a member to a
-
-changeis -> change is
-
-
-
-
-
-
-
-> +kernel data structure. When changes to a structure are anticipated,
-> +distribution maintainers can pre-emptively reserve space in the
-> +structure and take it into use later without breaking the ABI. If
-> +changes are needed to data structures without reserved space, existing
-> +alignment holes can potentially be used instead. While kABI rules could
-> +be added for these type of changes, using unions is typically a more
-> +natural method. This section describes gendwarfksyms support for using
-> +reserved space in data structures and hiding members that don't change
-> +the ABI when calculating symbol versions.
-> +
-> +4.3.1. Reserving space and replacing members
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Space is typically reserved for later use by appending integer types, or
-> +arrays, to the end of the data structure, but any type can be used. Each
-> +reserved member needs a unique name, but as the actual purpose is usuall=
-y
-> +not known at the time the space is reserved, for convenience, names that
-> +start with `__kabi_` are left out when calculating symbol versions::
-> +
-> +        struct s {
-> +                long a;
-> +                long __kabi_reserved_0; /* reserved for future use */
-> +        };
-> +
-> +The reserved space can be taken into use by wrapping the member in a
-> +union, which includes the original type and the replacement member::
-> +
-> +        struct s {
-> +                long a;
-> +                union {
-> +                        long __kabi_reserved_0; /* original type */
-> +                        struct b b; /* replaced field */
-> +                };
-> +        };
-> +
-> +If the `__kabi_` naming scheme was used when reserving space, the name
-> +of the first member of the union must start with `__kabi_reserved`. This
-> +ensures the original type is used when calculating versions, but the nam=
-e
-> +is again left out. The rest of the union is ignored.
-> +
-> +If we're replacing a member that doesn't follow this naming convention,
-> +we also need to preserve the original name to avoid changing versions,
-> +which we can do by changing the first union member's name to start with
-> +`__kabi_renamed` followed by the original name.
-> +
-> +The examples include `KABI_(RESERVE|USE|REPLACE)*` macros that help
-> +simplify the process and also ensure the replacement member is correctly
-> +aligned and its size won't exceed the reserved space.
-> +
-> +4.3.2. Hiding members
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Predicting which structures will require changes during the support
-> +timeframe isn't always possible, in which case one might have to resort
-> +to placing new members into existing alignment holes::
-> +
-> +        struct s {
-> +                int a;
-> +                /* a 4-byte alignment hole */
-> +                unsigned long b;
-> +        };
-> +
-> +
-> +While this won't change the size of the data structure, one needs to
-> +be able to hide the added members from symbol versioning. Similarly
-> +to reserved fields, this can be accomplished by wrapping the added
-> +member to a union where one of the fields has a name starting with
-> +`__kabi_ignored`::
-> +
-> +        struct s {
-> +                int a;
-> +                union {
-> +                        char __kabi_ignored_0;
-> +                        int n;
-> +                };
-> +                unsigned long b;
-> +        };
-> +
-> +With **--stable**, both versions produce the same symbol version.
-> diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.=
-rst
-> index cee2f99f734b..e82af05cd652 100644
-> --- a/Documentation/kbuild/index.rst
-> +++ b/Documentation/kbuild/index.rst
-> @@ -21,6 +21,7 @@ Kernel Build System
->      reproducible-builds
->      gcc-plugins
->      llvm
-> +    gendwarfksyms
->
->  .. only::  subproject and html
->
-> --
-> 2.47.0.371.ga323438b13-goog
->
-
-
---
-Best Regards
-
-
-
-Masahiro Yamada
+-- 
+With best wishes
+Dmitry
 
