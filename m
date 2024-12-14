@@ -1,159 +1,241 @@
-Return-Path: <linux-kernel+bounces-445848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9B59F1C35
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:02:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5905C9F1C36
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F219B16A84C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A485E188C394
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7C917BA0;
-	Sat, 14 Dec 2024 03:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4241B175AB;
+	Sat, 14 Dec 2024 03:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kUsOdR6U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB11401C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 03:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gFFNM8G5"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA91725765
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 03:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734145335; cv=none; b=LYYQTfJlbuCNfrDhnXzDxsUBBGfOeIFr8coYum6zsM/VoSy49rjWgaEN3wtO1LFHLNoUf588IXlwm8KDP2Cb+4LwVLW2tjV0+iDYlVnT93xse2c2zsJz3mssOKUvgvuqj1ZCtiqN7bNmT/M0quiFHenProiZOTS5XsruZTymIE0=
+	t=1734145443; cv=none; b=bzU57gcL4zi4uf6k3YUecxh6KCdhWWXrH2+cU94mfUtlqtlt11QPdfjmKqZN88rDVFTVpkyQJqi1aS6QQP4CxAlPKB7KDApazr2iiGe4H0ozivj9uIrovVhFtRDQmoiFW3proC0Dx9vSS0nspAB9JMAt9hghfgWIidNE9j3E+wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734145335; c=relaxed/simple;
-	bh=CpGtzE3DnA+5mDDyQq+HofQ/g8/sDt6qlmFMkW6w41k=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=mt6o3JmLKP3OV8KR+EvxKaDpok/yxmJPrABqmsDgLlUwwjJJWWvrtvOjJX1J8W8BnJbdne/jlL57Yrgfc+zbJrnPooaq+C5NaHrt8J65pdYvrth4p5baXF7C/AHJKM2bAIdTWadB5QzQieGCPFlxvjdgjWH5mH5MK6SXw6QugsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kUsOdR6U; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734145334; x=1765681334;
-  h=date:from:to:cc:subject:message-id;
-  bh=CpGtzE3DnA+5mDDyQq+HofQ/g8/sDt6qlmFMkW6w41k=;
-  b=kUsOdR6UUUCoRc6ug+Y4J1HccFeykHTDWP9zTzJxwpdf2Y/T7ljPlvdS
-   Na2afB/Eq9poprjpeGrE58OhDD3HJhGQtftkcmP9ZL+hNvIBtHC80za6W
-   G4N8yid2pGr3BF4YkbY4xgC2Pw0NyKOe+iUFhx+UuzYJPBedC7yWWl+mh
-   LShl7L3KBLfc8dKSBT1UxGZOoKsaU+QWewNjmTy0mSIP4O1zv3alCmDa0
-   UgKgM3Oub2TDrNlvVxeuB5CghzyHtGWAdsdEX8I+CTiO6trE4qoBS98SU
-   pCUw/FNhiOASCJl7oQ6GUDUkCU8hkmwyWvs8P9NmUGMPDX/UvCj8R+5OD
-   w==;
-X-CSE-ConnectionGUID: jCjqkXYrQKmKGDJS7kxU2Q==
-X-CSE-MsgGUID: klrUK6AbRmqV6MdgC5cqCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="37459306"
-X-IronPort-AV: E=Sophos;i="6.12,233,1728975600"; 
-   d="scan'208";a="37459306"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 19:02:13 -0800
-X-CSE-ConnectionGUID: o4OtPW9+SbOForeHQtqkVQ==
-X-CSE-MsgGUID: 6SVpzSr/RBeWRnEYFOU6fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,233,1728975600"; 
-   d="scan'208";a="96773673"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 13 Dec 2024 19:02:12 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMIPx-000Cel-1z;
-	Sat, 14 Dec 2024 03:02:09 +0000
-Date: Sat, 14 Dec 2024 11:01:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:dev.2024.12.11b] BUILD SUCCESS
- 41ae651d10dcc542e398e26c3dcc52e40c59b39d
-Message-ID: <202412141113.RuUhoAaw-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1734145443; c=relaxed/simple;
+	bh=y+unLlIOQ6rOl7hpgETYDgU3rqQN3RL5YloB0DAHnmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EFaazqQ2j6Ldq37k5LojM1t3QZK58Hut0KfZggEX/FDZjBwURQdTByciI/CzRtT31KjfBhAcMu3K0TItAPvey/1NbTTtknTHqGlJIZt4ZvwLPPZp+yt06tgmhc5mkcmsBHflaDjfVOIvMcSDwbTN3vj59DYIjYbwY4nP6tuUx+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gFFNM8G5; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=R1Zia
+	9Fz2QARQl8fEmYHofwn16afpQH0+MPKYwrH0LA=; b=gFFNM8G5HXgSrPIxO8nNB
+	iY+ljVY0HReH2tatNPzvKUBAvan/zWLXFVS360onsO5r4mRCZc25MV7fYpRz0q+K
+	9c01T+n34zUXqQwkdQSnZQAKqtoArYE2ZRkq2nRZCtevqXASbYPVqmo+K08Wmjy8
+	f++sfifIhwpk3eOB/McOK0=
+Received: from Jerry-PC.. (unknown [36.27.96.116])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgDXy66Q9VxnpMc9Fg--.7304S2;
+	Sat, 14 Dec 2024 11:03:50 +0800 (CST)
+From: Jerry <jerrydeng079@163.com>
+To: jerrydeng079@163.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Jerry <jerrydeng79@163.com>
+Subject: 
+Date: Sat, 14 Dec 2024 11:03:28 +0800
+Message-ID: <20241214030341.4264-1-jerrydeng079@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <em69028b68-d2c5-485d-a2ec-463c4673e723@f742d22a.com>
+References: <em69028b68-d2c5-485d-a2ec-463c4673e723@f742d22a.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgDXy66Q9VxnpMc9Fg--.7304S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXrW7uw15Zr4DXF48Kr4kWFg_yoW7JF1xpF
+	Wayw1FyrW8JF17WrZ3AayUZF4a93yIkFW7Ary7Ga9IyrsxKF1jkFyavFy0yr1IkrZ8GrWa
+	vr45trW7Gr48Cr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U7gAcUUUUU=
+X-CM-SenderInfo: xmhu25pghqwiixz6il2tof0z/1tbiNh+122dc5sTkEgAAso
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.12.11b
-branch HEAD: 41ae651d10dcc542e398e26c3dcc52e40c59b39d  rcu: Fix get_state_synchronize_rcu_full() GP-start detection
+Signed-off-by: Jerry <jerrydeng79@163.com>
+---
+ mm/backing-dev.c    |  1 +
+ mm/filemap.c        |  6 ++++-
+ mm/page-writeback.c | 61 +++++++++++++++++++++++++++++++++++++++++----
+ 3 files changed, 62 insertions(+), 6 deletions(-)
 
-elapsed time: 1520m
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index dd08ab928..0b86bd980 100755
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -878,6 +878,7 @@ void bdi_unregister(struct backing_dev_info *bdi)
+ 	/* make sure nobody finds us on the bdi_list anymore */
+ 	bdi_remove_from_list(bdi);
+ 	wb_shutdown(&bdi->wb);
++	wake_up(&(bdi->wb_waitq));
+ 	cgwb_bdi_unregister(bdi);
+ 
+ 	/*
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 3b0d8c6dd..3282840f0 100755
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3300,6 +3300,7 @@ ssize_t generic_perform_write(struct file *file,
+ 	long status = 0;
+ 	ssize_t written = 0;
+ 	unsigned int flags = 0;
++	errseq_t err = 0;
+ 
+ 	do {
+ 		struct page *page;
+@@ -3368,8 +3369,11 @@ ssize_t generic_perform_write(struct file *file,
+ 		}
+ 		pos += copied;
+ 		written += copied;
+-
+ 		balance_dirty_pages_ratelimited(mapping);
++		err = errseq_check(&mapping->wb_err, 0);
++		if (err)
++			return err;
++		
+ 	} while (iov_iter_count(i));
+ 
+ 	return written ? written : status;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index b2c916474..e013a6d01 100755
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -146,6 +146,16 @@ struct dirty_throttle_control {
+ 	unsigned long		pos_ratio;
+ };
+ 
++
++
++struct bdi_wq_callback_entry {
++	
++	struct task_struct *tsk;
++	struct wait_queue_entry  wq_entry;
++	int bdi_unregister;
++};
++
++
+ /*
+  * Length of period for aging writeout fractions of bdis. This is an
+  * arbitrarily chosen number. The longer the period, the slower fractions will
+@@ -1567,6 +1577,22 @@ static inline void wb_dirty_limits(struct dirty_throttle_control *dtc)
+ 	}
+ }
+ 
++
++static int wake_up_bdi_waitq(wait_queue_entry_t *wait, unsigned mode,
++				int sync, void *key)
++{
++
++	struct bdi_wq_callback_entry *bwce = 
++		container_of(wait, struct bdi_wq_callback_entry, wq_entry);
++	
++	bwce->bdi_unregister = 1;
++	if(bwce->tsk)
++		wake_up_process(bwce->tsk);
++	
++	return 0;
++}
++
++
+ /*
+  * balance_dirty_pages() must be called by processes which are generating dirty
+  * data.  It looks at the number of dirty pages in the machine and will force
+@@ -1574,7 +1600,7 @@ static inline void wb_dirty_limits(struct dirty_throttle_control *dtc)
+  * If we're over `background_thresh' then the writeback threads are woken to
+  * perform some writeout.
+  */
+-static void balance_dirty_pages(struct bdi_writeback *wb,
++static int balance_dirty_pages(struct bdi_writeback *wb,
+ 				unsigned long pages_dirtied)
+ {
+ 	struct dirty_throttle_control gdtc_stor = { GDTC_INIT(wb) };
+@@ -1595,6 +1621,16 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
+ 	struct backing_dev_info *bdi = wb->bdi;
+ 	bool strictlimit = bdi->capabilities & BDI_CAP_STRICTLIMIT;
+ 	unsigned long start_time = jiffies;
++	struct bdi_wq_callback_entry bwce= {NULL};
++	int ret = 0;
++
++
++	if (!test_bit(WB_registered, &wb->state))
++		return -EIO;
++
++	init_waitqueue_func_entry(&(bwce.wq_entry), wake_up_bdi_waitq);
++	bwce.tsk = current;
++	add_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
+ 
+ 	for (;;) {
+ 		unsigned long now = jiffies;
+@@ -1816,6 +1852,12 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
+ 		wb->dirty_sleep = now;
+ 		io_schedule_timeout(pause);
+ 
++		/* bid is unregister NULL, all bdi memory is illegal */
++		if (bwce.bdi_unregister){
++			ret = -EIO;
++			break;
++		}
++
+ 		current->dirty_paused_when = now + pause;
+ 		current->nr_dirtied = 0;
+ 		current->nr_dirtied_pause = nr_dirtied_pause;
+@@ -1843,12 +1885,15 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
+ 		if (fatal_signal_pending(current))
+ 			break;
+ 	}
++	
++	if (0 == bwce.bdi_unregister)
++		remove_wait_queue(&(bdi->wb_waitq), &(bwce.wq_entry));
+ 
+ 	if (!dirty_exceeded && wb->dirty_exceeded)
+ 		wb->dirty_exceeded = 0;
+ 
+ 	if (writeback_in_progress(wb))
+-		return;
++		return ret;
+ 
+ 	/*
+ 	 * In laptop mode, we wait until hitting the higher threshold before
+@@ -1859,10 +1904,12 @@ static void balance_dirty_pages(struct bdi_writeback *wb,
+ 	 * background_thresh, to keep the amount of dirty memory low.
+ 	 */
+ 	if (laptop_mode)
+-		return;
++		return ret;
+ 
+ 	if (nr_reclaimable > gdtc->bg_thresh)
+ 		wb_start_background_writeback(wb);
++
++	return ret;
+ }
+ 
+ static DEFINE_PER_CPU(int, bdp_ratelimits);
+@@ -1944,8 +1991,12 @@ void balance_dirty_pages_ratelimited(struct address_space *mapping)
+ 	}
+ 	preempt_enable();
+ 
+-	if (unlikely(current->nr_dirtied >= ratelimit))
+-		balance_dirty_pages(wb, current->nr_dirtied);
++	if (unlikely(current->nr_dirtied >= ratelimit)) {
++		
++		if( 0 > balance_dirty_pages(wb, current->nr_dirtied))
++			errseq_set(&(mapping->wb_err), -EIO);
++
++	}
+ 
+ 	wb_put(wb);
+ }
+-- 
+2.43.0
 
-configs tested: 67
-configs skipped: 0
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-arc                             allmodconfig    gcc-13.2.0
-arc                             allyesconfig    gcc-13.2.0
-arc                  randconfig-001-20241213    gcc-13.2.0
-arc                  randconfig-002-20241213    gcc-13.2.0
-arm                             allmodconfig    gcc-14.2.0
-arm                  randconfig-001-20241213    clang-16
-arm                  randconfig-002-20241213    clang-18
-arm                  randconfig-003-20241213    gcc-14.2.0
-arm                  randconfig-004-20241213    clang-18
-arm64                randconfig-001-20241213    gcc-14.2.0
-arm64                randconfig-002-20241213    gcc-14.2.0
-arm64                randconfig-003-20241213    clang-18
-arm64                randconfig-004-20241213    gcc-14.2.0
-csky                 randconfig-001-20241213    gcc-14.2.0
-csky                 randconfig-002-20241213    gcc-14.2.0
-hexagon              randconfig-001-20241213    clang-20
-hexagon              randconfig-002-20241213    clang-20
-i386                             allnoconfig    gcc-12
-i386       buildonly-randconfig-001-20241213    clang-19
-i386       buildonly-randconfig-002-20241213    gcc-12
-i386       buildonly-randconfig-003-20241213    gcc-12
-i386       buildonly-randconfig-004-20241213    clang-19
-i386       buildonly-randconfig-005-20241213    gcc-12
-i386       buildonly-randconfig-006-20241213    gcc-12
-loongarch            randconfig-001-20241213    gcc-14.2.0
-loongarch            randconfig-002-20241213    gcc-14.2.0
-m68k                            allmodconfig    gcc-14.2.0
-m68k                            allyesconfig    gcc-14.2.0
-nios2                randconfig-001-20241213    gcc-14.2.0
-nios2                randconfig-002-20241213    gcc-14.2.0
-openrisc                        allyesconfig    gcc-14.2.0
-parisc                          allmodconfig    gcc-14.2.0
-parisc               randconfig-001-20241213    gcc-14.2.0
-parisc               randconfig-002-20241213    gcc-14.2.0
-powerpc              randconfig-001-20241213    gcc-14.2.0
-powerpc              randconfig-002-20241213    clang-20
-powerpc              randconfig-003-20241213    gcc-14.2.0
-powerpc64            randconfig-001-20241213    gcc-14.2.0
-powerpc64            randconfig-002-20241213    gcc-14.2.0
-powerpc64            randconfig-003-20241213    gcc-14.2.0
-riscv                randconfig-001-20241213    gcc-14.2.0
-riscv                randconfig-002-20241213    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20241213    gcc-14.2.0
-s390                 randconfig-002-20241213    clang-19
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20241213    gcc-14.2.0
-sh                   randconfig-002-20241213    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20241213    gcc-14.2.0
-sparc                randconfig-002-20241213    gcc-14.2.0
-sparc64              randconfig-001-20241213    gcc-14.2.0
-sparc64              randconfig-002-20241213    gcc-14.2.0
-um                   randconfig-001-20241213    gcc-12
-um                   randconfig-002-20241213    clang-16
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20241213    gcc-12
-x86_64     buildonly-randconfig-002-20241213    gcc-12
-x86_64     buildonly-randconfig-003-20241213    gcc-12
-x86_64     buildonly-randconfig-004-20241213    gcc-12
-x86_64     buildonly-randconfig-005-20241213    gcc-12
-x86_64     buildonly-randconfig-006-20241213    clang-19
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20241213    gcc-14.2.0
-xtensa               randconfig-002-20241213    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
