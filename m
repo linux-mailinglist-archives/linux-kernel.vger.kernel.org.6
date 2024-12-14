@@ -1,76 +1,135 @@
-Return-Path: <linux-kernel+bounces-446212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7969F212B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:16:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CC79F212F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF80B1887934
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:16:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D487A0F71
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D871B2196;
-	Sat, 14 Dec 2024 22:16:33 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2E91B218D;
+	Sat, 14 Dec 2024 22:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kd0TmU9O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E919CC0A
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA32529CEF
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734214593; cv=none; b=QFjGJm1WfyY5Q4PvOe8qOuM859jicSF8ciMBZF7uJHJhaUIYkLzFVz/YPuG49poAb1ueh9a3IbhtD3AKDxZ3Hv+jAHLQqXgg0IwB9EAOkP4RtCvUv4T39XiMFPi92rf9CXkAU9AkeEUSnSm+BGmSQrFs3///wedKOI0ak2YgTxI=
+	t=1734214733; cv=none; b=a2H4Vf71HYT8nWdWQ18/uV/nBmXvsnqnNMW2OD6t56IgIdVZOGH27bv5/ie85eQSkUN3WgMZdZHKz/O/ILtx6LjXkK9AaB4BptbQiJFD226UtO4AYB2Pe0VDoKfGJqPytATi/iLCQWQgOwcXnokes7eE391yFCw8xFWO3Twmd2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734214593; c=relaxed/simple;
-	bh=jmOfGx8i6WqW/9e9eV0esQhvVw6dNrC2SZ1/lyEA2QA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MGb6wksaDXdxVhoJpmhGdBfvRT9Nj+L6TKp5I76PrvVCvFFKSRl9/5DrpSZd/YFryBtfdu6/CEG62U1N1V8a/ihK9/JrB0WSO+668mna72ze8zWoJpkXax7A+UiGMWIUgHtmFyWywXzlhonZ9wAyHefvzSAWrqRk2yqqsUDoF7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-844e5cf7b42so209700839f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:16:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734214590; x=1734819390;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bicnoxgy/OVG1OfhR8q3/VJAcXZClP4+JgLbGeU2LYg=;
-        b=wfWtC9YxJ7dU5Kx4LWy+kcVheBvvtEKKnDp3mAMlrgK5KNgtYECNIcXKm+kEGngxNV
-         9phc7pcPqxrvy4moarO6t3aydU68acXFFJEt1dCmU5lcP/0iqkDwLfa2Sk+Bvcvf9bBN
-         5UW5eS6WbJVdRfoEVgPJfmWC1EgsUlzolj4jwa+yMyakeUCLCq/4XiqxdBOaqP5COk4i
-         3kwrRZP6tUkSMIcxnW+5SDYZ3PjKAfE18GaMbEpZOp0YrCGLN25E/ZGa/X/5+Gd1Lg2L
-         mOnmcwDHEf4x0ySjOuNqYsdv6K3485VVxv+dZmucncpBL4zztfR4VWFpZ6BD0RcpWrmZ
-         jzjw==
-X-Gm-Message-State: AOJu0YxSz8SOoUOWMpCFH/AabeYtzHsaF8ThAVJUD1kf7dvHTmD/rKH6
-	5hBlcrGFkp+VKM45a04iO2zm4Al4i2qDEgaMypFgK8tLPPqTTWgN8GBj23DHStQMfuI//09g5Xs
-	8jrDYPKjCDBG09PeOn3679sxiV3cm2L6LHRpdEUQNgoeveT5Ha93kJQE=
-X-Google-Smtp-Source: AGHT+IExdpHTTQgbpsWZ2SggNuCAvpoxCCIhAH4lOu0LWXVsVnx7P5JN195KzUUE+G7qb6LGidpYeX9rTOw5YX7eKwuHGllEFd0g
+	s=arc-20240116; t=1734214733; c=relaxed/simple;
+	bh=rrJn6Y3w1pf8OHmv/ZNQSjjsloyZOFExYTXbxTK9eXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4jtVgu83SPS8/u517rwY4oST237G93cOAmIWcHaa1ab/iofIXykOQ39YnT9WeK5UJSP0BVNsyrTFUUJKNS0ZSUohasU9qWMq8+TsffhuLy8YqQFK4DDkBTt5HaGWH01RZQo4g5dclqr2p/h9UmMJ3lJ+xy1FPA+YAeGc7f3loc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kd0TmU9O; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734214731; x=1765750731;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=rrJn6Y3w1pf8OHmv/ZNQSjjsloyZOFExYTXbxTK9eXQ=;
+  b=kd0TmU9Oi2sMGtc6yhWa6+mw3A+zP/8vWvtVGWidVA1qACZ88aB8wezU
+   tLGFMhwyVTwolMuWO2GuhEACKzM2STMmKWY6h5kN+tK8EmarKINX1qXvq
+   wDvhHXv3Anp9h/5uEMEx8I1l+o5ZGZ/+CyoW+P+2GUrrZqGOQtSQ7YYp1
+   9R1dDQy+yZlHkkkJve35d4idu8WrTT10Cprc88TqMhd50j4GW18hPTWnj
+   9LSdsV7LiRD0uRybejckY9HKkUSrg+MlKqnF89xjc4xhA8ydaxomDiMYx
+   08eS2vnXYZXWpc2m5/ZM6q1Q1+MDfcK+6sUe3e948gD80g0BH8X2FAOwJ
+   g==;
+X-CSE-ConnectionGUID: zvBmQG0iSMqAZ+bLCLVtWw==
+X-CSE-MsgGUID: OCiUjXQ+Tq6vAyuEZ/p51A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34515551"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="34515551"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 14:18:51 -0800
+X-CSE-ConnectionGUID: SRIzwWp+TsKokfDWIcZDeQ==
+X-CSE-MsgGUID: aNCuxcMYS92jKAMx48kYkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="101942157"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 14:18:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tMaTG-00000007voL-0SSV;
+	Sun, 15 Dec 2024 00:18:46 +0200
+Date: Sun, 15 Dec 2024 00:18:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Subject: Re: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
+Message-ID: <Z14ERRHbVALHs8AT@smile.fi.intel.com>
+References: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
+ <514964ea-0795-41d6-91d3-f3d4f193fc6d@csgroup.eu>
+ <Z1sOTf6UZbruptnl@smile.fi.intel.com>
+ <991aee8b-fb10-4152-89fb-6ac542ee87c1@csgroup.eu>
+ <Z1xp1xwLXAvkKgwD@smile.fi.intel.com>
+ <95951cd6-f98f-4793-a35c-22f4e8d743af@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198d:b0:3a7:cf61:ded7 with SMTP id
- e9e14a558f8ab-3b02e0383f4mr69089145ab.10.1734214590647; Sat, 14 Dec 2024
- 14:16:30 -0800 (PST)
-Date: Sat, 14 Dec 2024 14:16:30 -0800
-In-Reply-To: <67409854.050a0220.363a1b.013f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675e03be.050a0220.37aaf.00db.GAE@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <95951cd6-f98f-4793-a35c-22f4e8d743af@csgroup.eu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Dec 13, 2024 at 07:01:42PM +0100, Christophe Leroy wrote:
+> Le 13/12/2024 à 18:07, Andy Shevchenko a écrit :
+> > On Fri, Dec 13, 2024 at 07:28:45AM +0100, Christophe Leroy wrote:
+> > > Le 12/12/2024 à 17:24, Andy Shevchenko a écrit :
+> > > > On Mon, Nov 18, 2024 at 03:10:09PM +0100, Christophe Leroy wrote:
+> > > > > Le 18/11/2024 à 13:31, Andy Shevchenko a écrit :
+> > > > > > Remove legacy-of-mm-gpiochip.h header file. The above mentioned
+> > > > > > file provides an OF API that's deprecated. There is no agnostic
+> > > > > > alternatives to it and we have to open code the logic which was
+> > > > > > hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
+> > > > > > drivers are using their own labeling schemas and resource retrieval
+> > > > > > that only a few may gain of the code deduplication, so whenever
+> > > > > > alternative is appear we can move drivers again to use that one.
+> > > > > > 
+> > > > > > As a side effect this change fixes a potential memory leak on
+> > > > > > an error path, if of_mm_gpiochip_add_data() fails.
+> > > > > > 
+> > > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > > 
+> > > > > Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > > > 
+> > > > Thanks, what's next?
+> > > 
+> > > Next step is that Michael or Madhavan apply it I guess ?
+> > 
+> > Folks, do you have any comments? Can you apply this and we move forward towards
+> > removing the legacy API from the kernel?
+> 
+> If you have some work which depends on this patch, you can also take it
+> together with that work through another tree. Just let us know.
 
-***
+Not right now.
+If Linus or Bart want to take this via their tree, it also would be good.
 
-Subject: 
-Author: mazin@getstate.dev
+> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
