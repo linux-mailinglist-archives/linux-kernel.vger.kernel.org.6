@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-446210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CC89F2127
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:08:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684DF9F212A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908DC1886BD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3A2166B59
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67241B392F;
-	Sat, 14 Dec 2024 22:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E681B21B3;
+	Sat, 14 Dec 2024 22:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfnvjqVd"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FPP5zK8V"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4AD101DE;
-	Sat, 14 Dec 2024 22:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664ED101DE;
+	Sat, 14 Dec 2024 22:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734214078; cv=none; b=aAsXp2NrfpDeiUM+koBX7WVmkGA6n5NxpLlLzbOU7fX+MP19cTG5Ol3FgnoYfVyNBEFY5um+qRe0n3UtUq3nzXrsLFnro8QzbhAw9t/xZIr0bT2UlUYu/EIZdzhBAzwJD/DooOI1Sy8fDu4F1bO7cxfW39R3j7WtCpyz8uy4cO0=
+	t=1734214278; cv=none; b=J7q1TCEOC/o8MG9Rg+IHAoj9sndY1yhO8YYSyysOudDlvBPi/b7NFlPlpmskZF/9Su+ebM1o0uVbjGm1LH6JQJvUd1MVJjMQ09VaIKLDrk2nw4s4ircygAvulGalFOL0LClKj8VUYI+MYtbrFsHzXix57Kcj0A4Po8UC57kdVkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734214078; c=relaxed/simple;
-	bh=znLEje4MeyzH8FXJBBFHAEoIafEYOYSMa0mrK5GnCYw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BBJ7xWuvXUKFV5U8PPeBwJV0NRSo8PSSVoHKuPcuT++vRzcbnbtUrjB+QodMq6CNasLgAUoZdmnX8Lor2+w1ooGa3dZSjcxJ3u9ecmXjozBIbONesQIu/U6Q5wNsqlVxADoJFqqZukriKFpBhi8dN2rzCrCmGvjpnDJPkGQ3n1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfnvjqVd; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso19924805e9.3;
-        Sat, 14 Dec 2024 14:07:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734214075; x=1734818875; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACrh33/0VpPxeYXX8I2uo19L8kPY5JYfKU4wzm3RzKU=;
-        b=cfnvjqVd9JMzjaiIpfAWSBTvJIYwyTXdcxgIPSX56F9p2P8zDpamsJC/nlN5Fuew2Q
-         RD2vMxG4bt4k39MUpG1H22tcA1NZnXNIJu27KKFVIZFZfGcpkGFvS2CteoHRRamgX1sm
-         Fwp5Ye4IsYbKh31Gfd1+ZzhbXZI1jHJ/3/w9/nqcCqfe7jgsu2HvmQtxtiyhKjoDlHUO
-         vPADr9XrWy66hzG/abOYK8A7n8xFJNnA3T1WUX0Bn0+TQp1490ZkFo+amlvHHaqCXpnw
-         Az0zq+gIJyA0OyE6Iggddmr9oQFz0eprfgveZBhTLii4rLceHTH/eK73fs8OgXzt3L2I
-         3C/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734214075; x=1734818875;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ACrh33/0VpPxeYXX8I2uo19L8kPY5JYfKU4wzm3RzKU=;
-        b=rLHWKYwnILIXQ5heKC8PFj2t/Q+8L2XiwwWOCMSOn79+00Gdt5ywNYHJyyas6h+3Ol
-         HP/1DTKmgO7vpQnyILEH5FMCet9ecEzy4uSKiEcjNW1dNxGTB3TYeZMjB2PrXnPuU/wV
-         QJSJilBnfW14QxR4BHjjF8IV4Tw7n5pZ6CQHe1+wOLHPJnboGFmDGYP4jZaT7Jlz4xFu
-         hkZGE83ebBFv1KnPFuloK2+wHbRK0+HAjI2GTNq1/FgUFcQaIQ6WBx6T80wHrP1RiTOq
-         VnewaV28vDQh4SD9ZiUJGflZwxQcODZMXMukoyLmCh1WH8zWD0bzRyNbM2ja5kWYBqKi
-         rbgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNCoxQyvHzPOV8PEUy/G3mnsoMS7FomSDI2nN5Hu5Mw3nSNojAZ16E9ZtFlScxyL5nm8LBvBEP6567@vger.kernel.org, AJvYcCXJHzjmy+FzDAmn2ZHEqpthIHq0moWJgirw0dtqjr/40DogMW3giNqsNIy5QjErK90xWLI6J9HvPQx5E33v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNcG0B5VVYQJdk+kNgf6HqQykyDNFL+XBFXOCcdj9LnMaDUIGC
-	NHHlQkS+HLMi4Y1Cssb7Fg+Ydh6MLX3V7J7XhZlUoDBOBvH/FIEM
-X-Gm-Gg: ASbGncvgrups8IBpKQ5kBAs6wBAGpeugiapjfEDw+OC7erd5C9oQqsha0Rib/vriHsR
-	55UJPycI0SlZhjl288QcLpocKcQhO4XVtRFYw7Jhl5v38lQWg9ngddFEys/k2hzanwFwTVROERv
-	ciCd7JIucoUTgYe4mWG+pp1j2H6WqF4Blig4ChcI0Gq2/WeXnCn+PYkaayDAPQeCRJ78H+1dnt3
-	hgP4dfm430h1KvCZU0+7V6ihGCFv5CIXY98t6DlT/1jFjDUb+duKvIydJaChDF6I+FczsKBxIOq
-	qN/E8fgHsa2N/MqRLGRr5Mymcxy3e2C/
-X-Google-Smtp-Source: AGHT+IEfd+QSAC7E/LXZUUhBYjyLml2o2c1E1vNqypWjINCbXo/G4qVPa0wBP1p2fCV8u0Syz7iBSw==
-X-Received: by 2002:a05:6000:460c:b0:385:e961:6589 with SMTP id ffacd0b85a97d-3888dcd4789mr5336184f8f.20.1734214074709;
-        Sat, 14 Dec 2024 14:07:54 -0800 (PST)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8049facsm3696434f8f.79.2024.12.14.14.07.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 14:07:54 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] arm64: dts: exynos8895: Add camera hsi2c nodes
-Date: Sun, 15 Dec 2024 00:07:50 +0200
-Message-ID: <20241214220750.723354-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1734214278; c=relaxed/simple;
+	bh=vS/mC/PG7Z7XwpQ+xnC0D9bGPQsCkaleBv56apyy5vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WO/hBhThaWBmhrteYDcVxeJDpSfuM80ivC0dlSEljkFUvit5cW7tSBFq1+pBvVbaf0Vbveoa1/YqnxMl7BFrgV5zJJYCbYQg+zeWkEy2D0FNfVHTM4YeKJr3uo9+7W12eSZk3JWrSjHTzxy/0M8T2+RKxwjJSRzF0H9OG0ZL+z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FPP5zK8V; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Qo9DRUyKRrqtLyRuNXYM99TkYAh0n7GpnTKVcYgBdPE=; b=FPP5zK8ViSCb+8pbD6ArAAmyiH
+	5tbsuw6oSYj65D4t5veoY7adMhxKFB+WgfTWDVJO6RSojy1lEUw9xUz8L8QRlbtz5dnQSi5XxMcdt
+	6Ff8bEnof3eNQ9CAbrH+Yb0z23MJSpEmAMZe4iU6on3G7ZyYYSTWWEcP5qzywn7bC/HXl2oduQes/
+	RqBpxyXKcYfPIe3zo1ZYsTnleFm0OLJfvW7SzyxVyFsRaKN4mrB7K3332MojFURnVQ4FVivEMLjjR
+	OEvWiSHUz4gM4MSrYfTBe+OWUyE0rlNy/yBYHKTJYbdUJEu38qV2Sfqjgz8BdUoHPhaN36eG3EKuj
+	/1Tq73AQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMaLs-00000005RuX-0hl1;
+	Sat, 14 Dec 2024 22:11:08 +0000
+Date: Sat, 14 Dec 2024 22:11:07 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Arnd Bergmann <arnd@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
+	linux-rt-devel@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
+Message-ID: <Z14Ce7cziCn5Fluq@casper.infradead.org>
+References: <20241210160556.2341497-1-arnd@kernel.org>
+ <20241210160556.2341497-3-arnd@kernel.org>
+ <CACRpkdZaoD2vqbCi1AFUa6mF2_=c3Nu4R0CvxFAep0VMgtMtOQ@mail.gmail.com>
+ <20241211152257.Igx3aT2Y@linutronix.de>
+ <CACRpkdbYU=Txm0zUWDWvNXA0JHRNGpy1ccy0zQdiBb2Ya+UBFA@mail.gmail.com>
+ <Z1v6XcaSK97Sa9Tz@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1v6XcaSK97Sa9Tz@shell.armlinux.org.uk>
 
-Add nodes for hsi2c1-4 (CAM0-3), which allows using them.
+On Fri, Dec 13, 2024 at 09:11:57AM +0000, Russell King (Oracle) wrote:
+> On Fri, Dec 13, 2024 at 01:27:00AM +0100, Linus Walleij wrote:
+> > On Wed, Dec 11, 2024 at 4:22 PM Sebastian Andrzej Siewior
+> > <bigeasy@linutronix.de> wrote:
+> > > On 2024-12-11 14:29:29 [+0100], Linus Walleij wrote:
+> > > > So fast GUP is supposed to be lockless, and should just not
+> > > > have this problem. So it can't be addressing gup_fast_pgd_range()
+> > > > right?
+> > > …
+> > > > I'm more asking if HIGHPTE even acquires a spinlock anymore
+> > > > as it is supposed to be "fast"/lockless. If it does, it is clearly violating
+> > > > the "fast" promise of the fast GUP API and should not exist.
+> > >
+> > > This is lockless on x86. The problem is ARM's
+> > > arch_kmap_local_high_get(). This is where the lock is from.
+> > 
+> > Aha that calls down to kmap_high_get() that that issues
+> > lock_kmap_any(flags).
+> > 
+> > But is it really sound that the "fast" API does this? It feels
+> > like a violation of the whole design of the fast stuff.
+> 
+> If there's no way to do it lockless, then it has to take the lock.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos8895.dtsi | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-index 90b318b2f..36657abfc 100644
---- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-@@ -292,6 +292,50 @@ pinctrl_peric1: pinctrl@10980000 {
- 			interrupts = <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		hsi2c_1: i2c@10990000 {
-+			compatible = "samsung,exynos8895-hsi2c";
-+			reg = <0x10990000 0x1000>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_HSI2C_CAM0_IPCLK>;
-+			clock-names = "hsi2c";
-+			interrupts = <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&hsi2c1_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_2: i2c@109a0000 {
-+			compatible = "samsung,exynos8895-hsi2c";
-+			reg = <0x109a0000 0x1000>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_HSI2C_CAM1_IPCLK>;
-+			clock-names = "hsi2c";
-+			interrupts = <GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&hsi2c2_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_3: i2c@109b0000 {
-+			compatible = "samsung,exynos8895-hsi2c";
-+			reg = <0x109b0000 0x1000>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_HSI2C_CAM2_IPCLK>;
-+			clock-names = "hsi2c";
-+			interrupts = <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&hsi2c3_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_4: i2c@109c0000 {
-+			compatible = "samsung,exynos8895-hsi2c";
-+			reg = <0x109c0000 0x1000>;
-+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_HSI2C_CAM3_IPCLK>;
-+			clock-names = "hsi2c";
-+			interrupts = <GIC_SPI 434 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&hsi2c4_bus>;
-+			pinctrl-names = "default";
-+			status = "disabled";
-+		};
-+
- 		spi_0: spi@109d0000 {
- 			compatible = "samsung,exynos8895-spi",
- 				     "samsung,exynos850-spi";
--- 
-2.43.0
-
+Well, no, it's allowed to fail.  It could trylock and fail if it can't
+get the lock.
 
