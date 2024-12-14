@@ -1,95 +1,54 @@
-Return-Path: <linux-kernel+bounces-445877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726239F1D08
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:30:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1826F9F1D09
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918F8169445
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80722188D15E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED2281720;
-	Sat, 14 Dec 2024 06:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13D712C470;
+	Sat, 14 Dec 2024 06:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XW913tGc"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b="Lo1AA0qS"
+Received: from mail-10625.protonmail.ch (mail-10625.protonmail.ch [79.135.106.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199CC84A22
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625DA5914C
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 06:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734157832; cv=none; b=USPh4psZ8J2edbqiOJIkdPWFrCEEGkfFETtYETCtWnECh6/Q0JeZastTS4/FXTzg4CCJxyVX4fg0rFJcBxueNJKDOddrvM8c7LF28gpzJsfHavoIxkHHJpPxHU9e3c91Xp2XiRpb02ibYxZq4acSD04ikd9+K5yhFgMgzgi7yug=
+	t=1734157985; cv=none; b=BTwbyhMV6BBi+gFAspodL1qnps9EJwxmMmdKMMdmRW1JB7pKY32IJqYCR062NTXz/LmuT+OoFMxRSBVGwfd4c//pz710HH8znWJKBij7G7AVlG3hqs8fou653pJOS0NeYo95VxBWEhlNYdoAwd4TkQOOyYfjKhSc6egIUVzDZD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734157832; c=relaxed/simple;
-	bh=KuGfBG3h1XO2QKIY6ZxLEUXPJlDUunNSyY3Zc7k6rLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naNd5zfO40KkxJ1nqkRMTdf2+TQB/8qJMHlxuvcWBvrE8M8NN4C96sWDs5AKm6SwvVERjyb52LWOXrg7+XnbabwXtTRnaOGAuUORTLEu16/X716aTikgGkw217tAIpM3tsOPGLlMcCT0DmytxlN11pLXvf578XcLfkqds0WS8kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XW913tGc; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-725f2f79ed9so1920169b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 22:30:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734157830; x=1734762630; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZlgMCaOaC31D3cOsxfoNKxD9p5p+eSeVRC9kaoau9Mk=;
-        b=XW913tGc8NNfyb+K3DO8vGKbn0GGgNLJTf2k1TT7utf2shVH4wEtt6lZqS2Oho643k
-         j662XNoKINhxvMRZBGHuUSv3fuEmhgy82YGimb2RUqJzKEFxjOk2BtTGA3+fJ0LVjTME
-         KFQwPn9tiqvLcGDBha+C24Kd4PeF5meOeg1wvAFSRJaV0uj/fUUgNjeZYvwvZk+8SIRa
-         md0E2cweJ8cnsgKTmpEwa8vNPWLKfQs5Y+DzKCIPZwKTWRBT0QsdA6S6jnA3+Lak9HGm
-         hIHtQkM3WOJXFoUgaqwvTPCgQbC3Yo8dC9mKNAfLOg5ZLIAZGl88pc7CKeByd4goSCWN
-         IKkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734157830; x=1734762630;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZlgMCaOaC31D3cOsxfoNKxD9p5p+eSeVRC9kaoau9Mk=;
-        b=Jd88gNjm3AABvSRwLjLspvFb5Fh1ys1u8dnqwxiWcBHyt615wy0biNhqCRFtu3we65
-         bqGSKQZkUeuyWKDj75gyvdZf53/hTahZFUYr5im8upHBFwe7xlY6yzDMya1ciEyyJLXp
-         SunP5N89F+79fvOvPXbYYNk73WslsB3sLFGkEVdf33vYIMJDmhpFp/DJ8Wlh8Ulk8a+L
-         Bw6hlOKj+g6i4/t0d1YwOF19Z0Krz8lGNpqJ9uP+2+25W4wbsENruATFphjo7yyYRkPg
-         /x4Iiy/rqfeWqGpQu4IITc/X3TRsVgdif/kGaumD7M3GtKMHB4+wqEKOX139fR6V0MLM
-         9VoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqyOC2gZLmuFV4nuP9zVui4E19k/voR0kqshXsgivrMqbGVIZQ2kdMq1r1+Eil/kC1MsCxiP3b2EVQXj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+iFOfy2EO0vlCs5ZjBLjNMFVIZq2wmF2+wIDFgy3OqE7RbSXp
-	nWj2BZJg8C18WJIuTgSxmrhJLJzoca+TOoVAKfcC8IljjJXmjzVJVtwhGGYRSA==
-X-Gm-Gg: ASbGncvizd7IP3jG74kmRwAV/iF9E4RdKCtzTBuOWp/4arX3rCkesKkY/C5qUpqh0ZS
-	wYESTAa03PZ0nOycs0OJ569tYcEwkyU7vX4dSPkK4Zeo7Ml3598KkFpG6DaNjqwp1RGYNo20BeI
-	JPlClLlQq2EJa5/lXLNGrm2BkupkeVhHV46PlxOGlKsFYJ3jcY0PBg22+CH02E8ZyzmNMEjKJtM
-	Oo7LvpjPowOMWBEzhxBrX9//FKHy/1tz+3mH4RZaXrgLi75PBgElhfp5iltgAIzyIC+
-X-Google-Smtp-Source: AGHT+IF1qZdiCv20zyVSp63JMQBIBSxSIe0ltCHbfrxCz8Ri2Bw6xNnbLmKF0vNlQnSnOzeS4RTRJQ==
-X-Received: by 2002:a05:6a00:2e89:b0:724:d758:f35 with SMTP id d2e1a72fcca58-7290c0def31mr7842131b3a.2.1734157830253;
-        Fri, 13 Dec 2024 22:30:30 -0800 (PST)
-Received: from thinkpad ([120.56.200.198])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bcdf56sm805168b3a.182.2024.12.13.22.30.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 22:30:29 -0800 (PST)
-Date: Sat, 14 Dec 2024 12:00:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org,
-	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241214063023.4tdvjbqd2lrylb7o@thinkpad>
-References: <20241205232900.GA3072557@bhelgaas>
- <20241209143821.m4dahsaqeydluyf3@thinkpad>
- <20241212055920.GB4825@lst.de>
- <13662231.uLZWGnKmhe@rjwysocki.net>
- <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
- <20241212151354.GA7708@lst.de>
- <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+	s=arc-20240116; t=1734157985; c=relaxed/simple;
+	bh=ievqeHVfDN1p5eeUqf09eDC9oeLJXp2DUIrALupbiTc=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Joy6tp+w5N5VilS25I3Rz1H4i36g5bj8Nx2S8VeS5rJBuYn4r3oIPoTcCnAd7TEqhcxoch5xfHUwvadIzU7OwYUhYFI0f8jjR/be+hd3vVRCayShf/ruOGSLeedS/2WHuTZ3ArDkkT7HrnWtL/uiP/GH1n71Bz14pfnqBVyI5TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io; spf=pass smtp.mailfrom=ranguvar.io; dkim=pass (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b=Lo1AA0qS; arc=none smtp.client-ip=79.135.106.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ranguvar.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ranguvar.io;
+	s=protonmail3; t=1734157981; x=1734417181;
+	bh=ievqeHVfDN1p5eeUqf09eDC9oeLJXp2DUIrALupbiTc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=Lo1AA0qSzQJTJKMajvxYqwDGjWAbrWc0jLytj2YyxV9CyuAjjscbPD/WXCJyuYRqP
+	 mDGxnd5Onj24epykQ/I2WKMDi8NjHsw2cYKduHqQAY6drz9gUgRQ/1pTPSY+W2AWVW
+	 Gy3KlKEC0sNvKN+QoFwvVSkcQ+zjzmusiEKEJSjD1ioUCNVWHa5gqJ3wh0hunpCE18
+	 sLFnTl8iXRKwAAQSBZgFRz1JAkI0ycaR42OLh9hyFVEdWvhMEVOwXFkrSgLilT4mGP
+	 P1/2BKEikVb4Cs0wX8V0QTKr2D3IRrATySNP5UHQ+492YNQOjbMfH1pySa0rLKJ0pT
+	 mOwpiZhxyD1Ww==
+Date: Sat, 14 Dec 2024 06:32:57 +0000
+To: Peter Zijlstra <peterz@infradead.org>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+From: Ranguvar <ranguvar@ranguvar.io>
+Cc: "regressions@leemhuis.info" <regressions@leemhuis.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM guest
+Message-ID: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io>
+Feedback-ID: 7618196:user:proton
+X-Pm-Message-ID: 17d298ae81f0994ea02c3104009042b0d1197e8b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,91 +56,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 03:35:15PM +0100, Rafael J. Wysocki wrote:
-> On Thu, Dec 12, 2024 at 4:14 PM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > On Thu, Dec 12, 2024 at 01:49:15PM +0100, Ulf Hansson wrote:
-> > > Right. This seems to somewhat work for ACPI types of systems, because
-> > > ACPI is controlling the low power state for all the devices. Based on
-> > > the requested system wide low power state, ACPI can then decide to
-> > > call pm_set_suspend_via_firmware() or not.
-> > >
-> > > Still there is a problem with this for ACPI too.
-> > >
-> > > How does ACPI know whether it's actually a good idea to keep the NVMe
-> > > storage powered in s2idle (ACPI calls pm_set_suspend_via_firmware()
-> > > only for S2R and S2disk!?)? Especially when my laptop only supports
-> > > s2idle and that's what I will use when I close the lid. In this way,
-> > > the NMVe storage will certainly contribute to draining the battery,
-> > > especially when I won't be using my laptop for a couple of days.
-> > >
-> > > In my opinion, we need a better approach that is both flexible and
-> > > that dynamically adjusts based upon the use case.
-> >
-> > Agreed.  I'd be happy to work with the PM maintainers to do this,
-> > but I don't really know enough about the PM core to drive it
-> > (as the reply from Rafael to my mail makes pretty clear :))
-> 
-> I'm here to help.
-> 
-> Let me know what exactly you want to achieve and we'll see how to make it work.
+Hello, all,
 
-I'll try to summarize the requirement here since I started this thread:
+Any assistance with proper format and process is appreciated as I am new to=
+ these lists.
+After the commit bd9bbc96e835 "sched: Rework dl_server" I am no longer able=
+ to boot my Windows 11 23H2 guest using pinned/exclusive CPU cores and pass=
+ing a PCIe graphics card.
+This setup worked for me since at least 5.10, likely earlier, with minimal =
+changes.
 
-Problem statement
-=================
+Most or all cores assigned to guest VM report 100% usage, and many tasks on=
+ the host hang indefinitely (10min+) until the guest is forcibly stopped.
+This happens only once the Windows kernel begins loading - its spinner appe=
+ars and freezes.
 
-We need a PM core API that tells the device drivers when it is safe to powerdown
-the devices. The usecase here is with PCIe based NVMe devices but the problem is
-applicable to other devices as well.
+Still broken on 6.13-rc2, as well as 6.12.4 from Arch's repository.
+When testing these, the failure is similar, but tasks on the host are slow =
+to execute instead of stalling indefinitely, and hung tasks are not reporte=
+d in dmesg. Only one guest core may show 100% utilization instead of many o=
+r all of them. This seems to be due to a separate regression which also imp=
+acts my usecase [0].
+After patching it [1], I then find the same behavior as bd9bbc96e835, with =
+hung tasks on host.
 
-Drivers are relying on couple of options now:
+git bisect log: [2]
+dmesg from 6.11.0-rc1-1-git-00057-gbd9bbc96e835, with decoded hung task bac=
+ktraces: [3]
+dmesg from arch 6.12.4: [4]
+dmesg from arch 6.12.4 patched for svm.c regression, has hung tasks, backtr=
+aces could not be decoded: [5]
+config for 6.11.0-rc1-1-git-00057-gbd9bbc96e835: [6]
+config for arch 6.12.4: [7]
 
-1. If pm_suspend_via_firmware() returns true, then drivers will shutdown the
-device assuming that the firmware is going to handle the suspend. But this API
-is currently used only by ACPI. Even there, ACPI relies on S2R being supported
-by the platform and it sets pm_set_suspend_via_firmware() only when the suspend
-is S2R. But if the platform doesn't support S2R (current case of most of the
-Qcom SoCs), then pm_suspend_via_firmware() will return false and NVMe won't be
-powered down draining the battery.
+If it helps, my host uses an AMD Ryzen 5950X CPU with latest UEFI and AMD W=
+X 5100 (Polaris, GCN 4.0) PCIe graphics.
+I use libvirt 10.10 and qemu 9.1.2, and I am passing three PCIe devices eac=
+h from dedicated IOMMU groups: NVIDIA RTX 3090 graphics, a Renesas uPD72020=
+1 USB controller, and a Samsung 970 EVO NVMe disk.
 
-If the platform is using DT, then there is no entity setting
-pm_set_suspend_via_firmware(). So NVMe will be kept in low power state all the
-time (still draining the battery). There were attempts to set this flag from
-PSCI [1], but there were objections on setting this flag when PSCI_SUSPEND is
-not supported by the platform (again, the case with Qcom SoCs). Even if this
-approach succeeds, then there are concerns that if the platform is used in an
-OS like Android where the S2Idle cycle is far more high, NVMe will wear out
-very quickly. So this is where the forthcoming API need to "dynamically adjusts
-based upon the use case" as quoted by Ulf in his previous reply. One way to
-achieve would be by giving the flexibility to the userspace to choose the
-suspend state (if platform has options to select). UFS does something similar
-with 'spm_lvl' [2] sysfs attribute that I believe Android userspace itself makes
-use of.
+I have in kernel cmdline `iommu=3Dpt isolcpus=3D1-7,17-23 rcu_nocbs=3D1-7,1=
+7-23 nohz_full=3D1-7,17-23`.
+Removing iommu=3Dpt does not produce a change, and dropping the core isolat=
+ion freezes the host on VM startup.
+Enabling/disabling kvm_amd.nested or kvm.enable_virt_at_load did not produc=
+e a change.
 
-2. Making use of pm_suspend_target_state to differentiate between suspend states
-and powering down the devices only during PM_SUSPEND_MEM (S2R). But this also
-suffers from the same issue as mentioned above (when platform doesn't support
-S2R).
+Thank you for your attention.
+- Devin
 
-TLDR: We need a PM core API that that sets a sane default suspend state for the
-platform and also allows dynamically changing/overriding the state (by taking
-inputs from userspace etc...). This API should also forbid override, if the
-platform has limitations (like if it requires powering down the devices all the
-time (x13s laptops)). Finally, this API would be used by the device drivers to
-decide when to safely power down the devices during suspend.
+#regzbot introduced: bd9bbc96e8356886971317f57994247ca491dbf1
 
-@Ulf/others: Please chime in if you don't agree with anything I said above.
-
-- Mani
-
-[1] https://lore.kernel.org/all/20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-driver-ufs#n1041
-
--- 
-மணிவண்ணன் சதாசிவம்
+[0]: https://lore.kernel.org/regressions/52914da7-a97b-45ad-86a0-affdf8266c=
+61@mailbox.org/
+[1]: https://lore.kernel.org/regressions/376c445a-9437-4bdd-9b67-e7ce786ae2=
+c4@mailbox.org/
+[2]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/bisect.log
+[3]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.11.0-rc=
+1-1-git-00057-gbd9bbc96e835-decoded.log
+[4]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.12.4-ar=
+ch1-1.log
+[5]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.12.4-ar=
+ch1-1-patched.log
+[6]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/config-6.11.0-r=
+c1-1-git-00057-gbd9bbc96e835
+[7]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/raw/=
+6.12.4.arch1-1/config
 
