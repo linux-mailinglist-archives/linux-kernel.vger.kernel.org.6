@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-445969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933129F1DFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:13:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829B49F1E01
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1485A188BA0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:13:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E021167E2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB62186E58;
-	Sat, 14 Dec 2024 10:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8853F187848;
+	Sat, 14 Dec 2024 10:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oM7BNTo1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOCSPIAT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7CB18AE2;
-	Sat, 14 Dec 2024 10:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A0018AE2;
+	Sat, 14 Dec 2024 10:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734171221; cv=none; b=ub6EYFU/62j95ufuvzdGSobeOsrj3KB8dT8zuJpI2c0cd1Wfjdb4I5ZqLPrRAqLsGSFQASPBpz+hgqzCTejL6yVMfdIH8KLjqGYJH78oclLKI7XErwdGCtncvZC7lIpyJvU9RaA6XipfBl2PtnWS6tIrx604SXw7rexHt0lBW1k=
+	t=1734171296; cv=none; b=Pch3CoU8L/SNq+QnjW8hLL81qELYcbuNntxBmdeQJGMR2H51NYjkV41PEzhn5aXyeuIJXgSriQtfv3dA9zBwmbRfy13QtJWMkIK0rbQY6WEnhZHAYk+6JfZakuofS+jEfVBT/2piKNaSxFkTTLeHebqgfXTW8wHT4Ucr8E0apFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734171221; c=relaxed/simple;
-	bh=GtUbfeprVSqC84GFBUJtrVNhwzGqSjy+5NCyYZL4rLw=;
+	s=arc-20240116; t=1734171296; c=relaxed/simple;
+	bh=6mnegxy9rT1+pQddReITs8KYl53ZtnkHOsgd4L+o9V4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rPJUsPj2/mt0mLd/udG38atGzJHOW0GjqqAiTQJRKnBIr6SKceBH7tysti1wY2aG2XItzmvupr0ZGbTbUqtUDHjqgmFtt58LOpBXcjGdidilpysQIZyiiNqzYjw5jKAYZbU/oooIHJGOnHLQDlxBI91gUVMJiiR4U1OioJqD1TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oM7BNTo1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A63DC4CED1;
-	Sat, 14 Dec 2024 10:13:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LAraleZ571K/bcIgXslyMBs4c0gDCWNR8Ie5vdTWluGEwOdcJfcSjwO26DTwRlRt2dM6BFZcDhDU6eCOF59pi/PCeEwDMUNSPFYCLOoWk1J2cINlBw9P7PuL75AKMehMlg8rmCuX7rXarSakrVslLT1OBLQmNhh/bV5Jv/7JhRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOCSPIAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB49C4CED1;
+	Sat, 14 Dec 2024 10:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734171220;
-	bh=GtUbfeprVSqC84GFBUJtrVNhwzGqSjy+5NCyYZL4rLw=;
+	s=k20201202; t=1734171296;
+	bh=6mnegxy9rT1+pQddReITs8KYl53ZtnkHOsgd4L+o9V4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oM7BNTo1xLch3Y/+NQA1kdLsExJBmvTTrIV8z99Y/7ye+eSiYlyEpqkEPrJKO53kZ
-	 V6c8DJK9rWZkPDeYdttcX58qeidMBmn7G0W3b3n89jjaMqGzMF6uXwY9h+cxBd6DLX
-	 oMuR32+lVIWZk9M5O6shR5KDZq8O1Qs0H98zWtbTQAtiq0hGOBwUkWgtjAmIq9u8Xq
-	 JIrqOnx3rRMgoS5DlzfI1ymGp9EWoWfK69NgWQwaDfU1SGbw+nyBYHQ0czmJOLHgWP
-	 wSB15P9urwanPM7Uw8CcdFkJeMWPXBXsDhuxBByOZaR/ZsRBSNA2+ih19vB79iuJr+
-	 P2cNP5uHFJ7aw==
-Message-ID: <a4137536-5c7f-43b7-9af6-dbf77aaa8987@kernel.org>
-Date: Sat, 14 Dec 2024 11:13:36 +0100
+	b=YOCSPIATAcXnIiOVp5zIlmXrc5h3X3phYeHJxatiR/icLbTDvKOLrcj2an+pp3Smx
+	 fThD24HQKdrOCLCRIHy61mvivdMQiAwfFa/eOsmOyHhLUXS/YPtkoMTX7mffStYQ0/
+	 TGOUKrzhwngw7GEkcgnedbD1WTEwXtb6zTewDLBNuUEqV5SS+jmhXqL9iZ/LTIOalD
+	 10byKvGj2ZQpzpQbRuWBJ01uIxI47AEt5QTfk0QHmX0P8pk/Sux40T1IfYkcFKmm1e
+	 Fu2ZGjdy/6prH71SexsDJDWHdwtU+EmaxHvDxao3H/QgH7v80CyQ0S40FdPOdh8ONi
+	 YzFSO37VOBWPA==
+Message-ID: <bc4ff071-ffc5-4b16-8e3a-977e47475816@kernel.org>
+Date: Sat, 14 Dec 2024 11:14:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] arm64: Introduce Arm Morello System Development
- Platform
+Subject: Re: [PATCH 6/8] arm64: dts: Add Arm Morello System Development
+ Platform support
 To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
 References: <20241213163221.3626261-1-vincenzo.frascino@arm.com>
- <20241213163221.3626261-6-vincenzo.frascino@arm.com>
+ <20241213163221.3626261-7-vincenzo.frascino@arm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,36 +101,62 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241213163221.3626261-6-vincenzo.frascino@arm.com>
+In-Reply-To: <20241213163221.3626261-7-vincenzo.frascino@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/12/2024 17:32, Vincenzo Frascino wrote:
-> Introduce the Kconfig entry for the Arm Morello System Development
-> Platform.
+> The Morello architecture is an experimental extension to Armv8.2-A,
+> which extends the AArch64 state with the principles proposed in
+> version 7 of the Capability Hardware Enhanced RISC Instructions
+> (CHERI) ISA.
+> 
+> Introduce Arm Morello System Development Platform support.
 > 
 > Cc: Sudeep Holla <sudeep.holla@arm.com>
 > Cc: Rob Herring <robh@kernel.org>
 > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  arch/arm64/Kconfig.platforms | 5 +++++
->  1 file changed, 5 insertions(+)
+>  arch/arm64/boot/dts/arm/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 370a9d2b6919..1c4867ea9407 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -250,6 +250,11 @@ config ARCH_NPCM
->  	  General support for NPCM8xx BMC (Arbel).
->  	  Nuvoton NPCM8xx BMC based on the Cortex A35.
->  
-> +config ARCH_MORELLO
-> +	bool "Arm Morello System Development Platform"
-> +	help
-> +	  Enables support for Arm Morello System Development Platform
+> diff --git a/arch/arm64/boot/dts/arm/Makefile b/arch/arm64/boot/dts/arm/Makefile
+> index d908e96d7ddc..0a821808692e 100644
+> --- a/arch/arm64/boot/dts/arm/Makefile
+> +++ b/arch/arm64/boot/dts/arm/Makefile
+> @@ -7,3 +7,4 @@ dtb-$(CONFIG_ARCH_VEXPRESS) += rtsm_ve-aemv8a.dtb
+>  dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2f-1xv7-ca53x2.dtb
+>  dtb-$(CONFIG_ARCH_VEXPRESS) += fvp-base-revc.dtb
+>  dtb-$(CONFIG_ARCH_VEXPRESS) += corstone1000-fvp.dtb corstone1000-mps3.dtb
+> +dtb-$(CONFIG_ARCH_MORELLO) += morello-soc.dtb
 
-You do not get new ARCH per each soc or product. Merge it to existing
-ARM Kconfigs.
+No, you organize patches in insane way. Makefile is never, never
+separate entry.
+
+Look how all existing submissions were done.
+
+Squash the patches.
+
+You also did not CC several people and at least arm kernel list. Use
+standard tools for development instead of inventing your own process.
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
+
+
 
 Best regards,
 Krzysztof
