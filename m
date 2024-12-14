@@ -1,148 +1,207 @@
-Return-Path: <linux-kernel+bounces-446030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D499F1EB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9699F1EB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA2D1889625
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30229188963F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16FA1925B9;
-	Sat, 14 Dec 2024 13:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE43E192D75;
+	Sat, 14 Dec 2024 13:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="qYz2n5NX"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5VcCJaE"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E44938DD6;
-	Sat, 14 Dec 2024 13:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B712383;
+	Sat, 14 Dec 2024 13:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734182509; cv=none; b=RPTHyumxgvjPRGnpjNc9ZvDDuDjxDWEMrubZA5AROtMMbWaxj4Y7ygx40E1b17UMOct1pH1j7R0DiTk4DemqcdHrtjaODUGOlWmwHsGhmunxMaJolIsSblyAyl7+k++3QWIln9gcLLWM6q03cJus52RQihsv6FHoaWIdvkqVWs0=
+	t=1734182927; cv=none; b=BZbYqHhwWxNeUq+JgMHF1jUYWMzla4woSzd6enCh89cNw2BQvOdDLhZORa0ibp4tFzFAEx5lLyYp3eML/hJ+lTdwVz5lyD9juX25ZPPC5ZXXawKGPqi7UJhv3tN1HLRVqhJndwlsOsZqV13tNpQ2taiv2wrf63LmABTSt+z3PN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734182509; c=relaxed/simple;
-	bh=GNPAXeKREmmCRVRrZsx5msaIenpHBKcxRMH7y/BULfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rAmfZveLPXlCT7+PJcUlSIdMbDBL10Wyg1OWr0W1wB/IQFxlrP/2pxSR8PGMN+7koyEdQ1GiK1qtQvr+x+BucTmb9iSVIyrY78yYVJANRR9nxhiDry8nX03hJqR390pvhAiOQEEedKWtja5EIiVlkWDwdrA8/mJRKnQO7aXBDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=qYz2n5NX; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1734182504; bh=GNPAXeKREmmCRVRrZsx5msaIenpHBKcxRMH7y/BULfo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qYz2n5NXM7BqCHY6yLfscI6LDTgBX8fBVXSKNIw1/65vHHJDYMMlP4Gvmk9OK0t8D
-	 aKZZ8DsjWWQzi1zn8xlduV2Zb9nuev7Q1Af6MXGrrHPnPmNTz1qw1lYkUzI4jc8q9R
-	 Luv57ZfE9mo+M1usM/HlDCnjgIR50SdlZr97jp34=
-Date: Sat, 14 Dec 2024 14:21:43 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, 
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 06/13] uprobes/x86: Add uprobe syscall to speed
- up uprobe
-Message-ID: <ec6f4159-8428-4156-9413-d5aa6b39e5eb@t-8ch.de>
-References: <20241211133403.208920-1-jolsa@kernel.org>
- <20241211133403.208920-7-jolsa@kernel.org>
- <66e85401-b2ec-442d-bebe-c4ff3151e7e2@t-8ch.de>
- <Z1xKAKnX3su21JZu@krava>
- <bd095061-f43b-4b99-bb94-40cdeac76f4c@t-8ch.de>
- <Z1ysj_PXy51WeAT2@krava>
+	s=arc-20240116; t=1734182927; c=relaxed/simple;
+	bh=Wy+U/RXFyyNeT0tzJjPMpTteXWlnAz+YsoOZBCw4Rcc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=VbATrH56kkB//a6T2TIjP3ouH4QBIef/LfOFdmKs/ojzEsUbhyhopzhxZyQkjkgu+JEq0CH9RiVyLjFUL/WzrdPKe5/oRv3BQ9ValO9Eg3Dl9Y38q7vEFctOeaz7v5IgXKJMQKi1RkC+ICKHB0YCG17eNyShCYR8CwZQlC/7PLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5VcCJaE; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a766b475so27534025e9.1;
+        Sat, 14 Dec 2024 05:28:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734182924; x=1734787724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HO8HOTr8B5ah55ywq4xCweT5ljEIJFW9Gqnw5M3266I=;
+        b=Y5VcCJaEqKACszlhxn3Rj03AxlLe8PLzg4YBKc8gE5icZWN4NIk4cYY2Fv4IA/wO0g
+         /fUFvtauFzALoZEMwHdujaL+89jh+6LgRTnXU+zSxKovzeCRA1n+FB6v5lSyVCpSdqza
+         rUsU5DW73p/+fyPdluyuFj5Uk0ECig2KDimVysVQMN8yt58bFEeaHpIght2rCFa26cSO
+         vcrNacjYh4STEcBx4Z4dwQ5EWWLtTyRMNXJ2ivKmMrofqee1HXXnQiyhTRQr/c2PBM7W
+         rezHNjIxgJSwBe3Aj7X9inH5usyz4GNAv4D4SKScpBsWe7p/ifhYbAIz8QC1B22qMx5e
+         i8PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734182924; x=1734787724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HO8HOTr8B5ah55ywq4xCweT5ljEIJFW9Gqnw5M3266I=;
+        b=RB+5ftmlDq0GXePGWWVX/r2TJjJasgRn7Uj7bSYaSoavqUFPCUrjKKL4xg64Dxqosb
+         c+AYblSNpH4+CJbOdu0+dKmAUDx3n28zGXn3NO4njNdu7YSsiTw1WHlWPoMDRRQSkfwq
+         SuW9wAu/nrgGPKJlDMJA5uJjN5RlwMlBIeNJWdfuRP1IhoQGgvDpG06RCi7qWMObTJqf
+         FOcjcUGWLopFRSyQpjNfm+KyafCnLC0BcX4vr3eqOpF7/Wazyr2Zi3L9vO8bgTZmzjS8
+         ZWciiigCY57sa3wC77zefFNzpC3EWwV6fdY6b+28Cn6ln6tFBuUmgIEAWOqCcO8F/x2f
+         JuUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3aewgcfSu4wRL41/LkmwRt44J0fCi34e+D2uNxKBSBSYF5qVcOEaN1YMupxtZ3H1ha68EKHRb/oXGbL01@vger.kernel.org, AJvYcCXVBU66vlHA7qyi5FCkt3uiX25ZIcw2nKnhhGMWnIrvJLprmFrFF7VHpd2FO+tGoKby0dcYJJaHVun8wEiu@vger.kernel.org, AJvYcCXnW5d6nFWlf4nvCzXaq3h1oZJPutd6tqIQwG+8SPjcvc5IUnx3pWaAVCmYKls6LOuRv4VYiqOYqTAH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfeumACpTlIQPByT5MJaeDf00eIa77uGGS4llBrt1xkDp348jq
+	1lsXe8rWPB60HHazs11h+/ZOWc/sDXsvP4RwbhedExPZV4yOLxaNc5+ktA==
+X-Gm-Gg: ASbGnct7/wo+wrMsilzImRDp+CQQl5EvyjtZKw85C4mhuSmGYMh1nBo72od8fZt6BsD
+	zFLr0LUsPx+aK3ENrJ0ycojBCXXtAco4dQFnsd4UWQlmgrK4y1F9T5t1biTKrF74YZEwE4Q6Ube
+	QHV+Q0HRnoqsU7yvKpuTUG4SBauEJMJNRYOB3cdLWxuvoELxpuWfT07KX5IMGWYX0d264Do5TJ7
+	KhGJfqX4vj+4tcDDHQbgM6FUfcqEF9+Q6y8BtF6s6eAjN5m7npqAUwRWUOl5BvtUsKxmR0v6MK6
+	lYKX4uENxZmZ2DtBchdxz4DxCg==
+X-Google-Smtp-Source: AGHT+IFJVjWIIB5s39gUx1SvdqqGCesjab1llC/QPC5s1Cw1w7UwSrqeg1+KD36txuQBShLxIST56w==
+X-Received: by 2002:a05:6000:4b0c:b0:385:fd07:8616 with SMTP id ffacd0b85a97d-3886c7252f4mr5918505f8f.0.1734182923380;
+        Sat, 14 Dec 2024 05:28:43 -0800 (PST)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c80162a6sm2559850f8f.33.2024.12.14.05.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 05:28:43 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	upstream@airoha.com
+Subject: [PATCH v9 0/3] crypto: Add EIP-93 crypto engine support
+Date: Sat, 14 Dec 2024 14:27:51 +0100
+Message-ID: <20241214132808.19449-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1ysj_PXy51WeAT2@krava>
 
-On 2024-12-13 22:52:15+0100, Jiri Olsa wrote:
-> On Fri, Dec 13, 2024 at 04:12:46PM +0100, Thomas Weißschuh wrote:
-> 
-> SNIP
-> 
-> > > > > +static int __init arch_uprobes_init(void)
-> > > > > +{
-> > > > > +	unsigned long size = uprobe_trampoline_end - uprobe_trampoline_entry;
-> > > > > +	static struct page *pages[2];
-> > > > > +	struct page *page;
-> > > > > +
-> > > > > +	page = alloc_page(GFP_HIGHUSER);
-> > > > 
-> > > > That page could be in static memory, removing the need for the explicit
-> > > > allocation. It could also be __ro_after_init.
-> > > > Then tramp_mapping itself can be const.
-> > > 
-> > > hum, how would that look like? I think that to get proper page object
-> > > you have to call alloc_page or some other page alloc family function..
-> > > what do I miss?
-> > 
-> > static u8 trampoline_page[PAGE_SIZE] __ro_after_init __aligned(PAGE_SIZE);
-> > static struct page *tramp_mapping_pages[2] __ro_after_init;
-> > 
-> > static const struct vm_special_mapping tramp_mapping = {
-> > 	.name   = "[uprobes-trampoline]",
-> > 	.pages  = tramp_mapping_pages,
-> > 	.mremap = tramp_mremap,
-> > };
-> > 
-> > static int __init arch_uprobes_init(void)
-> > {
-> > 	...
-> > 	trampoline_pages[0] = virt_to_page(trampoline_page);
-> > 	...
-> > }
-> > 
-> > Untested, but it's similar to the stuff the vDSO implementations are
-> > doing which I am working with at the moment.
-> 
-> nice idea, better than allocating the page, will do that
+This small series add support for the Inside Secure EIP-93.
+This is a predecessor of the current supported EIP197. It doesn't
+require a firmware but instead it's embedded in the SoC.
 
-Or even better yet, just allocate the whole page already in the inline
-asm and avoid the copying, too:
+First patch extend guard for spinlock_bh.
 
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index b2420eeee23a..c5e6ca7f998a 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -462,7 +462,7 @@ SYSCALL_DEFINE0(uprobe)
+The other actually implement Documentation and Driver.
 
- asm (
-        ".pushsection .rodata\n"
--       ".global uprobe_trampoline_entry\n"
-+       ".balign " __stringify(PAGE_SIZE) "\n"
-        "uprobe_trampoline_entry:\n"
-        "endbr64\n"
-        "push %rcx\n"
-@@ -474,13 +474,11 @@ asm (
-        "pop %r11\n"
-        "pop %rcx\n"
-        "ret\n"
--       ".global uprobe_trampoline_end\n"
--       "uprobe_trampoline_end:\n"
-+       ".balign " __stringify(PAGE_SIZE) "\n"
-        ".popsection\n"
- );
+The Driver pass all the normal selft test for the supported
+algo and also pass the EXTRA test with fuzz_iterations set to 10000.
 
--extern __visible u8 uprobe_trampoline_entry[];
--extern __visible u8 uprobe_trampoline_end[];
-+extern u8 uprobe_trampoline_entry[];
+Changes v9:
+- Rework hash code to alloc DMA only when needed
+- Rework hash code to only alloc needed blocks and use
+  local struct in req for everything else
+- Rework hash code to use GFP_ATOMIC
+- Simplify hash update function
+- Generalize hmac key set function
+Changes v8:
+- Rework export and update to not sleep on exporting state
+  (consume pending packet in update and return -EINPROGRESS)
+Changes v7:
+- Fix copypaste error in __eip93_hash_init
+- Rework import/export to actually export the partial hash
+  (we actually unmap DMA on export)
+- Rename no_finalize variable to better partial_hash
+- Rename 3rd commit title and drop Mediatek from title.
+- Add Cover Letter
+- Add Reviewed-by to DT commit
+(cumulative changes from old series that had changelog in each patch)
+Changes v6:
+- Add SoC specific compatible
+- Add now supported entry for compatible with no user
+Changes v5:
+- Add Ack tag to guard patch
+- Comment out compatible with no current user
+- Fix smatch warning (reported by Dan Carpenter)
+Changes v4:
+- Out of RFC
+- Add missing bitfield.h
+- Drop useless header
+Changes v3:
+- Mute warning from Clang about C23
+- Fix not inizialized err
+- Drop unused variable
+- Add SoC compatible with generic one
+Changes v2:
+- Rename all variables from mtk to eip93
+- Move to inside-secure directory
+- Check DMA map errors
+- Use guard API for spinlock
+- Minor improvements to code
+- Add guard patch
+- Change to better compatible
+- Add description for EIP93 models
 
+Christian Marangi (3):
+  spinlock: extend guard with spinlock_bh variants
+  dt-bindings: crypto: Add Inside Secure SafeXcel EIP-93 crypto engine
+  crypto: Add Inside Secure SafeXcel EIP-93 crypto engine support
 
-If you want to keep the copying for some reason, the asm code should be
-in the section ".init.rodata" as its not used afterwards.
+ .../crypto/inside-secure,safexcel-eip93.yaml  |  67 ++
+ MAINTAINERS                                   |   7 +
+ drivers/crypto/Kconfig                        |   1 +
+ drivers/crypto/Makefile                       |   1 +
+ drivers/crypto/inside-secure/eip93/Kconfig    |  20 +
+ drivers/crypto/inside-secure/eip93/Makefile   |   5 +
+ .../crypto/inside-secure/eip93/eip93-aead.c   | 711 ++++++++++++++
+ .../crypto/inside-secure/eip93/eip93-aead.h   |  38 +
+ .../crypto/inside-secure/eip93/eip93-aes.h    |  16 +
+ .../crypto/inside-secure/eip93/eip93-cipher.c | 413 +++++++++
+ .../crypto/inside-secure/eip93/eip93-cipher.h |  60 ++
+ .../crypto/inside-secure/eip93/eip93-common.c | 816 +++++++++++++++++
+ .../crypto/inside-secure/eip93/eip93-common.h |  24 +
+ .../crypto/inside-secure/eip93/eip93-des.h    |  16 +
+ .../crypto/inside-secure/eip93/eip93-hash.c   | 866 ++++++++++++++++++
+ .../crypto/inside-secure/eip93/eip93-hash.h   |  82 ++
+ .../crypto/inside-secure/eip93/eip93-main.c   | 502 ++++++++++
+ .../crypto/inside-secure/eip93/eip93-main.h   | 152 +++
+ .../crypto/inside-secure/eip93/eip93-regs.h   | 335 +++++++
+ include/linux/spinlock.h                      |  13 +
+ 20 files changed, 4145 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
+ create mode 100644 drivers/crypto/inside-secure/eip93/Kconfig
+ create mode 100644 drivers/crypto/inside-secure/eip93/Makefile
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aead.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aead.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-aes.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-cipher.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-cipher.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-common.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-common.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-des.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-hash.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-hash.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-main.c
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-main.h
+ create mode 100644 drivers/crypto/inside-secure/eip93/eip93-regs.h
 
-(A bit bikesheddy, I admit)
+-- 
+2.45.2
 
-
-Thomas
 
