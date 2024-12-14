@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-446169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F749F2099
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 20:15:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1E39F209E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 20:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2121888050
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3FBA188576B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65761B4150;
-	Sat, 14 Dec 2024 19:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3421B1AAE39;
+	Sat, 14 Dec 2024 19:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLPPLHOp"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FABAKGPB"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF021B2180;
-	Sat, 14 Dec 2024 19:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87D7195B37
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 19:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734203674; cv=none; b=XIMsr2++nJegviOaICcVJESeoMSaFConhRNpda6Q+2CkyUso8ato9w/+OPuYZQ+nvV6wAr3i9oMUDrOEyypP8Mty73OMi82Bvj9k26WZzEmsB0JSAKqvYWMtyfq0GVA0UjZVJC5FvDE8N6mxLLjGyrYZeuEYicdUGnj9/Eo6taI=
+	t=1734204762; cv=none; b=SrRNhx+99P+n1eLPiFHIeVMSXk4sW/fQR6+LcO2XjT3PVlHqd1iR63FmBjQUv1keECRBUKLMB+Vii4OY7a18k/FEo6sh61X3m8ibIlAgZP7YhUFX6Uuac6Y0p5GnyQOc29ZISJaIYfGCG6Sd2wOOt0oDzUISUukrockW+AUlX+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734203674; c=relaxed/simple;
-	bh=hwJ7g5Qp2RYDm7YSTNB5S2KOZXblWfiTufqQlCHXLeo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WNzw7YrTQ9PigxhVif3pydKVaqpkmPeRU3M9+GV4UXTtYM623MFCxKTqjSeKK6g0719ZN6cH+G1GYo6Hw0UZXUuPc7uPBH6KKA2xo7+pBdR1Q4xf5mKmj3QZtLr0brYuLG6dJDdqNluhK4OWRoTZ5+hHWk9h+dU9b298zd7UnTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLPPLHOp; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3f65844deso4516882a12.0;
-        Sat, 14 Dec 2024 11:14:32 -0800 (PST)
+	s=arc-20240116; t=1734204762; c=relaxed/simple;
+	bh=5Jn6S+PCzo7AtwY/ECptG9xjtJQeXvtl2DfkeEJVwQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=vGmahYCNL49qf1cp1T6Q4IXZ0/NYiQtuCif8jnF60jbsWPYJMSxrfIfdTz60UeITKMVO++Y5PJDD8E02yQYteRWvYOyepHw2cxsNwl5pQG0/9UGaqF1ZkgmV1sQVc6X2IX9qO+YYCjWnX7OWq66uW4DuRaNUi+hE3Oe7folEpTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FABAKGPB; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a9d0c28589so127195ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:32:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734203671; x=1734808471; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1734204759; x=1734809559; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EByrdtVQZYuV+5Drqauo7ZU8zZ2F3oVsb8nD9rm3sk8=;
-        b=TLPPLHOpAAJkaFCdiU5AJhIyZtBSQmpw6ztBMqjofNSgpznBj0EPuIP+832J9rlq/q
-         llZJDraoYO0/V6+va45aHdzSkQPbfO7eoBLwbdW5j1JyigfxbB8QIxg5AZWRI8EX+Eyp
-         NswhMg5zvxx7E7IosxH6JkkLmafirHI+442FrHomujf7KgzclUk1HynvQeuq/K6WxO8x
-         EIGuVNP5PDA9MDBXrOZJ8HSDXogpAfQrH9c4rDa6QdQvYOcisgwGoRP9ska/s+03bvCY
-         4uYq0spz73eP7fRsBYuoWE7TJAx/yiA8mtjyg8uc3emlcZzyY54Zt3Eoy7sbVL8lw5T/
-         6A+w==
+        bh=+ifcfCthQDxy8ySBkB1RvsW8y2Gn8eCLwcVlMpuAFhk=;
+        b=FABAKGPB2fqG++cv2YvXkOIXKv+wO0QQ90KfG8FAD9C7Hz8I6O3g0i2XB1CRAE1u0p
+         /vnyUHwZRsHis6RNN4AysTmHnNzhLe/ZE4R6Sz89Qkswp/01zuqLuB7Hxm44kH/u03bC
+         EY79L6tPlemP0U6KYnQx1iMthAL4XG/3DPdcFlqIBlf8JYCAC6EQN4a+Z6R5kMMYcKWe
+         bdmDr9D1LMN0QvzvK1I5raWebqMLPjgVUhUjkPn+9YwSoF8o/MbnlM1teTd52bgp7tFx
+         Wn+NXxatirwLqmPX/rs1oHzs1bXvkc3D3NeWL+mdMnlMWbBo2fE+B1JpQbYnhvdci2fl
+         ehng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734203671; x=1734808471;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734204759; x=1734809559;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EByrdtVQZYuV+5Drqauo7ZU8zZ2F3oVsb8nD9rm3sk8=;
-        b=U+/ALAxetg2sJjQV2Z+gmQ23SlJ9T4Q2T9gk5JAwuwRJS6MtUUoFyjfOZc7kAV+etR
-         al5lrAqg6OJwgiig97YJVxH5JSdEvh7mkbaEW2Oc/nrjugoUvvdRGHQbJ48BQEJjxrZz
-         EXgi3TKq7tasufn9iUYgjcUFMbkZwfxlNxF+rSew9MpjtPIRN8nuTUQdmku3GgBGsCEi
-         g+I1eOZpKQTU7LuMaI8SguNL1UIl2L+T/+F/yqmuP+1ny7dXmRkzOzOzxqiWO+5/F90c
-         +1pEspa1QsVM5yi3bXIyonreh0XKpab9myiGcH7xgoxR79doSFnZfUkXN7gOWNjYcyxL
-         VtoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfcD+UzeXkXgUJR0NjtqA2NQi3sR4lpwrOByC3ShEIfDIMejA2G77Cl7MYrtiYg0wkCYh4Zp6YZj7iQMEC@vger.kernel.org, AJvYcCW8NyX5SDCGZTJNfwwFsEsfrGQhdC7rrkkctKJY22XSbh86uDH8TXhugG9BzeOr4xr4vVPfAGv7Bto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRr1VMnUsPeBsScWo6UPARdKiSFXS7uXUdHRryQUhjvD986IRB
-	BPkmT730ZnvaaT7ijCn580n5Au5zqXp0umnOuhtz4n8/8FDAPOfS
-X-Gm-Gg: ASbGnctxW9fMv1ORqTn3I0qMCUE0rvR1qDSjPI8uS0HfaJl+igTNv2R4CzN84FhZ8Cb
-	fFdYmvppSkDZVGa7LNRtkmUFMq04zPSqYsn5mWS9gSo0DlF/uKnKP1WOJd0FlmXSZrr7JG6wBX7
-	znbojRGTt17YTsdcvupBkPUp2PNSijZfi3pWyOdPGGyKqaJpkNB7vceCGZlTddA/kLa07z05m9H
-	I718TQrmG03LRt08bt1XTzhdFf5V3+8ap9XuCuaE/wUHOZh539ekrnsoz/Prdj+hORYsQ==
-X-Google-Smtp-Source: AGHT+IHFL+bYnOYz8jFHG0mNxTg+1Mi/aJXuva23CyBnKKVieqWxlldrLG5HeM59bEEJw5gz+++0sA==
-X-Received: by 2002:a17:906:328d:b0:aa6:6e41:ea55 with SMTP id a640c23a62f3a-aab778be635mr626347666b.7.1734203670416;
-        Sat, 14 Dec 2024 11:14:30 -0800 (PST)
-Received: from vamoirid-laptop.. ([2a04:ee41:82:7577:abde:dd08:a767:d63c])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aab963c54d2sm122818766b.190.2024.12.14.11.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 11:14:30 -0800 (PST)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de
-Cc: krzysztof.kozlowski@linaro.org,
-	nuno.sa@analog.com,
-	u.kleine-koenig@baylibre.com,
-	abhashkumarjha123@gmail.com,
-	jstephan@baylibre.com,
-	dlechner@baylibre.com,
-	jackoalan@gmail.com,
-	k.wrona@samsung.com,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vassilisamir@gmail.com
-Subject: [PATCH v2 4/4] iio: core: mark scan_timestamp as __private
-Date: Sat, 14 Dec 2024 20:14:21 +0100
-Message-ID: <20241214191421.94172-5-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241214191421.94172-1-vassilisamir@gmail.com>
-References: <20241214191421.94172-1-vassilisamir@gmail.com>
+        bh=+ifcfCthQDxy8ySBkB1RvsW8y2Gn8eCLwcVlMpuAFhk=;
+        b=alhoJfm/LOqT51QAqjarLPz4mcsoPTH1SevAvILdxbhkzyxAWtMOE6QftNJKUwyvCj
+         oUyRd0u4I4bUsaInJpA3craGrgdqzi0oBYJVwy1oCvXyMpcgxLUMfOsMW3y7ptgb1M+9
+         sigYIPKNgDf7WD6lzXw3IMBsK2Tn/OdUlTN9i/YlyHLj89lPF9sNppSaA9hIkfdSuZOt
+         M2uLdluxnJUsabmzFsWp9qFOU/4v1zryIkEaeVlmzoTRyYiFQCWszRznh3yirYstZEG2
+         3MNZ283lyQK/5cbWXH9+cplxBMWnwTkqW1tLZBi/y25+Q6NRKBcbYWLZQu0yUh2nXH5O
+         LUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJFrBRGPPO7xQ7fqw0/Z81bS+Do3Bq/J2q0bJo/NTKbDX2R8czl0GZDsXW22ZtUf5ZA/79TbbCgr5w4VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyflO5xlzPFmki7azFFCBU/4D1m1Ob1eEioCQ/sre/wzJxbNSGd
+	WXxnmPveSJi9mvWBW66fykwZ2Rue+RoU8wgAv6GExdXb6yEIVb/wIl50i0Ew4XxmBwhvAYnER5C
+	dpsW+iCz4H+u3jBhcGHtRd+6u2Qp8R7BPa80+
+X-Gm-Gg: ASbGncs6qCSgjTQPuXheVUQmNOA0XOwFWrI+6NgdP9XdpEgzKPF4U+0s4n7Bnz/DMsK
+	PapdnymzBC6pZIQsNMzYbo6HDiae2uwgw1rYqP4s=
+X-Google-Smtp-Source: AGHT+IFGhEb9ifi4P5jJR6XUfQpzX49Z5lgclmZFwa3AsU2s1eMDMawXBOKA5N9NN49ZI2HTuN1WkAnYhYmJiUN64C4=
+X-Received: by 2002:a92:cdaa:0:b0:3a7:e616:8d36 with SMTP id
+ e9e14a558f8ab-3b2c59470f0mr1754295ab.9.1734204758801; Sat, 14 Dec 2024
+ 11:32:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241212080530.1329601-1-irogers@google.com>
+In-Reply-To: <20241212080530.1329601-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 14 Dec 2024 11:32:27 -0800
+Message-ID: <CAP-5=fWtxkt_kFCF8G=Dp4Fj+=m1M7Fv6Ep4RvJmH_k-k53rNw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] perf synthetic-events: Ensure features are aligned
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since there are no more direct accesses to the indio_dev->scan_timestamp
-value, it can be marked as __private and use the macro ACCESS_PRIVATE()
-in order to access it. Like this, static checkers will be able to inform
-in case someone tries to either write to the value, or read its value
-directly.
+On Thu, Dec 12, 2024 at 12:05=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> Features like hostname have arbitrary size and break the assumed
+> 8-byte alignment of perf events. Pad all feature events until 8-byte
+> alignment is restored.
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
----
- drivers/iio/industrialio-buffer.c | 2 +-
- include/linux/iio/buffer.h        | 2 +-
- include/linux/iio/iio.h           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+This change breaks pipe mode tests for me on ARM. I've not investigated why=
+ yet.
 
-diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
-index 2708f87df719..a80f7cc25a27 100644
---- a/drivers/iio/industrialio-buffer.c
-+++ b/drivers/iio/industrialio-buffer.c
-@@ -1137,7 +1137,7 @@ static int iio_enable_buffers(struct iio_dev *indio_dev,
- 	int ret;
- 
- 	indio_dev->active_scan_mask = config->scan_mask;
--	indio_dev->scan_timestamp = config->scan_timestamp;
-+	ACCESS_PRIVATE(indio_dev, scan_timestamp) = config->scan_timestamp;
- 	indio_dev->scan_bytes = config->scan_bytes;
- 	iio_dev_opaque->currentmode = config->mode;
- 
-diff --git a/include/linux/iio/buffer.h b/include/linux/iio/buffer.h
-index 418b1307d3f2..3b8d618bb3df 100644
---- a/include/linux/iio/buffer.h
-+++ b/include/linux/iio/buffer.h
-@@ -37,7 +37,7 @@ int iio_pop_from_buffer(struct iio_buffer *buffer, void *data);
- static inline int iio_push_to_buffers_with_timestamp(struct iio_dev *indio_dev,
- 	void *data, int64_t timestamp)
+Thanks,
+Ian
+
+> ---
+>  tools/perf/util/synthetic-events.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthet=
+ic-events.c
+> index f8ac2ac2da45..5b14244253b5 100644
+> --- a/tools/perf/util/synthetic-events.c
+> +++ b/tools/perf/util/synthetic-events.c
+> @@ -2401,6 +2401,11 @@ int perf_event__synthesize_features(const struct p=
+erf_tool *tool, struct perf_se
+>                         pr_debug("Error writing feature\n");
+>                         continue;
+>                 }
+> +               while (PERF_ALIGN(ff.offset, sizeof(u64)) !=3D ff.offset)=
  {
--	if (indio_dev->scan_timestamp) {
-+	if (ACCESS_PRIVATE(indio_dev, scan_timestamp)) {
- 		size_t ts_offset = indio_dev->scan_bytes / sizeof(int64_t) - 1;
- 		((int64_t *)data)[ts_offset] = timestamp;
- 	}
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index ae65890d4567..56161e02f002 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -611,7 +611,7 @@ struct iio_dev {
- 	const unsigned long		*available_scan_masks;
- 	unsigned int			__private masklength;
- 	const unsigned long		*active_scan_mask;
--	bool				scan_timestamp;
-+	bool				__private scan_timestamp;
- 	struct iio_trigger		*trig;
- 	struct iio_poll_func		*pollfunc;
- 	struct iio_poll_func		*pollfunc_event;
--- 
-2.43.0
-
+> +                       char c =3D 0;
+> +
+> +                       do_write(&ff, &c, 1);
+> +               }
+>                 /* ff.buf may have changed due to realloc in do_write() *=
+/
+>                 fe =3D ff.buf;
+>                 memset(fe, 0, sizeof(*fe));
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
+>
 
