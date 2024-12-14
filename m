@@ -1,200 +1,223 @@
-Return-Path: <linux-kernel+bounces-446202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0EC39F210E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599B29F2110
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00D1166AAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783F1166AB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4111C1B2180;
-	Sat, 14 Dec 2024 21:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BBE1B218D;
+	Sat, 14 Dec 2024 21:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc7+slfL"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Su6orVk4"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D1137E;
-	Sat, 14 Dec 2024 21:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98E137E;
+	Sat, 14 Dec 2024 21:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734213134; cv=none; b=BSgtwLZXAEHx6Gt163eOoyPr7fAR4/9Uyt0w2uPiDAgV2AHFqM7HuliYOC5a78D6UlWb+LztWmwIkExNTRMdXQ41x23Jg4TgKc+okDKTGTJVquoq3qdtG08spsc9oPMadryEtshC/Oe0AXIh6/8goH/FNHdJgHqADOTyjKP9zlg=
+	t=1734213413; cv=none; b=QtsmT7zXBEp0PkVC1DiHM6Qm9/9mTlUeV9OA+ZHw4/YCZnvKWcfdatKMlMiROSp7kz1kYq3wZqprjjr8wOJVTUYCDzNsmg8B8wBi+ZQqGkqGRrkYXEzFX9egbQ2s8Nn+VTfxADrH4gMKpxjwR8AC5uAh0dCwleS0btethQ3y9Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734213134; c=relaxed/simple;
-	bh=WEERpUugMIVF+RpGbGa3aJw6AHnRLtvfpjRFt8LA5fc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nvGysrkBnudhaqd2+11Skr9APCtyhBbj0fx2XClbDp/lxpT/+N1Rmx7/FblXQoCmA2P14GlXjq1BKgvEiFmVpnY3K31Ixf2NCza69+BMsGxdOfKftSrxF8yvltRGnfbvgZGhFGgKkrPht910mt1Wsn1PlfqGH6Cx8bTHq0tBu+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc7+slfL; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso489005666b.1;
-        Sat, 14 Dec 2024 13:52:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734213131; x=1734817931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3/YC7qsZQDqPwi0DSerU+A2lmpctu8Ls9iP33kzH6HQ=;
-        b=Jc7+slfL9agMGNYhIf/pjQ2/X8pIU3Y2CTuDquqFmfOQe9vpVveJatcTXDFJoQgjRs
-         b72mHIngZpfachnjVM9xj1zkhTPi9ZmTW4+FLOBYYNhun3M4ifJdey/+CTyGdVXIw6FY
-         DV2ceakCk72c2BYWezx6BNoyukOEHnHoQjPC0K6QZfANYtkIVIu9XYs1x1QXcACersc8
-         uNrm8dE1ACFyKkh94i2xHSKVnws8hrDamnwmGnd7X/KCt9HMUhyKDvrlUpLlm8OoDYJj
-         cxZIid0qjN4U2GviHNLduxbUeS/Dlo+/oXh+ikW4vjejeVVS1MGkrp2NuWAbFQDHnfV7
-         Nq+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734213131; x=1734817931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3/YC7qsZQDqPwi0DSerU+A2lmpctu8Ls9iP33kzH6HQ=;
-        b=Sg+2sr23JiHK+2cRoYAApd/vAWzQm7uSVhJhr93+C6XWrFkEXlsmGkiuGnY9a8RNwv
-         aEYRnr7gUBWKKSQ6HGPvh0Fx3t5669N013/zKRw4CFgEC9BpFTIq7JUhFrEQZdvMAnBh
-         TEL1ERs9kbvy3AcS0S+9jvzq/5BGsCynjL2JQ9sjNmyzXVwxF/nID+tlNK8oOVkSof8p
-         mhXbO0phN8QVdHPQ0qUGl+inWjqBMi2zx4Rd9opApXu1UfWQ7lu0N3XfEozs773DlxTY
-         nyKcKDnJAtIvVS+lauwnlDl4lJBKo+o3xsz4saA6rT1vDfE6h8bh01UTPIyiYA/JorOC
-         bXTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNQU0IJhpi2U+/T9tS8zxPlgVRKemRzVeIJvjslt0WEyflJyQv/VvUoyi2q/Hlw6vwKHiW7W+fl83uqyE=@vger.kernel.org, AJvYcCWMxxRU71VtElyoEgKWG8G1UYrMoxIFSLOUe693zL5sy3T+jjmEE8e4sbt7PZs38z7RzfLVyGOFvl83Jw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+3w2yxCHmQ8v9fsq+JdiGOSaGspXLEU75v0uFDCbWjSm66CeF
-	cU57WFdEtMWFXpYNJED3iTuM5n4GjpHUUXks068mFIobVB5PexIi
-X-Gm-Gg: ASbGnctZrMDnNdPZxZL5+WIuiUJMuYT4by9SFt0TEEiNtBBo8gbwmdrmVdC6LvBtA7n
-	uBFLFz9IvCPFzcG2pjpnwtoeuHV6boku3ovFYVnph+LWkQBrPI/3D/gGbYGosJAomYnuVlcdrBW
-	jUmTx+jKP1xuI9tLLUfgx8LFTDL3U+hcccTAc/JY3dXUd7nB07SeYmfHTqDB8O0VwC0J3Jw/vRQ
-	H7c2Lq3JxcNA3/BXgnGt9f9r/qEh33WJNDDK6oQVZKy76Lj56CGVSz1NKhWoaF57Vk=
-X-Google-Smtp-Source: AGHT+IHRglX6dcJH31gxHa/6wW1mMpn14tLgw9bFgX7WVXdACNj1C6kigUNQFnSR4vD5o8uj+wrjog==
-X-Received: by 2002:a17:907:c24:b0:aa6:7662:c56e with SMTP id a640c23a62f3a-aab77ec4181mr832539766b.55.1734213130370;
-        Sat, 14 Dec 2024 13:52:10 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9606839csm139090266b.61.2024.12.14.13.52.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 13:52:10 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: andreas@kemnade.info,
-	rogerq@kernel.org,
-	karprzy7@gmail.com,
-	lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCHv3] dt-bindings: mfd: omap-usb-tll: convert to YAML
-Date: Sat, 14 Dec 2024 22:52:07 +0100
-Message-Id: <20241214215207.842765-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734213413; c=relaxed/simple;
+	bh=B3D6ZgjcfGsFkj0EvBdxaN0UbW7ZFtrTzd6yM12JOrs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXWQiZc3fCMf0lPuvxrwYKWe9sPAXUzl4tBKJYk6OVG4mBRR6duSDCOKmiCjQm7XXyS2bsygutx00w6isnKT5fDBOKTiWQmLG6pFttnhT15kX0xpAxpDsWWFlJya77oW7nHoN8SlNn7xSh6f3dINMLtDOECcqTVJPcXX0WA3z2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Su6orVk4; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BELuO4A079250;
+	Sat, 14 Dec 2024 15:56:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1734213384;
+	bh=bikUv5chFR7Mp0GtINpALlwdheFMLn92Zv1sVgMXCcM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Su6orVk4oGSPdNpzzHJP1K/BxQb91vziqP80ujdPLV4F5FxIncFmZccYomZwYfdjQ
+	 VGKuhfoa2tTGiEmsG9YgLdfhIw4zAWaPgIb52/M9AAAt3LAtG8KYAL1gmo67ZhkPmK
+	 JsyOWwm6Jz/pxmbd2+4tTPTvdlLuno/FGdCiZf9Y=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BELuOnd024904
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 14 Dec 2024 15:56:24 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 14
+ Dec 2024 15:56:24 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 14 Dec 2024 15:56:23 -0600
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BELuOOP089856;
+	Sat, 14 Dec 2024 15:56:24 -0600
+Date: Sat, 14 Dec 2024 15:56:24 -0600
+From: Bryan Brattlof <bb@ti.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am62l: add initial infrastructure
+Message-ID: <20241214215624.e372oju6eserpf4f@bryanbrattlof.com>
+X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
+References: <20241117-am62lx-v1-0-4e71e42d781d@ti.com>
+ <20241117-am62lx-v1-1-4e71e42d781d@ti.com>
+ <Z12rnZiCXQxtMWlf@livingston.pivistrello.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <Z12rnZiCXQxtMWlf@livingston.pivistrello.it>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in
-lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
+On December 14, 2024 thus sayeth Francesco Dolcini:
+> On Sun, Nov 17, 2024 at 11:34:07PM -0600, Bryan Brattlof wrote:
+> > From: Vignesh Raghavendra <vigneshr@ti.com>
+> > 
+> > Add the initial infrastructure needed for the AM62L. All of which can be
+> > found in the Technical Reference Manual (TRM) located here:
+> > 
+> >     https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+> > 
+> > Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> > Signed-off-by: Bryan Brattlof <bb@ti.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/ti/k3.yaml |  6 ++
+> >  arch/arm64/boot/dts/ti/Makefile                  |  3 +
+> >  arch/arm64/boot/dts/ti/k3-am62l-main.dtsi        | 52 ++++++++++++++
+> >  arch/arm64/boot/dts/ti/k3-am62l-wakeup.dtsi      | 33 +++++++++
+> >  arch/arm64/boot/dts/ti/k3-am62l.dtsi             | 89 ++++++++++++++++++++++++
+> >  arch/arm64/boot/dts/ti/k3-am62l3.dtsi            | 67 ++++++++++++++++++
+> >  arch/arm64/boot/dts/ti/k3-pinctrl.h              |  2 +
+> >  7 files changed, 252 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > index 18f155cd06c84..b109e854879cb 100644
+> > --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> > @@ -31,6 +31,12 @@ properties:
+> >            - const: phytec,am62a-phycore-som
+> >            - const: ti,am62a7
+> >  
+> > +      - description: K3 AM62L3 SoC and Boards
+> > +        items:
+> > +          - enum:
+> > +              - ti,am62l3-evm
+> > +          - const: ti,am62l3
+> > +
+> 
+> can you clarify the differences between AM62L and AM62L3? you have a mix of names in this series. I assume that
+> AM62L is the SOC family / product name, while AM62L3 is a specific 
+> part number.
+>
 
-Changes made to the binding during conversion:
-- Added Roger Quadros as maintainer
-- Removed deprecated ti,hwmod
-- Renamed .yaml file to ti,usbhs-tll.yaml
+Absolutely! I found the naming a bit confusing myself. 
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 -----------
- .../devicetree/bindings/mfd/ti,usbhs-tll.yaml | 47 +++++++++++++++++++
- 2 files changed, 47 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+We (the baseport teams) have kinda coalesced into using less digits as a 
+way to describe all devices included in the subgroup. So for example AM6 
+would be all Sitara class MPUs in the K3 generation. AM62L would be all 
+parts in K3 in the 'lite' derivative. AM62L32 would be all AM62L parts 
+with display and dual cores.
 
-diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt b/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-deleted file mode 100644
-index c58d70437..000000000
---- a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--OMAP HS USB Host TLL (Transceiver-Less Interface)
--
--Required properties:
--
--- compatible : should be "ti,usbhs-tll"
--- reg : should contain one register range i.e. start and length
--- interrupts : should contain the TLL module's interrupt
--- ti,hwmod : must contain "usb_tll_hs"
--
--Optional properties:
--
--- clocks: a list of phandles and clock-specifier pairs, one for each entry in
--  clock-names.
--
--- clock-names: should include:
--  * "usb_tll_hs_usb_ch0_clk" - USB TLL channel 0 clock
--  * "usb_tll_hs_usb_ch1_clk" - USB TLL channel 1 clock
--  * "usb_tll_hs_usb_ch2_clk" - USB TLL channel 2 clock
--
--Example:
--
--	usbhstll: usbhstll@4a062000 {
--		compatible = "ti,usbhs-tll";
--		reg = <0x4a062000 0x1000>;
--		interrupts = <78>;
--		ti,hwmods = "usb_tll_hs";
--	  };
-diff --git a/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
-new file mode 100644
-index 000000000..aa4edc51d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ti,usbhs-tll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: OMAP HS USB Host TLL (Transceiver-Less Interface)
-+
-+maintainers:
-+  - Roger Quadros <rogerq@kernel.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,usbhs-tll
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 3
-+
-+  clock-names:
-+    items:
-+      - const: usb_tll_hs_usb_ch0_clk
-+      - const: usb_tll_hs_usb_ch1_clk
-+      - const: usb_tll_hs_usb_ch2_clk
-+    minItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    usbhstll@4a062000 {
-+      compatible = "ti,usbhs-tll";
-+      reg = <0x4a062000 0x1000>;
-+      interrupts = <78>;
-+    };
--- 
-2.34.1
+But I should probably decode everything as these part numbers are really 
+opaque in my eye if you don't see them every day. 
 
+The full orderable part number for this part is the XAM62L32AOGHAANB
+
+    'X' is the production status. If you see an 'X' here it just means 
+    it's a pre-production sample that hasn't gone through validation. 
+    Most of the time (outside of TI) this will be blank
+
+    'AM' is the prefix which indicates a Sitara class of SoC. The AM68 
+    and AM69 being originally a Jacinto class part kinda makes this more 
+    confusing but back in the day i think it used to stand for ARM 
+    Microprocessors so that's what I've been telling people.
+
+    '62' is the generation and family of the part. So this example the 6 
+    indicates the K3 generation of SoCs and the 2 means it's an MPU 
+    family with 2k display or 2k camera support among other things.
+
+    'L' is the derivative of the family. This is mostly a marketing 
+    thing to indicate the target market for the SoC:
+
+      AM62  (or blank) would be the general base class
+      AM62A is for the analytics derivative
+      AM62D is for DSP
+      AM62P is for Plus
+      AM62L is for Lite
+
+    '3' is the configuration. This really depends on what the business 
+    teams find feasible. Some of the family/derivative combinations
+    don't make sense to have. For example an AM62L9 which would just be 
+    the base AM62 derivative, so some configurations may not exist.
+
+      0 = No Display / No ISP
+      1 = No Display with ISP
+      2 = No Display with ISP and Analytics
+      3 = Display / No ISP
+      4 = Display / No ISP with Analytics
+      5 = Display / No ISP with GPU
+      6 = Display with ISP
+      7 = Display with ISP and Analytics
+      8 = Display with ISP and GPU
+      9 = includes everything
+
+    '2' is the core count. AM62L32 would be the dual core option.
+
+The rest of the digits get into stuff we try to do automatically via our 
+bootloaders so you wont see any mention of them in Linux, but I kinda 
+wanted to continue decoding this :)
+
+    'A' is the silicon revision. A = SR 1.0 
+
+    'O' is the speed grade. (there is a table somewhere with all the 
+    speed grades we support. The two I know about are.
+
+      O = 1.25GHz
+      E = 833MHz
+
+    'G' is the feature set. Because the derivative is 'L' (or lite) we 
+    probably won't have options other than G which is the baseline
+
+    'H' is the security & functional safety value
+
+      'G' is non secure no functional safety. (like the beagleplay)
+      '1-9' are dummy key devices with no functional safety
+      'H-R' are production key HS devices with no function safety 
+      'S-Z' are production key HS devices with function safety
+        
+'H-Z' is probably the most common security you will see TI make now. 
+There are ways (by talking to sales) you can purchase other variants for 
+special use cases (like aviation) but I think these are all special use 
+cases with unique regulatory or security issues.
+
+    'A' is the temperature rating
+     
+      'A' = -40C to 105C
+      'I' = -40C to 125C
+
+    'ANB' is the package: 11.9mm x 11.9mm with 0.5 BGA
+
+There can be a total of 18 digits which can vary when decoding the 
+family (AM65, AM64) but generally this decoding scheme will hold. I only 
+really see those weird parts with our vertically integrated customers 
+with their own sales teams.
+
+Sorry for the essay. I went though our catalog one day and had the very 
+same question you did so I wanted to dump as much as I could.
+
+~Bryan
 
