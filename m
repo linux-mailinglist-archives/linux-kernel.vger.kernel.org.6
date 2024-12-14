@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-445836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7D09F1C12
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E00839F1C15
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0B3188E94B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577A9188EADB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA93F15E96;
-	Sat, 14 Dec 2024 02:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A1C182BC;
+	Sat, 14 Dec 2024 02:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V73S8Yj2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TOAfIOYs"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238101C36
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 02:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782751401B
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 02:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734143082; cv=none; b=mZV43LQZfXofgI+OnRU97wHsSrLxiDM9Wwm/IfGIFoVIdBUOpieZnp4NNA+AxeUgv44RpdFdpz23WYLFQvU7iifeZNtKBNjR6IsUDea3x62RyShJXd9sb8JfISOSQ02mHjKS+eHbx0r8L1vtubuOOyxYdtN3wV3WfTFeDaaH2OU=
+	t=1734143148; cv=none; b=mmJMphL/UR0lFIziucGoKm2WkaYnfHKqUmZH3nb3PMbiTwmv9WxmJgHpRw6miehmYBYCTw4hfWp+0lU8xb8tPH/pHB2VEK2IfFKyBNVeXtUiYGjSVgRTTbH7Wc8gLDwdFra+fvHINeZqsEVZjzajoNVKqiLykxh+yGExkJYWjbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734143082; c=relaxed/simple;
-	bh=et1D6dfeplOdZeFaPO6hotSgn8lyeqC70x+GC6HjPE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GU/i4hqX1+CuZBdxXXz072aHFBDtZCSlROiYw4LN6QOcxnNF/OJO5dw8ZqRy5OjLK8SxdjRmj9jCsJzqroXhiUt7jNmGoL/dNosBSwtf8Wb9EFlsGBoo1yWCzIghOVAwrxOCTd1Ob5jRnooqZQdRRI5/29zScFH+1nvcYxkwFEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V73S8Yj2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734143078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H1dpSCmmqK/j/7n07sNfCg5XminxI/aT3vgOaLdpOTw=;
-	b=V73S8Yj2KVQmvwE20f9dhXB8FOmhpJkMKQlIOLj457q33g7iC1zZG/s7FywLIa7QnFmgPJ
-	r7kdjkeH9tpXC0sIPud71wjkiFn8+I6W7sw5blipCdUSibsEYW6GnCibIQ/8z51QiFTAOx
-	03QYVGjdrJOXXvldB+/D/GlMlDzCjsk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-8OlSKUhYPvy85pFRhSU7hg-1; Fri,
- 13 Dec 2024 21:24:35 -0500
-X-MC-Unique: 8OlSKUhYPvy85pFRhSU7hg-1
-X-Mimecast-MFC-AGG-ID: 8OlSKUhYPvy85pFRhSU7hg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46A7019560A2;
-	Sat, 14 Dec 2024 02:24:33 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.69])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40893195605A;
-	Sat, 14 Dec 2024 02:24:30 +0000 (UTC)
-Date: Sat, 14 Dec 2024 10:24:26 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
-	Milan Broz <gmazyland@gmail.com>,
-	Thomas Staudt <tstaudt@de.ibm.com>,
-	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>,
-	Jan Pazdziora <jpazdziora@redhat.com>,
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Dave Hansen <dave.hansen@intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v6 0/7] Support kdump with LUKS encryption by reusing
- LUKS volume keys
-Message-ID: <Z1zsWoRhVaqXkVbb@MiWiFi-R3L-srv>
-References: <20241029055223.210039-1-coxu@redhat.com>
+	s=arc-20240116; t=1734143148; c=relaxed/simple;
+	bh=iq6dDBbndLiY2DDddQXufq1/8xq38ddxvn4I/8Ms6j4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jl2EG3m0pHOLFfYfAjM8pHM/moZkYe/gY0/3+RcXsXSeuw5Ir79qV7CX4uU9iSWn8+6WagF4q1I55nqvzYPdoLP0d7RW7smedwNaz69PudCn6WZEUqczeFp639JgQffODtobsoUAbwjehucDwL8no3f/jHRS7KvSjGHvUPt8+wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TOAfIOYs; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-467896541e1so60511cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:25:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734143145; x=1734747945; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iq6dDBbndLiY2DDddQXufq1/8xq38ddxvn4I/8Ms6j4=;
+        b=TOAfIOYsGw09snwAdKsaL5dpulvRx5JP4DLhNeR3ZP4b/iSTmcS54EfV/GxkD5OQsK
+         atmrKU8y86YWDwP3dIzcykV0tx8QhggnwCpKju3bb/tbDcRZ1N/3P0eZ04zeBoDl4vKD
+         JgYCf3a75hyXrFZFCiL8VICVTeLPubtpKsW3M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734143145; x=1734747945;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iq6dDBbndLiY2DDddQXufq1/8xq38ddxvn4I/8Ms6j4=;
+        b=fS5FHVrRrZ1P8E0p6YAtbInr8tUtMo40zq6gOyb0fec4A/S2wrDeVkpn4DDjM3y+ow
+         1Q5MfZCONcA8QyQDYO2Wh+50dDtpgDvpIQcgLnE9BBQAlk9pop3DML8tA6IgwVS+WS16
+         XsNmbxBtCeamN8IR6WUVJz3EJlhKunaHNV1tyweohjgYovJbLGB8FQLHXmaBjX4Px+EC
+         +gShYpAOgM/7gKZ1CZPj7+GBjx9QU75uAx9OnU5nRMzyigsjBaKcKOswGGSqWN9OmK/I
+         2gDr2/7UWct76yY38ytm9mP6hk88ZO3vDiSUqvR4pnklLpAEkwlFbirQWkvscL7Ar9EO
+         ViuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTPN1Gxaqxta/UgK1a4Pe/0ZNLCZu16WvWxb1QFBsmA7Mma/AV6GtaObAjmy8AXSNSb05toAsh3FTtRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDwarEdBbw/F1tRSL2gS0csJplh22nD2+A2mosDDFf0j2oZjUn
+	R4YRRebs0oh+vWvj4zLM0TfavNddz6rURhCNt4ZN66iGziNWdIXUihTI7LUtOgN1ED7WdkmReo6
+	GPr499KjqK4QFc+spkavknIyT8yhOx1lqxI8+
+X-Gm-Gg: ASbGncswQk4WSGefzgrvdqRNsyTkbXc8OD0ufyb790yTmzZq71oHbHYpbJE2bGfOYMl
+	EYmqrXIf1fmIku6GS43pgNNQs9tcCppR343w=
+X-Google-Smtp-Source: AGHT+IEOn70h5dn6BYdJXbg/aSWnK5Ci6RKTe7m32gd+98te1xMx5Rg0/FeuU5bBDSrYLKEpYMEBBJdcHNY+XpSFfJI=
+X-Received: by 2002:a05:622a:89:b0:467:7f81:ade0 with SMTP id
+ d75a77b69052e-467b30b4e71mr1334511cf.24.1734143145148; Fri, 13 Dec 2024
+ 18:25:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029055223.210039-1-coxu@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241214005248.198803-1-dianders@chromium.org> <20241213165201.v2.1.I2040fa004dafe196243f67ebcc647cbedbb516e6@changeid>
+In-Reply-To: <20241213165201.v2.1.I2040fa004dafe196243f67ebcc647cbedbb516e6@changeid>
+From: Julius Werner <jwerner@chromium.org>
+Date: Fri, 13 Dec 2024 18:25:34 -0800
+Message-ID: <CAODwPW_c+Ycu_zhiDOKN-fH2FEWf2pxr+FcugpqEjLX-nVjQrg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] arm64: errata: Assume that unknown CPUs _are_
+ vulnerable to Spectre BHB
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, 
+	Jeffrey Hugo <quic_jhugo@quicinc.com>, Julius Werner <jwerner@chromium.org>, 
+	linux-arm-kernel@lists.infradead.org, Roxana Bradescu <roxabee@google.com>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, bjorn.andersson@oss.qualcomm.com, 
+	stable@vger.kernel.org, James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Coiby,
+I feel like this patch is maybe taking a bit of a wrong angle at
+achieving what you're trying to do. The code seems to be structured in
+a way that it has separate functions to test for each of the possible
+mitigation options one at a time, and pushing the default case into
+spectre_bhb_loop_affected() feels like a bit of a layering violation.
+I think it would work the way you wrote it, but it depends heavily on
+the order functions are called in is_spectre_bhb_affected(), which
+seems counter-intuitive with the way the functions seem to be designed
+as independent checks.
 
-On 10/29/24 at 01:52pm, Coiby Xu wrote:
-> LUKS is the standard for Linux disk encryption, widely adopted by users,
-> and in some cases, such as Confidential VMs, it is a requirement. With 
-> kdump enabled, when the first kernel crashes, the system can boot into
-> the kdump/crash kernel to dump the memory image (i.e., /proc/vmcore) 
-> to a specified target. However, there are two challenges when dumping
-> vmcore to a LUKS-encrypted device:
+What do you think about an approach like this instead:
 
-Other than those small concerns, and the lkp reported issue, the overral
-series looks good to me. Thanks for the effort.
+- Refactor max_bhb_k in spectre_bhb_loop_affected() to be a global
+instead, which starts out as zero, is updated by
+spectre_bhb_loop_affected(), and is directly read by
+spectre_bhb_patch_loop_iter() (could probably remove the `scope`
+argument from spectre_bhb_loop_affected() then).
 
-Thanks
-Baoquan
+- Add a function is_spectre_bhb_safe() that just checks if the MIDR is
+in the new list you're adding
 
+- Add an `if (is_spectre_bhb_safe()) return false;` to the top of
+is_spectre_bhb_affected
+
+- Change the `return false` into `return true` at the end of
+is_spectre_bhb_affected (in fact, you can probably take out some of
+the other calls that result in returning true as well then)
+
+- In spectre_bhb_enable_mitigations(), at the end of the long if-else
+chain, put a last else block that prints your WARN_ONCE(), sets the
+max_bhb_k global to 32, and then does the same stuff that the `if
+(spectre_bhb_loop_affected())` block would have installed (maybe
+factoring that out into a helper function called from both cases).
+
+I think that should implement the same "assume unsafe by default
+unless explicitly listed as safe, check for all other mitigations
+first, then default to k=32 loop if none found" approach, but makes it
+a bit more obvious in the code.
 
