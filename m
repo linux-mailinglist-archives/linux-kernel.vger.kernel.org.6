@@ -1,241 +1,270 @@
-Return-Path: <linux-kernel+bounces-446036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469ED9F1ECA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B529F1EE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10A81889736
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A207D18896F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B7019258A;
-	Sat, 14 Dec 2024 13:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127CA193425;
+	Sat, 14 Dec 2024 13:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="crs4yI3V"
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tQ1PAgW0"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4F863C;
-	Sat, 14 Dec 2024 13:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734183323; cv=pass; b=Fe7xDTcXoKujYlHt4ifgCt1dMbx4BEd7jyu1rNuIFyawTs/ZwhZNdg80V+hEL+Q/yJqYbeHr84ljbxqQcz6Hb8C6XsmTaHd83dK1kdA12DFaTJU6G6ouKYTflZq3cHjRdemPt/CBlEYGzjE+QlAYkLBNgWKjghNbFD7hfmWvykI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734183323; c=relaxed/simple;
-	bh=DNp5NyLYjpTHovQ1y6WoZ3lMswAME79gMoNY2Rnnwb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FFswwetTbLKPmZXwggEFWZzaaAdMgdeTcHrWbpVhO4+WN1ZpZCH3DLAsT0IBo/m+8OlW/uOE0NNONdHoijz+ni9ZvZZZimB2Fa/3l2RvEB3BohzOqbsEJ8ngucLkP9DwdtSdosM4by2wGFpJzPR4SNEqt9IiYrfKWDrnMM9NIUg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=crs4yI3V; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734183302; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AELDF5dDitodFZd2a7439oMtPNMM/AWuhQsFhmw8SCiuDDfANpyInItNd4ZxiUw8XJMz4Krk9exppn9HrclkZBeLTIMMOg/Uff0vcX7bOmo+kWIgS/uZaCzyd5+CtRBvDUXcf41PopeP6A2y9qTe7XaHgkOJxRdfxzbrX58Yx5w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734183302; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=MuQDYAnAiCnupF2c2O/j5fvSk5ZV3CYb+uG6AjERERg=; 
-	b=DYUwN6eEMYU0xQ7jtk75RmlvccABACCuCSgtlymDaic9pWhhlsA4fZikWuzczQ7j0JzrYeTf6cPYM87JKqkSceQQ6jKUxAEPqGWqYmti1eJ5t7WhLpdeYmq1ZJJM5SGQolVbrYymgSv60ahnB+EOpC3O1Ph+qIjUhD7LcUue+kI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734183302;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To:Cc;
-	bh=MuQDYAnAiCnupF2c2O/j5fvSk5ZV3CYb+uG6AjERERg=;
-	b=crs4yI3VTG5e0wH1OwGzfdLHMgw8OCGbvoX1cn64Z5C4mOcUGVZTss9VCW7MClFR
-	sNWZQc2DtiVNYVOQ2fb+a2KnPQIK/AuZZJCcCldkNZqKqIb7dNljGq835s9sCRqu4oi
-	fLimkkm4kbQMY8+gUcOzn8eTplRFLPHbb3y3bqsI=
-Received: by mx.zohomail.com with SMTPS id 173418329954737.32446005016391;
-	Sat, 14 Dec 2024 05:34:59 -0800 (PST)
-Message-ID: <d5bf9c4f-fde5-475c-9e4f-600b35508cb8@zohomail.com>
-Date: Sat, 14 Dec 2024 21:34:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958B4191F9E
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 13:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734183437; cv=none; b=DKEiX50misfT+K5Wh+iSfHsVnyl3cb2z2yjBSV0QkCfYV6jPIZFrM30m9lyPH3mui53nOZcY5OQA13AtXa/yzm3rDvxgE6n0pzqZ76l8khgehIIWffUEi0ZqcCgkgJkr9lYgwYde4wMmX/BQ9lp8M+4Ey6/N2B4cSQC7Dn7B6Ho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734183437; c=relaxed/simple;
+	bh=CFKCP8gmNVOgeqNjr+3QJjtmtNC/tAX/00xUMnJ/tTs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iH3Mfm7wlQIbjMe8wQh3dtZIVWr61B7M2EFq9upojxwJ9im+6adBRMCwjjzYt8OoGZlHmyNVtHXEu4l0C7HO2iF+kpfXg7y6JXoBj26oC8RZv49uXE9WT9LF4PvL9JVJIeGj5fEOTRJxS3gONum8KqxvuWtGY+06HNfv3R8znVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tQ1PAgW0; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53e3a90336eso2888391e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 05:37:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734183432; x=1734788232; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5Yifu5AHqHdXbQoT1ZLOpnCiREtj9Cd9aALDn2mK+0=;
+        b=tQ1PAgW0k11qQeZXHtPzNhlu34oullOFnWhsHthvUsQjQA3SqqKFE4krFadpJFOOhz
+         rbVaZn6Sdd3y7+xrEFOR8lqtECMmvbHvDIR4ozWd5rxL4vIZenQpU/mWIxziqUmj2/E9
+         kVc9Ombkenb4OEY9qlSzDBmOruPgzGd0PfGU6Ohis5zqGRxLCJtR7z37WJ85vRv0pOoQ
+         REk5yAXEQL6Lq8z/pRbKMfQS4amMNd1XurXZDdTX5COyDESuXdl91gnY8a0OII7nOt2E
+         oBkAxacodx1nkFcaI9NWhLbA/sxXxpjW4PWQZhwPowtsh5LR5ZOS/97KJg6mLTMxaGUv
+         nzFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734183432; x=1734788232;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D5Yifu5AHqHdXbQoT1ZLOpnCiREtj9Cd9aALDn2mK+0=;
+        b=hqe5hoMtEyehmkwJP6K9yBpBsqrE7txFwP8spXoUqInuHksKJ/pTF3hk0I+b8EAbqM
+         OzlfiSHofho/QsbrkLKCx6sLrksRmmKCEIQJWEfT7slM9uZgmv2esdImli7bpMxzSb/a
+         T6TRwS5n6GrMh80/KG3YJKzSgg5j26kxDeoBKNqRq1XaBznwdCaQ0x7k8rhnkPu3L+74
+         7Dymw+xTcQVsXi7v4f1dADaF8218Mjp2P72CiZJRNo5RDjB11Q8YKDQbGbtzQk/bi/jz
+         aQwAwnpJuQO47z4PxgUTAmcxHGCr8gCPTc7Py/A2M/U8oevVhbMfLkBxFZtRnQ1D9bG9
+         XoSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUgMoy+AurtlaCk7ksUAKAUunwR768SgRPTimTyu/J0IaZl7i1C+/HV4uczE38VGSdHp8OGY5ZzilJ/K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg6FnACw1402lRHKIJ06H6BX2BYksfWf2IlpnV7zx6MriiPtRQ
+	9FX9UD4mGq1YEGwd0r1SxqiSLk119pyxOQhkvtTApnBkhBKdaMgUwwe6fp7ngEs=
+X-Gm-Gg: ASbGncv9GCfcwwxuHNCfm3RM/SHDuUp3sH1vFro7IJODj2TK96BC9AeNslCwFxhaZuD
+	RSqWf4r1nxuKm8PoM5Bg6jSnW/kIYGPwUriHT63rY0c8x73nFIe16mgN/KoA1uIMkJPdVnF7DO8
+	MCmxW7b+BPyahlHwnBiKN46k8J3wS+0stpynrVxnMS0qSWVVzSoZeV/GL4iYXoES1LRTFzCLa/i
+	Q2yiOUJvO26t56eY+9ssUmOBIVx6yv2dvE9iWl71nmpp8bKg7acfkEP8DMOwpEH
+X-Google-Smtp-Source: AGHT+IEmz28NMTXAP81JXsAlUmRjxWGG4URFEoZPW2057H7lgb26FPjGbNMLBZ5J86SvfmTU0Z3DXQ==
+X-Received: by 2002:a05:6512:ba3:b0:540:3567:2ede with SMTP id 2adb3069b0e04-5408ad822dcmr1895173e87.12.1734183431555;
+        Sat, 14 Dec 2024 05:37:11 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120baa474sm220131e87.90.2024.12.14.05.37.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 05:37:10 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
+ const mode pointer
+Date: Sat, 14 Dec 2024 15:37:04 +0200
+Message-Id: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/15] PCI/AER: Modify AER driver logging to report CXL
- or PCIe bus error type
-To: "Bowman, Terry" <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- dave.jiang@intel.com, alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- PradeepVineshReddy.Kodamati@amd.com
-References: <20241211234002.3728674-1-terry.bowman@amd.com>
- <20241211234002.3728674-5-terry.bowman@amd.com>
- <ef7d45cc-d5ed-4a76-a9af-52c2a423ead0@zohomail.com>
- <208e6639-a394-428f-bfe9-a3b8d48d6144@amd.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <208e6639-a394-428f-bfe9-a3b8d48d6144@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112271c8d1833567dfefef03c7cf600002e50a68bfccd368470f93d8ca3c200031c9f46a82d6a31686e:zu080112278e854838a7a0ec0bf31e1ca20000e2709ff0c6002f061ae2ef3e3e0f5a51527a88dd9d7822d32a:rf0801122b7e45eafa645a239bf48f77690000fb1547e023d3a302104576ee2bf8b13728d3fa9c2fac99f8fce135e78c:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAACKXWcC/42NTQqDMBBGr1Jm3SlOrApd9R7FRX5GHdCkJBJax
+ Ls3eoIu34PvfRskjsIJHpcNImdJEnwBdb2AnbQfGcUVBlWpOxE16OKCNnjPdg0Rl+AYs57FHTK
+ tqLl2puKhtaaDEnlHHuRzHrz6wpOksvuef5kO+3c6E1ZoyDSqpqYdOnrO4nUMtxBH6Pd9/wHZe
+ zDbzQAAAA==
+X-Change-ID: 20241115-drm-connector-mode-valid-const-ae3db0ef6cb7
+To: Jani Nikula <jani.nikula@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+ Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, 
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
+ Martyn Welch <martyn.welch@collabora.co.uk>, 
+ Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, 
+ Alison Wang <alison.wang@nxp.com>, 
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Gurchetan Singh <gurchetansingh@chromium.org>, 
+ Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, virtualization@lists.linux.dev, 
+ spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ Jani Nikula <jani.nikula@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6418;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=CFKCP8gmNVOgeqNjr+3QJjtmtNC/tAX/00xUMnJ/tTs=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnXYoDmM2S87MrW8vu+JbVhyOODFafbOCaZxOjt
+ xp9pGfUjhmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ12KAwAKCRCLPIo+Aiko
+ 1eEwB/4jmBS/ZZEzFjxaESTGxzhJNhkCvznhOV0ymm9HyVmb5cREFRRAYjI5LoTWx7bG2RoJpPx
+ UvuWQ54Hy/EBhfpWcduIr/JhudedQ7jBPBIKLI9pTuxk9R5EX73GEkl63Fke70Rl4RJk106amoZ
+ L5UKcCV/8bd4eJp0zytj96tqIz4Ck6AKNLE/phVZ9qgSiEy8WyBf4S97qdT56EH3M7y0HwvvZUR
+ hYu0+I8MmFd53hj3SU9abEOy2j4vRwWzuePJ9fgEjSd8QoY+ntVzjh+bjurDQ8D7x0pTI/WJqrS
+ 6pXMPMXEdtL00Ib+8dAXox6yumWc5m53LQxFithWGBOqgCaL
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On 12/13/2024 3:59 AM, Bowman, Terry wrote:
->
->
-> On 12/11/2024 7:34 PM, Li Ming wrote:
->> On 12/12/2024 7:39 AM, Terry Bowman wrote:
->>> The AER driver and aer_event tracing currently log 'PCIe Bus Type'
->>> for all errors.
->>>
->>> Update the driver and aer_event tracing to log 'CXL Bus Type' for CXL
->>> device errors.
->>>
->>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->>> Reviewed-by: Fan Ni <fan.ni@samsung.com>
->>> ---
->>>  drivers/pci/pcie/aer.c  | 14 ++++++++------
->>>  include/ras/ras_event.h |  9 ++++++---
->>>  2 files changed, 14 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>> index fe6edf26279e..53e9a11f6c0f 100644
->>> --- a/drivers/pci/pcie/aer.c
->>> +++ b/drivers/pci/pcie/aer.c
->>> @@ -699,13 +699,14 @@ static void __aer_print_error(struct pci_dev *dev,
->>>  
->>>  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->>>  {
->>> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
->>>  	int layer, agent;
->>>  	int id = pci_dev_id(dev);
->>>  	const char *level;
->>>  
->>>  	if (!info->status) {
->>> -		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
->>> -			aer_error_severity_string[info->severity]);
->>> +		pci_err(dev, "%s Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
->>> +			bus_type, aer_error_severity_string[info->severity]);
->>>  		goto out;
->>>  	}
->>>  
->>> @@ -714,8 +715,8 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->>>  
->>>  	level = (info->severity == AER_CORRECTABLE) ? KERN_WARNING : KERN_ERR;
->>>  
->>> -	pci_printk(level, dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
->>> -		   aer_error_severity_string[info->severity],
->>> +	pci_printk(level, dev, "%s Bus Error: severity=%s, type=%s, (%s)\n",
->>> +		   bus_type, aer_error_severity_string[info->severity],
->>>  		   aer_error_layer[layer], aer_agent_string[agent]);
->>>  
->>>  	pci_printk(level, dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
->>> @@ -730,7 +731,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->>>  	if (info->id && info->error_dev_num > 1 && info->id == id)
->>>  		pci_err(dev, "  Error of this Agent is reported first\n");
->>>  
->>> -	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
->>> +	trace_aer_event(dev_name(&dev->dev), bus_type, (info->status & ~info->mask),
->>>  			info->severity, info->tlp_header_valid, &info->tlp);
->>>  }
->>>  
->>> @@ -764,6 +765,7 @@ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
->>>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
->>>  		   struct aer_capability_regs *aer)
->>>  {
->>> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
->>>  	int layer, agent, tlp_header_valid = 0;
->>>  	u32 status, mask;
->>>  	struct aer_err_info info;
->>> @@ -798,7 +800,7 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->>>  	if (tlp_header_valid)
->>>  		__print_tlp_header(dev, &aer->header_log);
->>>  
->>> -	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
->>> +	trace_aer_event(dev_name(&dev->dev), bus_type, (status & ~mask),
->>>  			aer_severity, tlp_header_valid, &aer->header_log);
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(pci_print_aer, CXL);
->>> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
->>> index e5f7ee0864e7..1bf8e7050ba8 100644
->>> --- a/include/ras/ras_event.h
->>> +++ b/include/ras/ras_event.h
->>> @@ -297,15 +297,17 @@ TRACE_EVENT(non_standard_event,
->>>  
->>>  TRACE_EVENT(aer_event,
->>>  	TP_PROTO(const char *dev_name,
->>> +		 const char *bus_type,
->>>  		 const u32 status,
->>>  		 const u8 severity,
->>>  		 const u8 tlp_header_valid,
->>>  		 struct pcie_tlp_log *tlp),
->>>  
->>> -	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
->>> +	TP_ARGS(dev_name, bus_type, status, severity, tlp_header_valid, tlp),
->>>  
->>>  	TP_STRUCT__entry(
->>>  		__string(	dev_name,	dev_name	)
->>> +		__string(	bus_type,	bus_type	)
->>>  		__field(	u32,		status		)
->>>  		__field(	u8,		severity	)
->>>  		__field(	u8, 		tlp_header_valid)
->>> @@ -314,6 +316,7 @@ TRACE_EVENT(aer_event,
->>>  
->>>  	TP_fast_assign(
->>>  		__assign_str(dev_name);
->>> +		__assign_str(bus_type);
->>>  		__entry->status		= status;
->>>  		__entry->severity	= severity;
->>>  		__entry->tlp_header_valid = tlp_header_valid;
->>> @@ -325,8 +328,8 @@ TRACE_EVENT(aer_event,
->>>  		}
->>>  	),
->>>  
->>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
->>> -		__get_str(dev_name),
->>> +	TP_printk("%s %s Bus Error: severity=%s, %s, TLP Header=%s\n",
->>> +		__get_str(dev_name), __get_str(bus_type),
->>>  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->>>  			__entry->severity == AER_FATAL ?
->>>  			"Fatal" : "Uncorrected, non-fatal",
->> Hi Terry,
->>
->>
->> Patch #3 is using flexbus dvsec to identify CXL RP/USP/DSP. But per CXL r3.1 section 9.12.3 "Enumerating CXL RPs and DSPs", there may be a flexbus dvsec if CXL RP/DSP is in disconnect state or connecting to a PCIe device.
->>
->> If a PCIe device connects to a CXL RP/DSP, and the CXL RP/DSP reports an error, the error log will be also "CXL Bus Type", is it expected? My understanding is that the CXL RP/DSP is working on PCIe mode.
->>
->> If not, I think that setting "pci_dev->is_cxl" during cxl port enumeration and CXL device probing is another option.
->>
->>
->> Thanks
->>
->> Ming
->>
-> Hi Ming,
->
-> aer_print_error() logs the AER details (including bus type) for the device that detected the error
-> not the RPAER reporting agent unless the error is detected in the RP. The bus type is determined
-> using the 'dev' parameter and in your example is a PCIe device not a CXL device. aer_print_error()
-> will log "PCI bus" because the flexbus DVSEC will not be present in 'dev' config space.
->
-> I agree in your example the RP and downstream device will train to PCIe mode and not CXL mode. But, the
-> flexbus DVSEC will still be present in the RP PCIe configuration space. The pci_dev::is_cxl structure
-> member indicates CXL support and is not reflective of the current training state.
->
-> Regards,
-> Terry
->
->
-Got it, thanks for your explanation.
+While working on the generic mode_valid() implementation for the HDMI
+Connector framework I noticed that unlike other DRM objects
+drm_connector accepts non-const pointer to struct drm_display_mode,
+while obviously mode_valid() isn't expected to modify the argument.
 
+Mass-change the DRM framework code to pass const argument to that
+callback.
 
-Thanks
+The series has been compile-tested with defconfig for x86-64, arm and
+arm64.
 
-Ming
+Note: yes, I understand that this change might be hard to review and
+merge. The only viable option that I foresee is to add new callback,
+having the const argument and migrate drivers into using it one by one.
 
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Rebased on top of linux-next
+- Replaced 'accept const argument' with 'take a const arugment'
+  (Laurent)
+- Link to v1: https://lore.kernel.org/r/20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org
+
+---
+Dmitry Baryshkov (5):
+      drm/encoder_slave: make mode_valid accept const struct drm_display_mode
+      drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
+      drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_idx()
+      drm/connector: make mode_valid_ctx take a const struct drm_display_mode
+      drm/connector: make mode_valid take a const struct drm_display_mode
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c           |  8 ++++----
+ drivers/gpu/drm/amd/amdgpu/atombios_dp.c                 |  2 +-
+ drivers/gpu/drm/amd/amdgpu/atombios_dp.h                 |  2 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c        | 12 +++++++++---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h        |  2 +-
+ drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c |  2 +-
+ drivers/gpu/drm/arm/malidp_mw.c                          |  2 +-
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c             |  2 +-
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c      |  2 +-
+ drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c |  7 -------
+ drivers/gpu/drm/display/drm_bridge_connector.c           |  2 +-
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c          |  2 +-
+ drivers/gpu/drm/drm_crtc_helper_internal.h               |  2 +-
+ drivers/gpu/drm/drm_probe_helper.c                       |  2 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c                     |  2 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c                |  2 +-
+ drivers/gpu/drm/gma500/cdv_intel_crt.c                   |  2 +-
+ drivers/gpu/drm/gma500/cdv_intel_dp.c                    |  2 +-
+ drivers/gpu/drm/gma500/cdv_intel_hdmi.c                  |  2 +-
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c                  |  2 +-
+ drivers/gpu/drm/gma500/oaktrail_hdmi.c                   |  2 +-
+ drivers/gpu/drm/gma500/psb_intel_drv.h                   |  2 +-
+ drivers/gpu/drm/gma500/psb_intel_lvds.c                  |  2 +-
+ drivers/gpu/drm/gma500/psb_intel_sdvo.c                  |  2 +-
+ drivers/gpu/drm/i2c/ch7006_drv.c                         |  2 +-
+ drivers/gpu/drm/i2c/sil164_drv.c                         |  2 +-
+ drivers/gpu/drm/i915/display/dvo_ch7017.c                |  2 +-
+ drivers/gpu/drm/i915/display/dvo_ch7xxx.c                |  2 +-
+ drivers/gpu/drm/i915/display/dvo_ivch.c                  |  2 +-
+ drivers/gpu/drm/i915/display/dvo_ns2501.c                |  2 +-
+ drivers/gpu/drm/i915/display/dvo_sil164.c                |  2 +-
+ drivers/gpu/drm/i915/display/dvo_tfp410.c                |  2 +-
+ drivers/gpu/drm/i915/display/icl_dsi.c                   |  2 +-
+ drivers/gpu/drm/i915/display/intel_crt.c                 |  2 +-
+ drivers/gpu/drm/i915/display/intel_dp.c                  |  2 +-
+ drivers/gpu/drm/i915/display/intel_dp_mst.c              |  2 +-
+ drivers/gpu/drm/i915/display/intel_dsi.c                 |  2 +-
+ drivers/gpu/drm/i915/display/intel_dsi.h                 |  2 +-
+ drivers/gpu/drm/i915/display/intel_dvo.c                 |  2 +-
+ drivers/gpu/drm/i915/display/intel_dvo_dev.h             |  2 +-
+ drivers/gpu/drm/i915/display/intel_hdmi.c                |  2 +-
+ drivers/gpu/drm/i915/display/intel_lvds.c                |  2 +-
+ drivers/gpu/drm/i915/display/intel_sdvo.c                |  2 +-
+ drivers/gpu/drm/i915/display/intel_tv.c                  |  2 +-
+ drivers/gpu/drm/i915/display/vlv_dsi.c                   |  2 +-
+ drivers/gpu/drm/imx/ipuv3/imx-tve.c                      |  2 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c      |  2 +-
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c                |  2 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c                  |  2 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.c              |  2 +-
+ drivers/gpu/drm/qxl/qxl_display.c                        |  2 +-
+ drivers/gpu/drm/radeon/atombios_dp.c                     |  2 +-
+ drivers/gpu/drm/radeon/radeon_connectors.c               | 10 +++++-----
+ drivers/gpu/drm/radeon/radeon_mode.h                     |  2 +-
+ drivers/gpu/drm/rockchip/cdn-dp-core.c                   |  2 +-
+ drivers/gpu/drm/rockchip/inno_hdmi.c                     |  4 ++--
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c                   |  2 +-
+ drivers/gpu/drm/sti/sti_dvo.c                            |  2 +-
+ drivers/gpu/drm/sti/sti_hda.c                            | 12 ++++++------
+ drivers/gpu/drm/sti/sti_hdmi.c                           |  2 +-
+ drivers/gpu/drm/tegra/dsi.c                              |  2 +-
+ drivers/gpu/drm/tegra/hdmi.c                             |  2 +-
+ drivers/gpu/drm/tegra/sor.c                              |  2 +-
+ drivers/gpu/drm/vc4/vc4_txp.c                            |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_display.c                 |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                      |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                      |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c                     |  2 +-
+ include/drm/display/drm_hdmi_state_helper.h              |  2 +-
+ include/drm/drm_encoder_slave.h                          |  2 +-
+ include/drm/drm_modeset_helper_vtables.h                 |  4 ++--
+ 71 files changed, 92 insertions(+), 93 deletions(-)
+---
+base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+change-id: 20241115-drm-connector-mode-valid-const-ae3db0ef6cb7
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
