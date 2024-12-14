@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-446065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BD39F1F6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:44:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45A29F1F71
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:49:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A7D1885758
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54F1166A6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63D0194AF3;
-	Sat, 14 Dec 2024 14:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9D1953B0;
+	Sat, 14 Dec 2024 14:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YkkU9BXU"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/YGapCg"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9485DEC0;
-	Sat, 14 Dec 2024 14:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E087946C;
+	Sat, 14 Dec 2024 14:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734187473; cv=none; b=FMUEhh83YChd6cbEusSocOZheqY9ULlV/YqvNk+T/6zCFrYpg26NBPdUetO9Es4jcrTibK0nMVZnsu84kgvup8si2rBJult7Ai3RGchuSCWrUpqalxmFBql2UW04+znQ/uhUGlZ/alc77NsqG3JY1rF7mQEEapExge5QFILAEdE=
+	t=1734187788; cv=none; b=tx5cxxsZmiDYvgpx1b5PpaMiPygtKPCYWr4ett8c3qD/IFJGsPZHIZryo1FbtpgLyVN4Z6bopiO1Kqg/z/qq1kXOuaHbQT7pz43uUtMupqy+2+macZgZ59v96FwT1qxeyh9cDwsuBbepVULVrqfgigicp6TY0XwJAG/FafIYnqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734187473; c=relaxed/simple;
-	bh=V/4hveNXnTzs2sR3Cj7CGb+By9JCXCdycd/ln7cLcV4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=S31E2Z14BCnoUH0wUPkysq9OOzkBXvLE9c90UCcAiv6ThF2w2BZnJRKdjlmSwlhC4z7Nyc2g6CdbgQmfif2tk2X9VeUuzl9bPylDiFr6GG45aK+XUcyOTkwmD0aSSfLOQukgLCPXiQ/QOnFVByYGQRVcb5OP+Ek2YQ0n9zcr/do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YkkU9BXU; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1734187440; x=1734792240; i=markus.elfring@web.de;
-	bh=zhSHKp1jxoNkU7hyFpf2kS1qX2yR7ZASZZoIXCxrPS4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YkkU9BXUgztAvQfYtLxXCmPEMR2/e1NZzJ0MGqY2XUM3xa7rN8XppNExjz5fMBzb
-	 D2yDMPE5M8C0+zHT0wH+7qjpCczjZ8bCjmIf/uYzzfNX/wqa7IwR52aFJUPvTzbd1
-	 FLml4OcyZGvhj5DjtrXERcAiVFkxoFHhxDszPtcGuQOmVh5Enz/9Vus9MDmPXUIC5
-	 8wAOH0ZAWv/RwxJ7TTOQ89PtRq4UaT8Y9snlUNQr8fVoH7SOXa6AeZxlMG8s0hRSd
-	 SVSRvJtDLDmN+WcQRkXkjt73Ikw86XMNe0L/aY4RbDrjj2DF8I8sXZQDFuqtZAKpO
-	 iHSIuRzviO8xcTxMVA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.70.57]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mf3qY-1tpSXF41Vq-00dgAK; Sat, 14
- Dec 2024 15:44:00 +0100
-Message-ID: <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
-Date: Sat, 14 Dec 2024 15:43:41 +0100
+	s=arc-20240116; t=1734187788; c=relaxed/simple;
+	bh=2WaOYimtK41GSXhFP1ibELg/fvUgx8ajc/IeCENQOCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YQLXYJKm9ifo5RFosNXmAuba+b5xLgC5zC8Ug1jqadhaX+eWFP9OEr0hD4i9IA0j1nWnaEifYIrDVlu/83+yr9eSerX3sbiqOHJds9O2R/pWI8ejM0RiMIa/EAOsDSAsPUYgcjCUZVe36e5kzCXvj6apZQFUk5Ad4CnRwbdchMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/YGapCg; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-216426b0865so23928285ad.0;
+        Sat, 14 Dec 2024 06:49:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734187786; x=1734792586; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LGwPyBPLakV/q2dhnntsvhl1W5GFqJD9tkWsyFepuM4=;
+        b=Z/YGapCgZZrKcmsh3Ac7HO1qQ2yMIV3H0V/3k0dzLW3cHmvz2Bo6wHgxLnrnGPYEbr
+         iB65EtvGs0wvXqwDP9GYa+AHcWM/VLFUWI7YRpnuKKke9TgmDqbxq1hC0gfJWFPW/eI7
+         ETeZgO7l/wC62QSF+rDo9HaF2+kH1k0lJJdEFBJ7ecVP+76WMcI3U2qoBGZlWum33v22
+         SEdM11X0oWLL8t053zZL+/Gv7ejGZ7ldv7hk2CIhrMNeubadzoXf8Zucgw14RMcPJOfi
+         ZmUdmw3ThuneX6ud1ROdXVAeo8wkHn/Crd1LD6wdEEMSrPhsdly5mqOwgSc1P0M17PoB
+         p6uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734187786; x=1734792586;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LGwPyBPLakV/q2dhnntsvhl1W5GFqJD9tkWsyFepuM4=;
+        b=CwAzB96CZOudxwRmpRpsECwXqDvEAB+6VrgALN2m8bTozXBk5i01i3HyExvomRpK/L
+         ysNJojmY3vZT9sTFnL8EG/rZs0AEfTeyPmsFLFD4Jh2E4sAk4RKyc3Ew1A0iXNtA1qn0
+         ePeoDvgbkfajff/7G1u/DRT3aIkJ2vzEAj2ris5nUQpRRJnotBQrX9qNd9oKAk05OJr6
+         vHYqRW7dNY/Gyl0ASMj30GuJjxbPAxtTCBBVtXo+Zy/tteyLYYW1DqbEC2vOyPNzbkVM
+         WrQNGSafIqdd0FyQm81Mo8zdfcUxAk8xudMBdbeV+SZDrR2mZ7ZF/TW2bAcoKo6IDFYJ
+         VFbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSfeDQ6l5Uq0GMnrrhRTult/U9bQb6cxwgVx+YCOlKFL9PivZI3egvQdKbLOCz3wfCvBYkF673bzY@vger.kernel.org, AJvYcCWRRLozrN7F2M1sC8Yr9+C9NfzfPyilFUAB6xA8IZMTnTfGgQb8paSEAbL51MCp+fwrnEi33nXkX07aezkQsw==@vger.kernel.org, AJvYcCWyVT473X2n9WTxVIYOZv7fLLVd53QUG3dkceBjybCbj3ZR0di0lkgQmqjyKg2heQUR1QIZexb46oXwts2f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAPY00FnBSUKLZTuoSBmpCfoA/VCLK37EPMdB12FaV4uNUYLqT
+	GAD54h2MR7Ntno9F4jkDPeT2F8ttfmSK156AGBbb8W4+1h0dzVaK
+X-Gm-Gg: ASbGncu5gI9FLJOT5fn/j9yUxWZslcVdUqCT7UzuS+cFgtzOXy8u/1duq8pqVzb+mnv
+	EdKEHM8aBh6JTaFd99FEOPW/sLtMajgwvSZPsIuTKflv3Y6G5OwGOeJ5TpSKkaKl3MK23QdmkvG
+	MYwSzLkbsboU/wci8HKwKiDP1ozYkK50o9lsEidVH/vgAk/ndoGrPHUTddXdvqZ4D4P/n58pkan
+	fGIOd5VGbWnebfkQeUJD5dprxI3mC8Fs9FKnq1+QG710TaAW7+WWq0=
+X-Google-Smtp-Source: AGHT+IEj9AsOKg+OhCsNjJ9wrzFf+uxH+yOJp8F53v9YGwrVjjxrWCX4ART8JnNDqIawKSyQ0SwXLg==
+X-Received: by 2002:a17:902:f60f:b0:216:3889:6f6f with SMTP id d9443c01a7336-218929b7895mr101243285ad.17.1734187785845;
+        Sat, 14 Dec 2024 06:49:45 -0800 (PST)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142db5b0esm4877221a91.22.2024.12.14.06.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 06:49:44 -0800 (PST)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: dmitry.baryshkov@linaro.org
+Cc: andersson@kernel.org,
+	chenxuecong2009@outlook.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gty0622@gmail.com,
+	johan+linaro@kernel.org,
+	konrad.dybcio@oss.qualcomm.com,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mitltlatltl@gmail.com,
+	robh@kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc8280xp: Add Huawei Matebook E Go (sc8280xp)
+Date: Sat, 14 Dec 2024 22:48:28 +0800
+Message-ID: <20241214144829.670851-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <lwhell4z72srw67gj6gpt2uyqzx4k5dzjw5xs7dab6lbya7soi@tsoh2bcn2gwc>
+References: <lwhell4z72srw67gj6gpt2uyqzx4k5dzjw5xs7dab6lbya7soi@tsoh2bcn2gwc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Maksym Holovach <nergzd@nergzd723.xyz>,
- Markuss Broks <markuss.broks@gmail.com>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-References: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
-Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
- controller
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kSs8gYPdVRGvnF2Xk5QnP0ZIbQ1n6Z9KVxpWNOEeZ50ISG7PUYA
- mjN6tq83OreQiN9pDPdt9NmiP4sosI4rXBevsCKfcoPTRG4Vxmq3th7agMUBhslrSz1NmkX
- FOQ/LXt1Gs8Luldq5e7IW8zOZpMFWv9jdzd8VjWAZUWw4UwIb6VW/nEwJLv8OyqaDiBiBah
- 8phBX+0h8PbIhjA9FgDpw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZvnPYnJTGNM=;H3nYxlU3VlEwdOlR9qYrS5Ut6fE
- Wea/z7R24moiT4HMqTyR06mku3iOWEjjcy1/H8MczfTEmkq7OmBU3oDv7ZJEtLIr66j8zIxLa
- xKfo91wZhUsAM0VcztLeYQsswmuAFlj/2LlF/6slISmj/KwS8gB6FdOjmiDJx2pl3WAnu8MAy
- +iNCUo27Cisfj/R+q3lwF7ByVry75r5juxdjZAFpWmDzoQkTOnFRJj8xV+aLbP6bIBcisnV+d
- OQamjnBuKt51XGN9Bs8S6must0CHh+1yDv//gDqLYovmEnDl02GMFjMnq7bej6lzCQNkUVxOE
- UglA8DCWcNkbRZHL3ySM1yKvkeJPFc4nL9JmkpwjM4SNruIMLVHjC5cR7iau8J/u+D63c2Qmq
- QddAPimuz644KujsfYNKwQ9YcHL5xldpeGXyfkjhuvP7AbN0aoOH7C2S1oOopkTg7W0Hm/lw4
- z/uNdETA05GWbCwptB0a2rLKkrhEkbX3fYdOvLRwotHuxEd5zX/YdElK+eU+M/EuIs+coJLns
- yj4LNwTdSLy+yIH2i7jYQ7IK2s1vbAknRCcT+Y6zBVx/hG+Ypgl+zfjGjeJUizt1qUBVXLNw5
- Sdvb+fN8CrMDEkJhARAPttNcjqrsLqcTBbf4EwcFWjCeWByHaAH7+qibRRiTxo0mVPudOYWta
- EZiA+MliZs30jBq2wk8sydCtNOgXozdfSJpiGHD+v2BCVw69AOBQDusEMFOGUV4J/S7F4ilge
- VhVLeuKVzlmkp8pmwjOBfA3uphIZQmNZKg8BLfIHNPo//wmU7ZiWiq6lfpfeH/dYA3Vc9j4//
- UhVqfj4DAwk/jlIqCAnifg7IYu1MncYC6/aiG4qEN/R7e3c5lGz42xJfbl5URSxj89giS+7Yo
- 7L+BrO4oIjLcQyYptWGvRhEyEkaVVL8VvQi8vY4ZqpNpD/0VozC0vfUg5RhbxU8YFWUrUjZgZ
- YKvM0GR+4Ad6ipsIbA6s+w3u7pxkRzuOX1i0p2mjFO9aYxOmBwPsJMr2cxEbgxHU+d9JoyLjZ
- GQg6sjkW2GcQqML4MQXI4ZGRc3dDkMWUm6aP5RU16bV8IxowLGevu5hKwKqfNM9U6+7fikNLv
- 3/KdvjPr4=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> SPEEDY is a proprietary 1 wire serial bus used by Samsung
-> in various devices =E2=80=A6
+On Sat, Dec 14, 2024 at 9:39 PM Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
 
-You may occasionally put more than 57 characters into text lines
-of such a change description.
+> On Sat, Dec 14, 2024 at 08:23:00PM +0800, Pengyu Luo wrote:
+>> On Fri, Dec 13, 2024 at 1:13 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> [...]
+>>
+>> >> +
+>> >> +          /* /lib/firmware/ath11k/WCN6855/hw2.1/board-2.bin
+>> >> +           * there is no calibrate data for huawei,
+>> >> +           * but they have the same subsystem-device id
+>> >> +           */
+>> >> +          qcom,ath11k-calibration-variant = "LE_X13S";
+>> >
+>> > Oh, this can be taken care of! See [2], [3].
+>>
+>> [...]
+>>
+>> Hi, Konrad
+>>
+>> I want to distrub you again.
+>>
+>> Finally, I found something, after I enabled ath11k boot dbg, I got my
+>> id_string='bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255`
+>>
+>> With qca-swiss-army-knife (see [1])
+>>
+>> $ ./ath11k-bdencoder -e board-2.bin | grep -i "$id_string"
+>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=255.bin created size: 60048
+>>
+>> It have already been here. So that means I don't need to extract from
+>> Windows. I just extract it from linux-firmware then give it a variant
+>> name and send patches to ath11k, right?
+> 
+> No. Usually 255 is an ID that is used by a variety of boards. So,
+> basically, you have to extract board data from Windows, add a proper
+> calibration variant that is specific to your board and then send the
+> resulting data to the ath11k mailing list.
+> 
+
+But how? Is it possible that some boards have no  calibration data?
+I tried to track the access time of files, the result shows that these
+bdwlan* are never touched. According to my observation, these files
+should have been accessed, (like BT firmware on windows).
+
+>>
+>> Pengyu
+>>
+>> [1] https://github.com/qca/qca-swiss-army-knife
+>
+> --
+> With best wishes
+> Dmitry
 
 
-=E2=80=A6
-> +++ b/drivers/soc/samsung/exynos-speedy.c
-> @@ -0,0 +1,457 @@
-=E2=80=A6
-> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 =
-addr, u32 *val)
-> +{
-> +	int ret;
-> +	u32 cmd, int_ctl, int_status;
-> +
-> +	mutex_lock(&speedy->io_lock);
-=E2=80=A6
-> +	ret =3D speedy_int_clear(speedy);
-> +
-> +	mutex_unlock(&speedy->io_lock);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
-
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&speedy->io_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/mutex.h#L2=
-01
-
-Regards,
-Markus
+Pengyu
 
