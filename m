@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-446227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63259F215A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:52:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0D79F215D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 145927A06B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDC67166024
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5FC1B6CE8;
-	Sat, 14 Dec 2024 22:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9194B1B6CE0;
+	Sat, 14 Dec 2024 22:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YgOz3rFe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNfNm3e1"
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F97DA9C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD9629CEF;
+	Sat, 14 Dec 2024 22:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734216734; cv=none; b=AIjigY8EprvOq2nofGTIFzAXRM1s2iKKbjGVr+C4/p9rrs+gTf/lb7w3NCmSEr3Szfae5z53qOxK1I6OXLmKcsrDeR/zTa3OR+AAvfdR712iHQvRHF2UOOTremNWV9Qxt7o8aT1+zO24ALtNThICP0hC3E7ghXWreRtRiPkVA98=
+	t=1734216966; cv=none; b=rrrRJ4lSkdMvm4FZczhy42e198WIi6gXl0/FFxI8+PbZtlsAQU23hAjcEaRA0O9gWZmVpsh520MGdSmejvdWIT408JhnwDcb12UhcAFc2UmGKbzBoCDfkG/tUwQWNx8GpgzJQbe7FqgdrvlOitit/Xs8rGMXA3yQ1WiO4Uz+5F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734216734; c=relaxed/simple;
-	bh=/D/vj4XanEKHzbb5zMRfqXPQ8+ADXufv99FkOEAVtx0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aEHanQaYBKZJMnII9p1frerI/wr9dC/FvG4CO3O1GSbA3kcVHNyAOn8mrXI026bHJm9kLp+4xXWagdeGG7Vb19P/YpQ/7/jAUJAm8qJaTfL6PqoNQEwT2+a02e1MGub/OemV2i+R3HaU+i0/vOEyCsTFQWGpkQhYPv/iyVcjD2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YgOz3rFe; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436281c8a38so17920515e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:52:10 -0800 (PST)
+	s=arc-20240116; t=1734216966; c=relaxed/simple;
+	bh=BgCbCgnN6Io4CxvOgNBg12hpP6R57z2ThGYb1vcaWmg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TNzAWvR2TnOEgzlqiLzR+iPgNRQGkUyS7EsdA4L0tj6+cb/n92mZeV1DJuXDI7hpjp6rArXiMYyRKDz5jyxJ5IvZepDM9xi73gMPuDv2WBDVYrCl2bL2H9xfqW7+vHDvX3Da1d+k7AJKMMN+HZle+kazgVNTKvyg9jsfOJeQVUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WNfNm3e1; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so31900655e9.0;
+        Sat, 14 Dec 2024 14:56:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734216729; x=1734821529; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734216963; x=1734821763; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L02UQRlh3qmNnFOiOhKbVlklLsrwrslECaPK4JYFGvM=;
-        b=YgOz3rFe3Ln/pzB3VB3sP/waS0avRJUBhaioFDi3yAx90A5X28+7zg+kio8YJqx+nH
-         QvckLiKIehS/fSBmhQgvFa8q2pn/D8+WdWb6ONMjd6rFX34tilaqIgrCe1qSXfqHkQg4
-         hdblp9ebFL/3kW21d8u+yLBReop0yKVqbsD5rIhBeJh6XAv1gL5G8Ae3QlVyoh4H83gh
-         78HpHpVZJi7hJxx5g4pGEuF8/E4qAtnTzZkXjvcwjLHURL4dSdsneInPIUZqjsmiCCYd
-         9sq4+KUQ2p4vGvQymsZ6QSsppaovvvqt+Bi/UCBtRw0d2uk3/yFI4SN5L0Lt0chH32fq
-         nH1g==
+        bh=G9JU+pXn4uJOLQy6qorVJZGNm9FKTMEhW5Kr8WecGYk=;
+        b=WNfNm3e1SA487GiYxWyXqvQROL94tCRj+461JYebglPDELzkvxJCLPp7ED/NogrLdP
+         TOqcrPvO4W49axR/P+VeHqHfhGhWTSodnSQZO8jv0BHnukFzJJjcVAwjyzIULhoAc5ZJ
+         YYxxc6nN6rewMZbp/rwzx5IE6fR5YLnSC2VaAD4+2i6mB6965V+q7GBgEvVRP9/GYNwl
+         jgZV3nYLIcPbz9nZ+HxY74VSl9St/p9UMBFW91n5KUPU/W8iMYwUP7DOPqUFC+/0Uk6n
+         V3vUVh5a/o6L3dT2aNYw6j04vyucaQDXPEsTK23k2aS6TLTjnN+H9wiPzxyIDTlG6ea2
+         oi+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734216729; x=1734821529;
+        d=1e100.net; s=20230601; t=1734216963; x=1734821763;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L02UQRlh3qmNnFOiOhKbVlklLsrwrslECaPK4JYFGvM=;
-        b=sds+akpiXJviVoUg9zTpd9LmpzZcgQC4xyZdgIBe/si+GR9C96m/ERMxCj3s09zpdu
-         G5WxzJzwezxB3o4RY4foWqMxkY5dZ8rLIwf3xG5sYPOSL/YKeF7Whbfh/3XWFOITX01A
-         Sp+rdRREcXgceGWfGPr/FUMyyNSZL6lhtslA/eZzeJetx5LXpm5kad3BsyN1HUZG2YLi
-         9ah3iuRJcJjHy3QMebiBv8Gil0QpiHD4xyqnmVvMy+6usrdHo3SK13hNlMgOp5uhItc9
-         f4vn9aywOXOOYZ1T2Xii0JpTWyuRDhCrcbXBR11Kp3JCxBvz6bbQs2IKNPOT3Pdeaan+
-         F6fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUn1mJE5dtc15A6hz8Z7O6ZexoYdrqDOcn841tv3MD33Wcp/gQ8yz3jL9sIDYm1hBa6sqZxsw3Z61P0b4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK1+CtWjRU+PxtAGXxvuF8U8kXG4onG6JQS41WK2d46QFcsK0w
-	Ss010HArM9S6GdgNtHH6zAusRYdu0kdO0C3UXyLw43RsSrrmqM8ynG0jpQ5bv/o=
-X-Gm-Gg: ASbGncs8vzf1/aaUgjFOc6eoQNo5d3RphmHoiUTYLpGo5XFxaep382q38rgPTVgOsWK
-	zwCHIVCTPsen20DkLG4e28LaqkO5rlhAWX240xY1EMkkTvxVCiBFAtRPxeWOml/vKdl/rH0RMHP
-	9G4odfykuHX4qx5e52fyA80cIE1P7UfJ09VmijP67/xiq5ntl5Eoyj77B0xExwOp3rbs/oMYw61
-	c6SVrmpWPGHOSICHGmSAvw8s00xDhPT0tg/cAQ9a+wEdSpW64LNFt6FRDxIoNLWbQ==
-X-Google-Smtp-Source: AGHT+IG7fJzmsRfOAoWZ0xtBW1irRd+OIJaddSdUEg+7EScA+wo3w5PtT+D0S/aXRhqHYmUjFI8g4w==
-X-Received: by 2002:a05:600c:b9b:b0:434:fdf3:2c26 with SMTP id 5b1f17b1804b1-4362aa6805bmr62263685e9.19.1734216729211;
-        Sat, 14 Dec 2024 14:52:09 -0800 (PST)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c457sm92719445e9.15.2024.12.14.14.52.07
+        bh=G9JU+pXn4uJOLQy6qorVJZGNm9FKTMEhW5Kr8WecGYk=;
+        b=GmpSlu4ppgA+DuChLIqSyBT9o4X3B/kFq4/9Om+Ip/A37ST5XGZxwUZUeJ1PNRFTmq
+         TRY8BaPdkydYTEcH+REayZ4jngjVeS8N9U6Ic4TQJC08tl2qyTbInNcGXJaOxnIlDWt7
+         agDlwoNCefs8CpY3ay4Tg0tGb439aRd6p6jqIuPesnTAcGLpoi0NRH4Vr5YPhKYUDeVg
+         vxmka3LT+eVj8pmV+nKag78K9yXBrdnw/JUsmqhAV2VdKxYYHcrik6a8cJldWhW91OkC
+         imvoKVMMcJAwcWzvL8gqQ6ji3H4kYAz3FTlR56I4ax/hiHuvtA4dxm4Nj+7HFMa8jsvG
+         buaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0jNKmbFEJ9R+yv3VBZJtWVoFWatMOiChoUafUxVgg4CRQJU/9Nj4/gSKGHOZFtXV6vINTlL2@vger.kernel.org, AJvYcCWaL+1pXMK4J4U0n6W0lYYuIcfVySv2ijc3b8TIG98JA8Q/efa0FCkqs/cQJaFg8St8pVcUGpODhm9wWzWy@vger.kernel.org, AJvYcCX5zlwAfeDWXgPTIlnbJbyDbBwPRaRy1e5x2MCrHxlCoF4jt1v3t58hxOwIxHnKA/iIauc6NdFopRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX1H3gc8+Gz05yrNiMFB0cwaD9/+VRnuswQD+4pzWty5wtuNJL
+	LRmK5xSciDbquwfzGhuPIBt25owSy7dutELF+z+5Q6Lz/0srnwoQ4BWcFg==
+X-Gm-Gg: ASbGncu+MsKPmVkpHWPz3wSV3RFalTFvrlVGMU2SrkPKLNk3RSAiMt5C+qJTiVhPSjJ
+	XWIMtSE04piOlrbv71b8mnrpzbnMmSvU5ED74DKB3BBS2V7WNjiZoy3MhwoU4/jbLBxToMkVNFt
+	fA0g0truIZwOT/LBjfLRU/qD2IzdRqBTbfUiryPhU2g1bhgvRDTuGyLd1vUaL6ozuLk34c1jv60
+	40yDMJkXNtQ0GLuWdQWI0Yq5/uVlHnWTvJvJgCZgWo/3FmRTseZhVqFRXKlJULOZVH+3TUZR/hk
+	ijaQe/MNwywEdAql8wmssLhuguxjjT05jFn7P65SOMiHnKtuG1myMCcKjPk3ledEKrsUTs13dt/
+	w4O0=
+X-Google-Smtp-Source: AGHT+IHCeumqiTzMF+lPxExwd2Ef1dUuNPTo6DmvjZ2sd9qx99lg8zhxRvkRPaBhtllcRRpRox3F+w==
+X-Received: by 2002:a5d:6c63:0:b0:385:ee59:4510 with SMTP id ffacd0b85a97d-38880ac1cc1mr7114757f8f.9.1734216963014;
+        Sat, 14 Dec 2024 14:56:03 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-3d12-6927-e558-75f6.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:3d12:6927:e558:75f6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361e3406b3sm64795995e9.0.2024.12.14.14.56.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 14:52:08 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Sat, 14 Dec 2024 22:52:07 +0000
-Subject: [PATCH] Revert "media: qcom: camss: Restructure
- camss_link_entities"
+        Sat, 14 Dec 2024 14:56:02 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Sat, 14 Dec 2024 23:55:50 +0100
+Subject: [PATCH v4] iio: light: as73211: fix channel handling in only-color
+ triggered buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,274 +82,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241214-b4-linux-next-revert-link-freq-v1-1-5e970d05dfcd@linaro.org>
-X-B4-Tracking: v=1; b=H4sIABYMXmcC/x2N0QrCMAxFf2XkeYE2Rgr+iuxh1VSDUjXtRmHs3
- 60+ngvnng2KmEqB07CByapFX7mDHwe43Od8E9RrZyBH7MkzRsan5qVhllaxK2L1tzwwmXww8By
- PiVI4OIJ+8jZJ2v6B87TvX2Lfg6lwAAAA
-X-Change-ID: 20241214-b4-linux-next-revert-link-freq-74ab5f2f7302
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, 
- Suresh Vankadara <quic_svankada@quicinc.com>, 
- Vikram Sharma <quic_vikramsa@quicinc.com>, 
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
+Message-Id: <20241214-iio_memset_scan_holes-v4-1-260b395b8ed5@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAPUMXmcC/3XN0QqCMBTG8VeRXbdwZ3O6rnqPCFnzTA+kCydSi
+ O/eCqIIvPx/cH5nYRFHwsgO2cJGnClSGFKoXcZcZ4cWOTWpGeSghADJiULdYx9xqqOzQ92FK0Z
+ udSkrKdEbCSzd3kb0dH+7p3PqjuIUxsf7zSxe60csNsRZ8Jzn7qLRVE1lCndse0vXvQs9e4kzf
+ BXI1ZYCSZHeKFEYsKVu/hX5owjYUiQXvPTK6Iv2JQD8Kuu6PgGdAZJORgEAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Christian Eggers <ceggers@arri.de>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734216961; l=4603;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=BgCbCgnN6Io4CxvOgNBg12hpP6R57z2ThGYb1vcaWmg=;
+ b=l+t4MypCOkhcCU5tVVVrmshL3+4W6g5PhmzU5CKJ0NrgJD9ok6I6tjfXIZxQrlsGGVxfq0Nha
+ jDDLUWQtCslB48Pl6+ekW0J3ejQ9Z2IDGEKvAc3Y+XDj3eI1rr16EKK
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-This reverts commit cc1ecabe67d92a2da0b0402f715598e8dbdc3b9e.
+The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
+set (optimized path for color channel readings), and it must be shifted
+instead of leaving an empty channel for the temperature when it is off.
 
-This commit has a basic flaw in that it relies on camss->res->csid_num as a
-control to index the array camss->vfe[i].
+Once the channel index is fixed, the uninitialized channel must be set
+to zero to avoid pushing uninitialized data.
 
-Testing on a platform where csid_num > vfe_num showed this bug up.
+Add available_scan_masks for all channels and only-color channels to let
+the IIO core demux and repack the enabled channels.
 
-camss->vfe should only be indexed by camss->res->vfe_num. Since this commit
-is meant to make the code be more readable reverting will simply restore
-the previous correct bounds checking.
-
-We can make another pass at making camss_link_entities look prettier but,
-for now we should zap the bug introduced.
-
-Fixes: cc1ecabe67d9 ("media: qcom: camss: Restructure camss_link_entities")
+Cc: stable@vger.kernel.org
+Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+Tested-by: Christian Eggers <ceggers@arri.de>
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
-Testing this commit out as I was adding in more CSID devices to my working
-x1e tree I noticed a NULL pointer dereference in camss_link_entities.
+This issue was found after attempting to make the same mistake for
+a driver I maintain, which was fortunately spotted by Jonathan [1].
 
-Investigating I discovered the following indexing error:
+Keeping old sensor values if the channel configuration changes is known
+and not considered an issue, which is also mentioned in [1], so it has
+not been addressed by this series. That keeps most of the drivers out
+of the way because they store the scan element in iio private data,
+which is kzalloc() allocated.
 
-> +    for (i = 0; i < camss->res->csid_num; i++) {
-> +        if (camss->ispif)
-> +            line_num = camss->ispif->line_num;
-> +        else
-> +            line_num = camss->vfe[i].res->line_num;
+This series only addresses cases where uninitialized i.e. unknown data
+is pushed to the userspace, either due to holes in structs or
+uninitialized struct members/array elements.
 
-This statement is incorrect, you are indexing vfe[] with a control derived
-from csid_num.
+While analyzing involved functions, I found and fixed some triviality
+(wrong function name) in the documentation of iio_dev_opaque.
 
-Below is the statement removed.
-
-> -        for (i = 0; i < camss->res->csid_num; i++)
-> -            for (k = 0; k < camss->res->vfe_num; k++)
-> -                for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-
-As soon as csid_num > ARRAY_SIZE(vfe) the code breaks.
-
-The commit is in linux-next but not yet in linux-stable so I'm not quite
-sure what to do with a Fixes: tag nothing I think.
-
-In any case we should revert this one before it hits stable.
-
-Link: https://lore.kernel.org/linux-arm-msm/1a570c17-c501-4a29-a4f7-020f41563f3d@linaro.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Link: https://lore.kernel.org/linux-iio/20241123151634.303aa860@jic23-huawei/ [1]
 ---
- drivers/media/platform/qcom/camss/camss.c | 155 ++++++++++--------------------
- 1 file changed, 52 insertions(+), 103 deletions(-)
+Changes in v4:
+- Fix as73211_scan_masks[] (first MASK_COLOR, then MASK_ALL, no comma
+  after 0 i.e. the last element).
+- Link to v3: https://lore.kernel.org/r/20241212-iio_memset_scan_holes-v3-1-7f496b6f7222@gmail.com
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 004a74f6b2f6ce7eef15765ad1eadc14a08a3908..a85e9df0f301a933d7e47e07b9fec535819aeb14 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -2298,6 +2298,7 @@ static int camss_init_subdevices(struct camss *camss)
- }
+Changes in v3:
+- as73211.c: add available_scan_masks for all channels and only-color
+  channels to let the IIO core demux and repack the enabled channels.
+- Link to v2: https://lore.kernel.org/r/20241204-iio_memset_scan_holes-v2-0-3f941592a76d@gmail.com
+
+Changes in v2:
+- as73211.c: shift channels if no temperature is available and
+  initialize chan[3] to zero.
+- Link to v1: https://lore.kernel.org/r/20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com
+---
+ drivers/iio/light/as73211.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+index be0068081ebb..11fbdcdd26d6 100644
+--- a/drivers/iio/light/as73211.c
++++ b/drivers/iio/light/as73211.c
+@@ -177,6 +177,12 @@ struct as73211_data {
+ 	BIT(AS73211_SCAN_INDEX_TEMP) | \
+ 	AS73211_SCAN_MASK_COLOR)
  
- /*
-+ * camss_link_entities - Register subdev nodes and create links
-  * camss_link_err - print error in case link creation fails
-  * @src_name: name for source of the link
-  * @sink_name: name for sink of the link
-@@ -2315,64 +2316,14 @@ inline void camss_link_err(struct camss *camss,
- }
++static const unsigned long as73211_scan_masks[] = {
++	AS73211_SCAN_MASK_COLOR,
++	AS73211_SCAN_MASK_ALL,
++	0
++};
++
+ static const struct iio_chan_spec as73211_channels[] = {
+ 	{
+ 		.type = IIO_TEMP,
+@@ -672,9 +678,12 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
  
- /*
-- * camss_link_entities_csid - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities_csid(struct camss *camss)
--{
--	struct media_entity *src_entity;
--	struct media_entity *sink_entity;
--	int ret, line_num;
--	u16 sink_pad;
--	u16 src_pad;
--	int i, j;
--
--	for (i = 0; i < camss->res->csid_num; i++) {
--		if (camss->ispif)
--			line_num = camss->ispif->line_num;
--		else
--			line_num = camss->vfe[i].res->line_num;
--
--		src_entity = &camss->csid[i].subdev.entity;
--		for (j = 0; j < line_num; j++) {
--			if (camss->ispif) {
--				sink_entity = &camss->ispif->line[j].subdev.entity;
--				src_pad = MSM_CSID_PAD_SRC;
--				sink_pad = MSM_ISPIF_PAD_SINK;
--			} else {
--				sink_entity = &camss->vfe[i].line[j].subdev.entity;
--				src_pad = MSM_CSID_PAD_FIRST_SRC + j;
--				sink_pad = MSM_VFE_PAD_SINK;
--			}
--
--			ret = media_create_pad_link(src_entity,
--						    src_pad,
--						    sink_entity,
--						    sink_pad,
--						    0);
--			if (ret < 0) {
--				camss_link_err(camss, src_entity->name,
--					       sink_entity->name,
--					       ret);
--				return ret;
--			}
--		}
--	}
--
--	return 0;
--}
--
--/*
-- * camss_link_entities_csiphy - Register subdev nodes and create links
-+ * camss_link_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
-  *
-  * Return 0 on success or a negative error code on failure
-  */
--static int camss_link_entities_csiphy(struct camss *camss)
-+static int camss_link_entities(struct camss *camss)
- {
--	int i, j;
-+	int i, j, k;
- 	int ret;
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
-@@ -2392,68 +2343,66 @@ static int camss_link_entities_csiphy(struct camss *camss)
- 		}
+ 		/* AS73211 starts reading at address 2 */
+ 		ret = i2c_master_recv(data->client,
+-				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
++				(char *)&scan.chan[0], 3 * sizeof(scan.chan[0]));
+ 		if (ret < 0)
+ 			goto done;
++
++		/* Avoid pushing uninitialized data */
++		scan.chan[3] = 0;
  	}
  
--	return 0;
--}
--
--/*
-- * camss_link_entities_ispif - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities_ispif(struct camss *camss)
--{
--	int i, j, k;
--	int ret;
--
--	for (i = 0; i < camss->ispif->line_num; i++) {
--		for (k = 0; k < camss->res->vfe_num; k++) {
--			for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--				struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
--				struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--				ret = media_create_pad_link(&ispif->entity,
--							    MSM_ISPIF_PAD_SRC,
--							    &vfe->entity,
--							    MSM_VFE_PAD_SINK,
-+	if (camss->ispif) {
-+		for (i = 0; i < camss->res->csid_num; i++) {
-+			for (j = 0; j < camss->ispif->line_num; j++) {
-+				ret = media_create_pad_link(&camss->csid[i].subdev.entity,
-+							    MSM_CSID_PAD_SRC,
-+							    &camss->ispif->line[j].subdev.entity,
-+							    MSM_ISPIF_PAD_SINK,
- 							    0);
- 				if (ret < 0) {
--					camss_link_err(camss, ispif->entity.name,
--						       vfe->entity.name,
-+					camss_link_err(camss,
-+						       camss->csid[i].subdev.entity.name,
-+						       camss->ispif->line[j].subdev.entity.name,
- 						       ret);
- 					return ret;
- 				}
- 			}
- 		}
-+
-+		for (i = 0; i < camss->ispif->line_num; i++)
-+			for (k = 0; k < camss->res->vfe_num; k++)
-+				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+					struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
-+					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+					ret = media_create_pad_link(&ispif->entity,
-+								    MSM_ISPIF_PAD_SRC,
-+								    &vfe->entity,
-+								    MSM_VFE_PAD_SINK,
-+								    0);
-+					if (ret < 0) {
-+						camss_link_err(camss, ispif->entity.name,
-+							       vfe->entity.name,
-+							       ret);
-+						return ret;
-+					}
-+				}
-+	} else {
-+		for (i = 0; i < camss->res->csid_num; i++)
-+			for (k = 0; k < camss->res->vfe_num; k++)
-+				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+					struct v4l2_subdev *csid = &camss->csid[i].subdev;
-+					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+					ret = media_create_pad_link(&csid->entity,
-+								    MSM_CSID_PAD_FIRST_SRC + j,
-+								    &vfe->entity,
-+								    MSM_VFE_PAD_SINK,
-+								    0);
-+					if (ret < 0) {
-+						camss_link_err(camss, csid->entity.name,
-+							       vfe->entity.name,
-+							       ret);
-+						return ret;
-+					}
-+				}
+ 	if (data_result) {
+@@ -682,9 +691,15 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+ 		 * Saturate all channels (in case of overflows). Temperature channel
+ 		 * is not affected by overflows.
+ 		 */
+-		scan.chan[1] = cpu_to_le16(U16_MAX);
+-		scan.chan[2] = cpu_to_le16(U16_MAX);
+-		scan.chan[3] = cpu_to_le16(U16_MAX);
++		if (*indio_dev->active_scan_mask == AS73211_SCAN_MASK_ALL) {
++			scan.chan[1] = cpu_to_le16(U16_MAX);
++			scan.chan[2] = cpu_to_le16(U16_MAX);
++			scan.chan[3] = cpu_to_le16(U16_MAX);
++		} else {
++			scan.chan[0] = cpu_to_le16(U16_MAX);
++			scan.chan[1] = cpu_to_le16(U16_MAX);
++			scan.chan[2] = cpu_to_le16(U16_MAX);
++		}
  	}
  
- 	return 0;
- }
+ 	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
+@@ -758,6 +773,7 @@ static int as73211_probe(struct i2c_client *client)
+ 	indio_dev->channels = data->spec_dev->channels;
+ 	indio_dev->num_channels = data->spec_dev->num_channels;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->available_scan_masks = as73211_scan_masks;
  
--/*
-- * camss_link_entities - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities(struct camss *camss)
--{
--	int ret;
--
--	ret = camss_link_entities_csiphy(camss);
--	if (ret < 0)
--		return ret;
--
--	ret = camss_link_entities_csid(camss);
--	if (ret < 0)
--		return ret;
--
--	if (camss->ispif)
--		ret = camss_link_entities_ispif(camss);
--
--	return ret;
--}
--
- /*
-  * camss_register_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
+ 	ret = i2c_smbus_read_byte_data(data->client, AS73211_REG_OSR);
+ 	if (ret < 0)
 
 ---
-base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-change-id: 20241214-b4-linux-next-revert-link-freq-74ab5f2f7302
+base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
+change-id: 20241123-iio_memset_scan_holes-a673833ef932
 
 Best regards,
 -- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
