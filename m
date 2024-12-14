@@ -1,168 +1,91 @@
-Return-Path: <linux-kernel+bounces-445772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677249F1B6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:44:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB6A9F1B6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FDAC16B030
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC4216B21D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF17D2FF;
-	Sat, 14 Dec 2024 00:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c8KAYX/U"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B30BBE4A;
+	Sat, 14 Dec 2024 00:45:47 +0000 (UTC)
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034D7B674
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDC92119
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137083; cv=none; b=uGqQOKw2fevy2Td8m7v/btoGVA59W2jJfKfxe5RDjiMWVuYgFZyCXkb19Ng0wI1Ai+m2Icg5TASo5eazLIWgAA73P/jtFVx7AhfIzRtMV291e9F2AnpzwGeUtk5glvGoV9fla6pWQb4AZb8Po0XEQvIj5tydDjtQGy3fMMKnMQY=
+	t=1734137146; cv=none; b=fqCaE2mX2ni5ecBDqAgbMUE3PLpXThmf4PWsKKUzH8xHCPj7+kSCS/g0uuC+d+850Z5ldz8GBOwPNZd9mnmSwwgsuCdA9Gc09B0+lT8QqF5w10kk3NpybrV2KqoAORPVOEzWoiSnLEWnYRDdNLH06cq96jbY9YJwbmNrUoYI7Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137083; c=relaxed/simple;
-	bh=aFbdLbRlaVcy+PhAJ++OAS1Q15RgBSAPtcCTnN3A5x4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIwtIB/y1S6k2pfUNXJ8ysg78qDu2BH6WwOTe9haXCOx7PTNSd9u6dnxGqVL5NmCXp1I8H3SlHqxZXO8sRWYnd9F3gzKV5Y1nfb0JmI2JC6LQwOAmqSbMwBEA4nEKzv8VPJDVhJOP3x7b3kIP7DHCWtmkHiQo9PrAsNIEFOLKW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c8KAYX/U; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4361c705434so16718675e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:44:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734137080; x=1734741880; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SeDrMymOkQm4q0L/Z4XKBmKDN4NxNTLNurLDHBywolY=;
-        b=c8KAYX/UP3qNr29rQR6KfNIOUtJQ2qU7uKHfoPBD2CZm7ey9oWw7Psb0zr7OPSF0h8
-         mL9kOOcP52WVFiBh5Mndxr8nEGeVzT2eZAgRyJ4t8r/zFYyaRrakW1sJx3GjSXaQdl1p
-         qQWEqDg6LG19Wn3crY1FP5+dcqd/Fn/Y58gltDkMIaFwSM4gl7ba0jaouGjAT2CERowB
-         lB34jpOuxlz+G6pPr/2UIlB4v4cIGIV0V2Vxu/wFan99+FkmP64Jq95ScPU6wE9/SFcm
-         F6VCdBhGSXcTIXEb1cqPjF6iOnmdpdAuCcH8vlB0XPUUwOOrq5wjlPp7cRNEUOzQwaCD
-         n4Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734137080; x=1734741880;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SeDrMymOkQm4q0L/Z4XKBmKDN4NxNTLNurLDHBywolY=;
-        b=iBNidM/bysS0i3cLkdjcVDiO/bqiHXfjhyqzzY8Tmjpj+gmb+8VOl2KA++5JySx1m3
-         r6i0oC5Se6F/Z4ZYFIlJhWRYDWCM7UEbY1f4puvYuf2l8P3UOHpw3djXk9ESb0BoiSVQ
-         dZDbxgvPZnWzcebyd5PCmHI8i532PWDDLM6xP4zFFuCU/AwiCZA6goo0qg9cG/BXnFlT
-         arqqk5fZvHU/HDYW30AMrTtmu8pie7UF5puiUUnP+XLIOPwNZv7zK4FWnbD9WG0ef4Gt
-         xK8S5x4yshu1MvcTjUzJmN9kBqAeWND3zxqEDjtNM/pVJyORZ7I5hO7wLXGvSvO75oC2
-         J70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVci2n/UHXziTccrCa0PUkRtUWsuc9Aqny8x0t8hF54Gr06hAC1y9OgHkKvQsZYjIvHSJYWSEiNVZ9lzJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJoCxVD48ecrtkifycgDMOwNYrweWFL9FuZTNbaxDObz6ay3lI
-	87YmLbarWjiuTPTh2PPFsgUIAQ01SRr+2en3Or2gJpoRGl04ToUUkZGn2ETwJOY=
-X-Gm-Gg: ASbGncsqMc3n4xJaJkTEFi+1W4tI3nC1hg54aXG9iaodVK/YDKPqukw/J3tTF1TPFzT
-	fRSOwAnoEcNc52rRdHDcMOs69il1zrEmIbIvhHIjkE7BBA0Nw/qEFLgyz/DmWM1bdg6Wc5jQGvO
-	X95HJsJWmD9CK44BTvoo5MHp86YjOFvsG1GvUN2v6FbBtfXGUBnIPVksFWuaVmTovXg8O3C/YaJ
-	+pctctVBXYbVhPmOivbEj7iFkTokVdzX6MUzHWAIph/gykSmFfuIHbaCJxMoYfNkUyptg==
-X-Google-Smtp-Source: AGHT+IE0KYR/8jsLefDmzAbaJ5qV8oYgeFZCRtcVw4sbIXG9a+jTQI69goTr98uf2yrQPqe8MTbCUA==
-X-Received: by 2002:a05:600c:511c:b0:434:fbda:1f36 with SMTP id 5b1f17b1804b1-4362aaa9cb5mr33801055e9.20.1734137080297;
-        Fri, 13 Dec 2024 16:44:40 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43636066f51sm8558775e9.22.2024.12.13.16.44.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 16:44:39 -0800 (PST)
-Message-ID: <1a570c17-c501-4a29-a4f7-020f41563f3d@linaro.org>
-Date: Sat, 14 Dec 2024 00:44:38 +0000
+	s=arc-20240116; t=1734137146; c=relaxed/simple;
+	bh=+RBqWLVjtr1EEKGdz7+HwG1Ur6TrYF46EuT7DVK5CeM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=i2rHfsiilt1k80OUxHcNQu8vmLPyP+4qayFSrn/fyDhFBNtfr5uXuYM1R+eYihnRaxDmeMiD0pMlqztzF2qjSbqGrCCJN3Fj9O6A6NxH0hy/JlJxZCpazFnDqs22SBd+NDhUsrdIFne5XU7c1AgapbKRr5MXUVdxPSxZpE5oX3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.238])
+	by sina.com (10.185.250.22) with ESMTP
+	id 675CD50500005C80; Sat, 14 Dec 2024 08:44:56 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8472767602739
+X-SMAIL-UIID: 839957029A68473EA4BF542F67B8F97D-20241214-084456-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+4c7590f1cee06597e43a@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in folio_evictable (3)
+Date: Sat, 14 Dec 2024 08:44:44 +0800
+Message-Id: <20241214004444.792-1-hdanton@sina.com>
+In-Reply-To: <675c5e51.050a0220.2875e5.0049.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] media: qcom: camss: Restructure
- camss_link_entities
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com
-References: <20241126100126.2743795-1-quic_vikramsa@quicinc.com>
- <20241126100126.2743795-3-quic_vikramsa@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241126100126.2743795-3-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/11/2024 10:01, Vikram Sharma wrote:
-> Refactor the camss_link_entities function by breaking it down into
-> three distinct functions. Each function will handle the linking of
-> a specific entity separately.
-> SC7280 and later targets mandates for 1:1 linking for csid -> vfe.
-> i.e. csid0 can be mapped to vfe0 only.
-> 
-> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   drivers/media/platform/qcom/camss/camss.c | 155 ++++++++++++++--------
->   1 file changed, 103 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index 6824ffbdf4a8..67fb11cbe865 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -1994,7 +1994,6 @@ static int camss_init_subdevices(struct camss *camss)
->   }
->   
->   /*
-> - * camss_link_entities - Register subdev nodes and create links
->    * camss_link_err - print error in case link creation fails
->    * @src_name: name for source of the link
->    * @sink_name: name for sink of the link
-> @@ -2012,14 +2011,64 @@ inline void camss_link_err(struct camss *camss,
->   }
->   
->   /*
-> - * camss_link_entities - Register subdev nodes and create links
-> + * camss_link_entities_csid - Register subdev nodes and create links
->    * @camss: CAMSS device
->    *
->    * Return 0 on success or a negative error code on failure
->    */
-> -static int camss_link_entities(struct camss *camss)
-> +static int camss_link_entities_csid(struct camss *camss)
->   {
-> -	int i, j, k;
-> +	struct media_entity *src_entity;
-> +	struct media_entity *sink_entity;
-> +	int ret, line_num;
-> +	u16 sink_pad;
-> +	u16 src_pad;
-> +	int i, j;
-> +
-> +	for (i = 0; i < camss->res->csid_num; i++) {
-> +		if (camss->ispif)
-> +			line_num = camss->ispif->line_num;
-> +		else
-> +			line_num = camss->vfe[i].res->line_num;
+On Fri, Dec 13, 2024 at 9:18
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    f932fb9b4074 Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14654730580000
 
-This statement is incorrect, you are indexing vfe[] with a control 
-derived from csid_num.
+#syz test
 
-Below is the statement you are removing.
-
-> -		for (i = 0; i < camss->res->csid_num; i++)
-> -			for (k = 0; k < camss->res->vfe_num; k++)
-> -				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-
-As soon as csid_num > ARRAY_SIZE(vfe) your code breaks.
-
-I noticed this as I added csid_lite to the x1e series where the 
-aggregate count of CSID is grater than the aggregate count of VFE.
-
-Please fix.
-
----
-bod
+--- x/mm/filemap.c
++++ y/mm/filemap.c
+@@ -871,6 +871,7 @@ noinline int __filemap_add_folio(struct
+ 	folio_ref_add(folio, nr);
+ 	folio->mapping = mapping;
+ 	folio->index = xas.xa_index;
++	BUG_ON(mapping_exiting(mapping));
+ 
+ 	for (;;) {
+ 		int order = -1, split_order = 0;
+--- x/block/blk.h
++++ y/block/blk.h
+@@ -72,8 +72,6 @@ static inline int bio_queue_enter(struct
+ 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+ 
+ 	if (blk_try_enter_queue(q, false)) {
+-		rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
+-		rwsem_release(&q->io_lockdep_map, _RET_IP_);
+ 		return 0;
+ 	}
+ 	return __bio_queue_enter(q, bio);
+--
 
