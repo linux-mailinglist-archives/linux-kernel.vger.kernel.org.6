@@ -1,268 +1,481 @@
-Return-Path: <linux-kernel+bounces-446047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4F39F1F28
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:48:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C759F1F34
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:11:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3583167117
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:48:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6E61889EB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8D7192B63;
-	Sat, 14 Dec 2024 13:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DB7193419;
+	Sat, 14 Dec 2024 14:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A0qvZWgd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcXnGHGW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1E63C;
-	Sat, 14 Dec 2024 13:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1827D53C;
+	Sat, 14 Dec 2024 14:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734184079; cv=none; b=G8+K5gN4PA39AA4xLqEK6qqKg6M9za7LJYpr/jZsUvg+MxIM+fdvBaULlDcvLnvka6H7efKc2R6OPOhYtvyvHkcPAzE66acE0gkyG1JN8+7BK/mw6QefDNmOobMWW3Ntlm+UfPh2my4z/Q5fKLIZBYM7rpF6jO1Foz/6/XiyBBk=
+	t=1734185461; cv=none; b=ladkudRoookE5lrvCpoQrUgy82zIrUJBApaibw9XVDHxpeMFWnj1FShPDDxTjS6P4BCa6Q7Fkg8NUWiCdNszSEwTmBRjVHIAoqpyHy/tb3N+JoXbrY1QiOA+dkg2HOKllMlQwB2GoWjrnIeM8hPdfKyaY1NsXAC6TijSD73Sfq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734184079; c=relaxed/simple;
-	bh=LZbbw4TdedVXgjVnhKWy7MwsYwaZutoJjxlCq10noos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCkhku9IK8rG9iL0RlmiR7GexLd1Bd9NZQbIspuN9qPWOjf/kmPkN7nMQtrF6YhFGUJeEFBueAZW1FXRcpAKmffAzub88/rkRL37OOoZWf5LB26Fi8KRyqYvzQ/C1V0fGbeCPMclY6K2f+ShYstQY3n8HP2G6aRfCNf8bLhCiGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A0qvZWgd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BECbxRr013247;
-	Sat, 14 Dec 2024 13:47:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ceGrUj
-	5LnvzZBejGcSiZq6IYs/Q4pb3RJuVhfxeWn/k=; b=A0qvZWgd0A3KRCM47S/4+i
-	9qrBuTL29ttdljKr1Oz79nkNFupBOE5JxoDXslAjKztmp8eFDjp7ve3D2gZ/+VMq
-	brxueZx5Il/lTJf1Urw99jVps9DaX4ehhAzxGyR0X+WeWG6Lx4SDpv6vj2NHQ5/A
-	UxaPuvbV80a7TzaFsJeSiH24NL/54B+rWBAaG/M0VdAdj0YTGwfwepUuBJ7UNtp4
-	0xcd1taOSn4lXCcbjsX3zq9sk8cF2w9y+35M7VZ+Jy6QrsoEHWjjuHXO0cdr6MWd
-	+Wo6uUODXU+/IsCcUbZCfLSgqrO6jx3ts5VLLT5Hoyo3JsV31wVrF2ZgbEt74RQQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gyenj6r5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Dec 2024 13:47:45 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BEDiquK003253;
-	Sat, 14 Dec 2024 13:47:45 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gyenj6r3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Dec 2024 13:47:44 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BEDJ42b016919;
-	Sat, 14 Dec 2024 13:47:44 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12yubmb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 14 Dec 2024 13:47:44 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BEDlheU38077106
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 14 Dec 2024 13:47:44 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A14825805A;
-	Sat, 14 Dec 2024 13:47:43 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D59358051;
-	Sat, 14 Dec 2024 13:47:41 +0000 (GMT)
-Received: from [9.171.51.66] (unknown [9.171.51.66])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 14 Dec 2024 13:47:40 +0000 (GMT)
-Message-ID: <2d752cd6-f861-40f4-8011-5571b84cbd64@linux.ibm.com>
-Date: Sat, 14 Dec 2024 19:17:39 +0530
+	s=arc-20240116; t=1734185461; c=relaxed/simple;
+	bh=nZR5IyZ4JBoHlrm0wnKGiw70Qdc5RwrXxIxFX0DMXh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a9hn26ApoWlUMCHQhXQXRFW+W/FmlitiJ9eckyFfehXZzi/tzGm8/RYvrZvAK8kKINrGDAlDlELr+ZBYdXw3avPEArUvcdSl1aiaOf16feFACA/Ro7RzwhAADkCyJUa5c+X3pV4fjOId+lMOT7Fhq4bkOiVnVtluD1ed0iV9/Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcXnGHGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA6CC4CED1;
+	Sat, 14 Dec 2024 14:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734185460;
+	bh=nZR5IyZ4JBoHlrm0wnKGiw70Qdc5RwrXxIxFX0DMXh0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kcXnGHGWutOJAye+fXblZ/I8GknmvOMypBOxIjRem1kitXYbjuD5SgeIvtEtVsaVf
+	 8xCF5wxHXHJX1MjHr8QzGakiJpP92UWDlvET5mWgmoov5w9yDLst0SQWUxUw3LSeOK
+	 NcIOLhEhmBf0kXDmRGi3A7bO5djVPFPrfilQ1VgMpNALpSl2ksxhWRS9W8kdZt8jDk
+	 lWqDmSDk/M2i1wN9OY6gfFSId02FlvH/qInNRDiY77Yo6TZmb04JSkuJje6c+wK8yY
+	 i1odFuTK1jU1fZcUDHQqdE7OPVjWGPEVYlM1iDqlFzKoGR8LUc+RHOqDYLtnMCIYzN
+	 tEX3Khqp/x12Q==
+Date: Sat, 14 Dec 2024 14:10:50 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Darius Berghe <darius.berghe@analog.com>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <corbet@lwn.net>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] iio: accel: adxl367: add support for adxl366
+Message-ID: <20241214141050.5763b781@jic23-huawei>
+In-Reply-To: <20241213095201.1218145-2-darius.berghe@analog.com>
+References: <20241213095201.1218145-1-darius.berghe@analog.com>
+	<20241213095201.1218145-2-darius.berghe@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fortify: Hide run-time copy size from value range
- tracking
-To: Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Yury Norov <yury.norov@gmail.com>, Qing Zhao <qing.zhao@oracle.com>,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "gjoyce@linux.ibm.com" <gjoyce@linux.ibm.com>
-References: <20241214013600.it.020-kees@kernel.org>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20241214013600.it.020-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -AykmngdXZMh8kIxqi36jIW0Vu4ruFZh
-X-Proofpoint-GUID: KITAfpi-Q_XPFEnAdIXJwh4ApvKOWOzz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 impostorscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 adultscore=0 spamscore=0 mlxscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412140111
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Fri, 13 Dec 2024 11:52:00 +0200
+Darius Berghe <darius.berghe@analog.com> wrote:
+
+> Add support for adxl366 Micropower, 3-Axis, +-/2g, +/-4g, +/-8g
+> Digital Output MEMS Accelerometer into the existing adxl367 iio
+> subsystem driver.
+> 
+> adxl366 supports all the features of adxl367 but has a few
+> additional features for which support is added in this patch:
+>  - built-in step counting (pedometer)
+>  - non-linearity compensation for Z axis
+> 
+> Signed-off-by: Darius Berghe <darius.berghe@analog.com>
+Hi Darius,
+
+General approach to cases which are adding the second device to an existing
+driver is to do it in two steps.
+1) Refactor to expose all the existing stuff that will be somewhat device
+  dependent.  This should be a noop patch that we can quickly see doesn't
+  break the existing device support.
+
+2) Add the new stuff + support for the new device.
+
+Various comments inline. Big one being the common one of : Where are the docs?
+I'm thinking that they maybe got accidentally dropped given you cc'd linux-doc!
+
+Thanks,
+
+Jonathan
 
 
-
-On 12/14/24 07:06, Kees Cook wrote:
-> GCC performs value range tracking for variables as a way to provide better
-> diagnostics. One place this is regularly seen is with warnings associated
-> with bounds-checking, e.g. -Wstringop-overflow, -Wstringop-overread,
-> -Warray-bounds, etc. In order to keep the signal-to-noise ratio high,
-> warnings aren't emitted when a value range spans the entire value range
-> representable by a given variable. For example:
-> 
-> 	unsigned int len;
-> 	char dst[8];
-> 	...
-> 	memcpy(dst, src, len);
-> 
-> If len's value is unknown, it has the full "unsigned int" range of [0,
-> UINT_MAX], and bounds checks against memcpy() will be ignored. However,
-> when a code path has been able to narrow the range:
-> 
-> 	if (len > 16)
-> 		return;
-> 	memcpy(dst, src, len);
-> 
-> Then a range will be updated for the execution path. Above, len is now
-> [0, 16], so we might see a -Wstringop-overflow warning like:
-> 
-> 	error: '__builtin_memcpy' writing between 9 and 16 bytes from to region of size 8 [-Werror=stringop-overflow]
-> 
-> When building with CONFIG_FORTIFY_SOURCE, the run-time bounds checking
-> can appear to narrow value ranges for lengths for memcpy(), depending on
-> how the compile constructs the execution paths during optimization
-> passes, due to the checks on the size. For example:
-> 
-> 	if (p_size_field != SIZE_MAX &&
-> 	    p_size != p_size_field && p_size_field < size)
-> 
-> As intentionally designed, these checks only affect the kernel warnings
-> emitted at run-time and do not block the potentially overflowing memcpy(),
-> so GCC thinks it needs to produce a warning about the resulting value
-> range that might be reaching the memcpy().
-> 
-> We have seen this manifest a few times now, with the most recent being
-> with cpumasks:
-> 
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> 
-> This warning is _not_ emitted when CONFIG_FORTIFY_SOURCE is disabled,
-> and with the recent -fdiagnostics-details we can confirm the origin of
-> the warning is due to the FORTIFY range checking:
-> 
-> ../include/linux/bitmap.h:259:17: note: in expansion of macro 'memcpy'
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
->   '__padata_set_cpumasks': events 1-2
-> ../include/linux/fortify-string.h:613:36:
->   612 |         if (p_size_field != SIZE_MAX &&
->       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   613 |             p_size != p_size_field && p_size_field < size)
->       |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
->       |                                    |
->       |                                    (1) when the condition is evaluated to false
->       |                                    (2) when the condition is evaluated to true
->   '__padata_set_cpumasks': event 3
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
->       |                                 |
->       |                                 (3) out of array bounds here
-> 
-> Note that this warning started appearing since bitmap functions were
-> recently marked __always_inline in commit ed8cd2b3bd9f ("bitmap: Switch
-> from inline to __always_inline"), which allowed GCC to gain visibility
-> into the variables as they passed through the FORTIFY implementation.
-> 
-> In order to silence this false positive but keep deterministic
-> compile-time warnings intact, hide the length variable from GCC with
-> OPTIMIZE_HIDE_VAR() before calling the builtin memcpy.
-> 
-> Additionally add a comment about why all the macro args have copies with
-> const storage.
-> 
-> Reported-by: "Thomas Weißschuh" <linux@weissschuh.net>
-> Closes: https://lore.kernel.org/all/db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de/
-> Reported-by: Nilay Shroff <nilay@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/20241112124127.1666300-1-nilay@linux.ibm.com/
-> Acked-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: "Qing Zhao" <qing.zhao@oracle.com>
-> Cc: linux-hardening@vger.kernel.org
+>  drivers/iio/accel/adxl367.c     | 233 +++++++++++++++++++++++++++++++-
+>  drivers/iio/accel/adxl367.h     |   5 +
+>  drivers/iio/accel/adxl367_i2c.c |   6 +-
+>  drivers/iio/accel/adxl367_spi.c |   6 +-
+>  4 files changed, 242 insertions(+), 8 deletions(-)
 > 
->  v2: Make sure the expression statement ends with a single statement
->  v1: https://lore.kernel.org/all/20241213020929.work.498-kees@kernel.org/
-> ---
->  include/linux/fortify-string.h | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
-> index 0d99bf11d260..1eef0119671c 100644
-> --- a/include/linux/fortify-string.h
-> +++ b/include/linux/fortify-string.h
-> @@ -616,6 +616,12 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
->  	return false;
+> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+> index 90b7ae6d42b7..95fd365c0a27 100644
+> --- a/drivers/iio/accel/adxl367.c
+> +++ b/drivers/iio/accel/adxl367.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/property.h>
+
+after change suggested below this won't be needed
+as you won't be calling device_get_match_data()
+
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <asm/unaligned.h>
+> @@ -96,8 +97,17 @@
+>  #define ADXL367_POWER_CTL_MODE_MASK	GENMASK(1, 0)
+>  
+>  #define ADXL367_REG_ADC_CTL		0x3C
+> -#define ADXL367_REG_TEMP_CTL		0x3D
+>  #define ADXL367_ADC_EN_MASK		BIT(0)
+> +#define ADXL367_REG_TEMP_CTL		0x3D
+> +#define ADXL367_NL_COMP_EN_MASK         BIT(7)
+> +
+> +#define ADXL367_REG_PEDOMETER_STEP_CNT_H        0x47
+
+This is never used... Given I assume it is the step counter, that
+seems unlikely to be intent.
+
+> +#define ADXL367_REG_PEDOMETER_CTL               0x49
+> +#define ADXL367_PEDOMETER_RESET_STEP_MASK       BIT(2)
+> +#define ADXL367_PEDOMETER_RESET_OF_MASK         BIT(1)
+> +#define ADXL367_PEDOMETER_EN_MASK               BIT(0)
+> +#define ADXL367_REG_PEDOMETER_THRESH_H          0x4A
+> +#define ADXL367_REG_PEDOMETER_SENS_H            0x4C
+>  
+>  enum adxl367_range {
+>  	ADXL367_2G_RANGE,
+> @@ -177,6 +187,9 @@ struct adxl367_state {
+>  	unsigned int	fifo_set_size;
+>  	unsigned int	fifo_watermark;
+>  
+> +	int             steps_en;
+> +	int             nl_comp_en;
+
+These sound like bools. 
+
+
+> +
+>  	__be16		fifo_buf[ADXL367_FIFO_SIZE] __aligned(IIO_DMA_MINALIGN);
+>  	__be16		sample_buf;
+>  	u8		act_threshold_buf[2];
+> @@ -221,6 +234,13 @@ static const int adxl367_range_scale_factor_tbl[] = {
+>  	[ADXL367_8G_RANGE] = 4,
+>  };
+
+> +static int adxl367_write_word(struct adxl367_state *st, int reg, int *val)
+> +{
+> +	u8 steps_raw[2];
+> +
+> +	put_unaligned_be16(*val, steps_raw);
+If you are going to not use it as u8 at all, use __be16 and 
+cpu_to_be16() to fill it.
+
+Same for other cases.  We only do it with u8 if we need to write it
+one byte at a time or it isn't a power of 2 long.
+
+> +
+> +	return regmap_bulk_write(st->regmap, reg,
+> +				steps_raw, 2);
+One line.
+
+> +}
+> +
+>  static int adxl367_read_sample(struct iio_dev *indio_dev,
+>  			       struct iio_chan_spec const *chan,
+>  			       int *val)
+> @@ -920,6 +964,17 @@ static int adxl367_read_raw(struct iio_dev *indio_dev,
+>  		*val2 = adxl367_samp_freq_tbl[st->odr][1];
+>  		mutex_unlock(&st->lock);
+>  		return IIO_VAL_INT_PLUS_MICRO;
+> +	case IIO_CHAN_INFO_PROCESSED:
+> +		switch (chan->type) {
+> +		case IIO_STEPS:
+> +			*val = st->nl_comp_en;
+
+Not number of steps? 
+
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+
+> +
+> +static ssize_t adxl367_write_attr(struct iio_dev *indio_dev,
+> +				  uintptr_t private,
+> +				  const struct iio_chan_spec *chan,
+> +				  const char *buf, size_t len)
+> +{
+> +	struct adxl367_state *st = iio_priv(indio_dev);
+> +	int ret = 0;
+ret always set so no need to init.
+
+> +	unsigned long value;
+> +	int val;
+> +
+> +	ret = kstrtoul(buf, 10, &value);
+> +	if (ret)
+> +		return ret;
+> +	val = value;
+> +
+> +	switch (private) {
+> +	case ADXL367_PEDOMETER_THRESHOLD:
+We may want to make some of these standard attributes, but Documentation first
+to get an idea of how consistent they are.
+
+> +		ret = adxl367_write_word(st, ADXL367_REG_PEDOMETER_THRESH_H, &val);
+> +		break;
+> +	case ADXL367_PEDOMETER_SENSITIVITY:
+> +		ret = adxl367_write_word(st, ADXL367_REG_PEDOMETER_SENS_H, &val);
+> +		break;
+> +	case ADXL367_PEDOMETER_RESET:
+> +		if (val)
+
+
+What does it mean to do have a value for a reset?
+As below - I need to know more on why we care about reseting at all.
+
+> +			ret = regmap_update_bits(st->regmap, ADXL367_REG_PEDOMETER_CTL,
+> +						 ADXL367_PEDOMETER_RESET_STEP_MASK | ADXL367_PEDOMETER_RESET_OF_MASK,
+> +						 ADXL367_PEDOMETER_RESET_STEP_MASK | ADXL367_PEDOMETER_RESET_OF_MASK);
+ret not checked.
+
+> +		ret = regmap_update_bits(st->regmap, ADXL367_REG_PEDOMETER_CTL,
+> +					 ADXL367_PEDOMETER_RESET_STEP_MASK | ADXL367_PEDOMETER_RESET_OF_MASK,
+> +					 0);
+> +		break;
+> +	case ADXL367_Z_NONLINEARITY_COMPENSATION:
+> +		ret = regmap_update_bits(st->regmap, ADXL367_REG_TEMP_CTL,
+> +					 ADXL367_NL_COMP_EN_MASK,
+> +					 val ? ADXL367_NL_COMP_EN_MASK : 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->nl_comp_en = val ? 1 : 0;
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> +
+> +	return ret ? ret : len;
 >  }
 >  
-> +/*
-> + * To work around what seems to be an optimizer bug, the macro arguments
-> + * need to have const copies or the values end up changed by the time they
-> + * reach fortify_warn_once(). See commit 6f7630b1b5bc ("fortify: Capture
-> + * __bos() results in const temp vars") for more details.
-> + */
->  #define __fortify_memcpy_chk(p, q, size, p_size, q_size,		\
->  			     p_size_field, q_size_field, op) ({		\
->  	const size_t __fortify_size = (size_t)(size);			\
-> @@ -623,6 +629,8 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
->  	const size_t __q_size = (q_size);				\
->  	const size_t __p_size_field = (p_size_field);			\
->  	const size_t __q_size_field = (q_size_field);			\
-> +	/* Keep a mutable version of the size for the final copy. */	\
-> +	size_t __copy_size = __fortify_size;				\
->  	fortify_warn_once(fortify_memcpy_chk(__fortify_size, __p_size,	\
->  				     __q_size, __p_size_field,		\
->  				     __q_size_field, FORTIFY_FUNC_ ##op), \
-> @@ -630,7 +638,11 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
->  		  __fortify_size,					\
->  		  "field \"" #p "\" at " FILE_LINE,			\
->  		  __p_size_field);					\
-> -	__underlying_##op(p, q, __fortify_size);			\
-> +	/* Hide only the run-time size from value range tracking to */	\
-> +	/* silence compile-time false positive bounds warnings. */	\
-> +	if (!__builtin_constant_p(__fortify_size))			\
-> +		OPTIMIZER_HIDE_VAR(__copy_size);			\
-> +	__underlying_##op(p, q, __copy_size);				\
->  })
+>  static int adxl367_write_raw_get_fmt(struct iio_dev *indio_dev,
+> @@ -1376,6 +1518,37 @@ static const struct iio_event_spec adxl367_events[] = {
+>  	},
+>  };
 >  
->  /*This patch works for me. I tested it on PowerPC and x86-64 using GCC 13.X,
-CONFIG_FORTIFY_SOURCE=Y and CONFIG_NR_CPUS=2048. So,
+> +static const struct iio_chan_spec_ext_info adxl367_step_ext_info[] = {
+> +	{
+> +		.name = "threshold",
+> +		.read = adxl367_read_attr,
+> +		.write = adxl367_write_attr,
+> +		.private = ADXL367_PEDOMETER_THRESHOLD,
+> +	},
+> +	{
+> +		.name = "sensitivity",
 
-Tested-By: nilay@linux.ibm.com
+Without docs, I'm not sure what this and threshold are.
+There are some existing ABI controls for step detection but they are
+around debouncing, so we may need more if this device uses a different
+algorithm.
+
+> +		.read = adxl367_read_attr,
+> +		.write = adxl367_write_attr,
+> +		.private = ADXL367_PEDOMETER_SENSITIVITY,
+> +	},
+> +	{
+> +		.name = "reset",
+Make the channel writeable and write a 0 to reset
+(don't accept any other write).  Also update in_steps_input documentation
+for that.  Right now it says the counter doesn't reset.
+It is non obvious why we care though - if userspace wants to know
+number of steps after time X then it can just save the counter at
+time X.
+
+So why provide a reset control at atll?
+
+
+
+
+> +		.write = adxl367_write_attr,
+> +		.private = ADXL367_PEDOMETER_RESET,
+> +	},
+> +	{ }
+> +};
+> +
+> +static const struct iio_chan_spec_ext_info adxl367_z_ext_info[] = {
+> +	{
+> +		.name = "nl_comp_en",
+This is new ABI. It must be accompanied by documentation in 
+Documentation/ABI/testing/sysfs-bus-iio-*
+
+I'd also be curious to why we'd ever turn it off.
+
+> +		.read = adxl367_read_attr,
+> +		.write = adxl367_write_attr,
+> +		.private = ADXL367_Z_NONLINEARITY_COMPENSATION,
+> +	},
+> +	{ }
+> +};
+> +
+>  #define ADXL367_ACCEL_CHANNEL(index, reg, axis) {			\
+>  	.type = IIO_ACCEL,						\
+>  	.address = (reg),						\
+> @@ -1424,6 +1597,44 @@ static const struct iio_chan_spec adxl367_channels[] = {
+>  			IIO_VOLTAGE),
+>  };
+>  
+> +static const struct iio_chan_spec adxl366_channels[] = {
+> +	ADXL367_ACCEL_CHANNEL(ADXL367_X_CHANNEL_INDEX, ADXL367_REG_X_DATA_H, X),
+> +	ADXL367_ACCEL_CHANNEL(ADXL367_Y_CHANNEL_INDEX, ADXL367_REG_Y_DATA_H, Y),
+> +	{
+> +		.type = IIO_ACCEL,
+> +		.address = ADXL367_REG_Z_DATA_H,
+> +		.modified = 1,
+> +		.channel2 = IIO_MOD_Z,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
+> +		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_SCALE),
+> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> +		.info_mask_shared_by_all_available =
+> +				BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> +		.event_spec = adxl367_events,
+> +		.num_event_specs = ARRAY_SIZE(adxl367_events),
+> +		.scan_index = ADXL367_Z_CHANNEL_INDEX,
+> +		.scan_type = {
+> +			.sign = 's',
+> +			.realbits = 14,
+> +			.storagebits = 16,
+> +			.endianness = IIO_BE,
+> +			},
+> +		.ext_info = adxl367_z_ext_info,
+> +	},
+> +	ADXL367_CHANNEL(ADXL367_TEMP_CHANNEL_INDEX, ADXL367_REG_TEMP_DATA_H,
+> +			IIO_TEMP),
+> +	ADXL367_CHANNEL(ADXL367_EX_ADC_CHANNEL_INDEX, ADXL367_REG_EX_ADC_DATA_H,
+> +			IIO_VOLTAGE),
+> +	{
+> +		.type = IIO_STEPS,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |
+> +				      BIT(IIO_CHAN_INFO_ENABLE),
+> +		.scan_index = -1, /* No buffer support */
+> +		.ext_info = adxl367_step_ext_info,
+> +	},
+> +};
+> +
+>  static int adxl367_verify_devid(struct adxl367_state *st)
+>  {
+>  	unsigned int val;
+> @@ -1479,6 +1690,9 @@ int adxl367_probe(struct device *dev, const struct adxl367_ops *ops,
+>  	struct iio_dev *indio_dev;
+>  	struct adxl367_state *st;
+>  	int ret;
+> +	enum adxl367_variant variant;
+> +
+> +	variant = (uintptr_t)device_get_match_data(dev);
+Use the bus specific extractors to get this and pass it in to probe.
+
+spi_get_device_match_data() / i2c_get_match_data()
+
+They deal with the various ID table rather than simple the ones supported
+by property.h
+
+>  
+>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+>  	if (!indio_dev)
+> @@ -1492,10 +1706,21 @@ int adxl367_probe(struct device *dev, const struct adxl367_ops *ops,
+>  
+>  	mutex_init(&st->lock);
+>  
+> -	indio_dev->channels = adxl367_channels;
+> -	indio_dev->num_channels = ARRAY_SIZE(adxl367_channels);
+> +	switch (variant) {
+> +	case ADXL366:
+
+Put everything here inside the adxl366_chip_info structure mentioned below
+then these are simple unconditional assignments.
+
+> +		indio_dev->name = "adxl366";
+> +		indio_dev->channels = adxl366_channels;
+> +		indio_dev->num_channels = ARRAY_SIZE(adxl366_channels);
+> +		break;
+> +	case ADXL367:
+> +		indio_dev->name = "adxl367";
+> +		indio_dev->channels = adxl367_channels;
+> +		indio_dev->num_channels = ARRAY_SIZE(adxl367_channels);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+>  	indio_dev->available_scan_masks = adxl367_channel_masks;
+> -	indio_dev->name = "adxl367";
+>  	indio_dev->info = &adxl367_info;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+> diff --git a/drivers/iio/accel/adxl367.h b/drivers/iio/accel/adxl367.h
+> index 4a42622149b1..21a6b06b774d 100644
+> --- a/drivers/iio/accel/adxl367.h
+> +++ b/drivers/iio/accel/adxl367.h
+> @@ -9,6 +9,11 @@
+>  
+>  #include <linux/types.h>
+>  
+> +enum adxl367_variant {
+> +	ADXL366,
+> +	ADXL367,
+> +};
+> +
+>  struct device;
+>  struct regmap;
+>  
+> diff --git a/drivers/iio/accel/adxl367_i2c.c b/drivers/iio/accel/adxl367_i2c.c
+> index b595fe94f3a3..b712e038183f 100644
+> --- a/drivers/iio/accel/adxl367_i2c.c
+> +++ b/drivers/iio/accel/adxl367_i2c.c
+> @@ -61,13 +61,15 @@ static int adxl367_i2c_probe(struct i2c_client *client)
+>  }
+>  
+>  static const struct i2c_device_id adxl367_i2c_id[] = {
+> -	{ "adxl367", 0 },
+> +	{ "adxl366", ADXL366 },
+No enums here. Use a device type specific chip_info structure.
+Couple of reasons.
+1) 0 value is an error for some of the helpers, so can trip us up
+  later.
+2) It is way more extensible to have a single structure that is used
+   for all device differences.
+
+Just define them in the main c file + export them as needed. Then use
+extern in the header so you can have pointers to them here.
+
+> +	{ "adxl367", ADXL367 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(i2c, adxl367_i2c_id);
+>  
+>  static const struct of_device_id adxl367_of_match[] = {
+> -	{ .compatible = "adi,adxl367" },
+> +	{ .compatible = "adi,adxl366", .data = (const void *)ADXL366 },
+> +	{ .compatible = "adi,adxl367", .data = (const void *)ADXL367 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, adxl367_of_match);
+> diff --git a/drivers/iio/accel/adxl367_spi.c b/drivers/iio/accel/adxl367_spi.c
+> index 118c894015a5..ea8c0408281b 100644
+> --- a/drivers/iio/accel/adxl367_spi.c
+> +++ b/drivers/iio/accel/adxl367_spi.c
+> @@ -138,13 +138,15 @@ static int adxl367_spi_probe(struct spi_device *spi)
+>  }
+>  
+>  static const struct spi_device_id adxl367_spi_id[] = {
+> -	{ "adxl367", 0 },
+> +	{ "adxl366", ADXL366 },
+> +	{ "adxl367", ADXL367 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(spi, adxl367_spi_id);
+>  
+>  static const struct of_device_id adxl367_of_match[] = {
+> -	{ .compatible = "adi,adxl367" },
+> +	{ .compatible = "adi,adxl366", .data = (const void *)ADXL366 },
+> +	{ .compatible = "adi,adxl367", .data = (const void *)ADXL367 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, adxl367_of_match);
+
 
