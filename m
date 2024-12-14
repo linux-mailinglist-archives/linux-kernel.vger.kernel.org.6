@@ -1,114 +1,287 @@
-Return-Path: <linux-kernel+bounces-446093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDEC9F1FCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:48:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1D29F1FD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D7418882CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3923E166B3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9216C194123;
-	Sat, 14 Dec 2024 15:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A081974EA;
+	Sat, 14 Dec 2024 15:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b="IxTKL7F+"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pbnN5hbt"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6B101DE;
-	Sat, 14 Dec 2024 15:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB65101DE;
+	Sat, 14 Dec 2024 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734191288; cv=none; b=rGjNqf3f3YUpFND3aGa8X8fjUB2J+bTD6PHkdELW2uID6whLz21+frx/nzNz0dxa1uGHtOmwZ/ny4A9Q8eYfrl6dSbwA4PyCBGZvO9KuretHY+7gXFOryRToz7I64M/BhVF8Cg9zbO5fyCxM1YK9iuawQQ20HJefx0zWbf9TPnQ=
+	t=1734191566; cv=none; b=RgFNFPpl00G6e4/Vyadcj3iz4xrtiyhnV3pmGo8P3+0wUgnKLQrtivwNB4+MVh4mz41mzRi6off0WAOzwkq7iLbPPaIdnHNHfO3oMzIM+/HCbxkMzwxWgfkK/y6oz3s903EJyKRcJ6b//DECRJoF2MBdP4Ve7u5A7+OepTWwOSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734191288; c=relaxed/simple;
-	bh=NsAijW7He8ZNqvND3ODoC7GqFTdM+ETcI4SDNwsPBEw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MrW66QxCTFX0jHIaaCEAvSyN5Fj5Ynl9VPJfJqhcp/x4pu79WJco/e8rHWYLLI1RsKjLOjn2M1sF0fTe9cE/USJfEajr4bYqREZ4Wl1a2kVzEf73/PP2Y8VZzVfUxoo1M3ztqqy84edUu1vfr3Tlj4F5G3pU1u2r8naRRNV7Cto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b=IxTKL7F+; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1734191249; x=1734796049; i=svenjoac@gmx.de;
-	bh=jKTnUzFv43iUiomb93gDcq2GrOVrgbNReFvK6+xebZM=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=IxTKL7F+M0zCLRHPBlu6gF0denQPhGz8XFnXw5kqdd9QRMglUxgoMJFj6Y0i+Rl8
-	 5XMtnUP0f7K6mLNzrs9Zg4d271rUiKBnp9KIlRHBhVfCMDX4GRGgriu313Y0OPMXd
-	 ncAeZNLxR+2dOfZSxPav2nMuzgHryNRjcS0aDgo2CcZUSQUFfSFNyhrd/JKCYuwSi
-	 dRhaVUr947M3XuCHqjarBX+uubDvxmWMhc0w/90KnRXdmRV6I9v+GTeyERXmg34om
-	 7o4+EEsrJDgsj6zZ+gDwvvvHmkVQQwjiiSkst5FyKVRGONHi6t5W4Fy5kCl+BNqBU
-	 iwKOEUzPQKTxzhCcpw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost.localdomain ([87.168.51.82]) by mail.gmx.net
- (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MtOKc-1tbGb11Y5O-00u5nI; Sat, 14 Dec 2024 16:47:29 +0100
-Received: by localhost.localdomain (Postfix, from userid 1000)
-	id EB3668011C; Sat, 14 Dec 2024 16:47:27 +0100 (CET)
-From: Sven Joachim <svenjoac@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,  patches@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  torvalds@linux-foundation.org,
-  akpm@linux-foundation.org,  linux@roeck-us.net,  shuah@kernel.org,
-  patches@kernelci.org,  lkft-triage@lists.linaro.org,  pavel@denx.de,
-  jonathanh@nvidia.com,  f.fainelli@gmail.com,  sudipm.mukherjee@gmail.com,
-  srw@sladewatkins.net,  rwarsow@gmx.de,  conor@kernel.org,
-  hargar@microsoft.com,  broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc2 review
-In-Reply-To: <20241213150009.122200534@linuxfoundation.org> (Greg
-	Kroah-Hartman's message of "Fri, 13 Dec 2024 16:04:17 +0100")
-References: <20241213150009.122200534@linuxfoundation.org>
-Date: Sat, 14 Dec 2024 16:47:27 +0100
-Message-ID: <87ttb66zcg.fsf@turtle.gmx.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1734191566; c=relaxed/simple;
+	bh=KPzoGkvzcbahsNrPZZ5TRDoa7zLT2SLuDOoN0FbaijM=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=uNF4KV8V2ZM69kZontw89o9p+c5auV7bd1jpb6Q7bkX93fUru2ZzZjgTXrLMKPGnp4oqaTPvCOkR+lIs2wfVZviki+peTMg+3gzOez6nWIhG8fBAYBURTD0MKWNuhY2lH3xNxUsNtRjftjsdP8j+/x2nn4E42ncwLPQ4n8xrHU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pbnN5hbt; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id MURZtVKNtJaUfMURatNGQD; Sat, 14 Dec 2024 16:52:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1734191561;
+	bh=FFahc2HzyCvXQnoK6BCINAM58qqaizbdQbpLVvV+TfI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=pbnN5hbtPGBiUlDVfQxFoZlGPM2Xm9VGhYHo0xpuItIfovPjV/Y4NFbQ/UledN0nv
+	 1621E1Knoz3U6X2kC9u5FaEDCbdQIjsq62uK4u5PWrDVtEXpsVPu+vXd1sAcEM8aix
+	 T+HUPr/wIK62pRB/LgN/sRNueIE1d1ZgMhfMci7EiPqJrbI2RLCsmZvBaswn2DxPwA
+	 nnwsjbntCdVHH+6XwloqzIBDsPIzQ7n6GEwATbWP52zxwrhoA8nMZoL4neL9pSTYkk
+	 sn7Ib9eSjPVxe+aVtwDh3Y6dXsf/LScFIzqANi4EuVrpHSTh7SqUbcze16lHUeINeq
+	 PEtRrKCXJcz9Q==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 14 Dec 2024 16:52:41 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <3c067b26-cfe8-4939-afce-5c8753767715@wanadoo.fr>
+Date: Sat, 14 Dec 2024 16:52:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Provags-ID: V03:K1:+1vAiYYmZmxKWRmt2iiM7EH3Ss70jh3yBCsEf7JM1BT2DIKP1nF
- 2DC8A7P73H3dOrMpT0GbLDBWT6hR4CpS0gwH7c9ziqMI6czpwvAg/oIaMPZ/tm5RwP71XMv
- mibHIcSSMg1ZX7pr3nZHK0zLwcE4Mh45xo88hBCBdy9Dpi2SSyiv6PakN5L/ITbkjRuWBNH
- CIznKc4mIpShLt0f9TRSg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NnimcqHXfTs=;FnJIgdsCaOOfPoYHiH3BWSswJKh
- Ec7j6WB8ldB+cMq4jKYDi+nnxC8su6Lsu+fVb5x/UV7+V6tKRClYgslTg7IxJ2CRQNdZoS3Lt
- v5kyo/Ybdtxx35enhFegGzA68Iyz4Y8stfza+agwpqZ2m4puntQmLXM9pdYqH0QV8yksIwvgO
- Nx45EX8kCwXzT+X4XhKfn7/j8PxqyMrbvIU0ynqSdSNkaw0QyItyVvGWEQgenbXpReDLa6hZU
- mncmh/YcQS0lj1jqOc/fGqRIptTQQDUSjCnd5x3m1FwdoQMOHn9+DU0iv85GsOjvxhE9rkitW
- J3O5IlfAXPR81m5HU9/WwPWJcvZdpUtgjP6NiJYzzcVrLyD4nCmFa3v2nAFeaFWqoxFWBt7WI
- Hht78fj4+hKGUaFsLJ96B8MZirGMKRYpahlcDSSyJ/wBNTURQaNISHYV4awfHiEASHS4Xmdbl
- F+UADm2cVdgbWEndfAjkng+mOpIqn6dVr6YYLuiIIWomIuDy6STV91+ATod3h7/KeKPvQx+xG
- Al6jPYlm0+S65EPPWmCHPd6nCJKl2QhGK1/tyf+Vy5yGcqfThkWOVEx8vEQWZZwZFf9nP3bCs
- 0TCnAciDTTey7bf2csgAyMQ8yPROhLd3mdhqPxShg6gQB/v40clr9pQEWTUSao7Y8TrUpRh8b
- ZABWVAz5adv75Nu5TYm16vdPjo/zdQy6rAB8WFqDgOLKpXX9UOUxh/rY7RF/+99+ZpKGNVIW/
- tWUmZxCVUWy6xAD8+THkDVjOzn2ynPWpwTF8CRgqytmH8mc5EW/otr+MHtGamIj3Ed9TFu+vc
- AKI81AV3HOLmUTKJGMCRaeY4fFOf5sNH7u6phr6OSPvTorK6yQclCuWtyjGNBt35I5jISm9Bj
- HPvv1qqTM0SfWKbPUjX91Vb+cBsvOzqxkASI3i9eErACpWqJNMgdwTvICT72rHrEleRMIj67e
- 1/pirDTOUOGn0qaVOCoC+hiLIvnX7L+6YDMmMvVi9nQStO+NjTmi/HALkJtZyuTa4uPKESXVl
- 7mduoh7dN9n/EWx/EzBWsMGhoXaR3IO2wYrkCrYRIGit55o22NzBYO3PMxS5y+aWnvUtMv3dB
- olYmuOw16H4VXQ8fGnbshjhSXsLkQa
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
+ controller
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Markuss Broks <markuss.broks@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Markuss Broks <markuss.broks@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-12-13 16:04 +0100, Greg Kroah-Hartman wrote:
+Le 12/12/2024 à 22:09, Markuss Broks a écrit :
+> Add a driver for Samsung SPEEDY serial bus host controller.
+> SPEEDY is a proprietary 1 wire serial bus used by Samsung
+> in various devices (usually mobile), like Samsung Galaxy
+> phones. It is usually used for connecting PMIC or various
+> other peripherals, like audio codecs or RF components.
+> 
+> This bus can address at most 1MiB (4 bit device address,
+> 8 bit registers per device, 8 bit wide registers:
+> 256*256*16 = 1MiB of address space.
 
-> This is the start of the stable review cycle for the 6.1.120 release.
-> There are 772 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
+...
 
-Works fine for me on x86_64.
+> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 addr, u32 *val)
+> +{
+> +	int ret;
+> +	u32 cmd, int_ctl, int_status;
+> +
+> +	mutex_lock(&speedy->io_lock);
 
-Tested-by: Sven Joachim <svenjoac@gmx.de>
+All error handling paths fail to release the mutex.
+guard(mutex) would help here.
 
-Cheers,
-       Sven
+> +
+> +	ret = speedy_fifo_reset(speedy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
+> +			      SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_READ |
+> +	      SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
+> +
+> +	int_ctl = SPEEDY_TRANSFER_DONE_EN | SPEEDY_FIFO_RX_ALMOST_FULL_EN |
+> +		  SPEEDY_RX_FIFO_INT_TRAILER_EN | SPEEDY_RX_MODEBIT_ERR_EN |
+> +		  SPEEDY_RX_GLITCH_ERR_EN | SPEEDY_RX_ENDBIT_ERR_EN |
+> +		  SPEEDY_REMOTE_RESET_REQ_EN;
+> +
+> +	ret = speedy_int_clear(speedy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for xfer done */
+> +	ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, int_status,
+> +				       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_read(speedy->map, SPEEDY_RX_DATA, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = speedy_int_clear(speedy);
+> +
+> +	mutex_unlock(&speedy->io_lock);
+> +
+> +	return ret;
+> +}
+
+...
+
+> +static int _speedy_write(struct speedy_controller *speedy, u32 reg, u32 addr, u32 val)
+> +{
+> +	int ret;
+> +	u32 cmd, int_ctl, int_status;
+> +
+> +	mutex_lock(&speedy->io_lock);
+> +
+> +	ret = speedy_fifo_reset(speedy);
+> +	if (ret)
+> +		return ret;
+
+All error handling paths fail to release the mutex.
+guard(mutex) would help here.
+
+> +
+> +	ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
+> +			      SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
+> +	if (ret)
+> +		return ret;
+> +
+> +	cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_WRITE |
+> +	      SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
+> +
+> +	int_ctl = (SPEEDY_TRANSFER_DONE_EN |
+> +		   SPEEDY_FIFO_TX_ALMOST_EMPTY_EN |
+> +		   SPEEDY_TX_LINE_BUSY_ERR_EN |
+> +		   SPEEDY_TX_STOPBIT_ERR_EN |
+> +		   SPEEDY_REMOTE_RESET_REQ_EN);
+> +
+> +	ret = speedy_int_clear(speedy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_write(speedy->map, SPEEDY_TX_DATA, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Wait for xfer done */
+> +	ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, int_status,
+> +				       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	speedy_int_clear(speedy);
+> +
+> +	mutex_unlock(&speedy->io_lock);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +/**
+> + * speedy_get_by_phandle() - internal get speedy device handle
+> + * @np:	pointer to OF device node of device
+> + *
+> + * Return: 0 on success, -errno otherwise
+
+On success, a handle is returned, not 0.
+
+> + */
+> +static const struct speedy_device *speedy_get_device(struct device_node *np)
+> +{
+...
+
+> +out:
+> +	of_node_put(speedy_np);
+> +	return handle;
+> +}
+
+...
+
+> +static int speedy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct speedy_controller *speedy;
+> +	void __iomem *mem;
+> +	int ret;
+> +
+> +	speedy = devm_kzalloc(dev, sizeof(struct speedy_controller), GFP_KERNEL);
+> +	if (!speedy)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, speedy);
+> +	speedy->pdev = pdev;
+> +
+> +	mutex_init(&speedy->io_lock);
+> +
+> +	mem = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(mem))
+> +		return dev_err_probe(dev, PTR_ERR(mem), "Failed to ioremap memory\n");
+> +
+> +	speedy->map = devm_regmap_init_mmio(dev, mem, &speedy_map_cfg);
+> +	if (IS_ERR(speedy->map))
+> +		return dev_err_probe(dev, PTR_ERR(speedy->map), "Failed to init the regmap\n");
+> +
+> +	/* Clear any interrupt status remaining */
+> +	ret = speedy_int_clear(speedy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Reset the controller */
+> +	ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_SW_RST);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(20);
+> +
+> +	/* Enable the hw */
+> +	ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_ENABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	msleep(20);
+> +
+> +	/* Probe child devices */
+> +	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, dev);
+> +	if (ret)
+> +		dev_err(dev, "Failed to populate child devices: %d\n", ret);
+
+Could be dev_err_probe() as well, at least for consistency.
+
+> +
+> +	return ret;
+> +}
+
+...
+
+CJ
 
