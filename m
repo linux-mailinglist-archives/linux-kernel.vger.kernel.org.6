@@ -1,169 +1,166 @@
-Return-Path: <linux-kernel+bounces-445779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CFC9F1B7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:50:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921A89F1B85
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:53:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21597A04C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4196188ECCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29D9DDCD;
-	Sat, 14 Dec 2024 00:50:24 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC19F513;
+	Sat, 14 Dec 2024 00:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NbMgb8we"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87B5D515
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2D0D51C
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137424; cv=none; b=Cf+dhkqPYcbvKGquPv+5W08KoeArLYVLVKklPnw1FMU/2yiv7Wwx/FU9Wuu9QhbsmnLa5YlIU+XDIaZMhoTPb2whdyVVnLEORcXXI4l4J7g9nlh0x86VIdtelIdzDIv7hnPtoC3sFn0UfWaYdy0vkuW/MgjsNZIJBbXOdUpwXU8=
+	t=1734137588; cv=none; b=Do+6pPVR9ijyA2fcWszAnPhDl3irxVQjlQdGzGBS7eRF2QKhXjSIgWWv2zUdMcIpHQdRzPd9w3a9D53J+3uyXnHuI+CsF3wu2HfJAqcdBXxBjqJbCZlGhXAicSWTV512hGUBbSIdCc9mfKzP/CeElKFWAeyK3kFGONtFqgl5wYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137424; c=relaxed/simple;
-	bh=KumtALtdchXW0ARe81cF++rA2me7Btw48nQOHsjRUFI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FVVG+t2TpfmK7BIB9i9aCzYPR4rQKyDCvlmt4Oo94vwNmG1S58MHD1RRSoriIYaFLsFs/lK7X3F3fCg0a3f7TaS0JEKaG0V09nsbsHVDaOxwV7K4X5701Et9ozAOlrWnxXi+0NbcCaSFQ0ehuKzpUw7ZmnP40u59EsT1hgwwVWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-844ee1661c9so154291739f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:50:22 -0800 (PST)
+	s=arc-20240116; t=1734137588; c=relaxed/simple;
+	bh=xkqZWtIFPlPp7kCQwHwtJW9768dMKK1yBmnprDLCFFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F0hqVkVYRBUWlIxB9+m/uzmSWbOC7B+AKo+7x/PmMrsUj/VcIHHv2+JyF035UviQBT9gtsoDB8dFmvtzrT1VKDcRkoSid+JAFF5EVGax20o1zWOm5XGg8leBEtkj3fqGOhlSdTZFcexIT6qhB4uAFygxz72gccp1YtsROsJX9OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NbMgb8we; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso1529063a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:53:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734137586; x=1734742386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3K5RBtg+xGFXHj6YDf/Bcn02yaBD+GLsVm3JTeRYXpg=;
+        b=NbMgb8weh5IKLYaz5e3YY6UHnxB1KMHCfYCYLLwBZpZS5vBVUkP83v0GZpehyueHbm
+         /pf1lILGeQbaQEXnlNu7g4sj04Xpah3YMYiFhi7mSilij7hqAnXLZ42GUoU2P822ImYR
+         DYRRi6M9kM9TQiOvmC1G5sw2hnnrTUTCNTb68=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734137422; x=1734742222;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fBLcU77vbmh0JWc6/g8EnwEOkvr08+fPCnf/UWJ2z/k=;
-        b=i01OYi7/CX0iKmsIgJM9+c2iB3PKlEYEaFFq/oeXIc4IrLzIPUy6cmVuULZ+hc1qfb
-         mfodBZ84xZ2OEklHxWzLzpIZDWdi6q3MNuQQHhz1h38CqWei0GXYzarnPNmC4zzhlXib
-         B4ROPG381eOHQ7IAylHA3pq50xLqGe1MeS49yhNoAD3LP7tQyLuDR3RtKpe48jVKqdhf
-         V5nnGetZTD4W44+hI3++zufMSGhNp78+VxlRtZ2UWEExQzN8GEi/BACWrufXKtdt7tRy
-         tDqFKMdfv2vhGEfDs9ZrELMhvsbSegb+kKY5PIC4Y/U7XMv6Evy4Fvfm3MvF+DgOrvYR
-         Bjcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEkeldytnvACIpmjhRjd7NbyKBsJmTSiEE2AmeS03p17amWS0gF1hLipncb6UE4YZh0bk0lWYwLAkb12Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFJfd0wen4SYN+G6n3XtQ98Ais9qjpXo21czHqH+2H2XYIDAr+
-	eEuB/evCMtkrEkllSNWw+TZAXnDdktNAv10O4sYzg0Dhld7UeEZGSa2xZ/FlmZxsFzRBAqMpEh+
-	N9CwN5FKJ6+iiM/O08PbkRQsMi58bwaDIVZD9J5MwEvnXj3hoWms1r8E=
-X-Google-Smtp-Source: AGHT+IEZs0zqBvel2J7o7SU5ibN0aq8rTNSCje/SGK9RjrxXSqkh2wKXDjfbYTC3ZSBRmrYmXpge0CnYcZN8Y9o7C41lD4RswOWJ
+        d=1e100.net; s=20230601; t=1734137586; x=1734742386;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3K5RBtg+xGFXHj6YDf/Bcn02yaBD+GLsVm3JTeRYXpg=;
+        b=Y9HWsHT0KVDQZTqwNfG7UyHJpbhVVyPLkoAAxmyEx//FC643Y9BJOqkodfnDhj39O6
+         S2ddRoGelWOZd3faGbtBykPa8xCD0t+VEJ9m7RMaxUYXAWjLEwVssXkYzv1WDLJS/D0U
+         PPcT4MpDfYYlHDTcElxBBF/H6eUlY2N2R6QW5cD2PAPk4lRNpY3YWB7AXLo/6FjuSIZ+
+         hBEmkKekRdwvSL4KOJLaLUuQf50Zja5gNpGIVpm748qv1UeSWhDgjF/Tc/q96MmJ8Wvy
+         RZ6EiiFAjtUJi2qbzFXMUj93KHJ1jNky3Y7t8ri8B0eMlKH3uhTGWnWEVOr7o776aKwo
+         G7lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWINNAy2vORiCh3e3Kp6SWK64UenpzhsvYcYvrRH5fZLn8+Eatx645mLxSJJDhKDQGerUVIi4/EsFK4S1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrvgoX94kcwPZ4KllBeRR/qRwwVLISirVvtenRTuaiGu5ChIPh
+	z46Gcd+kHXfZhTBe7YEXYifW4wkwFkcQgSXzRvZbJowWfT+GYLgyc4ln4e+U9A==
+X-Gm-Gg: ASbGncuF8HrM5/sAsAoTqmFBc6lxJvpor2D9XWAym8LSuoGlXHx0k8Trdvemn72pLA1
+	yw2QW6FY+lnMO43b3Aj8B/9l9BMobXpziJ7HJOX0cR5nbwk8i4SA5ecsz+JK19IE5t9N/FVCQ3/
+	qU0cbpXwxHI7zrtIDobWtlvY+qcH0rT1bg8rd7/yYeWVI8mCTfHzyXIbvLQQZF97SOymTm7T7xJ
+	xKwT2oJUzMveLu/fk7eWI5HF/ldYSFRHWLK1hm39UT85892hCQoifJi+DpSDdRbS6ztXwuL/Bka
+X-Google-Smtp-Source: AGHT+IE2YrqkKpATv2ql0bO6AIUnbqRYssgrXj6tpnlBoXs+JhE+ngG5QFI1yRxn2LJsxV5LcLo/Nw==
+X-Received: by 2002:a17:90b:4c0e:b0:2ee:dcf6:1c77 with SMTP id 98e67ed59e1d1-2f28fd66bbdmr7577820a91.16.1734137586549;
+        Fri, 13 Dec 2024 16:53:06 -0800 (PST)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:ae86:44a5:253c:f9bf])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm3788270a91.41.2024.12.13.16.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 16:53:06 -0800 (PST)
+From: Douglas Anderson <dianders@chromium.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Julius Werner <jwerner@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Roxana Bradescu <roxabee@google.com>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	bjorn.andersson@oss.qualcomm.com,
+	Douglas Anderson <dianders@chromium.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] arm64: errata: Rework Spectre BHB mitigations to not assume "safe"
+Date: Fri, 13 Dec 2024 16:52:01 -0800
+Message-ID: <20241214005248.198803-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1845:b0:3a7:e732:472a with SMTP id
- e9e14a558f8ab-3afed372bd5mr44103305ab.2.1734137422148; Fri, 13 Dec 2024
- 16:50:22 -0800 (PST)
-Date: Fri, 13 Dec 2024 16:50:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675cd64e.050a0220.37aaf.00bb.GAE@google.com>
-Subject: [syzbot] [f2fs?] kernel BUG in new_curseg (2)
-From: syzbot <syzbot+15669ec8c35ddf6c3d43@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    7cb1b4663150 Merge tag 'locking_urgent_for_v6.13_rc3' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103bc544580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=15669ec8c35ddf6c3d43
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7cb1b466.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/13e083329dab/vmlinux-7cb1b466.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fe3847d08513/bzImage-7cb1b466.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+15669ec8c35ddf6c3d43@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:2746!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5323 Comm: syz.0.0 Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:get_new_segment fs/f2fs/segment.c:2746 [inline]
-RIP: 0010:new_curseg+0x1f52/0x1f70 fs/f2fs/segment.c:2876
-Code: fe fd e9 1a fa ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 4c fa ff ff 48 89 df e8 59 37 fe fd e9 3f fa ff ff e8 0f d8 97 fd 90 <0f> 0b e8 07 d8 97 fd 90 0f 0b e8 ff d7 97 fd 90 0f 0b e8 f7 d7 97
-RSP: 0018:ffffc9000d22f528 EFLAGS: 00010293
-RAX: ffffffff84078631 RBX: 0000000000000018 RCX: ffff88801cf80000
-RDX: 0000000000000000 RSI: 0000000000000018 RDI: 0000000000000018
-RBP: dffffc0000000000 R08: ffffffff84077465 R09: fffff52001a45e94
-R10: dffffc0000000000 R11: fffff52001a45e94 R12: 0000000000000018
-R13: ffff888011d6d101 R14: 0000000000000018 R15: ffff888052d722d8
-FS:  00007ff3577bc6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc8f62ba00 CR3: 000000004320a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3210
- f2fs_allocate_new_section fs/f2fs/segment.c:3224 [inline]
- f2fs_allocate_pinning_section+0xfa/0x4e0 fs/f2fs/segment.c:3238
- f2fs_expand_inode_data+0x696/0xca0 fs/f2fs/file.c:1830
- f2fs_fallocate+0x537/0xa10 fs/f2fs/file.c:1940
- vfs_fallocate+0x569/0x6e0 fs/open.c:327
- do_vfs_ioctl+0x258c/0x2e40 fs/ioctl.c:885
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl+0x80/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff357d7ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff3577bc058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ff357f46160 RCX: 00007ff357d7ff19
-RDX: 00000000200000c0 RSI: 0000000040305828 RDI: 0000000000000004
-RBP: 00007ff357df3cc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007ff357f46160 R15: 00007ffc8f62c1e8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:get_new_segment fs/f2fs/segment.c:2746 [inline]
-RIP: 0010:new_curseg+0x1f52/0x1f70 fs/f2fs/segment.c:2876
-Code: fe fd e9 1a fa ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 4c fa ff ff 48 89 df e8 59 37 fe fd e9 3f fa ff ff e8 0f d8 97 fd 90 <0f> 0b e8 07 d8 97 fd 90 0f 0b e8 ff d7 97 fd 90 0f 0b e8 f7 d7 97
-RSP: 0018:ffffc9000d22f528 EFLAGS: 00010293
-RAX: ffffffff84078631 RBX: 0000000000000018 RCX: ffff88801cf80000
-RDX: 0000000000000000 RSI: 0000000000000018 RDI: 0000000000000018
-RBP: dffffc0000000000 R08: ffffffff84077465 R09: fffff52001a45e94
-R10: dffffc0000000000 R11: fffff52001a45e94 R12: 0000000000000018
-R13: ffff888011d6d101 R14: 0000000000000018 R15: ffff888052d722d8
-FS:  00007ff3577bc6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc8f62ba00 CR3: 000000004320a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Recently I realized that a device with some Qualcomm Kryo 4xx cores
+reported in `lscpu` that it was _not_ vulnerable to Spectre BHB. This
+seemed unlikely to me.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I wrote up a patch series to attempt (with a lot of guesswork) to add
+Qualcomm cores to the tables governing how the Spectre BHB mitigation
+worked.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+In response to that patch, Will suggested that I flip the mitigation
+on its head and assume things are vulnerable until we find that
+they're not [1]. This patch series _attempts_ to accomplish that.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I've tried to do the right thing for ARM Cores and for Qualcomm
+cores. I _think_ most of this likely to be right except that I don't
+have a lot of confidence in the "k" value for the Kryo 4XX cores.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+This patch series is _expected_ to cause some WARN splats for other
+ARM CPU variants. Sorry, but there's no way to make this "default
+assume affected" but not cause problems for ARM CPU variants that
+weren't previously listed. I hope the WARNing here is better than just
+slowing your cores down pointlessly or assuming the incorrect
+mitigation. If your core is mitigated by "loop" hopefully it's easy to
+just add your core to the list. If your core it mitigated by
+"firmware" you can add your core to the list and get rid of the WARN
+splat and you'll be left with the kernel reporting you as vulnerable
+until you can get a FW update out.
 
-If you want to undo deduplication, reply with:
-#syz undup
+In case it's not obvious, v2 of this patch series is pretty different
+than v1 because it flips the logic on its head. Some of the patches
+carried over, though.
+
+As a last caveat, I'll note that I am certainly no expert on
+Spectre. Mostly I ended up here running `lscpu` on a device and
+noticing that it thought that it wasn't affected by Spectre v2 when I
+thought it was.
+
+Link to prev versions:
+v1: https://lore.kernel.org/r/20241209174430.2904353-1-dianders@chromium.org/
+
+[1] https://lore.kernel.org/r/20241211213410.GB17486@willie-the-truck
+
+Changes in v2:
+- arm64: errata: Assume that unknown CPUs _are_ vulnerable to Spectre BHB
+- arm64: errata: Add KRYO 2XX/3XX/4XX silver cores to Spectre safe list
+- Slight change to wording and notes of KRYO_4XX_GOLD patch
+- Rebased / reworded QCOM_KRYO_2XX_GOLD patch
+- Rebased / reworded QCOM_KRYO_3XX_GOLD patch
+
+Douglas Anderson (6):
+  arm64: errata: Assume that unknown CPUs _are_ vulnerable to Spectre
+    BHB
+  arm64: errata: Add KRYO 2XX/3XX/4XX silver cores to Spectre safe list
+  arm64: errata: Add QCOM_KRYO_4XX_GOLD to the spectre_bhb_k24_list
+  arm64: errata: Add QCOM_KRYO_2XX_GOLD to the
+    spectre_bhb_firmware_mitigated_list
+  arm64: cputype: Add QCOM_CPU_PART_KRYO_3XX_GOLD
+  arm64: errata: Add QCOM_KRYO_3XX_GOLD to the
+    spectre_bhb_firmware_mitigated_list
+
+ arch/arm64/include/asm/cputype.h |  2 ++
+ arch/arm64/kernel/proton-pack.c  | 52 +++++++++++++++++++++++++++-----
+ 2 files changed, 46 insertions(+), 8 deletions(-)
+
+-- 
+2.47.1.613.gc27f4b7a9f-goog
+
 
