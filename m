@@ -1,177 +1,149 @@
-Return-Path: <linux-kernel+bounces-446196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD2D9F20F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:29:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6ABF9F20F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEF9188738A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1EA31656FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E2A1B0F37;
-	Sat, 14 Dec 2024 21:29:23 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8084D1AE003;
+	Sat, 14 Dec 2024 21:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/SyXPoh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5C1A8F79
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E4C1990A2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734211762; cv=none; b=e27r2FiEjDvO+ws4EsqhD9bzxpE/WXcFvDwCELDnuMxNYDVyXPABpRHuaW8KxwWT1D7S6SF8sXOUX8cI434l8g6KyFalCOBkqnxUo0nCcLsEUkopNsI0FUi3Z0TISk3UGRxU9pM/bcdtDTFK8eoMb3ogoY/JCSBRKvoOv8DKMAI=
+	t=1734211949; cv=none; b=sgMboGZnL0j7SMYOww+rnKLa6xf5fcQ/m1LxdCrTtjI/7ev9PvvDln1zgK5egJJDr1/k3X2WN+xPYg4pQd+4OOxhXTBXRDjrY0mFaz6lbeBPs/15p8z+sVvRXhZABBrrIH65QKe8/XkNEgO5XsMJHJIfQH3uYiWmBdg4cuhl0Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734211762; c=relaxed/simple;
-	bh=AKu2GiIrzTepf6osi+gd35zsxDpl3zr6/O+hlAOcg3k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I1YRO2TGNDuM8TYH1sHQfkgs/aqVxaXYi+fNb1ReeCk7fi+97Ios915ODblszJfrHgTGKUfGfkO4qUbbIVSlywo2uk2qvIxSTJKTwPsRpKxcr0Lf43E6xKvz+mdSetNO2P/Ra8/iNv+VjUBbI1E2n/E+klUxdDS2ftCAyZGPU5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso59471425ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 13:29:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734211760; x=1734816560;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=paHaFcfWBXLMk205W3buDhn9iPt32Zvb/Ivu3tiWL5E=;
-        b=quZ0TGXKNV3COYFlJl9usIR+SWE2QgZuW6gVIFsK+oJdMB2v5KCgKPuMTIwDA4RFer
-         /ShF9jBWtVlvaTpnxrI7v1vyZgcNS1wL4hmT1o6bq6Y3x0OPMhTQE8i5I5rFluI3R04X
-         9DEtv0FZ3ivFnBu0Kv5b1wbLe2ggAMfvs48UYdvC8CPmcwntKYy73OTcYbsgIj17hfH0
-         3ZBL7XaU8iHBDsipk6FfaYF+XaRyGwPfM1vDnUiCm4JlxNVbj9rvIYR25ycoERPg7pp6
-         NGcjEq4uNae58vXC77eoyoocDbISk7in6F/ofcI96B4DeFlqyv7uovo8kftYn5D2VGbV
-         XqVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWngTwtk5Ih6+spIQmtkr9DOK8LNoCWNjAfuBgMzuQRev4nZYEeCXqBTX8W8loHX9LW/jYUcT7/4oF7Lgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt6ZEdP7/uef3BClsiHRANodQTgTE/ELyIQsI3x84sJffpdGYf
-	FG+ClFijKTIh+WHbo7AqAgh4Gn2VN+524TQ4hoUJUIsQ/f16EWYTi5wDU6vd3M4XWhuSlQB+L5m
-	Ff6wfUPQRB6OIu97AB/uyv6mgFRs7eFxAQp/1DKiEm5KftFa6F1Tw0Z4=
-X-Google-Smtp-Source: AGHT+IHxAtIaF3EuSR5gJb/0dm1RwTvHyOG5erp+QIuBp3KjmkrGTz390sp6Tb5nGh6an3lBqtxFuWv5P+wwgxbhnTJRAYIWDkuO
+	s=arc-20240116; t=1734211949; c=relaxed/simple;
+	bh=Oq6D2KVeN7204X89JSXEcds95W7b2vtvGJFjIa9aRSE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cVgtxc34Zu9aYajwfZT9K6HvgnyJxoeVnLCF+2wRbtdeRFkvY/v8qDN8aH38rnmNIKGjiXrsTRxMalKrlbmuf6vjYOgKBuiOq5JfZKqgFUYiTgJf7/MGd1lvN33wfMltYLhj15NO0m9nu1QojHBv3tLsumCmekc651V/jdh5YOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/SyXPoh; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734211948; x=1765747948;
+  h=date:from:to:cc:subject:message-id;
+  bh=Oq6D2KVeN7204X89JSXEcds95W7b2vtvGJFjIa9aRSE=;
+  b=N/SyXPohzAYvtIxfteiwEDeXnfexJKwKchgzZwC+xc7klNgFvnt/WJQW
+   uvKFN/2oTfy2tLanmR0RQ/9879oUFLqYywkw58iYbjD7HEutwvH9R8jXA
+   vLQolNUQf6FlngCczRa/RmdtmDmZdjXqgQ/q2i0Nq1mBVZ3Zg/GklyONe
+   2d2eDODzLEsyB+OCEWY+IB/cyGHlTyqhmyejCLGnrKE0lynsZkPrLAEhX
+   ZoO4Xz6PeSo7Ank7kyV8+aeDFDavkDKfg3pdkELLqL/QiiVLiAHHELuem
+   Ks9dwn+VvS+hTweraSUNrvNeDl36MVaz+0bmLP7tGEfhl6XiwdJRNFwDT
+   Q==;
+X-CSE-ConnectionGUID: SAxfJzdoSfSVDh+lLNY9BA==
+X-CSE-MsgGUID: eV8ylae8TpOlo4LGCceoSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46032815"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="46032815"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 13:32:27 -0800
+X-CSE-ConnectionGUID: 2j5TH4HFQbumZzGje2nylg==
+X-CSE-MsgGUID: KVV2+kUwRtKY6zw3EOlFNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="97404827"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 14 Dec 2024 13:32:24 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMZkM-000DFO-0C;
+	Sat, 14 Dec 2024 21:32:22 +0000
+Date: Sun, 15 Dec 2024 05:32:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cache] BUILD SUCCESS
+ faf6ef673787956ec4d33ac8bf56f8ea929abf37
+Message-ID: <202412150554.ZBbvJ1iI-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:3a7:d7dd:e70f with SMTP id
- e9e14a558f8ab-3afeee787ecmr98990225ab.12.1734211760152; Sat, 14 Dec 2024
- 13:29:20 -0800 (PST)
-Date: Sat, 14 Dec 2024 13:29:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675df8b0.050a0220.37aaf.00d8.GAE@google.com>
-Subject: [syzbot] [xfs?] BUG: unable to handle kernel paging request in xfs_destroy_mount_workqueues
-From: syzbot <syzbot+63340199267472536cf4@syzkaller.appspotmail.com>
-To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
+branch HEAD: faf6ef673787956ec4d33ac8bf56f8ea929abf37  x86/resctrl: Document the new "mba_MBps_event" file
 
-syzbot found the following issue on:
+elapsed time: 1444m
 
-HEAD commit:    2e7aff49b5da Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f5a730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=696fb014d05da3a3
-dashboard link: https://syzkaller.appspot.com/bug?extid=63340199267472536cf4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+configs tested: 57
+configs skipped: 1
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef408f67fde3/disk-2e7aff49.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/414ac17a20dc/vmlinux-2e7aff49.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a93415d2a7e7/Image-2e7aff49.gz.xz
+tested configs:
+arc                  randconfig-001-20241214    gcc-13.2.0
+arc                  randconfig-002-20241214    gcc-13.2.0
+arm                  randconfig-001-20241214    gcc-14.2.0
+arm                  randconfig-002-20241214    clang-15
+arm                  randconfig-003-20241214    gcc-14.2.0
+arm                  randconfig-004-20241214    gcc-14.2.0
+arm64                randconfig-001-20241214    clang-15
+arm64                randconfig-002-20241214    clang-20
+arm64                randconfig-003-20241214    clang-15
+arm64                randconfig-004-20241214    gcc-14.2.0
+csky                 randconfig-001-20241214    gcc-14.2.0
+csky                 randconfig-002-20241214    gcc-14.2.0
+hexagon              randconfig-001-20241214    clang-20
+hexagon              randconfig-002-20241214    clang-14
+i386       buildonly-randconfig-001-20241214    gcc-12
+i386       buildonly-randconfig-002-20241214    gcc-12
+i386       buildonly-randconfig-003-20241214    clang-19
+i386       buildonly-randconfig-004-20241214    clang-19
+i386       buildonly-randconfig-005-20241214    gcc-11
+i386       buildonly-randconfig-006-20241214    gcc-12
+loongarch            randconfig-001-20241214    gcc-14.2.0
+loongarch            randconfig-002-20241214    gcc-14.2.0
+mips                         eyeq5_defconfig    gcc-14.2.0
+nios2                randconfig-001-20241214    gcc-14.2.0
+nios2                randconfig-002-20241214    gcc-14.2.0
+parisc               randconfig-001-20241214    gcc-14.2.0
+parisc               randconfig-002-20241214    gcc-14.2.0
+powerpc              randconfig-001-20241214    clang-20
+powerpc              randconfig-002-20241214    clang-15
+powerpc              randconfig-003-20241214    clang-20
+powerpc64            randconfig-001-20241214    gcc-14.2.0
+powerpc64            randconfig-003-20241214    clang-20
+riscv                randconfig-001-20241214    clang-20
+riscv                randconfig-002-20241214    clang-20
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20241214    gcc-14.2.0
+s390                 randconfig-002-20241214    gcc-14.2.0
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20241214    gcc-14.2.0
+sh                   randconfig-002-20241214    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20241214    gcc-14.2.0
+sparc                randconfig-002-20241214    gcc-14.2.0
+sparc64              randconfig-001-20241214    gcc-14.2.0
+sparc64              randconfig-002-20241214    gcc-14.2.0
+um                   randconfig-001-20241214    clang-20
+um                   randconfig-002-20241214    clang-17
+x86_64     buildonly-randconfig-001-20241214    gcc-11
+x86_64     buildonly-randconfig-002-20241214    clang-19
+x86_64     buildonly-randconfig-003-20241214    gcc-12
+x86_64     buildonly-randconfig-004-20241214    gcc-12
+x86_64     buildonly-randconfig-005-20241214    gcc-12
+x86_64     buildonly-randconfig-006-20241214    clang-19
+xtensa               randconfig-001-20241214    gcc-14.2.0
+xtensa               randconfig-002-20241214    gcc-14.2.0
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+63340199267472536cf4@syzkaller.appspotmail.com
-
-XFS (loop3): Unmounting Filesystem ca7e2101-b8f1-4838-8e2d-7637b90620e6
-Unable to handle kernel paging request at virtual address 001f7fe000182113
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[001f7fe000182113] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 6415 Comm: syz-executor Not tainted 6.13.0-rc2-syzkaller-g2e7aff49b5da #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 804000c5 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __lock_acquire+0xfc/0x7904 kernel/locking/lockdep.c:5089
-lr : lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
-sp : ffff8000a0d87620
-x29: ffff8000a0d878e0 x28: ffff800080367964 x27: 0000000000000000
-x26: ffff0001b360b500 x25: 0000000000000000 x24: 0000000000000001
-x23: 0000000000000000 x22: 1ffff00011f300ca x21: 00ffff0000c10898
-x20: 0000000000000001 x19: 0000000000000000 x18: 1fffe000366c167e
-x17: ffff80008f97d000 x16: ffff80008326d65c x15: 0000000000000001
-x14: 1fffe00018211000 x13: dfff800000000000 x12: ffff7000141b0eec
-x11: ffff8000804648c0 x10: ffff80008f980650 x9 : 00000000000000f3
-x8 : 001fffe000182113 x7 : ffff800080367964 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00ffff0000c10898
-Call trace:
- __lock_acquire+0xfc/0x7904 kernel/locking/lockdep.c:5089 (P)
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849 (L)
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x58/0x70 kernel/locking/spinlock.c:170
- put_pwq_unlocked kernel/workqueue.c:1662 [inline]
- destroy_workqueue+0x8d8/0xdc0 kernel/workqueue.c:5897
- xfs_destroy_mount_workqueues+0x58/0xdc fs/xfs/xfs_super.c:606
- xfs_fs_put_super+0x11c/0x138 fs/xfs/xfs_super.c:1157
- generic_shutdown_super+0x12c/0x2bc fs/super.c:642
- kill_block_super+0x44/0x90 fs/super.c:1710
- xfs_kill_sb+0x20/0x58 fs/xfs/xfs_super.c:2089
- deactivate_locked_super+0xc4/0x12c fs/super.c:473
- deactivate_super+0xe0/0x100 fs/super.c:506
- cleanup_mnt+0x34c/0x3dc fs/namespace.c:1373
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1380
- task_work_run+0x230/0x2e0 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:745
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-Code: 9007a8e8 b9465108 340090a8 d343fea8 (386d6908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	9007a8e8 	adrp	x8, 0xf51c000
-   4:	b9465108 	ldr	w8, [x8, #1616]
-   8:	340090a8 	cbz	w8, 0x121c
-   c:	d343fea8 	lsr	x8, x21, #3
-* 10:	386d6908 	ldrb	w8, [x8, x13] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
