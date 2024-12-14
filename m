@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-445970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829B49F1E01
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 701859F1E07
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E021167E2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C45E168202
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8853F187848;
-	Sat, 14 Dec 2024 10:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BD31898FC;
+	Sat, 14 Dec 2024 10:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOCSPIAT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJIa7Kh9"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A0018AE2;
-	Sat, 14 Dec 2024 10:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EB318AFC;
+	Sat, 14 Dec 2024 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734171296; cv=none; b=Pch3CoU8L/SNq+QnjW8hLL81qELYcbuNntxBmdeQJGMR2H51NYjkV41PEzhn5aXyeuIJXgSriQtfv3dA9zBwmbRfy13QtJWMkIK0rbQY6WEnhZHAYk+6JfZakuofS+jEfVBT/2piKNaSxFkTTLeHebqgfXTW8wHT4Ucr8E0apFA=
+	t=1734171385; cv=none; b=dIzGtbjhmCl9f6v1V0tsGL0/xGDsrdJFlgu5GS+MXtxMKc2EoukAG+4WrWAjI0iRyxu2NJhePfDv1oLzcMdjj1laJGaNbDbLtla0ec4rSsqoZDEY0DUoVlu32G1cPHTaYr6zRl6E5bRm/cfQZfakEXqwNxqT3UEBsZ3mGlxBK/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734171296; c=relaxed/simple;
-	bh=6mnegxy9rT1+pQddReITs8KYl53ZtnkHOsgd4L+o9V4=;
+	s=arc-20240116; t=1734171385; c=relaxed/simple;
+	bh=ppurqkLg5frVMfdj9t/MeoIOWop6fX3bDcl+dcNOFPQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LAraleZ571K/bcIgXslyMBs4c0gDCWNR8Ie5vdTWluGEwOdcJfcSjwO26DTwRlRt2dM6BFZcDhDU6eCOF59pi/PCeEwDMUNSPFYCLOoWk1J2cINlBw9P7PuL75AKMehMlg8rmCuX7rXarSakrVslLT1OBLQmNhh/bV5Jv/7JhRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOCSPIAT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CB49C4CED1;
-	Sat, 14 Dec 2024 10:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734171296;
-	bh=6mnegxy9rT1+pQddReITs8KYl53ZtnkHOsgd4L+o9V4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YOCSPIATAcXnIiOVp5zIlmXrc5h3X3phYeHJxatiR/icLbTDvKOLrcj2an+pp3Smx
-	 fThD24HQKdrOCLCRIHy61mvivdMQiAwfFa/eOsmOyHhLUXS/YPtkoMTX7mffStYQ0/
-	 TGOUKrzhwngw7GEkcgnedbD1WTEwXtb6zTewDLBNuUEqV5SS+jmhXqL9iZ/LTIOalD
-	 10byKvGj2ZQpzpQbRuWBJ01uIxI47AEt5QTfk0QHmX0P8pk/Sux40T1IfYkcFKmm1e
-	 Fu2ZGjdy/6prH71SexsDJDWHdwtU+EmaxHvDxao3H/QgH7v80CyQ0S40FdPOdh8ONi
-	 YzFSO37VOBWPA==
-Message-ID: <bc4ff071-ffc5-4b16-8e3a-977e47475816@kernel.org>
-Date: Sat, 14 Dec 2024 11:14:53 +0100
+	 In-Reply-To:Content-Type; b=D1ontV1GmSnfzkDmIwtjOt9bFznJV5BMj+Us9lc43QqIXSNxUFh/6ahptv89SOAfVo3zSHwYcOXkrRAQiMbw7+F/xlZdY1ino9zD/0pPydD9lilzuOJDhPOXWr23k1DKTp9l8lmbeWoYKsrkroBBqwPslXsjyOxGoeXvNI9YU9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJIa7Kh9; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2161eb95317so23944505ad.1;
+        Sat, 14 Dec 2024 02:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734171382; x=1734776182; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WC99pq7hRHFrLDw7siiOrZ7FqbwdIbl7gLGxK8elhYI=;
+        b=QJIa7Kh9MBaLvnHMx/XRt8EACl30f+H5iFPY7fZ/0cj17QAzO1c2hitEw9OT6SKmwu
+         aIYBZDZ0YeIMKdgz/GmEqUdEuYyg0P3jEviRPtdGfje6mptXXKb5/eOWMD48g3pTyuBp
+         yEB7PPNZQRyYqcbqrBRQej1kkKipquMiyAHc6NTq8s55f8FU8O/ynNrqiC4YGggGUyMz
+         GM12FCbQCzpg8nLyahMvVUsrTJqDJDR3vwWh9vWAt+oIAMY6qvSj9RwS1Y3rgWNCasYS
+         k+ef6xxXg9/qQsbZ0lkf/EoRMPTIiSx3G0NYs3FanYuzZHPqXZpjiBOLoTUO37E+dANc
+         Vhyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734171382; x=1734776182;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WC99pq7hRHFrLDw7siiOrZ7FqbwdIbl7gLGxK8elhYI=;
+        b=foQVLgN8Ar29yDbyftDFusUieWK4lz1hvguOITG2uCv6bZcJ/s/ruzyL282RqK+mM2
+         BloMScrZBNshruf+u0OLnA8b7WjkvsbdmUuXcPxeBt13EjSHzypvbbllxEPbwdGabCv5
+         ftcDVyfhQLp2lPvl+WocrX/gUr1gjhSgSVzYZHxPEn5hVrm0S+9H/7jUrNpXQK7ceGRk
+         +n1CXgzdDnnUW9TzH4IUmfn+546uAlveQFe2I5Kqz9LXcrg+x56vKd2+vKkPM2fvObfi
+         xgnKeUmK+TzqxEhOjp4gYXWufBwFoVtI5TH3feGYi5YtWxQqAllcsjM6EM0sh7+Ka68D
+         gYNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZo5aomFYU5zmkPz9dbOkYct26KPgWFSTXRTNe1szqlWjSORij5AiQJcbPk3PowvGp6F8JYIir9T+RL7JX@vger.kernel.org, AJvYcCVOT9i35Fn1NhzVn8eId7b/T8sSvMr9TrAlP3Uxx1sEv2HCtRSB0zE+KxOySWsfIxGGeBkmRS6ZyIV1lw==@vger.kernel.org, AJvYcCWIC12R1zWKRvZCBs8lk5lWC06KgMcha4xEKX3txh2qOiijHu1lq04VBSNGZzmfHuEAX6HJQmsJOTZk@vger.kernel.org, AJvYcCWQ0jxZb/I2qVp37Wxs8EPjIkbf5rjhYhuJEsqPB8HF2ceHHFOIQf1WN5biWPkvAZG3DhrAsnfFC6IUX4S4Tg==@vger.kernel.org, AJvYcCWdiCnQHu8/AHpapBh66us6u6dLApHK5B4C8nlL/ZJdDCU4y5lmuoj4D08J4qvRy1ZKJVbQ0ns2o2BN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVc9oy+K0f0C4gx+iJoYt4mvmG1ac9YXf799HCqFXONzz2GGpn
+	EAd3Qpm3s/T/WFS2Wj6f5+adk9TRIFCSFPdraSqkChVYFj8gW6yR
+X-Gm-Gg: ASbGncsZRLKQCbyeTL1zF8RSMArSpi9yIq2iztT1UpjSUjbYhSdmGo6tP/h2j/ZKHwJ
+	MnkpXQcnHd5b/ISQ8Lz8YwlFJSMYRakkbnj+5wVveAUlOeYNQ7zSwFnhdXXmuv9siHCNJXI1Kkk
+	RS4f4fNqOoGN7bxeUkaMYO7esRxTBmKgBBwhWD+y/kul0tMM2pKfB6EkZWXXIjoXfx4iHc7PhDP
+	wPClcvSqzW+ioCacWxI5s6htyI+xRHfY+S4ZtUGhb6nTzy3hesD2M4koLtyKIYQorOlqV56j7Kp
+	OPLZK+zSih8ZYlSkq4mMVCg=
+X-Google-Smtp-Source: AGHT+IEZVE15/vEAohikUk6vjIGzOeFn+yVnxHcYlw+pZKWRHHAPNEYP1GeDSZ8W1ZJPAeFwPcezZw==
+X-Received: by 2002:a17:902:f70b:b0:216:28c4:61c6 with SMTP id d9443c01a7336-218929fb17bmr82919535ad.34.1734171382443;
+        Sat, 14 Dec 2024 02:16:22 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e50455sm10069475ad.159.2024.12.14.02.16.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 02:16:22 -0800 (PST)
+Message-ID: <27fff669-bec4-4255-ba2f-4b154b474d97@gmail.com>
+Date: Sat, 14 Dec 2024 19:16:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,115 +80,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] arm64: dts: Add Arm Morello System Development
- Platform support
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
-References: <20241213163221.3626261-1-vincenzo.frascino@arm.com>
- <20241213163221.3626261-7-vincenzo.frascino@arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 07/10] netfs: Fix missing barriers by using
+ clear_and_wake_up_bit()
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+ Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Zilin Guan <zilin@seu.edu.cn>, Akira Yokosawa <akiyks@gmail.com>
+References: <20241213135013.2964079-1-dhowells@redhat.com>
+ <20241213135013.2964079-8-dhowells@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213163221.3626261-7-vincenzo.frascino@arm.com>
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20241213135013.2964079-8-dhowells@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/12/2024 17:32, Vincenzo Frascino wrote:
-> The Morello architecture is an experimental extension to Armv8.2-A,
-> which extends the AArch64 state with the principles proposed in
-> version 7 of the Capability Hardware Enhanced RISC Instructions
-> (CHERI) ISA.
+Hi David,
+
+David Howells wrote:
+> Use clear_and_wake_up_bit() rather than something like:
 > 
-> Introduce Arm Morello System Development Platform support.
+> 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+> 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
 > 
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> as there needs to be a barrier inserted between which is present in
+> clear_and_wake_up_bit().
+
+If I am reading the kernel-doc comment of clear_bit_unlock() [1, 2]:
+
+    This operation is atomic and provides release barrier semantics.
+
+correctly, there already seems to be a barrier which should be
+good enough.
+
+[1]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.clear_bit_unlock
+[2]: include/asm-generic/bitops/instrumented-lock.h
+
+> 
+> Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+
+So I'm not sure this fixes anything.
+
+What am I missing?
+
+        Thanks, Akira
+
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Zilin Guan <zilin@seu.edu.cn>
+> cc: Akira Yokosawa <akiyks@gmail.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
 > ---
->  arch/arm64/boot/dts/arm/Makefile | 1 +
->  1 file changed, 1 insertion(+)
+>  fs/netfs/read_collect.c  | 3 +--
+>  fs/netfs/write_collect.c | 9 +++------
+>  2 files changed, 4 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/arm/Makefile b/arch/arm64/boot/dts/arm/Makefile
-> index d908e96d7ddc..0a821808692e 100644
-> --- a/arch/arm64/boot/dts/arm/Makefile
-> +++ b/arch/arm64/boot/dts/arm/Makefile
-> @@ -7,3 +7,4 @@ dtb-$(CONFIG_ARCH_VEXPRESS) += rtsm_ve-aemv8a.dtb
->  dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2f-1xv7-ca53x2.dtb
->  dtb-$(CONFIG_ARCH_VEXPRESS) += fvp-base-revc.dtb
->  dtb-$(CONFIG_ARCH_VEXPRESS) += corstone1000-fvp.dtb corstone1000-mps3.dtb
-> +dtb-$(CONFIG_ARCH_MORELLO) += morello-soc.dtb
+[...]
 
-No, you organize patches in insane way. Makefile is never, never
-separate entry.
-
-Look how all existing submissions were done.
-
-Squash the patches.
-
-You also did not CC several people and at least arm kernel list. Use
-standard tools for development instead of inventing your own process.
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
-
-
-
-Best regards,
-Krzysztof
 
