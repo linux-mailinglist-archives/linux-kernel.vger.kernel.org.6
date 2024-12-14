@@ -1,169 +1,140 @@
-Return-Path: <linux-kernel+bounces-445988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFAD9F1E36
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:05:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB1B9F1E30
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC334188A77C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C09C71678D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F010818FC83;
-	Sat, 14 Dec 2024 11:05:01 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED24176AC8;
+	Sat, 14 Dec 2024 11:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ig5l4dCK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488A97E1
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2767E1
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 11:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734174301; cv=none; b=Nv/5j52FotGRna1QaJgsCw3j0scgP0AosLcHFgULTDObylvsWp2GQe22P300wPRyR/CJ8bP0TsDUm5VQXw6kHLx0cM2vOOSnq7ie2UjoMEPBkRgATrJTAEF/AqxBqqMKfG/3+GTBeEnqw+EX9gIL3e1u207D4cOpZH1OwAzdTPk=
+	t=1734174185; cv=none; b=iGrS2UIEuv1q1OImQ4qbRhl91Ep6oraVFNZwX9PieKXG+8qFZqHvtxe4tj2JvgVhnPhAkIPNbDhSSGreNKQ7lGsaCdqtiI8nK0hN+uaDys79Y5e5zUqbqEdJGQ/+VY62We7hb6Sz6TAj/Gdr6iDxpp6Qnn8NMoGE0ELJK4F1Agg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734174301; c=relaxed/simple;
-	bh=UiHixJW1c6gEPNYTuuZRGtF3cZWDELUUGrW3KXpK8Ag=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a2BR7ByIMnvxXeLfuaUgk/mobMcIqCzRhxlo8FqBvwfV5jyaLWIhPqZgKXcyC7cylspvLrPR0+7O3qzWvcM+TAFxhcgBPyRD0ftYCRYdhbajF4uyqMZ2vxTzpk6EW3V28g6WEywX+ZMATesOk3tNLMzMUaHMiKEKFCE3HJ9epd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y9NZn5Cb5z2DhMh;
-	Sat, 14 Dec 2024 19:02:25 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D2EF1401DC;
-	Sat, 14 Dec 2024 19:04:55 +0800 (CST)
-Received: from huawei.com (10.175.112.188) by kwepemk500005.china.huawei.com
- (7.202.194.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 14 Dec
- 2024 19:04:54 +0800
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-To: <richard@nod.at>, <dennis.lamerice@gmail.com>, <vigneshr@ti.com>,
-	<marten.lindahl@axis.com>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<chengzhihao1@huawei.com>, <yi.zhang@huawei.com>
-Subject: [PATCH] ubi: Revert "ubi: wl: Close down wear-leveling before nand is suspended"
-Date: Sat, 14 Dec 2024 19:01:53 +0800
-Message-ID: <20241214110153.684919-1-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1734174185; c=relaxed/simple;
+	bh=QdRw9fPUCPidFKoi1cGdFfjBJVaqNyeFj/S6MN1bIzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CBS7cd2qyzBL5Mc488lJH1054P77Yj7JZ4xDJC2SXNespecUOp7L9JW2kjsJiol2yPiJVpmXzhqLQ2hnaoLRymj/J81ZKngpdXw6MNM/I1z57aJTqS8uy8x3qsKu4tqreKjaU2EZwQ2EV0kM3WbqYXlsrgRZmyrLZIO8nEEY2yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ig5l4dCK; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734174184; x=1765710184;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=QdRw9fPUCPidFKoi1cGdFfjBJVaqNyeFj/S6MN1bIzM=;
+  b=ig5l4dCKjDbwK1oCAWy+awGLCGrjPHitB3qxx8Roz3ecDvHXoWyULinM
+   AVDEAteHHQ2GVuoR3cs4cKttrKfXKUijjUd2eSJkX4a/iUZyjYrpNUxJC
+   vLtYQBOQB7C/VEXfESQa3Yfg9eaMjPUR20ccpVDxnTIvTTlIzHSe882Kh
+   gdRAmZNX0cU0wqDRNBsMMdcoj1mkMs5G9UgnfgKtKy+OPj4nYwCDc/gpt
+   pSLIE/wBQk3Hvm4Tb2tjPjkeHXhDJqGVC6TkgxNqNi1UCa9STZjY2/5hQ
+   TqMxsAcHJxxMC9uMRNaf9IohsV9KKdX8i2aS/xF8JbkyUkmoaWsAcVvcI
+   Q==;
+X-CSE-ConnectionGUID: Y7lM29kXT8uaNwOUK7n24g==
+X-CSE-MsgGUID: GtV+4pObSQ60yVegzzl5jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34494896"
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="34494896"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 03:03:04 -0800
+X-CSE-ConnectionGUID: ZfQNOrmrTEG+tfuQ7aStrw==
+X-CSE-MsgGUID: +HyV8KuTR8KaMYL+KEGBNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="96509774"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Dec 2024 03:03:01 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMPvH-000CrW-1E;
+	Sat, 14 Dec 2024 11:02:59 +0000
+Date: Sat, 14 Dec 2024 19:02:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
+Subject: include/linux/ftrace.h:138:16: error: implicit declaration of
+ function 'arch_ftrace_get_regs'; did you mean 'ftrace_get_regs'?
+Message-ID: <202412141827.Xzmgi9eg-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is
-suspended") added a reboot notification in UBI layer to shutdown the
-wear-leveling subsystem, which imported an UAF problem[1]. Besides that,
-the method also brings other potential UAF problems, for example:
-       reboot             kworker
- ubi_wl_reboot_notifier
-  ubi_wl_close
-   ubi_fastmap_close
-    kfree(ubi->fm)
-                     update_fastmap_work_fn
-		      ubi_update_fastmap
-		       old_fm = ubi->fm
-		       if (old_fm && old_fm->e[i]) // UAF!
+Hi Puranjay,
 
-Actually, the problem fixed by commit 5580cdae05ae ("ubi: wl: Close down
-wear-leveling before nand is suspended") has been solved by commit
-8cba323437a4 ("mtd: rawnand: protect access to rawnand devices while in
-suspend"), which was discussed in [2]. So we can revert the commit
-5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is
-suspended") directly.
+FYI, the error/warning still remains.
 
-[1] https://lore.kernel.org/linux-mtd/20241208175211.9406-2-dennis.lamerice@gmail.com/
-[2] https://lore.kernel.org/all/9bf76f5d-12a4-46ff-90d4-4a7f0f47c381@axis.com/
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a446e965a188ee8f745859e63ce046fe98577d45
+commit: 7caa9765465f60b6d88e22264892cee12d971888 ftrace: riscv: move from REGS to ARGS
+date:   7 months ago
+config: riscv-randconfig-r133-20241214 (https://download.01.org/0day-ci/archive/20241214/202412141827.Xzmgi9eg-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241214/202412141827.Xzmgi9eg-lkp@intel.com/reproduce)
 
-Fixes: 5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is suspended")
-Reported-by: Dennis Lam <dennis.lamerice@gmail.com>
-Closes: https://lore.kernel.org/linux-mtd/20241208175211.9406-2-dennis.lamerice@gmail.com/
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- drivers/mtd/ubi/ubi.h |  2 --
- drivers/mtd/ubi/wl.c  | 21 ---------------------
- 2 files changed, 23 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412141827.Xzmgi9eg-lkp@intel.com/
 
-diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
-index 26cc53ad34ec..c792b9bcab9b 100644
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -549,7 +549,6 @@ struct ubi_debug_info {
-  * @peb_buf: a buffer of PEB size used for different purposes
-  * @buf_mutex: protects @peb_buf
-  * @ckvol_mutex: serializes static volume checking when opening
-- * @wl_reboot_notifier: close all wear-leveling work before reboot
-  *
-  * @dbg: debugging information for this UBI device
-  */
-@@ -652,7 +651,6 @@ struct ubi_device {
- 	void *peb_buf;
- 	struct mutex buf_mutex;
- 	struct mutex ckvol_mutex;
--	struct notifier_block wl_reboot_notifier;
- 
- 	struct ubi_debug_info dbg;
- };
-diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
-index 4f6f339d8fb8..fbd399cf6503 100644
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -89,7 +89,6 @@
- #include <linux/crc32.h>
- #include <linux/freezer.h>
- #include <linux/kthread.h>
--#include <linux/reboot.h>
- #include "ubi.h"
- #include "wl.h"
- 
-@@ -128,8 +127,6 @@ static int self_check_in_wl_tree(const struct ubi_device *ubi,
- 				 struct ubi_wl_entry *e, struct rb_root *root);
- static int self_check_in_pq(const struct ubi_device *ubi,
- 			    struct ubi_wl_entry *e);
--static int ubi_wl_reboot_notifier(struct notifier_block *n,
--				  unsigned long state, void *cmd);
- 
- /**
-  * wl_tree_add - add a wear-leveling entry to a WL RB-tree.
-@@ -1953,13 +1950,6 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
- 	if (!ubi->ro_mode && !ubi->fm_disabled)
- 		ubi_ensure_anchor_pebs(ubi);
- #endif
--
--	if (!ubi->wl_reboot_notifier.notifier_call) {
--		ubi->wl_reboot_notifier.notifier_call = ubi_wl_reboot_notifier;
--		ubi->wl_reboot_notifier.priority = 1; /* Higher than MTD */
--		register_reboot_notifier(&ubi->wl_reboot_notifier);
--	}
--
- 	return 0;
- 
- out_free:
-@@ -2005,17 +1995,6 @@ void ubi_wl_close(struct ubi_device *ubi)
- 	kfree(ubi->lookuptbl);
- }
- 
--static int ubi_wl_reboot_notifier(struct notifier_block *n,
--				  unsigned long state, void *cmd)
--{
--	struct ubi_device *ubi;
--
--	ubi = container_of(n, struct ubi_device, wl_reboot_notifier);
--	ubi_wl_close(ubi);
--
--	return NOTIFY_DONE;
--}
--
- /**
-  * self_check_ec - make sure that the erase counter of a PEB is correct.
-  * @ubi: UBI device description object
+All errors (new ones prefixed by >>):
+
+   In file included from arch/riscv/kernel/asm-offsets.c:12:
+   include/linux/ftrace.h: In function 'ftrace_get_regs':
+>> include/linux/ftrace.h:138:16: error: implicit declaration of function 'arch_ftrace_get_regs'; did you mean 'ftrace_get_regs'? [-Wimplicit-function-declaration]
+     138 |         return arch_ftrace_get_regs(fregs);
+         |                ^~~~~~~~~~~~~~~~~~~~
+         |                ftrace_get_regs
+>> include/linux/ftrace.h:138:16: error: returning 'int' from a function with return type 'struct pt_regs *' makes pointer from integer without a cast [-Wint-conversion]
+     138 |         return arch_ftrace_get_regs(fregs);
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   make[3]: *** [scripts/Makefile.build:117: arch/riscv/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1203: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +138 include/linux/ftrace.h
+
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  132) 
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  133) static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs)
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  134) {
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  135) 	if (!fregs)
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  136) 		return NULL;
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  137) 
+02a474ca266a47e Steven Rostedt (VMware  2020-10-27 @138) 	return arch_ftrace_get_regs(fregs);
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  139) }
+d19ad0775dcd64b Steven Rostedt (VMware  2020-10-28  140) 
+
+:::::: The code at line 138 was first introduced by commit
+:::::: 02a474ca266a47ea8f4d5a11f4ffa120f83730ad ftrace/x86: Allow for arguments to be passed in to ftrace_regs by default
+
+:::::: TO: Steven Rostedt (VMware) <rostedt@goodmis.org>
+:::::: CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
 -- 
-2.46.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
