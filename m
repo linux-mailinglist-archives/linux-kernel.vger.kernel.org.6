@@ -1,178 +1,148 @@
-Return-Path: <linux-kernel+bounces-446022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7239F1E98
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:39:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA93B9F1E9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662CD16772E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1961889E92
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371921922E9;
-	Sat, 14 Dec 2024 12:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1271922D4;
+	Sat, 14 Dec 2024 12:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLE71RCS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meJaMDpQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890863CF58;
-	Sat, 14 Dec 2024 12:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CAD3CF58
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 12:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734179975; cv=none; b=SzdwoW3zDQacv0zfO5XboeaYkF6sCg4aoi8J6W0wBH2XYkaY1LF/ActvbASqO0PIqiV7CwbxyetTnZNhpjcJ9HEza5ppTK40oe7qa0HYCyZbUw3VgFx8fc/EOe8Yg5SS0LtojApZTzKywFy8C8QJLoY5wOFA0CFa/w1EWfwFGm0=
+	t=1734180065; cv=none; b=F18K2Dn2jSVScqTu9jYj1jeYs2nbYY6v0QRMMuqzU1qAU1jVj3waFDB5k4MflL2RljBVVvO3QZDAwySQJ+LZ+aL8F5S5Zo1NvJrkD18FDSYLFKePmf4JsP+7GX/WyRpWUms3FeF7YwFDQGQgKdyKMDN18AWAeS+Uqg8SZEiaG28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734179975; c=relaxed/simple;
-	bh=OnTrxdOhvgux4nysU2LSezSSY4MpmjIO3lCBfQboZfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q9/aUtq4wVwUC2HJ7kde2c2jlRA1CDmGxJNvgGgJ5Nxu0CnmpqcOcx5P3u5uFiUiCzSQpzA/nNcJfmxu9+sv/CueGPjg5CgtlgbDq8H8PAATdOzRf8LZGiNXSHsbOmsSzvK62rwQ81U57Nb2LP8GUhNA6GYk9PQlIudTDGW+/UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLE71RCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A693C4CED1;
-	Sat, 14 Dec 2024 12:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734179975;
-	bh=OnTrxdOhvgux4nysU2LSezSSY4MpmjIO3lCBfQboZfU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RLE71RCSGwBrq7YnDk369xGV/O2CpaTYI2ZKJnRyCkWOlaK2MA2bcjPkK58gRySfg
-	 h9w8cMgUdhVnse0c7P/pC3t31aZbGTK29oUkMePZLZYC6OVvb2byZ9R6z1SftmDS/9
-	 vGteCCW1F826G6uXsfI/p8GrFizvO+N3OfRD3VQACpP1LmISwFOwINmP+4kjfpNu9e
-	 Y9ftTtx2HwwVjq0Jf/Mzx6xxXC91HmqX0ogap0QEUSrn1hmFrpz268GYoCoMVjhuau
-	 Mrk34n2Q9UT3gkNtAqiwF7mhU4prqQvHogdeT6iMBB77iNWcbVo9+gdARcd5LGJhpn
-	 DTJ1w86pG9VoQ==
-Date: Sat, 14 Dec 2024 12:39:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v7 7/7] iio: accel: adxl345: complete the list of
- defines
-Message-ID: <20241214123926.0b42ea59@jic23-huawei>
-In-Reply-To: <20241213211909.40896-8-l.rubusch@gmail.com>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
-	<20241213211909.40896-8-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734180065; c=relaxed/simple;
+	bh=aaYH2V4SA1Qldfx41VW2s1VHi+ScY/MRsEu05DhKJss=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=O/pdyoaydh+r2K1OWSnzPQXEYQwL1KkTQkVqCU89otSesydtnd4xqnWEz2wGnQB6w+Kkrz+JMynzbxDWz35oZSie9OcynFJ1HsqtBMV/2LonQYWfC151Y4pMLh9Dd9Q6Yf7/N9/h0KZh40pu0Z5RZtsbtWBGFf21h2jsdQAhzUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meJaMDpQ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734180064; x=1765716064;
+  h=date:from:to:cc:subject:message-id;
+  bh=aaYH2V4SA1Qldfx41VW2s1VHi+ScY/MRsEu05DhKJss=;
+  b=meJaMDpQDM4Q9sqiTc/+MFPDp6MXjhlDemOybFhtadcCVO7L6oir8NEO
+   Ld4ZeS9my3fnuPdvYbmBhOYH/w7OaI6uPWAZvBWMuuZKKgeaDekNyvL0x
+   weMngQ4Bg0RdsvPKLVCB8tbe7c2Xp807wPmzTfmp4p/meCxWEfrzyRyMd
+   hXfZNA2P3NAD6p5NzANta+oa80vk9r91WJdH//1MDWmY0jI0DmYCqTvHR
+   A/7vZqcn1nWsr6wCAiOLHFh4DdNnOekbkJ/vu+Zfn4u+ziPA/L6sxLGYc
+   IPdGVrqfNgPYSDheVLlfVtbQ7LxKlbd+7sefz2NDoaohhFPwkSWcec6CH
+   Q==;
+X-CSE-ConnectionGUID: +TjSSDi8TQ++fotvWqwEAA==
+X-CSE-MsgGUID: H+vr4U/yRQKVC5gRh8TBNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="38309420"
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="38309420"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 04:41:03 -0800
+X-CSE-ConnectionGUID: 9FZBj1T1Q92Jp5GncxM8MQ==
+X-CSE-MsgGUID: FT040BYBQSmCPXXefvtL+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="96649466"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 14 Dec 2024 04:41:02 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMRS7-000Cvn-2u;
+	Sat, 14 Dec 2024 12:40:59 +0000
+Date: Sat, 14 Dec 2024 20:40:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 7e39d667b06c0849ab9cec1c96e2dc253a57310b
+Message-ID: <202412142001.Hc4u917h-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 13 Dec 2024 21:19:09 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 7e39d667b06c0849ab9cec1c96e2dc253a57310b  Merge branch into tip/master: 'x86/tdx'
 
-> Having interrupts events and FIFO available allows to evaluate the
-> sensor events. Cover the list of interrupt based sensor events. Keep
-> them in the header file for readability.
+elapsed time: 1457m
 
-That makes sense for now, but longer term I'd attempt to restrict the scope
-of these by moving them to the top of core.c
+configs tested: 56
+configs skipped: 1
 
-The two bus drivers don't use any of them that I can immediately spot
-and if they do it is likely to be very few.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-That may be a good first patch for your next series.
+tested configs:
+arc                  randconfig-001-20241213    gcc-13.2.0
+arc                  randconfig-002-20241213    gcc-13.2.0
+arm                  randconfig-001-20241213    clang-16
+arm                  randconfig-002-20241213    clang-18
+arm                  randconfig-003-20241213    gcc-14.2.0
+arm                  randconfig-004-20241213    clang-18
+arm64                randconfig-001-20241213    gcc-14.2.0
+arm64                randconfig-002-20241213    gcc-14.2.0
+arm64                randconfig-003-20241213    clang-18
+arm64                randconfig-004-20241213    gcc-14.2.0
+csky                 randconfig-001-20241214    gcc-14.2.0
+csky                 randconfig-002-20241214    gcc-14.2.0
+hexagon              randconfig-001-20241214    clang-20
+hexagon              randconfig-002-20241214    clang-14
+i386       buildonly-randconfig-001-20241213    clang-19
+i386       buildonly-randconfig-002-20241213    gcc-12
+i386       buildonly-randconfig-003-20241213    gcc-12
+i386       buildonly-randconfig-004-20241213    clang-19
+i386       buildonly-randconfig-005-20241213    gcc-12
+i386       buildonly-randconfig-006-20241213    gcc-12
+loongarch            randconfig-001-20241214    gcc-14.2.0
+loongarch            randconfig-002-20241214    gcc-14.2.0
+nios2                randconfig-001-20241214    gcc-14.2.0
+nios2                randconfig-002-20241214    gcc-14.2.0
+parisc               randconfig-001-20241214    gcc-14.2.0
+parisc               randconfig-002-20241214    gcc-14.2.0
+powerpc              randconfig-001-20241214    clang-20
+powerpc              randconfig-002-20241214    clang-15
+powerpc              randconfig-003-20241214    clang-20
+powerpc64            randconfig-001-20241214    gcc-14.2.0
+powerpc64            randconfig-003-20241214    clang-20
+riscv                randconfig-001-20241213    gcc-14.2.0
+riscv                randconfig-002-20241213    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20241213    gcc-14.2.0
+s390                 randconfig-002-20241213    clang-19
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20241213    gcc-14.2.0
+sh                   randconfig-002-20241213    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20241213    gcc-14.2.0
+sparc                randconfig-002-20241213    gcc-14.2.0
+sparc64              randconfig-001-20241213    gcc-14.2.0
+sparc64              randconfig-002-20241213    gcc-14.2.0
+um                   randconfig-001-20241213    gcc-12
+um                   randconfig-002-20241213    clang-16
+x86_64     buildonly-randconfig-001-20241214    gcc-11
+x86_64     buildonly-randconfig-002-20241214    clang-19
+x86_64     buildonly-randconfig-003-20241214    gcc-12
+x86_64     buildonly-randconfig-004-20241214    gcc-12
+x86_64     buildonly-randconfig-005-20241214    gcc-12
+x86_64     buildonly-randconfig-006-20241214    clang-19
+xtensa               randconfig-001-20241213    gcc-14.2.0
+xtensa               randconfig-002-20241213    gcc-14.2.0
 
-Jonathan
-
-
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345.h | 57 +++++++++++++++++++++++++++++++++----
->  1 file changed, 51 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-> index bf9e86cff..df3977bda 100644
-> --- a/drivers/iio/accel/adxl345.h
-> +++ b/drivers/iio/accel/adxl345.h
-> @@ -9,10 +9,35 @@
->  #define _ADXL345_H_
->  
->  #define ADXL345_REG_DEVID		0x00
-> +#define ADXL345_REG_THRESH_TAP		0x1D
->  #define ADXL345_REG_OFSX		0x1E
->  #define ADXL345_REG_OFSY		0x1F
->  #define ADXL345_REG_OFSZ		0x20
->  #define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
-> +
-> +/* Tap duration */
-> +#define ADXL345_REG_DUR		0x21
-> +/* Tap latency */
-> +#define ADXL345_REG_LATENT		0x22
-> +/* Tap window */
-> +#define ADXL345_REG_WINDOW		0x23
-> +/* Activity threshold */
-> +#define ADXL345_REG_THRESH_ACT		0x24
-> +/* Inactivity threshold */
-> +#define ADXL345_REG_THRESH_INACT	0x25
-> +/* Inactivity time */
-> +#define ADXL345_REG_TIME_INACT		0x26
-> +/* Axis enable control for activity and inactivity detection */
-> +#define ADXL345_REG_ACT_INACT_CTRL	0x27
-> +/* Free-fall threshold */
-> +#define ADXL345_REG_THRESH_FF		0x28
-> +/* Free-fall time */
-> +#define ADXL345_REG_TIME_FF		0x29
-> +/* Axis control for single tap or double tap */
-> +#define ADXL345_REG_TAP_AXIS		0x2A
-> +/* Source of single tap or double tap */
-> +#define ADXL345_REG_ACT_TAP_STATUS	0x2B
-> +/* Data rate and power mode control */
->  #define ADXL345_REG_BW_RATE		0x2C
->  #define ADXL345_REG_POWER_CTL		0x2D
->  #define ADXL345_REG_INT_ENABLE		0x2E
-> @@ -34,20 +59,40 @@
->  #define ADXL345_FIFO_CTL_MODE(x)	FIELD_PREP(GENMASK(7, 6), x)
->  
->  #define ADXL345_INT_DATA_READY		BIT(7)
-> +#define ADXL345_INT_SINGLE_TAP		BIT(6)
-> +#define ADXL345_INT_DOUBLE_TAP		BIT(5)
-> +#define ADXL345_INT_ACTIVITY		BIT(4)
-> +#define ADXL345_INT_INACTIVITY		BIT(3)
-> +#define ADXL345_INT_FREE_FALL		BIT(2)
->  #define ADXL345_INT_WATERMARK		BIT(1)
->  #define ADXL345_INT_OVERRUN		BIT(0)
-> +
-> +#define ADXL345_S_TAP_MSK	ADXL345_INT_SINGLE_TAP
-> +#define ADXL345_D_TAP_MSK	ADXL345_INT_DOUBLE_TAP
-> +
-> +/*
-> + * BW_RATE bits - Bandwidth and output data rate. The default value is
-> + * 0x0A, which translates to a 100 Hz output data rate
-> + */
->  #define ADXL345_BW_RATE			GENMASK(3, 0)
-> +#define ADXL345_BW_LOW_POWER		BIT(4)
->  #define ADXL345_BASE_RATE_NANO_HZ	97656250LL
->  
->  #define ADXL345_POWER_CTL_STANDBY	0x00
-> +#define ADXL345_POWER_CTL_WAKEUP	GENMASK(1, 0)
-> +#define ADXL345_POWER_CTL_SLEEP	BIT(2)
->  #define ADXL345_POWER_CTL_MEASURE	BIT(3)
-> +#define ADXL345_POWER_CTL_AUTO_SLEEP	BIT(4)
-> +#define ADXL345_POWER_CTL_LINK		BIT(5)
->  
-> -#define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)	/* Set the g range */
-> -#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)	/* Left-justified (MSB) mode */
-> -#define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)	/* Up to 13-bits resolution */
-> -#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)	/* 3-wire SPI mode */
-> -#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)	/* Enable a self test */
-> -
-> +/* Set the g range */
-> +#define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)
-> +/* Data is left justified */
-> +#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)
-> +/* Up to 13-bits resolution */
-> +#define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)
-> +#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)
-> +#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)
->  #define ADXL345_DATA_FORMAT_2G		0
->  #define ADXL345_DATA_FORMAT_4G		1
->  #define ADXL345_DATA_FORMAT_8G		2
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
