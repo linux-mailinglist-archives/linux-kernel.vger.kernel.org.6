@@ -1,183 +1,123 @@
-Return-Path: <linux-kernel+bounces-445947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601889F1DB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:07:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CBD9F1DA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:03:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9177188BEFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1031886017
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB1189902;
-	Sat, 14 Dec 2024 09:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC4E14D43D;
+	Sat, 14 Dec 2024 09:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gyELVjOM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RhE1Xmo5"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5042E85931
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612577E0FF
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734167129; cv=none; b=SJmDINgUbNU7fnlBhcoHkL1ZmV82SZ9AkGas/nTyWfdlaeJWMfMdDIzVSP5pGUPe3Ckuxb1wdINaJ4mkv1fcBn8E6SfnapbSZSIL1GrV+Qx0kYwU84Z7H7/bgIg9wL+RfFKdvNotkxzl8JC/pLkqTtqwwawJ54RTuPvC3UTIQQI=
+	t=1734167014; cv=none; b=LqKSIM/RZloMLfVpt7h/E+W8MnaBi/+MdGLuNfAKRwv89PpFgCkHMg/LfxcHawiNFdgMETonVSoK4r4WxEu2VrbEV64gFO5cg8l9lT1FtqucOmn629dPiCXaFzKS1alY+ITG0GAayxqkJsE218p/lb73A7XK2TZPepkOvIaQrDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734167129; c=relaxed/simple;
-	bh=AOHzYz3e0W68bypaywk5PqwWiTbsh7X+wa84FHfFzTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rOeM5ln9VOpViWT8qMQJEvQOfzLNWDXp9AbmRaZ6TBISL7+sIIgp4l9QN67T/zSjGu8YgBBUB2kvWvPobUMcfTKwONW5AB0j4bSBu5ybjpUoLpyiT9TZyV2on4cFvebvT1IkOc5kBMRzCIluOgXM7KiYxIOO1fo1uFwnXYvzdZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gyELVjOM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-728f1e66418so2185630b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 01:05:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1734167128; x=1734771928; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAJKsDdGNb+ALwQvMYs9Oz9Vq8VGrLJsA8GxB+kZmZc=;
-        b=gyELVjOMzOIe6ph/l41hPbeC2fX3S/ImoO4KpcUfbLSsIUgGwpHMolKP6qnQCvFiaa
-         NFVlNjKqy3WA1ibWyq/hacbnUjeJRFKwxn6yuVwiT99Fldm2p3e4Lbr/uRb0QzhpxV4M
-         UzCOKiworw+LsfLlDkZXRGn/LfxovlJChAgbDjnM6Xtw+qX3jJ0GlQhTvHvaQEKFtZPp
-         nya9l/fQJMm1lLAe1t4ZHGyxuQnPNv6PQBG4M24TPG5OubOC5Tg0jUgaHUC7lddaHQTi
-         UjNz5sjpMt5NvOuUaptEwtfWqm6D0UZlvmd/qTlTh6rOz8ZMTcHGXXaKBH9C0MWy7Kpf
-         GTHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734167128; x=1734771928;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VAJKsDdGNb+ALwQvMYs9Oz9Vq8VGrLJsA8GxB+kZmZc=;
-        b=M51zLxY4ogOHAhbOf6LJ2jluJFN2DQN5GF07es009ByNdqHQUq4q0miWXRvkc9wI/w
-         CnOArAckFcMfWOgGaN7ViE0RRgn6jNitiCmv7EooPZtRrReweyUobk8rBVL/9rrW1B+5
-         Le50sHU6t5vexXU/trLedDLwo5AhYwf19jIlJ4r4HXatoJXl0GbCsivVOp1M0j8j15oq
-         WrnCPIM/a+xcv6YoIY30uR3biYBpADEpilqjMELyBSvrjpXU1A90xfH0UP307Spug2hw
-         ZFoMRRl7RDSQpCrLbZvYSdJgY/n3wo3r6kM2vyjxjKiKirhZNtO4173QBB+zlWvf0lsQ
-         A7vA==
-X-Forwarded-Encrypted: i=1; AJvYcCVl1vjsBA5AJgxsGNvLhSeEyCxzh3eTUOZnjD2o0jw72GWKpoE+KrCV19tXGkmYxumkPXkMXr3X931hg4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWw8fXhxtDjckWxVDK4gCEmt+62UYNx5arJg8HpTcGdlT1A7E+
-	NHRLEscW21CSGmcrBWwltIU0xzlvDELphIYOyAhidRR0NtYJ2k7KlgpX5lFl9Unx0XLRT3wGY1q
-	F
-X-Gm-Gg: ASbGncsHFVpx5EnQxSelkHa7khK6VXuPi6R4Hs7kzdX22ykr7sYNBSELDVtLccCHIiH
-	BPgK1i90kBw9cuSVGoW85oEsmB+fllBhGCOQZrgnCeSvC43v/KNEtnxJu6wXpyz00PB7p8NKS3u
-	cqbOdpxwMAwuNPVghIRzgBZg5nlEHh50k+se1OCt7jnwmqGtyD0fXwxmzpM4HyupjhAO5B8lA7J
-	ATyhDhrf4QAwcpYM75LBxx8CivBnfKyvaY83SFiWtUGbuQ6jzwO1lPYpqXjyRgEJSJxdiv2yvMk
-	EA18JkUvS9zcHG8XPuWhX0tBj8V1Bg==
-X-Google-Smtp-Source: AGHT+IFivM0byq9BUMDoda6VIidtD6lpjalZ4ywP7t2KopoDAAS1RcnNTtREGYaK+hQvD7u6okSdbQ==
-X-Received: by 2002:a05:6a20:1588:b0:1db:e536:158e with SMTP id adf61e73a8af0-1e1dfd91a2emr6805131637.22.1734167127753;
-        Sat, 14 Dec 2024 01:05:27 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([2409:8a28:f4f:a9a4:5d46:4ef0:daa9:1db8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5a90ba0sm905731a12.16.2024.12.14.01.05.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 01:05:26 -0800 (PST)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: peterz@infradead.org,
-	tglx@linutronix.de,
-	david@redhat.com,
-	jannh@google.com,
-	hughd@google.com,
-	yuzhao@google.com,
-	willy@infradead.org,
-	muchun.song@linux.dev,
-	vbabka@kernel.org,
-	lorenzo.stoakes@oracle.com,
-	akpm@linux-foundation.org,
-	rientjes@google.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH 12/12] mm: pgtable: move __tlb_remove_table_one() in x86 to generic file
-Date: Sat, 14 Dec 2024 17:02:58 +0800
-Message-Id: <b531c2b4a056a3ca473b39cbea27138fdebeaa75.1734164094.git.zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <cover.1734164094.git.zhengqi.arch@bytedance.com>
-References: <cover.1734164094.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1734167014; c=relaxed/simple;
+	bh=sj9HMrayUMHTgoGPDL2h+BYum5j5UdQa3R2Nv8KNGLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrsHpza+CpkJ8hfnWsxFSX1Ok/N6MLeU55gegiwmvzNOJiJROq3q6zmTdH+DBz93Ovs2NN3zWIHqlMadK9WKIQdeZ2aIvdpXCUhfOadGH6Qrc8aLmAxN+/f5bWKr7y7wQlPAYHbHT2SZwwpSzndm+ZcLbua8ZGZry4ZaDGW3kkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RhE1Xmo5; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=gRp7
+	uckktr6KR9/CC8Oa/hiD3So3uJLaZVYSElvE71w=; b=RhE1Xmo52Omc/aN/Fx7L
+	jTIuDx/RS0VMzyELVEaxsV/pdql7AfP5a8oDbFx3Vudu99wsEfTNykiN9Z1DFbK6
+	knWUmFmbOWLSNDciie+GGhAJf9bHBMUDtPKA6ByE+g5TC9O61B+YpeyuoLpla3EU
+	3oZn5edXjjBlSFAD9aoAHBuQ6Joqyru3Zeix0sa/BuxK9iRKQxIXxKlrmduK/Del
+	im/46j99B20mKv5YGD3/0zTWmjM0+g5FfRIynA4vDFZTTz+CK7DY+OhsKc/qUoE9
+	gfC02e0OlqAovaEmn7SyYx2Ypx9cWr9FV4a8BPWkIskDt2YHcnbnsLttiSMt/e54
+	WQ==
+Received: (qmail 3038578 invoked from network); 14 Dec 2024 10:03:30 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Dec 2024 10:03:30 +0100
+X-UD-Smtp-Session: l3s3148p1@f72dODcp/tNehhtJ
+Date: Sat, 14 Dec 2024 10:03:29 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.13-rc3
+Message-ID: <Z11J4d9Y2N1Rh7EU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <7bg2ioxxplgmmgna5j7a4e5fipg54wq3l4zaxy3gy4uk6ctmi2@ueniip4pkhx5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dMTlckdzwkUf53KU"
+Content-Disposition: inline
+In-Reply-To: <7bg2ioxxplgmmgna5j7a4e5fipg54wq3l4zaxy3gy4uk6ctmi2@ueniip4pkhx5>
 
-The __tlb_remove_table_one() in x86 does not contain architecture-specific
-content, so move it to the generic file.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- arch/x86/include/asm/tlb.h | 19 -------------------
- mm/mmu_gather.c            | 20 ++++++++++++++++++--
- 2 files changed, 18 insertions(+), 21 deletions(-)
+--dMTlckdzwkUf53KU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index 3858dbf75880e..77f52bc1578a7 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -20,25 +20,6 @@ static inline void tlb_flush(struct mmu_gather *tlb)
- 	flush_tlb_mm_range(tlb->mm, start, end, stride_shift, tlb->freed_tables);
- }
- 
--#ifdef CONFIG_PT_RECLAIM
--static inline void __tlb_remove_table_one_rcu(struct rcu_head *head)
--{
--	struct ptdesc *ptdesc;
--
--	ptdesc = container_of(head, struct ptdesc, pt_rcu_head);
--	__tlb_remove_table(ptdesc);
--}
--
--static inline void __tlb_remove_table_one(void *table)
--{
--	struct ptdesc *ptdesc;
--
--	ptdesc = table;
--	call_rcu(&ptdesc->pt_rcu_head, __tlb_remove_table_one_rcu);
--}
--#define __tlb_remove_table_one __tlb_remove_table_one
--#endif /* CONFIG_PT_RECLAIM */
--
- static inline void invlpg(unsigned long addr)
- {
- 	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
-diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-index 1e21022bcf339..7aa6f18c500b2 100644
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -311,13 +311,29 @@ static inline void tlb_table_invalidate(struct mmu_gather *tlb)
- 	}
- }
- 
--#ifndef __tlb_remove_table_one
-+#ifdef CONFIG_PT_RECLAIM
-+static inline void __tlb_remove_table_one_rcu(struct rcu_head *head)
-+{
-+	struct ptdesc *ptdesc;
-+
-+	ptdesc = container_of(head, struct ptdesc, pt_rcu_head);
-+	__tlb_remove_table(ptdesc);
-+}
-+
-+static inline void __tlb_remove_table_one(void *table)
-+{
-+	struct ptdesc *ptdesc;
-+
-+	ptdesc = table;
-+	call_rcu(&ptdesc->pt_rcu_head, __tlb_remove_table_one_rcu);
-+}
-+#else
- static inline void __tlb_remove_table_one(void *table)
- {
- 	tlb_remove_table_sync_one();
- 	__tlb_remove_table(table);
- }
--#endif
-+#endif /* CONFIG_PT_RECLAIM */
- 
- static void tlb_remove_table_one(void *table)
- {
--- 
-2.20.1
+On Fri, Dec 13, 2024 at 05:23:05PM +0100, Andi Shyti wrote:
+> Hi Wolfram,
+>=20
+> three fixes for this week; please find the pull request below.
+>=20
+> Have a good weekend!
+>=20
+> Andi
+>=20
+> The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dc=
+a4:
+>=20
+>   Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-fixes-6.13-rc3
+>=20
+> for you to fetch changes up to de6b43798d9043a7c749a0428dbb02d5fff156e5:
+>=20
+>   i2c: riic: Always round-up when calculating bus period (2024-12-12 12:5=
+4:02 +0100)
 
+Thanks, pulled!
+
+
+--dMTlckdzwkUf53KU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmddSd4ACgkQFA3kzBSg
+KbYRjw//TMpZcnpl2vjjNeg984df2SgeP9lTcS0Qd9T1hdR+1ZO0As2IKgcwszwZ
+inO3vQDkE2sBvuJHE1YQ2Vgi4pjbcdt226Z1oKGEG4lHdd3zplQ4zfdd8XB40hXF
+X+Agilt7slR4oAGkO+9UT5j6kSzzodGB6BMZFDrSNDT0Im+cBFlhkPjpFZC4PU3I
+29VgMu0gX43c9D6GOdV2mE1BX2QmZsf9uh60q4FfWSfUHHLRNzFULQmJWjIN8pdt
+y+O7ezNitQY1OXToy5NoiOCaF2mTbwUbjc2qcGAbwVwzRCwnOwG89jq3AJy754On
+3r6+Jci4967RAbo1LN6kxbfvvmIqKwbwl4ZDP350JC3cf4IC2h3UCcTJsyZkTtxk
+T4yKuB53RM3Qg8mbr/3FLMe1isYBZtUkZqUBPQImlI0oAJlg3M5CqmjSbO/8XWYu
+dheob7mBdvrKjg3oQ+e5SdwDdBDeS49VlVw9G1VljUJJOA3I+SMtaPhPYs/4i1hX
+vIBpJg9Sdw3Qon8x9tExTW6NlPhwrI1Tst3FJELlah3dpFRmSTDN1AuvCmAk+JmE
+OAnHVw2p/4AIh8c5nskGHjXuYjbaR4XTgp02rFi0UGtMFi/mnL6z/HjQ1cTRUA8P
+BGRp0jeEcmgVRHGSQNvWYN0HIXKF+HEMcYA9FuePUOiLBdVtacs=
+=F9NX
+-----END PGP SIGNATURE-----
+
+--dMTlckdzwkUf53KU--
 
