@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-446137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676E89F203F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:05:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806F59F2044
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB13E1887AEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7491887FAE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E2419B3E2;
-	Sat, 14 Dec 2024 18:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8343A199924;
+	Sat, 14 Dec 2024 18:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HiS6z5NB"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E08cEg5U"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0518190049
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 18:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFC0EBE;
+	Sat, 14 Dec 2024 18:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734199542; cv=none; b=nHjgGH/tmOZBqTjDNouFEBQ8Li+7Dw8hRBWpIqLGTKCGn+9edfdLyWS29IKhIwrq7tVgb032v3MTrI7zumi4SzYHejn7LTkFNlb9wYNZgQNBceoB+LTzyk/goQhRLR9TO1gkndcC0UWwRHAuoTCtS5rxtRb+Spom3YlaCvLNHqo=
+	t=1734200217; cv=none; b=HZX6EXNWp82gCwt9ZZnCyM6Dm7zhI08F1etw1cOWzDVJ9Osx9ONBd0PfbiW9k4tG60lGzOLPrOvWmy01trXJO8kUkgR/ZMMvbuNMAT83mXilh0r7StC5xBC14JHv0kx1m62kB6vaJt+oRCkIQ384piHCurkosn8vKl7kjqU0MSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734199542; c=relaxed/simple;
-	bh=l+XQb6SxMvKWcWSW+7tGlOSgBFAFSlDdjVPjAADwolA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNgcElF0lRA6r5oIiJ1QQy6vlxeWLCdo/Ud3SHnBDLF42xBUq13wmI5u9E2tEoHxdLmKmGskbZ6nZO8pA+4V6d0jcGMfSFEqFXoBfcj5qJ7G4G1AD+KfseWcRY+930njUy8yvkkK5EN2YFxAKZnYyVh3CGQcefo/sy2yG9aKmS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HiS6z5NB; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tCQ2jjH+bSRDMvpwlyw3LZciMoEKgsp+e5XKqudh3EU=; b=HiS6z5NB6a+2alRxGWmA9aNx7M
-	tEpSbS+GvaCSjhClht9eESGzBIJhM2BRNTHFZw0GsrKMlC/hJKHxu+roYZTe9aezjAgFcC+nCDJcI
-	aMY6SUmheVEEtip12qB4sY9078RitubNqHUJmS7p+5b/LOC85DcE8VtIl5Xn5VZ9OxryfAc4Hmh3T
-	1Oh6NHmQkhk8TrEMZT7Gytx9rvcqmBv1i6nZZOWF7DhHXHwNNrjDZeFZjfTyJRhG7Y38x1z7TheKS
-	uqhtaCAClEEji/a+VcfycNu90Q5Gh1I9xiilLYg/4Q1oNigtCBsDRQc59C/tpun2qIGqcR/1CIBc8
-	ZvsG24kg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tMWWI-00000004Xpg-3HFw;
-	Sat, 14 Dec 2024 18:05:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA34130035F; Sat, 14 Dec 2024 19:05:37 +0100 (CET)
-Date: Sat, 14 Dec 2024 19:05:37 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] sched/urgent for v6.13-rc3
-Message-ID: <20241214180537.GA10560@noisy.programming.kicks-ass.net>
-References: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
- <Z13BzesSJDSuSXRc@lappy>
+	s=arc-20240116; t=1734200217; c=relaxed/simple;
+	bh=9ySotLG2I7e8lQZdgi7KU14SuDxhDwBtC3BHM7KKGZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tt6ayIURO5hzBdZfc0L9iauUT2yJ6UO+fN5QrA0MIZH94ZFdZcv2SLKlW8Kv1nxDljd6PVf9R7ORH7w5PITvfaHKcLv6JVSpl5jMxo7dZje49YWxT9oLiQTTqCk7xods0zsF/Awy8tGGpqlD7tis3Zgm//wMJu+5smLUOkqfVOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E08cEg5U; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef05d0ef18so410742a91.0;
+        Sat, 14 Dec 2024 10:16:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734200215; x=1734805015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ySotLG2I7e8lQZdgi7KU14SuDxhDwBtC3BHM7KKGZU=;
+        b=E08cEg5URl5BDATQk5CJeb8Q/GJCIJ39k+1nP7kXJx9ArtEbA6yIT5OvGQSwsXqcLm
+         wyOmj5cI0c92Ds8bHLnOaZiYspSfvl0aAn9s3O5GYYbQQ+Qx8Z+mm/xmL42/XwaCakfu
+         xsmGO+gkOOUiNML6FM18iSGgSR7lT8onlgX1tq1M7/4CXWf7vvjHeKOvV6gSpZy6NkEl
+         dlgpCGZdzSVECGaMCORhKn1UwowMv03xu7tZ8VMTYqfKtRCR8cgGt9FHCrlrY9B4w2z5
+         IKJ8QsXileM8Ryv+LCLaiRVnrVgPhASfXTSMz3zVy6BIfKogPoyYCUol4WI5hwzzbI10
+         u3yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734200215; x=1734805015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ySotLG2I7e8lQZdgi7KU14SuDxhDwBtC3BHM7KKGZU=;
+        b=TgbAEEBtXf85Yjzn4VV0we7JiCE6qHRwV6ihQmK/nUiShACQ268QYWtpM28QO7Z3ii
+         tlMHhC8/zfx04k4UOZdrA0uhQ7dsHdq1IR8JELqX8KWdLRj1+hhS5OPQMb4Lh7xWAhrK
+         7g1aJHaRRFsa2WcGFFeno8upHQS1U4LMn8oxoP0e3dAygmDqv74VNyDD56eLdViUV9rr
+         IhknQNNh2JACosjIKPY5Z/PBP6iWtKxiNzWunpLyZS5Duw8R4F/ElA59lxnJgn9RFXFQ
+         Ae9+Q/KdWqKlVWakbje894Gpu3W+/s/X+/JahS8L3EmM36HJZGD6CP3PENiUWxnqg1+U
+         rhnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUXtm2288SxWb4r4MOKV4jdTsCFKasQ9alKB63r6vVL9F4GrQm5ixBcfrBlK5Y2OlTFGvg9MnxvGvecEc=@vger.kernel.org, AJvYcCVwtrwDIo4y9iJeRGlbL+SfoQYWdNLEPHxO6ZjzxzxYjWM+IsyOUQdFoEaITPCA9gwTjkMVLlvnhR+vwdr8tn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUJiprR+qfuno6mmPwCkjXKH3fmjULjEXNFlU4DpTnqD0CbH/p
+	GnXum2M4lL/KJN087oCXOVWYqZBS7qnCW8XpPMQihB98mkN0FtuNJMK/olnWeGUcYeZAAHD7byW
+	hxJPH03NOUX0HT1T2XkIJ+ZDnHL4=
+X-Gm-Gg: ASbGncvm4UQnxDvVJBXE/E8QLkk+JfvN5WobHHmxjKLo65kInCGHh3ZiKCrVynssT1C
+	7DoBSrW9e14TomFzp1XtnVHvK5Xgt2Hpfkk4fKQ==
+X-Google-Smtp-Source: AGHT+IE6qyFg9sNDsL5Pk2GS/f+8WuwZx/Sv8wQeZG7CEcgORT1t1vd3s++rirzQxQ3Fvz1H1tM20lNf4vHG2+tZAQA=
+X-Received: by 2002:a17:90b:5107:b0:2ee:948b:72d3 with SMTP id
+ 98e67ed59e1d1-2f28fa55570mr3932799a91.1.1734200214825; Sat, 14 Dec 2024
+ 10:16:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z13BzesSJDSuSXRc@lappy>
+References: <20241214065217.195385-1-ojeda@kernel.org> <CAHk-=wgXdJswe7JWZ2G6m11rL4Yxatrz_iFBKpqCO5xHPwMyJA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgXdJswe7JWZ2G6m11rL4Yxatrz_iFBKpqCO5xHPwMyJA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 14 Dec 2024 19:16:42 +0100
+Message-ID: <CANiq72kd0UTqvFB+PHGeSFdnbO55132u9ZdPgtCPP4TQ7DBaXw@mail.gmail.com>
+Subject: Re: [GIT PULL] Rust fixes for 6.13
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 14, 2024 at 12:36:07PM -0500, Sasha Levin wrote:
-> On Mon, Dec 09, 2024 at 10:48:22AM +0100, Borislav Petkov wrote:
-> > Hi Linus,
-> > 
-> > please pull the sched/urgent lineup for v6.13-rc3.
-> 
-> Hey Boris,
-> 
-> I'm a bit late to this party, but I've started seeing the following
-> warning. I'm not 100% sure that this PR is the culprit because Linus
-> ended up pulling it before I could run tests on it, but I haven't seen
-> this warning before.
-> 
-> [ 1107.003243] ------------[ cut here ]------------
-> [ 1107.010677] WARNING: CPU: 0 PID: 16 at kernel/sched/deadline.c:1995 enqueue_dl_entity+0x4a8/0x570
+On Sat, Dec 14, 2024 at 5:54=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Hmm. Is it just me, or has github become almost unusably slow lately?
+>
+> It might be time for you to mosey on over to git.kernel.org, and use
+> github as a backup rather than as the primary repo?
+>
+> But I'll see if I can reach out to any github people and see if it's just=
+ me.
 
-Ah, yeah, no. That's a known issue which we *finally* managed to track
-down last week. Unfortunately this sched/urgent pull does not yet
-include those patches.
+It has happened to me as well in the last couple (?) days, e.g. when
+pushing the tag, so it also seems to affect the writes. I guess it is
+temporary.
 
-If you want them, they can be had here:
+But happy to use git.kernel.org as the primary repository.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/urgent
-
-I was meaning to push them to tip/sched/urgent on Monday, so they'd be
-in next week's batch.
-
-But if people want them now, have at :-)
+Cheers,
+Miguel
 
