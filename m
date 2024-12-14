@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-445792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3F39F1B9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:56:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC8A9F1BA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F231D161B6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243F9162136
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F923D528;
-	Sat, 14 Dec 2024 00:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED5F175AB;
+	Sat, 14 Dec 2024 00:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQnB2rQS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHLF2XVq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D91CA6F;
-	Sat, 14 Dec 2024 00:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E1D14012;
+	Sat, 14 Dec 2024 00:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137791; cv=none; b=K4L5nwxXgcvBIVrRyMQOA0LEFjrwVVRCEbB9fVgndl4C9qQr1RpPZusJWqri3Aff5PXRXXN5RHeD9xGo0GkxjLJw1EzprYm9EAG9dh+F5eqMY9nLjT7CwlnN482IKF8cJlv49nsUE268BIRPpHfsgYNNaKZXM6ll+tnvL8RAj7w=
+	t=1734137799; cv=none; b=i9b+g7EL03sXji03r8oQ53sBh0gHgM79qo0i9yhFQiJRhzBXqS0Qy/wrhMNJaeDK4sky6swsMhyjBzsI1wEXHwv3zLOAERAhcHN98kSpOGyvDmJDYOrJ4N4CuUl5pStZ7AijDAgE2CqkoeYzm321uErkGm6WhWE62uV5PlRwZ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137791; c=relaxed/simple;
-	bh=92luzIVjfjAyEdhfZE/R/uAdo5CyLJyLxN1vjHYrNF8=;
+	s=arc-20240116; t=1734137799; c=relaxed/simple;
+	bh=06DHfHUoXN2gx/rqmuaz6xAj+b6BV0g4p7qVhA+C9ws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmiZaoikC9UY+BO64udCb0X/c4qD3MtlMyBrf8jOZgSRKXr+SVM7bqqFEDi3UC03Qw20iB2JA0SD45a1idrKMctDrdAX1yun9ebPFf4MKWVvNeWROqiaSyyyNQK+07Ro47uSs8ghw8qWqwe3dHv8fnuUmcQPe4CXvfU7ycg5PKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQnB2rQS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84150C4CED0;
-	Sat, 14 Dec 2024 00:56:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nhWVYFSq2As/PmcaHK+vC6OCR+7W+VZci+GLYXttiMdSD8hXLQODCsf0CXIjjofXHz02RHKovEj+/jy2pXmGU6auVDpYIenyJcAO8K3vaf22EebZwrtwHooHafAV0OHubE7x59L2XKdIa+G8eOOdFYymzi89bkZR2TGT5b+mdn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHLF2XVq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD23C4CED0;
+	Sat, 14 Dec 2024 00:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734137790;
-	bh=92luzIVjfjAyEdhfZE/R/uAdo5CyLJyLxN1vjHYrNF8=;
+	s=k20201202; t=1734137799;
+	bh=06DHfHUoXN2gx/rqmuaz6xAj+b6BV0g4p7qVhA+C9ws=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MQnB2rQSnBwr2OmGhth7bCvy/Qxff+5yElRN9uO42y1XtNa98wQaHkBoomZ/AOxjI
-	 tB4loxYtYE/sBHbesLtSi4TIZb/ZnlBhvONJPmdQ2YJHrL2qISGpMNRgFPgfHRcc0o
-	 95QP/j6STxtGA56lYmL0sFGRGVASWLjrUty5HS9yuZndJyK1d07HiQ3ZwfXei4uhpr
-	 12Dv84cNBxod3c/lar+CzwS9hJOvnRHBGjNU6b3QqB2mJGKs9XyPk3eAg94JA30NQk
-	 tNwxWGQehXMc525QZMNIP/lZS7x2bOyFKQAnU83L5j8b3gfS5k4qRyYsLy+NWJEmRY
-	 w+9iCwnjngxHQ==
-Date: Fri, 13 Dec 2024 16:56:27 -0800
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, jannh@google.com, sroettger@google.com,
-	adhemerval.zanella@linaro.org, ojeda@kernel.org,
-	adobriyan@gmail.com, jeffxu@chromium.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	jorgelo@chromium.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 0/1] binfmt_elf: seal address zero
-Message-ID: <202412131650.9537DD1B@keescook>
-References: <20240806214931.2198172-1-jeffxu@google.com>
- <172365478431.4159848.371478248517217096.b4-ty@kernel.org>
- <cfd3e288-c913-482d-a6ce-789fa6b0f2b3@lucifer.local>
+	b=BHLF2XVqZa0LCEogswGR35sUTliRU4plg9Dgx9U3oDfPyyfkWf+AzQJYyl25khZrK
+	 DGcEzjN+oI9wyuN5RRNVxKQN96CXx4h+8w59P+4tbfEp5Ehn/HQ7eJhTUM4myAU+Zn
+	 TXd06WDaP5plwJmGANIxNQTPH/jZ9PKyVoaJgbkjNIBXHk4jmDf8m0EECXh7rl+Jg6
+	 /V9UR7fndT8YN7sjH9s9AMkHcFIKt7FnYxPl0dvs6h43Ldqlo6ejdr48daZB8gUMhM
+	 Iux7A10xepuEhplmCZPqLSd5FDk0yLCDuteoGpLIFX8p+v1lNHWjq5LSHCOjgHuoQ1
+	 hbdAaSbmWrGYw==
+Date: Fri, 13 Dec 2024 16:56:38 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, ritesh.list@gmail.com,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20241214005638.GJ6678@frogsfrogsfrogs>
+References: <20241210125737.786928-1-john.g.garry@oracle.com>
+ <20241210125737.786928-3-john.g.garry@oracle.com>
+ <20241211234748.GB6678@frogsfrogsfrogs>
+ <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com>
+ <20241212204007.GL6678@frogsfrogsfrogs>
+ <20241213144740.GA17593@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cfd3e288-c913-482d-a6ce-789fa6b0f2b3@lucifer.local>
+In-Reply-To: <20241213144740.GA17593@lst.de>
 
-Sorry for the delay in my reply -- I've been trying to catch up on stuff
-after 2 weeks off.
+On Fri, Dec 13, 2024 at 03:47:40PM +0100, Christoph Hellwig wrote:
+> On Thu, Dec 12, 2024 at 12:40:07PM -0800, Darrick J. Wong wrote:
+> > > However, I still think that we should be able to atomic write mixed extents,
+> > > even though it is a pain to implement. To that end, I could be convinced
+> > > again that we don't require it...
+> > 
+> > Well... if you /did/ add a few entries to include/uapi/linux/fs.h for
+> > ways that an untorn write can fail, then we could define the programming
+> > interface as so:
+> > 
+> > "If you receive -EBADMAP, then call fallocate(FALLOC_FL_MAKE_OVERWRITE)
+> > to force all the mappings to pure overwrites."
+> 
+> Ewwwwwwwwwwwwwwwwwwwww.
+> 
+> That's not a sane API in any way.
 
-On Tue, Dec 03, 2024 at 02:13:45PM +0000, Lorenzo Stoakes wrote:
-> On Wed, Aug 14, 2024 at 09:59:47AM -0700, Kees Cook wrote:
-> > On Tue, 06 Aug 2024 21:49:26 +0000, jeffxu@chromium.org wrote:
-> > > From: Jeff Xu <jeffxu@chromium.org>
-> > >
-> > > In load_elf_binary as part of the execve(),  when the current
-> > > task’s personality has MMAP_PAGE_ZERO set, the kernel allocates
-> > > one page at address 0. According to the comment:
-> > >
-> > > /* Why this, you ask???  Well SVr4 maps page 0 as read-only,
-> > >     and some applications "depend" upon this behavior.
-> > >     Since we do not have the power to recompile these, we
-> > >      emulate the SVr4 behavior. Sigh. */
-> > >
-> > > [...]
-> >
-> > I added the cover letter details to the commit log and changed pr_warn()
-> > to pr_warn_ratelimited(), but otherwise, looked good.
-> >
-> > Applied to for-next/execve, thanks!
-> >
-> > [1/1] binfmt_elf: mseal address zero
-> >       https://git.kernel.org/kees/c/44f65d900698
-> >
-> > Take care,
-> >
-> > --
-> > Kees Cook
-> >
-> >
-> 
-> Hi Kees,
-> 
-> Reproducing diffstat here:
-> 
->  fs/binfmt_elf.c    |  5 +++++
->  include/linux/mm.h | 10 ++++++++++
->  mm/mseal.c         |  2 +-
->  3 files changed, 16 insertions(+), 1 deletion(-)
-> 
-> It seems that in commit 44f65d9006982 ("binfmt_elf: mseal address zero")
-> you took a patch that makes changes to mm code without any review/ack from
-> any mm maintainer.
-> 
-> While I realise this was a small change, in future can you make sure to
-> ensure you have that?
+Oh I know, I'd much rather stick to the view that block untorn writes
+are a means for programs that only ever do IO in large(ish) blocks to
+take advantage of a hardware feature that also wants those large
+blocks.  And only if the file mapping is in the correct state, and the
+program is willing to *maintain* them in the correct state to get the
+better performance.  I don't want xfs to grow code to write zeroes to
+mapped blocks just so it can then write-untorn to the same blocks.
 
-Oh, yes! I can do that. As you say, it was a very small change and
-almost entirely "standard" boilerplate. But sure, I will be poke people
-more directly if anything touches mm in the future.
+The gross part is that I think if you want to do untorn multi-fsblock
+writes, then you need forcealign.  In turn, forcealign has to handle COW
+of shared blocks.  willy and I looked through the changes I made to
+support dirtying and writing back gangs of pages for rtreflink when the
+rtextsize > 1, and didn't find anything insane in there.  Using that to
+handle COWing forcealign file blocks should work, though things get
+tricky once you add atomic untorn writes because we can't split bios.
 
--Kees
+Everything else I think should use exchange-range because it has so many
+fewer limitations.
 
--- 
-Kees Cook
+--D
+
+> > ...since there have been a few people who have asked about that ability
+> > so that they can write+fdatasync without so much overhead from file
+> > metadata updates.
+> 
+> And all of them fundamentally misunderstood file system semantics and/or
+> used weird bypasses that are dommed to corrupt the file system sooner
+> or later.
 
