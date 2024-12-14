@@ -1,86 +1,199 @@
-Return-Path: <linux-kernel+bounces-445838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CAE9F1C1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:31:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC16B9F1C20
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4ED3163D7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306BA1889B06
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C1A1A260;
-	Sat, 14 Dec 2024 02:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1rowdIZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2143B18622;
+	Sat, 14 Dec 2024 02:35:49 +0000 (UTC)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5AD23AD;
-	Sat, 14 Dec 2024 02:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0693323AD;
+	Sat, 14 Dec 2024 02:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734143481; cv=none; b=kME6ln1OIrIx7mnNxTjdR29k3bCTJoP5huS1d8nbKClzA5j7iQXhFOes8Yfp3W6SLyaBkE43RjIeWSrJUratdJfjVQI7IOcOPB9qnMN7bRRGABXteDJIuqmnrqqCMuW5LNeLYFvDW/Mf5JR3BmgLUIWaXQ7ISwZj36WcqUqS7B0=
+	t=1734143748; cv=none; b=HoEAmi5MX+MoJN4/EGGrlhj24XKD597636skRmQ9WSWD7It3pG7YJHtYVrQYyhCKxM5BiEhDPaufHxaRh3QbjE8wFVtRFmWeB5QzmDwq+4SnUKtwLG7iUjeFeQx0caalcGXNUXV5x8sQjKYzmZaXoN+AXeyiDl3oyw7HWSW/Bf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734143481; c=relaxed/simple;
-	bh=ONeE8zGtu5kORK57opTnqobNq2wLDyY1y+gmtaut78s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRgCnKkQpPdSg3ajF4aGDLOf7Nzf/yXB4p0S/ckkdpUdk6C0w3VUppDkPc+XDCKYeJwoAJ7auWf4yikRGyKolPrattKe6C6unHxIYUsavUbdWH1WcVq1152hhC/borVdTVOA5vVcKXYyKdZZMYnhmVvUdfidtY2m0m1auf+VjrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1rowdIZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBB8C4CED0;
-	Sat, 14 Dec 2024 02:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734143479;
-	bh=ONeE8zGtu5kORK57opTnqobNq2wLDyY1y+gmtaut78s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R1rowdIZM1cL9WOMeGb8LIckGCLWM6HOAXTZJSb60tdINtSAUn81ee6Nn0a+/YL0K
-	 CZCDYNMiKEg3o//d7r1LOF1jXCN5mq0LVaVTh2sXZK6SKSKkERIDxGiuK0x6GLmT0X
-	 iXHdZw9marDXofkb5XBFM3uOlHaCFOSjoAKweeJY6tmfoGYLQBsrG3lb19tbetZU33
-	 QXVJj7GoJn+x2eER2p2Hgo7zJMwTrQmfW9KUgwUEHer6ijK4to1zHMz/fA30inKfpn
-	 xoD+2wnSlFgv0t9r1PRwbN46VtXnLy13lWBqRH6tc2/tXF7bm23qDlhsEVe//X1fs8
-	 y4jZw4u9oSZ6g==
-Date: Fri, 13 Dec 2024 18:31:18 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Andrii
- Nakryiko" <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Josh
- Poimboeuf" <jpoimboe@kernel.org>, "Jose E. Marchesi"
- <jose.marchesi@oracle.com>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?=
- <toke@redhat.com>, Magnus Karlsson <magnus.karlsson@intel.com>, "Maciej
- Fijalkowski" <maciej.fijalkowski@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Jason Baron <jbaron@akamai.com>, "Casey
- Schaufler" <casey@schaufler-ca.com>, Nathan Chancellor <nathan@kernel.org>,
- <nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 07/12] xsk: add generic XSk &xdp_buff -> skb
- conversion
-Message-ID: <20241213183118.2fdca6f1@kernel.org>
-In-Reply-To: <eb2aab4b-ba00-4b9d-ba53-5a5bb544f6fd@intel.com>
-References: <20241211172649.761483-1-aleksander.lobakin@intel.com>
-	<20241211172649.761483-8-aleksander.lobakin@intel.com>
-	<20241212181944.37ca3888@kernel.org>
-	<eb2aab4b-ba00-4b9d-ba53-5a5bb544f6fd@intel.com>
+	s=arc-20240116; t=1734143748; c=relaxed/simple;
+	bh=4wqap3t1XSWLu8ztdQ7Cu8789k+uDEU+NcHW1Y8XLuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOMXC4OaDuOlYjpMQ2VSPYMM8dG+jNLD1qPRY6IwvjyzMTFNr1g9CPUceowCuvy9qTuTkbnvpf0oBviZ/wwD0VWAw6/fGhcBwhP8vnSsHRp0vUE3U/jeHzsMEnmiulanLJbeSh8GWGVIyzIIazslRyBkz+DhkiIqS3J5rTDhMIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1764844a12.0;
+        Fri, 13 Dec 2024 18:35:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734143746; x=1734748546;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FPRhjEJVxQTQSLdLSuZF+NUxMFxgovEYaBdCXHPfWoc=;
+        b=PxkK1S8S5VjgRp2h9sCKk/UuEogru7TxYFZHiy9ErEqr1ysU04vA1k0uZxSQ2b/Qc7
+         5bdSkEKNHXjKgFB/8vhEgVKyIdX/+BGWzrwufbzdUv5MccG+tRrhwTk8L3WgzVY4y7hp
+         MOWzkxspLQ8xXeTmCq+j0T1W9SbzvGkVsp2F1KY9eciD9S0H0I3Fc0QGsaCsdlfi6jDq
+         xresfCN+jM4iThmzIg30IjrFbiYKzgIJ0/HaKN4s0ugDDXEA991nQoYnKUTN1OPEb3hL
+         rROMlcTXBo8E6pMyiCG+co0NFGlZKAnWkdLXkkl3XfV9W47mmgC+MZLYS0ji81EmvVBQ
+         ybhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ0oMNKnZACnKBLR2yFrkLWKyCtQfehu/jMbz86zIMU73FKpyfBvNBY28//+grZSWlasO47sWV7MQ=@vger.kernel.org, AJvYcCWG2VI5aSi/xyAG9sh0vADDuqk9bcWnGfKgRcfdhEbXIUi+VUXcpdn56zyRZYwoA9Sjgx3mOBfy+us2m7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9mHaaEx54kUoUt/xxitaxv0Ab9x7pVRGKOI8ONMgawIKY400y
+	g8/bWCbLJulKH5YDjdeWBVtzZRjMaVo1+wMehhED3Xr4tA136Yvupij+g20b
+X-Gm-Gg: ASbGncsy1rRYnHrpHXTWx3tPUNfjo7i9UyjRQPg6uHiX5qUGQ5puy8oUtikYmQQOBlg
+	cWImTh1OG4dw4Tw6aB6zalRuZv4PZsl3DwBUEW4/4nnMKm15RyVuE56CIXddYxxL6ta5U2sbUzY
+	BfAHUue4hcoTQx3hfaOxPif4oklFUaLqhqH7A0VAphjIACRfHCLj6K/N0AZduBto4QWLbHWnv4n
+	dpQhpaAUl4+RaSHQFJnlMUaIk7MeME7mQNVhI8Agr0pf7tNsLAh8VxdqHBfPFN+aRECmtUmZFA=
+X-Google-Smtp-Source: AGHT+IHxR7O4ws5JgiDlhLRgvzI0NMOJdvjjQoVfbkd0GPtBPu+2RIHPfLAM2ibiKTPZXKZpNkfSRQ==
+X-Received: by 2002:a17:90b:3b48:b0:2ee:7415:4768 with SMTP id 98e67ed59e1d1-2f28fd6f5c1mr8909669a91.17.1734143746232;
+        Fri, 13 Dec 2024 18:35:46 -0800 (PST)
+Received: from sultan-box.localdomain ([142.147.89.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1e9dfa1sm557652a91.20.2024.12.13.18.35.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 18:35:45 -0800 (PST)
+Date: Fri, 13 Dec 2024 18:35:42 -0800
+From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cpufreq: schedutil: Fix superfluous updates caused
+ by need_freq_update
+Message-ID: <Z1zu_nDQcik0cZLx@sultan-box.localdomain>
+References: <20241212015734.41241-1-sultan@kerneltoast.com>
+ <20241212015734.41241-2-sultan@kerneltoast.com>
+ <79448239-86df-43ef-9a4f-717802d2c70a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79448239-86df-43ef-9a4f-717802d2c70a@arm.com>
 
-On Fri, 13 Dec 2024 18:31:59 +0100 Alexander Lobakin wrote:
-> > Can we kill all the if !CONFIG_PAGE_POOL sections and hide
-> > the entire helper under if CONFIG_PAGE_POLL ?  
+On Thu, Dec 12, 2024 at 01:24:41PM +0000, Christian Loehle wrote:
+> On 12/12/24 01:57, Sultan Alsawaf wrote:
+> > From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+> > 
+> > A redundant frequency update is only truly needed when there is a policy
+> > limits change with a driver that specifies CPUFREQ_NEED_UPDATE_LIMITS.
+> > 
+> > In spite of that, drivers specifying CPUFREQ_NEED_UPDATE_LIMITS receive a
+> > frequency update _all the time_, not just for a policy limits change,
+> > because need_freq_update is never cleared.
+> > 
+> > Furthermore, ignore_dl_rate_limit()'s usage of need_freq_update also leads
+> > to a redundant frequency update, regardless of whether or not the driver
+> > specifies CPUFREQ_NEED_UPDATE_LIMITS, when the next chosen frequency is the
+> > same as the current one.
+> > 
+> > Fix the superfluous updates by only honoring CPUFREQ_NEED_UPDATE_LIMITS
+> > when there's a policy limits change, and clearing need_freq_update when a
+> > requisite redundant update occurs.
+> > 
+> > This is neatly achieved by moving up the CPUFREQ_NEED_UPDATE_LIMITS test
+> > and instead setting need_freq_update to false in sugov_update_next_freq().
+> >
 > 
-> We can. But I think I'd need to introduce a return-NULL wrapper in case
-> of !PAGE_POOL to satisfy the linker, as lots of drivers build their XSk
-> code unconditionally.
+> Good catch!
+> Fixes:
+> 600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
+> 
+> 
+> > Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
+> 
+> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-Oh wow, you're right. Bunch of drivers of a certain vendor still don't
-use page pool.. return NULL wrapped SGTM.
+Thanks for the review and digging up the bug provenance!
+
+> > ---
+> >  kernel/sched/cpufreq_schedutil.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > index 28c77904ea74..e51d5ce730be 100644
+> > --- a/kernel/sched/cpufreq_schedutil.c
+> > +++ b/kernel/sched/cpufreq_schedutil.c
+> > @@ -83,7 +83,7 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >  
+> >  	if (unlikely(sg_policy->limits_changed)) {
+> >  		sg_policy->limits_changed = false;
+> > -		sg_policy->need_freq_update = true;
+> > +		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);>  		return true;
+> >  	}
+> >  
+> > @@ -96,7 +96,7 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+> >  				   unsigned int next_freq)
+> >  {
+> >  	if (sg_policy->need_freq_update)
+> > -		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
+> > +		sg_policy->need_freq_update = false;
+> >  	else if (sg_policy->next_freq == next_freq)
+> >  		return false;
+> 
+> I guess you could rewrite this into just one if like
+> 
+> ---
+> 
+> 	if (sg_policy->next_freq == next_freq && !sg_policy->need_freq_update))
+> 		return false;
+> 
+> 	sg_policy->need_freq_update = false
+> 	sg_policy->next_freq = next_freq;
+> 	sg_policy->last_freq_update_time = time;
+
+Hmm, asm seems worse since it adds an extra store to one of the branch targets:
+
+Before:
+-------
+        00100020 e3 03 00 aa     mov        x3,x0
+        00100024 00 a8 43 39     ldrb       w0,[x0, #0xea]
+        00100028 3f 23 03 d5     paciasp
+        0010002c c0 00 00 36     tbz        w0,#0x0,LAB_00100044
+        00100030 7f a8 03 39     strb       wzr,[x3, #0xea]
+                             LAB_00100034
+        00100034 20 00 80 52     mov        w0,#0x1
+        00100038 61 14 00 f9     str        x1,[x3, #0x28]
+        0010003c 62 38 00 b9     str        w2,[x3, #0x38]
+        00100040 ff 0b 5f d6     retaa
+                             LAB_00100044
+        00100044 64 38 40 b9     ldr        w4,[x3, #0x38]
+        00100048 9f 00 02 6b     cmp        w4,w2
+        0010004c 41 ff ff 54     b.ne       LAB_00100034
+        00100050 ff 0b 5f d6     retaa
+
+After:
+------
+        00100020 e3 03 00 aa     mov        x3,x0
+        00100024 00 38 40 b9     ldr        w0,[x0, #0x38]
+        00100028 3f 23 03 d5     paciasp
+        0010002c 1f 00 02 6b     cmp        w0,w2
+        00100030 c0 00 00 54     b.eq       LAB_00100048
+                             LAB_00100034
+        00100034 20 00 80 52     mov        w0,#0x1
+        00100038 61 14 00 f9     str        x1,[x3, #0x28]
+        0010003c 62 38 00 b9     str        w2,[x3, #0x38]
+        00100040 7f a8 03 39     strb       wzr,[x3, #0xea]
+        00100044 ff 0b 5f d6     retaa
+                             LAB_00100048
+        00100048 60 a8 43 39     ldrb       w0,[x3, #0xea]
+        0010004c 40 ff 07 37     tbnz       w0,#0x0,LAB_00100034
+        00100050 ff 0b 5f d6     retaa
+
+Sultan
 
