@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-445878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1826F9F1D09
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:33:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275FB9F1D0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80722188D15E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B28718851C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13D712C470;
-	Sat, 14 Dec 2024 06:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59E313B29F;
+	Sat, 14 Dec 2024 06:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b="Lo1AA0qS"
-Received: from mail-10625.protonmail.ch (mail-10625.protonmail.ch [79.135.106.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJhCI6I+"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625DA5914C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 06:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCABA522F;
+	Sat, 14 Dec 2024 06:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734157985; cv=none; b=BTwbyhMV6BBi+gFAspodL1qnps9EJwxmMmdKMMdmRW1JB7pKY32IJqYCR062NTXz/LmuT+OoFMxRSBVGwfd4c//pz710HH8znWJKBij7G7AVlG3hqs8fou653pJOS0NeYo95VxBWEhlNYdoAwd4TkQOOyYfjKhSc6egIUVzDZD0=
+	t=1734158120; cv=none; b=SKoZYpm3Kecde9wpzwSLQo83f8gfeOpNvmGx4/BGMqSNABb3czOyvRA65D9QicHZKoSnNxowyFro0PiJNto5LawweT9+uOYUg1bVhX1tbvOL8lrcD5UL46KA89RsAfTVYohu5fRfhmR0EWqCE+Ezs+ezk5XbcY1+dKxop2tQI4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734157985; c=relaxed/simple;
-	bh=ievqeHVfDN1p5eeUqf09eDC9oeLJXp2DUIrALupbiTc=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Joy6tp+w5N5VilS25I3Rz1H4i36g5bj8Nx2S8VeS5rJBuYn4r3oIPoTcCnAd7TEqhcxoch5xfHUwvadIzU7OwYUhYFI0f8jjR/be+hd3vVRCayShf/ruOGSLeedS/2WHuTZ3ArDkkT7HrnWtL/uiP/GH1n71Bz14pfnqBVyI5TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io; spf=pass smtp.mailfrom=ranguvar.io; dkim=pass (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b=Lo1AA0qS; arc=none smtp.client-ip=79.135.106.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ranguvar.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ranguvar.io;
-	s=protonmail3; t=1734157981; x=1734417181;
-	bh=ievqeHVfDN1p5eeUqf09eDC9oeLJXp2DUIrALupbiTc=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=Lo1AA0qSzQJTJKMajvxYqwDGjWAbrWc0jLytj2YyxV9CyuAjjscbPD/WXCJyuYRqP
-	 mDGxnd5Onj24epykQ/I2WKMDi8NjHsw2cYKduHqQAY6drz9gUgRQ/1pTPSY+W2AWVW
-	 Gy3KlKEC0sNvKN+QoFwvVSkcQ+zjzmusiEKEJSjD1ioUCNVWHa5gqJ3wh0hunpCE18
-	 sLFnTl8iXRKwAAQSBZgFRz1JAkI0ycaR42OLh9hyFVEdWvhMEVOwXFkrSgLilT4mGP
-	 P1/2BKEikVb4Cs0wX8V0QTKr2D3IRrATySNP5UHQ+492YNQOjbMfH1pySa0rLKJ0pT
-	 mOwpiZhxyD1Ww==
-Date: Sat, 14 Dec 2024 06:32:57 +0000
-To: Peter Zijlstra <peterz@infradead.org>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-From: Ranguvar <ranguvar@ranguvar.io>
-Cc: "regressions@leemhuis.info" <regressions@leemhuis.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM guest
-Message-ID: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io>
-Feedback-ID: 7618196:user:proton
-X-Pm-Message-ID: 17d298ae81f0994ea02c3104009042b0d1197e8b
+	s=arc-20240116; t=1734158120; c=relaxed/simple;
+	bh=zFKziE+ipoVbd2wXkCULZt2X9OhiD1E2pZBMKUsBaRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V8mjN1CNWctk1jTVtQtSvPF69y+GrrzqaXdGISBtnbWno4erADIor403v1IdCFb33090Q9wEBxv5hCkpWTdYyTsIQTG4UXvP3aZ0Ri4F4p5c4M+yO+8bvrD8Lli4R0tCirckojKkuPdvCjz0Evw8tj1OmVkOx/BRFlviDW35nco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HJhCI6I+; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21634417587so3608295ad.3;
+        Fri, 13 Dec 2024 22:35:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734158118; x=1734762918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=czn2tePC66dPj1Yi7rQxNU6WF4uHph8JSF5w70bMmx4=;
+        b=HJhCI6I+eYj7UBSe6Sdc+JtOeJxml081SY6EGSqBfMuABO9XwUqb2P7+mj5l6fRrrY
+         4cGbvLqVt7OzSYVan63Oj+UhmThDziXPc00ZpsyP4A2K76O8cmIhZcFQ7VCBiCbzxjsH
+         nYZcBJdumLl8EN2bZYPS018RBEZNZ8n7xuMVpQVQl846U2w4WH+f9W9WiPYJRrKUivjT
+         9cq6SRh0dXSxH+I0CtHiEN/ktksmCXupeF/ZUYK8tf27KunkaJttNMygCcfeNrW+9L6T
+         0gud3BMzy4YabKwer+7/JQ5A09N9dXxcGTeGYLg5h+XZ/oiKN28j9ScU3zpQvCQMaJtj
+         FTYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734158118; x=1734762918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=czn2tePC66dPj1Yi7rQxNU6WF4uHph8JSF5w70bMmx4=;
+        b=vA72Uvb/UWj51/zcpIv3uXKQphKTk00VufuDoI0Kj2Xlyvf+cjLF3Bk7sbS5TtUDFI
+         kAnNl3lpATOfBTw3PjGPqtsNP4MmrGnXJ2f8R11UjTWY5IourgXUxG0SOHs0QrhTASVr
+         Gv/M9zjlcWIVfAD2+QjceqEai3cI7fuy4CfZ9abCK3zIz6AuvMjxFrSDCNmL2hylLzKg
+         kO386TIYR6aepcV3n1YZoVhStO5ue4abQ84B5nrORLC/CUibHpwBTnakZ0vwlCwqx0yT
+         KhoyI7gBA+hcLZEMvHYNfTPsRgIoyhBdXv0dBcB3wYLvNihyeKOfiRV/TwVf8eC1g8A/
+         18bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHeKfsk58gp5rbZV4xHGpvi6jsUb82NHifTF294PpjM8jBpEuieg62T0JtBNkgZ/ItGQuhqavUpShRUNQ=@vger.kernel.org, AJvYcCX7IvRf5vTNGsq7TXnx+JkbJKk37ApfcF9xewqBsM59KDIXsKp0Soy8Rm3D8xIn/+9AiZ0bCTMqKB3cdRWZPRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJIyUwMR4lOJBoAbu8yxVlP+zxpR8hgFwSWOS4QAYpA437tdab
+	NU7U06s8U6AsMqWjpw8kfnzb2uYqGpfpm1CfQ+rildF7Buiya4EtjSTJBilbSx26IyBo9JrLYSH
+	dBKZM5fq2mXzbEKNIAug9NimiATMWRsrZ
+X-Gm-Gg: ASbGncuLiPcyzD/KCHIZbrW/z/dumVR0hanKAsytiAC6e0Nd9VtiqZm9SKpcBcD0RMt
+	j8XQczgfJvvmsmqutqBVPrGgU+DYr44m2yOrn7w==
+X-Google-Smtp-Source: AGHT+IH6zwBEOjsZhIdW1ZC/oKRUJnDIyzp5DRFpEUSyWKCG353lhiAS0MKdqsbFxiMXrFEbfuVTq3Go37U1wJDNgKY=
+X-Received: by 2002:a17:902:ce8c:b0:215:8d29:af0b with SMTP id
+ d9443c01a7336-21892a47c21mr30163265ad.14.1734158118104; Fri, 13 Dec 2024
+ 22:35:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241123180323.255997-1-ojeda@kernel.org> <CANiq72kTX5o2rs=A51keKQiV=6fT0sN+FjWygL4=ddytnNM8Cg@mail.gmail.com>
+In-Reply-To: <CANiq72kTX5o2rs=A51keKQiV=6fT0sN+FjWygL4=ddytnNM8Cg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 14 Dec 2024 07:35:06 +0100
+Message-ID: <CANiq72kDuaT5082br3PBHmD5xxPpWGD1q-ro_p0DWb+ai4ZywA@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: set `bindgen`'s Rust target version
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Christian Poveda <git@pvdrz.com>, =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <emilio@crisal.io>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello, all,
+On Tue, Dec 10, 2024 at 1:09=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Applied to `rust-fixes` -- thanks!
+>
+> I added the following note to the commit message and added a small
+> sentence to the comment too:
+>
+>     Starting with `bindgen` 0.71.0 [4], we will be able to set any future
+>     Rust version instead, i.e. we will be able to set here our minimum
+>     supported Rust version. Christian implemented it [5] after seeing thi=
+s
+>     patch. Thanks!
+>
+> I also queued it for stable:
+>
+>     Cc: stable@vger.kernel.org # needed for 6.12.y; unneeded for
+> 6.6.y; do not apply to 6.1.y
+>     Fixes: c844fa64a2d4 ("rust: start supporting several `bindgen` versio=
+ns")
 
-Any assistance with proper format and process is appreciated as I am new to=
- these lists.
-After the commit bd9bbc96e835 "sched: Rework dl_server" I am no longer able=
- to boot my Windows 11 23H2 guest using pinned/exclusive CPU cores and pass=
-ing a PCIe graphics card.
-This setup worked for me since at least 5.10, likely earlier, with minimal =
-changes.
+This is now also needed to support `bindgen` >=3D 0.71.0 and higher
+together with `rustc` < 1.82.0, since a week ago `bindgen`'s release
+started using `unsafe extern` blocks.
 
-Most or all cores assigned to guest VM report 100% usage, and many tasks on=
- the host hang indefinitely (10min+) until the guest is forcibly stopped.
-This happens only once the Windows kernel begins loading - its spinner appe=
-ars and freezes.
-
-Still broken on 6.13-rc2, as well as 6.12.4 from Arch's repository.
-When testing these, the failure is similar, but tasks on the host are slow =
-to execute instead of stalling indefinitely, and hung tasks are not reporte=
-d in dmesg. Only one guest core may show 100% utilization instead of many o=
-r all of them. This seems to be due to a separate regression which also imp=
-acts my usecase [0].
-After patching it [1], I then find the same behavior as bd9bbc96e835, with =
-hung tasks on host.
-
-git bisect log: [2]
-dmesg from 6.11.0-rc1-1-git-00057-gbd9bbc96e835, with decoded hung task bac=
-ktraces: [3]
-dmesg from arch 6.12.4: [4]
-dmesg from arch 6.12.4 patched for svm.c regression, has hung tasks, backtr=
-aces could not be decoded: [5]
-config for 6.11.0-rc1-1-git-00057-gbd9bbc96e835: [6]
-config for arch 6.12.4: [7]
-
-If it helps, my host uses an AMD Ryzen 5950X CPU with latest UEFI and AMD W=
-X 5100 (Polaris, GCN 4.0) PCIe graphics.
-I use libvirt 10.10 and qemu 9.1.2, and I am passing three PCIe devices eac=
-h from dedicated IOMMU groups: NVIDIA RTX 3090 graphics, a Renesas uPD72020=
-1 USB controller, and a Samsung 970 EVO NVMe disk.
-
-I have in kernel cmdline `iommu=3Dpt isolcpus=3D1-7,17-23 rcu_nocbs=3D1-7,1=
-7-23 nohz_full=3D1-7,17-23`.
-Removing iommu=3Dpt does not produce a change, and dropping the core isolat=
-ion freezes the host on VM startup.
-Enabling/disabling kvm_amd.nested or kvm.enable_virt_at_load did not produc=
-e a change.
-
-Thank you for your attention.
-- Devin
-
-#regzbot introduced: bd9bbc96e8356886971317f57994247ca491dbf1
-
-[0]: https://lore.kernel.org/regressions/52914da7-a97b-45ad-86a0-affdf8266c=
-61@mailbox.org/
-[1]: https://lore.kernel.org/regressions/376c445a-9437-4bdd-9b67-e7ce786ae2=
-c4@mailbox.org/
-[2]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/bisect.log
-[3]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.11.0-rc=
-1-1-git-00057-gbd9bbc96e835-decoded.log
-[4]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.12.4-ar=
-ch1-1.log
-[5]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.12.4-ar=
-ch1-1-patched.log
-[6]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/config-6.11.0-r=
-c1-1-git-00057-gbd9bbc96e835
-[7]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/raw/=
-6.12.4.arch1-1/config
+Cheers,
+Miguel
 
