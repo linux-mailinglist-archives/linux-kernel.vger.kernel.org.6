@@ -1,255 +1,353 @@
-Return-Path: <linux-kernel+bounces-446008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872F39F1E75
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:06:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A569F1E78
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62E918887CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:06:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4181668B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91BB18FDC5;
-	Sat, 14 Dec 2024 12:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF941917F9;
+	Sat, 14 Dec 2024 12:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloudbasesolutions.com header.i=@cloudbasesolutions.com header.b="dLkgvLBw"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2100.outbound.protection.outlook.com [40.107.20.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azbJc21O"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF8E155A2F;
-	Sat, 14 Dec 2024 12:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734177980; cv=fail; b=b0D2RJFj1k7hR25BPg2jCwUSrWgfIobEPyBXSDjJteqg54x8bnLC8x+TDf5M/wutg7x0bdzWlrV7Op1gAppyaBJtbpQR9DiW5aewF0HwjkaXW+oLR4HHeK9Wln53D9KKlM1AQ5aIvMt8ukGlwWQvmt1EaPlVLnUv54kqfZYGTyo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734177980; c=relaxed/simple;
-	bh=qEOPrH8cISY+xcV5OTEhnpWwf+Ss+e1eKV2XyMG/9I4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WJ4hsVJliwPBScjsZgYYv8ZGF2bV/V+tj8j7nzr4HwQP7+Z5CJjC3SOT5b6pgiEDMEKO4nIkctTpi/cxIiQBE4emIPJUS38efhM2CgM8KsGKvXtMcMzvyLxDwNAdKtmsWIbcHXO61kheAdO0MxAVoMQr3Osw443jso6YY7msVRI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cloudbasesolutions.com; spf=pass smtp.mailfrom=cloudbasesolutions.com; dkim=pass (1024-bit key) header.d=cloudbasesolutions.com header.i=@cloudbasesolutions.com header.b=dLkgvLBw; arc=fail smtp.client-ip=40.107.20.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cloudbasesolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudbasesolutions.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ngvgs278DeRxjrqI72znDka9O3Nv9xY09KL0x3Inx0xThSMzof+GOq2HVqTElnOk35wSLJ4oTls0lnKDFzJIEMb/m5sWyLzuFuQvh4/qdZ8XppiXM61hDqrP4EPoFc2qRBpSMtM+yeHxLip8AW/wVgi3MfoKT2t9MBGL0ttGqh9XrXV6jBVZ6HfhiWglvHiiNjlC2mP2z0D4LpMty/exFyjTmry5plW1a24zC59cZRHzUTSEMMZW4BLXDI8lrGgkHsxAqeUu5ymcZyBqZ98BEpt7eJ4QIZ5WhvQdzQKnHIy2o7rROMwKRLlWQww7/2odmJux1N393cHYR3OJk2vTnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qEOPrH8cISY+xcV5OTEhnpWwf+Ss+e1eKV2XyMG/9I4=;
- b=pot1lgJm6lXU95gRhy5TYzRM0l5QhNYNo/1AHjEu7egt4umSwDtOvW/6IE/Dz98MiakbZbC3UHdmw/g4d8yKOIfpbO7jmXMIjEfFJuS6ZDj2CxHLQQ5m38+hEZWTtSzRkYoNkS5G8ARLiqb3TlJbbfTdk3rCa0/j5czqXfsPmhYXmr9sS7GD6EV69XYmq+4v+HAi9CKg2cGQGBFYvJAvy87XTfBXgg6ZxVMuQqJsYD8Fwi86VDTKcdLYhBsUaTJWJ2dg9AZ3ryyepPn8fIJdRASKbY8FOkp+tCZbcLhDxg6qSyDYaAwE5PMi+f/AebTSBmCDTy1cTiOdVR7xeu6yag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cloudbasesolutions.com; dmarc=pass action=none
- header.from=cloudbasesolutions.com; dkim=pass
- header.d=cloudbasesolutions.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727818FC92;
+	Sat, 14 Dec 2024 12:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734177983; cv=none; b=owjTG4ZvPL6Iowe0M6vI5MRTd+kGEDv4pud4k8tOeUJzlQqgNLJ5kiYgGRbpPujYiQLoNpDcNFSHBjJXSexy+8WsP8xfpUDhTOXXDY76/JtVOHJ+hfGTh/JXv27DJgk3d2UODTeb0TfB5wndA7Pzmwsvbnz2xjS3Eyrq2GC/55M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734177983; c=relaxed/simple;
+	bh=BJmTgVvLl8ml8YBBTUmBeNxA5J1D32cpH5oF7U9HrKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a+1/MT/sHFPzdYmiJ82ihuvchcs/PMGfamVYhdTPmtIFS9e6MpzYThV31RkD1fs7qyM4Hjc2EnwoqiECOgOEIQTalhph3VsWsRQpnm7oPej83/+eZz22w6WxPmtiEl4hELF3MkKSIXlEad0oyctuhqMIyUDjzH46mbXVwYOWHAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azbJc21O; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso344710766b.2;
+        Sat, 14 Dec 2024 04:06:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cloudbasesolutions.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qEOPrH8cISY+xcV5OTEhnpWwf+Ss+e1eKV2XyMG/9I4=;
- b=dLkgvLBws9T8rMn5cj4y4U+NQqpERi14ExPpL023U024gLKznI1ISIkzQglCg8MJ7YDrMUtpge64VxtjTF/EsPTkCeZEWsK0ZpGKnzVcfSDxGpL2Tm6mIn7S9Sn/nSeK+V6fDj9KvXBQD3CmEi8owXxS9mb8PZtVe/qNtSXOrLw=
-Received: from PR3PR09MB5411.eurprd09.prod.outlook.com (2603:10a6:102:17e::10)
- by AS8PR09MB5401.eurprd09.prod.outlook.com (2603:10a6:20b:37a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Sat, 14 Dec
- 2024 12:06:13 +0000
-Received: from PR3PR09MB5411.eurprd09.prod.outlook.com
- ([fe80::4b11:ef50:8555:59fc]) by PR3PR09MB5411.eurprd09.prod.outlook.com
- ([fe80::4b11:ef50:8555:59fc%7]) with mapi id 15.20.8251.015; Sat, 14 Dec 2024
- 12:06:13 +0000
-From: Adrian Vladu <avladu@cloudbasesolutions.com>
-To: Roman Kisel <romank@linux.microsoft.com>, Saurabh Sengar
-	<ssengar@linux.microsoft.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "ssengar@microsoft.com" <ssengar@microsoft.com>
-Subject: Re: [PATCH] tools: hv: Fix cross-compilation
-Thread-Topic: [PATCH] tools: hv: Fix cross-compilation
-Thread-Index: AQHbTG/a1raMAEzCgEqnFkePb4bJTLLkfAcAgAEri4E=
-Date: Sat, 14 Dec 2024 12:06:13 +0000
-Message-ID:
- <PR3PR09MB5411DC88FF320011562BA32CB0392@PR3PR09MB5411.eurprd09.prod.outlook.com>
-References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
- <08380797-4dea-4dc3-9312-7e4c69090cdc@linux.microsoft.com>
-In-Reply-To: <08380797-4dea-4dc3-9312-7e4c69090cdc@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cloudbasesolutions.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PR3PR09MB5411:EE_|AS8PR09MB5401:EE_
-x-ms-office365-filtering-correlation-id: 0cd660bb-945d-41a9-76d9-08dd1c37b453
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?SCRsRRHNvkZ86m9krxspB3S3D1tcry9oSA9H4XT87FUJoKmV3D39Qtbo8+?=
- =?iso-8859-1?Q?oGf+CVtezIWZwUIRxHhRV+0r2+n8FBi+cTN3d4DJL59zNMnwGFSE7eW3G8?=
- =?iso-8859-1?Q?G0en212oY3LY6zGtPgu3bfZ9F98ybTv/qYDXemblaTNVXFNbvbmqfNxr5P?=
- =?iso-8859-1?Q?7gJkzXb7fsRv9nFNt7X+w7V8a7EFa2/fLx94IvsYYsfRHT0ZqoP09ZnROP?=
- =?iso-8859-1?Q?Gd6kv1Gn0x2osVogE9Lc3X4XHMcpnyA6md8GgA9nr0bbPs3Q7HzdsqO6Qu?=
- =?iso-8859-1?Q?Xhtg4Oo6vlQIIWcW1OGIgiry6dd3CZ9qZ+5SBUYloUfC05IPDA+xwImlL5?=
- =?iso-8859-1?Q?luJL3JOqXLjFNcKXWrznS6248zAmwnVQ8bcbk/NAYZvNps8w/yqoL4Npsr?=
- =?iso-8859-1?Q?nXydU9zxDxz+C4pvP+SRn1fu2/i4EjzHQ7jbXX+OjhZNRek6XYtiHagrUi?=
- =?iso-8859-1?Q?eawevhw7xrfrLoj+cJ2X78IBAZ0GHLLfIfVthQgZtMzbz2mtrWUtHcZvZO?=
- =?iso-8859-1?Q?7CFntIblckEDrLHzSnQddwE/YOvPpqQv1U2z4GidzEj5LXrBBr3/LWCzCC?=
- =?iso-8859-1?Q?egIiUuB11wXtJIn/djhadyi6UsRnunj3Ys0XQW/wKzwUAyBeH1blkRMb5R?=
- =?iso-8859-1?Q?Rfj/22RqRt1zxj/LeZcj7u2UbjoEQlXioL6sKccmgQnGiXBTA4kfMKohL0?=
- =?iso-8859-1?Q?eBJS3MCvoyrkv9+n1iZgVL775LpipjRzPtjxpNUYPRLGrIawpAwZI7CmT6?=
- =?iso-8859-1?Q?YRxhdInE0rCrz0K6MN20A/6nJn2pvxC2C9+pfJUlVCjW2ykOyomDt/cqBD?=
- =?iso-8859-1?Q?UbvFCMTEPYGlOStOo5uvgqYIZCkXMmIhTnVpdFr8D2ocj5VsN6abHwqmVG?=
- =?iso-8859-1?Q?0svsCX69P1TJHvh2XWbfwxtZUa1JR5hSzREBbmBSScGGMchOoxIm6FoU7a?=
- =?iso-8859-1?Q?30zezJp047OT/thF7QFuHymi7/iLCuZJa7Nsy9j3iTgc0TKpNk0cS/w8sH?=
- =?iso-8859-1?Q?QS4lzLrAWKiJT7I8q2bb92DSdDSmvTJ5SxgGke74OKkgpuJ8hJyF2qvbKg?=
- =?iso-8859-1?Q?0mlT/ohyRd7UQYqS3rJEWiA5oqSMWZX+MCDMKCIQXryEEEN12dK44ecUYT?=
- =?iso-8859-1?Q?8slASgeHF6I023kya81KAEk7K4OH0lBaTCOt0m8upSOKKP1og8Jt0gxDQB?=
- =?iso-8859-1?Q?UcPa8HCGFc5obDx6bAbsK9W7KyxWiV2ypajHh+yUnyjdzOuhj2StJ4E9UJ?=
- =?iso-8859-1?Q?9jpNRhkUhTdIcvZFqL20ogTlRvGb27o9YluUKD0cIsRvMs2v82LfndrHTW?=
- =?iso-8859-1?Q?J07xapPrO66Rk8MIbgcYDFMrfMw5TECjCqBFLCxY+7UyUxaL3CWaB0n35p?=
- =?iso-8859-1?Q?i6F7VvE83CNmR/UMOkly875XKX23Bon7s3TKcjSEIQjzU7Gm6An9ibB08D?=
- =?iso-8859-1?Q?gAvIxzck80ANZMRS/vEZlTma1B0Xj+MSOdgiAGnFueUAHj9vFtYBwkLykK?=
- =?iso-8859-1?Q?iBXsfQzoifHMfh/G29Ci68?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR3PR09MB5411.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?W4ZArdXhB54Ym54UcNwH1k4thO8yKzc+qsaKfe2DUNhRGgjNVbPOuuBGR5?=
- =?iso-8859-1?Q?rfX/5qQPXYDpJZREqsGshAKOijk5ksuFHjnpBZYXjKXPLYF/arKJHpq6ZG?=
- =?iso-8859-1?Q?qeW8/y2i26qmI6XSzRPc0Fje+4LEVV7IJZJXzxpiVvN3IDluoxjxjjK0fZ?=
- =?iso-8859-1?Q?usU2RJVphg1lnYP7+MC66YX470Z9aUJL/lEWBIoLzC501wlnTYN3PIzL6q?=
- =?iso-8859-1?Q?oqaSCA7oXsRgXnpSp5blW+JYkTlDlhEQvRGdvKsWZUbivzrf04/moKSzba?=
- =?iso-8859-1?Q?7yhUQipi9bugCdWhiu+HWVEiFlxAdIJ/wIy9fRj45RGPd4DN/Chg6KiTdU?=
- =?iso-8859-1?Q?8Si9YaCZgDQzb8yhs5qPwtgkNVxns0eyPfzfFLwfYtOiSdY/5RxfsvzzxJ?=
- =?iso-8859-1?Q?0i8ugzEH46KrKYpUesQtyu95PZdVIDCrIwlyd+Czzsl6T/Dbs/ugDTYzZy?=
- =?iso-8859-1?Q?E3fr7GzGd/Azh4qgslKvh3Jogz8SiNT7Kac8TW8PLpni6g5JILQrxVcd/8?=
- =?iso-8859-1?Q?j8xhVEKOQQgAcx053ZWKMIB9MzeZMlUGixY85NM2LbwWnfKmHQfzbMz7qA?=
- =?iso-8859-1?Q?rrgYBZajTNV5yzLW7Z+OT/CX2nzezW6WtXzEWX8hd96T6xXDDJ2Hij4VyQ?=
- =?iso-8859-1?Q?xAMchO9t4P1XYpk/mWGpxkygj3dF8LHweNa6V28xg0T0Vd2yvffY6tm9Xd?=
- =?iso-8859-1?Q?BhM0mBMaaSZqcwD5oIyD84N9khCNM8wX3a1YBmcN4q5d6hvoeIRAwbMpbf?=
- =?iso-8859-1?Q?dsrtS8o+3xnP/60ABk7zu85COm18zo5e0bT8QwAJ0VUmfNu/LD5jgwhnBD?=
- =?iso-8859-1?Q?1/zoL12yKKHUI8hzjOBKQk1yBE+iiyX27TOa7afa+AfT/T6zCTByUFATPo?=
- =?iso-8859-1?Q?SssUjJlbXkE65knz5/LkHcNhL2w/atS+UPtCQ9tzjlhBYc/knNy1KMarzj?=
- =?iso-8859-1?Q?XOTaRYFXHpS82IrEiajoRxGz/BIC1sDRqBKalWP4Z3OYYC4Dk2N1U4I2Hr?=
- =?iso-8859-1?Q?PocScJlqM3rDA7n1aLDJ8ggzZUvTvno7DrY5opShkAn0o19qh7SDfY7GSc?=
- =?iso-8859-1?Q?vTt1KLHrGMcmLhOv0BLqJWWN8aWlk+ra7wvi3kkLQ7ia7nm+iANx8WKP+9?=
- =?iso-8859-1?Q?6bGE2kSUG2vmtxfASvIzGZKnq7FAuaYg1kI5ZqiCN1OpsPPe6bw/p8y9b8?=
- =?iso-8859-1?Q?GyCmIWyMEhHWuS8EdsekK2Sl/0vzgG82sf8ILcGrHDeGhK3rTqU5CWyCyP?=
- =?iso-8859-1?Q?0Y/GyM7MRGm2U83k/l/Xw0gCxbS/Gw9ozJXDZEJ9RiIHLuWVp4b/PG+BhY?=
- =?iso-8859-1?Q?vljGhXzctjFvjPtLj5HAo470DFAQaana+/27YF0HYPweF38ehIB7Op2f2H?=
- =?iso-8859-1?Q?aCt+UTDvBharTGLTG3FItrh82Q2QoZ/fx1JDTFOki+y3ecWB1PKzB4RDqk?=
- =?iso-8859-1?Q?rUlpZQ/th32iXtzlOvnYCqCXGojaVf1p1ba1rGsD+NXV8asDZDQMEIS5S+?=
- =?iso-8859-1?Q?arq5mKMcUqjOh1xgpOCnPPjffCRiaCmH2fo5vrO+SaCWI/yba47BMMf2BW?=
- =?iso-8859-1?Q?hVzaipusO2A1Ndjp8sMRRplDRWIlMtDuBxorFaafq0b17n3lZe09N34JOL?=
- =?iso-8859-1?Q?XuUO3/MGVoXpI8O/Ihc41UjojvVdll8H7AUZfDISl8NNr4acaxSm55Jw?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20230601; t=1734177979; x=1734782779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lj7TAViOyhM5Tz9DtHTaXE0RXb+8s+NSvyJXc3PyvFA=;
+        b=azbJc21OHuv+GpOolYb/6z+DKN53ZUH7NkgCJ8X/ebsw4fN1DSvkADPIbOUWnL3Rqz
+         4XmAqGmqYhbPsSvtcFtu3DCFvB44x9Czl69FWovmwNqaVSb+Tp+FpByd9SDMALfaiVoH
+         UwtUpBreWKClI/03BrW4QmxlhGC7JmpEl9+0uCfO6NekoN3+kV+jKi9kjSVDvPN1aNFX
+         IPk0sUhl9wOrZylG51dFDT0EVaYbaXFDcBKf8xYGbMgj1a6+BlVOR/9OjhqwI59FPEw2
+         W+OlPk5WvD1jvkP6ZvFPl4AG2Mr87ei5K5+vRWJCzoETGx1ri/96wByurwr+Py72Bj+D
+         v1TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734177979; x=1734782779;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lj7TAViOyhM5Tz9DtHTaXE0RXb+8s+NSvyJXc3PyvFA=;
+        b=p14Mq/j8mc7eEx6SbgpKulDxxBXWdu7iLBwlJbvFs7dEbs//AjKx2b4vLnlrNA1ulR
+         dLO6eyYOOKR/fVW9JyEFeU6sjfiOB9L8Qpd9wb3bPmDkcLwUVbgBZIR9QQYPnMVHROCE
+         JXJt9GT9g9yZNbsExT6n+5wKgfGubrQ8Zaylx8vljA5TbWrfuXxHti2jNu/CQe23neOC
+         HXos9qwu+Q/lN0T8gbuC5dJm5REZD3eH8xTn/qo0SQfqQnHZ7QzI+VLmHscbhYI7el6D
+         85ncjlrn1lmL42CQium4G7jzrb6RakXNCK+Xs6G7daplAGZ/x6K7maLAP5wHmREzzkA9
+         CkrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVogOGIdaUg20zlaW/ci43iFZUX+n9t7cxqPovlvVt2nn1BnIDgi4SAfww058tG6GOJpjATRYzSvVW1@vger.kernel.org, AJvYcCWYm6iT0i7IWV12QuQ8zPKbhkTyAHIzwHTN46Xi/oXOJiRUvKDL+NzhwffsFU9R7rFH2432d3XIXk5Uquij@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzo+Uspkfsv2X6Txx+1Ab2yp4Q0OmS1u6YwSjGDibDanqQg78J
+	KQHafU/kDkMnAXnRH3pC558eknMrf8f+YO8eGrbheTBfEnO/D182
+X-Gm-Gg: ASbGncsoPrUSbw1+ZSQFFz1OlD1aHFzooDWFTBR+uImAob0m5+u8QEpxv4k/2MPEc78
+	xAwUmK8jKcuyXAEsMJb2s1++kMUF+7C+vi6cewRErsuyz96uwPxsu2LNVVuhCZfF+PmZJy8MhGl
+	0JORkBl125GuzPWI+zAMi8Efst41m0Om06SscJI9AsTc8DYekKawzSV1Mp1cYt86+yXj1gxWQz8
+	RIn8CJcxlTZoo2+MlzfjhhLJgvF0SS+phtEqOmxcDTOvvguNc6lV0tQnFNH4LfTEdHj
+X-Google-Smtp-Source: AGHT+IGfT/JSldciDYB6xIhVrdHrFi4SkBM0ogEz4ga6uzF6VHrATNJ4Iwm9FIoOV/SLO9gRjsnSiA==
+X-Received: by 2002:a05:6402:3808:b0:5d4:35c7:cd7a with SMTP id 4fb4d7f45d1cf-5d63c318fd5mr13274071a12.10.1734177978997;
+        Sat, 14 Dec 2024 04:06:18 -0800 (PST)
+Received: from [192.168.31.111] ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ab5198sm909183a12.8.2024.12.14.04.06.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 04:06:18 -0800 (PST)
+Message-ID: <0fdc56cc-c912-45c8-b90d-e5bc1d7c1e35@gmail.com>
+Date: Sat, 14 Dec 2024 14:06:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cloudbasesolutions.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PR3PR09MB5411.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cd660bb-945d-41a9-76d9-08dd1c37b453
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2024 12:06:13.0307
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c94c12d7-c30b-4479-8f5a-417318237407
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6FSAw8mBWoTwBzLATHXLvsVz7NRWSgU/lVXJjT3p1/rLLT/J7aPrtBjQjUMEyQ6RzIJzGIF6f2uWuxc8nmHwm14XP1Uv/ulgHHniJpDQ7aQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR09MB5401
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
+ controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+ <f08b068e-bc6b-4d9d-9839-370883309b88@kernel.org>
+ <2a7f71b6-0967-40ee-9d0f-d7144eafcd5a@gmail.com>
+ <c0d58c4d-e3dc-445d-93c4-a2aed07af143@kernel.org>
+Content-Language: en-US
+From: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <c0d58c4d-e3dc-445d-93c4-a2aed07af143@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks for the refined patch, much appreciated.=0A=
-For Flatcar Container Linux, we would like to use 6.12 kernel, would be gre=
-at to have this fix backported to the stable branch 6.12.=0A=
-=0A=
-________________________________________=0A=
-From:=A0Roman Kisel <romank@linux.microsoft.com>=0A=
-Sent:=A0Friday, December 13, 2024 8:11 PM=0A=
-To:=A0Saurabh Sengar <ssengar@linux.microsoft.com>; kys@microsoft.com <kys@=
-microsoft.com>; haiyangz@microsoft.com <haiyangz@microsoft.com>; wei.liu@ke=
-rnel.org <wei.liu@kernel.org>; decui@microsoft.com <decui@microsoft.com>; l=
-inux-hyperv@vger.kernel.org <linux-hyperv@vger.kernel.org>; linux-kernel@vg=
-er.kernel.org <linux-kernel@vger.kernel.org>=0A=
-Cc:=A0ssengar@microsoft.com <ssengar@microsoft.com>; Adrian Vladu <avladu@c=
-loudbasesolutions.com>=0A=
-Subject:=A0Re: [PATCH] tools: hv: Fix cross-compilation=0A=
-=A0=0A=
-Thanks, LGTM!=0A=
-=0A=
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>=0A=
-=0A=
-On 12/12/2024 12:28 AM, Saurabh Sengar wrote:=0A=
-> Use the native ARCH only incase it is not set, this will allow=0A=
-> the cross complilation where ARCH is explicitly set. Add few=0A=
-> info prints as well to know what arch and toolchain is getting=0A=
-> used to build it.=0A=
->=0A=
-> Additionally, simplify the check for ARCH so that fcopy daemon=0A=
-> is build only for x86_64.=0A=
->=0A=
-> Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio d=
-river")=0A=
-> Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>=0A=
-> Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbo=
-x-debian-v2/=0A=
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>=0A=
-> ---=0A=
->=A0=A0 tools/hv/Makefile | 14 +++++++++++---=0A=
->=A0=A0 1 file changed, 11 insertions(+), 3 deletions(-)=0A=
->=0A=
-> diff --git a/tools/hv/Makefile b/tools/hv/Makefile=0A=
-> index 34ffcec264ab..d29e6be6309b 100644=0A=
-> --- a/tools/hv/Makefile=0A=
-> +++ b/tools/hv/Makefile=0A=
-> @@ -2,7 +2,7 @@=0A=
->=A0=A0 # Makefile for Hyper-V tools=0A=
->=A0=A0 include ../scripts/Makefile.include=0A=
->=A0=A0=0A=
-> -ARCH :=3D $(shell uname -m 2>/dev/null)=0A=
-> +ARCH ?=3D $(shell uname -m 2>/dev/null)=0A=
->=A0=A0 sbindir ?=3D /usr/sbin=0A=
->=A0=A0 libexecdir ?=3D /usr/libexec=0A=
->=A0=A0 sharedstatedir ?=3D /var/lib=0A=
-> @@ -20,18 +20,26 @@ override CFLAGS +=3D -O2 -Wall -g -D_GNU_SOURCE -I$(O=
-UTPUT)include=0A=
->=A0=A0 override CFLAGS +=3D -Wno-address-of-packed-member=0A=
->=A0=A0=0A=
->=A0=A0 ALL_TARGETS :=3D hv_kvp_daemon hv_vss_daemon=0A=
-> -ifneq ($(ARCH), aarch64)=0A=
-> +ifeq ($(ARCH), x86_64)=0A=
->=A0=A0 ALL_TARGETS +=3D hv_fcopy_uio_daemon=0A=
->=A0=A0 endif=0A=
->=A0=A0 ALL_PROGRAMS :=3D $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))=0A=
->=A0=A0=0A=
->=A0=A0 ALL_SCRIPTS :=3D hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifco=
-nfig.sh=0A=
->=A0=A0=0A=
-> -all: $(ALL_PROGRAMS)=0A=
-> +all: info $(ALL_PROGRAMS)=0A=
->=A0=A0=0A=
->=A0=A0 export srctree OUTPUT CC LD CFLAGS=0A=
->=A0=A0 include $(srctree)/tools/build/Makefile.include=0A=
->=A0=A0=0A=
-> +info:=0A=
-> +=A0=A0=A0=A0 @echo "---------------------"=0A=
-> +=A0=A0=A0=A0 @echo "Building for:"=0A=
-> +=A0=A0=A0=A0 @echo "CC $(CC)"=0A=
-> +=A0=A0=A0=A0 @echo "LD $(LD)"=0A=
-> +=A0=A0=A0=A0 @echo "ARCH $(ARCH)"=0A=
-> +=A0=A0=A0=A0 @echo "---------------------"=0A=
-> +=0A=
->=A0=A0 HV_KVP_DAEMON_IN :=3D $(OUTPUT)hv_kvp_daemon-in.o=0A=
->=A0=A0 $(HV_KVP_DAEMON_IN): FORCE=0A=
->=A0=A0=A0=A0=A0=A0=A0 $(Q)$(MAKE) $(build)=3Dhv_kvp_daemon=0A=
-=0A=
---=0A=
-Thank you,=0A=
-Roman=0A=
+Hi Krzysztof,
+
+On 12/13/24 3:55 PM, Krzysztof Kozlowski wrote:
+> On 13/12/2024 10:42, Markuss Broks wrote:
+>> Hi Krzysztof,
+>>
+>> On 12/13/24 9:49 AM, Krzysztof Kozlowski wrote:
+>>> On 12/12/2024 22:09, Markuss Broks wrote:
+>>>> Add a driver for Samsung SPEEDY serial bus host controller.
+>>>> SPEEDY is a proprietary 1 wire serial bus used by Samsung
+>>>> in various devices (usually mobile), like Samsung Galaxy
+>>>> phones. It is usually used for connecting PMIC or various
+>>>> other peripherals, like audio codecs or RF components.
+>>>>
+>>>> This bus can address at most 1MiB (4 bit device address,
+>>>> 8 bit registers per device, 8 bit wide registers:
+>>>> 256*256*16 = 1MiB of address space.
+>>>>
+>>>> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+>>>> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+>>>> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+>>>> ---
+>>>>    drivers/soc/samsung/Kconfig               |  13 +
+>>>>    drivers/soc/samsung/Makefile              |   2 +
+>>>>    drivers/soc/samsung/exynos-speedy.c       | 457 ++++++++++++++++++++++++++++++
+>>>>    include/linux/soc/samsung/exynos-speedy.h |  56 ++++
+>>>>    4 files changed, 528 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>>>> index 1a5dfdc978dc4069eb71c4e8eada7ff1913b86b3..a38150fc9999ded1e1e93e2a9ef43b88175d34bd 100644
+>>>> --- a/drivers/soc/samsung/Kconfig
+>>>> +++ b/drivers/soc/samsung/Kconfig
+>>>> @@ -49,6 +49,19 @@ config EXYNOS_PMU_ARM_DRIVERS
+>>>>    	bool "Exynos PMU ARMv7-specific driver extensions" if COMPILE_TEST
+>>>>    	depends on EXYNOS_PMU
+>>>>    
+>>>> +config EXYNOS_SPEEDY
+>>>> +	tristate "Exynos SPEEDY host controller driver"
+>>>> +	depends on ARCH_EXYNOS || COMPILE_TEST
+>>>> +	depends on OF
+>>>> +	depends on REGMAP_MMIO
+>>>> +	help
+>>>> +	  Enable support for Exynos SPEEDY host controller block.
+>>>> +	  SPEEDY is a 1 wire proprietary Samsung serial bus, found in
+>>>> +	  modern Samsung Exynos SoCs, like Exynos8895 and newer.
+>>> I did not check that much but this looks like 1wire for which we have
+>>> subsystem. Please investigate more and figure out the differences.
+>> This is not compatible with Dallas Semi 1-Wire bus. There are several
+>> differences but the phy level is not compatible, looking at the Samsung
+>> patent. [1] The most obvious difference is that 1-Wire is discoverable,
+>> and this bus isn't. I'm pretty sure this is Samsung's own solution to a
+>> serial interface through only one wire.
+>>
+> It's fine then.
+>
+>>>> +
+>>>> +	  Select this if you have a Samsung Exynos device which uses
+>>>> +	  SPEEDY bus.
+>>>> +
+>>>> +
+>>>> +/* SPEEDY_PACKET_GAP_TIME register bits */
+>>>> +#define SPEEDY_FIFO_TX_ALMOST_EMPTY			(1 << 4)
+>>>> +#define SPEEDY_FIFO_RX_ALMOST_FULL			(1 << 8)
+>>>> +#define SPEEDY_FSM_INIT					(1 << 1)
+>>>> +#define SPEEDY_FSM_TX_CMD				(1 << 2)
+>>>> +#define SPEEDY_FSM_STANDBY				(1 << 3)
+>>>> +#define SPEEDY_FSM_DATA					(1 << 4)
+>>>> +#define SPEEDY_FSM_TIMEOUT				(1 << 5)
+>>>> +#define SPEEDY_FSM_TRANS_DONE				(1 << 6)
+>>>> +#define SPEEDY_FSM_IO_RX_STAT_MASK			(3 << 7)
+>>>> +#define SPEEDY_FSM_IO_TX_IDLE				(1 << 9)
+>>>> +#define SPEEDY_FSM_IO_TX_GET_PACKET			(1 << 10)
+>>>> +#define SPEEDY_FSM_IO_TX_PACKET				(1 << 11)
+>>>> +#define SPEEDY_FSM_IO_TX_DONE				(1 << 12)
+>>>> +
+>>>> +#define SPEEDY_RX_LENGTH(n)				((n) << 0)
+>>>> +#define SPEEDY_TX_LENGTH(n)				((n) << 8)
+>>>> +
+>>>> +#define SPEEDY_DEVICE(x)				((x & 0xf) << 15)
+>>>> +#define SPEEDY_ADDRESS(x)				((x & 0xff) << 7)
+>>>> +
+>>>> +static const struct of_device_id speedy_match[] = {
+>>>> +	{ .compatible = "samsung,exynos9810-speedy" },
+>>>> +	{ /* Sentinel */ }
+>>>> +};
+>>>> +MODULE_DEVICE_TABLE(of, speedy_match);
+>>> This is never at top of the file, but immediately before driver
+>>> structure. Look at other drivers.
+>> The function speedy_get_device uses this to match the compatible, do I
+>> just leave the prototype here?
+>
+> 1. Entire speedy_get_device() is unused so it will be removed.
+> 2. Even if it stays, speedy_get_device() is not supposed to match
+> anything. How are you supposed to use Samsung PMIC on different
+> controller? These things should not be tied.
+
+
+speedy_get_device was my approach to not make it a proper bus driver, 
+since I've thought it would be overkill for the purposes. 
+speedy_get_device() is supposed to be called by a child device through 
+the devm_ helper, and what it does is: it gets the parent node, verifies 
+if that node matches the speedy compatible, then if it does it gets the 
+platform_device and crafts a new struct speedy_device for the child 
+device to use. This approach is perhaps hacky, but it helps simplify 
+things a bit by not implementing the whole bus logic properly, let me 
+know if it's too hacky...
+
+Actually, one of my other concerns is that S2MPS18 has both SPEEDY and 
+I2C interface for communicating with host, and with current approach 
+it's going to be hacky if we want to support both. I've not seen S2MPS18 
+used with I2C on any real boards, but it should really be trivial to 
+support both, and with current hacky approach it might be not trivial at 
+all...
+
+>
+>
+>>>> +
+>>>> +static const struct regmap_config speedy_map_cfg = {
+>>>> +	.reg_bits = 32,
+>>>> +	.val_bits = 32,
+>>>> +};
+>
+> ...
+>
+>>>> +	cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_READ |
+>>>> +	      SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
+>>>> +
+>>>> +	int_ctl = SPEEDY_TRANSFER_DONE_EN | SPEEDY_FIFO_RX_ALMOST_FULL_EN |
+>>>> +		  SPEEDY_RX_FIFO_INT_TRAILER_EN | SPEEDY_RX_MODEBIT_ERR_EN |
+>>>> +		  SPEEDY_RX_GLITCH_ERR_EN | SPEEDY_RX_ENDBIT_ERR_EN |
+>>>> +		  SPEEDY_REMOTE_RESET_REQ_EN;
+>>>> +
+>>>> +	ret = speedy_int_clear(speedy);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Wait for xfer done */
+>>>> +	ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, int_status,
+>>>> +				       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	ret = regmap_read(speedy->map, SPEEDY_RX_DATA, val);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	ret = speedy_int_clear(speedy);
+>>>> +
+>>>> +	mutex_unlock(&speedy->io_lock);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +int exynos_speedy_read(const struct speedy_device *device, u32 addr, u32 *val)
+>>>> +{
+>>>> +	return _speedy_read(device->speedy, device->reg, addr, val);
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(exynos_speedy_read);
+>>> Nope, drop, unused.
+>> This is intended to be used with other device drivers, this driver in
+>> itself doesn't do anything, it only configures the controller and makes
+>> it ready for transmitting data, it's other drivers that will come (e.g.
+>> S2MPS18 PMIC, which uses SPEEDY for communication with the SoC) that
+>> will utilize those functions.
+> Post entire series, so we see users of this API. If you post API without
+> users, it won't be accepted simply because there are no users and we do
+> not want dead, unused code.
+>
+> Anyway we must see how you intend to use that interface to properly
+> review it.
+
+
+Sure!
+
+>
+>>>> +
+>>>> +/**
+>>>> + * _speedy_write() - internal speedy write operation
+>>>> + * @speedy:	pointer to speedy controller struct
+>>>> + * @reg:	address of device on the bus
+>>>> + * @addr:       address to write
+>>>> + * @val:        value to write
+>>>> + *
+>
+> ...
+>
+>>>> +}
+>>>> +
+>>>> +static struct platform_driver speedy_driver = {
+>>>> +	.probe = speedy_probe,
+>>>> +	.driver = {
+>>>> +		.name = "exynos-speedy",
+>>>> +		.of_match_table = speedy_match,
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +module_platform_driver(speedy_driver);
+>>>> +
+>>>> +MODULE_DESCRIPTION("Samsung Exynos SPEEDY host controller driver");
+>>>> +MODULE_AUTHOR("Markuss Broks <markuss.broks@gmail.com>");
+>>>> +MODULE_LICENSE("GPL");
+>>>> diff --git a/include/linux/soc/samsung/exynos-speedy.h b/include/linux/soc/samsung/exynos-speedy.h
+>>>> new file mode 100644
+>>>> index 0000000000000000000000000000000000000000..b2857d65d3b50927373866dd8ae1c47e98af6d7b
+>>>> --- /dev/null
+>>>> +++ b/include/linux/soc/samsung/exynos-speedy.h
+>>> Drop the header, not used.
+>> Same here, please clarify how this should be handled. This driver
+>> implements the devm_speedy_get_device and read/write functions for its
+>> child devices in that header, future drivers for e.g. PMIC would use
+>> this header and call devm_speedy_get_device to get a speedy_device
+>> pointer and then use read/write functions to read/write from the bus.
+> This needs to be proper bus with proper speedy_driver clients. See how
+> other buses - struct bus_type. Recent example of bus using platform
+> drivers for devices would be pwrseq (power/sequence). Not so old other
+> bus using its own xxx_driver for devices could be cxl or ffa (arm_ffa).
+> This current non-bus approach, could also work if this is really Samsung
+> specific. See memory/ for examples of MMIO buses and MMIO clients.
+
+
+Let me know if the current approach is acceptable or not, it is fine in 
+my eyes if it needs to be a full-fledged bus driver, but in my opinion 
+it's a lot of effort and additional logic for a niche samsung-specific 
+usecase. Although I've heard that they're still using SPEEDY in newer 
+devices as well, perhaps for more advanced purposes than just an 
+interface for PMIC, which would mean additional things to consider...
+
+I'll be glad to hear how you think it should be implemented, because I 
+myself do not know a lot about kernel drivers like this...
+
+>
+> I don't know good examples of non-MMIO buses not using bus_type and I am
+> not sure whether this is accepted in general. I'll ask on IRC, maybe
+> someone will give some hints.
+>
+>
+> Best regards,
+> Krzysztof
+
+Thanks,
+
+- Markuss
+
 
