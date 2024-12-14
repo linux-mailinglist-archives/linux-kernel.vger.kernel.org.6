@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-446174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBCE9F20A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 20:56:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2242E9F20AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D401E166DD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2DA0166F61
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 20:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB01C1B0F22;
-	Sat, 14 Dec 2024 19:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623C21B0F33;
+	Sat, 14 Dec 2024 20:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnS1YUX5"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tB6w25kT"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC2B19D07C;
-	Sat, 14 Dec 2024 19:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A89DDA9
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 20:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734206173; cv=none; b=rxaYL4DLwnzUVOdhOv4iZtfW5Fls04F3A8T9SlDaVNO1Rf4WpCbYkX42vwsKaxXanz3vgjwndjHIPj1iv9ZQi+60QOEgwSGaqNPKsx9u1ZhoNLImZQ4vmTMjVltGK5WGfupGzak1O7G5zgOe7HMDjkouYyKU0MCo36tAkS5gGHw=
+	t=1734207851; cv=none; b=XS/YTwKE9RBCsxUfTECpSyseTsBpf7ciqwoyEi7EkZAMRaAury4ZrpYaBeI+k9jG4VEmX0MNZ0ybvqjaga/n8GHCiuBdZl5ZbY4A9nV0o51GxAybMY2apr0VCtBEkLoe5Q5yIyllb9omftEYTYlqxX6sS9hLP5e8bJCvOLHrk4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734206173; c=relaxed/simple;
-	bh=2/PC+Vj7HoKTgLvvtazGZWIYrZFD+gplw0Wi3F0H3GY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pQtMkhNN1Upufv+bzJnbJMLapGyS2+MOyyqGO0OaqGw/CM87X26L9XvOb5E3+eW1kiI2MFEviPv5azu4myuDQZsQwcdjrqAvBZYz+Ve6P/dvYPqZ0G4tIjmZMRCAlp/eYm5xCqac1dRWyOuFxFSqbDKF7XzcsOJaAyvcrGndONY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnS1YUX5; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54024ecc33dso3107798e87.0;
-        Sat, 14 Dec 2024 11:56:11 -0800 (PST)
+	s=arc-20240116; t=1734207851; c=relaxed/simple;
+	bh=zofDod8j+ztP7THAIYRKQRjOLssFMAflJyxP2FRPQZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nqCZbujaXdDlhMkZ+kBHBoWiCTxEUo1z893fRQqZow/Q3vL+lEUEat3m+TnK97UBmKuk1la/Gb3fTZSO1SEw9s8s02NjQfK6pi88nbmF0DtZJNzcR23WVJuQTCZahnkYQ63LC9SYjBbJZc/4AhQnEHPOAmE0GtN7xRq5363/7zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tB6w25kT; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so758266fac.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 12:24:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734206169; x=1734810969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z4moWdmb49UZDL++57SdlyR9ZwMXMyBGAAH7KseBthQ=;
-        b=ZnS1YUX5XK6d0Jw7OcWPO3yjzGX01BYkAl842EiA3mQkXl/OSZ9CCA6Vl0ZegZnkIF
-         RY6dZEOPDnZoiOgPnGufgOQzmfWXXmTZKIaj/EY8mKZRl1tqQ6udossfXsVzWr3Zcogu
-         wRjf6h8LXuvcp4OOTLuRWcpSGz0qWsCvOOKxqEeQ/jITr89AKXYSDrsNko9lsAr/L0Rn
-         ROBKF8Pzp9pIIB1XJ+PLFu1CaaBAjUMU8g5EXXFf65O1Efiopf1b1WTR08W6tLDJaWyx
-         B63bcmtzIvtOq1ROQZFmKAvaba+9PSeQRNMI96nUrEVtAzYFg4yVkqlcDj59XcG62B/V
-         yZNw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734207848; x=1734812648; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SrkjOPWzOWxIOLJtRQcSvC8VCKadtMcoPJW8JEroxUE=;
+        b=tB6w25kTXyEjVAJFv7LAnx5MscDaMuvhklAmSGFOW4xfo8yQZ9FINMBXbbvVDRaBOH
+         lwI/v4RadsGLa0mTjYJfh3k8KUH3zOeryJQRe0h3K27bjNByC6QnxhI5zpjP77q04vf9
+         bQaBg7v4ZfL80G0i0UnIlyNo/SIJ7QTsrnHa1mEnfDyyW0awlkV5qb5/7twwfdvIODs8
+         4iP7xpDQzsix29evUgtAOwglu/+6In149R8uohTR939rzBXduR+K+jXsOZ+yHWv4qQVH
+         SwIvTmBxiPMWbyqCRFRFBZ7K/1sisUgyb+g+/pEruuWxyX+Ka+wIPAf7084JujWwGoRD
+         T5vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734206169; x=1734810969;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734207848; x=1734812648;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4moWdmb49UZDL++57SdlyR9ZwMXMyBGAAH7KseBthQ=;
-        b=PhE8G4erDJOGOZLAJbJcJ+cgwDeGwliBAUMieFwFqBt4w0J2feuXSyXZB+VLfWf20a
-         a1t++L965qW+rKhcb1F6c/Vqg5FbrDIsMhO41qNlTkjhjvAkNHutrWxym8aaFLuodHup
-         120ManeLec5plDNfPbJQPtRZXsbt9oPNqFr5STLGhdZmDaX1PIIQviOfTyNp73RFOneY
-         5X6OBV+CFcFSLv7V5zcqntbbHW9hBJFh7ERXcIRHnYzYPk3Lkc8o0ZIhOA1q+TQLbAIq
-         hVqsXJUaoG265LSvA8CeJRLF59zpx0xMyoyYJzmWuXJQhnZqYxH7vdT0AfpMntJESQce
-         Wu8w==
-X-Forwarded-Encrypted: i=1; AJvYcCU36GH+i+/Whx/s6UnmXgyknB6A9HUtn6XKlxFiquFi+nVwJKQKAzHd0gnfybEKo9jt+7Rqn9rle5FEDbo=@vger.kernel.org, AJvYcCWwvTH67HR5WkqldfLBA3he9nTuNmI/gGEGLyDg1t6/x7WKV9rfAdjtcV547p40GTGMx7T1JvMv@vger.kernel.org
-X-Gm-Message-State: AOJu0YygxKhExF8wnPrx1nmsolXOBm1HuiZBVyzYgipsQsmOa3f/vl3q
-	FH/Lq9CSbljFXtn6TyFbI0ZBVFaQEWw16qkY7jGwiziuyQ3Awkkp7oPang==
-X-Gm-Gg: ASbGncuAV7ApbCHfxz7SPTho8EK6I229CGMvQ0hoV16Fa11AyTJ1pvlFcpYxENXZlyX
-	8sLeQfAAAkmLqVqmOiQa8tZdE7OMM5JMlQevbDTjiOSy6n4L5YmB9e2N1B+B38vHl/cwZHBoLl6
-	7QBYZUg6DnmxTvekH7he0URnEUTNVhU4zEo8UJUc0FGNPNleqTWuxJiLkFARgjH67GqYB1p4H3J
-	vC0UmRTscJOXwuRzsWu2sDDKwhQmtmientvh8M0t+1eWcYbL41EphGLwp4=
-X-Google-Smtp-Source: AGHT+IF+V898aa8es++yx4jtxALz/gz5NZVNHRd80/3Ve/PFi0SUagDRAnW8ou4IejHJpmg34vVMoA==
-X-Received: by 2002:a05:6512:3189:b0:53f:8c46:42bc with SMTP id 2adb3069b0e04-5408fac7b0fmr2135432e87.2.1734206169262;
-        Sat, 14 Dec 2024 11:56:09 -0800 (PST)
-Received: from [192.168.0.91] ([188.242.176.155])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c2bd77sm298258e87.282.2024.12.14.11.56.05
+        bh=SrkjOPWzOWxIOLJtRQcSvC8VCKadtMcoPJW8JEroxUE=;
+        b=iUSX9vzdJcREJUGqY5OMIBvAA7xReFnsysyOdFL5lCgfDbl8tOQDAUqoxp+mmkLFZd
+         1lloKkwxm00rf8kocC+5PifpG1ISUEKp/icGreiyOB/J/6D2sJBBp3+V6qnqCKI9BWeH
+         ayld+k33fomOld6HKLsmFNu5EVPoMjXQiL/HfW8gBAfa7Qg4xP59pbQG7qX509arN9lX
+         O6bKztOeKR2932mk0+68asLcdPHzmToQMtsB2JGQCM6Nsjg7xgZk2F3ubSCU1l8dpvw8
+         Z9twv+yQ7zGC+woFPpMle5ZJNjMAvLszrf3S8nQl8XGjVPFPEmx8GsJ9RSY2taXF8yZZ
+         0ZWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUJ34kLSppgPrfWezpIMODWnLXDNsDWFxPCL/Z51hxyIvda2WU8jv90rZBtXZ9pp++8Fw9iJg6GNOkcQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbWIKN+zVSBTelfJV6k8xLKedcwV3JFmMRDQ+qoPpH5Zjn3O/7
+	meRE48Co2S2IFw/m3cY5XwLWKEi863/Uab7cA6CdBhOLR3STXCIcdxatoBd1OTA=
+X-Gm-Gg: ASbGncufD0cWDpVJX9Yf2ORG1oOUoMfAL42QTJzpfDs8p990Z66zGaghpV7n3hqw2UO
+	qedFSVN4RWJmZKd4jbOFXqx5DRXvz+uWmUHS0++uvnkhHvCRnSP5REukQCXtWcWkh0TBbyyMvc2
+	fn14JOeS16uGF+5kodqWAzwEt9xM01HRmqwIWGZ+TZ4PJMEz3TaTA2fztbapJEyXiVqzQ4XJVes
+	tbQYApxr7xMF5z5Y+m/oKrXqC3gKQvbT6S/tlEm+gajGjQzuKwi4c5xEQ7XYONB6380WnYHw4Hb
+	Jw+lpNJxFkpEmE9Hbw==
+X-Google-Smtp-Source: AGHT+IEzwHeZTPoi4etfNnGZeXD/roCPhCaM/ndaTdf2HRFNxeHbdaDaBvyiEJyZScfzW8J+9PK8yQ==
+X-Received: by 2002:a05:6870:15ca:b0:29e:43ce:a172 with SMTP id 586e51a60fabf-2a3ac867f5amr3376165fac.28.1734207848013;
+        Sat, 14 Dec 2024 12:24:08 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2a3d2541725sm724169fac.12.2024.12.14.12.24.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 11:56:07 -0800 (PST)
-Message-ID: <ce9055d7-7301-0abe-3609-3a4e2e7b1e5e@gmail.com>
-Date: Sat, 14 Dec 2024 22:58:24 +0300
+        Sat, 14 Dec 2024 12:24:07 -0800 (PST)
+Message-ID: <ebd71e3d-1902-402b-a84e-819b0976ba4b@baylibre.com>
+Date: Sat, 14 Dec 2024 14:24:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-From: Nikolai Zhubr <zhubr.2@gmail.com>
-Subject: Re: ext4 damage suspected in between 5.15.167 - 5.15.170
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-ext4@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, jack@suse.cz
-References: <CALQo8TpjoV8JtuYDH_nBU5i4e-iuCQ1-NORAE8uobpDD_yYBTA@mail.gmail.com>
- <20241212191603.GA2158320@mit.edu>
- <79af4b93-63a1-da4c-2793-8843c60068f5@gmail.com>
- <20241213161230.GF1265540@mit.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iio: dac: ad5791: ldac gpio is active low
+To: ahaslam@baylibre.com, jic23@kernel.org
+Cc: Michael.Hennerich@analog.com, robh@kernel.org, conor+dt@kernel.org,
+ krzk+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241106103824.579292-1-ahaslam@baylibre.com>
 Content-Language: en-US
-In-Reply-To: <20241213161230.GF1265540@mit.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241106103824.579292-1-ahaslam@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Ted,
-
-On 12/13/24 19:12, Theodore Ts'o wrote:
-> stable@kernel.org" to the commit description.  However, they are not
-> obligated to do that, so there is an auxillary system which uses AI to
-> intuit which patches might be a bug fix.  There is also automated
-> systems that try to automatically figure out which patches might be
-
-Oh, so meanwhile it got even worse than I used to imagine :-) Thanks for 
-pointing out.
-
-> Note that some hardware errors can be caused by one-off errors, such
-> as cosmic rays causing a bit-flip in memory DIMM.  If that happens,
-> RAID won't save you, since the error was introduced before an updated
-
-Certainly cosmic rays is a possibility, but based on previous episodes 
-I'd still rather bet on a more usual "subtle interaction" problem, 
-either exact same or some similar to [1].
-I even tried to run an existing test for this particular case as 
-described in [2] but it is not too user-friendly and somehow exits 
-abnormally without actually doing any interesting work. I'll get back to 
-it later when I have some time.
-
-[1] https://lore.kernel.org/stable/20231205122122.dfhhoaswsfscuhc3@quack3/
-[2] https://lwn.net/Articles/954364/
-
-> The location of block allocation bitmaps never gets changed, so this
-> sort of thing only happens due to hardware-induced corruption.
-
-Well, unless e.g. some modified sectors start being flushed to random 
-wrong offsets, like in [1] above, or something similar.
-
-> Looking at the dumpe2fs output, it looks like it was created
-> relatively recently (July 2024) but it doesn't have the metadata
-> checksum feature enabled, which has been enabled for quite a long
-
-Yes. That was intentional - for better compatibility with even more 
-ancient stuff. Maybe time has come to reconsider the approach though.
-
-> You got lucky because it block allocation bitmap location was
-> corrupted to an obviously invalid value.  But if it had been a
-
-Absolutely. I was really amazed when I realized that :-)
-It saved me days or even weeks of unnecessary verification work.
-
-> Otherwise, I strongly encourage you to learn, and to take
-> responsibility for the health of your own system.  And ideally, you
-> can also use that knowledge to help other users out, which is the only
-> way the free-as-in-beer ecosystem can flurish; by having everybody
-
-True. Generally I try to follow that, as much as appears possible.
-It is sad a direct communication end-user-to-developer for solving 
-issues is becoming increasingly problematic here.
-Anyway, thank you for friendly speech, useful hints and good references!
-
-Regards,
-
-Nick
-
-> helping each other.  Who knows, maybe you could even get a job doing
-> it for a living.  :-) :-) :-)
+On 11/6/24 4:38 AM, ahaslam@baylibre.com wrote:
+> From: Axel Haslam <ahaslam@baylibre.com>
 > 
-> Cheers,
+> On the example, the ldac gpio is flagged as active high, when in reality
+> its an active low gpio. Fix the example by using the active low flag for
+> the ldac gpio.
 > 
+> Fixes: baaa92d284d5 ("dt-bindings: iio: dac: ad5791: Add optional reset, clr and ldac gpios")
+> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> index 79cb4b78a88a..2bd89e0aa46b 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> @@ -91,7 +91,7 @@ examples:
+>              vrefn-supply = <&dac_vrefn>;
+>              reset-gpios = <&gpio_bd 16 GPIO_ACTIVE_LOW>;
+>              clear-gpios = <&gpio_bd 17 GPIO_ACTIVE_LOW>;
+> -            ldac-gpios = <&gpio_bd 18 GPIO_ACTIVE_HIGH>;
+> +            ldac-gpios = <&gpio_bd 18 GPIO_ACTIVE_LOW>;
+>          };
+>      };
+>  ...
+
+Hi Jonathan, any reason this one didn't get picked up yet?
 
