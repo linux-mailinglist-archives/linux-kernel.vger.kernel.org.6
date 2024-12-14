@@ -1,135 +1,320 @@
-Return-Path: <linux-kernel+bounces-445883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2029F1D14
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF679F1D19
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF48A7A057E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 06:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D071889609
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 07:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB48E13AA5D;
-	Sat, 14 Dec 2024 06:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341031420A8;
+	Sat, 14 Dec 2024 07:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="Biz0Kp73"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="KbmqNSY3"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF93D7EF09
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 06:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6ABE65
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 07:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734159442; cv=none; b=S+HxfBMU9SlrVMaAdqL23m3cPlPGCVJXbj7kFTSUdJgNJfuBnr2XqNBE1fXvVMeB6EWM0BIdWCxUnMg+V9i9dNxK4gX9tBAxEOkolPR9wu4N4NzODQzZ6zPdPKy1RhsoEF/J9LFoZPOYKLTo177NXL7lFb0tECsimluLmJP6vrg=
+	t=1734160330; cv=none; b=eoN7P+ShpWtVhmz3OmHazjk4/l9XHkpXdXwytwNpobdQKRl0A3ka9XwP7nQU7THr3g0mHfbylTJZVxTOCvbCvF+DO6YHq410HAhIQoKZZvYpbYmOI0trRRrKffIRVfXh+nUsGBnqaXvkhz+tJsVyhc2nwhSxrYDydIBSgsfn8Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734159442; c=relaxed/simple;
-	bh=s7Maksqyo1/cbgvd2H9KCJaNZwpklbS0ty8L690vreo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZjpsEHkh1Lhrlce1TTOe93DzLzTuYmkAiTC9/GSfBTouk/CyAv0cr5q3hEnJ9KQ/pEg2r3gDt5P2Ki9Mo7MiGymfJ/HsNrsj1IoPBndF6o3KbFO7LO02OgJoxyPv/r/0xIwOmWNFOMtQUOz8c8ydq9j0ZdoUqNkeNdL+EQ/zME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=Biz0Kp73; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso1623496a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 22:57:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1734159440; x=1734764240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=unpH/x6sT+wpQJiB0CaAbGxv+9w2ZHMovGzlygSlC2A=;
-        b=Biz0Kp73JnwyCisYgCuaJi2RAHrcSwyTQyVYPT7cstzmUjyeYch3KkYjYg5cJnQViM
-         T4EuHBCl8TZ25SV62ZhHTmpHo0Wn2A+HIS61JiDWJj6jHE1Mueljpq/unnXjilLUAGg7
-         eKLXxXMUE/oJNwTDIsggckKs3xcKrEBqD09m6VyxKXLQnCRGblezwzGe2xS6XNRvSPj+
-         doC+pJikdiyNXv+FF/1oZkqSJL5a8LKNVDJsJGEuaB1T4ztX9uRA6A5EeGG5vdDUYWd5
-         SAHVdcPeK1HOsHyHv5uB4ukfEDmFGHeWpVCJjFeVgItecAAKtgLQI6pQoFN2kBJ5PPIO
-         fDIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734159440; x=1734764240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=unpH/x6sT+wpQJiB0CaAbGxv+9w2ZHMovGzlygSlC2A=;
-        b=vYTNQ9fJsM7WXRFd1P0NKDEAR05IjpQKt6yeHVKo4HQ7AOPu0SEa4+ODyFfXBa9Kys
-         aTDsyyznLeolshEbEdPkvav0mC0rouwxbq3Rt9xE1pgMRMZeiZfyT6JB/Vl3CbanDHMy
-         oA57xWywLwajrBErIkvG29i3E57jKlpDnCg3ZNfoh6jZrSQvhjyGd82n+08SWH/NBbzE
-         vVSoLNO0PSTWYB12tDFcaXwSsh9GimXqrl3UXEM+M5WNYT8zg5TS3hgGE4s5HTvBXJgK
-         ZOMxeai1Wqv/3JsgRPYFLQJUghBYeuzhsxVK/1e7CksTTOWMr7HvoXcz4fGYRjnt66ZM
-         SZ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUIXun6qxfDPNj2V/cEpppQv++UW1balUfVvsYX8TnDwmoofAgyRdUaptOymHsjhr3NDBXFFjHCd7RF2GA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFZskacpV8uR5K6WxE5mEP+YPXTeCBOxmZDDy+MvO/rlVzQ2r4
-	HND2/zGWNpMjn6OT0A4AdYmt1rnpIalkRMXUpuNzAd2bbhGBafUjIuTQcJzMvPycfoEDxJIERyd
-	j9ZEYMqAsCfXWqd9B0S7ge+7btezlgUwT5Wwhgw==
-X-Gm-Gg: ASbGncuEKAQ5WoNQNVlAeDyXGP1HUUio0LjwSfQQMNY8T3280gbIjdKMGW/2e5+lQkO
-	5clsmZHxLX+v3VoBVCjC313nwgRqVt+XuNWDK5A==
-X-Google-Smtp-Source: AGHT+IGfWcHf1IqCM6xcZ42qVvO2ln2ZF7gp7PWckjle/qKeI72/cD+d0i+huT9mtsOvNbU440ioF28S4h2DaAFrN0A=
-X-Received: by 2002:a17:90b:1d51:b0:2ef:114d:7bf8 with SMTP id
- 98e67ed59e1d1-2f28fa50ff0mr7489453a91.6.1734159440009; Fri, 13 Dec 2024
- 22:57:20 -0800 (PST)
+	s=arc-20240116; t=1734160330; c=relaxed/simple;
+	bh=PxZqft45WD/CL0+24HIhyHmoZHrjbP38s4FSFx9SY28=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NMvoamj5oEgcdp/SiVL/qPYpTlXi9KljPcmqCf91TM2srVpvaUPXj4BBdrQ/9a0JofAF1PzOywvubr1KtDFI11ONlihjZHmt3MDGKS47Qu52iNtcCFaFlyhhwNl9me127iE1uyiL1+nDRO45oVtHiqBzJ+R/CzQZah8BCmBRcQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=KbmqNSY3; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BE7BIIY006005;
+	Fri, 13 Dec 2024 23:11:56 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=ol+CEpkKQ440/6jZgsB7aTm
+	n6job3wha0gYi3sWthoo=; b=KbmqNSY3xBrDmGJDtGi3nJkv0cPTn6Ne9veKRF8
+	2/my+smeP86pNmFM1RWjbdpwvc1mz0D+IeZLBPMnUPPQM/3TqilHaK92ZmL+OLdS
+	FVEkbth1gQeqXbT/0ZPQM+eENdGlWL6g9PJRqgg4s9k2iOcVDextsQN14/B0ETxm
+	+obp3ON95ZfaMS9LZfQ4EpqgVHNUfCwc444M9KsPuonfuqtxB+rlnMLygi8kbnjR
+	k+28roEJ+Dv15TS91Gu4xUOjRZHr64/6Y/ZH+W0MLun/aZJ20jXHgxv49/fcSfjJ
+	U2N1vncMqPbAGhxAYo5+Xl35fgO3aQaNyWwrgQnCtFwRQMA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 43h5d3803q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 23:11:56 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 13 Dec 2024 23:11:55 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 13 Dec 2024 23:11:54 -0800
+Received: from localhost.localdomain (unknown [10.28.34.29])
+	by maili.marvell.com (Postfix) with ESMTP id 253863F7073;
+	Fri, 13 Dec 2024 23:11:50 -0800 (PST)
+From: Shijith Thotton <sthotton@marvell.com>
+To: <virtualization@lists.linux.dev>, <mst@redhat.com>, <jasowang@redhat.com>,
+        <dan.carpenter@linaro.org>
+CC: Shijith Thotton <sthotton@marvell.com>, <schalla@marvell.com>,
+        <vattunuru@marvell.com>, <ndabilpuram@marvell.com>,
+        <jerinj@marvell.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?=
+	<eperezma@redhat.com>,
+        Satha Rao <skoteshwar@marvell.com>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/4] vdpa/octeon_ep: enable support for multiple interrupts per device
+Date: Sat, 14 Dec 2024 12:36:04 +0530
+Message-ID: <20241214070835.568818-1-sthotton@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213145925.077514874@linuxfoundation.org>
-In-Reply-To: <20241213145925.077514874@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Sat, 14 Dec 2024 15:57:09 +0900
-Message-ID: <CAKL4bV4y4ftwOw3E5soaob-EkkDS_5miUmziwrp4PTrh4aK=6Q@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/467] 6.12.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: NMyuxKO-ekBi-xN_4YxcGwD9opfCKxnX
+X-Proofpoint-GUID: NMyuxKO-ekBi-xN_4YxcGwD9opfCKxnX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Greg
+Updated the driver to utilize all the MSI-X interrupt vectors supported
+by each OCTEON endpoint VF, instead of relying on a single vector.
+Enabling more interrupts allows packets from multiple rings to be
+distributed across multiple cores, improving parallelism and
+performance.
 
-On Sat, Dec 14, 2024 at 12:04=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.5 release.
-> There are 467 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.5-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+---
+v1:
+- https://lore.kernel.org/virtualization/20241120070508.789508-1-sthotton@marvell.com
 
-6.12.5-rc2 tested.
+Changes in v2:
+- Handle reset getting called twice.
+- Use devm_kcalloc to allocate irq array.
+- IRQ is never zero. Adjusted code accordingly.
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Changes in v3:
+- Made the interrupt handling independent of device type.
+- Dropped the patch to add crypto device specific interrupt handler.
+- Moved spec specific macro and define to spec header file.
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+Changes in v4:
+- Included comments from spec in the spec header file.
+- Added BUILD_BUG_ON to check vendor data structure size.
 
-[    0.000000] Linux version 6.12.5-rc2rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Sat Dec 14 15:37:12 JST 2024
+ drivers/vdpa/octeon_ep/octep_vdpa.h      | 12 ++--
+ drivers/vdpa/octeon_ep/octep_vdpa_hw.c   |  2 -
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c | 87 +++++++++++++++---------
+ 3 files changed, 62 insertions(+), 39 deletions(-)
 
-Thanks
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_ep/octep_vdpa.h
+index 046710ec4d42..2cadb878e679 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa.h
++++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
+@@ -29,12 +29,12 @@
+ #define OCTEP_EPF_RINFO(x) (0x000209f0 | ((x) << 25))
+ #define OCTEP_VF_MBOX_DATA(x) (0x00010210 | ((x) << 17))
+ #define OCTEP_PF_MBOX_DATA(x) (0x00022000 | ((x) << 4))
+-
+-#define OCTEP_EPF_RINFO_RPVF(val) (((val) >> 32) & 0xF)
+-#define OCTEP_EPF_RINFO_NVFS(val) (((val) >> 48) & 0x7F)
++#define OCTEP_VF_IN_CTRL(x)        (0x00010000 | ((x) << 17))
++#define OCTEP_VF_IN_CTRL_RPVF(val) (((val) >> 48) & 0xF)
+ 
+ #define OCTEP_FW_READY_SIGNATURE0  0xFEEDFEED
+ #define OCTEP_FW_READY_SIGNATURE1  0x3355ffaa
++#define OCTEP_MAX_CB_INTR          8
+ 
+ enum octep_vdpa_dev_status {
+ 	OCTEP_VDPA_DEV_STATUS_INVALID,
+@@ -48,9 +48,8 @@ enum octep_vdpa_dev_status {
+ struct octep_vring_info {
+ 	struct vdpa_callback cb;
+ 	void __iomem *notify_addr;
+-	u32 __iomem *cb_notify_addr;
++	void __iomem *cb_notify_addr;
+ 	phys_addr_t notify_pa;
+-	char msix_name[256];
+ };
+ 
+ struct octep_hw {
+@@ -68,7 +67,8 @@ struct octep_hw {
+ 	u64 features;
+ 	u16 nr_vring;
+ 	u32 config_size;
+-	int irq;
++	int nb_irqs;
++	int *irqs;
+ };
+ 
+ u8 octep_hw_get_status(struct octep_hw *oct_hw);
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+index 1d4767b33315..d5a599f87e18 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+@@ -495,8 +495,6 @@ int octep_hw_caps_read(struct octep_hw *oct_hw, struct pci_dev *pdev)
+ 	if (!oct_hw->vqs)
+ 		return -ENOMEM;
+ 
+-	oct_hw->irq = -1;
+-
+ 	dev_info(&pdev->dev, "Device features : %llx\n", oct_hw->features);
+ 	dev_info(&pdev->dev, "Maximum queues : %u\n", oct_hw->nr_vring);
+ 
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+index cd55b1aac151..e9c3e57b321f 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+@@ -49,11 +49,25 @@ static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
+ 	struct octep_hw *oct_hw = data;
+ 	int i;
+ 
+-	for (i = 0; i < oct_hw->nr_vring; i++) {
+-		if (oct_hw->vqs[i].cb.callback && ioread32(oct_hw->vqs[i].cb_notify_addr)) {
+-			/* Acknowledge the per queue notification to the device */
+-			iowrite32(0, oct_hw->vqs[i].cb_notify_addr);
+-			oct_hw->vqs[i].cb.callback(oct_hw->vqs[i].cb.private);
++	/* Each device has multiple interrupts (nb_irqs) shared among rings
++	 * (nr_vring). Device interrupts are mapped to the rings in a
++	 * round-robin fashion.
++	 *
++	 * For example, if nb_irqs = 8 and nr_vring = 64:
++	 * 0 -> 0, 8, 16, 24, 32, 40, 48, 56;
++	 * 1 -> 1, 9, 17, 25, 33, 41, 49, 57;
++	 * ...
++	 * 7 -> 7, 15, 23, 31, 39, 47, 55, 63;
++	 */
++
++	for (i = irq - oct_hw->irqs[0]; i < oct_hw->nr_vring; i += oct_hw->nb_irqs) {
++		if (ioread8(oct_hw->vqs[i].cb_notify_addr)) {
++			/* Acknowledge the per ring notification to the device */
++			iowrite8(0, oct_hw->vqs[i].cb_notify_addr);
++
++			if (likely(oct_hw->vqs[i].cb.callback))
++				oct_hw->vqs[i].cb.callback(oct_hw->vqs[i].cb.private);
++			break;
+ 		}
+ 	}
+ 
+@@ -63,44 +77,53 @@ static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
+ static void octep_free_irqs(struct octep_hw *oct_hw)
+ {
+ 	struct pci_dev *pdev = oct_hw->pdev;
++	int irq;
++
++	if (!oct_hw->irqs)
++		return;
+ 
+-	if (oct_hw->irq != -1) {
+-		devm_free_irq(&pdev->dev, oct_hw->irq, oct_hw);
+-		oct_hw->irq = -1;
++	for (irq = 0; irq < oct_hw->nb_irqs; irq++) {
++		if (!oct_hw->irqs[irq])
++			break;
++
++		devm_free_irq(&pdev->dev, oct_hw->irqs[irq], oct_hw);
+ 	}
++
+ 	pci_free_irq_vectors(pdev);
++	devm_kfree(&pdev->dev, oct_hw->irqs);
++	oct_hw->irqs = NULL;
+ }
+ 
+ static int octep_request_irqs(struct octep_hw *oct_hw)
+ {
+ 	struct pci_dev *pdev = oct_hw->pdev;
+-	int ret, irq;
++	int ret, irq, idx;
+ 
+-	/* Currently HW device provisions one IRQ per VF, hence
+-	 * allocate one IRQ for all virtqueues call interface.
+-	 */
+-	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
++	oct_hw->irqs = devm_kcalloc(&pdev->dev, oct_hw->nb_irqs, sizeof(int), GFP_KERNEL);
++	if (!oct_hw->irqs)
++		return -ENOMEM;
++
++	ret = pci_alloc_irq_vectors(pdev, 1, oct_hw->nb_irqs, PCI_IRQ_MSIX);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to alloc msix vector");
+ 		return ret;
+ 	}
+ 
+-	snprintf(oct_hw->vqs->msix_name, sizeof(oct_hw->vqs->msix_name),
+-		 OCTEP_VDPA_DRIVER_NAME "-vf-%d", pci_iov_vf_id(pdev));
+-
+-	irq = pci_irq_vector(pdev, 0);
+-	ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
+-			       oct_hw->vqs->msix_name, oct_hw);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to register interrupt handler\n");
+-		goto free_irq_vec;
++	for (idx = 0; idx < oct_hw->nb_irqs; idx++) {
++		irq = pci_irq_vector(pdev, idx);
++		ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
++				       dev_name(&pdev->dev), oct_hw);
++		if (ret) {
++			dev_err(&pdev->dev, "Failed to register interrupt handler\n");
++			goto free_irqs;
++		}
++		oct_hw->irqs[idx] = irq;
+ 	}
+-	oct_hw->irq = irq;
+ 
+ 	return 0;
+ 
+-free_irq_vec:
+-	pci_free_irq_vectors(pdev);
++free_irqs:
++	octep_free_irqs(oct_hw);
+ 	return ret;
+ }
+ 
+@@ -559,6 +582,7 @@ static void octep_vdpa_setup_task(struct work_struct *work)
+ 	struct device *dev = &pdev->dev;
+ 	struct octep_hw *oct_hw;
+ 	unsigned long timeout;
++	u64 val;
+ 	int ret;
+ 
+ 	oct_hw = &mgmt_dev->oct_hw;
+@@ -590,6 +614,13 @@ static void octep_vdpa_setup_task(struct work_struct *work)
+ 	if (ret)
+ 		return;
+ 
++	val = readq(oct_hw->base[OCTEP_HW_MBOX_BAR] + OCTEP_VF_IN_CTRL(0));
++	oct_hw->nb_irqs = OCTEP_VF_IN_CTRL_RPVF(val);
++	if (!oct_hw->nb_irqs || oct_hw->nb_irqs > OCTEP_MAX_CB_INTR) {
++		dev_err(dev, "Invalid number of interrupts %d\n", oct_hw->nb_irqs);
++		goto unmap_region;
++	}
++
+ 	ret = octep_hw_caps_read(oct_hw, pdev);
+ 	if (ret < 0)
+ 		goto unmap_region;
+@@ -768,12 +799,6 @@ static int octep_vdpa_pf_setup(struct octep_pf *octpf)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (OCTEP_EPF_RINFO_RPVF(val) != BIT_ULL(0)) {
+-		val &= ~GENMASK_ULL(35, 32);
+-		val |= BIT_ULL(32);
+-		writeq(val, addr + OCTEP_EPF_RINFO(0));
+-	}
+-
+ 	len = pci_resource_len(pdev, OCTEP_HW_CAPS_BAR);
+ 
+ 	octpf->vf_stride = len / totalvfs;
+-- 
+2.25.1
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
