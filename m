@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-445949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ABE9F1DBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:09:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B9B9F1DBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10145160690
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:09:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70CC016257C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E9158DD9;
-	Sat, 14 Dec 2024 09:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702F157A5C;
+	Sat, 14 Dec 2024 09:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="YjoDe5nW"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BfNre14Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71E9653;
-	Sat, 14 Dec 2024 09:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734167380; cv=pass; b=bdGurjYqzmt7FN15Y+BpTjYq4wCddqF6Y7aVk/rvRpYna819+kkGRGlJuEGJ1Kzy/VCyuzZ/v2LJ0vU33N+Bkapic+ER6dIQ9pdD6xoUI212hEHvOokRe0vu7KS1bs3DZtaOCUiRUrApuyjWYLLmQkn/0G9OCzNQfEMS5nYCxHc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734167380; c=relaxed/simple;
-	bh=WzT2H42suMANIZoCqQsb9u/iwOrytohcYOuYX/upryc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bgnz+EagsUOv4mxfy7zwBkwxHzDZuhpTjhXnZrnaovvGsllppClwHJDGOAUxIw664ubd8TBMc3AQkHgbzGmWfcrwrlS5fXlHUx+q09YVViL+rH1wPbcp76XpSK0gzH8u9fiZJYG/0bD+qVJe5J2K4Byg77zbdpXk0u0mU0eLvhE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=YjoDe5nW; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734167346; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RQ9RoBBjiuQ3Cf+wmCUsftzHGfX97OAjN0s2SdnycUoEpnwBXKfJHGHBDnfOfoaUZMun1Llx4fzmUF/77wNdlxe3WYDw/5wKadeonGq635vE/B/yO5QTbpKDuZMQ6VbahdKAOrh4LkWaxhK0bQEcBKpHnXwE9u1WUHdOaVJw8G0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734167346; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rMpDg3PqsrHJK6VNXrao1mLWt9EKJHzRUN6KozvsDxk=; 
-	b=mkij/zSTLxVBGexVsvgnQhyi7xPvpK0qeiONa9XKilrmhd+515ZET56BnV0K7XXD021cIQdkdBC6hrevyd5ubsRudxiTz1puvPeoEeqXdZyCymMEhJ+ZBgMrY/7NeZItDglTVls9uhDOVYFi0/0Eps666tgPYfkR+wh7NWDQiuQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734167346;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=rMpDg3PqsrHJK6VNXrao1mLWt9EKJHzRUN6KozvsDxk=;
-	b=YjoDe5nWzsHLkYNlCKuVbIFrGH1oKwJO+Yha8y3vBbsCE45UTHAjOABjmTCBrzcK
-	2v8IqACxgwQzxtJgRhDVZMtpi0c46UVva1yjqKpAJy2lB40SMyOqWuNcXE1eLy3aRJZ
-	tBXiME5GkHjqFRKtUYx+nR6B/EtQb+IjPVODzZ5o=
-Received: by mx.zohomail.com with SMTPS id 1734167336646176.72621176386758;
-	Sat, 14 Dec 2024 01:08:56 -0800 (PST)
-Message-ID: <39529994-9170-42b7-90b7-e203ead4b6a2@collabora.com>
-Date: Sat, 14 Dec 2024 14:08:50 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC57653;
+	Sat, 14 Dec 2024 09:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734167544; cv=none; b=cJZ7kP1/1/hmK45cQHFc9GMDECMkaP/A7q64rnmbROZuLfgox9MDrrnaXZfRF74vv4mR1eIi9MLuDxWsGDNTi7CnLB6q5SKFh3xKLy2HGliG8XyH+am9NsS/51mxexbCc5QVGyk0/c2UkbkmxkobUO9oqfxAv6IEjypBgQyWMv8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734167544; c=relaxed/simple;
+	bh=vakxJDBESZJU69hvEmHaZbNiXoRGI/zkqMQV/o04X9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVe46P0ttNxKtDo2x0idW9grZ/MV7IztaEN2cssJqLy59a5OPR3C5kh6qJaqUUd78w2nTem6nufP0lkBjzhHlUfcCFB2c+bPvKRPwSkzSgxIGo5LISmy7bLxtpkKgIFUHeuwSUJ7FDdoP5G75oXqapcpAQKeeEkVvrOxiOLv5Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BfNre14Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81B8C4CED1;
+	Sat, 14 Dec 2024 09:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734167543;
+	bh=vakxJDBESZJU69hvEmHaZbNiXoRGI/zkqMQV/o04X9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BfNre14QDyWDsHUNnIp1SHG4ZL8SaX+OlRBtconsafmSusJMiCKa9jCrEsfG+h/Ns
+	 6XT/2hpZ5FiPDvFgoDb/8g/N0ygQ+iBqiKtDWQ+JvOqjp0cUoJsCDIp+QgO1cBrRXR
+	 FLDuC0pni+j/uPQxAT9P4vRQKSkt++9dDiEvYKuU=
+Date: Sat, 14 Dec 2024 10:12:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Nilay Shroff <nilay@linux.ibm.com>,
+	Yury Norov <yury.norov@gmail.com>, Qing Zhao <qing.zhao@oracle.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fortify: Hide run-time copy size from value range
+ tracking
+Message-ID: <2024121450-scrawny-payphone-71b5@gregkh>
+References: <20241214013600.it.020-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.12 000/467] 6.12.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241213145925.077514874@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241213145925.077514874@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241214013600.it.020-kees@kernel.org>
 
-On 12/13/24 8:03 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.5 release.
-> There are 467 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Dec 13, 2024 at 05:36:10PM -0800, Kees Cook wrote:
+> GCC performs value range tracking for variables as a way to provide better
+> diagnostics. One place this is regularly seen is with warnings associated
+> with bounds-checking, e.g. -Wstringop-overflow, -Wstringop-overread,
+> -Warray-bounds, etc. In order to keep the signal-to-noise ratio high,
+> warnings aren't emitted when a value range spans the entire value range
+> representable by a given variable. For example:
 > 
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
+> 	unsigned int len;
+> 	char dst[8];
+> 	...
+> 	memcpy(dst, src, len);
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
+> If len's value is unknown, it has the full "unsigned int" range of [0,
+> UINT_MAX], and bounds checks against memcpy() will be ignored. However,
+> when a code path has been able to narrow the range:
 > 
-> thanks,
+> 	if (len > 16)
+> 		return;
+> 	memcpy(dst, src, len);
 > 
-> greg k-h
-Hi,
+> Then a range will be updated for the execution path. Above, len is now
+> [0, 16], so we might see a -Wstringop-overflow warning like:
+> 
+> 	error: '__builtin_memcpy' writing between 9 and 16 bytes from to region of size 8 [-Werror=stringop-overflow]
+> 
+> When building with CONFIG_FORTIFY_SOURCE, the run-time bounds checking
+> can appear to narrow value ranges for lengths for memcpy(), depending on
+> how the compile constructs the execution paths during optimization
+> passes, due to the checks on the size. For example:
+> 
+> 	if (p_size_field != SIZE_MAX &&
+> 	    p_size != p_size_field && p_size_field < size)
+> 
+> As intentionally designed, these checks only affect the kernel warnings
+> emitted at run-time and do not block the potentially overflowing memcpy(),
+> so GCC thinks it needs to produce a warning about the resulting value
+> range that might be reaching the memcpy().
+> 
+> We have seen this manifest a few times now, with the most recent being
+> with cpumasks:
+> 
+> In function ‘bitmap_copy’,
+>     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+>     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+>   114 | #define __underlying_memcpy     __builtin_memcpy
+>       |                                 ^
+> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+>   633 |         __underlying_##op(p, q, __fortify_size);                        \
+>       |         ^~~~~~~~~~~~~
+> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+>   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+>       |                          ^~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+>   259 |                 memcpy(dst, src, len);
+>       |                 ^~~~~~
+> kernel/padata.c: In function ‘__padata_set_cpumasks’:
+> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+>   713 |                                  cpumask_var_t pcpumask,
+>       |                                  ~~~~~~~~~~~~~~^~~~~~~~
+> 
+> This warning is _not_ emitted when CONFIG_FORTIFY_SOURCE is disabled,
+> and with the recent -fdiagnostics-details we can confirm the origin of
+> the warning is due to the FORTIFY range checking:
+> 
+> ../include/linux/bitmap.h:259:17: note: in expansion of macro 'memcpy'
+>   259 |                 memcpy(dst, src, len);
+>       |                 ^~~~~~
+>   '__padata_set_cpumasks': events 1-2
+> ../include/linux/fortify-string.h:613:36:
+>   612 |         if (p_size_field != SIZE_MAX &&
+>       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   613 |             p_size != p_size_field && p_size_field < size)
+>       |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+>       |                                    |
+>       |                                    (1) when the condition is evaluated to false
+>       |                                    (2) when the condition is evaluated to true
+>   '__padata_set_cpumasks': event 3
+>   114 | #define __underlying_memcpy     __builtin_memcpy
+>       |                                 ^
+>       |                                 |
+>       |                                 (3) out of array bounds here
+> 
+> Note that this warning started appearing since bitmap functions were
+> recently marked __always_inline in commit ed8cd2b3bd9f ("bitmap: Switch
+> from inline to __always_inline"), which allowed GCC to gain visibility
+> into the variables as they passed through the FORTIFY implementation.
+> 
+> In order to silence this false positive but keep deterministic
+> compile-time warnings intact, hide the length variable from GCC with
+> OPTIMIZE_HIDE_VAR() before calling the builtin memcpy.
+> 
+> Additionally add a comment about why all the macro args have copies with
+> const storage.
+> 
+> Reported-by: "Thomas Weißschuh" <linux@weissschuh.net>
+> Closes: https://lore.kernel.org/all/db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de/
+> Reported-by: Nilay Shroff <nilay@linux.ibm.com>
+> Closes: https://lore.kernel.org/all/20241112124127.1666300-1-nilay@linux.ibm.com/
+> Acked-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
 
-Please find the KernelCI report below :-
+Fixed the build issues I have here, so:
 
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-OVERVIEW
-
-    Builds: 29 passed, 0 failed
-
-    Boot tests: 219 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: 602e3159e817475bec9784ba359147d8351e90c2
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
-    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=602e3159e817475bec9784ba359147d8351e90c2&var-patchset_hash=&from=now-100y&to=now&timezone=browser&var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
