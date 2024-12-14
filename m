@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-445991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFED9F1E3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:25:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBF39F1E4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C97016461B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA14188654E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D0218D65C;
-	Sat, 14 Dec 2024 11:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA618E37B;
+	Sat, 14 Dec 2024 11:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nhUf9tuP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhrnH/pW"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F25142A8F;
-	Sat, 14 Dec 2024 11:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18D2170A13;
+	Sat, 14 Dec 2024 11:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734175528; cv=none; b=MCgAgYT7cUi5pa0ZQhv1A6FKVIIo1w0nUR//7xUf+tmBODehdo45XI7mvyKpGSRMH3e4HLghMC9saHggIq1Y/RewRypN1R1NSSgk8XBUJBexG2WnqCc2wQsVmejoB6ydt/EFCsi9IvdtxywrRs7eeiD9x9REl13kQkwWDftbhbI=
+	t=1734176168; cv=none; b=ZqPjy7Bbm6TyHQPjmT1r7/lxGH+CWabt2T3yg3hKUiH7yTl1Mc8M3598eNgsdDicv+EfvuNgxHIGyhgw5gKNNIbLxglgoES4/zveyl8VKn78aNB4x+KednUNJnqmiZ+OBU+jL2lTS3ZvM5frXyXoqDfYM9HPRhtuwv9wH/qQRs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734175528; c=relaxed/simple;
-	bh=WIrhc8lgZTYzOMN3sCVepMyea5Ad9uNtxOg0fjPBF6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFqjAv2i9Ehiw9KJHmIfm7zinzNTXaZxfZ/8Kmnm1ZOpC7HHl89g9REAY+D/XplUYbjgrgWxno1J2Ca9A50elxPD2kVbuXMPNwjk0S0rFJRwOxBc/55PgLoauMtr2dSy5sRBErkxqXKp5U+7MOYAnry/au63WTLBk4GQpkjuLlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nhUf9tuP; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734175527; x=1765711527;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WIrhc8lgZTYzOMN3sCVepMyea5Ad9uNtxOg0fjPBF6A=;
-  b=nhUf9tuPH2EpE/C2Fc1qdri0WlfsOdH2arPRgJEUzMrPIUEDWYQcrv/U
-   PKG+9ql9FTUYLTbwkxVFjhe6zYyzRlenP3abvERcpy3Qw3i4HqiY34x9Q
-   dX9KHN2Z2pJl2QGjCbwIrwDTcE9gENVbHyl5vY95uuKIkoq0nX8Y0otN0
-   TzpQVabpf55Ekgb3//q0ve3ygG5COLaN1sMjZR8XPq+p/nDhVyogiYHw3
-   jlo1y+3DCNH1+VRtxjHIkuKcHfK4cWBU26FOkJgg0iN1lVNGqUn2ESsDg
-   wcVWFeTFX0Au69EghI3dwUC9AtU5plPXvR1W5uqoPX7ZUXMlbbZd6RZ23
-   w==;
-X-CSE-ConnectionGUID: HtoC1AebSYKBrvdB/wRmWw==
-X-CSE-MsgGUID: nhOx5pJySDay1s/xeNqBrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="52138303"
-X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
-   d="scan'208";a="52138303"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 03:25:26 -0800
-X-CSE-ConnectionGUID: ZgZqYyMmTvSmdIQ6vlVlbw==
-X-CSE-MsgGUID: z71IAE+eSFCxbLwuWqyCJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="101855598"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 14 Dec 2024 03:25:22 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMQGt-000Crz-1o;
-	Sat, 14 Dec 2024 11:25:19 +0000
-Date: Sat, 14 Dec 2024 19:24:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v1] perf intel-tpebs: Cleanup header
-Message-ID: <202412141915.vDvejTWQ-lkp@intel.com>
-References: <20241210191823.612631-1-irogers@google.com>
+	s=arc-20240116; t=1734176168; c=relaxed/simple;
+	bh=w3HeaF2v1sPGKZZGi3apRizueqVTdJOGs3yn14XsZds=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=diIgDHvXpsou1S6J5acOK99i8wmQkFntGp5+KRkGVO2NBtqh14h38kzCYzl9sVwJhlCY/rVYTEwnRU2J9+hBHC84clHNj0GQdPh9KM7wyi1T22IaphV6ccnhW+5O97wHBz3nJ8pYzYBXjV07bGyJ9vyF6ANAoz/6IZBxohAgjOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhrnH/pW; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so2973180a91.0;
+        Sat, 14 Dec 2024 03:36:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734176166; x=1734780966; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NgMsVx6LalBM3WCUrF4IRtnX3JNL264uu8F1CqpXfck=;
+        b=KhrnH/pW+ANRzudwGub3diIRok/Kq7HyRtKBFpKA5p6FryHsZSlNE4RM9hq6//9saS
+         QR5C9A4O3zNba79lyXBULrshYpVViaP63EmPbKK4rVqIM/fSVg4IuRe1y9RwtG8hZzyE
+         q1D+kN5ECV3pYIw3V6yWSICtbG/ypLjQkS1NMx9/JtlrfgbyWL+LpGkptEUpHqw7x2EM
+         2QhmZ7NeWF5Il5NVEhRcqtLT7Ig4Wy3wV4qq3vmXikKHHWLQlgfA1+WTAM9vrKey3dBn
+         tjPIKc08k28nEFmChBgj3mKk6JpRHfNQCJyqchEoo2pew3dsOO1y+Tr2l0zAxARCyGs8
+         LCEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734176166; x=1734780966;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NgMsVx6LalBM3WCUrF4IRtnX3JNL264uu8F1CqpXfck=;
+        b=cvLO/Pxwjphp3nss7vYOyzcnT9x0M2zlZ/FItOU2658/ww5EsP7lrnlCaGts6q6EAS
+         dkg1RjWxo4nHik2x1GEqGNiWzZXleLcLvO4cDm9whco7b/n3i2NqSQ+mhNDceGL5Wtro
+         qniwUfWg/XLOmFke1Jz/jd17C1snZ7vyNGqrc5DKkUZyXFXibhQ7pUPJAwqmeWWN3juC
+         XAUYr5Mh3i6UbQ1xK0ti2yNImagJZ0zmUaXNfG3ycmwkHf9j5TkrJNfKaettNtTGe50M
+         D7dFct+lDNNHhHjPsCeGR8IzGZ+kZ1wGwvZ7uLwsrnXuejZjz8Oz08mNADgZNpRvO7ek
+         1zNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZSRYK46bXZi58yvdZEna3ZjkJXmu5j5WD4opFKBXLO0CZ9WlRt4DgR01EHpj9MPPQ2+KVjPJxBRbm2aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz56bYDkFgbyrJ4kd1loT2AIqsRepBS6aQ2yawxlFtJK0C/NIbS
+	nhjo7EneX7u0Iv5X5TrydW+hb08BgCczau+9rZ9lRC4c4w2uDBdt
+X-Gm-Gg: ASbGncs7x7qbg5eqvI/Y/Jozvu+8QGpihWdiNW7G0rysdFLdDjsSorKcUEhT7gCeGN9
+	W0bYa1PUBdCNJLlc7I/PBrfUpGh4aL2ILxkh8K4QIEgbM2TpXmyFcOmpsc0h9+ezlqJy7CtL+6N
+	h5xW8qxiVsAekWAX4qqUuYdQWchIdTh5GS8DXQzrHws4d6Q7DDYbWniRsgQrtdTXd1h1bPMbCk2
+	GicvzqaP6mjoA0DHsEIYDHWaL/jyOyEOKCOO0ONbH+R04ZGeA==
+X-Google-Smtp-Source: AGHT+IHuxCFVFrk8Vz9sT5di4OuvtpoJ5KJwPjtYYcpOUcj42oCLFujWWI/ejP+u2tQbAW68orgrnA==
+X-Received: by 2002:a17:90b:3912:b0:2ee:463d:8e8d with SMTP id 98e67ed59e1d1-2f13ac560dfmr16513874a91.14.1734176166073;
+        Sat, 14 Dec 2024 03:36:06 -0800 (PST)
+Received: from dw-tp ([171.76.83.211])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1e9939fsm1266683a91.13.2024.12.14.03.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 03:36:05 -0800 (PST)
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> 
+To: Narayana Murty N <nnmlinux@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org, vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+Subject: Re: [PATCH v3] powerpc/pseries/eeh: Fix get PE state translation
+In-Reply-To: <20241213091822.3641-1-nnmlinux@linux.ibm.com>
+Date: Sat, 14 Dec 2024 16:58:12 +0530
+Message-ID: <87v7vm8pwz.fsf@gmail.com>
+References: <20241213091822.3641-1-nnmlinux@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210191823.612631-1-irogers@google.com>
 
-Hi Ian,
+Narayana Murty N <nnmlinux@linux.ibm.com> writes:
 
-kernel test robot noticed the following build errors:
+> The PE Reset State "0" obtained from RTAS calls
+> ibm_read_slot_reset_[state|state2] indicates that
+> the Reset is deactivated and the PE is not in the MMIO
+> Stopped or DMA Stopped state.
+>
+> With PE Reset State "0", the MMIO and DMA is allowed for
+> the PE. The function pseries_eeh_get_state() is currently
+> not indicating that to the caller because of  which the
+> drivers are unable to resume the MMIO and DMA activity.
+> The patch fixes that by reflecting what is actually allowed.
+>
+> Fixes: 00ba05a12b3c ("powerpc/pseries: Cleanup on pseries_eeh_get_state()")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+>
+> ---
+> Changelog:
+> V1:https://lore.kernel.org/all/20241107042027.338065-1-nnmlinux@linux.ibm.com/
 
-[auto build test ERROR on perf-tools-next/perf-tools-next]
-[also build test ERROR on tip/perf/core perf-tools/perf-tools linus/master v6.13-rc2 next-20241213]
-[cannot apply to acme/perf/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+As discussed in v1, powernv already does this and this is needed for
+pseries as well for the callers to know, whether the eeh recovery is
+completed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Rogers/perf-intel-tpebs-Cleanup-header/20241211-032044
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
-patch link:    https://lore.kernel.org/r/20241210191823.612631-1-irogers%40google.com
-patch subject: [PATCH v1] perf intel-tpebs: Cleanup header
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241214/202412141915.vDvejTWQ-lkp@intel.com/reproduce)
+This looks good to me. Please feel free to add - 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412141915.vDvejTWQ-lkp@intel.com/
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-All errors (new ones prefixed by >>):
-
-     PERF_VERSION = 6.13.rc1.g19e7440f1089
->> util/intel-tpebs.c:358:10: error: call to undeclared function 'perf_counts'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     358 |         count = perf_counts(evsel->counts, cpu_map_idx, thread);
-         |                 ^
->> util/intel-tpebs.c:358:8: error: incompatible integer to pointer conversion assigning to 'struct perf_counts_values *' from 'int' [-Wint-conversion]
-     358 |         count = perf_counts(evsel->counts, cpu_map_idx, thread);
-         |               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-   make[7]: *** [tools/build/Makefile.build:105: tools/perf/util/intel-tpebs.o] Error 1
-   make[7]: *** Waiting for unfinished jobs....
-   make[6]: *** [tools/build/Makefile.build:158: util] Error 2
-   make[5]: *** [Makefile.perf:789: tools/perf/perf-util-in.o] Error 2
-   make[5]: *** Waiting for unfinished jobs....
-   make[4]: *** [Makefile.perf:292: sub-make] Error 2
-   make[3]: *** [Makefile:76: all] Error 2
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-ritesh
 
