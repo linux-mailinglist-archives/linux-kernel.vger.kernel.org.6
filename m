@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-445791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8C19F1B9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:56:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3F39F1B9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B917A7A1283
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F231D161B6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BD61CFBC;
-	Sat, 14 Dec 2024 00:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F923D528;
+	Sat, 14 Dec 2024 00:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T1FDbm/c"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQnB2rQS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4159C6125
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D91CA6F;
+	Sat, 14 Dec 2024 00:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137634; cv=none; b=p0yEJSEoYPUBP286DHbL3hcoeQAkDT++wBnhiRw+PISQNcSudWd7vsx+NHg4z1K699Kq9zEeL8kPfFQHkjavJxzd6KqLFrx7Bz+iC8//LDkWpL3fVGwN35LzfDTC9fJoPgDPFd2TY+ILqUTOPyEHDnNQcS1fKOATalg+XpQa0I0=
+	t=1734137791; cv=none; b=K4L5nwxXgcvBIVrRyMQOA0LEFjrwVVRCEbB9fVgndl4C9qQr1RpPZusJWqri3Aff5PXRXXN5RHeD9xGo0GkxjLJw1EzprYm9EAG9dh+F5eqMY9nLjT7CwlnN482IKF8cJlv49nsUE268BIRPpHfsgYNNaKZXM6ll+tnvL8RAj7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137634; c=relaxed/simple;
-	bh=Q5cd0cjWyJ6Gcpn2MCFi80hTQsy0Q72Z9blKAZtUJPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Msyud0mMJ6DElBnyYNnmTwWrMixgTUm5Rx9hKBnHtK5eLHpteiydkMnPoyCNc7Sw7rstrAs4ED9vRNtwzRIQHpt8xOJTT6jnBBmoyVT2ZRFm7aIo7khePi2CtGVHUcNRvRq/UOPEKQvFVfmoT6D6lW8IoxNNlVX9arN//QvOaXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T1FDbm/c; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53e399e3310so2678758e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:53:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734137629; x=1734742429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5cd0cjWyJ6Gcpn2MCFi80hTQsy0Q72Z9blKAZtUJPM=;
-        b=T1FDbm/ctv7k4GgzFYAq+guLh9azLbQTU3dLgNsEuQleVH5HvvqCBnu5x2VuV/5tcr
-         YMZQRvBVGXSPpzAXVuKvKv2tl262QGFwJ05HVjpGdwphtLXhha7FRl+v+V1lhAXvQ2pc
-         K66IMd78KccQrir9a13D8vCLbXh5tWAXGP0bQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734137629; x=1734742429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5cd0cjWyJ6Gcpn2MCFi80hTQsy0Q72Z9blKAZtUJPM=;
-        b=XInWNbb+Fg1HIkOf7R+XD+Jdf/vNIHLoIXrsUXNfF+cPdn/xYPVxjCOPVIqXN/wPLa
-         D5D55kOffIdJpAwndvQ9gPhOL79z7PkSuDZCn1SZ98/jkNhlEVUP8mkRfiaewX+moN0A
-         TkT1oaJQx4qB/e2egqkZdgfoQEXgmU/VtSfj5V18oJF8X1cDT48xXQ6BJtijoSCuuMny
-         UAaxZj6g8iOim8NTFmbBs4laHXo1l37qy24aScaGBIkda/L9CrXT3F0KvvJ66oLdlXCC
-         86ctG9eoAJMY+jObVtTZnhXmBihA9Hutpz83CwizPePvJuoweBFyjZqQa21OioTIS86M
-         ahnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRckVHwTOqke3EqdQzCoI9vo+ygMonCqitQljHV51pVff3Ykafiu4sTIbPp4d1V5eHZQJozOUd8yd5rAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfR0Zj8LelWJyHyCqQDcf1PbBs2CZHv6G3A8df6kxd+LP9UCJg
-	tZx1KAcI/SN3GvWWcb1wSkDl48/Au6xqJucSS0UHz6gDP88NEQcJ3cpzYnTYjOst+kTTC0/ToxO
-	AbBF8
-X-Gm-Gg: ASbGncvQaIcIYEuq2Vomw1XuSlH3RzsLords7/MoiDeI/GgZZCDK/fA8WxhTxhL8y9M
-	+HtoKJA8/fejcJYqSqCIHDpTegJTSfILa9USFyeaPec7n1SW9XEd7pzXlZOKOJSiEELnXkIOx9f
-	K2RW7eN5zjK90o5SsRGo4/vKQYcl5hr6X6DBSx08hlJIa+6UcOZDMFjIRgb7o1RubMdPqsJcqcJ
-	JHz7SjYraql5Jc8rb8FIcRZ87E2Bgeehs2j8RG2SlReP4NdUk84R+w3qHhdWU7WjpAyfth9BzLy
-	Zzm0lqqT80BrcwtQ34ZkokYJ
-X-Google-Smtp-Source: AGHT+IG7ovMbgAXPr5hkN7viDqsKwldXT3ukF+Tj3ebSizG7XSKFJsFIeIGt+lzhtnQ20rLkc89G7Q==
-X-Received: by 2002:a05:6512:220f:b0:540:353a:5b1f with SMTP id 2adb3069b0e04-540857f5581mr1440349e87.0.1734137628988;
-        Fri, 13 Dec 2024 16:53:48 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120b9f4f1sm66391e87.24.2024.12.13.16.53.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 16:53:48 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3003c0c43c0so24380111fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:53:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIzNphs9A9JgpGcBKRHVcTPs0UFvf7AQCgd/pWnzaz6Kws62urdF4TNY0Ke/tkCTt0erM3ces8NLAw0Z0=@vger.kernel.org
-X-Received: by 2002:a05:6512:3088:b0:540:2111:db71 with SMTP id
- 2adb3069b0e04-540905a6fd4mr1322255e87.42.1734137626438; Fri, 13 Dec 2024
- 16:53:46 -0800 (PST)
+	s=arc-20240116; t=1734137791; c=relaxed/simple;
+	bh=92luzIVjfjAyEdhfZE/R/uAdo5CyLJyLxN1vjHYrNF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmiZaoikC9UY+BO64udCb0X/c4qD3MtlMyBrf8jOZgSRKXr+SVM7bqqFEDi3UC03Qw20iB2JA0SD45a1idrKMctDrdAX1yun9ebPFf4MKWVvNeWROqiaSyyyNQK+07Ro47uSs8ghw8qWqwe3dHv8fnuUmcQPe4CXvfU7ycg5PKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQnB2rQS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84150C4CED0;
+	Sat, 14 Dec 2024 00:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734137790;
+	bh=92luzIVjfjAyEdhfZE/R/uAdo5CyLJyLxN1vjHYrNF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MQnB2rQSnBwr2OmGhth7bCvy/Qxff+5yElRN9uO42y1XtNa98wQaHkBoomZ/AOxjI
+	 tB4loxYtYE/sBHbesLtSi4TIZb/ZnlBhvONJPmdQ2YJHrL2qISGpMNRgFPgfHRcc0o
+	 95QP/j6STxtGA56lYmL0sFGRGVASWLjrUty5HS9yuZndJyK1d07HiQ3ZwfXei4uhpr
+	 12Dv84cNBxod3c/lar+CzwS9hJOvnRHBGjNU6b3QqB2mJGKs9XyPk3eAg94JA30NQk
+	 tNwxWGQehXMc525QZMNIP/lZS7x2bOyFKQAnU83L5j8b3gfS5k4qRyYsLy+NWJEmRY
+	 w+9iCwnjngxHQ==
+Date: Fri, 13 Dec 2024 16:56:27 -0800
+From: Kees Cook <kees@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, jannh@google.com, sroettger@google.com,
+	adhemerval.zanella@linaro.org, ojeda@kernel.org,
+	adobriyan@gmail.com, jeffxu@chromium.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	jorgelo@chromium.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 0/1] binfmt_elf: seal address zero
+Message-ID: <202412131650.9537DD1B@keescook>
+References: <20240806214931.2198172-1-jeffxu@google.com>
+ <172365478431.4159848.371478248517217096.b4-ty@kernel.org>
+ <cfd3e288-c913-482d-a6ce-789fa6b0f2b3@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209174430.2904353-1-dianders@chromium.org>
- <20241209094310.6.I722621804be859e4ae4b7479ce191c5e3367b37c@changeid> <tx7vtur7yea6ruefrkpkccqptahgmxnsrudwdz5uzcfxnng25b@afrr5bmdk2xa>
-In-Reply-To: <tx7vtur7yea6ruefrkpkccqptahgmxnsrudwdz5uzcfxnng25b@afrr5bmdk2xa>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 13 Dec 2024 16:53:34 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XxL=HjA8pgpQjY8AQAkJns3H0BMV8nO9jKUxiuu2vKqA@mail.gmail.com>
-X-Gm-Features: AbW1kvYcJpO0sSHq-EaRR9tcdt8oe3PTBnA6qFnauBDoIBqVcERtioVBqqLZdLw
-Message-ID: <CAD=FV=XxL=HjA8pgpQjY8AQAkJns3H0BMV8nO9jKUxiuu2vKqA@mail.gmail.com>
-Subject: Re: [PATCH 6/6] arm64: errata: Add QCOM_KRYO_6XX_GOLD/PRIME to the spectre_bhb_k32_list
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Julius Werner <jwerner@chromium.org>, 
-	Jeffrey Hugo <quic_jhugo@quicinc.com>, Roxana Bradescu <roxabee@google.com>, 
-	bjorn.andersson@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org, 
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cfd3e288-c913-482d-a6ce-789fa6b0f2b3@lucifer.local>
 
-Hi,
+Sorry for the delay in my reply -- I've been trying to catch up on stuff
+after 2 weeks off.
 
-On Mon, Dec 9, 2024 at 3:09=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, Dec 09, 2024 at 09:43:16AM -0800, Douglas Anderson wrote:
-> > Qualcomm Kryo 600-series Gold cores appear to have a derivative of an
-> > ARM Cortex A78 / ARM Cortex X1 in them. Since these need Spectre
-> > mitigation then the Kyro 600-series Gold/Prime cores also should need
-> > Spectre mitigation.
+On Tue, Dec 03, 2024 at 02:13:45PM +0000, Lorenzo Stoakes wrote:
+> On Wed, Aug 14, 2024 at 09:59:47AM -0700, Kees Cook wrote:
+> > On Tue, 06 Aug 2024 21:49:26 +0000, jeffxu@chromium.org wrote:
+> > > From: Jeff Xu <jeffxu@chromium.org>
+> > >
+> > > In load_elf_binary as part of the execve(),  when the current
+> > > task’s personality has MMAP_PAGE_ZERO set, the kernel allocates
+> > > one page at address 0. According to the comment:
+> > >
+> > > /* Why this, you ask???  Well SVr4 maps page 0 as read-only,
+> > >     and some applications "depend" upon this behavior.
+> > >     Since we do not have the power to recompile these, we
+> > >      emulate the SVr4 behavior. Sigh. */
+> > >
+> > > [...]
 > >
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > Yes. I know. This patch DOESN'T COMPILE because
-> > MIDR_QCOM_KRYO_6XX_GOLD and MIDR_QCOM_KRYO_6XX_PRIME are not
-> > defined. Those value needs to come from Qualcomm or from testing on
-> > hardware, which I don't have. Qualcomm needs to chime in to confirm
-> > that this Spectre mitigation is correct anyway, though. I'm including
-> > this patch so it's obvious that I think these cores also need the
-> > mitigation.
->
-> SM8350 (Kryo 680) identifies itself as 0x41/0xd44 (Prime), 0x41/0xd41
-> (Gold) and 0x41/0xd05 (Silver)
+> > I added the cover letter details to the commit log and changed pr_warn()
+> > to pr_warn_ratelimited(), but otherwise, looked good.
+> >
+> > Applied to for-next/execve, thanks!
+> >
+> > [1/1] binfmt_elf: mseal address zero
+> >       https://git.kernel.org/kees/c/44f65d900698
+> >
+> > Take care,
+> >
+> > --
+> > Kees Cook
+> >
+> >
+> 
+> Hi Kees,
+> 
+> Reproducing diffstat here:
+> 
+>  fs/binfmt_elf.c    |  5 +++++
+>  include/linux/mm.h | 10 ++++++++++
+>  mm/mseal.c         |  2 +-
+>  3 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> It seems that in commit 44f65d9006982 ("binfmt_elf: mseal address zero")
+> you took a patch that makes changes to mm code without any review/ack from
+> any mm maintainer.
+> 
+> While I realise this was a small change, in future can you make sure to
+> ensure you have that?
 
-Wow, all standard ARM cores. OK, I guess we can drop this patch too then. N=
-ice!
+Oh, yes! I can do that. As you say, it was a very small change and
+almost entirely "standard" boilerplate. But sure, I will be poke people
+more directly if anything touches mm in the future.
 
+-Kees
 
--Doug
+-- 
+Kees Cook
 
