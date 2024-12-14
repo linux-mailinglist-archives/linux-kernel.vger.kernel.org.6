@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-445965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDDD9F1DF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:08:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08419F1DF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C1D188B968
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C6A167DBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A79117E472;
-	Sat, 14 Dec 2024 10:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417EA183CCA;
+	Sat, 14 Dec 2024 10:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyRao8tV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxA4f3lG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A645118AE2;
-	Sat, 14 Dec 2024 10:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECD518AE2;
+	Sat, 14 Dec 2024 10:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734170925; cv=none; b=VV+7bo8sxnirAhXtuJULMn5Tau01o+RWWhIIMRBfbVR+OiBE7O66x6fXUqVpywD1CbjgVH7XW4j5JidHBRziSRxz/XQq6Pm7dxvHbmbjVcejYHNqHqDtdDZpB3Fb7MpokYTyio7DsKMXvehThpMGTkLaKqylOcWcUBm2nNQtxAw=
+	t=1734171017; cv=none; b=jSAkYolkq3W9GqlSMcGIPsLuUUG7zmdBGHoQ1ZxpAqc1tsyuSL77UPQ7l85JZHWy+Wus5ulLpNeE4lzdnU6axzJuphsCUYZ18bKXkPc7408hUtGJ4TL0bujTXYDezCka/VyvtOfeFWedFaWteC0DsRMYXR8Ke78advzVWBnBE1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734170925; c=relaxed/simple;
-	bh=n9H5WFzPCrbodac12w+Qneayo0X3juJtP8Cj+26s3FY=;
+	s=arc-20240116; t=1734171017; c=relaxed/simple;
+	bh=xPb01oNmjHu3zOYISr4SRa66JEnsqQoY2c9pZyDHWao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bFmmFBgbdhULpuI9o8+Nm6zzW0w8QW+/lN+MxUowpcfQnpczFEe2z7s6+DUr9ilMe2u8cZWUxNTtmvBUh3vbMQ8xT8oCLS7I49XpQ+lhR68U3nmB2qBpa7OubB7vLDUkcRhyRXqQ6YdDgI74nIal6yEg8udQ6BYnVOJ5fWlryRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyRao8tV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFCDC4CED1;
-	Sat, 14 Dec 2024 10:08:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=u89hw/X6+rIfzq88aYP5mQ71+9JGLL2UuWZjXat1DWVld3zZqpXqmX/RwE8h35bQTHSzMxEw19SL8E3/fnFGmi5czkdruvRebQXU4I3zEZAbepSesoL8enm2Du18MNiKbbPo2hf/S1qTw0j2DJpnk++MNPf+oUzO1r8e5yG1JF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxA4f3lG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D790C4CED1;
+	Sat, 14 Dec 2024 10:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734170925;
-	bh=n9H5WFzPCrbodac12w+Qneayo0X3juJtP8Cj+26s3FY=;
+	s=k20201202; t=1734171017;
+	bh=xPb01oNmjHu3zOYISr4SRa66JEnsqQoY2c9pZyDHWao=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qyRao8tVPIv0LytPAmAmhcmt+WIspihMw1TJRkJ6YQ/qb/Nyl6dV9lLEp6M5HSwGr
-	 oNm0/k0Zv27kkX0eDdeIuwZH9femUQSPK6rlp3jxTj9eIwIboX/BmRZK232Nr+cCcH
-	 JEGe0ZiflCgAyBWYqSxD3gjYN35YOeGkgTtw5jRVBji6rzra+mQiMSY43DRfWifbzc
-	 RJV0GODgI2Qo/pMEoxLHZiihbO+DzlowoG9B20Ai4sTBYZpf75ITrXlZ/XasO8YsUC
-	 Mtb9zv30Vrj6M+GoR7YK7lbyK+IMyalavdpi7dEqsGHimhSH7ihNA8ggpd9y+IdizI
-	 LzqN8Kiav7dYg==
-Message-ID: <28b22474-1b50-47aa-ad89-87b2270189f2@kernel.org>
-Date: Sat, 14 Dec 2024 11:08:41 +0100
+	b=DxA4f3lGCY1iQksWYN3Lsh4uC+32kHc/BrkPIwGcGgW7XTbpgBMVPpOEsgnO7ncTv
+	 ArpvFRXw2JQG/kltLAHbYkXG9H6lGz5EPqOwNGBtO2Usw6DUhF6amgMMZIJbVhtKU9
+	 sOlVYFk0yjhYIK/bLofQd9UFyUCqg9eeRyKxZvYOhADvzADJs8+1XQOBQDj/urPwAX
+	 KoycSemCUa/Ks/HA/ImnclWhm8Q+TPzgx5bRew/fO0akbmej6SwZNFD5kxuVJ+7ysz
+	 XTtA5cQgP8pRujqR8JksVWQEzQ3jcmDl8qOwLSYvIJMHIy0ibqA4sCMiVr30JgYchb
+	 wSRl+o3NPj+vQ==
+Message-ID: <bad23b40-bbca-4ab4-b650-a75723c0bad0@kernel.org>
+Date: Sat, 14 Dec 2024 11:10:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: arm: Add Morello compatibility
+Subject: Re: [PATCH 2/8] dt-bindings: mailbox: arm,mhu: Add missing properties
 To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
 References: <20241213163221.3626261-1-vincenzo.frascino@arm.com>
- <20241213163221.3626261-2-vincenzo.frascino@arm.com>
+ <20241213163221.3626261-3-vincenzo.frascino@arm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,34 +101,70 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241213163221.3626261-2-vincenzo.frascino@arm.com>
+In-Reply-To: <20241213163221.3626261-3-vincenzo.frascino@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/12/2024 17:32, Vincenzo Frascino wrote:
-> Add compatibility to Arm Morello System Development Platform.
+> Add support for "interrupt-names" and "mbox-name" optional properties.
+
+Why?
+
+
+I wonder why you are not cc-ing other maintainers, like only Rob is
+acceptable by you?
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
+
 > 
 > Cc: Sudeep Holla <sudeep.holla@arm.com>
 > Cc: Rob Herring <robh@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
 > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/mailbox/arm,mhu.yaml | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-> index 8dd6b6446394..ea5a5e179ed1 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-> @@ -118,6 +118,9 @@ properties:
->          items:
->            - const: arm,foundation-aarch64
->            - const: arm,vexpress
-> +      - description: Arm Morello System Development Platform
-> +        items:
-> +          - const: arm,morello
+> diff --git a/Documentation/devicetree/bindings/mailbox/arm,mhu.yaml b/Documentation/devicetree/bindings/mailbox/arm,mhu.yaml
+> index d9a4f4a02d7c..65a4f66a7273 100644
+> --- a/Documentation/devicetree/bindings/mailbox/arm,mhu.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/arm,mhu.yaml
+> @@ -63,6 +63,16 @@ properties:
+>        - description: high-priority non-secure
+>        - description: Secure
+>  
+> +  interrupt-names:
+> +    minItems: 2
+> +    items:
+> +      - const: mhu-lpri-rx
+> +      - const: mhu-hpri-rx
+> +      - const: mhu-si-rx
 
-Why is this only SoC? Your commit msg is supposed to explain any
-oddities, because on first look that's just clearly wrong.
+No, drop.
+
+> +
+> +  mbox-name:
+> +    maxItems: 1
+
+No clue what's this, for sure there is no such property at all and
+commit msg does not explain it.
+
+
+Drop entire patch.
 
 Best regards,
 Krzysztof
