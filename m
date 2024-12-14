@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-445968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CCD9F1DFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:13:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933129F1DFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 11:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A941188BA78
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:13:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1485A188BA0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A4D1865E3;
-	Sat, 14 Dec 2024 10:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB62186E58;
+	Sat, 14 Dec 2024 10:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k64zMY3s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oM7BNTo1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E52F18AE2;
-	Sat, 14 Dec 2024 10:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7CB18AE2;
+	Sat, 14 Dec 2024 10:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734171182; cv=none; b=Wz+crNl9KVzySgMaZvhYM7MxWzYLu2rCEns4AxlZu1jMeZ8kXufYY+paLjQoW7pm2lGBpg4b0mU5zG1i/tbvmqg84WZl2yu9z2kcxW8/K9SE3S+3iknWGRRKPu2iN+CrGzr+kJi/32yWwZbnBwmHIkCRBI3iNGgzthJuDxH7+Fc=
+	t=1734171221; cv=none; b=ub6EYFU/62j95ufuvzdGSobeOsrj3KB8dT8zuJpI2c0cd1Wfjdb4I5ZqLPrRAqLsGSFQASPBpz+hgqzCTejL6yVMfdIH8KLjqGYJH78oclLKI7XErwdGCtncvZC7lIpyJvU9RaA6XipfBl2PtnWS6tIrx604SXw7rexHt0lBW1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734171182; c=relaxed/simple;
-	bh=B4w7qyzubxMMydQEqp4vY3XoKkUYi/sW0XSUiYIB5GU=;
+	s=arc-20240116; t=1734171221; c=relaxed/simple;
+	bh=GtUbfeprVSqC84GFBUJtrVNhwzGqSjy+5NCyYZL4rLw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sBbnvnQ6RTvADq5YysDFpXkjY7p2Vzm8q0qxgYYP6FJBPLGr9C3uNJYVdNP5nniTktzSwC/81IANjc7ZyZmeG0af9i+OZLU6UTHZNa9i0Hr35LQFBFobBKOVAw5wm7xXt+99gZc7Xt90082DZfyNB3XjLpg92Xe5Ls8najgwkk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k64zMY3s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE134C4CED1;
-	Sat, 14 Dec 2024 10:12:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=rPJUsPj2/mt0mLd/udG38atGzJHOW0GjqqAiTQJRKnBIr6SKceBH7tysti1wY2aG2XItzmvupr0ZGbTbUqtUDHjqgmFtt58LOpBXcjGdidilpysQIZyiiNqzYjw5jKAYZbU/oooIHJGOnHLQDlxBI91gUVMJiiR4U1OioJqD1TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oM7BNTo1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A63DC4CED1;
+	Sat, 14 Dec 2024 10:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734171181;
-	bh=B4w7qyzubxMMydQEqp4vY3XoKkUYi/sW0XSUiYIB5GU=;
+	s=k20201202; t=1734171220;
+	bh=GtUbfeprVSqC84GFBUJtrVNhwzGqSjy+5NCyYZL4rLw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k64zMY3sXhjFqj8VWoHKVF0VfjCyE8haQyPK0AOsMGKc+HhyEiekPiy+/nBZAbut5
-	 Z749auXM7u84JTN5l8Zrr+nls5mmHzxscTfI1fsOERBPeRfe8zz1UoaOsnvp82s4hH
-	 yvoTnb9xR1P5L1GnwFTNSIwOPySI3Kuu1WlAv2zE6L2GhCjR3N7o/bVU+gEbRMvHkt
-	 agXz3YeAgPCx/dpboWMg71cWoBsyBQxfoHqy6wxmSxTdkves24inTjZN5vUofZAn4F
-	 20sVH855IJ88fi0L8B1f2Zt7rR+aMzM0FeaOtE0L8c7cZ23rSWSzm0POVFRFr/9qUv
-	 shjxm62HsuaAQ==
-Message-ID: <c01fab26-876f-4ffa-9360-c6746bbb467e@kernel.org>
-Date: Sat, 14 Dec 2024 11:12:58 +0100
+	b=oM7BNTo1xLch3Y/+NQA1kdLsExJBmvTTrIV8z99Y/7ye+eSiYlyEpqkEPrJKO53kZ
+	 V6c8DJK9rWZkPDeYdttcX58qeidMBmn7G0W3b3n89jjaMqGzMF6uXwY9h+cxBd6DLX
+	 oMuR32+lVIWZk9M5O6shR5KDZq8O1Qs0H98zWtbTQAtiq0hGOBwUkWgtjAmIq9u8Xq
+	 JIrqOnx3rRMgoS5DlzfI1ymGp9EWoWfK69NgWQwaDfU1SGbw+nyBYHQ0czmJOLHgWP
+	 wSB15P9urwanPM7Uw8CcdFkJeMWPXBXsDhuxBByOZaR/ZsRBSNA2+ih19vB79iuJr+
+	 P2cNP5uHFJ7aw==
+Message-ID: <a4137536-5c7f-43b7-9af6-dbf77aaa8987@kernel.org>
+Date: Sat, 14 Dec 2024 11:13:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] arm64: dts: morello: Add support for soc dts
+Subject: Re: [PATCH 5/8] arm64: Introduce Arm Morello System Development
+ Platform
 To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>
 References: <20241213163221.3626261-1-vincenzo.frascino@arm.com>
- <20241213163221.3626261-5-vincenzo.frascino@arm.com>
-Content-Language: en-US
+ <20241213163221.3626261-6-vincenzo.frascino@arm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -100,121 +101,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241213163221.3626261-5-vincenzo.frascino@arm.com>
+In-Reply-To: <20241213163221.3626261-6-vincenzo.frascino@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/12/2024 17:32, Vincenzo Frascino wrote:
-> The Morello architecture is an experimental extension to Armv8.2-A,
-> which extends the AArch64 state with the principles proposed in
-> version 7 of the Capability Hardware Enhanced RISC Instructions
-> (CHERI) ISA.
-> 
-> Introduce Morello SoC dts.
-
-So Morello is an architecture, not a board or platform? You cannot have
-both...
-
-
-
-
+> Introduce the Kconfig entry for the Arm Morello System Development
+> Platform.
 > 
 > Cc: Sudeep Holla <sudeep.holla@arm.com>
 > Cc: Rob Herring <robh@kernel.org>
 > Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  arch/arm64/boot/dts/arm/morello-soc.dts | 267 ++++++++++++++++++++++++
->  1 file changed, 267 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/arm/morello-soc.dts
+>  arch/arm64/Kconfig.platforms | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/arm/morello-soc.dts b/arch/arm64/boot/dts/arm/morello-soc.dts
-> new file mode 100644
-> index 000000000000..3c5247121e4d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/arm/morello-soc.dts
-> @@ -0,0 +1,267 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> +/*
-> + * Copyright (c) 2021-2024, Arm Limited. All rights reserved.
-> +
-> + */
-> +
-> +/dts-v1/;
-> +#include "morello.dtsi"
-> +
-> +/ {
-> +	model = "Arm Morello System Development Platform";
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		secure-firmware@ff000000 {
-> +			reg = <0 0xff000000 0 0x01000000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +		cpu0: cpu0@0 {
-> +			compatible = "arm,neoverse-n1";
-> +			reg = <0x0 0x0>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			clocks = <&scmi_dvfs 0>;
-> +		};
-> +		cpu1: cpu1@100 {
-> +			compatible = "arm,neoverse-n1";
-> +			reg = <0x0 0x100>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			clocks = <&scmi_dvfs 0>;
-> +		};
-> +		cpu2: cpu2@10000 {
-> +			compatible = "arm,neoverse-n1";
-> +			reg = <0x0 0x10000>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			clocks = <&scmi_dvfs 1>;
-> +		};
-> +		cpu3: cpu3@10100 {
-> +			compatible = "arm,neoverse-n1";
-> +			reg = <0x0 0x10100>;
-> +			device_type = "cpu";
-> +			enable-method = "psci";
-> +			clocks = <&scmi_dvfs 1>;
-> +		};
-> +	};
-> +
-> +	/* The first bank of memory, memory map is actually provided by UEFI. */
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		/* [0x80000000-0xffffffff] */
-> +		reg = <0x00000000 0x80000000 0x0 0x7F000000>;
-> +	};
-> +
-> +	memory@8080000000 {
-> +		device_type = "memory";
-> +		/* [0x8080000000-0x83f7ffffff] */
-> +		reg = <0x00000080 0x80000000 0x3 0x78000000>;
-> +	};
-> +
-> +	smmu_pcie: iommu@4f400000 {
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 370a9d2b6919..1c4867ea9407 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -250,6 +250,11 @@ config ARCH_NPCM
+>  	  General support for NPCM8xx BMC (Arbel).
+>  	  Nuvoton NPCM8xx BMC based on the Cortex A35.
+>  
+> +config ARCH_MORELLO
+> +	bool "Arm Morello System Development Platform"
+> +	help
+> +	  Enables support for Arm Morello System Development Platform
 
-This all is weird. MMIO nodes outside of soc, soc pieces defined in DTS
-instead of DTSI.
-
-Please look first how all other DTS and DTSI are done. Also carefully
-read DTS coding style.
-
-
+You do not get new ARCH per each soc or product. Merge it to existing
+ARM Kconfigs.
 
 Best regards,
 Krzysztof
