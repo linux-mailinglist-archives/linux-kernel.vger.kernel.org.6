@@ -1,270 +1,198 @@
-Return-Path: <linux-kernel+bounces-446141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD28C9F204C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:27:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84A39F204D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0534D7A0FC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8BD1888725
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5781A8F80;
-	Sat, 14 Dec 2024 18:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570F91A8F6B;
+	Sat, 14 Dec 2024 18:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjijPWef"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="clT1p39L"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54130EBE;
-	Sat, 14 Dec 2024 18:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9C3D96A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 18:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734200810; cv=none; b=kIOnTMtag/R3KKk2HjqB1VDU8M1UaPBW2+a0jdf4K3k4U8LPKbjxokB4hSFEFktQiTz7FW+J26zrUEvxiG+oAmjU39zEcMz2k2qGTXkd3624xMnoakuK25h9hdy4nf4aiBBWSZDZ4W9ETuAm2iT5w0nVCg8znsDdLRjEDVmIsTw=
+	t=1734201016; cv=none; b=SQzc7WC6VBEvJVT5f1wud7mJQfRFX+ntpdZBeaeDZJsb7THr35U7ym0KwDT/9BT8HoWjuBwyxamuX//sE3VPHAyvTVSIdHFr42eh65O++tUZIqyGqXAxI2bzhKuY04Cu3xmvw/uAnsA3nsbOqEdpj5xy4B6KBvw1/3x7Z0mruZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734200810; c=relaxed/simple;
-	bh=yGbb+UmEpUS3I/z5uhSvfUZe9G4wyHQQcxxjKJgsLO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NGscfnzw8QpSbKlpEE4LtV8MNZdHpDiSn4Ri8dqrvQkRZSq6vF4cTYdYM8sIQfVuuo3lIVKRTKgQWRWGrF+DVmoNz6MQ151+2iFS/+ozwlpQqqwblSqgO4h5elfqQWxBM1HTOGPczFth4BwTK9GQKmt6gM3y+jk4czP+yh4z0VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjijPWef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0034C4CED1;
-	Sat, 14 Dec 2024 18:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734200809;
-	bh=yGbb+UmEpUS3I/z5uhSvfUZe9G4wyHQQcxxjKJgsLO4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pjijPWeflDLjiUNdDC/1KGbMempHYH2RhorhnDVqoVm7SZXnA0BvzA5dxUumZuABn
-	 WOwlyPXarpRZgG9ND1vUjr4d+qU6TlcddfUNnNVV7+BnAMoF9KCYzQlYZT7WF/Q8wi
-	 w8cb8nZue33/77reiyr/aLwFndHUQtVpvFDnNlF/Pj1eCCqceiyuo2dz8ezFGDvECs
-	 FIVh0OdVbfISSyBSYdya67hTYxKngfbnCZoVi4WYYGBRQTHiqn0+jEeNts6hRcPFrX
-	 w8iITb5Q06NjEQJMXwR8Uh5Xjm7PMISxDCAvUHdIMx3K3/2t8OjVMVEtPxXkENx93J
-	 1Etc5xZZ6CsBg==
-Date: Sat, 14 Dec 2024 18:26:40 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
- aardelean@baylibre.com, adureghello@baylibre.com
-Subject: Re: [PATCH v2 1/9] iio: adc: ad7606: Fix hardcoded offset in the
- ADC channels
-Message-ID: <20241214182640.6ee2c085@jic23-huawei>
-In-Reply-To: <20241210-ad7606_add_iio_backend_software_mode-v2-1-6619c3e50d81@baylibre.com>
-References: <20241210-ad7606_add_iio_backend_software_mode-v2-0-6619c3e50d81@baylibre.com>
-	<20241210-ad7606_add_iio_backend_software_mode-v2-1-6619c3e50d81@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734201016; c=relaxed/simple;
+	bh=XjPwGW2BXQKBQtncWKNfynfoEtP44/XabHm/ibJK1gQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QWzSxEFSQut58LvMxwJuuXwxNl7Tp6A+8AQ3MWeAoOyQS6k5CF2iwYg4zAPwZ3YUk4M8VLaeFGCFymGn+PA0mQMHFTRJHmG9uW2NRFnZanGn6b5VkIZIlTYEYUaPf8UfBdZYEZaRlPOhMDPb3ZCdTg8FlRCuG1wWqBbgWmqvUac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=clT1p39L; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4afefc876c6so742556137.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 10:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734201014; x=1734805814; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cfqxcq4wpnphymnU6ypxtGC8QErPdjcXWjyPVc+zgoc=;
+        b=clT1p39L7VS0ia9eSf4VzCy6sUIxppdg8GuOTSN1VSxtTa0c/upVnmJQmi8BEjHKR0
+         5iawt7xZWdqdOeei8TvGKnXHg0w7wai+hD8JNI/ahBaOJ3mRj3ITQGU6ySq9pOZS4RVW
+         /4K5NZBae2mTDgRSHKPJwWohs9awWscQ6WnSASfc3k1CDOq6Pwt0wqdG1E7imcIOQPqT
+         J5MBWT76fsmxP3DCRTqts7AwTrDY30qspAKCceoyYbSVepWvBoVY7GAoV4I54/2oRZRw
+         OyV4NkYjjQqm7Z6E94j0AxNO9EZ1D4XbgaB4axN/NoXXVgIQzcar1x/09yIjvACdKLMj
+         4Nnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734201014; x=1734805814;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cfqxcq4wpnphymnU6ypxtGC8QErPdjcXWjyPVc+zgoc=;
+        b=BxEZB2UALRkHWrO4zgGGs21gQTH12NTuKel9PwnSEwpDIdfBvgtc0JnAtzpnIlGwGI
+         06+9TN8bGC2WO+7+rrahjzlCR/Q65Sne1j515oQSO/7VqxT0l+DBP7KQ/HfT7nirm+wt
+         qeIjZ2kM5Ggj5WQGZ7dbx9IYhcT6shLEivof2LC9n25dRFfmNUfnjGij0Bh5Fa0cj50R
+         gg9DLgaTvPHoa+hfd96zCM64Mpn+3fWIh6rTN/dcTvNWHugDnuc7VyJt8bq67kZDUgfd
+         VLN38tjs9v5k+cxrpN9LLHrppFYB3RUcZiPT2Ax4oDwrZy5TlxtZU5AayrOep583qNMe
+         66gA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmd5Lwi9knIM7KDSgl/QMOcFKZDe2BNzJrzOZUWYmnoE5Y+u5u9FPt/yomC61ZQ4zgenJHDfqn21jiqjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLKcTnxkY30tmpK/e007JzjE5uHFHjmqErTPipCvZz2MS1kdQ+
+	rTKoBGLvNzrvoIrIjhE8gFzVIC4RbwvIon+/whIWC5RvPKrn28vooGUzIt8OWTsxd6uCmaInmU9
+	6l4WmRBqJoyfT4QLGtcnHs+M8qmgIapNFosV2
+X-Gm-Gg: ASbGncvpFcZEPacYRtaCKPlR4tZgDDVUcJ/iLJ2ifQuFbLt8m50DNJwB2tDGKijDM9a
+	Tfr88B+NpapN/IcPQT11CFT16silOVL4U3xt5hTtWf4ngm9VBLVN2kdP+nuTPMOOHu/ZUfoU=
+X-Google-Smtp-Source: AGHT+IERxcx+NGxGXAki+JjzuiZT8JRqTo75tQfQ8B0V4mn4vI3F5BUmfMlrnmFYVn/5gYY3jQjt28miU+4deXcTdtM=
+X-Received: by 2002:a05:6102:c90:b0:4af:c58f:4550 with SMTP id
+ ada2fe7eead31-4b25d986cafmr8543738137.7.1734201012332; Sat, 14 Dec 2024
+ 10:30:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1734164094.git.zhengqi.arch@bytedance.com> <1fdb3ee32e6958ad82229941b2213ef76b7c4705.1734164094.git.zhengqi.arch@bytedance.com>
+In-Reply-To: <1fdb3ee32e6958ad82229941b2213ef76b7c4705.1734164094.git.zhengqi.arch@bytedance.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Sat, 14 Dec 2024 11:29:35 -0700
+Message-ID: <CAOUHufaKRXJA=vZucoJMmgQw264LSxWuTtNcFQMLD7UNz_6wyw@mail.gmail.com>
+Subject: Re: [PATCH 01/12] Revert "mm: pgtable: make ptlock be freed by RCU"
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: peterz@infradead.org, tglx@linutronix.de, david@redhat.com, 
+	jannh@google.com, hughd@google.com, willy@infradead.org, 
+	muchun.song@linux.dev, vbabka@kernel.org, lorenzo.stoakes@oracle.com, 
+	akpm@linux-foundation.org, rientjes@google.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Dec 2024 10:46:41 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+On Sat, Dec 14, 2024 at 2:03=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.co=
+m> wrote:
+>
+> This reverts commit 2f3443770437e49abc39af26962d293851cbab6d.
+>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-> When introducing num_adc_channels, I overlooked some new functions
-> created in a meanwhile that had also the hardcoded offset. This commit
-> adds the new logic to these functions.
-> 
-> Fixes: 7a671afeb592 ("iio: adc: ad7606: Introduce num_adc_channels")
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-Applied this patch to the fixes-togreg branch of iio.git.
+Bloating struct pt_lock is unnecessary. Glad to see it's reverted.
 
-That may well stall the rest for a while though whilst that works its
-way around into the upstream for the togreg branch.
+Acked-by: Yu Zhao <yuzhao@google.com>
 
-Thanks,
-
-Jonathan
 
 > ---
->  drivers/iio/adc/ad7606.c | 48 ++++++++++++++++++++++++++++--------------------
->  drivers/iio/adc/ad7606.h |  2 +-
->  2 files changed, 29 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index e35d55d03d86..d8e3c7a43678 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -175,17 +175,17 @@ static const struct iio_chan_spec ad7616_channels[] = {
->  	AD7606_CHANNEL(15, 16),
->  };
->  
-> -static int ad7606c_18bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606c_18bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					  struct iio_chan_spec *chan, int ch);
-> -static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606c_16bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					  struct iio_chan_spec *chan, int ch);
-> -static int ad7606_16bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606_16bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					 struct iio_chan_spec *chan, int ch);
-> -static int ad7607_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7607_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch);
-> -static int ad7608_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7608_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch);
-> -static int ad7609_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7609_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch);
->  
->  const struct ad7606_chip_info ad7605_4_info = {
-> @@ -323,9 +323,10 @@ int ad7606_reset(struct ad7606_state *st)
+>  include/linux/mm.h       |  2 +-
+>  include/linux/mm_types.h |  9 +--------
+>  mm/memory.c              | 22 ++++++----------------
+>  3 files changed, 8 insertions(+), 25 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index e7902980439cc..5e73e53c34e9e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2988,7 +2988,7 @@ void ptlock_free(struct ptdesc *ptdesc);
+>
+>  static inline spinlock_t *ptlock_ptr(struct ptdesc *ptdesc)
+>  {
+> -       return &(ptdesc->ptl->ptl);
+> +       return ptdesc->ptl;
 >  }
->  EXPORT_SYMBOL_NS_GPL(ad7606_reset, "IIO_AD7606");
->  
-> -static int ad7606_16bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606_16bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					 struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  
->  	if (!st->sw_mode_en) {
-> @@ -345,10 +346,12 @@ static int ad7606_16bit_chan_scale_setup(struct ad7606_state *st,
->  	return 0;
->  }
->  
-> -static int ad7606_get_chan_config(struct ad7606_state *st, int ch,
-> +static int ad7606_get_chan_config(struct iio_dev *indio_dev, int ch,
->  				  bool *bipolar, bool *differential)
->  {
-> -	unsigned int num_channels = st->chip_info->num_channels - 1;
-> +	struct ad7606_state *st = iio_priv(indio_dev);
-> +	unsigned int num_channels = st->chip_info->num_adc_channels;
-> +	unsigned int offset = indio_dev->num_channels - st->chip_info->num_adc_channels;
->  	struct device *dev = st->dev;
->  	int ret;
->  
-> @@ -364,7 +367,7 @@ static int ad7606_get_chan_config(struct ad7606_state *st, int ch,
->  			continue;
->  
->  		/* channel number (here) is from 1 to num_channels */
-> -		if (reg == 0 || reg > num_channels) {
-> +		if (reg < offset || reg > num_channels) {
->  			dev_warn(dev,
->  				 "Invalid channel number (ignoring): %d\n", reg);
->  			continue;
-> @@ -399,9 +402,10 @@ static int ad7606_get_chan_config(struct ad7606_state *st, int ch,
->  	return 0;
->  }
->  
-> -static int ad7606c_18bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606c_18bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					  struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  	bool bipolar, differential;
->  	int ret;
-> @@ -413,7 +417,7 @@ static int ad7606c_18bit_chan_scale_setup(struct ad7606_state *st,
->  		return 0;
->  	}
->  
-> -	ret = ad7606_get_chan_config(st, ch, &bipolar, &differential);
-> +	ret = ad7606_get_chan_config(indio_dev, ch, &bipolar, &differential);
->  	if (ret)
->  		return ret;
->  
-> @@ -455,9 +459,10 @@ static int ad7606c_18bit_chan_scale_setup(struct ad7606_state *st,
->  	return 0;
->  }
->  
-> -static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7606c_16bit_chan_scale_setup(struct iio_dev *indio_dev,
->  					  struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  	bool bipolar, differential;
->  	int ret;
-> @@ -469,7 +474,7 @@ static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
->  		return 0;
->  	}
->  
-> -	ret = ad7606_get_chan_config(st, ch, &bipolar, &differential);
-> +	ret = ad7606_get_chan_config(indio_dev, ch, &bipolar, &differential);
->  	if (ret)
->  		return ret;
->  
-> @@ -512,9 +517,10 @@ static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
->  	return 0;
->  }
->  
-> -static int ad7607_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7607_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  
->  	cs->range = 0;
-> @@ -523,9 +529,10 @@ static int ad7607_chan_scale_setup(struct ad7606_state *st,
->  	return 0;
->  }
->  
-> -static int ad7608_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7608_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  
->  	cs->range = 0;
-> @@ -534,9 +541,10 @@ static int ad7608_chan_scale_setup(struct ad7606_state *st,
->  	return 0;
->  }
->  
-> -static int ad7609_chan_scale_setup(struct ad7606_state *st,
-> +static int ad7609_chan_scale_setup(struct iio_dev *indio_dev,
->  				   struct iio_chan_spec *chan, int ch)
->  {
-> +	struct ad7606_state *st = iio_priv(indio_dev);
->  	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
->  
->  	cs->range = 0;
-> @@ -1146,8 +1154,8 @@ static int ad7606_sw_mode_setup(struct iio_dev *indio_dev)
->  
->  static int ad7606_chan_scales_setup(struct iio_dev *indio_dev)
->  {
-> -	unsigned int num_channels = indio_dev->num_channels - 1;
->  	struct ad7606_state *st = iio_priv(indio_dev);
-> +	unsigned int offset = indio_dev->num_channels - st->chip_info->num_adc_channels;
->  	struct iio_chan_spec *chans;
->  	size_t size;
->  	int ch, ret;
-> @@ -1161,8 +1169,8 @@ static int ad7606_chan_scales_setup(struct iio_dev *indio_dev)
->  	memcpy(chans, indio_dev->channels, size);
->  	indio_dev->channels = chans;
->  
-> -	for (ch = 0; ch < num_channels; ch++) {
-> -		ret = st->chip_info->scale_setup_cb(st, &chans[ch + 1], ch);
-> +	for (ch = 0; ch < st->chip_info->num_adc_channels; ch++) {
-> +		ret = st->chip_info->scale_setup_cb(indio_dev, &chans[ch + offset], ch);
->  		if (ret)
->  			return ret;
->  	}
-> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> index 998814a92b82..8778ffe515b3 100644
-> --- a/drivers/iio/adc/ad7606.h
-> +++ b/drivers/iio/adc/ad7606.h
-> @@ -69,7 +69,7 @@
->  
->  struct ad7606_state;
->  
-> -typedef int (*ad7606_scale_setup_cb_t)(struct ad7606_state *st,
-> +typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
->  				       struct iio_chan_spec *chan, int ch);
->  
+>  #else /* ALLOC_SPLIT_PTLOCKS */
+>  static inline void ptlock_cache_init(void)
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index df8f5152644ec..5d8779997266e 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -434,13 +434,6 @@ FOLIO_MATCH(flags, _flags_2a);
+>  FOLIO_MATCH(compound_head, _head_2a);
+>  #undef FOLIO_MATCH
+>
+> -#if ALLOC_SPLIT_PTLOCKS
+> -struct pt_lock {
+> -       spinlock_t ptl;
+> -       struct rcu_head rcu;
+> -};
+> -#endif
+> -
 >  /**
-> 
-
+>   * struct ptdesc -    Memory descriptor for page tables.
+>   * @__page_flags:     Same as page flags. Powerpc only.
+> @@ -485,7 +478,7 @@ struct ptdesc {
+>         union {
+>                 unsigned long _pt_pad_2;
+>  #if ALLOC_SPLIT_PTLOCKS
+> -               struct pt_lock *ptl;
+> +               spinlock_t *ptl;
+>  #else
+>                 spinlock_t ptl;
+>  #endif
+> diff --git a/mm/memory.c b/mm/memory.c
+> index d9af83dd86bbf..83765632e20b0 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -7041,34 +7041,24 @@ static struct kmem_cache *page_ptl_cachep;
+>
+>  void __init ptlock_cache_init(void)
+>  {
+> -       page_ptl_cachep =3D kmem_cache_create("page->ptl", sizeof(struct =
+pt_lock), 0,
+> +       page_ptl_cachep =3D kmem_cache_create("page->ptl", sizeof(spinloc=
+k_t), 0,
+>                         SLAB_PANIC, NULL);
+>  }
+>
+>  bool ptlock_alloc(struct ptdesc *ptdesc)
+>  {
+> -       struct pt_lock *pt_lock;
+> +       spinlock_t *ptl;
+>
+> -       pt_lock =3D kmem_cache_alloc(page_ptl_cachep, GFP_KERNEL);
+> -       if (!pt_lock)
+> +       ptl =3D kmem_cache_alloc(page_ptl_cachep, GFP_KERNEL);
+> +       if (!ptl)
+>                 return false;
+> -       ptdesc->ptl =3D pt_lock;
+> +       ptdesc->ptl =3D ptl;
+>         return true;
+>  }
+>
+> -static void ptlock_free_rcu(struct rcu_head *head)
+> -{
+> -       struct pt_lock *pt_lock;
+> -
+> -       pt_lock =3D container_of(head, struct pt_lock, rcu);
+> -       kmem_cache_free(page_ptl_cachep, pt_lock);
+> -}
+> -
+>  void ptlock_free(struct ptdesc *ptdesc)
+>  {
+> -       struct pt_lock *pt_lock =3D ptdesc->ptl;
+> -
+> -       call_rcu(&pt_lock->rcu, ptlock_free_rcu);
+> +       kmem_cache_free(page_ptl_cachep, ptdesc->ptl);
+>  }
+>  #endif
+>
+> --
+> 2.20.1
+>
 
