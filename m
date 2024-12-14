@@ -1,224 +1,164 @@
-Return-Path: <linux-kernel+bounces-445760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586199F1B3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A929F1B3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EFB188E299
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DCFD16B563
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37199BE49;
-	Sat, 14 Dec 2024 00:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF1CE56C;
+	Sat, 14 Dec 2024 00:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MHxoIQO6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M2M2UW1B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7ED3C14
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B78F4E2
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734134770; cv=none; b=Nvxc/byiadr2/GYtlqSGPHr3rPWxzqpJKYPTat6bKysy6o+YV1ZIvN4mhvc/rgeML7WgJDwc+dWdVUK/KT9hvL8CWziYjIAH1/vZVsypHKhx7bV252wauNXtispKNSqG4tavdnwXQOh65kndUPBiEolcTYVRkFRQyQs/ZPcoVjk=
+	t=1734134789; cv=none; b=Jk1oA7VP6voheIqqMPJW3ZzuTfVkRt9w5vkkZCBLYnvIdvYwXSJS9we7WRcS1Bt0V8J2JWkzLtwNvcUrZ5B1NyCaaPhsnpWObvSsyeQaVNkqiC/+3nraiFflkigUbHntXYtCvXTce/BAI0dsPMCIUUS4Jl7txXPV4k+7veQXH1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734134770; c=relaxed/simple;
-	bh=pk9b7aQjULDMsfhCdbV7APXJ9Vk01GgEXcJP7pCPinA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UOH+SdMOBWtkN18vYrTKu8uwfJY/i2HBZM/QnTgI9xBvilPYZjFzmk/YLohYMjdYxiTHq3qMS4n8lBJCv80hXryNFdN/cIXB2cEOUV4YgSe5lqLVhsaL8moRs0ESdlmLcck8MIUTFwxuTdTjhV64Ud6lwQnmzINHFp8OR9MPpuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MHxoIQO6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M/oCU0QXpHv5wBTl4rjJLN6MhY5SgrkcuVkrhZ30vWo=; b=MHxoIQO60BVUQzhQzCqX6cS24Q
-	gZLsDe50RESXLkOlPBD0joVURo9tgEDaPKCoFBgkCvHBBlKNQBYhXiCXpyvgUC77GdCHbdcYmfemX
-	4DmgQ5BwJsXGvR6gAHJW23iNUbCQw4Xy/ypjPgVv9lHiRREdrnEtCML3HYdAvtckaxZs/uU842V6c
-	BRj9qFsX/8sBAzmlRiPSbxQSZxIuyZxH4QDenWhPVCtQ5E4Az2V4aQie6MMDvwPRpTVxUALP9oYXV
-	j3aU1Rai33vhjKtA1Ctfx8+Lxqpp86LOwNjYSxMbIWtS84CVGvHD0r9+ssdGsAN6gI/SJPK28lFIK
-	zmTIVu3Q==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tMFfU-0000000Gf4s-3pPj;
-	Sat, 14 Dec 2024 00:06:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2D2DC30049D; Sat, 14 Dec 2024 01:06:00 +0100 (CET)
-Date: Sat, 14 Dec 2024 01:05:59 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
-Subject: Re: [RFC][PATCH v14 5/7] sched: Add an initial sketch of the
- find_proxy_task() function
-Message-ID: <20241214000559.GC17501@noisy.programming.kicks-ass.net>
-References: <20241125195204.2374458-1-jstultz@google.com>
- <20241125195204.2374458-6-jstultz@google.com>
+	s=arc-20240116; t=1734134789; c=relaxed/simple;
+	bh=oVdrsM4iSvcVVv59Bq/l3kQZnH2DqSvqGHtaO/V5qFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RVKajs9jMWOLW8zMBkVzfOyj6zBGHXneRcybSSXgRwnu6NM46A3+OlDmdi1XO23OAb6RNRPMSmQ397nxirhvncI3Ht0/3BZVZVA4kJzGctZfxsTibHUB67Ba3C+rTrMbsm3SJA801WI+5a+65QYOt3MQDB73srheyBJ4UckObfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M2M2UW1B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBhq6a018447
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:06:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	URnOAD7B5WVB2bgpEbRPQyjpSOPc3nHHY920y5f2ebw=; b=M2M2UW1BxPSxaQvb
+	anPmbJygF25tMadYTvtItwsBMrlje+k3Xj3EssS7xtfo5wSOWMGTCB2PLLPN4LNa
+	tIcTUXlsAxhhqycAACh99VIENndA4K2+e074DMMsdc8gX0MhRshkoej2hO6CScMr
+	OE9V16amVfGnvrBVfEhVi+h1HAZT8HKNr2BjLAxUEJnIDoala3dXKJyu45y7Ggw9
+	+eWGdfH2aux2n3sDa8r7fG5aXRJqw46tUP/KSyTjf8lOxqK4AMsAeQt3vfWycnos
+	8dPnk3GFNoRXRwb46ncs31h3NpDKAvAj08D469Z3hu+9/AeuXdci3LkfzflDLHn0
+	sLrOfA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gmac1k6n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 00:06:26 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d8e7016630so5500246d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:06:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734134780; x=1734739580;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=URnOAD7B5WVB2bgpEbRPQyjpSOPc3nHHY920y5f2ebw=;
+        b=Hrnrew9uvP0S+tRRw/DCgXaPsLpLRrJiAHL65kKwJfS5kA92ShuDegdlQggm9tUADN
+         zA+/mi6Mjp9x2SLyuV26p+kIAFSULfUTeAVxAnP+rU4sIa67BNUmQD4HorIzbeS5J6r9
+         MFq+Lm9Jm0kB/mHA4uXGJd7Wt0vQ07Pl8SOUKcKs+vmM9Cg9iH1NcPmAoneXrIXqWi4p
+         hMRkOp/j/mfKEgKN27gYAJmdoKh57muKvhxnAmRn0lUcQMa3Olv3rl2Wtz4W2a4dtGre
+         2907oYyvHI7c6MaQVocR8dOaOiyRkr/w4uiSsVayFuoGBNZQ9ZWuD1MFD9iY8fSlmQpo
+         t4uw==
+X-Gm-Message-State: AOJu0YwO75NBdfhQeZQwOkBoA+n6KKI0AEPiZKsrd+rRHl0EwImuEhHK
+	R7xUMbOghOa2fuw6h4u3oYMmAPb3aIOejBf7kuK4V+srX47fTCLahmxkKvPLciNxxfRGtfH4bRM
+	7H6stRLD+H85sdo20QXUlF0tTlEId3Vl3jyV7LiBwhm2auDwHGO9G0DYxmx/BNOFuKM4ZFjo=
+X-Gm-Gg: ASbGncstfVDwP+OJNSOAelD8dKw5AXAhtfMjt3v275hvUbJKqs6SEaJnEbdKm/iPlR3
+	8HMy7sLNCS7TJ4V2PXuIr0KiR+ajdsrJbeCrS4Ob9GkDTCTFqZxEgQ3/OYx9uEwZDfJ+VnmEILO
+	N3uRvj18ckbxgf0set33RuEblop7GqJ68lY3CX2qcP8WBGPazMXy+vfpZJ185aO0gxMfzsygT7b
+	7DfcjU/g0becL9bKXE5RzHfITFjTWL0YEPZpnTCAaZuA2f4zCcn+Hdm8RDYm7aOg/Brj5KTAT0N
+	1Rzlc2y+DMfVlg7h0FeVV9zJ8Ktv8KtUKh4=
+X-Received: by 2002:a05:6214:3002:b0:6d8:e5f4:b972 with SMTP id 6a1803df08f44-6dc8ca4047fmr28201886d6.3.1734134780402;
+        Fri, 13 Dec 2024 16:06:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH4vD7vPLzQ4aG18YUkHITmORVt4lbdTdCFofhZWV8MLNWse7WmiAnMO0rpcbotPtBwqo6Ceg==
+X-Received: by 2002:a05:6214:3002:b0:6d8:e5f4:b972 with SMTP id 6a1803df08f44-6dc8ca4047fmr28201686d6.3.1734134780057;
+        Fri, 13 Dec 2024 16:06:20 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963b33bbsm25855866b.196.2024.12.13.16.06.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 16:06:18 -0800 (PST)
+Message-ID: <6e9c4ebc-c52e-47ee-b3a5-570e84125e42@oss.qualcomm.com>
+Date: Sat, 14 Dec 2024 01:06:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125195204.2374458-6-jstultz@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/19] arm64: dts: qcom: Disable USB U1/U2 entry for
+ SA8775P
+To: Prashanth K <quic_prashk@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, cros-qcom-dts-watchers@chromium.org
+References: <20241213095237.1409174-1-quic_prashk@quicinc.com>
+ <20241213095237.1409174-9-quic_prashk@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241213095237.1409174-9-quic_prashk@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ucL0W7-v8Asi36ZCd0sGNICFLFfE63XL
+X-Proofpoint-GUID: ucL0W7-v8Asi36ZCd0sGNICFLFfE63XL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=523 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130172
 
-On Mon, Nov 25, 2024 at 11:51:59AM -0800, John Stultz wrote:
+On 13.12.2024 10:52 AM, Prashanth K wrote:
+> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> 
+> Disable U1 and U2 power-saving states to improve stability of USB.
+> These low-power link states, designed to reduce power consumption
+> during idle periods, can cause issues in latency-sensitive or high
+> throughput use cases. Over the years, some of the issues seen are
+> as follows:
+> 
+> 1. In device mode of operation, when UVC is active, enabling U1/U2
+> is sometimes causing packets drops due to delay in entry/exit of
+> intermittent these low power states. These packet drops are often
+> reflected as missed isochronous transfers, as the controller wasn't
+> able to send packet in that microframe interval and hence glitches
+> are seen on the final transmitted video output.
+> 
+> 2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
+> when U1/U2 is enabled. Often when link enters U2, there is a re-
+> enumeration seen and device is unusable for many use cases.
+> 
+> 3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
+> the cable is disconnected and reconnected to host PC in HS, there
+> is no link status change interrupt seen and the plug-in in HS doesn't
+> show up a bus reset and enumeration failure happens.
+> 
+> Disabling these intermittent power states enhances device stability
+> without affecting power usage.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+> ---
 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index f8714050b6d0d..b492506d33415 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -5052,6 +5052,34 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
->  	}
->  }
+[...]
+
 >  
-> +/*
-> + * Only called from __schedule context
-> + *
-> + * There are some cases where we are going to re-do the action
-> + * that added the balance callbacks. We may not be in a state
-> + * where we can run them, so just zap them so they can be
-> + * properly re-added on the next time around. This is similar
-> + * handling to running the callbacks, except we just don't call
-> + * them.
-> + */
+> @@ -3570,6 +3576,8 @@ tcsr_mutex: hwlock@1f40000 {
+>  			compatible = "qcom,tcsr-mutex";
+>  			reg = <0x0 0x01f40000 0x0 0x20000>;
+>  			#hwlock-cells = <1>;
+> +				snps,dis-u1-entry-quirk;
+> +				snps,dis-u2-entry-quirk;
 
-Which specific callbacks are this? sched_core_balance()?
+Oh?
 
-In general, shooting down all callbacks like this makes me feel somewhat
-uncomfortable.
-
-> +#ifdef CONFIG_SCHED_PROXY_EXEC
-> +
-> +static inline struct task_struct *
-> +proxy_resched_idle(struct rq *rq)
-> +{
-> +	put_prev_task(rq, rq->donor);
-> +	rq_set_donor(rq, rq->idle);
-> +	set_next_task(rq, rq->idle);
-> +	set_tsk_need_resched(rq->idle);
-> +	return rq->idle;
-> +}
-> +
-> +static bool proxy_deactivate(struct rq *rq, struct task_struct *donor)
-> +{
-> +	unsigned long state = READ_ONCE(donor->__state);
-> +
-> +	/* Don't deactivate if the state has been changed to TASK_RUNNING */
-> +	if (state == TASK_RUNNING)
-> +		return false;
-> +	/*
-> +	 * Because we got donor from pick_next_task, it is *crucial*
-> +	 * that we call proxy_resched_idle before we deactivate it.
-> +	 * As once we deactivate donor, donor->on_rq is set to zero,
-> +	 * which allows ttwu to immediately try to wake the task on
-> +	 * another rq. So we cannot use *any* references to donor
-> +	 * after that point. So things like cfs_rq->curr or rq->donor
-> +	 * need to be changed from next *before* we deactivate.
-> +	 */
-> +	proxy_resched_idle(rq);
-> +	return try_to_block_task(rq, donor, state, true);
-> +}
-> +
-> +/*
-> + * Initial simple proxy that just returns the task if it's waking
-> + * or deactivates the blocked task so we can pick something that
-> + * isn't blocked.
-> + */
-> +static struct task_struct *
-> +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
-> +{
-> +	struct task_struct *p = donor;
-> +	struct mutex *mutex;
-> +
-> +	mutex = p->blocked_on;
-> +	/* Something changed in the chain, so pick again */
-> +	if (!mutex)
-> +		return NULL;
-> +	/*
-> +	 * By taking mutex->wait_lock we hold off concurrent mutex_unlock()
-> +	 * and ensure @owner sticks around.
-> +	 */
-> +	raw_spin_lock(&mutex->wait_lock);
-> +	raw_spin_lock(&p->blocked_lock);
-
-I'm still wondering what this blocked_lock does, that previous patch had
-it mirror wait_mutex too, so far I don't see the point.
-
-> +
-> +	/* Check again that p is blocked with blocked_lock held */
-> +	if (!task_is_blocked(p) || mutex != get_task_blocked_on(p)) {
-> +		/*
-> +		 * Something changed in the blocked_on chain and
-> +		 * we don't know if only at this level. So, let's
-> +		 * just bail out completely and let __schedule
-> +		 * figure things out (pick_again loop).
-> +		 */
-> +		goto out;
-> +	}
-> +	if (!proxy_deactivate(rq, donor))
-> +		/* XXX: This hack won't work when we get to migrations */
-> +		donor->blocked_on_state = BO_RUNNABLE;
-> +
-> +out:
-> +	raw_spin_unlock(&p->blocked_lock);
-> +	raw_spin_unlock(&mutex->wait_lock);
-> +	return NULL;
-> +}
-> +#else /* SCHED_PROXY_EXEC */
-> +static struct task_struct *
-> +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
-> +{
-> +	WARN_ONCE(1, "This should never be called in the !SCHED_PROXY_EXEC case\n");
-> +	return donor;
-> +}
-> +#endif /* SCHED_PROXY_EXEC */
-> +
->  /*
->   * __schedule() is the main scheduler function.
->   *
-> @@ -6732,12 +6845,22 @@ static void __sched notrace __schedule(int sched_mode)
->  			goto picked;
->  		}
->  	} else if (!preempt && prev_state) {
-> -		block = try_to_block_task(rq, prev, prev_state);
-> +		block = try_to_block_task(rq, prev, prev_state,
-> +					  !task_is_blocked(prev));
->  		switch_count = &prev->nvcsw;
->  	}
->  
-> -	next = pick_next_task(rq, prev, &rf);
-> +pick_again:
-> +	next = pick_next_task(rq, rq->donor, &rf);
->  	rq_set_donor(rq, next);
-> +	if (unlikely(task_is_blocked(next))) {
-> +		next = find_proxy_task(rq, next, &rf);
-> +		if (!next) {
-> +			/* zap the balance_callbacks before picking again */
-> +			zap_balance_callbacks(rq);
-> +			goto pick_again;
-> +		}
-> +	}
->  picked:
->  	clear_tsk_need_resched(prev);
->  	clear_preempt_need_resched();
+Konrad
 
