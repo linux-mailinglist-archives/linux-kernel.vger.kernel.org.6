@@ -1,99 +1,121 @@
-Return-Path: <linux-kernel+bounces-445758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490019F1B34
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534D39F1B3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66564165ADB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CF6188EE39
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8731F37BE;
-	Fri, 13 Dec 2024 23:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A374C8E;
+	Sat, 14 Dec 2024 00:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kfhldL39"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EcHNUvJz"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841E01F3D4A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7E12FB6;
+	Sat, 14 Dec 2024 00:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734134305; cv=none; b=YvIDc3oiJ7ozt5kb8dljYsBEMEbXgXk3NQHRjXYdUlTIHjsxTxL7tqMvjShdwZVN/9AelO3O9vBj4bTYMoKEh4Fz+OkzHnScovCkWgzowVxiJhQRtZNAfXv+ETTeTaSVsXgULkc1IRBrtavCgXPek7ZzXV0bQj/lTQeErFrsgL8=
+	t=1734134707; cv=none; b=U8oiRd3XNTRymt1EJCXmkyt4lqYnzlOV18fgsqj56maydNfOwM2VCjA8qWQ0YYLX/pnC4z45MBRP2h7sEUjC0zegl94EGq0XTqB9RjYO/UPM3nJO1/CAmQtD6X1UOrWaKJlqW6CVYEPxHLH19HlibCxdouR/w7D+6i5gKZ3+JvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734134305; c=relaxed/simple;
-	bh=OGq5+hgs9dJ1yb7kwu/w29GCqzBZmKeO5Y+Ru+siBvE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CpBgW3AC8u1oR4iBPYqKrLRIuI3Rc2BT4GgEwKGMHM44vwbKrl8p3b8gb9/noIdqSV4TvxnEg2x22ldA3RdIjKpXTl2Bab+jCqNFjemWkE3HAkKfycaeZiiwDUn3dib4AXyZ+jJzPTa+/RJ6Eu0/VDHumP3p3gbHphwNiLgJ7N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kfhldL39; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ef8c7ef51dso1897845a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:58:24 -0800 (PST)
+	s=arc-20240116; t=1734134707; c=relaxed/simple;
+	bh=q9jxJoysr0c2b6Zm2ABgTq3L0MNm+M4VQ6vhLHnTl08=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=itZp+aE99HHph1DK7Fmhn3yZacarWDEclXVQeyZYvrX/Wze4F0kvExlH4aKFDLKom3vSNc0gYDBBabE6hHdrijjbOdRGk1gbI9zFUHnGBu11aeA5zlprlS9g8+Z5MYaCfrdIH0H8VMn+xrZqlzblnBq+NJ0yrOOrzaCayJyZryM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EcHNUvJz; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-300392cc4caso26470541fa.3;
+        Fri, 13 Dec 2024 16:05:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734134304; x=1734739104; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pUgYlM58E1ID1zBsFizknmN76M0X0I58a2gj7PTiNA8=;
-        b=kfhldL39TBzg9mfNZ38MUKouWW9n3KF8rCW8KQmRe1H0hGO3EhPDeZXjXTlhoquyrR
-         1CLApWPe8V31MNazpfb28xvW+4gfohLNIfOLrlVr482N2e/jfUbauX7klRetYEEht73L
-         gsZnytOQRypwAUUOoDHoiJ6qgRHFavAGtEBu9Bc1zrQ2Myg55pMRCiyhcLxQPAJeDyDI
-         3vCh5/hwZ6bZ7Oh/3S4u20eKFDUlPzDMTQCmD0b3FBFrEgDrJmh5liv6r9qb7o0mFqH5
-         2xqUzIYFRK0unNWhPBqWsHEzecJ3EWI/lM2KQXPhNUyt6doxo6BZKmXkvUDO0cCRq4Lg
-         eyBg==
+        d=gmail.com; s=20230601; t=1734134704; x=1734739504; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UDay3WHOhRjIjx7Iai3jihzOyTK4g0Ls6xSC3UCPhpc=;
+        b=EcHNUvJzZ1nGiL+smdOOQcd+0kKGf3UlcTvLTzcKDibaWqbyDgtmjSKIqTkMYQCvLZ
+         Yrm5h/oMPepU5DZwTYqSPWQ/RMtdpHSrlew1MHZ0FzUaxJ1up0vrBfAbuydEJaGtswS7
+         gQkTwSmh59BcaSPmrTFYYwBvZRudM+7IQDECIrYJYQWObtqg/+L5TDR1ejTgvIF/8ksN
+         2JB8nLXeRRBlA7mn6znHbsal/tpK0B6GpHwpJsbZ31RozTpEwmon525Ck2qf+aaVYm6R
+         g3RGOIZG+LEAqIsfkTavOIpg/vCcPorb/FalV0SSZ+6jjn2cVMiytzChn5hbEqFFqq3j
+         H6dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734134304; x=1734739104;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUgYlM58E1ID1zBsFizknmN76M0X0I58a2gj7PTiNA8=;
-        b=YV27HyrjlvdGtS1+oHHMwnmYLsm0wkMPb4gB0pjk7RV4p9zHp4k4kGXwPjy990CxC4
-         0RA6BsoUFfdsATaxBju5V4sjs9DlYCdqf+QdxRV+mUqof/1XDQWxZziwAbz4AZBF+2eC
-         jgOZf5adogq3irnL8XHsvAvqZ40J0I9ojrQp4l6LmWRbSIsFwI0y+ZfnRGhbxLYCdYKp
-         2tiYAW6VxEVv+Zm4Z30gQ7IPwo+GNXjHdOuo5ZHRe6M1VaYoZWrllowekfyJL4ytFKCT
-         KlUfYxA0TA6CMWTGQLLLXHIpV1V1PijEe8vUIR2RANG7yNdWjUSf9af4S4PJu5EJxGBy
-         bZZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqi54uY9Ke5jEoq7o2i1DyRtQOVaWJskxd0jMMS7DTXwclUzuH1KfXyjq5+kDULYfKV6hc+TByglN+328=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK9D7CIbSVzBtEjM7EZJu+HAQ+XhlhhOnz3PLFQRP8pQP0UXDc
-	dlMhFbHmJM+WVDGhulC02xD2mFgjuDVsvENdlhk0p84kSnFiauDao+JIQ+Sd1hK/Sdy7HhheawM
-	eBQ==
-X-Google-Smtp-Source: AGHT+IEx2eqGQFBGQTUi/pn7XgE3bLWI9EM+6VGiZXjWJeNOX1FQChOgohoyAT6tKICqO9oQPQKyJbJfX0k=
-X-Received: from pjyd4.prod.google.com ([2002:a17:90a:dfc4:b0:2ef:973a:3caf])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c02:b0:2ee:7e53:bfae
- with SMTP id 98e67ed59e1d1-2f29166c324mr6176343a91.10.1734134303859; Fri, 13
- Dec 2024 15:58:23 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 13 Dec 2024 15:58:21 -0800
+        d=1e100.net; s=20230601; t=1734134704; x=1734739504;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UDay3WHOhRjIjx7Iai3jihzOyTK4g0Ls6xSC3UCPhpc=;
+        b=vGBSaXujTeG2Mm9UtKj3QXcYduhK1YhOir4fpzdKVwQpC8BpBoXLdExp/Ew7kOIfCP
+         dpGvQoaTkmZDxcjKAwZ2+zjN205Kisy4x6B1klQqc6FYXPistwtSx+if+3A5wrnHFlGt
+         D3HJ2UDbUHKL5E1pSJgOOPKKsdZjpZffjnY7h7a/5KjGLUY97Pn2fl+DRYnwoCLR3GCn
+         BMhHUBQNc694mX96fL+/jYLrm3ibw81Krbhgvm0R4BhPkLGzuzEtt4tdhmFS/bmhwmhC
+         HNFxLSl1Gu1Y6LjYk8w6aJNDTQ7z3EKt785J55MJSUZJd4SXxFP6f4/MKP0Bz8FAcaOj
+         VreA==
+X-Forwarded-Encrypted: i=1; AJvYcCXArH0BYkQMnm0vkVKON99TuNcCgsI7NzCPDvNBipUiwq6MZtme6vgTV580WthGxjJV7QEcuSe7FYmr598=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ2DG/6+4BiWrt7oHLCyvjeAYa4kbVDiJPSuo2lolqrxeb7Q8b
+	holJ3PiP9uOBwGjSbSGAdHyMsRgb+C+QJyY16H2taov+bjTkMC1rBKPV/iigNNs3LErQxdBJXNJ
+	EMp5e4NHTGfiAwY966W3pmDza0JgTCKDo
+X-Gm-Gg: ASbGncs9YQGrzn3saSC6ZbkffA1DBNInBsX7zy8Z/CKHexC/dShdnxwolqLCvJja5ce
+	QTSKpAE1SCzUm61yGEr2M5r00sn2YTlq3ppLmU6LX+WZnlawLYP41rN17AMuGOHJ7UWwGMC8z
+X-Google-Smtp-Source: AGHT+IEFv++x5tNOGInJhiV1yQUEoGsLZIbI5VFxaphO6y7U4nkFfMeoZLVnF7+JPgU9vngXFybe/z7hSmp+DsxL3W8=
+X-Received: by 2002:a05:6512:e98:b0:540:2122:fae9 with SMTP id
+ 2adb3069b0e04-540915e2c9emr1429320e87.46.1734134703691; Fri, 13 Dec 2024
+ 16:05:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241213235821.2270353-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2024.12.17 *** On Tuesday the 17th!!! ***
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 13 Dec 2024 18:04:51 -0600
+Message-ID: <CAH2r5mu+0egy3V0bVRO+OiXbCa+HT5FLA6LKAiJZ2LD85vNvQg@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-*** LOOK HERE ***
+Please pull the following changes since commit
+fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-Due to holiday schedules, next week's PUCK will be on Tuesday the 17th (regular
-time), not on Wednesday.
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
-There is no scheduled topic (which is code for "SNP, TDX, and guest_memfd").
+are available in the Git repository at:
 
-Time:     6am PDT
-Video:    https://meet.google.com/vdb-aeqo-knk
-Phone:    https://tel.meet/vdb-aeqo-knk?pin=3003112178656
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc2-smb3-client-fixes
 
-Calendar: https://calendar.google.com/calendar/u/0?cid=Y182MWE1YjFmNjQ0NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
-Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l986SngGlhPH?resourcekey=0-FDy0ykM3RerZedI8R-zj4A&usp=drive_link
+for you to fetch changes up to 633609c48a358134d3f8ef8241dff24841577f58:
 
-Future Schedule:
-Dec 17th - No topic
-Dec 25th - Canceled
-Jan 1sth - Canceled
+  smb: client: destroy cfid_put_wq on module exit (2024-12-10 20:47:39 -0600)
+
+----------------------------------------------------------------
+four SMB3 client fixes, most also for stable
+- fix rmmod leak
+- 2 minor cleanups
+- fix for unlink/rename with pending i/o
+----------------------------------------------------------------
+David Howells (1):
+      cifs: Fix rmdir failure due to ongoing I/O on deleted file
+
+Enzo Matsumiya (1):
+      smb: client: destroy cfid_put_wq on module exit
+
+Steve French (1):
+      smb3: fix compiler warning in reparse code
+
+Thorsten Blum (1):
+      cifs: Use str_yes_no() helper in cifs_ses_add_channel()
+
+ fs/smb/client/cifsfs.c  | 1 +
+ fs/smb/client/inode.c   | 5 ++++-
+ fs/smb/client/reparse.c | 2 +-
+ fs/smb/client/sess.c    | 4 ++--
+ 4 files changed, 8 insertions(+), 4 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
