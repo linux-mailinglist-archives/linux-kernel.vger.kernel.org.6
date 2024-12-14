@@ -1,343 +1,148 @@
-Return-Path: <linux-kernel+bounces-446029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA8C9F1EAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:05:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D499F1EB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE54188785D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA2D1889625
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2D3192B8A;
-	Sat, 14 Dec 2024 13:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16FA1925B9;
+	Sat, 14 Dec 2024 13:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egjqH4a3"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="qYz2n5NX"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EECC1CD2C;
-	Sat, 14 Dec 2024 13:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E44938DD6;
+	Sat, 14 Dec 2024 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734181500; cv=none; b=irX1J5rIttIVWdKFEAoAhea+THrSSFhWr7g1FhUZZg95eFE1zPLgpUbWcb0BekuQ3/c/T9TSHGDVd3BHbYATBErzIulcPufMdKCcGDSqZKPYKviRF4p2fNWh/cd92jRUTFpwqcaf+kXGJHODYh5iQZDEzwyLX0/zPsJmF3XSbl0=
+	t=1734182509; cv=none; b=RPTHyumxgvjPRGnpjNc9ZvDDuDjxDWEMrubZA5AROtMMbWaxj4Y7ygx40E1b17UMOct1pH1j7R0DiTk4DemqcdHrtjaODUGOlWmwHsGhmunxMaJolIsSblyAyl7+k++3QWIln9gcLLWM6q03cJus52RQihsv6FHoaWIdvkqVWs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734181500; c=relaxed/simple;
-	bh=g7RkEQvxHCUgGPAPsXg09LHzWL9erwZn26Z+wYkeh+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ezDqEYSVcnxwkmwFDuY2Z7juoA9eYvsQLaf6dFz9yYpOZWHl1NfwcUkpvnYdqk5pv7R8jbjQKqiMLIxQ1Sx2+z8u+vjN6TrIhs/ne180pekSb3ZGnntuKugGjVcUWpR9vN7ZH+K2fYuF7JOWBfVAh3e7uRDBG8Ab6k6JDk1d2Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egjqH4a3; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54024aa9febso2585568e87.1;
-        Sat, 14 Dec 2024 05:04:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734181496; x=1734786296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=smLP5LsKfh06xnFeNLi3B7TBCTXcGf3Y2qTyvmyCwTk=;
-        b=egjqH4a37BEdsPQdttJ0Y92N4NBCRVZDUo0ZPKkO2a5PMlJpPz1IA3cStXEMOl9dvO
-         z7WVEENHrdkwjt9qt8g64iEVEvXGEHyNqpHTUtNmB4R3ha1aM32mR0jL3VvWTZ+wU1zr
-         frMmZNBBOf/Cb3WXK1Pq02AjzkeO9YIOSJ+xylA7UPTnsV2oxCLjdft/fQdlGleKqLzx
-         YtSr8pyJXGBb6yhNtDBFV/b+6laZPnzNPXzfn6iCIxvYNzl0Y8ls9EAAinwfiad4j+h1
-         MmJ2Me9ud8pSXfw2wFGfPToOFx9VmyPL5Fw31H860jrqPxkm77h0eGkQsPR9vQYVYeYV
-         DqiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734181496; x=1734786296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=smLP5LsKfh06xnFeNLi3B7TBCTXcGf3Y2qTyvmyCwTk=;
-        b=pegXUULKB5Q8dw6Srx2IhMPaCS2h/oXXCOmkvf+RlBRryWix2xyUAHJhgjJasnsfem
-         Qx/7wdZlCSohOU816ZHzelagMDKydlePzq05y3VwlVGYJOpwsGf0WNQgesIB0gV1VhZg
-         UCnrhgdy2wp6wkPVyctx3wJU/I9SVTCesllaEvbyleRd3+ay/oh8xH9Kqo25FXqYToyX
-         BAn8B9ELgfP9VNgon4Gqyjj8YED7bT12JT8hZvHxDfgGeK5ITNuGeyM/JMI1nnJvOb2h
-         isrISI5n+Jr+8B5nm/cG2UCJ6rBv15O8a6QMFQxCGrbvK2ZkFCGgchbLrEnL2QZwT1En
-         1ihQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVt6Qx5T16SqKPiW8lvA2hEKcp2QeZdRXEdiS4ZeQiHRXZEjGbVdAHSdgTjwO0swoBNF4Abn0pN0rsYmZ0=@vger.kernel.org, AJvYcCWSeqVvKp0HMGtgqK9EF4r9PP6v4W2dIAVX38wr5XQ7zbKaR7iw5nSL+LzEyiq4T9lDCdcyXSGsYO+kKnG9@vger.kernel.org, AJvYcCWV258hF8jrrtx2dqmXrhD3btljXNB7A1n1a1eX4CgnYZCQVGIeLnN+aoFjEdBrsxwasyBf0FL3NxSlRPWhbrY=@vger.kernel.org, AJvYcCWvBH/BMr0sqA5E8c1o58zOmllT9/opcJLDrDmu4ol1OvUf4RTNfG1NFb3+jKDz8TeGROKx+v/UsRoKENUAFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcDt+8gQ6xRViItqG7pJfiU7jqIAmGUz1xYirkCBzwCDdlfTzt
-	q63VKb0fUJ0c0CFNlarRYsDWWLyMzOhaZ+9L+jVBhLjJQvWT8o7Bsd3xxiJhYLAeAuC0K9z9Ovu
-	CSTrsBdieWoJnB0Kn9ND6VV+qP+Y=
-X-Gm-Gg: ASbGncu9DZ4YDbGJKOGrBIrGn6PGS/Tb+9hOC6+n5KBQchaWOZhwkCrApQ4/m/YHm28
-	nkGRKjFLV97Dn6bhSyZDByLokTxQgCw8PslnEm+yA+XDymIsHNhUmEHNvAnMjRtFVHnNp
-X-Google-Smtp-Source: AGHT+IEPHgyqAt1cX70wM6GRV4JVDyFqSzf59RAxPEnyLNBb6LyX8wtzB0NASqgmUnpv3CsW0s5bk6c37/J8K0cVLPk=
-X-Received: by 2002:a05:6512:ea5:b0:540:2223:9b0b with SMTP id
- 2adb3069b0e04-540905aae88mr1968894e87.35.1734181496120; Sat, 14 Dec 2024
- 05:04:56 -0800 (PST)
+	s=arc-20240116; t=1734182509; c=relaxed/simple;
+	bh=GNPAXeKREmmCRVRrZsx5msaIenpHBKcxRMH7y/BULfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAmfZveLPXlCT7+PJcUlSIdMbDBL10Wyg1OWr0W1wB/IQFxlrP/2pxSR8PGMN+7koyEdQ1GiK1qtQvr+x+BucTmb9iSVIyrY78yYVJANRR9nxhiDry8nX03hJqR390pvhAiOQEEedKWtja5EIiVlkWDwdrA8/mJRKnQO7aXBDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=qYz2n5NX; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1734182504; bh=GNPAXeKREmmCRVRrZsx5msaIenpHBKcxRMH7y/BULfo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qYz2n5NXM7BqCHY6yLfscI6LDTgBX8fBVXSKNIw1/65vHHJDYMMlP4Gvmk9OK0t8D
+	 aKZZ8DsjWWQzi1zn8xlduV2Zb9nuev7Q1Af6MXGrrHPnPmNTz1qw1lYkUzI4jc8q9R
+	 Luv57ZfE9mo+M1usM/HlDCnjgIR50SdlZr97jp34=
+Date: Sat, 14 Dec 2024 14:21:43 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
+	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 06/13] uprobes/x86: Add uprobe syscall to speed
+ up uprobe
+Message-ID: <ec6f4159-8428-4156-9413-d5aa6b39e5eb@t-8ch.de>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-7-jolsa@kernel.org>
+ <66e85401-b2ec-442d-bebe-c4ff3151e7e2@t-8ch.de>
+ <Z1xKAKnX3su21JZu@krava>
+ <bd095061-f43b-4b99-bb94-40cdeac76f4c@t-8ch.de>
+ <Z1ysj_PXy51WeAT2@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com>
- <20241121204220.2378181-38-samitolvanen@google.com> <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-In-Reply-To: <CAK7LNAS7Pi9=Hcm7Kr=Ju4fMWK4taXEPLOqYombSLqGQ3ehR+w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Sat, 14 Dec 2024 14:04:19 +0100
-Message-ID: <CA+icZUX_actkO4Si2HNQiH6AcS=3aNXA1OOka7LZNtEBQCNTGA@mail.gmail.com>
-Subject: Re: [PATCH v6 18/18] Documentation/kbuild: Add DWARF module versioning
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1ysj_PXy51WeAT2@krava>
 
-On Sat, Dec 14, 2024 at 12:34=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> On Fri, Nov 22, 2024 at 5:43=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
-e.com> wrote:
-> >
-> > Add documentation for gendwarfksyms changes, and the kABI stability
-> > features that can be useful for distributions even though they're not
-> > used in mainline kernels.
-> >
-> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > ---
-> >  Documentation/kbuild/gendwarfksyms.rst | 308 +++++++++++++++++++++++++
-> >  Documentation/kbuild/index.rst         |   1 +
-> >  2 files changed, 309 insertions(+)
-> >  create mode 100644 Documentation/kbuild/gendwarfksyms.rst
-> >
-> > diff --git a/Documentation/kbuild/gendwarfksyms.rst b/Documentation/kbu=
-ild/gendwarfksyms.rst
-> > new file mode 100644
-> > index 000000000000..7725d7f57131
-> > --- /dev/null
-> > +++ b/Documentation/kbuild/gendwarfksyms.rst
-> > @@ -0,0 +1,308 @@
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +DWARF module versioning
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +1. Introduction
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +When CONFIG_MODVERSIONS is enabled, symbol versions for modules
-> > +are typically calculated from preprocessed source code using the
-> > +**genksyms** tool.  However, this is incompatible with languages such
-> > +as Rust, where the source code has insufficient information about
-> > +the resulting ABI. With CONFIG_GENDWARFKSYMS (and CONFIG_DEBUG_INFO)
-> > +selected, **gendwarfksyms** is used instead to calculate symbol versio=
-ns
-> > +from the DWARF debugging information, which contains the necessary
-> > +details about the final module ABI.
-> > +
-> > +1.1. Usage
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +gendwarfksyms accepts a list of object files on the command line, and =
-a
-> > +list of symbol names (one per line) in standard input::
-> > +
-> > +        Usage: gendwarfksyms [options] elf-object-file ... < symbol-li=
-st
-> > +
-> > +        Options:
-> > +          -d, --debug          Print debugging information
-> > +              --dump-dies      Dump DWARF DIE contents
-> > +              --dump-die-map   Print debugging information about die_m=
-ap changes
-> > +              --dump-types     Dump type strings
-> > +              --dump-versions  Dump expanded type strings used for sym=
-bol versions
-> > +          -s, --stable         Support kABI stability features
-> > +          -T, --symtypes file  Write a symtypes file
-> > +          -h, --help           Print this message
-> > +
-> > +
-> > +2. Type information availability
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +While symbols are typically exported in the same translation unit (TU)
-> > +where they're defined, it's also perfectly fine for a TU to export
-> > +external symbols. For example, this is done when calculating symbol
-> > +versions for exports in stand-alone assembly code.
-> > +
-> > +To ensure the compiler emits the necessary DWARF type information in t=
-he
-> > +TU where symbols are actually exported, gendwarfksyms adds a pointer
-> > +to exported symbols in the `EXPORT_SYMBOL()` macro using the following
-> > +macro::
-> > +
-> > +        #define __GENDWARFKSYMS_EXPORT(sym)                           =
-  \
-> > +                static typeof(sym) *__gendwarfksyms_ptr_##sym __used  =
-  \
-> > +                        __section(".discard.gendwarfksyms") =3D &sym;
-> > +
-> > +
-> > +When a symbol pointer is found in DWARF, gendwarfksyms can use its
-> > +type for calculating symbol versions even if the symbol is defined
-> > +elsewhere. The name of the symbol pointer is expected to start with
-> > +`__gendwarfksyms_ptr_`, followed by the name of the exported symbol.
->
-> I am interested in this sentence.
->
-> __GENDWARFKSYMS_EXPORT() is primarily introduced to handle
-> EXPORT_SYMBOL() in *.S files.
-> In fact, .discard.gendwarfksyms is always output for EXPORT_SYMBOL()
-> from *.c files.
->
-> Can we make it faster by processing only symbol references in the
-> .dscard.gendwarfksyms section, and skipping all other sections entirely?
->
+On 2024-12-13 22:52:15+0100, Jiri Olsa wrote:
+> On Fri, Dec 13, 2024 at 04:12:46PM +0100, Thomas Weißschuh wrote:
+> 
+> SNIP
+> 
+> > > > > +static int __init arch_uprobes_init(void)
+> > > > > +{
+> > > > > +	unsigned long size = uprobe_trampoline_end - uprobe_trampoline_entry;
+> > > > > +	static struct page *pages[2];
+> > > > > +	struct page *page;
+> > > > > +
+> > > > > +	page = alloc_page(GFP_HIGHUSER);
+> > > > 
+> > > > That page could be in static memory, removing the need for the explicit
+> > > > allocation. It could also be __ro_after_init.
+> > > > Then tramp_mapping itself can be const.
+> > > 
+> > > hum, how would that look like? I think that to get proper page object
+> > > you have to call alloc_page or some other page alloc family function..
+> > > what do I miss?
+> > 
+> > static u8 trampoline_page[PAGE_SIZE] __ro_after_init __aligned(PAGE_SIZE);
+> > static struct page *tramp_mapping_pages[2] __ro_after_init;
+> > 
+> > static const struct vm_special_mapping tramp_mapping = {
+> > 	.name   = "[uprobes-trampoline]",
+> > 	.pages  = tramp_mapping_pages,
+> > 	.mremap = tramp_mremap,
+> > };
+> > 
+> > static int __init arch_uprobes_init(void)
+> > {
+> > 	...
+> > 	trampoline_pages[0] = virt_to_page(trampoline_page);
+> > 	...
+> > }
+> > 
+> > Untested, but it's similar to the stuff the vDSO implementations are
+> > doing which I am working with at the moment.
+> 
+> nice idea, better than allocating the page, will do that
 
-Hi Masahiro,
+Or even better yet, just allocate the whole page already in the inline
+asm and avoid the copying, too:
 
-I am interested in everything making my build faster.
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index b2420eeee23a..c5e6ca7f998a 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -462,7 +462,7 @@ SYSCALL_DEFINE0(uprobe)
 
-v6 introduced a longer build-time for me.
-Sami wanted to check after his vacancies see [1].
+ asm (
+        ".pushsection .rodata\n"
+-       ".global uprobe_trampoline_entry\n"
++       ".balign " __stringify(PAGE_SIZE) "\n"
+        "uprobe_trampoline_entry:\n"
+        "endbr64\n"
+        "push %rcx\n"
+@@ -474,13 +474,11 @@ asm (
+        "pop %r11\n"
+        "pop %rcx\n"
+        "ret\n"
+-       ".global uprobe_trampoline_end\n"
+-       "uprobe_trampoline_end:\n"
++       ".balign " __stringify(PAGE_SIZE) "\n"
+        ".popsection\n"
+ );
 
-Just for the records.
+-extern __visible u8 uprobe_trampoline_entry[];
+-extern __visible u8 uprobe_trampoline_end[];
++extern u8 uprobe_trampoline_entry[];
 
-Best regards,
--Sedat-
 
-[1] https://lore.kernel.org/all/CABCJKudwpKX1_j46Tp6=3DeAJ0JU2zWE15+c8OFq9L=
-MAnSqwesOw@mail.gmail.com/
+If you want to keep the copying for some reason, the asm code should be
+in the section ".init.rodata" as its not used afterwards.
 
->
->
-> > +4.3. Adding structure members
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> > +
-> > +Perhaps the most common ABI compatible changeis adding a member to a
->
-> changeis -> change is
->
->
->
->
->
->
->
-> > +kernel data structure. When changes to a structure are anticipated,
-> > +distribution maintainers can pre-emptively reserve space in the
-> > +structure and take it into use later without breaking the ABI. If
-> > +changes are needed to data structures without reserved space, existing
-> > +alignment holes can potentially be used instead. While kABI rules coul=
-d
-> > +be added for these type of changes, using unions is typically a more
-> > +natural method. This section describes gendwarfksyms support for using
-> > +reserved space in data structures and hiding members that don't change
-> > +the ABI when calculating symbol versions.
-> > +
-> > +4.3.1. Reserving space and replacing members
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Space is typically reserved for later use by appending integer types, =
-or
-> > +arrays, to the end of the data structure, but any type can be used. Ea=
-ch
-> > +reserved member needs a unique name, but as the actual purpose is usua=
-lly
-> > +not known at the time the space is reserved, for convenience, names th=
-at
-> > +start with `__kabi_` are left out when calculating symbol versions::
-> > +
-> > +        struct s {
-> > +                long a;
-> > +                long __kabi_reserved_0; /* reserved for future use */
-> > +        };
-> > +
-> > +The reserved space can be taken into use by wrapping the member in a
-> > +union, which includes the original type and the replacement member::
-> > +
-> > +        struct s {
-> > +                long a;
-> > +                union {
-> > +                        long __kabi_reserved_0; /* original type */
-> > +                        struct b b; /* replaced field */
-> > +                };
-> > +        };
-> > +
-> > +If the `__kabi_` naming scheme was used when reserving space, the name
-> > +of the first member of the union must start with `__kabi_reserved`. Th=
-is
-> > +ensures the original type is used when calculating versions, but the n=
-ame
-> > +is again left out. The rest of the union is ignored.
-> > +
-> > +If we're replacing a member that doesn't follow this naming convention=
-,
-> > +we also need to preserve the original name to avoid changing versions,
-> > +which we can do by changing the first union member's name to start wit=
-h
-> > +`__kabi_renamed` followed by the original name.
-> > +
-> > +The examples include `KABI_(RESERVE|USE|REPLACE)*` macros that help
-> > +simplify the process and also ensure the replacement member is correct=
-ly
-> > +aligned and its size won't exceed the reserved space.
-> > +
-> > +4.3.2. Hiding members
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Predicting which structures will require changes during the support
-> > +timeframe isn't always possible, in which case one might have to resor=
-t
-> > +to placing new members into existing alignment holes::
-> > +
-> > +        struct s {
-> > +                int a;
-> > +                /* a 4-byte alignment hole */
-> > +                unsigned long b;
-> > +        };
-> > +
-> > +
-> > +While this won't change the size of the data structure, one needs to
-> > +be able to hide the added members from symbol versioning. Similarly
-> > +to reserved fields, this can be accomplished by wrapping the added
-> > +member to a union where one of the fields has a name starting with
-> > +`__kabi_ignored`::
-> > +
-> > +        struct s {
-> > +                int a;
-> > +                union {
-> > +                        char __kabi_ignored_0;
-> > +                        int n;
-> > +                };
-> > +                unsigned long b;
-> > +        };
-> > +
-> > +With **--stable**, both versions produce the same symbol version.
-> > diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/inde=
-x.rst
-> > index cee2f99f734b..e82af05cd652 100644
-> > --- a/Documentation/kbuild/index.rst
-> > +++ b/Documentation/kbuild/index.rst
-> > @@ -21,6 +21,7 @@ Kernel Build System
-> >      reproducible-builds
-> >      gcc-plugins
-> >      llvm
-> > +    gendwarfksyms
-> >
-> >  .. only::  subproject and html
-> >
-> > --
-> > 2.47.0.371.ga323438b13-goog
-> >
->
->
-> --
-> Best Regards
->
->
->
-> Masahiro Yamada
+(A bit bikesheddy, I admit)
+
+
+Thomas
 
