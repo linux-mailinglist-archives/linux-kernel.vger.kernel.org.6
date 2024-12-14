@@ -1,81 +1,132 @@
-Return-Path: <linux-kernel+bounces-446064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA4C9F1F6B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:39:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BD39F1F6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891851885ABC
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A7D1885758
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52389194C61;
-	Sat, 14 Dec 2024 14:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63D0194AF3;
+	Sat, 14 Dec 2024 14:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xzyftlpd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YkkU9BXU"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94917EC0;
-	Sat, 14 Dec 2024 14:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9485DEC0;
+	Sat, 14 Dec 2024 14:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734187167; cv=none; b=oGt+Td50lnq0PPpAR7mfgY4xn3I7h8uZ9fnY1PaZdOCWvMm13RGxvak5gD+b/S/f+HuVqP3NS/OlQPw8jGKI9vXjAuBNjkAId5WDPQDv/gZhjSCTpPEnYVY2lZM9zBc6TNbuSVGLqnodIAqdLBZ/LXEtHBvZocDcHEMyoeikaNE=
+	t=1734187473; cv=none; b=FMUEhh83YChd6cbEusSocOZheqY9ULlV/YqvNk+T/6zCFrYpg26NBPdUetO9Es4jcrTibK0nMVZnsu84kgvup8si2rBJult7Ai3RGchuSCWrUpqalxmFBql2UW04+znQ/uhUGlZ/alc77NsqG3JY1rF7mQEEapExge5QFILAEdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734187167; c=relaxed/simple;
-	bh=9NuCdmw8KQZZ1apwFrQRi6/Fz5J/9fHH42DpX0fP+kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBPtPEFvDzbRt+Ew1FmGSqA5GxoaC69hlKndHjBT51NbMxfDg4a3HN0rSERGDhyTQzwZAsGzDQKLGOjiBRcBYmFbXXCpphIZuidDNL+kQYEs+0leOMbZtmuVYh49IX4Zl3cPbaYybRDQWUIR1kERiWb+cEk/YOun4M3p2wTHtek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xzyftlpd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D96C4CED1;
-	Sat, 14 Dec 2024 14:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734187167;
-	bh=9NuCdmw8KQZZ1apwFrQRi6/Fz5J/9fHH42DpX0fP+kc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xzyftlpdi9k5Y9vAWQhzvpzAN/m7N8uC8xl7YyADcNshzHwkQ/Rz6Fk9eOl/zIW2y
-	 lUaU7jQsIxTF6hVtmJtbmmGm1ny9/P3bqdqevfXkoKY5RkCwqKf8BuEFmjUyQ3V2X+
-	 Cx7WbKNiI/JOKTIxA9GKbVRDlhkhDYkyMinuT1fKS16laWX5Rnz1R/5K85fNn4JbA4
-	 G0hqBQQXvVBYkANrKG66L/epx3F1YOdSZqkNyT6xaRsH7VQSJkYmDYiboBzVulH4qP
-	 WiqfPWObkj+TqXFN4wlCZFP8DqwivJWQo+23jU3A2qi+9nbpahuS/XOvTYo4WlDhX0
-	 2Gx7iSYxOtAqA==
-Date: Sat, 14 Dec 2024 14:39:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v6 09/17] iio: buffer-dmaengine: add
- devm_iio_dmaengine_buffer_setup_with_handle()
-Message-ID: <20241214143918.6bda7e66@jic23-huawei>
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-9-88ee574d5d03@baylibre.com>
-References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
-	<20241211-dlech-mainline-spi-engine-offload-2-v6-9-88ee574d5d03@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734187473; c=relaxed/simple;
+	bh=V/4hveNXnTzs2sR3Cj7CGb+By9JCXCdycd/ln7cLcV4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=S31E2Z14BCnoUH0wUPkysq9OOzkBXvLE9c90UCcAiv6ThF2w2BZnJRKdjlmSwlhC4z7Nyc2g6CdbgQmfif2tk2X9VeUuzl9bPylDiFr6GG45aK+XUcyOTkwmD0aSSfLOQukgLCPXiQ/QOnFVByYGQRVcb5OP+Ek2YQ0n9zcr/do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YkkU9BXU; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1734187440; x=1734792240; i=markus.elfring@web.de;
+	bh=zhSHKp1jxoNkU7hyFpf2kS1qX2yR7ZASZZoIXCxrPS4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=YkkU9BXUgztAvQfYtLxXCmPEMR2/e1NZzJ0MGqY2XUM3xa7rN8XppNExjz5fMBzb
+	 D2yDMPE5M8C0+zHT0wH+7qjpCczjZ8bCjmIf/uYzzfNX/wqa7IwR52aFJUPvTzbd1
+	 FLml4OcyZGvhj5DjtrXERcAiVFkxoFHhxDszPtcGuQOmVh5Enz/9Vus9MDmPXUIC5
+	 8wAOH0ZAWv/RwxJ7TTOQ89PtRq4UaT8Y9snlUNQr8fVoH7SOXa6AeZxlMG8s0hRSd
+	 SVSRvJtDLDmN+WcQRkXkjt73Ikw86XMNe0L/aY4RbDrjj2DF8I8sXZQDFuqtZAKpO
+	 iHSIuRzviO8xcTxMVA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.70.57]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mf3qY-1tpSXF41Vq-00dgAK; Sat, 14
+ Dec 2024 15:44:00 +0100
+Message-ID: <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
+Date: Sat, 14 Dec 2024 15:43:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Maksym Holovach <nergzd@nergzd723.xyz>,
+ Markuss Broks <markuss.broks@gmail.com>, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+References: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
+ controller
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kSs8gYPdVRGvnF2Xk5QnP0ZIbQ1n6Z9KVxpWNOEeZ50ISG7PUYA
+ mjN6tq83OreQiN9pDPdt9NmiP4sosI4rXBevsCKfcoPTRG4Vxmq3th7agMUBhslrSz1NmkX
+ FOQ/LXt1Gs8Luldq5e7IW8zOZpMFWv9jdzd8VjWAZUWw4UwIb6VW/nEwJLv8OyqaDiBiBah
+ 8phBX+0h8PbIhjA9FgDpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZvnPYnJTGNM=;H3nYxlU3VlEwdOlR9qYrS5Ut6fE
+ Wea/z7R24moiT4HMqTyR06mku3iOWEjjcy1/H8MczfTEmkq7OmBU3oDv7ZJEtLIr66j8zIxLa
+ xKfo91wZhUsAM0VcztLeYQsswmuAFlj/2LlF/6slISmj/KwS8gB6FdOjmiDJx2pl3WAnu8MAy
+ +iNCUo27Cisfj/R+q3lwF7ByVry75r5juxdjZAFpWmDzoQkTOnFRJj8xV+aLbP6bIBcisnV+d
+ OQamjnBuKt51XGN9Bs8S6must0CHh+1yDv//gDqLYovmEnDl02GMFjMnq7bej6lzCQNkUVxOE
+ UglA8DCWcNkbRZHL3ySM1yKvkeJPFc4nL9JmkpwjM4SNruIMLVHjC5cR7iau8J/u+D63c2Qmq
+ QddAPimuz644KujsfYNKwQ9YcHL5xldpeGXyfkjhuvP7AbN0aoOH7C2S1oOopkTg7W0Hm/lw4
+ z/uNdETA05GWbCwptB0a2rLKkrhEkbX3fYdOvLRwotHuxEd5zX/YdElK+eU+M/EuIs+coJLns
+ yj4LNwTdSLy+yIH2i7jYQ7IK2s1vbAknRCcT+Y6zBVx/hG+Ypgl+zfjGjeJUizt1qUBVXLNw5
+ Sdvb+fN8CrMDEkJhARAPttNcjqrsLqcTBbf4EwcFWjCeWByHaAH7+qibRRiTxo0mVPudOYWta
+ EZiA+MliZs30jBq2wk8sydCtNOgXozdfSJpiGHD+v2BCVw69AOBQDusEMFOGUV4J/S7F4ilge
+ VhVLeuKVzlmkp8pmwjOBfA3uphIZQmNZKg8BLfIHNPo//wmU7ZiWiq6lfpfeH/dYA3Vc9j4//
+ UhVqfj4DAwk/jlIqCAnifg7IYu1MncYC6/aiG4qEN/R7e3c5lGz42xJfbl5URSxj89giS+7Yo
+ 7L+BrO4oIjLcQyYptWGvRhEyEkaVVL8VvQi8vY4ZqpNpD/0VozC0vfUg5RhbxU8YFWUrUjZgZ
+ YKvM0GR+4Ad6ipsIbA6s+w3u7pxkRzuOX1i0p2mjFO9aYxOmBwPsJMr2cxEbgxHU+d9JoyLjZ
+ GQg6sjkW2GcQqML4MQXI4ZGRc3dDkMWUm6aP5RU16bV8IxowLGevu5hKwKqfNM9U6+7fikNLv
+ 3/KdvjPr4=
 
-On Wed, 11 Dec 2024 14:54:46 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+=E2=80=A6
+> SPEEDY is a proprietary 1 wire serial bus used by Samsung
+> in various devices =E2=80=A6
 
-> Add a new devm_iio_dmaengine_buffer_setup_with_handle() function to
-> handle cases where the DMA channel is managed by the caller rather than
-> being requested and released by the iio_dmaengine module.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+You may occasionally put more than 57 characters into text lines
+of such a change description.
 
+
+=E2=80=A6
+> +++ b/drivers/soc/samsung/exynos-speedy.c
+> @@ -0,0 +1,457 @@
+=E2=80=A6
+> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 =
+addr, u32 *val)
+> +{
+> +	int ret;
+> +	u32 cmd, int_ctl, int_status;
+> +
+> +	mutex_lock(&speedy->io_lock);
+=E2=80=A6
+> +	ret =3D speedy_int_clear(speedy);
+> +
+> +	mutex_unlock(&speedy->io_lock);
+> +
+> +	return ret;
+> +}
+=E2=80=A6
+
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&speedy->io_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/mutex.h#L2=
+01
+
+Regards,
+Markus
 
