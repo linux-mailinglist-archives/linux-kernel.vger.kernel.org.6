@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-446018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B0A9F1E8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6DF9F1E91
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 13:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7ED1889B18
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3011884D65
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 12:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218FC1922C6;
-	Sat, 14 Dec 2024 12:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7110191F9E;
+	Sat, 14 Dec 2024 12:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ByG2+Cm3"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+utZwpf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4BD1865E3;
-	Sat, 14 Dec 2024 12:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CACC42A99
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 12:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734179712; cv=none; b=r0z/IMdk16DoUYyKnks1WfTivjnE0hNYtJQsyhUF82I65Hwn3K4Mw3r/5Jnn5fjb2Zlyvc+udYXlFEys7/QpcDI3cB9X2X8XnwzhtpSZRWdknuYoS950bxpmVGD46yDY2YO8OaWMsWCtebPvINejYYTZGua2arp3xnXq29U2jLg=
+	t=1734179825; cv=none; b=NMXUw1TRwIbLJe9nLFsb4OiVm1YA/JPL2+ObWAG+0uwKXuw9U3DdE2DOB99Ssy4dAGVtdayam7oJrLgiS3Ptb33Odkx+SYX88b3gHqxZmH+fMdjFLIcLbA48CJ1xSNARSiqWS+ZFyU9JEzX8Y1GojAwUkzjIrXcG9y/COdxKZg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734179712; c=relaxed/simple;
-	bh=DHbsgIChekq1/+MQtnp5Gpc7MNurovM1v0ce07kwQO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNIBqqH0De8tkT1unnnO9qAsPUOPYgunWW46E+4ZPCfUUIempTQDJTEzH/etrQPbIT7zhUQP1mWmUuT51RW9GXdHu8fvKUCGYrgi/g837Z1ggvt16oVZU5Yp6OrwTXSUZqTydbOMYYeZW9nWwthg2V8+rZ9YJM8ByI6d+GHoSLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ByG2+Cm3; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ee397a82f6so2292203a91.2;
-        Sat, 14 Dec 2024 04:35:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734179710; x=1734784510; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1SMsEGruFdAyL91QMcYYqfUU9gU2qxB8M/r5v8wsDw=;
-        b=ByG2+Cm39KqQdMjgXCtHsZhhe2og2to4TmE+KEEKeY3EQ+skTmy/GhzYkhJXKoU5P4
-         2vJL4tMYFbRlIysKtRP+MV+mpoUfBGgPj30qKKtubSOLFEJVQpn1TqDtODps9ssDz0dC
-         oUMtJPAQe1+RUMnJK20uPaW/AvuV0CeRV5vci1AF4y/ESyRkRhO36C5qxMYu/28Ck7wY
-         pHyj4bwGzM3XC9mOkV4XsvkjnidZkeeb3HLiO3q6426aW9JzP2rIwCEV74gjNlIlQovk
-         Kn6VaPPPEeHf6/szE1ldXxEFAXWIr2VcTneFvI8kQVI8ZUZSYWoqSgqjatrhS0xjb8br
-         3dtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734179710; x=1734784510;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1SMsEGruFdAyL91QMcYYqfUU9gU2qxB8M/r5v8wsDw=;
-        b=k7W1qKojF8G73oGuKSmQT6RjKJ5WogSf8P2FGzo91pmKt1ftFfcXKHUmTH5PlwVm0g
-         ySqPOUbAi3bMTdkrFqeTnG5oAZdZnH5ppRBhRF1rmtlAJn8CCHx8kWkoPyGvVHYYtQ7N
-         qiT/ySfNLorHgKY0/W4PBpxhShoxcEFSswwUFWn/L+TdR3rdPNTV1Y20T2BkIhzv7gDs
-         39qIkBm8gVBYkh87Kn3f1UHRtDGcwbMebaal14MpUH5RNsxxNNXAfV2oCvccDfxZKF+l
-         QdifvrARMgjY3foZYzYiaZQzDz/T/TRmQlV7q3u95spH/ca7kA1KGmMk0zYxMrd1vzHG
-         P+vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt6hh+MMGMnUMUtYQM8hoCGQc84Uwe7DoD6asKtSj38Ygj6MZq6i2ARmzD6FdC07YV4ZwcyDZvCLO42I8=@vger.kernel.org, AJvYcCWO+u6YQ3/lie5atH5p3iXtOOmjqQCkvK9kzfSuLRq+WZtV6hARZM8U1Ogy2DK+2zzHzviG9AWPTeZhGA+l0HOdfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkXoTTJR412yKIVl4+CCiylHNc9J1kg8MS5RHJU5E23wvDPJao
-	2jMP7TkV9romfvJnU6ATSK5wsRYeu5gvRYVyol9qaOtk+TJwrKii
-X-Gm-Gg: ASbGnct5dw+Uj0wetl1eF67F35mcVQQVYhYxQifMl818Of5sXsSefK/EC7lKC0mEcG/
-	Zub+70Yta2ND3BxKP9n9R4ZjKx+I4tX0x3/vbzBTb6n6Q5dryR6Jtlt1W/nGqw50oJOpkdzh5qK
-	7IqcqCnZOVIVmnwneMnQtaOta92V84sVdGWDRtrJFHKuuaG9d9IpWOVjn31FxJezsgDrUeSRc8r
-	fuolHes5zVvoMk3Wj6Akbh4Ns8H7/oYdchWgjgMWjZKoK55sg6yZ5JXGT3XoPnKGtx335vNdXGz
-	az9qotgd
-X-Google-Smtp-Source: AGHT+IG8L1YaGH/Cgmw7Opw3u4PDbnmIOIuuXVXMVqH9T8gGG3dklZxuxNY+sYBFxEQpVE+ObpgmSw==
-X-Received: by 2002:a17:90b:5490:b0:2ee:cddd:2454 with SMTP id 98e67ed59e1d1-2f28fc672edmr9885088a91.15.1734179710538;
-        Sat, 14 Dec 2024 04:35:10 -0800 (PST)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a2434ae9sm1500804a91.33.2024.12.14.04.35.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 04:35:10 -0800 (PST)
-Date: Sat, 14 Dec 2024 20:35:05 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 6/8] perf maps: Avoid UB passing NULL to bsearch
-Message-ID: <Z117eag/AP9w9In6@visitorckw-System-Product-Name>
-References: <20241213210425.526512-1-irogers@google.com>
- <20241213210425.526512-7-irogers@google.com>
+	s=arc-20240116; t=1734179825; c=relaxed/simple;
+	bh=PK8vWe6/Z3roLiIfp5rmzYIrcidljC13dSg16QT36oA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=dGtw325eOtvd5gqPo9+hvJ4yid7vB2HSi0JAn1deb3PY6BWrx2617onvLe7qWix7ZDl0qzHJPgVPcEWNh/vQuhb6KSqkt0LzViurp79KucAm+ME4nwyhupCuXRqxUsAokOmh5aMQYvpuAQmspBziTQLlMXSGekN7gx3YwjGZ8i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+utZwpf; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734179823; x=1765715823;
+  h=date:from:to:cc:subject:message-id;
+  bh=PK8vWe6/Z3roLiIfp5rmzYIrcidljC13dSg16QT36oA=;
+  b=m+utZwpfvEAuzK7oC+XZKXKWbywNM1sweekUZX3Iuam1xwB9BH8lF27F
+   atuqE8gQsevNlrW7tVrVqEKZqk/r6eMK48olxguAGOuY44zA3z8RdZZr/
+   R7KB9ULUsX5Xsiz6BwNKPGgU5SJCKsHkdAs7sCf+qAO51/v+Celo8d8Y6
+   a6XvhAGZ9zyxu/FLj0eywGZ1q/Ovo9niW5gHg4rOwuE9bquHDuh7qSKc6
+   J/TAQwh2VVHkAD3ZVaVWykOGcdtDYUrhd0pKX5wZJtOXtHFpB7ukRW+49
+   Jbj9MDZf4kPFHIw6Ia/EoYtZdHOk56gyHyEiFxsiqC/xkwXULMov+HjcQ
+   Q==;
+X-CSE-ConnectionGUID: w/D5zk8qQrqPshwUxfGKJA==
+X-CSE-MsgGUID: qOpPO7XgTQ6o8Zy5IIkHlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34537878"
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="34537878"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 04:37:02 -0800
+X-CSE-ConnectionGUID: jw/Itvb4QKCdWvvhh7pfTA==
+X-CSE-MsgGUID: JQOhEW8tQI2eK6QkpAW1XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,234,1728975600"; 
+   d="scan'208";a="101802673"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 14 Dec 2024 04:37:01 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMROF-000Cvf-17;
+	Sat, 14 Dec 2024 12:36:59 +0000
+Date: Sat, 14 Dec 2024 20:36:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:tip/urgent] BUILD SUCCESS
+ ef4316d2ddea79c84e1ed0ef2047541dbbbee494
+Message-ID: <202412142021.aHNa48YA-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213210425.526512-7-irogers@google.com>
 
-On Fri, Dec 13, 2024 at 01:04:23PM -0800, Ian Rogers wrote:
-> If maps_by_address is NULL it is UB to pass it to bsearch, and will
-> trigger ubsan, even if the nr_maps is 0.
-> 
-> Fixes: 659ad3492b91 ("perf maps: Switch from rbtree to lazily sorted array for addresses")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
+branch HEAD: ef4316d2ddea79c84e1ed0ef2047541dbbbee494  Merge branch into tip/master: 'sched/urgent'
 
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+elapsed time: 1453m
 
-Regards,
-Kuan-Wei
+configs tested: 56
+configs skipped: 1
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+arc                  randconfig-001-20241213    gcc-13.2.0
+arc                  randconfig-002-20241213    gcc-13.2.0
+arm                  randconfig-001-20241213    clang-16
+arm                  randconfig-002-20241213    clang-18
+arm                  randconfig-003-20241213    gcc-14.2.0
+arm                  randconfig-004-20241213    clang-18
+arm64                randconfig-001-20241213    gcc-14.2.0
+arm64                randconfig-002-20241213    gcc-14.2.0
+arm64                randconfig-003-20241213    clang-18
+arm64                randconfig-004-20241213    gcc-14.2.0
+csky                 randconfig-001-20241214    gcc-14.2.0
+csky                 randconfig-002-20241214    gcc-14.2.0
+hexagon              randconfig-001-20241214    clang-20
+hexagon              randconfig-002-20241214    clang-14
+i386       buildonly-randconfig-001-20241213    clang-19
+i386       buildonly-randconfig-002-20241213    gcc-12
+i386       buildonly-randconfig-003-20241213    gcc-12
+i386       buildonly-randconfig-004-20241213    clang-19
+i386       buildonly-randconfig-005-20241213    gcc-12
+i386       buildonly-randconfig-006-20241213    gcc-12
+loongarch            randconfig-001-20241214    gcc-14.2.0
+loongarch            randconfig-002-20241214    gcc-14.2.0
+nios2                randconfig-001-20241214    gcc-14.2.0
+nios2                randconfig-002-20241214    gcc-14.2.0
+parisc               randconfig-001-20241214    gcc-14.2.0
+parisc               randconfig-002-20241214    gcc-14.2.0
+powerpc              randconfig-001-20241214    clang-20
+powerpc              randconfig-002-20241214    clang-15
+powerpc              randconfig-003-20241214    clang-20
+powerpc64            randconfig-001-20241214    gcc-14.2.0
+powerpc64            randconfig-003-20241214    clang-20
+riscv                randconfig-001-20241213    gcc-14.2.0
+riscv                randconfig-002-20241213    gcc-14.2.0
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20241213    gcc-14.2.0
+s390                 randconfig-002-20241213    clang-19
+sh                              allmodconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20241213    gcc-14.2.0
+sh                   randconfig-002-20241213    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                randconfig-001-20241213    gcc-14.2.0
+sparc                randconfig-002-20241213    gcc-14.2.0
+sparc64              randconfig-001-20241213    gcc-14.2.0
+sparc64              randconfig-002-20241213    gcc-14.2.0
+um                   randconfig-001-20241213    gcc-12
+um                   randconfig-002-20241213    clang-16
+x86_64     buildonly-randconfig-001-20241214    gcc-11
+x86_64     buildonly-randconfig-002-20241214    clang-19
+x86_64     buildonly-randconfig-003-20241214    gcc-12
+x86_64     buildonly-randconfig-004-20241214    gcc-12
+x86_64     buildonly-randconfig-005-20241214    gcc-12
+x86_64     buildonly-randconfig-006-20241214    clang-19
+xtensa               randconfig-001-20241213    gcc-14.2.0
+xtensa               randconfig-002-20241213    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
