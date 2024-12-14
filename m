@@ -1,164 +1,131 @@
-Return-Path: <linux-kernel+bounces-445924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4DA9F1D90
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:38:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274899F1D91
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09D4188B615
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169DC16834D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405F3130A7D;
-	Sat, 14 Dec 2024 08:38:31 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43E7161328;
+	Sat, 14 Dec 2024 08:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="b/UOZ7sn"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B2D383;
-	Sat, 14 Dec 2024 08:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734165510; cv=none; b=oS4DUd0x+Rz3nMzIQlcyztk1kuChfmdjoU3h+tmSZZGI0w6fqmCtV8qF1SeokQJrSh4ijIzRlwcM138WrjZjiQnux0Tqy569eTXiBJdRFqIJvTgImYiBlT25fn/aG+N8r/QjOb6E8SWrUpeLJVJKEJPzIbz2M2GMkGS/gpr1pHo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734165510; c=relaxed/simple;
-	bh=1/yIy1SrlcaNV2kPAIqau8laoWMKllp8+UijVCDcJAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d3ITfWZ21vvrTNiqsgZIpxMBKUDlPUoNK9Ph1btsbkQntTqtRvjHRKQ9IECC1HXdv1A7DbBhF+Hn7oD2iY7YJeSjkmF8TVVs5PKf9wGn/43eK8y2W7OmYn7IAYZr53y3Zgp2QCAzcL8zbUcGhZJNe3Emx7VvhAbkgjwEhJ5qJZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Y9KNp5ZCgz20lpM;
-	Sat, 14 Dec 2024 16:38:34 +0800 (CST)
-Received: from kwepemo500008.china.huawei.com (unknown [7.202.195.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 33C09180044;
-	Sat, 14 Dec 2024 16:38:17 +0800 (CST)
-Received: from [10.67.111.172] (10.67.111.172) by
- kwepemo500008.china.huawei.com (7.202.195.163) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 14 Dec 2024 16:38:15 +0800
-Message-ID: <7266ee61-3085-74fc-2560-c62fc34c2148@huawei.com>
-Date: Sat, 14 Dec 2024 16:37:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D77B130A7D;
+	Sat, 14 Dec 2024 08:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734165780; cv=pass; b=nhcCczXCgfAGQuiOlgSPz5nprNe52qw1YBjukYBCuCXvX9vMMUtLMi3VAUfO2VIgcbe5zL18gEydI2jLsHVEKYTYa6XQ3Mag4STcBVkPYTSSG4D2iUjCqdiBc8YtIhmlxxtnpcvZYIH+m5uB6/VBHpz9AnBe/XovjrDLW3WWgcg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734165780; c=relaxed/simple;
+	bh=6AlhKAx/1iHoUMPGCdg5yrqxj9sHnH/tjN/KBU+blDE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p6/mJw6HnFLkUQ1xJBTDxmyiP9evZOtjU7O1YV+h4ghc+D3bO+K3bDT8pa3NteeB66BMqiE4w8A6+H/pCjl/LfSgjCcnBeB91XWWKqSChlHRMCvoa+n4gdK7bMUyPnkHGUoVOh3WFV+nYI1rGgHriMYjnJ0nyLP4oqbq6lqPs9o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=b/UOZ7sn; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734165743; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QKfxdgxLjaRYnb2pHBXr1aPg+CCCwuLW0A4tly2uBK4iHuC7DRd/AaTPfTjYXNZuPl1Zf/oJcUh8zcMd/cktlgSxKA6juJYaxbz/t4b3qjw9PdnnI3+u6lJg4NlhOutScJI8dvqF9ftfMs0+bbUHvIzQrRxk4nVC734f2KjWvpw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734165743; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=n8XHznND3mecvXcSXbHtaGq3xtRw1Tf/k5yZDvCddkA=; 
+	b=C3t0tps2+gD2YnK96Fo5HM6EV0b+eqVuf0RiWHJ72VqAjJLL/+3RCTZHAtcUXcDLjzXHGUAGPFgmstcBGvin7WC8UElsGtluSI/U2+4o8AYaBivHMWjWAD3Iw53PX1w7PRJm2Y6nvtkPXJoq4uhYSYTUDxDTsPQSROn5PKXk1ao=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734165743;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=n8XHznND3mecvXcSXbHtaGq3xtRw1Tf/k5yZDvCddkA=;
+	b=b/UOZ7snydCggikbfUuVsVrwROwvNJvLxInkVhUl4H8UeuFRNzIS5GR7k6hErIfx
+	6t0XX+XcJVGY6QJPxTd/9rDAs1vpBLqyPmSBuJdmyjT9o06oCUlbG0ATRKfvaPdlaYe
+	loCf3SBlwgCM7oPbum/JAMOzu0Gp+L1Gn+DBiMRg=
+Received: by mx.zohomail.com with SMTPS id 1734165739581496.37692639463216;
+	Sat, 14 Dec 2024 00:42:19 -0800 (PST)
+Message-ID: <64035f44-0ef9-4eaf-b2eb-0a83b0fe3748@collabora.com>
+Date: Sat, 14 Dec 2024 13:42:20 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and fix
- weak function issue
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/356] 6.6.66-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241212144244.601729511@linuxfoundation.org>
 Content-Language: en-US
-To: Martin Kelly <martin.kelly@crowdstrike.com>, "masahiroy@kernel.org"
-	<masahiroy@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "pasha.tatashin@soleen.com"
-	<pasha.tatashin@soleen.com>, "mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"james.clark@arm.com" <james.clark@arm.com>, "mpe@ellerman.id.au"
-	<mpe@ellerman.id.au>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>, "nicolas@fjasle.eu"
-	<nicolas@fjasle.eu>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"nathan@kernel.org" <nathan@kernel.org>, "npiggin@gmail.com"
-	<npiggin@gmail.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "surenb@google.com" <surenb@google.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "naveen.n.rao@linux.ibm.com"
-	<naveen.n.rao@linux.ibm.com>, "kent.overstreet@linux.dev"
-	<kent.overstreet@linux.dev>, "bp@alien8.de" <bp@alien8.de>,
-	"yeweihua4@huawei.com" <yeweihua4@huawei.com>,
-	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-	"mcgrof@kernel.org" <mcgrof@kernel.org>
-CC: Amit Dang <amit.dang@crowdstrike.com>, "linux-modules@vger.kernel.org"
-	<linux-modules@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>
-References: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
- <44353f4cd4d1cc7170d006031819550b37039dd2.camel@crowdstrike.com>
- <364aaf7c-cdc4-4e57-bb4c-f62e57c23279@csgroup.eu>
- <d25741d8a6f88d5a6c219fb53e8aa0bcc1fea982.camel@crowdstrike.com>
- <1f11e3c4-e8fd-d4ac-23cd-0ab2de9c1799@huaweicloud.com>
- <30ee9989044dad1a7083a85316d77b35f838e622.camel@crowdstrike.com>
-From: Zheng Yejian <zhengyejian1@huawei.com>
-In-Reply-To: <30ee9989044dad1a7083a85316d77b35f838e622.camel@crowdstrike.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemo500008.china.huawei.com (7.202.195.163)
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241212144244.601729511@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 2024/12/14 03:31, Martin Kelly wrote:
-> On Thu, 2024-12-12 at 17:52 +0800, Zheng Yejian wrote:
->> On 2024/12/11 04:49, Martin Kelly wrote:
->>>
->>>
->>> Zheng, do you plan to send a v3? I'd be happy to help out with this
->>> patch series if you'd like, as I'm hoping to get this issue
->>> resolved
->>> (though I am not an ftrace expert).
->>
->> Sorry to rely so late. Thanks for your feedback!
->>
->> Steve recently started a discussion of the issue in:
->>
->> https://lore.kernel.org/all/20241015100111.37adfb28@gandalf.local.home/
->> but there's no conclusion.
->>    
->> I can rebase this patch series and send a new version first, and
->> I'm also hoping to get more feedbacks and help to resolve the issue.
->>
+On 12/12/24 7:55 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.66 release.
+> There are 356 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Hi Zheng,
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
 > 
-> I may have misunderstood, but based on the final message from Steven, I
-> got the sense that the idea listed in that thread didn't work out and
-> we should proceed with your current approach.
-
-This patch set attempts to add length information of symbols to kallsyms,
-which can then ensure that there is only one valid fentry within the range
-of function length.
-
-However, I think this patch set actually has some performance implications,
-including：
-   1. Adding hole symbols may cause the symbol table to grow significantly;
-   2. When parsing fentry tables, excluding invalid fentries through kallsyms lookups
-      may also increase boot or module load times slightly.
-
-The direct cause of this issue is the wrong fentry being founded by ftrace_location(),
-following the approach of "FTRACE_MCOUNT_MAX_OFFSET", narrowing down the search range
-and re-finding may also solve this problem, demo patch like below (not
-fully tested):
-
-     diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-     index 9b17efb1a87d..7d34320ca9d1 100644
-     --- a/kernel/trace/ftrace.c
-     +++ b/kernel/trace/ftrace.c
-     @@ -1678,8 +1678,11 @@ unsigned long ftrace_location(unsigned long ip)
-                             goto out;
-     
-                     /* map sym+0 to __fentry__ */
-     -               if (!offset)
-     +               if (!offset) {
-                             loc = ftrace_location_range(ip, ip + size - 1);
-     +                       while (loc > ip && loc - ip > FTRACE_MCOUNT_MAX_OFFSET)
-     +                               loc = ftrace_location_range(ip, loc - 1);
-     +               }
-             }
-
-Steve, Peter, what do you think?
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.66-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> Please consider me an interested party for this patch series, and let
-> me know if there's anything I can do to help speed it along (co-
-> develop, test, anything else). And of course, thanks very much for your
-> work thus far!
+> thanks,
+> 
+> greg k-h
+OVERVIEW
 
--- 
+        Builds: 23 passed, 0 failed
+
+    Boot tests: 210 passed, 0 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: v6.6.65-357-gae86bb742fa8
+        hash: ae86bb742fa81e7826a49817e016bf288015f456
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+
+
+BUILDS
+
+    No build failures found
+
+BOOT TESTS
+
+   No failures found
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=ae86bb742fa81e7826a49817e016bf288015f456&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
 Thanks,
-Zheng Yejian
-
+KernelCI team
 
