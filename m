@@ -1,115 +1,238 @@
-Return-Path: <linux-kernel+bounces-445843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CE69F1C27
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:45:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D119F1C2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B8027A0464
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:44:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BDB188CB93
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1293118AFC;
-	Sat, 14 Dec 2024 02:44:48 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157E2BB1B;
+	Sat, 14 Dec 2024 02:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="aK4LgnTZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X2TTGGoi"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384A13FEE;
-	Sat, 14 Dec 2024 02:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E34DF49;
+	Sat, 14 Dec 2024 02:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734144287; cv=none; b=FP8GnsHmyYNeFM3STpeQGf271rUtYeFbYPvvNPtwYdRF8lPtzCwBv1x6bv9Eii1n4ZvQn5DxEOz7h8tQT3xooU3+0BSClpaFPSEHhzK0gloOQScGwh1bOrz4L3sy6atNiE1bXLCaiIRJE2z38JGwKBhqEwTk9EuyiVkhdxoUMOE=
+	t=1734144305; cv=none; b=la/wwr7j3rWsx8VvNq7PxpgjTZHzC0F/ZhANtc5wwxowTbJMsaH/lPeJDZj4gNJEOFyVphq82sLqZY1yiRQ8embcVqx7gStX9b8lWsfa4BiaLSne+rH6v+TAdb6QGi9HiTrpmYyf9j+UvS/+MVkTGa1EMesfgxz804BYFRGfDYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734144287; c=relaxed/simple;
-	bh=LXQ424kNl0hkFT7GE2IZ60/jBTpGcgsKLpzUxMya2PI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bw78ZGDDpMiBuJckfnzhhXyTHo0uQ/gKbLgB4w+nnmWGRzpEEmQtHD0rc8OUZua/ZcAJJGrUYo7GQYYc0Wi3XpPsf+fWr03T7V45tgKjhcnRNj/OruSHEkl6F8Gkutic6J2p/rov8dESRJ4GZFukMCAGez6zTRGsc7d90nwjllo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y99Wy4M3Zz4f3jRC;
-	Sat, 14 Dec 2024 10:44:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EF4FB1A0359;
-	Sat, 14 Dec 2024 10:44:33 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgDHo4cQ8VxnjzcoEg--.42921S3;
-	Sat, 14 Dec 2024 10:44:33 +0800 (CST)
-Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
- the tag reservation code"
-To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
- ming.lei@redhat.com, osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
- <20241209115522.3741093-2-yukuai1@huaweicloud.com>
- <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
- <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com>
- <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
- <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2562353d-bfe3-a2b1-5427-76426cbda7b4@huaweicloud.com>
-Date: Sat, 14 Dec 2024 10:44:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1734144305; c=relaxed/simple;
+	bh=9qyDgkeCX1tal18Hf/Ny/eaU0q+9ST+DwYCRWojmXUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ew4nemQn4+0EDvjoEPNl5xXLdqDwwkg38E6WcnzpwDUKVvDB4BIXZyYt5BFjJzQ/86XzPAyta4zslbFP1FqhqD4JKYXjnUuGEyyqvNZvKrJPBFQMhpHK8QdGXyIZYpxa2FzQFYDjXOBnEYn2Eub9fQo57LslEwkXl+BggnnvCto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=aK4LgnTZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X2TTGGoi; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id A661513841EB;
+	Fri, 13 Dec 2024 21:45:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 13 Dec 2024 21:45:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1734144301;
+	 x=1734230701; bh=JzF+XelSXj4HAebN6G10rWGrSfReZwqnUK4DNzdHLvE=; b=
+	aK4LgnTZIQr2LvYmqh+sdZAcp6mZBlTwVcXtY7l2/IaeCDCPEf4oKyvBpMR0Y3h8
+	8lsF7+N7lcGsQ2Ix6YrtO5hDawNVr7myi3Y2YOM+efGOxQuZGYU77KcSt42xli3b
+	kn7wdbz+9fobWlMOgMalmMNFwzAdJq2Ur2HJu1NpwhBDbL2Vn/B+1IrwDGB2ZoSB
+	qFdf9kq+Hp2pm6UWC8PLR/xth1Hbkrb9gjk67mURZsyMotSgO5UiugYiA6WJ2Hy8
+	6kiDARd869JpTua8uq8DECTY98SZISNsNpqPRQy/GIDhMsl+5IEGr5W7ZAkoTTF2
+	rKpbR+OQv+WHFz3UWzlCaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734144301; x=
+	1734230701; bh=JzF+XelSXj4HAebN6G10rWGrSfReZwqnUK4DNzdHLvE=; b=X
+	2TTGGoiGHB61jbOt3JIO+2DXRt+TnyMdRiQjkywVO1Hm5GoE406bhgpCSOClYWM6
+	yD/Pgb84I3bkx7U3oXXJ3iqv2FswmQZoXAp0VNS1QNVcrlOrRkcBZoxIab6zIryR
+	KhA7p0rJtoa0NUzJdc26390d8Mp+yn1T1P+hVwBhbJkukVVVm4aJHCjuWpadPb+M
+	/rAGVUDfBYJVEmehxn3PxkBywOaXPAX+cNldUB8imX5WnUUlwG1DVGqvaibFfBpf
+	8jF+AQhyltwCvMfmqBh468w4JnZiLCZZDzZgv75fWc3e78CCs0jT8C4CL+9ihz6T
+	klQbKM7eJP4wz/ieqCakg==
+X-ME-Sender: <xms:LPFcZ4wJZddKBDuYpgpEVJh6Kd5_PvzT5pbkHZ0_YpHzjWCEX-RMsg>
+    <xme:LPFcZ8T0nvmXN9AWaMo9_EApz9rsAUotFWr6n5AoE2rNJHlipBGOahgdkNOR1telj
+    CNzaqupYOQxDtXNLw>
+X-ME-Received: <xmr:LPFcZ6WnpqztuP9BJS1aDML29exPp0xFn0mCsLPA5VAOceR_jGrPu1ViNNn-FOd_BFRlYR_QmFQ-HH5mRzWvjtc9x6P6pq8QBph8Ig6fRK-o9Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeekgdeglecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenfghrlhcuvffnffculdejtddmnecujfgurhepfffhvfevuffkfhgg
+    tggugfgjsehtkefstddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesug
+    iguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnheptdfgueeuueekieekgfeiueekffel
+    teekkeekgeegffevtddvjeeuheeuueelfeetnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghrtghp
+    thhtohepudelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhhiihdrnh
+    grkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigrdhnvg
+    htpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepsh
+    honhhgsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:LPFcZ2gLkySSqTMO_YhbArEZesnigQoXjcf8K_aOYKlgAjZ1ndhOTA>
+    <xmx:LPFcZ6AP_57R1QgUv69a5iI_LwvZYRbs-Vr2QCFFGwnhor3CIYtGCw>
+    <xmx:LPFcZ3IDCoN-MfP5bHzlqq5u-1i6ZF5Oc_U26usG9-mRJrG7CTFc7Q>
+    <xmx:LPFcZxB1EUYMwDohZcDaygtKvP0j_ivo0b2UWSasplQ7wB9F1EoDvQ>
+    <xmx:LfFcZ1UMNp2tLaZxTNMh6fNG75fQe5whelrusP6SR-6Ir6QEGBNgLO3e>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Dec 2024 21:44:57 -0500 (EST)
+Date: Fri, 13 Dec 2024 19:44:55 -0700
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, eddyz87@gmail.com, shuah@kernel.org, 
+	daniel@iogearbox.net, john.fastabend@gmail.com, martin.lau@linux.dev, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, mykolal@fb.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 4/5] bpf: verifier: Support eliding map
+ lookup nullness
+Message-ID: <zow3q3nhlz6vedbni3upag5yr7zzrhyiqysl5nwyubebmbwojk@th7kbm62x36g>
+References: <cover.1734045451.git.dxu@dxuuu.xyz>
+ <92065ca054beccd6d0f35efe9715ef965e8d379f.1734045451.git.dxu@dxuuu.xyz>
+ <CAEf4BzaqCgW9keiT+tJUBQWT6Q+jMwuvn4O2ZghO0c+ZvACNrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHo4cQ8VxnjzcoEg--.42921S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw47Gw1xtrWfXr4UWF4UJwb_yoWkWrXEgw
-	4qyryDGw4jqr1fCr47GayrGrZ0qrWDta4UArykKF4UX34IkwsxCF90kryfZa13XFyUKrn3
-	Xw1jyry5AwnF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <CAEf4BzaqCgW9keiT+tJUBQWT6Q+jMwuvn4O2ZghO0c+ZvACNrw@mail.gmail.com>
 
-Hi, Bart
-
-在 2024/12/11 4:33, Bart Van Assche 写道:
->> If so, following are the options that I can think of to fix this:
->>
->> 1) make async_depth read-only, if 75% tags will hurt performance in some
->> cases, user can increase nr_requests to prevent it.
->> 2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
->> with q->sysfs_lock, so deadline_async_depth_store() will be protected
->> against changing hctxs, and min_shallow_depth can be updated here.
->> 3) other options?
+On Fri, Dec 13, 2024 at 03:02:11PM GMT, Andrii Nakryiko wrote:
+> On Thu, Dec 12, 2024 at 3:23 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> > This commit allows progs to elide a null check on statically known map
+> > lookup keys. In other words, if the verifier can statically prove that
+> > the lookup will be in-bounds, allow the prog to drop the null check.
+> >
+> > This is useful for two reasons:
+> >
+> > 1. Large numbers of nullness checks (especially when they cannot fail)
+> >    unnecessarily pushes prog towards BPF_COMPLEXITY_LIMIT_JMP_SEQ.
+> > 2. It forms a tighter contract between programmer and verifier.
+> >
+> > For (1), bpftrace is starting to make heavier use of percpu scratch
+> > maps. As a result, for user scripts with large number of unrolled loops,
+> > we are starting to hit jump complexity verification errors.  These
+> > percpu lookups cannot fail anyways, as we only use static key values.
+> > Eliding nullness probably results in less work for verifier as well.
+> >
+> > For (2), percpu scratch maps are often used as a larger stack, as the
+> > currrent stack is limited to 512 bytes. In these situations, it is
+> > desirable for the programmer to express: "this lookup should never fail,
+> > and if it does, it means I messed up the code". By omitting the null
+> > check, the programmer can "ask" the verifier to double check the logic.
+> >
+> > Tests also have to be updated in sync with these changes, as the
+> > verifier is more efficient with this change. Notable, iters.c tests had
+> > to be changed to use a map type that still requires null checks, as it's
+> > exercising verifier tracking logic w.r.t iterators.
+> >
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > ---
+> >  kernel/bpf/verifier.c                         | 80 ++++++++++++++++++-
+> >  tools/testing/selftests/bpf/progs/iters.c     | 14 ++--
+> >  .../selftests/bpf/progs/map_kptr_fail.c       |  2 +-
+> >  .../selftests/bpf/progs/verifier_map_in_map.c |  2 +-
+> >  .../testing/selftests/bpf/verifier/map_kptr.c |  2 +-
+> >  5 files changed, 87 insertions(+), 13 deletions(-)
+> >
 > 
-> Another option is to remove the ability to configure async_depth. If it
-> is too much trouble to get the implementation right without causing
-> regressions for existing workloads, one possibility is to remove support
-> for restricting the number of asynchronous requests in flight.
+> Eduard has great points. I've added a few more comments below.
+> 
+> pw-bot: cr
+> 
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 58b36cc96bd5..4947ef884a18 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -287,6 +287,7 @@ struct bpf_call_arg_meta {
+> >         u32 ret_btf_id;
+> >         u32 subprogno;
+> >         struct btf_field *kptr_field;
+> > +       s64 const_map_key;
+> >  };
+> >
+> >  struct bpf_kfunc_call_arg_meta {
+> > @@ -9163,6 +9164,53 @@ static int check_reg_const_str(struct bpf_verifier_env *env,
+> >         return 0;
+> >  }
+> >
+> > +/* Returns constant key value if possible, else -1 */
+> > +static s64 get_constant_map_key(struct bpf_verifier_env *env,
+> > +                               struct bpf_reg_state *key,
+> > +                               u32 key_size)
+> > +{
+> > +       struct bpf_func_state *state = func(env, key);
+> > +       struct bpf_reg_state *reg;
+> > +       int zero_size = 0;
+> > +       int stack_off;
+> > +       u8 *stype;
+> > +       int slot;
+> > +       int spi;
+> > +       int i;
+> > +
+> > +       if (!env->bpf_capable)
+> > +               return -1;
+> > +       if (key->type != PTR_TO_STACK)
+> > +               return -1;
+> > +       if (!tnum_is_const(key->var_off))
+> > +               return -1;
+> > +
+> > +       stack_off = key->off + key->var_off.value;
+> > +       slot = -stack_off - 1;
+> > +       spi = slot / BPF_REG_SIZE;
+> > +
+> > +       /* First handle precisely tracked STACK_ZERO, up to BPF_REG_SIZE */
+> > +       stype = state->stack[spi].slot_type;
+> > +       for (i = 0; i < BPF_REG_SIZE && stype[i] == STACK_ZERO; i++)
+> 
+> it's Friday and I'm lazy, but please double-check that this works for
+> both big-endian and little-endian :)
 
-If you agree, I'll use following option in the next version:
+Any tips? Are the existing tests running thru s390x hosts in CI
+sufficient or should I add some tests writen in C (and not BPF
+assembler)? I can never think about endianness correctly...
 
-4) set min_async_depth to 64 (after treating min_shallow_depth for the
-whole sbitmap instead of one word).
+> 
+> with Eduard's suggestion this also becomes interesting when you have
+> 000mmm mix (as one example), because that gives you a small range, and
+> all values might be valid keys for arrays
 
-The good thing is that user can still set async_depth without changing
-wake_batch, the side effect is that async_depth can't be used if
-nr_requests <= 64;
+Can you define what "small range" means? What range is there with 0's?
+Any pointers would be helpful.
 
-Thanks,
-Kuai
+
+> 
+> > +               zero_size++;
+> > +       if (zero_size == key_size)
+> > +               return 0;
+> > +
+> > +       if (!is_spilled_reg(&state->stack[spi]))
+> > +               /* Not pointer to stack */
+> 
+> !is_spilled_reg and "Not pointer to stack" seem to be not exactly the
+> same things?
+
+You're right - comment is not helpful. I'll make the change to
+use is_spilled_scalar_reg() which is probably as clear as it gets.
+
+[..]
+
 
 
