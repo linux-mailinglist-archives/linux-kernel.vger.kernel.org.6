@@ -1,192 +1,200 @@
-Return-Path: <linux-kernel+bounces-446201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B029F2100
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:46:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EC39F210E
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87CF18875C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00D1166AAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808A1AF4E9;
-	Sat, 14 Dec 2024 21:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4111C1B2180;
+	Sat, 14 Dec 2024 21:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUTo62qD"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc7+slfL"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36645137E;
-	Sat, 14 Dec 2024 21:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78D1137E;
+	Sat, 14 Dec 2024 21:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734212801; cv=none; b=FxzNM3aRgTpQrEqWgGlowPwYHMZiKgc2E5WklQ7cyxFPFVAd0hyYeMqv6kUXKDl0UsIvECmghhMOCH5iHwN3WZp+f3B5ZNuMj+x8SjJK/V/2Bsup94lcePgGSd+3153St40undKDluIf4cPmaDw2jx7oi859OpUbVFobslhrMVA=
+	t=1734213134; cv=none; b=BSgtwLZXAEHx6Gt163eOoyPr7fAR4/9Uyt0w2uPiDAgV2AHFqM7HuliYOC5a78D6UlWb+LztWmwIkExNTRMdXQ41x23Jg4TgKc+okDKTGTJVquoq3qdtG08spsc9oPMadryEtshC/Oe0AXIh6/8goH/FNHdJgHqADOTyjKP9zlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734212801; c=relaxed/simple;
-	bh=5M02OVns2Iz8P3BP7U+TZ+l7ty5OV2Jj4S5MCvNcS6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gIvXbw8hi6fKrLsrAkevrw0iS0BGcIZ8bOSW35NRL++GM582w6zu2u+JUBzh1/vZM61xfmBQjjY0aoABR14EAgPaTQ3iv43Q2ECmjzI+b9ETs7KDwv2xwOg4kgAwgV+PB85b2CUC4SKWUU/YuP9guSepUa+rrDZ+ZEVj9DF/gX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUTo62qD; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1734213134; c=relaxed/simple;
+	bh=WEERpUugMIVF+RpGbGa3aJw6AHnRLtvfpjRFt8LA5fc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nvGysrkBnudhaqd2+11Skr9APCtyhBbj0fx2XClbDp/lxpT/+N1Rmx7/FblXQoCmA2P14GlXjq1BKgvEiFmVpnY3K31Ixf2NCza69+BMsGxdOfKftSrxF8yvltRGnfbvgZGhFGgKkrPht910mt1Wsn1PlfqGH6Cx8bTHq0tBu+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc7+slfL; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21636268e43so36304515ad.2;
-        Sat, 14 Dec 2024 13:46:39 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso489005666b.1;
+        Sat, 14 Dec 2024 13:52:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734212798; x=1734817598; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=6UvuuTwlUaB3Br+i87vUX933lDcfu6mE+mstWL6yF9U=;
-        b=YUTo62qDjgktMuQ27n1H7wFajDXjra1x8deoP03a6d0gAXV8k2h8w+S0Pp2wggpNiz
-         2bqD05ZeIG+P51i/ce2n7RP9RBFBOA3e0/Iuk85dRm7Qps+9eBo0UxgQY/rxRCLjf9Je
-         3mkFCkDuGwAky19NXY6ytMt28Qg1fgPYx88C3lEL8AslPE/NkCIEkJsGDBtLJx5cIL4F
-         f7Wky9YPGmxE4vxJhje3JQNHShOKR/MKu6w6/UR43uvt3oLDMJ8HPSmpI2LPajQnh8vV
-         mzlIduy7N397KR6u/Mh2B7QnPe6kn97EIutad7AffzOuEM36huRjxTXnHGOqf7urOdY9
-         MLug==
+        d=gmail.com; s=20230601; t=1734213131; x=1734817931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3/YC7qsZQDqPwi0DSerU+A2lmpctu8Ls9iP33kzH6HQ=;
+        b=Jc7+slfL9agMGNYhIf/pjQ2/X8pIU3Y2CTuDquqFmfOQe9vpVveJatcTXDFJoQgjRs
+         b72mHIngZpfachnjVM9xj1zkhTPi9ZmTW4+FLOBYYNhun3M4ifJdey/+CTyGdVXIw6FY
+         DV2ceakCk72c2BYWezx6BNoyukOEHnHoQjPC0K6QZfANYtkIVIu9XYs1x1QXcACersc8
+         uNrm8dE1ACFyKkh94i2xHSKVnws8hrDamnwmGnd7X/KCt9HMUhyKDvrlUpLlm8OoDYJj
+         cxZIid0qjN4U2GviHNLduxbUeS/Dlo+/oXh+ikW4vjejeVVS1MGkrp2NuWAbFQDHnfV7
+         Nq+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734212798; x=1734817598;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UvuuTwlUaB3Br+i87vUX933lDcfu6mE+mstWL6yF9U=;
-        b=u4vdoFtbERJUgEb21uT3GvXZb3l+P2SLW4O6ZwbOMcDXeF2Dum17JekNuy74R+0qRC
-         ubZeoMWjallcJK2pbPbP8/sQ9e0NcqvShfoiZ7SZd4wopffo5hMdqL8ReDmCDk3Ln98z
-         1aib/lWYxCoEPba6PdVu6FrtkfvrdsJ3ZgfhjGxCGnoQhHugq4/PIbSdxlvRZsZxKcfe
-         5dcXD0yA7vwNuzg+j+WhjxKABQjETmvgfQOF3YafiVMwrabxnoRzcYgljQwCEk7Nk1iY
-         OWkOMZWul0aEmeFPJH1K/03aN44dEsoETMO1om8aBSSWdLJ9SWRu/tuUobCnyvbxwWco
-         LStg==
-X-Forwarded-Encrypted: i=1; AJvYcCVImwtQrY1TyNjL/sbHyAB0oTL72lnqLHdI5YQwCNgMTCblO+l9fOvzd+LNXrVXxzabGuu3klY4Ku7R8LQ=@vger.kernel.org, AJvYcCVdso9qsdThukts20Pb0iIt/NboHWrLCrgFE1MDdhPxp78tf4t0xnaUiV0+f4Wq2Dmd6DxvLyJEFdwTcjV5bN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVMXfx9MOumrRAfl3jEu5UtAd55/2qiOKZ5d/m2nfBIHj+Z7lB
-	hYAfSo9lv46pXGoeQ1TSgkABiCJKDAMDANHEHVy6dCFWQ9Y7U3L/
-X-Gm-Gg: ASbGncuvXu1pICD/64rcBwJUTaVz6mENarWR4kzooQeIL+KboXegzlft8ZmKp9jHaxo
-	urRYY72m1ZkawQib+zLrC+l4MXiBKMTkH7aI1fsFBWzrxlsHxH+dLe+9coO5zvmZBU4Oxd7/B3X
-	O4hNLJ9pbA78YvSiFvd3RU0E9B9CYqq4oPElfQBPdulXyrLdMSHbgU8rQBZFUv0UENKSk+24CBt
-	A7u0zyJhvEkGTrosJiLSv6Tj+XrHsXun9zbKCax0Wjw1QU03rBdMR0upCgcAFhSAoXud9rd0hv1
-	FFg8XHhJ1dYDQfnZU3Kl2rakYHf12Q==
-X-Google-Smtp-Source: AGHT+IEZPwXuT+jhvGafA+HbJxXjg528LE13RpAPOnkGSYOwMGLuNDL4Y/sz5BWORDDjKyhDUEn2SQ==
-X-Received: by 2002:a17:903:234d:b0:216:42fd:79d2 with SMTP id d9443c01a7336-21892a52c51mr91855615ad.49.1734212798464;
-        Sat, 14 Dec 2024 13:46:38 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e4ff7asm16770315ad.134.2024.12.14.13.46.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 13:46:37 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <927f2063-4587-423f-8c75-441f55e17671@roeck-us.net>
-Date: Sat, 14 Dec 2024 13:46:36 -0800
+        d=1e100.net; s=20230601; t=1734213131; x=1734817931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3/YC7qsZQDqPwi0DSerU+A2lmpctu8Ls9iP33kzH6HQ=;
+        b=Sg+2sr23JiHK+2cRoYAApd/vAWzQm7uSVhJhr93+C6XWrFkEXlsmGkiuGnY9a8RNwv
+         aEYRnr7gUBWKKSQ6HGPvh0Fx3t5669N013/zKRw4CFgEC9BpFTIq7JUhFrEQZdvMAnBh
+         TEL1ERs9kbvy3AcS0S+9jvzq/5BGsCynjL2JQ9sjNmyzXVwxF/nID+tlNK8oOVkSof8p
+         mhXbO0phN8QVdHPQ0qUGl+inWjqBMi2zx4Rd9opApXu1UfWQ7lu0N3XfEozs773DlxTY
+         nyKcKDnJAtIvVS+lauwnlDl4lJBKo+o3xsz4saA6rT1vDfE6h8bh01UTPIyiYA/JorOC
+         bXTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNQU0IJhpi2U+/T9tS8zxPlgVRKemRzVeIJvjslt0WEyflJyQv/VvUoyi2q/Hlw6vwKHiW7W+fl83uqyE=@vger.kernel.org, AJvYcCWMxxRU71VtElyoEgKWG8G1UYrMoxIFSLOUe693zL5sy3T+jjmEE8e4sbt7PZs38z7RzfLVyGOFvl83Jw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+3w2yxCHmQ8v9fsq+JdiGOSaGspXLEU75v0uFDCbWjSm66CeF
+	cU57WFdEtMWFXpYNJED3iTuM5n4GjpHUUXks068mFIobVB5PexIi
+X-Gm-Gg: ASbGnctZrMDnNdPZxZL5+WIuiUJMuYT4by9SFt0TEEiNtBBo8gbwmdrmVdC6LvBtA7n
+	uBFLFz9IvCPFzcG2pjpnwtoeuHV6boku3ovFYVnph+LWkQBrPI/3D/gGbYGosJAomYnuVlcdrBW
+	jUmTx+jKP1xuI9tLLUfgx8LFTDL3U+hcccTAc/JY3dXUd7nB07SeYmfHTqDB8O0VwC0J3Jw/vRQ
+	H7c2Lq3JxcNA3/BXgnGt9f9r/qEh33WJNDDK6oQVZKy76Lj56CGVSz1NKhWoaF57Vk=
+X-Google-Smtp-Source: AGHT+IHRglX6dcJH31gxHa/6wW1mMpn14tLgw9bFgX7WVXdACNj1C6kigUNQFnSR4vD5o8uj+wrjog==
+X-Received: by 2002:a17:907:c24:b0:aa6:7662:c56e with SMTP id a640c23a62f3a-aab77ec4181mr832539766b.55.1734213130370;
+        Sat, 14 Dec 2024 13:52:10 -0800 (PST)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9606839csm139090266b.61.2024.12.14.13.52.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 13:52:10 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: andreas@kemnade.info,
+	rogerq@kernel.org,
+	karprzy7@gmail.com,
+	lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCHv3] dt-bindings: mfd: omap-usb-tll: convert to YAML
+Date: Sat, 14 Dec 2024 22:52:07 +0100
+Message-Id: <20241214215207.842765-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog: aspeed: replace mdelay with msleep
-To: David Laight <David.Laight@ACULAB.COM>,
- Phil Eichinger <phil@zankapfel.net>,
- "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241212113014.1075414-1-phil@zankapfel.net>
- <3fe75eab-e700-4ae2-984b-42342ec7d784@roeck-us.net>
- <d7ab80332def4a328cb9492fddcb8bef@AcuMS.aculab.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <d7ab80332def4a328cb9492fddcb8bef@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/14/24 13:21, David Laight wrote:
-> From: Guenter Roeck
->> Sent: 12 December 2024 13:56
->> To: Phil Eichinger <phil@zankapfel.net>; wim@linux-watchdog.org; joel@jms.id.au;
->> andrew@codeconstruct.com.au; linux-watchdog@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-aspeed@lists.ozlabs.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] watchdog: aspeed: replace mdelay with msleep
->>
->> On 12/12/24 03:30, Phil Eichinger wrote:
->>> Since it is not called in an atomic context the mdelay function
->>> can be replaced with msleep to avoid busy wait.
->>>
->>> Signed-off-by: Phil Eichinger <phil@zankapfel.net>
->>> ---
->>>    drivers/watchdog/aspeed_wdt.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
->>> index b4773a6aaf8c..98ef341408f7 100644
->>> --- a/drivers/watchdog/aspeed_wdt.c
->>> +++ b/drivers/watchdog/aspeed_wdt.c
->>> @@ -208,7 +208,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
->>>    	wdt->ctrl &= ~WDT_CTRL_BOOT_SECONDARY;
->>>    	aspeed_wdt_enable(wdt, 128 * WDT_RATE_1MHZ / 1000);
->>>
->>> -	mdelay(1000);
->>> +	msleep(1000);
->>>
->>>    	return 0;
->>>    }
->> This is a _restart_ handler. The only purpose of the delay is to wait
->> for the reset to trigger. It is not supposed to sleep.
-> 
-> With the recent scheduler changes isn't the code likely to get
-> pre-empted?
-> Which (effectively) converts is to a sleep?
-> 
+Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in
+lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
 
-This code is called from do_kernel_restart(), which in turn is called from
-machine_restart(). I'd think that the kernel has a severe problem if it
-decides to preempt that function.
+Changes made to the binding during conversion:
+- Added Roger Quadros as maintainer
+- Removed deprecated ti,hwmod
+- Renamed .yaml file to ti,usbhs-tll.yaml
 
-Guenter
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 -----------
+ .../devicetree/bindings/mfd/ti,usbhs-tll.yaml | 47 +++++++++++++++++++
+ 2 files changed, 47 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+
+diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt b/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
+deleted file mode 100644
+index c58d70437..000000000
+--- a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-OMAP HS USB Host TLL (Transceiver-Less Interface)
+-
+-Required properties:
+-
+-- compatible : should be "ti,usbhs-tll"
+-- reg : should contain one register range i.e. start and length
+-- interrupts : should contain the TLL module's interrupt
+-- ti,hwmod : must contain "usb_tll_hs"
+-
+-Optional properties:
+-
+-- clocks: a list of phandles and clock-specifier pairs, one for each entry in
+-  clock-names.
+-
+-- clock-names: should include:
+-  * "usb_tll_hs_usb_ch0_clk" - USB TLL channel 0 clock
+-  * "usb_tll_hs_usb_ch1_clk" - USB TLL channel 1 clock
+-  * "usb_tll_hs_usb_ch2_clk" - USB TLL channel 2 clock
+-
+-Example:
+-
+-	usbhstll: usbhstll@4a062000 {
+-		compatible = "ti,usbhs-tll";
+-		reg = <0x4a062000 0x1000>;
+-		interrupts = <78>;
+-		ti,hwmods = "usb_tll_hs";
+-	  };
+diff --git a/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+new file mode 100644
+index 000000000..aa4edc51d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/ti,usbhs-tll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: OMAP HS USB Host TLL (Transceiver-Less Interface)
++
++maintainers:
++  - Roger Quadros <rogerq@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - ti,usbhs-tll
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 3
++
++  clock-names:
++    items:
++      - const: usb_tll_hs_usb_ch0_clk
++      - const: usb_tll_hs_usb_ch1_clk
++      - const: usb_tll_hs_usb_ch2_clk
++    minItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    usbhstll@4a062000 {
++      compatible = "ti,usbhs-tll";
++      reg = <0x4a062000 0x1000>;
++      interrupts = <78>;
++    };
+-- 
+2.34.1
 
 
