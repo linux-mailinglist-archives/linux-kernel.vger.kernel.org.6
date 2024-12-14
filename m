@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-446122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873249F2015
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:27:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 769B29F2016
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4921887F5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F87188804C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627771A8F86;
-	Sat, 14 Dec 2024 17:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A891B0F3D;
+	Sat, 14 Dec 2024 17:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="d3DgLXZe"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ploH3Zt7"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD6C1A8F80
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BDD1A8F9C
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734197208; cv=none; b=uwdRXFuzq/lmSlyNHKk91ll4RAli88+Rt7KYEQfqUqxzRn1S9kk+biq/iGrS3aNcAlcoEr7D1kbzQjM1fPx2cm3CHG6BbNvplm8MI/LTGsOMI1WGpHuJA+NniTJ9+9UtNxGyFExDoKli64uhvGPInrCNrd23un4HeeI2223WRlo=
+	t=1734197215; cv=none; b=ouCcnKY7J8g1kdY62hDZSKGCrirEJpUawIr/W1mxxqZbUtLnI8Rjp0A9UZp382BqtBhBJDpY1ohE/8ZiSD+Rt9l6C8TyQoaMJe5pq1H62xLID9G5ewtxSshKr5Qb+elbxVrm7dqleH4BiX/ANE66Vnu/c4GftJdN05EZDOFw3NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734197208; c=relaxed/simple;
-	bh=KQvgHMf4mn/NJ5Xhw6rUHo6j+G4++aBmhNInEZUS85A=;
+	s=arc-20240116; t=1734197215; c=relaxed/simple;
+	bh=aE+CJCpUn5kUAnEgYyEV3gtDvbC5Svv8OP258wfgmN4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RSNXVP+v2NqgZyjQLLNote34tuL/3uYjAoJQTvbS+9CeAYBMJQkng3bg9VxyuUc+y5U0rhexTnwFFoNFunxA5rrYjad/aAJxtYziA1DRK9t02zAqMXpSPKzWx7rRBNxwJOwKR3VIjFt3OcKGioWMzZr5A8pWob/tb9Tqp08YhXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=d3DgLXZe; arc=none smtp.client-ip=209.85.214.169
+	 MIME-Version; b=LVeCrURO8m7Pi4RFYu3BWBhTExqzGOGRea56OPz7NHxNOOX9w00Vr42U+7YFpAPlwdP+KZB4HC2kPNxfXbGMKyA8TEgh+twznBC7MXLlgPupMe64MxF0Roqt9smFALI9jeBZQ6g1gYVw8g+mkcc+8MrblIti/hKq4h7F8tY6JzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ploH3Zt7; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2164b1f05caso26267355ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:26:47 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-216426b0865so24514105ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:26:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1734197207; x=1734802007; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1734197213; x=1734802013; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nBJthI+mqNYzorludLEAXvfiuDja+LCnD6djvnBek6Y=;
-        b=d3DgLXZew7K5QBclQ/cD4nFeStj8kh5eg8R+odpkIxGz4dz0rZwxoegej0l1UyWcN3
-         fXBpLC3wuTvnoqcQ3HvAoVBLtcSrQp0IWFQ6c3qcaRXteWaUH5u2d6o8bD7pe6mFlY5F
-         pllPV52jlH+UKjWs3ReSLm1bhIlJyWWDb4YqCJ7w2/0sObNro51axkAylCYAwE3Za5EL
-         SoWZE7eRQFzRLJBmOLhOVKqWQZx5SH0GjXBsaWfpLcUdfxZEwaY38zj9MCF8ELOCkFIB
-         ebGjCFh4I561go/VS1r7bI9TvwBZ3hoR3RqQ/BC0QkBFlgxK3UWjPzl2xa+8V/d40Hkh
-         vOOg==
+        bh=yE+w0neHmk87dMRt+p213gF5rtqgAWN6iext8wGVFRM=;
+        b=ploH3Zt7irmUPLOxQPo4cihjIN1TWCyNc2pBk2qBlMuPYrbgvM49tsdxwmnCngUYa+
+         brQsa+409wy3YDm/MRXMS+1yv4DUHf8iFkZgNtMAyXV4RVggtCY9wcYRH0oCdXVPTMT7
+         AWIB9R3hG0LT1CDPyxaWBP5XvtwmVQZxp475ntaktjJMs5Q05AbaizN7U5xyVbYQCVxQ
+         WTeV0pO58YUaQwOZJY+IU1WX7JsKGhqSwJxWOIMimKAtaEvWSw6gSrgiXDR1AP/cL5do
+         aJ7xKKQSEh2Dt9CIlMeMw4XZhNgkB8KRzY3PRIBOBSpmjRiWOKay/FzxFVVZbp1+nh7d
+         pSxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734197207; x=1734802007;
+        d=1e100.net; s=20230601; t=1734197213; x=1734802013;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nBJthI+mqNYzorludLEAXvfiuDja+LCnD6djvnBek6Y=;
-        b=bc6T6U4Y9Sl52UVlCARJRxXeCumsKT2y5w/jx/LoOvhgTgqFPzDHQa+1Y7SHxLOpz1
-         fEY6fBTvmqQvQsQjfN8woe7KWN6/vmPjboqVO7AducbZWL3f6dnypcm4DByQvKQOkX08
-         WI4wckseBjkB8jEdQtk6i9p7jvZlDqeZ2s6BQakHYa3I/PXUnRaK85EoDOdGJrqw2byz
-         QSqWkzlLNtmH+96FK5cFBqQHmTgNzg8gz1TnjJ1Tq345yN24VAUvMabEUt+plhGCSTTu
-         LyxmPDSlBUobqLPT0gjq4oEKUIqbjJ2GW9OzL+tmo/53YomwJIOZAFH11QAnN7l8YWN3
-         k2eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXovZ/E7k06nc5Bv0iZvpS6szVH7w94v9jCi3ueavDUZD6KJgtwb5P9g+dU4t2qRtLyI8c/i3VBqaI2TNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy0BTgNtc8D6kzjScRPhIv8CRUL6PXWLjjA80VVoS+t/WC9TVo
-	X+TCkJlxnxEv3MV3A84UmsbwIyRO0xCFOyewyJWqcEwcGSyoDXOj2h2yxP0QG6o=
-X-Gm-Gg: ASbGncuP0AOeEuXgETOxuIcqbQC+oTryl3lH6tqjd5pnb4yzPHgvEgBBF/mXz9tifwo
-	LIkpKLBHbn8vE/XXRxp/SL9UNilW6SFmsC44XeGNPZCLdzUhuV5Adc9tnyLCX5wfo67S5E/5fKA
-	NcOkWzXOoIjAsK9gcdgi+CZvYkKAjUZ/8zf5B5Mkq+VQz1OrBPtE2PGVHzB8hMifKQeolgn8jOm
-	BpSUn7gFrSjb30uuaL8HDx+sfXdvbFgkXeRaRbkEjAM9zolFxuUzNi7n6UIO9pn+lyZfML8MV8a
-	H2j+XL8hVSauT8Q=
-X-Google-Smtp-Source: AGHT+IHWMVLk7VAHEJKffclkR/GgfiztR1cE76mj+f0onDTerIF7KBl2vajNkAVkEerHi9sn/JzVIA==
-X-Received: by 2002:a17:902:ccd0:b0:216:3466:7414 with SMTP id d9443c01a7336-21892a41a9dmr113376145ad.44.1734197206669;
-        Sat, 14 Dec 2024 09:26:46 -0800 (PST)
+        bh=yE+w0neHmk87dMRt+p213gF5rtqgAWN6iext8wGVFRM=;
+        b=Gi43Mxk8i83EKbWlH1qSGh+qKCbLuJflxH9dhDTYvVpqQ/PZpikrpPd1jZwebOm3rP
+         ms9fZPdIFNegYkN66lfipzWjNGyVe6XVbsFHdi+yY3a06ZzuU2LxWqty6Ah9KGQ/VqYu
+         5omVgyJIHPGF3Drtc5EqKDG9VmAFcqM15aHmvqmo/eVBIVXybJlsu6LZluDH0XaNyXOn
+         Wj/fZgTPkmv6fqIK5l93sHBMD4u3+c0HI5y8Mp9R1Fo2fIhYcmeCuZsMXezhJS5MENwt
+         J08p4dI90umMpHkTtuhypWTaMP4tXilEzTT+O9XyTaN3eIa53xo8MySi+GrtOXCnKbsb
+         F2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWujm6902V0o8iB3AnX+c1YdFTmq8Zr/1kUPV1NrdFUAcQT+1uaWvmcwoMH92nLfLuJEfSzoIX/IsH13o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbXf++VRZdaV5n2pnajUsdJRn5nzQg7r3hA7IC4SCmVEAQcOp9
+	vqEBHqZWdNmE14D9X82QhVzhSpTIBpJo116j4r0HDUTyO57lreuo8oK9492B5uruvoO/gJohUNC
+	M
+X-Gm-Gg: ASbGncuU/JHwxJzo/315ZG8Wd+Iro1BgFOWwt27+LfHbXjSk7oTQw6bRlV5FjNM/nFd
+	ZeLtawd2zyWjySBJl2z7/Q2SFOBLDxRvtQWDBkkn2ThQLWFmT2PoHhVnrD1fn8Czznae6ZW1rNN
+	X8mBlCt+oe6uwPpYeyRLWbuzfV7P1rhP4Rc5e1heo4Wa9VKYxheKVAm+NsL5tBBLPpILKzpjvWJ
+	hu/z30ruSZ7SPK7igRpGeUKFaCpEfrUyY2SrsbK/Pl0FtIKiusHxGsND8t8uVtptveSgLAVy3vg
+	1Djo2Uv/Muz7ygE=
+X-Google-Smtp-Source: AGHT+IFHcRze2J0M8hyBJEZA/NeT8/eZWD7tT0rfNtTykqj4Jc1ZWMZrjfrUoQxfR7mhTVQoKpV61g==
+X-Received: by 2002:a17:902:e545:b0:216:30f9:93d4 with SMTP id d9443c01a7336-2189298bbf7mr99837005ad.8.1734197213088;
+        Sat, 14 Dec 2024 09:26:53 -0800 (PST)
 Received: from localhost.localdomain ([223.185.132.246])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm5049811a91.41.2024.12.14.09.26.39
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm5049811a91.41.2024.12.14.09.26.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 09:26:46 -0800 (PST)
+        Sat, 14 Dec 2024 09:26:52 -0800 (PST)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -91,9 +92,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v2 06/11] genirq: Introduce common irq_force_complete_move() implementation
-Date: Sat, 14 Dec 2024 22:55:44 +0530
-Message-ID: <20241214172549.8842-7-apatel@ventanamicro.com>
+Subject: [PATCH v2 07/11] RISC-V: Enable GENERIC_PENDING_IRQ and GENERIC_PENDING_IRQ_CHIPFLAGS
+Date: Sat, 14 Dec 2024 22:55:45 +0530
+Message-ID: <20241214172549.8842-8-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241214172549.8842-1-apatel@ventanamicro.com>
 References: <20241214172549.8842-1-apatel@ventanamicro.com>
@@ -105,64 +106,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The GENERIC_PENDING_IRQ requires an arch specific implementation
-of irq_force_complete_move(). At the moment, only x86 implements
-this but for RISC-V the irq_force_complete_move() is only needed
-when RISC-V IMSIC driver is in use and not needed otherwise.
-
-To address the above, introduce common weak implementation of
-the irq_force_complete_move() which lets irqchip do the actual
-irq_force_complete_move().
+Enable GENERIC_PENDING_IRQ and GENERIC_PENDING_IRQ_CHIPFLAGS for RISC-V
+so that RISC-V irqchips can support delayed irq mirgration in the
+interrupt context.
 
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- include/linux/irq.h    | 5 +++++
- kernel/irq/migration.c | 9 +++++++++
- 2 files changed, 14 insertions(+)
+ arch/riscv/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index b689c8fe8d60..509c0ee4ef38 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -496,6 +496,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
-  * @ipi_send_mask:	send an IPI to destination cpus in cpumask
-  * @irq_nmi_setup:	function called from core code before enabling an NMI
-  * @irq_nmi_teardown:	function called from core code after disabling an NMI
-+ * @irq_force_complete_move:	optional function to force complete pending irq move
-  * @flags:		chip specific flags
-  */
- struct irq_chip {
-@@ -547,6 +548,10 @@ struct irq_chip {
- 	int		(*irq_nmi_setup)(struct irq_data *data);
- 	void		(*irq_nmi_teardown)(struct irq_data *data);
- 
-+#if defined(CONFIG_SMP) && defined(CONFIG_GENERIC_PENDING_IRQ)
-+	void		(*irq_force_complete_move)(struct irq_data *data);
-+#endif
-+
- 	unsigned long	flags;
- };
- 
-diff --git a/kernel/irq/migration.c b/kernel/irq/migration.c
-index eb150afd671f..2920024475a3 100644
---- a/kernel/irq/migration.c
-+++ b/kernel/irq/migration.c
-@@ -5,6 +5,15 @@
- 
- #include "internals.h"
- 
-+void __weak irq_force_complete_move(struct irq_desc *desc)
-+{
-+	struct irq_data *d = irq_desc_get_irq_data(desc);
-+	struct irq_chip *chip = irq_data_get_irq_chip(d);
-+
-+	if (chip && chip->irq_force_complete_move)
-+		chip->irq_force_complete_move(d);
-+}
-+
- /**
-  * irq_fixup_move_pending - Cleanup irq move pending from a dying CPU
-  * @desc:		Interrupt descriptor to clean up
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index d4a7ca0388c0..adc878f029fb 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -110,6 +110,8 @@ config RISCV
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_IRQ_SHOW_LEVEL
+ 	select GENERIC_LIB_DEVMEM_IS_ALLOWED
++	select GENERIC_PENDING_IRQ if SMP
++	select GENERIC_PENDING_IRQ_CHIPFLAGS if SMP
+ 	select GENERIC_PCI_IOMAP
+ 	select GENERIC_PTDUMP if MMU
+ 	select GENERIC_SCHED_CLOCK
 -- 
 2.43.0
 
