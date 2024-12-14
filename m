@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-445822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7A49F1BE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:30:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 450FD9F1BE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 02:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302B5169176
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:30:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F6816A097
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647810940;
-	Sat, 14 Dec 2024 01:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F2713FEE;
+	Sat, 14 Dec 2024 01:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gq4V08CC"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fn0lcLEP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD4E3C14;
-	Sat, 14 Dec 2024 01:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2078BEA;
+	Sat, 14 Dec 2024 01:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734139848; cv=none; b=H/aK3ItgTOuhsv8I0Pzp2J/0zCWHPMZWqGtXbfajF+Iq4C56twrAkuNSouuMtYzumwrZIr95PlCaLU0Q07IGkrLuPqbFS5j55IKlD2HJpydnl3X4s2lwMmcz91FvOG3sokZ4M7i2iNQOQ94L0WX627ZvH7sxdtg+fk2Ol8cpCkM=
+	t=1734140109; cv=none; b=O/G4QOdG+60yB0ID0syJ8vaAeatr5fpgFT5SxaOMNAPwXfaoGvALve1eG4PIKVYOqMWEZXqNNDWOJAB19//pN6No+qaLFV2dEhPim5i98Fct8zXe2sfCpoKcHKtYI7HpJivwQUDzF2dxNzFP6phk3TKfJx1Ax8h//+SpPKWLkIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734139848; c=relaxed/simple;
-	bh=28Fjkn9YkOg3RuhmQiqVg0l5FNU6YiPtoIBkT3kcHLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=duHdKCYNsxNiY+AxDYqeUhQaSIGNel71rD+8OOi2gsrZaPkMa6k3nG7RGCySsT1uVOAbYzaTE7QwePJIeSz4bIrdUunWt/5DsMnVSN2FzWwyDdMwQl5GMEV0r7C3XAOmgRIGhFg2eo82vCdCPNfQYh4XRUHaBhGtuuQmJl1lTOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gq4V08CC; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so14958526d6.1;
-        Fri, 13 Dec 2024 17:30:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734139845; x=1734744645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=28Fjkn9YkOg3RuhmQiqVg0l5FNU6YiPtoIBkT3kcHLY=;
-        b=Gq4V08CCiBosZODcJlNgrZyRSD8yW3+n7PiGkAxVuv92NF1SbuLzfqyv5I17UGgkf0
-         MBLkKwxKa/TYP1fOXnDA7lLBLnLEGJC2UaFWp5J6W8lrK6OqUJ4u9XqrOLnCQDvvkA48
-         gUqMv94EyL3LTX+d5QpVX1GkfXI9e1y2DGeYp4pVw25JpcGjCJfz0a1fwr4VTBMLAJE9
-         WhxvNW7XJ54fTg0wBBgWOdfjYEYv5sdeOa/4DLzknhrNRpHW+WKuEQ9w4Jdf8VYBeK9T
-         WuT2SKfhGjxD8SCShLyO4mERrJQozuQZ3DP26bkgZwkrRDkuL1vwYB5z22Q2YDZfydlI
-         NwDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734139845; x=1734744645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=28Fjkn9YkOg3RuhmQiqVg0l5FNU6YiPtoIBkT3kcHLY=;
-        b=NM5VFCjPcTPOf6dvFb8BSRu6d+dSaeZi3gofZgMRD/IckaUfx34r3YW2BWTUvZgwOx
-         k0Ika6JlIBjBnP4yXeVNeXikxYiuYFzhu8V5f/xzvfWinL6+YP2EBo9eK1tND+dhQZXw
-         3N0v2yIamTVo1m1p3Zsjc64Vp9wc8t7IRlzGSiee1wTNVDXWaVR372IObvfQSAFZ6JSu
-         0GPLHx5a8NJgd/W0ScYs0OqJrGYUoxuL0BpUFLDIs0SX2uYisIdYlzETcf5C6fTaSDgV
-         Ho4vItfmCGC4ybhaS7hKECstg+0NaVj46oQ+pumjA+L7BLYemZEApy8+y/gQ9uzxZCqO
-         6wig==
-X-Forwarded-Encrypted: i=1; AJvYcCW6dbRBlNG+Ev2Rr42590+mjgKWYk8DubtHzY1P/JItKxBjF9cXPaseJORpbLRCw6vCS6nU1cpfpNNF2DWn@vger.kernel.org, AJvYcCWABV0E9x6z8nIKZDFPILUHYEa3cUPbtBMTfHFxmkjXA7wYSuFvbraJtAUE6BOjz0MUnkicqxKx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLLtM10VugCiYvDSubrXYfZbiN4V0Ka33jMsZRnb7bFifi6+SW
-	vuv0t1IsSim/yX/MKZdhr48MV92IKoGKN/PMOL7BuU/YO4jMHp/V3u7J1FEyA5JqSpkpm+6wv+Q
-	Lx0+b+gjPSKfsPH6AKXAm/cVUlgA=
-X-Gm-Gg: ASbGncvYq/mPkaJGMPEMhUDf2HfDbfbQuCtu44YhYSQnWYQAElDykxuLvZmr0nWxySx
-	zw8z+kEcWBY9cU2Ho0YhGPYtdi1ziPVZzsemBECHENfqtwsDtYHoG
-X-Google-Smtp-Source: AGHT+IH+9L1ksju6SQtsNiqm1uMZ4TS9SOCaHNdscWSKxxPmJo3W+JINm4LcZMWh/ABDH9KI6aF3YOV0rTWqCjBE6qc=
-X-Received: by 2002:a05:6214:da5:b0:6d4:85f:ccb7 with SMTP id
- 6a1803df08f44-6dc70f96cc5mr97548466d6.0.1734139845573; Fri, 13 Dec 2024
- 17:30:45 -0800 (PST)
+	s=arc-20240116; t=1734140109; c=relaxed/simple;
+	bh=ZkuB989E3MC1XMZNjx13akqfS4kpP4dJFO6T7Frfj1M=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ru6TqhPMzVD83igJ30+X57UDZGSJF9swKmZ/2lgRQjcNRk1nbWB0h+K2zi4IE4DGeSz7X03r/gRSJpQsjn0QV3Y1QuCqtqx+Hcsjxpj5qn5Z/HORHdl73x/ay6uDaPKfTYDGhb8sz1KfoJksdMRRYonnGU1rM7kKEg8FOOC95tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fn0lcLEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CADC4CED0;
+	Sat, 14 Dec 2024 01:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734140109;
+	bh=ZkuB989E3MC1XMZNjx13akqfS4kpP4dJFO6T7Frfj1M=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Fn0lcLEPpr17KSickt6srama/lrDu95bOGZOGxwXM26xYY2nfTiHvwv7ycEWcyiP5
+	 6dIEYdXUEPOSHAAyJMZ79xuhF9j8a/nVknsxvR3RGlSRFK+ZJRyo90ZcQoYsLAlTOl
+	 Y2XUCATMHi2n5eUbnv9uImfnQWF1ke/PzaSj/gxXyLChp1XYpxfG/SRez/sAKE3xbo
+	 nrNvz0JLJtpMF5scPAodyEQDKFIYzgGvhseqC7vqAV+f1ExpQX4qiFG2MwFKPOaBA+
+	 RcoWktDmctDE6bbSpxCvOiqg6yxpGAyG0tFYdy+wzQN+KwAmcSwAK0QA4A2r+4e+Vk
+	 v4qAbUqHRXfJQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0A9380A959;
+	Sat, 14 Dec 2024 01:35:26 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI fixes for v6.13-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
+References: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.13-rc3
+X-PR-Tracked-Commit-Id: e14d5ae28eb28c5edef53bd648037d2bb4fce1b3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c810e8df9668d378430862ceb5eeff619da28509
+Message-Id: <173414012519.3218065.35539358761682484.pr-tracker-bot@kernel.org>
+Date: Sat, 14 Dec 2024 01:35:25 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241211203951.764733-1-joshua.hahnjy@gmail.com> <20241211203951.764733-4-joshua.hahnjy@gmail.com>
-In-Reply-To: <20241211203951.764733-4-joshua.hahnjy@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 13 Dec 2024 17:30:34 -0800
-Message-ID: <CAKEwX=NjwuTZ21ZiTsT+qJFUHURrWGUbN0C+B48-cCDTOOyBYg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] memcg/hugetlb: Remove memcg hugetlb try-commit-cancel protocol
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: shakeel.butt@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	sj@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 12:40=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.c=
-om> wrote:
+The pull request you sent on Fri, 13 Dec 2024 21:59:34 +0100:
 
-I'm assuming this is V3?
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.13-rc3
 
->
-> This patch fully removes the mem_cgroup_{try, commit, cancel}_charge
-> functions, as well as their hugetlb variants.
->
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c810e8df9668d378430862ceb5eeff619da28509
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
