@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-445953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A119F1DC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:17:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9289F1DC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 10:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5EE188BD47
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A54188BEA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C83F161328;
-	Sat, 14 Dec 2024 09:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="YktAS6f3"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3903156F5D;
+	Sat, 14 Dec 2024 09:20:30 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F36F126C10;
-	Sat, 14 Dec 2024 09:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734167865; cv=pass; b=OKO/PdDktNtaWojA8BwjIHccntwSABwk2mpAr04BE4LMASVR5bkcpy0evFM39oe4oe5BnMkXE1HoVMI7uwpYdFY245VL4xmG4MI+ugoYVnkcuH/QGdOsbxbRiM+XTmmy1N+6u0id95eN/i6P/cqHceQ2AJLCnJ0DTIbtxZR1uE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734167865; c=relaxed/simple;
-	bh=3yQWs93OsT5foCFOxASMVoLXO2ADman8M923fVuDV+U=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z6Zrgk+esQBD59Nrs1PR+SU2P5MBt9qtLxwFaAPsByE2Lk+p9S0fvivDIfBp8qpEib0a9sQyaUWQqb2zgcdapAgqoFtHo0WL0Mwvgozr7h7B3mxqO5+abrOBG4D/rFUhxQVWLAWDW5NrjytPtThkPGH9q0vnLymWWLCnFv7xXEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=YktAS6f3; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734167828; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MfmXIIJq8HMEE2EkgH6+FVYxhW/hBFSKQlLuj1AKmzyqFaSXy1RJzJ5bv9AbZGSObkAuB/tcaETJI7fwmanxzNYpqgi3hNnNG9QrDkhv0aQ3Vwznh54AyOOSuhFx1KtODZeMHA4Sb7Y4N9AD7E6yZbfER1NHLaCy3EkzRSHqxp0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734167828; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UnyxacEJSTEgdFNIKKqgMJvx6u7/uWoG1+Uqtvejpd4=; 
-	b=h9OiLi9ZDGkBRvbqRb8nUR01AdAG7PvxUQMdow8tcBl7KMXmoZCNPCvZLSh9q9aTsB5dVmZD9HSR9fN3yIjGUR48ok/F8U3yPSmzmcP20T0JgnhO0fUucghYzTJhV7edEEp/TfbT17LjaehN4bPSE/oSHfsJDNMBmJt23Apjn6E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734167828;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=UnyxacEJSTEgdFNIKKqgMJvx6u7/uWoG1+Uqtvejpd4=;
-	b=YktAS6f3IGo5UstMWQ2FBk+R/QIX3T0CYdRCYY0K13zifQy0GAkf5G44qNKQz7qo
-	Nrp6hKMZ9LZ4cGQOoe1oDQOtoviUHXKYNdpSvFHHSffsCuJtN7xjJC5xQdQB+aPvpz9
-	inJZ8FRVCbWTJPgNC8py+GvLXTktvSkpdQ/G1d8E=
-Received: by mx.zohomail.com with SMTPS id 17341678253140.36163794351750767;
-	Sat, 14 Dec 2024 01:17:05 -0800 (PST)
-Message-ID: <2a8cd083-46e9-4ba9-bca7-710d743f4e1f@collabora.com>
-Date: Sat, 14 Dec 2024 14:17:08 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A58126C10
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734168030; cv=none; b=Gok4yP6aX9ikQFEg1O2L8jSarJRsLuwFuwtJC4PlMv059ffstF7172DyUB+NGoPXeF/cQRuybtwVYgnsz33TlT+7FxjwjD5E1Qgw++5uRiFkju8S4ItlrLux/rBxkA5tfr40bTMTyVsIFgLqx8UA5n1sj6LmRIcQj16znGGRqsQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734168030; c=relaxed/simple;
+	bh=q6E6nHgx7FpQaxmK8F3VebahMPjYpo9H7DTOBqI7fUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6K8HYnbNlCzWLo+R6P5ldS0oZ8/CznO0ntyCalOy2OcyRlJnBF//b/17xrQsdCUVhd5nuaicU24o981QSmz9bYQOx9ruu0PJLLpP11PKrIIQtS2zGx7pqU1Oy2YWq85B/ml7X1/MH7EXIAglwtbzGNGtNHr0lTV1MU9Cpi91TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2163dc5155fso22866225ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 01:20:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734168028; x=1734772828;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F+66VXGs6F5HU673/dKdLLlML7sMQZ22uvjCf12/lRU=;
+        b=ZCVzPnZbbibf4GYBabDerNCXbNi5inFlkcY+pkwLU7RypDODU6rOQV6IcGZeFQREE4
+         z9JRcxMXiqetxCLfl6N6cScOl43Ab96B+bsTl9MLs8DIAw0oKHh13cbRgLtOaEL5IGAz
+         K6U/dfZh58ItqDfICMqoWZqmML9Q8atze9kF4iAC5P35XdQcRZ1Eym+cKWqJkruYhwnx
+         EoIgUuxkyIdlLeT5quJms9evJJFDN3t1agugV+zl6QQvmGjlpBI4+3n1k1noXDRL52cD
+         1KHCt3LiyLMN9IURKGD1wv17qkOOY2eDc46aKnE0KPaAEYK+juiN1iAKB+LNfe04Y2Ez
+         DtNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLTtLJnqEUDBroxN7ivYJOtEoKIlodivrxKXF60vtVQbMxIwcNVRVuWwqmwDVTb75BYQC2VZeKtb25dIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9r7YpNa2v4aKIObuVbcPTMJ3R8TL9gCPSLcl0iA7wZB3txePg
+	HomGFNVV73GdARA6ISDGRejtTnCCr45s/ocR/DpmHrCGrZqeF4eI
+X-Gm-Gg: ASbGncsQ+UFQDOgmoy+WxBwpPOcKsvyso21mv8qDaemUwEeb37wW7Z9+t8eGcF29NoC
+	1mxg3nJPPqqf1PnhKb1+Q67VZFt2T4J7u+bYrM4LMg6wSIXjC9SjP8QwHdEmbVPgteM6D+F9d0x
+	6vroBQqgpZFvNAP+GtL/GAZI09jH6rWXnke5hTSpuGpEfw858S5ICUFYpmysJtUvyhJL1Njpdv7
+	9FEVWTDv67rF0wPfAUu09nW7db7uSEEtcKL9mlT6sqzIsJqTYB0rtMHbqIxE7UA
+X-Google-Smtp-Source: AGHT+IHWmUuzFm2NgWrxBw+GJHPWsqa1auCQBreCR2X2pHOkHboY1h0+LNMOIgKnDqiL6+vqpgONNw==
+X-Received: by 2002:a17:902:d512:b0:216:1cfa:2bbf with SMTP id d9443c01a7336-21892a41ecbmr76928745ad.35.1734168028072;
+        Sat, 14 Dec 2024 01:20:28 -0800 (PST)
+Received: from localhost.localdomain ([1.213.237.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e5d00csm9060345ad.202.2024.12.14.01.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 01:20:27 -0800 (PST)
+From: Leesoo Ahn <lsahn@ooseel.net>
+To: lsahn@ooseel.net
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] arm64: mm: fault: replace the behavior of fault_info[18]
+Date: Sat, 14 Dec 2024 18:19:36 +0900
+Message-ID: <20241214091937.203842-1-lsahn@ooseel.net>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.4 000/316] 5.4.287-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241213145847.112340475@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241213145847.112340475@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 12/13/24 8:03 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.287 release.
-> There are 316 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.287-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-Hi,
+Replace the behavior of 18th element of fault_info with the 'fn' member to
+do_sea(..) and 'name' to 'level -2 (translation table walk)' based on
+the information[1] of the latest reference manual[2].
 
-Please find the KernelCI report below :-
+The information has described in the chapter, D24.2.40 of [2] and
+DFSC[5:0] bit (stands for Data Fault Status Code).
 
+[1]: Synchronous External abort on translation table walk, level -2
+[2]: Arm Architecture Reference Manual, for A-profile architecture
 
-OVERVIEW
+Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
+---
+ arch/arm64/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Builds: 25 passed, 3 failed
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index ef63651099a9..b1c08289a5cc 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -863,7 +863,7 @@ static const struct fault_info fault_info[] = {
+ 	{ do_page_fault,	SIGSEGV, SEGV_ACCERR,	"level 3 permission fault"	},
+ 	{ do_sea,		SIGBUS,  BUS_OBJERR,	"synchronous external abort"	},
+ 	{ do_tag_check_fault,	SIGSEGV, SEGV_MTESERR,	"synchronous tag check fault"	},
+-	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 18"			},
++	{ do_sea,		SIGKILL, SI_KERNEL,	"level -2 (translation table walk)"	},
+ 	{ do_sea,		SIGKILL, SI_KERNEL,	"level -1 (translation table walk)"	},
+ 	{ do_sea,		SIGKILL, SI_KERNEL,	"level 0 (translation table walk)"	},
+ 	{ do_sea,		SIGKILL, SI_KERNEL,	"level 1 (translation table walk)"	},
+-- 
+2.46.1
 
-    Boot tests: 153 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: ce5516b3ce83b6b8b6f21d8b972e509420b4b551
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-
-BUILDS
-
-    -arm64(cros://chromeos-5.4/arm64/chromiumos-qualcomm.flavour.config)
-        https://kcidb.kernelci.org/d/build/build?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675c5836ca49c97d299f2a45&var-test-path=boot&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=yes
-    -arm64(defconfig)
-        https://kcidb.kernelci.org/d/build/build?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675c5870ca49c97d299f2a7b&var-test-path=boot&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=yes
-    -i386(i386_defconfig+allmodconfig)
-        https://kcidb.kernelci.org/d/build/build?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675c5877ca49c97d299f2c3c&var-test-path=boot&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=yes
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
-    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=ce5516b3ce83b6b8b6f21d8b972e509420b4b551&var-patchset_hash=&from=now-100y&to=now&timezone=browser&var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
