@@ -1,337 +1,99 @@
-Return-Path: <linux-kernel+bounces-446156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E469F2078
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF79F207A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 19:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AEA7167AAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D5A1669BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4059E1B87C8;
-	Sat, 14 Dec 2024 18:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB77F1AB6C9;
+	Sat, 14 Dec 2024 18:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R32F2+00";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O0MOGfUs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y59S4kWR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734C01B218E;
-	Sat, 14 Dec 2024 18:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A794B1A8F79;
+	Sat, 14 Dec 2024 18:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734202078; cv=none; b=NO5/vcPY3stzbPWoY4IuQWJ8ZYR3eSH98Wrp85a3UKtLQspKtvSqZpx2FNd9UzhDGupcsqQVbXgNrvcCeWzwgQREDPDdPi4i6/vE540KyxeI1gDe6dF7VKgIBOJet7ECcG/TrhbG8oT+0W7KtCm/EqEj5ibS/xkk78SwyMdl5R4=
+	t=1734202153; cv=none; b=NqY6CUqoqlJ1zMC789JzNQ2RP7JJB8uAoZaI2IeiidTPhe8kQ02fc13KiEhF9qc84ipmbRdN10dd7mX/59dRjdZ26jjXnpZOaKh+YKGdFBrSrCp372c0VjWYLI03chw9bREo1/tOI+MOECxn7ugz6BU5jPgLB86pdXmoYLlR/qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734202078; c=relaxed/simple;
-	bh=fBzX+cM0v4OwLBetwlVYEUDVhtEOuP6JYWeZnLg+gEc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ejzex7hAQkidj6ugd8EA6F0lvxjPEFY3QHIuFaXWXwiUwu5w9f02Cmjc1tVN5qhzflkFxjKSuXdZDhMry9iv4rVQT8/6XOASEu78hm3cVHjFIloxNA56y6GQzlW0L+kESUp50y98qLhwZFujpXmiMGT4rTEGZzp7MbR6GKNUmt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R32F2+00; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O0MOGfUs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 14 Dec 2024 18:47:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734202074;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oTDigCKksS22uORhHpwu45z5Kw0tI223cpR9YoUDdBI=;
-	b=R32F2+00wtIntAYJn95CENyBoHyoOk1mrqvdCZrjys4qB2srngFAacM/0l/K3qDFrZpBiX
-	ubOtXA+3KAJfXriqktsnDQYUQJVYU+bIiTomDwIk3cBgnZsdgdbgrrNab7yc+yE+VxT8Ml
-	aHovGfmWDmG345w19XCF4IY4jPTyfBeiI5j6zuG4qFKDj+jMmC/6HLjmUYkX5rLhh5yR8o
-	02c1KiP/UDiWr+wVjQXSksNbWpAEPR+aQC/3Po/FRGl6kBybG/fVrh596kEWQUKn4clGUn
-	siAgQGq4nHHQsPygB7G7bQJfmmC8g+cyNPBEC6H8/WJ70XVSItGniSXeg+lzbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734202074;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oTDigCKksS22uORhHpwu45z5Kw0tI223cpR9YoUDdBI=;
-	b=O0MOGfUsSbbnRk3PaxzGnIvhDphRfqRBIqsEgGHFUaxYyHGonoaZ0fsOtRNtzw/XFWIZPw
-	t+4b6h5qg08MmTCA==
-From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/sev: Prepare for using the RMPREAD instruction to
- access the RMP
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Nikunj A Dadhania <nikunj@amd.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cda49d5af1eb7f9039f35f14a32ca091efb2dd818=2E17331?=
- =?utf-8?q?72653=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
-References: =?utf-8?q?=3Cda49d5af1eb7f9039f35f14a32ca091efb2dd818=2E173317?=
- =?utf-8?q?2653=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
+	s=arc-20240116; t=1734202153; c=relaxed/simple;
+	bh=XrdtM6njkrXNWozn3mpzxyYmI3G3n7Yz2dgowLZPE4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/7mYr9CMw7/0dDguu4SuFeGJ/3N8yG1FUPT5HTmL/rnsRnKyecEpxKYq8XyhtaEDaK5XXNutWVokFWzkzA+HfAo2MH98vjYehNVAN0Cekv2sPMA0RYVSehnOmf+G/F3QI7NtZpkORCYIzE9L5KClaVsnC9KfwMBbS4DAAe7wpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y59S4kWR; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734202152; x=1765738152;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XrdtM6njkrXNWozn3mpzxyYmI3G3n7Yz2dgowLZPE4A=;
+  b=Y59S4kWRH2wyGEQ33QnXWbe1YJqUbUQti9knIv9gN1wptm7gnh+IwaOW
+   r2FyAgWQVYCeS0suVvIAXovSsGUn4lbN/KQxhgwcw0NALR3wVMLk8kXyc
+   tYWVLYNZzVGyRn8JYTv81TJhP/uenxzPLf312WwbOdh75bW/UywFD4b9/
+   zsHI9y2p6MCO5cd6fyOAfAuyksTeQ63qgsEOqYVvY3BmKRM9wm2CEYNGq
+   L5W0pbyCRPBH6IOuB5riC7cz1uKevK3ICKZZdle+S2tXk0elOuvfHleD2
+   LVjD1seHlx8WannDkOooNqRtyUQVz4tfLlS6hbaYNCXoWXZMJERcZiIHC
+   g==;
+X-CSE-ConnectionGUID: iBp44EnLRs6dHJt5dzxXpA==
+X-CSE-MsgGUID: lUclV/auS6q6ZgI3Q26uJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34681197"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="34681197"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 10:49:11 -0800
+X-CSE-ConnectionGUID: xiaTl1xxTTe9oBEclDhZ6A==
+X-CSE-MsgGUID: UBrifzzRTBid6SSMnNv7EA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96681526"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 10:49:10 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 4E42E11FA2A;
+	Sat, 14 Dec 2024 20:49:06 +0200 (EET)
+Date: Sat, 14 Dec 2024 18:49:06 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jai Luthra <jai.luthra@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/15] media: i2c: ds90ub960: Handle errors in
+ ub960_log_status_ub960_sp_eq()
+Message-ID: <Z13TIvIt7Eh_ehHA@kekkonen.localdomain>
+References: <20241206-ub9xx-fixes-v4-0-466786eec7cc@ideasonboard.com>
+ <20241206-ub9xx-fixes-v4-12-466786eec7cc@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173420207384.412.8772260599010817646.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-ub9xx-fixes-v4-12-466786eec7cc@ideasonboard.com>
 
-The following commit has been merged into the x86/sev branch of tip:
+On Fri, Dec 06, 2024 at 10:26:48AM +0200, Tomi Valkeinen wrote:
+> Add error handling for i2c read/write calls to
+> ub960_log_status_ub960_sp_eq().
+> 
+> Reported-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Link: https://lore.kernel.org/all/Zv40EQSR__JDN_0M@kekkonen.localdomain/
 
-Commit-ID:     3e43c60eb3e3779e88635d45400f7387ec732c07
-Gitweb:        https://git.kernel.org/tip/3e43c60eb3e3779e88635d45400f7387ec732c07
-Author:        Tom Lendacky <thomas.lendacky@amd.com>
-AuthorDate:    Mon, 02 Dec 2024 14:50:46 -06:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 13 Dec 2024 22:46:14 +01:00
+I've replaced these with Closes: to make checkpatch.pl happy. The CI should
+be able to tell this nowadays. Same for a few others in the set.
 
-x86/sev: Prepare for using the RMPREAD instruction to access the RMP
-
-The RMPREAD instruction returns an architecture defined format of an RMP
-entry. This is the preferred method for examining RMP entries.
-
-In preparation for using the RMPREAD instruction, convert the existing code
-that directly accesses the RMP to map the raw RMP information into the
-architecture defined format.
-
-RMPREAD output returns a status bit for the 2MB region status. If the input
-page address is 2MB aligned and any other pages within the 2MB region are
-assigned, then 2MB region status will be set to 1. Otherwise, the 2MB region
-status will be set to 0.
-
-For systems that do not support RMPREAD, calculating this value would require
-looping over all of the RMP table entries within that range until one is found
-with the assigned bit set. Since this bit is not defined in the current
-format, and so not used today, do not incur the overhead associated with
-calculating it.
-
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
-Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Link: https://lore.kernel.org/r/da49d5af1eb7f9039f35f14a32ca091efb2dd818.1733172653.git.thomas.lendacky@amd.com
----
- arch/x86/virt/svm/sev.c | 132 +++++++++++++++++++++++++++------------
- 1 file changed, 94 insertions(+), 38 deletions(-)
-
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 9a6a943..cf64e93 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -31,10 +31,29 @@
- #include <asm/iommu.h>
- 
- /*
-- * The RMP entry format is not architectural. The format is defined in PPR
-- * Family 19h Model 01h, Rev B1 processor.
-+ * The RMP entry information as returned by the RMPREAD instruction.
-  */
- struct rmpentry {
-+	u64 gpa;
-+	u8  assigned		:1,
-+	    rsvd1		:7;
-+	u8  pagesize		:1,
-+	    hpage_region_status	:1,
-+	    rsvd2		:6;
-+	u8  immutable		:1,
-+	    rsvd3		:7;
-+	u8  rsvd4;
-+	u32 asid;
-+} __packed;
-+
-+/*
-+ * The raw RMP entry format is not architectural. The format is defined in PPR
-+ * Family 19h Model 01h, Rev B1 processor. This format represents the actual
-+ * entry in the RMP table memory. The bitfield definitions are used for machines
-+ * without the RMPREAD instruction (Zen3 and Zen4), otherwise the "hi" and "lo"
-+ * fields are only used for dumping the raw data.
-+ */
-+struct rmpentry_raw {
- 	union {
- 		struct {
- 			u64 assigned	: 1,
-@@ -62,7 +81,7 @@ struct rmpentry {
- #define PFN_PMD_MASK	GENMASK_ULL(63, PMD_SHIFT - PAGE_SHIFT)
- 
- static u64 probed_rmp_base, probed_rmp_size;
--static struct rmpentry *rmptable __ro_after_init;
-+static struct rmpentry_raw *rmptable __ro_after_init;
- static u64 rmptable_max_pfn __ro_after_init;
- 
- static LIST_HEAD(snp_leaked_pages_list);
-@@ -249,8 +268,8 @@ skip_enable:
- 	rmptable_start += RMPTABLE_CPU_BOOKKEEPING_SZ;
- 	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
- 
--	rmptable = (struct rmpentry *)rmptable_start;
--	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry) - 1;
-+	rmptable = (struct rmpentry_raw *)rmptable_start;
-+	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry_raw) - 1;
- 
- 	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/rmptable_init:online", __snp_enable, NULL);
- 
-@@ -272,48 +291,77 @@ nosnp:
-  */
- device_initcall(snp_rmptable_init);
- 
--static struct rmpentry *get_rmpentry(u64 pfn)
-+static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
- {
--	if (WARN_ON_ONCE(pfn > rmptable_max_pfn))
-+	if (!rmptable)
-+		return ERR_PTR(-ENODEV);
-+
-+	if (unlikely(pfn > rmptable_max_pfn))
- 		return ERR_PTR(-EFAULT);
- 
--	return &rmptable[pfn];
-+	return rmptable + pfn;
-+}
-+
-+static int get_rmpentry(u64 pfn, struct rmpentry *e)
-+{
-+	struct rmpentry_raw *e_raw;
-+
-+	e_raw = get_raw_rmpentry(pfn);
-+	if (IS_ERR(e_raw))
-+		return PTR_ERR(e_raw);
-+
-+	/*
-+	 * Map the raw RMP table entry onto the RMPREAD output format.
-+	 * The 2MB region status indicator (hpage_region_status field) is not
-+	 * calculated, since the overhead could be significant and the field
-+	 * is not used.
-+	 */
-+	memset(e, 0, sizeof(*e));
-+	e->gpa       = e_raw->gpa << PAGE_SHIFT;
-+	e->asid      = e_raw->asid;
-+	e->assigned  = e_raw->assigned;
-+	e->pagesize  = e_raw->pagesize;
-+	e->immutable = e_raw->immutable;
-+
-+	return 0;
- }
- 
--static struct rmpentry *__snp_lookup_rmpentry(u64 pfn, int *level)
-+static int __snp_lookup_rmpentry(u64 pfn, struct rmpentry *e, int *level)
- {
--	struct rmpentry *large_entry, *entry;
-+	struct rmpentry e_large;
-+	int ret;
- 
- 	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
--		return ERR_PTR(-ENODEV);
-+		return -ENODEV;
- 
--	entry = get_rmpentry(pfn);
--	if (IS_ERR(entry))
--		return entry;
-+	ret = get_rmpentry(pfn, e);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Find the authoritative RMP entry for a PFN. This can be either a 4K
- 	 * RMP entry or a special large RMP entry that is authoritative for a
- 	 * whole 2M area.
- 	 */
--	large_entry = get_rmpentry(pfn & PFN_PMD_MASK);
--	if (IS_ERR(large_entry))
--		return large_entry;
-+	ret = get_rmpentry(pfn & PFN_PMD_MASK, &e_large);
-+	if (ret)
-+		return ret;
- 
--	*level = RMP_TO_PG_LEVEL(large_entry->pagesize);
-+	*level = RMP_TO_PG_LEVEL(e_large.pagesize);
- 
--	return entry;
-+	return 0;
- }
- 
- int snp_lookup_rmpentry(u64 pfn, bool *assigned, int *level)
- {
--	struct rmpentry *e;
-+	struct rmpentry e;
-+	int ret;
- 
--	e = __snp_lookup_rmpentry(pfn, level);
--	if (IS_ERR(e))
--		return PTR_ERR(e);
-+	ret = __snp_lookup_rmpentry(pfn, &e, level);
-+	if (ret)
-+		return ret;
- 
--	*assigned = !!e->assigned;
-+	*assigned = !!e.assigned;
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(snp_lookup_rmpentry);
-@@ -326,20 +374,28 @@ EXPORT_SYMBOL_GPL(snp_lookup_rmpentry);
-  */
- static void dump_rmpentry(u64 pfn)
- {
-+	struct rmpentry_raw *e_raw;
- 	u64 pfn_i, pfn_end;
--	struct rmpentry *e;
--	int level;
-+	struct rmpentry e;
-+	int level, ret;
- 
--	e = __snp_lookup_rmpentry(pfn, &level);
--	if (IS_ERR(e)) {
--		pr_err("Failed to read RMP entry for PFN 0x%llx, error %ld\n",
--		       pfn, PTR_ERR(e));
-+	ret = __snp_lookup_rmpentry(pfn, &e, &level);
-+	if (ret) {
-+		pr_err("Failed to read RMP entry for PFN 0x%llx, error %d\n",
-+		       pfn, ret);
- 		return;
- 	}
- 
--	if (e->assigned) {
-+	if (e.assigned) {
-+		e_raw = get_raw_rmpentry(pfn);
-+		if (IS_ERR(e_raw)) {
-+			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
-+			       pfn, PTR_ERR(e_raw));
-+			return;
-+		}
-+
- 		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
--			pfn, e->lo, e->hi);
-+			pfn, e_raw->lo, e_raw->hi);
- 		return;
- 	}
- 
-@@ -358,16 +414,16 @@ static void dump_rmpentry(u64 pfn)
- 		pfn, pfn_i, pfn_end);
- 
- 	while (pfn_i < pfn_end) {
--		e = __snp_lookup_rmpentry(pfn_i, &level);
--		if (IS_ERR(e)) {
--			pr_err("Error %ld reading RMP entry for PFN 0x%llx\n",
--			       PTR_ERR(e), pfn_i);
-+		e_raw = get_raw_rmpentry(pfn_i);
-+		if (IS_ERR(e_raw)) {
-+			pr_err("Error %ld reading RMP contents for PFN 0x%llx\n",
-+			       PTR_ERR(e_raw), pfn_i);
- 			pfn_i++;
- 			continue;
- 		}
- 
--		if (e->lo || e->hi)
--			pr_info("PFN: 0x%llx, [0x%016llx - 0x%016llx]\n", pfn_i, e->lo, e->hi);
-+		if (e_raw->lo || e_raw->hi)
-+			pr_info("PFN: 0x%llx, [0x%016llx - 0x%016llx]\n", pfn_i, e_raw->lo, e_raw->hi);
- 		pfn_i++;
- 	}
- }
+-- 
+Sakari Ailus
 
