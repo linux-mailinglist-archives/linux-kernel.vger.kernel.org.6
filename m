@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-445928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A939F1D98
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:51:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F159F1D9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC977168678
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:51:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6A5A7A05D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4452E161328;
-	Sat, 14 Dec 2024 08:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFD2161328;
+	Sat, 14 Dec 2024 08:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oa7/XjYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="L1EZv50c"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB711712;
-	Sat, 14 Dec 2024 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734166302; cv=none; b=JXeLQXTyud1DQR+xL5TKqOQ6uJXhJj0DCWCUVoeAqGEvXhRR/E1fLuczKdIchJBDZcnz/1phufr8t/D1re9Xg7/dbTPQWM0BbxCQN8UNCc2jkF39n/cCsfTjFCWBU6w3wkSth0hOaqaPLVL5iQxX9rPPtLUvn9cc5P1jkMfn2o8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734166302; c=relaxed/simple;
-	bh=qJP+1snHGVcuT72mDcsOpZlqJ/KIzbMZxkqkXsU6bQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KfRw8GSeUQb2LoXkDam/282OYBJqeNe38d+3SBXEL4jooljLkKfGBampshql30/3IOulYcmTmk9j+1V4Uo0AkiIP6V4D5/fgW21zY9b4oi3KMXRDDIJaa+pIicCUNASqUmc+njiOG/f0JvVSC07RxdAJ3m254d5ffWY8HuSnu9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oa7/XjYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF4FC4CED6;
-	Sat, 14 Dec 2024 08:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734166302;
-	bh=qJP+1snHGVcuT72mDcsOpZlqJ/KIzbMZxkqkXsU6bQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oa7/XjYITj5mkQY9V4xCyLCPTQOpughEABEO441BWcjvoVhxWAFnOznpOGa4poz6j
-	 mEx3BDs1NXZAAh/z+i4lmRYgXj64JSvsnL4hdd5XvtBO4mh2jHbK1/pxCD/vIwcG+Z
-	 tnqW/phgYR5iUgaHLwoACUrNxcO18JrkhENs4XIfQgW/cUTXVskPK8aF/JTl0l7yMR
-	 zFKUGorHbzHntyx41dOHBYjPeruRRscMYIopg8AJnZW5sO6Hcc5cWdQ/2MahsGwJ2Z
-	 PpL6YAgiPnDpkBA8/2isIL7Y1hWGEZT/kz0NcG1poVv7nP35n1BeiTpB04akk4juMz
-	 0zic8wKlVymDg==
-Date: Sat, 14 Dec 2024 16:51:34 +0800
-From: Peter Chen <peter.chen@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/5] usb: cdns3: rename hibernated argument of
- role->resume() to lost_power
-Message-ID: <20241214085134.GB4102926@nchen-desktop>
-References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
- <20241210-s2r-cdns-v6-3-28a17f9715a2@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C65711712;
+	Sat, 14 Dec 2024 08:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734166485; cv=pass; b=jVMzSIkzX20YJJ/ptLH5SmzObNK8H+yhgeDijMUMZjauiGlLBmgyqPI2X5EL+k+Rre8cH5k1D9htJ6zZwPHmr7pOE0UKGgdDW8E2aG4Kfvga1vKDhZI/NQAdw7Zjs16X4mKX2dJj/sscKaigNej4+fn5Ml/Vi3EpuZBaZXxkt2Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734166485; c=relaxed/simple;
+	bh=+nGlMweKS0GjG+aONxr8C30dAMpD095zIGE0nRMoTu8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QOAnRv1irAZhL3CVhbI6fT2ZX4jWiw162jYtVEZGL+e2+e+YDIKTRcEa+2E3FbBybB9g86AhMZpwwsYcvtZj1mqwwu+vMxuz29IILFRQaEq41nIJO8nCmsWxt/wXPvjvGMdw/mX9NRAL9af2Po7hLiUookZJGAJyDKtxXd2HrWw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=L1EZv50c; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734166452; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bjPK4fwNuBRHpE3QZ9SLMUqoraoCbcguLzbK4ku2VV31bhixbO33FM8mhD3IaLyGBUK3lPrQK4FGloWTHflSQg7Y3Vbe3tcVf5qCuqK5S63OLpkFen81NbYAzfPHKXsy2wVhrYiDtLJThfVf4+/udAbv4HOePZfrOZRAl/pONR0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734166452; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YRn+AaPl2Etjuf3mawv4nmRVtWHBXrcE7pK6bx7P4xQ=; 
+	b=cIxm8jzbJixZMcbeM0Ad7MNN6uk8dnzN+u79+Tuf7NwrCaddTKPGlPx35Ntlast37aHEXPaVZay8w4EIKCbEyPiRQschcrBTJgES/YbaObx/V/YtQpv+FizdrKTyc/3ZPssT1wPnolIv0UTAI7X6nxJPNTltW5pK+Aj5P6UFa9M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734166452;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=YRn+AaPl2Etjuf3mawv4nmRVtWHBXrcE7pK6bx7P4xQ=;
+	b=L1EZv50c++6prllGmM+cvNDFnYlsIWdCgyV8aOLlDRA4KdwUmmmU7/mYqHIf+GKA
+	HwKYwf8UKF5pQS8PS1LcDgriq+GVp5UyMVDONobLk20LLC9Ra1lJPrzCMeIrvmTHARp
+	zJZeruifpemXvXxUNOt3SSkx6SuD0zgmuo1ghJsY=
+Received: by mx.zohomail.com with SMTPS id 1734166450790568.1956373170367;
+	Sat, 14 Dec 2024 00:54:10 -0800 (PST)
+Message-ID: <a5238336-0439-4a7d-b94d-db78c313153e@collabora.com>
+Date: Sat, 14 Dec 2024 13:54:14 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241210-s2r-cdns-v6-3-28a17f9715a2@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/459] 5.10.231-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241212144253.511169641@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241212144253.511169641@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 24-12-10 18:13:37, Théo Lebrun wrote:
-> The cdns_role_driver->resume() callback takes a second boolean argument
-> named `hibernated` in its implementations. This is mistaken; the only
-> potential caller is:
+On 12/12/24 7:55 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.231 release.
+> There are 459 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> int cdns_resume(struct cdns *cdns)
-> {
-> 	/* ... */
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
 > 
-> 	if (cdns->roles[cdns->role]->resume)
-> 		cdns->roles[cdns->role]->resume(cdns, cdns_power_is_lost(cdns));
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.231-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> 	return 0;
-> }
+> thanks,
 > 
-> The argument can be true in cases outside of return from hibernation.
-> Reflect the true meaning by renaming both arguments to `lost_power`.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> greg k-h
+OVERVIEW
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+        Builds: 23 passed, 0 failed
 
-Peter
-> ---
->  drivers/usb/cdns3/cdns3-gadget.c | 4 ++--
->  drivers/usb/cdns3/cdnsp-gadget.c | 2 +-
->  drivers/usb/cdns3/core.h         | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
-> index fd1beb10bba726cef258e7438d642f31d6567dfe..694aa14577390b6e9a98ce8c4685ac8f56e43ad4 100644
-> --- a/drivers/usb/cdns3/cdns3-gadget.c
-> +++ b/drivers/usb/cdns3/cdns3-gadget.c
-> @@ -3468,7 +3468,7 @@ __must_hold(&cdns->lock)
->  	return 0;
->  }
->  
-> -static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
-> +static int cdns3_gadget_resume(struct cdns *cdns, bool lost_power)
->  {
->  	struct cdns3_device *priv_dev = cdns->gadget_dev;
->  
-> @@ -3476,7 +3476,7 @@ static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
->  		return 0;
->  
->  	cdns3_gadget_config(priv_dev);
-> -	if (hibernated)
-> +	if (lost_power)
->  		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
->  
->  	return 0;
-> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
-> index 4a3f0f95825698f0524cace5c06bfcf27f763149..7d05180442fb94c5d1aab3d8ef766e365685f454 100644
-> --- a/drivers/usb/cdns3/cdnsp-gadget.c
-> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
-> @@ -1973,7 +1973,7 @@ static int cdnsp_gadget_suspend(struct cdns *cdns, bool do_wakeup)
->  	return 0;
->  }
->  
-> -static int cdnsp_gadget_resume(struct cdns *cdns, bool hibernated)
-> +static int cdnsp_gadget_resume(struct cdns *cdns, bool lost_power)
->  {
->  	struct cdnsp_device *pdev = cdns->gadget_dev;
->  	enum usb_device_speed max_speed;
-> diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
-> index 57d47348dc193b1060f4543c2ef22905f464293b..921cccf1ca9db27a66b06c7c7873b13537c74b05 100644
-> --- a/drivers/usb/cdns3/core.h
-> +++ b/drivers/usb/cdns3/core.h
-> @@ -30,7 +30,7 @@ struct cdns_role_driver {
->  	int (*start)(struct cdns *cdns);
->  	void (*stop)(struct cdns *cdns);
->  	int (*suspend)(struct cdns *cdns, bool do_wakeup);
-> -	int (*resume)(struct cdns *cdns, bool hibernated);
-> +	int (*resume)(struct cdns *cdns, bool lost_power);
->  	const char *name;
->  #define CDNS_ROLE_STATE_INACTIVE	0
->  #define CDNS_ROLE_STATE_ACTIVE		1
-> 
-> -- 
-> 2.47.1
-> 
+    Boot tests: 186 passed, 5 failed
+
+    CI systems: broonie, maestro
+
+REVISION
+
+    Commit
+        name: v5.10.230-460-g2146a7485c27f
+        hash: 2146a7485c27f6f8373bb5570dee22631a7183a4
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+
+
+BUILDS
+
+    No build failures found
+
+BOOT TESTS
+
+    Failures
+
+      i386:(defconfig)
+      -hp-x360-14a-cb0001xx-zork
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675b11c5ca49c97d299a1b30&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+      -lenovo-TPad-C13-Yoga-zork
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675b11c6ca49c97d299a1b33&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+      -asus-CM1400CXA-dalboz
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675b11c4ca49c97d299a1b24&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+      CI system: maestro
+
+      arm:(multi_v7_defconfig)
+      -multi_v7_defconfig
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675b2f53ca49c97d299ab709&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+      -imx6q-udoo
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:675b2f54ca49c97d299ab70c&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+      CI system: maestro
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=2146a7485c27f6f8373bb5570dee22631a7183a4&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
