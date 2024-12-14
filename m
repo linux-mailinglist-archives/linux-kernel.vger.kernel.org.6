@@ -1,187 +1,179 @@
-Return-Path: <linux-kernel+bounces-446084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4E99F1FA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:18:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B549F1F9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 16:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E75216742E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:17:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB2507A0622
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17951A8F78;
-	Sat, 14 Dec 2024 15:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38B5195FE3;
+	Sat, 14 Dec 2024 15:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GY/CHKNd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSiC3YP/"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40C51A8F75
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFCC1A0700;
+	Sat, 14 Dec 2024 15:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734189424; cv=none; b=hl17+Yv4aw6iQOOnTmBSbPASHIJ/SdahDflJpKT+UWhSqRcQdb7tFviH+0rjvDzSPqd2lrYoMWY2r3iQIsWTmGDLpGIajEzbgPGhwyq49OIEoZ6ydenRGpnMWbjKaIq+GS/gfHXlPgD1klKCob0k27gcfvtDZ/FPml6SCktiK5I=
+	t=1734189390; cv=none; b=kg3Be3Ge6A2Z6JHGkkrajGdIeeAlr28lz3lmXfbZTaflwyI+w1nw79Bqk/mfnRwYDw1yrApEohP0BzdXbsDOD0H4VIDtU2F5Yay3EqN7nBdvrmHFJsWizg3ZoVCMQkPseQIRjDl1M1m8tRuxvSlvV5uX7nWmYKTeedlZW17P5cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734189424; c=relaxed/simple;
-	bh=JxMZELjVGKGPt6XOV2bTuB1nEjDz6560szhLElfrufc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=noRAQ41PRETKAhDzF9Q3QeJ/vbKhBT1cR0IDZbmYF+BFKmmvy/2o0b/zccG0nJKbdWnWM2xA9KkDZrsidel8/s5DiJ0i3/GIjxprCEwj0ZHAy8Xn85YFd0PAcbWR8b4uZ90yLndFPmWvDzURcFfPQczqbvjvVI1jjfO44JJyU3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GY/CHKNd; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734189423; x=1765725423;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JxMZELjVGKGPt6XOV2bTuB1nEjDz6560szhLElfrufc=;
-  b=GY/CHKNdoFlsG+zs+QPXFhqyC66zSBRPU+ovIPFuWy0QUMB8cGZHVxpK
-   XUFhcRMUUcXZbPBiHgMCiNS5ywUKsHXHsvvF+Zc8DTqp8wRvk1XlmT2VH
-   BU8xs+XmOOm2TBOb2kaqTovumuhGpJCfStSaKpwdqkFljO5zpOh0ii3/+
-   uHC6hj7jOPOgNd5eMj+yRJWWW70N0K3psWPDV0uKGPPkIhb8Ao4UqpgPQ
-   6OdWUJFFeapuEguHXXVGUlrbWHMH+yWW6vdAp1YtJkXpnWs5OhhkoNf78
-   Z1i7Y67j56EpmruBSEPMVST8pRXwJsji/+jA/WwQvcgJBuZBDNbiNthdD
-   A==;
-X-CSE-ConnectionGUID: JWzYpJ2VS2CZ1Cpdr9b6eA==
-X-CSE-MsgGUID: 2dIlWEGhTQyjtxGAa0wavg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45109944"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45109944"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:17:02 -0800
-X-CSE-ConnectionGUID: OpPYWUKgQKCntZovrZyk7g==
-X-CSE-MsgGUID: DO6Oq3FaTbq2UxiApXR2Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120050216"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.200])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 07:16:54 -0800
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	kirill.shutemov@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	dan.j.williams@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	adrian.hunter@intel.com,
-	nik.borisov@suse.com,
-	kai.huang@intel.com
-Subject: [PATCH v9 6/6] x86/virt/tdx: Require the module to assert it has the NO_RBP_MOD mitigation
-Date: Sun, 15 Dec 2024 04:15:47 +1300
-Message-ID: <76ae5025502c84d799e3a56a6fc4f69a82da8f93.1734188033.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1734188033.git.kai.huang@intel.com>
-References: <cover.1734188033.git.kai.huang@intel.com>
+	s=arc-20240116; t=1734189390; c=relaxed/simple;
+	bh=BWvK3U1CIWg9LcX3W21o5tsKZfNdnh55oTlqnwLp1Xc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=b0xzlpXO5q9Y09fIUsgkAP5rcyy1pYXCL3T8BDYx2qLpVkIWYnYv3dEEhwost7AgW89iletETsLlixsllq7s6cyj9A2GqoFiVZPAITnu2a0O6s1TE+UmlOoM6kjbUTdYmo4zAXIZjqgGfzxrDVG59kaQFbmm/JsjobgpU8loOY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSiC3YP/; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso10851615e9.1;
+        Sat, 14 Dec 2024 07:16:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734189384; x=1734794184; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3E3Emzcg2tKB9CFmyIgMQvl5U8sGNCEkWi+a0A2Q4Ag=;
+        b=QSiC3YP/AB8KUdXsNfe1qMlFsQ24sMZrUjAdanv9ukOO1YNoWhXtbqzzdJ2dNPIS6Y
+         punjCu0YmvHBgDvEIc9n0JtngkdOjTbGp6UFz7obN33S6Exj29+pPpPfqp7RFbW6idjN
+         agT5WYzDObpLTptU0sna7MMs2iuzF3qskU8oBHoJBFBxoCCizJAY7liHood8rU/Z/151
+         snOltVwjE+nOOt3RDRi+fQw+R9XX39j5n9yPSCsibwjx4MnYkViiE31HTYAxg8vdmzyG
+         vYHBSc50mcg77Fwyqkt8Ow0RNPJ2ovLmpBJK2k2yoRgXjwpSXLxPnp9xO4mMbIDoLPLq
+         0E0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734189384; x=1734794184;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3E3Emzcg2tKB9CFmyIgMQvl5U8sGNCEkWi+a0A2Q4Ag=;
+        b=kLvuoX+/cHY6yH1uoOjtf0rAU+EWTthXrYd3IYa0ZGfsy/4Ok/fCfVo6YPMO38DkP7
+         Z0PkPPj2GR4/zjTM3bkqWbyNnuq1mlaOhrtwazcwQ4yj6jQU5ZhjUlJUIVQW/azxovk1
+         f8ZdXHE6BK7AZxN0wUZXViIw15VVmDwg0JgVT35YwarC1VSc7T/79fCMiv2RPjf8qeBn
+         /66+GOD2izmKOqlV0uWakjk65A7v8NjfpLqwfLYJVldX+EhtetUMJV2hsXCtsT2wq4Ha
+         tHZN1w7C/bJi/Lkr57ivfn3ZPPCuA3obFslLObJUspdHVZ0gQvWzYQwNXxQljBnWBCgU
+         tg+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXP5PtmKA0eJc/Bqlxvf9fqLY3qjTeRpCnkOVHtIm/xjhkcaGzwKYJdHvNi9hzG7ICizN5rmeDMY+4=@vger.kernel.org, AJvYcCXQ0tzrrB/OM94ylK2PEUmuZw888x3+Jsg0BZ398j4Ur/nAYG4UDsl4zbTKFH24KGKP1Bcq58iUykzZxVJk@vger.kernel.org, AJvYcCXj0a4Evf2X7OTT/w/irseXTT17Y/zfh6XfV13AwUBdzwpfnM6s9XLc3koL63v374ehyXzHwaFr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBkWvSpbmPrQh/7IcfiGB6Kk7GuuHAM2pHskIv7efpUqfqLiGk
+	IbciMH/JMZhyOV4GOvC8trz3/HJt2mk9UjivT0Cr07Ns6ZTcp2AF/dZQHA==
+X-Gm-Gg: ASbGncsDZkOAOIc5jBzNE1fZxzmoTVyhxIjiwQN2QiiIs3BOeW53XID80IZ+QXOYPW0
+	LvDhsyn5sYt6upbUh6L4QbDbfS908Qv4xye1drc865wGITHgtsYk2pWqcHYsJjINR1EKYbVB0q/
+	Y1josGejgqQMoMsDNZyfB33HkHPF6CfYgH8yTQhyc2yJoHozU5i+rdG2RQcMSfD+rHrJwALJaNQ
+	ZRh/1gMbec0sND7l5nHdgq3N42G9hcfxLvpw2SNPEAYpCeGeYOEw1a0UBhNWoRkO0fI42xD49IX
+	ElJfqRv4IQaPMfnCQU8rK217/wFUxI1mRNwtBU0zAkLruKYL8vk7OCCXAgn2PH3xrE5DoFzDDCw
+	Q
+X-Google-Smtp-Source: AGHT+IHfclEaSoADB5/v+XdsN5Dn9CTN83YsZGxIn6fnmCxJH39svoKWHbW07lMnyyrUYa3Z7jojVA==
+X-Received: by 2002:a05:6000:4616:b0:386:1ba1:37dc with SMTP id ffacd0b85a97d-3888e0bd631mr4417117f8f.47.1734189384235;
+        Sat, 14 Dec 2024 07:16:24 -0800 (PST)
+Received: from localhost (2a02-8389-41cf-e200-330f-5008-acc6-6cc2.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:330f:5008:acc6:6cc2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804a34fsm2840467f8f.76.2024.12.14.07.16.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 07:16:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 14 Dec 2024 16:16:20 +0100
+Message-Id: <D6BITV4LNT71.O2XWAQNX16MV@gmail.com>
+Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Christian Eggers"
+ <ceggers@arri.de>, "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] iio: light: as73211: fix channel handling in
+ only-color triggered buffer
+From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
+To: "Jonathan Cameron" <jic23@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241212-iio_memset_scan_holes-v3-1-7f496b6f7222@gmail.com>
+ <20241214142221.3412ad9c@jic23-huawei>
+In-Reply-To: <20241214142221.3412ad9c@jic23-huawei>
 
-Old TDX modules can clobber RBP in the TDH.VP.ENTER SEAMCALL.  However
-RBP is used as frame pointer in the x86_64 calling convention, and
-clobbering RBP could result in bad things like being unable to unwind
-the stack if any non-maskable exceptions (NMI, #MC etc) happens in that
-gap.
+On Sat Dec 14, 2024 at 3:22 PM CET, Jonathan Cameron wrote:
+> On Thu, 12 Dec 2024 18:56:32 +0100
+> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+>
+> > The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
+> > set (optimized path for color channel readings), and it must be shifted
+> > instead of leaving an empty channel for the temperature when it is off.
+> >
+> > Once the channel index is fixed, the uninitialized channel must be set
+> > to zero to avoid pushing uninitialized data.
+> >
+> > Add available_scan_masks for all channels and only-color channels to le=
+t
+> > the IIO core demux and repack the enabled channels.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+> > Tested-by: Christian Eggers <ceggers@arri.de>
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> > ---
+> > This issue was found after attempting to make the same mistake for
+> > a driver I maintain, which was fortunately spotted by Jonathan [1].
+> >
+> > Keeping old sensor values if the channel configuration changes is known
+> > and not considered an issue, which is also mentioned in [1], so it has
+> > not been addressed by this series. That keeps most of the drivers out
+> > of the way because they store the scan element in iio private data,
+> > which is kzalloc() allocated.
+> >
+> > This series only addresses cases where uninitialized i.e. unknown data
+> > is pushed to the userspace, either due to holes in structs or
+> > uninitialized struct members/array elements.
+> >
+> > While analyzing involved functions, I found and fixed some triviality
+> > (wrong function name) in the documentation of iio_dev_opaque.
+> >
+> > Link: https://lore.kernel.org/linux-iio/20241123151634.303aa860@jic23-h=
+uawei/ [1]
+> > ---
+> > Changes in v3:
+> > - as73211.c: add available_scan_masks for all channels and only-color
+> >   channels to let the IIO core demux and repack the enabled channels.
+> > - Link to v2: https://lore.kernel.org/r/20241204-iio_memset_scan_holes-=
+v2-0-3f941592a76d@gmail.com
+> >
+> > Changes in v2:
+> > - as73211.c: shift channels if no temperature is available and
+> >   initialize chan[3] to zero.
+> > - Link to v1: https://lore.kernel.org/r/20241125-iio_memset_scan_holes-=
+v1-0-0cb6e98d895c@gmail.com
+> > ---
+> >  drivers/iio/light/as73211.c | 24 ++++++++++++++++++++----
+> >  1 file changed, 20 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+> > index be0068081ebb..4be2e349a068 100644
+> > --- a/drivers/iio/light/as73211.c
+> > +++ b/drivers/iio/light/as73211.c
+> > @@ -177,6 +177,12 @@ struct as73211_data {
+> >  	BIT(AS73211_SCAN_INDEX_TEMP) | \
+> >  	AS73211_SCAN_MASK_COLOR)
+> >
+> > +static const unsigned long as73211_scan_masks[] =3D {
+> > +	AS73211_SCAN_MASK_ALL,
+> > +	AS73211_SCAN_MASK_COLOR,
+>
+> I probably mislead you on this :(
+> Needs to be the other way around as the core code starts at first
+> entry whilst trying to find a mask that is a superset of what is turned o=
+n.
+> here that means it will always use the first one.
+> See iio_scan_mask_match() - strict isn't set int this case.
+>
 
-A new "NO_RBP_MOD" feature was introduced to more recent TDX modules to
-not clobber RBP.  KVM will need to use the TDH.VP.ENTER SEAMCALL to run
-TDX guests.  It won't be safe to run TDX guests w/o this feature.  To
-prevent it, just don't initialize the TDX module if this feature is not
-supported [1].
+Thanks for your feedback. I copied your suggestion, but it was my fault
+that I did not make sure it was right for the intended behavior.
 
-Note the bit definitions of TDX_FEATURES0 are not auto-generated in
-tdx_global_metadata.h.  Manually define a macro for it in "tdx.h".
+I will send a new version with that fixed soon.
 
-Link: https://lore.kernel.org/fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com/ [1]
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
----
-v8 -> v9:
- - Minor changelog improvement suggested by Rick and Reniette.
- - Rebase due to the removal of CMR reading code.
-
-Note:
-
-This doesn't need to be included to stable kernels because TDH.VP.ENTER
-won't be used until KVM is able to support TDX.
-
----
- arch/x86/virt/vmx/tdx/tdx.c | 17 +++++++++++++++++
- arch/x86/virt/vmx/tdx/tdx.h |  4 ++++
- 2 files changed, 21 insertions(+)
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 43ec56db5084..7fdb37387886 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -272,6 +272,18 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
- 
- #include "tdx_global_metadata.c"
- 
-+static int check_features(struct tdx_sys_info *sysinfo)
-+{
-+	u64 tdx_features0 = sysinfo->features.tdx_features0;
-+
-+	if (!(tdx_features0 & TDX_FEATURES0_NO_RBP_MOD)) {
-+		pr_err("frame pointer (RBP) clobber bug present, upgrade TDX module\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- /* Calculate the actual TDMR size */
- static int tdmr_size_single(u16 max_reserved_per_tdmr)
- {
-@@ -1055,6 +1067,11 @@ static int init_tdx_module(void)
- 	if (ret)
- 		return ret;
- 
-+	/* Check whether the kernel can support this module */
-+	ret = check_features(&sysinfo);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * To keep things simple, assume that all TDX-protected memory
- 	 * will come from the page allocator.  Make sure all pages in the
-diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-index 641beec86e73..4e3d533cdd61 100644
---- a/arch/x86/virt/vmx/tdx/tdx.h
-+++ b/arch/x86/virt/vmx/tdx/tdx.h
-@@ -2,6 +2,7 @@
- #ifndef _X86_VIRT_TDX_H
- #define _X86_VIRT_TDX_H
- 
-+#include <linux/bits.h>
- #include "tdx_global_metadata.h"
- 
- /*
-@@ -51,6 +52,9 @@ struct tdmr_info {
- 	DECLARE_FLEX_ARRAY(struct tdmr_reserved_area, reserved_areas);
- } __packed __aligned(TDMR_INFO_ALIGNMENT);
- 
-+/* Bit definitions of TDX_FEATURES0 metadata field */
-+#define TDX_FEATURES0_NO_RBP_MOD	BIT(18)
-+
- /*
-  * Do not put any hardware-defined TDX structure representations below
-  * this comment!
--- 
-2.47.1
-
+Best regards,
+Javier Carrasco
 
