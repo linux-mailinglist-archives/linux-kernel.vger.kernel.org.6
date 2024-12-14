@@ -1,223 +1,238 @@
-Return-Path: <linux-kernel+bounces-446203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599B29F2110
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:57:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F909F2142
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783F1166AB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 21:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBF781625FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BBE1B218D;
-	Sat, 14 Dec 2024 21:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2AD1B85D7;
+	Sat, 14 Dec 2024 22:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Su6orVk4"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="xoTuDkrV"
+Received: from mx06lb.world4you.com (mx06lb.world4you.com [81.19.149.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98E137E;
-	Sat, 14 Dec 2024 21:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252461B4F29
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734213413; cv=none; b=QtsmT7zXBEp0PkVC1DiHM6Qm9/9mTlUeV9OA+ZHw4/YCZnvKWcfdatKMlMiROSp7kz1kYq3wZqprjjr8wOJVTUYCDzNsmg8B8wBi+ZQqGkqGRrkYXEzFX9egbQ2s8Nn+VTfxADrH4gMKpxjwR8AC5uAh0dCwleS0btethQ3y9Dw=
+	t=1734215194; cv=none; b=rOPjBhH6pSOwEZdRVjzf0JPr7ha5V2T5uDoRc0psVgfl0j/Qg9P4Nqpmx19Igs5WwIGlgPdmvWX17knQ9fbLnWHWmjky4hqmo9uJos+vP8lBjqKFQc/YZkGB6XSi49AxRx9Bfg+X3Rh3FBFPQbD2Hvm1LKF4cFlGCwvXKRupA5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734213413; c=relaxed/simple;
-	bh=B3D6ZgjcfGsFkj0EvBdxaN0UbW7ZFtrTzd6yM12JOrs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VXWQiZc3fCMf0lPuvxrwYKWe9sPAXUzl4tBKJYk6OVG4mBRR6duSDCOKmiCjQm7XXyS2bsygutx00w6isnKT5fDBOKTiWQmLG6pFttnhT15kX0xpAxpDsWWFlJya77oW7nHoN8SlNn7xSh6f3dINMLtDOECcqTVJPcXX0WA3z2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Su6orVk4; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4BELuO4A079250;
-	Sat, 14 Dec 2024 15:56:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1734213384;
-	bh=bikUv5chFR7Mp0GtINpALlwdheFMLn92Zv1sVgMXCcM=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Su6orVk4oGSPdNpzzHJP1K/BxQb91vziqP80ujdPLV4F5FxIncFmZccYomZwYfdjQ
-	 VGKuhfoa2tTGiEmsG9YgLdfhIw4zAWaPgIb52/M9AAAt3LAtG8KYAL1gmo67ZhkPmK
-	 JsyOWwm6Jz/pxmbd2+4tTPTvdlLuno/FGdCiZf9Y=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BELuOnd024904
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 14 Dec 2024 15:56:24 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 14
- Dec 2024 15:56:24 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 14 Dec 2024 15:56:23 -0600
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BELuOOP089856;
-	Sat, 14 Dec 2024 15:56:24 -0600
-Date: Sat, 14 Dec 2024 15:56:24 -0600
-From: Bryan Brattlof <bb@ti.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am62l: add initial infrastructure
-Message-ID: <20241214215624.e372oju6eserpf4f@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20241117-am62lx-v1-0-4e71e42d781d@ti.com>
- <20241117-am62lx-v1-1-4e71e42d781d@ti.com>
- <Z12rnZiCXQxtMWlf@livingston.pivistrello.it>
+	s=arc-20240116; t=1734215194; c=relaxed/simple;
+	bh=zvdyZzPaCnRXEefBzLAd/8nZMGbOxiQyzRBX9R4DkO4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cxS/HxvXHJKrYuUGfinGDkvKjdlaULGM4Ku/vTWW4fS1C0Px0G8hwOH+0hDEVF6QVDL8IkJuM8HQS5eDdOU4P1Q1O3e8NrIQmT9frIsEZ42pnOmcK6oYTcL7Ic1hoFoIKVwgMm9ZfV0TKH8bqWPgRGMlV+jMcyhbvDUSa2qx5Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=xoTuDkrV; arc=none smtp.client-ip=81.19.149.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4n+aE9Nz2uXIWtI2nLwH2qv+kJM4V/wl+PdktQqxhHY=; b=xoTuDkrVnBy5yP2V7EqdqNywDR
+	AOQ/hZi05o9kGCDTSC0D4itfHr9NzPgXXrmu2+EI1WFl9ht4ey4bG7mAhcTZjfpDmIzkB76nnRsnW
+	rs3w7bONOLuODBJZAgwiM2Zh9S+YUiVfMfthwQHcfSdbTQcv6o1HDjx2/jecDdb/rWrk=;
+Received: from [88.117.62.55] (helo=hornet.engleder.at)
+	by mx06lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1tMa9K-000000007yN-17gz;
+	Sat, 14 Dec 2024 22:58:10 +0100
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+To: linux-kernel@vger.kernel.org
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	Gerhard Engleder <gerhard@engleder-embedded.com>,
+	Gerhard Engleder <eg@keba.com>
+Subject: [PATCH] misc: keba: Fix kernfs warning on module unload
+Date: Sat, 14 Dec 2024 22:57:59 +0100
+Message-Id: <20241214215759.60811-1-gerhard@engleder-embedded.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <Z12rnZiCXQxtMWlf@livingston.pivistrello.it>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-AV-Do-Run: Yes
+X-ACL-Warn: X-W4Y-Internal
 
-On December 14, 2024 thus sayeth Francesco Dolcini:
-> On Sun, Nov 17, 2024 at 11:34:07PM -0600, Bryan Brattlof wrote:
-> > From: Vignesh Raghavendra <vigneshr@ti.com>
-> > 
-> > Add the initial infrastructure needed for the AM62L. All of which can be
-> > found in the Technical Reference Manual (TRM) located here:
-> > 
-> >     https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
-> > 
-> > Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> > Signed-off-by: Bryan Brattlof <bb@ti.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/ti/k3.yaml |  6 ++
-> >  arch/arm64/boot/dts/ti/Makefile                  |  3 +
-> >  arch/arm64/boot/dts/ti/k3-am62l-main.dtsi        | 52 ++++++++++++++
-> >  arch/arm64/boot/dts/ti/k3-am62l-wakeup.dtsi      | 33 +++++++++
-> >  arch/arm64/boot/dts/ti/k3-am62l.dtsi             | 89 ++++++++++++++++++++++++
-> >  arch/arm64/boot/dts/ti/k3-am62l3.dtsi            | 67 ++++++++++++++++++
-> >  arch/arm64/boot/dts/ti/k3-pinctrl.h              |  2 +
-> >  7 files changed, 252 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > index 18f155cd06c84..b109e854879cb 100644
-> > --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
-> > @@ -31,6 +31,12 @@ properties:
-> >            - const: phytec,am62a-phycore-som
-> >            - const: ti,am62a7
-> >  
-> > +      - description: K3 AM62L3 SoC and Boards
-> > +        items:
-> > +          - enum:
-> > +              - ti,am62l3-evm
-> > +          - const: ti,am62l3
-> > +
-> 
-> can you clarify the differences between AM62L and AM62L3? you have a mix of names in this series. I assume that
-> AM62L is the SOC family / product name, while AM62L3 is a specific 
-> part number.
->
+Unloading the cp500 module leads to the following warning:
 
-Absolutely! I found the naming a bit confusing myself. 
+kernfs: can not remove 'eeprom', no directory
+WARNING: CPU: 1 PID: 1610 at fs/kernfs/dir.c:1683 kernfs_remove_by_name_ns+0xb1/0xc0
 
-We (the baseport teams) have kinda coalesced into using less digits as a 
-way to describe all devices included in the subgroup. So for example AM6 
-would be all Sitara class MPUs in the K3 generation. AM62L would be all 
-parts in K3 in the 'lite' derivative. AM62L32 would be all AM62L parts 
-with display and dual cores.
+The parent I2C device of the nvmem devices is freed before the nvmem
+devices. The reference to the nvmem devices is put by devm after
+cp500_remove(), but at this time the parent I2C device does not exist
+anymore as the I2C controller and its devices have already been freed in
+cp500_remove(). Thus, nvmem tries to remove an entry from an already
+deleted directory.
 
-But I should probably decode everything as these part numbers are really 
-opaque in my eye if you don't see them every day. 
+Free nvmem devices before I2C controller auxiliary device.
 
-The full orderable part number for this part is the XAM62L32AOGHAANB
+Signed-off-by: Gerhard Engleder <eg@keba.com>
+---
+ drivers/misc/keba/cp500.c | 69 +++++++++++++++++++++++++--------------
+ 1 file changed, 45 insertions(+), 24 deletions(-)
 
-    'X' is the production status. If you see an 'X' here it just means 
-    it's a pre-production sample that hasn't gone through validation. 
-    Most of the time (outside of TI) this will be blank
+diff --git a/drivers/misc/keba/cp500.c b/drivers/misc/keba/cp500.c
+index 255d3022dae8..d0c6113dcff3 100644
+--- a/drivers/misc/keba/cp500.c
++++ b/drivers/misc/keba/cp500.c
+@@ -126,8 +126,9 @@ static struct cp500_devs cp520_devices = {
+ };
+ 
+ struct cp500_nvmem {
+-	struct nvmem_device *nvmem;
++	struct nvmem_device *base_nvmem;
+ 	unsigned int offset;
++	struct nvmem_device *nvmem;
+ };
+ 
+ struct cp500 {
+@@ -581,8 +582,8 @@ static int cp500_nvmem_read(void *priv, unsigned int offset, void *val,
+ 	struct cp500_nvmem *nvmem = priv;
+ 	int ret;
+ 
+-	ret = nvmem_device_read(nvmem->nvmem, nvmem->offset + offset, bytes,
+-				val);
++	ret = nvmem_device_read(nvmem->base_nvmem, nvmem->offset + offset,
++				bytes, val);
+ 	if (ret != bytes)
+ 		return ret;
+ 
+@@ -595,15 +596,16 @@ static int cp500_nvmem_write(void *priv, unsigned int offset, void *val,
+ 	struct cp500_nvmem *nvmem = priv;
+ 	int ret;
+ 
+-	ret = nvmem_device_write(nvmem->nvmem, nvmem->offset + offset, bytes,
+-				 val);
++	ret = nvmem_device_write(nvmem->base_nvmem, nvmem->offset + offset,
++				 bytes, val);
+ 	if (ret != bytes)
+ 		return ret;
+ 
+ 	return 0;
+ }
+ 
+-static int cp500_nvmem_register(struct cp500 *cp500, struct nvmem_device *nvmem)
++static int cp500_nvmem_register(struct cp500 *cp500,
++				struct nvmem_device *base_nvmem)
+ {
+ 	struct device *dev = &cp500->pci_dev->dev;
+ 	struct nvmem_config nvmem_config = {};
+@@ -625,27 +627,52 @@ static int cp500_nvmem_register(struct cp500 *cp500, struct nvmem_device *nvmem)
+ 	nvmem_config.reg_read = cp500_nvmem_read;
+ 	nvmem_config.reg_write = cp500_nvmem_write;
+ 
+-	cp500->nvmem_cpu.nvmem = nvmem;
++	cp500->nvmem_cpu.base_nvmem = base_nvmem;
+ 	cp500->nvmem_cpu.offset = CP500_EEPROM_CPU_OFFSET;
+ 	nvmem_config.name = CP500_EEPROM_CPU_NAME;
+ 	nvmem_config.size = CP500_EEPROM_CPU_SIZE;
+ 	nvmem_config.priv = &cp500->nvmem_cpu;
+-	tmp = devm_nvmem_register(dev, &nvmem_config);
++	tmp = nvmem_register(&nvmem_config);
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
++	cp500->nvmem_cpu.nvmem = tmp;
+ 
+-	cp500->nvmem_user.nvmem = nvmem;
++	cp500->nvmem_user.base_nvmem = base_nvmem;
+ 	cp500->nvmem_user.offset = CP500_EEPROM_USER_OFFSET;
+ 	nvmem_config.name = CP500_EEPROM_USER_NAME;
+ 	nvmem_config.size = CP500_EEPROM_USER_SIZE;
+ 	nvmem_config.priv = &cp500->nvmem_user;
+-	tmp = devm_nvmem_register(dev, &nvmem_config);
+-	if (IS_ERR(tmp))
++	tmp = nvmem_register(&nvmem_config);
++	if (IS_ERR(tmp)) {
++		nvmem_unregister(cp500->nvmem_cpu.nvmem);
++		cp500->nvmem_cpu.nvmem = NULL;
++
+ 		return PTR_ERR(tmp);
++	}
++	cp500->nvmem_user.nvmem = tmp;
+ 
+ 	return 0;
+ }
+ 
++static void cp500_nvmem_unregister(struct cp500 *cp500)
++{
++	int notified;
++
++	if (cp500->nvmem_user.nvmem) {
++		nvmem_unregister(cp500->nvmem_user.nvmem);
++		cp500->nvmem_user.nvmem = NULL;
++	}
++	if (cp500->nvmem_cpu.nvmem) {
++		nvmem_unregister(cp500->nvmem_cpu.nvmem);
++		cp500->nvmem_cpu.nvmem = NULL;
++	}
++
++	/* CPU and user nvmem use the same base_nvmem, put only once */
++	notified = atomic_read(&cp500->nvmem_notified);
++	if (notified)
++		nvmem_device_put(cp500->nvmem_cpu.base_nvmem);
++}
++
+ static int cp500_nvmem_match(struct device *dev, const void *data)
+ {
+ 	const struct cp500 *cp500 = data;
+@@ -663,13 +690,6 @@ static int cp500_nvmem_match(struct device *dev, const void *data)
+ 	return 0;
+ }
+ 
+-static void cp500_devm_nvmem_put(void *data)
+-{
+-	struct nvmem_device *nvmem = data;
+-
+-	nvmem_device_put(nvmem);
+-}
+-
+ static int cp500_nvmem(struct notifier_block *nb, unsigned long action,
+ 		       void *data)
+ {
+@@ -698,10 +718,6 @@ static int cp500_nvmem(struct notifier_block *nb, unsigned long action,
+ 		return NOTIFY_DONE;
+ 	}
+ 
+-	ret = devm_add_action_or_reset(dev, cp500_devm_nvmem_put, nvmem);
+-	if (ret)
+-		return ret;
+-
+ 	ret = cp500_nvmem_register(cp500, nvmem);
+ 	if (ret)
+ 		return ret;
+@@ -932,12 +948,17 @@ static void cp500_remove(struct pci_dev *pci_dev)
+ {
+ 	struct cp500 *cp500 = pci_get_drvdata(pci_dev);
+ 
++	/*
++	 * unregister CPU and user nvmem and put base_nvmem before parent
++	 * auxiliary device of base_nvmem is unregistered
++	 */
++	nvmem_unregister_notifier(&cp500->nvmem_notifier);
++	cp500_nvmem_unregister(cp500);
++
+ 	cp500_unregister_auxiliary_devs(cp500);
+ 
+ 	cp500_disable(cp500);
+ 
+-	nvmem_unregister_notifier(&cp500->nvmem_notifier);
+-
+ 	pci_set_drvdata(pci_dev, 0);
+ 
+ 	pci_free_irq_vectors(pci_dev);
+-- 
+2.39.2
 
-    'AM' is the prefix which indicates a Sitara class of SoC. The AM68 
-    and AM69 being originally a Jacinto class part kinda makes this more 
-    confusing but back in the day i think it used to stand for ARM 
-    Microprocessors so that's what I've been telling people.
-
-    '62' is the generation and family of the part. So this example the 6 
-    indicates the K3 generation of SoCs and the 2 means it's an MPU 
-    family with 2k display or 2k camera support among other things.
-
-    'L' is the derivative of the family. This is mostly a marketing 
-    thing to indicate the target market for the SoC:
-
-      AM62  (or blank) would be the general base class
-      AM62A is for the analytics derivative
-      AM62D is for DSP
-      AM62P is for Plus
-      AM62L is for Lite
-
-    '3' is the configuration. This really depends on what the business 
-    teams find feasible. Some of the family/derivative combinations
-    don't make sense to have. For example an AM62L9 which would just be 
-    the base AM62 derivative, so some configurations may not exist.
-
-      0 = No Display / No ISP
-      1 = No Display with ISP
-      2 = No Display with ISP and Analytics
-      3 = Display / No ISP
-      4 = Display / No ISP with Analytics
-      5 = Display / No ISP with GPU
-      6 = Display with ISP
-      7 = Display with ISP and Analytics
-      8 = Display with ISP and GPU
-      9 = includes everything
-
-    '2' is the core count. AM62L32 would be the dual core option.
-
-The rest of the digits get into stuff we try to do automatically via our 
-bootloaders so you wont see any mention of them in Linux, but I kinda 
-wanted to continue decoding this :)
-
-    'A' is the silicon revision. A = SR 1.0 
-
-    'O' is the speed grade. (there is a table somewhere with all the 
-    speed grades we support. The two I know about are.
-
-      O = 1.25GHz
-      E = 833MHz
-
-    'G' is the feature set. Because the derivative is 'L' (or lite) we 
-    probably won't have options other than G which is the baseline
-
-    'H' is the security & functional safety value
-
-      'G' is non secure no functional safety. (like the beagleplay)
-      '1-9' are dummy key devices with no functional safety
-      'H-R' are production key HS devices with no function safety 
-      'S-Z' are production key HS devices with function safety
-        
-'H-Z' is probably the most common security you will see TI make now. 
-There are ways (by talking to sales) you can purchase other variants for 
-special use cases (like aviation) but I think these are all special use 
-cases with unique regulatory or security issues.
-
-    'A' is the temperature rating
-     
-      'A' = -40C to 105C
-      'I' = -40C to 125C
-
-    'ANB' is the package: 11.9mm x 11.9mm with 0.5 BGA
-
-There can be a total of 18 digits which can vary when decoding the 
-family (AM65, AM64) but generally this decoding scheme will hold. I only 
-really see those weird parts with our vertically integrated customers 
-with their own sales teams.
-
-Sorry for the essay. I went though our catalog one day and had the very 
-same question you did so I wanted to dump as much as I could.
-
-~Bryan
 
