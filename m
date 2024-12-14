@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-446115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBD49F200E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDB09F200F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 18:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA3D1887EF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E516F1887F24
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 17:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CA5198836;
-	Sat, 14 Dec 2024 17:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0E119340B;
+	Sat, 14 Dec 2024 17:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofncVW8m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="X2Hs/zJQ"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5BB2033A;
-	Sat, 14 Dec 2024 17:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748002033A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 17:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734196864; cv=none; b=sK1Py9CRVZLaCxzsQP5jrATEjI4PNJ8Wuu9OGyAUa8y3amwLZ9uaU9ht66+VeubFee7NC9RxAc5pIiqm6BLMqSbKirCumQvNPc2jOv6ajyinzu4Oi8S3v3vmHJgd4G2cRoDUF6SHXo/F7GvE5NfimN/5saxyT7T4Qlti8TviBzc=
+	t=1734197170; cv=none; b=PFKFmBiUtgd7fKvoZHNM2ns3PyKrA0K4ODmRJfNFSiLjAeoCcmns9MGxgwksGfIoa2+akoEVgakZWGQRTumEOBx2qvY5tHKqjCLfgYc4olHuJjL/L7KUFGc1+/zlqK1tWvB/jzdsOpoTF6j84E2svSFqrsoMkOZgMuKpAg3AE+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734196864; c=relaxed/simple;
-	bh=ezvO/MjsOFV8uZE5WolYahI6SlHzY/UYkTp7ZCJjJzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bpfg6xD9tGtiCYsw3+kKuLJKPXrtePSsV30KilLAs0A0RRaVDT0a3ouyLWVE2zvC7+9x6Hfw9STwGedQEYlEiVp6umer2U1tXTmQrZ0S1ZTD/qVAH0r3lE36NY0+3BNrD62yn9Kg/uPr5OfHsmR2x9ibZKnY6AjaJDSjRBcbzGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofncVW8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D4CC4CED1;
-	Sat, 14 Dec 2024 17:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734196864;
-	bh=ezvO/MjsOFV8uZE5WolYahI6SlHzY/UYkTp7ZCJjJzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ofncVW8ml90hf9qQ6TxI8LLCua/Q1FQgWwW2KW+OuE5Fk2MLnwJrhtPvl4sXcjJ3f
-	 QpPzmNhf+oQyBh9xhPgWXWF2Xp0eZ3BxinP2XXdRRuLtNHK2FQozeppu9B4fjq1OwS
-	 mzUlGUB5dMRZwP2Ab1VfLEAE7G1C1ZnNI72qMF8U3WKPUH517T+et/whWiSoi3SUGS
-	 o4S7eO8eEBT4hUdzQ+F98FvIwFxfBRmHwFGISbB+74Q0p4+2BxFgln3n2Hr4OrOE4n
-	 hE9oiEkXb+ySzad9ifO9iTcWSEAPGaH3ioM69vcfP6kIgs0oFBmO9Jd9OawBpYoXX6
-	 MBo0kme65XI8w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tMVpF-000000002lV-08Zw;
-	Sat, 14 Dec 2024 18:21:09 +0100
-Date: Sat, 14 Dec 2024 18:21:09 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Lode Willems <me@lodewillems.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] USB: serial: CH341: add hardware flow control
- RTS/CTS
-Message-ID: <Z12-hZKS83WQ5bYd@hovoldconsulting.com>
-References: <20241113180930.3741-1-me@lodewillems.com>
+	s=arc-20240116; t=1734197170; c=relaxed/simple;
+	bh=SQ9uVWQAhuntKlTS20JZafFZ98N5NOWQNg/95pFKO4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jWrsM3TzxBYF+K60WI/g8Gsx5UZQjE4rLdzcxjhawC/j9Sy1ggw2RwXR0uRaarWy6ZB+GTzb6lJyFIntIko2jbAOOuKI7L44+0J9gC7vX3G2hMoiCnSu18lmjqdGg8fNu03In2Lh0b563g1UYu6F7KIzde9gitFIPUBVrCHdusI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=X2Hs/zJQ; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7feffe7cdb7so1679088a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 09:26:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1734197166; x=1734801966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mv0bHKD8tx/knjsXKIIRgI9/G/KQE3L8kp8HO/illC0=;
+        b=X2Hs/zJQ3isc05UGh/quBj9OYxceob49D4Xr7ENagSvsKhIMKbvMwfB4W9lUSg3oCN
+         Jdsz1OZeVKrZAHWHAd53odc3EclrEuAq7RbvEw7/hQywcHZbRCRumQwU8yFh5aPZcyIe
+         9JKgz9Oc65YhmsqjGb8LZ7S9OT2QRktj2v/fq9esHdwsA8q0MENjFJ4wfHkps1mE4dCE
+         8N653srWdVMETZAmuLVbM/x+1VgCSix5LmXNuDnkq5cR7rmUENUJmKRdRCwNNdMFGyTO
+         zd5sICOtsyvRZ7R954QLionGXNDAu9HfNoRsVmAXYCu+tHxv+w7hwwEto2+dRNjdCwcw
+         bEkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734197166; x=1734801966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mv0bHKD8tx/knjsXKIIRgI9/G/KQE3L8kp8HO/illC0=;
+        b=o17RjRVDWHd5WZM5Fwco9Bi/c9bphbXp+K2mT7dPP0F2ysrIdWHju7KEjMSa0QVwhD
+         kAmr18P3A1p08p0kmhrocXa21BivtbXdIRzyJkSRhlvHqUrFkb29EDr3PxXrvJKNgYh+
+         TD9pjz4D5/WVv3NvkxajrHvHuIe6CKDNAwObw6miY6wxvcLkwAdGxY5Auv2ZDEUHAPIQ
+         1rQi+EioMCX8yVi4ifgLi9QDrjHEfUJ8nC/rpaamjHUkvLe/rwTYwgHBMncBnJNvYqNx
+         JWh95HLCeM4+u20+nEfwTCjub5nOB56qTYbRzjeRwyY8fFdOB/sPc9Fgm5qZfQJHENKO
+         4Dcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpiw39PeLSBcmg2+Zb37xgc3vnlJIieKofG6JNrXAtCz9Gtj/+Jz3eusFq4BRglp5gxN0F081CikHm0qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypqYyk34EUpM8QkuYtUP/Rb6W1SXLrctf7NlI6de4En6vK30AT
+	RVkJgdPw3MQj82p73cVNj1dn+KHg2H2w2hx4G8/oUTOThA1SDwk4/pEopMf2ttU=
+X-Gm-Gg: ASbGncuwf3BjZN01SNMh5ukinGNe3vRZ4mDsHOFGUDxSkY8s5wCPJnxyFpthVclpfQf
+	ia0r04mcfHOkidKj6zqFML54DrSwodafELt6ugecrMwsY8xZ8UpLWvkChG7YQEjZ3yr23S52m7c
+	Zg8Ucl5bOSEEy6G8ZRFPSiyHBTIUEgrjzHjBmQzaIGceudGEKcNYqtvG+IKQPa4gazvjI75171p
+	CeupNN62mbU5Byesmt6vhxsWNN/tM6QqnpEJjkcyGKpZj/8YbkjVnVOmF6qvEeKSPW6ewajgtS5
+	OYC+dNbgGanSbSE=
+X-Google-Smtp-Source: AGHT+IHyKbANKEj4g4KxocXm4yHOhpiEBiGMph5JPaoKcbo6rZ1/8zvn09yNoAs/k0KDXpN10M7D5g==
+X-Received: by 2002:a17:90b:4c43:b0:2ea:5dea:eb0a with SMTP id 98e67ed59e1d1-2f28fa5beacmr9746521a91.4.1734197165633;
+        Sat, 14 Dec 2024 09:26:05 -0800 (PST)
+Received: from localhost.localdomain ([223.185.132.246])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142f9e186sm5049811a91.41.2024.12.14.09.25.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 09:26:05 -0800 (PST)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v2 00/11] RISC-V IMSIC driver improvements
+Date: Sat, 14 Dec 2024 22:55:38 +0530
+Message-ID: <20241214172549.8842-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113180930.3741-1-me@lodewillems.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 07:08:27PM +0100, Lode Willems wrote:
-> This adds support for enabling and disabling
-> RTS/CTS hardware flow control.
-> Tested using a CH340E in combination with a CP2102.
-> 
-> Fixes part of the following bug report:
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=197109
-> 
-> Signed-off-by: Lode Willems <me@lodewillems.com>
+This series is based on recent discussion on LKML:
+https://lore.kernel.org/lkml/20241114161845.502027-18-ajones@ventanamicro.com/
 
-Thanks for the patch and sorry about the late feedback on this one. I
-wanted to give it a spin with the devices I have here (ch340g and
-ch341a).
+It primarily focuses on moving to RISC-V IMSIC driver use common MSI
+lib and GENERIC_PENDING_IRQ.
 
-Appears to the modem control lines are not wired up on the ch341a
-evaluation board I have, but the device accepts the request and stops
-transmitting with hardware flow control enabled.
+PATCH1: Fix for handling non-atomic MSI updates
+PATCH2 & PATCH3: Preparatory patches
+PATCH4: Main patch which updates IMSIC driver to use MSI lib
+PATCH5 & PATCH6: Preparatory patches for moving to GENERIC_PENDING_IRQ
+PATCH7 to PATCH11: Patches use GENERIC_PENDING_IRQ in IMSIC driver
 
-With ch340g in loopback, I also see it refuse to transmit unless cts is
-asserted. I was not able to get the device to deassert rts when
-attempting to fill its receive buffers, however. Perhaps the hardware
-does not support this, but is this something you tried?
+These patches can also be found in the riscv_imsic_imp_v2 branch at:
+https://github.com/avpatel/linux.git
 
-> ---
->  drivers/usb/serial/ch341.c | 41 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/usb/serial/ch341.c b/drivers/usb/serial/ch341.c
-> index d10e4c4848a0..62237f657320 100644
-> --- a/drivers/usb/serial/ch341.c
-> +++ b/drivers/usb/serial/ch341.c
-> @@ -63,6 +63,7 @@
->  #define CH341_REG_DIVISOR      0x13
->  #define CH341_REG_LCR          0x18
->  #define CH341_REG_LCR2         0x25
-> +#define CH341_REG_FLOW_CTL     0x27
->  
->  #define CH341_NBREAK_BITS      0x01
->  
-> @@ -77,6 +78,9 @@
->  #define CH341_LCR_CS6          0x01
->  #define CH341_LCR_CS5          0x00
->  
-> +#define CH341_FLOW_CTL_NONE    0x000
-> +#define CH341_FLOW_CTL_RTSCTS  0x101
+Changes since v1:
+ - Changed series subject
+ - Expand this series to use GENERIC_PENDING_IRQ in IMSIC driver
 
-The registers are eight bits wide, but the driver writes two at a time.
-So this should just be 0x00 and 0x01.
+Andrew Jones (1):
+  irqchip/riscv-imsic: Set irq_set_affinity for IMSIC base
 
-> +
->  #define CH341_QUIRK_LIMITED_PRESCALER	BIT(0)
->  #define CH341_QUIRK_SIMULATE_BREAK	BIT(1)
->  
-> @@ -478,6 +482,41 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
->  	return r;
->  }
->  
-> +static void ch341_set_flow_control(struct tty_struct *tty,
-> +				   struct usb_serial_port *port,
-> +				   const struct ktermios *old_termios)
-> +{
-> +	int r;
-> +
-> +	if (old_termios &&
-> +	    C_CRTSCTS(tty) == (old_termios->c_cflag & CRTSCTS))
-> +		return;
+Anup Patel (7):
+  irqchip/riscv-imsic: Handle non-atomic MSI updates for device
+  genirq: Introduce common irq_force_complete_move() implementation
+  RISC-V: Enable GENERIC_PENDING_IRQ and GENERIC_PENDING_IRQ_CHIPFLAGS
+  irqchip/riscv-imsic: Separate next and previous pointers in IMSIC
+    vector
+  irqchip/riscv-imsic: Implement irq_force_complete_move() for IMSIC
+  irqchip/riscv-imsic: Replace hwirq with irq in the IMSIC vector
+  irqchip/riscv-imsic: Use IRQCHIP_MOVE_DEFERRED flag for PCI devices
 
-Just drop this and set the requested setting unconditionally.
+Thomas Gleixner (3):
+  irqchip/irq-msi-lib: Optionally set default irq_eoi/irq_ack
+  irqchip/riscv-imsic: Move to common MSI lib
+  genirq: Introduce kconfig option GENERIC_PENDING_IRQ_CHIPFLAGS
 
-> +
-> +	if (C_CRTSCTS(tty)) {
-> +		r = ch341_control_out(port->serial->dev, CH341_REQ_WRITE_REG,
-> +				      CH341_REG_FLOW_CTL |
-> +				      ((u16)CH341_REG_FLOW_CTL << 8),
-> +				      CH341_FLOW_CTL_RTSCTS);
-> +		if (r < 0) {
-> +			dev_err(&port->dev,
-> +				"%s - failed to enable flow control: %d\n",
-> +				__func__, r);
-> +			tty->termios.c_cflag &= ~CRTSCTS;
-> +		}
-> +	} else {
-> +		r = ch341_control_out(port->serial->dev, CH341_REQ_WRITE_REG,
-> +				      CH341_REG_FLOW_CTL |
-> +				      ((u16)CH341_REG_FLOW_CTL << 8),
-> +				      CH341_FLOW_CTL_NONE);
-> +		if (r < 0) {
-> +			dev_err(&port->dev,
-> +				"%s - failed to disable flow control: %d\n",
-> +				__func__, r);
-> +			tty->termios.c_cflag |= CRTSCTS;
-> +		}
-> +	}
+ arch/riscv/Kconfig                         |   2 +
+ drivers/irqchip/Kconfig                    |   8 +-
+ drivers/irqchip/irq-gic-v2m.c              |   1 +
+ drivers/irqchip/irq-imx-mu-msi.c           |   1 +
+ drivers/irqchip/irq-msi-lib.c              |  11 +-
+ drivers/irqchip/irq-mvebu-gicp.c           |   1 +
+ drivers/irqchip/irq-mvebu-odmi.c           |   1 +
+ drivers/irqchip/irq-mvebu-sei.c            |   1 +
+ drivers/irqchip/irq-riscv-imsic-early.c    |  14 +-
+ drivers/irqchip/irq-riscv-imsic-platform.c | 177 +++++++++------------
+ drivers/irqchip/irq-riscv-imsic-state.c    | 110 +++++++++----
+ drivers/irqchip/irq-riscv-imsic-state.h    |  12 +-
+ include/linux/irq.h                        |  15 ++
+ include/linux/msi.h                        |  11 ++
+ kernel/irq/Kconfig                         |   4 +
+ kernel/irq/chip.c                          |  39 ++++-
+ kernel/irq/irqdomain.c                     |   1 +
+ kernel/irq/migration.c                     |   9 ++
+ 18 files changed, 262 insertions(+), 156 deletions(-)
 
-Please rewrite this so that you prepare the value and index parameters
-based on the termios settings and then do one control request. If it
-fails you can restore the old setting (if old_termios is non-NULL).
+-- 
+2.43.0
 
-And please drop the redundant __func__ from the error message (even if
-the driver still uses it in some other functions still).
-
-> +}
-> +
-
-Johan
 
