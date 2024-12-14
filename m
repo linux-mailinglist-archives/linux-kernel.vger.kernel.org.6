@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-446057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAA69F1F58
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83959F1F59
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 15:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1002E166677
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBB61667B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 14:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E866918FC79;
-	Sat, 14 Dec 2024 14:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467DC194C8B;
+	Sat, 14 Dec 2024 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPVZbAN0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHahqYS2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531B1946C
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67D8946C
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734186665; cv=none; b=HdKZwbGj8CdBw9u7XHxB7P8iEGM7DlhvEzQ5U04mXI+6iuBtMVFznJ5T0KiTbNfUjVjcTE4tgfjT5xSrtVS575Ls5KbfpVjrONcjUaCyC6oyOaNyztl69Vu9Ii+Wg67CSZOonwzSKejlUGFk1TL8sysPcIQD3JOnQ/I+/nnjFic=
+	t=1734186668; cv=none; b=qmM4XsAhNe8nAFxcqFhjPOWLhsqK+WVb6M/m+7DXDRH92xEC9MYnU2KWpiAk/swwb3yiNTQMSgJH/tg6QkNeYDR9CngMu3Nbdn19ydZV5Ac5qlhsz4N1AjYDV46uuBH+LEG/D2h2e2PyM5vt1bteqSlsFzwAIxzg9MfluTIyI54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734186665; c=relaxed/simple;
-	bh=CzrZn5L9YhOeV72hzspAP9gbjArVBFbBjsIn4pkcg1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Iad6NBxihTQLZnxb5bOSBUuQ2mL5cfkrcjMnVH7C023nI6UI/eFs68X3NovijhEqIRR9RAfgREQO79rwg0kmMvudqbxua52tbl4JWI0PmA53hGUS3p5tklJAWtZoDC7+s/ev4y/3qy5kytNcIn3UwSEg/dw2038T/3rmZtJF6y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPVZbAN0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E75C4CED1;
-	Sat, 14 Dec 2024 14:31:02 +0000 (UTC)
+	s=arc-20240116; t=1734186668; c=relaxed/simple;
+	bh=ot1bZWRhxXQjgYisV+ilgyR2+rvp4CLLEjM5WVVXLK8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ez9e19FXExJ97blAlM66MOoUiQHPaFux5nmg0SuN1MwdB0c32a2MsWHRyhuVyHzb8zliG4ZtYhfbjLkFCw5xwLuBcbJlDVmjCTDnw6cYGvWZhKPqltZTWd+jJucKxVwlmjejb/oQz8IFWA2CS4D+QkPsPDc3cy7X53EvTnYhPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHahqYS2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB33DC4CED1;
+	Sat, 14 Dec 2024 14:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734186664;
-	bh=CzrZn5L9YhOeV72hzspAP9gbjArVBFbBjsIn4pkcg1I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bPVZbAN0NOxgjlPbF6Ixw4QRuh2sv7aJXCB667zU383IGBXj7o+1WI96jJJl+ZlUV
-	 Ogpj1IXmspyPXmiCSm40rSSxvj3dyxBJF22l1st+knus7tItb7lDtopxoGCd3/1JA4
-	 OdQTZUS9Gr1XoU3F0r9zkL1InHDKSSmVAPiOP/nFXH/DLhbauibRjq8Ax7g3kKulNa
-	 Jc/isyTX7jesOIgtqVJTg8xcQr1FD3JRwWZV9e4syIUIETIR4RzX6+0akRoiVPiGAc
-	 OLr/xU+eWc8SmKjMaAhhP6e8hIA+hU+Y9ZVzQoXHTQe+SDYnDWHTimaBADpKSE6iwn
-	 2ipULs1Cb1StA==
+	s=k20201202; t=1734186668;
+	bh=ot1bZWRhxXQjgYisV+ilgyR2+rvp4CLLEjM5WVVXLK8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aHahqYS2Oeqr+QjAlTYuerJqvalUkbbATf9gwvX5b7/YF+7pBA7Ipgfrfq9ekDM7Y
+	 fxs9siyprKtBnQUuM2ZFKTcG5mv6ovcFZvcnaARFlER4gnhfNhiPdUPz6jr0RRdzQq
+	 ILWRxi/k8t+oNiJ5amk1Ge+Rgn+RxOek7xzOviyGTunPpBbl7/vdSECjK2/t4yKTEi
+	 ChFVklDmVN/+atosTjTQSiV2HhdR8wx5YK1qdsFy/DfgLLQ9vqMVTnG5jHSZLVydlz
+	 7Ao7ECMiyoFjel5liIv18Qb0OxiFMla1+ep9sYnWF/1/uSp2QoMrp+3xwXFFKsIjIU
+	 3DkspyI3IhbTQ==
 From: guoren@kernel.org
 To: guoren@kernel.org,
 	conor@kernel.org,
@@ -52,10 +53,12 @@ Cc: linux-riscv@lists.infradead.org,
 	corbet@lwn.net,
 	peterlin@andestech.com,
 	Guo Ren <guoren@linux.alibaba.com>
-Subject: [PATCH 0/2] riscv: qspinlock: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
-Date: Sat, 14 Dec 2024 09:30:37 -0500
-Message-Id: <20241214143039.4139398-1-guoren@kernel.org>
+Subject: [PATCH 1/2] riscv: Move vendor errata definitions into vendorid_list.h
+Date: Sat, 14 Dec 2024 09:30:38 -0500
+Message-Id: <20241214143039.4139398-2-guoren@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241214143039.4139398-1-guoren@kernel.org>
+References: <20241214143039.4139398-1-guoren@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,31 +69,70 @@ Content-Transfer-Encoding: 8bit
 
 From: Guo Ren <guoren@linux.alibaba.com>
 
-The early version of T-Head C9xx cores has a store merge buffer
-delay problem. The store merge buffer could improve the store queue
-performance by merging multi-store requests, but when there are not
-continued store requests, the prior single store request would be
-waiting in the store queue for a long time. That would cause
-significant problems for communication between multi-cores. This
-problem was found on sg2042 & th1520 platforms with the qspinlock
-lock torture test.
+Move vendor errata definitions into vendorid_list and make it re-useable
+for other header files.
 
-The orignal patch is from:
-https://lore.kernel.org/linux-riscv/20231225125847.2778638-5-guoren@kernel.org/
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+Signed-off-by: Guo Ren <guoren@kernel.org>
+---
+ arch/riscv/include/asm/errata_list.h   | 17 -----------------
+ arch/riscv/include/asm/vendorid_list.h | 17 +++++++++++++++++
+ 2 files changed, 17 insertions(+), 17 deletions(-)
 
-Guo Ren (2):
-  riscv: Move vendor errata definitions into vendorid_list.h
-  riscv: qspinlock: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
-
- arch/riscv/Kconfig.errata              | 19 +++++++++++++++
- arch/riscv/errata/thead/errata.c       | 20 ++++++++++++++++
- arch/riscv/include/asm/errata_list.h   | 17 -------------
- arch/riscv/include/asm/rwonce.h        | 33 ++++++++++++++++++++++++++
- arch/riscv/include/asm/vendorid_list.h | 18 ++++++++++++++
- include/asm-generic/rwonce.h           |  2 ++
- 6 files changed, 92 insertions(+), 17 deletions(-)
- create mode 100644 arch/riscv/include/asm/rwonce.h
-
+diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
+index 7c8a71a526a3..589a3ebe2ae2 100644
+--- a/arch/riscv/include/asm/errata_list.h
++++ b/arch/riscv/include/asm/errata_list.h
+@@ -11,23 +11,6 @@
+ #include <asm/hwcap.h>
+ #include <asm/vendorid_list.h>
+ 
+-#ifdef CONFIG_ERRATA_ANDES
+-#define ERRATA_ANDES_NO_IOCP 0
+-#define ERRATA_ANDES_NUMBER 1
+-#endif
+-
+-#ifdef CONFIG_ERRATA_SIFIVE
+-#define	ERRATA_SIFIVE_CIP_453 0
+-#define	ERRATA_SIFIVE_CIP_1200 1
+-#define	ERRATA_SIFIVE_NUMBER 2
+-#endif
+-
+-#ifdef CONFIG_ERRATA_THEAD
+-#define	ERRATA_THEAD_MAE 0
+-#define	ERRATA_THEAD_PMU 1
+-#define	ERRATA_THEAD_NUMBER 2
+-#endif
+-
+ #ifdef __ASSEMBLY__
+ 
+ #define ALT_INSN_FAULT(x)						\
+diff --git a/arch/riscv/include/asm/vendorid_list.h b/arch/riscv/include/asm/vendorid_list.h
+index 2f2bb0c84f9a..7a387368633a 100644
+--- a/arch/riscv/include/asm/vendorid_list.h
++++ b/arch/riscv/include/asm/vendorid_list.h
+@@ -9,4 +9,21 @@
+ #define SIFIVE_VENDOR_ID	0x489
+ #define THEAD_VENDOR_ID		0x5b7
+ 
++#ifdef CONFIG_ERRATA_ANDES
++#define ERRATA_ANDES_NO_IOCP 0
++#define ERRATA_ANDES_NUMBER 1
++#endif
++
++#ifdef CONFIG_ERRATA_SIFIVE
++#define	ERRATA_SIFIVE_CIP_453 0
++#define	ERRATA_SIFIVE_CIP_1200 1
++#define	ERRATA_SIFIVE_NUMBER 2
++#endif
++
++#ifdef CONFIG_ERRATA_THEAD
++#define	ERRATA_THEAD_MAE 0
++#define	ERRATA_THEAD_PMU 1
++#define	ERRATA_THEAD_NUMBER 2
++#endif
++
+ #endif
 -- 
 2.40.1
 
