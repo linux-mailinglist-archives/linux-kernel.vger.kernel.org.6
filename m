@@ -1,102 +1,153 @@
-Return-Path: <linux-kernel+bounces-445860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6200B9F1C7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:54:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF069F1C7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 04:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C95188CA8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4661166236
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 03:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE86383BF;
-	Sat, 14 Dec 2024 03:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/bpPLUl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76DB282F4;
+	Sat, 14 Dec 2024 03:56:30 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9D12E403;
-	Sat, 14 Dec 2024 03:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BFB17BA0
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 03:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734148472; cv=none; b=pZ/yw6xPSyUGbAdSrqjGDik/wt/azbfRo1Vcy/pMX0YuRYdlxNaAj99cJ9EubPtdM4b5+oL8yeyNMVQYauHG/G6VwNc+C8M774d5rfj9IUPqy+YukkiJECyoF2S9gR7LoIpkvbtaV8LXAERkbdLpS4kKHtf6IXg5tyAkWLuLcTk=
+	t=1734148590; cv=none; b=refZUgNC8UgtIEseR4mWbDeU2jpGKAiagS1qcjGnmmXwlL7HrhRGnAXMFDfIHzWj9EH1TjKdnwGqVYsDImdn9BrQXH3W7NQiADK6VIUGzKJPu3LoXlGdLl22ZaG/oI8edNSTSvp0HB+xkaisngHeEN+G2sioFu3bpxJN/02uaso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734148472; c=relaxed/simple;
-	bh=pkMggiR4I9xyqrzBwGdVtJ5InOhQ3pMI9hdzFsc3fVs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mIBm2BG7Z6TmCY9aNErzhqeR1Dehmw3ACjI2+6fIgcTr1KFQaaQFvTKF+XvkTDdHB39djF50DA8EBQfZUPY7I18ozO3yiZ8umtN1QpWpGUeX0OU7YZTKh5+FHvH/VLct9/ui6EafoX5MBpzZ7fUs0oJH+LtTiDavxi5lLDQRKIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/bpPLUl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20DFC4CED1;
-	Sat, 14 Dec 2024 03:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734148471;
-	bh=pkMggiR4I9xyqrzBwGdVtJ5InOhQ3pMI9hdzFsc3fVs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=o/bpPLUloyN5mPTJXnop1A3x//2oqdw3fGfEh0BauhlMkMaZS5g/7pkB8qAIjnLue
-	 U5mUipwzsWZqHd+3f0NCnyd8qmFEIpRE3UVtmDoXpyFykLsNvu4qoK16Eq/q7IMOSo
-	 ghF31vgDN2dbxibVIBzqjwYF2rOmPNftnHywNiYdAiX3UoLArScxoqRNHCLIy1KjiU
-	 Q6K1FR9zJoLXQmqWL3UjHgpnqR4sam8b/x76yTh5gMUYmvrtMfM1T+dVIaK6t+UAr9
-	 WEper+Rc7axBvadIYXcGXRN+53AsIRpSMO5dGOogYHbu7zJsHURNMOWPu9x3hoXSGq
-	 rqudibqoDXEmQ==
+	s=arc-20240116; t=1734148590; c=relaxed/simple;
+	bh=9bXlRvDRCP4i2xCKds9ODP9/fRkfDHOs2UMer8LkqjI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WibZ/3YkT8gccxAeGrK//vqz0/K5H79xxJtQ1cdSXLoUo4Pgt4+WwS2+Eb1/BTCpNjVY9buw32lxX3FQkpM4SGPOnD6VK4ASRfD9veoAVazCLja9Aj7nDSXOiDuIxp0e73DRBBa99IsPPDLqzNMPsNsId0ks1XGX3opK24yGvHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a814c7d58eso22377675ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:56:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734148585; x=1734753385;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AP2AJfwK5g5z8pqFOpkvkB3dn0tXpBdm+8FdXH8XQMY=;
+        b=IhA/EKJijzN68j5adznPQ+LU58nxP/TMxt3Dog5RQ/T+AAFgFvU2mxIzLRA32sLzBG
+         jsJkULusBiK6vccwcqwx9b7il8onNp8zqvAKZuO2MYjZwyXqvl6UJSK1jUSMLlGqB4ON
+         Y7tRV7mNd6k9OF+yXDorzuynM958kW3F6d2otMr1wVjRW+aR7JglPmSTXOLSR8gfOQ4h
+         XYlmmMkQ2E1yeSyRyfW2ua95DfGOATH8mVGL/HlTWvrA+yioJVz8zqhCtjQ83io3LQna
+         /y1q8LnqTshyEuqBmfb+3vsf3cI0lNLoixipP2ArNR/DK4uJNWHMzPKW60n1bTcKHZuY
+         5SkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9DvNIzif8i/WDiKkmb5M4q/zVNnxzQduHloD4kczL79Uw5R06s/wiCGVfpadpZqslDl6keL4zXbv3V+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+FE2fnGCg5E4Pzu5yPh69fly/z0dqo6N3mG6/jaj87nxGCQai
+	Uu9FHT1UrRv16MHonr/3KWDC315iouOxMofT9Sviu+InFjMmoKhEqDeQdjrt74Yk7SXEeOCujs4
+	EhcZtGfl85zHIpwaEo/ychayenRdneGOUJPQ4YkvYThtrbjCQjcwYYk4=
+X-Google-Smtp-Source: AGHT+IFxn5+Veh5mxNqdDVnalMSvoRmu0z2zrhWPndzEOWAtfaOJI5BRcdvMMKQ0rGXuW4mO/jPkSkP1lJPWMCrfeyElItFL2Lu1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Dec 2024 05:54:26 +0200
-Message-Id: <D6B4BRNN9S4U.IJ3IU91D6YRB@kernel.org>
-Cc: =?utf-8?q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>, "Jason Gunthorpe"
- <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>, "Ard Biesheuvel"
- <ardb@kernel.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-Subject: Re: TPM/EFI issue [Was: Linux 6.12]
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Jiri Slaby"
- <jirislaby@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com> <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org> <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org> <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org> <D65GMNDAP2VG.1OM0JQG5Q934M@kernel.org> <D676OAD5YQU7.26INY71381WIO@kernel.org> <b33007e9-c468-4395-8eac-8e0f9860562a@kernel.org> <878beebf9064abb7911c015d894192077f17ef0b.camel@HansenPartnership.com>
-In-Reply-To: <878beebf9064abb7911c015d894192077f17ef0b.camel@HansenPartnership.com>
+MIME-Version: 1.0
+X-Received: by 2002:a92:c569:0:b0:3a7:172f:1299 with SMTP id
+ e9e14a558f8ab-3aff794e4a0mr66293965ab.12.1734148585282; Fri, 13 Dec 2024
+ 19:56:25 -0800 (PST)
+Date: Fri, 13 Dec 2024 19:56:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675d01e9.050a0220.37aaf.00be.GAE@google.com>
+Subject: [syzbot] [mm?] WARNING in lock_list_lru_of_memcg
+From: syzbot <syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue Dec 10, 2024 at 3:04 PM EET, James Bottomley wrote:
-> On Tue, 2024-12-10 at 07:13 +0100, Jiri Slaby wrote:
-> [...]
-> > Perhaps, you can give a hint why those happen exclusively with 6.12+?
->
-> For which one: the ramdisk size not being modulo 4 or the unseal
-> getting a PCR changed error?  For the former I don't have much of an
-> idea, it would seem to be a dracut (or whatever initrd builder you use)
-> issue; the kernel doesn't care about the ramdisk size.  For the latter,
-> I would suspect something is delaying IMA measurements such that
-> they're still going on when you're trying to unseal.  The error you're
-> getting occurs if any PCR changes, not just the ones the policy is
-> locked to (thanks TCG).  We have had syzbot reports of processes
-> getting stuck in measurement that have been identified as exfat
-> related:
->
-> https://syzkaller.appspot.com/bug?extid=3D1de5a37cb85a2d536330
->
-> But it could be a more generic filesystem issue that measurement is
-> slowing but not enough to trigger the stuck process warning.
->
-> In particular systemd parallelizes a lot of stuff, so if it's doing
-> something that causes IMA measurement in parallel with the unseal and
-> this parallel process finished before unseal on an earlier kernel, that
-> would explain it.  You could probably verify this by adding more
-> dependencies to the tpm target, but I'm not really well versed in
-> systemd.
+Hello,
 
-Yeah, I agree. This is too much looking for needle from the haystack.
-A bit more evidence for kernel issue is needed than just kernel version
-change in order to make progress.
+syzbot found the following issue on:
 
-> Regards,
->
-> James
+HEAD commit:    7cb1b4663150 Merge tag 'locking_urgent_for_v6.13_rc3' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e96b30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
+dashboard link: https://syzkaller.appspot.com/bug?extid=38a0cbd267eff2d286ff
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-BR, Jarkko
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7cb1b466.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/13e083329dab/vmlinux-7cb1b466.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fe3847d08513/bzImage-7cb1b466.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+38a0cbd267eff2d286ff@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 80 at mm/list_lru.c:97 lock_list_lru_of_memcg+0x395/0x4e0 mm/list_lru.c:97
+Modules linked in:
+CPU: 0 UID: 0 PID: 80 Comm: kswapd0 Not tainted 6.13.0-rc2-syzkaller-00018-g7cb1b4663150 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:lock_list_lru_of_memcg+0x395/0x4e0 mm/list_lru.c:97
+Code: e9 22 fe ff ff e8 9b cc b6 ff 4c 8b 7c 24 10 45 84 f6 0f 84 40 ff ff ff e9 37 01 00 00 e8 83 cc b6 ff eb 05 e8 7c cc b6 ff 90 <0f> 0b 90 eb 97 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 7a fd ff ff 48
+RSP: 0018:ffffc9000105e798 EFLAGS: 00010093
+RAX: ffffffff81e891c4 RBX: 0000000000000000 RCX: ffff88801f53a440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff888042e70054 R08: ffffffff81e89156 R09: 1ffffffff2032cae
+R10: dffffc0000000000 R11: fffffbfff2032caf R12: ffffffff81e88e5e
+R13: ffffffff9a3feb20 R14: 0000000000000000 R15: ffff888042e70000
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020161000 CR3: 0000000032d12000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ list_lru_add+0x59/0x270 mm/list_lru.c:164
+ list_lru_add_obj+0x17b/0x250 mm/list_lru.c:187
+ workingset_update_node+0x1af/0x230 mm/workingset.c:634
+ xas_update lib/xarray.c:355 [inline]
+ update_node lib/xarray.c:758 [inline]
+ xas_store+0xb8f/0x1890 lib/xarray.c:845
+ page_cache_delete mm/filemap.c:149 [inline]
+ __filemap_remove_folio+0x4e9/0x670 mm/filemap.c:232
+ __remove_mapping+0x86f/0xad0 mm/vmscan.c:791
+ shrink_folio_list+0x30a6/0x5ca0 mm/vmscan.c:1467
+ evict_folios+0x3c86/0x5800 mm/vmscan.c:4593
+ try_to_shrink_lruvec+0x9a6/0xc70 mm/vmscan.c:4789
+ shrink_one+0x3b9/0x850 mm/vmscan.c:4834
+ shrink_many mm/vmscan.c:4897 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+ shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+ kswapd_shrink_node mm/vmscan.c:6785 [inline]
+ balance_pgdat mm/vmscan.c:6977 [inline]
+ kswapd+0x1ca9/0x36f0 mm/vmscan.c:7246
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
