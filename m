@@ -1,107 +1,76 @@
-Return-Path: <linux-kernel+bounces-446211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684DF9F212A
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:11:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7969F212B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3A2166B59
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF80B1887934
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 22:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E681B21B3;
-	Sat, 14 Dec 2024 22:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FPP5zK8V"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D871B2196;
+	Sat, 14 Dec 2024 22:16:33 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664ED101DE;
-	Sat, 14 Dec 2024 22:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E919CC0A
+	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734214278; cv=none; b=J7q1TCEOC/o8MG9Rg+IHAoj9sndY1yhO8YYSyysOudDlvBPi/b7NFlPlpmskZF/9Su+ebM1o0uVbjGm1LH6JQJvUd1MVJjMQ09VaIKLDrk2nw4s4ircygAvulGalFOL0LClKj8VUYI+MYtbrFsHzXix57Kcj0A4Po8UC57kdVkY=
+	t=1734214593; cv=none; b=QFjGJm1WfyY5Q4PvOe8qOuM859jicSF8ciMBZF7uJHJhaUIYkLzFVz/YPuG49poAb1ueh9a3IbhtD3AKDxZ3Hv+jAHLQqXgg0IwB9EAOkP4RtCvUv4T39XiMFPi92rf9CXkAU9AkeEUSnSm+BGmSQrFs3///wedKOI0ak2YgTxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734214278; c=relaxed/simple;
-	bh=vS/mC/PG7Z7XwpQ+xnC0D9bGPQsCkaleBv56apyy5vE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WO/hBhThaWBmhrteYDcVxeJDpSfuM80ivC0dlSEljkFUvit5cW7tSBFq1+pBvVbaf0Vbveoa1/YqnxMl7BFrgV5zJJYCbYQg+zeWkEy2D0FNfVHTM4YeKJr3uo9+7W12eSZk3JWrSjHTzxy/0M8T2+RKxwjJSRzF0H9OG0ZL+z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FPP5zK8V; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Qo9DRUyKRrqtLyRuNXYM99TkYAh0n7GpnTKVcYgBdPE=; b=FPP5zK8ViSCb+8pbD6ArAAmyiH
-	5tbsuw6oSYj65D4t5veoY7adMhxKFB+WgfTWDVJO6RSojy1lEUw9xUz8L8QRlbtz5dnQSi5XxMcdt
-	6Ff8bEnof3eNQ9CAbrH+Yb0z23MJSpEmAMZe4iU6on3G7ZyYYSTWWEcP5qzywn7bC/HXl2oduQes/
-	RqBpxyXKcYfPIe3zo1ZYsTnleFm0OLJfvW7SzyxVyFsRaKN4mrB7K3332MojFURnVQ4FVivEMLjjR
-	OEvWiSHUz4gM4MSrYfTBe+OWUyE0rlNy/yBYHKTJYbdUJEu38qV2Sfqjgz8BdUoHPhaN36eG3EKuj
-	/1Tq73AQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tMaLs-00000005RuX-0hl1;
-	Sat, 14 Dec 2024 22:11:08 +0000
-Date: Sat, 14 Dec 2024 22:11:07 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Arnd Bergmann <arnd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
-	linux-rt-devel@lists.linux.dev, Ard Biesheuvel <ardb@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH 2/4] ARM: Disable HIGHPTE on PREEMPT_RT kernels
-Message-ID: <Z14Ce7cziCn5Fluq@casper.infradead.org>
-References: <20241210160556.2341497-1-arnd@kernel.org>
- <20241210160556.2341497-3-arnd@kernel.org>
- <CACRpkdZaoD2vqbCi1AFUa6mF2_=c3Nu4R0CvxFAep0VMgtMtOQ@mail.gmail.com>
- <20241211152257.Igx3aT2Y@linutronix.de>
- <CACRpkdbYU=Txm0zUWDWvNXA0JHRNGpy1ccy0zQdiBb2Ya+UBFA@mail.gmail.com>
- <Z1v6XcaSK97Sa9Tz@shell.armlinux.org.uk>
+	s=arc-20240116; t=1734214593; c=relaxed/simple;
+	bh=jmOfGx8i6WqW/9e9eV0esQhvVw6dNrC2SZ1/lyEA2QA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MGb6wksaDXdxVhoJpmhGdBfvRT9Nj+L6TKp5I76PrvVCvFFKSRl9/5DrpSZd/YFryBtfdu6/CEG62U1N1V8a/ihK9/JrB0WSO+668mna72ze8zWoJpkXax7A+UiGMWIUgHtmFyWywXzlhonZ9wAyHefvzSAWrqRk2yqqsUDoF7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-844e5cf7b42so209700839f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 14:16:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734214590; x=1734819390;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bicnoxgy/OVG1OfhR8q3/VJAcXZClP4+JgLbGeU2LYg=;
+        b=wfWtC9YxJ7dU5Kx4LWy+kcVheBvvtEKKnDp3mAMlrgK5KNgtYECNIcXKm+kEGngxNV
+         9phc7pcPqxrvy4moarO6t3aydU68acXFFJEt1dCmU5lcP/0iqkDwLfa2Sk+Bvcvf9bBN
+         5UW5eS6WbJVdRfoEVgPJfmWC1EgsUlzolj4jwa+yMyakeUCLCq/4XiqxdBOaqP5COk4i
+         3kwrRZP6tUkSMIcxnW+5SDYZ3PjKAfE18GaMbEpZOp0YrCGLN25E/ZGa/X/5+Gd1Lg2L
+         mOnmcwDHEf4x0ySjOuNqYsdv6K3485VVxv+dZmucncpBL4zztfR4VWFpZ6BD0RcpWrmZ
+         jzjw==
+X-Gm-Message-State: AOJu0YxSz8SOoUOWMpCFH/AabeYtzHsaF8ThAVJUD1kf7dvHTmD/rKH6
+	5hBlcrGFkp+VKM45a04iO2zm4Al4i2qDEgaMypFgK8tLPPqTTWgN8GBj23DHStQMfuI//09g5Xs
+	8jrDYPKjCDBG09PeOn3679sxiV3cm2L6LHRpdEUQNgoeveT5Ha93kJQE=
+X-Google-Smtp-Source: AGHT+IExdpHTTQgbpsWZ2SggNuCAvpoxCCIhAH4lOu0LWXVsVnx7P5JN195KzUUE+G7qb6LGidpYeX9rTOw5YX7eKwuHGllEFd0g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1v6XcaSK97Sa9Tz@shell.armlinux.org.uk>
+X-Received: by 2002:a05:6e02:198d:b0:3a7:cf61:ded7 with SMTP id
+ e9e14a558f8ab-3b02e0383f4mr69089145ab.10.1734214590647; Sat, 14 Dec 2024
+ 14:16:30 -0800 (PST)
+Date: Sat, 14 Dec 2024 14:16:30 -0800
+In-Reply-To: <67409854.050a0220.363a1b.013f.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675e03be.050a0220.37aaf.00db.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 13, 2024 at 09:11:57AM +0000, Russell King (Oracle) wrote:
-> On Fri, Dec 13, 2024 at 01:27:00AM +0100, Linus Walleij wrote:
-> > On Wed, Dec 11, 2024 at 4:22 PM Sebastian Andrzej Siewior
-> > <bigeasy@linutronix.de> wrote:
-> > > On 2024-12-11 14:29:29 [+0100], Linus Walleij wrote:
-> > > > So fast GUP is supposed to be lockless, and should just not
-> > > > have this problem. So it can't be addressing gup_fast_pgd_range()
-> > > > right?
-> > > …
-> > > > I'm more asking if HIGHPTE even acquires a spinlock anymore
-> > > > as it is supposed to be "fast"/lockless. If it does, it is clearly violating
-> > > > the "fast" promise of the fast GUP API and should not exist.
-> > >
-> > > This is lockless on x86. The problem is ARM's
-> > > arch_kmap_local_high_get(). This is where the lock is from.
-> > 
-> > Aha that calls down to kmap_high_get() that that issues
-> > lock_kmap_any(flags).
-> > 
-> > But is it really sound that the "fast" API does this? It feels
-> > like a violation of the whole design of the fast stuff.
-> 
-> If there's no way to do it lockless, then it has to take the lock.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Well, no, it's allowed to fail.  It could trylock and fail if it can't
-get the lock.
+***
+
+Subject: 
+Author: mazin@getstate.dev
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
