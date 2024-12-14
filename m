@@ -1,149 +1,166 @@
-Return-Path: <linux-kernel+bounces-445895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BCDE9F1D34
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:02:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE83A9F1D4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 09:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6727C1886904
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA35188760D
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 08:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8341420A8;
-	Sat, 14 Dec 2024 08:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603B190462;
+	Sat, 14 Dec 2024 08:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="UhcOTYti"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB25663C;
-	Sat, 14 Dec 2024 08:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mlt+Hdd3"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4671F13B58E;
+	Sat, 14 Dec 2024 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734163336; cv=none; b=axkNSFEZ/AI7z/W+PHjG4UAa7ChRxOHcOUX+nrOq8X6CvkvnsLnYIhxMiY/7lACwjGUAbVa6MpPMmJ2OkLim3RdIYmz7cG9pt5E0t6c6CXoSvOT2HfNIxTLv9GJ6O7nER8AKbx1UrQIWggpJRjT99D5XuurtYK2Esfw8hExL9us=
+	t=1734164171; cv=none; b=ZsdcElJRdsbkZxanxLyue0uRg/387/3YcA3+3iD6rLMD2bYh+kH++1v+i3Yyzh4B7IPQzubcic1T6OA0pOBYoGLw1fn5s1xqNOxHoQ3M+whBe0T5O9l78WHppVbPwZv9XLIRi7LNmXe4XZUOBH5qtzohX+24+KWLVHicod8n7zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734163336; c=relaxed/simple;
-	bh=DBAdSv4vyH7sryCKLaYwlyuAXZMbbANVQAi9Asbtj30=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=G+Kz/iQwK4/d5zGyqRt26fRsDQsir6lUjidkCEe4lDLPbHR5wYnRwF5Wfk5O66WNP+tzvAQhBsYyWArXQ43dvnhH9QwYjCqirEYmrB6jHLXCNYC5sM9aIfXY7sJYRqCf9k/BnkrNupMrvHvVKxaFfVI0XhBDQjFe4VBcVG9ll+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=UhcOTYti reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+	s=arc-20240116; t=1734164171; c=relaxed/simple;
+	bh=aPw2kfpTrgpCzH2xzh4ku0CeofQKKfpQVDCRFud/Hd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QR9uhayPxA7lF9erb0lKebaIcDsBFcun2R672arnW3iUfOKLW9I2aNtGSXRI1uFech2xr/L/4JZzaJnH2AN7bASv0dWlD6TuMgSxiMT/LSMzRj3x2ij7R25VljUy0YD2DhyTv3OBdHSR5dk4eyX3B+glJvKuDp6X4/TWunOWHSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mlt+Hdd3; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=0o+z+EkurJaMlImlt88yGIJCVWZD3/7Ecx82GOvn8sc=; b=U
-	hcOTYti//V3hiQTeBz4zLvGkRSf1y4kYLg7uIq2GCXuOcIBpzb2b5n0Fp3hmVD7C
-	V+dp1qA+5OakaGa7n3X512USS9NJEZTC3eoN8OnFPQQhRv+o4iuMJq7ODUTY+/vW
-	lp0/bgIt2pLkHUAeoKNY3500ARuPcU9KavuetrQBk4=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-133 (Coremail) ; Sat, 14 Dec 2024 16:01:11 +0800
- (CST)
-Date: Sat, 14 Dec 2024 16:01:11 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Detlev Casanova" <detlev.casanova@collabora.com>
-Cc: heiko@sntech.de, hjc@rock-chips.com, krzk+dt@kernel.org, 
-	s.hauer@pengutronix.de, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, derek.foreman@collabora.com, 
-	"Andy Yan" <andy.yan@rock-chips.com>, kernel@collabora.com
-Subject: Re:Re: [PATCH v5 05/18] drm/rockchip: vop2: Set AXI id for rk3588
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <13660005.uLZWGnKmhe@bootstrap>
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=iMPbR
+	BdbrgKzjYWcrnT31MnocUukSFKsUhXGUgul7OQ=; b=mlt+Hdd3WdGjE67HcJAmv
+	3+lPK1wy82FRm3fjTsTbZ/2O0nulNv4YuBTKsvn0CxXy0m+WmavQ7sUKkE43Lnpg
+	GU6S47z8L3i67AMi+MGZcxFcc9IDNkAoIK+jSc19kyIuwuB2rFitg/QT1u08Pw8x
+	Y+dLszKnzZF61QxpSN2XIw=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3vwGjPl1n3T_wAQ--.16730S2;
+	Sat, 14 Dec 2024 16:15:34 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v6 00/16] VOP Support for rk3576
+Date: Sat, 14 Dec 2024 16:15:08 +0800
+Message-ID: <20241214081529.3330243-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
 References: <20241209122943.2781431-1-andyshrk@163.com>
- <5843712.DvuYhMxLoT@bootstrap>
- <3f1eace4.75cf.193b9daf585.Coremail.andyshrk@163.com>
- <13660005.uLZWGnKmhe@bootstrap>
-X-NTES-SC: AL_Qu2YBv2dvEos5yWfZ+lSwjJi9558MKvZ7qd+qcQSetEqqTHrwRInWV1kMlnE6vk6cbg7Df61gTPSD7ezjI7u
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <56a01c0e.20d5.193c42f8f9b.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:hSgvCgD3H9xHO11n7Sg_AA--.8272W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gK1XmddMGxEvgACsl
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3vwGjPl1n3T_wAQ--.16730S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1xtF48CF43WF17Zw1DZFb_yoW5ZF4xpa
+	98CryrZrWxGFyjqrs7Jw4DCrWSqwnayay7Ww4fG3ZrJasxGF9rKr9I9F15ZrW3X3W8Za1U
+	CF4fX34UKFs0vFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZZ2fUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQu1XmddM6x80QABsA
 
-SGkgRGV0bGV2LAoKQXQgMjAyNC0xMi0xNCAwMjozNDowMywgIkRldGxldiBDYXNhbm92YSIgPGRl
-dGxldi5jYXNhbm92YUBjb2xsYWJvcmEuY29tPiB3cm90ZToKPk9uIFRodXJzZGF5LCAxMiBEZWNl
-bWJlciAyMDI0IDAyOjUyOjM0IEVTVCBBbmR5IFlhbiB3cm90ZToKPj4gSGkgRGV0bGV2LAo+PiAK
-Pj4gQXQgMjAyNC0xMi0xMSAyMzo0NTowMSwgIkRldGxldiBDYXNhbm92YSIgPGRldGxldi5jYXNh
-bm92YUBjb2xsYWJvcmEuY29tPiAKPndyb3RlOgo+PiA+T24gV2VkbmVzZGF5LCAxMSBEZWNlbWJl
-ciAyMDI0IDAxOjM0OjM0IEVTVCBBbmR5IFlhbiB3cm90ZToKPj4gPj4gSGkgRGV0bGV2LAo+PiA+
-PiAKPj4gPj4gQXQgMjAyNC0xMi0xMSAwMjo0MDoxNCwgIkRldGxldiBDYXNhbm92YSIgPGRldGxl
-di5jYXNhbm92YUBjb2xsYWJvcmEuY29tPgo+PiA+Cj4+ID53cm90ZToKPj4gPj4gPkhpIEFuZHks
-Cj4+ID4+ID4KPj4gPj4gPk9uIE1vbmRheSwgOSBEZWNlbWJlciAyMDI0IDA3OjI5OjE4IEVTVCBB
-bmR5IFlhbiB3cm90ZToKPj4gPj4gPj4gRnJvbTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2stY2hp
-cHMuY29tPgo+PiA+PiA+PiAKPj4gPj4gPj4gVGhlcmUgYXJlIHR3byBBWEkgYnVzIGluIHZvcDIs
-IHdpbmRvd3MgYXR0YWNoZWQgb24gdGhlIHNhbWUgYnVzIG11c3QKPj4gPj4gPj4gaGF2ZSBhIHVu
-aXF1ZSBjaGFubmVsIFlVViBhbmQgUkdCIGNoYW5uZWwgSUQuCj4+ID4+ID4+IAo+PiA+PiA+PiBU
-aGUgZGVmYXVsdCBJRHMgd2lsbCBjb25mbGljdCB3aXRoIGVhY2ggb3RoZXIgb24gdGhlIHJrMzU4
-OCwgc28gdGhleQo+PiA+PiA+PiBuZWVkIHRvIGJlIHJlYXNzaWduZWQuCj4+ID4+ID4+IAo+PiA+
-PiA+PiBGaXhlczogNWEwMjhlOGYwNjJmICgiZHJtL3JvY2tjaGlwOiB2b3AyOiBBZGQgc3VwcG9y
-dCBmb3IgcmszNTg4IikKPj4gPj4gPj4gU2lnbmVkLW9mZi1ieTogQW5keSBZYW4gPGFuZHkueWFu
-QHJvY2stY2hpcHMuY29tPgo+PiA+PiA+PiBUZXN0ZWQtYnk6IERlcmVrIEZvcmVtYW4gPGRlcmVr
-LmZvcmVtYW5AY29sbGFib3JhLmNvbT4KPj4gPj4gPj4gCj4+ID4+ID4+IC0tLQo+PiA+PiA+PiAK
-Pj4gPj4gPj4gQ2hhbmdlcyBpbiB2NToKPj4gPj4gPj4gLSBBZGRlZCBpbiBWNQo+PiA+PiA+PiAK
-Pj4gPj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jIHwg
-MTQgKysrKysrKysrKysKPj4gPj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hp
-cF9kcm1fdm9wMi5oIHwgIDkgKysrKysrKwo+PiA+PiA+PiAgZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL3JvY2tjaGlwX3ZvcDJfcmVnLmMgfCAyNgo+PiA+PiA+PiAgKysrKysrKysrKysrKysrKysr
-Ky0KPj4gPj4gPj4gIDMgZmlsZXMgY2hhbmdlZCwgNDggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
-bigtKQo+PiA+PiA+PiAKPj4gPj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2Nr
-Y2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jCj4+ID4+ID4+IGIvZHJpdmVycy9ncHUvZHJtL3JvY2tj
-aGlwL3JvY2tjaGlwX2RybV92b3AyLmMgaW5kZXgKPj4gPj4gPj4gZGM0ZWRkNjViYzllLi44Yjlj
-YTA0NmVlZWIgMTAwNjQ0Cj4+ID4+ID4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
-b2NrY2hpcF9kcm1fdm9wMi5jCj4+ID4+ID4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hp
-cC9yb2NrY2hpcF9kcm1fdm9wMi5jCj4+ID4+ID4+IEBAIC0xNDI2LDYgKzE0MjYsMTIgQEAgc3Rh
-dGljIHZvaWQgdm9wMl9wbGFuZV9hdG9taWNfdXBkYXRlKHN0cnVjdAo+PiA+PiA+PiBkcm1fcGxh
-bmUgKnBsYW5lLCAmZmItPmZvcm1hdC0+Zm9ybWF0LAo+PiA+PiA+PiAKPj4gPj4gPj4gIAkJYWZi
-Y19lbiA/ICJBRkJDIiA6ICIiLCAmeXJnYl9tc3QpOwo+PiA+PiA+PiAKPj4gPj4gPj4gKwlpZiAo
-dm9wMi0+ZGF0YS0+c29jX2lkID4gMzU2OCkgewo+PiA+PiA+Cj4+ID4+ID5TaG91bGRuJ3QgdGhp
-cyBiZSBkb25lIG9ubHkgZm9yIHJrMzU4OCwgYXMgc3BlY2lmaWVkIGluIHRoZSBjb21tZW50cwo+
-PiA+PiA+YmVsb3cKPj4gPj4gPj8gVGhlIHRlc3Qgd2UgZGlkIGJlZm9yZSBzaG93ZWQgdGhhdCBp
-dCBpcyBmYWlsaW5nIG9uIHJrMzU3NiBhbmQgMzU3NiBpcwo+PiA+PiA+Pgo+PiA+PiA+MzU4OC4K
-Pj4gPj4gCj4+ID4+IEkgdGhpbmsgdGhpcyBpcyBiZWNhdXNlIHlvdSB0ZXN0ZWQgYmVmb3JlIHdp
-dGggdGhlIHBhdGNoIEkgZ2F2ZSBEZXJlawo+PiA+PiB3aXRob3V0IGF4aSBpZCBhc3NpZ25lZCBm
-b3IgcmszNTc2Lgo+PiA+PiBJIGFzc2lnbmVkIGF4aSBpZCBmb3IgcmszNTc2IGluIHRoaXMgdmVy
-c2lvbiAxOC8xOO+8iFRoZSBuZXcgSUQgYXNzaWdubWVudAo+PiA+PiBjYW4gYWRhcHQgdG8gbW9y
-ZSBhcHBsaWNhdGlvbiBzY2VuYXJpb3Mu77yJLCBjYW4geW91IHRlc3QgaXQgd2l0aCB0aGUKPj4g
-Pj4gd2hvbGUgVjUgdmVyc2lvbiBhZ2Fpbj8KPj4gPgo+PiA+WWVzLCBJIHdpbGwgZG8gdGhhdC4g
-QnV0IHBhdGNoIDE4IG1lbnRpb25zOgo+PiA+KyAgICAgICAvKiBSZWFkIG9ubHkgYml0IG9uIHJr
-MzU3NiovCj4+ID4rICAgICAgIFtWT1AyX1dJTl9BWElfQlVTX0lEXSA9IFJFR19GSUVMRChSSzM1
-NjhfQ0xVU1RFUl9DVFJMLCAxMywgMTMpLAo+PiA+Cj4+ID5BbmQgdGhlIGJpdCBpcyBiZWluZyB3
-cml0dGVuIGhlcmUuIElmIGl0IGlzIGluZGVlZCB3cml0YWJsZSwgdGhlbiBJIHdvdWxkCj4+ID5k
-cm9wIHRoYXQgY29tbWVudC4KPj4gCj4+IFRoZSBBWElfQlVTX0lEIGZvciB0d28gQ2x1c3RlciB3
-aW5kb3dzIG9uIFJLMzU3NiBhcmUgZml4ZWQgYnkgaGFyZHdhcmUsIHRoYXQKPj4gbWVhbnMgd2hl
-dGhlciB3ZSB3cml0ZSBpdCBvciBub3QsIGl0IHdvbid0IGNoYW5nZSBhbnl0aGluZy4KPj4gQnV0
-IHRoZSBBWElfQlVTX0lEIGZvciBFc21hcnQgd2luZG93cyBvbiByazM1NzYgYW5kICBBWElfWVJH
-Qi9VVl9SX0lEIGZvcgo+PiBhbGwgY2x1c3Rlci9lc21hcnQgd2luZG93cyBvbiByazM1NzYgYXJl
-IHdyaXRlYWJsZS4KPj4gSSB0aGluayB3ZSBkaXJlY3RseSB3cml0ZSBpdCBoZXJlIGFzIHRoZSBj
-dXJyZW50IGNvZGUgY2FuIG1ha2UgdGhpbmdzIGVhc3kuCj4KPkkgc2VlLCBzYXlpbmcgaXQgaXMg
-cmVhZCBvbmx5IG1heSBiZSBhIGJpdCBjb25mdXNpbmcgdGhlbiwgYnV0IGl0IG1ha2VzIHNlbnNl
-LiAKPllvdSBjb3VsZCBiZSBtb3JlIHNwZWNpZmljIGFkZGluZyB0aGF0IHdyaXRpbmcgaGFzIG5v
-IGVmZmVjdC4KCk9rYXksICBJIHdpbGwgYWRkIG1vcmUgc3BlY2lmaWMgZXhwbGFuYXRpb24gaW4g
-djYKCj4KPkFueXdheSwgSSB0ZXN0ZWQgdGhpcyBhbmQgaXQgd29ya3MgYXMgZXhwZWN0ZWQ6Cj4K
-PlRlc3RlZC1ieTogRGV0bGV2IENhc2Fub3ZhIDxkZXRsZXYuY2FzYW5vdmFAY29sbGFib3JhLmNv
-bT4KPgo+UmVnYXJkcywKPkRldGxldi4KPgo+PiA+PiA+SSBzdWdnZXN0Cj4+ID4+ID4KPj4gPj4g
-PglpZiAodm9wMi0+ZGF0YS0+c29jX2lkID09IDM1ODgpIHsKPj4gPj4gPgo+PiA+PiA+UmVnYXJk
-cywKPj4gPj4gPkRldGxldgo+PiA+PiA+Cj4+ID4+ID4+ICsJCXZvcDJfd2luX3dyaXRlKHdpbiwg
-Vk9QMl9XSU5fQVhJX0JVU19JRCwgd2luLT5kYXRhLQo+PiA+PiA+Pgo+PiA+PiA+PmF4aV9idXNf
-aWQpOwo+PiA+PiA+Pgo+PiA+PiA+PiArCQl2b3AyX3dpbl93cml0ZSh3aW4sIFZPUDJfV0lOX0FY
-SV9ZUkdCX1JfSUQsIHdpbi0+ZGF0YS0KPj4gPj4gPj4KPj4gPj4gPj5heGlfeXJnYl9yX2lkKTsK
-Pj4gPj4gPj4KPj4gPj4gPj4gKwkJdm9wMl93aW5fd3JpdGUod2luLCBWT1AyX1dJTl9BWElfVVZf
-Ul9JRCwgd2luLT5kYXRhLQo+PiA+PiA+Pgo+PiA+PiA+PmF4aV91dl9yX2lkKTsKPj4gPj4gPj4K
-Pj4gPj4gPj4gKwl9Cj4+ID4+ID4+ICsKPj4gPj4gPj4gCj4+ID4+ID4+ICAJaWYgKHZvcDJfY2x1
-c3Rlcl93aW5kb3cod2luKSkKPj4gPj4gPj4gIAkKPj4gPj4gPj4gIAkJdm9wMl93aW5fd3JpdGUo
-d2luLCBWT1AyX1dJTl9BRkJDX0hBTEZfQkxPQ0tfRU4sCj4+ID4+ID4KPj4gPj4gPmhhbGZfYmxv
-Y2tfZW4pOwo+PiA+Cj4+ID5EZXRsZXYuCj4+ID4KPj4gPgo+PiA+Cj4+ID5fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiA+TGludXgtcm9ja2NoaXAgbWFp
-bGluZyBsaXN0Cj4+ID5MaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRlYWQub3JnCj4+ID5odHRw
-Oi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCj4K
-Pgo+Cj4K
+From: Andy Yan <andy.yan@rock-chips.com>
+
+
+Thanks for the basic work from Collabora, I can bringup a HDMI
+display out on rk3576.
+
+PATCH 1 is a carryover from the working when add support for
+    rk3588[0], is very usefull when some people want me
+    help debug some issue online, so I really hope it can
+    be merged at this round.
+PATCH 2~8 are bugfix of rk3588 alpha blending which report and
+    test by Derek
+PATCH 9~13 are preparations for rk3576 support
+PATCH 17~18 are real support for rk376
+
+I test it with a 1080P/4K HDMI output with modetest and weston
+output.
+
+If there are some one want to have a try, I have a tree based on
+Linux 6.13-rc2 here[1]
+
+[0]https://patchwork.kernel.org/project/linux-rockchip/cover/20231211115547.1784587-1-andyshrk@163.com/
+[1]https://github.com/andyshrk/linux/tree/rk3576-vop2-upstream-v5
+
+Changes in v6:
+- Remove unnecessary blank line.
+- Limit line length not exceeds 100
+- Move the linear check to format_mod_supported() hook
+- Move 32 bpp check to format_mod_supported() hook
+- Add a blank line after hardware version check code
+-  More specific explanation about the AXI_BUS_ID register bit of
+   cluster window.
+- Collect Tested-by
+
+Changes in v5:
+- Added in V5
+- Added in V5
+- Added in V5
+- Add axi id configuration
+- Remove the non-existent CBCR scale register.
+
+Changes in v4:
+- Typo fix: selet->select
+
+Changes in v3:
+- Split it from 10/15, as it fix a exiting compile warning.
+- Add comments for why we should treat rk3566 with special care.
+- Add hardware version check
+- Add comments for why we should treat rk3566 with special care.
+- ordered by soc name
+- Add description for newly added interrupt
+- Share the alpha setup function with rk3568
+- recoder the code block by soc
+
+Changes in v2:
+- split it from main patch add support for rk3576
+- Add platform specific callback
+- Introduce vop hardware version
+- Add dt bindings
+- Add platform specific callback
+
+Andy Yan (15):
+  drm/rockchip: vop2: Add debugfs support
+  drm/rockchip: vop2: Fix the windows switch between different layers
+  drm/rockchip: vop2: Set AXI id for rk3588
+  drm/rockchip: vop2: Setup delay cycle for Esmart2/3
+  drm/rockchip: vop2: Check linear format for Cluster windows on
+    rk3566/8
+  drm/rockchip: vop2: Add check for 32 bpp format for rk3588
+  drm/rockchip: vop2: Support 32x8 superblock afbc
+  drm/rockchip: vop2: Add platform specific callback
+  drm/rockchip: vop2: Support for different layer select configuration
+    between VPs
+  drm/rockchip: vop2: Introduce vop hardware version
+  drm/rockchip: vop2: Register the primary plane and overlay plane
+    separately
+  drm/rockchip: vop2: Set plane possible crtcs by possible vp mask
+  drm/rockchip: vop2: Add uv swap for cluster window
+  dt-bindings: display: vop2: Add rk3576 support
+  drm/rockchip: vop2: Add support for rk3576
+
+Min-Hua Chen (1):
+  drm/rockchip: vop2: include rockchip_drm_drv.h
+
+ .../display/rockchip/rockchip-vop2.yaml       |   13 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 1638 ++++----------
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h  |  292 ++-
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c  | 2014 ++++++++++++++++-
+ 4 files changed, 2793 insertions(+), 1164 deletions(-)
+
+-- 
+2.34.1
+
 
