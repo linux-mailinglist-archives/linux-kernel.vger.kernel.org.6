@@ -1,59 +1,66 @@
-Return-Path: <linux-kernel+bounces-445780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFE59F1B82
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:52:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1DC9F1B83
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:52:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8DB7A03CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2D1188EC2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5886101F2;
-	Sat, 14 Dec 2024 00:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA04D515;
+	Sat, 14 Dec 2024 00:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7WVQ5xl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIlzleAT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE18DF49;
-	Sat, 14 Dec 2024 00:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693EE17543;
+	Sat, 14 Dec 2024 00:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734137546; cv=none; b=biyMFxEWMewnzyAkPwAA2YroyIXucLCX1b1PzxCOi0VLvQxR78e5IFLBjYXnzYUh+ObZFJMRS4fgTNJVXJPfD8D2CG6NOG/Mp3nCaoqSClAs6R8HEnhz5IsxJ8p0zABXdH61Cok/3wXUI8LD9GcTzaDj1IjpsqD7TtHPuLNlbqg=
+	t=1734137556; cv=none; b=s8iqxkSoOcTv5ulUcto9CQ2aoYXzRzkJv+tBLG/uodgFxBg2yVIeo3Ona1MnoivGNRZl8hrYsJ7YHuPPgOLH7fUWhqcfWNa7Z1viLDPq4mkZR3TZSvWMUkHjx7IazpMnVANHIyxB4iIVsr6zvKXAc8RnbeMMSoVH9pqpVnlzQMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734137546; c=relaxed/simple;
-	bh=+W4g2GLr3RRiyQamv62PIQrgXrlaNPxv9TTQuxY8cNE=;
+	s=arc-20240116; t=1734137556; c=relaxed/simple;
+	bh=KZ7SjeiKFlvvHyLFimY9QiRSfaYZW3YrSUMEZoOpL9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCP+zK1McJfMKniQpAD8iIQTkJvoyLY3U0WZ48nHNo7Yu52KfMgs2es8dbSKrL3Kr4dC9rk0gD8Fk1uMBE7sLuCT89eodnM6kpnte9ITfYNbJvgBM51/R5W115coyvN1zQjIllHp51m4AqqvoOXnqCzBsFhiT3eQwwlTLJQIgEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7WVQ5xl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A63CC4CED0;
-	Sat, 14 Dec 2024 00:52:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/nuPfrBud0vSzExYZ3lVefwQcokNYWAc/LURsMfN5EeEUj9v6MHHV6G94uyXtFEwZdy78BpqXWVflYx6L7Y2G25z1/FW0qI6LufXhkLXYmHsCVEF8iYX74MLk02ntB9sSySRTNkHZLWnwZ43YGkDReJxT2RvtwHsMd2AT8/1ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIlzleAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47784C4CED0;
+	Sat, 14 Dec 2024 00:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734137545;
-	bh=+W4g2GLr3RRiyQamv62PIQrgXrlaNPxv9TTQuxY8cNE=;
+	s=k20201202; t=1734137556;
+	bh=KZ7SjeiKFlvvHyLFimY9QiRSfaYZW3YrSUMEZoOpL9c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o7WVQ5xlFplBESsEZw2EVTOURhz6zWrDUEOuEszXi8TTg0+XA8sag13DVQbHUBn8u
-	 5mlA120CZQM95CS2nzTszpgMmlj41h3XjNXkN1QSz0RU5oBv30YClwX90q6G254sQE
-	 ZShq5XbWkWD7V4+Tj8A4WYCz3vF5S1NS2lzd+wZErdfy+IyG2SI9PkJ4V5W/x7gKPv
-	 KAuE7MC/6r/afcD+7WrJgw3FQ069Fds7r94PozNMwe2n76eXNuEf8c8Z/tLUcqHibZ
-	 xUn0wJTNDz8kTiLdX4+AAuDT2MV+Yx8rK+V6nBspptxN/onZ+lUqYppOphAaN7A0FD
-	 bH4PnrnGMfa+g==
-Date: Fri, 13 Dec 2024 16:52:23 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 2/2] kbuild: Add option to fail build on vmlinux objtool
- issues
-Message-ID: <20241214005223.f2fansikbwovm3oo@jpoimboe>
-References: <20241213-objtool-strict-v1-0-fd388f9d971f@google.com>
- <20241213-objtool-strict-v1-2-fd388f9d971f@google.com>
+	b=JIlzleAT6hqSSnm9fXV1eu5UkKH5ctTkJD5H78IHYLV9t6JLpwz693mC8/+D9xCmb
+	 seD0u0OUROACIjwBql9qjwwWQsizcAl9Q1gszbzVO52OVBmNL7jhpDApIwvzy8ORp0
+	 6RRr5JBHC0sJuOHMS9eM4zRo7fOyz1fuEXjiNObnSRZ+GEXLBtwtt4CaXtwns8Alxw
+	 vQexsUX26+F0qJ+vpQI6JAyw8TkkprM+gA8dAWcu1VG2opmUSCjFdMWxE4/IaRFl2g
+	 wvtZcB1iz3s1G1DNOyYaohq/WQkEb+xdXU+8FJOWboZDyycQ11ujZ1Kpdi18J5qFgO
+	 n2s6lnT61K3rw==
+Date: Fri, 13 Dec 2024 16:52:33 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 0/8] Various fixes around undefined behavior
+Message-ID: <Z1zW0abggo8KcYBw@google.com>
+References: <20241213210425.526512-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +69,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241213-objtool-strict-v1-2-fd388f9d971f@google.com>
+In-Reply-To: <20241213210425.526512-1-irogers@google.com>
 
-On Fri, Dec 13, 2024 at 11:31:31AM +0000, Brendan Jackman wrote:
-> NOINSTR_VALIDATION is pretty helpful for detecting bugs, I would like
-> my build to fail when those bugs arise.
+On Fri, Dec 13, 2024 at 01:04:17PM -0800, Ian Rogers wrote:
+> Fix various undefined behavior issues, improve tests to make them
+> easier to diagnose and add assertions so that problems don't recur.
 > 
-> If we wanted to we could enable this for individual warnings, it seems
-> unlikely there's a use-case for that though. So for now I've just added
-> a global setting for vmlinux.
+> Ian Rogers (8):
+>   perf disasm: Avoid undefined behavior in incrementing NULL
+>   perf test trace_btf_enum: Skip if permissions are insufficient
+>   tools headers: Update offsetof and container_of
+>   perf evsel: Avoid container_of on a NULL leader
+>   tools headers: Add non-NULL assert to container_of
+>   perf maps: Avoid UB passing NULL to bsearch
+>   perf test shell lock_contention: Extra debug diagnostics
+>   libperf event: Ensure tracing data is multiple of 8 sized
+
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
 > 
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
-
-Note that *any* objtool warning has a good change of being a major bug
-in the kernel or compiler which could result in crashing the kernel or
-breaking the livepatch consistency model.  So the option shouldn't be
-restricted to noinstr builds only.  In which case it should be called
-CONFIG_OBJTOOL_WERROR, analagous to CONFIG_WERROR.
-
-We definitely need this, though it will likely break a lot of robot
-builds, so it wouldn't be a good idea to merge it until after the
-holidays.  Though once the patches are ready I could throw it on a git
-branch to see how bad the robot breakage is.
-
--- 
-Josh
+>  tools/include/linux/kernel.h              | 16 ++++++++++------
+>  tools/lib/perf/include/perf/event.h       |  1 +
+>  tools/perf/tests/shell/lock_contention.sh |  9 +++++++--
+>  tools/perf/tests/shell/trace_btf_enum.sh  | 11 +++++++++++
+>  tools/perf/util/disasm.c                  |  7 +++++--
+>  tools/perf/util/evsel.c                   |  2 ++
+>  tools/perf/util/maps.c                    |  9 ++++++---
+>  7 files changed, 42 insertions(+), 13 deletions(-)
+> 
+> -- 
+> 2.47.1.613.gc27f4b7a9f-goog
+> 
 
