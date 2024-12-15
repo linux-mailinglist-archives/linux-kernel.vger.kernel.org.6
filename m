@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-446604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9789E9F26CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:45:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EEB9F26D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A79164872
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:45:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F1F17A1364
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C24D1CDFDE;
-	Sun, 15 Dec 2024 22:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A408C1CEAC7;
+	Sun, 15 Dec 2024 22:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lihQ5OME"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nc3SbXbf"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9F61C82E2
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9CB1CEAC9
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734302667; cv=none; b=j1hz8yxpeQk0IwYFBOipd3cTP0ph6XHHFzw48FTWEmAjKGUKqGydaGCYNMHb5W/lN/VvGHN4lIqWlcAa7WkJOCawZuXijHlYI4GVzhUt60AaYT43ELCVBxU8yvh7byoZBX6YZSpFg9RRAW/pGPn+AAXx1LHWJFmzpFeHkkJmF4w=
+	t=1734302671; cv=none; b=cH1udzKDlpcVlrC1ZdUtZvz0dK08uEuiVsY0jdUWPlEBcYtcfbRsYfBX5nPBZnGiOqa1JTyZ3Trd6q7TzClRhzECVRZ62zwzs+xntCYGjQ7xAd8azyB1pi7st7n3NeuIbgb5zt9cE89z7lUFPcrl2Df+0/3iqDdPdNlbY5XfY0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734302667; c=relaxed/simple;
-	bh=3MyLXDCoSNMrI8TDXI5uVPWdVRPsKv8qwhJVKH5nFNw=;
+	s=arc-20240116; t=1734302671; c=relaxed/simple;
+	bh=y//bbM3DWYF3HEdpfuzV0aVuaH3FmLoVHehWOxlGh/4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RSi+0V9Aa7kEQAMgR/J36MkGoM4tO1HFfCdPts0w0uoB/mYoLiEM4pL2vQINbENp4K0TPE8hIcRbZugSHw8IpEUPd6oCiZySx5AossLAhYrJyAkPsSOT9Z0Ojn2eaMZJ/G+iTOi58WkK6tcPTaqSqs+CtxjAW4Es22UA0kIR5rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lihQ5OME; arc=none smtp.client-ip=209.85.208.181
+	 In-Reply-To:To:Cc; b=QdQJUkbXGWHoU0qK6ippl9Wdk0XUZYkY6hQfbvQ9U0LEUEw32C4+lqEbkg0Mm1tNKly2/8ZdEAluZg71vTbSks6+s0aNP4LN75NI7Lg0VS6WGAT3J+IXwoJdmq3gkyvn0uqi8BlGGszxH5O2HRtn/M2ETIW/mqVnSV3+YfXXS4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nc3SbXbf; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3022484d4e4so40731761fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 14:44:24 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3035046d4bfso6752111fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 14:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734302663; x=1734907463; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734302665; x=1734907465; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XWnfiMNCi4KOmkp+j4DHxRsO+TL+A0SocC5CU/IrvPE=;
-        b=lihQ5OMEwBCzT7H422MOGtMJxUIZWNTyjRBdV1sT+TH3wMDjVVuSo0mTcvKUVPOVXN
-         PHS6lqZE/iWkRMZO+JXo37MbGyoWGi1O8pC1FxcaTf+ubZuXJY8mNcIhK9pTki3qsjz3
-         6C84xw/II8b+Xn1/5iN5wGwvW2IDCia18lZ1MKEM/hXHe7W25bKAxZ/AgYfuQ97aAlMm
-         AHwGABVo8Z/Xx9ve+Z9EHpw5Ac4+cjyg4wN8/2jfaRz0v9zCVbzRi5aGoJDDtlvUe76B
-         tpYAkIq+KilD6HRK/rrqV+cFtFfkdpudSWIfL45dpKMWavhunstKk6Re5UV5mQ6FTkfD
-         mi1A==
+        bh=s3aML7gxQK4Qe9FGAs5JaPzifxEP7lddSGDpHtcNIOE=;
+        b=Nc3SbXbfClRE7Ijhkd89WJXK3pFbqKnhQZgc/KGwb7SzXG6i3rJYwGw1W9Pu1CynI7
+         v7hGbaEY8gAhDgUi55vK15pUaxTiVe7dNR0EEGguAZyMNDRdp0QV4ZiCmJQput+9Mpqi
+         OVX/6JGxXFyRH6vha9oeCbHGCXZZfIA2ufZs4rRkWKIfdpEEVKaSuh/J40nU7YdClOPP
+         Frk7oBpGQY7lO0+DuP5BHDCdbewUnq9AeokYfmL8SZWX8w4vOCNTMI2WJPKoacYte3bl
+         nPXtaTnrJx2BjzGZOXzoftnUDdKoBqaYaYWi3TIujhweRQ/ao3cZxoErcPHktJK+4eCb
+         sb3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734302663; x=1734907463;
+        d=1e100.net; s=20230601; t=1734302665; x=1734907465;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XWnfiMNCi4KOmkp+j4DHxRsO+TL+A0SocC5CU/IrvPE=;
-        b=jSX79BqZPnCuPn78srbElvJeLHwdZw6NnHwNvBsUQLTSWIkelD8eKvWhSVfEN0i+Qd
-         SxHdMCZJzHTGjnw5vhmKE7R0sUWD4WNAxtL+LXIgwEAsL20J6YNcDLj+AqMVh3amH2zs
-         wtdcYDH8AWyZ4PaEbg5kHT7z0c6FfHLRMSUdOMwxv/buY6mH/L0RV85ykuO7vDVFAQYv
-         pt+5wWE/pRPl33RZrckxbDHgobeHq7ZqDyu+lbhhoaxVCC8EJuCaj2GSBhdgttU6gLXF
-         PVaUs3klNFHPH1TnqV8MmjZgz9mvmARqRukjymlO7FrALOiPszKAuhBsqYCIxZB29rZa
-         MT6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWreajjrkCDULVXLD0I55uVFSCgeZTVgwiCTPFQaSN1vkHQWFqxhHc9N6dRhLZOu0ixKQkKyTJiAS1HAQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJjfGSvT3hruxiCxLnZOq1gaZklkaGWQBguTqYw4OnjnlkmFOQ
-	hIHuJtLtIpMz6cajcK2wvskodWvqP1xl0FLuwI+2qfEZTfVXzpeeWzE6RV7PFQA=
-X-Gm-Gg: ASbGnctGMek1YSRKkzPw2XVcfQZqBRiPShx+TzCkVQ736e/pEfS12O1t8fSBvdxs8wX
-	RYZ9q7S6kyo8ry65wWOn+NkPUC5ddMD7NCyW5h6oAEavuDheW/c/vo/zf+5iCuoRhoED1xQCS1X
-	idNJ52ppS/Kg5SqcbAEwVeemLj/v9Oy1F4CNlf5h01DENPmX84bveCsZAUtLP+cxeMClXhmZN1r
-	Dlm13gLpEdShoNfLVLaqA5/tL6ROzaboiyp3b0zdemE9dpabsk8FDnBRmwSWgjl
-X-Google-Smtp-Source: AGHT+IHLBFoByH+x3/+UFbGTSbk4/0Y+TqebI1uovZeS9UilX2qFVz7bVp+R474fEQmn407fUfgEjg==
-X-Received: by 2002:a2e:a583:0:b0:2ff:a7c1:8c55 with SMTP id 38308e7fff4ca-302544ab007mr40923311fa.28.1734302662760;
-        Sun, 15 Dec 2024 14:44:22 -0800 (PST)
+        bh=s3aML7gxQK4Qe9FGAs5JaPzifxEP7lddSGDpHtcNIOE=;
+        b=nsMPYh4Z8WFDfJy4oBG3Nci4Y9ErYK7ua1VFfUWlJ6kOv/1KA1TMifWy1wWRCRj/sk
+         KuAXM+wY+1xTbFBUgxyzE6EmjAgHKRrSGJEFwzhjcvp8YJAx/UO93ABos8RH/yXB1vGJ
+         g1u6Q31Q2K8UpymIlsS7yj8QmXnhRvqTZ73B5qmTqRhrWLX81Xt/yhrkZRXuMpX0vmwc
+         mofTEeLx8m+SUnJkhPP+NsvxiloH00JuH7bafIc1iUcmKpJ7p0QgGoKhqS6iUg+MgBSt
+         w6bCcBH/Zch+nlxfwz3YOIki6OZT7dWrNNje7VAuXa1+EVNfIq50AxETX8GJJi+XFxT+
+         TLgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfk1aNK13tG+ewM/ZRfep2H5JQb2kH5tWLSSOuUV9NGBBQsNyzVHCKF3DxQl5MWCJN4KvezU8mePWsrNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUZqvLkgxjjIxBbQIS0YOlvh2owJxyR5xmLS+skIKlXjPyvhE7
+	O7qD689+nyYK9wXQrARWbQRCdyHhX4gCCogE7sgjRlA1tkOsnbP03ude7DNPJy8=
+X-Gm-Gg: ASbGncthOdqUzbZfTdKXPwfXghVGFafAYVHDnXcBj4fM9rYbfNLCKAQuPUTCRyDAxof
+	tY9iUHbc9ktqYgtH+7z9dE4OFw5y+bXu1rGAhZkgobwgcoQy0Wavtg9MdllOomUNrGuo/SY3HiZ
+	0kyRNpmTiihf3/yH29Pc40uKMpkq9wC/fIfCSFirWIScbSIh4UEVn7sHL9yWWK8ZzBTve+Wk6Qy
+	KgcvLWp9o8Tc1xaiyMqldVCYss3Njjzu1NMjxYuGgC0oVGitatpUt+qVupU/9zZ
+X-Google-Smtp-Source: AGHT+IHgYBQaQkAuEBIaZvjJII0xL145HHOwqROw1fcPzfz0MJlC5cSUx988XIfEN/8HldbDDvn61g==
+X-Received: by 2002:a2e:a994:0:b0:300:2524:84f2 with SMTP id 38308e7fff4ca-30254444a38mr36489511fa.2.1734302665117;
+        Sun, 15 Dec 2024 14:44:25 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a41d1sm7201701fa.100.2024.12.15.14.44.20
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a41d1sm7201701fa.100.2024.12.15.14.44.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 14:44:21 -0800 (PST)
+        Sun, 15 Dec 2024 14:44:23 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 16 Dec 2024 00:44:09 +0200
-Subject: [PATCH v4 04/16] drm/msm/dp: drop struct msm_dp_panel_in
+Date: Mon, 16 Dec 2024 00:44:10 +0200
+Subject: [PATCH v4 05/16] drm/msm/dp: stop passing panel to
+ msm_dp_audio_get()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-fd-dp-audio-fixup-v4-4-f8d1961cf22f@linaro.org>
+Message-Id: <20241216-fd-dp-audio-fixup-v4-5-f8d1961cf22f@linaro.org>
 References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
 In-Reply-To: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -94,125 +95,89 @@ Cc: Douglas Anderson <dianders@chromium.org>,
  dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3950;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2659;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=3MyLXDCoSNMrI8TDXI5uVPWdVRPsKv8qwhJVKH5nFNw=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ3p89M6Ju2veFlZ/qIvxPMR2hbNqtXHs3ikz/x1i9Fa0e
- q6SsWdxJ6MxCwMjF4OsmCKLT0HL1JhNyWEfdkythxnEygQyhYGLUwAm8qmTg2G5KktT4K9NZ6/f
- ez+tc0vT17pXKtLmhsY8d3jfn9FXEmvhbpR+/EjmywTRb/nLjN/8EIp6r2mt4Lxxg4so18/uKcW
- Xsm7eW9poKCzYcvgwo8nH+dpaOa8K5QR03I/URydns0VqOfJb+ff0LDjfZ+Hy9W954rv9GTl/05
- m33zLd/CNi5YZHG7ZFM1UJTzv+WHOxkm3+LSX5MMl9399XOtWkKPPMds2aaya8uX1rusp+B0+Z7
- i1VXPKeXAtEE36m6t/3PKSQV+uZo3T1ZGPirGXL/e8mGr7OXq5xNEouRKr+8y6XQ2pyGm39vPk2
- GcscN7G39zLsWnhKb6ngNLeJsbIMs28//sLSJ2/HyZUMAA==
+ bh=y//bbM3DWYF3HEdpfuzV0aVuaH3FmLoVHehWOxlGh/4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnX1u5kb1ZbcWlfFkv2I2FNncdtStLPvZRzeZjR
+ 7RfWc9OeMGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ19buQAKCRCLPIo+Aiko
+ 1WrjCACQCw3XmlmJHS23smdMsgQID06rTdcFDYjo83IbnI92bERW3cq/yFiAwL7CVi9r9NiKhmU
+ Cf4TQstar+Sj7PjNZ22jmKF7o2tZXN2N97ssGkzA/pK9i0PhHgY3zCXGUM+ciEUS3iq5ZQI2I73
+ 3M5U5PSShg0YSv71XpT6csm6UCXmYgIO7LoUQLYiDtrZExSEgnCXS25bQ/BJgLOSnwvBwQGOYyi
+ y8zV55Ofp1TADHr4HBdw/muO6KBejAnuFbbZKq1XJXSU03dOSS9uf/NBnURt0Wd/lpxit59ZSWf
+ Ydiq3bEssfRJaeVsFBkwJa9aaRBrCMg9kH04+bLvEupZ7iUV
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-All other submodules pass arguments directly. Drop struct
-msm_dp_panel_in that is used to wrap dp_panel's submodule args and pass
-all data to msm_dp_panel_get() directly.
+The dp_audio module doesn't make any use of the passed DP panel
+instance. Drop the argument.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Tested-by: Stephen Boyd <swboyd@chromium.org> # sc7180-trogdor
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/dp/dp_display.c |  9 +--------
- drivers/gpu/drm/msm/dp/dp_panel.c   | 15 ++++++++-------
- drivers/gpu/drm/msm/dp/dp_panel.h   | 10 ++--------
- 3 files changed, 11 insertions(+), 23 deletions(-)
+ drivers/gpu/drm/msm/dp/dp_audio.c   | 3 +--
+ drivers/gpu/drm/msm/dp/dp_audio.h   | 3 ---
+ drivers/gpu/drm/msm/dp/dp_display.c | 2 +-
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index aff51bb973ebe0835c96420d16547ebae0c6c0f2..8d428bc633a9f2165651194797b027dbe8655e06 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -722,9 +722,6 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
+index 9e402d71b9761f640f1a8733e10e09477ff675cb..a4b792624ccc444f8912eb967d722cb94f6d4087 100644
+--- a/drivers/gpu/drm/msm/dp/dp_audio.c
++++ b/drivers/gpu/drm/msm/dp/dp_audio.c
+@@ -351,14 +351,13 @@ int msm_dp_register_audio_driver(struct device *dev,
+ }
+ 
+ struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
+-			struct msm_dp_panel *panel,
+ 			struct msm_dp_catalog *catalog)
  {
  	int rc = 0;
- 	struct device *dev = &dp->msm_dp_display.pdev->dev;
--	struct msm_dp_panel_in panel_in = {
--		.dev = dev,
--	};
- 	struct phy *phy;
+ 	struct msm_dp_audio_private *audio;
+ 	struct msm_dp_audio *msm_dp_audio;
  
- 	phy = devm_phy_get(dev, "dp");
-@@ -765,11 +762,7 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
- 		goto error_link;
- 	}
- 
--	panel_in.aux = dp->aux;
--	panel_in.catalog = dp->catalog;
--	panel_in.link = dp->link;
--
--	dp->panel = msm_dp_panel_get(&panel_in);
-+	dp->panel = msm_dp_panel_get(dev, dp->aux, dp->link, dp->catalog);
- 	if (IS_ERR(dp->panel)) {
- 		rc = PTR_ERR(dp->panel);
- 		DRM_ERROR("failed to initialize panel, rc = %d\n", rc);
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-index 7d122496723a32fd591d094269397a9fdd51fe44..92415bf8aa16655a6cf4f7d6f8a5896275edf001 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.c
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-@@ -475,25 +475,26 @@ static int msm_dp_panel_parse_dt(struct msm_dp_panel *msm_dp_panel)
- 	return 0;
- }
- 
--struct msm_dp_panel *msm_dp_panel_get(struct msm_dp_panel_in *in)
-+struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux,
-+			      struct msm_dp_link *link, struct msm_dp_catalog *catalog)
- {
- 	struct msm_dp_panel_private *panel;
- 	struct msm_dp_panel *msm_dp_panel;
- 	int ret;
- 
--	if (!in->dev || !in->catalog || !in->aux || !in->link) {
-+	if (!dev || !catalog || !aux || !link) {
+-	if (!pdev || !panel || !catalog) {
++	if (!pdev || !catalog) {
  		DRM_ERROR("invalid input\n");
- 		return ERR_PTR(-EINVAL);
+ 		rc = -EINVAL;
+ 		goto error;
+diff --git a/drivers/gpu/drm/msm/dp/dp_audio.h b/drivers/gpu/drm/msm/dp/dp_audio.h
+index 1c9efaaa40e5879e54c1ed4a3d04a39a85c9402f..beea34cbab77f31b33873297dc454a9cee446240 100644
+--- a/drivers/gpu/drm/msm/dp/dp_audio.h
++++ b/drivers/gpu/drm/msm/dp/dp_audio.h
+@@ -8,7 +8,6 @@
+ 
+ #include <linux/platform_device.h>
+ 
+-#include "dp_panel.h"
+ #include "dp_catalog.h"
+ #include <sound/hdmi-codec.h>
+ 
+@@ -28,14 +27,12 @@ struct msm_dp_audio {
+  * Creates and instance of dp audio.
+  *
+  * @pdev: caller's platform device instance.
+- * @panel: an instance of msm_dp_panel module.
+  * @catalog: an instance of msm_dp_catalog module.
+  *
+  * Returns the error code in case of failure, otherwize
+  * an instance of newly created msm_dp_module.
+  */
+ struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
+-			struct msm_dp_panel *panel,
+ 			struct msm_dp_catalog *catalog);
+ 
+ /**
+diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+index 8d428bc633a9f2165651194797b027dbe8655e06..24dd37f1682bf5016bb0efbeb44489061deff060 100644
+--- a/drivers/gpu/drm/msm/dp/dp_display.c
++++ b/drivers/gpu/drm/msm/dp/dp_display.c
+@@ -780,7 +780,7 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+ 		goto error_ctrl;
  	}
  
--	panel = devm_kzalloc(in->dev, sizeof(*panel), GFP_KERNEL);
-+	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
- 	if (!panel)
- 		return ERR_PTR(-ENOMEM);
- 
--	panel->dev = in->dev;
--	panel->aux = in->aux;
--	panel->catalog = in->catalog;
--	panel->link = in->link;
-+	panel->dev = dev;
-+	panel->aux = aux;
-+	panel->catalog = catalog;
-+	panel->link = link;
- 
- 	msm_dp_panel = &panel->msm_dp_panel;
- 	msm_dp_panel->max_bw_code = DP_LINK_BW_8_1;
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
-index 47c1d349be470b60596b64a7bc8c7c39d2e8fdd1..4906f4f09f2451cfed3c1007f38b4db7dfdb1d90 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.h
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.h
-@@ -21,13 +21,6 @@ struct msm_dp_display_mode {
- 	bool out_fmt_is_yuv_420;
- };
- 
--struct msm_dp_panel_in {
--	struct device *dev;
--	struct drm_dp_aux *aux;
--	struct msm_dp_link *link;
--	struct msm_dp_catalog *catalog;
--};
--
- struct msm_dp_panel_psr {
- 	u8 version;
- 	u8 capabilities;
-@@ -91,6 +84,7 @@ static inline bool is_lane_count_valid(u32 lane_count)
- 		lane_count == 4);
- }
- 
--struct msm_dp_panel *msm_dp_panel_get(struct msm_dp_panel_in *in);
-+struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux,
-+			      struct msm_dp_link *link, struct msm_dp_catalog *catalog);
- void msm_dp_panel_put(struct msm_dp_panel *msm_dp_panel);
- #endif /* _DP_PANEL_H_ */
+-	dp->audio = msm_dp_audio_get(dp->msm_dp_display.pdev, dp->panel, dp->catalog);
++	dp->audio = msm_dp_audio_get(dp->msm_dp_display.pdev, dp->catalog);
+ 	if (IS_ERR(dp->audio)) {
+ 		rc = PTR_ERR(dp->audio);
+ 		pr_err("failed to initialize audio, rc = %d\n", rc);
 
 -- 
 2.39.5
