@@ -1,117 +1,182 @@
-Return-Path: <linux-kernel+bounces-446366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169889F237E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:41:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6119F9F2381
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63C127A1108
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3DE1885EFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0C156231;
-	Sun, 15 Dec 2024 11:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0CF16F0E8;
+	Sun, 15 Dec 2024 11:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QziLtJtc"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s45Ltqr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85111145B03;
-	Sun, 15 Dec 2024 11:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3593149E13;
+	Sun, 15 Dec 2024 11:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734262877; cv=none; b=V7ZexzVBx3wG0499GvkCtaq5HS3LIcCDNohVwpNUrDudhKrz3Db6xFKzMp+qtB8TW31Xr1BNXJkFh42mDhUUFwn5oTiVjktIdD3iJnRzimBONyKB7NHUOuHOhqA67yxa+tIoMroqFUnuE8lP8cUrRDdLacvg/G5u4XKTOV66meQ=
+	t=1734263477; cv=none; b=rOH/KvLv1WE1CzaNwecxo21Ko3ck4Bo8Aa72+FRwbUKEXtuvmFDGDb+SAZPML+c2Uh2zGX2k6+VbpOmwTzFZMst7gowwjr4UfmodNLP2Qin54q0p/7D8AsjZkoAudL1zrXlbAQPpl92qL8PVO89yPpXODcAIpK1bqaf+AE5KzNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734262877; c=relaxed/simple;
-	bh=OrT5OypUIRkSNqtZOYxKNlFeL2FtciIwtel/5pcPCSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lzONqkqFWkOu9Kp5tjlfpau2JbRj1VtlCLlImg75aKP9DU3MXYt3PkBkgmvRPRUqBZ9HKJmQm7c7zKzyHKdNFUQuYCuT4qllFjnDtr/rcjbzlnrzv/9IiZtx5RCg9q2DHHKcwZSxOiZuzG6WIuNBU+qJy5VnFLGbfskxxgoa0Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QziLtJtc; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5188311e61cso963526e0c.2;
-        Sun, 15 Dec 2024 03:41:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734262874; x=1734867674; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4WCgL15LbJ4GOpq9wna6wOMkuwKtZ/m/AB6Q4Iue9FY=;
-        b=QziLtJtcgJH8Egzyfy45Isadg4LU2ZfGlh/SA65+z11JjsFq0QKFq+XknVHFUnHxg+
-         RQht/2Cqou2jT69uUVcz9VcVqxPMuhUqZtkD80ZY5IuzFsVIVG1Lo/XcL0JmO4JRQjI/
-         UhQ8yWR4iEpmB0iMK0PHMzPSclDIe77jt9bWYplm1Qy4PuWOQrSbKuTBzWYzHs0ONATc
-         7bEh4OsXh1CkGjyU25IHpO1FKzD/tjMWbNyNFe6lARFvAy8y6uz+qRKf7srDbLzZiAqB
-         WgqONb3+lkHT3mJ8RcUnM+Ak1M5L+UxtE4BayhEC50g6+ZbXF0Ja+dIj2QTA4/Y2jyw9
-         N+oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734262874; x=1734867674;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4WCgL15LbJ4GOpq9wna6wOMkuwKtZ/m/AB6Q4Iue9FY=;
-        b=bzdSHnWFHMoqYvUaplL9MA2eL+WhAtPGttVxvw0NWVIS2atjsLhBNcpqIInhwUGr9y
-         +gVMvKFJ+o5DbepbXYlAPQAAxaeqzVqaYVItQH0sYC1Tb7DyQ7G8lgr7vneytbwTppEC
-         jh4MGLMrIP8Jmta/0nS1ND6J42z37rZrmXnaJn2LC4/NcLH7LigfazH0Rg9hktBUDdMr
-         dqnlefSaJ45K9IU5cUluQEDtuFZazBHsmDkFRvyuhR71YqDiupg/tTKoMCcjakb5Pvn+
-         1vec6Ea+j//2CZXYxP5oldWzlr8JqIAEs1vO62dir6OxOaGpxipFhA1VL2x+QcFMrcn0
-         BRaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAszaOhqmiza00cJhjNy4PDrlvLNFuws511r6DPLUYjDGOT7F7lm73rfYbD7ftbiMGebeI03NUn/GD@vger.kernel.org, AJvYcCXUJjqzS3csDLrYyDdJXuOegl0w8ws8xJhWoh9wNt3A019oKa+K3HkDbjjokpr1qgmrFcaIxMTXQ1JCTJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe8ilHpZh1Ci53jPFLs4AMraEG4/DmqQ11j94z3of23ymykp4J
-	ctHvDTjMU6VjiGiBCAog9HcHM4u/Mt4CtGMkp/pQsS+eKkiIO6qcgDQzLeOY1WOqDVnjJlUqWO7
-	G+wC0H5VcrizFbVpcIRvXsQQpfWPuS0Md6f0=
-X-Gm-Gg: ASbGncurA6iI6FiQYaAYEmWoNoLP5SQFrWB4CdLIp4hhcCtUhqxXWF8OWXXQmWZeMt3
-	Z6NXdevLxotlDKqO2O41DurDCQedXAt/Y8mLU4w==
-X-Google-Smtp-Source: AGHT+IG+LlmItXXSrrSAO1/e+MAC/5NtfAkYB32EqlYIuVxP7rrFOlwhbNY+5sZGFMj+qKLU48Y2Sd4uYrZEUF+qt/g=
-X-Received: by 2002:a05:6122:169b:b0:518:1cd4:4eb with SMTP id
- 71dfb90a1353d-518ca48517bmr7556635e0c.12.1734262874321; Sun, 15 Dec 2024
- 03:41:14 -0800 (PST)
+	s=arc-20240116; t=1734263477; c=relaxed/simple;
+	bh=0t0ZQKj/p7GAnvOKN0/2RvwC65Y0VMiw7Zr0Iborcn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b1B+7temJqSNjr4vOJ858gAJDDFOV8iTofG7xv05ZGOLmZo+eC9HpIzm+CUWh+HzCvvLsAu00SOohkglsrY/0X/kSk0e/3ZaCjYSk2NBGmg9rZn9oc57upiQwGYf3kR7GE9yxuqpb/jtu/IFOBS6MQr63Toi0TG6UN7E01M1PmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s45Ltqr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD21C4CECE;
+	Sun, 15 Dec 2024 11:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734263477;
+	bh=0t0ZQKj/p7GAnvOKN0/2RvwC65Y0VMiw7Zr0Iborcn0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s45Ltqr8OqH9WmvIBOjSJZpSbVXSXpGmu0Nf9nZsXE362Ve36YSUDKrU1UmeNR9Ey
+	 8L8+W/HVxgE6dYAXBSFXV3JyGtiJqRFiL/KuhSag/iU7IvZR2kZ3QGgvhbOpMZr9Cn
+	 OyTxcFC8VAUJrMp4R/FhQxyetFWCDiMzOH/d/+AwahNp1b3SsICBB5y5i0gjbwKA/W
+	 WcxONX9W2hF3M8f/P184ynOC7fgXt0EFQNqcORUReZ/rtmAzAmkqCVGkeczpiQwx9X
+	 LUaqVZn255vbz6CzX12uY9AmOxNO7v8kxsYvrwOAF9mwAsrTnq+BOBdC/6CTkPwkrm
+	 UahhkkG43VaKA==
+Date: Sun, 15 Dec 2024 11:51:08 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
+ aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH v2 4/9] iio: adc: ad7606: Move software functions into
+ common file
+Message-ID: <20241215115108.558bb5a9@jic23-huawei>
+In-Reply-To: <20241210-ad7606_add_iio_backend_software_mode-v2-4-6619c3e50d81@baylibre.com>
+References: <20241210-ad7606_add_iio_backend_software_mode-v2-0-6619c3e50d81@baylibre.com>
+	<20241210-ad7606_add_iio_backend_software_mode-v2-4-6619c3e50d81@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106183032.80155-1-karprzy7@gmail.com> <2024110719-kennel-tiptoeing-3409@gregkh>
-In-Reply-To: <2024110719-kennel-tiptoeing-3409@gregkh>
-From: Karol P <karprzy7@gmail.com>
-Date: Sun, 15 Dec 2024 12:41:03 +0100
-Message-ID: <CAKwoAfpB-n8m7btodbH0zzTuEGiEQbDsC0aYuOfk8MSb+CFgLg@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: f_fs: remove unused values and add immediate returns
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: paul@crapouillou.net, tudor.ambarus@linaro.org, Chris.Wulff@biamp.com, 
-	david.sands@biamp.com, viro@zeniv.linux.org.uk, m.grzeschik@pengutronix.de, 
-	peter@korsgaard.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 7 Nov 2024 at 06:15, Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Nov 06, 2024 at 07:30:32PM +0100, Karol Przybylski wrote:
-> > In case of faulty copy_from_user call inside ffs_epfile_ioctl, error code is
-> > saved in a variable. However, this variable is later overwritten in every possible
-> > path, which overshadows initial assignment.
-> >
-> > This patch fixes it by returning the error code immediately and exiting the function.
-> >
-> > Error discovered in coverity scan - CID 1583682
-> >
-> > Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
-> > ---
-> >  drivers/usb/gadget/function/f_fs.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> What commit id does this fix?
+On Tue, 10 Dec 2024 10:46:44 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-7b07a2a7ca02a, usb: gadget: functionfs: Add DMABUF import interface
+> Since the register are always the same, whatever bus is used, moving the
+> software functions into the main file avoids the code to be duplicated
+> in both SPI and parallel version of the driver.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+Hi Guillaume,
 
->
-> How was this change tested?
+Patch content is fine, but I'd ideally like you to take the opportunity to
+tidy up some of the really inconsistent indentation in the code you are moving.
 
-I compiled the kernel and ran it on my machine.
-Are there other ways to reliably test such change?
+> int ad7616_write_scale_sw(struct iio_dev *indio_dev, int ch, int val)
+>  {
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+> +	unsigned int ch_addr, mode, ch_index;
+>  
+> -	st->sw_mode_en = st->bops->sw_mode_config &&
+> -			 device_property_present(st->dev, "adi,sw-mode");
+> -	if (!st->sw_mode_en)
+> -		return 0;
+> +	/*
+> +	 * Ad7616 has 16 channels divided in group A and group B.
+> +	 * The range of channels from A are stored in registers with address 4
+> +	 * while channels from B are stored in register with address 6.
+> +	 * The last bit from channels determines if it is from group A or B
+> +	 * because the order of channels in iio is 0A, 0B, 1A, 1B...
+> +	 */
+> +	ch_index = ch >> 1;
+> +
+> +	ch_addr = AD7616_RANGE_CH_ADDR(ch_index);
+> +
+> +	if ((ch & 0x1) == 0) /* channel A */
+> +		ch_addr += AD7616_RANGE_CH_A_ADDR_OFF;
+> +	else	/* channel B */
+> +		ch_addr += AD7616_RANGE_CH_B_ADDR_OFF;
+> +
+> +	/* 0b01 for 2.5v, 0b10 for 5v and 0b11 for 10v */
+> +	mode = AD7616_RANGE_CH_MODE(ch_index, ((val + 1) & 0b11));
+>  
+> -	indio_dev->info = &ad7606_info_sw_mode;
+> +	return ad7606_write_mask(st, ch_addr, AD7616_RANGE_CH_MSK(ch_index),
+> +				     mode);
 
->
-> thanks,
->
-> greg k-h
+Another odd indent to fix.
+
+> +}
+> +
+> +static int ad7616_write_os_sw(struct iio_dev *indio_dev, int val)
+> +{
+> +	struct ad7606_state *st = iio_priv(indio_dev);
+> +
+> +	return ad7606_write_mask(st, AD7616_CONFIGURATION_REGISTER,
+> +				     AD7616_OS_MASK, val << 2);
+
+Trivial: Odd indentation choice.
+
+> +}
+> +
+> +static int ad7606_write_scale_sw(struct iio_dev *indio_dev, int ch, int val)
+> +{
+> +	struct ad7606_state *st = iio_priv(indio_dev);
+> +
+> +	return ad7606_write_mask(st,
+> +				 AD7606_RANGE_CH_ADDR(ch),
+
+In general maybe aim for more consistent indentation choice. I'd pull this time up
+on the line above.
+
+> +				 AD7606_RANGE_CH_MSK(ch),
+> +				 AD7606_RANGE_CH_MODE(ch, val));
+> +}
+> +
+> +static int ad7606_write_os_sw(struct iio_dev *indio_dev, int val)
+> +{
+> +	struct ad7606_state *st = iio_priv(indio_dev);
+> +
+> +	return st->bops->reg_write(st, AD7606_OS_MODE, val);
+> +}
+> +
+> +static int ad7616_sw_mode_setup(struct iio_dev *indio_dev)
+> +{
+> +	struct ad7606_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	/*
+> +	 * Scale can be configured individually for each channel
+> +	 * in software mode.
+> +	 */
+> +
+> +	st->write_scale = ad7616_write_scale_sw;
+> +	st->write_os = &ad7616_write_os_sw;
+> +
+> +	ret = st->bops->sw_mode_config(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Activate Burst mode and SEQEN MODE */
+> +	return ad7606_write_mask(st,
+> +			      AD7616_CONFIGURATION_REGISTER,
+
+Whilst moving the code, feel free to tidy up the indent for inconsistent
+cases.  Align this lot just after the opening bracket etc.
+
+> +			      AD7616_BURST_MODE | AD7616_SEQEN_MODE,
+> +			      AD7616_BURST_MODE | AD7616_SEQEN_MODE);
+> +}
+
+Thanks,
+
+Jonathan
+
 
