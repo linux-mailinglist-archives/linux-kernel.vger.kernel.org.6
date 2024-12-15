@@ -1,120 +1,76 @@
-Return-Path: <linux-kernel+bounces-446592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3A79F2690
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:25:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A9E9F2697
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1521882363
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A45F164FC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB8B1BC08B;
-	Sun, 15 Dec 2024 22:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742101C3BEF;
+	Sun, 15 Dec 2024 22:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjFk1o4m"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1c6sCD1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E30A41;
-	Sun, 15 Dec 2024 22:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84751E502;
+	Sun, 15 Dec 2024 22:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734301521; cv=none; b=Jtp42Jds5J00U2rIAqZvRXMXD7NVPZhMeRcUmq/VC9V/L1jy1uQVqUyK0DwXPQ18tKTwddAM6fxJJvLZc/rxOruVAfV40sXXX/9x5tg9IiivRJfE4WGxzxNYjj8Bl8Jn30FgkwxBUEWoLCL6CmUHMh1Dw766qTPFn+TBP+R7nx4=
+	t=1734301930; cv=none; b=GdI4TGt33LO6sWWcCe3Z2ULIZACOFHlE6kv8h9CIH6kSViPieQEYU+Gn93Ca5H/PBV2lOU4hsWfIuajPpAon1R+tvPDg38hjCtPGEt98uG7Wmr+zGLCuXSK9r9Bvzny2nOQNrwCOnZkjdlKApI6CJzFBeqgvfIuBEP3oxDR/yFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734301521; c=relaxed/simple;
-	bh=hQVscmHm0N+Efd2pRbsJNdKtoMY77h/knNeFJU7GEdw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bt84h0KJ60JEVdL4oDn7kN2x6MlYaEjORKsmmGEEGSTNUv5N1RJq+3lj1HiWvhzI1QfEV4UUt1RmpYKXx7HUn1PBq7L7L4bUZxZRHbS32ZZAd/4wSH6d1b66lFFDM5KEZT2gFUAybhVwMic0B1m+qXzNRNUn/AOK+yaqVFsDYaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjFk1o4m; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83eb38883b5so108266839f.1;
-        Sun, 15 Dec 2024 14:25:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734301519; x=1734906319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXTstuCQcImy0LBVGgtOS1MFBsqfl5Zi8vdE6RMLtzg=;
-        b=BjFk1o4mDLfrEj6z1eTqprvJOSR+Vg+CG2MANBMSbd/Kbir3ZD1doW6jeLK5HO5Z4S
-         c7BNdwfyHDP+2DaM1XCfE/N9ar1MWWf/NYKFUfcRfGYNplnURT6YkstSh1N0hWDeAf2X
-         QGweNO9nUnwfDEU5sGK8evpGhLUCyN1max9VcZY+9VMkCB4LOUrm14rgVP0eRz42FxLi
-         JxOZbmcI0hNUJVYGmxw6A9s/KkxDCBqC1TN48jE3N6lp/9f1uO2fyCDhvZl8fAQGi3RG
-         64JwS4QfZhktNbh87yg7eHXy3B2+gN/mJx2FSu0gKNQPClK2mby+L+RS7stob/aKnmoi
-         /wKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734301519; x=1734906319;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WXTstuCQcImy0LBVGgtOS1MFBsqfl5Zi8vdE6RMLtzg=;
-        b=Omn+bOKzPZ926aCJcycwkL3MfFvUOaNhmSOfSL182uF0YKJjzYy5ZjbUwE7dKSgAvV
-         c+9L2sx9L4hv3rQ9p3YbZLn01PSyUTS4IJfIqSN7h5vzvciT+C/RVYjivyATIKQdEFap
-         qWMM8XI2Gib3B2RHpTot65Aqt8HnOYOQYrg1OP1+gQDm5CrQPEjb03MiyW83NWGafgFM
-         c5Pypww87JBGWRXqPcFUbAIH6hEaClvTOl8ArSbzGWGpIV7uNNnDgv3CKBDWQ4pd8rap
-         bsSiUiWwldAahHU5nMbcUolelnlPHLjUJJKfcVOhdbPwlRotws4JYrTJoMx4SGDXAUNm
-         3y8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW5/z3Hsld0HWTKiuVOMdT+bbgYspsgJPUsS40yvVqEtGEu4xS5Og/bYDwJdmHZxweuxMya+ouEyavrwr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ+fRZ5eoRTP4OPXjtWOaRP3xrZDF7GLaMVaY0WIpJAvqwRGNm
-	6Hy7pG0UXyjiCL7nNCX3FhgwS7BY9SemMz5Xw9XbB3sBUUoJb1Pd
-X-Gm-Gg: ASbGncu5imgMydoQaOz7eo1w744U9CIXKs3jRq6G4LQx0U/OUB4bhBlCH+A+MFjD48q
-	qpybtcQJoXDGeAfaSa1aQJXXodI0/g1H8r65OubFp6dfp7g+9kvdypxYgtH10p3HwSwwv6pGvkA
-	YyAzbUzDsLgmcj2SLIITdTjABevzLtVXmsDWtfU1epcw24C+ojOmohDDgXbFXDfON7T2M5Wt6Ch
-	kaiF06Sa+69cwAUgSqda1n3934My2GB2BvFDJ9DXvU7B4WKGl36w0fQ+NuoLVxEC9CR
-X-Google-Smtp-Source: AGHT+IEZPhbD67vVGqtkYKg2eMC6FPSX4prryySqCuQVaiY4P/SIAioOg6hTCHbMB8hQH+Z59wl7/A==
-X-Received: by 2002:a05:6602:1546:b0:841:a652:b0c8 with SMTP id ca18e2360f4ac-844e87b0665mr1331142939f.3.1734301518682;
-        Sun, 15 Dec 2024 14:25:18 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-844f626ae79sm98995739f.20.2024.12.15.14.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 14:25:17 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: alexandre.belloni@bootlin.com,
-	anson.huang@nxp.com
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] rtc: snvs: Add check for clk_enable()
-Date: Sun, 15 Dec 2024 17:28:24 -0500
-Message-Id: <20241215222824.147575-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734301930; c=relaxed/simple;
+	bh=jg4FMEHnDQEdPeiYG++que5v/uPW0Z20gwcn0XCGsvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M/cSkQSYyClyUb1ANnHNj9V813mhD9afc75j/N+1Hpxbj1KGfg27G06vZ5Zy73Q+ewd04n/nZQGA7N0BRbGrx4rygJU4p43On40sWLk+bZHroJ48+9RxscssnWJf2m5gLQQZx9ev7mSp9o40z/hb/m9SOaG7MenWAiBaojy0mDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1c6sCD1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC030C4CECE;
+	Sun, 15 Dec 2024 22:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734301930;
+	bh=jg4FMEHnDQEdPeiYG++que5v/uPW0Z20gwcn0XCGsvU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o1c6sCD1QFgoPRpIdBJPT8D7wgf9sV55sNu8GDBvcWdNcXZIceUCngz3ypwl3c6D5
+	 m80CgXy41RveWw3BeYyZ6iEA+S+h/HCgAm7MNgyzC/dCOcWOfV87z9mGJoQlN8ThxD
+	 eF5kR2H6vf2+zBiZWKBDb4yPis/PBWB3oneiu9OxQ+wLM4Pv7Ee1r2Fueg7WkjwrTj
+	 RR5HDZuOfjtm8OMiHQDg/8vmBr1ceayKeSIqNjVm6oRLxbbxcxrdmBCfFYhqyh1bcb
+	 uIhDyTznCwam2xgPzNa/uB8rNWz7QJ3rY1eQf+EunlEQDwp6zlrL/KtH8Rhn2ibGCs
+	 913p6bW7LafXA==
+Date: Sun, 15 Dec 2024 14:32:08 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/7] mptcp: add mptcp_userspace_pm_get_sock
+ helper
+Message-ID: <20241215143208.3786c360@kernel.org>
+In-Reply-To: <20241213-net-next-mptcp-pm-misc-cleanup-v1-3-ddb6d00109a8@kernel.org>
+References: <20241213-net-next-mptcp-pm-misc-cleanup-v1-0-ddb6d00109a8@kernel.org>
+	<20241213-net-next-mptcp-pm-misc-cleanup-v1-3-ddb6d00109a8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+On Fri, 13 Dec 2024 20:52:54 +0100 Matthieu Baerts (NGI0) wrote:
+>  	struct nlattr *token = info->attrs[MPTCP_PM_ATTR_TOKEN];
+> +	struct mptcp_sock *msk;
+> +
+> +	if (!token) {
+> +		GENL_SET_ERR_MSG(info, "missing required token");
+> +		return NULL;
+> +	}
 
-Fixes: edb190cb1734 ("rtc: snvs: make sure clock is enabled for interrupt handle")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/rtc/rtc-snvs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
-index d82acf1af1fa..62af750e5751 100644
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -281,8 +281,11 @@ static irqreturn_t snvs_rtc_irq_handler(int irq, void *dev_id)
- 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
- 	u32 lpsr;
- 	u32 events = 0;
-+	int ret;
- 
--	clk_enable(data->clk);
-+	ret = clk_enable(data->clk);
-+	if (ret)
-+		return IRQ_NONE;
- 
- 	regmap_read(data->regmap, data->offset + SNVS_LPSR, &lpsr);
- 
--- 
-2.34.1
-
+Ideally GENL_REQ_ATTR_CHECK() would be used in such cases.
 
