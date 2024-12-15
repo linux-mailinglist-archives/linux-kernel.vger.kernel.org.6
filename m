@@ -1,104 +1,213 @@
-Return-Path: <linux-kernel+bounces-446472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE289F24C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D799F24C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:13:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E87B1885B55
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5DD1884965
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989BA193060;
-	Sun, 15 Dec 2024 16:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AC21922D4;
+	Sun, 15 Dec 2024 16:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iChyoXZq"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWPQVLTD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03B148FE6;
-	Sun, 15 Dec 2024 16:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB36148FE6
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 16:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734278996; cv=none; b=OdOu+apu7/LwAj/YqTwqi2mFdllEg1QwJsJkbA5bUcGQ0qD80L35KpMOU9GM3Rqk21I1IvTU5VYeykBpyD41a9XuMhg731+OIfkzKj1S8ZCY6QKj6JoGn5uVASx4JUiA3dHKVWOSAMqfQgY61Ix3uMgK0I0N+RiHWc77aFsVBvw=
+	t=1734279220; cv=none; b=JJzq2vtZfIc60iPAzumJs3uPFRI6SgjADSmf54GQWlBzpHm1W/kJSjxWc97x9REE0kA8UMZG0MmQ0mc5uCG/dH5jQjAv0+79QVsgg98V35ixrIJSQWHRcnDeoTu3aErm5N+Ihp9CZtGov4sEe6xcyMImMZOdhUxZoj/UP1lbQWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734278996; c=relaxed/simple;
-	bh=XpwSZVlzC82o66nV0lhIFTJTdE1OruzoHfBnFIWCmNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7IJbT7Xz0Zx+GAb774Of6TnWV1kJcpSi+lZ7MhtACMz4sl4Ed5d/a6fw+oUSbblIf8eZ3uaWNcgs6Uu3xAkrYMB3B6qG4eutyXtpmrKeJkNYOvECDxMwNpvw7rLF/c8I9gMWDIrlI/n1pFMrX73cdgFGt70IiCx7LKFAp0/fyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iChyoXZq; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21628b3fe7dso25394435ad.3;
-        Sun, 15 Dec 2024 08:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734278994; x=1734883794; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NbydwlmnyyUXH+HjHyTzLF4BdcAbWjwJ8fzwtaecwds=;
-        b=iChyoXZqTKe+HgTgPZQ1QaFQtP8YHoDWEjbZDlcyY39vjqponibNCox/XqPr3xYPdw
-         iC8BmN/yWuvG6TtONSRCArDMu9ykZT+Tsj0F23obWD+H06C6OJHOIckcD4bCI283BI1R
-         xHt9er14mFR1EI+9V0MshnbUw213LsDCjg6+aQHSTujqefdahvT+x8wqXGewFf8c8bD0
-         4tgKZR/XzqMVjhxE9I6zEN1mKyBfpybBPCBRVJBoTmohpg0XaA8XtovH/bl4+J7nuB1d
-         m+ZWa+/wIznqSChDylsv09kD9gCDqTZGP1KX6ScSIrz9mRV2rIwUMIjXKM3yA7sSilsL
-         yt2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734278994; x=1734883794;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbydwlmnyyUXH+HjHyTzLF4BdcAbWjwJ8fzwtaecwds=;
-        b=gthmKt7IU/fCgdW0YJe9BTQ/YsZTXLK5oH4vpiNtaAKJKi/4khIAioXacqQWqDuceF
-         iKFeN11leZvX7ZvJpAxepnVo/lMlol9n9iLI61bjFC0li9ImGU6b/4oJZ4hacSdpfjl4
-         JjvWEv1xpWfcByxwEi5wZCUq4ZSpNd2g6DijO4dxFqNaeAXS2rzm2pcxsrl4+A2duTRk
-         mEvDeHfBXB7dAs7+7Tt0s4/QQ94/k54hGIJNGRn5LtUoOhwt9kKZZwVSOQHk2dj6B+L8
-         us/5REGy3PfN7/XzkMtsgrbT9jWTwf4iby9QnyeOYNFpH3KOgFvSoZx6h739UdknYHd4
-         7y/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVwYS3/rblcDfGHLZ3i59R/jSiWwjqdaZOGWS0aLei0pWfratmTi5VBQG84MEy6O2ZzM3ec8ak3FRHnTNGC@vger.kernel.org, AJvYcCX0HFokR232hQoLjk5X16zg5riI1c0eD0ceAv9Y1GTcFaXKm8ESfU8u0srr/d8R7Rg3s+xZZbnBGp5z5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3rdS6ft8+/wUccELkv+RnLHqHcTcgcM2tXa60zCSiViIEEvTK
-	9ruRqlfASQSgBO+4zwFAT7M5YByMuYTkXokmP/HRqCq9Ad0V/rdb6opJ/w==
-X-Gm-Gg: ASbGncvlfF0CZRtEq6Snr0D1YRR7G400+TDa3amC14+6Uj0DggDY7olEwR3vHW72xg5
-	A+Bh7AtjmrXpjVG0jYfBn1ugDmmbHL86cMjgxfFmMCwvBTjuSAJ2g9uYgaCFTt6T9qiqQDa/QNE
-	JD8EeQ667AgcJ6m/3bcQ9kvy65xTqSzGrd0MmJiZw/XZ3vN0W/4IK607EWuwVZJlM4EAxsGUbcJ
-	KOP2QGPz3qILBp/EREgOkyADIt3ze1dK+xhU2VFAJAl4kaakA9Fze8cXfPtNypDmeeOVw==
-X-Google-Smtp-Source: AGHT+IEQEaqgtFboycp6mO3qGdjV4UToKgNG57BAEjdehWd7zsIJHKOh9UX2QqOVSmcYEUXM69gghQ==
-X-Received: by 2002:a17:902:cec3:b0:215:711d:d59 with SMTP id d9443c01a7336-21892980bb0mr144301635ad.2.1734278993698;
-        Sun, 15 Dec 2024 08:09:53 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e64041sm27735455ad.218.2024.12.15.08.09.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 08:09:53 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 15 Dec 2024 08:09:50 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (occ/p9_sbe) Constify 'struct bin_attribute'
-Message-ID: <5b17a7b2-3347-401f-872d-7732b231af2d@roeck-us.net>
-References: <20241215-sysfs-const-bin_attr-hwmon-v1-1-ea72a6a46c36@weissschuh.net>
+	s=arc-20240116; t=1734279220; c=relaxed/simple;
+	bh=IKAxgRIJnhSSWOi/XLmBHOVDaXtl12q5iO+oDI9X5I8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SvLheCAWUr2ClN/Lgw6tExlfB3WOil90kRUw+0S4Y3aeFB5taxgnuBsXwlEzL/EC3JOkGO3Y0t5mqGp0/oeaYp0x+S7pUFiYWgiNwL0cvHORIjnwKd3/6LaCTXXjcSMlcPdHfKsOQvqojrnC9zja4RMQlEsbtacOIoeGAb3thCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWPQVLTD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24B0C4CECE;
+	Sun, 15 Dec 2024 16:13:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734279219;
+	bh=IKAxgRIJnhSSWOi/XLmBHOVDaXtl12q5iO+oDI9X5I8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aWPQVLTDU8gXqxvvYbQ5od/w0EQywkHpDG4rtm4EszdZxE075eDxq9RmsvbeBVXBZ
+	 ekn6e6H46FE57EqBSUsBCURP+i56daD7e7cy4m6H0CLi7WHPH1DWUkZ4PIpcUnPGKH
+	 m0F35PWJgpFf2hAdid+CfPFZ0imenjMT3hntU+bZ4Yme13KI7omNyTaoc3YKNf/IPC
+	 9jkZxk15ZY93qM8bFGCqvcA6JtpuMUHB7AHrRV3d0yXt0WUrU/hYxcGoFZsDjCp4wV
+	 yD5IVSwT4mwA4Lt0rlQkwy5L4ijkw27aO/otTlRNqgO1McX9I47fT7xNWZGienKu10
+	 V/K48J1JO2vQA==
+From: guoren@kernel.org
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	guoren@kernel.org,
+	bjorn@rivosinc.com,
+	conor@kernel.org,
+	leobras@redhat.com,
+	alexghiti@rivosinc.com,
+	atishp@rivosinc.com,
+	apatel@ventanamicro.com
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	parri.andrea@gmail.com,
+	Guo Ren <guoren@linux.alibaba.com>
+Subject: [PATCH] riscv: qspinlock: Add virt_spin_lock() support for KVM guests
+Date: Sun, 15 Dec 2024 11:13:22 -0500
+Message-Id: <20241215161322.460832-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241215-sysfs-const-bin_attr-hwmon-v1-1-ea72a6a46c36@weissschuh.net>
 
-On Sun, Dec 15, 2024 at 04:19:04PM +0100, Thomas Weiﬂschuh wrote:
-> The sysfs core now allows instances of 'struct bin_attribute' to be
-> moved into read-only memory. Make use of that to protect them against
-> accidental or malicious modifications.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+From: Guo Ren <guoren@linux.alibaba.com>
 
-Applied.
+Add a static key controlling whether virt_spin_lock() should be
+called or not. When running on bare metal set the new key to
+false.
 
-Thanks,
-Guenter
+The VM guests should fall back to a Test-and-Set spinlock,
+because fair locks have horrible lock 'holder' preemption issues.
+The virt_spin_lock_key would shortcut for the queued_spin_lock_-
+slowpath() function that allow virt_spin_lock to hijack it.
+
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+Signed-off-by: Guo Ren <guoren@kernel.org>
+---
+ arch/riscv/include/asm/sbi.h      | 16 ++++++++++++++++
+ arch/riscv/include/asm/spinlock.h | 25 +++++++++++++++++++++++++
+ arch/riscv/kernel/sbi.c           |  2 +-
+ arch/riscv/kernel/setup.c         | 17 +++++++++++++++++
+ 4 files changed, 59 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 6c82318065cf..076ae2eb15a1 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -55,6 +55,21 @@ enum sbi_ext_base_fid {
+ 	SBI_EXT_BASE_GET_MIMPID,
+ };
+ 
++enum sbi_ext_base_impl_id {
++	SBI_EXT_BASE_IMPL_ID_BBL = 0,
++	SBI_EXT_BASE_IMPL_ID_OPENSBI,
++	SBI_EXT_BASE_IMPL_ID_XVISOR,
++	SBI_EXT_BASE_IMPL_ID_KVM,
++	SBI_EXT_BASE_IMPL_ID_RUSTSBI,
++	SBI_EXT_BASE_IMPL_ID_DIOSIX,
++	SBI_EXT_BASE_IMPL_ID_COFFER,
++	SBI_EXT_BASE_IMPL_ID_XEN,
++	SBI_EXT_BASE_IMPL_ID_POLARFIRE,
++	SBI_EXT_BASE_IMPL_ID_COREBOOT,
++	SBI_EXT_BASE_IMPL_ID_OREBOOT,
++	SBI_EXT_BASE_IMPL_ID_BHYVE,
++};
++
+ enum sbi_ext_time_fid {
+ 	SBI_EXT_TIME_SET_TIMER = 0,
+ };
+@@ -444,6 +459,7 @@ static inline int sbi_console_getchar(void) { return -ENOENT; }
+ long sbi_get_mvendorid(void);
+ long sbi_get_marchid(void);
+ long sbi_get_mimpid(void);
++long sbi_get_firmware_id(void);
+ void sbi_set_timer(uint64_t stime_value);
+ void sbi_shutdown(void);
+ void sbi_send_ipi(unsigned int cpu);
+diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
+index e5121b89acea..bcbb38194237 100644
+--- a/arch/riscv/include/asm/spinlock.h
++++ b/arch/riscv/include/asm/spinlock.h
+@@ -42,6 +42,31 @@ SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+ 
+ #endif
+ 
++#ifdef CONFIG_QUEUED_SPINLOCKS
++#include <asm/jump_label.h>
++
++/*
++ * The KVM guests fall back to a Test-and-Set spinlock, because fair locks
++ * have horrible lock 'holder' preemption issues. The test_and_set_spinlock_key
++ * would shortcut for the queued_spin_lock_slowpath() function that allow
++ * virt_spin_lock to hijack it.
++ */
++DECLARE_STATIC_KEY_FALSE(test_and_set_spinlock_key);
++
++#define virt_spin_lock test_and_set_spinlock
++static inline bool test_and_set_spinlock(struct qspinlock *lock)
++{
++	if (!static_branch_likely(&test_and_set_spinlock_key))
++		return false;
++
++	do {
++		smp_cond_load_relaxed((s32 *)&lock->val, VAL == 0);
++	} while (atomic_cmpxchg(&lock->val, 0, _Q_LOCKED_VAL) != 0);
++
++	return true;
++}
++#endif
++
+ #include <asm/qrwlock.h>
+ 
+ #endif /* __ASM_RISCV_SPINLOCK_H */
+diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+index 1989b8cade1b..2cbacc345e5d 100644
+--- a/arch/riscv/kernel/sbi.c
++++ b/arch/riscv/kernel/sbi.c
+@@ -488,7 +488,7 @@ static inline long sbi_get_spec_version(void)
+ 	return __sbi_base_ecall(SBI_EXT_BASE_GET_SPEC_VERSION);
+ }
+ 
+-static inline long sbi_get_firmware_id(void)
++long sbi_get_firmware_id(void)
+ {
+ 	return __sbi_base_ecall(SBI_EXT_BASE_GET_IMP_ID);
+ }
+diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+index 45010e71df86..7e98c1c8ff0d 100644
+--- a/arch/riscv/kernel/setup.c
++++ b/arch/riscv/kernel/setup.c
+@@ -249,6 +249,16 @@ DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+ EXPORT_SYMBOL(qspinlock_key);
+ #endif
+ 
++#ifdef CONFIG_QUEUED_SPINLOCKS
++DEFINE_STATIC_KEY_FALSE(test_and_set_spinlock_key);
++
++static void __init virt_spin_lock_init(void)
++{
++	if (sbi_get_firmware_id() == SBI_EXT_BASE_IMPL_ID_KVM)
++		static_branch_enable(&test_and_set_spinlock_key);
++}
++#endif
++
+ static void __init riscv_spinlock_init(void)
+ {
+ 	char *using_ext = NULL;
+@@ -274,10 +284,17 @@ static void __init riscv_spinlock_init(void)
+ 	}
+ #endif
+ 
++#ifdef CONFIG_QUEUED_SPINLOCKS
++	virt_spin_lock_init();
++
++	if (sbi_get_firmware_id() == SBI_EXT_BASE_IMPL_ID_KVM)
++		using_ext = "using test and set\n";
++
+ 	if (!using_ext)
+ 		pr_err("Queued spinlock without Zabha or Ziccrse");
+ 	else
+ 		pr_info("Queued spinlock %s: enabled\n", using_ext);
++#endif
+ }
+ 
+ extern void __init init_rt_signal_env(void);
+-- 
+2.40.1
+
 
