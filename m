@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-446235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C09E9F218B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:29:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBBD9F2190
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:03:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84E57A0F7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 23:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B621165EF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52A61B218E;
-	Sat, 14 Dec 2024 23:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DEF1862;
+	Sun, 15 Dec 2024 00:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LnziYlNj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GJYR2PW/"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7538C17D355
-	for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 23:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E59819
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734218980; cv=none; b=jEiIeHwlPaNqDyNASLWmRfQKVa/T/ZzvmqYCNEnotu2e2aCwrZDGOirlp2qQ7hBGKp8/O+EMxQFUPP6D6li2uCuUw+spIvpApzQIwC+kgLQnm3buoHcb6tkjUd1y2ORlN68KhtFuQTxLJObRTeptz76gn7jsAj1BjWySTIVcEA4=
+	t=1734220990; cv=none; b=TcQCDyT9xqhh8AiygK1CvriT3+vTjFNnnLkuY0Rxl6tlyEV615jHfCI/Wsa5enwmoIZ7Ia8JT5UmNmN3rlQaxXkpeKW1+AXZXzAiTzYMJkqscNLJO6IfoDyHBLz60Shhj//83SU2rZeXbQhJ0+PO53IH3t+HG0q2kduUi2FTgos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734218980; c=relaxed/simple;
-	bh=1+CFgeAd+oR6Q7/0GgOQkB/ji2r8yb3vByK9aFbF0Js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUYOiadi8WikBCsjiUuUP98+otKiIn1suCjDM/0lQzMDsOAVk4djonWxkSMLGgmQ8FALag0AhH2MmTj7kP73oQhsfeYieET7m4Hpr4cVrs4rvJLYTyKKpBbSSkXMpQ3aZTRGKquJxvjrP1K6grXdS/RdPhi+s/P6tC3ayeP93Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LnziYlNj; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734218979; x=1765754979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1+CFgeAd+oR6Q7/0GgOQkB/ji2r8yb3vByK9aFbF0Js=;
-  b=LnziYlNjYFeVMcXnTiu3Z4kMBcOqt9ee0vkgxKP6v6aRIUQruTXz5km+
-   ln7Y9rxwu8iuaHkg53iYNWtRHqlEnpfg3K3dJ2UNd0kVsJcTb7aK1RQA7
-   tnpP9Dbg/J6soAT1bW0PNAZmdhoi3ven5pu+le6eOjwt/tJsnEuCBiSO+
-   HDR/b0qJb/olshq/aiksKBTSqtAgCTCS7GKA9YlxzJMSbhkLaKCTuoVcB
-   /es0D/gPE7JdUQArAs+mGfe3fLiUr454L2KIUjLdM6oBKUFAnCr2Tz7Ul
-   w/dbwdeGauFrwcNdGjuLedz8EsPvwlGaqI/2mwRAoj4U0/O6LMqjBbpYy
-   A==;
-X-CSE-ConnectionGUID: CtepVbkzQ3ahCOqnkJXUTQ==
-X-CSE-MsgGUID: /A98/j3FRxSHjrNFefWgCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="52061455"
-X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
-   d="scan'208";a="52061455"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 15:29:38 -0800
-X-CSE-ConnectionGUID: SrouF0NVSG6mlDyZXA8t3A==
-X-CSE-MsgGUID: Z2iN8U93RbKsgav5GjOCCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
-   d="scan'208";a="97092677"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 14 Dec 2024 15:29:35 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMbZk-000DJi-0q;
-	Sat, 14 Dec 2024 23:29:32 +0000
-Date: Sun, 15 Dec 2024 07:28:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] drm/nouveau: incorporate I2C TV encoder drivers
-Message-ID: <202412150729.LAunB5YO-lkp@intel.com>
-References: <20241214-nouveau-encoder-slave-v1-1-beda767472e3@linaro.org>
+	s=arc-20240116; t=1734220990; c=relaxed/simple;
+	bh=xQFkpgBPg4Q78xCiadfJSR1zWL7V/gBsQiInFrVHHm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OyJBlVDEk8CD6KTWtWfrAXCcSCBHDqEKUYF6NmQa/1Vq9LMawTJG4Au7PnXkso2c7toyNMVuR4d1fjxIzi2m4607UujTsw9FvPTPN55ByMmvzOljYx0i2h90SNS2YK02nkSbyXKIVLm1OBBFMdZRzrebaIzNVOfekdBgCfI+4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GJYR2PW/; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso497932366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:03:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1734220986; x=1734825786; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3usN9VYGUEh24gR+LciJgIyFJjC0v6UAg/jDOmx3oE=;
+        b=GJYR2PW/J2E9gcF7loKLRmwX8qNvIdQ9IBY0mcQ+w5gpcFCu5jwPoKVIycf4IkmIzO
+         m/7112sqXk8cYeEO2HY/RIMSGIM5MHPJjrBPVdgNjhg2iZwzJRUT3TeHvprnS+ve6Qkd
+         k77LCdH9OCnm0pL4fSGbKAvdelvogQs+MtntQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734220986; x=1734825786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T3usN9VYGUEh24gR+LciJgIyFJjC0v6UAg/jDOmx3oE=;
+        b=eaZjDtTF9zWhU4UMc5/qQv84meSU+Rvq3goyEE2RKma3rhFMva0Q2qo/1TL07g2uNW
+         84ybKsXhof97cRmjcyYigYxkmtpAFQruzlgBWL5uRuoUY7sAkgGXeUuy4KZtcsisCQ/g
+         dkmbdzLmJzEQ2igK2bOPXbPcFbsqjaDlvgFlLjAplC//LWHRvOZG4045/jUjUT/+Uyc9
+         3xJ+IhFjWiNxBawEOkggzyRCoPrX05w+PgtUE8/mxEdTbtd0ZXPFk6R1beId9e+NgFnq
+         XBVub7e9U4NzG3Flo70dK4YO5g4+V8fdo182KwTGTxwmY7OLX+j4sH3OLlNh3aq5/Ugc
+         ETJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFmv6XYFtuyf8ud4L4exfPcMsqZ9OIQK7/rgXz4GVuccmAo9w/vaC3oNQ6RwDJbyCuvMxCfLBB4w7SpIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbfaunljPEjwglBbbrnCnuxL397CAJEHxaGHknqtWuVdhZ7LBJ
+	FUJqEUGvyDvXYQazsbFtYGR2sWahZ8eNfvqGSVMYOyllyXeV2BHso0unVhrUI1EKFTYrzXMtKI1
+	DBgQ=
+X-Gm-Gg: ASbGncsQ2LJvD0nMFRYBI9Z8aE9MxZbNgpk5XKYUzb90i5CU7w9esSFwTiwYXHSZIjt
+	p0AYV72RrRq9fCVOIsZvjzBEISzDP+ERIXk1AWiwWDPivTVYhiSICvuIw8R244wJPIGdySLWRfi
+	IeGjawdV6JsVpnrtPhh/rTpf0jQ3M9PPNsBBeiXxxvU8sAgWQSy9TxYJirYWADvL2KtWBqv75PL
+	N0bPVoD7AI7LPEivyNpaR7CkKYjgqProVqtIuGU9O4UbmnMKkkQVYhAXcDrWyDXTmxVQxxLrYxj
+	IuxWszKCeOxYE5FQ6YWMrLMEWcVQYHg=
+X-Google-Smtp-Source: AGHT+IH5KJ4hpMQo7zIWjfgj6JenAK07cVTgTeoUDFNila8bLSaGz2DAKnBTvI/W8JO9pvfZl3uLEA==
+X-Received: by 2002:a17:907:1c8b:b0:aa6:7cae:dba7 with SMTP id a640c23a62f3a-aab778c6ef1mr833443666b.4.1734220985965;
+        Sat, 14 Dec 2024 16:03:05 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963599d9sm149504466b.107.2024.12.14.16.03.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 16:03:04 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso497928366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:03:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUEdsGZUJcfDMP+QdvGECTID0esIbJ9j89wjoW+SXno5OMRIhbqPhoVLbMbTEpBfuxQ0iglf0C58LSd5dU=@vger.kernel.org
+X-Received: by 2002:a17:906:c146:b0:aa6:82e3:2103 with SMTP id
+ a640c23a62f3a-aab779b7e12mr856494866b.32.1734220983343; Sat, 14 Dec 2024
+ 16:03:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241214-nouveau-encoder-slave-v1-1-beda767472e3@linaro.org>
+References: <395d805645f141b15ef818dadf39c8689986e8b4.camel@HansenPartnership.com>
+In-Reply-To: <395d805645f141b15ef818dadf39c8689986e8b4.camel@HansenPartnership.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 14 Dec 2024 16:02:47 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjUTLUdiyc=+Mw3qTiQRu5xhtkBYd9r+o_hJTKgoW9XKQ@mail.gmail.com>
+Message-ID: <CAHk-=wjUTLUdiyc=+Mw3qTiQRu5xhtkBYd9r+o_hJTKgoW9XKQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SCSI fixes for 6.13-rc2
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dmitry,
+On Sat, 14 Dec 2024 at 15:08, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+>       scsi: ufs: core: Update compl_time_stamp_local_clock after completing a cqe
 
-kernel test robot noticed the following build errors:
+Why does that ufs driver have that pointless "local_clock" version,
+when it also does a real ktime?
 
-[auto build test ERROR on 4176cf5c5651c33769de83bb61b0287f4ec7719f]
+It's documented to be just for debugging.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-nouveau-incorporate-I2C-TV-encoder-drivers/20241214-233637
-base:   4176cf5c5651c33769de83bb61b0287f4ec7719f
-patch link:    https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-1-beda767472e3%40linaro.org
-patch subject: [PATCH 1/2] drm/nouveau: incorporate I2C TV encoder drivers
-reproduce: (https://download.01.org/0day-ci/archive/20241215/202412150729.LAunB5YO-lkp@intel.com/reproduce)
+Then the "ktime" version is documented to be for statistics.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412150729.LAunB5YO-lkp@intel.com/
+What makes this all make sense? Two different clocks, for two
+different non-essential uses? And that duplication literally causes
+bugs because clearly people get confused.
 
-All errors (new ones prefixed by >>):
+This particular bug has been around for almost two years, so equally
+clearly these timestamps really *really* aren't that important.
 
->> drivers/gpu/drm/nouveau/dispnv04/Kbuild:14: drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild: No such file or directory
->> make[6]: *** No rule to make target 'drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild'.
-   drivers/gpu/drm/nouveau/dispnv04/Kbuild:14: Failed to remake makefile 'drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild'.
-   make[5]: *** [scripts/Makefile.clean:61: drivers/gpu/drm/nouveau] Error 2
-   make[5]: Target '__clean' not remade because of errors.
-   make[4]: *** [scripts/Makefile.clean:61: drivers/gpu/drm] Error 2
-   make[4]: Target '__clean' not remade because of errors.
+Can we just agree that it's silly *and* confusing to maintain two
+different completely unimportant timestamps in parallel, and just get
+rid of at least one of them?
 
-
-vim +14 drivers/gpu/drm/nouveau/dispnv04/Kbuild
-
-    13	
-  > 14	include $(src)/dispnv04/i2c/Kbuild
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+            Linus
 
