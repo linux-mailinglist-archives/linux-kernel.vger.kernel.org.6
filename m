@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-446559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E00C9F2636
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:18:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF429F2638
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B5218817E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301207A13E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1241B87FF;
-	Sun, 15 Dec 2024 21:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7376B1B87DC;
+	Sun, 15 Dec 2024 21:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqofvW+j"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OBoKpyhl"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A342A41;
-	Sun, 15 Dec 2024 21:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60014A41;
+	Sun, 15 Dec 2024 21:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734297515; cv=none; b=DEmmwscJNhwmgZ1LdxmziTGmQHmVXDobzsLJMnDMazDdUba4Manr0BzvoMo9ZT84mEG++pCuBj5iRJ1KhC3j4nQSfR+NfwpkysOfo2Cd2hn433wWeBrqa9lCzHx4Ew+3Zu5y5mRujkA5LT/H025n+8wgitixzsjSF/O61s61PDU=
+	t=1734297574; cv=none; b=q0ubsfGdhEQ/b17/o+sv/JVEfVEJxj/PHEje7/wsPo2UQ22y47QVR/Md4Nr3o16VD6JWlhNRquX9GdY4jz9+lLBZ50tO91DJ1jVd5cSP9+all0FaP0lh2/a4wCtvUSUQKi9xN1+wrWMROqCqDN/l7BtVrZ+3Ls6Hflm8Tnzc0ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734297515; c=relaxed/simple;
-	bh=yjXOmhcGF2Ow/gb9PLs66Ycy5crwSKG3I8oO4kU7n4M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V0hP12Iq4Iy3k5fv9hEn7jEtQsImIXz/xNK17nrJIhbPwc6F3umJUlA9Yn8S782DvNlchqkkWuOkmHWlY5itafJ2VQAQVLEjgqfvNRvEQTgPGA/Rw309bNA3TSX7QocPsoA7hkpwgpBcruZMxwHodzoP/dCpKsH9EE51ZqkCrE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqofvW+j; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4363ae65100so9406445e9.0;
-        Sun, 15 Dec 2024 13:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734297512; x=1734902312; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cplwf6VlgeKzXrLCBa5YAfedqfufaukQJBqLnQAJy14=;
-        b=TqofvW+jnUehTRmjJtcj2xmhhcI23Xb2WOIA/V8HsE1j46ks7MPYr2AJOvNovIB4xT
-         HJfwu72IcRwRX3jWWblyYsEv/QnEjFLMrPztp1JBBF8Qpy4kUzUPYFZbD1qIZtXJD06x
-         YCS0qiEv+RNga/t2eTOHl72i0+WRv427Ym0LN+TtPzOX+a1DdNK3uUJHwxdQuOTEWvDD
-         2WldVDYG5uEA3xEK3BlOvzmir9vc5X7FMIWGu9nIBg94Bf0Ve4YF80niRt+tXR3m109Y
-         d3JPEKOm548CNatlcoyPMwTzqDcE3zlJrp5573BdmE8CVfBMfAB13Na1ImR2oF3W5d//
-         QwzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734297512; x=1734902312;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cplwf6VlgeKzXrLCBa5YAfedqfufaukQJBqLnQAJy14=;
-        b=D5bAJGbMnybsPtV3yguBEnrVQKqZZoD7SqeSEavrP6DV3+r4jQHzkHuhWSGKZ7JMpp
-         S0rHXtymuYV7Ft27raTfQcQeXkr6tOBIPSlhiOZ2OUFaZPNlFUm2hD7TXrPDtSGJrJt2
-         b1Ko5RyPTxajV5N8wlEiLYPT9zeXKmHFYcn677w+KUjc2V8pRZd6H+unP0aQqmRKginM
-         BtjxsPrecKEtoC8AB5dlllDRN67+pz4iZcHA7jg0w7UZtjwHBGC+7/W6KfNCdhnixIl1
-         NQfMAinpC0p5HxCJ88wA8U1qMIaJh8XemP6tvQeQLTLQn4xXYL2TGUwlrauQjaHYjEUJ
-         smYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt4hQ4EOZtlYKuTncrQjw6NxmUbOiPB4a3UcQ5TmFDP/WoraAbpWrSK77pLCoTm3ZCV1C8eXgzjVCHS60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRmrWmdMljY3Eq6RCjfcV6pe/zbNSK8CONQ1ARc3fC5aV2lhFr
-	Z9+ko82zjV+SExilCVHJCZbY3G/31NL+WazyuZfSkE4OTYavzcJXipoDmQ==
-X-Gm-Gg: ASbGncu/lOjWJHC/HWqg6rbPsO5MP6XwAKn2TwHAu0a9vdnartOxiRwlP44FZQCCZh2
-	TGdqW3rOKTvlWwDYivnq4VW3SaR5VThaOtX0K1dZkziICpRJvxnaVdfDUmKTjiEW0aEE/oOo95I
-	MZ4kG3OiTMfPKH1u9X7wf/YYvRXjZs2Y2A9aK+kjzguvIPDENpfzcZYu/ijSZM63dP1JMXYeq32
-	kjLDMG5fTm9hcqwG6fvUSiSWn/1d2lTlpwtuCxp2lYrX32CnlUrU/F5kGkJ5zQhcfKo1pBwnfio
-	swISNe/Mi6SY/24H0Oh5nr8cQU9bF06Z8jvEBpwDYWRcr4vWbeTf9s9SboaSvIUYH356+rNY6zo
-	pXos=
-X-Google-Smtp-Source: AGHT+IGSP7xylQ9nwfcEWkXJuujeAPD/nRwDLwLgpG87QWYkfxIXtT/FQNsQccdwyPyWN/qHEaZMRg==
-X-Received: by 2002:a05:600c:674a:b0:434:f5c0:329f with SMTP id 5b1f17b1804b1-4362aa37154mr101517385e9.14.1734297511454;
-        Sun, 15 Dec 2024 13:18:31 -0800 (PST)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-a6ee-1b0b-f819-e82c.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:a6ee:1b0b:f819:e82c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706c82sm120120585e9.35.2024.12.15.13.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 13:18:31 -0800 (PST)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sun, 15 Dec 2024 22:18:21 +0100
-Subject: [PATCH] iio: ABI: document in_illuminance_hardwaregain
+	s=arc-20240116; t=1734297574; c=relaxed/simple;
+	bh=LTIxK0RN0R6lsCrofer4wQZo0B6V8NcbLvOO30DIFt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOLaRTXLAWLyOs+VBSpluf/6CvXauwOeNi0A28JMG/jlK3w7IP12WfN3bB5d/dWarm86rDl8TRuTWyRcHUrh+AkompbroyL9INf1cZDmcCvRZFSPZ/bxwsEXbXW728pDvV8dc0O15135CqBzWywy9fLnQAQwpnp25RDGUscZKKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OBoKpyhl; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 902DF40E0163;
+	Sun, 15 Dec 2024 21:19:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1Rea2ZtLECJE; Sun, 15 Dec 2024 21:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1734297564; bh=F7lqgFh5d53qqE9QyMC250Hz1iuK1qpbSQta7le242g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OBoKpyhlXAelnezS65YehxjxndfCFk/ylLggVer4+KFGO/vFWIDmE4a5i4ei5O1Bb
+	 k2XAI/iL/MmqTZJcDnkw7x48+pFhn0riga5YxDBO5V2LGzSSbttA0dpgjbt4zBVJVx
+	 xlTE5mN+7SJ3VrdmP8u/Pm1sEc8Ckqae3XlsCNSw8rjuBjXx+nKBXq3e3wPIcvswkR
+	 MbKydsjLjbfflXDVVRz6n0TPSGusLVHXVqpPqy1OX5Uuq/temQE6UZ7JMLUA/BeE6R
+	 nqb0DnDRslubx7y31MhA2ImuW7+lsxp/bNBx/BA7+QO7+OtzjOxC1gBKOpPC3dmFgW
+	 6aD11lxKF/ZFSPKLsa8nno6TPs2UN3GiANIR7BQcpXQsTm1i+LYQQAQowjwaKfRp9v
+	 fgQaFb1WWmfo/ir5/scOt2VMgsYN8pnVkSXNyecs39EJ0me8iZfsALgQJZXlqxHcAh
+	 ifbarSuWbVl74d2u3UHOmT4Cov1TFKd1gJJBqp+fap6pwMma1lEb+diKIEqU508XJU
+	 nSjlSUrqPxnvTsaLGho+/TlEsQ5O3tNDNlwGiJHn5PVR91xptpA6umIuOa5M+FKLg1
+	 QCv9gBXry5uReUOQFY+teiwi9AVIFj2YhXDUHdhVrYIB0QfHMtSE6XVdxCaSQXlxaf
+	 h1SVua6p4l8Kn9C29eQ6Uy+c=
+Received: from zn.tnic (p200300ea971f9324329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9324:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1444B40E0263;
+	Sun, 15 Dec 2024 21:19:16 +0000 (UTC)
+Date: Sun, 15 Dec 2024 22:19:08 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+	rric@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] EDAC: Fix typos in the comments
+Message-ID: <20241215211908.GDZ19HzBchgHAaaent@fat_crate.local>
+References: <20240930074023.618110-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241215-iio_abi_in_illuminance_hardwaregain-v1-1-d94a59efb937@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJxHX2cC/x2NwQqDMBAFf0X23IAJ9pD+SilhTbb6wK5lQ21B/
- HdDjwPDzE5VDFLp1u1ksqFi1Qb+0lGeWSdxKI0p9GHwwV8dsCYekaAJy/J5QVmzpJmtfNlkYqi
- L0uwxlsyxp1Z6mzzx+1/uj+M4AUkD11F1AAAA
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734297509; l=1170;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=yjXOmhcGF2Ow/gb9PLs66Ycy5crwSKG3I8oO4kU7n4M=;
- b=rIky0/qRj8PGaYe1kAEL6JO/BG/2x/S9Seq+Y5mMzhZL/6yLe987BRHjEl2dUTVciUYo6SmHZ
- BFj6w9SswL1CeNqADU4XszvmrdZ2pBlNd+wVQwx3RnX2Ij7i17GdKEg
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240930074023.618110-1-yanzhen@vivo.com>
 
-This attribute is used for the vl6180 (see vl6180.c), but it is still
-not documented. Add it to the _hardwaregain list.
+On Mon, Sep 30, 2024 at 03:40:23PM +0800, Yan Zhen wrote:
+> Correctly spelled comments make it easier for the reader to understand
+> the code.
+> 
+> Fix typos:
+> 'Alocate' ==> 'Allocate',
+> 'specifed' ==> 'specified',
+> 'Technlogy' ==> 'Technology',
+> 'Brnach' ==> 'Branch',
+> 'branchs' ==> 'branches'.
+> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
+>  drivers/edac/edac_mc.c       | 2 +-
+>  drivers/edac/edac_mc_sysfs.c | 6 +++---
+>  drivers/edac/i5000_edac.c    | 8 ++++----
+>  3 files changed, 8 insertions(+), 8 deletions(-)
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 1 +
- 1 file changed, 1 insertion(+)
+Applied, thanks.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index f83bd6829285..c044f1608ba9 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -681,6 +681,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_red_hardwaregain
- What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_green_hardwaregain
- What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_hardwaregain
- What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_clear_hardwaregain
-+What:		/sys/bus/iio/devices/iio:deviceX/in_illuminance_hardwaregain
- KernelVersion:	2.6.35
- Contact:	linux-iio@vger.kernel.org
- Description:
-
----
-base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-change-id: 20241215-iio_abi_in_illuminance_hardwaregain-9e024b9dca90
-
-Best regards,
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
