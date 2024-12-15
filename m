@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-446631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10A29F2756
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 00:08:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF65E9F2724
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 00:05:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7BAE164FFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B951636BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CBD1D1F57;
-	Sun, 15 Dec 2024 23:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FX5qm10x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kUYKyebN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA85E1C1F20;
+	Sun, 15 Dec 2024 23:05:24 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EDD1CD210
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547251885A5
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734304019; cv=none; b=qEzQI3MyvGvi4tZbQnSdIVCTxxpiB9zUQ4WvKESweyCbFnDRSMzfCLYhVTUoTn2GoWAmSEO0sAw9ny9mOv28hgtW7YkueZDL32ZuBdeeFWJZXXCWVRJ5UdZWF54tSiwNAYnQQGyZ1e8s88GMZGZqkBXtKdryxJAA3o5MH0e6Ww0=
+	t=1734303924; cv=none; b=XVRNyURvUoBMKxFLvfK7iitxDSvFQIDo0z0FC1v+0LXsYrsxQ6+Y355xy5UdA3SX0TAljSf53KKjg84tZxvAneVZdWRYFABXJrMJnkHECqZl3WlgENY64U8WndtHxE5+HSzJJrJfIOhm2Q147GBhqwd1TFrt5vuJJbuA1o4FN/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734304019; c=relaxed/simple;
-	bh=lg8axIUYclb2T6+boQQvvI4x/adQdWN/2MeRAxM1I+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fPyj8da/MPI0f+BQzImEYrhULAb7QmHBBp7Y/57fgFXwvkmoxCge4+MR+5p0vz8t9MFRDUuYVUzNXZeAu5YqAvS7VVSM7zaYled/oFW3rSHDS4d1uZ26KuVNmsjUz/WZlz3gMbl0u9tAcrXJDX9bI2b1WQyknU9TITkk19z38Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FX5qm10x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kUYKyebN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734304010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6O0H8PocWBBcPGtHkLgMVhBIfVergybbi7OL8FwAuw=;
-	b=FX5qm10xvvJ0YL1mdxdCaowGcj/a1h95ddaSUKlSFvHjx92wsu+zcSCVVrx7g69tv4RLC/
-	X1cEVWwR/JIOx7huR/VlF1IsnJ7pxmhKnsxMNKUSFNz+G/y1Nmczl0QneKGTFMY5Z1N/jv
-	SNMzkCtTG8CltVzipwkQc/c3h2hV9IusrnfiZANS4Y1rUe5WUGJzrHCfF5edbSujwWyytP
-	geCRMjRNp0mU1MXJbcoDB5YwHJ4LNsmN7mVvSmW5xZ7p1Vk43uOLglM2E+NHWAD8SIBExU
-	JENegw3uD87tR9kr1Y+z6WwjBj3N4AahBZV4QhyA7tV2Qz5S/ujyRPMCtOyYvg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734304010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6O0H8PocWBBcPGtHkLgMVhBIfVergybbi7OL8FwAuw=;
-	b=kUYKyebNmTw2maS7BNcOM4Kybnyjb1oYoQmo7i3E6g+3qWoV1TeiOHVQ9vQNTmcKFIluDP
-	+obnWx5fvygNxoBw==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v5 14/14] tools/perf: Allocate futex locks on the local CPU-node.
-Date: Mon, 16 Dec 2024 00:00:18 +0100
-Message-ID: <20241215230642.104118-15-bigeasy@linutronix.de>
-In-Reply-To: <20241215230642.104118-1-bigeasy@linutronix.de>
-References: <20241215230642.104118-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1734303924; c=relaxed/simple;
+	bh=ZCHHnsEAgSkfGbld3SLMl/LDEuEdIlPLTc+qLR2B1HQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nP6mt33Txb15zYFpXvUJVP1HSEABLVlFiX9y1ied2AUg69Yapy8RPYIWfi0y61P82AHq1mtNKZ4uuYCU2zoHrgDXDi0Kh0a3cqje/4Z9rC/BhFnegIrl9/j8LnxDBPDZPp0X8l+L90m+VPhGuTBtw2NpdD6oz6GKY9V522SB/t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso74403565ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 15:05:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734303921; x=1734908721;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dce/12UJ1fnRvqwdj5c2f8CjHwfKlyXNjIxcN5WCROg=;
+        b=j0a8iArbECE6q6+miJlzxzt9qjqQBvo1JXq+zw5WFIKM3pfBZDeb4EEt1td4MKV01+
+         JggH66MEPisFlPtTChaYCrJldrcSsz0/eC6g88zK7z/02OVuWnY0Z32YcNLLUHepUY0b
+         ZnbtQ79Mv0NX9MKCuHsjIK29n9J7KKTIjGX62Nl/ylLpjzryFGNl6UwHNrgzhl9GPMXU
+         Pw8NgAr3Mlfqkz39qv9bLpiXUmrsJnL7ee/3BtoIaVm0pzM0gpIog6/xzpQsqm/SUfKO
+         q/GPe1vx37lfMYZi90rT1kaWh/1ne/DxF77SGYLeq8Q/h+93qOcUFHKzbNtOsn+q+rBR
+         1tgA==
+X-Gm-Message-State: AOJu0YzP4CdOay+71kfDjjUTjt8Mp0shPt4WqRjMs1TfB0qDTznbZanD
+	vCX4SAL4JfQVHczusCJvDgzaefWaGco1KwLBYId8qGiEIi7caEe/gIbtmKsVQXZ0klwrGCX1zi0
+	WPrJAtdhQGYFGyyoDDUjt+LfS074toyoPQcfZT3fgTL4HXwjWKwF2XxxQow==
+X-Google-Smtp-Source: AGHT+IFMq97YLgRrPi4vqxBiOYULmSClhQMljl8hMy8WtdEtYDxueKUobAkHWomWY3W8JIIU/8B74hOnmRmlHjjLWNsAQ2wpH5HD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1686:b0:3a7:8149:6aa with SMTP id
+ e9e14a558f8ab-3aff262a6b0mr116361505ab.24.1734303921545; Sun, 15 Dec 2024
+ 15:05:21 -0800 (PST)
+Date: Sun, 15 Dec 2024 15:05:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675f60b1.050a0220.37aaf.0107.GAE@google.com>
+Subject: [syzbot] [trace?] WARNING in bitmap_parse_user
+From: syzbot <syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=179d04f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=0aecfd34fb878546f3fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11466cdf980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15466cdf980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b85403132ddc/disk-f92f4749.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/20613d034287/vmlinux-f92f4749.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d1ea80bf7e4e/bzImage-f92f4749.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5820 at mm/page_alloc.c:4727 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Modules linked in:
+CPU: 0 UID: 0 PID: 5820 Comm: syz-executor318 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 0e b3 fe ff e9 69 f9 ff ff c6 05 21 45 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 9f a2 0c 00 8b 14 24 e9
+RSP: 0018:ffffc90003eef958 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 000000000000000b RDI: 0000000000040cc0
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000000 R12: 000000000000000b
+R13: 0000000000040cc0 R14: 1ffff920007ddf3f R15: 00000000ffffffff
+FS:  000055558bef6380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000580 CR3: 000000007d0f0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4228
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4255
+ __do_kmalloc_node mm/slub.c:4271 [inline]
+ __kmalloc_node_track_caller_noprof.cold+0x5/0x5f mm/slub.c:4302
+ memdup_user_nul+0x2b/0x110 mm/util.c:305
+ bitmap_parse_user+0x24/0x90 lib/bitmap-str.c:31
+ cpumask_parse_user include/linux/cpumask.h:876 [inline]
+ tracing_cpumask_write+0xfc/0x1a0 kernel/trace/trace.c:5231
+ vfs_write+0x24c/0x1150 fs/read_write.c:677
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc57b8672a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffd0ca10e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fffd0ca12c8 RCX: 00007fc57b8672a9
+RDX: 000000000040fdef RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007fc57b8da610 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffd0ca12b8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
 ---
- tools/perf/bench/futex-hash.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-index 216b0d1301ffc..4c7c6677463f8 100644
---- a/tools/perf/bench/futex-hash.c
-+++ b/tools/perf/bench/futex-hash.c
-@@ -122,6 +122,8 @@ static void print_summary(void)
- 	       (int)bench__runtime.tv_sec);
- }
-=20
-+#include <numa.h>
-+
- #define PR_FUTEX_HASH			77
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-@@ -212,14 +214,19 @@ int bench_futex_hash(int argc, const char **argv)
- 	size =3D CPU_ALLOC_SIZE(4096);
-=20
- 	for (i =3D 0; i < params.nthreads; i++) {
-+		unsigned int cpu_num;
- 		worker[i].tid =3D i;
--		worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
--		if (!worker[i].futex)
--			goto errmem;
-=20
- 		CPU_ZERO_S(size, cpuset);
-+		cpu_num =3D get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus);
-+		//worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
-=20
--		CPU_SET_S(get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus), size, cpus=
-et);
-+		worker[i].futex =3D numa_alloc_onnode(params.nfutexes * sizeof(*worker[i=
-].futex),
-+						    numa_node_of_cpu(cpu_num));
-+		if (worker[i].futex =3D=3D MAP_FAILED || worker[i].futex =3D=3D NULL)
-+			goto errmem;
-+
-+		CPU_SET_S(cpu_num, size, cpuset);
-=20
- 		ret =3D pthread_attr_setaffinity_np(&thread_attr, size, cpuset);
- 		if (ret) {
-@@ -271,7 +278,7 @@ int bench_futex_hash(int argc, const char **argv)
- 				       &worker[i].futex[params.nfutexes-1], t);
- 		}
-=20
--		zfree(&worker[i].futex);
-+		numa_free(worker[i].futex, params.nfutexes * sizeof(*worker[i].futex));
- 	}
-=20
- 	print_summary();
---=20
-2.45.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
