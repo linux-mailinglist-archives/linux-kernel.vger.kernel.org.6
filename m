@@ -1,78 +1,52 @@
-Return-Path: <linux-kernel+bounces-446355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7119F2348
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:09:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0799F2352
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC1F18866C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030B1165B94
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DE817BB21;
-	Sun, 15 Dec 2024 11:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08E4183CA6;
+	Sun, 15 Dec 2024 11:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgzKISPd"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="tUKwtUL8"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3915115534D
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 11:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320231FDD;
+	Sun, 15 Dec 2024 11:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734260959; cv=none; b=inSc5bOmdj1M3XHYWzK6Y65MCLlugCUjbgRsGCczXVkZfA4XOCp9kd4WDkQrzo9/PgvMlbbcg8sjDa6MvWUsJhRRWLok85411LShwu+umu7v/zWdKfqzOQFJEGAjJAlY69cSeYlctPOAtbWSjcT8VjEeVJtGsN/huWAKm0T4QsE=
+	t=1734261342; cv=none; b=APPya0XhOrn2p/IxC3gCWPQ40IzVjVHGYgvfoIhnkJ8lcWyKCj9iFyLiG2uBM5y1RNawf8zcCbM6SYmt9EtMAb5+XTmA5ea1CIZDXAP/Wg//W7d4eOr03ccwIdqDsF/4rP6f/ToR6olSa15BmqdLWQrORYZ2RvN7i4ZYXQcf85k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734260959; c=relaxed/simple;
-	bh=9HVg6HBh2+ASzBgpf6mNHTsofNt7kBP/QL4wncnBAys=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qEZEfsY2WwjHGFSM29NF+QLWlFy0d4UF+h6dSwGLu/nL1nwe+dBvqPYiI3zQywF/k4JeR4h4+Gz9hOcmO2K5h+KBsNjdXRvS5OaXE21QXmeQE9gxH0LTaHbs0gv47GiK6vm8MrNpkP2rNWXP7gBsrsWfBnOao4NXz4px7yo/jcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgzKISPd; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30227c56b11so31403591fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734260955; x=1734865755; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rtqsq0uxUn5fTI7xk69AME8ZpJLgefJ43G2XJKPJ1EM=;
-        b=bgzKISPdE/GBWGhc1xOk6EFSsnT/Xx5FI0Tsh48XrD6vH7AxuC7oDFq4ACoknwvEqb
-         8gdidIGeYJj9RDJysubMZhxj9ZwUpOiBpy7S+e/zx0Kygr3FrSmJAZ1FWZGRwqE4Q9OW
-         EOMtNLE7bPqMskhmA/Y1M5owVXppXB749egbN9azQz97YEZ89Lczq6UxwSUAzyhMETnz
-         g8xCGHdN5U40rhefWbY3QZOvDor8/RUwjaUbvI1ULV/4sVjDSrrUrM5NiRZxdDAYOsiR
-         tI+XbDFIvKhxDIvTByPo9BrCsneeus5v8wGWZcJZtDSYOwjvuT83UXv3As8KwFq/Jgem
-         ryJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734260955; x=1734865755;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rtqsq0uxUn5fTI7xk69AME8ZpJLgefJ43G2XJKPJ1EM=;
-        b=JHJOJHFfq23IqPs6+P/O410EuKv9pXBMHc/UszaRP5fr311ZSHbgTPP1bjqUdjDGSU
-         cDIxUk90WxPxl3ylswjfdbCSb1oD9D2/mzTWAGbOVobHA5+3ZdsQLFTuH3tHoDR+nD6T
-         aCbz8VfrmPszleFBqowcy8PecbTQUwsKvGhltcNRQ2HdmCcMV4WF6RidfeNINmO0oBCN
-         LdZjm6xOp19Uju+r41fyoMEeINGx20EX/s1mtvl2Gj5apDcx5dbWieub7Ku8XeXpMfUX
-         LfQdKb55H7FQf3KP2ivc7iR9NWY3brEoLqNx3a6WyesTSN6WJnBG+jj26RhmNzSzRnkY
-         xWoQ==
-X-Gm-Message-State: AOJu0Yy94jlxC50/o8hOsqvEOGeIngqFG2e03EFsZZisglRswqd5GdUM
-	Qmbnj5WTI8loOypET+fqJaUhQIe8lnoVPXDoD2bMim38WTrotQ0Ahph3hN7qwZ5jOuje7FI16tV
-	J
-X-Gm-Gg: ASbGnctCwyF81z/bcyrSR4SaE8tnUjOOcp7EcpsQkMI3O9QIZgqdMzxiNMQ2lJKQGPm
-	90CLic+tZHgmknGf/MvlVvWtd4YPJBGIJo/geZHh6FzREwLxGx/2M1dUgLYxMeyNM39JUDhZD4N
-	diOB+EV4bzcY9ijVFbKYVNqmc0FHGPOe6+Kw2F+Zckf3/d1AWALmZTGLtd6DPcVuUUO9ZyVN/u0
-	m5oDDd78SDrhhjj8KaaR4oPoqZwXHDNdGzypK6Kkz4+xmg8T3IGcsDaAhm/bTR6
-X-Google-Smtp-Source: AGHT+IFLmlv6NB9HM3wZEuLR4IJuP/fDkB45V7+26pOX+LvGU9x8LaRy70CNTQyyApNHRA4iD0fP+Q==
-X-Received: by 2002:a2e:700b:0:b0:300:360b:bc36 with SMTP id 38308e7fff4ca-30254471c9bmr26058101fa.23.1734260954999;
-        Sun, 15 Dec 2024 03:09:14 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3034404544csm5261531fa.29.2024.12.15.03.09.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 03:09:13 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 15 Dec 2024 13:09:08 +0200
-Subject: [PATCH 2/2] drm/i2c: move TDA drivers under drivers/gpu/drm/bridge
+	s=arc-20240116; t=1734261342; c=relaxed/simple;
+	bh=ueQt5GwccAwwxJiXpF97XX3QBwSEJKPeC0KGi9CgjIM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e/BnV2XQ6Iiop7cY90xraKKFcpRNHbXwGRFe1DcI06Z/sYf1asmt+HKw5G5N76ezOzLkKlRJ4qePw3lJYP8iE28cCMJoOo3guM9RsL7S70WLlHLTQTMoqxiHYD9bW7ZYwZnZKDCK1XP8x6RaikJ5cLMv1ZdfRKzv2O+G+0CMO54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=tUKwtUL8; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.0.220] (catv-176-63-31-221.catv.fixed.vodafone.hu [176.63.31.221])
+	by mail.mainlining.org (Postfix) with ESMTPSA id E53C4E450C;
+	Sun, 15 Dec 2024 11:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1734261331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+yiA/1ghe5hls2YFXRWo/fisaXESDHjsJbo7HIiQ4wI=;
+	b=tUKwtUL87+qNhrSB2H7rGx3H1UJ3DvbUMs9ZSnSHsI98MiMTacxpYONGYFufmfVDrAXloG
+	4EcWZ2Fs5f05s6S46oVfdgjNM38eW5qvvs7NHmSrd2uKboOfkEvNZw+i/y+FlDDzCYrv/G
+	cjZ407M5/X4r/1l776ZPhHxk6FJ7gqGKCzF1mfC0ZgU/XLUeg4tVo+dC78YfQbUpNvuSH3
+	rweqphol2fUWn3PLj61x82SjriB0OV6l2YTdhHqO4DoByvXKeVYEzX2K6BAU/mtfMkGxNv
+	pa5+4dhkIK6o8AXN6RVwwHpp5N/MJ2VUZ/MetzTegZ/lroeJFA4jCfpEFD4w8w==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v9 0/8] Add MSM8917/PM8937/Redmi 5A
+Date: Sun, 15 Dec 2024 12:14:55 +0100
+Message-Id: <20241215-msm8917-v9-0-bacaa26f3eef@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,174 +54,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241215-drm-move-tda998x-v1-2-7817122b1d73@linaro.org>
-References: <20241215-drm-move-tda998x-v1-0-7817122b1d73@linaro.org>
-In-Reply-To: <20241215-drm-move-tda998x-v1-0-7817122b1d73@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAC+6XmcC/23QTW7EIAwF4KuMWDcVtiHgrnqPqgvCTwapk1RJF
+ bUa5e4lswFpsnyI74F9F2tcclzF2+UulrjlNc9TCfxyEf7qpjF2OZQsUKICCdzd1ptlMB0YT0G
+ mpJxGUW5/LzHl30fTx2fJ17z+zMvfo3iD4/S5Y4NOdgkSeQfB2qjfby5PX3nK0/g6L6M4ijZsM
+ EHFWLB10ujknOUBTjFVDNJUTAX3IXjtfGBjh1OsWtx8Wx0vD5FZKsPozrFuMGDFuuAyMKlABAz
+ nuG8xVdwX7EnZNGjmFNMpNg1GVbE5ZgY0yJZUr/tTbCtGaLZtCwY2znupUNIz3vf9H/XZzC9OA
+ gAA
+X-Change-ID: 20241019-msm8917-17c3d0ff4a52
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5882;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=9HVg6HBh2+ASzBgpf6mNHTsofNt7kBP/QL4wncnBAys=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnXrjUQZKmGmQo8Fo8eAtPuOigqvQqQFAG2xwiX
- ey6K6dHUHaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1641AAKCRCLPIo+Aiko
- 1UxDB/0dxBw7DkueqenVzrvtWIOi2XXKAwKj+z31BJbjN099lOMVlTpMQHLXwsOzl1Y8UyEa9q0
- Df839NBVAQ7J05qOAf+MNlDEamFfoO4hChP+uVDIQY3syjwsQByNzYX2lrlZs4jZSicsLQY/Ma4
- Y/NK1E5QZf3A16uKaTtjbk7IS7QKwY6bpsQtFpz83eJyfAha1EDtq0mtLK/0O+ctXFZyjLCe7OW
- drghIcUUel3etPtsF7aYUAAEqv4i2D0vRZlY7+O8CjdN1sG9af3KALazOvd91rJPaE12TwXeP8f
- zM+ObiTq63sSxE/RcensAbq1KnEHOjj5E8vavQ7vRegV32MH
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734261329; l=3901;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=ueQt5GwccAwwxJiXpF97XX3QBwSEJKPeC0KGi9CgjIM=;
+ b=JhHMPr0XuLwNjNgZJzMxdMA9wdY0yX8FIeM1K4zaedAMGucxz4G4eRF06Np3FkhElNgxw0s1U
+ iLoiGhUAseCCKE91Xe86atdO2sSSS/kvtXlBzCxSIBkAPoR4T2/1yjd
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-TDA998x is the HDMI bridge driver, incorporating drm_connector and
-optional drm_encoder (created via the component bind API by the TICLDC
-and HDLCD drivers). Thus it should be residing together with the other
-DRM bridge drivers under drivers/gpu/drm/bridge/.
+This patch series add support for MSM8917 soc with PM8937 and
+Xiaomi Redmi 5A (riva).
 
-TDA9950 is an I2C-CEC translator, being present on-die on the TDA9989
-and TDA19989 chips, so it is being instantiated by the TDA998x driver.
-Move it together with the TDA998x under bridge drivers subdir.
-
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- MAINTAINERS                                       |  2 +-
- drivers/gpu/drm/arm/Kconfig                       |  1 +
- drivers/gpu/drm/bridge/Kconfig                    |  2 ++
- drivers/gpu/drm/bridge/Makefile                   |  1 +
- drivers/gpu/drm/bridge/tda/Kconfig                | 13 +++++++++++++
- drivers/gpu/drm/bridge/tda/Makefile               |  4 ++++
- drivers/gpu/drm/{i2c => bridge/tda}/tda9950.c     |  0
- drivers/gpu/drm/{i2c => bridge/tda}/tda998x_drv.c |  0
- drivers/gpu/drm/i2c/Kconfig                       | 13 -------------
- drivers/gpu/drm/i2c/Makefile                      |  4 ----
- 10 files changed, 22 insertions(+), 18 deletions(-)
+Changes in v9:
+- msm8917:
+ - add some empty lines for separating pins more
+ - order compatible, reg, ranges properties
+- Link to v8: https://lore.kernel.org/r/20241211-msm8917-v8-0-197acc042036@mainlining.org
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a23e80abf309cbd918a74683895f8dbe0507a6e..a4c7afd564e721e14aebaf828b75776e50760a45 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16982,7 +16982,7 @@ M:	Russell King <linux@armlinux.org.uk>
- S:	Maintained
- T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-devel
- T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-fixes
--F:	drivers/gpu/drm/i2c/tda998x_drv.c
-+F:	drivers/gpu/drm/bridge/tda/tda998x_drv.c
- F:	include/dt-bindings/display/tda998x.h
- K:	"nxp,tda998x"
- 
-diff --git a/drivers/gpu/drm/arm/Kconfig b/drivers/gpu/drm/arm/Kconfig
-index c901ac00c0c3a8f356bd53d97305c6b39b3e6662..ed3ed617c6884876368c8bd072c53f1b710df443 100644
---- a/drivers/gpu/drm/arm/Kconfig
-+++ b/drivers/gpu/drm/arm/Kconfig
-@@ -9,6 +9,7 @@ config DRM_HDLCD
- 	select DRM_CLIENT_SELECTION
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_DMA_HELPER
-+	select DRM_BRIDGE # for TDA998x
- 	help
- 	  Choose this option if you have an ARM High Definition Colour LCD
- 	  controller.
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 6b4664d91faa80f096ac6a0548ed342e802ae68b..1ef16dcc2ae53eb172604de2d6899004c080a979 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -438,4 +438,6 @@ source "drivers/gpu/drm/bridge/imx/Kconfig"
- 
- source "drivers/gpu/drm/bridge/synopsys/Kconfig"
- 
-+source "drivers/gpu/drm/bridge/tda/Kconfig"
-+
- endmenu
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 97304b429a530c108dcbff906965cda091b0a7a2..52e6c9b3094bba0fd6aaf28af1b58f4bd8bf26d0 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -43,3 +43,4 @@ obj-y += analogix/
- obj-y += cadence/
- obj-y += imx/
- obj-y += synopsys/
-+obj-y += tda/
-diff --git a/drivers/gpu/drm/bridge/tda/Kconfig b/drivers/gpu/drm/bridge/tda/Kconfig
-new file mode 100644
-index 0000000000000000000000000000000000000000..5f13e4ffc24eeaa8dd0015c7e84d0dbac93e170c
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/tda/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config DRM_I2C_NXP_TDA998X
-+	tristate "NXP Semiconductors TDA998X HDMI encoder"
-+	default m if DRM_TILCDC
-+	select CEC_CORE if CEC_NOTIFIER
-+	select SND_SOC_HDMI_CODEC if SND_SOC
-+	help
-+	  Support for NXP Semiconductors TDA998X HDMI encoders.
-+
-+config DRM_I2C_NXP_TDA9950
-+	tristate "NXP Semiconductors TDA9950/TDA998X HDMI CEC"
-+	select CEC_NOTIFIER
-+	select CEC_CORE
-diff --git a/drivers/gpu/drm/bridge/tda/Makefile b/drivers/gpu/drm/bridge/tda/Makefile
-new file mode 100644
-index 0000000000000000000000000000000000000000..31fd35527d99d7eb23851d290175a3ff0c756772
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/tda/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+tda998x-y := tda998x_drv.o
-+obj-$(CONFIG_DRM_I2C_NXP_TDA998X) += tda998x.o
-+obj-$(CONFIG_DRM_I2C_NXP_TDA9950) += tda9950.o
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/bridge/tda/tda9950.c
-similarity index 100%
-rename from drivers/gpu/drm/i2c/tda9950.c
-rename to drivers/gpu/drm/bridge/tda/tda9950.c
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/bridge/tda/tda998x_drv.c
-similarity index 100%
-rename from drivers/gpu/drm/i2c/tda998x_drv.c
-rename to drivers/gpu/drm/bridge/tda/tda998x_drv.c
-diff --git a/drivers/gpu/drm/i2c/Kconfig b/drivers/gpu/drm/i2c/Kconfig
-index 6f19e1c35e30b0e595c1a60628a6b8cf313fcabc..3205cdb827b95209a4bba9fb126ad2df27ddbdfb 100644
---- a/drivers/gpu/drm/i2c/Kconfig
-+++ b/drivers/gpu/drm/i2c/Kconfig
-@@ -20,17 +20,4 @@ config DRM_I2C_SIL164
- 	  when used in pairs) TMDS transmitters, used in some nVidia
- 	  video cards.
- 
--config DRM_I2C_NXP_TDA998X
--	tristate "NXP Semiconductors TDA998X HDMI encoder"
--	default m if DRM_TILCDC
--	select CEC_CORE if CEC_NOTIFIER
--	select SND_SOC_HDMI_CODEC if SND_SOC
--	help
--	  Support for NXP Semiconductors TDA998X HDMI encoders.
--
--config DRM_I2C_NXP_TDA9950
--	tristate "NXP Semiconductors TDA9950/TDA998X HDMI CEC"
--	select CEC_NOTIFIER
--	select CEC_CORE
--
- endmenu
-diff --git a/drivers/gpu/drm/i2c/Makefile b/drivers/gpu/drm/i2c/Makefile
-index a962f6f085686674ed33010345730db776815ebe..1df3869491e277ca210368c4e48efe6d11af62b6 100644
---- a/drivers/gpu/drm/i2c/Makefile
-+++ b/drivers/gpu/drm/i2c/Makefile
-@@ -4,7 +4,3 @@ obj-$(CONFIG_DRM_I2C_CH7006) += ch7006.o
- 
- sil164-y := sil164_drv.o
- obj-$(CONFIG_DRM_I2C_SIL164) += sil164.o
--
--tda998x-y := tda998x_drv.o
--obj-$(CONFIG_DRM_I2C_NXP_TDA998X) += tda998x.o
--obj-$(CONFIG_DRM_I2C_NXP_TDA9950) += tda9950.o
+Changes in v8:
+- pm8937, msm8917, msm8917-xiaomi-riva: remove unused includes
+- Link to v7: https://lore.kernel.org/r/20241124-msm8917-v7-0-612729834656@mainlining.org
 
+Changes in v7:
+- msm8917-xiaomi-riva:
+  - Add pinctrls for used GPIO pins.
+  - Use interrupts-extend for charger.
+  - Order properies.
+- Link to v6: https://lore.kernel.org/r/20241113-msm8917-v6-0-c348fb599fef@mainlining.org
+
+Changes in v6:
+- msm8917:
+  - Consolidate SDC pins, remove sdc2-cd-on/off pins.
+  - Remove cluster-sleep-0 and cluster-sleep-1
+  and rename cluster-sleep-2 to cluster-sleep-0.
+  - Fix spi, i2c and related pinctrl namings.
+- msm8917-xiaomi-riva: follow i2c name changes.
+- Link to v5: https://lore.kernel.org/r/20241112-msm8917-v5-0-3ca34d33191b@mainlining.org
+
+Changes in v5:
+- msm8917:
+  - Remove aliases.
+  - Rename spi, i2c labels and pins.
+  - Remove clock-frequency from timers
+  - Remove unused mpss_mem region.
+  - Use mboxes where it can be used, only smd-edge uses qcom,ipc.
+- msm8917-xiaomi-riva: Follow i2c label changes.
+- Link to v4: https://lore.kernel.org/r/20241109-msm8917-v4-0-8be9904792ab@mainlining.org
+
+Changes in v4:
+- msm8917 pinctrl: Fix gpio regexp in the schema.
+- msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
+- msm8917: fix address padding, naming and ordering, remove polling-delays.
+- Remove applied patches from the series.
+- Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
+
+Changes in v3:
+- msm8917-xiaomi-riva: Fix issues addressed by Konrad.
+- msm8917: Fix node addresses, orders of some properties.
+- pm8937: simplify vadc channels.
+- msm8917 pinctrl: Fix schema issues addressed by Krzysztof. 
+- Remove applied tcsr patch from this series.
+- Reword some commit title.
+- Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
+
+Changes in v2:
+- Add msm8937 tsens support.
+- Fix issues addressed by reviews.
+- Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
+
+---
+Barnabás Czémán (5):
+      dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+      dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
+      dt-bindings: nvmem: Add compatible for MS8917
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+      arm64: dts: qcom: Add Xiaomi Redmi 5A
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add PM8937 PMIC
+
+Otto Pflüger (2):
+      pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
+      arm64: dts: qcom: Add initial support for MSM8917
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  333 ++++
+ arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1954 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8937.dtsi               |  150 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
+ 11 files changed, 4234 insertions(+)
+---
+base-commit: 1b2ab8149928c1cea2d7eca30cd35bb7fe014053
+change-id: 20241019-msm8917-17c3d0ff4a52
+
+Best regards,
 -- 
-2.39.5
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
