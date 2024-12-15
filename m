@@ -1,130 +1,102 @@
-Return-Path: <linux-kernel+bounces-446480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F82E9F24D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:50:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BB59F2523
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1F91885E9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186801648C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FE118FDA3;
-	Sun, 15 Dec 2024 16:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A4F1B4157;
+	Sun, 15 Dec 2024 17:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="BSc6qgOY"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VF8NOEru"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFD3BE46
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 16:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C301119A;
+	Sun, 15 Dec 2024 17:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734281401; cv=none; b=J35/lkeOdskU3tbDuAO/FEmZLJ4YB6IC2KlnLhr8JePakKLklCoJrC884QfrYpI3eou20bZr7Qv2oyo+poRp/s+Q1O2GYmfRHxhKymc82YPF93be4vR0qQp8rYYlG4HExQVNNWpP8MdvmedGjv7I4DO6lRoq3WIy0JMBeiLKOKc=
+	t=1734284815; cv=none; b=Mm+1QXWHRVNmwB78UrA1hrAmrY/VN21Kuj24UHueaS2fcojG8sjfVc12zLh74c+jEJIHPN9LpbjZM9p5M9JiKPMm39xVv/FL0A1q3LS8LTd43D/zMoPymmf34kUQlznGkPv+hiXeEjRg4YkHsR3pJKLkmIW8/QipdRIaPQ/5T9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734281401; c=relaxed/simple;
-	bh=rIXuuppMuOBMkpBmnAVbEKooGp3Q1AReezTRBPIChcw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CPWPCV9MALjDECh2ps1ib9koMoW/SLBL/eX0Wey03/jq5KBAyzzx0qBsssAwn8cJPcN2HZBS1v4y/aqIZCDXOfE7b7GuffhXTGS1xvTOtn1CB6afwHLfCwfAlq/I89JdDrMGfW7ofTd+FHqjGrEUwayKp+zvk2qWxIyFafHmW8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=BSc6qgOY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734281396;
-	bh=rIXuuppMuOBMkpBmnAVbEKooGp3Q1AReezTRBPIChcw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BSc6qgOY4QMIpDTfHuovcFYs2r4AcXQo1TxkMMiA5kYqk7vqgWjliYN80cRVAx1lV
-	 XLZoUbg6dLvA0bUk7y7fyfzCVEJq8ZzILiyJYZiH9Q2voQceQL5d1TjAAVARiTlBQH
-	 +kb7I1VdSgQTYKC+zuCQbIbfLhfDJ9JhManviGvo=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 15 Dec 2024 17:49:50 +0100
-Subject: [PATCH] kheaders: Simplify attribute through
- sysfs_bin_attr_simple_read()
+	s=arc-20240116; t=1734284815; c=relaxed/simple;
+	bh=P+D5NOuscZiwdPVJ/Fz1S/W7kfcMJ8SsQQwV7AfKeFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYE81t+v0qEspl3VRblQ0CHqeZtthHwADWrilNlortc929jyTj5BcEl7Vp5YkrkOX1Z+NBgNe2l2h9To3QiTIEHp71woowA2pus0qQCqkXr3mUECh+z0xjgPs0Jv4FvvJVzvSXxyCgOaXl02vptC31cEaQxM5Rd4DWs+DsXsoeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VF8NOEru; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=9OY8ueUm4CR5UDIgHGg7Qyv//mhOC72otISc2Hlc4wM=; b=VF8NOErupEGkx3Efz/1IfnM2ay
+	zmE5nMaIDXsHEe/YPuWnrjRJAMDFgBPwVI83IANd2/iDwMfUtrxW222pyMuAJKUGh3wwcTzUNzdvP
+	XoGghKYtwf9+d+GvAbzJyQ1z66IR6hZz+cnx7191tRIM4i96drl7L9Y+njl6VhgBOJISmV6wSjXi9
+	ZErRab9/aryHDkvY1alrD//cF6QxKLNublQJr3q0M2hAj/UJMMu0kTJJbFthdZhGGxni5iYnK3QuX
+	NIXE3vIkNM/xmlpDUcZQXSUtLYK7fNnz0viu+rnT+EJIeGFXaxyH51Iea5SYOohm6yAi3TEAD9dzA
+	aEQrQn+g==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMrrn-00000004iKt-2pj8;
+	Sun, 15 Dec 2024 16:53:16 +0000
+Message-ID: <d9f04bf6-18a0-4f6b-a6ff-2c6e493005e3@infradead.org>
+Date: Sun, 15 Dec 2024 08:53:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: samsung-galaxybook: Add samsung-galaxybook
+ driver
+To: Joshua Grisham <josh@joshuagrisham.com>
+Cc: ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com,
+ platform-driver-x86@vger.kernel.org, corbet@lwn.net,
+ linux-doc@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241209163720.17597-1-josh@joshuagrisham.com>
+ <797b248c-7542-43fd-8e44-f2c7d650ccff@infradead.org>
+ <CAMF+Keb0cXc8t8J_T39WJUKydpD2EME92ZWT7SFr_taiCXfvww@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAMF+Keb0cXc8t8J_T39WJUKydpD2EME92ZWT7SFr_taiCXfvww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241215-sysfs-const-bin_attr-kheaders-v1-1-319bbd50e224@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAK0IX2cC/x3MUQqDMAwA0KtIvhewsWK3q4wxOk01DOpIypiId
- 1/x8/28HYxV2ODW7KD8FZM1V7hLA+MS88woUzVQS96R69E2S4bjmq3gS/IzlqL4XjhOrIbetyE
- MibpwJajHRznJ7/zvj+P4AxDEPA1vAAAA
-X-Change-ID: 20241215-sysfs-const-bin_attr-kheaders-440887f23892
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734281395; l=1959;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=rIXuuppMuOBMkpBmnAVbEKooGp3Q1AReezTRBPIChcw=;
- b=I85r3j7c09ThbrqAvn58Q0o4aBizvvV+JNzAiTpSkNp1nYTa1cTqFdgWzf+MPm7xtNw2ILg0u
- WY9fKiSfdSnBQk4OchNN6vq2NeVF2rqjVZxc3RJdb7GiThYw+K9i4hW
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The utility function from the sysfs core is sufficient to implement this
-attribute. Make use of it.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-__BIN_ATTR() is used over the normal struct initializer because it is
-shorter and can also handle the transition to const struct bin_attr
-callbacks.
-If you prefer, I can switch that back, but it will introduce a trivial
-conflict with [0].
 
-Note: There is no formal maintainer for that source file.
+On 12/15/24 8:09 AM, Joshua Grisham wrote:
+> Den mån 9 dec. 2024 kl 18:04 skrev Randy Dunlap <rdunlap@infradead.org>:
+>>
+>> Also needs <linux/sysfs.h>.
+>> Maybe <linux/printk.h>.
+>> Maybe <linux/err.h>.
+>>
+>> --
+>> ~Randy
+>>
+> 
+> Also done in v2 of the patch, thanks Randy! (though no printk.h
+> anymore as I removed all pr_* functions.. maybe I should explicitly
+> add <linux/dev_printk.h> though? or is it good enough to get it via
+> platform_device.h <= device.h <= dev_printk.h  ?)
+> 
+> Joshua
 
-[0] https://lore.kernel.org/lkml/20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net/
----
- kernel/kheaders.c | 19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
+from Documentation/process/submit-checklist.rst:
 
-diff --git a/kernel/kheaders.c b/kernel/kheaders.c
-index 42163c9e94e557c5043e2ac7987b567f23087ee2..de25d913e9473f14be70fb0f602c0202af4d92c9 100644
---- a/kernel/kheaders.c
-+++ b/kernel/kheaders.c
-@@ -29,25 +29,12 @@ asm (
- extern char kernel_headers_data[];
- extern char kernel_headers_data_end[];
- 
--static ssize_t
--ikheaders_read(struct file *file,  struct kobject *kobj,
--	       struct bin_attribute *bin_attr,
--	       char *buf, loff_t off, size_t len)
--{
--	memcpy(buf, &kernel_headers_data[off], len);
--	return len;
--}
--
--static struct bin_attribute kheaders_attr __ro_after_init = {
--	.attr = {
--		.name = "kheaders.tar.xz",
--		.mode = 0444,
--	},
--	.read = &ikheaders_read,
--};
-+static struct bin_attribute kheaders_attr __ro_after_init =
-+	__BIN_ATTR(kheaders.tar.xz, 0444, sysfs_bin_attr_simple_read, NULL, 0);
- 
- static int __init ikheaders_init(void)
- {
-+	kheaders_attr.private = kernel_headers_data;
- 	kheaders_attr.size = (kernel_headers_data_end -
- 			      kernel_headers_data);
- 	return sysfs_create_bin_file(kernel_kobj, &kheaders_attr);
+1) If you use a facility then #include the file that defines/declares
+   that facility.  Don't depend on other header files pulling in ones
+   that you use.
 
----
-base-commit: 2d8308bf5b67dff50262d8a9260a50113b3628c6
-change-id: 20241215-sysfs-const-bin_attr-kheaders-440887f23892
 
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+~Randy
 
 
