@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-446545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80A39F25F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:02:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFEF9F25F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D91D188569E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ABF4161CCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA7D1B87EA;
-	Sun, 15 Dec 2024 20:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57F1B9831;
+	Sun, 15 Dec 2024 20:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXrECkyY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CjIkw8iE"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D2175BF;
-	Sun, 15 Dec 2024 20:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECA6175BF
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 20:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734292966; cv=none; b=gKJ+5jI2bc/G/nKEr2WoEl/FJtrvn/Mjpmr8WGjuntlKA8No8+7oO/lS0Ri+od/Tr+IoLTkD5idrpCD/Cj6Z0iPuCeL0bIHoOpxX3JVmBxLFUVLi5d2qxRhQkoyrRKbIfb7A3DkNT/vP1U9qJitWgAmRstyoTWK39Q87qeMK11Y=
+	t=1734293059; cv=none; b=tpeYu1FUiU3b1uAEEL03XGD+Q25+9hyVkrWGmQFtHKaF1jIHbdwtglNghcWLYFbos0XSIWCLiONBeoZ6efb2Fy8rLSarZwm03FJ2ZqCZx7jcJgh7u+ynpOTTZZsBFbvUNM1tZ+2kNZ+xzruBSExZZYsp2D0irSa4JGB4q7zvceY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734292966; c=relaxed/simple;
-	bh=MfIWA0mL3UFSXZeNbdo5DmBQRZv7A44damBr44affXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UR1IJzg+9lec1cPTaktAjKgnvSLCWhBmjOmKbO/VAJdf+UAvCq/cj0HwbI/Sb8XXBX+iEBy58YwcPdxILa8Owe+kii8NZksQ/m3RbfFVJmyOh87ISf0dwRItL9Kiaod3jQApvRzOmwlJjRc+wmTyuACpmD1umzRahMDKvoItmP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXrECkyY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5EB8C4CECE;
-	Sun, 15 Dec 2024 20:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734292965;
-	bh=MfIWA0mL3UFSXZeNbdo5DmBQRZv7A44damBr44affXs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MXrECkyYm3T6zmPV75aFlqNOqqUnTEPKfSY8WSGfdr7tAArXyeUmB96yuJjtsSTDr
-	 d1VaqonSzwi76VOiwQj+Yhpnwi1Ba6ybNs4BRQ62/RBQ0TIXqKZAgntb02YSaBGDt8
-	 EgspoF2sMu08hVC0TNBRDvvDH9gvGU9QSUcpdEYgmGdEiWLYDSn+cCuB7wz7/nMKnJ
-	 hBrFjtYNuNFEKgw3QIRddvlSh01kdqk/CuHNqxpl5ie6Eo2Low/JiP/UVJS1xp+nkZ
-	 JwixsjWkvXReVMPSYW4vFY/Q+p7Ubs1A07sG/mmlm1OKf8Hfldb09yOU4Tbkz5VTys
-	 gJxdBhofjkgig==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2024-12-16
-Date: Sun, 15 Dec 2024 12:02:43 -0800
-Message-Id: <20241215200243.72079-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734293059; c=relaxed/simple;
+	bh=eLHtqR5A9wpX6zbeuRVIgqm9V748jbpbrIaWzgxiUGk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OBfBc/moHHRXFMGAaw1GGiE0Pcx6rOPPr9uEKbEAxDOBHrW7y3YKXgq7FgC2YpKRyO+gn7Wv/WAvVc+ZVsKi/JdtCiocaJ6qDuiRDkf5xasNZbKsr6H5Xq0wYhp6/6GC5OraPto8CKMQ0ggBYQV6JpIW+AYvzSUPVmr1Bj/HQFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CjIkw8iE; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43582d49dacso29880265e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:04:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734293056; x=1734897856; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YwBupfT+fyxXmEmly7oBmZ1BClZCHwQUt9Ls+vVmCiA=;
+        b=CjIkw8iEYjnI9Lo0Fd5nGoyoKicyWtmAD3lFtYPt0HZLpw5fvIuivFsQwAWePvqDHt
+         KFJ4kkMY1ZEEx91tYu8kAkAiLTK6luMkGhdvllk53Lie12/e1kTm9PFtThs1QTpJGQzf
+         GlBQlErhf5Z2Hh6FUvYlfls4WoE35JBTs6O9vtUt/LrbGJB7BJCh/5PO+1GSMTLObwhI
+         4cDh+SfX6JkIlTMF9jtIM+IvkxR4iSmf6KzHB1ZFEnWtggbfJGBCMPDV6z4L/RIgPWwg
+         dLwKBfiW+rmDZafmP5jO3OkOF+XsnxkV1Wu70dBSDvoMJ/i+HyNYwYFNONx7I17G+Ov3
+         Kudw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734293056; x=1734897856;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YwBupfT+fyxXmEmly7oBmZ1BClZCHwQUt9Ls+vVmCiA=;
+        b=MwkxiC/z26fI9ExlmMm+yd5belTtIZ6HacWWo0tzS6wkZIyczZGyn1UjkeEJlpPCoF
+         9RQf/c7QUrR7mUn3VLW5O1QsZjEEFJe62V1eNeroBQ8Rul9zmUmGx5b9JldodBhNxVy4
+         QKwL13cHJTBCL/gwAXqWstXVV7aDva0eGnJxozwDgxMnmIqWFZkeJFWwrnbg9/MxpAs4
+         z4sfOMkWIcuUL4ViwgEOO6FUhE+qetrbEIYfECme+R9hf57RReXFg5qDY2ntB4eRNk94
+         Y9BZAxzgMdxQvMn9YcFbuQqi3vsgmUiYpc2QO1SiNNUV2gyxi0YA/4+/JptbKnekiSMb
+         H8RA==
+X-Gm-Message-State: AOJu0YzT9EqnuCNpUO6LmhO6WreWq+OM2g3Qf5zKf8xtW73yVuETrczC
+	yTu8GVBXzcBaDTappaiBJRQWyIUxPUVpnkGmCTgs4mX4HKGsAr2xXBegcEPIIcd+iimAqVVKRov
+	G47mOm1/BjEVHbZ53XK6m7bK2mJz+Sf5XqB3U/6HsHrx2oxPJBOwTtsFyX067JP0++czUtqHR6n
+	01oKPwe5ZAgYPFO2QqK2rX3X4gAAvbW5khNtXtKg8eLUu7NsLn3lY=
+X-Google-Smtp-Source: AGHT+IFZBtol4MC3NA/MQiwAphEXkZPoxFlwPmucl0GZUYpBLZ8Bn8rpWMLd0hZKVOn4cpUk5W+HN7MQj3EJUQ==
+X-Received: from wmaz22.prod.google.com ([2002:a05:600c:6d96:b0:434:f173:a51])
+ (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1e87:b0:432:cbe5:4f09 with SMTP id 5b1f17b1804b1-4362aa113f1mr83361525e9.4.1734293056465;
+ Sun, 15 Dec 2024 12:04:16 -0800 (PST)
+Date: Sun, 15 Dec 2024 20:04:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Message-ID: <20241215200412.561400-1-smostafa@google.com>
+Subject: [PATCH] iommu/io-pgtable-arm: Fix cfg reading in arm_lpae_concat_mandatory()
+From: Mostafa Saleh <smostafa@google.com>
+To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	Mostafa Saleh <smostafa@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+I messed up the newly introduced function arm_lpae_concat_mandatory()
+where ias/oas are read from the io_pgtable_cfg copy in arm_lpae_io_pgtable.
 
+However, this copy is set later in alloc_io_pgtable_ops() after alloc()
+function was called.
 
-This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
-(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
-for the week of 2024-12-16.
+I didn=E2=80=99t catch that with my selftesting as arm_lpae_io_pgtable is
+allocated from kmalloc, which was caching old configs.
 
-We will have the two meetings in the week as usual.  According to the bi-weekly
-schedule, we will also have the meetings on the week of 2024-12-30.  Since it
-is the mid of the holidays, I will just cancel those, as announced before.  So,
-next two meetings will be the last ones of 2024.
+While at it, fix a couple of spaces.
 
-Please feel free to schedule a meeting with me if you have any topic you wanted
-to discuss on the week.  Beer/Coffee/Tea chat is just a time slot that I
-reserve for convenient schedules, not only place to discuss something about
-DAMON.  Of course, mail or whatever is also ok :)
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
+---
+ drivers/iommu/io-pgtable-arm.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Any-topic discussions
----------------------
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.=
+c
+index c1b62c7d81ba..7e53ee51270b 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -232,12 +232,13 @@ static inline int arm_lpae_max_entries(int i, struct =
+arm_lpae_io_pgtable *data)
+  *   c) 42 bits PA size with 4K: use level 1 instead of level 0 (8 tables =
+for ias =3D oas)
+  *   d) 48 bits PA size with 16K: use level 1 instead of level 0 (2 tables=
+ for ias =3D oas)
+  */
+-static inline bool arm_lpae_concat_mandatory(struct arm_lpae_io_pgtable *d=
+ata)
++static inline bool arm_lpae_concat_mandatory(struct io_pgtable_cfg *cfg,
++					     struct arm_lpae_io_pgtable *data)
+ {
+-	unsigned int ias =3D data->iop.cfg.ias;
+-	unsigned int oas =3D data->iop.cfg.oas;
++	unsigned int ias =3D cfg->ias;
++	unsigned int oas =3D cfg->oas;
+=20
+-	/* Covers 1  and 2.d */
++	/* Covers 1 and 2.d */
+ 	if ((ARM_LPAE_GRANULE(data) =3D=3D SZ_16K) && (data->start_level =3D=3D 0=
+))
+ 		return (oas =3D=3D 48) || (ias =3D=3D 48);
+=20
+@@ -1033,7 +1034,7 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *c=
+fg, void *cookie)
+ 	if (!data)
+ 		return NULL;
+=20
+-	if (arm_lpae_concat_mandatory(data))  {
++	if (arm_lpae_concat_mandatory(cfg, data)) {
+ 		if (WARN_ON((ARM_LPAE_PGD_SIZE(data) / sizeof(arm_lpae_iopte)) >
+ 			    ARM_LPAE_S2_MAX_CONCAT_PAGES))
+ 			return NULL;
+--=20
+2.47.1.613.gc27f4b7a9f-goog
 
-Next three time slots for any topic (no reservation is required) are scheduled
-as below:
-
-- 2024-12-16 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
-- 2025-01-13 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
-- 2025-01-29 (Wed) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
-
-Dedicated-topic discussions
----------------------------
-
-Next three time slots that I reserved in advance for possible future dedicated
-topic discussions are as below.
-
-- 2024-12-18 (Wed) 09:30 PT (not yet reserved)
-- 2025-01-15 (Wed) 09:30 PT (not yet reserved)
-- 2025-01-27 (Mon) 18:00 PT (not yet reserved)
-
-Please reach out to me (sj@kernel.org or whatever) to reserve the
-not-yet-reserved time slots for your topics.  The reservation is made in a
-First-Come First-Served way, and I will send a Google Meet link to
-reservation-confirmed attendees.
-
-Please note that other time slots are also available based on the demands.
-
-Shared Calendar
----------------
-
-You can get the schedule via this shared Google Calendar:
-https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
-
-You can also get the past and upcoming schedules via
-https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-
-
-Thanks,
-SJ
 
