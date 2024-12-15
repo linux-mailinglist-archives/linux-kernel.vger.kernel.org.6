@@ -1,122 +1,194 @@
-Return-Path: <linux-kernel+bounces-446578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCE19F266C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:06:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF0E9F266F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E99D1884F00
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688F81884E3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5511B87F5;
-	Sun, 15 Dec 2024 22:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07121BE86E;
+	Sun, 15 Dec 2024 22:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9WD4jT8"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HBmwOSY6"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8851D696
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9746B1D696;
+	Sun, 15 Dec 2024 22:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734300370; cv=none; b=OYlFkL2d/9YrBdC4X0L+1yka4P1x+4a0AegbNT+QT9aOeBFLIkbZHtYj4pkm52SFMGNXolraKCmtfi8g/mlqKAkJH4WnmQwgOaBr9Yhi/PJo7L3AnthBYxuKlhEQrVhJ3xiSaK/lgdv4/dj7LJ5z1zcFvb3bAsRnqMYgdp0jrUE=
+	t=1734300592; cv=none; b=KncamGO3ZFg56tOIT/QhMKLjmLJDhGz4JpdpEado+DTarLuYKSToV1EojmRKBzSbnRkQBKgMJTVPEJzIPfwdxcOwL4q0ZJhsl5iGs+7XowpCXLBNr8taQXCEztpl2uigjmsZoA2TkSacAcSNDKxeG9T+zpR1vcbjTRYQtmhWpUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734300370; c=relaxed/simple;
-	bh=i1lMoc4dH58y+8d7luRWSws20LuMilxHst2/L9mUwNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eov3I0SXPSpBAyuOyoQteRkoI7J8NQvpHQE10kGhFSHMRPLw97g+aopFz3R1ayOBuUbjiSF+uWRHVPA3EZIbYE12lIWd2wUAVzPP0lFQhn3WAY2KMhlQx/1uXgUe/3d8ImoZuYN/Nbznmqm5G+lpvNGon1n0QejDmI5HQLPFKjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9WD4jT8; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-844eb33827eso75810839f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 14:06:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734300368; x=1734905168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDIMOewigJmHzzSRfwlsgnwekYZKGWmSYwk2FpU4fjA=;
-        b=c9WD4jT8E/dONd8KmbhUSz0bcU4chDXFnFzdJYfVh9MglitubVU74WGluGKKrolx7Z
-         L7x38WaWhlPpDhwhq/XQAqYGXi/i0P/bmheoQnORbqN5ZJd2nSxu/ccYybem2YzKiFjk
-         JekViw94KEFOtHE3/FGSbtPBcDU6+iIfJoH3Kgca3O+PmB/c+3TGAK1jSQf7AlN2OlYm
-         2NG4Mipgv16z7HNzr8fVXRXBzXRLOLVAebLraiJOjx7wvnD1ZswN86s/4RYEHbdok6W4
-         Q8C5gMQF6mTIk/W+FNhqpWtTPQys4YLyOAXOlzIyGAeJTF+8BicuoXHPUdYIzfA4Wh5p
-         Fc5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734300368; x=1734905168;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZDIMOewigJmHzzSRfwlsgnwekYZKGWmSYwk2FpU4fjA=;
-        b=Ff7mrSTs9K7dOxjHXhzLU4snnaPmRefqUl+DfCRihdE7ND4D9C9oAQSSPxMpjGFVEq
-         AD2zQWaU6bnlAYr/8/UD3S0MVaC5pHh1J6ZpbeeebVac5p+tN3V3fsGloHcSXFCg3hcr
-         crn1QEXYeNShDdlr+FLMBqQX+MTd1ymkCevze0VVZHD1m0JbCfatO+ToDn30MRpbU0uD
-         LtVQOg1TXkn0EfN07pXrG621aDmUIcOpSgs3TKBIPHHFFHR0eLNtxbRvXpojinZFzL2G
-         xFOIGRQoa0n1HKq6m5LAk7POJzOa6nzKYAEoKWRMrKfxMpX57MFtL9v2uR0kSlwm+VCS
-         H88g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUplFFSxy6sjx5E9nGGK6QCM7dMkFVgeMxO0S28M3d8mMdd0r83SrY4JKCZL2Hku9vQkQHwYRAxUPe+eM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweu5Yu4SpT2u0yBuI9Bs9UMrZW3IFEkfP0JVesfYsmaZzN+bGg
-	kxjXXp0OIPo8so1Mt4DDIEL7m+oYa9B6cTmu3ALSu7VsZoeg4jYa
-X-Gm-Gg: ASbGncuNe106UCsJpYxyviGJLydOtQlCxJUcWnR0gOruT0qqZ8QSEEdsLSwsM1kX8Mt
-	zEM1fWS3aG9Mwf9oZ8Vw3yBwi1Uwxwg9ori2kT0XojHDOWsYhbtpih5R+6QywRcJOgLtsYdrzWM
-	Liwc5Xo+ug+Vkw8UhVDo1/MEcOwXmbOc4ofpeZ6q+cf9YjW8H9GfgStLdvOEQUDQBHY18A1wKSl
-	m+jsEY3NZFS9Y8uHNeuXWyyd7NzTEZhjdAMWnhew9dCqQ6c4tsKEAhZL4aWjPkkgrAAScu6rVk6
-	wd5FGK8x6sxSqrjhgRKfxDa90d20Xis=
-X-Google-Smtp-Source: AGHT+IGpINEcA+1pBG6zS0mOq03qQ8d8/19Mh3Uf0RVNgHnIkRC5K4eTEFoLX5i2z93RtAGzoRv2WA==
-X-Received: by 2002:a05:6602:1644:b0:83a:b8aa:ec0 with SMTP id ca18e2360f4ac-844e88ef8a1mr832233139f.13.1734300366217;
-        Sun, 15 Dec 2024 14:06:06 -0800 (PST)
-Received: from aford-System-Version.. (c-75-72-162-184.hsd1.mn.comcast.net. [75.72.162.184])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e03685ecsm914303173.2.2024.12.15.14.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 14:06:05 -0800 (PST)
-From: Adam Ford <aford173@gmail.com>
-To: linux-phy@lists.infradead.org
-Cc: aford@beaconembedded.com,
-	Adam Ford <aford173@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: freescale: fsl-samsung-hdmi: Fix 64-by-32 division cocci warnings
-Date: Sun, 15 Dec 2024 16:05:55 -0600
-Message-ID: <20241215220555.99113-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1734300592; c=relaxed/simple;
+	bh=1K4UDzQibAAbh+HcOfggNwiJiB/uWyO18wdmGXvsReI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZdajq4nZJVgHnny9m8qPw8DnjJoHUPnqfvh2YOhhuwsgjwxXECv/BwdwILVAdnIk7j/4gOvJI9K90ZdT8/hYcnwTy0dQWIKuiv71I9ybGlkdU/2+XBGAKZbIvxxPa+BazBXg/r5ckSpBpNpc47KKN093JBu9kl/84MbJeH4g9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HBmwOSY6; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BF2Ib3M000400;
+	Sun, 15 Dec 2024 22:09:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=foavY3
+	NUBKwRVvv82vUPDlwf/CmqkiZ880rnbJW+UKY=; b=HBmwOSY6M9KxGlnSUxzMVa
+	+uskSUz7Xp637o3fcTYGypxlrA6hCVi96O74r4RqUd4ip9/TwNuqkLrpBfcyXdNh
+	n0dn4nrqvXVH1Ocwa7Rvz67QvfChAdyXSnurqzfnc+S8O/FeaC1M4bjIrnda3S7i
+	PuaZp0S0WXM4KUVruvPy83/7Q7Vb1LKihy+j3FWjkAAwb7E4wdhBykp8vHMVK7Cs
+	3QVoL5AqHThIPWUUPqnAzDeFyIhoDDmvrgSmCZgv9boo0Udc7mTIbtqUelPCl9fk
+	tnONbQDPgTXzdtq2KOJn33ZLx6V9bLEItBgm950ztrcBDktGnDzQ/lAz9n+pD08A
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43hm5gu78p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Dec 2024 22:09:34 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BFK6Tbr014397;
+	Sun, 15 Dec 2024 22:09:33 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hq21ax5b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Dec 2024 22:09:33 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BFM9VKp56099082
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 15 Dec 2024 22:09:31 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C6F752005A;
+	Sun, 15 Dec 2024 22:09:31 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6D3C02004E;
+	Sun, 15 Dec 2024 22:09:31 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 15 Dec 2024 22:09:31 +0000 (GMT)
+Date: Sun, 15 Dec 2024 23:09:27 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, aruna.ramakrishna@oracle.com,
+        catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+        joey.gouly@arm.com, keith.lucas@oracle.com, ryan.roberts@arm.com,
+        shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH 11/14] selftests/mm: Use sys_pkey helpers consistently
+Message-ID: <Z19Tl30BuKTfL629@tuxmaker.boeblingen.de.ibm.com>
+References: <20241209095019.1732120-1-kevin.brodsky@arm.com>
+ <20241209095019.1732120-12-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241209095019.1732120-12-kevin.brodsky@arm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: DFxHJAOykh2WDho1kMjZipalLMNewXsl
+X-Proofpoint-GUID: DFxHJAOykh2WDho1kMjZipalLMNewXsl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ clxscore=1011 suspectscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412150192
 
-The Kernel test robot returns the following warning:
- do_div() does a 64-by-32 division, please consider using div64_ul instead.
+On Mon, Dec 09, 2024 at 09:50:16AM +0000, Kevin Brodsky wrote:
 
-To prevent the 64-by-32 divsion, consolidate both the multiplication
-and the do_div into one line which explicitly uses u64 sizes.
+Hi Kevin, Andrew,
 
-Fixes: 1951dbb41d1d ("phy: freescale: fsl-samsung-hdmi: Support dynamic integer")
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412091243.fSObwwPi-lkp@intel.com/
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index 814b17a43385..1f0743d9459d 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -147,8 +147,8 @@ TEST_FILES += write_hugetlb_memory.sh
+>  
+>  include ../lib.mk
+>  
+> -$(TEST_GEN_PROGS): vm_util.c thp_settings.c
+> -$(TEST_GEN_FILES): vm_util.c thp_settings.c
+> +$(TEST_GEN_PROGS): vm_util.c thp_settings.c pkey_util.c
+> +$(TEST_GEN_FILES): vm_util.c thp_settings.c pkey_util.c
 
-diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-index 2c8038864357..d3ccf547ba1c 100644
---- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-+++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-@@ -424,8 +424,7 @@ static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout, u8 *p, u1
- 			 * Fvco = (M * f_ref) / P,
- 			 * where f_ref is 24MHz.
- 			 */
--			tmp = (u64)_m * 24 * MHZ;
--			do_div(tmp, _p);
-+			tmp = div64_ul((u64)_m * 24 * MHZ, _p);
- 			if (tmp < 750 * MHZ ||
- 			    tmp > 3000 * MHZ)
- 				continue;
--- 
-2.45.2
+This patch breaks s390 in -next with the below error messages:
 
+In file included from pkey_util.c:5:
+pkey-helpers.h:109:2: error: #error Architecture not supported
+  109 | #error Architecture not supported
+      |  ^~~~~
+pkey-helpers.h: In function ‘set_pkey_bits’:
+pkey-helpers.h:126:21: error: implicit declaration of function ‘pkey_bit_position’ [-Wimplicit-function-declaration]
+  126 |         u32 shift = pkey_bit_position(pkey);
+      |                     ^~~~~~~~~~~~~~~~~
+pkey-helpers.h: In function ‘_read_pkey_reg’:
+pkey-helpers.h:151:24: error: implicit declaration of function ‘__read_pkey_reg’; did you mean ‘_read_pkey_reg’? [-Wimplicit-function-declaration]
+  151 |         u64 pkey_reg = __read_pkey_reg();
+      |                        ^~~~~~~~~~~~~~~
+      |                        _read_pkey_reg
+pkey-helpers.h: In function ‘write_pkey_reg’:
+pkey-helpers.h:165:18: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+  165 |         dprintf4("%s() changing %016llx to %016llx\n", __func__,
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  166 |                         __read_pkey_reg(), pkey_reg);
+      |                         ~~~~~~~~~~~~~~~~~
+      |                         |
+      |                         int
+pkey-helpers.h:62:32: note: in definition of macro ‘dprintf_level’
+   62 |                 sigsafe_printf(args);           \
+      |                                ^~~~
+pkey-helpers.h:165:9: note: in expansion of macro ‘dprintf4’
+  165 |         dprintf4("%s() changing %016llx to %016llx\n", __func__,
+      |         ^~~~~~~~
+pkey-helpers.h:165:39: note: format string is defined here
+  165 |         dprintf4("%s() changing %016llx to %016llx\n", __func__,
+      |                                 ~~~~~~^
+      |                                       |
+      |                                       long long unsigned int
+      |                                 %016x
+pkey-helpers.h:169:9: error: implicit declaration of function ‘__write_pkey_reg’; did you mean ‘write_pkey_reg’? [-Wimplicit-function-declaration]
+  169 |         __write_pkey_reg(pkey_reg);
+      |         ^~~~~~~~~~~~~~~~
+      |         write_pkey_reg
+pkey-helpers.h:171:18: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+  171 |         dprintf4("%s(%016llx) pkey_reg: %016llx\n", __func__,
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  172 |                         pkey_reg, __read_pkey_reg());
+      |                                   ~~~~~~~~~~~~~~~~~
+      |                                   |
+      |                                   int
+pkey-helpers.h:62:32: note: in definition of macro ‘dprintf_level’
+   62 |                 sigsafe_printf(args);           \
+      |                                ^~~~
+pkey-helpers.h:171:9: note: in expansion of macro ‘dprintf4’
+  171 |         dprintf4("%s(%016llx) pkey_reg: %016llx\n", __func__,
+      |         ^~~~~~~~
+pkey-helpers.h:171:47: note: format string is defined here
+  171 |         dprintf4("%s(%016llx) pkey_reg: %016llx\n", __func__,
+      |                                         ~~~~~~^
+      |                                               |
+      |                                               long long unsigned int
+      |                                         %016x
+pkey-helpers.h: In function ‘is_pkeys_supported’:
+pkey-helpers.h:207:14: error: implicit declaration of function ‘cpu_has_pkeys’; did you mean ‘kernel_has_pkeys’? [-Wimplicit-function-declaration]
+  207 |         if (!cpu_has_pkeys()) {
+      |              ^~~~~~~~~~~~~
+      |              kernel_has_pkeys
+
+Please, let me know if I am missing something.
+
+>  $(OUTPUT)/uffd-stress: uffd-common.c
+>  $(OUTPUT)/uffd-unit-tests: uffd-common.c
+
+Thanks!
 
