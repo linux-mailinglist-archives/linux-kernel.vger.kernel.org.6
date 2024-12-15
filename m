@@ -1,272 +1,119 @@
-Return-Path: <linux-kernel+bounces-446527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12A89F2580
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:02:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241919F2593
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5BA164B83
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 19:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3135718859D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 19:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945741BBBD7;
-	Sun, 15 Dec 2024 19:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U9yYFq9u"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A441B87FE;
+	Sun, 15 Dec 2024 19:07:26 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D403C192D76;
-	Sun, 15 Dec 2024 19:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794611BFE03
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 19:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734289368; cv=none; b=EvILtGn8WW1MX953xGrM/mPJVAbGKKWL328nJ28iWCsfiYdDbYMGs3Jaq4hz+JtyrmZPT9D5pXZ6E1XyEMVG0hh8vp8qzj3fJbapkA5NX2aZWpLQpcs+LYK8c8dkprtH8DE0ML1sZ3QT8lYAfdr207Ria7n1rN2pODP+Wfc+Wmg=
+	t=1734289645; cv=none; b=XAMVYQO6yN8UxnAGln8p5o6RTwiRLVZPHxpFqa8LuciJNa17vbgWWfsLO065wCGTKK7vVpQaHAad49akkZrUpmX0XblKJqM+cuT8LKby6+RcsyJbQkYL8OLBMwHj1qGuzhnatiL0MF3JaQfWvimBfu5NwnJVKpAMIym0rodgIvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734289368; c=relaxed/simple;
-	bh=5wgYjyIp/JT/tJn/YqdvA5A07C5vcJybT0TuAJFmO2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qEi3MRIUSo+BNJFmi6jNDALxKVY21uwZYMhZLqvtTEbSBDRgI21nG9h78PVqAm8gEoeKBUoS1U2SifCZjB/cXE+PX2am0eatZJsfCya/sCAhtTVIbelGwDqf9YjuDUT2vb919aAh5Xm8Z6tlhrfup3P54Yvuu90Pnd0qZT1Uqr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U9yYFq9u; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BFHgsU8010575;
-	Sun, 15 Dec 2024 19:02:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O6Du/W2RTrVQoyBwGNVh+rPSOyikaF9NgKinBBPgp04=; b=U9yYFq9uayB2iVgb
-	7mkGt65Ks+m2EGNEhek/FYRKHxt1Qdr5HIk3DgJgJTDmeDlm4IrW06fjk9C3Ie0e
-	gmls+W6xgD8EZemVVD1PNdKJfp7r19M42MLi1Z3/d8/N5JI1EcCatF6JJ/eFbfEI
-	YS+YmA6q9yHXb4Qciv1M+PGLz9BjGKCCSlw7IfaBwTJHGuZ1b5gbOAUSWXWXQsps
-	mcofEve8Tjy6Lbn1isjCEL3TBqktt59V40mhTRGgYzLuA5rf+TH4KPBf+TWCEDd5
-	VZC545JNKH7/ThyeGRSBRPRZULJiSCnGd92KsRF2KkQ9FoJrf+NRnThn69X9rgXh
-	5x1jeg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43hu3yrqkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Dec 2024 19:02:37 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BFJ2aBL023629
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Dec 2024 19:02:36 GMT
-Received: from [10.216.10.72] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 15 Dec
- 2024 11:02:34 -0800
-Message-ID: <3a8685b4-c18e-e3ca-60f2-893e3a9e0ecd@quicinc.com>
-Date: Mon, 16 Dec 2024 00:32:22 +0530
+	s=arc-20240116; t=1734289645; c=relaxed/simple;
+	bh=vgr8lLu1Qqnub64e79oXwUlqd2gR91iR24nmnJhUuJk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=jeZQFl1By2Rf/yVXgfHckSQb2EWosVO5bLkYY/TEY3zfP/DxGcd9SrWuyEGB28F80VP2bbDWbdFlluUugLAwDZKgBTQjU1fbULO4XtxAqnQb+qmqIOeFDLW5zcZ2poIMmhFqftDyfvthf1CuMm2EWr+xX2HUWqV0JcWtBfszs/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-150-76v1ZOAhNra134_68TK1Pg-1; Sun, 15 Dec 2024 19:07:14 +0000
+X-MC-Unique: 76v1ZOAhNra134_68TK1Pg-1
+X-Mimecast-MFC-AGG-ID: 76v1ZOAhNra134_68TK1Pg
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 15 Dec
+ 2024 19:06:13 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 15 Dec 2024 19:06:13 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Kees Cook' <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+CC: =?utf-8?B?VGhvbWFzIFdlacOfc2NodWg=?= <linux@weissschuh.net>, Nilay Shroff
+	<nilay@linux.ibm.com>, Yury Norov <yury.norov@gmail.com>, Qing Zhao
+	<qing.zhao@oracle.com>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] fortify: Hide run-time copy size from value range
+ tracking
+Thread-Topic: [PATCH v2] fortify: Hide run-time copy size from value range
+ tracking
+Thread-Index: AQHbTch8d+wrrUhKvECKbtRQEXOCn7LnrGkw
+Date: Sun, 15 Dec 2024 19:06:12 +0000
+Message-ID: <383ed0428fd2415aa7ab09255134d61c@AcuMS.aculab.com>
+References: <20241214013600.it.020-kees@kernel.org>
+In-Reply-To: <20241214013600.it.020-kees@kernel.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] thermal/thresholds: Fix boundaries and detection routine
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, <rafael@kernel.org>
-CC: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        "open
- list:THERMAL" <linux-pm@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <20241212190737.4127274-1-daniel.lezcano@linaro.org>
-From: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
-In-Reply-To: <20241212190737.4127274-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jDrlc2QBKwLt3_wcLyMn-pJChwgwK9aM
-X-Proofpoint-ORIG-GUID: jDrlc2QBKwLt3_wcLyMn-pJChwgwK9aM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 mlxscore=0 phishscore=0 clxscore=1011 mlxlogscore=999
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412150165
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 4avvLUWE9y37lLh2s4QJjqh44PfxSZ-Ux11DBiar8Yw_1734289633
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
+RnJvbTogS2VlcyBDb29rDQo+IFNlbnQ6IDE0IERlY2VtYmVyIDIwMjQgMDE6MzYNCi4uLg0KPiBJ
+biBvcmRlciB0byBzaWxlbmNlIHRoaXMgZmFsc2UgcG9zaXRpdmUgYnV0IGtlZXAgZGV0ZXJtaW5p
+c3RpYw0KPiBjb21waWxlLXRpbWUgd2FybmluZ3MgaW50YWN0LCBoaWRlIHRoZSBsZW5ndGggdmFy
+aWFibGUgZnJvbSBHQ0Mgd2l0aA0KPiBPUFRJTUlaRV9ISURFX1ZBUigpIGJlZm9yZSBjYWxsaW5n
+IHRoZSBidWlsdGluIG1lbWNweS4NCi4uLg0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9m
+b3J0aWZ5LXN0cmluZy5oIGIvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0cmluZy5oDQo+IGluZGV4
+IDBkOTliZjExZDI2MC4uMWVlZjAxMTk2NzFjIDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4
+L2ZvcnRpZnktc3RyaW5nLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9mb3J0aWZ5LXN0cmluZy5o
+DQo+IEBAIC02MTYsNiArNjE2LDEyIEBAIF9fRk9SVElGWV9JTkxJTkUgYm9vbCBmb3J0aWZ5X21l
+bWNweV9jaGsoX19rZXJuZWxfc2l6ZV90IHNpemUsDQo+ICAJcmV0dXJuIGZhbHNlOw0KPiAgfQ0K
+PiANCj4gKy8qDQo+ICsgKiBUbyB3b3JrIGFyb3VuZCB3aGF0IHNlZW1zIHRvIGJlIGFuIG9wdGlt
+aXplciBidWcsIHRoZSBtYWNybyBhcmd1bWVudHMNCj4gKyAqIG5lZWQgdG8gaGF2ZSBjb25zdCBj
+b3BpZXMgb3IgdGhlIHZhbHVlcyBlbmQgdXAgY2hhbmdlZCBieSB0aGUgdGltZSB0aGV5DQo+ICsg
+KiByZWFjaCBmb3J0aWZ5X3dhcm5fb25jZSgpLiBTZWUgY29tbWl0IDZmNzYzMGIxYjViYyAoImZv
+cnRpZnk6IENhcHR1cmUNCj4gKyAqIF9fYm9zKCkgcmVzdWx0cyBpbiBjb25zdCB0ZW1wIHZhcnMi
+KSBmb3IgbW9yZSBkZXRhaWxzLg0KPiArICovDQo+ICAjZGVmaW5lIF9fZm9ydGlmeV9tZW1jcHlf
+Y2hrKHAsIHEsIHNpemUsIHBfc2l6ZSwgcV9zaXplLAkJXA0KPiAgCQkJICAgICBwX3NpemVfZmll
+bGQsIHFfc2l6ZV9maWVsZCwgb3ApICh7CQlcDQo+ICAJY29uc3Qgc2l6ZV90IF9fZm9ydGlmeV9z
+aXplID0gKHNpemVfdCkoc2l6ZSk7CQkJXA0KPiBAQCAtNjIzLDYgKzYyOSw4IEBAIF9fRk9SVElG
+WV9JTkxJTkUgYm9vbCBmb3J0aWZ5X21lbWNweV9jaGsoX19rZXJuZWxfc2l6ZV90IHNpemUsDQo+
+ICAJY29uc3Qgc2l6ZV90IF9fcV9zaXplID0gKHFfc2l6ZSk7CQkJCVwNCj4gIAljb25zdCBzaXpl
+X3QgX19wX3NpemVfZmllbGQgPSAocF9zaXplX2ZpZWxkKTsJCQlcDQo+ICAJY29uc3Qgc2l6ZV90
+IF9fcV9zaXplX2ZpZWxkID0gKHFfc2l6ZV9maWVsZCk7CQkJXA0KPiArCS8qIEtlZXAgYSBtdXRh
+YmxlIHZlcnNpb24gb2YgdGhlIHNpemUgZm9yIHRoZSBmaW5hbCBjb3B5LiAqLwlcDQo+ICsJc2l6
+ZV90IF9fY29weV9zaXplID0gX19mb3J0aWZ5X3NpemU7CQkJCVwNCj4gIAlmb3J0aWZ5X3dhcm5f
+b25jZShmb3J0aWZ5X21lbWNweV9jaGsoX19mb3J0aWZ5X3NpemUsIF9fcF9zaXplLAlcDQo+ICAJ
+CQkJICAgICBfX3Ffc2l6ZSwgX19wX3NpemVfZmllbGQsCQlcDQo+ICAJCQkJICAgICBfX3Ffc2l6
+ZV9maWVsZCwgRk9SVElGWV9GVU5DXyAjI29wKSwgXA0KPiBAQCAtNjMwLDcgKzYzOCwxMSBAQCBf
+X0ZPUlRJRllfSU5MSU5FIGJvb2wgZm9ydGlmeV9tZW1jcHlfY2hrKF9fa2VybmVsX3NpemVfdCBz
+aXplLA0KPiAgCQkgIF9fZm9ydGlmeV9zaXplLAkJCQkJXA0KPiAgCQkgICJmaWVsZCBcIiIgI3Ag
+IlwiIGF0ICIgRklMRV9MSU5FLAkJCVwNCj4gIAkJICBfX3Bfc2l6ZV9maWVsZCk7CQkJCQlcDQo+
+IC0JX191bmRlcmx5aW5nXyMjb3AocCwgcSwgX19mb3J0aWZ5X3NpemUpOwkJCVwNCj4gKwkvKiBI
+aWRlIG9ubHkgdGhlIHJ1bi10aW1lIHNpemUgZnJvbSB2YWx1ZSByYW5nZSB0cmFja2luZyB0byAq
+LwlcDQo+ICsJLyogc2lsZW5jZSBjb21waWxlLXRpbWUgZmFsc2UgcG9zaXRpdmUgYm91bmRzIHdh
+cm5pbmdzLiAqLwlcDQo+ICsJaWYgKCFfX2J1aWx0aW5fY29uc3RhbnRfcChfX2ZvcnRpZnlfc2l6
+ZSkpCQkJXA0KPiArCQlPUFRJTUlaRVJfSElERV9WQVIoX19jb3B5X3NpemUpOwkJCVwNCg0KSSB0
+aGluayB5b3UgY2FuIG1ha2UgdGhhdDoNCglpZiAoIV9fYnVpbHRpbl9jb25zdGFudF9wKF9fY29w
+eV9zaXplKSkgXA0KCQlPUFRJTUlTRVJfSElERV9WQVIoX19jb3B5X3NpemUpIFwNCndoaWNoIGlz
+IHByb2JhYmx5IG1vcmUgcmVhZGFibGUuDQoNCglEYXZpZA0KDQo+ICsJX191bmRlcmx5aW5nXyMj
+b3AocCwgcSwgX19jb3B5X3NpemUpOwkJCQlcDQo+ICB9KQ0KPiANCj4gIC8qDQo+IC0tDQo+IDIu
+MzQuMQ0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQs
+IE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86
+IDEzOTczODYgKFdhbGVzKQ0K
 
-Hi Daniel,
-
-
-On 12/13/2024 12:37 AM, Daniel Lezcano wrote:
-> The current implementation does not work if the thermal zone is
-> interrupt driven only.
->
-> The boundaries are not correctly checked and computed as it happens
-> only when the temperature is increasing or decreasing.
->
-> The problem arises because the routine to detect when we cross a
-> threshold is correlated with the computation of the boundaries. We
-> assume we have to recompute the boundaries when a threshold is crossed
-> but actually we should do that even if the it is not the case.
->
-> Mixing the boundaries computation and the threshold detection for the
-> sake of optimizing the routine is much more complex as it appears
-> intuitively and prone to errors.
->
-> This fix separates the boundaries computation and the threshold
-> crossing detection into different routines. The result is a code much
-> more simple to understand, thus easier to maintain.
->
-> The drawback is we browse the thresholds list several time but we can
-> consider that as neglictible because that happens when the temperature
-> is updated. There are certainly some aeras to improve in the
-> temperature update routine but it would be not adequate as this change
-> aims to fix the thresholds for v6.13.
->
-> Fixes: 445936f9e258 ("thermal: core: Add user thresholds support")
-> Tested-by: Daniel Lezcano <daniel.lezcano@linaro.org> # rock5b, Lenovo x13s
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->   drivers/thermal/thermal_thresholds.c | 68 +++++++++++++++-------------
->   1 file changed, 36 insertions(+), 32 deletions(-)
->
-> diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
-> index d9b2a0bb44fc..dc2852721151 100644
-> --- a/drivers/thermal/thermal_thresholds.c
-> +++ b/drivers/thermal/thermal_thresholds.c
-> @@ -69,58 +69,60 @@ static struct user_threshold *__thermal_thresholds_find(const struct list_head *
->   	return NULL;
->   }
->   
-> -static bool __thermal_threshold_is_crossed(struct user_threshold *threshold, int temperature,
-> -					   int last_temperature, int direction,
-> -					   int *low, int *high)
-> +static bool thermal_thresholds_handle_raising(struct list_head *thresholds, int temperature,
-> +					      int last_temperature)
->   {
-> +	struct user_threshold *t;
->   
-> -	if (temperature >= threshold->temperature) {
-> -		if (threshold->temperature > *low &&
-> -		    THERMAL_THRESHOLD_WAY_DOWN & threshold->direction)
-> -			*low = threshold->temperature;
-> +	list_for_each_entry(t, thresholds, list_node) {
->   
-> -		if (last_temperature < threshold->temperature &&
-> -		    threshold->direction & direction)
-> -			return true;
-> -	} else {
-> -		if (threshold->temperature < *high && THERMAL_THRESHOLD_WAY_UP
-> -		    & threshold->direction)
-> -			*high = threshold->temperature;
-> +		if (!(t->direction & THERMAL_THRESHOLD_WAY_UP))
-> +		    continue;
->   
-> -		if (last_temperature >= threshold->temperature &&
-> -		    threshold->direction & direction)
-> +		if (temperature >= t->temperature &&
-> +		    last_temperature < t->temperature)
->   			return true;
->   	}
->   
->   	return false;
->   }
->   
-> -static bool thermal_thresholds_handle_raising(struct list_head *thresholds, int temperature,
-> -					      int last_temperature, int *low, int *high)
-> +static bool thermal_thresholds_handle_dropping(struct list_head *thresholds, int temperature,
-> +					       int last_temperature)
->   {
->   	struct user_threshold *t;
->   
-> -	list_for_each_entry(t, thresholds, list_node) {
-> -		if (__thermal_threshold_is_crossed(t, temperature, last_temperature,
-> -						   THERMAL_THRESHOLD_WAY_UP, low, high))
-> +	list_for_each_entry_reverse(t, thresholds, list_node) {
-> +
-> +		if (!(t->direction & THERMAL_THRESHOLD_WAY_DOWN))
-> +		    continue;
-> +
-> +		if (temperature < t->temperature &&
-> +		    last_temperature >= t->temperature)
->   			return true;
-
-Currently WAY_UP notification triggers if temperature is greater than or 
-equal to t-> temperature, but for WAY_DOWN
-
-it is only checking temperature is less than t->temperature. Why don't 
-we include temperature = t->temperature
-
-for WAY_DOWN threshold ? In that case it will be consistent for both 
-WAY_UP and WAY_DOWN notification for userspace.
-
-If we are not considering 'equal to' for WAY_DOWN, there is a 
-possibility of missing WAY_DOWN notification if a sensor
-
-is violated with same WAY_DOWN threshold temperature and only interrupt 
-mode is enabled for that sensor.
-
-
-Thank you
-
-Manaf
-
->   	}
->   
->   	return false;
->   }
->   
-> -static bool thermal_thresholds_handle_dropping(struct list_head *thresholds, int temperature,
-> -					       int last_temperature, int *low, int *high)
-> +static void thermal_threshold_find_boundaries(struct list_head *thresholds, int temperature,
-> +					      int *low, int *high)
->   {
->   	struct user_threshold *t;
->   
-> -	list_for_each_entry_reverse(t, thresholds, list_node) {
-> -		if (__thermal_threshold_is_crossed(t, temperature, last_temperature,
-> -						   THERMAL_THRESHOLD_WAY_DOWN, low, high))
-> -			return true;
-> +	list_for_each_entry(t, thresholds, list_node) {
-> +		if (temperature < t->temperature &&
-> +		    (t->direction & THERMAL_THRESHOLD_WAY_UP) &&
-> +		    *high > t->temperature)
-> +			*high = t->temperature;
->   	}
->   
-> -	return false;
-> +	list_for_each_entry_reverse(t, thresholds, list_node) {
-> +		if (temperature > t->temperature &&
-> +		    (t->direction & THERMAL_THRESHOLD_WAY_DOWN) &&
-> +		    *low < t->temperature)
-> +			*low = t->temperature;
-> +	}
->   }
->   
->   void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *high)
-> @@ -132,6 +134,8 @@ void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *hi
->   
->   	lockdep_assert_held(&tz->lock);
->   
-> +	thermal_threshold_find_boundaries(thresholds, temperature, low, high);
-> +
->   	/*
->   	 * We need a second update in order to detect a threshold being crossed
->   	 */
-> @@ -151,12 +155,12 @@ void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *hi
->   	 * - decreased : thresholds are crossed the way down
->   	 */
->   	if (temperature > last_temperature) {
-> -		if (thermal_thresholds_handle_raising(thresholds, temperature,
-> -						      last_temperature, low, high))
-> +		if (thermal_thresholds_handle_raising(thresholds,
-> +						      temperature, last_temperature))
->   			thermal_notify_threshold_up(tz);
->   	} else {
-> -		if (thermal_thresholds_handle_dropping(thresholds, temperature,
-> -						       last_temperature, low, high))
-> +		if (thermal_thresholds_handle_dropping(thresholds,
-> +						       temperature, last_temperature))
->   			thermal_notify_threshold_down(tz);
->   	}
->   }
 
