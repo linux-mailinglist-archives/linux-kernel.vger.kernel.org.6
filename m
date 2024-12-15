@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-446315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B679F2286
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:55:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEC79F228C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E3418866E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C340164EB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BB047F53;
-	Sun, 15 Dec 2024 07:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8BB49627;
+	Sun, 15 Dec 2024 08:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="X6AZtEw3"
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="usvhsaru"
 Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4B83D96A;
-	Sun, 15 Dec 2024 07:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB2418E1A;
+	Sun, 15 Dec 2024 08:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734249341; cv=none; b=B0UA3SMQhHUNY8FC85jqxNWVSUKOPizF8UmfjYsQY8/5xJuWe6qPnXH5rE76obP3IqRw0c0iJguhuHOB8BrkIq82lB6g5L8qwbXKArFaCaYfUvKfFEcAtuxT6dGGMFd8h4eBnlSl7fbwmh1q5P2F3e5Kvn5vqOogAWxojdosGro=
+	t=1734249627; cv=none; b=ftXOoZMV2uiw31Kbx1v8PDPh+F68uYdu9OXC/nVZvVL9L5+MZxs9mCZ4BQiYAmwnp1DG1RkPAdAleklD1qhRUkySdnRXgKzP6Ry82oP0h8FTzSi3f9+Age1r49+2o0pIAzcLbRT/PPHXbQYIb31oxqMVMTJ+61/IBvZ8ZPdIxGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734249341; c=relaxed/simple;
-	bh=+Lc1c+7W7amo74yObj3Gd5VmrD41PluEpZ3Nf3nThco=;
+	s=arc-20240116; t=1734249627; c=relaxed/simple;
+	bh=djYC58sVz93yHsKs88HbFV3AZuwifi4tTdhTqtfjjP8=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=tJS4ztmh0a5mH3+fsvNt5GgFBeeE+dRWLIQF1ipav5rPaM6jTh5vFok/SVHK6n0nqQ5qeAIe7HKQNwc4lsFcAihpqQdUS6yK9JlY8tTZro26DPeRTvJc8q+SRxyGiBwWTQtidJ/wEf5Jkrld20tzA8TzPwdJbTDjCFoC47JAovY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=X6AZtEw3; arc=none smtp.client-ip=116.203.91.91
+	 Message-ID:Content-Type; b=biOseMDK9KyC3prChd4XYbZABgKgBoukHY1z+MazbQ1diWW60fa4qi5A/fZ14Ays4Tp55XrB7h/V6pe+EY6+XHCs1eDm9n6TqjiNhgL/3b4KSXE2beRNoM3aqSz66HFD7rw65bBAn0A9Q1Z7OuZDaQk7WPFzV2xXcplxkbg/Fx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=usvhsaru; arc=none smtp.client-ip=116.203.91.91
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
@@ -37,18 +37,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1734249330;
+	t=1734249623;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DRkqo2vCIPvvfZ0H7gNeIfyEHMp6dUwFO/jiGLyMtk4=;
-	b=X6AZtEw3uOUVXCqCpY7rs27S3+N+fxh8zEMtymDE8HRrcBhG53znRlgQ585GWGJSIa7Xoi
-	Svayph6Hw6SkLBQVcMg47Rq5NvI3HJL10ZTyFGT3DimEuOoxkp8Mksnr2dPu2PBEhRbJRy
-	b+66vVyLT0MQ6coKyGc9eYMPezf89OryOrg4uTTvo+qlG22EBzqFe67sN8XssHuIW/avr2
-	xsBn2maD46Z3WxXmaAxE7osGkEk+pYUr0okIBsNKRN2BUR4RwUs0eQf+FNfdy9slpWWmMS
-	x1F5J6JfeOq+Yol/5ruSe+3i13ICfcr96Rc6NHWnVqGBB7b8OlLpEDtSTalKMg==
-Date: Sun, 15 Dec 2024 08:55:27 +0100
+	bh=0R8EIh7YecGagzC0jU7hcfHeDbHCAnsmyLpcoGh/spE=;
+	b=usvhsaruCnQOl5a6bXeyrJjTSK6+nYbPULuzwwZlQlaISsImaAw/6i/Q3INNxxLQPYO5c6
+	aOe+jNjeWmfR+AVEX7I1V3kRQi7Henw72ms3HlLy0l8dvOaMpSNlyRZtW+36jPyxHQRVdo
+	oIo1C/lJa1ldyX5C/JMlRhRHkwh/U+IonlHMoDUUyryjgFxOz5L6b04vqJI0Nmu+UdoLz0
+	iyhGYz4HyQ5kTWZ/f1s1lHz4qR6hP6i/GpJ+BQz/bZ077ZB625is1CEv5fefaBpnCUHAif
+	rh7eQApz3Y74iw09XQi8nWqSXo+8xmIzJO0XDtzTb9veeOjH8YLHzSFYdDn7ow==
+Date: Sun, 15 Dec 2024 09:00:23 +0100
 From: Dragan Simic <dsimic@manjaro.org>
 To: Vasily Khoruzhick <anarsoul@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -59,12 +59,12 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  <me@crly.cz>, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and
- PLL_MIPI
-In-Reply-To: <20241215053639.738890-2-anarsoul@gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: allwinner: a64: explicitly assign clock
+ parent for TCON0
+In-Reply-To: <20241215053639.738890-3-anarsoul@gmail.com>
 References: <20241215053639.738890-1-anarsoul@gmail.com>
- <20241215053639.738890-2-anarsoul@gmail.com>
-Message-ID: <1f400eec0f0583335ad8b40fcbf1b5d4@manjaro.org>
+ <20241215053639.738890-3-anarsoul@gmail.com>
+Message-ID: <bab2e7c53385da06a44b449077c7241a@manjaro.org>
 X-Sender: dsimic@manjaro.org
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
@@ -75,56 +75,76 @@ Authentication-Results: ORIGINATING;
 Hello Vasily,
 
 On 2024-12-15 06:34, Vasily Khoruzhick wrote:
-> These will be used to explicitly select TCON0 clock parent in dts
+> TCON0 seems to need a different clock parent depending on output type.
+> For RGB it has to be PLL-VIDEO0-2X, while for DSI it has to be PLL-MIPI
+> 
+> Video output doesn't work if incorrect clock is assigned.
+> 
+> On my Pinebook I manually configured PLL-VIDEO0-2X and PLL-MIPI to the 
+> same
+> rate, and while video output works fine with PLL-VIDEO0-2X, it doesn't
+> work at all (as in no picture) with PLL-MIPI.
 > 
 > Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in 
 > TCON0 mux")
 > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-Looking good to me, as a preparatory patch.  Please feel free
+Thanks for fixing this issue!  I've been banging my head for a while
+about how to fix it without introducing new DT properties, and I hope
+that the maintainers will like your approach.
+
+I'd suggest that the patch description is improved further a bit, by
+incorporating some parts of the good description of the issue that's
+already in the cover letter.  With that addressed, please feel free
 to include
 
 Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
 > ---
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 2 --
->  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts | 2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  | 2 ++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         | 2 ++
+>  3 files changed, 6 insertions(+)
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-> b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-> index a8c11c0b4e06..dfba88a5ad0f 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-> @@ -21,7 +21,6 @@
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+> index 379c2c8466f5..86d44349e095 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+> @@ -390,6 +390,8 @@ &sound {
+>  &tcon0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&lcd_rgb666_pins>;
+> +	assigned-clocks = <&ccu CLK_TCON0>;
+> +	assigned-clock-parents = <&ccu CLK_PLL_VIDEO0_2X>;
 > 
->  /* PLL_VIDEO0 exported for HDMI PHY */
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> index b407e1dd08a7..ec055510af8b 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> @@ -369,6 +369,8 @@ &sound {
+>  &tcon0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&lcd_rgb666_pins>;
+> +	assigned-clocks = <&ccu CLK_TCON0>;
+> +	assigned-clock-parents = <&ccu CLK_PLL_VIDEO0_2X>;
 > 
-> -#define CLK_PLL_VIDEO0_2X		8
->  #define CLK_PLL_VE			9
->  #define CLK_PLL_DDR0			10
-> 
-> @@ -32,7 +31,6 @@
->  #define CLK_PLL_PERIPH1_2X		14
->  #define CLK_PLL_VIDEO1			15
->  #define CLK_PLL_GPU			16
-> -#define CLK_PLL_MIPI			17
->  #define CLK_PLL_HSIC			18
->  #define CLK_PLL_DE			19
->  #define CLK_PLL_DDR1			20
-> diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h
-> b/include/dt-bindings/clock/sun50i-a64-ccu.h
-> index 175892189e9d..4f220ea7a23c 100644
-> --- a/include/dt-bindings/clock/sun50i-a64-ccu.h
-> +++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
-> @@ -44,7 +44,9 @@
->  #define _DT_BINDINGS_CLK_SUN50I_A64_H_
-> 
->  #define CLK_PLL_VIDEO0		7
-> +#define CLK_PLL_VIDEO0_2X	8
->  #define CLK_PLL_PERIPH0		11
-> +#define CLK_PLL_MIPI		17
-> 
->  #define CLK_CPUX		21
->  #define CLK_BUS_MIPI_DSI	28
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index a5c3920e0f04..0fecf0abb204 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -445,6 +445,8 @@ tcon0: lcd-controller@1c0c000 {
+>  			clock-names = "ahb", "tcon-ch0";
+>  			clock-output-names = "tcon-data-clock";
+>  			#clock-cells = <0>;
+> +			assigned-clocks = <&ccu CLK_TCON0>;
+> +			assigned-clock-parents = <&ccu CLK_PLL_MIPI>;
+>  			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
+>  			reset-names = "lcd", "lvds";
 
