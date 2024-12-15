@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-446573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBFEE9F2660
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:56:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E00C9F2636
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:18:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A02163D3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B5218817E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257F81C0DF0;
-	Sun, 15 Dec 2024 21:56:22 +0000 (UTC)
-Received: from torres.zugschlus.de (torres.zugschlus.de [81.169.166.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1241B87FF;
+	Sun, 15 Dec 2024 21:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqofvW+j"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E7A47;
-	Sun, 15 Dec 2024 21:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.169.166.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A342A41;
+	Sun, 15 Dec 2024 21:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734299781; cv=none; b=cbg8gtsoH9qqubyoFbyrwkjYK6jAMFroWvoFPevtbCLsDIlVv9wTyDB9++q3xCS0U8CzXfU9LpbP9ACQvHCNBsD6ZSdLFcT/maJOPUZwdQeXKSlvSVTpinymfmAGaeC8okKricLFeQs5Y4mqxM7YBs9/Yh+ip/TEpBYBZZrMTVQ=
+	t=1734297515; cv=none; b=DEmmwscJNhwmgZ1LdxmziTGmQHmVXDobzsLJMnDMazDdUba4Manr0BzvoMo9ZT84mEG++pCuBj5iRJ1KhC3j4nQSfR+NfwpkysOfo2Cd2hn433wWeBrqa9lCzHx4Ew+3Zu5y5mRujkA5LT/H025n+8wgitixzsjSF/O61s61PDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734299781; c=relaxed/simple;
-	bh=JTD6V+x3SZ85xNTMHpCfoFDzY9mj5HkgrDqBg2/D7U8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dzr/T8Cy3XGBBg5+nkcQPi4jzY77XBhw8U0U0X5Puyxbukk4qTyIQ434A7B4gjl55NViQ9FQCbhNvJ6jgMIQMOh1UPq+uD/pyD0ty0Wxl7j9Ex8kI1eWrVWC3jNAmmGRGgG8WlHDYnSMnBIklt3nA6QbCmIOdQZXl6ekMFmCwHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zugschlus.de; spf=pass smtp.mailfrom=zugschlus.de; arc=none smtp.client-ip=81.169.166.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zugschlus.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zugschlus.de
-Received: from mh by torres.zugschlus.de with local (Exim 4.96)
-	(envelope-from <mh+linux-kernel@zugschlus.de>)
-	id 1tMvxP-001vBG-0q;
-	Sun, 15 Dec 2024 22:15:19 +0100
-Date: Sun, 15 Dec 2024 22:15:19 +0100
-From: Marc Haber <mh+linux-kernel@zugschlus.de>
-To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Intel Comet Lake Wifi (8086:02f0) only working after cold start,
- failed with error -110
-Message-ID: <Z19G5zFhmWOfINvt@torres.zugschlus.de>
+	s=arc-20240116; t=1734297515; c=relaxed/simple;
+	bh=yjXOmhcGF2Ow/gb9PLs66Ycy5crwSKG3I8oO4kU7n4M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V0hP12Iq4Iy3k5fv9hEn7jEtQsImIXz/xNK17nrJIhbPwc6F3umJUlA9Yn8S782DvNlchqkkWuOkmHWlY5itafJ2VQAQVLEjgqfvNRvEQTgPGA/Rw309bNA3TSX7QocPsoA7hkpwgpBcruZMxwHodzoP/dCpKsH9EE51ZqkCrE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqofvW+j; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4363ae65100so9406445e9.0;
+        Sun, 15 Dec 2024 13:18:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734297512; x=1734902312; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cplwf6VlgeKzXrLCBa5YAfedqfufaukQJBqLnQAJy14=;
+        b=TqofvW+jnUehTRmjJtcj2xmhhcI23Xb2WOIA/V8HsE1j46ks7MPYr2AJOvNovIB4xT
+         HJfwu72IcRwRX3jWWblyYsEv/QnEjFLMrPztp1JBBF8Qpy4kUzUPYFZbD1qIZtXJD06x
+         YCS0qiEv+RNga/t2eTOHl72i0+WRv427Ym0LN+TtPzOX+a1DdNK3uUJHwxdQuOTEWvDD
+         2WldVDYG5uEA3xEK3BlOvzmir9vc5X7FMIWGu9nIBg94Bf0Ve4YF80niRt+tXR3m109Y
+         d3JPEKOm548CNatlcoyPMwTzqDcE3zlJrp5573BdmE8CVfBMfAB13Na1ImR2oF3W5d//
+         QwzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734297512; x=1734902312;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cplwf6VlgeKzXrLCBa5YAfedqfufaukQJBqLnQAJy14=;
+        b=D5bAJGbMnybsPtV3yguBEnrVQKqZZoD7SqeSEavrP6DV3+r4jQHzkHuhWSGKZ7JMpp
+         S0rHXtymuYV7Ft27raTfQcQeXkr6tOBIPSlhiOZ2OUFaZPNlFUm2hD7TXrPDtSGJrJt2
+         b1Ko5RyPTxajV5N8wlEiLYPT9zeXKmHFYcn677w+KUjc2V8pRZd6H+unP0aQqmRKginM
+         BtjxsPrecKEtoC8AB5dlllDRN67+pz4iZcHA7jg0w7UZtjwHBGC+7/W6KfNCdhnixIl1
+         NQfMAinpC0p5HxCJ88wA8U1qMIaJh8XemP6tvQeQLTLQn4xXYL2TGUwlrauQjaHYjEUJ
+         smYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWt4hQ4EOZtlYKuTncrQjw6NxmUbOiPB4a3UcQ5TmFDP/WoraAbpWrSK77pLCoTm3ZCV1C8eXgzjVCHS60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRmrWmdMljY3Eq6RCjfcV6pe/zbNSK8CONQ1ARc3fC5aV2lhFr
+	Z9+ko82zjV+SExilCVHJCZbY3G/31NL+WazyuZfSkE4OTYavzcJXipoDmQ==
+X-Gm-Gg: ASbGncu/lOjWJHC/HWqg6rbPsO5MP6XwAKn2TwHAu0a9vdnartOxiRwlP44FZQCCZh2
+	TGdqW3rOKTvlWwDYivnq4VW3SaR5VThaOtX0K1dZkziICpRJvxnaVdfDUmKTjiEW0aEE/oOo95I
+	MZ4kG3OiTMfPKH1u9X7wf/YYvRXjZs2Y2A9aK+kjzguvIPDENpfzcZYu/ijSZM63dP1JMXYeq32
+	kjLDMG5fTm9hcqwG6fvUSiSWn/1d2lTlpwtuCxp2lYrX32CnlUrU/F5kGkJ5zQhcfKo1pBwnfio
+	swISNe/Mi6SY/24H0Oh5nr8cQU9bF06Z8jvEBpwDYWRcr4vWbeTf9s9SboaSvIUYH356+rNY6zo
+	pXos=
+X-Google-Smtp-Source: AGHT+IGSP7xylQ9nwfcEWkXJuujeAPD/nRwDLwLgpG87QWYkfxIXtT/FQNsQccdwyPyWN/qHEaZMRg==
+X-Received: by 2002:a05:600c:674a:b0:434:f5c0:329f with SMTP id 5b1f17b1804b1-4362aa37154mr101517385e9.14.1734297511454;
+        Sun, 15 Dec 2024 13:18:31 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-a6ee-1b0b-f819-e82c.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:a6ee:1b0b:f819:e82c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706c82sm120120585e9.35.2024.12.15.13.18.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 13:18:31 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Sun, 15 Dec 2024 22:18:21 +0100
+Subject: [PATCH] iio: ABI: document in_illuminance_hardwaregain
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241215-iio_abi_in_illuminance_hardwaregain-v1-1-d94a59efb937@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJxHX2cC/x2NwQqDMBAFf0X23IAJ9pD+SilhTbb6wK5lQ21B/
+ HdDjwPDzE5VDFLp1u1ksqFi1Qb+0lGeWSdxKI0p9GHwwV8dsCYekaAJy/J5QVmzpJmtfNlkYqi
+ L0uwxlsyxp1Z6mzzx+1/uj+M4AUkD11F1AAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734297509; l=1170;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=yjXOmhcGF2Ow/gb9PLs66Ycy5crwSKG3I8oO4kU7n4M=;
+ b=rIky0/qRj8PGaYe1kAEL6JO/BG/2x/S9Seq+Y5mMzhZL/6yLe987BRHjEl2dUTVciUYo6SmHZ
+ BFj6w9SswL1CeNqADU4XszvmrdZ2pBlNd+wVQwx3RnX2Ij7i17GdKEg
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi,
+This attribute is used for the vl6180 (see vl6180.c), but it is still
+not documented. Add it to the _hardwaregain list.
 
-I recently bought a used ThinkPad X13 1st Generation. That one is
-equipped with an:
-00:14.3 Network controller [0280]: Intel Corporation Comet Lake PCH-LP CNVi WiFi[8086:02f0]
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-bus-iio | 1 +
+ 1 file changed, 1 insertion(+)
 
-(lspci output avaible online as https://www.zugschlus.de/stuff/lspci-v
-and https://www.zugschlus.de/stuff/lspci-nn)
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index f83bd6829285..c044f1608ba9 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -681,6 +681,7 @@ What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_red_hardwaregain
+ What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_green_hardwaregain
+ What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_blue_hardwaregain
+ What:		/sys/bus/iio/devices/iio:deviceX/in_intensity_clear_hardwaregain
++What:		/sys/bus/iio/devices/iio:deviceX/in_illuminance_hardwaregain
+ KernelVersion:	2.6.35
+ Contact:	linux-iio@vger.kernel.org
+ Description:
 
-I can reproduce the following behavior with all Linux kernels beginning
-with the one that is in Debian Stable (didn't try anything older than
-that), Debian unstable, current Linux Mint, Fedora Workstation 41, up to
-a self-compiled Linux 6.12.5).
+---
+base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+change-id: 20241215-iio_abi_in_illuminance_hardwaregain-9e024b9dca90
 
-While there was a Windows installed on the box when I got it, I do not
-intend to dual boot the machine, and Windows has been erased by
-installing the first Linux over it. Hence, I dont consider the hints
-found on the Internet regarding Windows fast startup applicable in my
-case. In any case, I disabled Windows fast startup before overwriting
-Windows.
-
-When the notebook is freshly cold booted (machine OFF, no led blinking,
-pulsing or anything, power supply disconnected), Wifi works. When I just
-reboot the machine without turning it actually off, or turn it off while
-leaving the power supply connected, Wifi does not work. The Wifi chip
-still shows up in lspci but not in ip addr / ip link. dmesg looks like
-it does not even try uploading firmware.
-
-In the non-working case, I see a bunch of lines like
-[    3.998476] iwlwifi 0000:00:14.3: CSR_RESET = 0x10
-[    3.998494] iwlwifi 0000:00:14.3: Host monitor block 0x0 vector 0x0
-[    3.998524] iwlwifi 0000:00:14.3:     value [iter 0]: 0x00000000
-[    3.998545] iwlwifi 0000:00:14.3:     value [iter 1]: 0x00000000
-[    3.998566] iwlwifi 0000:00:14.3:     value [iter 2]: 0x00000000
-[    3.998587] iwlwifi 0000:00:14.3:     value [iter 3]: 0x00000000
-[    3.998608] iwlwifi 0000:00:14.3:     value [iter 4]: 0x00000000
-ending with
-[    4.007732] iwlwifi 0000:00:14.3: probe with driver iwlwifi failed with error -110
-
-(full output on https://www.zugschlus.de/stuff/dmesg-notwork)
-
-For reference, see dmesg output for a working case on
-https://www.zugschlus.de/stuff/dmesg-work.
-
-As per the instructions given on
-https://wireless.docs.kernel.org/en/latest/en/users/drivers/iwlwifi/debugging.html,
-I have not yet upped the debug level. I am prepared to try with a kernel
-that has CONFIG_IWLWIFI_DEVICE_TRACING and/or CONFIG_IWLWIFI_DEBUG set.
-If you ask me to do this, please give me instructions about how to
-enable the desired debugging if module parameters, kernel command line
-parameters etc are necessary.
-
-I would apprecaite any help. I can keep the machine in the current state
-for a few days, I only need it after chrismas.
-
-Please keep me on Cc, I am not subscribed to the mailing lists.
-
-Greetings
-Marc
-
-
+Best regards,
 -- 
------------------------------------------------------------------------------
-Marc Haber         | "I don't trust Computers. They | Mailadresse im Header
-Leimen, Germany    |  lose things."    Winona Ryder | Fon: *49 6224 1600402
-Nordisch by Nature |  How to make an American Quilt | Fax: *49 6224 1600421
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
