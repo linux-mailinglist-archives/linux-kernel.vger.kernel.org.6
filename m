@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-446371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564229F238C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:00:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E149F238E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C71F1652FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA751885EBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4813C15B0F2;
-	Sun, 15 Dec 2024 12:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E151161302;
+	Sun, 15 Dec 2024 12:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MoR/bXM4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eA+2/hjk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88C1176FB0
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D79481CD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734264015; cv=none; b=IVO17xgFZgIs9fxVqYsIRN1J1KAKuAWj6EiiTih82NMdz3X5L4Llx4QdbJ3iH7XRYzddXijjCe5CptgpmS7qYJuYTTQA+FWrGgWm1vtrARWTdko7Sne/bysglPLEu3yd91Cz90+c5//oyPXf193ftXr9HXyvUAN4Ine/8K/R/R0=
+	t=1734264232; cv=none; b=NgKMO1wQzheEMqQUksnfsQWImWQoo5/vcLI0MKYkBSNXb6593BaNMsIBwcdjtjxupQyic5kFexaE+12NSl/rHqrcXD79FGtmpJXaQemeGh8ppMZFs/c9Ik3F0PxSrthC7leqGvqEefjIjEelvo1j7OxY/Tc+JkpdZlCgfuBrSms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734264015; c=relaxed/simple;
-	bh=hLZPbKvAmOHP5ghaLADqj46JseSFPvZpUTsU9dpIhIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YdV2r3oH643lfrm7qtMlgILW58hI0An6WnJdT/JM8cPLC9T+l2genhNGH0unAYwBBPen9006gcrpp3r6d52PiD5Ma5eo3k1e96MaUXU1S6jIsaB7rSP5SNXmqjWwQDbS6s5R0qK4TXC6iVWsOvsq2NRUwGjL8dR0slcXWfSa5tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MoR/bXM4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 20EC340E0263;
-	Sun, 15 Dec 2024 12:00:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id G08Xu7MDpJvn; Sun, 15 Dec 2024 12:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734264003; bh=VGVjg9gGvyDg3ZADSAvldODgaKhoRaH7H7E5cm7jR+w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MoR/bXM4m0U5+C1J4FVcFUHR5SXE7sXlcLFeKfUM6TvsE4E/HaI52eDGFC/U/Dx4N
-	 u/ua6pVEcjHFgexoVwqIHfMNEMqVuNU1cpmXt0umMzi+zESXkL5NANFTBxlEu/OxoB
-	 gWn8ey2Q7Pd8E8D5NKzJ49GxZteXblGARi1NZN4MTJy+QvHhJGQZwRAVS1bAXjwm/A
-	 00mkHWcqjBe6/TCQT//rT/5cWDjz4aK4o7HZn+WbYOI76lYLqV346878Ry/W5QZaQk
-	 w2LI3a4zG4K491pL760eOZo8JAAaWy5ecEPYIcW9G63phsWhR7ma91xqZiJNsgn3fv
-	 UxTwE4wA1ZQSn4QVT4YhiScZxvNqtWh3GB75gnEWs5y/uCwnycNPyGa1K//ZbWg0IG
-	 Ojrnm/LB3n4ZHOCMPOAdp/QHhcYik0FWkcwCuRfzPKbvPdnGhVQEnweGLqsxyD4S30
-	 acSGgVVai6gLn1YKjOHedbdnQ3sQzjpYT1nP+UN5wk6REEg/qZV1/r1YJ/hDC1NyFA
-	 4ezBsg13WWVuNoItla0kUrJdneg0OxCZqeEYbA44iRLWoKIvmQiX1KW0/I5MLGWfX8
-	 S0y1I5GaaLR/sLAV1NCzO/viKEwDjJvv6cWnRD/+QwOCwR5xdasmt4mTagcKYU6pbY
-	 yVZT8YahXSNRN0t4dAMl8hQc=
-Received: from zn.tnic (p200300eA971F9324329c23FFFEa6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9324:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B85D40E01C5;
-	Sun, 15 Dec 2024 12:00:00 +0000 (UTC)
-Date: Sun, 15 Dec 2024 12:59:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sched/urgent for v6.13-rc3, part2
-Message-ID: <20241215115953.GAZ17EuW-ZrT9oIblh@fat_crate.local>
+	s=arc-20240116; t=1734264232; c=relaxed/simple;
+	bh=aGpiOGREIUcShpcp8ShVC5e2TvYuN9RPLMTv9UtamMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6NwXD4xeKWU3E19+LJEq1tETegyEyDUOJtf4nHJM1kZYVc3ZaBa0rlafT79raGftM52ou3IMwLdkNlVSzcJfe1w6qT6pwDBXf0dglo2Mz+A4ewh29zMMtnIgsEUHrrv0DAfoYroT8Xzrb7nMjGhbkrCgEGoQMpDKYkpuckqmcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eA+2/hjk; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385deda28b3so2515054f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734264229; x=1734869029; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MS0JrlD/MIP9EaVqJjdQNvfB2tn7DETWLm6kEprczwQ=;
+        b=eA+2/hjkzWvPwpHMu1ip6KzFEc70WIAPC5jR73P4uzT9MLBQq47MPZqIQlw1QEL1b/
+         ptrRAMOPK0ZBl/rG15iro7vHULH24jmoA+7yqqH7XrCCWc774GUKoHEeauCnwTlx0xBh
+         PbsKn9+x1LH17YbDeIaUZ+nIjlAumI3CnDwQaAG+FrwOhMYRCzEAuqqZjtgGjI1/liW9
+         McFkCMFxCMVHEw83Sk0T672fl10vUynG/ABPJ629M8VcPKfj7ORb4d1cH7c5tVWPYMaz
+         Ifj5IoaNIXvbwYx0h7P5MLWOnqjXeV0SGbF2xapKngPs3XdW3KJjuci0ZRMKN1Ck460a
+         W2iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734264229; x=1734869029;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MS0JrlD/MIP9EaVqJjdQNvfB2tn7DETWLm6kEprczwQ=;
+        b=e3iD4h0pobm4+DrrI+SDTRWqxikmZP7cj9ifv+GBItbqwKZ2wem+Wb7uM4d1ABix7N
+         ndnpC4gTGQIPygfdahHRFXX4RZl0tloNWhZ6ddBJeI3pu5NzM6JZgpDBirsxBUNwINK/
+         6TUIl4QK3S+XeNG7gl/oKho6r5iEfiz7fAMIeqTirSmhHTujx9OmCaJ8yN/9HLcnOkqn
+         6hsp1nt2kYBWt1IDCZGFauzZ7RmjQaq4KtiPzSySdhSkMytiYnYt8GC3R4ecBAuoGAxq
+         2CcbhbZ/BK16iBaJs7tcCAkkW+fl9TpdP8sytVpEKwS0qNY77/rJxnqy7QpAu81rT1Jc
+         iyZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzbWlGGbgunkFh9Mw+JpGgDlqQac+EwX16YMhMvxLH2G1CZ0ETV70H+jBg2eq8Q1mUoy7acupyJUbOlNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztfCM6YM1irp+WsEFFB9jt4/XPB5T0bSJu0/7+IcJOiYPlRQUF
+	7M+vRktoLbpuzTptNcnrvl4a7mT2zeqw2+SjovBd52VlalCInOZIonar2/XN9no=
+X-Gm-Gg: ASbGnct0Qua/7STN7Aa6NpVG1sxI9hwVm0ZU3k49f2k8iJ1eKeadvG381LLzLwSfKWy
+	oqFwQBlDHS4Jrc+sGlZD1oQx0TMqLaAkf5PGjYfRPUcKzOdBC/+d3yVbzJUejk9KIhZOE+zt92T
+	Gv+mrjStEz2/McsbwdT0Vh7dhFteBEC6WYXYCqly7JNaFc9D3S+oYMShX9iM7Am/8moEAuuxJU1
+	lK+So2vxkdwqyi9B4YAXOQ94wc6vwKR19Svu4KhiZHm1Wg7XEoWGep7WQQa15uoZ6niiA==
+X-Google-Smtp-Source: AGHT+IHdf+axtUaBvNo+jZg5gVqNEZh7fpsNxrZqvb0qpatqR6zQGoIT4kFiRZ3VvH03TdccPTyjiA==
+X-Received: by 2002:a5d:47ae:0:b0:382:3754:38fa with SMTP id ffacd0b85a97d-3888e0ba9a7mr7465978f8f.51.1734264229096;
+        Sun, 15 Dec 2024 04:03:49 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80120dcsm5216297f8f.8.2024.12.15.04.03.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Dec 2024 04:03:48 -0800 (PST)
+Message-ID: <ee6bbbb3-f91b-4568-aeec-11d773ae4df3@linaro.org>
+Date: Sun, 15 Dec 2024 12:03:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Revert "media: qcom: camss: Restructure
+ camss_link_entities"
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Suresh Vankadara <quic_svankada@quicinc.com>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241215-b4-linux-next-revert-link-freq-v2-1-62d5660004ea@linaro.org>
+ <60bfe389-cea9-4aea-9175-fc80f1e9f594@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <60bfe389-cea9-4aea-9175-fc80f1e9f594@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 15/12/2024 11:58, Vladimir Zapolskiy wrote:
+> On 12/15/24 02:33, Bryan O'Donoghue wrote:
+>> This reverts commit cc1ecabe67d92a2da0b0402f715598e8dbdc3b9e.
+>>
+>> This commit has a basic flaw in that it relies on camss->res->csid_num 
+>> as a
+>> control to index the array camss->vfe[i].
+>>
+>> Testing on a platform where csid_num > vfe_num showed this bug up.
+>>
+>> camss->vfe should only be indexed by camss->res->vfe_num. Since this 
+>> commit
+>> is meant to make the code be more readable reverting will simply restore
+>> the previous correct bounds checking.
+>>
+>> We can make another pass at making camss_link_entities look prettier but,
+>> for now we should zap the bug introduced.
+>>
+>> Fixes: cc1ecabe67d9 ("media: qcom: camss: Restructure 
+>> camss_link_entities")
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> This change is very welcome.
+> 
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> 
+> -- 
+> Best wishes,
+> Vladimir
 
-please pull more urgent sched fixes for v6.13-rc3.
+Mauro.
 
-Thx.
+Hans would normally merge for us in CAMSS but, he's on Xmas holidays.
+
+Could I impose upon you to pick this one up directly ?
 
 ---
-
-The following changes since commit 82f9cc094975240885c93effbca7f4603f5de1bf:
-
-  locking: rtmutex: Fix wake_q logic in task_blocks_on_rt_mutex (2024-12-02 12:01:29 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/sched_urgent_for_v6.13_rc3-p2
-
-for you to fetch changes up to c7f7e9c73178e0e342486fd31e7f363ef60e3f83:
-
-  sched/dlserver: Fix dlserver time accounting (2024-12-13 12:57:35 +0100)
-
-----------------------------------------------------------------
-- Prevent incorrect dequeueing of the deadline dlserver helper task and fix
-  its time accounting
-
-- Properly track the CFS runqueue runnable stats
-
-- Check the total number of all queued tasks in a sched fair's runqueue
-  hierarchy before deciding to stop the tick
-
-- Fix the scheduling of the task that got woken last (NEXT_BUDDY) by
-  preventing those from being delayed
-
-----------------------------------------------------------------
-K Prateek Nayak (1):
-      sched/fair: Fix NEXT_BUDDY
-
-Peter Zijlstra (1):
-      sched/eevdf: More PELT vs DELAYED_DEQUEUE
-
-Vincent Guittot (1):
-      sched/fair: Fix sched_can_stop_tick() for fair tasks
-
-Vineeth Pillai (Google) (2):
-      sched/dlserver: Fix dlserver double enqueue
-      sched/dlserver: Fix dlserver time accounting
-
- include/linux/sched.h   |  7 +++++
- kernel/sched/core.c     |  2 +-
- kernel/sched/deadline.c |  8 ++++--
- kernel/sched/debug.c    |  1 +
- kernel/sched/fair.c     | 73 ++++++++++++++++++++++++++++++++++++++-----------
- kernel/sched/pelt.c     |  2 +-
- kernel/sched/sched.h    | 13 +++++++--
- 7 files changed, 84 insertions(+), 22 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+bod
 
