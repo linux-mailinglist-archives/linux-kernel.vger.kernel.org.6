@@ -1,289 +1,163 @@
-Return-Path: <linux-kernel+bounces-446252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264EB9F21BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9550A9F21EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C0F165CBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 02:17:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2250165F73
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 02:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DE58BFF;
-	Sun, 15 Dec 2024 02:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C8E8C1F;
+	Sun, 15 Dec 2024 02:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcJxSkWK"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nVaqjvLj"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1D14689;
-	Sun, 15 Dec 2024 02:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25392442C;
+	Sun, 15 Dec 2024 02:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734229067; cv=none; b=jRIU9bgmWHvKrLVHQ9Ti65/LMQTU/qlfG1038yZ2/k1takhQCnJsG/DgYNAboU42OBaOHc/fFYpipVTbSQe8XQLsp6J7zZu3pfjiS1qVtu6stus+tTm7U5xJ87Vh1vWJw4jDiiM6MZqaVxgpB8fZQjPNcsDN6sjQHO69FPwbYxE=
+	t=1734230845; cv=none; b=adwVprt3CldAn1uBHXdnxdi8tEdcZ0GgEfQsphPw+8p1WeSFxZOaHZ6zRPu8wYcxrFlOk+frqeMc50oKUxCcRZEZ879etQghrZd0FJ9XxGm3x2hr1LmxJE93JLsREKuqmto6SIfOHk/0xzfeHlQuPJom+L1s7JcPQEgiG3xcRak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734229067; c=relaxed/simple;
-	bh=1jXBw1XPkbs+3PW+Ku0V9cmcLDYFHxIln8uavLe/auw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bi2zOMUZ09Tgl6v7hQ95J2TeADxDF9ScIvXSnIpdZ3YEdRPHbrKtgBikpOLoUdONX0FPDRlKMLQ40asjErUV9vL6KrGkaSV7sh2WR6wTLtxDYfXFYnHpX+NlZE8AbAWWLdXAFrQ/XWtGD/xtK5SQdv0Zu3Z3l8Hbg0gxB6oQfMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcJxSkWK; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e0e224cbso1559861f8f.2;
-        Sat, 14 Dec 2024 18:17:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734229064; x=1734833864; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6knxOhrq01m9fcLE+SYB9TQecvDtnka5bQk5EmhLzdU=;
-        b=kcJxSkWKOzKtwG4usj/Mdr3RlAlTSrauDCU7jhxEmkWArj82g2m+NDQpcfszJYxiIO
-         9nIOPOoUw8FidLrZRdgCggjlX02B3Wb7PUa67A9+azQeTAmtOoJwFISnxjA2Yau0KepG
-         N2hb18LxNExkEwnyjQEgUyDEs8E0g4O/Uw83A12gaPIrEtKcO/RAfs4rFcaop7F/791L
-         s/1gOhIw8Q7Ni0b3MhJ1SdSCyHoKEL0aipHgi4DcvKc4BtrO0xO0xiJ/QMNmFrmkIec4
-         yO9LlGEzyVJwE4s369Djvp5PtczrYVKastkwRSGimP5D+SFnmBgM7cAI2efpd5hAHhnz
-         cB7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734229064; x=1734833864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6knxOhrq01m9fcLE+SYB9TQecvDtnka5bQk5EmhLzdU=;
-        b=En5Dex+uZhBM60054FjK9D38dW/KpKqnh1FelfDIxOGt6T78nq9E4x8QR/3nU0dgDc
-         lOIJSvaBeM1UNKkUI2PwY68ypenSxjaLwr/lmrBRv9sqkLcP6o18tqSVrnfd9tl4YLTD
-         odBgJnMmwrQYzWjZ5UPuwZhur8LZCcQtJKqVBcmPU0ihtQ4qPUG0lENnLVXTmvVO+gZJ
-         4ppzGeHJ1xDFMk9gwRdT3jHjPktpILcZ2j5fp1ButLundivA2JCP9mErhOR1qCMTSoUO
-         eq1c8UOgXOvHo0zFn8C+yOPDvXqwY2H+kWjNEQQbEmmJle3BvDNQGpaE8xrSFfTb3x+j
-         JqQA==
-X-Forwarded-Encrypted: i=1; AJvYcCULccXd5hTWv3C+t+Q22RTARBR0aCrl0tWmLWSijyZWSBhgxUkVH0z7IJaS2RnOSgoneKIWpaEd@vger.kernel.org, AJvYcCWBoFmLabCfngXBHnd3mXnkm8cjWwyPs7ans+LkBSmIMlv9+JjFmJQUgK6bcQa7u5yy5IFGkbSrHZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3juFgkKRU0PnsyqCGjFuqg54iFjacY6fPMtDkmURI5qShJMV+
-	HraPsy04/d52Dk9LnIOTaGNH9G8NOs0y4h2OEREExAwexoN+wg0B
-X-Gm-Gg: ASbGnctWrmk+biRqg01IJyeqZ3R6sj16sJh+eEEoqDIg963nVI3wgOfqtI7WKRpktPA
-	Zw1UUQ9UEwL1u5RDV60rk1wk64tpfqo7zD6t9nFrFJ2C0VuwRjVxSJ9MNTQPmmOM2mfmDwprCPU
-	r5D1ytdFQP91stwj0n9HaTwKtSARZI54NxuA13Zs2g/SZrH2uYJJfjfL/u26ki1eSIq8p0v/dq0
-	Jl/7FEiq+aSXW9uT7vBTM6fP2SMwtykwpFAqg1eQC72JtBFn7GgHkXBOA==
-X-Google-Smtp-Source: AGHT+IGLJ1W2T/hdbQdiCIBZkecDQtKrwoetGyA3/aLLuNgM4a1Dyf+OebwoRNCRaca4jYV/KL/34w==
-X-Received: by 2002:a5d:6c68:0:b0:385:df84:8496 with SMTP id ffacd0b85a97d-38880ac60d1mr5709653f8f.3.1734229063677;
-        Sat, 14 Dec 2024 18:17:43 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046dabsm4111731f8f.81.2024.12.14.18.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 18:17:42 -0800 (PST)
-Message-ID: <da90f64c-260a-4329-87bf-1f9ff20a5951@gmail.com>
-Date: Sun, 15 Dec 2024 04:17:39 +0200
+	s=arc-20240116; t=1734230845; c=relaxed/simple;
+	bh=wp7OgfHVY9Y3CorqTuNlNgPka83XVrd0Zq1/l0O6Ru4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sv22E1sBlxDfawQvnzZsiFMqbvi8/Ym1Ov3IAxRADleonRsh8+HdA4ApirVNqc8gI2F9lNEO6ufxudq09Q7yzThDCDFpeUba6bwPrbv17a6nR+R6BAg2rJuLzbR60XJxnC5YB7tj9u3iOOtzcMK78IDe7Qr3gLs9HAT2mmNHBkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nVaqjvLj; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=L5vMYFubsyGDtRUzS6YTga3Gt+vmg7NH1H30YZ43HGc=; b=nVaqjvLjuqueljvx
+	Tju+S0l8rgqtoibhTue25y3xTW+7CJsll0zTGLFFk4qeOgKsu/LPx8odjCIcUjkdsoZqqu3FxrQbP
+	mQOyufmiQdhfyI5iQSMoLw5isEeXxISm6nmz1bBAey60aJrdwSxAp857hjSggHlc0hRc0chw+sX2C
+	0G2yEEGMXMiWqK1s5HnMcHUyG69Kg8c6FSEMbqcAW4IGU9L6hmDckXdwkDhwTWGjHbXniyUuOhQgy
+	nlw1t0XIxJhXFo8jK6a54MLeVa2SlttgJUZ2/WQga36FUmtf3f5lLZ/eU/k2NyLU0DRSDMAwEjcqE
+	ePrsg/L7KSWwk7A9bw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tMeF6-005RBp-1B;
+	Sun, 15 Dec 2024 02:20:24 +0000
+From: linux@treblig.org
+To: andersson@kernel.org,
+	baolin.wang@linux.alibaba.com
+Cc: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	longman@redhat.com,
+	boqun.feng@gmail.com,
+	corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] hwspinlock: Remove unused hwspin_lock_get_id
+Date: Sun, 15 Dec 2024 02:20:23 +0000
+Message-ID: <20241215022023.181435-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net v2] net: wwan: t7xx: Fix FSM command timeout issue
-To: Jinjian Song <jinjian.song@fibocom.com>,
- chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
- haijun.liu@mediatek.com, ricardo.martinez@linux.intel.com,
- loic.poulain@linaro.org, johannes@sipsolutions.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, angelogioacchino.delregno@collabora.com,
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
- corbet@lwn.net, linux-mediatek@lists.infradead.org, helgaas@kernel.org,
- danielwinkler@google.com, korneld@google.com, andrew+netdev@lunn.ch,
- horms@kernel.org
-References: <20241213064720.122615-1-jinjian.song@fibocom.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241213064720.122615-1-jinjian.song@fibocom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello Jinjian,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Nice catch! Suddenly, the proposed fix is not complete, we still have 
-issues with memory use after free. Please find details below.
+hwspin_lock_get_id() has been unused since the original 2011
+commit bd9a4c7df256 ("drivers: hwspinlock: add framework")
 
-On 13.12.2024 08:47, Jinjian Song wrote:
-> When driver processes the internal state change command, it use an
-> asynchronous thread to process the command operation. If the main
-> thread detects that the task has timed out, the asynchronous thread
-> will panic when executing the completion notification because the
-> main thread completion object has been released.
-> 
-> BUG: unable to handle page fault for address: fffffffffffffff8
-> PGD 1f283a067 P4D 1f283a067 PUD 1f283c067 PMD 0
-> Oops: 0000 [#1] PREEMPT SMP NOPTI
-> RIP: 0010:complete_all+0x3e/0xa0
-> [...]
-> Call Trace:
->   <TASK>
->   ? __die_body+0x68/0xb0
->   ? page_fault_oops+0x379/0x3e0
->   ? exc_page_fault+0x69/0xa0
->   ? asm_exc_page_fault+0x22/0x30
->   ? complete_all+0x3e/0xa0
->   fsm_main_thread+0xa3/0x9c0 [mtk_t7xx (HASH:1400 5)]
->   ? __pfx_autoremove_wake_function+0x10/0x10
->   kthread+0xd8/0x110
->   ? __pfx_fsm_main_thread+0x10/0x10 [mtk_t7xx (HASH:1400 5)]
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork+0x38/0x50
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork_asm+0x1b/0x30
->   </TASK>
-> [...]
-> CR2: fffffffffffffff8
-> ---[ end trace 0000000000000000 ]---
-> 
-> After the main thread determines that the task has timed out, mark
-> the completion invalid, and add judgment in the asynchronous task.
-> 
-> Fixes: d785ed945de6 ("net: wwan: t7xx: PCIe reset rescan")
+Remove it and the corresponding docs.
 
-The completion waiting was introduced in a different commit. I believe, 
-the fix tag should be 13e920d93e37 ("net: wwan: t7xx: Add core components")
+Note that the of_hwspin_lock_get_id() version is still in use,
+so leave that alone.
 
-> Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
-> ---
->   drivers/net/wwan/t7xx/t7xx_state_monitor.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wwan/t7xx/t7xx_state_monitor.c b/drivers/net/wwan/t7xx/t7xx_state_monitor.c
-> index 3931c7a13f5a..57f1a7730fff 100644
-> --- a/drivers/net/wwan/t7xx/t7xx_state_monitor.c
-> +++ b/drivers/net/wwan/t7xx/t7xx_state_monitor.c
-> @@ -108,7 +108,8 @@ static void fsm_finish_command(struct t7xx_fsm_ctl *ctl, struct t7xx_fsm_command
->   {
->   	if (cmd->flag & FSM_CMD_FLAG_WAIT_FOR_COMPLETION) {
->   		*cmd->ret = result;
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ Documentation/locking/hwspinlock.rst | 11 -----------
+ drivers/hwspinlock/hwspinlock_core.c | 17 -----------------
+ include/linux/hwspinlock.h           |  6 ------
+ 3 files changed, 34 deletions(-)
 
-The memory for the result storage is allocated on the stack as well. And 
-writing it unconditionally can cause unexpected consequences.
+diff --git a/Documentation/locking/hwspinlock.rst b/Documentation/locking/hwspinlock.rst
+index d482422d7a38..a737c702a7d1 100644
+--- a/Documentation/locking/hwspinlock.rst
++++ b/Documentation/locking/hwspinlock.rst
+@@ -301,17 +301,6 @@ The caller should **never** unlock an hwspinlock which is already unlocked.
+ Doing so is considered a bug (there is no protection against this).
+ This function will never sleep.
+ 
+-::
+-
+-  int hwspin_lock_get_id(struct hwspinlock *hwlock);
+-
+-Retrieve id number of a given hwspinlock. This is needed when an
+-hwspinlock is dynamically assigned: before it can be used to achieve
+-mutual exclusion with a remote cpu, the id number should be communicated
+-to the remote task with which we want to synchronize.
+-
+-Returns the hwspinlock id number, or -EINVAL if hwlock is null.
+-
+ Typical usage
+ =============
+ 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index f000432ce21d..cc8e952a6772 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -709,23 +709,6 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+ 	return ret;
+ }
+ 
+-/**
+- * hwspin_lock_get_id() - retrieve id number of a given hwspinlock
+- * @hwlock: a valid hwspinlock instance
+- *
+- * Returns: the id number of a given @hwlock, or -EINVAL if @hwlock is invalid.
+- */
+-int hwspin_lock_get_id(struct hwspinlock *hwlock)
+-{
+-	if (!hwlock) {
+-		pr_err("invalid hwlock\n");
+-		return -EINVAL;
+-	}
+-
+-	return hwlock_to_id(hwlock);
+-}
+-EXPORT_SYMBOL_GPL(hwspin_lock_get_id);
+-
+ /**
+  * hwspin_lock_request_specific() - request for a specific hwspinlock
+  * @id: index of the specific hwspinlock that is requested
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 2f32d768dfd9..f35b42e8c5de 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -61,7 +61,6 @@ int hwspin_lock_unregister(struct hwspinlock_device *bank);
+ struct hwspinlock *hwspin_lock_request_specific(unsigned int id);
+ int hwspin_lock_free(struct hwspinlock *hwlock);
+ int of_hwspin_lock_get_id(struct device_node *np, int index);
+-int hwspin_lock_get_id(struct hwspinlock *hwlock);
+ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
+ 							unsigned long *);
+ int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
+@@ -131,11 +130,6 @@ static inline int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	return 0;
+ }
+ 
+-static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
+-{
+-	return 0;
+-}
+-
+ static inline
+ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+ {
+-- 
+2.47.1
 
-> -		complete_all(cmd->done);
-> +		if (cmd->done)
-> +			complete_all(cmd->done);
->   	}
->   
->   	kfree(cmd);
-> @@ -503,8 +504,10 @@ int t7xx_fsm_append_cmd(struct t7xx_fsm_ctl *ctl, enum t7xx_fsm_cmd_state cmd_id
->   
->   		wait_ret = wait_for_completion_timeout(&done,
->   						       msecs_to_jiffies(FSM_CMD_TIMEOUT_MS));
-> -		if (!wait_ret)
-> +		if (!wait_ret) {
-> +			cmd->done = NULL;
-
-We cannot access the command memory here, since fsm_finish_command() 
-could release it already.
-
->   			return -ETIMEDOUT;
-> +		}
->   
->   		return ret;
->   	}
-
-Here we have an ownership transfer problem and a driver author has tried 
-to solve it, but as noticed, we are still experiencing issues in case of 
-timeout.
-
-The command completion routine should not release the command memory 
-unconditionally. Looks like the references counting approach should help 
-us here. E.g.
-1. grab a reference before we put a command into the queue
-1.1. grab an extra reference if we are going to wait the completion
-2. release the reference as soon as we are done with the command execution
-3. in case of completion waiting release the reference as soon as we are 
-done with waiting due to completion or timeout
-
-Could you try the following patch? Please note, besides the reference 
-counter introduction it also moves completion and result storage inside 
-the command structure as advised by the completion documentation.
-
-
---- a/drivers/net/wwan/t7xx/t7xx_state_monitor.h
-+++ b/drivers/net/wwan/t7xx/t7xx_state_monitor.h
-@@ -109,8 +109,9 @@ struct t7xx_fsm_command {
-  	struct list_head	entry;
-  	enum t7xx_fsm_cmd_state	cmd_id;
-  	unsigned int		flag;
--	struct completion	*done;
--	int			*ret;
-+	struct completion	done;
-+	int			result;
-+	struct struct kref	refcnt;
-  };
-
-  struct t7xx_fsm_notifier {
---- a/drivers/net/wwan/t7xx/t7xx_state_monitor.c
-+++ b/drivers/net/wwan/t7xx/t7xx_state_monitor.c
-@@ -97,14 +97,20 @@ void t7xx_fsm_broadcast_state(struct t7xx_fsm_ctl 
-*ctl, enum md_state state)
-  	fsm_state_notify(ctl->md, state);
-  }
-
-+static void fsm_release_command(struct kref *ref)
-+{
-+	struct t7xx_fsm_command *cmd = container_of(ref, typeof(*cmd), refcnt);
-+	kfree(cmd);
-+}
-+
-  static void fsm_finish_command(struct t7xx_fsm_ctl *ctl, struct 
-t7xx_fsm_command *cmd, int result)
-  {
-  	if (cmd->flag & FSM_CMD_FLAG_WAIT_FOR_COMPLETION) {
--		*cmd->ret = result;
-+		cmd->result = result;
-  		complete_all(cmd->done);
-  	}
-
--	kfree(cmd);
-+	kref_put(&cmd->refcnt, fsm_release_command);
-  }
-
-  static void fsm_del_kf_event(struct t7xx_fsm_event *event)
-@@ -396,7 +402,6 @@ static int fsm_main_thread(void *data)
-
-  int t7xx_fsm_append_cmd(struct t7xx_fsm_ctl *ctl, enum 
-t7xx_fsm_cmd_state cmd_id, unsigned int flag)
-  {
--	DECLARE_COMPLETION_ONSTACK(done);
-  	struct t7xx_fsm_command *cmd;
-  	unsigned long flags;
-  	int ret;
-@@ -408,11 +413,13 @@ int t7xx_fsm_append_cmd(struct t7xx_fsm_ctl *ctl, 
-enum t7xx_fsm_cmd_state cmd_id
-  	INIT_LIST_HEAD(&cmd->entry);
-  	cmd->cmd_id = cmd_id;
-  	cmd->flag = flag;
-+	kref_init(&cmd->refcnt);
-  	if (flag & FSM_CMD_FLAG_WAIT_FOR_COMPLETION) {
--		cmd->done = &done;
--		cmd->ret = &ret;
-+		init_completion(&cmd->done);
-+		kref_get(&cmd->refcnt);
-  	}
-
-+	kref_get(&cmd->refcnt);
-  	spin_lock_irqsave(&ctl->command_lock, flags);
-  	list_add_tail(&cmd->entry, &ctl->command_queue);
-  	spin_unlock_irqrestore(&ctl->command_lock, flags);
-@@ -422,10 +429,10 @@ int t7xx_fsm_append_cmd(struct t7xx_fsm_ctl *ctl, 
-enum t7xx_fsm_cmd_state cmd_id
-  	if (flag & FSM_CMD_FLAG_WAIT_FOR_COMPLETION) {
-  		unsigned long wait_ret;
-
--		wait_ret = wait_for_completion_timeout(&done,
-+		wait_ret = wait_for_completion_timeout(&cmd->done,
-  						       msecs_to_jiffies(FSM_CMD_TIMEOUT_MS));
--		if (!wait_ret)
--			return -ETIMEDOUT;
-+		ret = wait_ret ? cmd->result : -ETIMEDOUT;
-+		kref_put(&cmd->refcnt, fsm_release_command);
-
-  		return ret;
-  	}
-
---
-Sergey
 
