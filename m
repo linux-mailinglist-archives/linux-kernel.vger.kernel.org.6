@@ -1,75 +1,101 @@
-Return-Path: <linux-kernel+bounces-446563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DFE9F263E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:23:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE999F2643
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03D11884BC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50512165345
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE861BE854;
-	Sun, 15 Dec 2024 21:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F55F1B87C7;
+	Sun, 15 Dec 2024 21:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcgpaNga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z/1lAyFh"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506AC17B502;
-	Sun, 15 Dec 2024 21:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC5D1B5ECB;
+	Sun, 15 Dec 2024 21:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734297815; cv=none; b=tVLvRwENKtR1Z9sjy0YgwE5QK1WVlmLWJ0C+RA5dl1EzriJ42uqMBL19YTx+OlVE2xPH2jDNw6XgWmUNCYWDA/zveO93G6KyPVx96P6tKsEATgUCH0G5CGs8k6pClApX9V8s59ZFOZGvZ14NbzXCMlyv+Tte9fFIcT8rR2Kq9pU=
+	t=1734298098; cv=none; b=VYu2OPIM74fuWcX39D11Cks9S4uX90CSKUjfAr0npzwLohkEW+i36AOjinv+Lba2mQTFR/zgml5EseA62Wjpim7PLmpMIoJfCeh9ZOzoDUqBPqJ3tia+ZQGGwSZm16+NOKdhVTzsid91WYeghB7kYRwVyO9Dq1YxkzdG95T8WWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734297815; c=relaxed/simple;
-	bh=KS6+EL9vNqjG7g3+LvxPJ54SOryTLzCuwyoq1+EbnPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mmedpNx2CS5+vuVdBJIR+N1UHNucMhwv6S/ZiJHWMNAzmwUZv/z4Xd5k+//v7u5QIp5g+DkdDarn6X+W5WKtpoIZ2hCY1Z1t2y3ac6cqO9r2qV+FkAtyXaN2aJ7YH3SRZPO1KyM1HOVMbPTugfnFjkpvRDigvcocz8h8X2m65QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcgpaNga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B42C4CECE;
-	Sun, 15 Dec 2024 21:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734297814;
-	bh=KS6+EL9vNqjG7g3+LvxPJ54SOryTLzCuwyoq1+EbnPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TcgpaNgaxmuYqSD4nv+IlmqHKoNg5m7pcNlJ2VkE+GMDAGbxnFA7hfbDtNMZNmoYh
-	 y8MiXgbkzn7nay9hGIVf/ywW/uBdQvMS7tebxoz653/ce8/Ni686JXVLKKpOL3+R17
-	 d9/MeLhXqBcEqHaN+rYaV8BW0rUIv+XvPqAxpoO2rPEx1h9GFaY1NO/Vnmq4xI1V9y
-	 81qBJVMvmyGYnCYlcAMOtypnunVbm6GdJ+NDFyLHJggKhjtdn4SgE9Sn+WvSaPnrId
-	 X0M8BhLb6BcqOZIPQhUgmWq42CN4pEjmbKBYHGJ6CfdVAm8p88hvXC2LqC7atNN6oV
-	 CJUbMEWT9VBRA==
-Date: Sun, 15 Dec 2024 22:23:29 +0100
-From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: bschnei@gmail.com, Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Benjamin Schneider <ben@bens.haus>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: Re: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
-Message-ID: <fjdblv62k3nhqgy7decdldtieo4zyv6phxofx72dreyq7jbm4f@qmkp3e2wyplb>
-References: <20241125211452.14987-1-ben@bens.haus>
- <20241212070712.txkxgmiugzji3doz@vireshk-i7>
+	s=arc-20240116; t=1734298098; c=relaxed/simple;
+	bh=L9hHf01pDnp/0wQWMVgHF/7+HuN3TlH8PUjf3W1qgTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uBkv578U/yoHvbI5mJF7PbLSJ4PjcF/o3apVqHqqq2kXlDEg6Kcql+8v5QrjP89xFGu83R9e9FkLtiv0wbHrsEnujRSoiLNrTkFpJtUgq7vWTQ87GtMktayThJLF9iH2tiHnlB20ccYJN/l1MkIF8qMK6FD2mQ8XUE7NrZ4vngU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z/1lAyFh; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1734298081;
+	bh=YBUgyDT/h/HjXUDNky4SSyDW2nyBFCJipC/qzXgEW/w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Z/1lAyFhtVpvqlOXMnJE/xmEKMA09UCFFD7rWt1cKOPgV4emIJ+V6uRW29b2XBV0P
+	 2IqOeBRrUcFKUBwdjyLRvlQwc5AdIuM50IIGmOhS2EmVHE2Ys4PyXS4UhnqIHBGSCy
+	 52JDapTJMHrTv5TbZY+figw3lqhzFoN4iSvfZh+Lpdqt9T0HRWc+Cign88twzOMSCm
+	 dVjEIsUCShzcq01inZwDNVoV1B4XGbL12fEi8EcdbsIsYwrN6nGbLS0nEZIfjM8Cxf
+	 V2ggmDjyw9xui/1uXSW9Mexdnd1sIBYqevkD5x3QMoT9LS3lNa9zc0AvM7gXZt6jMN
+	 9wlVaqEtOXLcg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YBGQ94qZwz4wcD;
+	Mon, 16 Dec 2024 08:28:01 +1100 (AEDT)
+Date: Mon, 16 Dec 2024 08:27:25 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
+ <namhyung@kernel.org>
+Cc: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the perf tree
+Message-ID: <20241216082725.2ef47ce1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212070712.txkxgmiugzji3doz@vireshk-i7>
+Content-Type: multipart/signed; boundary="Sig_/bqowpAJmZLCvncreCGinz+g";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Dec 12, 2024 at 12:37:12PM +0530, Viresh Kumar wrote:
-> Marek,
+--Sig_/bqowpAJmZLCvncreCGinz+g
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-...
+Hi all,
 
-> Any inputs on this before I apply it ?
+Commit
 
-Viresh, let me try to test it this week on Turris Mox.
+  8791a78fb70e ("perf test: Remove duplicate word")
 
-Marek
+is missing a Signed-off-by from its author.
+
+This is probably not necessarily necessary ;-)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bqowpAJmZLCvncreCGinz+g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdfSb0ACgkQAVBC80lX
+0GxLsAf+MSCVnUgEgqAa7Pq+cSaViVlvvpYHNFoQA7Q9TphvLybWwQaF+UWZ+cWD
+jh4MONB7jqyqHR8r74w5NjWkjn6R7pOH318Tq5UFH+pFyT5n2PEmVO3VAHdZqgyU
+rHaqRCcvDeJaH5FAzbNsmcilK+wHaskTFt7Tis5V2ZkVb3fotbQD9hHVYjvWLXtI
+cdxJYYHtbJzlWzKLA3Fo80g5+kWKArv5/v8AmIvHUtHBsPyHQdy4Yz0hFLtmnV89
+sby8i2iPowFKB/eAl3a9+sA3lSlHbm1C4ekAIzLoEzTueb9f1IZg6VIICfVFtu6X
+00clxV40F0w28FVUywVSTk0ROxXONQ==
+=Iwo1
+-----END PGP SIGNATURE-----
+
+--Sig_/bqowpAJmZLCvncreCGinz+g--
 
