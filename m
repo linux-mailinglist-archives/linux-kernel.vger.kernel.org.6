@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-446236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBBD9F2190
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:03:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A909F2191
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B621165EF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E86166106
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DEF1862;
-	Sun, 15 Dec 2024 00:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GJYR2PW/"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92E4A23;
+	Sun, 15 Dec 2024 00:07:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E59819
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E94193
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734220990; cv=none; b=TcQCDyT9xqhh8AiygK1CvriT3+vTjFNnnLkuY0Rxl6tlyEV615jHfCI/Wsa5enwmoIZ7Ia8JT5UmNmN3rlQaxXkpeKW1+AXZXzAiTzYMJkqscNLJO6IfoDyHBLz60Shhj//83SU2rZeXbQhJ0+PO53IH3t+HG0q2kduUi2FTgos=
+	t=1734221226; cv=none; b=jv/zUlQqwtkw6OLeqxjT2n7xw/m8ebMrYoRGihKEQPXDt0Vem/Oq3EO7zp1dFcY3VaSs/98FxiTKgTne4C6GXnt7ukSa4PMgRLhReNAWAZ8vgyvwtC30nA19iJRLjeEUia86mC/5zdShxPbu87e02568weEmmtAwhfX8vVKZaCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734220990; c=relaxed/simple;
-	bh=xQFkpgBPg4Q78xCiadfJSR1zWL7V/gBsQiInFrVHHm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OyJBlVDEk8CD6KTWtWfrAXCcSCBHDqEKUYF6NmQa/1Vq9LMawTJG4Au7PnXkso2c7toyNMVuR4d1fjxIzi2m4607UujTsw9FvPTPN55ByMmvzOljYx0i2h90SNS2YK02nkSbyXKIVLm1OBBFMdZRzrebaIzNVOfekdBgCfI+4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GJYR2PW/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso497932366b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:03:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734220986; x=1734825786; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T3usN9VYGUEh24gR+LciJgIyFJjC0v6UAg/jDOmx3oE=;
-        b=GJYR2PW/J2E9gcF7loKLRmwX8qNvIdQ9IBY0mcQ+w5gpcFCu5jwPoKVIycf4IkmIzO
-         m/7112sqXk8cYeEO2HY/RIMSGIM5MHPJjrBPVdgNjhg2iZwzJRUT3TeHvprnS+ve6Qkd
-         k77LCdH9OCnm0pL4fSGbKAvdelvogQs+MtntQ=
+	s=arc-20240116; t=1734221226; c=relaxed/simple;
+	bh=uZZrthGLZNzK5Oh4plmT0/IPq/4yxm3rkQ18bMATI9I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GF6Mgme36N5k/QNekFal+DSKWCRozjpX9MtjQP9OVO9yalmg/C4eDcButHmb9yMN/lzVGvkPkdJ/3aaVTW6t6CciJrEPo5cA21NzGN57SqKYHINW7AfPjRnUR0/P4zhrnZLQNDVv3PgYo+SOaNW1Lroqn/tfPrxTLtSVRBIEwqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a815ab079cso61587815ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:07:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734220986; x=1734825786;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T3usN9VYGUEh24gR+LciJgIyFJjC0v6UAg/jDOmx3oE=;
-        b=eaZjDtTF9zWhU4UMc5/qQv84meSU+Rvq3goyEE2RKma3rhFMva0Q2qo/1TL07g2uNW
-         84ybKsXhof97cRmjcyYigYxkmtpAFQruzlgBWL5uRuoUY7sAkgGXeUuy4KZtcsisCQ/g
-         dkmbdzLmJzEQ2igK2bOPXbPcFbsqjaDlvgFlLjAplC//LWHRvOZG4045/jUjUT/+Uyc9
-         3xJ+IhFjWiNxBawEOkggzyRCoPrX05w+PgtUE8/mxEdTbtd0ZXPFk6R1beId9e+NgFnq
-         XBVub7e9U4NzG3Flo70dK4YO5g4+V8fdo182KwTGTxwmY7OLX+j4sH3OLlNh3aq5/Ugc
-         ETJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFmv6XYFtuyf8ud4L4exfPcMsqZ9OIQK7/rgXz4GVuccmAo9w/vaC3oNQ6RwDJbyCuvMxCfLBB4w7SpIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbfaunljPEjwglBbbrnCnuxL397CAJEHxaGHknqtWuVdhZ7LBJ
-	FUJqEUGvyDvXYQazsbFtYGR2sWahZ8eNfvqGSVMYOyllyXeV2BHso0unVhrUI1EKFTYrzXMtKI1
-	DBgQ=
-X-Gm-Gg: ASbGncsQ2LJvD0nMFRYBI9Z8aE9MxZbNgpk5XKYUzb90i5CU7w9esSFwTiwYXHSZIjt
-	p0AYV72RrRq9fCVOIsZvjzBEISzDP+ERIXk1AWiwWDPivTVYhiSICvuIw8R244wJPIGdySLWRfi
-	IeGjawdV6JsVpnrtPhh/rTpf0jQ3M9PPNsBBeiXxxvU8sAgWQSy9TxYJirYWADvL2KtWBqv75PL
-	N0bPVoD7AI7LPEivyNpaR7CkKYjgqProVqtIuGU9O4UbmnMKkkQVYhAXcDrWyDXTmxVQxxLrYxj
-	IuxWszKCeOxYE5FQ6YWMrLMEWcVQYHg=
-X-Google-Smtp-Source: AGHT+IH5KJ4hpMQo7zIWjfgj6JenAK07cVTgTeoUDFNila8bLSaGz2DAKnBTvI/W8JO9pvfZl3uLEA==
-X-Received: by 2002:a17:907:1c8b:b0:aa6:7cae:dba7 with SMTP id a640c23a62f3a-aab778c6ef1mr833443666b.4.1734220985965;
-        Sat, 14 Dec 2024 16:03:05 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963599d9sm149504466b.107.2024.12.14.16.03.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 16:03:04 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso497928366b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:03:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUEdsGZUJcfDMP+QdvGECTID0esIbJ9j89wjoW+SXno5OMRIhbqPhoVLbMbTEpBfuxQ0iglf0C58LSd5dU=@vger.kernel.org
-X-Received: by 2002:a17:906:c146:b0:aa6:82e3:2103 with SMTP id
- a640c23a62f3a-aab779b7e12mr856494866b.32.1734220983343; Sat, 14 Dec 2024
- 16:03:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734221224; x=1734826024;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GGiUyga2mg5JNSlHrY8MMllNvV4UweqJDAG74MooPro=;
+        b=BUrALQvYtaHml6R22F0slpTQQmNJZaG2l5arGkqfbbH9XsXiqA2UBwcjXIub88IYEA
+         H26fHhvo+QTkzl4Gi2chlHtXQdOh4N3D6zbe5kj+i6Ohe1mjxYWMZczVKuvoaMFAWTy+
+         iIG+6VAM+YczwqE62gUznOXlHV6ZIbbxVO+gdYbMtmH5EcW39RYw3s3pG2DhSkerUAJh
+         b8cl+TVx7PeoyAFHFI6SfihZiOpLgk8/BK5U3VrtfwGtnkcwA6peVaENV6f1OuhKwn7z
+         3LAHJ3XaI+vFWrR1BEzAuljPRgTpfvp6fHsLiHnMGr5El+fEWpneShlYSXk8KQ6p8iEf
+         mZPQ==
+X-Gm-Message-State: AOJu0YxZf4UAIURJvtryMYbwYOl0dViZ0OyAlMuK74dYTbDIG3kXPZ35
+	WRn9DaflP7U1ZcxCkc5bS1YhwPTLZ6/BTywYAmWXrnQ1z+2cCHUCYGkItuAV687tC800+Coh3ah
+	pAfT+31b3yQ1gIGdwI8OGQGtFe//vXLs4VHBM3wLB0qwO9EVm6HimNqk=
+X-Google-Smtp-Source: AGHT+IHT6gZ1V0b5cimCxa9DxhuiHEUMdJ8edBQc0J32LkmZIRC0FG0Bfqi3JY3SQWkhLCICsjYo1luItm6xYfXMQ6e4tlPlAY9R
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <395d805645f141b15ef818dadf39c8689986e8b4.camel@HansenPartnership.com>
-In-Reply-To: <395d805645f141b15ef818dadf39c8689986e8b4.camel@HansenPartnership.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Dec 2024 16:02:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjUTLUdiyc=+Mw3qTiQRu5xhtkBYd9r+o_hJTKgoW9XKQ@mail.gmail.com>
-Message-ID: <CAHk-=wjUTLUdiyc=+Mw3qTiQRu5xhtkBYd9r+o_hJTKgoW9XKQ@mail.gmail.com>
-Subject: Re: [GIT PULL] SCSI fixes for 6.13-rc2
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:3042:b0:3a7:8720:9e9f with SMTP id
+ e9e14a558f8ab-3aff4619d10mr81437765ab.2.1734221224070; Sat, 14 Dec 2024
+ 16:07:04 -0800 (PST)
+Date: Sat, 14 Dec 2024 16:07:04 -0800
+In-Reply-To: <D6BRRF7DFZ1I.MUKMVCYMW0T5@getstate.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675e1da8.050a0220.37aaf.00de.GAE@google.com>
+Subject: Re: [syzbot] [netfilter?] KMSAN: uninit-value in ip6table_mangle_hook (3)
+From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mazin@getstate.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 14 Dec 2024 at 15:08, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
->       scsi: ufs: core: Update compl_time_stamp_local_clock after completing a cqe
+Hello,
 
-Why does that ufs driver have that pointless "local_clock" version,
-when it also does a real ktime?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It's documented to be just for debugging.
+Reported-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+Tested-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
 
-Then the "ktime" version is documented to be for statistics.
+Tested on:
 
-What makes this all make sense? Two different clocks, for two
-different non-essential uses? And that duplication literally causes
-bugs because clearly people get confused.
+commit:         a0e3919a Merge tag 'usb-6.13-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c84344580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f52f17eef5016d2
+dashboard link: https://syzkaller.appspot.com/bug?extid=6023ea32e206eef7920a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1063a730580000
 
-This particular bug has been around for almost two years, so equally
-clearly these timestamps really *really* aren't that important.
-
-Can we just agree that it's silly *and* confusing to maintain two
-different completely unimportant timestamps in parallel, and just get
-rid of at least one of them?
-
-            Linus
+Note: testing is done by a robot and is best-effort only.
 
