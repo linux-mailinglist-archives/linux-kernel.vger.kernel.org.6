@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-446591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C079F268D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:20:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3319F9F26A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A7B165A22
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D1118856E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4874D1C54AA;
-	Sun, 15 Dec 2024 22:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj8F0gIF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809B81C3C06;
+	Sun, 15 Dec 2024 22:40:50 +0000 (UTC)
+Received: from sxb1plsmtpa01-02.prod.sxb1.secureserver.net (sxb1plsmtpa01-02.prod.sxb1.secureserver.net [188.121.53.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6961C4616;
-	Sun, 15 Dec 2024 22:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D141C1F20
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734301212; cv=none; b=Qg44vaoRsY2PhBEucY2I09dcquH72xTLI+9daOgOsLDY7E+biAoTF6O05exoxKH1hGdCoEQBoTSYBFJrvi7MbXhqMnpakoxtJ813AZVgdI4u4vekK+lrrAFmC3kB/fr7CCPEDxMW4bLSMGbmzyBbyRRE5oCgJknLpOiZlyvlXQE=
+	t=1734302450; cv=none; b=olb4qTQpT5J0IGk8fv+lBvIhOdgSMozC4JxyaslcatUX+pCp/ZmRQXiaNdUOjWmyfCweQ+6nqN/1kApn5UVB0bB2tWcwONQntw9mcLKO3JxTzrpLwEP7S3T7FMSJ0vvIOMbVeO06W9ohCIilgDc4qm/aDXZZVd8nVrgLNR2/kE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734301212; c=relaxed/simple;
-	bh=pgFcx4vATfkUzjcy2OHq1Ngq4be/TjLTKjUapAC3DXQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aN2//qoPyqFFe9AjKN3xpYCgKNkCu/p0Q4Uw6UBsyUd0T81HkUkYmp0NqNHL0X4hb6/17ECTck/dB63uoUzk1XNFURIgJ/XD5Qh7E+yAJ+ofCdlLLLKgM4qulFhDcwhH1a3aTjsRx95j1Vlcu05i1jkgL/7OCsiECCpjZvSdpl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sj8F0gIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E887C4CECE;
-	Sun, 15 Dec 2024 22:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734301212;
-	bh=pgFcx4vATfkUzjcy2OHq1Ngq4be/TjLTKjUapAC3DXQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sj8F0gIFyvoW8EIMZnAn5koZKvIEUjwbTTm+KfcG5s9aFJ5lj8+fhnyZ6FM/JDP1g
-	 W3NLJR2y3X2PGDppNjBQNe7Kyd+qt3AWrc8dIDC0apJ1jlmW3ucHD2XyPFuK56fnLt
-	 O+jbYyoB7sDZlVDbAcQLp9yDMtN6TiyeVXvzMykG7d8Ny6DbSE9uZin3VI80LMVqi+
-	 kC8G/8n/MDSUTdophfLnGFPS1bZ3682T1QMTOYFGGceXC0jDjVFUyd8R/dILI7rkgR
-	 O6sRJTGQIHyQa1jWM+BmHe9c+JGCxke8a1Zq5R8EgSX+zrOX+xIM3B0RXkuBsq2hnp
-	 7Z14rZsRZ94SA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 449203806656;
-	Sun, 15 Dec 2024 22:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734302450; c=relaxed/simple;
+	bh=ADOHO1O9tI4q3PBTUOambB+v7LzZf4uS08mt4W7Qc24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qoLKxsklivriu34qmtCEcgo7QrC124pJpXDO5N//Wm2tcQq/PdmHYHL6bBmJWxX5MY286Kv2XYOb3chn0JsElhsjshWlBeJst3MX//lxdPyJGT42b0maQLmzXCHhcpoV2PbA7FnVoUxHWqqHqMLq+RXA/of0X3OCQR2AZQ9ZSBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id MwzZtMOxpeMEGMwzatqWHd; Sun, 15 Dec 2024 15:21:39 -0700
+X-CMAE-Analysis: v=2.4 cv=Mr2o63ae c=1 sm=1 tr=0 ts=675f5673
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=i0EeH86SAAAA:8 a=FXvPX3liAAAA:8 a=o5M-TyKBy0XTbSR6GjAA:9
+ a=QEXdDO2ut3YA:10 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <e5611a93-12ee-4f34-bbca-c9ad7c12baa5@squashfs.org.uk>
+Date: Sun, 15 Dec 2024 22:21:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: wan: framer: Simplify API
- framer_provider_simple_of_xlate() implementation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173430122900.3593151.18358965146513672110.git-patchwork-notify@kernel.org>
-Date: Sun, 15 Dec 2024 22:20:29 +0000
-References: <20241213-net_fix-v2-1-6d06130d630f@quicinc.com>
-In-Reply-To: <20241213-net_fix-v2-1-6d06130d630f@quicinc.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_zijuhu@quicinc.com,
- gregkh@linuxfoundation.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Squashfs: Dont allocate fragment caches more than
+ fragments
+To: pangliyuan <pangliyuan1@huawei.com>, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: wangfangpeng1@huawei.com
+References: <20241210090842.160853-1-pangliyuan1@huawei.com>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20241210090842.160853-1-pangliyuan1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfFAFXD7ZNSCvjeCUKkaSAW+aDY96yeKkLW9aytosWSGMNGLKotapJFnbsmefe+rT00txsujB0UtBCUzrNGxSSK2HGSg9tZp7T2hRO6P4HjByuVtNupZ+
+ XmRTq7dudTCB/B0NbghzXQpwODdN/KIDUAzuc2f7A5o5okKN8dUMxMGCoVX4X0Uk/A76HDrc2uArwMNh/oA1Jmj7VR3hpQAWc0T46WNgFdu2fTwvZ3kva1XA
+ Wdd8wbo5i4rA102UC86YRmOVIKl7eeA6U5uxeTgjVe5WXkreexzaybYfdkmzkEFLE/kXS9HkIjlttKnUabb8ZA==
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 13 Dec 2024 20:09:11 +0800 you wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 10/12/2024 09:08, pangliyuan wrote:
+> Sometimes the actual number of fragments in image is between
+> 0 and SQUASHFS_CACHED_FRAGMENTS, which cause additional
+> fragment caches to be allocated.
 > 
-> Simplify framer_provider_simple_of_xlate() implementation by API
-> class_find_device_by_of_node().
+> Sets the number of fragment caches to the minimum of fragments
+> and SQUASHFS_CACHED_FRAGMENTS.
 > 
-> Also correct comments to mark its parameter @dev as unused instead of
-> @args in passing.
+> Signed-off-by: pangliyuan <pangliyuan1@huawei.com>
+
+A small but useful optimisation.
+
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+
+> ---
+>   fs/squashfs/super.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2] net: wan: framer: Simplify API framer_provider_simple_of_xlate() implementation
-    https://git.kernel.org/netdev/net-next/c/dcacb364772e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
+> index 22e812808e5c..269c6d61bc29 100644
+> --- a/fs/squashfs/super.c
+> +++ b/fs/squashfs/super.c
+> @@ -405,7 +405,7 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   		goto check_directory_table;
+>   
+>   	msblk->fragment_cache = squashfs_cache_init("fragment",
+> -		SQUASHFS_CACHED_FRAGMENTS, msblk->block_size);
+> +		min(SQUASHFS_CACHED_FRAGMENTS, fragments), msblk->block_size);
+>   	if (msblk->fragment_cache == NULL) {
+>   		err = -ENOMEM;
+>   		goto failed_mount;
 
