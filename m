@@ -1,189 +1,127 @@
-Return-Path: <linux-kernel+bounces-446277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146F69F221F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:30:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81F29F2222
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8FCE7A0FF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7332165BB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2314C13D;
-	Sun, 15 Dec 2024 03:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FAE8C1F;
+	Sun, 15 Dec 2024 03:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DdsQfMBc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="GqLWPWHn"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190B9946C;
-	Sun, 15 Dec 2024 03:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146F928FD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734233400; cv=none; b=b27fxNz/ggQAdKlpIkV5rkUe1SlPnUcEOKGORur1nRp3ir97gzCKLK16gHbyZzbP6euyB24FKuoQ87OvqjOBcHrqHBPaojQGka1ccZ6LkgmPUbUo6fpTHtXYuRlFxRn4d8G4mpVvFpL75A6L68mPqYVitzDoDS5vfOo7uw2zNo0=
+	t=1734233993; cv=none; b=FayM71psluGXxA3XoP6Apt2L5dejFAiPOaJnOF7vT+cEdQwQsS4IOslKW1nij48JxPDPO1fUiHtFvlKa4KSW9cTbPWMFCSFTog1WlDRPkVEVLgMDJWObOXIpWiQyyTFD9v79JIpB4sCDh5MmY8cYbINDgfgiREwXUuaXOgcl3kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734233400; c=relaxed/simple;
-	bh=/NX2EoaKM0CshF8ayVfhRdRlhGgTbc6ZwoH2EXyMGFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5JTsA4EkjJeSK1SU+fYaU65/fnNYGtg2Lr4yfVgdd2OQA1V3o7pGDYGJiU9IJbenSQ0gy60ieQ0hpfHAR8L84kvU5JKNV05+UUDKPZLwkNXSroagU2v878vHJP5OkwUMETJzqkPgbbLiX05mxd2LAgV2JlEovWBuoOv21fI+Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DdsQfMBc; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734233397; x=1765769397;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/NX2EoaKM0CshF8ayVfhRdRlhGgTbc6ZwoH2EXyMGFQ=;
-  b=DdsQfMBcVZbcLACDFwhECn+lA7iphNu4e4EQe5uVzS15LvLb5y5EZhXA
-   iJeZ9CaJp4R3gf+eqI9a2zVkeGqDnK3fDzWhSZOjmGogpvl6caOVnas/b
-   qRJSXb2/pztC4QimS6pPgyL2+uBVcHLTUSqBvU63emml1BnmvHsyCzBVs
-   jEiPfi31qzGpVaHqO2Q3HAvKRixgFJ8go6ZkNBfsuekch5LI2/6KTTfd1
-   gYNOMhmw35Sm+jaSp7ab67eTuway8AC5qrvJ+SuawHvUvRYk1yBZ5AYeE
-   6c8cRgmDxkfjJAlT/UWEtRO7cf/6nJhmEKfxb3r6lj5OIAUWUocApHshX
-   Q==;
-X-CSE-ConnectionGUID: IaO9tpA8QZCNEsZ3md1zsw==
-X-CSE-MsgGUID: s1gBHvZgQRWVQzR4XcX5iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46040090"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="46040090"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 19:29:57 -0800
-X-CSE-ConnectionGUID: JeaPkRPVQA2mB1GwWL2aeA==
-X-CSE-MsgGUID: BmK1I43cRvGQvhA3Xj2xXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="97679538"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 14 Dec 2024 19:29:54 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMfKJ-000DP2-1X;
-	Sun, 15 Dec 2024 03:29:51 +0000
-Date: Sun, 15 Dec 2024 11:29:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: yangge1116@126.com, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	21cnbao@gmail.com, david@redhat.com, baolin.wang@linux.alibaba.com,
-	vbabka@suse.cz, liuzixing@hygon.cn, yangge <yangge1116@126.com>
-Subject: Re: [PATCH V2] mm, compaction: don't use ALLOC_CMA in long term GUP
- flow
-Message-ID: <202412151139.n93obAio-lkp@intel.com>
-References: <1734157420-31110-1-git-send-email-yangge1116@126.com>
+	s=arc-20240116; t=1734233993; c=relaxed/simple;
+	bh=+RzpPYbczDs0ceaSnAvTSb5HGFXTdODXv8bzFxTnbho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JPjQfPI7HyxzxNrCo8VcmvZNRLo235/tYF8XSXPG2zG2rHNUHjSLTWrXBTIG9h48u6Rw7/TZbRZYmEISXC4AIzQBhuWKgCOcvPIUvycUG6nn5KiXVVLj7jqcQOE/AyT7gLYXA95MHrrViSp7p71t16OkWgCqdLoaIFrE+fJwHHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=GqLWPWHn; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso3214456a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 19:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1734233990; x=1734838790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QucYTxoNFIQoZFl7iunkrbcE/LOYPuff6g2uMFrfQRU=;
+        b=GqLWPWHnahoe+ZQw8934fbMGXdQUxK5d0RrbDyWEqb89F4uiYstVYCCqBaA3w4vkOy
+         k9KK7D6T6RUV1PIXY+KZXX0oq5U8Inq4MvBcGxSilJgiOMVwDdLhd8BDN1J1FBWEY0EU
+         XLQ2vO+HSNv8LHwNEvPyA2Czo+b91UrsUGrUMa8Jj7Ie6UuDeQ5XzIH/PsXF4L8PDGUC
+         SSngDyToHl6x7hCRR0OxtMcSRxFUXGtRttGvZNuYPK31Tvufkgo15ELos5R8vJeBFCZ0
+         KX2GZRrlj8xSkHdPfqwWDZ0NlROrI/FHc0oGrnaBo5umKk+JkMquUbute9/zbI+r/qVE
+         UC9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734233990; x=1734838790;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QucYTxoNFIQoZFl7iunkrbcE/LOYPuff6g2uMFrfQRU=;
+        b=rHg8z8VhyAdmb1O51wJ4T/9q2Aw4pgdQ8SW4IpSfBScwLKhbxoFQRkf6gNaQ+VTPMJ
+         9Tx/WLrEakW/FgsNsH8/T3w3tl8oZr/48SGMcZ+OSLT64qVxslVcwjNvEba+aufxY31V
+         pPbpqTsYPZ4AfdU2q4vouGKwR+TZH2sw1klLuHt2DkxuOjQL7MdV18+E/9wKf6MsYg6N
+         PZvnsjmW9Z4d229tsQyLhFboq8yC3eJ5IBnXahH8cDtVkJh3mmSKmDtYeo2FvKwvXD41
+         1VGCqumSDG5E4tmOPzTE8Mq88eOywHrq6X4nX21EFnVc7TCFxU9g3tNXgI4xK+f/EAQu
+         tngg==
+X-Gm-Message-State: AOJu0YzSODA0iQfBOGxexZZK80YoWNGNIhaDFUTudrHdDRKZQQnr6G9H
+	p3vQdHDLvs2PC328JRRZwaxPuGvR40Er0uQtkrJVS6Mf6nuFdT3+boKQmgolbPY=
+X-Gm-Gg: ASbGncvR0gvpVfLfJ9n7v5ge0mMtoyxSuIOkqPAquTk+LjW5/aWXD7bMjoY8jRn8F88
+	Em8S/HX0LPsJf5seFtBO+PDywNZZwFyjqQbZFIfTdzRI19eX/ZK/l8xH6d1p1P90MWI7LdHKB7C
+	7ADT7Dw2OdCOsDnF365pxAfHnwhTt8z4Sgg2yGXIIy1ADHhnqq+CMRvHuZjX9NZJFETRnewhLTR
+	VyUWXs7oyyStIjJlK17Ap8npLJpfryZYnjzFnlw+1DWgPKKyeQVkEP13VeTzuvdOPIPhcH13dwQ
+	ZCUdwNtSLcjtZtvpLmQxqO/kPjqhsJOTIH6KZnaXIxY=
+X-Google-Smtp-Source: AGHT+IFcJ4yTXJ05VOqtqIZZVF+mnl1lvAx8yif3hGGbdWc6aJQ44AO8qrMvcQNgRZXUgodNORmx0A==
+X-Received: by 2002:a17:90b:3912:b0:2ee:463d:8e8d with SMTP id 98e67ed59e1d1-2f13ac560dfmr19613008a91.14.1734233990279;
+        Sat, 14 Dec 2024 19:39:50 -0800 (PST)
+Received: from localhost.localdomain (133-32-227-190.east.xps.vectant.ne.jp. [133.32.227.190])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1ebb737sm2475450a91.27.2024.12.14.19.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 19:39:49 -0800 (PST)
+From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+Subject: [PATCH] irqchip: fix an OF node reference leak in platform_irqchip_probe()
+Date: Sun, 15 Dec 2024 12:39:45 +0900
+Message-Id: <20241215033945.3414223-1-joe@pf.is.s.u-tokyo.ac.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1734157420-31110-1-git-send-email-yangge1116@126.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+platform_irqchip_probe() leaks an OF node when irq_init_cb fails. Fix it
+by declaring par_np with the __free(device_node) cleanup construct.
 
-kernel test robot noticed the following build errors:
+This bug was found by an experimental static analysis tool that I am
+developing.
 
-[auto build test ERROR on akpm-mm/mm-everything]
+Fixes: f8410e626569 ("irqchip: Add IRQCHIP_PLATFORM_DRIVER_BEGIN/END and IRQCHIP_MATCH helper macros")
+Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+---
+ drivers/irqchip/irqchip.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/yangge1116-126-com/mm-compaction-don-t-use-ALLOC_CMA-in-long-term-GUP-flow/20241214-142453
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/1734157420-31110-1-git-send-email-yangge1116%40126.com
-patch subject: [PATCH V2] mm, compaction: don't use ALLOC_CMA in long term GUP flow
-config: i386-buildonly-randconfig-004-20241215 (https://download.01.org/0day-ci/archive/20241215/202412151139.n93obAio-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412151139.n93obAio-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412151139.n93obAio-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/vmscan.c: In function 'should_continue_reclaim':
->> mm/vmscan.c:5822:21: error: too many arguments to function 'compaction_suitable'
-    5822 |                 if (compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
-         |                     ^~~~~~~~~~~~~~~~~~~
-   In file included from mm/vmscan.c:36:
-   include/linux/compaction.h:111:20: note: declared here
-     111 | static inline bool compaction_suitable(struct zone *zone, int order,
-         |                    ^~~~~~~~~~~~~~~~~~~
-   mm/vmscan.c: In function 'compaction_ready':
-   mm/vmscan.c:6050:14: error: too many arguments to function 'compaction_suitable'
-    6050 |         if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
-         |              ^~~~~~~~~~~~~~~~~~~
-   include/linux/compaction.h:111:20: note: declared here
-     111 | static inline bool compaction_suitable(struct zone *zone, int order,
-         |                    ^~~~~~~~~~~~~~~~~~~
-
-
-vim +/compaction_suitable +5822 mm/vmscan.c
-
-  5778	
-  5779	/*
-  5780	 * Reclaim/compaction is used for high-order allocation requests. It reclaims
-  5781	 * order-0 pages before compacting the zone. should_continue_reclaim() returns
-  5782	 * true if more pages should be reclaimed such that when the page allocator
-  5783	 * calls try_to_compact_pages() that it will have enough free pages to succeed.
-  5784	 * It will give up earlier than that if there is difficulty reclaiming pages.
-  5785	 */
-  5786	static inline bool should_continue_reclaim(struct pglist_data *pgdat,
-  5787						unsigned long nr_reclaimed,
-  5788						struct scan_control *sc)
-  5789	{
-  5790		unsigned long pages_for_compaction;
-  5791		unsigned long inactive_lru_pages;
-  5792		int z;
-  5793	
-  5794		/* If not in reclaim/compaction mode, stop */
-  5795		if (!in_reclaim_compaction(sc))
-  5796			return false;
-  5797	
-  5798		/*
-  5799		 * Stop if we failed to reclaim any pages from the last SWAP_CLUSTER_MAX
-  5800		 * number of pages that were scanned. This will return to the caller
-  5801		 * with the risk reclaim/compaction and the resulting allocation attempt
-  5802		 * fails. In the past we have tried harder for __GFP_RETRY_MAYFAIL
-  5803		 * allocations through requiring that the full LRU list has been scanned
-  5804		 * first, by assuming that zero delta of sc->nr_scanned means full LRU
-  5805		 * scan, but that approximation was wrong, and there were corner cases
-  5806		 * where always a non-zero amount of pages were scanned.
-  5807		 */
-  5808		if (!nr_reclaimed)
-  5809			return false;
-  5810	
-  5811		/* If compaction would go ahead or the allocation would succeed, stop */
-  5812		for (z = 0; z <= sc->reclaim_idx; z++) {
-  5813			struct zone *zone = &pgdat->node_zones[z];
-  5814			if (!managed_zone(zone))
-  5815				continue;
-  5816	
-  5817			/* Allocation can already succeed, nothing to do */
-  5818			if (zone_watermark_ok(zone, sc->order, min_wmark_pages(zone),
-  5819					      sc->reclaim_idx, 0))
-  5820				return false;
-  5821	
-> 5822			if (compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
-  5823				return false;
-  5824		}
-  5825	
-  5826		/*
-  5827		 * If we have not reclaimed enough pages for compaction and the
-  5828		 * inactive lists are large enough, continue reclaiming
-  5829		 */
-  5830		pages_for_compaction = compact_gap(sc->order);
-  5831		inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
-  5832		if (can_reclaim_anon_pages(NULL, pgdat->node_id, sc))
-  5833			inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
-  5834	
-  5835		return inactive_lru_pages > pages_for_compaction;
-  5836	}
-  5837	
-
+diff --git a/drivers/irqchip/irqchip.c b/drivers/irqchip/irqchip.c
+index 1eeb0d0156ce..0ee7b6b71f5f 100644
+--- a/drivers/irqchip/irqchip.c
++++ b/drivers/irqchip/irqchip.c
+@@ -35,11 +35,10 @@ void __init irqchip_init(void)
+ int platform_irqchip_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct device_node *par_np = of_irq_find_parent(np);
++	struct device_node *par_np __free(device_node) = of_irq_find_parent(np);
+ 	of_irq_init_cb_t irq_init_cb = of_device_get_match_data(&pdev->dev);
+ 
+ 	if (!irq_init_cb) {
+-		of_node_put(par_np);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -55,7 +54,6 @@ int platform_irqchip_probe(struct platform_device *pdev)
+ 	 * interrupt controller can check for specific domains as necessary.
+ 	 */
+ 	if (par_np && !irq_find_matching_host(par_np, DOMAIN_BUS_ANY)) {
+-		of_node_put(par_np);
+ 		return -EPROBE_DEFER;
+ 	}
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
