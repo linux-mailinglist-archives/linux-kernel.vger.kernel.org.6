@@ -1,166 +1,180 @@
-Return-Path: <linux-kernel+bounces-446311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070F09F2271
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:56:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8649F2272
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6694F18868DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3EAB7A0F6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409251802B;
-	Sun, 15 Dec 2024 06:56:22 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC9418E0E;
+	Sun, 15 Dec 2024 06:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOTCF9fK"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387902F56
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 06:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB536124;
+	Sun, 15 Dec 2024 06:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734245781; cv=none; b=lHtD92PvKNeCTKdR+TDXzZlCuGCseKFWXmAL8XmPs18sQJ3AmAybGFizomcVXdgLoToKkeOvApFYkU4RBVcR+MDsOjK0ZPDgLGMuS4KMcKkNXQI9qnr2exhiNUSdnB0dKk56tN56gk6aYXuR5ksGzjlA6IP5JIh1Z8LdfN1pHC8=
+	t=1734245883; cv=none; b=bS4ujgV0z4RvMPep3bB1Fes76TorRIf5OggJiVsOgQA8nnBvzpdOhEOhMHaK+nkWSE2qskIR8Zkplfe2w+82tBRaJrUUfPrjsQrbuNV07UmX0hwwZFdpu7AauvcybdZ0211FtYrtoqtzDpnl0dDQDdpNZc1sSmwO0WhpYgf1Rhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734245781; c=relaxed/simple;
-	bh=/b39DB2wUDkEzkULeDwV1DaCnXUC1uS3yWrdSZi0vX8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FJTmCiN4G5kwLDkeuQpw0DZU4a71guWEivxqed5YIKGXMLu1ppLs9g7fA4aVGrRbz2tDDBciBy8uKOWSmYSz8O/qGvdgExtQAE8TlZcf7wo26UXXPztaabnw6InIJuZ83xJQWnE0cwDzyUNZI45+DHhpCsxaay8Oarq2ao64PyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso366003139f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:56:20 -0800 (PST)
+	s=arc-20240116; t=1734245883; c=relaxed/simple;
+	bh=2OQZzP6BRxlJYJzS8PsQUtm8TeLwGOvv+YfaY6raTQ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=slKamIyUHvJfQg2Rywo+7wIxEXvR48hoOHCUhzYDyLACvk4Pz5p3ci0XatKRnfJ1E4iDXJsFqUo0eOX53y6vvEyq3wCMWxfAIfdCWDlB8ClBMN56Ove6Hwk1RAp+54xq5xZBGlyGnT6fx5gynbJ0VPAaqKQIliaO6ZCPjmu5BvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOTCF9fK; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e39f43344c5so2344224276.1;
+        Sat, 14 Dec 2024 22:58:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734245881; x=1734850681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQu56XW3Qsw5N6RW3n2l+4Gl0SaTByF3QhLogoOv0F8=;
+        b=JOTCF9fKcEOYZ32mfaGFIH7+sOXFkhGQioReUS5bL7GCGZF+FXyhISKPOlCk7F7RaQ
+         WQ/yxi3f0kV+Pgel5+8jD8dmruuz+mVWV4oogzmZwEVOExkBcsL3bJw2O19pIK/jl3PY
+         EpTwELptBURrAYSfZZF324Ly50oWJ3K1h4vnrynvrR9xS/6ZSJ5v3U0n+N80/BDPcLbo
+         FgpmTGunviOz3R5IN/8G4LyuvqFepBlaHxokwVrg1rAUr3iwqwJ7+iUsI0NTdQhA1QD6
+         C3dviqNUi/yMPmI2EjCuxZBUOpjNlX2dMc6aus6uEfl4k7Vjlc+M0MEoYobs3+u3RQzG
+         ApmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734245779; x=1734850579;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GQL3vJdZhzaq4q5jC3R54yCo/SVa59Q8hQ9ZR6nOLmU=;
-        b=JsLvFNqR6NeG1KmVv9udCzP2t6rMAYpcnSAQvG3sq51MpGjyiQ/KNqpifIUXyGyebc
-         ErlnwHlG0VIJwOQBdb35vafx479q1WJl1yNeaCRj/iQsTqblWBbSAFjhBMpP8J3/v4H2
-         VS2PEunFCMkCf/UCP6NoT/fEBMLW5oBlVwRrVHZBBv9L4ctDwEaKsLnQCN8AAPkavKYk
-         G24+C1qiHdMZI1Ki3ZzV9bfz2doccfDj2cshcq0c4foQ2Y5pkxnpo2d0QB03c+t6nY9/
-         c27sQyDiF4VVOMzi2mP1odv0GBWxXhMmJMtuM7W8Evlm5FOOLvmpLUH9WoIRAb1Abms+
-         itJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPVBOCk3hCkXt8zG9kIbVCLhcuwnTrnViAeW2XRSgl4JmuFVTmZaFtpjr36K5Qv+O4U5j4Ff7ubRvsXKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx45clYyhqMGfGdHqigCZV7ySelE/9dGaT1f5PgrrnTLCNH1Aia
-	eanGgEm6WFsZDUcwt41mg0iutudCesdxSdztX3puZe0MGP1U2BVn34D1eR2BHKg8zY9CB9c/G+l
-	qy4omh0YbRXgrjb8ndG8AKg5Up6qcn6VMfTdSNU9bYwMOuVzbbdhPzyw=
-X-Google-Smtp-Source: AGHT+IGSwiAgYvN8dTadK8I9n2LmdSnaHVaudySkR41xnRpF7e2nnfOO0Hn/RpCwwlK5cgMtFRjN0sqZJ0jQyuCu2Ha7tbDJyFdk
+        d=1e100.net; s=20230601; t=1734245881; x=1734850681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IQu56XW3Qsw5N6RW3n2l+4Gl0SaTByF3QhLogoOv0F8=;
+        b=mqn635AIBVDv8G4FlY4hKzVoc0e18y0ahLd8N9ZvUIdteSA0tk2TlrDCfGX73f3JtB
+         UQnc1ptgk8kxbmkNPgPygUBe/rlmthb8meTMq9BVzyS2hR/wJwICrknipLGeUYc7uUi8
+         +q2GrU9h1QiDnVrnLcUCqNDNCAd6BLandbFgcGjjd0nb4CRxQpE7vnSN7AaMJpL8eL86
+         UuWrG85joVAO0uYtHjMtiZSPas0X1WtZuel0+fT6jl27Ze9aPff0rISXB7EuPIhgAhWv
+         k1L3XVpH6SXWDUFMT1w+wEtio2s+dYvXu3U5kMU98bUywtdajymsbbeGJTFwWtSyRXaX
+         yzPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI3zMxXhIcCd5YBxGLUTIK6IG9Nq0wTIOkDgqnJYMZtDnd1XE/7NZlZT4hmHgdbnhycomJdJCykU3QgUo=@vger.kernel.org, AJvYcCXrJXRdX/lcT4hoh4grtp/G0J1cGkxXmZCbINR3Hn609OrWm8x/lE1acrUNUbrn4XQn87uTlPYu4inxqPDE/HKR8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwExIKQi4alYAif4kkpreJ9vLzxXRC1G2T6q9sfaT+KzIP6shV
+	b5Zx94lr9hPCL38jR3/8lNJJJQ2um0a97f679auYhCU4kl8ejnayc7hd4ZUAQxeuIDXm8RQXRk2
+	wlXMYdbOFCoo/csp65obJ/guVNEA=
+X-Gm-Gg: ASbGnct98MOEzInu9tiN7nFdvANdNMbu2Inzkwgb2j0uogRG/FS2rHysL+vhw/3v2MG
+	VhKp8S8toefVOeJKnIz2daHgF2/UMDw1YQoWc
+X-Google-Smtp-Source: AGHT+IGDbk6ZDT+lS4COZTbrFJ3E1SI1tPL361VV3BBfCYfnXlofaMeqIbGEmW9Ohwc9LArDwzQrKGfDfQqBiPtLleE=
+X-Received: by 2002:a05:6902:1b09:b0:e39:772b:4bae with SMTP id
+ 3f1490d57ef6-e4348d24c16mr6620973276.6.1734245881206; Sat, 14 Dec 2024
+ 22:58:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:238a:b0:3a7:e1c3:11f5 with SMTP id
- e9e14a558f8ab-3b02adcc3acmr75200985ab.6.1734245779364; Sat, 14 Dec 2024
- 22:56:19 -0800 (PST)
-Date: Sat, 14 Dec 2024 22:56:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675e7d93.050a0220.37aaf.00f3.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING: locking bug in sched_balance_rq
-From: syzbot <syzbot+2d4ccc03d6c11f23901e@syzkaller.appspotmail.com>
-To: andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+References: <20241211224927.968483-1-howardchu95@gmail.com>
+ <20241211224927.968483-2-howardchu95@gmail.com> <Z1zUW5itJzHI89gP@google.com>
+In-Reply-To: <Z1zUW5itJzHI89gP@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Sat, 14 Dec 2024 22:57:50 -0800
+Message-ID: <CAH0uvojcL+DL6WLJA1VhzysxeRY0=P9hAYm7Gng-skaoKLPHKg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] perf trace: Add tests for BTF general augmentation
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hello Namhyung,
 
-syzbot found the following issue on:
+On Fri, Dec 13, 2024 at 4:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Howard,
+>
+> On Wed, Dec 11, 2024 at 02:49:26PM -0800, Howard Chu wrote:
+> > Currently, we only have perf trace augmentation tests for enum
+> > arguments. This patch adds tests for more general syscall arguments,
+> > such as struct pointers, strings, and buffers.
+> >
+> > These tests utilize the perf config system to configure the perf trace
+> > output, as suggested by Arnaldo Carvalho de Melo <acme@kernel.org>
+> >
+> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/tests/shell/trace_btf_general.sh | 93 +++++++++++++++++++++
+> >  1 file changed, 93 insertions(+)
+> >  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+> >
+> > diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/t=
+ests/shell/trace_btf_general.sh
+> > new file mode 100755
+> > index 000000000000..bef07bad42bb
+> > --- /dev/null
+> > +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> > @@ -0,0 +1,93 @@
+> > +#!/bin/bash
+> > +# perf trace BTF general tests
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +err=3D0
+> > +set -e
+> > +
+> > +. "$(dirname $0)"/lib/probe.sh
+> > +
+> > +file1=3D$(mktemp /tmp/file1_XXXX)
+> > +file2=3D$(echo $file1 | sed 's/file1/file2/g')
+> > +
+> > +buffer=3D"buffer content"
+> > +perf_config_tmp=3D$(mktemp /tmp/.perfconfig_XXXXX)
+> > +
+> > +trap cleanup EXIT TERM INT HUP
+> > +
+> > +check_vmlinux() {
+> > +  echo "Checking if vmlinux BTF exists"
+> > +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
+>
+> Normally we do
+>
+>   if [ ! -f /sys/kernel/btf/vmlinux ]
 
-HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1414ccdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d4ccc03d6c11f23901e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Sure, I'll change the check to this.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>
+> > +  then
+> > +    echo "Skipped due to missing vmlinux BTF"
+> > +    err=3D2
+>
+> This can be overwritten by trace_test_string.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d03a74cd09e9/disk-f92f4749.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1b7f97b83a3f/vmlinux-f92f4749.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2eac1365a6a/bzImage-f92f4749.xz
+Oops my bad sorry.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2d4ccc03d6c11f23901e@syzkaller.appspotmail.com
+>
+>
+> > +  fi
+> > +}
+> > +
+> > +trace_test_string() {
+> > +  echo "Testing perf trace's string augmentation"
+> > +  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2=
+} 2>&1 | \
+> > +    grep -q -E "^mv/[0-9]+ renameat(2)?\(.*, \"${file1}\", .*, \"${fil=
+e2}\", .*\) +=3D +[0-9]+$"
+>
+> Does this work without BTF support?
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
-WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Modules linked in:
-CPU: 1 UID: 0 PID: 6423 Comm: syz.4.108 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Code: 00 00 83 3d 71 f3 9e 0e 00 75 23 90 48 c7 c7 00 96 0a 8c 48 c7 c6 00 99 0a 8c e8 f7 62 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc9000c4fed70 EFLAGS: 00010046
-RAX: 0fbe9254beddb100 RBX: 00000000000018d8 RCX: ffff88801f353c00
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000000c18d8 R08: ffffffff81600a42 R09: 1ffff110170e519a
-R10: dffffc0000000000 R11: ffffed10170e519b R12: ffff88801f3546c4
-R13: 0000000000000005 R14: 1ffff11003e6a8e5 R15: ffff88801f354728
-FS:  0000555590c7c500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3030dff8 CR3: 0000000028c98000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:606
- raw_spin_rq_lock kernel/sched/sched.h:1514 [inline]
- _raw_spin_rq_lock_irqsave kernel/sched/sched.h:1534 [inline]
- rq_lock_irqsave kernel/sched/sched.h:1799 [inline]
- sched_balance_rq+0x4dcd/0x8620 kernel/sched/fair.c:11733
- sched_balance_newidle+0x6ba/0xfd0 kernel/sched/fair.c:12795
- balance_fair+0x44/0x70 kernel/sched/fair.c:8744
- prev_balance kernel/sched/core.c:5995 [inline]
- pick_next_task kernel/sched/core.c:6145 [inline]
- __schedule+0x2a3f/0x4c30 kernel/sched/core.c:6709
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- futex_wait_queue+0x14e/0x1d0 kernel/futex/waitwake.c:370
- __futex_wait+0x17f/0x320 kernel/futex/waitwake.c:669
- futex_wait+0x101/0x360 kernel/futex/waitwake.c:697
- do_futex+0x33b/0x560 kernel/futex/syscalls.c:102
- __do_sys_futex kernel/futex/syscalls.c:179 [inline]
- __se_sys_futex+0x3f9/0x480 kernel/futex/syscalls.c:160
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0823d7ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffeba872b88 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 00007ffeba872ca0 RCX: 00007f0823d7ff19
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f0823f4616c
-RBP: 00007f0823f4616c R08: 7fffffffffffffff R09: 00007ffeba872e6f
-R10: 00007ffeba872c90 R11: 0000000000000246 R12: 0000000000026d66
-R13: 00007ffeba872c90 R14: 0000000000000032 R15: 0000000000026d34
- </TASK>
+Yes, this works without BTF with Arnaldo's patch adding
+sys_enter_renameat2. Before the patch, it wouldn't work because the
+second filename would not be displayed properly. I understand this may
+seem redundant, but now in perf trace all the data is collected
+through the BTF general collector (if BTF is present), so this
+trace_test_string() tests the new code path that uses BTF information
+to pretty-print string arguments, since all data collection goes
+through it.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Howard
 
