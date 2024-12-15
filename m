@@ -1,182 +1,101 @@
-Return-Path: <linux-kernel+bounces-446367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6119F9F2381
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:51:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095759F2383
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3DE1885EFE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF5D165162
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0CF16F0E8;
-	Sun, 15 Dec 2024 11:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1016F0E8;
+	Sun, 15 Dec 2024 11:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s45Ltqr8"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gsz44Nu2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3593149E13;
-	Sun, 15 Dec 2024 11:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DCB149E13;
+	Sun, 15 Dec 2024 11:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734263477; cv=none; b=rOH/KvLv1WE1CzaNwecxo21Ko3ck4Bo8Aa72+FRwbUKEXtuvmFDGDb+SAZPML+c2Uh2zGX2k6+VbpOmwTzFZMst7gowwjr4UfmodNLP2Qin54q0p/7D8AsjZkoAudL1zrXlbAQPpl92qL8PVO89yPpXODcAIpK1bqaf+AE5KzNM=
+	t=1734263573; cv=none; b=ScEZKOdXcT3GA12g8Agy41EfzfbhKcEIHbykxemzJChGxW6yq2seBpxElTS3CygRIz5iZUUmVgl6MoBH4JZnnn7ozGCUSzcT7rz9nF3x6XPRb7xfJjvQAM3cFS6Pcf4lqL+yneKTpUDTNURU3T09d8oR4FqoSZaRHearhtI5OeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734263477; c=relaxed/simple;
-	bh=0t0ZQKj/p7GAnvOKN0/2RvwC65Y0VMiw7Zr0Iborcn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b1B+7temJqSNjr4vOJ858gAJDDFOV8iTofG7xv05ZGOLmZo+eC9HpIzm+CUWh+HzCvvLsAu00SOohkglsrY/0X/kSk0e/3ZaCjYSk2NBGmg9rZn9oc57upiQwGYf3kR7GE9yxuqpb/jtu/IFOBS6MQr63Toi0TG6UN7E01M1PmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s45Ltqr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD21C4CECE;
-	Sun, 15 Dec 2024 11:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734263477;
-	bh=0t0ZQKj/p7GAnvOKN0/2RvwC65Y0VMiw7Zr0Iborcn0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s45Ltqr8OqH9WmvIBOjSJZpSbVXSXpGmu0Nf9nZsXE362Ve36YSUDKrU1UmeNR9Ey
-	 8L8+W/HVxgE6dYAXBSFXV3JyGtiJqRFiL/KuhSag/iU7IvZR2kZ3QGgvhbOpMZr9Cn
-	 OyTxcFC8VAUJrMp4R/FhQxyetFWCDiMzOH/d/+AwahNp1b3SsICBB5y5i0gjbwKA/W
-	 WcxONX9W2hF3M8f/P184ynOC7fgXt0EFQNqcORUReZ/rtmAzAmkqCVGkeczpiQwx9X
-	 LUaqVZn255vbz6CzX12uY9AmOxNO7v8kxsYvrwOAF9mwAsrTnq+BOBdC/6CTkPwkrm
-	 UahhkkG43VaKA==
-Date: Sun, 15 Dec 2024 11:51:08 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
- aardelean@baylibre.com, adureghello@baylibre.com
-Subject: Re: [PATCH v2 4/9] iio: adc: ad7606: Move software functions into
- common file
-Message-ID: <20241215115108.558bb5a9@jic23-huawei>
-In-Reply-To: <20241210-ad7606_add_iio_backend_software_mode-v2-4-6619c3e50d81@baylibre.com>
-References: <20241210-ad7606_add_iio_backend_software_mode-v2-0-6619c3e50d81@baylibre.com>
-	<20241210-ad7606_add_iio_backend_software_mode-v2-4-6619c3e50d81@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734263573; c=relaxed/simple;
+	bh=JhV7KZ7SDsO91RGFiqURr/3YV124szYnmbfrwQhyWoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WECKCSRUYPG3b+W/O3pvUkBnii9KwAT5ga9TQIktcwnUUOxXjzTQQTuUOfaW55MHm0kkVj3rsNWhdxgPlZChDxZ+s1u1urniAGbA13T2QyEzBHeXGYigxLFXuc0UdH/iFgOx1c4OV6/NRRk01D2MFNgv9F9pyLaYgYSi/1IXFk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gsz44Nu2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 799BDC4CECE;
+	Sun, 15 Dec 2024 11:52:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734263573;
+	bh=JhV7KZ7SDsO91RGFiqURr/3YV124szYnmbfrwQhyWoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gsz44Nu2U1f0lbknk5hvi4PQFjGu0NrZYmVrfDuGkfMdLBmcSukqijIa21pevX2ig
+	 FpBifB+yiuD7yau3YeP5K6M+BE2XoBxIn6jcVdsjwKomLii7cgcezk4OqA1nYR42cT
+	 jFDyQev9IXIvfnmK8dLkL1rUxYH7o4w30x8vF1KY=
+Date: Sun, 15 Dec 2024 12:52:49 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Karol P <karprzy7@gmail.com>
+Cc: paul@crapouillou.net, tudor.ambarus@linaro.org, Chris.Wulff@biamp.com,
+	david.sands@biamp.com, viro@zeniv.linux.org.uk,
+	m.grzeschik@pengutronix.de, peter@korsgaard.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] usb: gadget: f_fs: remove unused values and add
+ immediate returns
+Message-ID: <2024121557-alarm-devalue-c037@gregkh>
+References: <20241106183032.80155-1-karprzy7@gmail.com>
+ <2024110719-kennel-tiptoeing-3409@gregkh>
+ <CAKwoAfpB-n8m7btodbH0zzTuEGiEQbDsC0aYuOfk8MSb+CFgLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwoAfpB-n8m7btodbH0zzTuEGiEQbDsC0aYuOfk8MSb+CFgLg@mail.gmail.com>
 
-On Tue, 10 Dec 2024 10:46:44 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
-
-> Since the register are always the same, whatever bus is used, moving the
-> software functions into the main file avoids the code to be duplicated
-> in both SPI and parallel version of the driver.
+On Sun, Dec 15, 2024 at 12:41:03PM +0100, Karol P wrote:
+> On Thu, 7 Nov 2024 at 06:15, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Nov 06, 2024 at 07:30:32PM +0100, Karol Przybylski wrote:
+> > > In case of faulty copy_from_user call inside ffs_epfile_ioctl, error code is
+> > > saved in a variable. However, this variable is later overwritten in every possible
+> > > path, which overshadows initial assignment.
+> > >
+> > > This patch fixes it by returning the error code immediately and exiting the function.
+> > >
+> > > Error discovered in coverity scan - CID 1583682
+> > >
+> > > Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> > > ---
+> > >  drivers/usb/gadget/function/f_fs.c | 9 +++------
+> > >  1 file changed, 3 insertions(+), 6 deletions(-)
+> >
+> > What commit id does this fix?
 > 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-Hi Guillaume,
+> 7b07a2a7ca02a, usb: gadget: functionfs: Add DMABUF import interface
 
-Patch content is fine, but I'd ideally like you to take the opportunity to
-tidy up some of the really inconsistent indentation in the code you are moving.
+Then why not use the Fixes: tag?
 
-> int ad7616_write_scale_sw(struct iio_dev *indio_dev, int ch, int val)
->  {
->  	struct ad7606_state *st = iio_priv(indio_dev);
-> +	unsigned int ch_addr, mode, ch_index;
->  
-> -	st->sw_mode_en = st->bops->sw_mode_config &&
-> -			 device_property_present(st->dev, "adi,sw-mode");
-> -	if (!st->sw_mode_en)
-> -		return 0;
-> +	/*
-> +	 * Ad7616 has 16 channels divided in group A and group B.
-> +	 * The range of channels from A are stored in registers with address 4
-> +	 * while channels from B are stored in register with address 6.
-> +	 * The last bit from channels determines if it is from group A or B
-> +	 * because the order of channels in iio is 0A, 0B, 1A, 1B...
-> +	 */
-> +	ch_index = ch >> 1;
-> +
-> +	ch_addr = AD7616_RANGE_CH_ADDR(ch_index);
-> +
-> +	if ((ch & 0x1) == 0) /* channel A */
-> +		ch_addr += AD7616_RANGE_CH_A_ADDR_OFF;
-> +	else	/* channel B */
-> +		ch_addr += AD7616_RANGE_CH_B_ADDR_OFF;
-> +
-> +	/* 0b01 for 2.5v, 0b10 for 5v and 0b11 for 10v */
-> +	mode = AD7616_RANGE_CH_MODE(ch_index, ((val + 1) & 0b11));
->  
-> -	indio_dev->info = &ad7606_info_sw_mode;
-> +	return ad7606_write_mask(st, ch_addr, AD7616_RANGE_CH_MSK(ch_index),
-> +				     mode);
+> > How was this change tested?
+> 
+> I compiled the kernel and ran it on my machine.
 
-Another odd indent to fix.
+Did you exercise this codepath?
 
-> +}
-> +
-> +static int ad7616_write_os_sw(struct iio_dev *indio_dev, int val)
-> +{
-> +	struct ad7606_state *st = iio_priv(indio_dev);
-> +
-> +	return ad7606_write_mask(st, AD7616_CONFIGURATION_REGISTER,
-> +				     AD7616_OS_MASK, val << 2);
+> Are there other ways to reliably test such change?
 
-Trivial: Odd indentation choice.
+Exercise the codepath by using the module and passing in a value to test
+your change.
 
-> +}
-> +
-> +static int ad7606_write_scale_sw(struct iio_dev *indio_dev, int ch, int val)
-> +{
-> +	struct ad7606_state *st = iio_priv(indio_dev);
-> +
-> +	return ad7606_write_mask(st,
-> +				 AD7606_RANGE_CH_ADDR(ch),
+thanks,
 
-In general maybe aim for more consistent indentation choice. I'd pull this time up
-on the line above.
-
-> +				 AD7606_RANGE_CH_MSK(ch),
-> +				 AD7606_RANGE_CH_MODE(ch, val));
-> +}
-> +
-> +static int ad7606_write_os_sw(struct iio_dev *indio_dev, int val)
-> +{
-> +	struct ad7606_state *st = iio_priv(indio_dev);
-> +
-> +	return st->bops->reg_write(st, AD7606_OS_MODE, val);
-> +}
-> +
-> +static int ad7616_sw_mode_setup(struct iio_dev *indio_dev)
-> +{
-> +	struct ad7606_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	/*
-> +	 * Scale can be configured individually for each channel
-> +	 * in software mode.
-> +	 */
-> +
-> +	st->write_scale = ad7616_write_scale_sw;
-> +	st->write_os = &ad7616_write_os_sw;
-> +
-> +	ret = st->bops->sw_mode_config(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Activate Burst mode and SEQEN MODE */
-> +	return ad7606_write_mask(st,
-> +			      AD7616_CONFIGURATION_REGISTER,
-
-Whilst moving the code, feel free to tidy up the indent for inconsistent
-cases.  Align this lot just after the opening bracket etc.
-
-> +			      AD7616_BURST_MODE | AD7616_SEQEN_MODE,
-> +			      AD7616_BURST_MODE | AD7616_SEQEN_MODE);
-> +}
-
-Thanks,
-
-Jonathan
-
+greg k-h
 
