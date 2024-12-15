@@ -1,116 +1,162 @@
-Return-Path: <linux-kernel+bounces-446344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3F09F2317
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:14:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A009F231F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292E416469B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083BC1886456
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145014AD02;
-	Sun, 15 Dec 2024 10:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B2A148FF2;
+	Sun, 15 Dec 2024 10:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ojkm1FkE"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jq+CmCM7"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641F12DD95
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B48320E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734257666; cv=none; b=aiQwztFyxM/4nHealkc55fLImXafAMC7hvgZVGCBrKbmB09g96GMrAkowjNyVbTYisnv7L1M73oBziuGBvm2Quh4yk28uKCvIKF8M4hBbyhHEG7StQSn8GWQIGrNfQYmFLBoD7CNkz9K50T3oqJCk49ZkQZ0swpflgwtu4xnqb0=
+	t=1734257973; cv=none; b=iPKpLW0jodHIO3OCQlLa1JEaJ9Bj9gqxTxwb9FqMZIaEOLfLzbzh8SWmXMy8qtbARKImJZx2j5NCliuYwf+5HinCm5dDgV5pdNJEazwjh1rUXe9avg5hHPMpcovpU36GXBY8FTzM8O8DnIFJitzQGpklMZCKH5F0MGFkl7psKOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734257666; c=relaxed/simple;
-	bh=T6I5sFPvgXQenvHGDpF7a9tvT0DreXjvECBpiuAyedk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iD4RJf6mysAZGXuCBzpMVLCplX5Vp45dhUkrTd7bbffr8FzVauKHVNTEbQIUVdiqZu/VSon26n/Ds/wXkG3XIKK99X+fCj9zb/ySS8LPVxO2CAcCttX09ymhUi23jkeeb3IAbi5vSUdmfQdYw0W88bCFSuJbSQm5GGFYz+fUbbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ojkm1FkE; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725dac69699so2659502b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 02:14:24 -0800 (PST)
+	s=arc-20240116; t=1734257973; c=relaxed/simple;
+	bh=3uERJoyD6tEdmd7Ye5Z7DP4u68QhGn6/3ku1AADiaSo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j9l8kKB3vyZr0S+8ds/22/TcGlHfNf6XfrzTZUhoMgNvEIfSHsri3VGr1vxn6hCsEvTJ09GmyHKML7kUgKIfcKAel2RtkCWhPiiAJVViQC62FKYMQo9RUryQfqlWsCP6VISBIUqILHpSpyiNQ5EwUXAKUi2BqrSDmlEIQmhypus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jq+CmCM7; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso36444031fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 02:19:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734257664; x=1734862464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xqNjjk7oEjBBCzGWGGRo1tlNVo/ASpAvWDY2FHC/tA=;
-        b=Ojkm1FkEyVF4/dv4SDTgJWS1+ELYzmQDJkhLTTqkBFm06rAQx1XNv1nFUwDM82XKyQ
-         M3QsL3sjMasyKp0JlJjkOGaMmS2gSjI8kxZ+DOnucwOhpf/BuAKXa60n58zMbYZrBl6z
-         jbLVqxPcWc6kyZF4YC8Mm9pDHbY8L+Q3fzlWfUbrVBSSWUPGNIg/9Zhab30ARRsfAWCr
-         KF8Ii0Ytb4w0jdV1BuhiXIU4WBrLZIrgAj6X9Xs5UsKleB+a3HczBJKVGxRhtK61G0oH
-         VV6hOIqgssCEWY3WyHRXrg34DTcwQKXKnLeGZAV5244uDcChjOIXO3YNO/u6hk/jMxw5
-         dO7Q==
+        d=linaro.org; s=google; t=1734257970; x=1734862770; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XmJRlCgQ43HqhYS9HmW8tiBWnQtuxSsa3zDxVOfvub4=;
+        b=Jq+CmCM7brUXlFORb3DhwEhphFG5KWeYOb+DaYLceSntHMxwMSnObDsWjToTX/xYqr
+         TIXJlEKLuZjTt+mJH/hU9cV+crw0Ni3Q1uBBGMQJYFwprlHHCw7H6ysSjuR6Jr+Chr06
+         Dn7IvyoyuThyllF1WaO3y6Al6zI6H3OA2oMpa9XOnftEbDz/FOZqjZaIk7jxYCY8n+e7
+         +sw3NOsHheAacOB0KFXupsZfzFusxem12axp+K57NQA+CYJtewunOaElJanC+8f4c2Tf
+         XIG6kiat3/CkOx/vo45OED1gWz78i32JOUqvsoseIpz3rwF3ianDw4KlZarWAlEZtblb
+         oX7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734257664; x=1734862464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xqNjjk7oEjBBCzGWGGRo1tlNVo/ASpAvWDY2FHC/tA=;
-        b=o5AiKW/DrOkF1bYOEdVmi+kkz+afD6aBzfjh51wnlYWFbYZ4zc2mcWR5692Fa0SOz0
-         gZyFXKQgDHZlznmG5onn8ctAy/0P0sPWcq8mGdBG0f7TM6/ixHg5Cm7uhW7YmPgqjYyS
-         b0nZuCw9vMPYSWtxjR1j8UJFygkxihJs1yAEh1hP+xLcMW9iYWbnF0kdytYN3MmrYeQY
-         l47MV9ijIH65gYfI3cV4UqGw9DVSEGijuQIQYb+Xg6HYksUA6ezFI3zp50FijPIDofU/
-         Oz8Gr61FiUcuShmCpUo18nhdLDVumd6oKNn+7c3qhBo/NQNDh4svNIB6rRmSOA5PKmNp
-         JAXA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9YjMfHshaLdU4rRJu23yoXv+Vj6bTTY+pvkhyKNPITA4hIiy7QrAIFNgNK8RKyMay1Khebr6CbCF8zck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgT657oeven4QjG0Duo4gVCCdmshGdHqqJ+eJw8FZSIGtoKPdc
-	h5xVjwROfVINW4f6kgo9+HZgBN9jG+HFWqf17Q7O19xB07GgU2GI
-X-Gm-Gg: ASbGnctyxrkirQMCiEo99bFE+jZIcDqTXNEqC9r/vbDkZnpuDwYzj+fIyUJW5pRIPlc
-	+j7NeQez0MvVYBDW1ldaUfOxyxz8RGokgrmv46dDi+1z6IDnfJlcCHH+llqbMSIV+wR3XIYqeBC
-	4EVREHlD9dYBX8Vt7KjkEglZvuOWqC838Ov6wN+ianeIwVtqPgUDHWBQ5M5OlMwbHIsWizoB5Tb
-	a81zUi5HzP4C8ive5lEJoYZk7k9kMkRSzE1IrgsNB9KCce3xJvWMZTuFx9u4glFakxlnkgi
-X-Google-Smtp-Source: AGHT+IG+xe4V3gMOmWzfmbscJyj3mj8PuzdPQlwEW+IjcFStJ0C2iV7Qej0RE73ZtI1KNm8nn2Ugxg==
-X-Received: by 2002:a05:6a20:c996:b0:1e1:a693:d623 with SMTP id adf61e73a8af0-1e1dfd917camr12694780637.25.1734257663984;
-        Sun, 15 Dec 2024 02:14:23 -0800 (PST)
-Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72918ac5264sm2807705b3a.21.2024.12.15.02.14.20
+        d=1e100.net; s=20230601; t=1734257970; x=1734862770;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XmJRlCgQ43HqhYS9HmW8tiBWnQtuxSsa3zDxVOfvub4=;
+        b=h0sJ2DlwCa1De5deQV948Yje8HDYRTI/a2pvpTdnsZ468RVVk3judRCdPwH9SchvNB
+         EkJDCmXbYvPX2e0svI2lhXcY7Z/pxicv0lc7H+GwEu9eRAegiIpMtJ4QTGNSi8DJ6KQ4
+         m6NqV417e+w2P/OEN+eZO6TnMT2cdions1t09baErfAiNUw/MnIypmWtVYb7fXL4gD/H
+         oY3o7I77yd1WLXUyfDAySIIQGvwFik41TrSVFN58VcQ9SVg8YAqWqDw93lyaK9ZkhohS
+         K1sgwalpNrU2MrlUS11jkR1BPK/xDyVAkEe0wlpem1rygxb2t1sPwMeXiHDQkhIhsKIS
+         e1xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeBuXq526jQcY1Rtpw0JVOg0kub5Ih5/iMOl90ad1Y0zEpMiLDvwCNrokh4w03D66dMgVUe5IKftzCgRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFsvA0SinC1n+TIzXc83c5XCki3uPRzanl72lHM8GLw+y15Joj
+	+Zxx/7erCDFrevw61veeUkoslKwVZ/XaotPzuiTKfUtf2sYFWFpkKp/wGwkVXlc=
+X-Gm-Gg: ASbGncsIrgDvdZ5/kAEpFtycB3ezgvnXHva952m6sruMsaiZDtAqdTwn3YqjhQ8LQnb
+	y33bEuZ2g/gsFs6rauFF4osazMhmEJrGk9oy1JxU5vEzaLSLh1eGz0cRYV1QibH4XzCD6Of80m+
+	ll9hOQVK+N7caYir52aj/bHGQ0+aY1AJ9vjkULji6mqfh2mzGhTL78bZvzyt2I4WJEF614JRCr1
+	FHqZYCzPPrZMaGmMSrivv772C/Rp557t0A6yPrJOTeVLjA7tiZVvxin9a3mDnl5
+X-Google-Smtp-Source: AGHT+IGWyXChb/D3B2rPy2AbSmqVSVzMB+hbWmEQo+gBesrAsnI7rlvG3Pz1R9B+snZAh8Q1EO+Auw==
+X-Received: by 2002:a05:651c:2109:b0:2ff:9b6f:23d9 with SMTP id 38308e7fff4ca-302544268a1mr24067711fa.7.1734257969909;
+        Sun, 15 Dec 2024 02:19:29 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3034401d546sm5270851fa.11.2024.12.15.02.19.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 02:14:23 -0800 (PST)
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
-To: snitzer@kernel.org
-Cc: agk@redhat.com,
-	dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	mpatocka@redhat.com,
-	pvmohammedanees2003@gmail.com,
-	zkabelac@redhat.com
-Subject: Re: dm: Allow the use of escaped characters in str_field_delimit()
-Date: Sun, 15 Dec 2024 15:43:33 +0530
-Message-ID: <20241215101336.1456-1-pvmohammedanees2003@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <Z1hrfMRedzEJb26O@kernel.org>
-References: <Z1hrfMRedzEJb26O@kernel.org>
+        Sun, 15 Dec 2024 02:19:28 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Date: Sun, 15 Dec 2024 12:19:22 +0200
+Message-Id: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACqtXmcC/4WNQQ6CMBBFr0K6dgwdG4iuvIdhMdIBJiGtmUKjI
+ dzdygVcvpf89zeTWIWTuVWbUc6SJIYCeKpMP1EYGcQXNlijs2gdhLhmphU49NGzQpopM1DjvUM
+ cyNHVlO1LeZD30X10hSdJS9TPcZPtz/4rZgs1PNlT27SuRb7cZwmk8Rx1NN2+71+5zvEQuwAAA
+ A==
+X-Change-ID: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2501;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=3uERJoyD6tEdmd7Ye5Z7DP4u68QhGn6/3ku1AADiaSo=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnXq0vCch41TAM7WiRPkozL/rQQweK5oSKeHQ4y
+ RBmwJGmxyWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ16tLwAKCRCLPIo+Aiko
+ 1Yr7B/936nIs6FtfnNKBW5AwyrppVEyPZFGQpirMdY83dKN7czEFsLt8zQYuJU5tJ686XowwX2D
+ UsMiuGW5oAF3GXiXWDW53Z7lYXrepHGepoJvp7Zu21GxssPV9Kzgs9ST8kT+9Uy9DPCDEbRQuF4
+ ACXVXFxo1jy6ozYd/76xCnjeW/W0rkdI9+GqzWPAmggzy+I/KYwAzN1uM4t7Nk7RAZwKZMthyZS
+ Vo6nRyPasl5RhLttKblMSXeDQEVQC5CzqMSLef9IYMB4vYJ1K1SLtJpI3pzmBLeWhx4JFjwezYG
+ GzShXf1g//MCGCvQp3nx7a25wm4bCjT6e/hY4L/RYo7Ssa0E
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-> It would seem Mohammed cared enough to write the patch, but not reply
-> to you with further clarification on why it needed...
+The nouveau driver is the only user of the drm_encoder_slave interface.
+Demote it from KMS helpers module to the nouveau driver itself, moving
+corresponding I2C encoders to be handled by nouveau driver too.
 
-I thought I had already replied to the concern, but it seems 
-the message didn’t get sent, apologies for that oversight!
-College academics kept me tied up, and I lost track of this,
-apologies once again.
+Ideally those two drivers should be converted to the drm_bridge
+interface, but it's unclear if it's worth spending time on that.
 
-> BUT, in this instance it follows that: if lvm2 is allowing weird names
-> which require escacped characters _and_ dm-init is used then dm-init
-> needs to support handling them (dm-init is all about _not_ using
-> normal initramfs with lvm2 in all its glory).
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Renamed symbols in defconfig (Laurent)
+- Added missing Kbuild file (Laurent, LKP)
+- Renamed guarding defines in include files.
+- Dropped mentions of two removed functions.
+- Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
 
-I completely agree with your point and am more than happy to 
-provide further details or make any additional updates to 
-the patch if needed, please let me know if anything else if needed. 
-Thank you for your time.
+---
+Dmitry Baryshkov (2):
+      drm/nouveau: incorporate I2C TV encoder drivers
+      drm/nouveau: vendor in drm_encoder_slave API
 
-Regards
-Mohammed Anees
+ arch/arm/configs/multi_v7_defconfig                |   4 +-
+ arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+ arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+ drivers/gpu/drm/Makefile                           |   1 -
+ drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+ drivers/gpu/drm/i2c/Makefile                       |   6 --
+ drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+ drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+ drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+ drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+ .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+ .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+ .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+ drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+ .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+ .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+ .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+ drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+ 22 files changed, 172 insertions(+), 232 deletions(-)
+---
+base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
