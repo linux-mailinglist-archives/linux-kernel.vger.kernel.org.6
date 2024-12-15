@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-446266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAA19F2203
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 665079F2206
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2AF3163CA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE6B164F66
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E74B8F5C;
-	Sun, 15 Dec 2024 03:11:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7208F5B;
+	Sun, 15 Dec 2024 03:21:04 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DE279F6
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB4233FD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734232304; cv=none; b=euVXg3WDlYg5Wwws2DuhjBGG0h5RnJnHEqyMlKpFjf9Q9NMtJwBVpW4fM7p9GP8emuBt4jlWJ/LUcXMG5UKVSG5FCz/iXPKD0b4x0t0q6TlcWZVRKpZ4Sst/81x27HyujnATPujRNF5K8BJPNKKAOAfu2+4USMDMf1jZfjvmOAY=
+	t=1734232864; cv=none; b=hI+Ko5P3/3OgnjVANPUS32+XfKzpgEJpEbzbt22qHPGA6oRjLnidNfZiAMz3z3FQuEQH9gwAlsZzV7x6CDJMuOtH7vw6OV9GzNDmDAiwtJ29ZAY6hn+N8OdduToUBGyHumVSoMxOc3Jcx8qEuJPKmnGQuU+nLCPz57+YZHiGAA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734232304; c=relaxed/simple;
-	bh=4gu1MuWZDq4FUbv+DOzfx+xfBuPONuAZqE8YTZgyqwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r1D9ZgoIvyBE04AbkKe6E+tR9y2PC1cRkazrLzMQPWoX5XaCdXHviK+NgHXRqkz0Iktsk0Y0ue39hKg2ountvKSd5synJk6Pb0D+tf6jDdcadzA7qJJlIszXwAfBWXdEf4aJjdUjRPSugQUTWv3elyv59QCXV2LFsJPgIZR0tYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85998C4CECE;
-	Sun, 15 Dec 2024 03:11:43 +0000 (UTC)
-Date: Sat, 14 Dec 2024 22:12:12 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241214221212.38cc22c3@gandalf.local.home>
-In-Reply-To: <20241214220403.03a8f5d0@gandalf.local.home>
-References: <20241214182138.4e7984a2@batman.local.home>
-	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-	<20241214220403.03a8f5d0@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734232864; c=relaxed/simple;
+	bh=6aqJV0rhlMn0UbrS6paTpIqRGQToYigXJOP/27DjeYo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o9g9lME8c+CaUKeNi+DJyMDuiiuN3uePplS9qKRNKogmhoM3QclnyMNgyZFbP0mk9fUKuQfZWm9LBjw+qlym+obEhVj3+UsmOaPTrmzI8NoZmDZh+CjVG9EKXYCdn91zXeYnj5YCJffI8Dufsjq6vENlEuHdcOTGBUo5oJSoMuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a9d4ea9e0cso30788975ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 19:21:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734232862; x=1734837662;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0+Vcn1moma+9qnFa/6djJ8htYTS3IhloemAdDGEwDzA=;
+        b=elSv2UbJJLlMCiw7NGSq/9SgEx2frA9k9gPE8u9pzhsyhUhqcH4IA7YTFrnff1pJaq
+         BRdN7UCEXxZWAHGxqe407xKPXCb3ULvvFhh6L+CSwhJ7KH6S7ZE4lPgYN2DfDKAmhaZ/
+         UX0PnlJ1k6TOw7VmHv+XAhLtBt9G1d2KnEltVVkzxBykduVx/WmB3HPEbAC6J6EC7WAE
+         J0lFzR6W6eqZnFzXL/P+eWfUHz1uU0H/XOmpuAmzPKQAOtl/IVRGWARGlZOI84Rs5KUb
+         IB3S7pDbGKgYOJSImSHMk34qZuV+5zuKf3qaie1saFZ7iTnJC1azEMkLP/PD482NJYoD
+         G6CA==
+X-Gm-Message-State: AOJu0YzPtbujzPoY3ZN6om+5NMYSgtwpffYEOGzp8YEjuJAXlOve46qq
+	+idIIO81saKbH3pgRiZKB3SPmWi+DEn5jkRbtB0F0ES5PBlP8PAj0BOo7nHZa5GAWGsHXMqEiTB
+	aNayvNFdrgpZAOb5vASixm6n5NMPhed5EmgNRTFBiHI4ECNMc7bKA5Oc=
+X-Google-Smtp-Source: AGHT+IGslKKRWt7JFQSAQyVsFqibz4jr5zNTMdRAs6ddrx1npRwSgMwqPEbxOrbyWqTrrV47ARqf3Cbgsg9zLIc8l53vbyqySyOi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d0e:b0:3a7:98c4:86a9 with SMTP id
+ e9e14a558f8ab-3aff8aa417amr104514205ab.20.1734232861916; Sat, 14 Dec 2024
+ 19:21:01 -0800 (PST)
+Date: Sat, 14 Dec 2024 19:21:01 -0800
+In-Reply-To: <D6BX8NKJPY21.2ZDTR243JVLCI@getstate.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675e4b1d.050a0220.37aaf.00e9.GAE@google.com>
+Subject: Re: [syzbot] [netfilter?] KMSAN: uninit-value in ip6table_mangle_hook (3)
+From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mazin@getstate.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 14 Dec 2024 22:04:03 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello,
 
-> With the check, instead it doesn't crash the kernel, but issues a nasty
-> WARN_ON() (as it is a bug in the kernel) and then reads the value using
-> safe mechanisms and injects into the trace "[UNSAFE-MEMORY]" by the pointer.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I will also point out that the check triggers even if the pointer is still
-around (hasn't been freed). That is, it makes sure that the contents of the
-pointer is in the ring buffer event that is being printed, or if a %s, it
-is also OK to point to static strings (as the RCU trace points all do that).
+Reported-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+Tested-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
 
-That is, even though:
+Tested on:
 
-  TP_fast_assign(
-      __entry->ipv6 = ptr_to_ipv6;
-  )
+commit:         2d8308bf Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17926730580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f52f17eef5016d2
+dashboard link: https://syzkaller.appspot.com/bug?extid=6023ea32e206eef7920a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=125d3cdf980000
 
-  TP_printk("ipv6=%pI6", __entry->ipv6)
-
-is buggy, and the check will report it immediately even if the contents of
-that ptr_to_ipv6 hasn't been freed yet. But it is perfectly fine with:
-
-  TP_fast_assign(
-      memcpy(__entry->ipv6, ptr_to_ipv6, 16);
-  )
-
-  TP_printk("ipv6=%pI6", &__entry->ipv6)
-
-As the content of the ipv6 lives in the ring buffer itself and will not be
-freed at the time the event is printed.
-
--- Steve
+Note: testing is done by a robot and is best-effort only.
 
