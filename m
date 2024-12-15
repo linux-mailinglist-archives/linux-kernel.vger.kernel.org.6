@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-446408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ABE9F23FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:58:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061459F23FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126C31886605
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:58:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 585A77A1121
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFE4188904;
-	Sun, 15 Dec 2024 12:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E022E189912;
+	Sun, 15 Dec 2024 12:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jpAgK0hx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMf2hFu4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77567187876
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C41E871;
+	Sun, 15 Dec 2024 12:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734267522; cv=none; b=B9Hi9M4aj2oCa8ktRo9Zg27T4RoP8H8rpbM/aNMg6V9pbupALYTfwz/IAYXGKaBUU3tnCmjhjYH586gMr8A+csgs6r23/1w0Ka2XrsUASrye4x1+Mz6O00b8zEegt2FeACxD1+9gWuTmwVX99ryCzJ4sAURDuNy/z6yeYjA3uC0=
+	t=1734267487; cv=none; b=K3Asw+3znvskQDhmfw1rKPNUGtod/qh3ewmM6KUvpUtFyT/1Z7jTKFq2dfJ0Oly8UYmJCDC6zZkHRroDcuu9jzPKnGNTGxPq52nvYn57pA7376SKcXkL2a7ULo0cWUFP0vFB3mbMmYm6Q9BTwEG6/P9h/wRuobrZ3tJYidd3dQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734267522; c=relaxed/simple;
-	bh=3QZlqGTTnldowiyG5mUgxJY2mrHvR8JiPxhMeE8Z4tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Svo5g6TGIKZ04dLL7tRVi/oUMFNg3NmQiIOfhD3LOGb1Sx3ZqtMPXR/+MN705YqplEl2Av5UdZrL8CzIywUUgEsa0Ma/dng4fZu8yiYO45huuojEz+L3ogVpSUQw3k3bCedrQ9ki87zPIXH+oifzAp00fOTalWpwlVXcj/EBas8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jpAgK0hx; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734267520; x=1765803520;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=3QZlqGTTnldowiyG5mUgxJY2mrHvR8JiPxhMeE8Z4tA=;
-  b=jpAgK0hxZI4lWc9L0+HFNQp0GYOBJLMhb3k2cFJZSgzFXFMMzI0CN7Lg
-   kzyMWJ78Xf855x/ihAkZJgv0QqDk3soOsFQW4/qPlUIwbAGJVuZlJdGgF
-   05hCyz3fKiWsrLgmWSxxiWuhaZI2nbeWEcn4sb+4qMt27yndlQVmPEmbA
-   UMFEk+4fKUZnkZ393hclV32mR0pa5FQ7aJwJHkXrN+ImNVu2ATwjaTxN5
-   CHbcDWTTND6EpIw5AQRBb5TFPVLDc0i2IHZderVe4QXgksNK8qvJwkPie
-   fxLDf3BLeiOPsPkH2vLg5iNYQka0fxWXWWh3y3SSotBqvoNLpY5dW109E
-   A==;
-X-CSE-ConnectionGUID: 3IpEYbdHTRaaR4G0Bxut+Q==
-X-CSE-MsgGUID: 5QzzJaQSQQ+A6E/SufFkQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="45354613"
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="45354613"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 04:58:39 -0800
-X-CSE-ConnectionGUID: xHBH1Qc3TNqnB7J/iHgaqw==
-X-CSE-MsgGUID: 70ij6usqQpmSTPrvRXdCLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="102049160"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 15 Dec 2024 04:58:39 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMoCh-000Dcs-30;
-	Sun, 15 Dec 2024 12:58:35 +0000
-Date: Sun, 15 Dec 2024 20:57:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: kernel/reboot.c:226: warning: Function parameter or struct member
- 'cmd' not described in 'do_kernel_restart'
-Message-ID: <202412152053.KeJr8B5f-lkp@intel.com>
+	s=arc-20240116; t=1734267487; c=relaxed/simple;
+	bh=FxifYn/J+GjNzuVqe3a+BCsrK72tNlO+6PLafLcq+tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NmAaTChdGTX3G+l4ifBic51RRaijBYu9HnliJ+kwE0K2Q6ow5vNODCLffGkFM6ngu/qP55K83UDFnfjYgbTQQrT4t9yrJP1CHXn6v3J51oirmGk0VkjitY3uLsNLow1m71AGJrUdMiz0WwIrYFdKRh9sMaNpl/Bh9ft3Ef5WoMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMf2hFu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8325EC4CECE;
+	Sun, 15 Dec 2024 12:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734267486;
+	bh=FxifYn/J+GjNzuVqe3a+BCsrK72tNlO+6PLafLcq+tI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gMf2hFu4o8zeSuijrgmVpm9v3ZMIzFBxQZndg7oa0go+XzjbPgd9Se+oF0KpgfV3K
+	 XRhqff+LDFiz43ZukEbjs44Mpv2SsvsftfI50nR1kkNFCz2sKVhkuprE6s8PuNPajZ
+	 7IRV3Ka4ZwaFAPafF0f7lb3QV6wcVlmX0Ni2eI8o7dtZQpPi+YVydZcW3eVOJYfyTZ
+	 yDpY5JlARczYOw20P+RgzAy89C9cBJ3hsV2F3AZ80rxoPo/blg6xqXokpP0Njqj0BX
+	 HhWBcuvN4YQPNkGHFdeFSv9uwYnSEJeEZNtm4+eIM8wf0ZDbUM8WzWAfsLECxMWYXj
+	 t98DoMlA8TLjQ==
+Date: Sun, 15 Dec 2024 12:57:58 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Jiri Kosina <jikos@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-input@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: hid-sensor-prox: Fix invalid read_raw for
+ attention
+Message-ID: <20241215125758.558cc0ef@jic23-huawei>
+In-Reply-To: <d164919c9290ca1410bc21746511799a5c17b94d.camel@linux.intel.com>
+References: <20241122-fix-processed-v2-1-b9f606d3b519@chromium.org>
+	<d164919c9290ca1410bc21746511799a5c17b94d.camel@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2d8308bf5b67dff50262d8a9260a50113b3628c6
-commit: 0c3ebff535956d2718594dc90aa9cc87521ec9fd scripts: kernel-doc: Clarify missing struct member description
-date:   1 year ago
-config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20241215/202412152053.KeJr8B5f-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412152053.KeJr8B5f-lkp@intel.com/reproduce)
+On Fri, 22 Nov 2024 09:55:04 -0800
+srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412152053.KeJr8B5f-lkp@intel.com/
+> On Fri, 2024-11-22 at 17:36 +0000, Ricardo Ribalda wrote:
+> > The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
+> > IIO_CHAN_INFO_RAW.
+> >=20
+> > Modify prox_read_raw() to support it.
+> >=20
+> > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
+> > channels")
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org> =20
+>=20
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-All warnings (new ones prefixed by >>):
+Applied to the fixes-togreg branch of iio.git.
 
->> kernel/reboot.c:226: warning: Function parameter or struct member 'cmd' not described in 'do_kernel_restart'
->> kernel/reboot.c:952: warning: Function parameter or struct member 'poweroff_delay_ms' not described in 'hw_failure_emergency_poweroff'
---
->> lib/hweight.c:14: warning: Function parameter or struct member 'w' not described in '__sw_hweight32'
-   lib/hweight.c:14: warning: expecting prototype for hweightN(). Prototype was for __sw_hweight32() instead
+Thanks,
 
+Jonathan
 
-vim +226 kernel/reboot.c
+>=20
+> > ---
+> > Changes in v2:
+> > - Do not change the condition for applying the multiplier.
+> > - Link to v1:
+> > https://lore.kernel.org/r/20241121-fix-processed-v1-1-4fae6770db30@chro=
+mium.org
+> > ---
+> > =C2=A0drivers/iio/light/hid-sensor-prox.c | 1 +
+> > =C2=A01 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/drivers/iio/light/hid-sensor-prox.c
+> > b/drivers/iio/light/hid-sensor-prox.c
+> > index e8e7b2999b4c..0daa8d365a6c 100644
+> > --- a/drivers/iio/light/hid-sensor-prox.c
+> > +++ b/drivers/iio/light/hid-sensor-prox.c
+> > @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+> > =C2=A0	*val2 =3D 0;
+> > =C2=A0	switch (mask) {
+> > =C2=A0	case IIO_CHAN_INFO_RAW:
+> > +	case IIO_CHAN_INFO_PROCESSED:
+> > =C2=A0		if (chan->scan_index >=3D prox_state->num_channels)
+> > =C2=A0			return -EINVAL;
+> > =C2=A0		address =3D prox_state->channel2usage[chan- =20
+> > >scan_index]; =20
+> >=20
+> > ---
+> > base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+> > change-id: 20241121-fix-processed-ed1a95641e64
+> >=20
+> > Best regards, =20
+>=20
 
-b63adb979583ef Guenter Roeck 2014-09-26  213  
-b63adb979583ef Guenter Roeck 2014-09-26  214  /**
-b63adb979583ef Guenter Roeck 2014-09-26  215   *	do_kernel_restart - Execute kernel restart handler call chain
-b63adb979583ef Guenter Roeck 2014-09-26  216   *
-b63adb979583ef Guenter Roeck 2014-09-26  217   *	Calls functions registered with register_restart_handler.
-b63adb979583ef Guenter Roeck 2014-09-26  218   *
-b63adb979583ef Guenter Roeck 2014-09-26  219   *	Expected to be called from machine_restart as last step of the restart
-b63adb979583ef Guenter Roeck 2014-09-26  220   *	sequence.
-b63adb979583ef Guenter Roeck 2014-09-26  221   *
-b63adb979583ef Guenter Roeck 2014-09-26  222   *	Restarts the system immediately if a restart handler function has been
-b63adb979583ef Guenter Roeck 2014-09-26  223   *	registered. Otherwise does nothing.
-b63adb979583ef Guenter Roeck 2014-09-26  224   */
-b63adb979583ef Guenter Roeck 2014-09-26  225  void do_kernel_restart(char *cmd)
-b63adb979583ef Guenter Roeck 2014-09-26 @226  {
-b63adb979583ef Guenter Roeck 2014-09-26  227  	atomic_notifier_call_chain(&restart_handler_list, reboot_mode, cmd);
-b63adb979583ef Guenter Roeck 2014-09-26  228  }
-b63adb979583ef Guenter Roeck 2014-09-26  229  
-
-:::::: The code at line 226 was first introduced by commit
-:::::: b63adb979583ef185718d774d8162387db5589c0 kernel: add support for kernel restart handler call chain
-
-:::::: TO: Guenter Roeck <linux@roeck-us.net>
-:::::: CC: Guenter Roeck <linux@roeck-us.net>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
