@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-446320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2021E9F2296
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:15:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464BF9F22A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C6C165888
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED28118869BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0552074421;
-	Sun, 15 Dec 2024 08:15:21 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9C313C9A6;
+	Sun, 15 Dec 2024 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g19cOgZL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC20199BC;
-	Sun, 15 Dec 2024 08:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B1F13AD2A
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 08:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734250520; cv=none; b=glm00PHJQArRRq8I74ZdsK8hvNOCcMmHt7IMnukfzx2frunHGhyxE8zYewiQU4fALcdwRZAdqj7ZwRVuKbfZkzQvcYURKAMEm84zcfgcxPEn6qEHtdmTgSgURK9M7ngcjWsDZ6jm7OL1C5ih3n2AhEqbk2SfsPCh6A2EFAOAAdU=
+	t=1734252229; cv=none; b=uemgq+s0nh4wBzB+fxRa4TrWbv/EGkFI+QvtkD//Dylh+tcc8zH4z2U20gPPqxvG5+nNd5EtFRNCe2N5B5LYhd2zJmKRYXAyvD9mA4Xm7JBMGBhKh0wxTpzh+6I2aFqSlHJGUGWFodvN/cPZY/77LpjVM6WW+nULouNI3+T0rxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734250520; c=relaxed/simple;
-	bh=MfzlMTD2QL4BZMnKQKMZj1xTmWxcCa0w/vAtL5LJle4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uq8T0zrZogXmTqcUxtdCnfQSvh74NCeZPGaYkJIvFkQ88rt/pwMo4240V9413dqREXZbBmtCRSZhuPsihB7jz778oNmApyodLeMZNhLPhPxFdEfiy8VeA96qz2FdGm0CcJzyYB4Ful5Y7Quokl1Fvi/C8nDLoQVJKz59OTIbyGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df19bf6a9so4538436e87.1;
-        Sun, 15 Dec 2024 00:15:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734250513; x=1734855313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jbW+PaUOzCwCbF61CRYPi7XMG3ao6Wxw90lcjAtKDFs=;
-        b=t7o1ejUNV5jz1vIxIItcMZwpgS9EtHtq8zbeNI9EnxOGa+2uPtNnzvpedb4azJOSTj
-         X9YtoRNBqGx7xbiJfsqbKeiXJtq3TeeVi5qmAWEHrjRgkWHfRTEx36zhknsEN27yVnz6
-         WFFoeR0c3T7pnd17iElkVPlB1BZ8RqBt1JxpT4E0BVgO3umBa9+7dmrZ+mZnHF2VFs/1
-         ZA0riSYuMTkVeESxZc3t2TigZjzUPium+VNMFfnbZElSHLU/IsiuK4dE7wc67zKBU4UJ
-         vU9TsJF1272g1OLrfM814RhgP6AJ0LVYuzx8ihD/sZSl2+LoyRo3VicBivUQhEjU4dZe
-         0OoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVa29rfftaH8UqSW5jzmxq2SrFJtKFTvpRHEgFJoRyZ8ll4/9YFACSE/VnodK7JFlRtQ1OEMOAqSY3p@vger.kernel.org, AJvYcCWPFQDuMn+LQDwiVW2RRcTBtJNUV+Xd0LQBTfl75FTHM+Z1gNc9VbKURGVJ4CzDqcfm+YBWtRKE6Rk2Malz@vger.kernel.org, AJvYcCWdTZORS8bpcWQdzjFTilCLiBZ2RPOsRBzZMiUrpYoyrfa+RYjl77jrCeM0ADLQluWZBuWDJhe8c7px@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLzpitU4ZKXF2+gsHuw/ypvSqXPBkTWzH4sdEZoOiiEeDkmtQy
-	KceKjOkeKPIPQhJ/xSH9XH5jjQRlXGEAs6wAbje3O0HpLlInkbOPVEj+BJtc
-X-Gm-Gg: ASbGncvi3lpu4T1l22GsFu90gzQTiZPOWgPdzrmizpl/204F+SX3HXT49MWYCtGEQfR
-	bdJgh3a5D4Vpwjjq0Tm6K+0RkLupUExiocvd0SqH0fO4GiInLIlG01DwdDeh1HijRGVHXTRpgdn
-	xIgIkHYmYTzwRg6XVQhdCMjI2Y2WIB5MvgWl4BbAOiuZNdNxwfCpMO0g9kqlm87H/NNKxdGzuvY
-	+lkknvwZpiWp54yv6c4Q/8dXe3oQfzvRY2wWVy8rO7kFooQGh6+mnRgQ4gfHXM118ibcO+95fJk
-	BDg/mZhYY4jLgA==
-X-Google-Smtp-Source: AGHT+IE4kdx9KP+GTdphcLf5oLKpCZsV/Ub3q3kJzPn7HwT+5BDvQB+re7v2vmCROMO3PGEN9V8Ivw==
-X-Received: by 2002:a05:6512:104c:b0:53e:3a9d:e4a with SMTP id 2adb3069b0e04-54090268d57mr2530532e87.10.1734250512671;
-        Sun, 15 Dec 2024 00:15:12 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c00166sm442510e87.159.2024.12.15.00.15.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Dec 2024 00:15:12 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso38006401fa.0;
-        Sun, 15 Dec 2024 00:15:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV4ZviGXOVWSHQMt4bRBWyQ1kVGeUrykmm/ZuFnbI+N97zKBoOBTc37apqlf3WfsPIcXaupz9PpRxgH@vger.kernel.org, AJvYcCXCkwy+pgnmW2nRima0AQh2aesCeYtww9uZE8Iz0/5++1FEG5L4nNhLTbN3jGneCVn2whuP8x/6Xod6@vger.kernel.org, AJvYcCXoyb8ZneaKqnjRdVH88lWSH32ZOJpGjjv7m71LH6+8U7GENlngcyMtKACggGHEhpxz3wpHGW0fKd6PjUjo@vger.kernel.org
-X-Received: by 2002:a05:651c:198b:b0:300:3de4:ff7f with SMTP id
- 38308e7fff4ca-3025456691dmr30121161fa.6.1734250511023; Sun, 15 Dec 2024
- 00:15:11 -0800 (PST)
+	s=arc-20240116; t=1734252229; c=relaxed/simple;
+	bh=EjBvzeibEUJbBXQWIN5pQJ8KCUkfTes+hyKAGtN6VS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IKRVByYY87Oe1xcTN0V2FjhM3LNt1FN/QYkBqX6qem/n8QA71pGccW6SXO9J5726BVVRd6oU1i6ZRczEemllDv1Umo8pedWTJUuAPcSGZap1pD0UUSftzZxw1pMXOvrcnY7Sdn4I5RM9n4dD4CCkmxYZZ544YdsQyXy/EZRUC24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g19cOgZL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734252225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NHSkf91Gzqfu89F4IjlCBqVWZEt45j1DUKW4GlMiyxY=;
+	b=g19cOgZLjB2Bz07ws0K4wj5u2un6lRR5+C7MYOvO22I61gZ3sXiGS90qSY89sWIKeZhgF7
+	yNs7TwTyzuBM/bBaXA5kj8BbFcavZxKSXWYtfVU1gw2O0TCvNg2JAsfjjPub5+A6PyfqiV
+	J/WT8vqrGyZI58TvHVt+7ifOYWnAem0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-kwJDJYmPPk6dVo0D4rrDIw-1; Sun,
+ 15 Dec 2024 03:43:42 -0500
+X-MC-Unique: kwJDJYmPPk6dVo0D4rrDIw-1
+X-Mimecast-MFC-AGG-ID: kwJDJYmPPk6dVo0D4rrDIw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 67C3719560A3;
+	Sun, 15 Dec 2024 08:43:41 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28AC1955F40;
+	Sun, 15 Dec 2024 08:43:40 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for Linux 6.13-rc3
+Date: Sun, 15 Dec 2024 03:43:39 -0500
+Message-ID: <20241215084339.319122-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241215053639.738890-1-anarsoul@gmail.com>
-In-Reply-To: <20241215053639.738890-1-anarsoul@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 15 Dec 2024 16:14:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65odTCjkC493e=q57ikeKHWrKYS26N7-0Hjc=S_d6ELyQ@mail.gmail.com>
-Message-ID: <CAGb2v65odTCjkC493e=q57ikeKHWrKYS26N7-0Hjc=S_d6ELyQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm64: allwinner: a64: fix video output on Pinebook
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Sun, Dec 15, 2024 at 1:36=E2=80=AFPM Vasily Khoruzhick <anarsoul@gmail.c=
-om> wrote:
->
-> Since commit ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in =
-TCON0 mux"),
-> TCON0 clock parent is always set to PLL_MIPI, but unfortunately it breaks
-> video output on Pinebook.
->
-> I did an experiment: I manually configured PLL_MIPI and PLL_VIDEO0_2X
-> to the same clock rate and flipped the switch with devmem. Experiment cle=
-arly
-> showed that whenever PLL_MIPI is selected as TCON0 clock parent, the vide=
-o
-> output stops working.
->
-> To fix the issue, I partially reverted mentioned commit and added explici=
-t
-> TCON0 clock parent assignment to device tree. By default, it will be
-> PLL_MIPI, and the only users with RGB output - Pinebook and Teres-I will
-> override it in their dts.
->
-> Vasily Khoruzhick (3):
->   dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
->   arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
->   clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent
+Linus,
 
-Looks good to me.
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
-I'll wait for a bit for Andre to comment.
+are available in the Git repository at:
 
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts |  2 ++
->  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  |  2 ++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         |  2 ++
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c                 | 11 -----------
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.h                 |  2 --
->  include/dt-bindings/clock/sun50i-a64-ccu.h            |  2 ++
->  6 files changed, 8 insertions(+), 13 deletions(-)
->
-> --
-> 2.47.1
->
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to 3522c419758ee8dca5a0e8753ee0070a22157bc1:
+
+  Merge tag 'kvm-riscv-fixes-6.13-1' of https://github.com/kvm-riscv/linux into HEAD (2024-12-13 13:59:20 -0500)
+
+----------------------------------------------------------------
+ARM64:
+
+* Fix confusion with implicitly-shifted MDCR_EL2 masks breaking
+  SPE/TRBE initialization.
+
+* Align nested page table walker with the intended memory attribute
+  combining rules of the architecture.
+
+* Prevent userspace from constraining the advertised ASID width,
+  avoiding horrors of guest TLBIs not matching the intended context in
+  hardware.
+
+* Don't leak references on LPIs when insertion into the translation
+  cache fails.
+
+RISC-V:
+
+* Replace csr_write() with csr_set() for HVIEN PMU overflow bit.
+
+x86:
+
+* Cache CPUID.0xD XSTATE offsets+sizes during module init - On Intel's
+  Emerald Rapids CPUID costs hundreds of cycles and there are a lot of
+  leaves under 0xD.  Getting rid of the CPUIDs during nested VM-Enter and
+  VM-Exit is planned for the next release, for now just cache them: even
+  on Skylake that is 40% faster.
+
+----------------------------------------------------------------
+James Clark (1):
+      arm64: Fix usage of new shifted MDCR_EL2 values
+
+Keisuke Nishimura (1):
+      KVM: arm64: vgic-its: Add error handling in vgic_its_cache_translation
+
+Marc Zyngier (2):
+      KVM: arm64: Fix S1/S2 combination when FWB==1 and S2 has Device memory type
+      KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden
+
+Michael Neuling (1):
+      RISC-V: KVM: Fix csr_write -> csr_set for HVIEN PMU overflow bit
+
+Paolo Bonzini (2):
+      Merge tag 'kvmarm-fixes-6.13-2' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
+      Merge tag 'kvm-riscv-fixes-6.13-1' of https://github.com/kvm-riscv/linux into HEAD
+
+Sean Christopherson (1):
+      KVM: x86: Cache CPUID.0xD XSTATE offsets+sizes during module init
+
+ arch/arm64/include/asm/el2_setup.h |  4 ++--
+ arch/arm64/kernel/hyp-stub.S       |  4 ++--
+ arch/arm64/kvm/at.c                | 11 +++++++++--
+ arch/arm64/kvm/hyp/nvhe/pkvm.c     |  4 ++--
+ arch/arm64/kvm/sys_regs.c          |  3 ++-
+ arch/arm64/kvm/vgic/vgic-its.c     | 12 +++++++++++-
+ arch/riscv/kvm/aia.c               |  2 +-
+ arch/x86/kvm/cpuid.c               | 31 ++++++++++++++++++++++++++-----
+ arch/x86/kvm/cpuid.h               |  1 +
+ arch/x86/kvm/x86.c                 |  2 ++
+ 10 files changed, 58 insertions(+), 16 deletions(-)
+
 
