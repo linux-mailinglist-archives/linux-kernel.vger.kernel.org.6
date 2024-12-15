@@ -1,126 +1,149 @@
-Return-Path: <linux-kernel+bounces-446411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1E89F2408
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:06:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20AD9F240A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4514E188523A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2284165088
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DCC18C03E;
-	Sun, 15 Dec 2024 13:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F6D18C332;
+	Sun, 15 Dec 2024 13:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVxLKDZP"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PHmVQI4q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F961714CF;
-	Sun, 15 Dec 2024 13:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC58B17B502;
+	Sun, 15 Dec 2024 13:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734268005; cv=none; b=DX+6cuso8vATeCMo1PQPDjr3f4dWwFOMpSEcGfUZPo375MMkoU+fTtgtxWiE3M1hE+URmR8ebbWMkcyYjYh1mABwNZodcZ7ZlvI16SSgaBmKY6BteEP5FeGjiV/A6Kt8m6Oxfq6orkcZRkp05NRUxq05osWuXuvLVYbpMUKC350=
+	t=1734268128; cv=none; b=hpacCnWFrBP/Ic951dap2R9bKPdoO9UW4LkJMeBSclIztYR13Mu2l4Ppg/W0kXorrBgfP5RGmS+5fVL4DZYritWkzZJu9RdJe5v609qTFK92PNduEkG4PJ13KCjT6v46iDPDTPfMxpYTagthEF+hGcOl8K+LXiyPNBJs5webRHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734268005; c=relaxed/simple;
-	bh=Uz3UXC3ad9lWmYPZMxXlpUyfhBtQPk1wPl9GDqGvU3s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=ENrGz3A6olxKcjT3Jd4q1QNYh+OmDeLFrgu7ZwUxkonda0kqaYWA9XIWToRuY/8kqHKUTEHkPMTrSxr3HtcEWiWbDrSlpuMIcNLCebIdG3HZF+mEhxwBqDeCrWW6U4I9s0lLNO75sgyVA+wvcEH3RpM3t/rXn5VblmTzrH2NYkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XVxLKDZP; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-436341f575fso17876715e9.1;
-        Sun, 15 Dec 2024 05:06:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734268001; x=1734872801; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A4uVOIqETpLgu1IftPIECanmm5P+qCIbuOEo0dVm+x4=;
-        b=XVxLKDZP2KiHmGhSlKy9uTj+4Zufwms2NDeby8ReK2UxbUhv5+raIEYO13ZQaZ/Or7
-         hz+vwXLg9yJw8YT8OOIW6Y+U599c+/cG7nj8JeIab5AmlNyq3IqIr0oUW/44ADuPeD+G
-         OMObVhlOXXMt/U5/MAgrWiDZq7bUsPRtQdnjU7KOiD3AoiAgqytBwUm/Yx+aQJBZNlCe
-         +rC33r+leMWQFYUpqDw1gxcDeg/XARZ0EzFyoy4hr66388U4kzB/X5bcvYvvv9F+kfFn
-         EYFVUM7SuZt4ScCOF+jXpauQ0nYZ5ef8LYeIUmayDbdqjS+5y0lf8KIgLGn6fH+Gjz/Y
-         qGKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734268001; x=1734872801;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A4uVOIqETpLgu1IftPIECanmm5P+qCIbuOEo0dVm+x4=;
-        b=WpDbM1n5zClqKYnQnqNRuQF+/qXzNsOFiZP+Q0LqaMLJ/CIrb/mhoXkyrnQF8RB6De
-         //K/splSUfrydjJ+PE3KvqBnWaR8qOFgd6zHcTJ/Jy/W62/LQrYxwV5Zs8yvPIssfVb6
-         FAmLTuEEeozSBNRyp+j73RFwR8D+guJUDDblT6kTk6CP/4ix/kpGVQ5eWZWb2yk4VlPb
-         fyt5F8+9dy+KmlqsW7kFvs3tTovO4uvzOyyLla//pYfPsr5dk7EVi1ygHXC7yx/KFiso
-         LE4LGxahfL3aJH+mR5xi6MAc9tWvPSG9m9JSguaXkbM6up26DUZm3ODeHRvbR5sf4HhH
-         6+0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7NPWWUDVkft4y0S5RCu5d0VE5aovZCaZSfgQKSh2DqiYn8zmoEgFCz1sR5sFLFo0ohcOZOoUu@vger.kernel.org, AJvYcCWIq8vqr+jp6VM9J9cdENy9TmakPitxM9TdDa6NQf7icdNp6vg1sQiEy472jcQ2lSCUBIc/4X+v19VijgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv9wPCqzAIfxfZxWO7KI5/F5Q50+UeeLi7/swhrkZU0pNaUetd
-	uGGvfb13fRURZB1OzFaUazzOSO01QBRpqlt6bizD7DHE8eMTj2v5lCNjKQKq
-X-Gm-Gg: ASbGnctdKcSJJtfSEpDB5S7VNDMOZ6oVSLyo91/+cl66lwXHQcmVbJ9r8HoJMQRnF+o
-	Rq+7Xw5C3ftWug79FdEAgI6FtT1t+NreFJNMEPTo/soU72fXNkfhI+tPiKuyKgxZUD8tevUAFxF
-	YYbN2Yd2zM5N8cG5QJ81ipAFA/BGLxvF5YU9Mo8rc5+ua8LkrT17C+zXR6awTvsnblAyi5qZJMJ
-	QB4MYh0mEIwXWxOHwVgaMlxXOTC64dJK/QSTaFGxiipNEHvvPrd8qhtaeVXvI+4EI20pH/060CB
-	uTtWPrwVEWNOsUiespCSHbEBuDXuQg3ENqs7/g==
-X-Google-Smtp-Source: AGHT+IG+kkDedAFwVxbAoEhT782acvDkTzFx+j9v7R2pyj9Jq7Po5tzUc+SnvetmP8NADbWAchG2ow==
-X-Received: by 2002:a05:600c:3d15:b0:434:a1d3:a321 with SMTP id 5b1f17b1804b1-4362aa1b06cmr96201315e9.3.1734268001140;
-        Sun, 15 Dec 2024 05:06:41 -0800 (PST)
-Received: from ?IPV6:2a0d:6fc2:56d6:3b00:20f3:5417:1c06:8272? ([2a0d:6fc2:56d6:3b00:20f3:5417:1c06:8272])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c608sm109721265e9.16.2024.12.15.05.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Dec 2024 05:06:40 -0800 (PST)
-Message-ID: <e142749b-7714-4733-9452-918fbe328c8f@gmail.com>
-Date: Sun, 15 Dec 2024 15:06:38 +0200
+	s=arc-20240116; t=1734268128; c=relaxed/simple;
+	bh=fAo4P4rpHKuqyo0NonSsYZLQIJm0RKrQIz332EcYaHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yir3HGtEmQFEuhyEoql4eJ5WMygvJqHBLgeBPh3nBHOEUFyV3WLbjdxdeJjJcQJfs3FWo1qnfe3z5i539341QLkpAR6QEno2u0WIOCl72tbmNf7+v+7+3G4ZxTfKys08EzUMR9px1kvpB9CFhSxMwA7IJcw6nWIeY5FV5o0S6Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PHmVQI4q; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734268127; x=1765804127;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fAo4P4rpHKuqyo0NonSsYZLQIJm0RKrQIz332EcYaHw=;
+  b=PHmVQI4qzozA5BxYj+OLVvrMXhS3rtgqLXS+yT6QXuxZCgR7fctUcJ5K
+   AY+VinlP4MDsdjEguL6vj8aPVdNBRTC8awvjkJFeGMZ1WOXJGwCKQx8v2
+   dVFAl1BcORnheJbjRgES4KBn1R6QhfxHfRyA8E1a6CPNMwuchHHP5uHuS
+   Lg4TzfFAZP0FipFe8aRQkqK8Oa0OVMdOQCnSCS2pnsjaEPRpzKhXjKo0W
+   nU4DcPoLdu9+xBmqmPNPZmpatDVswHwYGtw9YNuTua2xPTvHc10wgqrxM
+   DarpBDeU7K/lfl6ta+bFTv2auqfb1w742JYDNjbcd2Ol8Vgx5v2mTNzMK
+   Q==;
+X-CSE-ConnectionGUID: YEeC5LyXTUCK++QQ37WIag==
+X-CSE-MsgGUID: iDGiX+jzQ3eBzjcRbGn9eA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="22248631"
+X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
+   d="scan'208";a="22248631"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 05:08:45 -0800
+X-CSE-ConnectionGUID: cG0dHzWlTxKJp3nb+wgDsA==
+X-CSE-MsgGUID: F1CLcAReTDScfSbi4nYyZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
+   d="scan'208";a="97512305"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 15 Dec 2024 05:08:40 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMoMO-000Dcw-1j;
+	Sun, 15 Dec 2024 13:08:36 +0000
+Date: Sun, 15 Dec 2024 21:08:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yafang Shao <laoar.shao@gmail.com>, mingo@redhat.com,
+	peterz@infradead.org, mkoutny@suse.com, hannes@cmpxchg.org
+Cc: oe-kbuild-all@lists.linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, surenb@google.com,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v7 3/4] sched, psi: Don't account irq time if
+ sched_clock_irqtime is disabled
+Message-ID: <202412152009.HZ862kna-lkp@intel.com>
+References: <20241215032315.43698-4-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Evgeny Kapun <abacabadabacaba@gmail.com>
-Subject: [REGRESSION] Distorted sound on Acer Aspire A115-31 laptop
-To: Linux Sound Mailing List <linux-sound@vger.kernel.org>
-Cc: Kailang Yang <kailang@realtek.com>, Takashi Iwai <tiwai@suse.de>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Regressions Mailing List <regressions@lists.linux.dev>,
- Linux Stable Mailing List <stable@vger.kernel.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215032315.43698-4-laoar.shao@gmail.com>
 
-I am using an Acer Aspire A115-31 laptop. When running newer kernel 
-versions, sound played through headphones is distorted, but when running 
-older versions, it is not.
+Hi Yafang,
 
-Kernel version: Linux version 6.12.5 (user@hostname) (gcc (Debian 
-14.2.0-8) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.50.20241210) #1 
-SMP PREEMPT_DYNAMIC Sun Dec 15 05:09:16 IST 2024
-Operating System: Debian GNU/Linux trixie/sid
+kernel test robot noticed the following build errors:
 
-No special actions are needed to reproduce the issue. The sound is 
-distorted all the time, and it doesn't depend on anything besides using 
-an affected kernel version.
+[auto build test ERROR on tip/sched/core]
+[also build test ERROR on peterz-queue/sched/core linus/master v6.13-rc2 next-20241213]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-It seems to be caused by commit 34ab5bbc6e82214d7f7393eba26d164b303ebb4e 
-(ALSA: hda/realtek - Add Headset Mic supported Acer NB platform). 
-Indeed, if I remove the entry that this commit adds, the issue disappears.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yafang-Shao/sched-Define-sched_clock_irqtime-as-static-key/20241215-112638
+base:   tip/sched/core
+patch link:    https://lore.kernel.org/r/20241215032315.43698-4-laoar.shao%40gmail.com
+patch subject: [PATCH v7 3/4] sched, psi: Don't account irq time if sched_clock_irqtime is disabled
+config: arc-randconfig-001-20241215 (https://download.01.org/0day-ci/archive/20241215/202412152009.HZ862kna-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412152009.HZ862kna-lkp@intel.com/reproduce)
 
-lspci output for the device in question:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412152009.HZ862kna-lkp@intel.com/
 
-00:0e.0 Multimedia audio controller [0401]: Intel Corporation 
-Celeron/Pentium Silver Processor High Definition Audio [8086:3198] (rev 06)
-     Subsystem: Acer Incorporated [ALI] Device [1025:1360]
-     Flags: bus master, fast devsel, latency 0, IRQ 130
-     Memory at a1214000 (64-bit, non-prefetchable) [size=16K]
-     Memory at a1000000 (64-bit, non-prefetchable) [size=1M]
-     Capabilities: [50] Power Management version 3
-     Capabilities: [80] Vendor Specific Information: Len=14 <?>
-     Capabilities: [60] MSI: Enable+ Count=1/1 Maskable- 64bit+
-     Capabilities: [70] Express Root Complex Integrated Endpoint, 
-IntMsgNum 0
-     Kernel driver in use: snd_hda_intel
-     Kernel modules: snd_hda_intel, snd_soc_avs, snd_sof_pci_intel_apl
+All errors (new ones prefixed by >>):
 
+   In file included from kernel/sched/build_utility.c:96:
+   kernel/sched/psi.c: In function 'psi_show':
+>> kernel/sched/psi.c:1243:42: error: 'PSI_IRQ' undeclared (first use in this function); did you mean 'PSI_IO'?
+    1243 |         if (!irqtime_enabled() && res == PSI_IRQ)
+         |                                          ^~~~~~~
+         |                                          PSI_IO
+   kernel/sched/psi.c:1243:42: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +1243 kernel/sched/psi.c
+
+  1233	
+  1234	int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
+  1235	{
+  1236		bool only_full = false;
+  1237		int full;
+  1238		u64 now;
+  1239	
+  1240		if (static_branch_likely(&psi_disabled))
+  1241			return -EOPNOTSUPP;
+  1242	
+> 1243		if (!irqtime_enabled() && res == PSI_IRQ)
+  1244			return -EOPNOTSUPP;
+  1245	
+  1246		/* Update averages before reporting them */
+  1247		mutex_lock(&group->avgs_lock);
+  1248		now = sched_clock();
+  1249		collect_percpu_times(group, PSI_AVGS, NULL);
+  1250		if (now >= group->avg_next_update)
+  1251			group->avg_next_update = update_averages(group, now);
+  1252		mutex_unlock(&group->avgs_lock);
+  1253	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
