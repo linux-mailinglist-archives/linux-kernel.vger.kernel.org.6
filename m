@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-446338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF5B9F2307
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:42:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841389F2582
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9850C1886900
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE3D164BEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 19:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCCE14B07E;
-	Sun, 15 Dec 2024 09:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="NpqNgQQV"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4141BBBF7;
+	Sun, 15 Dec 2024 19:04:02 +0000 (UTC)
+Received: from ec2-44-216-146-166.compute-1.amazonaws.com (ec2-44-216-146-166.compute-1.amazonaws.com [44.216.146.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A128D14A4F9;
-	Sun, 15 Dec 2024 09:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1592318E057;
+	Sun, 15 Dec 2024 19:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.216.146.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734255739; cv=none; b=QAfkrkF81zVnLwE4oTPnvBQX6M8QqOv0eYw8lIiXO+bA9TKHcuZplkDcJPuMAbMSGcGeZe0BhVO0tnnT2+/EIABlqb1RcqaQW76BGugxCeImPGmyAkvmn10dkf3MfZIk81wijGBsS6w3TjPjuqZ5ILrnXq35xd6VWml88atKcEs=
+	t=1734289441; cv=none; b=sCC3HZg0IKwATQxbyKRBnJPMsuNo44iaepoKWfOj/uu5UnL2qafw7t686uBlFBI4d8o9Yjf+PvgjAUlbj+u8r3M0Bs4uB0nuMSWntpBNs/zsVDQlXjhex6wf03DwPzLmHWzbTjJsMN8c58P1Urfsz9xb/C2YrE5KrxCUCthUf4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734255739; c=relaxed/simple;
-	bh=xMVOhtbQytr6wEIhe7eAl+vJ5qEW9VuVwiOHBxSryjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENef/a2ZZa3aocaohUBwvmMuwGTYrAFfGkUlJtZtXUC2u0dlubUCImojTsYcLkW0lehQ1EkP0vFVDRAbeWrB+XQxz2/thGjHiQhnPXWkta67HhyaoGN2gf/mMWprI4q9ib7g5HMDqLH3VjnUUkyGF1W2FnmF8nf7zONiYG6goxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=NpqNgQQV; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 720DE1049AF53;
-	Sun, 15 Dec 2024 10:42:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1734255732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RsKpE+SoXaRl2pX/ah17zsvmzlMzy0vowGk2sPgroH4=;
-	b=NpqNgQQV9XPaueL7GniXS73T1GcRv5pKgDOFMcozcWZoI07xpvinPJj62UHVHLrHqgWy62
-	HCBi8AH7nsrFAXg6Lvg4j7vsk2MJzC7LhbsQAuJE+7trumb/BU/An50O+Gy0Uj6mSXcss1
-	1Y8QDDd8RilLn3nNs6XqYMAwyCcdKNOeBoyfspfmGTGdFA2jLugMirIOz2nGLfwDMDCi0C
-	U9x02q4g/W4qj21m8UIJXLSbKE3XMVIJN7lcL6N9GYFIY4FCQ2An1yuMGL6nojbxIC2iHv
-	D28Uq279lSYtxcF+UqY18C9gTn4LxqrUsjcFZVJhgQwx7kkU/Gpt92pKaZNEgA==
-Date: Sun, 15 Dec 2024 10:42:07 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc2 review
-Message-ID: <Z16kb0iKa/NTPUBO@duo.ucw.cz>
-References: <20241213150009.122200534@linuxfoundation.org>
+	s=arc-20240116; t=1734289441; c=relaxed/simple;
+	bh=AoxPtyRQUj0dUAzX5e/wjnxlhv5fz0YsTWIKYtsNKF0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ndnDcACpkMAHCxm6bqTkTVafF1XMjuTaABP3JHuPdi+bdz4OAHHfHHUkxs9k7MYjKuk3sE1SX2wNPW0jfV3ZsYfUICUDLE/XTprzT/OTUT7+obnC2CtiSJhcBHR0ifgUNbTg1djukt2Dsrz3P9v+hT22ufiTlKDKfp4lVPagX0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=44.216.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c02:27b0:7e2c:bf7a:d235:f376])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5c2ad696;
+	Sun, 15 Dec 2024 18:00:31 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH 1/1] USB: serial: option: add MeiG Smart SRM815
+Date: Sun, 15 Dec 2024 18:00:27 +0800
+Message-Id: <20241215100027.1970930-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zz5q+IAwDhZ5Uyvh"
-Content-Disposition: inline
-In-Reply-To: <20241213150009.122200534@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHklPVhkYSh8YQ0IdSElKSFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtJQUlMGUtBTB5JGEEZHUwaQR9JSE5BHUhMTVlXWRYaDx
+	IVHRRZQVlPS0hVSktISk5MTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a93c9c32db603a2kunm5c2ad696
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PjY6TQw6MTIUUSI6OiIDVgkI
+	MDlPFFZVSlVKTEhPSU5NQ0hJT0hOVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0lBSUwZS0FMHkkYQRkdTBpBH0lITkEdSExNWVdZCAFZQUlMTUM3Bg++
 
+It looks like SRM815 shares ID with SRM825L.
 
---zz5q+IAwDhZ5Uyvh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=2dee ProdID=4d22 Rev= 4.14
+S:  Manufacturer=MEIG
+S:  Product=LTE-A Module
+S:  SerialNumber=123456
+C:* #Ifs= 5 Cfg#= 1 Atr=80 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Hi!
+Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+---
+ drivers/usb/serial/option.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> This is the start of the stable review cycle for the 6.1.120 release.
-> There are 772 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 9ba5584061c8..7e839e45a836 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -621,7 +621,7 @@ static void option_instat_callback(struct urb *urb);
+ 
+ /* MeiG Smart Technology products */
+ #define MEIGSMART_VENDOR_ID			0x2dee
+-/* MeiG Smart SRM825L based on Qualcomm 315 */
++/* MeiG Smart SRM815/SRM825L based on Qualcomm 315 */
+ #define MEIGSMART_PRODUCT_SRM825L		0x4d22
+ /* MeiG Smart SLM320 based on UNISOC UIS8910 */
+ #define MEIGSMART_PRODUCT_SLM320		0x4d41
+@@ -2382,6 +2382,7 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(UNISOC_VENDOR_ID, TOZED_PRODUCT_LT70C, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(UNISOC_VENDOR_ID, LUAT_PRODUCT_AIR720U, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SLM320, 0xff, 0, 0) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x30) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x40) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x60) },
+-- 
+2.25.1
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---zz5q+IAwDhZ5Uyvh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ16kbwAKCRAw5/Bqldv6
-8tMPAJ9TrajCnv3OTzQhfe82IktI9LVl/ACgizqO7dNpgCufuni9ko8hZ5kgDWQ=
-=W7e/
------END PGP SIGNATURE-----
-
---zz5q+IAwDhZ5Uyvh--
 
