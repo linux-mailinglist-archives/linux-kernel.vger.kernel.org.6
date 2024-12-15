@@ -1,179 +1,174 @@
-Return-Path: <linux-kernel+bounces-446482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E8A9F24DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:56:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2122F9F24DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E29B16500E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84771886001
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B369194A6F;
-	Sun, 15 Dec 2024 16:56:25 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A961B218E;
+	Sun, 15 Dec 2024 17:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcHdsrSb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED873194A51
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 16:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A278E191F7C
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 17:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734281784; cv=none; b=pgFMI7IucUpDYeumTSHYv9QcTgVbu+T+faIbCzjUwEgY9QqDmQVHNaU91RP8nWnbBrL9pI2RdbkAm9OrH5dSD2sEgjdJtzIgSiW+CiWuZ32EwuP5zFmmBjjYZx0GrlibTT6NFyJG6RuBD0mrUovqTr+xuqCghKQvlZEFFhmMORs=
+	t=1734282381; cv=none; b=vEXnav8Y9u0wPzMbfpYVbW0QEeR8Nfsj6baOeLuCrcnJaE8Mn+32gZaUMuxUzCEJvdQ1TgEmBYDHEb/a1tSXaqw620XLHA6bWuGtWxzriMsS304m+LeoDNFDiE3cQ9pnNh5c++ukK0zqXYSv5o1BkTgXdGX+t0bmLK8wZ2whXik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734281784; c=relaxed/simple;
-	bh=xqOs6Z+UKyv3MXOR0f6n0k7ckhOjJJq2TXjAboGTMCU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uY/plm6953EM6PF0eh5fmmP0MVCrw/bsbm+5r520zW5XPpHUTqk0nDgduT7kC/VMUVFw8ELcX66JNjd9JUGE5vF526PbZa6/OlmZn3mPyjHykS0JIVEvgOzTlgjj7+bxNsOTdJi5srPT0YLc4jsu+Q/kE9ptQqCVfpNm0Mn6ukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ac98b49e4dso33186975ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 08:56:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734281782; x=1734886582;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jd7/ODe3BJoj9ArJQMpN8NpBbFHmENCWNtUvI7ebTg0=;
-        b=qQoHVXL/ADNTHjrY1DpK5XlNkfyu3yIUr/i2K6NTbOvmutY5cCM64PfuOtzOE0st+i
-         3IUHpbGZMR8NsyPEt5oQCwMEtUpBO2anzNkCvT+D8oPLBKO76d2jOiRRvZhICx81z26s
-         dbDerWCL6hzQoxOrvgRS6rf7FTMDd4XAQ47BIc6QtZRM6962MqBMYXJgSMSMfh5ZflIJ
-         /1LcHCUPRUCvIWUVyRa80eeSi9NNbo5Yq7obf+LAi/4/NiSbWtfAJ5gWK/TqoYvsgVcW
-         nJb/nSG0GRHy8Ve2VtpAuOus4yXoEReRiJzQZraBA2NHJWA7KE992zJO/dN3wEc0DgR0
-         AM5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUvxGUd0/TRVQOe7t89BwTlY3e0SqxAWGrP7hZc0g1BMelmF7YUjdhuqufZZuTLZjWaLi/jF6u3hn4K9fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTSKdluRjwyi3Pcjl93dbcAxX3WGEohF2XaY9NKoMG8l3zW9ko
-	3ORgjKogZdo4nZAcTODnBOBdOJHUA8n7MQZKsiJEv0zYcuPjQMLu6ObUfU9MKOR+BwMjWDLBgHn
-	KOW3qZPlQmx9XRBlTsPK2c7OP0fNMZjqC9RzP8LdFr4b7gpHZrPoPOXQ=
-X-Google-Smtp-Source: AGHT+IHtRdKWCe/qQaG467EGsSK+O1pVmRjK/naWohM0Ag3073bV9ZGFMuJgm6SUgOMstJU4TkSDZZPuRgr1XNK9JfOzgrUc4ETW
+	s=arc-20240116; t=1734282381; c=relaxed/simple;
+	bh=IKudTICY63nTJBWp4dgbD+J6JAfkG36OqFhEojoALd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FDZhzTBaaJ/kcjtKB9hHpOATNcLu0MjH7G0ffcC8qLPoZyWhX24NM6fnTqP4KZ5mdNXi3tGwjIjJwvMtXqgVcSy+D9Suhika8F00N1zHaEpaAphHvhM8wj2hwqfF7Nb6PxphqG7opO9WompW5rLvAM4IJwHGSx8N9eLH0AGWJwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcHdsrSb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3943FC4CECE;
+	Sun, 15 Dec 2024 17:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734282381;
+	bh=IKudTICY63nTJBWp4dgbD+J6JAfkG36OqFhEojoALd4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LcHdsrSbRlgqgpsj9LCeZBksA6Fi+gcy0MxEeC6fsG3hjfKFizXHAqIurLOUA+Whu
+	 TKdSLO/mb6hnys7Yo3S5d1VRSj3Z2wFct+bMCGAwR0YTYqu3lIc/PyL5l5EtTDBo2q
+	 fjCi7/Pl3eoLE6oVjPNUAVHBHueKymi9kCkcQZfGXYiXLfc2sszhUXfaEYeuWua4xO
+	 SiuCLAKivD91/XJBMiyvD7FSV8ARTW5Ah0NafaeNMG31cAz9dudnKwT2YKU6QR+MXi
+	 0C6kmegB0wLvxJ6+b3JXfcBNC8JVON1rnKMU7BMFkSEOrzvPnleaeiO3oDOkhDAD7Y
+	 C4ev0NRz1slrA==
+Date: Sun, 15 Dec 2024 12:06:19 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] arm64 fixes for 6.13-rc3
+Message-ID: <Z18MixiGByAqDYLC@lappy>
+References: <Z1xx0ha7lbKkdhRC@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a25:b0:3a7:e528:6ee6 with SMTP id
- e9e14a558f8ab-3aff039a554mr109257625ab.13.1734281782211; Sun, 15 Dec 2024
- 08:56:22 -0800 (PST)
-Date: Sun, 15 Dec 2024 08:56:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675f0a36.050a0220.37aaf.00fc.GAE@google.com>
-Subject: [syzbot] [tomoyo?] general protection fault in tomoyo_gc_thread
-From: syzbot <syzbot+bf6351831bc4f9148d98@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-dev-en@lists.osdn.me
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Z1xx0ha7lbKkdhRC@arm.com>
 
-Hello,
+On Fri, Dec 13, 2024 at 05:41:38PM +0000, Catalin Marinas wrote:
+>- arm64 stacktrace: address some fallout from the recent changes to
+>  unwinding across exception boundaries
 
-syzbot found the following issue on:
+Hi Catalin, Mark,
 
-HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12fa2cdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf6351831bc4f9148d98
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fc78f8580000
+It seems that kselftests can hit a warning that was addressed in the
+commit above:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b85403132ddc/disk-f92f4749.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20613d034287/vmlinux-f92f4749.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d1ea80bf7e4e/bzImage-f92f4749.xz
+<12>[   74.172204] kselftest: Running tests in ftrace
+TAP version 13
+1..1
+# timeout set to 0
+# selftests: ftrace: ftracetest-ktap
+# unlink: cannot unlink '/opt/kselftests/default-in-kernel/ftrace/logs/latest': No such file or directory
+# TAP version 13
+# 1..145
+# ok 1 Basic trace file check
+<4>[  108.427656] hrtimer: interrupt took 13044036 ns
+<4>[  161.249175] sched: DL replenish lagged too much
+<4>[  163.845977] ------------[ cut here ]------------
+<4>[  163.851787] WARNING: CPU: 1 PID: 31 at arch/arm64/kernel/stacktrace.c:141 arch_stack_walk+0x4a0/0x4b0
+<4>[  163.861012] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+<4>[  163.890268] CPU: 1 UID: 0 PID: 31 Comm: kworker/1:1 Not tainted 6.13.0-rc2 #1
+<4>[  163.897386] Hardware name: linux,dummy-virt (DT)
+<4>[  163.904217] Workqueue:  0x0 (mm_percpu_wq)
+<4>[  163.915526] pstate: 624020c9 (nZCv daIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+<4>[  163.924218] pc : arch_stack_walk+0x4a0/0x4b0
+<4>[  163.930593] lr : arch_stack_walk+0x2bc/0x4b0
+<4>[  163.937101] sp : ffff80008000b920
+<4>[  163.942456] x29: ffff80008000b9d0 x28: fff00000ff6d9400 x27: fff00000ff6d9928
+<4>[  163.954275] x26: 0000000000000001 x25: 00000000000000c0 x24: ffffae003d389d40
+<4>[  163.967208] x23: 09cfae003ae216b4 x22: ffffae003ae2e4b0 x21: ffffae003ae35c70
+<4>[  163.978823] x20: ffff80008000ba10 x19: ffffae003ae216f0 x18: 0000000000000014
+<4>[  163.989751] x17: 0000000000000000 x16: ffff800080008000 x15: 00000000b5b23a12
+<4>[  164.000780] x14: 000000005865dcaf x13: 00000000b77eca6d x12: 0000959eae5a34e8
+<4>[  164.011592] x11: ffffae003d44a670 x10: ffff80008000b920 x9 : ffffae003ae2e4b0
+<4>[  164.022498] x8 : ffff800080043e00 x7 : fff00000c682c000 x6 : 00000000ffffffff
+<4>[  164.033396] x5 : fff00000c682c000 x4 : 0000000000000000 x3 : ffff80008000bda0
+<4>[  164.045100] x2 : ffffae003ae2e4b0 x1 : ffffae003ae2e4b0 x0 : ffffae003ae2e4b0
+<4>[  164.057084] Call trace:
+<4>[  164.061489]  arch_stack_walk+0x4a0/0x4b0 (P)
+<4>[  164.067225]  arch_stack_walk+0x2bc/0x4b0 (L)
+<4>[  164.073009]  profile_pc+0x44/0x80
+<4>[  164.078489]  profile_tick+0x50/0x80 (F)
+<4>[  164.085151]  tick_nohz_handler+0xcc/0x160 (F)
+<4>[  164.091427]  __hrtimer_run_queues+0x2c4/0x358 (F)
+<4>[  164.098138]  hrtimer_interrupt+0xf4/0x268 (F)
+<4>[  164.105401]  arch_timer_handler_phys+0x34/0x58 (F)
+<4>[  164.114958]  handle_percpu_devid_irq+0x8c/0x218 (F)
+<4>[  164.120914]  generic_handle_domain_irq+0x34/0x58 (F)
+<4>[  164.127570]  gic_handle_irq+0x54/0x128 (F)
+<4>[  164.135008]  do_interrupt_handler+0x58/0x98 (F)
+<4>[  164.140769]  el1_interrupt+0x34/0x68 (F)
+<4>[  164.146665]  el1h_64_irq_handler+0x18/0x28
+<4>[  164.151813]  el1h_64_irq+0x6c/0x70
+<4>[  164.160007]  _raw_spin_unlock_irq+0x28/0x58 (PF)
+<4>[  164.176292] ------------[ cut here ]------------
+<4>[  164.187816] WARNING: CPU: 1 PID: 31 at arch/arm64/kernel/stacktrace.c:141 dump_backtrace+0x620/0x660
+<4>[  164.209007] Modules linked in: crct10dif_ce sm3_ce sm3 sha3_ce sha512_ce sha512_arm64 fuse drm backlight ip_tables x_tables
+<4>[  164.252638] CPU: 1 UID: 0 PID: 31 Comm: kworker/1:1 Not tainted 6.13.0-rc2 #1
+<4>[  164.260491] Hardware name: linux,dummy-virt (DT)
+<4>[  164.266531] Workqueue:  0x0 (mm_percpu_wq)
+<4>[  164.275972] pstate: 624023c9 (nZCv DAIF +PAN -UAO +TCO -DIT -SSBS BTYPE=--)
+<4>[  164.282685] pc : dump_backtrace+0x620/0x660
+<4>[  164.288093] lr : dump_backtrace+0x410/0x660
+<4>[  164.293392] sp : ffff80008000b510
+<4>[  164.297983] x29: ffff80008000b5c0 x28: fff00000c08c91c0 x27: fff00000ff6d9928
+<4>[  164.309075] x26: ffff80008000bda0 x25: ffffae003cd0c000 x24: ffffae003cedfaa0
+<4>[  164.320534] x23: ffffae003cce90b8 x22: ffffae003ae35c70 x21: ffffae003ccd80a8
+<4>[  164.331352] x20: ffffae003cd1fd38 x19: fff00000c08c91c0 x18: 0000000000000006
+<4>[  164.343050] x17: 0000000000000000 x16: ffff800080008000 x15: ffff80008000af40
+<4>[  164.354100] x14: ffff80010000b0fa x13: ffff80008000b102 x12: ffffae003d410098
+<4>[  164.366177] x11: ffffae003d44a670 x10: ffff80008000b350 x9 : ffffae003ae2e4b0
+<4>[  164.378146] x8 : ffff800080043e00 x7 : fff00000c682c000 x6 : 00000000ffffffff
+<4>[  164.389041] x5 : fff00000c682c000 x4 : 0000000000000000 x3 : ffff80008000bda0
+<4>[  164.400262] x2 : ffffae003ae2e4b0 x1 : ffffae003ae2e4b0 x0 : ffffae003ae2e4b0
+<4>[  164.411526] Call trace:
+<4>[  164.415800]  dump_backtrace+0x620/0x660 (P)
+<4>[  164.421415]  dump_backtrace+0x410/0x660 (L)
+<4>[  164.427393]  show_regs+0x34/0x50 (F)
+<4>[  164.434342]  __warn+0x98/0x198 (F)
+<4>[  164.439610]  report_bug+0x1dc/0x200 (F)
+<4>[  164.444981]  bug_handler+0x2c/0x90
+<4>[  164.450151]  call_break_hook+0x6c/0x88 (F)
+<4>[  164.455802]  brk_handler+0x24/0x70 (F)
+<4>[  164.460935]  do_debug_exception+0x74/0x118 (F)
+<4>[  164.466742]  el1_dbg+0x70/0x90 (F)
+<4>[  164.471595]  el1h_64_sync_handler+0xd4/0x120
+<4>[  164.477225]  el1h_64_sync+0x6c/0x70
+<4>[  164.482730]  arch_stack_walk+0x4a0/0x4b0 (P)
+<4>[  164.488313]  arch_stack_walk+0x2bc/0x4b0 (L)
+<4>[  164.494329]  profile_pc+0x44/0x80
+<4>[  164.499430]  profile_tick+0x50/0x80 (F)
+<4>[  164.504776]  tick_nohz_handler+0xcc/0x160 (F)
+<4>[  164.511508]  __hrtimer_run_queues+0x2c4/0x358 (F)
+<4>[  164.519213]  hrtimer_interrupt+0xf4/0x268 (F)
+<4>[  164.525536]  arch_timer_handler_phys+0x34/0x58 (F)
+<4>[  164.531384]  handle_percpu_devid_irq+0x8c/0x218 (F)
+<4>[  164.537153]  generic_handle_domain_irq+0x34/0x58 (F)
+<4>[  164.543448]  gic_handle_irq+0x54/0x128 (F)
+<4>[  164.548744]  do_interrupt_handler+0x58/0x98 (F)
+<4>[  164.555359]  el1_interrupt+0x34/0x68 (F)
+<4>[  164.561123]  el1h_64_irq_handler+0x18/0x28
+<4>[  164.567261]  el1h_64_irq+0x6c/0x70
+<4>[  164.573197]  _raw_spin_unlock_irq+0x28/0x58 (PF)
+<4>[  164.580018] ---[ end trace 0000000000000000 ]---
+<4>[  164.585812] ---[ end trace 0000000000000000 ]---
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf6351831bc4f9148d98@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 6044 Comm: GC for TOMOYO Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:tomoyo_collect_acl security/tomoyo/gc.c:511 [inline]
-RIP: 0010:tomoyo_collect_entry security/tomoyo/gc.c:537 [inline]
-RIP: 0010:tomoyo_gc_thread security/tomoyo/gc.c:619 [inline]
-RIP: 0010:tomoyo_gc_thread+0x1ab/0x1390 security/tomoyo/gc.c:612
-Code: 3b 5c 47 fd c6 45 18 ff 4c 89 ee bf 09 00 00 00 e8 8a f1 ff ff e8 25 5c 47 fd 48 89 d8 48 89 de 49 89 dd 48 c1 e8 03 83 e6 07 <42> 0f b6 0c 20 48 8d 43 07 48 89 c2 48 c1 ea 03 42 0f b6 14 22 40
-RSP: 0018:ffffc90003367e78 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8451e1ab
-RDX: ffff888074e85a00 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff888143b02f00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000b8f R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888025b49b00
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000008 CR3: 0000000028642000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_collect_acl security/tomoyo/gc.c:511 [inline]
-RIP: 0010:tomoyo_collect_entry security/tomoyo/gc.c:537 [inline]
-RIP: 0010:tomoyo_gc_thread security/tomoyo/gc.c:619 [inline]
-RIP: 0010:tomoyo_gc_thread+0x1ab/0x1390 security/tomoyo/gc.c:612
-Code: 3b 5c 47 fd c6 45 18 ff 4c 89 ee bf 09 00 00 00 e8 8a f1 ff ff e8 25 5c 47 fd 48 89 d8 48 89 de 49 89 dd 48 c1 e8 03 83 e6 07 <42> 0f b6 0c 20 48 8d 43 07 48 89 c2 48 c1 ea 03 42 0f b6 14 22 40
-RSP: 0018:ffffc90003367e78 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8451e1ab
-RDX: ffff888074e85a00 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff888143b02f00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000b8f R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888025b49b00
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055b9c4865950 CR3: 0000000029aee000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	3b 5c 47 fd          	cmp    -0x3(%rdi,%rax,2),%ebx
-   4:	c6 45 18 ff          	movb   $0xff,0x18(%rbp)
-   8:	4c 89 ee             	mov    %r13,%rsi
-   b:	bf 09 00 00 00       	mov    $0x9,%edi
-  10:	e8 8a f1 ff ff       	call   0xfffff19f
-  15:	e8 25 5c 47 fd       	call   0xfd475c3f
-  1a:	48 89 d8             	mov    %rbx,%rax
-  1d:	48 89 de             	mov    %rbx,%rsi
-  20:	49 89 dd             	mov    %rbx,%r13
-  23:	48 c1 e8 03          	shr    $0x3,%rax
-  27:	83 e6 07             	and    $0x7,%esi
-* 2a:	42 0f b6 0c 20       	movzbl (%rax,%r12,1),%ecx <-- trapping instruction
-  2f:	48 8d 43 07          	lea    0x7(%rbx),%rax
-  33:	48 89 c2             	mov    %rax,%rdx
-  36:	48 c1 ea 03          	shr    $0x3,%rdx
-  3a:	42 0f b6 14 22       	movzbl (%rdx,%r12,1),%edx
-  3f:	40                   	rex
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Thanks,
+Sasha
 
