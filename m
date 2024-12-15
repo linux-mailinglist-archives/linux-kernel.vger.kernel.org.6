@@ -1,92 +1,147 @@
-Return-Path: <linux-kernel+bounces-446283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46419F2227
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:13:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B104C9F2226
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322B21886EAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351111886DEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBF41EB48;
-	Sun, 15 Dec 2024 04:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79DDBE46;
+	Sun, 15 Dec 2024 04:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="tXgu77QK"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VuSBGmaj"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8659A1CFB6
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CEF1FDD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734235985; cv=none; b=CXHyvUm/YzU9kRWJvTkj3ymW/Ga/BRDJLmlDuQrxKnm4aTYKqkBCb8ieDEUBXynTcuajNKZV5z6srtwj5JIkh8jzcD56jkvOeRNm5M68P9RPdHlKhJX0b28pgE+ZEn5clDX/6xHbjIG221gEwjroMZ5NEIciRLj0c6MAkS8JPJo=
+	t=1734235933; cv=none; b=AT9ZAUn2ckC0re7QPPzaAXjEU2FHD1rTmIsRIzs/rCi1roiLkvwd+ZBsQx2tpKG6ivUZlYfEufmaKuqS8hf6wbnVhJxWFSJe6RT7mZ846qk6WQJo0PT06vYb1ZIhkq7wFqM29wwG+2zs11mvwUIXaO3YRge90+J8EVtvT/QV3kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734235985; c=relaxed/simple;
-	bh=+DU9qUenRGC57uXD6+5RsxuyCrQnLR/9ExiCcYiNnIs=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=JRFd8+pYEnDyGqRxhZX8opSnrfbSSgX6GC6DZxMnLMAW9lwpVT77V46j+VDbVY3g4y/EvVyM9lv+Yc3lfojZcigj+FRhICMdKJAWKXKY0u9yvASVK37XtwOk+kolRyikiTQUoxoy7cejKXQmo806VioLHJ+aRi4eo/uLnXvhIBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=tXgu77QK; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1734235672; bh=k0VCZezrdl6j5Sw/CYwerlHf9QZ2M0oEhnKcmA0N7zg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=tXgu77QKf7xLieKYDZhNjRKpFZ95wd5F9LHIANZCfKUdrDtq0h+Ika7OwbQvukg4l
-	 zMG+eX0VsaiWSk6aG9S6BPvLLOusCXou8p5vkTt7BcXNpNghwSfydwFxhh2CBvSz9j
-	 cBE/THuF8CsOfdxnG78k096BdbAkyiIPQFMRNAYA=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
-	by newxmesmtplogicsvrszgpua5-0.qq.com (NewEsmtp) with SMTP
-	id 1F2AD250; Sun, 15 Dec 2024 12:07:50 +0800
-X-QQ-mid: xmsmtpt1734235670t5vplu27x
-Message-ID: <tencent_F64B7A746D776B66F63C05363E97BE378809@qq.com>
-X-QQ-XMAILINFO: NI6TJc3opC6FWa21P27onO+cXR13nnfEQRDSEjk/xL4QECW3YmRmZocMPkzSUY
-	 yYzJfIp3i/UC5KAfb6ubgiJ1u5ckWL4OqihHbwi7Suv9AOKqChkPQHpklHiefBtFvgiMx077iC5+
-	 aW+BTIV++3DZJuA4UHoAgHiab7zeRZzb9OlDU5qlIxUA1putSjfD8Sg5ou4ABMxZJdSMhCk6grns
-	 VL7gQfCW9xwyNgM8nRvIgkfjDLn1nShWncTzXm5P50gdwJnPVwHMUi2t0RpHVxoi/ClNGdjRjBP8
-	 jsZhmPt+jTZ9H3q07tvNaOdLVPRypccG/kk/ZEmBXsXjfGa68ro7gScTtjGFe6rPLc9yLGB25bxQ
-	 ZDUITpy7R+KPLu3ylp/veA8s1ZhheI4dhAAqObY5I2gjyyYy6V5a0aD1PzpzZeF0jIwUGgBAyOrh
-	 YAJ47rOYZgGlMCzsbdrse4GGYfmkZ/SFAOaniWk8WfZcLTYRGtJDDuHhrXOwelBnHHjYmcRw3WJ9
-	 2Yjyac68ceU7Ow/zpuncSIUXVhMJGjLlxz3tyd3H3bYE1Uc3uJ7e14yfohv5OcuF4Qx9tEzuNz46
-	 Yc92JI8IcSoEu0JzcD9sjoZRLec21e77qdtgfBlyp6tTKQEhI6wDyaWBjUtIZQpIY7zn+h4yVftA
-	 eKOAq6ATBQOQbqT+IFCTtVpz7k21y1/vvn8MBuDuqJ/EXXj1vf4t40mVRg8Rmqsdb3PYtAQ08XVg
-	 hmm/cGjIGZYP7qvsBr78Vrf7bpzulpgUNEmtdDMe4Hv6xG/IA+k5IderPm5+zzTgqlMIU0Fyeo3k
-	 y9/F0sVaOa8RibbAyABJS8Rh4nYr2wEpSw75Tp38FjKw25jR3f8mFwVx7SqlzaTN9PWhZ+t8c07k
-	 3aWV9rF3m0JDrND4btmSatgHvwqCE49AeLY6WLUX7mFzuAnXxwyECHKjeN73+XeuYbPJJuI3Tbd1
-	 4drPXQQ+XAFOoo/kX94ZL1AJI7irZ56yYxqxCmOFM=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4c7590f1cee06597e43a@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in folio_evictable (3)
-Date: Sun, 15 Dec 2024 12:07:51 +0800
-X-OQ-MSGID: <20241215040750.1672030-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <675c5e51.050a0220.2875e5.0049.GAE@google.com>
-References: <675c5e51.050a0220.2875e5.0049.GAE@google.com>
+	s=arc-20240116; t=1734235933; c=relaxed/simple;
+	bh=Ml66fngZ/Ii90qEbY8Ic3yR13fSVyotKChJ01wQVmnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=esUNPhyBUrS4lybjVojLumoJyOh6qeyk0EkVk1MG7+BiCnGDq4sKtFpxqDdrz/nOH+1CuZMs4wIug8pM4DK7qFcU94cPMLQyV3Va5I77oONnHwAXx5dBy9CB24y4t7oZLErM94GErnMY8grJb5XIjUVVDe27K9luqx408gZ933g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VuSBGmaj; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa67f31a858so559826366b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 20:12:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1734235929; x=1734840729; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0u+PGplY6kNcEdvH0mg1zZZuMNp6NaM5HQJJMrcW6yY=;
+        b=VuSBGmajulwgfh5fGwHUXlzEQ5PUFw1cGXNUQrCjHD7aKVEAvhKCxYLfFCakRyQ2ia
+         EZ06/Oob78IaR8h8wDf1i4lFJiF1DqsL0NUf8rap3v62hd4pwNrHnY8TpxAXooSPBYEH
+         S2Ow4PjHeqp54ZP2E1UfmjStxKpae6vQkRZ+c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734235929; x=1734840729;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0u+PGplY6kNcEdvH0mg1zZZuMNp6NaM5HQJJMrcW6yY=;
+        b=lHY9GjPreRUIeFAStkg80Bx4jUes2lAZUBTR9tXqrdqALvM0WC+7ojbMCPW+RJDhwz
+         8aZx0j7ic5K7ihLZElU4nVmec6GPAxt2NlIJWa2HtHBTvXNgzQxXf4rI4JIR3NcZZBwF
+         qjWsMwg6zFWE4FHm3TsNk4sCzoVhr4xHA4fHtMIZhZbAw162Rz00XFTMtWxPP67E+CNa
+         7T4WewjwLg8Rj9G3wqmzVe87T8jSBeZPHzTuFz+muIjwbHurSJ9hmETsub6vAY2N3eA3
+         CCU6TGt4I2KqqlwERN20TAIxNk29C8B36qY1d6W29BkDSjGoeERnP4+mfXHkPsSlnK+N
+         NfeQ==
+X-Gm-Message-State: AOJu0YxzZVYH5Nvq6sFL39d2Ie3NsqzApTqGV/UElnQVtARo0Ew4O3rB
+	QvAsdetxWTLWFOTdQq4g7KkgVg6Idymcs/Hd/XiQGtvljsG44fKcdhXXiIAxWzxoiEptF4aEGoS
+	6R4U=
+X-Gm-Gg: ASbGncsPeh9an+znWCH/hFo8K9e2sTwZtZRh4kBmLu5oGyi2xZgsftrNfDJ48ZC3iqe
+	RIqrJgSJm+6+scPWpBwesxLkMPQMfMw0andEm3X3192Ou3UWyRtPQAFAEG8SAbRa7biMJxMfoGu
+	p4QH/48mrjGWrFVZ5vZsPKgQeIdsm5+Mc2WmN3eG860uRWbOP2NF/7n19KgRGi7GDCMEq9IPlo/
+	aKovGKtVdCD0Rd2nje9zuY8T9unFEYYHpN6NCo32XYg7+dsvrT5H8RJfJvrKPYLkkqOUs0EcD8J
+	UqvM9PUjQgQIx6RhkOTvxLKhV1woQ6g=
+X-Google-Smtp-Source: AGHT+IGaRHVnFzQpyJpfQs9DKDwTCoQrN69t3Bq8HDgquN4DlJMsqiF89AYdQM40GFxV9UhZvRLSMw==
+X-Received: by 2002:a17:906:3152:b0:aa6:8160:8495 with SMTP id a640c23a62f3a-aab77e9705emr710436266b.42.1734235929254;
+        Sat, 14 Dec 2024 20:12:09 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9606897dsm163672866b.46.2024.12.14.20.12.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 20:12:07 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so5033374a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 20:12:06 -0800 (PST)
+X-Received: by 2002:a17:907:a088:b0:aa6:87e8:1cff with SMTP id
+ a640c23a62f3a-aab7797f9c0mr709886366b.24.1734235926700; Sat, 14 Dec 2024
+ 20:12:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241214182138.4e7984a2@batman.local.home> <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+ <20241214220403.03a8f5d0@gandalf.local.home> <20241214221212.38cc22c3@gandalf.local.home>
+ <CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 14 Dec 2024 20:11:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+Message-ID: <CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Content-Type: text/plain; charset="UTF-8"
 
-#syz test
+On Sat, 14 Dec 2024 at 20:06, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> And I think test_event_printk() could probably be expanded to handle
+> at least some cases of '%s' (because, as you say, pointers to various
+> static allocations are fine for it).
 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index 8c4c1f871a88..8f851ecd1625 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -267,6 +267,7 @@ static void __gfs2_glock_put(struct gfs2_glock *gl)
- 	lockref_mark_dead(&gl->gl_lockref);
- 	spin_unlock(&gl->gl_lockref.lock);
- 	gfs2_glock_remove_from_lru(gl);
-+	cancel_delayed_work(&gl->gl_work);
- 	GLOCK_BUG_ON(gl, !list_empty(&gl->gl_holders));
- 	if (mapping) {
- 		truncate_inode_pages_final(mapping);
+.. and I think we can at least protect against kernel faults in the
+generic '%s' handling. We already do some of that in
+check_pointer_msg, and it could be expanded upon with something like
 
+  --- a/lib/vsprintf.c
+  +++ b/lib/vsprintf.c
+  @@ -695,13 +695,22 @@ static char *error_string(char *buf, ...
+    */
+   static const char *check_pointer_msg(const void *ptr)
+   {
+  +       unsigned char val;
+  +
+          if (!ptr)
+                  return "(null)";
+
+          if ((unsigned long)ptr < PAGE_SIZE || IS_ERR_VALUE(ptr))
+                  return "(efault)";
+
+  +       pagefault_disable();
+  +       __get_kernel_nofault(&val, (const char *)ptr, u8, Efault);
+  +       pagefault_enable();
+          return NULL;
+  +
+  +Efault:
+  +       pagefault_enable();
+  +       return "(bad address)";
+   }
+
+which is admittedly
+
+ (a) ENTIRELY UNTESTED
+ (b) not exactly pretty
+ (c) only handles the first byte of the string
+
+but it's at least very simple and cheap and fits in with the checks we
+already do.
+
+No, that vsprintf code wouldn't deal with any tracing-specific sanity
+checks that say "the pointer is in the trace ring buffer", but as
+mentioned, *that* code is entirely separate from the thing I'm
+objecting to anyway.
+
+               Linus
 
