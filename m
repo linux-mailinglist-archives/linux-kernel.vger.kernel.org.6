@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-446407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 061459F23FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:58:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1D59F2403
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 585A77A1121
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CF71885DA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E022E189912;
-	Sun, 15 Dec 2024 12:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840A918DF62;
+	Sun, 15 Dec 2024 13:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMf2hFu4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCwzFEX+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C41E871;
-	Sun, 15 Dec 2024 12:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E7E14A4D4;
+	Sun, 15 Dec 2024 13:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734267487; cv=none; b=K3Asw+3znvskQDhmfw1rKPNUGtod/qh3ewmM6KUvpUtFyT/1Z7jTKFq2dfJ0Oly8UYmJCDC6zZkHRroDcuu9jzPKnGNTGxPq52nvYn57pA7376SKcXkL2a7ULo0cWUFP0vFB3mbMmYm6Q9BTwEG6/P9h/wRuobrZ3tJYidd3dQU=
+	t=1734267618; cv=none; b=fzFjkFHTJo4RMoQDQN3UfriqKACzVYDVJLMz1tWNo6a1HMW8pxz3+3IKaKIwnQdMMrH0HYEBQ6lMo94rYYaCgg1QLJfRbBK5RbRUlkKhMStv1WL/cku+hYF2kN9c6/nfzSlm8MYZViDfah+3F+Ofb++elW+L3YeEo95j5sb4XDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734267487; c=relaxed/simple;
-	bh=FxifYn/J+GjNzuVqe3a+BCsrK72tNlO+6PLafLcq+tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NmAaTChdGTX3G+l4ifBic51RRaijBYu9HnliJ+kwE0K2Q6ow5vNODCLffGkFM6ngu/qP55K83UDFnfjYgbTQQrT4t9yrJP1CHXn6v3J51oirmGk0VkjitY3uLsNLow1m71AGJrUdMiz0WwIrYFdKRh9sMaNpl/Bh9ft3Ef5WoMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMf2hFu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8325EC4CECE;
-	Sun, 15 Dec 2024 12:58:03 +0000 (UTC)
+	s=arc-20240116; t=1734267618; c=relaxed/simple;
+	bh=ovjTdhdS2ag8ix+fDM+12rd3WwymerQdUPyZV39SyIg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=txIzG5DW6W5piL+at04mQipMAp6yuDpUAuTzPG5xSD84k5vqwz5TF1DBfJZ67TWrjCCCPxzc1x8Z1JlS8q/2GnYtTVK9FjGKRqO2tCQwPpUJoa7p2UMohVXKTXaZAia7qcddJa9zVdexu0U/lSRO/d8oBevpgOfkHREM4vVXQbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCwzFEX+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5E0C4CECE;
+	Sun, 15 Dec 2024 13:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734267486;
-	bh=FxifYn/J+GjNzuVqe3a+BCsrK72tNlO+6PLafLcq+tI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gMf2hFu4o8zeSuijrgmVpm9v3ZMIzFBxQZndg7oa0go+XzjbPgd9Se+oF0KpgfV3K
-	 XRhqff+LDFiz43ZukEbjs44Mpv2SsvsftfI50nR1kkNFCz2sKVhkuprE6s8PuNPajZ
-	 7IRV3Ka4ZwaFAPafF0f7lb3QV6wcVlmX0Ni2eI8o7dtZQpPi+YVydZcW3eVOJYfyTZ
-	 yDpY5JlARczYOw20P+RgzAy89C9cBJ3hsV2F3AZ80rxoPo/blg6xqXokpP0Njqj0BX
-	 HhWBcuvN4YQPNkGHFdeFSv9uwYnSEJeEZNtm4+eIM8wf0ZDbUM8WzWAfsLECxMWYXj
-	 t98DoMlA8TLjQ==
-Date: Sun, 15 Dec 2024 12:57:58 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>, Jiri Kosina <jikos@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: hid-sensor-prox: Fix invalid read_raw for
- attention
-Message-ID: <20241215125758.558cc0ef@jic23-huawei>
-In-Reply-To: <d164919c9290ca1410bc21746511799a5c17b94d.camel@linux.intel.com>
-References: <20241122-fix-processed-v2-1-b9f606d3b519@chromium.org>
-	<d164919c9290ca1410bc21746511799a5c17b94d.camel@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1734267618;
+	bh=ovjTdhdS2ag8ix+fDM+12rd3WwymerQdUPyZV39SyIg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mCwzFEX+Ay6sXBZmKo9FCmXxdCjVeNhhgWg7sjekJ+f3rPeRV1pfsmdFJplj0Gp+a
+	 CCpLUFzQpnox3SGmNRht2Z8lDTDtSDANIbn1uFPzySz+zSqLDOoobzKSXsv4IFkarl
+	 NCN7EIdLGK7SI2KPmnsnqV/mY6IvPUUYjzOc3Mqhm2ILzidz4u2jvl8tD8WAPpqEk2
+	 Hpa6aMlhZhs1u9/IY8Sfr5NCHpDKYgv/3heXpFXpYFcgYstELmtUv0IqiKtFpBM5cn
+	 C/2QfKShFcEcmmdtK2R2ublPc4oUz/9Z01nV90pYK3z1kquc+kDxVufaByk2vk4TIL
+	 FJQkM09RoD0Wg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCA3806656;
+	Sun, 15 Dec 2024 13:00:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 0/6] several fixes for smc
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173426763526.3514004.3994108925591833248.git-patchwork-notify@kernel.org>
+Date: Sun, 15 Dec 2024 13:00:35 +0000
+References: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
+In-Reply-To: <20241211092121.19412-1-guangguan.wang@linux.alibaba.com>
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+ tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2024 09:55:04 -0800
-srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
+Hello:
 
-> On Fri, 2024-11-22 at 17:36 +0000, Ricardo Ribalda wrote:
-> > The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
-> > IIO_CHAN_INFO_RAW.
-> >=20
-> > Modify prox_read_raw() to support it.
-> >=20
-> > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
-> > channels")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org> =20
->=20
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Applied to the fixes-togreg branch of iio.git.
+On Wed, 11 Dec 2024 17:21:15 +0800 you wrote:
+> v1 -> v2:
+> rewrite patch #2 suggested by Paolo.
+> 
+> Guangguan Wang (6):
+>   net/smc: protect link down work from execute after lgr freed
+>   net/smc: check sndbuf_space again after NOSPACE flag is set in
+>     smc_poll
+>   net/smc: check iparea_offset and ipv6_prefixes_cnt when receiving
+>     proposal msg
+>   net/smc: check v2_ext_offset/eid_cnt/ism_gid_cnt when receiving
+>     proposal msg
+>   net/smc: check smcd_v2_ext_offset when receiving proposal msg
+>   net/smc: check return value of sock_recvmsg when draining clc data
+> 
+> [...]
 
-Thanks,
+Here is the summary with links:
+  - [net,v2,1/6] net/smc: protect link down work from execute after lgr freed
+    https://git.kernel.org/netdev/net/c/2b33eb8f1b3e
+  - [net,v2,2/6] net/smc: check sndbuf_space again after NOSPACE flag is set in smc_poll
+    https://git.kernel.org/netdev/net/c/679e9ddcf90d
+  - [net,v2,3/6] net/smc: check iparea_offset and ipv6_prefixes_cnt when receiving proposal msg
+    https://git.kernel.org/netdev/net/c/a29e220d3c8e
+  - [net,v2,4/6] net/smc: check v2_ext_offset/eid_cnt/ism_gid_cnt when receiving proposal msg
+    https://git.kernel.org/netdev/net/c/7863c9f3d24b
+  - [net,v2,5/6] net/smc: check smcd_v2_ext_offset when receiving proposal msg
+    https://git.kernel.org/netdev/net/c/9ab332deb671
+  - [net,v2,6/6] net/smc: check return value of sock_recvmsg when draining clc data
+    https://git.kernel.org/netdev/net/c/c5b8ee5022a1
 
-Jonathan
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
->=20
-> > ---
-> > Changes in v2:
-> > - Do not change the condition for applying the multiplier.
-> > - Link to v1:
-> > https://lore.kernel.org/r/20241121-fix-processed-v1-1-4fae6770db30@chro=
-mium.org
-> > ---
-> > =C2=A0drivers/iio/light/hid-sensor-prox.c | 1 +
-> > =C2=A01 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/iio/light/hid-sensor-prox.c
-> > b/drivers/iio/light/hid-sensor-prox.c
-> > index e8e7b2999b4c..0daa8d365a6c 100644
-> > --- a/drivers/iio/light/hid-sensor-prox.c
-> > +++ b/drivers/iio/light/hid-sensor-prox.c
-> > @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
-> > =C2=A0	*val2 =3D 0;
-> > =C2=A0	switch (mask) {
-> > =C2=A0	case IIO_CHAN_INFO_RAW:
-> > +	case IIO_CHAN_INFO_PROCESSED:
-> > =C2=A0		if (chan->scan_index >=3D prox_state->num_channels)
-> > =C2=A0			return -EINVAL;
-> > =C2=A0		address =3D prox_state->channel2usage[chan- =20
-> > >scan_index]; =20
-> >=20
-> > ---
-> > base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> > change-id: 20241121-fix-processed-ed1a95641e64
-> >=20
-> > Best regards, =20
->=20
 
 
