@@ -1,214 +1,166 @@
-Return-Path: <linux-kernel+bounces-446310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4469F2270
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:30:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070F09F2271
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61ABC1886D63
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6694F18868DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A7518AE2;
-	Sun, 15 Dec 2024 06:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cV+e+7l0"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409251802B;
+	Sun, 15 Dec 2024 06:56:22 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BC818E0E
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 06:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387902F56
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 06:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734244204; cv=none; b=qT2IV3rBemE7HZr9zYWSlfxtrgZkepq1YgG9gFF5sSGScYBzOwL760UHlTb/e+dnk8Bzh5QQAPU6Na/jmmaO1C5VJurQ/bq1CQxiYpJX8ACj/SGYQAH344m1/ppMv0kTBSnlq9aVDwh1lo1fD+cejiFGgeU9kDJmvx0l4ajI9cM=
+	t=1734245781; cv=none; b=lHtD92PvKNeCTKdR+TDXzZlCuGCseKFWXmAL8XmPs18sQJ3AmAybGFizomcVXdgLoToKkeOvApFYkU4RBVcR+MDsOjK0ZPDgLGMuS4KMcKkNXQI9qnr2exhiNUSdnB0dKk56tN56gk6aYXuR5ksGzjlA6IP5JIh1Z8LdfN1pHC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734244204; c=relaxed/simple;
-	bh=LEBUuqQK0aAq3QVG4Yc41XBVtrujyJmyC34cjq+zEPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ldg/wpv39X7hQFoA3xGvFIbw3/EZgUreh33pWfqal/H1C46vnM/gTwKByn1+PFHiq9Kgqw7g/EfbOkFmijMMzFAue9FsCKtxl+R4wGJqQ7u4EJdzht8rgIzALB2FJfbTzMdH/ymk4+u1bqDqI/HIBfL1Mpn1L207h/+1dH2IKxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cV+e+7l0; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-728ea1573c0so2570843b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:30:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1734244202; x=1734849002; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rwNYe1XDDHCxQqM+OnwDDhWm8Wr5Z1XvjowB1bcfSd0=;
-        b=cV+e+7l0ZQroRhnwNios4vmH6JQSXsczHKrz2yh5ow34kUMFXA7PRCiMqVSpCbpihA
-         5QIENHJaR43emYooJ+IjW2UwnST7a5UJZB8jFAMr7mup9uieFx1CodLXuqeXNGJE4lZE
-         za7R6k6GAOOoiVwtSPszoQYWlM/o81S6Q9pwWqN28bY5v0eTWYgDa5VOASAV27bEOyyU
-         cC6fh88jz2QjxkJKojIPtHNSU/fTZj3got+Ak78ytTNCTHdAWlvstoSrG1A620msmk7u
-         qr1bk5ODDeoJPRywwO1MzctNWevMy3VHly3D+DW8I8lEdi+Jsx8DCMBzpNepFWJD4IHw
-         uA4g==
+	s=arc-20240116; t=1734245781; c=relaxed/simple;
+	bh=/b39DB2wUDkEzkULeDwV1DaCnXUC1uS3yWrdSZi0vX8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FJTmCiN4G5kwLDkeuQpw0DZU4a71guWEivxqed5YIKGXMLu1ppLs9g7fA4aVGrRbz2tDDBciBy8uKOWSmYSz8O/qGvdgExtQAE8TlZcf7wo26UXXPztaabnw6InIJuZ83xJQWnE0cwDzyUNZI45+DHhpCsxaay8Oarq2ao64PyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso366003139f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 22:56:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734244202; x=1734849002;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwNYe1XDDHCxQqM+OnwDDhWm8Wr5Z1XvjowB1bcfSd0=;
-        b=ikem+0XeVgqGd4FZAa2jHSJcZVN8S8o5//I9czPsQoQJWboHsDWDV4119ReOLUN8qq
-         f1X2xNSxF7C2JYb6rIj5tbsV0ny3XcTIWzXPo/B3Pzjgsiiutx7nmGlQ0hnINUfzCH34
-         Vkzm5ShdpWoCPQPBahIlL6fkj62TFaeBzA/v+NkSu8W2lWqmVmhVyrbuUKvTNyO3mPkW
-         hTBOG+2t8So/KfS5aE9D3Q6Dab3chQMgPd7WdovXP8EazjV9rbUS3PwZ/rnFkAxFP6Fl
-         CW4Dne4QK75GA5rXcfzBgWvRm0bJkxlJ8xY9A92hcs9S9Hx1YVBQS+cemrKbDkIhvpAL
-         e9Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMqxoeJdqxPfbO0LbXFUlVKulPvNk+EKirCzbPfBR0IpK3k1Pd8L78mlJGrinrTGy30zkYuQVEqGFS0io=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw01QQ6vAzY4wqfeQnfjsw1NtO5qASR61+jqk4zT4iL253oo4DP
-	tfl+yx3mVTj5fLIohpFjyJy/IryOw0wNckfTJ2Hfe+UjDwKtZKAoh+LSZx8254I=
-X-Gm-Gg: ASbGnctdlJHukWoUw5IvJtdiKQBiz/4dP5jxsC+95RbQAWNtWuQQ3O8SWGuefmpHD4j
-	NyV26r+hQH5bGM1cdk8p7/XJziC5lg3+tlZRQiEu8qJKSVbcqRaAmjuy/vGu2VQc/jd0rm/FH6O
-	gA2m0hq8kx5JqaP3MxfEJKLKGkM/Ee5w3nCkIlDthyaV9bgMv2vtJCIbpDcDf7r9ydx7XaCLDb5
-	dC/LdQdCEmOubc8wisKX06DpnI/O6HZLKpeV+2zfz7zLzzokdE17eT1QottC2hqWRNdtgp5GLJ2
-	YvIJf+GERas51Bbe9NelAoNwHBTTysVhVSGSkpDHzb9LKqn5kJgtQME=
-X-Google-Smtp-Source: AGHT+IEyhC05pRlCoG7uiWXEq03tySPT5h+dGj8fQf3nkjF7E7tyWGU0NclNvArd44iS5Pxk6GDf5A==
-X-Received: by 2002:a17:903:32cd:b0:215:cbbf:8926 with SMTP id d9443c01a7336-21892a543f6mr128401865ad.35.1734244202084;
-        Sat, 14 Dec 2024 22:30:02 -0800 (PST)
-Received: from ?IPV6:2409:8a28:f4f:a9a4:11bc:4825:e7fe:2e0e? ([2409:8a28:f4f:a9a4:11bc:4825:e7fe:2e0e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e4ffd9sm21702895ad.142.2024.12.14.22.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 22:30:01 -0800 (PST)
-Message-ID: <18bc52f4-ab02-495f-8f8f-87f69ea5b914@bytedance.com>
-Date: Sun, 15 Dec 2024 14:29:38 +0800
+        d=1e100.net; s=20230601; t=1734245779; x=1734850579;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GQL3vJdZhzaq4q5jC3R54yCo/SVa59Q8hQ9ZR6nOLmU=;
+        b=JsLvFNqR6NeG1KmVv9udCzP2t6rMAYpcnSAQvG3sq51MpGjyiQ/KNqpifIUXyGyebc
+         ErlnwHlG0VIJwOQBdb35vafx479q1WJl1yNeaCRj/iQsTqblWBbSAFjhBMpP8J3/v4H2
+         VS2PEunFCMkCf/UCP6NoT/fEBMLW5oBlVwRrVHZBBv9L4ctDwEaKsLnQCN8AAPkavKYk
+         G24+C1qiHdMZI1Ki3ZzV9bfz2doccfDj2cshcq0c4foQ2Y5pkxnpo2d0QB03c+t6nY9/
+         c27sQyDiF4VVOMzi2mP1odv0GBWxXhMmJMtuM7W8Evlm5FOOLvmpLUH9WoIRAb1Abms+
+         itJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPVBOCk3hCkXt8zG9kIbVCLhcuwnTrnViAeW2XRSgl4JmuFVTmZaFtpjr36K5Qv+O4U5j4Ff7ubRvsXKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx45clYyhqMGfGdHqigCZV7ySelE/9dGaT1f5PgrrnTLCNH1Aia
+	eanGgEm6WFsZDUcwt41mg0iutudCesdxSdztX3puZe0MGP1U2BVn34D1eR2BHKg8zY9CB9c/G+l
+	qy4omh0YbRXgrjb8ndG8AKg5Up6qcn6VMfTdSNU9bYwMOuVzbbdhPzyw=
+X-Google-Smtp-Source: AGHT+IGSwiAgYvN8dTadK8I9n2LmdSnaHVaudySkR41xnRpF7e2nnfOO0Hn/RpCwwlK5cgMtFRjN0sqZJ0jQyuCu2Ha7tbDJyFdk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] Revert "mm: pgtable: make ptlock be freed by RCU"
-Content-Language: en-US
-To: Yu Zhao <yuzhao@google.com>
-Cc: peterz@infradead.org, tglx@linutronix.de, david@redhat.com,
- jannh@google.com, hughd@google.com, willy@infradead.org,
- muchun.song@linux.dev, vbabka@kernel.org, lorenzo.stoakes@oracle.com,
- akpm@linux-foundation.org, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1734164094.git.zhengqi.arch@bytedance.com>
- <1fdb3ee32e6958ad82229941b2213ef76b7c4705.1734164094.git.zhengqi.arch@bytedance.com>
- <CAOUHufaKRXJA=vZucoJMmgQw264LSxWuTtNcFQMLD7UNz_6wyw@mail.gmail.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <CAOUHufaKRXJA=vZucoJMmgQw264LSxWuTtNcFQMLD7UNz_6wyw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:238a:b0:3a7:e1c3:11f5 with SMTP id
+ e9e14a558f8ab-3b02adcc3acmr75200985ab.6.1734245779364; Sat, 14 Dec 2024
+ 22:56:19 -0800 (PST)
+Date: Sat, 14 Dec 2024 22:56:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675e7d93.050a0220.37aaf.00f3.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING: locking bug in sched_balance_rq
+From: syzbot <syzbot+2d4ccc03d6c11f23901e@syzkaller.appspotmail.com>
+To: andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1414ccdf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
+dashboard link: https://syzkaller.appspot.com/bug?extid=2d4ccc03d6c11f23901e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d03a74cd09e9/disk-f92f4749.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1b7f97b83a3f/vmlinux-f92f4749.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2eac1365a6a/bzImage-f92f4749.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2d4ccc03d6c11f23901e@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
+WARNING: CPU: 1 PID: 6423 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
+Modules linked in:
+CPU: 1 UID: 0 PID: 6423 Comm: syz.4.108 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
+RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
+Code: 00 00 83 3d 71 f3 9e 0e 00 75 23 90 48 c7 c7 00 96 0a 8c 48 c7 c6 00 99 0a 8c e8 f7 62 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc9000c4fed70 EFLAGS: 00010046
+RAX: 0fbe9254beddb100 RBX: 00000000000018d8 RCX: ffff88801f353c00
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00000000000c18d8 R08: ffffffff81600a42 R09: 1ffff110170e519a
+R10: dffffc0000000000 R11: ffffed10170e519b R12: ffff88801f3546c4
+R13: 0000000000000005 R14: 1ffff11003e6a8e5 R15: ffff88801f354728
+FS:  0000555590c7c500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3030dff8 CR3: 0000000028c98000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:606
+ raw_spin_rq_lock kernel/sched/sched.h:1514 [inline]
+ _raw_spin_rq_lock_irqsave kernel/sched/sched.h:1534 [inline]
+ rq_lock_irqsave kernel/sched/sched.h:1799 [inline]
+ sched_balance_rq+0x4dcd/0x8620 kernel/sched/fair.c:11733
+ sched_balance_newidle+0x6ba/0xfd0 kernel/sched/fair.c:12795
+ balance_fair+0x44/0x70 kernel/sched/fair.c:8744
+ prev_balance kernel/sched/core.c:5995 [inline]
+ pick_next_task kernel/sched/core.c:6145 [inline]
+ __schedule+0x2a3f/0x4c30 kernel/sched/core.c:6709
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6848
+ futex_wait_queue+0x14e/0x1d0 kernel/futex/waitwake.c:370
+ __futex_wait+0x17f/0x320 kernel/futex/waitwake.c:669
+ futex_wait+0x101/0x360 kernel/futex/waitwake.c:697
+ do_futex+0x33b/0x560 kernel/futex/syscalls.c:102
+ __do_sys_futex kernel/futex/syscalls.c:179 [inline]
+ __se_sys_futex+0x3f9/0x480 kernel/futex/syscalls.c:160
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0823d7ff19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeba872b88 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: ffffffffffffffda RBX: 00007ffeba872ca0 RCX: 00007f0823d7ff19
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f0823f4616c
+RBP: 00007f0823f4616c R08: 7fffffffffffffff R09: 00007ffeba872e6f
+R10: 00007ffeba872c90 R11: 0000000000000246 R12: 0000000000026d66
+R13: 00007ffeba872c90 R14: 0000000000000032 R15: 0000000000026d34
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/12/15 02:29, Yu Zhao wrote:
-> On Sat, Dec 14, 2024 at 2:03 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->>
->> This reverts commit 2f3443770437e49abc39af26962d293851cbab6d.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> 
-> Bloating struct pt_lock is unnecessary. Glad to see it's reverted.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Indeed!
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> 
-> Acked-by: Yu Zhao <yuzhao@google.com>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Thanks! Once the review of this patch series is completed, we can simply
-drop "mm: pgtable: make ptlock be freed by RCU" from mm tree.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> 
-> 
->> ---
->>   include/linux/mm.h       |  2 +-
->>   include/linux/mm_types.h |  9 +--------
->>   mm/memory.c              | 22 ++++++----------------
->>   3 files changed, 8 insertions(+), 25 deletions(-)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index e7902980439cc..5e73e53c34e9e 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -2988,7 +2988,7 @@ void ptlock_free(struct ptdesc *ptdesc);
->>
->>   static inline spinlock_t *ptlock_ptr(struct ptdesc *ptdesc)
->>   {
->> -       return &(ptdesc->ptl->ptl);
->> +       return ptdesc->ptl;
->>   }
->>   #else /* ALLOC_SPLIT_PTLOCKS */
->>   static inline void ptlock_cache_init(void)
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index df8f5152644ec..5d8779997266e 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -434,13 +434,6 @@ FOLIO_MATCH(flags, _flags_2a);
->>   FOLIO_MATCH(compound_head, _head_2a);
->>   #undef FOLIO_MATCH
->>
->> -#if ALLOC_SPLIT_PTLOCKS
->> -struct pt_lock {
->> -       spinlock_t ptl;
->> -       struct rcu_head rcu;
->> -};
->> -#endif
->> -
->>   /**
->>    * struct ptdesc -    Memory descriptor for page tables.
->>    * @__page_flags:     Same as page flags. Powerpc only.
->> @@ -485,7 +478,7 @@ struct ptdesc {
->>          union {
->>                  unsigned long _pt_pad_2;
->>   #if ALLOC_SPLIT_PTLOCKS
->> -               struct pt_lock *ptl;
->> +               spinlock_t *ptl;
->>   #else
->>                  spinlock_t ptl;
->>   #endif
->> diff --git a/mm/memory.c b/mm/memory.c
->> index d9af83dd86bbf..83765632e20b0 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -7041,34 +7041,24 @@ static struct kmem_cache *page_ptl_cachep;
->>
->>   void __init ptlock_cache_init(void)
->>   {
->> -       page_ptl_cachep = kmem_cache_create("page->ptl", sizeof(struct pt_lock), 0,
->> +       page_ptl_cachep = kmem_cache_create("page->ptl", sizeof(spinlock_t), 0,
->>                          SLAB_PANIC, NULL);
->>   }
->>
->>   bool ptlock_alloc(struct ptdesc *ptdesc)
->>   {
->> -       struct pt_lock *pt_lock;
->> +       spinlock_t *ptl;
->>
->> -       pt_lock = kmem_cache_alloc(page_ptl_cachep, GFP_KERNEL);
->> -       if (!pt_lock)
->> +       ptl = kmem_cache_alloc(page_ptl_cachep, GFP_KERNEL);
->> +       if (!ptl)
->>                  return false;
->> -       ptdesc->ptl = pt_lock;
->> +       ptdesc->ptl = ptl;
->>          return true;
->>   }
->>
->> -static void ptlock_free_rcu(struct rcu_head *head)
->> -{
->> -       struct pt_lock *pt_lock;
->> -
->> -       pt_lock = container_of(head, struct pt_lock, rcu);
->> -       kmem_cache_free(page_ptl_cachep, pt_lock);
->> -}
->> -
->>   void ptlock_free(struct ptdesc *ptdesc)
->>   {
->> -       struct pt_lock *pt_lock = ptdesc->ptl;
->> -
->> -       call_rcu(&pt_lock->rcu, ptlock_free_rcu);
->> +       kmem_cache_free(page_ptl_cachep, ptdesc->ptl);
->>   }
->>   #endif
->>
->> --
->> 2.20.1
->>
+If you want to undo deduplication, reply with:
+#syz undup
 
