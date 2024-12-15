@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-446571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9812E9F2659
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:48:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FF39F265B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A7B164F07
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24A91883BB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3B71BBBF7;
-	Sun, 15 Dec 2024 21:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Q+oLF/Kz"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F291C07D1;
+	Sun, 15 Dec 2024 21:48:26 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F913653;
-	Sun, 15 Dec 2024 21:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAE81B413B
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734299283; cv=none; b=KkarDFenFLrZmL9QHDZUylk/Jsd/SsIeYao4R7ZD1enqvAuqYCRIzvVp2xa1lP7xOhLD4e7ftwda2sbGGIPna1FFfHUpdM68OmoP/trP2g+EK8rO+fbIrnXICAusONDj1TZKNMGRPaDmwk0+ENNvQGMOZedrDbFeKouWDZQ9fs0=
+	t=1734299305; cv=none; b=YyV4DOMU1X5VV6DleuRHl6EX2WxQFqi7M0Tm19r6IUeFPJ34E7aT4NV6qEKDXGxmCVK+NRDvmLqUmNulRoyzJ3HVSWihgrITm9XiVsRBQbSVsdamP99twR8CxU1kwDRTBk2hBAzyZgS/Jp8YYH3yiV/q1HA9NXRwztyNKD2NsWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734299283; c=relaxed/simple;
-	bh=vEFeXeLScr75rsFNgY1KWtU450y8shtGwTrVMWxtj+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gDfMPSTWh7f3UjIs08EVrO7Ct6aDB7AH5vBYSTlxWnObbFtVLA8DtbblgztCEH78OhB72ZEw27l8QH4DeZ/OZorH4+utvM0q1lSlcvb47IZEnwltdXp/PG5C/nyK6gh1l4vbxVlxdaxZJGYSnYkUaDExarZj3OqyNTNz80tSqu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Q+oLF/Kz; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=cHBKF03U+jZMko8P8Q0VvvH1LhKjNSPqXhElrlL/24A=; b=Q+oLF/Kz0ZXyL/Ma
-	D8lb9TCiSdsTRdc4cphsUJmWW1nLfRC/HsDrtogd8Q0N5olIj4B2DvUwzdkNOA8FA3dW+KFFmyR3M
-	JBKo2v5ZIJIj5cxeiN1zyXL79vppwgd2l4oS+bEXRzf/nONqiU8gdohV14kn6yQRZ2ar8P3bf3jr2
-	YMvg3x6ORhsd0SpIaXGWahVrPPLSB+gkrC7tHFrqOqGLNrT0sUlyugPICmGGZK1xLnmKinTCBT3Lb
-	W60z1CCgQPGnaJ3CAGr3wjnIn31S8Ck30gXsRSqlsGNEUp1q9pz2A2R+2eNJJUeiGygyEzLBhBzvH
-	mV8EP/3b2iWHrSWnkw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tMwSt-005UzH-1n;
-	Sun, 15 Dec 2024 21:47:51 +0000
-From: linux@treblig.org
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	linux-tegra@vger.kernel.org
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
-Date: Sun, 15 Dec 2024 21:47:50 +0000
-Message-ID: <20241215214750.448209-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734299305; c=relaxed/simple;
+	bh=IpgbfIy2DuNdrJKBdvsgJ9iI8u2s/h1Eh+cHoqnnd2E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jQrmNIUt3Yp5gx9373LhLG7U92CL3D0cXMqzFxdLD0jlhHaOcfQcf5+86RRdj+eVO5sMGkC0+1hUN3k8qo+PIUKXjGGUCnhFhU/Gk2fvX/JOCRifX4nMLF6s/JsaYH9r5VexEt6Dd7f4nctumCHb/ZCdIs/ehJ6vKgAv8seLm4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3abe7375ba6so74073695ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 13:48:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734299303; x=1734904103;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TBYYRxyJG0IroxJFpY7nB6aCRT29iLvmJ30t7+ONrcI=;
+        b=oRKgdHkOUDhFBbZ2T6LjGxKmGCjNyEsvHa8zh5SPpN86RPsL0ZX9/VI7WWPkUxSLjK
+         T9axdmoS5t/h/hcVnfgCDEjYhs8J8y2LGKj5dG9gOcCFKejwy8cyWF1+eQRmWN1BRYST
+         Dk0ZzjiUxwtZ1nNRxSNM8yj3OiEUetkFN5BjHCbekrgajJn2sVrC8Fy+WAAAR1VeXK8z
+         xt8ebXHhUjW/bZi3956yEWRo8ScrjPLPPmSu5trjblxbpTHbzCwxzdlQLpwAoM0iyqPK
+         gHJ15CXQ3zCHMFZ1ZzwmrZqXKCquaa13BQtZ0zh+KmzZqC6nWvarqb0MmUGhG+xRuPGQ
+         mWAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJm0VP59eyDOoVd93kcqE/Hxp6mQC9yLvzCRYbv7Hac1LVqdemDB4Y+QT0968GccFGd3fGleidztBrsZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw56qo43uUT5OPVLVCI2/3UDOzypq70KUXMjvTUKCcHLgalqFtU
+	ZGkwaLrX67NasfbI8/xAHCtrS7/D/w3nt4BtJiKtOhXpoqFpx3Qhj6p/VZyT8FqJ3wdgv+Mm3fW
+	STmjy8i5He+RAwc3xOIgudYZjTlBcyeE5PUab5iIiXwO/X2W+avTPgPI=
+X-Google-Smtp-Source: AGHT+IFe7PGDa6k6xeGn37MxcJm13J2M+qzHemq2/qD+jLVqleWB1u+7ENhWDwmJKNcsXG5lQ5X/rOMRHG1BIeICYUvzKBaJd2nz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1846:b0:3a3:4175:79da with SMTP id
+ e9e14a558f8ab-3afeee7924emr114778165ab.13.1734299303473; Sun, 15 Dec 2024
+ 13:48:23 -0800 (PST)
+Date: Sun, 15 Dec 2024 13:48:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+Subject: [syzbot] [tomoyo?] WARNING in tomoyo_write_control
+From: syzbot <syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com>
+To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
+	tomoyo-dev-en@lists.osdn.me
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello,
 
-host1x_debug_dump_syncpts() has been unused since
-commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
-fences")
+syzbot found the following issue on:
 
-Remove it.
+HEAD commit:    f932fb9b4074 Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17855be8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a12d44580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11fc4730580000
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0d0c95f5364/disk-f932fb9b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/201cf3c7a7b5/vmlinux-f932fb9b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fcb972084579/bzImage-f932fb9b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5829 at mm/page_alloc.c:4727 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Modules linked in:
+CPU: 1 UID: 0 PID: 5829 Comm: syz-executor788 Not tainted 6.13.0-rc2-syzkaller-00159-gf932fb9b4074 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 0e b3 fe ff e9 69 f9 ff ff c6 05 e1 44 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 9f a2 0c 00 8b 14 24 e9
+RSP: 0018:ffffc90003e1f918 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 000000000000000b RDI: 0000000000040d40
+RBP: 0000000000000000 R08: 0000000000000006 R09: 00000000003fffff
+R10: 00000000003fffff R11: 0000000000000003 R12: 000000000000000b
+R13: 0000000000040d40 R14: 1ffff920007c3f37 R15: 00000000003fffff
+FS:  0000555571ba8380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000003ff000 CR3: 000000007b498000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4228
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4255
+ __do_kmalloc_node mm/slub.c:4271 [inline]
+ __kmalloc_noprof.cold+0xc/0x63 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ tomoyo_write_control+0x267/0x13d0 security/tomoyo/common.c:2668
+ vfs_write+0x24c/0x1150 fs/read_write.c:677
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f569c4ea2e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffddff422d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ffddff424b8 RCX: 00007f569c4ea2e9
+RDX: 00000000fffffdef RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f569c55d610 R08: 0000000000008000 R09: 0000000000008000
+R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffddff424a8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
 ---
- drivers/gpu/host1x/debug.c | 9 ---------
- drivers/gpu/host1x/debug.h | 1 -
- 2 files changed, 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-index a18cc8d8caf5..6433c00d5d7e 100644
---- a/drivers/gpu/host1x/debug.c
-+++ b/drivers/gpu/host1x/debug.c
-@@ -216,12 +216,3 @@ void host1x_debug_dump(struct host1x *host1x)
- 
- 	show_all(host1x, &o, true);
- }
--
--void host1x_debug_dump_syncpts(struct host1x *host1x)
--{
--	struct output o = {
--		.fn = write_to_printk
--	};
--
--	show_syncpts(host1x, &o, false);
--}
-diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
-index 62bd8a091fa7..c43c61d876a9 100644
---- a/drivers/gpu/host1x/debug.h
-+++ b/drivers/gpu/host1x/debug.h
-@@ -41,6 +41,5 @@ extern unsigned int host1x_debug_trace_cmdbuf;
- void host1x_debug_init(struct host1x *host1x);
- void host1x_debug_deinit(struct host1x *host1x);
- void host1x_debug_dump(struct host1x *host1x);
--void host1x_debug_dump_syncpts(struct host1x *host1x);
- 
- #endif
--- 
-2.47.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
