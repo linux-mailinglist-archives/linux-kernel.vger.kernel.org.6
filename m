@@ -1,163 +1,220 @@
-Return-Path: <linux-kernel+bounces-446336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690879F2303
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:39:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC6C9F2306
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 879AA16594D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD2A1886895
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E897A14A0B3;
-	Sun, 15 Dec 2024 09:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB614B084;
+	Sun, 15 Dec 2024 09:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LPMGzM6G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejXzFaYb"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B80BEBE
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 09:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE34EBE;
+	Sun, 15 Dec 2024 09:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734255567; cv=none; b=pYh18+vpijoByTjnxYRYUO1+Z3l/JTNqP+hKk891CuA9oKYiBdhsTgVuzz34zJHRADk1m0IyG7C0K23712ZBh7YgrC8chDc5gje8uWP7z5AIVeNM7wZt7h1lyGd7nOXlcWZBAOZRc5Cf+2gUVvNnSR7whZCf9VjE2qzraBR7SZw=
+	t=1734255710; cv=none; b=O7Rjz1uCB8nwVSsBGIUvLxkzKs926awrdq7wu4bQl6oJpdc6epIpXSmg0J8vstTjQIPigKYfDwIPUEbK/fBh5P4H8yttFP5NtgRk8r2CGEuffb4jyXEY27MNKi9gn5O8d4j5RDtxAYY9KErgg+kIeXugbOd7IVmxCfEgj07FvoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734255567; c=relaxed/simple;
-	bh=pWWXOa6+BN7t+okq6TWWWHok1k9uzAMr5Nhv0cFskRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n4yaeQiUqEgKYtoKmLHlM3ThKsuSVLoN+fHlz0T3kzZmzhyl6B5rCRb+kwX/WIRzO8fUkpTLbrbkh0bSu7cviDwQwNRtfSEN7naL5x/Ea9m8uAhNdVQnz0MlB9PyfboUkF6NZ4nMEz3rXXJId4inBjJew+8a02AGSDtfoADNEA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LPMGzM6G; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734255565; x=1765791565;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=pWWXOa6+BN7t+okq6TWWWHok1k9uzAMr5Nhv0cFskRI=;
-  b=LPMGzM6G5KcZ9Uk7JEB+W9ROlg9jrSD/3lb+wMjuV5jzA5I5stNDTQca
-   xrHlPrNQ6c9D9ZRGtLhYbB1xoRkunluFcz1PwoMN2n2nRVjGj2wOqZ3rU
-   zLUjIah/MAZw9Sqby9R3SznSTvum+wCTryTnukKOJrw1dIARO43UimCPv
-   oNFqmeOS0re5GGr2g/B7EgzK/N7r8bDfSZ4UIO5QZ76pH+clbnHdH3zIM
-   KTZpClksJ1Vj5rvG6brE9mooIaXmL/+W8tNP2arCpxJIwjrAEe/kNigCS
-   y7UQ+lTuIcocGLSjqh7z8aREMJ6nkaFqDMhO9CfJTDQgz5wT+rU+fwSBQ
-   g==;
-X-CSE-ConnectionGUID: HC5BPwkVSU2rGq2DH7mHMw==
-X-CSE-MsgGUID: Nbz7NCJGTxKFwM/V3exsLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="52177428"
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="52177428"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 01:39:25 -0800
-X-CSE-ConnectionGUID: AuajVq6AQKGk/3xha7T+Cw==
-X-CSE-MsgGUID: p0oBrmLcR1+zmIiDxtHr4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="101782092"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 15 Dec 2024 01:39:23 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMl5s-000DXi-2w;
-	Sun, 15 Dec 2024 09:39:20 +0000
-Date: Sun, 15 Dec 2024 17:38:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: arch/x86/lib/usercopy_64.c:29: warning: Function parameter or struct
- member 'addr' not described in 'clean_cache_range'
-Message-ID: <202412151701.yujios7D-lkp@intel.com>
+	s=arc-20240116; t=1734255710; c=relaxed/simple;
+	bh=ePbSdZsRFiXqhNGHuSmR6Lslncho2ls6gSK5kjpaKPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K7yZtOncGmsV4MHx5oZitqWW+MXzMGjUPd9qPUZC5DI7P1gaSdClG/aN+PS49FfC7WkDRxd7S2hum8I8RWCHo7fx9Nzo3b85eAtGA3/fxPE6+tUnP1U063d9Ig6R+vpLLl9sL7N7hUSobYb60qVqQi9QxVN+mC45LQ7b6RyEWK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejXzFaYb; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6eed30536acso2381577b3.1;
+        Sun, 15 Dec 2024 01:41:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734255708; x=1734860508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G6/6+IunBBs1SWisZWZM0JmMebIt2yjPR7LbVi4W908=;
+        b=ejXzFaYb5prXUJIxSbr8wgD3/8GliCzvOy6oai/wtfwvDoavOV1fB58zFJK4HWRnNl
+         sQK3cyIHIGrgQepd+/XcDvm4Gx5UgcDdb9NOFwZ1Z7HPDfvfe/TV6vr5zLjgfPsD/2tW
+         Z2owu1mi7HqPoyPbX02AxrbFXWwA8kgCyHksfi0gciDbRCfn9qOJdknenM+woSbGUO9x
+         2V6Pt3njbPnzOctlk5dzXtJVkP48sIaRWmHY3WwjSPYFOKSx/1GAsX/Swy2vtk/FN1aa
+         ge71Zxv1z7sxwOkxcOmcYjIUn+yLCCkChhzzdarhme3oLDtYgd4ryzJJJkH2yG6El73n
+         g62Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734255708; x=1734860508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G6/6+IunBBs1SWisZWZM0JmMebIt2yjPR7LbVi4W908=;
+        b=XFrvPrae+es7ZbFAkRON4hG1wqhzCqs3J8qBHO7o5mLg49C/aoCJsizfR74FQXH2iu
+         EHgafP8oRimBwD3vkD8YzpAAl8asNXNm6yrMkyStkJu6/WG0hvBYgsPEt7W6VnQFpuZr
+         60tDrpzxwBwxRler2wA4gBrnPirpIML3qzCIqIJ3QLEvwr6S6Y8TzRzD+iDnP8sa3bTF
+         Q+lfqrJaWb2MsmWhAhuTALdB3KkNegIIZYvqEdDCQZcAzuvZes/334F6YX0yVS4rUFoK
+         BZgr0VSHitHQ7Qu29yospiSekARXw0/R8N3vpNc0fjDGE/sZoBH35fIgj1ODEHPugSOn
+         SOtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSd5gPVojBlzvNpyMeb2R1VKJzJyuDMXVhtXWLcukSI1PhGoa8QgcuDxYF7Rc+TEAw8BIK6ywApnnV@vger.kernel.org, AJvYcCX1/LD3b3Gj3thWF8H9S2D7MEoi2GPUSfE5D6dEQNYPW6iej0+Mq1oFcuiJwOlCieF72tq7AMTOSnX2@vger.kernel.org, AJvYcCXyyQf20kAMI74G8NyM8YozvJTCGBuolkChN8zsbYmA1ZnISNyFI7KOrj8jbqHfP1G8GfvpLjcIohgBuo9j@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4LUJRMnQ7mA1JWvjicmSkh2bgatXFmLw7mm+eYGd2MZKagbvu
+	A9nVtLsnpULRPg/NKDZ3n9r2OrteIGP3ohVF/8PohPkFFmWkRxElkJq4iBV4MT6ONbj8/Y0fqYj
+	AmGp4I0UILyIo5wzcidZtS0gOGz0=
+X-Gm-Gg: ASbGnctMkFmCcX7U/viSuapYmlXovuRmcuGRMb7VGIOTI6rcXsXQs/i1QhJjA0fHITI
+	Wqw5AcKBJMVNgT0uITwm6z6S0aI0O+/Nzs2c/fQ==
+X-Google-Smtp-Source: AGHT+IFXZK0uLrnVPvZOazyEcoVczU6YFWv+84oNq4z+ofBIWMkP7pxXq5dEiQFaIEvZ+ujr+vpGotVtAUfJVOGqZQY=
+X-Received: by 2002:a05:690c:80a:b0:6f1:4f61:d0d1 with SMTP id
+ 00721157ae682-6f279ad9fa0mr27223637b3.2.1734255708057; Sun, 15 Dec 2024
+ 01:41:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241213211909.40896-1-l.rubusch@gmail.com> <20241213211909.40896-2-l.rubusch@gmail.com>
+ <20241214120227.56b885fa@jic23-huawei>
+In-Reply-To: <20241214120227.56b885fa@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Sun, 15 Dec 2024 10:41:12 +0100
+Message-ID: <CAFXKEHamiip3fVp1HNX4DZSzNnc7bMOQNg1RKsY45NbFymzr7g@mail.gmail.com>
+Subject: Re: [PATCH v7 1/7] iio: accel: adxl345: add function to switch
+ measuring mode
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2d8308bf5b67dff50262d8a9260a50113b3628c6
-commit: 0c3ebff535956d2718594dc90aa9cc87521ec9fd scripts: kernel-doc: Clarify missing struct member description
-date:   1 year ago
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241215/202412151701.yujios7D-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412151701.yujios7D-lkp@intel.com/reproduce)
+On Sat, Dec 14, 2024 at 1:02=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Fri, 13 Dec 2024 21:19:03 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+>
+> > Replace the powerup / powerdown functions by a generic function to put
+> > the sensor in STANDBY, or MEASURE mode. When configuring the FIFO for
+> > several features of the accelerometer, it is recommended to put
+> > measuring in STANDBY mode.
+> >
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> Mostly in the interests of trimming down the queue of patches in flight
+> and because this one has been fine for a few versions without significant
+> comment.
+>
+> Applied this patch to the togreg branch of iio.git and pushed out initial=
+ly
+> as testing to let 0-day take a look.
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412151701.yujios7D-lkp@intel.com/
+Question here: you applied this patch now to the iio branch. Now,
+Christophe Jaillet pointed still something out that could be improved,
+the function could be shortened to, e.g.
 
-All warnings (new ones prefixed by >>):
++static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
++{
++     unsigned int val =3D en ? ADXL345_POWER_CTL_MEASURE :
+ADXL345_POWER_CTL_STANDBY;
++
++     return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
++}
 
->> arch/x86/lib/usercopy_64.c:29: warning: Function parameter or struct member 'addr' not described in 'clean_cache_range'
-   arch/x86/lib/usercopy_64.c:29: warning: Excess function parameter 'vaddr' description in 'clean_cache_range'
---
->> kernel/reboot.c:226: warning: Function parameter or struct member 'cmd' not described in 'do_kernel_restart'
->> kernel/reboot.c:952: warning: Function parameter or struct member 'poweroff_delay_ms' not described in 'hw_failure_emergency_poweroff'
---
->> arch/x86/mm/pgtable.c:650: warning: Function parameter or struct member 'reserve' not described in 'reserve_top_address'
->> arch/x86/mm/pgtable.c:699: warning: Function parameter or struct member 'p4d' not described in 'p4d_set_huge'
->> arch/x86/mm/pgtable.c:699: warning: Function parameter or struct member 'addr' not described in 'p4d_set_huge'
->> arch/x86/mm/pgtable.c:699: warning: Function parameter or struct member 'prot' not described in 'p4d_set_huge'
->> arch/x86/mm/pgtable.c:709: warning: Function parameter or struct member 'p4d' not described in 'p4d_clear_huge'
->> arch/x86/mm/pgtable.c:726: warning: Function parameter or struct member 'pud' not described in 'pud_set_huge'
->> arch/x86/mm/pgtable.c:726: warning: Function parameter or struct member 'addr' not described in 'pud_set_huge'
->> arch/x86/mm/pgtable.c:726: warning: Function parameter or struct member 'prot' not described in 'pud_set_huge'
->> arch/x86/mm/pgtable.c:752: warning: Function parameter or struct member 'pmd' not described in 'pmd_set_huge'
->> arch/x86/mm/pgtable.c:752: warning: Function parameter or struct member 'addr' not described in 'pmd_set_huge'
->> arch/x86/mm/pgtable.c:752: warning: Function parameter or struct member 'prot' not described in 'pmd_set_huge'
->> arch/x86/mm/pgtable.c:779: warning: Function parameter or struct member 'pud' not described in 'pud_clear_huge'
->> arch/x86/mm/pgtable.c:794: warning: Function parameter or struct member 'pmd' not described in 'pmd_clear_huge'
---
->> arch/x86/kernel/apic/apic.c:2170: warning: Function parameter or struct member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
-   arch/x86/kernel/apic/apic.c:2170: warning: expecting prototype for spurious_interrupt(). Prototype was for DEFINE_IDTENTRY_IRQ() instead
---
->> arch/x86/mm/pat/memtype.c:710: warning: Function parameter or struct member 'pfn' not described in 'pat_pfn_immune_to_uc_mtrr'
---
->> kernel/time/tick-broadcast.c:1026: warning: Function parameter or struct member 'bc' not described in 'tick_broadcast_setup_oneshot'
->> kernel/time/tick-broadcast.c:1026: warning: Function parameter or struct member 'from_periodic' not described in 'tick_broadcast_setup_oneshot'
+Should I present an improved patch? Or, in case this was urgent, would
+it require an additional patch/fix? What would be the way to deal with
+such fixes immediately after "applied"?
 
+Best,
+L
 
-vim +29 arch/x86/lib/usercopy_64.c
-
-^1da177e4c3f415 arch/x86_64/lib/usercopy.c Linus Torvalds 2005-04-16  13  
-^1da177e4c3f415 arch/x86_64/lib/usercopy.c Linus Torvalds 2005-04-16  14  /*
-^1da177e4c3f415 arch/x86_64/lib/usercopy.c Linus Torvalds 2005-04-16  15   * Zero Userspace
-^1da177e4c3f415 arch/x86_64/lib/usercopy.c Linus Torvalds 2005-04-16  16   */
-^1da177e4c3f415 arch/x86_64/lib/usercopy.c Linus Torvalds 2005-04-16  17  
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  18  #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  19  /**
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  20   * clean_cache_range - write back a cache range with CLWB
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  21   * @vaddr:	virtual start address
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  22   * @size:	number of bytes to write back
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  23   *
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  24   * Write back a cache range using the CLWB (cache line write back)
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  25   * instruction. Note that @size is internally rounded up to be cache
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  26   * line size aligned.
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  27   */
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  28  static void clean_cache_range(void *addr, size_t size)
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29 @29  {
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  30  	u16 x86_clflush_size = boot_cpu_data.x86_clflush_size;
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  31  	unsigned long clflush_mask = x86_clflush_size - 1;
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  32  	void *vend = addr + size;
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  33  	void *p;
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  34  
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  35  	for (p = (void *)((unsigned long)addr & ~clflush_mask);
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  36  	     p < vend; p += x86_clflush_size)
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  37  		clwb(p);
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  38  }
-0aed55af88345b5 arch/x86/lib/usercopy_64.c Dan Williams   2017-05-29  39  
-
-:::::: The code at line 29 was first introduced by commit
-:::::: 0aed55af88345b5d673240f90e671d79662fb01e x86, uaccess: introduce copy_from_iter_flushcache for pmem / cache-bypass operations
-
-:::::: TO: Dan Williams <dan.j.williams@intel.com>
-:::::: CC: Dan Williams <dan.j.williams@intel.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Thanks
+>
+> Jonathan
+>
+> > ---
+> >  drivers/iio/accel/adxl345_core.c | 42 +++++++++++++++++++++++---------
+> >  1 file changed, 30 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
+45_core.c
+> > index 88df9547b..b48bc838c 100644
+> > --- a/drivers/iio/accel/adxl345_core.c
+> > +++ b/drivers/iio/accel/adxl345_core.c
+> > @@ -138,6 +138,34 @@ static int adxl345_write_raw_get_fmt(struct iio_de=
+v *indio_dev,
+> >       }
+> >  }
+> >
+> > +/**
+> > + * adxl345_set_measure_en() - Enable and disable measuring.
+> > + *
+> > + * @st: The device data.
+> > + * @en: Enable measurements, else standby mode.
+> > + *
+> > + * For lowest power operation, standby mode can be used. In standby mo=
+de,
+> > + * current consumption is supposed to be reduced to 0.1uA (typical). I=
+n this
+> > + * mode no measurements are made. Placing the device into standby mode
+> > + * preserves the contents of FIFO.
+> > + *
+> > + * Return: Returns 0 if successful, or a negative error value.
+> > + */
+> > +static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
+> > +{
+> > +     unsigned int val =3D 0;
+> > +
+> > +     val =3D (en) ? ADXL345_POWER_CTL_MEASURE : ADXL345_POWER_CTL_STAN=
+DBY;
+> > +     return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
+> > +}
+> > +
+> > +static void adxl345_powerdown(void *ptr)
+> > +{
+> > +     struct adxl345_state *st =3D ptr;
+> > +
+> > +     adxl345_set_measure_en(st, false);
+> > +}
+> > +
+> >  static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
+> >  "0.09765625 0.1953125 0.390625 0.78125 1.5625 3.125 6.25 12.5 25 50 10=
+0 200 400 800 1600 3200"
+> >  );
+> > @@ -158,16 +186,6 @@ static const struct iio_info adxl345_info =3D {
+> >       .write_raw_get_fmt      =3D adxl345_write_raw_get_fmt,
+> >  };
+> >
+> > -static int adxl345_powerup(void *regmap)
+> > -{
+> > -     return regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWER_=
+CTL_MEASURE);
+> > -}
+> > -
+> > -static void adxl345_powerdown(void *regmap)
+> > -{
+> > -     regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWER_CTL_STA=
+NDBY);
+> > -}
+> > -
+> >  /**
+> >   * adxl345_core_probe() - Probe and setup for the accelerometer.
+> >   * @dev:     Driver model representation of the device
+> > @@ -237,11 +255,11 @@ int adxl345_core_probe(struct device *dev, struct=
+ regmap *regmap,
+> >                                    regval, ADXL345_DEVID);
+> >
+> >       /* Enable measurement mode */
+> > -     ret =3D adxl345_powerup(st->regmap);
+> > +     ret =3D adxl345_set_measure_en(st, true);
+> >       if (ret < 0)
+> >               return dev_err_probe(dev, ret, "Failed to enable measurem=
+ent mode\n");
+> >
+> > -     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st->regm=
+ap);
+> > +     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st);
+> >       if (ret < 0)
+> >               return ret;
+> >
+>
 
