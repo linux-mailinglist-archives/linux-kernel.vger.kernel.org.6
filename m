@@ -1,212 +1,249 @@
-Return-Path: <linux-kernel+bounces-446385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778649F23B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:26:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555B59F23B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ECF81886354
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C493E18863DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB05186E2F;
-	Sun, 15 Dec 2024 12:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE1F183CC3;
+	Sun, 15 Dec 2024 12:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LFCMzPLl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML3RFGf/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7291D374FF;
-	Sun, 15 Dec 2024 12:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE69517A58F;
+	Sun, 15 Dec 2024 12:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734265549; cv=none; b=TS7uYObb248iYo/H6PNclwGTTcZPHElLFGTJr+bXjHsEkhzwt0MTzudOsA9uUTqDYf2+hYAsqv5jfJrSh7s3cvxuB7CKIldyIukCXhkxxYfBkbXPLy2pyPsw3VQMkG7eeORrb38Md1Zc+18/6pia7EBvIln77OtwlqEJmz/2XHM=
+	t=1734265562; cv=none; b=qSHhwXhYHE3o4spyCvJ3nf3sOU+93nwuXpNRriE40zgYpKxG+7cFPvufxm4bDgMTwhfyNdJzKA5ETdcmzLF+BO4Ni5ulogJ9+sn6xnZdfCXlMSo3xTdXWqmPQ+kHQ7JUMHnsSrbgbm60v6fk5ebAWNdrX+nsmcn2Y78+w+QU0k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734265549; c=relaxed/simple;
-	bh=KeOD3KNWOuUH038iG87RRDiwd2G8jPvxj6Ojj9isRjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVl5nTavdaIffYuPc4aiH3yUWn6uCK5a6Bc2UVBhFwxn8C4UPnHcFgQDrpEX35QmFNlMXusXTDv7OjbrTUFpI3o5I+TLMRIMK0mUhz61MiwSD2fd9HLPIz0JxC0ovNMf7NFPGJxSr6vGb06Z7xjvcnGM98jyrrC00Zii5xruXY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LFCMzPLl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FBA2C4CECE;
-	Sun, 15 Dec 2024 12:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734265549;
-	bh=KeOD3KNWOuUH038iG87RRDiwd2G8jPvxj6Ojj9isRjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LFCMzPLlSGq3cXbaKzaIADY7zM4/V0Yzq5KX/RJH0D059aW+paCYrO2dM0u+y7eSG
-	 e1fOFxga6xYxIOD4TOH/IrCWV8/nw7cSm57I9AfMHl+R5gkHv0cmhBDgiDSmL3lEwQ
-	 hoqgBDP2cVJ9tgPLfdByh578vSc2fS/77l54VkjM=
-Date: Sun, 15 Dec 2024 13:25:45 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, paulmck@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH v6 15/16] samples: rust: add Rust platform sample driver
-Message-ID: <2024121550-palpitate-exhume-348c@gregkh>
-References: <20241212163357.35934-1-dakr@kernel.org>
- <20241212163357.35934-16-dakr@kernel.org>
+	s=arc-20240116; t=1734265562; c=relaxed/simple;
+	bh=hBCBYksFIyNhxJwJxRKXqjB5K6Spf0NiF3kaZ0z6gZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hAGkJAl5BtguuT5Lv1Qho0xJIjclfbqK7gxxJKRJkXaDNk7WbC6LTQvARVkFHZslmbt1JDK2ljdnMbNuDYeGmCLxeXCTR63uUcJ9V1nGbSx1lyPZdgG4Av73A6lZRupU7GYqT8RUSM/PTD310KOC85tQujYhbSiU9g4r1QZuYw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ML3RFGf/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D7BC4CECE;
+	Sun, 15 Dec 2024 12:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734265562;
+	bh=hBCBYksFIyNhxJwJxRKXqjB5K6Spf0NiF3kaZ0z6gZ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ML3RFGf/JgEAFv3dDlzelPXTh2oN4dXEQfUH402JguQABiaZObjU5aFfyZiUtLoqV
+	 DPRRG1uz3G5kYdB1x8gswhVywmO0jTSuFfLnumoBhxDlYOthZGNlgkp46e1bvy4N/Y
+	 v8Pn8jvfAbgi3iW94Yy6WEw53VnS6dM5xnUWrg8NVXsIDWSysRdQogzrFq6Knd4nqa
+	 fo6oZdIT5aY1qYOGqPOXgM3mloRtR73fHMYFBrAvoHnYTdkDvaTyPJypZIyXlWv910
+	 jtj8iab7oSEeekrKyZy9HLkgNXGOrJgbewXP0DY6cVwHPfu9lxvLnjUrXRYnvMGlx1
+	 QuBq1H9F8Tp7w==
+Date: Sun, 15 Dec 2024 12:25:53 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yasin Lee <yasin.lee.x@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, yasin.lee.x@outlook.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] iio: proximity: hx9023s: Added firmware file parsing
+ functionality
+Message-ID: <20241215122553.60c2caba@jic23-huawei>
+In-Reply-To: <20241210-hx9023s-firmware-20241209-v1-1-8a736691b106@gmail.com>
+References: <20241210-hx9023s-firmware-20241209-v1-1-8a736691b106@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212163357.35934-16-dakr@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 05:33:46PM +0100, Danilo Krummrich wrote:
-> Add a sample Rust platform driver illustrating the usage of the platform
-> bus abstractions.
+On Tue, 10 Dec 2024 12:24:03 +0800
+Yasin Lee <yasin.lee.x@gmail.com> wrote:
+
+> Configuration information is now prioritized from the firmware file.
+> If the firmware file is missing or fails to parse, the driver falls
+> back to using the default configuration list for writing the settings.
 > 
-> This driver probes through either a match of device / driver name or a
-> match within the OF ID table.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+
+Ok.  I guess just reading a load of register values isn't hugely different
+to more complex firmware loads.
+
+Comments inline - in particular please take the time to tidy up
+formatting of your code before posting.
+
+Also why is this +CC linux-hardening, Kees and Gustavo?
+
+They have enough stuff to do without getting patches that seem to have nothing
+to do with hardening!
+
+Jonathan
+
 > ---
->  MAINTAINERS                                  |  1 +
->  drivers/of/unittest-data/tests-platform.dtsi |  5 ++
->  samples/rust/Kconfig                         | 10 ++++
->  samples/rust/Makefile                        |  1 +
->  samples/rust/rust_driver_platform.rs         | 49 ++++++++++++++++++++
->  5 files changed, 66 insertions(+)
->  create mode 100644 samples/rust/rust_driver_platform.rs
+>  drivers/iio/proximity/hx9023s.c | 96 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 89 insertions(+), 7 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fec876068c40..95bd7dc88ad8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7037,6 +7037,7 @@ F:	rust/kernel/device_id.rs
->  F:	rust/kernel/devres.rs
->  F:	rust/kernel/driver.rs
->  F:	rust/kernel/platform.rs
-> +F:	samples/rust/rust_driver_platform.rs
+> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+> index 4021feb7a7ac..6cb1b688bfa9 100644
+> --- a/drivers/iio/proximity/hx9023s.c
+> +++ b/drivers/iio/proximity/hx9023s.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/cleanup.h>
+>  #include <linux/device.h>
+>  #include <linux/errno.h>
+> +#include <linux/firmware.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irqreturn.h>
+> @@ -100,6 +101,17 @@
+>  #define HX9023S_INTERRUPT_MASK GENMASK(9, 0)
+>  #define HX9023S_PROX_DEBOUNCE_MASK GENMASK(3, 0)
 >  
->  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
->  M:	Nishanth Menon <nm@ti.com>
-> diff --git a/drivers/of/unittest-data/tests-platform.dtsi b/drivers/of/unittest-data/tests-platform.dtsi
-> index fa39611071b3..2caaf1c10ee6 100644
-> --- a/drivers/of/unittest-data/tests-platform.dtsi
-> +++ b/drivers/of/unittest-data/tests-platform.dtsi
-> @@ -33,6 +33,11 @@ dev@100 {
->  					reg = <0x100>;
->  				};
->  			};
+> +#define FW_VER_OFFSET 2
+> +#define FW_REG_CNT_OFFSET 3
+> +#define FW_DATA_OFFSET 16
 > +
-> +			test-device@2 {
-> +				compatible = "test,rust-device";
-> +				reg = <0x2>;
-> +			};
->  		};
->  	};
->  };
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index 6d468193cdd8..70126b750426 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -41,6 +41,16 @@ config SAMPLE_RUST_DRIVER_PCI
+> +struct hx9023s_bin {
+> +	u16 reg_count;
+> +	u16 fw_size;
+> +	u8 fw_ver;
+> +	u8 data[] __counted_by(fw_size);
+> +};
+> +
+>  struct hx9023s_ch_data {
+>  	s16 raw; /* Raw Data*/
+>  	s16 lp; /* Low Pass Filter Data*/
+> @@ -998,6 +1010,80 @@ static int hx9023s_id_check(struct iio_dev *indio_dev)
+>  	return 0;
+>  }
 >  
->  	  If unsure, say N.
->  
-> +config SAMPLE_RUST_DRIVER_PLATFORM
-> +	tristate "Platform Driver"
-> +	help
-> +	  This option builds the Rust Platform driver sample.
+> +static int hx9023s_bin_load(struct hx9023s_data *data,
+> +								struct hx9023s_bin *bin)
+> +{
+> +	u8 *cfg_start = bin->data + FW_DATA_OFFSET;
+> +	u8 addr, val;
+> +	u16 i;
+> +	int ret;
 > +
-> +	  To compile this as a module, choose M here:
-> +	  the module will be called rust_driver_platform.
+> +	for (i = 0; i < bin->reg_count; i++) {
+> +		addr = cfg_start[i * 2];
+> +		val = cfg_start[i * 2 + 1];
+> +		ret = regmap_write(data->regmap, addr, val);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
 > +
-> +	  If unsure, say N.
-> +
->  config SAMPLE_RUST_HOSTPROGS
->  	bool "Host programs"
->  	help
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index 2f5b6bdb2fa5..761d13fff018 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -4,6 +4,7 @@ ccflags-y += -I$(src)				# needed for trace events
->  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
-> +obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
->  
->  rust_print-y := rust_print_main.o rust_print_events.o
->  
-> diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-> new file mode 100644
-> index 000000000000..8120609e2940
-> --- /dev/null
-> +++ b/samples/rust/rust_driver_platform.rs
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Rust Platform driver sample.
+> +	return ret;
+return 0;
+Can't get here with anything else.
 
-Nit, I think your employer will want a copyright line on these, but hey,
-I could be wrong!  Your call...
-
-> +use kernel::{c_str, of, platform, prelude::*};
-> +
-> +struct SampleDriver {
-> +    pdev: platform::Device,
 > +}
 > +
-> +struct Info(u32);
-> +
-> +kernel::of_device_table!(
-> +    OF_TABLE,
-> +    MODULE_OF_TABLE,
-> +    <SampleDriver as platform::Driver>::IdInfo,
-> +    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
-> +);
-> +
-> +impl platform::Driver for SampleDriver {
-> +    type IdInfo = Info;
-> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-> +
-> +    fn probe(pdev: &mut platform::Device, info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
-> +        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-> +
-> +        if let Some(info) = info {
-> +            dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
-> +        }
-> +
-> +        let drvdata = KBox::new(Self { pdev: pdev.clone() }, GFP_KERNEL)?;
-> +
-> +        Ok(drvdata.into())
-> +    }
-> +}
-> +
-> +impl Drop for SampleDriver {
-> +    fn drop(&mut self) {
-> +        dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver sample.\n");
-> +    }
-> +}
-> +
-> +kernel::module_platform_driver! {
-> +    type: SampleDriver,
-> +    name: "rust_driver_platform",
-> +    author: "Danilo Krummrich",
-> +    description: "Rust Platform driver",
-> +    license: "GPL v2",
-> +}
+> +static int hx9023s_send_cfg(const struct firmware *fw,
+> +								struct hx9023s_data *data)
 
-That is almost too simple.  Seriously nice work, let's wait a few days
-for some others to review the series and I'll be glad to apply it to my
-tree!
 
-greg k-h
+Fix all your indenting to match kernel style.
+
+> +{
+> +	if (!fw)
+
+You can't get to this call below with out fw so drop this check.
+
+> +		return -EINVAL;
+> +
+> +	struct hx9023s_bin *bin __free(kfree) =
+> +		kzalloc(fw->size + sizeof(*bin), GFP_KERNEL);
+> +	if (!bin)
+> +		return -ENOMEM;
+> +
+> +	memcpy(bin->data, fw->data, fw->size);
+> +	release_firmware(fw);
+> +
+> +	bin->fw_size = fw->size;
+> +	bin->fw_ver = bin->data[FW_VER_OFFSET];
+> +	bin->reg_count = get_unaligned_le16(bin->data + FW_REG_CNT_OFFSET);
+> +
+> +	return hx9023s_bin_load(data, bin);
+> +}
+> +
+> +static void hx9023s_cfg_update(const struct firmware *fw, void *context)
+> +{
+> +	struct hx9023s_data *data = context;
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +	int ret;
+> +
+> +	if (!fw || !fw->data) {
+> +		dev_warn(dev, "No firmware\n");
+> +		goto no_fw;
+> +	}
+> +
+> +	ret = hx9023s_send_cfg(fw, data);
+> +	if (ret)
+If this fails, we want to notify the user.  The firmware loaded
+but we were unable to use it for some reasons.
+
+> +		goto no_fw;
+> +
+> +	ret = regcache_sync(data->regmap);
+> +	if (ret)
+> +		dev_err(dev, "regcache sync failed\n");
+> +
+> +	return;
+> +
+> +no_fw:
+> +	ret = regmap_multi_reg_write(data->regmap, hx9023s_reg_init_list,
+> +								ARRAY_SIZE(hx9023s_reg_init_list));
+> +	if (ret) {
+> +		dev_err(dev, "Error loading default configuration\n");
+> +		return;
+> +	}
+> +
+> +	ret = regcache_sync(data->regmap);
+> +	if (ret)
+> +		dev_err(dev, "regcache sync failed\n");
+> +}
+> +
+>  static int hx9023s_probe(struct i2c_client *client)
+>  {
+>  	struct device *dev = &client->dev;
+> @@ -1036,18 +1122,14 @@ static int hx9023s_probe(struct i2c_client *client)
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  	i2c_set_clientdata(client, indio_dev);
+>  
+> -	ret = regmap_multi_reg_write(data->regmap, hx9023s_reg_init_list,
+> -				     ARRAY_SIZE(hx9023s_reg_init_list));
+> -	if (ret)
+> -		return dev_err_probe(dev, ret, "device init failed\n");
+> -
+>  	ret = hx9023s_ch_cfg(data);
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "channel config failed\n");
+>  
+> -	ret = regcache_sync(data->regmap);
+
+> +	ret = request_firmware_nowait(THIS_MODULE, true, "hx9023s.bin",
+> +						dev, GFP_KERNEL, data, hx9023s_cfg_update);
+
+Indent dev under T of the THIS_MODULE
+
+
+>  	if (ret)
+> -		return dev_err_probe(dev, ret, "regcache sync failed\n");
+> +		return dev_err_probe(dev, ret, "reg config failed\n");
+>  
+>  	if (client->irq) {
+>  		ret = devm_request_threaded_irq(dev, client->irq,
+> 
+> ---
+> base-commit: 8d4d26450d71289a35ff9e847675fd9c718798b8
+> change-id: 20241209-hx9023s-firmware-20241209-47411e8cda0b
+> 
+> Best regards,
+
 
