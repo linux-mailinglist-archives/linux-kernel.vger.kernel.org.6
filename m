@@ -1,180 +1,219 @@
-Return-Path: <linux-kernel+bounces-446312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8649F2272
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:58:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3059F2276
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3EAB7A0F6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752B7165D87
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 07:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC9418E0E;
-	Sun, 15 Dec 2024 06:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272B71946B;
+	Sun, 15 Dec 2024 07:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOTCF9fK"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Okojbzrd"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB536124;
-	Sun, 15 Dec 2024 06:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F812F5E
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 07:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734245883; cv=none; b=bS4ujgV0z4RvMPep3bB1Fes76TorRIf5OggJiVsOgQA8nnBvzpdOhEOhMHaK+nkWSE2qskIR8Zkplfe2w+82tBRaJrUUfPrjsQrbuNV07UmX0hwwZFdpu7AauvcybdZ0211FtYrtoqtzDpnl0dDQDdpNZc1sSmwO0WhpYgf1Rhs=
+	t=1734247194; cv=none; b=kGJjmP56yyXUa4jH3NVQJmX4JFaWZ2UFNtIBiLYIE0ybMyw/orcL9F7mU93TpNeierFMt8be/GhptIh4ROO5LDkPasVlY0jHxZ8gi7QGU4d+leQwEsjJy8Nzi94GIyrcOe3JzIB6FolBJvHY2nCECmDHFAZF1Nib05VmlBZjFFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734245883; c=relaxed/simple;
-	bh=2OQZzP6BRxlJYJzS8PsQUtm8TeLwGOvv+YfaY6raTQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=slKamIyUHvJfQg2Rywo+7wIxEXvR48hoOHCUhzYDyLACvk4Pz5p3ci0XatKRnfJ1E4iDXJsFqUo0eOX53y6vvEyq3wCMWxfAIfdCWDlB8ClBMN56Ove6Hwk1RAp+54xq5xZBGlyGnT6fx5gynbJ0VPAaqKQIliaO6ZCPjmu5BvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOTCF9fK; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e39f43344c5so2344224276.1;
-        Sat, 14 Dec 2024 22:58:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734245881; x=1734850681; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IQu56XW3Qsw5N6RW3n2l+4Gl0SaTByF3QhLogoOv0F8=;
-        b=JOTCF9fKcEOYZ32mfaGFIH7+sOXFkhGQioReUS5bL7GCGZF+FXyhISKPOlCk7F7RaQ
-         WQ/yxi3f0kV+Pgel5+8jD8dmruuz+mVWV4oogzmZwEVOExkBcsL3bJw2O19pIK/jl3PY
-         EpTwELptBURrAYSfZZF324Ly50oWJ3K1h4vnrynvrR9xS/6ZSJ5v3U0n+N80/BDPcLbo
-         FgpmTGunviOz3R5IN/8G4LyuvqFepBlaHxokwVrg1rAUr3iwqwJ7+iUsI0NTdQhA1QD6
-         C3dviqNUi/yMPmI2EjCuxZBUOpjNlX2dMc6aus6uEfl4k7Vjlc+M0MEoYobs3+u3RQzG
-         ApmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734245881; x=1734850681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IQu56XW3Qsw5N6RW3n2l+4Gl0SaTByF3QhLogoOv0F8=;
-        b=mqn635AIBVDv8G4FlY4hKzVoc0e18y0ahLd8N9ZvUIdteSA0tk2TlrDCfGX73f3JtB
-         UQnc1ptgk8kxbmkNPgPygUBe/rlmthb8meTMq9BVzyS2hR/wJwICrknipLGeUYc7uUi8
-         +q2GrU9h1QiDnVrnLcUCqNDNCAd6BLandbFgcGjjd0nb4CRxQpE7vnSN7AaMJpL8eL86
-         UuWrG85joVAO0uYtHjMtiZSPas0X1WtZuel0+fT6jl27Ze9aPff0rISXB7EuPIhgAhWv
-         k1L3XVpH6SXWDUFMT1w+wEtio2s+dYvXu3U5kMU98bUywtdajymsbbeGJTFwWtSyRXaX
-         yzPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXI3zMxXhIcCd5YBxGLUTIK6IG9Nq0wTIOkDgqnJYMZtDnd1XE/7NZlZT4hmHgdbnhycomJdJCykU3QgUo=@vger.kernel.org, AJvYcCXrJXRdX/lcT4hoh4grtp/G0J1cGkxXmZCbINR3Hn609OrWm8x/lE1acrUNUbrn4XQn87uTlPYu4inxqPDE/HKR8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwExIKQi4alYAif4kkpreJ9vLzxXRC1G2T6q9sfaT+KzIP6shV
-	b5Zx94lr9hPCL38jR3/8lNJJJQ2um0a97f679auYhCU4kl8ejnayc7hd4ZUAQxeuIDXm8RQXRk2
-	wlXMYdbOFCoo/csp65obJ/guVNEA=
-X-Gm-Gg: ASbGnct98MOEzInu9tiN7nFdvANdNMbu2Inzkwgb2j0uogRG/FS2rHysL+vhw/3v2MG
-	VhKp8S8toefVOeJKnIz2daHgF2/UMDw1YQoWc
-X-Google-Smtp-Source: AGHT+IGDbk6ZDT+lS4COZTbrFJ3E1SI1tPL361VV3BBfCYfnXlofaMeqIbGEmW9Ohwc9LArDwzQrKGfDfQqBiPtLleE=
-X-Received: by 2002:a05:6902:1b09:b0:e39:772b:4bae with SMTP id
- 3f1490d57ef6-e4348d24c16mr6620973276.6.1734245881206; Sat, 14 Dec 2024
- 22:58:01 -0800 (PST)
+	s=arc-20240116; t=1734247194; c=relaxed/simple;
+	bh=GmeB2Nnt0p/0wasYv284RQ20U5wr2dFwZ1HyXbGq3cw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=AWUk7CEOZfOvtfzz0KUSOOTpsCJnDe1nAV0MzxVi/TKyfPbwvzag2Fq1Uc8RtKR3avkzcA184WtiMG74AlUzpf1pjhc5mHArkwZiQzDXpB2rAkgt6Qv4l6E7fC11fS6A5RydxJ/Yz/zaD22Yh2Gofp6Rc1BAL9ITMnE/rJ8dIr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Okojbzrd; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=bWKhjWo4ZcyICulU1Fa0XHjSXwdydYn+lbDyutrgMcM=; b=Okojbzrd8P4Inemojyydw3prVP
+	+rd3xmGU1YXobqoWpgYQu3LrVqbr0eS6LwGVpRZihpDCaU+ZrUn0JlDjl4gBKNHo+t2+ZdPpF3TJh
+	f/nIA5y9VJk3vK6/qjaAKjILUACrVfAPcsZ1DNSuuzUmEiqojPHOi+cptxuE3551vhuEnbEnh4jU1
+	liNcQqQ8GNCIOl70jIhA13wXzfyLDdB/ZbZb4lfvSk+4HOHa5ya4r6EYzph1dCzRK2b4gYG7Bj3Qx
+	blo6iTRBut7bIpG1Y+W7U6NlGUty2D6cOiuT7fv2Dr6xFCBnGfjGNUb/YPom+Cw4sVKlszJZXD+Z7
+	8+wGPJsQ==;
+Received: from [2001:8b0:10b:5:17ff:680f:f1d1:5aaa] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMiuU-00000004djX-3AvV;
+	Sun, 15 Dec 2024 07:19:29 +0000
+Date: Sun, 15 Dec 2024 07:19:29 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>
+CC: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_07/20=5D_x86/kexec=3A_Invoke_copy_?=
+ =?US-ASCII?Q?of_relocate=5Fkernel=28=29_instead_of_the_original?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241214230818.GA677337@ax162>
+References: <20241205153343.3275139-1-dwmw2@infradead.org> <20241205153343.3275139-8-dwmw2@infradead.org> <20241214230818.GA677337@ax162>
+Message-ID: <9F682018-58B5-4018-9D39-29AD07153A13@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211224927.968483-1-howardchu95@gmail.com>
- <20241211224927.968483-2-howardchu95@gmail.com> <Z1zUW5itJzHI89gP@google.com>
-In-Reply-To: <Z1zUW5itJzHI89gP@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Sat, 14 Dec 2024 22:57:50 -0800
-Message-ID: <CAH0uvojcL+DL6WLJA1VhzysxeRY0=P9hAYm7Gng-skaoKLPHKg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] perf trace: Add tests for BTF general augmentation
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello Namhyung,
+On 14 December 2024 23:08:18 GMT, Nathan Chancellor <nathan@kernel=2Eorg> w=
+rote:
+>Hi David,
+>
+>On Thu, Dec 05, 2024 at 03:05:13PM +0000, David Woodhouse wrote:
+>> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>>=20
+>> This currently calls set_memory_x() from machine_kexec_prepare() just
+>> like the 32-bit version does=2E That's actually a bit earlier than I'd
+>> like, as it leaves the page RWX all the time the image is even *loaded*=
+=2E
+>>=20
+>> Subsequent commits will eliminate all the writes to the page between th=
+e
+>> point it's marked executable in machine_kexec_prepare() the time that
+>> relocate_kernel() is running and has switched to the identmap %cr3, so
+>> that it can be ROX=2E But that can't happen until it's moved to the =2E=
+data
+>> section of the kernel, and *that* can't happen until we start executing
+>> the copy instead of executing it in place in the kernel =2Etext=2E So b=
+reak
+>> the circular dependency in those commits by letting it be RWX for now=
+=2E
+>>=20
+>> Signed-off-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>> ---
+>>  arch/x86/kernel/machine_kexec_64=2Ec   | 30 ++++++++++++++++++++++----=
+--
+>>  arch/x86/kernel/relocate_kernel_64=2ES |  5 ++++-
+>>  2 files changed, 28 insertions(+), 7 deletions(-)
+>>=20
+>> diff --git a/arch/x86/kernel/machine_kexec_64=2Ec b/arch/x86/kernel/mac=
+hine_kexec_64=2Ec
+>> index 3a4cbac1a0c6=2E=2E9567347f7a9b 100644
+>> --- a/arch/x86/kernel/machine_kexec_64=2Ec
+>> +++ b/arch/x86/kernel/machine_kexec_64=2Ec
+>=2E=2E=2E
+>>  void machine_kexec(struct kimage *image)
+>>  {
+>> +	unsigned long (*relocate_kernel_ptr)(unsigned long indirection_page,
+>> +					     unsigned long page_list,
+>> +					     unsigned long start_address,
+>> +					     unsigned int preserve_context,
+>> +					     unsigned int host_mem_enc_active);
+>>  	unsigned long page_list[PAGES_NR];
+>>  	unsigned int host_mem_enc_active;
+>>  	int save_ftrace_enabled;
+>> @@ -371,6 +387,8 @@ void machine_kexec(struct kimage *image)
+>>  		page_list[PA_SWAP_PAGE] =3D (page_to_pfn(image->swap_page)
+>>  						<< PAGE_SHIFT);
+>> =20
+>> +	relocate_kernel_ptr =3D control_page;
+>> +
+>
+>Because of this change=2E=2E=2E
+>
+>>  	/*
+>>  	 * The segment registers are funny things, they have both a
+>>  	 * visible and an invisible part=2E  Whenever the visible part is
+>> @@ -390,11 +408,11 @@ void machine_kexec(struct kimage *image)
+>>  	native_gdt_invalidate();
+>> =20
+>>  	/* now call it */
+>> -	image->start =3D relocate_kernel((unsigned long)image->head,
+>> -				       (unsigned long)page_list,
+>> -				       image->start,
+>> -				       image->preserve_context,
+>> -				       host_mem_enc_active);
+>> +	image->start =3D relocate_kernel_ptr((unsigned long)image->head,
+>> +					   (unsigned long)page_list,
+>> +					   image->start,
+>> +					   image->preserve_context,
+>> +					   host_mem_enc_active);
+>
+>kexec-ing on a CONFIG_CFI_CLANG kernel crashes and burns:
+>
+>RAX=3D0000000000000018 RBX=3Dff408cf982596000 RCX=3D0000000000000000 RDX=
+=3D000000047fffb280
+>RSI=3Dff6c99a785943d20 RDI=3D000000011e145002 RBP=3Dff6c99a785943d70 RSP=
+=3Dff6c99a785943d10
+>R8 =3D0000000000000000 R9 =3D0000000000000000 R10=3D00000000ab150dc6 R11=
+=3Dff408cf99e139000
+>R12=3D0000000028121969 R13=3D00000000fee1dead R14=3D0000000000000000 R15=
+=3D0000000000000001
+>RIP=3Dffffffff84c9c510 RFL=3D00010086 [--S--P-] CPL=3D0 II=3D0 A20=3D1 SM=
+M=3D0 HLT=3D0
+>ES =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+>CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+>SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+>DS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+>FS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+>GS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+>LDT=3D0000 0000000000000000 ffffffff 00c00000
+>TR =3D0040 fffffe441f360000 00004087 00008b00 DPL=3D0 TSS64-busy
+>GDT=3D     0000000000000000 00000000
+>IDT=3D     0000000000000000 00000000
+>CR0=3D80050033 CR2=3D00007ffde71dbfc0 CR3=3D00000001140b0002 CR4=3D00771e=
+f0
+>DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=
+=3D0000000000000000
+>DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+>EFER=3D0000000000000d01
+>Code=3D83 e1 01 48 8d 74 24 10 41 ba c6 0d 15 ab 45 03 53 f1 74 02 <0f> 0=
+b 41 ff d3 0f 1f 00 48 89 43 18 f6 83 78 02 00 00 02 74 05 e8 16 06 da 00 4=
+4 89 3d 17
+>
+>     a0c: 83 e1 01                      andl    $0x1, %ecx
+>     a0f: 48 8d 74 24 10                leaq    0x10(%rsp), %rsi
+>;   image->start =3D relocate_kernel_ptr((unsigned long)image->head,
+>     a14: 41 ba 67 a6 7c e6             movl    $0xe67ca667, %r10d      #=
+ imm =3D 0xE67CA667
+>     a1a: 45 03 53 f1                   addl    -0xf(%r11), %r10d
+>     a1e: 74 02                         je  0xa22 <machine_kexec+0x1c2>
+>     a20: 0f 0b                         ud2
+>     a22: 2e e8 00 00 00 00             callq   0xa28 <machine_kexec+0x1c=
+8>
+>     a28: 48 89 43 18                   movq    %rax, 0x18(%rbx)
+>
+>I guess this seems somewhat unavoidable because control_page is just a
+>'void *', perhaps machine_kexec() should just be marked as __nocfi? This
+>diff resolves that issue for me=2E
+>
+>Cheers,
+>Nathan
+>
+>diff --git a/arch/x86/kernel/machine_kexec_64=2Ec b/arch/x86/kernel/machi=
+ne_kexec_64=2Ec
+>index 9567347f7a9b=2E=2Ee77110c4bb91 100644
+>--- a/arch/x86/kernel/machine_kexec_64=2Ec
+>+++ b/arch/x86/kernel/machine_kexec_64=2Ec
+>@@ -334,7 +334,7 @@ void machine_kexec_cleanup(struct kimage *image)
+>  * Do not allocate memory (or fail in any way) in machine_kexec()=2E
+>  * We are past the point of no return, committed to rebooting now=2E
+>  */
+>-void machine_kexec(struct kimage *image)
+>+void __nocfi machine_kexec(struct kimage *image)
+> {
+> 	unsigned long (*relocate_kernel_ptr)(unsigned long indirection_page,
+> 					     unsigned long page_list,
 
-On Fri, Dec 13, 2024 at 4:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Howard,
->
-> On Wed, Dec 11, 2024 at 02:49:26PM -0800, Howard Chu wrote:
-> > Currently, we only have perf trace augmentation tests for enum
-> > arguments. This patch adds tests for more general syscall arguments,
-> > such as struct pointers, strings, and buffers.
-> >
-> > These tests utilize the perf config system to configure the perf trace
-> > output, as suggested by Arnaldo Carvalho de Melo <acme@kernel.org>
-> >
-> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > ---
-> >  tools/perf/tests/shell/trace_btf_general.sh | 93 +++++++++++++++++++++
-> >  1 file changed, 93 insertions(+)
-> >  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
-> >
-> > diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/t=
-ests/shell/trace_btf_general.sh
-> > new file mode 100755
-> > index 000000000000..bef07bad42bb
-> > --- /dev/null
-> > +++ b/tools/perf/tests/shell/trace_btf_general.sh
-> > @@ -0,0 +1,93 @@
-> > +#!/bin/bash
-> > +# perf trace BTF general tests
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +err=3D0
-> > +set -e
-> > +
-> > +. "$(dirname $0)"/lib/probe.sh
-> > +
-> > +file1=3D$(mktemp /tmp/file1_XXXX)
-> > +file2=3D$(echo $file1 | sed 's/file1/file2/g')
-> > +
-> > +buffer=3D"buffer content"
-> > +perf_config_tmp=3D$(mktemp /tmp/.perfconfig_XXXXX)
-> > +
-> > +trap cleanup EXIT TERM INT HUP
-> > +
-> > +check_vmlinux() {
-> > +  echo "Checking if vmlinux BTF exists"
-> > +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
->
-> Normally we do
->
->   if [ ! -f /sys/kernel/btf/vmlinux ]
-
-Sure, I'll change the check to this.
-
->
-> > +  then
-> > +    echo "Skipped due to missing vmlinux BTF"
-> > +    err=3D2
->
-> This can be overwritten by trace_test_string.
-
-Oops my bad sorry.
-
->
->
-> > +  fi
-> > +}
-> > +
-> > +trace_test_string() {
-> > +  echo "Testing perf trace's string augmentation"
-> > +  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2=
-} 2>&1 | \
-> > +    grep -q -E "^mv/[0-9]+ renameat(2)?\(.*, \"${file1}\", .*, \"${fil=
-e2}\", .*\) +=3D +[0-9]+$"
->
-> Does this work without BTF support?
-
-Yes, this works without BTF with Arnaldo's patch adding
-sys_enter_renameat2. Before the patch, it wouldn't work because the
-second filename would not be displayed properly. I understand this may
-seem redundant, but now in perf trace all the data is collected
-through the BTF general collector (if BTF is present), so this
-trace_test_string() tests the new code path that uses BTF information
-to pretty-print string arguments, since all data collection goes
-through it.
-
-Thanks,
-Howard
+Thanks=2E Could I have that with a SoB please? I can craft a commit messag=
+e if you need=2E I'll round it up with a couple of other fixups I already h=
+ave in my tree, and send them on=2E
 
