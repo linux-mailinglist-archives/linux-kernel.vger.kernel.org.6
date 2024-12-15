@@ -1,209 +1,279 @@
-Return-Path: <linux-kernel+bounces-446341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624399F2312
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:04:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A059F2313
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEB818860D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BBF18851A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FA1494D8;
-	Sun, 15 Dec 2024 10:04:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F860148FE6;
+	Sun, 15 Dec 2024 10:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/PvvBB+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37BA20322
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D417991
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734257088; cv=none; b=trz59hYAGAjM2jwC+3VTcXD1ckLBFHfYubOO/Cw8BjuofJNKFlVGvizYN+vVDFg92DMbQ5jlcZ3iht4zfejIzT9L9Fy8ZzZM17XovxNlSxIR8YKpDdlhQwrNbq1B+GIlc0t/gpxFsQnNuE9Q5x7vhuwV43Fc2qWEPyt/jbgPKTs=
+	t=1734257414; cv=none; b=VwNswfOWZYF29f81QVkwYan52sRyvXQCH8nKNjZvvCp2/3TDjOnjHIUz16VDUAQrqLWhom/mVUb7ShxTowXMmsQOPAYF5cNbdNmfZyxc0gSJ4zxeNG6W0LW1qjhBBPNBVsjZEYck/ChbFLsceRhbycNcnroYFrXBilD7fe6rtk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734257088; c=relaxed/simple;
-	bh=PqILX2C2DBi1a7/GnAPPm1Mi8+xwz4Wn7O4WQ7XP7AA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BrH5ZQES08aqQYebtd/XMXDvM7H0dn/HLO8tMS05LP4dcvoxSLHAaBl3/RiCj5qncZf9nIxVDOTv8Ild5gzQ8TRWdRXpQVvpGaXCRiQ7Go1PYtDfkZl262e5p5qBeJRZDcSHtiPXkvRMGGVnsVfdVlm3Elm56CS5ftdMBA1Q4QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CBBC4CECE;
-	Sun, 15 Dec 2024 10:04:47 +0000 (UTC)
-Date: Sun, 15 Dec 2024 05:05:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241215050517.050e9d83@gandalf.local.home>
-In-Reply-To: <CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-References: <20241214182138.4e7984a2@batman.local.home>
-	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-	<20241214220403.03a8f5d0@gandalf.local.home>
-	<20241214221212.38cc22c3@gandalf.local.home>
-	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
-	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
-	<20241214233855.46ad80e0@gandalf.local.home>
-	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734257414; c=relaxed/simple;
+	bh=fz9BNa+5ROa0xzJeYdetsOf/XMhNNrbQru4rKXCwQ5U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ajIdO0JLCMKJjiHoMaExCxcThN/N0QD4Sk7IBzn8T+EdPEsIoT192yHyj2z3kzETpj25sjIdrsCmJubtxVvljffAQ3iPAOYZ4thq2TSmvbSmheZVZXws1vyhLyJu75dZW3bej68hpSBTBrhHKjbABiuoR0N0GnvFVfjO75OKzyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O/PvvBB+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g4qR+snC6HtZgH55at3AFXAwWfRBbeTKNcqFpr3lL7o=; b=O/PvvBB+QSLCmq7urEBrUmdPPu
+	EAO/mEODFFALt5aRR4oG8Ayl0/UVeQ+vXXpIzqBGwBN8BCGa2Dj6TG9U1wx3CU/ubsrmKTvladxLw
+	PF9eV5+4bVztmxlaBN5SCfx52RgKV3AleK1fLnjPj/QnKNLBQHLWJZAzqbtRpMA5eXTtRIACeNHwY
+	e3pESAaL7irQrFCj2SiVq5uacbGdJzXiUfTT0khpgXu6pYw8tP4pSRrMKGABmZgVJg16RdP2sbV/T
+	Yuw9AqOhEkl69rgzs2moC5cpXLIiZHl0QGjfM/CU52NsvMOwQS47UFAmw1DvMWVYB4zWKbKFhbSFU
+	MI5ySxrA==;
+Received: from [54.239.6.187] (helo=u09cd745991455d.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMlZW-00000008eVf-2qZ3;
+	Sun, 15 Dec 2024 10:09:59 +0000
+Message-ID: <24d843d2ceb09acdae494ee9a17ec94bf8bb4e4f.camel@infradead.org>
+Subject: Re:  [PATCH v5 07/20] x86/kexec: Invoke copy of relocate_kernel()
+ instead of the original
+From: David Woodhouse <dwmw2@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>,  "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, Dave Young
+ <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Date: Sun, 15 Dec 2024 10:09:57 +0000
+In-Reply-To: <20241214230818.GA677337@ax162>
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+	 <20241205153343.3275139-8-dwmw2@infradead.org>
+	 <20241214230818.GA677337@ax162>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-S+evPgq2z/6BpNaFnBAi"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, 14 Dec 2024 21:19:01 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-I'll start by saying that I'm fine with ripping this out, but I'm going to
-expect seeing bugs in trace events where people just reference strings in
-the TP_printk() instead of using the assign_str() logic. I use to get
-reports of this a few times a year, and have not had one since this code
-was added back in 2021. That's over 3 years of this bug going away in
-mainline.
+--=-S+evPgq2z/6BpNaFnBAi
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The code is literally making assumptions about how va_list arguments
-> even work. It calls trace_seq_printf() and expects that to keep the
-> "va_list" argument in sync as it walks the argument list.
+On Sat, 2024-12-14 at 16:08 -0700, Nathan Chancellor wrote:
+>=20
+> I guess this seems somewhat unavoidable because control_page is just a
+> 'void *', perhaps machine_kexec() should just be marked as __nocfi? This
+> diff resolves that issue for me.
 
-I did my research on this before adding it. With the eventfs, I was very
-open about not understanding the file system logic and asked for help,
-which I received very little on. I had to go by tribal knowledge.
+The patch below seems to work too. I already wanted to deal with the
+case where relocate_kernel isn't at the start of the page, so it forces
+me to do that.
 
-> 
-> The code even seems to *know* how hacky and wrong it is, because it
-> does a RUNTIME CHECK for this in test_can_verify(). But that really is
-> just testing one random implementation. The whole approach
-> fundamnetally doesn't work on some architectures at all, and on others
-> it would be broken by seq_buf_vprintf() (or vsprintf) doing a
-> va_copy() and using an internal version or any number of other things.
-> 
-> So the code IS WRONG.
+For some reason it also started complaining
+vmlinux.o: warning: objtool: relocate_kernel+0x6a: return with modified sta=
+ck frame
+... which is easy to fix just by turning it into a jmp *%rsi; I have no
+idea why it was done with a ret like that in the first place.
 
-As I said, I did my homework on this and knew exactly what it was doing. I
-did my research on va_list and it is possible to do this if the va_list is a
-reference and not a copy (as my comment states), which is what the verify
-was checking.
+I don't know why it puts 16 bytes of NOPs between __reloc_start and
+__cfi_relocate_kernel (in addition to the 16 before relocate_kernel
+itself), and space is *fairly* tight in the control page, but it's
+tolerable.
 
-> 
-> It's wrong at a fundamental level. The thing where it modifies
-> iter->fmt in place is just a detail in the bigger picture of that
-> function being completely broken.
+To make the CFI check actually give useful output if it triggers, I'm
+tempted to do the IDT/GDT invalidation relocate_kernel itself, instead
+of before the call.
 
-BTW, this code had only two minor bugs in it since it was created, and the
-last one was on March 2022. The bug here, was simply that the temp buffer
-it used could also be passed into the function. That would break any
-algorithm. The logic itself was not the bug at all. One solution I was
-thinking of doing was to introduce a second temp buffer to use, and not
-change this code at all.
 
-> 
-> It's literally hacking together a really *bad* version of KASAN
-> checking, re-implementing 'vsnprintf()' *badly* by trying to use the
-> real vsnprintf() for the heavy lifting and literally hacking around
-> corner cases. And when I say that the "va_list" handling is buggy, I'm
-> *not* asking you to try to fix it. The va_list bug is just another
-> symptom of the deeper problem in that thing.
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocat=
+e_kernel_64.S
+index ccb297765e08..e6befd11fee4 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -6,6 +6,7 @@
+=20
+ #include <linux/linkage.h>
+ #include <linux/stringify.h>
++#include <linux/cfi_types.h>
+ #include <asm/alternative.h>
+ #include <asm/page_types.h>
+ #include <asm/kexec.h>
+@@ -61,7 +62,10 @@ SYM_DATA_END(kexec_debug_idt)
+=20
+ 	.section .text.relocate_kernel,"ax";
+ 	.code64
+-SYM_CODE_START_NOALIGN(relocate_kernel)
++__reloc_start:
++	ANNOTATE_NOENDBR
++
++SYM_TYPED_FUNC_START(relocate_kernel)
+ 	UNWIND_HINT_END_OF_STACK
+ 	ANNOTATE_NOENDBR
+ 	/*
+@@ -115,10 +119,9 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+ 	lea	PAGE_SIZE(%rsi), %rsp
+=20
+ 	/* jump to identity mapped page */
+-	addq	$(identity_mapped - relocate_kernel), %rsi
+-	pushq	%rsi
+-	ANNOTATE_UNRET_SAFE
+-	ret
++	addq	$(identity_mapped - __reloc_start), %rsi
++	ANNOTATE_RETPOLINE_SAFE
++	jmp	*%rsi
+ 	int3
+ SYM_CODE_END(relocate_kernel)
+=20
+@@ -263,7 +266,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+=20
+ 	/* get the re-entry point of the peer system */
+ 	popq	%rbp
+-	leaq	relocate_kernel(%rip), %r8
++	leaq	__reloc_start(%rip), %r8
+ 	movq	kexec_pa_swap_page(%rip), %r10
+ 	movq	pa_backup_pages_map(%rip), %rdi
+ 	movq	kexec_pa_table_page(%rip), %rax
+@@ -272,7 +275,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+ 	movq	$1, %r11	/* Ensure preserve_context flag is set */
+ 	call	swap_pages
+ 	movq	kexec_va_control_page(%rip), %rax
+-	addq	$(virtual_mapped - relocate_kernel), %rax
++	addq	$(virtual_mapped - __reloc_start), %rax
+ 	pushq	%rax
+ 	ANNOTATE_UNRET_SAFE
+ 	ret
 
-What va_list bug? That logic didn't break. The breakage came here:
 
-		strncpy(iter->fmt, p, i);
-		iter->fmt[i] = '\0';
+--=-S+evPgq2z/6BpNaFnBAi
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Where it didn't expect p to be pointing to iter->fmt! Because it expected
-the fmt parameter to point to the "const char * printk_fmt" of the trace
-event, and not be pointing to the iter->fmt itself. My fault for not
-noticing in the call in trace_event_printf():
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjE1MTAwOTU3WjAvBgkqhkiG9w0BCQQxIgQg3AElYPAd
+AasbBdmXeAOfGnjo8wO427fwl83zJkKzVPEwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgACd/n0ThArzOvquvooG93CL1eGxbli1wEV
+D+EN9Egzfr4HPH0L/3mp6LFKRfYc9xVHgaO2Km2qnAnIc7aYzfTwN1CBomfHT3eXSTA7FuHJCzJd
+NOuS4aqWFxreU6YKx/QZqjjMaQlI3MbXR1e6Ynzp3wnmoIgNMFI7L4KLw43b1DY268knw//Nobhe
+uQjA+wFDQN65864bbIASbI10E051mwxiOpfngQtrOn4wqJoD4ImbOEnYiuwx5RKBOPVNO5VC5r4H
+s20tbZINvD8EzY++6atJOFA/wq4E+gjAcfF+4W9s/kBvt3vKgtZIDmiRJd4a4jS0oC17AdoyDKwW
+pxPQ0sDK16okjTSyjbLkZYEnUhD6u2zp2H34/P8C+hP+J6aJbOYN6rU9YhWRQWcgoQNdLu/NttXx
+xryKeXVnk9rMmhWZug/3kMRLFO7IJwbZS0vUXis0ikGbVGzQSTMYY/xA8KasciZ7I067oHmxTLKB
+BSCQr4ep2dJmN0AU6KWPY/9E+Z0CAjvji3kus1ywafHJv47d2u90E0JqFrzxCKuDl5l1evONRlAt
+I+IXJ5JEhtu0GI/H4gdzhPqq/WwzHoxYUXq8WucMrUc5LLtBaVcXbQMBw33O4+lIbMnm+Xb/hV/Y
+EUPeGYkyt+d4qg2bV2RohGAMrJ2xecoFfebcdxRDgwAAAAAAAA==
 
-	trace_check_vprintf(iter, trace_event_format(iter, fmt), ap);
 
-that trace_event_format() can return iter->fmt if the hash-ptr option is
-disabled.
-
-p was pointing into iter->fmt because iter->fmt was passed into the
-function as the "fmt" parameter that p was assigned to.
-
-The fmt parameter started with "comm=%s" and in this case iter->fmt = fmt
-and p was iterating it.
-
-When the fmt had:  "comm=%s pid=%d"
-
-We get to i = 5 and since fmt = iter->fmt, p = fmt, that means p = iter->fmt!
-
-The iter->fmt[i] = '\0'; Just changed p[i] to be '\0'. That was the bug. It
-had nothing to do with the va_list logic.
-
-		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
-
-Would copy the "comm=" into the seq buffer, but then the code after that
-was broken, as p[i] == '\0'.
-
-			strncpy(iter->fmt, p + i, j + 1);
-			iter->fmt[j+1] = '\0';
-
-Which just copied an empty string to iter->fmt, so when we do:
-
-			trace_seq_printf(&iter->seq, iter->fmt, str);
-
-It also copied an empty string into the seq buffer.
-
- The result was:
-
-  "comm= pid=1234"
-
-> 
-> This is why I compared it to the tracefs situation. It has exactly the
-> same pattern: fundamentally misusing core kernel infrastructure,
-> hacking around it to get something that "works", but that is wrong on
-> a fundamental level, and then adding more hacks on top when some new
-> issue rears its ugly head.
-> 
-> I absolutely believe that coimmit ff54c8dc3f7a fixes some behavior.
-> But I'm looking at it and going "this code is not salvageable". All
-> you do is add more bandaids on top.
-
-That commit fixes the iter->fmt being passed into the function by making
-the assumption that p will iterate over the temp buffer. It has nothing to
-do with the current code that hasn't seen a bug since 2022, and has stopped
-constant "%s" bugs since then.
-
-I could have replace ff54c8dc3f7a with using another temp buffer instead
-and not change the logic of trace_check_vprintk() at all. Hence, the
-va_list logic wasn't the bug.
-
-> 
-> Do it right. And honestly, "right" in this case is almost certainly
-> "get rid of trace_check_vprintf() entirely".
-
-I can get rid of it, but I highly expect to see the "%s" bug start showing
-up within a few months again.
-
-> 
-> The fact that you basically disable the thing already with a static
-> branch when 'va_list" doesn't work the way you want is a BIG sign.
-
-It gets disabled because I know there were two implementations of va_list.
-One that used a pass by reference and another that used a copy. This
-wouldn't work with the copy (32bit x86 does that) but does work with pass
-by reference (64 bit x86 does that). And the fact that the "%s" bug stopped
-showing up after I implemented it, and I was even asked by someone about
-the WARN_ON() triggering (but the bug never made it into your tree), I know
-that it was the reason the bug stopped showing up.
-
-> 
-> Just disable it unconditionally.
-> 
-
-I can do that, but I'm not looking forward to seeing random crashes in the
-trace event code again :-(
-
-Honestly, I did not like this code when I wrote it, but I have no idea how
-to stop the "%s" bug from happening before it gets out to production. This
-worked. Do you have any suggestions for alternatives?
-
--- Steve
+--=-S+evPgq2z/6BpNaFnBAi--
 
