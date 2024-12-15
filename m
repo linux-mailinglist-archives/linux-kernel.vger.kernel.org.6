@@ -1,81 +1,86 @@
-Return-Path: <linux-kernel+bounces-446278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81F29F2222
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:40:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F17B9F2223
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7332165BB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47DE1165CEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FAE8C1F;
-	Sun, 15 Dec 2024 03:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE3AC8CE;
+	Sun, 15 Dec 2024 04:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="GqLWPWHn"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpSrJb1P"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146F928FD
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55668F40
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734233993; cv=none; b=FayM71psluGXxA3XoP6Apt2L5dejFAiPOaJnOF7vT+cEdQwQsS4IOslKW1nij48JxPDPO1fUiHtFvlKa4KSW9cTbPWMFCSFTog1WlDRPkVEVLgMDJWObOXIpWiQyyTFD9v79JIpB4sCDh5MmY8cYbINDgfgiREwXUuaXOgcl3kA=
+	t=1734235232; cv=none; b=dsPtfWYIHEvgJl7sIdYVtzVRDpv3DIK0ZYExNM0+sxz8xCZz6Uc51/U2WhbAqnbZAR/mvZn3yH9OLbRLh5lEsT1m6DhVGMy/nJuV5QL9ZJNbBdhxrPrBKKLp6xoLikFuflrsCPOaDZ6GKIFzak44JcfFdixUB73KhrvavU6LUtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734233993; c=relaxed/simple;
-	bh=+RzpPYbczDs0ceaSnAvTSb5HGFXTdODXv8bzFxTnbho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JPjQfPI7HyxzxNrCo8VcmvZNRLo235/tYF8XSXPG2zG2rHNUHjSLTWrXBTIG9h48u6Rw7/TZbRZYmEISXC4AIzQBhuWKgCOcvPIUvycUG6nn5KiXVVLj7jqcQOE/AyT7gLYXA95MHrrViSp7p71t16OkWgCqdLoaIFrE+fJwHHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=GqLWPWHn; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso3214456a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 19:39:50 -0800 (PST)
+	s=arc-20240116; t=1734235232; c=relaxed/simple;
+	bh=AhHs8wDXptTDXqO88AynHTjfp9xWvm0BZ1ABm1nrtek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tb2HCnDuDwyaJIJiLZ2iD2qV5ixCpUn9qnE5C2xrVnBE39wXRfsU0s+A/IgGxIHVvyn+IX/REzi6t58UKPyoPhVTxW8Qzm2xTcj+68eD8W/NEKehotIOJqsFzG1R+7dMmKYRdKoUNNFBuqc6i22f9NMKRY4DfOiEFWGMwbMelGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpSrJb1P; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b15d7b7a32so320290685a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 20:00:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1734233990; x=1734838790; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734235230; x=1734840030; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QucYTxoNFIQoZFl7iunkrbcE/LOYPuff6g2uMFrfQRU=;
-        b=GqLWPWHnahoe+ZQw8934fbMGXdQUxK5d0RrbDyWEqb89F4uiYstVYCCqBaA3w4vkOy
-         k9KK7D6T6RUV1PIXY+KZXX0oq5U8Inq4MvBcGxSilJgiOMVwDdLhd8BDN1J1FBWEY0EU
-         XLQ2vO+HSNv8LHwNEvPyA2Czo+b91UrsUGrUMa8Jj7Ie6UuDeQ5XzIH/PsXF4L8PDGUC
-         SSngDyToHl6x7hCRR0OxtMcSRxFUXGtRttGvZNuYPK31Tvufkgo15ELos5R8vJeBFCZ0
-         KX2GZRrlj8xSkHdPfqwWDZ0NlROrI/FHc0oGrnaBo5umKk+JkMquUbute9/zbI+r/qVE
-         UC9A==
+        bh=/9GqpNH/QUF1rjt8cgarwiZ2r7vZlmB7WaQfeZrmbY8=;
+        b=cpSrJb1P5xre3gcOE8fZWK6GoAw7OJF6zDr5sqCmngZGwGmtUXIu6hgVJhALSDzrKh
+         +qA7aw+/5Lb2fqbRFNYURsmRguXwwWVuxM/OEPJ2fZOaeOyczZj21YZ5Q4XQafDqETAd
+         EG54NixqAPliZKZ/AXFjOM151R1C4+mHwiBT3vD750OdJ5qWH6+yCRibmrFusdi91YBx
+         2p6a8W5E2964HhpIX3cRGf68YrVjvEpVTX3lVcZuklu/U2v3h5yy8Em9pBc8zQTYNVK5
+         9ZBcbcD07cSK9KmB73mknvKwSn80b8hT2BwZe7Qy4WSFNdzcTZyw1JpOcdvZJGPk6KnE
+         7MkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734233990; x=1734838790;
+        d=1e100.net; s=20230601; t=1734235230; x=1734840030;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QucYTxoNFIQoZFl7iunkrbcE/LOYPuff6g2uMFrfQRU=;
-        b=rHg8z8VhyAdmb1O51wJ4T/9q2Aw4pgdQ8SW4IpSfBScwLKhbxoFQRkf6gNaQ+VTPMJ
-         9Tx/WLrEakW/FgsNsH8/T3w3tl8oZr/48SGMcZ+OSLT64qVxslVcwjNvEba+aufxY31V
-         pPbpqTsYPZ4AfdU2q4vouGKwR+TZH2sw1klLuHt2DkxuOjQL7MdV18+E/9wKf6MsYg6N
-         PZvnsjmW9Z4d229tsQyLhFboq8yC3eJ5IBnXahH8cDtVkJh3mmSKmDtYeo2FvKwvXD41
-         1VGCqumSDG5E4tmOPzTE8Mq88eOywHrq6X4nX21EFnVc7TCFxU9g3tNXgI4xK+f/EAQu
-         tngg==
-X-Gm-Message-State: AOJu0YzSODA0iQfBOGxexZZK80YoWNGNIhaDFUTudrHdDRKZQQnr6G9H
-	p3vQdHDLvs2PC328JRRZwaxPuGvR40Er0uQtkrJVS6Mf6nuFdT3+boKQmgolbPY=
-X-Gm-Gg: ASbGncvR0gvpVfLfJ9n7v5ge0mMtoyxSuIOkqPAquTk+LjW5/aWXD7bMjoY8jRn8F88
-	Em8S/HX0LPsJf5seFtBO+PDywNZZwFyjqQbZFIfTdzRI19eX/ZK/l8xH6d1p1P90MWI7LdHKB7C
-	7ADT7Dw2OdCOsDnF365pxAfHnwhTt8z4Sgg2yGXIIy1ADHhnqq+CMRvHuZjX9NZJFETRnewhLTR
-	VyUWXs7oyyStIjJlK17Ap8npLJpfryZYnjzFnlw+1DWgPKKyeQVkEP13VeTzuvdOPIPhcH13dwQ
-	ZCUdwNtSLcjtZtvpLmQxqO/kPjqhsJOTIH6KZnaXIxY=
-X-Google-Smtp-Source: AGHT+IFcJ4yTXJ05VOqtqIZZVF+mnl1lvAx8yif3hGGbdWc6aJQ44AO8qrMvcQNgRZXUgodNORmx0A==
-X-Received: by 2002:a17:90b:3912:b0:2ee:463d:8e8d with SMTP id 98e67ed59e1d1-2f13ac560dfmr19613008a91.14.1734233990279;
-        Sat, 14 Dec 2024 19:39:50 -0800 (PST)
-Received: from localhost.localdomain (133-32-227-190.east.xps.vectant.ne.jp. [133.32.227.190])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1ebb737sm2475450a91.27.2024.12.14.19.39.48
+        bh=/9GqpNH/QUF1rjt8cgarwiZ2r7vZlmB7WaQfeZrmbY8=;
+        b=oQcvCVoMuHzJt2A9PDIh2+dHJWNrVuD2/3uBrysWUHnIypOT1moCXS6ZQRzNjrQ1+X
+         KruiWBw2vYy5TeMyDe2KEosNBxGAXCrqjZcEf8d1liRmGf8Gh9KBOLWnmDLVZHIRvJwk
+         r3Ly3d1f0SYVkn6Clu/7GE4RE/kANttl7PnTYCjZEyUPR/m/DB39aKxBWGoQkp7VqHgL
+         QiN1N5FbG3CFBGhpVpfl9w3FnvTunemVrR7xcvzXtC9aJ30aVl1bTDgMhTLQmMXfBs2w
+         uTygDWDQ+ow+7xxZgWbdec08JGE8sshiE28+L6Jx236aheJ8Whqq3UoVY4TL9T5E1e4S
+         /anA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEZ90QUryTPEYFJOw+mUPJJ/r+07wGCd18PNnE7PA8cvrz58YSWR+DL8uT1k16f6cVWQ4IOB8ChNdMJgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTFSRIgjM9sVhlIwlmNF6lWlefez3rLcozKsgO5o/eFTaKqQul
+	8dMXngsBavVTUqraslI4wFcWWxLVaXMkIW7aidsiMoVr4R3XALd+
+X-Gm-Gg: ASbGncseKKH6jpnDV2v1kvf6C2uT1X4csuR2k3xEmt+9gVdj3J39meJ59X7uCtZyE2b
+	m+bXJGiymyISdvtfEXK1b5TI3qeFVU2rFbw58U2jSQ6JMjs1q5Y6YQkXPxr/1aGQnvAw4wZmajT
+	A3RyqZq6BBzT/iZDd9Do/+CcF+TA1pozp/YuXJrZ9RsrTVuk1ZT7bC3jA7BLxn0OB0+4qnMv1CA
+	oMGaE+e1K5Xf2u2u90QYzIIfEGaUid9E+tF/axqpS5bc8CwLD+aiNNVDU5BmmfonJkH/piw37vK
+	3rWwsmUQ3RwncFwIfLZ2dKJCrU3kAg27z+Y=
+X-Google-Smtp-Source: AGHT+IHxa9F8PDQJ3jj9NFmjBJdz4vd3H5LBFlmQ12JfK1aWCMiYBrBOyDF7CcAl9/TzRYCuB71UrA==
+X-Received: by 2002:a05:6214:508f:b0:6d4:243f:6c9c with SMTP id 6a1803df08f44-6dc8469848dmr143052216d6.9.1734235229718;
+        Sat, 14 Dec 2024 20:00:29 -0800 (PST)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6dccd22fed2sm13365546d6.10.2024.12.14.20.00.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 19:39:49 -0800 (PST)
-From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-Subject: [PATCH] irqchip: fix an OF node reference leak in platform_irqchip_probe()
-Date: Sun, 15 Dec 2024 12:39:45 +0900
-Message-Id: <20241215033945.3414223-1-joe@pf.is.s.u-tokyo.ac.jp>
-X-Mailer: git-send-email 2.34.1
+        Sat, 14 Dec 2024 20:00:29 -0800 (PST)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] ocfs2: fix slab-use-after-free due to dangling pointer dqi_priv
+Date: Sat, 14 Dec 2024 22:58:29 -0500
+Message-ID: <20241215035828.106936-2-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,44 +89,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-platform_irqchip_probe() leaks an OF node when irq_init_cb fails. Fix it
-by declaring par_np with the __free(device_node) cleanup construct.
+When mounting ocfs2 and then remounting it as read-only, a
+slab-use-after-free occurs after the user uses a syscall to
+quota_getnextquota. Specifically, sb_dqinfo(sb, type)->dqi_priv is the
+dangling pointer.
 
-This bug was found by an experimental static analysis tool that I am
-developing.
+During the remounting process, the pointer dqi_priv is freed but is
+never set as null leaving it to to be accessed. Additionally, the
+read-only option for remounting sets the DQUOT_SUSPENDED flag instead of
+setting the DQUOT_USAGE_ENABLED flags. Moreover, later in the process of
+getting the next quota, the function ocfs2_get_next_id is called and
+only checks the quota usage flags and not the quota suspended flags.
 
-Fixes: f8410e626569 ("irqchip: Add IRQCHIP_PLATFORM_DRIVER_BEGIN/END and IRQCHIP_MATCH helper macros")
-Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+To fix this, I set dqi_priv to null when it is freed after remounting
+with read-only and put a check for DQUOT_SUSPENDED in ocfs2_get_next_id.
+
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+Reported-by: syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6731d26f.050a0220.1fb99c.014b.GAE@google.com/T/
 ---
- drivers/irqchip/irqchip.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/ocfs2/quota_global.c | 3 ++-
+ fs/ocfs2/quota_local.c  | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irqchip.c b/drivers/irqchip/irqchip.c
-index 1eeb0d0156ce..0ee7b6b71f5f 100644
---- a/drivers/irqchip/irqchip.c
-+++ b/drivers/irqchip/irqchip.c
-@@ -35,11 +35,10 @@ void __init irqchip_init(void)
- int platform_irqchip_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct device_node *par_np = of_irq_find_parent(np);
-+	struct device_node *par_np __free(device_node) = of_irq_find_parent(np);
- 	of_irq_init_cb_t irq_init_cb = of_device_get_match_data(&pdev->dev);
+diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
+index 2b0daced98eb..c6d38340d6d4 100644
+--- a/fs/ocfs2/quota_global.c
++++ b/fs/ocfs2/quota_global.c
+@@ -893,7 +893,8 @@ static int ocfs2_get_next_id(struct super_block *sb, struct kqid *qid)
+ 	int status = 0;
  
- 	if (!irq_init_cb) {
--		of_node_put(par_np);
- 		return -EINVAL;
+ 	trace_ocfs2_get_next_id(from_kqid(&init_user_ns, *qid), type);
+-	if (!sb_has_quota_loaded(sb, type)) {
++	if (!sb_has_quota_loaded(sb, type) ||
++			sb_dqopt(sb)->flags & DQUOT_SUSPENDED) {
+ 		status = -ESRCH;
+ 		goto out;
  	}
- 
-@@ -55,7 +54,6 @@ int platform_irqchip_probe(struct platform_device *pdev)
- 	 * interrupt controller can check for specific domains as necessary.
- 	 */
- 	if (par_np && !irq_find_matching_host(par_np, DOMAIN_BUS_ANY)) {
--		of_node_put(par_np);
- 		return -EPROBE_DEFER;
- 	}
+diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+index 73d3367c533b..2956d888c131 100644
+--- a/fs/ocfs2/quota_local.c
++++ b/fs/ocfs2/quota_local.c
+@@ -867,6 +867,7 @@ static int ocfs2_local_free_info(struct super_block *sb, int type)
+ 	brelse(oinfo->dqi_libh);
+ 	brelse(oinfo->dqi_lqi_bh);
+ 	kfree(oinfo);
++	info->dqi_priv = NULL;
+ 	return status;
+ }
  
 -- 
-2.34.1
+2.47.0
 
 
