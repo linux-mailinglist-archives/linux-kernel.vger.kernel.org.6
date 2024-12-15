@@ -1,276 +1,216 @@
-Return-Path: <linux-kernel+bounces-446374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892AE9F2396
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:06:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8BF9F2393
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4898B1653B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:06:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D193D18854FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F431186615;
-	Sun, 15 Dec 2024 12:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A91161302;
+	Sun, 15 Dec 2024 12:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LFxyBFE0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vM7yxdex"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B338384;
-	Sun, 15 Dec 2024 12:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B67638384;
+	Sun, 15 Dec 2024 12:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734264343; cv=none; b=GyJIdLszxOM7M5j/f9qcC8CD2IvIhXb5KFBtP7YcWXEmnySEx++ZBPWRs9B/+sEawRV2XVVVaFQqL90UqKF9I7z4yNSptlbSKrQoXXaI3sKCX9cNa3kz5ad9qtn6eZY+vTaU2tNaQ0h6RvhyfZhXm1Jn8FX18Rr+yQKpnYCGi4s=
+	t=1734264335; cv=none; b=Je+fC9CusUA+wLiq4eunCT+uLWnMi9mTXU8t79B/A1o3EokVa/0N1jOoWmtLvi8kf4lMOOGK5UlWqY2qAHjPd9gIkEmAMY/7nGaYJhKHw51p80vFvvnOIjbSGQCa0iidCfWc6wzyfrRglVw8hPFloblB5pPC1GVS3OLnL0Slz/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734264343; c=relaxed/simple;
-	bh=9kJLi0dXcGI0Nv+xmsFVcopdmVnhaH0hQ44/xOLTk5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILnPeTS11Yj7iigJkbQHfIJIQk9FCs4mctQdIhcfrr4jHZIuoZBVnYOjk3PutYsrZThPn+vDti6Im3Vq2hUMeXKUpgJK0HICMSAaGXglMOGUKE7amqPJWVQbrud1HxCLV2tLrEANbICEw4qtQ3R17dGineAM703C0mhZXv7bXwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LFxyBFE0; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734264341; x=1765800341;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9kJLi0dXcGI0Nv+xmsFVcopdmVnhaH0hQ44/xOLTk5Y=;
-  b=LFxyBFE0RZPF5dPu4A0OVhFrcP4XqnKPJvsT+XV+LHuqP2qhe/XrsLCF
-   B/rPU9h6XlKRA+UCp0DNhAyGJk98WCKxffu/nOAPkitaP250VPlv/lwT2
-   KODTCg4DnJuThJyc9e1iq4ABbiSLS3JsYyhwRVju5OH85dtNIka3etRoy
-   qE59uhs/sBXFJPehaOjhz+isbPEWzCqLhivBEp2GUPiBJp2S19+MLYOJi
-   5+BzlOJQXbmzJjFzwkcJmAHXVZlY1n3rHGS7xZToslLGWHZIl0Oa7x3AY
-   Ev+woeog7DAlrtscYsr5S/dH8IqY8AtfLIE50odPUj1xi2brzkISQeZJp
-   Q==;
-X-CSE-ConnectionGUID: mHfq8e5sTjSE9uRFQay3OA==
-X-CSE-MsgGUID: y3pxru5YSa+XVnGqrcJrwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="22246174"
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="22246174"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 04:05:40 -0800
-X-CSE-ConnectionGUID: P8R3k7+lQM2ZtLbYVrag9A==
-X-CSE-MsgGUID: RVCG9s3BRyChlgkgpNp+Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="97504875"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 15 Dec 2024 04:05:34 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMnNM-000Db4-09;
-	Sun, 15 Dec 2024 12:05:32 +0000
-Date: Sun, 15 Dec 2024 20:04:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chen Wang <unicornxw@gmail.com>, kw@linux.com,
-	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de,
-	bhelgaas@google.com, unicorn_wang@outlook.com, conor+dt@kernel.org,
-	guoren@kernel.org, inochiama@outlook.com, krzk+dt@kernel.org,
-	lee@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, pbrobinson@gmail.com, robh@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com, helgaas@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <202412151947.yDHMy3jh-lkp@intel.com>
-References: <1d82eff3670f60df24228e5c83cf663c6dd61eaf.1733726572.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1734264335; c=relaxed/simple;
+	bh=tkWNbT4uu+gfMrKCNqOzvi4TJkR3xUxhFs0MxlXbYdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=svDp1Y+P7gctfd6gwbj8V0aQ+5EzJynRDHVxleZ3pjRRbr5eMWPng4OYbVYCb4/aGgV0IQmPNqOGvAJRIjxmR/JsoPiT0ca6O/TgARxbi/xR+ujeRm5oKvxPQRwuxNHdeY8RjtHvwZcdFcv4vkk3dvEEHJLZR+i5Q6jBo3jm/do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vM7yxdex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6637EC4CECE;
+	Sun, 15 Dec 2024 12:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734264334;
+	bh=tkWNbT4uu+gfMrKCNqOzvi4TJkR3xUxhFs0MxlXbYdQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vM7yxdex6QK/h27rlfikgkUfa5nwIK+ZB11Zy+rM81IAcfpe0Blz8+Ko9k4aJyAqj
+	 4mNgBOD/2/Ys17CXSPmBgcFnNiO8m2JIm2SNJQSbPA7TidwsvJX44yFjlfce581EUZ
+	 u57e5Jp870ojrHA1QWWSxPOXHNXA80Oe4vVgumVstE+2HLe+x85lJOHPJsb9FQehQh
+	 kM04jKZu84iNdHHD6DehQm7pvKVlcQDQX1rXV5Czk/xI++N2RXimBHDYYVl0LMSzi8
+	 L2z41mAZTCFrUURFNU/7YwNfEYIMkTvOLeHdfpynxsKj08K2maU8aWMpx/co9TAPRW
+	 gHnzXUuBn/lfQ==
+Date: Sun, 15 Dec 2024 12:05:23 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
+ aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH v2 6/9] iio: adc: adi-axi-adc: Add support for AD7606
+ register writing
+Message-ID: <20241215120523.1b60ed43@jic23-huawei>
+In-Reply-To: <20241210-ad7606_add_iio_backend_software_mode-v2-6-6619c3e50d81@baylibre.com>
+References: <20241210-ad7606_add_iio_backend_software_mode-v2-0-6619c3e50d81@baylibre.com>
+	<20241210-ad7606_add_iio_backend_software_mode-v2-6-6619c3e50d81@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d82eff3670f60df24228e5c83cf663c6dd61eaf.1733726572.git.unicorn_wang@outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Chen,
+On Tue, 10 Dec 2024 10:46:46 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-kernel test robot noticed the following build errors:
+> Since we must access the bus parallel bus using a custom procedure,
+> let's add a specialized compatible, and define specialized callbacks for
+> writing the registers using the parallel interface.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+Hi Guillaume,
 
-[auto build test ERROR on fac04efc5c793dccbd07e2d59af9f90b7fc0dca4]
+A few comments inline.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Wang/dt-bindings-pci-Add-Sophgo-SG2042-PCIe-host/20241209-152613
-base:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-patch link:    https://lore.kernel.org/r/1d82eff3670f60df24228e5c83cf663c6dd61eaf.1733726572.git.unicorn_wang%40outlook.com
-patch subject: [PATCH v2 2/5] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-config: sh-randconfig-r071-20241215 (https://download.01.org/0day-ci/archive/20241215/202412151947.yDHMy3jh-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412151947.yDHMy3jh-lkp@intel.com/reproduce)
+Thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412151947.yDHMy3jh-lkp@intel.com/
+Jonathan
+> ---
+>  drivers/iio/adc/ad7606_bi.h   |  16 +++++++
+>  drivers/iio/adc/adi-axi-adc.c | 100 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 116 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ad7606_bi.h b/drivers/iio/adc/ad7606_bi.h
+> new file mode 100644
+> index 000000000000..9ade23ec61dd
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad7606_bi.h
 
-All errors (new ones prefixed by >>):
+Why bi?  Bus interface?  I'd spell it out.  Header name lengths don't
+usually need to be quite this short.
 
-   In file included from drivers/pci/controller/cadence/pcie-sg2042.c:23:
-   drivers/pci/controller/cadence/../../../irqchip/irq-msi-lib.h:25:39: warning: 'struct msi_domain_info' declared inside parameter list will not be visible outside of this definition or declaration
-      25 |                                struct msi_domain_info *info);
-         |                                       ^~~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:306:15: error: variable 'sg2042_pcie_msi_parent_ops' has initializer but incomplete type
-     306 | static struct msi_parent_ops sg2042_pcie_msi_parent_ops = {
-         |               ^~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:307:10: error: 'struct msi_parent_ops' has no member named 'required_flags'
-     307 |         .required_flags         = SG2042_PCIE_MSI_FLAGS_REQUIRED,
-         |          ^~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:301:41: error: 'MSI_FLAG_USE_DEF_DOM_OPS' undeclared here (not in a function)
-     301 | #define SG2042_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS |      \
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:307:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_REQUIRED'
-     307 |         .required_flags         = SG2042_PCIE_MSI_FLAGS_REQUIRED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:302:41: error: 'MSI_FLAG_USE_DEF_CHIP_OPS' undeclared here (not in a function)
-     302 |                                         MSI_FLAG_USE_DEF_CHIP_OPS)
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:307:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_REQUIRED'
-     307 |         .required_flags         = SG2042_PCIE_MSI_FLAGS_REQUIRED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:301:40: warning: excess elements in struct initializer
-     301 | #define SG2042_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS |      \
-         |                                        ^
-   drivers/pci/controller/cadence/pcie-sg2042.c:307:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_REQUIRED'
-     307 |         .required_flags         = SG2042_PCIE_MSI_FLAGS_REQUIRED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:301:40: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
-     301 | #define SG2042_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS |      \
-         |                                        ^
-   drivers/pci/controller/cadence/pcie-sg2042.c:307:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_REQUIRED'
-     307 |         .required_flags         = SG2042_PCIE_MSI_FLAGS_REQUIRED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:308:10: error: 'struct msi_parent_ops' has no member named 'supported_flags'
-     308 |         .supported_flags        = SG2042_PCIE_MSI_FLAGS_SUPPORTED,
-         |          ^~~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:304:41: error: 'MSI_GENERIC_FLAGS_MASK' undeclared here (not in a function)
-     304 | #define SG2042_PCIE_MSI_FLAGS_SUPPORTED MSI_GENERIC_FLAGS_MASK
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:308:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_SUPPORTED'
-     308 |         .supported_flags        = SG2042_PCIE_MSI_FLAGS_SUPPORTED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:304:41: warning: excess elements in struct initializer
-     304 | #define SG2042_PCIE_MSI_FLAGS_SUPPORTED MSI_GENERIC_FLAGS_MASK
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:308:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_SUPPORTED'
-     308 |         .supported_flags        = SG2042_PCIE_MSI_FLAGS_SUPPORTED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:304:41: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
-     304 | #define SG2042_PCIE_MSI_FLAGS_SUPPORTED MSI_GENERIC_FLAGS_MASK
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:308:35: note: in expansion of macro 'SG2042_PCIE_MSI_FLAGS_SUPPORTED'
-     308 |         .supported_flags        = SG2042_PCIE_MSI_FLAGS_SUPPORTED,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:309:10: error: 'struct msi_parent_ops' has no member named 'bus_select_mask'
-     309 |         .bus_select_mask        = MATCH_PCI_MSI,
-         |          ^~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/../../../irqchip/irq-msi-lib.h:15:33: warning: excess elements in struct initializer
-      15 | #define MATCH_PCI_MSI           (0)
-         |                                 ^
-   drivers/pci/controller/cadence/pcie-sg2042.c:309:35: note: in expansion of macro 'MATCH_PCI_MSI'
-     309 |         .bus_select_mask        = MATCH_PCI_MSI,
-         |                                   ^~~~~~~~~~~~~
-   drivers/pci/controller/cadence/../../../irqchip/irq-msi-lib.h:15:33: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
-      15 | #define MATCH_PCI_MSI           (0)
-         |                                 ^
-   drivers/pci/controller/cadence/pcie-sg2042.c:309:35: note: in expansion of macro 'MATCH_PCI_MSI'
-     309 |         .bus_select_mask        = MATCH_PCI_MSI,
-         |                                   ^~~~~~~~~~~~~
->> drivers/pci/controller/cadence/pcie-sg2042.c:310:10: error: 'struct msi_parent_ops' has no member named 'bus_select_token'
-     310 |         .bus_select_token       = DOMAIN_BUS_NEXUS,
-         |          ^~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:310:35: warning: excess elements in struct initializer
-     310 |         .bus_select_token       = DOMAIN_BUS_NEXUS,
-         |                                   ^~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:310:35: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
->> drivers/pci/controller/cadence/pcie-sg2042.c:311:10: error: 'struct msi_parent_ops' has no member named 'prefix'
-     311 |         .prefix                 = "SG2042-",
-         |          ^~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:311:35: warning: excess elements in struct initializer
-     311 |         .prefix                 = "SG2042-",
-         |                                   ^~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:311:35: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
->> drivers/pci/controller/cadence/pcie-sg2042.c:312:10: error: 'struct msi_parent_ops' has no member named 'init_dev_msi_info'
-     312 |         .init_dev_msi_info      = msi_lib_init_dev_msi_info,
-         |          ^~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:312:35: warning: excess elements in struct initializer
-     312 |         .init_dev_msi_info      = msi_lib_init_dev_msi_info,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/cadence/pcie-sg2042.c:312:35: note: (near initialization for 'sg2042_pcie_msi_parent_ops')
-   drivers/pci/controller/cadence/pcie-sg2042.c: In function 'sg2042_pcie_setup_msi':
->> drivers/pci/controller/cadence/pcie-sg2042.c:344:22: error: 'struct irq_domain' has no member named 'msi_parent_ops'
-     344 |         parent_domain->msi_parent_ops = &sg2042_pcie_msi_parent_ops;
-         |                      ^~
-   drivers/pci/controller/cadence/pcie-sg2042.c: At top level:
->> drivers/pci/controller/cadence/pcie-sg2042.c:306:30: error: storage size of 'sg2042_pcie_msi_parent_ops' isn't known
-     306 | static struct msi_parent_ops sg2042_pcie_msi_parent_ops = {
-         |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright (c) 2010-2024 Analog Devices Inc.
+> + * Copyright (c) 2024 Baylibre, SAS
+> + */
+> +#ifndef __LINUX_PLATFORM_DATA_AD7606_H__
+> +#define __LINUX_PLATFORM_DATA_AD7606_H__
+> +
+> +#include <linux/iio/backend.h>
+Only a pointer type needed, so a forward def better than an include
+(which costs some trivial amount of compile time).
 
+struct iio_backend;
 
-vim +/sg2042_pcie_msi_parent_ops +306 drivers/pci/controller/cadence/pcie-sg2042.c
+> +
+> +struct ad7606_platform_data {
+> +	int (*bus_reg_read)(struct iio_backend *back, u32 reg, u32 *val);
+> +	int (*bus_reg_write)(struct iio_backend *back, u32 reg, u32 val);
+> +};
+> +
+> +#endif /* __LINUX_PLATFORM_DATA_AD7606_H__ */
+> diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
+> index 7ff636643e56..b8bcf89417b0 100644
+> --- a/drivers/iio/adc/adi-axi-adc.c
+> +++ b/drivers/iio/adc/adi-axi-adc.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/iio/buffer.h>
+>  #include <linux/iio/iio.h>
+>  
+> +#include "ad7606_bi.h"
+>  /*
+>   * Register definitions:
+>   *   https://wiki.analog.com/resources/fpga/docs/axi_adc_ip#register_map
+> @@ -73,6 +74,12 @@
+>  #define ADI_AXI_ADC_REG_DELAY(l)		(0x0800 + (l) * 0x4)
+>  #define   AXI_ADC_DELAY_CTRL_MASK		GENMASK(4, 0)
+>  
+> +#define ADI_AXI_REG_CONFIG_WR			0x0080
+> +#define ADI_AXI_REG_CONFIG_RD			0x0084
+> +#define ADI_AXI_REG_CONFIG_CTRL			0x008c
+> +#define   ADI_AXI_REG_CONFIG_CTRL_READ		0x03
+> +#define   ADI_AXI_REG_CONFIG_CTRL_WRITE		0x01
+> +
+>  #define ADI_AXI_ADC_MAX_IO_NUM_LANES		15
+>  
+>  #define ADI_AXI_REG_CHAN_CTRL_DEFAULTS		\
+> @@ -80,6 +87,11 @@
+>  	 ADI_AXI_REG_CHAN_CTRL_FMT_EN |		\
+>  	 ADI_AXI_REG_CHAN_CTRL_ENABLE)
+>  
+> +/* AD7606's specific */
+> +#define AD7606_REG_READ_BIT			0x8000
+> +#define AD7606_REG_ADDRESS_MASK			0xff00
+> +#define AD7606_REG_VALUE_MASK			0x00ff
+> +
 
-   300	
- > 301	#define SG2042_PCIE_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS |	\
- > 302						MSI_FLAG_USE_DEF_CHIP_OPS)
-   303	
- > 304	#define SG2042_PCIE_MSI_FLAGS_SUPPORTED MSI_GENERIC_FLAGS_MASK
-   305	
- > 306	static struct msi_parent_ops sg2042_pcie_msi_parent_ops = {
- > 307		.required_flags		= SG2042_PCIE_MSI_FLAGS_REQUIRED,
- > 308		.supported_flags	= SG2042_PCIE_MSI_FLAGS_SUPPORTED,
- > 309		.bus_select_mask	= MATCH_PCI_MSI,
- > 310		.bus_select_token	= DOMAIN_BUS_NEXUS,
- > 311		.prefix			= "SG2042-",
- > 312		.init_dev_msi_info	= msi_lib_init_dev_msi_info,
-   313	};
-   314	
-   315	static int sg2042_pcie_setup_msi(struct sg2042_pcie *pcie, struct device_node *msi_node)
-   316	{
-   317		struct device *dev = pcie->cdns_pcie->dev;
-   318		struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
-   319		struct irq_domain *parent_domain;
-   320		int ret = 0;
-   321	
-   322		if (!of_property_read_bool(msi_node, "msi-controller"))
-   323			return -ENODEV;
-   324	
-   325		ret = of_irq_get_byname(msi_node, "msi");
-   326		if (ret <= 0) {
-   327			dev_err(dev, "%pOF: failed to get MSI irq\n", msi_node);
-   328			return ret;
-   329		}
-   330		pcie->msi_irq = ret;
-   331	
-   332		irq_set_chained_handler_and_data(pcie->msi_irq,
-   333						 sg2042_pcie_msi_chained_isr, pcie);
-   334	
-   335		parent_domain = irq_domain_create_linear(fwnode, MSI_DEF_NUM_VECTORS,
-   336							 &sg2042_pcie_msi_domain_ops, pcie);
-   337		if (!parent_domain) {
-   338			dev_err(dev, "%pfw: Failed to create IRQ domain\n", fwnode);
-   339			return -ENOMEM;
-   340		}
-   341		irq_domain_update_bus_token(parent_domain, DOMAIN_BUS_NEXUS);
-   342	
-   343		parent_domain->flags |= IRQ_DOMAIN_FLAG_MSI_PARENT;
- > 344		parent_domain->msi_parent_ops = &sg2042_pcie_msi_parent_ops;
-   345	
-   346		pcie->msi_domain = parent_domain;
-   347	
-   348		ret = sg2042_pcie_init_msi_data(pcie);
-   349		if (ret) {
-   350			dev_err(dev, "Failed to initialize MSI data!\n");
-   351			return ret;
-   352		}
-   353	
-   354		return 0;
-   355	}
-   356	
+Maybe name these to keep the ADI_AXI_ prefix as well.  Otherwise it might get
+a little confusing wrt to registers in teh deivce.  They are nice short
+names currently so that shouldn't make the code to messy.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  struct axi_adc_info {
+>  	unsigned int version;
+>  	const struct iio_backend_info *backend_info;
+> @@ -313,6 +325,80 @@ static struct iio_buffer *axi_adc_request_buffer(struct iio_backend *back,
+>  	return iio_dmaengine_buffer_setup(st->dev, indio_dev, dma_name);
+>  }
+>  
+> +static int axi_adc_raw_write(struct iio_backend *back, void *buf, unsigned int len)
+> +{
+> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
+> +	u32 data;
+> +	u32 *bdata = buf;
+
+	data = *(u32)(buf);
+
+Is fine here I think rather than the extra local variable that is just
+used to do the type cast.
+
+> +
+> +	data = *bdata;
+> +	regmap_write(st->regmap, ADI_AXI_REG_CONFIG_WR, data);
+> +	regmap_write(st->regmap, ADI_AXI_REG_CONFIG_CTRL,
+> +		     ADI_AXI_REG_CONFIG_CTRL_WRITE);
+> +	usleep_range(50, 100);
+> +	regmap_write(st->regmap, ADI_AXI_REG_CONFIG_CTRL, 0x00);
+> +	usleep_range(50, 100);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +
+> +static int ad7606_bi_reg_write(struct iio_backend *back, u32 reg, u32 val)
+> +{
+> +	struct adi_axi_adc_state *st = iio_backend_get_priv(back);
+> +	u32 buf;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	/* Read any register to switch to register mode */
+
+What follows looks like a write...
+
+> +	buf = 0xaf00;
+> +	axi_adc_raw_write(back, &buf, sizeof(buf));
+> +
+> +	buf = FIELD_PREP(AD7606_REG_ADDRESS_MASK, reg) | FIELD_PREP(AD7606_REG_VALUE_MASK, val);
+> +	axi_adc_raw_write(back, &buf, sizeof(buf));
+> +
+> +	/* Write 0x0 on the bus to get back to ADC mode */
+> +	buf = 0;
+> +	axi_adc_raw_write(back, &buf, sizeof(buf));
+> +
+> +	return 0;
+> +}
+
 
