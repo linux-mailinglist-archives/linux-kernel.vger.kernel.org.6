@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-446260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9550A9F21EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:47:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524A29F21BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2250165F73
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 02:47:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25AF7A070E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 02:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C8E8C1F;
-	Sun, 15 Dec 2024 02:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B274379DC;
+	Sun, 15 Dec 2024 02:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nVaqjvLj"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="U57B8Y/K"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25392442C;
-	Sun, 15 Dec 2024 02:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B663D68;
+	Sun, 15 Dec 2024 02:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734230845; cv=none; b=adwVprt3CldAn1uBHXdnxdi8tEdcZ0GgEfQsphPw+8p1WeSFxZOaHZ6zRPu8wYcxrFlOk+frqeMc50oKUxCcRZEZ879etQghrZd0FJ9XxGm3x2hr1LmxJE93JLsREKuqmto6SIfOHk/0xzfeHlQuPJom+L1s7JcPQEgiG3xcRak=
+	t=1734229462; cv=none; b=ET+1V0fOhTXxdM+y6qx3eqhGc2HrCWqQnpsrFf8CPtQxMEXdxNfgZlXgczzRKCkvqOqVBYO2tf2opBFqRQFeHP23L+RcFC54Nt1wuCnI9ypccRqtwET5s0soq4E3UkNcQ8Qdnqndpy8qZYZOOxS32+EBAoxy8YfH5McLZUQ3FW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734230845; c=relaxed/simple;
-	bh=wp7OgfHVY9Y3CorqTuNlNgPka83XVrd0Zq1/l0O6Ru4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sv22E1sBlxDfawQvnzZsiFMqbvi8/Ym1Ov3IAxRADleonRsh8+HdA4ApirVNqc8gI2F9lNEO6ufxudq09Q7yzThDCDFpeUba6bwPrbv17a6nR+R6BAg2rJuLzbR60XJxnC5YB7tj9u3iOOtzcMK78IDe7Qr3gLs9HAT2mmNHBkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nVaqjvLj; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1734229462; c=relaxed/simple;
+	bh=jGPopWmX1xlN9nq/1Y3c9K41mIFQFaULt0dCbu3WuZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=STPe4VJtSOVVjMBcNkdalOOLLSF1I5C51ZXaQDGn8Deoz4KOmQAItuFvd8mIf3UQZxeLd1dlnlhyeDwgzsLUNqv5j9WgBIeKbf++Ugr/iP3baVrjMQ+f+RcQNhm7pfZuZ0JUSD8zEy3x9Wi9WsfWhIxjdO3lTSpyvrmcUumsbLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=U57B8Y/K; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=L5vMYFubsyGDtRUzS6YTga3Gt+vmg7NH1H30YZ43HGc=; b=nVaqjvLjuqueljvx
-	Tju+S0l8rgqtoibhTue25y3xTW+7CJsll0zTGLFFk4qeOgKsu/LPx8odjCIcUjkdsoZqqu3FxrQbP
-	mQOyufmiQdhfyI5iQSMoLw5isEeXxISm6nmz1bBAey60aJrdwSxAp857hjSggHlc0hRc0chw+sX2C
-	0G2yEEGMXMiWqK1s5HnMcHUyG69Kg8c6FSEMbqcAW4IGU9L6hmDckXdwkDhwTWGjHbXniyUuOhQgy
-	nlw1t0XIxJhXFo8jK6a54MLeVa2SlttgJUZ2/WQga36FUmtf3f5lLZ/eU/k2NyLU0DRSDMAwEjcqE
-	ePrsg/L7KSWwk7A9bw==;
+	:Subject; bh=rL0oTmB2iSe6RXlIBnzrVi61wE1l8L5JqTcTH9KVf2w=; b=U57B8Y/KZbR9NqyK
+	CQhPpUWqU6xKuainSWZhc5dQ3GBz1zV+ttwdeRK5T8Gmd5OK/o4woc87r/S+2XRly6wZSpWauX+0C
+	4M7TW+wcAnDAk31wmAremRgpqlCHT46Mhb2CCm4/9/T574TbBmRdxZKqPKuPOWmvwZBX2vkE/mE7T
+	xeGDLys9eX+fDtENSgtumyQaBnBfDAPcDuZQ5Xy5lrUa6twZQHt4YLOhE1CJw/3wJn6rvpmj+rpK2
+	YGE9/HzMV4uC/4pQorXShVrmETj2ltki3xHmoNVy86ioXdIEainM63xkHz6EOp8YyxsdFRAyq+4fr
+	Vs74llZmKjr+BfbcOw==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1tMeF6-005RBp-1B;
-	Sun, 15 Dec 2024 02:20:24 +0000
+	id 1tMeIY-005REz-0C;
+	Sun, 15 Dec 2024 02:23:58 +0000
 From: linux@treblig.org
-To: andersson@kernel.org,
-	baolin.wang@linux.alibaba.com
-Cc: peterz@infradead.org,
+To: bp@alien8.de,
 	mingo@redhat.com,
-	will@kernel.org,
-	longman@redhat.com,
-	boqun.feng@gmail.com,
-	corbet@lwn.net,
-	linux-remoteproc@vger.kernel.org,
+	tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	alexandre.belloni@bootlin.com
+Cc: x86@kernel.org,
+	linux-rtc@vger.kernel.org,
+	arnd@arndb.de,
 	linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] hwspinlock: Remove unused hwspin_lock_get_id
-Date: Sun, 15 Dec 2024 02:20:23 +0000
-Message-ID: <20241215022023.181435-1-linux@treblig.org>
+Subject: [PATCH] rtc: Remove hpet_rtc_dropped_irq()
+Date: Sun, 15 Dec 2024 02:23:56 +0000
+Message-ID: <20241215022356.181625-1-linux@treblig.org>
 X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,95 +68,63 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-hwspin_lock_get_id() has been unused since the original 2011
-commit bd9a4c7df256 ("drivers: hwspinlock: add framework")
+hpet_rtc_dropped_irq() has been unused since
+commit f52ef24be21a ("rtc/alpha: remove legacy rtc driver")
 
-Remove it and the corresponding docs.
-
-Note that the of_hwspin_lock_get_id() version is still in use,
-so leave that alone.
+Remove it in rtc, and x86 hpet code.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- Documentation/locking/hwspinlock.rst | 11 -----------
- drivers/hwspinlock/hwspinlock_core.c | 17 -----------------
- include/linux/hwspinlock.h           |  6 ------
- 3 files changed, 34 deletions(-)
+ arch/x86/include/asm/hpet.h | 1 -
+ arch/x86/kernel/hpet.c      | 6 ------
+ drivers/rtc/rtc-cmos.c      | 5 -----
+ 3 files changed, 12 deletions(-)
 
-diff --git a/Documentation/locking/hwspinlock.rst b/Documentation/locking/hwspinlock.rst
-index d482422d7a38..a737c702a7d1 100644
---- a/Documentation/locking/hwspinlock.rst
-+++ b/Documentation/locking/hwspinlock.rst
-@@ -301,17 +301,6 @@ The caller should **never** unlock an hwspinlock which is already unlocked.
- Doing so is considered a bug (there is no protection against this).
- This function will never sleep.
- 
--::
--
--  int hwspin_lock_get_id(struct hwspinlock *hwlock);
--
--Retrieve id number of a given hwspinlock. This is needed when an
--hwspinlock is dynamically assigned: before it can be used to achieve
--mutual exclusion with a remote cpu, the id number should be communicated
--to the remote task with which we want to synchronize.
--
--Returns the hwspinlock id number, or -EINVAL if hwlock is null.
--
- Typical usage
- =============
- 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index f000432ce21d..cc8e952a6772 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -709,23 +709,6 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
- 	return ret;
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index ab9f3dd87c80..ab0c78855ecb 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -84,7 +84,6 @@ extern int hpet_set_rtc_irq_bit(unsigned long bit_mask);
+ extern int hpet_set_alarm_time(unsigned char hrs, unsigned char min,
+ 			       unsigned char sec);
+ extern int hpet_set_periodic_freq(unsigned long freq);
+-extern int hpet_rtc_dropped_irq(void);
+ extern int hpet_rtc_timer_init(void);
+ extern irqreturn_t hpet_rtc_interrupt(int irq, void *dev_id);
+ extern int hpet_register_irq_handler(rtc_irq_handler handler);
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index c96ae8fee95e..7e21018a0e04 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -1392,12 +1392,6 @@ int hpet_set_periodic_freq(unsigned long freq)
  }
+ EXPORT_SYMBOL_GPL(hpet_set_periodic_freq);
  
--/**
-- * hwspin_lock_get_id() - retrieve id number of a given hwspinlock
-- * @hwlock: a valid hwspinlock instance
-- *
-- * Returns: the id number of a given @hwlock, or -EINVAL if @hwlock is invalid.
-- */
--int hwspin_lock_get_id(struct hwspinlock *hwlock)
+-int hpet_rtc_dropped_irq(void)
 -{
--	if (!hwlock) {
--		pr_err("invalid hwlock\n");
--		return -EINVAL;
--	}
--
--	return hwlock_to_id(hwlock);
+-	return is_hpet_enabled();
 -}
--EXPORT_SYMBOL_GPL(hwspin_lock_get_id);
+-EXPORT_SYMBOL_GPL(hpet_rtc_dropped_irq);
 -
- /**
-  * hwspin_lock_request_specific() - request for a specific hwspinlock
-  * @id: index of the specific hwspinlock that is requested
-diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-index 2f32d768dfd9..f35b42e8c5de 100644
---- a/include/linux/hwspinlock.h
-+++ b/include/linux/hwspinlock.h
-@@ -61,7 +61,6 @@ int hwspin_lock_unregister(struct hwspinlock_device *bank);
- struct hwspinlock *hwspin_lock_request_specific(unsigned int id);
- int hwspin_lock_free(struct hwspinlock *hwlock);
- int of_hwspin_lock_get_id(struct device_node *np, int index);
--int hwspin_lock_get_id(struct hwspinlock *hwlock);
- int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
- 							unsigned long *);
- int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
-@@ -131,11 +130,6 @@ static inline int of_hwspin_lock_get_id(struct device_node *np, int index)
+ static void hpet_rtc_timer_reinit(void)
+ {
+ 	unsigned int delta;
+diff --git a/drivers/rtc/rtc-cmos.c b/drivers/rtc/rtc-cmos.c
+index 78f2ce12c75a..9c8ce7510c56 100644
+--- a/drivers/rtc/rtc-cmos.c
++++ b/drivers/rtc/rtc-cmos.c
+@@ -151,11 +151,6 @@ static inline int hpet_set_periodic_freq(unsigned long freq)
  	return 0;
  }
  
--static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
+-static inline int hpet_rtc_dropped_irq(void)
 -{
 -	return 0;
 -}
 -
- static inline
- int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+ static inline int hpet_rtc_timer_init(void)
  {
+ 	return 0;
 -- 
 2.47.1
 
