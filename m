@@ -1,157 +1,240 @@
-Return-Path: <linux-kernel+bounces-446388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43829F23B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:29:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64E09F23C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 336F27A1100
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F641885DCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554D9183098;
-	Sun, 15 Dec 2024 12:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F069D18C03E;
+	Sun, 15 Dec 2024 12:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gU01JShZ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kEzEYrBM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191CC374FF
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704D231A89
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734265743; cv=none; b=W3VeXRV3wLwuBAAqPC68O8Pg83WSwKOq8WNbHwFADi6271GVKPQ/y1SLeh9w3LkIfyesCfhPEfLoYZvyVHOpAL43aY4Nwk8QIxyqdNr4bkkgN4lZRpQJVBQ0JRw7hffwkaTgEYIi9LhWn740Rilal1GltO1oi8Bygl8lNdTwPE4=
+	t=1734266126; cv=none; b=KbYLGA/1GxhfNNwlYo8LaOPG9ZWelXZ8Xl0XA/NniS71jmjugCnQvDKk4hYs67J6ZXPPeDzqB9jqd4CrkqI2z1nU/jUTI+vONjY+fN++mfcXIdd9v3qZyv4oFhf+1wLsahLu9lHfFWdBFqR7a8TViEcqLpMJ2pACMIp2VV+OQhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734265743; c=relaxed/simple;
-	bh=5X80d57jg2IFKmnuuhkK8v4YFcp19duqGS7KS9kggWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p47Xt0Egf4KH6vPPFvBbYlqxqeRDH6navOUpzYs5g/mlRiFgG5RLjY7Txan7DnnHPqiobauFNYF40nQk35pR2WQojTJ0934aA3pdAr0PZxQYTZ1z2YNPk6T74Jx9HcV9oQVo/TZLaSx6xjFhno98KM8qHY4yG7S/6AD8xx6/pIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gU01JShZ; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d3f65844deso5271666a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:29:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734265740; x=1734870540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bHWJV/LD4gPHZZNcXt29U0PATFI+oJ17IUeLcy4IdyI=;
-        b=gU01JShZPSHs33iJ4yPvC+dO0KDoACAOJM2GoTgW9vWziAEtcEOeIYz/83dYUTwqVR
-         XgRWG7vEVy/+0j9MU1ru7jSEXSa28XlRwAN6Mam627WwTmTg0V1+lzPQ9yihOAYdeCe0
-         aCTdG3MSin3y1fUlJKJM+JqrjyzdmtHN4fgvHwXgm/xiFuhC46WKq9rSAlKF0tY0He1P
-         /8w1K41ptN+5evW9rIyZo3bR1blXRjDvmDWh4nAPmmwfHTpxmmLMAhh/xH6I0kEbYLL5
-         Z/wZziOu81P5tL+eMyi1DEFWXq94gD3Fp/PwoQTtb6WHV8vCz7sKGhM1lsqBgZMVb1qm
-         wmkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734265740; x=1734870540;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bHWJV/LD4gPHZZNcXt29U0PATFI+oJ17IUeLcy4IdyI=;
-        b=E5QYx48bSCB7OAoBW1ZmoRVJsEiwOamD+ZDeP8IO+a147mxi08ZfEAR3DDJQlsqzNX
-         vFrRw3z6C4XWBTsEcv5PtNaxHXhqc0ZVPirk34gLXUD+HJn246cUSFYiMo5ff/JKN1M2
-         pb8t1JMndpICRh0phPvTBbP7wBBYYM44uWBPVeDTF0Lnvr0uCNDQ67sCmyHDK619Q9/u
-         GUa4Z5yLuMHTwGpqaG+xpp9+31YQN08xzKGL1nt3iF7gub6mDqIfURYS3Ql4a2My0FIK
-         P6m2v5I8hoanXeGrn4sVga8tpiRtuFYbnWpJdPd7fDAyec3HYwekQQ+lYrk/RQuYpjh7
-         0sCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp0/w5jdS0wz6DLWe7Q8Bn6go9KCY4BOKA3+KZGwn4ZXPSmYWOuQARB09LynHza7p7DR/+s76Fq9fn0PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEHQptlo7Nw1dnOoNac/YZqaMggHRh7GNd4hzFFW+rWnjmXKKv
-	X07ALEfs3WHObuD4/eYvlUoll5TLucb/CjhFz5tOci5syfSk5Gkx
-X-Gm-Gg: ASbGncvOXK8SCzggIQjYC0jsr/sD5ttuoUzE3k9/LjXPucw4rr4NR6KXj5k0yIhSb6E
-	yOmNDJUJxKgfYYoW8kM90z8TZxqV0yQoed2cwBB+IQHmCjQ6eNVV94RGmn3ZDB0b1coyBsu218Q
-	JFMtz5AaP1e/46/PnFB+ataLDjFOlO3yFVjRmE1OJPW7nU5vPsyFon0xSA7NIfexGzIJAGUCLLH
-	a4MjSHF01sw/WnuzitZjQbuFu8AnppQ0PlkkARVesH7LIFISFei6+/uskmo47kYPSU=
-X-Google-Smtp-Source: AGHT+IFs4h7kFQ1tBETm2pZSMvLI9Eb//palqWRPKxDQoSymF7Pdlu6jW09S5JdbUeT9M+3q91Focw==
-X-Received: by 2002:a05:6402:348b:b0:5d0:8197:7ab3 with SMTP id 4fb4d7f45d1cf-5d63c2e5275mr7998238a12.3.1734265740122;
-        Sun, 15 Dec 2024 04:29:00 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ad187dsm2055327a12.28.2024.12.15.04.28.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 04:28:59 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	srinivasan.shanmugam@amd.com,
-	Hawking.Zhang@amd.com,
-	Jack.Xiao@amd.com,
-	lijo.lazar@amd.com,
-	Jesse.zhang@amd.com,
-	tao.zhou1@amd.com
-Cc: Karol Przybylski <karprzy7@gmail.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Fix potential integer overflow in scheduler mask calculations
-Date: Sun, 15 Dec 2024 13:28:57 +0100
-Message-Id: <20241215122857.927606-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734266126; c=relaxed/simple;
+	bh=Cw/4s1cnTdpvoGxzO73Vu8Phx08ECrq4JjmSBktXtWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ji2j6smGUgaqgzSSstMe5bCPXh/GTLZsUbUc0Yz/ldZofvESCv8If9vBvhEe91UU9CjOBAn1lyE83oRnRwOGc7yUcRjKOHRClpZG3ZdznSUXwlAjd+KFnihYglVLGGp1jtYuo7BYFv6HJQtCIzQKIt4ukn9T6DwG2Nx4IucGVGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kEzEYrBM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33BED99F;
+	Sun, 15 Dec 2024 13:34:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734266086;
+	bh=Cw/4s1cnTdpvoGxzO73Vu8Phx08ECrq4JjmSBktXtWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kEzEYrBMorH93mkgbR+HewocUmhkfsj0+NKNtW2wApjmoIa3La8TUteD2Xg3zn41G
+	 R1vGtMwcVFHG04u72DKfaj0+Qc+uc9IzFiaY7dgsILW4Vk0yCY+UTY0TuwGeW3A8ga
+	 AyKSuaNrfjpqc/H2Uo2OpPePoj274C3Kd07j6yKA=
+Date: Sun, 15 Dec 2024 14:35:05 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] drm/i2c: tda998x: drop support for platform_data
+Message-ID: <20241215123505.GA25852@pendragon.ideasonboard.com>
+References: <20241215-drm-move-tda998x-v1-0-7817122b1d73@linaro.org>
+ <20241215-drm-move-tda998x-v1-1-7817122b1d73@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241215-drm-move-tda998x-v1-1-7817122b1d73@linaro.org>
 
-The use of 1 << i in scheduler mask calculations can result in an
-unintentional integer overflow due to the expression being
-evaluated as a 32-bit signed integer.
+Hi Dmitry,
 
-This patch replaces 1 << i with 1ULL << i to ensure the operation
-is performed as a 64-bit unsigned integer, preventing overflow
+Thank you for the patch.
 
-Discovered in coverity scan, CID 1636393, 1636175, 1636007, 1635853
+On Sun, Dec 15, 2024 at 01:09:07PM +0200, Dmitry Baryshkov wrote:
+> After the commit 0fb2970b4b6b ("drm/armada: remove non-component
+> support") there are no remaining users of the struct
+> tda998x_encoder_params. Drop the header and corresponding API from the
+> TDA998x driver.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Fixes: c5c63d9cb5d3b drm/amdgpu: add amdgpu_gfx_sched_mask and amdgpu_compute_sched_mask debugfs
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-index 69a6b6dba0a5..8fb6c5f6a060 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
-@@ -2050,7 +2050,7 @@ static int amdgpu_debugfs_gfx_sched_mask_set(void *data, u64 val)
- 	if (!adev)
- 		return -ENODEV;
- 
--	mask = (1 << adev->gfx.num_gfx_rings) - 1;
-+	mask = (1ULL << adev->gfx.num_gfx_rings) - 1;
- 	if ((val & mask) == 0)
- 		return -EINVAL;
- 
-@@ -2078,7 +2078,7 @@ static int amdgpu_debugfs_gfx_sched_mask_get(void *data, u64 *val)
- 	for (i = 0; i < adev->gfx.num_gfx_rings; ++i) {
- 		ring = &adev->gfx.gfx_ring[i];
- 		if (ring->sched.ready)
--			mask |= 1 << i;
-+			mask |= 1ULL << i;
- 	}
- 
- 	*val = mask;
-@@ -2120,7 +2120,7 @@ static int amdgpu_debugfs_compute_sched_mask_set(void *data, u64 val)
- 	if (!adev)
- 		return -ENODEV;
- 
--	mask = (1 << adev->gfx.num_compute_rings) - 1;
-+	mask = (1ULL << adev->gfx.num_compute_rings) - 1;
- 	if ((val & mask) == 0)
- 		return -EINVAL;
- 
-@@ -2149,7 +2149,7 @@ static int amdgpu_debugfs_compute_sched_mask_get(void *data, u64 *val)
- 	for (i = 0; i < adev->gfx.num_compute_rings; ++i) {
- 		ring = &adev->gfx.compute_ring[i];
- 		if (ring->sched.ready)
--			mask |= 1 << i;
-+			mask |= 1ULL << i;
- 	}
- 
- 	*val = mask;
+> ---
+>  MAINTAINERS                       |  1 -
+>  drivers/gpu/drm/i2c/tda998x_drv.c | 49 ++++-----------------------------------
+>  include/drm/i2c/tda998x.h         | 40 --------------------------------
+>  3 files changed, 4 insertions(+), 86 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 81348dbce8ca7c877bd9c2d88cb093368eca5a0a..9a23e80abf309cbd918a74683895f8dbe0507a6e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16983,7 +16983,6 @@ S:	Maintained
+>  T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-devel
+>  T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-fixes
+>  F:	drivers/gpu/drm/i2c/tda998x_drv.c
+> -F:	include/drm/i2c/tda998x.h
+>  F:	include/dt-bindings/display/tda998x.h
+>  K:	"nxp,tda998x"
+>  
+> diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+> index 2160f05bbd16d2346e27365e5549b75ad26fdcb9..67480dcbbfde4da68ffaeaf20935af467d4da92a 100644
+> --- a/drivers/gpu/drm/i2c/tda998x_drv.c
+> +++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+> @@ -21,10 +21,11 @@
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/drm_simple_kms_helper.h>
+> -#include <drm/i2c/tda998x.h>
+>  
+>  #include <media/cec-notifier.h>
+>  
+> +#include <dt-bindings/display/tda998x.h>
+> +
+>  #define DBG(fmt, ...) DRM_DEBUG(fmt"\n", ##__VA_ARGS__)
+>  
+>  enum {
+> @@ -1717,10 +1718,10 @@ static int tda998x_get_audio_ports(struct tda998x_priv *priv,
+>  		u8 ena_ap = be32_to_cpup(&port_data[2*i+1]);
+>  
+>  		switch (afmt) {
+> -		case AFMT_I2S:
+> +		case TDA998x_I2S:
+>  			route = AUDIO_ROUTE_I2S;
+>  			break;
+> -		case AFMT_SPDIF:
+> +		case TDA998x_SPDIF:
+>  			route = AUDIO_ROUTE_SPDIF;
+>  			break;
+>  		default:
+> @@ -1746,44 +1747,6 @@ static int tda998x_get_audio_ports(struct tda998x_priv *priv,
+>  	return 0;
+>  }
+>  
+> -static int tda998x_set_config(struct tda998x_priv *priv,
+> -			      const struct tda998x_encoder_params *p)
+> -{
+> -	priv->vip_cntrl_0 = VIP_CNTRL_0_SWAP_A(p->swap_a) |
+> -			    (p->mirr_a ? VIP_CNTRL_0_MIRR_A : 0) |
+> -			    VIP_CNTRL_0_SWAP_B(p->swap_b) |
+> -			    (p->mirr_b ? VIP_CNTRL_0_MIRR_B : 0);
+> -	priv->vip_cntrl_1 = VIP_CNTRL_1_SWAP_C(p->swap_c) |
+> -			    (p->mirr_c ? VIP_CNTRL_1_MIRR_C : 0) |
+> -			    VIP_CNTRL_1_SWAP_D(p->swap_d) |
+> -			    (p->mirr_d ? VIP_CNTRL_1_MIRR_D : 0);
+> -	priv->vip_cntrl_2 = VIP_CNTRL_2_SWAP_E(p->swap_e) |
+> -			    (p->mirr_e ? VIP_CNTRL_2_MIRR_E : 0) |
+> -			    VIP_CNTRL_2_SWAP_F(p->swap_f) |
+> -			    (p->mirr_f ? VIP_CNTRL_2_MIRR_F : 0);
+> -
+> -	if (p->audio_params.format != AFMT_UNUSED) {
+> -		unsigned int ratio, route;
+> -		bool spdif = p->audio_params.format == AFMT_SPDIF;
+> -
+> -		route = AUDIO_ROUTE_I2S + spdif;
+> -
+> -		priv->audio.route = &tda998x_audio_route[route];
+> -		priv->audio.cea = p->audio_params.cea;
+> -		priv->audio.sample_rate = p->audio_params.sample_rate;
+> -		memcpy(priv->audio.status, p->audio_params.status,
+> -		       min(sizeof(priv->audio.status),
+> -			   sizeof(p->audio_params.status)));
+> -		priv->audio.ena_ap = p->audio_params.config;
+> -		priv->audio.i2s_format = I2S_FORMAT_PHILIPS;
+> -
+> -		ratio = spdif ? 64 : p->audio_params.sample_width * 2;
+> -		return tda998x_derive_cts_n(priv, &priv->audio, ratio);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static void tda998x_destroy(struct device *dev)
+>  {
+>  	struct tda998x_priv *priv = dev_get_drvdata(dev);
+> @@ -1982,10 +1945,6 @@ static int tda998x_create(struct device *dev)
+>  		if (priv->audio_port_enable[AUDIO_ROUTE_I2S] ||
+>  		    priv->audio_port_enable[AUDIO_ROUTE_SPDIF])
+>  			tda998x_audio_codec_init(priv, &client->dev);
+> -	} else if (dev->platform_data) {
+> -		ret = tda998x_set_config(priv, dev->platform_data);
+> -		if (ret)
+> -			goto fail;
+>  	}
+>  
+>  	priv->bridge.funcs = &tda998x_bridge_funcs;
+> diff --git a/include/drm/i2c/tda998x.h b/include/drm/i2c/tda998x.h
+> deleted file mode 100644
+> index 3cb25ccbe5e68bf95ce13249f15549b7e2582281..0000000000000000000000000000000000000000
+> --- a/include/drm/i2c/tda998x.h
+> +++ /dev/null
+> @@ -1,40 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> -#ifndef __DRM_I2C_TDA998X_H__
+> -#define __DRM_I2C_TDA998X_H__
+> -
+> -#include <linux/hdmi.h>
+> -#include <dt-bindings/display/tda998x.h>
+> -
+> -enum {
+> -	AFMT_UNUSED =	0,
+> -	AFMT_SPDIF =	TDA998x_SPDIF,
+> -	AFMT_I2S =	TDA998x_I2S,
+> -};
+> -
+> -struct tda998x_audio_params {
+> -	u8 config;
+> -	u8 format;
+> -	unsigned sample_width;
+> -	unsigned sample_rate;
+> -	struct hdmi_audio_infoframe cea;
+> -	u8 status[5];
+> -};
+> -
+> -struct tda998x_encoder_params {
+> -	u8 swap_b:3;
+> -	u8 mirr_b:1;
+> -	u8 swap_a:3;
+> -	u8 mirr_a:1;
+> -	u8 swap_d:3;
+> -	u8 mirr_d:1;
+> -	u8 swap_c:3;
+> -	u8 mirr_c:1;
+> -	u8 swap_f:3;
+> -	u8 mirr_f:1;
+> -	u8 swap_e:3;
+> -	u8 mirr_e:1;
+> -
+> -	struct tda998x_audio_params audio_params;
+> -};
+> -
+> -#endif
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
