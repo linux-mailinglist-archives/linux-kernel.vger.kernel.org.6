@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-446455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FA49F247B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 15:57:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA719F2480
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 15:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F541642AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C429618855CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B78A18FDD2;
-	Sun, 15 Dec 2024 14:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CDE18FC81;
+	Sun, 15 Dec 2024 14:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upnra4WS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Na4fR/kt"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADC2143C69;
-	Sun, 15 Dec 2024 14:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D09F143C69;
+	Sun, 15 Dec 2024 14:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734274623; cv=none; b=ZVc8W9WNSOzJfpyb6hAgTkmpV75TFypjISbCVVdAbI3oUvKbiiKNYDdpo88fQZSqF0jIb/PqeEoKczDsZS8TF8Cu1EaMRR84wktgCdeKJQRg202XNLeQqZHVvTMWW0xaXdl9CsmCUPU0h0V8D5e5mYATCz00ANBwj4dYw56MFRs=
+	t=1734274691; cv=none; b=oNMHnQ+YVN5HhjQJcmWMmnswzzFeKcCuEkZcS2snDSMwmXigHku0M0tms6+/bUSKJELz4BdYxXLDbDktynwtc3zHwdZ3Tzj+Pn+o8+y8wPPjtV+bt+s2h0I3UN7gJpLUtskFVPHb2D6CUakhV1rCFLcyUiUlQ92LuNWpxBnk3gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734274623; c=relaxed/simple;
-	bh=9QV+PHMTXlp02Zc634LB9+q/huRg5PsGVu+GEL9nvbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ltt8lbAQi80sv0euBOmKqTgoL3WdWtTTET5cT7esLipwB1d0SisecuJIGcaVuOPnjflO3JQU1GAalt4wBaBlFTxQBPv4HNF8VaLQhiqIY44jvwGybW6djr43xDGqrcZJ95iupce14S3H1NqAucBmEAeNmU/aYDZGAA48rUYSOgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upnra4WS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7524C4CECE;
-	Sun, 15 Dec 2024 14:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734274623;
-	bh=9QV+PHMTXlp02Zc634LB9+q/huRg5PsGVu+GEL9nvbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=upnra4WSGSE0jd5lRMUZveij74NqOwMUV6i9gyrGDbJKmh10S59+k7D8GKJgmZfDI
-	 QEMuGLxiZtQK5g0KHK6BIQEdc3Wlz9yTxkWXELqPdV+lMv3X67SKYHwkpYRkVdRjUn
-	 kWqgEYdsJya/28AIoDbxOD4KIwXQ/Oxxx4DgtunTo4ErIqRSUTBxSFB3OepPmmajGI
-	 ZVD0Qky4tWuv671xzCcFky1fpnjSBkkiGYFCcm3fMXXjkzU/fezLteaEGhTCeQvZxt
-	 zTKtseTuSyuGqNjrCxN9QmP1BgGME4XHx0aKqMOLnFxGEupAq6Yg88mt4vm5mhlJ5f
-	 SbEnJCFgZ03Nw==
-Date: Sun, 15 Dec 2024 14:56:58 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	eraretuya@gmail.com
-Subject: Re: [PATCH v7 3/7] dt-bindings: iio: accel: adxl345: add
- interrupt-names
-Message-ID: <20241215-satisfied-expiring-9200ec935768@spud>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
- <20241213211909.40896-4-l.rubusch@gmail.com>
- <20241214121057.5b12a236@jic23-huawei>
+	s=arc-20240116; t=1734274691; c=relaxed/simple;
+	bh=w9nvy9g1FOojXUI4vOJQb1SM3VY2aQLrTqmaDrLN1Xk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qfQpFzXss/q9Lib+NswkjcZuHlRs49EWcBmwowv5siwZXgF58Y4GBGxQmC3V2dRLXNeQYrPuStFpWuMXDsyht0JG0i/bsOk/dzDmXD6IbJnv8q7ZJLXOSf91WP/4diD5smGOW7j8GJIv2Xqu+lEJNLIOXg8EgmrgbS0a7fQlc6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Na4fR/kt; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1734274688;
+	bh=w9nvy9g1FOojXUI4vOJQb1SM3VY2aQLrTqmaDrLN1Xk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Na4fR/kt6LgwpxNgI6tz2AcZDhoefq7v24LZjhBbrFRcfq5/hGSzfj9rQPhPaeIlw
+	 BipUGzrVTVGAon1OKBSlZXU77dYHXW6NvkiVIlsJiwNantLuZY6vbldTG3zAJe7s4S
+	 nfaoH5kWQG/Znv7vZrubEv+Fg3JT4dlaV33U2514=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 15 Dec 2024 15:58:04 +0100
+Subject: [PATCH] fbdev/radeon: Use const 'struct bin_attribute' callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tPYxCPsmEU8y7dm7"
-Content-Disposition: inline
-In-Reply-To: <20241214121057.5b12a236@jic23-huawei>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241215-sysfs-const-bin_attr-radeonfb-v1-1-577bcffa1100@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAHvuXmcC/x3MwQrCMAwA0F8ZORtoyxS3XxkibZe6XNKRFFHG/
+ t3i8V3eAUbKZDAPByi92bhKh78MkLcoL0JeuyG4MPrgr2hfK4a5ijVMLM/YmqLGlaqUhDeX8uT
+ clO4jQT92pcKf/788zvMHA+6DgW8AAAA=
+X-Change-ID: 20241215-sysfs-const-bin_attr-radeonfb-60bc9009b84e
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+ Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734274687; l=1982;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=w9nvy9g1FOojXUI4vOJQb1SM3VY2aQLrTqmaDrLN1Xk=;
+ b=BslxGOrxS0iJMK1+ZAjFPUiwzPYaJt0wmnvkgiMQ/6rEGZThdAkBroJrhihP8t2YCdX351uoG
+ sufuPtSdUjmDMjTcW+35fDzfdIB1D2AKD9OuLYqxXHSD7rfQ24p1fx8
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+The sysfs core now provides callback variants that explicitly take a
+const pointer. Make use of it to match the attribute definitions.
 
---tPYxCPsmEU8y7dm7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/video/fbdev/aty/radeon_base.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Sat, Dec 14, 2024 at 12:10:57PM +0000, Jonathan Cameron wrote:
-> On Fri, 13 Dec 2024 21:19:05 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->=20
-> > Add interrupt-names INT1 and INT2 for the two interrupt lines of the
-> > sensor.
-> >=20
-> > When one of the two interrupt lines is connected, the interrupt as its
-> > interrupt-name, need to be declared in the devicetree. The driver then
-> > configures the sensor to indicate its events on either INT1 or INT2.
-> >=20
-> > If no interrupt is configured, then no interrupt-name should be
-> > configured, and vice versa. In this case the sensor runs in FIFO BYPASS
-> > mode. This allows sensor measurements, but none of the sensor events.
-> >=20
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
->=20
-> Just to repeat what I sent in reply to v6 (well after you'd posted this).
-> Maybe we can maintain compatibility with the binding before this by adding
-> a default of INT1.
+diff --git a/drivers/video/fbdev/aty/radeon_base.c b/drivers/video/fbdev/aty/radeon_base.c
+index 36bfb6deb8abde5268953082d096b97786ba3644..d866608da8d18f1987ea831f97a7f304ae62fa2f 100644
+--- a/drivers/video/fbdev/aty/radeon_base.c
++++ b/drivers/video/fbdev/aty/radeon_base.c
+@@ -2199,7 +2199,7 @@ static ssize_t radeon_show_one_edid(char *buf, loff_t off, size_t count, const u
+ 
+ 
+ static ssize_t radeon_show_edid1(struct file *filp, struct kobject *kobj,
+-				 struct bin_attribute *bin_attr,
++				 const struct bin_attribute *bin_attr,
+ 				 char *buf, loff_t off, size_t count)
+ {
+ 	struct device *dev = kobj_to_dev(kobj);
+@@ -2211,7 +2211,7 @@ static ssize_t radeon_show_edid1(struct file *filp, struct kobject *kobj,
+ 
+ 
+ static ssize_t radeon_show_edid2(struct file *filp, struct kobject *kobj,
+-				 struct bin_attribute *bin_attr,
++				 const struct bin_attribute *bin_attr,
+ 				 char *buf, loff_t off, size_t count)
+ {
+ 	struct device *dev = kobj_to_dev(kobj);
+@@ -2227,7 +2227,7 @@ static const struct bin_attribute edid1_attr = {
+ 		.mode	= 0444,
+ 	},
+ 	.size	= EDID_LENGTH,
+-	.read	= radeon_show_edid1,
++	.read_new	= radeon_show_edid1,
+ };
+ 
+ static const struct bin_attribute edid2_attr = {
+@@ -2236,7 +2236,7 @@ static const struct bin_attribute edid2_attr = {
+ 		.mode	= 0444,
+ 	},
+ 	.size	= EDID_LENGTH,
+-	.read	= radeon_show_edid2,
++	.read_new	= radeon_show_edid2,
+ };
+ 
+ static int radeonfb_pci_register(struct pci_dev *pdev,
 
-But can you make that assumption? If we did, and it's not universally
-true, we break systems that had INT2 connected that previously worked.
+---
+base-commit: 2d8308bf5b67dff50262d8a9260a50113b3628c6
+change-id: 20241215-sysfs-const-bin_attr-radeonfb-60bc9009b84e
 
-> Then you'd need to drop the dependency on interrupt-names.
->=20
-> I'm not sure though if the checking of number of entries will work against
-> a default. Give it a go and see what happens :)
->=20
-> We are lucky that we can't have bindings in the wild assuming ordering
-> of the two interrupts due to the maxItems being set for interrupts.
->=20
-> It's a messy corner, perhaps we should just not bother in the binding,
-> but keep that default handling in the driver?
->=20
-> DT binding folk, what do you think the best way of handling this is?
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
---tPYxCPsmEU8y7dm7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ17uOgAKCRB4tDGHoIJi
-0re3AQD3VfA+g76cz3luJUYI2rPZ5UBT7Llfk0sig1CdWRYIdwD/Yd9SqNLnyo3K
-Nj45N/klZKZtQe40EA9cQMlHnv5DUgc=
-=qAMS
------END PGP SIGNATURE-----
-
---tPYxCPsmEU8y7dm7--
 
