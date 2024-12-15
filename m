@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-446297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13599F2241
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:19:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E489F2242
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C471663FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9871886E62
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF5710957;
-	Sun, 15 Dec 2024 05:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658811BDE6;
+	Sun, 15 Dec 2024 05:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VJ1PgtmM"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Gdvf4gk9"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607EC79DC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF0C13D
 	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 05:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734239964; cv=none; b=W+ckXa/qjXPxH2tZLYdIQeunX7cT5a0/B5tXGo17Dkk8yl8rj+cF7CB0ZdqRuwbxjSt61Ah/SRYrtqqxYbNNfeDHdSSUTksl1isnpjSh9vcwTKttGxLBSJOQZHvdWDcrzJEzl/u+2qX26w43up2wOQTjozHbfYxPnbJMQa39kDc=
+	t=1734239967; cv=none; b=jZy/NqsEnOGS4aJG/L3BxPZY5nZmZQ2Jvb6QLVNbf6ZBdlC6Q1ioYRqQC3cof74ixFF8ggG38rJ1Yhl84sJTdqlOI673gThjFFGpAzks1RTye5kaFeAloeiCFolF+RPwFmbXNQLyPCSTTDv7uTTviYCk6OPPL+HA0hDpViVWRzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734239964; c=relaxed/simple;
-	bh=plRPBq7ASTDvAPVhEFqMLnmfkdr9J3nRihvlX5aA/Dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D9Udjpa6mKA6RKBv1XS5tOahW3XOdAUORughcc5qbSKGfjMep4hyjmigyYymFVnjt58x7DqtiZLq6w77uVbkF0nlwz/L4FhHqTM/ZdhHpJkdt8XV0QEePSRAq91XKitIfTzW7TpWEqX0YeDeQUupBDfVccp4SQcX3yYt/4bjM0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VJ1PgtmM; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so5205209a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:19:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734239960; x=1734844760; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GtrjhtrZa8UpJ/3eJcf4PBIGLhAtNPvkgEuXPSYFaw=;
-        b=VJ1PgtmMd2A0Qk8IrIdgLEyrWVU4SWSQb1JciS43wgp8DLbLt3KWnutxKgk7oWR0nG
-         NhqeTbLpBYQqZuko2JHbtxHrkhIR86JZsyXKT7PZUp0SsUyfAAN69CKjJVAae6QoBa9Y
-         4wy9vnIW5T7n/UJg+G8G+Itn/XoUWC0bjNLZ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734239960; x=1734844760;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+GtrjhtrZa8UpJ/3eJcf4PBIGLhAtNPvkgEuXPSYFaw=;
-        b=amUXmQiKhncCT9eayDFlDrv08xL8j7TqP9CejNA5yd76Ijf6m6fTgfKCN/zEUY81f6
-         c3np0kDMykOSK1ASQKe/bj08fxOYpqqEO0b1Z3CeKAbYA1w+5B7lhVFLJRgKcoHcDuX3
-         tVUJLrupWCq3fKpOfcQ3P54Dl7DZP9B4N1VlvbHUd/CJ8KxP5dfW9GmymUsEbq4741le
-         0Ecl+jXf1Z1TeGZhlcRsKv6QGcxe1qV0+ZXXFMSQiMSVzZ7Txn6TR+PxBaIHAbIuDTzH
-         1xg1hILjwtN7DyQjZ7WcCCn8DKM6Psib9y1iJyo1EW4dqHkiTuvqjtHHjwORxAHzolb+
-         iwFw==
-X-Gm-Message-State: AOJu0Yzbq6DwhgsxTiQ9XJuOGXoqXy7t+YWhWVz8BxcCLW4q9QfX4gg8
-	vc0xR23JV3FzaKPX+/jrQOtM04+llsmPiItAYpcolOxxEmrmbol6/uA52C3lesasmejGKabSfyL
-	0PWs=
-X-Gm-Gg: ASbGncugdEE2PgpbcQ8vA42g9n+AwDHaY8QQwf41j2Mj7N5yQdgbq2XolhK5yqkP1EC
-	4dS49HJdzGxUUxAe77tcvKlKDJiklXqtMqbSJlgUyunUfD3Cj6LzsOF5Qy2cHantgM47v1lrbRq
-	rWrlBvwOn2YBXEhHZlVarlcEnfJW/wP1dMGdlBZfFa1oVjT66MKEfDkeuElZAAni0TtnKsl8T0C
-	tooUktad63aCSMg9Nee5wQeevYkk/NJarZioujr8V9K94OtboNpTJ5Ixf90ZZYlFBKOpgbbr3gw
-	c8b3BnL8WmSHGKDu7xv/yUz5epO8w8c=
-X-Google-Smtp-Source: AGHT+IH3Wg1YKXyB/aSXT+fuOLWBu05po28T10cqmI69WYgWvURZDiTr1J5hrwbkWZ9P/fNBSoV+1w==
-X-Received: by 2002:a05:6402:1d50:b0:5d0:bdc1:75df with SMTP id 4fb4d7f45d1cf-5d63c3b3bc3mr5936216a12.24.1734239960411;
-        Sat, 14 Dec 2024 21:19:20 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ab5114sm1736913a12.5.2024.12.14.21.19.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 21:19:18 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa543c4db92so612197666b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:19:17 -0800 (PST)
-X-Received: by 2002:a17:906:c142:b0:aa5:4672:663b with SMTP id
- a640c23a62f3a-aab77eaf931mr789801366b.55.1734239957671; Sat, 14 Dec 2024
- 21:19:17 -0800 (PST)
+	s=arc-20240116; t=1734239967; c=relaxed/simple;
+	bh=QEAJjJe46UqDesEuWkjOKH9iiQgNxEe1eBhgVrPZ+KA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=a+0UpQMN7ZXL9iGMmuplLh2UuZV0DRuO3d9fVBvqlEsxHM4tHuC9+ka2s9R8C8UnGlrKUbJxAIW4pNCstRYBGlEdLUtfLPMWecKowkMNVPV9Y07MQlQYX0Vgc+RZh+r6uoZUfvLa+0Ge1o59PMZ6qp4HSbG1s7VpqH+/EBXzZlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Gdvf4gk9; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1734239960; bh=RGxLWxlTBIL4IiWRMN0bjGjhxTp8hi5m7uffpw6ah3E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Gdvf4gk9tC9vjiovXpFK8b1yO2dA3U+zBsgrwTIPxws9rw412PTpu3CHKE7qYwp8G
+	 OVwph2Z3M5LxIn8oVZswnZIKrL/zxHNA0/ZDtesraqeEC/sb7/4NJtfNNPJRYowecO
+	 a2RKJepQ0YtmXeVdztYs4f5gAlRbaUzd48xcs3eA=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 4D18720C; Sun, 15 Dec 2024 13:19:17 +0800
+X-QQ-mid: xmsmtpt1734239957t7k94amqb
+Message-ID: <tencent_8146EC92D7066E89802EFEEED48C8427DE06@qq.com>
+X-QQ-XMAILINFO: MTAjqnahuprtPW4FKF7yXlhbRy453zofBquyh2c8zRW1k2MaKGcik8RzQ98ryF
+	 +RX5NgkhlQdYK9ewZTFlyTUBfEkpyBqFQHniRSH9B/LCSEVQ7oytANt5isH+jYF8Ath0iN5Ug8uE
+	 Z1fvYo0gMqvmG9396Utq0BTVTrDvipLTg7fPAQoheSRmn1TQh7zIR8KcPqQku1ER477qr7I4km3L
+	 VqK14OZnvuYT4txiKwyWOl0p7RPWJ0njrjmHQjqRUKVHwBn+Mg1g3rQNItkHOZjFvO9D4JQLEqVq
+	 eZX/8e2v1yYhZ0uIQMZlmjAP5N4EGgiK1jdAPpuJyuSCvlUhKBgygNS7r5OxWY/Z9T/x1+k8LFgz
+	 K4UO5n1hezP3YKn6KyCtWCU4lCphiGkQQji4SC275QJVuAPwXcSrSFcNszhz61slVeysmXyxh9Q9
+	 vwGuXwtYoA47sV3WVrVCsGgaT6SCi4hOrUcYRatDWruGcvuMrpzcSWDgs28cJwkXz8GamJKvI3vl
+	 AFxxbsPbt0UnwRWLjTezE8N36AcsK9p5bSwBOi+Ydr9dhGQHUUfLQiogItaBytCbEvecu52lp4LM
+	 OjDkt2KjTGxPbfA+QNgn/EK7fO1K/IzoUbfKRcwpfO166qMZvGoXwP3D1DRNitAD7iTNLEgSh6Qm
+	 XCvebAKhw8b/qGdyvPAEQ96tSLCPyJYxhaNBAOioEaVArFRW0aRnvGh4HdRuql/Jl/bjs+OyQcFW
+	 x6hFgMT5p1dGeNkCX5F7dzjZVrBoES6sYpFNL6ovuQ7PYExWttV6+se9QcGaVK+latXO68jYVOIh
+	 PeIidC1sef/6gKa78Kcjjvw9FAzLm6WqI0viACC4nqrpF0mcGp4nO2LrhRBbWiaC0g+qpLgG9hzn
+	 lRNJ6i8XRu1kSejdFvc+ItJ6BFfBxFkDFi90nZsWrDYe0G9ZW/PqOCgtQWzfzwCcW2HBJr8SCQ3G
+	 mRmukutR8=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4c7590f1cee06597e43a@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in folio_evictable (3)
+Date: Sun, 15 Dec 2024 13:19:18 +0800
+X-OQ-MSGID: <20241215051917.1735604-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <675c5e51.050a0220.2875e5.0049.GAE@google.com>
+References: <675c5e51.050a0220.2875e5.0049.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214182138.4e7984a2@batman.local.home> <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
- <20241214220403.03a8f5d0@gandalf.local.home> <20241214221212.38cc22c3@gandalf.local.home>
- <CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
- <CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com> <20241214233855.46ad80e0@gandalf.local.home>
-In-Reply-To: <20241214233855.46ad80e0@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Dec 2024 21:19:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-Message-ID: <CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 14 Dec 2024 at 20:38, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> So what are you objecting to?
+#syz test
 
-I'm objecting to "we wrote bad code, so let's hack it up some more".
+diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+index 042329b74c6e..3dcef4bb0427 100644
+--- a/drivers/scsi/scsi_scan.c
++++ b/drivers/scsi/scsi_scan.c
+@@ -222,6 +222,7 @@ static int scsi_realloc_sdev_budget_map(struct scsi_device *sdev,
+ 	bool need_free = false;
+ 	int ret;
+ 	struct sbitmap sb_backup;
++	unsigned int flags;
+ 
+ 	depth = min_t(unsigned int, depth, scsi_device_max_queue_depth(sdev));
+ 
+@@ -243,10 +244,12 @@ static int scsi_realloc_sdev_budget_map(struct scsi_device *sdev,
+ 		blk_mq_freeze_queue(sdev->request_queue);
+ 		sb_backup = sdev->budget_map;
+ 	}
++	flags = memalloc_nofs_save();
+ 	ret = sbitmap_init_node(&sdev->budget_map,
+ 				scsi_device_max_queue_depth(sdev),
+ 				new_shift, GFP_KERNEL,
+ 				sdev->request_queue->node, false, true);
++	memalloc_nofs_restore(flags);
+ 	if (!ret)
+ 		sbitmap_resize(&sdev->budget_map, depth);
+ 
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index e83d293c3614..573f62ccd01e 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -839,6 +839,8 @@ static int init_journal(struct gfs2_sbd *sdp, int undo)
+ 	    gfs2_holder_initialized(&sdp->sd_jinode_gh))
+ 		gfs2_glock_dq_uninit(&sdp->sd_jinode_gh);
+ fail_journal_gh:
++	if (ip)
++		cancel_delayed_work(&ip->i_gl->gl_work);
+ 	if (!sdp->sd_args.ar_spectator &&
+ 	    gfs2_holder_initialized(&sdp->sd_journal_gh))
+ 		gfs2_glock_dq_uninit(&sdp->sd_journal_gh);
 
-> The current change, or the code that's already been there?
-
-Both.
-
-The current change looked so random that it made me go "WTF?" and then
-I looked at the code it's changing.
-
-The code is literally making assumptions about how va_list arguments
-even work. It calls trace_seq_printf() and expects that to keep the
-"va_list" argument in sync as it walks the argument list.
-
-The code even seems to *know* how hacky and wrong it is, because it
-does a RUNTIME CHECK for this in test_can_verify(). But that really is
-just testing one random implementation. The whole approach
-fundamnetally doesn't work on some architectures at all, and on others
-it would be broken by seq_buf_vprintf() (or vsprintf) doing a
-va_copy() and using an internal version or any number of other things.
-
-So the code IS WRONG.
-
-It's wrong at a fundamental level. The thing where it modifies
-iter->fmt in place is just a detail in the bigger picture of that
-function being completely broken.
-
-It's literally hacking together a really *bad* version of KASAN
-checking, re-implementing 'vsnprintf()' *badly* by trying to use the
-real vsnprintf() for the heavy lifting and literally hacking around
-corner cases. And when I say that the "va_list" handling is buggy, I'm
-*not* asking you to try to fix it. The va_list bug is just another
-symptom of the deeper problem in that thing.
-
-This is why I compared it to the tracefs situation. It has exactly the
-same pattern: fundamentally misusing core kernel infrastructure,
-hacking around it to get something that "works", but that is wrong on
-a fundamental level, and then adding more hacks on top when some new
-issue rears its ugly head.
-
-I absolutely believe that coimmit ff54c8dc3f7a fixes some behavior.
-But I'm looking at it and going "this code is not salvageable". All
-you do is add more bandaids on top.
-
-Do it right. And honestly, "right" in this case is almost certainly
-"get rid of trace_check_vprintf() entirely".
-
-The fact that you basically disable the thing already with a static
-branch when 'va_list" doesn't work the way you want is a BIG sign.
-
-Just disable it unconditionally.
-
-              Linus
 
