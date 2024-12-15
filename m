@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-446634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2F29F275A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 00:09:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D01B9F2759
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 00:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CE816520A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CCD1882850
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4C71D5178;
-	Sun, 15 Dec 2024 23:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B621D319B;
+	Sun, 15 Dec 2024 23:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BDH1N5Nn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D7qox8Em"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cL9Mv/I9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gMP6g89E"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F261CD1E0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B831CD1E4
 	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734304019; cv=none; b=HyhIha0qB7jIgXFNpnRNG/7KT0dMSAIhj1im8kM7DfZhyvEArI+M2dYePEb4SqgyWbFGv7u+pR4F0tgls1xUiT4KrWgLSXRhhn2GYaPQB+/RU4NwjO2l6StinxuwYGlV4JALA7ffJQjDiwV/9QC+jCG5hv0EMcJH4JwXQO5zt6c=
+	t=1734304019; cv=none; b=uF6nqN/c8h3QF8W8HfNdNn0lfv4r3zR/kduKyA0eaSg7P7cAL7MSwhcvWWntxJPpvYQdtMZ/QgNfbe5CCSzKwqQrGfkCm2FCkT1vFxeXUehtyA9vZC7W8X5FuXvVaWIktVb6fbdCLlIqRlz8Jkdh3qW59tOAn6wJPdsvyDmO6jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734304019; c=relaxed/simple;
-	bh=tGQ90tQFNBs0LioAZHXxhJi+dnJqsSoi4itaba/oBcU=;
+	bh=oBCl2xg1hBgwXDdOFVnS6Y5pFTfEYL/Bz1BD8yFVl24=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l8Pp4WjcTHZ6AfdkOcvYhZW0GIGPNeYKUilJxdksP0p6Wmp7aqmmr2gDrEbJoR6ifAOKo8IheQl8ENMj07Tkj5plMOvDnkeU6qyTXsjw5W6Pwu0ScSpUJe1RFxuRl/+MLKm1UmLaNK8+p6PWCf5gNv6mYiU0Yif+HT+f9FJZfNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BDH1N5Nn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D7qox8Em; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=YXrNmMmGQCV1eE4wVfImJJAAg2wuArBEnRawQ6lLBxJUDNC+Yr7tnTMwgj2mSh7Ah45JL6UdnGVxfdwl+VkonjiTvCeXbzmBD3gweKsHDXWnYMc5cm2/LAnoAtOJRGYSPEWB//uYs6ILKMG+E1E7VMfcHIv6IejZrxLbBhYIEhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cL9Mv/I9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gMP6g89E; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734304009;
+	s=2020; t=1734304010;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RXQJmqhHPrSasMZSAKq9wWCexASoz+ENk/0L1qCztPU=;
-	b=BDH1N5Nns2jn+rHBKPB5smoQ6OBUA2MgYwPnWmNkZ3Vn/Bzi1xO1tTVHsGz6/m0FKjqYHc
-	lL25xsOzScS3A8GMsZyF8exvJs/O+ElW66sgkOktGcyzc/7fbNzw6FRJZnwViS01zIpudY
-	ksu59SW/WHx2LOTTtUe/AhQfBjNeNKyUr44cf2ibjwlDkBm9+4dgOYFMP1OJD7cWELDDR9
-	tdAbD/3X3pUpdZdEUt9AkAQN+61ZyvVB+B1+Hg61j/Y5gEL8WVB27oYmtEAtnp4e+yLTh7
-	usyvnRau7yD67fP6YQGea1T7AdO59gmRxX1MOAwiZVrzDrHW9dx6pK/lH9/89w==
+	bh=3L65Sur2ZtMYl6cHzYDBnz6z7qp7UvxDlE/18U+/UkU=;
+	b=cL9Mv/I9ElqtgngdVm7gAIuvQf9ER6jkgzRVBURJl+nHbRnalv1tKMpjx09NMlhIeoF4ca
+	tTVI1rQRXwQhdXm4I686kKHNzd+lJMFPl15pjtFyFDDaBWiow1FqZi2TWlR38yDw7jTlcL
+	rLcXgZQ1utRFZq8Zr3BB/QdiWFIegyR/xuxbV0M/2TW6vEwzh7U1F0QclZC87tVd8/8ets
+	r73Y/fIp8CeN+NS4EGUXSIKy72d4XQGBhxMzAj3Aw+N99DhekImJ570XC5K6hcHeO1qlNK
+	wrRSS5vUjthTpkkMdHFs6nSxUQHkkYmOKsqxdgyZnJFho9vYPWbFLEsF6JdHXQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734304009;
+	s=2020e; t=1734304010;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RXQJmqhHPrSasMZSAKq9wWCexASoz+ENk/0L1qCztPU=;
-	b=D7qox8EmHs5aNj1+QLs6sWdwAHF2xnivF3dNcl7YSH9sBv4mcTv30OSDXrZpNHK3xVs/zE
-	6WVZyYWgilGfdzBw==
+	bh=3L65Sur2ZtMYl6cHzYDBnz6z7qp7UvxDlE/18U+/UkU=;
+	b=gMP6g89ElOUbaApJX+yGHyRhjdroMN3V6XzVpfHaLIgzkvx48zlT95RQvQw+/7/P/Fdrkq
+	JkCczzZDQPDMrdDw==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -64,9 +64,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v5 11/14] futex: Use a hashmask instead of hashsize.
-Date: Mon, 16 Dec 2024 00:00:15 +0100
-Message-ID: <20241215230642.104118-12-bigeasy@linutronix.de>
+Subject: [PATCH v5 12/14] =?UTF-8?q?tools/perf:=20Add=20the=20prctl(PR=5FF?= =?UTF-8?q?UTEX=5FHASH,=E2=80=A6)=20to=20futex-hash.?=
+Date: Mon, 16 Dec 2024 00:00:16 +0100
+Message-ID: <20241215230642.104118-13-bigeasy@linutronix.de>
 In-Reply-To: <20241215230642.104118-1-bigeasy@linutronix.de>
 References: <20241215230642.104118-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -75,85 +75,103 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-The global hash uses futex_hashsize to save the amount of the hash
-buckets that have been allocated during system boot. On each
-futex_hash() invocation this number is substracted by one to get the
-mask. This can be optimized by saving directly the mask avoiding the
-substraction on each futex_hash() invocation.
-
-Rename futex_hashsize to futex_hashmask and save the mask of the
-allocated hash map.
+Wire up PR_FUTEX_HASH to futex-hash. Use the `-b' argument to specify
+the number of buckets. Read it back and show during invocation.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- kernel/futex/core.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ tools/perf/bench/futex-hash.c | 19 +++++++++++++++++--
+ tools/perf/bench/futex.h      |  1 +
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 15e319239c282..b237154d67df0 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -52,10 +52,10 @@
-  */
- static struct {
- 	struct futex_hash_bucket *queues;
--	unsigned long            hashsize;
-+	unsigned long            hashmask;
- } __futex_data __read_mostly __aligned(2*sizeof(long));
- #define futex_queues   (__futex_data.queues)
--#define futex_hashsize (__futex_data.hashsize)
-+#define futex_hashmask (__futex_data.hashmask)
+diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
+index b472eded521b1..e24e987ae213e 100644
+--- a/tools/perf/bench/futex-hash.c
++++ b/tools/perf/bench/futex-hash.c
+@@ -22,6 +22,7 @@
+ #include <sys/time.h>
+ #include <sys/mman.h>
+ #include <perf/cpumap.h>
++#include <sys/prctl.h>
 =20
- struct futex_hash_bucket_private {
- 	rcuref_t	users;
-@@ -300,7 +300,7 @@ struct futex_hash_bucket *futex_hash(union futex_key *k=
-ey)
- 	hash =3D jhash2((u32 *)key,
- 		      offsetof(typeof(*key), both.offset) / 4,
- 		      key->both.offset);
--	return &futex_queues[hash & (futex_hashsize - 1)];
-+	return &futex_queues[hash & futex_hashmask];
+ #include "../util/mutex.h"
+ #include "../util/stat.h"
+@@ -53,6 +54,7 @@ static struct bench_futex_parameters params =3D {
+ };
+=20
+ static const struct option options[] =3D {
++	OPT_UINTEGER('b', "buckets", &params.nbuckets, "Task local futex buckets =
+to allocate"),
+ 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads=
+"),
+ 	OPT_UINTEGER('r', "runtime", &params.runtime, "Specify runtime (in second=
+s)"),
+ 	OPT_UINTEGER('f', "futexes", &params.nfutexes, "Specify amount of futexes=
+ per threads"),
+@@ -120,6 +122,10 @@ static void print_summary(void)
+ 	       (int)bench__runtime.tv_sec);
  }
 =20
- void futex_hash_put(struct futex_hash_bucket *hb)
-@@ -1486,25 +1486,25 @@ int futex_hash_prctl(unsigned long arg2, unsigned l=
-ong arg3)
-=20
- static int __init futex_init(void)
++#define PR_FUTEX_HASH			77
++# define PR_FUTEX_HASH_SET_SLOTS	1
++# define PR_FUTEX_HASH_GET_SLOTS	2
++
+ int bench_futex_hash(int argc, const char **argv)
  {
-+	unsigned long i, hashsize;
- 	unsigned int futex_shift;
--	unsigned long i;
+ 	int ret =3D 0;
+@@ -131,6 +137,7 @@ int bench_futex_hash(int argc, const char **argv)
+ 	struct perf_cpu_map *cpu;
+ 	int nrcpus;
+ 	size_t size;
++	int num_buckets;
 =20
- #ifdef CONFIG_BASE_SMALL
--	futex_hashsize =3D 16;
-+	hashsize =3D 16;
- #else
--	futex_hashsize =3D roundup_pow_of_two(256 * num_possible_cpus());
-+	hashsize =3D roundup_pow_of_two(256 * num_possible_cpus());
- #endif
--	futex_default_max_buckets =3D futex_hashsize;
-+	futex_default_max_buckets =3D hashsize;
+ 	argc =3D parse_options(argc, argv, options, bench_futex_hash_usage, 0);
+ 	if (argc) {
+@@ -147,6 +154,14 @@ int bench_futex_hash(int argc, const char **argv)
+ 	act.sa_sigaction =3D toggle_done;
+ 	sigaction(SIGINT, &act, NULL);
 =20
- 	futex_queues =3D alloc_large_system_hash("futex", sizeof(*futex_queues),
--					       futex_hashsize, 0, 0,
-+					       hashsize, 0, 0,
- 					       &futex_shift, NULL,
--					       futex_hashsize, futex_hashsize);
--	futex_hashsize =3D 1UL << futex_shift;
-+					       hashsize, hashsize);
-+	hashsize =3D 1UL << futex_shift;
++	ret =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, params.nbuckets);
++	if (ret) {
++		printf("Allocation of %u hash buckets failed: %d/%m\n",
++		       params.nbuckets, ret);
++		goto errmem;
++	}
++	num_buckets =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_SLOTS);
++
+ 	if (params.mlockall) {
+ 		if (mlockall(MCL_CURRENT | MCL_FUTURE))
+ 			err(EXIT_FAILURE, "mlockall");
+@@ -162,8 +177,8 @@ int bench_futex_hash(int argc, const char **argv)
+ 	if (!params.fshared)
+ 		futex_flag =3D FUTEX_PRIVATE_FLAG;
 =20
--	for (i =3D 0; i < futex_hashsize; i++)
-+	for (i =3D 0; i < hashsize; i++)
- 		futex_hash_bucket_init(&futex_queues[i], 0);
--
-+	futex_hashmask =3D hashsize - 1;
- 	return 0;
- }
- core_initcall(futex_init);
+-	printf("Run summary [PID %d]: %d threads, each operating on %d [%s] futex=
+es for %d secs.\n\n",
+-	       getpid(), params.nthreads, params.nfutexes, params.fshared ? "shar=
+ed":"private", params.runtime);
++	printf("Run summary [PID %d]: %d threads, hash slots: %d each operating o=
+n %d [%s] futexes for %d secs.\n\n",
++	       getpid(), params.nthreads, num_buckets, params.nfutexes, params.fs=
+hared ? "shared":"private", params.runtime);
+=20
+ 	init_stats(&throughput_stats);
+ 	mutex_init(&thread_lock);
+diff --git a/tools/perf/bench/futex.h b/tools/perf/bench/futex.h
+index ebdc2b032afc1..abc353c63a9a4 100644
+--- a/tools/perf/bench/futex.h
++++ b/tools/perf/bench/futex.h
+@@ -20,6 +20,7 @@ struct bench_futex_parameters {
+ 	bool multi; /* lock-pi */
+ 	bool pi; /* requeue-pi */
+ 	bool broadcast; /* requeue */
++	unsigned int nbuckets;
+ 	unsigned int runtime; /* seconds*/
+ 	unsigned int nthreads;
+ 	unsigned int nfutexes;
 --=20
 2.45.2
 
