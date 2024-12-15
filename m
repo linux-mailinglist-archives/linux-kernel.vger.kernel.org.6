@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-446575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3559F2665
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:00:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974199F266A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CC51884DBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:00:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1CA07A1703
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67E1C3C05;
-	Sun, 15 Dec 2024 22:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFC81C54BE;
+	Sun, 15 Dec 2024 22:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYnSFEda"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6jxE5Ze"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12B1C0DF0;
-	Sun, 15 Dec 2024 22:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129AB1BCA1B;
+	Sun, 15 Dec 2024 22:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734300012; cv=none; b=VGw7wCpECM57xxreh30AjgUoB1LxMmRsJaFQX4HmWv7D6H/MyFQe7Nuh3IIrwEaDrAMl1XPNXvC9ZoLulVXaA4VWDCic8hXNPIQ4s5rYmisWIoxMjuU1LuW26kmaN3WfFxEU9yHMebUXVp6gXLZhwBeT0aW61T5kbosc+CLcYaA=
+	t=1734300016; cv=none; b=lNm54YA+qmF0SHt+r8fRXT03Puh475WPrR7ICWYtb2mpJ38H4Dfh4hyAg/Gd1bm5UGKerAgxo3r+yyfQK+zmhS128fGvY4/zMj5c1076c1ALY6ujy17TGmr5MXMdZwn+buQ4kwczKUOeeeftUXSpfauI/OYJC+6J1OKwZYaa7FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734300012; c=relaxed/simple;
-	bh=xPw1BdIggUijSOVomyn8DE/QuxGpu73NRPHvR6FOeNk=;
+	s=arc-20240116; t=1734300016; c=relaxed/simple;
+	bh=FmclbdDjJ7uS1L59HpwGcSVYM6UH/bu3sc9AyNYWC5M=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tR4xPs2/g66rFbmiznxsavyL6FrL64QLwMHQEQDT0eHZRHtbI8Xr4ZKZTSaTLp8G3K0zqNzbAZBoRuHMu6FEdy54BnOHyDj8EUTtgzWS84WI1FtbLdV0btAscOjvA0dPAm+5/sup55Cb/2HigwrqUZq5hI9mcLlMaLJxJc0v5A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYnSFEda; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94621C4CECE;
-	Sun, 15 Dec 2024 22:00:11 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=eAXFGu0JG7oaqaySez4AkZOH2oLEfAci417nzfEyd+5DCFr0b/599Es/AAOnpSWPlWB8PVsHBLi+6Vsohl86vZSbPDEvP04xg6FvLIuS0o6bOp0MdQ/Yi25TAGG6Wj8T6t71TeLRoD9upLqbutb/qLbvkmgbMN8WPy8CnARL4bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6jxE5Ze; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917DCC4CED4;
+	Sun, 15 Dec 2024 22:00:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734300011;
-	bh=xPw1BdIggUijSOVomyn8DE/QuxGpu73NRPHvR6FOeNk=;
+	s=k20201202; t=1734300015;
+	bh=FmclbdDjJ7uS1L59HpwGcSVYM6UH/bu3sc9AyNYWC5M=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KYnSFEdamkQnqowOJQ3oDBBFIOQh5Y35dfgUIYbPSwGW/kXho1KbOcTovaFFSxEK7
-	 7rvO2MoTPnDeKDiIHG/Z5kSvqBkqLLxoGdzVqrl+iZO0UFVCNlNZT82/ZTEO+dK5vG
-	 JlU3MTLGpixDBHlMsWgrY6/BH78TmcvMlnBmHm+S99IP3CA7xNcKUY+gLCvjGy6gJ5
-	 9hvOpeSex133WBL7wH2X5Bk1gclNMOOZ4J7Qsg1s2KAVM1gkfCl3ITa8F4pptL9Y0z
-	 zFdR9rU4NBocD14ncBg+pIwgJpBwmObbwPE0SUWSxV+YVRyfzO24jYu2QC0PrptmnZ
-	 nyKd3XWmzoy3w==
+	b=f6jxE5ZecAlX0QlfjDYRVso7Y0Td4qcrL7qEIerx9/BRE24g1+/6Sn/i0b8tp10nH
+	 HrykjQQjV9uzftAP5gGx8Yf/Z1YVtKd5wvhDwWpqsttU5qoMOELvJaIZhTsH0FfUYM
+	 OQ23XK4D2R36m6x1PXDE8wfkuN1PbX9OX8MC3HKPy1yvEVKYtHgGidA2x/WY+vbY5i
+	 r6Qa+LZnN60DG+1r67GnogMq9SwYo95Rcs1wLBzMYw8uvnY6nIrLLg3N2l9GjxQLpA
+	 RB1xcnn57PWrVCHJvBovzL3wD0gYmfgxn2g5RQCpT2SezG87MPA3QSnIgmC9VkHGqw
+	 8hy9WJIpOF8iA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2EB3806656;
-	Sun, 15 Dec 2024 22:00:29 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE03C3806656;
+	Sun, 15 Dec 2024 22:00:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] ethernet: Make OA_TC6 config symbol invisible
+Subject: Re: [PATCH net-next] octeontx2-af: fix build regression without
+ CONFIG_DCB
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173430002850.3589621.15459457255990504708.git-patchwork-notify@kernel.org>
-Date: Sun, 15 Dec 2024 22:00:28 +0000
-References: <3b600550745af10ab7d7c3526353931c1d39f641.1733994552.git.geert+renesas@glider.be>
-In-Reply-To: <3b600550745af10ab7d7c3526353931c1d39f641.1733994552.git.geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Parthiban.Veerasooran@microchip.com, andrew+netdev@lunn.ch,
+ <173430003225.3589621.13879594848073437493.git-patchwork-notify@kernel.org>
+Date: Sun, 15 Dec 2024 22:00:32 +0000
+References: <20241213083228.2645757-1-arnd@kernel.org>
+In-Reply-To: <20241213083228.2645757-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+ hkelam@marvell.com, bbhushan2@marvell.com, andrew+netdev@lunn.ch,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ arnd@arndb.de, horms@kernel.org, alexious@zju.edu.cn, kdipendra88@gmail.com,
+ rkannoth@marvell.com, saikrishnag@marvell.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 12 Dec 2024 10:11:43 +0100 you wrote:
-> Commit aa58bec064ab1622 ("net: ethernet: oa_tc6: implement register
-> write operation") introduced a library that implements the OPEN Alliance
-> TC6 10BASE-T1x MAC-PHY Serial Interface protocol for supporting
-> 10BASE-T1x MAC-PHYs.
+On Fri, 13 Dec 2024 09:32:18 +0100 you wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> There is no need to ask the user about enabling this library, as all
-> drivers that use it select the OA_TC6 symbol.  Hence make the symbol
-> invisible, unless when compile-testing.
+> When DCB is disabled, the pfc_en struct member cannot be accessed:
+> 
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c: In function 'otx2_is_pfc_enabled':
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c:22:48: error: 'struct otx2_nic' has no member named 'pfc_en'
+>    22 |         return IS_ENABLED(CONFIG_DCB) && !!pfvf->pfc_en;
+>       |                                                ^~
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c: In function 'otx2_nix_config_bp':
+> drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c:1755:33: error: 'IEEE_8021QAZ_MAX_TCS' undeclared (first use in this function)
+>  1755 |                 req->chan_cnt = IEEE_8021QAZ_MAX_TCS;
+>       |                                 ^~~~~~~~~~~~~~~~~~~~
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,net-next] ethernet: Make OA_TC6 config symbol invisible
-    https://git.kernel.org/netdev/net-next/c/0193eebbb1fc
+  - [net-next] octeontx2-af: fix build regression without CONFIG_DCB
+    https://git.kernel.org/netdev/net-next/c/410cd938511f
 
 You are awesome, thank you!
 -- 
