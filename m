@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-446377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4189F239E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:12:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D13729F23A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1999016586A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E141316580C
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9C017BB21;
-	Sun, 15 Dec 2024 12:12:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8453B17BB32;
+	Sun, 15 Dec 2024 12:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DKgegFXS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B746E1119A
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C987617B50F
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734264751; cv=none; b=sx6P/D/TyVboZlgijvPBUD9jTJEQiroakQdn/3VHN3tQ2t1D7PuTgqLpDgYwDcCxyYcCE8ERZKpPZZ1XaKAoe7Fh4CIEAJnyF+JR9UdaC6oWNGy5KajuJEjmjVIctStY+gdCTcywHMJ+65jQSF3eTPuQOu3k/yCwG/ojfu5cNcc=
+	t=1734264781; cv=none; b=tLw7F0K7vCq3x5usVhWh12G934Q6TBV2waAqx1/A7tCbV8iZqmPe9vbHgAXWuWJeNXsewnTKdTsXy+RIpDijW23Y0gH9thMU0Od2DO4aZX2WOqbRvV7piKu0SjoB1xs4PdcWXxyKVT6dh6lFN2jd5/DHt12IQPu253fHO7vM3Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734264751; c=relaxed/simple;
-	bh=AYlTEFpWIncjRpZQPffyZDlLYSxAWaU1Ave5Ue9IMSQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TP+PLEr6dVEDcXbFFCwmnkh+WvOyEp/A3BRmnHkLYXKxc7hLtDMO0LDXvcah7PWBOSnyLsKjlopJlzB9U4eT6WMwMXIRkP3WkQKV6dKR6uDV90q0A/WgM5c9vAQKNqbVMrXqD1pUHw7lNdLaOUQ1c3qdP9fIVnXTqpxfrYKQZRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a814bfb77bso42095235ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:12:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734264749; x=1734869549;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FOL9s/OQ6MNT6UGsGpZsjo3MmE6YYjvHLOxHAwyHjm0=;
-        b=bId81gzG1zA/Inmgi035HiGKr/foJUwQdEeglYn+Kuep+FZSFRD5mvEnHP5mWFgYnS
-         nPTHkhovavI7okja41p7I6QXZB3Fs7+yAWhi3li+u23hAysTWM1jZmOSiLehV/6MZvIx
-         K0Ebuuvlqr2u2LXgWw8Qb1MuMhQrn69uRgnvwvIq1qe8wKke+y0h4oA3vMOutk5JzNlY
-         2a1fCn2Da6MPbqn2uhw+DGdQl2RfYlu9ZkQtau7onIxuvaSifTHZ80YCoAzQWUtXlSeH
-         jFs0Ls54I1tmOIQsqtBDLzgQdSHyxraaU120VfTQ/57UtgB1ALQQvjIM6A7HI5JFmlnK
-         aXzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXASRP7TZ25F52oa19Qz2SPsZi27JeiycMn/ZkPAwoXoF8hQ50m6DjUkKC0/BcTBy0hRJoht88tmgNqEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/pKRs4/RG6gD88M+TLPCW6rytpV04m4vdsxJ6GLOnNAClxoVp
-	OMurNpbp8moxYkjer15sGqL+6pHKzg1DbP3KprmzD80BFsNhPxBYDbgscGTOsZ+/L1/jPOBI0dS
-	2SViwpMZrZNxA1S/C1ISuuxkQ4kLqFgiT12wkX4UY5kkVmDqLkcJoozo=
-X-Google-Smtp-Source: AGHT+IFUeBrcc2QCuF0+CuTx0GFY7B+Ia2Os/4nKWE/1sZmNSz+EU/eK1rK7hjjPuG8VagdLXkezG47kYg+UyuQ0jmGBDkQTz926
+	s=arc-20240116; t=1734264781; c=relaxed/simple;
+	bh=TttqRsVgCfE6r9ebvMRJELkBmgx7mejiIA2CHJUF4oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JxZ2GqD64zGLtSjRjLMbNVdgPdfLux3vSyiUPQJP9NR3iEfl7zLg4ke8rgGkzoOZVposmaZehDpAQdv0Vu4i7UhobuEk/444g9c6GDiVqeWHRVXf3wsfGzu52RXerqw4iFZ9GCXzzKEluD+bi0RbinrdW2BuK+oiazlJ4X0hsZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DKgegFXS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 87E8540E0264;
+	Sun, 15 Dec 2024 12:12:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AuE1ZiWNe0Fo; Sun, 15 Dec 2024 12:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1734264774; bh=SJ5i8l4VTt55KDY9JKzIS0FmiIKL4qBNlGI6lABpLPY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DKgegFXSK4aI4Dk/lGCd9UAEhFYFReKoa/f66gCEXbR3cnnmjvTITO4a3GIvKAkeZ
+	 G2CdteF2tcwTlzAFH+TbdOjg5lbso3OXJSrVmDvmYYBbKesfR1maCposfRLAdrEQ9h
+	 iHEBqi8Et0kYiugcXIaxVoE09sb4D220BrUqYqVKXL1u1a8zjdac+WW+jigKYKlXvv
+	 rPlPtnJF38dvMrW4dUpn2Dh/KceGBKnrxZQzJGiiIQjbIobVffAELRtXubWt63rTcV
+	 At0HvD5Y1l7cfW1hvIGN96sz+ILp1bN98zRGLdm7EAi+/4E2W5We3FT88g6ZCBUoI2
+	 jMFM9+o7LDkhLY/8HuAmZQ9q0ZyqZEz7FSq+GKH/DPd8doP+n6NqXswEromFsGF1Q5
+	 0uZf+fwASkkcunLQLnhSQa4aKRokzag5cF9F3Wbz6+Pe2nFhUI1CmLqTUTiUpFbSja
+	 bR+xArPmrtPtrddUURgsZdeuJgC2BdNvJF1tjHv62xPMonfBhCnfzn3QzL8+14/0JD
+	 W+udaDcndiUBvfF21AOg4Oj4TnyzbJNLfJAB/aa02GRwkWKRK0NsrOscb++bX5sdv3
+	 V1aGfwhb4Wf0oiXic9+S4ODIVFuvAbo42N9gw3Bwa0zMMFvqEKkk6ncMtzZh224Hl4
+	 db5Ah4MPKy6OX8RwRi8EE41E=
+Received: from zn.tnic (p200300ea971f9324329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9324:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DE87F40E01C5;
+	Sun, 15 Dec 2024 12:12:50 +0000 (UTC)
+Date: Sun, 15 Dec 2024 13:12:39 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] irq/urgent for v6.13-rc3
+Message-ID: <20241215121239.GAZ17Ht6EXiItke-uz@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:238a:b0:3a7:e1c3:11f5 with SMTP id
- e9e14a558f8ab-3b02adcc3acmr79077925ab.6.1734264748854; Sun, 15 Dec 2024
- 04:12:28 -0800 (PST)
-Date: Sun, 15 Dec 2024 04:12:28 -0800
-In-Reply-To: <0000000000008cabee0614a97e81@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675ec7ac.050a0220.37aaf.00f9.GAE@google.com>
-Subject: Re: [syzbot] [media?] WARNING in call_s_stream
-From: syzbot <syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com>
-To: hverkuil-cisco@xs4all.nl, kieran.bingham@ideasonboard.com, 
-	laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, mchehab@kernel.org, sakari.ailus@linux.intel.com, 
-	skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
-	tfiga@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-syzbot has found a reproducer for the following issue on:
+Hi Linus,
 
-HEAD commit:    2d8308bf5b67 Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149594f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b874549ac3d0b012
-dashboard link: https://syzkaller.appspot.com/bug?extid=5bcd7c809d365e14c4df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ba07e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bac344580000
+please pull the irq/urgent lineup for v6.13-rc3.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d8308bf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f42110acb18e/vmlinux-2d8308bf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d819752d1b01/bzImage-2d8308bf.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com
-
-0 pages HighMem/MovableOnly
-281646 pages reserved
-0 pages cma reserved
-vimc vimc.0: subdev_call error Scaler
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5933 at drivers/media/v4l2-core/v4l2-subdev.c:460 call_s_stream+0x2df/0x350 drivers/media/v4l2-core/v4l2-subdev.c:460
-Modules linked in:
-CPU: 0 UID: 0 PID: 5933 Comm: syz-executor330 Not tainted 6.13.0-rc2-syzkaller-00362-g2d8308bf5b67 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:call_s_stream+0x2df/0x350 drivers/media/v4l2-core/v4l2-subdev.c:460
-Code: c1 ea 03 80 3c 02 00 75 75 48 8b bb 08 01 00 00 44 89 e2 48 c7 c6 00 17 4f 8c e8 bc 43 39 fe e9 54 fe ff ff e8 62 79 0e fa 90 <0f> 0b 90 e9 cb fe ff ff 4c 89 f7 e8 11 27 71 fa e9 48 fd ff ff e8
-RSP: 0018:ffffc900035cfa60 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8880275bf020 RCX: ffffffff878b879e
-RDX: ffff8880216e0000 RSI: ffffffff878b8a1e RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffff8880275bf198 R15: ffffffff87de3560
-FS:  0000555584c4b380(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffee98411d8 CR3: 0000000034912000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- vimc_streamer_pipeline_terminate+0x218/0x320 drivers/media/test-drivers/vimc/vimc-streamer.c:62
- vimc_streamer_pipeline_init drivers/media/test-drivers/vimc/vimc-streamer.c:101 [inline]
- vimc_streamer_s_stream+0x650/0x9a0 drivers/media/test-drivers/vimc/vimc-streamer.c:203
- vimc_capture_start_streaming+0xa1/0x130 drivers/media/test-drivers/vimc/vimc-capture.c:256
- vb2_start_streaming+0x15f/0x5a0 drivers/media/common/videobuf2/videobuf2-core.c:1789
- vb2_core_streamon+0x2a7/0x450 drivers/media/common/videobuf2/videobuf2-core.c:2348
- vb2_streamon drivers/media/common/videobuf2/videobuf2-v4l2.c:875 [inline]
- vb2_ioctl_streamon+0xf4/0x170 drivers/media/common/videobuf2/videobuf2-v4l2.c:1118
- __video_do_ioctl+0xaf0/0xf00 drivers/media/v4l2-core/v4l2-ioctl.c:3122
- video_usercopy+0x4d2/0x1620 drivers/media/v4l2-core/v4l2-ioctl.c:3463
- v4l2_ioctl+0x1ba/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2b85c01b19
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee98412d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f2b85c01b19
-RDX: 0000000020000000 RSI: 0000000040045612 RDI: 0000000000000005
-RBP: 00007f2b85c430f3 R08: 00007ffee9841077 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007f2b85c431c6
-R13: 00007ffee98412f0 R14: 00007f2b85c43014 R15: 00007f2b85c4314b
- </TASK>
-
+Thx.
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
+
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.13_rc3
+
+for you to fetch changes up to 773c05f417fa14e1ac94776619e9c978ec001f0b:
+
+  irqchip/gic-v3: Work around insecure GIC integrations (2024-12-13 18:15:29 +0100)
+
+----------------------------------------------------------------
+- Disable the secure programming interface of the GIC500 chip in the RK3399
+  SoC to fix interrupt priority assignment and even make a dead machine boot
+  again when the gic-v3 driver enables pseudo NMIs
+
+- Correct the declaration of a percpu variable to fix several sparse warnings
+
+----------------------------------------------------------------
+Marc Zyngier (1):
+      irqchip/gic-v3: Work around insecure GIC integrations
+
+Uros Bizjak (1):
+      irqchip/gic: Correct declaration of *percpu_base pointer in union gic_base
+
+ drivers/irqchip/irq-gic-v3.c | 17 ++++++++++++++++-
+ drivers/irqchip/irq-gic.c    |  2 +-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
