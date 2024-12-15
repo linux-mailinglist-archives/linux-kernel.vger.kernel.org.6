@@ -1,76 +1,73 @@
-Return-Path: <linux-kernel+bounces-446321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464BF9F22A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC349F22AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 09:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED28118869BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5198A1886A01
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 08:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9C313C9A6;
-	Sun, 15 Dec 2024 08:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D6142E76;
+	Sun, 15 Dec 2024 08:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g19cOgZL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpTsAyG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B1F13AD2A
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 08:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC313E03A;
+	Sun, 15 Dec 2024 08:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734252229; cv=none; b=uemgq+s0nh4wBzB+fxRa4TrWbv/EGkFI+QvtkD//Dylh+tcc8zH4z2U20gPPqxvG5+nNd5EtFRNCe2N5B5LYhd2zJmKRYXAyvD9mA4Xm7JBMGBhKh0wxTpzh+6I2aFqSlHJGUGWFodvN/cPZY/77LpjVM6WW+nULouNI3+T0rxE=
+	t=1734252759; cv=none; b=d8nglCXYVRp1Vbhb6N7QdAMo13otE5+jfi4WSGXicBt98SIgw2vlrZRVRY24g8yhy1Ni/ERtEuR9sO7wSlbQLYSc+Z39fvQHr4wPktdoDoTbsbArQN6B46EKzMlmfv3pDAZk1evYUeytDoktRRp/DlmkLTt0FG9oXbx7FvBXdQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734252229; c=relaxed/simple;
-	bh=EjBvzeibEUJbBXQWIN5pQJ8KCUkfTes+hyKAGtN6VS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IKRVByYY87Oe1xcTN0V2FjhM3LNt1FN/QYkBqX6qem/n8QA71pGccW6SXO9J5726BVVRd6oU1i6ZRczEemllDv1Umo8pedWTJUuAPcSGZap1pD0UUSftzZxw1pMXOvrcnY7Sdn4I5RM9n4dD4CCkmxYZZ544YdsQyXy/EZRUC24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g19cOgZL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734252225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NHSkf91Gzqfu89F4IjlCBqVWZEt45j1DUKW4GlMiyxY=;
-	b=g19cOgZLjB2Bz07ws0K4wj5u2un6lRR5+C7MYOvO22I61gZ3sXiGS90qSY89sWIKeZhgF7
-	yNs7TwTyzuBM/bBaXA5kj8BbFcavZxKSXWYtfVU1gw2O0TCvNg2JAsfjjPub5+A6PyfqiV
-	J/WT8vqrGyZI58TvHVt+7ifOYWnAem0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-kwJDJYmPPk6dVo0D4rrDIw-1; Sun,
- 15 Dec 2024 03:43:42 -0500
-X-MC-Unique: kwJDJYmPPk6dVo0D4rrDIw-1
-X-Mimecast-MFC-AGG-ID: kwJDJYmPPk6dVo0D4rrDIw
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 67C3719560A3;
-	Sun, 15 Dec 2024 08:43:41 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28AC1955F40;
-	Sun, 15 Dec 2024 08:43:40 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for Linux 6.13-rc3
-Date: Sun, 15 Dec 2024 03:43:39 -0500
-Message-ID: <20241215084339.319122-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1734252759; c=relaxed/simple;
+	bh=GXMfR71BINMxRUbasKTEHeoIwyH3/80RaqRMxfN21XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gPnGV0ANc11ophQS0Cmt6FW56k5k/zPWvo6MRoXGp2/sTp1Vv/XsXz5goAIP/s+68ShPcoGm7Si0NLBcaZyWKHpPeWuyV2UiLJULiw//i89uEltIQfkZ5Raqh+t6XvQ2NTYCj1Ed+9xQBi+eNWS9FORj5pM+e9w7L1LAgWUJEVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpTsAyG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57647C4CEDD;
+	Sun, 15 Dec 2024 08:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734252758;
+	bh=GXMfR71BINMxRUbasKTEHeoIwyH3/80RaqRMxfN21XQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rpTsAyG5qMVy+GSQXMX/235R1sOD7Aj6uQ8vU2JeS3hP3dvFN1NWF5Vs3dbbNPFJX
+	 TWkunKuP5gzrru1E++i3VxBDSE9ClZ1pycCq3ulLus5AIiZwLJoI5Uq2wygJ7YoRG4
+	 S0iTKp5KztA03acDHiQO7U4drlGZ1aX/b919Zoqru+Y8fMGQhLQzpwolC/vXdBfvcP
+	 zAKFVy2T7BI9K5CQRuny0zGscISrZf3EyxFo9gpcQW+9o9ClG2sEdk9FQSzwWPZRsz
+	 TmYCm/lYLKk2X2irtb//IiOHLfupfuMoFYqLb2MFw+HS2Upc9t6UvGpHcttr2LIkqs
+	 3DIfVeanlccWQ==
+Date: Sun, 15 Dec 2024 09:52:35 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.13-rc3
+Message-ID: <Z16Y0y5inb4t5jJm@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p18DCJlXseYbsS4D"
+Content-Disposition: inline
 
-Linus,
+
+--p18DCJlXseYbsS4D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
@@ -78,71 +75,63 @@ The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.13-rc3
 
-for you to fetch changes up to 3522c419758ee8dca5a0e8753ee0070a22157bc1:
+for you to fetch changes up to 5b6b08af1fb09ec1ffab9564994cc152e4930431:
 
-  Merge tag 'kvm-riscv-fixes-6.13-1' of https://github.com/kvm-riscv/linux into HEAD (2024-12-13 13:59:20 -0500)
-
-----------------------------------------------------------------
-ARM64:
-
-* Fix confusion with implicitly-shifted MDCR_EL2 masks breaking
-  SPE/TRBE initialization.
-
-* Align nested page table walker with the intended memory attribute
-  combining rules of the architecture.
-
-* Prevent userspace from constraining the advertised ASID width,
-  avoiding horrors of guest TLBIs not matching the intended context in
-  hardware.
-
-* Don't leak references on LPIs when insertion into the translation
-  cache fails.
-
-RISC-V:
-
-* Replace csr_write() with csr_set() for HVIEN PMU overflow bit.
-
-x86:
-
-* Cache CPUID.0xD XSTATE offsets+sizes during module init - On Intel's
-  Emerald Rapids CPUID costs hundreds of cycles and there are a lot of
-  leaves under 0xD.  Getting rid of the CPUIDs during nested VM-Enter and
-  VM-Exit is planned for the next release, for now just cache them: even
-  on Skylake that is 40% faster.
+  Merge tag 'i2c-host-fixes-6.13-rc3' of git://git.kernel.org/pub/scm/linux=
+/kernel/git/andi.shyti/linux into i2c/for-current (2024-12-14 10:01:46 +010=
+0)
 
 ----------------------------------------------------------------
-James Clark (1):
-      arm64: Fix usage of new shifted MDCR_EL2 values
+i2c-for-6.13-rc3
 
-Keisuke Nishimura (1):
-      KVM: arm64: vgic-its: Add error handling in vgic_its_cache_translation
+We have these fixes for hosts: PNX used the wrong unit for timeouts,
+Nomadik was missing a sentinel, and RIIC was missing rounding up.
 
-Marc Zyngier (2):
-      KVM: arm64: Fix S1/S2 combination when FWB==1 and S2 has Device memory type
-      KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      i2c: nomadik: Add missing sentinel to match table
+      i2c: riic: Always round-up when calculating bus period
 
-Michael Neuling (1):
-      RISC-V: KVM: Fix csr_write -> csr_set for HVIEN PMU overflow bit
+Vladimir Riabchun (1):
+      i2c: pnx: Fix timeout in wait functions
 
-Paolo Bonzini (2):
-      Merge tag 'kvmarm-fixes-6.13-2' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-      Merge tag 'kvm-riscv-fixes-6.13-1' of https://github.com/kvm-riscv/linux into HEAD
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.13-rc3' of git://git.kernel.org/pub/scm/l=
+inux/kernel/git/andi.shyti/linux into i2c/for-current
 
-Sean Christopherson (1):
-      KVM: x86: Cache CPUID.0xD XSTATE offsets+sizes during module init
 
- arch/arm64/include/asm/el2_setup.h |  4 ++--
- arch/arm64/kernel/hyp-stub.S       |  4 ++--
- arch/arm64/kvm/at.c                | 11 +++++++++--
- arch/arm64/kvm/hyp/nvhe/pkvm.c     |  4 ++--
- arch/arm64/kvm/sys_regs.c          |  3 ++-
- arch/arm64/kvm/vgic/vgic-its.c     | 12 +++++++++++-
- arch/riscv/kvm/aia.c               |  2 +-
- arch/x86/kvm/cpuid.c               | 31 ++++++++++++++++++++++++++-----
- arch/x86/kvm/cpuid.h               |  1 +
- arch/x86/kvm/x86.c                 |  2 ++
- 10 files changed, 58 insertions(+), 16 deletions(-)
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Th=C3=A9o Lebrun (1):
+      (Rev.) i2c: nomadik: Add missing sentinel to match table
 
+ drivers/i2c/busses/i2c-nomadik.c | 1 +
+ drivers/i2c/busses/i2c-pnx.c     | 4 ++--
+ drivers/i2c/busses/i2c-riic.c    | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+--p18DCJlXseYbsS4D
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdemNMACgkQFA3kzBSg
+Kbb2Mg//RVKPdzx9XougSYhcZCyDJv4p7lMU0NMeEkbtx8N8okUeTjBNNGFs743I
+fI0+0m3l5C3MwiF8Q3YXT7N6tgz33hmYtrcyScslwNK0+dx2+C0hDBfFhL3t9z1O
+IVHGbalxA5YaSb5J2UmkM70yrLKFHmpmCx87QT0YTf4z3MwHf9MCWhps6DgNjIk3
+mr8GIxL+BjJC9ZT7sEsUWZCoW/AdMP7/XfJ8nksi2sErJabVjHkMZHRPm0bcxFtw
+dY06M2mZyejD649CleUHyd+vpfavlO7FPDLWaCBXU4AFkLmu1HTT7sFA8U3r6GML
+P/EnSrTemT5oTrmEnOMe4M9qL4BQCOSDuwENABfG1Z4AuMsiVPYKt8Xe31ucjUiC
+0h+2ezYcGLDfNk0/R4MWtTNn4pmyHsqGDUVePXY73Kp33i8vyC0Zzuev/T4QkDuc
+fVQA2iQw7S+H/1NX0uVUbBQrv269I4I273y6MBUr00vnrTzSXQ+0448I1zFRncqy
+8Zk0UlizU7lBB0Ft7ha1VDLnetVTpM6yK+nAOesH5xPtvaCS98MwVlG8F4aRpRfe
+sNuynNUB/L2yT6VtFTUTiplHk7817udjwjYOUIm0O0AXGDSQM/RqmZZljY2h8/Ws
+DEBKr+9kwJ6UI1u9MvYO+Koz554Gj4VT6mx73l8Fa6EiWY5P+lk=
+=nrrT
+-----END PGP SIGNATURE-----
+
+--p18DCJlXseYbsS4D--
 
