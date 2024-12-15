@@ -1,171 +1,229 @@
-Return-Path: <linux-kernel+bounces-446517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D989F2547
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 19:23:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723FD9F255E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 19:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCA9162D8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2D7163CCB
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A9E1B5ED0;
-	Sun, 15 Dec 2024 18:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732CF1B6D1B;
+	Sun, 15 Dec 2024 18:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mu5kMjnu"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/nXpsNK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0685F13C8FF;
-	Sun, 15 Dec 2024 18:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3645F9D6;
+	Sun, 15 Dec 2024 18:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734286992; cv=none; b=HdvzpwTwM9KxCUviKKfr/+rqqEn8xNBYZO80K8Vg2ORLnoRGdj/GUs/LPny/K8c497ntSmDB2mpRsCxNBz9LhucM/vLZE7ygKeIIDWM7C1NmeX/kwcvKkimGlxMNcNXd5EAVON4oULx8kr7lf5YUshnKGdwpSBWTqgtYgyc6EVw=
+	t=1734287488; cv=none; b=Ac420rRs/d0BOeosKMSYZLxhLsnr3Ce7IpJWQkrfGXm0wcsf7IScLkzTpEX83mqwaHsEdmAxCUzAHt38b6tzEEHVI9AszGnha4wNOzfcaDNo3UGkDQkKLndRjM5U5sMKvf2FGzksjf407wMFaiJD87th/SgCnbZnKweFuY9ReX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734286992; c=relaxed/simple;
-	bh=qu3wlW7Uo9zD+xVeSo7k1okCq8Xzu8vd8wDtAvHPJCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lDJoqWBHjxrFP1Glajnr2keOcdP3+mMUgBVdHQQh3GRJVy2PYphGr6avGHLG58FW3VrITvanghrCMw16Z52cgSp72528XR89DgKJTqn2YXcHN1aAiVo1qXjZT7/jenXV6r7eFElT6hxtztM7Tvim8VR/ALJiaNugQRunXPbEPQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mu5kMjnu; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-725dbdf380aso2598636b3a.3;
-        Sun, 15 Dec 2024 10:23:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734286990; x=1734891790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=VB5U278Ekvx7PUgFX9oou4aB64U2gIbAQihOlszjNso=;
-        b=Mu5kMjnuELfsbS1UXuUKRNBQSMXrrqJBgm/jun1ug5Z1BKB9NDKbmfYYwhcxPhzWQS
-         NzNLmrpyLmYjABcc19Q3XHK0koRNczs1V4URxwVM/Izyj66TqmAb1Jz7cyDnZ4tDn0TM
-         DvYQJojgoViUlAXGv4sHHFV5R37TEIAkEAM1W6upVvxAmWHSnkXY2LzVMmdgoEtAb7MU
-         yrQXZxfCre8P/BhAXMANeTO5+RAqrT9P2qo+X5i55q+TBUJIQFj9Bhb13Ph+3EGWIOxs
-         WO45d5o9C8lGSlMWbqBPpS0MbOZ2NaiifLI7reALn1YZYHsDCsJYbnWzZO6qikVGA2j/
-         +hgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734286990; x=1734891790;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VB5U278Ekvx7PUgFX9oou4aB64U2gIbAQihOlszjNso=;
-        b=m4yI2ZqCwp8HD9l2UUGzEr2i0mmJv0yBzM4+Vc6QJtWv4Yd8oJmAocqJm74H/GEYeN
-         MrC5XxNrmGkQEX7zJqrFE2D1cPbx9VNAImnPUCVd0GVmUzPitWMu/Y8J7+Q4EFvvtgRy
-         tO+/gjjhfLt5wn2/24InCA5N1o3hyGW7ehKIYr3pKdE5ucNFxu+PghUMQ4R8Gkj21aq0
-         ygW62SpENEsQYrcmcUQOhCthU8e8X4AfgwdGHgcZwNmZB3T56YACWvB5vUsTHbkdW2Z0
-         CGNFB4uSO83rF/74NEBfStRCx/HCpvrqPThMQtVuVBtPVAIVUYmJSXEl6uuQrnLnyfoz
-         ljZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2honeT1/68m+QeOLHqf339uDRj5cyszfWRH4iMSj0okuVOnkXAVyOf4cpRbjbnaMcO5JNncGgGXePihs@vger.kernel.org, AJvYcCVBdrNeLyujQ+QqxJ+j/SNZuYXrD21d3ZHbdJTKP6eyGrSeUNuPQtzOBH3rWXIuPRhEoz+ygE/NRuL3NDVJXgFtMZHFvw==@vger.kernel.org, AJvYcCX52qvtXjSsLl6/O68OFsG+NjTVQYogOjNcQO/9hpeib0fgfcchsrzhGAMjmRn/El1QtYWBTYYEGV4=@vger.kernel.org, AJvYcCXc6nkQpjLithWc8WSeg9/S65dn1rKy71TtNDlKQU0KFlfiNNzHLEiuP1QxVIMO5mrNOcg03a8MGqn7AG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL2GRjALveYIiBX+3Tpfap2PO1oKEcxI0QgYhAk4zTFE+8dBrM
-	P9mfqfslgDqTfPeds9jO8HqJPPJxpfDbE/2EKuAd8JWiWrdwOsde
-X-Gm-Gg: ASbGncshayVDpBlgAk0xMXDXKfvl652icNzpTx0G4V7EW8sjmPXOW/1ZZUWafeHQeJ5
-	o4keUsVPOvo6Px4w+7oTRNx4Unjs/7zwBnKckvo2583MPAdafOFJG21EBeTxfWQbNTO77QB6i3C
-	lSJIrRzIOPJIkgZlQgf5G6U8H5b7bjg6iGTD0TiavWDS7f1ZD61CtWN1oc3D5E3Y0PAnAXXu6WT
-	DAh70YmvrEn4vmWUYLXXVy4bU6m+tfnlckqC+hhwJHT//AeheCVbWh55xMaUCXO4SU7VX5+kuvR
-	JZYLJMeODfY293/Yby00eeR52KHdEg==
-X-Google-Smtp-Source: AGHT+IGaY1jiKlgDcsNLc4PsVmW8EQ5H3DnagxmDWb8AytHmsvLoHmi4QHkE6o1Pc8UkzGeQoPdp2w==
-X-Received: by 2002:a05:6a00:3c8c:b0:725:460e:6bc0 with SMTP id d2e1a72fcca58-7290be71abemr13267218b3a.0.1734286990278;
-        Sun, 15 Dec 2024 10:23:10 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5883sm3332314b3a.63.2024.12.15.10.23.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Dec 2024 10:23:09 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <04c6066f-b8ff-431c-a093-c25aedf58d3f@roeck-us.net>
-Date: Sun, 15 Dec 2024 10:23:08 -0800
+	s=arc-20240116; t=1734287488; c=relaxed/simple;
+	bh=2iN0kSe0uP782LnBpBWzGUk/6m6gbioeqyGoNrCNLZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gSlpqR9LOrIvrp6oh5HPTJcRyDiiRXfyUsHoHPyvYHv9wiPpcLEccOa9ANMJKVVWVSm3s2/Mm0383iSStnWDNP4yzvUSbiXvKwRvneRodHvVVE8+7VL2eXKecjDqgZsQ/bg25YfwcHGxonPIte8ZEYMAzgWpTGkgxPHsO9LWnAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/nXpsNK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E3EC4CECE;
+	Sun, 15 Dec 2024 18:31:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734287488;
+	bh=2iN0kSe0uP782LnBpBWzGUk/6m6gbioeqyGoNrCNLZI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=J/nXpsNK33fGpf6C0CZtParPHhb4Bdi1FTnlAlSIJ0NliXWM+tV5d2RgFl7ArIcbI
+	 4naDVr+opV+l2T8tTTLpAVBapz0O2lzTBNoGi41Fm6MmyZm70svR5uEyw2JjNo9rFo
+	 Xf3WSAiVtCWC346shq0JKpQ2Ak3/NscdGGr5QNPD42H9Zu2nkJJPDkJBdT8szXuQRO
+	 BE+wCozU/TXvrOQNs5BE1eYP88m4fO0o8jKLTpARDqvMhCesKseHmujyTAnKOy1S9f
+	 xogjSU3cxbiEI0H+0pZ0jD3K07Lu5uLuT1BPQBDRwiAQxDykg76H7vHMW13Luy4xlt
+	 OpGI01pdqiewQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D3BEECE0E58; Sun, 15 Dec 2024 10:31:27 -0800 (PST)
+Date: Sun, 15 Dec 2024 10:31:27 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <2cd70642-86de-4b26-87c2-94bde7441ce8@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+ <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
+ <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
+ <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
+ <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+ <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
+ <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
+ <6e3fce44-1072-4720-bf91-33bb22ebbd21@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: samsung-galaxybook: Add samsung-galaxybook
- driver
-To: Joshua Grisham <josh@joshuagrisham.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, platform-driver-x86@vger.kernel.org, corbet@lwn.net,
- linux-doc@vger.kernel.org, jdelvare@suse.com, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209163720.17597-1-josh@joshuagrisham.com>
- <797b248c-7542-43fd-8e44-f2c7d650ccff@infradead.org>
- <CAMF+Keb0cXc8t8J_T39WJUKydpD2EME92ZWT7SFr_taiCXfvww@mail.gmail.com>
- <90e6a8f6-666b-45cc-ae66-4ccbee0ba08e@roeck-us.net>
- <CAMF+KebEX+AM_6O5j=ym6GzZ64qac=Kknd1SKLx6VhJsZG-eiQ@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAMF+KebEX+AM_6O5j=ym6GzZ64qac=Kknd1SKLx6VhJsZG-eiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e3fce44-1072-4720-bf91-33bb22ebbd21@paulmck-laptop>
 
-On 12/15/24 09:19, Joshua Grisham wrote:
-> Den sön 15 dec. 2024 kl 17:35 skrev Guenter Roeck <linux@roeck-us.net>:
->>
->> Your v2 is highly unusual. The patch description is the change log,
->> and the patch itself seems to be a diff against v1. Did someone ask you
->> to do that ? Just wondering.
->>
->> Guenter
->>
+On Thu, Nov 14, 2024 at 10:16:12AM -0800, Paul E. McKenney wrote:
+> On Mon, Oct 21, 2024 at 12:25:41PM -0700, Paul E. McKenney wrote:
+> > On Mon, Oct 14, 2024 at 11:55:05AM -0700, Paul E. McKenney wrote:
 > 
-> Hi Guenter, here I was just following a patch guide (or at least,
-> attempting to?); should it instead be a whole new patch against
-
-Is that a Linux kernel patch guide ? Please provide a reference if possible.
-
-> for-next instead of a diff from the v1 of the first patch itself?
+> [ . . . ]
 > 
+> > > But no big wins thus far, so this will be a slow process.  My current test
+> > > disables CPU hotplug.  I will be disabling other things in the hope of
+> > > better identifying the code paths that should be placed under suspicion.
+> 
+> The "this will be a slow process" was no joke...
 
-That would have been my expectation, and every revised patch series I have
-seen so far did that. This is why I am curious and try to understand why
-you didn't do that.
+[ . . . ]
 
-Thanks,
-Guenter
+> Back to beating on it.  More info than anyone needs is available here:
+> 
+> https://docs.google.com/document/d/1-JQ4QYF1qid0TWSLa76O1kusdhER2wgm0dYdwFRUzU8/edit?usp=sharing
 
+And the fix for the TREE03 too-short grace periods is finally in, at
+least in prototype form:
+
+https://lore.kernel.org/all/da5065c4-79ba-431f-9d7e-1ca314394443@paulmck-laptop/
+
+Or this commit on -rcu:
+
+22bee20913a1 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+
+This passes more than 30 hours of 400 concurrent instances of rcutorture's
+TREE03 scenario, with modifications that brought the bug reproduction
+rate up to 50 per hour.  I therefore have strong reason to believe that
+this fix is a real fix.
+
+With this fix in place, a 20-hour run of 400 concurrent instances
+of rcutorture's TREE03 scenario resulted in 50 instances of the
+enqueue_dl_entity() splat pair.  One (untrimmed) instance of this pair
+of splats is shown below.
+
+You guys did reproduce this some time back, so unless you tell me
+otherwise, I will assume that you have this in hand.  I would of course
+be quite happy to help, especially with adding carefully chosen debug
+(heisenbug and all that) or testing of alleged fixes.
+
+Just let me know!
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+------------[ cut here ]------------
+smpboot: Booting Node 0 Processor 3 APIC 0x3
+WARNING: CPU: 1 PID: 29304 at kernel/sched/deadline.c:1995 enqueue_dl_entity+0x511/0x5d0
+Modules linked in:
+CPU: 1 UID: 0 PID: 29304 Comm: kworker/1:2 Not tainted 6.13.0-rc1-00063-ga51301a307ab-dirty #2355
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+Workqueue: rcu_gp sync_rcu_do_polled_gp
+RIP: 0010:enqueue_dl_entity+0x511/0x5d0
+Code: ff 48 89 ef e8 10 cf ff ff 0f b6 4d 54 e9 0e fc ff ff 85 db 0f 84 d0 fe ff ff 5b 44 89 e6 48 89 ef 5d 41 5c e9 30 d6 ff ff 90 <0f> 0b 90 e9 fa fa ff ff 48 8b bb f8 09 00 00 48 39 fe 0f 89 de fb
+RSP: 0018:ffff9b88c13ebaf0 EFLAGS: 00010086
+RAX: 0000000000000001 RBX: ffff893a5f4ac8e8 RCX: 0000000000000002
+RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffff893a5f4ac8e8
+RBP: ffff893a5f4ac8e8 R08: 0000000000000001 R09: 0000000000000197
+R10: 0000000000000000 R11: ffff893a4181bb90 R12: 0000000000000001
+R13: 000000000016e360 R14: ffff893a5f4ac040 R15: ffff893a5f4ac080
+FS:  0000000000000000(0000) GS:ffff893a5f480000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000001d06000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? __warn+0x83/0x130
+ ? enqueue_dl_entity+0x511/0x5d0
+ ? report_bug+0x18e/0x1a0
+ ? handle_bug+0x54/0x90
+ ? exc_invalid_op+0x18/0x70
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? enqueue_dl_entity+0x511/0x5d0
+ dl_server_start+0x31/0xe0
+ enqueue_task_fair+0x21b/0x6b0
+ enqueue_task+0x2c/0x70
+ activate_task+0x21/0x50
+ attach_task+0x30/0x50
+ sched_balance_rq+0x654/0xdf0
+ sched_balance_newidle.constprop.0+0x190/0x360
+ pick_next_task_fair+0x2a/0x340
+ __schedule+0x1f3/0x8f0
+ schedule+0x22/0xd0
+ synchronize_rcu_expedited+0x1bf/0x350
+ ? __pfx_autoremove_wake_function+0x10/0x10
+ ? __pfx_wait_rcu_exp_gp+0x10/0x10
+ sync_rcu_do_polled_gp+0x4f/0x110
+ process_one_work+0x163/0x390
+ worker_thread+0x293/0x3b0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xd1/0x100
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2f/0x50
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+---[ end trace 0000000000000000 ]---
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 29304 at kernel/sched/deadline.c:1971 enqueue_dl_entity+0x54f/0x5d0
+Modules linked in:
+CPU: 1 UID: 0 PID: 29304 Comm: kworker/1:2 Tainted: G        W          6.13.0-rc1-00063-ga51301a307ab-dirty #2355
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+Workqueue: rcu_gp sync_rcu_do_polled_gp
+RIP: 0010:enqueue_dl_entity+0x54f/0x5d0
+Code: de fb ff ff e9 66 ff ff ff 89 c1 45 84 d2 0f 84 ce fb ff ff a8 20 0f 84 c6 fb ff ff 84 c0 0f 89 20 fe ff ff e9 b9 fb ff ff 90 <0f> 0b 90 e9 f4 fb ff ff 84 d2 0f 85 e3 fa ff ff 48 89 ea 48 8d b5
+RSP: 0018:ffff9b88c13ebaf0 EFLAGS: 00010086
+RAX: 00000000ffffff00 RBX: ffff893a5f4ac040 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 0000000b1a2986b8 RDI: 0000000b1a268bc8
+RBP: ffff893a5f4ac8e8 R08: ffff893a5f4ac880 R09: 000000003b9aca00
+R10: 0000000000000001 R11: 00000000000ee6b2 R12: 0000000000000001
+R13: 000000000016e360 R14: ffff893a5f4ac040 R15: ffff893a5f4ac080
+FS:  0000000000000000(0000) GS:ffff893a5f480000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000001d06000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? __warn+0x83/0x130
+ ? enqueue_dl_entity+0x54f/0x5d0
+ ? report_bug+0x18e/0x1a0
+ ? handle_bug+0x54/0x90
+ ? exc_invalid_op+0x18/0x70
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? enqueue_dl_entity+0x54f/0x5d0
+ dl_server_start+0x31/0xe0
+ enqueue_task_fair+0x21b/0x6b0
+ enqueue_task+0x2c/0x70
+ activate_task+0x21/0x50
+ attach_task+0x30/0x50
+ sched_balance_rq+0x654/0xdf0
+ sched_balance_newidle.constprop.0+0x190/0x360
+ pick_next_task_fair+0x2a/0x340
+ __schedule+0x1f3/0x8f0
+ schedule+0x22/0xd0
+ synchronize_rcu_expedited+0x1bf/0x350
+ ? __pfx_autoremove_wake_function+0x10/0x10
+ ? __pfx_wait_rcu_exp_gp+0x10/0x10
+ sync_rcu_do_polled_gp+0x4f/0x110
+ process_one_work+0x163/0x390
+ worker_thread+0x293/0x3b0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xd1/0x100
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2f/0x50
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+---[ end trace 0000000000000000 ]---
 
