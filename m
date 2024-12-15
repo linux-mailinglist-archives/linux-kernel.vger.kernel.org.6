@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-446494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7899F250D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9DB9F2514
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 18:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46823188595B
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:31:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AF31885A43
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4E1B6CE0;
-	Sun, 15 Dec 2024 17:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RnmyhxMw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452051B3936;
+	Sun, 15 Dec 2024 17:32:07 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FE81465A5;
-	Sun, 15 Dec 2024 17:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814F21EB48;
+	Sun, 15 Dec 2024 17:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734283851; cv=none; b=ITD6SHk2tBAlK5D6PMFrkIg7qjpeNeU13e+lhBDlTmkF3Z8Uzgia6g6ygdslTPo0vtXWNsJExAC6un6jZ0wD2LeYcjh+PaRXY4yOHJewOvMzEipHrZ8OsbJg5a7XrX/KyMgG8nLbaSMs2mtsoheQVf4QP4Y6eBO5eZIm29WyZFA=
+	t=1734283926; cv=none; b=ehn4dtf7Krq/rR8CgtmFhOWuCWAVYfxNNCIIHmihNT6DTE3AMbJQXASESo2uPyZA5BJXzg2i+Vy068eRQW3j+UPMN3wXZ2LR4krVgOeDbQxeCHOHyqYG1JBy1TfbX4cZzSAa0zj4tWS45TO9jDZOelUgdUvjMY+RohiFCnTdqHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734283851; c=relaxed/simple;
-	bh=XvSZhCcMO+b5GYrnq5FHh4XipnZMgiopvTngRcyaNSo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RvbO1uadUIUL9MmecobE8w9yQMbNka+oIJKoeWO8WWNcIuBDdiYLMVgI3IxDHeQwzn4wT7kYNW3MWuC80xj+Nn2NaW/Zn4Ckg9a3gcxUMuYQGffCqeN37x2kRvNAR1aF2BFG/0ivilT73dU2DMiABMfzKSfrvsEuvaghsy6rrwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RnmyhxMw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=pq5GsMcfo4rfBFuKUoZeo1gFpeGJ1AOCYPKI7H6XpQI=; b=Rn
-	myhxMwzSnLlwXLQtUOSmSog/6e6ID8k2vxFLj088y5+GzYQKS6t58XyYLXd3G3OhSe32WZSPfKg3h
-	VOFU0AaDzjsuzvfQ/kbAaJQ3/HRpZLEuZufFfJzo22W6ASGuscwHIb45OUA9NDsFoE7aAK5XmZk7M
-	cw29iEZqrE2BRCA=;
-Received: from [94.14.176.234] (helo=thinkpad.home.lunn.ch)
-	by vps0.lunn.ch with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tMsS3-000WHi-4N; Sun, 15 Dec 2024 18:30:43 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-Date: Sun, 15 Dec 2024 17:30:05 +0000
-Subject: [PATCH 3/3] net: dsa: mv88e6xxx: Enable RMU on 6351 family
+	s=arc-20240116; t=1734283926; c=relaxed/simple;
+	bh=3nScF0VsYpNmrjY7vUKpNDzRjSzzr6uKxKptSD4MOhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnc5qh6XlOLrn8lOg0YjaozIWv8I0PX03Xi1khFAqeXMtGJRfK2SNrSqTRBrAL252XbvYX9C8sP7MHRVbAbNSrdlmGPiqTKbTrFm52bIsaAWPJJngT0tMslTQr233QuWNpwMdPJ6MMHKxNJfXzjQtXt/DaylMf/+qFjBQkOuX/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id CA3AA100D9403;
+	Sun, 15 Dec 2024 18:32:02 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A2134335398; Sun, 15 Dec 2024 18:32:02 +0100 (CET)
+Date: Sun, 15 Dec 2024 18:32:02 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH 0/4] PCI/pwrctrl: Rework pwrctrl driver integration and
+ add driver for PCI slot
+Message-ID: <Z18SkkuPbVgTYD8k@wunner.de>
+References: <20241210-pci-pwrctrl-slot-v1-0-eae45e488040@linaro.org>
+ <c5c9b7fc-a484-438a-aa97-35785f25d576@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241215-v6-13-rc1-net-next-mv88e6xxx-rmu-ops-v1-3-87671db17a65@lunn.ch>
-References: <20241215-v6-13-rc1-net-next-mv88e6xxx-rmu-ops-v1-0-87671db17a65@lunn.ch>
-In-Reply-To: <20241215-v6-13-rc1-net-next-mv88e6xxx-rmu-ops-v1-0-87671db17a65@lunn.ch>
-To: Vladimir Oltean <olteanv@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andrew Lunn <andrew@lunn.ch>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2159; i=andrew@lunn.ch;
- h=from:subject:message-id; bh=XvSZhCcMO+b5GYrnq5FHh4XipnZMgiopvTngRcyaNSo=;
- b=owEBbQKS/ZANAwAIAea/DcumaUyEAcsmYgBnXxI9phcCRRuLiYllJ4YEMZM1vEHAZi+aJS4no
- tO+5knklT+JAjMEAAEIAB0WIQRh+xAly1MmORb54bfmvw3LpmlMhAUCZ18SPQAKCRDmvw3LpmlM
- hI3aD/9zAtdryswp48PAA0NV9GJumIa/On7kZD3bFs2DAIPN7cxSdly/qUkoEe0DezcKp3a2SAG
- ohekJekcxiWlCbLJ2GAXL/5OgYuWb7xO7Q9ZYatDJeCxJ3bJ8jnt7Y2NAGWJhzApoyaR++HVah3
- Nq4ff1q2dH9Wigu5DlntueHM4dbvodlmSvMnJdFpxVPL2Br3fLneWcLCdIzsq6Nr25jT9Jp3Jlt
- geb+zV1b9+FP+tV+ZjsvHREPhPWPbkWzbnvd2CD+RGNdXFgE0YUgQdG4H4TE58Yoe6mYDKasAO+
- UVf+ilkhJEPr0te/OeEzqrkOayZRhIdPnxRV1xs9Us0fqyojjF0RN3lvkAb0UytMAhCopfwlDLj
- I7/I4pP1LWx9dRaqyaURqLoAiR6M5ju8yMpNY7qJ3yWo5U4xzhpIEpE46Tsu82kwnK4eOO3WScG
- JZBimCOYGX3iIPFyZKuKBp9VxMFmu2j6Qgr5gtYPXEKrTZLJULrOs2fI8I3BAMl4NHlXWUnGixj
- 3gv12jZ7lQzek1OUpgocxog41T0JzUr6JVK+CIb9JEm6ua8IUE507CnkKSLNTmt7ooOi3szhh08
- TMlr6mFVG3B/ehBOXIQ8gVCGwwxoyj1ceRKLPKUZrZQwcYipFPhIy5CK1x79vcUyOedWCrOP1+Q
- zVb0QItl8xNTDZA==
-X-Developer-Key: i=andrew@lunn.ch; a=openpgp;
- fpr=61FB1025CB53263916F9E1B7E6BF0DCBA6694C84
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5c9b7fc-a484-438a-aa97-35785f25d576@quicinc.com>
 
-The 6351 family of switches has the same RMU configuration as the 6352
-family.
+On Wed, Dec 11, 2024 at 05:55:48PM +0800, Qiang Yu wrote:
+> PCIe3 is able to link up after applying your patch. Slot power is turned on
+> correctly.
+> But see "NULL pointer dereference" when I try to remove device.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/net/dsa/mv88e6xxx/chip.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+There's a WARN splat occurring before the NULL pointer deref.
+Was this happening before or is it new?  Probably makes sense
+to debug that first before looking into the NULL pointer deref,
+which could be a result of it.
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index fe471ff4cd8ea8bb6654c61d0b95bb66c2e12157..300a2acfdd941f30d5ae7cb16062ee269e04178a 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -4559,6 +4559,8 @@ static const struct mv88e6xxx_ops mv88e6171_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
-+	.rmu_enable = mv88e6352_g1_rmu_enable,
- 	.atu_get_hash = mv88e6165_g1_atu_get_hash,
- 	.atu_set_hash = mv88e6165_g1_atu_set_hash,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
-@@ -4663,6 +4665,8 @@ static const struct mv88e6xxx_ops mv88e6175_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
-+	.rmu_enable = mv88e6352_g1_rmu_enable,
- 	.atu_get_hash = mv88e6165_g1_atu_get_hash,
- 	.atu_set_hash = mv88e6165_g1_atu_set_hash,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
-@@ -5321,6 +5325,8 @@ static const struct mv88e6xxx_ops mv88e6350_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
-+	.rmu_enable = mv88e6352_g1_rmu_enable,
- 	.atu_get_hash = mv88e6165_g1_atu_get_hash,
- 	.atu_set_hash = mv88e6165_g1_atu_set_hash,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
-@@ -5367,6 +5373,8 @@ static const struct mv88e6xxx_ops mv88e6351_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
-+	.rmu_enable = mv88e6352_g1_rmu_enable,
- 	.atu_get_hash = mv88e6165_g1_atu_get_hash,
- 	.atu_set_hash = mv88e6165_g1_atu_set_hash,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
 
--- 
-2.45.2
+> [   38.757726] WARNING: CPU: 1 PID: 816 at drivers/regulator/core.c:5857
+> regulator_unregister+0x13c/0x160
+> [   38.767288] Modules linked in: phy_qcom_qmp_combo aux_bridge
+> drm_kms_helper drm nvme backlight pinctrl_sm8550_lpass_lpi pci_pwrctl_slot
+> pci_pwrctrl_core nvme_core phy_qcom_edp phy_qcom_eusb2_repeater
+> dispcc_x1e80100 pinctrl_lpass_lpi phy_qcom_snps_eusb2 lpasscc_sc8280xp typec
+> gpucc_x1e80100 phy_qcom_qmp_pcie
+> [   38.795279] CPU: 1 UID: 0 PID: 816 Comm: bash Not tainted
+> 6.12.0-next-20241128-00005-g6178bf6ce3c2-dirty #50
+> [   38.805359] Hardware name: Qualcomm IDP, BIOS
+> 6.0.240607.BOOT.MXF.2.4-00348.1-HAMOA-1.67705.7 06/ 7/2024
+> [   38.815088] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS
+> BTYPE=--)
+> [   38.822239] pc : regulator_unregister+0x13c/0x160
+> [   38.827081] lr : regulator_unregister+0xc0/0x160
 
+The WARN splat seems to be caused by:
+
+	WARN_ON(rdev->open_count);
+
+So the regulator is unregistered although it's still in use.
+Is there maybe a multifunction PCIe device in your system
+so that multiple devices are using the same regulator?
+
+Thanks,
+
+Lukas
 
