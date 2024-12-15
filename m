@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-446349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60EC9F2325
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:25:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0429F2331
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA444164590
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59026188669A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128EF14900F;
-	Sun, 15 Dec 2024 10:24:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E24149C6F;
+	Sun, 15 Dec 2024 10:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SAahw5ST"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC814320E
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E904139D
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734258297; cv=none; b=kZ+B83jkycse/stVB27B0GuD/I26d/3xBMLEdGyhF1e1ebqhvvHAom5ADZWx2vQHrIPKTxxLn/ImgkK0671H3KD7kKwGc4mZowD0mh+Z44VofYmcqmeASvRH1h+0B+ycWA3pq0pbY/LIGogpS337gZfrZ+1LE2y55byrsgs2+H0=
+	t=1734259573; cv=none; b=ZPh5hNXTVkrUsHnEL+dxnmsr//XY0utQiHsK3D92XWzLSQhuLjNFC1R3QwUPYRyPTEVrgS9+xrtpGFp3OB1uh03Rl6abGKns1Yr28J3s/Mdn7bDMsQYahlgUDaikiMvmEKlCqcK26NBN7M3IA5QstknPMGLc0Al+E5OBv2BaOd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734258297; c=relaxed/simple;
-	bh=8K9Du3Rw2sSzQ/IpsCCij734zu3MgQjVtSnNaKZzMRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kieeZlGhGdp1fIn89n+U2mT1vrfL1o61E1cQZjt6W42+xqabdMnATXpGuv0YdE1fUXcnouXdIGirCq0uxjLpNfRP0M+k3cNEgAAyNjvtXUEx7x70sDTh4jf73OSND3xV8JzAbPhPl26+7JRxkfAyV7FraJySxhBPEyQ1NA3s3fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B2AC4CECE;
-	Sun, 15 Dec 2024 10:24:56 +0000 (UTC)
-Date: Sun, 15 Dec 2024 05:25:26 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241215052526.7f0cdc5b@gandalf.local.home>
-In-Reply-To: <20241215050517.050e9d83@gandalf.local.home>
-References: <20241214182138.4e7984a2@batman.local.home>
-	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-	<20241214220403.03a8f5d0@gandalf.local.home>
-	<20241214221212.38cc22c3@gandalf.local.home>
-	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
-	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
-	<20241214233855.46ad80e0@gandalf.local.home>
-	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-	<20241215050517.050e9d83@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734259573; c=relaxed/simple;
+	bh=5t1BNa5HQdM+3zXQLQgSHFGt7YUlUZMcFtjhuswos30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V//HIeh5NCo52Nj23tdTQYhmH2xmf/PRgixe7vIiNzHIWLHVzd8ZF4V8hFuGa6/8p4UPHVsZp0wUVqZ9gjLYyRY1E+RnC9MQqSqhrpWlHalYHzQCBus0NQpfrgaOmb/X9uEhL+aRGg+eFQvsvnWldyW+qhCd7uLtAcLGtQABWi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SAahw5ST; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734259563;
+	bh=5t1BNa5HQdM+3zXQLQgSHFGt7YUlUZMcFtjhuswos30=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SAahw5STK5MQY8r3hb/+muvdXAHXJSG1R4iNSAoIa7ddYEPUMTdbLGeeGWlB7GtwC
+	 fzWupY3zQDE8ekfFLZF3n46QhKkCMcD76VoANQqKwum1DHcBOFinTRNAMkbwWbVnPB
+	 5vqv2DyksLCs9Iyyf6uFhW0oD5yujw6HThc1oHicXSzBEpsTdDwoInC5QQ1yhJ3u4j
+	 GPaJtyaaiV4r8g8x9TwPhcfjlRYe/xf+6xG4QdChGo3IL7WJx2rli1d6aO6BGh3Ccy
+	 sbQ7eZ4GZ0Tyf/P98ptr5/7CCe54JX7ue223r7LywsTgHGJZMZtgY67Nvt0fHK9acJ
+	 LU/dLamUSvMAw==
+Received: from [192.168.1.90] (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0726317E3620;
+	Sun, 15 Dec 2024 11:46:02 +0100 (CET)
+Message-ID: <c0eb7e53-8dd5-4ef8-b56a-c79132f04acb@collabora.com>
+Date: Sun, 15 Dec 2024 12:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: synopsys: Fix Copyright Writing Style of
+ dw-hdmi-qp
+To: Andy Yan <andyshrk@163.com>, mripard@kernel.org, neil.armstrong@linaro.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ sebastian.reichel@collabora.com, Andy Yan <andy.yan@rock-chips.com>
+References: <20241215091911.3446653-1-andyshrk@163.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <20241215091911.3446653-1-andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Sun, 15 Dec 2024 05:05:17 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 12/15/24 11:19 AM, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> The standard writing style should be: Co., Ltd.
+> This fix the mail server warning:
+> DBL_SPAM(6.50)[co.ltd:url];
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
+> 
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h
+> index 2115b8ef0bd6..74088e0d1d87 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+> - * Copyright (C) Rockchip Electronics Co.Ltd
+> + * Copyright (c) Rockchip Electronics Co., Ltd.
 
-> That commit fixes the iter->fmt being passed into the function by making
-> the assumption that p will iterate over the temp buffer. It has nothing to
-> do with the current code that hasn't seen a bug since 2022, and has stopped
-> constant "%s" bugs since then.
+Nit: For consistency with your previous copyright fixes [1], the (c) part 
+could be written in uppercase.
 
-In fact, I could have fixed this with this one line change:
+Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814..d990687335b1 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3722,6 +3722,10 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 	if (static_branch_unlikely(&trace_no_verify))
- 		goto print;
- 
-+	/* If hash-ptr is not set, the fmt points to our temp buffer */
-+	if (p == iter->fmt)
-+		goto print;
-+
- 	/*
- 	 * When the kernel is booted with the tp_printk command line
- 	 * parameter, trace events go directly through to printk().
+[1] https://lore.kernel.org/lkml/20241214071333.3325308-1-andyshrk@163.com/
 
-
--- Steve
 
