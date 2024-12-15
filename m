@@ -1,190 +1,296 @@
-Return-Path: <linux-kernel+bounces-446469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF2C9F24B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:04:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4DF9F24B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 17:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02918163C0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:04:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391E218854C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 16:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A30C191F95;
-	Sun, 15 Dec 2024 16:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D17B1917C2;
+	Sun, 15 Dec 2024 16:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="Aky+lveZ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="a42n1UiG"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2079.outbound.protection.outlook.com [40.107.22.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C23A189912;
-	Sun, 15 Dec 2024 16:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734278685; cv=none; b=SKC4LUSziaWuDk3Px+6vaypZQuZEWFkWZnfeZNUPxmJ1PpsFAsBt4kekktlJ55jBRoe41v8yM8To1yEvAIzmTcGG36FoFOvLnvHwjknCI8YbdNOy7ZTuChjIQR4R7gQwpX0oksQzoEAchyYgSYNJfERg/8ntpguMr9FyYRiZD9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734278685; c=relaxed/simple;
-	bh=lG3oa76h+CM7R0sveI4lJVV207XxC/3DQZgSOboWY7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJU13xfqphL9IzG7DM/F/NI70kAe9Ic6KaXJoQMSxSjYLFSjU86MEx08K9R8NGlb3Ss5XwTskvj4vSYqTMrY3BxvA6jUhFrSDkakdfam+LPgqg3hP7mnYACHI4RjzZC56LbnFnv98lO/ECl4Sz6SZgveusO2vhPBLx/MJD30Qo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=Aky+lveZ; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1734278676; x=1734883476; i=deller@gmx.de;
-	bh=g4BgLYlQJWV0uClMLmCWbIXGgt3L/2H1UTwttrn3fes=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Aky+lveZeflozekH7N0gn8x53/Zshr5bUVAFzmSCaD7wfvgJdQLd+Ugusl50sGe5
-	 uoPz3ZYandsZ+29k1sSXq5BIF4uKp60B8h2sTx3sYw/lk3TjUMvCDvE+tk0LnNe39
-	 g8o0hNA9lDI8r3SSFt5hfzOFkY3/E0UTo1KJhwSZvIu6v+7AEKsBR3dLXtRzHDQQs
-	 JkDp18QD9tzye2riMQZX+c782Eb8WjxK3+zUDOzLlGF38saLNINw6HqbFI2OgEsTr
-	 tK9xC6Ge+CmEuHuGPDz8ab4fWAO1uH36jSLKgdI29+DUHJfKxOBwvBpoFVZMuZmM+
-	 oAuU7QXXypjzLswRjw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.172] ([109.250.63.155]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mof57-1tyKez1ag5-00pqPd; Sun, 15
- Dec 2024 17:04:36 +0100
-Message-ID: <5c806fca-9081-4b67-ae6c-1a2c47869177@gmx.de>
-Date: Sun, 15 Dec 2024 17:04:35 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A72189912
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734278795; cv=fail; b=crFsLJrAsUyYyxQYGMcFlxdL+LwI9OySvkoGnqeiYQOO/JuPTVkQSeBKCJfoUOEdzzrCeU7Rc1dpVJqGCfNW/i+1MAFcOMitEt4BCIIzw8wYUzn5xey6CEx1CyUniSRCENHC8mwqO+RneycxxmGF3mBTomboH6b+tdRy0fHKa3M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734278795; c=relaxed/simple;
+	bh=VRlfYKdaNT9jw8liovufASBwQORrDWJJjtAH7SJ0r9I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pl1gHVInuWuf7QXOkeMHlRK9+iD0b4bvAk1IL4AYpk1Tzb/iT9lwuEGNcD0opM19QECIgH37QOBRLkj0u0ONPayPPSzOv051s8cRuH3D2A25YooPWYu6XDHnBAhgPKl79MD37u/u7AEWjrdi49SzxX1PbQKTFgM5wBBM4SIEqas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=a42n1UiG; arc=fail smtp.client-ip=40.107.22.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S9jHsQFz1okmZiITj0zVS4TFsthfHa28v398Q7QYZlMJfdmEdat1zNLFMX/zhW5kFdtrHP93/hUC6AiS/V1gA/FdT7s5zL3v0x1JCJ4y5WpxHznWGsAWklVIfVW3FetuWNJWcBAEGBslvUtDqzCFOjQu27+i0uqeqxuholHNL1iG8YlLwdBOsNBMMyOAvJM/I8+Oo0XrTUCdJolHU26zu6mjCLQS5tgr0Go0DPOHUscksGUYShrjhi+lyp6qvh1fxs+17IaetM491naOKnGkcsAqjfCXOKfEACFXEu+Q44e367YnxT56y8CaARo3wLjFFrkUbo8nNWoFAAFEr23bag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ghPZ9mdS3x5sreIhLP6yMTEwx4au47nbQCIupbQBJVU=;
+ b=g1prKd4VXgH5B3BRPrNI18UkcPICs4KAurxYvyvfAWhaIdD0v5SfAhwp2IGK2TstdY7KmtAkmLfWWza6ybgGhCfzLMfWmAKaPe4XQdQ/lC0O9V3lC+MPE952H6kvrkmS7KjKbRYX9g5Um3HFGR4sZnZcwtoL2sfVUkBFBcwVV1P2rK1lhymlB0lv6gZSoHd5wRenmDLdaXsyb/3z54Y1FD06RO0SIL4h5iXi2abCUw8M+hwG5QYqCgs5tLOkzRDWvcb0A5eC+RIuiUWBE5NY45ZpIj19Lhpfo2xZlMw83kLkjWD9XNR05OG16NcmgcuRxgLSHuk6DNWqCLnLf0YDXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ghPZ9mdS3x5sreIhLP6yMTEwx4au47nbQCIupbQBJVU=;
+ b=a42n1UiGFVt4UMCy0BXO3+YX0SMrxPE6mNzSYrkVlOkLm5Y4ci3bHaHPO4KWnLtCgdkknjTxuLW8goGqEx+kS/dKScMJit42SQB61dhn1/So1814pJOgC6NXMO6JFjYsR5TML4/6VcPzmztWRkY9EYXoyn/gI/S5kzHR8zo1FkA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+Received: from AS8PR02MB9529.eurprd02.prod.outlook.com (2603:10a6:20b:5a5::16)
+ by PAXPR02MB7912.eurprd02.prod.outlook.com (2603:10a6:102:28d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Sun, 15 Dec
+ 2024 16:06:29 +0000
+Received: from AS8PR02MB9529.eurprd02.prod.outlook.com
+ ([fe80::8927:53fe:9d2:cc22]) by AS8PR02MB9529.eurprd02.prod.outlook.com
+ ([fe80::8927:53fe:9d2:cc22%4]) with mapi id 15.20.8251.015; Sun, 15 Dec 2024
+ 16:06:29 +0000
+Message-ID: <e157669a-0ffa-4d43-b282-e14651c269b9@axis.com>
+Date: Sun, 15 Dec 2024 17:05:38 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ubi: Revert "ubi: wl: Close down wear-leveling before
+ nand is suspended"
+To: Zhihao Cheng <chengzhihao1@huawei.com>, richard@nod.at,
+ dennis.lamerice@gmail.com, vigneshr@ti.com, marten.lindahl@axis.com
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com
+References: <20241214110153.684919-1-chengzhihao1@huawei.com>
+Content-Language: en-US
+From: Marten Lindahl <martenli@axis.com>
+In-Reply-To: <20241214110153.684919-1-chengzhihao1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MM0P280CA0099.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:9::12) To AS8PR02MB9529.eurprd02.prod.outlook.com
+ (2603:10a6:20b:5a5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/udlfb: Remove world-writability from EDID attribute
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Bernie Thompson <bernie@plugable.com>, Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241215-udlfb-perms-v1-1-2d1f8c96b1ab@weissschuh.net>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20241215-udlfb-perms-v1-1-2d1f8c96b1ab@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pN7hPfaqEPivIMyJfEePKwVnDDcEneG/sTdxsCZSey0tY3uyyBh
- v0K6HzuBQ6fTLyIJ3WoIhzPIuvpez4qre3Wa3DaWaDDZ4S1pJvfLPngwfRjXihHL3eUsfmw
- L9FAbGWlMtb7PcvhB2ab5yd3BWF4BU+2zOQQIqaG4Zq5LO4oJ4gGB3i+YuAaN+Jk58FtS2p
- 9KE1aADajPLEr3oS/nwjg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2WZfOk496HI=;IS8oNBDis3gWh52kXcPVKfpoX6L
- PRTND+/zemu2SpX+OaAbU8N0S9wjlIS/COIdWo1+xOcdGf6+0/t8PbbdfSr7hmaqF27MhZzuT
- c7F1avRkbil//J6+Jao43ImGsOzmgwxsdiNWXjt6hIrgQFKSnCI79DUgnFSWuEMPHAgfxFMK2
- RmKC9mMobmDY1MPSX8s3Ype1wNjt69HtnPWZeKJofrdFJwhdqmzye++wJ8ddrlH6vQ1oAGBx/
- j8uy1TpVxud+Ug7W4q44ttYemuoFLT3so6pi103UOmCigtXWeARz3gsyfy2V+9L9L8yk2qCfm
- ydbjM89w9v1MBuCwPhYx3hN1o0Sjiqm8cAoCUewQd17QqQxNowgBJPGIp8NBJkqWf9RTGc9TT
- 41oNnGg0Pn8Nwbbh4lhedGBsYG8jjsTn5RJpznq2R+55Sbpv8tpB/1L584sziyNuMkPn4znHL
- uNBIB6VWfvh4kIC+/M1AwUqACAt/IJnUK7kBW9Z1dY5mFltz0xWd3BM9o+lqXv6+AUkF22+IZ
- PIoV5VNjeYPOxlwQ8d5WgwJv5fagQzpl0x7HBEV0yZeSfum14jaHnQ4SNhkzbpFH2/r+dNIJI
- NAV3xwbjSCoz5t2A4UMu83LT21oFmtlfH8xpxn5EuDnirE53XqB8AMwhqokwYdleeMmccYNNS
- iJHRaroy29zmoO14m8+ktI9LbxxS8XsliANbAbQHXw+zRHQJzVbnTVeksZ72v102x2RTWiKLT
- z+8WBPs/2XaT4EYYBPSOkboV0S1AElruxE0IE/tfG/7Li5aTK1r0rg3hpBa7Ie+MxIfas/MlK
- uAktrv85tllxLfZ1VWGJIJxebvC4+9IVmAB1JJhH9uvujXvs196HcGdLUhI+X1gMoMfX480J7
- T/bJkeQdqBIZTL3ES0Zfu81I8mKdCyroI7/bVt3mAVUPoPKyuVotYW6es8wwNhGwjf12/j8Ng
- voa+7x7gh6WC3x4cyCYKuc3oxYN8ronXpELh5C1ZLlITbvvPSbJpXsoTu5sb+oOJMFmo3HTxQ
- gZoOkQSfJRfy+bFsyZyf6u1mEVJvUt/HiC7XlV4ubOJ82ztPucAluWRrbPfCrb/GknqIghRIv
- MugKJGcyQlck41mLillj6wmeg8m2J8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB9529:EE_|PAXPR02MB7912:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3a92f28-5ac5-4875-6127-08dd1d226f5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bXpsL2p2MDJJQllJeER1Z3cycWxqWU41ZDFxMFJzaEVrZHRSYnVOd1RYbFJu?=
+ =?utf-8?B?bll4Q3c1U2Nic1huSlBuUmxaaXR3Z2p4K3pOU2N1YmZDVXNJVWU4YzJQeU1y?=
+ =?utf-8?B?Yk50aG1KQkkxM0JCam9NeUxKVHVHQ2RlREIyZUpxWGdvYnNQYXFNQUpKZjNa?=
+ =?utf-8?B?T251d1dueHZPQUppbS9HcjAwVUJjaFNKNldSUjBVS1l6eHFRNVIxald2MUUx?=
+ =?utf-8?B?a1dhNW5LRzRJcHpyZUtCUXlkVFluZTQ5eGdZR3ZUOUhyL0pqWm5tcnV5WWlO?=
+ =?utf-8?B?ZUh4OGFRTWh6NlEzaEFkNi9JV01YeG5scys1b2dIMmxLRzZrMktUYTJRcStw?=
+ =?utf-8?B?ZTRXc21pdno3SU13VU5NNEN6T1hPdEovd1EyVExLWHJ3K3hZRExlUlQyaTg1?=
+ =?utf-8?B?c3JLUTNta0R1TUV6UlJVYXpIZXRjYUNEVVVic2Z4SnRhTTdlYWZoVnF1R3lH?=
+ =?utf-8?B?d2tyNEoyU3E2U0xVM244K0tlZnBXdjhTU052Z0RTcjVrUklHaGpnZExRUUNl?=
+ =?utf-8?B?WGtzZzZXc0NUL0JoUjJUQzFBSVVkMnVBcDkwcldEZUN5dFc0V2lZN0VZa1Fn?=
+ =?utf-8?B?a05Lc0RYWitIQmpQRFpxYVM2bGJGT3FRc1NFU05tYnJwSkwvRmdKbW53MEE5?=
+ =?utf-8?B?ZGJKNUl2SXZRaEM3U3JHbXNtcU1peUg1UkQyU0QyMWUxUFp1bVFFUDRyZ3lm?=
+ =?utf-8?B?MUc2ODV4dUk0K1p5aHJ0Mlh0WWk3UEdrYU8wNHh2MUNmZURmUVl1NDdScTRO?=
+ =?utf-8?B?NGpncjcxU2p4bWRjOWxVbUNHVGR6NFM1ZFpPYkRUUjI4eEIyREhFbjNQTm9q?=
+ =?utf-8?B?cG5aVHFuVEduU1RYRE9IMXVJZlBCVk5DaTU1MmhpeWEraHF2UXRUV2Y2dzE1?=
+ =?utf-8?B?MDdSbjNxblh0MTNmdmIza1ZycHF6ZTJsODRZTVd4MkxtbXNBTG5CU1o5L1dZ?=
+ =?utf-8?B?QWw1ZFdaSU1CamZiL2JwYzFPcE05RENjMjQzVllHU1VkSDh4dmk5M05qdTVH?=
+ =?utf-8?B?SEhOeU1BdTI2RHl5MkR1TXUwcjFVWGxlblBDeHExSWtnVExXNE1hOG5YQm5J?=
+ =?utf-8?B?bHBTeDJXUlVKNDhoT3dRUHh4SHptaDZuSVprMk0zdUlyaThhUUhMSFR4ejYr?=
+ =?utf-8?B?OENISWpRY2FDRVNPMSsrRWt3V0twb051S0dmdjV4Yk12QkE1WUpLdVI2TFZu?=
+ =?utf-8?B?ZlBrY3UyMjZYMHYwUW1lV25TZ2NXd3R6K3VIK0N5VnR6RVFvN0ExZVF3S2hH?=
+ =?utf-8?B?bjZ1UzI2aEs1VXRaSEMvenIzbUdUTWlzSWhIemhzRWo2MngvSmVGQXBBaUNK?=
+ =?utf-8?B?SHJmMWxmTDZ3cVpwc1ZOQnY3bUw2ZHhVU1VMU0YxamNVZW9lZC85UVNWTEtj?=
+ =?utf-8?B?aldJbTZySWRVMm5yNnJEcnZ1MEtMRXc0ZFNqT2dERDBlV2VQSDlML1dJdG04?=
+ =?utf-8?B?V2o5UHlQaUZLaFdHMnd6ZnhCSkNhaVMrRFJDaXNWK3htK2h2R3M3NE9jdmpG?=
+ =?utf-8?B?YmpBcXY4VFp4NkFyS3ZrMXl3U2FhWWVpVG1VL0hIalNEZmtaT3U4ancrY3A5?=
+ =?utf-8?B?b3M3MzhxV01hM2xTaFJsdDMyK2M0NG5QZkMzQVZONjRVMkJBYVBBRjJ0clJI?=
+ =?utf-8?B?cmtJblB6bE1SSElISSs0ZEFBVEhERTVMNzhTU2V2SDRFZkk3NWNRTktRdUtC?=
+ =?utf-8?B?ZDNqSXlNcGZpWG1nQlNHNFUydXcrMFJSazk5TGo4MUU2aXlENG9IRUxmNTZs?=
+ =?utf-8?B?R1Z1R01Wa1h6bE1JSTlmTVluY0hNcm9SSlNtdUFMbmZaMFFjM3E1QXgwVlB4?=
+ =?utf-8?B?QkY0K1Blck1QeUVNUEVRdmIvbjhUSDZORFp2OFAyMW04alJkTGpzYzVmUFpS?=
+ =?utf-8?Q?2pyCbDEf/VZlR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR02MB9529.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NlQ2MFNBaDZkTTZBVHlaZjJkeVpXQzFvWGJrcHFSZnBjdmRqV0Q4cEFvNHE4?=
+ =?utf-8?B?T2tQUE9WSVlYL3hnV0NYMThPakdlT3BSeTJ2U1BJdy9SU2JQVzZPZ0YxRlhL?=
+ =?utf-8?B?VzVQMWZBd0N6Y3d5U0phZi9BcWFSTENxYS9NT25vYmVkWmdaaHFJMjNaZXQ3?=
+ =?utf-8?B?dHorOWF4ZFl6VkI2Z3ZUVGhUWUM1U3hqMlZ5VFJzdjdWUnFRWVlpVE9XZFph?=
+ =?utf-8?B?dnlpMG9UVEhhampTRWRIREw4eEZVcXEvUHVqL1loczRScmN5S2hQYjlUL2VW?=
+ =?utf-8?B?ZWl6cXZ6aXlMeExxdEFJM1o5blV5eVA3R3QyNUZsa3U5VHp5NDlXakcyd2Ns?=
+ =?utf-8?B?Mkx3SU93cm9wRVdiRHRoejhibW4vZWN4ZXM4SzRFc1VRZzVQRTJmTnVERVpL?=
+ =?utf-8?B?WmtYeHRKUmhzT0pWL0p0TUJUZDZJOWtnWXFLTEljMTljc21JczY3OEpZbVJM?=
+ =?utf-8?B?bUlxYm54TkdoZDg1Skc5ZXh6ZWVZWml2RWpHZmtkK0lqbStncktOM1U2ZC9P?=
+ =?utf-8?B?aHl4UzBWNFN2dGVCSy9oejFsRUN5M25Fa05vc1kvY1JDRk9WU0hFa2RKcEFO?=
+ =?utf-8?B?RXFVeVdsRlhRZG1nYzdoMzFjaUhqT3JzOUw5UjNCK1UyejR3TU5pS2Q3VUwx?=
+ =?utf-8?B?cU1HaW1LbkNjRFQ3eGtNclJOdTIrT2I3WG9zSk5acTM1NmVwczZvcEp4Y1NY?=
+ =?utf-8?B?UWhITUhXTndjZWxmb0QrZ1I0Y0VWZWNmZHJrZHFZZUl2OERqdE5nOFJpdVJF?=
+ =?utf-8?B?bFBrYTJTMlFFaVZhc3Z2c2x3OVdqam1WSnVZR3pMOTY2aFFHOFYzL2JYUkti?=
+ =?utf-8?B?VjJmTG5RdjBvd2xXRzZLRFlpc2hCYitaQjNDcWNvRHhxVXVrdUZhdjQ0a3k5?=
+ =?utf-8?B?a0VpWjdEQjA1WFc0Wjc0Y3d6OGlEcEJjWHUwNWo5WG5kQnlYZ2wrK0ZPenpI?=
+ =?utf-8?B?Nlh1ejd3aDJNSzBMejBodlpTMUdhRnpzUytIK2p6T0tTaE9ta0tFU3Q0UndY?=
+ =?utf-8?B?Vk1mSThiVEQxMmo2cVhuVjVoVXpMY1B3SW1lK0ZoZXI5Qklybm9LeXJvNXdS?=
+ =?utf-8?B?UEdRWjBZZU4wRkNzTzExNFpROEhUYkp2TTYyZnp3clVhSTFTTm4vWVcyZ3hC?=
+ =?utf-8?B?U3lyOXJKdnU0VmpuTnppT29wSENSc0pQQzBRR1dEeS8vYmRXcVdERTZYaXFQ?=
+ =?utf-8?B?bmxyUTJEdzBxNEJzWmptSjV6UFVoRCtVcStZQjNsTXNLMWhPMDRwQUxqemNz?=
+ =?utf-8?B?RFNGMTlpdkJna0luWXo2alZHa2V0RDFCa053N2Q4SkRRT0Y1YUxpQ2VkTUUz?=
+ =?utf-8?B?aUxMejFFL0lWNzVZU1c2N0NkQ3gzVVJhMjVjdS9QeWhacFhKaWx5b2FWeHFs?=
+ =?utf-8?B?by9wbnJ2THZMOCtUR2VJUUdLVW5IU3dQUzlsTFdrY05uYlZaUU4zOU9MTG5F?=
+ =?utf-8?B?R0h4Q1ZBS0FlOU5vV21JSVB6dTFnaW5OeFdtM0RFZVVaaThIK1d6V1RCVWJQ?=
+ =?utf-8?B?N09xQmdRcEFvRytIZWZpckNOUmplK3pQZU9ldkFVQnJJcUpCQjIrTXJiaEZp?=
+ =?utf-8?B?ZnNOVjAwMXhnalBuc1hNaUZNYUFuRUYySGFIN3Q0TVByaXNzWUFoYWc5Sm05?=
+ =?utf-8?B?UjVER051dzJFMUYwbkRGTFU4ekU4VWdvOUpSL1orM1gvTURKd3QyYkZQOFQx?=
+ =?utf-8?B?RkMveUVERDM5bDlOT2Nqd3ZyVHo4VVF3T0tjTEZITlVHQWlhVEJPYk9icG5i?=
+ =?utf-8?B?bkk2elcxaitGRXdVcGxaU0dNK0xFWmE3S1VuRDBaQnBDMXBCeGdmMm5mQjRp?=
+ =?utf-8?B?ZDZUYjJlRTlpN2dYcEhIaEFSRzFEN2p4dEpUQmFyKzVibERkc1dsdDNCNjF6?=
+ =?utf-8?B?R0hLYmU5Qm10eGprSEo4ZUpMNlFVazdiZVVQYytTajRuQjJwN08yME9waWxL?=
+ =?utf-8?B?TzBXa1hUVy9neTRIMUNxMTVxSVdoY1JRdG5yeWJaUUVKMm0yWFdzTEdxWXRP?=
+ =?utf-8?B?QVo2M1ZUOC9JdjIyeUVFbDNWeXFKaWFkU2FjRzVuVnptNE1POHNOeEtNR29X?=
+ =?utf-8?B?ZDhpRDNIUTlzV0JxaTNIcWh5OWwxdndVR3l1RXNrNDUwRlEzaEFQQ2xZa0xl?=
+ =?utf-8?B?RW5aaUtlYUxtTkZvTXZhaTk5ZjN0aklvU3lwZXlwNFhaVkhrc3g5emoyM21U?=
+ =?utf-8?Q?JGGXdsyyxsdfILsGv6vr/YPqStfGMZq45m4bWNKYAQrm?=
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3a92f28-5ac5-4875-6127-08dd1d226f5c
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB9529.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Dec 2024 16:06:29.2417
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZZZx+h0xGdgKGHXKNO1BU3h9u0UWfge3u3whNv96FEOCzfmux7DlqvANSxNhX9lANSQ8O7aOHXcgLZPCvbmRSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR02MB7912
 
-On 12/15/24 16:15, Thomas Wei=C3=9Fschuh wrote:
-> It should not be possible for every user to override the EDID.
-> Limit it to the system administrator.
+Hi Zhihao Cheng!
+
+Yes, we discussed this issue in [2], and I thought 5580cdae05ae ("ubi: 
+wl: Close down wear-leveling before nand is suspended") was dropped, but 
+I see now it got merged.
+
+I agree it should be reverted.
+
+Acked-by: Mårten Lindahl <marten.lindahl@axis.com>
+
+Kind regards
+
+Mårten
+
+On 12/14/24 12:01, Zhihao Cheng wrote:
+> Commit 5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is
+> suspended") added a reboot notification in UBI layer to shutdown the
+> wear-leveling subsystem, which imported an UAF problem[1]. Besides that,
+> the method also brings other potential UAF problems, for example:
+>         reboot             kworker
+>   ubi_wl_reboot_notifier
+>    ubi_wl_close
+>     ubi_fastmap_close
+>      kfree(ubi->fm)
+>                       update_fastmap_work_fn
+> 		      ubi_update_fastmap
+> 		       old_fm = ubi->fm
+> 		       if (old_fm && old_fm->e[i]) // UAF!
 >
-> Fixes: 8ef8cc4fca4a ("staging: udlfb: support for writing backup EDID to=
- sysfs file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Actually, the problem fixed by commit 5580cdae05ae ("ubi: wl: Close down
+> wear-leveling before nand is suspended") has been solved by commit
+> 8cba323437a4 ("mtd: rawnand: protect access to rawnand devices while in
+> suspend"), which was discussed in [2]. So we can revert the commit
+> 5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is
+> suspended") directly.
+>
+> [1] https://lore.kernel.org/linux-mtd/20241208175211.9406-2-dennis.lamerice@gmail.com/
+> [2] https://lore.kernel.org/all/9bf76f5d-12a4-46ff-90d4-4a7f0f47c381@axis.com/
+>
+> Fixes: 5580cdae05ae ("ubi: wl: Close down wear-leveling before nand is suspended")
+> Reported-by: Dennis Lam <dennis.lamerice@gmail.com>
+> Closes: https://lore.kernel.org/linux-mtd/20241208175211.9406-2-dennis.lamerice@gmail.com/
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 > ---
-> The EDID passed through sysfs is only used as a fallback if the hardware
-> does not provide one. To me it still feels incorrect to have this
-> world-writable.
-
-I'm wondering if there is any real danger to the system integrity if
-a user writes an own EDID (or a broken one)?
-I mean, the only reason to use an own EDID is if you are a desktop user,
-and then you usually are not a root user.
-So, user-writeable *seems* safe to me, especially since the provided EDID =
-is only
-used if a real one isn't provided by the monitor.
-
-Maybe Bernie has an opinion here?
-
-Helge
-
-
-
-> ---
->   drivers/video/fbdev/udlfb.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/mtd/ubi/ubi.h |  2 --
+>   drivers/mtd/ubi/wl.c  | 21 ---------------------
+>   2 files changed, 23 deletions(-)
 >
-> diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-> index 71ac9e36f67c68aa7a54dce32323047a2a9a48bf..391bdb71197549caa839d862=
-f0ce7456dc7bf9ec 100644
-> --- a/drivers/video/fbdev/udlfb.c
-> +++ b/drivers/video/fbdev/udlfb.c
-> @@ -1480,7 +1480,7 @@ static ssize_t metrics_reset_store(struct device *=
-fbdev,
->
->   static const struct bin_attribute edid_attr =3D {
->   	.attr.name =3D "edid",
-> -	.attr.mode =3D 0666,
-> +	.attr.mode =3D 0644,
->   	.size =3D EDID_LENGTH,
->   	.read =3D edid_show,
->   	.write =3D edid_store
->
-> ---
-> base-commit: 2d8308bf5b67dff50262d8a9260a50113b3628c6
-> change-id: 20241215-udlfb-perms-bb6ed270facf
->
-> Best regards,
-
+> diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+> index 26cc53ad34ec..c792b9bcab9b 100644
+> --- a/drivers/mtd/ubi/ubi.h
+> +++ b/drivers/mtd/ubi/ubi.h
+> @@ -549,7 +549,6 @@ struct ubi_debug_info {
+>    * @peb_buf: a buffer of PEB size used for different purposes
+>    * @buf_mutex: protects @peb_buf
+>    * @ckvol_mutex: serializes static volume checking when opening
+> - * @wl_reboot_notifier: close all wear-leveling work before reboot
+>    *
+>    * @dbg: debugging information for this UBI device
+>    */
+> @@ -652,7 +651,6 @@ struct ubi_device {
+>   	void *peb_buf;
+>   	struct mutex buf_mutex;
+>   	struct mutex ckvol_mutex;
+> -	struct notifier_block wl_reboot_notifier;
+>   
+>   	struct ubi_debug_info dbg;
+>   };
+> diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+> index 4f6f339d8fb8..fbd399cf6503 100644
+> --- a/drivers/mtd/ubi/wl.c
+> +++ b/drivers/mtd/ubi/wl.c
+> @@ -89,7 +89,6 @@
+>   #include <linux/crc32.h>
+>   #include <linux/freezer.h>
+>   #include <linux/kthread.h>
+> -#include <linux/reboot.h>
+>   #include "ubi.h"
+>   #include "wl.h"
+>   
+> @@ -128,8 +127,6 @@ static int self_check_in_wl_tree(const struct ubi_device *ubi,
+>   				 struct ubi_wl_entry *e, struct rb_root *root);
+>   static int self_check_in_pq(const struct ubi_device *ubi,
+>   			    struct ubi_wl_entry *e);
+> -static int ubi_wl_reboot_notifier(struct notifier_block *n,
+> -				  unsigned long state, void *cmd);
+>   
+>   /**
+>    * wl_tree_add - add a wear-leveling entry to a WL RB-tree.
+> @@ -1953,13 +1950,6 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+>   	if (!ubi->ro_mode && !ubi->fm_disabled)
+>   		ubi_ensure_anchor_pebs(ubi);
+>   #endif
+> -
+> -	if (!ubi->wl_reboot_notifier.notifier_call) {
+> -		ubi->wl_reboot_notifier.notifier_call = ubi_wl_reboot_notifier;
+> -		ubi->wl_reboot_notifier.priority = 1; /* Higher than MTD */
+> -		register_reboot_notifier(&ubi->wl_reboot_notifier);
+> -	}
+> -
+>   	return 0;
+>   
+>   out_free:
+> @@ -2005,17 +1995,6 @@ void ubi_wl_close(struct ubi_device *ubi)
+>   	kfree(ubi->lookuptbl);
+>   }
+>   
+> -static int ubi_wl_reboot_notifier(struct notifier_block *n,
+> -				  unsigned long state, void *cmd)
+> -{
+> -	struct ubi_device *ubi;
+> -
+> -	ubi = container_of(n, struct ubi_device, wl_reboot_notifier);
+> -	ubi_wl_close(ubi);
+> -
+> -	return NOTIFY_DONE;
+> -}
+> -
+>   /**
+>    * self_check_ec - make sure that the erase counter of a PEB is correct.
+>    * @ubi: UBI device description object
 
