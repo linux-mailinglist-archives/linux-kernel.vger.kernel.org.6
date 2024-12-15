@@ -1,261 +1,232 @@
-Return-Path: <linux-kernel+bounces-446551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8BC9F2604
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:18:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA569F2609
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D191646F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A63507A114F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E34A1BC08B;
-	Sun, 15 Dec 2024 20:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5251BF7FC;
+	Sun, 15 Dec 2024 20:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOQCIK1X"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="eFJRBTBP"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86BF189905;
-	Sun, 15 Dec 2024 20:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109A11925AE
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 20:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734293877; cv=none; b=UCKhAESEowRrrCWlT1Ht/2Qvem4INq/0eYokonPx9TE5MUfrUbsfN6UkO3ymJR2cZ9j658V8bH91afah3zdyW+KXCWwtgiQ/lyXCuwt3U54CLiysUI9usg7U3t7ZzzATnLZkmqlm6Lv49vgulnEvvHPUKuzVbeH/xPJoARUOpLw=
+	t=1734294445; cv=none; b=AlY+ME63ZGmGCSGqs8bc9wdmYIyvhK3/GdAMt8Y7zOSy71wo7FYrWH2XukTh3ufinUfF3a6wElS51ttNnx1ntLcM7UlLqDL0rLQFRiBVJVkpEt3pcUztKM0VbmxBa5661uNgUyGuRaRLB5tuMxHhCIBIbjZFQroE4gqVeEU1xKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734293877; c=relaxed/simple;
-	bh=Fy9B0AEG3flGCVswO76R2mq6DS1CYSTqSpVqCHtWa2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5XVIqINKK3YwNxhgH1Za/lrxt7PX/OfYL/ma2XURrh64jwxvUoi65Mvz0zCa+rqN1/K0xPXp8xgLAWagS5z7eJzu60+MaLJcYiqyaqOcCTBDLqDY5ceF348QXVJJRbEskrR0feQBN+qmiQzhXWmpZZcndk1RTnotqYDxqFA+JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOQCIK1X; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d89a727a19so43075316d6.0;
-        Sun, 15 Dec 2024 12:17:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734293875; x=1734898675; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hUjPRb60UOKxlJX9P7WCdKWYJ4xgoEt+z+ky4eQN6ys=;
-        b=fOQCIK1XhzoLHMslc9rdyUT/fkTg7kh70Ds1/Dej+BRpnV7XLam8fbxgcBzRd+rXRN
-         3baxRUoUqT09BWkpqlo20ByBv5uQ9MO6JlajOO0PIh+wmNVNAiNDLQ1YkwnaQxN5NH+E
-         Ev7cCECverQrbRJKeRSubnJi+1uZeoLL6qTm+lJPZrWKN8wmCMfDqPJMQZOTkUHpSbya
-         n2Ejosek2rS+O0VfB2hFQX3vGY6Ga076gFaxCub4QaO4cOgSxpto6sFURZcaK+zd/grY
-         ZX4LXZ+wiYTvcMnnQmqEGaEsqCxwNggzlMKWQicWINVc2QKizsKNCQeH4QbpwjIfH2tf
-         NBcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734293875; x=1734898675;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hUjPRb60UOKxlJX9P7WCdKWYJ4xgoEt+z+ky4eQN6ys=;
-        b=oddNGD0mESah0BWJY1J9c+W0xBx3zC2+3+rIU4C7pwvUAze7/hoxBMj0s5H6sEj4/A
-         WaP7BRWkBPkIn9Ya1tH5uE8iMpZ2CNV81+sEiZn/ICjqzDmyThEZ3EFuer4PZ9hYYdAN
-         L6Jy3qjHdBj/MX+bdv3DsjkAeoVj/p/cUSKGF8d2i3r9R9evo/1QxrTLBnZOndMpa3Oj
-         wWvD49q+zgSd1ktJzi0phr0acIDWYyhT1vBvCR/CsnINkw94vOPxyWtmpH8NINM3Plda
-         ReBQIzZ6Ggcvf21rJMuSSjJMKXVfWMaEagVLDCbVjwbUkdAK5tkBdc0mv0HGuUGDex3e
-         KIVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYu5bZjplreUSFB2i8avPixX2CmHSjRbC/bQz9riMjsS2TT6BWXbzG8Cyigxva+vcpx3D+U7BiFoJ5LoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfO9wcW5QE4D9E2TMVVtoYmGdbSZGLQHBKQwtwoLyjGxLVjdEi
-	JXeHgg23IsS/FiqJ/1EFOEBPpPVWjq7z4dDUIT9zeLA5lRpmhcNC
-X-Gm-Gg: ASbGncsc4mbGrztIsvzyt3IG0Plj84oPdguCeNcE1upGMEyZRNcghqpTgHjtJcpWXFP
-	BwP/0Le/izIsHZvrnGfhHbHwfBRgC9ztObA+pm5sD2H1MClxzpsf/X76NvFJn5oYJauSRys6CQF
-	bJU9tQ33KsQrOwOFamVxCVfIYEOdO6b9yki5WMfCYSORczl1GNhkbCVhxAbZpxpnEW6eo9qZLMM
-	P2ixKh2qRgr9PVu786Xp6Xe9ktgCscbLVUh6tJ6XC8sjVS2JxXiFmyin95DkL7vj+Hk92Xdq0yt
-	1H+PTOmVAD+oXhjgqCJ6uC6FeHmyliCvNPs61EmZGxF9Xtw=
-X-Google-Smtp-Source: AGHT+IGbQaAYFhipq5CQQ9enZUKb31QAAvTuw/+A5sSzSL6nm215jJD1+TsAczrxWGkhk6mPogx8CQ==
-X-Received: by 2002:a05:6214:c6e:b0:6d8:8f81:e2ec with SMTP id 6a1803df08f44-6db0f3f3340mr221717366d6.12.1734293874587;
-        Sun, 15 Dec 2024 12:17:54 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd38061csm19654496d6.109.2024.12.15.12.17.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 12:17:54 -0800 (PST)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6E6C61200043;
-	Sun, 15 Dec 2024 15:17:53 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Sun, 15 Dec 2024 15:17:53 -0500
-X-ME-Sender: <xms:cTlfZ6V1wy6Bkt2x6YYT_T0-PIOXxGM8yHqT6cLCRCqUDKJMudetQg>
-    <xme:cTlfZ2lx_VabS6BP76DYPywnuybMqqlH2WHju0UYcWf3_ibRyQdWMKIEuwst6yF40
-    j2-iTFlz1MBdjtSUw>
-X-ME-Received: <xmr:cTlfZ-b3-U8vEv0_600j84ov68r2ZQaMvPzCg1hvlwBFrCDqpJRVd8z3B7wp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrledugddufeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehlhihuuggvsehrvgguhhgrthdrtghomhdprh
-    gtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
-    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrg
-    hrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmh
-    gvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:cTlfZxWdEuMOjnkdS1eO4zco_19yfXZ07_FILURNrKIhSaQMqQt0Ug>
-    <xmx:cTlfZ0mEralcf4ksbF6zNmCwkxPZiF9sEWQc3jMqS23A07Slz6Nf1Q>
-    <xmx:cTlfZ2eF7eUMS6vZShYWt1oQmdFDeGJAzHA9RENMdFcnXIfy9_Xpcw>
-    <xmx:cTlfZ2HojQu9Mty33fPqXKdiMgnX5v9OU04_SDz1526XiiOXYjaNkA>
-    <xmx:cTlfZynkT8qtoavFuwRybwm1WEF57knzVQyO8IrDPDq_8X8_8xvpQm6T>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 15 Dec 2024 15:17:52 -0500 (EST)
-Date: Sun, 15 Dec 2024 12:17:51 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Filipe Xavier <felipe_life@live.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	Wedson Almeida Filho <walmeida@microsoft.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2] rust: sync: Add lock::Backend::assert_is_held()
-Message-ID: <Z185bwYfvVUJ2EXZ@tardis.local>
-References: <20241125204139.656801-1-lyude@redhat.com>
+	s=arc-20240116; t=1734294445; c=relaxed/simple;
+	bh=f5DAW3+f795DgZCt4sr1NZnCVK/tOzCH9ov3xlcpkHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SS6o7M96HMvixpXvnlXFqCjJqIzbKQINQhL5vFB/m1ZU0TweHz44IBZFjI2Wvk2m8y4Qt3GU4oBf//HcOFLTKdiX6HAUNZNXD4nG1sae+4GsW744KxR7yz/eCgKzMNph5gI2fpPstkZY59ChZvijCZA9aHoG21ctOGPmTQzFJmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=eFJRBTBP; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id DC84D2C03C9;
+	Mon, 16 Dec 2024 09:27:19 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734294439;
+	bh=qsUFAijF4WKH/nYMIkBPJ6k6amC+zkvwUC6O275o3eA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eFJRBTBPqjDi4JqhovGZymRivBhebvDTwg7PPN6TJMIGxWN3GOhKECM4O7ofb14yO
+	 gQtXj9Jl9NJmAv4ia+3uaRuOafOuWKK6jM0ylmnFYzjcd3KJIpE74NCvnXvEydslcY
+	 r8JbUBSrWynLLyylRN9ffrIh9ngzrO3la6BvbyPLGt5faAX13e9jK/S18cgPL+Yvfh
+	 tu+dqGvGJxbDueXOSe+6JyiKNLSail+pzgxtnXrW8XFUnonWipaBaYWdsqHH2ebCgb
+	 YMjLDu3i05leQH30FCdP/BGRQbd+2EeieJTZGiEMTY84VlplpGGtqIoj+F9TkYx0m9
+	 +KbPgvQMZF7wg==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B675f3ba70000>; Mon, 16 Dec 2024 09:27:19 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id BF17213ED7B;
+	Mon, 16 Dec 2024 09:27:19 +1300 (NZDT)
+Message-ID: <44978be8-2494-4d4c-b718-668f8205176a@alliedtelesis.co.nz>
+Date: Mon, 16 Dec 2024 09:27:19 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125204139.656801-1-lyude@redhat.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
+To: Simon Horman <horms@kernel.org>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+ <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
+ <20241213195911.GF561418@kernel.org>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241213195911.GF561418@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=675f3ba7 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=oIK0dgETfHc4Cs-NtC8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Mon, Nov 25, 2024 at 03:40:58PM -0500, Lyude Paul wrote:
-> Since we've exposed Lock::from_raw() and Guard::new() publically, we want
-> to be able to make sure that we assert that a lock is actually held when
-> constructing a Guard for it to handle instances of unsafe Guard::new()
-> calls outside of our lock module.
-> 
-> So, let's do this by adding a new method assert_is_held to Backend, which
-> uses lockdep to check whether or not a lock has been acquired. When lockdep
-> is disabled, this has no overhead.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> 
 
-Queued for more testing and reviews, thanks!
+On 14/12/2024 08:59, Simon Horman wrote:
+> On Thu, Dec 12, 2024 at 12:53:42PM +1300, Chris Packham wrote:
+>> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+>> switches with integrated SoC. There are 4 physical SMI interfaces on the
+>> RTL9300 but access is done using the switch ports so a single MDIO bus
+>> is presented to the rest of the system.
+>>
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ...
+>
+>> diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-realtek-rtl.c
+> ...
+>
+>> +static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
+>> +{
+>> +	u32 port_addr[5] = { };
+>> +	u32 poll_sel[2] = { 0, 0 };
+>> +	u32 glb_ctrl_mask = 0, glb_ctrl_val = 0;
+>> +	int i, err;
+>> +
+>> +	for (i = 0; i < MAX_PORTS; i++) {
+>> +		int pos;
+>> +
+>> +		if (priv->smi_bus[i] > 3)
+>> +			continue;
+>> +
+>> +		pos = (i % 6) * 5;
+>> +		port_addr[i / 6] |=  priv->smi_addr[i] << pos;
+> Hi Chris,
+>
+> The maximum index of port_addr accessed above is
+> (MAX_PORTS - 1) / 6 = (32 - 1) / 6 = 5.
+> But port_addr only has five elements (maximum index of 4).
+> So this will overflow.
+>
+> Flagged by Smatch.
 
-Regards,
-Boqun
+Drat. It's more complicated than that. The maximum number of _physical_ 
+ports on the RTL9300 is 28 (i.e. 0-27). In some other places port 28 is 
+used to mean the CPU port (i.e. the DMA interface) and in others it just 
+uses 32 possible ports because that makes the tables entries align 
+nicely. Since this is just the MDIO interface, setting MAX_PORTS to 28 
+here seems like the sensible thing to do.
 
-> ---
-> 
-> V2
-> * Use lockdep instead of is_locked() functions
-> * Drop is_locked, replace with assert_is_held()
-> ---
->  rust/helpers/mutex.c              |  5 +++++
->  rust/helpers/spinlock.c           |  5 +++++
->  rust/kernel/sync/lock.rs          | 10 ++++++++++
->  rust/kernel/sync/lock/mutex.rs    |  7 +++++++
->  rust/kernel/sync/lock/spinlock.rs |  7 +++++++
->  5 files changed, 34 insertions(+)
-> 
-> diff --git a/rust/helpers/mutex.c b/rust/helpers/mutex.c
-> index 7e00680958ef1..06575553eda5c 100644
-> --- a/rust/helpers/mutex.c
-> +++ b/rust/helpers/mutex.c
-> @@ -12,3 +12,8 @@ void rust_helper___mutex_init(struct mutex *mutex, const char *name,
->  {
->  	__mutex_init(mutex, name, key);
->  }
-> +
-> +void rust_helper_mutex_assert_is_held(struct mutex *mutex)
-> +{
-> +	lockdep_assert_held(mutex);
-> +}
-> diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-> index b7b0945e8b3cb..b26953d0d65b5 100644
-> --- a/rust/helpers/spinlock.c
-> +++ b/rust/helpers/spinlock.c
-> @@ -26,3 +26,8 @@ int rust_helper_spin_trylock(spinlock_t *lock)
->  {
->  	return spin_trylock(lock);
->  }
-> +
-> +void rust_helper_spin_assert_is_held(spinlock_t *lock)
-> +{
-> +	lockdep_assert_held(lock);
-> +}
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index 6d3c8874eb26a..bc71fda87b104 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -85,6 +85,13 @@ unsafe fn relock(ptr: *mut Self::State, guard_state: &mut Self::GuardState) {
->          // SAFETY: The safety requirements ensure that the lock is initialised.
->          *guard_state = unsafe { Self::lock(ptr) };
->      }
-> +
-> +    /// Asserts that the lock is held using lockdep.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Callers must ensure that [`Backend::init`] has been previously called.
-> +    unsafe fn assert_is_held(ptr: *mut Self::State);
->  }
->  
->  /// A mutual exclusion primitive.
-> @@ -207,6 +214,9 @@ impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
->      ///
->      /// The caller must ensure that it owns the lock.
->      pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
-> +        // SAFETY: The caller can only hold the lock if `Backend::init` has already been called.
-> +        unsafe { B::assert_is_held(lock.state.get()) };
-> +
->          Self {
->              lock,
->              state,
-> diff --git a/rust/kernel/sync/lock/mutex.rs b/rust/kernel/sync/lock/mutex.rs
-> index 0e946ebefce12..8ee079f6ae0ac 100644
-> --- a/rust/kernel/sync/lock/mutex.rs
-> +++ b/rust/kernel/sync/lock/mutex.rs
-> @@ -126,4 +126,11 @@ unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
->              None
->          }
->      }
-> +
-> +    unsafe fn assert_is_held(ptr: *mut Self::State) {
-> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
-> +        unsafe {
-> +            bindings::mutex_assert_is_held(ptr);
-> +        }
-> +    }
->  }
-> diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-> index 9f4d128bed983..b2c1343aabee3 100644
-> --- a/rust/kernel/sync/lock/spinlock.rs
-> +++ b/rust/kernel/sync/lock/spinlock.rs
-> @@ -125,4 +125,11 @@ unsafe fn try_lock(ptr: *mut Self::State) -> Option<Self::GuardState> {
->              None
->          }
->      }
-> +
-> +    unsafe fn assert_is_held(ptr: *mut Self::State) {
-> +        // SAFETY: The `ptr` pointer is guaranteed to be valid and initialized before use.
-> +        unsafe {
-> +            bindings::spin_assert_is_held(ptr);
-> +        }
-> +    }
->  }
-> 
-> base-commit: b7ed2b6f4e8d7f64649795e76ee9db67300de8eb
-> -- 
-> 2.47.0
-> 
+>> +
+>> +		pos = (i % 16) * 2;
+>> +		poll_sel[i / 16] |= priv->smi_bus[i] << pos;
+>> +	}
+>> +
+>> +	for (i = 0; i < MAX_SMI_BUSSES; i++) {
+>> +		if (priv->smi_bus_isc45[i]) {
+>> +			glb_ctrl_mask |= GLB_CTRL_INTF_SEL(i);
+>> +			glb_ctrl_val |= GLB_CTRL_INTF_SEL(i);
+>> +		}
+>> +	}
+>> +
+>> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_5_ADDR_CTRL,
+>> +				port_addr, 5);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_15_POLLING_SEL,
+>> +				poll_sel, 2);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_update_bits(priv->regmap, priv->reg_base + SMI_GLB_CTRL,
+>> +				 glb_ctrl_mask, glb_ctrl_val);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int realtek_mdiobus_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct realtek_mdio_priv *priv;
+>> +	struct fwnode_handle *child;
+>> +	struct mii_bus *bus;
+>> +	int err;
+>> +
+>> +	bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
+>> +	if (!bus)
+>> +		return -ENOMEM;
+>> +
+>> +	bus->name = "Reaktek Switch MDIO Bus";
+>> +	bus->read_c45 = realtek_mdio_read_c45;
+>> +	bus->write_c45 =  realtek_mdio_write_c45;
+>> +	bus->parent = dev;
+>> +	priv = bus->priv;
+>> +
+>> +	priv->regmap = syscon_node_to_regmap(dev->parent->of_node);
+>> +	if (IS_ERR(priv->regmap))
+>> +		return PTR_ERR(priv->regmap);
+>> +
+>> +	err = device_property_read_u32(dev, "reg", &priv->reg_base);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
+>> +
+>> +	device_for_each_child_node(dev, child) {
+>> +		u32 pn, smi_addr[2];
+>> +
+>> +		err = fwnode_property_read_u32(child, "reg", &pn);
+>> +		if (err)
+>> +			return err;
+>> +
+>> +		if (pn > MAX_PORTS)
+>> +			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
+>> +
+>> +		err = fwnode_property_read_u32_array(child, "realtek,smi-address", smi_addr, 2);
+>> +		if (err) {
+>> +			smi_addr[0] = 0;
+>> +			smi_addr[1] = pn;
+>> +		}
+>> +
+>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+>> +			priv->smi_bus_isc45[smi_addr[0]] = true;
+>> +
+>> +		priv->smi_bus[pn] = smi_addr[0];
+>> +		priv->smi_addr[pn] = smi_addr[1];
+> The condition about 15 lines above ensures that the maximum value of pn
+> is MAX_PORTS. But if this is the case then the above will overflow
+> both smi_bus and smi_addr as they each have MAX_PORTS elements
+> (maximum index of MAX_PORTS - 1).
+>
+> I suspect the condition above should be updated to:
+>
+> 	if (pn >= MAX_PORTS)
+> 		return ...
+>
+> Also flagged by Smatch.
+Good catch thanks. Will fix in v2.
+>> +	}
+>> +
+>> +	err = realtek_mdiobus_init(priv);
+>> +	if (err)
+>> +		return dev_err_probe(dev, err, "failed to initialise MDIO bus controller\n");
+>> +
+>> +	err = devm_of_mdiobus_register(dev, bus, dev->of_node);
+>> +	if (err)
+>> +		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
+>> +
+>> +	return 0;
+>> +}
+> ...
 
