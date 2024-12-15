@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-446240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9499F219A
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:38:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662FB9F219E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03AFF1886875
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F31916646E
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604CD1C27;
-	Sun, 15 Dec 2024 00:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4F923A9;
+	Sun, 15 Dec 2024 00:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S3wCP1Sf"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TiDKZjrQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E99E36C
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B3A23DE
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734223082; cv=none; b=U9+4+hUt25oYqOMuRkK/JmjM6aw2MulOxwAphro664Hh3Nmh4ITvPiDcr3JKwlU4YVC3jyvTpLU1hryYigKutHobS7Z8KfJWYI/dvJvYmJHxQWI1scRhk7w583ivgT5U0MHcXIbqV4G5ANhvHzg5F+iFUopgAInLbSfKYWwTOXw=
+	t=1734223484; cv=none; b=Z+P5p+pD3I+LBIOjtZbgyePM1VdK2NNcl2thczwMhK/GRZBmlSScNfEkXTWdVPJY7l/WtY0VpAgn4CfP3M7DEvXkvOvZ0w+3pVJ9PHSesj3F7HwNWuUOoW/9oiSgjSLmgcWuHHCmHQpMPPch//2Ffpy4TguAaSFI+xRsgG3o/qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734223082; c=relaxed/simple;
-	bh=G2LKWQr1J6nfI88bqaGvpEmyXxeJu00LiqMMfKxVkRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bmfBEjco6W+IwO6UC7GgrMUl7duTlZ/51Q+qzfIfHeE6JZFQvZnT4LjOaO5cEwXgIeHSzcR18+gw+umQSv+0zvnpS6quXE/D/+CMIf5TWRSCMXydW2ZuF8pA8aAF+FE+V39vvgs4eAhR+k8KLXbkwN6yGOiWoV/iIpOmGHjpW1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S3wCP1Sf; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso5403691a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:38:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734223078; x=1734827878; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lek2a64UVzeNy0p4/Sh+8fSGQa+3tUGdFQWLgqLbCoI=;
-        b=S3wCP1SfKMxnuEY3w6peqn3Dp5g/AA67QYE33XqWR9a+XJBUU97SjIpgypHFJLQ1cS
-         7+vpPFRqdJwRsGxmoloGD+7KNXAt18n4h9JOZcmIDngJkR2we5BZ/WfTQtPCuOVq8dup
-         iS7ij9nDQSfrrBsuP0q/7dbDWTElkGdCMRP5Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734223078; x=1734827878;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lek2a64UVzeNy0p4/Sh+8fSGQa+3tUGdFQWLgqLbCoI=;
-        b=LM7hPFVp4u9AVRcDAflpfICgVLdP/WA+xBdiA+BCfUMiSOI5SdhB2dDb284O0v3z75
-         KedY734fOdjZxrZPgnGephjWbUHW0ZsA/9r4COom1XibTdX/hE23bKlI7UaxISJkGzn2
-         6yuQTQ0PIoVSop9dnemHXuVV2lK+WK4tjdeTx9m2zQLjyoWSkZjvpPmh0kDhYR9SJy2A
-         WWCdWXBdqtS9WGJNSoKQVE/7YF/SgguEakMHRPXhc14u2LxfJ17rXu4/hl/ogSDy/Kbh
-         91VPgele5c9Oa3h2+gI9TB0KRyibC090IkqK1tgAIeDlclayxzAXnRkWPGuk/BO5DSzm
-         bYDw==
-X-Gm-Message-State: AOJu0Yz3OKGmmpk0GR5TTFtmJiHzUq4z4PFxMPkpSGbItcCcKXGff2QN
-	nxKmynzkghomnhqcAzUXFJTEy+yvnVEzUAZudKc3hfbofk324RFmelnajAcVyUEHe1aNjE/7VdC
-	ZR/0=
-X-Gm-Gg: ASbGnctTe+QQ3ZniaMtX3garJWKlRK3LUACOhp8Molq9t6w7wbsg1+jIQPgK/Vn18g+
-	PSIcTCctqzUu9AoGMrBjeCSsYDBzHM95Ve6PjbmojM62alxo7A8fFT4PzFPFqBBvu4EfeOP158I
-	rsWplFCMkWMoDL0E2cYKMKkVWev/r3+OCXdIquk48953jepHharK5V5wF/gLkMokeDgrQiAqaXo
-	rnR0fXaCK5fVcvjYl3U71AmpU9/M3Z8NRbeuxk1COS/McmaC7QDqTb2Jv+4y/oWnpoHQIX617zr
-	sQN3UuPBKq+UCGtdNE7kZXbzvbjgNxE=
-X-Google-Smtp-Source: AGHT+IGYlFRksiZqXgyupH84hhlbKxc4/G/f0gaDV5wGnltSqCm2zM794LonadSDutAB4N9kuhWyjw==
-X-Received: by 2002:a17:906:7953:b0:aa6:a53a:f6c7 with SMTP id a640c23a62f3a-aab779ba4ebmr928516566b.31.1734223078502;
-        Sat, 14 Dec 2024 16:37:58 -0800 (PST)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96068adfsm153015966b.63.2024.12.14.16.37.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 16:37:56 -0800 (PST)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa670ffe302so557195766b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:37:56 -0800 (PST)
-X-Received: by 2002:a17:907:1c14:b0:aa6:6d2b:cbeb with SMTP id
- a640c23a62f3a-aab779c146bmr683840566b.28.1734223075690; Sat, 14 Dec 2024
- 16:37:55 -0800 (PST)
+	s=arc-20240116; t=1734223484; c=relaxed/simple;
+	bh=QrHFSg+Zn8/fYe668R+Z7k/wyvoIrZ8tNVGAT2B4t0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QyCHja/BBXDYg4htZXi4q8O5FYCixshbyuA0mcVjl7czxBU5fhO3iVQTsRuxtk20D9qqNuiq085wmZsVViIzrm4x1I5/VujRw0IYCkbwmxriYb1bxeE9KEPT9XDToNs+0BZ8TC//wnInkozo0WW2vcv2k7duEY63bLCK1mUFodU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TiDKZjrQ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734223482; x=1765759482;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=QrHFSg+Zn8/fYe668R+Z7k/wyvoIrZ8tNVGAT2B4t0c=;
+  b=TiDKZjrQkFcLnFXl7DnReYGx2mub8Y4MnpvkJ27M+xRRj/qLMAWajCWd
+   iaQ4VhoEpy8QZZRHhDJORhAOY+XW8eDR8gvl62cOlv4fqKIPeBt7liJLO
+   WvVGTX6JYhq3oGnmI2Z3A67KRfXV4+DxfXxb8vCUrV0HAvzoyWmkzKq1d
+   +VpNC+qq5rL+QNo27v86FO9fwlTPNMyYlE8Xru6NA+Bp7qVA2W0u38x8S
+   s81yDsCTqXPSq0QvBZLZlDhPHuDxc8fGzB0A1XG7P4DbX4L/97nW9lw6J
+   y4F0sbOxG79D662GVJaD2ldzVLk3wSptAWiUISC/09cc1nfVMj1QOh08C
+   g==;
+X-CSE-ConnectionGUID: tBbizmHhRbKLlsFxE8aIWw==
+X-CSE-MsgGUID: SGX8mmlKQHaZMab1m4K1FA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34561370"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="34561370"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 16:44:42 -0800
+X-CSE-ConnectionGUID: HBORvpPrTXyZQswbP8p7Ig==
+X-CSE-MsgGUID: sAHdkY9NRn6Ee5b6edPzQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="134210673"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 14 Dec 2024 16:44:41 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMckQ-000DLY-0M;
+	Sun, 15 Dec 2024 00:44:38 +0000
+Date: Sun, 15 Dec 2024 08:44:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: arch/x86/kernel/apic/apic.c:2135: warning: Function parameter or
+ struct member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
+Message-ID: <202412150840.1QCL4y44-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214182138.4e7984a2@batman.local.home>
-In-Reply-To: <20241214182138.4e7984a2@batman.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Dec 2024 16:37:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-Message-ID: <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 14 Dec 2024 at 15:21, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> - Fix output of trace when hashing a pointer is disabled
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a446e965a188ee8f745859e63ce046fe98577d45
+commit: fa5e5c409213265da8a188b4a5e4e641b1382eb4 x86/entry: Use idtentry for interrupts
+date:   4 years, 6 months ago
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241215/202412150840.1QCL4y44-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412150840.1QCL4y44-lkp@intel.com/reproduce)
 
-Christ.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412150840.1QCL4y44-lkp@intel.com/
 
-I'm looking at this, and my reaction is literally "tracing is doing
-crazy things AGAIN".
+All warnings (new ones prefixed by >>):
 
-This stuff is full of crazy special cases for things that should never
-be done in the first place.
+>> arch/x86/kernel/apic/apic.c:2135: warning: Function parameter or struct member 'spurious_interrupt' not described in 'DEFINE_IDTENTRY_IRQ'
+>> arch/x86/kernel/apic/apic.c:2135: warning: expecting prototype for spurious_interrupt(). Prototype was for DEFINE_IDTENTRY_IRQ() instead
 
-And - surprise surprise - it was buggy in odd ways as a result.
 
-If I read the code right, this hacky code literally only catches stale
-strings, but also has some *insane* code to do "text_delta" to
-'%p[sS]' printouts.
+vim +2135 arch/x86/kernel/apic/apic.c
 
-And I see how it does that
+c0104d38a740b25 arch/x86/kernel/apic/apic.c Yinghai Lu      2010-12-07  2118  
+^1da177e4c3f415 arch/x86_64/kernel/apic.c   Linus Torvalds  2005-04-16  2119  /*
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2120   * Local APIC interrupts
+^1da177e4c3f415 arch/x86_64/kernel/apic.c   Linus Torvalds  2005-04-16  2121   */
+^1da177e4c3f415 arch/x86_64/kernel/apic.c   Linus Torvalds  2005-04-16  2122  
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2123  /**
+fa5e5c409213265 arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2124   * spurious_interrupt - Catch all for interrupts raised on unused vectors
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2125   * @regs:	Pointer to pt_regs on stack
+fa5e5c409213265 arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2126   * @vector:	The vector number
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2127   *
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2128   * This is invoked from ASM entry code to catch all interrupts which
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2129   * trigger on an entry which is routed to the common_spurious idtentry
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2130   * point.
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2131   *
+633260fa143bbed arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2132   * Also called from smp_spurious_apic_interrupt().
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2133   */
+fa5e5c409213265 arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2134  DEFINE_IDTENTRY_IRQ(spurious_interrupt)
+^1da177e4c3f415 arch/x86_64/kernel/apic.c   Linus Torvalds  2005-04-16 @2135  {
+dc1528dd864a0b7 arch/x86/kernel/apic_64.c   Yinghai Lu      2008-08-24  2136  	u32 v;
+dc1528dd864a0b7 arch/x86/kernel/apic_64.c   Yinghai Lu      2008-08-24  2137  
+61069de7a3252be arch/x86/kernel/apic/apic.c Thomas Gleixner 2017-08-28  2138  	trace_spurious_apic_entry(vector);
+61069de7a3252be arch/x86/kernel/apic/apic.c Thomas Gleixner 2017-08-28  2139  
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2140  	inc_irq_stat(irq_spurious_count);
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2141  
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2142  	/*
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2143  	 * If this is a spurious interrupt then do not acknowledge
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2144  	 */
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2145  	if (vector == SPURIOUS_APIC_VECTOR) {
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2146  		/* See SDM vol 3 */
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2147  		pr_info("Spurious APIC interrupt (vector 0xFF) on CPU#%d, should never happen.\n",
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2148  			smp_processor_id());
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2149  		goto out;
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2150  	}
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2151  
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2152  	/*
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2153  	 * If it is a vectored one, verify it's set in the ISR. If set,
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2154  	 * acknowledge it.
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2155  	 */
+2414e021ac8d588 arch/x86/kernel/apic/apic.c Jan Beulich     2014-11-03  2156  	v = apic_read(APIC_ISR + ((vector & ~0x1f) >> 1));
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2157  	if (v & (1 << (vector & 0x1f))) {
+fa5e5c409213265 arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2158  		pr_info("Spurious interrupt (vector 0x%02x) on CPU#%d. Acked\n",
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2159  			vector, smp_processor_id());
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2160  		ack_APIC_irq();
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2161  	} else {
+fa5e5c409213265 arch/x86/kernel/apic/apic.c Thomas Gleixner 2020-05-21  2162  		pr_info("Spurious interrupt (vector 0x%02x) on CPU#%d. Not pending!\n",
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2163  			vector, smp_processor_id());
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2164  	}
+f8a8fe61fec8006 arch/x86/kernel/apic/apic.c Thomas Gleixner 2019-06-28  2165  out:
+2414e021ac8d588 arch/x86/kernel/apic/apic.c Jan Beulich     2014-11-03  2166  	trace_spurious_apic_exit(vector);
+0e078e2f5060e06 arch/x86/kernel/apic_64.c   Thomas Gleixner 2008-01-30  2167  }
+c4d58cbd158dc9b arch/x86/kernel/apic_64.c   Thomas Gleixner 2007-10-12  2168  
 
-                text_delta = iter->tr->text_delta;
+:::::: The code at line 2135 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
 
-but I don't actually see where 'text_delta' would ever actually get
-set.  Where does tr->text_delta ever get set to anything but zero?
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
 
-That code should be *removed*. It seems to be there entirely as a
-sanity check, and when the sanity check itself is buggy, you don't try
-to fix it, you remove the whole crazy garbage.
-
-What makes '%s' so special in trace formats that it merits this
-horrible hackery?
-
-What makes 'text_delta' at all sane, never mind where it even gets set?
-
-And why should we maintain that horrible hackery and make it worse?
-
-This code shows a complete lack of taste. This needs extreme
-crapectomy, not some alleged "fix".
-
-If "people use stale pointers for '%s' and we actually care" is a real
-issue, we could very possibly teach vsnprintf() about that. The code
-already has a "check_pointer()" thing for just NULL pointer magic
-printouts.
-
-                  Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
