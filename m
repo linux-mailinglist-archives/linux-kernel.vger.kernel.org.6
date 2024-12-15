@@ -1,161 +1,87 @@
-Return-Path: <linux-kernel+bounces-446264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0099F21FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:03:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702B69F2200
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 04:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 944E67A086D
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:03:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A4C16630F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 03:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B16A8BFF;
-	Sun, 15 Dec 2024 03:03:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721498F40;
+	Sun, 15 Dec 2024 03:09:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E7E819
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996258479
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 03:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734231815; cv=none; b=DMnZBwLieaGWn1kEcA3QvKzNvMPYAA4r4aDpCtEMdrbFVLJ2S+sKxZmn9jwoIBY4MdN2J2ei1FL9O4WzClrM2cg/NOyFAYsV3yJiBCoy4e+OuLZersdj4t8O5J/fEaW/ALjBGlBRgKGyYOhSbXL/qMlvLG1yK2O+tLEcBmEOehw=
+	t=1734232145; cv=none; b=gzX0ERQqbf0eCTLZpjnOyicFepXEF/v39cWRAheJypDMsTJI+1eqvSwSTRls4ZokiHvj203/w+RDmdM8iFCQMyPs6yu1y64mNC6qhrK9MEaeecyanBzQot3JMdwTYF1x74rvUj8NB8vBJUGFT0PbZ1dMpJzclvGcog/pmDvgPz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734231815; c=relaxed/simple;
-	bh=oOUWIYLx0wtohDKk/KKApcKdwrbZdKySl68YoKdoSnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tlIKaK+LbGlvJZlrrN3wIaBOPwd0OY3rJYbYx/sj+tpASWdNe/gUB0kWNVNfRJxqzVT/1ZzZFTmQ5Alt0xbfC1iKa5L1ROBO8GRJkMvIJ+CcOOtCM7A9cfjupgXlSRlIabnEGovvy3UxS0lqOClIE/JXIQgZm/yc5yaC4dXU4uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E75C4CED4;
-	Sun, 15 Dec 2024 03:03:34 +0000 (UTC)
-Date: Sat, 14 Dec 2024 22:04:03 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241214220403.03a8f5d0@gandalf.local.home>
-In-Reply-To: <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-References: <20241214182138.4e7984a2@batman.local.home>
-	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734232145; c=relaxed/simple;
+	bh=fqtBdXCFWXubnREpOgJb+ScNkEEA4xYbdzVT8FesPi0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HFBuTiyQEcyF/v9J+TJ8wxq+IN831rJiDttUbeQEhNYXQ5KQpIN1dkoZ+oYejmBWCZksru1HyTJzMvuBX8Lpcc92b73VWTqIjenOYNh7Nw6jfvhzFQbucm/n2vex9i/KJb0SYTsTCO8wzdb5Kq8XENSsX/vtwV6RZgt1rVpkeN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a812f562bbso60167425ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 19:09:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734232142; x=1734836942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JNCWFZL2vMT3iM7JxWTRAmfaTTjnhOUKtMcTvFgickc=;
+        b=pu5Vp1PWsmAk3gqbXmUxyVsEwElLqum00wh/Es5oQM3LHBF8l+odCKr6cnHuOQ9lHc
+         l+nLSk9OSGRVRCHtGtEH2NA5QmOygy05tMoiv42vBp3IW+W7EVRa5rArfVJ1ZQwon9B2
+         oDLaKip3szawG2Vuj1VIoLa4wJTg+CC+9CkEMJWN7ligPIwEthGJ+rDYUjgARFRzHX+Q
+         Fy4J88SFXl0zTix634JklP1zp3bSEEFIAwgNHwVEPqFKzOZsONYeUIBkut3hm1TUcfah
+         QCtDH8F7O3EAhv0Iy1jd2M1T2wtoeSGd6qhbd3qMoAAtnsMvPmbp5hB0d54yFByVaroH
+         TXmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWaCLRoKTvd9QkMNpl4Kx/CI9pVFKkmY/JW498WUeCIrAkFs6GhID7D8RSB1N/H/szjYNBI7A1RzkKpWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybsZpAQyzwrCYH584mCQ1ZqXYEZtIsO+42fUeYMLxSVl48E9K4
+	KC5gX+w3tygNY7PzJK8C5o2X4XrZXIq6cjWBwMhJcCAwomqPRBdoibxsMvdm5mtue9au9C8rv7R
+	5UG3YTB8bFTI+PhYIp0oxHE2uE1/GGVOnetpqB7U0AZA1zSHqrZdxWv4=
+X-Google-Smtp-Source: AGHT+IG4LitOGiiVyPyjLYB7ac4SAc+wVCbAnkWUUXgEv1uiMhTIm46tsv65WxchnbWVZWrq2TSaWG2Kn6UVH7KNosbJfTwXJMfh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:156e:b0:3a7:9860:d7e5 with SMTP id
+ e9e14a558f8ab-3aff8aa31c7mr88573325ab.23.1734232142789; Sat, 14 Dec 2024
+ 19:09:02 -0800 (PST)
+Date: Sat, 14 Dec 2024 19:09:02 -0800
+In-Reply-To: <20241215023601.99201-3-dennis.lamerice@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675e484e.050a0220.37aaf.00e8.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: slab-use-after-free Read in ocfs2_lock_global_qf
+From: syzbot <syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com>
+To: dennis.lamerice@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 14 Dec 2024 16:37:39 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hello,
 
-> On Sat, 14 Dec 2024 at 15:21, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > - Fix output of trace when hashing a pointer is disabled  
-> 
-> Christ.
-> 
-> I'm looking at this, and my reaction is literally "tracing is doing
-> crazy things AGAIN".
-> 
-> This stuff is full of crazy special cases for things that should never
-> be done in the first place.
-> 
-> And - surprise surprise - it was buggy in odd ways as a result.
-> 
-> If I read the code right, this hacky code literally only catches stale
-> strings, but also has some *insane* code to do "text_delta" to
-> '%p[sS]' printouts.
-> 
-> And I see how it does that
-> 
->                 text_delta = iter->tr->text_delta;
-> 
-> but I don't actually see where 'text_delta' would ever actually get
-> set.  Where does tr->text_delta ever get set to anything but zero?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It gets set by the persistent ring buffer code, via a call to
-ring_buffer_last_boot_delta(). It's the delta between pointers from the
-previous kernel boot up and the current kernel boot up. Without it, you
-don't get function names in your function traces from the last boot. That
-is, instead of having this:
+Reported-by: syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
+Tested-by: syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
 
-              <idle>-0       [003] d.h2.   156.462395: __rcu_read_lock <-cpu_emergency_disable_virtualization
-              <idle>-0       [003] d.h2.   156.462396: vmx_emergency_disable_virtualization_cpu <-cpu_emergency_disable_virtualization
-              <idle>-0       [003] d.h2.   156.462396: __rcu_read_unlock <-__sysvec_reboot
-              <idle>-0       [003] d.h2.   156.462397: stop_this_cpu <-__sysvec_reboot
-              <idle>-0       [003] d.h2.   156.462397: set_cpu_online <-stop_this_cpu
-              <idle>-0       [003] d.h2.   156.462397: disable_local_APIC <-stop_this_cpu
-              <idle>-0       [003] d.h2.   156.462398: clear_local_APIC <-disable_local_APIC
-              <idle>-0       [003] d.h2.   156.462574: mcheck_cpu_clear <-stop_this_cpu
-              <idle>-0       [003] d.h2.   156.462575: mce_intel_feature_clear <-stop_this_cpu
-              <idle>-0       [003] d.h2.   156.462575: lmce_supported <-mce_intel_feature_clear
+Tested on:
 
-You get this:
+commit:         2d8308bf Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13226730580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c7c9f223bfe8924e
+dashboard link: https://syzkaller.appspot.com/bug?extid=d173bf8a5a7faeede34c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13c2fbe8580000
 
-              <idle>-0       [003] d.h2.   156.462395: 0xffffffff9a1e3194 <-0xffffffff9a0f655e
-              <idle>-0       [003] d.h2.   156.462396: 0xffffffff9a0a1d24 <-0xffffffff9a0f656f
-              <idle>-0       [003] d.h2.   156.462396: 0xffffffff9a1e6bc4 <-0xffffffff9a0f7323
-              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a0d12b4 <-0xffffffff9a0f732a
-              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a1458d4 <-0xffffffff9a0d12e2
-              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a0faed4 <-0xffffffff9a0d12e7
-              <idle>-0       [003] d.h2.   156.462398: 0xffffffff9a0faaf4 <-0xffffffff9a0faef2
-              <idle>-0       [003] d.h2.   156.462574: 0xffffffff9a0e3444 <-0xffffffff9a0d12ef
-              <idle>-0       [003] d.h2.   156.462575: 0xffffffff9a0e4964 <-0xffffffff9a0d12ef
-              <idle>-0       [003] d.h2.   156.462575: 0xffffffff9a0e3fb0 <-0xffffffff9a0e496f
-
-Due to KASLR.
-
-> 
-> That code should be *removed*. It seems to be there entirely as a
-> sanity check, and when the sanity check itself is buggy, you don't try
-> to fix it, you remove the whole crazy garbage.
-> 
-> What makes '%s' so special in trace formats that it merits this
-> horrible hackery?
-> 
-> What makes 'text_delta' at all sane, never mind where it even gets set?
-> 
-> And why should we maintain that horrible hackery and make it worse?
-> 
-> This code shows a complete lack of taste. This needs extreme
-> crapectomy, not some alleged "fix".
-> 
-> If "people use stale pointers for '%s' and we actually care" is a real
-> issue, we could very possibly teach vsnprintf() about that. The code
-> already has a "check_pointer()" thing for just NULL pointer magic
-> printouts.
-
-The check code was added because I was sick and tired of fixing bugs in
-trace events. People would use the TRACE_EVENT() TP_printk() like a normal
-printk with things like:
-
-  TP_fast_assign(
-      __entry->ipv6 = ptr_to_ipv6;
-  )
-
-  TP_printk("ipv6=%pI6", __entry->ipv6)
-
-
-This is very buggy. Because the ipv6 pointer is added to the ring buffer at
-the time of the trace event was triggered, but that "ipv6=%pI6" is executed
-when the user reads the trace. Which can be minutes, hours, days, even
-months later! In other words, it will read a pointer that has long been
-freed.
-
-With the check, instead it doesn't crash the kernel, but issues a nasty
-WARN_ON() (as it is a bug in the kernel) and then reads the value using
-safe mechanisms and injects into the trace "[UNSAFE-MEMORY]" by the pointer.
-
-I haven't seen this bug show up again since I added that. That's because
-developers see the warning when they add the buggy trace event, and it is
-fixed before it ever reaches you.
-
-Should I move that protection from the tracing code into vsnprintf()?
-
--- Steve
+Note: testing is done by a robot and is best-effort only.
 
