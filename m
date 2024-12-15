@@ -1,158 +1,83 @@
-Return-Path: <linux-kernel+bounces-446432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7399F2442
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:52:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78409F243F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155BB18865DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40431642F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C90318FDA3;
-	Sun, 15 Dec 2024 13:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g8KY3Eo5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA9618DF86;
+	Sun, 15 Dec 2024 13:50:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3C71865FA;
-	Sun, 15 Dec 2024 13:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3D91487D5
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 13:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734270711; cv=none; b=cxND3HB04k5v0TWmoRN4ZZRoFLPvuBdrpUuFHz1f5QyhyxO1YwVjSieBlivE19miKkMtnTGpdtENlarLQaKxeGEil3DSpYaU7YBQXRcxL6IDBndUiashB2mwOl7W4HQHePMbGHwjcXhmx4NEItMmcNhxvf31TuKIxYjhej/Oe44=
+	t=1734270641; cv=none; b=QVd3fiw9qWFALbAOnTsCCNHHUp/QImNmTVWWq9AEDEnfC0fMdiNW/q8Bp/esq/UlSpXY4e5f2rUztiiNUPPMQ89pXcUr1QDVpewHG7fwWlaGfGlwclWlkLb+AjXfnNBnkseNDqpD6ClPTgRz2FsGFag2RDyTGrioS7wkO3Gm6ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734270711; c=relaxed/simple;
-	bh=2LWjmtPJFDOKIXDan6DkpQm4ooohv4Sn4+uq85iaUG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQuOZ9eEEdkcfzGvVU86ZaRRyjY9hYklvQWcCog7tCCFTZJH3F2IWGEVbkl6D7mWMlEfgbT+A6CuLIlXhcKDC1syrZWe70nFrVS0jUFdsmRscSf9UTi9y5FnbV6+gpYPC3lSgT8uEw/sdriyUT+yXdyE4yFsYtto9CfMK/wWUHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g8KY3Eo5; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734270709; x=1765806709;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2LWjmtPJFDOKIXDan6DkpQm4ooohv4Sn4+uq85iaUG4=;
-  b=g8KY3Eo5+NLSVGCZERuV5xTW+y4FlsutEfvEtwnbSxDfvbkckgJTjMSa
-   /LDj8tnY9ph/uThalRMDVYQKuC/bBDdE+BKlz1Fk/DnhMHYHCafWA/DUt
-   OqIMaJy1IhSlUZS3Go7HePkj85yuazZ1ZkhBHu2t5X5mYAItQuk7Nxkdt
-   8PC9deJX8gf/TcR7tBnkolkisT2+tMx89K9fjIydFpj4F3z/dTnADHgv7
-   6vXNzZrfPsVBGVN0F0lFwXS4rCYN2zET5P9PXR2qcZPOc3B2KxfeD5ocU
-   bdoEHeXjIoL6VjbE5j+E7r+kG1wJv7DwKC+fsOee/cuHw+HYDGz8E5c2y
-   Q==;
-X-CSE-ConnectionGUID: FIxEZu9zTpysf8W0T+/PyA==
-X-CSE-MsgGUID: AcqCQ6iRQ5eConOnOIQVNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46061200"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="46061200"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 05:51:49 -0800
-X-CSE-ConnectionGUID: mVxlGRFjR76uOYep9V2vew==
-X-CSE-MsgGUID: C2uK/3F0TXCdvEqBaL9gcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="101991422"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 15 Dec 2024 05:51:42 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMp23-000Ddy-2A;
-	Sun, 15 Dec 2024 13:51:39 +0000
-Date: Sun, 15 Dec 2024 21:50:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yafang Shao <laoar.shao@gmail.com>, mingo@redhat.com,
-	peterz@infradead.org, mkoutny@suse.com, hannes@cmpxchg.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, surenb@google.com,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH v7 3/4] sched, psi: Don't account irq time if
- sched_clock_irqtime is disabled
-Message-ID: <202412152115.zQ6k9tVk-lkp@intel.com>
-References: <20241215032315.43698-4-laoar.shao@gmail.com>
+	s=arc-20240116; t=1734270641; c=relaxed/simple;
+	bh=8lWvN57ddExe2F6IisvmZXAGR5lkslaGsVwGqwA/seI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UQLRnCY1FfpI39l+AZobjXn+e7dJUV0ESCjmuUXhmUoYYJ5tMvWkoSSfJNzXSIIBT4lPYN1BAhm+OCz4f5vfjf0ShGjtPX4IS9LMNOm/as6qBrmA1WgebHehO0wNIn7FxsOjuPRA8D6vVxnQs8XkfoYgXPrYD3teHs0Ez7pKHEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBC7C4CECE;
+	Sun, 15 Dec 2024 13:50:38 +0000 (UTC)
+Date: Sun, 15 Dec 2024 08:51:09 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+Message-ID: <20241215085109.546a9b8c@gandalf.local.home>
+In-Reply-To: <20241215050517.050e9d83@gandalf.local.home>
+References: <20241214182138.4e7984a2@batman.local.home>
+	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+	<20241214220403.03a8f5d0@gandalf.local.home>
+	<20241214221212.38cc22c3@gandalf.local.home>
+	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+	<20241214233855.46ad80e0@gandalf.local.home>
+	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
+	<20241215050517.050e9d83@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241215032315.43698-4-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Yafang,
+On Sun, 15 Dec 2024 05:05:17 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-kernel test robot noticed the following build errors:
+> Honestly, I did not like this code when I wrote it, but I have no idea how
+> to stop the "%s" bug from happening before it gets out to production. This
+> worked. Do you have any suggestions for alternatives?
 
-[auto build test ERROR on tip/sched/core]
-[also build test ERROR on peterz-queue/sched/core linus/master v6.13-rc2 next-20241213]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+My mind wouldn't stop thinking about this all night, and I think I found an
+alternative.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yafang-Shao/sched-Define-sched_clock_irqtime-as-static-key/20241215-112638
-base:   tip/sched/core
-patch link:    https://lore.kernel.org/r/20241215032315.43698-4-laoar.shao%40gmail.com
-patch subject: [PATCH v7 3/4] sched, psi: Don't account irq time if sched_clock_irqtime is disabled
-config: arm-randconfig-001-20241215 (https://download.01.org/0day-ci/archive/20241215/202412152115.zQ6k9tVk-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 2dc22615fd46ab2566d0f26d5ba234ab12dc4bf8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412152115.zQ6k9tVk-lkp@intel.com/reproduce)
+The test_event_printk() catches everything but the "%s" issue, only because
+we allow events to print to static strings and not have to copy them into
+the ring buffer. But that function also has access to the event fields. It
+can figure out which field is being printed by "%s", and flag it. Then on
+output, it can check that the field is going to be printed before the
+vsnprintf() is called on the TP_printk() format.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412152115.zQ6k9tVk-lkp@intel.com/
+If it is a bad field, it can inject into the trace that the field is bad,
+not print the event at all, and trigger a WARN_ON_ONCE().
 
-All errors (new ones prefixed by >>):
+Hmm,
 
-   In file included from kernel/sched/build_utility.c:15:
-   In file included from include/linux/sched/isolation.h:5:
-   In file included from include/linux/cpuset.h:17:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from kernel/sched/build_utility.c:96:
->> kernel/sched/psi.c:1243:35: error: use of undeclared identifier 'PSI_IRQ'; did you mean 'PSI_IO'?
-    1243 |         if (!irqtime_enabled() && res == PSI_IRQ)
-         |                                          ^~~~~~~
-         |                                          PSI_IO
-   include/linux/psi_types.h:42:2: note: 'PSI_IO' declared here
-      42 |         PSI_IO,
-         |         ^
-   1 warning and 1 error generated.
-
-
-vim +1243 kernel/sched/psi.c
-
-  1233	
-  1234	int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
-  1235	{
-  1236		bool only_full = false;
-  1237		int full;
-  1238		u64 now;
-  1239	
-  1240		if (static_branch_likely(&psi_disabled))
-  1241			return -EOPNOTSUPP;
-  1242	
-> 1243		if (!irqtime_enabled() && res == PSI_IRQ)
-  1244			return -EOPNOTSUPP;
-  1245	
-  1246		/* Update averages before reporting them */
-  1247		mutex_lock(&group->avgs_lock);
-  1248		now = sched_clock();
-  1249		collect_percpu_times(group, PSI_AVGS, NULL);
-  1250		if (now >= group->avg_next_update)
-  1251			group->avg_next_update = update_averages(group, now);
-  1252		mutex_unlock(&group->avgs_lock);
-  1253	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- Steve
 
