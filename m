@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-446400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013C09F23E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C769F23E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354241617B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381701885BF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0346718CBE8;
-	Sun, 15 Dec 2024 12:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC231865E9;
+	Sun, 15 Dec 2024 12:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S8BlQM4X"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtPCKDL9"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89307189912
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD901E871;
+	Sun, 15 Dec 2024 12:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734266568; cv=none; b=j9wjVSFyYAFkkgDpONf+8039fNbEFTu6YzjR06lDmIcBp2ddTATZXYrDNgeb153qinx8AeuTsEkZ58AOqcW3Qi/pdGcUlGoQdc+4sCY+brsVQmCLF1jScquH3BAPTGL5PZOZBxbd5NG6bKRqv6tiKkV5oiyu2TZafFQJaxzGcNo=
+	t=1734266817; cv=none; b=sVgAFclJBwMYwQRxbMK+lAZxnDRLBnRjrfvvC8Bi89FjWUgr3D7hxxK9+sPX12kMU9dRTNU7foDZQG2Q1YETz5VR/U+100hJdwZR5sxokEfeygbk2e2tyfdUs9fsg66dar2YkcK2oVUb6Wk/p12S+/g6Cf5Eddlfa+6ypxDcPzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734266568; c=relaxed/simple;
-	bh=34l1H84WeU4LzQM3c34I60viscofOXunMpWCOKo6rK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVL3G3P+SRzIcmkfzhiQDo0VTp8HzGTlJMDschbBYqUUtflDgU8u7NrY1z6TB19zi4CPIXwa8g1BUQCEZeP4G6FYBG+q7BqR+xJP2QHAloYjXBuBoqfBMI85gylS/uVIvvaGXS7npBAUR3FkfnY+h7T+tmZVRj48WSfle2+2DSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S8BlQM4X; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3011c7b39c7so34874451fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 04:42:46 -0800 (PST)
+	s=arc-20240116; t=1734266817; c=relaxed/simple;
+	bh=+I511b+b+vwNhO6JeznuVo4Xu6HcmHb9VvSDWCZP1KQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=sSd5zjPHgp0PCEQftTWgy3wdO0JBVQ/BrJvgapxYMIwaTM6PDHxkAHdKK7Q43nw2ziHLQWifaqJetemz/aw5WHkwvqLXpurFpDTzyA1qpMDalkUrMgr0rRGzDQoroVwJbbdvjAqUu40r7N5QAdR378gRnE/GnSXVDqK6CerIDKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtPCKDL9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21683192bf9so29965195ad.3;
+        Sun, 15 Dec 2024 04:46:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734266565; x=1734871365; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hYI3tK4z04wmka3DeGZjKOkOw0GlWVobEE9u3MV0cX0=;
-        b=S8BlQM4Xz4F1EiIN0zS36/QEKMwinFzgVlorcUhI3N5i+tMQDuaRAN07pMRsp6w9vy
-         OZw16Ph4uX6OXlLAC0LH4G74gsqZM0vXPnZG4JCFKEDLK2+lcYcxoC7f5eR+CK810PIO
-         RhZjExDjfXJplNb25c6e6034qUBfIatwLzZqjYQqcSVJTPdkDwnxrMRvWco6+Jc0bi0z
-         cmwA25yw7gCiABY1drk2Pqn+RktiPZ9XXd/ACMi8rX4hVGvLP28cvRFaACN+ZwJHj8Ek
-         EJsfNz8JjTv8M6LCKxfF7WYC56tuLB2LX81VyEvcp/XAqgPPy44XeWSN3pg+T0iPaXjd
-         vuzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734266565; x=1734871365;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734266815; x=1734871615; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hYI3tK4z04wmka3DeGZjKOkOw0GlWVobEE9u3MV0cX0=;
-        b=CYoN6p6ne4JfpSJDKNOQRA32Rp3BTfwEhknfG2F2CYLG1SDen+9K9DK2RrCUd+pnOe
-         fNIFjxvO3E70V1NCgtuqP/92iqY9vY67dbPiZszOc9ULI0tJyxSv96JUIuiRqd9HdMGk
-         AZ8oHI5Nb++rADuUlerkW+CynMOWFdSRfX/Y6lxQZKbfA0soqOitEKu2TUqUAvFzoIbA
-         B7ZiFkg0NoOL5RfJyg7aE+SzneAZLweL0QNI5UqUNUi3YH4x6fY0eIl6REPqLHTjt2Dm
-         adUQeGk8f20iXP3EquLiBIxSZBttfWCs3FTRFsN16M+IiNMbdPz46YUrVL77gSDEw2JH
-         035w==
-X-Forwarded-Encrypted: i=1; AJvYcCUt4j7xxbwr/PfEnxgk0PLqFs16CqUdb7Do8q7xLUIv73TfEvgTmIIzodf2ild7aahU6EFn1GRJQtXw3YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdSi2gqdnCM/AYnffAtNo5vOaH/LFHeFPuRXNSuEKiMUD+T0JB
-	mn2gErKzUyF1yDWXlIUyyJFtcjqAQfO7iQyW2ohE1Y7sYRFbNFvm7LQMlZJlxqY=
-X-Gm-Gg: ASbGnctC4gjUCaPl9mu8cgeMefks+7CDOPS8LdutmNbEDKmEywzUAPGw7UjbUN1kHJj
-	LGBKdPiliQm31ob6dm2QBixpThsnJh/Hs5XaHDzKF24rpDeOtpTVVxN5oJOVy0G1Kt/6BQgm0om
-	gF8ad/mRx4It+Pa5F+OIRwi02UuWBHKywT4YIjBkEYDnYzaRiaxHNE8SFssbxQNWLvHEh0/S4uK
-	HhePjRJzVoDeX1iIQf3RT3BqToYhAa37Cgxuj+c1wuvh9kOkRFX9XpvV7rMCf9A0112hQzthmOE
-	ZbdmchdYwYje/qGJV0Qx2T/ulgGofTtiqFBy
-X-Google-Smtp-Source: AGHT+IHsbdhkAZECyyNTJWfHo8P5cXdKXaUUsnfTwGl+ugfHZQYfSxPEs6t1dmb15lJWqB6WTYjwMw==
-X-Received: by 2002:a05:651c:54f:b0:300:de99:fcd9 with SMTP id 38308e7fff4ca-3025459d0d8mr36236791fa.29.1734266564741;
-        Sun, 15 Dec 2024 04:42:44 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30344061d5dsm5850411fa.52.2024.12.15.04.42.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 04:42:44 -0800 (PST)
-Date: Sun, 15 Dec 2024 14:42:41 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/3] drm/msm/dpu: allow using two SSPP blocks for a
- single plane
-Message-ID: <tynudqtodz46ti2j6paivfmvczijokhqiqxh3c2hy5ujdyuuzv@t627uosi3fhp>
-References: <20241215-dpu-virtual-wide-v8-0-65221f213ce1@linaro.org>
- <20241215-dpu-virtual-wide-v8-2-65221f213ce1@linaro.org>
+        bh=wtiXrhlLULhmcmYD7/J70YHVMioWnzIVKEMBp1SpeEc=;
+        b=dtPCKDL9clVKcq0dIsg/WDPQMFZ+LNzlLaN2ULpJ/flr6dSgaBv/YHJqkovXx3F+dm
+         YNTFC+nsLa2/pDSE4ESEjLdeE22t65Zk26XcT2HPjdUJwlUQyu+QL6fCJS0hbYeTqKnk
+         +u74oXV6vj6veKdB+5GiDTj2IZPywS5cshgiRVFiv9wjHXIDNqow1z5fY7W0wXIl251o
+         s/z7tG2PIK1H/BdqzNtCVhz6JnLW2rsif+rBp+898Rv19FD0eVFsjfqr1C+EdX6x67Fh
+         Wxa8YdYBxc3KgKi0HxC/sqqHhlMsnsT5tJCji1NQf0NshsmNy2fjI7P8MKiJPv9+4OKI
+         gkzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734266815; x=1734871615;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wtiXrhlLULhmcmYD7/J70YHVMioWnzIVKEMBp1SpeEc=;
+        b=EFDpsVHaw2MkGT2Hdor4gTNV1YGXfijqheI/9QA6Z9FBCoemWVxNODAuHDyX3C1bzT
+         cfcuti+hErBHtxncC8iPaghHq0t6MsXef5pnwq935oVR5OAo6btXlTE/Zl1K26u6FCwI
+         1JS23khvSMsf5rQl9IYgT5/kiPGpwnSkptMpht9ulzMGnDdcQ5JlF7ScVRjTTVPJ2g2h
+         /JBbQL4F8hePSY8KM944vxR6tKk7tHj56WC0+uM2iEJOw0lE7fyrP26vsYOgiN7KqsFU
+         ZxsNaF9ItnbOEh5d6ouWZbVAMQzBtMVbgQ/D8tKVorABGusPywNkQvRJn0M+VGnifSWa
+         4AEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKs2RKb1U4Ma6CeFVJtB9/GxIAD4feGi278EF6AqIAsR+RTj6++95WSp/PK/5bjPrM1y+xaChpZjfVOInr@vger.kernel.org, AJvYcCWMnlt5CHVqUU83rGhxsYEf7FG1rOcYcHkRsGHXQIAmrctuvSdra55Je6YskVTOV6ZrGw51KZ7rkbZ/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Nx522o+CZi4bPdnxnY/3NjhrP5lWCpZiRIE/olfdm26M+Sp6
+	H6/sLM7FS4Q93ah2l981UjU34a6lx2qqvFqvC0nMwyz+oy2heUst/+fPiZJT
+X-Gm-Gg: ASbGncsQyFGksUqA99WjLX1AksZqNWhFb4cSyctPSC/bQ8dO8wElZ8saZ2RgeQju9lQ
+	sI6/zJA/z36/LiIIlGx7K7WH7EQvUdU+h7Uw39yCnu6grVD2alvgpswocQuKfOicu1YrSb+Ks4Z
+	p1Bh1U9xCQKYjleBNEFyVKNHFkWxUfqqJZlE4gJprM2SSjRMBg76OO4usXoqG3qp+H7a1S/gBxW
+	YVTvk5DkpdKh0BrNn4zFxfyQ9Lyj7GY9O8AVf7z6hcOr7gr8rpgnRcK/wTwQaTrXw==
+X-Google-Smtp-Source: AGHT+IGBw3Ak9JZg78wP4qokuJz69rQ9vPtcZmHcQY7f0i4Ako2nJam/OWxJdVyjDdoako8K1O+wIQ==
+X-Received: by 2002:a17:903:22c7:b0:212:67a5:ab2d with SMTP id d9443c01a7336-21892a3fdf8mr136561135ad.44.1734266814930;
+        Sun, 15 Dec 2024 04:46:54 -0800 (PST)
+Received: from localhost ([36.45.249.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142d90d07sm6214608a91.3.2024.12.15.04.46.53
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Dec 2024 04:46:54 -0800 (PST)
+From: joswang <joswang1221@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	amitsd@google.com,
+	dmitry.baryshkov@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jos Wang <joswang@lenovo.com>
+Subject: [PATCH 1/2] dt-bindings: connector: Add time property for sender response
+Date: Sun, 15 Dec 2024 20:46:27 +0800
+Message-Id: <20241215124627.70525-1-joswang1221@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241215-dpu-virtual-wide-v8-2-65221f213ce1@linaro.org>
 
-On Sun, Dec 15, 2024 at 02:40:17PM +0200, Dmitry Baryshkov wrote:
-> Virtual wide planes give high amount of flexibility, but it is not
-> always enough:
-> 
-> In parallel multirect case only the half of the usual width is supported
-> for tiled formats. Thus the whole width of two tiled multirect
-> rectangles can not be greater than max_linewidth, which is not enough
-> for some platforms/compositors.
-> 
-> Another example is as simple as wide YUV plane. YUV planes can not use
-> multirect, so currently they are limited to max_linewidth too.
-> 
-> Now that the planes are fully virtualized, add support for allocating
-> two SSPP blocks to drive a single DRM plane. This fixes both mentioned
-> cases and allows all planes to go up to 2*max_linewidth (at the cost of
-> making some of the planes unavailable to the user).
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 144 ++++++++++++++++++++----------
->  1 file changed, 98 insertions(+), 46 deletions(-)
+From: Jos Wang <joswang@lenovo.com>
 
-And I forgot to pick up the tag from the previous iteration:
+This commit adds the following properties:
+  * pd2-sender-response-time-ms
+  * pd3-sender-response-time-ms
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+This is to enable setting of platform/board specific timer values as
+these timers have a range of acceptable values.
 
+Signed-off-by: Jos Wang <joswang@lenovo.com>
+---
+ .../bindings/connector/usb-connector.yaml     | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+index 67700440e23b..83be66f6d406 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
++++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+@@ -293,6 +293,26 @@ properties:
+       PD negotiation till BC1.2 detection completes.
+     default: 0
+ 
++  pd2-sender-response-time-ms:
++    description: Represents the PD20 max time in ms that port started from
++      the time the last bit of the GoodCRC Message EOP has been received by
++      the Physical Layer, it shall be stopped when the last bit of the expected
++      response Message EOP has been received by the Physical Layer. A timeout
++      leads to a hard reset message by the port.
++    minimum: 24
++    maximum: 30
++    default: 27
++
++  pd3-sender-response-time-ms:
++    description: Represents the PD30 max time in ms that port started from
++      the time the last bit of the GoodCRC Message EOP has been received by
++      the Physical Layer, it shall be stopped when the last bit of the expected
++      response Message EOP has been received by the Physical Layer. A timeout
++      leads to a hard reset message by the port.
++    minimum: 27
++    maximum: 33
++    default: 30
++
+ dependencies:
+   sink-vdos-v1: [ sink-vdos ]
+   sink-vdos: [ sink-vdos-v1 ]
 -- 
-With best wishes
-Dmitry
+2.17.1
+
 
