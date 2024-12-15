@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-446574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36FF9F2662
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2CC9F266B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 23:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B4B163376
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F567163AE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2904C1C0DF0;
-	Sun, 15 Dec 2024 21:59:25 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320961D696;
+	Sun, 15 Dec 2024 22:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="n0zL26eG"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FC5653
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDE338DC8
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734299964; cv=none; b=oujZjDqLaeb9Wn60wNdiSHoRkxAvFG7Io3ez/evegIltQBrB2P7YtuW1XpSXinl2A4k9QnVIPnIo9IJU14rNiYfqkG9Q2XHMoIXTGZk+abWXPvV++oY01dvpSbdcMVxDnu5HHvMTAdBXOAFWGFKknlHmLCt1iUa/SVV4k/9lCO8=
+	t=1734300025; cv=none; b=E/lUaTU7a08AaXXmNrslC2O95vi7FUdGKP+rw+eOUWR0l0iyFPwGc/imM5anyyoeqxtjErGdYgeQJM+jOqGqOvs1txJaq7UO9PFA2QPCEwfYlldBXOEhdZjsDInvcQjcVhf1wSGi/Nn8IQfzxUB42HuZV6/kXfKmAxKxTEv6J80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734299964; c=relaxed/simple;
-	bh=JtKkl0vLdu7Wka0xgaujTfSJ66Eo89eAHYs3iJ+aPX0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hp9UlieQW6D6JsFCVaW4zM7Rm7NJHaKpe5D2eNAHipLu9uxj1IaocFSOQ3rXG6XJvCmlcDbt+G9twokc0PwUwL/GNPInPQ/433rVWjoJix9bEOzvtGvFTTteO2UhlrvR+Ztp2Rg/W/qzfhb6zXqeDIgivwLkyvigu/PMstmjVUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a9c9b37244so75700565ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 13:59:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734299962; x=1734904762;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7EbX7fF8lmd0Q7j5a9UxfXPz76ch2RqY/1MK2FKj3oI=;
-        b=iC+dxJJfGTtZmgIsFrUZO/tN1pL8aS+fETs0yS9Rf7xaHrEVU7/Tl2bWCp5BkC32zJ
-         x8td9bijxCto9IBbKbH35o8O1XqV5j+sdPBEFc0ipNTMb35wE+08Ggj8oLeELBLULxu1
-         HAkwKAwr6SIl1go9zTwvMFRmmDlv7Lf/YCnD0ejKS1pbdxOLW0N/ph1Abbh08lrfQWWw
-         w9CSAqAXJ1BZ70Lj6Wcx98mG33LN3BOqJf42Kl5KOrm+4hvrhmFcgpEi6Mvy+bbo61tq
-         GpgzceXxrDkhxL0V11NRyWS/Zz2amrfZYZNtFqN9b5TcChoIhP7Ad0HYRt4g1rQi2zWI
-         HrFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnnx2YMVFsUB5d4SEMS6qcJNgLseVuW2odsKtamr13os5vtbzO6znpVGUVHhzS5HJTEO9VDcH6ekOmIh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwPd8PrmlxygYS2gikLcwO2i5b2cIatzMRr2N+pZTpvNVP4eVP
-	X4Ta1x5nGGwiZQyvpBiGPb5rABk+ZIA3kZBx7eZIoRVyCQq5kyaz/ZmfUGA6oDI18IbMEXDCBy2
-	gPWsFHbqJfTEB7wATCyYqWvlBV3MUkdkQkyD7mIvAF682gJmTsEBtRVM=
-X-Google-Smtp-Source: AGHT+IGHWHFWcoyC1UDyBV8nKaRBzeNk08jfOdbWyP8o3I2rRj/RODX03lBXPU85SXcbJnAG3raCFRP2FRgKnmjuJOrd5b72IqmO
+	s=arc-20240116; t=1734300025; c=relaxed/simple;
+	bh=208BiTv2DepqDoiOAGVV/y0GTGq2EYW+abeF7itm9I4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I7IwaERGPdenfOHexVlSKIb62bxo3eOnHM2eDFBTfF10qV0hcsh6GBstDLY84qROzhFs+6nw6Kfb9+KQxhU7I5zKdd++7ov9MJZVuswcOfp4CtyHpP1YFluzZjQ1CrLh5sIoJIugrKu0qPHKtGOVul/VygIjDg/u5lNrdCkTVUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=n0zL26eG; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=j25qHSApzncyRr3fV7n8eHJV1JPDpKKPKVP7ZGcHdZE=; b=n0zL26eGyIFWHeWs
+	Nzie2G75r64ALTSe/EIglaUawMZ9iQfVzz6G0tbnvkoKJWosuvPgNx8X4oL0HTbNC2ouRQ9HYwCq7
+	5+GQbtIPXjKkPP6eJcXYokAvuOcJZ/6uMqG3u4RByOkjb8FHqQ+8ON9/ncZrBxmJ9YY9nfLjRFVx9
+	xXlhaPlu48KDpdPJi3QBZMCziAtgkXyc45gyXq/KygNP0TM7KgV+/hkYvg/dThu1t0YvZwoaxnpT0
+	Q8Kx33FSH2fKUGhVMC46p9nvaCBcA4HJdKTLD0Dt1QjfhG/mNLyzg2qEgLPpJDVza2knj4fihWd3a
+	5ef6yaeYT8LcOTWn5g==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tMwes-005V34-2K;
+	Sun, 15 Dec 2024 22:00:14 +0000
+From: linux@treblig.org
+To: hdegoede@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/vboxvideo: Remove unused hgsmi_cursor_position
+Date: Sun, 15 Dec 2024 22:00:14 +0000
+Message-ID: <20241215220014.452537-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c248:0:b0:3a7:a2c6:e6d1 with SMTP id
- e9e14a558f8ab-3aff0c4d94bmr103875515ab.16.1734299962447; Sun, 15 Dec 2024
- 13:59:22 -0800 (PST)
-Date: Sun, 15 Dec 2024 13:59:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675f513a.050a0220.37aaf.0106.GAE@google.com>
-Subject: [syzbot] [lsm?] WARNING in handle_policy_update
-From: syzbot <syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mortonm@chromium.org, 
-	paul@paul-moore.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-syzbot found the following issue on:
+hgsmi_cursor_position() has been unused since 2018's
+commit 35f3288c453e ("staging: vboxvideo: Atomic phase 1: convert cursor to
+universal plane")
 
-HEAD commit:    f932fb9b4074 Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10892d44580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1696ea0f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16509cdf980000
+Remove it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f0d0c95f5364/disk-f932fb9b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/201cf3c7a7b5/vmlinux-f932fb9b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fcb972084579/bzImage-f932fb9b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5827 at mm/page_alloc.c:4727 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
-Modules linked in:
-CPU: 0 UID: 0 PID: 5827 Comm: syz-executor752 Not tainted 6.13.0-rc2-syzkaller-00159-gf932fb9b4074 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
-Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 0e b3 fe ff e9 69 f9 ff ff c6 05 e1 44 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 9f a2 0c 00 8b 14 24 e9
-RSP: 0018:ffffc900015978e8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000013 RDI: 0000000000040cc0
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000100
-R10: 0000000000000100 R11: ffffffff81fb9344 R12: 0000000000000013
-R13: 0000000000040cc0 R14: 1ffff920002b2f31 R15: 00000000ffffffff
-FS:  000055556162e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000130 CR3: 0000000028cc2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4228
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4255
- __do_kmalloc_node mm/slub.c:4271 [inline]
- __kmalloc_node_track_caller_noprof.cold+0x5/0x5f mm/slub.c:4302
- memdup_user_nul+0x2b/0x110 mm/util.c:305
- handle_policy_update+0x188/0x11e0 security/safesetid/securityfs.c:153
- safesetid_gid_file_write+0x87/0xc0 security/safesetid/securityfs.c:260
- vfs_write+0x24c/0x1150 fs/read_write.c:677
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8b2d0d02e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd58b75818 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007ffd58b759f8 RCX: 00007f8b2d0d02e9
-RDX: 00000000fffffdef RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f8b2d143610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffd58b759e8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/gpu/drm/vboxvideo/hgsmi_base.c      | 37 ---------------------
+ drivers/gpu/drm/vboxvideo/vboxvideo_guest.h |  2 --
+ 2 files changed, 39 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/gpu/drm/vboxvideo/hgsmi_base.c b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
+index 87dccaecc3e5..db994aeaa0f9 100644
+--- a/drivers/gpu/drm/vboxvideo/hgsmi_base.c
++++ b/drivers/gpu/drm/vboxvideo/hgsmi_base.c
+@@ -181,40 +181,3 @@ int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
+ 
+ 	return rc;
+ }
+-
+-/**
+- * hgsmi_cursor_position - Report the guest cursor position.  The host may
+- *                         wish to use this information to re-position its
+- *                         own cursor (though this is currently unlikely).
+- *                         The current host cursor position is returned.
+- * Return: 0 or negative errno value.
+- * @ctx:              The context containing the heap used.
+- * @report_position:  Are we reporting a position?
+- * @x:                Guest cursor X position.
+- * @y:                Guest cursor Y position.
+- * @x_host:           Host cursor X position is stored here.  Optional.
+- * @y_host:           Host cursor Y position is stored here.  Optional.
+- */
+-int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
+-			  u32 x, u32 y, u32 *x_host, u32 *y_host)
+-{
+-	struct vbva_cursor_position *p;
+-
+-	p = hgsmi_buffer_alloc(ctx, sizeof(*p), HGSMI_CH_VBVA,
+-			       VBVA_CURSOR_POSITION);
+-	if (!p)
+-		return -ENOMEM;
+-
+-	p->report_position = report_position;
+-	p->x = x;
+-	p->y = y;
+-
+-	hgsmi_buffer_submit(ctx, p);
+-
+-	*x_host = p->x;
+-	*y_host = p->y;
+-
+-	hgsmi_buffer_free(ctx, p);
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
+index 55fcee3a6470..643c4448bdcb 100644
+--- a/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
++++ b/drivers/gpu/drm/vboxvideo/vboxvideo_guest.h
+@@ -34,8 +34,6 @@ int hgsmi_query_conf(struct gen_pool *ctx, u32 index, u32 *value_ret);
+ int hgsmi_update_pointer_shape(struct gen_pool *ctx, u32 flags,
+ 			       u32 hot_x, u32 hot_y, u32 width, u32 height,
+ 			       u8 *pixels, u32 len);
+-int hgsmi_cursor_position(struct gen_pool *ctx, bool report_position,
+-			  u32 x, u32 y, u32 *x_host, u32 *y_host);
+ 
+ bool vbva_enable(struct vbva_buf_ctx *vbva_ctx, struct gen_pool *ctx,
+ 		 struct vbva_buffer *vbva, s32 screen);
+-- 
+2.47.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
