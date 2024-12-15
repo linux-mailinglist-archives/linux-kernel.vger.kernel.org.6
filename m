@@ -1,106 +1,100 @@
-Return-Path: <linux-kernel+bounces-446560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF429F2638
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CED699F263B
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301207A13E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:19:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 988507A147F
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7376B1B87DC;
-	Sun, 15 Dec 2024 21:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD181C0DF0;
+	Sun, 15 Dec 2024 21:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OBoKpyhl"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuEpZfBc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60014A41;
-	Sun, 15 Dec 2024 21:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F08A41;
+	Sun, 15 Dec 2024 21:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734297574; cv=none; b=q0ubsfGdhEQ/b17/o+sv/JVEfVEJxj/PHEje7/wsPo2UQ22y47QVR/Md4Nr3o16VD6JWlhNRquX9GdY4jz9+lLBZ50tO91DJ1jVd5cSP9+all0FaP0lh2/a4wCtvUSUQKi9xN1+wrWMROqCqDN/l7BtVrZ+3Ls6Hflm8Tnzc0ys=
+	t=1734297612; cv=none; b=lrV6fmS6xS8hskuckkrNZQRSmaRMrPuOBrK18Ue5vfbfPXH2diYP9HkACdk04kGDxB6Uip+sJvAmGr0hji8JKKbDy+iJD105BQ6jspdG9M7KPUt5XARRletZizgU6wF1LxkJHHzxnRYsXRB23pNNtAlmfZXs2YSLDIvXLAjZD2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734297574; c=relaxed/simple;
-	bh=LTIxK0RN0R6lsCrofer4wQZo0B6V8NcbLvOO30DIFt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOLaRTXLAWLyOs+VBSpluf/6CvXauwOeNi0A28JMG/jlK3w7IP12WfN3bB5d/dWarm86rDl8TRuTWyRcHUrh+AkompbroyL9INf1cZDmcCvRZFSPZ/bxwsEXbXW728pDvV8dc0O15135CqBzWywy9fLnQAQwpnp25RDGUscZKKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OBoKpyhl; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 902DF40E0163;
-	Sun, 15 Dec 2024 21:19:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1Rea2ZtLECJE; Sun, 15 Dec 2024 21:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734297564; bh=F7lqgFh5d53qqE9QyMC250Hz1iuK1qpbSQta7le242g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OBoKpyhlXAelnezS65YehxjxndfCFk/ylLggVer4+KFGO/vFWIDmE4a5i4ei5O1Bb
-	 k2XAI/iL/MmqTZJcDnkw7x48+pFhn0riga5YxDBO5V2LGzSSbttA0dpgjbt4zBVJVx
-	 xlTE5mN+7SJ3VrdmP8u/Pm1sEc8Ckqae3XlsCNSw8rjuBjXx+nKBXq3e3wPIcvswkR
-	 MbKydsjLjbfflXDVVRz6n0TPSGusLVHXVqpPqy1OX5Uuq/temQE6UZ7JMLUA/BeE6R
-	 nqb0DnDRslubx7y31MhA2ImuW7+lsxp/bNBx/BA7+QO7+OtzjOxC1gBKOpPC3dmFgW
-	 6aD11lxKF/ZFSPKLsa8nno6TPs2UN3GiANIR7BQcpXQsTm1i+LYQQAQowjwaKfRp9v
-	 fgQaFb1WWmfo/ir5/scOt2VMgsYN8pnVkSXNyecs39EJ0me8iZfsALgQJZXlqxHcAh
-	 ifbarSuWbVl74d2u3UHOmT4Cov1TFKd1gJJBqp+fap6pwMma1lEb+diKIEqU508XJU
-	 nSjlSUrqPxnvTsaLGho+/TlEsQ5O3tNDNlwGiJHn5PVR91xptpA6umIuOa5M+FKLg1
-	 QCv9gBXry5uReUOQFY+teiwi9AVIFj2YhXDUHdhVrYIB0QfHMtSE6XVdxCaSQXlxaf
-	 h1SVua6p4l8Kn9C29eQ6Uy+c=
-Received: from zn.tnic (p200300ea971f9324329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9324:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1444B40E0263;
-	Sun, 15 Dec 2024 21:19:16 +0000 (UTC)
-Date: Sun, 15 Dec 2024 22:19:08 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
-	rric@kernel.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] EDAC: Fix typos in the comments
-Message-ID: <20241215211908.GDZ19HzBchgHAaaent@fat_crate.local>
-References: <20240930074023.618110-1-yanzhen@vivo.com>
+	s=arc-20240116; t=1734297612; c=relaxed/simple;
+	bh=P4sc5AT5pgeRG2PGVcnMVCqnHvnlH//RUGpPaeFWg1o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=eHcBrEjPO7270OXIW5f0d24/XchfFdP0fg/CHGgdUnY2VLCvMGMBUY5Pi8VUwidlGitwpIdb+mvs98fQrSV89LXRzex++dI7UMZAQ9UjwtkGj8E7VWlZoEouELLquW0FtkuHMjIsqbs/yYRXU5zoSz84SWFk3HZ6vQwcQPaWmPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EuEpZfBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B341C4CECE;
+	Sun, 15 Dec 2024 21:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734297611;
+	bh=P4sc5AT5pgeRG2PGVcnMVCqnHvnlH//RUGpPaeFWg1o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EuEpZfBcuhJj0JtY5jZUgV0h/CRjqTm5KhSqpqvSUZIEc/z6tH6Jg2cLo2Mc287zZ
+	 uf2e+zUa5lo3comUAeIi36lcZsKLcuTpuCR+/GQUD174bwu4/6sJqjgh1ova1UPvQP
+	 Tt3A+GdX0ynI0q9z0JOESVXaTF8SjAkUQals/7JHm92QsAG7/keN6HX5RMo5YPu+8u
+	 OPBiMAgQKMI5k0HSSc69OKZVsqTfm/AnYYPZbtiAvarlqsKpOOVH8uSHuf8o4F93oD
+	 RDtygRoj15Wa1tZkZ3Qp7NH2WW3LwWz2J5bFtffZhagwZYVZMKn868PFtj/ZheMvnu
+	 lVQzhPlcxnB9w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4243806656;
+	Sun, 15 Dec 2024 21:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240930074023.618110-1-yanzhen@vivo.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/2] net: phy: dp83822: Add support for GPIO2
+ clock output
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173429762851.3583630.14158888213694105867.git-patchwork-notify@kernel.org>
+Date: Sun, 15 Dec 2024 21:20:28 +0000
+References: <20241212-dp83822-gpio2-clk-out-v3-0-e4af23490f44@liebherr.com>
+In-Reply-To: <20241212-dp83822-gpio2-clk-out-v3-0-e4af23490f44@liebherr.com>
+To: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, afd@ti.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dimitri.fedrau@liebherr.com,
+ dima.fedrau@gmail.com
 
-On Mon, Sep 30, 2024 at 03:40:23PM +0800, Yan Zhen wrote:
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Thu, 12 Dec 2024 09:44:05 +0100 you wrote:
+> The DP83822 has several clock configuration options for pins GPIO1, GPIO2
+> and GPIO3. Clock options include:
+>   - MAC IF clock
+>   - XI clock
+>   - Free-Running clock
+>   - Recovered clock
+> This patch adds support for GPIO2, the support for GPIO1 and GPIO3 can be
+> easily added if needed. Code and device tree bindings are derived from
+> dp83867 which has a similar feature.
 > 
-> Fix typos:
-> 'Alocate' ==> 'Allocate',
-> 'specifed' ==> 'specified',
-> 'Technlogy' ==> 'Technology',
-> 'Brnach' ==> 'Branch',
-> 'branchs' ==> 'branches'.
-> 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> ---
->  drivers/edac/edac_mc.c       | 2 +-
->  drivers/edac/edac_mc_sysfs.c | 6 +++---
->  drivers/edac/i5000_edac.c    | 8 ++++----
->  3 files changed, 8 insertions(+), 8 deletions(-)
+> [...]
 
-Applied, thanks.
+Here is the summary with links:
+  - [net-next,v3,1/2] dt-bindings: net: dp83822: Add support for GPIO2 clock output
+    https://git.kernel.org/netdev/net-next/c/a2d8af57452e
+  - [net-next,v3,2/2] net: phy: dp83822: Add support for GPIO2 clock output
+    https://git.kernel.org/netdev/net-next/c/53e3b540952c
 
+You are awesome, thank you!
 -- 
-Regards/Gruss,
-    Boris.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
