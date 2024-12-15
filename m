@@ -1,301 +1,129 @@
-Return-Path: <linux-kernel+bounces-446555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ACC39F260E
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:37:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D649F2617
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D80165035
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4071F188536D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 20:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1851BD4FD;
-	Sun, 15 Dec 2024 20:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906B91B85C9;
+	Sun, 15 Dec 2024 20:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSKBkW2Z"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbOV9EL5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9204B282E1;
-	Sun, 15 Dec 2024 20:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9F81FDD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 20:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734295026; cv=none; b=gA435ZdoQJC/atGKrD6PlHMcNpvZCKQk6FCKK/XjfcGjQVoUkeNgX5Qf1NYIGtkKxxN48YtySF9RZoFTOy1uIsyWRt2eZf/5k1EPx86YP3VR4Kp/TxvteeDOamfCkbTZYJF1Q+0WUT5L5ce1t1fjkJdMQTYVDCqe/Wrvk77K7hk=
+	t=1734295797; cv=none; b=e/MLuSEylYNXMvvXlQTzgrjSIC3VpMcDT08pH29zTqsEYAP50zvypT4n4eIdSeFj2n2vqTvSnFR3ppSXzFqBvIIEHYT3UBGVAnv/+Wys3wpzP7DawuT0PmkqjTerU7aCAm2UViGKwrd9oPkSC6obsrzrmPBUn5xlOQVbZMHJsME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734295026; c=relaxed/simple;
-	bh=X1K4wSau30fYA2lbnYeGwayHNblaat6aNKPSM756XCs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=di4WYeR6M+jvcs3rkihRjx+GsfKcu5H/T4z7BfEqQitDbKIQan1kQkhkMYQUBFQD7bsq7t9BZA93ihjjf37TF6J/h/2xUHqDfINn6a2iXIxtLfCqQQl25QLpQ5uooU4r0BXLC6zJ9U11YkltUAAaMpLmO7jcIrgCnV1qT2O8Trg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSKBkW2Z; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-844e61f3902so253408339f.0;
-        Sun, 15 Dec 2024 12:37:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734295024; x=1734899824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTfdf5nMQc4EWge5pFOY3vdTy/j5chcCgYemMh7oSNk=;
-        b=ZSKBkW2ZzJkIZJH+z01bk9PpGLSVzNFO3+CDhqmDsxOadUVYQwcW7twzo8utGGqbod
-         XgvSk0QA2lmgXkzAXbyX3hXg5NFUs4eEWiHqpELtTHyT4Qw0Yau7Ghk7R/kVXZpg3sbR
-         aoaqGv26DhxE7VIVHlb/5P1aE/2GhWdEzkmr58ucmUY4lzn7yWnlHsVypNOC9O4TjOVn
-         oLIptf1zXuI3IaoDP+8z8mdzScys5gelsDeOgcNWFGg8KfvaNPBcth+g1+FWbJIzBrao
-         ShXIRsF8hEGq0ccwfO5FiazRmxNcitlu5vXeE3QtR+YmTkJNNZPB7Po9VekJBhwFaSxI
-         d8pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734295024; x=1734899824;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CTfdf5nMQc4EWge5pFOY3vdTy/j5chcCgYemMh7oSNk=;
-        b=bPqhDL3Kt/7+2JjECNUNqtZ3u4+P3s5T5z4wUK2EcCU09UposMjLcSvNsYw+2NhraN
-         g7BvAPTN9L9xDnfa1AQcM3mgl/1TRDFgmwRYdL0Ag70dBu+E3QRB9yluKVURhLb0XHCe
-         8cNLzSWa7aQbSQ+ZOb2sNFo9vhp714DOdmvSR9W0DwQyl4Rmmb+Y1hFI/ww5t5pIna54
-         OxG2v7tgkwpWp7A/NMxO+LqNdzqitAbgzTPpeQtAJoIOxmd1+2T+hNyIB7Gcof8GMPAE
-         qxZDM0NYdNlgFCXFjLPLLCKaLWUSciVJBwi0188zHRxaO3TQQuARmmYfZDgHPO9FRm6b
-         EANA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQzk6w8IyzfgwnbP7VMKXnnGVbsPURnple3nLMQsHTF7MadHEaz5GWL4F0uzVcPaYz4TYYa/agY4wF@vger.kernel.org, AJvYcCWQi8TGVHa6aYd0VKYMD1KXRaA0VGEgqepKGGWNwugm4F4CrvsrwkzmamSpumUGGj2zH1m0xW431dbZIBZa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXyzAIyMB8b/TVxzU3lgzAogwhARDuJnWJHlSTul5Ck9rVS61z
-	o2isIk6KifG1vt2OqvYTXZh1j5AEPicCOqx2agwqA2jNGfCNprzd
-X-Gm-Gg: ASbGncslbxpA3DgGP87G9BKc56qN6/CeDB2WUwRpo8HbtVBcLm3P/TXdqZz45hOczgJ
-	4vqC0GCNMgzO3asiAJ+cYOBjPe7kGSJc9O1l7z9+l3kFrJsuhCikxLiexMOSlNkcv7q2H8l3aiP
-	NDMKiPnhLV5j9iAAq4hXWKnl7QlJD8aIEnSFEUA8y9yizTTpzOQiBh0qzb+quWLZuRns8ve1l3K
-	30jXtoohg/ynz4ol9ZkpSC1CO/+25wAHqf266cAHXCLppQrMAPzaPdzgdpLGO7GKCJ6
-X-Google-Smtp-Source: AGHT+IEgLKb6YqAkp/sb/aFLexcbRJzAt4rZw2ltZ964YL9/S1xZekP6D1npsz0NfYXIDmMoBDXGeA==
-X-Received: by 2002:a05:6602:2b0e:b0:83d:e526:fde7 with SMTP id ca18e2360f4ac-844e87be5c6mr1146615539f.6.1734295023634;
-        Sun, 15 Dec 2024 12:37:03 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e32a336bsm892166173.100.2024.12.15.12.37.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 12:37:02 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: antonio.borneo@foss.st.com
-Cc: marex@denx.de,
-	linus.walleij@linaro.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	make24@iscas.ac.cn,
-	peng.fan@nxp.com,
-	fabien.dessenne@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v5] pinctrl: stm32: Add check for clk_enable()
-Date: Sun, 15 Dec 2024 15:40:14 -0500
-Message-Id: <20241215204014.4076659-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734295797; c=relaxed/simple;
+	bh=cPKzzqKkHLMu415YDondciNGZujnY7eo/7uNqZFN2Og=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=o4KHihnHtr/P09eE8aLQIItir+gRJLepPuFFcLjxRJ+R4HvTCoh62lsnA6hgJdMTW0YbJ2W0LHG4QyTgijEhTPFCgHEQFK5wyWXTZxT1UwfkH7qhs7ZKmDuccGNEWrDC8Mfe6p/VTBxhj/3E3o37q8mtfrmci/LylTZgt/pdHJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbOV9EL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63163C4CECE;
+	Sun, 15 Dec 2024 20:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734295796;
+	bh=cPKzzqKkHLMu415YDondciNGZujnY7eo/7uNqZFN2Og=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cbOV9EL5jLa3n5F3LUQJZnYvdCQSmsfzn95xNy6BNjZNdZXvGetfVl2ynCDdhpcc1
+	 PLE7laxf1z/V62x8Fhita/SW9s9DdWhfa+d+RTXixMWfuhuI27lh6mGhqY2efYf3AQ
+	 zv0Gfe2ohqvHDREVuXGC1QMkYZiKIbILT/4POarVYO8bFAcx8PV6bflRKzVKaNLXCI
+	 7cyixIJf3FK+kyhuf79oydNht3asvOMk03EbTBsufnE+YfUhoNP4ree1f95MkzwDeu
+	 fdQqzubPzTo0OuVeXoLFmwFoLsq+GFAyS9jj/a7JHEUPG6Q4FJzGtu+GsWBZ51h4yf
+	 MdwBYuyMTuvPQ==
+Message-ID: <c7e0d492-c7a2-4266-904c-9b247a41fa20@kernel.org>
+Date: Sun, 15 Dec 2024 12:49:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Vineet Gupta <vgupta@kernel.org>
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+ arcml <linux-snps-arc@lists.infradead.org>,
+ =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>,
+ Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+ Leon Romanovsky <leon@kernel.org>, lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Subject: [GIT PULL] ARC fixes for 6.13
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Convert the driver to clk_bulk*() API.
-Add check for the return value of clk_bulk_enable() to catch
-the potential error.
+Hi Linus,
 
-Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+A little pile of long pending fixes for ARC.
+Please pull ! Happy Holidays.
 
-v4 -> v5:
-1. Move the clock handling from stm32_gpiolib_register_bank() 
-and moving it to its caller.
-2. Call clk_bulk_prepare_enable() in stm32_pctl_probe() 
-and clk_bulk_disable_unprepare() for error.
+Thx,
+-Vineet
+--------------------->
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-v3 -> v4:
-1. Add initialization for  pctl->clks.
-2. Adjust alignment.
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
-v2 -> v3:
+are available in the Git repository at:
 
-1. Convert clk_disable_unprepare to clk_bulk_disable
-and clk_bulk_unprepare.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-6.13-fixes
 
-v1 -> v2:
+for you to fetch changes up to 824927e88456331c7a999fdf5d9d27923b619590:
 
-1. Move int ret declaration into if block.
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 70 ++++++++++++---------------
- 1 file changed, 32 insertions(+), 38 deletions(-)
+  ARC: build: Try to guess GCC variant of cross compiler (2024-12-13 14:39:24 -0800)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 5b7fa77c1184..5874a054dc48 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
- 
- struct stm32_gpio_bank {
- 	void __iomem *base;
--	struct clk *clk;
- 	struct reset_control *rstc;
- 	spinlock_t lock;
- 	struct gpio_chip gpio_chip;
-@@ -108,6 +107,7 @@ struct stm32_pinctrl {
- 	unsigned ngroups;
- 	const char **grp_names;
- 	struct stm32_gpio_bank *banks;
-+	struct clk_bulk_data *clks;
- 	unsigned nbanks;
- 	const struct stm32_pinctrl_match_data *match_data;
- 	struct irq_domain	*domain;
-@@ -1308,12 +1308,6 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	if (IS_ERR(bank->base))
- 		return PTR_ERR(bank->base);
- 
--	err = clk_prepare_enable(bank->clk);
--	if (err) {
--		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
--		return err;
--	}
--
- 	bank->gpio_chip = stm32_gpio_template;
- 
- 	fwnode_property_read_string(fwnode, "st,bank-name", &bank->gpio_chip.label);
-@@ -1360,26 +1354,21 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 							   bank->fwnode, &stm32_gpio_domain_ops,
- 							   bank);
- 
--		if (!bank->domain) {
--			err = -ENODEV;
--			goto err_clk;
--		}
-+		if (!bank->domain)
-+			return -ENODEV;
- 	}
- 
- 	names = devm_kcalloc(dev, npins, sizeof(char *), GFP_KERNEL);
--	if (!names) {
--		err = -ENOMEM;
--		goto err_clk;
--	}
-+	if (!names)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < npins; i++) {
- 		stm32_pin = stm32_pctrl_get_desc_pin_from_gpio(pctl, bank, i);
- 		if (stm32_pin && stm32_pin->pin.name) {
- 			names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s", stm32_pin->pin.name);
--			if (!names[i]) {
--				err = -ENOMEM;
--				goto err_clk;
--			}
-+			if (!names[i])
-+				return -ENOMEM;
-+
- 		} else {
- 			names[i] = NULL;
- 		}
-@@ -1390,15 +1379,11 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	err = gpiochip_add_data(&bank->gpio_chip, bank);
- 	if (err) {
- 		dev_err(dev, "Failed to add gpiochip(%d)!\n", bank_nr);
--		goto err_clk;
-+		return err;
- 	}
- 
- 	dev_info(dev, "%s bank added\n", bank->gpio_chip.label);
- 	return 0;
--
--err_clk:
--	clk_disable_unprepare(bank->clk);
--	return err;
- }
- 
- static struct irq_domain *stm32_pctrl_get_irq_domain(struct platform_device *pdev)
-@@ -1617,10 +1602,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 	pctl->banks = devm_kcalloc(dev, banks, sizeof(*pctl->banks),
--			GFP_KERNEL);
-+				   GFP_KERNEL);
- 	if (!pctl->banks)
- 		return -ENOMEM;
- 
-+	pctl->clks = devm_kcalloc(dev, banks, sizeof(*pctl->clks),
-+				  GFP_KERNEL);
-+	if (!pctl->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < banks; ++i)
-+		pctl->clks[i].id = "";
-+
- 	i = 0;
- 	for_each_gpiochip_node(dev, child) {
- 		struct stm32_gpio_bank *bank = &pctl->banks[i];
-@@ -1631,11 +1624,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 			fwnode_handle_put(child);
- 			return -EPROBE_DEFER;
- 		}
--
--		bank->clk = of_clk_get_by_name(np, NULL);
--		if (IS_ERR(bank->clk)) {
-+		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
-+		if (IS_ERR(pctl->clks[i].clk)) {
- 			fwnode_handle_put(child);
--			return dev_err_probe(dev, PTR_ERR(bank->clk),
-+			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
- 					     "failed to get clk\n");
- 		}
- 		i++;
-@@ -1646,15 +1638,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 		if (ret) {
- 			fwnode_handle_put(child);
- 
--			for (i = 0; i < pctl->nbanks; i++)
--				clk_disable_unprepare(pctl->banks[i].clk);
--
- 			return ret;
- 		}
- 
- 		pctl->nbanks++;
- 	}
- 
-+	ret = clk_bulk_prepare_enable(pctl->nbanks, pctl->clks);
-+	if (ret) {
-+		dev_err(dev, "failed to prepare_enable clk (%d)\n", ret);
-+		return ret;
-+	}
-+
- 	dev_info(dev, "Pinctrl STM32 initialized\n");
- 
- 	return 0;
-@@ -1726,10 +1721,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
- int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
--	int i;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_disable(pctl->banks[i].clk);
-+	clk_bulk_disable(pctl->nbanks, pctl->clks);
- 
- 	return 0;
- }
-@@ -1738,10 +1731,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
- 	struct stm32_pinctrl_group *g = pctl->groups;
--	int i;
-+	int i, ret;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_enable(pctl->banks[i].clk);
-+	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
-+	if (ret)
-+		return ret;
- 
- 	for (i = 0; i < pctl->ngroups; i++, g++)
- 		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
--- 
-2.34.1
+----------------------------------------------------------------
+ARC fixes for 6.13-r32 or rc4
 
+ - Sundry build and miscll fixes
+
+----------------------------------------------------------------
+Benjamin Szőke (1):
+      arc: rename aux.h to arc_aux.h
+
+Hardevsinh Palaniya (1):
+      ARC: bpf: Correct conditional check in 'check_jmp_32'
+
+Leon Romanovsky (1):
+      ARC: build: Try to guess GCC variant of cross compiler
+
+Lukas Bulwahn (1):
+      ARC: fix reference of dependency for PAE40 config
+
+Paul E. McKenney (1):
+      ARC: build: Use __force to suppress per-CPU cmpxchg warnings
+
+Uwe Kleine-König (1):
+      ARC: dts: Replace deprecated snps,nr-gpios property for
+snps,dw-apb-gpio-port devices
+
+Vineet Gupta (1):
+      ARC: build: disallow invalid PAE40 + 4K page config
+
+ arch/arc/Kconfig                     |  4 ++--
+ arch/arc/Makefile                    |  2 +-
+ arch/arc/boot/dts/axc001.dtsi        |  2 +-
+ arch/arc/boot/dts/axc003.dtsi        |  2 +-
+ arch/arc/boot/dts/axc003_idu.dtsi    |  2 +-
+ arch/arc/boot/dts/axs10x_mb.dtsi     | 12 ++++++------
+ arch/arc/boot/dts/hsdk.dts           |  2 +-
+ arch/arc/include/asm/arcregs.h       |  2 +-
+ arch/arc/include/asm/cmpxchg.h       |  2 +-
+ arch/arc/include/asm/mmu-arcv2.h     |  2 +-
+ arch/arc/net/bpf_jit_arcv2.c         |  2 +-
+ include/soc/arc/{aux.h => arc_aux.h} |  0
+ include/soc/arc/mcip.h               |  2 +-
+ include/soc/arc/timers.h             |  2 +-
+ 14 files changed, 19 insertions(+), 19 deletions(-)
+ rename include/soc/arc/{aux.h => arc_aux.h} (100%)
 
