@@ -1,78 +1,111 @@
-Return-Path: <linux-kernel+bounces-446570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784239F2656
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9812E9F2659
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 22:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDCB9165312
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A7B164F07
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 21:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D6B1C1F13;
-	Sun, 15 Dec 2024 21:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3B71BBBF7;
+	Sun, 15 Dec 2024 21:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIdZuyBw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Q+oLF/Kz"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB66653;
-	Sun, 15 Dec 2024 21:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F913653;
+	Sun, 15 Dec 2024 21:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734299085; cv=none; b=LF9NtHxKEmrdLazd1/yBkW/4hVsgZV4ga/CdzNpE4YCye9hC1ryEqY3H5xGH+jl1abKCJldzGixmnLe+bJG5FAe94vbTIP8VtpABcURoAZDPggrTGs38ZvedU2uV6j0qY68GkFwHkEyzwTfpAA/XrBY4pQLtFt2KNnc+0yqRKaQ=
+	t=1734299283; cv=none; b=KkarDFenFLrZmL9QHDZUylk/Jsd/SsIeYao4R7ZD1enqvAuqYCRIzvVp2xa1lP7xOhLD4e7ftwda2sbGGIPna1FFfHUpdM68OmoP/trP2g+EK8rO+fbIrnXICAusONDj1TZKNMGRPaDmwk0+ENNvQGMOZedrDbFeKouWDZQ9fs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734299085; c=relaxed/simple;
-	bh=1CPpcw0Otx08FEarz0dPgCUUa9KnxhNco6gxmihwvQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dIlvv5cpcVZrql4gWKMeFkkgK3XZLG/qkrEcUrOclaqMXcRw/Hglb/pOAmCljqAi+k+yp3KA+ipESH8M1ataQnolL4CVRn+dUGmcfKSr7ECYtsMlkYsXJsIf3TeU+MCpHI4TV5VCW7UIbj7IYywuS4ddHtF01obVgj8AJSdPUAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIdZuyBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC097C4CECE;
-	Sun, 15 Dec 2024 21:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734299085;
-	bh=1CPpcw0Otx08FEarz0dPgCUUa9KnxhNco6gxmihwvQQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SIdZuyBwf8wJcINmix6Dca3qoDtjImgICN+qSAYQ/dM13/dXlt3mzFIkR6y7+Iaoa
-	 A0mzexMb6I4fbgN80+SOPX9yAinCgNWQIo11aMiOlzDg6h5Vph4o/wS7b5NURPoM57
-	 QwG/9UuY1RolXeGMXovDwa2x1Fb8eCux/NAbtxyxAmHvEulsTkrzp8KOe2VrqKFNPw
-	 tbagkv+3aU2XZlXBYQqhyIGd0F6y/CiSKAkzBJtBCZ+t5P/E9qQzMAgKrh2y/oKkwF
-	 wsfYvATacu1Np4V3w49o0XrCjrw0ZzTZa28Bs3Vr1aTFgjC4cgwDy0vdXdj4hFDPSz
-	 VY3syBuIBXQuQ==
-Date: Sun, 15 Dec 2024 13:44:43 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <andrew+netdev@lunn.ch>, <horms@kernel.org>, <gregkh@linuxfoundation.org>,
- <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
- <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>,
- <jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
- <salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <hkelam@marvell.com>
-Subject: Re: [PATCH V7 net-next 1/7] net: hibmcge: Add debugfs supported in
- this module
-Message-ID: <20241215134443.28770bbe@kernel.org>
-In-Reply-To: <20241212142334.1024136-2-shaojijie@huawei.com>
-References: <20241212142334.1024136-1-shaojijie@huawei.com>
-	<20241212142334.1024136-2-shaojijie@huawei.com>
+	s=arc-20240116; t=1734299283; c=relaxed/simple;
+	bh=vEFeXeLScr75rsFNgY1KWtU450y8shtGwTrVMWxtj+U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gDfMPSTWh7f3UjIs08EVrO7Ct6aDB7AH5vBYSTlxWnObbFtVLA8DtbblgztCEH78OhB72ZEw27l8QH4DeZ/OZorH4+utvM0q1lSlcvb47IZEnwltdXp/PG5C/nyK6gh1l4vbxVlxdaxZJGYSnYkUaDExarZj3OqyNTNz80tSqu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Q+oLF/Kz; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=cHBKF03U+jZMko8P8Q0VvvH1LhKjNSPqXhElrlL/24A=; b=Q+oLF/Kz0ZXyL/Ma
+	D8lb9TCiSdsTRdc4cphsUJmWW1nLfRC/HsDrtogd8Q0N5olIj4B2DvUwzdkNOA8FA3dW+KFFmyR3M
+	JBKo2v5ZIJIj5cxeiN1zyXL79vppwgd2l4oS+bEXRzf/nONqiU8gdohV14kn6yQRZ2ar8P3bf3jr2
+	YMvg3x6ORhsd0SpIaXGWahVrPPLSB+gkrC7tHFrqOqGLNrT0sUlyugPICmGGZK1xLnmKinTCBT3Lb
+	W60z1CCgQPGnaJ3CAGr3wjnIn31S8Ck30gXsRSqlsGNEUp1q9pz2A2R+2eNJJUeiGygyEzLBhBzvH
+	mV8EP/3b2iWHrSWnkw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tMwSt-005UzH-1n;
+	Sun, 15 Dec 2024 21:47:51 +0000
+From: linux@treblig.org
+To: thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	linux-tegra@vger.kernel.org
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
+Date: Sun, 15 Dec 2024 21:47:50 +0000
+Message-ID: <20241215214750.448209-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Dec 2024 22:23:28 +0800 Jijie Shao wrote:
-> +#define str_true_false(state) ((state) ? "true" : "false")
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Didn't notice until I started applying this..
-str_true_false() is an existing helper:
-https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/string_choices.h#L68
+host1x_debug_dump_syncpts() has been unused since
+commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
+fences")
+
+Remove it.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/host1x/debug.c | 9 ---------
+ drivers/gpu/host1x/debug.h | 1 -
+ 2 files changed, 10 deletions(-)
+
+diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+index a18cc8d8caf5..6433c00d5d7e 100644
+--- a/drivers/gpu/host1x/debug.c
++++ b/drivers/gpu/host1x/debug.c
+@@ -216,12 +216,3 @@ void host1x_debug_dump(struct host1x *host1x)
+ 
+ 	show_all(host1x, &o, true);
+ }
+-
+-void host1x_debug_dump_syncpts(struct host1x *host1x)
+-{
+-	struct output o = {
+-		.fn = write_to_printk
+-	};
+-
+-	show_syncpts(host1x, &o, false);
+-}
+diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+index 62bd8a091fa7..c43c61d876a9 100644
+--- a/drivers/gpu/host1x/debug.h
++++ b/drivers/gpu/host1x/debug.h
+@@ -41,6 +41,5 @@ extern unsigned int host1x_debug_trace_cmdbuf;
+ void host1x_debug_init(struct host1x *host1x);
+ void host1x_debug_deinit(struct host1x *host1x);
+ void host1x_debug_dump(struct host1x *host1x);
+-void host1x_debug_dump_syncpts(struct host1x *host1x);
+ 
+ #endif
 -- 
-pw-bot: cr
+2.47.1
+
 
