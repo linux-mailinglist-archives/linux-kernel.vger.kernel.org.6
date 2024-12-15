@@ -1,217 +1,118 @@
-Return-Path: <linux-kernel+bounces-446435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2596C9F244C
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 15:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2319F244D
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 15:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4443D165004
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5B4164DAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 14:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0B18FDC5;
-	Sun, 15 Dec 2024 14:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCF918FC7E;
+	Sun, 15 Dec 2024 14:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYmsKz/p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JNlhvb4R"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA461805A;
-	Sun, 15 Dec 2024 14:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A1D1805A
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 14:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734271835; cv=none; b=SrSEA3cijZy9Q3GAzMXzqRPFF0YQS3fpzipfJ5674vKM6hWNVHUZywFsnZPOD8HJ8hx6KuUVAFAFVnlNljUEiio5tXbKFzDXJKMYXEjYS3CZ2hrW1aDaAEetEgT4Xp0LjKVa0dmELDJn4aQ/s9z8EUcVqHhi6nrQhSvf6mckNOE=
+	t=1734271861; cv=none; b=nOL4RD1uuyYyTuNzRuAW9baiKjq9QLK4PSL541j8pipcexuQu3OBpy5LvFZHuO81G1CpRrom2YBemhre3rDfUaXHivkfU2j/GjS6DP21O1g/QR0dop/ou59dRVql+sKYeE/9p2VmHuwXeoBA9EpI3FwjwfKtiy44U0isBUOE6dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734271835; c=relaxed/simple;
-	bh=Ugt82RAiwmx4n7n5jRLgGBhD/IdHRmG1Grv/4HCIsK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L3bge84uAvl0KxjMHtWnajff0CJ3166y9Iah+B64NGKlX1Qxi51TDtxWbzuOnrpn5EcEvZZqOMuDhsuZisfuq93q07uZpl328Lj8vcIlcvjMCsAEx1O/cmhHS0sTXnucWX6h5WNyMro+MVxshmMm6UwdT2Qh+vP1xP3wB4Ol8mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYmsKz/p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93956C4CECE;
-	Sun, 15 Dec 2024 14:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734271835;
-	bh=Ugt82RAiwmx4n7n5jRLgGBhD/IdHRmG1Grv/4HCIsK4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DYmsKz/p8aD42joolfp3Z4n/GCB+OzMwy1faMGhL0NJOXQC1xpnRqe0eYJ8x/em5I
-	 YVrA1lY85UZmHaLeK+2QYysldr6GxN07yFh3f83ZePPkUd2axra0kYSbpdVxJgBdZl
-	 BuD9shXH6z/iMrW56rVpwBYtIAu6eKDm04tE3J6kJv5WcELk2dVmHwDvisM+QCL6l8
-	 w+wcFfAR1eNj57XMbqpElUuwGBdAl/jzERIjKxxtfxCqqIZpKav2+8Cpph1IGCuhrF
-	 vWOgvOsJ1jKTeN5Jut8CXyWoet1YOlx1MH8JpOqPyPJG6GmGl/LEfQqWV/VXi+qIss
-	 xkDjJTewuEfoA==
-Date: Sun, 15 Dec 2024 14:10:27 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v7 1/7] iio: accel: adxl345: add function to switch
- measuring mode
-Message-ID: <20241215141027.6ee70828@jic23-huawei>
-In-Reply-To: <CAFXKEHamiip3fVp1HNX4DZSzNnc7bMOQNg1RKsY45NbFymzr7g@mail.gmail.com>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
-	<20241213211909.40896-2-l.rubusch@gmail.com>
-	<20241214120227.56b885fa@jic23-huawei>
-	<CAFXKEHamiip3fVp1HNX4DZSzNnc7bMOQNg1RKsY45NbFymzr7g@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734271861; c=relaxed/simple;
+	bh=MlrPz+vnLABP0cabnsl55vKGWyPFUDb6AU/xf7DTd+E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NIETj6n6PemWJINcnRiPcUeFGv0steQ+Fv404EPkGIx+YwhyEDaQae8JM/YLLhx8AAzGmadIQA6f8OPAuvqtAfW87UDc4/0IfWmc7xouoNFQvFo+fb4uVM9vBgf5UM2NsLmNZNuN+ewr1J9nnnNk3GqIghX9lawO6DNG+Gg4Dko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JNlhvb4R; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1734271857;
+	bh=MlrPz+vnLABP0cabnsl55vKGWyPFUDb6AU/xf7DTd+E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=JNlhvb4RtAzc9pM9OrkxFMoqhO3giS+mXtanzUX4hXJ4v59Om4TMz2I+pUtvtV2Ij
+	 O7aESygV4Ebx8q27wv7gsTRkdbC5ZMnX40Wx4a7Gy212lFYHDBSQgZZcJZ1lmgc2e7
+	 dPjYiqjJPY7VhsMdCcdCVTjGLbtdy07M6rauebkE=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 15 Dec 2024 15:10:53 +0100
+Subject: [PATCH] fsi: core: Use const 'struct bin_attribute' callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241215-sysfs-const-bin_attr-fsi-v1-1-b717f76a0146@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAGzjXmcC/x3MQQqAIBBA0avErBtISYOuEhFaY83GwpEoorsnL
+ d/i/weEEpNAXz2Q6GThPRaouoJ5c3El5KUYdKNbpZVBuSUIznuUjJ7j5HJOGISx09Z3djHWKQM
+ lPxIFvv71ML7vBwUvZ8dqAAAA
+X-Change-ID: 20241215-sysfs-const-bin_attr-fsi-726b76d56a15
+To: Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>, 
+ Alistar Popple <alistair@popple.id.au>, Eddie James <eajames@linux.ibm.com>
+Cc: linux-fsi@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734271855; l=1791;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=MlrPz+vnLABP0cabnsl55vKGWyPFUDb6AU/xf7DTd+E=;
+ b=sfrDvgZFpT83hjbwy8ehyMngs9daL4oPazDo+o8Yune2N4sGIFImzpLphFZxQx3mye1J6xJyN
+ wSBrCacsSxKBtl4PbO0ZF2+bMTRofo64sX3nXe5a1+Ma0gEo20jSirQ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sun, 15 Dec 2024 10:41:12 +0100
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+The sysfs core now provides callback variants that explicitly take a
+const pointer. Make use of it to match the attribute definition.
 
-> On Sat, Dec 14, 2024 at 1:02=E2=80=AFPM Jonathan Cameron <jic23@kernel.or=
-g> wrote:
-> >
-> > On Fri, 13 Dec 2024 21:19:03 +0000
-> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
-> > =20
-> > > Replace the powerup / powerdown functions by a generic function to put
-> > > the sensor in STANDBY, or MEASURE mode. When configuring the FIFO for
-> > > several features of the accelerometer, it is recommended to put
-> > > measuring in STANDBY mode.
-> > >
-> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com> =20
-> > Mostly in the interests of trimming down the queue of patches in flight
-> > and because this one has been fine for a few versions without significa=
-nt
-> > comment.
-> >
-> > Applied this patch to the togreg branch of iio.git and pushed out initi=
-ally
-> > as testing to let 0-day take a look.
-> > =20
->=20
-> Question here: you applied this patch now to the iio branch. Now,
-> Christophe Jaillet pointed still something out that could be improved,
-> the function could be shortened to, e.g.
->=20
-> +static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
-> +{
-> +     unsigned int val =3D en ? ADXL345_POWER_CTL_MEASURE :
-> ADXL345_POWER_CTL_STANDBY;
-> +
-> +     return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
-> +}
->=20
-> Should I present an improved patch? Or, in case this was urgent, would
-> it require an additional patch/fix? What would be the way to deal with
-> such fixes immediately after "applied"?
->=20
-Send me a patch on top. I may well squash it into the original (particularly
-if you stick a note on that being sensible under the --- for the patch!)
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/fsi/fsi-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-There is always a window in which I'm happy to rebase (or pull a patch
-if we get feedback needing bigger changes) because I typically give
-at least half a week for 0-day to poke the tree before I make a potential
-mess in linux-next.  Ultimately I'll rebase after that for a sufficiently
-serious issue but for something like this I'll just apply the patch on top
-once it's out for linux-next to pick up.
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index e2e1e9df611543343a8498cdc425528a3e44619a..50e8736039fe686dd402ecf8fabe37a4c237d71b 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -554,7 +554,7 @@ static unsigned long aligned_access_size(size_t offset, size_t count)
+ }
+ 
+ static ssize_t fsi_slave_sysfs_raw_read(struct file *file,
+-		struct kobject *kobj, struct bin_attribute *attr, char *buf,
++		struct kobject *kobj, const struct bin_attribute *attr, char *buf,
+ 		loff_t off, size_t count)
+ {
+ 	struct fsi_slave *slave = to_fsi_slave(kobj_to_dev(kobj));
+@@ -581,7 +581,7 @@ static ssize_t fsi_slave_sysfs_raw_read(struct file *file,
+ }
+ 
+ static ssize_t fsi_slave_sysfs_raw_write(struct file *file,
+-		struct kobject *kobj, struct bin_attribute *attr,
++		struct kobject *kobj, const struct bin_attribute *attr,
+ 		char *buf, loff_t off, size_t count)
+ {
+ 	struct fsi_slave *slave = to_fsi_slave(kobj_to_dev(kobj));
+@@ -613,8 +613,8 @@ static const struct bin_attribute fsi_slave_raw_attr = {
+ 		.mode = 0600,
+ 	},
+ 	.size = 0,
+-	.read = fsi_slave_sysfs_raw_read,
+-	.write = fsi_slave_sysfs_raw_write,
++	.read_new = fsi_slave_sysfs_raw_read,
++	.write_new = fsi_slave_sysfs_raw_write,
+ };
+ 
+ static void fsi_slave_release(struct device *dev)
 
-Jonathan
+---
+base-commit: 2d8308bf5b67dff50262d8a9260a50113b3628c6
+change-id: 20241215-sysfs-const-bin_attr-fsi-726b76d56a15
 
-> Best,
-> L
->=20
-> > Thanks
-> >
-> > Jonathan
-> > =20
-> > > ---
-> > >  drivers/iio/accel/adxl345_core.c | 42 +++++++++++++++++++++++-------=
---
-> > >  1 file changed, 30 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adx=
-l345_core.c
-> > > index 88df9547b..b48bc838c 100644
-> > > --- a/drivers/iio/accel/adxl345_core.c
-> > > +++ b/drivers/iio/accel/adxl345_core.c
-> > > @@ -138,6 +138,34 @@ static int adxl345_write_raw_get_fmt(struct iio_=
-dev *indio_dev,
-> > >       }
-> > >  }
-> > >
-> > > +/**
-> > > + * adxl345_set_measure_en() - Enable and disable measuring.
-> > > + *
-> > > + * @st: The device data.
-> > > + * @en: Enable measurements, else standby mode.
-> > > + *
-> > > + * For lowest power operation, standby mode can be used. In standby =
-mode,
-> > > + * current consumption is supposed to be reduced to 0.1uA (typical).=
- In this
-> > > + * mode no measurements are made. Placing the device into standby mo=
-de
-> > > + * preserves the contents of FIFO.
-> > > + *
-> > > + * Return: Returns 0 if successful, or a negative error value.
-> > > + */
-> > > +static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
-> > > +{
-> > > +     unsigned int val =3D 0;
-> > > +
-> > > +     val =3D (en) ? ADXL345_POWER_CTL_MEASURE : ADXL345_POWER_CTL_ST=
-ANDBY;
-> > > +     return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
-> > > +}
-> > > +
-> > > +static void adxl345_powerdown(void *ptr)
-> > > +{
-> > > +     struct adxl345_state *st =3D ptr;
-> > > +
-> > > +     adxl345_set_measure_en(st, false);
-> > > +}
-> > > +
-> > >  static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
-> > >  "0.09765625 0.1953125 0.390625 0.78125 1.5625 3.125 6.25 12.5 25 50 =
-100 200 400 800 1600 3200"
-> > >  );
-> > > @@ -158,16 +186,6 @@ static const struct iio_info adxl345_info =3D {
-> > >       .write_raw_get_fmt      =3D adxl345_write_raw_get_fmt,
-> > >  };
-> > >
-> > > -static int adxl345_powerup(void *regmap)
-> > > -{
-> > > -     return regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWE=
-R_CTL_MEASURE);
-> > > -}
-> > > -
-> > > -static void adxl345_powerdown(void *regmap)
-> > > -{
-> > > -     regmap_write(regmap, ADXL345_REG_POWER_CTL, ADXL345_POWER_CTL_S=
-TANDBY);
-> > > -}
-> > > -
-> > >  /**
-> > >   * adxl345_core_probe() - Probe and setup for the accelerometer.
-> > >   * @dev:     Driver model representation of the device
-> > > @@ -237,11 +255,11 @@ int adxl345_core_probe(struct device *dev, stru=
-ct regmap *regmap,
-> > >                                    regval, ADXL345_DEVID);
-> > >
-> > >       /* Enable measurement mode */
-> > > -     ret =3D adxl345_powerup(st->regmap);
-> > > +     ret =3D adxl345_set_measure_en(st, true);
-> > >       if (ret < 0)
-> > >               return dev_err_probe(dev, ret, "Failed to enable measur=
-ement mode\n");
-> > >
-> > > -     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st->re=
-gmap);
-> > > +     ret =3D devm_add_action_or_reset(dev, adxl345_powerdown, st);
-> > >       if (ret < 0)
-> > >               return ret;
-> > > =20
-> > =20
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
 
