@@ -1,103 +1,228 @@
-Return-Path: <linux-kernel+bounces-446391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9659F23C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:36:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF92E9F23C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 13:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E117616454F
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:36:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1288C164412
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 12:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4C81865F0;
-	Sun, 15 Dec 2024 12:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB83185B62;
+	Sun, 15 Dec 2024 12:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j6syRrhx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GFhXbBhU"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A34131A89
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A5B1FDD
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 12:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734266200; cv=none; b=XTd/hDBw2zNeejJX8Eek74EMsnC01q+SBUIsJMgABYDdxY0q/kwUhVZn6+JB62SUsVqlQqARRu9tS3v9CffX2k/VU6Fggf9AYpdy8M5uv/1yy+zzagAeypCd+MJNfqYKY8kAWVGhOhxF+1ZtccuI/bi6F5NvCBcatUI/ZryjT74=
+	t=1734266305; cv=none; b=nugti/v4UFZfatBW51Wors5Lyb1tX9FLjNOdy0dG2rNR+NIRmjOfugy0iqqu//Vo8Jh0i4uPN2+BRqDsYmtaO7CFHH1oHTUv+JWGj3bKfjC1t9kMh5m2Mcl1/XuS3YHC3/t1By2pFsETW7t/ZgBKZhmO1oGBzo2ZcRw6TXSY3x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734266200; c=relaxed/simple;
-	bh=5e8fb8SP+GkRSkzBlX7AXt4ERtJ7Xf7OGV8o4T6wlQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ngt8Vs6oRcbbp0rWAs5E5HsG+w3K6EhQpWtnEzlRYK1XciTY7aBdVvovL6sJYMrFB9LWpGdy19Rt746yZS6gFYMrFFWcs2VqtVzJ2gP+NrwrDj7rfVgGXPScpkStcVzBwH8jLoTj4OuU6nQzbICG9O/24KhQuHM3Yew26xYjz7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j6syRrhx; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734266198; x=1765802198;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=5e8fb8SP+GkRSkzBlX7AXt4ERtJ7Xf7OGV8o4T6wlQA=;
-  b=j6syRrhxaMCNq7jDYp26dWyws3c9jcj+L6YfmZi3UzXTGBMuQfu4w7do
-   LexDEcS1XcV5WF5Ks9C+/mP2x028Af/nKKFpxNTlVbF46rGUIIH4xlz4R
-   WrBYEd1RMVPiZfXdnokboaxbr/4EbBtGfTkSF68FESWy7BAQ0+86Jh13c
-   QQHfRIh4r6gEV8Ch8Qk0spD9gtsx35/teW8wpnJapuJYqCysFs/eWVdM0
-   VsQUXYEukCy+x+vWM6QlBTJvEolOlRTJlfD5amjKEIL/aR+BNg9fKG58y
-   TfeKFOlf1pLURaQkiD2VRBVpzyDwy88JF5eLb9bG5S5X9MMb5zUYvkPE0
-   Q==;
-X-CSE-ConnectionGUID: 6+mw6tYuR82yFbkzpJIYVw==
-X-CSE-MsgGUID: oLFlpUAiTreeGKx8Ax15lQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="34389309"
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="34389309"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 04:36:38 -0800
-X-CSE-ConnectionGUID: /M/LD2OaSEONTxSzFWrNyg==
-X-CSE-MsgGUID: FQipea7+QxS3a2mAryyopg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,236,1728975600"; 
-   d="scan'208";a="97191827"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 15 Dec 2024 04:36:36 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMnrO-000DcE-1L;
-	Sun, 15 Dec 2024 12:36:34 +0000
-Date: Sun, 15 Dec 2024 20:36:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: rtl8366rb.c:undefined reference to `led_init_default_state_get'
-Message-ID: <202412152006.8cAlfJ55-lkp@intel.com>
+	s=arc-20240116; t=1734266305; c=relaxed/simple;
+	bh=USTGCrmhUiju2hWFQljQzI678587/572TzQbpP2zoUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YwBrazzoe+yCLXqbmBq4p0NvJm8yDIORVBboELnTZbG3ZOf7x719Bt1QEaB58/rdDJ3VL4yCn02pkfcTsOjyQOl9qWBv4lBceUiO479mgrjklf4qDcEGYO0Rh0EFEBdAHmRj+sGcvznQ5iVMlfYuonEnVGV5tFOJFLxdgkXowK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GFhXbBhU; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C493E99F;
+	Sun, 15 Dec 2024 13:37:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734266266;
+	bh=USTGCrmhUiju2hWFQljQzI678587/572TzQbpP2zoUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GFhXbBhUnbJBiKFUy7VbJ+V7P7juhCI8VLJDylh9hPEBAW8TX3nlaC5ALtrwiAhJu
+	 7+NmIjCXRN8ebCf45T6BiwlG2lg79kEa8JyVBEugDWZQukKKUbCdPPuAOenI0ACT96
+	 1qCiBebE8x36QJj5ORUYOX9NBFjbQGxbR6+rwh2U=
+Date: Sun, 15 Dec 2024 14:38:05 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 2/2] drm/i2c: move TDA drivers under
+ drivers/gpu/drm/bridge
+Message-ID: <20241215123805.GB25852@pendragon.ideasonboard.com>
+References: <20241215-drm-move-tda998x-v1-0-7817122b1d73@linaro.org>
+ <20241215-drm-move-tda998x-v1-2-7817122b1d73@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20241215-drm-move-tda998x-v1-2-7817122b1d73@linaro.org>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2d8308bf5b67dff50262d8a9260a50113b3628c6
-commit: 32d617005475a71ebcc4ec8b2791e8d1481e9a10 net: dsa: realtek: add LED drivers for rtl8366rb
-date:   8 months ago
-config: csky-randconfig-r061-20241215 (https://download.01.org/0day-ci/archive/20241215/202412152006.8cAlfJ55-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412152006.8cAlfJ55-lkp@intel.com/reproduce)
+Hi Dmitry,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412152006.8cAlfJ55-lkp@intel.com/
+Thank you for the patch.
 
-All errors (new ones prefixed by >>):
+On Sun, Dec 15, 2024 at 01:09:08PM +0200, Dmitry Baryshkov wrote:
+> TDA998x is the HDMI bridge driver, incorporating drm_connector and
+> optional drm_encoder (created via the component bind API by the TICLDC
+> and HDLCD drivers). Thus it should be residing together with the other
+> DRM bridge drivers under drivers/gpu/drm/bridge/.
+> 
+> TDA9950 is an I2C-CEC translator, being present on-die on the TDA9989
+> and TDA19989 chips, so it is being instantiated by the TDA998x driver.
+> Move it together with the TDA998x under bridge drivers subdir.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  MAINTAINERS                                       |  2 +-
+>  drivers/gpu/drm/arm/Kconfig                       |  1 +
+>  drivers/gpu/drm/bridge/Kconfig                    |  2 ++
+>  drivers/gpu/drm/bridge/Makefile                   |  1 +
+>  drivers/gpu/drm/bridge/tda/Kconfig                | 13 +++++++++++++
+>  drivers/gpu/drm/bridge/tda/Makefile               |  4 ++++
+>  drivers/gpu/drm/{i2c => bridge/tda}/tda9950.c     |  0
+>  drivers/gpu/drm/{i2c => bridge/tda}/tda998x_drv.c |  0
 
-   csky-linux-ld: drivers/net/dsa/realtek/rtl8366rb.o: in function `rtl8366rb_setup_led':
->> rtl8366rb.c:(.text.unlikely+0x1ac): undefined reference to `led_init_default_state_get'
->> csky-linux-ld: rtl8366rb.c:(.text.unlikely+0x272): undefined reference to `devm_led_classdev_register_ext'
->> csky-linux-ld: rtl8366rb.c:(.text.unlikely+0x2b0): undefined reference to `led_init_default_state_get'
-   csky-linux-ld: rtl8366rb.c:(.text.unlikely+0x2d0): undefined reference to `devm_led_classdev_register_ext'
+I probably wouldn't have created a tda/ subdirectory in bridge/, but I
+don't mind much either way.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  drivers/gpu/drm/i2c/Kconfig                       | 13 -------------
+>  drivers/gpu/drm/i2c/Makefile                      |  4 ----
+>  10 files changed, 22 insertions(+), 18 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9a23e80abf309cbd918a74683895f8dbe0507a6e..a4c7afd564e721e14aebaf828b75776e50760a45 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16982,7 +16982,7 @@ M:	Russell King <linux@armlinux.org.uk>
+>  S:	Maintained
+>  T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-devel
+>  T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-tda998x-fixes
+> -F:	drivers/gpu/drm/i2c/tda998x_drv.c
+> +F:	drivers/gpu/drm/bridge/tda/tda998x_drv.c
+>  F:	include/dt-bindings/display/tda998x.h
+>  K:	"nxp,tda998x"
+>  
+> diff --git a/drivers/gpu/drm/arm/Kconfig b/drivers/gpu/drm/arm/Kconfig
+> index c901ac00c0c3a8f356bd53d97305c6b39b3e6662..ed3ed617c6884876368c8bd072c53f1b710df443 100644
+> --- a/drivers/gpu/drm/arm/Kconfig
+> +++ b/drivers/gpu/drm/arm/Kconfig
+> @@ -9,6 +9,7 @@ config DRM_HDLCD
+>  	select DRM_CLIENT_SELECTION
+>  	select DRM_KMS_HELPER
+>  	select DRM_GEM_DMA_HELPER
+> +	select DRM_BRIDGE # for TDA998x
+>  	help
+>  	  Choose this option if you have an ARM High Definition Colour LCD
+>  	  controller.
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index 6b4664d91faa80f096ac6a0548ed342e802ae68b..1ef16dcc2ae53eb172604de2d6899004c080a979 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -438,4 +438,6 @@ source "drivers/gpu/drm/bridge/imx/Kconfig"
+>  
+>  source "drivers/gpu/drm/bridge/synopsys/Kconfig"
+>  
+> +source "drivers/gpu/drm/bridge/tda/Kconfig"
+> +
+>  endmenu
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index 97304b429a530c108dcbff906965cda091b0a7a2..52e6c9b3094bba0fd6aaf28af1b58f4bd8bf26d0 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -43,3 +43,4 @@ obj-y += analogix/
+>  obj-y += cadence/
+>  obj-y += imx/
+>  obj-y += synopsys/
+> +obj-y += tda/
+> diff --git a/drivers/gpu/drm/bridge/tda/Kconfig b/drivers/gpu/drm/bridge/tda/Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5f13e4ffc24eeaa8dd0015c7e84d0dbac93e170c
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/tda/Kconfig
+> @@ -0,0 +1,13 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +config DRM_I2C_NXP_TDA998X
+> +	tristate "NXP Semiconductors TDA998X HDMI encoder"
+> +	default m if DRM_TILCDC
+> +	select CEC_CORE if CEC_NOTIFIER
+> +	select SND_SOC_HDMI_CODEC if SND_SOC
+> +	help
+> +	  Support for NXP Semiconductors TDA998X HDMI encoders.
+> +
+> +config DRM_I2C_NXP_TDA9950
+> +	tristate "NXP Semiconductors TDA9950/TDA998X HDMI CEC"
+> +	select CEC_NOTIFIER
+> +	select CEC_CORE
+> diff --git a/drivers/gpu/drm/bridge/tda/Makefile b/drivers/gpu/drm/bridge/tda/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..31fd35527d99d7eb23851d290175a3ff0c756772
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/tda/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +tda998x-y := tda998x_drv.o
+> +obj-$(CONFIG_DRM_I2C_NXP_TDA998X) += tda998x.o
+> +obj-$(CONFIG_DRM_I2C_NXP_TDA9950) += tda9950.o
+> diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/bridge/tda/tda9950.c
+> similarity index 100%
+> rename from drivers/gpu/drm/i2c/tda9950.c
+> rename to drivers/gpu/drm/bridge/tda/tda9950.c
+> diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/bridge/tda/tda998x_drv.c
+> similarity index 100%
+> rename from drivers/gpu/drm/i2c/tda998x_drv.c
+> rename to drivers/gpu/drm/bridge/tda/tda998x_drv.c
+> diff --git a/drivers/gpu/drm/i2c/Kconfig b/drivers/gpu/drm/i2c/Kconfig
+> index 6f19e1c35e30b0e595c1a60628a6b8cf313fcabc..3205cdb827b95209a4bba9fb126ad2df27ddbdfb 100644
+> --- a/drivers/gpu/drm/i2c/Kconfig
+> +++ b/drivers/gpu/drm/i2c/Kconfig
+> @@ -20,17 +20,4 @@ config DRM_I2C_SIL164
+>  	  when used in pairs) TMDS transmitters, used in some nVidia
+>  	  video cards.
+>  
+> -config DRM_I2C_NXP_TDA998X
+> -	tristate "NXP Semiconductors TDA998X HDMI encoder"
+> -	default m if DRM_TILCDC
+> -	select CEC_CORE if CEC_NOTIFIER
+> -	select SND_SOC_HDMI_CODEC if SND_SOC
+> -	help
+> -	  Support for NXP Semiconductors TDA998X HDMI encoders.
+> -
+> -config DRM_I2C_NXP_TDA9950
+> -	tristate "NXP Semiconductors TDA9950/TDA998X HDMI CEC"
+> -	select CEC_NOTIFIER
+> -	select CEC_CORE
+> -
+>  endmenu
+> diff --git a/drivers/gpu/drm/i2c/Makefile b/drivers/gpu/drm/i2c/Makefile
+> index a962f6f085686674ed33010345730db776815ebe..1df3869491e277ca210368c4e48efe6d11af62b6 100644
+> --- a/drivers/gpu/drm/i2c/Makefile
+> +++ b/drivers/gpu/drm/i2c/Makefile
+> @@ -4,7 +4,3 @@ obj-$(CONFIG_DRM_I2C_CH7006) += ch7006.o
+>  
+>  sil164-y := sil164_drv.o
+>  obj-$(CONFIG_DRM_I2C_SIL164) += sil164.o
+> -
+> -tda998x-y := tda998x_drv.o
+> -obj-$(CONFIG_DRM_I2C_NXP_TDA998X) += tda998x.o
+> -obj-$(CONFIG_DRM_I2C_NXP_TDA9950) += tda9950.o
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+
+Laurent Pinchart
 
