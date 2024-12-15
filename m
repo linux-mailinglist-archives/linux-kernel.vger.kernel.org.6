@@ -1,374 +1,209 @@
-Return-Path: <linux-kernel+bounces-446340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521409F2311
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:04:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 624399F2312
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 11:04:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A4918860BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEB818860D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 10:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4281487D5;
-	Sun, 15 Dec 2024 10:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CWoSju31"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FA1494D8;
+	Sun, 15 Dec 2024 10:04:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDBC20322
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37BA20322
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 10:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734257062; cv=none; b=aQz+5Ygd0OPcHoTgtDeIsk1Ql848RQif4cysojw26bnnMphmN7DIpV5mKbyYZvRw8fFSkFTCM2x86xklf5DqGk0c5eGrW9eASwcm02peX+h7VSsSo/aWia/p0VKUqUX2xmy96Lh4r56M62uA6P9MwGdlTOCfgPoZY0OdV8iO/4E=
+	t=1734257088; cv=none; b=trz59hYAGAjM2jwC+3VTcXD1ckLBFHfYubOO/Cw8BjuofJNKFlVGvizYN+vVDFg92DMbQ5jlcZ3iht4zfejIzT9L9Fy8ZzZM17XovxNlSxIR8YKpDdlhQwrNbq1B+GIlc0t/gpxFsQnNuE9Q5x7vhuwV43Fc2qWEPyt/jbgPKTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734257062; c=relaxed/simple;
-	bh=H1G7IHH91ROrvN04mtHIkuzWgAcWgDT7IbRdPfWfXTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zf+9vyV/6mB41sBDGU/g/h47NwoPJne+6GBn4tGLyY5teIWyGehldAXP1y+qmAdGO2sPgZ9ZL/PIbRkUZSs76WhcT6XxJsn2YOBhL817OZ4HO/s7CIfPiuujxkBhWILjRB2phbuoP5jhwVAYGl+Fqvo2wPJAe0uxx5exQvvMXb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CWoSju31; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e387ad7abdaso2275855276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 02:04:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734257059; x=1734861859; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uAJaArqx1AqZ8QGrFyJcHuUfAcUCD/Ft5r8EKpL5/Vc=;
-        b=CWoSju3144NveESCNn5i3QRX52ML38OsfrfTWHDB9sCtR1SbUsqCngMcfXznvZsG4b
-         BqFTjpIuZmeTuzxTXi013Bz81jrZvC/qlOn9voSMOIDLYQHPN/7qi6P1PtVYmW3Y4isw
-         5/xNnNrueA7Oe2WvbeqEEi8gc7dj5k1b0JwI9AltOJoCmmAlLpPu54u151laJcsy99bx
-         LEeUEZ99Qrho0CXhF+EA9qjE8+fKSoDaPt5Vd1X1xLU/gKmyz3GlD0LF5CHiEXbUa7Db
-         oNxxAS+kf9D8eOlOXZ3+J12KMsNVFZ/wdwHmJS4gRSajHYtf415XkB1r5IWrIeTgs322
-         +XQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734257059; x=1734861859;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uAJaArqx1AqZ8QGrFyJcHuUfAcUCD/Ft5r8EKpL5/Vc=;
-        b=jKCCIynQ/WbLG3rTAtPf99BpJUcjbKSsfkz5vJmYZZJwjNHzR0dua8zQelCc8nrqRJ
-         T4pK9byLUWo8njn9i3nxWg3mzaugczrYQSZ7u6p+S3vHdG+3xNE9B4wWKMQUDHQarCmX
-         Bj0GJxa72VO8WmovReO7zSp4c3O33qZ9J6BVk8h0UusLjyxkxUe41Q6kXSEAel3/DYJy
-         VtxThHIjemzdtXGDmNGTF5hyMaKN/YO58+rnY1hUc5oEiFDmFo++6JuTZda1b5db3/Mq
-         993iCSlnC5q4B5a8Tu5MWG1iVCvu3RN8WXTp3x9/G3BGOu5Azuv0cd3I30S3y1bksSR0
-         Elyg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9hNyDln1ohvKrP6c1qUf1kJqmyUZdXUC0yj31St1WjZgOE6MCnIuOVOul1v9A1NP8RwzmHqz7MUDJZsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAQa/X14srmv3/kcdipwz2tTj9+drST6b1caofQdFPerEC5ARd
-	wHf0x5RIEZ2+XOCKLag/oWDXKxDz/Viq8/B6oFH6LViXu+Ryhqmz1dJ7EFM1v+62nKKgtJIY0H6
-	bG3y6zGksUzmBeRjJQ/Dh1ZvtjenWdbz/J7b04A==
-X-Gm-Gg: ASbGncunYLuZ0I5iZA8VlWAmGXmYfFYnPgmmtC5UcM0L5c9hzQK7MjB1VV/WbhtCObh
-	fMBZHEslpzM5ENoYjD1NpRZ0yLcrV9hsVZWWs17ZgfMT3Rq7dY1Zy
-X-Google-Smtp-Source: AGHT+IHgTkQqA70oc1CspI5s9VcIDPdAJpQqn9sPiYRcvYJyJgYEC6tFCFhWhgBRPZreJLjJWD+59s/yaSBXx14HJfs=
-X-Received: by 2002:a05:6902:1105:b0:e4c:2726:e67e with SMTP id
- 3f1490d57ef6-e4c27270453mr464529276.26.1734257059049; Sun, 15 Dec 2024
- 02:04:19 -0800 (PST)
+	s=arc-20240116; t=1734257088; c=relaxed/simple;
+	bh=PqILX2C2DBi1a7/GnAPPm1Mi8+xwz4Wn7O4WQ7XP7AA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BrH5ZQES08aqQYebtd/XMXDvM7H0dn/HLO8tMS05LP4dcvoxSLHAaBl3/RiCj5qncZf9nIxVDOTv8Ild5gzQ8TRWdRXpQVvpGaXCRiQ7Go1PYtDfkZl262e5p5qBeJRZDcSHtiPXkvRMGGVnsVfdVlm3Elm56CS5ftdMBA1Q4QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CBBC4CECE;
+	Sun, 15 Dec 2024 10:04:47 +0000 (UTC)
+Date: Sun, 15 Dec 2024 05:05:17 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+Message-ID: <20241215050517.050e9d83@gandalf.local.home>
+In-Reply-To: <CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
+References: <20241214182138.4e7984a2@batman.local.home>
+	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+	<20241214220403.03a8f5d0@gandalf.local.home>
+	<20241214221212.38cc22c3@gandalf.local.home>
+	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+	<20241214233855.46ad80e0@gandalf.local.home>
+	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org>
- <20241214-nouveau-encoder-slave-v1-2-beda767472e3@linaro.org> <20241214203604.GD8294@pendragon.ideasonboard.com>
-In-Reply-To: <20241214203604.GD8294@pendragon.ideasonboard.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 15 Dec 2024 12:04:08 +0200
-Message-ID: <CAA8EJpqyhmmf_S4jDRgyV0rjTnN3BiaKZQ_yg3Mnqd8xNzw0nw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/nouveau: vendor in drm_encoder_slave API
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 14 Dec 2024 at 22:36, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Dmitry,
->
-> Thank you for the patch.
->
-> On Sat, Dec 14, 2024 at 05:35:45PM +0200, Dmitry Baryshkov wrote:
-> > Nouveau driver is the only user of the drm_encoder_slave API. Rework
-> > necessary bits of drm_encoder_slave into the nouveau_i2c_encoder API and
-> > drop drm_encoder_slave.c from the DRM KMS helper.
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/Makefile                           |   1 -
-> >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   1 +
-> >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  10 +-
-> >  drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c  |  30 +++---
-> >  drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c |   8 +-
-> >  drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h |   4 +-
-> >  drivers/gpu/drm/nouveau/dispnv04/i2c/sil164_drv.c  |  30 +++---
-> >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
-> >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  18 ++--
-> >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
-> >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 108 ++++++++-------------
-> >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
-> >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
-> >  13 files changed, 127 insertions(+), 191 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> > index 19fb370fbc56772077973c864df71e4b8e0bf99b..85af94bb907d6cdbad7078e2667426e479b1069f 100644
-> > --- a/drivers/gpu/drm/Makefile
-> > +++ b/drivers/gpu/drm/Makefile
-> > @@ -135,7 +135,6 @@ drm_kms_helper-y := \
-> >       drm_atomic_state_helper.o \
-> >       drm_crtc_helper.o \
-> >       drm_damage_helper.o \
-> > -     drm_encoder_slave.o \
-> >       drm_flip_work.o \
-> >       drm_format_helper.o \
-> >       drm_gem_atomic_helper.o \
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/Kbuild b/drivers/gpu/drm/nouveau/dispnv04/Kbuild
-> > index 949802882ebd53c15e124c218a092af9693d36bc..4c7bc6bb81b325ac22286372b0a3e4f1390e78be 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/Kbuild
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/Kbuild
-> > @@ -6,6 +6,7 @@ nouveau-y += dispnv04/dac.o
-> >  nouveau-y += dispnv04/dfp.o
-> >  nouveau-y += dispnv04/disp.o
-> >  nouveau-y += dispnv04/hw.o
-> > +nouveau-y += dispnv04/nouveau_i2c_encoder.o
-> >  nouveau-y += dispnv04/overlay.o
-> >  nouveau-y += dispnv04/tvmodesnv17.o
-> >  nouveau-y += dispnv04/tvnv04.o
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/dfp.c b/drivers/gpu/drm/nouveau/dispnv04/dfp.c
-> > index 28a42ab5cb900ebe8a526e154f9e90598333356c..e211602298a5fb9f513203720b3ee5d37cd21122 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/dfp.c
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/dfp.c
-> > @@ -171,7 +171,7 @@ static struct drm_encoder *get_tmds_slave(struct drm_encoder *encoder)
-> >       list_for_each_entry(slave, &dev->mode_config.encoder_list, head) {
-> >               struct dcb_output *slave_dcb = nouveau_encoder(slave)->dcb;
-> >
-> > -             if (slave_dcb->type == DCB_OUTPUT_TMDS && get_slave_funcs(slave) &&
-> > +             if (slave_dcb->type == DCB_OUTPUT_TMDS && get_encoder_i2c_funcs(slave) &&
-> >                   slave_dcb->tmdsconf.slave_addr == dcb->tmdsconf.slave_addr)
-> >                       return slave;
-> >       }
-> > @@ -473,7 +473,7 @@ static void nv04_dfp_commit(struct drm_encoder *encoder)
-> >       /* Init external transmitters */
-> >       slave_encoder = get_tmds_slave(encoder);
-> >       if (slave_encoder)
-> > -             get_slave_funcs(slave_encoder)->mode_set(
-> > +             get_encoder_i2c_funcs(slave_encoder)->mode_set(
-> >                       slave_encoder, &nv_encoder->mode, &nv_encoder->mode);
-> >
-> >       helper->dpms(encoder, DRM_MODE_DPMS_ON);
-> > @@ -614,8 +614,8 @@ static void nv04_dfp_destroy(struct drm_encoder *encoder)
-> >  {
-> >       struct nouveau_encoder *nv_encoder = nouveau_encoder(encoder);
-> >
-> > -     if (get_slave_funcs(encoder))
-> > -             get_slave_funcs(encoder)->destroy(encoder);
-> > +     if (get_encoder_i2c_funcs(encoder))
-> > +             get_encoder_i2c_funcs(encoder)->destroy(encoder);
-> >
-> >       drm_encoder_cleanup(encoder);
-> >       kfree(nv_encoder);
-> > @@ -649,7 +649,7 @@ static void nv04_tmds_slave_init(struct drm_encoder *encoder)
-> >       if (type < 0)
-> >               return;
-> >
-> > -     drm_i2c_encoder_init(dev, to_encoder_slave(encoder),
-> > +     nouveau_i2c_encoder_init(dev, to_encoder_i2c(encoder),
-> >                            &bus->i2c, &info[type].dev);
-> >  }
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c
-> > index 131512a5f3bd996ad1e2eb869ffa09837daba0c7..c9249b58e65459ae61898a246c36da2c3bfe0844 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c
-> > @@ -47,14 +47,14 @@ static void ch7006_encoder_destroy(struct drm_encoder *encoder)
-> >       drm_property_destroy(encoder->dev, priv->scale_property);
-> >
-> >       kfree(priv);
-> > -     to_encoder_slave(encoder)->slave_priv = NULL;
-> > +     to_encoder_i2c(encoder)->encoder_i2c_priv = NULL;
-> >
-> > -     drm_i2c_encoder_destroy(encoder);
-> > +     nouveau_i2c_encoder_destroy(encoder);
-> >  }
-> >
-> >  static void  ch7006_encoder_dpms(struct drm_encoder *encoder, int mode)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_state *state = &priv->state;
-> >
-> > @@ -71,7 +71,7 @@ static void  ch7006_encoder_dpms(struct drm_encoder *encoder, int mode)
-> >
-> >  static void ch7006_encoder_save(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >
-> >       ch7006_dbg(client, "\n");
-> > @@ -81,7 +81,7 @@ static void ch7006_encoder_save(struct drm_encoder *encoder)
-> >
-> >  static void ch7006_encoder_restore(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >
-> >       ch7006_dbg(client, "\n");
-> > @@ -116,7 +116,7 @@ static void ch7006_encoder_mode_set(struct drm_encoder *encoder,
-> >                                    struct drm_display_mode *drm_mode,
-> >                                    struct drm_display_mode *adjusted_mode)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_encoder_params *params = &priv->params;
-> >       struct ch7006_state *state = &priv->state;
-> > @@ -179,7 +179,7 @@ static void ch7006_encoder_mode_set(struct drm_encoder *encoder,
-> >  static enum drm_connector_status ch7006_encoder_detect(struct drm_encoder *encoder,
-> >                                                      struct drm_connector *connector)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_state *state = &priv->state;
-> >       int det;
-> > @@ -285,7 +285,7 @@ static int ch7006_encoder_set_property(struct drm_encoder *encoder,
-> >                                      struct drm_property *property,
-> >                                      uint64_t val)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_state *state = &priv->state;
-> >       struct drm_mode_config *conf = &encoder->dev->mode_config;
-> > @@ -370,7 +370,7 @@ static int ch7006_encoder_set_property(struct drm_encoder *encoder,
-> >       return 0;
-> >  }
-> >
-> > -static const struct drm_encoder_slave_funcs ch7006_encoder_funcs = {
-> > +static const struct nouveau_i2c_encoder_funcs ch7006_encoder_funcs = {
-> >       .set_config = ch7006_encoder_set_config,
-> >       .destroy = ch7006_encoder_destroy,
-> >       .dpms = ch7006_encoder_dpms,
-> > @@ -437,7 +437,7 @@ static int ch7006_resume(struct device *dev)
-> >
-> >  static int ch7006_encoder_init(struct i2c_client *client,
-> >                              struct drm_device *dev,
-> > -                            struct drm_encoder_slave *encoder)
-> > +                            struct nouveau_i2c_encoder *encoder)
-> >  {
-> >       struct ch7006_priv *priv;
-> >       int i;
-> > @@ -448,8 +448,8 @@ static int ch7006_encoder_init(struct i2c_client *client,
-> >       if (!priv)
-> >               return -ENOMEM;
-> >
-> > -     encoder->slave_priv = priv;
-> > -     encoder->slave_funcs = &ch7006_encoder_funcs;
-> > +     encoder->encoder_i2c_priv = priv;
-> > +     encoder->encoder_i2c_funcs = &ch7006_encoder_funcs;
-> >
-> >       priv->norm = TV_NORM_PAL;
-> >       priv->select_subconnector = DRM_MODE_SUBCONNECTOR_Automatic;
-> > @@ -495,7 +495,7 @@ static const struct dev_pm_ops ch7006_pm_ops = {
-> >       .resume = ch7006_resume,
-> >  };
-> >
-> > -static struct drm_i2c_encoder_driver ch7006_driver = {
-> > +static struct nouveau_i2c_encoder_driver ch7006_driver = {
-> >       .i2c_driver = {
-> >               .probe = ch7006_probe,
-> >               .remove = ch7006_remove,
-> > @@ -516,12 +516,12 @@ static struct drm_i2c_encoder_driver ch7006_driver = {
-> >
-> >  static int __init ch7006_init(void)
-> >  {
-> > -     return drm_i2c_encoder_register(THIS_MODULE, &ch7006_driver);
-> > +     return i2c_add_driver(&ch7006_driver.i2c_driver);
-> >  }
-> >
-> >  static void __exit ch7006_exit(void)
-> >  {
-> > -     drm_i2c_encoder_unregister(&ch7006_driver);
-> > +     i2c_del_driver(&ch7006_driver.i2c_driver);
-> >  }
-> >
-> >  int ch7006_debug;
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c
-> > index 6afe6d0ee6306db57c3e3bafe2bf1b0b1b49aea5..e58d94451959a2afc01f570ea620d8e6721cb7af 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c
-> > @@ -198,7 +198,7 @@ const struct ch7006_mode *ch7006_lookup_mode(struct drm_encoder *encoder,
-> >
-> >  void ch7006_setup_levels(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       uint8_t *regs = priv->state.regs;
-> >       const struct ch7006_tv_norm_info *norm = &ch7006_tv_norms[priv->norm];
-> > @@ -229,7 +229,7 @@ void ch7006_setup_levels(struct drm_encoder *encoder)
-> >
-> >  void ch7006_setup_subcarrier(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_state *state = &priv->state;
-> >       const struct ch7006_tv_norm_info *norm = &ch7006_tv_norms[priv->norm];
-> > @@ -253,7 +253,7 @@ void ch7006_setup_subcarrier(struct drm_encoder *encoder)
-> >
-> >  void ch7006_setup_pll(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       uint8_t *regs = priv->state.regs;
-> >       const struct ch7006_mode *mode = priv->mode;
-> > @@ -324,7 +324,7 @@ void ch7006_setup_power_state(struct drm_encoder *encoder)
-> >
-> >  void ch7006_setup_properties(struct drm_encoder *encoder)
-> >  {
-> > -     struct i2c_client *client = drm_i2c_encoder_get_client(encoder);
-> > +     struct i2c_client *client = nouveau_i2c_encoder_get_client(encoder);
-> >       struct ch7006_priv *priv = to_ch7006_priv(encoder);
-> >       struct ch7006_state *state = &priv->state;
-> >       const struct ch7006_tv_norm_info *norm = &ch7006_tv_norms[priv->norm];
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
-> > index c66ca7f525034bb9fd113c5edf10c371a01c3c79..a62387ae3af11163cbd64317686a8be5a4f4011c 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
-> > @@ -27,9 +27,9 @@
-> >  #ifndef __DRM_I2C_CH7006_PRIV_H__
-> >  #define __DRM_I2C_CH7006_PRIV_H__
-> >
-> > -#include <drm/drm_encoder_slave.h>
-> >  #include <drm/drm_probe_helper.h>
-> >
-> > +#include <i2c/encoder_i2c.h>
-> >  #include <i2c/ch7006.h>
->
-> I don't have a strong opinion on the nouveau driver internals, but I
-> think
->
-> #include <dispnv04/i2c/encoder_i2c.h>
-> #include <dispnv04/i2c/ch7006.h>
->
-> could be less ambiguous. Up to you and the nouveau maintainers.
+On Sat, 14 Dec 2024 21:19:01 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Good question. I'll post v2, fixing the missing Kconfig in patch 1 and
-keeping existing includes, but I'm open to the feedback from nouveau
-maintainers.
+I'll start by saying that I'm fine with ripping this out, but I'm going to
+expect seeing bugs in trace events where people just reference strings in
+the TP_printk() instead of using the assign_str() logic. I use to get
+reports of this a few times a year, and have not had one since this code
+was added back in 2021. That's over 3 years of this bug going away in
+mainline.
 
--- 
-With best wishes
-Dmitry
+> The code is literally making assumptions about how va_list arguments
+> even work. It calls trace_seq_printf() and expects that to keep the
+> "va_list" argument in sync as it walks the argument list.
+
+I did my research on this before adding it. With the eventfs, I was very
+open about not understanding the file system logic and asked for help,
+which I received very little on. I had to go by tribal knowledge.
+
+> 
+> The code even seems to *know* how hacky and wrong it is, because it
+> does a RUNTIME CHECK for this in test_can_verify(). But that really is
+> just testing one random implementation. The whole approach
+> fundamnetally doesn't work on some architectures at all, and on others
+> it would be broken by seq_buf_vprintf() (or vsprintf) doing a
+> va_copy() and using an internal version or any number of other things.
+> 
+> So the code IS WRONG.
+
+As I said, I did my homework on this and knew exactly what it was doing. I
+did my research on va_list and it is possible to do this if the va_list is a
+reference and not a copy (as my comment states), which is what the verify
+was checking.
+
+> 
+> It's wrong at a fundamental level. The thing where it modifies
+> iter->fmt in place is just a detail in the bigger picture of that
+> function being completely broken.
+
+BTW, this code had only two minor bugs in it since it was created, and the
+last one was on March 2022. The bug here, was simply that the temp buffer
+it used could also be passed into the function. That would break any
+algorithm. The logic itself was not the bug at all. One solution I was
+thinking of doing was to introduce a second temp buffer to use, and not
+change this code at all.
+
+> 
+> It's literally hacking together a really *bad* version of KASAN
+> checking, re-implementing 'vsnprintf()' *badly* by trying to use the
+> real vsnprintf() for the heavy lifting and literally hacking around
+> corner cases. And when I say that the "va_list" handling is buggy, I'm
+> *not* asking you to try to fix it. The va_list bug is just another
+> symptom of the deeper problem in that thing.
+
+What va_list bug? That logic didn't break. The breakage came here:
+
+		strncpy(iter->fmt, p, i);
+		iter->fmt[i] = '\0';
+
+Where it didn't expect p to be pointing to iter->fmt! Because it expected
+the fmt parameter to point to the "const char * printk_fmt" of the trace
+event, and not be pointing to the iter->fmt itself. My fault for not
+noticing in the call in trace_event_printf():
+
+	trace_check_vprintf(iter, trace_event_format(iter, fmt), ap);
+
+that trace_event_format() can return iter->fmt if the hash-ptr option is
+disabled.
+
+p was pointing into iter->fmt because iter->fmt was passed into the
+function as the "fmt" parameter that p was assigned to.
+
+The fmt parameter started with "comm=%s" and in this case iter->fmt = fmt
+and p was iterating it.
+
+When the fmt had:  "comm=%s pid=%d"
+
+We get to i = 5 and since fmt = iter->fmt, p = fmt, that means p = iter->fmt!
+
+The iter->fmt[i] = '\0'; Just changed p[i] to be '\0'. That was the bug. It
+had nothing to do with the va_list logic.
+
+		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
+
+Would copy the "comm=" into the seq buffer, but then the code after that
+was broken, as p[i] == '\0'.
+
+			strncpy(iter->fmt, p + i, j + 1);
+			iter->fmt[j+1] = '\0';
+
+Which just copied an empty string to iter->fmt, so when we do:
+
+			trace_seq_printf(&iter->seq, iter->fmt, str);
+
+It also copied an empty string into the seq buffer.
+
+ The result was:
+
+  "comm= pid=1234"
+
+> 
+> This is why I compared it to the tracefs situation. It has exactly the
+> same pattern: fundamentally misusing core kernel infrastructure,
+> hacking around it to get something that "works", but that is wrong on
+> a fundamental level, and then adding more hacks on top when some new
+> issue rears its ugly head.
+> 
+> I absolutely believe that coimmit ff54c8dc3f7a fixes some behavior.
+> But I'm looking at it and going "this code is not salvageable". All
+> you do is add more bandaids on top.
+
+That commit fixes the iter->fmt being passed into the function by making
+the assumption that p will iterate over the temp buffer. It has nothing to
+do with the current code that hasn't seen a bug since 2022, and has stopped
+constant "%s" bugs since then.
+
+I could have replace ff54c8dc3f7a with using another temp buffer instead
+and not change the logic of trace_check_vprintk() at all. Hence, the
+va_list logic wasn't the bug.
+
+> 
+> Do it right. And honestly, "right" in this case is almost certainly
+> "get rid of trace_check_vprintf() entirely".
+
+I can get rid of it, but I highly expect to see the "%s" bug start showing
+up within a few months again.
+
+> 
+> The fact that you basically disable the thing already with a static
+> branch when 'va_list" doesn't work the way you want is a BIG sign.
+
+It gets disabled because I know there were two implementations of va_list.
+One that used a pass by reference and another that used a copy. This
+wouldn't work with the copy (32bit x86 does that) but does work with pass
+by reference (64 bit x86 does that). And the fact that the "%s" bug stopped
+showing up after I implemented it, and I was even asked by someone about
+the WARN_ON() triggering (but the bug never made it into your tree), I know
+that it was the reason the bug stopped showing up.
+
+> 
+> Just disable it unconditionally.
+> 
+
+I can do that, but I'm not looking forward to seeing random crashes in the
+trace event code again :-(
+
+Honestly, I did not like this code when I wrote it, but I have no idea how
+to stop the "%s" bug from happening before it gets out to production. This
+worked. Do you have any suggestions for alternatives?
+
+-- Steve
 
