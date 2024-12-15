@@ -1,112 +1,219 @@
-Return-Path: <linux-kernel+bounces-446299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E808A9F2244
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9A89F224A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 06:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5907E1886E47
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF591886D91
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 05:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12FD17BBF;
-	Sun, 15 Dec 2024 05:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A58A17BBF;
+	Sun, 15 Dec 2024 05:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aDOrv1gM"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goTKoz3y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A785CA6B
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 05:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD9946C;
+	Sun, 15 Dec 2024 05:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734240057; cv=none; b=NRaN8NZjXdGXCVioLkDRDQO/S0hc2m5429Cg7ermCkpjMcHbupYxRCv23E7KqZLjmjXdFG3/oQtA1SFilS71l1OWdi20+4ZHa3FqXQP8VsGxd/amVyig3EYbBsHnW1jZm8S240BuIp4GQvVPMoKK91D11KNoaU+N+d7eDGA66MA=
+	t=1734240790; cv=none; b=AocxM5yzy+vmDA9YPiQ2Lz4OsPEm0xSnwQHm3FM6vv6ULO/6LRS6GonBlmL/akt8RN+vGMtNpL1O2VgwbrhZcH/V0lliJKWxP+KAxfMUMzLe6raA5VqoYGKtKwSl8NMmEDyNfY8BfEBKI/E65RdExVXdNhJCnRWIENLGugNP7BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734240057; c=relaxed/simple;
-	bh=Ltjwz/XO7//43l51lHbe02NSZUnZYBRUH2GyAsi4rs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E+RNrj8Zdejf6SflK9qP7jm2YcLpY5Bz47AAeh2VeSq3Aes7pZHNroilJCBjKCwrrpjQrm1BU4DM4RS27wHry0RVnP6iXSbnYw1Al42CGNVqCunK0plMR9PqW4nBOogvp6aJ1gmKpNePgnIGeHqxTg3dBTp5D8kl3UcgiEaYV4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aDOrv1gM; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d647d5df91so3164888a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734240054; x=1734844854; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p0oWhzbRv4ivtENhrLib3Ss1yzhkHaNRWs6vOjisUSI=;
-        b=aDOrv1gMQaSyOb5GtCpRcvCvSQ1nD1CgE4dd5fQRNyNYRFui6ZJD5DVIrtPkuIb2Wy
-         xpJ2cuWXuND5QSRDXJ/jS/o8Hb0qBQViT5MYN+CKCRadYVN141yjF2O+M/iws034goOT
-         niHseuXOHMrdSL5zBVwyU2nMcWEekfVpc7OFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734240054; x=1734844854;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p0oWhzbRv4ivtENhrLib3Ss1yzhkHaNRWs6vOjisUSI=;
-        b=ss1/26I5oT+ySttkhlE3iP9BeDdgQxoDAWglBtl2G917GlxcWlUqWz3A1XkAYmgILO
-         KLdaWCVXWEtTJY1mJlgFy4f3pYdk/rn7iXMfjrosCnYJsO6XLES1jIpxqVp8zQ3e5P6U
-         sYvb+zb/ixTTUIbnTJ5NStuEdIcmv6y2Q2XFBOHkBAR3qssG2hckMpGWITGyjuJr1R5E
-         TrBE5SfbDykuo9H+FtwKUpOdNDNSYeNLfLuE2DBoWjHCnHsfkU+3/+Ds2OQ0YMELWQlN
-         VPF8jwWMp08JIK5ir+eOjg/t0IjzvPqSiMocTKXevWAwrwh4S2KGvhH6XKgXiUBzfbSE
-         XSBw==
-X-Gm-Message-State: AOJu0YxBpeUIUtNteFmpRHD8bUMFF4AQZomRZsazs2EDEOTmuxzhcura
-	g1QPOtDoyr5kKIMESwzt7hEgy7fZ2wHhtaZhlgFpYMcpH+Yn0pyGmGTGRmHXmiCqBLWrwbKJ99r
-	L1+o=
-X-Gm-Gg: ASbGncuWjZzzzdIrgpsgPQiIXJ9w6pOoWmvLiiDULPO607mWGkQasBewtlDi1HBRVhU
-	2I7Ut8PPhzz5d9cV0LfO0xzpWBqhD1BzvfR9NCy1QI4EMu22aifgRQXKItdmkf/tFQy5C9cSZDb
-	5EJf0RFVTJQgEAps6ccDwAhI7qr8BodFbjyN7c24HJ1FTB0ulQ1oU1u2V9GIto7jm6Rs/O0Uiy1
-	wRQVH3kpb9qLZPWE/P/afSU7VttpEGtNOzZjA4OW+FADqC/sK5AbhACbisczuExZK3EEThPv6Mr
-	kN4pDhw4d0nPAOWUIi6vB40TjnggHn8=
-X-Google-Smtp-Source: AGHT+IGI0AJtypbhRG2bgy+nnmDR4nrCJX+se2uuJgjvnJBdaXrPwKf+zYcJXRrRZ6vNhP6RJKAGQQ==
-X-Received: by 2002:a05:6402:370a:b0:5d4:75b:8ced with SMTP id 4fb4d7f45d1cf-5d63c3c181fmr7679311a12.32.1734240053696;
-        Sat, 14 Dec 2024 21:20:53 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f25afbsm1732266a12.55.2024.12.14.21.20.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 14 Dec 2024 21:20:52 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aabbb507998so8320366b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 21:20:52 -0800 (PST)
-X-Received: by 2002:a17:907:6d1f:b0:aa6:b63a:4521 with SMTP id
- a640c23a62f3a-aab7790798amr880311266b.15.1734240051722; Sat, 14 Dec 2024
- 21:20:51 -0800 (PST)
+	s=arc-20240116; t=1734240790; c=relaxed/simple;
+	bh=+fY9hEPSKJmOpv8MMFl4MGi9GJjNk1kJJuxIOhFcZ+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4VnjmmX3VndP+K/a50njS2YenjZcQ2YU3OfwWU7AD93sxDLWlMvXVwcq7ZCzzYs3Q/GDH6MEulJbYsH0yx/dJBgy4w21G85p0NwqH6n+Z6hQYI4mfgBwJaUmfO0gHf6rL80/5dniaG4TKO6ud8388kvOzc5iNYfvYNwN65/I80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goTKoz3y; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734240788; x=1765776788;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+fY9hEPSKJmOpv8MMFl4MGi9GJjNk1kJJuxIOhFcZ+s=;
+  b=goTKoz3yKTt6kRx4m0U57AK2L2KuVO8u6Hpfj9FrpguHIN6YJojCIGj9
+   OIU6GlXxp23s9yQeblo5y1g2rqjN+sDiAh9H1lU4rUCuV1JyPk1mZFYPN
+   /rjidzOiZqLmDyA96z3STjJX7aLbY51VRx1VnQFrma9d6sjo/ue5/p0C5
+   gGloiyUzNroTMCepdAA2YI4DwcaV34fGJ26DuFD5zfdhpWSjaSnOrGKxs
+   6PEGGYRjfj6MoOJgeflqOVFNP/K4QvQD0UcQAA805TiEIoznlFjo894Yx
+   X6IU84wLCzGIPtDJGaHRbxF1v2Kp6f5cE+3Kbr+vFqBXWswa+nTAyJgEo
+   A==;
+X-CSE-ConnectionGUID: xOERSROTSVW0cyBcIOXRMA==
+X-CSE-MsgGUID: ZOGETKw6S7a+rU7DO0l6kA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11286"; a="22236789"
+X-IronPort-AV: E=Sophos;i="6.12,235,1728975600"; 
+   d="scan'208";a="22236789"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2024 21:33:07 -0800
+X-CSE-ConnectionGUID: jx8Wunj5QrGej9qdFuAyEw==
+X-CSE-MsgGUID: arxHAJamRTuuU+XVW7hbIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="127889575"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Dec 2024 21:33:05 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMhFW-000DSU-2o;
+	Sun, 15 Dec 2024 05:33:02 +0000
+Date: Sun, 15 Dec 2024 13:32:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: yangge1116@126.com, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	21cnbao@gmail.com, david@redhat.com, baolin.wang@linux.alibaba.com,
+	vbabka@suse.cz, liuzixing@hygon.cn, yangge <yangge1116@126.com>
+Subject: Re: [PATCH V2] mm, compaction: don't use ALLOC_CMA in long term GUP
+ flow
+Message-ID: <202412151325.svvh8EAB-lkp@intel.com>
+References: <1734157420-31110-1-git-send-email-yangge1116@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214182138.4e7984a2@batman.local.home> <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
- <20241214220403.03a8f5d0@gandalf.local.home> <CAHk-=whrxZwrdm2zHrTmEdRoiC_29XR+0nJpq2CkZjm-ZdOTNg@mail.gmail.com>
- <20241214232333.3c49c1e3@gandalf.local.home> <CAHk-=wi63xXZiCUsMC_3JCuBbYNT2wSiF0JE24fKbyS=yGu8hA@mail.gmail.com>
- <20241214235320.0b01d809@gandalf.local.home>
-In-Reply-To: <20241214235320.0b01d809@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Dec 2024 21:20:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgoGjv3Mw6B7fpjrG_psaaks7FVrPgFO6wbCSAY-96_hA@mail.gmail.com>
-Message-ID: <CAHk-=wgoGjv3Mw6B7fpjrG_psaaks7FVrPgFO6wbCSAY-96_hA@mail.gmail.com>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1734157420-31110-1-git-send-email-yangge1116@126.com>
 
-On Sat, 14 Dec 2024 at 20:52, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> But main code of trace_check_vprintk() that you appear to be objecting to
-> is the hacking into vsnprintf() that was added back in 2021 to handle the
-> RCU and other events that point to their strings. I'm not sure how we can
-> check that before hand because we don't see the pointers until the event is
-> being printed.
+Hi,
 
-I'm objecting to ALL of it.
+kernel test robot noticed the following build errors:
 
-It's a debug feature that is *broken*. And not in some kind of subtle
-way. In a very fundamental way.
+[auto build test ERROR on akpm-mm/mm-everything]
 
-                  Linus
+url:    https://github.com/intel-lab-lkp/linux/commits/yangge1116-126-com/mm-compaction-don-t-use-ALLOC_CMA-in-long-term-GUP-flow/20241214-142453
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/1734157420-31110-1-git-send-email-yangge1116%40126.com
+patch subject: [PATCH V2] mm, compaction: don't use ALLOC_CMA in long term GUP flow
+config: arm-randconfig-001-20241215 (https://download.01.org/0day-ci/archive/20241215/202412151325.svvh8EAB-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 2dc22615fd46ab2566d0f26d5ba234ab12dc4bf8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241215/202412151325.svvh8EAB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412151325.svvh8EAB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/vmscan.c:30:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+   mm/vmscan.c:409:51: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     409 |                         size += zone_page_state(zone, NR_ZONE_LRU_BASE + lru);
+         |                                                       ~~~~~~~~~~~~~~~~ ^ ~~~
+   mm/vmscan.c:1773:4: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
+    1773 |                         __count_zid_vm_events(PGSCAN_SKIP, zid, nr_skipped[zid]);
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
+     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
+         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+   mm/vmscan.c:2279:51: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+    2279 |         inactive = lruvec_page_state(lruvec, NR_LRU_BASE + inactive_lru);
+         |                                              ~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+   mm/vmscan.c:2280:49: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+    2280 |         active = lruvec_page_state(lruvec, NR_LRU_BASE + active_lru);
+         |                                            ~~~~~~~~~~~ ^ ~~~~~~~~~~
+>> mm/vmscan.c:5822:61: error: too many arguments to function call, expected 3, have 4
+    5822 |                 if (compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
+         |                     ~~~~~~~~~~~~~~~~~~~                                   ^
+   include/linux/compaction.h:111:20: note: 'compaction_suitable' declared here
+     111 | static inline bool compaction_suitable(struct zone *zone, int order,
+         |                    ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 |                                                       int highest_zoneidx)
+         |                                                       ~~~~~~~~~~~~~~~~~~~
+   mm/vmscan.c:6050:61: error: too many arguments to function call, expected 3, have 4
+    6050 |         if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
+         |              ~~~~~~~~~~~~~~~~~~~                                   ^
+   include/linux/compaction.h:111:20: note: 'compaction_suitable' declared here
+     111 | static inline bool compaction_suitable(struct zone *zone, int order,
+         |                    ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     112 |                                                       int highest_zoneidx)
+         |                                                       ~~~~~~~~~~~~~~~~~~~
+   mm/vmscan.c:6239:3: warning: arithmetic between different enumeration types ('enum vm_event_item' and 'enum zone_type') [-Wenum-enum-conversion]
+    6239 |                 __count_zid_vm_events(ALLOCSTALL, sc->reclaim_idx, 1);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:139:34: note: expanded from macro '__count_zid_vm_events'
+     139 |         __count_vm_events(item##_NORMAL - ZONE_NORMAL + zid, delta)
+         |                           ~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+   7 warnings and 2 errors generated.
+
+
+vim +5822 mm/vmscan.c
+
+  5778	
+  5779	/*
+  5780	 * Reclaim/compaction is used for high-order allocation requests. It reclaims
+  5781	 * order-0 pages before compacting the zone. should_continue_reclaim() returns
+  5782	 * true if more pages should be reclaimed such that when the page allocator
+  5783	 * calls try_to_compact_pages() that it will have enough free pages to succeed.
+  5784	 * It will give up earlier than that if there is difficulty reclaiming pages.
+  5785	 */
+  5786	static inline bool should_continue_reclaim(struct pglist_data *pgdat,
+  5787						unsigned long nr_reclaimed,
+  5788						struct scan_control *sc)
+  5789	{
+  5790		unsigned long pages_for_compaction;
+  5791		unsigned long inactive_lru_pages;
+  5792		int z;
+  5793	
+  5794		/* If not in reclaim/compaction mode, stop */
+  5795		if (!in_reclaim_compaction(sc))
+  5796			return false;
+  5797	
+  5798		/*
+  5799		 * Stop if we failed to reclaim any pages from the last SWAP_CLUSTER_MAX
+  5800		 * number of pages that were scanned. This will return to the caller
+  5801		 * with the risk reclaim/compaction and the resulting allocation attempt
+  5802		 * fails. In the past we have tried harder for __GFP_RETRY_MAYFAIL
+  5803		 * allocations through requiring that the full LRU list has been scanned
+  5804		 * first, by assuming that zero delta of sc->nr_scanned means full LRU
+  5805		 * scan, but that approximation was wrong, and there were corner cases
+  5806		 * where always a non-zero amount of pages were scanned.
+  5807		 */
+  5808		if (!nr_reclaimed)
+  5809			return false;
+  5810	
+  5811		/* If compaction would go ahead or the allocation would succeed, stop */
+  5812		for (z = 0; z <= sc->reclaim_idx; z++) {
+  5813			struct zone *zone = &pgdat->node_zones[z];
+  5814			if (!managed_zone(zone))
+  5815				continue;
+  5816	
+  5817			/* Allocation can already succeed, nothing to do */
+  5818			if (zone_watermark_ok(zone, sc->order, min_wmark_pages(zone),
+  5819					      sc->reclaim_idx, 0))
+  5820				return false;
+  5821	
+> 5822			if (compaction_suitable(zone, sc->order, sc->reclaim_idx, 0))
+  5823				return false;
+  5824		}
+  5825	
+  5826		/*
+  5827		 * If we have not reclaimed enough pages for compaction and the
+  5828		 * inactive lists are large enough, continue reclaiming
+  5829		 */
+  5830		pages_for_compaction = compact_gap(sc->order);
+  5831		inactive_lru_pages = node_page_state(pgdat, NR_INACTIVE_FILE);
+  5832		if (can_reclaim_anon_pages(NULL, pgdat->node_id, sc))
+  5833			inactive_lru_pages += node_page_state(pgdat, NR_INACTIVE_ANON);
+  5834	
+  5835		return inactive_lru_pages > pages_for_compaction;
+  5836	}
+  5837	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
