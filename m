@@ -1,362 +1,140 @@
-Return-Path: <linux-kernel+bounces-446239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39E69F2199
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:34:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9499F219A
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 01:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2348166219
-	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:34:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03AFF1886875
+	for <lists+linux-kernel@lfdr.de>; Sun, 15 Dec 2024 00:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249264C80;
-	Sun, 15 Dec 2024 00:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604CD1C27;
+	Sun, 15 Dec 2024 00:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fXDycUgC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S3wCP1Sf"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC22EC0
-	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E99E36C
+	for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 00:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734222846; cv=none; b=VcEsH2PE5cBA4Q92PXdD1ODeE+o4vETPF1xGhjuNimUTrW6QdBuLEG9WfxEmG02/Cn79tewpzFb41UBLStwlsIAvEASdZ4w3dvoOQaqblKllAYlUNHicRrgAlozgNc8IXr9PiyLK7TaqY4hJ/E6E+kt2VKJeBeUEKIzUh1anYeg=
+	t=1734223082; cv=none; b=U9+4+hUt25oYqOMuRkK/JmjM6aw2MulOxwAphro664Hh3Nmh4ITvPiDcr3JKwlU4YVC3jyvTpLU1hryYigKutHobS7Z8KfJWYI/dvJvYmJHxQWI1scRhk7w583ivgT5U0MHcXIbqV4G5ANhvHzg5F+iFUopgAInLbSfKYWwTOXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734222846; c=relaxed/simple;
-	bh=pWQn3JV+/a88gt8ILo01+Z7GYnZjpGJjND4nuVqK04o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kq7EfRFtcdSxoS5DtoY7yvF2oWVwuBBXpP2Ms5pnPlP3XSS7sobh1awQKhxXwib2ym7Jjsaf8+dzmM2BeZLHND/vMn9Mvst3KZ9ZSGJh/3zex1JVtC6CJIhGKUzKWTqrSRKuTHyUSWEPGXitEvhFe6peDgXUvG/sti5SkqEfxHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fXDycUgC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4361d5dcf5bso32223845e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:34:02 -0800 (PST)
+	s=arc-20240116; t=1734223082; c=relaxed/simple;
+	bh=G2LKWQr1J6nfI88bqaGvpEmyXxeJu00LiqMMfKxVkRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bmfBEjco6W+IwO6UC7GgrMUl7duTlZ/51Q+qzfIfHeE6JZFQvZnT4LjOaO5cEwXgIeHSzcR18+gw+umQSv+0zvnpS6quXE/D/+CMIf5TWRSCMXydW2ZuF8pA8aAF+FE+V39vvgs4eAhR+k8KLXbkwN6yGOiWoV/iIpOmGHjpW1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S3wCP1Sf; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso5403691a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:38:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734222841; x=1734827641; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JAPvPxiy58GCJu8OdAKmusbfiRklcnwh5LO/YJk+t9w=;
-        b=fXDycUgCYtz7a/WZKH23BwZ+ND9yZNH0z+d8ym/afYaojkMfyVJ2jxT/kn4KgS0jor
-         o6QI1f5gLhaiRptGfX9TkJW61SyuN/L7jEobXkWKasGtkt1jcCtD2Rzdv9rLT+vKyNK2
-         IChr/xjU7msROls+K4ExaTeRWTW1eOdHKxIq2E5eBFGVxRl+jVfK5SyW9S66uFLoheAp
-         Ocvw8rmx8CUt8bOsH4mKXDthtE+3S0Q20dbDLhy/7lfN1ju0GW5vKqPbFz7FYZske8WS
-         mMXopA6D12uuQqFQqaDoRnNanebPB6sTo75SHAgrKsZoIEf0uEHKdql34lXZOlbDYbV+
-         CxCQ==
+        d=linux-foundation.org; s=google; t=1734223078; x=1734827878; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lek2a64UVzeNy0p4/Sh+8fSGQa+3tUGdFQWLgqLbCoI=;
+        b=S3wCP1SfKMxnuEY3w6peqn3Dp5g/AA67QYE33XqWR9a+XJBUU97SjIpgypHFJLQ1cS
+         7+vpPFRqdJwRsGxmoloGD+7KNXAt18n4h9JOZcmIDngJkR2we5BZ/WfTQtPCuOVq8dup
+         iS7ij9nDQSfrrBsuP0q/7dbDWTElkGdCMRP5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734222841; x=1734827641;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1734223078; x=1734827878;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JAPvPxiy58GCJu8OdAKmusbfiRklcnwh5LO/YJk+t9w=;
-        b=m+ADZUrwoBjpxvLgzdChz3Lzvb8IquiWDFPJOXkeQIb9C/DvSLU4v/CKCq4VuCAM7s
-         m1g52MeUPRWMONIUgU3nNC+eO5u/CcnlJResUtBFfz1jYLKn+doJtP2BvQvCrX1RLpef
-         zL9BDWqvuf0xtCb4oQ9sBCPSYgeBn81XFtuWV+HYbCXcwUrSxAuh3Mh+CKl4pCTO0CtU
-         UP7t9iTQtqW63yT8nPJ31diABfoSubggqeYi9eDVcmm6OefppY1vThJSBmY+os/YZYgF
-         cDMukDo/lrxqY8i8f09Y7csROI6qN5PSaLxriCxaWwbcWWIgzwlGv6X3UQEdr/Y4uoM2
-         YcRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWR/xoKtcZkFiY20UEBiPyQpbEjaD9YnbFrYowhK7SlzGNJUWNMDvdgaKx70M0I08p77gvwrSkvtH85QWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXEG7VMwwtcFDddDUNqSaIQQxICVBVO17V2swaEqmUx4BC1uQC
-	SyU2QdSq1Zq9vpzJcbB4VDgpkEEAU+hxDFS+DrG76zRhyTJ4WmprBjcTLx4FE7aQwT6YY+U0uNq
-	q
-X-Gm-Gg: ASbGnctKiaZe+ptDMfR6RVAHD9MQad335gzLdxrnOmDZeH2L0u7/uLDulsuwlJX0bbB
-	+8hPsmZVCCIYVCtUt60w+i42bqGO0rVepAGwLzZCaaQo7MT77JN9hGTeuTjVcclOrBsiSXWMHk7
-	j4seBnuowFyBoQK7JT2+b/DSOVPy2QYr530m+o3PnJQrQeaeTA33OpmgmASD8nrFp0fHLE8U0L0
-	9uHHdyFsih7YbiqDq5+EDWUF1fD08u4i37CvsDc0M3xAXtpM5jY9Ywt+5dzEa5tCQ==
-X-Google-Smtp-Source: AGHT+IGJWQ+cT8kcvTA+plzjPlFZBzh252TYfMJKFBanLQAiwOK+dFP4ErkBxInK+AZXxU7scor2OQ==
-X-Received: by 2002:a05:600c:b95:b0:434:f218:e1a8 with SMTP id 5b1f17b1804b1-4362aa3d1d2mr59250775e9.19.1734222841049;
-        Sat, 14 Dec 2024 16:34:01 -0800 (PST)
-Received: from [127.0.0.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4363606404fsm38540095e9.20.2024.12.14.16.33.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 16:33:59 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Sun, 15 Dec 2024 00:33:58 +0000
-Subject: [PATCH v2] Revert "media: qcom: camss: Restructure
- camss_link_entities"
+        bh=Lek2a64UVzeNy0p4/Sh+8fSGQa+3tUGdFQWLgqLbCoI=;
+        b=LM7hPFVp4u9AVRcDAflpfICgVLdP/WA+xBdiA+BCfUMiSOI5SdhB2dDb284O0v3z75
+         KedY734fOdjZxrZPgnGephjWbUHW0ZsA/9r4COom1XibTdX/hE23bKlI7UaxISJkGzn2
+         6yuQTQ0PIoVSop9dnemHXuVV2lK+WK4tjdeTx9m2zQLjyoWSkZjvpPmh0kDhYR9SJy2A
+         WWCdWXBdqtS9WGJNSoKQVE/7YF/SgguEakMHRPXhc14u2LxfJ17rXu4/hl/ogSDy/Kbh
+         91VPgele5c9Oa3h2+gI9TB0KRyibC090IkqK1tgAIeDlclayxzAXnRkWPGuk/BO5DSzm
+         bYDw==
+X-Gm-Message-State: AOJu0Yz3OKGmmpk0GR5TTFtmJiHzUq4z4PFxMPkpSGbItcCcKXGff2QN
+	nxKmynzkghomnhqcAzUXFJTEy+yvnVEzUAZudKc3hfbofk324RFmelnajAcVyUEHe1aNjE/7VdC
+	ZR/0=
+X-Gm-Gg: ASbGnctTe+QQ3ZniaMtX3garJWKlRK3LUACOhp8Molq9t6w7wbsg1+jIQPgK/Vn18g+
+	PSIcTCctqzUu9AoGMrBjeCSsYDBzHM95Ve6PjbmojM62alxo7A8fFT4PzFPFqBBvu4EfeOP158I
+	rsWplFCMkWMoDL0E2cYKMKkVWev/r3+OCXdIquk48953jepHharK5V5wF/gLkMokeDgrQiAqaXo
+	rnR0fXaCK5fVcvjYl3U71AmpU9/M3Z8NRbeuxk1COS/McmaC7QDqTb2Jv+4y/oWnpoHQIX617zr
+	sQN3UuPBKq+UCGtdNE7kZXbzvbjgNxE=
+X-Google-Smtp-Source: AGHT+IGYlFRksiZqXgyupH84hhlbKxc4/G/f0gaDV5wGnltSqCm2zM794LonadSDutAB4N9kuhWyjw==
+X-Received: by 2002:a17:906:7953:b0:aa6:a53a:f6c7 with SMTP id a640c23a62f3a-aab779ba4ebmr928516566b.31.1734223078502;
+        Sat, 14 Dec 2024 16:37:58 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96068adfsm153015966b.63.2024.12.14.16.37.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Dec 2024 16:37:56 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa670ffe302so557195766b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Dec 2024 16:37:56 -0800 (PST)
+X-Received: by 2002:a17:907:1c14:b0:aa6:6d2b:cbeb with SMTP id
+ a640c23a62f3a-aab779c146bmr683840566b.28.1734223075690; Sat, 14 Dec 2024
+ 16:37:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241215-b4-linux-next-revert-link-freq-v2-1-62d5660004ea@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPUjXmcC/42NQQ6CMBBFr0Jm7Zi2lhBdeQ/DAugUJppWpkgwh
- LtbOIHL937+/yskEqYEt2IFoZkTx5DBnArohib0hOwyg1HGaqMtthZfHD4LBlomzBWSaTdP9EI
- jVrZpS298dVEG8shbyPNyHDzqzAOnKcr3+Jv1bv+enjVqLOlaKadK5zt3z1kj8Rylh3rbth8KD
- 0aGzQAAAA==
-X-Change-ID: 20241214-b4-linux-next-revert-link-freq-74ab5f2f7302
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, 
- Suresh Vankadara <quic_svankada@quicinc.com>, 
- Vikram Sharma <quic_vikramsa@quicinc.com>, 
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
+References: <20241214182138.4e7984a2@batman.local.home>
+In-Reply-To: <20241214182138.4e7984a2@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 14 Dec 2024 16:37:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+Message-ID: <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit cc1ecabe67d92a2da0b0402f715598e8dbdc3b9e.
+On Sat, 14 Dec 2024 at 15:21, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> - Fix output of trace when hashing a pointer is disabled
 
-This commit has a basic flaw in that it relies on camss->res->csid_num as a
-control to index the array camss->vfe[i].
+Christ.
 
-Testing on a platform where csid_num > vfe_num showed this bug up.
+I'm looking at this, and my reaction is literally "tracing is doing
+crazy things AGAIN".
 
-camss->vfe should only be indexed by camss->res->vfe_num. Since this commit
-is meant to make the code be more readable reverting will simply restore
-the previous correct bounds checking.
+This stuff is full of crazy special cases for things that should never
+be done in the first place.
 
-We can make another pass at making camss_link_entities look prettier but,
-for now we should zap the bug introduced.
+And - surprise surprise - it was buggy in odd ways as a result.
 
-Fixes: cc1ecabe67d9 ("media: qcom: camss: Restructure camss_link_entities")
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
-v2:
-- My SoB was under the --- fixed
-- Leaving out cc stable because this is reverting a commit in next not
-  stable.
-- Link to v1: https://lore.kernel.org/r/20241214-b4-linux-next-revert-link-freq-v1-1-5e970d05dfcd@linaro.org
+If I read the code right, this hacky code literally only catches stale
+strings, but also has some *insane* code to do "text_delta" to
+'%p[sS]' printouts.
 
-v1:
-Testing this commit out as I was adding in more CSID devices to my working
-x1e tree I noticed a NULL pointer dereference in camss_link_entities.
+And I see how it does that
 
-Investigating I discovered the following indexing error:
+                text_delta = iter->tr->text_delta;
 
-> +    for (i = 0; i < camss->res->csid_num; i++) {
-> +        if (camss->ispif)
-> +            line_num = camss->ispif->line_num;
-> +        else
-> +            line_num = camss->vfe[i].res->line_num;
+but I don't actually see where 'text_delta' would ever actually get
+set.  Where does tr->text_delta ever get set to anything but zero?
 
-This statement is incorrect, you are indexing vfe[] with a control derived
-from csid_num.
+That code should be *removed*. It seems to be there entirely as a
+sanity check, and when the sanity check itself is buggy, you don't try
+to fix it, you remove the whole crazy garbage.
 
-Below is the statement removed.
+What makes '%s' so special in trace formats that it merits this
+horrible hackery?
 
-> -        for (i = 0; i < camss->res->csid_num; i++)
-> -            for (k = 0; k < camss->res->vfe_num; k++)
-> -                for (j = 0; j < camss->vfe[k].res->line_num; j++) {
+What makes 'text_delta' at all sane, never mind where it even gets set?
 
-As soon as csid_num > ARRAY_SIZE(vfe) the code breaks.
+And why should we maintain that horrible hackery and make it worse?
 
-The commit is in linux-next but not yet in linux-stable so I'm not quite
-sure what to do with a Fixes: tag nothing I think.
+This code shows a complete lack of taste. This needs extreme
+crapectomy, not some alleged "fix".
 
-In any case we should revert this one before it hits stable.
+If "people use stale pointers for '%s' and we actually care" is a real
+issue, we could very possibly teach vsnprintf() about that. The code
+already has a "check_pointer()" thing for just NULL pointer magic
+printouts.
 
-Link: https://lore.kernel.org/linux-arm-msm/1a570c17-c501-4a29-a4f7-020f41563f3d@linaro.org
----
- drivers/media/platform/qcom/camss/camss.c | 155 ++++++++++--------------------
- 1 file changed, 52 insertions(+), 103 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 004a74f6b2f6ce7eef15765ad1eadc14a08a3908..a85e9df0f301a933d7e47e07b9fec535819aeb14 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -2298,6 +2298,7 @@ static int camss_init_subdevices(struct camss *camss)
- }
- 
- /*
-+ * camss_link_entities - Register subdev nodes and create links
-  * camss_link_err - print error in case link creation fails
-  * @src_name: name for source of the link
-  * @sink_name: name for sink of the link
-@@ -2315,64 +2316,14 @@ inline void camss_link_err(struct camss *camss,
- }
- 
- /*
-- * camss_link_entities_csid - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities_csid(struct camss *camss)
--{
--	struct media_entity *src_entity;
--	struct media_entity *sink_entity;
--	int ret, line_num;
--	u16 sink_pad;
--	u16 src_pad;
--	int i, j;
--
--	for (i = 0; i < camss->res->csid_num; i++) {
--		if (camss->ispif)
--			line_num = camss->ispif->line_num;
--		else
--			line_num = camss->vfe[i].res->line_num;
--
--		src_entity = &camss->csid[i].subdev.entity;
--		for (j = 0; j < line_num; j++) {
--			if (camss->ispif) {
--				sink_entity = &camss->ispif->line[j].subdev.entity;
--				src_pad = MSM_CSID_PAD_SRC;
--				sink_pad = MSM_ISPIF_PAD_SINK;
--			} else {
--				sink_entity = &camss->vfe[i].line[j].subdev.entity;
--				src_pad = MSM_CSID_PAD_FIRST_SRC + j;
--				sink_pad = MSM_VFE_PAD_SINK;
--			}
--
--			ret = media_create_pad_link(src_entity,
--						    src_pad,
--						    sink_entity,
--						    sink_pad,
--						    0);
--			if (ret < 0) {
--				camss_link_err(camss, src_entity->name,
--					       sink_entity->name,
--					       ret);
--				return ret;
--			}
--		}
--	}
--
--	return 0;
--}
--
--/*
-- * camss_link_entities_csiphy - Register subdev nodes and create links
-+ * camss_link_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
-  *
-  * Return 0 on success or a negative error code on failure
-  */
--static int camss_link_entities_csiphy(struct camss *camss)
-+static int camss_link_entities(struct camss *camss)
- {
--	int i, j;
-+	int i, j, k;
- 	int ret;
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
-@@ -2392,68 +2343,66 @@ static int camss_link_entities_csiphy(struct camss *camss)
- 		}
- 	}
- 
--	return 0;
--}
--
--/*
-- * camss_link_entities_ispif - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities_ispif(struct camss *camss)
--{
--	int i, j, k;
--	int ret;
--
--	for (i = 0; i < camss->ispif->line_num; i++) {
--		for (k = 0; k < camss->res->vfe_num; k++) {
--			for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--				struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
--				struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--				ret = media_create_pad_link(&ispif->entity,
--							    MSM_ISPIF_PAD_SRC,
--							    &vfe->entity,
--							    MSM_VFE_PAD_SINK,
-+	if (camss->ispif) {
-+		for (i = 0; i < camss->res->csid_num; i++) {
-+			for (j = 0; j < camss->ispif->line_num; j++) {
-+				ret = media_create_pad_link(&camss->csid[i].subdev.entity,
-+							    MSM_CSID_PAD_SRC,
-+							    &camss->ispif->line[j].subdev.entity,
-+							    MSM_ISPIF_PAD_SINK,
- 							    0);
- 				if (ret < 0) {
--					camss_link_err(camss, ispif->entity.name,
--						       vfe->entity.name,
-+					camss_link_err(camss,
-+						       camss->csid[i].subdev.entity.name,
-+						       camss->ispif->line[j].subdev.entity.name,
- 						       ret);
- 					return ret;
- 				}
- 			}
- 		}
-+
-+		for (i = 0; i < camss->ispif->line_num; i++)
-+			for (k = 0; k < camss->res->vfe_num; k++)
-+				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+					struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
-+					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+					ret = media_create_pad_link(&ispif->entity,
-+								    MSM_ISPIF_PAD_SRC,
-+								    &vfe->entity,
-+								    MSM_VFE_PAD_SINK,
-+								    0);
-+					if (ret < 0) {
-+						camss_link_err(camss, ispif->entity.name,
-+							       vfe->entity.name,
-+							       ret);
-+						return ret;
-+					}
-+				}
-+	} else {
-+		for (i = 0; i < camss->res->csid_num; i++)
-+			for (k = 0; k < camss->res->vfe_num; k++)
-+				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+					struct v4l2_subdev *csid = &camss->csid[i].subdev;
-+					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+					ret = media_create_pad_link(&csid->entity,
-+								    MSM_CSID_PAD_FIRST_SRC + j,
-+								    &vfe->entity,
-+								    MSM_VFE_PAD_SINK,
-+								    0);
-+					if (ret < 0) {
-+						camss_link_err(camss, csid->entity.name,
-+							       vfe->entity.name,
-+							       ret);
-+						return ret;
-+					}
-+				}
- 	}
- 
- 	return 0;
- }
- 
--/*
-- * camss_link_entities - Register subdev nodes and create links
-- * @camss: CAMSS device
-- *
-- * Return 0 on success or a negative error code on failure
-- */
--static int camss_link_entities(struct camss *camss)
--{
--	int ret;
--
--	ret = camss_link_entities_csiphy(camss);
--	if (ret < 0)
--		return ret;
--
--	ret = camss_link_entities_csid(camss);
--	if (ret < 0)
--		return ret;
--
--	if (camss->ispif)
--		ret = camss_link_entities_ispif(camss);
--
--	return ret;
--}
--
- /*
-  * camss_register_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
-
----
-base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-change-id: 20241214-b4-linux-next-revert-link-freq-74ab5f2f7302
-
-Best regards,
--- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
+                  Linus
 
