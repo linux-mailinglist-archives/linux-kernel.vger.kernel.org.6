@@ -1,184 +1,319 @@
-Return-Path: <linux-kernel+bounces-448174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267C39F3C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:18:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E849F3C6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76942188553E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877A7163D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEE71F6670;
-	Mon, 16 Dec 2024 21:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D91D5AAC;
+	Mon, 16 Dec 2024 21:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0Lkw7tg"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vBtvgqQ+"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2063.outbound.protection.outlook.com [40.107.237.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4B01DD87D;
-	Mon, 16 Dec 2024 21:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383048; cv=none; b=QBzxzGo1KE12CZVia3iQdWN5JpTpFdYnSpGGcYnHEvUYpR3+hpCZy0TBRMTNBds4op/aM+MfECEDd4oX8wTzGOtjHsx4TDC8GQchuqVnrpgW9Tv3UBaMXka9tvJJa/72nX5SAMpGqBzTpiTs9Q9tRGZUaRLn5g3fmWCBnItt61A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383048; c=relaxed/simple;
-	bh=dvTzohMiD7GUz6DzyJw0JoLjPgfIBuHE4olZyULcQ+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FcOh/DuLgfE8/wRvCoDVGHncrpeyabm+SpY2QrnTU8k0asbNICSFmK9er7xt26cIXTg+SNQFPuqFv8fxExA/Nuj45jndJFzidr1g4w49jcQ3PEj7QCZJL9GJuUoC2PwLD0ncbNzQO5JHSgrkoTGN5c2SIfbtvh91OiDvziFxhhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0Lkw7tg; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85c559ed230so813911241.0;
-        Mon, 16 Dec 2024 13:04:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734383045; x=1734987845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5HvQ4GLhmwe6KpEk8y705jR0aQYVEU3Rm32oAPC7Vuc=;
-        b=O0Lkw7tgtx7ZtTwUE+D/01Z8gFTNNP7Hs0deUILvG3d45myj+4Q6Ihx2qfBFEF+rV4
-         poRL+nNDO7GlfQvgTX8VTtgKqYuvBGNiLzA+PrQ8Djr/pognLevdeznbtTJ/qnhtQoSg
-         8MBPNGNUUUs7wXiuEaDybqG9Nwrd4QPK5mIWPpavMNuzH2W/W7OqDIjQiLS5w8HpjxoK
-         66ll39CyNuDU8be9m2xLVuy2imUcKI7el/4ikb3MokPeVZv1QL3i6t0kDzTASf5d6zd9
-         CPh66dSgDZEDczz6DKqRPFRoL7KX+KyiykhqQ/2AqrX6em7mEFl2YdT5FxLeQC6rGDdk
-         lnLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734383045; x=1734987845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5HvQ4GLhmwe6KpEk8y705jR0aQYVEU3Rm32oAPC7Vuc=;
-        b=PXHapTMPc2BFsqs26HikhcMP//HPewoKvTtfeSpuQkO/YPaviCO16Pz7Ef44My9JZG
-         KJeQuVkBJTYTvUFl9CTI6kdXi4Nd+cknYUP6y3axPotF1H606NF/IfjjbMwD+KrIj718
-         wHYhNk+kcXROpPfhPfblVUI9KHnR6ysxPeUKAlpW4Uu2H4Aqd759ePHTpOOLSUjoaLKN
-         CN2EJCeNteZgGscEro+B9f0RYjB3DjxbZ52YNJY/iGN3pjvBeGDL4tPUy2SEId8/KYCz
-         xYImyOtZXMoZq4IzEwpCQXpbX7rtx8r+NgaLgTV2hQr8Y4Wk5afMVRalb5m991v3qrdK
-         30wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSiwbM9rPZvZ9EqeSpk+zRl9lF2vIOX5g6ZEuxsUoHtuK1poEbNlRsBT3wI6xOrwGpqm6bUCJ1Plw=@vger.kernel.org, AJvYcCV3rpTSau8Galr8lrVV2e8PtwK2USmLy4JcX/nFhAUT/7Jxw+79KzyCrjwn4DjKejdenw95fxAGbLukRwew@vger.kernel.org, AJvYcCVJFxS2dfuP+78uBjYooioBpMf+L1f5Xfl06KS9KtSqruvmp2H//C6rDa+yM39VTc5Hr7wzNEo1uHOM8InYITQyUA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/8Yq2A6NyygV5O+Dn10XElqfLLr/DS+FTmrgTcVFn6tuzm+MP
-	3/3dDn2HSMcOjtg/Ohw+xzlqW9oC35XeznPDYp1Gh77d1CwmgTAvbPB739QvXDwhWibTgl+gnfG
-	jGVFUE+bbz0C30NmR93RbxUQ6/MA=
-X-Gm-Gg: ASbGnctiAGJ9ERTsDwKGaXOivdXFAAQYyEB3ayxpe5jsp3ZjuiZittflggAgrKvkxrS
-	rp7by2eLtqLtKA3OW2wzexcGqLrbCiRrILoxX2Q==
-X-Google-Smtp-Source: AGHT+IEtGNUuLwgR3bxeWohisHij0p4RhAszHNLPYak5i8Hura98Y4YldNWpMkO6ab5mIvf9sOhum11sOxfZ6CiLx38=
-X-Received: by 2002:a05:6122:3d0a:b0:518:8bfe:d5f0 with SMTP id
- 71dfb90a1353d-51a2404e693mr2060412e0c.0.1734383045239; Mon, 16 Dec 2024
- 13:04:05 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C405E1B5EB5
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734383042; cv=fail; b=sBk3Gr9ktYIQSyw+q4WQXd7m1b4WhP9UUZ522z67gKjouHTmLslPxzLRjABuJciBLZ2OfNwqV3MSCQ4HuZZIWjORE9QhtwuTjeonfIVv3I9ftL0uVO5fNVbI1N81bUEIZ4QMrLP4L3wAaDcJbtrzLpKEGh2UKUFX/JN6rAAYKyo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734383042; c=relaxed/simple;
+	bh=DyOYx+oGLCCO6LXs24pwFBiyLkFwZIvQX1PumPRxXJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oGL/zyWzBepY+3oORnek+aVsYfRP24IZU+hRj/nM52H+KnV6E6bVpi9oIpOgFdb0tUaeMrxx/JtWV+d567WrkvAFT1H7XQ9XagcUY9HrOkXKrIoeX3dKxxTFSt2HlMgkbT+U9D11vycVO2dLZpQWuECxzHKvR4eRhgnwoWwf7Co=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vBtvgqQ+; arc=fail smtp.client-ip=40.107.237.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jQnQ7amHkhX7Gax2l/IQApiWWeh2fOHSjq1/1NBNSBrDv/2LOjY1XsJUuJ/Gm97psp0UgX6a0yFbr5J6RSDt8fQl9Zh0LE2c3q/+6p6N2yCFoczUNpy8R9jK513J67ujtYmRqjxUhzYXiQSUuvHRefqIG0632uKkKaNFe1T8hRJHIAX6O9qg33iCGTIqL3vyOdScH0sU8BLT+mFBeognegMpRDYNruetK2HnAWW+1fQ8bYfSTpuf4mWgA5qe9lwhvj+h5cyGkrD7jUAsfHhzuo4zo6TjFO0UtNUpp9R3nqZgOxIgvbngCm8a74dlgrkaBSfL1C+jJvutD6lFicSxsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rhzmVqviZ7lKUu2c51XbZrcDvzUHm4QTfaETkYBVhgg=;
+ b=tI0bDwXidVVfU6NjAWRgP5IguFty00jNUHC48WS+ZRIIxJts1hNPdNhtnOmv8ifCXb4sTlr+xNFTCpH10NqRQ52qWrc6cBob1Jd+KgRmvABlWmR5r0YOZXCIPO9Wu+muegKdfyN+kHm/FvIkPqrKHdPZvS7dJEJSdz0mYLeFcWg/WwgaBTrRLOdupDcHZXqnpqErNL/kGEwkAQvdnXOQ2/DbV5/LPWjs5u9UHQsDZxqt3AYXHDqacDfNsB+ZwvRgmAe+YNzZjQp3SQw3YWUeftDfXqn3rWDIKeAYkkIg5FOdOAvW7tHUHr6Fa1lVXAdHkf24r+IU9SU0BKMBlnsg+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rhzmVqviZ7lKUu2c51XbZrcDvzUHm4QTfaETkYBVhgg=;
+ b=vBtvgqQ+Ttaf+nq4v6AcAH4wuKa8g6XPjWWkmYggC904ADmxSw9NdIfNN2tX3Q5MLk0d2VGVjHNuJrO5dIK01iSIX5DN+4lFlsBRMVb85FKUhqTs9XbUEKRgwGcKI/ws1vyb1YjfwYo41B7p7p4kSdMJc1A8FQNORsxZvgTL634=
+Received: from SJ0PR13CA0037.namprd13.prod.outlook.com (2603:10b6:a03:2c2::12)
+ by DS0PR12MB8504.namprd12.prod.outlook.com (2603:10b6:8:155::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Mon, 16 Dec
+ 2024 21:03:55 +0000
+Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::98) by SJ0PR13CA0037.outlook.office365.com
+ (2603:10b6:a03:2c2::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8272.8 via Frontend Transport; Mon,
+ 16 Dec 2024 21:03:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8272.0 via Frontend Transport; Mon, 16 Dec 2024 21:03:55 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 16 Dec
+ 2024 15:03:54 -0600
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 16 Dec 2024 15:03:53 -0600
+Message-ID: <cf132e81-524b-3b13-aa18-4f542f7ca480@amd.com>
+Date: Mon, 16 Dec 2024 13:03:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241213175828.909987-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com>
- <CA+V-a8sAiMTC9Y3vrOKshMZSFLzN0QczMk9B-++LyToG1r+qzw@mail.gmail.com> <CAMuHMdXOaphnU=caTuCx3yme_hi-_zdn5PN5P1zhrOSA3duBWg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXOaphnU=caTuCx3yme_hi-_zdn5PN5P1zhrOSA3duBWg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 16 Dec 2024 21:03:39 +0000
-Message-ID: <CA+V-a8ttbsoo2GfNRA3jcZGnMc627kqxVmkqgCXeCzr1SKbcaQ@mail.gmail.com>
-Subject: Re: [PATCH 8/9] i2c: riic: Add `riic_bus_barrier()` to check bus availability
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 5/5] accel/amdxdna: Add zero check for pad in ioctl
+ input structures
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241213232933.1545388-1-lizhi.hou@amd.com>
+ <20241213232933.1545388-6-lizhi.hou@amd.com>
+ <050b7fac-1ebd-46a0-840e-2df8c82136ae@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <050b7fac-1ebd-46a0-840e-2df8c82136ae@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|DS0PR12MB8504:EE_
+X-MS-Office365-Filtering-Correlation-Id: b44b90e6-415d-419a-d031-08dd1e1526f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z3ZVQ3ZKK2wreW1zNkR2djQ0bExYREJ3U3dYeXNOMHE1Nmk3RndCbGlyTTB0?=
+ =?utf-8?B?R3AwT3liOHBEOEZlMlZ2cEh3UFlmT1lJZ0d5alJTckpRZ0Y3aWRIbFVCZE8z?=
+ =?utf-8?B?dlpjTzNxdkVpcG1BbnRSNnhyR1EvQkhyS1lTMGtFelNUV0x3Z1o4aG1vODIx?=
+ =?utf-8?B?NVF0Mkk0ZFN4aTg5SjY4RWVyQjBpQVZmdmhKMm5mWEpKRCt2TmtWcm1zVkl4?=
+ =?utf-8?B?NGVBa09VZzAyaUQwV0sraGtvb0JPczR5bVFFRGM0dkt3ejlOU2RrdG9yVHg4?=
+ =?utf-8?B?a2NaRjFPMGtQUUNObzNWdjkrVVAwSjc2MGtzMnU4Snh5WDhYaXd4NEhEM0Yr?=
+ =?utf-8?B?cDNrMmplQUlWOXhLOStheHBsVVE1WElHRFdJSi9KMnc5VDVVdVVpSkl2VzJ3?=
+ =?utf-8?B?YmVDSGI2WlhHeFh5WHBHbk1ESFpDWWtRZVhnMG41b0h2a0hvYmlJbVlSeGkz?=
+ =?utf-8?B?bGZQSU9rOXVIZ1BBUE85SHJId0hWZi9oK3FpdHYwMzRCVlJ0TUxCNU8yUTVs?=
+ =?utf-8?B?ajRZam84MlkxRWhWY3U0cW9hbCt3NVVLQkFEQmFESUpaVE5qU0VET3hoTGlz?=
+ =?utf-8?B?clo3aVdCdVREbXEyTVZ6SFlyZkhSS3k4TVZpOWRza2dqSHd2SUh3RUFiL3RV?=
+ =?utf-8?B?RmUxbEw4M2YvS3VTM0ttZElKb1FKaTFmUGFIbU5ZbGJYQ1c1R3lleWxNU094?=
+ =?utf-8?B?K3pnYlI3Zjd4cW5SVll3M1lWVkdkWTUyaXlNKzNRS0wrWXdMc0dySzcwRkkw?=
+ =?utf-8?B?K05KbDJaVDRKWmt2bUYzQU5DWE5rUkJLb0dXYXhTRlF0RUVuaDQvamRpMCs1?=
+ =?utf-8?B?c0ovTnJzU3ZBM0NKd1M2VC94bG1yYlFNTWQzbko1dDBvVWNBd25ocVIrcjl6?=
+ =?utf-8?B?QWlFdmVTVU1XUGFIVENJTWJWVUZTUk9UeVNOc1lrbkdpVHdXVnpLeThka0hR?=
+ =?utf-8?B?d3pDN2pmbFhJN3VVcVo4aFphakdIUWtKNEg5WmtWS0lFNDMrUStENmtURG9v?=
+ =?utf-8?B?ZFRlQmdrOGJ4RThaYWFyVi9mUFpMK0d6Wk9FdHZGYXNVaTRxOHdYdTFhL1Ri?=
+ =?utf-8?B?Z0RQVlZkTXlkZ1F2K0ZXa041NzdRMllnbTZlN1JFVDRQdzBNM1BuZ1dsbFlN?=
+ =?utf-8?B?djhWZ3ViZHd3UC8vQThuaW1LcVdDVVFIZGRET2hHcXJ4bGNiWlhPWlhlYm9y?=
+ =?utf-8?B?MXdmOUFkUysrV3RKSG9kTXBJdVptdTEzdzJmWVF2Qlp4WDJrcWRBQVJxcHRy?=
+ =?utf-8?B?dFduTnMzUHgrVmJaQXAwM3Y1bENDMm41SHRLVzBRczFNV3BmY0FtbTZZOEZR?=
+ =?utf-8?B?RWh0VlhBbHFJSE9LNnd6TlU2UGM4Q2tUc3FJaHRJNUtTVEhMT0NSQWR3cWJn?=
+ =?utf-8?B?eUVJNFczT09wS3JXS1V0d0NmZHBWQzQzNkwvQnZQYlZ0SzZ3bnpyS3hvWFdJ?=
+ =?utf-8?B?c2xibEZZSEdaampPY1RkcGhaa3hqNkR5d0N4MlBZN1BrQ0V2UDdLalRES0tv?=
+ =?utf-8?B?UUg2UUVQVkZjR1h6d3E2NlJZS3l3MklVUWdlb1pnZVhWQ003R290RjlTTTBp?=
+ =?utf-8?B?dk92bjhzRFYrbHhFNElheGlhSjVhVFZzbXlDZmRZV1RpMFYzN1ZKMmlKTWp5?=
+ =?utf-8?B?UE1aZVQrbTFUVnkrTkM3SWNJT3p2R0V4QjFnWm5NbXpudkVrWHlCQUl5akNV?=
+ =?utf-8?B?TEVvcFNWZWxlOGZOdExlZjE4R0Jzb1FuNnRHNmlmNjUzM0l6VkhDaVg2S3ha?=
+ =?utf-8?B?a2tHRHBxcWZCeFZuRUxzMUhHaXFFdFdVeVlHVGFnMmYwM2tuam4rRnNjbTFD?=
+ =?utf-8?B?Z0xRMktlbUZINDdjSzJsVkVlUFZHSnlpRHhHUFJKNXE1a1UweHcwdWtxeUNV?=
+ =?utf-8?B?R0lKbnl3aUw3T1RvVlJucmk3a1FERTVWOWg5RGtPYmZ1bGE5MXhTcGNFam1z?=
+ =?utf-8?B?OXBaR0s3Y2Q3OTNsQzQzMFRwVlMwZjEzRktodit3S0d6S3pySUNRV2RBdjdl?=
+ =?utf-8?B?STBHUUdmZDJRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 21:03:55.1287
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b44b90e6-415d-419a-d031-08dd1e1526f1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044FD.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8504
 
-Hi Geert,
 
-On Mon, Dec 16, 2024 at 7:13=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
+On 12/16/24 12:38, Mario Limonciello wrote:
+> On 12/13/2024 17:29, Lizhi Hou wrote:
+>> For input structures, it is better to check if the pad is zero.
+>> Thus, the pad bytes might be usable in the future.
+>>
 >
-> Hi Prabhakar,
+> IIRC you should pick up:
+> Suggested-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Sure. Will add it.
 >
-> On Mon, Dec 16, 2024 at 7:19=E2=80=AFPM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Mon, Dec 16, 2024 at 4:09=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Introduce a new `riic_bus_barrier()` function to verify bus availab=
-ility
-> > > > before initiating an I2C transfer. This function enhances the bus
-> > > > arbitration check by ensuring that the SDA and SCL lines are not he=
-ld low,
-> > > > in addition to checking the BBSY flag using `readb_poll_timeout()`.
-> > > >
-> > > > Previously, only the BBSY flag was checked to determine bus availab=
-ility.
-> > > > However, it is possible for the SDA line to remain low even when BB=
-SY =3D 0.
-> > > > This new implementation performs an additional check on the SDA and=
- SCL
-> > > > lines to avoid potential bus contention issues.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > --- a/drivers/i2c/busses/i2c-riic.c
-> > > > +++ b/drivers/i2c/busses/i2c-riic.c
-> > >
-> > > > @@ -135,6 +138,27 @@ static inline void riic_clear_set_bit(struct r=
-iic_dev *riic, u8 clear, u8 set, u
-> > > >         riic_writeb(riic, (riic_readb(riic, reg) & ~clear) | set, r=
-eg);
-> > > >  }
-> > > >
-> > > > +static int riic_bus_barrier(struct riic_dev *riic)
-> > > > +{
-> > > > +       int ret;
-> > > > +       u8 val;
-> > > > +
-> > > > +       /*
-> > > > +        * The SDA line can still be low even when BBSY =3D 0. Ther=
-efore, after checking
-> > > > +        * the BBSY flag, also verify that the SDA and SCL lines ar=
-e not being held low.
-> > > > +        */
-> > > > +       ret =3D readb_poll_timeout(riic->base + riic->info->regs[RI=
-IC_ICCR2], val,
-> > > > +                                !(val & ICCR2_BBSY), 10, riic->ada=
-pter.timeout);
-> > > > +       if (ret)
-> > > > +               return -EBUSY;
-> > > > +
-> > > > +       if (!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SDAI) ||
-> > > > +           !(riic_readb(riic, RIIC_ICCR1) & ICCR1_SCLI))
-> > >
-> > > Surely you can read the register once, and check both bits?
-> > >
-> > Agreed, I will add a helper func for this something like below, as
-> > this can be re-used in patch 9/9
-> >
-> > static inline bool riic_lines_ok(struct riic_dev *riic)
-> > {
-> >     u8 reg =3D riic_readb(riic, RIIC_ICCR1);
-> >
-> >     if (!(reg & ICCR1_SDAI) || !(reg & ICCR1_SCLI))
-> >         return false;
-> >
-> >     return true;
-> > }
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   drivers/accel/amdxdna/aie2_ctx.c     |  3 +++
+>>   drivers/accel/amdxdna/aie2_message.c |  3 +++
+>>   drivers/accel/amdxdna/amdxdna_ctx.c  |  6 ++++++
+>>   drivers/accel/amdxdna/amdxdna_gem.c  |  2 +-
+>>   include/uapi/drm/amdxdna_accel.h     | 11 +++++------
+>>   5 files changed, 18 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/accel/amdxdna/aie2_ctx.c 
+>> b/drivers/accel/amdxdna/aie2_ctx.c
+>> index cdeead75c6f5..9facf45818f9 100644
+>> --- a/drivers/accel/amdxdna/aie2_ctx.c
+>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+>> @@ -690,6 +690,9 @@ static int aie2_hwctx_cu_config(struct 
+>> amdxdna_hwctx *hwctx, void *buf, u32 size
+>>       int ret;
+>>         XDNA_DBG(xdna, "Config %d CU to %s", config->num_cus, 
+>> hwctx->name);
+>> +    if (XDNA_MBZ_DBG(xdna, config->pad, sizeof(config->pad)))
+>> +        return -EINVAL;
+>> +
+>>       if (hwctx->status != HWCTX_STAT_INIT) {
+>>           XDNA_ERR(xdna, "Not support re-config CU");
+>>           return -EINVAL;
+>> diff --git a/drivers/accel/amdxdna/aie2_message.c 
+>> b/drivers/accel/amdxdna/aie2_message.c
+>> index b2ca78cfd0a7..9e2c9a44f76a 100644
+>> --- a/drivers/accel/amdxdna/aie2_message.c
+>> +++ b/drivers/accel/amdxdna/aie2_message.c
+>> @@ -395,6 +395,9 @@ int aie2_config_cu(struct amdxdna_hwctx *hwctx)
+>>       for (i = 0; i < hwctx->cus->num_cus; i++) {
+>>           struct amdxdna_cu_config *cu = &hwctx->cus->cu_configs[i];
+>>   +        if (XDNA_MBZ_DBG(xdna, cu->pad, sizeof(cu->pad)))
+>> +            return -EINVAL;
+>> +
+>>           gobj = drm_gem_object_lookup(hwctx->client->filp, cu->cu_bo);
+>>           if (!gobj) {
+>>               XDNA_ERR(xdna, "Lookup GEM object failed");
+>> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c 
+>> b/drivers/accel/amdxdna/amdxdna_ctx.c
+>> index 324f35c43f6c..d11b1c83d9c3 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
+>> @@ -243,6 +243,9 @@ int amdxdna_drm_destroy_hwctx_ioctl(struct 
+>> drm_device *dev, void *data, struct d
+>>       struct amdxdna_hwctx *hwctx;
+>>       int ret = 0, idx;
+>>   +    if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
+>> +        return -EINVAL;
+>> +
+>>       if (!drm_dev_enter(dev, &idx))
+>>           return -ENODEV;
+>>   @@ -277,6 +280,9 @@ int amdxdna_drm_config_hwctx_ioctl(struct 
+>> drm_device *dev, void *data, struct dr
+>>       void *buf;
+>>       u64 val;
+>>   +    if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
+>> +        return -EINVAL;
+>> +
+>>       if (!xdna->dev_info->ops->hwctx_config)
+>>           return -EOPNOTSUPP;
+>>   diff --git a/drivers/accel/amdxdna/amdxdna_gem.c 
+>> b/drivers/accel/amdxdna/amdxdna_gem.c
+>> index 4dfeca306d98..606433d73236 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_gem.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
+>> @@ -552,7 +552,7 @@ int amdxdna_drm_get_bo_info_ioctl(struct 
+>> drm_device *dev, void *data, struct drm
+>>       struct drm_gem_object *gobj;
+>>       int ret = 0;
+>>   -    if (args->ext || args->ext_flags)
+>> +    if (args->ext || args->ext_flags || args->pad)
+>>           return -EINVAL;
+>>         gobj = drm_gem_object_lookup(filp, args->handle);
+>> diff --git a/include/uapi/drm/amdxdna_accel.h 
+>> b/include/uapi/drm/amdxdna_accel.h
+>> index e4edb52bc27b..a706ead39082 100644
+>> --- a/include/uapi/drm/amdxdna_accel.h
+>> +++ b/include/uapi/drm/amdxdna_accel.h
+>> @@ -87,7 +87,7 @@ struct amdxdna_drm_create_hwctx {
+>>   /**
+>>    * struct amdxdna_drm_destroy_hwctx - Destroy hardware context.
+>>    * @handle: Hardware context handle.
+>> - * @pad: Structure padding.
+>> + * @pad: MBZ.
+>>    */
+>>   struct amdxdna_drm_destroy_hwctx {
+>>       __u32 handle;
+>> @@ -98,7 +98,7 @@ struct amdxdna_drm_destroy_hwctx {
+>>    * struct amdxdna_cu_config - configuration for one CU
+>>    * @cu_bo: CU configuration buffer bo handle.
+>>    * @cu_func: Function of a CU.
+>> - * @pad: Structure padding.
+>> + * @pad: MBZ.
+>>    */
+>>   struct amdxdna_cu_config {
+>>       __u32 cu_bo;
+>> @@ -109,7 +109,7 @@ struct amdxdna_cu_config {
+>>   /**
+>>    * struct amdxdna_hwctx_param_config_cu - configuration for CUs in 
+>> hardware context
+>>    * @num_cus: Number of CUs to configure.
+>> - * @pad: Structure padding.
+>> + * @pad: MBZ.
+>>    * @cu_configs: Array of CU configurations of struct 
+>> amdxdna_cu_config.
+>>    */
+>>   struct amdxdna_hwctx_param_config_cu {
+>> @@ -122,7 +122,6 @@ enum amdxdna_drm_config_hwctx_param {
+>>       DRM_AMDXDNA_HWCTX_CONFIG_CU,
+>>       DRM_AMDXDNA_HWCTX_ASSIGN_DBG_BUF,
+>>       DRM_AMDXDNA_HWCTX_REMOVE_DBG_BUF,
+>> -    DRM_AMDXDNA_HWCTX_CONFIG_NUM
 >
-> A helper might be overkill...
->
->     if ((riic_readb(riic, RIIC_ICCR1) & (ICCR1_SDAI | ICCR1_SCLI)) !=3D
->         ICCR1_SDAI | ICCR1_SCLI)
->             ...
->
-Ok, I'll update as suggested above.
+> This change actually meant here?  It seems like it should be it's own 
+> change.
 
-Cheers,
-Prabhakar
+Agree. Hopefully, the patch 1 - 4 are good to go and I do not need to 
+resend them. :)
+
+
+Thanks,
+
+Lizhi
+
+>
+>>   };
+>>     /**
+>> @@ -133,7 +132,7 @@ enum amdxdna_drm_config_hwctx_param {
+>>    * @param_val: A structure specified by the param_type struct member.
+>>    * @param_val_size: Size of the parameter buffer pointed to by the 
+>> param_val.
+>>    *            If param_val is not a pointer, driver can ignore this.
+>> - * @pad: Structure padding.
+>> + * @pad: MBZ.
+>>    *
+>>    * Note: if the param_val is a pointer pointing to a buffer, the 
+>> maximum size
+>>    * of the buffer is 4KiB(PAGE_SIZE).
+>> @@ -175,7 +174,7 @@ struct amdxdna_drm_create_bo {
+>>    * @ext: MBZ.
+>>    * @ext_flags: MBZ.
+>>    * @handle: DRM buffer object handle.
+>> - * @pad: Structure padding.
+>> + * @pad: MBZ.
+>>    * @map_offset: Returned DRM fake offset for mmap().
+>>    * @vaddr: Returned user VA of buffer. 0 in case user needs mmap().
+>>    * @xdna_addr: Returned XDNA device virtual address.
+>
 
