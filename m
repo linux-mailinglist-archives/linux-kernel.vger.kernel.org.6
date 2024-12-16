@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-446917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD72E9F2AEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:27:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171729F2AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5A6161904
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D736160F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EFE1CDFDE;
-	Mon, 16 Dec 2024 07:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE2D1CDFDE;
+	Mon, 16 Dec 2024 07:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnOCABwD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elj6vRug"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E541B87CF;
-	Mon, 16 Dec 2024 07:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A70192D69;
+	Mon, 16 Dec 2024 07:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734334039; cv=none; b=ud6n538Hy/0lPlPIHF895JNIf5W+2i64u5G6igZsorKLneV0a4M2hUkU5h/FjyElS8MoUivaoIoNu1DBSKBRTi8srrUZrJ9h0UD3VAhfJaJC6pCwThOqOZP0nub82AmiF2zuz5PyxGs6CvRn9LJcbRw8WRng2WBg3yhae5rqWMI=
+	t=1734334104; cv=none; b=tH0hj9RR5cAcAM4we9Rj2IVKaiy7/ficL4h/8U6brBDbKqylgpIvTxK5FrRaujUYbk32r13ZumtZ//FU46UVQitvv0BG1tYCcdoY7OvOZKHOGfNCmLDuvYfQWnPv/9Mt9f88fvd9YhCY2gK7sP1X7LMKzIxi/GQvI2J/G/Hn/Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734334039; c=relaxed/simple;
-	bh=0QCTZGtEFDlm0TcurRpWITUvpOa+7C6VzG5wAcvq2tE=;
+	s=arc-20240116; t=1734334104; c=relaxed/simple;
+	bh=30F4QuZ9esXdc1IwL7KRSFkAK8vaLkyBruyPhStEfUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMt2aa5wgwjm8c57NsMP1qY+1g4lkK+1TD2zenHLgfXK9IVryuKrTJ7So/hcMAhOg6+kGrCxJ6BO0d6Kf6BT8P2ml+JQmXUJsfqFamZdGOGTs2u4btdeJyHwUqU2E/YyzyB2mIPzfMJFZ3QMHuOWMZpk7vJ1FSQ6WNbdADIcyJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnOCABwD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D482AC4CED0;
-	Mon, 16 Dec 2024 07:27:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gZlCc4VzLSn8Q7guorHf76+ByfY/Ju4QsS1DMVwM3hI2Ml4ZgTYKa4H85FimJIjm1aCtoU/KFnwOh2nAoooQQNbO+iQzTojuu3g9vdHHVNiFQ5wQkj8UgZhvg3vQZkLXvcb5/L8+/he6tS9Vqv4ol0IL9/1/0rdOyxQSaRx0mrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elj6vRug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8440C4CED0;
+	Mon, 16 Dec 2024 07:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734334037;
-	bh=0QCTZGtEFDlm0TcurRpWITUvpOa+7C6VzG5wAcvq2tE=;
+	s=k20201202; t=1734334103;
+	bh=30F4QuZ9esXdc1IwL7KRSFkAK8vaLkyBruyPhStEfUc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SnOCABwDbsOckTV1PNg/+EgChr8KpLYELPB18NCFt/o+F93Y2ooZxmMptSSqiPpmH
-	 BoaMgsmKWo3dKS4VoDknqiHOxoyUQaWekPKK5w4nhQebURQZfwwEZBTdo7sXuWj28F
-	 0LbzziTS80zwtV8xjh0cgqZgR8Mqc/0yPlmGJFyR2lQc5wmzP+uI9W1YEN9K8nVZL8
-	 GwHjdf9CnEOPrxaHjq8RKj76MccsDYDMl680n3ZPR9wAREssfVltzS+roowhCnxNoA
-	 wbdTLVf62SfyVnkwjF2aul3/KogtrL5CVrgjV9gOYklzwdGrdNf1KYmFa5l7B+5+ir
-	 VA9r3v33RZYAQ==
-Message-ID: <853fbb4a-c36c-41d0-8ce3-3cb0d0c4b2f6@kernel.org>
-Date: Mon, 16 Dec 2024 08:27:11 +0100
+	b=elj6vRugCkqe5XCvkQXrBbNbfv/5NVbz8CDssDiUteYjewHs/80YqJr5XDbaa4iCb
+	 iuAHsb8Jign1l0WxgOmf4jRNRsz9BTplBGQosbgrbqyFzAaCPgsoPC+uIsFSMmTxqA
+	 58ctjnoh49o7zmjh9r1zlCSbp97jqhy51eC2enowASlWW9MhTHq7V1h/9PVlYJUfH3
+	 2glkCRhjSTlC6nfVtQRMu9yB8moDkWtsBt9Q30JCiZdSkw8fpD+dBOZb0o5dNxtOp7
+	 w7ldM0L+V3Jwb3X/zwxcx7yFUAhb0Shno/6HBj7Lms0zT/ZrsujJ68YGLZCn8yTKz7
+	 Htijc7xPdm12g==
+Message-ID: <1bbab4d4-d23f-4e9b-8c12-e303d347cea2@kernel.org>
+Date: Mon, 16 Dec 2024 08:28:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] Support host1x actmon
-To: Johnny Liu <johnliu@nvidia.com>
-Cc: airlied@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, krzk+dt@kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-tegra@vger.kernel.org, luca.ceresoli@bootlin.com,
- maarten.lankhorst@linux.intel.com, mperttunen@nvidia.com,
- mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
- skomatineni@nvidia.com, thierry.reding@gmail.com, tzimmermann@suse.de
-References: <jgqdgq6mifzex3tonl4sxbehwmcjo4jksfqmh7l4z5e2v4dqsj@uouomf3gyj7v>
- <20241213231726.2568-1-johnliu@nvidia.com>
+Subject: Re: [PATCH 1/3] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ FSUSB42
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+ Johan Hovold <johan@kernel.org>
+References: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
+ <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,36 +107,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241213231726.2568-1-johnliu@nvidia.com>
+In-Reply-To: <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/12/2024 00:17, Johnny Liu wrote:
->> On Tue, Dec 10, 2024 at 09:45:49AM -0800, Johnny Liu wrote:
->>> Activity monitoring (actmon for short) is a means to dynamically
->>> measure the utilization of units in the system to help drive software
->>> power management policies.
->>>
->>
->> Is this a resend or v2? Please always mark your patches appropriately -
->> see submitting patches document.
->>
->> b4 diff '20241210174554.18869-1-johnliu@nvidia.com'
->> Grabbing thread from lore.kernel.org/all/20241210174554.18869-1-johnliu@nvidia.com/t.mbox.gz
->> ---
->> Analyzing 6 messages in the thread
->> Could not find lower series to compare against.
->>
->> But I am sure I saw it somewhere...
->>
->> Or just use b4, so all this problems disappear.
+On 12/12/2024 14:08, Stephan Gerhold wrote:
+> Add a compatible entry for the onsemi FSUSB42 USB switch, which can be used
+> for switching orientation of the SBU lines in USB Type-C applications.
 > 
-> This is a resend actually to include all necessary To/Cc entries based on your comment
-> in the previous patch series:
+> Drivers work as-is with the existing fallback compatible.
+> 
+> Link to datasheet: https://www.onsemi.com/pdf/datasheet/fsusb42-d.pdf
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
-Then mark patches as RESEND. Please carefully read submitting patches
-before posting anything.
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
 Best regards,
