@@ -1,177 +1,101 @@
-Return-Path: <linux-kernel+bounces-447735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E1A9F3680
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1F69F3640
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57E316BE87
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16F1316539B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D68D20D4F7;
-	Mon, 16 Dec 2024 16:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C54200BB4;
+	Mon, 16 Dec 2024 16:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="Plwfp0bo"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juaKhib8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C574B2063C9;
-	Mon, 16 Dec 2024 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA86114B086
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367328; cv=none; b=t5lA07sYRosIrTvZPa51uiL39YUExpgQMy76jrmM+SWMZkR8L1r42tN+3kLt4WigEpZCwW8Ib6NbX3kltyj2/YD0yRfEVFGGvG2OsxCdAvXrkGsA6FlNG5w8Dxg05Hb2DS5mRdGX58+uUcOlhPZYZEMJa/vVITRtQiOp/JkqqlA=
+	t=1734367223; cv=none; b=qGb8cUjsF/L59lxyd8x/1B1RH/J5/E3q9eHOTTX+M4bhVElBC/IRTfqJ8RfvM1rljrqb4FC2lASr6kFxBpdRG2IVGjGO1i/85eM/RRWvyQJbDpPqwvtKEpgxUEXImSrYvtawv5KA/mISkXHXvGSDYuSU3DHyq9GAxFHk9zBAZfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367328; c=relaxed/simple;
-	bh=gO8n9vZfpBjfodmCvr1/fbnzjIA/qScsIumVEWsMZoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BbH2onxbt06qke1uvCBq3yXoutYC1dMxSxSLNpMmn1zMTsoD12ejNz9m1dhMirA00kTdT2J9B3Mx2skFg0KyniIcjAOpKvM8M5mvJP178QHt+AstezBjhs7wH5Ard+je2GqQgo/M2psoFSrWI2/qN5fxtDRKpml+qDNwC9lvYQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=Plwfp0bo; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1734367325;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i3EeGZr/t96R0XuHvR13YB4j6oGq0qLz1TSEmdxnqKY=;
-	b=Plwfp0boZO+ECktNZQncqJ4Ddk0FOAQuoiStDkBE0Qi64nFOIxEKfqQdRe8Fy6T9pKUIKt
-	mBb3PMaaUKnFj157SMOKGJAFOE4LCK4fdsq6NPgX9qKqe5ZvfQliyrrFdu8Kn+8pdc352y
-	fmo2xsjOnw9i+eIv34+q5w34NgK8unMaaVMqmpIeCwonOYT+mo+Nem3EwzwdzzqTpPjTld
-	pXw6xGBnhlLONr/hqpKABOMTNJF7GPjocubDb0byfuzY1ikddjhhweCKwZ/hV9RjnKUyhr
-	UxoqA7H4yluSbzQCYxM3EbxgwHixIdnOT75fpOVR3XpN4RHFd2phAySoFZFz9w==
-To: selinux@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
-	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH v2 00/22] selinux: harden against malformed policies
-Date: Mon, 16 Dec 2024 17:40:21 +0100
-Message-ID: <20241216164055.96267-23-cgoettsche@seltendoof.de>
-In-Reply-To: <20241216164055.96267-1-cgoettsche@seltendoof.de>
-References: <20241216164055.96267-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1734367223; c=relaxed/simple;
+	bh=70lINbxMiuJr0DwKul2hLcahtcYekps2D3NWfzvPUqI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g0csNriKp3uaB19R2QHhR8VCs7P6qI0+XkZRLnJl9pfVwRqjWiURyurjPalbzBCMDB9liLS3/MqoGEbct0SprRUEGcpYIrwD8+i33Rmu1WnQiFaZMhpQkvQjeCpFTgPiiBq8S5RIoo2lUvBQc7SqpnBy9c4HwZo2gP9cm7FTIW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juaKhib8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33953C4CEE0;
+	Mon, 16 Dec 2024 16:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734367223;
+	bh=70lINbxMiuJr0DwKul2hLcahtcYekps2D3NWfzvPUqI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=juaKhib8i5XlsjUEzHgmF0Nw7IUh8wLMcxaJgD9jtqOtrJKcweuBM5fE6yqdpPoKl
+	 tCcdvvqNJ2RjWT6WtfJlJ9/X63DcamtPC1azcuiq/r04Ot3wIuEoJyvW2ibYn5iZ+a
+	 rdqyNyer3mX7L/VXfF3avH01e9WozcO5uAIFubWbBiwRvM5jsPLS9FZlkIeBWtmk+G
+	 sIaaA0coaW40RvxEGnrMRYSiNmMGtWZmaZ55alY/vdrTGxxeiUd60XjyKfmygUX+Dd
+	 sUwJ6VhWrnwW6yZ1JMtkTQzm/wwsa95O6A8AaluZH5a1Q3FICPl0mb+p3FmK+nZRdy
+	 xaxEaual5SZIg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71A9B3806656;
+	Mon, 16 Dec 2024 16:40:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH V2] f2fs: The GC triggered by ioctl also needs to
+ mark the segno as victim
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <173436724000.272389.17352923573264150429.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Dec 2024 16:40:40 +0000
+References: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
+In-Reply-To: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
+To: Yongpeng Yang <yangyongpeng1@oppo.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-From: Christian Göttsche <cgzones@googlemail.com>
+Hello:
 
-With the SELinux namespace feature on the horizon it becomes important
-to identify and reject malformed policies at load time.  Otherwise
-memory corruptions can compromise the kernel or NULL-pointer dereferences
-and BUG() encounters can bring systems down.  Currently this is not a
-security relevant issue since loading a policy requires root privileges
-and permission of the current loaded SELinux policy, making it one of the
-most privileged operation.
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-The first 9 patches are cleanup commits with overseeable diffs.
+On Wed,  4 Dec 2024 11:31:13 +0800 you wrote:
+> In SSR mode, the segment selected for allocation might be the same as
+> the target segment of the GC triggered by ioctl, resulting in the GC
+> moving the CURSEG_I(sbi, type)->segno.
+> Thread A				Thread B or Thread A
+> - f2fs_ioc_gc_range
+>  - __f2fs_ioc_gc_range(.victim_segno=segno#N)
+>   - f2fs_gc
+>    - __get_victim
+>     - f2fs_get_victim
+>     : segno#N is valid, return segno#N as source segment of GC
+> 					- f2fs_allocate_data_block
+> 						- need_new_seg
+> 						- get_ssr_segment
+> 						- f2fs_get_victim
+> 						: get segno #N as destination segment
+> 						- change_curseg
+> 
+> [...]
 
-Patch 10 unifies the underlying type used for security class identifiers.
+Here is the summary with links:
+  - [f2fs-dev,V2] f2fs: The GC triggered by ioctl also needs to mark the segno as victim
+    https://git.kernel.org/jaegeuk/f2fs/c/e9a844f6e487
 
-Patch 11 to 21 add various checks at policy load time to reject malformed
-policies.
-
-Patch 22 needs some discussion:
-It limits the valid set of characters and the length for strings defined
-by policies.  Currently there are no restrictions, so control characters
-are accepted, e.g. Esc as part of a type name, and their length can be
-arbitrary.  Human formatted security contexts however must not be
-arbitrarily long, one example is they must fit in a page size for
-selinuxfs interaction and network associations.
-Thus the patch introduces the following restrictions:
-  * Disallow control characters
-  * Limit characters of identifiers to alphanumeric, underscore, dash,
-    and dot
-  * Limit identifiers in length to 128, expect types to 1024 and
-    categories to 32, characters (excluding NUL-terminator)
-    
-p.s.:
-On a related note to patch 10, the underlying type for types (and type-
-attributes) is also not consistent:
-In role, range and filename transitions, and the actual datum u32 is
-used, while avtables use u16, practically limiting the number of
-available types to 65534 (= U16_MAX - 2 (0 and U16_MAX are invalid)).
-
-v1: https://lore.kernel.org/selinux/20241115133619.114393-23-cgoettsche@seltendoof.de/
-
-v2: 
-  - also convert ebitmap_cmp() as suggested by Daniel
-  - accept instead of rejecting unknown xperm specifiers to support
-    backwards compatibility for future ones, suggested by Thiébaud
-  - add wrappers for str_read() to minimize the usage of magic numbers
-  - limit sensitivities to a length of 32, to match categories,
-    suggested by Daniel
- 
-Christian Göttsche (22):
-  selinux: supply missing field initializers
-  selinux: avoid using types indicating user space interaction
-  selinux: align and constify functions
-  selinux: rework match_ipv6_addrmask()
-  selinux: avoid nontransitive comparison
-  selinux: rename comparison functions for clarity
-  selinux: use known type instead of void pointer
-  selinux: avoid unnecessary indirection in struct level_datum
-  selinux: make use of str_read()
-  selinux: use u16 for security classes
-  selinux: more strict policy parsing
-  selinux: check length fields in policies
-  selinux: validate constraints
-  selinux: pre-validate conditional expressions
-  selinux: introduce ebitmap_highest_set_bit()
-  selinux: check type attr map overflows
-  selinux: reorder policydb_index()
-  selinux: beef up isvalid checks
-  selinux: validate symbols
-  selinux: more strict bounds check
-  selinux: check for simple types
-  selinux: restrict policy strings
-
- security/selinux/hooks.c               |   2 +-
- security/selinux/include/classmap.h    |   2 +-
- security/selinux/include/conditional.h |   2 +-
- security/selinux/include/security.h    |   4 +-
- security/selinux/selinuxfs.c           |   2 +-
- security/selinux/ss/avtab.c            |  58 +-
- security/selinux/ss/avtab.h            |  11 +-
- security/selinux/ss/conditional.c      | 166 +++---
- security/selinux/ss/conditional.h      |   6 +-
- security/selinux/ss/constraint.h       |   2 +-
- security/selinux/ss/context.c          |   2 +-
- security/selinux/ss/context.h          |  14 +-
- security/selinux/ss/ebitmap.c          |  39 +-
- security/selinux/ss/ebitmap.h          |   8 +-
- security/selinux/ss/hashtab.h          |   4 +-
- security/selinux/ss/mls.c              |  70 ++-
- security/selinux/ss/mls.h              |   6 +-
- security/selinux/ss/mls_types.h        |   2 +-
- security/selinux/ss/policydb.c         | 698 +++++++++++++++++++------
- security/selinux/ss/policydb.h         | 116 +++-
- security/selinux/ss/services.c         |  82 +--
- security/selinux/ss/sidtab.c           |   2 +-
- security/selinux/ss/symtab.c           |   2 +-
- security/selinux/ss/symtab.h           |   2 +-
- 24 files changed, 940 insertions(+), 362 deletions(-)
-
+You are awesome, thank you!
 -- 
-2.45.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
