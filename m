@@ -1,181 +1,95 @@
-Return-Path: <linux-kernel+bounces-446660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE2B9F27B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:08:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0AC9F27B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3D01885519
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C699C18864C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F965E57D;
-	Mon, 16 Dec 2024 01:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PwIp8/TV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED756F9DD;
+	Mon, 16 Dec 2024 01:09:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAF3232;
-	Mon, 16 Dec 2024 01:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940A7E56A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734311317; cv=none; b=MfV8WdFt8awP4HN31G3J12es/X/mdQ+nz8pNqce/F0I4P7esulFsE2IRrB5di/TmBNFEwgBKGpqzbNA/dFr5Fv0PMW34MxxX7xwFNAJtFtMPaEFrErFvEonflybwbvg6MzpgjKtU288we/8P/1GDNTWsxCPscUfrwRd9+8UYtAk=
+	t=1734311390; cv=none; b=AuMSCYdarutIOQFEOYpn3Y3RkwNJJVRIcgYORY3B6HkUBoFjtdsBFkJ2r6geHcQBGOqERCTiQPxIYnuknn+gN24cCXbM8YdtwOszjokF/mGBEj41Yj1Pwv4svBRKrKiqBVKzwrbe5GGY0aX4F0onvjkZ1NJPVRjUcrBnQAQszfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734311317; c=relaxed/simple;
-	bh=fA1zxkZy55Xbl5aDRt3PnVnaE7uEwwg7jkSWYAyiOOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1aZMnxgXCwKpi8lO4oelsmUNMl9IqwmKTdruYiVhA4Yvez4n0ov2VC/kDqo/aRKvebX46WWQF+qxEkurByi8499HOZLRq9sR5iNdDHJFZv2qiMZeslah43XwfjIsGuSqspvD+WAbnWA2s8bQxVrIi9gz6bMoPVmxFLS6YHVCSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PwIp8/TV; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734311317; x=1765847317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fA1zxkZy55Xbl5aDRt3PnVnaE7uEwwg7jkSWYAyiOOc=;
-  b=PwIp8/TVhcq4xzbaGLwEV398YCuEzP7ezXi1A3Iov4x1lmChYeCB+xOs
-   mPELvyiDUBZdXDcxU63DQKaIcDWup3IXSyO0KHVt703E+FOoG3P1+zM9E
-   SsTrqKL7ViPEK3H2lQGp+1eAsfKci9JN7CS4Vp3ivbog3r6Ro5MKi8aWf
-   om4YxE69zzUSp/QBYt5sgXi57IYtPbO19N1LY0PHLB64qd9nPDf6OHrG2
-   0n6qISiUVeR/955It4oHaFmS0d5w+Cun4OviZuorrYCbROTzZaUpbFp7l
-   Qa3jHvL+Z7CUQjf84aPFKJ6KwXdLqJfBGBe0usrKcAGNGLw3P0OkuaIHv
-   w==;
-X-CSE-ConnectionGUID: gnS8trVlQnWn+oAI8MeGNg==
-X-CSE-MsgGUID: 9hblDb/5Txa3VBeGRQZZuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34599495"
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="34599495"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 17:08:36 -0800
-X-CSE-ConnectionGUID: EoD++NoBTUOY9MX5XJvTlg==
-X-CSE-MsgGUID: PrCzXibAQdKvcNv1LyBh2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="96925577"
-Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 17:08:32 -0800
-Message-ID: <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
-Date: Mon, 16 Dec 2024 09:08:29 +0800
+	s=arc-20240116; t=1734311390; c=relaxed/simple;
+	bh=AI3KSgaav8QYd0mzA+A+8meEjDh2HtmAXZ/qd8sM5Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eYL2MQtTT5PUFkdYsQw8gc16WKD4MQX3aPTJ4Ic6Ecr104N1D2JYmxhgnVTGUy37/ZDTsjqDy6SHNGrEw6jLg+GhPCczT5grxjNvMsCAiHdqykSsE+JnClC2ekn1aqSJksalQ5G3lUXyfZvxGKfbErEDTe69JBAxIMKE+ELWVqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E634EC4CED4;
+	Mon, 16 Dec 2024 01:09:48 +0000 (UTC)
+Date: Sun, 15 Dec 2024 20:09:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML
+ <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Al Viro <viro@zeniv.linux.org.uk>, Michal
+ Simek <monstr@monstr.eu>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+Message-ID: <20241215200950.5cb5c3d9@batman.local.home>
+In-Reply-To: <20241215214034.GE2472262@mit.edu>
+References: <20241214182138.4e7984a2@batman.local.home>
+	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+	<20241214220403.03a8f5d0@gandalf.local.home>
+	<20241214221212.38cc22c3@gandalf.local.home>
+	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+	<20241214233855.46ad80e0@gandalf.local.home>
+	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
+	<20241215050517.050e9d83@gandalf.local.home>
+	<CAHk-=wh5jE5ARarmYNdL4sja36_e-mnejv3zRMC62Jzn-a3omw@mail.gmail.com>
+	<20241215214034.GE2472262@mit.edu>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
- michael.roth@amd.com, linux-kernel@vger.kernel.org
-References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
- <20241201035358.2193078-5-binbin.wu@linux.intel.com>
- <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+[
+  I'm back from a lovely day with my wife and friends visiting the
+  Finger Lake wineries which I would love to share with the Linux
+  Plumbers attendees if we ever get to have Plumbers at the Ithaca
+  Conference center. ;-)
+]
 
+On Sun, 15 Dec 2024 16:40:34 -0500
+"Theodore Ts'o" <tytso@mit.edu> wrote:
 
+> I'm not convinced that it's worth it in this particular case, so I
+> think I side with Linus here; maybe all of this hackery isn't worth
+> it?  Steven, what am I missing?  Why did we go down this particular
+> path in the first place?  I assume there must have been something that
+> seemed like a good reason at the time?
 
-On 12/13/2024 5:32 PM, Xiaoyao Li wrote:
-> On 12/1/2024 11:53 AM, Binbin Wu wrote:
->
-[...]
->> +
->> +static int tdx_map_gpa(struct kvm_vcpu *vcpu)
->> +{
->> +    struct vcpu_tdx * tdx = to_tdx(vcpu);
->> +    u64 gpa = tdvmcall_a0_read(vcpu);
->
-> We can use kvm_r12_read() directly, which is more intuitive. And we can drop the MACRO for a0/a1/a2/a3 accessors in patch 022.
-I am neutral about it.
+It has nothing to do with performance. It has only to do with debugging
+and catching the issue where developers use "%s" in the TP_printk() of
+TRACE_EVENT() for a string that can be freed after the trace event was
+executed but before it is read from the ring buffer.
 
+I stated in another email that I didn't like this solution when I wrote
+it, but it was the only solution I could think of to catch this common
+bug. But I also stated in another email that I think there's another
+solution that doesn't deal with va_list implementations and should be
+acceptable by Linus.
 
->
->> +    u64 size = tdvmcall_a1_read(vcpu);
->> +    u64 ret;
->> +
->> +    /*
->> +     * Converting TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE requires
->> +     * userspace to enable KVM_CAP_EXIT_HYPERCALL with KVM_HC_MAP_GPA_RANGE
->> +     * bit set.  If not, the error code is not defined in GHCI for TDX, use
->> +     * TDVMCALL_STATUS_INVALID_OPERAND for this case.
->> +     */
->> +    if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
->> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
->> +        goto error;
->> +    }
->> +
->> +    if (gpa + size <= gpa || !kvm_vcpu_is_legal_gpa(vcpu, gpa) ||
->> +        !kvm_vcpu_is_legal_gpa(vcpu, gpa + size -1) ||
->> +        (vt_is_tdx_private_gpa(vcpu->kvm, gpa) !=
->> +         vt_is_tdx_private_gpa(vcpu->kvm, gpa + size -1))) {
->> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
->> +        goto error;
->> +    }
->> +
->> +    if (!PAGE_ALIGNED(gpa) || !PAGE_ALIGNED(size)) {
->> +        ret = TDVMCALL_STATUS_ALIGN_ERROR;
->> +        goto error;
->> +    }
->> +
->> +    tdx->map_gpa_end = gpa + size;
->> +    tdx->map_gpa_next = gpa;
->> +
->> +    __tdx_map_gpa(tdx);
->> +    /* Forward request to userspace. */
->> +    return 0;
->
-> Maybe let __tdx_map_gpa() return a int to decide whether it needs to return to userspace and
->
->     return __tdx_map_gpa(tdx);
->
-> ?
+I'm not against ripping out the code. I agree with Linus that it's a
+hack, but the hack that caught the bugs early seemed to me worth it at
+the time.
 
-To save one line of code and the comment?
-Because MapGPA always goes to userspace, I don't want to make a function return
-a int that is a fixed value.
-And if the multiple comments bother you, I think the comments can be removed.
-
->
->
->> +
->> +error:
->> +    tdvmcall_set_return_code(vcpu, ret);
->> +    kvm_r11_write(vcpu, gpa);
->> +    return 1;
->> +}
->> +
->>   static int handle_tdvmcall(struct kvm_vcpu *vcpu)
->>   {
->>       if (tdvmcall_exit_type(vcpu))
->>           return tdx_emulate_vmcall(vcpu);
->>         switch (tdvmcall_leaf(vcpu)) {
->> +    case TDVMCALL_MAP_GPA:
->> +        return tdx_map_gpa(vcpu);
->>       default:
->>           break;
->>       }
->> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
->> index 1abc94b046a0..bfae70887695 100644
->> --- a/arch/x86/kvm/vmx/tdx.h
->> +++ b/arch/x86/kvm/vmx/tdx.h
->> @@ -71,6 +71,9 @@ struct vcpu_tdx {
->>         enum tdx_prepare_switch_state prep_switch_state;
->>       u64 msr_host_kernel_gs_base;
->> +
->> +    u64 map_gpa_next;
->> +    u64 map_gpa_end;
->>   };
->>     void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
->
-
+-- Steve
 
