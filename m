@@ -1,473 +1,302 @@
-Return-Path: <linux-kernel+bounces-447040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC179F2C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:57:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530E49F2C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14335161B13
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82CE2164027
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F2120124F;
-	Mon, 16 Dec 2024 08:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080BF200109;
+	Mon, 16 Dec 2024 08:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0Ks55wd"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="qG3I/NOq"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0F7200B8C;
-	Mon, 16 Dec 2024 08:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734339408; cv=none; b=hc5TW7PguVqiefJUUMWVkIiEjxWn2yvJgqxBUgZ73Zvk6nVTbdiLVr6vjf0rDQ+HyJSezjnJuhmIWCTiPX0RHDM2y7sUiq55ltJ8F2lEnY927+gJvFQEpjy5kCMDJyJvrOtCETB073omU8eFvu9Kwjv895m0ITEI/WQpqrBHDbc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734339408; c=relaxed/simple;
-	bh=tfbUP9gjJDGiJPTIqFiPdMEMEkKSRuNhcd5l9B9OJ/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=M5r5A54WYvsVkdK+k/n7Iz5ko9B2sRi26+dZxi3r23yXKTzRr1WNq1b4fxDP2DL9DigwPMW/GB/FO8caW3+iv2+f+oN1FDvPwveFcSf8KgYuBXaIIqC6+SzwfiX5jzyMXrjBEw+XaUll9mLhe/0DARltb8J30QL5u8GKK7e214I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0Ks55wd; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30034ad2ca3so32154881fa.1;
-        Mon, 16 Dec 2024 00:56:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734339404; x=1734944204; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=626pWv5KSy+d5fJyUTQWTlBU9Lgvvvj33oOG+jYjkv0=;
-        b=i0Ks55wdt8p0o7dCT7Z0MXpxZmMhc1ef5FbTht3p+vGedmTgOeucvQMNwieOrCm8W6
-         CwQ3LHTh5QITNHopFkLqlSFYScGLchBYOY4TtZjrC/EIaP5bgCve3Hn2wNlPVJdKIoYk
-         v9FxKbJ8LpmCNSRrEpdXx9R59EpSBkM6VO6BP8JkoahJhwIXDsiZ9aqS+ucc8e91jVob
-         3xZ+hOtNBkE2TJ0u2qdplf89AhdG+lXBpy+nYke2EIx41bX2eBML9l0ny/pjzcZyXMWH
-         OfwG1lB4QLHQEoPlhwiREHxM38L7E3RMI/FXY6lcSzSKEZhsJnFtJLNdqqPNzn+bNOU8
-         PvJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734339404; x=1734944204;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=626pWv5KSy+d5fJyUTQWTlBU9Lgvvvj33oOG+jYjkv0=;
-        b=pvnRMaa2gkAhGJ3A9gTeFYY9d91OziXhDPUNZpTB1He1qLqdcSLFmg0PzuwvoWYL3D
-         Hvk+WnrHzOKemjg3ZtxOVgJdn0ks1Irq4DUPsY6uPvSWNI6ZIUsMTiP9zvLN5x126Ad/
-         y6QLN/vZp+XKU8816P3H936pUuU+G9ZrpYyBjCBnqxzwSyDQI1oAKk2SdJXGChbh3t89
-         xS6+UjPMR6LaXDC4+spBBwClnejWwUxAsLyTgN6cdLoAu7O8TY+ddC+S9HsXK7wkyyPA
-         kEjKuNDfO9faKH4LzUO4yQ6+i6QH8ObslcanQ0ChJ93Gb37sgfogpgVdD6SVW8PDc2QV
-         D+AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpWDdrnRWpYuqZLJ48qQXN6i3LXTI/dgtmkW8G51Pa2zugsj8Bgtxmva/P7z3iBLFW/S2ZezHhQPbVR/2r@vger.kernel.org, AJvYcCWA5QokS0PvMhnonkolgsuXJxMfUnzE5COnNolN3ecld3aAb/YKNYmOtZlMcopVdHZIReIzW1LegIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHMIXSRdvkMBGQpnrAZ82/SVkmXdIpRZBMKLuEfSma0oxchSEj
-	KlrgFTEdrkQoj0cNQVDJWWaDGWB/2Ps6MYtXSOHXALXyTjBT1/aU
-X-Gm-Gg: ASbGncvPjOY5jUwCdzXPw1HJx8XA/ulTVPG9BC7/0OBf9VFXmdqU2cFeU3dtOEKpSkJ
-	6rWAb01eQmPWlv90hyadH/+M27wZXV+ftwGlSKxZcX6vFG9GllhUlwX+A7t68zS/awquDO6gDh/
-	TGs+6yE+1rD3zlEb2ANXWpTkivYgPcNjIL+/MKBtTwcfbMf2tXOK5U85C8LG+5se1cv2pnNkuK2
-	6a/1EAUppId0zw3w8EAZkVEPptRlEqYOhD6pQ2B0ZR2QwD0w1/w8pInWyw=
-X-Google-Smtp-Source: AGHT+IG3Oh337cUx8Oy+qqjyTPg8NGVyK3fDHAmv4fQ//dttOmRU51JIvzr7qeqQXMoU/yfI7RqujA==
-X-Received: by 2002:a2e:a30e:0:b0:2ff:df01:2b43 with SMTP id 38308e7fff4ca-3025447b0a9mr31724281fa.18.1734339404090;
-        Mon, 16 Dec 2024 00:56:44 -0800 (PST)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a5fbcsm8358901fa.105.2024.12.16.00.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 00:56:42 -0800 (PST)
-Date: Mon, 16 Dec 2024 10:56:37 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio: gts: Simplify available scale table build
-Message-ID: <Z1_rRXqdhxhL6wBw@mva-rohm>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448721FFC46;
+	Mon, 16 Dec 2024 08:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734339431; cv=fail; b=NxdwTEKRQdUAwOHzmWrko0UzdzDCRJei1j4G8NkGkBCoMAqPvJBKLe5poVxKBKr7q4jVhnjGVY7esgKYjQJB4xNBew6dP8MuvhTYqZEmUzokiNZXTI7esmdfAi48u4a43DIshHT06gN8sjXBF/O67F0MGLer8DbgnX0jLFslXOU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734339431; c=relaxed/simple;
+	bh=g8df1/kak5zgjqNIJZbnJ54TmO/KEFGs59XZ7loSvOk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q/Q2l3qaD5TgxKyT2CF+382vtK8vHqbJG6c4krGlz4Ok3Me6VNT3P8ICjonfwICGf78Ks9uAotHiUdgrL6yPp3uKRB49qbu11Q7Aa/9yatrxMUtIF0Y8aB7Ap8wJukxAiDwIhEbqz5mPiNA38zfgzH19ZixupCtCUQ66QpeAsHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=qG3I/NOq; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CkC/7rIb88Y+c240JdPhdw3/kbKJrWVSif15nN7efLQQXzOmvTE0edUT55YMTthZXHbCYvH/FlQiOJ8vamGsvg6axR2SEFkWRi8FgiLmut87gxYY4SwrVoA/o69jbL/tgNFt5epQtYXDc8hZrQ1sP+JtVzanP9O++Ef46Hlr4RGrOiWyvuTswVIC9NcQm+JKEiLTpEgS5SFdh6Bw9VDNg9aSHupKqAvsLhIRnWxS5ldXMu8bSkacD6EXLmAOJjtpi9G/2DuY5HEKI1KK+h9p/V0kXyc8qaJwTIrehHMqYvfIhGVQ/9CXCbgfYafeZQd/Tz5KqLzH4qNvtlmNQMSoAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g8df1/kak5zgjqNIJZbnJ54TmO/KEFGs59XZ7loSvOk=;
+ b=mbpB4zQL6WJV5ASbK+K8+A4jV9VTA6XTESUm+p0i1idVNyANHiDzv1Y61/K2K6X371lMPR+uxg4XJkBsqFVuHcWIdR5FldoEq71rSvHm/d5/Y9Nj7UYKmH/YlqBj0TGACXP157bZ6bhFrLTiYTzsd6/s2KYjhQqlZD0I5PpDQTzcpaTwUJzQ1D/y0Gn0DKneH0s2giGpfOx8OULN1prKdF3mwsFdMNVYsv+tscH3iej/N9S4k5VmBI94ubuY2CZt+u+gBNWsu90B4SnthE6XZr6fYCzD1iF8ZFsNpxj+kufMKywFg0EDhPrzv2+LHuKUDawjB0NCgnFmuMRW+bwZyw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8df1/kak5zgjqNIJZbnJ54TmO/KEFGs59XZ7loSvOk=;
+ b=qG3I/NOqGDAflOhQqLFRJRHA/Kx0Cc7URPtSre072lnDDfRG759OWHegixTb6n3ucOkOg1ZAKaUDm+jYpO2OnREjUu10+qXmgek6nuQcliXF+YYXuimJAf6GUxK0oiPykD9TSsT/TyO2i8kvcje36WvU4v8KG4LU/aPJl92hQBoFsmNAQPF0FE4q0LMAJJczbLzPdsaMFPoEqeraeQybIzLBd/KASwdH2grgT5hmojDUhq+SZSh9epi7CrW2l7+MlXRznfiy/SEuxlSEqe9Ta8rNieYbxXSAtRGQ2sRPSSau24J8aYtFoNvy73tyvFRAhrXGMUz3i6wsOZVgVcJpxw==
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b6::22)
+ by VI0PR10MB8816.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:233::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.10; Mon, 16 Dec
+ 2024 08:57:05 +0000
+Received: from AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4]) by AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::baa6:3ada:fbe6:98f4%7]) with mapi id 15.20.8272.005; Mon, 16 Dec 2024
+ 08:57:05 +0000
+From: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+To: "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>, "brgl@bgdev.pl"
+	<brgl@bgdev.pl>
+CC: "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH 2/2] gpio: omap: save two lines by using
+ devm_clk_get_prepared()
+Thread-Topic: [PATCH 2/2] gpio: omap: save two lines by using
+ devm_clk_get_prepared()
+Thread-Index: AQHbRaJCThPj1tY640qXcJUSCr5fNbLkJk8AgAADvYCAABgWgIAEY40A
+Date: Mon, 16 Dec 2024 08:57:05 +0000
+Message-ID: <828da89cff6dd2c49df9af6131aa3b43675abc87.camel@siemens.com>
+References: <20241203164143.29852-1-brgl@bgdev.pl>
+	 <20241203164143.29852-2-brgl@bgdev.pl>
+	 <a21531a7-13ae-45f5-a60d-dd80b3ef9834@gmail.com>
+	 <0bf97a477f1c547b960c63607395b82d92986ef3.camel@siemens.com>
+	 <a175fd56-c21b-46f5-bd0a-ccaa7c0f3efa@gmail.com>
+In-Reply-To: <a175fd56-c21b-46f5-bd0a-ccaa7c0f3efa@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR10MB6867:EE_|VI0PR10MB8816:EE_
+x-ms-office365-filtering-correlation-id: 6c736f37-d890-407a-d278-08dd1daf9d44
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MlBsRFJhSmRzRThRUmJzbVdUZjRLU0xZVHg5NmYyalEzaUNaYjJoTUxNRmc0?=
+ =?utf-8?B?bUt6MWsrdDk5TVZnZW9SaTVySnZwK3B2ZGJHVnlTL25sekFhNE1iTVYwNTk4?=
+ =?utf-8?B?SEhqYkVlTGtkNkkwQXA5ZXd0V2R0c1pHYS83ai9yTEpueVoxRVFGcG1GalVH?=
+ =?utf-8?B?NnRWVlRIRGlZeFRRY3JFU2xLbUs3LzFiUXRLLzJULzFFT1BuQWZiR04rQVlp?=
+ =?utf-8?B?ZzdZbkkyZTdvdStvMUYzdThWTUNKQk5WUW1JeFpXd1M4TGNVd2lvYlBBZml3?=
+ =?utf-8?B?S2xia3Zhc1NPNXBCWHRDUi9EUUNnbmthemF0QTQzSFR3ZW1ZNEJKVkYvNHp4?=
+ =?utf-8?B?dzZCWGVHUHZPUTRsZk55WFNmNXZrN0x3OU92OHlEYktNNXpHL3doQzVJMkNO?=
+ =?utf-8?B?V042a3dJMVh1S3F0WTBPS0txcFZJdEowQ0EvV1p4a3dXS2hJNmhHSHJDWGlC?=
+ =?utf-8?B?UFdFZUNQVXZxR3RnMWY5R1B1SFpmeC93VGNFR1liQXJpM211Z2s4RlVRcHN2?=
+ =?utf-8?B?UVZoVEFYQ2xvRHQrZkxWNUxqcUMzeTF3STN0QzFxQjc1RWNsMjhWbDc2bmxI?=
+ =?utf-8?B?M0JlNThjRDkxbGhpTjF5VysvV0JMYW5pWCtIaFBQbzZmbGRtS2toQlM2TzZY?=
+ =?utf-8?B?Q2drNkV1cWpOSEFQYm9oUDJZYllTTW5XTzNsWFJOVUtPYjRUVlBqaDRVQXl3?=
+ =?utf-8?B?aS9SQTkvaHRrZnYrZ241UVBobVl5RjJrWDFUdGJKTGhnelE5ayt2SXJDUzdL?=
+ =?utf-8?B?blcyQ3hMdHRhM2NSL1RTK3JWR0w4NnJuNzJzMytOL1lJdnJndk1vcjBwekVS?=
+ =?utf-8?B?aHBKQ09oSW80L1lJNTVZL1lxdHA1UlBVcVMyQURjV3pLa0E3UUZ3ZHBxeVNK?=
+ =?utf-8?B?SEZaSUdZWHk2SUE0azBCS2JXYTJPSTh1R1E4enl2T0F0MjhRcHZ0TS96Sy92?=
+ =?utf-8?B?T29EWml2ckVPWUdlZDEzTE54R05mbkc5VW0ra1BiK3Zlb0FNN0NteERSVFBJ?=
+ =?utf-8?B?dHZBS20yM0NaMGhPQVloalZxdW9Sd25YU1dpRmdBT2t6K3hSWXlmN0lrYm5r?=
+ =?utf-8?B?VWtKMEV2dXFTb2UrcHRRTmRqZ096U2xwUDRKd2tIS3dTNUxIbTN2WldTVFQv?=
+ =?utf-8?B?QytlYkFTK2trZmQyNWIxSnZMK21adzJSRjl4and4eDM5UGFxN3BLYmIxVHAr?=
+ =?utf-8?B?R2FPZ2VhQ25BRmVoMEttMGREMFRFLzNvS3BTYllOVHhpUHJaZG5ld2NSVG9v?=
+ =?utf-8?B?cDhzd2tIUUE4eVJ4YUN5cWxPQjNBbm51SFVjUGNaNS8rMzd2aGFwUEpyaENt?=
+ =?utf-8?B?ZUFZVlpKNmJ1UHZNc29yL0tTb2JaVDZ5MTlHbVVsRlh4QTRrbGJzQ291OXNp?=
+ =?utf-8?B?NVpyT3AwMWVIVmI3L0pmR0ZvVmt2MEo4Z0o3djF3U2pRSyt6aThEMVBoYmxh?=
+ =?utf-8?B?R3hMUDBGZ2VyM1VOQ1c5azZ0WHVDNnRUS09Ha3QzN3ZhekcxZ25yV2lzV2JG?=
+ =?utf-8?B?Mk5VTi9aQjNOaEh3MTFpUk82d0VUSHJOQ1ZVbXpKUk9jYjd6ZXFXM3FSKzJl?=
+ =?utf-8?B?R3g5WTBLMlNaSzdnZ2pSY1l5a1M4Mi9mK3h3cTZPTTlJQmN2SExpL05IcnNM?=
+ =?utf-8?B?S0trQ3BBQ0dlR3JHL2EvZm91Y2VKTnBlUnZVakNBa2NpMk9tTjZZY3BBL2JP?=
+ =?utf-8?B?RFlpdXBHdXBkUHNoRnBtdTYvNlUvMGdpOHFKb3grTGVvY0NDaHdkaEFjOXUr?=
+ =?utf-8?B?d1g1YXcyaWNqMktDV1JzaHNJWTRKalBtaU5BY0dFRVBDazFEQWQvY0hqdzBn?=
+ =?utf-8?B?dXlVd21Jd3RKL08wZERMb1U1VnkrWmI0cmw4SEl5L2YyYXdCVHJlckk4eTVx?=
+ =?utf-8?Q?M9JV8yyH9y8K1?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YktaSGV3eGduZEtIandsMmlBV2dFck5KQ0pETmdxd2piYlMvWlJacHBGbm1i?=
+ =?utf-8?B?MTVESzdLcnlnNTE2WFNOZE5qMHpsMDNVcmIrZGJwNTZCRUNKOEhsY1ZHb05D?=
+ =?utf-8?B?MjEzdWdSaHRlclR1bW53ejlRYndPWTRmbTM3cmpQb0w4V1pDT2Z3emxoN2xE?=
+ =?utf-8?B?dndhdWk2Q3IyR2RKLytYNUpiMXRybnQ4bUVXSmpMbzhwWXh3b1oxWDE5RU5D?=
+ =?utf-8?B?ZlNTYm5qbW1yQnc3WXFkUEpDdjY1TkN0ZWtnOE9HdW1LOGNpYzN3NFA4QWtx?=
+ =?utf-8?B?bXJmRFRKbEsxTUFvVEVDTTNPd1F0NVFPcXI3ZGdIS21rSlVOU1diS2FWOGdH?=
+ =?utf-8?B?emJtWGRMVG1BdXFFcEhrWGRFSHJ3V0ZmNlFKRmFDWjc2dGR4VTZLZnFZY1Av?=
+ =?utf-8?B?TVFwUlhMSFhrT0pkdGZpOHUwK1FaZ2lDcUNCenNDcWgxV2RaWlFMc1NRQXpz?=
+ =?utf-8?B?R0diTThydTNMdHY3VnNHK2x6czBCV2R5bHBTNzM4TFlLV2NyckZCeTJiVWNT?=
+ =?utf-8?B?QnppWG5pKzBWeHg3bE9ycjA4TGpEemF2eWwwb2VLVlRGekRKUFRYK052elRs?=
+ =?utf-8?B?NGZFWHNiNFFjKzRKTjBkdVA3YnJJTlUyMmY5WWROMHZjcHpab1hwTExoZ2xz?=
+ =?utf-8?B?T0xweENCNWp4SXdYeEVEK214WG56MUsvMDA0S2kyYm1ENHRYRE1HQzBIMk9v?=
+ =?utf-8?B?OHZOT3ZNSUVoRkpZV3dOUXdQR2wzUkNWZWhzQy9IeVdtcngrUEo2cHVjSFpv?=
+ =?utf-8?B?Wm1tLzJCQXllTldSTUE4cnlncHZ5enZQTDhTeGlXZkQ5elRMOGRSZDRkWjZt?=
+ =?utf-8?B?cHA3dnljZjdqTGpkckxRWHdvU0FxRGFOb1NkMUFQZ1ZRTUhtMUEwN2Q0Ymk2?=
+ =?utf-8?B?YWI2Q0xJOEpOdmtPQzYzZlBwTVNTL2NZNnN4RHVzeXVhMldscDhJbE9HaEpU?=
+ =?utf-8?B?YVpBSWNZeFVQMUx5bEJNd1JXTmRXak1kZHM3MFUzYWNTS3NLRW9iZmNFTjU1?=
+ =?utf-8?B?Y0d3TzVoOG90Y3hyNGtUekE2WndKOGE2Rm5QcUFwTU5FMkFBMFhueHF1REkz?=
+ =?utf-8?B?b2V5c0NDd1U2MXVuRVQ4NVQ5cER2bmRiSlJocktLaHc4d0FWTlNacHZOMlk4?=
+ =?utf-8?B?amlsdmd0bm91WERvYWx3Qnc5dGlBWWp5NlcxK1JZKzBZaXFxYUI2TDlXaEI3?=
+ =?utf-8?B?a1ZFK2VVaWZndmwwWFFpNkNwYW84dUxaNTJHK0JRWWg0b0lUd1N4T25kTXlC?=
+ =?utf-8?B?QmE2aGtUU2ltblQ4em5XU3ZXaG85RmVJeVFaNzFkSU84Sm45b2c4TXZCMTZt?=
+ =?utf-8?B?WFlyMFNabzljMTlteE9rNU5pWm9ybHNhb2UvRzVGMVNWOWlrMW9PY0hQWG05?=
+ =?utf-8?B?d1MvcnF1Z3lxWEFKTmE1V1dxRUtKZS9Ma3R0WGE4aGpQZkV1S2FwOUlrOWxz?=
+ =?utf-8?B?SmNrOTNhRHFGa1EzdmVmbnFZNVBvTHpMOXFta0h4UkRSaU9xKzExN1FhQS9l?=
+ =?utf-8?B?WEdENDVUdkdxMlFUekVnVENrbmRhdTNQMldTTUFLcGNHUi9JdE43TWMyT2dj?=
+ =?utf-8?B?WWxsN0x0NjBWN2o4YzV1ekNLaWNyQXJCVGNuMUdrajVncnJhMDIwbmc1OE5X?=
+ =?utf-8?B?ODhjd25HcFpxanByVThSUk02VnJCY0dSY2M2VUI4ZkFTb2FkVkxueStGeWE2?=
+ =?utf-8?B?N1AvcHFBVnZFLzZ0dHJIVmRHRnI5VGNjdHFGYjJkdnhwRkhMS0ozSHpSQksx?=
+ =?utf-8?B?bVVsVU9qRDlxUGJqZHk0NEZTNGtJdzZOR2gzUnpNUmZVNytYTnVnQm1uVGdC?=
+ =?utf-8?B?VXcyQkplUk43b3BpSkVEb3d4UHR3NGVLRzhqVHhyTVdPRmg1UWNpZy9BZ0Nn?=
+ =?utf-8?B?UXhmNThIWVRad2E2OHg0ZWp1ZHZxWGNZUGd5bGxRVkJpakFVZkRraVVxejNX?=
+ =?utf-8?B?dlMwTjYyeUZTN3I1aTNqM2YzZlBuS0dObFFpTHR3eVlzTWF0RjVBT1Y1NFIz?=
+ =?utf-8?B?S0FiYk9MVklELzRUVGJTdEhHbWdFcmQ0U2F3YlVDT040a2RrRjhGS29EVUhK?=
+ =?utf-8?B?bVVndjYzV1B4SDdkS3dNUU5lY1E0RXV2TlVtMnJzcEFuaGlocWNwV2xnV21a?=
+ =?utf-8?B?VzRteGlkZ3J4M0VhQ1E1bUNuNlJzZEc1cVdKSUJDLzdTemtHbEZvRG1nWW9x?=
+ =?utf-8?Q?iBvketRDBUpdmqkOj0Aq06s=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D3C407B9E136794BA79E39012E01DCCB@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eo02nJzJzcUjPyry"
-Content-Disposition: inline
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6867.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c736f37-d890-407a-d278-08dd1daf9d44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2024 08:57:05.1042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RLuoaTF01rEHHoUpN/F302yBL7L4fYsuL7aaoz3fJBw5TgVbBqsH+n4B5uynUyeGeP8C1SoG2N076YJY5cL/SNQTAP5Ox+4lhhhARyYCj6Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8816
 
-
---eo02nJzJzcUjPyry
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Make available scale building more clear. This hurts the performance
-quite a bit by looping throgh the scales many times instead of doing
-everything in one loop. It however simplifies logic by:
- - decoupling the gain and scale allocations & computations
- - keeping the temporary 'per_time_gains' table inside the
-   per_time_scales computation function.
- - separating building the 'all scales' table in own function and doing
-   it based on the already computed per-time scales.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
- v2:
-    - Add a few comments
-    - Use more descriptive variable name
-
-This is still only tested using the kunit tests. All further testing is
-still highly appreciated!
----
- drivers/iio/industrialio-gts-helper.c | 272 ++++++++++++++++----------
- 1 file changed, 174 insertions(+), 98 deletions(-)
-
-diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrial=
-io-gts-helper.c
-index 291c0fc332c9..65697be58a10 100644
---- a/drivers/iio/industrialio-gts-helper.c
-+++ b/drivers/iio/industrialio-gts-helper.c
-@@ -160,16 +160,123 @@ static void iio_gts_purge_avail_scale_table(struct i=
-io_gts *gts)
- 	gts->num_avail_all_scales =3D 0;
- }
-=20
-+static int scale_eq(int *sc1, int *sc2)
-+{
-+	return sc1[0] =3D=3D sc2[0] && sc1[1] =3D=3D sc2[1];
-+}
-+
-+static int scale_smaller(int *sc1, int *sc2)
-+{
-+	if (sc1[0] !=3D sc2[0])
-+		return sc1[0] < sc2[0];
-+
-+	/* If integer parts are equal, fixp parts */
-+	return sc1[1] < sc2[1];
-+}
-+
-+/*
-+ * Do a single table listing all the unique scales that any combination of
-+ * supported gains and times can provide.
-+ */
-+static int do_combined_scaletable(struct iio_gts *gts,
-+				  size_t all_scales_tbl_bytes)
-+{
-+	int t_idx, i, new_idx;
-+	int **scales =3D gts->per_time_avail_scale_tables;
-+	int *all_scales =3D kcalloc(gts->num_itime, all_scales_tbl_bytes,
-+				  GFP_KERNEL);
-+
-+	if (!all_scales)
-+		return -ENOMEM;
-+	/*
-+	 * Create table containing all of the supported scales by looping
-+	 * through all of the per-time scales and copying the unique scales
-+	 * into one sorted table.
-+	 *
-+	 * We assume all the gains for same integration time were unique.
-+	 * It is likely the first time table had greatest time multiplier as
-+	 * the times are in the order of preference and greater times are
-+	 * usually preferred. Hence we start from the last table which is likely
-+	 * to have the smallest total gains.
-+	 */
-+	t_idx =3D gts->num_itime - 1;
-+	memcpy(all_scales, scales[t_idx], all_scales_tbl_bytes);
-+	new_idx =3D gts->num_hwgain * 2;
-+
-+	while (t_idx-- > 0) {
-+		for (i =3D 0; i < gts->num_hwgain ; i++) {
-+			int *candidate =3D &scales[t_idx][i * 2];
-+			int chk;
-+
-+			if (scale_smaller(candidate, &all_scales[new_idx - 2])) {
-+				all_scales[new_idx] =3D candidate[0];
-+				all_scales[new_idx + 1] =3D candidate[1];
-+				new_idx +=3D 2;
-+
-+				continue;
-+			}
-+			for (chk =3D 0; chk < new_idx; chk +=3D 2)
-+				if (!scale_smaller(candidate, &all_scales[chk]))
-+					break;
-+
-+			if (scale_eq(candidate, &all_scales[chk]))
-+				continue;
-+
-+			memmove(&all_scales[chk + 2], &all_scales[chk],
-+				(new_idx - chk) * sizeof(int));
-+			all_scales[chk] =3D candidate[0];
-+			all_scales[chk + 1] =3D candidate[1];
-+			new_idx +=3D 2;
-+		}
-+	}
-+
-+	gts->num_avail_all_scales =3D new_idx / 2;
-+	gts->avail_all_scales_table =3D all_scales;
-+
-+	return 0;
-+}
-+
-+static void iio_gts_free_int_table_array(int **arr, int num_tables)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < num_tables; i++)
-+		kfree(arr[i]);
-+
-+	kfree(arr);
-+}
-+
-+static int iio_gts_alloc_int_table_array(int ***arr, int num_tables, int n=
-um_table_items)
-+{
-+	int i, **tmp;
-+
-+	tmp =3D kcalloc(num_tables, sizeof(**arr), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	for (i =3D 0; i < num_tables; i++) {
-+		tmp[i] =3D kcalloc(num_table_items, sizeof(int), GFP_KERNEL);
-+		if (!tmp[i])
-+			goto err_free;
-+	}
-+
-+	*arr =3D tmp;
-+
-+	return 0;
-+err_free:
-+	iio_gts_free_int_table_array(tmp, i);
-+
-+	return -ENOMEM;
-+}
-+
- static int iio_gts_gain_cmp(const void *a, const void *b)
- {
- 	return *(int *)a - *(int *)b;
- }
-=20
--static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **sca=
-les)
-+static int fill_and_sort_scaletables(struct iio_gts *gts, int **gains, int=
- **scales)
- {
--	int i, j, new_idx, time_idx, ret =3D 0;
--	int *all_gains;
--	size_t gain_bytes;
-+	int i, j, ret;
-=20
- 	for (i =3D 0; i < gts->num_itime; i++) {
- 		/*
-@@ -189,71 +296,69 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
-nt **gains, int **scales)
- 		}
- 	}
-=20
--	gain_bytes =3D array_size(gts->num_hwgain, sizeof(int));
--	all_gains =3D kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
--	if (!all_gains)
--		return -ENOMEM;
-+	return 0;
-+}
-+
-+static void compute_per_time_gains(struct iio_gts *gts, int **gains)
-+{
-+	int i, j;
-+
-+	for (i =3D 0; i < gts->num_itime; i++) {
-+		for (j =3D 0; j < gts->num_hwgain; j++)
-+			gains[i][j] =3D gts->hwgain_table[j].gain *
-+				      gts->itime_table[i].mul;
-+	}
-+}
-+
-+static int compute_per_time_tables(struct iio_gts *gts, int **scales)
-+{
-+	int **per_time_gains;
-+	int ret;
-=20
- 	/*
--	 * We assume all the gains for same integration time were unique.
--	 * It is likely the first time table had greatest time multiplier as
--	 * the times are in the order of preference and greater times are
--	 * usually preferred. Hence we start from the last table which is likely
--	 * to have the smallest total gains.
-+	 * Create a temporary array of the 'total gains' for each integration
-+	 * time.
- 	 */
--	time_idx =3D gts->num_itime - 1;
--	memcpy(all_gains, gains[time_idx], gain_bytes);
--	new_idx =3D gts->num_hwgain;
-+	ret =3D iio_gts_alloc_int_table_array(&per_time_gains, gts->num_itime,
-+					    gts->num_hwgain);
-+	if (ret)
-+		return ret;
-=20
--	while (time_idx-- > 0) {
--		for (j =3D 0; j < gts->num_hwgain; j++) {
--			int candidate =3D gains[time_idx][j];
--			int chk;
-+	compute_per_time_gains(gts, per_time_gains);
-=20
--			if (candidate > all_gains[new_idx - 1]) {
--				all_gains[new_idx] =3D candidate;
--				new_idx++;
-+	/* Convert the gains to scales and populate the scale tables */
-+	ret =3D fill_and_sort_scaletables(gts, per_time_gains, scales);
-=20
--				continue;
--			}
--			for (chk =3D 0; chk < new_idx; chk++)
--				if (candidate <=3D all_gains[chk])
--					break;
-+	iio_gts_free_int_table_array(per_time_gains, gts->num_itime);
-=20
--			if (candidate =3D=3D all_gains[chk])
--				continue;
-+	return ret;
-+}
-=20
--			memmove(&all_gains[chk + 1], &all_gains[chk],
--				(new_idx - chk) * sizeof(int));
--			all_gains[chk] =3D candidate;
--			new_idx++;
--		}
--	}
-+/*
-+ * Create a table of supported scales for each supported integration time.
-+ * This can be used as available_scales by drivers which don't allow scale
-+ * setting to change the integration time to display correct set of scales
-+ * depending on the used integration time.
-+ */
-+static int **create_per_time_scales(struct iio_gts *gts)
-+{
-+	int **per_time_scales, ret;
-=20
--	gts->avail_all_scales_table =3D kcalloc(new_idx, 2 * sizeof(int),
--					      GFP_KERNEL);
--	if (!gts->avail_all_scales_table) {
--		ret =3D -ENOMEM;
--		goto free_out;
--	}
--	gts->num_avail_all_scales =3D new_idx;
-+	ret =3D iio_gts_alloc_int_table_array(&per_time_scales, gts->num_itime,
-+					    gts->num_hwgain * 2);
-+	if (ret)
-+		return ERR_PTR(ret);
-=20
--	for (i =3D 0; i < gts->num_avail_all_scales; i++) {
--		ret =3D iio_gts_total_gain_to_scale(gts, all_gains[i],
--					&gts->avail_all_scales_table[i * 2],
--					&gts->avail_all_scales_table[i * 2 + 1]);
-+	ret =3D compute_per_time_tables(gts, per_time_scales);
-+	if (ret)
-+		goto err_out;
-=20
--		if (ret) {
--			kfree(gts->avail_all_scales_table);
--			gts->num_avail_all_scales =3D 0;
--			goto free_out;
--		}
--	}
-+	return per_time_scales;
-=20
--free_out:
--	kfree(all_gains);
-+err_out:
-+	iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
-=20
--	return ret;
-+	return ERR_PTR(ret);
- }
-=20
- /**
-@@ -275,55 +380,26 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
-nt **gains, int **scales)
-  */
- static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
- {
--	int **per_time_gains, **per_time_scales, i, j, ret =3D -ENOMEM;
--
--	per_time_gains =3D kcalloc(gts->num_itime, sizeof(*per_time_gains), GFP_K=
-ERNEL);
--	if (!per_time_gains)
--		return ret;
--
--	per_time_scales =3D kcalloc(gts->num_itime, sizeof(*per_time_scales), GFP=
-_KERNEL);
--	if (!per_time_scales)
--		goto free_gains;
-+	int ret, all_scales_tbl_bytes;
-+	int **per_time_scales;
-=20
--	for (i =3D 0; i < gts->num_itime; i++) {
--		per_time_scales[i] =3D kcalloc(gts->num_hwgain, 2 * sizeof(int),
--					     GFP_KERNEL);
--		if (!per_time_scales[i])
--			goto err_free_out;
--
--		per_time_gains[i] =3D kcalloc(gts->num_hwgain, sizeof(int),
--					    GFP_KERNEL);
--		if (!per_time_gains[i]) {
--			kfree(per_time_scales[i]);
--			goto err_free_out;
--		}
--
--		for (j =3D 0; j < gts->num_hwgain; j++)
--			per_time_gains[i][j] =3D gts->hwgain_table[j].gain *
--					       gts->itime_table[i].mul;
--	}
-+	if (unlikely(check_mul_overflow(gts->num_hwgain, 2 * sizeof(int),
-+					&all_scales_tbl_bytes)))
-+		return -EOVERFLOW;
-=20
--	ret =3D gain_to_scaletables(gts, per_time_gains, per_time_scales);
--	if (ret)
--		goto err_free_out;
-+	per_time_scales =3D create_per_time_scales(gts);
-+	if (IS_ERR(per_time_scales))
-+		return PTR_ERR(per_time_scales);
-=20
--	for (i =3D 0; i < gts->num_itime; i++)
--		kfree(per_time_gains[i]);
--	kfree(per_time_gains);
- 	gts->per_time_avail_scale_tables =3D per_time_scales;
-=20
--	return 0;
--
--err_free_out:
--	for (i--; i >=3D 0; i--) {
--		kfree(per_time_scales[i]);
--		kfree(per_time_gains[i]);
-+	ret =3D do_combined_scaletable(gts, all_scales_tbl_bytes);
-+	if (ret) {
-+		iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
-+		return ret;
- 	}
--	kfree(per_time_scales);
--free_gains:
--	kfree(per_time_gains);
-=20
--	return ret;
-+	return 0;
- }
-=20
- static void iio_gts_us_to_int_micro(int *time_us, int *int_micro_times,
---=20
-2.47.0
-
-
---eo02nJzJzcUjPyry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdf60EACgkQeFA3/03a
-ocWsLwf/coSoYvQ6FJiP/WDFlXtYTHiNisdHqHJfZddfnCbTSmHp3k8f3OcKHJhl
-Dw4II4slg/o7JeEPq2bQQkghOh5nTduDRvTkAYunZ3OCqjBSnUeelcXtPuEEdy2H
-0WKeZxEOF2flmgQDM65sWdfGCEeRh4V4D0nzmG3xUo8G4C2gLylflEW2qR+ktvX1
-YmUucIyvgp6g7SzEGQZPIhFe9MfIiH+YqzmUk0FZm0Zw0io4mudfI7gMSEndIN2E
-f+dzALyEABuntcOacQZrbhy4dw0Lovxvl6tvd8KRGsE/ZIzoIzpG8YqFO7yf6bDG
-Mo1KsWauX9pagkQJI/F7n0KAVhze3g==
-=iwJ3
------END PGP SIGNATURE-----
-
---eo02nJzJzcUjPyry--
+SGkgTWF0dGkhDQoNCk9uIEZyaSwgMjAyNC0xMi0xMyBhdCAxNTo1NSArMDIwMCwgTWF0dGkgVmFp
+dHRpbmVuIHdyb3RlOg0KDQo+ID4gPiA+IEZyb206IEJhcnRvc3ogR29sYXN6ZXdza2kgPGJhcnRv
+c3ouZ29sYXN6ZXdza2lAbGluYXJvLm9yZz4NCj4gPiA+ID4gDQo+ID4gPiA+IFdlIGNhbiBkcm9w
+IHRoZSBlbHNlIGJyYW5jaCBpZiB3ZSBnZXQgdGhlIGNsb2NrIGFscmVhZHkgcHJlcGFyZWQgdXNp
+bmcNCj4gPiA+ID4gdGhlIHJlbGV2YW50IGhlbHBlci4NCj4gPiA+ID4gDQo+ID4gPiA+IFNpZ25l
+ZC1vZmYtYnk6IEJhcnRvc3ogR29sYXN6ZXdza2kgPGJhcnRvc3ouZ29sYXN6ZXdza2lAbGluYXJv
+Lm9yZz4NCj4gPiA+ID4gLS0tDQo+ID4gPiANCj4gPiA+IEJvb3RpbmcgYSBiZWFnbGVib25lIGJs
+YWNrIHdpdGggdGhlIGxpbnV4LW5leHQgZnJvbSBUb2RheSBmYWlscw0KPiA+ID4gKG5leHQtMjAy
+NDEyMTMpLiBFbmFibGluZyBlYXJseWNvbiArIGRlYnVnIHlpZWxkcyBiZWxvdyBzcGxhdCB0byBi
+ZQ0KPiA+ID4gcHJpbnRlZCB0byB0aGUgY29uc29sZToNCj4gPiA+IA0KPiA+ID4gW8KgwqDCoCAy
+LjYyODAxOV0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+ID4gPiBbwqDC
+oMKgIDIuNjMyNzkzXSBXQVJOSU5HOiBDUFU6IDAgUElEOiAzNCBhdCBkcml2ZXJzL2Nsay9jbGsu
+YzoxMjU0DQo+ID4gPiBjbGtfY29yZV9lbmFibGUrMHhiNC8weDFiMA0KPiA+ID4gW8KgwqDCoCAy
+LjY0MTE1Nl0gRW5hYmxpbmcgdW5wcmVwYXJlZCBsNC13a3VwLWNsa2N0cmw6MDAwODoxOA0KPiA+
+ID4gW8KgwqDCoCAyLjY0NjUzMF0gTW9kdWxlcyBsaW5rZWQgaW46DQo+ID4gPiBbwqDCoMKgIDIu
+NjQ5Njg4XSBDUFU6IDAgVUlEOiAwIFBJRDogMzQgQ29tbToga3dvcmtlci91NDozIE5vdCB0YWlu
+dGVkDQo+ID4gPiA2LjEzLjAtcmMyLW5leHQtMjAyNDEyMTMtMDAwMDItZ2YyZDRiMjljODMzMCAj
+MTUNCj4gPiA+IFvCoMKgwqAgMi42NjAyNTZdIEhhcmR3YXJlIG5hbWU6IEdlbmVyaWMgQU0zM1hY
+IChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpDQo+ID4gPiBbwqDCoMKgIDIuNjY2NTMxXSBXb3JrcXVl
+dWU6IGV2ZW50c191bmJvdW5kIGRlZmVycmVkX3Byb2JlX3dvcmtfZnVuYw0KPiA+ID4gW8KgwqDC
+oCAyLjY3MjU1M10gQ2FsbCB0cmFjZToNCj4gPiA+IFvCoMKgwqAgMi42NzI1NzBdwqAgdW53aW5k
+X2JhY2t0cmFjZSBmcm9tIHNob3dfc3RhY2srMHgxMC8weDE0DQo+ID4gPiBbwqDCoMKgIDIuNjgw
+NTc4XcKgIHNob3dfc3RhY2sgZnJvbSBkdW1wX3N0YWNrX2x2bCsweDUwLzB4NjQNCj4gPiA+IFvC
+oCA3IDIuNjg1Nzg4XcKgIGR1bXBfc3RhY2tfbHZsIGZyb20gX193YXJuKzB4YzAvMHgxMzANCj4g
+PiA+IFvCoMKgwqAgMi42OTA3MzRdwqAgX193YXJuIGZyb20gd2Fybl9zbG93cGF0aF9mbXQrMHg4
+MC8weDFhMA0KPiA+ID4gW8KgwqDCoCAyLjY5NTk0NF3CoCB3YXJuX3Nsb3dwYXRoX2ZtdCBmcm9t
+IGNsa19jb3JlX2VuYWJsZSsweGI0LzB4MWIwDQo+ID4gPiBbwqDCoMKgIDIuNzAxOTYzXcKgIGNs
+a19jb3JlX2VuYWJsZSBmcm9tIGNsa19jb3JlX2VuYWJsZV9sb2NrKzB4MTgvMHgyYw0KPiA+ID4g
+W8KgwqDCoCAyLjcwODE1OV3CoCBjbGtfY29yZV9lbmFibGVfbG9jayBmcm9tDQo+ID4gPiBzeXNj
+X2VuYWJsZV9vcHRfY2xvY2tzLnBhcnQuOSsweDI4LzB4ODQNCj4gPiA+IFvCoMKgwqAgMi43MTU2
+MTFdwqAgc3lzY19lbmFibGVfb3B0X2Nsb2Nrcy5wYXJ0LjkgZnJvbQ0KPiA+ID4gc3lzY19lbmFi
+bGVfbW9kdWxlKzB4MjU0LzB4MmRjDQo+ID4gPiBbwqDCoMKgIDIuNzIzMDUyXcKgIHN5c2NfZW5h
+YmxlX21vZHVsZSBmcm9tIHN5c2NfcnVudGltZV9yZXN1bWUrMHgxN2MvMHgxYzANCj4gPiA+IFvC
+oMKgwqAgMi43Mjk1OTldwqAgc3lzY19ydW50aW1lX3Jlc3VtZSBmcm9tIF9fcnBtX2NhbGxiYWNr
+KzB4NGMvMHgxMzANCj4gPiA+IFvCoMKgwqAgMi43MzU3MDldwqAgX19ycG1fY2FsbGJhY2sgZnJv
+bSBycG1fY2FsbGJhY2srMHg1MC8weDU0DQo+ID4gPiBbwqDCoMKgIDIuNzQxMDk2XcKgIHJwbV9j
+YWxsYmFjayBmcm9tIHJwbV9yZXN1bWUrMHg2MTQvMHg2NjANCj4gPiA+IFvCoMKgwqAgMi43NDYz
+MDRdwqAgcnBtX3Jlc3VtZSBmcm9tIF9fcG1fcnVudGltZV9yZXN1bWUrMHg0Yy8weDY0DQo+ID4g
+PiBbwqDCoMKgIDIuNzUxOTYwXcKgIF9fcG1fcnVudGltZV9yZXN1bWUgZnJvbSBfX2RldmljZV9h
+dHRhY2grMHhkMC8weDE4OA0KPiA+ID4gW8KgwqDCoCAyLjc1ODE1NV3CoCBfX2RldmljZV9hdHRh
+Y2ggZnJvbSBidXNfcHJvYmVfZGV2aWNlKzB4ODgvMHg4Yw0KPiA+ID4gb3JfdGhyZWFkIGZyb20g
+a3RocmVhZCsweDE4OC8weDI0Yw0KPiA+ID4gW8KgwqDCoCAyLjc4OTQ3Nl3CoCBrdGhyZWFkIGZy
+b20gcmV0X2Zyb21fZm9yaysweDE0LzB4MjANCj4gPiA+IFvCoMKgwqAgMi43OTQzMjddIEV4Y2Vw
+dGlvbiBzdGFjaygweGUwMDkxZmIwIHRvIDB4ZTAwOTFmZjgpDQo+ID4gPiBbwqDCoMKgIDIuNzk5
+NTI4XSAxZmEwOsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAwMDAwMDAwMA0KPiA+ID4gMDAwMDAwMDAgMDAwMDAw
+MDAgMDAwMDAwMDANCj4gPiA+IFvCoMKgwqAgMi44MDc5NDddIDFmYzA6IDAwMDAwMDAwIDAwMDAw
+MDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQo+ID4gPiAwMDAwMDAwMCAwMDAwMDAwMCAw
+MDAwMDAwMA0KPiA+ID4gW8KgwqDCoCAyLjgxNjM2NV0gMWZlMDogMDAwMDAwMDAgMDAwMDAwMDAg
+MDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMTMgMDAwMDAwMDANCj4gPiA+IFvCoMKgwqAgMi44MjMx
+NzNdIC0tLVsgZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQ0KPiA+ID4gW8KgwqDCoCAy
+LjgyODA3MF0gdGktc3lzYyA0NGUwNzAwMC50YXJnZXQtbW9kdWxlOiBPcHRpb25hbCBjbG9ja3Mg
+ZmFpbGVkDQo+ID4gPiBmb3IgZW5hYmxlOiAtMTA4DQo+ID4gPiBbwqDCoMKgIDIuODM1OTk4XSAt
+LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NCj4gPiA+IA0KPiA+ID4gcmV2ZXJ0
+aW5nDQo+ID4gPiBiN2JiYWZmOGMxYmMgKCJncGlvOiBvbWFwOiBzYXZlIHR3byBsaW5lcyBieSB1
+c2luZyBkZXZtX2Nsa19nZXRfcHJlcGFyZWQoKSIpDQo+ID4gPiANCj4gPiA+IGZpeGVzIHRoZSBi
+b290IGZvciBtZS4NCj4gPiA+IA0KPiA+ID4gDQo+ID4gPiA+IMKgIMKgwqAgZHJpdmVycy9ncGlv
+L2dwaW8tb21hcC5jIHwgNCArLS0tDQo+ID4gPiA+IMKgIMKgwqAgMSBmaWxlIGNoYW5nZWQsIDEg
+aW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+ID4gPiANCj4gPiA+ID4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYw0K
+PiA+ID4gPiBpbmRleCA1NGM0YmZkY2NmNTY4Li41N2QyOTlkNWQwYjE2IDEwMDY0NA0KPiA+ID4g
+PiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1vbWFwLmMNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9n
+cGlvL2dwaW8tb21hcC5jDQo+ID4gPiA+IEBAIC0xNDQ5LDEzICsxNDQ5LDExIEBAIHN0YXRpYyBp
+bnQgb21hcF9ncGlvX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gPiA+
+IMKgIMKgwqDCoAl9DQo+ID4gPiA+IMKgwqDCoMKgIA0KPiA+ID4gPiDCoCDCoMKgwqAJaWYgKGJh
+bmstPmRiY2tfZmxhZykgew0KPiA+ID4gPiAtCQliYW5rLT5kYmNrID0gZGV2bV9jbGtfZ2V0KGRl
+diwgImRiY2xrIik7DQo+ID4gPiA+ICsJCWJhbmstPmRiY2sgPSBkZXZtX2Nsa19nZXRfcHJlcGFy
+ZWQoZGV2LCAiZGJjbGsiKTsNCj4gPiA+ID4gwqAgwqDCoMKgCQlpZiAoSVNfRVJSKGJhbmstPmRi
+Y2spKSB7DQo+ID4gPiA+IMKgIMKgwqDCoAkJCWRldl9lcnIoZGV2LA0KPiA+ID4gPiDCoCDCoMKg
+wqAJCQkJIkNvdWxkIG5vdCBnZXQgZ3BpbyBkYmNrLiBEaXNhYmxlIGRlYm91bmNlXG4iKTsNCj4g
+PiA+ID4gwqAgwqDCoMKgCQkJYmFuay0+ZGJja19mbGFnID0gZmFsc2U7DQo+ID4gPiA+IC0JCX0g
+ZWxzZSB7DQo+ID4gPiA+IC0JCQljbGtfcHJlcGFyZShiYW5rLT5kYmNrKTsNCj4gPiA+ID4gwqAg
+wqDCoMKgCQl9DQo+ID4gPiA+IMKgIMKgwqDCoAl9DQo+ID4gPiA+IMKgwqDCoMKgIA0KPiA+ID4g
+DQo+ID4gPiBJIGNhbiBvbmx5IHNwb3QgYSBtaW5vciBmdW5jdGlvbmFsIGNoYW5nZS4gVGhlIGNv
+ZGUgcHJpb3IgdGhpcyBjb21taXQNCj4gPiA+IGRvZXMgbm90IGNoZWNrIHRoZSByZXN1bHQgb2Yg
+Y2xrX3ByZXBhcmUoKSwgYW5kIGRvZXMgbmVpdGhlciBzZXQNCj4gPiA+IGJhbmstPmRiY2tfZmxh
+ZyA9IGZhbHNlOyBub3IgY2FsbCBjbGtfcHV0KCk7DQo+ID4gPiANCj4gPiA+IE90aGVyIHRoYW4g
+dGhhdCwgdGltaW5nIGlzIGxpa2VseSB0byBiZSBjaGFuZ2VkLiBOb3Qgc3VyZSB3aGF0IGlzIHRo
+ZQ0KPiA+ID4gdGhpbmcgaGVyZS4NCj4gPiANCj4gPiBUaGUgbmV3IGNvZGUgbG9va3MgbW9yZSBj
+b3JyZWN0LCB3aXRoIHRoZSByZXR1cm4gY29kZSBjaGVjayBmcm9tIGNsa19wcmVwYXJlKCkuDQo+
+IA0KPiBJIGFncmVlLiBVbmZvcnR1bmF0ZWx5IHNvbWV0aGluZyBicmVha3MgdGhvdWdoLg0KPiAN
+Cj4gPiBDb3VsZCBpdCBiZSB0aGF0IHR3byBwcm9ibGVtcyBlbGltaW5hdGVkIHRoZW1zZWx2ZXMg
+aW4geW91ciBjYXNlIGJlZm9yZT8gOy0pDQo+IA0KPiBIYS4gV291bGQgaXQgYmUgdGhlIGZpcnN0
+IHRpbWU/IDspIFdlbGwsIHVuZm9ydHVuYXRlbHkgSSByZWFsbHkgZG9uJ3QgDQo+IGtub3cgdGhl
+IG9tYXAvYW0zMzV4IHN0dWZmIHRvbyB3ZWxsLiBNYXliZSBUb255IChDQykgb3IgR3J5Z29yaSBr
+bm93IA0KPiBiZXR0ZXIgLSBJIHRoaW5rIHRoZXkgaGF2ZSBoZWxwZWQgbWUgd2l0aCBCQkIgcmVs
+YXRlZCBzdHVmZiBiZWZvcmUgOikNCj4gDQo+ID4gV291bGQgaXQgYmUgcG9zc2libGUgZm9yIHlv
+dSB0byBwcm92aWRlIHRoZSBsb2dzIHdpdGggImluaXRjYWxsX2RlYnVnIiB3aXRoDQo+ID4gYW5k
+IHdpdGhvdXQgdGhlIHBhdGNoIGluIHF1ZXN0aW9uPw0KPiANCj4gTG9ncyBhdHRhY2hlZCA6KSBt
+aW5pY29tX3JldmVydGVkLmNhcCBoYXMgaXMgdGhlIG5leHQtMjAyNDEyMTMgaGF2aW5nIA0KPiB0
+aGlzIGNvbW1pdCByZXZlcnRlZC4gbWluaWNvbV9ub3RfcmV2ZXJ0ZWQuY2FwIGlzIGp1c3QgdGhl
+IG5leHQtMjAyNDEyMTMuDQo+IA0KPiBVbmZvcnR1bmF0ZWx5IGl0IHNlZW1zIHRoZXJlIGFyZSBz
+b21lIGVycm9ycyAoZmxpcHBlZCBiaXRzPykgaW4gdGhlIA0KPiBzZXJpYWwgbG9nLiBOb3Qgc3Vy
+ZSB3aGF0IGNhdXNlcyB0aGVtIC0gSSBoYXZlIG5ldyBGVERJIGNoaXAsIHBlcmhhcHMgaXQgDQo+
+IGNhdXNlcyB0aGVzZSBwcm9ibGVtcy4gKENvbXBhcmlzb24gb2YgdGhlIGxvZ3Mgc2hvd3Mgc2lu
+Z2xlLCBzZWVtaW5nbHkgDQo+IHJhbmRvbSwgbGV0dGVycyBiZWluZyBjaGFuZ2VkLikNCg0KTm8g
+cHJvYmxlbSEgVGhhbmtzIGZvciB0aGUgbG9ncyEgSSB0aGluayBJIGtub3cgd2hhdCBoYXBwZW5l
+ZDogSSBzdXBwb3NlDQppdCdzICJwcmVwYXJlZCIgY291bnRlciB1bmRlcmZsb3cgb24gcHJvYmUg
+ZGVmZXJyYWwgb2YgR1BJTyBkcml2ZXINCih0aGVyZSBhcmUgInByb2JlIG9mIDQ0ZTA3MDAwLmdw
+aW8gcmV0dXJuZWQgNTE3IiB2aXNpYmxlKS4NCg0KSWYgeW91J2Qgc3RpbGwgaGF2ZSBhIGNoYW5j
+ZSB0byB0ZXN0IDYuMTMuMC1yYzItbmV4dC0yMDI0MTIxMywNCkkgYmVsaWV2ZSB0aGlzIHdhcyBt
+aXNzaW5nIGluIHRoZQ0KImdwaW86IG9tYXA6IHNhdmUgdHdvIGxpbmVzIGJ5IHVzaW5nIGRldm1f
+Y2xrX2dldF9wcmVwYXJlZCgpIjoNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bpby9ncGlvLW9t
+YXAuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvLW9tYXAuYw0KaW5kZXggNzZkNWQ4N2U5NjgxLi4wYzMw
+MDEzZDJiNDggMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1vbWFwLmMNCisrKyBiL2Ry
+aXZlcnMvZ3Bpby9ncGlvLW9tYXAuYw0KQEAgLTE0NzMsOCArMTQ3Myw2IEBAIHN0YXRpYyBpbnQg
+b21hcF9ncGlvX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQogCWlmIChyZXQp
+IHsNCiAJCXBtX3J1bnRpbWVfcHV0X3N5bmMoZGV2KTsNCiAJCXBtX3J1bnRpbWVfZGlzYWJsZShk
+ZXYpOw0KLQkJaWYgKGJhbmstPmRiY2tfZmxhZykNCi0JCQljbGtfdW5wcmVwYXJlKGJhbmstPmRi
+Y2spOw0KIAkJcmV0dXJuIHJldDsNCiAJfQ0KIA0KQEAgLTE0OTUsOCArMTQ5Myw2IEBAIHN0YXRp
+YyB2b2lkIG9tYXBfZ3Bpb19yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCiAJ
+Y3B1X3BtX3VucmVnaXN0ZXJfbm90aWZpZXIoJmJhbmstPm5iKTsNCiAJZ3Bpb2NoaXBfcmVtb3Zl
+KCZiYW5rLT5jaGlwKTsNCiAJcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2LT5kZXYpOw0KLQlpZiAo
+YmFuay0+ZGJja19mbGFnKQ0KLQkJY2xrX3VucHJlcGFyZShiYW5rLT5kYmNrKTsNCiB9DQogDQog
+c3RhdGljIGludCBfX21heWJlX3VudXNlZCBvbWFwX2dwaW9fcnVudGltZV9zdXNwZW5kKHN0cnVj
+dCBkZXZpY2UgKmRldikNCg0KDQotLSANCkFsZXhhbmRlciBTdmVyZGxpbg0KU2llbWVucyBBRw0K
+d3d3LnNpZW1lbnMuY29tDQo=
 
