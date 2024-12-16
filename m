@@ -1,96 +1,121 @@
-Return-Path: <linux-kernel+bounces-447202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2FF9F2ED8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:07:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C899F2EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:10:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7300718845CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:07:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FA8165E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C4D204097;
-	Mon, 16 Dec 2024 11:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B07204586;
+	Mon, 16 Dec 2024 11:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuraBuVR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n4SJcHtw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5D20408E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F5F204574;
+	Mon, 16 Dec 2024 11:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734347216; cv=none; b=fiEVhPpso0nGolEPeS8xQk4srY0WDMUjy2sHb+E3tHYSpxHKYa+SuEn047o+eMIpl7RHl9wguBFuHeWwOPyDUEV85GPzQv9jHGNuKuIchNhG0sr3JqYIRBar/3qmWYRWi5tU3liyLEdTqemFy77ziQGe6aaIH25iwjQ8MpnF/ks=
+	t=1734347409; cv=none; b=p7E3tsnwr6YNpKCZ3uPm5VwFhNjOgI7shJOxpP8YaPNVpN6BihpUgne6CgRmJetQE8VHzkoI9KdY1OpnGf3fOnBNvPHlG5FN5jvoZV/Nutbk2s6kgaVO00ognlrbon5TMFJn2M09cs5HiA9LJle87O+YRXsrXi9W4DdAuSxzL2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734347216; c=relaxed/simple;
-	bh=ywX1oQ18iE2vfl6WWVI5VhJrNL5RQwd7RuMeVyNwMPo=;
+	s=arc-20240116; t=1734347409; c=relaxed/simple;
+	bh=4SGBuLlC7yvLtIze+D8oqUF4k9KT61/1jVHbgR573mM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPBUJC7Q8tesBnkxmfZcr+R/CGmBzLIKMwr+em2XYv4qKLzU20QOcNTfBbPAPtlm4t11wOexY4yQgWBJY0Uqn0V/TDwfx6W+5kglicMOVd+SUjRf0Mv8g22Hh3BK2evLvG1TfDxEjL3LLvzIoi0MrPQZzgRm1RV1AB41/WMNsV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuraBuVR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C9ECC4CED0;
-	Mon, 16 Dec 2024 11:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734347215;
-	bh=ywX1oQ18iE2vfl6WWVI5VhJrNL5RQwd7RuMeVyNwMPo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjBJoEuygfroA09t8liZxRanzdgaXuqyEmfZ1jEnLfarA4A6u2Kp5TJKNvusPgzzo0sCzT0f9Nj/2H7YHfJ59HrwODXCWWvRh3T7qS0dC70Z9l2UO8Jo/cXXHIqyg8SCMASgOswBYl2dpxRtR95jfdDL2yZQxkA8oLe9l7hiSzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n4SJcHtw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFD3A13C;
+	Mon, 16 Dec 2024 12:09:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734347367;
+	bh=4SGBuLlC7yvLtIze+D8oqUF4k9KT61/1jVHbgR573mM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LuraBuVRAsnT6gD6C7MwpftgUMyIgYT4jkPbZClcgUHIgAQbC3jyzh6rp0mzYYjQ9
-	 S77N5jO5/+eVUMBEypsuJVhCL93MHcLSf43s6E2Ip7NAUIMgHRv8wG2lir8TPB9krm
-	 y/rLWcKUEr6h+6IxBIjotw01LmIQuIXb8pHXN2avcmpvAusM35Z9mE6FLifuFVMh0n
-	 pUvkZVluitwzgRgyfZGEeylP/GPop6sIGG8GDYlGsYRQPcxpmNfOfBRqqm9Ed7h2+y
-	 K2/Nw08o+rCIzzK/eGQ3WKO/wS/3VI16wsgqRAaQxDG1Futl/oYWxvLgwAt+gWq0YQ
-	 kbOnp8+CbVr7g==
-Date: Mon, 16 Dec 2024 12:06:53 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org, robdclark@gmail.com
-Subject: Re: [PATCH v3 0/2] drm: Allow encoder modeset when connectors are
- changed
-Message-ID: <20241216-daring-opalescent-herring-bfdc8f@houat>
-References: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
+	b=n4SJcHtw3ny1CmDDyfpsJ3a4KvZIeooLjKlX3qwqxHhko0jXZLq5C1Gt8oVKSMl/C
+	 emR5QFaljbmd9hJilhNyxG/qcuVQ/lepDskEtG/D5G2FDEipDk+nM5XrBwVfMfDh5y
+	 VG2tW1veQMnSgfXyHF/FtIoH7ibC7Hwtz/pcDajQ=
+Date: Mon, 16 Dec 2024 13:09:46 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
+ maxItems
+Message-ID: <20241216110946.GJ32204@pendragon.ideasonboard.com>
+References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
+ <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+ <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
+ <20241216083239.GC32204@pendragon.ideasonboard.com>
+ <d560cde5-6689-4933-8a42-3986f1a7b861@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="cve54abmjy6zy4ki"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
+In-Reply-To: <d560cde5-6689-4933-8a42-3986f1a7b861@ideasonboard.com>
 
+On Mon, Dec 16, 2024 at 01:02:26PM +0200, Tomi Valkeinen wrote:
+> On 16/12/2024 10:32, Laurent Pinchart wrote:
+> > On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
+> >> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
+> >>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>>
+> >>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+> >>> properties. As the amount of cmms or vsps is always a fixed amount, set
+> >>> the maxItems to match the minItems.
+> >>>
+> >>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> >>> ---
+> >>>   Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
+> >>>   1 file changed, 10 insertions(+)
+> >>
+> >> The top level property should define widest constraints as well.
+> > 
+> > I'm curious, why is that ? I understand why a top-level default would
+> > make sense when it's optionally overridden by model-specific values, but
+> > in this case there's no such default. Every SoC has its own fixed value.
+> 
+> Looking at the file, shouldn't we have minItems == maxItems for 
+> interrupts and resets too? Well, I guess for interrupts we could in 
+> theory run with just some of the interrupt lines connected. I'm not sure 
+> if that's the case for resets.
 
---cve54abmjy6zy4ki
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v3 0/2] drm: Allow encoder modeset when connectors are
- changed
-MIME-Version: 1.0
+Unless there's some magic handling of min/maxItems for those that I
+wouldn't be aware of, I think it makes sense.
 
-On Wed, Dec 11, 2024 at 01:18:41PM -0800, Jessica Zhang wrote:
-> Call encoder mode_set() when connectors are changed. This avoids issues
-> for cases where the connectors are changed but CRTC mode is not.
+-- 
+Regards,
 
-Looks great, thanks a lot for doing the tests :)
-
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---cve54abmjy6zy4ki
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2AJyAAKCRAnX84Zoj2+
-doAKAX4pPBt7VLBlP5IvAhuVZ6Shqdm2H1X/lYRp7MyncmWE+FL5eQP1/vfD6ZnC
-E/VtNa8BfR6R5wMfrQSRkkVWpIUeUVmiq2gpikdFQ5+i6Pwonp/GABF2PdLHhXaU
-6Mv00hJLEQ==
-=c2zP
------END PGP SIGNATURE-----
-
---cve54abmjy6zy4ki--
+Laurent Pinchart
 
