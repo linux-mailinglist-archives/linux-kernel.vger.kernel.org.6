@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-446809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1839F2963
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E57BF9F2966
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6017518861E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3A218862B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA811925AD;
-	Mon, 16 Dec 2024 05:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D5C25632;
+	Mon, 16 Dec 2024 05:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCkmTzGI"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="azaRBaeI"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BE210F4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF2D10F4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734325568; cv=none; b=WOFMncIOr5lrE9kb9w2cASBnVSFSIgetJuOuIZiGUsTzYVlnWgTp40OaQUV6APuSKtG5guY2D6kV3hR8RMOnyp2+hvSYUoCpHoNMefvPpQxaCL3sCVHsvTbFAZmi6O0j/fklqZ+wUrBtgs0Dn8MBY3caYF/q21gvPcdrYexAdMo=
+	t=1734325577; cv=none; b=iSKOASZWhj+RKUgLzRsxIdo1ywrOG2S099eNX8fwucZXy48/x21T4gniLRP+GqUDUCuy4vcMzzAqYP72yHZ00zvuLrFoze+yG4j+NObB5xHO++/DnpFX5gIxznz4xUfw7dV6VPJsPhN/R1AbSgmGCRwhRYrHDoJu5ukxQ7j0WUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734325568; c=relaxed/simple;
-	bh=wWZ0zgu8E+iN8nHcNX6Kk6KfdHJSI4HjZiBQTk19Q08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKs2SvxNofmeNEAD22jPfThoRilz7tSAatGiPheLyqUR+X15O8gu7WB9sphoxw/dxl8XlTD30T005n75d71v1GtFuqC+p/hBafVPK2/LhSngM6Cz/FB7sLOmUq4TeDpaH/bM0wcKEIjK5xZa4BiTLOPXEUvRcYmVcTTsInjbUrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCkmTzGI; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b15d7b7a32so389330285a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:06:07 -0800 (PST)
+	s=arc-20240116; t=1734325577; c=relaxed/simple;
+	bh=kCRva32N0VhrNgQfChfjnrcWqJoDUo1iXfZ0ODPK70c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rS0186qQyoWXcdIuT5OXBB7j2kUfUHRFEKWLJZBDTW67x4yFxQk1W8EBalhKkUwkx/r7eRg/1FKdiA0WzgS7uGrmRTKH3XlRmrQ5weSXvL06uCC2Cheep0o6E9eYcY9/EHyGKKGJJvc28VPVmymWRcwhHPXeT9WcC1E5k/PCAWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=azaRBaeI; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3022598e213so35748061fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:06:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734325566; x=1734930366; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyAlmSIue1yI2x6sqSoYtePgVLtgmXfHaAKBgrqewBQ=;
-        b=eCkmTzGIiTguF76oUDTGtcOuotwIj8W611XD493hiCprHj6sV485mq4nNV+DFIleff
-         kWBslb0Q9Rr6Jec7Pk8vsL5oxIH676G7neLAPpV4eSh0ykoFbGpJvTUXHNbC+aoYDvaY
-         OqBDlxNDe7PKF5tK2hoPUtISrkEAlwiDvjZlxn6qp5J2ckBbeC+bFXwPw/hjKd2z0uMS
-         jIBP1dJFhIs0Snzw4MvW89gKrtfjekneTId9usl1S3io+3JAKZT5PW9UMTxhw/6HSszM
-         i5NJdnfpWZ1rKGmEfw3trzEEPYzcICQVEEiRPpNj9/Jl3UbHHiYlaRDeoX9ioVHppJGI
-         65vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734325566; x=1734930366;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1734325574; x=1734930374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LyAlmSIue1yI2x6sqSoYtePgVLtgmXfHaAKBgrqewBQ=;
-        b=RaDHWxTO/tUXP2nIqaMz5QTNEQJXKelsOg6kb4B4BeCSCe6W5n2X52kzorZHpcVj46
-         yLqLQP+WLFAkHvb54fGkP8VlCHQ6bF/Up2FCDfU5CmN4Df7Hold1ML2Bw7sWbXbb5FrZ
-         Qf2Mqdjlcj8rP1ymq7uLWU1XIA9xT4uKsrZd0RqjyfdJK2HW/DzJpNdWobnsNd/5X2ep
-         frSGyVk6RX0Ku+l6jLop9ouZmLdQh2zAci5afDr8bWlPSx8V9LVDdLJkkMoY5a10XmxE
-         VqrvCDCfsRauw99lsoRhhMHoXqt+FiZV0dLD+db76XxvdwAourbZMBNqaDchVFQApInb
-         j5pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGN+KFzBQF4fo5blyeV7pOBvQDqyxYrXVNKwxWR9TpT3TOXH5BjjzxbEtKOB+lmeIgNalasXq9UZcBHs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7fzu3Ncw6QjIsQHLeOX/rVwlZE0IVzHdZ2I9cb0YRLFSP+Cdw
-	EeKc1loXy9DpP54hkdyWoPQm6GjkigYsyWdku7i08x94R95zvH8Z
-X-Gm-Gg: ASbGncvTeNKEZkzS4fCq/m8SYOnb6SmWW4e8yY+CjQxQJI0Z3HiX2AV0wWBaEef9C3M
-	C8wRO4bSB3A9aOqIhfWxfIdDRHhjjVHj536fypaYntMS92iaa0a6HlU92Ud2LGxgpwbUcTm3NrH
-	74snegxLjbwhznqUke1ay9VQZGgS8UCmHiPRbaKQOg0wgHO5E7Zf/cO0PfpV0w+ltZGu3azx+d8
-	Dkq43uG5JdTlSbpoHRrKhvhbn1Bnaur
-X-Google-Smtp-Source: AGHT+IF1V1JDBT9DxBXnKsSb9FGOSWHTVrkLz4gC4NnnVANUPFlFTC911pK1N5+IlhRrLEkQEQ26SA==
-X-Received: by 2002:a05:620a:46a6:b0:7b6:dd7a:9716 with SMTP id af79cd13be357-7b6fbecc698mr2294512685a.10.1734325566242;
-        Sun, 15 Dec 2024 21:06:06 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7048ca76asm191276585a.112.2024.12.15.21.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 21:06:05 -0800 (PST)
-Date: Mon, 16 Dec 2024 13:05:48 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: guoren@kernel.org, conor@kernel.org, alexghiti@rivosinc.com
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com, leobras@redhat.com, 
-	corbet@lwn.net, peterlin@andestech.com, Guo Ren <guoren@linux.alibaba.com>
-Subject: Re: [PATCH 0/2] riscv: qspinlock: errata: Add
- ERRATA_THEAD_WRITE_ONCE fixup
-Message-ID: <ohjfp2mwenkmm77t3iwtd6xhuhiykcmumujknqme3yd7hyac2p@j6mi542lmbeg>
-References: <20241214143039.4139398-1-guoren@kernel.org>
+        bh=kCRva32N0VhrNgQfChfjnrcWqJoDUo1iXfZ0ODPK70c=;
+        b=azaRBaeIXKBmrQxHeg7eil9IwlxtRI7RD+KUYevzjWqTvRXER0+JsW20rEMWRKwAsP
+         XdGGAdBylCoo4e5rAb4UexmI0GBbWRywRHd/Zs94JvzD0B+qjIfFS87CtPL4cvP1WCCX
+         4y/eaubA7yHUD6ZWh8N4Sd8gjlqCdkFrNmBUA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734325574; x=1734930374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kCRva32N0VhrNgQfChfjnrcWqJoDUo1iXfZ0ODPK70c=;
+        b=M9JBhYaZI6+odh93ufJW5QSUr6DG6zWMmMwuNs8KtLD4/tDaKCfNw55jjteluwVITj
+         RQoHPgYkwZcDsGEPJ14OA2gtmuTh87ovnlyMUo/q7kQSPsQyzPn4uPjHXd6Q17DludmH
+         dKF5KoOWWIPepIJapLEBBrrZLyYN3h+reDmy7R/fT36njFpbh+ZtoT4prlUxwfh4bM7f
+         +4cRUKa/dtioQ5h5nbZj6fdFkyEdNyY29DDNcmdQEXOdBSxc+OzmGLhJVyVQGfeP9d3O
+         HRJZBCdhgZBRK7Zs//giDM//BBKGHciVvQcQKCAA7aKLdvpwiRchxt40PtB3VmWstzaI
+         bR8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKr3qGWV1mUmAwfDkDHG6j+2BVIZlR9IDTXHn+M8jQxfAuFP5OcK6EvVXLvUOCjVxrjedIOgkabK/53uY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFt1P4E3WLASyRbXw1eovHw+K1Ms7Yi20qMavea6XSl905IfJV
+	VIXcn+npkqzRhhleHs+i9k299vR/LrMrimFCHoU5ZkmKjQ6kObaPpPJuZ80beAOJTIx23ArQM+1
+	PojjcocA1k/6fqvrMIfk4/andmPTG7Rdy0u1F
+X-Gm-Gg: ASbGncuQaJ5BLlGBoP4hkzEQ8V5CNO3P9qJKiVLApZGHSvg3OeF5neecYfu8s/kvdhH
+	azNcZ60frb6Zh0965AxV2DcG+uAwTwIVpTwm17w==
+X-Google-Smtp-Source: AGHT+IE2lSfy0plkHFYvqJzzMKQfZf0H0X0Pv4uKJBDZr2SBKnWb1wfneg9v2qKtvbV2M2+FSEtq4YdfQJ0p+sPWLjA=
+X-Received: by 2002:a2e:be8a:0:b0:302:1c90:58de with SMTP id
+ 38308e7fff4ca-302544cd2a9mr45430851fa.33.1734325573758; Sun, 15 Dec 2024
+ 21:06:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241214143039.4139398-1-guoren@kernel.org>
+References: <20241212224114.888373-1-dualli@chromium.org> <20241212224114.888373-2-dualli@chromium.org>
+ <20241215142723.3e7d22e7@kernel.org>
+In-Reply-To: <20241215142723.3e7d22e7@kernel.org>
+From: Li Li <dualli@chromium.org>
+Date: Sun, 15 Dec 2024 21:06:02 -0800
+Message-ID: <CANBPYPi8Q2akivjbMCeThtHEw1L_rHErxL_Cwt=Xjf=B1fZ=-w@mail.gmail.com>
+Subject: Re: [PATCH net-next v10 1/2] binderfs: add new binder devices to binder_devices
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com, 
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, 
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org, 
+	cmllamas@google.com, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org, 
+	bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com, 
+	smoreland@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 14, 2024 at 09:30:37AM -0500, guoren@kernel.org wrote:
-> From: Guo Ren <guoren@linux.alibaba.com>
-> 
-> The early version of T-Head C9xx cores has a store merge buffer
-> delay problem. The store merge buffer could improve the store queue
-> performance by merging multi-store requests, but when there are not
-> continued store requests, the prior single store request would be
-> waiting in the store queue for a long time. That would cause
-> significant problems for communication between multi-cores. This
-> problem was found on sg2042 & th1520 platforms with the qspinlock
-> lock torture test.
-> 
-> The orignal patch is from:
-> https://lore.kernel.org/linux-riscv/20231225125847.2778638-5-guoren@kernel.org/
-> 
-> Guo Ren (2):
->   riscv: Move vendor errata definitions into vendorid_list.h
->   riscv: qspinlock: errata: Add ERRATA_THEAD_WRITE_ONCE fixup
-> 
->  arch/riscv/Kconfig.errata              | 19 +++++++++++++++
->  arch/riscv/errata/thead/errata.c       | 20 ++++++++++++++++
->  arch/riscv/include/asm/errata_list.h   | 17 -------------
->  arch/riscv/include/asm/rwonce.h        | 33 ++++++++++++++++++++++++++
->  arch/riscv/include/asm/vendorid_list.h | 18 ++++++++++++++
->  include/asm-generic/rwonce.h           |  2 ++
->  6 files changed, 92 insertions(+), 17 deletions(-)
->  create mode 100644 arch/riscv/include/asm/rwonce.h
-> 
-> -- 
-> 2.40.1
-> 
+On Sun, Dec 15, 2024 at 2:27=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Thu, 12 Dec 2024 14:41:13 -0800 Li Li wrote:
+> > +/**
+> > + * Add a binder device to binder_devices
+>
+> nit: kdoc is missing function name
+>
+> > + * @device: the new binder device to add to the global list
+> > + *
+> > + * Not reentrant as the list is not protected by any locks
+> > + */
+> > +void binder_add_device(struct binder_device *device);
+>
+> To be clear we do not intend to apply these patches to net-next,
+> looks like binder patches are mostly handled by Greg KH. Please
+> drop the net-next from the subject on future revisions to avoid
+> confusion.
 
-It works on SG2042.
 
-Tested-by: Inochi Amaoto <inochiama@gmail.com>
+Got it. I'll modify the subject accordingly.
+
+Meanwhile, Greg KH did say we need netlink experts to review
+the netlink code. Please let me know if you have any more
+comments about the netlink part of this patch so that I can
+fix them in the next revision. Thank you!
 
