@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-446912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FE19F2ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:22:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFDD9F2ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A731889601
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823A71681B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D181D5AD3;
-	Mon, 16 Dec 2024 07:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="lp2QMC9C"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E841CDA19;
+	Mon, 16 Dec 2024 07:20:43 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5A11D54E2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851D61B87F6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734333622; cv=none; b=c/GpoXpxF1pokGc43hEMx65EdRcbn4ZbrgQMJ8o8fq0e4tuQxVreDvHEWebafRjFRVBwNY8oCHvzmHJH9ict7znr2JbsfVUp8IOGrJjJOF6S49RfJc/B5dPyBprCLB30Qm8GXO+djAzOCDvU/u0iExJ4sVnE0weNQcGdhXejcaU=
+	t=1734333643; cv=none; b=ZQVtlxgduRFKSNhg2H0cGV4qE1gNZ8ki90Y2nH4xbkzRR1LGMJWGrKNunYUDj2Aypubypo0ue+aiRBUnZcmdewMcC0BNTlV53CpuD/6aSwa0BnOv18/cIOxjEbhJhXy6v5/QNzrxH98mje6xzHYS+zfYWFoI2reJMMyn5CfEEIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734333622; c=relaxed/simple;
-	bh=PPu77jqSXBAgupPgYnoSOAHUAmL6TvEmfGQvFsLGMGU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tzG4JafMBHl1B6IHQIpyBvPqGdkZsiDrWD10ckK87g9XepAs8qtjAMlDDguPTC0gpR8xcRJqsZQlQooNDDOzSYhVDBAdM+Uw4W6r3zm2oJ6nDDxecVbGOLkvNWkciYJIcarthpL8qZT+U8rgWBI7ZQkTYPvfZHumCqAI3Q/lCfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=lp2QMC9C; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53df80eeeedso3773925e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:20:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1734333619; x=1734938419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bRm8i06V7UAQJx4SsgcbkPUCzwQb13lEnvW91v/XN8=;
-        b=lp2QMC9CI3ikyuAy2Tt9MtnsgHTh/Weq/TNHrCzoGhFjpSqj4i8hVoFa/H4ntMR3zd
-         AG/vIuyn2m4gJyTClbQnI480tmeJt4eOsthR0NBvtXbBYSALivYD/k3wk1iH28mRcmv1
-         58AZAMhi1F1qBENhYGKpkveJZYs/1KOwDyCAp1CuTff/TH/+Jt3HY4nCYJcebVH2V4AK
-         99anuJvKzysRb7SK6WXSxlIaGRfnH2fl85X1lFdSi/M+MzMoqovJmfSWhaeBlStPuXMj
-         V+JUzYSqRbwbHLMe65qZb4zYO9vpvynX7r3AYZKm0mNNr/vh7A7nxMcC0mM36mh4BKav
-         DpMQ==
+	s=arc-20240116; t=1734333643; c=relaxed/simple;
+	bh=1+n9MFuy442kEZNesADgTlNOCnFVj5EOeX3STxDA5K8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rBjhwGDcGzRlsMy62TomR8hoITSgDhklWfN+tx63T75gTNQAvnp/w0a9u/LDnTSYz8eqVV9zw4z8iWTR2Yt7XJGQLIL9d2djl5iKdQRAC9fUqbIROZmybVFke5gpZsG+/oo/asrk0G3APPO2RZOLlQ0KzVhlGo37+iUlk2NZbW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9cbe8fea1so40123865ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:20:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734333619; x=1734938419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bRm8i06V7UAQJx4SsgcbkPUCzwQb13lEnvW91v/XN8=;
-        b=cMXixF3z2svWkiWADH0cQdUrdmXGlPGF5TPD5Pxk5ZeIEB4ChWnWqIr2qhu6Mtwshh
-         QzK4oKy0ntx1Li3ONP/cwReyrdscCsQcX0uVclvEbTgc7CUr0NXMQhGclbOnk+ZFpBpy
-         aXP6I/f/sEgwXWDm7qEIy9DL4d1a7ICjIXq0ymnvvj/gUAz+r7dXVGUmNm3BVNblRRi/
-         yxLcOfYcYpL8MfYTq2rVE3n/os3lv1JVI1rEWs4M6FhR/NNvjHY/FRnND5kY/yfxN42P
-         FW5hptAnvNZ4o3A4fVV/TuD4yLVYPreONUa8NJY6t3po9emTdLHKt4L3j3xwGQTITXCc
-         8Ugg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxtFrjs58uHLnEFhzDrlyKAZfQuc1N3+MFj1MV82SKRLENT7fFmOTNVFwXLxYVZm2lE6gi+evgz0O1sy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPtcWtSA/ay4NnCy85sK0gT6vI3hbLkOLLVqJwraR6UG8l6pw6
-	u5zzqQLQltiWCafLgBRY3mdseJ2iRT/bE/tp9fYw1StSdnf0O97Zl8XxT07rwmA=
-X-Gm-Gg: ASbGncvki2CyBrfAb3a7BR2loQkDq4EzHmXZ+h3EMPX5pHwo1BqsWPmKAPkrsnKDhDu
-	HOsLUcz/Iks8JRvAuw9DslSl6PUdGKIuSd3CIyUzGoq9bhj74JFQ7Hwm58SoVomnSRpIQxstSS1
-	QaUUBG+Dx4PBaakl2y1fpgs7VghG2JtRPCPTWufDCYq44GssXKm3qAxhkVKfRocGSkzZjvRQGFq
-	tzeKfYQionU9i3er1aAfNnMTcvnoxEpn7hvspKkIDCHYpPX6w+ugPKAUdn1reVmdipCNKY=
-X-Google-Smtp-Source: AGHT+IFowAXgGjOedfuT8nJJtjG23yp3KyVX22HWiWvy1vf9kaEvbhBVhV1xHsfmSOlU8xeDwiDt1Q==
-X-Received: by 2002:a05:6512:401b:b0:540:c349:a81b with SMTP id 2adb3069b0e04-540c349a962mr3449085e87.48.1734333619267;
-        Sun, 15 Dec 2024 23:20:19 -0800 (PST)
-Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9b2bsm748930e87.94.2024.12.15.23.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 23:20:19 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net-next v2 5/5] net: renesas: rswitch: add mdio C22 support
-Date: Mon, 16 Dec 2024 12:19:57 +0500
-Message-Id: <20241216071957.2587354-6-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241216071957.2587354-1-nikita.yoush@cogentembedded.com>
-References: <20241216071957.2587354-1-nikita.yoush@cogentembedded.com>
+        d=1e100.net; s=20230601; t=1734333639; x=1734938439;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WPewfZLSQKSD/zqScvtQojTowwsPkSIhne4fOZaMto4=;
+        b=we5Ww/kTlbEKPeAkEuctvdqBaKKy3SOclWH3FlJcFVFLMDqdGBRMsrJ7cpoR6aW6c8
+         YyoTyrKUH4KUtC0J4Fd5YJHjOLcYT//JV9ySdtMqecxl5KfIj7ynB8dxIhl/3OOtwRRL
+         tfZgi67tcFNKoK771AnDMWHunmUGjoJc3ekFrjsJVtq7BvmXzpvPEeu0ky3A+il1GoIC
+         SjSskhRFsOin/qU83jeoS8w9vXP7RbAbMT3DR6mdnGydYwnad8BIqSzV/iArX+OQaBX2
+         rA4Yt/EPvAWpKXLZVVGzFakujPbijt4V6o//twNR+ig27gYObq1N/LC65I1Ktd3X+67X
+         zvHQ==
+X-Gm-Message-State: AOJu0YxcxquFT6G6YJbLJK61y45zZvSq7uuX9xs81IUlAwLtOY9/PzCS
+	oy1Mve+T4XFfEJ9CzL+tczP5fRWwiHCm1W4oK1CyZudMAWMO7v/t835tuXoyz2+atQJRYFmK22a
+	3P7ZbgtN/k7vVHhk57zcyKbWyw6oDl89FI43IX9hl2LLc4Tn1IpZv7Ws=
+X-Google-Smtp-Source: AGHT+IEeolcJxXJJMCsUknvwWRNENroF+FQ//S2ajtxc0Y74lqUWVO83lpwNWIhhDF4whwg4jX+GkPt2WHRNJV54FVREHHwbLhfr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1886:b0:3a7:4eee:b7b9 with SMTP id
+ e9e14a558f8ab-3aff6219ff1mr119270475ab.13.1734333639785; Sun, 15 Dec 2024
+ 23:20:39 -0800 (PST)
+Date: Sun, 15 Dec 2024 23:20:39 -0800
+In-Reply-To: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675fd4c7.050a0220.37aaf.0118.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [tomoyo?] WARNING in tomoyo_write_control
+From: syzbot <syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The generic MPSM operation added by the previous patch can be used both
-for C45 and C22.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Add handlers for C22 operations.
+***
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Subject: Re: [syzbot] [tomoyo?] WARNING in tomoyo_write_control
+Author: lizhi.xu@windriver.com
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index a3ba2a91c0ab..aae26098bc0c 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1253,6 +1253,23 @@ static int rswitch_etha_mii_write_c45(struct mii_bus *bus, int addr, int devad,
- 				    MPSM_POP_WRITE, val);
- }
+User input a too large avail length 0xfffffdeful.
+
+#syz test
+
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index 5c7b059a332a..65458b4059ab 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -2654,6 +2654,8 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
  
-+static int rswitch_etha_mii_read_c22(struct mii_bus *bus, int phyad, int regad)
-+{
-+	struct rswitch_etha *etha = bus->priv;
-+
-+	return rswitch_etha_mpsm_op(etha, true, MPSM_MMF_C22, phyad, regad,
-+				    MPSM_POP_READ_C22, 0);
-+}
-+
-+static int rswitch_etha_mii_write_c22(struct mii_bus *bus, int phyad,
-+				      int regad, u16 val)
-+{
-+	struct rswitch_etha *etha = bus->priv;
-+
-+	return rswitch_etha_mpsm_op(etha, false, MPSM_MMF_C22, phyad, regad,
-+				    MPSM_POP_WRITE, val);
-+}
-+
- /* Call of_node_put(port) after done */
- static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
- {
-@@ -1335,6 +1352,8 @@ static int rswitch_mii_register(struct rswitch_device *rdev)
- 	mii_bus->priv = rdev->etha;
- 	mii_bus->read_c45 = rswitch_etha_mii_read_c45;
- 	mii_bus->write_c45 = rswitch_etha_mii_write_c45;
-+	mii_bus->read = rswitch_etha_mii_read_c22;
-+	mii_bus->write = rswitch_etha_mii_write_c22;
- 	mii_bus->parent = &rdev->priv->pdev->dev;
- 
- 	mdio_np = of_get_child_by_name(rdev->np_port, "mdio");
--- 
-2.39.5
-
+ 	if (!head->write)
+ 		return -EINVAL;
++	if (avail_len << PAGE_SHIFT > MAX_PAGE_ORDER)
++		return -EINVAL;
+ 	if (mutex_lock_interruptible(&head->io_sem))
+ 		return -EINTR;
+ 	cp0 = head->write_buf;
 
