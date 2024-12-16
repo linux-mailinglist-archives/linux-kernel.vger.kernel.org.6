@@ -1,267 +1,126 @@
-Return-Path: <linux-kernel+bounces-447826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31379F3785
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:26:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47319F3787
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20EA163686
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F721883575
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6454F20629B;
-	Mon, 16 Dec 2024 17:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FA92063D1;
+	Mon, 16 Dec 2024 17:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="toTUnwew"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUB5ADDX"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93988205E17;
-	Mon, 16 Dec 2024 17:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657B381ACA;
+	Mon, 16 Dec 2024 17:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734369947; cv=none; b=Bvnl2kak+uq0zFDxbWDEk3h1TrX+KtSgNx4C4adVGx8K0PS2FKnXRX3Ozmr1zeyoRUfqUFbnR+7vMAJSOoJhV3wCcBv5lq2Yl1Q85vannNEn22HH+/bLYEX7jz2kzGyY0pCDop2S2GoTtO4TvrhvjFjkg5mIexru4/GH6AXKobc=
+	t=1734370016; cv=none; b=qt0+AKut8oRvzJrjlZt5fqVM4wP6OY0fM9Sf6d8Z1FSawhO8Ga4ZnCxfw2+c8TAx3ZN3TptP9XDaqfLw487Fj/4ugIhk97nml1fAVp4J80Vknr3RDxAZKhkAFU5wtwtZzNzFSlD2ycYDX6xA1r3wxJpJ3zbqn9M3naQsuqbsPQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734369947; c=relaxed/simple;
-	bh=vrhax0uCiqAGQOLYSpdt9ZOKtlA1P7bIl0Zey18a2nA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ED2msNDRptqrP//TLLqMIWJlb8ZxUBwa3xOntgtovcz4QIV927FPiac7idR824Oy8aYKM4uFehGfM9TbG5K0coNo0VYG2af7LCJgjY4iGbEAvv1FekS7DpZPuHnMU4XP1gH85GKY4xLZeoNk/KLlWKOdUnPftRP/t/7HnynBacc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=toTUnwew; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A020C4CEDF;
-	Mon, 16 Dec 2024 17:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734369947;
-	bh=vrhax0uCiqAGQOLYSpdt9ZOKtlA1P7bIl0Zey18a2nA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=toTUnwewEEZTYhL+I2YLM2oNfs7M+hKzJ92JGBAX03Us784/Gosfx/Tl6Nr7F8PdC
-	 +oFTemCZiwohqst6Zg7/O2u1nj3Vh8P1iy8xSsAhoOtClQL4KI9TSYiCeS1314kcvs
-	 kdPGrknwz6phBaVtNJptpWL+y3uZi8ZV3ohc5IgDQYf1Tc6gbLD/owcYPMrZEeOteJ
-	 Z0G+NCIbmfng1UyRCs6KX0w7NUmzZmsqpLsMyaSy/lTxa1WdsBbGqrS6vS2oG/h4g5
-	 J1UMzAhr6bO+arR1x7x8OBJ8DpQCDzrkeK9buZa1f0Mb0ZHo+tSHigxrZXnTNcxtIL
-	 8PqNVcYkqIrxA==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e63e5c0c50so2231395b6e.0;
-        Mon, 16 Dec 2024 09:25:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVcL7GJ0sEREPlyQUtamEBRIiwzfws2sJr2N4oOjmzCdG5ld+DknsANA93uhnUojjsK7EJPVZQxoEUVVSA=@vger.kernel.org, AJvYcCVvDqqDDdeFnl5kS9mgzMgth6RrDcYPlynPmddohQlCBB6XsCjkT5u30U2Bl5b6YpQgicxw4keKLj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz5ge+rSQEyB4VBSh434qJyOKRGOizzPjASAKZ3ALzUZL8rl9g
-	IruQ5g9JKuEcPQxxOfe1Hu1mj6Gon0nkXfhtMRIQEO7X6jNexP5pMTIHh1K0hUdXfVwalY01wrV
-	yUCzZ/JOQjQVSCVXaTKxp+lZzTns=
-X-Google-Smtp-Source: AGHT+IFDBJrOSWDGX2nbG+PjKRGvDraMZbwtcEXMHLHOXB92iCn9tAWqUkN27WJXftFoueYL+mx32GZFNIGAnWzmXww=
-X-Received: by 2002:a05:6808:2114:b0:3e6:22d4:d2c8 with SMTP id
- 5614622812f47-3ebca7212cfmr86184b6e.12.1734369946282; Mon, 16 Dec 2024
- 09:25:46 -0800 (PST)
+	s=arc-20240116; t=1734370016; c=relaxed/simple;
+	bh=/t1NRYv4/Q5pN1JG7idM3iLXiuadUz5zwHnKIJiHGNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GamhLwvS1KKfuRe68YaulXARoReucVnOORd2FNgSJeJ8lf7CS+UmCwdaWkhH5KY26SxTmHYAB+/h+k/avb6p8YpmynGJmIVd6QwFZ5MGu3UI2kMFmHmGRZk2wDBIXJh+xZn3kDTcNq4IMyMYrqvavlpcFdR/FPlQbRgxvqtphq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUB5ADDX; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-436203f1203so3782405e9.2;
+        Mon, 16 Dec 2024 09:26:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734370013; x=1734974813; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ws62IqXxwOmIXvue6QqDBdu01bZQNbrgvdYcyFWCQ+g=;
+        b=KUB5ADDXZH/M5py/ZL53ZgqaeU4U1trfICITuqIw0j+TNNt586cSB3+Sl7/cdV2zDt
+         iy8tC2eXjgSjiwC+E12JldkFeLUg2zT5qjEtzXMUsH9bS086gWGXqRng/bEHA/UkXa1I
+         KZMWpNibw3gv3hL4mZXurdoLEa7ocW2qCxOxEi7EJ8SaBlJPORJn0voDt9eyiwmiQeHK
+         SGoo671aKqlNT/Nhf19PDGW8H4vUoT8EpRtlbb4FGyih/I2VyKLVWEgM2dEJTip0C9QR
+         SVZR6/ly9hn5nTqaQZnfsbkt30he667HHxfLALKxmZZtyKP4ij9kyCGKQnTDGfqVCtsl
+         eIPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734370013; x=1734974813;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ws62IqXxwOmIXvue6QqDBdu01bZQNbrgvdYcyFWCQ+g=;
+        b=EqbZCGkVKhputa3JsxSdBCwqSRxozQTtDsyL3ztOXaW0c9pbpGFFHgU6M7eWCFFxSD
+         JV+b694tjbF0IUpKrSWfbtLjFYhjsyfEicJ7CYdczuwEkn9fDa6AtsiD4TffEFWJsFmt
+         Q0+lQN65PkokDlarBudG6f9A0CITl5J9+1pb7L5RIsuvuxWN9bfsMCsskyjSIlzfQgY1
+         QjQ2FZVq/8C2+fn4XIDj0ToJGO6e48yU1cKf2apeKsx544q4E3EfUDizHEK1+R1UZB/U
+         r1q6ytMoOI/9tFYQUiwlT81hMNj5g+GBE1hbzMBIm3b/Lal+owYk+AzGTqCbDlUsZiah
+         QUdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFGjTEWrLsAQIWCVKaAXmp2YAs36WyjvAmBYIIvkTiZdCz08GJDa6c0ElDcNeapxhNAX8=@vger.kernel.org, AJvYcCWD6D3vhRGqwcSDCes82pR+bRf+9+iJJXsmylVLR72GC4YKl4YZyoL9RtrFt76pi2X8TSZc6+Xm@vger.kernel.org, AJvYcCXlnP58leo1oSCBEC/1fA7dTvN2oDgKwRR8e2Z+UX/Hq3WQcB+6DcaMjTw64f6YeYBWkNvzxS0pNISsdj7Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfM7T42+1dMIaBSy5/c5w+dQ1Y8FKsS7ii5OoK92iqZ8NAsGiI
+	CSIag8Y2TPBX6WMXj+4qc+W3dTpm0zYDA80Nk2HmIYJ7FwjBe+5W
+X-Gm-Gg: ASbGncvNh74mEYIB9AZJzdpTrjJaHagTpH3tw6EbRzto7H8Rr1ApJ3/ByaVKKB0gv+w
+	7X3v+vC5cHtlyg4gq0TYrgzY2iTAsK3+MyI6CGwtL6C184MpEEWbMfoG2P1ehKzvr6xkQGtn4wG
+	1SNbVwsObAOItPDkECypsj/m/2UfWZmUum6NhyAi0Fvn/4fdOw/iLRScWLOcdd1vaiw68nzrekt
+	+HKdu3OfwZKB5hXOY0C+7erdlh/SG0WPRWt/0V/5ljw
+X-Google-Smtp-Source: AGHT+IHJMEc5NsNfUNm/SdMJ561r1AUdBtJzRijqI4fw/BK5BRf5cPDJKOpc00nhQoFK0zD4hEpV4Q==
+X-Received: by 2002:a05:600c:1c14:b0:42c:b55f:f4f with SMTP id 5b1f17b1804b1-4362aaa97e7mr44822235e9.6.1734370012348;
+        Mon, 16 Dec 2024 09:26:52 -0800 (PST)
+Received: from skbuf ([86.127.124.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801a487sm8902263f8f.45.2024.12.16.09.26.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 09:26:51 -0800 (PST)
+Date: Mon, 16 Dec 2024 19:26:48 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next 4/9] igc: Add support for receiving frames with
+ all zeroes address
+Message-ID: <20241216172648.q3fxwaxdkvtjqrfn@skbuf>
+References: <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
+ <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
+ <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
+ <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3607404.iIbC2pHGDl@rjwysocki.net> <115421572.nniJfEyVGO@rjwysocki.net>
- <2b0953b5-4978-446a-b686-5b8d1541a265@arm.com> <CAJZ5v0hH424_4N1TZVVgKCegUsAisjdAXr7KekafJteSSLEnHA@mail.gmail.com>
- <c920700c-9969-4c23-a1fc-a88c87dc98a6@arm.com>
-In-Reply-To: <c920700c-9969-4c23-a1fc-a88c87dc98a6@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 16 Dec 2024 18:25:34 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hTC20LB1ifbGmesYQULGS4-uEfu2Tgc17OMftvFqvnJg@mail.gmail.com>
-Message-ID: <CAJZ5v0hTC20LB1ifbGmesYQULGS4-uEfu2Tgc17OMftvFqvnJg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v0.1 6/6] cpufreq: intel_pstate: Add basic EAS
- support on hybrid platforms
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Christian Loehle <Christian.Loehle@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
+ <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
 
-On Mon, Dec 16, 2024 at 4:33=E2=80=AFPM Pierre Gondois <pierre.gondois@arm.=
-com> wrote:
->
->
->
-> On 11/19/24 18:20, Rafael J. Wysocki wrote:
-> > On Mon, Nov 18, 2024 at 5:34=E2=80=AFPM Pierre Gondois <pierre.gondois@=
-arm.com> wrote:
-> >>
-> >>
-> >>
-> >> On 11/8/24 17:46, Rafael J. Wysocki wrote:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >>> Modify intel_pstate to register stub EM perf domains for CPUs on
-> >>> hybrid platforms via em_dev_register_perf_domain() and to use
-> >>> em_dev_expand_perf_domain() introduced previously for adding new
-> >>> CPUs to existing EM perf domains when those CPUs become online for
-> >>> the first time after driver initialization.
-> >>>
-> >>> This change is targeting platforms (for example, Lunar Lake) where
-> >>> "small" CPUs (E-cores) are always more energy-efficient than the "big=
-"
-> >>> or "performance" CPUs (P-cores) when run at the same HWP performance
-> >>> level, so it is sufficient to tell the EAS that E-cores are always
-> >>> preferred (so long as there is enough spare capacity on one of them
-> >>> to run the given task).
-> >>>
-> >>> Accordingly, the perf domains are registered per CPU type (that is,
-> >>> all P-cores belong to one perf domain and all E-cores belong to anoth=
-er
-> >>> perf domain) and they are registered only if asymmetric CPU capacity =
-is
-> >>> enabled.  Each perf domain has a one-element states table and that
-> >>> element only contains the relative cost value (the other fields in
-> >>> it are not initialized, so they are all equal to zero), and the cost
-> >>> value for the E-core perf domain is lower.
-> >>>
-> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>> ---
-> >>>    drivers/cpufreq/intel_pstate.c |  110 ++++++++++++++++++++++++++++=
-++++++++++---
-> >>>    1 file changed, 104 insertions(+), 6 deletions(-)
-> >>>
-> >>> Index: linux-pm/drivers/cpufreq/intel_pstate.c
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-> >>> +++ linux-pm/drivers/cpufreq/intel_pstate.c
-> >>> @@ -8,6 +8,7 @@
-> >>>
-> >>>    #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >>>
-> >>> +#include <linux/energy_model.h>
-> >>>    #include <linux/kernel.h>
-> >>>    #include <linux/kernel_stat.h>
-> >>>    #include <linux/module.h>
-> >>> @@ -938,6 +939,12 @@ static struct freq_attr *hwp_cpufreq_att
-> >>>        NULL,
-> >>>    };
-> >>>
-> >>> +enum hybrid_cpu_type {
-> >>> +     HYBRID_PCORE =3D 0,
-> >>> +     HYBRID_ECORE,
-> >>> +     HYBRID_NR_TYPES
-> >>> +};
-> >>> +
-> >>>    static struct cpudata *hybrid_max_perf_cpu __read_mostly;
-> >>>    /*
-> >>>     * Protects hybrid_max_perf_cpu, the capacity_perf fields in struc=
-t cpudata,
-> >>> @@ -945,6 +952,86 @@ static struct cpudata *hybrid_max_perf_c
-> >>>     */
-> >>>    static DEFINE_MUTEX(hybrid_capacity_lock);
-> >>>
-> >>> +#ifdef CONFIG_ENERGY_MODEL
-> >>> +struct hybrid_em_perf_domain {
-> >>> +     cpumask_t cpumask;
-> >>> +     struct device *dev;
-> >>> +     struct em_data_callback cb;
-> >>> +};
-> >>> +
-> >>> +static int hybrid_pcore_cost(struct device *dev, unsigned long freq,
-> >>> +                          unsigned long *cost)
-> >>> +{
-> >>> +     /*
-> >>> +      * The number used here needs to be higher than the analogous
-> >>> +      * one in hybrid_ecore_cost() below.  The units and the actual
-> >>> +      * values don't matter.
-> >>> +      */
-> >>> +     *cost =3D 2;
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +static int hybrid_ecore_cost(struct device *dev, unsigned long freq,
-> >>> +                          unsigned long *cost)
-> >>> +{
-> >>> +     *cost =3D 1;
-> >>> +     return 0;
-> >>> +}
-> >>
-> >> The artificial EM was introduced for CPPC based platforms since these =
-platforms
-> >> only provide an 'efficiency class' entry to describe the relative effi=
-ciency
-> >> of CPUs. The case seems similar to yours.
-> >
-> > It is, but I don't particularly like the CPPC driver's approach to this=
-.
-> >
-> >> 'Fake' OPPs were created to have an incentive for EAS to balance the l=
-oad on
-> >> the CPUs in one perf. domain. Indeed, in feec(), during the energy
-> >> computation of a pd, if the cost is independent from the max_util valu=
-e,
-> >> then one CPU in the pd could end up having a high util, and another CP=
-U a
-> >> NULL util.
-> >
-> > Isn't this a consequence of disabling load balancing by EAS?
->
-> Yes. Going in that direction, this patch from Vincent should help balanci=
-ng
-> the load in your case I think. The patch evaluates other factors when the=
- energy
-> cost of multiple CPU-candidates is the same.
->
-> Meaning, if all CPUs of the same type have only one OPP, the number of ta=
-sks
-> and the the load of the CPUs is then compared. This is not the case curre=
-ntly.
-> Doing so will help to avoid having one CPU close to being overutilized wh=
-ile
-> others are idle.
->
-> However I think it would still be better to have multiple OPPs in the ene=
-rgy model.
-> Indeed, it would be closer to reality as I assume that for Intel aswell, =
-there
-> might be frequency domains and the frequency of the domain is lead by the=
- most
-> utilized CPU.
+On Mon, Dec 16, 2024 at 01:47:15AM -0500, Faizal Rahim wrote:
+> From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> 
+> The frame preemption verification (as defined by IEEE 802.3-2018
+> Section 99.4.3) handshake is done by the driver, the default
+> configuration of the driver is to only receive frames with the driver
+> address.
+> 
+> So, in preparation for that add a second address to the list of
+> acceptable addresses.
+> 
+> Because the frame preemption "verify_enable" toggle only affects the
+> transmission of verification frames, this needs to always be enabled.
+> As that address is invalid, the impact in practical scenarios should
+> be minimal. But still a bummer that we have to do this.
 
-There are a couple of problems with this on my target platforms.
-
-First, it is not actually known what the real OPPs are and how the
-coordination works.
-
-For some cores (P-cores mostly) the voltage can be adjusted per-core
-and for some others there are coordination domains, but the
-coordination there involves idle states (for instance, one core may be
-allowed to run at the max turbo frequency when the other ones in the
-same domain are in idle states, but not otherwise) and dynamic
-balancing (that is, the effective capacity depends on how much energy
-is used by the domain over time).
-
-Thus whatever is put into the perf states table will be way off most
-of the time and there isn't even a good way to choose the numbers to
-put in there.  Using the entire range of HWP P-states for that would
-be completely impractical IMV because it would only increase overhead
-for no real benefit.  Either it would need to be done per-CPU, which
-doesn't really make sense because CPUs of the same type really share
-the same cost-performance curve, or the assumption that the entire
-domain is led by the most utilized CPU would need to be lifted to some
-extent.  That would require some more intrusive changes in EAS which
-I'd rather avoid unless the simplest approach doesn't work.
-
-The second problem is that the current platforms are much smaller than
-what we're expecting to see in the future and whatever is done today
-needs to scale.
-
-Also, I really wouldn't want to have to register special perf domains
-for favored cores that share the cost-performance curve with the other
-cores of the same type except that they can turbo-up higher if
-everyone else is idle or similar.
-
-> This would also avoid hitting corner cases. As if there is one big task a=
-nd many
-> small tasks, balancing on the number of tasks per CPU is not the best ide=
-a.
->
-> https://lore.kernel.org/all/20240830130309.2141697-4-vincent.guittot@lina=
-ro.org/
-
-Understood.
+Stuff that happened since this patch was written: "ethtool --set-mm
+pmac-enabled on" exists. You don't have to accept verification frames if
+the pMAC is disabled. You can enable the reception of 00:00:00:00:00:00
+using that, and keep it off by default.
 
