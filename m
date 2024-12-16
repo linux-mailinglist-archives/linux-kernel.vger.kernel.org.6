@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-447178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2719F2E6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:45:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6228B9F2E75
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 341C0162CDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 671441888B86
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE136203D75;
-	Mon, 16 Dec 2024 10:45:13 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B968D203D75;
+	Mon, 16 Dec 2024 10:45:18 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7032C203D4C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3EE203D4C;
+	Mon, 16 Dec 2024 10:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734345913; cv=none; b=PQg9k/Z5Pm2c250WM4VfuSpbDsU5UGVE6W6iqhdEiT/kz6j5n9GoPMyrxmVxUnUW1pNBRB4Ud7Vu1bZh4ibP4ybhcQNUyHwWMm3rUhCVMQzv4vSXr8xXFxZ+YofT83NBlnBxXbWtAQuhvxlHdIyi4GDrN8ekT93D6TWZVE2bJR4=
+	t=1734345918; cv=none; b=aGGD1HURYPJk0lWBUmigNyDGkBMCvBMRhgem6H8jFfyTCFasda+H7TQOFnwY0oQLGW5NYmjetZkUYTzRBsPCiFBfxRiqnibER/dtZgNjaFypjpnSp8OEo8iv9vUmwz0OEUdBbyIz+Xb3VtNRdciEQi1+0pGyv9FiNuLZoqJl/+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734345913; c=relaxed/simple;
-	bh=FiUPkIE/sDWZPVHArm16IayTrZ7JdqAK/P7UJ9pzxbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ENCm1gORHosRljN9gjAGBddHk65hl9IB9CaR1OJOJGkyXpgzLQb7PvCAOk+qtx7QTV+51s9q3yYQaCK2QPQv1KiwA96QzUuPp9pVyoM9BbLEkkdiUGoL+it/MuWofQUsVMqRM8xt+N2H2na5l/t3+rOLzpinZ7mdOJJjOUM8xcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4BGAj7vX060266;
-	Mon, 16 Dec 2024 19:45:07 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4BGAj7ks060262
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 16 Dec 2024 19:45:07 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <57f7253d-a55e-420a-b1b1-f572a0ab13f2@I-love.SAKURA.ne.jp>
-Date: Mon, 16 Dec 2024 19:45:06 +0900
+	s=arc-20240116; t=1734345918; c=relaxed/simple;
+	bh=b6jv3+DWBxCF8l0TUWPyTMuxIa0cbs6w/yR4rfH7TGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R73EE7Ak99XEHqMkzH7AHen5TVJnvvryjrm4ZbvS1HMncTc5v+JE2NyD5tgxOGYYz1wNuHkiV4wwqQCsXuhpVanggrmLD1/HiqdNkds0grMNkPJGlRbF7IL1O9ng4mz0IswUucyT9/EeCkDdPP9Gwesn5IdInv5ameKVjRNOspA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YBc5c0lnPz4f3khf;
+	Mon, 16 Dec 2024 18:44:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 862241A0194;
+	Mon, 16 Dec 2024 18:45:11 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgAH5sK1BGBn6R17Eg--.10368S2;
+	Mon, 16 Dec 2024 18:45:11 +0800 (CST)
+Message-ID: <fe6728eb-d1a4-4e5d-a01c-9585452d0a79@huaweicloud.com>
+Date: Mon, 16 Dec 2024 18:45:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,56 +46,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH] tomoyo: don't emit warning in tomoyo_write_control()
-To: syzbot <syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
-        takedakn@nttdata.co.jp, Leo Stone <leocstone@gmail.com>
-References: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+Subject: Re: [PATCH v2] freezer, sched: report the frozen task stat as 'D'
+To: Tejun Heo <tj@kernel.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, mkoutny@suse.com,
+ roman.gushchin@linux.dev, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241213110332.3105932-1-chenridong@huaweicloud.com>
+ <Z1xkFq9WIeF-MvHr@slm.duckdns.org>
 Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <Z1xkFq9WIeF-MvHr@slm.duckdns.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
-X-Virus-Status: clean
+X-CM-TRANSID:_Ch0CgAH5sK1BGBn6R17Eg--.10368S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Wr4ruw13Zw17JFWrGryrtFb_yoWfXwb_ua
+	13KFy0kFs7Xr4fZ3W7tF42yryrKayxXrn7X395Gr4jyrs8Ja95G3Z5XFWDGrWfWrZ7uF1q
+	k3ZIqaykKwnI9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-syzbot is reporting too large allocation warning at tomoyo_write_control(),
-for one can write a very very long line without new line character. To fix
-this warning, I use __GFP_NOWARN rather than checking for KMALLOC_MAX_SIZE,
-for practically a valid line should be always shorter than 32KB where the
-"too small to fail" memory-allocation rule applies.
 
-One might try to write a valid line that is longer than 32KB, but such
-request will likely fail with -ENOMEM. Therefore, I feel that separately
-returning -EINVAL when a line is longer than KMALLOC_MAX_SIZE is redundant.
-There is no need to distinguish over-32KB and over-KMALLOC_MAX_SIZE.
 
-Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
-Reported-by: Leo Stone <leocstone@gmail.com>
-Closes: https://lkml.kernel.org/r/20241216021459.178759-2-leocstone@gmail.com
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/tomoyo/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024/12/14 0:43, Tejun Heo wrote:
+> On Fri, Dec 13, 2024 at 11:03:32AM +0000, Chen Ridong wrote:
+> ...
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index d380bffee2ef..dbe0cb97461f 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1630,8 +1630,9 @@ static inline unsigned int __task_state_index(unsigned int tsk_state,
+>>  	 * We're lying here, but rather than expose a completely new task state
+>>  	 * to userspace, we can make this appear as if the task has gone through
+>>  	 * a regular rt_mutex_lock() call.
+>> +	 * Report the frozen task uninterruptible.
+>>  	 */
+>> -	if (tsk_state & TASK_RTLOCK_WAIT)
+>> +	if (tsk_state & TASK_RTLOCK_WAIT || tsk_state & TASK_FROZEN)
+> 
+> Can you please add ()'s so that it's if ((a & b) || (c & d))? Other than
+> that,
+> 
+> Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> Thanks.
+> 
 
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 5c7b059a332a..972664962e8f 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2665,7 +2665,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
- 
- 		if (head->w.avail >= head->writebuf_size - 1) {
- 			const int len = head->writebuf_size * 2;
--			char *cp = kzalloc(len, GFP_NOFS);
-+			char *cp = kzalloc(len, GFP_NOFS | __GFP_NOWARN);
- 
- 			if (!cp) {
- 				error = -ENOMEM;
--- 
-2.43.5
-
+Thanks, will update.
 
 
