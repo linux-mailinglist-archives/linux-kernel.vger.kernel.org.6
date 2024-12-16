@@ -1,171 +1,325 @@
-Return-Path: <linux-kernel+bounces-448238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384A49F3D54
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:19:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1DB9F3D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A9A188DB9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18236188E414
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F681D63D8;
-	Mon, 16 Dec 2024 22:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="EAFMYX0A"
-Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B71BA49;
-	Mon, 16 Dec 2024 22:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE73B1D63EC;
+	Mon, 16 Dec 2024 22:22:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59921D618E;
+	Mon, 16 Dec 2024 22:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734387518; cv=none; b=fcWp4rGedw9CaXao/wUUyXj861EJPnAcvmTjtkBxu2GdgqsYdppAeSnMSNAE+KBurqTcTS2QoJ+yszzUdpffN6A6llyyc7l8XFhMmB2w71eflYycIYGyQso6INfabkHa/kbgV8/lO6j0SjKBnPQZOwH3vHYxDeHlv0yvroU3cA4=
+	t=1734387737; cv=none; b=czRgFsK7nV53lJBIAzBGBA3t3Y+XJxTdKW6bpodIjEz8Dqto5IeNvd2jMbJHyz3OfQeaTO4yoKJAYob/8eRLR+Nb7KC3jg/wT8rza+kGYnTrV/gpd+cO3eyUSRNlKKn8mSyZijDkOJ1EbysrUEIh8FCk+mL15Z/Xm3VWjFBZmGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734387518; c=relaxed/simple;
-	bh=RroWU3dXYsEIKnrRQq/sEb58UjG+0rdx0yuK4kzjM0E=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=c8/f/aqCtCnRg2oMlP9jou5xsEPROKYGzwnFNXD9A7hi7BJlsOIKbwyiw9jSeyzPL/Ts39KAXEl6dNNy57XCMoQFGvS+uYRg/Zj6SpZLQ01T+ubDtBs/tpTGAosOXo1QaP8DCPhWtbf3F3jaSwTyiV66KeHlRbyk+z4sLg2+JGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=EAFMYX0A; arc=none smtp.client-ip=193.238.174.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mx.ssi.bg (localhost [127.0.0.1])
-	by mx.ssi.bg (Potsfix) with ESMTP id 02A5123564;
-	Tue, 17 Dec 2024 00:18:27 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
-	:content-type:content-type:date:from:from:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
-	 bh=P2PH9pRT7HgCd5Xu5gne/9j211rCmiQ1rBQxoRa7c10=; b=EAFMYX0AKai2
-	D20CVrb/14WbDKGX+4Q+YEnPsoql+Pxb9dWa/9uorwtILHq6mZn/nlX565nuA5E4
-	LoVjiPn8M/BYWYXyem2aWq+QsSDaSmjwrN2UV8mMDnjhMC5xTwCXOXuOzlseSn/i
-	HixG8qAnxx4oZQLODB7y5QXGMRSiGoCojjhYq7cNX1z6XCoFVMGPepnLBNjt+iyZ
-	wJ1en+WwEIBsrtuad5oz+ZqmtDFdpCqWPfNrheC0eELpfKmG8+LVa9Ej+y4Bo8wM
-	8SdlsCCoXEU6Yb4NUBzzaisEsNK8DO6RFJGTj6KkQXBqltnQqNiWkq2JaReBoStV
-	rSFlKq2n8vt40N3tvrb012csM/4UN2Uk06nIXglHrwp/tI4+QDy22rqV91ilhWdN
-	TTponn6SuCaPKDT7/Rimiuo+zdBu+cenWwCIR7ALERNmbbCtK6E+msDIodCFcpKH
-	0RdCodgxRAt1V+d3fWyk4b7uUK05LFKaISfT9My7y4mRcs2YKJ76uw0/OIc2e9Sx
-	+Es5dtIwUlMQcd2aAi6rQGVAnRK1f7nIkFummQi0fJjUc/LQeHGsVwVaHOYuRt9I
-	7f3CfM/jzMG+iL2tYI1/Ba1MoslmCu/FF3Dgv1n32xvaspyl/QOua40eJPhcdotU
-	6MIbwEW40TfTASMOhrT9Ecpxtaf86Xc=
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mx.ssi.bg (Potsfix) with ESMTPS;
-	Tue, 17 Dec 2024 00:18:26 +0200 (EET)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id 1122F15D48;
-	Tue, 17 Dec 2024 00:18:11 +0200 (EET)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4BGMI5p7081391;
-	Tue, 17 Dec 2024 00:18:07 +0200
-Date: Tue, 17 Dec 2024 00:18:05 +0200 (EET)
-From: Julian Anastasov <ja@ssi.bg>
-To: David Laight <David.Laight@ACULAB.COM>
-cc: "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
-        "'Naresh Kamboju'" <naresh.kamboju@linaro.org>,
-        "'Dan Carpenter'" <dan.carpenter@linaro.org>,
-        "'pablo@netfilter.org'" <pablo@netfilter.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "'open list'" <linux-kernel@vger.kernel.org>,
-        "'lkft-triage@lists.linaro.org'" <lkft-triage@lists.linaro.org>,
-        "'Linux Regressions'" <regressions@lists.linux.dev>,
-        "'Linux ARM'" <linux-arm-kernel@lists.infradead.org>,
-        "'netfilter-devel@vger.kernel.org'" <netfilter-devel@vger.kernel.org>,
-        "'Arnd Bergmann'" <arnd@arndb.de>,
-        "'Anders Roxell'" <anders.roxell@linaro.org>,
-        "'Johannes Berg'" <johannes.berg@intel.com>,
-        "'toke@kernel.org'" <toke@kernel.org>,
-        "'Al Viro'" <viro@zeniv.linux.org.uk>,
-        "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
-        "'kees@kernel.org'" <kees@kernel.org>,
-        Simon Horman <horms@verge.net.au>, lvs-devel@vger.kernel.org
-Subject: Re: [PATCH net-next] Fix clamp() of ip_vs_conn_tab on small memory
- systems.
-In-Reply-To: <24a6bfd0811b4931b6ef40098b33c9ee@AcuMS.aculab.com>
-Message-ID: <5e288aa5-5374-5542-b730-f3b923ba5a36@ssi.bg>
-References: <24a6bfd0811b4931b6ef40098b33c9ee@AcuMS.aculab.com>
+	s=arc-20240116; t=1734387737; c=relaxed/simple;
+	bh=MHhi9S0GHsvH3wVLCm0jNTQH0/RTJXtk4d+qFOLRA+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqSshFKT6VdVWezvESMXmYbo04jvGfiL+m4IQTrBHXdYSmYPLWk3PI4coLvveIzyH168dZBNAVzMDlx4OASAUl5KWgXs8aokv0YfaYTgUvzIC2F3V/UPhwoX7yZdlQjdqyc2bzyH0oDHugBWoVO4WWmxGM8yefujLO1eSIkwxUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6C24497;
+	Mon, 16 Dec 2024 14:22:40 -0800 (PST)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C53C3F58B;
+	Mon, 16 Dec 2024 14:22:06 -0800 (PST)
+Date: Mon, 16 Dec 2024 23:21:21 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
+	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
+	rafael@kernel.org, viresh.kumar@linaro.org, sumitg@nvidia.com,
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com, zhanjie9@hisilicon.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
+	x86@kernel.org, linux-doc@vger.kernel.org,
+	Carol Soto <csoto@nvidia.com>
+Subject: Re: [PATCH v8 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+Message-ID: <Z2Cn4YQjw9-4m55c@arm.com>
+References: <20241206135600.4083965-1-beata.michalska@arm.com>
+ <20241206135600.4083965-2-beata.michalska@arm.com>
+ <3f19c5a8-9ee6-42fe-8b4c-3a66c65c8d35@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f19c5a8-9ee6-42fe-8b4c-3a66c65c8d35@nvidia.com>
 
-
-	Hello,
-
-On Sat, 14 Dec 2024, David Laight wrote:
-
-> The 'max_avail' value is calculated from the system memory
-> size using order_base_2().
-> order_base_2(x) is defined as '(x) ? fn(x) : 0'.
-> The compiler generates two copies of the code that follows
-> and then expands clamp(max, min, PAGE_SHIFT - 12) (11 on 32bit).
-> This triggers a compile-time assert since min is 5.
-
-	8 ?
-
+On Mon, Dec 16, 2024 at 01:43:02PM +0800, Kai-Heng Feng wrote:
+> Hi Beata,
 > 
-> In reality a system would have to have less than 512MB memory
-> for the bounds passed to clamp to be reversed.
+> On 2024/12/6 9:55 PM, Beata Michalska wrote:
+> > Currently the CPUFreq core exposes two sysfs attributes that can be used
+> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> > and scaling_cur_freq. Both provide slightly different view on the
+> > subject and they do come with their own drawbacks.
+> > 
+> > cpuinfo_cur_freq provides higher precision though at a cost of being
+> > rather expensive. Moreover, the information retrieved via this attribute
+> > is somewhat short lived as frequency can change at any point of time
+> > making it difficult to reason from.
+> > 
+> > scaling_cur_freq, on the other hand, tends to be less accurate but then
+> > the actual level of precision (and source of information) varies between
+> > architectures making it a bit ambiguous.
+> > 
+> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
+> > distinct interface, exposing an average frequency of a given CPU(s), as
+> > reported by the hardware, over a time frame spanning no more than a few
+> > milliseconds. As it requires appropriate hardware support, this
+> > interface is optional.
+> > 
+> > Note that under the hood, the new attribute relies on the information
+> > provided by arch_freq_get_on_cpu, which, up to this point, has been
+> > feeding data for scaling_cur_freq attribute, being the source of
+> > ambiguity when it comes to interpretation. This has been amended by
+> > restoring the intended behavior for scaling_cur_freq, with a new
+> > dedicated config option to maintain status quo for those, who may need
+> > it.
+> > 
+> > CC: Jonathan Corbet <corbet@lwn.net>
+> > CC: Thomas Gleixner <tglx@linutronix.de>
+> > CC: Ingo Molnar <mingo@redhat.com>
+> > CC: Borislav Petkov <bp@alien8.de>
+> > CC: Dave Hansen <dave.hansen@linux.intel.com>
+> > CC: H. Peter Anvin <hpa@zytor.com>
+> > CC: Phil Auld <pauld@redhat.com>
+> > CC: x86@kernel.org
+> > CC: linux-doc@vger.kernel.org
+> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > ---
+> >   Documentation/admin-guide/pm/cpufreq.rst | 16 ++++++++++-
+> >   arch/x86/kernel/cpu/aperfmperf.c         |  2 +-
+> >   arch/x86/kernel/cpu/proc.c               |  7 +++--
+> >   drivers/cpufreq/Kconfig.x86              | 12 ++++++++
+> >   drivers/cpufreq/cpufreq.c                | 36 +++++++++++++++++++++---
+> >   include/linux/cpufreq.h                  |  2 +-
+> >   6 files changed, 66 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/pm/cpufreq.rst b/Documentation/admin-guide/pm/cpufreq.rst
+> > index fe1be4ad88cb..76f3835afe01 100644
+> > --- a/Documentation/admin-guide/pm/cpufreq.rst
+> > +++ b/Documentation/admin-guide/pm/cpufreq.rst
+> > @@ -248,6 +248,19 @@ are the following:
+> >   	If that frequency cannot be determined, this attribute should not
+> >   	be present.
+> > +``cpuinfo_avg_freq``
+> > +        An average frequency (in KHz) of all CPUs belonging to a given policy,
+> > +        derived from a hardware provided feedback and reported on a time frame
+> > +        spanning at most few milliseconds.
+> > +
+> > +        This is expected to be based on the frequency the hardware actually runs
+> > +        at and, as such, might require specialised hardware support (such as AMU
+> > +        extension on ARM). If one cannot be determined, this attribute should
+> > +        not be present.
+> > +
+> > +        Note, that failed attempt to retrieve current frequency for a given
+> > +        CPU(s) will result in an appropriate error.
+> > +
+> >   ``cpuinfo_max_freq``
+> >   	Maximum possible operating frequency the CPUs belonging to this policy
+> >   	can run at (in kHz).
+> > @@ -293,7 +306,8 @@ are the following:
+> >   	Some architectures (e.g. ``x86``) may attempt to provide information
+> >   	more precisely reflecting the current CPU frequency through this
+> >   	attribute, but that still may not be the exact current CPU frequency as
+> > -	seen by the hardware at the moment.
+> > +	seen by the hardware at the moment. This behavior though, is only
+> > +	available via c:macro:``CPUFREQ_ARCH_CUR_FREQ`` option.
+> >   ``scaling_driver``
+> >   	The scaling driver currently in use.
+> > diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+> > index 0b69bfbf345d..a00059139ca4 100644
+> > --- a/arch/x86/kernel/cpu/aperfmperf.c
+> > +++ b/arch/x86/kernel/cpu/aperfmperf.c
+> > @@ -413,7 +413,7 @@ void arch_scale_freq_tick(void)
+> >    */
+> >   #define MAX_SAMPLE_AGE	((unsigned long)HZ / 50)
+> > -unsigned int arch_freq_get_on_cpu(int cpu)
+> > +int arch_freq_get_on_cpu(int cpu)
+> >   {
+> >   	struct aperfmperf *s = per_cpu_ptr(&cpu_samples, cpu);
+> >   	unsigned int seq, freq;
+> > diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+> > index e65fae63660e..34d8fb93fb70 100644
+> > --- a/arch/x86/kernel/cpu/proc.c
+> > +++ b/arch/x86/kernel/cpu/proc.c
+> > @@ -86,9 +86,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+> >   		seq_printf(m, "microcode\t: 0x%x\n", c->microcode);
+> >   	if (cpu_has(c, X86_FEATURE_TSC)) {
+> > -		unsigned int freq = arch_freq_get_on_cpu(cpu);
+> > +		int freq = arch_freq_get_on_cpu(cpu);
+> > -		seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq / 1000, (freq % 1000));
+> > +		if (freq <= 0)
+> > +			seq_puts(m, "cpu MHz\t\t: Unknown\n");
+> > +		else
+> > +			seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq / 1000, (freq % 1000));
+> >   	}
+> >   	/* Cache size */
+> > diff --git a/drivers/cpufreq/Kconfig.x86 b/drivers/cpufreq/Kconfig.x86
+> > index 97c2d4f15d76..212e1b9afe21 100644
+> > --- a/drivers/cpufreq/Kconfig.x86
+> > +++ b/drivers/cpufreq/Kconfig.x86
+> > @@ -340,3 +340,15 @@ config X86_SPEEDSTEP_RELAXED_CAP_CHECK
+> >   	  option lets the probing code bypass some of those checks if the
+> >   	  parameter "relaxed_check=1" is passed to the module.
+> > +config CPUFREQ_ARCH_CUR_FREQ
+> > +	default y
+> > +	bool "Current frequency derived from HW provided feedback"
+> > +	help
+> > +	  This determines whether the scaling_cur_freq sysfs attribute returns
+> > +	  the last requested frequency or a more precise value based on hardware
+> > +	  provided feedback (as architected counters).
+> > +	  Given that a more precise frequency can now be provided via the
+> > +	  cpuinfo_avg_cur_freq attribute, by enabling this option,
+> > +	  scaling_cur_freq maintains the provision of a counter based frequency,
+> > +	  for compatibility reasons.
+> > +
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index 04fc786dd2c0..70df2a24437b 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -747,9 +747,14 @@ show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
+> >   show_one(scaling_min_freq, min);
+> >   show_one(scaling_max_freq, max);
+> > -__weak unsigned int arch_freq_get_on_cpu(int cpu)
+> > +__weak int arch_freq_get_on_cpu(int cpu)
+> >   {
+> > -	return 0;
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
+> > +{
+> > +	return arch_freq_get_on_cpu(policy->cpu) != -EOPNOTSUPP;
+> >   }
+> >   static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+> > @@ -757,8 +762,11 @@ static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+> >   	ssize_t ret;
+> >   	unsigned int freq;
+> > -	freq = arch_freq_get_on_cpu(policy->cpu);
+> > -	if (freq)
+> > +	freq = IS_ENABLED(CONFIG_CPUFREQ_ARCH_CUR_FREQ)
+> > +		? arch_freq_get_on_cpu(policy->cpu)
+> > +		: 0;
+> > +
+> > +	if (freq > 0)
+> >   		ret = sysfs_emit(buf, "%u\n", freq);
+> >   	else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
+> >   		ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
+> > @@ -802,6 +810,19 @@ static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
+> >   	return sysfs_emit(buf, "<unknown>\n");
+> >   }
+> > +/*
+> > + * show_cpuinfo_avg_freq - average CPU frequency as detected by hardware
+> > + */
+> > +static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
+> > +				     char *buf)
+> > +{
+> > +	int avg_freq = arch_freq_get_on_cpu(policy->cpu);
 > 
-> Swap the order of the arguments to clamp() to avoid the warning.
+> We are seeing issues when reading cpuinfo_avg_freq on an ARM64 system:
 > 
-> Replace the clamp_val() on the line below with clamp().
-> clamp_val() is just 'an accident waiting to happen' and not needed here.
+> $ cat /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq
+> cat: /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq: Resource
+> temporarily unavailable
 > 
-> Detected by compile time checks added to clamp(), specifically:
-> minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+> The CPU is in idle state, so arch_freq_get_on_cpu() can't find a good
+> alternative source for frequency info.
 > 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYsT34UkGFKxus63H6UVpYi5GRZkezT9MRLfAbM3f6ke0g@mail.gmail.com/
-> Fixes: 4f325e26277b ("ipvs: dynamically limit the connection hash table")
-> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Signed-off-by: David Laight <david.laight@aculab.com>
+> One way to resolve this is to have fallback methods in
+> show_cpuinfo_avg_freq() so it will look like this:
+> 
+> static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
+>                                      char *buf)
+> {
+>         int avg_freq = arch_freq_get_on_cpu(policy->cpu);
+>         int ret;
+> 
+>         if (avg_freq > 0)
+>                 ret = sysfs_emit(buf, "%u\n", avg_freq);
+>         else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
+>                 ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
+>         else
+>                 ret = sysfs_emit(buf, "%u\n", policy->cur);
+>         return ret;
+> }
+> 
+> But that also makes show_cpuinfo_avg_freq() pretty much the same as
+> show_scaling_cur_freq().
+> 
+> So is it possible to consolidate show_cpuinfo_avg_freq() into
+> show_scaling_cur_freq(), by making CONFIG_CPUFREQ_ARCH_CUR_FREQ also
+> available to ARM64?
+>
+The whole idea of this patch was to add support for retrieving the average
+frequency withouth modifying expected bahaviour of the scaling_cur_freq handler.
+The proposed config option is there to keep backward compatibility and allow
+userspace tools to catch up with the change - I'd expect that option to be
+either set as default to No or droped at some point.
 
-	Looks good to me, thanks to everyone!
-
-Acked-by: Julian Anastasov <ja@ssi.bg>
-
-	Pablo, Simon, probably, this should be applied
-to the 'nf' tree as it fixes a build failure...
-
-> ---
+---
+BR
+Beata
+> Kai-Heng
 > 
-> Julian seems to be waiting for a 'v2' from me.
-> Changed target tree to 'net-next'.
-> I've re-written the commit message.
-> Copied Andrew Morton - he might want to take the change through the 'mm' tree.
-> Plausibly the 'fixes' tag should refer to the minmax.h change?
-> This will need back-porting if the minmax set get back-ported.
+> > +
+> > +	if (avg_freq > 0)
+> > +		return sysfs_emit(buf, "%u\n", avg_freq);
+> > +	return avg_freq != 0 ? avg_freq : -EINVAL;
+> > +}
+> > +
+> >   /*
+> >    * show_scaling_governor - show the current policy for the specified CPU
+> >    */
+> > @@ -964,6 +985,7 @@ static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
+> >   }
+> >   cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
+> > +cpufreq_freq_attr_ro(cpuinfo_avg_freq);
+> >   cpufreq_freq_attr_ro(cpuinfo_min_freq);
+> >   cpufreq_freq_attr_ro(cpuinfo_max_freq);
+> >   cpufreq_freq_attr_ro(cpuinfo_transition_latency);
+> > @@ -1091,6 +1113,12 @@ static int cpufreq_add_dev_interface(struct cpufreq_policy *policy)
+> >   			return ret;
+> >   	}
+> > +	if (cpufreq_avg_freq_supported(policy)) {
+> > +		ret = sysfs_create_file(&policy->kobj, &cpuinfo_avg_freq.attr);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> >   	ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
+> >   	if (ret)
+> >   		return ret;
+> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> > index d4d2f4d1d7cb..a7b6c0ccf9bc 100644
+> > --- a/include/linux/cpufreq.h
+> > +++ b/include/linux/cpufreq.h
+> > @@ -1194,7 +1194,7 @@ static inline int of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
+> >   }
+> >   #endif
+> > -extern unsigned int arch_freq_get_on_cpu(int cpu);
+> > +extern int arch_freq_get_on_cpu(int cpu);
+> >   #ifndef arch_set_freq_scale
+> >   static __always_inline
 > 
-> I'm not sure whether there ought to be an attribution to Dan Carpenter <dan.carpenter@linaro.org>
-> 
->  net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
-> index 98d7dbe3d787..c0289f83f96d 100644
-> --- a/net/netfilter/ipvs/ip_vs_conn.c
-> +++ b/net/netfilter/ipvs/ip_vs_conn.c
-> @@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
->  	max_avail -= 2;		/* ~4 in hash row */
->  	max_avail -= 1;		/* IPVS up to 1/2 of mem */
->  	max_avail -= order_base_2(sizeof(struct ip_vs_conn));
-> -	max = clamp(max, min, max_avail);
-> -	ip_vs_conn_tab_bits = clamp_val(ip_vs_conn_tab_bits, min, max);
-> +	max = clamp(max_avail, min, max);
-> +	ip_vs_conn_tab_bits = clamp(ip_vs_conn_tab_bits, min, max);
->  	ip_vs_conn_tab_size = 1 << ip_vs_conn_tab_bits;
->  	ip_vs_conn_tab_mask = ip_vs_conn_tab_size - 1;
->  
-> -- 
-> 2.17.1
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
-
 
