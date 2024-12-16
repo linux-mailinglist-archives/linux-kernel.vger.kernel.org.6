@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-447013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF5A9F2C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:36:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4B89F2C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBED18838F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8FF1884151
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0B81FF7DE;
-	Mon, 16 Dec 2024 08:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BD1FFC52;
+	Mon, 16 Dec 2024 08:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uv2H8c4i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="W1CZUG7e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kVyAYW8a"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078931CB51B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B2C1F709A;
+	Mon, 16 Dec 2024 08:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734338203; cv=none; b=NYVMlSZaObD3eTqlzsTpkv4z2e3MAyTN0TOH5kS/hNhdjfDZVFm6qe5qGCJmDsGyxtqQ0U07Ng5QHMeu3nlS5rPBGc7tEB1SkJF+/8kXe9fbJqEBhuseYCeF99ND0FeT4TpX8B06fGYNSpnpzbIl2UkOaGtcG5AaIgXa9TRAFoM=
+	t=1734338256; cv=none; b=pHbOMRGEZeU9wmqqDZ0yFz4BpXXCo1ef3cpvDBoI59CsPw6y4CjKwF3zcdeaEm9EIqOjVKnaJCJY9foLvQ8da2W7BiMnU/1CJzuC9aNqzNq6Zewg0MEvg/strGzJ1D13OJsujyxb5ptxwEjobLj0pt6woDxyGJNA4xfr5oU7y4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734338203; c=relaxed/simple;
-	bh=xcBMAfPwVj1ts+vRJPOTbVGYP1REcVAC0hbJ/1Rtr7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=o6oVjWEB5Y+IEg9gxMzqBbTPYGsia84cDMKdoqvxfDa9BbC8N57SM50LInRiJ0b5LqofIUFFiR6spGZiw9bR9JsjIvN9+77sRPnaBkNZb6GbEU+HWtIku2VwEl5Oqeo54fSvkyIy/qiibHu0+x7b5FhqYpOTmGZ5bE2TaxHWans=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uv2H8c4i; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734338201; x=1765874201;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=xcBMAfPwVj1ts+vRJPOTbVGYP1REcVAC0hbJ/1Rtr7w=;
-  b=Uv2H8c4iClbZF8/H8MYri2c8on2n2a46aTbgjSZL62BGVSH0qtCADi7M
-   CbGNDAEbG1SFLcBdgJ6odJz+iMkZRzt1Ibz9YDEoeS6tAp5sdreRoxYz6
-   5K5T4kmk4UOt/1XKOrW5a8Yal1kPHUsfHuLlyjnoFn4TCT54ik3STE/qH
-   JUQglHhNwB1yARGzfjTbsxdvJxUnpOq5s7j1SOTHdDteWUxgXCi4J3MGo
-   t09XMNfXv4g72D3+j6bE8vMuoh1HDRxLsOq3OiWUp4tgw8xSb8x/taFL0
-   vZRwVMfpkn/7HFlyl4j3eK2oXZdlGqgeEBYW6lJ5pCSk/GXOgjrFlktpR
-   w==;
-X-CSE-ConnectionGUID: +MccNnwzQMezY2fh0A3KDw==
-X-CSE-MsgGUID: l+4k/jqNSoyLDz1lPt/lkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46109022"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="46109022"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 00:36:41 -0800
-X-CSE-ConnectionGUID: qSljELkSR1mRGnjBf8kqeQ==
-X-CSE-MsgGUID: qdC+17W4T4aJOl9K3TAOwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="scan'208";a="102159125"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 16 Dec 2024 00:36:39 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tN6ai-000E6u-2E;
-	Mon, 16 Dec 2024 08:36:36 +0000
-Date: Mon, 16 Dec 2024 16:35:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Likun Gao <Likun.Gao@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Kenneth Feng <kenneth.feng@amd.com>
-Subject: drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c:1638:5-8:
- Unneeded variable: "ret". Return "0" on line 1642
-Message-ID: <202412161655.2LXuAggt-lkp@intel.com>
+	s=arc-20240116; t=1734338256; c=relaxed/simple;
+	bh=G5iOSpiCvKWgBkvTbE8BeIEzKnW5/hdoL6FsopUDLM4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=pIFlGXgJN24CrvFi8gdiFl26QK1sDZShRra5Eajpt7SlfxKKukQqRNBBA34OnwigAAV7ESOSXTbrx2fhwIwZgOvBF6gfzzOmhRjpXnAEf67gCYb+htzML3zyjdR+Kme38jAdfEod6z5+H/wz+SKcuXR5yRBUJ0fqf9pPSC3PyEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=W1CZUG7e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kVyAYW8a; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 87C4C114011B;
+	Mon, 16 Dec 2024 03:37:32 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 16 Dec 2024 03:37:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734338252;
+	 x=1734424652; bh=QuwIIKotvWiGSfFnUvfQc5WJsm4iWiEqcQ7nbAiK+xo=; b=
+	W1CZUG7eaQaDIXxrHwJqoYY2zuMUb62yDQd9cAQ5zBrX5LtzqLvLS/vlg3GNb4uf
+	CU66MnEndfSqcv0tV8NM6ft3RKmcwNpbvLk+mXklTX4be+KGRo8G3GD83ccmjP9U
+	K3ZikgivLN3T5YYty2zIy6kttEE7hMt0h21KD+0kZmNC1Gklr0F+xzLLxXhiH04Y
+	/c6IRgeKWGQwzx7D0CEZNwt6mQbqurhVteQnRY3SAU1tnPUh9joXO3FYvNv/BEjO
+	wnO+ZaH8bk6CGNZQLWDasl0yIlNB/9lFZWEGig9+B4XfgUAkrY4JDwttv1E6M+gf
+	+xXzI7hjPQjPqFnaI8PVWQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734338252; x=
+	1734424652; bh=QuwIIKotvWiGSfFnUvfQc5WJsm4iWiEqcQ7nbAiK+xo=; b=k
+	VyAYW8anAq0SHR36vK+r1IEwV7E1BgT6g8F3dTsoxYV5c8ctSHoog+K5mMzZFpgX
+	+HXUZg0FYaorG8wWLp5TjRsKNWU8vBOHje/+dioF5idqwHfK63grkBg1hBl2da2d
+	FNtrnNiaFAubfyRDk+8mJLBeU0JzzOvbE+cG7OL6g2chKRFywrW1CQZPBc3PCiA5
+	9PqT34A4WvmqQ4kIVyd9xYDTaO8I+klqe5eRipFHh6u8FIs5tHxpEkPzTSJ9FAqz
+	jMaqp7qI9PD1zqlOTYX3FGEzmx8k12SYnRepbrHuzsu4w+BKGp6h/HjYGb9+R++A
+	m+xGzcwpZ76zROLzH8CFA==
+X-ME-Sender: <xms:zOZfZ30C85k7-L5LPSJlffWVNvXf7-AZV7pi24zfkNxKsSTdghKxRg>
+    <xme:zOZfZ2F55tlzncPllBfRfUt6y8WMjkM932JTuHWZ3DsAUq2lvJEq8WOQsD184dYAH
+    fUOYJQTHf18WTOVJHE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrledvgdduvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprh
+    gtphhtthhopegumhhithhrhidrthhorhhokhhhohhvsehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepsggrrhhtohhsiidrghholhgrshiivgifshhkiheslhhinhgrrhhordhorhhgpd
+    hrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zOZfZ34s-9JrlLziW4TZ58dFtuFTH8DiscHwF2DLE7y9IknoCd1ZSA>
+    <xmx:zOZfZ82R9gv-oYVCacjgAEVtYfWXXROPRkIjJDFPt6RDLflwfT7djw>
+    <xmx:zOZfZ6EGOgrji6H8Zaacv_G92X4i3yX7dFJvP3TFVYpn9rFoXv4kZA>
+    <xmx:zOZfZ98U_Lezj1lEBxW4_gNeih_5ZQ3gsVcpDaM_LMocpw_05DlB3Q>
+    <xmx:zOZfZ2hTzJmbCrHBFzWTluiUGDVeRZBpG4ORHsk1Nx0584O8r3p4kHnk>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 256EC2220072; Mon, 16 Dec 2024 03:37:32 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Mon, 16 Dec 2024 09:37:11 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>
+Message-Id: <010fe0ce-68bf-4e36-83b9-6c8e9c046cae@app.fastmail.com>
+In-Reply-To: <20241216083218.22926-1-brgl@bgdev.pl>
+References: <20241216083218.22926-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] Input: davinci-keyscan: remove leftover header
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-commit: 3e55845c3983d92e28517a545e403b5eb9acf95b drm/amd/swsmu: add smu v14_0_2 support
-date:   8 months ago
-config: i386-randconfig-052-20241214 (https://download.01.org/0day-ci/archive/20241216/202412161655.2LXuAggt-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+On Mon, Dec 16, 2024, at 09:32, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> The corresponding driver was removed two years ago but the platform data
+> header was left behind. Remove it now.
+>
+> Fixes: 3c9cb34939fb ("input: remove davinci keyboard driver")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  include/linux/platform_data/keyscan-davinci.h | 29 -------------------
+>  1 file changed, 29 deletions(-)
+>  delete mode 100644 include/linux/platform_data/keyscan-davinci.h
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412161655.2LXuAggt-lkp@intel.com/
+Thanks for the fix!
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c:1638:5-8: Unneeded variable: "ret". Return "0" on line 1642
-   drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c:1647:5-8: Unneeded variable: "ret". Return "0" on line 1651
-   drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c:1711:5-8: Unneeded variable: "ret". Return "0" on line 1715
+Dmitry, can you pick this up?
 
-vim +1638 drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c
-
-  1635	
-  1636	static int smu_v14_0_2_mode1_reset(struct smu_context *smu)
-  1637	{
-> 1638		int ret = 0;
-  1639	
-  1640		// TODO
-  1641	
-> 1642		return ret;
-  1643	}
-  1644	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
