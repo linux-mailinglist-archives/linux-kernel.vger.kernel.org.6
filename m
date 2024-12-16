@@ -1,182 +1,176 @@
-Return-Path: <linux-kernel+bounces-447465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A877B9F32E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:19:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6489A9F32F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99A291889383
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FBD161461
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD4D205E1B;
-	Mon, 16 Dec 2024 14:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AC42066E8;
+	Mon, 16 Dec 2024 14:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/j4kboh"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c56Irisw"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B62450F2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B3F206283
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358390; cv=none; b=sH6NbQuUctErl2EVFdOLNITfYaC7bNu3w50OMpa7od35jY99aWZRo7bqn0Zo4QTBTREG+H/sj02z5ae0CdrkXCvHeBWewV2PQ9QTAIPilMkZpXtA1AjJE8KFVX40sM+sD5MMj5/ktIk7oIsWEZ6nLLFx+81fKTqUAuR2GL5bsV8=
+	t=1734358513; cv=none; b=IwGzFreVNDJNvCvIogvAFlbwCruhT/sYh48fbO07JLBTK2EGrhMkF4ahgAKgM5O0/z6FQg9cdfqn9DrzuPalPXH4nMyrJO17QMlbPJ5e1GU6oTHT/tqb+5SoB2gY6w2K27XoJBlwonJIkjFFzxr2YIR51v2cZWdSdZ4R+PA66dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734358390; c=relaxed/simple;
-	bh=YXb2OO26JuzzRT5gugYbGq1eBtgz8qYkjN+bl/xvvu8=;
+	s=arc-20240116; t=1734358513; c=relaxed/simple;
+	bh=BWKay8aCkBASbe7NfIokCvthHXIEjCiOrlZ4ghdpg8c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzB5W+6m1ENZFu7iNn59O9zZ48n1KaWClY1bRBdt5fuLlrfCGHcAWZggG2aSODGnfFodQYxO7B+Ax1nQjjrUdyJEpD4jNQCBeggUk48ot118AfSLgkRvz7Kf+DnAgE2NYMWuWs+XAy96DGaGhbz+b2ItmC7ToEW3wKIDr5AYT5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/j4kboh; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAAGlA3Xt8SWwhKFR+innCGxqpkuGcD0o0B5+PJw1hD3xlTJuBECB/LQRxiCLrYykYGtzOsbvTEUgKnqsLMP8thOapzmTa+ww869PWuahC3QcY0ZD+8CeZEMUOQ3qyF54nE8kyyQ6+2Xkh0F+/PGRiWizeI8+jcs5YT9Dp3ve/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c56Irisw; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21619108a6bso30796625ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:13:08 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53e384e3481so3856468e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734358388; x=1734963188; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4lqEeDutj/XDSerpsZ8M++ye4tVb7VkggEGa71i6G0U=;
-        b=h/j4kbohbp/x/KkqotjtwlA/pm74b5QUwAvAGcOoA1ju5OvRE08xI/TA7TzL4gGrlQ
-         Zd8dZrPhOFV36metvoV/sxlX+Dhzgv5qYBSkCCBCYB5L0HicBflopsEHNURhKTvDgi7/
-         rE/oP8Zd0WTl4yAr8LQUTF60PbNdU+iYe7Jv3JdJNzR3SWmZOZwLznAagd14+UpvEbQX
-         dm4vN7bf2rtV+nS0uPA/kfUQj5LaDyTLgjJPBohYl6HOosqaPAiKxZYa5Bgte8AieK9f
-         Upwgrf7kY3knKmptlCDAU11VLCiSdHywNwnLDkjyBo9bhJWWQkBy3jEmGTjZ380iahsG
-         htYA==
+        d=linaro.org; s=google; t=1734358510; x=1734963310; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UKSczxnLoUJAPWSomZ621XIOP46vr1LWagGXlu/bsRA=;
+        b=c56Irisw/dTOKJ4OS7dC3W8Y007BbhO2nXf/cFoAnuxcLy6ueP9q+aF9hVhjfAX7cn
+         62HTfUbeeKS8pCH/9j/i0XjnGxBWFLr3mmoAZI410WaHUtVQ+oJYTSXYUMtAYRND2FZ1
+         Wg6XI/VzEwG/9n+8pnmDNQg9BvKlUlYRXwFJvde1TCJaCHJ/uwUZN5jlMdeq/wI3pPYc
+         NWTOdKO7iKcINmVQJqRmV8ALAVk6yZNpAvGNJOwbrqH9IDag9yVedzsuFe21ssmkU/st
+         wJXxUgjj/XQjGk9mr88bsF/1Fqhoar1ZZ8xddN0LzmdqvB35b57O4zqzuabq4B3VTtIT
+         Yp3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734358388; x=1734963188;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lqEeDutj/XDSerpsZ8M++ye4tVb7VkggEGa71i6G0U=;
-        b=dUkd6CW/TthjnrXKRCSxQ7pInOwpQLmaBUV+OGHBLRIHwvXsxgbAfLgDwdjfitw6hc
-         H7a2H4PFrh4wl/4QH64HNvnwwIx5WT/6EVEzLyOkTjbqUPt0KBXM1yr17qfTOkef7PI+
-         Z6GGHpLO5qapTLwp5+tHkV+wQhheeL7X/KhZebCtZKdROknZbzhCKzgNj9OHzC/kNyWi
-         u/iRCacSl2mmrLO297lav9V3LSWcK5DITjiDhY2Ebth7wWNiRQ7ulv+lXhro+VtWBgvl
-         6WZ+ym0ReRQd07d3FMNm4I0zi2gXWTK4SDhH2DXEfQjoGtl3aotmKzVKFDcDsm87JuJ/
-         KOrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjnN6/qDEwdhzslwIV4cEnbAQNv9L/uqhqfEof8B6w0HX5XxD0/LQ8N5IpSfgebvf003hPcbz7jLQR/0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc4RqvlFyHJjvxm+puacMuR8NxEKripKyJ0yhzQY4xbrzx5WHs
-	d2PE66kepwdNtBwWvzthBzYGgi2XoCOgDnGFbj4akDJPnqsY0i1DeFmz5oLQrg==
-X-Gm-Gg: ASbGncuz3uu6+OD2jgxQNKOHjZn2kN7nZ6Mw/9t787t8R/9iia+tdGLjrB8E0wZkCAJ
-	xJupNmfRUQMBMXdE0uDbK4xN8fUBVGxh/s+mz4WVQz6zP2R99FaPILNJriIV12ec9Yd1s/F6FfR
-	XP15HVa5Mjlye84ou7dqoSYX6mzu1vAUBwoRKMrnKIabY/jfHJV8MDpYKUIZxLXb3jPlvscEY/1
-	cj5XtzQV/9aU2r/h8KIi5B2FGU4FyWBNQV1lADAZyatvzlrcu54vgG1IEsDYDwn+KXH
-X-Google-Smtp-Source: AGHT+IFbwXMmkjRCJjhB390rc2YrPcY2ddmkYzVMrHtWWR7ffsZEsQAAigu4VplGhhTpeUsoGW86wg==
-X-Received: by 2002:a17:902:db09:b0:215:83e1:99ff with SMTP id d9443c01a7336-218929c7077mr158661225ad.27.1734358387786;
-        Mon, 16 Dec 2024 06:13:07 -0800 (PST)
-Received: from thinkpad ([120.56.200.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1db63cesm43415695ad.33.2024.12.16.06.13.05
+        d=1e100.net; s=20230601; t=1734358510; x=1734963310;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UKSczxnLoUJAPWSomZ621XIOP46vr1LWagGXlu/bsRA=;
+        b=MtWdJWgc/c+USsjEWQylbsOYRJ/5VIFUZdSjWwWfBjK6ShIgffSK93UDht4poNsukl
+         Eq5F73t7T/sHhYCIZXHxe/GC9I5Xx1bYD2+EyqWIT/0MeydQPUm1drB6SINbcP2mqbe9
+         0utN2ScDi09MaBqb8LS4LaK9U6GXtpQXcH9YkDYI3UHFkSv+JZk0LhzX9g7c4BI7GC7I
+         hF4KxoqylkkcIwG8w2ohs7FOffHCPKQrn606PPL/wq+Y74icNdh3FUAR7jT4r78SG5Zn
+         7hGbiOIcXcwhrAZzgrRVN2u/mPyDWmGD9Z1wAd4usMztPNiathuHJd1tF/xuPIGzvgNQ
+         JRGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa8HQaux0awrxi13IKXCbKZ6jIxKhTtp1F61psRXx6Oa78rOXYx+shap9GXbnU3L9//Lc6E5esX+dyqYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/GisUpLZY9y9fXlxMzJO+/1M/yf281k7vHHJQNiMQkXMNp3GS
+	wdejRKHSxDy+6IvodRdJBnmsSSc0npdtHLL0j4XK+i/x092D21owlGOz+zwAbig=
+X-Gm-Gg: ASbGnctSYd2QsgtWNS+bPhtQm+V90EnZTQaf04PnBYBxhnAyvbHCu6fosEg+Ahd0JBZ
+	fZeONeQjvELVoc5MHHC5TYo4haVSFg8ylBUQYeEfzGb4FehgZBVEymfRF0U78zwNNKHKywpkd3+
+	StZufhG6z5N/7K40l4N/xBvNWieaHUIpRYng15csmY4g1oOQQo9zwGP/t2ivs7aGRbyCoyaVBi7
+	6x1kOFL11Br7ghjjV/q96FqnAMuIRJebbydrgrlErbEeLUlnO7NqIPaztgCocHaWp/A/hZLz/1D
+	mRfXp/hP2MamxRZeSLwP1D5urD8FkJsQK4BI
+X-Google-Smtp-Source: AGHT+IHbHSLczqY5nj/2VfoD1kdLMoq1Dp5yoiXtRZ5jCeqQsP9C363sZLJ5c9AJ/IeUMH19P3sgNg==
+X-Received: by 2002:a05:6512:110e:b0:540:241d:d74e with SMTP id 2adb3069b0e04-54090558390mr4985254e87.24.1734358509762;
+        Mon, 16 Dec 2024 06:15:09 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120b9f686sm868000e87.49.2024.12.16.06.15.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:13:07 -0800 (PST)
-Date: Mon, 16 Dec 2024 19:43:03 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: mhi resume failure on reboot with 6.13-rc2
-Message-ID: <20241216141303.2zr5klbgua55agkx@thinkpad>
-References: <Z1me8iaK7cwgjL92@hovoldconsulting.com>
- <20241211145315.vaf7gbapieywcvau@thinkpad>
- <Z1mp3_ArzL-GLr3D@hovoldconsulting.com>
- <20241216074021.kwoid2747o7piquv@thinkpad>
- <Z2ApCU3DAxKS7Y9k@hovoldconsulting.com>
+        Mon, 16 Dec 2024 06:15:08 -0800 (PST)
+Date: Mon, 16 Dec 2024 16:15:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <bpvyq543f4o3uusbjrivlymxeiqjcrnzb3atae2bp2vjleiggc@eolxb6jdep57>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <Z2ASy3TQ4suupdvd@cassiopeiae>
+ <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
+ <20241216121651.GP32204@pendragon.ideasonboard.com>
+ <Z2AgFHV2BaaZYGTx@cassiopeiae>
+ <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
+ <Z2Arj_cLW-aY5cnD@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z2ApCU3DAxKS7Y9k@hovoldconsulting.com>
+In-Reply-To: <Z2Arj_cLW-aY5cnD@cassiopeiae>
 
-On Mon, Dec 16, 2024 at 02:20:09PM +0100, Johan Hovold wrote:
-> On Mon, Dec 16, 2024 at 01:10:21PM +0530, Manivannan Sadhasivam wrote:
-> > On Wed, Dec 11, 2024 at 04:03:59PM +0100, Johan Hovold wrote:
-> > > On Wed, Dec 11, 2024 at 08:23:15PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Wed, Dec 11, 2024 at 03:17:22PM +0100, Johan Hovold wrote:
+On Mon, Dec 16, 2024 at 02:30:55PM +0100, Danilo Krummrich wrote:
+> On Mon, Dec 16, 2024 at 02:58:59PM +0200, Dmitry Baryshkov wrote:
+> > On Mon, Dec 16, 2024 at 01:41:56PM +0100, Danilo Krummrich wrote:
+> > > On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
+> > > > On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
+> > > > > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
+> > > > > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> > > > > > > The nouveau driver is the only user of the drm_encoder_slave interface.
+> > > > > > > Demote it from KMS helpers module to the nouveau driver itself, moving
+> > > > > > > corresponding I2C encoders to be handled by nouveau driver too.
+> > > > > > 
+> > > > > > I understand nouveau is the only driver using this interface (and the
+> > > > > > corresponding i2c encoders).
+> > > > > > 
+> > > > > > However, I'm not quite seeing the advantage of folding the interface (including
+> > > > > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+> > > > > > the subsystem in any way / does prevent the subsystem from moving forward.
+> > > > > > 
+> > > > > > Can't we just keep it as it is?
+> > > > > 
+> > > > > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
+> > > > > take (a little bit) of space on every system. The nouveau situation
+> > > > > isn't unique, other drivers (i915, ast) also incorporate the code for
+> > > > > I2C backends. For the further discussion see the thread starting from
+> > > > > Laurent's email ([1]).
+> > > > > 
+> > > > > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
 > > > 
-> > > > > I just hit the following modem related error on reboot of the x1e80100
-> > > > > CRD for the second time with 6.13-rc2:
-> > > > > 
-> > > > > 	[  138.348724] shutdown[1]: Rebooting.
-> > > > >         [  138.545683] arm-smmu 3da0000.iommu: disabling translation
-> > > > >         [  138.582505] mhi mhi0: Resuming from non M3 state (SYS ERROR)
-> > > > >         [  138.588516] mhi-pci-generic 0005:01:00.0: failed to resume device: -22
-> > > > >         [  138.595375] mhi-pci-generic 0005:01:00.0: device recovery started
-> > > > >         [  138.603841] wwan wwan0: port wwan0qcdm0 disconnected
-> > > > >         [  138.609508] wwan wwan0: port wwan0mbim0 disconnected
-> > > > >         [  138.615137] wwan wwan0: port wwan0qmi0 disconnected
-> > > > >         [  138.702604] mhi mhi0: Requested to power ON
-> > > > >         [  139.027494] mhi mhi0: Power on setup success
-> > > > >         [  139.027640] mhi mhi0: Wait for device to enter SBL or Mission mode
-> > > > > 
-> > > > > and then the machine hangs.
-> 
-> > Could be. But the issue seems to be stemming from the modem crash while exiting
-> > M3. You can try removing the modem autosuspend by skipping the if condition
-> > block:
+> > > The drm_encoder_slave code it's rather small, but I guess this can be used as
+> > > argument for both, keeping it where it is and moving it.
+> > > 
+> > > If you want to move it to nouveau, I'm not going to object. But please fold the
+> > > helper code, such that we aren't left with unused functions and unnecessary
+> > > function pointer indirections through struct drm_encoder_slave_funcs.
 > > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bus/mhi/host/pci_generic.c?h=v6.13-rc1#n1184
+> > This is more or less what I've done. Or would you prefer to keep the
+> > wrapping functions that just execute the callback? I can change the
+> > patchset accordingly.
+> 
+> No, I think it's good indeed -- st a first glance it looked like there's more to
+> get rid of.
+> 
+> There are just a few more nits, I'll go ahead and add comments in the
+> corresponding patches.
+> 
 > > 
-> > If you no longer see the crash, then the issue might be with modem not coping
-> > up with autosuspend. If you still see the crash, then something else going wrong
-> > during reboot/power off.
-> 
-> I've only hit this issue three times and only since 6.13-rc2. So not
-> sure how useful that sort of experiment would be.
-> 
-
-I do not have access to the device. So if you cannot spend time on debugging the
-reason for crash, then I'll have to rely on Qcom to do it (which I've asked
-anyway).
-
-> > > Is there anything you can do on the mhi side to prevent it from blocking
-> > > reboot/power off?
+> > > 
+> > > > 
+> > > > It's also a question of whether maintenance of this code based used by
+> > > > the nouveau driver only should be the responsibility of the drm-misc
+> > > > community or the nouveau driver maintainers.
+> > > 
+> > > Good question. It's common infrastructure; do we expect / require the last user
+> > > of such infrastructure to take ownership?
 > > 
-> > It should not block the reboot/power off forever. There is a timeout waiting for
-> > SBL/Mission mode and the max time is 24s (depending on the modem). Can you share
-> > the modem VID:PID?
+> > Unfortunately it's more like 'the only one' :-( In other words, if we
 > 
-> I just hit the issue again and can confirm that it does block
-> reboot/shutdown forever (I've been waiting for 20 minutes now).
+> I can't see a major difference between "last one" and "only one" in this
+> context.
+
+I was thinkinkg between "the last one" and "the only one, there will be
+more in future". Excuse me.
+
 > 
-
-Ah, that's bad.
-
-> Judging from a quick look at the code, "Wait for device to enter SBL or
-> Mission mode" is printed by mhi_fw_load_handler(), which in turn is only
-> called from the mhi_pm_st_worker() state machine.
+> > were expecting other users, there would not be such a move. But
+> > hopefully all new drivers will use bridges infrastructure.
 > 
-> I can't seem to find anything that makes sure that the next state is
-> ever reached, so regardless of the cause of the modem fw crash
+> Agreed, but I don't think it answers my question.
 
-This code will make sure:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bus/mhi/host/pm.c?h=v6.13-rc1#n1264
-
-But then it doesn't print the error and returns -ETIMEDOUT to the caller after
-powering down MHI. The caller (mhi_pci_recovery_work), in the case of failure,
-unprepares MHI and starts function level recovery.
-
-> (if
-> that's what it is) the hung reboot appears to be a bug in mhi.
-> 
-
-I'm not sure where exactly it got stuck. I've asked Qcom folks to reproduce this
-issue. We will investigate and hopefully get back with a fix asap.
-
-> This is with the SDX65 modem in the x1e80100 CRD:
-> 	
-> 	17cb:0308
-
-Okay thanks!
-
-- Mani
+Anyway, yes (in my humble opinion). it's usually easier to push bits of
+infrasrucure towards the last user. Frequently it allows us to simplify
+both the framework and the last user.
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
 
