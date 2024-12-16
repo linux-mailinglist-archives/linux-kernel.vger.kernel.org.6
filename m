@@ -1,169 +1,118 @@
-Return-Path: <linux-kernel+bounces-447936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238CD9F38E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:27:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462E09F38E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D727A15C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DBD318924A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5934D206F27;
-	Mon, 16 Dec 2024 18:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049AB206F0B;
+	Mon, 16 Dec 2024 18:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kl+bXONP"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JTWIjAq0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E025205E11;
-	Mon, 16 Dec 2024 18:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41CF1CB31D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734373627; cv=none; b=sbolpeNyI0BFq4UPh1SsyIFsUTxTizyypiqOccJjqTSRh69gbVrH0lz701XSjS9ljm13q1iVQBenCEUdYI4oWNXLvSJR+KnGD0bo+ZUXWjV4S6GBE68kDkU9nNZZ/SwNKIFXyPkpSPfdJR+VxnteuSNQn0s2q7bOV8EhyHQ6OWM=
+	t=1734373679; cv=none; b=uaKVRCrNhCleMswPJke0hgtjckHelBeSGVimAY8LPA63lFR9EuUjf/w4n1butifY77HfRbdFSU7c2dOQp+XBObtpSeArwTi00fA3IK5yYrsqCbYIvigaRoLBRID6s3osSWhHEww5BZA3qHdNXS/Ubpxov8ahoVTy0Qe3oK9sJVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734373627; c=relaxed/simple;
-	bh=peQztMcshPa/GyXWLb1xn1u3goLQ4a1w0elREhsTn3I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Uf/TnpvSK79KfyR5Rj0ZopKe9n6t7QHTrSyVdMVQTlvGeCRVxgci77mMwG2mXriPQ/1NNy86BEIFLYOjB0nAK93ujHqrLn8UyHTSLsDoyaMANPKZdGYr183I1fqDMe0DaDNf25YZ2d+cjShH47jAHEUTYfNXP1wthvJXCnHDwFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kl+bXONP; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f4325168c8so1839517a12.1;
-        Mon, 16 Dec 2024 10:27:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734373625; x=1734978425; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=570qyQ95MyqKtEn6RjLsmFDhC4N5AWY32KuxxTRb1BY=;
-        b=Kl+bXONPzgu7K74xoIx46hR4wsBxFG/+iNEMfPWCFYlCBxrEDyzwpWZzqPbqKehs8O
-         FguY/jV/VKecxw9I3phs9L8MU1oaEeHkMpA4ixmGuxYJSMrZxe7mxbheSJfAbgAvZ+hk
-         BOMqc947WKVBewLSpO6JXigwGERLs1DDl+v1k8pWpcr3CNLt/d+U3m5JJ6rgwTAWAFHc
-         STvJKsTqcS+dsGHJAVcfExAMVey9nrkIa0m1gXgSwN0DEmS0bD8Pewd/xC8ZGHPa7jpr
-         ZgZzoqUVqT71hopVafG6et7uVZtl0X9cPwd2OQFvfWp2SSsZRIVMPk0vMlosG9PKNnfB
-         j8Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734373625; x=1734978425;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=570qyQ95MyqKtEn6RjLsmFDhC4N5AWY32KuxxTRb1BY=;
-        b=LamBjqyQjIVTxaVx74PxCk+O0aUbWXGZBkfv3l7fcEJr1g5KbuGQFh8LKtiwzALiiK
-         qu/fKTunvlumJSF3BUL/fYfmMHRjxRkHaAIo55rGgLPvRJhhruuFrP42sVuwYRTHJNpT
-         ztkRnyhvBVFa/ScBT/qJ3M11ygIWBxrw900058MU1aA1SHvoUaHCOvBpk1QlduCDZa0l
-         w/BpivonJDYX4+ReETj+UKW+A9Em1yO72eaBM1gVeJQKu54LmkvoM25WxPNJoFBSAqHK
-         L0Hx1xB6Xmdj4oYgJwymM0zYnyknM4sasdp3c7JsgeuDamK7tSNswZ3e6CXX+0N3BLlL
-         /NLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1rgiYD94eihrdYsm8NWPPHp6+j6Q9b1tqHPrsKbX7FA8qETuS3YribfGfe13G66A8eB0=@vger.kernel.org, AJvYcCWSSocnWGwHBP/ltY8m0nNnkT30c/XmIsJwBaiqVRVgJx/rLWo/cCh4ymuAHVxfB67a+8sWUEJ0vTnP159J@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvrW2YjpBg7z1qu7vqCNROj2CBpzA5uQZLZO6DPk3FdZor87lf
-	Td1fRtOmtQskiMwFjb6COESXotkVehkTkN7EGPhnAx7qwEHqzXmL
-X-Gm-Gg: ASbGncutQhTO0DD2kHOiNpk9w4K7zKPAzo76SW3nKthy1xIZcqnSSRORSsQpk7Vw3NZ
-	BndDPnMuHH+rqPIVnFr1GBmqjGZz2cDyMr1LQW/A3AoUm/Cjs7gi35c2S5aeVu3oiJ0otwA5vJV
-	559bkqt3HT2TAZLhCasMMBlBL2u6n3gYGh4RFTg8DthSoW9m5gXn0lfDqU6CPllLkR7Elb4Ufsw
-	ErnwBXmoXmuLqNPEFqesCsGMaqFyN05r1QQbsiLgZxZvLcKsGzOOw==
-X-Google-Smtp-Source: AGHT+IEY7zjkNVI5yJ5SkMTDb1v2zTwA60kE/oy5BUWvi/5nVDLfJfu5OJsU4IgBMi2nQ3hiXgQQ1w==
-X-Received: by 2002:a17:90b:3884:b0:2ee:c9b6:4c42 with SMTP id 98e67ed59e1d1-2f28fb64a91mr21209603a91.16.1734373625506;
-        Mon, 16 Dec 2024 10:27:05 -0800 (PST)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a2449873sm5026403a91.44.2024.12.16.10.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 10:27:04 -0800 (PST)
-Message-ID: <49407656def0054fb62c47907c2338bfc36df47e.camel@gmail.com>
-Subject: Re: [PATCH] bpf: do not inline bpf_get_smp_processor_id() with
- CONFIG_SMP disabled
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Andrea Righi <arighi@nvidia.com>, Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>, John Fastabend	
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh
- <kpsingh@kernel.org>,  Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 	bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 16 Dec 2024 10:26:59 -0800
-In-Reply-To: <Z2BiWTcp-CnC5cCz@gpd3>
-References: <20241216104615.503706-1-arighi@nvidia.com>
-	 <5e7c4b07-f5f0-400f-a84f-36699f867a4a@iogearbox.net>
-	 <Z2BiWTcp-CnC5cCz@gpd3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1734373679; c=relaxed/simple;
+	bh=7DOBJZl9si+58nGTd/L2lxljBXyhFzOHtZTCE5inhJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MMwyoPKB+PcwIJ2T580oPlk3cm+gwDPI9bfDrh12IJXLn8tbT1WrdI+CFTz5Ya/dCEddxD2LxIQRxIY/dJTAPGRTGAuJUYmVSacUv+AlUELdtGrqJsgXfkonWk2YGCFYirXL7blnSmkvWQezckWw4M5frNTb/ZvcAoxjlqfJocU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JTWIjAq0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGFgKgq015320;
+	Mon, 16 Dec 2024 18:27:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	P3MBJgkWNt+1zBLdfIRA/UwIK+aKTPriY9UIm2BDsow=; b=JTWIjAq0wEeJj0lG
+	za1U3OhU2EIKD31fsMk9PItVxQF6dyvdVUYlqbF7jXhS38wyt0qT0+v3UxWg/k/g
+	ZWpMLVtiYuukDvjdZRq38PKqDzHYUJfokP69Y4JELAEbnxh2WLpLgAv+P7Aigxw2
+	lAuxkbEFrpV5x4omSs4XzM+mBuz3lFQ0qK1LG2BAjumFCGdbkWlP2RJs1DQlKB7b
+	Vgo+dRvVKeGIc3m51iU1fnpN22Ulms4viCHTZHYlejCCN19ZfyQ7H7A2n0tZdr8A
+	pJ1xhGMFGgEwP0j3ljhbNoOSbQNzd4E6o0+YjqkJamrarM0rgFEKY1IpQPfg8PTN
+	F73rBw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jq350e9g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 18:27:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGIRlBJ013326
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 18:27:47 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 10:27:46 -0800
+Message-ID: <8484df79-6ad8-4702-853f-31d985178607@quicinc.com>
+Date: Mon, 16 Dec 2024 10:27:44 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] drm: Allow encoder modeset when connectors are
+ changed
+Content-Language: en-US
+To: Maxime Ripard <mripard@kernel.org>,
+        Jessica Zhang
+	<quic_jesszhan@quicinc.com>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <robdclark@gmail.com>
+References: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
+ <20241216-daring-opalescent-herring-bfdc8f@houat>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-daring-opalescent-herring-bfdc8f@houat>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: A9NOT-SK5Om6gI5TeVP1qvnD4OBy27UW
+X-Proofpoint-ORIG-GUID: A9NOT-SK5Om6gI5TeVP1qvnD4OBy27UW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 malwarescore=0 clxscore=1015 mlxlogscore=820 impostorscore=0
+ mlxscore=0 suspectscore=0 bulkscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160154
 
-On Mon, 2024-12-16 at 18:24 +0100, Andrea Righi wrote:
-> On Mon, Dec 16, 2024 at 05:16:33PM +0100, Daniel Borkmann wrote:
-> > On 12/16/24 11:46 AM, Andrea Righi wrote:
-> > > Calling bpf_get_smp_processor_id() in a kernel with CONFIG_SMP disabl=
-ed
-> > > can trigger the following bug, as pcpu_hot is unavailable:
-> > >=20
-> > > [    8.471774] BUG: unable to handle page fault for address: 00000000=
-936a290c
-> > > [    8.471849] #PF: supervisor read access in kernel mode
-> > > [    8.471881] #PF: error_code(0x0000) - not-present page
-> > >=20
-> > > Fix by preventing the inlining of bpf_get_smp_processor_id() when
-> > > CONFIG_SMP disabled.
-> > >=20
-> > > Fixes: 1ae6921009e5 ("bpf: inline bpf_get_smp_processor_id() helper")
-> > > Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> >=20
-> > lgtm, but can't we instead do sth like this :
-> >=20
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index f7f892a52a37..761c70899754 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -21281,11 +21281,15 @@ static int do_misc_fixups(struct bpf_verifier=
-_env *env)
-> >  			 * changed in some incompatible and hard to support
-> >  			 * way, it's fine to back out this inlining logic
-> >  			 */
-> > +#ifdef CONFIG_SMP
-> >  			insn_buf[0] =3D BPF_MOV32_IMM(BPF_REG_0, (u32)(unsigned long)&pcpu_=
-hot.cpu_number);
-> >  			insn_buf[1] =3D BPF_MOV64_PERCPU_REG(BPF_REG_0, BPF_REG_0);
-> >  			insn_buf[2] =3D BPF_LDX_MEM(BPF_W, BPF_REG_0, BPF_REG_0, 0);
-> >  			cnt =3D 3;
-> > -
-> > +#else
-> > +			BPF_ALU32_REG(BPF_XOR, BPF_REG_0, BPF_REG_0),
-> > +			cnt =3D 1;
-> > +#endif
-> >  			new_prog =3D bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
-> >  			if (!new_prog)
-> >  				return -ENOMEM;
->=20
-> That works as well (just tested) and it's probably better since we're
-> basically inlining the return 0. Do you want me to send a v2 with this?
 
-I think both Andrea's and Daniel's versions of the fix are good.
-Note, however, that I missed one more configuration variable when
-making bpf_get_smp_processor_id() inlinable: CONFIG_DEBUG_PREEMPT.
 
-Helper body:
+On 12/16/2024 3:06 AM, Maxime Ripard wrote:
+> On Wed, Dec 11, 2024 at 01:18:41PM -0800, Jessica Zhang wrote:
+>> Call encoder mode_set() when connectors are changed. This avoids issues
+>> for cases where the connectors are changed but CRTC mode is not.
+> 
+> Looks great, thanks a lot for doing the tests :)
+> 
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> 
+> Maxime
 
-    BPF_CALL_0(bpf_get_smp_processor_id)
-    {
-    	return smp_processor_id();
-    }
+Thanks for your feedback.
 
-smp_processor_id definition:
-
-    #ifdef CONFIG_DEBUG_PREEMPT
-      extern unsigned int debug_smp_processor_id(void);
-    # define smp_processor_id() debug_smp_processor_id()
-    #else
-    # define smp_processor_id() __smp_processor_id()
-    #endif
-
-Thanks,
-Eduard.
-
+Can we get an ack to land this through msm tree as part of the series 
+which needed it?
 
