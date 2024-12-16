@@ -1,111 +1,173 @@
-Return-Path: <linux-kernel+bounces-447566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C897D9F3447
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:19:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837249F344E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BB51884747
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:19:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA63416843A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A206145FE8;
-	Mon, 16 Dec 2024 15:18:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B8F146599;
+	Mon, 16 Dec 2024 15:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BCyc6/0D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58913D89D;
-	Mon, 16 Dec 2024 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A870143C7E;
+	Mon, 16 Dec 2024 15:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362334; cv=none; b=illX6Bnnwlt5aI7uzbr0JDVQeiWPL9R8ayanK9n7WeNyzP0BwYIcCCeJxTaZVeeRsdKLWkKiSEEu6itj/l3vjtZOfgIOD8wKAWQrMzoNEJDk8mRSUEQu7lTsmWuiopE1/FIoapG3eyPo2pzzFFae929O4R82YWFlfeDVkymlOhY=
+	t=1734362394; cv=none; b=gLwv9pkE2XMH5Twm6e4Xk7XRebVbsKCcToiA4moCog5K2G/PsflZw320nXAHNiG9dk18tP2qdUUewGf+2cCYe8binY9x4amd9EmDx3xzArQTsJkw9LoFuHLqvg6cxCpHYLR+CzRmVg2IVSw9d1Nyx8s067lmOmG0c4BCWHEyuu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362334; c=relaxed/simple;
-	bh=IsrKlm+2OUZKcqqVBC8nxFIPZLQYgWNWMK0rbRQBNIo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CvQaG69bsXVJtHxyhYUgB/0SonRWvrjqdRaBIBhkfOxu8NkpSLgBUhECUUiWdaGXqThl21bQ3m3zXn5npZQdMQ0BT9EkqFIz8Con2uXbsJa8DOFwPzRMyFB3h1tA6BFcsjKOMyYklibzdyxf619oVUk3rdKN7KgN7PRzRrJFBpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YBk42236mz6K6jQ;
-	Mon, 16 Dec 2024 23:13:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DFA751400E3;
-	Mon, 16 Dec 2024 23:18:47 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Dec
- 2024 16:18:47 +0100
-Date: Mon, 16 Dec 2024 15:18:45 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Tejun Heo <tj@kernel.org>, Josef Bacik
-	<josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, Boris Burkov
-	<boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
- Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
-	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 4/9] driver core: Move true expression out of if
- condition in API driver_find_device()
-Message-ID: <20241216151845.000074b1@huawei.com>
-In-Reply-To: <20241212-class_fix-v3-4-04e20c4f0971@quicinc.com>
-References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
-	<20241212-class_fix-v3-4-04e20c4f0971@quicinc.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1734362394; c=relaxed/simple;
+	bh=y7TlfMVEZusekH//J5taUkgokjw1JUo0vLvktWvyuPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UJGH36mwfS6W60BYRPiOpCa6PV9hZNqmFUQa/oYQFgPMcqh/pw6wdDUo8jIjkWFZwPgkgO++QNZtxoIKPa43L+0jzN2bdwIVc1OPyM9EE7JXvgG8hrUParf+maP9mfzbj/ltJI9MlEocITyvXeRblSkA8zAP5yW62xEkheZCg74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BCyc6/0D; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734362392; x=1765898392;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=y7TlfMVEZusekH//J5taUkgokjw1JUo0vLvktWvyuPg=;
+  b=BCyc6/0DI75Kasc6MHnDLPGHUoDu+wf0wx5fVVhiVzO2HIN8WwpBYwqg
+   TUoEb1iuzm/AyV+HYfmFxDMbAT6u96A5Y7/66PUpB1ylTQRaart/iXfOE
+   nHQ4UdHvzTPnx9tEZzwm3igaYKLYrKXZ4RHVc6cc987IT3FwTZWxmaUFr
+   DDo8c7ovHMt1P5nm48KqX3Hv4HDiqQf3iovmUiI7iQyo3T53cBUuRDQuG
+   Eur35V0VMyy0EfAClw/tgKE6IxAzRAVZQwj3pK1slkro26/7hQFmGo4Ss
+   za9zZaIrUkEphmYU3hGdnefC69/Hpk37YShR7yyv7evSmcB9L2GI+OwFx
+   A==;
+X-CSE-ConnectionGUID: CWlGa5QvRfqyBRc6Te/LXg==
+X-CSE-MsgGUID: QISOYajlRbazV1Rqobh8BA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="52272176"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="52272176"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 07:19:25 -0800
+X-CSE-ConnectionGUID: AHE7hPvVRWSJv6VqLEp0Zg==
+X-CSE-MsgGUID: g1CYaax3TAyj8grdzRkJRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="101375763"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 07:19:22 -0800
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: reinette.chatre@intel.com,
+	fenghua.yu@intel.com,
+	shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com,
+	maciej.wieczor-retman@intel.com
+Subject: [PATCH v8 0/2] selftests/resctrl: SNC kernel support discovery
+Date: Mon, 16 Dec 2024 16:18:52 +0100
+Message-ID: <cover.1734361935.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Dec 2024 21:38:40 +0800
-Zijun Hu <zijun_hu@icloud.com> wrote:
+Changes v8:
+- Fix Makefile changes.
+- Update cover letter SNC status information.
+- Add Reinette's reviewed by tag to patch 2/2.
 
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> For driver_find_device(), get_device() in the if condition always returns
-> true, move it to if body to make the API's logic more clearer.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Changes v7:
+- Include fallthrough in resctrlfs.c.
+- Check fp after opening empty cpus file.
+- Correct a comment and merge strings in snprintf().
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Changes v6:
+- Rebase onto latest kselftest-next.
+- Looking at the two patches with a fresh eye decided to make a split
+  along the lines of:
+	- Patch 1/2 contains all of the code that relates to SNC mode
+	  detection and checking that detection's reliability.
+	- Patch 2/2 contains checking kernel support for SNC and
+	  modifying the messages at the end of affected tests.
 
-Though I think it would have been fine to have all these similar patches
-as a single patch.
+Changes v5:
+- Tests are skipped if snc_unreliable was set.
+- Moved resctrlfs.c changes from patch 2/2 to 1/2.
+- Removed CAT changes since it's not impacted by SNC in the selftest.
+- Updated various comments.
+- Fixed a bunch of minor issues pointed out in the review.
 
-> ---
->  drivers/base/driver.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-> index b4eb5b89c4ee7bc35458fc75730b16a6d1e804d3..6f033a741aa7ce6138d1c61e49e72b2a3eb85e06 100644
-> --- a/drivers/base/driver.c
-> +++ b/drivers/base/driver.c
-> @@ -160,9 +160,12 @@ struct device *driver_find_device(const struct device_driver *drv,
->  
->  	klist_iter_init_node(&drv->p->klist_devices, &i,
->  			     (start ? &start->p->knode_driver : NULL));
-> -	while ((dev = next_device(&i)))
-> -		if (match(dev, data) && get_device(dev))
-> +	while ((dev = next_device(&i))) {
-> +		if (match(dev, data)) {
-> +			get_device(dev);
->  			break;
-> +		}
-> +	}
->  	klist_iter_exit(&i);
->  	return dev;
->  }
-> 
+Changes v4:
+- Printing SNC warnings at the start of every test.
+- Printing SNC warnings at the end of every relevant test.
+- Remove global snc_mode variable, consolidate snc detection functions
+  into one.
+- Correct minor mistakes.
+
+Changes v3:
+- Reworked patch 2.
+- Changed minor things in patch 1 like function name and made
+  corrections to the patch message.
+
+Changes v2:
+- Removed patches 2 and 3 since now this part will be supported by the
+  kernel.
+
+Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
+into multiple NUMA nodes. When enabled, NUMA-aware applications can
+achieve better performance on bigger server platforms.
+
+SNC support was merged into the kernel [1]. With SNC enabled
+and kernel support in place all the tests will function normally (aside
+from effective cache size). There might be a problem when SNC is enabled
+but the system is still using an older kernel version without SNC
+support. Currently the only message displayed in that situation is a
+guess that SNC might be enabled and is causing issues. That message also
+is displayed whenever the test fails on an Intel platform.
+
+Add a mechanism to discover kernel support for SNC which will add more
+meaning and certainty to the error message.
+
+Add runtime SNC mode detection and verify how reliable that information
+is.
+
+Series was tested on Ice Lake server platforms with SNC disabled, SNC-2
+and SNC-4. The tests were also ran with and without kernel support for
+SNC.
+
+Series applies cleanly on kselftest/next.
+
+[1] https://lore.kernel.org/all/20240716065458.GAZpYZQhh0PBItpD1k@fat_crate.local/
+
+Previous versions of this series:
+[v1] https://lore.kernel.org/all/cover.1709721159.git.maciej.wieczor-retman@intel.com/
+[v2] https://lore.kernel.org/all/cover.1715769576.git.maciej.wieczor-retman@intel.com/
+[v3] https://lore.kernel.org/all/cover.1719842207.git.maciej.wieczor-retman@intel.com/
+[v4] https://lore.kernel.org/all/cover.1720774981.git.maciej.wieczor-retman@intel.com/
+[v5] https://lore.kernel.org/all/cover.1730206468.git.maciej.wieczor-retman@intel.com/
+[v6] https://lore.kernel.org/all/cover.1733136454.git.maciej.wieczor-retman@intel.com/
+[v7] https://lore.kernel.org/all/cover.1733741950.git.maciej.wieczor-retman@intel.com/
+
+Maciej Wieczor-Retman (2):
+  selftests/resctrl: Adjust effective L3 cache size with SNC enabled
+  selftests/resctrl: Discover SNC kernel support and adjust messages
+
+ tools/testing/selftests/resctrl/Makefile      |   1 +
+ tools/testing/selftests/resctrl/cmt_test.c    |   4 +-
+ tools/testing/selftests/resctrl/mba_test.c    |   2 +
+ tools/testing/selftests/resctrl/mbm_test.c    |   4 +-
+ tools/testing/selftests/resctrl/resctrl.h     |   6 +
+ .../testing/selftests/resctrl/resctrl_tests.c |   9 +-
+ tools/testing/selftests/resctrl/resctrlfs.c   | 137 ++++++++++++++++++
+ 7 files changed, 158 insertions(+), 5 deletions(-)
+
+-- 
+2.47.1
 
 
