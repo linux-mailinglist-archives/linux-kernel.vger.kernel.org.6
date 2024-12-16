@@ -1,113 +1,188 @@
-Return-Path: <linux-kernel+bounces-446805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7949F2952
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:35:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F1B9F2953
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BAA163E1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302781641CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8EC1922FA;
-	Mon, 16 Dec 2024 04:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7908194141;
+	Mon, 16 Dec 2024 04:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j/KEqgaW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eUKbPwqq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521D0150981;
-	Mon, 16 Dec 2024 04:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F1DA41;
+	Mon, 16 Dec 2024 04:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734323740; cv=none; b=OlOEIkeLwKjnetAbbF3G0DV3YYWy/E2XS6kvoYTsukf33e8O4Z1cn+H+DrizJubmN8VeQrvlGQKPw6hseNnONHRWTnX4LT0JkRWgouETV+weeUJo5puIGJpMWAUPWqtUe6AqWi1jifvGiAg7d4XKn7ehVHJk++JGUhahY8ziW/0=
+	t=1734323861; cv=none; b=Y/bAFZCT5tsuSqGRzFKkx8/amUs2JvYSaILIle7XyedmKRxHASYXPIDeMKhekdKQrMs2XfE8g1bKi5v1D0b42YJtlCM6Vbcm7J7Gv9zn+V7gXMxYslyCvLO8xxmv2dJ4ce7VS0pdSzI5RMSKiqh5RBgd/5mgbBYAQLoGk05MV6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734323740; c=relaxed/simple;
-	bh=mGtop8vkfJEr4qcLH0V1j8V7bYDWBE8kSRU/V0QvyHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cDEOiBBhDwr7fp9yUL++0yCKPDT43gkFYtx/bQpJLNe1UAg8tXzIN+lHyLO2DAtgdFMTpLzcBgHJ4I/DV/0I1viiNo4yzrubw5uc1VylhLvy1MtZsPSwrDRzbGdjAD8R/K/hfLIlWG+v55VkDSaHBI5W81ay4DI+y9tpUYe4FVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j/KEqgaW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1734323731;
-	bh=wmHh6bp27Olp6vYWKaLvxeDmEwhXw7Xv6jT5w0mW5ac=;
-	h=Date:From:To:Cc:Subject:From;
-	b=j/KEqgaWAuGlRc3S6URv8y+7EM8cKjNWd852b3wUGbDtKgo3r2h6mKE0U5mowGDlG
-	 P9G8qGVFSZ2kTDVj3jxe65lFGq0PmI5pzQL4EHyfEI7L4B5ZzAYGinLsq6nAJAqeKy
-	 4NJjwNwXfFHNk3JaP6Rwh6O73v+TDzQsGcMsKOufdOeCVylOAaEbOIZAgtxEeBCB31
-	 6Jac0ISipH4Nq9H2YKMnqEktV+J+2pwCMxCctq1PF7LQ4YYxMlC1sB4Jeg/Sw7kOfB
-	 Jw0LRL9MJUYA3MdGZjgiFwSUA/WFTxXAMFOTIIfVL1zSkQfNt80iG9QzEcVhkI623+
-	 IuQyr7O4is7tw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YBRvR0KQXz4wcr;
-	Mon, 16 Dec 2024 15:35:31 +1100 (AEDT)
-Date: Mon, 16 Dec 2024 15:35:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the rust tree with the security tree
-Message-ID: <20241216153535.23d51bb8@canb.auug.org.au>
+	s=arc-20240116; t=1734323861; c=relaxed/simple;
+	bh=/ZLxmtpD7i77LgMQtthygKh9darH2+HxDdhqKF+SxZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pw7YjdqbqLivNny1m0y+LeXpL0GPhWp+O2/ap8sLqlPQzfNx3+zFI62KcnPAQ/ZCYJktEG/yWeiuGRNwloaOTU05n48Ul8WC4fdl8+z0Nyn1q5Aiomp2nLi+iw3DmnWmr3fIrtZSK7pMFKwqP5p3Tck8b7588snzB3JjI7hVOzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eUKbPwqq; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734323859; x=1765859859;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/ZLxmtpD7i77LgMQtthygKh9darH2+HxDdhqKF+SxZ4=;
+  b=eUKbPwqqhzuSMmPnu78bak2eKKaWFa3b6Ol8DdJE3WGrblP1wt09p7tG
+   qm5q24Aw/6jnCaKF6Q8Yrt6jGwDMd4ZL5DRS0/ijqNruDp8GpYbM2FD0Q
+   IPz3pM3zGI3+DtoKIkRL1f3sL8PsAFhLqx3T00OPh8Ot6PURPszVgoMWg
+   vmoJ+9E5hDpsGAavIlF5K54bPexvK8eD858bjf3yIGnUx92p2MF34bK6i
+   mTrEWjh02yi2lHaSXJSLbEAiIt0SqWu5u6Ix1jPuQTj0E0PpC5XaiPLvV
+   YU0DKngniyoiOdVGQDD+Wf77UxNZUsKQu/xEg22ATKqY4R5Fqe30rGuqX
+   A==;
+X-CSE-ConnectionGUID: Rd9b3sWeQEiM3EDaIJ9KCw==
+X-CSE-MsgGUID: Z6qkA69gTcSgnJiz56lHgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34732467"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="34732467"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 20:37:39 -0800
+X-CSE-ConnectionGUID: hB2F3kOKRVK/ZBxkreQCXA==
+X-CSE-MsgGUID: R+AidrljTfqnvygPxOJ+tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="101937650"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 20:37:36 -0800
+Message-ID: <646990e1-cce6-4040-af40-6d80e0cd954a@intel.com>
+Date: Mon, 16 Dec 2024 12:37:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/U.d1_An_p8BA.1/xP8GSx4.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] KVM: TDX: Add a place holder to handle TDX VM exit
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ michael.roth@amd.com, linux-kernel@vger.kernel.org
+References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+ <20241201035358.2193078-2-binbin.wu@linux.intel.com>
+ <28930ac3-f4af-4d93-a766-11a5fedb321e@intel.com>
+ <25a042e8-c39a-443c-a2e4-10f515b1f2af@linux.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <25a042e8-c39a-443c-a2e4-10f515b1f2af@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/U.d1_An_p8BA.1/xP8GSx4.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 12/16/2024 8:54 AM, Binbin Wu wrote:
+> 
+> 
+> 
+> On 12/13/2024 4:57 PM, Xiaoyao Li wrote:
+>> On 12/1/2024 11:53 AM, Binbin Wu wrote:
+...
+>>
+>>>   }
+>>>     void tdx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int 
+>>> pgd_level)
+>>> @@ -1135,6 +1215,88 @@ int tdx_sept_remove_private_spte(struct kvm 
+>>> *kvm, gfn_t gfn,
+>>>       return tdx_sept_drop_private_spte(kvm, gfn, level, pfn);
+>>>   }
+>>>   +int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
+>>> +{
+>>> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
+>>> +    u64 vp_enter_ret = tdx->vp_enter_ret;
+>>> +    union vmx_exit_reason exit_reason;
+>>> +
+>>> +    if (fastpath != EXIT_FASTPATH_NONE)
+>>> +        return 1;
+>>> +
+>>> +    /*
+>>> +     * Handle TDX SW errors, including TDX_SEAMCALL_UD, 
+>>> TDX_SEAMCALL_GP and
+>>> +     * TDX_SEAMCALL_VMFAILINVALID.
+>>> +     */
+>>> +    if (unlikely((vp_enter_ret & TDX_SW_ERROR) == TDX_SW_ERROR)) {
+>>> +        KVM_BUG_ON(!kvm_rebooting, vcpu->kvm);
+>>> +        goto unhandled_exit;
+>>> +    }
+>>> +
+>>> +    /*
+>>> +     * Without off-TD debug enabled, failed_vmentry case must have
+>>> +     * TDX_NON_RECOVERABLE set.
+>>> +     */
+>>
+>> This comment is confusing. I'm not sure why it is put here. Below code 
+>> does nothing with exit_reason.failed_vmentry.
+> 
+> Because when failed_vmentry occurs, vp_enter_ret will have
+> TDX_NON_RECOVERABLE set, so it will be handled below.
 
-Hi all,
+The words somehow is confusing, which to me is implying something like:
 
-Today's linux-next merge of the rust tree got a conflict in:
+	WARN_ON(!debug_td() && exit_reason.failed_vmentry &&
+                 !(vp_enter_ret & TDX_NON_RECOVERABLE))
 
-  rust/kernel/security.rs
+Besides, VMX returns KVM_EXIT_FAIL_ENTRY for vm-entry failure. So the 
+question is why TDX cannot do it same way?
 
-between commit:
+>>
+>>> +    if (unlikely(vp_enter_ret & (TDX_ERROR | TDX_NON_RECOVERABLE))) {
+>>> +        /* Triple fault is non-recoverable. */
+>>> +        if (unlikely(tdx_check_exit_reason(vcpu, 
+>>> EXIT_REASON_TRIPLE_FAULT)))
+>>> +            return tdx_handle_triple_fault(vcpu);
+>>> +
+>>> +        kvm_pr_unimpl("TD vp_enter_ret 0x%llx, hkid 0x%x hkid pa 
+>>> 0x%llx\n",
+>>> +                  vp_enter_ret, to_kvm_tdx(vcpu->kvm)->hkid,
+>>> +                  set_hkid_to_hpa(0, to_kvm_tdx(vcpu->kvm)->hkid));
+>>
+>> It indeed needs clarification for the need of "hkid" and "hkid pa". 
+>> Especially the "hkdi pa", which is the result of applying HKID of the 
+>> current TD to a physical address 0. I cannot think of any reason why 
+>> we need such info.
+> Yes, set_hkid_to_hpa(0, to_kvm_tdx(vcpu->kvm)->hkid) should be removed.
+> I didn't notice it.
 
-  9c76eaf78488 ("rust: replace lsm context+len with lsm_context")
+don't forget to justify why HKID is useful here. To me, HKID can be 
+dropped as well.
 
-from the security tree and commit:
+> Thanks!
+> 
+> 
+>>
+>>> +        goto unhandled_exit;
+>>> +    }
+>>> +
+>>> +    /* From now, the seamcall status should be TDX_SUCCESS. */
+>>> +    WARN_ON_ONCE((vp_enter_ret & TDX_SEAMCALL_STATUS_MASK) != 
+>>> TDX_SUCCESS);
+>>
+>> Is there any case that TDX_SUCCESS with additional non-zero 
+>> information in the lower 32-bits? I thought TDX_SUCCESS is a whole 64- 
+>> bit status code.
+> TDX status code uses the upper 32-bits.
+> 
+> When the status code is TDX_SUCCESS and has a valid VMX exit reason, the 
+> lower
+> 32-bit is the VMX exit reason.
+> 
+> You can refer to the TDX module ABI spec or 
+> interface_function_completion_status.json
+> from the intel-tdx-module-1.5-abi-table for details.
+> 
 
-  4724732dc2a8 ("rust: finish using custom FFI integer types")
+I see. (I asked a silly question that I even missed the normal Exit case)
 
-from the rust tree.
-
-I fixed it up (I just used the former) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/U.d1_An_p8BA.1/xP8GSx4.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdfrhcACgkQAVBC80lX
-0GzNNAf8DJHkMlUUnMH5JKVqljT60jj2Hoz5WhM8XKY6iKJ4I55BmcZbkFa9hpXG
-6LyN6qbXps0KjU3ZjT1CX046BGEMFTD6gwSLSJMdi4tVEhBvJuWTvWZNLAJYS2op
-tk65rqtgC4dUQMEgIlVlXCLtsKb2Dhitw93Ba440WtpCkf0rE+GkpYh5pO0CZD+r
-lHlgGaoI+43Re4XUs3ECbJhqaMlXIPnRvakpodx3Dyrf+E3uuUQ3RTwn7SOHfzhc
-KT2C6vpbaXgyUHVksmPc8QbijTW0sqhotSutuywenBGm4veDHWdfKXLQuIKBmxpG
-Wz1gMSnFPQOOaE1+5JbCBan3GKDmJg==
-=dsIh
------END PGP SIGNATURE-----
-
---Sig_/U.d1_An_p8BA.1/xP8GSx4.--
 
