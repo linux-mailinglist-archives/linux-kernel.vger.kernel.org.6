@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-447006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E319F2BF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:33:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195769F2BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554EF188870F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569E416667D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F31B1FFC53;
-	Mon, 16 Dec 2024 08:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD0200114;
+	Mon, 16 Dec 2024 08:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DydwwEHV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pT5HXt8Q"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A191CEAD5;
-	Mon, 16 Dec 2024 08:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997791FF7B0;
+	Mon, 16 Dec 2024 08:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734337975; cv=none; b=lmcnuDNCc7Y/CESQWY6Rz9dWhI/xqPYN7M41A98O+ygM/iOz4LLKhlwTkUWTYejrUlmxd4lm3Wk6fya4lgodxHMimly5KQPBpgTIAx3+fUb93TBCZ1e1iKDY1VSyKlv/kVgS2/VPq9Qf+srJZqgeO8/kHJJ9kzzyft3eXNtLtMo=
+	t=1734337986; cv=none; b=BgOW6ImCLytCRGZMvD8MjteSw5DitDXn8b+h6/E34gEzEBhATPfpnuFOvFff7CkPnSYmUgSE34zSsy8f8c0pazdYevx4bbkuj26+mtY0ftPD5n4c9Z/x+2Kv5/xvEg9TjCqxJRVrnKI+NYfFCR44wB4oiGgvItux1qlXyVVbNZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734337975; c=relaxed/simple;
-	bh=olVS1kY17WrcCv3kW793pCXAc2bhMbq54Nxa5kggo2w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=shlTuxBdT1nWkhzUp0dl/ALsbtfpmK++UTlqeZ4P+KnEkECHM9YkaayHA6yP7+VJurA7x6u5FBUkkSK6R6QFUtDXChugkZr2lQl+Of0emwGPJ5QF7ZlFh/ENXRyQAZazbis6DWSWr7FrvGUeu0A73IQVGN8W/mcO8GfV4DaOyeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DydwwEHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E694EC4CED0;
-	Mon, 16 Dec 2024 08:32:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734337975;
-	bh=olVS1kY17WrcCv3kW793pCXAc2bhMbq54Nxa5kggo2w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DydwwEHVVJ2uxhaLVBGXpepl8IbQCawS8vI+buXtQh4ej8pIzEKoM2nfHGoHrJt1V
-	 455BaPLqXlwxBlrdSI/V7Pm3kxU5I9U8l0ipjuvQiMAVJwdGCx5DyRv6wtoa9aHxNU
-	 6NO8koBNCmQEmMEgxMIL9xATnvE7v9+JF2krMIhsyYv10vMjJYKElPGb67zXi0d+72
-	 3IJ9w1LdZSgRbQJo8zT6hL1iyVnIZk9xyJB4kZkBXi9CM/EbQjeIyJ8GLTOC9gg6tH
-	 xi8SQ7x4cth8GtQLd+/uFmrjpxFfcO+ncASdtf8jHpyx4z2lEViEK0gBY2NyE53g8p
-	 gK4GEIeCcdy9w==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Anand Jain <anand.jain@oracle.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Qu Wenruo <wqu@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Boris Burkov <boris@bur.io>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: avoid opencoded 64-bit div/mod operation
-Date: Mon, 16 Dec 2024 09:32:37 +0100
-Message-Id: <20241216083248.1816638-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734337986; c=relaxed/simple;
+	bh=6jLd1uN34169vrHjBxynJiQD7DGybjgKDzBNRxxHp6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eH9TrD4ZgK45H4rlJ8FWByWc73/ACt9IpaukcE6cLy+VF2AnrTYYGs9+JJc7itQj0/tUY2PPTY9dUhGNG+hpQxL08hRCnCtRLeJO7zOjRWbLfrTRD6XTQ5TUtgeEC4lsVpnwUm28vLxe3iivogBKOzFlVqrG/awOyPy7UtFqX7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pT5HXt8Q; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 664BB13C;
+	Mon, 16 Dec 2024 09:32:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734337939;
+	bh=6jLd1uN34169vrHjBxynJiQD7DGybjgKDzBNRxxHp6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pT5HXt8Qdd6jf0+ZGRGtk1o4+1AH4aQzdWQwgML2CYEP/cuVeM56ZZ2d1YskSx/Xw
+	 HGsXaNRyzjIg5wQMdPKDmoAdOWBJK6RbEq+840ZJP3U6icjbw3MpwtPSwq9MEm78BE
+	 6U/DGkmH3oYCgNBpcax0QcI4j08ONGFQG/yIgwvo=
+Date: Mon, 16 Dec 2024 10:32:39 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
+ maxItems
+Message-ID: <20241216083239.GC32204@pendragon.ideasonboard.com>
+References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
+ <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+ <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Krzysztof,
 
-Dividing 64-bit numbers causes a link failure on 32-bit builds:
+On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
+> > From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > 
+> > The binding is missing maxItems for all renesas,cmms and renesas,vsps
+> > properties. As the amount of cmms or vsps is always a fixed amount, set
+> > the maxItems to match the minItems.
+> > 
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > ---
+> >  Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> 
+> The top level property should define widest constraints as well.
 
-arm-linux-gnueabi-ld: fs/btrfs/sysfs.o: in function `btrfs_read_policy_store':
-sysfs.c:(.text+0x3ce0): undefined reference to `__aeabi_ldivmod'
+I'm curious, why is that ? I understand why a top-level default would
+make sense when it's optionally overridden by model-specific values, but
+in this case there's no such default. Every SoC has its own fixed value.
 
-Use an explicit call to div_u64_rem() here to work around this. It would
-be possible to optimize this further, but this is not a performance
-critical operation.
-
-Fixes: 185fa5c7ac5a ("btrfs: introduce RAID1 round-robin read balancing")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/btrfs/sysfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-index 50bc4b6cb821..67bc8fa4d6ab 100644
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -1433,7 +1433,9 @@ static ssize_t btrfs_read_policy_store(struct kobject *kobj,
- #ifdef CONFIG_BTRFS_EXPERIMENTAL
- 	if (index == BTRFS_READ_POLICY_RR) {
- 		if (value != -1) {
--			if ((value % fs_devices->fs_info->sectorsize) != 0) {
-+			u32 rem;
-+			div_u64_rem(value, fs_devices->fs_info->sectorsize, &rem);
-+			if (rem) {
- 				btrfs_err(fs_devices->fs_info,
- "read_policy: min_contiguous_read %lld should be multiples of the sectorsize %u",
- 					  value, fs_devices->fs_info->sectorsize);
 -- 
-2.39.5
+Regards,
 
+Laurent Pinchart
 
