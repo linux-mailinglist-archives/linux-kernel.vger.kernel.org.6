@@ -1,206 +1,359 @@
-Return-Path: <linux-kernel+bounces-447490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BE39F334A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:34:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49809F334E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C957A2C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF82116251E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318D3205ABA;
-	Mon, 16 Dec 2024 14:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E67205AA5;
+	Mon, 16 Dec 2024 14:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XsmjkCxY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NYc09AMk"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FD17557
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C250617557;
+	Mon, 16 Dec 2024 14:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734359645; cv=none; b=WfownzzRrCahncgbUt1flywGduOA0+KRgyg+I8pGdWiPbz1D+RKpE+JRqH/4Z1m5STQgpKJMHq/XVFFXFlLwPg7O1FoIgZ3OmWv3qMxOQjNw7tKH+nATueaJQyuXSSlG+SqPZ3uZYsfqJLVK3IzlUuQFLzutziWP+wmw8loD0kk=
+	t=1734359712; cv=none; b=QitroQFMl9p5R9bjzHdefJz67bhCv1BVnfdZCI+HkhG0WfNKvb7i1PLHngrYLd3pXjlg6faylj9CcFgbX6604iDLHkgVbC8WTUtqlBLDSkeJw+L1kNI7MyoMVRencieBLj/m1E+g95gBYrTSOlgh32duRXR7Vxwnj1lxb+Il8BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734359645; c=relaxed/simple;
-	bh=oTRXj583qhXYalltzk7nvbwA7tflotqemGH5c0pkMus=;
+	s=arc-20240116; t=1734359712; c=relaxed/simple;
+	bh=aMeWAEimrlw6qXct5kd+BXWm55TuZfTGURCel5kRdDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjMP3aLGIdnKHthMwfQrmflKFQ7khBQlPvjs0OiOD4mllC0UigRBtRsDptyx+eqZ1rmy62zawXUUrPnMQEDpqfTQ5mhdv6K5ZG2qc14+MpyhugaN6As7yVaHdX9r8BWkwvRslg+u5qKDpB1geNyAs0zK7XWZP1P5Rc/cOwe3Ln8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XsmjkCxY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734359643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VkhxEwUUHPw94KlIQ0Cbt2szuO3qNDjFa8Hwl+dqHhw=;
-	b=XsmjkCxYYCO6J8D5fYC/CLA533gQ+8pnjoUsaDPcsjKt0AJ0+u//JyunOc95FtlEGRKGG+
-	yF/OJxTjHsyWew6l3xI+YSeVgAIYvv5Ug9hwwKkxbsyiK6l3TMvYeAtBO6ziFxEXz0eIpe
-	vc3k93VeEC0QmN6t+O66SzNDydUuwwY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-idgB9--NMKaO44SRTukU3g-1; Mon,
- 16 Dec 2024 09:34:01 -0500
-X-MC-Unique: idgB9--NMKaO44SRTukU3g-1
-X-Mimecast-MFC-AGG-ID: idgB9--NMKaO44SRTukU3g
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D53D1955F77;
-	Mon, 16 Dec 2024 14:33:59 +0000 (UTC)
-Received: from localhost (unknown [10.22.88.147])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5B32419560A3;
-	Mon, 16 Dec 2024 14:33:58 +0000 (UTC)
-Date: Mon, 16 Dec 2024 11:33:56 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] PCI: vmd: Fix spinlock usage on config access for RT
- kernel
-Message-ID: <Z2A6VEMN5jkXg2lr@uudg.org>
-References: <20241215141321.383144-1-ryotkkr98@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0UKvdH4X2+7r+BEFCSSvJcz9GfSWUGPdmX2GvCzWKtu4jQCuUmcZz50f1L+4/fV4nV0nhc+1shJnHf4qo3xmeY84n3m6XLplnNkQfs0D4UeulKyRZRY3TvV1XtCPtu2BStZTOW22oKjiVzE5SqkISRids4r9EMbSlJR0WNWH8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NYc09AMk; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=pmCjcHpOJanIPNwBCMDVgy5FRXTfAqUpy7+wiqHetyE=; b=NYc09AMkjvmWdoUL
+	lQl+enbUPzbfbIbokhlb3P+Jv4uVCow0tO68Kf5SZR+0DZUa+s8PDQie08b0gCb7eaBEdjWz6ybts
+	8imhN7zJKbBUxiNYBzaqh18y+ADxUmv35QIXYK8A02djNXtiFKEk90hIOq4VhVAIXA0gWMi6BHlVD
+	uxgMCEu3hj1jCtAtyEi1vctnOSXt/dljwtoZBRng8SjMXTVDqvHwglRaI2otIdb7AEt0bHricuWJl
+	4MqTIi0oefoe2c6Rggx0exSE2Bc6mICjQJ7jwKEA4HiYxmdUFITBz7GICqRbl4GtWbNHZMLbyU97p
+	N5hUHBrodAMKmlJv4Q==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tNCBe-005d8h-0g;
+	Mon, 16 Dec 2024 14:35:06 +0000
+Date: Mon, 16 Dec 2024 14:35:06 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: kraxel@redhat.com, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: a bochs-drm (?) oops on head
+Message-ID: <Z2A6moXZAf-FyacO@gallifrey>
+References: <Z18dbfDAiFadsSdg@gallifrey>
+ <b2e2a217-dced-472f-9084-9822f7e6803c@suse.de>
+ <Z2AvS_8xgBhnF4CW@gallifrey>
+ <0bb74885-745c-4647-a24d-a686381ee64a@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241215141321.383144-1-ryotkkr98@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <0bb74885-745c-4647-a24d-a686381ee64a@suse.de>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:30:10 up 222 days,  1:44,  1 user,  load average: 0.01, 0.06,
+ 0.02
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sun, Dec 15, 2024 at 11:13:21PM +0900, Ryo Takakura wrote:
-> PCI config access is locked with pci_lock which is raw_spinlock.
-> Convert cfg_lock to raw_spinlock so that the lock usage is consistent
-> for RT kernel.
+* Thomas Zimmermann (tzimmermann@suse.de) wrote:
+> Hi
 > 
-> Reported as following:
-> [   18.756807] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-> [   18.756810] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1617, name: nodedev-init
-> [   18.756810] preempt_count: 1, expected: 0
-> [   18.756811] RCU nest depth: 0, expected: 0
-> [   18.756811] INFO: lockdep is turned off.
-> [   18.756812] irq event stamp: 0
-
-This problem has been discussed in the past at:
-
-    [PATCH v6.4-rc5-rt4] rt: vmd: make cfg_lock a raw spinlock
-    https://lore.kernel.org/linux-rt-users/20230608210232.056e731f@gandalf.local.home/T/#t
-
-And there was a suggestion to remove the lock altogether as (at the time) the
-only two call sites of vmd_pci_read() were already protected by pci_lock.
-
-I wrote the patch removing the lock and it worked as expected, but never
-sent it to the list. If you think that for the current code that makes
-sense, please have fun removing the lock. :)
-
-Best regards,
-Luis
-
-> [   18.756812] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> [   18.756815] hardirqs last disabled at (0): [<ffffffff864f1fe2>] copy_process+0xa62/0x2d90
-> [   18.756819] softirqs last  enabled at (0): [<ffffffff864f1fe2>] copy_process+0xa62/0x2d90
-> [   18.756820] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> [   18.756822] CPU: 3 UID: 0 PID: 1617 Comm: nodedev-init Tainted: G        W          6.12.1 #11
-> [   18.756823] Tainted: [W]=WARN
-> [   18.756824] Hardware name: Dell Inc. Vostro 3710/0K1D6X, BIOS 1.14.0 06/09/2023
-> [   18.756825] Call Trace:
-> [   18.756826]  <TASK>
-> [   18.756827]  dump_stack_lvl+0x9b/0xf0
-> [   18.756830]  dump_stack+0x10/0x20
-> [   18.756831]  __might_resched+0x158/0x230
-> [   18.756833]  rt_spin_lock+0x4e/0x130
-> [   18.756837]  ? vmd_pci_read+0x8d/0x100 [vmd]
-> [   18.756839]  vmd_pci_read+0x8d/0x100 [vmd]
-> [   18.756840]  pci_user_read_config_byte+0x6f/0xe0
-> [   18.756843]  pci_read_config+0xfe/0x290
-> [   18.756845]  sysfs_kf_bin_read+0x68/0x90
-> [   18.756847]  kernfs_fop_read_iter+0xd7/0x200
-> [   18.756850]  vfs_read+0x26d/0x360
-> [   18.756853]  ksys_read+0x70/0xf0
-> [   18.756855]  __x64_sys_read+0x1a/0x20
-> [   18.756857]  x64_sys_call+0x1715/0x20d0
-> [   18.756859]  do_syscall_64+0x8f/0x170
-> [   18.756861]  ? syscall_exit_to_user_mode+0xcd/0x2c0
-> [   18.756863]  ? do_syscall_64+0x9b/0x170
-> [   18.756865]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> ---
->  drivers/pci/controller/vmd.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> Am 16.12.24 um 14:46 schrieb Dr. David Alan Gilbert:
+> > * Thomas Zimmermann (tzimmermann@suse.de) wrote:
+> > > Hi
+> > Hi Thomas,
+> >    Thanks for the reply.
+> > 
+> > > Am 15.12.24 um 19:18 schrieb Dr. David Alan Gilbert:
+> > > > Hey Gerd, Thomas,
+> > > >     I've got the following oops that looks bochs-drm related on the current
+> > > > HEAD ( 4800575d8c0b2f354ab05ab1c4749e45e213bf73 ) and it's been there
+> > > > for at least a few days; this is
+> > > [...]
+> > > > The oops has :
+> > > > [   78.463760][    T1]  bochs_pci_driver_init+0x8a/0xc0
+> > > > 
+> > > > in it, hence why I'm blaming that.
+> > > > (Other odd observation, the Tuxen flicker heavily during booting!)
+> > > > 
+> > > > [   72.756014][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+> > > > [   72.758258][    T1] [drm] Found bochs VGA, ID 0xb0c5.
+> > > > [   72.758793][    T1] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
+> > > > [   72.767777][    T1] [drm] Initialized bochs-drm 1.0.0 for 0000:00:02.0 on minor 2
+> > > > [   72.839222][    T1] fbcon: bochs-drmdrmfb (fb1) is primary device
+> > > > [   72.839311][    T1] fbcon: Remapping primary device, fb1, to tty 1-63
+> > > > [   78.402163][    T1] bochs-drm 0000:00:02.0: [drm] fb1: bochs-drmdrmfb frame buffer device
+> > > > [   78.459984][    T1] BUG: unable to handle page fault for address: ffff8dd345604004
+> > > > [   78.463246][    T1] #PF: supervisor write access in kernel mode
+> > > > [   78.463760][    T1] #PF: error_code(0x0002) - not-present page
+> > > > [   78.463760][    T1] PGD 72001067 P4D 72001067 PUD 72002067 PMD 7fbe1067 PTE 800ffffffa9fb060
+> > > > [   78.463760][    T1] Oops: Oops: 0002 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
+> > > > [   78.463760][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W        N 6.13.0-rc2+ #363 6c653a430ed30aae3dac648429c492a2726da3d7
+> > > > [   78.463760][    T1] Tainted: [W]=WARN, [N]=TEST
+> > > > [   78.463760][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+> > > > [   78.463760][    T1] RIP: 0010:devm_drm_dev_init_release+0x4e/0x140
+> > > [...]
+> > > > [   78.463760][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> > > > 
+> > > > 
+> > > > The config is a fairly full yes-config ish; see attached.
+> > > Thanks for reporting. I've been able to reproduce the problem by setting
+> > > CONFIG_DEBUG_TEST_DRIVER_REMOVE <https://elixir.bootlin.com/linux/v6.13-rc2/K/ident/CONFIG_DEBUG_TEST_DRIVER_REMOVE>=y.
+> > Ah OK, so fairly obscure (I'm running something close to a all-yes-config
+> > because I'm mostly build testing obscure stuff).
 > 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 9d9596947..94ceec50a 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -125,7 +125,7 @@ struct vmd_irq_list {
->  struct vmd_dev {
->  	struct pci_dev		*dev;
->  
-> -	spinlock_t		cfg_lock;
-> +	raw_spinlock_t		cfg_lock;
->  	void __iomem		*cfgbar;
->  
->  	int msix_count;
-> @@ -391,7 +391,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
->  	if (!addr)
->  		return -EFAULT;
->  
-> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
-> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
->  	switch (len) {
->  	case 1:
->  		*value = readb(addr);
-> @@ -406,7 +406,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
->  		ret = -EINVAL;
->  		break;
->  	}
-> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
-> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
->  	return ret;
->  }
->  
-> @@ -426,7 +426,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
->  	if (!addr)
->  		return -EFAULT;
->  
-> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
-> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
->  	switch (len) {
->  	case 1:
->  		writeb(value, addr);
-> @@ -444,7 +444,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
->  		ret = -EINVAL;
->  		break;
->  	}
-> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
-> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
->  	return ret;
->  }
->  
-> @@ -1009,7 +1009,7 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  	if (features & VMD_FEAT_OFFSET_FIRST_VECTOR)
->  		vmd->first_vec = 1;
->  
-> -	spin_lock_init(&vmd->cfg_lock);
-> +	raw_spin_lock_init(&vmd->cfg_lock);
->  	pci_set_drvdata(dev, vmd);
->  	err = vmd_enable_domain(vmd, features);
->  	if (err)
+> Yeah, it's the first time I saw this option. But as we usually don't unload
+> the bochs driver, we'd otherwise not found the issue.
+> 
+> > 
+> > > The attached patch fixes the problem for me. Could you please test and
+> > > report back the results.
+> > That gets me a different oops; this was run with:
+> > qemu-system-x86_64  -M pc -cpu host --enable-kvm -smp 4 -m 2G -kernel /discs/fast/kernel/arch/x86/boot/bzImage -append "console=tty0 console=ttyS0 root=/dev/vdb1 single" -drive if=virtio,file=/discs/more/images/debian12-64scan.qcow2
+> > 
+> > It looks to me if it made the mistake of trying to print something in the middle of being removed:
+> > 
+> > [   73.569852][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+> > [   73.571802][    T1] [drm] Found bochs VGA, ID 0xb0c5.
+> > [   73.572787][    T1] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
+> > [   73.581626][    T1] [drm] Initialized bochs-drm 1.0.0 for 0000:00:02.0 on minor 2
+> > [   73.650048][    T1] fbcon: bochs-drmdrmfb (fb1) is primary device
+> > [   73.650134][    T1] fbcon: Remapping primary device, fb1, to tty 1-63
+> > [   79.276550][    T1] bochs-drm 0000:00:02.0: [drm] fb1: bochs-drmdrmfb frame buffer device
+> > [   79.346726][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+> > [   79.348731][    T1] BUG: kernel NULL pointer dereference, address: 000000000000020c
+> > [   79.348799][    T1] #PF: supervisor write access in kernel mode
+> > [   79.348857][    T1] #PF: error_code(0x0002) - not-present page
+> > [   79.348913][    T1] PGD 0 P4D 0
+> > [   79.348999][    T1] Oops: Oops: 0002 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
+> > [   79.349107][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W        N 6.13.0-rc2+ #373 5a5c0ce8f09b0b72067981f01985e201a0118bb6
+> > [   79.349268][    T1] Tainted: [W]=WARN, [N]=TEST
+> > [   79.349313][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+> > [   79.349377][    T1] RIP: 0010:fbcon_cursor+0xa9/0x3c0
+> > [   79.349524][    T1] Code: c0 05 00 00 66 89 44 24 06 e8 f3 35 2a fd 0f b7 bb c0 05 00 00 e8 27 b8 e9 fc 49 8d bc 24 0c 02 00 00 49 89 c7 e8 d7 3d 2a fd <45> 89 bc 24 0c 02 00 00 48 8d bd e0 05 00 00 e8 c3 3b 2a fd 44 8b
+> > [   79.349628][    T1] RSP: 0018:ffffb927800136c0 EFLAGS: 00010046
+> > [   79.349716][    T1] RAX: 0000000000000000 RBX: ffff9835810a8800 RCX: 0000000000000000
+> > [   79.349808][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > [   79.349879][    T1] RBP: ffff983585d07000 R08: 0000000000000000 R09: 0000000000000000
+> > [   79.349952][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > [   79.350024][    T1] R13: 0000000000000000 R14: ffff983585d075e8 R15: 0000000000000032
+> > [   79.350101][    T1] FS:  0000000000000000(0000) GS:ffff9835fd200000(0000) knlGS:0000000000000000
+> > [   79.350196][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   79.350278][    T1] CR2: 000000000000020c CR3: 000000004d920000 CR4: 0000000000350ef0
+> > [   79.350344][    T1] Call Trace:
+> > [   79.350373][    T1]  <TASK>
+> > [   79.350413][    T1]  ? __die+0x23/0x80
+> > [   79.350540][    T1]  ? page_fault_oops+0x21c/0x240
+> > [   79.350675][    T1]  ? do_user_addr_fault+0x893/0x1180
+> > [   79.350798][    T1]  ? srso_return_thunk+0x5/0x7f
+> > [   79.350904][    T1]  ? exc_page_fault+0x3f/0x180
+> > [   79.351066][    T1]  ? exc_page_fault+0x87/0x180
+> > [   79.351211][    T1]  ? asm_exc_page_fault+0x26/0x40
+> > [   79.351379][    T1]  ? fbcon_cursor+0xa9/0x3c0
+> > [   79.351542][    T1]  hide_cursor+0x66/0x1c0
+> > [   79.351656][    T1]  vt_console_print+0x9b1/0xa40
+> > [   79.351813][    T1]  ? srso_return_thunk+0x5/0x7f
+> > [   79.351920][    T1]  ? irq_trace+0x84/0xc0
+> > [   79.352029][    T1]  ? srso_return_thunk+0x5/0x7f
+> > [   79.352153][    T1]  ? console_emit_next_record+0x1fe/0x440
+> > [   79.352254][    T1]  console_emit_next_record+0x232/0x440
+> > [   79.352333][    T1]  ? console_emit_next_record+0x1fe/0x440
+> > [   79.352450][    T1]  console_flush_all+0x590/0x7c0
+> > [   79.352531][    T1]  ? console_flush_all+0x26/0x7c0
+> > [   79.352601][    T1]  console_unlock+0xf9/0x280
+> > [   79.352601][    T1]  vprintk_emit+0x572/0x5c0
+> > [   79.352601][    T1]  dev_vprintk_emit+0x70/0xc0
+> > [   79.352601][    T1]  ? __mutex_lock+0x380/0xd40
+> > [   79.352601][    T1]  dev_printk_emit+0x7f/0xc0
+> > [   79.352601][    T1]  __dev_printk+0x89/0x100
+> > [   79.352601][    T1]  _dev_info+0xba/0xf5
+> > [   79.352601][    T1]  vga_remove_vgacon.cold+0x18/0xc0
+> > [   79.352601][    T1]  aperture_remove_conflicting_pci_devices+0x142/0x1c0
+> 
+> That is also graphics, but looks like something unrelated to bochs. It's
+> probably been there for a while already. I didn't see this in my test, but
+> I'll try to reproduce. I assume your test system starts up in VGA text mode
+> first?
+
+Yes; I can try a bisect a bit later; your fix seems to have fixed it if I boot
+with console=ttyS0 and -nographic on qemu, which gets me back to booting OK
+on serial which is what I normally do.    This hide_cursor case is only
+with video/console which I don't run very often on this build, so I'll guess
+a bit where to start my bisect.
+
+Dave
+
+> Best regards
+> Thomas
+> 
+> > [   79.352601][    T1]  ? __pfx_bochs_pci_probe+0x40/0x40
+> > [   79.352601][    T1]  bochs_pci_probe+0x30/0x380
+> > [   79.352601][    T1]  local_pci_probe+0x88/0x100
+> > [   79.352601][    T1]  pci_call_probe+0x126/0x340
+> > [   79.352601][    T1]  ? srso_return_thunk+0x5/0x7f
+> > [   79.352601][    T1]  ? pci_match_device+0x287/0x380
+> > [   79.352601][    T1]  pci_device_probe+0x154/0x280
+> > [   79.352601][    T1]  ? __pfx_pci_device_probe+0x40/0x40
+> > [   79.352601][    T1]  really_probe+0x411/0x780
+> > [   79.352601][    T1]  __driver_probe_device+0x194/0x280
+> > [   79.352601][    T1]  driver_probe_device+0x6f/0x1c0
+> > [   79.352601][    T1]  __driver_attach+0x204/0x380
+> > [   79.352601][    T1]  ? __pfx___driver_attach+0x40/0x40
+> > [   79.352601][    T1]  bus_for_each_dev+0xe3/0x180
+> > [   79.352601][    T1]  driver_attach+0x3a/0x80
+> > [   79.352601][    T1]  bus_add_driver+0x1fd/0x3c0
+> > [   79.352601][    T1]  driver_register+0x11d/0x1c0
+> > [   79.352601][    T1]  __pci_register_driver+0x105/0x140
+> > [   79.352601][    T1]  bochs_pci_driver_init+0x8a/0xc0
+> > [   79.352601][    T1]  ? __pfx_bochs_pci_driver_init+0x40/0x40
+> > [   79.352601][    T1]  do_one_initcall+0xa7/0x500
+> > [   79.352601][    T1]  do_initcalls+0x1d5/0x240
+> > [   79.352601][    T1]  kernel_init_freeable+0x1e4/0x280
+> > [   79.352601][    T1]  ? __pfx_kernel_init+0x40/0x40
+> > [   79.352601][    T1]  kernel_init+0x2a/0x280
+> > [   79.352601][    T1]  ret_from_fork+0x4d/0x80
+> > [   79.352601][    T1]  ? __pfx_kernel_init+0x40/0x40
+> > [   79.352601][    T1]  ret_from_fork_asm+0x22/0x80
+> > [   79.352601][    T1]  </TASK>
+> > [   79.352601][    T1] Modules linked in:
+> > [   79.352601][    T1] CR2: 000000000000020c
+> > [   79.352601][    T1] ---[ end trace 0000000000000000 ]---
+> > [   79.352601][    T1] RIP: 0010:fbcon_cursor+0xa9/0x3c0
+> > [   79.352601][    T1] Code: c0 05 00 00 66 89 44 24 06 e8 f3 35 2a fd 0f b7 bb c0 05 00 00 e8 27 b8 e9 fc 49 8d bc 24 0c 02 00 00 49 89 c7 e8 d7 3d 2a fd <45> 89 bc 24 0c 02 00 00 48 8d bd e0 05 00 00 e8 c3 3b 2a fd 44 8b
+> > [   79.352601][    T1] RSP: 0018:ffffb927800136c0 EFLAGS: 00010046
+> > [   79.352601][    T1] RAX: 0000000000000000 RBX: ffff9835810a8800 RCX: 0000000000000000
+> > [   79.352601][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > [   79.352601][    T1] RBP: ffff983585d07000 R08: 0000000000000000 R09: 0000000000000000
+> > [   79.352601][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> > [   79.352601][    T1] R13: 0000000000000000 R14: ffff983585d075e8 R15: 0000000000000032
+> > [   79.352601][    T1] FS:  0000000000000000(0000) GS:ffff9835fd200000(0000) knlGS:0000000000000000
+> > [   79.352601][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   79.352601][    T1] CR2: 000000000000020c CR3: 000000004d920000 CR4: 0000000000350ef0
+> > [   79.352601][    T1] Kernel panic - not syncing: Fatal exception
+> > [   79.352601][    T1] Kernel Offset: 0xf800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> > [   79.352601][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> > 
+> > > Best regards
+> > > Thomas
+> > > 
+> > > 
+> > > > Dave
+> > > > 
+> > > -- 
+> > > --
+> > > Thomas Zimmermann
+> > > Graphics Driver Developer
+> > > SUSE Software Solutions Germany GmbH
+> > > Frankenstrasse 146, 90461 Nuernberg, Germany
+> > > GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> > > HRB 36809 (AG Nuernberg)
+> > >  From bebba3b34d5df5aa7c882f080633b43ddb87f4ad Mon Sep 17 00:00:00 2001
+> > > From: Thomas Zimmermann <tzimmermann@suse.de>
+> > > Date: Mon, 16 Dec 2024 09:21:46 +0100
+> > > Subject: [PATCH] drm/bochs: Do not put DRM device in PCI remove callback
+> > > 
+> > > Removing the bochs PCI device should mark the DRM device as unplugged
+> > > without removing it. Hence clear the respective call to drm_dev_put()
+> > > from bochs_pci_remove().
+> > > 
+> > > Fixes a double unref in devm_drm_dev_init_release(). An example error
+> > > message is shown below:
+> > > 
+> > > [   32.958338] BUG: KASAN: use-after-free in drm_dev_put.part.0+0x1b/0x90
+> > > [   32.958850] Write of size 4 at addr ffff888152134004 by task (udev-worker)/591
+> > > [   32.959574] CPU: 3 UID: 0 PID: 591 Comm: (udev-worker) Tainted: G            E      6.13.0-rc2-1-default+ #3417
+> > > [   32.960316] Tainted: [E]=UNSIGNED_MODULE
+> > > [   32.960637] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-2-gc13ff2cd-prebuilt.qemu.org 04/01/2014
+> > > [   32.961429] Call Trace:
+> > > [   32.961433]  <TASK>
+> > > [   32.961439]  dump_stack_lvl+0x68/0x90
+> > > [   32.961452]  print_address_description.constprop.0+0x88/0x330
+> > > [   32.961461]  ? preempt_count_sub+0x14/0xc0
+> > > [   32.961473]  print_report+0xe2/0x1d0
+> > > [   32.961479]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > [   32.963725]  ? __virt_addr_valid+0x143/0x320
+> > > [   32.964077]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > [   32.964463]  ? drm_dev_put.part.0+0x1b/0x90
+> > > [   32.964817]  kasan_report+0xce/0x1a0
+> > > [   32.965123]  ? drm_dev_put.part.0+0x1b/0x90
+> > > [   32.965474]  kasan_check_range+0xff/0x1c0
+> > > [   32.965806]  drm_dev_put.part.0+0x1b/0x90
+> > > [   32.966138]  release_nodes+0x84/0xc0
+> > > [   32.966447]  devres_release_all+0xd2/0x110
+> > > [   32.966788]  ? __pfx_devres_release_all+0x10/0x10
+> > > [   32.967177]  ? preempt_count_sub+0x14/0xc0
+> > > [   32.967523]  device_unbind_cleanup+0x16/0xc0
+> > > [   32.967886]  really_probe+0x1b7/0x570
+> > > [   32.968207]  __driver_probe_device+0xca/0x1b0
+> > > [   32.968568]  driver_probe_device+0x4a/0xf0
+> > > [   32.968907]  __driver_attach+0x10b/0x290
+> > > [   32.969239]  ? __pfx___driver_attach+0x10/0x10
+> > > [   32.969598]  bus_for_each_dev+0xc0/0x110
+> > > [   32.969923]  ? __pfx_bus_for_each_dev+0x10/0x10
+> > > [   32.970291]  ? bus_add_driver+0x17a/0x2b0
+> > > [   32.970622]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > > [   32.971011]  bus_add_driver+0x19a/0x2b0
+> > > [   32.971335]  driver_register+0xd8/0x160
+> > > [   32.971671]  ? __pfx_bochs_pci_driver_init+0x10/0x10 [bochs]
+> > > [   32.972130]  do_one_initcall+0xba/0x390
+> > > [...]
+> > > 
+> > > After unplugging the DRM device, clients will close their references.
+> > > Closing the final reference will also release the DRM device.
+> > > 
+> > > Reported-by: Dr. David Alan Gilbert <dave@treblig.org>
+> > > Closes: https://lore.kernel.org/lkml/Z18dbfDAiFadsSdg@gallifrey/
+> > > Fixes: 04826f588682 ("drm/bochs: Allocate DRM device in struct bochs_device")
+> > > Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> > > Cc: Gerd Hoffmann <kraxel@redhat.com>
+> > > Cc: virtualization@lists.linux.dev
+> > > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > > ---
+> > >   drivers/gpu/drm/tiny/bochs.c | 1 -
+> > >   1 file changed, 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+> > > index 89a699370a59..c67e1f906785 100644
+> > > --- a/drivers/gpu/drm/tiny/bochs.c
+> > > +++ b/drivers/gpu/drm/tiny/bochs.c
+> > > @@ -757,7 +757,6 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+> > >   	drm_dev_unplug(dev);
+> > >   	drm_atomic_helper_shutdown(dev);
+> > > -	drm_dev_put(dev);
+> > >   }
+> > >   static void bochs_pci_shutdown(struct pci_dev *pdev)
+> > > -- 
+> > > 2.47.1
+> > > 
+> 
 > -- 
-> 2.34.1
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
 > 
 > 
----end quoted text---
-
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
