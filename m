@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-446919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9A79F2AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:29:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5799F2AF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCE716134F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:29:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D930E1881E78
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA681CCEF8;
-	Mon, 16 Dec 2024 07:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18921CDFD6;
+	Mon, 16 Dec 2024 07:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akmXyn2j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYxBCJbb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C19192D69;
-	Mon, 16 Dec 2024 07:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B14124B34;
+	Mon, 16 Dec 2024 07:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734334172; cv=none; b=vAYg9aOHG5jvmu5UYm7c0C1RimJJTgpLmSNPaMShg6ZlKanDWL9IwQkJDMDq5bHxaQB/HwTQhc6du0Anr4Q8/32RAEvSF3vA1sSMigiso5iPiS879drpGc3xtk+jnEiQ8f7RADuwaw4hM5M0FYzPxx84lrnX37RzpysJR0IHkn4=
+	t=1734334252; cv=none; b=E8P/wgHL/1HKC5Y3orF/B3KOVrZXzNJYCugoTHU2fvYQuj/Xwd9hzStG9IqOgM3HkeuxopYK46ig+7/WXPzdX1CDyL1EHHs9cXGoOWtX6GnftRHUMVc0cCT+7kX5vromrwAqCEtkciAOKpm71Jg7rZjybIbc8dJVIolgv9vlvks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734334172; c=relaxed/simple;
-	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
+	s=arc-20240116; t=1734334252; c=relaxed/simple;
+	bh=j4Vx/25BVWcsUfPa9vEHLLSMS5ddhxS02oX3/QfJ+iU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jqMuxjZCPU3uY6/XZA0V3qWBr0X47owaLqdl0vHowymsSu9Lvn4AgFkFmjLru01JWV68fI4CVGWmwqkI7JMbTacy1uNOkBIsMSrjoWlxWIneVB2mK7E5L2JxxZKRypVJbXtUddlTlo47LoKKp4C+kuvFRmwcAu+fzq/yt/J9nfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akmXyn2j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31887C4CED0;
-	Mon, 16 Dec 2024 07:29:27 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RU3DQFtI879RIY/QZ8JMX8b+sX+a2lBRU5GEi1JwlqTyzqPX9k6s1NUTL9UmsjzFM74JQanPHBT6hr3/CPHuqN+3pP8XOj9RmyKLtMVSyARu0xWYtIWLkD+UVfkdX4icgTC1uLN7BmCKMfxyxkZl5ukocYOMt1msaGG4ynXMZz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYxBCJbb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FDB3C4CED0;
+	Mon, 16 Dec 2024 07:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734334171;
-	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
+	s=k20201202; t=1734334251;
+	bh=j4Vx/25BVWcsUfPa9vEHLLSMS5ddhxS02oX3/QfJ+iU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=akmXyn2jfDilSj2r94s1ULYl7iiXgEqAJEVozPTniguACWUbfUmBdnVueBJrwU+l1
-	 aKls2K/Ek8h8Trh0D0/q+bBHnL3ZrbLx+I1uCwtT5sJt7rYMtSkIVBQm8RyrqUjhjM
-	 pmvlI7Lhtw6HjiJBh3Jc8C/AoQZBtW/gXoARUVDNpu0d94x+qXTajKsLFn6+q91eC+
-	 GWwCmmzrkWHD/gCQKZwGOLcODobA2bQSGwm56AjfOcSqi0tkb2S5H/hWasRKT2FNsd
-	 4Kzvpf/H7KNEr3Bj9CpcW4HDIaqIGLUGI9w7OebL2kkHWYwLp+lXoj3YTaF8BMEwR7
-	 2xSIWmPMuccfQ==
-Message-ID: <d2b9bcba-703c-4d5e-8677-65cacc8f2636@kernel.org>
-Date: Mon, 16 Dec 2024 08:29:26 +0100
+	b=hYxBCJbbQ2ZrxHgO4NOaEa6L/X9Rd/pKh+5I91jXH2Uxckpn3o5c6elAJyaDs68Vy
+	 DqVRDfh5hC+I28YZtOrQ3maCqQED8kgp+5mXaVD6EUj8qn4tOBddopbBrS5j+7GaX2
+	 pDdYq78dPCkZLtzsNsJ/5PlmRExgQvz1XO6yVeR5egFCI+J2TACc31hnpM42/vjGzF
+	 CfvimzNVxFjR40EYcQnChDxnzyK96Jn+9hmHTjQQeL2NpUJ0Hwgm8r48Euj4oyPmpV
+	 W8+LPJbYznJr243z5Wo6u04Bnq3e6Z785aCPU58UVtfAzf+gnrtYPpta7v9cL1bxrV
+	 Mn3sfCCbnwGsw==
+Message-ID: <8a7948f8-b80e-463d-95ef-2f3461b96896@kernel.org>
+Date: Mon, 16 Dec 2024 08:30:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
-References: <20241211112253.27905-1-ansuelsmth@gmail.com>
- <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
- <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
+Subject: Re: [PATCH v2 1/1] power: supply: gpio-charger: Support to disable
+ charger
+To: Stefan Raufhake <raufhakestefan@gmail.com>
+Cc: sre@kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, s.raufhake@beckhoff.com,
+ s.dirkwinkel@beckhoff.com, s.raufhake@beckhoff.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+References: <4tvn5k6zbsbyc2n3r2jnkrasyfhzfua4cap6ql65yjfmwzu3xw@lx6jmqvzypqv>
+ <20241213102825.5509-1-raufhakestefan@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,55 +103,99 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
+In-Reply-To: <20241213102825.5509-1-raufhakestefan@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/12/2024 12:16, Christian Marangi wrote:
-> On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
->> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
->>> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
->>> between 200MHz and 150MHz.
+On 13/12/2024 11:28, Stefan Raufhake wrote:
+> Hallo Krzysztof,
+> 
+>>
+>> On Tue, Dec 10, 2024 at 09:23:43AM +0000, Stefan Raufhake wrote:
+>>> From: Stefan Raufhake <s.raufhake@beckhoff.de>
 >>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>>> Some GPIO-controlled power supplies can be turned off (charging disabled).
+>>> Support changing the charging state by setting charge_type to
+>>> POWER_SUPPLY_CHARGE_TYPE_STANDARD and disabling charging by setting
+>>> charge_type to POWER_SUPPLY_CHARGE_TYPE_NONE. One potential use case for
+>>> this is disabling battery backup on a UPS.
+>>>
+>>> Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
 >>> ---
->>>  include/dt-bindings/clock/en7523-clk.h | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>  .../bindings/power/supply/gpio-charger.yaml   |  6 +++
+>>>  drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
+>>>  2 files changed, 49 insertions(+)
 >>>
->>> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
->>> index 717d23a5e5ae..78d16068228a 100644
->>> --- a/include/dt-bindings/clock/en7523-clk.h
->>> +++ b/include/dt-bindings/clock/en7523-clk.h
->>> @@ -11,7 +11,8 @@
->>>  #define EN7523_CLK_NPU		5
->>>  #define EN7523_CLK_CRYPTO	6
->>>  #define EN7523_CLK_PCIE		7
->>> +#define EN7581_CLK_EMMC		8
->>>  
->>> -#define EN7523_NUM_CLOCKS	8
->>> +#define EN7523_NUM_CLOCKS	9
 >>
->> This cannot change.
+>> <form letter>
+>> This is a friendly reminder during the review process.
 >>
->> If this changes, then it is not a binding and first drop it in separate
->> patch.
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
+>>
+>> Thank you.
+>> </form letter>
+> 
+> Sorry, it seems I made a mistake during the patch review process. 
+> Should I reply to your email about version 1 of the patch or only about
+> version 2? I don't want to make another mistake and open two discussions 
+> at the same time. 
+> I hope to do better in the future.
+> 
+>>
+>>> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+>>> index 89f8e2bcb2d7..084520bfc040 100644
+>>> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+>>> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
+>>> @@ -44,6 +44,10 @@ properties:
+>>>      maxItems: 32
+>>>      description: GPIOs used for current limiting
+>>>
+>>> +  enable-gpios:
+>>> +    maxItems: 1
+>>> +    description: GPIO is used to enable/disable the charger
+>>> +
+>>
+>> You did not respond to my comments, nothing improved. Without
+>> explanation based on hardware - which I asked - this is still a no.
+>>
+>> Implement and respond fully to previous feedback.
 >>
 >> Best regards,
 >> Krzysztof
 >>
 > 
-> Hi Krzysztof,
 > 
-> maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
-> give more info about this... It's not clear to me why NUM_CLOCKS is
-> needed considering is only needed in clk-en7523.c to probe the driver
-> and allock memory...
+> Sorry, I'm new to this and don't really know what exactly you want for the
+> hardware description and how best to represent our hardware in dts.
+> For the gpio power supply, it can basically be any circuit that implements
+> a "fully charged" GPIO and a "disable ups" GPIO.
 > 
-> Anyway is a different define OK for you?
+> We're using a circuit built around the LTC3350 (super capacitor ups chip):
+> We use this pin to indicate that our UPS is fully charged (once the input
+> is gone, it's not fully charged anymore):
+> PFO (pin 38): Power-Fail Status Output. This open-drain output is pulled
+> low when a power failure has occurred.
+>  
+> For the "disable ups" GPIO, we have some external circuitry around the 
+> LTC3350. I can't share the schematic, but it boils down to "disable usage
+> of ups" so that the device shuts down immediately when power is lost.
+>  
+> We've implemented this in many of our devices, but first we're looking 
+> at [1] and [2], which we also want to upstream the device trees for.
+> [1] https://www.beckhoff.com/en-en/products/ipc/embedded-pcs/cx9240-arm-r-cortex-r-a53/cx9240.html
+> [2] https://www.beckhoff.com/en-en/products/ipc/embedded-pcs/cx8200-arm-r-cortex-r-a53/cx8200.html
+> 
+> For the LTC3350, there is a separate driver posted to the Linux kernel
+> mail list [3] by another devolper that we would like to use in the future,
+> but without this gpio, our circuit won't work.
+> [3] https://lore.kernel.org/all/?q=power%3A+supply%3A+ltc3350-charger
 
-I don't understand. You just added that enum with corrected number...
-Anyway, review does not change. Number of clocks is not a binding. Drop
-or don't touch.
+This does not address my concerns at all. Read the previous comments -
+you are duplicating existing property.
+
 
 Best regards,
 Krzysztof
