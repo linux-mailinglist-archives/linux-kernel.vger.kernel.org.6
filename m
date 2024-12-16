@@ -1,290 +1,186 @@
-Return-Path: <linux-kernel+bounces-447983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15439F3988
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A59A9F3989
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68BCA188E7B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2C6188E805
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9896E207DE6;
-	Mon, 16 Dec 2024 19:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L16RjnxK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3901146019;
+	Mon, 16 Dec 2024 19:16:31 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0117A1E87B;
-	Mon, 16 Dec 2024 19:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D41E87B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734376584; cv=none; b=rqoKdkELlmoHSA7pGB2s10cxzdEChaQKjqU/tT/nBxditMcNUJsvWmHF9uhQXI3JSDM+5j/c60OmsQg9BtmE+1qcxekjPcFMFVioMGLrwfov+RVggX1oTXNme0mxFFEO8YhL2UWlyly7jsz2T/N42crAoolbtM5aYUI+OjwNkNo=
+	t=1734376591; cv=none; b=sOrTfNZmol/Up0G1tK2Vv2BpSyD5Z5UvRQoVC4agptQR88pUtooifvUnE03R6QTdzw9uiwtlLmwY/EuPTSylCod6WdnKWUEmCAplstxWWYvun+x0rKy87dRLb7LiBwDKxwXEthkZPvZfp5bhJ+3n3QGE0ZLPu/iiMvcP1ioCTBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734376584; c=relaxed/simple;
-	bh=IFc2mm/hRXw3yX0Bejn/fInSbLWD5lnwhdLgM3y6H3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XoAsj2vJ2P3sOd5ZjMP6W0bQ/yAkb5+ZrByvxHWweY89aRfjfaoWJ8H+0vLLDgqZVvPukvHb7OqmVSP3N9ABKMdnSmSZvPv+4KkKy57l01XsJzQFXTF/wsafC/ydj8VOFdfWXt+/5YCL0frSZzlDUPBf/v9mixAqiidZVAmBxFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L16RjnxK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGE5bpL013330;
-	Mon, 16 Dec 2024 19:16:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uy3T0lC9OYpeT7OKnDO7ZhyUgedlwCfpE/ttIVc5Aek=; b=L16RjnxKdReVBQpJ
-	ARrJQyjMUt7Pg88GE0tCuSLVyEideHMdyJITlnIHwMcqquWkKfFfwHtsBJfAtY9A
-	ynG2fnjS0ujVq7GPSic8vNemHY13zt4qjcaCspynGLb3R8dijkZB+89/h8v6kL/g
-	Zk39tyhl5+oD3sDgHGpQFNBVhkJ7dW31E/5k1R1PHDqLrJQxlgPTAmWG8RxEZTjv
-	QeSk4eAbYzPfynni1ueGqcs/QYWLZxL+Tok7erCLmHuQZ0sA4fmeckal0GLf6Vvo
-	Iu6EWl85HzfpmDQekCkoq/RcPi5x6Ut/RcJ6+VdW0ApLXHt0mKjVb+F50g9+LsIM
-	bvcJeA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jnnurt38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:16:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJGEkW012200
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:16:14 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:16:13 -0800
-Message-ID: <ab9a5f29-39d3-46bd-bcdf-15466a6a30b4@quicinc.com>
-Date: Mon, 16 Dec 2024 11:16:11 -0800
+	s=arc-20240116; t=1734376591; c=relaxed/simple;
+	bh=GPYGRmq5hMY/z9biIT+c0Gj7Z6hxxEiW/uOfFkHCGFg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tEy/9jtmiLRI3UcHskxCqXhCTHwFF5CLYdrtQZwm5bbZUvbZ96pQ30eyf0IxMEMZcIeGinNV1dwFA0LRZGhtWSQsu1eniGh8LeWtDMoyCnkS9IecCe+VTM7d5fI0yauz2dUFTpIoePwMAhYAfLtBY2f5w1oNLnro8nsGyyYwCKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a814c7d58eso42747545ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:16:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734376588; x=1734981388;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ysevNBa1o97DtsNJkILIAJiTHHF/LiJkIs1PQ7evepc=;
+        b=eCaGvb8h6SoPDQHc/RWWfDw6wNlr7jY5CMBF5e6Dj5Z/zamWz0dfYNd/NvxTaai8rw
+         O/RNx640G2niPz0APilInxf14X6/Ec5baeEchKXxEiin7ZNgz0ea8n1VAD8x4LdtszUO
+         OlngZgIGBORR+xDRPrDjy1kiacXmHAcXtS7i7WeeD62dS+ZkFxKjR9NQHjNNEPfrZiBW
+         yZ6TB1fCYCUb5+C3QSYtZNg29FBUQFjM2CbXBk7vGm5+C+F9knZMY5XbyMI5bSuX4KMU
+         c/K5KWNDkiNwRLUZASvEFgCtuAxEyGVF8QDmS+3x0hW3hKOqxM8YjZnqSW1LbTwQA+Ug
+         pkug==
+X-Forwarded-Encrypted: i=1; AJvYcCUtpN3xcYvlNUr3Ve9DXmdL8DfRu2MnGSjBdBYyS55gUaGeD2I9scbScFz7GWmGGFDU+yoHuSlvV9F+wIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS9G+3zDAf5Et0B5Q8aMFPiB8Nfc/HJm+w+V/7YV8w14wTCjPR
+	kch26wVjKBnSVfySLR21iglRijiMbpzaRJJkuJJGFoVTQ25oPAxeRO4/p4nmG+ZTqTNkkyHKvGB
+	la9p1UjEdC0Jrfjbce8QNzom3tLqDNWelEadJ4u6nTuNN39ypPy42y90=
+X-Google-Smtp-Source: AGHT+IHTOhz8RR59D+DPzC/Y02b2hgEmzCRJftUNd0h/A+jIL3fCy1pDChtg6a1c5+BoSHqoGrilIWccmRX2FFBr5S42dKF2S2vk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: Filter modes based on adjusted mode clock
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
- <onavg2s7uamgwh34ozhbt56c74ktj5chp3jnn4bw5m22y5sdjr@fktyn5yt4gmw>
- <1f71a352-ab8a-47fb-a4ed-ae0a4767aec6@quicinc.com>
- <CAA8EJprwE-zV1cX4OUJJfJ1en1+riHZVCQNGNYHxnPe_S=2cwA@mail.gmail.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAA8EJprwE-zV1cX4OUJJfJ1en1+riHZVCQNGNYHxnPe_S=2cwA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bojs3WEWaoUAAH0KXcKBrF-ah43P3zTW
-X-Proofpoint-ORIG-GUID: bojs3WEWaoUAAH0KXcKBrF-ah43P3zTW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxscore=0 phishscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160159
+X-Received: by 2002:a05:6e02:1a8b:b0:3a7:7124:bd2c with SMTP id
+ e9e14a558f8ab-3affab62206mr145529225ab.19.1734376588677; Mon, 16 Dec 2024
+ 11:16:28 -0800 (PST)
+Date: Mon, 16 Dec 2024 11:16:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67607c8c.050a0220.37aaf.013a.GAE@google.com>
+Subject: [syzbot] [mm?] general protection fault in find_lock_task_mm
+From: syzbot <syzbot+c2e074db555379260750@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    231825b2e1ff Revert "unicode: Don't special case ignorable..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=133b4d44580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=c2e074db555379260750
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102844f8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/41e68d86d902/disk-231825b2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0cb4e353f885/vmlinux-231825b2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c4df524e0176/bzImage-231825b2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c2e074db555379260750@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000006c: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000360-0x0000000000000367]
+CPU: 0 UID: 0 PID: 8122 Comm: syz-executor Not tainted 6.13.0-rc2-syzkaller-00036-g231825b2e1ff #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:__lock_acquire+0xe4/0x3c40 kernel/locking/lockdep.c:5089
+Code: 08 84 d2 0f 85 15 14 00 00 44 8b 0d 4a 00 a7 0e 45 85 c9 0f 84 b4 0e 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 96 2c 00 00 49 8b 04 24 48 3d a0 17 32 93 0f 84
+RSP: 0018:ffffc9000d087990 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000006c RSI: 1ffff92001a10f44 RDI: 0000000000000360
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff901cc317 R11: 0000000000000002 R12: 0000000000000360
+R13: ffff888034c38000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00005555879c4500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555879c4808 CR3: 0000000030ed6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:351 [inline]
+ task_lock include/linux/sched/task.h:229 [inline]
+ find_lock_task_mm+0xd4/0x2f0 mm/oom_kill.c:140
+ __set_oom_adj.isra.0+0xcd8/0x1120 fs/proc/base.c:1157
+ oom_score_adj_write+0x1b8/0x200 fs/proc/base.c:1294
+ vfs_write+0x24c/0x1150 fs/read_write.c:677
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3c079847cf
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 f9 92 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 4c 93 02 00 48
+RSP: 002b:00007fffc0defcf0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f3c079847cf
+RDX: 0000000000000004 RSI: 00007fffc0defd40 RDI: 0000000000000003
+RBP: 00007f3c07a0320c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000004
+R13: 00007fffc0defd40 R14: 00007fffc0df02a0 R15: 00007fffc0df02a0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0xe4/0x3c40 kernel/locking/lockdep.c:5089
+Code: 08 84 d2 0f 85 15 14 00 00 44 8b 0d 4a 00 a7 0e 45 85 c9 0f 84 b4 0e 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 0f 85 96 2c 00 00 49 8b 04 24 48 3d a0 17 32 93 0f 84
+RSP: 0018:ffffc9000d087990 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000006c RSI: 1ffff92001a10f44 RDI: 0000000000000360
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff901cc317 R11: 0000000000000002 R12: 0000000000000360
+R13: ffff888034c38000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00005555879c4500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555879c4808 CR3: 0000000030ed6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	08 84 d2 0f 85 15 14 	or     %al,0x1415850f(%rdx,%rdx,8)
+   7:	00 00                	add    %al,(%rax)
+   9:	44 8b 0d 4a 00 a7 0e 	mov    0xea7004a(%rip),%r9d        # 0xea7005a
+  10:	45 85 c9             	test   %r9d,%r9d
+  13:	0f 84 b4 0e 00 00    	je     0xecd
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	4c 89 e2             	mov    %r12,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 96 2c 00 00    	jne    0x2cca
+  34:	49 8b 04 24          	mov    (%r12),%rax
+  38:	48 3d a0 17 32 93    	cmp    $0xffffffff933217a0,%rax
+  3e:	0f                   	.byte 0xf
+  3f:	84                   	.byte 0x84
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 12/13/2024 12:38 PM, Dmitry Baryshkov wrote:
-> On Fri, 13 Dec 2024 at 21:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>
->>
->>
->> On 12/12/2024 5:05 PM, Dmitry Baryshkov wrote:
->>> On Thu, Dec 12, 2024 at 11:11:54AM -0800, Jessica Zhang wrote:
->>>> Filter out modes that have a clock rate greater than the max core clock
->>>> rate when adjusted for the perf clock factor
->>>>
->>>> This is especially important for chipsets such as QCS615 that have lower
->>>> limits for the MDP max core clock.
->>>>
->>>> Since the core CRTC clock is at least the mode clock (adjusted for the
->>>> perf clock factor) [1], the modes supported by the driver should be less
->>>> than the max core clock rate.
->>>>
->>>> [1] https://elixir.bootlin.com/linux/v6.12.4/source/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c#L83
->>>>
->>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->>>> ---
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c | 29 +++++++++++++++++++--------
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h |  3 +++
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      | 12 +++++++++++
->>>>    3 files changed, 36 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
->>>> index 6f0a37f954fe8797a4e3a34e7876a93d5e477642..0afd7c81981c722a1a9176062250c418255fe6d0 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
->>>> @@ -31,6 +31,26 @@ enum dpu_perf_mode {
->>>>       DPU_PERF_MODE_MAX
->>>>    };
->>>>
->>>> +/**
->>>> + * dpu_core_perf_adjusted_crtc_clk - Adjust given crtc clock rate according to
->>>
->>> Nit: CRTC (here and further)
->>>
->>>> + *   the perf clock factor.
->>>> + * @crtc_clk_rate - Unadjusted crtc clock rate
->>>> + * @perf_cfg: performance configuration
->>>> + */
->>>> +u64 dpu_core_perf_adjusted_crtc_clk(u64 crtc_clk_rate,
->>>> +                                const struct dpu_perf_cfg *perf_cfg)
->>>
->>> It's not just the CRTC clocks
->>>
->>
->> Do you mean we should use adjusted mode clock here?
-> 
-> This also applies, etc. But my point was that you can not name it just
-> "adjusted CRTC clock" if you also add the plane clocks handling.
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-_dpu_plane_calc_clk() already handles the plane_clk calculation so we 
-dont need to add it here.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-adjusted_mode_clk sounds fine to me in that case.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->>
->>>> +{
->>>> +    u32 clk_factor;
->>>> +
->>>> +    clk_factor = perf_cfg->clk_inefficiency_factor;
->>>> +    if (clk_factor) {
->>>> +            crtc_clk_rate *= clk_factor;
->>>> +            do_div(crtc_clk_rate, 100);
->>>> +    }
->>>> +
->>>> +    return crtc_clk_rate;
->>>> +}
->>>> +
->>>>    /**
->>>>     * _dpu_core_perf_calc_bw() - to calculate BW per crtc
->>>>     * @perf_cfg: performance configuration
->>>> @@ -76,7 +96,6 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
->>>>       struct dpu_plane_state *pstate;
->>>>       struct drm_display_mode *mode;
->>>>       u64 crtc_clk;
->>>
->>> While you are at it, could you please also add a patch, replacing height
->>> * vidth * vrefresh with mode->clock * 1000? The former one has limited
->>> precision.
->>>
->>>> -    u32 clk_factor;
->>>>
->>>>       mode = &state->adjusted_mode;
->>>>
->>>> @@ -90,13 +109,7 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
->>>>               crtc_clk = max(pstate->plane_clk, crtc_clk);
->>>>       }
->>>
->>> This function calculates crtc_clk as max(plane_clk, crtc_clk). Shouldn't
->>> we also reject the atomic_state if for any of the planes the corrected
->>> clock is lower than max_core_clk_rate
->>>
->>
->> You mean higher than max_core_clk_rate? If so, yes we can fix that up.
-> 
-> Yes
-> 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-I cross-checked the src code, we do already have the protection for 
-plane_clk going beyond max_core_clk
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-         /* max clk check */
-         if (_dpu_plane_calc_clk(mode, pipe_cfg) > 
-kms->perf.max_core_clk_rate) {
-                 DPU_DEBUG_PLANE(pdpu, "plane exceeds max mdp core clk 
-limits\n");
-                 return -E2BIG;
-         }
-
-So this should be sufficient for the case you are referring to.
-
->>
->>>>
->>>> -    clk_factor = perf_cfg->clk_inefficiency_factor;
->>>> -    if (clk_factor) {
->>>> -            crtc_clk *= clk_factor;
->>>> -            do_div(crtc_clk, 100);
->>>> -    }
->>>> -
->>>> -    return crtc_clk;
->>>> +    return dpu_core_perf_adjusted_crtc_clk(crtc_clk, perf_cfg);
->>>>    }
->>>>
->>>>    static struct dpu_kms *_dpu_crtc_get_kms(struct drm_crtc *crtc)
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
->>>> index 451bf8021114d9d4a2dfdbb81ed4150fc559c681..c3bcd567cdfb66647c83682d1feedd69e33f0680 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
->>>> @@ -54,6 +54,9 @@ struct dpu_core_perf {
->>>>       u64 fix_core_ab_vote;
->>>>    };
->>>>
->>>> +u64 dpu_core_perf_adjusted_crtc_clk(u64 clk_rate,
->>>> +                                const struct dpu_perf_cfg *perf_cfg);
->>>> +
->>>>    int dpu_core_perf_crtc_check(struct drm_crtc *crtc,
->>>>               struct drm_crtc_state *state);
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->>>> index ad3462476a143ec01a3b8817a2c85b0f50435a9e..cd7b84ab57a7526948c2beb7c5cefdddcbe4f6d9 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->>>> @@ -1257,6 +1257,7 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->>>>                                               const struct drm_display_mode *mode)
->>>>    {
->>>>       struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->>>> +    u64 adjusted_mode_clk;
->>>>
->>>>       /* if there is no 3d_mux block we cannot merge LMs so we cannot
->>>>        * split the large layer into 2 LMs, filter out such modes
->>>> @@ -1264,6 +1265,17 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->>>>       if (!dpu_kms->catalog->caps->has_3d_merge &&
->>>>           mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
->>>>               return MODE_BAD_HVALUE;
->>>> +
->>>> +    adjusted_mode_clk = dpu_core_perf_adjusted_crtc_clk(mode->clock,
->>>> +                                                        dpu_kms->perf.perf_cfg);
->>>> +
->>>> +    /*
->>>> +     * The given mode, adjusted for the perf clock factor, should not exceed
->>>> +     * the max core clock rate
->>>> +     */
->>>> +    if (adjusted_mode_clk > dpu_kms->perf.max_core_clk_rate / 1000)
->>>> +            return MODE_CLOCK_HIGH;
->>>> +
->>>>       /*
->>>>        * max crtc width is equal to the max mixer width * 2 and max height is 4K
->>>>        */
->>>>
->>>> ---
->>>> base-commit: 423c1c96d6b2d3bb35072e33a5fdd8db6d2c0a74
->>>> change-id: 20241212-filter-mode-clock-8cb2e769f05b
->>>>
->>>> Best regards,
->>>> --
->>>> Jessica Zhang <quic_jesszhan@quicinc.com>
->>>>
->>>
-> 
-> 
-> 
+If you want to undo deduplication, reply with:
+#syz undup
 
