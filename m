@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-447484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D899F3338
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:27:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB1F9F333B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42399188605A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6824162261
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068AD205E0F;
-	Mon, 16 Dec 2024 14:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4723205ADE;
+	Mon, 16 Dec 2024 14:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fro3i912"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B14203D42;
-	Mon, 16 Dec 2024 14:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NGXpTPYb"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4D0204585;
+	Mon, 16 Dec 2024 14:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734359247; cv=none; b=Ly9bTuYGvygoxXll7evnG173ncTiEO0q/g1okio0gLf10EQYJJrlJd03/Ezf65LRASd2VAXkTQar9e8lJxrhZsmRzeBkafRKW/ZflO4g8zjrvSD8twzZIVzh4Eo03UEo+s2bAgVZMm4KN/cnfAGI8R1Ez8hZD0JgryeswNkBrF8=
+	t=1734359296; cv=none; b=O+np9sXrwPGaObBlR6Zof3E8buIzSuZWrzAgc8EzjHddr/za1pDGvbaZka76uboY1Yq7qTuRiXfpX3yl3lBdJo72XVSTeKrls0X/+POfp01ZRK7r9msC9+nh/cod5TAZh3CNSbCGPckwHYiLlDZDv9nlNfIjE3SBbdezXo6seVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734359247; c=relaxed/simple;
-	bh=Mr35VqwgweA69AHCsQwnqUK4U36oZgsI7Vqv1GiCVuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJ8rpfkP38GaGbnkwjKrud0eDFFD9lHS60eFZ7iygEeaZLZqL4cxU7s+GgMbyTVQaVgXEhQJ9IrNV4lr2VM/PeCNywcLhzjHK82iTA9vWrpaggcjHbBSjGoKTYbSxzUf/UyFbQ8CsmyQvQcvxszmaoZ9+Av9+bB2EDWn9hJ7rx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fro3i912; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B13C4CEE0;
-	Mon, 16 Dec 2024 14:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734359246;
-	bh=Mr35VqwgweA69AHCsQwnqUK4U36oZgsI7Vqv1GiCVuY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fro3i912XCn1bOY2tqDZK1/F3kQ08RLKElLPkKR4AjpKHSvzjQNUBV9O5tO0vePg7
-	 etDP1F62WwqhGNXW6m5w0/wQRuyaAIRyTUKWR8lQiqGi5s15IQAH5/GN468+K/baS+
-	 Ym11OmhuaeXJk76uyVqFFeePTsyEsrv5ZZs86x3Z9nP6qSWkpQU6Bp7ok4Nqyzs50N
-	 WLzw3jddrXnlZA1cEYo0Bei6COMdjRGpJUFd8OeRayx+LzRjLIIL/wOBfJMI2veFMV
-	 EZJd+/wdLl1fEynZhgx0fCRFB8VVPuJ/5m6G3fCU64sTC9Uz3KQoLTk/k38U4mhQRL
-	 2/8eSjDm11WEA==
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3983f8ff40so2443715276.1;
-        Mon, 16 Dec 2024 06:27:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUhG4fxqNdWYnJVjqzh9ALctqJVziizuoG+wFj3NozdqsdHiCuBE+Jd42QsTvu93xPIFnmXn5pHl8b3IQc9@vger.kernel.org, AJvYcCW8eNph5q+UVs88SqNAlOzU2Xg6wNryGzHfF6jiB297AvLiX1lHbRuofxE1067SfwViQqeo78BUTKtE@vger.kernel.org, AJvYcCWJbEHQSIp4Ae0gQYq+skzukTKwjS9ne4UexJcyUlcSiTeI4u9pM+OzjJItcKTbUdFP2qT/mgO7baqabzBe3/+gMzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhb+iq/5TtT95gJ7Yc76q1oztqawHWBxvcBd7NGdlIYV7Nlz1N
-	hIIcolm1J4mQu/43t18k2Xl+9fe1IGZtrA7n5JXsiY+KHChE8c1KxBw/y0VO35az/P3aJnkISsp
-	jMFSA85MLi4OEZVij8hy5yBqvaw==
-X-Google-Smtp-Source: AGHT+IF+SzaoPtVSZAlJvWgwFl8E44ixi6sB1aULDbhwrV6Mys2MrEPY+9ulABzQBZn3pK8qf8Lpu1q+VL/7Cde5Jk4=
-X-Received: by 2002:a05:6902:72a:b0:e3c:7b6c:9d1c with SMTP id
- 3f1490d57ef6-e433f94c771mr11142194276.0.1734359245885; Mon, 16 Dec 2024
- 06:27:25 -0800 (PST)
+	s=arc-20240116; t=1734359296; c=relaxed/simple;
+	bh=MElMlEENTYJQv3QEDrPQ4mKy0lTJukyrhv1g80PSamw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dqXwSzLGNEFtEJ11AkcMZnLnQmiOtT55HssdpUXK/Wl3042Ci0swPfny8kYlto0BUS+roFbqdzSqphXkjhhJFnzgWWDMGaQysAx7mU0KC0FudlT8yZwfAN9QLhs8PoQNG7qQEWMdyj61xF0TiIgVjR89b5p4zMgZY0GBf6frCRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NGXpTPYb; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.13] (pool-96-241-22-207.washdc.fios.verizon.net [96.241.22.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2E5E12042FD2;
+	Mon, 16 Dec 2024 06:28:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2E5E12042FD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734359294;
+	bh=mxutLUmRXxC9hOlpMbuLFXyKhhFJ+piQ1nIkRvimiUM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NGXpTPYbKBCdHz32jl9yMUfrprMYPH7JSSl+0PdnSf5tF2FX2TPZoNmbJ9PIJw/lc
+	 jHl7um3476q1QA8D6AYQNCwfPhapI4ThMYh0q8bm3L5lzvz1d5VtrGbAW4sqVG78jQ
+	 xLvanf70lOsFbCOUqTf8d46X3p1Waj9V5J7ETYO0=
+Message-ID: <f00152c1-6eb9-487d-af69-42573b5f79bc@linux.microsoft.com>
+Date: Mon, 16 Dec 2024 09:28:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
- <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
- <20241216141846.GA71151-robh@kernel.org>
-In-Reply-To: <20241216141846.GA71151-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 16 Dec 2024 08:27:14 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKNZGwgd17q4Em9-fdVLgTsjLYnVHEXjDcH+i60b1ssdA@mail.gmail.com>
-Message-ID: <CAL_JsqKNZGwgd17q4Em9-fdVLgTsjLYnVHEXjDcH+i60b1ssdA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for gs101-pmu
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 06/22] selinux: rename comparison functions for
+ clarity
+To: cgzones@googlemail.com, selinux@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ John Johansen <john.johansen@canonical.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>,
+ Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>,
+ linux-kernel@vger.kernel.org
+References: <20241115133619.114393-1-cgoettsche@seltendoof.de>
+ <20241115133619.114393-6-cgoettsche@seltendoof.de>
+Content-Language: en-US
+From: Daniel Burgener <dburgener@linux.microsoft.com>
+In-Reply-To: <20241115133619.114393-6-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 16, 2024 at 8:19=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Fri, Dec 13, 2024 at 04:44:39PM +0000, Peter Griffin wrote:
-> > To avoid dtschema warnings allow google,gs101-pmu to have
-> > two reg regions.
->
-> It's not a "simple" syscon if you have 2 regions, so put it in its own
-> schema doc.
+On 11/15/2024 8:35 AM, Christian Göttsche wrote:
+> From: Christian Göttsche <cgzones@googlemail.com>
+> 
+> The functions context_cmp() and mls_context_cmp() are not traditional
+> C style compare functions returning -1, 0, and 1 for less than, equal,
+> and greater than; they only return whether their arguments are equal.
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>   security/selinux/ss/context.c  |  2 +-
+>   security/selinux/ss/context.h  | 10 +++++-----
+>   security/selinux/ss/services.c |  2 +-
+>   security/selinux/ss/sidtab.c   |  2 +-
+>   4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/security/selinux/ss/context.c b/security/selinux/ss/context.c
+> index e39990f494dd..a528b7f76280 100644
+> --- a/security/selinux/ss/context.c
+> +++ b/security/selinux/ss/context.c
+> @@ -20,7 +20,7 @@ u32 context_compute_hash(const struct context *c)
+>   	 * context struct with only the len & str set (and vice versa)
+>   	 * under a given policy. Since context structs from different
+>   	 * policies should never meet, it is safe to hash valid and
+> -	 * invalid contexts differently. The context_cmp() function
+> +	 * invalid contexts differently. The context_equal() function
+>   	 * already operates under the same assumption.
+>   	 */
+>   	if (c->len)
+> diff --git a/security/selinux/ss/context.h b/security/selinux/ss/context.h
+> index 7ccab2e6965f..e1307f6f7f50 100644
+> --- a/security/selinux/ss/context.h
+> +++ b/security/selinux/ss/context.h
+> @@ -132,8 +132,8 @@ static inline int mls_context_glblub(struct context *dst,
+>   	return rc;
+>   }
+>   
+> -static inline int mls_context_cmp(const struct context *c1,
+> -				  const struct context *c2)
+> +static inline bool mls_context_equal(const struct context *c1,
+> +				     const struct context *c2)
+>   {
+>   	return ((c1->range.level[0].sens == c2->range.level[0].sens) &&
+>   		ebitmap_cmp(&c1->range.level[0].cat, &c2->range.level[0].cat) &&
 
-NM, I see it already does. If you keep 'syscon', then 'maxItems: 1'
-will probably need to move to syscon.yaml.
+Should the same logic in this patch be applied to ebitmap_cmp as well?
 
-Rob
+-Daniel
+
 
