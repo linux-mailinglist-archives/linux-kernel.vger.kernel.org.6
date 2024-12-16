@@ -1,171 +1,182 @@
-Return-Path: <linux-kernel+bounces-447960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46C09F393B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:48:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7139F3942
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C6216A454
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFDE1888533
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31BA20764E;
-	Mon, 16 Dec 2024 18:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449B2207DFE;
+	Mon, 16 Dec 2024 18:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cv2POJKu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gEBIWvvc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCrfdr7V"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92744206F19
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04737207658;
+	Mon, 16 Dec 2024 18:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734374897; cv=none; b=YKoioJ21Kd7AtBxBC6gXgYb4sOj1YjpZXVnOhapAvCvtCd0LyOVYGn4b+WDruVldiWh7/a9u+qD3TYdVLkwG7EjlRPkTLd9BxL7defbU/faya0Fmj2/zpxGjVOvQObyJhfQjJCQDcNQ27+fLwmBjLHpPZuwBBuvIZovj0yy1BtA=
+	t=1734374899; cv=none; b=Y76GqdNd7XP8hQh48ROirQsEA8t6n2dfqU37Wt7TpJ62PA3FxZUVLt/DJC7VTTmEi+nUouAYALMAvbtJDHk5DNmZvUQU30z4kRcvZaSiwqufwnQmRvFzpojWUNrM1nsA/c71Ya/Odjhosr8s5oO3RvPsoVwPV2/VwbPzVmNpoYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734374897; c=relaxed/simple;
-	bh=Q7wkvJLnrrcwdHrPC9SrXsQNlKtuizmmonOp7ufhVoc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AdL3/nm5QcxSCEC2jU3UXZHvVM8ODikbLyMJ6mxaNanWByHqrt2HuvCyeA2iIeC3JWgAU9fNSsjcRsQTZCUd7JgVLTK1MugT5o95Uk2+HG39p1isRNK7FgC1xMSC+BjdsMTVQuCvTWNFbTMASngRJZlUe7f8DEL/t4WkLNwJvkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cv2POJKu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gEBIWvvc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734374887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNm+kbLR+AwtgRjnsI0eiJWH7Z9SSugB6GpXdN42y9c=;
-	b=Cv2POJKuvvXEjlWx9VweXe/Zh+Sz7Cwn5q9FdBbTFK4teItryuslOrS448hLIkkrtyt3Du
-	/J+A7W2sgxQfzpMxnMv+V2QFI+zDBZAsV+XcoZrv0lCBndVklN0Oy6NtnNECHB8hLMH+mX
-	EIIJRsA7uU6FX0d4a8M3hIe0gP6ovcxqsxIm2Q05+QMbnhMfLjI0ghdsVwnP7MyOB6P4uB
-	vZXwdeBqBCA5MA4QtDVTTwF5TZyTHSwb5wTFWwBF/28czxFeUfjsLOtku+Qh+Wv/bNvKm8
-	sZLIRV++r+HCfXUpbGd7HnGP8kns2wZKg+ui1qwDwIUaf/xTQ0xo47MiAfYyAA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734374887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNm+kbLR+AwtgRjnsI0eiJWH7Z9SSugB6GpXdN42y9c=;
-	b=gEBIWvvcS2q8PxyTx3dl6Jl7FPxWfvlvTY6Op9GEaHW6zLNjrPzAzj5kBP3Vt2YapsMJl6
-	4faNhumkQ4jKuAAA==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <longman@redhat.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: Re: [PATCH v5 06/14] futex: Add helper which include the put of a
- hb after end of operation.
-In-Reply-To: <20241215230642.104118-7-bigeasy@linutronix.de>
-References: <20241215230642.104118-1-bigeasy@linutronix.de>
- <20241215230642.104118-7-bigeasy@linutronix.de>
-Date: Mon, 16 Dec 2024 19:48:07 +0100
-Message-ID: <87wmfz79co.ffs@tglx>
+	s=arc-20240116; t=1734374899; c=relaxed/simple;
+	bh=kmEYNF71/7++qPgLBRe0qCZQCXLr12g/b3oiSdt3p/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=n0XKNorp77Sly6bvQ3ai7lnhGanc7zf73zjiSZCufPn8uLXp1YjbnGVKinFfCzO+ODiqXMjhnWJWL/lzIlZhc8M6BL2Ne1xTLTRNo31Te/+qV0popT1VtorfWwbCD7GFuxmu1EOMQqsTdGApfmQiebW/N5PjzawCttVnGntGZEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCrfdr7V; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fd17f2312bso3095141a12.0;
+        Mon, 16 Dec 2024 10:48:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734374897; x=1734979697; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=GUU/XypxaduzqMjt/wtaQMQLw5fmlBNHttBG958fM88=;
+        b=SCrfdr7VsbNpHdS8t6BSRrPgHN+6H3zWGSAIPdghHyV3Lt5VKA1Q0ElBTy3q+b/+cU
+         PrZY0pt7p74TlJNlMky4vQ+0DNav5uPmwZVIRZ8Q+E9gOTXm9Wj/Mztl3QpcXMOWlTLY
+         VzQDof/yL68yUdEPyxEfILkxtUevWHsU+9hEz5TAgxHbj9RaUG57RIcTo2JNwT8jK7Vl
+         W4aYZL4x5r6jYC9qLyFgYy//6JqajUhGCzS7oitScVwWaDrag9X/541bhNF/B8GyXTfO
+         cAuTZSki6FvoRkqI2j5fT+Sp/IUMT+xGAu21bg8UpE4tvfvCyYXNa0FmOyDMEfUgQX/0
+         PwMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734374897; x=1734979697;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GUU/XypxaduzqMjt/wtaQMQLw5fmlBNHttBG958fM88=;
+        b=bpAJgktlXY33h9+KtbadekXWxLByoY6sg81SUdMax4+aDfc3GdCLRyOtYcMTyZIAQ6
+         MZvyzm0oMWzwCpGgF6NzQxaDRl4NeF2AY3NnFrrqKq/Pax3SWLJ5zseYB3XM/ek1ZOgE
+         Gjr9Vg+yDtr3PC+ANkGFccjmhw8S2uzmi22Jed9NAY1WnnGeJJlfmXvI8y+Hz64xTd1n
+         knS5gpbF9FoZzU73yhig+7Jo+2Ke2NJpTvGwMHAeB/6ouZGre6WNdLIHU3O4nsIO5A39
+         vroXG4SQ/Zeu6bJduQbqYF2DH8KVu4/M7d0tK7h+MdN0QkyNXK2cWZxYEtYLUppMRR0E
+         hO9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUKvcLH5cVW6t5iAES5CHI9S+LumhDkv2QCmRMDZP9V/DSGFqES9nQo3lw5c++L57MewdR2xNEO497J@vger.kernel.org, AJvYcCUNgwd1uwbDgwQNZ8QKyDkyC+JL33/Z+/+fCxEsvqXWhRyIj0BT7z9nw6gh1mexG2cMLQ+RULe7647XajQ=@vger.kernel.org, AJvYcCV6cgWjIpBr1sP3OANYNYFHkTH6WD8rW5RmhYuPEi82ixecWoQZ1IN3kPhxqjyw/oo8L2x5VIUjjneZ@vger.kernel.org, AJvYcCVuTCeILj/8wHSfhUqkTgk2CdOoO9GlXfo2AChvNM5s8f//i2+wSXxL4Oj2rXmR/3uET93Yo7pSlZkrmC3g@vger.kernel.org, AJvYcCWxz8erpn2RWZk9hyH4YVlmWN3m1o7II/nCqGrwdo4f/bsB5ClNCv3SztPgXooIycWvcuymPuscpGSg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1IwFhwc1uJGgARZ5NZYPC5tKz8MDQxzD5gPrJ8GWkj4PdxdOd
+	ifgvaN80+u8jM9eHs++DMfp7lc3x0N/l9GUt+LWnpPbQm4xEupcP
+X-Gm-Gg: ASbGncsQD9qwRPkEaPQYhTpjphS6ptFT1q/WZQWoQF921Xs9z/VbTbcXP3jgyyqlX7j
+	KcrjHd1PPF61hECO0c1W8MzV8NOgJjaVdhPhtKcfS3xlFnJJb5ppOWGJirL9eF59Iufr9IX8x+E
+	sCQh2d6lH1kd++rHCj53dzqEB6g2Qs3Xkd1Y2kOhkjyg4Qxibn/tsd/5oK52Lz6vHy1VCuXh2cG
+	SSeOCRemYEDLjm4paPrOJtI9TmJzZVO9iRnV+iNz5mQGaBDX0aPCYTPt4ThJPt76UimrdGTJg9J
+	05cYF81c69ZGGGZzBUnFR4+zxBKrlg==
+X-Google-Smtp-Source: AGHT+IFjQgGzXMt3UDx2US4yIi+IDTITId8IwO9BLtbyFBWANvRg/nW81MMDSaOHXQlVmHcHYluZ1w==
+X-Received: by 2002:a17:90b:2e4f:b0:2ee:f687:6ad5 with SMTP id 98e67ed59e1d1-2f2d7d6d692mr891327a91.2.1734374897329;
+        Mon, 16 Dec 2024 10:48:17 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142c2b1f6sm8453029a91.0.2024.12.16.10.48.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 10:48:16 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c64bb634-46d4-486a-8743-699775326058@roeck-us.net>
+Date: Mon, 16 Dec 2024 10:48:14 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add support for Intel CRPS PSU
+To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+ corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+ Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org, peteryin.openbmc@gmail.com,
+ noahwang.wang@outlook.com, naresh.solanki@9elements.com, lukas@wunner.de,
+ jbrunet@baylibre.com, patrick.rudolph@9elements.com,
+ gregkh@linuxfoundation.org, peterz@infradead.org, pbiel7@gmail.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-i2c@vger.kernel.org
+References: <20241216175044.4144442-1-ninad@linux.ibm.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241216175044.4144442-1-ninad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 16 2024 at 00:00, Sebastian Andrzej Siewior wrote:
-> With the planned schema of resize of hb, a reference count will be
-> obtained during futex_hash() and will be dropped after the hb is
-> unlocked. Once the reference is dropped, the hb must not be used because
-> it will disappear after a resize.
-> To prepare the integration, rename
-> - futex_hb_unlock() to futex_hb_unlock_put()
-> - futex_queue() to futex_queue_put()
-> - futex_q_unlock() to futex_q_unlock_put()
-> - double_unlock_hb() to double_unlock_hb_put()
->
-> which is additionally includes futex_hb_unlock_put(), an empty stub.
-> Introduce futex_hb_unlock_put() which is the unlock plus the reference
-> drop. Move futex_hb_waiters_dec() before the reference drop, if needed
-> before the unlock.
-> Update comments referring to the functions accordingly.
+On 12/16/24 09:50, Ninad Palsule wrote:
+> Hello,
+> 
+> Please review the patchset for Intel CRPS185 driver.
+> V2:
+> ---
+>    - Incorporated review comments by Guenter Roeck
+>    - Incorporated review comments by Krzysztof Kozlowski
+> 
 
-If I didn't know what you are talking about, it would have taken me a
-while to decode the word salad above. It starts with the usage of 'hb',
-an acronym which might be understandable for people familiar with the
-futex code, but otherwise it's an arbitrary reference to nothing.
+That is not a useful change log. Please describe what you changed, not who
+asked for it.
 
-Assuming that 'hb' stands for hashbucket, the usage here is wrong:
+Guenter
 
-      With the planned schema of resize of hb...
+> Ninad Palsule (4):
+>    hwmon: (pmbus/core) Add PMBUS_REVISION in debugfs
+>    hwmon: (pmbus/crps) Add Intel CRPS185 power supply
+>    dt-bindings: hwmon: intel,crps185: Add to trivial
+>    ARM: dts: aspeed: system1: Use crps PSU driver
+> 
+>   .../devicetree/bindings/trivial-devices.yaml  |  2 +
+>   Documentation/hwmon/crps.rst                  | 97 +++++++++++++++++++
+>   Documentation/hwmon/index.rst                 |  1 +
+>   MAINTAINERS                                   |  7 ++
+>   .../dts/aspeed/aspeed-bmc-ibm-system1.dts     |  8 +-
+>   drivers/hwmon/pmbus/Kconfig                   |  9 ++
+>   drivers/hwmon/pmbus/Makefile                  |  1 +
+>   drivers/hwmon/pmbus/crps.c                    | 79 +++++++++++++++
+>   drivers/hwmon/pmbus/pmbus_core.c              | 13 ++-
+>   9 files changed, 211 insertions(+), 6 deletions(-)
+>   create mode 100644 Documentation/hwmon/crps.rst
+>   create mode 100644 drivers/hwmon/pmbus/crps.c
+> 
 
-This is about resizing the hash not the hashbucket, right?
-
-So something like this might be more to the point:
-
-   futex: Prepare for reference counting of the process private hash
-
-   To support runtime resizing of the process private hash, it's
-   required to add a reference count to the hash structure. The
-   reference count ensures that the hash cannot be resized or freed
-   while a task is operating on it.
-
-   The reference count will be obtained within futex_hash() and dropped
-   once the hash bucket is unlocked and not longer required for the
-   particular operation (queue, unqueue, wakeup etc.).
-
-   This is achieved by:
-
-    - appending _put() to existing functions so it's clear that they
-      also put the hash reference and fixing up the usage sites
-
-    - providing new helpers, which combine common operations (unlock,
-      put), and using them at the appropriate places
-
-    - providing new helper for standalone reference counting
-      functionality and using them at places, where the unlock operation
-      needs to be separate.
-   
-Hmm?
-> -void futex_q_unlock(struct futex_hash_bucket *hb)
-> +void futex_q_unlock_put(struct futex_hash_bucket *hb)
->  	__releases(&hb->lock)
->  {
->  	spin_unlock(&hb->lock);
->  	futex_hb_waiters_dec(hb);
-> +	futex_hash_put(hb);
-
-You missed a place to move the waiter_dec() before the unlock. Actually
-this move should be in a separate preparatory patch, which does only
-that. It also needs a proper change log which explains why this done,
-why it is equivalent and not introducing a change in terms of ordering
-rules. This:
-
-> Move futex_hb_waiters_dec() before the reference drop, if needed
-> before the unlock.
-
-does not really give any clue at all.
-
->  		if (unlikely(ret)) {
-> -			double_unlock_hb(hb1, hb2);
->  			futex_hb_waiters_dec(hb2);
-> +			double_unlock_hb_put(hb1, hb2);
-
-And having this move before the _put() change makes the latter a purely
-mechanical change which let's the reader/reviewer focus on the reference
-count rules and not be distracted by the waiter count changes.
-  
-> -	/* futex_queue and wait for wakeup, timeout, or a signal. */
-> +	/* futex_queue_put and wait for wakeup, timeout, or a signal. */
-
-When you fix up these comments, can you please use the fn() notation?
-
->  	futex_wait_queue(hb, &q, to);
->  
->  	/* If we were woken (and unqueued), we succeeded, whatever. */
-
-Thanks,
-
-        tglx
 
