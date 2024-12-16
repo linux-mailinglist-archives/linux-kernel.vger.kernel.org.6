@@ -1,132 +1,87 @@
-Return-Path: <linux-kernel+bounces-447994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF82D9F39A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:20:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CDB9F39AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123D916B104
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83721887201
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF0207DF7;
-	Mon, 16 Dec 2024 19:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AD1207DF9;
+	Mon, 16 Dec 2024 19:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SSPVYcQ2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YL3HtXNT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0585206287
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E984A2F;
+	Mon, 16 Dec 2024 19:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734376817; cv=none; b=i08nEdBh6bk9ffqB469FD4ZyRSopO2/HOWP7+pq9ENC6cP1y7s350dNbz07XIY9NtZ6bPvn7DHV/ZR3fQNQPuaZzoV2i9JAxZL7hMfy4OJ65PAhkd8jkJYRr6JBCWxeq96sUHd6xfPoVGrFoOUyMoC9L140UMOwyD/q41fuaLao=
+	t=1734377005; cv=none; b=JJmsYTcXHMFaC0rlN8bwIDfr4PmFNAL08eEqO6W8Nv5MYaJmW8AAXgj1cF2AZaWwT3Xb/LbcOA9svt5biaUtxRLTHxfQgnIhGQPm1WK7Z2Xzc3JmlqMPxMF5xhUx1YLKsOD8POUs0G7H0fMUPE4PhggiPKCiVT9PodPYtyWrxus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734376817; c=relaxed/simple;
-	bh=hJO7PhFFILWqOSoDZ6qlrrhdx3WwQXrpYMxPRM4LBuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJXleR8wGOj92mIdOhTF3WWhzyleGZpWg+21IK8Laec0a0w/h2/5px2xOoFODYWM0WLbRoysXnndqmF5I6Ig9/Q22RfVoaIFM6QJJuHxM6XwmPZP36BcAFEMyV+IOJcijXpMSVdV1kd2y5KjxAL2peDeo45rmPB8FNyuGfP4YB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SSPVYcQ2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734376814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dAcFp9mawsitE6ltl4OckOZ068h+OrWsoh6QDL7J4Vg=;
-	b=SSPVYcQ2L6rJKW5GftEy5Eabm0VD/q2OwH3SCKpPSCDr9GzRpxQ/UzyKbcHanFuNO70nWU
-	bEzgbGELTs4g9Mlrl8tVNr4Ajp0Q0tuAC4RhONAOjjt4ZsGHJPBLVxB99rWil4U66a5Ch+
-	er+xe+1UCcugYzKTs3Z7cq0YbGUWPtw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-cyoXPWvWObWdX3TmoZTNOA-1; Mon,
- 16 Dec 2024 14:20:13 -0500
-X-MC-Unique: cyoXPWvWObWdX3TmoZTNOA-1
-X-Mimecast-MFC-AGG-ID: cyoXPWvWObWdX3TmoZTNOA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70D561956089;
-	Mon, 16 Dec 2024 19:20:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.224])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5C73419560A2;
-	Mon, 16 Dec 2024 19:20:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 16 Dec 2024 20:19:46 +0100 (CET)
-Date: Mon, 16 Dec 2024 20:19:37 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Lai, Yi" <yi1.lai@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <20241216191937.GC374@redhat.com>
-References: <Zy4OFlxoRK2jM5zo@localhost.localdomain>
- <20241108190835.GA11231@redhat.com>
- <Zy6QHHakztIXvudC@pavilion.home>
- <20241111120857.5cWFpNkJ@linutronix.de>
- <20241204134826.GA923@redhat.com>
- <Z1DxqJlGM_I8irVQ@pavilion.home>
- <20241205092015.GA8673@redhat.com>
- <Z1F6_cC4bRvcN56T@pavilion.home>
- <20241205102840.GB8673@redhat.com>
- <Z1y6vSznjbCwAvn1@pavilion.home>
+	s=arc-20240116; t=1734377005; c=relaxed/simple;
+	bh=LTcCZnJCBIAVDCBYyRpRW2C2Mx7jjQ7PnOoCN0T2WVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XK668K++Qc/cRkUrxc5FyMPN4F+eUaZqpTFy4JpgvRemLQsFHK1ZgftCHDJkhSj1B865hgHzQb5xSsc8x0K491XFqe9pnnzvjsG6P32fHstDy9KzK9AGKfeB5UdghqG7s76VfEkzSBfSeO9cjS7NlPXu5LznaIkQa70MUUaHD/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YL3HtXNT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CEDC4AF0B;
+	Mon, 16 Dec 2024 19:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734377005;
+	bh=LTcCZnJCBIAVDCBYyRpRW2C2Mx7jjQ7PnOoCN0T2WVQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YL3HtXNTaW12jCadQU0ufYvvqQH935N64bPDYLAdBwi4s5/oNpP0K3Ixlr+s1BeJF
+	 Q/51BAk+iCanuuh+jGby3PLol4WbKE9OAMLP6Rxh7Sp9zSlBFIYQbfX/pvy4VfEWh4
+	 DPOQAybI005eh1U09IV5e1MHfbnnPWPeoMhAiRjuN+waQm/D1WJ//DNQ76HT/LxclC
+	 TcMMNurKvwqtC/4tfKLDlvXkLgrRrYoa4xSykZ04He6B2gOa+7qNr3N2X/jvEwtryU
+	 tKWTr3jKdgfHfaIJTjTxxYbOhCna1zneUFWUGEAO8+qNB8W3e93/ZLU8QKraF+Q2sp
+	 yyoMddwYX/HVQ==
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e3a26de697fso3318786276.3;
+        Mon, 16 Dec 2024 11:23:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUD5R4M1J8VErHEGGic9D/TeiOD/W36ITrqxNUjGBBoeG7QNCj7XVvtmp9I2kw4GHulbIRkKooQkx/4Sa9p@vger.kernel.org, AJvYcCXwebbKc9BKBhWhHl0VwD0Y2hJwlIyzYLM/yWCRi8nFcBUojUsgD2SW0AhdLkv4PglUTGk63AXEzeMI@vger.kernel.org
+X-Gm-Message-State: AOJu0YynY1xTBe3wcZqYXl6lJdp0x8DLKP2Oa3qm/MNWZnkiifTY5zUK
+	TXTn/BntmINYem7LrmxDIJY40s3H+5l4X49vsWnYT4RpIqBV6BUZpW2IvcZkJRdf1qZrDhiMSS0
+	+eWXqAs05AQGNUCHFNTZpAqzKCA==
+X-Google-Smtp-Source: AGHT+IGwkCBQPm10plulVM5kBQzTywdv2iGyB/e588i9eKvMTwG+Wj7fE4qsvRoms6WCvGP/olOcSaEzN3CD9V5VWOo=
+X-Received: by 2002:a05:6902:e0a:b0:e4a:fc25:30ca with SMTP id
+ 3f1490d57ef6-e4afc2536a7mr4832939276.24.1734377004311; Mon, 16 Dec 2024
+ 11:23:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1y6vSznjbCwAvn1@pavilion.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20241216-of_core_fix-v2-0-e69b8f60da63@quicinc.com> <20241216-of_core_fix-v2-2-e69b8f60da63@quicinc.com>
+In-Reply-To: <20241216-of_core_fix-v2-2-e69b8f60da63@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 16 Dec 2024 13:23:13 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKa62-OGHYb9ZLf_s+iMoyAtdazFeMuoz_1Hvz7Qkzeiw@mail.gmail.com>
+Message-ID: <CAL_JsqKa62-OGHYb9ZLf_s+iMoyAtdazFeMuoz_1Hvz7Qkzeiw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] of: unittest: Add a test case for API of_find_node_opts_by_path()
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Saravana Kannan <saravanak@google.com>, Maxime Ripard <mripard@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Grant Likely <grant.likely@secretlab.ca>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/13, Frederic Weisbecker wrote:
+On Sun, Dec 15, 2024 at 6:41=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com> wrot=
+e:
 >
-> So which way do you prefer do solve the initial problem?
-
-Ah. please do what you think/feel is right.
-
-I can't suggest a better fix anyway.
-
-> > > > 			do {
-> > > > 	-			next = work->next;
-> > > > 	+			next = READ_ONCE(work->next);
-> > > > 				work->func(work);
-> > > > 				work = next;
-> > > > 				cond_resched();
-> > > >
-> > > > Perhaps it makes sense before the patch from Sebastian even if that patch
-> > > > removes this do/while loop ?
-> > >
-> > > Hmm, can work->next be modified concurrently here?
-> >
-> > work->func(work) can, say, do kfree(work) or do another task_work_add(X,
-> > work).
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 >
-> Right but then isn't it serialized program order, from the compiler point of view?
+> To test of_find_node_opts_by_path() take @path argument with pattern:
+>
+> "alias-name/node-name-1/.../node-name-N:options", for example:
+> "testcase-alias/phandle-tests/consumer-a:testaliasoption"
 
-Hmm, indeed, you are right. In this case the compiler can't assume it can
-"defer" work->next. Thanks for correcting me!
+The test passes with or without patch 1 applied.
 
-Oleg.
-
+Rob
 
