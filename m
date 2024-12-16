@@ -1,173 +1,155 @@
-Return-Path: <linux-kernel+bounces-447858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B719F3806
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:54:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D3A9F380C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B502163D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:54:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77C618832CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F8D206F22;
-	Mon, 16 Dec 2024 17:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6790206F0F;
+	Mon, 16 Dec 2024 17:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RfWMmxEC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jT4XH837"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4112E20627E;
-	Mon, 16 Dec 2024 17:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE542066E4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371645; cv=none; b=Zh13jR08wN+fKFkjMwZuogXV5MXB61qcUEo4lA8sUgOST/BK+r4jfQZEQQ3kzLqHziKK2HsNVFyI3k1tTu2KZMYrPgTM7YI45lEIwTdgIOncsTdAugJOjDNANB55DYQj1K7BEVtYtsdyg353R7PJ7qKaOjzMNjDdyp8usCaJ/DI=
+	t=1734371691; cv=none; b=JCfBUTq5C6lIVL3WMqR+HDCz8yGlS/sgv+PJC8S364/QEfDkFTTIyCMiBA2h3l6R8pWQ4Ag/PmzHqdWQq4b0i7UuIjIaat/HYb2E4aZfYs6HgvXNfqSQZ4NuESmgIFi+s9P6VzHCk0mfna2HtQq7Yxd3ezwvLeL1joqSdKzzZqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371645; c=relaxed/simple;
-	bh=hnKY5i2/zljIg4l97AhyOwu0FPsYJY76IY8x1olp0ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mcTCcJb7nZB9EEHhv3Qp/gmkTSWh+bmnktfi0zga1nSDUgHzMb43eyaMjrwZYjATiNC6JX2eXlysl64xNv0KeSGbMT7/iaSm4c+KBLsK/WPG1z8T0gUK7IJGGryzRYnFkoqqLCI3zwdQ/vrmsNhr+igKDqNtTM4UEx7Iw3JMp2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RfWMmxEC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG85ZLx027025;
-	Mon, 16 Dec 2024 17:53:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9U/ilX
-	h/eRoLsnqCHshZWK39IQwc60QO0ixa1oM/5QI=; b=RfWMmxEC0RengRjOBhBROo
-	OAORxdP+bf3+X01t/t/taikTSx7WvA8uuooEP4z9/UpofmssBY1dbhb9CAyWF28B
-	zr3Mx6gfY7e1JI2F1lMjSlqrINo9FwTW3/F5LV2lR0D1iR4DRZxE3fTvDBgn+LYU
-	1IFvbYw84juKAhuUj1xyNpfxs8Q/eauRlIn12MMMIkju+bNKiGDJfDMKeTwegcaH
-	AXpe7VLXb3B0amsAaBtEUwJDvCiuMXdDD/jjxv1AqQVixl0PSZva+WDtjof3Mbdi
-	Ay3TJvS8SgMsyF9PzN/ggm7oThp9Z0FUXBi1CSU66hHG6KYo2UEo0gZkB3UWYAfA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2astr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 17:53:30 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BGHAPDH027554;
-	Mon, 16 Dec 2024 17:53:29 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2astm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 17:53:29 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGHCfSo014344;
-	Mon, 16 Dec 2024 17:53:28 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqxy62j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 17:53:28 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGHrSKK16450262
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 17:53:28 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7CA2F58054;
-	Mon, 16 Dec 2024 17:53:28 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5892C5805C;
-	Mon, 16 Dec 2024 17:53:27 +0000 (GMT)
-Received: from [9.24.12.86] (unknown [9.24.12.86])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Dec 2024 17:53:27 +0000 (GMT)
-Message-ID: <b5f5635a-a807-42ea-a81f-22b80fe4eda0@linux.ibm.com>
-Date: Mon, 16 Dec 2024 11:53:27 -0600
+	s=arc-20240116; t=1734371691; c=relaxed/simple;
+	bh=t4FYe7Gm5xtC06oaiScu5p5Cbwegv+blsaKqUEyBo0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VOhcSAuFgKkb582LV9FywwabgSq7fOd30GCwGE36unYC/8QKUZYkf1b0gAfOwvrX/QTKGrVDhev9tfx/XwCUF97PPzIKyBDfkDj8jYPPi9lpVLylJdnEk8YmuB+k+d3le9yo1rzElgQmcFBeS1muY25HesuYvr6CTshSJR7C5Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jT4XH837; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso4281479f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:54:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734371688; x=1734976488; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G3AbEFKqDmJ/1viuki0ESyzjIWrD2kKZVZPFr7133W8=;
+        b=jT4XH837vdHMX7hXcbldsGvaElnHnwASUn7SxdwbUt51LMc+tq4LD/xC3m9cI2PapC
+         EzX+LTL3NfG/HsWV4FEpBWlF8I4ZW/s9LLppuUsmBGoxjsIuuw4urlW5CVqmSh0zOsQh
+         7/eRDGrrd1HxrqVYtP3QoEtteybVy65rfmXHLGIvCQ1wLuQ2KFpXue18zDXMBKrLareN
+         PbBkMxCW5N0yFP+a1b4/e6OC6elGIkxe2Ih8JwwTrkIzIoQ/FWJYkVz0gtr0NS5Zv01d
+         YZAm1zK9vIrRGC4SBzbYrXECFLRcSfppWTub+XHihodcRZAApeC68nIkJuGicwCn2yPl
+         NGFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734371688; x=1734976488;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G3AbEFKqDmJ/1viuki0ESyzjIWrD2kKZVZPFr7133W8=;
+        b=tfDnsJyoS42j4d5xc3RxNmh/9Wrw/LAgrShaQiL/MsR1ytHLPv+J2cQlBAEkTXZoDz
+         OCDEHqIg6NrbttY8dUy1XcTug1etAOlFxzDitQEtbHXBK51dfOhhPngsoh76Zggahj/z
+         vcFl6vMe8KgS3dpIzbjwVPeZFI4SCnY07d/ldscJBnbXn0pIhe1YR2JWKzAb1oS+lIx+
+         7HAev6yalscnaz4ZVp5HLfIEasQny/DJAO2niyb75OfTCudmeK+cDpmm78e6fSO1Jt/s
+         yun0DQbjm9zu5ljaWmm5tYVSCLg0miLJr7a7P1c9a50uPM4rrDDYTMHiP3nTdhdZgtZX
+         kYkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcec36LVv1SwAD5xtTODYyAqJElevSvW2pmYdkBO2JB697lorADOM2kS8hzCRV6JehPov7R6QPrQYqpjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLUwwNjqiFIW179cFyjRWdzxhxSVhREfnEbryvVTVyJjBeoveN
+	PR9j81qapsbTUUGFXPv2esmWrTlAeBMpKyewFMEN4ngHMcq3gziFsBjAkL/kfA==
+X-Gm-Gg: ASbGncunigb58zPtmiQHyJgUQoBABrFeomJHp5Kk5AUTeqJqh0pHS7aK5GHybQQa/Sh
+	EsqZCScywIaozLFETlFhpXfo+4WKIXdqueSTGI5/CO6d/vATTKz5IpXfKAHf/XKdXrlGgAstdJp
+	fWvEJ49eGInc47GyxlrnWg1Hy9WHQYQQ+htkq4YONW8cGizWh5wKwFM4Ll5omB5GdY7qgKYcQJX
+	tj82xlTr0vLCpk/pgHy0CMlgAviMgCEnk8tAeDDkDCbEYPmtsIH5HyyE3JfNgVM+pzcmi+Th4OG
+	NTkN3Z67svoLoyH4PXmY4Q==
+X-Google-Smtp-Source: AGHT+IGlns8j8gYRX+8al9zuzgAiKn/tbr/9/wdBkt9kQs6HtCRG/bDMRMDr27QgDSp6SOTOy/GBrA==
+X-Received: by 2002:a05:6000:70d:b0:385:ded5:86ee with SMTP id ffacd0b85a97d-3888e0c0515mr12706974f8f.57.1734371687837;
+        Mon, 16 Dec 2024 09:54:47 -0800 (PST)
+Received: from google.com (202.88.205.35.bc.googleusercontent.com. [35.205.88.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80121d4sm8996562f8f.2.2024.12.16.09.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 09:54:47 -0800 (PST)
+Date: Mon, 16 Dec 2024 17:54:43 +0000
+From: Vincent Donnefort <vdonnefort@google.com>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, david@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ring-buffer: fix array bounds checking
+Message-ID: <Z2BpY5LimG7E3LpC@google.com>
+References: <20241216164931.57323-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] hwmon: pmbus-core: Add label for fan and temp
-To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
-        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
-        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
-        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
-        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
-        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
-References: <20241212214927.3586509-1-ninad@linux.ibm.com>
- <20241212214927.3586509-2-ninad@linux.ibm.com>
- <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
- <c7717f89-65cc-4668-a3e0-ee042cdcd426@linux.ibm.com>
- <2713e85d-f88a-49d6-8221-151e8631758c@roeck-us.net>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <2713e85d-f88a-49d6-8221-151e8631758c@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vyxuOXaWbKmODO8fmrlBccyobF9kgdWW
-X-Proofpoint-GUID: zeKm9EyZZPe56r_CuCPOaDwnvBKsFpAv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- mlxlogscore=689 priorityscore=1501 malwarescore=0 impostorscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160146
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216164931.57323-1-aha310510@gmail.com>
 
-Hi Guenter,
+On Tue, Dec 17, 2024 at 01:49:30AM +0900, Jeongjun Park wrote:
+> If there is a case where the variable s is greater than or equal to nr_subbufs
+> before entering the loop, oob read or use-after-free will occur. This problem
+> occurs because the variable s is used as an index to dereference the
+> struct page before the variable value range check. This logic prevents the
+> wrong address value from being copied to the pages array through the subsequent
+> range check, but oob read still occurs, so the code needs to be modified.
 
+Hi Jeongjun, thanks for the patch.
 
-On 12/13/24 11:08, Guenter Roeck wrote:
-> On 12/13/24 08:12, Ninad Palsule wrote:
->> Hello Guenter,
->>
->> On 12/12/24 16:06, Guenter Roeck wrote:
->>> On 12/12/24 13:49, Ninad Palsule wrote:
->>>> Adding label files for fan and temperature sensors in the power 
->>>> supply.
->>>> The openbmc application dbus-sensor(psusensor) requires those files to
->>>> consfigure those sensors.
->>>> Note that prefix for temp label is temp[A..C] used instead of 
->>>> temp[1..3]
->>>> as dbus-sensor(psusensor) application calculate index based on last
->>>> digit in the name so we do not want to make index double digit after
->>>> appending page index.
->>>>
->>>> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
->>>
->>> We are not going to fix userspace problems in the kernel.
->>>
->>> Guenter
->>>
->>
->> Thanks for the quick review.
->>
->> Sorry I am not clear on this. I feel that it is better to support 
->> labels for temperature
->>
->> sensors and fans like other. Are you saying we should not support 
->> these labels or
->>
->> I need update in the patch to support them better?
->>
->
-> There should be no such labels. Labels are supposed to have specific 
-> meanings,
-> such as "this is the CPU temperature sensor", not vague meanings such 
-> as "tempA".
->
-> Guenter
+Did you find a reproducer for that problem or has it just been found by code
+inspection?
 
-Thanks for the quick response. I will remove these changes for now and 
-will talk to you later about
+As discussed here [1], s >= nr_subbufs should really never happen as we already
+cap nr_pages. 
 
-better option.
+[1] https://lore.kernel.org/all/78e20e98-bdfc-4d7b-a59c-988b81fcc58b@redhat.com/, 
 
-Thanks & Regards,
+> 
+> Fixes: 117c39200d9d ("ring-buffer: Introducing ring-buffer mapping functions")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  kernel/trace/ring_buffer.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 7e257e855dd1..83da74bf7bd6 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -6994,9 +6994,9 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
+>  {
+>  	unsigned long nr_subbufs, nr_pages, nr_vma_pages, pgoff = vma->vm_pgoff;
+>  	unsigned int subbuf_pages, subbuf_order;
+> -	struct page **pages;
+> +	struct page **pages, *page;
+>  	int p = 0, s = 0;
+> -	int err;
+> +	int err, off;
+>  
+>  	/* Refuse MP_PRIVATE or writable mappings */
+>  	if (vma->vm_flags & VM_WRITE || vma->vm_flags & VM_EXEC ||
+> @@ -7055,14 +7055,14 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
+>  	}
+>  
+>  	while (p < nr_pages) {
+> -		struct page *page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
+> -		int off = 0;
+> -
 
-Ninad Palsule
+I believe we can keep the struct page and off declaration within the while loop.
 
+>  		if (WARN_ON_ONCE(s >= nr_subbufs)) {
+>  			err = -EINVAL;
+>  			goto out;
+>  		}
+>  
+> +		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
+> +		off = 0;
+> +
+>  		for (; off < (1 << (subbuf_order)); off++, page++) {
+>  			if (p >= nr_pages)
+>  				break;
+> --
 
