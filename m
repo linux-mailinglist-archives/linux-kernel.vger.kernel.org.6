@@ -1,180 +1,148 @@
-Return-Path: <linux-kernel+bounces-447304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110829F3048
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:15:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6113E9F304E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F651633CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:15:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7857A1F8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E12C204592;
-	Mon, 16 Dec 2024 12:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A6204597;
+	Mon, 16 Dec 2024 12:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+anelpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HsHzlV26"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E170C34CC4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D512634CC4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351346; cv=none; b=GX8srq9yavpo1l+aLsKDGPrDHjlz07xOcgWjZs6H7i1WHY6rXsEmRdyA7j2c91h/5L3z7ftRLKmKD4xO457JamQretYW3iFU4UyH89TVqa3BjWaV3+zHGT/ZDgZ2uhGPEzc8SSkegBhyfbN7ax+HuUDkIcIdyCpBdHowZT8XGiQ=
+	t=1734351431; cv=none; b=r6oFrBuMA+f7ETzfT1Iv1Ga7/CqOZoOfRbTXn6PF7Mukzf3nozvE27/N4WhWPM/1A6xP2CZEW5YdBWGnv1e2EhyvOdhSMFq+3YgRId0nfovjc1VPaF4pPFVF8dAN/4FnFPu0XmQK8B726S4BxQWaibnxj89qmkBfUjJjmSlEjeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351346; c=relaxed/simple;
-	bh=6LtgPO/DFAIJLqM7AGygH206s98mwXlC7QCJH2Bn+sM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WEGMhx03786vV+Ox6vbwRO/NC0bqbuWR8ivjsmFSdJVMyxhkNDWxEKhXwS3Mjh66jMh21FPlg5RV1YIq95bRzta0DMsoxy4nMnVT1gbjS++y8W0u19cJgpdY8KMjLVVrNXqxWsEuUY4DGTWeSpD6kUuEWhqvLj6uqlBM78sGlt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+anelpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C802FC4CED3;
-	Mon, 16 Dec 2024 12:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734351345;
-	bh=6LtgPO/DFAIJLqM7AGygH206s98mwXlC7QCJH2Bn+sM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=F+anelpaBKzsb7vsOAkla1WPa0/LMAfm+RHKoROj9UzBnkz5ZigU14O2TIdv4vS0h
-	 hdb+IyNYvHK3u9WmC2vkeOZmcB/ILMndEjDCTSt65iWM+MUbcBHeTQZDuQ6ZdR+nH9
-	 /oxT78qw8qRvJZMKqHov1uHl8iN5S1Q5kqhqSeekZWmBBQIF8fPW7/l1qoaG2JsQDG
-	 CvXuLgszwzzzQj4+iohsME6cKaaiO+Q7Etfs+/aXLy43PfXGSeSnaCzR3S7SEbGq1S
-	 IEwuXyuDy2xBHh28RqDrx+NX75QZzjDhKTnqtt1AhWLKJ5haoI6f/aH0gnOyBNJdXn
-	 BZtYf5Z4CUDnQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Simon Trimmer <simont@opensource.cirrus.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] firmware: cs_dsp: avoid large local variables
-Date: Mon, 16 Dec 2024 13:15:35 +0100
-Message-Id: <20241216121541.3455880-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734351431; c=relaxed/simple;
+	bh=BFU17b0C79hkAAo1gImoylZxo7hMJ5jrzR1P/pgMkn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DztPswOfS2YhOnVQxQfEaDvRBMmE/TY8zKf9kGxnBfac7jHhcvcpPuXRz6LgDXFMUfz6J4HH/Dl0/JNUZDgmV2BOVKCozrI4TW3p48F6l3KTGr4azXR2oWEeE/LNsxw7Uppfwp5TRdrYdldQLHSRVNXJMsKUxTDAwFm2FJlK97o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HsHzlV26; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2A96813C;
+	Mon, 16 Dec 2024 13:16:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734351391;
+	bh=BFU17b0C79hkAAo1gImoylZxo7hMJ5jrzR1P/pgMkn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HsHzlV26zyo+ZkP3ISboWUfa1BgnsclRurITZ3CISW1hDATwrRAJEcGCYe+m7fsnL
+	 QySwqO79dxIj5xSKSdURPnblPGLhsV8JOQ2ug3n6UkQep7wi4M4vygMt2AsfylE3l6
+	 Ns/nx+7hPo7oS+PQqR1NUZnkjEHz+Pi4+Fnm6+tg=
+Date: Mon, 16 Dec 2024 14:16:51 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <20241216121651.GP32204@pendragon.ideasonboard.com>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <Z2ASy3TQ4suupdvd@cassiopeiae>
+ <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
+> > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> > > The nouveau driver is the only user of the drm_encoder_slave interface.
+> > > Demote it from KMS helpers module to the nouveau driver itself, moving
+> > > corresponding I2C encoders to be handled by nouveau driver too.
+> > 
+> > I understand nouveau is the only driver using this interface (and the
+> > corresponding i2c encoders).
+> > 
+> > However, I'm not quite seeing the advantage of folding the interface (including
+> > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+> > the subsystem in any way / does prevent the subsystem from moving forward.
+> > 
+> > Can't we just keep it as it is?
+> 
+> Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
+> take (a little bit) of space on every system. The nouveau situation
+> isn't unique, other drivers (i915, ast) also incorporate the code for
+> I2C backends. For the further discussion see the thread starting from
+> Laurent's email ([1]).
+> 
+> [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
 
-Having 1280 bytes of local variables on the stack exceeds the limit
-on 32-bit architectures:
+It's also a question of whether maintenance of this code based used by
+the nouveau driver only should be the responsibility of the drm-misc
+community or the nouveau driver maintainers.
 
-drivers/firmware/cirrus/test/cs_dsp_test_bin.c: In function 'bin_patch_mixed_packed_unpacked_random':
-drivers/firmware/cirrus/test/cs_dsp_test_bin.c:2097:1: error: the frame size of 1784 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+> > > Ideally those two drivers should be converted to the drm_bridge
+> > > interface, but it's unclear if it's worth spending time on that.
+> > 
+> > Probably not.
+> > 
+> > > 
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > > Changes in v2:
+> > > - Renamed symbols in defconfig (Laurent)
+> > > - Added missing Kbuild file (Laurent, LKP)
+> > > - Renamed guarding defines in include files.
+> > > - Dropped mentions of two removed functions.
+> > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
+> > > 
+> > > ---
+> > > Dmitry Baryshkov (2):
+> > >       drm/nouveau: incorporate I2C TV encoder drivers
+> > >       drm/nouveau: vendor in drm_encoder_slave API
+> > > 
+> > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
+> > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+> > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+> > >  drivers/gpu/drm/Makefile                           |   1 -
+> > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+> > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
+> > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+> > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+> > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+> > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+> > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+> > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+> > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+> > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+> > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+> > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+> > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+> > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+> > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+> > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+> > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+> > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+> > >  22 files changed, 172 insertions(+), 232 deletions(-)
+> > > ---
+> > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+> > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
 
-Use dynamic allocation for the largest two here.
-
-Fixes: dd0b6b1f29b9 ("firmware: cs_dsp: Add KUnit testing of bin file download")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2 changes:
- - use kunit_kmalloc() as suggested by Richard Fitzgerald
- - use KUNIT_ASSERT_NOT_NULL
----
- .../firmware/cirrus/test/cs_dsp_test_bin.c    | 33 +++++++++++--------
- 1 file changed, 19 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
-index 689190453307..bbff6caee285 100644
---- a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
-+++ b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
-@@ -1978,8 +1978,10 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 		 4, 51, 76, 72, 16,  6, 39, 62, 15, 41, 28, 73, 53, 40, 45, 54,
- 		14, 55, 46, 66, 64, 59, 23,  9, 67, 47, 19, 71, 35, 18, 42,  1,
- 	};
--	u32 packed_payload[80][3];
--	u32 unpacked_payload[80];
-+	struct {
-+		u32 packed[80][3];
-+		u32 unpacked[80];
-+	} *payload;
- 	u32 readback[3];
- 	unsigned int alg_base_words, patch_pos_words;
- 	unsigned int alg_base_in_packed_regs, patch_pos_in_packed_regs;
-@@ -1988,8 +1990,11 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 	struct firmware *fw;
- 	int i;
- 
--	get_random_bytes(packed_payload, sizeof(packed_payload));
--	get_random_bytes(unpacked_payload, sizeof(unpacked_payload));
-+	payload = kunit_kmalloc(test, sizeof(*payload), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, payload);
-+
-+	get_random_bytes(payload->packed, sizeof(payload->packed));
-+	get_random_bytes(payload->unpacked, sizeof(payload->unpacked));
- 
- 	/* Create a patch entry for every offset in offset_words[] */
- 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
-@@ -2010,8 +2015,8 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 						  bin_test_mock_algs[0].ver,
- 						  param->mem_type,
- 						  payload_offset,
--						  packed_payload[i],
--						  sizeof(packed_payload[i]));
-+						  payload->packed[i],
-+						  sizeof(payload->packed[i]));
- 		} else {
- 			payload_offset = offset_words[i] * 4;
- 			cs_dsp_mock_bin_add_patch(priv->local->bin_builder,
-@@ -2019,8 +2024,8 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 						  bin_test_mock_algs[0].ver,
- 						  unpacked_mem_type,
- 						  payload_offset,
--						  &unpacked_payload[i],
--						  sizeof(unpacked_payload[i]));
-+						  &payload->unpacked[i],
-+						  sizeof(payload->unpacked[i]));
- 		}
- 	}
- 
-@@ -2033,7 +2038,7 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 	/*
- 	 * Readback the packed registers that should have been written.
- 	 * Place the values into the expected location in readback[] so
--	 * that the content of readback[] should match packed_payload[]
-+	 * that the content of readback[] should match payload->packed[]
- 	 */
- 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
- 		alg_base_words = cs_dsp_mock_xm_header_get_alg_base_in_words(priv,
-@@ -2055,16 +2060,16 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 				regmap_raw_read(priv->dsp->regmap, reg_addr, readback,
- 						sizeof(readback)),
- 				0);
--		KUNIT_EXPECT_MEMEQ(test, readback, packed_payload[i], sizeof(packed_payload[i]));
-+		KUNIT_EXPECT_MEMEQ(test, readback, payload->packed[i], sizeof(payload->packed[i]));
- 
- 		/* Drop expected writes from the cache */
--		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(packed_payload[i]));
-+		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(payload->packed[i]));
- 	}
- 
- 	/*
- 	 * Readback the unpacked registers that should have been written.
- 	 * Place the values into the expected location in readback[] so
--	 * that the content of readback[] should match unpacked_payload[]
-+	 * that the content of readback[] should match payload->unpacked[]
- 	 */
- 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
- 		alg_base_words = cs_dsp_mock_xm_header_get_alg_base_in_words(priv,
-@@ -2085,10 +2090,10 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
- 				regmap_raw_read(priv->dsp->regmap, reg_addr,
- 						&readback[0], sizeof(readback[0])),
- 				0);
--		KUNIT_EXPECT_EQ(test, readback[0], unpacked_payload[i]);
-+		KUNIT_EXPECT_EQ(test, readback[0], payload->unpacked[i]);
- 
- 		/* Drop expected writes from the cache */
--		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(unpacked_payload[i]));
-+		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(payload->unpacked[i]));
- 	}
- 
- 	/* Drop expected writes and the cache should then be clean */
 -- 
-2.39.5
+Regards,
 
+Laurent Pinchart
 
