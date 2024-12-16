@@ -1,226 +1,108 @@
-Return-Path: <linux-kernel+bounces-447364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAB99F313C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:08:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C909F3123
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4506A1615FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:08:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A2D16416A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602352063CC;
-	Mon, 16 Dec 2024 13:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24197204C0C;
+	Mon, 16 Dec 2024 13:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dN4l+szc"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="dDLeIh0i"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C6148FF2;
-	Mon, 16 Dec 2024 13:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA602046B2
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354409; cv=none; b=hX9UQkIGoK1oGj3ohhfqGfLb/lp53n2zevb5NLu62Ys8/G9ksiK/64M2HHpZ4jvKPk22x3wTaPdqbilxhHyV+mGzqDVIJNnE8HrwysU/I3oIMIMJwiBLrBVlnC1gNOz9eNczSqSdBMx+WAG/Kf6JGliA6c6qZTXZBl2DfI4gJDA=
+	t=1734354381; cv=none; b=rnoXM5dhSAb+Dm8fEP/mUxwpSfMG8xW/tiv73+O69y+BW4tKfBi0zhiDvym5DVv8SYMZ/w6kpfdg9+ReOqeC8sUbblr3eWG1SDR0vIwztuPqvft2+4hkcIEk9Fjepfp9LxnLG4LflIqou1ZyIza3avBV2CKQzwtEH0UFCRnDkjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354409; c=relaxed/simple;
-	bh=kEaMspLIRrrFhRiFyKDmcVMmgoYWb1T3m2H/SlJmZj0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQeP8PMM7QDI1tanWg7pyygJIFiZhUiPKp+aIz2GZUqDu8EYLGEtg+KOTyqR2IS5+ohoRGym8mCfHTITSpkIjcINhsPuupbooQVGeWNKy8jRCiSDNNpofXA07q5QQZsGE/Sh9XJztINb17Xz5S8c4wp2n7hiAKOhboIbAFdqsKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dN4l+szc; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725ee27e905so5243742b3a.2;
-        Mon, 16 Dec 2024 05:06:48 -0800 (PST)
+	s=arc-20240116; t=1734354381; c=relaxed/simple;
+	bh=wfiIlfNISL7LxmEo4PkSBvNVf6zI03QBaUXQpOsHzBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tG6lROL0hrMDnE1skMY3ELFUcMopj4vPGSsmPu8J5WGs/3dh5oyPFgMhCy0rbTLKMKTvC2vkCM5f2qmJ3qtCzwIpEWtuR1pYBDNkvjm857fM5zWE/MQVpWGFL+Ta4kpimC9ijSVOd7WK+FTl66yDTIb9OS3/tFmUM2W5HLz+j+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=dDLeIh0i; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46785fbb949so46165331cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:06:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734354407; x=1734959207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r+JzeXaCBZ8Q0UvE6DTJsJh3vIeyP4Z/j9o/+bvB6LY=;
-        b=dN4l+szcfj5/lEbT91nzKGR1FeHCIPPHeyO5ZxHCyCZpUP1IQve+rBcaIkOzaPNWBS
-         H7+5KCfvUcNjGEJwcL+iFKRLL4uTTItulgVKE1Z6pZOkhOoYK9DsxBZyy+CmYao/Fhwb
-         rwQ/5dJyGIl8L73oY9hPedzFL88jvKSuONjvMLoIco2w+aFkqCC/0PxSt5eQCcipAfQZ
-         nf+YEW8smOiBuz3oZOntaC5ofBzuIyiKJyLl35+P4iwuigcP/Sy0wjJNB9LzEczTt2Lt
-         cCGT8MpKGN2Gm5qtLoRupE2G3pNx6RZEOQGFYL4eKcARSJldZYz5yQj0uYQ3LRAfCn52
-         /lww==
+        d=fooishbar.org; s=google; t=1734354379; x=1734959179; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfiIlfNISL7LxmEo4PkSBvNVf6zI03QBaUXQpOsHzBk=;
+        b=dDLeIh0i8JWrVenF79eFfBdZEZakYyAm/YgV9LMHPHvl/j4WnYi+LuyxVDStdySviR
+         NmQaucMdXd2+YuKjynVEgoqiwTBDV8YnJKkcqezRLdVbhJrR1IAltaj1YGM8l1xejWkt
+         X8SpYc+U7vnIe/9FoConM9rXc4zDExs9EyMlmN9/pwiO7lEdGwXuVKtMxUAB8v2cr1qZ
+         3YEJVeWhJbFj7p5Tv8mY/Zv+7nw5lO0QDoCnZuHbDRR6SWX483mYBxyNGeyqHhhjkjEe
+         VdlfkX0yh69VXbiyD94pmoR/Z3AttfazI3+Qvisq/XJZaCwUehjOG0SdXj1pQXpCbIXn
+         t8EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734354407; x=1734959207;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r+JzeXaCBZ8Q0UvE6DTJsJh3vIeyP4Z/j9o/+bvB6LY=;
-        b=tczU0P6coS3RmgE/jLnsaImbdoxncrZaGgdusa6nS0tK85HXAXp8FtKkDTrXRQEwkO
-         fi5uZSa/RikRLTXqh53j+HUis2XdvsXk6u+mTrdG0aVjv65dGWqfiRU3y6oh5sB0yVz7
-         1u7P/xgYg5ge3lrqZvsJJpbIzTEUy2tuUeX94hAmZ/yipKrBlFzBDk3/r2HtdgOEHugM
-         fGOi0uxfed07YFkbh22Qe7m9ON3sn7akIhKYU3SWqZgTjLTEB2jGrcBMm2dv/DBXzS0h
-         pIhi9SXtitEmtVaVXSjTc36E8wr0CR/UMzzbwRoUuw/v9GR7QMOxwP9FWvkbym1y6PJJ
-         qC8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVy0j+cMi6/XZGHVqjtk1igBSoYU5rUMDkUainqkfPq1HkjeOekjNAnOcV0c1QIIVx62V+bJbY+Tkx+UJyv@vger.kernel.org, AJvYcCXMcbNkgQdiqW66nzo7Nw0/+BZv0gZKu3QaMQRSA2qP4lqAfyXUMI7r0kwGz7Xg9EjBFF1M4zJ0BW/6@vger.kernel.org, AJvYcCXiY8jHq8MxwyrTjp/zH7GtAMoApU2jfcZTy6sXR1F4vqO5Gm0W9ABQH/jfXn4f0Nn60EghkzguLHEm6yp+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6g8ttZM2/CWgTHbnO7y8PIZ9cHH0UNKbcSUHHwtrkfqq8w2Gr
-	KWklG0IihjSGtWdwSRlXhu+kUOk4alSvWTEubOj3NYWUQ6+BXhOI
-X-Gm-Gg: ASbGncv5hPVIWtv1Hml3skX0nhH/oVsE4EWnrY2980l6554GThoiQM8vSECTK1LrZ9N
-	PbWrItkzwtH3bc5Bz42ZTDG67Nm61TsxltlEZVjFC5iG+SuQRXWiLtz8DiPOkefoIvF4bCu+Eol
-	x0QvYvxhp9noEwyuE09e0Av8jG9mksyTkVtN1x0z6C86yEUtEV+X8drbYlllmefeibEV8v8a+hT
-	BXZUIaARQl3F5yheO/cRAdBtLsuWrxXrpZGqLVeBCBz4LouA30sj3HFTZA+ke+9XP3km2titcOP
-	BAXBoWUZzysdaBM=
-X-Google-Smtp-Source: AGHT+IH0es7NhMLXx74mVVyAti+SehWLoqo9cBImyHUIQ5+dUc6ZqcHnuPAZNQ0Njgwj+5RsawsQug==
-X-Received: by 2002:a05:6a20:db0a:b0:1e1:a885:3e21 with SMTP id adf61e73a8af0-1e1dfc18486mr18496775637.7.1734354407304;
-        Mon, 16 Dec 2024 05:06:47 -0800 (PST)
-Received: from localhost.localdomain ([180.101.244.64])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5ad0sm4651803b3a.56.2024.12.16.05.06.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 05:06:46 -0800 (PST)
-From: Tianxiang Peng <luminosity1999@gmail.com>
-X-Google-Original-From: Tianxiang Peng <txpeng@tencent.com>
-To: chandan.babu@oracle.com,
-	djwong@kernel.org,
-	p.raghav@samsung.com,
-	mcgrof@kernel.org,
-	brauner@kernel.org,
-	dchinner@redhat.com
-Cc: Tianxiang Peng <txpeng@tencent.com>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	allexjlzheng@tencent.com,
-	flyingpeng@tencent.com
-Subject: [PATCH 2/2] mkfs: make cluster size tunnable when sparse alloc enabled
-Date: Mon, 16 Dec 2024 21:05:49 +0800
-Message-ID: <20241216130551.811305-3-txpeng@tencent.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241216130551.811305-1-txpeng@tencent.com>
-References: <20241216130551.811305-1-txpeng@tencent.com>
+        d=1e100.net; s=20230601; t=1734354379; x=1734959179;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wfiIlfNISL7LxmEo4PkSBvNVf6zI03QBaUXQpOsHzBk=;
+        b=WhoRSs/oJ95xC3Ros7LH+41kj3P2FF6CvLq0faTAm2wFNtAvFlud9C+Ch58NDc3XAo
+         lvui1gdGj2rSBClBgTfcJV3Ceyv5h0E42R7W83NUIRK4ERnyhAMtY8gKGAxaDRjw5i42
+         Ip5mOusHk1AvNON69dqYfBOvekBEnv5T3Qgg12wVnVjGbWDjx54F/m2RVW1E+TXGS72Z
+         Pou/I0S2ePctqAx4eE452t583pXshZyKDom67WoILD8LyYedYhhplFy91SHvbwj8Wesk
+         pbxFrPVUTL9orzE/KTi8XtCp9ZMg14KLN7Jx3CKO7BenwynYXiyj/smYjHM8gbxwFQDz
+         rxwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZe2x7Cka4q1Nz488ez1+JDkMkBtIFI3zOs1Dos5WVstpUgAAc/VYJEks48MfAiN3XGyLt35V3FOVHSHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU4mkWQsgWmK/DYyd/BrApEaQdBnBnTc+FB1kSXDKvwVJhRbpn
+	Zl/cG7qsAHFLE+Xl1+ckes0MKd5PSMRf8z1z83DPDoXXb+T4vC4J9dw/aN0YPn9xsZmqRsW1WOW
+	8hd/1Pf3vh50lsNgVDGQsR2kNU7WklVVmlxsMOA==
+X-Gm-Gg: ASbGnctSmRF8m4h+p3GtBb9g87hjUTXILTRgHz1He5p/UIE8xyUxRDYhI+HfMZP5RQE
+	0NDDn0tE4mmJ4I9KP10SvKIpl8m0JrcACMxwU
+X-Google-Smtp-Source: AGHT+IE9Cnqk1RFA303SJ/sEM1uxY2IdUkOrI2lN1tMljvUXQswUAevS43+NhsG6LahpLoL3T6y4Oj0/rJaBAzD6y9Y=
+X-Received: by 2002:a05:622a:454:b0:467:45b7:c498 with SMTP id
+ d75a77b69052e-467a577b4c5mr198761341cf.20.1734354378718; Mon, 16 Dec 2024
+ 05:06:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241214081719.3330518-1-andyshrk@163.com> <20241214081719.3330518-9-andyshrk@163.com>
+In-Reply-To: <20241214081719.3330518-9-andyshrk@163.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Mon, 16 Dec 2024 13:06:07 +0000
+Message-ID: <CAPj87rOjqZdyht2y8MK7gVyk_eqEzk1Sy0DcxFtQRuhrHQ_oxA@mail.gmail.com>
+Subject: Re: [PATCH v6 08/16] drm/rockchip: vop2: Support 32x8 superblock afbc
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, hjc@rock-chips.com, krzk+dt@kernel.org, 
+	s.hauer@pengutronix.de, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	derek.foreman@collabora.com, detlev.casanova@collabora.com, 
+	Andy Yan <andy.yan@rock-chips.com>, Michael Riesch <michael.riesch@wolfvision.net>
+Content-Type: text/plain; charset="UTF-8"
 
-Add clustersize parameter for -i(inode size) switch. When sparse
-inode allocation is enabled, use clustersize from cmdline if it's
-provided and fallback to XFS_INODE_BIG_CLUSTER_SIZE if not.
+Hi Andy,
 
-Signed-off-by: Tianxiang Peng <txpeng@tencent.com>
-Reviewed-by: Jinliang Zheng <allexjlzheng@tencent.com>
-Reviewed-by: Hao Peng <flyingpeng@tencent.com>
----
- mkfs/xfs_mkfs.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+On Sat, 14 Dec 2024 at 08:18, Andy Yan <andyshrk@163.com> wrote:
+> This is the only afbc format supported by the upcoming
+> VOP for rk3576.
+>
+> Add support for it.
 
-diff --git a/mkfs/xfs_mkfs.c b/mkfs/xfs_mkfs.c
-index bbd0dbb6..b8a597d4 100644
---- a/mkfs/xfs_mkfs.c
-+++ b/mkfs/xfs_mkfs.c
-@@ -92,6 +92,7 @@ enum {
- 	I_SPINODES,
- 	I_NREXT64,
- 	I_EXCHANGE,
-+	I_CLUSTERSIZE,
- 	I_MAX_OPTS,
- };
- 
-@@ -474,6 +475,7 @@ static struct opt_params iopts = {
- 		[I_SPINODES] = "sparse",
- 		[I_NREXT64] = "nrext64",
- 		[I_EXCHANGE] = "exchange",
-+		[I_CLUSTERSIZE] = "clustersize",
- 		[I_MAX_OPTS] = NULL,
- 	},
- 	.subopt_params = {
-@@ -535,6 +537,13 @@ static struct opt_params iopts = {
- 		  .maxval = 1,
- 		  .defaultval = 1,
- 		},
-+		{ .index = I_CLUSTERSIZE,
-+		  .conflicts = { { NULL, LAST_CONFLICT } },
-+		  .is_power_2 = true,
-+		  .minval = XFS_DINODE_MIN_SIZE,
-+		  .maxval = XFS_DINODE_MIN_SIZE << XFS_INODES_PER_CHUNK_LOG,
-+		  .defaultval = XFS_INODE_BIG_CLUSTER_SIZE,
-+		},
- 	},
- };
- 
-@@ -956,6 +965,7 @@ struct cli_params {
- 	int	inopblock;
- 	int	imaxpct;
- 	int	lsectorsize;
-+	int	clustersize;
- 	uuid_t	uuid;
- 
- 	/* feature flags that are set */
-@@ -993,6 +1003,7 @@ struct mkfs_params {
- 	int		inodesize;
- 	int		inodelog;
- 	int		inopblock;
-+	int		clustersize;
- 
- 	uint64_t	dblocks;
- 	uint64_t	logblocks;
-@@ -1055,7 +1066,7 @@ usage( void )
- /* force overwrite */	[-f]\n\
- /* inode size */	[-i perblock=n|size=num,maxpct=n,attr=0|1|2,\n\
- 			    projid32bit=0|1,sparse=0|1,nrext64=0|1,\n\
--			    exchange=0|1]\n\
-+			    exchange=0|1,clustersize=num]\n\
- /* no discard */	[-K]\n\
- /* log subvol */	[-l agnum=n,internal,size=num,logdev=xxx,version=n\n\
- 			    sunit=value|su=num,sectsize=num,lazy-count=0|1,\n\
-@@ -1756,6 +1767,9 @@ inode_opts_parser(
- 	case I_EXCHANGE:
- 		cli->sb_feat.exchrange = getnum(value, opts, subopt);
- 		break;
-+	case I_CLUSTERSIZE:
-+		cli->clustersize = getnum(value, opts, subopt);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -2594,6 +2608,17 @@ validate_inodesize(
- 	}
- }
- 
-+static void
-+validate_clustersize(
-+	struct mkfs_params	*cfg,
-+	struct cli_params	*cli)
-+{
-+	if (cli->sb_feat.spinodes && cli->clustersize)
-+		cfg->clustersize = cli->clustersize;
-+	else
-+		cfg->clustersize = XFS_INODE_BIG_CLUSTER_SIZE;
-+}
-+
- static xfs_rfsblock_t
- calc_dev_size(
- 	char			*size,
-@@ -3517,12 +3542,10 @@ sb_set_features(
- 		sbp->sb_versionnum |= XFS_SB_VERSION_4;
- 
- 	if (fp->inode_align) {
--		int     cluster_size = XFS_INODE_BIG_CLUSTER_SIZE;
--
- 		sbp->sb_versionnum |= XFS_SB_VERSION_ALIGNBIT;
- 		if (cfg->sb_feat.crcs_enabled)
--			cluster_size *= cfg->inodesize / XFS_DINODE_MIN_SIZE;
--		sbp->sb_inoalignmt = cluster_size >> cfg->blocklog;
-+			cfg->clustersize *= cfg->inodesize / XFS_DINODE_MIN_SIZE;
-+		sbp->sb_inoalignmt = cfg->clustersize >> cfg->blocklog;
- 	} else
- 		sbp->sb_inoalignmt = 0;
- 
-@@ -4634,6 +4657,7 @@ main(
- 	 */
- 	validate_dirblocksize(&cfg, &cli);
- 	validate_inodesize(&cfg, &cli);
-+	validate_clustersize(&cfg, &cli);
- 
- 	/*
- 	 * if the device size was specified convert it to a block count
--- 
-2.43.5
+Out of interest, how was this tested? There is no 32x8 modifier in the
+format list in format_modifiers_afbc[], so it seems like it shouldn't
+be possible to get a 32x8 buffer on a plane at all.
 
+You can use the drm_info utility from
+https://gitlab.freedesktop.org/emersion/drm_info to validate that the
+list of supported formats/modifiers for each plane matches your
+expectation.
+
+Cheers,
+Daniel
 
