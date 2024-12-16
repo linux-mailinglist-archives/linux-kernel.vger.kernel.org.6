@@ -1,284 +1,178 @@
-Return-Path: <linux-kernel+bounces-447957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC7A9F392C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:45:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AFC9F3936
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23B87A222C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71CC188AF96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E7207A20;
-	Mon, 16 Dec 2024 18:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C534B207666;
+	Mon, 16 Dec 2024 18:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PexKnRJU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHBvTw9k"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414AA207657
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72E81E493;
+	Mon, 16 Dec 2024 18:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734374730; cv=none; b=fY9Q1+yD3YlNiCI78AVg8riUZBVT1BYPV5VT4iZcpxtr0HVTv2bDy8wa2i9hQ00bMy4JOIZnaWuS+PxELlZO6RDO9mqQLACHZtcj2sDYnp9ZcARXgJwBj+DfIBM/us4uJZFyt/dt+8B0Nx3EhSoYZA6ELBM20mKPw96qQFF/SIQ=
+	t=1734374859; cv=none; b=rqV2RHuqsG+i6ilMm7PUKreBB5y1sTh+m1oTqVxNXFudry7sg8S+m1roTMLMIeIQhgazkn7AEIlVpEG+A2qEar6zxjA9zQK4PZgA9xHoJGZEx6pa83PfIJ+H+WENaKueSC2gmCkyqJGTTL6+JwZn5l2/amfwvcQXiyQUKtou5P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734374730; c=relaxed/simple;
-	bh=N+SDcaRaPLmwU+S3cxEP/3JecqntZWQBn2RnxDMjWoY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BQq/4CwDWISS+68XxljG8ocS+rIt9Wilg+TJ62k2LIwun3RNqy+iLV8QPUjENQX3+QJx52oPnAgyKaBSc72qZM1qTMmHYFULFyJ0KgA8qnM4GTviWxrYc8/XoIDW1ZysgS9DKjTAGnorOaZy2Bv9MTrU5joW6xRfI6r11+yWx98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PexKnRJU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734374726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+qZu5w8AAZJ493Tj0qMUBFvCjVcrATmNsXnEfokgdYQ=;
-	b=PexKnRJUffjQ1MhcXfHBTkFL+p5Sld83NSCeoxtJH+phyLUUcw0WvX4CEIRkgEj6Pls5yi
-	xa2QAdh+7Vr+vi8qSQnX1qSVYOiqfVxYZn9zLV1oD6YVKVoI9YADCBKerxcWKgs6ONs9Ni
-	K2au0ifumrt4So7aSTZZOnCuNcGh/ZI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-7rd2VwcBNOeswmkRVStcaA-1; Mon,
- 16 Dec 2024 13:45:22 -0500
-X-MC-Unique: 7rd2VwcBNOeswmkRVStcaA-1
-X-Mimecast-MFC-AGG-ID: 7rd2VwcBNOeswmkRVStcaA
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 637571955F3C;
-	Mon, 16 Dec 2024 18:45:21 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.65.20])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 02A5A1956056;
-	Mon, 16 Dec 2024 18:45:19 +0000 (UTC)
-From: Luiz Capitulino <luizcap@redhat.com>
-To: linux-mm@kvack.org,
-	mgorman@techsingularity.net
-Cc: david@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: [RFC] mm: alloc_pages_bulk_noprof: drop page_list argument
-Date: Mon, 16 Dec 2024 13:45:04 -0500
-Message-ID: <20241216184504.19406-1-luizcap@redhat.com>
+	s=arc-20240116; t=1734374859; c=relaxed/simple;
+	bh=J6/FzYFwHnRv9BLzHltNFMIOIxKwdbIG8JjNRs53Fi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IoLHyZJ0gAg1BnJKT4fYfNH2gP/oY5R94xZksIHAcL7mZfH+kfqqoj1t/wDblYmJxiChDUUDLEVsafwGYw4hE8kjMJ199BbxPB9hxedyXiZoD3337Cnt+69BkrafpDwshsCJcKni8/bPMOUAX5lsuHarxEo1dFctZ9DU8Ye9WNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHBvTw9k; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2166651f752so47238005ad.3;
+        Mon, 16 Dec 2024 10:47:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734374857; x=1734979657; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=CqFXFmSmKLaSa4Vhvi8HNeoTtmpRApxU91TTMrXkHTg=;
+        b=AHBvTw9kyiNTr2FiytgKeR2Ynd7O0s0IYNLZ5KBJutLCq2m8eXeEhISlCboFAY3IAY
+         2l9PSgGQqFRUupclOGuOl5KRsc4XamkIaWUnA3vqsTHDDlOq14ZXR0rt8Smqi5HAbRKE
+         Vo1Sf4KYT44tJv868kvtw4jAzI4BOZuWz7sfrCY9kT1YeVugnzNwrR0bSzmtYbcCeW09
+         szh9hKZ1ESQzyrQUf/HHjLcrMvIokcBrAQ8oDdTYH25+5OPm5YT4+b3glKKwi+VXswqo
+         W6Ov8e0xEoPQsSt+KM07PRRdN4xflVdxlJAW19I7SPJBfVpXAiuXu8upKISpnDdtf4oK
+         7nEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734374857; x=1734979657;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CqFXFmSmKLaSa4Vhvi8HNeoTtmpRApxU91TTMrXkHTg=;
+        b=fYKcDPDbwFeXIeySS84N09fXL9EpR/5jcClo78ETUQz11NYc2mpFzq/x1e0N1q+IzY
+         fcdu9h/DHNp56Dbm3/s0tzqcqpiyRgTGpYBarauVRdZdpNg5ODKQIFPGN/FxDlvZ41o7
+         RjtQLG6kUzIL5HOilN+1CQnZ19Tn5jcEB00gWpTL8F/aT+Uv+oQmd66Cuecmp1ZA1Xcf
+         wG7t3wJEITQIG2QYpmwF/8N6F0dVbOUMLRqDM4McLCk1yXq5n6gJLHZFfCbXtKFPYTQB
+         FA1gubQ6Wn9vv+0DI1WfmpKe9HaLPVddLsyfgyjnb2PobyeNL7kdRHEns1ZHzZhy44tF
+         SxUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa2UN0JJaMhIpgBnAViZpBQRwpYo5BW9837Hwtn9F0lCmW7A1JRN6BNK2OGn+I9tzmdXRdC7TCfEnq8OU5@vger.kernel.org, AJvYcCUq2Vhs9ohHZo28ja41rn7BqpvSnOpXt44onyLMRd6qdEZa9q7SCnpo/ZUcS00RrQUx1Xua4NlEk+vp4io=@vger.kernel.org, AJvYcCWV+rUcZo79EC/NKv79P1pjJwHwI8w8zKGishSI4IWoOCO1iucTdbePeXcI5f5qSnU/+CGOYewZyZbt@vger.kernel.org, AJvYcCWVfcDbeG/12HTBkxH8kueJdEx/5UBLzfv1PJzmbld1D1qj/M2o4lLUDBHR7mfH7fnDoC3SRxYVicuJ@vger.kernel.org, AJvYcCWkjX6lGCmnKWAuR9rTV3H7AGuDGdwcJ8+MEUSbCTsMH+bC7nbZGABp5t8y+jvea+YmJmRlvku9WkDF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4Xn9zknBBJuJUbZwZHfmicYG0SDYCjYq/V1kblEaKzcyOIsIq
+	ZM9vuGC1/S2cQgQeoDdIT2OzrMVI90EAxeaiXm8TKIH+2d0ywAYe
+X-Gm-Gg: ASbGncuINbU8rFWovm+apGEUOrvHikIgS/6qGetYfUGG7DZ33B6bNmhWUv0hlWl69Fj
+	u/4fA99POaeNeYZVfThPtFWJqtWRb7Idh0bKBwoejpYANkBW+qfaEVdCSbaeeG3DIKiALG8Z2cG
+	EkKCBj85vgSnLjrOPuLreiijV+xr3sTNgGXhJ39s6qnNWRhfIrSYX8PqwRNqwxFFnV93lnijJTR
+	gpUqYCJ5ty1LiFW+uJM38DL+7K9aPaF0dtGrHLoGsP5q33eXBTIKIgZ4GjEZNRf2BC4o0sRvQ4s
+	N3YvwQqrJfZXTd5RyUJ6NxoWwBV6sA==
+X-Google-Smtp-Source: AGHT+IEIIrPoJh1GXWlfdX3/QWjWvj2/h7CMhTzjWUDIMndNQJ5On8mQEgeMF8lUXxA39smV+RBsqw==
+X-Received: by 2002:a17:902:ce8d:b0:215:385e:921c with SMTP id d9443c01a7336-21892a7a2d9mr152417255ad.51.1734374856981;
+        Mon, 16 Dec 2024 10:47:36 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dcb353sm46475315ad.76.2024.12.16.10.47.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 10:47:36 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <a010366e-b911-43bd-8445-e893e11fa51a@roeck-us.net>
+Date: Mon, 16 Dec 2024 10:47:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: hwmon: intel,crps185: Add to trivial
+To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+ corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+ Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org, peteryin.openbmc@gmail.com,
+ noahwang.wang@outlook.com, naresh.solanki@9elements.com, lukas@wunner.de,
+ jbrunet@baylibre.com, patrick.rudolph@9elements.com,
+ gregkh@linuxfoundation.org, peterz@infradead.org, pbiel7@gmail.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-i2c@vger.kernel.org
+References: <20241216175044.4144442-1-ninad@linux.ibm.com>
+ <20241216175044.4144442-4-ninad@linux.ibm.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241216175044.4144442-4-ninad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The commit 387ba26fb1cb added __alloc_pages_bulk() along with the page_list
-argument. The next commit 0f87d9d30f21 added the array-based argument. As
-it turns out, the page_list argument has no users in the current tree (if it
-ever had any). Dropping it allows for a slight simplification and eliminates
-some unnecessary checks, now that page_array is required.
+On 12/16/24 09:50, Ninad Palsule wrote:
+> Add INTEL Common Redundant Power Supply Versions crps185 bindings as
+> trivial. It is trivial because only compatibility string is required in
+> the device tree to load this driver.
+> 
+> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
 
-Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
----
- include/linux/gfp.h |  8 ++------
- mm/mempolicy.c      | 14 +++++++-------
- mm/page_alloc.c     | 39 ++++++++++++---------------------------
- 3 files changed, 21 insertions(+), 40 deletions(-)
+Krzysztof had Acked this patch. I don't immediately see why you dropped it.
+Am I missing something ?
 
-I spotted this while reading some code. Sending as RFC because I'm not sure
-if there might be a good reason to keep it.
+Guenter
 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index b0fe9f62d15b..eebed36443b3 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -212,7 +212,6 @@ struct folio *__folio_alloc_noprof(gfp_t gfp, unsigned int order, int preferred_
- 
- unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 				nodemask_t *nodemask, int nr_pages,
--				struct list_head *page_list,
- 				struct page **page_array);
- #define __alloc_pages_bulk(...)			alloc_hooks(alloc_pages_bulk_noprof(__VA_ARGS__))
- 
-@@ -223,11 +222,8 @@ unsigned long alloc_pages_bulk_array_mempolicy_noprof(gfp_t gfp,
- 	alloc_hooks(alloc_pages_bulk_array_mempolicy_noprof(__VA_ARGS__))
- 
- /* Bulk allocate order-0 pages */
--#define alloc_pages_bulk_list(_gfp, _nr_pages, _list)			\
--	__alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, _list, NULL)
--
- #define alloc_pages_bulk_array(_gfp, _nr_pages, _page_array)		\
--	__alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, NULL, _page_array)
-+	__alloc_pages_bulk(_gfp, numa_mem_id(), NULL, _nr_pages, _page_array)
- 
- static inline unsigned long
- alloc_pages_bulk_array_node_noprof(gfp_t gfp, int nid, unsigned long nr_pages,
-@@ -236,7 +232,7 @@ alloc_pages_bulk_array_node_noprof(gfp_t gfp, int nid, unsigned long nr_pages,
- 	if (nid == NUMA_NO_NODE)
- 		nid = numa_mem_id();
- 
--	return alloc_pages_bulk_noprof(gfp, nid, NULL, nr_pages, NULL, page_array);
-+	return alloc_pages_bulk_noprof(gfp, nid, NULL, nr_pages, page_array);
- }
- 
- #define alloc_pages_bulk_array_node(...)				\
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 04f35659717a..42a7b07ccc15 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2375,13 +2375,13 @@ static unsigned long alloc_pages_bulk_array_interleave(gfp_t gfp,
- 		if (delta) {
- 			nr_allocated = alloc_pages_bulk_noprof(gfp,
- 					interleave_nodes(pol), NULL,
--					nr_pages_per_node + 1, NULL,
-+					nr_pages_per_node + 1,
- 					page_array);
- 			delta--;
- 		} else {
- 			nr_allocated = alloc_pages_bulk_noprof(gfp,
- 					interleave_nodes(pol), NULL,
--					nr_pages_per_node, NULL, page_array);
-+					nr_pages_per_node, page_array);
- 		}
- 
- 		page_array += nr_allocated;
-@@ -2430,7 +2430,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 	if (weight && node_isset(node, nodes)) {
- 		node_pages = min(rem_pages, weight);
- 		nr_allocated = __alloc_pages_bulk(gfp, node, NULL, node_pages,
--						  NULL, page_array);
-+						  page_array);
- 		page_array += nr_allocated;
- 		total_allocated += nr_allocated;
- 		/* if that's all the pages, no need to interleave */
-@@ -2493,7 +2493,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 		if (!node_pages)
- 			break;
- 		nr_allocated = __alloc_pages_bulk(gfp, node, NULL, node_pages,
--						  NULL, page_array);
-+						  page_array);
- 		page_array += nr_allocated;
- 		total_allocated += nr_allocated;
- 		if (total_allocated == nr_pages)
-@@ -2517,11 +2517,11 @@ static unsigned long alloc_pages_bulk_array_preferred_many(gfp_t gfp, int nid,
- 	preferred_gfp &= ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL);
- 
- 	nr_allocated  = alloc_pages_bulk_noprof(preferred_gfp, nid, &pol->nodes,
--					   nr_pages, NULL, page_array);
-+					   nr_pages, page_array);
- 
- 	if (nr_allocated < nr_pages)
- 		nr_allocated += alloc_pages_bulk_noprof(gfp, numa_node_id(), NULL,
--				nr_pages - nr_allocated, NULL,
-+				nr_pages - nr_allocated,
- 				page_array + nr_allocated);
- 	return nr_allocated;
- }
-@@ -2557,7 +2557,7 @@ unsigned long alloc_pages_bulk_array_mempolicy_noprof(gfp_t gfp,
- 	nid = numa_node_id();
- 	nodemask = policy_nodemask(gfp, pol, NO_INTERLEAVE_INDEX, &nid);
- 	return alloc_pages_bulk_noprof(gfp, nid, nodemask,
--				       nr_pages, NULL, page_array);
-+				       nr_pages, page_array);
- }
- 
- int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1cb4b8c8886d..32c7ca80468c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4529,28 +4529,23 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
- }
- 
- /*
-- * __alloc_pages_bulk - Allocate a number of order-0 pages to a list or array
-+ * __alloc_pages_bulk - Allocate a number of order-0 pages to an array
-  * @gfp: GFP flags for the allocation
-  * @preferred_nid: The preferred NUMA node ID to allocate from
-  * @nodemask: Set of nodes to allocate from, may be NULL
-- * @nr_pages: The number of pages desired on the list or array
-- * @page_list: Optional list to store the allocated pages
-- * @page_array: Optional array to store the pages
-+ * @nr_pages: The number of pages desired on the array
-+ * @page_array: Array to store the pages
-  *
-  * This is a batched version of the page allocator that attempts to
-- * allocate nr_pages quickly. Pages are added to page_list if page_list
-- * is not NULL, otherwise it is assumed that the page_array is valid.
-+ * allocate nr_pages quickly. Pages are added to the page_array.
-  *
-- * For lists, nr_pages is the number of pages that should be allocated.
-- *
-- * For arrays, only NULL elements are populated with pages and nr_pages
-+ * Note that only NULL elements are populated with pages and nr_pages
-  * is the maximum number of pages that will be stored in the array.
-  *
-- * Returns the number of pages on the list or array.
-+ * Returns the number of pages on the array.
-  */
- unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 			nodemask_t *nodemask, int nr_pages,
--			struct list_head *page_list,
- 			struct page **page_array)
- {
- 	struct page *page;
-@@ -4568,7 +4563,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 	 * Skip populated array elements to determine if any pages need
- 	 * to be allocated before disabling IRQs.
- 	 */
--	while (page_array && nr_populated < nr_pages && page_array[nr_populated])
-+	while (nr_populated < nr_pages && page_array[nr_populated])
- 		nr_populated++;
- 
- 	/* No pages requested? */
-@@ -4576,7 +4571,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 		goto out;
- 
- 	/* Already populated array? */
--	if (unlikely(page_array && nr_pages - nr_populated == 0))
-+	if (unlikely(nr_pages - nr_populated == 0))
- 		goto out;
- 
- 	/* Bulk allocator does not support memcg accounting. */
-@@ -4658,7 +4653,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 	while (nr_populated < nr_pages) {
- 
- 		/* Skip existing pages */
--		if (page_array && page_array[nr_populated]) {
-+		if (page_array[nr_populated]) {
- 			nr_populated++;
- 			continue;
- 		}
-@@ -4676,11 +4671,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 		nr_account++;
- 
- 		prep_new_page(page, 0, gfp, 0);
--		if (page_list)
--			list_add(&page->lru, page_list);
--		else
--			page_array[nr_populated] = page;
--		nr_populated++;
-+		page_array[nr_populated++] = page;
- 	}
- 
- 	pcp_spin_unlock(pcp);
-@@ -4697,14 +4688,8 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 
- failed:
- 	page = __alloc_pages_noprof(gfp, 0, preferred_nid, nodemask);
--	if (page) {
--		if (page_list)
--			list_add(&page->lru, page_list);
--		else
--			page_array[nr_populated] = page;
--		nr_populated++;
--	}
--
-+	if (page)
-+		page_array[nr_populated++] = page;
- 	goto out;
- }
- EXPORT_SYMBOL_GPL(alloc_pages_bulk_noprof);
--- 
-2.47.1
+> ---
+>   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 73a49d50c4ef..7d07b08b1459 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -151,6 +151,8 @@ properties:
+>             - injoinic,ip5306
+>               # Inspur Power System power supply unit version 1
+>             - inspur,ipsps1
+> +            # Intel common redudant power supply crps185
+> +          - intel,crps185
+>               # Intersil ISL29028 Ambient Light and Proximity Sensor
+>             - isil,isl29028
+>               # Intersil ISL29030 Ambient Light and Proximity Sensor
 
 
