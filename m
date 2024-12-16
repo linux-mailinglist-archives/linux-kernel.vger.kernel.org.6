@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-447711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5641E9F364D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:41:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7099F364E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198D61883C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D332918805A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E7F206273;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22922063CB;
 	Mon, 16 Dec 2024 16:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TfXKhGw1"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eyDGFgHV"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824611B87C4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA8D202C50
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367275; cv=none; b=F+CyIR15gb8nJBL825dSR1PccSCQsScKGutdjCvT09t+Q3OnAdYtBeURfs8ZmmNwK5HOw8mB7+Z+qYFHHlWoX64Tj/Di5mMeEO+Ojwo9PYxrqcoAlW0OcW+46e8k6dhPp86kDpIZbMKgGkBw3v/gfArobl58kRrpi2j1zgbocdc=
+	t=1734367276; cv=none; b=NQR9PocSG4X/HknBYG81wg996RVuNWklwf2dKRKiiEuPjmdanbbOEOf5q0hwD4Mve4E7F0178/q2GU+Xx+Od+0Y+8tlD6f3KoKFlSO8uqMWg5ImO9xuYwq+468p4VmvSu/xMRZbpvqf7W0sWi8XYSbX2m9sRojnyT2JIU9Hbqfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367275; c=relaxed/simple;
-	bh=0SJMUdIo0vcYqeGqB8sU7dxtzNBNywrmH0+lcVQv05E=;
+	s=arc-20240116; t=1734367276; c=relaxed/simple;
+	bh=H0MySrUxWDCqvEAcb0pedeQRSOE3Bds2iksJxEoUuwM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fgWzmMQl9DHX0yTJX93EuqjoOWVv3pYDuwjzIoetNffutT4upbjr7ahTT1AK6XyFTQl8Qrrbkj/TTB+maQV5qkRG4AvnzfjDQx5tNgvuBO4Y6aBQu2OKfiL9qePei/I1y4lqPn03AmTp41a7/9h2cSnpfhCLwGMD287XX/GZAH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TfXKhGw1; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:To:Cc; b=K9p7gk9mYvSrFQQR88WbRGPDDj3haw3dhJnwxRErp9bhv/trcIhMf9Y4fHlAoiB7XGQ3u2U7mucQVbdd11HOMpzwFdh3coF+6kxFclyFhuWrtIErY5POq120qNrTYZaC55A7D/4IiiKZgCGFtx0o7BbdLwL1NmUvnER9b3A6lw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eyDGFgHV; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB879E0003;
-	Mon, 16 Dec 2024 16:41:10 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DC324E000F;
+	Mon, 16 Dec 2024 16:41:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734367271;
+	t=1734367272;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J90J1NyXaKoXccZe2X72ycchhXTtGFZ2PH6GpQkBJsQ=;
-	b=TfXKhGw1Xu1kMTIPHWCUs8aLwUWzuTKGvJ4j91Qfd6r0hlmwy9jqbDGUa3nK9YjKpnJnwP
-	cK53r5KYTSI9yx8tH/zjuFZhBWgUTpbaJX8x06dQO4fSlDokEEimr5TcZHmb5krbdJ60hL
-	FMAd7Z8uS7G/ROKDCzU156r1kC6R8C231T1QzABHhYsQA1nX8PrulSaGWMogyY1wzibSjU
-	bsqZCDq+mHrv4t5A5dfbxYfHsK4DAh9lOKJ4L7A9IPeve9fYNtC6WAmruHJSg/a8cPNZhk
-	8lp0QQaqPShbNAC1lTe4zRpFQxtsqtF9rE8Ajky47TvAs297yqgUvcnumi+Jgw==
+	bh=qW3wdr4EeYIZ0MLaRPPuH3cK65j246cHF8/ZPxNc2Bo=;
+	b=eyDGFgHVeEDhExDDMXCSOSgsB8v/VSm2hPy3ubebFzBaHgkY9OCIVc9nnBg43U2bRdhdvW
+	ss9r9o+GQbM6f1QKp6acKn032ygY1oWgbk519MEvab2avDyHYqC3LlfOiM2ClxaZiUdHXf
+	tZhTbUkPSbyf80lmr4Jd9HImCi3J6kdtpv/tEfVEOHd1mCFH/9Hcu3K3axOY2bSceJ9ujy
+	OBFut0yli1R9jA6DDRwLg76sQpgCE7fPL7Zclp3m83/ZQcvhntvDhXmrVxrsA7gkqD/B+Z
+	jGkIKakyPXSRc80NEp8IcCix2arnsXdmcdn0p3jEPCRkGE9aJxtSdb6X+KkTjA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 16 Dec 2024 17:40:50 +0100
-Subject: [PATCH RESEND v3 3/4] drm/mode_object: add
- drm_mode_object_read_refcount()
+Date: Mon, 16 Dec 2024 17:40:51 +0100
+Subject: [PATCH RESEND v3 4/4] drm/connector: warn when cleaning up a
+ refcounted connector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-drm-small-improvements-v3-3-78bbc95ac776@bootlin.com>
+Message-Id: <20241216-drm-small-improvements-v3-4-78bbc95ac776@bootlin.com>
 References: <20241216-drm-small-improvements-v3-0-78bbc95ac776@bootlin.com>
 In-Reply-To: <20241216-drm-small-improvements-v3-0-78bbc95ac776@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -71,65 +71,37 @@ Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Add a wrapper to kref_read() just like the ones already in place for
-kref_get() and kref_put(). This will be used for sanity checks on object
-lifetime.
+Calling drm_connector_cleanup() should only be done via the free_cb =>
+.destroy path, which cleans up the struct drm_connector only when the
+refcount drops to zero.
 
+A cleanup done with a refcount higher than 0 can result from buggy code,
+e.g. by doing cleanup directly in the drivers teardown code. Serious
+trouble can happen if this happens, so warn about it.
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
 ---
+ drivers/gpu/drm/drm_connector.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Changed in v3:
-
- * use conventions for 'Returns' doc syntax
- * ditch DRM_DEBUG() and as a consequence rework and simplify the entire
-   function
- * fix function name in kerneldoc
----
- drivers/gpu/drm/drm_mode_object.c | 17 +++++++++++++++++
- include/drm/drm_mode_object.h     |  1 +
- 2 files changed, 18 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
-index df4cc0e8e263d5887a799cf1a61d998234be7158..b9a16aceb926782eb033434eb6967ce9fd2e94f7 100644
---- a/drivers/gpu/drm/drm_mode_object.c
-+++ b/drivers/gpu/drm/drm_mode_object.c
-@@ -217,6 +217,23 @@ void drm_mode_object_get(struct drm_mode_object *obj)
- }
- EXPORT_SYMBOL(drm_mode_object_get);
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index fc35f47e2849ed6786d6223ac9c69e1c359fc648..e0bf9c490af43055de4caaee1580a4befbd608c5 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -624,6 +624,12 @@ void drm_connector_cleanup(struct drm_connector *connector)
+ 	struct drm_device *dev = connector->dev;
+ 	struct drm_display_mode *mode, *t;
  
-+/**
-+ * drm_mode_object_read_refcount - read the refcount for a mode object
-+ * @obj: DRM mode object
-+ *
-+ * Returns:
-+ * The current object refcount if it is a refcounted modeset object, or 0
-+ * for any other object.
-+ */
-+unsigned int drm_mode_object_read_refcount(struct drm_mode_object *obj)
-+{
-+	if (obj->free_cb)
-+		return kref_read(&obj->refcount);
++	/*
++	 * Cleanup must happen when the last ref is put, via the
++	 * drm_connector_free() callback.
++	 */
++	WARN_ON(drm_mode_object_read_refcount(&connector->base) != 0);
 +
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_mode_object_read_refcount);
-+
- /**
-  * drm_object_attach_property - attach a property to a modeset object
-  * @obj: drm modeset object
-diff --git a/include/drm/drm_mode_object.h b/include/drm/drm_mode_object.h
-index c68edbd126d04d51221f50aa2b4166475543b59f..3d2c739e703888bf4520c61594d480f128d50e56 100644
---- a/include/drm/drm_mode_object.h
-+++ b/include/drm/drm_mode_object.h
-@@ -123,6 +123,7 @@ struct drm_mode_object *drm_mode_object_find(struct drm_device *dev,
- 					     uint32_t id, uint32_t type);
- void drm_mode_object_get(struct drm_mode_object *obj);
- void drm_mode_object_put(struct drm_mode_object *obj);
-+unsigned int drm_mode_object_read_refcount(struct drm_mode_object *obj);
- 
- int drm_object_property_set_value(struct drm_mode_object *obj,
- 				  struct drm_property *property,
+ 	/* The connector should have been removed from userspace long before
+ 	 * it is finally destroyed.
+ 	 */
 
 -- 
 2.34.1
