@@ -1,158 +1,194 @@
-Return-Path: <linux-kernel+bounces-447385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E939F317A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:26:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C7C9F3195
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C680D164BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD937A3095
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D656205E02;
-	Mon, 16 Dec 2024 13:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F84D207658;
+	Mon, 16 Dec 2024 13:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EUpcv9Jh"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3yjP0Cl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AEB205AB1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987A204C25
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355539; cv=none; b=FYJyE50qYvHrpJaWltW2ggAuKwyPr06t4bu8r6xvQGjeD65e2K9tlAECXCr3k1wxSpEf+lMB74+YDDM7QH71cfhiGBxZOySBDqNBFT1u8X9va9MkobFocF5cmdwRcTWfZd5lU4Y5QGnTUF4MnPM7Lvy1Ane1i6CI0U5QkKxJfws=
+	t=1734355861; cv=none; b=nELBvjm0snY/K7cF2gp12z6TC5F4JKFZeIhocaNDIFC54EkehTjxjfptZm7vNwd7x4bYTqOlmcDarJ4HObDAw0pe+HVSJiIvEW6nEDLgLADvknDx4/7Px1mUUczCf0/ew1bTFS/QU4H6y3hKTmTbplCQ5yvYczjvJrYsOsuRM5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355539; c=relaxed/simple;
-	bh=NndeOH6sd65ORicRkF+Jky+H97Q2/FBkQEok6InkZT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TJ2spYz6mRepW8WzpF08VO5Oe9gS8D3vOgFTI8biaV+cuz1LGyqB6WQ0G8ygpnwbvBMaS1QXqOSrC5QpWENCl4ozl74okxA2oHV38FDZS3aoh9+RJwy78SbfXtVS5gZLc0+ObAeC5RI2BYcYpATBlWLfVEzwmO8ikg7B2R7LNuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EUpcv9Jh; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385e2880606so3769195f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:25:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734355536; x=1734960336; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=STePF4alhOUCMJb60WwslpIUy0epmImIHj5n/B736B8=;
-        b=EUpcv9JhDG+2+g4LGiJBH1hjfimm5Q0kzVNJbo3NAy1yLnwroXqbQ0NS/QZp5EYQVV
-         /5ImGO+ypVik5s8CR5Vcas9g9zsw8KiGgkktNCkfbrVT30JlWJRm9JScQfidsojKDP6F
-         LyqMVkm8eXmX87BJzpX5OFKwwtXff544hFQJS57sNf3lS6PQqdZwViSyNgKWRHDwq0ZR
-         MLC0oapa2oLutHV2lmPGbmwHMklOpIvP2sXkAK1dLPzoPodLhxemY1HBI/g7W0KhqPCM
-         HAJtOW1vcBxejpgdrTVniY212gDzGYMNv5gNiB1JYwHGtNVuSIMr1GVxc/Gvq8XdaJiP
-         /rLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734355536; x=1734960336;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=STePF4alhOUCMJb60WwslpIUy0epmImIHj5n/B736B8=;
-        b=u0ezWzMP7yJyj6BivdboLKHkr3GFHKmcyiDBJ8j/eOFBWAqzMdE0dxjXyUHZD+8g6y
-         XwLqJ/tBbUimYyTIoKYu3bIjwc58EPIetmE0m2IatsIu7CEWPfzFftjrihHgNhbHHIDu
-         GfvKZDF8APEXo7xRnnI67SStpDAnCPzIgy8NbUFJ6P/KUr0ZbuirI01wFTLN3MW4ILYa
-         KXnBvNNoDZ3LID25a1JDz/y4GBlerK5JOuFqF2UNoa0zz2NT5V6oGF/uwLDUb0cgA2um
-         hocTgPYUiEWTf1OEYmKJ3tALb/TQ7J9ZDyY8dmjATDsGflaEQWlsk9HPYxruuuEutltT
-         LFvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMXqlhiof+qTuj58QyuxubMyfFtk0YlyYFAAtRpQyuVatlIrT5pY46LBYlolkUVSddxqgx+yX57uhPbPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQS7FFX/mRC7iiUO79gd5JO0WCaE5OxhetVbG+qVhrxiZTOGT7
-	J9deMGuLKGngas2MhdMy3ZIgOq50F3eWdXLlJEaQOKphVk+UmzOInWLSx6IDIUo=
-X-Gm-Gg: ASbGncsU26mTY/OAc43Vodf5yR0nZDDA2jQfIluCPrRqOQ3Kq38Kw98Kcnjh8vtipVr
-	L4z2XImVFmQaeninwfPpTc2eU6sB+6ptFcVOHAeUcOUzmECH7j4jUGaeRRk7Oq9KjuD4UhaShnC
-	tcPiYyK2kQjdZSeCs5efCV+CE1Zg52+GckqsQBImum0u6yZnd5g+pAzb276QGKVAkydhXwHOSWm
-	d0wc7L1OdQJaPe1iLCIBoMcXw3tYar1yW0tbFZ7ks70+HdAHKsi3FDYSad/
-X-Google-Smtp-Source: AGHT+IGqoSYH/VA6fKloW87cFzqLGeD30iZmGbWZZas/HuP1gKITI6KUoUpWyXXkXirFAcpa9znGog==
-X-Received: by 2002:adf:eec3:0:b0:388:c75d:be97 with SMTP id ffacd0b85a97d-388c75dbeaamr7310161f8f.11.1734355535593;
-        Mon, 16 Dec 2024 05:25:35 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804a34fsm8253045f8f.76.2024.12.16.05.25.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 05:25:35 -0800 (PST)
-Message-ID: <e522ec59-6ee6-4c11-8a4f-91a683e6435c@suse.com>
-Date: Mon, 16 Dec 2024 14:25:33 +0100
+	s=arc-20240116; t=1734355861; c=relaxed/simple;
+	bh=hBw7RRtzB4nbDxsid/Mm8Wl2admJ4GL8pyzglKXg2xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSvwEt5nfxhdiB6RgAVA4z2RO47kxZ1M+80TaOakoY6smt5t/NpmXrebprrPh+V5Wp68mBroS12BjS7yCrMlT14Ye6mcJhU7/W+yc3TF31YGsTo4+lyW4VZsJ8lpOIV31K0jA4g5FuYt0VSDToTp8xu6YUgnT3T/HPXvBsPknF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3yjP0Cl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9ECC4CEDE;
+	Mon, 16 Dec 2024 13:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734355861;
+	bh=hBw7RRtzB4nbDxsid/Mm8Wl2admJ4GL8pyzglKXg2xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d3yjP0Cl53AVXVcQEDyPQI6GJR3n6ckCK7SopJur72blRDZiPwibK8Mm+K8aE/1XZ
+	 ZPdCV+uwbu1CY3hfAZzzSkdgAXxrORNR4GziMlpis/R1vgcJ19OiFdUT7cc8nDQ8ah
+	 H5n19MZUmjtt1nTAxf77hk24/zu+Sp1qN18qnvpPk9ad+VZTTs1+e0A2T1NQC1JB4f
+	 2DhJR87A3rEhWUcQkqTxOZI/hkGxAETkJ8TAcp3L73tbiy5MI/pms9F+DN20vnXFX8
+	 c/x1BqYASNjNHM+GeQinYAP8SHTnUT11d5bodTsJgifMCSZRY6dUTUXcWknwXwnpWM
+	 DTG/GK1cvwHvg==
+Date: Mon, 16 Dec 2024 14:30:55 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <Z2Arj_cLW-aY5cnD@cassiopeiae>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <Z2ASy3TQ4suupdvd@cassiopeiae>
+ <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
+ <20241216121651.GP32204@pendragon.ideasonboard.com>
+ <Z2AgFHV2BaaZYGTx@cassiopeiae>
+ <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/5] Documentation/kbuild: Document storage of symbol
- information
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20241123-extended-modversions-v10-0-0fa754ffdee3@google.com>
- <20241123-extended-modversions-v10-4-0fa754ffdee3@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20241123-extended-modversions-v10-4-0fa754ffdee3@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
 
-On 11/23/24 03:42, Matthew Maurer wrote:
-> Document where exported and imported symbols are kept, format options,
-> and limitations.
+On Mon, Dec 16, 2024 at 02:58:59PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Dec 16, 2024 at 01:41:56PM +0100, Danilo Krummrich wrote:
+> > On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
+> > > On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
+> > > > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
+> > > > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> > > > > > The nouveau driver is the only user of the drm_encoder_slave interface.
+> > > > > > Demote it from KMS helpers module to the nouveau driver itself, moving
+> > > > > > corresponding I2C encoders to be handled by nouveau driver too.
+> > > > > 
+> > > > > I understand nouveau is the only driver using this interface (and the
+> > > > > corresponding i2c encoders).
+> > > > > 
+> > > > > However, I'm not quite seeing the advantage of folding the interface (including
+> > > > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+> > > > > the subsystem in any way / does prevent the subsystem from moving forward.
+> > > > > 
+> > > > > Can't we just keep it as it is?
+> > > > 
+> > > > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
+> > > > take (a little bit) of space on every system. The nouveau situation
+> > > > isn't unique, other drivers (i915, ast) also incorporate the code for
+> > > > I2C backends. For the further discussion see the thread starting from
+> > > > Laurent's email ([1]).
+> > > > 
+> > > > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
+> > 
+> > The drm_encoder_slave code it's rather small, but I guess this can be used as
+> > argument for both, keeping it where it is and moving it.
+> > 
+> > If you want to move it to nouveau, I'm not going to object. But please fold the
+> > helper code, such that we aren't left with unused functions and unnecessary
+> > function pointer indirections through struct drm_encoder_slave_funcs.
 > 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  Documentation/kbuild/modules.rst | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> This is more or less what I've done. Or would you prefer to keep the
+> wrapping functions that just execute the callback? I can change the
+> patchset accordingly.
+
+No, I think it's good indeed -- st a first glance it looked like there's more to
+get rid of.
+
+There are just a few more nits, I'll go ahead and add comments in the
+corresponding patches.
+
 > 
-> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
-> index 101de236cd0c9abe1f5684d80063ff3f9a7fc673..c32e3ed67cd26070f6929f6ad98c4308a1ab71f8 100644
-> --- a/Documentation/kbuild/modules.rst
-> +++ b/Documentation/kbuild/modules.rst
-> @@ -423,6 +423,26 @@ Symbols From the Kernel (vmlinux + modules)
->  	1) It lists all exported symbols from vmlinux and all modules.
->  	2) It lists the CRC if CONFIG_MODVERSIONS is enabled.
->  
-> +Version Information Formats
-> +---------------------------
-> +
-> +	Exported symbols have information stored in __ksymtab or __ksymtab_gpl
-> +	sections. Symbol names and namespaces are stored in __kstrtab and
-> +	__kstrtabns respectively, using a format similar to the string table
-> +	used for ELF. If CONFIG_MODVERSIONS is enabled, the CRCs corresponding
-> +	to exported symbols will be added to the __kcrctab or __kcrctab_gpl.
-
-The second sentence should be that symbol names and namespaces of
-exported symbols are both stored in the __ksymtab_strings section.
-
-> +
-> +	If CONFIG_BASIC_MODVERSIONS is enabled (default with
-> +	CONFIG_MODVERSIONS), imported symbols will have their symbol name and
-> +	CRC stored in the __versions section of the importing module. This
-> +	mode only supports symbols of length up to 64 bytes.
-> +
-> +	If CONFIG_EXTENDED_MODVERSIONS is enabled (required to enable both
-> +	CONFIG_MODVERSIONS and CONFIG_RUST at the same time), imported symbols
-> +	will have their symbol name recorded in the __version_ext_names
-> +	section as a series of concatenated, null-terminated strings. CRCs for
-> +	these symbols will be recorded in the __version_ext_crcs section.
-> +
->  Symbols and External Modules
->  ----------------------------
->  
+> > 
+> > > 
+> > > It's also a question of whether maintenance of this code based used by
+> > > the nouveau driver only should be the responsibility of the drm-misc
+> > > community or the nouveau driver maintainers.
+> > 
+> > Good question. It's common infrastructure; do we expect / require the last user
+> > of such infrastructure to take ownership?
 > 
+> Unfortunately it's more like 'the only one' :-( In other words, if we
 
--- 
-Thanks,
-Petr
+I can't see a major difference between "last one" and "only one" in this
+context.
+
+> were expecting other users, there would not be such a move. But
+> hopefully all new drivers will use bridges infrastructure.
+
+Agreed, but I don't think it answers my question.
+
+> 
+> > 
+> > > 
+> > > > > > Ideally those two drivers should be converted to the drm_bridge
+> > > > > > interface, but it's unclear if it's worth spending time on that.
+> > > > > 
+> > > > > Probably not.
+> > > > > 
+> > > > > > 
+> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > ---
+> > > > > > Changes in v2:
+> > > > > > - Renamed symbols in defconfig (Laurent)
+> > > > > > - Added missing Kbuild file (Laurent, LKP)
+> > > > > > - Renamed guarding defines in include files.
+> > > > > > - Dropped mentions of two removed functions.
+> > > > > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
+> > > > > > 
+> > > > > > ---
+> > > > > > Dmitry Baryshkov (2):
+> > > > > >       drm/nouveau: incorporate I2C TV encoder drivers
+> > > > > >       drm/nouveau: vendor in drm_encoder_slave API
+> > > > > > 
+> > > > > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
+> > > > > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+> > > > > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+> > > > > >  drivers/gpu/drm/Makefile                           |   1 -
+> > > > > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+> > > > > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
+> > > > > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+> > > > > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+> > > > > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+> > > > > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+> > > > > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+> > > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+> > > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+> > > > > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+> > > > > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+> > > > > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+> > > > > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+> > > > > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+> > > > > >  22 files changed, 172 insertions(+), 232 deletions(-)
+> > > > > > ---
+> > > > > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+> > > > > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+> > > 
+> > > -- 
+> > > Regards,
+> > > 
+> > > Laurent Pinchart
+> 
+> -- 
+> With best wishes
+> Dmitry
 
