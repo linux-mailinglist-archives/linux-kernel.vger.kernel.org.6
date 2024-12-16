@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-447379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A1B9F3167
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94B79F3186
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1047A2C15
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABFC61887FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AF12054E6;
-	Mon, 16 Dec 2024 13:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="RzD3rfIN"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8204205AAC;
+	Mon, 16 Dec 2024 13:30:55 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2277B204C25
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E53FD4;
+	Mon, 16 Dec 2024 13:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355269; cv=none; b=rY6HZRp7IZPbtWcamoX8v0zkEfH6fDfKuvVcFsPStSb+XbZ5DNn+hCJ02mzYc++15yyH/DFGbz5OMU4gw1qPij5MmuZnLIU6xCgWw/6cUf06SFuyug6y6udd/XKUSPHY11SDnqqNJIqbqIWUMRnqANxOPQMIznxm1nSW2maXjN8=
+	t=1734355855; cv=none; b=Z426o2yH9a9rjIyLibQzO80unVoWE/+x+9nRLfWTJkS/4onVO4XqnvjXKRoZqJazEKb/ozqE1QDF0bEU0+1gytLUBWSUmmnMSsA+1pWreYhNdKXT0Bu64vJ4jgvJBXZJYPp1Qao+BcvyZsouf59CBH7uFWtbLRcaMl55XQBXtFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355269; c=relaxed/simple;
-	bh=nB897+6vWEd6pYH8mLCQE0U1Y7oTCdOV3drp2D63urc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Po+AzVFTXQrKqXwTUYLYotCeHW+62IvU3Bwa5s0iuRswqvVUx9MqQe7TBOlezJjxtsJ9O9Lm8InEk/rPTz6gz8QnQGJ/2EvvqMpwF5IwoZkEUkoMJPXkT7Ct9dI28XrFDxYWmGR4kCMkjRvbQmfiUQRqS1GlJzgJIIF2ljrCM5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=RzD3rfIN; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5401c52000fso4133452e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1734355261; x=1734960061; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DFco6zz3ViZHeRNfOV74UUN+XYneMKfp/doHU14hnA8=;
-        b=RzD3rfINuBfhkiGPIGIb8kz+LcKqd76pBguGmkZeOomzAbgWXj9zjz/i1RKxVHXvxJ
-         idfu+z5WsBXzOgUm47u5yeEM/Xb3v8mxiYfPg2OohBk3troxQVh6cB32ek1vEzutDPSj
-         9TzOneBv9Uge85zk2VnTMdOkdXEmw5VSSo+WU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734355261; x=1734960061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DFco6zz3ViZHeRNfOV74UUN+XYneMKfp/doHU14hnA8=;
-        b=wg14bOIu1J+BW6eTCHHfcLcUFquc57hYCooclnP8/cFYihq1Mv+mkGCOAkNvEa0FAp
-         gGyqqN1fzJzU+RZ8wKJ9MnLNa0hnI2PJi/1bd64C4mKqtbTIqNtxUiv6wnRvaluehApB
-         bjWeOE0MmWSpxa59NHmixwbdG2TFo+URZKqJ0JXDqScrUaBiZcoyPLAL9jzbEETx0/LD
-         zsNlOFVWNud6x+hNb6q/+eVqVCWvyuiUvhyo/1rADISDn9g+uoGDIRixkfLtVzytj+AA
-         Sl6gwep1CSvnYO6Q3DrR9ZLGwnzExdiOA8DZWcEwnYZeWB/9kmD4xjXIKxOETWULsou5
-         Ggbw==
-X-Gm-Message-State: AOJu0YxzIt9J+cbjXjEnkIgB7tsLHfPqrPrKykYELrhZL0P/omo1esHB
-	9xvMM0ogFCD4WloGW5vPB6WpTO/IWYfWt9rgArN3djR1Crvi1LXh3B63rENWgrxFFu0V8z/xPZg
-	eTfk=
-X-Gm-Gg: ASbGncsOTD4po32OhOr8fsCat6KaHnQwedgxjmETWp/wRm2amtkL/NAp3Ptuo4nvVom
-	/ac3Y1B0JN/Vll7B4WPQzhbrjjJEYxnedvGEff39L5v4Nf5xgY05kr4E5tKaSErCRNT8Ie3xvL2
-	/RjeNhD5p4lSy4St9rwAUNzuFn1DirsblZ9+q3e2hJS+byTpCl8DLelOp1Z2u5CovARjk3UJVrE
-	lIL/GSr+PnLQcRDh7jxWXfvBe/LXGZ3tsiHVsVgUYK14eSAjKE65/ka1DtXf/do4A1g3uQrh/ut
-	wqjGvNbcDOjruxY=
-X-Google-Smtp-Source: AGHT+IFWEvBupHqBDbttAhQG15UMVl0A9wDHJA3TjsJ9voUC0qHS3hTvHi6raf7jb3BMqQcFrp/i9g==
-X-Received: by 2002:a05:6512:3e17:b0:53e:362e:ed6 with SMTP id 2adb3069b0e04-54099b69b54mr3769006e87.50.1734355261056;
-        Mon, 16 Dec 2024 05:21:01 -0800 (PST)
-Received: from localhost (77.33.185.121.dhcp.fibianet.dk. [77.33.185.121])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120b9f4b8sm876526e87.13.2024.12.16.05.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 05:21:00 -0800 (PST)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] LICENSES: Linux-syscall-note: replace stale "below" reference
-Date: Mon, 16 Dec 2024 14:20:35 +0100
-Message-ID: <20241216132035.3409853-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734355855; c=relaxed/simple;
+	bh=zhHngj4Pi5/YkHSEUwNIJqChG7QvJm/9H+bn4MeBShs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eyd3hGF5WhbS8ySSxahZH0GKS5LNyFReAI2ICIdsNz+u8GeWb6KDRgYbS0DQTTHGlEvvoXn9VOM1SoYuz9VEFxb59OpCai6hY4zuzp2RA/HwZHiwPBWaGWUfBpQZQEQrdc1j6ET8BU7JeWKvofNlO2/1emBAd7HD4Mv8k/WKb8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YBgk92ljDz1kw5r;
+	Mon, 16 Dec 2024 21:28:17 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7CBB7140156;
+	Mon, 16 Dec 2024 21:30:49 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 16 Dec 2024 21:30:48 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
+Subject: [PATCH V2 net 0/7] There are some bugfix for the HNS3 ethernet driver
+Date: Mon, 16 Dec 2024 21:23:39 +0800
+Message-ID: <20241216132346.1197079-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,42 +56,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-Ever since this was copied out of the original COPYING file [1], and the
-COPYING file itself subsequently replaced by references to files under
-LICENSES/ [2], the word "below" lost its meaning. Refresh the wording
-so it is independent of whether the GPL text is reproduced next
-to (above, below, alongside) the syscall note or not.
+There's a series of bugfix that's been accepted:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=d80a3091308491455b6501b1c4b68698c4a7cd24
 
-[1] e00a844acab3 ("LICENSES: Add Linux syscall note exception")
-[2] bf02d491237e ("COPYING: use the new text with points to the license files")
+However, The series is making the driver poke into IOMMU internals instead of
+implementing appropriate IOMMU workarounds. After discussion, the series was reverted:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=249cfa318fb1b77eb726c2ff4f74c9685f04e568
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+But only two patches are related to the IOMMU.
+Other patches involve only the modification of the driver.
+This series resends other patches.
+
 ---
+ChangeLog:
+v1 -> v2:
+  - Fix a data inconsistency issue caused by simultaneous access of multiple readers,
+    suggested by Jakub.
+  v1: https://lore.kernel.org/all/20241107133023.3813095-1-shaojijie@huawei.com/
+---
+Hao Lan (4):
+  net: hns3: fixed reset failure issues caused by the incorrect reset
+    type
+  net: hns3: fix missing features due to dev->features configuration too
+    early
+  net: hns3: Resolved the issue that the debugfs query result is
+    inconsistent.
+  net: hns3: fixed hclge_fetch_pf_reg accesses bar space out of bounds
+    issue
 
-Linus, I can certainly understand if you don't want to change this
-text that has been there forever, so feel free to just ignore. Also,
-I'm not sure I can even "sign off" on changes to this text, so also
-feel free to remove that tag and replace by a reported-by or
-suggested-by if you do decide to take it.
+Jian Shen (2):
+  net: hns3: don't auto enable misc vector
+  net: hns3: initialize reset_timer before hclgevf_misc_irq_init()
 
- LICENSES/exceptions/Linux-syscall-note | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jie Wang (1):
+  net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
 
-diff --git a/LICENSES/exceptions/Linux-syscall-note b/LICENSES/exceptions/Linux-syscall-note
-index 9abdad71fafd..df3ced6ec8ee 100644
---- a/LICENSES/exceptions/Linux-syscall-note
-+++ b/LICENSES/exceptions/Linux-syscall-note
-@@ -13,7 +13,7 @@ License-Text:
-    NOTE! This copyright does *not* cover user programs that use kernel
-  services by normal system calls - this is merely considered normal use
-  of the kernel, and does *not* fall under the heading of "derived work".
-- Also note that the GPL below is copyrighted by the Free Software
-+ Also note that the GPL text itself is copyrighted by the Free Software
-  Foundation, but the instance of code that it refers to (the Linux
-  kernel) is copyrighted by me and others who actually wrote it.
- 
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  3 -
+ .../ethernet/hisilicon/hns3/hns3_debugfs.c    | 96 ++++++-------------
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   |  1 -
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 45 +++++++--
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         |  3 +
+ .../hisilicon/hns3/hns3pf/hclge_regs.c        |  9 +-
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 40 ++++++--
+ .../hisilicon/hns3/hns3vf/hclgevf_regs.c      |  9 +-
+ 8 files changed, 113 insertions(+), 93 deletions(-)
+
 -- 
-2.47.1
+2.33.0
 
 
