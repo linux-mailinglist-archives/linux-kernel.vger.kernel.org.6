@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-447148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651D79F2DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FA29F2DF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7B91884CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA081888508
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B057203D58;
-	Mon, 16 Dec 2024 10:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2F4202C5D;
+	Mon, 16 Dec 2024 10:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArWhBjJl"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsWn6z+k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817D72AF03;
-	Mon, 16 Dec 2024 10:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42086202C3A;
+	Mon, 16 Dec 2024 10:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344026; cv=none; b=KFvlKgOqE8enXyO8gpud4AJUQ9/uo7ht0xhWxQiBuTo0W/pq+RDPBazW8s7Grx4ihG5xsZv0/aUhlTb01wt5492el1JvIn8iiNiG2KuRyGi8D0l8Nmeq4iPihkL6a09dXvfcjCEFJyGtbjdddD2TGNNXJO0tDqwnAObg01WyfJM=
+	t=1734344052; cv=none; b=V3CwHlYOhL3hEmv2uxTFkBWnbf7CXqJzpgZdUS7fBnBLE8dXKa/ZBrNJ9OLgTahw+LM+85pp8rtHpG2E9d0lAxzhvYZ5cvNjiHzBr2MjyTksXguCaXreyWuI9HNqi5zw/w0fesEINuHPXO7Mo5Jo8FYQ91uqnAVXy7E46s7DI24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344026; c=relaxed/simple;
-	bh=6o4jofo5o0s4egvVbxhwmAn4YH9WdHGRsBXLWeO+DtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=llWH7MRcpQy8dGn/jx8skZVadlDxoccd0lbpK7Y9ONTF97m5uy+cnN8V1Q5NUic78onqaRGtWZpJU+8uPwHSvo7bVxyg/xVU/ONFx3ST9VI8mpnN60w4AUgdKlbKlRbz6QEXsezNbuLCg2CyZkC3/dtVHoST2FM4Maa27ZfTI+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArWhBjJl; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-728f1525565so4530416b3a.1;
-        Mon, 16 Dec 2024 02:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734344025; x=1734948825; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
-        b=ArWhBjJl3hPPOaKkIaY/r+yGPfLKSnkKdtF1TEpdvVhnWMOKURtfK/Wn5Ix/UNNpzX
-         pZrrqBnJVHlbkENmVJLNlVaP0hTHxqSN8zJtu3np8YV3WQzU4ZnbFqSRJzhDjS+Yv+lh
-         VZ+4KObdpdXeZOzP7J6NH3YfE4mb2gcewtTPjW0H/rFt7vFyAkkxqvA4RM2KWejpQv5x
-         6C9dvGXjsA4SCWDSU4qzdHbdptEKkGlTwCjtDds/pUGtc3zBBUKhfTHLoEVXAT8LG+64
-         3l1SCjyQChpZQ6AdjHNDjhLv+2L1bxmEamsQkDFoqb5Luj7Asd0eVlTi18xkAj0ava2e
-         s6GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734344025; x=1734948825;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
-        b=BvT4pudPVPlb4iKaFCjVriJQTM2XQ1ovXhOWJJX9/XHZJLxM06tuvpcO53bImru50u
-         eCvT4kl2Vxc88xpU8zz6iCJEs/jJ35KLYnZX4JPex7oJ9Xomf7DV7UlJ1D97Oyy/ZGqJ
-         Rvw2LoZd+wf4aL+E3FBre6FRsndV44I9sGXMrnrPCZNuWNBT8r9f97h2CR9eSmG/3xx0
-         wF3n2iXF7VMS9U00uHiJ/FXBBXDISvwlPGYBWkrNprxLDwISbqsOzBEuwmjDsds7evRa
-         fovmE5gTJQioUfG7e4zELpVJBPn6fu0bPJmrlcDsFfTxlcTY1NeRO6ZTYAR93lG257QE
-         3ghw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY8Pq35Ai8nboc5CMbQH0A9pYJBAiivv4BxokddKHnyu0ug4lvLY6bO2pJ9x7qC1iytiP1Vme733W8@vger.kernel.org, AJvYcCUgj+VAC9wZScEale4DvdNt6oaQkScbLqvU4dedr0S2X5GbGTg90AxvRBhi+bezyUJDTFJe6sYanOwG@vger.kernel.org, AJvYcCVFeBzHM9UQ22kV5ed0chN0KT+kFeFLr1umx5PCZWCynHEIE1ONeM2uAtRj803fgHYWvpH/6VBSSa24YeBM@vger.kernel.org, AJvYcCWDTIkjNr30p6AOumCmZ5VBQ8PY8TmJ4PwqmZR/c2nWTq8W9dgFXplTD2uaBQ4+Alk+Xj0a8Mbh709IN7nRCw==@vger.kernel.org, AJvYcCXFJ/hXevDkYzQJ1eERqLePiy2/yzSfCcywqxTxPgxv5+L7NwLTguvIDsJM0gt8uyAqfkCc+Q2lcMazrA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTe67VOy4vncRMgAkQ0GdDriMtRUv8BENPHvOjbXrwBVJxkU46
-	LSKkU9A+GbvtJf/9Eqrzilwlq3uynuXBk4nJCFbDKlKz3TrAfsJC
-X-Gm-Gg: ASbGncus2+wAW8zO/M4IDWlchL4Qx8c/EiHaaynjcEUCZWuSykEdl6rQWcHcD9tqNoj
-	XLiBaZUepirhuO+nFFomVyqJrHFdE+mh4SkrhMXgXzD4GAk/o6HfqWmU5Rqx8VcVN5iqlq99muG
-	uhzK0hN/75NHl2Qgj6t34NkrblyL3tGs8ad63hFuu7mX0N0WkmJ9bvpIteW5oedQsnzsGQufQp5
-	PUlDj6tLqSA0m3K+EootKncgwXHVIl23OhLDxjy4lNj5zYVX1XUmchop8N+mOYgIGTzUDUcW/kB
-	SlYE+eMwkiwL5gTiQkpgAt0=
-X-Google-Smtp-Source: AGHT+IFq3zJyvoXfAV7XVBdCiDQC4vaO/7xLrUwixiOvu21RBmLw5wfgxXzoYw8zU6Yia4k+KM7puQ==
-X-Received: by 2002:a05:6a20:4304:b0:1e1:bdae:e045 with SMTP id adf61e73a8af0-1e1dfd91980mr18130458637.23.1734344023005;
-        Mon, 16 Dec 2024 02:13:43 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bce39csm4517791b3a.189.2024.12.16.02.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 02:13:42 -0800 (PST)
-Message-ID: <843f5270-d715-4c98-b191-1c271eb418c5@gmail.com>
-Date: Mon, 16 Dec 2024 19:13:39 +0900
+	s=arc-20240116; t=1734344052; c=relaxed/simple;
+	bh=neQjXpprVKKr7+IF1BUgJEHAPq3M8lzz9xydrcqWFo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=soWcDBKtinYsH8dvMOTr3dOkUqctoCgXoj4T3SYawXxRl1mluMrkrpsdipeJlWsLuU1Iz86umZPUjxYmGITEmPxk3zbvTNI2s2AyC5IlOOXO27dAvVOHhMqIKN400CkGHjGkKofLbPE9ipjI/4KaT16AZvvT18YnbPRYLy4ip0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsWn6z+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BD8C4CED0;
+	Mon, 16 Dec 2024 10:14:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734344051;
+	bh=neQjXpprVKKr7+IF1BUgJEHAPq3M8lzz9xydrcqWFo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dsWn6z+kYzVCL1d/ttsn3cAwhLsTJnrZKePws0DMQfCcdZfxqUGa1c+War27UfG/b
+	 EccRMYa4nAOQhmutyTjfkJaoZ5nCS2WY34x6FY3kLKB+/XRi5L9KGJyx1M8RkFQ9ge
+	 TIzi1EebQwjW7soX8CPxHJjUTYHCzpEWB5YVzsN3r0Gbaqj7NQMPUHIaTPxuWVo1H8
+	 WpS5l+LFSQAOVxngrZiOu5Nz4rxePRs3grq767Af1lYipAbKKa3vFgRwNwEaWT+G2I
+	 276CiLDsXZy728PqRvP18pQKkVyFP9Iq7ipiHqsspb0DyYjkJkdqTDLX7mEWvA4ejH
+	 cUUX07hmt4mUQ==
+Date: Mon, 16 Dec 2024 11:14:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Charan Pedumuru <charan.pedumuru@microchip.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
+ schema
+Message-ID: <dxgqkdo6ulmqfa5vyerwta3vubuy32gzzu2cxfwwtespydfc4b@5wjrno3lgjsp>
+References: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/10] netfs: Remove redundant use of smp_rmb()
-To: David Howells <dhowells@redhat.com>,
- Christian Brauner <christian@brauner.io>
-Cc: Max Kellermann <max.kellermann@ionos.com>,
- Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Zilin Guan <zilin@seu.edu.cn>, Akira Yokosawa <akiyks@gmail.com>
-References: <20241213135013.2964079-1-dhowells@redhat.com>
- <20241213135013.2964079-7-dhowells@redhat.com>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20241213135013.2964079-7-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
 
-David Howells wrote:
-> From: Zilin Guan <zilin@seu.edu.cn>
-> 
-> The function netfs_unbuffered_write_iter_locked() in
-> fs/netfs/direct_write.c contains an unnecessary smp_rmb() call after
-> wait_on_bit(). Since wait_on_bit() already incorporates a memory barrier
-> that ensures the flag update is visible before the function returns, the
-> smp_rmb() provides no additional benefit and incurs unnecessary overhead.
-> 
-> This patch removes the redundant barrier to simplify and optimize the code.
-> 
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Akira Yokosawa <akiyks@gmail.com>
+On Wed, Dec 11, 2024 at 04:59:22PM +0530, Charan Pedumuru wrote:
+> Convert old text based binding to json schema.
+> Changes during conversion:
+> Add a fallback for all compatibles as the IP core is compatible
+> with `syscon`.
 
-Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
+I don't understand. The syscon was already there. You added different
+fallback, so provide explanation why do you think they are compatible.
 
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/r/20241207021952.2978530-1-zilin@seu.edu.cn/
+> 
+> Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
 > ---
->  fs/netfs/direct_write.c | 1 -
->  1 file changed, 1 deletion(-)
+>  .../bindings/mfd/atmel,at91sam9260-matrix.yaml     | 54 ++++++++++++++++++++++
+>  .../devicetree/bindings/mfd/atmel-matrix.txt       | 26 -----------
+>  2 files changed, 54 insertions(+), 26 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml b/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml
+> new file mode 100644
+> index 000000000000..0e827882823f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/atmel,at91sam9260-matrix.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/atmel,at91sam9260-matrix.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip AT91 Bus Matrix
+> +
+> +maintainers:
+> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
+> +
+> +description:
+> +  The Bus Matrix (MATRIX) implements a multi-layer AHB, based on the
+> +  AHB-Lite protocol, that enables parallel access paths between multiple
+> +  masters and slaves in a system, thus increasing the overall bandwidth.
+> +
+> +properties:
+> +  compatible:
+> +    anyOf:
+
+oneOf
+See other bindings for preferred syntax. There is never anyOf.
+
+> +      - items:
+> +          - enum:
+> +              - atmel,at91sam9260-matrix
+> +              - atmel,at91sam9261-matrix
+> +              - atmel,at91sam9263-matrix
+> +              - atmel,at91sam9rl-matrix
+> +              - atmel,at91sam9g45-matrix
+> +              - atmel,at91sam9n12-matrix
+> +              - atmel,at91sam9x5-matrix
+> +              - atmel,sama5d3-matrix
+> +          - const: syscon
+> +      - items:
+> +          - const: microchip,sam9x60-matrix
+> +          - const: atmel,at91sam9x5-matrix
+> +          - const: syscon
+> +      - items:
+> +          - const: microchip,sam9x7-matrix
+
+So that's just enum with previous group.
+
+
+> +          - const: atmel,at91sam9x5-matrix
+> +          - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    matrix@ffffec00 {
+
+syscon@
+or system-controller@
+
+
+Best regards,
+Krzysztof
 
 
