@@ -1,243 +1,187 @@
-Return-Path: <linux-kernel+bounces-448032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378A39F3A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:45:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D349F3A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A35916CE4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:45:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ABE716CCDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC320B1E0;
-	Mon, 16 Dec 2024 19:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EBB20C49C;
+	Mon, 16 Dec 2024 19:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqexwAv7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZFPw3/76"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D220897F;
-	Mon, 16 Dec 2024 19:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD0414A4D4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378297; cv=none; b=cyWKOivhJc4QXSkvV30fnd2el0+qruW5HnUPsgyTVZE6U1llaHpEegbWXWJ+qQJWpqNh9j/epQmQEHNV66DJWJsFdoY/s77jZgkFC6AwxRIx7PIWvRuW2U474p8GfF4ozZi9OWlLpI0QGDyFe6uU2bh+tXFEOIcZydAYIxKBKxk=
+	t=1734378382; cv=none; b=NiUQ+p8JX6fjCVtxHWlW4xSRHWzrQU9vKGbYwYukE3jS27DMkfZh+96WMqOcczACxgY8r609UZx8XPosjlrd3oa5vABynN6aVUrcHu11V0kJ4syH867GUNCm8IjXaz2nzyJkdkglyexRd8GF+gf4U5VxEfQYyqhr9Ddycfrk1lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378297; c=relaxed/simple;
-	bh=rZlMAModRsdgbe5w/zLsoK/sH5kP0/f2DN9f03zSC58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n++KfaJ/PrIz1+MXPi4GLbdy4iYE9koVIbQEMPKNW2x77Iad/ZRq1PH9r3FYHxGMeS72YfcCTEWkSkgXHdWfJQU7ZvjX525pBiKZd3ow7s0wSpgBV0UvsWa6ZacuT6LIdRpWUQxthOHGHSczEhwXHthdYJSjWMKerWUYErLU0gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqexwAv7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIwdKQ010436;
-	Mon, 16 Dec 2024 19:44:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QoKedy9nYKtdTeo3ZbXuPAijYEnVjQxjDUwben+Uc8A=; b=mqexwAv76Z5Urklf
-	Pp+5j1FIk30/a+184RGWP8p3xYpASLLI3Efz/nTk9ywkbXKNaKDUIMNFJZ2aNg+d
-	e2eeRzvz6dRgOrq2JWhegdx95y5tiXJCRamY2AMudjCXEAJ2iljfAIk2qJFPl2xd
-	eXQL467v4oVTWgqOyCn8QGBxxmJrCgnkPZu+AwkZ+gg5HNZWc/jgHDIfsAXHcZhU
-	JYCz9BEHb9+WkxTsa6UsHFzrVjBQhUpCTvPf683D6ek7biTDFyW7prdNI0WsIwN/
-	39SKj0MgKunZoEgnRBqMd2GBe+Ruhp78MW1ts5WxsXDpCWWOYuouE7/QDoYq191Y
-	2foSzg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsy70389-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:44:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJifra029261
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:44:41 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:44:41 -0800
-Message-ID: <42947ffb-5fd0-42dc-9f9e-6c90f0810258@quicinc.com>
-Date: Mon, 16 Dec 2024 11:44:28 -0800
+	s=arc-20240116; t=1734378382; c=relaxed/simple;
+	bh=j6tAfhrAKfM+BxyKJyBCAECpbjqe9JSVwIYSxNWXM9A=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hKEFJdFG6aaBCjUwiD+ipkLHwo5LH4pdH+Rjk7D6vqBKdyLN+gvRZ0vy/3mzVd5OEmJJ1dSTQA/sem+Xw2b6XVp9ioTjgRl4acMceUxaFggxqnGSpyl0v7HWqtsKXwXet1iPRjxAQm/HrEBvGFBFvwLHy34iwaILExGxqwoI028=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZFPw3/76; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679d366adeso42902121cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734378378; x=1734983178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:user-agent
+         :from:references:in-reply-to:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dj4MkECiGqrOXQxpuQLD4yCOwjnhMEXT22q3KbMrq/k=;
+        b=ZFPw3/76A+yR8hZsJ8MPg7v6Y914MtWiHLvgR2dCVYvNOlQm3YOkHnDApNm+AyVb05
+         N8d5RsgitKo2TLqOehTerc1s26A/3RVTI+PiXCEGUXy7Lv8t8ys4eeQGx0ZQFblvtdgg
+         iKwS9hZQqj9fk6Ezreu+1DgCvPYCxPj/Mgrek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734378378; x=1734983178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:user-agent
+         :from:references:in-reply-to:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Dj4MkECiGqrOXQxpuQLD4yCOwjnhMEXT22q3KbMrq/k=;
+        b=RdHDts1R3xiO7MFwJ1XCIoCwWkgIOVw5m7DKecfbwdf4aVRyZq8htXrNSzhoqmx8sP
+         g3NM1VUOdX7fvJZGRTGjUPf4Wt4e2/wWC7fvzcoHIteuY+GtfK3Wt9s16raGpgrVi06y
+         AywgvjqntueR+7Yx2Zp/xR63GwKYiOhr3pxFpw3LfDQTNmozmypEzyYFDk08KCJ6wHus
+         VqCS8x8ubgI4VVXWEC/7disn0m6TvFItFGVN/Jo2N68rFKMS6Rg6nOoFBR/0eRHWqfJV
+         YfwtaSGLfPZ2FCoZaoMZRCx5jQ3Iv/5ge02fHvYC3CNKBq99/GpZJaUKPDP4C+XBz+62
+         7E1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVO4hlFmPcTj2scJIbNwaRvqnKa8+YzXpkFZn6f9g8hZwQEsG5vfFasj205HpYvOibG7Nfmj1acZ7f1sFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBM9/UEICGitkQ+nP9n6QCi5H2Yy4GFIlkzbQeEXBnnITv5tjI
+	QWQLPL/3uiK/RcvgkzT9FNzrFLm4U3+rT+FKA40X5zSGn6tpAU/Ibj1MxVXnzOsC9kBNbdM6u29
+	QxUM63fHqp1YKGF4J5n6/RKfjCMRfjau88TGm
+X-Gm-Gg: ASbGncvjDiRldLUdLt+GyS5o+gjVnNuocLeIttpH0Kp/EHqg6l511g2gNbpHAwDh+OL
+	fcOAx+RzEd6WapS54SPPr4voibuHOxU8gEe9XdluQXVzsuhEvzUIMbz/svuwku+RMbw==
+X-Google-Smtp-Source: AGHT+IHGV/UEHN7glrKn45Rm7GMxGUJA8r5aYXDp4ruex87I6ZIK8597fD+gsMJMcB3UPXYWmc3P1FV2kT6S+lFHJd4=
+X-Received: by 2002:ac8:5a50:0:b0:467:72c1:7084 with SMTP id
+ d75a77b69052e-468f8c06fc3mr12036341cf.0.1734378378091; Mon, 16 Dec 2024
+ 11:46:18 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 16 Dec 2024 11:46:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/22] drm: Add valid clones check
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Maxime Ripard
-	<mripard@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark
-	<robdclark@chromium.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
-	<ville.syrjala@linux.intel.com>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
- <20240925-hasty-bald-caribou-eedbf5@houat>
- <80d08449-71de-4a7f-8b2a-8af565d8d701@quicinc.com>
- <54188c68-41c7-4a42-9eca-67363b30217a@quicinc.com>
- <Z2A4uahCHuOz45Fc@phenom.ffwll.local>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <Z2A4uahCHuOz45Fc@phenom.ffwll.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MNXQyAJ-coX4yR_R4aLjrCNCaShb2gUT
-X-Proofpoint-GUID: MNXQyAJ-coX4yR_R4aLjrCNCaShb2gUT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160162
+In-Reply-To: <CANFp7mU=wjXc6FrdzWT5oe25wtZnxOXvpVmbMqeVhOeEUchpcA@mail.gmail.com>
+References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
+ <20241206153813.v4.5.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
+ <CAE-0n513GoDKW7mA_rjCLsgZZFq=CEb5S8WLYr2rskq8fJW9LA@mail.gmail.com> <CANFp7mU=wjXc6FrdzWT5oe25wtZnxOXvpVmbMqeVhOeEUchpcA@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Mon, 16 Dec 2024 11:46:16 -0800
+Message-ID: <CAE-0n52dZONV2Fj=N4f85ttGRg+yyvOSXQoD50oFc9B7LBgtPA@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] platform/chrome: cros_ec_typec: Displayport support
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: chrome-platform@lists.linux.dev, heikki.krogerus@linux.intel.com, 
+	linux-usb@vger.kernel.org, tzungbi@kernel.org, akuchynski@google.com, 
+	pmalani@chromium.org, jthies@google.com, dmitry.baryshkov@linaro.org, 
+	badhri@google.com, rdbabiera@google.com, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Quoting Abhishek Pandit-Subedi (2024-12-13 10:29:51)
+> On Tue, Dec 10, 2024 at 4:08=E2=80=AFPM Stephen Boyd <swboyd@chromium.org=
+> wrote:
+> >
+> > Quoting Abhishek Pandit-Subedi (2024-12-06 15:38:16)
+> > > diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers/p=
+latform/chrome/cros_typec_altmode.c
+> > > new file mode 100644
+> > > index 000000000000..bb7c7ad2ff6e
+> > > --- /dev/null
+> > > +++ b/drivers/platform/chrome/cros_typec_altmode.c
+> > > @@ -0,0 +1,281 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Alt-mode implementation on ChromeOS EC.
+> > > + *
+> > > + * Copyright 2024 Google LLC
+> > > + * Author: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > > + */
+> > > +#include "cros_ec_typec.h"
+> > > +
+> > > +#include <linux/usb/typec_dp.h>
+> > > +#include <linux/usb/pd_vdo.h>
+> >
+> > Please include workqueue.h, mutex.h, etc. for things used in this file.
+> Done. Btw, is there a script that does this for you in the kernel like
+> include-what-you-use does for userspace?
 
+I'm not aware of one.
 
-On 12/16/2024 6:27 AM, Simona Vetter wrote:
-> On Sun, Dec 15, 2024 at 06:19:08PM -0800, Abhinav Kumar wrote:
->> Hi Maxime
->>
->> Gentle reminder on this one.
->>
->> We are looking for some advice on how to go about KUnit for this static
->> function.
->>
->> Please help with our question below.
->>
->> Thanks
->>
->> Abhinav
->>
->> On 12/6/2024 4:48 PM, Jessica Zhang wrote:
->>>
->>>
->>> On 9/25/2024 12:23 AM, Maxime Ripard wrote:
->>>> On Tue, Sep 24, 2024 at 03:59:18PM GMT, Jessica Zhang wrote:
->>>>> Check that all encoders attached to a given CRTC are valid
->>>>> possible_clones of each other.
->>>>>
->>>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->>>>> ---
->>>>>    drivers/gpu/drm/drm_atomic_helper.c | 23 +++++++++++++++++++++++
->>>>>    1 file changed, 23 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
->>>>> b/drivers/gpu/drm/drm_atomic_helper.c
->>>>> index 43cdf39019a4..cc4001804fdc 100644
->>>>> --- a/drivers/gpu/drm/drm_atomic_helper.c
->>>>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
->>>>> @@ -574,6 +574,25 @@ mode_valid(struct drm_atomic_state *state)
->>>>>        return 0;
->>>>>    }
->>>>> +static int drm_atomic_check_valid_clones(struct
->>>>> drm_atomic_state *state,
->>>>> +                     struct drm_crtc *crtc)
->>>>> +{
->>>>> +    struct drm_encoder *drm_enc;
->>>>> +    struct drm_crtc_state *crtc_state =
->>>>> drm_atomic_get_new_crtc_state(state,
->>>>> +                                      crtc);
->>>>> +
->>>>> +    drm_for_each_encoder_mask(drm_enc, crtc->dev,
->>>>> crtc_state->encoder_mask) {
->>>>> +        if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
->>>>> +            crtc_state->encoder_mask) {
->>>>> +            DRM_DEBUG("crtc%d failed valid clone check for mask
->>>>> 0x%x\n",
->>>>> +                  crtc->base.id, crtc_state->encoder_mask);
->>>>> +            return -EINVAL;
->>>>> +        }
->>>>> +    }
->>>>> +
->>>>> +    return 0;
->>>>> +}
->>>>> +
->>>>>    /**
->>>>>     * drm_atomic_helper_check_modeset - validate state object for
->>>>> modeset changes
->>>>>     * @dev: DRM device
->>>>> @@ -745,6 +764,10 @@ drm_atomic_helper_check_modeset(struct
->>>>> drm_device *dev,
->>>>>            ret = drm_atomic_add_affected_planes(state, crtc);
->>>>>            if (ret != 0)
->>>>>                return ret;
->>>>> +
->>>>> +        ret = drm_atomic_check_valid_clones(state, crtc);
->>>>> +        if (ret != 0)
->>>>> +            return ret;
->>>>>        }
->>>>
->>>> Pretty much the same comment, we should have kunit tests for this.
->>>
->>> Hey Maxime,
->>>
->>> I'm working on the kunit test for this and had a question on the design
->>> for the unit test:
->>>
->>> Since this is a static helper that returns a pretty common error code,
->>> how would you recommend going about making sure that
->>> `drm_atomic_check_valid_clones()` specifically is returning the error
->>> (and not a different part of check_modeset) when testing the
->>> check_valid_clones() failure path?
-> 
-> So the usual way to test very specific things of a big function is to
-> first setup a driver and atomic request which does pass all checks. And
-> then do a minimal change which does not pass anymore.
-> 
-> So what you could do here is have 3 connectors 1 crtc, but only the first
-> two connectors can be cloned. Then do an atomic request with those two
-> connectors and the crtc. Then the 2nd request is with one of the
-> connectors replaced with the 3rd one (so it's still a clone config, but
-> not an invalid one), then have a failure.
-> 
-> Note: I didn't check all the details, I might be getting something wrong
-> here, but the idea should work.
+>
+> >
+> > > +
+> > > +#include "cros_typec_altmode.h"
+> > > +
+> > > +struct cros_typec_altmode_data {
+> > > +       struct work_struct work;
+> > > +       struct cros_typec_port *port;
+> > > +       struct typec_altmode *alt;
+> > > +       bool ap_mode_entry;
+> >
+> > The UCSI driver (drivers/usb/typec/ucsi/displayport.c) calls this
+> > 'override', can it be named the same thing? I also see that the UCSI
+> > driver has two bools, 'override' and 'initialized', which seems to be t=
+o
+> > support a DP_CMD_CONFIGURE that will respond with an ACK and then the
+> > next DP_CMD_CONFIGURE will call ucsi_altmode_update_active() to set the
+> > altmode as active. Maybe the same method can be followed here so that o=
+n
+> > older chromebooks where EC is in control of mode entry we can emulate
+> > entering the mode?
+>
+> The reason it's called `override` in UCSI is because the feature is
+> called "alternate mode override supported". When this optional bit is
+> set, the UCSI method "SET_NEW_CAM" can be used to change what
+> alternate mode is active. However, it behaves differently from cros_ec
+> because even when override is set, the PD controller can/will still
+> autonomously enter a mode on connection. Whereas on cros_ec_typec, if
+> you set "ap-driven-mode", the EC will not enter any modes until the AP
+> tells it to.
 
-Hey Sima,
+Ok, got it.
 
-Ack, FWIW this describes something very similar to my planned test cases 
-(my current kunit tests 3 cases -- valid clone, invalid clone, and no 
-clones). Will post the changes later today if there's no major 
-objections to this.
+>
+> Also, the reason the UCSI driver does the DP_CMD_CONFIGURE dance is
+> because the UCSI command, SET_NEW_CAM, requires the DP configuration
+> VDO as a parameter. Since UCSI doesn't define a VDM mechanism, the
+> UCSI driver fakes the ".entry" call and then uses the first
+> DP_CONFIGURE to do the actual entry. This also doesn't match the
+> cros_ec driver (either ap-driven or not) because the interface does
+> not allow setting the DP VDO at all. DP_CONFIGURE will be generated
+> and consumed entirely within the EC and all we can really use is the
+> mux update to generate a status update for the DP state machine.
 
-Thanks,
+Is the 'initialized' dance the fake ".entry"? I want the not ap-driven
+(ec-driven?) mode to work with this series, and specifically not print
+an error message. I'm guessing that to do that we should fake ".entry"
+when the EC is in control of the mode entry. Or is there some way to
+jump the state machine forward for the port altmode so that it is
+already entered? I think to get the device to show the pin configuration
+and mode like "source" vs. "sink" or "usb" we need to spoof multiple
+VDMs.
 
-Jessica Zhang
+>
+> Right now, EC driven Chromebooks will simply report active/inactive
+> for DP without reporting any configuration/status info. If you want to
+> handle DP_CONFIGURE and DP_STATUS from the altmode driver, you'll need
+> to fake the interactions in the port driver in a subsequent CL.
+>
 
-> 
-> Cheers, Sima
-> 
->>>
->>> Thanks,
->>>
->>> Jessica Zhang
->>>
->>>>
->>>> Maxime
->>>
-> 
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
+Ok. I'd very much like to do that because I need to make the displayport
+partner altmode driver work to the point that it calls
+drm_connector_oob_hotplug_event(). Do we need to spoof a
+DP_CMD_STATUS_UPDATE on mode entry when the EC indicates that DP mode is
+entered on a port?
 
