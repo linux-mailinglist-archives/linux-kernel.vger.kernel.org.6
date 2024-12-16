@@ -1,139 +1,179 @@
-Return-Path: <linux-kernel+bounces-447050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534AA9F2C9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 679A29F2C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F15C161D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960081679AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5884C200120;
-	Mon, 16 Dec 2024 09:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED25200BB3;
+	Mon, 16 Dec 2024 09:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gv6KZ5Iq"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cctCAbYR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E520011D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5582E628;
+	Mon, 16 Dec 2024 09:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734340146; cv=none; b=U3h8mTFyAELX8NcjlxAxTOgIjW7pD3AFyZJdssxz1ThjwgGuk77ouTQpKiY5irKG3RjeOdeR5ocWNZzmlUBpUB+y4Cd4RKR8/SEppKAfjSZH7sMP6SU6JTc5ijd7jwL40dsV+hn/7dwhHrINl4tvQR1VbdFsq1avVjlZ9g7GvQA=
+	t=1734340187; cv=none; b=cN4tkCmk8To/IUy+k/HWw2kwdnn6BTvhr077BbOnjyR/vJn4LVA4fhrA/UuTvGXK7QIC6Y3kYYAaOsaSIukarIK6dmEt4Mc1GtuxzzPGMP3W1FMLSsj7zCWLV1M3gnAqePhNM4PjIWveaEzEnbpWLxmdJOCoRatNpwzWR2FwRX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734340146; c=relaxed/simple;
-	bh=M19509IjZMcFyL8kbGcmsLxqS7khHdG+4BTdiY+Cn3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eIX2FTdPUZiaS3naOsrWj+qStTuq4+z/p4MTFPjvZBXUu3rG1UBM0EDJLtXk8lGPGpN8D3uSnByJ1oKHcTrNkP4zRGGUrN+hwKSUWUDD4H0Wh26oej4lYD/Iqn2InZBf7upP0Y0IseefdDLGHVz2IVJbJug4W4YWVNn/n4gXsJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gv6KZ5Iq; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361d5dcf5bso42274515e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:09:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734340143; x=1734944943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cGBHS4QHf1CsUcSFjaZXRI9YWCCVYzt2h/iHstQ0laA=;
-        b=Gv6KZ5Iqx6fzNhZAU09D/gQSVlFTqh9G8v4OVdBKVEPO4vcVXbBYkJBRG1PecZ3DAg
-         R9cbNo+FTpS6IJvrIjPyPf27QfuykBmjyQX4X17Ra4FzSHrf+6gPQJUSwvtia91rf+Fi
-         4wnGPAmPVX6SMLGhwjBG4GsfuMfTN9FDbQdalQO115lzwl+IUZujiU8+UsJ5B04MXzKX
-         /nw4keWIdfH7xVURQf83yx+eQl6I127uRb7iGTAqX45V6kmtjxEJ7489mD8+c8DSZa12
-         m0JunSnVSkD+A9BsH2k31VqBSIIO0QibCvPscO3IQkbe8DDwuHaxie6pePXC2Vbf6BWM
-         r28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734340143; x=1734944943;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cGBHS4QHf1CsUcSFjaZXRI9YWCCVYzt2h/iHstQ0laA=;
-        b=D+CXFJ5dDx7szImDSNKuJoeyWkJsKI7s+dpQb9A+ddbZYV/EEXNOm1QwH0E/K0upeh
-         q6eCeKPdDeVPXY/rK+jDcXYZjb5OtizE0iN3+dMiiwE1nzadw7VEN49N5fqi0T/Hz+ri
-         1Vf9z2SIMNsmkW5VJTjCuZrqjRLEqJlpWQvLr4QSXOvEtPmrfh+MNTyLKdMk9IkyF3vq
-         1JilCUX/m6ZDQRUf8sEfzPAUlYgRvf1vTWozEjlEfCVNgEsmVFmlPcbM2Ogqwhn4Pvar
-         3MCZiWr4fsAGeZr1hK8Ldc0xGJFwu06iHGut0Voi/MTwve3DmKbbREv6u8+Lq8Ehd+pe
-         nL7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwczOQGUUxc3D7M4/eru26EBeMnIwAuzdQinYx6+1AIqoTRIKASrQf2JFmWbN2+QzsXA9lUmeXVuKTqIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+YTazETcvjKXR2rzDkcpVvxC9OnP2nUqVxRChEANqwxN06pbU
-	V2NoNUAj2Zher7LmI/+o7rmrbYJU/driZhONx3jRp0BYRknXmzF3UGNiGfi/2c4=
-X-Gm-Gg: ASbGncujQPwBve3qmofuqq8Fzg1fp4eVYEIBRN90EUsuz8MZ7J/u01wsEip7qMbuTHK
-	03r8aAlUwIX09E4SCr3hjJ5/6g91thn/IO44G+8fBlFYCzx69MsAkXPZFd/AJhTf4ptB6mlKJeM
-	MwDRuJ76MJfFoF/AlQN/fAPTFhAj2ryq6jlOhEgcjXBGypotJtwO6sLdXtcZFlqqn4PFQwqqPo5
-	8t6qnwQFMliB2mpoJRqIhRAi+wxODGqctdn4gF0eVxm7DQX83VUACtF
-X-Google-Smtp-Source: AGHT+IH72Dfr5eQ52hfcPTD2JDNeTzGbEvM+MfJLbWyJGQJuX1wyKsEB2Yp2W1KGB/T0MXX4Wu47cg==
-X-Received: by 2002:a05:600c:871b:b0:434:e9ee:c3d with SMTP id 5b1f17b1804b1-4362aa93cb0mr85374005e9.20.1734340143532;
-        Mon, 16 Dec 2024 01:09:03 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ddd7:943f:c7de:9971])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ef45sm133677185e9.26.2024.12.16.01.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 01:09:03 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Eric Anholt <eric@anholt.net>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
+	s=arc-20240116; t=1734340187; c=relaxed/simple;
+	bh=X52xQmeRvmCvazkS+Ms21FXQkeUYcg+KEnCBdAPKsKo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CKEFeoczdMPrbGhuBeakgttgkwgLHBCKmON79sWTm+OMf7JbUp4NbZ+CGSFD2LzpRJnpO37zf97B0fcQHL2XVk7a/ER0jrwK6TCYrXZogzoDb3DlBUqBehGY1lFKrFKsCbXKK9szp7hQdmC+OIa2ONYWswTdHNwW7ndFuHAeHnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cctCAbYR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E26C4CED0;
+	Mon, 16 Dec 2024 09:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734340187;
+	bh=X52xQmeRvmCvazkS+Ms21FXQkeUYcg+KEnCBdAPKsKo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cctCAbYRWrbjXJfufpjd3nowwqC8anwHN+n/Cri5Idn30lAdBNwV6ukV+FhLxN4xu
+	 RixlyaxLA+gaXA8zfaPlEEyCtfD9q3Hnp7Y03dxGLiZe0uKN/iIkdGb8Sg/zflkiUI
+	 TEuK+OsWXpkLeI+EyJpud0ZccLBwiGjfWtpPldmJJ2JUKcM4IQLjblY2liAQ2txwrA
+	 i3O064JoMU0hGmplKCxW/GdTJtgAqiKzNV/ME9afxSKbMIybmAe8/ahj77qIGJ11GX
+	 3wNuYE9adGfLMkhqfYmW69HA7bS7pWeZRRbLMuZJy8bXdC7rbZ6/0FJDivTjIdTj2u
+	 tas1YxZ2spVHQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tN76m-0046dr-RG;
+	Mon, 16 Dec 2024 09:09:44 +0000
+Date: Mon, 16 Dec 2024 09:09:43 +0000
+Message-ID: <867c80ro2w.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com>
+Cc: catalin.marinas@arm.com,
+	joey.gouly@arm.com,
+	kvmarm@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-gpio@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/7] drm/vc4: Fixup DT and DT binding issues from recent patchset
-Date: Mon, 16 Dec 2024 10:09:01 +0100
-Message-ID: <173434013318.38429.808413721248542013.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
-References: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
+	oliver.upton@linux.dev,
+	suzuki.poulose@arm.com,
+	syzkaller-bugs@googlegroups.com,
+	will@kernel.org,
+	yuzenghui@huawei.com
+Subject: Re: [syzbot] [kvmarm?] BUG: unable to handle kernel paging request in __hwasan_check_x0_ADDR
+In-Reply-To: <675aa352.050a0220.1ac542.0018.GAE@google.com>
+References: <675aa352.050a0220.1ac542.0018.GAE@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com, catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Thu, 12 Dec 2024 18:36:27 +0000, Dave Stevenson wrote:
-> I missed the DT errors from the recent patchset[1] (DT patches
-> in linux-next via Florian, DRM bindings patches on dri-misc-next)
-> as Rob's bot report got spam filtered, so this is a fixup set.
+On Thu, 12 Dec 2024 08:48:18 +0000,
+syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com> wrote:
 > 
-> Largely it was changes to number of interrupts or clocks in the
-> bindings, so those are now covered.
+> Hello,
 > 
-> [...]
+> syzbot found the following issue on:
+> 
+> HEAD commit:    5db899a34f75 Merge remote-tracking branch 'kernel/kvmarm/n..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16db78f8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fde68ab6d6c8c8ab
+> dashboard link: https://syzkaller.appspot.com/bug?extid=67a9ec5b1706e0184581
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-5db899a3.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/4938b757ff4a/vmlinux-5db899a3.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/936938b47987/Image-5db899a3.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com
+> 
+> Unable to handle kernel paging request at virtual address efff800000000137
+> KASAN: probably user-memory-access in range [0x0000000000001370-0x000000000000137f]
+> Mem abort info:
+>   ESR = 0x0000000096000005
+>   EC = 0x25: DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+>   FSC = 0x05: level 1 translation fault
+> Data abort info:
+>   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> swapper pgtable: 4k pages, 52-bit VAs, pgdp=0000000044a53000
+> [efff800000000137] pgd=1000000049992003, p4d=1000000049993003, pud=0000000000000000
+> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 6560 Comm: syz.2.929 Not tainted 6.12.0-rc7-syzkaller-g5db899a34f75 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 80402009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __hwasan_check_x0_67043363+0x4/0x30
+> lr : vgic_get_irq+0x7c/0x3d4 arch/arm64/kvm/vgic/vgic.c:93
+> sp : ffff80008c597650
+> x29: ffff80008c597660 x28: 00000000000000e0 x27: 0000000000000004
+> x26: 0000000000000002 x25: ffff800083a7fe20 x24: 16f0000014accd90
+> x23: 16f0000014acb9a0 x22: 0000000000000000 x21: a9ff80008c583000
+> x20: 0000000000000001 x19: efff800000000000 x18: 0000000000000005
+> x17: 0000000000000000 x16: 0000000000000137 x15: 0000000000000000
+> x14: 0000000000000002 x13: 0000000000000003 x12: 70f000000a33ba80
+> x11: 0000000000080000 x10: 0000000000001378 x9 : efff800000000000
+> x8 : 0000000000000001 x7 : 0000000000000001 x6 : 0000000000000001
+> x5 : ffff80008c597858 x4 : ffff8000800f2b38 x3 : ffff8000800f7a00
+> x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000001378
+> Call trace:
+>  __hwasan_check_x0_67043363+0x4/0x30
+>  vgic_mmio_write_invlpi+0xb0/0x174 arch/arm64/kvm/vgic/vgic-mmio-v3.c:546
+>  dispatch_mmio_write+0x2a4/0x308
+>  kvm_iodevice_write include/kvm/iodev.h:54 [inline]
+>  __kvm_io_bus_write+0x290/0x340 virt/kvm/kvm_main.c:5852
+>  kvm_io_bus_write+0x100/0x1bc virt/kvm/kvm_main.c:5877
+>  io_mem_abort+0x4b8/0x7a0 arch/arm64/kvm/mmio.c:204
+>  kvm_handle_guest_abort+0xb4c/0x1c64 arch/arm64/kvm/mmu.c:1880
+>  handle_trap_exceptions arch/arm64/kvm/handle_exit.c:351 [inline]
+>  handle_exit+0x1a0/0x274 arch/arm64/kvm/handle_exit.c:381
+>  kvm_arch_vcpu_ioctl_run+0xbc0/0x15b0 arch/arm64/kvm/arm.c:1279
+>  kvm_vcpu_ioctl+0x660/0xf78 virt/kvm/kvm_main.c:4475
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+>  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+>  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+>  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+>  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> Code: a90efbfd d2800441 143a3ed3 9344dc10 (38706930)
 
-Applied, thanks!
+This seems to be something that is already handled by d561491ba927c
+("KVM: arm64: vgic-v3: Sanitise guest writes to GICR_INVLPIR"), which
+made it into 6.13-rc1.
 
-[3/7] dt-bindings: gpio: brcmstb: permit gpio-line-names property
-      commit: 83a9752729c455a6bd9b7cf62198506180691931
+The branch you are using doesn't seem to contain that particular
+commit. I have now updated it to -rc3, which should plug that issue.
 
-Best regards,
+Let me know if it keeps appearing.
+
+Thanks,
+
+	M.
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Without deviation from the norm, progress is not possible.
 
