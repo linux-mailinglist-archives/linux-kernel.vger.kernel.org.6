@@ -1,147 +1,89 @@
-Return-Path: <linux-kernel+bounces-447217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8669F2F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:24:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493699F2F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E557A1B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBFF167136
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75396204577;
-	Mon, 16 Dec 2024 11:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F5B204575;
+	Mon, 16 Dec 2024 11:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="optb0I5c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFpjYKin"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F04204570;
-	Mon, 16 Dec 2024 11:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDBB20100C;
+	Mon, 16 Dec 2024 11:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734348245; cv=none; b=DI9+lpok0O6Hg2Eo+uv7Ot/Vvoof+XWGsfhjJYzw6GzvMQmR56H2NSdK9ym7egzcnUPC1jIW6/ypSdv4Mo8vLHTj87ofa0+5E8F+8pcddyzpD5ZVCcFbzdEgKiHn0Nkd3MqAGx/IRSOjM2PBW3+PzgFxlyeNhO70rs2x4Nc9wvE=
+	t=1734348215; cv=none; b=U7ak1lMlWHAimsQ3mzvA9n+4joF/PUr4fnNJQ+loR45bQkovqsWyob+jmvvdpmeBYQ7E5aPpH7XKttOkrcw0Te63B6ab/RfliJ3V80W3t4tgJytsRTqlaobSQRGXj/hsU8Ly2+tRuJ+gzVSnQgmEgsbGU3bv6c9BYlfOUC4KQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734348245; c=relaxed/simple;
-	bh=FHDzRf9XplQIVKV5ZROwjyH68Lcb6hQK4EdGbC6roFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hdxa5Ot8D0AdEcAFmN10NJGc1idARza2GDZlwOcFBPUwHuXGON8QRqoYDVJysOj7UWlGmkGVflyv0L3qV7jlx2BOzM0FUPyHT0DGxuIexx33+WeJYXcc63uEqVQrIDFg3BEakgM+J6tiwkrgWUCX+5cUe/XSDqh9cKJuh6tR8iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=optb0I5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D17C4CEE1;
-	Mon, 16 Dec 2024 11:24:05 +0000 (UTC)
+	s=arc-20240116; t=1734348215; c=relaxed/simple;
+	bh=a+8v+fuwd8dw9g2lGEMgITHzsDDNppuzd2b4d2wGLss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BjGJZEBLwmdIUtD3ubU+Tkg1p/OB5Fn4emvJi5sNS6WnMbyiSUAk2jDccVm8Bz7koaKh53idE3JHni0NKI7F6JarLofC6WeeeVGnFw9EwG89odN0oxXNexlThEGY8fFDFbXLEvv+g4rZxTybp1DxLodUe9vLw1QKNKU8fq0fQ/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFpjYKin; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189FDC4CED0;
+	Mon, 16 Dec 2024 11:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734348245;
-	bh=FHDzRf9XplQIVKV5ZROwjyH68Lcb6hQK4EdGbC6roFI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=optb0I5cJBzbAkDyaGFC3k3SqUFYWu96CozIYWuMXcv702+OZSM6jZS2sMI5Nn6gz
-	 8EEU2RGh9JX7EONnxhYll4VH1KMw369DeLYRYgdmqKeTAP4lRoYn2VthABeTAbCtS4
-	 n4VtHx9lPoHzdlXOwxX0BeAKYF6BofQ4+mgXUKHSyORV+Djx4VjtxDVxNaLAZcUd8+
-	 bJAT/ms12lwIBa+hAEw2esLWxIHO6hfu2xTwRr2Hf5p3GrlqSUkv4npbjcOKhVnDVc
-	 vONpPzmMa/3Wl3o5pjpeHxoTn6DFp3I+5zj4zqCXJWFm6Iow9LDIHVVE2eDjOAXRJG
-	 I3L/CbRSY7iBw==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa692211331so764318166b.1;
-        Mon, 16 Dec 2024 03:24:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVoUz1FhCBaepGhu1dMJIXfL36qSiWVlHEKttkaITM21g8EtsBfmd3MavkfceIf4lyKNDcGEr0p5u6resID@vger.kernel.org, AJvYcCWgldeozGl3ANWyPombVlpSnlWrg0JBp+6AIUq/sMpG/Q5EZXUdPMttNLwINoEvuPCA1Ic9WGtLK8aNaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1vsVWTv7TRdSRkuf42ws/FKusWPoUyNZEsit6pA8M2mlpc07y
-	A8bSiRlnRvLH/UGursdxclRtxp56LiCgAtpU/OCx/3cYF/ATlmoEMfqf/59vcvU6U4O1vltNRIT
-	m7kFbpg6mo+0NMkd/AEty09XZH5Q=
-X-Google-Smtp-Source: AGHT+IENINiS+xOG/vwpVS/Z2cnq/8d8ukc2aBTZA1Jpqg5Mq+e+pXbqSjSQlgakgIL9FZ3VOqL7ZvYA/IYVm3z1Roo=
-X-Received: by 2002:a17:907:3eaa:b0:aa6:abe7:ff49 with SMTP id
- a640c23a62f3a-aab7b7607camr1039010266b.16.1734348243870; Mon, 16 Dec 2024
- 03:24:03 -0800 (PST)
+	s=k20201202; t=1734348214;
+	bh=a+8v+fuwd8dw9g2lGEMgITHzsDDNppuzd2b4d2wGLss=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=VFpjYKinpVL/5vV/gJlmV5q/9cdhf0EgGASLoKB6f6WoHzGYrXlJrVcNnMkyouulB
+	 EVkWqAEthfRfo8zSmuUiuSMbH0vmV7KoCZRYxVen3DNycbOhhkyGy9Op0MpSEOz1uw
+	 6xBEA4Odd1+q4RGhgP/DTVGXWxFxnQMUx5XwV8GdtSWmpKqZb0mRFTVDJSzTxdh9uD
+	 +lQwGt8WnYHspXSQpyOFJUV3rt8grkYegXN3e56+TbUpU4OyY9ief0UYCx8kS8WOgO
+	 kg3Lc96A+HHHfgX5zkARk1X60t2joAJNLkfT5mZnjnwenJ5fcbamFMGBVi5/uWZVmP
+	 p8j0F1zrCdfDg==
+Message-ID: <fa534569-b3e0-486d-a0f9-25523f404aed@kernel.org>
+Date: Mon, 16 Dec 2024 11:23:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216-btrfs_need_stripe_tree_update-cleanups-v2-0-42b6d0274da7@kernel.org>
- <20241216-btrfs_need_stripe_tree_update-cleanups-v2-2-42b6d0274da7@kernel.org>
-In-Reply-To: <20241216-btrfs_need_stripe_tree_update-cleanups-v2-2-42b6d0274da7@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Mon, 16 Dec 2024 11:23:26 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H77_ZVMKhDX-hKc6FuA4XRxG6y1N15H2ukeg9434vEecQ@mail.gmail.com>
-Message-ID: <CAL3q7H77_ZVMKhDX-hKc6FuA4XRxG6y1N15H2ukeg9434vEecQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] btrfs: cache RAID stripe tree decision in btrfs_io_context
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Filipe Manana <fdmanana@suse.com>, Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] bpftool: Link zstd lib required by libelf
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Nick Terrell <terrelln@fb.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, Guilherme Amadio <amadio@gentoo.org>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20241215221223.293205-1-leo.yan@arm.com>
+ <20241215221223.293205-4-leo.yan@arm.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20241215221223.293205-4-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 16, 2024 at 8:11=E2=80=AFAM Johannes Thumshirn <jth@kernel.org>=
- wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Cache the decision if a particular I/O needs to update RAID stripe tree
-> entries in struct btrfs_io_context.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+2024-12-15 22:12 UTC+0000 ~ Leo Yan <leo.yan@arm.com>
+> When the feature libelf-zstd is detected, the zstd lib is required by
+> libelf.  Link the zstd lib in this case.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> Tested-by: Namhyung Kim <namhyung@kernel.org>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
 
-Looks good, thanks.
+Thank you! And thanks for the updated commit description in your first
+patch, looks great.
 
-
-> ---
->  fs/btrfs/bio.c     | 3 +--
->  fs/btrfs/volumes.c | 1 +
->  fs/btrfs/volumes.h | 1 +
->  3 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-> index 7ea6f0b43b95072b380172dc16e3c0de208a952b..bc80ee4f95a5a8de05f2664f6=
-8ac4fcb62864d7b 100644
-> --- a/fs/btrfs/bio.c
-> +++ b/fs/btrfs/bio.c
-> @@ -725,8 +725,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio=
-, int mirror_num)
->                         bio->bi_opf |=3D REQ_OP_ZONE_APPEND;
->                 }
->
-> -               if (is_data_bbio(bbio) && bioc &&
-> -                   btrfs_need_stripe_tree_update(bioc->fs_info, bioc->ma=
-p_type)) {
-> +               if (is_data_bbio(bbio) && bioc && bioc->use_rst) {
->                         /*
->                          * No locking for the list update, as we only add=
- to
->                          * the list in the I/O submission path, and list
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index fa190f7108545eacf82ef2b5f1f3838d56ca683e..088ba0499e184c93a402a3f92=
-167cccfa33eec58 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -6663,6 +6663,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
-enum btrfs_map_op op,
->                 goto out;
->         }
->         bioc->map_type =3D map->type;
-> +       bioc->use_rst =3D io_geom.use_rst;
->
->         /*
->          * For RAID56 full map, we need to make sure the stripes[] follow=
-s the
-> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-> index 3a416b1bc24cb0735c783de90fb7490d795d7d96..10bdd731e3fcc889237b4e1b0=
-5cc9389bc937659 100644
-> --- a/fs/btrfs/volumes.h
-> +++ b/fs/btrfs/volumes.h
-> @@ -485,6 +485,7 @@ struct btrfs_io_context {
->         struct bio *orig_bio;
->         atomic_t error;
->         u16 max_errors;
-> +       bool use_rst;
->
->         u64 logical;
->         u64 size;
->
-> --
-> 2.43.0
->
->
+Quentin
 
