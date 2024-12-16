@@ -1,233 +1,206 @@
-Return-Path: <linux-kernel+bounces-447489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FD09F3348
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:33:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BE39F334A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A447A2095
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:33:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C957A2C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72336205E25;
-	Mon, 16 Dec 2024 14:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318D3205ABA;
+	Mon, 16 Dec 2024 14:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEbQl3ps"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XsmjkCxY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68321DDE9;
-	Mon, 16 Dec 2024 14:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FD17557
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734359590; cv=none; b=Njml/R0d+Cz3U2gdR5VVUXOjOKvxGla8lvBPW6avRDMer2hA+J/E0wKbMU8Z40w/b4EccdSD+MBBg/h1wVw81EL0U9QqJf1b3aX5D3NYn+b73BBsdyOKcM+CanIg7gVEPwjL57KTQSOSNkfbOTOvxGyYLwJAloG+WCSXDutEjxA=
+	t=1734359645; cv=none; b=WfownzzRrCahncgbUt1flywGduOA0+KRgyg+I8pGdWiPbz1D+RKpE+JRqH/4Z1m5STQgpKJMHq/XVFFXFlLwPg7O1FoIgZ3OmWv3qMxOQjNw7tKH+nATueaJQyuXSSlG+SqPZ3uZYsfqJLVK3IzlUuQFLzutziWP+wmw8loD0kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734359590; c=relaxed/simple;
-	bh=8xMQSMajVdEloFdHjNjiGT8ocden+NeG4pG+oObPpxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Se5FoGjCNfaZxiePeQmzXyqZPzkEKpgR1F09EhIO6SCZtpnixuYzStocbQrJODetwGKRnK7JNwg0FyqV8ArXUiDA7ILLArRXQIAPkeukzmB19L3Niw0LpwhEofr4+L2fLLqYZ/LxdTSSMVgLsm6XKsu2e2gUSWb/z6hOhB1AkcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEbQl3ps; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53e3778bffdso4412754e87.0;
-        Mon, 16 Dec 2024 06:33:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734359587; x=1734964387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UcGJusMROs1d9U6OcF/dUgFih+81cOor/KxZG4XJKuc=;
-        b=aEbQl3psbb8Tp2lwTDGB7rEoDiwmoHQrIFjMuTzxBaksj8/oG/OyZV/j6NiSDvgpfN
-         OpoBh1ShtoTs+3gRMN3w4eX3HN9CFaZjg4BimsLK1WR9nQTtIO70BtbWts6p0rzUa+li
-         KIq6FhOfqUbicGn6e/QvvIfEUubexDfQ9Go0GDLRBOqy7cM65RmDmS8kkHnqJS4wjzPV
-         QEFN2aQLvNQumxOooFyyndb2IBxkhd65BpD/ZQdDyeeGEmjpRd7rVFDs023NZDOuU++7
-         hONgmEhUqUkK9FCvTiuUZ/u6q1+p6HHEc4VjrHytk5PzVf6LMHgL8u4uwTIWDLqjRmPk
-         KNXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734359587; x=1734964387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UcGJusMROs1d9U6OcF/dUgFih+81cOor/KxZG4XJKuc=;
-        b=H60btENafmSO4TIDaHiJUS4FGYSCYJiovgtmUEb9Yp1bXsyID7ltIyREpPUNCMMs6H
-         UrlF6GnsTWEvI2W1PCF3Oq3ZrRNvsgJsz+j7p98BGZFK8NlHpnstEUmnQiIrhJTokUUN
-         +N4My77Ssd+BlPjDQqnKXKG+VJz/Cd270kZMyoV/pxPESbmd17YtavRMoUxxs5UxQihg
-         JrfUh00m1PEQmCiR0ulb3k2HGlEnv3J+PCTk0YvTE4cyvSEhygFcGMtHYA2e1MrDX5Ay
-         kge9QjvgZGu54cxdLMz33EPAj7/dWGjjPaus0764AUesHeyldi88ttn51SWkLGgvQT7x
-         8zlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU16G9GXMkeEiNwe7EwlMHltibJSXoAGdRflYVxeHFQiFtzrQIkBDh0f+rcXlHJWCOciKHJs4OI@vger.kernel.org, AJvYcCW9yMtJGIg4KZ7duIW8s6nKhZ06JRvCsUqF7eUnpub9lOIVIP1mp5DqLVY1/fv/Pm3d7ADOwrn9W8iomJ2cX9s=@vger.kernel.org, AJvYcCWAqlUlGxfXVuxIAgfCdYng8SjFk9tTXRrzmsTEk+nP3sXKIqfyk1OzhrxqO098BluIYsu+cCpkXUPM4CJb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7gbypabxdszfYiZCzeQeluuJglDRwKpanpHIvjQKpuMCEZq5N
-	5nRu3Wda/kVsg0WYLwyeWS/OYzXDQeDsJUAyrEe/kuzt0elEyxOzJCGDEvPJtMlgb52P1d4D1v8
-	31hHUqWpL7R+R1H5HCreYb6F9Lm3wnmdy
-X-Gm-Gg: ASbGncujnBcp+vYl0RaI/rSKNZBFyAh2sBxXl22wdyhvb9UFqLzSr4OphyHBnx27B9M
-	INit/8zV4naWEecSMKWxbH/iXI5zjrQKtMNwi
-X-Google-Smtp-Source: AGHT+IELpcpoOMr0HZIYsbPkHXhRImQ+VIsxUYWZmevTZLApJPoAOQq0DMX0ucJCu/DDTc7ZaIih4Z12yiHzp+r6PE8=
-X-Received: by 2002:a05:6512:39c8:b0:540:1b7e:7b4a with SMTP id
- 2adb3069b0e04-540905955d7mr4268744e87.36.1734359586622; Mon, 16 Dec 2024
- 06:33:06 -0800 (PST)
+	s=arc-20240116; t=1734359645; c=relaxed/simple;
+	bh=oTRXj583qhXYalltzk7nvbwA7tflotqemGH5c0pkMus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RjMP3aLGIdnKHthMwfQrmflKFQ7khBQlPvjs0OiOD4mllC0UigRBtRsDptyx+eqZ1rmy62zawXUUrPnMQEDpqfTQ5mhdv6K5ZG2qc14+MpyhugaN6As7yVaHdX9r8BWkwvRslg+u5qKDpB1geNyAs0zK7XWZP1P5Rc/cOwe3Ln8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XsmjkCxY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734359643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VkhxEwUUHPw94KlIQ0Cbt2szuO3qNDjFa8Hwl+dqHhw=;
+	b=XsmjkCxYYCO6J8D5fYC/CLA533gQ+8pnjoUsaDPcsjKt0AJ0+u//JyunOc95FtlEGRKGG+
+	yF/OJxTjHsyWew6l3xI+YSeVgAIYvv5Ug9hwwKkxbsyiK6l3TMvYeAtBO6ziFxEXz0eIpe
+	vc3k93VeEC0QmN6t+O66SzNDydUuwwY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-467-idgB9--NMKaO44SRTukU3g-1; Mon,
+ 16 Dec 2024 09:34:01 -0500
+X-MC-Unique: idgB9--NMKaO44SRTukU3g-1
+X-Mimecast-MFC-AGG-ID: idgB9--NMKaO44SRTukU3g
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D53D1955F77;
+	Mon, 16 Dec 2024 14:33:59 +0000 (UTC)
+Received: from localhost (unknown [10.22.88.147])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5B32419560A3;
+	Mon, 16 Dec 2024 14:33:58 +0000 (UTC)
+Date: Mon, 16 Dec 2024 11:33:56 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Ryo Takakura <ryotkkr98@gmail.com>
+Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+	lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] PCI: vmd: Fix spinlock usage on config access for RT
+ kernel
+Message-ID: <Z2A6VEMN5jkXg2lr@uudg.org>
+References: <20241215141321.383144-1-ryotkkr98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
-In-Reply-To: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 16 Dec 2024 09:32:53 -0500
-Message-ID: <CABBYNZLRdu_f9eNEapPp5mNqgcUE0jby5VPpaMaArY_FjyjB8Q@mail.gmail.com>
-Subject: Re: [PATCH v1] Bluetooth: hci_sync: Fix disconnect complete event
- timeout issue
-To: Cheng Jiang <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_jiaymao@quicinc.com, 
-	quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215141321.383144-1-ryotkkr98@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Cheng,
+On Sun, Dec 15, 2024 at 11:13:21PM +0900, Ryo Takakura wrote:
+> PCI config access is locked with pci_lock which is raw_spinlock.
+> Convert cfg_lock to raw_spinlock so that the lock usage is consistent
+> for RT kernel.
+> 
+> Reported as following:
+> [   18.756807] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [   18.756810] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1617, name: nodedev-init
+> [   18.756810] preempt_count: 1, expected: 0
+> [   18.756811] RCU nest depth: 0, expected: 0
+> [   18.756811] INFO: lockdep is turned off.
+> [   18.756812] irq event stamp: 0
 
-On Mon, Dec 16, 2024 at 3:08=E2=80=AFAM Cheng Jiang <quic_chejiang@quicinc.=
-com> wrote:
->
-> Sometimes, the remote device doesn't acknowledge the LL_TERMINATE_IND
-> in time, requiring the controller to wait for the supervision timeout,
-> which may exceed 2 seconds. In the current implementation, the
-> HCI_EV_DISCONN_COMPLETE event is ignored if it arrives late, since
-> the hci_abort_conn_sync has cleaned up the connection after 2 seconds.
-> This causes the mgmt to get stuck, resulting in bluetoothd waiting
-> indefinitely for the mgmt response to the disconnect. To recover,
-> restarting bluetoothd is necessary.
->
-> bluetoothctl log like this:
-> [Designer Mouse]# disconnect D9:B5:6C:F2:51:91
-> Attempting to disconnect from D9:B5:6C:F2:51:91
-> [Designer Mouse]#
-> [Designer Mouse]# power off
-> [Designer Mouse]#
-> Failed to set power off: org.freedesktop.DBus.Error.NoReply.
->
-> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+This problem has been discussed in the past at:
+
+    [PATCH v6.4-rc5-rt4] rt: vmd: make cfg_lock a raw spinlock
+    https://lore.kernel.org/linux-rt-users/20230608210232.056e731f@gandalf.local.home/T/#t
+
+And there was a suggestion to remove the lock altogether as (at the time) the
+only two call sites of vmd_pci_read() were already protected by pci_lock.
+
+I wrote the patch removing the lock and it worked as expected, but never
+sent it to the list. If you think that for the current code that makes
+sense, please have fun removing the lock. :)
+
+Best regards,
+Luis
+
+> [   18.756812] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+> [   18.756815] hardirqs last disabled at (0): [<ffffffff864f1fe2>] copy_process+0xa62/0x2d90
+> [   18.756819] softirqs last  enabled at (0): [<ffffffff864f1fe2>] copy_process+0xa62/0x2d90
+> [   18.756820] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [   18.756822] CPU: 3 UID: 0 PID: 1617 Comm: nodedev-init Tainted: G        W          6.12.1 #11
+> [   18.756823] Tainted: [W]=WARN
+> [   18.756824] Hardware name: Dell Inc. Vostro 3710/0K1D6X, BIOS 1.14.0 06/09/2023
+> [   18.756825] Call Trace:
+> [   18.756826]  <TASK>
+> [   18.756827]  dump_stack_lvl+0x9b/0xf0
+> [   18.756830]  dump_stack+0x10/0x20
+> [   18.756831]  __might_resched+0x158/0x230
+> [   18.756833]  rt_spin_lock+0x4e/0x130
+> [   18.756837]  ? vmd_pci_read+0x8d/0x100 [vmd]
+> [   18.756839]  vmd_pci_read+0x8d/0x100 [vmd]
+> [   18.756840]  pci_user_read_config_byte+0x6f/0xe0
+> [   18.756843]  pci_read_config+0xfe/0x290
+> [   18.756845]  sysfs_kf_bin_read+0x68/0x90
+> [   18.756847]  kernfs_fop_read_iter+0xd7/0x200
+> [   18.756850]  vfs_read+0x26d/0x360
+> [   18.756853]  ksys_read+0x70/0xf0
+> [   18.756855]  __x64_sys_read+0x1a/0x20
+> [   18.756857]  x64_sys_call+0x1715/0x20d0
+> [   18.756859]  do_syscall_64+0x8f/0x170
+> [   18.756861]  ? syscall_exit_to_user_mode+0xcd/0x2c0
+> [   18.756863]  ? do_syscall_64+0x9b/0x170
+> [   18.756865]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
 > ---
->  include/net/bluetooth/hci_core.h |  2 ++
->  net/bluetooth/hci_conn.c         |  9 +++++++++
->  net/bluetooth/hci_event.c        |  9 +++++++++
->  net/bluetooth/hci_sync.c         | 18 ++++++++++++++++++
->  4 files changed, 38 insertions(+)
->
-> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci=
-_core.h
-> index 734cd50cd..2ab079dcf 100644
-> --- a/include/net/bluetooth/hci_core.h
-> +++ b/include/net/bluetooth/hci_core.h
-> @@ -753,6 +753,8 @@ struct hci_conn {
->
->         struct bt_codec codec;
->
-> +       struct completion disc_ev_comp;
-> +
->         void (*connect_cfm_cb)  (struct hci_conn *conn, u8 status);
->         void (*security_cfm_cb) (struct hci_conn *conn, u8 status);
->         void (*disconn_cfm_cb)  (struct hci_conn *conn, u8 reason);
-> diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-> index d097e308a..e0244e191 100644
-> --- a/net/bluetooth/hci_conn.c
-> +++ b/net/bluetooth/hci_conn.c
-> @@ -1028,6 +1028,15 @@ static struct hci_conn *__hci_conn_add(struct hci_=
-dev *hdev, int type, bdaddr_t
->
->         hci_conn_init_sysfs(conn);
->
-> +       /* This disc_ev_comp is inited when we send a disconnect request =
-to
-> +        * the remote device but fail to receive the disconnect complete
-> +        * event within the expected time (2 seconds). This occurs becaus=
-e
-> +        * the remote device doesn't ack the terminate indication, forcin=
-g
-> +        * the controller to wait for the supervision timeout.
-> +        */
-> +       init_completion(&conn->disc_ev_comp);
-> +       complete(&conn->disc_ev_comp);
-> +
->         return conn;
+>  drivers/pci/controller/vmd.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 9d9596947..94ceec50a 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -125,7 +125,7 @@ struct vmd_irq_list {
+>  struct vmd_dev {
+>  	struct pci_dev		*dev;
+>  
+> -	spinlock_t		cfg_lock;
+> +	raw_spinlock_t		cfg_lock;
+>  	void __iomem		*cfgbar;
+>  
+>  	int msix_count;
+> @@ -391,7 +391,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
+>  	if (!addr)
+>  		return -EFAULT;
+>  
+> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
+> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
+>  	switch (len) {
+>  	case 1:
+>  		*value = readb(addr);
+> @@ -406,7 +406,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
+>  		ret = -EINVAL;
+>  		break;
+>  	}
+> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+>  	return ret;
 >  }
->
-> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-> index 2cc7a9306..60ecb2b18 100644
-> --- a/net/bluetooth/hci_event.c
-> +++ b/net/bluetooth/hci_event.c
-> @@ -3366,6 +3366,15 @@ static void hci_disconn_complete_evt(struct hci_de=
-v *hdev, void *data,
->         if (!conn)
->                 goto unlock;
->
-> +       /* Wake up disc_ev_comp here is ok. Since we hold the hdev lock
-> +        * hci_abort_conn_sync will wait hdev lock release to continue.
-> +        */
-> +       if (!completion_done(&conn->disc_ev_comp)) {
-> +               complete(&conn->disc_ev_comp);
-> +               /* Add some delay for hci_abort_conn_sync to handle the c=
-omplete */
-> +               usleep_range(100, 1000);
-> +       }
-> +
->         if (ev->status) {
->                 mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
->                                        conn->dst_type, ev->status);
-> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-> index 0badec712..783d04b57 100644
-> --- a/net/bluetooth/hci_sync.c
-> +++ b/net/bluetooth/hci_sync.c
-> @@ -5590,6 +5590,24 @@ int hci_abort_conn_sync(struct hci_dev *hdev, stru=
-ct hci_conn *conn, u8 reason)
->                 break;
->         }
->
-> +       /* Check whether the connection is successfully disconnected.
-> +        * Sometimes the remote device doesn't acknowledge the
-> +        * LL_TERMINATE_IND in time, requiring the controller to wait
-> +        * for the supervision timeout, which may exceed 2 seconds. In
-> +        * this case, we need to wait for the HCI_EV_DISCONN_COMPLETE
-> +        * event before cleaning up the connection.
-> +        */
-> +       if (err =3D=3D -ETIMEDOUT) {
-> +               u32 idle_delay =3D msecs_to_jiffies(10 * conn->le_supv_ti=
-meout);
-> +
-> +               reinit_completion(&conn->disc_ev_comp);
-> +               if (!wait_for_completion_timeout(&conn->disc_ev_comp, idl=
-e_delay)) {
-> +                       bt_dev_warn(hdev, "Failed to get complete");
-> +                       mgmt_disconnect_failed(hdev, &conn->dst, conn->ty=
-pe,
-> +                                              conn->dst_type, conn->abor=
-t_reason);
-> +               }
-> +       }
-
-Why don't we just set the supervision timeout as timeout then? If we
-will have to wait for it anyway just change hci_disconnect_sync to use
-10 * conn->le_supv_timeout as timeout instead.
-
-That said, we really need to fix bluetoothd if it is not able to be
-cleaned up if SET_POWERED command fails, but it looks like it is
-handling errors correctly so it sounds like something else is at play.
-
->         hci_dev_lock(hdev);
->
->         /* Check if the connection has been cleaned up concurrently */
->
-> base-commit: e25c8d66f6786300b680866c0e0139981273feba
-> --
+>  
+> @@ -426,7 +426,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
+>  	if (!addr)
+>  		return -EFAULT;
+>  
+> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
+> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
+>  	switch (len) {
+>  	case 1:
+>  		writeb(value, addr);
+> @@ -444,7 +444,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
+>  		ret = -EINVAL;
+>  		break;
+>  	}
+> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+>  	return ret;
+>  }
+>  
+> @@ -1009,7 +1009,7 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  	if (features & VMD_FEAT_OFFSET_FIRST_VECTOR)
+>  		vmd->first_vec = 1;
+>  
+> -	spin_lock_init(&vmd->cfg_lock);
+> +	raw_spin_lock_init(&vmd->cfg_lock);
+>  	pci_set_drvdata(dev, vmd);
+>  	err = vmd_enable_domain(vmd, features);
+>  	if (err)
+> -- 
 > 2.34.1
->
+> 
+> 
+---end quoted text---
 
-
---=20
-Luiz Augusto von Dentz
 
