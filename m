@@ -1,179 +1,185 @@
-Return-Path: <linux-kernel+bounces-447981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD4B9F397F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:10:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491529F3984
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8140616745A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A5E61698D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB3B207DF7;
-	Mon, 16 Dec 2024 19:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evCvRQpT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FCE207DF2;
+	Mon, 16 Dec 2024 19:13:07 +0000 (UTC)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783841CD213;
-	Mon, 16 Dec 2024 19:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3433206F2D;
+	Mon, 16 Dec 2024 19:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734376221; cv=none; b=U9aIQUUyqyE3R3swDBAorjxTBiWxpIGXbc0QryH+xAOYgxrIM9E28FTxWgnc1UT65G0XgUQjU3fSq+xY05DYnP0hZ+oCNU+9+yAKVf+bUB87YzGAWRHE0mQ5hyt0O++swppa0uhdyUf1s2f07d49Nk6Y40mMUCdX6I0PoRwz8g8=
+	t=1734376387; cv=none; b=XE55h2eYdjJVDL56uaLTNIYxelTsvapW9bPPcZzzEkphWkvp1GOfUaSZHA6RYKNeUzqNBOhQCUvD9VXEZAjDQKTxuQehDsd8JK3PD4FU6wOPXfluGpqlTyNrodIzky2ttHCCBELwfa1AtQ70KtsPQo/E7+r71unWmpLm/qJREiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734376221; c=relaxed/simple;
-	bh=qeYHwULuvIS8IOi5OkxWsi2QR2qYDfzPIJmQKUyh6FM=;
+	s=arc-20240116; t=1734376387; c=relaxed/simple;
+	bh=02wYEqqVCf18XL+fYMqYuyLpjITDEP3akrjr7yHXmx4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gKmmw4IXg58bHyrd5Zj/VgJQHxoRTk/gDO7BruyQBJgyeQMRHn4h52oV9jWGaWhPl3COtkUmXyM+Z4Ir4SQ321IGRQIPl98slR0EcNc1cz6zBTwg7ncmAUQVQ26tsd+xgg72voiz6FhPN9uokoz5yAwaS8Co5idDccc/WKD/1ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evCvRQpT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16786C4CEDD;
-	Mon, 16 Dec 2024 19:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734376221;
-	bh=qeYHwULuvIS8IOi5OkxWsi2QR2qYDfzPIJmQKUyh6FM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=evCvRQpTS0zks6AjRvM+fshukuAwu5HI4Xyg5uISYDIcRm669qGpnazk5HWkd4ClL
-	 yQHsbIu/Xlzpd3Acmm4N0WyDJY8OhnMWwG2IKgSR0YtmntaPa0H31ELwm31jb4HGXy
-	 JNuL4hBMIw6ufvawmu7gn47NYuEzbD4SEGoIGoi/ZIpbYe18VlkQUxZNOHmyxEeZ5k
-	 Dg+l8u/pCkeBzf4/B0mb/pRUXbfj1ab/O3dFESxNJmFlPkuYsDPPFwamiOTLgSCcax
-	 xbrClSp+dY/EXqrxCol8MmDEX0fz7aaV/X54M8TX43F+1rMmrWFSkrtOQjG6vDN1Rr
-	 kooxsSqWfecFQ==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3ebb2d8dac4so1501164b6e.0;
-        Mon, 16 Dec 2024 11:10:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVrrC2E6IWpR3BjXR5DJ2iiKETD67YBqwWvp/Af6wVRJDzZa4uBMZQT6EqujtLD5oQI+T24PJF64DbI3AU=@vger.kernel.org, AJvYcCWNhQPx6c55KVCRWpOeZZ1EsXL6iWfN5uuOrb/JRpHzFa1iHmlzOoV3/c9d0Y4vmOUyRl4+m90jlX17@vger.kernel.org, AJvYcCWxcasZwSnM4KrP7IzVS3jdI7E+DW5cVK25egqpjXpwqkEGCqFZKtaltAMtKxjBRn1iM0q3Oo4G8AY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCmv9D366/hAVW78cdFObFmekUWobbt5flsJoYBVKfa4g0rihA
-	55riFd+Lv/pNdNWXzlCoeqaak326Ly9m2rc1MKQpLUgIlktC7P+3+q1bNWsaiiM7RstgMuhqKXs
-	eUTnWfCk/6MJSuDX5e5Wv92VBOK0=
-X-Google-Smtp-Source: AGHT+IEtKuUcyShfRdoQ6ZVPEaQjiY5/nPcB9LIM8bKSgRsRQ5zSt7I5tDEKwVaMyBFzeZP4GURKyXnod0Il+Bz/kOQ=
-X-Received: by 2002:a05:6808:2384:b0:3ea:431c:4f70 with SMTP id
- 5614622812f47-3eba65cb9e1mr7328003b6e.0.1734376220324; Mon, 16 Dec 2024
- 11:10:20 -0800 (PST)
+	 To:Cc:Content-Type; b=X51/9GaMNnPc85xSBjhDy7pOEO/5tBqAxdkUgPfPYNrfmdtTtIgbGeGly/w6nSW9EUU8UhxHFTDqbG7ey9+xCr53rJbHCnhsma56d+gDIZaH/RpnX5UsoTN18R4Rs3WkcHshYRpCNXa/eAmikp/0u9iSQdtPbs23SlRzjzd0g6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467a1d43821so36105481cf.1;
+        Mon, 16 Dec 2024 11:13:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734376382; x=1734981182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAwBVTsR1hBIF1OWZc14smHZk5O1YXVKm4ctcyzbmRA=;
+        b=D0OEh1NcDhRmcbKmrf4OGl5JDhJoHDiJIpBKSzjkj1T/6L0mcbbSbkiKNE+0kkEg70
+         AOJ/z1Um6M9jP5Pts0rpJ8gOTGmUFiigoq9Ppc3JvSbMlxQiP9u/tYzbbr+Gp5eDsDxj
+         oen19QDqT3wfgYy75bJiTd3LzJ+3lpglifbOsvLFxpjc5CLnzUx0ngo2+H9P2h4BfhUE
+         Z2XoFmbtH4UEV070oEfNeqq7ZoO8Xqj/7b8wd7s2jejGk3bgVfz863b3Wf8VAhxWhXkG
+         hPzD9tjik7aVMyYB6WOQ1eKlgU6dQWr3pn/IOV6WhvZffFxyquuR46QI0siUKkYqLns7
+         fjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8YaN5dsgXwIrhmdFO8J0YgSPSkCnRdBk/BEJaMhBdbZMa5iUOA+goZ+EP8TDJqgTj49QsJ0bLG40yzEBq@vger.kernel.org, AJvYcCXRfcP1fGMtMtsPfuMTSmPl4yreMmDHnIquiyePqgf1ZUKnDqkptwjGr3zcAF9b/lsAwny4hPVIrl8=@vger.kernel.org, AJvYcCXdOzYeh5FMFwE2y3UDb2Dypzan52dm2kCDhDdOg+gsmDLo4tSGeNkWjqsoJ4z428yiJ5Tp7RYXGPoUGT+XTUrxv1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVwmCMQPZhFE3jX6KeInhQJaxOcJoYva8hz9DXxk7nOU/jKdFp
+	qjnrZPISuLWukoFrTv4jr03iiwGSATCXVwWAQXbFmGaqGIORSmd+RY26nnxR
+X-Gm-Gg: ASbGncuB4h0Scwx2xzIPC7T6pGi0ruYLC92PaUFBjFlS6XCMdQNhsCnL88o1neuKvXF
+	n6SlC0+8aeB5MARaRduAJQDDeSf/TCXcpwRoDrm8kcCzpHsXy0vp5AvA49NbFCPu9mlaukKDgVe
+	Y88whDilOegY+HsG1ZNKfE76w1aP/yZ25VYVlcxV+GujdA+tKuJWaZbTa9FYzGfXsI5gwV5VsZT
+	UJovfHL/mmYmu4YcCd39JTJvrL+IsUG8+WorAlYdz3VQ7lS7yV1CN47x78/1dM2fu4SQO1+BM3f
+	H213vlbfUsDQJrIJkU/bIvc=
+X-Google-Smtp-Source: AGHT+IGdTYwQkMnScByrKibMbb6F0bey8EM5NDsGIXyQtnZcjsdMW4v0y80qhWDs3OUumzQdEKh5FA==
+X-Received: by 2002:ac8:7c49:0:b0:467:603d:1cd5 with SMTP id d75a77b69052e-468f8dd49eamr8251021cf.26.1734376382330;
+        Mon, 16 Dec 2024 11:13:02 -0800 (PST)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com. [209.85.222.170])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e83176sm31041511cf.66.2024.12.16.11.13.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 11:13:02 -0800 (PST)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b6ef047e9bso409265185a.1;
+        Mon, 16 Dec 2024 11:13:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUKU6XZELax/MLqws0tGh4w5XNDUlrH6V7e5hqdoJKl7K3f9J8o62wOEJrqdre1jxr6Bn/nNjlPfig=@vger.kernel.org, AJvYcCX3VGCpHgj7dkGt/GRhmrN3yTyyOB54+H1g/1I0t+6+QtfAywiQf0LspkSghG5237+NiJ3gnfnXuh2HwNsS2VF6Dk8=@vger.kernel.org, AJvYcCXw+NMBAXQSaNTq6NI3PMigHWykt6cCfjlScEmvTpzZ2QRu0O/jwjoOBEnsuHK+/S86dhG0r3LBmk2e1cTF@vger.kernel.org
+X-Received: by 2002:a05:620a:27c6:b0:7b6:eba3:2dfa with SMTP id
+ af79cd13be357-7b859623825mr76092585a.22.1734376381674; Mon, 16 Dec 2024
+ 11:13:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212055920.GB4825@lst.de> <13662231.uLZWGnKmhe@rjwysocki.net>
- <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
- <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
- <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <20241216162303.GA26434@lst.de>
- <CAJZ5v0g8CdGgWA7e6TXpUjYNkU1zX46Rz3ELiun42MayoN0osA@mail.gmail.com>
- <20241216164830.36lpu6gfnapsdar4@thinkpad> <CAJZ5v0hxnYere19wXbua6zWEDRDgSPeJgSECugtwfgTP-UN8Bw@mail.gmail.com>
- <20241216173945.s5y4dsyzhi5fo4ey@thinkpad>
-In-Reply-To: <20241216173945.s5y4dsyzhi5fo4ey@thinkpad>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 16 Dec 2024 20:10:09 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hhruAS_b739FTo_63=h=U5zbH5M5jWco8pq+KwVY5UcA@mail.gmail.com>
-Message-ID: <CAJZ5v0hhruAS_b739FTo_63=h=U5zbH5M5jWco8pq+KwVY5UcA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, 
-	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241213175828.909987-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com> <CA+V-a8sAiMTC9Y3vrOKshMZSFLzN0QczMk9B-++LyToG1r+qzw@mail.gmail.com>
+In-Reply-To: <CA+V-a8sAiMTC9Y3vrOKshMZSFLzN0QczMk9B-++LyToG1r+qzw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 20:12:50 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXOaphnU=caTuCx3yme_hi-_zdn5PN5P1zhrOSA3duBWg@mail.gmail.com>
+Message-ID: <CAMuHMdXOaphnU=caTuCx3yme_hi-_zdn5PN5P1zhrOSA3duBWg@mail.gmail.com>
+Subject: Re: [PATCH 8/9] i2c: riic: Add `riic_bus_barrier()` to check bus availability
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 6:39=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Mon, Dec 16, 2024 at 06:28:55PM +0100, Rafael J. Wysocki wrote:
-> > On Mon, Dec 16, 2024 at 5:48=E2=80=AFPM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
+Hi Prabhakar,
+
+On Mon, Dec 16, 2024 at 7:19=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Mon, Dec 16, 2024 at 4:09=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gma=
+il.com> wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > > >
-> > > On Mon, Dec 16, 2024 at 05:42:30PM +0100, Rafael J. Wysocki wrote:
-> > > > On Mon, Dec 16, 2024 at 5:23=E2=80=AFPM Christoph Hellwig <hch@lst.=
-de> wrote:
-> > > > >
-> > > > > On Sat, Dec 14, 2024 at 12:00:23PM +0530, Manivannan Sadhasivam w=
-rote:
-> > > > > > We need a PM core API that tells the device drivers when it is =
-safe to powerdown
-> > > > > > the devices. The usecase here is with PCIe based NVMe devices b=
-ut the problem is
-> > > > > > applicable to other devices as well.
-> > > > >
-> > > > > Maybe I'm misunderstanding things, but I think the important part=
- is
-> > > > > to indicate when a suspend actually MUST put the device into D3. =
- Because
-> > > > > doing that should always be safe, but not always optimal.
-> > > >
-> > > > I'm not aware of any cases when a device must be put into D3cold
-> > > > (which I think is what you mean) during system-wide suspend.
-> > > >
-> > > > Suspend-to-idle on x86 doesn't require this, at least not for
-> > > > correctness.  I don't think any platforms using DT require it eithe=
-r.
-> > > >
+> > > Introduce a new `riic_bus_barrier()` function to verify bus availabil=
+ity
+> > > before initiating an I2C transfer. This function enhances the bus
+> > > arbitration check by ensuring that the SDA and SCL lines are not held=
+ low,
+> > > in addition to checking the BBSY flag using `readb_poll_timeout()`.
 > > >
-> > > On suspend-to-idle, yes D3Cold doesn't make sense,
-> >
-> > Why?
-> >
+> > > Previously, only the BBSY flag was checked to determine bus availabil=
+ity.
+> > > However, it is possible for the SDA line to remain low even when BBSY=
+ =3D 0.
+> > > This new implementation performs an additional check on the SDA and S=
+CL
+> > > lines to avoid potential bus contention issues.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
 >
-> Because there is no requirement to remove power during S2Idle, isn't it?
-
-There is no requirement, but there is a reason that I've already
-mentioned: A device in D3cold causes a system in s2idle use less
-energy.
-
-I think this reason is good enough.
-
-> From Documentation/admin-guide/pm/sleep-states.rst:
->
-> 'This is a generic, pure software, light-weight variant of system suspend=
-'.
-
-Sure.  Which basically means that platform firmware is not involved
-(at least not as much as in the ACPI S3 case) and CPUs are managed in
-a more lightweight way.
-
-The power states of devices are what they are.
-
-Moreover, the whole idea of suspend-to-idle is to re-use the
-suspend-to-RAM (ACPI S3, basically) control flow, along with the
-handling of devices.  The devices handled differently are exceptions,
-not a rule.
-
-> > > but on suspend-to-ram it is pretty much required.
 > >
-> > Well, I know for a fact that on x86 platforms ACPI S3 does not require
-> > putting devices into D3cold in general.
+> > Thanks for your patch!
 > >
-> > Why is it required for NVMe?
+> > > --- a/drivers/i2c/busses/i2c-riic.c
+> > > +++ b/drivers/i2c/busses/i2c-riic.c
 > >
->
-> But ACPI code currently calls pm_set_suspend_via_firmware() for S3 suspen=
-d. And
-> that causes NVMe to be powered down because of pm_suspend_via_firmware() =
-check.
-
-That's how the driver is designed, but is it actually required to be
-designed this way?
-
-> > > That applies to DT as well.
+> > > @@ -135,6 +138,27 @@ static inline void riic_clear_set_bit(struct rii=
+c_dev *riic, u8 clear, u8 set, u
+> > >         riic_writeb(riic, (riic_readb(riic, reg) & ~clear) | set, reg=
+);
+> > >  }
+> > >
+> > > +static int riic_bus_barrier(struct riic_dev *riic)
+> > > +{
+> > > +       int ret;
+> > > +       u8 val;
+> > > +
+> > > +       /*
+> > > +        * The SDA line can still be low even when BBSY =3D 0. Theref=
+ore, after checking
+> > > +        * the BBSY flag, also verify that the SDA and SCL lines are =
+not being held low.
+> > > +        */
+> > > +       ret =3D readb_poll_timeout(riic->base + riic->info->regs[RIIC=
+_ICCR2], val,
+> > > +                                !(val & ICCR2_BBSY), 10, riic->adapt=
+er.timeout);
+> > > +       if (ret)
+> > > +               return -EBUSY;
+> > > +
+> > > +       if (!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SDAI) ||
+> > > +           !(riic_readb(riic, RIIC_ICCR1) & ICCR1_SCLI))
 > >
-> > Again, why?
+> > Surely you can read the register once, and check both bits?
+> >
+> Agreed, I will add a helper func for this something like below, as
+> this can be re-used in patch 9/9
 >
-> On DT systems if firmware supports both S2Idle and S2R, devices can be ke=
-pt in
-> low power state during S2Idle and powered down during S2R.
+> static inline bool riic_lines_ok(struct riic_dev *riic)
+> {
+>     u8 reg =3D riic_readb(riic, RIIC_ICCR1);
 >
-> The problem comes if the firmware only supports the former state.
+>     if (!(reg & ICCR1_SDAI) || !(reg & ICCR1_SCLI))
+>         return false;
+>
+>     return true;
+> }
 
-I don't get it, sorry.
+A helper might be overkill...
 
-Firmware support for suspend-to-idle is not required, at least in
-principle, so I'm not sure what you mean by firmware support for it.
-I'm also not sure how S2R is supported by firmware on DT systems, so
-care to explain?
+    if ((riic_readb(riic, RIIC_ICCR1) & (ICCR1_SDAI | ICCR1_SCLI)) !=3D
+        ICCR1_SDAI | ICCR1_SCLI)
+            ...
 
-In any case, I don't see why in principle devices need to be handled
-differently depending on what flavor of system suspend in used at any
-given time.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
