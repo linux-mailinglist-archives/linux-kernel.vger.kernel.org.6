@@ -1,294 +1,194 @@
-Return-Path: <linux-kernel+bounces-448221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650D79F3D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E9F3D02
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F215B1885162
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390F31888005
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F661D6188;
-	Mon, 16 Dec 2024 21:55:44 +0000 (UTC)
-Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BB114A609;
-	Mon, 16 Dec 2024 21:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.14.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E921D61B5;
+	Mon, 16 Dec 2024 21:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="CSg7z1OI"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B70F1D434F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734386144; cv=none; b=sZzfkXBpHVCPaEv+3vjY4hT8yMgTbcydXa6w/WZUDfNU6rn8bI6kooLac5ddmKl05P1roJJZoXmWkxfCf9GuqCboetyFRXAFHdd3JAkck+5UPw1nPUoPF06HovdNeTIMMetqkBvSf/Bt89oiPzd+VXvizAIi+48IoHqG+8FjMPw=
+	t=1734385636; cv=none; b=CZG1rVd3xDQg3HOfgB9+ExrhrGgs8UfQksNtG8rdtQ6ST2f1nVE8Gx/H+/TLbvAXcHnEEcBH9NaxfEO0z92oZVjZK5pre6AHg+GcIrZgb8x0QFf4LO68oyNPvqztf88mQetIufxB0gKO8KAOFA80JB8ABULgIdYpcjctX5sQHok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734386144; c=relaxed/simple;
-	bh=FPttELg76H49itZZAKb+r9R0kb5QpPbnyY9iXhvhav4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DsDXMIJU4O0IhAR3cJYNIJFkVDifhZwLQMKEUn/BIs3qwnA4tixlaS7iBTQx2jRvjV7Hg7vXqgjvJ8DNaVNkhQqMu80MnUAMUmoMvO1M7D7lL00YcxyncVsySbmkncTLudQp8f1QPm8MTPN+120BkAn/ozdA9z4zjGiisW4e1Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c--e.de
-Received: by cae.in-ulm.de (Postfix, from userid 1000)
-	id A98251404E8; Mon, 16 Dec 2024 22:47:00 +0100 (CET)
-Date: Mon, 16 Dec 2024 22:47:00 +0100
-From: "Christian A. Ehrhardt" <lk@c--e.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Samuel =?utf-8?B?xIxhdm9q?= <samuel@cavoj.net>,
-	linux-usb@vger.kernel.org, Kenneth Crudup <kenny@panix.com>,
-	Saranya Gopal <saranya.gopal@intel.com>
-Subject: Re: [PATCH 5/5] usb: typec: ucsi: Clear UCSI_CCI_RESET_COMPLETE
- before reset
-Message-ID: <Z2Cf1AI8CXao5ZAn@cae.in-ulm.de>
-References: <20240320073927.1641788-1-lk@c--e.de>
- <20240320073927.1641788-6-lk@c--e.de>
- <Z18hJM55ED2hYJ6D@lappy>
+	s=arc-20240116; t=1734385636; c=relaxed/simple;
+	bh=GiyAav8BXYZqsXgqsh8Cs6jCSKLPXEo+MstoFe/VrbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YS4x7j+9/PYbUFqZg6o9KlZIofr3ld5Y7k+8F1apHsuLKMsiclTXNduifiyjsdc7TAIHoeYJdoXQeLgewoGtxa6By4QvHxyONORyTsoVq9Cn4dyt1lbHCUSZMgtWrwhjiC9zIzWtwljdk5f/Bj1JkYJSbSyXEdN7bS8ototAmHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=CSg7z1OI; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 364B82C097F;
+	Tue, 17 Dec 2024 10:47:10 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734385630;
+	bh=uEtrjirkbc1c4fmNTn0NYmmHEdfisUyR/ER4gLI/RxU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CSg7z1OIjwq88geczSeena6WKBRg20FTTzI2SMWTMmyRdN94yEDMmmAKlWh3vE2tz
+	 Qb80rM80KKlnFp5P/W4IZawAVtp9MB0sjqXwWxAjLZrQVQLX0E/30mLRdxTElenDBQ
+	 /EhVYUuqqUz3ctynpprlRriQzTo0sdYChJFfeBY5SLDsb/cO9Tqk51c/ux5KUdyQOK
+	 8Ns8KXPTJkyO+CWtd0PmPqNUryXJv25BFLSmN1xomxrRaZe8hE6sZgWqeqjjUEWPXa
+	 dY2JsXE+RDj6lYh6WFjQqeVoG/A6AABYDJyFwzlNHcNc7NKgiHKaNitmQVPpqfcJ/f
+	 gC2SPC8zQftUA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67609fde0000>; Tue, 17 Dec 2024 10:47:10 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 0E73713ED95;
+	Tue, 17 Dec 2024 10:47:10 +1300 (NZDT)
+Message-ID: <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
+Date: Tue, 17 Dec 2024 10:47:10 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z18hJM55ED2hYJ6D@lappy>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO driver
+To: Simon Horman <horms@kernel.org>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
+ <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
+ <20241216164814.GH780307@kernel.org>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241216164814.GH780307@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=67609fde a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=KkFew8YCm9Hy8_kfsgoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
 
-Hi,
+On 17/12/2024 05:48, Simon Horman wrote:
+> On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
+>> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+>> switches with integrated SoC. There are 4 physical SMI interfaces on the
+>> RTL9300 but access is done using the switch ports so a single MDIO bus
+>> is presented to the rest of the system.
+>>
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ...
+>
+>> diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-realtek-rtl.c
+> ...
+>
+>> +#define MAX_SMI_BUSSES  4
+>> +#define MAX_SMI_ADDR	0x1f
+>> +
+>> +struct realtek_mdio_priv {
+>> +	struct regmap *regmap;
+>> +	u8 smi_bus[MAX_PORTS];
+>> +	u8 smi_addr[MAX_PORTS];
+>> +	bool smi_bus_isc45[MAX_SMI_BUSSES];
+>> +	u32 reg_base;
+>> +};
+> ...
+>
+>> +static int realtek_mdiobus_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct realtek_mdio_priv *priv;
+>> +	struct fwnode_handle *child;
+>> +	struct mii_bus *bus;
+>> +	int err;
+>> +
+>> +	bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
+>> +	if (!bus)
+>> +		return -ENOMEM;
+>> +
+>> +	bus->name = "Reaktek Switch MDIO Bus";
+>> +	bus->read = realtek_mdio_read_c22;
+>> +	bus->write = realtek_mdio_write_c22;
+>> +	bus->read_c45 = realtek_mdio_read_c45;
+>> +	bus->write_c45 =  realtek_mdio_write_c45;
+>> +	bus->parent = dev;
+>> +	priv = bus->priv;
+>> +
+>> +	priv->regmap = syscon_node_to_regmap(dev->parent->of_node);
+>> +	if (IS_ERR(priv->regmap))
+>> +		return PTR_ERR(priv->regmap);
+>> +
+>> +	err = device_property_read_u32(dev, "reg", &priv->reg_base);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
+>> +
+>> +	device_for_each_child_node(dev, child) {
+>> +		u32 pn, smi_addr[2];
+>> +
+>> +		err = fwnode_property_read_u32(child, "reg", &pn);
+>> +		if (err)
+>> +			return err;
+>> +
+>> +		if (pn >= MAX_PORTS)
+>> +			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
+>> +
+>> +		err = fwnode_property_read_u32_array(child, "realtek,smi-address", smi_addr, 2);
+>> +		if (err) {
+>> +			smi_addr[0] = 0;
+>> +			smi_addr[1] = pn;
+>> +		}
+>> +
+>> +		if (smi_addr[0] > MAX_SMI_BUSSES)
+> Hi Chris,
+>
+> Should this condition be
+>
+> 		if (smi_addr[0] >= MAX_SMI_BUSSES)
+Yes. You are correct.
+>> +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
+>> +					     smi_addr[0]);
+>> +
+>> +		if (smi_addr[1] > MAX_SMI_ADDR)
+>> +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
+>> +
+>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+>> +			priv->smi_bus_isc45[smi_addr[0]] = true;
+> Otherwise it seems that smi_bus_isc45 may overflow here.
+>
+> Flagged by Smatch.
 
-[ CC: Saranya Gopal <saranya.gopal@intel.com> ]
+Sounds like something I should start looking at for myself. Have you got 
+a link to share?
 
-On Sun, Dec 15, 2024 at 01:34:12PM -0500, Sasha Levin wrote:
-> On Wed, Mar 20, 2024 at 08:39:26AM +0100, Christian A. Ehrhardt wrote:
-> > Check the UCSI_CCI_RESET_COMPLETE complete flag before starting
-> > another reset. Use a UCSI_SET_NOTIFICATION_ENABLE command to clear
-> > the flag if it is set.
-> 
-> Hi Christian,
-> 
-> It looks like kernelci is able to trigger the warning added by this
-> commit:
-> 
-> [   15.988528] WARNING: CPU: 0 PID: 8 at drivers/usb/typec/ucsi/ucsi.c:1377 ucsi_reset_ppm+0x1af/0x1c0 [typec_ucsi]
-> [ ... ]
-
-I think I can see what's going on.
-
-First of all: The warning is harmless and UCSI will still work as
-expected (but there is an additional delay during init).
-
-The trigger for the warning is likely this commit (reviewed by me, so ...):
-
-| commit fa48d7e81624efdf398b990a9049e9cd75a5aead
-| Author: Saranya Gopal <saranya.gopal@intel.com>
-| Date:   Fri Aug 30 14:13:42 2024 +0530
-| 
-|     usb: typec: ucsi: Do not call ACPI _DSM method for UCSI read
-|     operations
-
-The (compile tested) diff below should fix it and I can turn this
-into a proper patch but I lost access to test hardware with UCSI,
-thus this would need a "Tested-by:" from someone else before it can
-be included. Maybe Saranya can do this?
-
-     Best regards   Christian
-
-
-commit b44ba223cd840e6dbab6c7f69da6203c7a8ba570
-Author: Christian A. Ehrhardt <lk@c--e.de>
-Date:   Mon Dec 16 21:52:46 2024 +0100
-
-    acpi: typec: ucsi: Introduce a ->poll_cci method
-    
-    For the ACPI backend of UCSI the UCSI "registers" are just
-    a memory copy of the register values in an opregion. The ACPI
-    implementation in the BIOS ensures that the opregion contents
-    are synced to the embedded controller and it ensures that the
-    registers (in particular CCI) are synced back to the opregion
-    on notifications. While there is an ACPI call that syncs the
-    actual registers to the opregion there is rarely a need to do
-    this and on some ACPI implementations it actually breaks in
-    various interesting ways.
-    
-    The only reason to force a sync from the embedded controller
-    is to poll CCI while notifications are disabled. Only the
-    ucsi core knows if this is the case and guessing based on
-    the current command is suboptimal.
-    
-    Thus introduce a ->poll_cci() method that works like
-    ->read_cci() with an additional forced sync and document that
-    this should be used when polling with notifications disabled.
-    For all other backends that presumably don't have this issue
-    use the same implementation for both methods.
-    
-    Fixes: fa48d7e81624 ("usb: typec: ucsi: Do not call ACPI _DSM method for UCSI read operations")
-    Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
-
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index fcf499cc9458..0fe1476f4c29 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -1346,7 +1346,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
- 
- 	mutex_lock(&ucsi->ppm_lock);
- 
--	ret = ucsi->ops->read_cci(ucsi, &cci);
-+	ret = ucsi->ops->poll_cci(ucsi, &cci);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -1364,7 +1364,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
- 
- 		tmo = jiffies + msecs_to_jiffies(UCSI_TIMEOUT_MS);
- 		do {
--			ret = ucsi->ops->read_cci(ucsi, &cci);
-+			ret = ucsi->ops->poll_cci(ucsi, &cci);
- 			if (ret < 0)
- 				goto out;
- 			if (cci & UCSI_CCI_COMMAND_COMPLETE)
-@@ -1393,7 +1393,7 @@ static int ucsi_reset_ppm(struct ucsi *ucsi)
- 		/* Give the PPM time to process a reset before reading CCI */
- 		msleep(20);
- 
--		ret = ucsi->ops->read_cci(ucsi, &cci);
-+		ret = ucsi->ops->poll_cci(ucsi, &cci);
- 		if (ret)
- 			goto out;
- 
-@@ -1929,8 +1929,8 @@ struct ucsi *ucsi_create(struct device *dev, const struct ucsi_operations *ops)
- 	struct ucsi *ucsi;
- 
- 	if (!ops ||
--	    !ops->read_version || !ops->read_cci || !ops->read_message_in ||
--	    !ops->sync_control || !ops->async_control)
-+	    !ops->read_version || !ops->read_cci || !ops->poll_cci ||
-+	    !ops->read_message_in || !ops->sync_control || !ops->async_control)
- 		return ERR_PTR(-EINVAL);
- 
- 	ucsi = kzalloc(sizeof(*ucsi), GFP_KERNEL);
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index 5ff369c24a2f..e4c563da715f 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -61,6 +61,7 @@ struct dentry;
-  * struct ucsi_operations - UCSI I/O operations
-  * @read_version: Read implemented UCSI version
-  * @read_cci: Read CCI register
-+ * @poll_cci: Read CCI register while polling with notifications disabled
-  * @read_message_in: Read message data from UCSI
-  * @sync_control: Blocking control operation
-  * @async_control: Non-blocking control operation
-@@ -75,6 +76,7 @@ struct dentry;
- struct ucsi_operations {
- 	int (*read_version)(struct ucsi *ucsi, u16 *version);
- 	int (*read_cci)(struct ucsi *ucsi, u32 *cci);
-+	int (*poll_cci)(struct ucsi *ucsi, u32 *cci);
- 	int (*read_message_in)(struct ucsi *ucsi, void *val, size_t val_len);
- 	int (*sync_control)(struct ucsi *ucsi, u64 command);
- 	int (*async_control)(struct ucsi *ucsi, u64 command);
-diff --git a/drivers/usb/typec/ucsi/ucsi_acpi.c b/drivers/usb/typec/ucsi/ucsi_acpi.c
-index 5c5515551963..ac1ebb5d9527 100644
---- a/drivers/usb/typec/ucsi/ucsi_acpi.c
-+++ b/drivers/usb/typec/ucsi/ucsi_acpi.c
-@@ -59,19 +59,24 @@ static int ucsi_acpi_read_version(struct ucsi *ucsi, u16 *version)
- static int ucsi_acpi_read_cci(struct ucsi *ucsi, u32 *cci)
- {
- 	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
--	int ret;
--
--	if (UCSI_COMMAND(ua->cmd) == UCSI_PPM_RESET) {
--		ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
--		if (ret)
--			return ret;
--	}
- 
- 	memcpy(cci, ua->base + UCSI_CCI, sizeof(*cci));
- 
- 	return 0;
- }
- 
-+static int ucsi_acpi_poll_cci(struct ucsi *ucsi, u32 *cci)
-+{
-+	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
-+	int ret;
-+
-+	ret = ucsi_acpi_dsm(ua, UCSI_DSM_FUNC_READ);
-+	if (ret)
-+		return ret;
-+
-+	return ucsi_acpi_read_cci(ucsi, cci);
-+}
-+
- static int ucsi_acpi_read_message_in(struct ucsi *ucsi, void *val, size_t val_len)
- {
- 	struct ucsi_acpi *ua = ucsi_get_drvdata(ucsi);
-@@ -94,6 +99,7 @@ static int ucsi_acpi_async_control(struct ucsi *ucsi, u64 command)
- static const struct ucsi_operations ucsi_acpi_ops = {
- 	.read_version = ucsi_acpi_read_version,
- 	.read_cci = ucsi_acpi_read_cci,
-+	.poll_cci = ucsi_acpi_poll_cci,
- 	.read_message_in = ucsi_acpi_read_message_in,
- 	.sync_control = ucsi_sync_control_common,
- 	.async_control = ucsi_acpi_async_control
-@@ -142,6 +148,7 @@ static int ucsi_gram_sync_control(struct ucsi *ucsi, u64 command)
- static const struct ucsi_operations ucsi_gram_ops = {
- 	.read_version = ucsi_acpi_read_version,
- 	.read_cci = ucsi_acpi_read_cci,
-+	.poll_cci = ucsi_acpi_poll_cci,
- 	.read_message_in = ucsi_gram_read_message_in,
- 	.sync_control = ucsi_gram_sync_control,
- 	.async_control = ucsi_acpi_async_control
-diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-index fcb8e61136cf..bb0dc2005c05 100644
---- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-+++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-@@ -664,6 +664,7 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
- static const struct ucsi_operations ucsi_ccg_ops = {
- 	.read_version = ucsi_ccg_read_version,
- 	.read_cci = ucsi_ccg_read_cci,
-+	.poll_cci = ucsi_ccg_read_cci,
- 	.read_message_in = ucsi_ccg_read_message_in,
- 	.sync_control = ucsi_ccg_sync_control,
- 	.async_control = ucsi_ccg_async_control,
-diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-index 90948cd6d297..a78e53480875 100644
---- a/drivers/usb/typec/ucsi/ucsi_glink.c
-+++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-@@ -201,6 +201,7 @@ static void pmic_glink_ucsi_connector_status(struct ucsi_connector *con)
- static const struct ucsi_operations pmic_glink_ucsi_ops = {
- 	.read_version = pmic_glink_ucsi_read_version,
- 	.read_cci = pmic_glink_ucsi_read_cci,
-+	.poll_cci = pmic_glink_ucsi_read_cci,
- 	.read_message_in = pmic_glink_ucsi_read_message_in,
- 	.sync_control = ucsi_sync_control_common,
- 	.async_control = pmic_glink_ucsi_async_control,
-diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-index 6923fad31d79..57ef7d83a412 100644
---- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-+++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
-@@ -424,6 +424,7 @@ static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
- static const struct ucsi_operations ucsi_stm32g0_ops = {
- 	.read_version = ucsi_stm32g0_read_version,
- 	.read_cci = ucsi_stm32g0_read_cci,
-+	.poll_cci = ucsi_stm32g0_read_cci,
- 	.read_message_in = ucsi_stm32g0_read_message_in,
- 	.sync_control = ucsi_sync_control_common,
- 	.async_control = ucsi_stm32g0_async_control,
-diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-index f3a5e24ea84d..40e5da4fd2a4 100644
---- a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-+++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-@@ -74,6 +74,7 @@ static int yoga_c630_ucsi_async_control(struct ucsi *ucsi, u64 command)
- const struct ucsi_operations yoga_c630_ucsi_ops = {
- 	.read_version = yoga_c630_ucsi_read_version,
- 	.read_cci = yoga_c630_ucsi_read_cci,
-+	.poll_cci = yoga_c630_ucsi_read_cci,
- 	.read_message_in = yoga_c630_ucsi_read_message_in,
- 	.sync_control = ucsi_sync_control_common,
- 	.async_control = yoga_c630_ucsi_async_control,
+>> +
+>> +		priv->smi_bus[pn] = smi_addr[0];
+>> +		priv->smi_addr[pn] = smi_addr[1];
+>> +	}
+>> +
+>> +	err = realtek_mdiobus_init(priv);
+>> +	if (err)
+>> +		return dev_err_probe(dev, err, "failed to initialise MDIO bus controller\n");
+>> +
+>> +	err = devm_of_mdiobus_register(dev, bus, dev->of_node);
+>> +	if (err)
+>> +		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
 
