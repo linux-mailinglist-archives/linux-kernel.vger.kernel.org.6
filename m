@@ -1,223 +1,197 @@
-Return-Path: <linux-kernel+bounces-447278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D24B9F2FDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:55:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C89F2FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E0B162B9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D5318887A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F71E204088;
-	Mon, 16 Dec 2024 11:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7EC20458A;
+	Mon, 16 Dec 2024 11:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iFHGGEoB"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R7A4dX9P"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC800203D55;
-	Mon, 16 Dec 2024 11:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734350103; cv=fail; b=Zgfx8Yw/OI78K1qN7HQYawDJYHlj/UJ+1gUbemtczFh01P82EK1dgsWk5u9/a7tDQiXWaqHO10dYwmdwM7yg2C7omHw3zPXFGF3CR0H/986ML0r+EKTq27o849ezwzOnunUlansfzKfrk22jgqh6JLOSYOnIv9uGL1YL1I23ztg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734350103; c=relaxed/simple;
-	bh=SpTAQpbdpMM687hQjrtjc1Z9ARYxqFXwHM0qAe+8kAA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jLPMGFidVPwLWxEGuPneKLKyy2GeqR+sm2MxWZGUTPJM1HoHFgakCB6kQSUcI9CIPIeAL2+7zaHEhR+mteZM0+UXYAvNX31K/3ecjmb8vDoTe89k41nfcVLtMs9aWuqoKIXW1NcCTDK0X4vYU0+CYoWbZmmKH+fZCUMTYNEBfzs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iFHGGEoB; arc=fail smtp.client-ip=40.107.220.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PyW6yTYG91aiIdHs7ykAFfTHJygpymj05YCxXPzzD0hbcAOJ2JNz9u7Id2gSwcpH1AAjpwdZ1bXER3OCUw00j+7sKcw7Q25RoQDRfUzMiKTKrAbQs4XEaTM5tmDVUFhAhE5+C1t26oilYhuUbzVW6U1k+8d+RUd1k+aMwd9tLr/7vbGUut/DfMQ1tbIasF4dq/9QDBFQ3cJ3EJqZpb/Gyp4cJZkHcbYiVyNyxlsFRPOI0C0nvAW4jYQj/g7efY6UAL4c2NPFBPSo2OpwOzFXH1h8t5kYKTdwAJUSZAjfg38ToPSa8UvPxKaQWbbTJorLD5Rn4t+8QN6rYdzqUhK2iA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7ZDbTwAXQfqKCMUoDS8Lc9hLNWk2Ts7Zc29bhcEBk40=;
- b=IJhBAdeuxPqqpfDSlFhBH1CSMHyVTzryC8gAbeHvMtKmmiImmPuaSDvrjo9RfaoSr0eYA+QAnG2QktAC49TLFvTd6H5oVvHCMcI2PolOQOWKT4TZ/WFId/fGzDEhE4mydB2p60LQdvjV07TiVbnN8t8OwckaiTMTYSPDg5qxBQIBmFpQdH7uTmZr4CGWFhGCDQFBTlt/CB74vsPZrPuiLUc3EfzkeoFOc/q3lLlKv4n+qpTaXrK7jxHLh/ZcXHCeHsdeBYBkgovpIdRx9gCxIhQCCguiWQtFul5+Cs9KzEBTrsXYiCWQmnrQ1CnP6uV14ibA5IH7+y5YTXFLX9+wCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7ZDbTwAXQfqKCMUoDS8Lc9hLNWk2Ts7Zc29bhcEBk40=;
- b=iFHGGEoB8FUAgI/VYh1XMwRJHS0vhPOPrY6uTbDsAPhi/GQifrF+Kd376LWt4ynAgpbV3CDRIhEWzgKgj+kxwLWpxE0qqybHeoe0i6M81OdpF+KdD7/e46Pq2qdOHR0ta+BvZusRipBd1PNQ3ahcOzY3aPZ61HjvLneoukzdnQ9RQnVF1adLPvgLunCjA8W+oTaTi3iJem3q2uTtirrKgUhkQ/8ayXiCNbsFvGS59T+9FrkyMaNBUUWiXUaJpNWW7tBpN7PoH77mBun+f8dPzkI7mSerQrHmdf1G4OIxK5IajEfvvwKloNg/Fmt6+L/1o/z8ckqtRQcGpdpAq99PcQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SA1PR12MB8096.namprd12.prod.outlook.com (2603:10b6:806:326::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Mon, 16 Dec
- 2024 11:54:58 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
- 11:54:58 +0000
-Message-ID: <c304c70e-e69e-43fd-82ae-46e964ab84b2@nvidia.com>
-Date: Mon, 16 Dec 2024 11:54:50 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/467] 6.12.5-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20241213145925.077514874@linuxfoundation.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20241213145925.077514874@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0119.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:192::16) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD0204579;
+	Mon, 16 Dec 2024 11:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734350180; cv=none; b=gbxBB4cteYX9TA7X1uPVVDQ5fKvggZW5TQydJSe4+1NkNYnGNNz+SrtIf4UVAW8ISe+VRphBmw21sVuJ6gpPCSjicFLxF6GWeWOKSFNeJZx/m6T9ROBT9VjObXqdYuTaK4/37UCtSFwpKRvi36S6Z4BBzqrOY1JYFFoxmobYAeg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734350180; c=relaxed/simple;
+	bh=OKPLTQHxIuUahfuatylu+8JAUqFjImAX8tPtEshEgDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ejMuQMcJY91b/tGsZpRunHKh8EOl06AJ4M3ugFSVWIWhsr6Sidp/fN8xzbkumYAATLNBN3ev+yVt/5FRc62Nfc/jFsyU95FcGN+JsDzpYyjImHoszKeuE0E23azKGFCxSG63Mt6b/xNymmC93rH23C1my/yHO9bXHmz2F791gEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R7A4dX9P; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 400BD40E0266;
+	Mon, 16 Dec 2024 11:56:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id jl2PoPUHnDkL; Mon, 16 Dec 2024 11:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1734350170; bh=rYh3Vo4Y6Cn3XYiD3KvUWwt/WV0Vv7KQwFCZjgxQ7rY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R7A4dX9P1IScVfb33XC4RQNy0URmuHQkdq5GjLGiEI0TQ5itVj5qopQ5swmf+3e4a
+	 M9TGovU8mxakF3MnUrobGPUBnxnUm2WA5LdkrEMgyVOBEBcCyQQ5xucOFImQ+n3sza
+	 7eZf2PH9fYnmAN6UIm7FDq1r912QcTsHLgb6nhi9wNwGgLX9Q1iWFHoitGyufh+FaI
+	 OoQoyydcFJy/YF4+zLf08N0U7pTr6yktBnDLtkkyJc+svJs0stz1NSGkJjRqqhk8DR
+	 N2tkkY6TrWISHOFiJEwpCP0eU/sotQNqzexbnzsXVtwIKoM0DvhPZXXfERBHcYsLSs
+	 O++ZX6CvOocqtWuI1F8JvC00xUtrtko417tHLKNs0OJ1sz/lkLj8obn0ZdB7BZMsss
+	 A7q3VpTxfHIt7HHEdvYjCSFPM/6Q5uZQ88q5dN3OYRbDm8ciIbHOiUiD27OIFa201y
+	 o//CBl5yMwrAYwkV23IitIYNNy6zoj+hDNxJ3pGqaNuzOmYbFM09fDOWxUU0zIu7Vm
+	 HDBLc8uHZxCdbl/OB3P6kIdauCniA23i2cJd32Mi7UPIneLChJwxGyo6T5sqa3WaQh
+	 3i50lhOHT492p2Z2HrPTdIC9uuRP+sGXjZPu1ZloHYHVz4SOzmh9qXjv0YcNICvRa2
+	 5Sd5VXOY6JV9YqOS+EfqgqAU=
+Received: from zn.tnic (p200300ea971f937d329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:937d:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1497140E0269;
+	Mon, 16 Dec 2024 11:55:56 +0000 (UTC)
+Date: Mon, 16 Dec 2024 12:55:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Cc: chenhuacai@kernel.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@xen0n.name,
+	tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+	rric@kernel.org, loongarch@lists.linux.dev, xry111@xry111.site,
+	Markus.Elfring@web.de, Jonathan.Cameron@huawei.com,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: Re: [PATCH V10 RESEND] EDAC: Add EDAC driver for loongson memory
+ controller
+Message-ID: <20241216115546.GHZ2AVQi9u5lABWboE@fat_crate.local>
+References: <20241216013351.15432-1-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA1PR12MB8096:EE_
-X-MS-Office365-Filtering-Correlation-Id: dafa3919-7fae-40e2-5e0d-08dd1dc87717
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVZTQWlKZ2l5Z1loOEo2SDJSNlk3OEpTcFhMSUNKNERVUXI2aW9ZckJBMUd0?=
- =?utf-8?B?U3FuTE50VkdQY2dLbWlQN09BcVdVb0xoMTdMRnp2dlQxeWlVcjNXTXdlSjhJ?=
- =?utf-8?B?eHZaYUF4NGlmSHEyQlZHUENEMk9VMCs2eGVHQWgwMXBlTTJwYjkvTmo3aUVk?=
- =?utf-8?B?TXAvc2tKSFpocVlMN0Nyd0gyTk1JUFZ3TmluNDZMSTdnT2VwT1p1amIxek10?=
- =?utf-8?B?UFI5Q0IyM2JpNllQa1FZc0VPNExYVVhkMWg2VG8xVXdsOEZLTWNReTl2RjFR?=
- =?utf-8?B?S0ZuU1E1T2tVTnZ2V0J4eHc0d0h3bnlCUVBBUEhUNzZBakpHd3ZsamxFL1lk?=
- =?utf-8?B?QmVwelpZNGpMRlNQRm5xelZNRFdmZkN0c3V2Nk5NRmorMTllV1pTK1lQTnRX?=
- =?utf-8?B?SFdiMVlKQ1lmQ1MxNVlEeXdWQmQwUi8xMmE0eVZ3OGdlNEh4eE5hRm1GR3VU?=
- =?utf-8?B?ZVpKUFVpYXViYnVmbE9PQmRleSt6THpDQVJsUS9qMCs5R3lOQzdQWmVSTElm?=
- =?utf-8?B?L0JkUDFSb3VBVjBUdjF4bnF1N0cyQ0lrb0tsanlxUDFlelRIWEVpOEtwSnVo?=
- =?utf-8?B?ZUQ0NDdUVmtGQ1UwNlk5VHB6V1I2YUtBOEw0MVJOZEtGQ01zK01iVU80dEpL?=
- =?utf-8?B?RjdxODJWNUFRbHo1VDdycTZkbEYyWjhiQUZIOHlJa1g1OVI3ZU80cGRhOWVE?=
- =?utf-8?B?UHFORkpVbGN0QXNzR0R1Q3hrbS8rb2x3ZTRZQUo1R0xJdGhDUWpEdXpaYWNE?=
- =?utf-8?B?bmNzVmhPUUd5MVk2bng2Qi96alpsanhxRjNLTDRnTnhWTkFDVnAwcEFUOUw4?=
- =?utf-8?B?eEZISUJJSEROY1R5RlRLZHg5MHh3T3JKVkRqN3VwUzEzQ3ozWktLUGR0dHZG?=
- =?utf-8?B?Zmg3eGsxeitPNmRyd0RSVTN6QWtBQ1RaU1p5ZHlJMG9vQmtXOWdMZFVPSGdx?=
- =?utf-8?B?OFNvZkpyU2lMSHAwREdFRk5odG01d2dGK0twNHFMMnozQjhBNWhwejBudERk?=
- =?utf-8?B?S2l3WFhDSXh1L1UvZE9mbTIwTTEwQStXckUwMkJGbVlCZWs3VmxxRjFDemdD?=
- =?utf-8?B?M0grMUl3ckRjWk8wdVFra1c2N2ZMOWVpaGNOeFNaYkRubFYxUklwZ3NlVHlp?=
- =?utf-8?B?SzFhdkRXN0ZXTUtoVFk1VWRUR1hucm5mMUdNTmJ5NjBHQ3ZobTROQmpndEoy?=
- =?utf-8?B?em5PM3ptWlIvOHArWDA2SmhtUWF3ejJLUnMrOHFwZkJVcFhrMDl1K0hHME1K?=
- =?utf-8?B?b0JHdTY5QThlbWNnKzh2MDJTR0JCZGZNK2daaHRiQUl3dXRoSmZOVlMybjl6?=
- =?utf-8?B?MnNneTV6R1ZacjRvdHgxaUN5b2FCNENmcnRNQ1V4eWZyVnVjOEdZWEgwdHBS?=
- =?utf-8?B?RkZERnJVOVRBSUdyT0czT2dYT2Y1K2ErVlRubXhiTmNXanFicFVwWGZSVUVS?=
- =?utf-8?B?Qmd5bGtXdjNTNWFncGRtMlRXMzNTR1dDZy9nOGxTSEh6clF6aWR6d25zakVL?=
- =?utf-8?B?bmtYbE5pUUw3cTFiWUIzVmN0Y1V0SmRoVWg5L1lmZVUxRTJUM013Q0xVbDJr?=
- =?utf-8?B?Y0pKZzRmb3FQL1NwWVg1RU95T2FscitGSkRWbnpCTi85QnJGaVdMWVNYc3BV?=
- =?utf-8?B?c3VWSHlod3RRTDRoNGpudWVtSWNWb0FWWTlmdGE1dDBVMmdaZDJrZnpkb2g4?=
- =?utf-8?B?aDBQenVwRERONFUvUnFZMGppdlhWdUxtd1RGVDFJVkFTSGJtZDZkNU94TytT?=
- =?utf-8?B?aHF6aERZUFhDa0xnUHl4SDhnUy80R290b25DbU9BREZYMlpCVzIxVXREY0xF?=
- =?utf-8?B?dmsvbWtSckZFNkRLNWhQSnZ5RkloTkk2eDg2K1puck53VXY5Q3Vmcjcva1p5?=
- =?utf-8?Q?ffMUsRprNPMJ+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aDJsa0dNdmVxTzB0UER6Mm8zS1FtTm44enQzcDhJQUlHWGpVN3pKWlVPQmhP?=
- =?utf-8?B?S0FZWlVTMlhNeFNoOEJrYXRlNnpyU0QzR0E4cm9zTnFNQy9Yb3d3empySGN0?=
- =?utf-8?B?TFpDa3ZhcWlTclpWOTdCU3RqaXpycDVKOUxmRnFuYTdUL0VQeXduSlVQQklG?=
- =?utf-8?B?aDR2UUJFaVRPbFhZNXFuZmhjUGxZSHRWdHQyOHQwYlJ4dWVNYlBvTmE2UTJk?=
- =?utf-8?B?WTJqaWF5VWFSL3orQ0tGd3c4bU0wYUtnVjdCSEFvV2t0dEV3cVUvOFEvSGRw?=
- =?utf-8?B?YUVnY3E3UU9kTW9SRE1kbjZVS29BZVBnSVg1bGFGNjFrejVJNTZzWEprOExo?=
- =?utf-8?B?YkZZd0Vkd2NCSzE3WWxEaldCTnhLRkRmNE1hL2N1aGQrb1g0RUFGTGNFUTF4?=
- =?utf-8?B?S0tBbnlPRnh2SG9vaDJGdzVaRnUrRkIvYng5djBQbGdqckliYnA0aUpCb3Jr?=
- =?utf-8?B?VWpKdTBJcWtabnMyNjQ0QUNHMnlMVmZUSEpxdVQ1K1NKTFhGejM0MzFpOW95?=
- =?utf-8?B?L2RMbE11MFQxN25FYnhpTlNuYm5Ta3g1TFdBaEIzK0M5NEV0Q2phcUVYVlAz?=
- =?utf-8?B?QTdWTkQxaHFwZzB4ZmdZNy9WdTF1ZjdTajE3L1A0a2drMVk2VG81RjFmTm1C?=
- =?utf-8?B?UUI2Ky9TdlNVUE5wa1oyZGVvQU1PbkV6aURZRDYxdjdDWW9IWlZGQk1IS1J1?=
- =?utf-8?B?QmQxUWJPbWV2bWxkODNEWTNaWHZnYm5IdHVhOGJRSi94eCtyaFVUd3VtUEJp?=
- =?utf-8?B?Q3VKYVJRcVBkMzZ5Yk5WOVlGeHJkWU8wcnZtOWpjMTh4MklhK1ZEdDZmMS80?=
- =?utf-8?B?QVZpQ2p0d3AvWjlVNVNHbFBjamxUdmtyREtUUE44RGVoenNpd2g2YzBOdmdw?=
- =?utf-8?B?aU1pNk5yS3ZYWGlid2plYWhWcHBrY1I4cEVSZVAwOTdGWERSYUFGc1pJRXJx?=
- =?utf-8?B?TXByc0xhN1pIZi9lbTFFWENEYm5QNnZ6OHNqNDJrUUU4cDlqTjh2ZXF5T0t6?=
- =?utf-8?B?bFRFcUovUjJ0UmVRcmdBdGlUU1htSE02eCtkaFk3ZXVnbEVjY1JrQVUxcEg3?=
- =?utf-8?B?Z3dDTnF0aVhOaWNnWjNrYnhoa2VqODhnK2RPMkJiNnVzZUdaQmFndWlPYnc5?=
- =?utf-8?B?VTl2SjNvcmZzOXlkM25lZytsb1QzYS9lSG9zQ3JCbDl6NFhBQWd3ZnpTa2ZG?=
- =?utf-8?B?dmJDdTROamU4UUQ3Rm5QYUcwU0p0WVVKdDMzQTA2TkRjeEVVTnNGa3lYc2h4?=
- =?utf-8?B?ZEpoT3J4NmZuRXFKRkc3NXhndWVPMHRWd0JHTmk1WEFPVitKaDRrYUNyamla?=
- =?utf-8?B?RkxYVmc4MTd0TXR4dWg0dkpmNnhrRFdtMWt4M0R3SDNZNUdGS3k2WXVubEpN?=
- =?utf-8?B?SnRLQi9SYjY2L2xIVTVMTTErZVR1WWMySjJZRkZBTlhDanp1RkFkY0s3Y2Nr?=
- =?utf-8?B?UnZmeUtBWGlNK3luVmRoQ3J1ZlFkYUxwM2pXeWl2bVBnblJjUkpoVFJCOFJu?=
- =?utf-8?B?Q3pOdWoxYXA2ajBPdEpubXYxUXVaTktkQ21NTXBvaGZCeHlGU3EyQkFhWitE?=
- =?utf-8?B?S0hTbXpJVm5PcnVrOXZZWXVIRVlma2xTN3VUK3UrZ08vTHBxYkZkclFtRDds?=
- =?utf-8?B?QXpqamVlRzJOdEtsZXh0ZHhrcEpvcXlvVktIUlQ1SUNyMjBNMHAvYjRWbndF?=
- =?utf-8?B?Q0ZzOHBLK0xVMjJPY0piTm9YcHBYb3NkTDlNZ3MyWEg0Q0lOQUh5b3lWNmk3?=
- =?utf-8?B?bHFzd3RZeGhRRUdnem1Wc2pQUFdIaUdrcDI1eVdQeXB6VFNIUS9vblJwZ3NE?=
- =?utf-8?B?ZGxPbTV2SWxyRXlMOGlURkpxcVhQdnJCYzRIRE1QbkN4R1FiQ1p2bTVlc2pw?=
- =?utf-8?B?RHJ0ZU54SzJZQ2k4NGhzaUViVHp4bHE0QURzVG5FN1RzNk44MGhFb2NScDJW?=
- =?utf-8?B?TDBsWE1DYzM0c216U0J4a2FzbUlldk5zWmhUUTFid1VIU3l5QXZaTHNEa1lq?=
- =?utf-8?B?UjRCQ0JsQ1RTWVYyS0dqV09TRjc1WDFBaDVFaHp1VDRTUGRCSUw1U3V6QTcx?=
- =?utf-8?B?dGQrS21DK3BJMmF0Y1Zxcy9Pa0RnQzB6TlRJMU5WTGtlYndCMmJucmNiSEpv?=
- =?utf-8?B?VTgxWUkrL2lJVFQzZTBxMm8wemM3MDJxend5S0s1MWdKR2tMVWsyMnBNSHpT?=
- =?utf-8?Q?8dkbjaoVx4OeBm4h/MN/t+6Bm7OSOFqrhxG8Il2sQ1co?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dafa3919-7fae-40e2-5e0d-08dd1dc87717
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 11:54:58.7925
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jTCuH0B6ckWeczfwV9mzEgeifMaRd9dH0tF0tqp5UvHdKR/RbyrwbVSQrn5lEjZqCr3r7iDCdHbxreH2K62EGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8096
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241216013351.15432-1-zhaoqunqin@loongson.cn>
 
+On Mon, Dec 16, 2024 at 09:33:51AM +0800, Zhao Qunqin wrote:
+> +LOONGSON EDAC DRIVER
+> +M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
+> +L:	linux-edac@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/edac/loongson_edac.c
 
-On 13/12/2024 15:03, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.5 release.
-> There are 467 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+If you add yourself as a maintainer, I'd expect you to review and/or ack
+patches for your driver so that I can pick them up.
 
+> +config EDAC_LOONGSON
+> +	tristate "Loongson Memory Controller"
+> +	depends on (LOONGARCH && ACPI) || COMPILE_TEST
 
-No new regressions for Tegra ...
+The COMPILE_TEST thing would mean that you'll make sure this driver always
+builds on other arches and it doesn't break randconfig builds of people. If it
+happens too often and no one is fixing it, I'll remove the COMPILE_TEST.
 
-Test results for stable-v6.12:
-     10 builds:	10 pass, 0 fail
-     26 boots:	26 pass, 0 fail
-     116 tests:	114 pass, 2 fail
+> +	help
+> +	  Support for error detection and correction on the Loongson
+> +	  family memory controller. This driver reports single bit
+> +	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3A6000/3C6000
+> +	  are compatible.
+>  
+>  endif # EDAC
 
-Linux version:	6.12.5-rc2-g602e3159e817
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                 tegra20-ventana, tegra210-p2371-2180,
-                 tegra210-p3450-0000, tegra30-cardhu-a04
+> +static int read_ecc(struct mem_ctl_info *mci)
+> +{
+> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
+> +	u64 ecc;
+> +	int cs;
+> +
+> +	if (!pvt->ecc_base)
 
-Test failures:	tegra186-p2771-0000: cpu-hotplug
-                 tegra186-p2771-0000: tegra-audio-loopback-testsuite.sh
+When can that even happen? You're initializing it properly in pvt_init().
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> +		return pvt->last_ce_count;
+> +
+> +	ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
+> +	/* cs0 -- cs3 */
+> +	cs = ecc & 0xff;
+> +	cs += (ecc >> 8) & 0xff;
+> +	cs += (ecc >> 16) & 0xff;
+> +	cs += (ecc >> 24) & 0xff;
+> +
+> +	return cs;
+> +}
+> +
+> +static void edac_check(struct mem_ctl_info *mci)
+> +{
+> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
+> +	int new, add;
+> +
+> +	new = read_ecc(mci);
+> +	add = new - pvt->last_ce_count;
+> +	pvt->last_ce_count = new;
 
-Jon
+That last_ce_count is just silly. Kill it.
+
+> +	if (add <= 0)
+> +		return;
+> +
+> +	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
+> +			     0, 0, 0, 0, 0, -1, "error", "");
+> +	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
+
+"add"? What are you adding? Error count?
+
+No need.
+
+> +static int edac_probe(struct platform_device *pdev)
+> +{
+> +	struct edac_mc_layer layers[2];
+> +	struct mem_ctl_info *mci;
+> +	void __iomem *vbase;
+> +	int ret;
+> +
+> +	vbase = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(vbase))
+> +		return PTR_ERR(vbase);
+> +
+> +	/* allocate a new MC control structure */
+> +	layers[0].type = EDAC_MC_LAYER_CHANNEL;
+> +	layers[0].size = 1;
+> +	layers[0].is_virt_csrow = false;
+> +	layers[1].type = EDAC_MC_LAYER_SLOT;
+> +	layers[1].size = 1;
+> +	layers[1].is_virt_csrow = true;
+> +	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers,
+> +			    sizeof(struct loongson_edac_pvt));
+> +	if (mci == NULL)
+> +		return -ENOMEM;
+> +
+> +	mci->mc_idx = edac_device_alloc_index();
+> +	mci->mtype_cap = MEM_FLAG_RDDR4;
+> +	mci->edac_ctl_cap = EDAC_FLAG_NONE;
+> +	mci->edac_cap = EDAC_FLAG_NONE;
+> +	mci->mod_name = "loongson_edac.c";
+> +	mci->ctl_name = "loongson_edac_ctl";
+> +	mci->dev_name = "loongson_edac_dev";
+> +	mci->ctl_page_to_phys = NULL;
+> +	mci->pdev = &pdev->dev;
+> +	mci->error_desc.grain = 8;
+> +	/* Set the function pointer to an actual operation function */
+
+Remove that obvious comment.
 
 -- 
-nvpublic
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
