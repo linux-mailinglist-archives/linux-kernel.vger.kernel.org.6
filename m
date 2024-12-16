@@ -1,216 +1,140 @@
-Return-Path: <linux-kernel+bounces-447097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647FB9F2D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:47:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDAA9F2D3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 568DC168564
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A30AC167FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD60202C2B;
-	Mon, 16 Dec 2024 09:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D2201271;
+	Mon, 16 Dec 2024 09:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Iv1NuLx6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QM3Vol3G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211911FF60E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55263202C38
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342376; cv=none; b=uSxUVF7Kv+k0j8XfBWw1JPS/5NoH85ExsPDLbkvXfWtWPotq1RdSmWhT6oTrWVh/jX5U9WXzDaez2N0yf2U3nPjre8Y3Nrw1Jhk5JSak+26+V2Z+mYHHG5PnIDyWyrDdYLXc2JDQnAsxBN5AuhBD8M+qDkmmfgaQ8hLU65Ui3C8=
+	t=1734342332; cv=none; b=PhRV2SY9ZigmsyokHkYg5MnFZvZSI6gS+IGm2aV08YvR8QVcZQI/R1r4p+M3IUiyODI4vfUF9Qqw9UFa9P2KYd6djMLaFdVLy3TUTSpjraMpgZAL27PaVdX+bShFfXhRakCvyHE0huFDEVDL8bwpb83BcERm3pwnyvVayCRGnj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342376; c=relaxed/simple;
-	bh=c7yvDfhv8WcxYFfPe46x6LquIBU7edyOUd9m2GSjlOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EtJ8mqWQQnud/GCcX4ebZ2c9marRa/NuzCQHkHShTm2tystu6XyAKjvSLTBsuCy+XRixDuD+EZEzrdiGqFSxdXWP1LMoNnakUz8ZgMW5zcCDy8NF423gljcdieJl4jWwhfIAeHoU9acTyr460fzh6h1hJMgJJ+OaSSmp8Bk6HC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Iv1NuLx6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG3rgn9021225;
-	Mon, 16 Dec 2024 09:45:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=ulV4+WgTFr0u8S5OSFAAuFSRsajOC35FB5jApTr74
-	Pw=; b=Iv1NuLx6b+hAmrrHHXkH5lDMFPdYtYLulTPHuJezZui7lWI87DlneIBzI
-	qNMAf8FW2eKSCcLeOaac04BKJssM++eczTlY+O1moU7dlGTvX/PB1t4dtUre5kDr
-	wyAMR00eR/KXsJtAxusjimLp1T7MNHqGnqFjng/o6p8wveh/nIHJB0Cwuu8ybSqS
-	yF5Dh+5ZiSeJInrvvRzh41Ru+vfvf5NdwtvDt/Gqh7iMvRLNiiGP0RntEzffXJB/
-	Qz5s2APJy7+uhzKaBq+J851dp2zSuPi8mj+5IMDMB/aVfaSDCSvnt/TWUnrv47Dn
-	S5spHkwVvU/SSleSYz17Mxcu/XqFg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpgset4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 09:45:50 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BG9gdEs008750;
-	Mon, 16 Dec 2024 09:45:50 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpgset0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 09:45:50 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG8QprV029773;
-	Mon, 16 Dec 2024 09:45:49 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hmbsdhfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 09:45:49 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BG9jj5w31523376
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 09:45:45 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 743BD20043;
-	Mon, 16 Dec 2024 09:45:45 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9548720040;
-	Mon, 16 Dec 2024 09:45:41 +0000 (GMT)
-Received: from vishalc-ibm.ibmuc.com (unknown [9.124.212.182])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Dec 2024 09:45:41 +0000 (GMT)
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, sshegde@linux.ibm.com, srikar@linux.ibm.com,
-        vineethr@linux.ibm.com, zhangqiao22@huawei.com,
-        Vishal Chourasia <vishalc@linux.ibm.com>,
-        Samir Mulani <samir@linux.ibm.com>
-Subject: [PATCH v5] sched/fair: Fix CPU bandwidth limit bypass during CPU hotplug
-Date: Mon, 16 Dec 2024 15:15:10 +0530
-Message-ID: <20241216094509.1035255-2-vishalc@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1734342332; c=relaxed/simple;
+	bh=JRmzcGKr+C1GZ2afbWPHsrKQ/+3opStKZJzgRZVI+OQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3Qa9K8vf6ugecUmPRHhQe45nWdQxEvJd7EQRo3uaKskuVSwGVs1bJbbZ/Vbq6nQMjK4uVg+nfcgBM8KhH9OVbw/mcaJMuJCVywyXVSZ9X9tjpX3peyiz8imTrXmQHy+Vx+6r5DGJ6RsZdCknTejI8WNZQhnNketNIPeFFuepPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QM3Vol3G; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734342329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mUEqVhqEm411y2btyANp0nQYhhxxqt+IdHIRX6Fy7yA=;
+	b=QM3Vol3GXTJ7BNjcP+KwoJhydUdIpmJ2UB6dA1/xZBrnPxDEguuG7cx3+AMd6KhXh0C9Jm
+	3XDL2elXlu4qSKfGBib8csQXg5yzOsmjzkytQecgpg4CKQwWg2goK/yDKbTYq1snsx1Xlt
+	sHkrZ6sR6bFsbNIbPYRUUtsrPHr5w7o=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-554-BnH-XBrSOFuCFb8ImeBlxw-1; Mon, 16 Dec 2024 04:45:27 -0500
+X-MC-Unique: BnH-XBrSOFuCFb8ImeBlxw-1
+X-Mimecast-MFC-AGG-ID: BnH-XBrSOFuCFb8ImeBlxw
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa69e84128aso335014866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:45:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734342326; x=1734947126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mUEqVhqEm411y2btyANp0nQYhhxxqt+IdHIRX6Fy7yA=;
+        b=tMoLi2MKrFf3DNjEYI1J+F1aoTXqSCZm8m8oH9dhTSjBsRN7N/FyKEgs3cGwZQPmiE
+         hkj26leNoIHFqTgtxXGwQyYZ5fNetbl29XN+eEDpb5iyAdnA0X56b5sdNhkQ1y45u9lZ
+         n5ZnA5gcQhVOGuWFJ3Y4emkP0k56jel9WpNI0ysiFlkE7ShKwQSv5+Uz/7vytwQDZFCE
+         RS8Un/7kFOaqGjUmPfeXP6V/0+I4+DFpAOnYcSZKGaTFcZAVIFx5J1oEgmqrev0d/dOg
+         LW0WCc+4ITT+v1Vk+Sao0dUi036eHe42Z+lFY3qKRLRgaE6lBfAxRjdcxUiXgo9PQqLy
+         lbRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSw8oxVtxS6dPm5u/eD2P6eZno1POKdoHtSoEermfKF6jqffbMCycXzoYqcOfbhknFSh575xA/8iRy5/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOiIwIHkpmm0cRVJI3vVH7NT6mqyIXcadduG3pT7Rjg0R7G6TG
+	FBQE8YcEbJ7/1qF7HOeqFq2shpKFkRHJDGOaeB704Y61WYYWKhaV4t8kQUIa1ekwbhmyHSACZdJ
+	fi3oOWU1+huYNB2VGDT7ilifl4Pfykgr387E23NNeaaYRheUWOWFKE7IvRcAeQA==
+X-Gm-Gg: ASbGncugE8PeF8bycfVG806OY0sDBcvwdEzK7ohxzjAE/U7uINEeDwaDaM7o8t5lHpM
+	hKjpvwxC/WtLOMxR8t8rNVhrcMRjT/IF1c/WrT179iKCR8XPyRFfeQPwKoQtnRScrWQ6xQG2v4C
+	oKnIKjw6Hz7szcH+WU5PbdsyDxOquhQ6FlF0/IiR7mqa8jJVIkMNhPrLIiAkl9Jfz1Z7O2kOdlR
+	OvOs0xU1dWun0eMtOrtTyYB2iV8Uop1FJksU1/b0BXHiSL1ElcH
+X-Received: by 2002:a17:906:3289:b0:aa6:7470:8efe with SMTP id a640c23a62f3a-aab77907930mr922253066b.13.1734342326536;
+        Mon, 16 Dec 2024 01:45:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZ1z2lzdh2iwu9u26o1qjT8nMT8Dfj1jXT3HMa99NlV9SwaueXBmTZhsa9d+oTc6bnLe3cWQ==
+X-Received: by 2002:a17:906:3289:b0:aa6:7470:8efe with SMTP id a640c23a62f3a-aab77907930mr922251066b.13.1734342326159;
+        Mon, 16 Dec 2024 01:45:26 -0800 (PST)
+Received: from cassiopeiae ([2a00:79c0:644:6900:642:1aff:fe31:a19f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f35365sm3093068a12.80.2024.12.16.01.45.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 01:45:25 -0800 (PST)
+Date: Mon, 16 Dec 2024 10:45:22 +0100
+From: Danilo Krummrich <dakr@redhat.com>
+To: Zhanxin Qi <zhanxin@nfschina.com>
+Cc: kherbst@redhat.com, lyude@redhat.com, airlied@gmail.com,
+	simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/nouveau: Fix memory leak in nvbios_iccsense_parse
+Message-ID: <Z1_2sugsla44LgIz@cassiopeiae>
+References: <20241216015246.141006-1-zhanxin@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -EHadINEpZGe4KWVudO2w2n3Wtnn6INH
-X-Proofpoint-ORIG-GUID: fXfu_If-8L93Ou-N1hJWCpUDQ0YfEpaL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- mlxscore=0 phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0
- spamscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216015246.141006-1-zhanxin@nfschina.com>
 
-CPU controller limits are not properly enforced during CPU hotplug
-operations, particularly during CPU offline. When a CPU goes offline,
-throttled processes are unintentionally being unthrottled across all CPUs
-in the system, allowing them to exceed their assigned quota limits.
+Thanks for the patch, some notes below.
 
-Consider below for an example,
+On Mon, Dec 16, 2024 at 09:52:46AM +0800, Zhanxin Qi wrote:
+> The nvbios_iccsense_parse function allocates memory for sensor data
+> but fails to free it when the function exits, leading to a memory
+> leak. Add proper cleanup to free the allocated memory.
+> 
+> Signed-off-by: Zhanxin Qi <zhanxin@nfschina.com>
 
-Assigning 6.25% bandwidth limit to a cgroup
-in a 8 CPU system, where, workload is running 8 threads for 20 seconds at
-100% CPU utilization, expected (user+sys) time = 10 seconds.
+Please also add a "Fixes:" tag and "Cc: stable@vger.kernel.org" for this.
 
-$ cat /sys/fs/cgroup/test/cpu.max
-50000 100000
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
+> index 8f0ccd3664eb..502608d575f7 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
+> @@ -291,6 +291,9 @@ nvkm_iccsense_oneinit(struct nvkm_subdev *subdev)
+>  			list_add_tail(&rail->head, &iccsense->rails);
+>  		}
+>  	}
+> +
+> +	kfree(stbl.rail);
 
-$ ./ebizzy -t 8 -S 20        // non-hotplug case
-real 20.00 s
-user 10.81 s                 // intended behaviour
-sys   0.00 s
+I think it's a bit subtile why this is needed here; better add a new inline
+function (nvbios_iccsense_cleanup()) to include/nvkm/subdev/bios/iccsense.h that
+frees the memory and call this one instead.
 
-$ ./ebizzy -t 8 -S 20        // hotplug case
-real 20.00 s
-user 14.43 s                 // Workload is able to run for 14 secs
-sys   0.00 s                 // when it should have only run for 10 secs
+While at it, you may also want to send a separate patch, adding a brief comment
+to nvbios_iccsense_parse() which notes, that after a successful call to
+nvbios_iccsense_parse() it must be cleaned up with nvbios_iccsense_cleanup().
 
-During CPU hotplug, scheduler domains are rebuilt and cpu_attach_domain
-is called for every active CPU to update the root domain. That ends up
-calling rq_offline_fair which un-throttles any throttled hierarchies.
-
-Unthrottling should only occur for the CPU being hotplugged to allow its
-throttled processes to become runnable and get migrated to other CPUs.
-
-With current patch applied,
-$ ./ebizzy -t 8 -S 20        // hotplug case
-real 21.00 s
-user 10.16 s                 // intended behaviour
-sys   0.00 s
-
-This also has another symptom, when a CPU goes offline, and if the cfs_rq
-is not in throttled state and the runtime_remaining still had plenty
-remaining, it gets reset to 1 here, causing the runtime_remaining of
-cfs_rq to be quickly depleted.
-
-Note: hotplug operation (online, offline) was performed in while(1) loop
-
-Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Zhang Qiao <zhangqiao22@huawei.com>
-Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Tested-by: Samir Mulani <samir@linux.ibm.com>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-
-v4: https://lore.kernel.org/all/20241212043102.584863-2-vishalc@linux.ibm.com
-v3: https://lore.kernel.org/all/20241210102346.228663-2-vishalc@linux.ibm.com
-v2: https://lore.kernel.org/all/20241207052730.1746380-2-vishalc@linux.ibm.com
-v1: https://lore.kernel.org/all/20241126064812.809903-2-vishalc@linux.ibm.com
-
----
- kernel/sched/fair.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3e9ca38512de..623c828ad3ef 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6709,6 +6709,10 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
- 
- 	lockdep_assert_rq_held(rq);
- 
-+	/* Do not unthrottle for an active CPU */
-+	if (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
-+		return;
-+
- 	/*
- 	 * The rq clock has already been updated in the
- 	 * set_rq_offline(), so we should skip updating
-@@ -6723,19 +6727,21 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
- 		if (!cfs_rq->runtime_enabled)
- 			continue;
- 
--		/*
--		 * clock_task is not advancing so we just need to make sure
--		 * there's some valid quota amount
--		 */
--		cfs_rq->runtime_remaining = 1;
- 		/*
- 		 * Offline rq is schedulable till CPU is completely disabled
- 		 * in take_cpu_down(), so we prevent new cfs throttling here.
- 		 */
- 		cfs_rq->runtime_enabled = 0;
- 
--		if (cfs_rq_throttled(cfs_rq))
--			unthrottle_cfs_rq(cfs_rq);
-+		if (!cfs_rq_throttled(cfs_rq))
-+			continue;
-+
-+		/*
-+		 * clock_task is not advancing so we just need to make sure
-+		 * there's some valid quota amount
-+		 */
-+		cfs_rq->runtime_remaining = 1;
-+		unthrottle_cfs_rq(cfs_rq);
- 	}
- 	rcu_read_unlock();
- 
-
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
--- 
-2.47.0
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.30.2
+> 
 
 
