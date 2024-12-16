@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-448004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C829F39C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:26:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB049F39C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D3D188707E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025BE1885176
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF56220C00D;
-	Mon, 16 Dec 2024 19:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B008120C038;
+	Mon, 16 Dec 2024 19:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zl0PUbgR"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G1zLWh1U"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA30820B7ED
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE9D20C00B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377082; cv=none; b=Dm1Z/bfc/SenPm0rzuE07fayl2r0yG+VHgQKthUJA0aAb+e9sVgmToJ4aqu2XfoD0CgCTaqkp3VcdtlfPgO44zUN+fsB12qp0YNVrRHw5aUnk0QWoeuTiUggtbJJNBP6I4AhYzT2tmPdptXQtXk2zFie7fBHpcAJM8et+W4gBzM=
+	t=1734377084; cv=none; b=VnUVwfpC0J7QwCBYi5hbViyGQPtguCxEdjflPktf+cZmo4zwisztY82Bwqo5+CxzF2nFs/jJO/lOWjxRuehJc9nZTAckXvCtQuKrqfBIyxjibAHw09+YwdHBWPb1v5IKue8dDktoPMTGVmTsWPa0C/1MTDdnFFCW6urSeoZAJfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377082; c=relaxed/simple;
-	bh=4HVgEs+Z5egjLoYt8HIyu4EWui7/xkUMkpUi/DbY8o0=;
+	s=arc-20240116; t=1734377084; c=relaxed/simple;
+	bh=slEyDSyOmggj5mJJINjjr/YocKsmeusN6XkbngdxcOw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MYq9msLd2FdReKxJafCN+BvNHkGs1lnzd9plLo2/MMKrGU150+Zg8bwKjV5kdTOG3usIb7+gTwoK2fi7hU89j/jEzeZJmxmLdw9yrKyD2/gC2fqHP46UrQrl628egwbURVpWL3fgRQqdENrkXF4UYmWBAJ06jinb3PZgoSjuYNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zl0PUbgR; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=XVxfHLzUBeYbnozinR5vfJni7oLIY7I0xAGOwmtakXlZ5RlAb17x5AF2xJTNa0o8DL5pNk2wYVAg1pf1qSmGr4BwENzI0fHbGMK4LyHSs2ni12UQTL0yHbMI+dYpcxQclxcYyWV5Z7nt7Prkeoqz/xz8iWcsT4zKP52YoKpViFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G1zLWh1U; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-725e6fe074eso6614075b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:24:40 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ef9b9981f1so6675914a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:24:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734377080; x=1734981880; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734377082; x=1734981882; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlSIABx/zxxF1ijBMV6mDoRgzimHB9QssQ8SIetRkVU=;
-        b=Zl0PUbgRvff4heTsRClAa4GLDd5rS/Gc97JTiiC0xEoMBlPxtL6ETeJeJERUXobOY5
-         TIRa3E9v/F1s1RcOLTEwNFK9rFGPkf+Z5CdYiM3rxwJhReY+BN6O3zqoxD5ZzgbIFBW/
-         Xofn9BNGYEhQyqkeCsD0z1XlGrDrxgAihEmJFd3RbohRtPJ3RdjQzsOsVOkPqtch35Nx
-         VUPfTVekH7Q5lvGVR/p8ivmtiV0Z9zCNSCfboglU//M1S4zV4Xe8/mMPDnxzo9LsYw0V
-         /fKkrPV23ml0Q++kWdG1+W6NOi9GRGQT/i4rFVt2QB9Eg65fw4EErECQSCKXXu7gq4gA
-         8edA==
+        bh=PJyEpzu4DU8rJRmq3ow3hqlNy2LMWwwp3HWnjTLdNPo=;
+        b=G1zLWh1UH/CfwHm+0Ij2DjpAsoptAMaKm7hv7WFaV6EcwkIrLbnQEWiMPvN3afu7VA
+         9rCE8H3PJIDq5Llbc5WxDZeHMwBMkKA6weIARvQVeoAdYmil13sM8IUGu2u6/2oqYQUN
+         1S5uvbOT/CoIgu7bwBFL6QWGB1pRnPbBNWvrN4KBQqHHa6L1lHxyNNtmGAYw3h19wkTk
+         T+EsMGfMvpXuVlL+b+Rv+21hRhi0LD84U5jFFDMWTx5Pa4LHYCUdAuaf0Lrw+iIanW3x
+         bk9mZMOHCMvmir4CDf3QV7rTp4XsEhtI/Qcu/55Q2+yx0aHDY0WcI4JuVuyvwND2stA4
+         Mxpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734377080; x=1734981880;
+        d=1e100.net; s=20230601; t=1734377082; x=1734981882;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlSIABx/zxxF1ijBMV6mDoRgzimHB9QssQ8SIetRkVU=;
-        b=d8pBWT5cEQX4gq0OqOV6gOlJostL5j0nC8y6P7iXROwY5B92cWaFUUoVGfpkLphzFE
-         bTuBOK1C1zsOb4DlRQpdALzvJNFq0F3Tlg8w9+ojXkDp/ZvHQyCQHdBW6SuJamf1dN0z
-         PpGhvf2sPG5Q54eKhpxOpWwBUKaEkhmelju0Qli9PGtjcP3ywxEfiS9mz2cj6nCcUzss
-         otX39zQ+3lk7Z3hEScRXHFg8//bGPOy67Ohpt4CDJBb9UjbVNN+md3VfCmIsZO0Ruigz
-         VbVVVv7QTStG3/jz2Pg6ZTfhm/5Q2/e8UQURO6ixDGP+xrTlgZ1MNnsviyYx5EKDBLEo
-         uvIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWyE1ZQ2LTp771PS6756xEGPLR6xWnCtlemM7KZXnf8CxeTQBe2XWs4BFT6uh1wpuQJNh4a0rU5Jd/uxGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSnMhyDYsA5vVpDfKlk+wuMhoIfT+17AypCYuECIO6jq8Qxkwk
-	f5Q25g0+hpc9sBTGAd2rV2OKGG6lsG9XL9OTkKi0ma3UTHD/4OpJK42FzlRA1HUOnurr8rP/Aal
-	XGw==
-X-Google-Smtp-Source: AGHT+IFInU2/c8WUI1v0xjpwtORb6r7NqVkTkq8OC0u0JtieghImrnI2AnpvFTBaqoW2DCB2chLg/yy/KrA=
-X-Received: from pfblh8.prod.google.com ([2002:a05:6a00:7108:b0:728:f1bf:72ad])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9c8d:b0:1dc:790e:3bd0
- with SMTP id adf61e73a8af0-1e1dfd3dbb6mr22228664637.15.1734377079970; Mon, 16
- Dec 2024 11:24:39 -0800 (PST)
-Date: Mon, 16 Dec 2024 11:24:11 -0800
+        bh=PJyEpzu4DU8rJRmq3ow3hqlNy2LMWwwp3HWnjTLdNPo=;
+        b=LKz9soJ7iVODwWWt8Lqq+mkxM3rlXCvBKiJquzIfsTnL5ldmEvikVH7iF6n6jhfaew
+         SihddWHKV+wwamYrU/9I1880DTCogJ7CblZbg6W2Y0Fz9DZjD4n3TdNpvWq+xX/DlEkY
+         slKMy/W5Kpo7qnaHM5FBeBm01a+A2s89o2MHsDOCedrE+Ro1UTzoyWXNYJ4RrUQV23Y1
+         sy5ptWyGTXD+QR9YGN7pulyVHWOQdqG1zpGMBY/ZAjBJCGKveqYd+tYt33+1BvE7o91p
+         biyBuOIIeA3xEJDWpnSw9oss68+AWJNktc2+8F47FsR6ELMUV1lrvPrbOmT+YtMVBODE
+         dDuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjgTQSnOD+Dj0XzbrffB+z9nH+q2ou/2zcfoHK0m69gH2l2kgdb97mP2YjVUiMBL4qelMKUCBcEAH1iZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG9RcRsfhhtfzhTG0fbO1iPAAL7bYLJL71WebiYPwK8cTFuc5k
+	ZApy2Bb2k0ejWDhuyPP28s9p2gI6vwBT0DDs15/xnUPTm4+E8I8SUtyUCMjGU75YD0oAv6e95mg
+	JCQ==
+X-Google-Smtp-Source: AGHT+IGSC/WDrL2DnP38qBt3Yi0DRZx0zLMWebStlpO2MkkwMeYlYALEb8oRG5sXg1v7sD7oiSjMQ3XiMF4=
+X-Received: from pjboi16.prod.google.com ([2002:a17:90b:3a10:b0:2e2:9021:cf53])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c4a:b0:2ee:7233:4e8c
+ with SMTP id 98e67ed59e1d1-2f28fb522d7mr20621018a91.8.1734377082197; Mon, 16
+ Dec 2024 11:24:42 -0800 (PST)
+Date: Mon, 16 Dec 2024 11:24:12 -0800
 In-Reply-To: <20241216192419.2970941-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241216192419.2970941-1-surenb@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241216192419.2970941-9-surenb@google.com>
-Subject: [PATCH v6 08/16] mm: uninline the main body of vma_start_write()
+Message-ID: <20241216192419.2970941-10-surenb@google.com>
+Subject: [PATCH v6 09/16] refcount: introduce __refcount_{add|inc}_not_zero_limited
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com, 
@@ -90,72 +90,66 @@ Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com,
 	surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-vma_start_write() is used in many places and will grow in size very soon.
-It is not used in performance critical paths and uninlining it should
-limit the future code size growth.
-No functional changes.
+Introduce functions to increase refcount but with a top limit above
+which they will fail to increase. Setting the limit to 0 indicates
+no limit.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- include/linux/mm.h | 12 +++---------
- mm/memory.c        | 14 ++++++++++++++
- 2 files changed, 17 insertions(+), 9 deletions(-)
+ include/linux/refcount.h | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0ecd321c50b7..ccb8f2afeca8 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -787,6 +787,8 @@ static bool __is_vma_write_locked(struct vm_area_struct *vma, unsigned int *mm_l
- 	return (vma->vm_lock_seq == *mm_lock_seq);
+diff --git a/include/linux/refcount.h b/include/linux/refcount.h
+index 35f039ecb272..e51a49179307 100644
+--- a/include/linux/refcount.h
++++ b/include/linux/refcount.h
+@@ -137,13 +137,19 @@ static inline unsigned int refcount_read(const refcount_t *r)
  }
  
-+void __vma_start_write(struct vm_area_struct *vma, unsigned int mm_lock_seq);
-+
- /*
-  * Begin writing to a VMA.
-  * Exclude concurrent readers under the per-VMA lock until the currently
-@@ -799,15 +801,7 @@ static inline void vma_start_write(struct vm_area_struct *vma)
- 	if (__is_vma_write_locked(vma, &mm_lock_seq))
- 		return;
+ static inline __must_check __signed_wrap
+-bool __refcount_add_not_zero(int i, refcount_t *r, int *oldp)
++bool __refcount_add_not_zero_limited(int i, refcount_t *r, int *oldp,
++				     int limit)
+ {
+ 	int old = refcount_read(r);
  
--	down_write(&vma->vm_lock.lock);
--	/*
--	 * We should use WRITE_ONCE() here because we can have concurrent reads
--	 * from the early lockless pessimistic check in vma_start_read().
--	 * We don't really care about the correctness of that early check, but
--	 * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
--	 */
--	WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
--	up_write(&vma->vm_lock.lock);
-+	__vma_start_write(vma, mm_lock_seq);
+ 	do {
+ 		if (!old)
+ 			break;
++		if (limit && old + i > limit) {
++			if (oldp)
++				*oldp = old;
++			return false;
++		}
+ 	} while (!atomic_try_cmpxchg_relaxed(&r->refs, &old, old + i));
+ 
+ 	if (oldp)
+@@ -155,6 +161,12 @@ bool __refcount_add_not_zero(int i, refcount_t *r, int *oldp)
+ 	return old;
  }
  
- static inline void vma_assert_write_locked(struct vm_area_struct *vma)
-diff --git a/mm/memory.c b/mm/memory.c
-index cc7159aef918..c6356ea703d8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6329,6 +6329,20 @@ struct vm_area_struct *lock_mm_and_find_vma(struct mm_struct *mm,
- #endif
- 
- #ifdef CONFIG_PER_VMA_LOCK
-+void __vma_start_write(struct vm_area_struct *vma, unsigned int mm_lock_seq)
++static inline __must_check __signed_wrap
++bool __refcount_add_not_zero(int i, refcount_t *r, int *oldp)
 +{
-+	down_write(&vma->vm_lock.lock);
-+	/*
-+	 * We should use WRITE_ONCE() here because we can have concurrent reads
-+	 * from the early lockless pessimistic check in vma_start_read().
-+	 * We don't really care about the correctness of that early check, but
-+	 * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
-+	 */
-+	WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
-+	up_write(&vma->vm_lock.lock);
++	return __refcount_add_not_zero_limited(i, r, oldp, 0);
 +}
-+EXPORT_SYMBOL_GPL(__vma_start_write);
 +
- /*
-  * Lookup and lock a VMA under RCU protection. Returned VMA is guaranteed to be
-  * stable and not isolated. If the VMA is not found or is being modified the
+ /**
+  * refcount_add_not_zero - add a value to a refcount unless it is 0
+  * @i: the value to add to the refcount
+@@ -213,6 +225,12 @@ static inline void refcount_add(int i, refcount_t *r)
+ 	__refcount_add(i, r, NULL);
+ }
+ 
++static inline __must_check bool __refcount_inc_not_zero_limited(refcount_t *r,
++								int *oldp, int limit)
++{
++	return __refcount_add_not_zero_limited(1, r, oldp, limit);
++}
++
+ static inline __must_check bool __refcount_inc_not_zero(refcount_t *r, int *oldp)
+ {
+ 	return __refcount_add_not_zero(1, r, oldp);
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
