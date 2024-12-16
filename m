@@ -1,103 +1,141 @@
-Return-Path: <linux-kernel+bounces-446838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F499F29CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:03:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603599F296C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685AE1668DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7578918862D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96401C0DF0;
-	Mon, 16 Dec 2024 06:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036E21BDA89;
+	Mon, 16 Dec 2024 05:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QQJNvZkX"
-Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUPDIYYC"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7329A322E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585EA10F4;
+	Mon, 16 Dec 2024 05:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734328995; cv=none; b=AUC5KB8PBeirQZGgtFbhGqzyELzjCwJgnlNkq8m2gYyDzKPzk38YAlgLYG+jXenYhMFOU0SE/WvE1YfyDnIFcxMoqiF8IT/+zE5o4XvPP7cJxJcmUG6ddf3Cpm9Hdbzalz24dzSq0u/etxOoSaQxMr4vWQTO+0k90EmLf8U26YA=
+	t=1734326078; cv=none; b=CuuBfIapG0sBoGKE8h8C4WoTaSzSDn/dl78N3hdqWTl1ltEu5XwFZXnP2kWQOtilXqAsa8kJYxVvF2lOKLspfZHXdM1lkh/7Q1h6zSCur2Mk2NZjs5601nrwkFmt/KXd/SOJbN2ufmghMWOxUwvPXfJdAWT0OjNWYqxSGS7rjPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734328995; c=relaxed/simple;
-	bh=YnCePJWoz9FkSVTLpE3C9sEeuTuQrhRVU06qePhamQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T17o7oSiRD7dAJlJOJWCNHaMJEFCAauwNSOlLKlJ+z2OLO9X1150nPNeCfErhgCI0rLAgRPwqkQZx3LrAFT5Sh3f2ND83+AwXpBIUgqRI+KcLzGKFnZ6UEQ5yJgx6+5A/Al2SKThomy+jylFL21Df3qfw6kd9+v94/xsyn1GMF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QQJNvZkX; arc=none smtp.client-ip=220.197.32.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.67] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5d0822af;
-	Mon, 16 Dec 2024 11:40:46 +0800 (GMT+08:00)
-Message-ID: <69751cb9-006b-485b-b3da-b8d2788d519a@rock-chips.com>
-Date: Mon, 16 Dec 2024 11:40:46 +0800
+	s=arc-20240116; t=1734326078; c=relaxed/simple;
+	bh=FR3e8Djp9ihbO9X2uAmNOL4/KKIFoYlrwUJ2ZbLRzI0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jHqb4wJrWS5qEM/Boa4hq9KKX8TisulnZm/aZj2rIF4bvM/R5OA+jypINeWXqSZmQQLwa+m0XpbKYMcalUbkqnQBr2ybLSh9CibdfdWxS++Cf2tSv91WU4mH5wy8Gk2eBBMnQoridVUHbNS2+vunTS9WQIINIEad5iXafmxs2bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUPDIYYC; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b6e4d38185so289204885a.0;
+        Sun, 15 Dec 2024 21:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734326075; x=1734930875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlwmzSwpYOXs672PYvNQq898z2PTS+fEUh9xaAh2uWU=;
+        b=kUPDIYYC+PnmRXYtnAKW92UhT+qGxCJRULQl9OOyjFNak1+erpnEyyqHVLykTpFDrr
+         OdiWqIlXV39603fF8xKE/B1+ab0rzbezHpqvb9AsC6tMe7+WT8+cx+/x/QuyVgRDdFmo
+         DRbP891mYGpzNo78X9/Ru5r/fVK08nfSnPdprmi64xYFEdc+zXp2bpONB2cO3NhSDKl2
+         x4B/N64XCJA3Y/1I4c93XefiViX03VEtFLhCDENrEfoajU8Oc/8TklMP5CjUUqBTRmMw
+         RPNYiNxbElti3vWZcNTRz9bzxI2Of0nhsaf4Od1k4n12AURaEJr6sMeETRuJY7a3wH92
+         H2WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734326075; x=1734930875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IlwmzSwpYOXs672PYvNQq898z2PTS+fEUh9xaAh2uWU=;
+        b=HdFBm9qLmL2wC1IKP/L1teANd2YTUbPNuHA4VtxKhwRdzY3EyA9jiirylNLAA5uZzC
+         Hd//1Njv8xPjAD0sQLcxrt1KJzdl6J31zYWan4Rxlhw/CZOMFeYzMWCwY0g66b+rkG9a
+         NobwNTfe/MyZCpj8/5mmYSRa/Jjrh+trepyWC+EV+pl9+B0vvWKvpKatRVZrXPCy89EJ
+         bS3Ni7DRKEF8Drn46QlJDS+GdNxMYdwp1VbifqWvC/KhipFxO9RCROFq16tqaVMmqZWP
+         1r/h4AMrvT61dqjbfsYzLv4+2ZZODuS6WVj8v6uOsQFUKgadILI5dEnO5R7attxs6tUG
+         D8fA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8QNWRMLMQdVL+y2KimSh497jagGGEI6+aANYRqmGFXGGd2wzgYt0OUic9kRz0e+RLEwPFq0l6@vger.kernel.org, AJvYcCWZKY91DbOxO66NebmWwSTVR+zbDpp/8tLUHinnQigWItp5VB8ZWRcGQUgjW8cxK6W/nZMamN0Z/sGEXmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz27qcrg27wVTKsTfXdDPey8k9WOEJsFMajL9Qjm40m/X8zVtQn
+	UYwj1PeaI9qCNC/4KtHnR3p7OFeZRjXjesSl4QMfKebOxDf6NuFj
+X-Gm-Gg: ASbGncsRgPtcaKT4JL+GkbbDXISpHyd8gwZrDje3QoxqOiUifTkjykxb8VrJ52Exv2M
+	KgesSZPuPEKOkcl7CoH0LXGisXsdbI0VNRqTCPYDQikJeO1/O8UAsry0+k22Jy6+PWAvAP9j3w5
+	yNna1VkogiyySL2cegv2p8ySu8oAsw0VL+KnB15Xt263IVCYr52nRqdPV0QQi+djXsSsnD8xjvp
+	DUIfXGLhDtnpZe4j5iBeSQJsZ0GUIeOVVxY+nbkhmq/5IM/qTDgFX8TK1eCv7alyX6mWaAB98SI
+	jlq0PnMB4g==
+X-Google-Smtp-Source: AGHT+IFrk0f2ovHsJQJa25YqTu5jT2h5uGeHFj8CZDR9cllMrtrBbmGNGvQJFp+emRqRP4Eg07Vk3A==
+X-Received: by 2002:a05:620a:1aa3:b0:7b6:f219:a7a8 with SMTP id af79cd13be357-7b6fbf3c37dmr1526783785a.49.1734326075230;
+        Sun, 15 Dec 2024 21:14:35 -0800 (PST)
+Received: from localhost (211-75-139-220.hinet-ip.hinet.net. [211.75.139.220])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7048bd619sm192112785a.78.2024.12.15.21.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 21:14:34 -0800 (PST)
+Sender: AceLan Kao <acelan@gmail.com>
+From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] igc: Return early when failing to read EECD register
+Date: Mon, 16 Dec 2024 13:14:30 +0800
+Message-ID: <20241216051430.1606770-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: rockchip: phy-rockchip-typec: Fix Copyright
- description
-To: Andy Yan <andyshrk@163.com>, kishon@kernel.org,
- linux-phy@lists.infradead.org, vkoul@kernel.org
-Cc: heiko@sntech.de, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, sebastian.reichel@collabora.com,
- Andy Yan <andy.yan@rock-chips.com>
-References: <20241215092441.3447155-1-andyshrk@163.com>
-Content-Language: en-US
-From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <20241215092441.3447155-1-andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk1DT1ZJGUhLHR9IS0odSk1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93cd8ddd4f03afkunm5d0822af
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODY6Fjo4QjIRKiFWCS0ZDkIc
-	EDYwFClVSlVKTEhPSElLT09DSU5IVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKS09MNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=QQJNvZkXkO4xuFK3Ssdr4t6ucRRATY442NcfcCZHa/oPkc1P0vGuqltjBsjzakKXb/VB0IMMzWWo8Ce/emekE7FNLYHtaQwsXGrPWHeap2sJ5GZOu7KwHDoDarleZyOz6m/jUzejrmQlvqpkV8hn+o7/VrnU2mIwAUFoSvvjnmA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Fx0nkf+AyUanISVWFcHsI/N1SR2FzzXYHeCfgWZJivE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
 
+When booting with a dock connected, the igc driver can get stuck for ~40
+seconds if PCIe link is lost during initialization.
 
-On 2024/12/15 17:24, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
->
-> The company name has update to Rockchip Electronics Co., Ltd.
-> since 2021.
-> And change Co.Ltd to Co., Ltd. to fix mail server warning:
-> DBL_SPAM(6.50)[co.ltd:url];
->
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+This happens because the driver access device after EECD register reads
+return all F's, indicating failed reads. Consequently, hw->hw_addr is set
+to NULL, which impacts subsequent rd32() reads. This leads to the driver
+hanging in igc_get_hw_semaphore_i225(), as the invalid hw->hw_addr
+prevents retrieving the expected value.
 
-Thanks,
-- Kever
-> ---
->
->   drivers/phy/rockchip/phy-rockchip-typec.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
-> index 122ae0fdc785..7b1dba252ce9 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-typec.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-typec.c
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
-> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> + * Copyright (c) Rockchip Electronics Co., Ltd.
->    * Author: Chris Zhong <zyw@rock-chips.com>
->    *         Kever Yang <kever.yang@rock-chips.com>
->    *
+To address this, a validation check is added for the EECD register read
+result. If all F's are returned, indicating PCIe link loss, the driver
+will return -ENXIO immediately. This avoids the 40-second hang and
+significantly improves boot time when using a dock with an igc NIC.
+
+[    0.911913] igc 0000:70:00.0: enabling device (0000 -> 0002)
+[    0.912386] igc 0000:70:00.0: PTM enabled, 4ns granularity
+[    1.571098] igc 0000:70:00.0 (unnamed net_device) (uninitialized): PCIe link lost, device now detached
+[   43.449095] igc_get_hw_semaphore_i225: igc 0000:70:00.0 (unnamed net_device) (uninitialized): Driver can't access device - SMBI bit is set.
+[   43.449186] igc 0000:70:00.0: probe with driver igc failed with error -13
+[   46.345701] igc 0000:70:00.0: enabling device (0000 -> 0002)
+[   46.345777] igc 0000:70:00.0: PTM enabled, 4ns granularity
+
+Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
+---
+ drivers/net/ethernet/intel/igc/igc_base.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_base.c b/drivers/net/ethernet/intel/igc/igc_base.c
+index 9fae8bdec2a7..54ce60280765 100644
+--- a/drivers/net/ethernet/intel/igc/igc_base.c
++++ b/drivers/net/ethernet/intel/igc/igc_base.c
+@@ -68,6 +68,10 @@ static s32 igc_init_nvm_params_base(struct igc_hw *hw)
+ 	u32 eecd = rd32(IGC_EECD);
+ 	u16 size;
+ 
++	/* failed to read reg and got all F's */
++	if (!(~eecd))
++		return -ENODEV;
++
+ 	size = FIELD_GET(IGC_EECD_SIZE_EX_MASK, eecd);
+ 
+ 	/* Added to a constant, "size" becomes the left-shift value
+-- 
+2.43.0
+
 
