@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-447213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29899F2F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:21:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33F09F2F06
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DAF418853ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:21:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38091670FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90D1204563;
-	Mon, 16 Dec 2024 11:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC54204569;
+	Mon, 16 Dec 2024 11:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjbyiY94"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWkMryo8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF1920100C;
-	Mon, 16 Dec 2024 11:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55D20100C;
+	Mon, 16 Dec 2024 11:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734348103; cv=none; b=TGdzkTx7jXuXuuDQr/PHAmhXgotQPdpZM71kR2sBjRXaYqrSvy+GLILgZOI3qgqLmtkHSfZ26PJN3oQYHsX/kq3j6GcrZYjx3Ma/uLA+p0DEBRl42u9o8GbyPmiFj7LgajtrqWYZLzUWWF1t/qy/7AB5CugvhJLQumKvGIaUV1k=
+	t=1734348159; cv=none; b=QWCGJ9mvNiJwonzmmKQSBGnFPiQ8VciB3DCTbQ7t/MKmtqDXDK8Y9U1g7/6yZDDM4nsg3ZIiNopxL+ADGMNC+wmCI32F3c92qHtmcxVsWPVSUBHirOXnEdW4JEBAl10POtgfgPEpCFJWWX3JfPXtOnfbsrCoiWx26XLRLp1htX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734348103; c=relaxed/simple;
-	bh=Ol6PtMikkJyTFr9dgZFn9grVHoVbWgOPbh/5kb0IPps=;
+	s=arc-20240116; t=1734348159; c=relaxed/simple;
+	bh=qPq0Nt6Zf8yCjcNQ/PAEykhRaOf9EUh0LiugO8xcgig=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tVgRoOaGDtcPyraaYFdlsVcqNjXMCBCzZzaYwp01KhGIRkoAFb3JYDklHoskGdO16GrgT4s3fzP4LHh97qFMNh3L8mjnm8mTc57MTeLzWe9Yfezz8tHOrhGnukKeVrlc5Q9DWts51dp05fJY/XbZLOPxkZ3LfKafNisGNlXtRfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjbyiY94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF14FC4CED0;
-	Mon, 16 Dec 2024 11:21:38 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=h30rELZERsjhMWi02Dp/d7svfhNhGRQoI0wendBwN9fcj5rBETKMFvS0b3giVr4hdcHB1OOakyaXc7R3EwwR5I4nC7PKExWoo0bpkSKNK1c+U6WqBTjZXS5MWZ3TqxKdafV8W1Jh9X+8wRiFSRR03zhxMqK7hcps+1J/YrjQvlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWkMryo8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 311ABC4CED0;
+	Mon, 16 Dec 2024 11:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734348102;
-	bh=Ol6PtMikkJyTFr9dgZFn9grVHoVbWgOPbh/5kb0IPps=;
+	s=k20201202; t=1734348159;
+	bh=qPq0Nt6Zf8yCjcNQ/PAEykhRaOf9EUh0LiugO8xcgig=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JjbyiY94xmLp6YSCuClK6PE+/i1JhmCAuGa+ZD5WssPls4G3jFGKrVkKZbXHDYZv4
-	 Deg6rUCVkUCLc5oVavAwrNwDtviwUmw9LkSIAZS/sujyyzWgoe3R+i3vYdDzd7ZB/l
-	 hhaqn0FmNWQVl/Jokn2kk/B4qb77HahMP9HbVWCqfVYCqrYC3uTjAbxyQxqXXYRfWQ
-	 ShhwTGC/6fLmp1k8JgnyT5ZSi+cLMk+bCtOwKB8AXdPlvndPmVlx6SCfik0hIAT7Ns
-	 JADs1znQoJoDceHJhVXSw0xr/d0zepyZQNLwSMoG2tLlCzqwYfESYRhy0lYVPNDrha
-	 NEs/V5V25AMIw==
-Message-ID: <3fe71f37-8737-43ed-a2dd-1435ece375e6@kernel.org>
-Date: Mon, 16 Dec 2024 12:21:36 +0100
+	b=rWkMryo8Dr0o+kiePU80vzm+BsiluBhhi89+ze5cPzKb3OrSoa92M3F/qy/zR5Yzx
+	 Oehc46xHzuPUj/bfZEynKxzBXKDduFe5ZPAuhUdUpYTe/66OxWikrvT5xmpNEsE5mf
+	 v8HXgpTb+3oL2w/n7sSOCruhpyYnI6D8IvclbRu834NBVOIGm2ows/2UiLmunT05+a
+	 VW/Dvz49XlkFEqqdjbZE8YyZ6+jqMCrirO/nMhdlpkMou53ETafUvbP1TT5amXJ4tY
+	 8ZS6zHcewIH3Qo8laNPNpgs2LxY0+mQBTDmFdGSVBPzYsOlQPIMHmRh31+fAnGrjoy
+	 1x+YFadYgHBUw==
+Message-ID: <32677f46-da3e-4f89-abb7-02fdb4f6b268@kernel.org>
+Date: Mon, 16 Dec 2024 12:22:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] ASoC: sgtl5000: Introduce "mclk-rate" Property for
- Device Tree Configuration
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
- Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_mohsquicinc.com@qualcomm.com,
- kernel@quicinc.com
-References: <20241216110341.3707-1-quic_pkumpatl@quicinc.com>
- <20241216110341.3707-3-quic_pkumpatl@quicinc.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
+ maxItems
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
+ <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
+ <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
+ <20241216083239.GC32204@pendragon.ideasonboard.com>
+ <12d157af-e309-4c8d-9c14-bd0e9da8194d@kernel.org>
+ <c64b11a0-1720-418e-bb7a-06c2c0ac191e@ideasonboard.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,34 +122,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241216110341.3707-3-quic_pkumpatl@quicinc.com>
+In-Reply-To: <c64b11a0-1720-418e-bb7a-06c2c0ac191e@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/12/2024 12:03, Prasad Kumpatla wrote:
-> Introduce the "mclk-rate" property, enabling the configuration of the
-> Master Clock (MCLK) via the device tree. The Codec Slave supports
-> a defined range of frequencies, and users can request the desired rate
-> from the Master, using `clk_set_rate()`. If the property is not specified,
-> the default MCLK frequency will be applied.
+On 16/12/2024 11:54, Tomi Valkeinen wrote:
+> Hi,
 > 
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> ---
->  sound/soc/codecs/sgtl5000.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> On 16/12/2024 12:42, Krzysztof Kozlowski wrote:
+>> On 16/12/2024 09:32, Laurent Pinchart wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
+>>>> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
+>>>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>>>>
+>>>>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+>>>>> properties. As the amount of cmms or vsps is always a fixed amount, set
+>>>>> the maxItems to match the minItems.
+>>>>>
+>>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>>>> ---
+>>>>>   Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
+>>>>>   1 file changed, 10 insertions(+)
+>>>>
+>>>> The top level property should define widest constraints as well.
+>>>
+>>> I'm curious, why is that ? I understand why a top-level default would
+>>> make sense when it's optionally overridden by model-specific values, but
+>>> in this case there's no such default. Every SoC has its own fixed value.
+>>
+>> Because otherwise top level property does not have proper description
+>> and we expect properties to be defined at top-level.
 > 
-> diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-> index 7aa89e34657e..7e134a3219c7 100644
-> --- a/sound/soc/codecs/sgtl5000.c
-> +++ b/sound/soc/codecs/sgtl5000.c
-> @@ -1615,6 +1615,16 @@ static int sgtl5000_i2c_probe(struct i2c_client *client)
->  		goto disable_regs;
->  	}
->  
-> +	if (!of_property_read_u32(np, "mclk-rate", &value)) {
+> As we don't know what is the maximum number of items for future SoCs, 
+> should we then use a number that'll surely be big enough? At the moment 
+> the max cmms seems to be 4, so maybe 16 would be safely big enough. But 
+> is it then better to be extra safe, and use, say, maxItems 256?
 
-No, NAK, you just reimplemented legacy clock-frequency property
-duplicating existing assigned-clocks properties.
+No, look at all other bindings. Widest constraints for ONLY these
+devices. We do not talk about future SoCs here.
 
 Best regards,
 Krzysztof
