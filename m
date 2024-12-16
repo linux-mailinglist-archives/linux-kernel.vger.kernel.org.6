@@ -1,449 +1,444 @@
-Return-Path: <linux-kernel+bounces-448128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2D09F3BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:57:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160349F3C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E3ED1699EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9781891583
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C1C1F7565;
-	Mon, 16 Dec 2024 20:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5856F1DDA37;
+	Mon, 16 Dec 2024 20:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OEVbs0KV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g51OOJcq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DD61F7065;
-	Mon, 16 Dec 2024 20:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AA61F9ECC;
+	Mon, 16 Dec 2024 20:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381875; cv=none; b=r4Xk5MSWq1ourcJZzd4tezwRAV7QIgjgldNbJWt+sNdPWR463sHtYWlb4Tweh7G0Im9UdKlTYQJvk0QNBhIqipLX89h7vZGahIb0MdsSJycHsPoZW757THx2B897jBAhsDMzQPIzmfnYEiiHq1lMRS4fGfCiLCUKxMnWOPdWYpg=
+	t=1734381931; cv=none; b=j7aEoXDTO8JepwIIsYijPjN/MZb3zhBAfJqXoxhBVTW+DuqQ8Qer35/5rK2fCfphVhxTRXK94UASChRMsnqsZWkxT1NwDgiKgppdCOqjPGAeLT9wI1YcsqmYpmFjtVb1lpNYcdvyp86YI4z/SqsQBhhlX0zibN8tm5ta+ac4hB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381875; c=relaxed/simple;
-	bh=2XUkz66BwP2x5AkumLZ0Q0cmmuaod4syxDeA06cfqWk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NUVk7r+XachKco4JRx/eM/aGdyBoy65WC91xN8r+xy2ITL9DOIckPs1qAoKf44afPJ3AJ+WhaqnopkCj4JFQ+t2VMkOr5/qWXVT6sQ5+0TuX4T+WNflLy9IINRckQFPqa0Ky6CE62k1Uhx8dOLm3GdPMQ35/2eEVOs/45ongsqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OEVbs0KV; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734381874; x=1765917874;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2XUkz66BwP2x5AkumLZ0Q0cmmuaod4syxDeA06cfqWk=;
-  b=OEVbs0KVu3CW8MqvQOR18yCHUhOPz8kGlYi/cFSq+CeqPi0ax7hg809d
-   e2pgeRI4kRUZOnkIu816rw6HlKGpJ9YTd0i3lDLhIeiXOeifnoG7M6bWy
-   Smqc7/4lFiXLKM6h+7HAFGqVhVmS8QHsEccm208A+00UOskYHgr4a0242
-   cxCzTziKu9KV6AZ3/ouK0LwWsi2JCxFMjaHs3HM8XNTQLpdDQIiGvzAGm
-   KRVUoWT19y68uFtRWV9Bgq08UjO/rGwSmiu6wLabozzu0Cg9kIQHD2Qdu
-   UBnTuCukPg3T1Vr4faBoH1HBtWLCXnjJLpQeLf+4AXtQQaZ4z5FPVz0gg
-   g==;
-X-CSE-ConnectionGUID: xztycPG9RTOCtBrrFpNzDA==
-X-CSE-MsgGUID: Rhj4Hpk9Qb6WQMYc0XMygQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="38461528"
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="38461528"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 12:44:31 -0800
-X-CSE-ConnectionGUID: jW+kudgMTyuAh+aYsYiX2g==
-X-CSE-MsgGUID: NTR2NNbvRdaeTC5c0+UZMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="101926358"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa005.fm.intel.com with ESMTP; 16 Dec 2024 12:44:30 -0800
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: ak@linux.intel.com,
-	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
-Date: Mon, 16 Dec 2024 12:45:05 -0800
-Message-Id: <20241216204505.748363-4-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20241216204505.748363-1-kan.liang@linux.intel.com>
-References: <20241216204505.748363-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1734381931; c=relaxed/simple;
+	bh=vDyPHFU9QQLek/rs6G3JaiDow3+yIU8P7xjsUFYH0jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DY6GjJIleGZHU3pA/elJTZe+EN6jLWhn52Pr1+aKCQYuo56d/i0DpPONjYP/ZXhp2FJ4clntztlY1HV3UZe1C1Nf7Kxew420zWPLN0Anu1KgVDtYJZOSPWMaWde8ZxmLuw5+94DzPL0V1aFg0npBRsHjugnMK20S7/YFDTkPJUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g51OOJcq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKMRLP030679;
+	Mon, 16 Dec 2024 20:45:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TIQUPCx8d8cCp/MGQ2ICn/uaSk3pF+Pzp7n1J+0C2Dw=; b=g51OOJcqBjdy47PY
+	0M2xRBcFmCTZEc9jSTQmFnxpO8YTCfrky7QQnV3AIFbw+8NMkege+bWMC5/u98by
+	RbCyHxtQpYsQU2qE9CBsElgiOCRHnntHSLPteFjDDdYWMSn/G1dv+HlNGZFNuRvg
+	4XGTDPy62ohXRzUPGztoG0Z9T9xLFRKJqhE9DwDnzTBcEG8841fI6nlWAidL2iDR
+	ak3J8vvT9ePthq2Zadym3G8ENuuErg1R00LQ1lE0C4C4R/uSBBjlEJS4o1kE66Ne
+	XN545FES1G1S9jrc708F4LBmroTyFzaXuywyeAbThyWTxoI049gDt9JAI6Zz0vM2
+	lO7kkw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61r1jx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 20:45:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGKjHd3022526
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 20:45:17 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 12:45:14 -0800
+Message-ID: <3be2e15c-9dfd-4521-a1cf-99a0c502686b@quicinc.com>
+Date: Mon, 16 Dec 2024 12:45:13 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/14] drm/msm/dp: pull I/O data out of
+ msm_dp_catalog_private()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
+ <20241212-fd-dp-audio-fixup-v3-4-0b1c65e7dba3@linaro.org>
+ <c5090fcc-d7ec-4d49-aa21-8d1aa7f6a1c7@quicinc.com>
+ <CAA8EJppOjAjFVUFSEXJMbJ4aV_MvzpeTuKDkL7P+t_Mw47YECw@mail.gmail.com>
+ <5cb7b1b1-5596-4704-bd01-beaadf8bba51@quicinc.com>
+ <CAA8EJppyNceC+t-2MKqq1QhCj2cYb+jprc++cFEen8Cqhhbo0w@mail.gmail.com>
+ <459e59b1-1212-4a93-89cd-f5a2e062543e@quicinc.com>
+ <CAA8EJpqaigaJmHJB73doAxwWMWXDHS4Drs0R0w=YEtZ3iZkWcw@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpqaigaJmHJB73doAxwWMWXDHS4Drs0R0w=YEtZ3iZkWcw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BK3ruJy_-oFoXxLA7MQkDrIDSAoU0eH_
+X-Proofpoint-ORIG-GUID: BK3ruJy_-oFoXxLA7MQkDrIDSAoU0eH_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412160170
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-The counters snapshotting is a new adaptive PEBS extension, which can
-capture programmable counters, fixed-function counters, and performance
-metrics in a PEBS record. The feature is available in the PEBS format
-V6.
 
-The target counters can be configured in the new fields of MSR_PEBS_CFG.
-Then the PEBS HW will generate the bit mask of counters (Counters Group
-Header) followed by the content of all the requested counters into a
-PEBS record.
+On 12/14/2024 2:05 PM, Dmitry Baryshkov wrote:
+> On Sat, 14 Dec 2024 at 22:53, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>> Hi Dmitry
+>>
+>> On 12/12/2024 3:09 PM, Dmitry Baryshkov wrote:
+>>> On Thu, 12 Dec 2024 at 21:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 12/12/2024 12:52 AM, Dmitry Baryshkov wrote:
+>>>>> On Thu, 12 Dec 2024 at 04:59, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 12/11/2024 3:41 PM, Dmitry Baryshkov wrote:
+>>>>>>> Having I/O regions inside a msm_dp_catalog_private() results in extra
+>>>>>>> layers of one-line wrappers for accessing the data. Move I/O region base
+>>>>>>> and size to the globally visible struct msm_dp_catalog.
+>>>>>>>
+>>>>>>> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>>>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>> ---
+>>>>>>>      drivers/gpu/drm/msm/dp/dp_catalog.c | 457 +++++++++++++++---------------------
+>>>>>>>      drivers/gpu/drm/msm/dp/dp_catalog.h |  12 +
+>>>>>>>      2 files changed, 197 insertions(+), 272 deletions(-)
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Fundamentally, the whole point of catalog was that it needs to be the
+>>>>>> only place where we want to access the registers. Thats how this really
+>>>>>> started.
+>>>>>>
+>>>>>> This pre-dates my time with the DP driver but as I understand thats what
+>>>>>> it was for.
+>>>>>>
+>>>>>> Basically separating out the logical abstraction vs actual register writes .
+>>>>>>
+>>>>>> If there are hardware sequence differences within the controller reset
+>>>>>> OR any other register offsets which moved around, catalog should have
+>>>>>> been able to absorb it without that spilling over to all the layers.
+>>>>>>
+>>>>>> So for example, if we call dp_ctrl_reset() --> ctrl->catalog->reset_ctrl()
+>>>>>>
+>>>>>> Then the reset_ctrl op of the catalog should manage any controller
+>>>>>> version differences within the reset sequence.
+>>>>>
+>>>>> The problem is that the register-level writes are usually not the best
+>>>>> abstraction. So, instead of designing the code around dp_catalog I'd
+>>>>> prefer to see actual hw / programming changes first.
+>>>>>
+>>>>
+>>>> So thats the issue here. If we did end up with registers and sequences
+>>>> different for controller versions, the ctrl layer was expected to just
+>>>> call a reset() op for example similar to the DPU example you gave. And
+>>>> as you rightly noted, the dpu_hw_xxx files only expose the ops based on
+>>>> version and the upper layers were supposed to just call into the ops
+>>>> without knowing the register level details. Thats pretty much what
+>>>> dp_ctrl tried to do here. We did not want to expose all the register
+>>>> defines in those layers. This series is doing exactly opposite of that.
+>>>
+>>> We don't have the issue up to now, even though we support DP
+>>> controllers since SDM845 up to SM8650 and X1E80100. The SDE driver has
+>>> v200 vs v420 catalog files for PHY programming, the rest of the
+>>> functions are common. So, for me it looks like a preparation for the
+>>> imaginary case that didn't come to existence up to now.
+>>> So, yes. I want to get rid of extra useless indirection and I want to
+>>> expose register sequences in those layers.
+>>>
+>>
+>> Yes because PHY programming is managed in the PHY driver today and does
+>> not go through catalog whereas in SDE driver it does, I do not have any
+>> other concrete example to give you which exists in the current code
+>> where sequence changes across chipset variants for DP controller and
+>> since I certainly cannot discuss how things can evolve moving forward,
+>> as usual, I have to accept it as one of those things which is not used
+>> today. So yes, I guess the register sequencing point changing across
+>> chipset variants, does not have a good example which I can really share.
+>>
+>> But exposing register sequences within the same file, I am not too sure
+>> about that. For example, you can take a look at
+>> dp_catalog_panel_config_hdr in the SDE code OR even
+>> msm_dp_catalog_panel_enable_vsc_sdp in the current upstream code. Why
+>> should this entire sequence be exposed to the dp_panel layer?
+> 
+> Why not? The dp_catalog_panel_config_hdr() is a bit tough, we don't
+> implement similar functions currently. For
+> msm_dp_catalog_panel_enable_vsc_sdp() this is also a logical sequence:
+> configure GENERIC0, write the package to GENERIC0, indicate presence
+> of the VSC SDP. I really don't see why this should go to a separate
+> file.
+> 
 
-The current Linux perf sample read feature intends to read the counters
-of other member events when the leader event is overflowing. But the
-current read is in the NMI handler, which may has a small gap from
-overflow. Using the counters snapshotting feature for the sample read.
+We have to plan for hdr for sure. its not an imaginary use-case.
 
-Add a new PEBS_CNTR flag to indicate a sample read group that utilizes
-the counters snapshotting feature. When the group is scheduled, the
-PEBS configure can be updated accordingly.
+msm_dp_catalog_panel_enable_vsc_sdp() does a bunch of things, packing 
+the size, programming the SDP and triggering the update. dp_panel does 
+not need to know all these details.
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
+There are many other examples. Take a look at 
+msm_dp_catalog_ctrl_mainlink_ctrl(). from the dp_ctl standpoint, all it 
+needs to know is it needs to program the mainlink_Ctrl() at some point, 
+it really does not need to know the full sequence of doing that. Thats 
+the abstraction getting lost with this.
 
-Changes since V4
-- Always drain PEBS before handling the overflow from the non PEBS
-event overflow.
+>> For smaller functions which are one-liners the redirection seems
+>> redundant but when the sequence is bigger like in the examples I gave,
+>> the logical Vs register sequence separation grows. Thats where the
+>> dp_catalog came from.
+>>
+>>
+>>>>
+>>>>>>
+>>>>>> We do not use or have catalog ops today so it looks redundant as we just
+>>>>>> call the dp_catalog APIs directly but that was really the intention.
+>>>>>>
+>>>>>> Another reason which was behind this split but not applicable to current
+>>>>>> upstream driver is that the AUX is part of the PHY driver in upstream
+>>>>>> but in downstream, that remains a part of catalog and as we know the AUX
+>>>>>> component keeps changing with chipsets especially the settings. That was
+>>>>>> the reason of keeping catalog separate and the only place which should
+>>>>>> deal with registers and not the entire DP driver.
+>>>>>>
+>>>>>> The second point seems not applicable to this driver but first point
+>>>>>> still is. I do admit there is re-direction like ctrl->catalog
+>>>>>> instead of just writing it within dp_ctrl itself but the redirection was
+>>>>>> only because ctrl layers were not really meant to deal with the register
+>>>>>> programming. So for example, now with patch 7 of this series every
+>>>>>> register being written to i exposed in dp_ctrl.c and likewise for other
+>>>>>> files. That seems unnecessary. Because if we do end up with some
+>>>>>> variants which need separate registers written, then we will now have to
+>>>>>> end up touching every file as opposed to only touching dp_catalog.
+>>>>>
+>>>>> Yes. I think that it's a bonus, not a problem. We end up touching the
+>>>>> files that are actually changed, so we see what is happening. Quite
+>>>>> frequently register changes are paired with the functionality changes.
+>>>>>
+>>>>
+>>>> Not exactly. Why should dp_ctrl really know that some register offset or
+>>>> some block shift happened for example. It only needs to know when to
+>>>> reset the hardware and not how. Thats the separation getting broken with
+>>>> this.
+>>>
+>>> Yes. And I'm removing that separation very intentionally. If one is
+>>> looking for AUX programming, they should be looking into dp_aux only,
+>>> not dp_aux & dp_catalog. Likewise all audio code should be in
+>>> dp_audio. By using dp_catalog we ended up with a very very very bad
+>>> abstraction of msm_dp_catalog_audio_get_header() /
+>>> msm_dp_catalog_audio_set_header() / enum
+>>> msm_dp_catalog_audio_sdp_type. Just because reads & writes should go
+>>> through the catalog.
+>>
+>> No, I think this is where there is some correction needed. the
+>> get_header() / set_header() was done not because all writes need to go
+>> through catalog but because the audio headers were thought to be written
+>> only one header at a time and we had thought that read-modify-write had
+>> to be done to preserve the bytes. And when we have to do only one header
+>> at a time and because two headers map to one register, catalog had to
+>> end up managing an audio_map. Now, after checking where it came from as
+>> I commented on that patch, this requirement was not a functional one but
+>> was just trying to preserve the pre-silicon validation scripts sequence,
+>> this part of it can be dropped. So no need of get_header() /
+>> set_header() and an audio_map. Now all registers going through catalog
+>> is another thing which we are still discussing here.
+> 
+> You've skipped the msm_dp_catalog_audio_sdp_type enum (which was
+> explicitly mentioned). It is an abstraction which in my opinion also
+> isn't required, but it clearly comes from dp_catalog.
+> 
 
-The V4 can be found at
-https://lore.kernel.org/lkml/20240731143835.771618-1-kan.liang@linux.intel.com/
+msm_dp_catalog_audio_sdp_type was needed only till the map was needed as 
+it was made with an intention of trying to re-use the sdp_map layout for 
+different packets. So its still tied to the fact that we needed a map. 
+After dropping the map, this can be dropped too as you already did.
 
- arch/x86/events/intel/core.c       |  45 ++++++++++-
- arch/x86/events/intel/ds.c         | 122 ++++++++++++++++++++++++++---
- arch/x86/events/perf_event.h       |   8 ++
- arch/x86/events/perf_event_flags.h |   2 +-
- arch/x86/include/asm/perf_event.h  |  15 ++++
- 5 files changed, 180 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index b448db65df52..32b28d674641 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3115,6 +3115,14 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
- 		if (!test_bit(bit, cpuc->active_mask))
- 			continue;
- 
-+		/*
-+		 * There may be unprocessed PEBS records in the PEBS buffer,
-+		 * which still stores the previous values.
-+		 * Process those records first before handling the latest value.
-+		 */
-+		if (is_pebs_counter_event(event))
-+			x86_pmu.drain_pebs(regs, &data);
-+
- 		if (!intel_pmu_save_and_restart(event))
- 			continue;
- 
-@@ -4062,6 +4070,23 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 		event->hw.flags |= PERF_X86_EVENT_PEBS_VIA_PT;
- 	}
- 
-+	if ((event->attr.sample_type & PERF_SAMPLE_READ) &&
-+	    (x86_pmu.intel_cap.pebs_format >= 6)) {
-+		struct perf_event *leader = event->group_leader;
-+		bool slots_leader = is_slots_event(leader);
-+
-+		if (slots_leader)
-+			leader = list_next_entry(leader, sibling_list);
-+
-+		if (leader->attr.precise_ip) {
-+			event->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-+			if (slots_leader) {
-+				leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-+				event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-+			}
-+		}
-+	}
-+
- 	if ((event->attr.type == PERF_TYPE_HARDWARE) ||
- 	    (event->attr.type == PERF_TYPE_HW_CACHE))
- 		return 0;
-@@ -4165,6 +4190,24 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	return 0;
- }
- 
-+static int intel_pmu_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
-+{
-+	struct perf_event *event;
-+	int ret = x86_schedule_events(cpuc, n, assign);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (cpuc->is_fake)
-+		return ret;
-+
-+	event = cpuc->event_list[n - 1];
-+	if (event && (event->group_leader->hw.flags & PERF_X86_EVENT_PEBS_CNTR))
-+		intel_pmu_pebs_update_cfg(cpuc, n, assign);
-+
-+	return 0;
-+}
-+
- /*
-  * Currently, the only caller of this function is the atomic_switch_perf_msrs().
-  * The host perf context helps to prepare the values of the real hardware for
-@@ -5298,7 +5341,7 @@ static __initconst const struct x86_pmu intel_pmu = {
- 	.set_period		= intel_pmu_set_period,
- 	.update			= intel_pmu_update,
- 	.hw_config		= intel_pmu_hw_config,
--	.schedule_events	= x86_schedule_events,
-+	.schedule_events	= intel_pmu_schedule_events,
- 	.eventsel		= MSR_ARCH_PERFMON_EVENTSEL0,
- 	.perfctr		= MSR_ARCH_PERFMON_PERFCTR0,
- 	.fixedctr		= MSR_ARCH_PERFMON_FIXED_CTR0,
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index ba74e1198328..e06ac9a3cdf8 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1308,10 +1308,63 @@ static void adaptive_pebs_record_size_update(void)
- 		sz += sizeof(struct pebs_xmm);
- 	if (pebs_data_cfg & PEBS_DATACFG_LBRS)
- 		sz += x86_pmu.lbr_nr * sizeof(struct lbr_entry);
-+	if (pebs_data_cfg & (PEBS_DATACFG_METRICS | PEBS_DATACFG_CNTR)) {
-+		sz += sizeof(struct pebs_cntr_header);
-+
-+		/* Metrics base and Metrics Data */
-+		if (pebs_data_cfg & PEBS_DATACFG_METRICS)
-+			sz += 2 * sizeof(u64);
-+
-+		if (pebs_data_cfg & PEBS_DATACFG_CNTR) {
-+			sz += hweight64((pebs_data_cfg >> PEBS_DATACFG_CNTR_SHIFT) & PEBS_DATACFG_CNTR_MASK)
-+			      * sizeof(u64);
-+			sz += hweight64((pebs_data_cfg >> PEBS_DATACFG_FIX_SHIFT) & PEBS_DATACFG_FIX_MASK)
-+			      * sizeof(u64);
-+		}
-+	}
- 
- 	cpuc->pebs_record_size = sz;
- }
- 
-+static void __intel_pmu_pebs_update_cfg(struct perf_event *event,
-+					int idx, u64 *pebs_data_cfg)
-+{
-+	if (is_metric_event(event)) {
-+		*pebs_data_cfg |= PEBS_DATACFG_METRICS;
-+		return;
-+	}
-+
-+	*pebs_data_cfg |= PEBS_DATACFG_CNTR;
-+
-+	if (idx >= INTEL_PMC_IDX_FIXED) {
-+		*pebs_data_cfg |= ((1ULL << (idx - INTEL_PMC_IDX_FIXED)) & PEBS_DATACFG_FIX_MASK)
-+				  << PEBS_DATACFG_FIX_SHIFT;
-+	} else {
-+		*pebs_data_cfg |= ((1ULL << idx) & PEBS_DATACFG_CNTR_MASK)
-+				  << PEBS_DATACFG_CNTR_SHIFT;
-+	}
-+}
-+
-+void intel_pmu_pebs_update_cfg(struct cpu_hw_events *cpuc, int n, int *assign)
-+{
-+	struct perf_event *leader, *event;
-+	u64 pebs_data_cfg = 0;
-+	int i = n - 1;
-+
-+	leader = cpuc->event_list[i]->group_leader;
-+	for (; i >= 0; i--) {
-+		event = cpuc->event_list[i];
-+		if (!is_pebs_counter_event(event))
-+			continue;
-+		if (leader != event->group_leader)
-+			break;
-+		__intel_pmu_pebs_update_cfg(event, assign[i], &pebs_data_cfg);
-+	}
-+
-+	if (pebs_data_cfg & ~cpuc->pebs_data_cfg)
-+		cpuc->pebs_data_cfg |= pebs_data_cfg | PEBS_UPDATE_DS_SW;
-+}
-+
- #define PERF_PEBS_MEMINFO_TYPE	(PERF_SAMPLE_ADDR | PERF_SAMPLE_DATA_SRC |   \
- 				PERF_SAMPLE_PHYS_ADDR |			     \
- 				PERF_SAMPLE_WEIGHT_TYPE |		     \
-@@ -2049,6 +2102,40 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
- 		}
- 	}
- 
-+	if (format_group & (PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS)) {
-+		struct pebs_cntr_header *cntr = next_record;
-+		int bit;
-+
-+		next_record += sizeof(struct pebs_cntr_header);
-+
-+		for_each_set_bit(bit, (unsigned long *)&cntr->cntr, INTEL_PMC_MAX_GENERIC) {
-+			x86_perf_event_update(cpuc->events[bit], (u64 *)next_record);
-+			next_record += sizeof(u64);
-+		}
-+
-+		for_each_set_bit(bit, (unsigned long *)&cntr->fixed, INTEL_PMC_MAX_FIXED) {
-+			/* The slots event will be handled with perf_metric later */
-+			if ((cntr->metrics == INTEL_CNTR_METRICS) &&
-+			    (INTEL_PMC_IDX_FIXED_SLOTS == bit + INTEL_PMC_IDX_FIXED)) {
-+				next_record += sizeof(u64);
-+				continue;
-+			}
-+			x86_perf_event_update(cpuc->events[bit + INTEL_PMC_IDX_FIXED], (u64 *)next_record);
-+			next_record += sizeof(u64);
-+		}
-+
-+		/* HW will reload the value right after the overflow. */
-+		if (event->hw.flags & PERF_X86_EVENT_AUTO_RELOAD)
-+			local64_set(&event->hw.prev_count, (u64)-event->hw.sample_period);
-+
-+		if (cntr->metrics == INTEL_CNTR_METRICS) {
-+			static_call(intel_pmu_update_topdown_event)
-+				   (event->group_leader, (u64 *)next_record);
-+			next_record += 2 * sizeof(u64);
-+		}
-+		data->sample_flags |= PERF_SAMPLE_READ;
-+	}
-+
- 	WARN_ONCE(next_record != __pebs + basic->format_size,
- 			"PEBS record size %u, expected %llu, config %llx\n",
- 			basic->format_size,
-@@ -2211,15 +2298,27 @@ __intel_pmu_pebs_last_event(struct perf_event *event,
- 	}
- 
- 	if (hwc->flags & PERF_X86_EVENT_AUTO_RELOAD) {
--		/*
--		 * Now, auto-reload is only enabled in fixed period mode.
--		 * The reload value is always hwc->sample_period.
--		 * May need to change it, if auto-reload is enabled in
--		 * freq mode later.
--		 */
--		intel_pmu_save_and_restart_reload(event, count);
--	} else
--		intel_pmu_save_and_restart(event);
-+		if ((is_pebs_counter_event(event))) {
-+			/*
-+			 * The value of each sample has been updated when setup
-+			 * the corresponding sample data.
-+			 */
-+			perf_event_update_userpage(event);
-+		} else {
-+			/*
-+			 * Now, auto-reload is only enabled in fixed period mode.
-+			 * The reload value is always hwc->sample_period.
-+			 * May need to change it, if auto-reload is enabled in
-+			 * freq mode later.
-+			 */
-+			intel_pmu_save_and_restart_reload(event, count);
-+		}
-+	} else {
-+		if (is_pebs_counter_event(event))
-+			static_call(x86_pmu_set_period)(event);
-+		else
-+			intel_pmu_save_and_restart(event);
-+	}
- }
- 
- static __always_inline void
-@@ -2552,6 +2651,9 @@ void __init intel_ds_init(void)
- 			break;
- 
- 		case 6:
-+			if (x86_pmu.intel_cap.pebs_baseline)
-+				x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
-+			fallthrough;
- 		case 5:
- 			x86_pmu.pebs_ept = 1;
- 			fallthrough;
-@@ -2576,7 +2678,7 @@ void __init intel_ds_init(void)
- 					  PERF_SAMPLE_REGS_USER |
- 					  PERF_SAMPLE_REGS_INTR);
- 			}
--			pr_cont("PEBS fmt4%c%s, ", pebs_type, pebs_qual);
-+			pr_cont("PEBS fmt%d%c%s, ", format, pebs_type, pebs_qual);
- 
- 			if (!is_hybrid() && x86_pmu.intel_cap.pebs_output_pt_available) {
- 				pr_cont("PEBS-via-PT, ");
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 14c8262d4811..e88dd0fcc4d4 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -115,6 +115,11 @@ static inline bool is_branch_counters_group(struct perf_event *event)
- 	return event->group_leader->hw.flags & PERF_X86_EVENT_BRANCH_COUNTERS;
- }
- 
-+static inline bool is_pebs_counter_event(struct perf_event *event)
-+{
-+	return event->hw.flags & PERF_X86_EVENT_PEBS_CNTR;
-+}
-+
- struct amd_nb {
- 	int nb_id;  /* NorthBridge id */
- 	int refcnt; /* reference count */
-@@ -1146,6 +1151,7 @@ extern u64 __read_mostly hw_cache_extra_regs
- 				[PERF_COUNT_HW_CACHE_RESULT_MAX];
- 
- u64 x86_perf_event_update(struct perf_event *event, u64 *cntr);
-+DECLARE_STATIC_CALL(intel_pmu_update_topdown_event, x86_perf_event_update);
- 
- static inline unsigned int x86_pmu_config_addr(int index)
- {
-@@ -1642,6 +1648,8 @@ void intel_pmu_pebs_disable_all(void);
- 
- void intel_pmu_pebs_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sched_in);
- 
-+void intel_pmu_pebs_update_cfg(struct cpu_hw_events *cpuc, int n, int *assign);
-+
- void intel_pmu_auto_reload_read(struct perf_event *event);
- 
- void intel_pmu_store_pebs_lbrs(struct lbr_entry *lbr);
-diff --git a/arch/x86/events/perf_event_flags.h b/arch/x86/events/perf_event_flags.h
-index 6c977c19f2cd..1d9e385649b5 100644
---- a/arch/x86/events/perf_event_flags.h
-+++ b/arch/x86/events/perf_event_flags.h
-@@ -9,7 +9,7 @@ PERF_ARCH(PEBS_LD_HSW,		0x00008) /* haswell style datala, load */
- PERF_ARCH(PEBS_NA_HSW,		0x00010) /* haswell style datala, unknown */
- PERF_ARCH(EXCL,			0x00020) /* HT exclusivity on counter */
- PERF_ARCH(DYNAMIC,		0x00040) /* dynamic alloc'd constraint */
--			/*	0x00080	*/
-+PERF_ARCH(PEBS_CNTR,		0x00080) /* PEBS counters snapshot */
- PERF_ARCH(EXCL_ACCT,		0x00100) /* accounted EXCL event */
- PERF_ARCH(AUTO_RELOAD,		0x00200) /* use PEBS auto-reload */
- PERF_ARCH(LARGE_PEBS,		0x00400) /* use large PEBS */
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index cd8023d5ea46..4e28ee0f2f3e 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -140,6 +140,12 @@
- #define PEBS_DATACFG_XMMS	BIT_ULL(2)
- #define PEBS_DATACFG_LBRS	BIT_ULL(3)
- #define PEBS_DATACFG_LBR_SHIFT	24
-+#define PEBS_DATACFG_CNTR	BIT_ULL(4)
-+#define PEBS_DATACFG_CNTR_SHIFT	32
-+#define PEBS_DATACFG_CNTR_MASK	GENMASK_ULL(15, 0)
-+#define PEBS_DATACFG_FIX_SHIFT	48
-+#define PEBS_DATACFG_FIX_MASK	GENMASK_ULL(7, 0)
-+#define PEBS_DATACFG_METRICS	BIT_ULL(5)
- 
- /* Steal the highest bit of pebs_data_cfg for SW usage */
- #define PEBS_UPDATE_DS_SW	BIT_ULL(63)
-@@ -467,6 +473,15 @@ struct pebs_xmm {
- 
- #define IBS_CPUID_FEATURES		0x8000001b
- 
-+struct pebs_cntr_header {
-+	u32 cntr;
-+	u32 fixed;
-+	u32 metrics;
-+	u32 reserved;
-+};
-+
-+#define INTEL_CNTR_METRICS		0x3
-+
- /*
-  * Same bit mask as for IBS cpuid feature flags (Fn8000_001B_EAX), but
-  * bit 0 is used to indicate the existence of IBS.
--- 
-2.38.1
+>>
+>>> For dp_panel likewise there is no need to look into some other source
+>>> file to follow the register sequences. It can all be contained within
+>>> dp_panel.c, helping one to understand the code.
+>>>
+>>
+>>> Last, but not least. Code complexity. dp_catalog.c consists of 1340
+>>> lines, covering different submodules. It is hard to follow it in this
+>>> way.
+>>>
+>>
+>> Its just a question of spreading up the functions all over, not reducing
+>> code complexity. So yes, it reduces the file size of dp_catalog whereas
+>> increases that of others. Code complexity impact due to that is subjective.
+> 
+> The main issue is that dp_catalog now contains unrelated sets of
+> functions. That's code complexity.
+> 
 
+dp_catalog was never meant to be a place where we have related 
+functions. It was supposed to provide the register space abstraction and 
+hiding away the details from rest of the layers. Going by what you are 
+saying even the APIs in dsi_host.c should be related but they are not 
+because of the same reason. I think this series went too far in terms of 
+what it was trying to achieve trying to clenaup even useful things. 
+Audio map removal was a problem tied to the fact that that 
+read-modify-write behavior was preserved. That was removed after we 
+identified its background. No issues with that. but beyond that, this is 
+too much of a rework. I will let other developers chime into this. But I 
+am not too fond of this one.
+
+>>
+>>>>
+>>>>> For example (a very simple and dumb one), when designing code around
+>>>>> dp_catalog you ended up adding separate _p1 handlers.
+>>>>> Doing that from the data source point of view demands adding a stream_id param.
+>>>>>
+>>>>
+>>>> I have not checked your comment on that series here but if your concern
+>>>
+>>> This is really a bad cadence. I have provided most of the feedback
+>>> almost a week ago.
+>>>
+>>
+>> Yes, was a very tight week trying to enable upstream developers to land
+>> their platforms such as QCS615 by fixing platform specific dpu things
+>> and had the fixes cycle this week too so as a result my own feature took
+>> a bit of a hit this week :(
+>>
+>>>> is stream_id should not be stored in the catalog but just passed, thats
+>>>> fine, we can change it. stream_id as a param is needed anyway because
+>>>> the register programming layer needs to know which offset to use. This
+>>>> series is not mitigating that fact.
+>>>
+>>> No, my concern was that you have been adding separate _p1() functions
+>>> which are a duplicate of _p0() counterparts. When one looks at the
+>>> dp_catalog.c it is logical: there are two different register areas, so
+>>> there are two distinct sets of functions. If one starts looking from
+>>> the dp_panel point of view, it's obvious that there should be a single
+>>> msm_dp_write_stream() function which accepts stream_id and then
+>>> multiplexes it to go to p0 or p1.
+>>>
+>>
+>> Your multiplexing suggestion of adding a msm_dp_read_pn/msm_dp_write_pn
+>> by passing a stream_id can be done even with current dp_catalog intact
+>> as it will help reduce storing the stream_id in the dp_catalog. So its a
+>> valid suggestion and can be implemented even in the current code and not
+>> tied to the fact that register writing is done in dp_catalog or dp_panel.
+> 
+> It can. The point was about the implementation logic, not about the possibility.
+> 
+>>
+>>>>
+>>>>> In the DPU driver we also have version-related conditionals in the HW
+>>>>> modules rather than pushing all data access to dpu_hw_catalog.c &
+>>>>> counterparts.
+>>>>
+>>>> The dpu_hw_catalog.c and the dp_catalog.c are not the right files to
+>>>> compare with each other. dp_catalog.c should be compared with
+>>>> dpu_hw_xxx.c and as you noted, DPU version dependencies are handled in
+>>>> those files only and not all over the files like what this series is doing.
+>>>
+>>> Not really. dpu_encoder_phys_cmd_init() checks for the core_major_ver.
+>>> Let me see if other files check for the version under the hood.
+>>>
+>>
+>> Well, thats because only cmd mode panel cares about TE. No other files
+>> from what I checked.
+> 
+> I've sent a series which refactors feature bits into core_major_ver.
+> Now HW revision is being checked inside dpu_encoder_phys_wb.c,
+> dpu_kms.c and dpu_rm.c. And I didn't refactor SSPP, which would bring
+> similar checks to dpu_plane.c and possibly dpu_vbif.c
+> 
+
+We will evaluate it on its merits / demerits as usual and decide.
+
+>>
+>>> Also as you wrote, there are multiple dpu_hw_xxx.c files, each
+>>> handling register issues on its own. We don't have a single file which
+>>> keeps all such differences in one place.
+>>>
+>>
+>> Thats because of the way the registers are laid our in the SW interface
+>> document aligns nicely with the file split we have in the DPU even when
+>> the first DPU post happened.
+>>
+>> But I still dont think its a fair comparison.
+>>
+>> If you really had to go deeper into this thought, then even dp_reg.h
+>> should be broken down into smaller headers because the offsets in
+>> dpu_hw_*** files are relevant only to those files but after this change
+>> all DP files must include dp_reg.h even though they will not be using
+>> all of the offsets. Since current code was already doing that, which it
+>> didnt have to as dp_Catalog was the only one writing all registers, this
+>> went unnoticed.
+> 
+> Well... I had a thought about reworking DP into using XML files to
+> describe registers. It will make it slightly cleaner and
+> self-documented, but it most likely will be a single file.
+> 
+
+It being in a single file is leaning towards the same model we have 
+right now. If dp_regs.h is remaining one unified file, I dont see why 
+dp_catalog can stay as well.
+
+>>
+>>
+>>> Last, but not least, in the DPU driver there are actual differences
+>>> between generations, which require different code paths. In the DP
+>>> driver there are none.
+>>>
+>>>>
+>>>>> I think it's better to make DP driver reflect DPU rather than keeping
+>>>>> a separate wrapper for no particular reason (note, DPU has hardware
+>>>>> abstractions, but on a block level, not on a register level).
+>>>>>
+>>>>
+>>>> Thats the issue here. DPU hardware blocks are arranged according to the
+>>>> sub-blocks both in the software interface document and hence the code
+>>>> matches it file-by-file. DP registers are grouped by clock domains and
+>>>> the file separation we have today does not match that anyway. Hence
+>>>> grouping link registers writes or pixel clock register writes into
+>>>> dp_ctrl is also not correct that way. Let catalog handle that separation
+>>>> internally which it already does.
+>>>
+>>> I'd say, dp_panel, dp_audio and dp_link are already pretty
+>>> self-contained. I was hoping to look at dp_display vs dp_drm later on,
+>>> once the HPD issue gets resolved. Only dp_ctrl is not that logical
+>>> from my point of view.
+>>>
+
+Not from the point of view of the register separation of what belongs 
+where. Its just a subjective opinion of what belongs where. Different 
+developers can view it differently.
+
+> 
+> 
+> 
 
