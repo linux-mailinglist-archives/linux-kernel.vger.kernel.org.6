@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-448029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F529F3A0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:40:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FC59F3A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970E516CE7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:40:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFF718849BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447992080C1;
-	Mon, 16 Dec 2024 19:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DA620B1EA;
+	Mon, 16 Dec 2024 19:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XqWNfTc9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0Rs4OZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261CB207679;
-	Mon, 16 Dec 2024 19:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C6F20A5FD;
+	Mon, 16 Dec 2024 19:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378050; cv=none; b=UXClHKFivRh0Y+/I+E/Yn3P7kLSr8Za0GV1t1gD8jf/46qIw/0MyPXSBMh5BolnDkafqJybFvnmj3uiXIZHyz8UmDRzh3geYXc5WWBJmp/bLE+k/LpDnfozm84c55xsJzG3vNU6s1n+8igctGXldgTHj0ikLGnTZgUDu+7705Lk=
+	t=1734378216; cv=none; b=KxMmfzsXpsKtwR2k2pvEansv4S0qC/yHGODU2u94tzQEqpopHcqAGU+EeYVBPmFWweEMqcneLn9UQ4WWKtayyezK7ayvHEQcbMR7UoM9b/FdkTgauhw7sNxsYD3RGdk9Y4m+vAWh6vEW3EkKujta/w+cnH/VZ/tIYQt5v7yn0MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378050; c=relaxed/simple;
-	bh=UJu+NBq3Ii9rP+TB6FpQKA5fZk+O2JR2Ity67bK8yxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UM5tVOml5qFoe3UknQv1Bzk6jwMv+QjiVBnhTPDN4hoLbUVsvpaos7tpWIMD7rTBsx+00ZgjL3B3L7FXqSBfjFzYtf1WVjjrJne2QOrujg8P09JMvGrR19LPaQMEHpDayK1igpA2aqB0Z9Rf6y7ENBDgj2UoUXNPQrHmdT13eIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XqWNfTc9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGE5bqh013330;
-	Mon, 16 Dec 2024 19:40:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RIYAf90Y+pXaJcLIYmG3uytoqhcIAoMDr16CStgQEnM=; b=XqWNfTc97Grx1nN5
-	oQ1VBcZekO6FDuIl0q+HrO1LBbD53yeZfH7qmzo0OC21MkvhXjJgMReq6zyMDyYQ
-	OgJuY2ACYC6ZQ07pNPB6HLQAPggl4ENNJr110RgbFKO0g2PPWAqbZYG9IQQwNtLt
-	kY12uQLWB7c5Fx8gH+nanXgrgm6dmwKDGO1am4SxcPq0dBFB+UDwjyPqnrx5cofW
-	3pw48R2JlMUXtLBtJHYDMKg8kP8jQ2nZ+8Qu8/gOkMi7G2s1wO638mIg1vSl/BW4
-	nQ8DtauY44kXTjEIyCu17vO5kmm6WHzltC8GfPpmqYMuRbBmRYcXxvv0lka2mO4x
-	zQoP2w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jnnurupt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:40:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJefYZ000545
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:40:41 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:40:38 -0800
-Message-ID: <cb759ace-482e-4840-8545-f81e28d4ca42@quicinc.com>
-Date: Mon, 16 Dec 2024 11:40:37 -0800
+	s=arc-20240116; t=1734378216; c=relaxed/simple;
+	bh=bLCUG42w9Rd2j2ctr/dQMjIHxW6uq1VaCrTcAGQt3vQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O2sfq9MODD8qcuj1cQ1/I4AReoML4jZXHnyM+ABRzZyOtdXq6Sk/9+A7ipgiZ4oLZrIUnuKvkiHwUft5CeYEWJ8wury/VimeOZfa6nIxLOvX7sb9KDxjTlq1IDnnZtIBo45Hnafzq1fFukO8Y7aR/u9rmzh/Thj3TjLxjNNxw9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0Rs4OZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DF4C4CED0;
+	Mon, 16 Dec 2024 19:43:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734378215;
+	bh=bLCUG42w9Rd2j2ctr/dQMjIHxW6uq1VaCrTcAGQt3vQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R0Rs4OZkNJFFbVLkxGZkocsVxkqWzRWQUbF7JQOf7Ia5kzkKZIBNEyWgaYt0laS02
+	 v6bniI96SOM8buGJQCOS6vEEsLRfDFYfBKQmQoOIpSJGsjEgO6zjMQj7tVbZYfXGND
+	 gED7MAQU1bO1u8uSKJi2VEnV/U9unIpshjn5CHXmHnBB7iIZkB3wIqpgsDuRxb3Xn1
+	 ktzzVZV20cTNjbxORcBPdnepF+e3UT5CP6Yv0UGUh6oIPYbwdOwOcRl3gKHjOsGk8k
+	 GtDA9dkjnif9DXvhiaics/9Xy9KfVGCJxvRT8DRvppRDkvpMEp6s8cQgdR48iGT7OD
+	 aJG2KRR6r1DLQ==
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3eb8559b6b0so2471302b6e.1;
+        Mon, 16 Dec 2024 11:43:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUUWLvqgPqBepfvXyuhcqqJJWQ43ef9TG7WQwwx0AmN98/AyouYRaA/TjKhj93k2ZIuMTCbhf6rgVGdwKQ=@vger.kernel.org, AJvYcCVtWDR1IYAuqyLgAIkhM/FOL2Ss3BHdw4YyDvRoOrSCawK8Jsp/dnz2/4sxOI7ASBQo6rk088Oeb0BQ@vger.kernel.org, AJvYcCXux2aqM3833boqqyeTMmkbYhS3VuDabMpG5byqzEyec6vJJulzamp4PAWkkxOBKZkt86GJSpNSLcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycfYKbKNsSPedv0jIZWwQkA7kq6Hc0ptp1VBZZ8QWEwFfrbMCN
+	OJqOI8cZNdo0k/UTDbIyRIx+VfOXhfzsAmjNQ8dct8XNEQx1gPH1qpQewSkkq1QowFAZUo+VRZY
+	9EPrj2KjMcbJbrvCv+YKFVyAYBig=
+X-Google-Smtp-Source: AGHT+IHBIkkg9ryeWoXUjvDA+eOStEt8YeUf9CRTqn6A5LAOHY0mQEKE5h0I8dvOns0NI/pgRtXFEf2n3JxCdyuWQY4=
+X-Received: by 2002:a05:6808:2448:b0:3eb:60e9:eae1 with SMTP id
+ 5614622812f47-3ebcb33635dmr15143b6e.29.1734378214876; Mon, 16 Dec 2024
+ 11:43:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/16] drm/msm/dp: stop passing panel to
- msm_dp_audio_get()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
- <20241216-fd-dp-audio-fixup-v4-5-f8d1961cf22f@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-fd-dp-audio-fixup-v4-5-f8d1961cf22f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -bxco4tv4zt2OVDzVR6JjddVZ-HWe2YO
-X-Proofpoint-ORIG-GUID: -bxco4tv4zt2OVDzVR6JjddVZ-HWe2YO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxscore=0 phishscore=0 mlxlogscore=895 impostorscore=0 malwarescore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160162
+References: <13662231.uLZWGnKmhe@rjwysocki.net> <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
+ <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+ <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <CAJZ5v0gLMx+tBo+MA3AQZ7qP28Z91d04oVBHVeTNcd-QD=kJZg@mail.gmail.com>
+ <20241216171108.6ssulem3276rkycb@thinkpad> <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
+ <20241216175210.mnc5kp6646sq7vzm@thinkpad> <CAJZ5v0grRdTYaamSnKSF-HyMmCHDEZ4haLo+ziSBxhDg1PbjRQ@mail.gmail.com>
+ <Z2CCH5HAbx8ECDin@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <Z2CCH5HAbx8ECDin@kbusch-mbp.dhcp.thefacebook.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Dec 2024 20:43:23 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jfaNjgjNAQPa3QPNdU8BCoocsbo4Vfo5obTxcyTKOUWw@mail.gmail.com>
+Message-ID: <CAJZ5v0jfaNjgjNAQPa3QPNdU8BCoocsbo4Vfo5obTxcyTKOUWw@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
+To: Keith Busch <kbusch@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Christoph Hellwig <hch@lst.de>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Bjorn Helgaas <helgaas@kernel.org>, axboe@kernel.dk, sagi@grimberg.me, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 8:40=E2=80=AFPM Keith Busch <kbusch@kernel.org> wro=
+te:
+>
+> On Mon, Dec 16, 2024 at 08:34:24PM +0100, Rafael J. Wysocki wrote:
+> > However, there is an additional concern that putting an NVMe device
+> > into D3cold every time during system suspend on Android might cause it
+> > to wear out more quickly.
+> >
+> > Is there anything else?
+>
+> I recall a previous reason for this behavior was because the resume
+> latency was significantly faster if we don't prepare the device for D3,
+> and the nvme protocol specific power states for some platforms was
+> sufficiently low enough. Apparently this choice hasn't been universally
+> optimal.
 
+Thanks for chiming in!
 
-On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
-> The dp_audio module doesn't make any use of the passed DP panel
-> instance. Drop the argument.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_audio.c   | 3 +--
->   drivers/gpu/drm/msm/dp/dp_audio.h   | 3 ---
->   drivers/gpu/drm/msm/dp/dp_display.c | 2 +-
->   3 files changed, 2 insertions(+), 6 deletions(-)
-> 
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+I'm recalling some other reasons too (mentioned in one of my previous
+messages), but overall this is a driver design choice, it is not done
+to adhere to some general rule.
 
