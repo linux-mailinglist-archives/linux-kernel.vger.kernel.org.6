@@ -1,62 +1,85 @@
-Return-Path: <linux-kernel+bounces-448034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2799F3A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:46:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8389F3A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52741882DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:46:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAAD16C733
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2620C48A;
-	Mon, 16 Dec 2024 19:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA4820C471;
+	Mon, 16 Dec 2024 19:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KvftCxGn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWBNz/i/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1263514A4D4;
-	Mon, 16 Dec 2024 19:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE6920C486
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378393; cv=none; b=HIpAcvjAMMuJtIPPkH2JL0Gq8CyPpveO5UzJ2Ao89MGy89QA3Adjp4ZFZZ5YMd+FQMoHjYTsW31J2zU8CV0nadOHpifJWkwk8RUtYk5aWPRqhuANnyuQuvGi3LgP4cYztJ7sqLyKLW7X5nEgRH3U5x7+XyhTQmU9e1h62yFTxzU=
+	t=1734378427; cv=none; b=lBu4qtLWgYWAuTkn8sN7jFjekOoXmG68lLvLTU5nvD85OBDQYvvs9IDM/HGIx0k7CTA/gCvjXIK4T3pk8zoh0F7XwsqFjfzTHwgZsKci5Ud+IH7HDXYobPRXxMrmnW+VddiHZNcWyiI7lsOK9mxSEzOo6PZ3E3/RZx0CiSXcFec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378393; c=relaxed/simple;
-	bh=RLUntgJcAtM8NP7THRlyqK5g3ipxcNtp7E3Czb/3EgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HEcI+tDVg1LvgdJ9rPskYYZLQOFYNALCijAP/YPHmXI/v72cZyIueHk4OiIsy0hf5D60JISsKrssyw0fhnjuj2MhnIETN6tDklfnugTQWiNqygBPhF55xIqeEucD5L23p+NEesIt2r/22ZGCYZyyfD+MWAhjG6I6Kb5bYw8n0hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KvftCxGn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGFgVke015402;
-	Mon, 16 Dec 2024 19:46:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EZX1kqIMLz6GdpHdIEmLG54+LmHa25JfHQjG5BAGSMM=; b=KvftCxGnxFlSx1yh
-	rHIZsr2++G/odbS0eRoCbSU9G0JpbmUFji0PBhIcU7uB+A5DuS+ZbxmtgKKnARMI
-	xJIh7IgLTd81qfj2K1acU8D6ZMki2qDInB4okt/wyPotWF68pLpXoE3u/nVTTftS
-	En+EsTN6P17vD1G/qCdI2khjrknHQsqMUgLVgiAT9umgPzfFVgt2VJPan5Fqw66i
-	dC5AE3XUEbpKCaoe9F6oYI+nOYBGK9rvZbpImaFOaur15J5KtrsApxQXQOfM0qJg
-	GM2qVVb1DHunyg9lV3vo72ANZ88hGMYAwIc/QRZOv9mCczx6UqeRi3uC2aEfsY5V
-	dl2TRA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jq350m91-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:46:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJkOsC005915
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:46:24 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:46:22 -0800
-Message-ID: <9fb5986b-f375-4300-b50c-92bb9c0b4399@quicinc.com>
-Date: Mon, 16 Dec 2024 11:46:21 -0800
+	s=arc-20240116; t=1734378427; c=relaxed/simple;
+	bh=raCkinJQGxA0uA4MCVcfsShss+K8IRx4YhrVbMYa8Hg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Owd50pxS10BeqSIkKxTor/0fJ9n02+FwQIotCB3dFUkNYVZO2XibEw3S2gdbDkvABh+FHhLUkms71e5bCVxGozTIXaoW9hQNBUKGvYff1O5mR/3fDPiePLEKyQV+bfYbgMhlFp2vdo/NbWbVT14Yxk1C6JV/TXMjsbZGWK9f58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWBNz/i/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734378424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LWtbYIolgfrDHNCI0pGmWklAYAhRyKp9JwnJD3qNZJo=;
+	b=hWBNz/i/+1JmJTdJC+niUu34xtbXvCsTvt6AwgtyXvBjFCJ+wNDH+4gxYHKQUSYOLdEyay
+	xTaJggV1+4Q3vhWLQ6260PVij1NZE5OeQpqILByjUqOVnveon6MQugv2GW/NlA87+0/c5V
+	2MInONQ3bt6LJsG/ItPeqCA6KH0DtTM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-218-oYX5wj4zOM2Xp4bwUkKRNg-1; Mon, 16 Dec 2024 14:47:01 -0500
+X-MC-Unique: oYX5wj4zOM2Xp4bwUkKRNg-1
+X-Mimecast-MFC-AGG-ID: oYX5wj4zOM2Xp4bwUkKRNg
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4361c040ba8so18798105e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:47:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734378420; x=1734983220;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWtbYIolgfrDHNCI0pGmWklAYAhRyKp9JwnJD3qNZJo=;
+        b=wOi4EPzplgLOaznMk7jOaW+d5CmhuoUS1Gef+GH8SEYn27p9jMLxgB3Ajpm5htf9Si
+         OU6IUpp0A8nufitJZ4ys3umBMY3L3k8n1c6AU5KtPcSeybFhDSYI1iGDsl0jg1Ak0FD6
+         CV2iBualfknVdS5UXXPVY37k1hMUKEmV87+z5vzkuv+4uPaKNqkL6nGUYmQd922n0gnv
+         ZaRCguehyiI1UQdxFppj1JNXGgIcv3IqWpKpjkcC9D1VZL7Bh56kEYlb+UaAo55CtV+U
+         LTN/e97c8Y8e2/9DvcDXUmGFC9hFO8uUNiM52hfZnoQ/Vrhh6Bgnk52kOUfxYZp+GX7w
+         B7Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzgodRO4iTprX84ySCLfEY0wHYZfNhpvc4AvPKAeYZw/xHUdY/HURMW8x6HUVv36jMrOyBaTYZiLPR+U8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrx6SsF10ZFVSnLt7VPsgVoTfuGG3eMLPrHPZPjqrnmenNTH0M
+	OpW6ZT7WrYUUzRjk8PCCHhqmB37tZVAkJM6qDEaCTV03tgfOel5W5sEDaDQGTtEn0QZoVwHoSN4
+	23JpWrLDAuRaWCBVyalQWNInDCZE33V+VeykR4yVhXrNCoRovIHT6y536a1Mdeg==
+X-Gm-Gg: ASbGncv6xeY9c44DDc2nEV2JrKakgkGCZWUSZsoBhXpixD2Ros7nY7MZXWrPP2jlSzz
+	HsRx/cDq0ngnwtzwnaCu7reiwQ07Y4fcnDE/nDn3G6fR7DBvAP8dEzo/jQ5uuNw+4IjPTMs4qnU
+	oVHU5kGFw1WOA+u0L3zfK6mELFvZtmXC7vItB8NR3MoIx1PR86+XFSE+ZwghEEx1GOgN/MobcQG
+	qId335smWMtJWPRB2RSuNYhQRIVyrRdWqAbYILB04hI0v354l6r0voXjAT/6zahs6hbh5FF28Mz
+	XiJWVj5kY8p+gY6c1kgB
+X-Received: by 2002:a05:600c:4e51:b0:434:ff9d:a3a1 with SMTP id 5b1f17b1804b1-4362aa2e2c5mr137548195e9.2.1734378420165;
+        Mon, 16 Dec 2024 11:47:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHqjR3H3gwgGPNEFWph3WLlX/KvsKACkTobIpdFheAU0MtIGufaN8S69UyWpw4i5vWzSPk7Xw==
+X-Received: by 2002:a05:600c:4e51:b0:434:ff9d:a3a1 with SMTP id 5b1f17b1804b1-4362aa2e2c5mr137548005e9.2.1734378419768;
+        Mon, 16 Dec 2024 11:46:59 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550518sm149270845e9.5.2024.12.16.11.46.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 11:46:58 -0800 (PST)
+Message-ID: <cc9253fa-9d5f-460b-9841-94948fb6580c@redhat.com>
+Date: Mon, 16 Dec 2024 20:46:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,112 +87,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/16] drm/msm/dp: split MMSS_DP_DSC_DTO register write
- to a separate function
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
- <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EvqjYVgfZqa5_ucbbtS9wEPbQs__TbEy
-X-Proofpoint-ORIG-GUID: EvqjYVgfZqa5_ucbbtS9wEPbQs__TbEy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999 impostorscore=0
- mlxscore=0 suspectscore=0 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160163
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Miguel Ojeda <ojeda@kernel.org>,
+ Gary Guo <gary@garyguo.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241216162512.064724b9@canb.auug.org.au>
+ <CANiq72kv-bjeHtnom2xLqMD92xfogd1hm6yFGg16wpqjhJWMGw@mail.gmail.com>
+ <06f34e34-116d-48de-88f2-c029877f41e8@redhat.com>
+ <CANiq72nqM6Ncz7pP4jfyBENK936QXqd0KP-9BQdbHwVU8zX=Xg@mail.gmail.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <CANiq72nqM6Ncz7pP4jfyBENK936QXqd0KP-9BQdbHwVU8zX=Xg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
-> It's the dp_panel's duty to clear the MMSS_DP_DSC_DTO register. Once DP
-> driver gets DSC support, it will handle that register in other places
-> too. Split a call to write 0x0 to that register to a separate function.
+On 16/12/2024 17:24, Miguel Ojeda wrote:
+> On Mon, Dec 16, 2024 at 11:59 AM Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>>
+>> Yes, I'm fine with that change, thanks for the fix!
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_catalog.c | 8 ++++++++
->   drivers/gpu/drm/msm/dp/dp_catalog.h | 2 ++
->   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 2 ++
->   3 files changed, 12 insertions(+)
+> Thanks for the quick reply!
 > 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> index 7b7eadb2f83b169d8df27ee93589abe05b38f3ae..354ec834f9357c4797fc08a4532e69acc67b4317 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> @@ -1039,6 +1039,14 @@ void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog)
->   	msm_dp_write_p0(catalog, MMSS_DP_TIMING_ENGINE_EN, 0x0);
->   }
->   
-> +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +
-> +	msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
-> +}
+> May I transform your reply into an Acked-by?
 
-This is already done msm_dp_catalog_ctrl_config_msa(), this is either a 
-duplicate or redundant.
-
-void msm_dp_catalog_ctrl_config_msa(..........)
-{
-	**********
-         msm_dp_write_link(catalog, REG_DP_SOFTWARE_NVID, nvid);
-         msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
-}
-
-> +
->   static void __iomem *msm_dp_ioremap(struct platform_device *pdev, int idx, size_t *len)
->   {
->   	struct resource *res;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index 6678b0ac9a67881244884d59487fa288d33d1be7..08bb42e91b779633875dbeb4130bc55a6571cfb1 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> @@ -92,6 +92,8 @@ void msm_dp_catalog_panel_tpg_enable(struct msm_dp_catalog *msm_dp_catalog,
->   				struct drm_display_mode *drm_mode);
->   void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog);
->   
-> +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog);
-> +
->   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
->   
->   /* DP Audio APIs */
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> index 9c463ae2f8fae916661fef1c7e225f55c1026478..b9c461fee96f8fae9259ce03a32e1155b42d17bb 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> @@ -2011,6 +2011,8 @@ int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, bool force_link_train
->   		pixel_rate_orig,
->   		ctrl->panel->msm_dp_mode.out_fmt_is_yuv_420);
->   
-> +	msm_dp_catalog_panel_clear_dsc_dto(ctrl->catalog);
-> +
->   	msm_dp_ctrl_setup_tr_unit(ctrl);
->   
->   	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, DP_STATE_CTRL_SEND_VIDEO);
+Sure, please do.
 > 
+> By the way, if you want it as an independent fix that can go to stable
+> too, I am happy to split it into its own (previous) commit and tag it
+> as such. I am not sure if it should be considered a fix, though, since
+> one could argue nothing is "broken" (apart from the type not being the
+> optimal choice).
+
+Don't spend more time on this trivial fix, it probably won't need to be 
+backported.
+> 
+> I am also happy to split it without marking it as a fix, in case you
+> may want to backport it independently as a prerequisite at some point
+> or similar.
+> 
+> Cheers,
+> Miguel
+> 
+
+Thanks,
+
+--
+
+Jocelyn
+
 
