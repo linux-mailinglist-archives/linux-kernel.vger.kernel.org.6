@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-448156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1093A9F3C3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:09:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF859F3C40
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52891161D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892C71885822
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4CA1E3796;
-	Mon, 16 Dec 2024 21:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCB01E008A;
+	Mon, 16 Dec 2024 20:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLlr6U8x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O1R3Tvw6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC66161302;
-	Mon, 16 Dec 2024 21:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB2A1D9595;
+	Mon, 16 Dec 2024 20:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734382856; cv=none; b=hqh3DLT77pv/1/OP7KLBNvMC3YgV8CcY9KFvoFeTTcJidocu0pTF6+53cUJra7XmCjrBWugs5x8ie+rP4hiPaVAAtwcP8r7qTBeSSJTYMHMlgQXmK7o5EdunUsxlUk4e3wmCX/EaNI8FrKb/cUfH8E3Bm8gD54QProkHBq6f6+U=
+	t=1734382344; cv=none; b=BnjJpD6hYxzJIkiuAqM4fRIZ3j9xdjeQ77pIMsY8xTWhMdDSmpHzPFlZqU+GEiC2006Cmololu3kN1MxJ7JDIrr04o0LVnHaGUcJix7Zc8SsZ/5v/ezWsWTGXaC1yC11NB1N+dU8u4sVR7cCLvVZwTPb0FFX2ovsl9DP25uAj6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734382856; c=relaxed/simple;
-	bh=IkgwABEpTX6k+xX+6ZtF199C0d7wI+RvcURG1CDjL1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AjuminE2p4X2XUhXuv5XOgwRigmWBwlx5zmQxYrmcv8+crhBv8l7t4WSFpoO85YQRnjS+vC6W3CHV0AzMjP+fMDiAI2egnf/asYTEIqqYyxvQpfYVsVWpTBsE5HVEf8O0X4QMosVHcvxRXG0r7RM7nSJEs7/a96xuBhaEHGaLmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLlr6U8x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42164C4CED0;
-	Mon, 16 Dec 2024 21:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734382855;
-	bh=IkgwABEpTX6k+xX+6ZtF199C0d7wI+RvcURG1CDjL1w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mLlr6U8xt33FMi7TfvrIdNyeOFqv+gXDKTDXfHLcdELpkXeADQfvhonQaMTWh9t7F
-	 fto+kTp/dLvxgBcRw0hcjosX4Dpap14dcK9KuEfAMmTA29ckbus4Aqx2e565VE8PrZ
-	 ChoNdoUWohpUX0T/zLrPOxo0gi2kLIqJoUUv79dB8c8tLqAmii04prpznD03nit/MQ
-	 svVSv9dZo/r9jovlVtbKpfvGAp9UUJZlLPEvhEGZq9mDNiiJ3zHUSxslic63vnT0Rb
-	 UoVOahb5bgdut8TCqfH++OPNb1fHgTQAoXvAQMuf2Z0DLutRguFGTyh3goWmhTR/eH
-	 Get8/PfUsamvw==
-Message-ID: <5381389c-80bb-4c8d-9708-abc1aa9857ee@kernel.org>
-Date: Mon, 16 Dec 2024 14:00:54 -0700
+	s=arc-20240116; t=1734382344; c=relaxed/simple;
+	bh=Z8phgwoaNiU7bL15KsnNZNkdYTf7NzvjvDW4bkCnj4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CMA3Nfus/Irk45YWncbFePiQ2fKin3XOhSLCUREEfNIwsZJ2DWxAZ8gR+nXT34khB7c0UzFe1kiJRAHmvwF7+1tDMVGn6lCQfZYUGtXC7zQgU4p6GTyW3KuqjWQ9ojkBKkY7MkfxVrysSL8zUKHdfcQFi4pnBeCfRjU3SOQGdSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O1R3Tvw6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIwdNl010436;
+	Mon, 16 Dec 2024 20:52:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JeHhNvzCpbNEp1a2ew77ggNizxztZaVSKeqIIBHvoYU=; b=O1R3Tvw624bdw5j4
+	xeqVNy11fQ1c3RKDsuinxXFZyE8M5xxTHk2OXQhx9WbdeuMBneJpGseFJs9EcWQj
+	/J9rmRMMqdTIFpy82GacY59jpCQZgR46dlcy0IlHFkJ0ARIBaMaXlXZtQZ9iMFai
+	EKNfMzjgth3ab8Ny7aKtSH9YIThPfaa11U/D+ajMWRFUgAVB79RVxnO1fAo+W9Bl
+	OTfv2uiMzOkH01i63qf4Rfl2UNY8yykDnfNJl3ONAd+A3eEQegjDE9+bTvRwGfsN
+	5w0yYygqRVzGda8P+5zedI4yhGM51ms093+Qg5tHGw8brxT77WdtAw6QMMRbbriE
+	7vb8Pg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsy707ep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 20:52:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGKqCZg011299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 20:52:12 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 12:52:10 -0800
+Message-ID: <5a3f1bd2-436f-4886-90b5-bec205692fb1@quicinc.com>
+Date: Mon, 16 Dec 2024 12:52:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,50 +64,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] cpupower: fix TSC MHz calculation
-To: He Rongguang <herongguang@linux.alibaba.com>, trenn@suse.com,
- shuah@kernel.org, jwyatt@redhat.com, jkacur@redhat.com, wyes.karny@amd.com
-Cc: linux-kernel@vger.kernel.org, shannon.zhao@linux.alibaba.com,
- linux-pm@vger.kernel.org
-References: <6084e3c9-921b-4450-97bd-51ec44c52c04@linux.alibaba.com>
+Subject: Re: [PATCH v4 15/16] drm/msm/dp: read hw revision only once
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>
+CC: Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
+ <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
 Content-Language: en-US
-From: Shuah <shuah@kernel.org>
-In-Reply-To: <6084e3c9-921b-4450-97bd-51ec44c52c04@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: krWvG6pfq1uq6wWLboM1mtjGHZw6vEom
+X-Proofpoint-GUID: krWvG6pfq1uq6wWLboM1mtjGHZw6vEom
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160172
 
-On 12/11/24 19:14, He Rongguang wrote:
-> Commit 'cpupower: Make TSC read per CPU for Mperf monitor' (c2adb1877b7)
-> changes TSC counter reads per cpu, but left time diff global (from start
-> of all cpus to end of all cpus), thus diff(time) is too large for a
-> cpu's tsc counting, resulting in far less than acutal TSC_Mhz and thus
-> `cpupower monitor` showing far less than actual cpu realtime frequency.
+
+
+On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
+> There is little point in rereading DP controller revision over and over
+> again. Read it once, after the first software reset and propagate it to
+> the dp_panel module.
 > 
-> /proc/cpuinfo shows frequency:
-> cat /proc/cpuinfo | egrep -e 'processor' -e 'MHz'
-> ...
-> processor : 171
-> cpu MHz   : 4108.498
-> ...
-> 
-> before fix (System 100% busy):
->      | Mperf              || Idle_Stats
->   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
->   171|  0.77| 99.23|  2279||  0.00|  0.00|  0.00
-> 
-> after fix (System 100% busy):
->      | Mperf              || Idle_Stats
->   CPU| C0   | Cx   | Freq  || POLL | C1   | C2
->   171|  0.46| 99.54|  4095||  0.00|  0.00|  0.00
-> 
-> Fixes: c2adb1877b76 ("cpupower: Make TSC read per CPU for Mperf monitor")
-> Signed-off-by: He Rongguang <herongguang@linux.alibaba.com>
+
+Good idea, can be posted even separately in front of the catalog rework 
+as it fits in nicely even with current model.
+
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=cpupower
-to be included in my next pull request to Rafael.
-
-thanks,
--- Shuah
+>   drivers/gpu/drm/msm/dp/dp_catalog.c | 13 -------------
+>   drivers/gpu/drm/msm/dp/dp_catalog.h |  3 ---
+>   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 12 +++++++++---
+>   drivers/gpu/drm/msm/dp/dp_panel.c   |  3 +--
+>   drivers/gpu/drm/msm/dp/dp_panel.h   |  1 +
+>   5 files changed, 11 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> index 2992a0df262e9ab167a21a270d1aa8fd1383033d..84adf3a38e4cf0619b15850c31416f1e67049a42 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> @@ -42,19 +42,6 @@ void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_d
+>   				    msm_dp_catalog->p0_len, msm_dp_catalog->p0_base, "dp_p0");
+>   }
+>   
+> -/**
+> - * msm_dp_catalog_hw_revision() - retrieve DP hw revision
+> - *
+> - * @msm_dp_catalog: DP catalog structure
+> - *
+> - * Return: DP controller hw revision
+> - *
+> - */
+> -u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog)
+> -{
+> -	return msm_dp_read_ahb(msm_dp_catalog, REG_DP_HW_VERSION);
+> -}
+> -
+>   static void __iomem *msm_dp_ioremap(struct platform_device *pdev, int idx, size_t *len)
+>   {
+>   	struct resource *res;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+> index 310319619242df5fa0d91c89fbcc477f16c130ea..ddbae0fcf5fc428b2d37cd1eab1d5860a2f11a50 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+> @@ -95,9 +95,6 @@ static inline void msm_dp_write_link(struct msm_dp_catalog *msm_dp_catalog,
+>   /* Debug module */
+>   void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_disp_state *disp_state);
+>   
+> -/* DP Controller APIs */
+> -u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog);
+> -
+>   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
+>   
+>   #endif /* _DP_CATALOG_H_ */
+> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> index b15b7ba599e29c4edd746e9c2a8bf2f4a8eedf15..60dbf7eab3fd184bc12035d267abb3758cce9f89 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> @@ -131,6 +131,8 @@ struct msm_dp_ctrl_private {
+>   	struct completion psr_op_comp;
+>   	struct completion video_comp;
+>   
+> +	u32 hw_revision;
+> +
+>   	bool core_clks_on;
+>   	bool link_clks_on;
+>   	bool stream_clks_on;
+> @@ -173,6 +175,11 @@ void msm_dp_ctrl_reset(struct msm_dp_ctrl *msm_dp_ctrl)
+>   
+>   	sw_reset &= ~DP_SW_RESET;
+>   	msm_dp_write_ahb(msm_dp_catalog, REG_DP_SW_RESET, sw_reset);
+> +
+> +	if (!ctrl->hw_revision) {
+> +		ctrl->hw_revision = msm_dp_read_ahb(msm_dp_catalog, REG_DP_HW_VERSION);
+> +		ctrl->panel->hw_revision = ctrl->hw_revision;
+> +	}
+>   }
+>   
+>   static u32 msm_dp_ctrl_get_aux_interrupt(struct msm_dp_ctrl_private *ctrl)
+> @@ -307,12 +314,11 @@ static void msm_dp_ctrl_mainlink_disable(struct msm_dp_ctrl_private *ctrl)
+>   static void msm_dp_setup_peripheral_flush(struct msm_dp_ctrl_private *ctrl)
+>   {
+>   	struct msm_dp_catalog *msm_dp_catalog = ctrl->catalog;
+> -	u32 mainlink_ctrl, hw_revision;
+> +	u32 mainlink_ctrl;
+>   
+>   	mainlink_ctrl = msm_dp_read_link(msm_dp_catalog, REG_DP_MAINLINK_CTRL);
+>   
+> -	hw_revision = msm_dp_catalog_hw_revision(msm_dp_catalog);
+> -	if (hw_revision >= DP_HW_VERSION_1_2)
+> +	if (ctrl->hw_revision >= DP_HW_VERSION_1_2)
+>   		mainlink_ctrl |= DP_MAINLINK_FLUSH_MODE_SDE_PERIPH_UPDATE;
+>   	else
+>   		mainlink_ctrl |= DP_MAINLINK_FLUSH_MODE_UPDATE_SDP;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+> index 3441c28e3ce332bfe932d7adee7f0ecbaa486c2e..969d618c909876fd7a13aeb6e6c9e117071bc682 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+> @@ -380,9 +380,8 @@ static void msm_dp_panel_send_vsc_sdp(struct msm_dp_panel_private *panel, struct
+>   
+>   static void msm_dp_panel_update_sdp(struct msm_dp_panel_private *panel)
+>   {
+> -	u32 hw_revision;
+> +	u32 hw_revision = panel->msm_dp_panel.hw_revision;
+>   
+> -	hw_revision = msm_dp_catalog_hw_revision(panel->catalog);
+>   	if (hw_revision >= DP_HW_VERSION_1_0 &&
+>   	    hw_revision < DP_HW_VERSION_1_2) {
+>   		msm_dp_write_link(panel->catalog, MMSS_DP_SDP_CFG3, UPDATE_SDP);
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+> index 8dde55b3a5ab64c0c12d69cb2dd5b5c733c83432..c348417bb07f33efdf1402a73c27ff99e394e5a3 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+> @@ -38,6 +38,7 @@ struct msm_dp_panel {
+>   	struct msm_dp_panel_psr psr_cap;
+>   	bool video_test;
+>   	bool vsc_sdp_supported;
+> +	u32 hw_revision;
+>   
+>   	u32 max_dp_lanes;
+>   	u32 max_dp_link_rate;
+> 
 
