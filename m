@@ -1,80 +1,109 @@
-Return-Path: <linux-kernel+bounces-447205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C899F2EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:10:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975499F2EDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FA8165E41
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC814165E63
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B07204586;
-	Mon, 16 Dec 2024 11:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679392040B3;
+	Mon, 16 Dec 2024 11:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n4SJcHtw"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="RTlmaYDF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RjpzLea7"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F5F204574;
-	Mon, 16 Dec 2024 11:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FC0203D7F;
+	Mon, 16 Dec 2024 11:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734347409; cv=none; b=p7E3tsnwr6YNpKCZ3uPm5VwFhNjOgI7shJOxpP8YaPNVpN6BihpUgne6CgRmJetQE8VHzkoI9KdY1OpnGf3fOnBNvPHlG5FN5jvoZV/Nutbk2s6kgaVO00ognlrbon5TMFJn2M09cs5HiA9LJle87O+YRXsrXi9W4DdAuSxzL2w=
+	t=1734347403; cv=none; b=PAHhMQF8fU/qok4P9Ai+v0icu+/J+PL5UMR4GNlPZ4E0zHoFV2mDb/WnG7hDX9s/xCyAJucJoLYMqzfyR8ck9cV0bp7afYW0uuuiVVhGelyQCAfCFqTydPnf4E1lv9W4/rpDvpdUBDSTUPIvsR3s1FcIK+n5g0OnFw9DwQsH/EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734347409; c=relaxed/simple;
-	bh=4SGBuLlC7yvLtIze+D8oqUF4k9KT61/1jVHbgR573mM=;
+	s=arc-20240116; t=1734347403; c=relaxed/simple;
+	bh=xn95Pi4umwEL5V6TEFqfsF5iwXrY6u8D2aQGSHcBbdE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjBJoEuygfroA09t8liZxRanzdgaXuqyEmfZ1jEnLfarA4A6u2Kp5TJKNvusPgzzo0sCzT0f9Nj/2H7YHfJ59HrwODXCWWvRh3T7qS0dC70Z9l2UO8Jo/cXXHIqyg8SCMASgOswBYl2dpxRtR95jfdDL2yZQxkA8oLe9l7hiSzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n4SJcHtw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFD3A13C;
-	Mon, 16 Dec 2024 12:09:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734347367;
-	bh=4SGBuLlC7yvLtIze+D8oqUF4k9KT61/1jVHbgR573mM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4SJcHtw3ny1CmDDyfpsJ3a4KvZIeooLjKlX3qwqxHhko0jXZLq5C1Gt8oVKSMl/C
-	 emR5QFaljbmd9hJilhNyxG/qcuVQ/lepDskEtG/D5G2FDEipDk+nM5XrBwVfMfDh5y
-	 VG2tW1veQMnSgfXyHF/FtIoH7ibC7Hwtz/pcDajQ=
-Date: Mon, 16 Dec 2024 13:09:46 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
- maxItems
-Message-ID: <20241216110946.GJ32204@pendragon.ideasonboard.com>
-References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
- <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
- <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
- <20241216083239.GC32204@pendragon.ideasonboard.com>
- <d560cde5-6689-4933-8a42-3986f1a7b861@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rL8gH0KTiJ6gE8p07EFTCXJIfyIQL52J5OS3inFO43r3kvc6V8sahkv6lU2BOu+1smMsGlfGKJQUOxryh6OPhVUNmZFhXFT0spHt0xpH1I4RIlNWLx5eI1h/jhz3cHUTR4pDyEBaKnTM88BiBJWnYovpOi2QQ3H0oZvg1SzzOTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=RTlmaYDF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RjpzLea7; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id CE0E313838F6;
+	Mon, 16 Dec 2024 06:09:57 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Mon, 16 Dec 2024 06:09:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1734347397; x=
+	1734433797; bh=ScOq+swQzHKW0GAW9g0fDYWS5GmMw3Ms2ywzxyyuIZ8=; b=R
+	TlmaYDF8bHiHa1upgTGd64ZNqHtz7JYzrB5plbvPx557SvTAFFlzXjHynQkbqn6P
+	lWLWbWWoXyHEbyJmYeaepWbr0JYij0PEiZFd2IWv2dEBAuKdYKe5YgX5nuGmIA0s
+	CkkYUpa9HhEQ4UV7JJpFEkIQ/318AFrK8SBZ+3AvUa0hIMUcAXC9Um8SpVbIg9rt
+	clUSR9K4KiCWcJkDKO7Js++NOOwC7H4RsrEolrf3mJmHrZEeLLN18UiZaxbN4aaB
+	CQ6ycKEwOKBZQ4IRJrXKkh/D4J3kRwiOLYlnQuctdn+gUvGOLDMT54heeNSAHEXn
+	mphhY2vT7Uqeq7trUlJhw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734347397; x=1734433797; bh=ScOq+swQzHKW0GAW9g0fDYWS5GmMw3Ms2yw
+	zxyyuIZ8=; b=RjpzLea7xVwGsrWp66aQvY6fMFRRKzDEq8zPSjc3PfyVFNZYuYB
+	kS9GSJECA95Vzg8fYIcpEDJThXuW82wBvsdTFsrpx29XoHQ5WMizC/aVupZ2sUSa
+	OYnQlbqsu7Sq5Z041jyXsW5iyqIKDjXRNiDdtON4ak1odS/CZhIOgeqQDWnlIdG1
+	HOY99mSc4TF5Jaqm+87HGsSxmbNDRxWdjZd3gpTiDAPkp5uty+VXh3zTFI5bAiA/
+	ZSJ0vgl2Q3vRCSHWKLwspGE2t1Huu7/z7Uw6J2JtiNpIoKnTWwJJ7wgdqcA5b3tO
+	gaeD5saDgMXEV53RSqzb3os/8TK6WvJPD0Q==
+X-ME-Sender: <xms:hQpgZ-vQDKU4jzgdouM_9L7o5_hQjLnXO37wwZlLVPdjVxuxvHRYUA>
+    <xme:hQpgZzcywnSuh5Ugm8KSwxJkI33JhiJyB4eEki-WoRKDMRm8WADFihTF0AxDd75tL
+    EYorYyexXFAXl31H2c>
+X-ME-Received: <xmr:hQpgZ5wj4SMCDnl-yYJ7tzp_350RAMpRy9tS0mQxnlWdhFMhX9YXwUXtAw4W>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleefgddvgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
+    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    eprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-ME-Proxy: <xmx:hQpgZ5O9je3oFbYEZX4Ggm67R2SV680KnPR16lCKsuGi9uuCMbD2yA>
+    <xmx:hQpgZ--Nc_coUJ7r8yXyPOtiNiQnOTK6dVg_KnNIqRlT7dSqDgh0IA>
+    <xmx:hQpgZxXF8shc7m8X3pDwOw1a-Jntm-CdETg8_CsFczuJ5hlCJ4h4zw>
+    <xmx:hQpgZ3dZaAQMkH95u55RY5bcLJHpaUgRWItm33KJlIT1jcXSMoZhqg>
+    <xmx:hQpgZyWgcFMQvCPAKNZc6dJZm0Y600eTPaYCZEWmi8o7ToTRei_Wc3_h>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 16 Dec 2024 06:09:56 -0500 (EST)
+Date: Mon, 16 Dec 2024 12:09:55 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+	willemdebruijn.kernel@gmail.com
+Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
+Message-ID: <Z2AKg6ntLd94anHv@hog>
+References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
+ <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net>
+ <Z1sNEgQLMzZua3mS@hog>
+ <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,39 +112,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d560cde5-6689-4933-8a42-3986f1a7b861@ideasonboard.com>
+In-Reply-To: <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
 
-On Mon, Dec 16, 2024 at 01:02:26PM +0200, Tomi Valkeinen wrote:
-> On 16/12/2024 10:32, Laurent Pinchart wrote:
-> > On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
-> >> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
-> >>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>>
-> >>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
-> >>> properties. As the amount of cmms or vsps is always a fixed amount, set
-> >>> the maxItems to match the minItems.
-> >>>
-> >>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>> ---
-> >>>   Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
-> >>>   1 file changed, 10 insertions(+)
-> >>
-> >> The top level property should define widest constraints as well.
+2024-12-12, 23:46:11 +0100, Antonio Quartulli wrote:
+> On 12/12/2024 17:19, Sabrina Dubroca wrote:
+> > 2024-12-11, 22:15:10 +0100, Antonio Quartulli wrote:
+> > > +static struct ovpn_socket *ovpn_socket_get(struct socket *sock)
+> > > +{
+> > > +	struct ovpn_socket *ovpn_sock;
+> > > +
+> > > +	rcu_read_lock();
+> > > +	ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
+> > > +	if (WARN_ON(!ovpn_socket_hold(ovpn_sock)))
 > > 
-> > I'm curious, why is that ? I understand why a top-level default would
-> > make sense when it's optionally overridden by model-specific values, but
-> > in this case there's no such default. Every SoC has its own fixed value.
+> > Could we hit this situation when we're removing the last peer (so
+> > detaching its socket) just as we're adding a new one? ovpn_socket_new
+> > finds the socket already attached and goes through the EALREADY path,
+> > but the refcount has already dropped to 0?
+> > 
 > 
-> Looking at the file, shouldn't we have minItems == maxItems for 
-> interrupts and resets too? Well, I guess for interrupts we could in 
-> theory run with just some of the interrupt lines connected. I'm not sure 
-> if that's the case for resets.
+> hm good point.
+> 
+> > Then we'd also return NULL from ovpn_socket_new [1], which I don't
+> > think is handled well by the caller (at least the netdev_dbg call at
+> > the end of ovpn_nl_peer_modify, maybe other spots too).
+> > 
+> > (I guess it's not an issue you would see with the existing userspace
+> > if it's single-threaded)
+> 
+> The TCP patch 11/22 will convert the socket release routine to a scheduled
+> worker.
 
-Unless there's some magic handling of min/maxItems for those that I
-wouldn't be aware of, I think it makes sense.
+Oh right, I forgot about that.
+
+> This means we can have the following flow:
+> 1) userspace deletes a peer -> peer drops its reference to the ovpn_socket
+> 2) ovpn_socket refcnt may hit 0 -> cleanup/detach work is scheduled, but not
+> yet executed
+> 3) userspace adds a new peer -> attach returns -EALREADY but refcnt is 0
+> 
+> So not so impossible, even with a single-threaded userspace software.
+
+True, that seems possible.
+
+> > [...]
+> > > +struct ovpn_socket *ovpn_socket_new(struct socket *sock, struct ovpn_peer *peer)
+> > > +{
+> > > +	struct ovpn_socket *ovpn_sock;
+> > > +	int ret;
+> > > +
+> > > +	ret = ovpn_socket_attach(sock, peer);
+> > > +	if (ret < 0 && ret != -EALREADY)
+> > > +		return ERR_PTR(ret);
+> > > +
+> > > +	/* if this socket is already owned by this interface, just increase the
+> > > +	 * refcounter and use it as expected.
+> > > +	 *
+> > > +	 * Since UDP sockets can be used to talk to multiple remote endpoints,
+> > > +	 * openvpn normally instantiates only one socket and shares it among all
+> > > +	 * its peers. For this reason, when we find out that a socket is already
+> > > +	 * used for some other peer in *this* instance, we can happily increase
+> > > +	 * its refcounter and use it normally.
+> > > +	 */
+> > > +	if (ret == -EALREADY) {
+> > > +		/* caller is expected to increase the sock refcounter before
+> > > +		 * passing it to this function. For this reason we drop it if
+> > > +		 * not needed, like when this socket is already owned.
+> > > +		 */
+> > > +		ovpn_sock = ovpn_socket_get(sock);
+> > > +		sockfd_put(sock);
+> > 
+> > [1] so we would need to add
+> > 
+> >      if (!ovpn_sock)
+> >          return -EAGAIN;
+> 
+> I am not sure returning -EAGAIN is the right move at this point.
+> We don't know when the scheduled worker will execute, so we don't know when
+> to try again.
+
+Right.
+
+> Maybe we should call cancel_sync_work(&ovpn_sock->work) inside
+> ovpn_socket_get()?
+> So the latter will return NULL only when it is sure that the socket has been
+> detached.
+> 
+> At that point we can skip the following return and continue along the "new
+> socket" path.
+> 
+> What do you think?
+
+The work may not have been scheduled yet? (small window between the
+last kref_put and schedule_work)
+
+Maybe a completion [Documentation/scheduler/completion.rst] would
+solve it (but it makes things even more complex, unfortunately):
+
+ - at the end of ovpn_socket_detach: complete(&ovpn_sock->detached);
+ - in ovpn_socket_new when handling EALREADY: wait_for_completion(&ovpn_sock->detached);
+ - in ovpn_socket_new for the new socket: init_completion(&ovpn_sock->detached);
+
+but ovpn_sock could be gone immediately after complete(). Maybe
+something with completion_done() before the kfree_rcu in
+ovpn_socket_detach? I'm not that familiar with the completion API.
+
+
+> However, this makes we wonder: what happens if we have two racing PEER_NEW
+> with the same non-yet-attached UDP socket?
+
+mhmm, I remember noticing that, but it seems I never mentioned it in
+my reviews. Sorry.
+
+> Maybe we should lock the socket in ovpn_udp_socket_attach() when checking
+> its user-data and setting it (in order to make the test-and-set atomic)?
+
+I'd use the lock to protect all of ovpn_socket_new.
+ovpn_tcp_socket_attach locks the socket but after doing the initial
+checks, so 2 callers could both see sock->sk->sk_user_data == NULL and
+do the full attach. And I don't think unlocking before
+rcu_assign_sk_user_data is safe for either UDP or TCP.
+
+> I am specifically talking about this in udp.c:
+> 
+> 345         /* make sure no pre-existing encapsulation handler exists */
+> 346         rcu_read_lock();
+> 347         old_data = rcu_dereference_sk_user_data(sock->sk);
+> 348         if (!old_data) {
+> 349                 /* socket is currently unused - we can take it */
+> 350                 rcu_read_unlock();
+> 351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
+> 352                 return 0;
+> 353         }
+> 
+> We will end up returning 0 in both contexts and thus allocate two
+> ovpn_sockets instead of re-using the first one we allocated.
+> 
+> Does it make sense?
+
+Yes.
+
+[...]
+> > [I have some more nits/typos here and there but I worry the
+> > maintainers will get "slightly" annoyed if I make you repost 22
+> > patches once again :) -- if that's all I find in the next few days,
+> > everyone might be happier if I stash them and we get them fixed after
+> > merging?]
+> 
+> If we have to rework this socket attaching part, it may be worth throwing in
+> those typ0 fixes too :)
+
+ACK, I'll send them out.
+
+> Thanks a lot.
+
+Thanks again for your patience.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Sabrina
 
