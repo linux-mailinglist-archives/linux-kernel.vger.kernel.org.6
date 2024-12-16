@@ -1,504 +1,112 @@
-Return-Path: <linux-kernel+bounces-447090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2269F2D34
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:45:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F7E9F2D2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF07D1666C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF101884848
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602FD20371B;
-	Mon, 16 Dec 2024 09:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DPJ8oB6j"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACED201100;
+	Mon, 16 Dec 2024 09:44:23 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B48203709
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF5E201033
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342269; cv=none; b=XkgvWCLbNcEcvm9AEE9X214612yqNQYYVNnjf7rEl9uB57rmyWHb30bqNb53MF0t4hW66AhLXW+UZk6UIz8qMZsdJZqvJ2E51ZGhmJC3vF4ce5d/7mPcuYnN3DBRrDNbb6tDqo31HSfn9rtp/2VJA/oKVo9LkZ600dL8ut+i6vQ=
+	t=1734342263; cv=none; b=sRsmcW0Saox7td7LyuhAM66sS61dUQEfCtoeB+lxHzZjnwrkl97nDZzqmANvS80jAW7wN8S+8VUqVheztpHGKiPj+GlfcprM2e1KjBImymP8t3iRDr3p5Bq4JMuaFMOGQjDeyVCUH3UQFrsNdt3BDtbfxsFutjSyFxkefK8DLMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342269; c=relaxed/simple;
-	bh=i8VvjTZT8yfaXHkFCyHt6DpAlDxKWTcz5GJExFLdeLo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JJBICfSFqOUCB7U/XnRv3aeiFMLux8/nIWzeKWgh2dn0wtyEDlPBuNcCYhfrOt4x/oLwrhx2UfIsBFtJvKRWQkuB634rsfiHEsCATActG4QIsJEdWeI5z7LOvwhT/ADah+S9USvc1tq3Un1bqg9wSwHe7DjkWYVDHIRQPq8k0mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DPJ8oB6j; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3f78f5fc07so2833462276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734342265; x=1734947065; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JuUwiwam2NLEhcEaeDlZ9kN1aj2SGwFO1wzDqoeRp0Q=;
-        b=DPJ8oB6j6YA4QTQo05o+HM3Md1KOxffcTyJf42nGDp4phPhGPN+gg6oqALYIOr2M56
-         UROAJ+2+ZHVkTI67iEQ/lkwsD8AXtYUAfEo7X09cfWqbh/dwYOno8kDbm0f0ziPv/JkN
-         2joaeYRokUamVkgpy9ZnkJx7G75gwQHr+DHbYtD8OFkio+PWNi5kIn9veJKCzMf/6whl
-         4rRlR9jTgqCEDj42dYVqfnyhv92/vZFRtZCv0VcDzYKbPWSlm58PwwVkQZFTFw037bPq
-         9JUcrzDu0KNwmCrL/Wh7ANAGKMhWJNf8lBbOlKYs+haEhsN/6wXE6jI+JMlD3UsejM+7
-         Qp3w==
+	s=arc-20240116; t=1734342263; c=relaxed/simple;
+	bh=F2SjC0h/OdRY60mWc5uSsVjUgK6l5Cnrl7XaTv3guRE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iSAaXyJGW822nl+hyZEZlYPD92X7y5Qz/oQ2bqMK7FZhqyWvvVnCJHGbnViF3uWxZ3VAu4zlYCKZ+WqFNtFlKg5IW4R/1OmP6MNjLnV0nHNv4y1s9nqIVK4D/11ChuKAF6fNbdLLhO7GAV/eK0rf/tYbFQ6vp1MYlGas64I4vas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9d195e6e5so39816165ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:44:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342265; x=1734947065;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JuUwiwam2NLEhcEaeDlZ9kN1aj2SGwFO1wzDqoeRp0Q=;
-        b=iTZnkTpeIejx+rYFMobKuV0Nxnfhe4tOOHyimh1tRHMZdxAfjqs+lTtRX+39FIowKY
-         NeLKQPhM1rfoclNXOfmqkzsclH8NyNaDLU1n187vIVu0ejIVOqcQr3vm0SpD5bEqxoYj
-         KLiVfUqqlxxqVi2Km/JLYrk5l7G8MvaTXY+MJTBajlHGfBk9b6hjPMpmFeiNzns7/5UN
-         Iyub/PbKsspKDR6kj2RHFP9XietKBgGdC6Vy1MZpeUduVWFk+PrIDKP4ePJti6DBcK7Y
-         QLj6bWY5KAdmjbEV0j70KD0u6V7FSl0iNUtCRTqShShOTqmPjw4YLlo5slzfEKd12V2h
-         uiDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVu9sjDVJ3g4vjtb/FUW6sMr+HKrgHmF7ecIf+IkorYSeoci7rNvqkASbmHdnFdeQY8dDcG1Lve3HmyaQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+qywhXae19tcD0uLt/T+yC4ab5bXVCmc2XXKdebrRUEpMSAu4
-	JIg3ABB5DzZdRhHAquqmBWc1JgEKi/DIF8jPwFwcEfNdTzdLoISzzCU55pFigd3ZgqZGU5gqpV3
-	SwY5lICwNlz5E800dTaGUcHIXoqe59guzUrvL0g==
-X-Gm-Gg: ASbGnctA+LMir2jz7eTwU+1WCwkYyIaCOMoJUJ8n5GxvOfC7Y3ovA/BzYqQvnvwhxQ3
-	0aMU08HGyNbRTcnsRcE6fOYUbClj84wFvvtVfpd7Z7Z2hMgjolRrl
-X-Google-Smtp-Source: AGHT+IEaxgr5zAENdkbhHhWLUWeddBiATkm12WTcfnkIBrtIL6G9ABG6kqvlOs/mlL45ibQg3MGgK6n9x3gh6NKZnko=
-X-Received: by 2002:a05:6902:1587:b0:e4d:d319:ba6 with SMTP id
- 3f1490d57ef6-e4dd3190cc0mr2042157276.39.1734342265011; Mon, 16 Dec 2024
- 01:44:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734342261; x=1734947061;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rQTFow5kBgqg7MVcn2fDaYhYjBgMHcFLjw9h5v8S15E=;
+        b=Zi3Ldom27FCgDFoPcqWpWEX0WlVPgfcdpd5VvrLdcul8oT0/n0e2fiixzOmMINjPDP
+         KSjnV17wfq+wHwfmRwfVJj/5r5HEM6dCfL/TQrSJ6JVi59tyeOjf3tWsxXDnmByfqrva
+         5r5KBaSUEUnTJE6MhIUJKqlfZq4fAdmg6rNbOitdMdJWuhMLh2X751Tc2J4/7kBmaG/8
+         DiJ46tdtrIgsHySJM/hq+n7oOdUCdfzoHb7LznlhoMHJO/3qFdDk4fdkg+UqTBhNmUSe
+         vHMPxwx+ALORNhiTknO09qJGcw4jC/0iMBs77CHHP3aG/KvZuOTOxhpr81Ae8DaVVNnT
+         ELJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXp32I4riqYE2NLZUiRXw1S6z71YJ7wDwif3+mI03BbWsJDSiZLCWpAsaFsp41qhQ1azYUPv9C0yW1zDmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX2dIb7YDJLByevVGo03dEMdnnUkFC+iNxn8cCrssN0NrUDO2r
+	xWj+VQ5OPny4wzNEjqnPXf3bjKloU3DfX23GyAV8ZllTjTpab1v3qYw1/BTM1YXDbLUztfE4qIV
+	HqO6G6iL8izBybwkJoJNxzRUDKJtftZS4c/fXuc9LHgTLL8MBRnNpH88=
+X-Google-Smtp-Source: AGHT+IE32lVajrmmFMsx2oL8z54XtOUSw3a/mH6s1PlqARarrcIulnuMxdV5kYWZXeAofjzJ+wcZ6adrpUZlojlsIK+gxeTLyRSm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209033923.3009629-1-victor.liu@nxp.com> <20241209033923.3009629-13-victor.liu@nxp.com>
- <3j4fguv4oienfaj4fghpiqpmnq3aczu4azhdo5jzvywc5mawm5@hh33p3dhf6xa>
- <db4d9d4e-855f-4647-9b93-ccc5ec0202b3@nxp.com> <q6pdop6ucowtoxxr66czq7yooujyvp6qs5vcg6gpmi3q4rs4l3@szyqt5pxteoz>
- <b02fb998-9420-4954-8e48-82447493bbb7@nxp.com> <CAA8EJppBpeMA3aSzk025tvzfTW-bFxeZS4kj0Ujk_AuCyoxnEg@mail.gmail.com>
- <95a5c779-941a-4942-8988-65fbe1c4cf82@nxp.com>
-In-Reply-To: <95a5c779-941a-4942-8988-65fbe1c4cf82@nxp.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 16 Dec 2024 11:44:13 +0200
-Message-ID: <CAA8EJpoUa9y9nfrrDf47aLs5zr4XKSghySXNLnCGwDyYdOvMog@mail.gmail.com>
-Subject: Re: [PATCH v6 12/19] drm/imx: Add i.MX8qxp Display Controller KMS
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	p.zabel@pengutronix.de, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org, aisheng.dong@nxp.com, 
-	agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com, 
-	u.kleine-koenig@baylibre.com
+X-Received: by 2002:a05:6e02:248c:b0:3a7:8d8e:e730 with SMTP id
+ e9e14a558f8ab-3aff2dd5e5fmr108753445ab.22.1734342261004; Mon, 16 Dec 2024
+ 01:44:21 -0800 (PST)
+Date: Mon, 16 Dec 2024 01:44:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675ff674.050a0220.37aaf.0122.GAE@google.com>
+Subject: [syzbot] Monthly dri report (Dec 2024)
+From: syzbot <syzbot+listbe2d42c16524143e5dc9@syzkaller.appspotmail.com>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Dec 2024 at 08:28, Liu Ying <victor.liu@nxp.com> wrote:
->
-> On 12/13/2024, Dmitry Baryshkov wrote:
-> > On Fri, 13 Dec 2024 at 08:06, Liu Ying <victor.liu@nxp.com> wrote:
-> >>
-> >> On 12/12/2024, Dmitry Baryshkov wrote:
-> >>> On Wed, Dec 11, 2024 at 03:43:20PM +0800, Liu Ying wrote:
-> >>>> On 12/10/2024, Dmitry Baryshkov wrote:
-> >>>>> On Mon, Dec 09, 2024 at 11:39:16AM +0800, Liu Ying wrote:
-> >>>>>> i.MX8qxp Display Controller(DC) is comprised of three main components that
-> >>>>>> include a blit engine for 2D graphics accelerations, display controller for
-> >>>>>> display output processing, as well as a command sequencer.  Add kernel
-> >>>>>> mode setting support for the display controller part with two CRTCs and
-> >>>>>> two primary planes(backed by FetchLayer and FetchWarp respectively).  The
-> >>>>>> registers of the display controller are accessed without command sequencer
-> >>>>>> involved, instead just by using CPU.  The command sequencer is supposed to
-> >>>>>> be used by the blit engine.
-> >>>>>>
-> >>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> >>>>>> ---
-> >>>>>> v6:
-> >>>>>> * No change.
-> >>>>>>
-> >>>>>> v5:
-> >>>>>> * Replace .remove_new with .remove in dc-drv.c. (Uwe)
-> >>>>>>
-> >>>>>> v4:
-> >>>>>> * Move dc_fg_displaymode(), dc_fg_panic_displaymode() and dc_lb_blendcontrol()
-> >>>>>>   function calls from KMS routine to initialization stage. (Dmitry)
-> >>>>>> * Drop dc-crtc.h and dc-plane.h header files and move relevant defines to
-> >>>>>>   appropriate .h header files or .c source files. (Dmitry)
-> >>>>>> * Drop futile "else" clause from dc_crtc_common_irq_handler(). (Dmitry)
-> >>>>>> * Drop dc_drm->pe_rpm_count. (Dmitry)
-> >>>>>> * Drop DC_{CRTCS,ENCODERS,PRIMARYS} macros and only use DC_DISPLAYS. (Dmitry)
-> >>>>>> * Drop drmm_kcalloc() function call to allocate an array for storing IRQs.
-> >>>>>>   Instead, put it in struct dc_crtc.  (Dmitry)
-> >>>>>> * Call devm_request_irq() to request IRQs, instead of using drmm action.
-> >>>>>>   (Dmitry)
-> >>>>>> * Call devm_drm_of_get_bridge() to find the next bridge. (Dmitry)
-> >>>>>> * Select DRM_CLIENT_SELECTION due to rebase.
-> >>>>>> * Select the missing DRM_DISPLAY_HELPER and DRM_BRIDGE_CONNECTOR.
-> >>>>>> * Use DRM_FBDEV_DMA_DRIVER_OPS due to rebase.
-> >>>>>> * Replace drm_fbdev_dma_setup() with drm_client_setup_with_fourcc() due to
-> >>>>>>   rebase.
-> >>>>>> * Replace drmm_add_action_or_reset() with devm_add_action_or_reset() to
-> >>>>>>   register dc_drm_component_unbind_all() action.
-> >>>>>> * Request interrupts in dc_crtc_post_init() after encoder initialization to
-> >>>>>>   make sure next bridge is found first.
-> >>>>>>
-> >>>>>> v3:
-> >>>>>> * No change.
-> >>>>>>
-> >>>>>> v2:
-> >>>>>> * Find next bridge from TCon's port.
-> >>>>>> * Drop drm/drm_module.h include from dc-drv.c.
-> >>>>>>
-> >>>>>>  drivers/gpu/drm/imx/dc/Kconfig    |   5 +
-> >>>>>>  drivers/gpu/drm/imx/dc/Makefile   |   5 +-
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-crtc.c  | 558 ++++++++++++++++++++++++++++++
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-de.h    |   3 +
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-drv.c   | 244 +++++++++++++
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-drv.h   |  19 +
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-kms.c   | 143 ++++++++
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-kms.h   |  58 ++++
-> >>>>>>  drivers/gpu/drm/imx/dc/dc-plane.c | 241 +++++++++++++
-> >>>>>>  9 files changed, 1274 insertions(+), 2 deletions(-)
-> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-crtc.c
-> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-kms.c
-> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-kms.h
-> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-plane.c
-> >>>>>>
+Hello dri maintainers/developers,
 
-> >>>>>
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static const struct component_master_ops dc_drm_ops = {
-> >>>>>> +  .bind = dc_drm_bind,
-> >>>>>> +  .unbind = dc_drm_unbind,
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static int dc_probe(struct platform_device *pdev)
-> >>>>>> +{
-> >>>>>> +  struct component_match *match = NULL;
-> >>>>>> +  struct dc_priv *priv;
-> >>>>>> +  int ret;
-> >>>>>> +
-> >>>>>> +  priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-> >>>>>> +  if (!priv)
-> >>>>>> +          return -ENOMEM;
-> >>>>>> +
-> >>>>>> +  priv->clk_cfg = devm_clk_get(&pdev->dev, NULL);
-> >>>>>> +  if (IS_ERR(priv->clk_cfg))
-> >>>>>> +          return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk_cfg),
-> >>>>>> +                               "failed to get cfg clock\n");
-> >>>>>> +
-> >>>>>> +  dev_set_drvdata(&pdev->dev, priv);
-> >>>>>> +
-> >>>>>> +  ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> >>>>>> +  if (ret)
-> >>>>>> +          return ret;
-> >>>>>> +
-> >>>>>> +  ret = devm_pm_runtime_enable(&pdev->dev);
-> >>>>>> +  if (ret)
-> >>>>>> +          return ret;
-> >>>>>> +
-> >>>>>> +  ret = devm_of_platform_populate(&pdev->dev);
-> >>>>>> +  if (ret)
-> >>>>>> +          return ret;
-> >>>>>> +
-> >>>>>> +  dc_add_components(&pdev->dev, &match);
-> >>>>>> +
-> >>>>>> +  ret = component_master_add_with_match(&pdev->dev, &dc_drm_ops, match);
-> >>>>>> +  if (ret)
-> >>>>>> +          return dev_err_probe(&pdev->dev, ret,
-> >>>>>> +                               "failed to add component master\n");
-> >>>>>> +
-> >>>>>> +  return 0;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static void dc_remove(struct platform_device *pdev)
-> >>>>>> +{
-> >>>>>> +  component_master_del(&pdev->dev, &dc_drm_ops);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static int dc_runtime_suspend(struct device *dev)
-> >>>>>> +{
-> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
-> >>>>>> +
-> >>>>>> +  clk_disable_unprepare(priv->clk_cfg);
-> >>>>>> +
-> >>>>>> +  return 0;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static int dc_runtime_resume(struct device *dev)
-> >>>>>> +{
-> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
-> >>>>>> +  int ret;
-> >>>>>> +
-> >>>>>> +  ret = clk_prepare_enable(priv->clk_cfg);
-> >>>>>> +  if (ret)
-> >>>>>> +          dev_err(dev, "failed to enable cfg clock: %d\n", ret);
-> >>>>>> +
-> >>>>>> +  return ret;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static int dc_suspend(struct device *dev)
-> >>>>>> +{
-> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
-> >>>>>> +
-> >>>>>> +  return drm_mode_config_helper_suspend(priv->drm);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static int dc_resume(struct device *dev)
-> >>>>>> +{
-> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
-> >>>>>> +
-> >>>>>> +  return drm_mode_config_helper_resume(priv->drm);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static void dc_shutdown(struct platform_device *pdev)
-> >>>>>> +{
-> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(&pdev->dev);
-> >>>>>> +
-> >>>>>> +  drm_atomic_helper_shutdown(priv->drm);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +static const struct dev_pm_ops dc_pm_ops = {
-> >>>>>> +  RUNTIME_PM_OPS(dc_runtime_suspend, dc_runtime_resume, NULL)
-> >>>>>> +  SYSTEM_SLEEP_PM_OPS(dc_suspend, dc_resume)
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static const struct of_device_id dc_dt_ids[] = {
-> >>>>>> +  { .compatible = "fsl,imx8qxp-dc", },
-> >>>>>> +  { /* sentinel */ }
-> >>>>>> +};
-> >>>>>> +MODULE_DEVICE_TABLE(of, dc_dt_ids);
-> >>>>>> +
-> >>>>>> +static struct platform_driver dc_driver = {
-> >>>>>> +  .probe = dc_probe,
-> >>>>>> +  .remove = dc_remove,
-> >>>>>> +  .shutdown = dc_shutdown,
-> >>>>>> +  .driver = {
-> >>>>>> +          .name = "imx8-dc",
-> >>>>>> +          .of_match_table = dc_dt_ids,
-> >>>>>> +          .pm = pm_sleep_ptr(&dc_pm_ops),
-> >>>>>> +  },
-> >>>>>> +};
-> >>>>>> +
-> >>>>>>  static struct platform_driver * const dc_drivers[] = {
-> >>>>>>    &dc_cf_driver,
-> >>>>>>    &dc_de_driver,
-> >>>>>> @@ -19,6 +262,7 @@ static struct platform_driver * const dc_drivers[] = {
-> >>>>>>    &dc_lb_driver,
-> >>>>>>    &dc_pe_driver,
-> >>>>>>    &dc_tc_driver,
-> >>>>>> +  &dc_driver,
-> >>>>>>  };
-> >>>>>>
-> >>>>>>  static int __init dc_drm_init(void)
-> >>>>>> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.h b/drivers/gpu/drm/imx/dc/dc-drv.h
-> >>>>>> index 3b11f4862c6c..39a771a13933 100644
-> >>>>>> --- a/drivers/gpu/drm/imx/dc/dc-drv.h
-> >>>>>> +++ b/drivers/gpu/drm/imx/dc/dc-drv.h
-> >>>>>> @@ -6,19 +6,38 @@
-> >>>>>>  #ifndef __DC_DRV_H__
-> >>>>>>  #define __DC_DRV_H__
-> >>>>>>
-> >>>>>> +#include <linux/container_of.h>
-> >>>>>>  #include <linux/platform_device.h>
-> >>>>>>
-> >>>>>>  #include <drm/drm_device.h>
-> >>>>>> +#include <drm/drm_encoder.h>
-> >>>>>>
-> >>>>>>  #include "dc-de.h"
-> >>>>>> +#include "dc-kms.h"
-> >>>>>>  #include "dc-pe.h"
-> >>>>>>
-> >>>>>>  struct dc_drm_device {
-> >>>>>>    struct drm_device base;
-> >>>>>> +  struct dc_crtc dc_crtc[DC_DISPLAYS];
-> >>>>>> +  struct dc_plane dc_primary[DC_DISPLAYS];
-> >>>>>> +  struct drm_encoder encoder[DC_DISPLAYS];
-> >>>>>>    struct dc_de *de[DC_DISPLAYS];
-> >>>>>>    struct dc_pe *pe;
-> >>>>>>  };
-> >>>>>>
-> >>>>>> +static inline struct dc_drm_device *to_dc_drm_device(struct drm_device *drm)
-> >>>>>> +{
-> >>>>>> +  return container_of(drm, struct dc_drm_device, base);
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +int dc_crtc_init(struct dc_drm_device *dc_drm, int crtc_index);
-> >>>>>> +int dc_crtc_post_init(struct dc_drm_device *dc_drm, int crtc_index);
-> >>>>>> +
-> >>>>>> +int dc_kms_init(struct dc_drm_device *dc_drm);
-> >>>>>> +void dc_kms_uninit(struct dc_drm_device *dc_drm);
-> >>>>>> +
-> >>>>>> +int dc_plane_init(struct dc_drm_device *dc_drm, struct dc_plane *dc_plane);
-> >>>>>> +
-> >>>>>>  extern struct platform_driver dc_cf_driver;
-> >>>>>>  extern struct platform_driver dc_ed_driver;
-> >>>>>>  extern struct platform_driver dc_de_driver;
-> >>>>>> diff --git a/drivers/gpu/drm/imx/dc/dc-kms.c b/drivers/gpu/drm/imx/dc/dc-kms.c
-> >>>>>> new file mode 100644
-> >>>>>> index 000000000000..2b18aa37a4a8
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/drivers/gpu/drm/imx/dc/dc-kms.c
-> >>>>>> @@ -0,0 +1,143 @@
-> >>>>>> +// SPDX-License-Identifier: GPL-2.0+
-> >>>>>> +/*
-> >>>>>> + * Copyright 2024 NXP
-> >>>>>> + */
-> >>>>>> +
-> >>>>>> +#include <linux/of.h>
-> >>>>>> +#include <linux/of_graph.h>
-> >>>>>> +
-> >>>>>> +#include <drm/drm_atomic_helper.h>
-> >>>>>> +#include <drm/drm_bridge.h>
-> >>>>>> +#include <drm/drm_bridge_connector.h>
-> >>>>>> +#include <drm/drm_connector.h>
-> >>>>>> +#include <drm/drm_crtc.h>
-> >>>>>> +#include <drm/drm_device.h>
-> >>>>>> +#include <drm/drm_encoder.h>
-> >>>>>> +#include <drm/drm_gem_framebuffer_helper.h>
-> >>>>>> +#include <drm/drm_mode_config.h>
-> >>>>>> +#include <drm/drm_print.h>
-> >>>>>> +#include <drm/drm_probe_helper.h>
-> >>>>>> +#include <drm/drm_simple_kms_helper.h>
-> >>>>>> +#include <drm/drm_vblank.h>
-> >>>>>> +
-> >>>>>> +#include "dc-de.h"
-> >>>>>> +#include "dc-drv.h"
-> >>>>>> +#include "dc-kms.h"
-> >>>>>> +
-> >>>>>> +static const struct drm_mode_config_funcs dc_drm_mode_config_funcs = {
-> >>>>>> +  .fb_create = drm_gem_fb_create,
-> >>>>>> +  .atomic_check = drm_atomic_helper_check,
-> >>>>>> +  .atomic_commit = drm_atomic_helper_commit,
-> >>>>>> +};
-> >>>>>> +
-> >>>>>> +static int dc_kms_init_encoder_per_crtc(struct dc_drm_device *dc_drm,
-> >>>>>> +                                  int crtc_index)
-> >>>>>> +{
-> >>>>>> +  struct dc_crtc *dc_crtc = &dc_drm->dc_crtc[crtc_index];
-> >>>>>> +  struct drm_device *drm = &dc_drm->base;
-> >>>>>> +  struct drm_crtc *crtc = &dc_crtc->base;
-> >>>>>> +  struct drm_connector *connector;
-> >>>>>> +  struct device *dev = drm->dev;
-> >>>>>> +  struct drm_encoder *encoder;
-> >>>>>> +  struct drm_bridge *bridge;
-> >>>>>> +  int ret;
-> >>>>>> +
-> >>>>>> +  bridge = devm_drm_of_get_bridge(dev, dc_crtc->de->tc->dev->of_node,
-> >>>>>> +                                  0, 0);
-> >>>>>> +  if (IS_ERR(bridge)) {
-> >>>>>> +          ret = PTR_ERR(bridge);
-> >>>>>> +          if (ret == -ENODEV)
-> >>>>>> +                  return 0;
-> >>>>>> +
-> >>>>>> +          return dev_err_probe(dev, ret,
-> >>>>>> +                               "failed to find bridge for CRTC%u\n",
-> >>>>>> +                               crtc->index);
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>> +  encoder = &dc_drm->encoder[crtc_index];
-> >>>>>> +  ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
-> >>>>>> +  if (ret) {
-> >>>>>> +          dev_err(dev, "failed to initialize encoder for CRTC%u: %d\n",
-> >>>>>> +                  crtc->index, ret);
-> >>>>>> +          return ret;
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>> +  encoder->possible_crtcs = drm_crtc_mask(crtc);
-> >>>>>> +
-> >>>>>> +  ret = drm_bridge_attach(encoder, bridge, NULL,
-> >>>>>> +                          DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> >>>>>> +  if (ret) {
-> >>>>>> +          dev_err(dev,
-> >>>>>> +                  "failed to attach bridge to encoder for CRTC%u: %d\n",
-> >>>>>> +                  crtc->index, ret);
-> >>>>>> +          return ret;
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>> +  connector = drm_bridge_connector_init(drm, encoder);
-> >>>>>> +  if (IS_ERR(connector)) {
-> >>>>>> +          ret = PTR_ERR(connector);
-> >>>>>> +          dev_err(dev, "failed to init bridge connector for CRTC%u: %d\n",
-> >>>>>> +                  crtc->index, ret);
-> >>>>>> +          return ret;
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>> +  ret = drm_connector_attach_encoder(connector, encoder);
-> >>>>>> +  if (ret)
-> >>>>>> +          dev_err(dev,
-> >>>>>> +                  "failed to attach encoder to connector for CRTC%u: %d\n",
-> >>>>>> +                  crtc->index, ret);
-> >>>>>> +
-> >>>>>> +  return ret;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>> +int dc_kms_init(struct dc_drm_device *dc_drm)
-> >>>>>> +{
-> >>>>>> +  struct drm_device *drm = &dc_drm->base;
-> >>>>>> +  int ret, i;
-> >>>>>> +
-> >>>>>> +  ret = drmm_mode_config_init(drm);
-> >>>>>> +  if (ret)
-> >>>>>> +          return ret;
-> >>>>>> +
-> >>>>>> +  drm->mode_config.min_width = 60;
-> >>>>>> +  drm->mode_config.min_height = 60;
-> >>>>>> +  drm->mode_config.max_width = 8192;
-> >>>>>> +  drm->mode_config.max_height = 8192;
-> >>>>>> +  drm->mode_config.funcs = &dc_drm_mode_config_funcs;
-> >>>>>> +
-> >>>>>> +  drm->vblank_disable_immediate = true;
-> >>>>>> +  drm->max_vblank_count = DC_FRAMEGEN_MAX_FRAME_INDEX;
-> >>>>>> +
-> >>>>>> +  for (i = 0; i < DC_DISPLAYS; i++) {
-> >>>>>> +          ret = dc_crtc_init(dc_drm, i);
-> >>>>>> +          if (ret)
-> >>>>>> +                  return ret;
-> >>>>>> +
-> >>>>>> +          ret = dc_kms_init_encoder_per_crtc(dc_drm, i);
-> >>>>>> +          if (ret)
-> >>>>>> +                  return ret;
-> >>>>>> +  }
-> >>>>>> +
-> >>>>>> +  for (i = 0; i < DC_DISPLAYS; i++) {
-> >>>>>> +          ret = dc_crtc_post_init(dc_drm, i);
-> >>>>>
-> >>>>> Can you use .late_register for this?
-> >>>>
-> >>>> Kerneldoc of struct drm_crtc_funcs::late_register says it's used to register
-> >>>> additional userspace interfaces like debugfs interfaces. And, it seems that
-> >>>> everyone implementing this uses it to add debugfs interfaces. So, it will
-> >>>> kind of abuse it to do CRTC post initialization.
-> >>>
-> >>> Why can't they be requested earlier then?
-> >>
-> >> If I request them earlier in dc_crtc_init(), then they cannot be freed by
-> >> devm_irq_release() when devm_drm_of_get_bridge() called by
-> >> dc_kms_init_encoder_per_crtc() returns -EPROBE_DEFER(which means failing
-> >> to find the first DRM bridge for the CRTC).  Why can't they be freed by
-> >> devm_irq_release()?  Because they are requested by the devices of ExtDsts
-> >> and Display Engines and their drivers are not removed during the probe
-> >> deferral dance.  Furthermore, -EPROBE_DEFER won't be returned after
-> >> dc_crtc_post_init() since the later called drm_vblank_init() doesn't
-> >> return -EPROBE_DEFER anyway, so it's fine to call dc_crtc_post_init() here.
-> >>
-> >> I met the irq free issue on my i.MX8qxp MEK board before, i.e., -EBUSY is
-> >> returned when requesting them again, so it's tested.
-> >
-> > A typical solution is to request all resources before binding the
-> > device as a component. Don't tell me that your interrupt controller is
-> > another component of the DRM device :-)
->
-> The IRQ handlers are _highly_ related to the CRTC driver(especially the
-> dc_crtc_dec_framecomplete_irq_handler() where vblank is handled), so maybe
-> it's more appropriate to request the IRQs and implement the IRQ handlers in
-> dc-crtc.c instead of doing them in dc-{de,ed}.c. No?
+This is a 31-day syzbot report for the dri subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/dri
 
-And CRTCs don't exist before master_bind(). Ack.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 18 issues are still open and 31 have already been fixed.
 
--- 
-With best wishes
-Dmitry
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  1064    Yes   WARNING in drm_syncobj_array_find
+                   https://syzkaller.appspot.com/bug?extid=95416f957d84e858b377
+<2>  331     Yes   WARNING in vkms_get_vblank_timestamp (2)
+                   https://syzkaller.appspot.com/bug?extid=93bd128a383695391534
+<3>  70      Yes   WARNING in drm_mode_create_lease_ioctl
+                   https://syzkaller.appspot.com/bug?extid=6754751ad05524dae739
+<4>  64      No    INFO: task hung in drm_atomic_get_plane_state
+                   https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
+<5>  47      Yes   WARNING in drm_wait_one_vblank (2)
+                   https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+<6>  19      Yes   WARNING in drm_gem_prime_fd_to_handle
+                   https://syzkaller.appspot.com/bug?extid=268d319a7bfd92f4ae01
+<7>  14      Yes   divide error in drm_mode_vrefresh
+                   https://syzkaller.appspot.com/bug?extid=622bba18029bcde672e1
+<8>  4       Yes   KASAN: slab-use-after-free Read in drm_atomic_helper_wait_for_vblanks (2)
+                   https://syzkaller.appspot.com/bug?extid=0f999d26a4fd79c3a23b
+<9>  4       Yes   WARNING in drm_prime_destroy_file_private (2)
+                   https://syzkaller.appspot.com/bug?extid=59dcc2e7283a6f5f5ba1
+<10> 4       Yes   divide error in drm_mode_debug_printmodeline
+                   https://syzkaller.appspot.com/bug?extid=2e93e6fb36e6fdc56574
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
