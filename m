@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-448019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA739F39E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:31:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBED9F39EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2CE163D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F361D1880516
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128BF207DF8;
-	Mon, 16 Dec 2024 19:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF44206263;
+	Mon, 16 Dec 2024 19:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="IUKvP1s6"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJUy2ng4"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9245E2080E9
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE8D61FF2
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377485; cv=none; b=U1CFCQiv/WWVD97dfkTnOTPLg8Uo/cO0/rGY9DxvnK3abhHnCUDV9I4ceZKOwSEveutc6eluEjCZrjf16kXCkKhGy9u2Xzfz9bO0efJWYLKMBVKqciHjK8wVYjBlzItIHFj3wcfaiiJDSI4lb/C3rypHNy1nD0UL3PGdiK2JH8w=
+	t=1734377581; cv=none; b=JzdApN29QyuYckSqdXht0EK++7NitzVc3FUPT+9EK/OnZ+dswOA2cp+vb+rHR+D3VqhVHpqUA9d94rutGTVpC/9gNNzQIyVEmMVMSQf+jo0s1/3LCUZxGapNo2POh548N3zhUSYb5kILn6T2HREIiN7/OeDWydRNP9K6H4t5G/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377485; c=relaxed/simple;
-	bh=L9zcMBKeuOwzr9ViOPL0voJBv/TYO3r7K4N5MMWcRUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLB0oIM++cGlYDENkwCfVvJN+ZtGReGmmSxw4w4SpI8JkWPKn/ll1l+IwTKqySfZdhxQ7CFg8Jud09NcR1uF9HDZjkn3HNSju5nJJ/tZBjoEcecSnZT1rOB84O1dh/1L4+m5DiJpJacQUwJMyVpBJYyu/shRqx1JnPWJLFqD+kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=IUKvP1s6; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-226.bstnma.fios.verizon.net [173.48.82.226])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4BGJV4D9026272
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 14:31:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1734377468; bh=OdCeftKWAeDpgPElvpYkXATUaHqORDkwR8a8/KHla8A=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=IUKvP1s6il45paUsNl8EBYMqtNeYEbPsEE7ArF2G3hJjA6mIiifqY8JmkjtxMV+iM
-	 kArTsELK3BA/We/M5EC1T4lJox1E509etb5w8171EtFfHmGilAtppFlrnxjdgyzRLp
-	 kdyOiwcBA81/sv12XUmaCZx1V7GtLV80RGEqzTCh2XpXBPgfP5oaUXHrnUsnyR/iIY
-	 W47fuNFAl6kOi7kgF3tjgemc+Job6wfOA2Vl0X6FGPUoRSY/F520AETOFYWL2vE8TG
-	 kXicT6ClPKiaSPw/G9Lf9b0ePR3+fBcJ6jFg6g0fioVyq5iVMjgdLPbWEsXuy1VbWs
-	 nuM1t4OpqnDgw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id B2BD915C4656; Mon, 16 Dec 2024 14:31:04 -0500 (EST)
-Date: Mon, 16 Dec 2024 14:31:04 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: David Laight <David.Laight@aculab.com>
-Cc: "'Nikolai Zhubr'" <zhubr.2@gmail.com>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>
-Subject: Re: ext4 damage suspected in between 5.15.167 - 5.15.170
-Message-ID: <20241216193104.GB78919@mit.edu>
-References: <CALQo8TpjoV8JtuYDH_nBU5i4e-iuCQ1-NORAE8uobpDD_yYBTA@mail.gmail.com>
- <20241212191603.GA2158320@mit.edu>
- <79af4b93-63a1-da4c-2793-8843c60068f5@gmail.com>
- <20241213161230.GF1265540@mit.edu>
- <ce9055d7-7301-0abe-3609-3a4e2e7b1e5e@gmail.com>
- <229641a5c7f046b282c151cb1c6b9110@AcuMS.aculab.com>
+	s=arc-20240116; t=1734377581; c=relaxed/simple;
+	bh=R3xI/58T/F1D9RFYozRoEtTKUhnDXrvAVWgWkpLHyDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZahZ9L0ynELnlx2zecUb+H3H8RZMtJFGYXsuER/d+oJbKqCVOTXmpzA5g5eTI09N9S26AV1TNJchRmcxy8ZyJKWb2CDvxV0gwtCHgH0w+/CbATWsfIkeckbDjDrY0GtMZp8ekimSnPAa32D2XTvtXW8p7rSDhOn6jM5ps3godRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJUy2ng4; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-467896541e1so34661cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:33:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734377579; x=1734982379; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rnp1pQwFAGvWyc7ujr4my+8rn/zofEngb5XuRNk7o1g=;
+        b=oJUy2ng41ULVo3RBQFqX5bQe9uVNYeRqfdFOn7Q8BDncQKCEOYXo/GRAsN/bibndw5
+         sr1PI5j1Woay+t3+/AoKzz2QPOAdBc9qapajT4M4gtqkQKQrSmSzn7PmzoNkfCMLgJbC
+         bhItx6fYpw5+rqfbcIMX37AITs6gSpUbMZc+pO+Bydppgt/1lwG0pwErGnwvezPkbSK+
+         7DhNTsQOq+CHBItIgad9ICUuAd8j3UYI2fCNADt1+cmir3met5rGAW9JaJ5/Zinq1bPG
+         Lymrhwtc57dQ8x8ZGYJUrqpdBXAg+T3gslGdFHoLX0KMIzYdOo3f30P0QuHhrVhKRwFb
+         fu9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734377579; x=1734982379;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rnp1pQwFAGvWyc7ujr4my+8rn/zofEngb5XuRNk7o1g=;
+        b=SV1+sK/lO8B2jHwBsDIesS5qaHa/vXoP50BTMR4G00lldrffmF1z2MbaKA+cYwYpoY
+         YORv3E+zOrSNEj6pMxkasWbMiaf07gbpa/oodjWEPvUuxdDCJ91JCW2ptlOMMn+5IpDY
+         y/bUIREkiBNHoHPTiZ62EXK5UILc1ICrBXKj0OZRDj05QHGFC5lQO4lqEeRXH/ZMHNJ4
+         oJ4RPW9mw0Ypss2bYt/T+NDV+LwBFlQfY7aNZvnDdl4g622oetOCk1IxyUOAmO6oZ6yQ
+         VksqDxpanVlQBKtHA0mBT7s4iAeLu4nd65qjifm5UW1SJZVx9ba4U5tODL0r56GzrIJa
+         KZdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyBRAvGfse/Vsmedp9fSK+IilAH6S8uxfrIUZAd6ZZPb6/CU9eJmguWoYk86diwtgJurxAVGBrRIMr0RY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylnXHwSc9B+v6TEKL8q9YwApdgCkBIFBHmz1HJ6l1NU0q3cjxh
+	e3L3RHqGa5njJd4W+OKGNC1b3hvA6QvQtUsFiGXlNZJp2vsFYjcAjJkbw+9A++3NroTuZ2DEKJc
+	hIEly/J9CQl18AX/GLeABY5e2XRof0aogGjk2
+X-Gm-Gg: ASbGncuVmd562kgl1kS8nf/XU6MccNrokyPl+0LzXrqWcKa/i37W7dGy6ghymIbaeAN
+	IkyjcvLJRlZCV1EZJR4OCoSkrjMSGwgS3KipwZA==
+X-Google-Smtp-Source: AGHT+IHj+HQHj2A2e+dxWaLP5rgIuLcnFIc+g+z1NFpaB1H8aqRrAsgQQMl3PJX8x8ome62Yd7ixIHA2lhsVnTFpE8Y=
+X-Received: by 2002:a05:622a:4ce:b0:466:8e4d:e981 with SMTP id
+ d75a77b69052e-468f9944400mr137521cf.3.1734377578908; Mon, 16 Dec 2024
+ 11:32:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <229641a5c7f046b282c151cb1c6b9110@AcuMS.aculab.com>
+References: <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net> <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+ <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
+ <20241212091659.GU21636@noisy.programming.kicks-ass.net> <CAJuCfpHKFZ2Q1R1Knh-LFLUYcTX6CJuEsqNM5AwxRyDUAzdcVw@mail.gmail.com>
+ <CAJuCfpGKEthmc2JkbOcfEJqsM_cBcm0cAvv0VFe-acMi169fcQ@mail.gmail.com>
+ <CAJuCfpGJcrCkzOtaZDH98_oQK01+HNxHzzsf7SS95cXVRyXUPg@mail.gmail.com>
+ <20241213095729.GC2484@noisy.programming.kicks-ass.net> <CAJuCfpHJn9jLT4zW2vPc4kv-Y3_3BTNXkn7pjFEKLVeFjxL4oQ@mail.gmail.com>
+ <20241213183546.GB12338@noisy.programming.kicks-ass.net> <CAJuCfpG5LJeM3OmkUv7MGr6tVVGFJ10j5T1TJMdhq6p6yyCz2Q@mail.gmail.com>
+In-Reply-To: <CAJuCfpG5LJeM3OmkUv7MGr6tVVGFJ10j5T1TJMdhq6p6yyCz2Q@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 16 Dec 2024 11:32:47 -0800
+Message-ID: <CAJuCfpEN=v57sSAOgjfau0dfhZSfMZ-wEcwp2SHmgcSwrYyNtw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 03:16:00PM +0000, David Laight wrote:
-> ....
-> > > The location of block allocation bitmaps never gets changed, so this
-> > > sort of thing only happens due to hardware-induced corruption.
-> > 
-> > Well, unless e.g. some modified sectors start being flushed to random
-> > wrong offsets, like in [1] above, or something similar.
+On Fri, Dec 13, 2024 at 10:37=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> On Fri, Dec 13, 2024 at 10:35=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> >
+> > On Fri, Dec 13, 2024 at 09:45:33AM -0800, Suren Baghdasaryan wrote:
+> > > On Fri, Dec 13, 2024 at 1:57=E2=80=AFAM Peter Zijlstra <peterz@infrad=
+ead.org> wrote:
+> > > >
+> > > > On Thu, Dec 12, 2024 at 08:48:52PM -0800, Suren Baghdasaryan wrote:
+> > > >
+> > > > > I'm not sure if this is the best way to deal with this circular
+> > > > > dependency. Any other ideas?
+> > > >
+> > > > Move the waiting into an out-of-line slow-path?
+> > > >
+> > > >   if (atomic_read(&vma->refcnt) !=3D 2)
+> > > >     __vma_write_start_wait(mm, vma);
+> > >
+> > > The problem is not a function but the addition of struct rcuwait into
+> >
+> > Durr, in my brain that was a struct task_struct pointer, totally forgot
+> > we had a type there. Yeah, as Willy says, move it to compiler_types.h o=
+r
+> > somesuch.
+>
+> Got it. Thank you both!
 
-Well in the bug that you referenced in [1], what was happening was
-that data could get written to the wrong offset in the file under
-certain race conditions.  This would not be the case of data block
-getting written over some metadata block like the block group
-descriptors.
-
-Sectors getting written to the wrong LBA's do happen; there's a reason
-why enterprise databases include a checksum in every 4k database
-block.  But the root cause of that generally tends to be a bit getting
-flipped in the LBA number when it is being sent from the CPU to the
-Controller to the storage device.  It's rare, but when it does happen,
-it is more often than not hardware-induced --- and again, one of those
-things where RAID won't necessarily save you.
-
-> Or cutting the power in the middle of SSD 'wear levelling'.
-> 
-> I've seen a completely trashed disk (sectors in completely the
-> wrong places) after an unexpected power cut.
-
-Sure, but that falls in the category of hardware-induced corruption.
-There have been non-power-fail certified SSD which have their flash
-translation metadata so badly corrupted that you lose everything
-(there's a reason why professional photographers use dual SDcard
-slots, and some may use duct tape to make sure the battery access door
-won't fly open if their camera gets dropped).
-
-					- Ted
+I posted the implementation of the mechanism we discussed here at:
+https://lore.kernel.org/all/20241216192419.2970941-11-surenb@google.com/
+It ended up becoming a large patchset but most patches are very small
+logical units.
+Feedback is greatly appreciated!
 
