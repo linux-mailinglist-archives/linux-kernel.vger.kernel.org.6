@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-447196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586749F2EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:03:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E1F9F2ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914F71883BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51E51885202
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE302040B0;
-	Mon, 16 Dec 2024 11:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34382204594;
+	Mon, 16 Dec 2024 11:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMj2kW0V"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q04egcso"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86812040A7;
-	Mon, 16 Dec 2024 11:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03DD203D46;
+	Mon, 16 Dec 2024 11:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734347026; cv=none; b=aT+abou3lSSEYmQ8yJQyYddXv4NIR+7xWBR9bHpSUwkgWwMr/DJVMA+kiGYeT8RnCL7YmU9lGQJjU69PZwWEER4CCTa7AhIG53UahUFRKb/PTzuPqAhxS814zMXY89kKWcZurna+1DKYLoZBW+TnrR1rmz2AZ6W7jShdUmN3jRI=
+	t=1734347060; cv=none; b=uOo4e799A/RldXh/aZWquaTyCK3dwZJfXMMVMemgvkhOmq6jgEVPMoOBmvcRk8COLmpeUpzX8DdjGRxs9cWqKX/g+UYJm2A0C4XDlAOSGNtgrjroTpAfZR0nq+9DWLvpsmJyk3yHjbqD4r/1Piz/hQozMO1ss5Pa3r24xa3hLpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734347026; c=relaxed/simple;
-	bh=k95fXMavV9mnMZ7GK+gCGNZ3iThKn/UBOA8ho8NOafo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLLNTx8NTXZPlG2apNNMDC2VGg/7phISXGhOT3CBgRLCAmSw88wqeFeHQJt3Iwb7EDKq1WDz2aUEJHO4fIkpuAap8JMfxCrDmD/JkBzMNAkgNDHgL7ntZ00kx2s3d8ZYatJJlk8u3qlgB3f8Lz3q4mLEeL4kSMwatbsr4J6lzB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMj2kW0V; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3022c61557cso41895751fa.0;
-        Mon, 16 Dec 2024 03:03:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734347020; x=1734951820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wRXGX3wdH+oqcCyvYkhqVDvUj0B3vnY2uEQUPlXVtyA=;
-        b=dMj2kW0V/4wihR0LcCGdtajRtbb+zL0HoUDtuznF/gMuegC7ZjdWLGVXQLW3/YmR0M
-         9Sdx70WDUoeOTdBBccdU8fc/ukk/alpUAZJoE2W2SUFuQxK+cn1QF4OEW+o8oc83eH5X
-         8lphL5axdjS8zq+0NKKd3h3gZle3lfxt8x4hNfUlg3TvkMrS9Ty8H6T3rSa34LCS5Vhm
-         MMYcLQCS5G1hLm4iAd3GioMGtS+QwK53KYz28x29fbTVpJycMv8mPpmrBE17VroD/5//
-         xRxFEwl6WunHzEvTGpszkeh+V7H2BuUC3yy810ZSuuexNE31ofbJMHpejLd7h2YxD/Rd
-         Kp8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734347020; x=1734951820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wRXGX3wdH+oqcCyvYkhqVDvUj0B3vnY2uEQUPlXVtyA=;
-        b=pmQaHgeQA8V+mA2f5g5OiTFaTokmbToTFLxYPbofQHzSsjScevsTl+emvTyrGVnr+e
-         5AA8+BYG0ub6ITaJ+0tcrxkY/9DwrJrM607+6HwDgwUXEpLVfkwRdTfvgZLuCjbgjk7H
-         vGpdaC4win5FI5QE8MYKfCh3iSL2MWx47bs6CFzJ8S+jXAkSpDHudoRFyjop3H0nONs1
-         lHzSBajSygbAk4wZzzknCjjBpIzf7ewCqptvgbUi2zgXgBHmVb6sS2RcJ/y4NAiLd7bM
-         sGlKF4ldTWUBw1IYJTXEDtij7ki37Yu3/cKJeHIevgkWjOfmRADSZj0Q7GHLBHvkc1FG
-         UWtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnpa19hFrhHgVhN0UckEV2FGmb3dpQWPy7zJXQfQC3cfHEoDzyFvrVK2H3czpJVHjc6XFhSUpLjvJBNmQ=@vger.kernel.org, AJvYcCVWbNrBWJJ0rRg/tWqGkOsIRIt3hoD4kPedif9Vo2tBRB3qQMrffcgy4URVqxl04w9csLba@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLZbHt5aySACqe8hWus1Bc1L/Gk2tQL4VdqmtvVn92Ya18Bo0K
-	AxGAAhkHCGPKA0ch93fwn+APkKD6UJgQZ7FIsZhK0l4FsmSO1jg+
-X-Gm-Gg: ASbGncuNg6si1SMkKg1gvlfoEVVJ2Q7zs4FOo5ulnjuR1H0h/LQy7rJXAd6l0c+Sk2x
-	2YvHDkXdxfxY1adYnr6H2YuMjNXX520cElGT6Q3XsQBxYlJ1WiyJHLAr5JEVvuY4Bb7IdLkHZ0P
-	At3ZSvFQBBnoGo1nHH3PGL3lUpMBBvCVYuGOYy3yV+jypOTI/8gAJ3dG2XDfW5vYYDce4mYrT3o
-	YHmZaZiOC7uCb/n3YEtm2eb1uLae492Qjf43gf8iLc+cXbJDo1zZkjRZTnWj1heMtJwJ0wh261K
-	bNA=
-X-Google-Smtp-Source: AGHT+IHTu+UsNTcCQATOvGryOILX7Z4tdC3dgpY+2CIY/ImvJH66I6x7vITTmDgkL2xalUPlQqnXrw==
-X-Received: by 2002:a05:6512:ea1:b0:53f:231e:6f92 with SMTP id 2adb3069b0e04-5409056162amr3764697e87.34.1734347020125;
-        Mon, 16 Dec 2024 03:03:40 -0800 (PST)
-Received: from pc636 (host-95-203-7-38.mobileonline.telia.com. [95.203.7.38])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c20c64sm821302e87.252.2024.12.16.03.03.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 03:03:39 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 16 Dec 2024 12:03:36 +0100
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2 0/5] Move kvfree_rcu() into SLAB (v2)
-Message-ID: <Z2AJCI3cIR9ETFFu@pc636>
-References: <20241212180208.274813-1-urezki@gmail.com>
- <17476947-d447-4de3-87bb-97d5f3c0497d@suse.cz>
+	s=arc-20240116; t=1734347060; c=relaxed/simple;
+	bh=Ep6BfWXQ0mWEw/aoKmfPQubW1X/Ku/4ClR9igDvt6YU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=FSGYHJNCr1iEn4Sh+Snqm5qrfJkVjYAil0233GtBZZ0zE+IWKe97Kca/dSLwi7dM/EP0eTX2WPh5Z+FeVlEvTr/GO0MXJNM40B5i4XCXydpokXrRUIAc1ZFo3zX7krnJnJVH+i74ZkLXSEdgNuaNct4phDgQofdu2t52Z2T4ar8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q04egcso; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG6YC1q023472;
+	Mon, 16 Dec 2024 11:04:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=8PiEzheEavzz
+	E7dCdu3xhWm3MuqOMS7yXV2tZZ4F48k=; b=Q04egcsouFf3HHxBR5PP7SCpDh2y
+	PZMke3f5szgq+EvEw9Dzf3Zkp4Dz9fN7xCY2fOessFB8DcEOLZchM0VLxsct4j+r
+	8K20Uux3oA4jOP/GkmOtYS94UoF/znQkC00fYrtDLVoEmDiQqO7C+59luYM4kkqF
+	J4tUKt/wvsZX36zP9REfpIzANb894QLG1GULrU5cWs4LQnln61V0voWMCJQ5jde4
+	Pv66WVzJ/fzSY1czT8aI66DMcCUrXGlffbk6bUXXhWnooe+wirrvF5250I0jBQZv
+	G8MBIcoLbff7VHJng0SYQAdO/J3pqRYrn6kGI3fHoXUGw4sXtgzxTLVMOQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jf1w8ssu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 11:04:05 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGB41HX011378;
+	Mon, 16 Dec 2024 11:04:01 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 43h33kna2y-1;
+	Mon, 16 Dec 2024 11:04:01 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BGB41Uw011356;
+	Mon, 16 Dec 2024 11:04:01 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.213.109.81])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 4BGB41Fe011353;
+	Mon, 16 Dec 2024 11:04:01 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3914174)
+	id A09315000A7; Mon, 16 Dec 2024 16:34:00 +0530 (+0530)
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+To: Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_mohsquicinc.com@qualcomm.com,
+        kernel@quicinc.com, Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Subject: [PATCH v1 0/2] ASoC: sgtl5000: Introduce "mclk-rate" Property for Device Tree Configuration
+Date: Mon, 16 Dec 2024 16:33:39 +0530
+Message-Id: <20241216110341.3707-1-quic_pkumpatl@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NwwY13TfEmrP_4csCfK-BxeN4R0LEHGd
+X-Proofpoint-ORIG-GUID: NwwY13TfEmrP_4csCfK-BxeN4R0LEHGd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 adultscore=0 bulkscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160093
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17476947-d447-4de3-87bb-97d5f3c0497d@suse.cz>
 
-On Sun, Dec 15, 2024 at 06:30:02PM +0100, Vlastimil Babka wrote:
-> On 12/12/24 19:02, Uladzislau Rezki (Sony) wrote:
-> > Hello!
-> > 
-> > This is v2. It is based on the Linux 6.13-rc2. The first version is
-> > here:
-> > 
-> > https://lore.kernel.org/linux-mm/20241210164035.3391747-4-urezki@gmail.com/T/
-> > 
-> > The difference between v1 and v2 is that, the preparation process is
-> > done in original place instead and after that there is one final move.
-> 
-> Looks good, will include in slab/for-next
-> 
-> I think patch 5 should add more explanation to the commit message - the
-> subthread started by Christoph could provide content :) Can you summarize so
-> I can amend the commit log?
-> 
-I will :)
+Introduce the "mclk-rate" property, enabling the configuration of the
+Master Clock (MCLK) via the device tree. The Codec Slave supports
+a defined range of frequencies, and users can request the desired rate
+from the Master using `clk_set_rate()`. If the property is not specified,
+the default MCLK frequency will be applied.
 
-> Also how about a followup patch moving the rcu-tiny implementation of
-> kvfree_call_rcu()?
-> 
-As, Paul already noted, it would make sense. Or just remove a tiny
-implementation.
+Prasad Kumpatla (2):
+  ASoC: dt-bindings: Add support for master clock frequency
+  ASoC: sgtl5000: Introduce "mclk-rate" Property for Device Tree
+    Configuration
 
->
-> We might also consider moving the kfree_rcu*() entry points from rcupdate.h
-> to slab.h, what do you think, is it a more logical place for them? There's
-> some risk that files that include rcupdate.h and not slab.h would break, so
-> that will need some build testing...
-> 
-I agree. I have not moved them in this series, because it requires more
-testing due to a build break. I can work on this further, so it is not
-an issue.
+ .../devicetree/bindings/sound/fsl,sgtl5000.yaml | 17 +++++++++++++----
+ sound/soc/codecs/sgtl5000.c                     | 10 ++++++++++
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-Thank you for taking this!
 
---
-Uladzislau Rezki
+base-commit: 5757b31666277e2b177b406e48878dc48d587a46
+-- 
+2.17.1
+
 
