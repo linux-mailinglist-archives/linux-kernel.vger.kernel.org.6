@@ -1,193 +1,224 @@
-Return-Path: <linux-kernel+bounces-447949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607F39F3912
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:35:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270049F391A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9494C164FDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61FDD1653B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6BF207658;
-	Mon, 16 Dec 2024 18:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556A9206F13;
+	Mon, 16 Dec 2024 18:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aF6gmnas"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3qeXkGx"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5C205E11
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160F343AA9
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734374122; cv=none; b=N512SIWkAx59PFm+5RHa8X1cf3L/9SZ/MbZpjBwi79GJ1JMF9xJm13OjAiyJE8P4jn7Pls76O0fZAR98GwhLl3PwftsPWkZzRbc58fzgW72Npg94rZCl4iqxnuStXm30zwuSxwmrGkK6LlNHxVtuSlZmwpKX902sMPk+6JD2+h4=
+	t=1734374203; cv=none; b=nYSEQm91ZCob5JlgtQdQKhqL1ICEv6nv5cnBUT55ZiuApflUDEU4iLb0105qDFiQKewGBVpIEUW/ICO+WOBIj8iBsjyv4fQ8a9QCOmE7rS2AZI4X0IRom2Gdo4Fe5N89ZUWVvGgYpK5Ry/qirzaKqcfSD97cyz6mHqqBGJnJtxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734374122; c=relaxed/simple;
-	bh=ZXCZa1S/4LkUPEXrXl7PNDO7FmMdW8jJpnyAg7E7XI4=;
+	s=arc-20240116; t=1734374203; c=relaxed/simple;
+	bh=NfW7moROXhbETJ0M9vx7mqqF3Ac5PJHua6AqrfwQw2s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnv9HbsApOa8jmEJ25rI4YaS7Ij32n1OXiHGaB+P4xFiBmS1mIEoI84UP4UHSe7nqWJPx/y2f1mHybnHvHo8cadWioE2ytT0F9o5w+4rRRctYOyOAsMquwrz4JhdH3EcCItPUkoAADGyz/OFSAiIAWpTK50yyjy9eTNh18gCUn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aF6gmnas; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71e2bc22b3bso534660a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:35:20 -0800 (PST)
+	 To:Cc:Content-Type; b=AHRzb/zVVK2ro0YhBMeeXzVYa7itS/+cAOEFGOTOQzN4IxUopqJwDXomsYpBShy0vpgrZg4s7O8cWB0AAQfETbVEUD8dTfqMlScMTnkNmtoQaSBX2K9N/l7NE5o7XQDoy6VoTpxj0Xxdld/8SxPmX0rncJu5BS/uPWrTZJIQyf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3qeXkGx; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee6d0a57acso486834a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:36:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734374119; x=1734978919; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734374201; x=1734979001; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oXEK7Vse6aakb2JheJS8WYLCYFeLAE0epOYSkGGSTqM=;
-        b=aF6gmnas2bfKkL50w1Flbs/FRIrMM3c2KStYJ9crbWGOzcs5ylqpju3bTU3rbiVvKN
-         lempJFk3/ptE4ebEutg1QNE7E6NCuQ9BDhMQOsQtNrrRMI35RlnGXQjA7sQyiT/bPSVA
-         tNVC6akMqo8aOrqgVmX/pW4RoO8nd6IwLOYic=
+        bh=GoHpaxKC0+kkzVuZNNTWmHCNqinn+c7Ii7MrNklMZsg=;
+        b=S3qeXkGxkKCq809dN8EKe8kBsS1Zs8Ip8x6s7ZcSYMKfSvkaDEkoH+tcM3H3+ajwfr
+         7ehQCHe9oeu9GC7wrJgYJDEtot34nPcEq7SVJ4e9Y2iaVYZ9QxDOqDOw0lj/0Fq1jFx4
+         ZcIlM1ofiFzuE95+EEzgYItoXkPuVxdGrDS40ruv3afw3Lsq5TAPwNvBrPaQX1J+yGwh
+         6iClpHCqEdotd7U23f97d83RoxPkmSTmLj+RJtrtTbWzyfe230KeX+WRDK9Z1KbnrXw+
+         E+F2AcHGPPL+B1XBGogKrHGu6lpFDNUvyW148yfAmCFQ4qcprdoaoKn6uLLeGeNTiGnS
+         2IrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734374119; x=1734978919;
+        d=1e100.net; s=20230601; t=1734374201; x=1734979001;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oXEK7Vse6aakb2JheJS8WYLCYFeLAE0epOYSkGGSTqM=;
-        b=i5RZfl9kuU6VLatH3QvxoeM9J6y7be0S1mRu4lQ8K6Mn7gA3eLxIEzHWL512d4orPU
-         eeGk3tuEq67LWISBD+GqduDiZDjntsd50aXuf2+WE3FlhQC+aK5zo4id/D2lX/eAcFxl
-         uuQRCxz8ZeW5pom8bgBTVbZGGxxnuFwynhKBjI5f8lcuohY+q1xMF/ZbzUuPqudC3I1g
-         V+cZeugfWUF6J9s+hwfeQaIgH38h+HFiKyhndqYtD1J679QUBQlQELXHucpFux1oClzj
-         efNgXVlAQAzIkP3HcxKx2NBsQf2m9M6rRz2rXlZ4ezcFHrfFstyZUDRjsz48lhdRRPiT
-         DhBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXCmutT5rVgZdjjr1T3eCoVGOE9dOCaMEJnavZ5E/e8jrHH/hfE+YtE3YR2pARUaz7dYrI4svIXl1+rf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1IcDQq8w7CYBZI2fn5b/S7i3i30iz9ij8l1X3jOiaeSCauzCF
-	hGNSnMiFcVEpphtF9CsdT8zNZymvWF/kho4s8Rk+c079qdOAzU1IkyXSLBi05mJq0PiAvQNuuxt
-	22zw19lSox29gYXMZu+GvG/fLFSM+bfC7BR7K
-X-Gm-Gg: ASbGncsTZzxx2N9Jlylk53pBBQqsMLUbthRFtNQmoWiwxl2Ouo8hbJ+Lr1R+Ul5bxD/
-	0fDctPYikj3SNjAeRdxbQnKiFfmycnTV8FlYHMVvlKGRg+oIE6XARV1WJ8pAr0E6bBQ==
-X-Google-Smtp-Source: AGHT+IExY3RjjFLn3tPMx9+giIoAqAfP5Lu05qFPLELxlUn5L2uO9fAM5yo6LSyh1i1i6mjZIwzEf4LGOzkSZN571NU=
-X-Received: by 2002:a05:6870:9688:b0:291:cb6:f3cd with SMTP id
- 586e51a60fabf-2a3ac77e492mr2908435fac.8.1734374119592; Mon, 16 Dec 2024
- 10:35:19 -0800 (PST)
+        bh=GoHpaxKC0+kkzVuZNNTWmHCNqinn+c7Ii7MrNklMZsg=;
+        b=nxf8mYz0oVT1XtDkJQEJXRwVzCu2aMOQMBZdS4BjSSfwBX4u6FdUCBOXf9X1BDKgXB
+         +1qHt/d3QM6hqbikMY6yBMeB9sS7A5eIVuHEAYYJmQXqMA+te9v9OAI3JLHMb5iGWKyP
+         I4WKqzusFM8moMtcxwO2nrmW0oCsXkFpzuTTeEEmu6IAcL3QW3CYLxzsaHuvI6QlI49g
+         +rnURHbl+JMzJZv/B+P9UbJn+NYHA+gIzRUevCEl2Tovfojh6PLBr/vcg8k52N2fdQFg
+         EYgDkYBE0pUOXEDNMoB5CnTK/TqaeSWi32T7j+3/ueFICZ2jrql10UGBXiwjixBkHtqe
+         oFNQ==
+X-Gm-Message-State: AOJu0YwE8RrCwQRX+6m047VI6Co6W5k+msYgC1pBejTqi8gU6jEobtzY
+	v/Rtz71fWpF93oK6YG6Sd3pJWfpuKZlMhfBoD2ps6ORkdmq/zwdm2XHtwEe+k1cqRj0cwJFcRiM
+	bPuaWKUm+dYPhu5JhB0GYcrij/co=
+X-Gm-Gg: ASbGncujc4na2K0T+Bn/huRRuYBiOQ8+dIw3lVmtU3DJ2PIYLc4fp453qwexZsTqz9w
+	nJocsNl8GksBPN2XtWdoN7F1dUzGoBFtlUR9uPQ==
+X-Google-Smtp-Source: AGHT+IFPLgnnULim77ZTS270N6gKqb4/FH6nXr2RxedlEA0Rm8kILkobAryUZlvNCyspmPnYuTcIgcSTLnIq+n/hKJU=
+X-Received: by 2002:a17:90b:4d08:b0:2ee:f64b:9aab with SMTP id
+ 98e67ed59e1d1-2f2901a8b82mr7359185a91.6.1734374201367; Mon, 16 Dec 2024
+ 10:36:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125202021.3684919-1-jeffxu@google.com> <20241125202021.3684919-2-jeffxu@google.com>
- <CANaxB-wvHERPBu+17b5GP3pVv7pC8J0dkK9MUG1tSir4PQx=ZQ@mail.gmail.com>
- <CABi2SkXgZfTvyPX_rcb8KTKyeHxpZrL9_2Wr+vJ1q3K3_1rwoQ@mail.gmail.com> <CANaxB-z57KoCNawGEkmpoiHV_iCaYr8YiOc2zQiTHM4fso0ABQ@mail.gmail.com>
-In-Reply-To: <CANaxB-z57KoCNawGEkmpoiHV_iCaYr8YiOc2zQiTHM4fso0ABQ@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 16 Dec 2024 10:35:06 -0800
-Message-ID: <CABi2SkXYjq0ACYkFf3e35DoOJP6d3TEpLEU_RCTmNLHQ_YJq6g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] exec: seal system mappings
-To: Andrei Vagin <avagin@gmail.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, 
-	ojeda@kernel.org, adobriyan@gmail.com, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, 
-	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, hch@lst.de, 
-	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com, gerg@kernel.org, 
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	Liam.Howlett@oracle.com, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, 
-	Dmitry Safonov <0x7f454c46@gmail.com>, Mike Rapoport <mike.rapoport@gmail.com>, 
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, Andrei Vagin <avagin@google.com>
+References: <CAK2bqVJXY2CkR4Od2bj8wnYYfzZCpFYhaiPAcwpw0Uk7zXUVkg@mail.gmail.com>
+In-Reply-To: <CAK2bqVJXY2CkR4Od2bj8wnYYfzZCpFYhaiPAcwpw0Uk7zXUVkg@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 16 Dec 2024 13:36:29 -0500
+Message-ID: <CADnq5_OYjnFhVnQmVLQ7ucSYLm4NZ_wmRnLSOfJQzY33VQZ+EA@mail.gmail.com>
+Subject: Re: [WARNING][AMDGPU] WQ_MEM_RECLAIM with Radeon RX 6600
+To: Chris Rankin <rankincj@gmail.com>, Christian Koenig <christian.koenig@amd.com>, 
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Matthew Brost <matthew.brost@intel.com>, 
+	Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, amd-gfx@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrei
-
-On Thu, Dec 12, 2024 at 10:33=E2=80=AFPM Andrei Vagin <avagin@gmail.com> wr=
-ote:
+On Fri, Dec 13, 2024 at 7:53=E2=80=AFAM Chris Rankin <rankincj@gmail.com> w=
+rote:
 >
-> On Wed, Dec 11, 2024 at 2:47=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wro=
-te:
-> >
-> > Hi Andrei
-> >
-> > Thanks for your email.
-> > I was hoping to get some feedback from CRIU devs, and happy to see you
-> > reaching out..
-> >
-> ...
-> > I have been thinking of other alternatives, but those would require
-> > more understanding on CRIU use cases.
-> > One of my questions is: Would CRIU target an individual process? or
-> > entire systems?
+> Hi,
 >
-> It targets individual processes that have been forked from the main
-> CRIU process.
+> I've just noticed this warning in my dmesg log. This is a vanilla
+> 6.12.4 kernel, with a Radeon RX6600 graphics card.
+
+That was caused by this commit:
+
+commit 746ae46c11137ba21f0c0c68f082a9d8c1222c78
+Author: Matthew Brost <matthew.brost@intel.com>
+Date:   Wed Oct 23 16:59:17 2024 -0700
+
+    drm/sched: Mark scheduler work queues with WQ_MEM_RECLAIM
+
+    drm_gpu_scheduler.submit_wq is used to submit jobs, jobs are in the pat=
+h
+    of dma-fences, and dma-fences are in the path of reclaim. Mark schedule=
+r
+    work queue with WQ_MEM_RECLAIM to ensure forward progress during
+    reclaim; without WQ_MEM_RECLAIM, work queues cannot make forward
+    progress during reclaim.
+
+However, after further discussion, I think the warning is actually a
+false positive.  See this discussion:
+https://lists.freedesktop.org/archives/amd-gfx/2024-November/117349.html
+
+From the thread:
+"Question is - does check_flush_dependency() need to skip the
+!WQ_MEM_RECLAIM flushing WQ_MEM_RECLAIM warning *if* the work is already
+running *and* it was called from cancel_delayed_work_sync()?"
+
+Thanks,
+
+Alex
+
+
 >
-> >
-> > If it is an individual process, we could use prctl to opt-in/opt-out
-> > certain processes. There could be two alternatives.
-> > 1> Opt-in solution: process must set prctl.seal_criu_mapping, this
-> > needs to be set before execve() because sealing is applied at execve()
-> > call.
-> > 2> opt-out solution: The system will by default seal all of the system
-> > mappings, but individual processes can opt-out by setting
-> > prctl.not_seal_criu_mappings. This also needs to be set before
-> > execve() call.
+> Cheers,
+> Chris
 >
-> I like the idea and I think the opt-out solution should work for CRIU.
-> CRIU will be able to call this prctl and re-execute itself.
->
-Great! Let's iterate on the opt-out solution then.
-
-> Let me give you a bit of context on how CRIU works. When CRIU restores
-> processes, it recreates a process tree by forking itself. Afterwards, it
-> restores all mappings in each process but doesn't put them to proper
-> addresses. After that, each process unmaps CRIU mappings from its address
-> space and remaps its restored mappings to the proper addresses. So CRIU s=
-hould
-> be able to move system mappings and seal them if they have been sealed be=
-fore
-> dump.
-Thanks for the context.
-
-> BTW, It isn't just about CRIU. gVisor and maybe some other sandbox soluti=
-ons
-> will be affected by this change too. gVisor uses stub-processes to repres=
-ent
-> guest address spaces. In a stub process, it unmaps all system mappings.
->
-> >
-> > For both cases, we will want to identify what type of mapping CRIU
-> > cares about, i.e. maybe CRIU doesn't care about uprobe and vsyscall ?
-> > and only care about vdso/vvar/sigpage ?
->
-> As for now, it handles only vdso/vvar/sigpage mappings. It doesn't care
-> about vsyscall because it is always mapped to the fixed address.
->
-Given this understanding that CRIU intends to replace the current
-process's vdso/vvar with that of the restored process, and therefore
-doesn't want the parent CRIU process to seal the vdso/vvar, a prctl
-opt-out  for vdso/vvar is reasonable path going forward.
-
-The sigpage mapping also should be included in this opt-out, for the
-same reason as vdso/vvar,  it is created by the
-arch_setup_additional_pages() call during execve().
-
-However, the uprobe mapping shouldn't be included by this opt-out, as
-it is not created by arch_setup_additional_pages() during execveat().
-CRIU should simply restore it from the restored process, if present.
-
-vsyscall, which is created when the system boots, and maps to a fixed
-virtual address and page, shouldn't be included by this opt-out.
-
-So I'm proposing to opt-out vdso/vvar/sigpage with a new prctl:
-disable_mseal_criu_system_mappings =3D true/false
-What do you think ?
-
-> gVisor should be able to unmap all system mappings from a process
-> address space.
->
-Do you think this opt-out solution will work for gVisor too ?
-
-Thanks
--Jeff
-
-
-> Thanks,
-> Andrei
+> [ 4624.741148] ------------[ cut here ]------------
+> [ 4624.744474] workqueue: WQ_MEM_RECLAIM sdma0:drm_sched_run_job_work
+> [gpu_sched] is flushing !WQ_MEM_RECLAIM
+> events:amdgpu_device_delay_enable_gfx_off [amdgpu]
+> [ 4624.744942] WARNING: CPU: 2 PID: 9069 at kernel/workqueue.c:3704
+> check_flush_dependency+0xbe/0xd0
+> [ 4624.765285] Modules linked in: snd_seq_dummy rpcrdma rdma_cm iw_cm
+> ib_cm ib_core af_packet nf_conntrack_netbios_ns nf_conntrack_broadcast
+> nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet
+> nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat
+> ebtable_nat ebtable_broute ip6table_nat ip6table_mangle ip6table_raw
+> ip6table_security iptable_nat iptable_mangle iptable_raw
+> iptable_security nf_nat_ftp nf_conntrack_ftp nf_nat nf_conntrack
+> nf_defrag_ipv6 nf_defrag_ipv4 nf_tables libcrc32c ebtable_filter
+> ebtables ip6table_filter ip6_tables iptable_filter ip_tables x_tables
+> bnep it87 hwmon_vid binfmt_misc snd_hda_codec_realtek
+> snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_scodec_component
+> snd_hda_intel uvcvideo btusb uvc videobuf2_vmalloc btintel
+> videobuf2_memops videobuf2_v4l2 videodev btbcm snd_usb_audio bluetooth
+> snd_intel_dspcfg intel_powerclamp snd_hda_codec videobuf2_common
+> coretemp snd_virtuoso snd_usbmidi_lib snd_oxygen_lib snd_ctl_led
+> kvm_intel input_leds mc snd_hwdep led_class snd_mpu401_uart
+> [ 4624.765400]  snd_hda_core joydev snd_rawmidi rfkill kvm snd_seq
+> snd_seq_device gpio_ich snd_pcm pktcdvd iTCO_wdt snd_hrtimer r8169
+> snd_timer intel_cstate realtek snd mdio_devres intel_uncore libphy
+> i2c_i801 soundcore lpc_ich tiny_power_button mxm_wmi i7core_edac
+> acpi_cpufreq i2c_smbus pcspkr button nfsd auth_rpcgss nfs_acl lockd
+> grace dm_mod fuse sunrpc loop configfs dax nfnetlink zram zsmalloc
+> ext4 crc32c_generic mbcache jbd2 amdgpu video amdxcp i2c_algo_bit
+> mfd_core drm_ttm_helper ttm drm_exec gpu_sched hid_microsoft
+> drm_suballoc_helper drm_buddy drm_display_helper drm_kms_helper usbhid
+> sr_mod sd_mod cdrom drm pata_jmicron ahci libahci uhci_hcd xhci_pci
+> libata ehci_pci ehci_hcd xhci_hcd scsi_mod firewire_ohci psmouse
+> firewire_core usbcore crc32c_intel sha512_ssse3 sha256_ssse3 bsg
+> serio_raw sha1_ssse3 drm_panel_orientation_quirks scsi_common crc16
+> usb_common crc_itu_t wmi msr gf128mul crypto_simd cryptd
+> [ 4624.932496] CPU: 2 UID: 0 PID: 9069 Comm: kworker/u32:3 Tainted: G
+>         I        6.12.4 #1
+> [ 4624.939803] Tainted: [I]=3DFIRMWARE_WORKAROUND
+> [ 4624.942773] Hardware name: Gigabyte Technology Co., Ltd.
+> EX58-UD3R/EX58-UD3R, BIOS FB  05/04/2009
+> [ 4624.950340] Workqueue: sdma0 drm_sched_run_job_work [gpu_sched]
+> [ 4624.954967] RIP: 0010:check_flush_dependency+0xbe/0xd0
+> [ 4624.958806] Code: 75 2a 48 8b 55 18 48 8d 8b c8 00 00 00 4d 89 e0
+> 48 81 c6 c8 00 00 00 48 c7 c7 1b d6 e9 81 c6 05 a3 5f 56 01 01 e8 32
+> 30 fe ff <0f> 0b 5b 5d 41 5c c3 cc cc cc cc 0f 1f 80 00 00 00 00 90 90
+> 90 90
+> [ 4624.976253] RSP: 0018:ffffc9000bec7c88 EFLAGS: 00010086
+> [ 4624.980177] RAX: 0000000000000000 RBX: ffff888100118000 RCX: 000000000=
+0000027
+> [ 4624.986003] RDX: 0000000000000003 RSI: ffffffff81eab2b9 RDI: 00000000f=
+fffffff
+> [ 4624.991835] RBP: ffff888155daa900 R08: 0000000000000000 R09: 7067646d6=
+1006600
+> [ 4624.997668] R10: 0000000000000091 R11: fefefefefefefeff R12: ffffffffa=
+05ec880
+> [ 4625.003501] R13: 0000000000000001 R14: ffff88810011c600 R15: ffff88816=
+3600000
+> [ 4625.009334] FS:  0000000000000000(0000) GS:ffff888343c80000(0000)
+> knlGS:0000000000000000
+> [ 4625.016118] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 4625.020555] CR2: 0000000099837000 CR3: 0000000144e4c000 CR4: 000000000=
+00026f0
+> [ 4625.026381] Call Trace:
+> [ 4625.027525]  <TASK>
+> [ 4625.028323]  ? __warn+0x90/0x120
+> [ 4625.030255]  ? report_bug+0xe2/0x160
+> [ 4625.032532]  ? check_flush_dependency+0xbe/0xd0
+> [ 4625.035768]  ? handle_bug+0x53/0x80
+> [ 4625.037959]  ? exc_invalid_op+0x13/0x60
+> [ 4625.040499]  ? asm_exc_invalid_op+0x16/0x20
+> [ 4625.043384]  ? __pfx_amdgpu_device_delay_enable_gfx_off+0x10/0x10 [amd=
+gpu]
+> [ 4625.049366]  ? check_flush_dependency+0xbe/0xd0
+> [ 4625.052598]  ? check_flush_dependency+0xbe/0xd0
+> [ 4625.055830]  __flush_work+0xb2/0x1f0
+> [ 4625.058109]  ? work_grab_pending+0x3f/0x120
+> [ 4625.060996]  ? set_work_pool_and_clear_pending+0x14/0x20
+> [ 4625.065008]  ? __cancel_work+0x89/0xc0
+> [ 4625.067460]  __cancel_work_sync+0x4a/0x70
+> [ 4625.070173]  amdgpu_gfx_off_ctrl+0xa6/0x100 [amdgpu]
+> [ 4625.074231]  amdgpu_ring_alloc+0x52/0x60 [amdgpu]
+> [ 4625.077974]  amdgpu_ib_schedule+0x155/0x640 [amdgpu]
+> [ 4625.081988]  amdgpu_job_run+0xda/0x140 [amdgpu]
+> [ 4625.085663]  drm_sched_run_job_work+0x246/0x310 [gpu_sched]
+> [ 4625.089935]  process_scheduled_works+0x19c/0x2c0
+> [ 4625.093252]  worker_thread+0x13b/0x1c0
+> [ 4625.095706]  ? __pfx_worker_thread+0x10/0x10
+> [ 4625.098678]  kthread+0xef/0x100
+> [ 4625.100523]  ? __pfx_kthread+0x10/0x10
+> [ 4625.102976]  ret_from_fork+0x24/0x40
+> [ 4625.105256]  ? __pfx_kthread+0x10/0x10
+> [ 4625.107709]  ret_from_fork_asm+0x1a/0x30
+> [ 4625.110338]  </TASK>
+> [ 4625.111228] ---[ end trace 0000000000000000 ]---
 
