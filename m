@@ -1,151 +1,177 @@
-Return-Path: <linux-kernel+bounces-448176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3808F9F3C75
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:15:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD66D9F3C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A28E1654E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:15:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91409188284C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075D71D47A2;
-	Mon, 16 Dec 2024 21:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5F1D4600;
+	Mon, 16 Dec 2024 21:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q2qzFn5g"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NfAQT7RC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F308D1D0F61;
-	Mon, 16 Dec 2024 21:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C4139CEF;
+	Mon, 16 Dec 2024 21:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383513; cv=none; b=o8LX41tix5y0H8uXVvoSD9WVFNIvHnpiraARyDMG/yxdZHyqNRP4FRmNMHMnjavX/q6t+nezi1u1GI/lRETr5o5/0JIv93gMECczPrfw90wQ9LZfQNz7XU4Z7azyWuR6PSDSeTn6y2288oS+0T909/H0AmHwoW5i7Q2eoKC0aPY=
+	t=1734383768; cv=none; b=nrbVNk7Sm85ikU52572PaXYgtxaLqBuo33PvVVNQu47C/kTazE1YsNc7whob2FSTj0bcEKc9tihRtIX0OVgh9Q7uzloIga2hf2VMix096aCBxAmj/dkB9cAZDxo+L/QXggTvgkfdnohK8Q7GBhfeGh3gDVV1M236neVEE8ImFUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383513; c=relaxed/simple;
-	bh=RhN2PrCBrj10EEwCH8X4NwaJS0QujL1dEwADSZ8UAFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qPMYo0bCw3rAdUkZ0P+/8vOLgUArAV1BrYfRBru4O/Ow2G5IR/XJPo2ihu5GbyLYdtgWDP0xW0r6ydu/EvSGv/sWRxk8QsDpzrA+1DJqEQDyT5v0JD+u30CxtuIzVTugN6BVjDZ6uVl8dCxzogqg9cll8zgytD8r8d7JOUZIURs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q2qzFn5g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKM9xi030386;
-	Mon, 16 Dec 2024 21:11:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FNjGgAqGXlNmhe5qrVq4WK9DY381IBX6xhcAAUzOYPY=; b=Q2qzFn5g49K1pYO8
-	Q0qYigwdc+tF5BAgbd/MRE+38rycj6Wx+nd8L8UxTZiYgk+vcchVGhymy3RwGrXM
-	7AaOhcrK3Ey93gHUyZq732WaJpDmtODZ9HMPBWo8b0BrgCvcKm1UNe4CU/9jz2iI
-	10nqeUCSIZqFj36Y/mq9YB0sVRGf9frh1h7P1tPgaesit8YDqirEEkBR85DOp9rh
-	mIgpmdcL5ZpXAlnX/iqdZu1X1wHmjzSCkumESe+JU1znlYv47oyfd1+KGqn0n76d
-	xDNfiZuEbGOAsS42iLOTH735jfypPZEHWSXL+MSvJQVLfVgZ+FbxC6FCfznhMm6s
-	kWm08g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61r3bu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 21:11:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGLBelK023925
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 21:11:40 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 13:11:36 -0800
-Message-ID: <d6be6564-ce24-4a27-a014-45aa9ff28d24@quicinc.com>
-Date: Mon, 16 Dec 2024 13:11:35 -0800
+	s=arc-20240116; t=1734383768; c=relaxed/simple;
+	bh=p7TYtotFYa4y5nQEwj4JJYabgdwgE9RHpPtpdDzCv0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMGpR8jgD9Oml56Fb6B3Qt90U/AlQ3u9ZmOzUnfvXbv6RSSfMAaznLmAApkw2DZbvO5lJBnIGHOkjD9kM92S3pCXPUsNqNfvQh3Lwwy6zsgFaK8dpGfSZmdrtdj8+KBhmXzHYTtbjay8hb0VFh7E6wHLSKqLXyvlhIEbMWlQEvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NfAQT7RC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wqNYOv2fOBvrraLi79AJjU9ppSyLY79/galhJe9yCkU=; b=NfAQT7RC312eJHlSA9cGJJbM6k
+	YMsJHVMYQwLfEH/fJ+uQdUatWWB2pmwhcnB+eAE3B3tKIZ5MgKTXOKwNo14ZOfnjRLxRh6HeW3SVX
+	r9oQxU9hjAXWeElN2EwabOa6s+UP3IDHJaZUJNAJLYbk5BxeheDKWBDoJ61Nkp20o0/7d8uX1syvQ
+	tQTSIbhKwrkEq8cpVtuR2nBFUwrZRrME7nIEa0eSNPImDgyJ8H43+Nq7QFe/jHNALSwcOn5hyMF9t
+	MY1MG2pe+AIFxrl2ya7eVRongwJYDCEuLudwQ2fhpowZ4Hn8w5l5wTTY0xO0sPjIuF1pkzZPCEHpc
+	9/G2u0Tw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNIQz-00000004wfB-1VYk;
+	Mon, 16 Dec 2024 21:15:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A1DCF30031E; Mon, 16 Dec 2024 22:15:20 +0100 (CET)
+Date: Mon, 16 Dec 2024 22:15:20 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v6 10/16] mm: replace vm_lock and detached flag with a
+ reference count
+Message-ID: <20241216211520.GB9803@noisy.programming.kicks-ass.net>
+References: <20241216192419.2970941-1-surenb@google.com>
+ <20241216192419.2970941-11-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] drm/msm/dpu: link DSPP_2/_3 blocks on SM8150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>,
-        Robert Foss <rfoss@kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Richard Acayan
-	<mailingradian@gmail.com>
-CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
- <20241216-dpu-fix-catalog-v1-1-15bf0807dba1@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-dpu-fix-catalog-v1-1-15bf0807dba1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: i21IZFNvATVl5g0kxaN2T_PTciKfGhC5
-X-Proofpoint-ORIG-GUID: i21IZFNvATVl5g0kxaN2T_PTciKfGhC5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 malwarescore=0 clxscore=1011 phishscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412160174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216192419.2970941-11-surenb@google.com>
 
+On Mon, Dec 16, 2024 at 11:24:13AM -0800, Suren Baghdasaryan wrote:
 
+FWIW, I find the whole VMA_STATE_{A,DE}TATCHED thing awkward. And
+perhaps s/VMA_STATE_LOCKED/VMA_LOCK_OFFSET/ ?
 
-On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
-> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
-> 
-> Fixes: 05ae91d960fd ("drm/msm/dpu: enable DSPP support on SM8[12]50")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h | 2 ++
->   1 file changed, 2 insertions(+)
-> 
+Also, perhaps:
 
-Change looks fine
+#define VMA_REF_LIMIT	(VMA_LOCK_OFFSET - 2)
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> @@ -699,10 +700,27 @@ static inline void vma_numab_state_free(struct vm_area_struct *vma) {}
+>  #ifdef CONFIG_PER_VMA_LOCK
+>  static inline void vma_lock_init(struct vm_area_struct *vma)
+>  {
+> -	init_rwsem(&vma->vm_lock.lock);
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	static struct lock_class_key lockdep_key;
+> +
+> +	lockdep_init_map(&vma->vmlock_dep_map, "vm_lock", &lockdep_key, 0);
+> +#endif
+> +	refcount_set(&vma->vm_refcnt, VMA_STATE_DETACHED);
+>  	vma->vm_lock_seq = UINT_MAX;
 
-One question below (not tied to the change but arose due to it):
+Depending on how you do the actual allocation (GFP_ZERO) you might want
+to avoid that vm_refcount store entirely.
 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> index 6ccfde82fecdb4e3612df161814b16f7af40ca5f..421afacb7248039abd9fb66bcb73b756ae0d640a 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
-> @@ -164,6 +164,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
->   		.sblk = &sdm845_lm_sblk,
->   		.lm_pair = LM_3,
->   		.pingpong = PINGPONG_2,
-> +		.dspp = DSPP_2,
->   	}, {
->   		.name = "lm_3", .id = LM_3,
->   		.base = 0x47000, .len = 0x320,
-> @@ -171,6 +172,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
->   		.sblk = &sdm845_lm_sblk,
->   		.lm_pair = LM_2,
->   		.pingpong = PINGPONG_3,
-> +		.dspp = DSPP_3,
->   	}, {
->   		.name = "lm_4", .id = LM_4,
->   		.base = 0x48000, .len = 0x320,
-> 
+Perhaps instead write: VM_WARN_ON(refcount_read(&vma->vm_refcnt));
 
-the consumer of .dspp seems to be in the RM code which is used to map 
-the DSPP to encoder_id but is there really any case where lm_id != 
-dspp_id ... I guess I am missing the context of why DSPP id needs to be 
-tracked as LMs and DSPPs go together. Let me also check this part 
-internally.
+> @@ -813,25 +849,42 @@ static inline void vma_assert_write_locked(struct vm_area_struct *vma)
+>  
+>  static inline void vma_assert_locked(struct vm_area_struct *vma)
+>  {
+> -	if (!rwsem_is_locked(&vma->vm_lock.lock))
+> +	if (refcount_read(&vma->vm_refcnt) <= VMA_STATE_ATTACHED)
+	if (is_vma_detached(vma))
+
+>  		vma_assert_write_locked(vma);
+>  }
+>  
+> -static inline void vma_mark_attached(struct vm_area_struct *vma)
+> +/*
+> + * WARNING: to avoid racing with vma_mark_attached(), should be called either
+> + * under mmap_write_lock or when the object has been isolated under
+> + * mmap_write_lock, ensuring no competing writers.
+> + */
+> +static inline bool is_vma_detached(struct vm_area_struct *vma)
+>  {
+> -	vma->detached = false;
+> +	return refcount_read(&vma->vm_refcnt) == VMA_STATE_DETACHED;
+	return !refcount_read(&vma->vm_refcnt);
+>  }
+>  
+> -static inline void vma_mark_detached(struct vm_area_struct *vma)
+> +static inline void vma_mark_attached(struct vm_area_struct *vma)
+>  {
+> -	/* When detaching vma should be write-locked */
+>  	vma_assert_write_locked(vma);
+> -	vma->detached = true;
+> +
+> +	if (is_vma_detached(vma))
+> +		refcount_set(&vma->vm_refcnt, VMA_STATE_ATTACHED);
+
+Urgh, so it would be really good to not call this at all them not 0.
+I've not tried to untangle the mess, but this is really awkward. Surely
+you don't add it to the mas multiple times either.
+
+Also:
+
+	refcount_set(&vma->vm_refcnt, 1);
+
+is so much clearer.
+
+That is, should this not live in vma_iter_store*(), right before
+mas_store_gfp() ?
+
+Also, ISTR having to set vm_lock_seq right before it?
+
+>  }
+>  
+> -static inline bool is_vma_detached(struct vm_area_struct *vma)
+> +static inline void vma_mark_detached(struct vm_area_struct *vma)
+>  {
+> -	return vma->detached;
+> +	vma_assert_write_locked(vma);
+> +
+> +	if (is_vma_detached(vma))
+> +		return;
+
+Again, this just reads like confusion :/ Surely you don't have the same
+with mas_detach?
+
+> +
+> +	/* We are the only writer, so no need to use vma_refcount_put(). */
+> +	if (!refcount_dec_and_test(&vma->vm_refcnt)) {
+> +		/*
+> +		 * Reader must have temporarily raised vm_refcnt but it will
+> +		 * drop it without using the vma since vma is write-locked.
+> +		 */
+> +	}
+>  }
 
