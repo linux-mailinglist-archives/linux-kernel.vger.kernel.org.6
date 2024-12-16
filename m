@@ -1,197 +1,118 @@
-Return-Path: <linux-kernel+bounces-447282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6E99F2FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A269F2FEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054961884936
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1656188493C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16588204598;
-	Mon, 16 Dec 2024 11:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A87120459B;
+	Mon, 16 Dec 2024 11:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="pQnyzuYS"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRcbAeYx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D21204564;
-	Mon, 16 Dec 2024 11:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46B1204564;
+	Mon, 16 Dec 2024 11:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734350337; cv=none; b=HF+azFVgVPmsFyPbL0FR81bA10hYsRc5pNz15DDP13dovpOUMO6GSEOld69GB0DfAl/IheM5xJhIZ7CqqiWXOqU22b+mXuRyddYeanORm19g3WU6TWShXeo3yG/2R4iGRGVnXSqxdpocH4bFsPyPTCr8It/n0MAY89e5H/e5wUA=
+	t=1734350354; cv=none; b=G8bA7UruUoMnylT7OQ7XIzYgclEk/5lZ1G7UL/k0DhOKLPxp1ohyV3ul71+Td0+z9lbtHWJVzcuCWYMRopbYDGhDs219TBc+iJ3UecSnfcMkKoNi3oV0zzhAI4JrTusDf3Z5pdOdD96Eb2n3E22vVoXE92SzYHkSDPjx15zNhtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734350337; c=relaxed/simple;
-	bh=lm3kgClJug7qa+J0SXo8cfDLbmK5Qv+6XxvlK4603KQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=AZJGn1EDBOYldQn1lMIOR6umfGl6RtB4yWGCT/Z3YqMwJ+GmkuC2u/L9PL4Dkx2tbPOJjMkfu57qFe0zdhZ1R8y69aL2PdX2xbVRasvAVWbxITjMckTgZFYJpscIJJw34+hCJdNvRV0XVF0grWGZPYR6Hj/teZU3DjdSN8jfM0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=pQnyzuYS; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 2808C120004;
-	Mon, 16 Dec 2024 14:58:34 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 2808C120004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1734350314;
-	bh=N4EIz87hdTFuSyYktZ8RMVmUnwBSsWbB+okMih0CFqM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type:From;
-	b=pQnyzuYSX/M9GJOkTUyKebvfexTMuenJvJqRSPXkRsdmFDZqUgi3QpwYXnbSVvRpx
-	 haS5OFBOLgbvgmaCtmsQkufQBq2CeHXn0yK7TvMs6N9Szz3royzN7Jnz9jb9VcyvDA
-	 4Y1RDfXVugkpZHsvIH8mS6bxtv19fk2xsB4rB/PT5Zd7KoRDabgISmAGstjEciKLLi
-	 eogsjx92cghoqVPGZtgGDuovsus2x0HBNN5aTzA/aW9mgiczZNHLb3rA9e/HtLzlm0
-	 EkWnImCuSxL9J0GjSj2e2jFIPVB6wGH0N7FoHBP60QdGGRE20IY8PERfHRRZXC8/oM
-	 zGGDXpcsaYU1g==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 16 Dec 2024 14:58:33 +0300 (MSK)
-Message-ID: <e18ebe28-e300-f9e3-ef66-1b7811ebd447@salutedevices.com>
-Date: Mon, 16 Dec 2024 14:58:28 +0300
+	s=arc-20240116; t=1734350354; c=relaxed/simple;
+	bh=49bBP0LsMyxtlWCuKKBIlMSYx/JcUqR7Q6/yg4H6FII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qlHDGfK/P8VlIcZb25ld5HQeNMpfscPHKZDr+irIrwGwtJUaHvLSOuNUhkyyY/NjeevhcdkmXSJSP8qFmhFziPeUt1B0NOcAeHgSYYPDz1ZiAI3okasCH2RwvXujaUZoFHAFhPQDQjzliqk825RB7Y45WhSC2YRn7xXId/0ZRpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRcbAeYx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42862C4CEDE;
+	Mon, 16 Dec 2024 11:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734350353;
+	bh=49bBP0LsMyxtlWCuKKBIlMSYx/JcUqR7Q6/yg4H6FII=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NRcbAeYxKUmqogjXCkFhUbHCCoClu4iY4cxzJVE5fuB4UBVkySamTmr4w6c62sS0e
+	 ybzPntEy03/i+lCfJcIQYvSqelIeKoq90G6Lcf/FPfmDH7kBCTb54Wg4dOYi/bnzu1
+	 PwRY3L3JoZ2bU8PpxnlAa3TDqHrVpLv4lNNqY7ynnVPCkBVK8h8cXMCOoFuRyupg83
+	 ssQLKvxJFNVFlU6fnXfInv+4MutRZ/cLch3kSQ59GH0wWhWuC/YzAtskvYLCUQUhjR
+	 4b+B+zmL8y43tSarIqT4hyOgVDvN6cN3GfCLioCMgZMPine1i1j/dh/hlRTJGJUMiA
+	 xSmiGSUVVQMHQ==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3eb7ca55c3bso2165236b6e.3;
+        Mon, 16 Dec 2024 03:59:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWe79dN1lel1S5oNXEI0wq1hgpD5h9022xa8GMc44nGUnGuTt+waposkeBlq26V9ZSDTDTnbJRwqUg=@vger.kernel.org, AJvYcCX09rNp3UjcNhs5dg9i0pytnAc9unpTmUNsk/si4MbGYcjgxkSwM+QfhNL6WMXoiDhIasJqKR9w11VQN3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhXB/dw02jbUpJBTmxY6HEZOuC8pfDzqJFS3c2yZ+9UPSL/7zb
+	EKq/r61jH/Jvv4K25P2rWwP7OgR7K0FZpe+auD0b3VaoXkf5D3s2SoL5CIVIrrxSpnIpQ5p7HZK
+	0DmWV4rD8X9ywo3eomFi29GEUVoU=
+X-Google-Smtp-Source: AGHT+IGfXFgIVeFXescUdDva5biu2hL3Sx2+6RkNaAgSoRSLIWN4fzL/ROszPcP8d2SET4DptPZxu3h3OVpEoGGRcpE=
+X-Received: by 2002:a05:6808:308d:b0:3eb:6bf8:800a with SMTP id
+ 5614622812f47-3eba6815be3mr5701407b6e.3.1734350352467; Mon, 16 Dec 2024
+ 03:59:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
-Content-Language: en-US
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<oxffffaa@gmail.com>, <ddrokosov@salutedevices.com>
-References: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
-In-Reply-To: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
+References: <5861970.DvuYhMxLoT@rjwysocki.net> <3278518.5fSG56mABF@rjwysocki.net>
+ <a345f7a1-52f0-476e-b2ca-7e229e957d46@arm.com>
+In-Reply-To: <a345f7a1-52f0-476e-b2ca-7e229e957d46@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Dec 2024 12:58:57 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iwiQVRCpm3Z4HY2S_LANrjWgRSGaQVXFfw12dVBzKdGQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iwiQVRCpm3Z4HY2S_LANrjWgRSGaQVXFfw12dVBzKdGQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH v021 7/9] PM: EM: Register perf domains with ho
+ :active_power() callbacks
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Morten Rasmussen <morten.rasmussen@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189858 [Dec 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 47 0.3.47 57010b355d009055a5b6c34e0385c69b21a4e07f, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/16 09:00:00 #26886042
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
 
-Hi, sorry, pls ping
+On Mon, Dec 16, 2024 at 11:59=E2=80=AFAM Dietmar Eggemann
+<dietmar.eggemann@arm.com> wrote:
+>
+> On 29/11/2024 17:15, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> In Subject:
+>
+> with ho :active_power() - without ?
+> ^^^^^^^
 
-Thanks
+Sure, thanks!
 
-On 27.11.2024 15:38, Arseniy Krasnov wrote:
-> 'hci_register_dev()' calls power up function, which is executed by
-> kworker - 'hci_power_on()'. This function does access to bluetooth chip
-> using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
-> Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
-> if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
-> 'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
-> be executed before setting this bit. In that case HCI init logic fails.
-> 
-> Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
-> allows to perform power up logic without original bit set.
-> 
-> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-> ---
->  drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
->  drivers/bluetooth/hci_uart.h  |  1 +
->  2 files changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-> index 30192bb083549..2e20f00649bd7 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct hci_uart *hu)
->  	if (!skb) {
->  		percpu_down_read(&hu->proto_lock);
->  
-> -		if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +		if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-> +		    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->  			skb = hu->proto->dequeue(hu);
->  
->  		percpu_up_read(&hu->proto_lock);
-> @@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
->  	if (!percpu_down_read_trylock(&hu->proto_lock))
->  		return 0;
->  
-> -	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->  		goto no_schedule;
->  
->  	set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
-> @@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
->  
->  	percpu_down_read(&hu->proto_lock);
->  
-> -	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-> +	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->  		percpu_up_read(&hu->proto_lock);
->  		return -EUNATCH;
->  	}
-> @@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
->  	if (tty != hu->tty)
->  		return;
->  
-> -	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +	if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-> +	    test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->  		hci_uart_tx_wakeup(hu);
->  }
->  
-> @@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data,
->  
->  	percpu_down_read(&hu->proto_lock);
->  
-> -	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-> +	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +	    !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->  		percpu_up_read(&hu->proto_lock);
->  		return;
->  	}
-> @@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
->  
->  	hu->proto = p;
->  
-> +	set_bit(HCI_UART_PROTO_INIT, &hu->flags);
-> +
->  	err = hci_uart_register_dev(hu);
->  	if (err) {
->  		return err;
->  	}
->  
->  	set_bit(HCI_UART_PROTO_READY, &hu->flags);
-> +	clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-> index 00bf7ae82c5b7..39f39704be41f 100644
-> --- a/drivers/bluetooth/hci_uart.h
-> +++ b/drivers/bluetooth/hci_uart.h
-> @@ -89,6 +89,7 @@ struct hci_uart {
->  #define HCI_UART_REGISTERED		1
->  #define HCI_UART_PROTO_READY		2
->  #define HCI_UART_NO_SUSPEND_NOTIFIER	3
-> +#define HCI_UART_PROTO_INIT		4
->  
->  /* TX states  */
->  #define HCI_UART_SENDING	1
+> [...]
+>
+> > @@ -594,7 +599,19 @@ int em_dev_register_perf_domain(struct d
+> >                        * All CPUs of a domain must have the same
+> >                        * micro-architecture since they all share the sa=
+me
+> >                        * table.
+> > +                      *
+> > +                      * If the :active_power() callback is present, th=
+e
+> > +                      * performance values for different states in the=
+ table
+> > +                      * computed by em_create_perf_table() depend on t=
+he CPU
+> > +                      * capacity which therefore must be the same for =
+all
+> > +                      * CPUs in the domain.  However, if the :active_p=
+ower()
+> > +                      * callback is not NULL, em_create_perf_table() d=
+oesn't
+>
+> s/is not NULL/is NULL ?
+>
+> [...]
+
+Yeah, one negation too many, thanks!
 
