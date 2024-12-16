@@ -1,105 +1,92 @@
-Return-Path: <linux-kernel+bounces-448098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00479F3B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1739F3B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B47E18801CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA5016CBD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCAE1D5178;
-	Mon, 16 Dec 2024 20:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F451D5143;
+	Mon, 16 Dec 2024 20:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b="Da7rTmwE"
-Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2DW4THH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769071D45EF
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B85D1D45EF;
+	Mon, 16 Dec 2024 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381633; cv=none; b=hQerD5c8YP4fXXPJzcHwvq45uFjaoO6PUIBLwJ4y5u9qXCd7aLlPA12wTHdg7w7HQgwdL6DqHdDBSJDlxEE20bS1oXwTlWkm48J6nlXfWrGiBYJSAc5f3qriWoJZV2sLUf+JZ5XloBEQakn0J6GEJWbD3V296RaneFlOh+Y5F18=
+	t=1734381614; cv=none; b=p8v9WwYZ57iy8Cww+qdmgT0Y+F/tUISAWOLyJf1LCaMQaqqPmtCHmmQFpdRjmL7+fzbwF2mhu4GnaTNFqs4d2OyF5krOvm5fjnov14ewNgU9iZu8GrUwh2yVj2j3Xd6WbJelLvcUN3NUrL4yowWnCZ310e+qRKqdPe5oPPWAdfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381633; c=relaxed/simple;
-	bh=RU5BkYL8V+CfpqXLSJHZSHYMYQl+nYMNgsff/LFSdbc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=If8uTSbp6U5DMCv5lx63wb9MN/3Lq8YLnhktSmSWRqv6LXAhbWrvxuj74BeLIufAG9yECATfJ8iHXvuy3qJTPUGErZhuL2V5t/kDJEwOvVph4gUiCAncHiRXqjuLU5P33RCW72U4ETi0ErhA80WsKwxpLEgaYJYVAYrIwuD40NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io; spf=pass smtp.mailfrom=ranguvar.io; dkim=pass (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b=Da7rTmwE; arc=none smtp.client-ip=79.135.106.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ranguvar.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ranguvar.io;
-	s=protonmail3; t=1734381622; x=1734640822;
-	bh=RU5BkYL8V+CfpqXLSJHZSHYMYQl+nYMNgsff/LFSdbc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Da7rTmwEKuJc5arr9F/4ctWbg6jnlkvCmVxAp+eab9pr1SV1T8FXa6d7GYhSmeJpV
-	 LMhpbI4wvnaZdAapRke5wnLacgIeSzQ4gSuSNtGhiVoJFuZ8WqPaSvnqdV7DTGJPZ2
-	 cIueUHs5BgMCEsrySs/frTWKVAFwhZVJSZ0nAGog2UTatYR8N8RRtMKIvvXlPczxET
-	 X45y+TZkKZZBfbITuSLoTQjTRxKxCxFZLqq2IWG45Rdw1ohXCDK0syY+ORR1QlLIdF
-	 uNLDQSC0mPlZLWqNoKiBhpB0/OC8AhPu7S0431TiyU0959DxdWloHC/e/O3o6A2PZG
-	 OZDJAOaFfp8ZQ==
-Date: Mon, 16 Dec 2024 20:40:18 +0000
-To: Sean Christopherson <seanjc@google.com>
-From: Ranguvar <ranguvar@ranguvar.io>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@gmail.com>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>, "regressions@leemhuis.info" <regressions@leemhuis.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM guest
-Message-ID: <b6d8WzC2p_tpdLs36QeL_oqtEKy_pRy-PdeOxa08JtTcPhHNNOCjN73b799C0gv8NnmIJKH9gD6J4W-Dv5JKEVdrbMoVUp3wSOrqEY_LrDg=@ranguvar.io>
-In-Reply-To: <Z2BaZSKtaAPGSCqb@google.com>
-References: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io> <20241214185248.GE10560@noisy.programming.kicks-ass.net> <gvam6amt25mlvpxlpcra2caesdfpr5a75cba3e4n373tzqld3k@ciutribtvmjj> <Z2BaZSKtaAPGSCqb@google.com>
-Feedback-ID: 7618196:user:proton
-X-Pm-Message-ID: cb7daf2d21f0020e7d28b64803a9024a5c888504
+	s=arc-20240116; t=1734381614; c=relaxed/simple;
+	bh=YFGqhpyVPnOYQpDyIgSWoLGeRmyVo9fNbmzrRfMbe+4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TbQKUCTeYVpQ1pTKE52Qgx6sA8DZNVN1QCEArKqMVRSaY1Cxws5YuhLjb64MlUvRSZIOj7XsFr54AUZneDoeR0ZCkHmINfIVUYsFAypGEKkkNaB55cmhUrujlGn3RjBQP5ueatj2/kWi99yM08NY6xmJt7qxctdzpeBcBiCorYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2DW4THH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD712C4CED0;
+	Mon, 16 Dec 2024 20:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734381613;
+	bh=YFGqhpyVPnOYQpDyIgSWoLGeRmyVo9fNbmzrRfMbe+4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=J2DW4THHw5BrCyjm4CqZmvYPXm1hBoHhtPuhB04ic2zCN1ioU4EhTo0Z0OU1zN5tQ
+	 QpDWMmLvelX8aKl2FWUSmK1EiNC+aey2+sSp/9zlHWkmW8JOXWlMgBBxid9S/zuZ8p
+	 /b28W9AlI/wdT03TA21Hp01+I+v996ZoLkwMCnAfU8M/jpYR7/43YiLDzC+G5i+xKq
+	 QhjBnF2Tuto3kxT5arliD2RO4eDaDzPWVyFF3n3rJu9piFSVISs9+uPhzD8EdwxCOa
+	 v7ClX4M6V081zGWB7AMexEU+onxEAdBycaE5i3UYTQROceAudR8VIpdU8n0w1kYR72
+	 Twvh1k+OM2fYw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 344043806656;
+	Mon, 16 Dec 2024 20:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] bpf: lsm: Remove hook to bpf_task_storage_free
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173438163084.338924.11471264348219299930.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Dec 2024 20:40:30 +0000
+References: <20241212075956.2614894-1-song@kernel.org>
+In-Reply-To: <20241212075956.2614894-1-song@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kernel-team@meta.com,
+ andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, kpsingh@kernel.org, mattbobrowski@google.com
 
-On Monday, December 16th, 2024 at 16:50, Sean Christopherson <seanjc@google=
-.com> wrote:
->=20
-> On Mon, Dec 16, 2024, Juri Lelli wrote:
->=20
-> > On 14/12/24 19:52, Peter Zijlstra wrote:
-> >=20
-> > > On Sat, Dec 14, 2024 at 06:32:57AM +0000, Ranguvar wrote:
-> > >=20
-> > > > I have in kernel cmdline `iommu=3Dpt isolcpus=3D1-7,17-23 rcu_nocbs=
-=3D1-7,17-23 nohz_full=3D1-7,17-23`. Removing iommu=3Dpt does not produce a=
- change, and
-> > > > dropping the core isolation freezes the host on VM startup.
->=20
-> As in, dropping all of isolcpus, rcu_nocbs, and nohz_full? Or just droppi=
-ng
-> isolcpus?
+Hello:
 
-Thanks for looking.
-I had dropped all three, but not altered the VM guest config, which is:
+This patch was applied to bpf/bpf-next.git (master)
+by Martin KaFai Lau <martin.lau@kernel.org>:
 
-<cputune>
-<vcpupin vcpu=3D'0' cpuset=3D'2'/>
-<vcpupin vcpu=3D'1' cpuset=3D'18'/>
-...
-<vcpupin vcpu=3D'11' cpuset=3D'23'/>
-<emulatorpin cpuset=3D'1,17'/>
-<iothreadpin iothread=3D'1' cpuset=3D'1,17'/>
-<vcpusched vcpus=3D'0' scheduler=3D'fifo' priority=3D'95'/>
-...
-<iothreadsched iothreads=3D'1' scheduler=3D'fifo' priority=3D'50'/>
-</cputune>
+On Wed, 11 Dec 2024 23:59:56 -0800 you wrote:
+> free_task() already calls bpf_task_storage_free(). It is not necessary
+> to call it again on security_task_free(). Remove the hook.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> 
+> ---
+> 
+> [...]
 
-CPU mode is host-passthrough, cache mode is passthrough.
+Here is the summary with links:
+  - [bpf-next] bpf: lsm: Remove hook to bpf_task_storage_free
+    https://git.kernel.org/bpf/bpf-next/c/58ecb3a789fd
 
-The 24GB VRAM did cause trouble when setting up resizeable BAR months ago a=
-s well. It necessitated a special qemu config:
-<qemu:commandline>
-<qemu:arg value=3D'-fw_cfg'/>
-<qemu:arg value=3D'opt/ovmf/PciMmio64Mb,string=3D65536'/>
-</qemu:commandline>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
