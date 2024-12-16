@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-447618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B2B9F34FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:53:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D696E9F34FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2870C18851BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:53:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C2ED7A13D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0B214A4D4;
-	Mon, 16 Dec 2024 15:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W+yEyA33"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A7914A4D4;
+	Mon, 16 Dec 2024 15:53:37 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0CD53E23
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D059253E23;
+	Mon, 16 Dec 2024 15:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364378; cv=none; b=jGVCs9EiW59rNayU2L5UnOqNXEnMC0aors9NhBGCvin0Y4AsIgp9W0yOeOBgQgWaZnskFkKfq1O5tCXjrYcssa9Pd/+AZ+G3gfv0zJXojo/PTL//fp1xQBCoQtmGbiGq2KZ3xzUIz8voKyM6WFyf/pW5eYsSKhAKNQCXv/7TN8s=
+	t=1734364417; cv=none; b=XuHkE9fGoEUxZvp9Nq/cNpwxtgh6oCDekzleBUpcqYul2WgIR+HmG0zae5F/FcBZ0hO2GErUsLEahLnG+gN3/UISDywj30iWlqVy308iJEOoKrIIVA4kNqEfJGADCpsgl9D02XPN8Pcnb/Qxoeyqip1spmem+4GlVr+A/3OEtTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364378; c=relaxed/simple;
-	bh=oGAvYTUda6zsqAhxih/iNc51wzbk5dR2ZYfn9oKE79U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IveJzAmuM4QuJ8lN08Rwacx7N22yo9d7JnFiVDfqQkeFXADELbJuYOWa8wnCmJ9Pv/+Al9EJTiWcbUymnbx3Ct/JpcrTMV2Yg7UmsuhqjYr8UpogFJgXiaVpSuUrRQvLwzy5cNvlkbu6r2tdN6iJtlXeVDqJxfuKzkd/Ybrjoo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W+yEyA33; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3862de51d38so206542f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:52:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734364375; x=1734969175; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=38FKdhz1VvDhc/ssvKRblfgMS+wpHTOD89YDjFr970E=;
-        b=W+yEyA33HKEXGeiMVqnAbUYCpP8PihKlnWR3IwNH3cNh8A2X0gK9n8ROrVfpdt8H5u
-         xOdls8umhW1SDnY6Qu8vJdLaoiO4xCNZ/j+BhRqRafPPwLWHzx3xvalCYP3sHT3Q3G8E
-         VJDlRPPfbb4bbRObbGcfpyOKG41YjkRr9T9ohOuitd/SL5+qsHqqVrra70hztxzknuLy
-         pfshaEHlQZOOv0MDZ9e3OfI8sfHIlxD0VPLK6PkfzWJO8HyAJJuh7HYIO1BiKih7zEkB
-         RFRovPtg9P/YjxA55QWZ67oOUgxGM/uF3e2WyoQclZHEVtndT6/BbyuWK9hl8CUNHZe2
-         RqaA==
+	s=arc-20240116; t=1734364417; c=relaxed/simple;
+	bh=wUZ1i9lVo2VGEudmDjN/iE/ECduHc1tifU6tFVvAPOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SnzAc9It6rz7SUSijr7HTJH96//QO0viagKOEs1THLCvvz5nzbKg1XlMADWNrctDMz6G69EKfLkDDGld5q6Jr/aYuXZ6mOzajTZ2VDGFKXCYWx+GxHZr3I+S51XVKjsry1EoqO/f3K1grlVAsPWujA1NS/CebdgkZZzgcqeuF8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-85c5a913cffso2155599241.0;
+        Mon, 16 Dec 2024 07:53:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364375; x=1734969175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734364414; x=1734969214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=38FKdhz1VvDhc/ssvKRblfgMS+wpHTOD89YDjFr970E=;
-        b=bAjFNskD++6OgOfL3SVpxMYklsCS79PAS0gCBu5MbZ97oN0eDt6haqoJiCm12outln
-         fd0ged2qQVFZhHrn3/TPkyQJP+k+H5vM9VD00wbqma7zQLGUehq5ROhwmcc5+eDKu2Fg
-         Shsfi4jDFW6hjkEJ5I8ZcDrp2vq82FgOpzGn/6bxzWAFJeus1wtk7r+HcJsYP0WQ4+bP
-         DpwZmOCbq10EE2ejA+IROTnOr++eEgkrXFaybG553bGAySndEFJsp2x/Kr/ydQEEH5Gt
-         7xdKKtdTvRaFSJuf2IXZyLJ+2p++ywUsvYxVUiEpdAYo2kg7UkBhiIVdpbF99+iZOmIu
-         uUvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpL1rkfZmmJnadfZL+NPkPEySvf/gqvCVxSPR2ZLQykmbjXQUMGIpuFH1x9V/iEz9gzYm+N0S2kiepsHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7f8EN4lcCAyDnEaamDaLqKcbw5w8eGORjKWE1Z59hpXxJTQ6N
-	LMH9bWTU0A9o6IsgnWwZ57FpZV/ciwJ5R4l6bGKNWcqdVkKY6Ua8yrRjXNEsnJSHNpcICCPNjqc
-	R
-X-Gm-Gg: ASbGncuuZg5lzXBbSqZRLj8NN2TKvH7/DgpMj66DLsGsyHxZFTuiqwPipXaSMYpUHH1
-	tRCcEmmySCiMcb030jRgq3fPeWHCw0m2VdoV4gT4JxHeMH7auhN02ghmSPYBbxjyg3uLDQmy+rD
-	P1eaNheLGOzGST6R/Pz0xlDEbIIwlI5AuEPbRHIiYfQb7V1sRWW9BPk+3pOaW3iToR/PEx0mU1m
-	LKsWx73bXdPnC0uFyNj5QzFEQe3SUoclg/6fRCN8baaUCfE//M3kHooyc52cYsPPbsCbu1UTJvr
-	2I3pGxuQHav28c1tYjBjdzmR7XilavQh6rcMBcHkXuGoAhUbZu6+WiXqUCVY/w==
-X-Google-Smtp-Source: AGHT+IERJiZgYVHCfr1v98k+3qwUb/e+s8BAL/XMJ5t/zmC887eRAbHa3krDvJnb+Btr6fWCPTHiqw==
-X-Received: by 2002:a05:6000:4b04:b0:385:f0c9:4b73 with SMTP id ffacd0b85a97d-3886c72110bmr4641130f8f.0.1734364374759;
-        Mon, 16 Dec 2024 07:52:54 -0800 (PST)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804d573sm8397658f8f.64.2024.12.16.07.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 07:52:54 -0800 (PST)
-Date: Mon, 16 Dec 2024 16:52:48 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev,
- LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, Steven
- Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v6.13-rc1-rt1
-Message-ID: <20241216165248.5cae6311@mordecai.tesarici.cz>
-In-Reply-To: <20241206154701.8XBv1qNE@linutronix.de>
-References: <20241206154701.8XBv1qNE@linutronix.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+        bh=1kDmFioBDMA7ARCl1RhR8kmWJ6/lD1Q6R02mYTOsXp4=;
+        b=uGwzbk3VuAc1DqArnq9b9kWSILVQ72OPdttZtZtrObZ16NWd+VsBLJ7zcz29q/j+XX
+         7YkO2MR9Xxc2jlLSMDnPIJeQV9NK9GgY/7jRcTR05KMcZoFcEHnw2v36HDa4z9IpQ0Dv
+         b3/cfvu53z3fbKMRewzjhEGWW7hJBD8o5lxWFBWVjzCA3en3S9U05l6etWo32nLVpb4x
+         kmoYPiwcGajdhSmfveWMw7EEivZUNTfI1YsrrI0gRa/4DIRwonY1lAxybvHVLPB5+M1U
+         Bmo4J2E2aVq0Y03jG4VBjhRGw6SnNrJF8QBHqBgJY3zMihGkGLVZakY/xsSk0F5ypF3E
+         t1Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuizyDrzKeTwD7nZu3sApyxeDO3aUkOZmU6KBIIeu1yEU4a9wEG2CMbvuJqbF1KVvXmbAtc4T0tKgjkXCo@vger.kernel.org, AJvYcCVinNr7LAsfTq+n7uRCxbOeDOdEVjujQYThlchUoQewunOkwLxBE4t3z8GtPioRXptAUafUTFoQtcA=@vger.kernel.org, AJvYcCXG5f0GDemW5AM4Fkl0TL6CvNhf/of0nLUB/d7f1eRsQXv1HhL6QmYHXJz8G6JJ5tNc9VulKEDg0Jm8v6m6UVLRdNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+PItlFYcOexJzfZ/NxJEin/j4bF8ij6vVMIoMcJZvMzOfjjD9
+	EKywwOfaRI01z2vfRc309AZ161UXPAH9Vn70MGNMWYwZ2Gg5/pF9b7dLsc2S
+X-Gm-Gg: ASbGncs1CzaR/Gxso18JPliv/Yvki8TvKUhDUGES63fMOd3Df5BS4dtWuALCrJ61gfi
+	P3N357f0Ah4oo2qCO3AZihLJRz7/m4c1zhvBg/lMnhV5os8nyjGHSdy9dzIAEa3mWOxFbPU4Wes
+	Bz4aK8SEtkv9JH3yfA25n46lm+q0zLObQ2hb4TSYgv59sCDkJVPe22eyUCTc+Mq0lrE3P8UJy50
+	S/ED/99mffVIKYtHjf5b+awX12GJhTuwT9obzQ9X+7dHrl6JPJDEL98kiRQ+FCbLNOSetQh8ogq
+	MDmZMIPpTcHa+y+xgmc=
+X-Google-Smtp-Source: AGHT+IFcDMjt6MzwD6bBEYCK1PRi7WVqEgmBSCyY8J5DOj6WHaoT68sVn5viBInFhOM4FYCWV6X7/A==
+X-Received: by 2002:a05:6102:148c:b0:4b1:102a:5834 with SMTP id ada2fe7eead31-4b25ddc652dmr12570834137.21.1734364413964;
+        Mon, 16 Dec 2024 07:53:33 -0800 (PST)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b270233605sm839418137.9.2024.12.16.07.53.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 07:53:32 -0800 (PST)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85bc7d126b2so1912479241.1;
+        Mon, 16 Dec 2024 07:53:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVoQQbQbSuPmA10i8QDcj2ecEzh/990AQhqz+chl8Sbp3NsqAyy3PfiG6ZLyH0r/jraDV2jxW12ZYmO7cF3@vger.kernel.org, AJvYcCWlKfqaZVttIZGJz8cf6rX+S4Ptf9mP+m69ADn/NY8vWI5V8j34htpFRLnWCerUEoVxImdfH52KJeo=@vger.kernel.org, AJvYcCXNVu3zZdBQuH417WA2W8zlsoxTfxaazqBopJdErdyrDzgF47Q95RjCfx3Eokm7Iib5vu5M1TN728U+ais7av7XeFw=@vger.kernel.org
+X-Received: by 2002:a05:6102:c05:b0:4b1:1b07:f7c3 with SMTP id
+ ada2fe7eead31-4b25ddbefcdmr12758278137.20.1734364412440; Mon, 16 Dec 2024
+ 07:53:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241213175828.909987-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 16:53:20 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW00-c_=KzfhQdA5Z3eKKeU911sCjGJqft89e--_Tp6dw@mail.gmail.com>
+Message-ID: <CAMuHMdW00-c_=KzfhQdA5Z3eKKeU911sCjGJqft89e--_Tp6dw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] i2c: riic: Use GENMASK() macro for bitmask definitions
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sebastian,
+On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Replace raw bitmask values with the `GENMASK()` macro in the `i2c-riic`
+> driver to improve readability and maintain consistency.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, 6 Dec 2024 16:47:01 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Dear RT folks!
-> 
-> I'm pleased to announce the v6.13-rc1-rt1 patch set. 
-> 
-> Changes since v6.12-rc4-rt6
-> 
->   - Update to 6.13-rc1
-> 
->   - Down to 24 patches (including three new). The v6.12-rc4-rt6 release
->     had 42.
+Gr{oetje,eeting}s,
 
-Great job!
+                        Geert
 
-However, I found 26 patches in v6.13-rc1-rt1-patches:
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-petr@mordecai:~/src/linux>  git ls-tree v6.13-rc1-rt1-patches:patches | grep '\.patch$' | wc -l
-26
-
-It turns out, that these two patch files are orphaned (not listed in
-series):
-- netfilter-nft_counter-Use-u64_stats_t-for-statistic.patch
-- riscv-add-PREEMPT_AUTO-support.patch
-
-What is the reason to keep them around? Is it even intentional?
-
-Petr T
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
