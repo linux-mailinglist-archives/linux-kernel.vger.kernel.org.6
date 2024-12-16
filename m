@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-447099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D95A9F2D46
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:48:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46599F2D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D497188A918
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA91B1671F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A108E202C3E;
-	Mon, 16 Dec 2024 09:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="H85/k+Jw"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415320124F;
+	Mon, 16 Dec 2024 09:49:24 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663E02036E8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEB21804E;
+	Mon, 16 Dec 2024 09:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342446; cv=none; b=XPdbeldzggeBND37Tb3Pfk3rhvCS18fy2E2De+v8bDh+gOWJPX/rXJ/inlFy3Cig3BQuBFEbVF3WeyhUItfXeXQ1i0BZQBTDRFuU5Lw/Vstws51BUryfr4vFhrOQwkGkZ9zC/uhmeusfZzk8UQ4Bm3Yzo1kokvtX9JnpCjE7ZV8=
+	t=1734342564; cv=none; b=gZ10hRNhptBGTvj9hMx1C2UEop4GTUIbC1MqBp1vU1GAhoVktfsF17p4b/Xrtn94TtXfkEAWpz9OqCk7RIKurAnnaS6VTSxlc7oEoEYbgXS5H6NaQ3hPolcDx3sB/KvwP8tPZBeju907+bEBV5zGqsFTH2vLMQgM1uf6W0dyJAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342446; c=relaxed/simple;
-	bh=BfwhoMEmCl4bzWZVdzsW/vy74IIm23dtlmSsoG0ijCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQ825zt/u7VvRzCYDpXueYLrau1VrGXm7qYlmxcHkneyOHEOs9Z9Iojq85htw0qhSC556XoinDhA/fr+5a8o4g2ONClAvCUptcCKt7SVKtyPAG9xN84521Nw80exildRGJeSkwFJFm6MKu9LDW9APaW4jlAcpNOCppNd0a4swno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=H85/k+Jw; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3d69e5b63so403193a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:47:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1734342443; x=1734947243; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BfwhoMEmCl4bzWZVdzsW/vy74IIm23dtlmSsoG0ijCk=;
-        b=H85/k+JwmsNlWhwwis8gUZ+L79P+MZjx2j7zeUolUlfyr7aKdsiTCL+lWDNebTMo2t
-         /wejalIpQaF53k0IJZl4/lP1k2+zxKILfjR8JJWWZGv/LAjhtdCV4YRmPWQVtgK43WuA
-         l2ZCqfAlxcfBzMNlqJlULaxaDmy2QQaH4oU20ruQQbTc7gGFL2fasLGvaAcYvZcv6rDx
-         oKkX+oQGEJddITB4WN0brtEgz+snSoX3ADxYEzQoiJ/PDkrpG3njt8ASJ0mOYnOdEoj/
-         cJ6FzF4kXs3rrFmCY+5wL6ZNFZBCjEu9DzPWIYT5ED8jjsrwgUQA0+2KQB+9EltDO5cd
-         NiOg==
+	s=arc-20240116; t=1734342564; c=relaxed/simple;
+	bh=n0x3WRqr4ADX31+h2v0g99ljCXGAP3sn1bme2h1rOT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JZh09kOp0XDuwg8M3e5h1c9+L/s7R7PCnLe67LiicjTlzRhA9YmP2cWYdkO6UenGkos1H3PLcqP1kZ5YAyYq+A3T27t8hmW77HX/1SHv6nMDWdNAiRQL/dTTsPHPRU185ezyoEx/GgEEiZUqcioTeVaQjX55IfRr2n+2SCAB7C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51873e55d27so2130390e0c.1;
+        Mon, 16 Dec 2024 01:49:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342443; x=1734947243;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BfwhoMEmCl4bzWZVdzsW/vy74IIm23dtlmSsoG0ijCk=;
-        b=btfs6NRPgHmaXIeirzStBkbCekSQ8Q+tf+jeRuJiHPC0VZQGpCM+lX2BB5BtiDIFiU
-         FLwnOIrcx4F/9/hEVSAtox9YHbkkuF7Hmb0hEudAsrsEL1Dca5+yf/g0dr85rqyKyPJY
-         PRjFVhUJYyVHseEMTdD+sNmDu5ZEpkFEg2Erw9xbxBr0e1kby5Q9jhjOfkAgt0Qt/4J9
-         QZsxADe+/x97hEUjictEg9gscyuKP9ma4uTk9w5OtKx/NO2LxY23l47iOHVeCPf59tX4
-         EBI51mKyM1YoMF15lnrUsP1d54PIrxI0V0Chv1aRTUMWkc9AQtX0efdibseh1i3GbNou
-         N0dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKZott/iGNdlGxOdxF4GoIXFoZRkJRj46tnWGrWkjccEjYshvs9+UWrGgB9HDQpI5Hdl2bs5yyKJbuvxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx2XUDZzPKBpsUqSgXD1gfOIhJeHy5ygaNhfPOKCxNzh4M48cB
-	ck3WWsrCqjUX/imSpP/waLPFuWJSUETMZ/3R4jW7l0LMjEBtMGyYCE6dI7jgX0g=
-X-Gm-Gg: ASbGncv0hx9OD3JsrVed2vFCsO984Vb4KcbZgcPO9tfjXkwcxbJYirK2/JzezPRAGga
-	a/0JYeRT6fLRM7N3E87MAqy1AGZ/7V096zRMygvUHB4RmIcbZhtHzHTeiJjtGQqznl6gw0e2FDK
-	TlDA2k7sM4HkaHdgfIdX3M1wUli2dAEX3ErVlWLE6//vf5ciPuV2H/eDLbz43tuo0A8DOQcJLft
-	TzPK9LjFHSVdTOy4shi2JDBqkPBFJ2D3zCkUtlGmIq65ttiAVjPyBkt2TG2HAY14+nMbN77Lrnm
-	JDD9y8KbXbBXjNMMAxBXDhaWsZyVrzBKuWIn7PwqgR8zjw==
-X-Google-Smtp-Source: AGHT+IHFeq/+nCe5ggsaLGepw/t531rWVuUQBmDN6QoOg6H6ozKl8Rg6N9Iw1AYH27D2IAU9zMcOww==
-X-Received: by 2002:a17:907:3f8f:b0:aa6:ab00:7b9d with SMTP id a640c23a62f3a-aab7794039amr442095266b.4.1734342442726;
-        Mon, 16 Dec 2024 01:47:22 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-ac7d-82cf-fd83-c610.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:ac7d:82cf:fd83:c610])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9600e02esm310913266b.15.2024.12.16.01.47.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 01:47:22 -0800 (PST)
-Date: Mon, 16 Dec 2024 10:47:21 +0100
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-To: guoren@kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com, 
-	conor@kernel.org, leobras@redhat.com, alexghiti@rivosinc.com, atishp@rivosinc.com, 
-	apatel@ventanamicro.com, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	parri.andrea@gmail.com, Guo Ren <guoren@linux.alibaba.com>
-Subject: Re: [PATCH] riscv: qspinlock: Add virt_spin_lock() support for KVM
- guests
-Message-ID: <36jzgc7cpsvphw32wghpegb7t6ezsgd622bm2ws7syjj6mmah2@pameujabd32c>
-References: <20241215161322.460832-1-guoren@kernel.org>
+        d=1e100.net; s=20230601; t=1734342559; x=1734947359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QMssFc4WlUyziRcYZ7/lgFWbIJiPIdNq0Bs3CRb6Zv8=;
+        b=uIIKGeVrQd0U0mEG9F9ERJomEmVYNaUeg46dfRkqw4TGw8bzkZj7etu+vNa9J/AQGy
+         tpOOzyoUBIrNR6T8UBsNi3MK5w2KHI2jj0JdSxPi8JhlWYbzKCqzxDnsbl0eZHzO062G
+         Gw9R7qKo24CL6Nc919QsVm+YSVJXBAY48sCLqiCuYTqwF2JLnKoCaJQl5dsryGoJkprO
+         XyPbmZNwXOmFWUSIWH42uHPxW/qlSixPMJFIOa8bawBQRYN03YQ/Ne3bIYpXJrPbsCQu
+         Otu7I1/Y1SxiYwSFg0jSp9HifcQ5NjMEUp90jRs/sZG8KvyRzAJYYXM7RKFK/Tp5MYXE
+         OrWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVO94BnYMsJEOF3mBVr3nyH70r4b3Jt/BtaYoM/qinpDlepll8z6LeEL5fEwofU0+nM0GZd4S1m2EMaj8LP@vger.kernel.org, AJvYcCWz4a7NBw7aQaIDKr3/mRx6entlazWgx+9VmNl9Kawdf+VaAzR0Mpfx7y9kQea7h7YCg6DQ6Hq9uetzzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ4cOzwamxQ1yQlWLqzDYwSsNY+jCNAwjPaglRuaVK46iuTZyD
+	4KeItzVWPJGe5l1vKJmY6J4c4QHaGVZ+G+BAbv9arnlNbLrqdQHigPX7WeeL
+X-Gm-Gg: ASbGncs8V0ZWGs3qTvwIa0BrF43HzELoVLH4HXtDpQFhliOlkmvx3NyV82pOFqvWGdL
+	OlD4kE9/4A+uLALqP4+H4g3Pa+2D8hST4WZr9VxfBnDbN7tGW7PkxqPYbXrXjpk++KwZgyymE8m
+	ag81KC3tJbXHes45eYpL0s3uFoycs5Dqc427BOifo4pEznWt05v6IK5CtOsAyf4A5wDsXIGPCZ/
+	BN7UWggqA6cToE2VYe5Spzcd8aB7FkhPXDYhUvkNLXk/Gj2CRRa+tbyaxZ6/5qLm/EEvEm9KCRV
+	bNFv5YtMZhOIuR+K1LM=
+X-Google-Smtp-Source: AGHT+IFJjSdtCpKMJAcE1XCO1DNQDIJeYeyK3bYxW0gzjcIZc3zjAJ1McrxY7oVn648HI6AaE8+kuw==
+X-Received: by 2002:a05:6122:318b:b0:518:8915:89ec with SMTP id 71dfb90a1353d-518c5bd8a2amr11598612e0c.1.1734342559232;
+        Mon, 16 Dec 2024 01:49:19 -0800 (PST)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-860ab6d6de6sm816758241.22.2024.12.16.01.49.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 01:49:18 -0800 (PST)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-85c436db302so1895522241.0;
+        Mon, 16 Dec 2024 01:49:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW+vXYCm68dYDxTHlLSWTV4MNzfQ3YDfqIewsOho3KGfDeV29nMNr7XjflSvjYIMI17QajTa4OT9yp58zI8@vger.kernel.org, AJvYcCWhn8hDyk3ppUzpMpkn0dNqELG5nde4ye5wXvVdOhnv05lk4IzanZ3B19hH4Uo7QeeBdmT8Kn0gY8YOkA==@vger.kernel.org
+X-Received: by 2002:a05:6102:1483:b0:4af:d263:de23 with SMTP id
+ ada2fe7eead31-4b257b156damr12193210137.9.1734342558479; Mon, 16 Dec 2024
+ 01:49:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241215161322.460832-1-guoren@kernel.org>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com> <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 10:49:06 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVZ6_LCZcPiL59A05XkNt88-2OwDTHZDdT0c7GMuFQNag@mail.gmail.com>
+Message-ID: <CAMuHMdVZ6_LCZcPiL59A05XkNt88-2OwDTHZDdT0c7GMuFQNag@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2024-12-15T11:13:22-0500, guoren@kernel.org:
-> Add a static key controlling whether virt_spin_lock() should be
-> called or not. When running on bare metal set the new key to
-> false.
+On Sat, Dec 14, 2024 at 9:59=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> There are multiple open coded implementations for getting the parity of
+> a byte in the kernel, even using different approaches. Take the pretty
+> efficient version from SPD5118 driver and make it generally available by
+> putting it into the bitops header. As long as there is just one parity
+> calculation helper, the creation of a distinct 'parity.h' header was
+> discarded. Also, the usage of hweight8() for architectures having a
+> popcnt instruction is postponed until a use case within hot paths is
+> desired. The motivation for this patch is the frequent use of odd parity
+> in the I3C specification and to simplify drivers there.
+>
+> Changes compared to the original SPD5118 version are the addition of
+> kernel documentation, switching the return type from bool to int, and
+> renaming the argument of the function.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Wouldn't re-using the combo spinlock qspinlock_key be better?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> The VM guests should fall back to a Test-and-Set spinlock,
-> because fair locks have horrible lock 'holder' preemption issues.
-> The virt_spin_lock_key would shortcut for the queued_spin_lock_-
-> slowpath() function that allow virt_spin_lock to hijack it.
+Gr{oetje,eeting}s,
 
-I think we want the proper paravirtualized slowpath, have the
-discussions stalled on the SBI side?
+                        Geert
 
-Btw. how bad are the performance numbers without this patch?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Thanks.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
