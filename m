@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-447377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7B59F3162
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25219F3164
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B893C1884B2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFEC163A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CC9205507;
-	Mon, 16 Dec 2024 13:20:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3C3205ABA;
+	Mon, 16 Dec 2024 13:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8rucFmE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80917204597
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2992A204597;
+	Mon, 16 Dec 2024 13:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355200; cv=none; b=TVoS8b0dCxXHSX2RDKwAjgEncN7v9SlFgOO0mj+SeCVbe+i8zIMRBBbMfdreNOKYO+3DGt1ZVmzf2nBUI2K6aGqU16CXXJvfSm3+N19MORUaoN9nLuSBGRmfZPedfhebkO/8JDF0ImaMn76dBWvfRcw566fAn+Kxm8Yb8630bZY=
+	t=1734355208; cv=none; b=I3li5seSkiPhhc5W9CuDmoffbI9fALQ0PZ82uwKIe6DzVZBm0EgQc6iX3SrtMnpH2tNV0JrqgxUdaJhGML+vJDozGtdrPNtuiq4Pv1wQqAC9TIdOwg8RQJsBrrCzLY6hbQFbf2vQ2AQyiTLL5eknfw22O2paobRBhJrk9I/cvyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355200; c=relaxed/simple;
-	bh=l5YhrR+CX9lbYsE/9OheTAC/N4CRxTnq2ihla+kxOiw=;
+	s=arc-20240116; t=1734355208; c=relaxed/simple;
+	bh=XWQtd3OIQ1+hddYdelD8wN1PPbNt/mGKC46IATBq2tk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mso1xf5XCfq4wV+hmyuGS9lScPGjIK8S4YvnJ1J7pnMmhcNQVwNYC71VYVzP7sSe7P4dF1fqAUgsVEgpKFgxR/A2Tkn31Ljr5eM8Hb05w1k5zQIF7o5ux0GcFHx+0RDD+41HmFQLl7QbHKIEgy3x+n9X94LQTm59CYmjn/YsWnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tNB0m-0000Fi-Fk; Mon, 16 Dec 2024 14:19:48 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tNB0k-003hfY-0Z;
-	Mon, 16 Dec 2024 14:19:46 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tNB0k-002bbw-2i;
-	Mon, 16 Dec 2024 14:19:46 +0100
-Date: Mon, 16 Dec 2024 14:19:46 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 1/6] net: usb: lan78xx: Add error handling to
- lan78xx_get_regs
-Message-ID: <Z2Ao8r3gJRnQLq_I@pengutronix.de>
-References: <20241216120941.1690908-1-o.rempel@pengutronix.de>
- <20241216120941.1690908-2-o.rempel@pengutronix.de>
- <c7ddac7d-debc-44eb-9c43-7746ad3edb55@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0d+fCuEEfQfBJnI/4pbwKyyCnoau/ABxqNMO17PJwxCnifanTihTROA66p/MtxfZO6D6rwm/NRsr83yOiobVUalLAMHM9u6h8odTer/XSC3CllnY6Opj1DBnedTi/hG/v1EIiM/ysWXEuma7KEOXqCNPtrF54KYsfQ/aSMWcjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8rucFmE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEB17C4CED0;
+	Mon, 16 Dec 2024 13:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734355207;
+	bh=XWQtd3OIQ1+hddYdelD8wN1PPbNt/mGKC46IATBq2tk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s8rucFmEvIC4Pt04PRIjO/8QEGuHQOul3hZE/Ve1OXyMYy3HwBqnvu58Mpt6xz8TF
+	 AzhvaNq97p/oZtzP1x7DN7GHDuz/aXwO2BINNhyY0sSaXDCulGRJdh22TThdmGiRQx
+	 GTMKOCtyuKoOm54fS1D837VbVh9g2AlOqUQo+oPohX7xk5S4I/30CdVUNlxrVJYXmp
+	 lRYlcndUOQaSYJi+RqhtNtxzt8TmMs+1IqNE+OfyNX4zN4aGnX4C5rn9mDyHFXp1qq
+	 8mfL1b+h1ibCAi4eIwxCCt0rgPI3QE3o55s+ToPMCToDgrQCvH9y6u2DeV11HJuh1c
+	 To1Sx90GUdUBQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tNB17-000000001rn-3iUp;
+	Mon, 16 Dec 2024 14:20:09 +0100
+Date: Mon, 16 Dec 2024 14:20:09 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Loic Poulain <loic.poulain@linaro.org>
+Subject: Re: mhi resume failure on reboot with 6.13-rc2
+Message-ID: <Z2ApCU3DAxKS7Y9k@hovoldconsulting.com>
+References: <Z1me8iaK7cwgjL92@hovoldconsulting.com>
+ <20241211145315.vaf7gbapieywcvau@thinkpad>
+ <Z1mp3_ArzL-GLr3D@hovoldconsulting.com>
+ <20241216074021.kwoid2747o7piquv@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c7ddac7d-debc-44eb-9c43-7746ad3edb55@intel.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241216074021.kwoid2747o7piquv@thinkpad>
 
-On Mon, Dec 16, 2024 at 02:07:37PM +0100, Mateusz Polchlopek wrote:
-> 
-> 
-> On 12/16/2024 1:09 PM, Oleksij Rempel wrote:
-> >   	if (!netdev->phydev)
-> >   		return;
-> >   	/* Read PHY registers */
-> > -	for (j = 0; j < 32; i++, j++)
-> > -		data[i] = phy_read(netdev->phydev, j);
-> > +	for (j = 0; j < 32; i++, j++) {
-> 
-> Maybe during this refactor is it worth to add some #define with
-> number of registers to be read?
+On Mon, Dec 16, 2024 at 01:10:21PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Dec 11, 2024 at 04:03:59PM +0100, Johan Hovold wrote:
+> > On Wed, Dec 11, 2024 at 08:23:15PM +0530, Manivannan Sadhasivam wrote:
+> > > On Wed, Dec 11, 2024 at 03:17:22PM +0100, Johan Hovold wrote:
+> > 
+> > > > I just hit the following modem related error on reboot of the x1e80100
+> > > > CRD for the second time with 6.13-rc2:
+> > > > 
+> > > > 	[  138.348724] shutdown[1]: Rebooting.
+> > > >         [  138.545683] arm-smmu 3da0000.iommu: disabling translation
+> > > >         [  138.582505] mhi mhi0: Resuming from non M3 state (SYS ERROR)
+> > > >         [  138.588516] mhi-pci-generic 0005:01:00.0: failed to resume device: -22
+> > > >         [  138.595375] mhi-pci-generic 0005:01:00.0: device recovery started
+> > > >         [  138.603841] wwan wwan0: port wwan0qcdm0 disconnected
+> > > >         [  138.609508] wwan wwan0: port wwan0mbim0 disconnected
+> > > >         [  138.615137] wwan wwan0: port wwan0qmi0 disconnected
+> > > >         [  138.702604] mhi mhi0: Requested to power ON
+> > > >         [  139.027494] mhi mhi0: Power on setup success
+> > > >         [  139.027640] mhi mhi0: Wait for device to enter SBL or Mission mode
+> > > > 
+> > > > and then the machine hangs.
 
-I prefer to remove this part. Please see patch 5
+> Could be. But the issue seems to be stemming from the modem crash while exiting
+> M3. You can try removing the modem autosuspend by skipping the if condition
+> block:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/bus/mhi/host/pci_generic.c?h=v6.13-rc1#n1184
+> 
+> If you no longer see the crash, then the issue might be with modem not coping
+> up with autosuspend. If you still see the crash, then something else going wrong
+> during reboot/power off.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+I've only hit this issue three times and only since 6.13-rc2. So not
+sure how useful that sort of experiment would be.
+
+> > Is there anything you can do on the mhi side to prevent it from blocking
+> > reboot/power off?
+> 
+> It should not block the reboot/power off forever. There is a timeout waiting for
+> SBL/Mission mode and the max time is 24s (depending on the modem). Can you share
+> the modem VID:PID?
+
+I just hit the issue again and can confirm that it does block
+reboot/shutdown forever (I've been waiting for 20 minutes now).
+
+Judging from a quick look at the code, "Wait for device to enter SBL or
+Mission mode" is printed by mhi_fw_load_handler(), which in turn is only
+called from the mhi_pm_st_worker() state machine.
+
+I can't seem to find anything that makes sure that the next state is
+ever reached, so regardless of the cause of the modem fw crash (if
+that's what it is) the hung reboot appears to be a bug in mhi.
+
+This is with the SDX65 modem in the x1e80100 CRD:
+	
+	17cb:0308
+
+Johan
 
