@@ -1,117 +1,84 @@
-Return-Path: <linux-kernel+bounces-447162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C309F2E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:33:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B4E9F2E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D919C1886BCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94691887B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7472036FD;
-	Mon, 16 Dec 2024 10:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4E820371E;
+	Mon, 16 Dec 2024 10:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dpHF1bso"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab95bM8g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5017A2036FA
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4E01CD1E0;
+	Mon, 16 Dec 2024 10:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734345225; cv=none; b=a2Fit9YYpeXBPFiAwwYrdIQLYNaNNbOotdKlRHaldadbHzaomm4eymTyTPT2+ichGRR35y3zS49ftkO4Oit1qYM9j0JwFgaPbQjXEjpQyX/34nZd61sPUSvp9wF5Qx4nrVStb9yODdcOft9IwedQJsejMniMmwwQ+rRnIA9bNvg=
+	t=1734345237; cv=none; b=iAsrHCzp3mMy9t4Bi7/NIV7sqgspKHgIN1eAOq3XLwR3a316vPcKoAGJc48K5VHQ7g2b2wfFVsUJyqTMLM9QyYpFBaFJhRlsDvAB2y+OYh4oJr/b50dbv3Qix+jS9w7sHpWRWPhrWlJfuIVFDmJ/vpQJpspAqUDd2oCTo14Ak9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734345225; c=relaxed/simple;
-	bh=PYwh9Ejzktqnk/4b3X6HTET4UjWYpwtQYwse3ElACjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ADn9VgnXBnKS8rGheJlp5lqpkrAVc9d9qM2V+RO3QjNUPnThzHXiir0/BRJQXgxh0XJ0bhYLFkDB0Vrwh1Cw8IRc6MN8s7BaMXJrhOPRz8kfJ8+9WGDbOS+5PuLrEzdnMpgmpamOPFJ5fL/1JG0LccPyR5NXhidnzsmP3rErcqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dpHF1bso; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53ffaaeeb76so4235881e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 02:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734345221; x=1734950021; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=81rR1eTM9HElymQ2hIkXvkfh84mtbQHR8oN+z/vprns=;
-        b=dpHF1bsoXY5M3b7MlnEpOGGHghGom+pSsXU1kbrqQrbtRIs8cx1uhnSzks/KNBTRHJ
-         DDh91QvjfyewUjLrjskEBJ1MnZb4EWytNTwFvF4ODS+gBeWYtv5f6ftxVKezxH8bfUxr
-         YwSSlNMwi+ALqQRPr5fvgsaZqy/faIRKD0R7AXaJrYOii8bd2oIPpIsA57IDTmvJjAV6
-         X2Edqs0XGJwYI9T137tVGg+7dXjgn0dccJ+iscBzpZHBVLieHIvhQ1uxRb7jEvLX4xQ9
-         bXpsY8++GJ/vOCrO8STHTESfFnmuiZYksPnnwJz6E0lyh9iKp6Lh2y3MC2ArjmDHftQ2
-         oZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734345221; x=1734950021;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=81rR1eTM9HElymQ2hIkXvkfh84mtbQHR8oN+z/vprns=;
-        b=urGhEaTKmCzt76lQPEynwBpRPns8/OcpcVH2qO4PW05twyIyZYO4xgbW9u0/2eoB0U
-         diOOpUNy8SbHiblBgVBBpON3oMqd0soVNHIR/QFA3I4B8v/lhMqaUxAfJNOo3/H3WbGz
-         PD87c+F/knQO3B6YcX1gJif0TVrD1Auly+0hNqN8/bIjFjM+P0qw3Iyeh0XXUQV2qjo0
-         xbtr6Lcvlym8ckQc0DOeyaiLZsN56OxvPeKkNFQD0SoXAC4+y0O1YnP43a3Tl+DhOFD2
-         eTHO3E7Zza5oQ53h+vxy+02+2ppAJP7BiPPpt0ScqhcmTkZk3BId4MaBi+IGKA11kuwX
-         5HnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaoXsKQtHdr/sXkaQ3fZIt/gLdEvw6evjGVi9uk5u9Iv3bVU9o3ZsPqH7VJYAtQ5S9TbH94Ujx3I4cg/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEFbevjVOPJGVAhQeMCj9tkmu588HP8Mwb64plMVuBW3dEY0Jt
-	12jDMjdDQ7jqbN11/4f5xIWLagXLuIMBCPvB2vKFY0lDf0KMxwW0x1XxPw2z78I+BhdVJxJnQmW
-	r+V7xi3bRLAEcvPxcU2KRq506UKpDnhCLMqgSqA==
-X-Gm-Gg: ASbGncs65SY2NlCeUTbN+XNT94mgEqfdl+daRfHykgYx/Ovzw3Ocv8nbFSaisROq/an
-	IUCn0yNViNQo9+BakSjaZlZaBYl8FbKMPOknA
-X-Google-Smtp-Source: AGHT+IEUf3iLQlaHwj+huKVEu7Rf6ZfMRHEmd0RkbAiajFtXRNVDdgnZzJS2Enw8KLsa6+/B9ivQKuoEjmBWCEUg1Qo=
-X-Received: by 2002:a05:6512:230b:b0:540:3561:969d with SMTP id
- 2adb3069b0e04-54099b7188fmr3706580e87.49.1734345221514; Mon, 16 Dec 2024
- 02:33:41 -0800 (PST)
+	s=arc-20240116; t=1734345237; c=relaxed/simple;
+	bh=qk4tHCi45AeYn35KUrKNzZZJMfz9AxiHC3bgwhgpFGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJ0SDybcBLEHclkhU33fdXxut57XXnBLB6/c4401qgv9YJDqjlhgEYdF0ii9ITQd1qjv+mCg+1vF+4wUVcs69/dxNQSPkCbOViz7d3h0LmWsPbG8O4OQHGB5WlMw7FAkYjVtXN8puuCl6cXHyXvstY8BCldF+HMCnAgVbuEHRw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab95bM8g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CB4C4CED0;
+	Mon, 16 Dec 2024 10:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734345237;
+	bh=qk4tHCi45AeYn35KUrKNzZZJMfz9AxiHC3bgwhgpFGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ab95bM8gPDCkWA+Xp0DacngeOp0lk2RjC/00gs1l9s2bcCagH62jezq/foo4g2z/l
+	 GXnjtA6ENxBFTaMSN6hB2Ds2lwuVwXDuOBq5MKb64YRzZypYFCF6xPaQ6FrOQSWsYg
+	 9PJHH8BjMSLRvVmoh01wpWkvZHbmlBjpCBfG8CtfHgnMW9BnjwhyS+d+0Tq+8nL5S1
+	 Pao6eIvlKU6hVSR5zh65d87sU3Rxf+eFQ8ykFH8Kj6V9f7qrDdjJNqCv5GQcsKbbQu
+	 o7DIg+/DIhv5FRFjcBlbdnDnQhT9s4T7bRp89UtSQE8bOAJVsnDETDKSO3B3gLt1/+
+	 Ht1Ihk2db1yAw==
+Date: Mon, 16 Dec 2024 10:33:52 +0000
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Aviad Krawczyk <aviad.krawczyk@huawei.com>,
+	Cai Huoqing <cai.huoqing@linux.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Zhao Chen <zhaochen6@huawei.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: hinic: Fix cleanup in create_rxqs/txqs()
+Message-ID: <20241216103352.GA780307@kernel.org>
+References: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241215-msm8917-v9-0-bacaa26f3eef@mainlining.org>
-In-Reply-To: <20241215-msm8917-v9-0-bacaa26f3eef@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 16 Dec 2024 11:33:30 +0100
-Message-ID: <CACRpkdZ-ZEiGMUPObHU=kw=OUADrRGtxgMc-QC3EaBevp-Shng@mail.gmail.com>
-Subject: Re: [PATCH v9 0/8] Add MSM8917/PM8937/Redmi 5A
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	Dang Huynh <danct12@riseup.net>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
 
-On Sun, Dec 15, 2024 at 12:15=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
+On Fri, Dec 13, 2024 at 05:28:11PM +0300, Dan Carpenter wrote:
+> There is a check for NULL at the start of create_txqs() and
+> create_rxqs() which tess if "nic_dev->txqs" is non-NULL.  The
+> intention is that if the device is already open and the queues
+> are already created then we don't create them a second time.
+> 
+> However, the bug is that if we have an error in the create_txqs()
+> then the pointer doesn't get set back to NULL.  The NULL check
+> at the start of the function will say that it's already open when
+> it's not and the device can't be used.
+> 
+> Set ->txqs back to NULL on cleanup on error.
+> 
+> Fixes: c3e79baf1b03 ("net-next/hinic: Add logical Txq and Rxq")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> This patch series add support for MSM8917 soc with PM8937 and
-> Xiaomi Redmi 5A (riva).
->
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
-(...)
->       dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
-(...)
->       pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
-
-Is it possible for me to apply these two patches in isolation?
-
-I want to make sure the patches get moving.
-
-Yours,
-Linus Walleij
+Reviewed-by: Simon Horman <horms@kernel.org>
 
