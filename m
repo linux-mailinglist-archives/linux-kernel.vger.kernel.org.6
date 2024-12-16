@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-447630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2778E9F3528
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:01:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C537B9F352F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96481889BED
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337F81699B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4440614A4C7;
-	Mon, 16 Dec 2024 16:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUZH13Nm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A478214A4C7;
+	Mon, 16 Dec 2024 16:02:13 +0000 (UTC)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5083217591;
-	Mon, 16 Dec 2024 16:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5817D1D696;
+	Mon, 16 Dec 2024 16:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364894; cv=none; b=gOPcGZt4lQ8eBe5zw7mwSLzgUWqtBKN+eosLtNCQRmR8AFfftAk4UVcn4t2XSZ51he+8H2Qi3LdWtsMZhf4E+9f6v8r8mw5YgUysz+BrwRf0hTM1OCANxLzIpYSkNCQTKGSiU86GFCBSuMbrOZy1n8goze40gDldZz3TQTVjsRE=
+	t=1734364933; cv=none; b=jL6zDXsGuoAwPriKhrRfnkD/IL4SMLGO2Kdr5BCOCMwgu6v8SpqsHxTMuFgeuAuKMM5OJ5LnB0BWWMFj+g2egl9OhHm0oCjTQ9tTFm0J0KYdlq82PRMbcqxaZf8FAwRlbmDn6U0mmM6UO6DO8NYSKwQ6NlA2sSKBsji28OxMgKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364894; c=relaxed/simple;
-	bh=lEX9N+/EdEZGwnBqSmWoKk8wnmnP4cylfr/1FvUxUxw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=d4sI5QRV6OI1ZGPwaiotTGfXQ2zVDe2ZoCZmmRAC6FpehMjnoYxSuDnApTkttn/ytpkg5L58tfx46JywJC/t+4k2caCo2PS4E3ttGiV0wYQbEb16fWBDDVB/CqiWvNEaCV5uqQVzbJ7tUexC8GukvFQZKjqP+IBG1VYo+q8xMJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUZH13Nm; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734364893; x=1765900893;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=lEX9N+/EdEZGwnBqSmWoKk8wnmnP4cylfr/1FvUxUxw=;
-  b=UUZH13NmTZiS3N57XcPWog0KAUN201uBcLx0jNhstuBKj54gze/WE/k6
-   SIwuKZ0KSMCLCR0Unca6HYuFJXda/ZmS5lG3tISRwdscgwexQSL95DBd3
-   uBtqnJd/KbehPNFghKay1HUTdV1vrPRSvvtUmvuk2pLacwCsYOm7W05KT
-   HWUweuXKs9WgpcSqV8nQgnD8d0tI6Irg2V2m+okP0iAZPwUdA1FUbK9JD
-   bfpOxzqwyYpo6mgpYyaaUZTOkg/uhvh6WPuAc2xNyCHBnIKoZSPCFynSN
-   6e/yinpPXq4X8rpvNXV/DsOv2sZY8OLBbjGVPITVynwAVnbCyuj6ZMoIx
-   g==;
-X-CSE-ConnectionGUID: QKVLmNuBQH2SKtor/QDlaw==
-X-CSE-MsgGUID: 88j7ErqDQWCCRfBZUsdfJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="38530718"
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="38530718"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 08:01:32 -0800
-X-CSE-ConnectionGUID: uLkk7swzS6GLSPySWw/2SQ==
-X-CSE-MsgGUID: D/ks+nPYQiGn83aWcOEg/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="97468225"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.29])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 08:01:30 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 16 Dec 2024 18:01:27 +0200 (EET)
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] PCI : Fix pcie_flag_reg in set_pcie_port_type
-In-Reply-To: <20241213070241.3334854-1-gthiagarajan@marvell.com>
-Message-ID: <5047c4a8-dfce-a081-e4fa-c6da731eb01d@linux.intel.com>
-References: <20241213070241.3334854-1-gthiagarajan@marvell.com>
+	s=arc-20240116; t=1734364933; c=relaxed/simple;
+	bh=7qB+WH5CvzhJIUn/n+fEK1o4wvpCcq42CH7zzcTVJ0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pVRybRwnlROly8dpoLB54y0xSwn4wbAO8yVp8a1sY+Fc6ZDU6ZJ14cAQJ6JoChxFq7z39ilDFyy6CBVeG7ZLJ3K9X5f6B5Ub54D47WociQxz7nwABqQPeDqfbTWgzvbTBut8Ahc9fJvaFoHeCjpy2mAiirkDKHGjLeEGoXX+L+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3fd6cd9ef7so3083961276.1;
+        Mon, 16 Dec 2024 08:02:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734364930; x=1734969730;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1rhzR3tttEO159oG0zFZxwUBRhydlJ5RVs56V/7Yj5o=;
+        b=pW2ddd4bTJ+Xtacwkw3NW/n22DyxCBBbguUeCMd8LWM8YNO7SW8S+0ECzb4DuEvWMm
+         kZJzbSst2IpcXJDTNtg7f1FXB9deFEIJ1XR1Uiv2sngcMO/8da5xOgejX7ygoMzDuPga
+         MDoZF9ZjUDqorjDRWy8tiws4BYTzH6jQaiH1i1/+5277YLr6TtvMPE4ldiC5kH14PVlW
+         o7FgPc+93nLmgumUMO1sEeLQc8didvL/BcbJFlP+nMm078db0wGnisP6ZN+3gr27ZFEA
+         oM+Rr03HV30NDNto87o/dmlbf8K3y8boPKQv8rCptI8lhn2pr1aVH7+mt53QuabHRlo+
+         or/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSvXnpKt4NBGOXID369/L/dEe5j2Q/f8iXn/4xUXST6EkwHMHT2pgcjne8phc0RGzPl7OjspZEzjHGG4Oh@vger.kernel.org, AJvYcCUZUCAlEyAXLOgjcA9xF/TxA6TSYGj1wF3r+qHGhF8Shauopt85Kx2nQEbjslZjbdtrLs7ktWrS14bRDK3uIvASZps=@vger.kernel.org, AJvYcCVfoXnPLhwV4lXQZEHhGHUV9I+x1PA8CxtcjsJgI4mmx4iAm8kw8eAqrHn1de/5aZVBS9JctqdPaJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWVzp2c9A/CKX0c49wNCmOMNfBpUt2hT06KzvbEhlTwaD35JFF
+	WpWLRD9Z4tBa9ScXtPwPfc4SskjCXxAvBcGKlJviir/FVrwDi5yrCwvRbZxM
+X-Gm-Gg: ASbGncuZcVhSiEzf9NTdU+yBH5/coQJmcmn6xhmI/St2fBKwpDGBT+Wi0wM2hgM2Klz
+	HHScH+hDr/t4Y368j/+KJ1hgoaExMrsM5lcc1H5mwRAZ6vwSOGTNDDnyA9u2ZVFiOHvt2l1B6EY
+	ktoMx9I6fCjr2iglG9vdC237sF3PvqbTfMWOADK3nqvyvhAwQhlAdk01cq6hKWAZrAlW1jMVOSO
+	XYxff5xtCpZ7zH6g2BNxFaib01aPPKEFhHTZekwB1iq+T6aqTtZMXYxBrcyd+4R8TkwaLnBlJ61
+	/inrhjjVpUAw3sGs1INy3Uw=
+X-Google-Smtp-Source: AGHT+IFg33LfxT9NqKcTyZDrO8iVahlkEKy8+ELUTaGc2+zc9y8eONbTWngWX0MPNmHYcXJ98I/L8Q==
+X-Received: by 2002:a05:6902:a90:b0:e4e:32d6:e9dc with SMTP id 3f1490d57ef6-e4e32d6f1a6mr3430701276.1.1734364929855;
+        Mon, 16 Dec 2024 08:02:09 -0800 (PST)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e47021fafa7sm1401155276.2.2024.12.16.08.02.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 08:02:09 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eeca49d8baso36066687b3.0;
+        Mon, 16 Dec 2024 08:02:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUTuSfL9FQ/Twa7y6yUzl/FTH0hM7E8FXyPN0F/Ri0djdGgTVfzwi4yE48K7mjy2KKva02wjj7+xXd6PBw9poO4zRQ=@vger.kernel.org, AJvYcCWTPyXiHFhKCfCoahfACorGJWO4PglNiFga/4SFmMpHeDm5jzdGrCSw7iP60tpRRAuk7GmXDkwG1WM9+57K@vger.kernel.org, AJvYcCXpJDKDgdXIPdpoWc7E0u7zEZ50c9J5pTOoyyg/OR61HihlP9gH+pyPIfuIoY0ol/FV/a8pPxKuix0=@vger.kernel.org
+X-Received: by 2002:a05:690c:3388:b0:6f0:3f7:ab1e with SMTP id
+ 00721157ae682-6f275cc8dc9mr104112327b3.16.1734364928938; Mon, 16 Dec 2024
+ 08:02:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241213175828.909987-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 17:01:57 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX-z6jVKXOgAz6S0qrdQ+CcobT7XYiknEQJoryi281PAg@mail.gmail.com>
+Message-ID: <CAMuHMdX-z6jVKXOgAz6S0qrdQ+CcobT7XYiknEQJoryi281PAg@mail.gmail.com>
+Subject: Re: [PATCH 7/9] i2c: riic: Use predefined macro and simplify clock
+ tick calculation
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Dec 2024, Gowthami Thiagarajan wrote:
+On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Replace the hardcoded `1000000000` with the predefined `NANO` macro for
+> clarity. Simplify the code by introducing a `ns_per_tick` variable to
+> store `NANO / rate`, reducing redundancy and improving readability.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> When an invalid PCIe topology is detected, the set_pcie_port_type function 
-> does not set the port type correctly. This issue can occur in 
-> configurations such as:
-> 
-> 	Root Port ---> Downstream Port ---> Root Port
-> 
-> In such cases, the topology is identified as invalid and due to the incorrect 
-> port type setting, the extended configuration space of the child device becomes 
-> inaccessible.
-> 
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-> ---
-> v1->v2:
-> 	Updated commit description
-> 
->  drivers/pci/probe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 4f68414c3086..263ec21451d9 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1596,7 +1596,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pcie_downstream_port(parent)) {
->  			pci_info(pdev, "claims to be downstream port but is acting as upstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM << 4;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Use FIELD_PREP() please.
+Gr{oetje,eeting}s,
 
--- 
- i.
+                        Geert
 
->  		}
->  	} else if (type == PCI_EXP_TYPE_UPSTREAM) {
->  		/*
-> @@ -1607,7 +1607,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
->  			pci_info(pdev, "claims to be upstream port but is acting as downstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM << 4;
->  		}
->  	}
->  }
-> 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
