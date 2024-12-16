@@ -1,530 +1,300 @@
-Return-Path: <linux-kernel+bounces-448021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED649F39ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:33:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A129F39F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E270B1616EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:33:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD48188CFAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D252080E9;
-	Mon, 16 Dec 2024 19:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C70207DFB;
+	Mon, 16 Dec 2024 19:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vv58uAt2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKK4U5Bg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8EA61FF2;
-	Mon, 16 Dec 2024 19:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357D777111;
+	Mon, 16 Dec 2024 19:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377591; cv=none; b=vEt2TPy3KuMwSXSIysthgxljxb5iRQM4LCPXFWzXS88ywelUdqfGsJucIdOT3qWvoOMc35XPo5catGGNNarFjR/FDlbAXXOp3Pdg3aPcn6HLK4ZoEzi0vH9SiPG65ELoQTSPh5Kcfo1vJUTDvstRyBXsTtPxuQtee7/eT+lhgVA=
+	t=1734377677; cv=none; b=feQXzjLYWcsJv9saLS1sqiQsBHbGLfKDVtpqWTHKjiw9V/tWTC+2s5PVHI/qJVO/a2OSZiELCfZieOeAdsEYKUwZz5Ck/P95Kdgz0K0wogBLapl3R0sPQdFXIM5ya6XMqSdZsLWMakHbyAb7nmkDvMG+r1XZDZ9l+/3ahUDOODw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377591; c=relaxed/simple;
-	bh=U1fbGO0BSNRpKiIjjNf+s/CPVnOP8eDf6pahtLW3rcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GDLPoWywnhv9vUK+q3Hz+HgTH0Gjz3P7li/hZ7regogLhqBi1PfPiaWJVI3BOk6Kdu82zu3rPzQa86U7cDRo2uZBaoResmgJTsyfjB16gXYsSxgGZvnDW9cPJPD1FYVwlG58+s4L7LcF3ibp1WbipiZkwPch5XxKqIo1sSAfcwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vv58uAt2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGJ7jpK022392;
-	Mon, 16 Dec 2024 19:33:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hwarrb2xkt4Df2SqtitlS/S7AbnfxS7sGXFzsoFEwWg=; b=Vv58uAt2j37qFfB3
-	klTvBiyJhvOT6p7UzmkCJK/W761VaVymPR3mIiyM+fFFPBWBMqQyDmVuCzl+n5Bn
-	/jUt4MkzT/0SgxqKu71rAYHoxuakbT4knctMxhT+tTMO7NOfJ0ye4mxWsLe3JU7I
-	Umo0/IxTnMHwYkHXJejl+spTualaoYVoQWeZ2J00eSBgDAsoR3ktlyA4s9VU19Ag
-	aScbRFkLlGdOERNSdGRiCihWyCyw+ONMiA7P2MxteZSvCxH4hobzFLT5STCSs6J4
-	nfqFAyCRfBWKvNQRkzbnIaazHBV/JpgpXRCuDLXAml/fBB0Kh11zIdWNtaQuZVES
-	IAxEuA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jgrr9s2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:33:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJX0fj020921
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:33:00 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:32:58 -0800
-Message-ID: <0cbe48cd-b830-444a-8de0-529343d86192@quicinc.com>
-Date: Mon, 16 Dec 2024 11:32:57 -0800
+	s=arc-20240116; t=1734377677; c=relaxed/simple;
+	bh=AbSwzQeSAAwSlPBzlMhf9FunRjlq1c0ocCOPV62VjNI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YEL2mkdsiqCxwveZVZ82vICBpJMFlVAeYcNIOlKMBqRl0U46rpo6uY0tCaO3nQLFmL82oJUNcqBfi5M8SHaQR6I8IaBdaQOzZhdvfE8XYT/5INlRGv9xP006/D13yG6J6t2yv/S5f36M0aFqxY6FT5DAOkdVFtfDIYM4Eydigsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKK4U5Bg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B290DC4CEDF;
+	Mon, 16 Dec 2024 19:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734377676;
+	bh=AbSwzQeSAAwSlPBzlMhf9FunRjlq1c0ocCOPV62VjNI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DKK4U5BguR4BDjrZUP1SCauViHJZ2t9XEZhiaOBnS0XFo7qBsxqxHubDwtJzdH6hq
+	 02qnmNyfPcbWiqnsI2Euf+aMaDjFTD2j5WnlZq7/LyQs1ae/9SeMjWIrtykNzhniAn
+	 /y+QVErCQmq+hZT/Mq3cmLW/hQyBxRR6i5JfZaeUDq5vBD2WUCpiKtVS4eLw5skDYO
+	 PYVPWABWZYg0pqVsZU0a2r+3xkAPuwd9o2YMrkTi9IR0gvemBo8TCT8zTHWpXIFaOV
+	 SWsY1Ppqdw2+1iwWywgMvcA6RvcTkFBcRd9yQZI3o3PajYaGfCcsYMjnHtJkyiST6v
+	 Xgnxf29Rokqjg==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-71e2bb84fe3so2154297a34.1;
+        Mon, 16 Dec 2024 11:34:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVgkDD/TrI3KgC3u0IPtBTHteI3ffNRBWBQdqgnvr5tfr8r6N7htOg7wWIhE/lLPtmECBzNY9AYHEU=@vger.kernel.org, AJvYcCW2eJV1XWzwh2piPoqLtzU2r1rOFqk9QljLGblqSDBoau8wx1VIbtIlggIoJ28AePQ4X0KGL+p6e3Ec@vger.kernel.org, AJvYcCXJXEGMQRg4pbVDc99WO75V3SqQ9QVKWeVq/Q1XpDsDeCVECN6DldNvwtzBbAjFQaBebalq4lb9sZKU+Uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOgod3aKAaaszGcn/WeLocwJKc4FIUj5Xhh05cXX/2OmKB0Ih0
+	XajYMraA7n2Ufn7IW2qE370JSfmgd8vz1NEzaUrOx6M4V7NKfBRt1OP1WpHfQ77nf61diGJq8k+
+	mmsnEoIICuL60L5cwntil+2XKeYo=
+X-Google-Smtp-Source: AGHT+IE0wpa+7kxEMfC5+J2Oi9KVNNrXTpOtVC/OkvKGxKPPvYOjGQeDw7sEgCsP07TGUrQWRL2YirlTvycMfVLtUBE=
+X-Received: by 2002:a05:6808:3c47:b0:3e7:eda5:6b06 with SMTP id
+ 5614622812f47-3eba6988131mr9167034b6e.35.1734377675891; Mon, 16 Dec 2024
+ 11:34:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/16] drm/msm/dp: use msm_dp_utils_pack_sdp_header()
- for audio packets
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
- <20241216-fd-dp-audio-fixup-v4-2-f8d1961cf22f@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-fd-dp-audio-fixup-v4-2-f8d1961cf22f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4aO7QFkh3Wz9UKW4dyj__2UrxqwR-yAs
-X-Proofpoint-GUID: 4aO7QFkh3Wz9UKW4dyj__2UrxqwR-yAs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 adultscore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160161
+References: <20241209143821.m4dahsaqeydluyf3@thinkpad> <20241212055920.GB4825@lst.de>
+ <13662231.uLZWGnKmhe@rjwysocki.net> <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
+ <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+ <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <CAJZ5v0gLMx+tBo+MA3AQZ7qP28Z91d04oVBHVeTNcd-QD=kJZg@mail.gmail.com>
+ <20241216171108.6ssulem3276rkycb@thinkpad> <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
+ <20241216175210.mnc5kp6646sq7vzm@thinkpad>
+In-Reply-To: <20241216175210.mnc5kp6646sq7vzm@thinkpad>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Dec 2024 20:34:24 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0grRdTYaamSnKSF-HyMmCHDEZ4haLo+ziSBxhDg1PbjRQ@mail.gmail.com>
+Message-ID: <CAJZ5v0grRdTYaamSnKSF-HyMmCHDEZ4haLo+ziSBxhDg1PbjRQ@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, 
+	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 6:52=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Dec 16, 2024 at 06:35:52PM +0100, Rafael J. Wysocki wrote:
+> > On Mon, Dec 16, 2024 at 6:11=E2=80=AFPM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Mon, Dec 16, 2024 at 05:24:40PM +0100, Rafael J. Wysocki wrote:
+> > > > On Sat, Dec 14, 2024 at 7:30=E2=80=AFAM Manivannan Sadhasivam
+> > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > >
+> > > > > On Fri, Dec 13, 2024 at 03:35:15PM +0100, Rafael J. Wysocki wrote=
+:
+> > > > > > On Thu, Dec 12, 2024 at 4:14=E2=80=AFPM Christoph Hellwig <hch@=
+lst.de> wrote:
+> > > > > > >
+> > > > > > > On Thu, Dec 12, 2024 at 01:49:15PM +0100, Ulf Hansson wrote:
+> > > > > > > > Right. This seems to somewhat work for ACPI types of system=
+s, because
+> > > > > > > > ACPI is controlling the low power state for all the devices=
+. Based on
+> > > > > > > > the requested system wide low power state, ACPI can then de=
+cide to
+> > > > > > > > call pm_set_suspend_via_firmware() or not.
+> > > > > > > >
+> > > > > > > > Still there is a problem with this for ACPI too.
+> > > > > > > >
+> > > > > > > > How does ACPI know whether it's actually a good idea to kee=
+p the NVMe
+> > > > > > > > storage powered in s2idle (ACPI calls pm_set_suspend_via_fi=
+rmware()
+> > > > > > > > only for S2R and S2disk!?)? Especially when my laptop only =
+supports
+> > > > > > > > s2idle and that's what I will use when I close the lid. In =
+this way,
+> > > > > > > > the NMVe storage will certainly contribute to draining the =
+battery,
+> > > > > > > > especially when I won't be using my laptop for a couple of =
+days.
+> > > > > > > >
+> > > > > > > > In my opinion, we need a better approach that is both flexi=
+ble and
+> > > > > > > > that dynamically adjusts based upon the use case.
+> > > > > > >
+> > > > > > > Agreed.  I'd be happy to work with the PM maintainers to do t=
+his,
+> > > > > > > but I don't really know enough about the PM core to drive it
+> > > > > > > (as the reply from Rafael to my mail makes pretty clear :))
+> > > > > >
+> > > > > > I'm here to help.
+> > > > > >
+> > > > > > Let me know what exactly you want to achieve and we'll see how =
+to make it work.
+> > > > >
+> > > > > I'll try to summarize the requirement here since I started this t=
+hread:
+> > > > >
+> > > > > Problem statement
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >
+> > > > > We need a PM core API that tells the device drivers when it is sa=
+fe to powerdown
+> > > > > the devices. The usecase here is with PCIe based NVMe devices but=
+ the problem is
+> > > > > applicable to other devices as well.
+> > > > >
+> > > > > Drivers are relying on couple of options now:
+> > > > >
+> > > > > 1. If pm_suspend_via_firmware() returns true, then drivers will s=
+hutdown the
+> > > > > device assuming that the firmware is going to handle the suspend.=
+ But this API
+> > > > > is currently used only by ACPI. Even there, ACPI relies on S2R be=
+ing supported
+> > > > > by the platform and it sets pm_set_suspend_via_firmware() only wh=
+en the suspend
+> > > > > is S2R. But if the platform doesn't support S2R (current case of =
+most of the
+> > > > > Qcom SoCs), then pm_suspend_via_firmware() will return false and =
+NVMe won't be
+> > > > > powered down draining the battery.
+> > > >
+> > > > So my question here would be why is it not powered down always duri=
+ng
+> > > > system-wide suspend?
+> > > >
+> > > > Why exactly is it necessary to distinguish one case from the other
+> > > > (assuming that we are talking about system-wide suspend only)?
+> > > >
+> > >
+> > > To support Android like usecase with firmware that only supports
+> > > suspend-to-idle (Qcom platforms). This usecase is not applicable righ=
+t now, but
+> > > one can't just rule out the possibility in the near future.
+> >
+> > This doesn't explain anything to me, sorry.
+> >
+> > > And the problem is that we need to support both Android and non-Andro=
+id systems
+> > > with same firmware :/
+> >
+> > So what technically is the problem?
+> >
+>
+> NVMe wear out is the problem.
+>
+> > > > There are drivers that use pm_suspend_via_firmware() to check wheth=
+er
+> > > > or not something special needs to be done to the device because if
+> > > > "false" is returned, the platform firmware is not going to remove
+> > > > power from it.
+> > > >
+> > > > However, you seem to be talking about the opposite, so doing someth=
+ing
+> > > > special to the device if "true" is returned.  I'm not sure why this=
+ is
+> > > > necessary.
+> > > >
+> > >
+> > > Because, since 'false' is returned, drivers like NVMe are assuming th=
+at the
+> > > platform won't remove power on all DT systems and they just keep the =
+devices in
+> > > low power state (not powering them down). But why would I want my NVM=
+e in DT
+> > > based laptop to be always powered in system suspend?
+> >
+> > Because it causes the system to use less energy when suspended.
+> >
+>
+> But the NVMe driver would be still operational. Powering it down would ca=
+use the
+> system to use much less energy.
 
+Yes, that's what I wanted to say, sorry for the confusion.
 
-On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
-> Use msm_dp_utils_pack_sdp_header() and call msm_dp_write_link() directly
-> to program audio packet data. Use 0 as Packet ID, as it was not
-> programmed earlier.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_audio.c   | 268 ++++++------------------------------
->   drivers/gpu/drm/msm/dp/dp_catalog.c |  71 ++++++++++
->   drivers/gpu/drm/msm/dp/dp_catalog.h |  10 ++
->   3 files changed, 122 insertions(+), 227 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
-> index 5cbb11986460d1e4ed1890bdf66d0913e013083c..46fbf8601eea8e43a152049dfd1dc1d77943d922 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_audio.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_audio.c
-> @@ -14,6 +14,7 @@
->   #include "dp_catalog.h"
->   #include "dp_audio.h"
->   #include "dp_panel.h"
-> +#include "dp_reg.h"
+IIRC, there are two reasons why the NVMe driver does this:
+(1) On some platforms the devices handled by it couldn't come back
+from D3cold without platform firmware's help.
+(2) Putting devices into D3hot alone was not sufficient to reduce
+their power sufficiently and it didn't make much difference on top of
+the other things done to them for this purpose.
 
-This change still does reg writes through catalog. Why do you need to 
-include dp_reg.h here?
+ It avoids putting devices into D3cold (or even into D3hot for that
+matter) because of the above, not because it is generally required to
+do so in suspend-to-idle.  So this really is exceptional behavior and
+not following a rule of some kind.
 
->   #include "dp_display.h"
->   #include "dp_utils.h"
->   
-> @@ -28,251 +29,64 @@ struct msm_dp_audio_private {
->   	struct msm_dp_audio msm_dp_audio;
->   };
->   
-> -static u32 msm_dp_audio_get_header(struct msm_dp_catalog *catalog,
-> -		enum msm_dp_catalog_audio_sdp_type sdp,
-> -		enum msm_dp_catalog_audio_header_type header)
-> -{
-> -	return msm_dp_catalog_audio_get_header(catalog, sdp, header);
-> -}
-> -
-> -static void msm_dp_audio_set_header(struct msm_dp_catalog *catalog,
-> -		u32 data,
-> -		enum msm_dp_catalog_audio_sdp_type sdp,
-> -		enum msm_dp_catalog_audio_header_type header)
-> -{
-> -	msm_dp_catalog_audio_set_header(catalog, sdp, header, data);
-> -}
-> -
->   static void msm_dp_audio_stream_sdp(struct msm_dp_audio_private *audio)
->   {
-> -	struct msm_dp_catalog *catalog = audio->catalog;
-> -	u32 value, new_value;
-> -	u8 parity_byte;
-> -
-> -	/* Config header and parity byte 1 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	new_value = 0x02;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_1_BIT)
-> -			| (parity_byte << PARITY_BYTE_1_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	/* Config header and parity byte 2 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_2);
-> -	new_value = value;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_2_BIT)
-> -			| (parity_byte << PARITY_BYTE_2_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	/* Config header and parity byte 3 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_3);
-> -
-> -	new_value = audio->channels - 1;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_3_BIT)
-> -			| (parity_byte << PARITY_BYTE_3_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
-> -		value, parity_byte);
-> -
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_3);
-> +	struct dp_sdp_header sdp_hdr = {
-> +		.HB0 = 0x00,
-> +		.HB1 = 0x02,
-> +		.HB2 = 0x00,
-> +		.HB3 = audio->channels - 1,
-> +	};
-> +
-> +	msm_dp_catalog_write_audio_stream(audio->catalog, &sdp_hdr);
->   }
->   
->   static void msm_dp_audio_timestamp_sdp(struct msm_dp_audio_private *audio)
->   {
-> -	struct msm_dp_catalog *catalog = audio->catalog;
-> -	u32 value, new_value;
-> -	u8 parity_byte;
-> -
-> -	/* Config header and parity byte 1 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	new_value = 0x1;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_1_BIT)
-> -			| (parity_byte << PARITY_BYTE_1_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	/* Config header and parity byte 2 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	new_value = 0x17;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_2_BIT)
-> -			| (parity_byte << PARITY_BYTE_2_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	/* Config header and parity byte 3 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_3);
-> -
-> -	new_value = (0x0 | (0x11 << 2));
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_3_BIT)
-> -			| (parity_byte << PARITY_BYTE_3_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_3);
-> +	struct dp_sdp_header sdp_hdr = {
-> +		.HB0 = 0x00,
-> +		.HB1 = 0x01,
-> +		.HB2 = 0x17,
-> +		.HB3 = 0x0 | (0x11 << 2),
-> +	};
-> +
-> +	msm_dp_catalog_write_audio_timestamp(audio->catalog, &sdp_hdr);
->   }
->   
->   static void msm_dp_audio_infoframe_sdp(struct msm_dp_audio_private *audio)
->   {
-> -	struct msm_dp_catalog *catalog = audio->catalog;
-> -	u32 value, new_value;
-> -	u8 parity_byte;
-> -
-> -	/* Config header and parity byte 1 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	new_value = 0x84;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_1_BIT)
-> -			| (parity_byte << PARITY_BYTE_1_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	/* Config header and parity byte 2 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	new_value = 0x1b;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_2_BIT)
-> -			| (parity_byte << PARITY_BYTE_2_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	/* Config header and parity byte 3 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_3);
-> -
-> -	new_value = (0x0 | (0x11 << 2));
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_3_BIT)
-> -			| (parity_byte << PARITY_BYTE_3_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
-> -			new_value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_3);
-> +	struct dp_sdp_header sdp_hdr = {
-> +		.HB0 = 0x00,
-> +		.HB1 = 0x84,
-> +		.HB2 = 0x1b,
-> +		.HB3 = 0x0 | (0x11 << 2),
-> +	};
-> +
-> +	msm_dp_catalog_write_audio_infoframe(audio->catalog, &sdp_hdr);
->   }
->   
->   static void msm_dp_audio_copy_management_sdp(struct msm_dp_audio_private *audio)
->   {
-> -	struct msm_dp_catalog *catalog = audio->catalog;
-> -	u32 value, new_value;
-> -	u8 parity_byte;
-> -
-> -	/* Config header and parity byte 1 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	new_value = 0x05;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_1_BIT)
-> -			| (parity_byte << PARITY_BYTE_1_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	/* Config header and parity byte 2 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	new_value = 0x0F;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_2_BIT)
-> -			| (parity_byte << PARITY_BYTE_2_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	/* Config header and parity byte 3 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_3);
-> -
-> -	new_value = 0x0;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_3_BIT)
-> -			| (parity_byte << PARITY_BYTE_3_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_3);
-> +	struct dp_sdp_header sdp_hdr = {
-> +		.HB0 = 0x00,
-> +		.HB1 = 0x05,
-> +		.HB2 = 0x0f,
-> +		.HB3 = 0x00,
-> +	};
-> +
-> +	msm_dp_catalog_write_audio_copy_mgmt(audio->catalog, &sdp_hdr);
->   }
->   
->   static void msm_dp_audio_isrc_sdp(struct msm_dp_audio_private *audio)
->   {
-> -	struct msm_dp_catalog *catalog = audio->catalog;
-> -	u32 value, new_value;
-> -	u8 parity_byte;
-> -
-> -	/* Config header and parity byte 1 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	new_value = 0x06;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_1_BIT)
-> -			| (parity_byte << PARITY_BYTE_1_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_1);
-> -
-> -	/* Config header and parity byte 2 */
-> -	value = msm_dp_audio_get_header(catalog,
-> -			DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_2);
-> -
-> -	new_value = 0x0F;
-> -	parity_byte = msm_dp_utils_calculate_parity(new_value);
-> -	value |= ((new_value << HEADER_BYTE_2_BIT)
-> -			| (parity_byte << PARITY_BYTE_2_BIT));
-> -	drm_dbg_dp(audio->drm_dev,
-> -			"Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
-> -			value, parity_byte);
-> -	msm_dp_audio_set_header(catalog, value,
-> -		DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_2);
-> +	struct dp_sdp_header sdp_hdr = {
-> +		.HB0 = 0x00,
-> +		.HB1 = 0x06,
-> +		.HB2 = 0x0f,
-> +		.HB3 = 0x00,
-> +	};
-> +
-> +	msm_dp_catalog_write_audio_isrc(audio->catalog, &sdp_hdr);
->   }
->   
->   static void msm_dp_audio_setup_sdp(struct msm_dp_audio_private *audio)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> index 6a30996200bc7fbaacd0502f096e787f754752de..8fddfe5d85d6398c6582e1f74647f4cd83f5a4d9 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> @@ -1122,6 +1122,77 @@ struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev)
->   	return &catalog->msm_dp_catalog;
->   }
->   
-> +void msm_dp_catalog_write_audio_stream(struct msm_dp_catalog *msm_dp_catalog,
-> +				       struct dp_sdp_header *sdp_hdr)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +	u32 header[2];
-> +
-> +	msm_dp_utils_pack_sdp_header(sdp_hdr, header);
-> +
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_STREAM_0, header[0]);
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_STREAM_1, header[1]);
-> +}
-> +
-> +void msm_dp_catalog_write_audio_timestamp(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +	u32 header[2];
-> +
-> +	msm_dp_utils_pack_sdp_header(sdp_hdr, header);
-> +
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_TIMESTAMP_0, header[0]);
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_TIMESTAMP_1, header[1]);
-> +}
-> +
-> +void msm_dp_catalog_write_audio_infoframe(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +	u32 header[2];
-> +
-> +	msm_dp_utils_pack_sdp_header(sdp_hdr, header);
-> +
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_INFOFRAME_0, header[0]);
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_INFOFRAME_1, header[1]);
-> +}
-> +
-> +void msm_dp_catalog_write_audio_copy_mgmt(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +	u32 header[2];
-> +
-> +	msm_dp_utils_pack_sdp_header(sdp_hdr, header);
-> +
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_COPYMANAGEMENT_0, header[0]);
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_COPYMANAGEMENT_1, header[1]);
-> +}
-> +
-> +void msm_dp_catalog_write_audio_isrc(struct msm_dp_catalog *msm_dp_catalog,
-> +				     struct dp_sdp_header *sdp_hdr)
-> +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +				struct msm_dp_catalog_private, msm_dp_catalog);
-> +	struct dp_sdp_header tmp = *sdp_hdr;
-> +	u32 header[2];
-> +	u32 reg;
-> +
-> +	/* XXX: is it necessary to preserve this field? */
-> +	reg = msm_dp_read_link(catalog, MMSS_DP_AUDIO_ISRC_1);
-> +	tmp.HB3 = FIELD_GET(HEADER_3_MASK, reg);
-> +
-> +	msm_dp_utils_pack_sdp_header(&tmp, header);
-> +
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_ISRC_0, header[0]);
-> +	msm_dp_write_link(catalog, MMSS_DP_AUDIO_ISRC_1, header[1]);
-> +}
-> +
->   u32 msm_dp_catalog_audio_get_header(struct msm_dp_catalog *msm_dp_catalog,
->   				enum msm_dp_catalog_audio_sdp_type sdp,
->   				enum msm_dp_catalog_audio_header_type header)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index 62a401d8f75a6af06445a42af657d65e3fe542c5..4a5591d9f82a21d7a3bb64ad6b486e39bd406cd5 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> @@ -111,6 +111,16 @@ void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog);
->   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
->   
->   /* DP Audio APIs */
-> +void msm_dp_catalog_write_audio_stream(struct msm_dp_catalog *msm_dp_catalog,
-> +				       struct dp_sdp_header *sdp_hdr);
-> +void msm_dp_catalog_write_audio_timestamp(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr);
-> +void msm_dp_catalog_write_audio_infoframe(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr);
-> +void msm_dp_catalog_write_audio_copy_mgmt(struct msm_dp_catalog *msm_dp_catalog,
-> +					  struct dp_sdp_header *sdp_hdr);
-> +void msm_dp_catalog_write_audio_isrc(struct msm_dp_catalog *msm_dp_catalog,
-> +				     struct dp_sdp_header *sdp_hdr);
->   u32 msm_dp_catalog_audio_get_header(struct msm_dp_catalog *msm_dp_catalog,
->   				enum msm_dp_catalog_audio_sdp_type sdp,
->   				enum msm_dp_catalog_audio_header_type header);
-> 
+> There is also a case where some devices like
+> (Laptops made out of Qcom SCX Gen3 SoCs) require all the PCIe devices to =
+be
+> powered down in order for the SoC to reach its low power state (CX power
+> collapse in Qcom terms). If not, the SoC would continue to draw more powe=
+r
+> leading to battery draining quickly. This platform is supported in upstre=
+am and
+> we keep the PCIe interconnect voted during suspend as the NVMe driver is
+> expecting the device to retain its state during resume. Because of this
+> requirement, this platform is not reaching SoC level low power state with
+> upstream kernel.
+
+OK, now all of this makes sense and that's why you really want NVMe
+devices to end up in some form of PCI D3 in suspend-to-idle.
+
+Would D3hot be sufficient for this platform or does it need to be
+D3cold?  If the latter, what exactly is the method by which they are
+put into D3cold?
+
+> > > > > If the platform is using DT, then there is no entity setting
+> > > > > pm_set_suspend_via_firmware().
+> > > >
+> > > > That's true and so the assumption is that in this case the handling=
+ of
+> > > > all devices will always be the same regardless of which flavor of
+> > > > system suspend is chosen by user space.
+> > > >
+> > >
+> > > Right and that's why the above concern is raised.
+> >
+> > And it is still unclear to me what the problem with it is.
+> >
+> > What exactly can go wrong?
+> >
+> > > > > So NVMe will be kept in low power state all the
+> > > > > time (still draining the battery).
+> > > >
+> > > > So what would be the problem with powering it down unconditionally?
+> > > >
+> > >
+> > > I'm not sure how would you do that (by checking dev_of_node()?). Even=
+ so, it
+> > > will wear out the NVMe devices if used in Android tablets etc...
+> >
+> > I understand the wear-out concern.
+> >
+> > Is there anything else?
+> >
+>
+> No, that's the only concern.
+
+OK
+
+I think we're getting to the bottom of the issue.
+
+First off, there really is no requirement to avoid putting PCI devices
+into D3hot or D3cold during suspend-to-idle.  On all modern Intel
+platforms, PCIe devices are put into D3(hot or cold) during
+suspend-to-idle and I don't see why this should be any different on
+platforms from any other vendors.
+
+The NVMe driver is an exception and it avoids D3(hot or cold) during
+suspend-to-idle because of problems with some hardware or platforms.
+It might in principle allow devices to go into D3(hot or cold) during
+suspend-to-idle, so long as it knows that this is going to work.
+
+However, there is an additional concern that putting an NVMe device
+into D3cold every time during system suspend on Android might cause it
+to wear out more quickly.
+
+Is there anything else?
 
