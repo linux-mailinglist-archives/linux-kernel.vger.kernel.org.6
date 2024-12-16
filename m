@@ -1,571 +1,160 @@
-Return-Path: <linux-kernel+bounces-447034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178579F2C56
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:55:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E13A9F2C69
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48057165AF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5BD51887DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7A61FFC73;
-	Mon, 16 Dec 2024 08:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b="PvlINJIN"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4522720010B;
+	Mon, 16 Dec 2024 08:56:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC01FFC75
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43423200109
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734339287; cv=none; b=BWf4xUjK/8r0QaWYEoGWPkv5NXE2ALUZ1rEm6l6wlUCvOIJLIWn2tcsO4tyIJje1nXoT5wH7XjQn0DSWkmW0QbSsJWFmDNreY00ww4rHN0R6Ubhf6jLKjdweGnXnxCUdcNYMXUcpT3NF4nhH/9mqUNSEOdvwBzpP/3xlLPmOP+0=
+	t=1734339389; cv=none; b=uiehi07OF80INm483XSbbtFZtdl4LOkyIIFEr7zl4/Xil8iIi74VT6TH6/cLgFaSxhmTeeOwGt+PMiI/dPR9IhFHwoaIvWu7JgmjiRe50w7EgvXa3sYcQN26rrAgkoRy6g27M2fKdGX5w243mbFucCRfoj0l95OE4ZM5oc6nxkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734339287; c=relaxed/simple;
-	bh=5RY4lshhlze7QRp7NGCq58pFPobkxguy7/8IzrEV/BA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R80rgiRdnhUAVib7CmQY7/L8zJzcvf+8HF/lDWinsX9araeGlaR9h4kWT6Yxs99EFb4ZTVMA3NedPIlP01Dex/vGKCvLeZ7nyztvCMvkYQq5LknFi3kFJqBLlDlN3x2wxP5aF8ZDEJcTqM6DurEuxcWrvQBvez9ztsU1NziKRdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com; spf=pass smtp.mailfrom=8devices.com; dkim=pass (2048-bit key) header.d=8devices.com header.i=@8devices.com header.b=PvlINJIN; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=8devices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8devices.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3003943288bso36786471fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:54:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=8devices.com; s=8devices; t=1734339282; x=1734944082; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6HjFTfajugFjsfLZm3+u6D3uXDNooXNPgDhumvsfytQ=;
-        b=PvlINJINj7usqDKjkhHwF044ny5/b6kU1S4S9YRBHeda+cIkoO+5nvENuFo9v9sdmN
-         Xg83IHb2rnx2ySgHZLu+kc2euQHYip3UvpGRgFFkJw9FLqi6esJ5lrkmPx+YOT46YgTN
-         XsRdqAyIvbG1DQBvzhw0zeTjiWlxNcDC5d6mLJ32HDdWuP+osTtn+AhXhRjLFUJLCs23
-         c02Ih+1Xj4aF+9jGNY8NKMlYH9eejOp56R6g2BdlJA7Av2n9idkR+ypM2RXUuy9PaXNL
-         12nuptKc9W5xDF0SsOv1WSkxzbCRkpZ9Yg7/S4HKxBJrDDCnI5ov9omS6gM3iuMl/DCP
-         6J9A==
+	s=arc-20240116; t=1734339389; c=relaxed/simple;
+	bh=qHy8pe6BJZ/CNAHEzIVHbAuPyQL9DFoR782xOYMDW3M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lrx5CCyYx1p99an+9BGC5ChLwKJAR/oIYKFocQRsy+/bp9QUU2NS8vdqul12E5hsMP+C2AcY4WmEyF7Ln8R/6+wHn7OYHTwYLlwJ5CEhpATUpzJSz0X1J1FSBqiJKyBTD/CObRfRK1ax01uB6oPZrbp30rWSdprAmbxHZEfqI6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so85146205ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:56:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734339282; x=1734944082;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6HjFTfajugFjsfLZm3+u6D3uXDNooXNPgDhumvsfytQ=;
-        b=sGtMYKXeMCtWjj63qO04WJSljd9qT2iFmN8PGuB2G9PTg5XMFxxmBkw4WDeWZUjncy
-         ctQ2uofY1EWNoL9b0vcKjkXS4Wyw0VnTcXDOJrB0ub2EWug/rC4p4LLT6+EGG3JiNeB5
-         erwATB4fqTJZZdyvWNne53FUufZ/S7jovB2Xt8cTNaF2BE49W4RF2oeS+INIK5Hm6SD3
-         JekukiW/pw9FYIJFy1gVgY9nAmq0heO2yUclb8VBU/QqFHSdF47/ShhegjuwfK8UyLdU
-         ZPsvjBWr8JI7bRI3zdeQJ96aChUuXohWK+hBrN6/hQN26L12bALkz/nKEsR3duHxv/0i
-         Ehlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQVLkVVMi3K4ET+69VxB0hqNlw5JQIWV8Jl962rBgEvMNMkE7MJpKNgCHNi3ESd22t81FaSnPyO4EdwWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRBD/RqSRE6mKhBEmStwB4vcVtlhwJvWBVkFPrMXj5vYxxfvp6
-	YMRtDe4WHcF+ce/VFUxD/mmFzYXa5rJbVk1MOQNqHBQWBJmc7rqOJj4R/sAU+t0=
-X-Gm-Gg: ASbGncvJN90xYXolqeQ0VUyKPQ0pkb3oeR7D9yYgbbZ2p3lejPFH56agqvVXXDbBzKv
-	t1iH5af3zvJoLZ2EXSYSo6aoTq8p5o0Rx8zBkMErd1fwjwdbBOWFevSDZ342NqMdfbm153shkBd
-	fQEoXakQ7y42NLZ/TV/1yR594KsXZSwFKE5wg0o6zPiios8JVjHuc4cPHcTd3qo7gv07eue9nDL
-	kRDIwfPKV92Nd7MrvMVA7gJ3XyuEzZID05XN9VI5vYEbLaLjFILxFwfRES6sJSRzL5mAgU=
-X-Google-Smtp-Source: AGHT+IEzSwcxMpfmsNAigtq6qZL4byOIUgTPPgr6w3Egy1Yuh0xxpseLaL7YmEO2D9SNew4xWf7X0w==
-X-Received: by 2002:a2e:beac:0:b0:302:1d24:8db7 with SMTP id 38308e7fff4ca-302545504e8mr40968581fa.19.1734339282338;
-        Mon, 16 Dec 2024 00:54:42 -0800 (PST)
-Received: from [192.168.2.155] ([78.62.132.154])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3034401d405sm8561641fa.5.2024.12.16.00.54.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 00:54:41 -0800 (PST)
-Message-ID: <cd55964f-423a-4fec-9c8c-7ee3602b8322@8devices.com>
-Date: Mon, 16 Dec 2024 10:54:40 +0200
+        d=1e100.net; s=20230601; t=1734339387; x=1734944187;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l60Dua/WtRR5J4wn9Myw1KA8V4e7z1uHssTczWLt9JY=;
+        b=f1kEgv2Q09TTR+jxw3SHDOEuEVdOEHYu7ru1Uw1H7aE17EhoTHs9S+E4P7zhMFoZAY
+         p+vax05QU1XTqaBz3oStYVVGCRArGVa4ZK8QiPaeYvp7YYSPLZr43AqqImHWINIA7Ii1
+         c4dLTz11NvBQiIoKRLraroYEedh4Nd/EPB5saVrKOWggssmPSHgcgbQjKdQuWdlLAIdB
+         XbL6JInCbed3VvGaElG+IYYdThRpP8rTxBzZhIFUqdc/90XzYXunT73QPbwVR+PA2w1W
+         3qWEYvy57KYHck2agup/s0bmtx2PqdrKRgLfVSqJtj3AJDPHy7A1WGSziWmZnr+ABwMV
+         2Mqw==
+X-Gm-Message-State: AOJu0YzTqk7uudxFfwk2XObZqJMT4bWbU1j90xQReyMAtEnhjLNBaPEB
+	s1na5RTdf2zrSJEqTV0a6KwvSSyvRHDfCb8bobyhKXorJBgpXPrBHlM8x0YzvOSloHcrL2+ZnnO
+	997SH8lSCU9eEKJT+Zclk+EDHJcvIcbegEhbALRjDNrqiZGVqfih35yK7TQ==
+X-Google-Smtp-Source: AGHT+IEzamfjcvk4wbGxi4HkqRFj7xXF3MP0C4LAUNUsuYXgZa/dX56WSWA9Ds7VgnsqMfxRudxB5Uo/wb4TS0q2LtXElAECnGcN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7 2/4] arm64: dts: qcom: ipq9574: Add PCIe PHYs and
- controller nodes
-To: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
- manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240801054803.3015572-1-quic_srichara@quicinc.com>
- <20240801054803.3015572-3-quic_srichara@quicinc.com>
-Content-Language: en-US
-From: Mantas Pucka <mantas@8devices.com>
-In-Reply-To: <20240801054803.3015572-3-quic_srichara@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:19cf:b0:3a7:6a98:3fdf with SMTP id
+ e9e14a558f8ab-3afeee7a120mr89281705ab.14.1734339387306; Mon, 16 Dec 2024
+ 00:56:27 -0800 (PST)
+Date: Mon, 16 Dec 2024 00:56:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675feb3b.050a0220.37aaf.0120.GAE@google.com>
+Subject: [syzbot] [trace?] WARNING in ring_buffer_map
+From: syzbot <syzbot+648bb824605554d08bff@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-08-01 08:48, Sricharan R wrote:
-> From: devi priya <quic_devipriy@quicinc.com>
->
-> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
-> found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
-> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
->
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
-> [V7] Fixed review comments from Manivannan.
->
->   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 420 +++++++++++++++++++++++++-
->   1 file changed, 416 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 48dfafea46a7..078e2950acd2 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -226,6 +226,52 @@ rpm_msg_ram: sram@60000 {
->   			reg = <0x00060000 0x6000>;
->   		};
->   
-> +		pcie0_phy: phy@84000 {
-> +			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
-> +			reg = <0x00084000 0x1000>;
-> +
-> +			clocks = <&gcc GCC_PCIE0_AUX_CLK>,
-> +				 <&gcc GCC_PCIE0_AHB_CLK>,
-> +				 <&gcc GCC_PCIE0_PIPE_CLK>;
-> +			clock-names = "aux", "cfg_ahb", "pipe";
-> +
-> +			assigned-clocks = <&gcc GCC_PCIE0_AUX_CLK>;
-> +			assigned-clock-rates = <20000000>;
-> +
-> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
-> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
-> +			reset-names = "phy", "common";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "gcc_pcie0_pipe_clk_src";
-> +
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie2_phy: phy@8c000 {
-> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-> +			reg = <0x0008c000 0x2000>;
-> +
-> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
-> +				 <&gcc GCC_PCIE2_AHB_CLK>,
-> +				 <&gcc GCC_PCIE2_PIPE_CLK>;
-> +			clock-names = "aux", "cfg_ahb", "pipe";
-> +
-> +			assigned-clocks = <&gcc GCC_PCIE2_AUX_CLK>;
-> +			assigned-clock-rates = <20000000>;
-> +
-> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
-> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
-> +			reset-names = "phy", "common";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "gcc_pcie2_pipe_clk_src";
-> +
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->   		rng: rng@e3000 {
->   			compatible = "qcom,prng-ee";
->   			reg = <0x000e3000 0x1000>;
-> @@ -243,6 +289,52 @@ mdio: mdio@90000 {
->   			status = "disabled";
->   		};
->   
-> +		pcie3_phy: phy@f4000 {
-> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-> +			reg = <0x000f4000 0x2000>;
-> +
-> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
-> +				 <&gcc GCC_PCIE3_AHB_CLK>,
-> +				 <&gcc GCC_PCIE3_PIPE_CLK>;
-> +			clock-names = "aux", "cfg_ahb", "pipe";
-> +
-> +			assigned-clocks = <&gcc GCC_PCIE3_AUX_CLK>;
-> +			assigned-clock-rates = <20000000>;
-> +
-> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
-> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
-> +			reset-names = "phy", "common";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "gcc_pcie3_pipe_clk_src";
-> +
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie1_phy: phy@fc000 {
-> +			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
-> +			reg = <0x000fc000 0x1000>;
-> +
-> +			clocks = <&gcc GCC_PCIE1_AUX_CLK>,
-> +				 <&gcc GCC_PCIE1_AHB_CLK>,
-> +				 <&gcc GCC_PCIE1_PIPE_CLK>;
-> +			clock-names = "aux", "cfg_ahb", "pipe";
-> +
-> +			assigned-clocks = <&gcc GCC_PCIE1_AUX_CLK>;
-> +			assigned-clock-rates = <20000000>;
-> +
-> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
-> +			reset-names = "phy", "common";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "gcc_pcie1_pipe_clk_src";
-> +
-> +			#phy-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->   		qfprom: efuse@a4000 {
->   			compatible = "qcom,ipq9574-qfprom", "qcom,qfprom";
->   			reg = <0x000a4000 0x5a1>;
-> @@ -309,10 +401,10 @@ gcc: clock-controller@1800000 {
->   			clocks = <&xo_board_clk>,
->   				 <&sleep_clk>,
->   				 <0>,
-> -				 <0>,
-> -				 <0>,
-> -				 <0>,
-> -				 <0>,
-> +				 <&pcie0_phy>,
-> +				 <&pcie1_phy>,
-> +				 <&pcie2_phy>,
-> +				 <&pcie3_phy>,
->   				 <0>;
->   			#clock-cells = <1>;
->   			#reset-cells = <1>;
-> @@ -756,6 +848,326 @@ frame@b128000 {
->   				status = "disabled";
->   			};
->   		};
-> +
-> +		pcie1: pcie@10000000 {
-> +			compatible = "qcom,pcie-ipq9574";
-> +			reg =  <0x10000000 0xf1d>,
-> +			       <0x10000f20 0xa8>,
-> +			       <0x10001000 0x1000>,
-> +			       <0x000f8000 0x4000>,
-> +			       <0x10100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <1>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x01000000 0x0 0x00000000 0x10200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x10300000 0x10300000 0x0 0x7d00000>;
-> +
-> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 35 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 2 &intc 0 0 49 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 0 84 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 0 85 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&gcc GCC_PCIE1_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>,
-> +				 <&gcc GCC_PCIE1_RCHNG_CLK>,
-> +				 <&gcc GCC_PCIE1_AHB_CLK>,
-> +				 <&gcc GCC_PCIE1_AUX_CLK>;
-> +			clock-names = "axi_m",
-> +				      "axi_s",
-> +				      "axi_bridge",
-> +				      "rchng",
-> +				      "ahb",
-> +				      "aux";
-> +
-> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_S_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_S_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_M_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_M_ARES>,
-> +				 <&gcc GCC_PCIE1_AUX_ARES>,
-> +				 <&gcc GCC_PCIE1_AHB_ARES>;
-> +			reset-names = "pipe",
-> +				      "sticky",
-> +				      "axi_s_sticky",
-> +				      "axi_s",
-> +				      "axi_m_sticky",
-> +				      "axi_m",
-> +				      "aux",
-> +				      "ahb";
-> +
-> +			phys = <&pcie1_phy>;
-> +			phy-names = "pciephy";
-> +			interconnects = <&gcc MASTER_ANOC_PCIE1 &gcc SLAVE_ANOC_PCIE1>,
-> +					<&gcc MASTER_SNOC_PCIE1 &gcc SLAVE_SNOC_PCIE1>;
-> +			interconnect-names = "pcie-mem", "cpu-pcie";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie3: pcie@18000000 {
-> +			compatible = "qcom,pcie-ipq9574";
-> +			reg =  <0x18000000 0xf1d>,
-> +			       <0x18000f20 0xa8>,
-> +			       <0x18001000 0x1000>,
-> +			       <0x000f0000 0x4000>,
-> +			       <0x18100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <3>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <2>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x01000000 0x0 0x00000000 0x18200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x18300000 0x18300000 0x0 0x7d00000>;
-> +
-> +			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+Hello,
 
-Exact same SPI lines are listed for pcie@20000000 controller as well.
+syzbot found the following issue on:
 
-With this, MSI on pcie@18000000 don't seem to work.
+HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1764b20f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=648bb824605554d08bff
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150b04f8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130b04f8580000
 
-> +				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 189 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 2 &intc 0 0 190 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 0 191 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&gcc GCC_PCIE3_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE3_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
-> +				 <&gcc GCC_PCIE3_RCHNG_CLK>,
-> +				 <&gcc GCC_PCIE3_AHB_CLK>,
-> +				 <&gcc GCC_PCIE3_AUX_CLK>;
-> +			clock-names = "axi_m",
-> +				      "axi_s",
-> +				      "axi_bridge",
-> +				      "rchng",
-> +				      "ahb",
-> +				      "aux";
-> +
-> +			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE3_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE3_AXI_S_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE3_AXI_S_ARES>,
-> +				 <&gcc GCC_PCIE3_AXI_M_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE3_AXI_M_ARES>,
-> +				 <&gcc GCC_PCIE3_AUX_ARES>,
-> +				 <&gcc GCC_PCIE3_AHB_ARES>;
-> +			reset-names = "pipe",
-> +				      "sticky",
-> +				      "axi_s_sticky",
-> +				      "axi_s",
-> +				      "axi_m_sticky",
-> +				      "axi_m",
-> +				      "aux",
-> +				      "ahb";
-> +
-> +			phys = <&pcie3_phy>;
-> +			phy-names = "pciephy";
-> +			interconnects = <&gcc MASTER_ANOC_PCIE3 &gcc SLAVE_ANOC_PCIE3>,
-> +					<&gcc MASTER_SNOC_PCIE3 &gcc SLAVE_SNOC_PCIE3>;
-> +			interconnect-names = "pcie-mem", "cpu-pcie";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie2: pcie@20000000 {
-> +			compatible = "qcom,pcie-ipq9574";
-> +			reg =  <0x20000000 0xf1d>,
-> +			       <0x20000f20 0xa8>,
-> +			       <0x20001000 0x1000>,
-> +			       <0x00088000 0x4000>,
-> +			       <0x20100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <2>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <2>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x01000000 0x0 0x00000000 0x20200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x20300000 0x20300000 0x0 0x7d00000>;
-> +
-> +			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 164 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 2 &intc 0 0 165 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 0 186 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 0 187 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE2_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
-> +				 <&gcc GCC_PCIE2_RCHNG_CLK>,
-> +				 <&gcc GCC_PCIE2_AHB_CLK>,
-> +				 <&gcc GCC_PCIE2_AUX_CLK>;
-> +			clock-names = "axi_m",
-> +				      "axi_s",
-> +				      "axi_bridge",
-> +				      "rchng",
-> +				      "ahb",
-> +				      "aux";
-> +
-> +			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE2_AXI_S_ARES>,
-> +				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE2_AXI_M_ARES>,
-> +				 <&gcc GCC_PCIE2_AUX_ARES>,
-> +				 <&gcc GCC_PCIE2_AHB_ARES>;
-> +			reset-names = "pipe",
-> +				      "sticky",
-> +				      "axi_s_sticky",
-> +				      "axi_s",
-> +				      "axi_m_sticky",
-> +				      "axi_m",
-> +				      "aux",
-> +				      "ahb";
-> +
-> +			phys = <&pcie2_phy>;
-> +			phy-names = "pciephy";
-> +			interconnects = <&gcc MASTER_ANOC_PCIE2 &gcc SLAVE_ANOC_PCIE2>,
-> +					<&gcc MASTER_SNOC_PCIE2 &gcc SLAVE_SNOC_PCIE2>;
-> +			interconnect-names = "pcie-mem", "cpu-pcie";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie0: pci@28000000 {
-pcie@28000000 to match other nodes
-> +			compatible = "qcom,pcie-ipq9574";
-> +			reg =  <0x28000000 0xf1d>,
-> +			       <0x28000f20 0xa8>,
-> +			       <0x28001000 0x1000>,
-> +			       <0x00080000 0x4000>,
-> +			       <0x28100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <0>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x01000000 0x0 0x00000000 0x28200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x28300000 0x28300000 0x0 0x7d00000>;
-> +			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi0",
-> +					  "msi1",
-> +					  "msi2",
-> +					  "msi3",
-> +					  "msi4",
-> +					  "msi5",
-> +					  "msi6",
-> +					  "msi7";
-> +
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 0 75 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 2 &intc 0 0 78 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 3 &intc 0 0 79 IRQ_TYPE_LEVEL_HIGH>,
-> +					<0 0 0 4 &intc 0 0 83 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clocks = <&gcc GCC_PCIE0_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE0_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE0_AXI_S_BRIDGE_CLK>,
-> +				 <&gcc GCC_PCIE0_RCHNG_CLK>,
-> +				 <&gcc GCC_PCIE0_AHB_CLK>,
-> +				 <&gcc GCC_PCIE0_AUX_CLK>;
-> +			clock-names = "axi_m",
-> +				      "axi_s",
-> +				      "axi_bridge",
-> +				      "rchng",
-> +				      "ahb",
-> +				      "aux";
-> +
-> +			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_S_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_S_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_M_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_M_ARES>,
-> +				 <&gcc GCC_PCIE0_AUX_ARES>,
-> +				 <&gcc GCC_PCIE0_AHB_ARES>;
-> +			reset-names = "pipe",
-> +				      "sticky",
-> +				      "axi_s_sticky",
-> +				      "axi_s",
-> +				      "axi_m_sticky",
-> +				      "axi_m",
-> +				      "aux",
-> +				      "ahb";
-> +
-> +			phys = <&pcie0_phy>;
-> +			phy-names = "pciephy";
-> +			interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> +					<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> +			interconnect-names = "pcie-mem", "cpu-pcie";
-> +			status = "disabled";
-> +		};
-> +
->   	};
->   
->   	thermal-zones {
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b85403132ddc/disk-f92f4749.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/20613d034287/vmlinux-f92f4749.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d1ea80bf7e4e/bzImage-f92f4749.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+648bb824605554d08bff@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5834 at kernel/trace/ring_buffer.c:7061 __rb_map_vma+0x881/0xae0 kernel/trace/ring_buffer.c:7061
+Modules linked in:
+CPU: 1 UID: 0 PID: 5834 Comm: syz-executor239 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:__rb_map_vma+0x881/0xae0 kernel/trace/ring_buffer.c:7061
+Code: 04 25 28 00 00 00 0f 85 11 02 00 00 48 81 c4 b0 00 00 00 89 d8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 40 7c fd ff 90 <0f> 0b 90 bb ea ff ff ff eb 96 e8 30 7c fd ff 48 8b 44 24 20 be ff
+RSP: 0018:ffffc90003a27790 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 00000000000007ff RCX: ffffffff819bbf0b
+RDX: ffff888059005a00 RSI: ffffffff819bc1b0 RDI: 0000000000000006
+RBP: ffff888078d9c578 R08: 0000000000000006 R09: 00000000000007ff
+R10: 0000000000000003 R11: ffffffff8b200130 R12: ffffea000007bb80
+R13: ffff88807ab41bc0 R14: 0000000000000003 R15: 0000000000000001
+FS:  0000555581f4d480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f183f3b20f0 CR3: 0000000032d56000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ring_buffer_map+0x56e/0x9b0 kernel/trace/ring_buffer.c:7138
+ tracing_buffers_mmap+0xa6/0x120 kernel/trace/trace.c:8482
+ call_mmap include/linux/fs.h:2183 [inline]
+ mmap_file mm/internal.h:124 [inline]
+ __mmap_new_file_vma mm/vma.c:2291 [inline]
+ __mmap_new_vma mm/vma.c:2355 [inline]
+ __mmap_region+0x1786/0x2670 mm/vma.c:2456
+ mmap_region+0x127/0x320 mm/mmap.c:1348
+ do_mmap+0xc00/0xfc0 mm/mmap.c:496
+ vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
+ ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
+ __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
+ __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
+ __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f183f33c5d9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd6456a698 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f183f33c5d9
+RDX: 0000000000000009 RSI: 0000000000001000 RDI: 0000000020ffe000
+RBP: 00007f183f3831e4 R08: 0000000000000003 R09: 0000000000800000
+R10: 0000000000000011 R11: 0000000000000246 R12: 00007f183f38917c
+R13: 00007f183f383169 R14: 00007ffd6456a6f0 R15: 00007f183f3b441c
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
