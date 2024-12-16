@@ -1,95 +1,143 @@
-Return-Path: <linux-kernel+bounces-447352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F04F9F3110
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:01:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E259F3117
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E098166ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8A4167258
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5528C204F98;
-	Mon, 16 Dec 2024 13:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692F8204F9D;
+	Mon, 16 Dec 2024 13:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NU1RGrOO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUDqiH2d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B51B6D10;
-	Mon, 16 Dec 2024 13:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97B11FF7B0;
+	Mon, 16 Dec 2024 13:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354054; cv=none; b=uUfC8oDEh4qyKH0UTDY1JrvfPXLfvCWXUKrfHqj/J42/5WQa+zHtjK0Z761PMa/eUyLo/6YoHV1K4pbbSwMOijEGzg2TtSbAKBKxdqo4midOxNdk6giuN5ZY7h1clh/7+Q8C1yn7y1D3cqVW69OnoSZ/Eq2yIrywJD+TctmvKl4=
+	t=1734354278; cv=none; b=D8pQYobpt2vtkNJK856OSn19451i7Gy0P3WSKJJQEjYBha3fypBtSFyx66ux5l5Ox66wHXSNm78nfIgiOY/TiXsGew2rgNBE61a37Tw+blIh2Tg2CCuHNO6vXyTKxdK/S+JnQ+nhPbdq/s58UoeNlomVg3XSyx6490Wzz++Mb/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354054; c=relaxed/simple;
-	bh=YXTvZR9SdBjMgqkJ+mObfuctc5EgI3M5pPmKYsfxVJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pvzSW2U7O1UyuKbJhhkhloO/6KBtpfUs/qAbZi3t5eQ6QBsHUP8kWGviJ903VLgtlgBUBgTxi6HBLr0hfIxHAPXhjYEvUbzw3tOH7A2f8ien/ONWhvVyv7UqhhrqQoC/OcdD9v82u8tmscOR1YKASIomjOVphFEg1joAEMzfu9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NU1RGrOO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F66FC4CEE2;
-	Mon, 16 Dec 2024 13:00:54 +0000 (UTC)
+	s=arc-20240116; t=1734354278; c=relaxed/simple;
+	bh=UfjTc9LIrPJm2Rs7X6W6aYw8jkgCCZczPYg5hDR7u04=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=XifEPAbL6LouD9jQf32Tr2KJSVuCsvuZHwW2r3ik2C20/bvvn316ktVBr5IEKGlYZ3YWg6WrBFadxPmO+cQqFPVntn4agJAXZ7iE6zaoPULcu7Wj1pFMI/KTyMrk5TPItoN4ERDlcNqkW69XQuNHWFUhR0+BZbpa3cJWQHbps9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUDqiH2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8858C4CED0;
+	Mon, 16 Dec 2024 13:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734354054;
-	bh=YXTvZR9SdBjMgqkJ+mObfuctc5EgI3M5pPmKYsfxVJE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NU1RGrOO+nh+WjtAvZXglFfqFwVqK2uLVRcdZSNGB2PhHxB1OGgaM6ikF/aq2dhbq
-	 c+5XizMz2LuImqruhoWEElzMoZKDtHhUbHXKDSPB97t73zu70JlrJZ95h1+DwaMjsf
-	 hKydvT17PmN8j0tGwy0J+OaATpwTuIXRnBxPdjgvfXjgkL0Qx/Fh1ODwvyXKkSxxvC
-	 4yV0q1HJbXpt/8YEkoqCa2174/ltYbhi9ZA9R/vFswwmoAliOsrOdEs6Imbww3gbOM
-	 G6ivZ8cTHPdIFcMMoJzoAPptruqy03rC9EbR4cIwyOcRU2V1cZIk8UjRb/ZE82Szlv
-	 Gx9e8uc824fow==
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5187aa2c97dso1211842e0c.2;
-        Mon, 16 Dec 2024 05:00:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/LXwQ1Zat+PoLoeIHDGGMOC3mHxgg1WW5+l/wchkQyhPx3V5LNfcZI4Qh9DgWhbTWW/ziUDcOga7PaAk=@vger.kernel.org, AJvYcCUwdmDMLKGj+WUXcYy9RXc1OutUN3joHrQ2Dl2SspM5sc8/zuStoz2i2IxeILGw/GiIvgqrsIh04HzRhHU=@vger.kernel.org, AJvYcCXhxWilIeaK7WWmvhtFqn8e1xOqmeqIy9wfZCkgspfQBwIC4suX3Lb50pruJlA7D9G/ecED+2IE66yPW0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjqNfwjGp28cl0n5TMhr059KpICR57b3kveiooBjAXEnA+r4w6
-	f5u67ne33Y7Q19p7waTVuarEQDIk9d1PmEwvKmBYdJW+jtB+rkkkd+Oz/+VOMDdT1h1qnnOdFsP
-	SQv/BJJK6Cs1xqIGhBhJ4l1wOJr4=
-X-Google-Smtp-Source: AGHT+IF0NX75zBMHN2+/94hqFgD6YqWH31pTae+DJQdB37SSNbAvnCAkSPbCZVF9hNwaTmj0O1/ATMkX05XGbbCeJJ4=
-X-Received: by 2002:a05:6122:2228:b0:518:7eec:be7a with SMTP id
- 71dfb90a1353d-518ca3a69b9mr9373102e0c.5.1734354052698; Mon, 16 Dec 2024
- 05:00:52 -0800 (PST)
+	s=k20201202; t=1734354278;
+	bh=UfjTc9LIrPJm2Rs7X6W6aYw8jkgCCZczPYg5hDR7u04=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:References:From;
+	b=DUDqiH2dsVwKpuBWmUr8kf0LAzrKb9EiizjTmbgie1aryVBmm8W3JiCFruLy/RSa5
+	 VSvvidiWaVRa3ZkCpiv3yOWIsCS4W6XxaxTbkDLGsGuLSrcgl7ms+qH5N5gXeGsPsS
+	 iLeX7NkHKtJfOnP5QblVl8RholHS/PFwS62/JOkQ23HtNjX8aAL5cWbRHXBlmq02dX
+	 B3OzVnzA2OOVOPuUsYGchJrlJUbqKH6rIQ3EXDDOfUOCewNPpr7HXjhWfAPx1Pug1F
+	 FTAkplXdiB/kGhf0WHB9C/Rq6tfHSrNeKruu+tIDpviqwjWNU6SJneRDOIKjX00kdv
+	 eccV2iPIGKyHQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?us-ascii?Q?=3D=3Futf-8=3FQ=3FBj=3DC3=3DB6rn=3F=3D?=
+ Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>,  "Jens Axboe" <axboe@kernel.dk>
+Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
+ parameter support
+In-Reply-To: <2024121646-shelve-series-5319@gregkh> (Greg KH's message of
+	"Mon, 16 Dec 2024 13:14:16 +0100")
+Date: Mon, 16 Dec 2024 14:02:01 +0100
+Message-ID: <877c7zbx2u.fsf@kernel.org>
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
+	<4Dsa69UGULRGsMbRbwOJNp_puyfsSSFt1QTcYU9AL4azd8vbfEFFtc7YNSsGegc40AfCZqVqZETfxg4TggUlSw==@protonmail.internalid>
+	<2024121324-overdue-giggly-bdb8@gregkh> <87frmrepo5.fsf@kernel.org>
+	<I0v8YGJe3e1ex1oF3mki-7QKimYLCJHnBy6g1taHgoOFvpNmQSrSnsMGJyGS064pGJsJDsTsei-pInFRz5INWA==@protonmail.internalid>
+	<2024121309-lethargic-ended-5f99@gregkh> <87ttb7d24p.fsf@kernel.org>
+	<hmmCwoNftQc5Mj4BLjFC2qTABem8CvuXSx3ucXzjIfQSwLjULmZgsw7vpq3Zxy0kk5H3Zjpz-vd4d7E1sb4LHw==@protonmail.internalid>
+	<2024121344-excusably-resurrect-d01a@gregkh> <87h674c5vq.fsf@kernel.org>
+	<UW-ATumT4L-13ZXX-lO1inQGeZK7VgQWNAHE3688ulGj-rvzxWkUdrmnAUlufI1W5-9d6vzH3TXZ4VOmYh9wxA==@protonmail.internalid>
+	<2024121646-shelve-series-5319@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
- <20241207-imx214-v3-7-ab60af7ee915@apitzsch.eu> <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
- <76b604796a819d30f5b1725fa9b50b96e01e3589.camel@apitzsch.eu>
-In-Reply-To: <76b604796a819d30f5b1725fa9b50b96e01e3589.camel@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Mon, 16 Dec 2024 14:00:35 +0100
-X-Gmail-Original-Message-ID: <CAPybu_1ebAMrw=Q7M2G7gBNNOCBOR94W6UntdB0xTKo8DAA-fA@mail.gmail.com>
-Message-ID: <CAPybu_1ebAMrw=Q7M2G7gBNNOCBOR94W6UntdB0xTKo8DAA-fA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] media: i2c: imx214: Add vblank and hblank controls
-To: =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Vincent Knecht <vincent.knecht@mailoo.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-> > Is the handler->lock held when we call this function?
->
-> I'm not sure how to test this.
->
-> > Can you try
-> > running the code with lockdep?
->
-> /proc/lockdep contains
->
-> > 00000000f9299231 FD:   89 BD:    6 +.+.: imx214:901:(&imx214->ctrls)->_lock
->
-> (no idea how to interpret this line)
->
-> and dmesg doesn't print anything, when changing the vblank value.
->
+"Greg KH" <gregkh@linuxfoundation.org> writes:
 
-If dmesg does not complain after using it I am happy.
+> On Mon, Dec 16, 2024 at 10:51:53AM +0100, Andreas Hindborg wrote:
+>> "Greg KH" <gregkh@linuxfoundation.org> writes:
+>>
+>> > On Fri, Dec 13, 2024 at 04:38:30PM +0100, Andreas Hindborg wrote:
 
-Thanks! :)
+[cut]
+
+>> >
+>> >>  - Can we merge this so I can move forward at my current projected
+>> >>    course, or should I plan on dealing with not having this available?
+>> >
+>> > We generally do not want to merge apis without any real users, as it's
+>> > hard to justify them, right?  Also, we don't even know if they work
+>> > properly or not.
+>>
+>> While null_blk is just a piece of testing infrastructure that you would
+>> not deploy in a production environment, it is still a "real user". I am
+>> sure we can agree on the importance of testing.
+>>
+>> The exercise I am undertaking is to produce a drop in replacement of the
+>> existing C null_blk driver. If all goes well, we are considering to swap
+>> the C implementation for the Rust implementation in X number of years.
+>> Granted - a lot of things have to fall into place for that to happen,
+>> but that is the plan. This plan does not really work well if the two
+>> modules do not have the same interface.
+>
+> Why do you have to have the same interface?  Why not do it "properly"
+> and make it use configfs that way you can have multiple devices and test
+> them all at the same time?
+>
+> As this is "just" a testing driver, there should not be any need to keep
+> the same user/kernel api for setting things up, right?
+
+Because that would break all the users that use the old interface.
+
+>
+> Again, don't make the mistakes we have in the past, drivers should NOT
+> be using module parameters.
+>
+>> I understand that you would like to phase out module parameters, but I
+>> don't think blocking their use from Rust is the right way to go about
+>> that task. If you really feel that module parameters have no place in
+>> new drivers, I would suggest that to be part of review process for each
+>> individual new driver - not at the stage of enabling module parameters
+>> for Rust in general.
+>
+> I'm saying that module parameters do NOT belong in a driver, which is
+> what you are wanting to do here.  And as for adding new apis, please
+> only do so when you have a real user, I don't see a real user for module
+> parameters in rust just yet.  If that changes, I'll reconsider my stance :)
+
+I guess we disagree about what is "real" and what is not.
+
+In my view, null_blk is real, it is used by real people to do real work.
+They get real annoyed when the interface for their real tools change -
+thus making it more difficult to do this experiment.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
