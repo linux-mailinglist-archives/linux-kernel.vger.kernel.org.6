@@ -1,365 +1,267 @@
-Return-Path: <linux-kernel+bounces-447824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7E99F3781
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:25:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31379F3785
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:26:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5BF18824AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:25:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20EA163686
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0870206F1A;
-	Mon, 16 Dec 2024 17:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6454F20629B;
+	Mon, 16 Dec 2024 17:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="E1krEBuT"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="toTUnwew"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFC9205E17;
-	Mon, 16 Dec 2024 17:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93988205E17;
+	Mon, 16 Dec 2024 17:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734369920; cv=none; b=VdIqxUo/zGuE84XkSmhW3cxuJJ8k1UY8pBawSgdU69A22QWEPJi/t1TtJlPObMABp/qQdmPBQ5htL8g4ILX7FSWnG2v9h2KHo/xRZ8tF6ngUs7M0cGpS8Jsd+lX9tpwdZR2k5w09yq0NMj62EsBJDXoyIQoo88416AvJnCb4XFE=
+	t=1734369947; cv=none; b=Bvnl2kak+uq0zFDxbWDEk3h1TrX+KtSgNx4C4adVGx8K0PS2FKnXRX3Ozmr1zeyoRUfqUFbnR+7vMAJSOoJhV3wCcBv5lq2Yl1Q85vannNEn22HH+/bLYEX7jz2kzGyY0pCDop2S2GoTtO4TvrhvjFjkg5mIexru4/GH6AXKobc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734369920; c=relaxed/simple;
-	bh=DuxXlk3W/T8wuzPthEBObYLuRqqRuQXmKbcONxISvNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VUO4iYiHtgDHL733evsi38sNbZ7NBnbN1AZfbYQkFX+dbIeQJpvqzvnu8r1LCSABN9fQGT3uR091k9VHlMmB042qr8eyZedEaeRrZn1vNFeZtW3J37u+jZCGX92ZeQpVjcSMovSjrVNZ/fDNVpCgzLqhAIraH5oeXH29FF6fMu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=E1krEBuT; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734369915;
-	bh=DuxXlk3W/T8wuzPthEBObYLuRqqRuQXmKbcONxISvNo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=E1krEBuTbDRp8zNUQFNmkaBWylEss+jQifuRhIFZcXHT0jcGWaWIjsTPRoZEqnrS5
-	 Q/vQJ8IY6OEih0jDFZrz1OVN2z/ULD9wp4OuxM7Do5A1IPAm0XBHClqQvjKrqr7ClY
-	 ybJ/mn7vGd7RDz95OckZkpnzVmP+UbFZb4EdtJ4s=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 16 Dec 2024 18:25:10 +0100
-Subject: [PATCH 3/3] module: Constify 'struct module_attribute'
+	s=arc-20240116; t=1734369947; c=relaxed/simple;
+	bh=vrhax0uCiqAGQOLYSpdt9ZOKtlA1P7bIl0Zey18a2nA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ED2msNDRptqrP//TLLqMIWJlb8ZxUBwa3xOntgtovcz4QIV927FPiac7idR824Oy8aYKM4uFehGfM9TbG5K0coNo0VYG2af7LCJgjY4iGbEAvv1FekS7DpZPuHnMU4XP1gH85GKY4xLZeoNk/KLlWKOdUnPftRP/t/7HnynBacc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=toTUnwew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A020C4CEDF;
+	Mon, 16 Dec 2024 17:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734369947;
+	bh=vrhax0uCiqAGQOLYSpdt9ZOKtlA1P7bIl0Zey18a2nA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=toTUnwewEEZTYhL+I2YLM2oNfs7M+hKzJ92JGBAX03Us784/Gosfx/Tl6Nr7F8PdC
+	 +oFTemCZiwohqst6Zg7/O2u1nj3Vh8P1iy8xSsAhoOtClQL4KI9TSYiCeS1314kcvs
+	 kdPGrknwz6phBaVtNJptpWL+y3uZi8ZV3ohc5IgDQYf1Tc6gbLD/owcYPMrZEeOteJ
+	 Z0G+NCIbmfng1UyRCs6KX0w7NUmzZmsqpLsMyaSy/lTxa1WdsBbGqrS6vS2oG/h4g5
+	 J1UMzAhr6bO+arR1x7x8OBJ8DpQCDzrkeK9buZa1f0Mb0ZHo+tSHigxrZXnTNcxtIL
+	 8PqNVcYkqIrxA==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e63e5c0c50so2231395b6e.0;
+        Mon, 16 Dec 2024 09:25:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVcL7GJ0sEREPlyQUtamEBRIiwzfws2sJr2N4oOjmzCdG5ld+DknsANA93uhnUojjsK7EJPVZQxoEUVVSA=@vger.kernel.org, AJvYcCVvDqqDDdeFnl5kS9mgzMgth6RrDcYPlynPmddohQlCBB6XsCjkT5u30U2Bl5b6YpQgicxw4keKLj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz5ge+rSQEyB4VBSh434qJyOKRGOizzPjASAKZ3ALzUZL8rl9g
+	IruQ5g9JKuEcPQxxOfe1Hu1mj6Gon0nkXfhtMRIQEO7X6jNexP5pMTIHh1K0hUdXfVwalY01wrV
+	yUCzZ/JOQjQVSCVXaTKxp+lZzTns=
+X-Google-Smtp-Source: AGHT+IFDBJrOSWDGX2nbG+PjKRGvDraMZbwtcEXMHLHOXB92iCn9tAWqUkN27WJXftFoueYL+mx32GZFNIGAnWzmXww=
+X-Received: by 2002:a05:6808:2114:b0:3e6:22d4:d2c8 with SMTP id
+ 5614622812f47-3ebca7212cfmr86184b6e.12.1734369946282; Mon, 16 Dec 2024
+ 09:25:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241216-sysfs-const-attr-module-v1-3-3790b53e0abf@weissschuh.net>
-References: <20241216-sysfs-const-attr-module-v1-0-3790b53e0abf@weissschuh.net>
-In-Reply-To: <20241216-sysfs-const-attr-module-v1-0-3790b53e0abf@weissschuh.net>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734369915; l=11663;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=DuxXlk3W/T8wuzPthEBObYLuRqqRuQXmKbcONxISvNo=;
- b=zXHeliF/ZE+yFg6djABfJaIXPBfIA7+SFRp0AlOiyQQytJuJkue2Y/+sY61Xw7dgltqCa4WyS
- jJPKi4EO0sPBSLZc90yNhAM0wDgthrIpnsJbv3oHjAP8cz/g6N6rSND
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <3607404.iIbC2pHGDl@rjwysocki.net> <115421572.nniJfEyVGO@rjwysocki.net>
+ <2b0953b5-4978-446a-b686-5b8d1541a265@arm.com> <CAJZ5v0hH424_4N1TZVVgKCegUsAisjdAXr7KekafJteSSLEnHA@mail.gmail.com>
+ <c920700c-9969-4c23-a1fc-a88c87dc98a6@arm.com>
+In-Reply-To: <c920700c-9969-4c23-a1fc-a88c87dc98a6@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Dec 2024 18:25:34 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hTC20LB1ifbGmesYQULGS4-uEfu2Tgc17OMftvFqvnJg@mail.gmail.com>
+Message-ID: <CAJZ5v0hTC20LB1ifbGmesYQULGS4-uEfu2Tgc17OMftvFqvnJg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v0.1 6/6] cpufreq: intel_pstate: Add basic EAS
+ support on hybrid platforms
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Christian Loehle <Christian.Loehle@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These structs are never modified, move them to read-only memory.
-This makes the API clearer and also prepares for the constification of
-'struct attribute' itself.
+On Mon, Dec 16, 2024 at 4:33=E2=80=AFPM Pierre Gondois <pierre.gondois@arm.=
+com> wrote:
+>
+>
+>
+> On 11/19/24 18:20, Rafael J. Wysocki wrote:
+> > On Mon, Nov 18, 2024 at 5:34=E2=80=AFPM Pierre Gondois <pierre.gondois@=
+arm.com> wrote:
+> >>
+> >>
+> >>
+> >> On 11/8/24 17:46, Rafael J. Wysocki wrote:
+> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>>
+> >>> Modify intel_pstate to register stub EM perf domains for CPUs on
+> >>> hybrid platforms via em_dev_register_perf_domain() and to use
+> >>> em_dev_expand_perf_domain() introduced previously for adding new
+> >>> CPUs to existing EM perf domains when those CPUs become online for
+> >>> the first time after driver initialization.
+> >>>
+> >>> This change is targeting platforms (for example, Lunar Lake) where
+> >>> "small" CPUs (E-cores) are always more energy-efficient than the "big=
+"
+> >>> or "performance" CPUs (P-cores) when run at the same HWP performance
+> >>> level, so it is sufficient to tell the EAS that E-cores are always
+> >>> preferred (so long as there is enough spare capacity on one of them
+> >>> to run the given task).
+> >>>
+> >>> Accordingly, the perf domains are registered per CPU type (that is,
+> >>> all P-cores belong to one perf domain and all E-cores belong to anoth=
+er
+> >>> perf domain) and they are registered only if asymmetric CPU capacity =
+is
+> >>> enabled.  Each perf domain has a one-element states table and that
+> >>> element only contains the relative cost value (the other fields in
+> >>> it are not initialized, so they are all equal to zero), and the cost
+> >>> value for the E-core perf domain is lower.
+> >>>
+> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>> ---
+> >>>    drivers/cpufreq/intel_pstate.c |  110 ++++++++++++++++++++++++++++=
+++++++++++---
+> >>>    1 file changed, 104 insertions(+), 6 deletions(-)
+> >>>
+> >>> Index: linux-pm/drivers/cpufreq/intel_pstate.c
+> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
+> >>> +++ linux-pm/drivers/cpufreq/intel_pstate.c
+> >>> @@ -8,6 +8,7 @@
+> >>>
+> >>>    #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> >>>
+> >>> +#include <linux/energy_model.h>
+> >>>    #include <linux/kernel.h>
+> >>>    #include <linux/kernel_stat.h>
+> >>>    #include <linux/module.h>
+> >>> @@ -938,6 +939,12 @@ static struct freq_attr *hwp_cpufreq_att
+> >>>        NULL,
+> >>>    };
+> >>>
+> >>> +enum hybrid_cpu_type {
+> >>> +     HYBRID_PCORE =3D 0,
+> >>> +     HYBRID_ECORE,
+> >>> +     HYBRID_NR_TYPES
+> >>> +};
+> >>> +
+> >>>    static struct cpudata *hybrid_max_perf_cpu __read_mostly;
+> >>>    /*
+> >>>     * Protects hybrid_max_perf_cpu, the capacity_perf fields in struc=
+t cpudata,
+> >>> @@ -945,6 +952,86 @@ static struct cpudata *hybrid_max_perf_c
+> >>>     */
+> >>>    static DEFINE_MUTEX(hybrid_capacity_lock);
+> >>>
+> >>> +#ifdef CONFIG_ENERGY_MODEL
+> >>> +struct hybrid_em_perf_domain {
+> >>> +     cpumask_t cpumask;
+> >>> +     struct device *dev;
+> >>> +     struct em_data_callback cb;
+> >>> +};
+> >>> +
+> >>> +static int hybrid_pcore_cost(struct device *dev, unsigned long freq,
+> >>> +                          unsigned long *cost)
+> >>> +{
+> >>> +     /*
+> >>> +      * The number used here needs to be higher than the analogous
+> >>> +      * one in hybrid_ecore_cost() below.  The units and the actual
+> >>> +      * values don't matter.
+> >>> +      */
+> >>> +     *cost =3D 2;
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static int hybrid_ecore_cost(struct device *dev, unsigned long freq,
+> >>> +                          unsigned long *cost)
+> >>> +{
+> >>> +     *cost =3D 1;
+> >>> +     return 0;
+> >>> +}
+> >>
+> >> The artificial EM was introduced for CPPC based platforms since these =
+platforms
+> >> only provide an 'efficiency class' entry to describe the relative effi=
+ciency
+> >> of CPUs. The case seems similar to yours.
+> >
+> > It is, but I don't particularly like the CPPC driver's approach to this=
+.
+> >
+> >> 'Fake' OPPs were created to have an incentive for EAS to balance the l=
+oad on
+> >> the CPUs in one perf. domain. Indeed, in feec(), during the energy
+> >> computation of a pd, if the cost is independent from the max_util valu=
+e,
+> >> then one CPU in the pd could end up having a high util, and another CP=
+U a
+> >> NULL util.
+> >
+> > Isn't this a consequence of disabling load balancing by EAS?
+>
+> Yes. Going in that direction, this patch from Vincent should help balanci=
+ng
+> the load in your case I think. The patch evaluates other factors when the=
+ energy
+> cost of multiple CPU-candidates is the same.
+>
+> Meaning, if all CPUs of the same type have only one OPP, the number of ta=
+sks
+> and the the load of the CPUs is then compared. This is not the case curre=
+ntly.
+> Doing so will help to avoid having one CPU close to being overutilized wh=
+ile
+> others are idle.
+>
+> However I think it would still be better to have multiple OPPs in the ene=
+rgy model.
+> Indeed, it would be closer to reality as I assume that for Intel aswell, =
+there
+> might be frequency domains and the frequency of the domain is lead by the=
+ most
+> utilized CPU.
 
-While at it, also constify 'modinfo_attrs_count'.
+There are a couple of problems with this on my target platforms.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- include/linux/module.h   |  8 ++++----
- kernel/module/internal.h |  4 ++--
- kernel/module/main.c     | 40 ++++++++++++++++++++--------------------
- kernel/module/sysfs.c    |  4 ++--
- kernel/params.c          | 12 ++++++------
- 5 files changed, 34 insertions(+), 34 deletions(-)
+First, it is not actually known what the real OPPs are and how the
+coordination works.
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index de2f2293204a4681072fba9ea3439e5582c81fbf..81a0dd46a5d2c29c30ea2cb8d82147ba2fa2a0a8 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -52,9 +52,9 @@ struct module_kobject {
- 
- struct module_attribute {
- 	struct attribute attr;
--	ssize_t (*show)(struct module_attribute *, struct module_kobject *,
-+	ssize_t (*show)(const struct module_attribute *, struct module_kobject *,
- 			char *);
--	ssize_t (*store)(struct module_attribute *, struct module_kobject *,
-+	ssize_t (*store)(const struct module_attribute *, struct module_kobject *,
- 			 const char *, size_t count);
- 	void (*setup)(struct module *, const char *);
- 	int (*test)(struct module *);
-@@ -67,10 +67,10 @@ struct module_version_attribute {
- 	const char *version;
- };
- 
--extern ssize_t __modver_version_show(struct module_attribute *,
-+extern ssize_t __modver_version_show(const struct module_attribute *,
- 				     struct module_kobject *, char *);
- 
--extern struct module_attribute module_uevent;
-+extern const struct module_attribute module_uevent;
- 
- /* These are either module local, or the kernel's dummy ones. */
- extern int init_module(void);
-diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-index daef2be8390222c22220e2f168baa8d35ad531b9..ac73da5f15bccfa6e280669c6ce048868120822b 100644
---- a/kernel/module/internal.h
-+++ b/kernel/module/internal.h
-@@ -47,8 +47,8 @@ struct kernel_symbol {
- extern struct mutex module_mutex;
- extern struct list_head modules;
- 
--extern struct module_attribute *modinfo_attrs[];
--extern size_t modinfo_attrs_count;
-+extern const struct module_attribute *const modinfo_attrs[];
-+extern const size_t modinfo_attrs_count;
- 
- /* Provided by the linker */
- extern const struct kernel_symbol __start___ksymtab[];
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 5399c182b3cbed2dbeea0291f717f30358d8e7fc..69be1dad032abe53d55b437411f152aa95e4adf6 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -538,7 +538,7 @@ static void setup_modinfo_##field(struct module *mod, const char *s)  \
- {                                                                     \
- 	mod->field = kstrdup(s, GFP_KERNEL);                          \
- }                                                                     \
--static ssize_t show_modinfo_##field(struct module_attribute *mattr,   \
-+static ssize_t show_modinfo_##field(const struct module_attribute *mattr, \
- 			struct module_kobject *mk, char *buffer)      \
- {                                                                     \
- 	return scnprintf(buffer, PAGE_SIZE, "%s\n", mk->mod->field);  \
-@@ -552,7 +552,7 @@ static void free_modinfo_##field(struct module *mod)                  \
- 	kfree(mod->field);                                            \
- 	mod->field = NULL;                                            \
- }                                                                     \
--static struct module_attribute modinfo_##field = {                    \
-+static const struct module_attribute modinfo_##field = {              \
- 	.attr = { .name = __stringify(field), .mode = 0444 },         \
- 	.show = show_modinfo_##field,                                 \
- 	.setup = setup_modinfo_##field,                               \
-@@ -842,13 +842,13 @@ void symbol_put_addr(void *addr)
- }
- EXPORT_SYMBOL_GPL(symbol_put_addr);
- 
--static ssize_t show_refcnt(struct module_attribute *mattr,
-+static ssize_t show_refcnt(const struct module_attribute *mattr,
- 			   struct module_kobject *mk, char *buffer)
- {
- 	return sprintf(buffer, "%i\n", module_refcount(mk->mod));
- }
- 
--static struct module_attribute modinfo_refcnt =
-+static const struct module_attribute modinfo_refcnt =
- 	__ATTR(refcnt, 0444, show_refcnt, NULL);
- 
- void __module_get(struct module *module)
-@@ -917,7 +917,7 @@ size_t module_flags_taint(unsigned long taints, char *buf)
- 	return l;
- }
- 
--static ssize_t show_initstate(struct module_attribute *mattr,
-+static ssize_t show_initstate(const struct module_attribute *mattr,
- 			      struct module_kobject *mk, char *buffer)
- {
- 	const char *state = "unknown";
-@@ -938,10 +938,10 @@ static ssize_t show_initstate(struct module_attribute *mattr,
- 	return sprintf(buffer, "%s\n", state);
- }
- 
--static struct module_attribute modinfo_initstate =
-+static const struct module_attribute modinfo_initstate =
- 	__ATTR(initstate, 0444, show_initstate, NULL);
- 
--static ssize_t store_uevent(struct module_attribute *mattr,
-+static ssize_t store_uevent(const struct module_attribute *mattr,
- 			    struct module_kobject *mk,
- 			    const char *buffer, size_t count)
- {
-@@ -951,10 +951,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
- 	return rc ? rc : count;
- }
- 
--struct module_attribute module_uevent =
-+const struct module_attribute module_uevent =
- 	__ATTR(uevent, 0200, NULL, store_uevent);
- 
--static ssize_t show_coresize(struct module_attribute *mattr,
-+static ssize_t show_coresize(const struct module_attribute *mattr,
- 			     struct module_kobject *mk, char *buffer)
- {
- 	unsigned int size = mk->mod->mem[MOD_TEXT].size;
-@@ -966,11 +966,11 @@ static ssize_t show_coresize(struct module_attribute *mattr,
- 	return sprintf(buffer, "%u\n", size);
- }
- 
--static struct module_attribute modinfo_coresize =
-+static const struct module_attribute modinfo_coresize =
- 	__ATTR(coresize, 0444, show_coresize, NULL);
- 
- #ifdef CONFIG_ARCH_WANTS_MODULES_DATA_IN_VMALLOC
--static ssize_t show_datasize(struct module_attribute *mattr,
-+static ssize_t show_datasize(const struct module_attribute *mattr,
- 			     struct module_kobject *mk, char *buffer)
- {
- 	unsigned int size = 0;
-@@ -980,11 +980,11 @@ static ssize_t show_datasize(struct module_attribute *mattr,
- 	return sprintf(buffer, "%u\n", size);
- }
- 
--static struct module_attribute modinfo_datasize =
-+static const struct module_attribute modinfo_datasize =
- 	__ATTR(datasize, 0444, show_datasize, NULL);
- #endif
- 
--static ssize_t show_initsize(struct module_attribute *mattr,
-+static ssize_t show_initsize(const struct module_attribute *mattr,
- 			     struct module_kobject *mk, char *buffer)
- {
- 	unsigned int size = 0;
-@@ -994,10 +994,10 @@ static ssize_t show_initsize(struct module_attribute *mattr,
- 	return sprintf(buffer, "%u\n", size);
- }
- 
--static struct module_attribute modinfo_initsize =
-+static const struct module_attribute modinfo_initsize =
- 	__ATTR(initsize, 0444, show_initsize, NULL);
- 
--static ssize_t show_taint(struct module_attribute *mattr,
-+static ssize_t show_taint(const struct module_attribute *mattr,
- 			  struct module_kobject *mk, char *buffer)
- {
- 	size_t l;
-@@ -1007,10 +1007,10 @@ static ssize_t show_taint(struct module_attribute *mattr,
- 	return l;
- }
- 
--static struct module_attribute modinfo_taint =
-+static const struct module_attribute modinfo_taint =
- 	__ATTR(taint, 0444, show_taint, NULL);
- 
--struct module_attribute *modinfo_attrs[] = {
-+const struct module_attribute *const modinfo_attrs[] = {
- 	&module_uevent,
- 	&modinfo_version,
- 	&modinfo_srcversion,
-@@ -1027,7 +1027,7 @@ struct module_attribute *modinfo_attrs[] = {
- 	NULL,
- };
- 
--size_t modinfo_attrs_count = ARRAY_SIZE(modinfo_attrs);
-+const size_t modinfo_attrs_count = ARRAY_SIZE(modinfo_attrs);
- 
- static const char vermagic[] = VERMAGIC_STRING;
- 
-@@ -1681,7 +1681,7 @@ static void module_license_taint_check(struct module *mod, const char *license)
- 
- static void setup_modinfo(struct module *mod, struct load_info *info)
- {
--	struct module_attribute *attr;
-+	const struct module_attribute *attr;
- 	int i;
- 
- 	for (i = 0; (attr = modinfo_attrs[i]); i++) {
-@@ -1692,7 +1692,7 @@ static void setup_modinfo(struct module *mod, struct load_info *info)
- 
- static void free_modinfo(struct module *mod)
- {
--	struct module_attribute *attr;
-+	const struct module_attribute *attr;
- 	int i;
- 
- 	for (i = 0; (attr = modinfo_attrs[i]); i++) {
-diff --git a/kernel/module/sysfs.c b/kernel/module/sysfs.c
-index 456358e1fdc43e6b5b24f383bbefa37812971174..31e7f305540708582d95a83bdc865aaa28e27005 100644
---- a/kernel/module/sysfs.c
-+++ b/kernel/module/sysfs.c
-@@ -275,7 +275,7 @@ static int add_usage_links(struct module *mod)
- 
- static void module_remove_modinfo_attrs(struct module *mod, int end)
- {
--	struct module_attribute *attr;
-+	const struct module_attribute *attr;
- 	int i;
- 
- 	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
-@@ -293,7 +293,7 @@ static void module_remove_modinfo_attrs(struct module *mod, int end)
- 
- static int module_add_modinfo_attrs(struct module *mod)
- {
--	struct module_attribute *attr;
-+	const struct module_attribute *attr;
- 	struct module_attribute *temp_attr;
- 	int error = 0;
- 	int i;
-diff --git a/kernel/params.c b/kernel/params.c
-index 763261a7fef94d02503fa0d365d155c223fc382b..0074d29c9b80ced537bba29c33972c998de60864 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -538,7 +538,7 @@ const struct kernel_param_ops param_ops_string = {
- EXPORT_SYMBOL(param_ops_string);
- 
- /* sysfs output in /sys/modules/XYZ/parameters/ */
--#define to_module_attr(n) container_of(n, struct module_attribute, attr)
-+#define to_module_attr(n) container_of_const(n, struct module_attribute, attr)
- #define to_module_kobject(n) container_of(n, struct module_kobject, kobj)
- 
- struct param_attribute
-@@ -557,7 +557,7 @@ struct module_param_attrs
- #ifdef CONFIG_SYSFS
- #define to_param_attr(n) container_of_const(n, struct param_attribute, mattr)
- 
--static ssize_t param_attr_show(struct module_attribute *mattr,
-+static ssize_t param_attr_show(const struct module_attribute *mattr,
- 			       struct module_kobject *mk, char *buf)
- {
- 	int count;
-@@ -573,7 +573,7 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
- }
- 
- /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
--static ssize_t param_attr_store(struct module_attribute *mattr,
-+static ssize_t param_attr_store(const struct module_attribute *mattr,
- 				struct module_kobject *mk,
- 				const char *buf, size_t len)
- {
-@@ -857,7 +857,7 @@ static void __init param_sysfs_builtin(void)
- 	}
- }
- 
--ssize_t __modver_version_show(struct module_attribute *mattr,
-+ssize_t __modver_version_show(const struct module_attribute *mattr,
- 			      struct module_kobject *mk, char *buf)
- {
- 	const struct module_version_attribute *vattr =
-@@ -892,7 +892,7 @@ static ssize_t module_attr_show(struct kobject *kobj,
- 				struct attribute *attr,
- 				char *buf)
- {
--	struct module_attribute *attribute;
-+	const struct module_attribute *attribute;
- 	struct module_kobject *mk;
- 	int ret;
- 
-@@ -911,7 +911,7 @@ static ssize_t module_attr_store(struct kobject *kobj,
- 				struct attribute *attr,
- 				const char *buf, size_t len)
- {
--	struct module_attribute *attribute;
-+	const struct module_attribute *attribute;
- 	struct module_kobject *mk;
- 	int ret;
- 
+For some cores (P-cores mostly) the voltage can be adjusted per-core
+and for some others there are coordination domains, but the
+coordination there involves idle states (for instance, one core may be
+allowed to run at the max turbo frequency when the other ones in the
+same domain are in idle states, but not otherwise) and dynamic
+balancing (that is, the effective capacity depends on how much energy
+is used by the domain over time).
 
--- 
-2.47.1
+Thus whatever is put into the perf states table will be way off most
+of the time and there isn't even a good way to choose the numbers to
+put in there.  Using the entire range of HWP P-states for that would
+be completely impractical IMV because it would only increase overhead
+for no real benefit.  Either it would need to be done per-CPU, which
+doesn't really make sense because CPUs of the same type really share
+the same cost-performance curve, or the assumption that the entire
+domain is led by the most utilized CPU would need to be lifted to some
+extent.  That would require some more intrusive changes in EAS which
+I'd rather avoid unless the simplest approach doesn't work.
 
+The second problem is that the current platforms are much smaller than
+what we're expecting to see in the future and whatever is done today
+needs to scale.
+
+Also, I really wouldn't want to have to register special perf domains
+for favored cores that share the cost-performance curve with the other
+cores of the same type except that they can turbo-up higher if
+everyone else is idle or similar.
+
+> This would also avoid hitting corner cases. As if there is one big task a=
+nd many
+> small tasks, balancing on the number of tasks per CPU is not the best ide=
+a.
+>
+> https://lore.kernel.org/all/20240830130309.2141697-4-vincent.guittot@lina=
+ro.org/
+
+Understood.
 
