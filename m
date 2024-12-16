@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-447616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494FC9F34F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F25E69F34F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A991630BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7352A162017
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F3F149C57;
-	Mon, 16 Dec 2024 15:51:11 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8B7149C57;
+	Mon, 16 Dec 2024 15:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JRXNxHiD"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E653E23;
-	Mon, 16 Dec 2024 15:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDB914830A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364270; cv=none; b=jyxwK+tCFY0Zx2MZIcCxKLYM5M96awAYmddjqn6lzEuiUjkFdWseMz4Wdt1ZLOks6iQVlcz9oqP1blNT6yITr4Yvf/X/IojYthdrEKa54NUGJBZXNv58pQQ5AVE2jztPrNN872ZBPGkk6oKCDZgCVQvX3IcGj7GILrLrRBstvIY=
+	t=1734364292; cv=none; b=MkXomBXQIW7iQkLMXYeu9Q1lwQBx3GZih10Ja7ygSCfKkusxcFYqqfzLj9W/xzO2wsTVHA3ZCmT+xV80at1vYpDjbhWZhdIWR8dalQaCLTdObh3QMf5wC/JJWfYhwlclYgejPv9ED6C0XAIt4iqD2igLEY+Q1HTHADFNXQSQmqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364270; c=relaxed/simple;
-	bh=UCwieU66/99o/wE0qXJcxX+MLBlFinlvMlIOZscA97U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YVDVPaQPYU6LsiVByhV/hYkZ5vBdfNCC/LSEk6MMKklOXPdoYcuTekzdCgXpfWM7orEajvqRyNuqgReelLBCQLkDR6/dxxMzFcI/HtxsAvHUDIpPnf4fQJH0mBxf4ZFgtVMaaxNQKvorcEyPMKGZv3IGYKAqcAHqYYjgb4pNJAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5188c6f260cso1281410e0c.1;
-        Mon, 16 Dec 2024 07:51:09 -0800 (PST)
+	s=arc-20240116; t=1734364292; c=relaxed/simple;
+	bh=3g8DC1mNg7XB6KkhfdDAW5YL9wzGPK7RETSbnA7JMhs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oH+cNMXfu+/JPH7mX9TcGQyBJz3DtlUMDOc9Z+3xfZoTdUTCj1LO8LXtz3UEFy5WazOT60WotjLpTa/Yo/B0jExumWnHSnufA7FSZ2PNvSJUQd20c9ZGgIx6Szz59oaRNnLs+vdK3g1lDiWxc9SgVBgYPy2Avjz27cJqppVLpWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JRXNxHiD; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6dcc42b5e30so43008316d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:51:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734364289; x=1734969089; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANGVT/6vrWuj/lKkD9RrqomD0lbQDWrUQKUnTL+w+JM=;
+        b=JRXNxHiDuLJqMYFS7vt9aF28bsg+TyjrvHmSe5I0XCmbIzdkyxJhroCk4vs3L2LqZI
+         doHp+znXX5HPEM6A2x3CGbOZhTULm+KUWDNhQTPNKoueGNJPKSfRkFWQAGqT63R5d3Ui
+         gJVjECNPE64wFsIgdx4W9kjdnu3aZkTwtujio=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364268; x=1734969068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NFmcu2x7nM+cpZdx4yRmO6qW4644N8d091wOSqNC+YE=;
-        b=AylEcEHTSUtt36Y8vEMe5yXWKLAXUT533PRKdhQ1plWGF6GetOyvdBr43Yl5vy76ba
-         mlk7ra4E+eBhoOUxr8bzALiUQiYx/hSbTGOxnYYuvd94DX2dpGJqSl9vGOlYiVaoqhCT
-         3J4jqiGchzuI1/HyDEcnCY+18J6J+g9iiuVPF6CD4YoJVnafFj3o6gSkvpLo/pcakQPP
-         pre4jyzQscexO3AQTRvGEhjwj3AMp6+0QNlDl2+Hsdamy5O5YHhtBXwVajZg+YUvXWb8
-         gw10DsCIQkmolUyP99r1VEKpn4fhmQwYVJetQ8JBrWKHXqFLAbF9eB7nNjUfsc+tKdNv
-         dghA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF7tkN//7A/OW70E/yaJTmixXeOuTIOUZMRwifHxFl1o2cztsxSPUz+bht53ekUWlvjN+qHqmZ1/Erdp90@vger.kernel.org, AJvYcCWssIG69OatTdHUDK/9GdeUVPdodPJPVYvIi8++fQdt/KPMbdcC5mYwtqzO08Uq09954X4SFpjd9r6OVY/bQs0Rpz4=@vger.kernel.org, AJvYcCXBBpu3IjwU5SpFUiVxXnwhzWoNOvFp+iIRloltOAUu4IYI0M2SWN15ZsTh8/wtSWv8WfUIDbhFLTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRZjDDB6EKyvw/IZdntVR48kMKlZbA3U6yZSc2JezlDgEZyUJF
-	TLHtD/dZGlpsRioPqM9b0f/V8KgXMshy3yHgr8t8LgI79d9U+bff9Y8oPIBN
-X-Gm-Gg: ASbGnctRsuCWzR9bi82twyx+qWmfhoGxIsgTJa4KvMZSUaL+ujBpnZ0yjshJMVx02CX
-	zwsB0JB0+yUqt2TpZWxmmh2zTzPzVW9m2ncBrLCcbzAXzzOqb8KpuMHo1/DDlwj92/fn1gNK3dg
-	K6iUWvsXLYYFaAQaIIYUAb2fMwgs9xzDcM4LLTkPdO6VNrJE6sko9P1x8fMfH8NItq/hqMCqQlJ
-	ICJiYhPDLZbxNyJHRgB6eHPlvXW4T9cRfKGB0yJV+JfXmo2/11Zj0HuTvqe2jLPGdGB/ionodC7
-	B4kWY60rYunDISF7bsM=
-X-Google-Smtp-Source: AGHT+IE6ML3f8XwhYx49vEkYmodzuwOugfM8xE8ZwGJ9BHc9Ryu10iFxvj6F9iSRR7TY2LoGyOwTHg==
-X-Received: by 2002:a05:6122:2505:b0:515:ed1b:e6dd with SMTP id 71dfb90a1353d-518ca2182bemr11535348e0c.0.1734364267516;
-        Mon, 16 Dec 2024 07:51:07 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-519eb72a06csm677564e0c.44.2024.12.16.07.51.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 07:51:07 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-85b95896cefso737778241.2;
-        Mon, 16 Dec 2024 07:51:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV2U6bZk6gthydkk07d5o6AqJ+TmaEnP9aBUXxHZwCm/Qrb2dSlWeV8Z6xrSaSjIhGUj3/D57f+FFiuigVIAVN5QbY=@vger.kernel.org, AJvYcCWSiDWQ6SeCGYH34Y4nRgFReCpT9TcKCf+zlF2P0oQe36FcHh2pzkVIgTPHyGa7+41gNWBGgNbBsbzUlrSv@vger.kernel.org, AJvYcCWx8BFCblo2V3Z4RnIqGFEfzMOqC/XGPJVTD1S5C1x5zX6C23GMUqznGcydNExFRBVXnY1ytNUGGgY=@vger.kernel.org
-X-Received: by 2002:a05:6102:1591:b0:4b2:5c2a:cc9d with SMTP id
- ada2fe7eead31-4b25d9dff21mr13929134137.16.1734364266819; Mon, 16 Dec 2024
- 07:51:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734364289; x=1734969089;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ANGVT/6vrWuj/lKkD9RrqomD0lbQDWrUQKUnTL+w+JM=;
+        b=J+BfV+RLHR1bnAG0VJLaGduxifuzjqKZ9mu5t9AWaHrNqqvIenrK2oEBS/Eax/wdQn
+         V8Ty9e4anCSq4HNgTqMumdyPunga+evEdLkTIitWKq3g5Egr7V4QtWEHlQfA/zrT21iK
+         6cbDp06v3XvoT4oc2bRjrXbP3ReNVh0NTzBzClPdvgT6DLec+lJH7Q1Mzssg+4KtvYvI
+         WRAzFjOvy0bVuRjL/gSBa0H1CCG0SlfECwEeJdHY/JUhJ+KhqfAipU3fzJIOPERfB0dR
+         8gNItbSu7nwXJixNQXnkHlX9JtFmzGgx7NgiGyPGdZHh/xRfRyXIjfDkMjep8gMbHO9z
+         /VgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR8SHKdUHxMOTY7L2ro7LGONKX6dtcVZbovn7iTGMur2LQsyBuH85QU0QhslDow0bZO0U5K5U1H3zP+zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM7wo46A6tSJHl982uinkZ88qM85XXy1A0Zl5T5KvR4mCYu0Ii
+	O8Rc1Hb5lgrM5nZQ8Y4Que328eNthv6HLnNErrpazp9BrxP7H3dsIPJwwfCdvg==
+X-Gm-Gg: ASbGncusIvpf1DGoQ+YxKsZ8kqnuHF+f3v1i2dql+QZaQyhdTitx9OFXXR7oAYmlaKN
+	CCnv9vC5WwJOGMijUVU0U2imRkGOMGe8nWwSG9Dxbs3yXPMj9+248nh2LRBXKqg9LuStJ91gznG
+	F6JkrRfvN7eihWdczZsPhqDLx3Hh9tRLtR4O2Wq3m5U0WtWpfPPZXwr6L3QvNAjGK5FnUNb4Cwi
+	wWbzCG6L24kXCWNspMpml0Bl89wgICkz2i7d4Uvi32NcY0Z2xrq+MAzRsg/ggLauiU0h/qd9LPo
+	Hp8Mv2OZ2N7Yf0mIca0FQ/j8TwXOmKQ=
+X-Google-Smtp-Source: AGHT+IEryXgjRGebrTAf3XDOlliT3FU618LhayFyfvmpOnzp9l+uOYDGOFR/H+wX94jhcNDHFdBzoQ==
+X-Received: by 2002:ad4:5d67:0:b0:6d8:d79c:1cbd with SMTP id 6a1803df08f44-6dc8ca55737mr247992346d6.15.1734364289688;
+        Mon, 16 Dec 2024 07:51:29 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd38abd0sm28416446d6.123.2024.12.16.07.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 07:51:29 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 16 Dec 2024 15:51:28 +0000
+Subject: [PATCH] media: Documentation: ipu3: Remove unused footnotes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241213175828.909987-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Dec 2024 16:50:55 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX5KuMLih9_upsrJFHM422+N5mgMMafBLxKOtrBX_njiQ@mail.gmail.com>
-Message-ID: <CAMuHMdX5KuMLih9_upsrJFHM422+N5mgMMafBLxKOtrBX_njiQ@mail.gmail.com>
-Subject: Re: [PATCH 3/9] i2c: riic: Use BIT macro consistently
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241216-ipu-doc-v1-1-e07f0b4f9065@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAH9MYGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Mz3cyCUt2U/GRdizRTS8tUg5RkS0MjJaDqgqLUtMwKsEnRsbW1AOv
+ wD8FZAAAA
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Easier to read and ensures proper types.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+These footnotes are not used, or they are used in a codeblock:
+Documentation/media/admin-guide/ipu3.rst:592: WARNING: Footnote [#] is not referenced. [ref.footnote]
+Documentation/media/admin-guide/ipu3.rst:598: WARNING: Footnote [#] is not referenced. [ref.footnote]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Remove them for now.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ Documentation/admin-guide/media/ipu3.rst | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-                        Geert
+diff --git a/Documentation/admin-guide/media/ipu3.rst b/Documentation/admin-guide/media/ipu3.rst
+index 83b3cd03b35c..9c190942932e 100644
+--- a/Documentation/admin-guide/media/ipu3.rst
++++ b/Documentation/admin-guide/media/ipu3.rst
+@@ -98,7 +98,7 @@ frames in packed raw Bayer format to IPU3 CSI2 receiver.
+     # and that ov5670 sensor is connected to i2c bus 10 with address 0x36
+     export SDEV=$(media-ctl -d $MDEV -e "ov5670 10-0036")
+ 
+-    # Establish the link for the media devices using media-ctl [#f3]_
++    # Establish the link for the media devices using media-ctl
+     media-ctl -d $MDEV -l "ov5670:0 -> ipu3-csi2 0:0[1]"
+ 
+     # Set the format for the media devices
+@@ -589,12 +589,8 @@ preserved.
+ References
+ ==========
+ 
+-.. [#f5] drivers/staging/media/ipu3/include/uapi/intel-ipu3.h
+-
+ .. [#f1] https://github.com/intel/nvt
+ 
+ .. [#f2] http://git.ideasonboard.org/yavta.git
+ 
+-.. [#f3] http://git.ideasonboard.org/?p=media-ctl.git;a=summary
+-
+ .. [#f4] ImgU limitation requires an additional 16x16 for all input resolutions
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+---
+base-commit: d216d9cb4dd854ef0a2ec1701f403facb298af51
+change-id: 20241216-ipu-doc-8f599e0dc912
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
