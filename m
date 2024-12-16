@@ -1,172 +1,165 @@
-Return-Path: <linux-kernel+bounces-448246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FE39F3D6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:25:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980639F3D76
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17811188F6EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAEE7169403
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539ED1D618E;
-	Mon, 16 Dec 2024 22:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94401D63EF;
+	Mon, 16 Dec 2024 22:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ki6o7Y22"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nyb8/uIg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D102A1D61BF
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996C21C3C04;
+	Mon, 16 Dec 2024 22:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734387897; cv=none; b=CKbLjlpCK4auieW02XWLTmWie07owk3ZyZkQasP5KuudIOd3mBRaHjGmLdcYIOH2cSrAmSogOl/3tlKb0KeFjpC4NVwsuvcg7vQz8+i48PCHaDDWbIHTfLy12ytTnMJJI54daXNCZsrwUUzUjTmd/sV6LLp1U1z+tCKPGjDOzB8=
+	t=1734388098; cv=none; b=rsCBaF1qDxAJf9unx08WECktGOkZIlrpiqEm4LpuGL3zSmSLrwro73DsoJ047tW6kJkYQh00Df1wRLw7dhj9pQD77j8yjwdXOX1Avc/ESZpofQEyDnGw77ZfcVYCvHR4JnV5cWQkl0PNJTndwuiTdJu8nrZPxX/HjkyhamuErI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734387897; c=relaxed/simple;
-	bh=Gigplh9uNnG2VybEpHpX1m/kbyDyOv21lQUSjXfIiGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LmBqA8i7IoYqmWrVIsemZdWYCV7QbId7/WHFIWHtRmv52mPt2AyHB+wlbF0ow1xq3R0U1UQm9U14KPBd4GQ21bY2tV/WOdIv+4/O4jL+wyF8/qzvDmE1yEw+wNCbWIOJmTPBq6RahpvK7zJn2bd/tXHLB7TX9LZv6DtsLNyt800=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ki6o7Y22; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so4741872e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:24:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734387894; x=1734992694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lUKNdC2kAAGBCwC8ulcU+ZnvIc3yXrgdr0jrnZTuug=;
-        b=ki6o7Y22vheRHceEJn+jysciejPloQ95plf5J+9O8L5QLPpYbS7g44AH6Cp6GhF343
-         n/V6/Svx3awplh5uV7Kz5N8MNQ4APd1BWEE0ZLvlj+shM8C9N4eHFiNOL8GklKn9JFys
-         gJmPASwwbI4SWM+19dPV0kubGAnvF77LmQm1p0Nhg6xjB7THk1BtdzDw8W0obQl/Vd3x
-         k3Lvm5O2TFv4ABhPlWDjp4zPYIgp/+DG7k7U0gHKMALb1QD60Xjbi1/6ExkQxHTG6YsZ
-         kuiCcgTEyektOK/C8EQp9Bt6Ret0SKzNj8pA1XXYGE5XUCpQgquJoZB7OfGmmfBlkj0R
-         k2sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734387894; x=1734992694;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4lUKNdC2kAAGBCwC8ulcU+ZnvIc3yXrgdr0jrnZTuug=;
-        b=dLHhQ/Dq4XXCCKWK1E1vYmVy/9fqk4LilRB9QSiFsAVVZJAs2oR6jqFlM6jL1ubckP
-         ldu7Vb4qNkUdrlsam0k2oRBmz0Ck+TqZSqwO8m2ip/C7DYAFtf2Fjm3NHOSZPHnH6AN2
-         ha9Q7AYM/bMzwzc4ol/XpVM9pG3FAfv5gd+N3fyFc+fo49XVFk+ykxsrAjTOIpXufn4j
-         XXSKRpgyr4uVjn+9lwZXySZvUlkOcQmjWraGZsmtw4QfOl7dhrct/PVGHp5MLh6o7EMl
-         WVNddlrKLRg6M0iwEb/vH9vd5XdaKb2UBUrOvDqLWkjtQMqiyK0qcYlG6RMUdqO4a6iT
-         zj8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUToYBPyWOYhExY2G5adw+Mcz8m012feubUyYeRzFigB/LBkr8TWH4slLJAbz1aGKQMlpZQKKVWhz5u+AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5dJNGFfznGCuhKu53RUrJ5/4/wOi8YXxBwMEdhIq9FYsG7hpU
-	E8T+L59Uon4DwiTZd8zkr22DqLr8Dv+oPA+prmaG1ICtZ8L/r7Rg1ezO0DSGaD0=
-X-Gm-Gg: ASbGnct0aRNo66QYq2DxwI248XRfAao4oo/cayW6b2ArYQd8coz1/jidCgvgfbKtoP0
-	S0hxZDKmPH+n0gdEP9HH4YWgf5Kw/oSQ8AuphYE7eZ8F9jGLaj6AdD6KMcZI+u5b1fQmpT8YTlr
-	jjx77udnIxsT5ZL28W1mNN9Qn8i1jgFr1/WU7ScMF+dkB0eD0j+OLTfAK2dBw+nZB106bQYG21I
-	0Mzu/zl0eOo8MuK4Yx02IYp8LSHJ0dm/m4mlE1foCsHH28aEMkJ18epzM41hfux05a0hG07WGr/
-	J0XAt2ldV6wXvhyYybZ8Ydn0bAXoKqU4TjgO
-X-Google-Smtp-Source: AGHT+IGeM80+qzSI85ogwxR7TJc35MFGjDldBmFT9FD2cLdQVLMDcDnI76ZKZkotwpop5fLoExBoFw==
-X-Received: by 2002:a05:6512:3b89:b0:53f:afae:7364 with SMTP id 2adb3069b0e04-540905a6f62mr4232404e87.40.1734387893905;
-        Mon, 16 Dec 2024 14:24:53 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120bffd77sm972047e87.136.2024.12.16.14.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 14:24:52 -0800 (PST)
-Date: Tue, 17 Dec 2024 00:24:50 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Paloma Arellano <quic_parellan@quicinc.com>, 
-	Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/16] drm/msm/dp: split MMSS_DP_DSC_DTO register
- write to a separate function
-Message-ID: <6nt7cacoik4nxbjpgpidmovzilxf7q2gld64ch2p7ltatkzl4p@sg4ltm7jt47c>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
- <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
- <9fb5986b-f375-4300-b50c-92bb9c0b4399@quicinc.com>
+	s=arc-20240116; t=1734388098; c=relaxed/simple;
+	bh=BchgCZSTz5otN9tUx9euPmpFn6JLf22aQRkS2L0H2x0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZoU36MWLEju/QHyOe+5TfZXcc4z2ZuenE32/053iDTaFo4MInytKdjeFtrHhvAnbyyPaO/1us8w7oDfnca8pv/4ZlpIUgVMCN6KMgHJK3B74mE2GEkTw3bdlcN9NrNvDilfrjflqeh1SYWg6mgWpLD5nC/scfWlqPBQSSCm2gsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nyb8/uIg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGEhWhn022843;
+	Mon, 16 Dec 2024 22:27:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=XexS5E
+	E03A2kFOO1RC4vOyWubIQY+mIHYfLpVdjzVl4=; b=Nyb8/uIg0lov8QWWAhi6ym
+	fJhH8v7Tr+FdNv8NbmGcSlBnn0wkGgelfj0TeTmav5XbgPNaw0PfQDBEj1Uk64Eu
+	TvbnaK+lzqiUtgAgvJ3w9kNhzhA+h3uMRWdQe23k4WjA5iOecK1QVgxCOvNGJIL8
+	OMjIc03td2D6JzzyLXg/ilRiw05VL4i1mLTyi3QpyUFdq4SNzyo99cAVQ4CzIDYs
+	5/dZgTPF2qQyc2vMDZre7UzzgOenAPNP0H2nhnEiG31kHwnXfUbMTehMBOHQcK9J
+	9R80g6sBlbt9ZXzec8P3PW7mtLuBNaWghNPBNf0tmL5XgJEJdGppbJqeNcCTmOOA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpgw1v1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:27:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BGMBIIP021984;
+	Mon, 16 Dec 2024 22:27:40 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpgw1uy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:27:40 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGLDT7L014340;
+	Mon, 16 Dec 2024 22:27:39 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqy04sk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:27:39 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGMRcYI18219554
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 22:27:38 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A4A95805F;
+	Mon, 16 Dec 2024 22:27:38 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD8BA58051;
+	Mon, 16 Dec 2024 22:27:35 +0000 (GMT)
+Received: from [9.61.165.36] (unknown [9.61.165.36])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Dec 2024 22:27:35 +0000 (GMT)
+Message-ID: <d75e72a8-6bd5-4929-a8bb-e1b13fd7d3b8@linux.ibm.com>
+Date: Mon, 16 Dec 2024 16:27:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fb5986b-f375-4300-b50c-92bb9c0b4399@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add support for Intel CRPS PSU
+To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
+        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
+References: <20241216175044.4144442-1-ninad@linux.ibm.com>
+ <c64bb634-46d4-486a-8743-699775326058@roeck-us.net>
+Content-Language: en-US
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <c64bb634-46d4-486a-8743-699775326058@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GST_I0viN8YQt3jOs4JP1EhREbfu_C3_
+X-Proofpoint-ORIG-GUID: Y5LYT8Ng54jd9v0EuHcH24-ljTCPN46c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ mlxscore=0 phishscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412160181
 
-On Mon, Dec 16, 2024 at 11:46:21AM -0800, Abhinav Kumar wrote:
-> 
-> 
-> On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
-> > It's the dp_panel's duty to clear the MMSS_DP_DSC_DTO register. Once DP
-> > driver gets DSC support, it will handle that register in other places
-> > too. Split a call to write 0x0 to that register to a separate function.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/gpu/drm/msm/dp/dp_catalog.c | 8 ++++++++
-> >   drivers/gpu/drm/msm/dp/dp_catalog.h | 2 ++
-> >   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 2 ++
-> >   3 files changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > index 7b7eadb2f83b169d8df27ee93589abe05b38f3ae..354ec834f9357c4797fc08a4532e69acc67b4317 100644
-> > --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > @@ -1039,6 +1039,14 @@ void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog)
-> >   	msm_dp_write_p0(catalog, MMSS_DP_TIMING_ENGINE_EN, 0x0);
-> >   }
-> > +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog)
-> > +{
-> > +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> > +				struct msm_dp_catalog_private, msm_dp_catalog);
-> > +
-> > +	msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
-> > +}
-> 
-> This is already done msm_dp_catalog_ctrl_config_msa(), this is either a
-> duplicate or redundant.
-> 
-> void msm_dp_catalog_ctrl_config_msa(..........)
-> {
-> 	**********
->         msm_dp_write_link(catalog, REG_DP_SOFTWARE_NVID, nvid);
->         msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
-> }
+Hi Guenter,
 
-The chunk to remove it got squashed into a different patch.
+Thanks for the review.
 
-> 
-> > +
-> >   static void __iomem *msm_dp_ioremap(struct platform_device *pdev, int idx, size_t *len)
-> >   {
-> >   	struct resource *res;
-> > diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> > index 6678b0ac9a67881244884d59487fa288d33d1be7..08bb42e91b779633875dbeb4130bc55a6571cfb1 100644
-> > --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> > +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> > @@ -92,6 +92,8 @@ void msm_dp_catalog_panel_tpg_enable(struct msm_dp_catalog *msm_dp_catalog,
-> >   				struct drm_display_mode *drm_mode);
-> >   void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog);
-> > +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog);
-> > +
-> >   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
-> >   /* DP Audio APIs */
-> > diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> > index 9c463ae2f8fae916661fef1c7e225f55c1026478..b9c461fee96f8fae9259ce03a32e1155b42d17bb 100644
-> > --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> > +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> > @@ -2011,6 +2011,8 @@ int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, bool force_link_train
-> >   		pixel_rate_orig,
-> >   		ctrl->panel->msm_dp_mode.out_fmt_is_yuv_420);
-> > +	msm_dp_catalog_panel_clear_dsc_dto(ctrl->catalog);
-> > +
-> >   	msm_dp_ctrl_setup_tr_unit(ctrl);
-> >   	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, DP_STATE_CTRL_SEND_VIDEO);
-> > 
+On 12/16/24 12:48, Guenter Roeck wrote:
+> On 12/16/24 09:50, Ninad Palsule wrote:
+>> Hello,
+>>
+>> Please review the patchset for Intel CRPS185 driver.
+>> V2:
+>> ---
+>>    - Incorporated review comments by Guenter Roeck
+>>    - Incorporated review comments by Krzysztof Kozlowski
+>>
+>
+> That is not a useful change log. Please describe what you changed, not 
+> who
+> asked for it.
+>
+> Guenter
+>
+ok, I will improve it in version 3.
 
--- 
-With best wishes
-Dmitry
+Regards,
+
+Ninad
+
+>> Ninad Palsule (4):
+>>    hwmon: (pmbus/core) Add PMBUS_REVISION in debugfs
+>>    hwmon: (pmbus/crps) Add Intel CRPS185 power supply
+>>    dt-bindings: hwmon: intel,crps185: Add to trivial
+>>    ARM: dts: aspeed: system1: Use crps PSU driver
+>>
+>>   .../devicetree/bindings/trivial-devices.yaml  |  2 +
+>>   Documentation/hwmon/crps.rst                  | 97 +++++++++++++++++++
+>>   Documentation/hwmon/index.rst                 |  1 +
+>>   MAINTAINERS                                   |  7 ++
+>>   .../dts/aspeed/aspeed-bmc-ibm-system1.dts     |  8 +-
+>>   drivers/hwmon/pmbus/Kconfig                   |  9 ++
+>>   drivers/hwmon/pmbus/Makefile                  |  1 +
+>>   drivers/hwmon/pmbus/crps.c                    | 79 +++++++++++++++
+>>   drivers/hwmon/pmbus/pmbus_core.c              | 13 ++-
+>>   9 files changed, 211 insertions(+), 6 deletions(-)
+>>   create mode 100644 Documentation/hwmon/crps.rst
+>>   create mode 100644 drivers/hwmon/pmbus/crps.c
+>>
+>
+>
 
