@@ -1,185 +1,147 @@
-Return-Path: <linux-kernel+bounces-447344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D109F30E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:53:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7BE9F30EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:53:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31EE81885D65
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593DC188266E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D85B204F9B;
-	Mon, 16 Dec 2024 12:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0BE204F93;
+	Mon, 16 Dec 2024 12:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvMZJqzE"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="by6kvTum"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D0204C2B;
-	Mon, 16 Dec 2024 12:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06CA204C0C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734353575; cv=none; b=lyQ6+PQmiz6T8042SsoRF1yKWI/yIECpCkBlJjE5kSH5//SlkDRboucpaG3WiJ5TRwuMKrDdpxuYEk6Lm/+JEnjtfNSPV5s1OsJI9R+NOvFEdE5PXowLfCSMtyslDrPNLqlUf4gAJsxD52LEwymYakcYJrlnP/DYaY/ZHa6/oWw=
+	t=1734353602; cv=none; b=nQZWUS2mOWH4rgv0qNek12Oko3lpL8bcYg9ejqYwc6fSJRurO+vWuwIpw2EgqaAto/H4wDckQz13TfTZz6uXp48iB2PZjFeWSM5D40O3Bm9vfXiw2ltWYum3o48HVteZmYvYiriIKHASi9aDQ44xdQkOyjw2DAQnGCOtaL1TDy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734353575; c=relaxed/simple;
-	bh=HjFYd6BndnpoiCRd2oyS549xr1ezPodTGI6FzDIpkfQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sdRZjqLiNXQ6SJ+5s3KGhMtfub48wuslinOLHCPi3v6ti8svjT9p+53lYzteON8YOInfpv/vtkvmn5xM+RPVIOqiYOHslQ9iu9kAmQomvekp7Kt0u2QW82dBttX23ObBNSS+jpzKBLoSrOcVVH+c8l9G/HTwOcsE7X0kbWtrErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvMZJqzE; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54025432becso4124809e87.1;
-        Mon, 16 Dec 2024 04:52:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734353571; x=1734958371; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g+26SMdialOSb6Rf0bIvmxpAwyXCSbvy4Gbj4G/lVa8=;
-        b=kvMZJqzEIysldsdwruplbgb7jTWqkYzNkDiAk6avZyN5LhEXGaYpJJTI8uEav+MMKD
-         Vmhqm/MdStY026iPsnVHKn+FS4pXrEZVOqGpcu0XnV8DjQGdIxlCKyzc8fFwHw9BlLy7
-         ljvWJBWR/l4DUuqH4S2b+01XhRCxU8jLJ45wxBP9s8CfBDVBV1H0xe8RC2hkahw084fu
-         25YsBPxQVIPkLzHxGPBMYvAFPiq4QYVquzBD8eeY8sdZKaekctkFmTEdoWWe2bxlN+De
-         BQUmfRNMC5q0CA/7B4Ew83a5zb7vBpleCi4dTCPhwWV7H1hfv9SsUBbmUujhQtVmDozZ
-         lJUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734353571; x=1734958371;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g+26SMdialOSb6Rf0bIvmxpAwyXCSbvy4Gbj4G/lVa8=;
-        b=VFFY0DftIG9FNrmk0junI+lAC7jnk9WJxxUdMXNnEkvHsec7oY4rQQEX9QlFp6GuyP
-         jBz+vEBqIFprmJMwHfzcttmwG5ZsEZLWmDFkZiJZH/YKfUg1fQOKq/NHVEl9KIb18lAp
-         lqxN+q6Y5MA8DKTjiXVz++nW0bOodhEQ9+qwSJkiFPhiX6leghIeCLMZZtiZDUqZUvCE
-         MvtML++SxH13k3UiN3taVv+xy9WgI06HuwqAoerqN+WDU8draSTtHWHCUPshVDyFEQwW
-         lhNthFqCu+YwhO/qCeiER9Q91Bhv0WP0SMutd/VnsH+XVuK4TOktkpJIZSX+IJVmmXLB
-         LSng==
-X-Forwarded-Encrypted: i=1; AJvYcCUYojpQkZC/6WGcNDQ7huxQjY2rr0UBDS0BAcpMl1Nt+6HaZFbd+nur1OjSFR4mpeVnuie23+fJQtlvVeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHINnMGWAXKqaTrTBELGc/BFApUlXP59DWlI2+j/mQFdX14PGp
-	XRkoC4jZsgSHSD7BW4BAk+bUldMN7vEVTuZMG4j8UPbvHBQY+sI7CLQI5BFcbyG3BYn3Dyzp9S7
-	Hz6gFWFiNuz5ZYS27oL63RL5k6lA12pjaZhfDRw==
-X-Gm-Gg: ASbGncvfCGn5YJTH+CdzGq3rw0Rhxn6JnIviGD2Djz0fiLhRP5vkvL5mLCAXmD8Gun2
-	p6kZQf2wkSuFmw1kLDoD0PuTG7BJzIoeMu6YyEHir
-X-Google-Smtp-Source: AGHT+IFNQpdcFgvzgPCArT7asNvaiEBS5RdaRAoiNuFcO4e6j8/ODGkRopUfvTV1xxc0f0tgRt8ofRgliLZE0+eaBv0=
-X-Received: by 2002:a05:6512:a8c:b0:53e:391c:e96c with SMTP id
- 2adb3069b0e04-5408ad80ba1mr3770191e87.8.1734353571087; Mon, 16 Dec 2024
- 04:52:51 -0800 (PST)
+	s=arc-20240116; t=1734353602; c=relaxed/simple;
+	bh=0NEaVlSfcKA6VZ14JF6k7UBb0PRxtrSPnyOhzfeZQp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hCQ4b5kEGvMwTasaKsY0HRlbz7Mv2es93H0EuwrSoEvhJuH6u5FnhR86YVc2FUvoxnoWu6lmrneZJR0Huj3WFuMmXGALhK9G4t8vYa0rSnDpV5NNOcr7hG4rvrm0BGuUmHCcQzbP9XFKADWOG667l1G4agAcm91q5PbBJHVN3E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=by6kvTum; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734353597; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=igS+vMvKO7ShxBR7rp8ORXO+whr6YQCKn1xoR3jaKug=;
+	b=by6kvTumhpTqFfrztN/2hzw4i00egHZUiryU16Cezenz2mxebLICoo25ucyrdOf8E9OOHLZZ8vK5yd5dZuyIyuhXDSAvyVfk932sHyctk9SUlzVQUFkT4j0gosDM8MdeEAsW7zgcCcQ29iaPcNt3NbgAG+OWAwG5T79rADfj3LU=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLcksKQ_1734353592 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 16 Dec 2024 20:53:17 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3 1/4] erofs: add erofs_sb_free() helper
+Date: Mon, 16 Dec 2024 20:53:07 +0800
+Message-ID: <20241216125310.930933-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211111315.65007-1-sunjunchao2870@gmail.com>
-In-Reply-To: <20241211111315.65007-1-sunjunchao2870@gmail.com>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Mon, 16 Dec 2024 20:52:40 +0800
-Message-ID: <CAHB1NaiY-DfZzaofQ82XMJW75V-tcaN0dHLD-LC5UH-766EQ7A@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: fix an assertion failure related to squota feature.
-To: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, wqu@suse.com, 
-	boris@bur.io
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Friendly ping...
-[+cc Boris]
+Unify the common parts of erofs_fc_free() and erofs_kill_sb() as
+erofs_sb_free().
 
-Julian Sun <sunjunchao2870@gmail.com> =E4=BA=8E2024=E5=B9=B412=E6=9C=8811=
-=E6=97=A5=E5=91=A8=E4=B8=89 19:13=E5=86=99=E9=81=93=EF=BC=9A
->
-> With the config CONFIG_BTRFS_ASSERT enabled, an assertion
-> failure occurs regarding the simple quota feature.
->
-> [    5.596534] assertion failed: btrfs_fs_incompat(fs_info, SIMPLE_QUOTA)=
-, in fs/btrfs/qgroup.c:365
-> [    5.597098] ------------[ cut here ]------------
-> [    5.597371] kernel BUG at fs/btrfs/qgroup.c:365!
-> [    5.597946] CPU: 1 UID: 0 PID: 268 Comm: mount Not tainted 6.13.0-rc2-=
-00031-gf92f4749861b #146
-> [    5.598450] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
-S 1.16.2-debian-1.16.2-1 04/01/2014
-> [    5.599008] RIP: 0010:btrfs_read_qgroup_config+0x74d/0x7a0
-> [    5.604303]  <TASK>
-> [    5.605230]  ? btrfs_read_qgroup_config+0x74d/0x7a0
-> [    5.605538]  ? exc_invalid_op+0x56/0x70
-> [    5.605775]  ? btrfs_read_qgroup_config+0x74d/0x7a0
-> [    5.606066]  ? asm_exc_invalid_op+0x1f/0x30
-> [    5.606441]  ? btrfs_read_qgroup_config+0x74d/0x7a0
-> [    5.606741]  ? btrfs_read_qgroup_config+0x74d/0x7a0
-> [    5.607038]  ? try_to_wake_up+0x317/0x760
-> [    5.607286]  open_ctree+0xd9c/0x1710
-> [    5.607509]  btrfs_get_tree+0x58a/0x7e0
-> [    5.608002]  vfs_get_tree+0x2e/0x100
-> [    5.608224]  fc_mount+0x16/0x60
-> [    5.608420]  btrfs_get_tree+0x2f8/0x7e0
-> [    5.608897]  vfs_get_tree+0x2e/0x100
-> [    5.609121]  path_mount+0x4c8/0xbc0
-> [    5.609538]  __x64_sys_mount+0x10d/0x150
->
-> The issue can be easily reproduced using the following reproduer:
-> root@q:linux# cat repro.sh
-> set -e
->
-> mkfs.btrfs -f /dev/sdb > /dev/null
-> mount /dev/sdb /mnt/btrfs
-> btrfs quota enable -s /mnt/btrfs
-> umount /mnt/btrfs
-> mount /dev/sdb /mnt/btrfs
->
-> The root cause of this issue is as follows:
-> When simple quota is enabled, the BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA
-> flag is set after btrfs_commit_transaction(), whereas the
-> BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE flag is set before btrfs_commit_tran=
-saction(),
-> which led to the first flag not being flushed to disk, and the second
-> flag is successfully flushed. Finally causes this assertion failure
-> after umount && mount again.
->
-> To resolve this issue, the BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA flag
-> is set immediately after setting the BTRFS_QGROUP_STATUS_FLAG_SIMPLE_MODE=
-.
-> This ensures that both flags are flushed to disk within the same
-> transaction.
->
-> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> ---
->  fs/btrfs/qgroup.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index a6f92836c9b1..f9b214992212 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -1121,6 +1121,7 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_inf=
-o,
->         fs_info->qgroup_flags =3D BTRFS_QGROUP_STATUS_FLAG_ON;
->         if (simple) {
->                 fs_info->qgroup_flags |=3D BTRFS_QGROUP_STATUS_FLAG_SIMPL=
-E_MODE;
-> +               btrfs_set_fs_incompat(fs_info, SIMPLE_QUOTA);
->                 btrfs_set_qgroup_status_enable_gen(leaf, ptr, trans->tran=
-sid);
->         } else {
->                 fs_info->qgroup_flags |=3D BTRFS_QGROUP_STATUS_FLAG_INCON=
-SISTENT;
-> @@ -1254,8 +1255,6 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_inf=
-o,
->         spin_lock(&fs_info->qgroup_lock);
->         fs_info->quota_root =3D quota_root;
->         set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
-> -       if (simple)
-> -               btrfs_set_fs_incompat(fs_info, SIMPLE_QUOTA);
->         spin_unlock(&fs_info->qgroup_lock);
->
->         /* Skip rescan for simple qgroups. */
-> --
-> 2.39.5
->
+Thus, fput() in erofs_fc_get_tree() is no longer needed, too.
 
+Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/super.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index c235a8e4315e..de8e3ecc6381 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -703,16 +703,19 @@ static int erofs_fc_get_tree(struct fs_context *fc)
+ 			GET_TREE_BDEV_QUIET_LOOKUP : 0);
+ #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
+ 	if (ret == -ENOTBLK) {
++		struct file *file;
++
+ 		if (!fc->source)
+ 			return invalf(fc, "No source specified");
+-		sbi->fdev = filp_open(fc->source, O_RDONLY | O_LARGEFILE, 0);
+-		if (IS_ERR(sbi->fdev))
+-			return PTR_ERR(sbi->fdev);
++
++		file = filp_open(fc->source, O_RDONLY | O_LARGEFILE, 0);
++		if (IS_ERR(file))
++			return PTR_ERR(file);
++		sbi->fdev = file;
+ 
+ 		if (S_ISREG(file_inode(sbi->fdev)->i_mode) &&
+ 		    sbi->fdev->f_mapping->a_ops->read_folio)
+ 			return get_tree_nodev(fc, erofs_fc_fill_super);
+-		fput(sbi->fdev);
+ 	}
+ #endif
+ 	return ret;
+@@ -763,19 +766,24 @@ static void erofs_free_dev_context(struct erofs_dev_context *devs)
+ 	kfree(devs);
+ }
+ 
+-static void erofs_fc_free(struct fs_context *fc)
++static void erofs_sb_free(struct erofs_sb_info *sbi)
+ {
+-	struct erofs_sb_info *sbi = fc->s_fs_info;
+-
+-	if (!sbi)
+-		return;
+-
+ 	erofs_free_dev_context(sbi->devs);
+ 	kfree(sbi->fsid);
+ 	kfree(sbi->domain_id);
++	if (sbi->fdev)
++		fput(sbi->fdev);
+ 	kfree(sbi);
+ }
+ 
++static void erofs_fc_free(struct fs_context *fc)
++{
++	struct erofs_sb_info *sbi = fc->s_fs_info;
++
++	if (sbi) /* free here if an error occurs before transferring to sb */
++		erofs_sb_free(sbi);
++}
++
+ static const struct fs_context_operations erofs_context_ops = {
+ 	.parse_param	= erofs_fc_parse_param,
+ 	.get_tree       = erofs_fc_get_tree,
+@@ -813,15 +821,9 @@ static void erofs_kill_sb(struct super_block *sb)
+ 		kill_anon_super(sb);
+ 	else
+ 		kill_block_super(sb);
+-
+-	erofs_free_dev_context(sbi->devs);
+ 	fs_put_dax(sbi->dax_dev, NULL);
+ 	erofs_fscache_unregister_fs(sb);
+-	kfree(sbi->fsid);
+-	kfree(sbi->domain_id);
+-	if (sbi->fdev)
+-		fput(sbi->fdev);
+-	kfree(sbi);
++	erofs_sb_free(sbi);
+ 	sb->s_fs_info = NULL;
+ }
+ 
+-- 
+2.43.5
+
 
