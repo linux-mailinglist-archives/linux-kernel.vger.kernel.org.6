@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-448264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24029F3DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:55:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3E69F3DD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177A516AB32
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:55:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 086EA7A3C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B351D63EE;
-	Mon, 16 Dec 2024 22:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCDA1DA113;
+	Mon, 16 Dec 2024 22:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="M7K7dG9h"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRF0C3fH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6B1D88AC;
-	Mon, 16 Dec 2024 22:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76327143723;
+	Mon, 16 Dec 2024 22:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734389705; cv=none; b=W4MbYzExeZaZZSSGg5YH+x0ZAuvejjIdmBTxOoD4HOqcEQkrq0PjFd3nhZxPV9JbnKj7RLdMCYJ2mKWV25wC/TnPo/O6zDgEoBvVgaVBV5qdN67aegBDEtl6ALUNqtNy2vIgYRnbQS23jkmYO0J3QqOru7IJXRyrBcR+cMygutQ=
+	t=1734389752; cv=none; b=eRf5uR+D2tvkQkZFWkY7gXpcqcBDkY0eVps0ydndY6VS79xf9aK0xQ5p8YEYKXejQFu6C9m9ptsHN/kgs61CZefvFyUdZhFyWApgt+VzNspCoa59BXtQ9CCmQ38rK2uimSZAS4qpGyT1VxuL5EssDdKpezpCWceejWNOV2aVsSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734389705; c=relaxed/simple;
-	bh=k9NUczgE5afoW2R/ObI/FDGVpPK8DosAmvDcl+FS5OA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jher/dRFffq1xs5wZ/PVo4ud3B68Uc89ZxU/rfBz9zVvQaZzv3Z0iwFgpxIrCofhRyY4An5GZizq63+Xnin3+LqpxFb5JkAEjyJQV5BGH/CDc9Czw/HE8bhNlPhJ1kwnVI4kq3aTNGyE1jlX2yLe40jOZXMYKvV7rRcQYNbcWU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=M7K7dG9h; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 06679C0003;
-	Mon, 16 Dec 2024 22:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734389699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3fV5e/unfpOyTP78WuJI+lL4T0kp1x8P3iyxboyk8CI=;
-	b=M7K7dG9hNs144lbC4tFE4v5qP0Sk04SievkUEmEhp01weoUA2bmkioucoEY5RUlSvM5QFN
-	+ASgHev+xFPZZlCCnUXzK7cKR5nO0ugim6AR3b2Yzj2qnZjrfsKUW6y2rWqhA1eIwthBQS
-	oXJTxJr/I1QKeAo7lNP0KXBLoQX3n4ndPvL7MBzxrV7uLTztX62wMrkQAP3O+UdutINxP7
-	XlLoDTgDB0m/o/Sv5dpMX61MxymAICC9XTD1Qj4OsmLKI/DpVLnWiYRXti8ovnb3ksQsn4
-	rGGH62V4k5s4+PSQDfqiYWF50+cKZldlS6nAZKYmQ1ofvMlJLw//6p9VutNzUA==
-Date: Mon, 16 Dec 2024 23:54:56 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: linux-pm@vger.kernel.org, imx@lists.linux.dev, Ulf Hansson
- <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, Marek
- Vasut <marex@denx.de>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>, Jindong
- Yue <jindong.yue@nxp.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Paul Elder
- <paul.elder@ideasonboard.com>, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>
-Subject: Re: imx8m-blk-ctrl: WARNING, no release() function
-Message-ID: <20241216235456.3a6b07a2@booty>
-In-Reply-To: <20241212141003.GA44219@francesco-nb>
-References: <20241212141003.GA44219@francesco-nb>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734389752; c=relaxed/simple;
+	bh=HWkTxX+IpDGQNG52ogknWjClj9up9Mh0BRCF+szV+n0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=teqxbliCUsdL6zn3qEvrHcDjyiPBO0Rez8MhN8Jn6Ro9otsFT1n5/574elvI8TMDJzVSGcSVJJXYOxuIAQeE8g0gkFNcj4PFStBz2ToevymPD+RU1AM7ltyXzGqCOdCBLUkg//RwBi2s6xooAlL0NGRFP4wb2KbYxvXvftZM+4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRF0C3fH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 19CECC4CED0;
+	Mon, 16 Dec 2024 22:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734389752;
+	bh=HWkTxX+IpDGQNG52ogknWjClj9up9Mh0BRCF+szV+n0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=mRF0C3fHlp/SR4oj0P+4VoJhIR4Mv79dx5EobhVgttY40OO+nZQu9FLRKe5n/XjaQ
+	 wIgQQvF0oEJplgB5McW4Vx5w0hFHhvjClUMMHv0jvF9vaRzqQyNht4qTZmC+8vFrXE
+	 lBGZBqe3zfpM7lN4fIOB8AuweQTQVIqGIr05+WuqpsRIDWY1qDnEe+doKQFuqLUvIR
+	 LMZFQFiq8dH0dI1IQKcLdRKCb3WBkTwlaM3HpkqAfmB73Azs1LCqGYhV/sjyP6q4L7
+	 AceratXQxEXQwJQUveVjuZJ/BRD/uR0ktdgy3Ox4hPXFHm4G+EM437oNyRc0KhR5nf
+	 +woo7/erKjDDg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBC3E7717F;
+	Mon, 16 Dec 2024 22:55:52 +0000 (UTC)
+From: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>
+Subject: [PATCH v3 0/2] Add support for Avago/Broadcom APDS9160
+Date: Mon, 16 Dec 2024 17:55:39 -0500
+Message-Id: <20241216-apds9160-driver-v3-0-c29f6c670bdb@dimonoff.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOuvYGcC/3XNTQ7CIBCG4as0rMUAbenPynsYFxRm7CxaGjBE0
+ /Tu0m5MNC7fL5lnVhYhEETWFysLkCiSn3OUp4LZ0cx34ORyMyVUJaXsuFlc7KQW3AVKEHirLdb
+ QagdlzfLVEgDpeYjXW+6R4sOH1/EgyX39byXJBUcjhG7qoQJTXRxNfvaIZ+sntnNJfQgl9C+hM
+ jGAskOjAFv8JrZtewM+W14D9AAAAA==
+X-Change-ID: 20241119-apds9160-driver-86cf5e86de35
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734389751; l=2469;
+ i=mgonellabolduc@dimonoff.com; s=20241119; h=from:subject:message-id;
+ bh=HWkTxX+IpDGQNG52ogknWjClj9up9Mh0BRCF+szV+n0=;
+ b=+42sxzvfPl1eT5ll3dVLEOTAVpMhKjB+BIa9Hp1ShMspCQwr4MNjOmWpFBA4PV2ff65lJSQ69
+ li7jgfiYkhpAC6v6GDBLE+PgM85AeWASs1UeJObVqfu2R9IVyGtrDiV
+X-Developer-Key: i=mgonellabolduc@dimonoff.com; a=ed25519;
+ pk=p4tvPfGPfXRyChsgHc6s7HwB6YBl2JqqcP3BXtoDitE=
+X-Endpoint-Received: by B4 Relay for mgonellabolduc@dimonoff.com/20241119
+ with auth_id=279
+X-Original-From: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+Reply-To: mgonellabolduc@dimonoff.com
 
-Hi Francesco,
+APDS9160 is an ALS and proximity sensor.
+https://www.broadcom.com/products/optical-sensors/integrated-ambient-light-and-proximity-sensors/apds-9160-003
 
-+Cc: Jindong, Benjamin, Paul (recent committers, in lack of an
-imx8m-blk-ctrl.c maintainer)
-+Cc: Herv=C3=A9 (stumbled on this issue too)
+Signed-off-by: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+---
+Changes in v3:
+- Updated maintainers file email and vendor
+- Corrected documentation file reference
+- dt-bindings: Changed commit message
+- driver: Added event and channel table when irq is not used
+- driver: Using int time instead of sampling freq for proximity channel
+- driver: Using scale instead of hardwaregain for proximity channel
+- driver: Dropped unused static variables
+- driver: Fixed switch fall-through
+- driver: Dropped explicit void pointer cast
+- driver: Dropped some less relevant comments
+- driver: Various code style related fix
+- Link to v2: https://lore.kernel.org/r/20241206-apds9160-driver-v2-0-be2cb72ef8f4@dimonoff.com
 
-On Thu, 12 Dec 2024 15:10:03 +0100
-Francesco Dolcini <francesco@dolcini.it> wrote:
+Changes in v2:
+- Rebased on linux-iio 20fd1383
+- dt-bindings: Dropped the old Avago name and use the brcm vendor prefix
+- dt-bindings: Updated example node name with a generic name
+- dt-bindings: Updated example indentation to 4 spaces
+- dt-bindings: Fixed element ordering
+- KConfig: Dropped unsure sentences
+- KConfig: Dropped unused Kfifo buffer selection
+- driver: Use a more recent iio light driver as template
+- driver: Remove buffer declaration
+- driver: Use avail functions instead of custom iio attributes
+- driver: Use scale instead of hardware gain
+- driver: Removed unused members and unreachable statements
+- driver: Removed unnecessary info and debug prints
+- driver: Fix some coding style and line wrapping issues
+- driver: Reordering of functions
+- Link to v1: https://lore.kernel.org/r/20241119-apds9160-driver-v1-0-fa00675b4ea4@dimonoff.com
 
-> Hello,
-> on v6.13-rc2 (PREEMPT_RT, if it matters), I have the following warning
->=20
-> [    4.615793] ------------[ cut here ]------------
-> [    4.615814] Device 'mediablk-mipi-csi2-1' does not have a release() fu=
-nction, it is broken and must be fixed. See Documentation/core-api/kobject.=
-rst.
+---
+Mikael Gonella-Bolduc (2):
+      dt-bindings: iio: light: Add APDS9160 binding
+      iio: light: Add APDS9160 ALS & Proximity sensor driver
 
-Thanks for the report. It is happening also here after upgrading from
-6.13-rc1 to 6.13-rc3.
+ .../bindings/iio/light/brcm,apds9160.yaml          |   51 +
+ MAINTAINERS                                        |    7 +
+ drivers/iio/light/Kconfig                          |   11 +
+ drivers/iio/light/Makefile                         |    1 +
+ drivers/iio/light/apds9160.c                       | 1581 ++++++++++++++++++++
+ 5 files changed, 1651 insertions(+)
+---
+base-commit: 5de07b8a24cf44cdb78adeab790704bf577c2c1d
+change-id: 20241119-apds9160-driver-86cf5e86de35
 
-This originates from drivers/pmdomain/imx/imx8m-blk-ctrl.c
+Best regards,
+-- 
+Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
 
-I bisected and the initial commit exposing this warning is:
 
-  commit b8f7bbd1f4ecff6d6277b8c454f62bb0a1c6dbe4
-  Author: Ulf Hansson <ulf.hansson@linaro.org>
-  Date:   Fri Nov 22 14:42:02 2024 +0100
-
-    pmdomain: core: Add missing put_device()
-   =20
-    When removing a genpd we don't clean up the genpd->dev correctly. Let's=
- add
-    the missing put_device() in genpd_free_data() to fix this.
-   =20
-    Fixes: 401ea1572de9 ("PM / Domain: Add struct device to genpd")
-    Cc: stable@vger.kernel.org
-    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-    Message-ID: <20241122134207.157283-2-ulf.hansson@linaro.org>
-
-Superficially, it looks to me like a legitimate commit which exposes a
-pre-existing flaw in drivers/pmdomain/imx/imx8m-blk-ctrl.c.
-
-I have no more info at the moment.
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
