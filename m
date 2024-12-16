@@ -1,515 +1,234 @@
-Return-Path: <linux-kernel+bounces-446750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5B09F28B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C639F28BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1C41655B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0681F166F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA451C54AC;
-	Mon, 16 Dec 2024 03:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5298150981;
+	Mon, 16 Dec 2024 03:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ot8+dGVh"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="kLV6XObC"
+Received: from mail-m83156.xmail.ntesmail.com (mail-m83156.xmail.ntesmail.com [156.224.83.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A191547E4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B8322B;
+	Mon, 16 Dec 2024 03:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734318836; cv=none; b=gyU4y8XugfGspkN0UfLcbsr7727UIG0/W2GvK3X6dGUXqqHkaRWBpkJyYoUZCUgI2GtM7xwNiCXn3pjSS+IIwdQbrjq9kxVRBQ8wGPweHxaWubFYenqgLgKraITwe7U6ym2AMJpHjbIwLPqfBjPBU3qIutJlZHCO9gAb8bulpjE=
+	t=1734319087; cv=none; b=R3xGEyQV8b+YYpGzEz7pMW+C/V4+Ug9O0HYR5WIbGh5IY0qUdfzH+DRpebeHBAgnjoCEZFO3+bTTlWOb1sijqLBWa3mgtNj66oup+2vVasRSwI8ft9ttTFjWBL7Yq/catPHcg2NiEZah/zRozWguNeDhtz0f1768bTZ8ZYhadS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734318836; c=relaxed/simple;
-	bh=dTxUYroMkkS6yYemGfRDl3QZZF8yWEGI0ldNnuZpgB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DPjRvmmYZnomh6GnX2+uShPycCUdxeuz3rByEr+uwIW0j4rwojkswyMDjZMUo/nHKFCOT2J2/CLBXpxSItFhpvdMbCY3Zi1hCWqFBVPLLAK3x9+arJ3S9jzn29zeBxBCo+JVxMZMJtAB3ZJCrF9BycNhIYyw12JIWpZyuMdpABI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ot8+dGVh; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6253B2C04EA;
-	Mon, 16 Dec 2024 16:13:49 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734318829;
-	bh=dAFqooAZLwvN37SBMg+rsgoIlHkI6A6yh+3k1eVyeJA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ot8+dGVhy2xDkIe6Wz4Fn0nI6GztPKBq7X5Hn+pZVSSKgyR7IrV+QXvKH3zsyUgT4
-	 25WuR//1ggXmv+MCdfH/IKjwN+X7WYFx1Ft+bl4a5jYAf2GIFejJr06Ca7TzJHF+T+
-	 Ml5zHWHqJNOnPzZHo8sPFcd0XC28XBEJeZoo0fjqBrEH/wJ3CH0W3TxWbVR3eN2YlF
-	 wU3Iq8tcAjJjW83xWRCnIQDaZr3mczp3BHS2VVBXWHdLE7HOYGBQnUvaQ9TncYDEX6
-	 /Pp+plJdS0D5TEGjm/t4/GQxb5QGMAJlzcinsnM1T8+XwtaZzLDisfyQjXEXoxiek7
-	 Yv+uo+6AxEP/Q==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B675f9aec0003>; Mon, 16 Dec 2024 16:13:49 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id EEC3013EE9C;
-	Mon, 16 Dec 2024 16:13:48 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id EBA452803EA; Mon, 16 Dec 2024 16:13:48 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: lee@kernel.org,
-	robh@kernel.org,
+	s=arc-20240116; t=1734319087; c=relaxed/simple;
+	bh=Y9I1wDNC7rPoLrQOqf0OTOq9zLelWqepoNFJzLfgvq8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P/fD063IEQKnVPQKw1JUps5EWuqP3VZnWDlV7Uh9LFBmabfwE//v0VV4l2QvZbHsijwvbHz5Ymn3mMYyCM7PsgDHthikh/4vj/t4bu9p4xWQkNosp6JhGi5d9d1ju7+KTFgJv0eNxzSJ5WjsMxRzepk9w7b4P8EYQDpOU8bpEcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=kLV6XObC; arc=none smtp.client-ip=156.224.83.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5cf798ef;
+	Mon, 16 Dec 2024 11:12:50 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	tsbogend@alpha.franken.de,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	markus.stockhausen@gmx.de
-Cc: devicetree@vger.kernel.org,
+	rfoss@kernel.org,
+	vkoul@kernel.org,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	l.stach@pengutronix.de,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com,
+	algea.cao@rock-chips.com,
+	kever.yang@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO driver
-Date: Mon, 16 Dec 2024 16:13:46 +1300
-Message-ID: <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
-References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
+	linux-phy@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v2 01/11] drm/rockchip: analogix_dp: Use formalized struct definition for grf field
+Date: Mon, 16 Dec 2024 11:12:15 +0800
+Message-Id: <20241216031225.3746-2-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241216031225.3746-1-damon.ding@rock-chips.com>
+References: <20241216031225.3746-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=675f9aed a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=PLFZzS6RjvMAOK3DgDUA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh4dS1YeTBhPSU5MT0pJTR5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0
+	NVSktLVUpCWQY+
+X-HM-Tid: 0a93cd744b6503a3kunm5cf798ef
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NlE6Kjo5HjIVNiE3MkktOgwN
+	QiMwCx5VSlVKTEhPSEpDTExJTkxMVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPTktDNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=kLV6XObCAsNGJ4m9IVkDoSBHP3yxMWacf8JXsce4607myMKo40vfrqZxMZYCXTNZ0ugbluSpHLbPiwPp3scjMHdUOsZEU9c0tLXClXYsK4xE4CiW3SHi8VGXJ/0J5efSt0NCcx30NHVEqpBzyKw/kvw0TRh296nIOgToJ+T//bI=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=jSiNxVdDNc2EjHmkzB8d0czfEXAFHpn+E0ApTupnCwA=;
+	h=date:mime-version:subject:message-id:from;
 
-Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-switches with integrated SoC. There are 4 physical SMI interfaces on the
-RTL9300 but access is done using the switch ports so a single MDIO bus
-is presented to the rest of the system.
+The formalized struct definition will makes grf field operations more
+concise and easier to extend.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+
 ---
 
-Notes:
-    Changes in v2:
-    - Add clause 22 support
-    - Remove commented out code
-    - Formatting cleanup
-    - Set MAX_PORTS correctly for MDIO interface
-    - Fix off-by-one error in pn check
+Changes in v2:
+- Initialize struct rockchip_dp_chip_data rk3399_edp/rk3288_dp in order
+  of its members
+---
+ .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 77 +++++++++++--------
+ 1 file changed, 45 insertions(+), 32 deletions(-)
 
- drivers/net/mdio/Kconfig            |   7 +
- drivers/net/mdio/Makefile           |   1 +
- drivers/net/mdio/mdio-realtek-rtl.c | 341 ++++++++++++++++++++++++++++
- 3 files changed, 349 insertions(+)
- create mode 100644 drivers/net/mdio/mdio-realtek-rtl.c
-
-diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
-index 4a7a303be2f7..0c6240c4a7e9 100644
---- a/drivers/net/mdio/Kconfig
-+++ b/drivers/net/mdio/Kconfig
-@@ -185,6 +185,13 @@ config MDIO_IPQ8064
- 	  This driver supports the MDIO interface found in the network
- 	  interface units of the IPQ8064 SoC
-=20
-+config MDIO_REALTEK_RTL
-+	tristate "Realtek RTL9300 MDIO interface support"
-+	depends on MACH_REALTEK_RTL || COMPILE_TEST
-+	help
-+	  This driver supports the MDIO interface found in the Realtek
-+	  RTL9300 family of Ethernet switches with integrated SoC.
+diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+index d3341edfe4f4..871606a31ef1 100644
+--- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+@@ -32,26 +32,29 @@
+ 
+ #include "rockchip_drm_drv.h"
+ 
+-#define RK3288_GRF_SOC_CON6		0x25c
+-#define RK3288_EDP_LCDC_SEL		BIT(5)
+-#define RK3399_GRF_SOC_CON20		0x6250
+-#define RK3399_EDP_LCDC_SEL		BIT(5)
+-
+-#define HIWORD_UPDATE(val, mask)	(val | (mask) << 16)
+-
+ #define PSR_WAIT_LINE_FLAG_TIMEOUT_MS	100
+ 
++#define GRF_REG_FIELD(_reg, _lsb, _msb) {	\
++				.reg = _reg,	\
++				.lsb = _lsb,	\
++				.msb = _msb,	\
++				.valid = true,	\
++				}
 +
- config MDIO_REGMAP
- 	tristate
- 	help
-diff --git a/drivers/net/mdio/Makefile b/drivers/net/mdio/Makefile
-index 1015f0db4531..2cd8b491f301 100644
---- a/drivers/net/mdio/Makefile
-+++ b/drivers/net/mdio/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MDIO_MOXART)		+=3D mdio-moxart.o
- obj-$(CONFIG_MDIO_MSCC_MIIM)		+=3D mdio-mscc-miim.o
- obj-$(CONFIG_MDIO_MVUSB)		+=3D mdio-mvusb.o
- obj-$(CONFIG_MDIO_OCTEON)		+=3D mdio-octeon.o
-+obj-$(CONFIG_MDIO_REALTEK_RTL)		+=3D mdio-realtek-rtl.o
- obj-$(CONFIG_MDIO_REGMAP)		+=3D mdio-regmap.o
- obj-$(CONFIG_MDIO_SUN4I)		+=3D mdio-sun4i.o
- obj-$(CONFIG_MDIO_THUNDER)		+=3D mdio-thunder.o
-diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-=
-realtek-rtl.c
-new file mode 100644
-index 000000000000..a13b84279138
---- /dev/null
-+++ b/drivers/net/mdio/mdio-realtek-rtl.c
-@@ -0,0 +1,341 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * MDIO controller for RTL9300 switches with integrated SoC.
-+ *
-+ * The MDIO communication is abstracted by the switch. At the software l=
-evel
-+ * communication uses the switch port to address the PHY with the actual=
- MDIO
-+ * bus and address having been setup via the realtek,smi-address propert=
-y.
-+ */
-+
-+#include <linux/mdio.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/of_mdio.h>
-+#include <linux/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#define SMI_GLB_CTRL			0x000
-+#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
-+#define SMI_PORT0_15_POLLING_SEL	0x008
-+#define SMI_ACCESS_PHY_CTRL_0		0x170
-+#define SMI_ACCESS_PHY_CTRL_1		0x174
-+#define   PHY_CTRL_RWOP			BIT(2)
-+#define   PHY_CTRL_TYPE			BIT(1)
-+#define   PHY_CTRL_CMD			BIT(0)
-+#define   PHY_CTRL_FAIL			BIT(25)
-+#define SMI_ACCESS_PHY_CTRL_2		0x178
-+#define SMI_ACCESS_PHY_CTRL_3		0x17c
-+#define SMI_PORT0_5_ADDR_CTRL		0x180
-+
-+#define MAX_PORTS       28
-+#define MAX_SMI_BUSSES  4
-+#define MAX_SMI_ADDR	0x1f
-+
-+struct realtek_mdio_priv {
-+	struct regmap *regmap;
-+	u8 smi_bus[MAX_PORTS];
-+	u8 smi_addr[MAX_PORTS];
-+	bool smi_bus_isc45[MAX_SMI_BUSSES];
-+	u32 reg_base;
++struct rockchip_grf_reg_field {
++	u32 reg;
++	u32 lsb;
++	u32 msb;
++	bool valid;
 +};
 +
-+static int realtek_mdio_wait_ready(struct realtek_mdio_priv *priv)
+ /**
+  * struct rockchip_dp_chip_data - splite the grf setting of kind of chips
+- * @lcdsel_grf_reg: grf register offset of lcdc select
+- * @lcdsel_big: reg value of selecting vop big for eDP
+- * @lcdsel_lit: reg value of selecting vop little for eDP
++ * @lcdc_sel: grf register field of lcdc_sel
+  * @chip_type: specific chip type
+  */
+ struct rockchip_dp_chip_data {
+-	u32	lcdsel_grf_reg;
+-	u32	lcdsel_big;
+-	u32	lcdsel_lit;
++	const struct rockchip_grf_reg_field lcdc_sel;
+ 	u32	chip_type;
+ };
+ 
+@@ -84,6 +87,26 @@ static struct rockchip_dp_device *pdata_encoder_to_dp(struct analogix_dp_plat_da
+ 	return container_of(plat_data, struct rockchip_dp_device, plat_data);
+ }
+ 
++static int rockchip_grf_write(struct regmap *grf, u32 reg, u32 mask, u32 val)
 +{
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+
-+	return regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL_=
-1,
-+					val, !(val & PHY_CTRL_CMD), 10, 500);
++	return regmap_write(grf, reg, (mask << 16) | (val & mask));
 +}
 +
-+static int realtek_mdio_read_c22(struct mii_bus *bus, int phy_id, int re=
-gnum)
++static int rockchip_grf_field_write(struct regmap *grf,
++				    const struct rockchip_grf_reg_field *field,
++				    u32 val)
 +{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
++	u32 mask;
 +
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
++	if (!field->valid)
++		return 0;
 +
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, phy_id <=
-< 16);
-+	if (err)
-+		return err;
++	mask = GENMASK(field->msb, field->lsb);
++	val <<= field->lsb;
 +
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   regnum << 20 |  0x1f << 15 | 0xfff << 3 | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		return err;
-+
-+	return val & 0xffff;
++	return rockchip_grf_write(grf, field->reg, mask, val);
 +}
 +
-+static int realtek_mdio_write_c22(struct mii_bus *bus, int phy_id, int r=
-egnum, u16 value)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
+ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
+ {
+ 	reset_control_assert(dp->rst);
+@@ -181,7 +204,6 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder,
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *old_crtc_state;
+ 	int ret;
+-	u32 val;
+ 
+ 	crtc = rockchip_dp_drm_get_new_crtc(encoder, state);
+ 	if (!crtc)
+@@ -192,24 +214,19 @@ static void rockchip_dp_drm_encoder_enable(struct drm_encoder *encoder,
+ 	if (old_crtc_state && old_crtc_state->self_refresh_active)
+ 		return;
+ 
+-	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
+-	if (ret < 0)
+-		return;
+-
+-	if (ret)
+-		val = dp->data->lcdsel_lit;
+-	else
+-		val = dp->data->lcdsel_big;
+-
+-	DRM_DEV_DEBUG(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
+-
+ 	ret = clk_prepare_enable(dp->grfclk);
+ 	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "failed to enable grfclk %d\n", ret);
+ 		return;
+ 	}
+ 
+-	ret = regmap_write(dp->grf, dp->data->lcdsel_grf_reg, val);
++	ret = drm_of_encoder_active_endpoint_id(dp->dev->of_node, encoder);
++	if (ret < 0)
++		return;
 +
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
++	DRM_DEV_DEBUG(dp->dev, "vop %s output to dp\n", (ret) ? "LIT" : "BIG");
 +
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_0, BIT(phy_=
-id));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, value <<=
- 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   regnum << 20 |  0x1f << 15 | 0xfff << 3 | PHY_CTRL_RWOP | PHY_CTRL=
-_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		return err;
-+
-+	if (val & PHY_CTRL_FAIL)
-+		return -ENXIO;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdio_read_c45(struct mii_bus *bus, int phy_id, int de=
-v_addr, int regnum)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, phy_id <=
-< 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, &val);
-+	if (err)
-+		return err;
-+
-+	return val & 0xffff;
-+}
-+
-+static int realtek_mdio_write_c45(struct mii_bus *bus, int phy_id, int d=
-ev_addr,
-+				  int regnum, u16 value)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_0, BIT(phy_=
-id));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_2, value <<=
- 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(regmap, reg_base + SMI_ACCESS_PHY_CTRL_1,
-+			   PHY_CTRL_RWOP | PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read_poll_timeout(regmap, reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		return err;
-+
-+	if (val & PHY_CTRL_FAIL)
-+		return -ENXIO;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
-+{
-+	u32 glb_ctrl_mask =3D 0, glb_ctrl_val =3D 0;
-+	struct regmap *regmap =3D priv->regmap;
-+	u32 reg_base =3D priv->reg_base;
-+	u32 port_addr[5] =3D { 0 };
-+	u32 poll_sel[2] =3D { 0 };
-+	int i, err;
-+
-+	/* Associate the port with the SMI interface and PHY */
-+	for (i =3D 0; i < MAX_PORTS; i++) {
-+		int pos;
-+
-+		if (priv->smi_bus[i] > 3)
-+			continue;
-+
-+		pos =3D (i % 6) * 5;
-+		port_addr[i / 6] |=3D priv->smi_addr[i] << pos;
-+
-+		pos =3D (i % 16) * 2;
-+		poll_sel[i / 16] |=3D priv->smi_bus[i] << pos;
-+	}
-+
-+	/* Put the interfaces into C45 mode if required */
-+	for (i =3D 0; i < MAX_SMI_BUSSES; i++) {
-+		if (priv->smi_bus_isc45[i]) {
-+			glb_ctrl_mask |=3D GLB_CTRL_INTF_SEL(i);
-+			glb_ctrl_val |=3D GLB_CTRL_INTF_SEL(i);
-+		}
-+	}
-+
-+	err =3D regmap_bulk_write(regmap, reg_base + SMI_PORT0_5_ADDR_CTRL,
-+				port_addr, 5);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_bulk_write(regmap, reg_base + SMI_PORT0_15_POLLING_SEL,
-+				poll_sel, 2);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_update_bits(regmap, reg_base + SMI_GLB_CTRL,
-+				 glb_ctrl_mask, glb_ctrl_val);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdiobus_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct realtek_mdio_priv *priv;
-+	struct fwnode_handle *child;
-+	struct mii_bus *bus;
-+	int err;
-+
-+	bus =3D devm_mdiobus_alloc_size(dev, sizeof(*priv));
-+	if (!bus)
-+		return -ENOMEM;
-+
-+	bus->name =3D "Reaktek Switch MDIO Bus";
-+	bus->read =3D realtek_mdio_read_c22;
-+	bus->write =3D realtek_mdio_write_c22;
-+	bus->read_c45 =3D realtek_mdio_read_c45;
-+	bus->write_c45 =3D  realtek_mdio_write_c45;
-+	bus->parent =3D dev;
-+	priv =3D bus->priv;
-+
-+	priv->regmap =3D syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	err =3D device_property_read_u32(dev, "reg", &priv->reg_base);
-+	if (err)
-+		return err;
-+
-+	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
-+
-+	device_for_each_child_node(dev, child) {
-+		u32 pn, smi_addr[2];
-+
-+		err =3D fwnode_property_read_u32(child, "reg", &pn);
-+		if (err)
-+			return err;
-+
-+		if (pn >=3D MAX_PORTS)
-+			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
-+
-+		err =3D fwnode_property_read_u32_array(child, "realtek,smi-address", s=
-mi_addr, 2);
-+		if (err) {
-+			smi_addr[0] =3D 0;
-+			smi_addr[1] =3D pn;
-+		}
-+
-+		if (smi_addr[0] > MAX_SMI_BUSSES)
-+			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
-+					     smi_addr[0]);
-+
-+		if (smi_addr[1] > MAX_SMI_ADDR)
-+			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[=
-1]);
-+
-+		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
-+			priv->smi_bus_isc45[smi_addr[0]] =3D true;
-+
-+		priv->smi_bus[pn] =3D smi_addr[0];
-+		priv->smi_addr[pn] =3D smi_addr[1];
-+	}
-+
-+	err =3D realtek_mdiobus_init(priv);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to initialise MDIO bus controll=
-er\n");
-+
-+	err =3D devm_of_mdiobus_register(dev, bus, dev->of_node);
-+	if (err)
-+		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id realtek_mdio_ids[] =3D {
-+	{ .compatible =3D "realtek,rtl9301-mdio" },
-+	{ .compatible =3D "realtek,rtl9302b-mdio" },
-+	{ .compatible =3D "realtek,rtl9302c-mdio" },
-+	{ .compatible =3D "realtek,rtl9303-mdio" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, realtek_mdio_ids);
-+
-+static struct platform_driver rtl9300_mdio_driver =3D {
-+	.probe =3D realtek_mdiobus_probe,
-+	.driver =3D {
-+		.name =3D "mdio-rtl9300",
-+		.of_match_table =3D realtek_mdio_ids,
-+	},
-+};
-+
-+module_platform_driver(rtl9300_mdio_driver);
-+
-+MODULE_DESCRIPTION("RTL9300 MDIO driver");
-+MODULE_LICENSE("GPL");
---=20
-2.47.1
++	ret = rockchip_grf_field_write(dp->grf, &dp->data->lcdc_sel, ret);
+ 	if (ret != 0)
+ 		DRM_DEV_ERROR(dp->dev, "Could not write to GRF: %d\n", ret);
+ 
+@@ -448,16 +465,12 @@ static DEFINE_RUNTIME_DEV_PM_OPS(rockchip_dp_pm_ops, rockchip_dp_suspend,
+ 		rockchip_dp_resume, NULL);
+ 
+ static const struct rockchip_dp_chip_data rk3399_edp = {
+-	.lcdsel_grf_reg = RK3399_GRF_SOC_CON20,
+-	.lcdsel_big = HIWORD_UPDATE(0, RK3399_EDP_LCDC_SEL),
+-	.lcdsel_lit = HIWORD_UPDATE(RK3399_EDP_LCDC_SEL, RK3399_EDP_LCDC_SEL),
++	.lcdc_sel = GRF_REG_FIELD(0x6250, 5, 5),
+ 	.chip_type = RK3399_EDP,
+ };
+ 
+ static const struct rockchip_dp_chip_data rk3288_dp = {
+-	.lcdsel_grf_reg = RK3288_GRF_SOC_CON6,
+-	.lcdsel_big = HIWORD_UPDATE(0, RK3288_EDP_LCDC_SEL),
+-	.lcdsel_lit = HIWORD_UPDATE(RK3288_EDP_LCDC_SEL, RK3288_EDP_LCDC_SEL),
++	.lcdc_sel = GRF_REG_FIELD(0x025c, 5, 5),
+ 	.chip_type = RK3288_DP,
+ };
+ 
+-- 
+2.34.1
 
 
