@@ -1,335 +1,245 @@
-Return-Path: <linux-kernel+bounces-447639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F2E9F3548
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 708DD9F3520
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDA1169D2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794B516945E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254B3203D50;
-	Mon, 16 Dec 2024 16:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6539214A619;
+	Mon, 16 Dec 2024 15:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YUxf97R3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXQ+OJDV"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C9E14264A;
-	Mon, 16 Dec 2024 16:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C25F53E23;
+	Mon, 16 Dec 2024 15:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734365118; cv=none; b=NxBCjhyKNAz2lZz3LzU77lRtoPUMOiy82yHPBSx2hNVrPQ157nbEZkH3eooET+ok4P/+RqVt7s+LzQUM/7bJTn58XpKsARKiPxaO+6adLgciOmEYRvh0AqIvbzY0fChz7eM4qqMlmjMEpQZPMvz9AUmpiRs0NmaLmLD9QBBM6vs=
+	t=1734364730; cv=none; b=UvH29/KRZVT4U++u1pwtKqaovfnnmY8ymu/tyYB1LMEQrLt9amv8lDp9zypIVaT3kJfs6/C6hVXM0Oi4sa6Hcv6bphQpQXcm+39hgZ67ToOnWBuZ08dPAvwEzAIi/DQH4d6uesjanZyeDtouG/b1vPt8/s4XkaJQ+ABgYh/808E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734365118; c=relaxed/simple;
-	bh=SoPWuP3RpegI1yn9SWwCawdjtKDS6Auas23SpxkrCrI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lh3IcajNHOc1J9zApKYcTCAuLJ1M4ODzMAFJgYSYh/Ft21OlfNFRr/9d6UVTCsZg01wNYJdt8kTCGChaZO576rHU1mPW9dg9C2ZzETZ0CIRmoN2uHdXIKKJJ8TFX2eZpR30ReswMfShC3L/DzI5rQn8nlJ70tfSr7yxQpwPePsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YUxf97R3; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1734365116; x=1765901116;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=SoPWuP3RpegI1yn9SWwCawdjtKDS6Auas23SpxkrCrI=;
-  b=YUxf97R3x6QSQMvdsEwIJ2htHjApwE73O20j9WFR/qY8DhzyhkbA/lUX
-   qdyEGvXSH4GMyEpoSL70lol9y/Rf6SQJ7vpgkNqu+FY4gnb9MCVGdwIoL
-   9oLD6Jx4thtR1vgcItUCnECcAfRes0O8+NV84rFtevx/CEZlGoIF8/UaQ
-   Jks+9ZvtxoHfaiEHd85SXffHk4lE9ZLl9VdKBFD1M43Q09fp3TMhaeI92
-   RNIR3tKqbYw8qHjoWrdgvzkXrxVKACaMEpeoLa6c6pm0p/2m3dDnFLD+w
-   isC/e3Jst9HQuDObJ7lndCelobBpDWNyZsoXGYrPlHIpk/ny6r08eKAtJ
-   w==;
-X-CSE-ConnectionGUID: HgADXUGmStKNGYtSiPP8QQ==
-X-CSE-MsgGUID: 4v2noHWZTNSBsCdlN2zycw==
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="35271702"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Dec 2024 09:05:15 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Dec 2024 09:04:36 -0700
-Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 16 Dec 2024 09:04:32 -0700
-From: Tarun Alle <Tarun.Alle@microchip.com>
-To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next v2 2/2] net: phy: microchip_t1: Auto-negotiation support for LAN887x
-Date: Mon, 16 Dec 2024 21:28:30 +0530
-Message-ID: <20241216155830.501596-3-Tarun.Alle@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241216155830.501596-1-Tarun.Alle@microchip.com>
-References: <20241216155830.501596-1-Tarun.Alle@microchip.com>
+	s=arc-20240116; t=1734364730; c=relaxed/simple;
+	bh=vJZgWVzD4jhJrBb5M6sIe8BOzPIYfwBS46TYCF/Mxno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QeZ/hfBRaN8rp3cZQ3Jeca9Z2vYdqTFEsH6y1+nHhYg75wI/r0Qc0oB4gNA2dISwJf9rsYTeymSvSUaVTSRuDf6TKcRsRwivX6vdpiosUjUJEtNIxOwWT4eun3e03n+ZwpTtIvsWXqBjLyVk3trJPgBST+zqcaXwmIvP3HyP9i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXQ+OJDV; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2161eb94cceso28646735ad.2;
+        Mon, 16 Dec 2024 07:58:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734364728; x=1734969528; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=C7xBZw5Ddpwe0w4iMihNpgYksKYHlA1ZTg6HO2/bz00=;
+        b=OXQ+OJDVXfiXK428JqVlGn7YCydHILMVz5t9asZA6fk73YIZIXbd1QMpA5dzfjVDpb
+         QtWrEtnn/P1FJZ+Noh7pwH7VK+0ydlVeb2dHXdeQ0Ox1wpNP6mh98SV8l9U+JrurYkz0
+         Z4a5htonB23I/LrD5tDENujKHOzmVWqu4ENoS8Fxb7+nRojCAKWLHV/+aeqOZgBA50XV
+         odYhnQiGQFE5rN79uMr9Gv98zrieRAr9FuJMtukUaI/07Ax7VjpiODCm1y8DZj7IZvg1
+         rQGUtMci2PiDDcLChucSShn6Fp8M9oaWmqDKJ6IiHhLeiAW1KTtCi8I6QgZ+YL6+3zy7
+         2h2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734364728; x=1734969528;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C7xBZw5Ddpwe0w4iMihNpgYksKYHlA1ZTg6HO2/bz00=;
+        b=KGWB0bbTbJaUzXRP6aIgPEKjCLrIxfROCMDI/E0MfEOfN0CO/CpFcf9HmMFSJjVVLN
+         lwJCvrYcl086TpF/EWAkrquvwSEj47oCpIyY8TOzD+dpbSeGt/jAZCGiAp3+FWiV/CE2
+         rjT/mZrJxP08Vi28xjWlczUlKq8tXqy9+Z6GRaJCo3E8+/TY/hzOcsuRBUo1UFOq7KBn
+         dq9yF7wqMqN6F8OMJ+zfIacl4UP/1ED++cyWQoBDmSkkUdebhn+T4EwRGweV2nF8EUw+
+         s/R0/eqB2OYMehZbsk1rVJ2sSNBs+iPWi7pvDmBE3DSoUlGc1L5lbOL3YBw1SY5TBaP9
+         hH2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCLZOG/BnVbPd7JZNJoRWWV4HlAdQgI/vwOHKCjBP6J7QVd+4vFkTGF+46k2KcCJOhAB87F9YDkOsJWRsI@vger.kernel.org, AJvYcCXYhB1sNfhi1Q5IFrDn/bcfNosdxO2RcYzwMvwMBU09kQP8HvHU6JX5uER3HqjbJKU8PYdaIxS57Vhncl2I@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRWhn/KViJzfFH31eRGK7psN7Uyv+FSiCvvAYEogw8tP6Vgbtz
+	vgcy3nIZocPfHGPnpiowE5XnCZdUcGSZj4UQ73Sw6yxaFOlZSX4t
+X-Gm-Gg: ASbGncumBo9kc/jLuDb8+NwVcVPW+JHww868kiUa4ynkRXz0eStWViCeObps/Cq8FQd
+	QZWX0SE7dvlnfbV4gLo6kBEV6+ApWsjVYiOh5QPth46UtXJczEAsPJjmTWlYhubKChajNJnDxxt
+	H21wfXkCafi/srPVghBklsb/i1geczUR8bFRzUCo1Nmj34Jp8su041LyWoSLWYRCdoDuG+HrrY1
+	jDRx9+bY/ANhEUdBiidMQHqwwOQQNr2hVusPSOgtnbwyQgmhecLJo/4NXJ1oH/ZPbkE56vBfg==
+X-Google-Smtp-Source: AGHT+IEOsfNZcb3SZHyfo1RNEKahDpjpWH1lNU+f8wfMbfmQFVCZdc+JZ+F4SsmzX7wba+7PFtgNEQ==
+X-Received: by 2002:a17:90b:5206:b0:2ee:b4d4:78 with SMTP id 98e67ed59e1d1-2f2d7f81d59mr61298a91.24.1734364728337;
+        Mon, 16 Dec 2024 07:58:48 -0800 (PST)
+Received: from [10.234.7.32] ([43.224.245.237])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fc6a53sm8345726a91.51.2024.12.16.07.58.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 07:58:48 -0800 (PST)
+Message-ID: <4169e59e-9015-4323-aae7-09bc8e513bbd@gmail.com>
+Date: Mon, 16 Dec 2024 23:58:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+To: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand
+ <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
+ Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+ <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+ <f2d58d57-df38-42eb-a00c-a993ca7299ba@arm.com>
+ <31158c3e-bf1b-47e8-a41b-0417c538b62e@gmail.com>
+ <500d1007-56f5-43cb-be9d-4a39fccc6e53@arm.com>
+Content-Language: en-US
+From: Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <500d1007-56f5-43cb-be9d-4a39fccc6e53@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Adds auto-negotiation support for lan887x T1 phy. After this commit,
-by default auto-negotiation is on and default advertised speed is 1000M.
+On 2024/12/5 1:05, Ryan Roberts wrote:
+> On 04/12/2024 14:40, Wenchao Hao wrote:
+>> On 2024/12/3 22:42, Ryan Roberts wrote:
+>>> On 03/12/2024 14:17, David Hildenbrand wrote:
+>>>> On 03.12.24 14:49, Wenchao Hao wrote:
+>>>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+>>>>> each VMA, but it does not include large pages smaller than PMD size.
+>>>>>
+>>>>> This patch adds the statistics of anonymous huge pages allocated by
+>>>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>>>>>
+>>>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>>>>> ---
+>>>>>   fs/proc/task_mmu.c | 6 ++++++
+>>>>>   1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>>> index 38a5a3e9cba2..b655011627d8 100644
+>>>>> --- a/fs/proc/task_mmu.c
+>>>>> +++ b/fs/proc/task_mmu.c
+>>>>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss,
+>>>>> struct page *page,
+>>>>>           if (!folio_test_swapbacked(folio) && !dirty &&
+>>>>>               !folio_test_dirty(folio))
+>>>>>               mss->lazyfree += size;
+>>>>> +
+>>>>> +        /*
+>>>>> +         * Count large pages smaller than PMD size to anonymous_thp
+>>>>> +         */
+>>>>> +        if (!compound && PageHead(page) && folio_order(folio))
+>>>>> +            mss->anonymous_thp += folio_size(folio);
+>>>>>       }
+>>>>>         if (folio_test_ksm(folio))
+>>>>
+>>>>
+>>>> I think we decided to leave this (and /proc/meminfo) be one of the last
+>>>> interfaces where this is only concerned with PMD-sized ones:
+>>>>
+>>>> Documentation/admin-guide/mm/transhuge.rst:
+>>>>
+>>>> The number of PMD-sized anonymous transparent huge pages currently used by the
+>>>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+>>>> To identify what applications are using PMD-sized anonymous transparent huge
+>>>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+>>>> fields for each mapping. (Note that AnonHugePages only applies to traditional
+>>>> PMD-sized THP for historical reasons and should have been called
+>>>> AnonHugePmdMapped).
+>>>>
+>>>
+>>> Agreed. If you need per-process metrics for mTHP, we have a python script at
+>>> tools/mm/thpmaps which does a fairly good job of parsing pagemap. --help gives
+>>> you all the options.
+>>>
+>>
+>> I tried this tool, and it is very powerful and practical IMO.
+>> However, thereare two disadvantages:
+>>
+>> - This tool is heavily dependent on Python and Python libraries.
+>>   After installing several libraries with the pip command, I was able to
+>>   get it running.
+> 
+> I think numpy is the only package it uses which is not in the standard library?
+> What other libraries did you need to install?
+> 
 
-Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
----
-v1 -> v2
-- Changed the commit message.
-- Elaborated the errata messages.
-- Added helper functions for lan887x_100M_setup.
----
- drivers/net/phy/microchip_t1.c | 159 +++++++++++++++++++++++++++------
- 1 file changed, 132 insertions(+), 27 deletions(-)
+Yes, I just tested it on the standard version (Fedora), and that is indeed the case.
+Previously, I needed to install additional packages is because I removed some unused
+software from the old environment.
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index b17bf6708003..694e001f8a15 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -268,6 +268,11 @@
- /* End offset of samples */
- #define SQI_INLIERS_END (SQI_INLIERS_START + SQI_INLIERS_NUM)
- 
-+#define LAN887X_VEND_CTRL_STAT_REG		0x8013
-+#define LAN887X_AN_LOCAL_CFG_FAULT		BIT(10)
-+#define LAN887X_AN_LOCAL_SLAVE			BIT(9)
-+#define LAN887X_AN_LOCAL_MASTER			BIT(8)
-+
- #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
- #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
- 
-@@ -1259,11 +1264,6 @@ static int lan887x_get_features(struct phy_device *phydev)
- 	/* Enable twisted pair */
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, phydev->supported);
- 
--	/* First patch only supports 100Mbps and 1000Mbps force-mode.
--	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
--	 */
--	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
--
- 	return 0;
- }
- 
-@@ -1342,28 +1342,44 @@ static int lan887x_phy_setup(struct phy_device *phydev)
- 	return lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
- }
- 
-+static int lan887x_100M_forced_slave_setup(struct phy_device *phydev)
-+{
-+	static const struct lan887x_regwr_map phy_cfg[] = {
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4,
-+		 0x0038},
-+		{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100,
-+		 0x0014},
-+	};
-+
-+	return lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+}
-+
-+static int lan887x_100M_common_setup(struct phy_device *phydev)
-+{
-+	static const struct lan887x_regwr_map phy_comm_cfg[] = {
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
-+		{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
-+		{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
-+	};
-+
-+	return lan887x_phy_config(phydev, phy_comm_cfg,
-+				  ARRAY_SIZE(phy_comm_cfg));
-+}
-+
- static int lan887x_100M_setup(struct phy_device *phydev)
- {
-+	bool is_master;
- 	int ret;
- 
-+	is_master = (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
-+		     phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED);
-+
- 	/* (Re)configure the speed/mode dependent T1 settings */
--	if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
--	    phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED){
--		static const struct lan887x_regwr_map phy_cfg[] = {
--			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
--			{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
--			{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
--		};
--
--		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
--	} else {
--		static const struct lan887x_regwr_map phy_cfg[] = {
--			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x0038},
--			{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100, 0x0014},
--		};
-+	if (phydev->autoneg == AUTONEG_ENABLE || is_master)
-+		ret = lan887x_100M_common_setup(phydev);
-+	else
-+		ret = lan887x_100M_forced_slave_setup(phydev);
- 
--		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
--	}
- 	if (ret < 0)
- 		return ret;
- 
-@@ -1384,8 +1400,16 @@ static int lan887x_1000M_setup(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
--	return phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
--				LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+	if (phydev->autoneg == AUTONEG_ENABLE)
-+		ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				       LAN887X_REG_REG26,
-+				       LAN887X_REG_REG26_HW_INIT_SEQ_EN);
-+	else
-+		ret = phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD,
-+				       LAN887X_DSP_PMA_CONTROL,
-+				       LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+
-+	return ret;
- }
- 
- static int lan887x_link_setup(struct phy_device *phydev)
-@@ -1407,6 +1431,11 @@ static int lan887x_phy_reset(struct phy_device *phydev)
- {
- 	int ret, val;
- 
-+	/* Disable aneg */
-+	ret = genphy_c45_an_disable_aneg(phydev);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Clear 1000M link sync */
- 	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
- 				 LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-@@ -1435,23 +1464,71 @@ static int lan887x_phy_reset(struct phy_device *phydev)
- 				    5000, 10000, true);
- }
- 
-+/* LAN887X Errata: The device may not link in auto-neg when both
-+ * 100BASE-T1 and 1000BASE-T1 are advertised. Hence advertising
-+ * only one speed. In this case auto-neg to determine Leader/Follower.
-+ */
-+static int lan887x_config_advert(struct phy_device *phydev)
-+{
-+	linkmode_and(phydev->advertising, phydev->advertising,
-+		     phydev->supported);
-+
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT1_Full_BIT,
-+			      phydev->advertising)) {
-+		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				   phydev->advertising);
-+		phydev->speed = SPEED_1000;
-+	} else if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				     phydev->advertising)) {
-+		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT1_Full_BIT,
-+				   phydev->advertising);
-+		phydev->speed = SPEED_100;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int lan887x_phy_reconfig(struct phy_device *phydev)
- {
- 	int ret;
- 
--	linkmode_zero(phydev->advertising);
-+	if (phydev->autoneg == AUTONEG_ENABLE)
-+		ret = genphy_c45_an_config_aneg(phydev);
-+	else
-+		ret = genphy_c45_pma_setup_forced(phydev);
-+	if (ret < 0)
-+		return ret;
- 
--	ret = genphy_c45_pma_setup_forced(phydev);
-+	/* For link to comeup, (re)configure the speed/mode
-+	 * dependent T1 settings
-+	 */
-+	ret = lan887x_link_setup(phydev);
- 	if (ret < 0)
- 		return ret;
- 
--	return lan887x_link_setup(phydev);
-+	/* Autoneg to be re-started only after all settings are done */
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		ret = genphy_c45_restart_aneg(phydev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int lan887x_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
- 
-+	/* Reject the not support advertisement settings */
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		ret  = lan887x_config_advert(phydev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	/* LAN887x Errata: speed configuration changes require soft reset
- 	 * and chip soft reset
- 	 */
-@@ -2058,6 +2135,34 @@ static int lan887x_get_sqi(struct phy_device *phydev)
- 	return FIELD_GET(T1_DCQ_SQI_MSK, rc);
- }
- 
-+static int lan887x_read_status(struct phy_device *phydev)
-+{
-+	int rc;
-+
-+	phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
-+
-+	rc = genphy_c45_read_status(phydev);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		/* Fetch resolved mode */
-+		rc = phy_read_mmd(phydev, MDIO_MMD_AN,
-+				  LAN887X_VEND_CTRL_STAT_REG);
-+		if (rc < 0)
-+			return rc;
-+
-+		if (rc & LAN887X_AN_LOCAL_MASTER)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_MASTER;
-+		else if (rc & LAN887X_AN_LOCAL_SLAVE)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_SLAVE;
-+		else if (rc & LAN887X_AN_LOCAL_CFG_FAULT)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_ERR;
-+	}
-+
-+	return 0;
-+}
-+
- static struct phy_driver microchip_t1_phy_driver[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
-@@ -2106,7 +2211,7 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.get_strings    = lan887x_get_strings,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
--		.read_status	= genphy_c45_read_status,
-+		.read_status	= lan887x_read_status,
- 		.cable_test_start = lan887x_cable_test_start,
- 		.cable_test_get_status = lan887x_cable_test_get_status,
- 		.config_intr    = lan887x_config_intr,
--- 
-2.34.1
+Recently, I revisited and started using your tool again. It’s very useful, meeting
+my needs and even exceeding them. I am now testing with qemu to run a fedora, so
+it's easy to run it.
+
+>>   In practice, the environment we need to analyze may be a mobile or
+>>   embedded environment, where it is very difficult to deploy these
+>>   libraries.
+> 
+> Yes, I agree that's a problem, especially for Android. The script has proven
+> useful to me for debugging in a traditional Linux distro environment though.
+> 
+>> - It seems that this tool only counts file-backed large pages? During
+> 
+> No; the tool counts file-backed and anon memory. But it reports it in separate
+> counters. See `thpmaps --help` for full details.
+> 
+>>   the actual test, I mapped a region of anonymous pages and mapped it
+>>   as large pages, but the tool did not display those large pages.
+>>   Below is my test file(mTHP related sysfs interface is set to "always"
+>>   to make sure using large pages):
+> 
+> Which mTHP sizes did you enable? Depending on your value of SIZE and which mTHP
+> sizes are enabled, you may not have a correctly aligned region in p. So mTHP
+> would not be allocated. Best to over-allocate then explicitly align p to the
+> mTHP size, then fault it in.
+> 
+
+I enabled 64k/128k/256k MTHP and have been studying, debugging, and changing
+parts of the khugepaged code to try merging standard pages into mTHP large
+pages. So, I wanted to use smap to observe the large page sizes in a process.
+
+>>
+>> int main()
+>> {
+>>         int i;
+>>         char *c;
+>>         unsigned long *p;
+>>
+>>         p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> 
+> What is SIZE here?
+> 
+>>         if (!p) {
+>>                 perror("fail to get memory");
+>>                 exit(-1);
+>>         }
+>>
+>>         c = (unsigned char *)p;
+>>
+>>         for (i = 0; i < SIZE / 8; i += 8)
+>>                 *(p + i) = 0xffff + i;
+> 
+> Err... what's your intent here? I think you're writting to 1 in every 8 longs?
+> Probably just write to the first byte of every page.
+> 
+
+The data is fixed for the purpose of analyzing zram compression, so I filled
+some data here.
+
+> Thanks,
+> Ryan
+> 
+>>
+>>         while (1)
+>>                 sleep(10);
+>>
+>>         return 0;
+>> }
+>>
+>> Thanks,
+>> wenchao
+>>
+> 
 
 
