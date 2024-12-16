@@ -1,140 +1,231 @@
-Return-Path: <linux-kernel+bounces-446758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44DC9F28CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:23:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA7D9F28D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4C27A1DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9636916593D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48634153565;
-	Mon, 16 Dec 2024 03:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC6E155312;
+	Mon, 16 Dec 2024 03:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjuVY9PG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZK54ucVv"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A832F852
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C5825760;
+	Mon, 16 Dec 2024 03:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734319389; cv=none; b=Gx1BA/0Jc8nDACemZUvQ8athy9ttAfBKERCDagzuzm7y+tA+6pyq3+NdIQFKL5wwGZ/Y7oans1F0JmpRAhD0W0Lsj6pN30TvK1FQUKVV25/aoLgfWl/InddN2ZkYi6fm7aPzFoD9GjbI/CXv/kdNmEXQ1+UIBYPNqTCZxOECTwE=
+	t=1734319929; cv=none; b=LNyruoi2A9rJAg1/ltY1HcCOOLjpS3J++DKYPUaS9LdS58WPS/+fm4JyVfC9W49WMhFX1WdBlYjov5AuQyD7+N/w0ldpGMopDUQ91Z54semCkWmJhMXO1Itah2C2XAmEa8pjiqx+cEDdAymjE/yfSYtHrQHHHvzwhjkNGzN6UW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734319389; c=relaxed/simple;
-	bh=V4jM3CVSCQm1TaO1otXw7852w/swq8OZFbl3RxkIYK4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XYkSnS1wWGVJpmD/xLSyl0ET7nAU8dFd2VC/76mCts0Vq7bzqtMtkme2Msc3Nauu/RN3bj+l3q6EU2z0nvZ//jVU0Twgfy2cV4LfpvnxoOFD1OT3BkYJmzrQBmOh2urGHyA7uc3ZWTW6ybZY1J7v8uZncXjG/XJ/VVOJRD1cPe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjuVY9PG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48104C4CED0;
-	Mon, 16 Dec 2024 03:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734319389;
-	bh=V4jM3CVSCQm1TaO1otXw7852w/swq8OZFbl3RxkIYK4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kjuVY9PGhDTtrEHi/eH9u8pArsgTdG3NHgqlKH9cBtPvf+LGHxw0mZ/wK/sHWxQPe
-	 H/bZk4C+cC1a4BWJyFCpHnhMz1UM2ybo9yn4gjGYKCQ9phC+s875/LSrqSpGSXBK4n
-	 jBa/ZZzVOwJoGT5ohcQNioboygexWAg2IfcPSt/rOn8xcUWSJtRZk+fcZG9lq7qBsn
-	 vbVngoME1TjByjp6y9CxwGSd9ZOuiguO7DkSRllgLyk2ysrGVdODtjcsoJ+gDPJ4NL
-	 oknWLJRF9DZMt+r7ne2xAcBaeh2uDzGFguujf80RXHPaXA6A6GGSu1gNS5ZhzuIdKx
-	 0fsS87gW9evnw==
-From: guoren@kernel.org
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	guoren@kernel.org,
-	bjorn@rivosinc.com,
-	conor@kernel.org,
-	leobras@redhat.com,
-	alexghiti@rivosinc.com,
-	christoph.muellner@vrull.eu
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	parri.andrea@gmail.com,
-	ajones@ventanamicro.com,
-	ericchancf@google.com,
-	Guo Ren <guoren@linux.alibaba.com>
-Subject: [PATCH] riscv: Implement smp_cond_load8/16() with Zawrs
-Date: Sun, 15 Dec 2024 22:22:53 -0500
-Message-Id: <20241216032253.685728-1-guoren@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1734319929; c=relaxed/simple;
+	bh=S2vQcu2RlyXhfyFLl5hUwkaHAA+c0PBHHGEC+2Ep8F0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=PX8Q9y5DC2UvJbKcTd9kis1pHGg0QOE2lFtiRv1mN0gEjETCd4LLb2kaFjw74wW85BX/sa0C6j/GsWEUTpxrGgFf8gpCpcGOo1n5ezBzQhAyINbIekfGvZlCPNL1bhmmT9OXMMzAtHF5VVD5tJDCl+/jxOXzHImQPBKnM5qV/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZK54ucVv; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2165cb60719so26828865ad.0;
+        Sun, 15 Dec 2024 19:32:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734319927; x=1734924727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nNOXfbpXdv41m/bOJkFcObz3huwlsENpJ7Jf000ZPk4=;
+        b=ZK54ucVvBmKbylAIVLES0EivGAW3xCm10Av0HfPM3k90Vcy4Cb2ZVzWgIqazXqK0/8
+         oRmDR9lUrJySx4MXzp8HWpEXlS86mSrqsLFzIMNX+Kp1RBM51yqwuZaYtJSi/6trv3Mv
+         maMVYeIf1rQl0WFQlZNrvoyLIjGjEnzdBvWtb5hsKjXOTgI4FYc0P0uCXr4JiTnmfwvE
+         8IX6QVV5t+OhX9+BxvwzErGvHFJ3RrC7l29mg0SNj1j5DsGSaB7z4MJXkGbtqLPE3MQa
+         0AXSNwTw4bh7hy7eRX/1R8wE67FF4rzVrrKRdY6Pu/UUCafXFMQEPc+LoFiGWFRxv+C9
+         yvow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734319927; x=1734924727;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nNOXfbpXdv41m/bOJkFcObz3huwlsENpJ7Jf000ZPk4=;
+        b=TNZqXDaiwGalhKig6MbHeHXM4uMXNtnMoeZmmXd6E8B3kqKA9HbVrkritjNVcz6X0t
+         n0CxQfm0ZKwGuh+edmc1op1sSTAvreFD+Ttq+Zry6do5ggcYiE7aAEoajQPYcqXKx9x/
+         jvR5m4tyEDIuZG535qZvewLd0QNm7QSbssidOuwuZgwF7ZqCJ5mK03Nhzvr0UPGV+vTw
+         Jlfok2VzlLiI/+GaObG0b+lv6kn2xe6MC2s3yaBeJ6bPpykIoRjxaj/Eb0Y/2lDBJ0Ph
+         9wJOxg3zLJP8UUXc8v//lkrsgYFH1LADTYoJfFjga3a04bYG+xOvM7egBR0v9c5nAO9y
+         3nOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeJd7xdCma/B15wXcGN10Gce562ZA9hUqqyzrYsesz4ly1EIDbQFsxm1q5fjKSUjQj2513mrq9I65GcrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrI1vFaYWDZL9txQAlYo2L/TE7Ljgg1UNpfbS893Uokz1D6Z/v
+	hFQkaJ7hOxHqTyVi64UBh0RP+D6xuRhMFD8rv9R1V+2NMzG8WnE3
+X-Gm-Gg: ASbGncuxdMSp16sau8VfCvNgxhoriS/XSCSea+BtlbQb7dqcLt3wfw+qBEyH5eLTm4a
+	JmIXZ1LsRYJ5UrTdsTebLuYbp0XaAFfwapZWsfGyrtsm7ogPFwvL5tYkHCYGPy//MER8bwFCNtJ
+	8VHPDYzp0+yIImCqnANumtRfyE5bbh+SMFOCqgOprAw5kOtJaf26VM9XQiQiQY95JMemXTQeyaI
+	tjMe3JTHTRYrfpQ00pI6u9gvostgH5M0DSuPG8PzW8lX+6Vdbn3Jc3rYQ==
+X-Google-Smtp-Source: AGHT+IEY417LiHa8XKzorTrI7WgocgIKDLhiY2qmsRvZtrCi2a9JHVe/oB79usdGBJ1xjM6YnatJyA==
+X-Received: by 2002:a17:902:f64a:b0:215:522d:72d6 with SMTP id d9443c01a7336-21892a20f38mr156206615ad.38.1734319926721;
+        Sun, 15 Dec 2024 19:32:06 -0800 (PST)
+Received: from localhost ([98.97.40.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e5d1b1sm32268655ad.204.2024.12.15.19.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 19:32:06 -0800 (PST)
+Date: Sun, 15 Dec 2024 19:32:01 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Jiayuan Chen <mrpre@163.com>, 
+ John Fastabend <john.fastabend@gmail.com>
+Cc: bpf@vger.kernel.org, 
+ martin.lau@linux.dev, 
+ ast@kernel.org, 
+ edumazet@google.com, 
+ jakub@cloudflare.com, 
+ davem@davemloft.net, 
+ dsahern@kernel.org, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ linux-kernel@vger.kernel.org, 
+ song@kernel.org, 
+ andrii@kernel.org, 
+ mhal@rbox.co, 
+ yonghong.song@linux.dev, 
+ daniel@iogearbox.net, 
+ xiyou.wangcong@gmail.com, 
+ horms@kernel.org
+Message-ID: <675f9f3184dfe_159ba20815@john.notmuch>
+In-Reply-To: <xtsolkbkdecvlbqx4zjtvd74c45lg5kqx2ojgdvovxrjgaghij@ld4wjwi7imvy>
+References: <20241209152740.281125-1-mrpre@163.com>
+ <20241209152740.281125-2-mrpre@163.com>
+ <6758f4ce604d5_4e1720871@john.notmuch>
+ <f2pur5raimm5y3phmtwubf6yf3sniphwgql4c4k7md25lxcehm@3qwyp4zibnrd>
+ <675b8f8f65e28_ff0720890@john.notmuch>
+ <xtsolkbkdecvlbqx4zjtvd74c45lg5kqx2ojgdvovxrjgaghij@ld4wjwi7imvy>
+Subject: Re: [PATCH bpf v2 1/2] bpf: fix wrong copied_seq calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: Guo Ren <guoren@linux.alibaba.com>
+Jiayuan Chen wrote:
+> On Thu, Dec 12, 2024 at 05:36:15PM -0800, John Fastabend wrote:
+> [...]
+> > > > I think easier is to do similar logic to read_sock and track
+> > > > offset and len? Did I miss something.
+> > > 
+> > > Thanks to John Fastabend.
+> > > 
+> > > Let me explain it.
+> > > Now I only replace the read_sock handler when using strparser.
+> > > 
+> > > My previous implementation added the replacement of read_sock in
+> > > sk_psock_start_strp() to more explicitly require replacement when using
+> > > strparser, for instance:
+> > > '''skmsg.c
+> > > void sk_psock_start_strp(struct sock *sk, struct sk_psock *psock)
+> > > {
+> > >     ...
+> > >     sk->sk_data_ready = sk_psock_strp_data_ready;
+> > >     /* Replacement */
+> > >     sk->sk_socket->ops->read_sock = tcp_bpf_read_sock;
+> > > }
+> > > '''
+> > > 
+> > > As you can see that it only works for strparser.
+> > > (The current implementation of replacement in tcp_bpf_update_proto()
+> > > achieves the same effect just not as obviously.)
+> > > 
+> > > So the current implementation of recv_actor() can only be strp_recv(),
+> > > with the call stack as follows:
+> > > '''
+> > > sk_psock_strp_data_ready
+> > >   -> strp_data_ready
+> > >     -> strp_read_sock
+> > >       -> strp_recv
+> > > '''
+> > > 
+> > > The implementation of strp_recv() will consume all input skb. Even if it
+> > > reads part of the data, it will clone it, then place it into its own
+> > > queue, expecting the caller to release the skb. I didn't find any
+> > > logic like tcp_try_coalesce() (fix me if i miss something).
+> > 
+> > 
+> > So here is what I believe the flow is,
+> > 
+> > sk_psock_strp_data_ready
+> >   -> str_data_ready
+> >      -> strp_read_sock
+> >         -> sock->ops->read_sock(.., strp_recv)
+> > 
+> > 
+> > We both have the same idea up to here. But then the proposed data_ready()
+> > call
+> > 
+> > +	while ((skb = skb_peek(&sk->sk_receive_queue)) != NULL) {
+> > +		u8 tcp_flags;
+> > +		int used;
+> > +
+> > +		WARN_ON_ONCE(!skb_set_owner_sk_safe(skb, sk));
+> > +		tcp_flags = TCP_SKB_CB(skb)->tcp_flags;
+> > +		used = recv_actor(desc, skb, 0, skb->len);
+> > 
+> > The recv_actor here is strp_recv() all good so far. But, because
+> > that skb is still on the sk_receive_queue() the TCP stack may
+> > at the same time do
+> > 
+> >  tcp_data_queue
+> >   -> tcp_queue_rcv
+> >      -> tail = skb_peek_tail(&sk->sk_receive_queue);
+> >         tcp_try_coalesce(sk, tail, skb, fragstolen)
+> >          -> skb_try_coalesce()
+> >             ... skb->len += len
+> > 
+> > So among other things you will have changed the skb->len and added some
+> > data to it. If this happens while you are running the recv actor we will
+> > eat the data by calling tcp_eat_recv_skb(). Any data added from the
+> > try_coalesce will just be dropped and never handled? The clone() from
+> > the strparser side doesn't help you the tcp_eat_recv_skb call will
+> > unlik the skb from the sk_receive_queue.
+> > 
+> > I don't think you have any way to protect this at the moment.
+> 
+> Thanks John Fastabend.
+> 
+> It seems sk was always locked whenever data_ready called.
+> 
+> '''
+> bh_lock_sock_nested(sk)
+> tcp_v4_do_rcv(sk)
+>    |
+>    |-> tcp_rcv_established
+>    	|-> tcp_queue_rcv 
+>    		|-> tcp_try_coalesce
+>    |
+>    |-> tcp_rcv_state_process
+>    	|-> tcp_queue_rcv
+>    		|-> tcp_try_coalesce
+>    |
+>    |-> sk->sk_data_ready()
+> 
+> bh_unlock_sock(sk)
+> '''
+> 
+> other data_ready path:
+> '''
+> lock_sk(sk)
+> sk->sk_data_ready()
+> release_sock(sk)
+> '''
+> 
+> I can not find any concurrency there. 
 
-RISC-V code uses the queued spinlock implementation, which calls
-the macros smp_cond_load_acquire for one byte. So, complement the
-implementation of byte and halfword versions.
+OK thanks, one more concern though. What if strp_recv thorws an ENOMEM
+error on the clone? Would we just drop the data then? This is problem
+not the expected behavior its already been ACKed.
 
-Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
-Signed-off-by: Guo Ren <guoren@kernel.org>
----
- arch/riscv/include/asm/cmpxchg.h | 38 +++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-index 4cadc56220fe..2bd42a11ff8f 100644
---- a/arch/riscv/include/asm/cmpxchg.h
-+++ b/arch/riscv/include/asm/cmpxchg.h
-@@ -365,16 +365,48 @@ static __always_inline void __cmpwait(volatile void *ptr,
- {
- 	unsigned long tmp;
- 
-+	u32 *__ptr32b;
-+	ulong __s, __val, __mask;
-+
- 	asm goto(ALTERNATIVE("j %l[no_zawrs]", "nop",
- 			     0, RISCV_ISA_EXT_ZAWRS, 1)
- 		 : : : : no_zawrs);
- 
- 	switch (size) {
- 	case 1:
--		fallthrough;
-+		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
-+		__s = ((ulong)(ptr) & 0x3) * BITS_PER_BYTE;
-+		__val = val << __s;
-+		__mask = 0xf << __s;
-+
-+		asm volatile(
-+		"	lr.w	%0, %1\n"
-+		"	and	%0, %0, %3\n"
-+		"	xor	%0, %0, %2\n"
-+		"	bnez	%0, 1f\n"
-+			ZAWRS_WRS_NTO "\n"
-+		"1:"
-+		: "=&r" (tmp), "+A" (*(__ptr32b))
-+		: "r" (__val), "r" (__mask)
-+		: "memory");
-+		break;
- 	case 2:
--		/* RISC-V doesn't have lr instructions on byte and half-word. */
--		goto no_zawrs;
-+		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
-+		__s = ((ulong)(ptr) & 0x2) * BITS_PER_BYTE;
-+		__val = val << __s;
-+		__mask = 0xff << __s;
-+
-+		asm volatile(
-+		"	lr.w	%0, %1\n"
-+		"	and	%0, %0, %3\n"
-+		"	xor	%0, %0, %2\n"
-+		"	bnez	%0, 1f\n"
-+			ZAWRS_WRS_NTO "\n"
-+		"1:"
-+		: "=&r" (tmp), "+A" (*(__ptr32b))
-+		: "r" (__val), "r" (__mask)
-+		: "memory");
-+		break;
- 	case 4:
- 		asm volatile(
- 		"	lr.w	%0, %1\n"
--- 
-2.40.1
-
+Thanks,
+John
 
