@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-447609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516039F34D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:44:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C749F34D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A885A162059
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1390C169567
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03C91494DC;
-	Mon, 16 Dec 2024 15:43:01 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B2E14F125;
+	Mon, 16 Dec 2024 15:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GYA1mccX"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC51714B7;
-	Mon, 16 Dec 2024 15:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B877614D2A7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734363781; cv=none; b=Vj7U6EnpUIvjBswrXKVTcLkbu8D9qKq9CL2vWmOBvmr/YtS5wTQJ4S9t/6Yp6fdpu0Sx/Fci/0bobKjmbIcrLa2oj2K2QSMZha5WRDe7aUg0Lhmu1cubEGZTyCN9AuBVlIiVRGNFZS9GIDlnxDGnGWIbQGvf2b/dQy6qevj/fjk=
+	t=1734363773; cv=none; b=ThpCb+ZVaHVmqIgG27lPqzI3OBC0f46icZYbrhoUo1iKwClK6hYBydievuXQgz3TRvuhtb3lyblWDztIGHOlcJlxfQd42esyoOYBFOVbq++gf21A4GnfIBkC4f2qj9FHmxKwlJHgxS2yxenqTsyi299ETHmsl06GwucH6oTOZGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734363781; c=relaxed/simple;
-	bh=58FYXRqBpcNh81+gZYGToNCLzgg83BEO8O5Yry+Fhoc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQRjI71bb8QbnK3ak9jbDVrkhe1DDt+7dNBDXOi6X8wrib+5KIQ9bk2/qru1ySkZhYFZrcUGybJKY7PKMj7Bde3NB8Tlhqb5JnSt1QAoPcfrdabjTIb/fvY0zPU2D5F373dWP8M7EcBKEDR4lmZvuuszW0U5s+5piVJtuKdZ8Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5188c6f260cso1278033e0c.1;
-        Mon, 16 Dec 2024 07:42:59 -0800 (PST)
+	s=arc-20240116; t=1734363773; c=relaxed/simple;
+	bh=7J1z7zGKi8qDpBcj9GbdI/Ps2EFAVijpo5S7dkYA/fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VX/o9GycMoYwW7++NIG0bQ1i5yG/PEC/SZK3xaCfum0d0pno4AiApIdp05pl+DWbl5OXIpr1QewZM6rI7+8RO2MaqUr/XPaT6i8545KlY/lBZ9GAuUioZcmd0EyNBWPf1Ol0hpx8m+Ip+oG9c7+ZizCkbin0PKyPVFVk2gIBuHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GYA1mccX; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385ddcfc97bso3587340f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:42:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1734363770; x=1734968570; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mRPpIX6x1X6PfLdkN5XTWPSEZi3D2nzydsb0ntGYnfo=;
+        b=GYA1mccXFfekYw5yFClwS2HBNyxCiYDs7aGMHR6JJtTR+w6kK7DSrpa7cbd2WFAvug
+         XVOzE/aVwfwq4Kye3mkH3c+sxonBYti+LUSE0um66rOP7TWWeyyqNz7srvvAtOkgx2Ii
+         OBKXTnZIJpoy4sAmY1u3V6WItj+lzMoI1oYYfAEsXkiODIrNe3uPceLCeQXzeW2ljast
+         i5khxTfkXSZwokgLdkYDa4+Iba5YKzznaFLl1nYgETimLSz+//nPX2aMJE0gOwOWycLo
+         eZSMVBoQKX8K9TVyg+822LsEkKDQfRG66q5EZ3OXVhSjvb3HoTSseFyQ2HeXc4+rNCJI
+         RwHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734363777; x=1734968577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+acnXNVUQ0LA7MYUEQM7LfAc1qmX6IAb7It8hYEHGtQ=;
-        b=KpFXkfxHibf+nIQlazEOzgbdux6XiFrJvA8geopSZ5F/OS6o+0VuVxKc7GJSAA0ULq
-         eF4LBTzVxx526w4GyG3rZNuzEAfVq6qghXT9igYVYE7Y/dGkVgAj6bRxEWW+kZWQM35W
-         TBVg/tbaROnplK8lcibcDO/6g7xkWBBihdde2g0cnYdsyx0jt+/Wjvc3cAR15E+slHQK
-         im4qp2pjKf2N6sZtjaVW9asEZE1IupxOAo40mEZQjuu0ogqdmNzLochLuy4NEABhywNo
-         e3Mubd34II6+nqM01v5OfT8+pGgKNUKB8keNSyIU7/5CHiYNnn+/IAqPUqudd3zHXB+o
-         U70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJl4AUq75QgYlW1Aw/mYMyoRSySD3W2xfTSDnZxG1KCTV/f+CVX+XfKfNcOZFkbILcF3Z/azIzHMfjlGuy@vger.kernel.org, AJvYcCWIXojEZUwhI7nHomdh0p3P5BKllAQJwIII736mWSG/4/+EnsdZ7sCkcUu74K+ZONtZNMaQrXPVitM=@vger.kernel.org, AJvYcCWXJsbtJCtJJiVknCz88Vi2PJ3HpjQkSlTNPGrBrC8lGGYOcoVC90WsplWDQFLbiN/f7owDstEFWkrFlbBkPDZ1OiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIuFEinTbwva8ZsjjFoMhCmiFirDdIXIqM2o7x/1xYukLhd0hR
-	sbgkxcHHfs/MKrKbpCFHRRp7YvCdCG2Mex5bytWiBl/srCMtYKBXzaW1UsRc
-X-Gm-Gg: ASbGncsbwv0KsW6vk+R5WQ6BoVghQU5zw1j35Atn4snIHdn0CX6JyXQ6jfX79FqCKDn
-	YCDXOy3bzzWBHUu7XQfbmlIHvhQAnfgQYdiH/lBNJg7b0OXC2SgJZNM77G/pxe1QCuOv58btTbX
-	H0uHxEpm0nZp92/ux9ypVe9FZnNbUsAwdBbg1MY4b3Lq2C9FeLNaMgKLyOffNn4w/8yWs7cEQHT
-	l3Mmk6eO8GwaBId1vm/ACi8Diaq7x349X4aueJvCKlbwN7wmCeqDX0NlElX3Q78ZfIL3X/wIx8L
-	hS+EpAL4zQfZJLQGHlc=
-X-Google-Smtp-Source: AGHT+IGLVYyX1dGArf5gdqdcc8zgHtAJ//EzJwRXmYQhgiD+0+UuIg/0dxB1gViQMD9Gy5VMyUyVeg==
-X-Received: by 2002:a05:6122:2505:b0:515:ed1b:e6dd with SMTP id 71dfb90a1353d-518ca2182bemr11488424e0c.0.1734363776923;
-        Mon, 16 Dec 2024 07:42:56 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-519eb72a06csm675458e0c.44.2024.12.16.07.42.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 07:42:56 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4afefc876c6so1148533137.2;
-        Mon, 16 Dec 2024 07:42:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/9rYR9DfvyHkxYL9cOfXCUDHV2xHtFu+j2gNWP7LqzIPWOcss0cTjE0VIpYKTWEq+IBSqTfF61gLa9y1XkI+yZmM=@vger.kernel.org, AJvYcCWVttc3vqgwMZQ6k21bzLGoYjcUCQAWJtAGT8+BNb73kqgYbkN7FAYuKxEmJFEAUi3JjVD9KSW9Cv/pVHo5@vger.kernel.org, AJvYcCXz5ArgDlavh4i2FNz1y8X/dUiOirV6goyisW7VmYHGzMvklp7Shhb1VRg31YC4oK+gSt3fxFXGhbg=@vger.kernel.org
-X-Received: by 2002:a05:6102:418e:b0:4b1:1b33:eb0f with SMTP id
- ada2fe7eead31-4b25db3f6a0mr11773132137.24.1734363776010; Mon, 16 Dec 2024
- 07:42:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734363770; x=1734968570;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mRPpIX6x1X6PfLdkN5XTWPSEZi3D2nzydsb0ntGYnfo=;
+        b=QUxUNa1SgibNsHNYVhO5kAI/7f3EfEas8JZ3ln36joz9Mlj2ONuCtM2xLvtQ7P/sCE
+         8Cp/ff62883ekc+Mu/h28lF7RaTfoj/8MHgdjKzu8kRXDdHGl1uhmmCuFUDhwK2YFa6J
+         fUoMumr2VQEAJNCLxQQJ1kzI2ZPl4S5zYrb2hpDNPGLZ5kYmPM8GVjeJ7tdEqaJRKVmU
+         un75tBYNxmtioykZDu2AZLZYKiJVFzHpD7WwFFFH4Ghm8YV/D84fz6GK52RkmkZ5Bi4/
+         PDK8NyCqW6cMUHNb8GkY38hO239/EbOyJKQsuNHrZfgGFRcV+pVPioBmgyzH+Cmt40fq
+         4QzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb/XbZyTP5VeVBY3jEwUlaXfSvW1+2uFnyTKWpGRpS0rAs8hzZssdapkzHSp8ORqahlbFYIaksXUHseF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwNC6PAkQB+lEMg/wNgeOhWH403STZs84mJZb7F97QxZF8WEb8
+	hGfMI9c42aXdguoFGI3s7wEVtTH3QBfJP+clrV3d55XyfrAftvuHdU3YDGEM3Ms=
+X-Gm-Gg: ASbGncshTTf6oVLXl5seyIIqthIE+bleYJACkp2KT+yl/Ge/tLgf3UqSGoIhYRRh4SQ
+	faqrT8la2A1T6V5/gtUq49jVbUxHQ/ZRofsx6/RZp7wTwujHMKLWz3IWUz7D3VcbOdhfBYtdNXj
+	8wrx6bLjupZrL+UDIXPXOqjkcUYpDXf1GQ1j9VrHrFgV9CtucWbFvsb6inpxBqoqIuF+1oeAzzi
+	01v8Tk06U9M6CFTTLFo4hfmeZWWHKYsCQCpGrpt4oVCbpBqE+rweYSsGtJW0YYajmBdwMZr+d94
+	tgMKNXR8OQ==
+X-Google-Smtp-Source: AGHT+IGHTCJNG0wofm8YQHMVhU6jNcr410dOUPkItU01CIE2mfswJ1fwu09e8a9C94aWhKnGcE9L0g==
+X-Received: by 2002:a5d:6da4:0:b0:385:fa33:29ed with SMTP id ffacd0b85a97d-3888e0f4553mr10445190f8f.47.1734363769937;
+        Mon, 16 Dec 2024 07:42:49 -0800 (PST)
+Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801b9ebsm8461313f8f.63.2024.12.16.07.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 07:42:49 -0800 (PST)
+Date: Mon, 16 Dec 2024 16:42:48 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: guoren@kernel.org
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com, 
+	conor@kernel.org, leobras@redhat.com, alexghiti@rivosinc.com, 
+	christoph.muellner@vrull.eu, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	parri.andrea@gmail.com, ericchancf@google.com, Guo Ren <guoren@linux.alibaba.com>
+Subject: Re: [PATCH] riscv: Implement smp_cond_load8/16() with Zawrs
+Message-ID: <20241216-2d9b35cb1911106971a54356@orel>
+References: <20241216032253.685728-1-guoren@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241213175828.909987-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Dec 2024 16:42:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW9=ZNzaJaxyEB3Bu-EFL-txa4c9BOUo6w8Uk8zuPeQeQ@mail.gmail.com>
-Message-ID: <CAMuHMdW9=ZNzaJaxyEB3Bu-EFL-txa4c9BOUo6w8Uk8zuPeQeQ@mail.gmail.com>
-Subject: Re: [PATCH 1/9] i2c: riic: Replace dev_err with dev_err_probe in
- probe function
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216032253.685728-1-guoren@kernel.org>
 
-On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sun, Dec 15, 2024 at 10:22:53PM -0500, guoren@kernel.org wrote:
+> From: Guo Ren <guoren@linux.alibaba.com>
+> 
+> RISC-V code uses the queued spinlock implementation, which calls
+> the macros smp_cond_load_acquire for one byte. So, complement the
+> implementation of byte and halfword versions.
+> 
+> Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+> Signed-off-by: Guo Ren <guoren@kernel.org>
+> ---
+>  arch/riscv/include/asm/cmpxchg.h | 38 +++++++++++++++++++++++++++++---
+>  1 file changed, 35 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+> index 4cadc56220fe..2bd42a11ff8f 100644
+> --- a/arch/riscv/include/asm/cmpxchg.h
+> +++ b/arch/riscv/include/asm/cmpxchg.h
+> @@ -365,16 +365,48 @@ static __always_inline void __cmpwait(volatile void *ptr,
+>  {
+>  	unsigned long tmp;
+>  
+> +	u32 *__ptr32b;
+> +	ulong __s, __val, __mask;
+> +
+>  	asm goto(ALTERNATIVE("j %l[no_zawrs]", "nop",
+>  			     0, RISCV_ISA_EXT_ZAWRS, 1)
+>  		 : : : : no_zawrs);
+>  
+>  	switch (size) {
+>  	case 1:
+> -		fallthrough;
+> +		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
+> +		__s = ((ulong)(ptr) & 0x3) * BITS_PER_BYTE;
+> +		__val = val << __s;
+> +		__mask = 0xf << __s;
+
+This mask should be 0xff and the mask below should be 0xffff.
+
+> +
+> +		asm volatile(
+> +		"	lr.w	%0, %1\n"
+> +		"	and	%0, %0, %3\n"
+> +		"	xor	%0, %0, %2\n"
+> +		"	bnez	%0, 1f\n"
+> +			ZAWRS_WRS_NTO "\n"
+> +		"1:"
+> +		: "=&r" (tmp), "+A" (*(__ptr32b))
+> +		: "r" (__val), "r" (__mask)
+> +		: "memory");
+> +		break;
+>  	case 2:
+> -		/* RISC-V doesn't have lr instructions on byte and half-word. */
+> -		goto no_zawrs;
+> +		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
+> +		__s = ((ulong)(ptr) & 0x2) * BITS_PER_BYTE;
+> +		__val = val << __s;
+> +		__mask = 0xff << __s;
+> +
+> +		asm volatile(
+> +		"	lr.w	%0, %1\n"
+> +		"	and	%0, %0, %3\n"
+> +		"	xor	%0, %0, %2\n"
+> +		"	bnez	%0, 1f\n"
+> +			ZAWRS_WRS_NTO "\n"
+> +		"1:"
+> +		: "=&r" (tmp), "+A" (*(__ptr32b))
+> +		: "r" (__val), "r" (__mask)
+> +		: "memory");
+> +		break;
+>  	case 4:
+>  		asm volatile(
+>  		"	lr.w	%0, %1\n"
+> -- 
+> 2.40.1
 >
-> Refactor error handling in the riic_i2c_probe() function by replacing
-> multiple dev_err() calls with dev_err_probe().
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+drew
 
