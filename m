@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-447410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBAD9F31D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:44:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C895E9F33C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CDD165A78
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED471888B31
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DD22066F4;
-	Mon, 16 Dec 2024 13:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EE4207A14;
+	Mon, 16 Dec 2024 14:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pj8luyPK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpZJl9b1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A62063F3;
-	Mon, 16 Dec 2024 13:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC8214B94C;
+	Mon, 16 Dec 2024 14:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734356571; cv=none; b=iDSsRe1J/rLzD2x/xdZGzf5Nm221UBjh/GGZSe91ZdbLKJu2U4jQPucJ1uRtgqnSr7wk4qxnaksHlVlYC7VTc8kxw9xjZkdJ3/C1ioFqSp66YMlc+qCT8VkuURUzvYI4rOwl5Czoifp/tZkfliLe/z2+hdgskJlAhzElc9JrOls=
+	t=1734360685; cv=none; b=LP3zWvlYUDkGz3zwxFKYzY9uMbw91JDOPtr9yOIET1tHXCUfx36R8chH1EVka/JMDP3ZureMRhR9jbt6uQWRjP+K3GVQepVDhShyJfCpQ77X0rSepyMwMSAls+ueJzzP1QkCViUQ1v44/qUn/L5VCuKsohPDjF8w6txTX2aJ54s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734356571; c=relaxed/simple;
-	bh=63arimq/oo2IlPmsEYAg8gJf+87rPBhCjMDw7DnSNGU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=PaRPsazpT29t9o3l5c6DPJiXy1F+aQnQiN+5RvIipAfQLrkHBM12DwnRrxF5Q1vD5bzFZ+meLG9mIaeh3ziSooMVBo+HEgjKi3tJb3BBtThiNHN1jFC+tnbtHP64iN9+EI2Pi9vNMM++MkUiq+mKXavgi3CfJo0xjRb+0MKP9TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pj8luyPK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG86dH9008575;
-	Mon, 16 Dec 2024 13:42:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0nZpHmpRyudFmzgYM94xkg6Kt/g8rgGoz/uBAW153tI=; b=pj8luyPK40OaaKo/
-	ewOQkbjWu65i2r8owjGv125sidvZEmds6M6+Si6RzHFIyqo2Tz6uJvfldjZiiZYe
-	wp9GCecK1Au4WkU6495AEz9TSka5ZLMQLUIR+xskjUOG5hDSRE6gP3u25YXuODD6
-	eAnZOxgRWKtVnHblgs+mIXDzUtdRBb1ldF8XZ0YS53lTdJAdnwEJbkssyNUc52WP
-	xiLULk2gFgJkr9i9AsOMfNc0gdb8HCgBrnpevRZXI8hm89CTKld197V2VvfBSJP6
-	WPgO0nZ/2Dn+oXy6I9HyLaLWBbTTQzvhMPpsM4AW+cPz+TZNhDb7gh28C4d3+uzB
-	0lQ5mw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jgdj0xf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 13:42:37 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGDgakL010688
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 13:42:36 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 16 Dec 2024 05:42:31 -0800
-From: Lei Wei <quic_leiwei@quicinc.com>
-Date: Mon, 16 Dec 2024 21:40:27 +0800
-Subject: [PATCH net-next v3 5/5] MAINTAINERS: Add maintainer for Qualcomm
- IPQ9574 PCS driver
+	s=arc-20240116; t=1734360685; c=relaxed/simple;
+	bh=VSQZ/AKwvf2LJcrZzL1IDApIqfRTSAFZpSCwFSSlC/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HBJyZpZsdr4vYYeFbaUwEwAHIpTMkGuM4rE0x0NDslvWtreNVaJ21Mr9h/kNyKgE5QptSLIIE2Hh4Lt+nzcOW4tiQwh1VniIeM0fVzsG2Ql+NY82uAW9FKyz4kAUz6FY2J9Ey3kqokJRoMocKCJTK+6bVdSVipTfs7y2af/ZqME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpZJl9b1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A682C4CED0;
+	Mon, 16 Dec 2024 14:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734360684;
+	bh=VSQZ/AKwvf2LJcrZzL1IDApIqfRTSAFZpSCwFSSlC/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hpZJl9b1YQB+3WKmUm0rX90tuDV8nxkw5nJZe7Clo2lj4LRzqvvUe4YDNJsoCBEWs
+	 zNUxpwjKfZTHighicJ246cMLpKHw8Gg6xBYUffQNizkYnjaLljZLEJq89WzMuXuFwL
+	 /Sss64Sp8cinXbnVMCg3Pz1r+tMH+FJcuq8vIW3DqbekSLqthiC17A4VGxNNjhCegQ
+	 01jBku9es2bEHp/ElRFw+Vsmz3CeNL0hdZL3JeSrnsSJKXwGrCazsUJaSpOy6nKqw1
+	 kJBOz32mcdjNs0D1Ek2vd4yJOgkgoP5amuCFe+NeXkEF4TS7RTNlqU92MXapcqrHnj
+	 6p0cTs5yIWrOg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Matthew Wilcox"
+ <willy@infradead.org>,  "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+  "Vlastimil Babka" <vbabka@suse.cz>,  "John Hubbard"
+ <jhubbard@nvidia.com>,  "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+  "Andrew Morton" <akpm@linux-foundation.org>,  "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Arnd Bergmann" <arnd@arndb.de>,
+  "Christian Brauner" <brauner@kernel.org>,  "Jann Horn"
+ <jannh@google.com>,  "Suren Baghdasaryan" <surenb@google.com>,  "Alex
+ Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Trevor Gross" <tmgross@umich.edu>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v11 6/8] mm: rust: add VmAreaNew for f_ops->mmap()
+In-Reply-To: <20241211-vma-v11-6-466640428fc3@google.com> (Alice Ryhl's
+	message of "Wed, 11 Dec 2024 10:37:10 +0000")
+References: <20241211-vma-v11-0-466640428fc3@google.com>
+	<f8bp5f3T5_3_0LpabBpwjSarzhZTp1CbAvcTBI6lHlaKpPAAFiofsNI2iJxK9kuXwnqvTkky9uvpS0rqRpa_RA==@protonmail.internalid>
+	<20241211-vma-v11-6-466640428fc3@google.com>
+Date: Mon, 16 Dec 2024 14:41:00 +0100
+Message-ID: <87o71bagpf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241216-ipq_pcs_6-13_rc1-v3-5-3abefda0fc48@quicinc.com>
-References: <20241216-ipq_pcs_6-13_rc1-v3-0-3abefda0fc48@quicinc.com>
-In-Reply-To: <20241216-ipq_pcs_6-13_rc1-v3-0-3abefda0fc48@quicinc.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_luoj@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <bartosz.golaszewski@linaro.org>,
-        <vsmuthu@qti.qualcomm.com>, <john@phrozen.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734356525; l=960;
- i=quic_leiwei@quicinc.com; s=20240829; h=from:subject:message-id;
- bh=63arimq/oo2IlPmsEYAg8gJf+87rPBhCjMDw7DnSNGU=;
- b=4cRd1KvooQmo2b2gTAWKi38ghifwy4O8ZwxXKm2esQAScWN2pwzeaZfqlm8E9lLFHIBBxZart
- 8bIKb1S0nJiCIOzBfF3t8sNie9PCPV61HkxZLIp5A18JgRpYAz0Q+h1
-X-Developer-Key: i=quic_leiwei@quicinc.com; a=ed25519;
- pk=uFXBHtxtDjtIrTKpDEZlMLSn1i/sonZepYO8yioKACM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6AWeZMzUbYKYMxfHZnDH-DsCNDNnTHvT
-X-Proofpoint-ORIG-GUID: 6AWeZMzUbYKYMxfHZnDH-DsCNDNnTHvT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=824
- mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0 impostorscore=0
- bulkscore=0 malwarescore=0 priorityscore=1501 adultscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160116
+Content-Type: text/plain
 
-Add maintainer for the Ethernet PCS driver supported for Qualcomm
-IPQ9574 SoC.
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Signed-off-by: Lei Wei <quic_leiwei@quicinc.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> This type will be used when setting up a new vma in an f_ops->mmap()
+> hook. Using a separate type from VmAreaRef allows us to have a separate
+> set of operations that you are only able to use during the mmap() hook.
+> For example, the VM_MIXEDMAP flag must not be changed after the initial
+> setup that happens during the f_ops->mmap() hook.
+>
+> To avoid setting invalid flag values, the methods for clearing
+> VM_MAYWRITE and similar involve a check of VM_WRITE, and return an error
+> if VM_WRITE is set. Trying to use `try_clear_maywrite` without checking
+> the return value results in a compilation error because the `Result`
+> type is marked #[must_use].
+>
+> For now, there's only a method for VM_MIXEDMAP and not VM_PFNMAP. When
+> we add a VM_PFNMAP method, we will need some way to prevent you from
+> setting both VM_MIXEDMAP and VM_PFNMAP on the same vma.
+>
+> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
+> Reviewed-by: Jann Horn <jannh@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/mm/virt.rs | 181 ++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 180 insertions(+), 1 deletion(-)
+>
+> diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+> index 3a23854e14f4..6d9ba56d4f95 100644
+> --- a/rust/kernel/mm/virt.rs
+> +++ b/rust/kernel/mm/virt.rs
+> @@ -6,7 +6,7 @@
+>
+>  use crate::{
+>      bindings,
+> -    error::{to_result, Result},
+> +    error::{code::EINVAL, to_result, Result},
+>      mm::MmWithUser,
+>      page::Page,
+>      types::Opaque,
+> @@ -171,6 +171,185 @@ pub fn vm_insert_page(&self, address: usize, page: &Page) -> Result {
+>      }
+>  }
+>
+> +/// A builder for setting up a vma in an `f_ops->mmap()` hook.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..81e9277fb0c3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19351,6 +19351,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM IPQ9574 Ethernet PCS DRIVER
-+M:	Lei Wei <quic_leiwei@quicinc.com>
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/net/pcs/qcom,ipq9574-pcs.yaml
-+F:	drivers/net/pcs/pcs-qcom-ipq9574.c
-+F:	include/dt-bindings/net/qcom,ipq9574-pcs.h
-+F:	include/linux/pcs/pcs-qcom-ipq9574.h
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
+Reading this line, I would expect to be able to chain update methods as
+in `Builder::new().prop_a().prop_b().build()`. Could/should this type
+accommodate a proper builder pattern? Or is "builder" not the right word
+to use here?
 
--- 
-2.34.1
+
+Best regards,
+Andreas Hindborg
+
 
 
