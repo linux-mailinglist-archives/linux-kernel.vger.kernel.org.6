@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-447772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD18E9F36DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E849F36DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB65188E750
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126BA1891D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7265A20ADD3;
-	Mon, 16 Dec 2024 16:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A49B20ADD6;
+	Mon, 16 Dec 2024 16:53:41 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858E814B96E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EC320628A
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368009; cv=none; b=UsuHmfyh1QJcZ8aaKCFJxRah7HxuGML5WIyk0qNt1GkFW93I62KzsSDuz/EMsswfZvjqDf8CWVKaVW2p2AWxnNxKo/1HsI+M2/OYeFRU0NDQ/7WQVgmwFEy2VyYUfIYxSvVF+G5WrnXer9LWQtcUW6mVhWvvBaP9rx0iTPzZKik=
+	t=1734368020; cv=none; b=m0wDxHpcHLTNCi6qKA1NIh/77iYuonXILJIfcZsCYfhNj18la4freOKlpFMCNVyTCl9Sol5U2fseMZXvLQaLFh14925ZzQ3E4vcSSIPRI866m3pA7XcZ9FM+6k4QaOBdTPVF5P/IRBChr35d/5XYPodSN9WETLGnVGMWvc1dKFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368009; c=relaxed/simple;
-	bh=x8/lax7AnEY8aIMV7rJN+ovhV7eHuZNGumeyQOCxLVE=;
+	s=arc-20240116; t=1734368020; c=relaxed/simple;
+	bh=Qq63Q6G0y1Jtctd8xyf5/g1EfA4Ks1NpSue9gU92jfQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XnK6lHb3eh+pGcn+IbMf9Pl/EwPu4AyTuhVlOCkVkxHVhy98FYBCiK8r5JOC56LRzRixeXk7H62ts2bOeJ4pxCrFYuN0GZNwoyfiEBFb762435GrLKtw96qX5QBebmR6G+5062yntjJyppY/lCYi1RBqYIylZ/qm5gchzeI4s8g=
+	 MIME-Version; b=o+jNEIbHWegMwsmdt2TVw6fyGV/aLTrVlT9JlPFyvrjF0hvfHXejowcErM8xAvZJWXTCwoGabAepP+6YXN/lfC846CeYusd7HAAD3I0jwAbA+XjoLmibX6Z1z1JMNUkTXd4+LEfOfFZ/T6gcWAtme9HRGe7GRg/R5SPnFaQutKw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32FFE16F8;
-	Mon, 16 Dec 2024 08:53:55 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 911B616F8;
+	Mon, 16 Dec 2024 08:54:06 -0800 (PST)
 Received: from K4MQJ0H1H2.arm.com (unknown [10.163.78.212])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 552383F528;
-	Mon, 16 Dec 2024 08:53:16 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B695E3F528;
+	Mon, 16 Dec 2024 08:53:27 -0800 (PST)
 From: Dev Jain <dev.jain@arm.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -67,9 +67,9 @@ Cc: ryan.roberts@arm.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Dev Jain <dev.jain@arm.com>
-Subject: [RFC PATCH 10/12] khugepaged: Skip PTE range if a larger mTHP is already mapped
-Date: Mon, 16 Dec 2024 22:21:03 +0530
-Message-Id: <20241216165105.56185-11-dev.jain@arm.com>
+Subject: [RFC PATCH 11/12] khugepaged: Enable sysfs to control order of collapse
+Date: Mon, 16 Dec 2024 22:21:04 +0530
+Message-Id: <20241216165105.56185-12-dev.jain@arm.com>
 X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 In-Reply-To: <20241216165105.56185-1-dev.jain@arm.com>
 References: <20241216165105.56185-1-dev.jain@arm.com>
@@ -81,95 +81,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We may hit a situation wherein we have a larger folio mapped. It is incorrect
-to go ahead with the collapse since some pages will be unmapped, leading to
-the entire folio getting unmapped. Therefore, skip the corresponding range.
+Activate khugepaged for anonymous collapse even if a single order is activated.
+Note that, we are still scanning the VMAs only when they are PMD-aligned/sized,
+for ease of implementation.
 
 Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
-In the future, if at all it is required that at some point we want all the folios
-in the system to be of a specific order, we may split these larger folios.
-
- mm/khugepaged.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ mm/khugepaged.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 8040b130e677..47e7c476b893 100644
+index 47e7c476b893..ffc4d5aef991 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -33,6 +33,7 @@ enum scan_result {
- 	SCAN_PMD_NULL,
- 	SCAN_PMD_NONE,
- 	SCAN_PMD_MAPPED,
-+	SCAN_PTE_MAPPED,
- 	SCAN_EXCEED_NONE_PTE,
- 	SCAN_EXCEED_SWAP_PTE,
- 	SCAN_EXCEED_SHARED_PTE,
-@@ -609,6 +610,11 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 		folio = page_folio(page);
- 		VM_BUG_ON_FOLIO(!folio_test_anon(folio), folio);
+@@ -414,24 +414,20 @@ static inline int hpage_collapse_test_exit_or_disable(struct mm_struct *mm)
+ 	       test_bit(MMF_DISABLE_THP, &mm->flags);
+ }
  
-+		if (order !=HPAGE_PMD_ORDER && folio_order(folio) >= order) {
-+			result = SCAN_PTE_MAPPED;
-+			goto out;
-+		}
-+
- 		/* See hpage_collapse_scan_ptes(). */
- 		if (folio_likely_mapped_shared(folio)) {
- 			++shared;
-@@ -1369,6 +1375,7 @@ static int hpage_collapse_scan_ptes(struct mm_struct *mm,
- 	unsigned long orders;
- 	pte_t *pte, *_pte;
- 	spinlock_t *ptl;
-+	int found_order;
- 	pmd_t *pmd;
- 	int order;
- 
-@@ -1467,6 +1474,24 @@ static int hpage_collapse_scan_ptes(struct mm_struct *mm,
- 			goto out_unmap;
- 		}
- 
-+		found_order = folio_order(folio);
-+
-+		/*
-+		 * No point of scanning. Two options: if this folio was hit
-+		 * somewhere in the middle of the scan, then drop down the
-+		 * order. Or, completely skip till the end of this folio. The
-+		 * latter gives us a higher order to start with, with atmost
-+		 * 1 << order PTEs not collapsed; the former may force us
-+		 * to end up going below order 2 and exiting.
-+		 */
-+		if (order != HPAGE_PMD_ORDER && found_order >= order) {
-+			result = SCAN_PTE_MAPPED;
-+			_address += (PAGE_SIZE << found_order);
-+			_pte += (1UL << found_order);
-+			pte_unmap_unlock(pte, ptl);
-+			goto decide_order;
-+		}
-+
- 		/*
- 		 * We treat a single page as shared if any part of the THP
- 		 * is shared. "False negatives" from
-@@ -1550,6 +1575,10 @@ static int hpage_collapse_scan_ptes(struct mm_struct *mm,
- 		if (_address == org_address + (PAGE_SIZE << HPAGE_PMD_ORDER))
- 			goto out;
+-static bool hugepage_pmd_enabled(void)
++static bool thp_enabled(void)
+ {
+ 	/*
+ 	 * We cover the anon, shmem and the file-backed case here; file-backed
+ 	 * hugepages, when configured in, are determined by the global control.
+-	 * Anon pmd-sized hugepages are determined by the pmd-size control.
++	 * Anon mTHPs are determined by the per-size control.
+ 	 * Shmem pmd-sized hugepages are also determined by its pmd-size control,
+ 	 * except when the global shmem_huge is set to SHMEM_HUGE_DENY.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) &&
+ 	    hugepage_global_enabled())
+ 		return true;
+-	if (test_bit(PMD_ORDER, &huge_anon_orders_always))
+-		return true;
+-	if (test_bit(PMD_ORDER, &huge_anon_orders_madvise))
+-		return true;
+-	if (test_bit(PMD_ORDER, &huge_anon_orders_inherit) &&
+-	    hugepage_global_enabled())
++	if (huge_anon_orders_always || huge_anon_orders_madvise ||
++	    (huge_anon_orders_inherit && hugepage_global_enabled()))
+ 		return true;
+ 	if (IS_ENABLED(CONFIG_SHMEM) && shmem_hpage_pmd_enabled())
+ 		return true;
+@@ -474,9 +470,9 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
+ 			  unsigned long vm_flags)
+ {
+ 	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
+-	    hugepage_pmd_enabled()) {
+-		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
+-					    PMD_ORDER))
++	    thp_enabled()) {
++		if (thp_vma_allowable_orders(vma, vm_flags, TVA_ENFORCE_SYSFS,
++					    BIT(PMD_ORDER + 1) - 1))
+ 			__khugepaged_enter(vma->vm_mm);
  	}
-+	/* A larger folio was mapped; it will be skipped in next iteration */
-+	if (result == SCAN_PTE_MAPPED)
-+		goto decide_order;
-+
- 	if (result != SCAN_SUCCEED) {
+ }
+@@ -2586,8 +2582,8 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+ 			progress++;
+ 			break;
+ 		}
+-		if (!thp_vma_allowable_order(vma, vma->vm_flags,
+-					TVA_ENFORCE_SYSFS, PMD_ORDER)) {
++		if (!thp_vma_allowable_orders(vma, vma->vm_flags,
++					TVA_ENFORCE_SYSFS, BIT(PMD_ORDER + 1) - 1)) {
+ skip:
+ 			progress++;
+ 			continue;
+@@ -2611,6 +2607,11 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+ 				  khugepaged_scan.address + HPAGE_PMD_SIZE >
+ 				  hend);
+ 			if (IS_ENABLED(CONFIG_SHMEM) && vma->vm_file) {
++				if (!thp_vma_allowable_order(vma, vma->vm_flags,
++				    TVA_ENFORCE_SYSFS, PMD_ORDER)) {
++					khugepaged_scan.address += HPAGE_PMD_SIZE;
++					continue;
++				}
+ 				struct file *file = get_file(vma->vm_file);
+ 				pgoff_t pgoff = linear_page_index(vma,
+ 						khugepaged_scan.address);
+@@ -2689,7 +2690,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
  
- 		/* Go to the next order. */
-@@ -1558,6 +1587,8 @@ static int hpage_collapse_scan_ptes(struct mm_struct *mm,
- 			goto out;
- 		goto maybe_mmap_lock;
- 	} else {
-+
-+decide_order:
- 		address = _address;
- 		pte = _pte;
+ static int khugepaged_has_work(void)
+ {
+-	return !list_empty(&khugepaged_scan.mm_head) && hugepage_pmd_enabled();
++	return !list_empty(&khugepaged_scan.mm_head) && thp_enabled();
+ }
  
+ static int khugepaged_wait_event(void)
+@@ -2762,7 +2763,7 @@ static void khugepaged_wait_work(void)
+ 		return;
+ 	}
+ 
+-	if (hugepage_pmd_enabled())
++	if (thp_enabled())
+ 		wait_event_freezable(khugepaged_wait, khugepaged_wait_event());
+ }
+ 
+@@ -2793,7 +2794,7 @@ static void set_recommended_min_free_kbytes(void)
+ 	int nr_zones = 0;
+ 	unsigned long recommended_min;
+ 
+-	if (!hugepage_pmd_enabled()) {
++	if (!thp_enabled()) {
+ 		calculate_min_free_kbytes();
+ 		goto update_wmarks;
+ 	}
+@@ -2843,7 +2844,7 @@ int start_stop_khugepaged(void)
+ 	int err = 0;
+ 
+ 	mutex_lock(&khugepaged_mutex);
+-	if (hugepage_pmd_enabled()) {
++	if (thp_enabled()) {
+ 		if (!khugepaged_thread)
+ 			khugepaged_thread = kthread_run(khugepaged, NULL,
+ 							"khugepaged");
+@@ -2869,7 +2870,7 @@ int start_stop_khugepaged(void)
+ void khugepaged_min_free_kbytes_update(void)
+ {
+ 	mutex_lock(&khugepaged_mutex);
+-	if (hugepage_pmd_enabled() && khugepaged_thread)
++	if (thp_enabled() && khugepaged_thread)
+ 		set_recommended_min_free_kbytes();
+ 	mutex_unlock(&khugepaged_mutex);
+ }
 -- 
 2.30.2
 
