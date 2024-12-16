@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-446975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8307B9F2B8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:10:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBD99F2B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B521660AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:10:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B37957A2C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2D31FFC79;
-	Mon, 16 Dec 2024 08:10:23 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08E41FFC40;
+	Mon, 16 Dec 2024 08:10:51 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20981FF7C1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8703F1B5EB5;
+	Mon, 16 Dec 2024 08:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734336622; cv=none; b=l/PGECdpxpQyeQKZEt281332pa9fW56oe81SdUG7k1F5JRyFFW9mGsq/IQWKhQzEfT2C4NRKojz7vEwYucteZWDesZUWjntafIwSYHcGDaJNVNcHbZNpfoUOCgLX5bTrIIVrzqaEF0Crd1iG27v50A9PrEZpYmlCCdN1VzlrUcQ=
+	t=1734336651; cv=none; b=dbvD/LIK/TmIse/YRqkHXgeRlv1XETf7txYz07+Z2qxLprq3UIMIwfi4JfWb0IsSyD34NxbqEUu/AP3PALsSmY0dHvRrfg87UQKDxteRhCHPJcrHcT/iaTuANCfqfqK2R6EtfH6TVJlCfjRAVtHg3yTb3nU7XI+qjuW6/PAwgXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734336622; c=relaxed/simple;
-	bh=KbX/MJdK6ZdyPAaE9FDaKyEEueArsLx9toG+wsNvEkE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O41gLRNOGXNFbmqCEBa1LbH2e/o3Wt8ujaY8ehRQ2m3X/vUgPVjwAz/1qugsGh6USYlFYCzAfhuOhyJ46JqmsdNpQiJSwJ0Dcwab6afSrqcYP+oD4/gPS2bOKyPMj6Bjg5ldJyxFwnrA1S9+nLQgUyKIR/AUxw4Vvnfmh3ZWDGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so71394335ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:10:20 -0800 (PST)
+	s=arc-20240116; t=1734336651; c=relaxed/simple;
+	bh=/emqZqfbQ65nMrGTAYU0MnfHjtKYGqaTGMt5J2ol3dE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ojvw1Eg+cntIhtHJqavqp7nNeozkE0jncdhe2h4Qmm0bFiPt3vk+Y4LRmD1Nhpv5p2nTRtvx0/fJj4ndGCH0Pt1GbiQ0iTD3itG8LiBVYyQy0TQcVrjTFPM5Dv2NFtQOC68jZYllIBOVNxi2ZXN68VETgJRa5a2+WgerFkfShno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa69107179cso717495166b.0;
+        Mon, 16 Dec 2024 00:10:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734336620; x=1734941420;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JV8iIp9qpM2IB+djcYXWsqgd5g5+MlAIrnWp9CzwxPs=;
-        b=DP1FoLeU/v+Tltpy8Z9z9+nJD/MVJIfjSmtVpdFYVKpkvXxCyWDeFel4+oRaGKGomG
-         ATHjvCY+pd1XrvCSYWBk7atm0FAHIdafABpNdc7CTj2vc0MgqxpCJRtle4+Dtit+BcWm
-         bYYaWnXclaa7LSqBKFwVMkcqmBnl2XFJSZ4bbo2In0oYcih/0yCKx8r3bsaw7pXicK9y
-         dulC05XDiVimmjTcrOB5PQnhs6DDiUSfULx+U/Xm+utnOYYFc4Yjmo/zI+pNa5DuwZVX
-         e2T+Sexv7JVu7sMqhVOjpdZoqEk+nZjOmKiF7lu5xW0BTTcdvWv90yhFMuf5g96mDvs7
-         BW6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXfwOfhSZy7fdD6oH3vljGgW5gVmWbJvYM7my2qc/KesKlw72q2f/dQosx0DzugJDF54X4xrIEE8un/XV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5V7KQXc82HuO8Ueq2So/8egtUodQyZ1uyKGPcJfNf3MzUSCam
-	9YbjIsNJ/LQHtWF24VFj7ro3zsqnmbOv7VjtwyD9FcS5t6cKeCtoSDexecAEECkjqoF+inutQII
-	H9X9+JKwemlO0FNVglt1Xm1VoRSIrf40thXCbAuGbZUK/R/4/4ZFaRrU=
-X-Google-Smtp-Source: AGHT+IFhLZx/D4YLRUo+eS+hjDg+ipRi+l48Zy+dYIUdALk9xwMeHg2kotV1B+iEEaApZlUAKU4z8lFOqZRpMEdgi4lfd9k5yDfI
+        d=1e100.net; s=20230601; t=1734336648; x=1734941448;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9qsaZIhrCZYpmQkmeAq3rJ2jvMNztmu3MzjxK25fqaw=;
+        b=BoeGJ5Ysc4IK8FD+KF30E1N3y2m7qd0vkFtgIYvPkRPUtsuq7hBnKyY8sMqMx6qThW
+         plQS7zQdsaP0hrjRpGywN12JGFQ+oRzMuo9hR29y2d+s+nXGXx2nOK8FiPc8iVks3bG2
+         X6BVmzl8cJMjQYefCNcOWeVbSAMMTX83sOtuzL84KVluwnNafYDLJps8HrOwlC5UdlG2
+         gdzdXnu2Bvnf9BBc07kAMleoZUyuxexBGX29o9B9Gtk7HWv4UGNASVtx46lQeEMwucI/
+         H7dS6wA39tQbPks7XwMrfpoafXwtjapoYdGBm7a65Ae7qsms3gKi78KDMYnUtHqJQCpt
+         oorQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdSqxAD65hApROQL/7ienPJGmlt7YGNxu8pPBCNKCHyeXPdjGCRYFo4NjsyE6TmbPwQvCSr+sGOSnCUI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeYMb+5SD3w3J5frqP2cLrEm4YeauuebnfBiRWRoT9oylmPVPq
+	jVJYd3NqWOh3YqzlQ2IkjLBBY2LgsFRAZVs/vZWfztBKF6e7s8mQ
+X-Gm-Gg: ASbGnctXlo5D+5q5vNsVIExVfcx1fDfHeDdXRJonxe4Yjkn72HccoKW0MSNmkCLhjA5
+	B7rP5jLUlm+G5Zs7Qq9PJhcufQAROHAL8aFulCF0KQBfHy4HBV8GwKsaQjJNIGSpoRQRVAXZIlI
+	vwLQAZkgKt6N6+YSXVelZfK/kAZebfw3M1KogKvSnGoIxrZoCLDFN1aP4lvc+PeQY0HUdXhXP02
+	A9raZliSAdxvad7M5XjQwkGg0pY37WS5L0MmUD40txczV2g0QHldOdUoPg/FVMZ3l8WYa3lm70D
+	q2Xm9WRmFR7Wgme5ONsJFN1jsmcgpxD2E4io
+X-Google-Smtp-Source: AGHT+IH+q8WFVJO+t8bNDZrj5g192HkdRZWmpkWI2ZCISRP40w+b+G6RX87sLNKElyjrFOBdNYigiA==
+X-Received: by 2002:a17:906:32c2:b0:aa6:5eae:7ed6 with SMTP id a640c23a62f3a-aab779585ddmr948994366b.13.1734336647516;
+        Mon, 16 Dec 2024 00:10:47 -0800 (PST)
+Received: from [127.0.0.1] (p200300f6f7081700fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f708:1700:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9635a000sm299013566b.113.2024.12.16.00.10.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 00:10:47 -0800 (PST)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH v2 0/3] btrfs: reduce repeated calls to
+ btrfs_need_stripe_tree_update()
+Date: Mon, 16 Dec 2024 09:10:38 +0100
+Message-Id: <20241216-btrfs_need_stripe_tree_update-cleanups-v2-0-42b6d0274da7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1948:b0:3a7:8c3f:edce with SMTP id
- e9e14a558f8ab-3aff4619adamr121208775ab.3.1734336620090; Mon, 16 Dec 2024
- 00:10:20 -0800 (PST)
-Date: Mon, 16 Dec 2024 00:10:20 -0800
-In-Reply-To: <6735aa91.050a0220.2a2fcc.0062.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675fe06c.050a0220.37aaf.011c.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __journal_res_get (2)
-From: syzbot <syzbot+53bb24d476ef8368a7f0@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH7gX2cC/5XNQQ6CMBSE4auQrq2hL4joynsY0gAdoJGU5rUQD
+ eHuVm7g8p/FfJsIYIsg7tkmGKsNdnYp6JSJbmzcAGlNakE5FYoUyTZyH7QDjA6RrYeODOjFmyZ
+ CdhMat/ggVVn2F1xR3YpOpDPP6O37gJ516tGGOPPncFf1W/8mViVzaaqC2tJUJqf28QI7TOeZB
+ 1Hv+/4FHblDi90AAAA=
+X-Change-ID: 20241212-btrfs_need_stripe_tree_update-cleanups-166f5e7e894c
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Filipe Manana <fdmanana@suse.com>, 
+ Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1237; i=jth@kernel.org;
+ h=from:subject:message-id; bh=/emqZqfbQ65nMrGTAYU0MnfHjtKYGqaTGMt5J2ol3dE=;
+ b=owGbwMvMwCV2ad4npfVdsu8YT6slMaTHP2gTVrQLrSzROHC55bXW3LAoNbPpPA3XvX5Nn8OQu
+ quR969oRykLgxgXg6yYIsvxUNv9EqZH2Kccem0GM4eVCWQIAxenAEykcz8jw3P1tVlpC2wc7CNd
+ P24wWHElQnLRpR0F+Wv7u7m9LG+fL2b47/xjf75n2/3rxpK+jTnGU6rsGc4qt61Zo+FzpZ3HQsq
+ KBwA=
+X-Developer-Key: i=jth@kernel.org; a=openpgp;
+ fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-syzbot has found a reproducer for the following issue on:
+When working on RST backed RAID56 I was looking for a way to plumb the "use
+RST or not" decision into the bio submission code and this way found that
+we can cache the return of btrfs_need_raid_stripe_tree_update() in the
+btrfs_io_context (and btrfs_io_stripe) so there's no need to do multiple
+lookups for the same I/O.
 
-HEAD commit:    2e7aff49b5da Merge branches 'for-next/core' and 'for-next/..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1129a60f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=696fb014d05da3a3
-dashboard link: https://syzkaller.appspot.com/bug?extid=53bb24d476ef8368a7f0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12b547e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10baf344580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ef408f67fde3/disk-2e7aff49.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/414ac17a20dc/vmlinux-2e7aff49.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a93415d2a7e7/Image-2e7aff49.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6280c05687f7/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+53bb24d476ef8368a7f0@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/journal.c:359!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 6423 Comm: syz-executor145 Not tainted 6.13.0-rc2-syzkaller-g2e7aff49b5da #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : journal_entry_open fs/bcachefs/journal.c:359 [inline]
-pc : __journal_res_get+0x1d80/0x1f60 fs/bcachefs/journal.c:544
-lr : journal_entry_open fs/bcachefs/journal.c:359 [inline]
-lr : __journal_res_get+0x1d80/0x1f60 fs/bcachefs/journal.c:544
-sp : ffff80009e026b00
-x29: ffff80009e026d80 x28: 000000000000000a x27: 0000000000effffe
-x26: 8111000080100103 x25: ffff0000dcacab40 x24: ffff0000dcacab40
-x23: ffff0000dcacab38 x22: dfff800000000000 x21: 1fffe0001b959545
-x20: 1fffe0001b9594a0 x19: ffff0000dcaca500 x18: ffff80009e0267e0
-x17: 000000000000e53f x16: ffff80008045f36c x15: 0000000000000001
-x14: 1fffe0001b959567 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001b959568 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c6acdac0 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : ffff800093532ec8 x4 : 0000000000000008 x3 : ffff800082b728f0
-x2 : 0000000000000000 x1 : 0000000000000002 x0 : 0000000000000000
-Call trace:
- journal_entry_open fs/bcachefs/journal.c:359 [inline] (P)
- __journal_res_get+0x1d80/0x1f60 fs/bcachefs/journal.c:544 (P)
- journal_entry_open fs/bcachefs/journal.c:359 [inline] (L)
- __journal_res_get+0x1d80/0x1f60 fs/bcachefs/journal.c:544 (L)
- bch2_journal_res_get_slowpath+0xe0/0x618 fs/bcachefs/journal.c:606
- bch2_journal_res_get+0x124/0x1b4 fs/bcachefs/journal.h:382
- bch2_journal_meta+0x9c/0x26c fs/bcachefs/journal.c:842
- bch2_journal_flush_device_pins+0x3b0/0x5e0 fs/bcachefs/journal_reclaim.c:889
- bch2_data_job+0x290/0xa90 fs/bcachefs/move.c:1065
- bch2_data_thread+0xc0/0x178 fs/bcachefs/chardev.c:438
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-Code: 17ffff9f 976c947b d4210000 976c9479 (d4210000) 
----[ end trace 0000000000000000 ]---
-
+Signed-off-by: Johannes Thumshirn <johannes.thjumshirn@wdc.com>
+---
+Changes in v2:
+- remove pointless comments
+- place 'use_rst' after 'max_errors' in struct btrfs_io_context
+- fix typo
+- don't break lines if they're < 85 chars
+- Link to v1: https://lore.kernel.org/r/20241212-btrfs_need_stripe_tree_update-cleanups-v1-0-d842b6d8d02b@kernel.org
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Johannes Thumshirn (3):
+      btrfs: cache stripe tree usage in io_geometry
+      btrfs: cache RAID stripe tree decision in btrfs_io_context
+      btrfs: pass btrfs_io_geometry to is_single_device_io
+
+ fs/btrfs/bio.c     |  3 +--
+ fs/btrfs/volumes.c | 15 ++++++++-------
+ fs/btrfs/volumes.h |  1 +
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+---
+base-commit: 043ad78b53f999f39fbc0044fd8f69d25d300f4e
+change-id: 20241212-btrfs_need_stripe_tree_update-cleanups-166f5e7e894c
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
