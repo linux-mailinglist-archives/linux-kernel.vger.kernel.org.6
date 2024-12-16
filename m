@@ -1,159 +1,127 @@
-Return-Path: <linux-kernel+bounces-448016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454949F39DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 359D99F39E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C1D16D15F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D6116D153
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3D420967C;
-	Mon, 16 Dec 2024 19:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33EB208978;
+	Mon, 16 Dec 2024 19:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V5O8R22u"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RceAWJ5Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C74207DF8;
-	Mon, 16 Dec 2024 19:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2B0206F35;
+	Mon, 16 Dec 2024 19:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377209; cv=none; b=peFNa92eK4e+/+Dss1NrYCmb1gw7GWj4FFZqwG89JUYXLC9pTfsOoS3QMD3zwd5VxaE8hHZ42VayUHKOMSjd1aeoETdhXLlhpeRK/tQqhCSG2dEYjXgXT3uvRcImpc5XXLIh8I9s1MnCnJWqZKIQCyj+ifzLQ5/g72GBAYoYu3s=
+	t=1734377388; cv=none; b=lrZXCR3k5P+qQnnLRvRVfq4RuRB77HeRQ8TeAfA55kmJr0p7lU7tlEyL12lkg8TIafoOS7++0pY2pqP2sVchIikRtf9OndKuyNG6lNZwqKGg5TUbShAocq5+cCax0e0NxXxRqlttPCXx525j8f/6pyKgY9maM6cFj4gpACtDdHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377209; c=relaxed/simple;
-	bh=PGjgd7TBpJnauZyGJkoqMA0DOAbX29AOhv3na7ggMMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mboTNi+YCAFfH5yAVytMQaKkARloyj+C3lhFOZMw26CawLUVKg8JKuHHty8sFxs5sGbH2eaoHmtktS+YY5BM6KgnWNLZgyAUmePW4j4NKLjuP288CyTXsLxywWrKB/SVO3hu/jLLFeqQLbRVHU/3VHbo/KNTpVg3BdA9Kb5sYM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V5O8R22u; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGHA1Vm017650;
-	Mon, 16 Dec 2024 19:26:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	x8o5BulnjWrc9FstuAyn8X67jGFrZz3Vo5bL2vWSzoo=; b=V5O8R22uUGcGFWOE
-	Jj0eJ9MH/vIA4LauYnfrQtJYy6/pdkdio9+dtHuwtq/SZdroqWHWnaHQrX6myZlX
-	iEUdV9XQhASLAJuHodAuc0IOhOZUCVzxAACUPTA8Mtp0JrylOcaR8APsU2ofc2Qp
-	N6Dash52hyVfaUrLfLW4QJw0g2tOjqCstq91G/y5ekRUEOI75o7qSslY7AQURLXW
-	jLH4jqwCIPHRYRkNTVtNWLR+0N/DI0Pm7aXPYRjueJY4y1u/5pSOgOg6BU9Nhk4Z
-	Sf0xD3TUtxzqO/9uvshmhp+vqSRp2FxykRX/TjhRpZH/AjvqVfyRDohSkmp0erUm
-	S6Qfrg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jrc1rb3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:26:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJQePR000591
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 19:26:40 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 11:26:38 -0800
-Message-ID: <54edef24-b27a-4d79-aff1-672d4e65b5a3@quicinc.com>
-Date: Mon, 16 Dec 2024 11:26:37 -0800
+	s=arc-20240116; t=1734377388; c=relaxed/simple;
+	bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Egll8SH6sb6nhRrDaioF27RGEvSzdQOM2+6jwbQTjM6CdkxBWAGLCOevGkBDPfZQMN6a/LNzIKPI9YYPuP0MKPfy1IsMM0cpWj87jKgZosMVB0gAuSFHXwN2QSMPDppSjy7SwHRM95eFgpmmAE4u9kDIgAWiUz6d9ETvFQTZzGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RceAWJ5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C88EC4CED0;
+	Mon, 16 Dec 2024 19:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734377387;
+	bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
+	h=From:Date:Subject:To:Cc:From;
+	b=RceAWJ5Q2b4cYp49HafjaGkvIF9zm69/z/2HLKc3IS9jz5zzn38GD+oTZSnh2IbYc
+	 jr+FOGAmx09yngJSQoX/EYvhpQNh9STzPtn0RqhJ/PSyAPPXLtlmHYXc7KdNDDUhAJ
+	 tcBc1lJv/sytueVF9aHmsvhJC06GcDzdMSuPfzI7yHeQQLR9nLWrKQto8qFTJhhAiF
+	 VQwcTGXNvF7V2nZOyYp+r1YhWaoAYRiJvOaOvGB92CEOa9edLORlo1EAslUr9y/KCC
+	 DCIw9DDaSLGIseq2rxT1fqdK9+Gsz1Ov0gw8UN1e9QvGgV7eqS2Ofxbxy08XEY0gm0
+	 T3kdVHQTcTJPw==
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 16 Dec 2024 19:28:24 +0000
+Subject: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming
+ unwritable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: correct LM pairing for SM6150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: Li Liu <quic_lliu6@quicinc.com>, Fange Zhang <quic_fangez@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-sm6150-v1-1-9fd7ce2ff606@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-dpu-fix-sm6150-v1-1-9fd7ce2ff606@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _eGJJNDVW3dGcaRy1bI7HwslwN8P70cS
-X-Proofpoint-ORIG-GUID: _eGJJNDVW3dGcaRy1bI7HwslwN8P70cS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160160
+Message-Id: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFd/YGcC/x3MSQqAMAxA0atI1gZsndCriIvWRg3iQCMiiHc3u
+ Pzw+A8IRSaBNnkg0sXC+6Zh0gSG2W0TIQdtsJktjDUVLteKLq5VgSPfKHQqQCccPJ+CjadAtvS
+ 1Czno44ik7P93/ft+dELguG8AAAA=
+X-Change-ID: 20241216-kvm-arm64-fix-set-id-asidbits-9bede25b7ad3
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2077; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnYH+o8aXSlFkq0JGBg1lM1VwGO+DbhuBYGgA0lSnu
+ em750Y2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ2B/qAAKCRAk1otyXVSH0HySB/
+ 9KXCZ0JRJ0FegaopfpAL6MwAVzZ47XDi1i0B4ODxl5pBgFCnLOSZOzxG1WNdAKaNxymgQOG9TyZNq+
+ 7ReuXTGTiZspw2CqVdH3ypZNWzIgfkRzNg8hYx+nli6lddmcubxQE94D75DmMTJAAz+jZVraqxmSSs
+ vlZxm1WG8s1gN5WfYEwkrsnxQkCsjDoRTlVKg4oVOs6X7Kc3ePbuvIwk1exGMWGZ8uHUaTab9+r5sl
+ ej+WQt7MSuXLY2ymYH6oaITPjt+FJM0kDNg6k1J962MLyfQEMkpS3m2z36sGgVFlsspasqbgMStuif
+ qk7g0Ba+4gaA/8CXKp9bQ91TfgI9K/
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+In commit 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits
+to be overridden") we made that bitfield in the ID registers unwritable
+however the change neglected to make the corresponding update to set_id_regs
+resulting in it failing:
 
+# ok 56 ID_AA64MMFR0_EL1_BIGEND
+# ==== Test Assertion Failure ====
+#   aarch64/set_id_regs.c:434: masks[idx] & ftr_bits[j].mask == ftr_bits[j].mask
+#   pid=5566 tid=5566 errno=22 - Invalid argument
+#      1	0x00000000004034a7: test_vm_ftr_id_regs at set_id_regs.c:434
+#      2	0x0000000000401b53: main at set_id_regs.c:684
+#      3	0x0000ffff8e6b7543: ?? ??:0
+#      4	0x0000ffff8e6b7617: ?? ??:0
+#      5	0x0000000000401e6f: _start at ??:?
+#   0 != 0xf0 (masks[idx] & ftr_bits[j].mask != ftr_bits[j].mask)
+not ok 8 selftests: kvm: set_id_regs # exit=254
 
-On 12/16/2024 12:20 AM, Dmitry Baryshkov wrote:
-> According to the vendor devicetree on SM6150 LM_0 is paired with LM_2
-> rather than LM_1. Correct pairing indices.
-> 
-> Fixes: cb2f9144693b ("drm/msm/dpu: Add SM6150 support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-> index 621a2140f675fa28b3a7fcd8573e59b306cd6832..81eb274cc7000a3b70b0f6650088ddcd24648eab 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-> @@ -116,20 +116,20 @@ static const struct dpu_lm_cfg sm6150_lm[] = {
->   		.sblk = &sdm845_lm_sblk,
->   		.pingpong = PINGPONG_0,
->   		.dspp = DSPP_0,
-> -		.lm_pair = LM_1,
-> +		.lm_pair = LM_2,
->   	}, {
->   		.name = "lm_1", .id = LM_1,
->   		.base = 0x45000, .len = 0x320,
->   		.features = MIXER_QCM2290_MASK,
->   		.sblk = &sdm845_lm_sblk,
->   		.pingpong = PINGPONG_1,
-> -		.lm_pair = LM_0,
->   	}, {
->   		.name = "lm_2", .id = LM_2,
->   		.base = 0x46000, .len = 0x320,
->   		.features = MIXER_QCM2290_MASK,
->   		.sblk = &sdm845_lm_sblk,
->   		.pingpong = PINGPONG_2,
-> +		.lm_pair = LM_0,
->   	},
->   };
+Remove ID_AA64MMFR1_EL1.ASIDBITS from the set of bitfields we test for
+writeability.
 
-Have a basic question here. We check the peer only if we will have more 
-than one LM needed in the topology but sm6150 does not have 3dmux, so 
-the number of LMs will not go beyond one.
+Fixes: 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/kvm/aarch64/set_id_regs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-318 		/* Valid primary mixer found, find matching peers */
-319 		if (lm_count < reqs->topology.num_lm) {
+diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
+index a79b7f18452d2ec336ae623b8aa5c9cf329b6b4e..3a97c160b5fec990aaf8dfaf100a907b913f057c 100644
+--- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
++++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
+@@ -152,7 +152,6 @@ static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
+ 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGENDEL0, 0),
+ 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, SNSMEM, 0),
+ 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGEND, 0),
+-	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ASIDBITS, 0),
+ 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, PARANGE, 0),
+ 	REG_FTR_END,
+ };
 
-It seems like this fix will be unused or does not really matter.
+---
+base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
+change-id: 20241216-kvm-arm64-fix-set-id-asidbits-9bede25b7ad3
 
-Downstream has a different implementation for lm_pair, its used even to 
-decide the LM pair for CWB mux. Upstream has a simpler implementation of 
-just doing that in the code of using ODD LMs for ODD CWB muxes and even 
-LMs for even CWB muxes. So fix is okay but not needed.
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
->   
-> 
-> ---
-> base-commit: a3d570eace66b4016f2692a6f1045742ee70c6b1
-> change-id: 20241216-dpu-fix-sm6150-17f0739f8fe0
-> 
-> Best regards,
 
