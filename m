@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-447730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0735C9F367C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579769F367E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CFE188FCF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:47:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC81C189013D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E4F20C460;
-	Mon, 16 Dec 2024 16:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1711B20C489;
+	Mon, 16 Dec 2024 16:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="Qs8KU2bG"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="ia0Ml4O0"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CFF20C02C;
-	Mon, 16 Dec 2024 16:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C804620C03C;
+	Mon, 16 Dec 2024 16:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367322; cv=none; b=YG0jyUoatvVLn/OR2XjWCvfhfWlvmCtEmwq5PX8NNlLCExDEy0k6hvBORgFFzxIRObLXpamK2+aUUrqFkCq+q/Rr8cMQgtks801Jzkrs6xV+8UWg/Dd6JI3YH1Vr5lGPfKp3ezRARLsNTB7lOp0VhvkmlzUbBsBdOU+XlOfraxU=
+	t=1734367324; cv=none; b=tFKLY9UAadjiIuEUZmOxqWfY7gGh6WNpQZmf+R8XWLyx9+3kZLOMv94I95L3PhSAOPZaZDZed3eu089HhX7BKuE0/qxgFL7ly6CCXiItVNnVxFF2evIUrxcdtWxMnkQ6XB+I8iDh+v26xjNpxI+5LYIFKGmtMQnYN6ypprdIfZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367322; c=relaxed/simple;
-	bh=fIcZ5Xj8C8Oj8FZcRN5Gbr/C/m51uRS8ByQPpn58ThA=;
+	s=arc-20240116; t=1734367324; c=relaxed/simple;
+	bh=FJzvDyWWCwqVpHIfMCa7UJrZGBneB+gtnGIL7XG+RtE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJsA1UVykidluGugDmpryrt/QC1uRqml0pkku3D36XJv8je8NIW3rJgM6K5Rm60ZaLVoUEJcrDtcDnYRFuagPt4PcgrBwGyy+5L33nNcJ3ymGBSS1od8i7j1BZ9TIDz/hmjIwexNG5xJzEQDykhKeYBJwQWAE1HVI9u621GsoRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=Qs8KU2bG; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=lCNwFqcu1YIj2/SQW8z63RQm/111lN+Lj+S0wAsU5T+oELH5sJUYyje4MEQPuNJ1dqSkmxrKtRJcK7nHAimlNYukw4gK83uyEPPXWhfqoB7tPTct+CrQDtIorjS+bXDRD24DQfZw6Kuw2HH0lxItNeLSjblEHEo6UaNvapzUlxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=ia0Ml4O0; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1734367319;
+	s=2023072701; t=1734367321;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LV+sbTjEWQAFpQ5C0FTAsDA0F0DIiqPLpESDx1eDNSc=;
-	b=Qs8KU2bGKrvcIM3NlOSN4Rc8r1uSyjAiPaGkW74T2FJ2Ko18KQfD57LZl5/yetOLCWgngm
-	DKyiF4l1NC/D6K5y1ZMZXAFtb+gyCMNoJsjBATP4v68JdMm1wvUas3yz6Y4XkDj0QFK8G0
-	6ignqlq3rGpYDwFk0T6A1GmZxa6sBaZ4aYDFhSY/bx/Xu/roq/Yq+I38X4suPFZB78Fn8W
-	cGG8nEMd6UJ+NdX7j3VOC2aBnOFRrOH0O0VL/R5lh9UdP22hGYGNP77am4S1fDKAvjzEQ6
-	hGwgEs5n5haGjkXr78t2Ksc1QRA68jV2lDVcHEibCBJNONKZ9wG6TCIY/zCEjQ==
+	bh=tBaRFnJhDQjwxVQI6LlYqr3HMdrJ+5zyzl8QyvbBav0=;
+	b=ia0Ml4O00zsUQsYb3+rYVu+PUysdBcieWACyfnRBpp9jUUEd6HJ5o2gm5RblkGPXi0hXRs
+	tCBVfJRx5RrMPaywu0p7g5tRnmuZqJGP1G0ER8zD97WyJ4GOvp15pk4qrr/BOVxId6b1Pe
+	RcyLRmxJN6GcyroGfY4sOUx2WH4V7NBsAf3qSHCN+99JbNlT2diswb6e/w2uEUgqlypxz7
+	gK/X44bDrAtq7KangjjdGvyhlk2dV5d9NdgCtviVttRRq13wA2uNHuMT6q43GYhUxIbGGh
+	7pzX+RBcAIpLBda0aztpwg0qxEY+yh/KI/VPcmirqFrlhKc/XuiyRrjiwj04SQ==
 To: selinux@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -57,10 +57,13 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH v2 19/22] selinux: validate symbols
-Date: Mon, 16 Dec 2024 17:40:17 +0100
-Message-ID: <20241216164055.96267-19-cgoettsche@seltendoof.de>
+	llvm@lists.linux.dev,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	GUO Zihua <guozihua@huawei.com>
+Subject: [RFC PATCH v2 20/22] selinux: more strict bounds check
+Date: Mon, 16 Dec 2024 17:40:18 +0100
+Message-ID: <20241216164055.96267-20-cgoettsche@seltendoof.de>
 In-Reply-To: <20241216164055.96267-1-cgoettsche@seltendoof.de>
 References: <20241216164055.96267-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -75,133 +78,105 @@ Content-Transfer-Encoding: 8bit
 
 From: Christian Göttsche <cgzones@googlemail.com>
 
-Some symbol tables need to be validated after indexing, since during
-indexing their referenced entries might not yet have been indexed.
+Validate the types used in bounds checks.
+Replace the usage of BUG(), to avoid halting the system on malformed
+polices.
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- security/selinux/ss/policydb.c | 94 ++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ security/selinux/ss/policydb.c | 29 +++++++++++++++++++++++++++--
+ security/selinux/ss/policydb.h |  1 +
+ security/selinux/ss/services.c |  3 +++
+ 3 files changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index a4c9377b8060..e9e478650e74 100644
+index e9e478650e74..57ab2a811a15 100644
 --- a/security/selinux/ss/policydb.c
 +++ b/security/selinux/ss/policydb.c
-@@ -673,6 +673,84 @@ static int (*const index_f[SYM_NUM])(void *key, void *datum, void *datap) = {
- };
- /* clang-format on */
+@@ -1020,6 +1020,15 @@ bool policydb_class_isvalid(const struct policydb *p, u16 class)
+ 	return true;
+ }
  
-+static int role_validate(void *key, void *datum, void *datap)
++bool policydb_user_isvalid(const struct policydb *p, u32 user)
 +{
-+	const struct policydb *p = datap;
-+	const struct role_datum *role = datum;
-+	struct ebitmap_node *node;
-+	u32 i;
-+
-+	ebitmap_for_each_positive_bit(&role->dominates, node, i) {
-+		if (!policydb_role_isvalid(p, i))
-+			goto bad;
-+	}
-+
-+	ebitmap_for_each_positive_bit(&role->types, node, i) {
-+		if (!policydb_type_isvalid(p, i + 1))
-+			goto bad;
-+	}
-+
-+	return 0;
-+
-+bad:
-+	pr_err("SELinux:  invalid role %s\n", sym_name(p, SYM_ROLES, role->value - 1));
-+	return -EINVAL;
++	if (!user || user > p->p_roles.nprim)
++		return false;
++	if (!p->sym_val_to_name[SYM_USERS][user - 1])
++		return false;
++	return true;
 +}
 +
-+static int user_validate(void *key, void *datum, void *datap)
-+{
-+	const struct policydb *p = datap;
-+	const struct user_datum *usrdatum = datum;
-+	struct ebitmap_node *node;
-+	u32 i;
-+
-+	ebitmap_for_each_positive_bit(&usrdatum->roles, node, i) {
-+		if (!policydb_role_isvalid(p, i))
-+			goto bad;
-+	}
-+
-+	if (!mls_range_isvalid(p, &usrdatum->range))
-+		goto bad;
-+
-+	if (!mls_level_isvalid(p, &usrdatum->dfltlevel))
-+		goto bad;
-+
-+	return 0;
-+
-+bad:
-+	pr_err("SELinux:  invalid user %s\n", sym_name(p, SYM_USERS, usrdatum->value - 1));
-+	return -EINVAL;
-+}
-+
-+static int sens_validate(void *key, void *datum, void *datap)
-+{
-+	const struct policydb *p = datap;
-+	const struct level_datum *levdatum = datum;
-+
-+	if (!mls_level_isvalid(p, &levdatum->level))
-+		goto bad;
-+
-+	return 0;
-+
-+bad:
-+	pr_err("SELinux:  invalid sensitivity\n");
-+	return -EINVAL;
-+}
-+
-+
-+/* clang-format off */
-+static int (*const validate_f[SYM_NUM])(void *key, void *datum, void *datap) = {
-+	NULL, /* Everything validated in common_read() and common_index() */
-+	NULL, /* Everything validated in class_read() and class_index() */
-+	role_validate,
-+	NULL, /* Everything validated in type_read(), type_index() and type_bounds_sanity_check() */
-+	user_validate,
-+	NULL, /* Everything validated in cond_read_bool() and cond_index_bool() */
-+	sens_validate,
-+	NULL, /* Everything validated in cat_read() and cat_index() */
-+};
-+/* clang-format on */
-+
- #ifdef CONFIG_SECURITY_SELINUX_DEBUG
- static void hash_eval(struct hashtab *h, const char *hash_name,
- 		      const char *hash_details)
-@@ -765,6 +843,16 @@ static int policydb_index(struct policydb *p)
- 		if (rc)
- 			goto out;
- 	}
-+
-+	for (i = 0; i < SYM_NUM; i++) {
-+		if (!validate_f[i])
-+			continue;
-+
-+		rc = hashtab_map(&p->symtab[i].table, validate_f[i], p);
-+		if (rc)
-+			goto out;
-+	}
-+
- 	rc = 0;
- out:
- 	return rc;
-@@ -1087,6 +1175,12 @@ static int context_read_and_validate(struct context *c, struct policydb *p,
- 			pr_err("SELinux: error reading MLS range of context\n");
- 			goto out;
+ bool policydb_role_isvalid(const struct policydb *p, u32 role)
+ {
+ 	if (!role || role > p->p_roles.nprim)
+@@ -1940,6 +1949,12 @@ static int user_bounds_sanity_check(void *key, void *datum, void *datap)
+ 			return -EINVAL;
  		}
-+
-+		rc = -EINVAL;
-+		if (!mls_range_isvalid(p, &c->range)) {
-+			pr_warn("SELinux: invalid range in security context\n");
-+			goto out;
-+		}
- 	}
  
- 	rc = -EINVAL;
++		if (!policydb_user_isvalid(p, upper->bounds)) {
++			pr_err("SELinux: user %s: invalid boundary id %d\n",
++			       (char *) key, upper->bounds);
++			return -EINVAL;
++		}
++
+ 		upper = p->user_val_to_struct[upper->bounds - 1];
+ 		ebitmap_for_each_positive_bit(&user->roles, node, bit)
+ 		{
+@@ -1977,6 +1992,12 @@ static int role_bounds_sanity_check(void *key, void *datum, void *datap)
+ 			return -EINVAL;
+ 		}
+ 
++		if (!policydb_role_isvalid(p, upper->bounds)) {
++			pr_err("SELinux: role %s: invalid boundary id %d\n",
++			       (char *) key, upper->bounds);
++			return -EINVAL;
++		}
++
+ 		upper = p->role_val_to_struct[upper->bounds - 1];
+ 		ebitmap_for_each_positive_bit(&role->types, node, bit)
+ 		{
+@@ -2011,9 +2032,13 @@ static int type_bounds_sanity_check(void *key, void *datum, void *datap)
+ 			return -EINVAL;
+ 		}
+ 
+-		upper = p->type_val_to_struct[upper->bounds - 1];
+-		BUG_ON(!upper);
++		if (!policydb_type_isvalid(p, upper->bounds)) {
++			pr_err("SELinux: type %s: invalid boundary id %d\n",
++			       (char *) key, upper->bounds);
++			return -EINVAL;
++		}
+ 
++		upper = p->type_val_to_struct[upper->bounds - 1];
+ 		if (upper->attribute) {
+ 			pr_err("SELinux: type %s: "
+ 			       "bounded by attribute %s\n",
+diff --git a/security/selinux/ss/policydb.h b/security/selinux/ss/policydb.h
+index aa3b21bd5286..512d2081733b 100644
+--- a/security/selinux/ss/policydb.h
++++ b/security/selinux/ss/policydb.h
+@@ -323,6 +323,7 @@ extern bool policydb_context_isvalid(const struct policydb *p, const struct cont
+ extern bool policydb_class_isvalid(const struct policydb *p, u16 class);
+ extern bool policydb_type_isvalid(const struct policydb *p, u32 type);
+ extern bool policydb_role_isvalid(const struct policydb *p, u32 role);
++extern bool policydb_user_isvalid(const struct policydb *p, u32 user);
+ extern bool policydb_boolean_isvalid(const struct policydb *p, u32 boolean);
+ extern int policydb_read(struct policydb *p, struct policy_file *fp);
+ extern int policydb_write(struct policydb *p, struct policy_file *fp);
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 227fe7832c08..6dd281ddef7a 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -711,6 +711,9 @@ static void context_struct_compute_av(struct policydb *policydb,
+ 	 * If the given source and target types have boundary
+ 	 * constraint, lazy checks have to mask any violated
+ 	 * permission and notice it to userspace via audit.
++	 *
++	 * Infinite recursion is avoided via a depth pre-check in
++	 * type_bounds_sanity_check().
+ 	 */
+ 	type_attribute_bounds_av(policydb, scontext, tcontext,
+ 				 tclass, avd);
 -- 
 2.45.2
 
