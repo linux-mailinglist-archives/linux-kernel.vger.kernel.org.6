@@ -1,249 +1,1190 @@
-Return-Path: <linux-kernel+bounces-446811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9A19F2968
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:08:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E229F2A40
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BCB1633B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280021885A07
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1207E1BD9F6;
-	Mon, 16 Dec 2024 05:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B7C1CD1E4;
+	Mon, 16 Dec 2024 06:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mfw9C4oq"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="NPuiqJ/V"
+Received: from mail-m11871.qiye.163.com (mail-m11871.qiye.163.com [115.236.118.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FCE13D53A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3201BF9D6;
+	Mon, 16 Dec 2024 06:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734325718; cv=none; b=cCkY6hDwznXQ74C5WNomcSH1jWbX/mrVlxdpvtGT1lO1fWykFxMEsa8H1/zu3SSNhBGHTqvT0er3QY7ySMI+WWSUp5skV5/Csfaps/bsce9ufV+ytFjTfw0B5AFHQ9g4b/yS+UcfX8mG3w/7c2fdAEGPbRkLsCOqY09EgYfA/kI=
+	t=1734331340; cv=none; b=Hqna1wSdWhyW8ZZagNr6cq+HaYam918UI8tTjORLJ0p4tVonZNltLj0Tj0zqKelJukYLlHWsb6KNZEhXrBYWyHLNDO+EM2sYlMwu9MvaKwUpw0OVL72QnPEV5leot1Twn0pT62zGR0p1Og1AoTRICwVglQzMqMJZPqP55spbqqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734325718; c=relaxed/simple;
-	bh=2ju1IAEVBOrQUBDdBSs6KvnVdRWpmQIbD4ykKEu/9QA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zoc42aXqjDKUCJukFDaqbyuajhnytSRWYJP/ZtcottMtpZPQEE2FrmWN6WbLBCirE9+WuPVD00rwNBPeSV9JGwW2I5g5G+ZXShpcseKnyZtRVnBHNlau+x/hGM2U5o5zJ1BVrGbHxe2l2HNHzgMk77SZWSMyg7t1Eo1Gq0n4ub0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mfw9C4oq; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ee86a1a92dso2467176a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734325715; x=1734930515; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Em/Cl1Un5rZGf3VhkwdnO0AI73Gmssn5wRijQz+hyu4=;
-        b=Mfw9C4oqfe3nef2hI7K45gcz3EfhQZ8+gL0TcSH9QhZSf6yfNT9kgmb0EeEmOfuegf
-         2ZQ21xYvWcXZol8U+5/mZJRWqN0UOYqtL7c8L1BZ3aB00p/uSBY/0Xcot4AMqcRyVS9U
-         ay9VUL1Y6T/H5+97/x2st5pgQVwU0dxk/dBY9usJ9emgLQWJwII4EgKQObXaQbptZBdX
-         Xwk+9UVPCSLSnJfVjB/eWtX7kmwbYxypIFA3yJx0h4/ZVzhzzmzlrWW9+74ooXu1ZMn7
-         2Zz78rRWrRtxsqIVj8T8S1u/7Ew7HJGyRuJnUt85Z+FupZAxXZ8jEajXdz4EXc98ChC9
-         6Pfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734325715; x=1734930515;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Em/Cl1Un5rZGf3VhkwdnO0AI73Gmssn5wRijQz+hyu4=;
-        b=POAyuArk/ecaSao4AQKmBWbTTKq2tm4TGnCdG/4Bm5dXk5MUDhqP3nkbuaN706M3ch
-         rmQn7E2eNPxnWx7fDJ1qklEuVJyNf+i8rVD5mcaHpqjVkr24NzdHStcVroldAuPjnL1J
-         qx+Nh/Bahq5AckoaXF0e5cPoy1sTz5mwNamtY9E8mI3isQ04mzS/bx24bMWvS91prHvy
-         Q75IZsPHQYz8zsKfSdbGImtesk2JBelHmq+LLeAD6G8gLVRiqsHK3ZW5CCedBtFx8lBq
-         TJscTSYa/gJWggPrDxhBdCu3+GTInF8/uQELxxjWE92/5IDNx7GPvhQqiUBuD5Jjk6du
-         RHsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2LO0HRLbTEg4ub6tkYOBMx+3Aiyd3PHEzjtKl52nspILFMWTSJWlEgZD0sxU0rln6B4z3hP2q/gze5No=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww4BjPZUB3xE9qvnzyuOW+2aVm21mXlQHAJLdDt3nmpavGGJoD
-	paThhG82WafQ6r2jfIznXVcxGrRqY0JxJ3XrCA54AK3IC1iHBQ5Mi53Q8cuwOQ==
-X-Gm-Gg: ASbGnctYsN+JhwNJauKJ9UmAh68gNGB7r3PTDu5qXCY7GrfvLET3sgX5PW5vWNUtDzM
-	hCMancaUZRbNvtEIvYjEBV57aS9JlD+JX0ck+ooWV5lvbG8AWbQHyhonRZTeLPobHu1LJQ9an79
-	hOqGLljkwgBkgXGlPxr0dXVhKilz5KtkgZm9RWueyu8iUls4+RewYXiUYq2+pyF5zeTjRwG5/uJ
-	eSH5fi9hEFelt6lEDMA4rXssDQ17WGgKP2IfDqfWQHpCjfZUdLeuQJyXR1bqIdMQZA=
-X-Google-Smtp-Source: AGHT+IGFLuaa872OiTpbwIJ12EZGTfvEXRUxI9S+oBeqTkwTJAML2INav9Us601kCggSsKLcDvu6cg==
-X-Received: by 2002:a17:90b:4a09:b0:2ee:5bc9:75c7 with SMTP id 98e67ed59e1d1-2f28fa55c38mr16565074a91.5.1734325715065;
-        Sun, 15 Dec 2024 21:08:35 -0800 (PST)
-Received: from thinkpad ([120.60.56.176])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fa1cd5sm7111817a91.34.2024.12.15.21.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 21:08:34 -0800 (PST)
-Date: Mon, 16 Dec 2024 10:38:29 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-	"open list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-pci@vger.kernel.org>,
-	"moderated list:PCI DRIVER FOR GENERIC OF HOSTS" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: check bridge->bus in pci_host_common_remove
-Message-ID: <20241216050829.m4f5wqnzstsqqfcj@thinkpad>
-References: <20241028084644.3778081-1-peng.fan@oss.nxp.com>
- <20241115062005.6ifvr6ens2qnrrrf@thinkpad>
- <PAXPR04MB8459D1507CA69498D8C38E0488242@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20241115144720.ovsyq2ani47norby@thinkpad>
- <20241127195650.GA4132105-robh@kernel.org>
- <20241202092902.rp6xb3f64llpabbi@thinkpad>
- <CAL_Jsq+R39jtCeDecpEHbKq+4N-uirMQmsuNG1NaVe1Vnnnv3Q@mail.gmail.com>
- <20241215132640.GA2476@localhost.localdomain>
+	s=arc-20240116; t=1734331340; c=relaxed/simple;
+	bh=g3k3rXZxgC0i+CHzaCsrCGoYkLBh5qWklzwF5cGTq6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J77JrEiIYe4MA3BU5sM8amBOi8mQx7yhhrpuh4En2Cp8J7ca+cngpKeDp10ocxW9jr6OlhF7o08bBpkQdIU1omvyXnv9+waKjlBDkQ5RgFiTJWGAKlFaPgjuQ1ciAyX5M0Y76cY189ewLI+gMg92apikJSWdjDpBDrjCE8ajsfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=NPuiqJ/V; arc=none smtp.client-ip=115.236.118.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5cf79904;
+	Mon, 16 Dec 2024 11:12:56 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	rfoss@kernel.org,
+	vkoul@kernel.org,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	l.stach@pengutronix.de,
+	andy.yan@rock-chips.com,
+	hjc@rock-chips.com,
+	algea.cao@rock-chips.com,
+	kever.yang@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v2 04/11] phy: phy-rockchip-samsung-hdptx: Add support for eDP mode
+Date: Mon, 16 Dec 2024 11:12:18 +0800
+Message-Id: <20241216031225.3746-5-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241216031225.3746-1-damon.ding@rock-chips.com>
+References: <20241216031225.3746-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241215132640.GA2476@localhost.localdomain>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkoeTFYYSk9MTUtKThlNTBhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a93cd74608903a3kunm5cf79904
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ny46Exw4PDIXLiE8FE8RQhY1
+	KkhPCxdVSlVKTEhPSEpDTExDSkJIVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFIQkJCTjcG
+DKIM-Signature:a=rsa-sha256;
+	b=NPuiqJ/VocZh1sKaPsYRJRusxoamt/vYvtHrBxhZFAYsMO5ah6GPuTFMgZXdKjYkZ1u6rZzlM7c/8Du251iZsCD6j4ld8lGf54jrVQMF9EU+aVJUf3eVNzZ8dvtkJ/P4rdob+QYTMD3rmnAdpCrA1LQxJxX9r1D8oOw5Bk8l9ms=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=VFTu3dOpvFrjP/4o6+fSEftKMTkqh+ZFzKR4qTP/Cvw=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sun, Dec 15, 2024 at 09:26:40PM +0800, Peng Fan wrote:
-> Hi Rob,
-> 
-> On Mon, Dec 02, 2024 at 07:55:27AM -0600, Rob Herring wrote:
-> >On Mon, Dec 2, 2024 at 3:29 AM Manivannan Sadhasivam
-> ><manivannan.sadhasivam@linaro.org> wrote:
-> >>
-> >> On Wed, Nov 27, 2024 at 01:56:50PM -0600, Rob Herring wrote:
-> >> > On Fri, Nov 15, 2024 at 08:17:20PM +0530, Manivannan Sadhasivam wrote:
-> >> > > On Fri, Nov 15, 2024 at 10:14:10AM +0000, Peng Fan wrote:
-> >> > > > Hi Manivannan,
-> >> > > >
-> >> > > > > Subject: Re: [PATCH] PCI: check bridge->bus in
-> >> > > > > pci_host_common_remove
-> >> > > > >
-> >> > > > > On Mon, Oct 28, 2024 at 04:46:43PM +0800, Peng Fan (OSS) wrote:
-> >> > > > > > From: Peng Fan <peng.fan@nxp.com>
-> >> > > > > >
-> >> > > > > > When PCI node was created using an overlay and the overlay is
-> >> > > > > > reverted/destroyed, the "linux,pci-domain" property no longer exists,
-> >> > > > > > so of_get_pci_domain_nr will return failure. Then
-> >> > > > > > of_pci_bus_release_domain_nr will actually use the dynamic IDA,
-> >> > > > > even
-> >> > > > > > if the IDA was allocated in static IDA. So the flow is as below:
-> >> > > > > > A: of_changeset_revert
-> >> > > > > >     pci_host_common_remove
-> >> > > > > >      pci_bus_release_domain_nr
-> >> > > > > >        of_pci_bus_release_domain_nr
-> >> > > > > >          of_get_pci_domain_nr      # fails because overlay is gone
-> >> > > > > >          ida_free(&pci_domain_nr_dynamic_ida)
-> >> > > > > >
-> >> > > > > > With driver calls pci_host_common_remove explicity, the flow
-> >> > > > > becomes:
-> >> > > > > > B pci_host_common_remove
-> >> > > > > >    pci_bus_release_domain_nr
-> >> > > > > >     of_pci_bus_release_domain_nr
-> >> > > > > >      of_get_pci_domain_nr      # succeeds in this order
-> >> > > > > >       ida_free(&pci_domain_nr_static_ida)
-> >> > > > > > A of_changeset_revert
-> >> > > > > >    pci_host_common_remove
-> >> > > > > >
-> >> > > > > > With updated flow, the pci_host_common_remove will be called
-> >> > > > > twice, so
-> >> > > > > > need to check 'bridge->bus' to avoid accessing invalid pointer.
-> >> > > > > >
-> >> > > > > > Fixes: c14f7ccc9f5d ("PCI: Assign PCI domain IDs by ida_alloc()")
-> >> > > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >> > > > >
-> >> > > > > I went through the previous discussion [1] and I couldn't see an
-> >> > > > > agreement on the point raised by Bjorn on 'removing the host bridge
-> >> > > > > before the overlay'.
-> >> > > >
-> >> > > > This patch is an agreement to Bjorn's idea.
-> >> > > >
-> >> > > > I have added pci_host_common_remove to remove host bridge
-> >> > > > before removing overlay as I wrote in commit log.
-> >> > > >
-> >> > > > But of_changeset_revert will still runs into pci_host_
-> >> > > > common_remove to remove the host bridge again. Per
-> >> > > > my view, the design of of_changeset_revert to remove
-> >> > > > the device tree node will trigger device remove, so even
-> >> > > > pci_host_common_remove was explicitly used before
-> >> > > > of_changeset_revert. The following call to of_changeset_revert
-> >> > > > will still call pci_host_common_remove.
-> >> > > >
-> >> > > > So I did this patch to add a check of 'bus' to avoid remove again.
-> >> > > >
-> >> > >
-> >> > > Ok. I think there was a misunderstanding. Bjorn's example driver,
-> >> > > 'i2c-demux-pinctrl' applies the changeset, then adds the i2c adapter for its
-> >> > > own. And in remove(), it does the reverse.
-> >> > >
-> >> > > But in your case, the issue is with the host bridge driver that gets probed
-> >> > > because of the changeset. While with 'i2c-demux-pinctrl' driver, it only
-> >> > > applies the changeset. So we cannot compare both drivers. I believe in your
-> >> > > case, 'i2c-demux-pinctrl' becomes 'jailhouse', isn't it?
-> >> > >
-> >> > > So in your case, changeset is applied by jailhouse and that causes the
-> >> > > platform device to be created for the host bridge and then the host bridge
-> >> > > driver gets probed. So during destroy(), you call of_changeset_revert() that
-> >> > > removes the platform device and during that process it removes the host bridge
-> >> > > driver. The issue happens because during host bridge remove, it calls
-> >> > > pci_remove_root_bus() and that tries to remove the domain_nr using
-> >> > > pci_bus_release_domain_nr().
-> >> > >
-> >> > > But pci_bus_release_domain_nr() uses DT node to check whether to free the
-> >> > > domain_nr from static IDA or dynamic IDA. And because there is no DT node exist
-> >> > > at this time (it was already removed by of_changeset_revert()), it forces
-> >> > > pci_bus_release_domain_nr() to use dynamic IDA even though the IDA was initially
-> >> > > allocated from static IDA.
-> >> >
-> >> > Putting linux,pci-domain in an overlay is the same problem as aliases in
-> >> > overlays[1]. It's not going to work well.
-> >> >
-> >> > IMO, you can have overlays, or you can have static domains. You can't
-> >> > have both.
-> >> >
-> >>
-> >> Okay.
-> >>
-> >> > > I think a neat way to solve this issue would be by removing the OF node only
-> >> > > after removing all platform devices/drivers associated with that node. But I
-> >> > > honestly do not know whether that is possible or not. Otherwise, any other
-> >> > > driver that relies on the OF node in its remove() callback, could suffer from
-> >> > > the same issue. And whatever fix we may come up with in PCI core, it will be a
-> >> > > band-aid only.
-> >> > >
-> >> > > I'd like to check with Rob first about his opinion.
-> >> >
-> >> > If the struct device has an of_node set, there should be a reference
-> >> > count on that node. But I think that only prevents the node from being
-> >> > freed. It does not prevent the overlay from being detached. This is one
-> >> > of many of the issues with overlays Frank painstakingly documented[2].
-> >> >
-> >>
-> >> Ah, I do remember this page as Frank ended up creating it based on my
-> >> continuous nudge to add CONFIG_FS interface for applying overlays.
-> >>
-> >> So why are we applying overlays in kernel now?
-> >
-> >That's been the case for some time. Mostly it's been for fixups of old
-> >to new bindings, but those all got dropped at some point. The in
-> >kernel users are very specific use cases where we know something about
-> >what's in the overlay. In contrast, configfs interface allows for any
-> >change to any node or property with no control over it by the kernel.
-> >Never say never, but I just don't see that ever happening upstream.
-> 
-> So should I switch to use configfs for jailhouse case? Currently
-> we use overlay to add a virtual pci node to kernel device tree.
-> 
+Add basic support for RBR/HBR/HBR2 link rates, and the voltage swing and
+pre-emphasis configurations of each link rate have been verified according
+to the eDP 1.3 requirements.
 
-Not at all. I think you have 2 options:
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
 
-1. Get rid of 'linux,pci-domain' from overlay and rely on static id allocation.
-2. Make sure the driver is unbind for each device before removing the overlays.
+---
 
-Options 1 is to avoid your issue and option 2 is to fix your issue. You can
-decide which one to opt for :)
+Changes in v2:
+- Add the module author
+---
+ .../phy/rockchip/phy-rockchip-samsung-hdptx.c | 937 +++++++++++++++++-
+ 1 file changed, 894 insertions(+), 43 deletions(-)
 
-- Mani
-
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index 9f084697dd05..8dd0de267d10 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -25,6 +25,7 @@
+ #define HDPTX_I_PLL_EN			BIT(7)
+ #define HDPTX_I_BIAS_EN			BIT(6)
+ #define HDPTX_I_BGR_EN			BIT(5)
++#define HDPTX_MODE_SEL			BIT(0)
+ #define GRF_HDPTX_STATUS		0x80
+ #define HDPTX_O_PLL_LOCK_DONE		BIT(3)
+ #define HDPTX_O_PHY_CLK_RDY		BIT(2)
+@@ -44,6 +45,7 @@
+ #define LANE_REG(n)			HDTPX_REG(n, 0300, 062d)
+ 
+ /* CMN_REG(0008) */
++#define OVRD_LCPLL_EN_MASK		BIT(7)
+ #define LCPLL_EN_MASK			BIT(6)
+ #define LCPLL_LCVCO_MODE_EN_MASK	BIT(4)
+ /* CMN_REG(001e) */
+@@ -61,49 +63,110 @@
+ /* CMN_REG(002f) */
+ #define LCPLL_SDC_DENOMINATOR_MASK	GENMASK(7, 2)
+ #define LCPLL_SDC_NDIV_RSTN		BIT(0)
++/* CMN_REG(003c) */
++#define ANA_LCPLL_RESERVED7_MASK	BIT(7)
+ /* CMN_REG(003d) */
++#define OVRD_ROPLL_EN_MASK		BIT(7)
++#define ROPLL_EN_MASK			BIT(6)
+ #define ROPLL_LCVCO_EN			BIT(4)
++/* CMN_REG(0046) */
++#define ROPLL_ANA_CPP_CTRL_COARSE_MASK	GENMASK(7, 4)
++#define ROPLL_ANA_CPP_CTRL_FINE_MASK	GENMASK(3, 0)
++/* CMN_REG(0047) */
++#define ROPLL_ANA_LPF_C_SEL_COARSE_MASK	GENMASK(5, 3)
++#define ROPLL_ANA_LPF_C_SEL_FINE_MASK	GENMASK(2, 0)
+ /* CMN_REG(004e) */
+ #define ROPLL_PI_EN			BIT(5)
++/* CMN_REG(0051) */
++#define ROPLL_PMS_MDIV_MASK		GENMASK(7, 0)
++/* CMN_REG(0055) */
++#define ROPLL_PMS_MDIV_AFC_MASK		GENMASK(7, 0)
++/* CMN_REG(0059) */
++#define ANA_ROPLL_PMS_PDIV_MASK		GENMASK(7, 4)
++#define ANA_ROPLL_PMS_REFDIV_MASK	GENMASK(3, 0)
++/* CMN_REG(005a) */
++#define ROPLL_PMS_SDIV_RBR_MASK		GENMASK(7, 4)
++#define ROPLL_PMS_SDIV_HBR_MASK		GENMASK(3, 0)
++/* CMN_REG(005b) */
++#define ROPLL_PMS_SDIV_HBR2_MASK	GENMASK(7, 4)
+ /* CMN_REG(005c) */
+ #define ROPLL_PMS_IQDIV_RSTN		BIT(5)
+ /* CMN_REG(005e) */
+ #define ROPLL_SDM_EN_MASK		BIT(6)
+-#define ROPLL_SDM_FRAC_EN_RBR		BIT(3)
+-#define ROPLL_SDM_FRAC_EN_HBR		BIT(2)
+-#define ROPLL_SDM_FRAC_EN_HBR2		BIT(1)
+-#define ROPLL_SDM_FRAC_EN_HBR3		BIT(0)
++#define OVRD_ROPLL_SDM_RSTN_MASK	BIT(5)
++#define ROPLL_SDM_RSTN_MASK		BIT(4)
++#define ROPLL_SDC_FRAC_EN_RBR_MASK	BIT(3)
++#define ROPLL_SDC_FRAC_EN_HBR_MASK	BIT(2)
++#define ROPLL_SDC_FRAC_EN_HBR2_MASK	BIT(1)
++/* CMN_REG(005f) */
++#define OVRD_ROPLL_SDC_RSTN_MASK	BIT(5)
++#define ROPLL_SDC_RSTN_MASK		BIT(4)
++/* CMN_REG(0060)  */
++#define ROPLL_SDM_DENOMINATOR_MASK	GENMASK(7, 0)
+ /* CMN_REG(0064) */
+ #define ROPLL_SDM_NUM_SIGN_RBR_MASK	BIT(3)
++#define ROPLL_SDM_NUM_SIGN_HBR_MASK	BIT(2)
++#define ROPLL_SDM_NUM_SIGN_HBR2_MASK	BIT(1)
++/* CMN_REG(0065) */
++#define ROPLL_SDM_NUM_MASK		GENMASK(7, 0)
+ /* CMN_REG(0069) */
+ #define ROPLL_SDC_N_RBR_MASK		GENMASK(2, 0)
++/* CMN_REG(006a) */
++#define ROPLL_SDC_N_HBR_MASK		GENMASK(5, 3)
++#define ROPLL_SDC_N_HBR2_MASK		GENMASK(2, 0)
++/* CMN_REG(006b) */
++#define ROPLL_SDC_N_HBR3_MASK		GENMASK(3, 1)
++/* CMN_REG(006c) */
++#define ROPLL_SDC_NUM_MASK		GENMASK(5, 0)
++/* cmn_reg0070 */
++#define ROPLL_SDC_DENO_MASK		GENMASK(5, 0)
+ /* CMN_REG(0074) */
+-#define ROPLL_SDC_NDIV_RSTN		BIT(2)
+-#define ROPLL_SSC_EN			BIT(0)
++#define OVRD_ROPLL_SDC_NDIV_RSTN_MASK	BIT(3)
++#define ROPLL_SDC_NDIV_RSTN_MASK	BIT(2)
++#define OVRD_ROPLL_SSC_EN_MASK		BIT(1)
++#define ROPLL_SSC_EN_MASK		BIT(0)
++/* CMN_REG(0075) */
++#define ANA_ROPLL_SSC_FM_DEVIATION_MASK	GENMASK(5, 0)
++/* CMN_REG(0076) */
++#define ANA_ROPLL_SSC_FM_FREQ_MASK	GENMASK(6, 2)
++/* CMN_REG(0077) */
++#define ANA_ROPLL_SSC_CLK_DIV_SEL_MASK	GENMASK(6, 3)
+ /* CMN_REG(0081) */
+-#define OVRD_PLL_CD_CLK_EN		BIT(8)
+-#define PLL_CD_HSCLK_EAST_EN		BIT(0)
++#define ANA_PLL_CD_TX_SER_RATE_SEL_MASK	BIT(3)
++#define ANA_PLL_CD_HSCLK_WEST_EN_MASK	BIT(1)
++#define ANA_PLL_CD_HSCLK_EAST_EN_MASK	BIT(0)
++/* CMN_REG(0082) */
++#define ANA_PLL_CD_VREG_GAIN_CTRL_MASK	GENMASK(3, 0)
++/* CMN_REG(0083) */
++#define ANA_PLL_CD_VREG_ICTRL_MASK	GENMASK(6, 5)
++/* CMN_REG(0084) */
++#define PLL_LCRO_CLK_SEL_MASK		BIT(5)
++/* CMN_REG(0085) */
++#define ANA_PLL_SYNC_LOSS_DET_MODE_MASK	GENMASK(1, 0)
+ /* CMN_REG(0086) */
+ #define PLL_PCG_POSTDIV_SEL_MASK	GENMASK(7, 4)
+ #define PLL_PCG_CLK_SEL_MASK		GENMASK(3, 1)
+ #define PLL_PCG_CLK_EN			BIT(0)
+ /* CMN_REG(0087) */
+-#define PLL_FRL_MODE_EN			BIT(3)
+-#define PLL_TX_HS_CLK_EN		BIT(2)
++#define ANA_PLL_FRL_MODE_EN_MASK	BIT(3)
++#define ANA_PLL_TX_HS_CLK_EN_MASK	BIT(2)
+ /* CMN_REG(0089) */
+ #define LCPLL_ALONE_MODE		BIT(1)
++/* CMN_REG(0095) */
++#define DP_TX_LINK_BW_MASK		GENMASK(1, 0)
+ /* CMN_REG(0097) */
+-#define DIG_CLK_SEL			BIT(1)
+-#define ROPLL_REF			BIT(1)
+-#define LCPLL_REF			0
++#define DIG_CLK_SEL_MASK		BIT(1)
++#define LCPLL_REF			BIT(1)
++#define ROPLL_REF			0
+ /* CMN_REG(0099) */
++#define SSC_EN_MASK			GENMASK(7, 6)
+ #define CMN_ROPLL_ALONE_MODE		BIT(2)
+ #define ROPLL_ALONE_MODE		BIT(2)
+ /* CMN_REG(009a) */
+-#define HS_SPEED_SEL			BIT(0)
++#define HS_SPEED_SEL_MASK		BIT(0)
+ #define DIV_10_CLOCK			BIT(0)
+ /* CMN_REG(009b) */
+-#define IS_SPEED_SEL			BIT(4)
++#define LS_SPEED_SEL_MASK		BIT(4)
+ #define LINK_SYMBOL_CLOCK		BIT(4)
+ #define LINK_SYMBOL_CLOCK1_2		0
+ 
+@@ -118,6 +181,8 @@
+ /* SB_REG(0104) */
+ #define OVRD_SB_EN_MASK			BIT(5)
+ #define SB_EN_MASK			BIT(4)
++#define OVRD_SB_AUX_EN_MASK		BIT(1)
++#define SB_AUX_EN_MASK			BIT(0)
+ /* SB_REG(0105) */
+ #define OVRD_SB_EARC_CMDC_EN_MASK	BIT(6)
+ #define SB_EARC_CMDC_EN_MASK		BIT(5)
+@@ -126,6 +191,8 @@
+ #define ANA_SB_TX_LLVL_PROG_MASK	GENMASK(6, 4)
+ /* SB_REG(0109) */
+ #define ANA_SB_DMRX_AFC_DIV_RATIO_MASK	GENMASK(2, 0)
++/* SB_REG(010d) */
++#define ANA_SB_DMRX_LPBK_DATA_MASK	BIT(4)
+ /* SB_REG(010f) */
+ #define OVRD_SB_VREG_EN_MASK		BIT(7)
+ #define SB_VREG_EN_MASK			BIT(6)
+@@ -133,6 +200,7 @@
+ #define SB_VREG_LPF_BYPASS_MASK		BIT(4)
+ #define ANA_SB_VREG_GAIN_CTRL_MASK	GENMASK(3, 0)
+ /* SB_REG(0110) */
++#define ANA_SB_VREG_OUT_SEL_MASK	BIT(1)
+ #define ANA_SB_VREG_REF_SEL_MASK	BIT(0)
+ /* SB_REG(0113) */
+ #define SB_RX_RCAL_OPT_CODE_MASK	GENMASK(5, 4)
+@@ -147,13 +215,24 @@
+ #define AFC_RSTN_DELAY_TIME_MASK	GENMASK(6, 4)
+ /* SB_REG(0117) */
+ #define FAST_PULSE_TIME_MASK		GENMASK(3, 0)
++/* SB_REG(0118) */
++#define SB_TG_EARC_DMRX_RECVRD_CLK_CNT_MASK	GENMASK(7, 0)
++/* SB_REG(011a) */
++#define SB_TG_CNT_RUN_NO_7_0_MASK	GENMASK(7, 0)
+ /* SB_REG(011b) */
+ #define SB_EARC_SIG_DET_BYPASS_MASK	BIT(4)
+ #define SB_AFC_TOL_MASK			GENMASK(3, 0)
++/* SB_REG(011c) */
++#define SB_AFC_STB_NUM_MASK		GENMASK(3, 0)
++/* SB_REG(011d) */
++#define SB_TG_OSC_CNT_MIN_MASK		GENMASK(7, 0)
++/* SB_REG(011e) */
++#define SB_TG_OSC_CNT_MAX_MASK		GENMASK(7, 0)
+ /* SB_REG(011f) */
+ #define SB_PWM_AFC_CTRL_MASK		GENMASK(7, 2)
+ #define SB_RCAL_RSTN_MASK		BIT(1)
+ /* SB_REG(0120) */
++#define SB_AUX_EN_IN_MASK		BIT(7)
+ #define SB_EARC_EN_MASK			BIT(1)
+ #define SB_EARC_AFC_EN_MASK		BIT(2)
+ /* SB_REG(0123) */
+@@ -165,35 +244,65 @@
+ #define HDMI_MODE			BIT(2)
+ #define HDMI_TMDS_FRL_SEL		BIT(1)
+ /* LNTOP_REG(0206) */
+-#define DATA_BUS_SEL			BIT(0)
++#define DATA_BUS_WIDTH_MASK		GENMASK(2, 1)
++#define DATA_BUS_WIDTH_SEL_MASK		BIT(0)
+ #define DATA_BUS_36_40			BIT(0)
+ /* LNTOP_REG(0207) */
+ #define LANE_EN				0xf
+ #define ALL_LANE_EN			0xf
+ 
+-/* LANE_REG(0312) */
+-#define LN0_TX_SER_RATE_SEL_RBR		BIT(5)
+-#define LN0_TX_SER_RATE_SEL_HBR		BIT(4)
+-#define LN0_TX_SER_RATE_SEL_HBR2	BIT(3)
+-#define LN0_TX_SER_RATE_SEL_HBR3	BIT(2)
+-/* LANE_REG(0412) */
+-#define LN1_TX_SER_RATE_SEL_RBR		BIT(5)
+-#define LN1_TX_SER_RATE_SEL_HBR		BIT(4)
+-#define LN1_TX_SER_RATE_SEL_HBR2	BIT(3)
+-#define LN1_TX_SER_RATE_SEL_HBR3	BIT(2)
+-/* LANE_REG(0512) */
+-#define LN2_TX_SER_RATE_SEL_RBR		BIT(5)
+-#define LN2_TX_SER_RATE_SEL_HBR		BIT(4)
+-#define LN2_TX_SER_RATE_SEL_HBR2	BIT(3)
+-#define LN2_TX_SER_RATE_SEL_HBR3	BIT(2)
+-/* LANE_REG(0612) */
+-#define LN3_TX_SER_RATE_SEL_RBR		BIT(5)
+-#define LN3_TX_SER_RATE_SEL_HBR		BIT(4)
+-#define LN3_TX_SER_RATE_SEL_HBR2	BIT(3)
+-#define LN3_TX_SER_RATE_SEL_HBR3	BIT(2)
++/* LANE_REG(0301) */
++#define OVRD_LN_TX_DRV_EI_EN_MASK	BIT(7)
++#define LN_TX_DRV_EI_EN_MASK		BIT(6)
++/* LANE_REG(0303) */
++#define OVRD_LN_TX_DRV_LVL_CTRL_MASK	BIT(5)
++#define LN_TX_DRV_LVL_CTRL_MASK		GENMASK(4, 0)
++/* LANE_REG(0304)  */
++#define OVRD_LN_TX_DRV_POST_LVL_CTRL_MASK	BIT(4)
++#define LN_TX_DRV_POST_LVL_CTRL_MASK	GENMASK(3, 0)
++/* LANE_REG(0305) */
++#define OVRD_LN_TX_DRV_PRE_LVL_CTRL_MASK	BIT(6)
++#define LN_TX_DRV_PRE_LVL_CTRL_MASK	GENMASK(5, 2)
++/* LANE_REG(0306) */
++#define LN_ANA_TX_DRV_IDRV_IDN_CTRL_MASK	GENMASK(7, 5)
++#define LN_ANA_TX_DRV_IDRV_IUP_CTRL_MASK	GENMASK(4, 2)
++#define LN_ANA_TX_DRV_ACCDRV_EN_MASK	BIT(0)
++/* LANE_REG(0307) */
++#define LN_ANA_TX_DRV_ACCDRV_POL_SEL_MASK	BIT(6)
++#define LN_ANA_TX_DRV_ACCDRV_CTRL_MASK	GENMASK(5, 3)
++/* LANE_REG(030a) */
++#define LN_ANA_TX_JEQ_EN_MASK		BIT(4)
++#define LN_TX_JEQ_EVEN_CTRL_RBR_MASK	GENMASK(3, 0)
++/* LANE_REG(030b) */
++#define LN_TX_JEQ_EVEN_CTRL_HBR_MASK	GENMASK(7, 4)
++#define LN_TX_JEQ_EVEN_CTRL_HBR2_MASK	GENMASK(3, 0)
++/* LANE_REG(030c) */
++#define LN_TX_JEQ_ODD_CTRL_RBR_MASK	GENMASK(3, 0)
++/* LANE_REG(030d) */
++#define LN_TX_JEQ_ODD_CTRL_HBR_MASK	GENMASK(7, 4)
++#define LN_TX_JEQ_ODD_CTRL_HBR2_MASK	GENMASK(3, 0)
++/* LANE_REG(0310) */
++#define LN_ANA_TX_SYNC_LOSS_DET_MODE_MASK	GENMASK(1, 0)
++/* LANE_REG(0311) */
++#define LN_TX_SER_40BIT_EN_RBR_MASK	BIT(3)
++#define LN_TX_SER_40BIT_EN_HBR_MASK	BIT(2)
++#define LN_TX_SER_40BIT_EN_HBR2_MASK	BIT(1)
++/* LANE_REG(0316) */
++#define LN_ANA_TX_SER_VREG_GAIN_CTRL_MASK	GENMASK(3, 0)
++/* LANE_REG(031B) */
++#define LN_ANA_TX_RESERVED_MASK		GENMASK(7, 0)
++/* LANE_REG(031e) */
++#define LN_POLARITY_INV_MASK		BIT(2)
++#define LN_LANE_MODE_MASK		BIT(1)
+ 
+ #define HDMI20_MAX_RATE			600000000
+ 
++enum dp_link_rate {
++	DP_BW_RBR,
++	DP_BW_HBR,
++	DP_BW_HBR2,
++};
++
+ struct lcpll_config {
+ 	u32 bit_rate;
+ 	u8 lcvco_mode_en;
+@@ -255,6 +364,19 @@ struct ropll_config {
+ 	u8 cd_tx_ser_rate_sel;
+ };
+ 
++struct tx_drv_ctrl {
++	u8 tx_drv_lvl_ctrl;
++	u8 tx_drv_post_lvl_ctrl;
++	u8 ana_tx_drv_idrv_idn_ctrl;
++	u8 ana_tx_drv_idrv_iup_ctrl;
++	u8 ana_tx_drv_accdrv_en;
++	u8 ana_tx_drv_accdrv_ctrl;
++	u8 tx_drv_pre_lvl_ctrl;
++	u8 ana_tx_jeq_en;
++	u8 tx_jeq_even_ctrl;
++	u8 tx_jeq_odd_ctrl;
++};
++
+ enum rk_hdptx_reset {
+ 	RST_PHY = 0,
+ 	RST_APB,
+@@ -560,6 +682,90 @@ static const struct reg_sequence rk_hdtpx_tmds_lane_init_seq[] = {
+ 	REG_SEQ0(LANE_REG(0606), 0x1c),
+ };
+ 
++static struct tx_drv_ctrl tx_drv_ctrl_rbr[4][4] = {
++	/* voltage swing 0, pre-emphasis 0->3 */
++	{
++		{ 0x2, 0x0, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0x4, 0x3, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0x7, 0x6, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xd, 0xc, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 1, pre-emphasis 0->2 */
++	{
++		{ 0x4, 0x0, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0x9, 0x5, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xc, 0x8, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 2, pre-emphasis 0->1 */
++	{
++		{ 0x8, 0x0, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0xc, 0x5, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 3, pre-emphasis 0 */
++	{
++		{ 0xb, 0x0, 0x7, 0x7, 0x1, 0x4, 0x1, 0x1, 0x7, 0x7 },
++	}
++};
++
++static struct tx_drv_ctrl tx_drv_ctrl_hbr[4][4] = {
++	/* voltage swing 0, pre-emphasis 0->3 */
++	{
++		{ 0x2, 0x0, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0x5, 0x4, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0x9, 0x8, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xd, 0xc, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 1, pre-emphasis 0->2 */
++	{
++		{ 0x6, 0x1, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0xa, 0x6, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xc, 0x8, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 2, pre-emphasis 0->1 */
++	{
++		{ 0x9, 0x1, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0xd, 0x6, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 3, pre-emphasis 0 */
++	{
++		{ 0xc, 0x1, 0x7, 0x7, 0x1, 0x4, 0x1, 0x1, 0x7, 0x7 },
++	}
++};
++
++static struct tx_drv_ctrl tx_drv_ctrl_hbr2[4][4] = {
++	/* voltage swing 0, pre-emphasis 0->3 */
++	{
++		{ 0x2, 0x1, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0x5, 0x4, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0x9, 0x8, 0x4, 0x6, 0x1, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xd, 0xc, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 1, pre-emphasis 0->2 */
++	{
++		{ 0x6, 0x1, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0xb, 0x7, 0x4, 0x6, 0x0, 0x4, 0x0, 0x1, 0x7, 0x7 },
++		{ 0xd, 0x9, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 2, pre-emphasis 0->1 */
++	{
++		{ 0x8, 0x1, 0x4, 0x6, 0x0, 0x4, 0x1, 0x1, 0x7, 0x7 },
++		{ 0xc, 0x6, 0x7, 0x7, 0x1, 0x7, 0x0, 0x1, 0x7, 0x7 },
++	},
++
++	/* voltage swing 3, pre-emphasis 0 */
++	{
++		{ 0xb, 0x0, 0x7, 0x7, 0x1, 0x4, 0x1, 0x1, 0x7, 0x7 },
++	}
++};
++
+ static bool rk_hdptx_phy_is_rw_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+@@ -911,11 +1117,297 @@ static int rk_hdptx_phy_consumer_put(struct rk_hdptx_phy *hdptx, bool force)
+ 	return ret;
+ }
+ 
++static void rk_hdptx_dp_reset(struct rk_hdptx_phy *hdptx)
++{
++	reset_control_assert(hdptx->rsts[RST_LANE].rstc);
++	reset_control_assert(hdptx->rsts[RST_CMN].rstc);
++	reset_control_assert(hdptx->rsts[RST_INIT].rstc);
++
++	reset_control_assert(hdptx->rsts[RST_APB].rstc);
++	udelay(10);
++	reset_control_deassert(hdptx->rsts[RST_APB].rstc);
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(0301),
++			   OVRD_LN_TX_DRV_EI_EN_MASK | LN_TX_DRV_EI_EN_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_EI_EN_MASK, 1) |
++			   FIELD_PREP(LN_TX_DRV_EI_EN_MASK, 0));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0401),
++			   OVRD_LN_TX_DRV_EI_EN_MASK | LN_TX_DRV_EI_EN_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_EI_EN_MASK, 1) |
++			   FIELD_PREP(LN_TX_DRV_EI_EN_MASK, 0));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0501),
++			   OVRD_LN_TX_DRV_EI_EN_MASK | LN_TX_DRV_EI_EN_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_EI_EN_MASK, 1) |
++			   FIELD_PREP(LN_TX_DRV_EI_EN_MASK, 0));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0601),
++			   OVRD_LN_TX_DRV_EI_EN_MASK | LN_TX_DRV_EI_EN_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_EI_EN_MASK, 1) |
++			   FIELD_PREP(LN_TX_DRV_EI_EN_MASK, 0));
++
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_PLL_EN << 16 | FIELD_PREP(HDPTX_I_PLL_EN, 0x0));
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_BIAS_EN << 16 | FIELD_PREP(HDPTX_I_BIAS_EN, 0x0));
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_BGR_EN << 16 | FIELD_PREP(HDPTX_I_BGR_EN, 0x0));
++}
++
++static void rk_hdptx_dp_pll_init(struct rk_hdptx_phy *hdptx)
++{
++	regmap_update_bits(hdptx->regmap, CMN_REG(003c), ANA_LCPLL_RESERVED7_MASK,
++			   FIELD_PREP(ANA_LCPLL_RESERVED7_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0046),
++			   ROPLL_ANA_CPP_CTRL_COARSE_MASK | ROPLL_ANA_CPP_CTRL_FINE_MASK,
++			   FIELD_PREP(ROPLL_ANA_CPP_CTRL_COARSE_MASK, 0xe) |
++			   FIELD_PREP(ROPLL_ANA_CPP_CTRL_FINE_MASK, 0xe));
++	regmap_update_bits(hdptx->regmap, CMN_REG(0047),
++			   ROPLL_ANA_LPF_C_SEL_COARSE_MASK |
++			   ROPLL_ANA_LPF_C_SEL_FINE_MASK,
++			   FIELD_PREP(ROPLL_ANA_LPF_C_SEL_COARSE_MASK, 0x4) |
++			   FIELD_PREP(ROPLL_ANA_LPF_C_SEL_FINE_MASK, 0x4));
++
++	regmap_write(hdptx->regmap, CMN_REG(0051), FIELD_PREP(ROPLL_PMS_MDIV_MASK, 0x87));
++	regmap_write(hdptx->regmap, CMN_REG(0052), FIELD_PREP(ROPLL_PMS_MDIV_MASK, 0x71));
++	regmap_write(hdptx->regmap, CMN_REG(0053), FIELD_PREP(ROPLL_PMS_MDIV_MASK, 0x71));
++
++	regmap_write(hdptx->regmap, CMN_REG(0055),
++		     FIELD_PREP(ROPLL_PMS_MDIV_AFC_MASK, 0x87));
++	regmap_write(hdptx->regmap, CMN_REG(0056),
++		     FIELD_PREP(ROPLL_PMS_MDIV_AFC_MASK, 0x71));
++	regmap_write(hdptx->regmap, CMN_REG(0057),
++		     FIELD_PREP(ROPLL_PMS_MDIV_AFC_MASK, 0x71));
++
++	regmap_write(hdptx->regmap, CMN_REG(0059),
++		     FIELD_PREP(ANA_ROPLL_PMS_PDIV_MASK, 0x1) |
++		     FIELD_PREP(ANA_ROPLL_PMS_REFDIV_MASK, 0x1));
++	regmap_write(hdptx->regmap, CMN_REG(005a),
++		     FIELD_PREP(ROPLL_PMS_SDIV_RBR_MASK, 0x3) |
++		     FIELD_PREP(ROPLL_PMS_SDIV_HBR_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(005b), ROPLL_PMS_SDIV_HBR2_MASK,
++			   FIELD_PREP(ROPLL_PMS_SDIV_HBR2_MASK, 0x0));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(005e), ROPLL_SDM_EN_MASK,
++			   FIELD_PREP(ROPLL_SDM_EN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(005e),
++			   OVRD_ROPLL_SDM_RSTN_MASK | ROPLL_SDM_RSTN_MASK,
++			   FIELD_PREP(OVRD_ROPLL_SDM_RSTN_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_SDM_RSTN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(005e), ROPLL_SDC_FRAC_EN_RBR_MASK,
++			   FIELD_PREP(ROPLL_SDC_FRAC_EN_RBR_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(005e), ROPLL_SDC_FRAC_EN_HBR_MASK,
++			   FIELD_PREP(ROPLL_SDC_FRAC_EN_HBR_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(005e), ROPLL_SDC_FRAC_EN_HBR2_MASK,
++			   FIELD_PREP(ROPLL_SDC_FRAC_EN_HBR2_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(005f),
++			   OVRD_ROPLL_SDC_RSTN_MASK | ROPLL_SDC_RSTN_MASK,
++			   FIELD_PREP(OVRD_ROPLL_SDC_RSTN_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_SDC_RSTN_MASK, 0x1));
++	regmap_write(hdptx->regmap, CMN_REG(0060),
++		     FIELD_PREP(ROPLL_SDM_DENOMINATOR_MASK, 0x21));
++	regmap_write(hdptx->regmap, CMN_REG(0061),
++		     FIELD_PREP(ROPLL_SDM_DENOMINATOR_MASK, 0x27));
++	regmap_write(hdptx->regmap, CMN_REG(0062),
++		     FIELD_PREP(ROPLL_SDM_DENOMINATOR_MASK, 0x27));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0064),
++			   ROPLL_SDM_NUM_SIGN_RBR_MASK |
++			   ROPLL_SDM_NUM_SIGN_HBR_MASK |
++			   ROPLL_SDM_NUM_SIGN_HBR2_MASK,
++			   FIELD_PREP(ROPLL_SDM_NUM_SIGN_RBR_MASK, 0x0) |
++			   FIELD_PREP(ROPLL_SDM_NUM_SIGN_HBR_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_SDM_NUM_SIGN_HBR2_MASK, 0x1));
++	regmap_write(hdptx->regmap, CMN_REG(0065),
++		     FIELD_PREP(ROPLL_SDM_NUM_MASK, 0x0));
++	regmap_write(hdptx->regmap, CMN_REG(0066),
++		     FIELD_PREP(ROPLL_SDM_NUM_MASK, 0xd));
++	regmap_write(hdptx->regmap, CMN_REG(0067),
++		     FIELD_PREP(ROPLL_SDM_NUM_MASK, 0xd));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0069), ROPLL_SDC_N_RBR_MASK,
++			   FIELD_PREP(ROPLL_SDC_N_RBR_MASK, 0x2));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(006a),
++			   ROPLL_SDC_N_HBR_MASK | ROPLL_SDC_N_HBR2_MASK,
++			   FIELD_PREP(ROPLL_SDC_N_HBR_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_SDC_N_HBR2_MASK, 0x1));
++
++	regmap_write(hdptx->regmap, CMN_REG(006c),
++		     FIELD_PREP(ROPLL_SDC_NUM_MASK, 0x3));
++	regmap_write(hdptx->regmap, CMN_REG(006d),
++		     FIELD_PREP(ROPLL_SDC_NUM_MASK, 0x7));
++	regmap_write(hdptx->regmap, CMN_REG(006e),
++		     FIELD_PREP(ROPLL_SDC_NUM_MASK, 0x7));
++
++	regmap_write(hdptx->regmap, CMN_REG(0070),
++		     FIELD_PREP(ROPLL_SDC_DENO_MASK, 0x8));
++	regmap_write(hdptx->regmap, CMN_REG(0071),
++		     FIELD_PREP(ROPLL_SDC_DENO_MASK, 0x18));
++	regmap_write(hdptx->regmap, CMN_REG(0072),
++		     FIELD_PREP(ROPLL_SDC_DENO_MASK, 0x18));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0074),
++			   OVRD_ROPLL_SDC_NDIV_RSTN_MASK | ROPLL_SDC_NDIV_RSTN_MASK,
++			   FIELD_PREP(OVRD_ROPLL_SDC_NDIV_RSTN_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_SDC_NDIV_RSTN_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0077), ANA_ROPLL_SSC_CLK_DIV_SEL_MASK,
++			   FIELD_PREP(ANA_ROPLL_SSC_CLK_DIV_SEL_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0081), ANA_PLL_CD_TX_SER_RATE_SEL_MASK,
++			   FIELD_PREP(ANA_PLL_CD_TX_SER_RATE_SEL_MASK, 0x0));
++	regmap_update_bits(hdptx->regmap, CMN_REG(0081),
++			   ANA_PLL_CD_HSCLK_EAST_EN_MASK | ANA_PLL_CD_HSCLK_WEST_EN_MASK,
++			   FIELD_PREP(ANA_PLL_CD_HSCLK_EAST_EN_MASK, 0x1) |
++			   FIELD_PREP(ANA_PLL_CD_HSCLK_WEST_EN_MASK, 0x0));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0082), ANA_PLL_CD_VREG_GAIN_CTRL_MASK,
++			   FIELD_PREP(ANA_PLL_CD_VREG_GAIN_CTRL_MASK, 0x4));
++	regmap_update_bits(hdptx->regmap, CMN_REG(0083), ANA_PLL_CD_VREG_ICTRL_MASK,
++			   FIELD_PREP(ANA_PLL_CD_VREG_ICTRL_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(0084), PLL_LCRO_CLK_SEL_MASK,
++			   FIELD_PREP(PLL_LCRO_CLK_SEL_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(0085), ANA_PLL_SYNC_LOSS_DET_MODE_MASK,
++			   FIELD_PREP(ANA_PLL_SYNC_LOSS_DET_MODE_MASK, 0x3));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0087), ANA_PLL_TX_HS_CLK_EN_MASK,
++			   FIELD_PREP(ANA_PLL_TX_HS_CLK_EN_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0097), DIG_CLK_SEL_MASK,
++			   FIELD_PREP(DIG_CLK_SEL_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0099), CMN_ROPLL_ALONE_MODE,
++			   FIELD_PREP(CMN_ROPLL_ALONE_MODE, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(009a), HS_SPEED_SEL_MASK,
++			   FIELD_PREP(HS_SPEED_SEL_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, CMN_REG(009b), LS_SPEED_SEL_MASK,
++			   FIELD_PREP(LS_SPEED_SEL_MASK, 0x1));
++}
++
++static int rk_hdptx_dp_aux_init(struct rk_hdptx_phy *hdptx)
++{
++	u32 status;
++	int ret;
++
++	regmap_update_bits(hdptx->regmap, SB_REG(0102), ANA_SB_RXTERM_OFFSP_MASK,
++			   FIELD_PREP(ANA_SB_RXTERM_OFFSP_MASK, 0x3));
++	regmap_update_bits(hdptx->regmap, SB_REG(0103), ANA_SB_RXTERM_OFFSN_MASK,
++			   FIELD_PREP(ANA_SB_RXTERM_OFFSN_MASK, 0x3));
++	regmap_update_bits(hdptx->regmap, SB_REG(0104), SB_AUX_EN_MASK,
++			   FIELD_PREP(SB_AUX_EN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, SB_REG(0105), ANA_SB_TX_HLVL_PROG_MASK,
++			   FIELD_PREP(ANA_SB_TX_HLVL_PROG_MASK, 0x7));
++	regmap_update_bits(hdptx->regmap, SB_REG(0106), ANA_SB_TX_LLVL_PROG_MASK,
++			   FIELD_PREP(ANA_SB_TX_LLVL_PROG_MASK, 0x7));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(010d), ANA_SB_DMRX_LPBK_DATA_MASK,
++			   FIELD_PREP(ANA_SB_DMRX_LPBK_DATA_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(010f), ANA_SB_VREG_GAIN_CTRL_MASK,
++			   FIELD_PREP(ANA_SB_VREG_GAIN_CTRL_MASK, 0x0));
++	regmap_update_bits(hdptx->regmap, SB_REG(0110),
++			   ANA_SB_VREG_OUT_SEL_MASK | ANA_SB_VREG_REF_SEL_MASK,
++			   FIELD_PREP(ANA_SB_VREG_OUT_SEL_MASK, 0x1) |
++			   FIELD_PREP(ANA_SB_VREG_REF_SEL_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(0113),
++			   SB_RX_RCAL_OPT_CODE_MASK | SB_RX_RTERM_CTRL_MASK,
++			   FIELD_PREP(SB_RX_RCAL_OPT_CODE_MASK, 0x1) |
++			   FIELD_PREP(SB_RX_RTERM_CTRL_MASK, 0x3));
++	regmap_update_bits(hdptx->regmap, SB_REG(0114),
++			   SB_TG_SB_EN_DELAY_TIME_MASK | SB_TG_RXTERM_EN_DELAY_TIME_MASK,
++			   FIELD_PREP(SB_TG_SB_EN_DELAY_TIME_MASK, 0x2) |
++			   FIELD_PREP(SB_TG_RXTERM_EN_DELAY_TIME_MASK, 0x2));
++	regmap_update_bits(hdptx->regmap, SB_REG(0115),
++			   SB_READY_DELAY_TIME_MASK | SB_TG_OSC_EN_DELAY_TIME_MASK,
++			   FIELD_PREP(SB_READY_DELAY_TIME_MASK, 0x2) |
++			   FIELD_PREP(SB_TG_OSC_EN_DELAY_TIME_MASK, 0x2));
++	regmap_update_bits(hdptx->regmap, SB_REG(0116),
++			   AFC_RSTN_DELAY_TIME_MASK,
++			   FIELD_PREP(AFC_RSTN_DELAY_TIME_MASK, 0x2));
++	regmap_update_bits(hdptx->regmap, SB_REG(0117),
++			   FAST_PULSE_TIME_MASK,
++			   FIELD_PREP(FAST_PULSE_TIME_MASK, 0x4));
++	regmap_update_bits(hdptx->regmap, SB_REG(0118),
++			   SB_TG_EARC_DMRX_RECVRD_CLK_CNT_MASK,
++			   FIELD_PREP(SB_TG_EARC_DMRX_RECVRD_CLK_CNT_MASK, 0xa));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(011a), SB_TG_CNT_RUN_NO_7_0_MASK,
++			   FIELD_PREP(SB_TG_CNT_RUN_NO_7_0_MASK, 0x3));
++	regmap_update_bits(hdptx->regmap, SB_REG(011b),
++			   SB_EARC_SIG_DET_BYPASS_MASK | SB_AFC_TOL_MASK,
++			   FIELD_PREP(SB_EARC_SIG_DET_BYPASS_MASK, 0x1) |
++			   FIELD_PREP(SB_AFC_TOL_MASK, 0x3));
++	regmap_update_bits(hdptx->regmap, SB_REG(011c), SB_AFC_STB_NUM_MASK,
++			   FIELD_PREP(SB_AFC_STB_NUM_MASK, 0x4));
++	regmap_update_bits(hdptx->regmap, SB_REG(011d), SB_TG_OSC_CNT_MIN_MASK,
++			   FIELD_PREP(SB_TG_OSC_CNT_MIN_MASK, 0x67));
++	regmap_update_bits(hdptx->regmap, SB_REG(011e), SB_TG_OSC_CNT_MAX_MASK,
++			   FIELD_PREP(SB_TG_OSC_CNT_MAX_MASK, 0x6a));
++	regmap_update_bits(hdptx->regmap, SB_REG(011f), SB_PWM_AFC_CTRL_MASK,
++			   FIELD_PREP(SB_PWM_AFC_CTRL_MASK, 0x5));
++	regmap_update_bits(hdptx->regmap, SB_REG(011f), SB_RCAL_RSTN_MASK,
++			   FIELD_PREP(SB_RCAL_RSTN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, SB_REG(0120), SB_AUX_EN_IN_MASK,
++			   FIELD_PREP(SB_AUX_EN_IN_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(0102), OVRD_SB_RXTERM_EN_MASK,
++			   FIELD_PREP(OVRD_SB_RXTERM_EN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, SB_REG(0103), OVRD_SB_RX_RESCAL_DONE_MASK,
++			   FIELD_PREP(OVRD_SB_RX_RESCAL_DONE_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, SB_REG(0104), OVRD_SB_EN_MASK,
++			   FIELD_PREP(OVRD_SB_EN_MASK, 0x1));
++	regmap_update_bits(hdptx->regmap, SB_REG(0104), OVRD_SB_AUX_EN_MASK,
++			   FIELD_PREP(OVRD_SB_AUX_EN_MASK, 0x1));
++
++	regmap_update_bits(hdptx->regmap, SB_REG(010f), OVRD_SB_VREG_EN_MASK,
++			   FIELD_PREP(OVRD_SB_VREG_EN_MASK, 0x1));
++
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_BGR_EN << 16 | FIELD_PREP(HDPTX_I_BGR_EN, 0x1));
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_BIAS_EN << 16 | FIELD_PREP(HDPTX_I_BIAS_EN, 0x1));
++	usleep_range(20, 25);
++
++	reset_control_deassert(hdptx->rsts[RST_INIT].rstc);
++	usleep_range(20, 25);
++	reset_control_deassert(hdptx->rsts[RST_CMN].rstc);
++	usleep_range(20, 25);
++
++	regmap_update_bits(hdptx->regmap, SB_REG(0103), OVRD_SB_RX_RESCAL_DONE_MASK,
++			   FIELD_PREP(OVRD_SB_RX_RESCAL_DONE_MASK, 0x1));
++	usleep_range(100, 110);
++	regmap_update_bits(hdptx->regmap, SB_REG(0104), SB_EN_MASK,
++			   FIELD_PREP(SB_EN_MASK, 0x1));
++	usleep_range(100, 110);
++	regmap_update_bits(hdptx->regmap, SB_REG(0102), SB_RXTERM_EN_MASK,
++			   FIELD_PREP(SB_RXTERM_EN_MASK, 0x1));
++	usleep_range(20, 25);
++	regmap_update_bits(hdptx->regmap, SB_REG(010f), SB_VREG_EN_MASK,
++			   FIELD_PREP(SB_VREG_EN_MASK, 0x1));
++	usleep_range(20, 25);
++	regmap_update_bits(hdptx->regmap, SB_REG(0104), SB_AUX_EN_MASK,
++			   FIELD_PREP(SB_AUX_EN_MASK, 0x1));
++	usleep_range(100, 110);
++
++	ret = regmap_read_poll_timeout(hdptx->grf, GRF_HDPTX_STATUS,
++				       status, FIELD_GET(HDPTX_O_SB_RDY, status),
++				       50, 1000);
++	if (ret) {
++		dev_err(hdptx->dev, "Failed to get phy sb ready: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
+ static int rk_hdptx_phy_power_on(struct phy *phy)
+ {
+ 	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
+ 	int bus_width = phy_get_bus_width(hdptx->phy);
+-	int ret;
++	enum phy_mode mode = phy_get_mode(phy);
++	int ret, lane;
+ 
+ 	/*
+ 	 * FIXME: Temporary workaround to pass pixel_clk_rate
+@@ -927,13 +1419,43 @@ static int rk_hdptx_phy_power_on(struct phy *phy)
+ 	dev_dbg(hdptx->dev, "%s bus_width=%x rate=%u\n",
+ 		__func__, bus_width, rate);
+ 
+-	ret = rk_hdptx_phy_consumer_get(hdptx, rate);
+-	if (ret)
+-		return ret;
++	if (mode == PHY_MODE_DP) {
++		rk_hdptx_dp_reset(hdptx);
+ 
+-	ret = rk_hdptx_ropll_tmds_mode_config(hdptx, rate);
+-	if (ret)
+-		rk_hdptx_phy_consumer_put(hdptx, true);
++		for (lane = 0; lane < 4; lane++) {
++			regmap_update_bits(hdptx->regmap, LANE_REG(031e) + 0x400 * lane,
++					   LN_POLARITY_INV_MASK | LN_LANE_MODE_MASK,
++					   FIELD_PREP(LN_POLARITY_INV_MASK, 0) |
++					   FIELD_PREP(LN_LANE_MODE_MASK, 1));
++		}
++
++		regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++			     HDPTX_MODE_SEL << 16 | FIELD_PREP(HDPTX_MODE_SEL, 0x1));
++
++		regmap_update_bits(hdptx->regmap, LNTOP_REG(0200), PROTOCOL_SEL,
++				   FIELD_PREP(PROTOCOL_SEL, 0x0));
++		regmap_update_bits(hdptx->regmap, LNTOP_REG(0206), DATA_BUS_WIDTH_MASK,
++				   FIELD_PREP(DATA_BUS_WIDTH_MASK, 0x1));
++		regmap_update_bits(hdptx->regmap, LNTOP_REG(0206), DATA_BUS_WIDTH_SEL_MASK,
++				   FIELD_PREP(DATA_BUS_WIDTH_SEL_MASK, 0x0));
++
++		rk_hdptx_dp_pll_init(hdptx);
++
++		ret = rk_hdptx_dp_aux_init(hdptx);
++		if (ret)
++			pm_runtime_put(hdptx->dev);
++	} else {
++		regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++			     HDPTX_MODE_SEL << 16 | FIELD_PREP(HDPTX_MODE_SEL, 0x0));
++
++		ret = rk_hdptx_phy_consumer_get(hdptx, rate);
++		if (ret)
++			return ret;
++
++		ret = rk_hdptx_ropll_tmds_mode_config(hdptx, rate);
++		if (ret)
++			rk_hdptx_phy_consumer_put(hdptx, true);
++	}
+ 
+ 	return ret;
+ }
+@@ -945,9 +1467,337 @@ static int rk_hdptx_phy_power_off(struct phy *phy)
+ 	return rk_hdptx_phy_consumer_put(hdptx, false);
+ }
+ 
++static int rk_hdptx_phy_set_mode(struct phy *phy, enum phy_mode mode,
++				 int submode)
++{
++	return 0;
++}
++
++static int rk_hdptx_phy_verify_config(struct rk_hdptx_phy *hdptx,
++				      struct phy_configure_opts_dp *dp)
++{
++	int i;
++
++	if (dp->set_rate) {
++		switch (dp->link_rate) {
++		case 1620:
++		case 2700:
++		case 5400:
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	if (dp->set_lanes) {
++		switch (dp->lanes) {
++		case 0:
++		case 1:
++		case 2:
++		case 4:
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	if (dp->set_voltages) {
++		for (i = 0; i < dp->lanes; i++) {
++			if (dp->voltage[i] > 3 || dp->pre[i] > 3)
++				return -EINVAL;
++
++			if (dp->voltage[i] + dp->pre[i] > 3)
++				return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static int rk_hdptx_phy_set_rate(struct rk_hdptx_phy *hdptx,
++				 struct phy_configure_opts_dp *dp)
++{
++	u32 bw, status;
++	int ret;
++
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_PLL_EN << 16 | FIELD_PREP(HDPTX_I_PLL_EN, 0x0));
++
++	switch (dp->link_rate) {
++	case 1620:
++		bw = DP_BW_RBR;
++		break;
++	case 2700:
++		bw = DP_BW_HBR;
++		break;
++	case 5400:
++		bw = DP_BW_HBR2;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0008), OVRD_LCPLL_EN_MASK | LCPLL_EN_MASK,
++			   FIELD_PREP(OVRD_LCPLL_EN_MASK, 0x1) |
++			   FIELD_PREP(LCPLL_EN_MASK, 0x0));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(003d), OVRD_ROPLL_EN_MASK | ROPLL_EN_MASK,
++			   FIELD_PREP(OVRD_ROPLL_EN_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_EN_MASK, 0x1));
++
++	if (dp->ssc) {
++		regmap_update_bits(hdptx->regmap, CMN_REG(0074),
++				   OVRD_ROPLL_SSC_EN_MASK | ROPLL_SSC_EN_MASK,
++				   FIELD_PREP(OVRD_ROPLL_SSC_EN_MASK, 0x1) |
++				   FIELD_PREP(ROPLL_SSC_EN_MASK, 0x1));
++		regmap_write(hdptx->regmap, CMN_REG(0075),
++			     FIELD_PREP(ANA_ROPLL_SSC_FM_DEVIATION_MASK, 0xc));
++		regmap_update_bits(hdptx->regmap, CMN_REG(0076),
++				   ANA_ROPLL_SSC_FM_FREQ_MASK,
++				   FIELD_PREP(ANA_ROPLL_SSC_FM_FREQ_MASK, 0x1f));
++
++		regmap_update_bits(hdptx->regmap, CMN_REG(0099), SSC_EN_MASK,
++				   FIELD_PREP(SSC_EN_MASK, 0x2));
++	} else {
++		regmap_update_bits(hdptx->regmap, CMN_REG(0074),
++				   OVRD_ROPLL_SSC_EN_MASK | ROPLL_SSC_EN_MASK,
++				   FIELD_PREP(OVRD_ROPLL_SSC_EN_MASK, 0x1) |
++				   FIELD_PREP(ROPLL_SSC_EN_MASK, 0x0));
++		regmap_write(hdptx->regmap, CMN_REG(0075),
++			     FIELD_PREP(ANA_ROPLL_SSC_FM_DEVIATION_MASK, 0x20));
++		regmap_update_bits(hdptx->regmap, CMN_REG(0076),
++				   ANA_ROPLL_SSC_FM_FREQ_MASK,
++				   FIELD_PREP(ANA_ROPLL_SSC_FM_FREQ_MASK, 0xc));
++
++		regmap_update_bits(hdptx->regmap, CMN_REG(0099), SSC_EN_MASK,
++				   FIELD_PREP(SSC_EN_MASK, 0x0));
++	}
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0095), DP_TX_LINK_BW_MASK,
++			   FIELD_PREP(DP_TX_LINK_BW_MASK, bw));
++
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_PLL_EN << 16 | FIELD_PREP(HDPTX_I_PLL_EN, 0x1));
++
++	ret = regmap_read_poll_timeout(hdptx->grf, GRF_HDPTX_STATUS,
++				       status, FIELD_GET(HDPTX_O_PLL_LOCK_DONE, status),
++				       50, 1000);
++	if (ret) {
++		dev_err(hdptx->dev, "Failed to get phy pll lock: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void rk_hdptx_phy_lane_disable(struct rk_hdptx_phy *hdptx)
++{
++	reset_control_assert(hdptx->rsts[RST_LANE].rstc);
++
++	regmap_update_bits(hdptx->regmap, LNTOP_REG(0207), LANE_EN,
++			   FIELD_PREP(LANE_EN, 0x0));
++
++	regmap_write(hdptx->grf, GRF_HDPTX_CON0,
++		     HDPTX_I_PLL_EN << 16 | FIELD_PREP(HDPTX_I_PLL_EN, 0x0));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(0008), OVRD_LCPLL_EN_MASK | LCPLL_EN_MASK,
++			   FIELD_PREP(OVRD_LCPLL_EN_MASK, 0x1) |
++			   FIELD_PREP(LCPLL_EN_MASK, 0x0));
++
++	regmap_update_bits(hdptx->regmap, CMN_REG(003d), OVRD_ROPLL_EN_MASK | ROPLL_EN_MASK,
++			   FIELD_PREP(OVRD_ROPLL_EN_MASK, 0x1) |
++			   FIELD_PREP(ROPLL_EN_MASK, 0x0));
++}
++
++static int rk_hdptx_phy_set_lanes(struct rk_hdptx_phy *hdptx,
++				  struct phy_configure_opts_dp *dp)
++{
++	if (!dp->lanes) {
++		rk_hdptx_phy_lane_disable(hdptx);
++		return 0;
++	}
++
++	regmap_update_bits(hdptx->regmap, LNTOP_REG(0207), LANE_EN,
++			   FIELD_PREP(LANE_EN, GENMASK(dp->lanes - 1, 0)));
++
++	return 0;
++}
++
++static void rk_hdptx_phy_set_voltage(struct rk_hdptx_phy *hdptx,
++				     struct phy_configure_opts_dp *dp,
++				     u8 lane)
++{
++	const struct tx_drv_ctrl *ctrl;
++	u32 offset = lane * 0x400;
++
++	switch (dp->link_rate) {
++	case 1620:
++		ctrl = &tx_drv_ctrl_rbr[dp->voltage[lane]][dp->pre[lane]];
++		regmap_update_bits(hdptx->regmap, LANE_REG(030a) + offset,
++				   LN_TX_JEQ_EVEN_CTRL_RBR_MASK,
++				   FIELD_PREP(LN_TX_JEQ_EVEN_CTRL_RBR_MASK,
++				   ctrl->tx_jeq_even_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(030c) + offset,
++				   LN_TX_JEQ_ODD_CTRL_RBR_MASK,
++				   FIELD_PREP(LN_TX_JEQ_ODD_CTRL_RBR_MASK,
++				   ctrl->tx_jeq_odd_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(0311) + offset,
++				   LN_TX_SER_40BIT_EN_RBR_MASK,
++				   FIELD_PREP(LN_TX_SER_40BIT_EN_RBR_MASK, 0x1));
++		break;
++	case 2700:
++		ctrl = &tx_drv_ctrl_hbr[dp->voltage[lane]][dp->pre[lane]];
++		regmap_update_bits(hdptx->regmap, LANE_REG(030b) + offset,
++				   LN_TX_JEQ_EVEN_CTRL_HBR_MASK,
++				   FIELD_PREP(LN_TX_JEQ_EVEN_CTRL_HBR_MASK,
++				   ctrl->tx_jeq_even_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(030d) + offset,
++				   LN_TX_JEQ_ODD_CTRL_HBR_MASK,
++				   FIELD_PREP(LN_TX_JEQ_ODD_CTRL_HBR_MASK,
++				   ctrl->tx_jeq_odd_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(0311) + offset,
++				   LN_TX_SER_40BIT_EN_HBR_MASK,
++				   FIELD_PREP(LN_TX_SER_40BIT_EN_HBR_MASK, 0x1));
++		break;
++	case 5400:
++	default:
++		ctrl = &tx_drv_ctrl_hbr2[dp->voltage[lane]][dp->pre[lane]];
++		regmap_update_bits(hdptx->regmap, LANE_REG(030b) + offset,
++				   LN_TX_JEQ_EVEN_CTRL_HBR2_MASK,
++				   FIELD_PREP(LN_TX_JEQ_EVEN_CTRL_HBR2_MASK,
++				   ctrl->tx_jeq_even_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(030d) + offset,
++				   LN_TX_JEQ_ODD_CTRL_HBR2_MASK,
++				   FIELD_PREP(LN_TX_JEQ_ODD_CTRL_HBR2_MASK,
++				   ctrl->tx_jeq_odd_ctrl));
++		regmap_update_bits(hdptx->regmap, LANE_REG(0311) + offset,
++				   LN_TX_SER_40BIT_EN_HBR2_MASK,
++				   FIELD_PREP(LN_TX_SER_40BIT_EN_HBR2_MASK, 0x1));
++		break;
++	}
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(0303) + offset,
++			   OVRD_LN_TX_DRV_LVL_CTRL_MASK | LN_TX_DRV_LVL_CTRL_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_LVL_CTRL_MASK, 0x1) |
++			   FIELD_PREP(LN_TX_DRV_LVL_CTRL_MASK,
++				      ctrl->tx_drv_lvl_ctrl));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0304) + offset,
++			   OVRD_LN_TX_DRV_POST_LVL_CTRL_MASK |
++			   LN_TX_DRV_POST_LVL_CTRL_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_POST_LVL_CTRL_MASK, 0x1) |
++			   FIELD_PREP(LN_TX_DRV_POST_LVL_CTRL_MASK,
++				      ctrl->tx_drv_post_lvl_ctrl));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0305) + offset,
++			   OVRD_LN_TX_DRV_PRE_LVL_CTRL_MASK |
++			   LN_TX_DRV_PRE_LVL_CTRL_MASK,
++			   FIELD_PREP(OVRD_LN_TX_DRV_PRE_LVL_CTRL_MASK, 0x1) |
++			   FIELD_PREP(LN_TX_DRV_PRE_LVL_CTRL_MASK,
++				      ctrl->tx_drv_pre_lvl_ctrl));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0306) + offset,
++			   LN_ANA_TX_DRV_IDRV_IDN_CTRL_MASK |
++			   LN_ANA_TX_DRV_IDRV_IUP_CTRL_MASK |
++			   LN_ANA_TX_DRV_ACCDRV_EN_MASK,
++			   FIELD_PREP(LN_ANA_TX_DRV_IDRV_IDN_CTRL_MASK,
++				      ctrl->ana_tx_drv_idrv_idn_ctrl) |
++			   FIELD_PREP(LN_ANA_TX_DRV_IDRV_IUP_CTRL_MASK,
++				      ctrl->ana_tx_drv_idrv_iup_ctrl) |
++			   FIELD_PREP(LN_ANA_TX_DRV_ACCDRV_EN_MASK,
++				      ctrl->ana_tx_drv_accdrv_en));
++	regmap_update_bits(hdptx->regmap, LANE_REG(0307) + offset,
++			   LN_ANA_TX_DRV_ACCDRV_POL_SEL_MASK |
++			   LN_ANA_TX_DRV_ACCDRV_CTRL_MASK,
++			   FIELD_PREP(LN_ANA_TX_DRV_ACCDRV_POL_SEL_MASK, 0x1) |
++			   FIELD_PREP(LN_ANA_TX_DRV_ACCDRV_CTRL_MASK,
++				      ctrl->ana_tx_drv_accdrv_ctrl));
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(030a) + offset,
++			   LN_ANA_TX_JEQ_EN_MASK,
++			   FIELD_PREP(LN_ANA_TX_JEQ_EN_MASK, ctrl->ana_tx_jeq_en));
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(0310) + offset,
++			   LN_ANA_TX_SYNC_LOSS_DET_MODE_MASK,
++			   FIELD_PREP(LN_ANA_TX_SYNC_LOSS_DET_MODE_MASK, 0x3));
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(0316) + offset,
++			   LN_ANA_TX_SER_VREG_GAIN_CTRL_MASK,
++			   FIELD_PREP(LN_ANA_TX_SER_VREG_GAIN_CTRL_MASK, 0x2));
++
++	regmap_update_bits(hdptx->regmap, LANE_REG(031b) + offset,
++			   LN_ANA_TX_RESERVED_MASK,
++			   FIELD_PREP(LN_ANA_TX_RESERVED_MASK, 0x1));
++}
++
++static int rk_hdptx_phy_set_voltages(struct rk_hdptx_phy *hdptx,
++				     struct phy_configure_opts_dp *dp)
++{
++	u8 lane;
++	u32 status;
++	int ret;
++
++	for (lane = 0; lane < dp->lanes; lane++)
++		rk_hdptx_phy_set_voltage(hdptx, dp, lane);
++
++	reset_control_deassert(hdptx->rsts[RST_LANE].rstc);
++
++	ret = regmap_read_poll_timeout(hdptx->grf, GRF_HDPTX_STATUS,
++				       status, FIELD_GET(HDPTX_O_PHY_RDY, status),
++				       50, 5000);
++	if (ret) {
++		dev_err(hdptx->dev, "Failed to get phy ready: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int rk_hdptx_phy_configure(struct phy *phy, union phy_configure_opts *opts)
++{
++	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
++	enum phy_mode mode = phy_get_mode(phy);
++	int ret;
++
++	if (mode != PHY_MODE_DP)
++		return -EINVAL;
++
++	ret = rk_hdptx_phy_verify_config(hdptx, &opts->dp);
++	if (ret) {
++		dev_err(hdptx->dev, "invalid params for phy configure\n");
++		return ret;
++	}
++
++	if (opts->dp.set_rate) {
++		ret = rk_hdptx_phy_set_rate(hdptx, &opts->dp);
++		if (ret) {
++			dev_err(hdptx->dev, "failed to set rate: %d\n", ret);
++			return ret;
++		}
++	}
++
++	if (opts->dp.set_lanes) {
++		ret = rk_hdptx_phy_set_lanes(hdptx, &opts->dp);
++		if (ret) {
++			dev_err(hdptx->dev, "failed to set lanes: %d\n", ret);
++			return ret;
++		}
++	}
++
++	if (opts->dp.set_voltages) {
++		ret = rk_hdptx_phy_set_voltages(hdptx, &opts->dp);
++		if (ret) {
++			dev_err(hdptx->dev, "failed to set voltages: %d\n",
++				ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
+ static const struct phy_ops rk_hdptx_phy_ops = {
+ 	.power_on  = rk_hdptx_phy_power_on,
+ 	.power_off = rk_hdptx_phy_power_off,
++	.set_mode  = rk_hdptx_phy_set_mode,
++	.configure = rk_hdptx_phy_configure,
+ 	.owner	   = THIS_MODULE,
+ };
+ 
+@@ -1164,5 +2014,6 @@ module_platform_driver(rk_hdptx_phy_driver);
+ 
+ MODULE_AUTHOR("Algea Cao <algea.cao@rock-chips.com>");
+ MODULE_AUTHOR("Cristian Ciocaltea <cristian.ciocaltea@collabora.com>");
++MODULE_AUTHOR("Damon Ding <damon.ding@rock-chips.com>");
+ MODULE_DESCRIPTION("Samsung HDMI/eDP Transmitter Combo PHY Driver");
+ MODULE_LICENSE("GPL");
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
