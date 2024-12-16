@@ -1,154 +1,140 @@
-Return-Path: <linux-kernel+bounces-446864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983B69F2A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:46:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9689F2A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD965166938
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:46:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C403A7A22E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8108A1CD213;
-	Mon, 16 Dec 2024 06:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DA61CD219;
+	Mon, 16 Dec 2024 06:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EuJhHu0K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="axzr4p6y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A975A48;
-	Mon, 16 Dec 2024 06:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BACFA48;
+	Mon, 16 Dec 2024 06:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734331606; cv=none; b=E8n0BLtWKEfC6uLIazn9wqHL6zIjq1njKe+7sWgiqL6L1xhoY3X/v9DtVUs14NYWxBAmJRJb5k6niRzLfgn+JI+O4LGz5R+gxW/WVPeM/lDdXwsp4+72ALCQ2f55SAbD1xvCraHNQ6NnFCkKNYG4Q+o4PoPmcxgGL3ay5f3O+3g=
+	t=1734331727; cv=none; b=dwss8QWZuYdf42qpKmeZPjS3pFAJz0lZe5FKfjpOU5kRLcMvBZtebcSioeSXOZc5h//19PnjZAuWIsLNZBJWsIfaVsctHOPkqcYcpqSD3P6GIp3peva3gBUBJKk/s9+a9bgyYylaD51GorMOqbA95H3CWuAT9Vs27xV/TrflPsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734331606; c=relaxed/simple;
-	bh=uAA+xsvVn62MXq04wVPd7Kih4Sb9EJn29VAChkY1Up4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l0POM0dsXfUVFDbYbjCFQwVtBwU9hENJyZV807eTXzpSNLlMPyxTpAos0ACZvwjE1bCr8F7h5kPGKKEt2/3DiaFzx1NjWEzfQP3pHzGCzOnnhbMIiSfQ53QRZy/08yqOpvCHadM/ABMxTNxVV0pVC5XVt4lDi4KVeeWeRV/hk9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EuJhHu0K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG28tB3025857;
-	Mon, 16 Dec 2024 06:46:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UzVlqg/tbSo4RLlGYHUSgvpFKa0KrzSAkEHjBi+NHG8=; b=EuJhHu0K/dfrhYsQ
-	KKDv9okeNKpyr8IS3ilMH6Wg6x7rSBqksuuNHVlfkPIeBxQWThuytH1X/f/brSG8
-	UoOt+sSB9pNOpBYLy7pjhtk2feUmKh+Ade0KGKFQTIR6Ow8qJJ8KgLGv5SLAoWEm
-	vIF7FVFcWTC9q2DZfrBsvXXo9WiD9IpQtfbtDC54EK/2BcVlKiDyXJwGgoVcuBxw
-	IeeP+PeSCjnhBnxJ0xz/FOo2zg8o3l0Qhjm9jinZSAwFMlf/ZOyabAOb6406mUG1
-	Ax5v86uBrL4p5hm7BvahWL//p6TKuV/e8CXNrZ58p+/VBiKqWTJILf0rdafwZSv7
-	mEJfSA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jb5rrn5y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 06:46:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BG6keZu011347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 06:46:40 GMT
-Received: from [10.239.132.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 15 Dec
- 2024 22:46:33 -0800
-Message-ID: <365c24e5-5482-4ee8-9dfb-36af96454d2d@quicinc.com>
-Date: Mon, 16 Dec 2024 14:46:31 +0800
+	s=arc-20240116; t=1734331727; c=relaxed/simple;
+	bh=f6imVHIwBO5y+VNI+OBSEm0607sjuDvEWjjMWJjz7Jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LQUcQjzpNVYE1HWqdnIlC1Crh0pNjSeVTgsOE1X/OjuG6io07Rv1jTUZFffqn7FsCSe4r6qEiopkP4vUj6nnbn3Ne7m4UUIk5AQghmcZyVDytwq/TId2BqeJb5MJh4VLfQoZ0mjbQUctvEgm2acWXHO9R3+9X1s/bOvihN53lWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=axzr4p6y; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734331726; x=1765867726;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=f6imVHIwBO5y+VNI+OBSEm0607sjuDvEWjjMWJjz7Jo=;
+  b=axzr4p6yAP+9nMzGJ69RuIT0i95RSIaRTYalP34zXqdvci0XbevwKu7j
+   Yt0rn28tmBQNL5QJlyHe9XiaPamc4axHuAx3ZUAJXCKontlvjzZXjbKlT
+   GUvrqCqwmPFtYAZtHDXQgyCmz711ZliRXBGJOvkMrBepNLNMkb45Q9p8Y
+   rApP/dNnc8wu4GCIxlNSB9yOgphQneDzwFkV8MJXPo/xiCHR0yKENHDX2
+   ZbzmPFwyVleVmcwm4Yhvk6lxyuj+f7yuruULeuwx1dsR1aFcCcIQIZGvA
+   TKdTNzfvJscOHU1xETZHYY0MCyp+q1Ce359aAhqXllsF9HhDJVm7mdAHT
+   A==;
+X-CSE-ConnectionGUID: ODhR4mkWTdW53j3l7VaA/g==
+X-CSE-MsgGUID: kMKFXXGVRI+QnOOnVRFB4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34848179"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="34848179"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:48:45 -0800
+X-CSE-ConnectionGUID: 0ZYhOhqLRF2QZFp/LSt1ow==
+X-CSE-MsgGUID: H+0+CYdpREuAj9JqRrXIKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="128101836"
+Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
+  by fmviesa001.fm.intel.com with ESMTP; 15 Dec 2024 22:48:41 -0800
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-next 0/9] igc: Add support for Frame Preemption feature in IGC
+Date: Mon, 16 Dec 2024 01:47:11 -0500
+Message-Id: <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] Correct the number of GPIOs in gpio-ranges for QCS615
- and QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Jingyi
- Wang" <quic_jingyw@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20241212-correct_gpio_ranges-v1-0-c5f20d61882f@quicinc.com>
- <ccsuwijfrspm2a2irycsicqepjhwai5pfvgkd5dcaf3nhmqwui@hels74qjkiva>
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-In-Reply-To: <ccsuwijfrspm2a2irycsicqepjhwai5pfvgkd5dcaf3nhmqwui@hels74qjkiva>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ANd-U4zH-U6IysopODhS89HLFQ3969Yd
-X-Proofpoint-ORIG-GUID: ANd-U4zH-U6IysopODhS89HLFQ3969Yd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 mlxscore=0 adultscore=0 clxscore=1011 bulkscore=0
- mlxlogscore=814 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412160054
 
+Introduces support for the FPE feature in the IGC driver.
 
+The patches aligns with the upstream FPE API:
+https://patchwork.kernel.org/project/netdevbpf/cover/20230220122343.1156614-1-vladimir.oltean@nxp.com/
+https://patchwork.kernel.org/project/netdevbpf/cover/20230119122705.73054-1-vladimir.oltean@nxp.com/
 
-在 12/12/2024 5:34 PM, Dmitry Baryshkov 写道:
-> On Thu, Dec 12, 2024 at 05:23:59PM +0800, Lijuan Gao wrote:
->> The UFS_RESET pin is expected to be wired to the reset pin of the
->> primary UFS memory, it's a general purpose output pin. Reorder it and
->> expose it as a gpio, so that the UFS driver can toggle it.
-> 
-> I don't see pins being reordered. Please correct your commit messages.
-> 
-Understood,  I will update the commit message in next patch, thanks!
->>
->> The QCS615 TLMM pin controller has GPIOs 0-122, so correct the
->> gpio-rangs to 124.
->>
->> The QCS8300 TLMM pin controller has GPIOs 0-132, so correct the
->> gpio-rangs to 134.
->>
->> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
->> ---
->> Lijuan Gao (6):
->>        dt-bindings: pinctrl: qcom: correct gpio-ranges in examples for qcs615
->>        dt-bindings: pinctrl: qcom: correct gpio-ranges in examples for qcs8300
->>        pinctrl: qcom: correct the number of ngpios for QCS615
->>        pinctrl: qcom: correct the number of ngpios for QCS8300
->>        arm64: dts: qcom: correct gpio-ranges for QCS615
->>        arm64: dts: qcom: correct gpio-ranges for QCS8300
->>
->>   Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml  | 2 +-
->>   Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml | 2 +-
->>   arch/arm64/boot/dts/qcom/qcs615.dtsi                             | 2 +-
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi                            | 2 +-
->>   drivers/pinctrl/qcom/pinctrl-qcs615.c                            | 2 +-
->>   drivers/pinctrl/qcom/pinctrl-qcs8300.c                           | 2 +-
->>   6 files changed, 6 insertions(+), 6 deletions(-)
->> ---
->> base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
->> change-id: 20241211-correct_gpio_ranges-ed8a25ad22e7
->>
->> Best regards,
->> -- 
->> Lijuan Gao <quic_lijuang@quicinc.com>
->>
-> 
+It builds upon earlier work:
+https://patchwork.kernel.org/project/netdevbpf/cover/20220520011538.1098888-1-vinicius.gomes@intel.com/
 
--- 
-Thx and BRs
-Lijuan Gao
+The first four patches in this series are preparation work for the subsequent patches.
+
+The patch series adds the following functionalities to the IGC driver:
+a) Configure FPE using `ethtool --set-mm`.
+b) Display FPE settings via `ethtool --show-mm`.
+c) View FPE statistics using `ethtool --include-statistics --show-mm'.
+e) Enable preemptible/express queue with `fp`:
+   tc qdisc add ... root taprio \
+   fp E E P P
+
+Note:
+1. preemption can occur with or without the verification handshake,
+   depending on the value of the verify_enabled field, which can be
+   configured using ethtool --set-mm.
+2. Enabling FPE with mqprio offload is not covered in this series, but
+   existing code prevents user from configuring FPE alongside mqprio offload.
+
+Faizal Rahim (6):
+  igc: Rename xdp_get_tx_ring() for non-xdp usage
+  igc: Add support to set MAC Merge data via ethtool
+  igc: Add support for frame preemption verification
+  igc: Add support for preemptible traffic class in taprio
+  igc: Add support to get MAC Merge data via ethtool
+  igc: Add support to get frame preemption statistics via ethtool
+
+Vinicius Costa Gomes (3):
+  igc: Optimize the TX packet buffer utilization
+  igc: Set the RX packet buffer size for TSN mode
+  igc: Add support for receiving frames with all zeroes address
+
+ drivers/net/ethernet/intel/igc/igc.h         |  45 ++-
+ drivers/net/ethernet/intel/igc/igc_defines.h |  15 +-
+ drivers/net/ethernet/intel/igc/igc_ethtool.c |  96 ++++++
+ drivers/net/ethernet/intel/igc/igc_main.c    |  80 ++++-
+ drivers/net/ethernet/intel/igc/igc_regs.h    |  19 ++
+ drivers/net/ethernet/intel/igc/igc_tsn.c     | 330 ++++++++++++++++++-
+ drivers/net/ethernet/intel/igc/igc_tsn.h     |  15 +
+ 7 files changed, 586 insertions(+), 14 deletions(-)
+
+--
+2.25.1
 
 
