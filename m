@@ -1,175 +1,227 @@
-Return-Path: <linux-kernel+bounces-447736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7049F3688
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:49:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52FE9F3684
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA27188C22D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 719C47A522B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36932066C4;
-	Mon, 16 Dec 2024 16:42:27 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1B0202F64;
+	Mon, 16 Dec 2024 16:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jSG0FlTy"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011009.outbound.protection.outlook.com [52.101.70.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931DA206266
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367347; cv=none; b=GtLiCuLM9a+B3Vashos1azcb//kEga6vnyoYiE4W+DoKVUxCpdtUj9/f/1+JCaZzA6lt/6CCyOPnJKw8tmGLvw05MXZwUcniWCZGulTXnP+qeSIxnjW99Zjtga+/OWIIwtl4rFEFJrpnAORkO62K3HY2fIg+Ct84aHtnDWp+SYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367347; c=relaxed/simple;
-	bh=+2A5q8NooEqm05JzMq3tUoF04pXhbxQmr813UKPX0G4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QHjpy/r6tCr7ltFq/crf+wl8snXQ4BI9v30uJuJFtnyw9+BlMxHqyrXQpPQVBTkhdT2EYbsnIA7aH/aWbDsqYbTS2Z0EmSOGhup8mlqAVyk5n/ctYTtIOwKR8mnzGDfEbAszZVChzTLf43C20aMPYy0puLdJArj/PZKReiD5YtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a9d303a5ccso87929725ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:42:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734367344; x=1734972144;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xQWogq1JLSCeTRuMywH+apCWqE09emlrsEIy9hrKPMQ=;
-        b=sMmPgKIC1Z20bTMhNoqhw6d4ByQeP/KLarWA6jWGWY/41jThtFpd1QkM5/z5lnHsTH
-         UVf7cz7DLop5B+o1p+zVKv3c0JKna4tIzXbbbcaCbBVgPMRsbSqCODS+C4U0ztIrs7yy
-         FuC8Gmy0U2mvMP6xDQDo1ExCZEvLi6i+TD8jT70Ogr9xfwK1+shWlIdhTReyBD1V7y/s
-         CH14l3v1HTOBYqcqYk+w7HHW6/dvSMzVFTepUJJGR1ZTUuUm+7s41WATd9IvYoXlsgX2
-         7ppSha78o2uLaQwyD6VwhaQvFdKyBNpviDGuGl8Oi9JV+foXn3I1AfyGlnhkciq18sj1
-         Dt5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4qVENh+ehVgfmf8Fdx9gk29OmJHLdHbGGTfosFvLlqJ76+e52N/HkPQh3P10eTAHVE9U3Y/pyq2oZ48A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKNIq9B29yTAMzwWt8+N9Lo7mBuHqgtgJjKWJsu7XWX09OwrLA
-	pNHILXgfLHZPq8AbqderhWRkYmgSk/K8fx2K18Pr+CyHwP4OuQuvoRHVc3EDj4rANmYn+hhVJM8
-	lC3P4+aXYe2GabsodwXHUo8uUMmnrhHqTSzWIkh3oUyGrzdZzba8eB8I=
-X-Google-Smtp-Source: AGHT+IFvubeG006//sC4Q12Uq2eaVtr0/8+9odVPr3h15PHP6y8s2Yy1O5KqFXGIVHN5toRZdy7ELj+A/+Wg2RMBT2m3Bn6Tqee5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E0B1531C2;
+	Mon, 16 Dec 2024 16:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734367360; cv=fail; b=QfoNLLyPblGshe5N8VP/Bs22XP4Gx0CRZKPZONxuQZiEjwOcDR3pzLbZu/Pzd+pKdlWUUxSn5lxan7SQGJOPTk/vCqyCZAEv+PeOvQIBI02wu6Qy74UNF09nSv7xzWIA91tk9qc6aPNknWK7j+mLnG/gFGVJt0C5NA0Y2bBD0Dg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734367360; c=relaxed/simple;
+	bh=+Mp3WLSjNbkb6Hyup7x2uxDyj2J/H2J8E0njcR1WNAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eQXje65IB2EBnfUJDqvSMTj5tAK1ed+urZU+gVyOMzpDsG0tQA1AGxHkAPtOpj6fjcFDm3XSLIIUEpvUbsW04/qMCPXA0z4O3w4cLJ4rvMKSTaZLCEOWhu1WOEMB1VoZu45HpBFcLCetcbuBCcSE2bz2SRG5fV0j6UPj/cEEoo0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jSG0FlTy; arc=fail smtp.client-ip=52.101.70.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JPKR7gKZNs4R/uQr/eWx4TZsQykVsw1E1ZMH0j6AIA2MMx2+TX2hpoSNu22CDGQNqW0xsdyvdIHTwUsvB7dmkGevh6klwzpnvsbShMJwaRS6yekAnYw7PeMNdQROLJ4rUlI6SJcRabGqgMwX4+85lLvcysucSYY4+RxeacZHy1EKDZ2S9PxAMpT7wsGKgC9DX93mhTYCVuW/DLECZ6/6x23s6qQ4hFgX3Nb+PGLuOeOJI5L5OMjWTzGQ9cjv76cBzZSboNrmgadDzcHZSlDTnbkt2q0sMTnTVjwuPqHXkJenelQHEokRbuWxDB6dn1+LhXi36MfsNsHFvzMwdPNcAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rRWmIJpDCGIQOJl5PcCyc0L3sewTEyZxE8ZbNKumWGA=;
+ b=yuyYKJu6q1/yicnrNbLmxJZQphLEIntLDbqVK6Mql8JY4Tnb0y+BEyz5kuUJuN8qibmfcKtjdND1PQkBRpymTagS0LA0wiLkVBM19fUohFLdzz53LzvLjKGq24LHq0G1jj8fEBmuW3EM8XWsTaKM0GpayUyb+nWBfOhyWw/JMA04z0E9OtdfVqjypGQhNrveL/skQaj6yjBQ5RX2WjZ3jMnfuB5kr+xTZmJL+X5RO8nl3i4+Z7dWuEwWdRWsJ1HTCJSwEWtejcwdBHQuG9zgtN5oC9vtoZUwJ7TOa46OKF/odpzuvmcYKlmxIMkT5Fu6zvFazsoO+69NH4LkWQ8tHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rRWmIJpDCGIQOJl5PcCyc0L3sewTEyZxE8ZbNKumWGA=;
+ b=jSG0FlTyC6TH8NEPa1zgYjRcw79+rc60YmQ1lZOVaM3aaz4xJJJDmtBYuIuCFVUFLwQPqJ7xpJePkyD73FLNTckyGXQwsVOppJsbj/hyfn39EoTY3Z2UMwetMIV4kykNLV8bjoJMVw/9ZB592MBBWfqkNKKufTL4Le3hk1yA7Arc30JAr+h+dIid6EmGOx/9VLxzfbUBWvVl4YpGnjTkqIamrbmQpUNpyLHGAfqOXkzY2MKoN4sOOwmzmw0ROhDes3naRdO8+JrXNqk+eocmx8/cV5J23Gu9ROWd32wGOd90AeRwaZBMUAYpEjRNWzEzCHS+NkxznuujVf8TIPtMQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB7776.eurprd04.prod.outlook.com (2603:10a6:102:c4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Mon, 16 Dec
+ 2024 16:42:36 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8251.008; Mon, 16 Dec 2024
+ 16:42:36 +0000
+Date: Mon, 16 Dec 2024 11:42:27 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Mark Brown <broonie@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] ASoC: dt-bindings: add common binding for NXP
+ audio processors
+Message-ID: <Z2BYcw6x3zyeBwvE@lizhi-Precision-Tower-5810>
+References: <20241216145039.3074-1-laurentiumihalcea111@gmail.com>
+ <20241216145039.3074-2-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216145039.3074-2-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: BY5PR17CA0015.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156e:b0:3a7:9860:d7e5 with SMTP id
- e9e14a558f8ab-3aff8aa31c7mr134936625ab.23.1734367344278; Mon, 16 Dec 2024
- 08:42:24 -0800 (PST)
-Date: Mon, 16 Dec 2024 08:42:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67605870.050a0220.37aaf.0137.GAE@google.com>
-Subject: [syzbot] [mptcp?] WARNING in __mptcp_clean_una (2)
-From: syzbot <syzbot+ebc0b8ae5d3590b2c074@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, geliang.tang@linux.dev, 
-	geliang@kernel.org, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martineau@kernel.org, matttbe@kernel.org, 
-	mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7776:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90d64634-fde1-41fb-54cb-08dd1df0a537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?s86Nhow/IDt3rTAHnA7pgP21uslS2no1ujyOFoMtwEpq7jWKo0PoUZtR84AF?=
+ =?us-ascii?Q?t1Y99VUakFk8Uu8LdjM72EGB5pM7R6lsTA3ldOK+/wdepzkYgKMiacbDxHTF?=
+ =?us-ascii?Q?siOXjLICVf1SisIz4j9E8Wkg3y9JOyLeioybtPYm8nUIVar634IZJVyrOEcx?=
+ =?us-ascii?Q?QgjS45dy/fZQv7R2OJ955MT50L6mGPcYf+cq/GH0HC0nnif5vRraIyQmi5kc?=
+ =?us-ascii?Q?MsSLSGbOilh0t+TlA1BIdpy5h2NsirY6k7/7dEBjlaIoo5PvVppFUi3aQ1xP?=
+ =?us-ascii?Q?Fn32sUUaZEMU1zDgs/feLfw+lJJz3FNwy/sUv5ti58NilziFWWP3fSSxebo7?=
+ =?us-ascii?Q?R2SjBDb3RMafD0uyqxRdtap2PSI2M1hvU77SpKUYFC/1QBIm9nBhRFAUQ0iZ?=
+ =?us-ascii?Q?6lcsu04JgQMqGvO//Bsi+39pG7BhGK+UT1juGS27SdHIpiHujWMvmfPenxqg?=
+ =?us-ascii?Q?cDbd9xQJ7XPt/pSBUzhvU9V/rI1fhNsMKg3UOsKixU6w4nC2X55Lp9m+KFrU?=
+ =?us-ascii?Q?+Op8SzzNZ/mJzHWsvS9jGR0nAmEMiPfAE+mUIBlgQpLAdTIiB/8LthC0b/uw?=
+ =?us-ascii?Q?JiqXUg+cqykGNUJxfA2d/r/vJnAawbwp262hz3NNWLeW/v94cvITNCsMNpNN?=
+ =?us-ascii?Q?DgI5qrD4DcoqRh+dj0TOXZoG0vLbiJGsRIyIvRpKNHSJteyyPWyAqngQjRFh?=
+ =?us-ascii?Q?gURqb/LBIsexv6bMA9mYQBT2LQhijK6koc5Yl/tsldIhXxVGH/SPLaVeUms4?=
+ =?us-ascii?Q?rHthQU0xWMK+yiQAgi83CPDUKota1u0C6gQ/JJ/ZJxrDUinnq1iWE49PbyhL?=
+ =?us-ascii?Q?jS/1C/L61o2FU8krcT0Gfe1gTlifR2/sQciAuQf6/+R15QKSuoMWZTQFWxp6?=
+ =?us-ascii?Q?zb9FB+pGoxRkYCCISWFVya2zqyfTQ6Z2lQmUNRzKiFBJlIEStQOMVL8Lp/nZ?=
+ =?us-ascii?Q?lD1yR/gaKVNUOxe+Ni43hr4FUbjQrmbbKl8YThZbzxw6oqcGLzmZc8mCSpXQ?=
+ =?us-ascii?Q?hiftD4Vq3lMv4vzWD61DoNbFaewYkdBxdYoyEm0s3jyjQzT5Og8AxFTtfnM2?=
+ =?us-ascii?Q?uumd2iDJ/H0oOzpZYfgxr08GABjA1KmsWp4fmnDEG4v5jVFihSTCN6g+WXcz?=
+ =?us-ascii?Q?34K/01fiiLBoXMjeFYK3ZV3AVWOLCYBe8yKljyPCY5u5B0pZAcuSz3ZCdNhC?=
+ =?us-ascii?Q?7QrBb+MEci8x1pzg8gknv6QBuhKjeRTMgvxcqIghnB4mTDHaDZgGxgVxjdBp?=
+ =?us-ascii?Q?OS+m4EGXgz1lRXpyEQkiYzZawjEgDM6MgWPZ5kytwu+I3KZWezWz7S2mXHS8?=
+ =?us-ascii?Q?2FBZ3WYb/XtQLQfO1xNg/vf1Jwt2cRkEeOnnHcAXwjc0AOzrDm8PHGc4vf0K?=
+ =?us-ascii?Q?KQ8yyNGP9V5MjQZq4qIPp2jjObeG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pG49nOTnAlxvTHZpTCJQ4NMeTQhvGbnYI/pTFJetevLxQzisSG0lMu6CTesX?=
+ =?us-ascii?Q?PewKdvfaOdxCC5wCiDExavRpCCSEjbIAfiU0XLuznX9ALznEhFoKCs4Nx7Uh?=
+ =?us-ascii?Q?Z/irM5Nu5AakTvDdVtpblmrkvFlcfIWhgm1qWWcaRUZCkFrsIK91ITwYTlS9?=
+ =?us-ascii?Q?f0mv+s3SoPQyDjsZLkE9acyR3R9wgr4f7KiqzPV8Z2M17tUH64vIiWKGzT+N?=
+ =?us-ascii?Q?lETQyfhJ1oJvdFNmhLrbxwCj2G+Goq8Mg2OYjIblnAYImF/kpPc6/tSaIj1P?=
+ =?us-ascii?Q?mJvxE3GRioOoropFnjDOnoz7bvbp1blmH9PtH5QK5gMOBGMhSk7ZXCCiwSJs?=
+ =?us-ascii?Q?XBBXRmefe1aMOpIpnwDzebHbuM0SsQvnnvJm89HmRGeYlYen1d/UHNO6xl1j?=
+ =?us-ascii?Q?ncb5n7YhNCQg99mb1d3bF1l02jbvR9ws4Opd0I6w/hSZ9zJIXIaUOk0YA/Dv?=
+ =?us-ascii?Q?emyzKCDMXT9UAyC1wgZjDWZqGb7rndjSvc9efd71WYo249YQiuPUp5tjYWVY?=
+ =?us-ascii?Q?9LX+Z80dPUOdo9SbMiL7jE/52JtKrJGFb00RwcBokxBP3iTow/gCxzaPkrWt?=
+ =?us-ascii?Q?DeOXWFGHxiVDp0r04QlToyLUkvPy67WEtQAfZMBfuakuVlqa2T5pTpxbq9to?=
+ =?us-ascii?Q?aId3a9CTsXB9EcXUFI2X91j1obaRFAPlrArNMhVUwB/FV+x8Ar15ENLbwsJq?=
+ =?us-ascii?Q?+Zp7kAR9x0hj7ZA4oYihA0CX/B86WOKo4ppqHUAZxzWIXWzo2+VaXwRnvGnh?=
+ =?us-ascii?Q?kim5Cwmh4cF1FUHdUFqTe0htfEhMvzusCaxy+wx8Axs2YUlqh+yJYhFVuAAo?=
+ =?us-ascii?Q?fP8rfB6Xd3sOgLUuJa9sczLu74BJiGX29aGBt75nI0S7dmOM3Vymu6ZTnrxS?=
+ =?us-ascii?Q?i1rANTP/IhJTf3+n9Pw7jKm2CIyfTRzNQXVO6RExOo6AWBlKGKXs+qtXy8C+?=
+ =?us-ascii?Q?odzPMhD054w41gOZKTKBGME7pzvOihNKiHeJl73gVx13Jb4ebWek7+p0tGQZ?=
+ =?us-ascii?Q?2ch3rIjGnjjItzEot7OS3zqvLWf6iAinK2ygPSWITz5/X+b09DKVaeIVOojO?=
+ =?us-ascii?Q?2P2K/wTWHqJ5YVeh/MBhn7qRzsZ8LVyX2KaajHoSFF1AcjDXGwBkoIXnTdku?=
+ =?us-ascii?Q?J+WzKfYdOosxHvnebV25nn4CuSEnRRZso3NWfgp2tjruPTTaBTJO16ogpOsP?=
+ =?us-ascii?Q?j+DHYiFMgGQNTdvZdYlLWQGwHl4CMQVBe2gWrkwzXgRx87h2lMPg1sxJ/lXU?=
+ =?us-ascii?Q?/nHFTNCmbxGnaskUDSabGE5KI10r9tc3dXSa3Pw9o5k3FX8dzycbe/ODX4n3?=
+ =?us-ascii?Q?pCDc2vfeLFPUoS2g+yPXjk1AVRCOUo/BaLBa8Tos8zBDFfJbPqZeKR2frDmF?=
+ =?us-ascii?Q?j0wqefkwzm02bQp9wusaOvk68U2uYsxTJLX2VjRadcg9lmA26X5v1rg8VGtW?=
+ =?us-ascii?Q?wfBOWK6rFrFgDuga3YFLE+qNza5tBIh2I/BzWsZVVfsqwyFs4EXGibp8y3hV?=
+ =?us-ascii?Q?rQgUpZJ3e30YNgygczjOPKFiAqRMFxKEQBo+d4JYIKfZz/3BVqQiC//bFQIs?=
+ =?us-ascii?Q?xUNF8sgxUT3lQiO0wcvzIk5E14ifdJruvzkswAHW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90d64634-fde1-41fb-54cb-08dd1df0a537
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 16:42:35.9380
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QSOE+POdaZbiIbzWy8U1tDgKpdbpUIdapIhEDch/Hy7rEzbs1uGgns9w3cCvtSaXiMdLjXVT+zvwt1gLEPgwnw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7776
 
-Hello,
+On Mon, Dec 16, 2024 at 09:50:35AM -0500, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>
+> Add common binding for NXP audio processors with Sound Open Firmware
+> (SOF) support.
+>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  .../bindings/sound/fsl,sof-cpu.yaml           | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
 
-syzbot found the following issue on:
+You create common file, could you please change existed binding yaml to
+use it also?
 
-HEAD commit:    00a5acdbf398 bpf: Fix configuration-dependent BTF function..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=148de730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=ebc0b8ae5d3590b2c074
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d82344580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=179654f8580000
+Frank
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fc306c95490c/disk-00a5acdb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e17d5125ee77/vmlinux-00a5acdb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/65f791a7fd14/bzImage-00a5acdb.xz
-
-The issue was bisected to:
-
-commit 3f83d8a77eeeb47011b990fd766a421ee64f1d73
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Thu Feb 8 18:03:51 2024 +0000
-
-    mptcp: fix more tx path fields initialization
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d2c7e8580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11d2c7e8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d2c7e8580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ebc0b8ae5d3590b2c074@syzkaller.appspotmail.com
-Fixes: 3f83d8a77eee ("mptcp: fix more tx path fields initialization")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 9846 at net/mptcp/protocol.c:1024 __mptcp_clean_una+0xddb/0xff0 net/mptcp/protocol.c:1024
-Modules linked in:
-CPU: 0 UID: 0 PID: 9846 Comm: syz-executor351 Not tainted 6.13.0-rc2-syzkaller-00059-g00a5acdbf398 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:__mptcp_clean_una+0xddb/0xff0 net/mptcp/protocol.c:1024
-Code: fa ff ff 48 8b 4c 24 18 80 e1 07 fe c1 38 c1 0f 8c 8e fa ff ff 48 8b 7c 24 18 e8 e0 db 54 f6 e9 7f fa ff ff e8 e6 80 ee f5 90 <0f> 0b 90 4c 8b 6c 24 40 4d 89 f4 e9 04 f5 ff ff 44 89 f1 80 e1 07
-RSP: 0018:ffffc9000c0cf400 EFLAGS: 00010293
-RAX: ffffffff8bb0dd5a RBX: ffff888033f5d230 RCX: ffff888059ce8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000c0cf518 R08: ffffffff8bb0d1dd R09: 1ffff110170c8928
-R10: dffffc0000000000 R11: ffffed10170c8929 R12: 0000000000000000
-R13: ffff888033f5d220 R14: dffffc0000000000 R15: ffff8880592b8000
-FS:  00007f6e866496c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6e86f491a0 CR3: 00000000310e6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __mptcp_clean_una_wakeup+0x7f/0x2d0 net/mptcp/protocol.c:1074
- mptcp_release_cb+0x7cb/0xb30 net/mptcp/protocol.c:3493
- release_sock+0x1aa/0x1f0 net/core/sock.c:3640
- inet_wait_for_connect net/ipv4/af_inet.c:609 [inline]
- __inet_stream_connect+0x8bd/0xf30 net/ipv4/af_inet.c:703
- mptcp_sendmsg_fastopen+0x2a2/0x530 net/mptcp/protocol.c:1755
- mptcp_sendmsg+0x1884/0x1b10 net/mptcp/protocol.c:1830
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x1a6/0x270 net/socket.c:726
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
- ___sys_sendmsg net/socket.c:2637 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2669
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6e86ebfe69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6e86649168 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f6e86f491b8 RCX: 00007f6e86ebfe69
-RDX: 0000000030004001 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00007f6e86f491b0 R08: 00007f6e866496c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6e86f491bc
-R13: 000000000000006e R14: 00007ffe445d9420 R15: 00007ffe445d9508
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml b/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
+> new file mode 100644
+> index 000000000000..1958afceba75
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/fsl,sof-cpu.yaml
+> @@ -0,0 +1,35 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/fsl,sof-cpu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP audio processor common properties
+> +
+> +maintainers:
+> +  - Daniel Baluta <daniel.baluta@nxp.com>
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  mboxes:
+> +    maxItems: 4
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: txdb0
+> +      - const: txdb1
+> +      - const: rxdb0
+> +      - const: rxdb1
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +required:
+> +  - reg
+> +  - mboxes
+> +  - mbox-names
+> +  - memory-region
+> +
+> +additionalProperties: true
+> --
+> 2.34.1
+>
 
