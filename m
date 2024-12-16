@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-447817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFA89F3767
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:22:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21ECC9F3763
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CAF1881DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DDE161D02
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B18206F05;
-	Mon, 16 Dec 2024 17:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A798A205E1B;
+	Mon, 16 Dec 2024 17:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r29ylNXP"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJkAKTd6"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FAE2063E3
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B805C25634;
+	Mon, 16 Dec 2024 17:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734369691; cv=none; b=aG8FXy6Ce+7ufQrKmDTK1DiAvKexxrjh0kE7GaCtiL5Mj2HWfvA0aNiHPPzXPvXNZrEwmctmna2Qx8SuZOOpSANOmq6ionHZRFNC8tQdeOr82EPLItG0EXUGs7QtFO19JrpopVG3/awa9LvTILMunKHi0C/UY6wKBxA+61MS5Ok=
+	t=1734369685; cv=none; b=AMcQPStLJq55BXIRpucM4JT68u3b5Gpe8+ytXg1IpMRyeraBLv+Z/0eetwUzYzQB3Lk9BV6xlcKR2/9nbS9x0lwg9BdU9LJHWgCSInnPUfJ+CNFrc7VtoMmlU/w6NWavaDqpQge22kIfOFxZBxIhnWalofMq4lTNkOnkpyXV/gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734369691; c=relaxed/simple;
-	bh=iSi59v8LNr+EPwWCBvXOnQ0Kss0DSiv4S3oup6h2dsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NI3IhRyhmLhsjhjv9R5ri0GXoCxuvBVLSjmsuxK76oJQPSARV4FIkhJ4opNUYh71OgFKItA8yIjddHFew5WkH1P4SzcxHO/GwT8IG2wA109WlNWm/oA7Dkw3NQmrYn6YADCrtGO00R/16MCKD3ujw/2jj/LaUDPn98uLP4h8QDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r29ylNXP; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <80f412f1-a060-463b-9034-3128906e6929@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734369686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9LLLaGjtfz1xmvBfYNrPAJD9KQz5/pkDMu0zRApdZY=;
-	b=r29ylNXPDZN66EP4Nx70zpHwFezQHTn2fMdw5+OKcmlwm/aWiSqVfCa3roIbmCex4aBjz4
-	A2CGZKihtsbe0U6kFvlauBQS7PALEyZOe1wcZcLlmzljOLnp20FqrvLWILlRHC4DlmXqh4
-	zeLB7/4+49q8dHDvORF5l3Z7RyM12qU=
-Date: Mon, 16 Dec 2024 09:21:15 -0800
+	s=arc-20240116; t=1734369685; c=relaxed/simple;
+	bh=IcL1XjdkUIEBmmzvEb6EiZPV4byjUljVf66+eHQX+Nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nfx4FMZvT4DxMPlMOJtNugB5fD0NvoeNWsqyBgU1sW1lPFSvTcbiC8VSdsWkJJuIL5VEyxaOxiC20P6ix+XAUwNev6rckhCJJZxh/0xYQqBTHuszTOmoN/NFtXlDcfoS0UiCoBLH2+LayUv0kXIi/m+vC+NWe7VRg3W7D9LyK0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJkAKTd6; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7265c18d79bso4706506b3a.3;
+        Mon, 16 Dec 2024 09:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734369683; x=1734974483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IcjBpJX+zzgt7wIjPU2TwNu8q+9vMRU4pA4lmjT7Ylo=;
+        b=GJkAKTd6kf70cOlgyTgsfocZ4lJFWu5ZpLKAka1tn7Z1oEdcyADkKoI6x1xKjMxO0x
+         Z0wLYNcT3aNsX72CRxQh8G4kmo9U3BLUudALnsAVTP9uElN7WHGbraL3YODCTa8yN4Wk
+         1LCHlQwgvBzY/WF4XLoVY+XnM7GcCHO6ZVmj+0hAaKsPQwMsk4OLoBlkR9oCg2eaMNlk
+         RwKRT7X0mSUoNTGeEzRX0ufVu7k9DBBk+86xsD5Z1UAvI02zPs49pYN9UJ+b3bA0h+vX
+         voPAv0h029eOAduEUUZB9I4lk4YrQWD4yRV2nyQ+97oCk/aVT+aGsIdyFo5Nm+CaTvOm
+         Rllw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734369683; x=1734974483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IcjBpJX+zzgt7wIjPU2TwNu8q+9vMRU4pA4lmjT7Ylo=;
+        b=rG2F5Juw3sPJ3w+fO2/DQNkuGszp0SYwnrmaNOO0ZZ5k67T6OE/PsuBghQZ7XRKsyT
+         52MqpRoH/O6djI1FD1JswnesHqudH2swR2CNSNKGapGbjlbGPImAgWajvEeBvbAq4ycW
+         OfqoOzsxcuP8Bv9YHLwFvhi8cxzOXXJ3hIGC1ATQIl0uMaYBcenQpuFbyoU4MEC6p97c
+         MJbqG63DapfWkzcerzSrvlRx4AFw6inNZ4IyEKZmt/+dmyLEZXup9podwdGBObv1/BOU
+         RuA1BqiGmi58DPaYBtDGcMDT8gFqAXvUk8E48AFv1uGUGTSZXXIX+pEii8imRg/wL4K2
+         6ojw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1QV/f483MV2hsgXscvGyXNxN4bACE/UWt3my9k4jn/vEdHWC7Fn56mBuaDA3wqKLFmnB9LBuCz5wqWvCNKPxFxXJ1zg==@vger.kernel.org, AJvYcCVNWk+fSxxyLqUtwOHD+GogVNmISygXap3U6IoYXX3EJnXL2U4aDEx2viQrVQPLSn2wVSkPIjcULFRTccQF@vger.kernel.org, AJvYcCXdz5tny3jPD5om/ezwMhufYR7UGg42cJJEVpn/VDQY/o2PFFvRls3IQhzw3eAKmtgqJdQYuDNV0Eyytw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWlShfYqsuiLFZW3QVzhdxAifx48kFcKOo6KSEjs+vO/XqGpT9
+	z3bMQuzvK4FRkQ3e/Wdh0pCII/r+G/w0isnfK+aO2JDpUTVDub9tiMV9Rg==
+X-Gm-Gg: ASbGncu45NsA8EEbFygqANDYEmdQsACKFd5UFyNQs9PXn4siKEARLnZ427A8F5Rz+0w
+	2T7YtopfOQF/W22RMxBTVh8+h4oOcYIIrXj8mEZt52y5+61r8T+KU5dlTumcF3d/BlkyFUi/CsH
+	Rz7wpxlU7a6yujTS5YKyLbj60G/+UWisY0bXYl682b+IZOELXQeUOdDLbdUKLfI2e1/b/FOM3O/
+	DSeVHhuMH91F1YtMorBJNb8pgeve7Yial9kGHHThSS23QncLZV2QXhSnA==
+X-Google-Smtp-Source: AGHT+IEL0ah1zj8HhvrqaHeKinHAb5ObqgwkbHEUEbO1BeM3QxAvO7JHNSB4FgpuegdTvWV0EcfdmA==
+X-Received: by 2002:a05:6a20:c99a:b0:1db:eff0:6ae7 with SMTP id adf61e73a8af0-1e1dfdd7c82mr19757265637.33.1734369682955;
+        Mon, 16 Dec 2024 09:21:22 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:e6c1:cee8:7b58:a395])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5a93567sm4342543a12.4.2024.12.16.09.21.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 09:21:22 -0800 (PST)
+Date: Mon, 16 Dec 2024 09:21:19 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: o2g.org.ru@gmail.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com,
+	luke@ljones.dev, mjg59@srcf.ucam.org, pali@kernel.org,
+	eric.piel@tremplin-utc.net, jlee@suse.com, kenneth.t.chan@gmail.com,
+	coproscefalo@gmail.com, linux-input@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	josh@joshuagrisham.com
+Subject: Re: [PATCH] Input: i8042 - Add support for platform filter contexts
+Message-ID: <Z2BhjwkkysKsmhVT@google.com>
+References: <20241215233628.4500-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 2/7] bpf: Add bpf_perf_event_aux_pause kfunc
-To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Namhyung Kim <namhyung@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>, "Liang, Kan"
- <kan.liang@linux.intel.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>
-References: <20241215193436.275278-1-leo.yan@arm.com>
- <20241215193436.275278-3-leo.yan@arm.com>
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20241215193436.275278-3-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215233628.4500-1-W_Armin@gmx.de>
 
+Hi Armin,
 
+On Mon, Dec 16, 2024 at 12:36:28AM +0100, Armin Wolf wrote:
+> Currently the platform filter cannot access any driver-specific state
+> which forces drivers installing a i8042 filter to have at least some
+> kind of global pointer for their filter.
+> 
+> This however might cause issues should such a driver probe multiple
+> devices. Fix this by allowing callers of i8042_install_filter() to
+> submit a context pointer which is then passed to the i8042 filter.
 
+Right now i8042 supports only one instance of a filter, so the driver
+probing several devices will have to sort out the ownership of the
+filter anyways.
 
-On 12/15/24 11:34 AM, Leo Yan wrote:
-> The bpf_perf_event_aux_pause kfunc will be used to control the Perf AUX
-> area to pause or resume.
->
-> An example use-case is attaching eBPF to Ftrace tracepoints.  When a
-> tracepoint is hit, the associated eBPF program will be executed.  The
-> eBPF program can invoke bpf_perf_event_aux_pause() to pause or resume
-> AUX trace.  This is useful for fine-grained tracing by combining
-> Perf and eBPF.
->
-> This commit implements the bpf_perf_event_aux_pause kfunc, and make it
-> pass the eBPF verifier.
+Unless you plan on supporting multiple filters I do not see the need of
+storing the context in i8042. And if you decide to add support for
+multiple filters I would need to better understand the use case.
 
-The subject and commit message mentions to implement a kfunc,
-but actually you implemented a uapi helper. Please implement a kfunc
-instead (searching __bpf_kfunc in kernel/bpf directory).
+Thanks.
 
->
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   include/uapi/linux/bpf.h | 21 ++++++++++++++++
->   kernel/bpf/verifier.c    |  2 ++
->   kernel/trace/bpf_trace.c | 52 ++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 75 insertions(+)
->
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index 4162afc6b5d0..678278c91ce2 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -5795,6 +5795,26 @@ union bpf_attr {
->    *		0 on success.
->    *
->    *		**-ENOENT** if the bpf_local_storage cannot be found.
-> + *
-> + * long bpf_perf_event_aux_pause(struct bpf_map *map, u64 flags, u32 pause)
-> + *	Description
-> + *		Pause or resume an AUX area trace associated to the perf event.
-> + *
-> + *		The *flags* argument is specified as the key value for
-> + *		retrieving event pointer from the passed *map*.
-> + *
-> + *		The *pause* argument controls AUX trace pause or resume.
-> + *		Non-zero values (true) are to pause the AUX trace and the zero
-> + *		value (false) is for re-enabling the AUX trace.
-> + *	Return
-> + *		0 on success.
-> + *
-> + *		**-ENOENT** if not found event in the events map.
-> + *
-> + *		**-E2BIG** if the event index passed in the *flags* parameter
-> + *		is out-of-range of the map.
-> + *
-> + *		**-EINVAL** if the flags passed is an invalid value.
->    */
->   #define ___BPF_FUNC_MAPPER(FN, ctx...)			\
->   	FN(unspec, 0, ##ctx)				\
-> @@ -6009,6 +6029,7 @@ union bpf_attr {
->   	FN(user_ringbuf_drain, 209, ##ctx)		\
->   	FN(cgrp_storage_get, 210, ##ctx)		\
->   	FN(cgrp_storage_delete, 211, ##ctx)		\
-> +	FN(perf_event_aux_pause, 212, ##ctx)		\
->   	/* */
->   
->   /* backwards-compatibility macros for users of __BPF_FUNC_MAPPER that don't
->
-[...]
+-- 
+Dmitry
 
