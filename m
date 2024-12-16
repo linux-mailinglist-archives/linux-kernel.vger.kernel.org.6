@@ -1,208 +1,262 @@
-Return-Path: <linux-kernel+bounces-447635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5369F3539
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:03:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B608E9F354C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E652C1886695
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16350188ACBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A16F18A950;
-	Mon, 16 Dec 2024 16:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609871C4A13;
+	Mon, 16 Dec 2024 16:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qyt8TNEC"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVEhgTF6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F23214B086;
-	Mon, 16 Dec 2024 16:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA5192B70;
+	Mon, 16 Dec 2024 16:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364992; cv=none; b=AipFCOhJ8F9H+o+6MqiJ6dlB4TrUlJcHD6NrRAqsGrISB+PxZCjaTKehlGhh1CGInWP34tWdnqhrOHgCo6JU6VQlTE+U0S/6sR+NnTcjLTGXnXFWUIhHqkbEEOPJqx8KWsRrqU0Ot2z74ZOhkX4qXdvWTtYKUkn+6713H003gJw=
+	t=1734365120; cv=none; b=fSgHxnzJZj86tZpIhAdUg+ZdS3Ma+vLu9yPnDgJARwCDjIhAmS8e7rclsgwaA6nBCpQ3fVWzSsJp+irlgpQdBfEntp2DMEcRS0zXAzCdi2CjEWvnVkXf51ZStOG9Q4A8SAgnCHRFwwOPw+jdJGKYHWFWMpim4pMHvAHIXyusZGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364992; c=relaxed/simple;
-	bh=Q/du6zT7+ml5oP8NLxNeB86FKeWQXezTveGjGvOyFKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qHESjQD329fITzAy69F8zU09VPG9LvOeTqFHd43mgNoSLZQ+aEJMo9qAI/NAhBYWHTWCfuGDIWQI+FP15yAUui7Qqj19Ujb/geIamBZRaVN7PVzTohfs/4c3Tpkz6QnYod1DFH3jRtZNuyTzB3xRUzTvjt7JcdkWT7UoHn93iss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qyt8TNEC; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1734365120; c=relaxed/simple;
+	bh=hwAuvErfSFn0MWdhGQXJs8ZXEJYf1uVrAWPyWrNJ5a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oo7VnAH5OhAfaNPxUfu+DHvzXlkw9si2bQvu1W27kGiAn2epYkipeaacb0VRghOL9yQZm/3nAzV4J+Y2ofnhV2Xk9pMagtIu69Gqq+6+7Ltg8KuEmFUFURUflxtx0v9gUPsH7Gno5ZtLin/a2ziYk3j0txIyV/WqRfH4Uf7OFYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVEhgTF6; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2164b1f05caso39478645ad.3;
-        Mon, 16 Dec 2024 08:03:11 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43616c12d72so5809025e9.2;
+        Mon, 16 Dec 2024 08:05:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734364991; x=1734969791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uf9egybKI/MKwFIGN0jlMtv9pzalLYkTVpIwCM8w0nA=;
-        b=Qyt8TNECgNnu7MALoCCptW9NbITVAuXdxOyEiFuyl+ILMEPayW3m355NnftzJUlZxa
-         AdqGVNooty2q1jnmRvk1iOSYgN/Gpd8LE3VxKeSKbNzpLoqlG6g6bgI3NotQIILZ/Cwd
-         2w2gNoMwX6d6Yp29Roha7v6Y72vAuqx8eWDzYShuRxjFK4m89t2/xZHxD6suIjR7F/Ba
-         j9vF6aC2m7CeHz6up3Ljyh9+jwH6JTQ3C6HoEIktuoWKaqurgA5VjwDThHvjPKt9N4hw
-         TwXeTCOtb/EcINRN77QGpsXOO64N7hCwIhM0Jiqopk8aGOofuQ2GQ1rRzRuJfjgp+5Yk
-         fkMg==
+        d=gmail.com; s=20230601; t=1734365117; x=1734969917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dG99stxxx20DSdS/lbls1Jk7NIYbcNyenoZoJZYfN7g=;
+        b=DVEhgTF6IBmMD8PWaNNmJa0EdxuVbOs/QqpqkW0+XrIMBE6zOW3zTHM5amSqSfoS+N
+         yBuU315uauIUXJGwv7/kchHtBpz3OKUGsDESFMMWGVsE34bZ0M+dRel54wtNEc9EDM+y
+         751h7Z7nrmEEF1JJ7PHwVGlqZ2rhRjmIlBus8lO3NuqZDNCnjAJxKJupJS2NAPZlLWgi
+         06Mf0ax4gJnSBL8FPAPJswDYjxHbF8XGn6Nf23BAzDiLvUuGcouLFsyrsOXWXXk3b9tq
+         Kxk1/UWIJwytffNvr+z+01PHqrErKg4ASEj2JqaSs0xfxjWvPiUzJP1zp4tZRCZqMCpk
+         8zqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364991; x=1734969791;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uf9egybKI/MKwFIGN0jlMtv9pzalLYkTVpIwCM8w0nA=;
-        b=WbLcX2qgAR4bFouemC+RpplcTTdHZLtRKz89KSXYUMZNkUGuQNFX3niwjev8wLCRDx
-         +tUETWOP3jcivYrK7f8XodKy4pkNHKrRvIBdAhyrhTQwlwv97hsMpIvUvFZrl+obxn2L
-         9LU11yXSzR2oHEXapuL6SQ4uO3UvFZJaYoOEaI9OXFzsyoJ8NquBGssLZPSkU62G/4pj
-         /82cJRCdsuqvPIt5OIPS6CTstbVX1jLLyLm68Pc67l8tjlqL6AbMmOpAJPdgYW0jlJfh
-         lHqpodqlSNyQacm9DP+UPCN9w7/pJTQ8gJGWSKSZI3rVrfjSODfq6tfhrs1ftpBaC/cD
-         7pBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMh3QnNcVaeUAYLFQ9uC4D7rKgr32qsgmLIVuvdHAnR7xaz6oX0HoP9Bmbrgo+jn/oa0z737fcVUBF9zrv@vger.kernel.org, AJvYcCWfcpnvfnTG/Png5h+CqfHMaGZP1jq/XXCfPJijs8XTsgx/GcrA1DsWKTtIVSIOzkeSqUO73U8VLEkq1qsI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+fxzrWGnfR2WdC4DGfnqMzQJbjYlKHuAX+/SWcJKCHAYHQ93o
-	jvtv3+WCdjpTTSThklZW7CXLjoU64gRqYV9CgTmXCPHCDx2J7J5o
-X-Gm-Gg: ASbGncsOjyJ0orp0yry7fMMudWPEkBHHFS98IrOaEn5PivASTp3dTKy/HKP8hWXQphK
-	Z7Mk60FxCI6028qAzSjXSWMRaTbaBaBnoim7YBOyTQoSaVCgM8k/8g27hpuDHMgXYy2zALOzXHC
-	GWCZvNqk+7ZddQrOxIpDCVbn6/EK6tKFVi3aibfxskZgRu908rHZF2F/QiVdPYJqnIG8zAgBsSU
-	NXUST+8q/Cv3S8pYfHWEMXNWrB/vl1ugnjmEf21wEFUHguDv4UhV1QkB0vz7mDeyqytrhQYSg==
-X-Google-Smtp-Source: AGHT+IHhNdOmIfe4WNpSFZkqbTMp/z+SfeJeZ8rB9+dD41oswN6PiNS5ukRlgiyh6NBjpGwjucyF1w==
-X-Received: by 2002:a17:902:e808:b0:216:4c88:d939 with SMTP id d9443c01a7336-21892a41d6fmr170574275ad.38.1734364989268;
-        Mon, 16 Dec 2024 08:03:09 -0800 (PST)
-Received: from [10.234.7.32] ([43.224.245.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e7227asm44452215ad.272.2024.12.16.08.03.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 08:03:08 -0800 (PST)
-Message-ID: <edfc9b39-52d8-4c4c-8c81-53dd5b35ba6e@gmail.com>
-Date: Tue, 17 Dec 2024 00:03:03 +0800
+        d=1e100.net; s=20230601; t=1734365117; x=1734969917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dG99stxxx20DSdS/lbls1Jk7NIYbcNyenoZoJZYfN7g=;
+        b=jhhm6PZys1yIclkFhxdZMGcINA0Sy3iYWW2e2TQO5I+y6gxWafm0WgGjKTPLlF0xY1
+         jg3DBAYWnW+t0ni2fwZEdhdaI8U8A/a6rX52myNag8c9tXm3LBO3tBrfyXu7plKGFesu
+         B6dvK9zRx2kS4H6j45qlRoaRPb7gfhYkzfbHksNldHt3A4FPQJT2yVOn8fCsu3kRuHKq
+         yA+vlckP0c9mLLzxvkUN9gTCs0ChsmxiOX5tiOQYCeyUz4UpmR6P8OlTAsxo6mRpBV8/
+         au5WcH5/Ehyq8Wt8QX8SKx2c+hz5aOmDokFMVNDvvhCYG3LLD32M/rKlDjyslFw3CnGg
+         Z5Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4freUIH3RHhwB0uhjPufIWyPmhHjyOo7rX2Rd+SV25YQ3O8GAKvecSU336Oh9anhOAp8D8dyM04MHUbFO@vger.kernel.org, AJvYcCVflaCyORttZZX6aV+bQjG25NCyOBIqJkvSLTtpsixKvaCzAg1Uo085k+fhfMHGLiWXQ8s=@vger.kernel.org, AJvYcCWr2mzO8/Hn6nDuJcm66H7kbdNhejYPVmiLpK38lX+ygi3N26mEMqWaHgX6FmtIZQzTNj/n2qFU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDhAxi/rNFnUzhUcuZf0PW166D1JQU+hNwtKwgE61aDiXRZY42
+	d9kYEGlKeK9QeCENFK5nA0u2oDMjY2+qfhMN9tfHVedDN4Zud8my3z7fecVe
+X-Gm-Gg: ASbGncvJp8rnZ1jo7YLrvpat3CtMbZ4PzhUJd5b/lkU4oiW59lx2HyPminbFQWWnqIo
+	JpQLV4wje/SagrgYF3TdG40s7r/BOTFnEsPkccEfQBbcGiL6X5sPS+4s2Cc5caPIxEhGvVekr40
+	z+SX92olBoYso2RZfvUhflepZ4DYNoeLWyNUkuhpyaDYSj9B2rRhScwP+5ci4v10GOaGKFOkcbJ
+	eS1SYmVwV3BN89y7V5QZZwX1SCXZZiwK5gYBfxfOuJ8
+X-Google-Smtp-Source: AGHT+IHYj/tJTjJciBlbThZka3fht5do0jmD0uAVpuX39xUUzlLX6XnsjobX3DJLyFyd+Ta+kfQJDw==
+X-Received: by 2002:a05:6000:1846:b0:37d:4aa2:5cfe with SMTP id ffacd0b85a97d-38880ac5c89mr4680766f8f.6.1734365116394;
+        Mon, 16 Dec 2024 08:05:16 -0800 (PST)
+Received: from skbuf ([86.127.124.81])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436360159aasm88625815e9.6.2024.12.16.08.05.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 08:05:15 -0800 (PST)
+Date: Mon, 16 Dec 2024 18:05:13 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next 9/9] igc: Add support to get frame preemption
+ statistics via ethtool
+Message-ID: <20241216160513.24i4ehroff47iwzi@skbuf>
+References: <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
+ <20241216064720.931522-10-faizal.abdul.rahim@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
- anonymous_thp
-Content-Language: en-US
-To: Barry Song <21cnbao@gmail.com>, Lance Yang <ioworker0@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20241203134949.2588947-1-haowenchao22@gmail.com>
- <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
- <CABzRoyZOJJKWyx4Aj0CQ17Om3wZPixJYMgZ24VSVQ5BRh2EdJw@mail.gmail.com>
- <CAGsJ_4z_nQXrnjWFODhhNPW4Q0KjeF+p+bXL5D0=CxskWo1_Jg@mail.gmail.com>
-From: Wenchao Hao <haowenchao22@gmail.com>
-In-Reply-To: <CAGsJ_4z_nQXrnjWFODhhNPW4Q0KjeF+p+bXL5D0=CxskWo1_Jg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216064720.931522-10-faizal.abdul.rahim@linux.intel.com>
 
-On 2024/12/8 14:06, Barry Song wrote:
-> On Fri, Dec 6, 2024 at 7:16 PM Lance Yang <ioworker0@gmail.com> wrote:
->>
->> On Tue, Dec 3, 2024 at 10:17 PM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 03.12.24 14:49, Wenchao Hao wrote:
->>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
->>>> each VMA, but it does not include large pages smaller than PMD size.
->>>>
->>>> This patch adds the statistics of anonymous huge pages allocated by
->>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
->>>>
->>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->>>> ---
->>>>   fs/proc/task_mmu.c | 6 ++++++
->>>>   1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>> index 38a5a3e9cba2..b655011627d8 100644
->>>> --- a/fs/proc/task_mmu.c
->>>> +++ b/fs/proc/task_mmu.c
->>>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
->>>>               if (!folio_test_swapbacked(folio) && !dirty &&
->>>>                   !folio_test_dirty(folio))
->>>>                       mss->lazyfree += size;
->>>> +
->>>> +             /*
->>>> +              * Count large pages smaller than PMD size to anonymous_thp
->>>> +              */
->>>> +             if (!compound && PageHead(page) && folio_order(folio))
->>>> +                     mss->anonymous_thp += folio_size(folio);
->>>>       }
->>>>
->>>>       if (folio_test_ksm(folio))
->>>
->>>
->>> I think we decided to leave this (and /proc/meminfo) be one of the last
->>> interfaces where this is only concerned with PMD-sized ones:
->>>
->>> Documentation/admin-guide/mm/transhuge.rst:
->>>
->>> The number of PMD-sized anonymous transparent huge pages currently used by the
->>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
->>> To identify what applications are using PMD-sized anonymous transparent huge
->>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
->>> fields for each mapping. (Note that AnonHugePages only applies to traditional
->>> PMD-sized THP for historical reasons and should have been called
->>> AnonHugePmdMapped).
->>
->> Yeah, I think we need to keep AnonHugePages unchanged within these interfaces
->> due to historical reasons ;)
->>
->> Perhaps, there might be another way to count all THP allocated for each process.
+On Mon, Dec 16, 2024 at 01:47:20AM -0500, Faizal Rahim wrote:
+> Implemented "ethtool --include-statistics --show-mm" callback for IGC.
 > 
-> My point is that counting the THP allocations per process doesn't seem
-> as important
-> when compared to the overall system's status. We already have
-> interfaces to track
-> the following:
+> Tested preemption scenario to check preemption statistics:
+> 1) Trigger verification handshake on both boards:
+>     $ sudo ethtool --set-mm enp1s0 pmac-enabled on
+>     $ sudo ethtool --set-mm enp1s0 tx-enabled on
+>     $ sudo ethtool --set-mm enp1s0 verify-enabled on
+> 2) Set preemptible or express queue in taprio for tx board:
+>     $ sudo tc qdisc replace dev enp1s0 parent root handle 100 taprio \
+>       num_tc 4 map 0 1 2 3 0 0 0 0 0 0 0 0 0 0 0 0 \
+>       queues 1@0 1@1 1@2 1@3 base-time 0 sched-entry S F 100000 \
+>       fp E E P P
+
+Hmm, the prio_tc_map pattern changed since the last time I looked at igc
+examples? It was in decreasing order before? How do you handle backwards
+compatibility with the Tx ring strict priority default configuration?
+I haven't downloaded the entire set locally, will do so later.
+
+> 3) Send large size packets on preemptible queue
+> 4) Send small size packets on express queue to preempt packets in
+>    preemptible queue
+> 5) Show preemption statistics on the receiving board:
+>    $ ethtool --include-statistics --show-mm enp1s0
+>      MAC Merge layer state for enp1s0:
+>      pMAC enabled: on
+>      TX enabled: on
+>      TX active: on
+>      TX minimum fragment size: 252
+>      RX minimum fragment size: 252
+>      Verify enabled: on
+>      Verify time: 128
+>      Max verify time: 128
+>      Verification status: SUCCEEDED
+>      Statistics:
+>      	MACMergeFrameAssErrorCount: 0
+> 	MACMergeFrameSmdErrorCount: 0
+> 	MACMergeFrameAssOkCount: 511
+> 	MACMergeFragCountRx: 764
+> 	MACMergeFragCountTx: 0
+> 	MACMergeHoldCount: 0
 > 
-> * The number of mTHPs allocated or fallback events;
-> * The total number of anonymous mTHP folios in the system.
-> * The total number of partially unmapped mTHP folios in the system.
+> Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> ---
+>  drivers/net/ethernet/intel/igc/igc_ethtool.c | 40 ++++++++++++++++++++
+>  drivers/net/ethernet/intel/igc/igc_regs.h    | 19 ++++++++++
+>  2 files changed, 59 insertions(+)
 > 
-> To me, knowing the details for each process doesn’t seem particularly
-> critical for
-> profiling.  To be honest, I don't see a need for this at all, except perhaps for
-> debugging to verify if mTHP is present.
+> diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+> index 16aa6e4e1727..90a9dbb0d901 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
+> @@ -1835,6 +1835,45 @@ static int igc_ethtool_set_mm(struct net_device *netdev,
+>  	return igc_tsn_offload_apply(adapter);
+>  }
+>  
+> +/**
+> + * igc_ethtool_get_frame_ass_error - Get the frame assembly error count.
+> + * @dev: Pointer to the net_device structure.
+> + * @return: The count of frame assembly errors.
+
+I may be wrong, but I think the syntax for kernel-doc is "Returns: "
+
+> + */
+> +static u64 igc_ethtool_get_frame_ass_error(struct net_device *dev)
+> +{
+> +	struct igc_adapter *adapter = netdev_priv(dev);
+> +	u32 ooo_smdc, ooo_frame_cnt, ooo_frag_cnt; /* Out of order statistics */
+> +	struct igc_hw *hw = &adapter->hw;
+> +	u32 miss_frame_frag_cnt;
+> +	u32 reg_value;
+> +
+> +	reg_value = rd32(IGC_PRMEXPRCNT);
+> +	ooo_smdc = reg_value & IGC_PRMEXPRCNT_OOO_SMDC;
+> +	ooo_frame_cnt = (reg_value & IGC_PRMEXPRCNT_OOO_FRAME_CNT)
+> +			 >> IGC_PRMEXPRCNT_OOO_FRAME_CNT_SHIFT;
+> +	ooo_frag_cnt = (reg_value & IGC_PRMEXPRCNT_OOO_FRAG_CNT)
+> +			>> IGC_PRMEXPRCNT_OOO_FRAG_CNT_SHIFT;
+> +	miss_frame_frag_cnt = (reg_value & IGC_PRMEXPRCNT_MISS_FRAME_FRAG_CNT)
+> +			      >> IGC_PRMEXPRCNT_MISS_FRAME_FRAG_CNT_SHIFT;
+
+Candidates for FIELD_GET()?
+
+> +
+> +	return ooo_smdc + ooo_frame_cnt + ooo_frag_cnt + miss_frame_frag_cnt;
+> +}
+> +
+> +static void igc_ethtool_get_mm_stats(struct net_device *dev,
+> +				     struct ethtool_mm_stats *stats)
+> +{
+> +	struct igc_adapter *adapter = netdev_priv(dev);
+> +	struct igc_hw *hw = &adapter->hw;
+> +
+> +	stats->MACMergeFrameAssErrorCount = igc_ethtool_get_frame_ass_error(dev);
+> +	stats->MACMergeFrameSmdErrorCount = 0; /* Not available in IGC */
+> +	stats->MACMergeFrameAssOkCount = rd32(IGC_PRMPTDRCNT);
+> +	stats->MACMergeFragCountRx =  rd32(IGC_PRMEVNTRCNT);
+> +	stats->MACMergeFragCountTx = rd32(IGC_PRMEVNTTCNT);
+> +	stats->MACMergeHoldCount = 0; /* Not available in IGC */
+
+Don't report counters as zero when in reality you don't know.
+
+Just don't assign values to these. mm_prepare_data() -> ethtool_stats_init()
+presets them to 0xffffffffffffffff (ETHTOOL_STAT_NOT_SET), and
+mm_put_stats() -> mm_put_stat() detects whether they are still equal to
+this value, and if they are, does not report netlink attributes for them.
+
+> +}
+> +
+>  static int igc_ethtool_get_link_ksettings(struct net_device *netdev,
+>  					  struct ethtool_link_ksettings *cmd)
+>  {
+> @@ -2124,6 +2163,7 @@ static const struct ethtool_ops igc_ethtool_ops = {
+>  	.get_channels		= igc_ethtool_get_channels,
+>  	.get_mm			= igc_ethtool_get_mm,
+>  	.set_mm			= igc_ethtool_set_mm,
+> +	.get_mm_stats		= igc_ethtool_get_mm_stats,
+>  	.set_channels		= igc_ethtool_set_channels,
+>  	.get_priv_flags		= igc_ethtool_get_priv_flags,
+>  	.set_priv_flags		= igc_ethtool_set_priv_flags,
+> diff --git a/drivers/net/ethernet/intel/igc/igc_regs.h b/drivers/net/ethernet/intel/igc/igc_regs.h
+> index 12ddc5793651..f40946cce35a 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_regs.h
+> +++ b/drivers/net/ethernet/intel/igc/igc_regs.h
+> @@ -222,6 +222,25 @@
+>  
+>  #define IGC_FTQF(_n)	(0x059E0 + (4 * (_n)))  /* 5-tuple Queue Fltr */
+>  
+> +/* Time sync registers - preemption statistics */
+> +#define IGC_PRMEVNTTCNT		0x04298	/* TX Preemption event counter */
+> +#define IGC_PRMEVNTRCNT		0x0429C	/* RX Preemption event counter */
+> +#define IGC_PRMPTDRCNT		0x04284	/* Good RX Preempted Packets */
+> +
+> + /* Preemption Exception Counter */
+> +#define IGC_PRMEXPRCNT					0x042A0
+> +/* Received out of order packets with SMD-C and NOT ReumeRx */
+> +#define IGC_PRMEXPRCNT_OOO_SMDC 0x000000FF
+> +/* Received out of order packets with SMD-C and wrong Frame CNT */
+> +#define IGC_PRMEXPRCNT_OOO_FRAME_CNT			0x0000FF00
+> +#define IGC_PRMEXPRCNT_OOO_FRAME_CNT_SHIFT		8
+> +/* Received out of order packets with SMD-C and wrong Frag CNT */
+> +#define IGC_PRMEXPRCNT_OOO_FRAG_CNT			0x00FF0000
+> +#define IGC_PRMEXPRCNT_OOO_FRAG_CNT_SHIFT		16
+> +/* Received packets with SMD-S and ReumeRx */
+
+What is ReumeRx?
+
+> +#define IGC_PRMEXPRCNT_MISS_FRAME_FRAG_CNT		0xFF000000
+> +#define IGC_PRMEXPRCNT_MISS_FRAME_FRAG_CNT_SHIFT	24
+> +
+>  /* Transmit Scheduling Registers */
+>  #define IGC_TQAVCTRL		0x3570
+>  #define IGC_TXQCTL(_n)		(0x3344 + 0x4 * (_n))
+> -- 
+> 2.25.1
 > 
-> If feasible, we could explore converting Ryan's Python script into a native
-> C program. I believe this would be more than sufficient for embedded systems
-> and Android.
 > 
-
-Hi Barry,
-
-Yes, the reason I want to use smap to collect this data is that I wasn’t familiar
-with this tool before. When analyzing the performance impact of enabling mTHP, I want
-to understand the actual memory usage of the process being analyzed, including the
-proportions of anonymous pages, swap pages, large pages and so on.
-This helps determine whether the test results align with expectations.
-
-Indeed, the main purpose of adding this is to make debugging more convenient.
-For now, I’ll perform the analysis and testing on the Fedora distribution, so I
-can use the pyrhon tool directly.
-
-If it becomes unavoidable to run this tool on embedded devices in the future, I may
-take the time to create a simplified version of the analysis tool in C based on this
-script.
-
->>
->> Thanks,
->> Lance
->>
->>
->>>
->>>
->>>
->>> --
->>> Cheers,
->>>
->>> David / dhildenb
-> 
-> Thanks
-> Barry
-
 
