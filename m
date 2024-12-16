@@ -1,74 +1,77 @@
-Return-Path: <linux-kernel+bounces-447797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCD49F3716
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2C39F371B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE24F169157
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:12:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB74016B4E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E2E205507;
-	Mon, 16 Dec 2024 17:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B992063E3;
+	Mon, 16 Dec 2024 17:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tZjolHmA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4nWHBpZY"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZVZKCP/s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iL1Jf2wy"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2962AD2C;
-	Mon, 16 Dec 2024 17:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6564B1B412A;
+	Mon, 16 Dec 2024 17:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734369168; cv=none; b=ONCau07PGw3O1EFJajhVeEVMnuFawSq6TOTJwvLPav55/2P0jmLLBbcJnhxAt9b7ASe+3s8x1PiuXFMNQ+xJetEMjhrfhNRFi6vCeG1TQZp9RyR+jrX5qRBGT9MA2et2qcwY1fEf+kufg2qnvIPISc5GRIYefsd2VoaNg3hR0Gs=
+	t=1734369169; cv=none; b=tgnvaC89zCEK5Ab3H/dU41FeBmIJ8mzfO8mc70DA2WN5rfXj8yyq0SgNHTCr//iwW1P/w1pjuHA1EaJX5N73vVYoAJccJ8znaPLjIXPJTO3+6sYkhi2XzKVjUXB0DSVKaH/EH8ch7bfAosvUD0lZnYc86w9pWLkt0vFTH+zM1EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734369168; c=relaxed/simple;
-	bh=2zHGMhXczieY8uy03r4x9wyNQErE608yROGA/U9K5GM=;
+	s=arc-20240116; t=1734369169; c=relaxed/simple;
+	bh=9ulM/VLZgmh6Vb61H3gobPJULnBEd94G/t+5gQOobO0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XFr5rpMpjUIZZ6P1GMvIdNYGBjzFISQRwj3ZlGwqxFTsJ69xC17ERTmBa0/+nLGWYWfk0pnripbQY6MyekyNiymU8FQ+mfPcGt4+mmQ7A0HE2MqUxz/8r7F+uoLGEnNmQ/OuinZma1j7QoFObousOXjXor0NILa1/EJ2w7WP3cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tZjolHmA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4nWHBpZY; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=JIkjfAqkULFUsKl+qIXBaCSdoWLcyDC4NeNhV45TqAN3zIwZLNE0S1ylyMobAh3v9ru2ck8kvZjEdzPPsCJf7iVIc/HxrAZW+f0AuK3FFLT/yXbmwA+De8Puxl0Bz+/v44DBVWeO5yntIxBxeYjRfTQQNwC7TL1Jmtj+MjTxYVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZVZKCP/s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iL1Jf2wy; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734369165;
+	s=2020; t=1734369166;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/Ho2g2JVR/Wkh20uSYT1koH8iN5EU9nEd431AmzNkK0=;
-	b=tZjolHmAa84GEQRZ+3Vx76cAXFZNIz9SwAlBhtJg894g7JzkWM2edI13BEN5PrvF7sl8oj
-	jFU1meOAVPukd9oBoiPm9saY07iISQOtKx4TIKx5ObL7G5wyBfjoG8AItsObvPtC48QF54
-	SB+R5etiJ49E3GFNrcvBWH+GCV5ItFZLXgJRhtgzqWO7bJUYAoJZ0G9+Onrea68atyfcYB
-	iNvpuBsQ3BKGr5kIUiW8EWp4f78wdp6P5ju/PYj0MXPcp9bhMuRwkfUG6fhw+8ADbMFHeN
-	cl4v+d08Adal+p0+j7DWmLnaansm3tRz6TUozyWgIYwy86hd1j1crcCLAYsppA==
+	bh=lHekKzUh6KDzBa4Wm/wnMVOz430Naq4Xufxov1IYktQ=;
+	b=ZVZKCP/sC7pSSh58XjkURjnz0P+SeKRcufTrVly1ZJqqlHUKmrtq9qofVVmpWXdZAY0Yn3
+	Rjpq5gO+BM7WAmgjqrazXBXYzrV0po4FTh/YgszxQr3cwcOCKAqUIICcBALL30lSuDscmC
+	TEuA5fhW+MpMDz6YwuNrXV65RNPwmx1i/Rd8pry/AkmVZljT04oi0auxBvQG6tVp1xOwCq
+	z0r5V5bI5Y1omlke6Ae/Undfns3ccPWdGe8AAi7Br7vVHkASnpcf/GnSwrnmx2pKsFUv2C
+	OZOOXr2AkfqozNatVQhBmU53Ma5ekgdPxzFnI3iW7M8nnRBoLDnv+pyqJf+jEA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734369165;
+	s=2020e; t=1734369166;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/Ho2g2JVR/Wkh20uSYT1koH8iN5EU9nEd431AmzNkK0=;
-	b=4nWHBpZYK9THsJ7KAOWOZmMRG6EtQ3gJBVHg86XvG4ZBsokVNF+U4hf4XShEL01ysRAu/8
-	bAIo93W1FTI4gSCQ==
+	bh=lHekKzUh6KDzBa4Wm/wnMVOz430Naq4Xufxov1IYktQ=;
+	b=iL1Jf2wySkY85dB3YmsPSfqZLtfb/Nz/3G2uOCp9qAftgnocBHLyIYgT+EwarUX9q4BxAE
+	flmXPleQcV62gCDQ==
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jirislaby@kernel.org>,
 	Esben Haabendal <esben@geanix.com>,
 	linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Markus Schneider-Pargmann <msp@baylibre.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Rengarajan S <rengarajan.s@microchip.com>,
-	Bart Van Assche <bvanassche@acm.org>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
 	Niklas Schnelle <schnelle@linux.ibm.com>,
 	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
 	Peter Collingbourne <pcc@google.com>
-Subject: [PATCH tty-next v1 1/4] serial: 8250: Use @ier bits to determine if Rx is stopped
-Date: Mon, 16 Dec 2024 18:18:41 +0106
-Message-Id: <20241216171244.12783-2-john.ogness@linutronix.de>
+Subject: [PATCH tty-next v1 2/4] serial: 8250: Do not set UART_LSR_THRE in @read_status_mask
+Date: Mon, 16 Dec 2024 18:18:42 +0106
+Message-Id: <20241216171244.12783-3-john.ogness@linutronix.de>
 In-Reply-To: <20241216171244.12783-1-john.ogness@linutronix.de>
 References: <20241216171244.12783-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -79,33 +82,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit f19c3f6c8109 ("serial: 8250_port: Don't service RX FIFO if
-throttled") uses @read_status_mask (bit UART_LSR_DR) to determine
-if Rx has been stopped. However, the bit UART_LSR_DR is not
-managed properly in @read_status_mask for all Rx stop/start
-situations and is therefore not suitable for this purpose.
+Since Linux 2.1.8 @read_status_mask is no longer used as a
+general control of which bits are used from the LSR register.
+Instead it has become an additional mask applied to
+@ignore_status_mask. Since UART_LSR_THRE is never set for
+@ignore_status_mask, it serves no purpose to set it for
+@read_status_mask. In fact, it propagates the misconception
+that @read_status_mask can be used as a general mask for LSR
+bits.
 
-Use the UART_IER_RLSI and UART_IER_RDI bits in @ier instead, as
-this is already common in 8250-variants and drivers.
+Do not set UART_LSR_THRE for @read_status_mask.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
+ drivers/tty/serial/8250/8250_omap.c | 2 +-
  drivers/tty/serial/8250/8250_port.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 9eb9aa766811..5290aed76a5e 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -412,7 +412,7 @@ static void omap_8250_set_termios(struct uart_port *port,
+ 	 */
+ 	uart_update_timeout(port, termios->c_cflag, baud);
+ 
+-	up->port.read_status_mask = UART_LSR_OE | UART_LSR_THRE | UART_LSR_DR;
++	up->port.read_status_mask = UART_LSR_OE | UART_LSR_DR;
+ 	if (termios->c_iflag & INPCK)
+ 		up->port.read_status_mask |= UART_LSR_FE | UART_LSR_PE;
+ 	if (termios->c_iflag & (IGNBRK | PARMRK))
 diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 1ea52fce9bf1..4d742bfb7e9a 100644
+index 4d742bfb7e9a..a5c1b069c67b 100644
 --- a/drivers/tty/serial/8250/8250_port.c
 +++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1931,7 +1931,7 @@ int serial8250_handle_irq(struct uart_port *port, unsigned int iir)
+@@ -2786,7 +2786,7 @@ serial8250_do_set_termios(struct uart_port *port, struct ktermios *termios,
  	 */
- 	if (!(status & (UART_LSR_FIFOE | UART_LSR_BRK_ERROR_BITS)) &&
- 	    (port->status & (UPSTAT_AUTOCTS | UPSTAT_AUTORTS)) &&
--	    !(port->read_status_mask & UART_LSR_DR))
-+	    !(up->ier & (UART_IER_RLSI | UART_IER_RDI)))
- 		skip_rx = true;
+ 	uart_update_timeout(port, termios->c_cflag, baud);
  
- 	if (status & (UART_LSR_DR | UART_LSR_BI) && !skip_rx) {
+-	port->read_status_mask = UART_LSR_OE | UART_LSR_THRE | UART_LSR_DR;
++	port->read_status_mask = UART_LSR_OE | UART_LSR_DR;
+ 	if (termios->c_iflag & INPCK)
+ 		port->read_status_mask |= UART_LSR_FE | UART_LSR_PE;
+ 	if (termios->c_iflag & (IGNBRK | BRKINT | PARMRK))
 -- 
 2.39.5
 
