@@ -1,92 +1,181 @@
-Return-Path: <linux-kernel+bounces-446658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CF19F27A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:55:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE2B9F27B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529991886148
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 00:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3D01885519
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90909BA49;
-	Mon, 16 Dec 2024 00:55:40 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F965E57D;
+	Mon, 16 Dec 2024 01:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PwIp8/TV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88C1323D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAF3232;
+	Mon, 16 Dec 2024 01:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734310540; cv=none; b=sA8XvXPU1qlmgdaE462GdDc3trT4+2NGRQaaoJpKbfVFRIQ0+r2dKN5lmuPHchNL3VNA+jQw4hM+HSu82EuSIADNiVIkWFl5UxTBkfD2I8GfUYrESnHcJnBJcm57Wr+ZeL/ri0EQGS4htm+FvgJIpaQgt+BxocdB9PA6Ly/Fwvs=
+	t=1734311317; cv=none; b=MfV8WdFt8awP4HN31G3J12es/X/mdQ+nz8pNqce/F0I4P7esulFsE2IRrB5di/TmBNFEwgBKGpqzbNA/dFr5Fv0PMW34MxxX7xwFNAJtFtMPaEFrErFvEonflybwbvg6MzpgjKtU288we/8P/1GDNTWsxCPscUfrwRd9+8UYtAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734310540; c=relaxed/simple;
-	bh=M5zkbHOH0pjT2Wk0Sqvf6Y4HF8My1HjzpvwNs+nt8sE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=J1vunjeSFrQkHwGV1zAlwPtQHbYf55T0OkpQZhsiN1S9yuA6ydx7Hu2UHW3vzn4mkD8eyhG/qw9DEPVUcQRHZ24bUELbN9OGDc7NE3hxGnzmWEfJeaB10Wc8hhPg1GeuaUFbabS37hIZIbmeLfxHEz7kvLWY+RqXAnTfI8LX5fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7e0d7b804so36072295ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 16:55:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734310538; x=1734915338;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyPTg29gCznr30gAWH83+Dq4brap8KWMDwmlkDrkrA8=;
-        b=fLcZzHfDOaUa+MfSLGrBaH2rf0GZdjXFher3joJn/Ke7rEGL02HhUY9S+CZWlbJ8fx
-         aEU9crSp4mSIWpdugEm3V1jrG2wyH1jt0BOnyzzSeXX/tMTVxeqsZTxtij7C0Nrvi3qn
-         RFUGOsCqwmpXc9Vh/1yzNSw/vaHgl8tSVqOu/2qq5m0jGmvvHWDgt8IKphpnZxRuaU29
-         /a0FJwR86k9j32S+ReDjo3KfeRK8JeAnIG+ows1UteS2pahS/3Z8Rc277wUkQDrC985U
-         HF08Nk5lcPuvh8maQjhmDPdQIIeIcC21N1ogZxQOWaWQH+bK1A0ko60KKdEQUzlLGgwr
-         bLow==
-X-Gm-Message-State: AOJu0Yy+4pfY7tORysSczoRe/yUsv5owUYV3ctoq5q94Uk/CUEbjaeHR
-	5/47p38yF0duIeI8fEOPvJmHQamYUBZGJYAMM2qM8cnt6gPME0J4poYf5wikmPcpGcOMakp9hOp
-	DrSF4I5wUdhPDrNsJQ4iI1p2Bx35ZDGkuKLO0Fx2Z42h1/bRfZw5dcIw=
-X-Google-Smtp-Source: AGHT+IGnvGBZQI8ERNdQHHrFt45mAGGa/4eO0Vc9wu36l2XVH6qiyTwG/idsquTJPdQeC4EmxfNpMLTuGo3SkJv8zO3vqEb8nRKj
+	s=arc-20240116; t=1734311317; c=relaxed/simple;
+	bh=fA1zxkZy55Xbl5aDRt3PnVnaE7uEwwg7jkSWYAyiOOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1aZMnxgXCwKpi8lO4oelsmUNMl9IqwmKTdruYiVhA4Yvez4n0ov2VC/kDqo/aRKvebX46WWQF+qxEkurByi8499HOZLRq9sR5iNdDHJFZv2qiMZeslah43XwfjIsGuSqspvD+WAbnWA2s8bQxVrIi9gz6bMoPVmxFLS6YHVCSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PwIp8/TV; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734311317; x=1765847317;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fA1zxkZy55Xbl5aDRt3PnVnaE7uEwwg7jkSWYAyiOOc=;
+  b=PwIp8/TVhcq4xzbaGLwEV398YCuEzP7ezXi1A3Iov4x1lmChYeCB+xOs
+   mPELvyiDUBZdXDcxU63DQKaIcDWup3IXSyO0KHVt703E+FOoG3P1+zM9E
+   SsTrqKL7ViPEK3H2lQGp+1eAsfKci9JN7CS4Vp3ivbog3r6Ro5MKi8aWf
+   om4YxE69zzUSp/QBYt5sgXi57IYtPbO19N1LY0PHLB64qd9nPDf6OHrG2
+   0n6qISiUVeR/955It4oHaFmS0d5w+Cun4OviZuorrYCbROTzZaUpbFp7l
+   Qa3jHvL+Z7CUQjf84aPFKJ6KwXdLqJfBGBe0usrKcAGNGLw3P0OkuaIHv
+   w==;
+X-CSE-ConnectionGUID: gnS8trVlQnWn+oAI8MeGNg==
+X-CSE-MsgGUID: 9hblDb/5Txa3VBeGRQZZuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34599495"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="34599495"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 17:08:36 -0800
+X-CSE-ConnectionGUID: EoD++NoBTUOY9MX5XJvTlg==
+X-CSE-MsgGUID: PrCzXibAQdKvcNv1LyBh2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="96925577"
+Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 17:08:32 -0800
+Message-ID: <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
+Date: Mon, 16 Dec 2024 09:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aab:b0:3a8:1195:f216 with SMTP id
- e9e14a558f8ab-3aff7668d77mr106596545ab.10.1734310537868; Sun, 15 Dec 2024
- 16:55:37 -0800 (PST)
-Date: Sun, 15 Dec 2024 16:55:37 -0800
-In-Reply-To: <675f60b1.050a0220.37aaf.0107.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675f7a89.050a0220.37aaf.010b.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [trace?] WARNING in bitmap_parse_user
-From: syzbot <syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ michael.roth@amd.com, linux-kernel@vger.kernel.org
+References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+ <20241201035358.2193078-5-binbin.wu@linux.intel.com>
+ <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: Re: [syzbot] [trace?] WARNING in bitmap_parse_user
-Author: lizhi.xu@windriver.com
 
-If either a zero count or a large one is provided, will triger a warning in bitmap_parse_user.
+On 12/13/2024 5:32 PM, Xiaoyao Li wrote:
+> On 12/1/2024 11:53 AM, Binbin Wu wrote:
+>
+[...]
+>> +
+>> +static int tdx_map_gpa(struct kvm_vcpu *vcpu)
+>> +{
+>> +    struct vcpu_tdx * tdx = to_tdx(vcpu);
+>> +    u64 gpa = tdvmcall_a0_read(vcpu);
+>
+> We can use kvm_r12_read() directly, which is more intuitive. And we can drop the MACRO for a0/a1/a2/a3 accessors in patch 022.
+I am neutral about it.
 
-#syz test
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814..9e989d97bb78 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5224,6 +5224,8 @@ tracing_cpumask_write(struct file *filp, const char __user *ubuf,
- 	struct trace_array *tr = file_inode(filp)->i_private;
- 	cpumask_var_t tracing_cpumask_new;
- 	int err;
-+	if (count == 0 || count > PAGE_SIZE)
-+		return -EINVAL;
- 
- 	if (!zalloc_cpumask_var(&tracing_cpumask_new, GFP_KERNEL))
- 		return -ENOMEM;
+>
+>> +    u64 size = tdvmcall_a1_read(vcpu);
+>> +    u64 ret;
+>> +
+>> +    /*
+>> +     * Converting TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE requires
+>> +     * userspace to enable KVM_CAP_EXIT_HYPERCALL with KVM_HC_MAP_GPA_RANGE
+>> +     * bit set.  If not, the error code is not defined in GHCI for TDX, use
+>> +     * TDVMCALL_STATUS_INVALID_OPERAND for this case.
+>> +     */
+>> +    if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
+>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
+>> +        goto error;
+>> +    }
+>> +
+>> +    if (gpa + size <= gpa || !kvm_vcpu_is_legal_gpa(vcpu, gpa) ||
+>> +        !kvm_vcpu_is_legal_gpa(vcpu, gpa + size -1) ||
+>> +        (vt_is_tdx_private_gpa(vcpu->kvm, gpa) !=
+>> +         vt_is_tdx_private_gpa(vcpu->kvm, gpa + size -1))) {
+>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
+>> +        goto error;
+>> +    }
+>> +
+>> +    if (!PAGE_ALIGNED(gpa) || !PAGE_ALIGNED(size)) {
+>> +        ret = TDVMCALL_STATUS_ALIGN_ERROR;
+>> +        goto error;
+>> +    }
+>> +
+>> +    tdx->map_gpa_end = gpa + size;
+>> +    tdx->map_gpa_next = gpa;
+>> +
+>> +    __tdx_map_gpa(tdx);
+>> +    /* Forward request to userspace. */
+>> +    return 0;
+>
+> Maybe let __tdx_map_gpa() return a int to decide whether it needs to return to userspace and
+>
+>     return __tdx_map_gpa(tdx);
+>
+> ?
+
+To save one line of code and the comment?
+Because MapGPA always goes to userspace, I don't want to make a function return
+a int that is a fixed value.
+And if the multiple comments bother you, I think the comments can be removed.
+
+>
+>
+>> +
+>> +error:
+>> +    tdvmcall_set_return_code(vcpu, ret);
+>> +    kvm_r11_write(vcpu, gpa);
+>> +    return 1;
+>> +}
+>> +
+>>   static int handle_tdvmcall(struct kvm_vcpu *vcpu)
+>>   {
+>>       if (tdvmcall_exit_type(vcpu))
+>>           return tdx_emulate_vmcall(vcpu);
+>>         switch (tdvmcall_leaf(vcpu)) {
+>> +    case TDVMCALL_MAP_GPA:
+>> +        return tdx_map_gpa(vcpu);
+>>       default:
+>>           break;
+>>       }
+>> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+>> index 1abc94b046a0..bfae70887695 100644
+>> --- a/arch/x86/kvm/vmx/tdx.h
+>> +++ b/arch/x86/kvm/vmx/tdx.h
+>> @@ -71,6 +71,9 @@ struct vcpu_tdx {
+>>         enum tdx_prepare_switch_state prep_switch_state;
+>>       u64 msr_host_kernel_gs_base;
+>> +
+>> +    u64 map_gpa_next;
+>> +    u64 map_gpa_end;
+>>   };
+>>     void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 field, u64 err);
+>
+
 
