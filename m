@@ -1,719 +1,234 @@
-Return-Path: <linux-kernel+bounces-447397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3469F319F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:35:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8BA9F31A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 091C7188A50A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A75D16878B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A60205AA3;
-	Mon, 16 Dec 2024 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0989205AA9;
+	Mon, 16 Dec 2024 13:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+0Xy04L"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b6/LdGbj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95262204F9D;
-	Mon, 16 Dec 2024 13:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734356084; cv=none; b=uAGhf3uX648s8pQyewAe6utCApazp4B2J8/1pMLvBpcdsiz+57soPN4f9rtwBRT1GWNzOhrqnGOZP1tIlX2he/1Z5k1dhIkCspzD+fx5g/FPyyjKIm4X9bpAXPWqepRzZQNF08iruwb7DAtzSJQam+OdrCwZU9bndcJhf3vE2pU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734356084; c=relaxed/simple;
-	bh=bY20enhKMPdcj6oWFMzCK/M0TP4e1CqqRI/zqvA9mB8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CnwnfMozOp5xt1fBlVnHNwWo5NOp+S3pPRWWag53k3d4sAaA5h0HEPoQa4Rc7ffT1+DVU9kNt14VCvU0Q4AGi5NSvjDHapHrpp66E5ktqaxjFz7KFXmwOxOt6I3HYJJQgcj3X2RtTRCl2x751bZ5tdK+GvTWKZwfDwPEdplYyGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+0Xy04L; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b6eb531e13so172760985a.0;
-        Mon, 16 Dec 2024 05:34:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734356081; x=1734960881; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ILJaSAjaG1IblCmaudS8cApx6aMUXt4jADLU281ARgI=;
-        b=l+0Xy04LKwzanrsAoMq3LgntbuplNpAbCHiAUbliHNzts9GgkFtW19byyceKvX4GHK
-         BIFwV5rVdW0z24LgoMsaZAwLEUsOvdLgZIUqjcq8tec4IAlPm8mAiSmakp82di+2oxRC
-         C6B/3rGujJ04u9Sp/gi0T77JCLrR2BOol4rxakOEGIYREWgvboo9Aa11IoDfk85yUOZx
-         Z9eV6M2xAY/QQ5P63jdB8JuCfvCsh8NGb+fTL8he+MJjuqGyBSAxH5iQeSewbFsBKJg5
-         Ssxsi0DGnGq2njdBHXL+a+a1VT2KoM8he537z9tOVXNYFAxroLwrwnt9XFhWS7rsJjPb
-         cK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734356081; x=1734960881;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ILJaSAjaG1IblCmaudS8cApx6aMUXt4jADLU281ARgI=;
-        b=lmMWvYiyL91pYVo0ufX6Z3r1C63zhFU0uFhM0dHPV6I4FfW2JNVHLp41FLlA1W+Mzx
-         jMdZ8JMXK1R0pKwtpujoYuVbC97mHIws7GyCrxVlrAxfYMgAuvhfCoA4J6l9qcbIyARX
-         PtWyj/mfeKqvFgxzBVMO9n1rqbmwU7enUb+RGXZdEOFiyfZlCArE3KPivrQ8EukzizyY
-         f4+Eg8E4m5F75gj1Wx1h0EfVfscq9+pDP1lA63/2h4X26OyteJtjE+pWykk2mOTCF0jZ
-         Ed9N613lI1GB2fKl85nOJOr3iOrOXa5ok26l6hQpAbvigej3uwm0T9nYm38yUPt+kCfv
-         +XhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8qGT7fRJjd1imx1sUW34k7w7OMxMfwQ4cVi9hGUDSwm7H5zvoA72gtgCj+rcSysXOpPjyNXDpO/w4IYqi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc+P7ANDFCgxx4hiS16HSW0LP6Rpt8EInovio8wRqhyWSIeNgF
-	edI+BpCYwubHJxWrSDF+IvFxsqw8nJFHXeK0f8IGo2C+l9iuqPRTV+MjI2beEdGqrRE9Ngk035j
-	8Qi8UyqFAcs8MfoI4ZIAYoUq11/hzVzwL8QWWG2Ck
-X-Gm-Gg: ASbGnctmamCGnr9AXJUz4AfhEp8aD9Jn/Z11GF8f57CeWipdWTe1gdI822xs6mU06hG
-	sYimmu/ozpCTkx+XAhYYlKoOziwv68Nzpz0PxppU=
-X-Google-Smtp-Source: AGHT+IHMcBSy3Tf5kAJvQgr66QZoqhD+CQ9t341JflPTqp1SVQbA9+GS8iyePy2rHAMXlntgAfocw3ROPQN1Yl+9RvU=
-X-Received: by 2002:a05:6214:20a3:b0:6d8:899e:c3bf with SMTP id
- 6a1803df08f44-6dc9032067bmr221515486d6.34.1734356080446; Mon, 16 Dec 2024
- 05:34:40 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725452054F3;
+	Mon, 16 Dec 2024 13:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734356167; cv=fail; b=Rgopo2hQvMKvInIZtD1c+kbWPisnFnwlq/sFgugDsETNgordBALprhWCaB96gYFtnyzk4rGfXPrhLiNmXXjb/MACrreafvwHpLY7VgqU+0S+stG4uuzW88zy2YowsBQVWKAQDh5f3aLThu5lmTkS5AFzL5+x9kFBrKK8t0+2Kic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734356167; c=relaxed/simple;
+	bh=Ge8KNlkLoYf5HONWi8vdBoh/mbZ4shSSD4oVSP7klV0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uFNu/I0cBJCV+oNhjclZv59S0fS/hUARd3rYhT2kWWZvaRHVzyBAOVss29ARER8mpmV7W3fZORmznVjnwjkBvMdlz52ZTABWCGoB7Q4zdW5KxwB+zl+z7tmfY0q/9C+XR9EtG11NfN7mjw09SfKBcFTJLxYbGQrzFqTpSjKwvHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b6/LdGbj; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734356166; x=1765892166;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Ge8KNlkLoYf5HONWi8vdBoh/mbZ4shSSD4oVSP7klV0=;
+  b=b6/LdGbjhKrnR2yB4kWLM0SZ2gZrI5mCWU0l2cfTLTNMr78jzh7fQBcj
+   Z2Xz87w42Qbzkg89PIROVwjdOJ7SALT3bPcRQMfWQSrSQ7NFHIC/uus3n
+   +PrRsmnkhjC6wFzFdjt+ikURuqoQ95+8J0vEmDvmMBRRxb+88+oQ4t4Df
+   5YMmjq8oFil6jbpILlmqSER3zxIr+Y6H7FywrAXTKc0sSFm1qnfikct0q
+   z9Mvyx+12GaVGlJ+H3PbpheEfLv5EbQ8sQ991sltyrQGSNquMfPqOf/fL
+   0kGazh559Oi4mW2CTDGGzz3zZ4NJuumUoHHpROABTirLXVQTCtMAveZmt
+   Q==;
+X-CSE-ConnectionGUID: P9X6RhmrRt+THs3oXihOuA==
+X-CSE-MsgGUID: QyTfHBfIQr2rHGOGnSZPbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="45432430"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="45432430"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:36:04 -0800
+X-CSE-ConnectionGUID: csEknJI9T8uXKXlKKny+3Q==
+X-CSE-MsgGUID: gZNcAvO0RQiPpxYyBMoTPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="101345357"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Dec 2024 05:36:04 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:36:03 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Mon, 16 Dec 2024 05:36:03 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:36:03 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SuVsQK6i0h/fJ8vFALExWKt095wAmyw3kdMp567H3v/1l4w5ad3zIiwTiqRykWJOIy2+rTc1cIpoDruBTSl78iFxFXYUPJcPmgI10bgL2XJ91homiM9NplexwF/8mJ74qGpDxERcX8Qof6L6x+uPNLyn6FZxe+HbWMUIlCAdfbKCzUsZZhykvp1EU30MoYps6N5bkPr57rg7pz8mTau1R0MOx4FxIRCR4/RAhnTqng0Fn6QuL82vX71RABrt8aAWk9KnYXJiykrEwlshfKtXrLC8/pABWcACu/vOby4BhZCY/9aQ5TB7zaAdIMX1IJ4BSiPV4VBjiYmMzS9sS9LV5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0bZO0bzwgQBWlD4UhEUIZVIaw9RrUe5qh6P/eXNWoiY=;
+ b=iLK4F7pjLcwNMiY3ZcbFVHDQZFFdFolT2Bww4sIL+1mmeQpCNpZ/OHRwgLqoc4OBXxYfwVPTCKeso7gChF+lt6AtQ9Dqxly7KXbMZKwh5gnUBnxyEHuBJzHuLFNxfRdGN4z1wPr5ODF5qYVBeNd6dFYU2NJbYqxv9xgOqAU2AfO2vHdNu96by4h1cPUldEwtKK1loi4rX8+buhXUBqGMBnnkzJxFvC2DvjC7L4fxahXouL0sAFuRO49OQfF582NcuZWHPSR7X58IA810p3g8QO6HFiskKPm24c0nglWSA3Nz1G7+aHXko+lSbv1oxKXxyjtaJLrzAgPmLasOTDA4Dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
+ by SJ0PR11MB5183.namprd11.prod.outlook.com (2603:10b6:a03:2d9::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Mon, 16 Dec
+ 2024 13:36:00 +0000
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc%5]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 13:36:00 +0000
+Message-ID: <c3926eff-513d-4c43-9074-696495caa3f4@intel.com>
+Date: Mon, 16 Dec 2024 14:35:26 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 1/6] net: usb: lan78xx: Add error handling to
+ lan78xx_get_regs
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, <kernel@pengutronix.de>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>, Phil Elwell <phil@raspberrypi.org>
+References: <20241216120941.1690908-1-o.rempel@pengutronix.de>
+ <20241216120941.1690908-2-o.rempel@pengutronix.de>
+ <c7ddac7d-debc-44eb-9c43-7746ad3edb55@intel.com>
+ <Z2Ao8r3gJRnQLq_I@pengutronix.de>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <Z2Ao8r3gJRnQLq_I@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR0502CA0005.eurprd05.prod.outlook.com
+ (2603:10a6:803:1::18) To BN9PR11MB5402.namprd11.prod.outlook.com
+ (2603:10b6:408:11b::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sam Sun <samsun1006219@gmail.com>
-Date: Mon, 16 Dec 2024 21:34:28 +0800
-Message-ID: <CAEkJfYM-wj1wYjCPTCWs2GGkmp0W4z2VEMoL8qEH_9trB1PZkQ@mail.gmail.com>
-Subject: [Bug] BUG: soft lockup in oom_score_adj_write
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: brauner@kernel.org, tglx@linutronix.de, akpm@linux-foundation.org, 
-	peterz@infradead.org, viro@zeniv.linux.org.uk, chengming.zhou@linux.dev, 
-	felix.moessbauer@siemens.com, adrian.ratiu@collabora.com, 
-	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|SJ0PR11MB5183:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4414673-092d-4c65-83da-08dd1dd68bdb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VHNkaTBKQnI3c0hBOU84THp4RW5yS3VDekxVb0pEbjYva1grejV4U05DY0lL?=
+ =?utf-8?B?UGJ6ZVhTUDVSK0IrNUZmV3dYL1FjOVcwQkdQaGozZ2E5M1NvSDZUeEljeG1T?=
+ =?utf-8?B?cCt6Q2kwRWRnbngwdFNaVllKc1U5SC80amlCZnYyYTZPMis4bDFBZUNZVnpZ?=
+ =?utf-8?B?RnBaaU51MVZWMHVCcndPZ0VGZ3MvQmlqMmpuaEtkWVE1SnV2L1FaVEhqR2ph?=
+ =?utf-8?B?SHR1aFlWYXBRdE45UXV4dm1hMjJxMXNxUUo3cm9CaXVKakZQYkxXN2lNcG01?=
+ =?utf-8?B?b0JFamxsZlFpMGxGSkcrY1QwM3pJUnFnWU5VeUlLUEFIOVMvL3NUSDE4WWs0?=
+ =?utf-8?B?RGxLMHE4MkhoZm1BVFBBSm9qSXlMQ3M5cXQ3ait2c0ttNU5NVlRBU3M2ZnJ2?=
+ =?utf-8?B?NDE0aHFqcW5sTGtLbkVLaktNQzRHVk5vN1dqZnNmSGl5V2p4eEVLdjB0c21S?=
+ =?utf-8?B?VXUxV1Y5VEpMUmUrZUlYT3dOaW5IbWV5T09YdG1qdEJRQllFWUdiZG83bmpL?=
+ =?utf-8?B?dVB6QXRqVlpueDBwaXZtQVFyY3NnWEVwK0JCRVNxcjdaaUZlKzBpRVMvSUJ2?=
+ =?utf-8?B?bkpiR2FXWC9KRys2TUV0R2lwM0FObkgxa1E1OTIvRmw2RFlyR202UFlQSFZS?=
+ =?utf-8?B?RXoxS2wyTXllU1l4M21LRFV0eGo1VHBnZDVwWVM2NlJZaXBGTi81dE42T3JS?=
+ =?utf-8?B?UHJwdWxjczVYZXUzeElOWXFOL2lFVHJ3RGdOYmluMEQxY21oL2ZlUE9EcEF0?=
+ =?utf-8?B?cjUvZzJiYVFzWjhWSWFsb1FKVjAvajhQcmZ5SzJiaHNueHJTUVcvU2d2WmM2?=
+ =?utf-8?B?Y0tWVW5HWUpRTXFrN3dFOXZaSDkyV3BFNjRyM3hvNGdFSUtlSFlLaHB6cG13?=
+ =?utf-8?B?V1pja1BObVN5YmJUejZ4Z0doTmN6UUlGRU8vdmlxZlhCRXFOZXpTU1gyRCsz?=
+ =?utf-8?B?eHhwSFp2U2N1eG56ZXFHVXdGTGYwYjVVdVdCYWp4ZE43bHRRZ2xJclZ0Smxl?=
+ =?utf-8?B?ODNlNzNDd0lMbnE3SGxWbDFnZUZINUUzL1RsMVUwSlRCZGFwWnNlMk5RcHlH?=
+ =?utf-8?B?UFBMNlV0TTMvajNEU2QxdUJtWVpQYVgxZFNhekRZVnpMcXlJaWVENThGRlpx?=
+ =?utf-8?B?bXFNa3o4K2hTNlREL3hjQytVR25saXQwYnFWYVhzNmJISjlVaFBGV0RveEJv?=
+ =?utf-8?B?SnhNU3g5WG9oYkNPbE03RnVvZ1lnaDBpWmxSZFZGT3Z4TmxjbUZXR0VrTTVZ?=
+ =?utf-8?B?NEgzNC8zOW9WeHBUTE40YUt4OC81Q05hanluUk9GK0ZFdHQrTVJiNlA0QnJm?=
+ =?utf-8?B?OFBNNjRRemx5SHBaMlZUYzMwVXVGYnRiMnIrTU8vQm9oMVhBbVpIemoxc2do?=
+ =?utf-8?B?REUxS3Awb0xRVVFrc3M4UWt2M3FxNWNwQnNGMzJNN1JKQkRLeURFM0h2Unlw?=
+ =?utf-8?B?N1NUY2hZV2taWC9DckJUUVBDSTI2UjlrUnJ6cUJ3KzM3eWdHQi91c00veGJx?=
+ =?utf-8?B?aWtIMG54WTRERE03QmhZOEhTUFFUc1dDTDh1NGpyalFhSDdRajZZUHBWS204?=
+ =?utf-8?B?M1F5V1B6bU9TN0ZMRkNzRGFLbHFSV3paaUVZMzA0bm05bytTNkw4VDBORllG?=
+ =?utf-8?B?UWk4ekNHZS90dHlsY2Y0d056aFo5MWVxSi96WStFeFQxWVpiVDFJZ3ZleHVH?=
+ =?utf-8?B?K2ZKWXNZSFljcTY1TmhPZ1JwN2dEdlRmd09oU20vRkJpZ3hGb1lJU2MrMGQ3?=
+ =?utf-8?B?RW1MTGcreGZua0gzNTRoRFVCVDZFOW5sMjdHU3VXVTc2cW4zOTJKR2tvOXVU?=
+ =?utf-8?B?K2dKbVM1VGZSWGR5Z3NFZHN6cEh6ZjRZNmZVUzF4aFU2cVNsSXRwVWVwNExt?=
+ =?utf-8?Q?FS6YVHYP2XWJE?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aWRJRlB4VkdVVkF2UlBJRGxVZ3BJb3FneFhSejdDR0cwQlVrbzk3RzREUWZ1?=
+ =?utf-8?B?UEFBZ0xaYy84TURpcTFxYUd4MmFaUmxOaS9tbHNReHZhOENpcHVkS0NOOGht?=
+ =?utf-8?B?RzR4cW93VXFhaEJiakhETytsczRjS1hZZU1WMklIMXVJbkw2K2xONmlJMHgv?=
+ =?utf-8?B?V3BtcnU0eHBUMzc4aTBzL2ZwbnUraDZJRXM2MHVzTkZEUDBhL3V0T0loeE14?=
+ =?utf-8?B?MXMvUEgvbk9LRFI0TVYyTlpISlpkWDh6cG1hVTJEV2xOcHhELzRWRm0xUVVO?=
+ =?utf-8?B?ZE56ODhzYXRIVVFTSHpRVkI1TXN2cmc1a2s0U3p2bDVMN0FFSkZyVHNMWGpT?=
+ =?utf-8?B?QjBGQ2lPQTBSajBZZXMvOEswM0RnVU5XMDdDa09oelJVYXhyWXpJWStPeEZv?=
+ =?utf-8?B?aDd5NitsRkw1aTQ5Q0UrZVFvZmtqT0RYNnNmUWxsSEI3Q2Z1SDRsY3RCRmhz?=
+ =?utf-8?B?ZTcxamJ3eTZLN1ErUmpSZWRJTWJkbm5MWFZjN3ZibG1EcGMwRkptSGI0eHMy?=
+ =?utf-8?B?VUF4K3piZjZ5T2UyZG1Eb25ZUnY3Rysxd2Q5OG5oVkdJcGVMc2N0SWVFdW5I?=
+ =?utf-8?B?RmdmclNobStCSGNQMm9OMWxmT2dUTlR6a0hnOHUwcUEwV0cxQ3d3V21DZHRO?=
+ =?utf-8?B?UkFNc05yYTUzTm9tQzBGYmMwams5bDErZmN4QTg1UXhXcXBwY1h0ckFGZjhi?=
+ =?utf-8?B?Y2xkYVlsWFN6dVY0Uzl4THdPS3MwOGYvZ0JBMmNGTlpWV1gxNDl0aXVpNlU3?=
+ =?utf-8?B?WmZFNnpxQzlrMEg0ZklWbXl3UFArNFVkc24rdGxpNGxRbnNEdnRHQ3lQbzVp?=
+ =?utf-8?B?dnhZa0ZXUndXdWRZN1JmRGtEbUtpUGVhUTZtdlZQOXNkTGN6S0RvbCtOUlVH?=
+ =?utf-8?B?TS81U3MyTExSUjgxMjQ1SjlrTzdkTFYwTHdjVVQwK2ZrRVZ5akxhUXpvVUJy?=
+ =?utf-8?B?bHBVbmpHdzNtUVQ3aFVuNEVmVDNhbWVCN3RscXowbHIzMUdiOG50SVhxVVBL?=
+ =?utf-8?B?SVVPdkQvSGYzaTBFWHRmVktyNmRtNkI0eUV4WkZhOGpHMDVGdGFwNklCV2xn?=
+ =?utf-8?B?RldGTVdjWUxrZkhIZXhteVBYRHk2b2k4bWFxNGJ1RGpaZ3d2V2dIeFBtS0J3?=
+ =?utf-8?B?OUtmaXlHQVZwNk9uR3pweXdURkY2SUowMGRyUnpvSGx0Sk52TUEyZUVWYkFN?=
+ =?utf-8?B?Q0JObGNUSHRyUWZYT2p6ODNyWEIyQWdUOWNMR0pHSGtmTlJMR1E3ZGFOUStD?=
+ =?utf-8?B?eE0yUU16MnM1bVZ6aDJsR1JKZ1dDL0dkS1lWU1pNcEhrc0pyWlZEK0htN2h6?=
+ =?utf-8?B?T1IzSituZWs2WVBYNXlLNTlyNzJGejR2RVV6SWZhTnhNdjJEbG05c0R2YUdR?=
+ =?utf-8?B?YWVDZVFPNU52ZGtJNktSTWtRMDd0SXgvNHZqczh3MlFaTStCM0JaVStPNEtq?=
+ =?utf-8?B?QUw5MWJTa1lZakVpTGlWMHJDdmI1dXllWlVMN04yYmtTRnJ4eEUxM3l3OXFH?=
+ =?utf-8?B?d1lpeThPZW5WRVB1b2FwNVFnMGk3emxtRHpGT1IxNVNEWW1sY1NPb3doVS9a?=
+ =?utf-8?B?aU5lUXZka0ZlcjhGRVBvdVJYazYxbDVTYWx5MjUyOTZGS1d6ZWxzNXVEVlls?=
+ =?utf-8?B?SXlaYnVWbGlSaEp6WndJb1JURUZydG02RG5pVzFPZTl0T2pSdmFKRW5CTmZp?=
+ =?utf-8?B?bVpIK0JIYm9RLzM2dU5pakg4Q2hHbnMxUVl0MEZudDhVYkMwbTl5dTg4cFk4?=
+ =?utf-8?B?cWhMK0hTZGVMQWdFWUYveENtOXBBd0M2cFlMWVI1MVRMUmNGd0c5NVFFZSt0?=
+ =?utf-8?B?VnA5amZjYWxuYmYwUnVwajZrUEUyTUh4c0tLbXpCYmQzYk9aTWJodjFKMG15?=
+ =?utf-8?B?MnBRdlNTRk5keEgwQUJVNXZtNHd2SnljSmFvRThEbGlVR3dQQmxRSktWbm1k?=
+ =?utf-8?B?UmtOQVN4RXhHMjd2RjdTUUI5T3J4VVpGNWl0Yis1OTJiM0N1V2xvN3RCRHR0?=
+ =?utf-8?B?QzhIZVZKS0YyYUlHdS8xYnR2cyt2L09UUUJBZVdJS3BjdUh0dWVPSXFmOUxh?=
+ =?utf-8?B?N3A1cFBHWHIvczcxQVFIdTVVMWxyaUJNa3pHTmNhd2NWZmJZdWIyRFEzMEZV?=
+ =?utf-8?B?bmxUMklYNUlXN3JRYW90ODlDUmIyMjJjZ080eWpISHd0OEdFc01EUFBkVHdJ?=
+ =?utf-8?B?OEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4414673-092d-4c65-83da-08dd1dd68bdb
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5402.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 13:36:00.4271
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BgPUk+oicbK2MJCzBGaPmUyqNvg8P3Sj8myJOHsSBcEiW6okit4UXhlXqGQxnQ4obzKWWZkAiDf4R/GwlFWYMWx49BB3hqNomDNja8P5BYI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5183
+X-OriginatorOrg: intel.com
 
-Dear developers and maintainers,
 
-We encountered a kernel bug while using our modified
-syzkaller. It was tested against the latest upstream kernel.
-Kernel crash log is listed below.
 
-```
-Syzkaller hit 'BUG: soft lockup in oom_score_adj_write' bug.
+On 12/16/2024 2:19 PM, Oleksij Rempel wrote:
+> On Mon, Dec 16, 2024 at 02:07:37PM +0100, Mateusz Polchlopek wrote:
+>>
+>>
+>> On 12/16/2024 1:09 PM, Oleksij Rempel wrote:
+>>>    	if (!netdev->phydev)
+>>>    		return;
+>>>    	/* Read PHY registers */
+>>> -	for (j = 0; j < 32; i++, j++)
+>>> -		data[i] = phy_read(netdev->phydev, j);
+>>> +	for (j = 0; j < 32; i++, j++) {
+>>
+>> Maybe during this refactor is it worth to add some #define with
+>> number of registers to be read?
+> 
+> I prefer to remove this part. Please see patch 5
+> 
 
-watchdog: BUG: soft lockup - CPU#0 stuck for 290s! [syz-executor434:52600]
-Modules linked in:
-irq event stamp: 220
-hardirqs last  enabled at (219): [<ffffffff8b122621>]
-syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
-hardirqs last  enabled at (219): [<ffffffff8b122621>]
-do_syscall_64+0x91/0x250 arch/x86/entry/common.c:79
-hardirqs last disabled at (220): [<ffffffff8b128c0f>]
-sysvec_apic_timer_interrupt+0xf/0xc0 arch/x86/kernel/apic/apic.c:1049
-softirqs last  enabled at (0): [<ffffffff814dc1b2>]
-copy_process+0x1f22/0x8960 kernel/fork.c:2321
-softirqs last disabled at (0): [<0000000000000000>] 0x0
-CPU: 0 UID: 0 PID: 52600 Comm: syz-executor434 Tainted: G S
-     6.12.0-09435-g2c22dc1ee3a1 #11
-Tainted: [S]=CPU_OUT_OF_SPEC
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
-RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:564 [inline]
-RIP: 0010:__mutex_lock+0x122/0xa50 kernel/locking/mutex.c:735
-Code: 0f 85 c6 06 00 00 8b 35 7c d1 50 0f 85 f6 75 2b 49 8d 7c 24 60
-48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 <0f> 85
-ad 06 00 00 4d 3b 64 24 60 0f 85 96 01 00 00 bf 01 00 00 00
-RSP: 0018:ffffc900114bfab0 EFLAGS: 00000246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 1ffffffff1c1c5c4 RSI: 0000000000000000 RDI: ffffffff8e0e2e20
-RBP: ffffc900114bfbf0 R08: ffffffff82279e78 R09: fffffbfff208021a
-R10: ffffc900114bfc10 R11: 0000000000000000 R12: ffffffff8e0e2dc0
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffffc900114bfb30
-FS:  00005555771343c0(0000) GS:ffff88802b800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc345f1a01d CR3: 0000000025910000 CR4: 00000000003506b0
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- __set_oom_adj.isra.0+0x68/0xfd0 fs/proc/base.c:1129
- oom_score_adj_write+0x1b4/0x1f0 fs/proc/base.c:1294
- vfs_write+0x2b6/0x10d0 fs/read_write.c:677
- ksys_write+0x122/0x240 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc345ec68d7
-Code: ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f
-1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-RSP: 002b:00007ffd2e307948 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007fc345ec68d7
-RDX: 0000000000000004 RSI: 00007ffd2e307970 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 00007ffd2e3078c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd2e307970
-R13: 0000000000000000 R14: 00007ffd2e307e8c R15: 431bde82d7b634db
- </TASK>
-```
-
-We have a C repro which can trigger the task hung, listed below:
-```
-
-#define _GNU_SOURCE
-
-#include <dirent.h>
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/mount.h>
-#include <sys/prctl.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <unistd.h>
-
-#include <linux/futex.h>
-
-static unsigned long long procid;
-
-static void sleep_ms(uint64_t ms)
-{
-  usleep(ms * 1000);
-}
-
-static uint64_t current_time_ms(void)
-{
-  struct timespec ts;
-  if (clock_gettime(CLOCK_MONOTONIC, &ts))
-    exit(1);
-  return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
-
-static void use_temporary_dir(void)
-{
-  char tmpdir_template[] = "./syzkaller.XXXXXX";
-  char* tmpdir = mkdtemp(tmpdir_template);
-  if (!tmpdir)
-    exit(1);
-  if (chmod(tmpdir, 0777))
-    exit(1);
-  if (chdir(tmpdir))
-    exit(1);
-}
-
-static void thread_start(void* (*fn)(void*), void* arg)
-{
-  pthread_t th;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
-  pthread_attr_setstacksize(&attr, 128 << 10);
-  int i = 0;
-  for (; i < 100; i++) {
-    if (pthread_create(&th, &attr, fn, arg) == 0) {
-      pthread_attr_destroy(&attr);
-      return;
-    }
-    if (errno == EAGAIN) {
-      usleep(50);
-      continue;
-    }
-    break;
-  }
-  exit(1);
-}
-
-typedef struct {
-  int state;
-} event_t;
-
-static void event_init(event_t* ev)
-{
-  ev->state = 0;
-}
-
-static void event_reset(event_t* ev)
-{
-  ev->state = 0;
-}
-
-static void event_set(event_t* ev)
-{
-  if (ev->state)
-    exit(1);
-  __atomic_store_n(&ev->state, 1, __ATOMIC_RELEASE);
-  syscall(SYS_futex, &ev->state, FUTEX_WAKE | FUTEX_PRIVATE_FLAG, 1000000);
-}
-
-static void event_wait(event_t* ev)
-{
-  while (!__atomic_load_n(&ev->state, __ATOMIC_ACQUIRE))
-    syscall(SYS_futex, &ev->state, FUTEX_WAIT | FUTEX_PRIVATE_FLAG, 0, 0);
-}
-
-static int event_isset(event_t* ev)
-{
-  return __atomic_load_n(&ev->state, __ATOMIC_ACQUIRE);
-}
-
-static int event_timedwait(event_t* ev, uint64_t timeout)
-{
-  uint64_t start = current_time_ms();
-  uint64_t now = start;
-  for (;;) {
-    uint64_t remain = timeout - (now - start);
-    struct timespec ts;
-    ts.tv_sec = remain / 1000;
-    ts.tv_nsec = (remain % 1000) * 1000 * 1000;
-    syscall(SYS_futex, &ev->state, FUTEX_WAIT | FUTEX_PRIVATE_FLAG, 0, &ts);
-    if (__atomic_load_n(&ev->state, __ATOMIC_ACQUIRE))
-      return 1;
-    now = current_time_ms();
-    if (now - start > timeout)
-      return 0;
-  }
-}
-
-static bool write_file(const char* file, const char* what, ...)
-{
-  char buf[1024];
-  va_list args;
-  va_start(args, what);
-  vsnprintf(buf, sizeof(buf), what, args);
-  va_end(args);
-  buf[sizeof(buf) - 1] = 0;
-  int len = strlen(buf);
-  int fd = open(file, O_WRONLY | O_CLOEXEC);
-  if (fd == -1)
-    return false;
-  if (write(fd, buf, len) != len) {
-    int err = errno;
-    close(fd);
-    errno = err;
-    return false;
-  }
-  close(fd);
-  return true;
-}
-
-static long syz_mod_param(volatile long a0, volatile long a1, volatile long a2,
-                          volatile long a3, volatile long a4)
-{
-  int fd, sysfd;
-  char buf[1024], sysbuf[1024], input[1024];
-  char* hash;
-  strncpy(buf, (char*)a0, sizeof(buf) - 1);
-  buf[sizeof(buf) - 1] = 0;
-  while ((hash = strchr(buf, '#'))) {
-    *hash = '0' + (char)(a1 % 10);
-    a1 /= 10;
-  }
-  fd = open(buf, a2, 0);
-  strncpy(sysbuf, (char*)a3, sizeof(sysbuf) - 1);
-  sysbuf[sizeof(sysbuf) - 1] = 0;
-  sysfd = open(sysbuf, O_RDWR, 0);
-  strncpy(input, (char*)a4, sizeof(input) - 1);
-  hash = strchr(input, '\0');
-  sysfd = write(sysfd, input, hash - input + 1);
-  return fd;
-}
-
-/*
-#if SYZ_EXECUTOR || __NR_syz_mod_power
-static long syz_mod_power(volatile long a0, volatile long a1)
-{
-        int sysfd;
-        char sysbuf[1024], input[1024];
-        char* hash;
-        strncpy(sysbuf, (char*)a0, sizeof(sysbuf) - 1);
-        sysbuf[sizeof(sysbuf) - 1] = 0;
-        sysfd = open(sysbuf, O_RDWR, 0);
-        strncpy(input, (char*)a1, sizeof(input) - 1);
-        hash = strchr(input, '\0');
-        sysfd = write(sysfd, input, hash - input + 1);
-        return sysfd;
-}
-#endif
-*/
-
-#define FS_IOC_SETFLAGS _IOW('f', 2, long)
-static void remove_dir(const char* dir)
-{
-  int iter = 0;
-  DIR* dp = 0;
-retry:
-  while (umount2(dir, MNT_DETACH | UMOUNT_NOFOLLOW) == 0) {
-  }
-  dp = opendir(dir);
-  if (dp == NULL) {
-    if (errno == EMFILE) {
-      exit(1);
-    }
-    exit(1);
-  }
-  struct dirent* ep = 0;
-  while ((ep = readdir(dp))) {
-    if (strcmp(ep->d_name, ".") == 0 || strcmp(ep->d_name, "..") == 0)
-      continue;
-    char filename[FILENAME_MAX];
-    snprintf(filename, sizeof(filename), "%s/%s", dir, ep->d_name);
-    while (umount2(filename, MNT_DETACH | UMOUNT_NOFOLLOW) == 0) {
-    }
-    struct stat st;
-    if (lstat(filename, &st))
-      exit(1);
-    if (S_ISDIR(st.st_mode)) {
-      remove_dir(filename);
-      continue;
-    }
-    int i;
-    for (i = 0;; i++) {
-      if (unlink(filename) == 0)
-        break;
-      if (errno == EPERM) {
-        int fd = open(filename, O_RDONLY);
-        if (fd != -1) {
-          long flags = 0;
-          if (ioctl(fd, FS_IOC_SETFLAGS, &flags) == 0) {
-          }
-          close(fd);
-          continue;
-        }
-      }
-      if (errno == EROFS) {
-        break;
-      }
-      if (errno != EBUSY || i > 100)
-        exit(1);
-      if (umount2(filename, MNT_DETACH | UMOUNT_NOFOLLOW))
-        exit(1);
-    }
-  }
-  closedir(dp);
-  for (int i = 0;; i++) {
-    if (rmdir(dir) == 0)
-      break;
-    if (i < 100) {
-      if (errno == EPERM) {
-        int fd = open(dir, O_RDONLY);
-        if (fd != -1) {
-          long flags = 0;
-          if (ioctl(fd, FS_IOC_SETFLAGS, &flags) == 0) {
-          }
-          close(fd);
-          continue;
-        }
-      }
-      if (errno == EROFS) {
-        break;
-      }
-      if (errno == EBUSY) {
-        if (umount2(dir, MNT_DETACH | UMOUNT_NOFOLLOW))
-          exit(1);
-        continue;
-      }
-      if (errno == ENOTEMPTY) {
-        if (iter < 100) {
-          iter++;
-          goto retry;
-        }
-      }
-    }
-    exit(1);
-  }
-}
-
-static void kill_and_wait(int pid, int* status)
-{
-  kill(-pid, SIGKILL);
-  kill(pid, SIGKILL);
-  for (int i = 0; i < 100; i++) {
-    if (waitpid(-1, status, WNOHANG | __WALL) == pid)
-      return;
-    usleep(1000);
-  }
-  DIR* dir = opendir("/sys/fs/fuse/connections");
-  if (dir) {
-    for (;;) {
-      struct dirent* ent = readdir(dir);
-      if (!ent)
-        break;
-      if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-        continue;
-      char abort[300];
-      snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
-               ent->d_name);
-      int fd = open(abort, O_WRONLY);
-      if (fd == -1) {
-        continue;
-      }
-      if (write(fd, abort, 1) < 0) {
-      }
-      close(fd);
-    }
-    closedir(dir);
-  } else {
-  }
-  while (waitpid(-1, status, __WALL) != pid) {
-  }
-}
-
-static void setup_test()
-{
-  prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
-  setpgrp();
-  write_file("/proc/self/oom_score_adj", "1000");
-  if (symlink("/dev/binderfs", "./binderfs")) {
-  }
-}
-
-struct thread_t {
-  int created, call;
-  event_t ready, done;
-};
-
-static struct thread_t threads[16];
-static void execute_call(int call);
-static int running;
-
-static void* thr(void* arg)
-{
-  struct thread_t* th = (struct thread_t*)arg;
-  for (;;) {
-    event_wait(&th->ready);
-    event_reset(&th->ready);
-    execute_call(th->call);
-    __atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
-    event_set(&th->done);
-  }
-  return 0;
-}
-
-static void execute_one(void)
-{
-  int i, call, thread;
-  for (call = 0; call < 2; call++) {
-    for (thread = 0; thread < (int)(sizeof(threads) / sizeof(threads[0]));
-         thread++) {
-      struct thread_t* th = &threads[thread];
-      if (!th->created) {
-        th->created = 1;
-        event_init(&th->ready);
-        event_init(&th->done);
-        event_set(&th->done);
-        thread_start(thr, th);
-      }
-      if (!event_isset(&th->done))
-        continue;
-      event_reset(&th->done);
-      th->call = call;
-      __atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
-      event_set(&th->ready);
-      event_timedwait(&th->done, 50);
-      break;
-    }
-  }
-  for (i = 0; i < 100 && __atomic_load_n(&running, __ATOMIC_RELAXED); i++)
-    sleep_ms(1);
-}
-
-static void execute_one(void);
-
-#define WAIT_FLAGS __WALL
-
-static void loop(void)
-{
-  int iter = 0;
-  for (;; iter++) {
-    char cwdbuf[32];
-    sprintf(cwdbuf, "./%d", iter);
-    if (mkdir(cwdbuf, 0777))
-      exit(1);
-    int pid = fork();
-    if (pid < 0)
-      exit(1);
-    if (pid == 0) {
-      if (chdir(cwdbuf))
-        exit(1);
-      setup_test();
-      execute_one();
-      exit(0);
-    }
-    int status = 0;
-    uint64_t start = current_time_ms();
-    for (;;) {
-      if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
-        break;
-      sleep_ms(1);
-      if (current_time_ms() - start < 5000)
-        continue;
-      kill_and_wait(pid, &status);
-      break;
-    }
-    remove_dir(cwdbuf);
-  }
-}
-
-uint64_t r[1] = {0xffffffffffffffff};
-
-void execute_call(int call)
-{
-  intptr_t res = 0;
-  switch (call) {
-  case 0:
-    memcpy((void*)0x20000180, "/dev/cpu/#/msr\000", 15);
-    memcpy((void*)0x200001c0, "/sys/module/msr/parameters/allow_writes\000",
-           40);
-    memcpy((void*)0x20000200, "10\000", 3);
-    res = -1;
-    res = syz_mod_param(/*dev=*/0x20000180, /*id=*/0, /*flags=O_WRONLY*/ 1,
-                        /*file=*/0x200001c0, /*buf=*/0x20000200);
-    if (res != -1)
-      r[0] = res;
-    break;
-  case 1:
-    *(uint64_t*)0x200008c0 = 0x200002c0;
-    memset((void*)0x200002c0, 103, 1);
-    *(uint64_t*)0x200008c8 = 0x10;
-    syscall(__NR_pwritev, /*fd=*/r[0], /*vec=*/0x200008c0ul, /*vlen=*/1ul,
-            /*off_low=*/0x10, /*off_high=*/0);
-    break;
-  }
-}
-int main(void)
-{
-  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
-          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  for (procid = 0; procid < 4; procid++) {
-    if (fork() == 0) {
-      use_temporary_dir();
-      loop();
-    }
-  }
-  sleep(1000000);
-  return 0;
-}
-
-```
-However, the crash log is sometimes different from the original one.
-For example, this is the crash log of one run:
-```
-root@syzkaller:~# ./oom_score_adj_write
-[  351.275672][    C1] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  351.277613][    C1] rcu:     0-...!: (0 ticks this GP)
-idle=ab9c/1/0x4000000000000000 softirq=18614/18614 fqs=0
-[  351.280856][    C1] rcu:     Tasks blocked on level-0 rcu_node
-(CPUs 0-1): P7953/3:b..l
-[  351.282951][    C1] rcu:     (detected by 1, t=768614301051
-jiffies, g=5765, q=221 ncpus=2)
-[  351.290334][    C1] rcu: rcu_preempt kthread timer wakeup didn't
-happen for 768614301050 jiffies! g5765 f0x0 RCU_GP_WAIT_FQS(5)
-->state=0x402
-[  351.293657][    C1] rcu:     Possible timer handling issue on cpu=1
-timer-softirq=6744
-[  351.295684][    C1] rcu: rcu_preempt kthread starved for
-768614301051 jiffies! g5765 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-->cpu=1
-[  351.298718][    C1] rcu:     Unless rcu_preempt kthread gets
-sufficient CPU time, OOM is now expected behavior.
-[  351.301284][    C1] rcu: RCU grace-period kthread stack dump:
-[  351.304248][    C1] rcu: Stack dump where RCU GP kthread last ran:
-[  531.267940][    T1] systemd[1]: systemd-udevd.service: Watchdog
-timeout (limit 3min)!
-[  682.879881][    C1] watchdog: BUG: soft lockup - CPU#1 stuck for
-143s! [kworker/1:1:7934]
-[  682.880575][    C1] CPU#1 Utilization every 22s during lockup:
-[  682.880995][    C1]  #1: 100% system,          0% softirq,     1%
-hardirq,     0% idle
-[  682.881516][    C1]  #2: 100% system,          0% softirq,     1%
-hardirq,     0% idle
-[  682.882022][    C1]  #3: 100% system,          0% softirq,     1%
-hardirq,     0% idle
-[  682.882539][    C1]  #4: 100% system,          0% softirq,     1%
-hardirq,     0% idle
-[  682.883052][    C1]  #5: 100% system,          0% softirq,     0%
-hardirq,     0% idle
-[  682.884393][    C1] Kernel panic - not syncing: softlockup: hung tasks
-[  682.884881][    C1] CPU: 1 UID: 0 PID: 7934 Comm: kworker/1:1
-Tainted: G S           L     6.13.0-rc3 #5
-[  682.885566][    C1] Tainted: [S]=CPU_OUT_OF_SPEC, [L]=SOFTLOCKUP
-[  682.886004][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS 1.15.0-1 04/01/2014
-[  682.886642][    C1] Workqueue: events bpf_prog_free_deferred
-[  682.887066][    C1] Call Trace:
-[  682.887302][    C1]  <IRQ>
-[  682.887510][    C1]  dump_stack_lvl+0x3d/0x1b0
-[  682.887852][    C1]  panic+0x6fd/0x7b0
-[  682.888137][    C1]  ? __pfx_panic+0x10/0x10
-[  682.888468][    C1]  ? show_trace_log_lvl+0x284/0x390
-[  682.888847][    C1]  ? watchdog_timer_fn+0xd9e/0x1150
-[  682.889231][    C1]  ? watchdog_timer_fn+0xd91/0x1150
-[  682.889609][    C1]  watchdog_timer_fn+0xdaf/0x1150
-[  682.889990][    C1]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[  682.890393][    C1]  ? timerqueue_del+0x83/0x150
-[  682.890749][    C1]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[  682.891166][    C1]  __hrtimer_run_queues+0x5ea/0xae0
-[  682.891552][    C1]  ? __pfx___hrtimer_run_queues+0x10/0x10
-[  682.891965][    C1]  ? ktime_get_update_offsets_now+0x2ba/0x450
-[  682.892409][    C1]  hrtimer_interrupt+0x398/0x890
-[  682.892760][    C1]  __sysvec_apic_timer_interrupt+0x111/0x400
-[  682.893187][    C1]  sysvec_apic_timer_interrupt+0xa3/0xc0
-[  682.893606][    C1]  </IRQ>
-[  682.893818][    C1]  <TASK>
-[  682.894035][    C1]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[  682.894477][    C1] RIP: 0010:smp_call_function_many_cond+0x613/0x12e0
-[  682.894956][    C1] Code: e8 22 09 0c 00 45 85 e4 74 49 48 8b 44 24
-08 49 89 c5 83 e0 07 49 c1 ed 03 49 89 c4 4d 01 fd 41 83 c4 03 e8 cf
-05 0c 00 f3 90 <41> 0f b6 45 01
-[  682.896291][    C1] RSP: 0018:ffffc90000aef9c8 EFLAGS: 00000293
-[  682.896711][    C1] RAX: 0000000000000000 RBX: 0000000000000000
-RCX: ffffffff818a1aa7
-[  682.897271][    C1] RDX: ffff88804231a480 RSI: ffffffff818a1a81
-RDI: 0000000000000005
-[  682.897831][    C1] RBP: ffff88802c4469a0 R08: 0000000000000001
-R09: fffffbfff2823399
-[  682.898405][    C1] R10: 0000000000000001 R11: 0000000000000000
-R12: 0000000000000003
-[  682.898974][    C1] R13: ffffed1005888d35 R14: 0000000000000001
-R15: dffffc0000000000
-[  682.899539][    C1]  ? smp_call_function_many_cond+0x637/0x12e0
-[  682.899973][    C1]  ? smp_call_function_many_cond+0x611/0x12e0
-[  682.900412][    C1]  ? smp_call_function_many_cond+0x611/0x12e0
-[  682.900863][    C1]  ? __pfx_do_flush_tlb_all+0x10/0x10
-[  682.901253][    C1]  on_each_cpu_cond_mask+0x40/0x90
-[  682.901629][    C1]  __purge_vmap_area_lazy+0x4f1/0xc50
-[  682.902019][    C1]  _vm_unmap_aliases+0x286/0x880
-[  682.902388][    C1]  ? __pfx__vm_unmap_aliases+0x10/0x10
-[  682.902787][    C1]  ? remove_vm_area+0x299/0x400
-[  682.903138][    C1]  vfree+0x61d/0x890
-[  682.903433][    C1]  bpf_prog_free_deferred+0x463/0x630
-[  682.903826][    C1]  process_one_work+0x99f/0x1bb0
-[  682.904183][    C1]  ? __pfx_lock_acquire.part.0+0x10/0x10
-[  682.904578][    C1]  ? __pfx_process_one_work+0x10/0x10
-[  682.904957][    C1]  ? rcu_is_watching+0x12/0xc0
-[  682.905296][    C1]  ? assign_work+0x194/0x240
-[  682.905623][    C1]  worker_thread+0x677/0xe90
-[  682.905951][    C1]  ? __pfx_worker_thread+0x10/0x10
-[  682.906316][    C1]  kthread+0x2c7/0x3b0
-[  682.906613][    C1]  ? __pfx_kthread+0x10/0x10
-[  682.906950][    C1]  ret_from_fork+0x45/0x80
-[  682.907270][    C1]  ? __pfx_kthread+0x10/0x10
-[  682.907593][    C1]  ret_from_fork_asm+0x1a/0x30
-[  682.907938][    C1]  </TASK>
-[  683.989287][    C1] Shutting down cpus with NMI
-[  683.989912][    C1] Kernel Offset: disabled
-[  683.990244][    C1] Rebooting in 86400 seconds..
-```
-If you have any questions, please contact us.
-
-Reported by Yue Sun <samsun1006219@gmail.com>
-
-Best Regards,
-Yue
+Ach, now I see that. So please forget about my comment
 
