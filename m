@@ -1,92 +1,128 @@
-Return-Path: <linux-kernel+bounces-446714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C759F2843
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:56:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8539F2858
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7272188128E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D949818863A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3997A17993;
-	Mon, 16 Dec 2024 01:56:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC25200A0;
+	Mon, 16 Dec 2024 02:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ACE5nSmM"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C6EE57D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D2EC13C;
+	Mon, 16 Dec 2024 02:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734314194; cv=none; b=iDwQGIa35RIHiPvogZdfuF5AxjbnWrORwHNU+AM5gpmYHqojIoJ0Owm6l9j04OBrY3iM40I/LgmdRLnOhedmOOHoijrHmPlsZ4Mpg/R9r27DgsPGHpXsWMbYsF0Mitkcl5EZ1xgq8+Y76A+YIxdfKeOlHkH8IFmiLJGG/ak9Qgc=
+	t=1734314494; cv=none; b=NDoGUDjztbPZxTqm2lGC0sWxbJJFm3O5pOTTl5bnCmjRPKSHUmrBAiVpBpQjnz+0v08SUoecOih+Yvj1u6lsqIWiErWuebonf6XczRX35INnl0uIdYeTMSPqQBhnvIuNLGhp6IujEJp+NI4ASZ6SlfWY5zLJ+yIJPqXByele5oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734314194; c=relaxed/simple;
-	bh=cpSupO2dHRTuC1+MTZE34NkoUF+f5bIb2C4r1kuKX8U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kG+E07Hh8n3p38CE/e4IiA2jmLZy6KP4fYxQMSXi7vQrHAoiBM0yJ7UUg72HJyrAwmzh1/AtfTu4nOyYKb8HkQ6OlHdhSvgqJUpiTKTgq4vqy6TpKbIhcJ88yHKm8/F6150WB/rspqPSjsBc9AIA5PgcH9HWx9zS9C05mlEXxag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a81684bac0so73636535ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 17:56:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734314192; x=1734918992;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rtpUagL4+EAkS80NOkOYrDL4cmYf9YoWCsJSkvWAJMM=;
-        b=gcaJgRRBiP/UIf+xPDDBANd+7b9Iqhl3SH5SpxQpeYwvyWGXhK8meO0BAggWCteHbi
-         rutBEH7a56vGBWxg/B5pSuUmYz+4tJ7IqrETJlYjEKKIIDdHU60vOYrWwf62ofNM7Zs1
-         pLyBRxxWpNlFy3U+icxxmeu0IiVWPhvFqYbf/zJFbptJtIzZgSbjrT5oDWXrZQD5MO1D
-         l2jlHrp4go2HlinLR3MESfS4J0K48p1Z4l1cXIB+OY8SMdGwDFBw8b8EN0BKzbTE/OKU
-         pksJwvx0NUZCsvU+/EojBofOvrz2+XqmQWnBU8dXQLHLR7q1IOoOv9O9gEUpKGsZ3WkK
-         VxFg==
-X-Gm-Message-State: AOJu0YwMic6cZq/2OEBaWGOgVF18KfkxrYFGMyAELbLjJ2P61YvhZ+s1
-	C7IFR3g8fo6vQuYxU3QdHqgvK0O7LdHQzw1qCQJPvLwa1CG0keojzJsV37DFTWkt3YIicvf8aZT
-	xKeObmyfn7T3+5fJtxCdK3UltN4CN9aSRvFhECL5ZVuTZYKrHDpBB7Zc=
-X-Google-Smtp-Source: AGHT+IFRrf8aG3PYy9vJKnySzEPZdnbTBeWbND1tI46yAHReBmPFORfklXeznBLonlKUordM+0PsvGcGvhOm/zNUnuhHYrbSH6yN
+	s=arc-20240116; t=1734314494; c=relaxed/simple;
+	bh=jy6JeXs2Y4N4FEgapoAuxphq3YytVmsqFHhFWkE4yrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mqV2LlATHwWkgf48dpHT4oT1nszGzciP9GTQQsjqZ4TlcELW0WEELmnOy+uSJR5mR5BGqLZ9D8InhelX8HCxVSsxNyKLSWg5O24VhKqk/mdqexbwhXU+tiOJpEFQweDGNnAKqoPsqXdQRVyPwljZo9hd8z7lvnkrfLJ2+0WhmOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ACE5nSmM; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734314483; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Uzhd86AP6M1PVIFrrHesQFgI9H7FZF3bFho2hW5Z7uI=;
+	b=ACE5nSmMAKL4JbL4EcIrrCvUUtrI/dedKF+czL8EMpArIF6Q8ndanIhE294OtTLEtbFtS3E9CmCld+4x+tFGuPYJDLxZ6SkSDqhliPBPimOQr+3LGSo8vAqKT4Nq6T1kTo23fk16Uek7++nR/nIZa8uNtsilMkAS1JGlPylCGf0=
+Received: from 30.221.131.67(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WLVCjR4_1734314481 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 16 Dec 2024 10:01:22 +0800
+Message-ID: <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com>
+Date: Mon, 16 Dec 2024 10:01:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0c:b0:3a9:e2f3:8dc4 with SMTP id
- e9e14a558f8ab-3aff8aa28bemr131916705ab.20.1734314192432; Sun, 15 Dec 2024
- 17:56:32 -0800 (PST)
-Date: Sun, 15 Dec 2024 17:56:32 -0800
-In-Reply-To: <675f60b1.050a0220.37aaf.0107.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675f88d0.050a0220.37aaf.010e.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [trace?] WARNING in bitmap_parse_user
-From: syzbot <syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for
+ virtio-blk
+To: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ virtualization@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+Content-Language: en-US
+From: Ferry Meng <mengferry@linux.alibaba.com>
+In-Reply-To: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+On 12/3/24 8:14 PM, Ferry Meng wrote:
+> We seek to develop a more flexible way to use virtio-blk and bypass the block
+> layer logic in order to accomplish certain performance optimizations. As a
+> result, we referred to the implementation of io_uring passthrough in NVMe
+> and implemented it in the virtio-blk driver. This patch series adds io_uring
+> passthrough support for virtio-blk devices, resulting in lower submit latency
+> and increased flexibility when utilizing virtio-blk.
+>
+> To test this patch series, I changed fio's code:
+> 1. Added virtio-blk support to engines/io_uring.c.
+> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> Link: https://github.com/jdmfr/fio
+>
+> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+> scales better than block device access. (such as below, Virtio-Blk with QEMU,
+> 1-depth fio)
+> (passthru) read: IOPS=17.2k, BW=67.4MiB/s (70.6MB/s)
+> slat (nsec): min=2907, max=43592, avg=3981.87, stdev=595.10
+> clat (usec): min=38, max=285,avg=53.47, stdev= 8.28
+> lat (usec): min=44, max=288, avg=57.45, stdev= 8.28
+> (block) read: IOPS=15.3k, BW=59.8MiB/s (62.7MB/s)
+> slat (nsec): min=3408, max=35366, avg=5102.17, stdev=790.79
+> clat (usec): min=35, max=343, avg=59.63, stdev=10.26
+> lat (usec): min=43, max=349, avg=64.73, stdev=10.21
+>
+> Testing the virtio-blk device with fio using 'engines=io_uring_cmd'
+> and 'engines=io_uring' also demonstrates improvements in submit latency.
+> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u1 /dev/vdcc0
+> IOPS=189.80K, BW=741MiB/s, IOS/call=4/3
+> IOPS=187.68K, BW=733MiB/s, IOS/call=4/3
+> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u0 /dev/vdc
+> IOPS=101.51K, BW=396MiB/s, IOS/call=4/3
+> IOPS=100.01K, BW=390MiB/s, IOS/call=4/4
+>
+> The performance overhead of submitting IO can be decreased by 25% overall
+> with this patch series. The implementation primarily references 'nvme io_uring
+> passthrough', supporting io_uring_cmd through a separate character interface
+> (temporarily named /dev/vdXc0). Since this is an early version, many
+> details need to be taken into account and redesigned, like:
+> ● Currently, it only considers READ/WRITE scenarios, some more complex operations
+> not included like discard or zone ops.(Normal sqe64 is sufficient, in my opinion;
+> following upgrades, sqe128 and cqe32 might not be needed).
+> ● ......
+>
+> I would appreciate any useful recommendations.
+>
+> Ferry Meng (3):
+>    virtio-blk: add virtio-blk chardev support.
+>    virtio-blk: add uring_cmd support for I/O passthru on chardev.
+>    virtio-blk: add uring_cmd iopoll support.
+>
+>   drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++-
+>   include/uapi/linux/virtio_blk.h |  16 ++
+>   2 files changed, 336 insertions(+), 5 deletions(-)
 
-Subject: Re: [syzbot] [trace?] WARNING in bitmap_parse_user
-Author: lizhi.xu@windriver.com
+Hi, Micheal & Jason :
 
-User input a too large count 0x40fdef, it will triger a warning in bitmap_parse_user.
+What about yours' opinion? As virtio-blk maintainer. Looking forward to 
+your reply.
 
-#syz test
+Thanks
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814..9e989d97bb78 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5224,6 +5224,8 @@ tracing_cpumask_write(struct file *filp, const char __user *ubuf,
- 	struct trace_array *tr = file_inode(filp)->i_private;
- 	cpumask_var_t tracing_cpumask_new;
- 	int err;
-+	if (count == 0 || count << PAGE_SHIFT > MAX_PAGE_ORDER)
-+		return -EINVAL;
- 
- 	if (!zalloc_cpumask_var(&tracing_cpumask_new, GFP_KERNEL))
- 		return -ENOMEM;
 
