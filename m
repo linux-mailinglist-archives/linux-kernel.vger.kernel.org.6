@@ -1,102 +1,159 @@
-Return-Path: <linux-kernel+bounces-448251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581C69F3D9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:32:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A569F3D7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F816C432
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:32:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2DDF7A59B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596481D89F0;
-	Mon, 16 Dec 2024 22:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01421D7992;
+	Mon, 16 Dec 2024 22:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="gWj8WwO2"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P1U0+WWf"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C811D86ED
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B8B1D63D0;
+	Mon, 16 Dec 2024 22:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388321; cv=none; b=UEWLSroTlKKE5xX73lboqHruQ8BxdfGxzuAkQgdBqNSAmUC1WXHHV7OsaujeHW5Cm0BTHK3r+R/nXPCBgDQXrwqUSnKXNtXkCMfl/AvBnXR76wWbFi8vNLhwsnc6MCIYukCcn2MXX0Tq/gm+jrV/+KxKtRvOZph1RyvvEpnUcQY=
+	t=1734388141; cv=none; b=lVzvI00lOjQdbrJdPlNg1Q+xL2vC1zqeDBzid5uwM4fLF5HtM8xUktzt2cH9H1yYC0jUy8iAeeiOtNXqd1r3pOrhcyUuTBaWrFrgQxlm6W6kpTe0ZEfqcDLP/vIrgkkTzw3tmxLX3nLUVj6no6pSjqNadLXYb3FbArNLw5u3amg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388321; c=relaxed/simple;
-	bh=1uGIbsxoPlE08Dk2PTvQ2UKXwAtNvBQDUjn0GNOAGuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OEpvWBMiaL/KzuGleC+UdWFgg+rJ9E92JnkcLNGqkfPFhLZpbZ6R1kLdR7M4Dum2jgxdbqRsD4ubADR/1Ob6ZcquFOdtUGjrOYK4Vasupy+SEq+7kNZ/1yh8K+kmjV15lKk+TewbU/yLmpGUBl6TGonxSK9p+Hbvqej60W8aKww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=gWj8WwO2; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (p5de4533f.dip0.t-ipconnect.de [93.228.83.63])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 4235F2FC005F;
-	Mon, 16 Dec 2024 23:31:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1734388311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sncl4e9UgPZiTF/SjSO2WBM8N+7rex7SV4V3sZMTcUg=;
-	b=gWj8WwO28RuNj3eMJo0zxOnSweGuD7AbbePFXyJeLNU9YnD9URDR8OO0UY/uIXSxlvCduR
-	w3Pjz1tl9mnRtFHsVeZLDicJa4J0AmD7g1HECH0OR688oxsdbaicvb29WZkBwfLE7CZFIj
-	ALEPwuWyoY7NcOPqlL5fNP7XcdPmx4c=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: Georg Gottleuber <ggo@tuxedocomputers.com>,
-	Werner Sembach <wse@tuxedocomputers.com>,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] nvme-pci: Add TUXEDO IBP Gen9 to Samsung sleep quirk
-Date: Mon, 16 Dec 2024 23:28:04 +0100
-Message-ID: <20241216223145.135942-2-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241216223145.135942-1-wse@tuxedocomputers.com>
-References: <20241216223145.135942-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1734388141; c=relaxed/simple;
+	bh=eoGW4rYwbaZ/2M4LrMHKJQyWKn4iJ3is+QY0McqNHsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SI3Ul/dWsJCGmDuVi0CXr1F1cAFUmmCj8u+HeHehcTBNAfy/0MrkzpBS1ovWAJn08Zny+hGnlksPKC0GSTc/cnHCUK3G+DGBX+NlWT9vvj5QUNMNpwVNjaBzgfdvr3ZoiJ/XcU9sNzM6sZtIv9mU2PBF78IrRYbT4/GX22K6wlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P1U0+WWf; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKksXh020555;
+	Mon, 16 Dec 2024 22:28:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jcj1Ps
+	OJ7ipuwbemWQTh7kw6w3cBtHTDi0TGzxH0yUQ=; b=P1U0+WWfiZWiZWG3tFCOmf
+	OGbLABgMlNl5MRg23nL+4vRrM8e0isnb3xYXjMv/zCcvgsH2819umwEYZSn0w2HS
+	v98q/rb02Zx+fgasjG166/kP7LZLBAin1sucQO06HI/imbHKTR1evSx4APEw3ytI
+	2VL1KlXCjvq9nB9kv2+B/uXBjfjiUegWNuHvZN8fZQ7hV+lzHYXUkYE57bDBZtF6
+	IFSG2Fyas1DpM5R0GERX0jyw1KpkRyPgG9yw0OQKXc6Af6rVvQeAGob1xB4qOOTc
+	ujQ5dGUP2/ok/obrczlYm+OJhQE6ZlycU8GjmccgRS7hxQR0CdxqwpDHXXLi1jag
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43j8xanf4e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:28:23 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BGMPNMO017656;
+	Mon, 16 Dec 2024 22:28:22 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43j8xanf4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:28:22 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGI6B6R024022;
+	Mon, 16 Dec 2024 22:28:22 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hnuk7xdr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:28:22 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGMSLMl44368558
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 22:28:21 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 516D85805E;
+	Mon, 16 Dec 2024 22:28:21 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 099265805A;
+	Mon, 16 Dec 2024 22:28:19 +0000 (GMT)
+Received: from [9.61.165.36] (unknown [9.61.165.36])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Dec 2024 22:28:18 +0000 (GMT)
+Message-ID: <ff077ea7-80dd-4cdf-8c08-f2eb7104f213@linux.ibm.com>
+Date: Mon, 16 Dec 2024 16:28:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] dt-bindings: hwmon: intel,crps185: Add to trivial
+To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
+        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
+References: <20241216175044.4144442-1-ninad@linux.ibm.com>
+ <20241216175044.4144442-4-ninad@linux.ibm.com>
+ <a010366e-b911-43bd-8445-e893e11fa51a@roeck-us.net>
+Content-Language: en-US
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <a010366e-b911-43bd-8445-e893e11fa51a@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Q_maQMCl2FphVcf93vPs1YdNBNN9Qq6s
+X-Proofpoint-ORIG-GUID: oelKxqLF5j-DBXP5kL4ownZBFq4ejKiN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 adultscore=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 impostorscore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160181
 
-From: Georg Gottleuber <ggo@tuxedocomputers.com>
+Hi Guenter,
 
-On the TUXEDO InfinityBook Pro Gen9 Intel, a Samsung 990 Evo NVMe leads to
-a high power consumption in s2idle sleep (4 watts).
+Thanks for the review.
 
-This patch applies 'Force No Simple Suspend' quirk to achieve a sleep with
-a lower power consumption, typically around 1.2 watts.
+On 12/16/24 12:47, Guenter Roeck wrote:
+> On 12/16/24 09:50, Ninad Palsule wrote:
+>> Add INTEL Common Redundant Power Supply Versions crps185 bindings as
+>> trivial. It is trivial because only compatibility string is required in
+>> the device tree to load this driver.
+>>
+>> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+>
+> Krzysztof had Acked this patch. I don't immediately see why you 
+> dropped it.
+> Am I missing something ?
+>
+> Guenter
+>
+I think that was my mistake. Adding it in version 3.
 
-Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- drivers/nvme/host/pci.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index c5ecbda6bd1da..f00f72d57355c 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -3145,6 +3145,7 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
- 		 */
- 		if (dmi_match(DMI_BOARD_NAME, "DN50Z-140HC-YD") ||
- 		    dmi_match(DMI_BOARD_NAME, "GMxPXxx") ||
-+		    dmi_match(DMI_BOARD_NAME, "GXxMRXx") ||
- 		    dmi_match(DMI_BOARD_NAME, "PH4PG31") ||
- 		    dmi_match(DMI_BOARD_NAME, "PH4PRX1_PH6PRX1") ||
- 		    dmi_match(DMI_BOARD_NAME, "PH6PG01_PH6PG71"))
--- 
-2.43.0
-
+>> ---
+>>   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml 
+>> b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> index 73a49d50c4ef..7d07b08b1459 100644
+>> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+>> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+>> @@ -151,6 +151,8 @@ properties:
+>>             - injoinic,ip5306
+>>               # Inspur Power System power supply unit version 1
+>>             - inspur,ipsps1
+>> +            # Intel common redudant power supply crps185
+>> +          - intel,crps185
+>>               # Intersil ISL29028 Ambient Light and Proximity Sensor
+>>             - isil,isl29028
+>>               # Intersil ISL29030 Ambient Light and Proximity Sensor
+>
+>
 
