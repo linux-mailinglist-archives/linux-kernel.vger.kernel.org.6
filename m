@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-446721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8299F286F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:15:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F309F2872
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A127E16441E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD48A1642BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A343B19A;
-	Mon, 16 Dec 2024 02:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IcIANeON"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5202CCC0;
+	Mon, 16 Dec 2024 02:16:04 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0302AD2C;
-	Mon, 16 Dec 2024 02:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF3BF9DD
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 02:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734315322; cv=none; b=W8SS+i0sPFs13bXF1LKKqAZoJ5TQ75KGzpKfRKQtwo9qwt9QLro8l3xRH/PM11qfBtWp/WZ+udI7CVPmK5C6f5Sp3X/40WjTw14vkcRs7/p6eOyjXwqJS1nc9/TFubTsQm9Na1+qGgunFde2GjYHDr2lJMpXZ8XjDMETv1wi9ak=
+	t=1734315363; cv=none; b=aeXeqYmNUvrBXYBEyb2S0+mQKsX29g6SgyfLIGSvb/PihuuM1oFKTUpA9lSelUZk2Kaa0Jt3RyGvtbvTRAG/nE0nvvVGoLTFtlIlU4pwal8+ZKM8wi4w8NToxyOpmvJD/r6SdejY3K0UTkpY3Z+ASm6FL+Mu0JACkiwy+vu94q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734315322; c=relaxed/simple;
-	bh=viMTA3KontE6bymRa2un1KK0eCHT3PdKd0fxyrsDGpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nMZznEGiWp3KWbFoyi8qvCAIxeCh4lsq8ZLqiuYjLdMp+n1V1pgk5hzaEcfwdeZKXUDtGop0lj9e97XZ30mlx57h2nFMxUQg/QXSZ9tpqvA9pD7K1IU/dqDpb0aAitGZqQE/U/lSZa17M3unI1itL3BSvoerBAf5gK+9oc+m2G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IcIANeON; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1734315313;
-	bh=U69ogNzUgdNWshqhg3jvFGYJfG1yy7B46bJom/jIT4o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IcIANeONm4tHkQj4BZnzN/Ch9o9v+kcuA1GfBsa06vYdzgNApv/oNOLnBt1retEux
-	 YZCIFB1jta4Mpv4s/P+NFHAwQXjAJ3mWuxd88PZtlopu2vPB2Ei1PoKMD6CiPD58cN
-	 WoZJkKboQnYHdgcpCoJvlUSimTHbaZuZ5Q0hyLKAjLZgGiGslilG8vsPXOozB7qyeH
-	 egeAGYuAN070Yf3peveSSiYlWv+VEnknVeGY1spccAVMlxG2b1ZfA9GSMKeTZQ278e
-	 OxlVNpQpfRvyhYSbAt9x787gyL5jDU8tm+Dnx1FZyG6tCTG/azO6VrUI5qdpcry7Bg
-	 igmk3uKBysCsg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YBNnY1bWLz4wc2;
-	Mon, 16 Dec 2024 13:15:13 +1100 (AEDT)
-Date: Mon, 16 Dec 2024 13:15:17 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: linux-next: manual merge of the mfd tree with Linus' tree
-Message-ID: <20241216131517.6413c3ac@canb.auug.org.au>
+	s=arc-20240116; t=1734315363; c=relaxed/simple;
+	bh=nIiz0t0zby5UXMzM5XD96zQfnoKlbyjIoLhhDIoQrc8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lmZ7pIfkW90DqgHQvNW54ShCtNeEm5B3epL8px2nzXCDtPoS/UF+dA/goldQdRbNMWj4q1BESjMAn5eTP2yJQ5cAta+WRoilFfWvrPjszJYeB/NcA807AYs1hg/usJwoYGUtodtbLPE8ZtH+wrR+zRhIEIr67w0CO+ffzk4cMwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a814406be9so67128415ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 18:16:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734315361; x=1734920161;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vh6n0+uY/1ZKvN8yuesEQ9161vrIkUQqwYnqqU7jW4=;
+        b=UrwtQYpVE8sTIab/zGz6gjd3MoXOJ+p7RARKGD+5cfo9+Mz/uabKUJQSgZl7Kp/sjc
+         EmFk6Bvv48xzhBrxcteBli6VD2lJB+uK6QhGuXWC1K8s1Kdz4/mSJnQt+6IOrMkjmr3J
+         VK/Db195zwdED608csm5w+69qc9c/DGYbnhRCsGXwLr/si3QPox7M4MxN/WuxorZFcVp
+         sQIcsW2l2sFAQ1S8vuykK70j3rb7l+s0JQ3vcja+yJ3+e/hXTcu0Z0sHNsMdjKYkbaVl
+         d6N9uGVQ4aJfjnCEVHkS//tBH+SmOXO6fE9vRkoWfvzhXBv4+Jj6w9YXPZFJz0SbweMN
+         1j+g==
+X-Gm-Message-State: AOJu0YwnAm/CWCMboehdbEd7A94FGsoWvzIU3ZXdgece1etnQQDWEkoL
+	VEK0y0c3k7omGLODJzZ0nHfvz2DefcsvJ6WxaH0RKPAWc/DW9vifcxIe4nG3TRm6vh3B8wkVhDm
+	HZ6n6G6TcbOH9FuMbfzZV6BmA29SRuVkGHD0eNRi289MV29OhZGjouuU=
+X-Google-Smtp-Source: AGHT+IERH1QaKc/klSTnf/eZA2Xcf0KyLY3Z9Mrn5kmW3D3a0JWkDX66q3j7ESl2w1m4iFdJ5vI4giaERc8mLbTMMRD9IWGRcMRb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UuMtHmuv+b_=rBDhBaCBU8b";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:23c4:b0:3a7:e86a:e803 with SMTP id
+ e9e14a558f8ab-3afedc1a3cbmr128722295ab.8.1734315361785; Sun, 15 Dec 2024
+ 18:16:01 -0800 (PST)
+Date: Sun, 15 Dec 2024 18:16:01 -0800
+In-Reply-To: <20241216015627.2229310-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675f8d61.050a0220.37aaf.0110.GAE@google.com>
+Subject: Re: [syzbot] [trace?] WARNING in bitmap_parse_user
+From: syzbot <syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/UuMtHmuv+b_=rBDhBaCBU8b
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Today's linux-next merge of the mfd tree got a conflict in:
+Reported-by: syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com
+Tested-by: syzbot+0aecfd34fb878546f3fd@syzkaller.appspotmail.com
 
-  drivers/mfd/cs42l43.c
+Tested on:
 
-between commit:
+commit:         78d4f34e Linux 6.13-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1272d4f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9cac7e24ceea492
+dashboard link: https://syzkaller.appspot.com/bug?extid=0aecfd34fb878546f3fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ef87e8580000
 
-  cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
-
-from Linus' tree and commit:
-
-  c5bb88eac10f ("mfd: cs42l43: Use devres for remove as well")
-
-from the mfd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/mfd/cs42l43.c
-index b5ab5e613db7,beb63c4efd21..000000000000
---- a/drivers/mfd/cs42l43.c
-+++ b/drivers/mfd/cs42l43.c
-@@@ -1096,16 -1113,8 +1113,8 @@@ int cs42l43_dev_probe(struct cs42l43 *c
- =20
-  	return 0;
-  }
- -EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, MFD_CS42L43);
- +EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, "MFD_CS42L43");
- =20
-- void cs42l43_dev_remove(struct cs42l43 *cs42l43)
-- {
-- 	cancel_work_sync(&cs42l43->boot_work);
--=20
-- 	cs42l43_power_down(cs42l43);
-- }
-- EXPORT_SYMBOL_NS_GPL(cs42l43_dev_remove, "MFD_CS42L43");
--=20
-  static int cs42l43_suspend(struct device *dev)
-  {
-  	struct cs42l43 *cs42l43 =3D dev_get_drvdata(dev);
-
---Sig_/UuMtHmuv+b_=rBDhBaCBU8b
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdfjTUACgkQAVBC80lX
-0Gw2tQf/SFIKyLQH7vUwpM1Valfhxeht4S1kBbmngW8BO3GlLMnQaX7Xhkpj1fPM
-dglYwnz3YXC7Xpoa1dT1CtrHgG3sfplHLSS4RaS3kLy33B5PZT2sX2IHNwPqd3FN
-rXKVaCEsZmo/eEkjj8VZNKMpBYpznUZioGtFDBTrBUln6pn8by7LWm4+5ELls4WS
-o5nla2CkaQsBveB+M2BeNlFF6cbazYXgAqs1WHF/uk89kxKR3IiZ05jm9HkxiD9o
-jCMOnyYYofKNZPEA2l810Ccxoln83om+GaciV7LIiQITgz1ZYW7Cpw6jnTb3Ooqe
-luk7fBusuH3fWhHiaVVu6zsCIOW+8g==
-=fhfk
------END PGP SIGNATURE-----
-
---Sig_/UuMtHmuv+b_=rBDhBaCBU8b--
+Note: testing is done by a robot and is best-effort only.
 
