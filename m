@@ -1,248 +1,179 @@
-Return-Path: <linux-kernel+bounces-447848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16379F37CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646C69F37D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA3F7A2F66
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C1A16711C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27D9206F33;
-	Mon, 16 Dec 2024 17:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B83206F06;
+	Mon, 16 Dec 2024 17:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B8m/idKZ"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2087.outbound.protection.outlook.com [40.107.100.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k5OHQPqk"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5742066E0;
-	Mon, 16 Dec 2024 17:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371263; cv=fail; b=RUAG7Uo12GAqBfu04czSRALtmzE3smFheKqrtUDBAVjMwuJYcL619jwp1M6pjFXJOgLmUPH2TT6por6Md1H0Yriao6RXVeGrkcxPDQf5ChfBI0Scc2sk4PAIhDB/Y4x5fhxQk7DcZ6OmuJb3VMMV3eKVPuc8JV/+1JbopBBfyAk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371263; c=relaxed/simple;
-	bh=hWTxXALnKyXjURScR2nCdUt5giDQ4a75MPqEnGD9L4Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ei6+wvwxEDYr7ssabt0L305R4NfY2LQN85czcjojVOwCNJgxabzKZ+LMQikpb8hdjEKCuTicly4+giBAA4xcChm8QxCTy4KrFwFp6Z9egWdQzdhhturI3dJeycp2L933j5FhidsA83s2+rElXQReQHtYfXnFEBo0iQO/5UXx/48=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B8m/idKZ; arc=fail smtp.client-ip=40.107.100.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p7vMTrSUWbHHbnQGHAGAEq4d1twVE2Yml42w6z97oc0GoL60JlrewaH+PkUvD7HcV0Jicy5o6DGMQZRn/suHFzWEpX+9Axuq9gE1AOy356hSthGKzPgEegJzQe6i0kkL2LxcFUOKv/ChmHp4AQlfnOr1k/pHgPJDrM+s8MFXDxB9DKJVnDM14L+Ah5BvUQzyxJ9YOTBdy21WUButyBGX38vLole/ydLI6D+EsOugPKHqmzOaXPVJwMnlAn9rr8NxUlNybq6/tp1FXw/kLFisWdXGp6yq3bYD+hX9+AvJwugZiYtFviyyvFudojIesXWUX+cUN6Hpox5ZGdNdZysGQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y0TIfG75wJO5lrMLZtdzhGADL0JGb9XEc+PuAWLT5vQ=;
- b=JOffgMo0swXKlzBy/glxCCdazWGQQ4xbFDHspmZsaX/D/gvAi1UrJgcoqFeD/4mF1CpJ2BPGsyMnp6CAAH/kPJuIpu9iVOjESLZobiNVTkmDF37ArX9se24bWCyBV84awWbpznBhQeBMma4t5fD2+vYzDIb+QL4mF47B1X+VKeZK8NW79CpdpJ/tFCk/4P+ZN7Mnp1CIZJh4L5Kgmrjw2ed1uSG8Ng8CWOvyTXgBN6JCR/hEogv0FGdMkkZNY2EngtdgL7fee/Cf7uNUFqo/7IwnsTG7U3sBDlQhrEv7+PxXCS3w1tnkuP8c2GBCBpA/w/8HYJ4o9OzOeSnghzdEUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y0TIfG75wJO5lrMLZtdzhGADL0JGb9XEc+PuAWLT5vQ=;
- b=B8m/idKZTBYiH6gBtoeAzE4E4HiheDsmop5doGS/loQNINe51G55UgxhRiV0xqblFLERB22AnWADPB+KBbO0vBOy+LwysVmDbv2y/8LcYbHiy0m9DLA8WWE3IOI9aiX49jMeBE2uoNledTf4YpLR5oFSvsPvrqx56dJHcMg5Ffo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
- by MN0PR12MB6197.namprd12.prod.outlook.com (2603:10b6:208:3c6::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
- 2024 17:47:36 +0000
-Received: from CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d]) by CH2PR12MB4956.namprd12.prod.outlook.com
- ([fe80::fa2c:c4d3:e069:248d%6]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
- 17:47:36 +0000
-Message-ID: <65a1d19e-e793-4371-a33d-e2374908d7f8@amd.com>
-Date: Mon, 16 Dec 2024 11:47:33 -0600
-User-Agent: Mozilla Thunderbird
-Reply-To: tanmay.shah@amd.com
-Subject: Re: [PATCH v2] mailbox: zynqmp: Remove invalid __percpu annotation in
- zynqmp_ipi_probe()
-To: Michal Simek <michal.simek@amd.com>, Uros Bizjak <ubizjak@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>
-References: <20241214091327.4716-1-ubizjak@gmail.com>
- <25eb1e35-83b0-46f4-9a9c-138c89665e05@amd.com>
-Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <25eb1e35-83b0-46f4-9a9c-138c89665e05@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR01CA0008.prod.exchangelabs.com (2603:10b6:805:b6::21)
- To CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247F22063C4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734371394; cv=none; b=upqyfXIu2AFvXfsGzNybQvUUvo/uVk9nq2KKj0tTJgQgLhl4dipDIiHbqCrn7Z5Dmcmzn4O1u0JazHOYvC0DddVsI2+FNp/1La00M0hI3ZFfHxhVPi98cFmwhePbXymtchgOGeUeyzvqoKn4lzZZS4NXzh9q8OmCOrOjgZVshAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734371394; c=relaxed/simple;
+	bh=lfnA6uNiRFtkap/7RIz1BvgDV1eEViN/vIY8Ipgyylw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HxFn/6NLjlSQzsaR42Rq/7BO4KIp9vPw5iCzdid82BhPfGTyyyKp4P4erPZ+f0NE6rNdIm2peTa9lScs+W2Sx/p6im4qFZ2byvOSpkeCkGb/8nor5hhsHPdR0jrBO6F42c/2QP+MfWaih4TpVNvBNd5e0PohgIwTAMY6xML9bRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k5OHQPqk; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53df80eeeedso4383729e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:49:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734371390; x=1734976190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=29HZw9kHGxpHsgmlYwTPoFjON5PsGOojd/3ISS3t80s=;
+        b=k5OHQPqk4AhfS2c2JG/Ypk1h8bZn3NJUmfm6MAsdzr8pAB/ASEyp/2NnI8hs4UD3M/
+         oJNS7vWrvuaclFxfn2xPwV/JXSNkAg5akxK/0M84o6T/pwQP5UDdjKBQRnGKxLSdz/7t
+         ntqPCvWe3G9cTltV5tV5OSkKEBW8roArU9duQNWH6CHJi0dqDgKg/YTJXygKgslPT63d
+         TGfCY+T9Sq2kBJ9ricerdEB5Swd1QTm8vdCHPQmB/OThSPJNIs3YbskS0clqI9U5GPhY
+         JOt0NhUfwHKue7dVz3//BrtY4viSZbAeedXdDdYe9euYEIfNoHnBVVddjraw6ZXs/5tW
+         Swxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734371390; x=1734976190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=29HZw9kHGxpHsgmlYwTPoFjON5PsGOojd/3ISS3t80s=;
+        b=D5tcmUbhSd8GDVhDLxo8A35dMfpertlKhce4kFXTOiFRt+px0StsFDcPlgVsQ1Ln/J
+         88VSmcRqqoCFIpLY/RV/nxaqn6WIFt5QpD8niN73K80KSAIdVdXcH1UqkaSq+b5A9QPm
+         dOQnDL+yMyhsEcyKEESLdjRNQpLpZwFe/x8QGevqpu4/Sq8MqwkeB9ZFipKFnLc1oOYu
+         Jp9CXnwqfMyVfqaiQ8754HGinR9FaNbie+P08QUz/vWhgSNfVEvDLX7/H6yBL1L41G53
+         fJr1LBaLD0DxOLptpts+dVgLCJqXrMRsNdSeCb6A0JvGy/N0iAexu0OZaOsnnOiuK3WQ
+         vztQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2vQSUM4GyWiLa6EC8i79JhhbNDvbibeOFrP7R76UvOqAXohcIE28PA8Q52acPSmbknyPHLivj9twJ2Nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdNJJ5Fo3R+FN7JUk0lsbRZ2clQw0AdpPr3KZvFRWRQSBRhpvc
+	L8MH9x899DHkTzk/oGTIcXjcfEEtpFv8PRQM6mYn5ILqAQ0i+rttiH7P0lfNbBc=
+X-Gm-Gg: ASbGncuNlFzDBMe+K2HpnKyr8gOw52++0b9HPF5KvUEAr6lwPzDvQJUeouAbicOObG/
+	YNMkw0aXIkmEBT+5o1gumnPI9svi36Yihwwj2Qcnd7f/9ZdDnXUaSAJwZn+SAixprEbfJjf1tk9
+	DYKJzSdhhNfdBr+r79r9QVaXlKE/rHP/5Y0AuEiXpKIRqtyXW5kG44dPhFVWcLT8fxSxH4xuPGf
+	jyLCHVBDCRE8qXa4RQlAE39y5vpVXOBRI4s7R0NTbObKPaLqZoAPnZLCbfCRzqJ8swrXJ38acxB
+	o1ceKFUoxHh2vPVBxv0BnAZS+Cg6ilzLJUUL
+X-Google-Smtp-Source: AGHT+IGejqU6hvp6CTUn8Lo7kd3aSi6GmIf9oBeaAY0N0VSQP5YDDaQsXS6dw98iZgXbtRgL0xzwjQ==
+X-Received: by 2002:a05:6512:31c6:b0:540:3561:666f with SMTP id 2adb3069b0e04-5409055837amr4736533e87.20.1734371390228;
+        Mon, 16 Dec 2024 09:49:50 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c0031dsm921971e87.117.2024.12.16.09.49.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 09:49:49 -0800 (PST)
+Date: Mon, 16 Dec 2024 19:49:47 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 04/10] drm/bridge: connector: add support for HDMI
+ codec framework
+Message-ID: <3su4cgtkkysztdvog24tkltvcflfbhdb24c2acelmbtt3dbm3n@dxtsuiqnxawz>
+References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
+ <20241206-drm-bridge-hdmi-connector-v6-4-50dc145a9c06@linaro.org>
+ <20241216-benign-amiable-grebe-e0b3e1@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4956:EE_|MN0PR12MB6197:EE_
-X-MS-Office365-Filtering-Correlation-Id: b321ffc2-5373-4c7e-cb3d-08dd1df9b9e6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0lOeHUvbTNjZUN0ek9kQ25URytuL2ZXb0pYSjhISVpzcVBSaUFGUlRBNDk2?=
- =?utf-8?B?L3o0NXRIYnh2TnZLTHdTbksrT00yTkpWeU9rVmxncVdvaGpsWjlqSnVKN0dh?=
- =?utf-8?B?UEttb1k3UlZjRjVveFpYSUFUa3FmcXF5NmdBNUlpTkVZcVF6bE1ZZFlFWGRa?=
- =?utf-8?B?eHZtRHI5MGRLK0plaW5hU2d0dm9SZUpnMjFvckYxbWJjalhGUEJ1Zm40YUhL?=
- =?utf-8?B?SjluYlNaU1l0WVB3cHNONzZMNE1mMnFOa3hUd2thYkpNYWVSL2x3ei80WDhS?=
- =?utf-8?B?YWhGbEIrZlFuS2RHbzJzWFVVdjZFUCtiUEJGcjlQYjQ5RTgrcDUwVEpkOEh1?=
- =?utf-8?B?enVnd09pK2JIbGY0cmdhYW13MnJkZ2w0NlpKNVkrUm5QSFczYm8zR0FHa0RP?=
- =?utf-8?B?cVovNEtQdWM2dXNDTXhXR3NSUnQ1bVEwb05TS1ZqZTFiYkppSk5OaFduVS90?=
- =?utf-8?B?YmxseEQ2T3lEN0wrMHE4ZXlGbU1LcEJGbU9DVVdVdEExK2dpZjZ1Tnl0Uzl6?=
- =?utf-8?B?VGRydWRUZUJ1ZVJMc05ZeVdoSTVPUWFFSUVnTFM5alk4OW54blQ0d0IzYllG?=
- =?utf-8?B?Y3hxSXZQVzlqSGhWWGxxZTdqd2poNm9lMmlFTzJPQy9DVlJpQ204U0UwTUoz?=
- =?utf-8?B?ejdBNnpFOFpVemNkSThkaW5IeGdSL1dsSHVhU1QyM1I5YkE0Uk5lajBLeG8x?=
- =?utf-8?B?UWlaNDhQbU53eWlLVi9OT2dQVU1hWDdDNjU3OTdJZWxEVmxmMlV6MVNWM2Yy?=
- =?utf-8?B?Mm1seTdFL0p0WDFWWWJPeXh1RmdMc0swN3hsblVoc2l2bjI0SEhkcVV6b2pE?=
- =?utf-8?B?VmtqNnRXenVNTDhINmZ4eGxCOUlFbEFhYzluUGJMLzJlMFlBQ2V4aTRXS2J0?=
- =?utf-8?B?QUl0eGFjRFRWNlM3dVFnMUFKOVhmWHdQUEtQdHJvazZ3NXdLTmMrNlNJZVZt?=
- =?utf-8?B?dzB5V250VXhlVEJxd2lMQllaS0Y0bVJ6UW04bHlnTk11Wk8wOW16b1I3NXIz?=
- =?utf-8?B?ZFlNUCtreG1Ma3JpUU0vSk44YmN4c21ydWpRWS9BcW1BeUNRR3hMTTQ1RnBE?=
- =?utf-8?B?WWEvUXF1L3FJdVM1ME04Sk5pUFphWVZhbm5QSWdxWEk2MU53czBIcGk5OGRh?=
- =?utf-8?B?S3cxYVFtc2xqQUVBU0ZEamVtQ3ZxTFQzc095RTV5cTNLYTNaRUIrVXo3UVF2?=
- =?utf-8?B?WUFxVS9nOXhyeXZxMlUrZXpjalFaRjJHQitKckNxbnVqLzVNQ2dVZWcxb2d6?=
- =?utf-8?B?Q1dwVFBIQU1lVmYwTWQ0a0tRYnNieXlDOWMxSHRQMVluV2dFRWd3ZENDTWth?=
- =?utf-8?B?MWFvUGRnTGVvc0JEdE5aMmUyL2oxYWxsSFU3UysvUEthbXB4Ny8vN25QN3li?=
- =?utf-8?B?WnFKQzJDV1VKaFBwS3VmdUV6MU5vSGYzV3FBZEpTblV4WHhKZURLaWVlbGM4?=
- =?utf-8?B?ZktLNWg3VlRvcGpVR2IxeUIxMzZ2WXo2ZHdUb2lDcGcvVDg1aUc0elJyM3Vk?=
- =?utf-8?B?M1pQVGdQRzZwU1RWRnRGK05VcHg0V1BYOURpVHBMY0lqQ2k5THhiWHBCakho?=
- =?utf-8?B?ZXl0U3d6ZG9tQWJkeHNjUVBoYUYzYmJKTktybVlXbHJNT0xlbW9iVHRCTHM0?=
- =?utf-8?B?eXUvZVJmdFZLVXRsdFJQMzM1K2RzYktaRVBHOTFHajNHVDVxZzZpclA1MUFi?=
- =?utf-8?B?MXZCSHJyemhkTUlUUFd2R3k4NHNHc2JnbWgwYkRKa1FyUnQwQUsybTNJcWxF?=
- =?utf-8?B?bzdnaUtIaVBnZjdldHc2cFFrTU9sRTlxL1pGTm5HdXRDZmZlajNJbUI3Q3dM?=
- =?utf-8?B?Q0d0OG9rQnMrUDY1SEN2T2NVZUVXWENxU0xaUzBOZXVRaFhyWTR4ZmVLYUZv?=
- =?utf-8?Q?MrZoXzP0ozn+q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4956.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L0djdDZRNmhpR0tNWS81SG1tb3Uva2ZLUzRhdlUxdUNldjNVdkdwbzFiR04y?=
- =?utf-8?B?Qm80L0IyZk5xNDU2aUlDSzRLdEFpV3p0VG44dCtuQ2dVOGhtZGdJaU9RNGFY?=
- =?utf-8?B?Y1dsM3E2S2RLSlhnTGdwRVFudExobWxObTVQTDhlTGh0aDZ2cWJmRFVRYWE4?=
- =?utf-8?B?di9lUFhiUi9samNTYk1MMFU0ZDJZL2dWdmZjbXE5NEVyV0wvZTVBNzlUS1k5?=
- =?utf-8?B?bFRlWUZLM0tiUVhyWXZmUFFvcjM0c2E2TkJvZVNFMmY4VUF5OUpVUW5VaFZy?=
- =?utf-8?B?dWxzNTVQd3lWek5GWkJiaUhBUzRLNDdGek5MNGJQZDI3Yi9nN0tRVmVrVTgw?=
- =?utf-8?B?N2xrS1J4VlJqbFQvd2tNUXpXUEF1b2FXNEU4RWx4L3Jmd2xoWWw0dDZDYTRm?=
- =?utf-8?B?WWFqS09tYTl4S3RMQzBJTFhKNjVWU0NIRXJ5R212d3VNa2V5VWh3VnZjR2Fx?=
- =?utf-8?B?dkszS3dKNnNIYlFqdTNvQ0Nud0g1Ukt5OHB0ZXl2OWkzZkJobUZxcldSM3Bv?=
- =?utf-8?B?b0J6SjF5SnM0b2FHOVhUZ1QzVmsrOEJCTzZ4QlZ4ZmFvUExmN3ZDM0VFWHd0?=
- =?utf-8?B?dFZOSG8rQmVGYW1Jb0p1eGlFVTdZS2g4SHIzVFZsNERSTk44dWJ3Y2Z6VUh1?=
- =?utf-8?B?aVdjcDRicXkwaHNidG5UM21icFFUdTlFTGtnTVo5UGFvSEJkOGZ1Nm5OZGcw?=
- =?utf-8?B?OUp2ZGZNNUhsSmYxeFF6V2JqUnJ6T2NBd3lQTEJESWw4RVJpY3kwWk8wa0dR?=
- =?utf-8?B?UHp2T3M1V1JjTE5vNVlmdkZRNFl4UXhjR0puVVRETmc3ano1MGJ1Q3dCaVVL?=
- =?utf-8?B?a2JBaG1iNjNXZFhlY3IxTDRmd3RPcWpseVhwNTFuc21hTG53TjlOQitLemVQ?=
- =?utf-8?B?TzJKczZoaldxSE8xRFBqNWpIZzB2U2lyTzB0Qy9NUjVoZktROThBcC8wUWt6?=
- =?utf-8?B?WFFyeFEyRWZ0K3JkajJWOWNBZmJyZ1JHZ3IxcktrMjZvZG00ODBVd3k0Nnds?=
- =?utf-8?B?NWVJbzYvd0tmdWlzWi8zNjZicGFLZ2c3V0QyY2x2ZWoycjh5a255UlJmR2ZQ?=
- =?utf-8?B?ckFoWnZWSEd3WGdQdnl1UzBBblJkYXRKNjZmUGp1b0RyTVhvLzNydTM4QmFn?=
- =?utf-8?B?N0RKTGJyRmxYa1VrK1k4RGpKT3ZGWkE1YWxVdEt2U2hvZmRqd3BYaU9GSy9C?=
- =?utf-8?B?bEJENks5K21EOEprNDNINzNNbWhxamdtQ0RjOE5SWG9LdU56V0tFb0tidkNN?=
- =?utf-8?B?SW9sREtkUXJEYUswMll2aTg3RTBhZld6L29KY0QzamQyYklWdWdwdnpUT0xx?=
- =?utf-8?B?Rk81bHdkNFN0SmV3aDV1R3JJV3VIeWVOQ0d2LzJROHVxL2VzZTl0RXdFQ0Ny?=
- =?utf-8?B?UjNOUzVtT1BxYkhvQjM5b014ak9idGg3cmpLbXZzakhzNFVlSU92YmhRbnJU?=
- =?utf-8?B?VDNoSFpQY2JUMXNZUWVsR2dxYW9obmdYOHFlT0dMVTBidVR1TFErWTljQnBS?=
- =?utf-8?B?aWxNY1JqSHNNZ3g5Uld5QUxXamVWWnYwYVNBc0RBS0xwdHBDUER2V0J6U1Az?=
- =?utf-8?B?MDFMeDF1K1c1ckpXK1NBMmZLN2p1WUovSlJlSVBaNndub1lHcjFMaDU2RFNh?=
- =?utf-8?B?dVNlZ3ljNllld1UrZUZYbzAwTTZQNHpnVXRjWjJIdkxmd1REUGFhWFFtYUVK?=
- =?utf-8?B?WUlFRGFPbWp4L0xnU2NUZlNrdXFJYkt2NjIvdWNrR1p1czJvZk9odkt4Q2p0?=
- =?utf-8?B?ZnBCM0hmS1pXU0hwZ1lyakc5NUh2NkVYMUZTdDdGblVXR1ByOWl0aVFqMGlq?=
- =?utf-8?B?bzRDT2dJNVk4U2JPQWh3QURPMDFITmhvUnFUL3R6RUtxQkN3S25lRXdMSGVs?=
- =?utf-8?B?eTlDSkJBV1hwLzZlc1dXR2tZek0wcU9jWGhSMGJkL1IvU2lOaGx2ckp5czIy?=
- =?utf-8?B?K3hLUVA5d2VESWQ2QTN5WWordHBXMXUrNko3aVpqUUFIZ1VKWHNRN0ZtaUp4?=
- =?utf-8?B?aE8wWjNpSEpybHZDZk04Z1RMMk9sS0FpcWlyWnZQOFgyTUlsYWN1bThHcHNQ?=
- =?utf-8?B?bUZOOUZmeEQ5Y0dMdExPUVVweUJWTHUxamNNelphaGM0cndIQWZncE5kT3Nh?=
- =?utf-8?Q?7KVtomLhwi3zTii904ZlFjpyL?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b321ffc2-5373-4c7e-cb3d-08dd1df9b9e6
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4956.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 17:47:36.1094
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 55UiCF1MLpqCC6vFTYnBwb+pAKtfb2EaDNKonsmApPA1lQOBNwCJHYkH8gP277hT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6197
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216-benign-amiable-grebe-e0b3e1@houat>
 
-Reviewed-by: Tanmay Shah <tanmay.shah@amd.com>
+On Mon, Dec 16, 2024 at 06:14:43PM +0100, Maxime Ripard wrote:
+> On Fri, Dec 06, 2024 at 12:15:58PM +0200, Dmitry Baryshkov wrote:
+> > Add necessary glue code to be able to use new HDMI codec framework from
+> > the DRM bridge drivers. The drm_bridge implements a limited set of the
+> > hdmi_codec_ops interface, with the functions accepting both
+> > drm_connector and drm_bridge instead of just a generic void pointer.
+> > 
+> > This framework is integrated with the DRM HDMI Connector framework, but
+> > can also be used for DisplayPort connectors.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/display/drm_bridge_connector.c | 100 ++++++++++++++++++++++++-
+> >  include/drm/drm_bridge.h                       |  38 ++++++++++
+> >  2 files changed, 134 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+> > index 512ced87ea18c74e182a558a686ddd83de891814..4fa1bb73d430d02d5b79a1a184c203ec9e9c66e7 100644
+> > --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> > +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> > @@ -21,6 +21,8 @@
+> >  #include <drm/display/drm_hdmi_helper.h>
+> >  #include <drm/display/drm_hdmi_state_helper.h>
+> >  
+> > +#include <sound/hdmi-codec.h>
+> > +
+> >  /**
+> >   * DOC: overview
+> >   *
+> > @@ -368,10 +370,80 @@ static int drm_bridge_connector_write_infoframe(struct drm_connector *connector,
+> >  	return bridge->funcs->hdmi_write_infoframe(bridge, type, buffer, len);
+> >  }
+> >  
+> > +static int drm_bridge_connector_audio_startup(struct drm_connector *connector)
+> > +{
+> > +	struct drm_bridge_connector *bridge_connector =
+> > +		to_drm_bridge_connector(connector);
+> > +	struct drm_bridge *bridge;
+> > +
+> > +	bridge = bridge_connector->bridge_hdmi;
+> > +	if (!bridge)
+> > +		return -EINVAL;
+> > +
+> > +	if (bridge->funcs->hdmi_codec_audio_startup)
+> > +		return bridge->funcs->hdmi_codec_audio_startup(connector, bridge);
+> > +	else
+> > +		return 0;
+> > +}
+> 
+> Nit: it looks like you return in other cases, and there's no need for
+> that else.
+> 
+> I'd remove the else.
 
-On 12/16/24 1:16 AM, Michal Simek wrote:
-> 
-> 
-> On 12/14/24 10:12, Uros Bizjak wrote:
->> struct zynqmp_ipi_pdata __percpu *pdata is not a per-cpu variable,
->> so it should not be annotated with __percpu annotation.
->>
->> Remove invalid __percpu annotation to fix several
->>
->> zynqmp-ipi-mailbox.c:920:15: warning: incorrect type in assignment 
->> (different address spaces)
->> zynqmp-ipi-mailbox.c:920:15:    expected struct zynqmp_ipi_pdata 
->> [noderef] __percpu *pdata
->> zynqmp-ipi-mailbox.c:920:15:    got void *
->> zynqmp-ipi-mailbox.c:927:56: warning: incorrect type in argument 3 
->> (different address spaces)
->> zynqmp-ipi-mailbox.c:927:56:    expected unsigned int [usertype] 
->> *out_value
->> zynqmp-ipi-mailbox.c:927:56:    got unsigned int [noderef] __percpu *
->> ...
->>
->> and several
->>
->> drivers/mailbox/zynqmp-ipi-mailbox.c:924:9: warning: dereference of 
->> noderef expression
->> ...
->>
->> sparse warnings.
->>
->> There were no changes in the resulting object file.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 6ffb1635341b ("mailbox: zynqmp: handle SGI for shared IPI")
->> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
->> Cc: Jassi Brar <jassisinghbrar@gmail.com>
->> Cc: Michal Simek <michal.simek@amd.com>
->> Cc: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->> v2: - Fix typo in commit message
->>      - Add Fixes and Cc: stable.
->> ---
->>   drivers/mailbox/zynqmp-ipi-mailbox.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/ 
->> zynqmp-ipi-mailbox.c
->> index aa5249da59b2..0c143beaafda 100644
->> --- a/drivers/mailbox/zynqmp-ipi-mailbox.c
->> +++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
->> @@ -905,7 +905,7 @@ static int zynqmp_ipi_probe(struct platform_device 
->> *pdev)
->>   {
->>       struct device *dev = &pdev->dev;
->>       struct device_node *nc, *np = pdev->dev.of_node;
->> -    struct zynqmp_ipi_pdata __percpu *pdata;
->> +    struct zynqmp_ipi_pdata *pdata;
->>       struct of_phandle_args out_irq;
->>       struct zynqmp_ipi_mbox *mbox;
->>       int num_mboxes, ret = -EINVAL;
-> 
-> Tanmay: Please take a look
-> 
-> I think this patch is correct. Pdata structure is allocated only once 
-> not for every CPU and marking here is not correct. Information from 
-> zynqmp_ipi_pdata are likely fixed and the same for every CPU. Only IRQ 
-> handling is done per cpu basis but that's it.
-> 
-> Reviewed-by: Michal Simek <michal.simek@amd.com>
-> 
-> Thanks,
-> Michal
-> 
+Ack
 
+> 
+> Looks good otherwise, once fixed
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> 
+> Maxime
+
+
+
+-- 
+With best wishes
+Dmitry
 
