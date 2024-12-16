@@ -1,227 +1,315 @@
-Return-Path: <linux-kernel+bounces-447493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83499F3359
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:38:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918CD9F335E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091D2162F86
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CDE3163381
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D146205E01;
-	Mon, 16 Dec 2024 14:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E4F205E31;
+	Mon, 16 Dec 2024 14:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEk9+y/y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b="Yr9ctiSy"
+Received: from outbound-ip24b.ess.barracuda.com (outbound-ip24b.ess.barracuda.com [209.222.82.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE2D17557
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734359916; cv=none; b=fMii8/mW/vso7n4gKdMkfHgMkznG5aV1XLLLlRLO7epE5dJGZUGPuxSIdyi6kaDdnIg53gX03wUGRyd/dotDatSC6sBKNcIzEKIHLgcTwkBuPZnynjud4kDtZb7Vju4ZLrlqHjeVQoakYp/2C1od1G9Hi7Tk8R882rKbGxQtArA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734359916; c=relaxed/simple;
-	bh=NqFH9M1poRt7bTXpp4KtGXJJB3jbpXnCTAj4fl1xr9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e3l4SBbDh6m8qPHfpDqHjUMeEPyGEZvSzpdTh32xalQ26vQQC8n0KLdZYB379EEiejkPzqxp5tTW06XSKJL7VPfrhsaEyUfR/6IEiTW9chBzq9ftN/DI068Ljd0aAKoi/3iWE5+1y8+8yvwsAGXsiqCh6/m0sRF9mZFDTev0XmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEk9+y/y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734359913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hl88bKgUtQBoA+6/xxv7PGibXvEneifgefM4d26Q1/o=;
-	b=bEk9+y/ytY3dAV1XvVgB5oTXn8FmbcpzYGeOb7rFQq43qvweiZSDRE/Rh5WHnNufkU1AHu
-	Twj6wVjt5sMyO/SPvWnJ+RIy3hDFHefxVK93jh/CHTdPlj0tMAICC7XGgxMsxI2gl5gs6t
-	MtIY2nTFSrR5DKjhe92MDIkGp3zmLzI=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-UCvnvKWLOBi_oIueIUNMEg-1; Mon, 16 Dec 2024 09:38:32 -0500
-X-MC-Unique: UCvnvKWLOBi_oIueIUNMEg-1
-X-Mimecast-MFC-AGG-ID: UCvnvKWLOBi_oIueIUNMEg
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa6732a1af5so388995966b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:38:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734359911; x=1734964711;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hl88bKgUtQBoA+6/xxv7PGibXvEneifgefM4d26Q1/o=;
-        b=nEJqn40CbRNQw3ZBsyRGGIShDMR4fXBjjAwkrfo3vKmRPpSi/u8twCGF0SMw6qNX/W
-         lA3TMnTvlGNuI0i3XLMViLjcEnJ13W7r8t/6LZO3JpMQLESiOlaqpv5B5h00CJnKl0ek
-         NFLVRJHK8NUGBQUKjlfD5TWFCio0RAD1aqN8/zL3D+SzqcRwJAt82WTUg4GicX9glKNf
-         3L9PMl0TMjEWuCapXZPyw1ZZkxAX93n46D8CbTofkbkedfZDCsz84gj3aGJ+jcYdiV9w
-         6yVvEcz4CtVyeBxFTm4Vy8DWMRwoty8gtrtFyovVrOmWqk1oN4jCPdmLZ+1Ng4nPs98h
-         +vnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu0bVsfANq603gPzGwaNGqNRx8Lh1MVJw/2SonFEw4OyQbAtyaj5iUXE8FVWk/9amm5zaGcMiP/c2Idag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwE4mWFK514a8a2bNmte/DtdOHN405rlhl7vzXQLxlfKvVqAG+
-	GfBW9YXQACV67X4cBxFGc23ZMWPe509/Bpo8qmftWc5E0AC/aZzy41gafJl1mmtVAd7EOl/TmuN
-	3QcSvGxZoRVS/p01pV0DgMWvGrpZPx7Csit+sZVlN2ApgPJddb5LsMFRMCKbK5FXCXpYsITBD/Z
-	e/JF2vaOucg52uX4YouB6CCv/8DIZ+UWn0VCd/
-X-Gm-Gg: ASbGncu9JeD6+hwKAhT0X8D8Skr5LjFKhybZ3o5Mw0EPiMaFC/hCAAVLX8vjmpjGu/z
-	srXZQ8FNzvMrcauDBuV2bc+S+Ob5D7TlDvJdRYXN/2Il8h/tnIGWnwbV+C2vSHGdkR/2hOQ==
-X-Received: by 2002:a17:907:7709:b0:aa6:715a:75b5 with SMTP id a640c23a62f3a-aab77e8a150mr980514166b.46.1734359911304;
-        Mon, 16 Dec 2024 06:38:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFHB7tBQb79RZc8CrYX/I076MMpQ2QApIP/IRE0TK+AI+IpOmViY7Ec5Sc6pSayO7yLkQy2O4MXQCAx//+ILKg=
-X-Received: by 2002:a17:907:7709:b0:aa6:715a:75b5 with SMTP id
- a640c23a62f3a-aab77e8a150mr980511166b.46.1734359910847; Mon, 16 Dec 2024
- 06:38:30 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294317BA2;
+	Mon, 16 Dec 2024 14:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.221
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734359982; cv=fail; b=IeAbovZbTcQkq+mR2TGMMKAb4elJJ7uC/ZzFGXiRQzSj20aatdoDZtbc3ju1HBGW4xltC0+qRilOIwPwDsfropdYUYwJGrzMCIjckbaYLWfMJ+Wim1NwpTg39Ona+YeBdLLlpMfVcfEqqykMNmjxl2XQOKF48+omdHKKBhQTp7M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734359982; c=relaxed/simple;
+	bh=Duxl53HF9rX69t3kAbdpaYzrtp7BCZiGK8BSgxhYWiY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sD+hr+txHbdRRnjCO4BSMpo3MuoJjhNCZ3/5ZLAjnHhdpQSHJGzOAAb2QPm+bKFNeDYQohuXTHGSjjP2jIOyqFHiKh51WknukXQGNMrjxw1NoRmTZ7LhFKHetD7B33dLGf77drErTm4Q4cD2tPs3M/tQDVaJ4GpB4J9H9l3TLo0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com; spf=pass smtp.mailfrom=digi.com; dkim=pass (2048-bit key) header.d=digi.com header.i=@digi.com header.b=Yr9ctiSy; arc=fail smtp.client-ip=209.222.82.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digi.com
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2048.outbound.protection.outlook.com [104.47.58.48]) by mx-outbound42-213.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 16 Dec 2024 14:39:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=imLnFcjk32MHUgEGWPw7uaSDrc2NQoIJ+KMEO+4Mcuxic17NmFC0ER+/ZvKv2vd3E6GGtgAS0gMunSU2skJwKD6pebzgX/r3n8YMmAUQSMi4pqDE0uYUeJw9SAb+m6wuJI25YUOrgqVx9cqsb/8HPFvQ799sxzb1jOHZDeqM/nyP08S7i7/fZf/xYaIos8ieHcDs8+TyrCtp/DufqXhLcYT3ArUSjCn4tSW94AlP2hXuAumJDVpZBJeoeMplPLrOOZLZwaMrCOJPl9Crwzcio3K1orriLdBaFetkQdMXS+81BW4sQVea/8MPxhASh4I85cXRAywYJQuWsn813hal5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=77wPSf5xCrxItAJgTkA2MPt6aPAENyRpyPtSLL9WEqM=;
+ b=vpvcDcMF4XaIrzICMwKiNs9BAD60kaD1j1STDfuZm5gmgFOT6nJHajQNGPc7u7NY+fQHMS4tUaI2p1dKeNRCRRVMxWY4/BrTSsZhaAmlqEgkn3IwAkXol6b8xvLHdbYSObLNBilGBUbeQsiFLbcY2M+5mciYgjPbZdU9AgPoH2W77d0zf8pxnIllX1CuXK6+FOTnvv7npPwk9qYi5FcJFk/H6iFyclXGqReGjx2+6QGAaiQR0vDGRv8uTHTiTO5eSMhrdMV/+UjIBCU1m9X1eS1GxTkmunRAoPi37h+A8JzbNyr7dRWpuUm76tRiWm1GdP3J5Ny3l4eHd11asx2IGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=digi.com; dmarc=pass action=none header.from=digi.com;
+ dkim=pass header.d=digi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digi.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=77wPSf5xCrxItAJgTkA2MPt6aPAENyRpyPtSLL9WEqM=;
+ b=Yr9ctiSybO/2xZPJI/OcC8423f0Wjmt2z1KVt0uXZBbYOItSKs1JIKbRJoan8EUDCYnIX9HucMjCUZEliO96s4X4Ml3GjVEOzBtupmvydugyAfj5VXW0/mfhfZJIeBH8HRxO76D+PYV7h7FOIAoTLwg5AAJ0N0+tGdRisEf7Dd3Xd4/xBjCGflNdds3Uh6g6mXRS1Vygo9rSzwzY13Q6I+husmvHWD2EmQGC+IgYkwH7FS50D5anmtbqB04rv6eGBXtblkBh9+tI2b6BnPbdrvm3ZTmGUFJvfjwWCE5sLt0kA5tVEH69NEPuZ2Evn2Rl/OBnZlrSvkKOQ8yMGQyvjA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=digi.com;
+Received: from CO1PR10MB4561.namprd10.prod.outlook.com (2603:10b6:303:9d::15)
+ by BN0PR10MB4886.namprd10.prod.outlook.com (2603:10b6:408:114::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Mon, 16 Dec
+ 2024 14:39:23 +0000
+Received: from CO1PR10MB4561.namprd10.prod.outlook.com
+ ([fe80::ecc0:e020:de02:c448]) by CO1PR10MB4561.namprd10.prod.outlook.com
+ ([fe80::ecc0:e020:de02:c448%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 14:39:23 +0000
+Message-ID: <49d10bde-6257-4cc0-abaf-3bffb3a812c0@digi.com>
+Date: Mon, 16 Dec 2024 15:39:17 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net 0/2] net: dsa: felix: fix VLAN-unaware reception
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, claudiu.manoil@nxp.com,
+ alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, linux-kernel@vger.kernel.org
+References: <20241215163334.615427-1-robert.hodaszi@digi.com>
+ <20241215170921.5qlundy4jzutvze7@skbuf>
+ <908ec18c-3d04-4cc9-a152-e41b17c5b315@digi.com>
+ <20241216135159.jetvdglhtl6mfk2r@skbuf>
+Content-Language: en-US
+From: Robert Hodaszi <robert.hodaszi@digi.com>
+In-Reply-To: <20241216135159.jetvdglhtl6mfk2r@skbuf>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI0P293CA0001.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:44::16) To CO1PR10MB4561.namprd10.prod.outlook.com
+ (2603:10b6:303:9d::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
- <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop> <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
- <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
- <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop> <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
- <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop> <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
- <6e3fce44-1072-4720-bf91-33bb22ebbd21@paulmck-laptop> <2cd70642-86de-4b26-87c2-94bde7441ce8@paulmck-laptop>
-In-Reply-To: <2cd70642-86de-4b26-87c2-94bde7441ce8@paulmck-laptop>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Mon, 16 Dec 2024 15:38:20 +0100
-Message-ID: <CAP4=nvTqnABSzYXiDfizoaeviqLtC87jG1fnGH4XFV+xQGn-2Q@mail.gmail.com>
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-To: paulmck@kernel.org
-Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, 
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4561:EE_|BN0PR10MB4886:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9fc86e16-da3f-452d-34c0-08dd1ddf6f0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OGt3ajRLZ0w4UFBRYUpiUHkvSFFMMDMzQ1BsWC9BdUpJemZnRmxGdk9UNXhP?=
+ =?utf-8?B?MVY1TkxhK0h4SXJEU2YxVUo1RWxOMDM2cUJYek9TY1lSbzJEUW95Z2VEbDJw?=
+ =?utf-8?B?WW43MCtaa1RMOHlPMlJBQVpkSnZFQXNyREpLV1NVOHdPb09SNkhUbFF0Tkxo?=
+ =?utf-8?B?bDVMN21BOGt6WG1XTklSMGo2ZjRCU1ZtMGNoYnN0UmpHZ0RidnRoUHJpY2w3?=
+ =?utf-8?B?N3pBOXErSE4xdHRNWndPMEJFd1lrWE5IQWlyelFWMVo4NTdKak1mbCtHa0F3?=
+ =?utf-8?B?am1QMGpCUWlCL2JsNTI1SVgzN0NvQ2o1MWdJaTFCb1VSR0dyTHpObUUzazlp?=
+ =?utf-8?B?TE5CS2pDa3ppSWRRTVpRZFNKd3ZaTnhWbWR1OFJWNlUrNHFtR09VVEYzU0Z6?=
+ =?utf-8?B?blVFZnFGdkh6Z0FCeTN3NkVkVlpZQmN5ZmxzemI4dU1JYk1YZ1lHSlgwSTZI?=
+ =?utf-8?B?TXZzTG52dGs0VnFkdkdvOWVaNU4zZU9SL21zVkIrQWd6a1lLL1ZreHllQVVV?=
+ =?utf-8?B?bS9YS3BhTTJOQURUckkyUFFQaWZ1cXhSRXZpakQzRmRzdldFcmpDenRneTlh?=
+ =?utf-8?B?eVc1QUZXMmx6MFcwTS9iOHRVWkhZNHRLOE1uZTROUUVSckE5Q091alcwa2Nh?=
+ =?utf-8?B?Uk1MdzNPRVRmeHdvay9ES2NvZ3FtR3NTSHlaRTdYbjA4L2NkMzlLQ21Yenpv?=
+ =?utf-8?B?REZKWGJLVElvUncrMzBwMk5lOFdKS05WcW8rU2pXQ1E3WThYZjJ6S3NBY3k3?=
+ =?utf-8?B?WGpvNnE5V0FKRHJwSTUrN2dOMHdyOXIvMVIyTVkxbGhZR0pjSlNYTXR1UXc0?=
+ =?utf-8?B?TVJaSkxhMGo1bjZRRFBIZjVkazkzWmNJdWxsbW5sdzJKaWZkb3QrQjFONzln?=
+ =?utf-8?B?UzJnaDdXSmhnTHR4ZE9ub2xsZTJiUHJCRzUxU0pENkgrb1RUMjFYY3VlbFk5?=
+ =?utf-8?B?QWd1QS9vTGFFZzdOUzA3OFhpUTlhUHhpTnJhdzdrbXN0dVA4Ty8vdzZpRmhq?=
+ =?utf-8?B?ODRUSnhVRUdpWCt2djBRRlAydCtWVFJQUVh1SU13cDZBVmtpL1locndHMENX?=
+ =?utf-8?B?NzRNeE1rSkZJdm5hN0dOV0x0NE9INUV3QzJCdndlWU41Y2lOTlZyaDJTY3NS?=
+ =?utf-8?B?TUVMQmYrOEZuOFZpUnZobDFoVGVldUNvUk0zb04zbHNBZ3VxYzRRRkszLzRK?=
+ =?utf-8?B?NWZwTW41aElxemFieHJDOXRWWFRleExPRHNQOGJLQUxsOEplbzJ6RWJ2eVlm?=
+ =?utf-8?B?eXpEc1RLbkJ5RkFjNlFFMnN3NmtKWEhsYWx6MzEzTFlzVzhJTXVCZk5xV1d5?=
+ =?utf-8?B?TGkzamNqaGsvVGh2YlIrbnVyeEhNTU5VNW1jOCszNDZyTG1VeWo4dXNxSG5q?=
+ =?utf-8?B?MkNLVHpWVi9heG45MHIxL1lmZGh0a01aeVd5RjFCMlo2NjZYSkxTbFlTMWlE?=
+ =?utf-8?B?UnozWkUxeEhKeEdwZzBMWis2QTQ3bjAvYjNzUHQyUkRCek9DK3REZ0xKb0ZJ?=
+ =?utf-8?B?b3RWaGFIWFUyRkxQL3FmT3dtalhWbU9xMG5HTU5jRGJyRnlLcHVYd1R2L1NU?=
+ =?utf-8?B?eVFDbkhPdEtvakJ3YzdIRGZwTThCL05zdTllTzhCc0x4bnAvQmpWRG80MU9C?=
+ =?utf-8?B?ZVdzblVzQTJCeDFnSzZFV2x0MXZqMm9DTVNZSUFjcjIyNXFmVHpmN1FVa3gr?=
+ =?utf-8?B?K2RCOC9qSGFEUm1EL3NIV09kUG4zSWl4dEllakthQUphNC80RDQ3dkxNbHRO?=
+ =?utf-8?Q?Q8Rqzf9kbMnm5+a7wTKVbaHtusTxvNWj9wRgA1s?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR10MB4561.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXV0V2MwbHZuR1dsSGlwVjRldlZiL1BSZDdsY3Q0ZUIvN3Brc2ExK0cyOWZJ?=
+ =?utf-8?B?M2FUUUhoY0txWnovQWJwV3I3bERHQ2I0T1g2MG1qSGFFdDF2dWRJa2ZieVpG?=
+ =?utf-8?B?TzlUNlphYUJ4NmV5YnQ1QVBsY0tRMVh6SkZBeU45NXZMb1hteXJtd3BkcWRh?=
+ =?utf-8?B?bjJmUmNiektYR0M4dTJkdFI4TmhtcTdPamhSWjZiSmdZamsyZ25YWmhrdXJv?=
+ =?utf-8?B?L0l2SU9CNEN6SEpMR0pFbHFXc21ha3JwWmRyMEJvMHo0RjZsOTdISHZmRGZp?=
+ =?utf-8?B?WWV0L2tMK1ZZZW9wN1FHR29KQmhLb1lqWVpSK3o3eDcyM1IxQ09XTFE3ckFu?=
+ =?utf-8?B?NWxMM1dlNEJlcWg4NHE1M2JUVHY2WWpZVEVwNlJiMFVKWGNaMExXemxQc3JT?=
+ =?utf-8?B?ZXpDQktJUzFZRVdacGhyd0JRRG1zQkIyZ0Q5aU1UdjlkbGhyek02djYreWxG?=
+ =?utf-8?B?MHNhZ2J3WU41L25wTC93Z2Rmb1haSjhyd1E5SFlBL0FJRCs4THUrSFlpMEha?=
+ =?utf-8?B?d2ROeGhaSnk3RVFWdTdqcmxGeTZoWkVPKzB6THVhelg4aXp6cUgwbnRnallO?=
+ =?utf-8?B?S0RzUjgwQlNtcXVXNXI0eTB5VFFqVXpydDNucy9BWkVQVzV3RnVIWndOUmtL?=
+ =?utf-8?B?alNDLytHclVPVmhIL3lmQm1IeDhZWXRoYnYyZVJTRGV5aEpLVDFSN0tDMTFT?=
+ =?utf-8?B?SDBLeURRT1JkOFFHNVU3SWNrZEZScWhZcXdBZnJsVWVwOFB0UW9HbzBRNWxO?=
+ =?utf-8?B?SC9nTGtrQTBMSWRpOFRhN3ZIeTVRWk9CTjVuRmNqVVU2TkszbkhyNzNwUjFS?=
+ =?utf-8?B?SXljdFFPeVhsNlpqSjIwMDFNMEVTSXNyVXNaQTlnRnAwczNIK1phZU0vMjA2?=
+ =?utf-8?B?cTVmZUQzODB6Q0FkWTJMMHNmR0lZL2NlNDROMFYrVFBVVTFRVlZncUJjVlNW?=
+ =?utf-8?B?YW1yemdEa1p4NzlmVzNkTVhOMmVGWXZPbnF6d1JQR2x1UWpnM1NGUWZiVHZE?=
+ =?utf-8?B?b0xqa2dZV3ZLSXArdXZOUkNwc3dzbFlqQXFzY01FaDRDNStVcHN6cE55bk90?=
+ =?utf-8?B?RmttYjJub3l4YXhFRFZKSHFWNmhMeGIwd0RyN1cyNm5PWGNCUVUzTlV5M29P?=
+ =?utf-8?B?R0V0NnRUcUVsYSt2dytKYkhRSGlPcGxPZXJlM2dOYy9WdVVQNC9uVm8zazZC?=
+ =?utf-8?B?TGhobXMxM0lEMitXYmdGVUREbUhHUkZZL3BEYXJsUEhGcFdFc0J2YUJxZG45?=
+ =?utf-8?B?WVYvR3BKNlRZODM3Z0laVmNXMlpXQXJUcVlOMHlRME1XdzhOd1ZTbnhINit0?=
+ =?utf-8?B?S3RJSjRodkdJOUFLVWErbkhsK1FlNDFVSThTWGlFMU9MOVU4RkRVL1d0ODNN?=
+ =?utf-8?B?QWdYZGg1TzRXbUJtMnlBKzZDUWFlM003SC9rTVNlMi9KRGNCWUJZT0xuRzBm?=
+ =?utf-8?B?b2ZDVEJFTHdabkhkZTVqWjlPb21hd2N6NmRPUVJiRTF1NWFqZ2owNTkveXht?=
+ =?utf-8?B?VFJWYU1OUUFhSG1JTGVZUHZaWXdnU2JtS0o1ZVNvZU9NaEQ0RVBOUjFHcVJH?=
+ =?utf-8?B?bTc4L3NPTnVHSnhmbEJEa0UxZkk0bVJNRSt2N0pHeEw1ZHJpaFJzbXQrTFV6?=
+ =?utf-8?B?YWxaK0NiZTZ6cCtVWS9yL2FKMFh0a2FRanpSaDJMMWsrM0QvakFhUTVtZWhk?=
+ =?utf-8?B?eDFnSFFna0lORSsyakZybklWVzVwMU1STjcvQnFXL0VhcWZnVnQ4UUROUHEz?=
+ =?utf-8?B?T3VMU3F5VUl2Qm8wT3VrZWVraHNBcFpZYldvUjBvT1JiNXZka3A4RzUwVnoz?=
+ =?utf-8?B?SWtaSjU4ZVdta1NQVFduajBHK1IwZ2NTUHVYV3lPM0U0ZmU1UEl3alpWeXgz?=
+ =?utf-8?B?RHZqNEFJNnRtekg5VWhuVmR2VDlWVlZHaU5PcktjOVRwOFBnczI5ZWFkMHpw?=
+ =?utf-8?B?bDZ3dU5jY3VvRGxTMmc2bEkzenExam83ZGJCZEZvOERmOGkwdHBEeHdDUnJP?=
+ =?utf-8?B?WnVadFVqWGtoTThTNTI4Z3dvbjhMTkNiZmo2R0E4L3FEUC9YekhsVndGVHBZ?=
+ =?utf-8?B?MnMzSmZacjJBNngzUXRJa0FIZVIwM25qM1BNQlpmK1h1ejl1dHNYdjJhOXpJ?=
+ =?utf-8?Q?YUcsG1cLJ8rvmNAz3EhmYwJke?=
+X-OriginatorOrg: digi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fc86e16-da3f-452d-34c0-08dd1ddf6f0a
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR10MB4561.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 14:39:23.5794
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: abb4cdb7-1b7e-483e-a143-7ebfd1184b9e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4BnjfnBm8egnO2lFKakZkZMD8ZfADLtmQORgvaqTDp+dPWF3HcEe/dR7rx69WPispraLoPELLebDByvq4YYJvw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4886
+X-BESS-ID: 1734359966-110965-13342-8490-1
+X-BESS-VER: 2019.1_20241212.2019
+X-BESS-Apparent-Source-IP: 104.47.58.48
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqZGBpZAVgZQMMnCMtU80dwsMS
+	3FODXNzCDZPCnR0jzN0NQsyTQtJTVFqTYWAOjJhalBAAAA
+X-BESS-Outbound-Spam-Score: 0.90
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.261154 [from 
+	cloudscan23-55.us-east-2b.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.40 BSF_SC0_SA085b         META: Custom Rule SA085b 
+	0.50 BSF_SC0_MV0963_2       META:  
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.90 using account:ESS112744 scores of KILL_LEVEL=7.0 tests=BSF_SC0_SA085b, BSF_SC0_MV0963_2, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
 
-ne 15. 12. 2024 v 19:41 odes=C3=ADlatel Paul E. McKenney <paulmck@kernel.or=
-g> napsal:
->
-> And the fix for the TREE03 too-short grace periods is finally in, at
-> least in prototype form:
->
-> https://lore.kernel.org/all/da5065c4-79ba-431f-9d7e-1ca314394443@paulmck-=
-laptop/
->
-> Or this commit on -rcu:
->
-> 22bee20913a1 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detecti=
-on")
->
-> This passes more than 30 hours of 400 concurrent instances of rcutorture'=
-s
-> TREE03 scenario, with modifications that brought the bug reproduction
-> rate up to 50 per hour.  I therefore have strong reason to believe that
-> this fix is a real fix.
->
-> With this fix in place, a 20-hour run of 400 concurrent instances
-> of rcutorture's TREE03 scenario resulted in 50 instances of the
-> enqueue_dl_entity() splat pair.  One (untrimmed) instance of this pair
-> of splats is shown below.
->
-> You guys did reproduce this some time back, so unless you tell me
-> otherwise, I will assume that you have this in hand.  I would of course
-> be quite happy to help, especially with adding carefully chosen debug
-> (heisenbug and all that) or testing of alleged fixes.
->
 
-The same splat was recently reported to LKML [1] and a patchset was
-sent and merged into tip/sched/urgent that fixes a few bugs around
-double-enqueue of the deadline server [2]. I'm currently re-running
-TREE03 with those patches, hoping they will also fix this issue.
+On Monday, 16.12.2024 at 14:51 +0100, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
+> 
+> The memory is starting to come back :-|
+> 
+> Ok, so the good news is that you aren't seeing things, I can reproduce
+> with tools/testing/selftests/drivers/net/dsa/https://linkprotect.cudasvc.com/url?a=https%3a%2f%2flocal_termination.sh&c=E,1,Ez0FDT_USqvD0083KxZU7x7ffGuJDoeCC6xMtetczJrwErBfCEyO1pnImOnY_ifhHDMKhhPtJGv8MpKk1zKoqa6Gm1JP-zTkotP2AOShxr3N&typo=1
+> 
+> Another good thing is that the fix is easier than your posted attempt.
+> You've correctly identified the previous VLAN stripping logic, and that
+> is what we should go forward with. I don't agree with your analysis that
+> it wouldn't work, because if you look at the implementation of
+> skb_vlan_untag(), it strips the VLAN header from the skb head, but still
+> keeps it in the hwaccel area, so packets are still VLAN-tagged.
+> 
+> This does not have a functional impact upon reception, it is just done
+> to have unified handling later on in the function:
+> skb_vlan_tag_present() and skb_vlan_tag_get_id(). This side effect is
+> also mentioned as a comment on dsa_software_vlan_untag().
+> 
+> The stripping itself will only take place in dsa_software_untag_vlan_unaware_bridge()
+> if the switch driver sets dp->ds->untag_bridge_pvid. The felix driver
+> does not set this.
+> 
+> What is not so good is that I'm seriously starting to doubt my sanity.
+> You'd think that I ran the selftests that I had posted together with the
+> patch introducing the bug, but somehow they fail :-| And not only that,
+> but thoughts about this problem itself have since passed through my head,
+> and I failed to correctly identify where the problem applies and where
+> it does not. I'm sorry for that.
+> 
+> I've just posted a fix to this bug, which I would like you to double-check
+> and respond with review and test tags, or let me know if it doesn't work.
+> https://linkprotect.cudasvc.com/url?a=https%3a%2f%2flore.kernel.org%2fnetdev%2f20241216135059.1258266-1-vladimir.oltean%40nxp.com%2f&c=E,1,iMsl_DfLMdZXF3FfFIT1CISQcjOL417WIsr7z01GodEy-1vyX9d_6X-8hFJih2CA2zAax4kx2mFdtftzn-ELRkGDBCa9lxIWU_wEN8dtO2aVO7NS7ck,&typo=1
+> I posted it myself because I don't expect you to have the full context
+> (it's a bug that I introduced), and with yours there are still a lot of
+> unanswered "why"s, as well as not the simplest solution.
 
-Also, last week I came up with some more extensive tracing, which
-showed dl_server_update and dl_server_start happening right after each
-other, apparently during the same run of enqueue_task_fair (see
-below). I'm currently looking into that to figure out whether the
-mechanism shown by the trace is fixed by the patchset.
+Actually, what you did is exactly what I did first to fix the issue, but it broke my setup when I sent VLAN-tagged messages to the device. Now I tested again, and it is working fine. That made me think it's happening because it is stripping incorrectly the VLAN tag. Probably it was just an incorrect setup, maybe something remained set either on my PC or on the unit from the previous test.
 
---------------------------
+One thing is different to my change though: you're calling the br_vlan_get_proto() twice. You can tweak performance a bit probably, if you rather pass 'proto' to both dsa_software_untag_vlan_aware_bridge and dsa_software_untag_vlan_unaware_bridge instead. So something like this:
 
-rcu_tort-148       1dN.3. 20531758076us : dl_server_stop <-dequeue_entities
-rcu_tort-148       1dN.2. 20531758076us : dl_server_queue: cpu=3D1
-level=3D2 enqueue=3D0
-rcu_tort-148       1dN.3. 20531758078us : <stack trace>
- =3D> trace_event_raw_event_dl_server_queue
- =3D> dl_server_stop
- =3D> dequeue_entities
- =3D> dequeue_task_fair
- =3D> __schedule
- =3D> schedule
- =3D> schedule_hrtimeout_range_clock
- =3D> torture_hrtimeout_us
- =3D> rcu_torture_writer
- =3D> kthread
- =3D> ret_from_fork
- =3D> ret_from_fork_asm
-rcu_tort-148       1dN.3. 20531758095us : dl_server_update <-update_curr
-rcu_tort-148       1dN.3. 20531758097us : dl_server_update <-update_curr
-rcu_tort-148       1dN.2. 20531758101us : dl_server_queue: cpu=3D1
-level=3D2 enqueue=3D1
-rcu_tort-148       1dN.3. 20531758103us : <stack trace>
-rcu_tort-148       1dN.2. 20531758104us : dl_server_queue: cpu=3D1
-level=3D1 enqueue=3D1
-rcu_tort-148       1dN.3. 20531758106us : <stack trace>
-rcu_tort-148       1dN.2. 20531758106us : dl_server_queue: cpu=3D1
-level=3D0 enqueue=3D1
-rcu_tort-148       1dN.3. 20531758108us : <stack trace>
- =3D> trace_event_raw_event_dl_server_queue
- =3D> rb_insert_color
- =3D> enqueue_dl_entity
- =3D> update_curr_dl_se
- =3D> update_curr
- =3D> enqueue_task_fair
- =3D> enqueue_task
- =3D> activate_task
- =3D> attach_task
- =3D> sched_balance_rq
- =3D> sched_balance_newidle.constprop.0
- =3D> pick_next_task_fair
- =3D> __schedule
- =3D> schedule
- =3D> schedule_hrtimeout_range_clock
- =3D> torture_hrtimeout_us
- =3D> rcu_torture_writer
- =3D> kthread
- =3D> ret_from_fork
- =3D> ret_from_fork_asm
-rcu_tort-148       1dN.3. 20531758110us : dl_server_start <-enqueue_task_fa=
-ir
-rcu_tort-148       1dN.2. 20531758110us : dl_server_queue: cpu=3D1
-level=3D2 enqueue=3D1
-rcu_tort-148       1dN.3. 20531760934us : <stack trace>
- =3D> trace_event_raw_event_dl_server_queue
- =3D> enqueue_dl_entity
- =3D> dl_server_start
- =3D> enqueue_task_fair
- =3D> enqueue_task
- =3D> activate_task
- =3D> attach_task
- =3D> sched_balance_rq
- =3D> sched_balance_newidle.constprop.0
- =3D> pick_next_task_fair
- =3D> __schedule
- =3D> schedule
- =3D> schedule_hrtimeout_range_clock
- =3D> torture_hrtimeout_us
- =3D> rcu_torture_writer
- =3D> kthread
- =3D> ret_from_fork
- =3D> ret_from_fork_asm
+diff --git a/net/dsa/tag.h b/net/dsa/tag.h
+index d5707870906b..3d790d8e16cd 100644
+--- a/net/dsa/tag.h
++++ b/net/dsa/tag.h
+@@ -57,15 +57,11 @@ static inline struct net_device *dsa_conduit_find_user(struct net_device *dev,
+  */
+ static inline void dsa_software_untag_vlan_aware_bridge(struct sk_buff *skb,
+ 							struct net_device *br,
+-							u16 vid)
++							u16 vid, u16 proto)
+ {
+-	u16 pvid, proto;
++	u16 pvid;
+ 	int err;
+ 
+-	err = br_vlan_get_proto(br, &proto);
+-	if (err)
+-		return;
+-
+ 	err = br_vlan_get_pvid_rcu(skb->dev, &pvid);
+ 	if (err)
+ 		return;
+@@ -103,16 +99,12 @@ static inline void dsa_software_untag_vlan_aware_bridge(struct sk_buff *skb,
+  */
+ static inline void dsa_software_untag_vlan_unaware_bridge(struct sk_buff *skb,
+ 							  struct net_device *br,
+-							  u16 vid)
++							  u16 vid, u16 proto)
+ {
+ 	struct net_device *upper_dev;
+-	u16 pvid, proto;
++	u16 pvid;
+ 	int err;
+ 
+-	err = br_vlan_get_proto(br, &proto);
+-	if (err)
+-		return;
+-
+ 	err = br_vlan_get_pvid_rcu(skb->dev, &pvid);
+ 	if (err)
+ 		return;
+@@ -149,14 +141,19 @@ static inline struct sk_buff *dsa_software_vlan_untag(struct sk_buff *skb)
+ {
+ 	struct dsa_port *dp = dsa_user_to_port(skb->dev);
+ 	struct net_device *br = dsa_port_bridge_dev_get(dp);
+-	u16 vid;
++	u16 vid, proto;
++	int err;
+ 
+ 	/* software untagging for standalone ports not yet necessary */
+ 	if (!br)
+ 		return skb;
+ 
++	err = br_vlan_get_proto(br, &proto);
++	if (err)
++		return skb;
++
+ 	/* Move VLAN tag from data to hwaccel */
+-	if (!skb_vlan_tag_present(skb)) {
++	if (!skb_vlan_tag_present(skb) && skb->protocol == htons(proto)) {
+ 		skb = skb_vlan_untag(skb);
+ 		if (!skb)
+ 			return NULL;
+@@ -169,10 +166,12 @@ static inline struct sk_buff *dsa_software_vlan_untag(struct sk_buff *skb)
+ 
+ 	if (br_vlan_enabled(br)) {
+ 		if (dp->ds->untag_vlan_aware_bridge_pvid)
+-			dsa_software_untag_vlan_aware_bridge(skb, br, vid);
++			dsa_software_untag_vlan_aware_bridge(skb, br, vid,
++							     proto);
+ 	} else {
+ 		if (dp->ds->untag_bridge_pvid)
+-			dsa_software_untag_vlan_unaware_bridge(skb, br, vid);
++			dsa_software_untag_vlan_unaware_bridge(skb, br, vid,
++							       proto);
+ 	}
+ 
+ 	return skb;
 
-[1] - https://lore.kernel.org/lkml/571b2045-320d-4ac2-95db-1423d0277613@ovn=
-.org/
-[2] - https://lore.kernel.org/lkml/20241213032244.877029-1-vineeth@bitbytew=
-ord.org/
 
-> Just let me know!
->
->                                                         Thanx, Paul
-
-Tomas
-
+Robert
 
