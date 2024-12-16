@@ -1,270 +1,504 @@
-Return-Path: <linux-kernel+bounces-447086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAECF9F2D2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:44:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F2269F2D34
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0031883569
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF07D1666C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32182201253;
-	Mon, 16 Dec 2024 09:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602FD20371B;
+	Mon, 16 Dec 2024 09:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LSkKzigp"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DPJ8oB6j"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C54201026
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B48203709
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342229; cv=none; b=ISgN3khYoUjUhG5Cftf5Fo480irCIFVpYNkvMU+34QmSKwhJcCPlW6Btpo0deymGL2DrVQOFV0jra7a9BQ6k6s4u9yYAzkJSG8j+WO6iS9Bxe8d3/RH1S7wQwpTN35KIC+Bip0YMev2ktghNPI0t2JPNI7Ov56Eb5uAWDqrEQ0o=
+	t=1734342269; cv=none; b=XkgvWCLbNcEcvm9AEE9X214612yqNQYYVNnjf7rEl9uB57rmyWHb30bqNb53MF0t4hW66AhLXW+UZk6UIz8qMZsdJZqvJ2E51ZGhmJC3vF4ce5d/7mPcuYnN3DBRrDNbb6tDqo31HSfn9rtp/2VJA/oKVo9LkZ600dL8ut+i6vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342229; c=relaxed/simple;
-	bh=HzD7gz9GNg/SHZkC3dZGDJORy9fFKq35Ul6YypMPq4s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dkEzhtdIWt7hXTKIMQY0FTryENIjnZJjiMtW73ZXgKfTu5UG9YSyapY6vm8kyQXYt+FkeOLXHK7y6sjHETqLKvq52c17Ex/bUXEwJGL0WqDFlNBpb87C0mhTdpBkpNfHW6HfZlDNjVwDGcSje4eQuX1jSbadbcq4N+oDIbUPKwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LSkKzigp; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1734342269; c=relaxed/simple;
+	bh=i8VvjTZT8yfaXHkFCyHt6DpAlDxKWTcz5GJExFLdeLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JJBICfSFqOUCB7U/XnRv3aeiFMLux8/nIWzeKWgh2dn0wtyEDlPBuNcCYhfrOt4x/oLwrhx2UfIsBFtJvKRWQkuB634rsfiHEsCATActG4QIsJEdWeI5z7LOvwhT/ADah+S9USvc1tq3Un1bqg9wSwHe7DjkWYVDHIRQPq8k0mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DPJ8oB6j; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-386329da1d9so1753477f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:43:47 -0800 (PST)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3f78f5fc07so2833462276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734342226; x=1734947026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LqU5vYBELVt/Nw/KToRPXSprTAyscafpf0VwqEOHv/E=;
-        b=LSkKzigpeFFQjIyw7TRc9KkJaouoEapRGkWm39lJbO6Wq4br1471zxsqcVQaiS11LB
-         zV9SG3G6VITYLNi47L40KKTQga2ftThAlDAN1i7yfr3/4hOj1KDGA13Vyisq1h0Wlmlt
-         A5iJ14HnymKeXRDOdDDKjZrItRYdj2FLVY/QhW9OosDy31h8Dao3NwGki88kztslHZwv
-         VHdNvgg3cB7DoImJQu5VfdgqXwnoSqxw1I6R8zmC41mIMv8IokJsgHLbwLjbIF7Sfylx
-         I+x4GMZc/T3tC48qQLlC/2+VsnmFQx0UsuMSeHeAgnk/p2subKtZ49zTYF/Y6vghhxy9
-         QdpA==
+        d=linaro.org; s=google; t=1734342265; x=1734947065; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JuUwiwam2NLEhcEaeDlZ9kN1aj2SGwFO1wzDqoeRp0Q=;
+        b=DPJ8oB6j6YA4QTQo05o+HM3Md1KOxffcTyJf42nGDp4phPhGPN+gg6oqALYIOr2M56
+         UROAJ+2+ZHVkTI67iEQ/lkwsD8AXtYUAfEo7X09cfWqbh/dwYOno8kDbm0f0ziPv/JkN
+         2joaeYRokUamVkgpy9ZnkJx7G75gwQHr+DHbYtD8OFkio+PWNi5kIn9veJKCzMf/6whl
+         4rRlR9jTgqCEDj42dYVqfnyhv92/vZFRtZCv0VcDzYKbPWSlm58PwwVkQZFTFw037bPq
+         9JUcrzDu0KNwmCrL/Wh7ANAGKMhWJNf8lBbOlKYs+haEhsN/6wXE6jI+JMlD3UsejM+7
+         Qp3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342226; x=1734947026;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LqU5vYBELVt/Nw/KToRPXSprTAyscafpf0VwqEOHv/E=;
-        b=Pd2+Ff8UzXup5YK13pLBmX8TybZ3keHyBRgscB+YWtpnW0HuH2rZdSSwntICtnfBp4
-         /s39K0+fWQkh5TKBTbgrrEwPmMZGXF6edEAz+hh1zQjo2xeoY9mWD18/lDN/6RhloTC5
-         gSnr5SzfBDBXWDwOM1VaKw+5C0AhMWu3oQ2z5yvnxcWR5w1BIBHt3fZmBfuoehpLdc5k
-         Ofkv7VOz6LZVK7Jf15sgYpyI7Sy8NmG3ZeW+5nfZAvrjd28rUyeSKNkeL/A+G911dITs
-         6nVpC0L1AB6mXrgREQwWTH3YMrRPyZesOh7KytuXeoUg4Lz9HNhckNt7Z+PZB00MpIR9
-         xWCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDrP5eATFdvY/UIGtzwsdzzIlp0QB6OK/OQI/YbH/u6dkchQH2QqrD7d3CHMI23JCIdw9SphJp3tve2fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy8vT6/sxm2gGQb/oiOV858HGXeUmOcmYIgxbLaeREut0tg3cZ
-	v+3Tz3v09Q4cJasye/vEzZFWzR9fzr8Ski4yagcEaP7HgoLBVTI1y85QkFT2mUI=
-X-Gm-Gg: ASbGnctOlG4ymFjL2EGnNAJK39V3Mg8WsMNvc6+bmFPtfwnPFxLBbTf2HBtEVGfY1YY
-	OGSiAGk7IowtAyBvMtdxpqn1NweK3eW6AFUbPJKgyvoRec5QJB7n6l+ymy3CZ9WWkitjxUUHLnk
-	NhGZgFXjFQt/bTtxpvCvSsrX9kAhOWYGPfC2IASSqv1Lille3SW9aYussM0MvDdOiry9sz0exEX
-	jlLSB5HMrYe2jSngK6JQTtkOMd3NpnAQFADkJ+MmsloJXMOCmS26JjGX7kjejiPJJMwEiYOngft
-	y1svZ7Ngsab1Roav2FI/fUlOMb5+w+Wx9g==
-X-Google-Smtp-Source: AGHT+IGgDSYxyzrzTRmeC/QEF8znt6B6ADQf/ynduMm5l01yHzHIUbSi3NLRBJnYO8Eayia2oBpfnw==
-X-Received: by 2002:a05:6000:2ad:b0:385:f19f:5a8f with SMTP id ffacd0b85a97d-38880ac6108mr9897963f8f.4.1734342225837;
-        Mon, 16 Dec 2024 01:43:45 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8b75:a430:7bc1:919b? ([2a01:e0a:982:cbb0:8b75:a430:7bc1:919b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ec46sm135533095e9.20.2024.12.16.01.43.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 01:43:45 -0800 (PST)
-Message-ID: <bc1e71e3-c487-4700-869a-ed21f3633267@linaro.org>
-Date: Mon, 16 Dec 2024 10:43:45 +0100
+        d=1e100.net; s=20230601; t=1734342265; x=1734947065;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JuUwiwam2NLEhcEaeDlZ9kN1aj2SGwFO1wzDqoeRp0Q=;
+        b=iTZnkTpeIejx+rYFMobKuV0Nxnfhe4tOOHyimh1tRHMZdxAfjqs+lTtRX+39FIowKY
+         NeLKQPhM1rfoclNXOfmqkzsclH8NyNaDLU1n187vIVu0ejIVOqcQr3vm0SpD5bEqxoYj
+         KLiVfUqqlxxqVi2Km/JLYrk5l7G8MvaTXY+MJTBajlHGfBk9b6hjPMpmFeiNzns7/5UN
+         Iyub/PbKsspKDR6kj2RHFP9XietKBgGdC6Vy1MZpeUduVWFk+PrIDKP4ePJti6DBcK7Y
+         QLj6bWY5KAdmjbEV0j70KD0u6V7FSl0iNUtCRTqShShOTqmPjw4YLlo5slzfEKd12V2h
+         uiDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu9sjDVJ3g4vjtb/FUW6sMr+HKrgHmF7ecIf+IkorYSeoci7rNvqkASbmHdnFdeQY8dDcG1Lve3HmyaQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+qywhXae19tcD0uLt/T+yC4ab5bXVCmc2XXKdebrRUEpMSAu4
+	JIg3ABB5DzZdRhHAquqmBWc1JgEKi/DIF8jPwFwcEfNdTzdLoISzzCU55pFigd3ZgqZGU5gqpV3
+	SwY5lICwNlz5E800dTaGUcHIXoqe59guzUrvL0g==
+X-Gm-Gg: ASbGnctA+LMir2jz7eTwU+1WCwkYyIaCOMoJUJ8n5GxvOfC7Y3ovA/BzYqQvnvwhxQ3
+	0aMU08HGyNbRTcnsRcE6fOYUbClj84wFvvtVfpd7Z7Z2hMgjolRrl
+X-Google-Smtp-Source: AGHT+IEaxgr5zAENdkbhHhWLUWeddBiATkm12WTcfnkIBrtIL6G9ABG6kqvlOs/mlL45ibQg3MGgK6n9x3gh6NKZnko=
+X-Received: by 2002:a05:6902:1587:b0:e4d:d319:ba6 with SMTP id
+ 3f1490d57ef6-e4dd3190cc0mr2042157276.39.1734342265011; Mon, 16 Dec 2024
+ 01:44:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 4/7] drm/msm: adreno: find bandwidth index of OPP and
- set it along freq index
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
- <20241211-topic-sm8x50-gpu-bw-vote-v5-4-6112f9f785ec@linaro.org>
- <ddf91ba2-cab2-4653-b842-65a8e82b5160@oss.qualcomm.com>
- <2f1c6deb-29f8-4144-b086-743fb0f8495c@linaro.org>
- <80bed70e-7802-4555-a15e-e06fe46214c6@quicinc.com>
- <c2d8f443-5876-4293-8d2b-ecd13eaf8285@oss.qualcomm.com>
- <268d67c0-efdf-4ad4-b5fe-5b4f04e73131@linaro.org>
- <0d4d3ca3-ec8a-4e85-9838-a2bf1e07e872@oss.qualcomm.com>
- <9dcf26e5-1c25-4a18-ab01-58ddf3fbd607@linaro.org>
- <cf298ca5-e2fe-4e0e-a0e7-a2cdad3c657b@quicinc.com>
- <f730135f-b952-4f5c-bcb8-dc725e7db336@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <f730135f-b952-4f5c-bcb8-dc725e7db336@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241209033923.3009629-1-victor.liu@nxp.com> <20241209033923.3009629-13-victor.liu@nxp.com>
+ <3j4fguv4oienfaj4fghpiqpmnq3aczu4azhdo5jzvywc5mawm5@hh33p3dhf6xa>
+ <db4d9d4e-855f-4647-9b93-ccc5ec0202b3@nxp.com> <q6pdop6ucowtoxxr66czq7yooujyvp6qs5vcg6gpmi3q4rs4l3@szyqt5pxteoz>
+ <b02fb998-9420-4954-8e48-82447493bbb7@nxp.com> <CAA8EJppBpeMA3aSzk025tvzfTW-bFxeZS4kj0Ujk_AuCyoxnEg@mail.gmail.com>
+ <95a5c779-941a-4942-8988-65fbe1c4cf82@nxp.com>
+In-Reply-To: <95a5c779-941a-4942-8988-65fbe1c4cf82@nxp.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 16 Dec 2024 11:44:13 +0200
+Message-ID: <CAA8EJpoUa9y9nfrrDf47aLs5zr4XKSghySXNLnCGwDyYdOvMog@mail.gmail.com>
+Subject: Re: [PATCH v6 12/19] drm/imx: Add i.MX8qxp Display Controller KMS
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	p.zabel@pengutronix.de, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org, aisheng.dong@nxp.com, 
+	agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com, 
+	u.kleine-koenig@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 14/12/2024 00:46, Konrad Dybcio wrote:
-> On 13.12.2024 5:55 PM, Akhil P Oommen wrote:
->> On 12/13/2024 10:10 PM, neil.armstrong@linaro.org wrote:
->>> On 13/12/2024 17:31, Konrad Dybcio wrote:
->>>> On 13.12.2024 5:28 PM, neil.armstrong@linaro.org wrote:
->>>>> On 13/12/2024 16:37, Konrad Dybcio wrote:
->>>>>> On 13.12.2024 2:12 PM, Akhil P Oommen wrote:
->>>>>>> On 12/13/2024 3:07 AM, Neil Armstrong wrote:
->>>>>>>> On 12/12/2024 21:21, Konrad Dybcio wrote:
->>>>>>>>> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
->>>>>>>>>> The Adreno GPU Management Unit (GMU) can also scale the DDR
->>>>>>>>>> Bandwidth
->>>>>>>>>> along the Frequency and Power Domain level, until now we left
->>>>>>>>>> the OPP
->>>>>>>>>> core scale the OPP bandwidth via the interconnect path.
->>>>>>>>>>
->>>>>>>>>> In order to enable bandwidth voting via the GPU Management
->>>>>>>>>> Unit (GMU), when an opp is set by devfreq we also look for
->>>>>>>>>> the corresponding bandwidth index in the previously generated
->>>>>>>>>> bw_table and pass this value along the frequency index to the GMU.
->>>>>>>>>>
->>>>>>>>>> The GMU also takes another vote called AB which is a 16bit
->>>>>>>>>> quantized
->>>>>>>>>> value of the floor bandwidth against the maximum supported
->>>>>>>>>> bandwidth.
->>>>>>>>>>
->>>>>>>>>> The AB is calculated with a default 25% of the bandwidth like the
->>>>>>>>>> downstream implementation too inform the GMU firmware the minimal
->>>>>>>>>> quantity of bandwidth we require for this OPP.
->>>>>>>>>>
->>>>>>>>>> Since we now vote for all resources via the GMU, setting the OPP
->>>>>>>>>> is no more needed, so we can completely skip calling
->>>>>>>>>> dev_pm_opp_set_opp() in this situation.
->>>>>>>>>>
->>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>>>>>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>>>>>> ---
->>>>>>>>>>      drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 39 +++++++++++++++++
->>>>>>>>>> +++++++
->>>>>>>>>> +++++++++--
->>>>>>>>>>      drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
->>>>>>>>>>      drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
->>>>>>>>>>      drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
->>>>>>>>>>      4 files changed, 46 insertions(+), 6 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/
->>>>>>>>>> gpu/drm/
->>>>>>>>>> msm/adreno/a6xx_gmu.c
->>>>>>>>>> index
->>>>>>>>>> 36696d372a42a27b26a018b19e73bc6d8a4a5235..46ae0ec7a16a41d55755ce04fb32404cdba087be 100644
->>>>>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>>>>>> @@ -110,9 +110,11 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
->>>>>>>>>> struct dev_pm_opp *opp,
->>>>>>>>>>                     bool suspended)
->>>>>>>>>>      {
->>>>>>>>>>          struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>>>>>>>> +    const struct a6xx_info *info = adreno_gpu->info->a6xx;
->>>>>>>>>>          struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>>>>>>>>          struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->>>>>>>>>>          u32 perf_index;
->>>>>>>>>> +    u32 bw_index = 0;
->>>>>>>>>>          unsigned long gpu_freq;
->>>>>>>>>>          int ret = 0;
->>>>>>>>>>      @@ -125,6 +127,37 @@ void a6xx_gmu_set_freq(struct msm_gpu
->>>>>>>>>> *gpu,
->>>>>>>>>> struct dev_pm_opp *opp,
->>>>>>>>>>              if (gpu_freq == gmu->gpu_freqs[perf_index])
->>>>>>>>>>                  break;
->>>>>>>>>>      +    /* If enabled, find the corresponding DDR bandwidth
->>>>>>>>>> index */
->>>>>>>>>> +    if (info->bcms && gmu->nr_gpu_bws > 1) {
->>>>>>>>>
->>>>>>>>> if (gmu->nr_gpu_bws)
->>>>>>>>
->>>>>>>> gmu->nr_gpu_bws == 1 means there's not BW in the OPPs (index 0 is the
->>>>>>>> "off" state)
->>>>>>>>
->>>>>>>>>
->>>>>>>>>> +        unsigned int bw = dev_pm_opp_get_bw(opp, true, 0);
->>>>>>>>>> +
->>>>>>>>>> +        for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1;
->>>>>>>>>> bw_index+
->>>>>>>>>> +) {
->>>>>>>>>> +            if (bw == gmu->gpu_bw_table[bw_index])
->>>>>>>>>> +                break;
->>>>>>>>>> +        }
->>>>>>>>>> +
->>>>>>>>>> +        /* Vote AB as a fraction of the max bandwidth */
->>>>>>>>>> +        if (bw) {
->>>>>>>>>
->>>>>>>>> This seems to only be introduced with certain a7xx too.. you should
->>>>>>>>> ping the GMU with HFI_VALUE_GMU_AB_VOTE to check if it's supported
->>>>>>>>
->>>>>>>> Good point
->>>>>>>
->>>>>>> No no. Doing this will trigger some assert in pre-A750 gmu
->>>>>>> firmwares. We
->>>>>>> learned it the hard way. No improvisation please. :)
->>>>>>
->>>>>> We shouldn't be sending that AB data to firmware that doesn't expect
->>>>>> it either too, though..
->>>>>
->>>>> Well we don't !
->>>>
->>>> The code in the scope that I quoted above does that
->>>
->>> No it doesn't, if the proper bcms are not declared in the gpu_info, it
->>> won't
->>
->> I think what Konrad meant was that IB voting is supported from a650+,
->> but AB voting is support only from a750+. So we can add bcm nodes to
->> enable IB voting, but how do we ensure AB voting via GMU is done only on
->> a750+.
-> 
-> Yep, relying on incomplete data in the catalog is not a great way
-> to ensure that
+On Mon, 16 Dec 2024 at 08:28, Liu Ying <victor.liu@nxp.com> wrote:
+>
+> On 12/13/2024, Dmitry Baryshkov wrote:
+> > On Fri, 13 Dec 2024 at 08:06, Liu Ying <victor.liu@nxp.com> wrote:
+> >>
+> >> On 12/12/2024, Dmitry Baryshkov wrote:
+> >>> On Wed, Dec 11, 2024 at 03:43:20PM +0800, Liu Ying wrote:
+> >>>> On 12/10/2024, Dmitry Baryshkov wrote:
+> >>>>> On Mon, Dec 09, 2024 at 11:39:16AM +0800, Liu Ying wrote:
+> >>>>>> i.MX8qxp Display Controller(DC) is comprised of three main components that
+> >>>>>> include a blit engine for 2D graphics accelerations, display controller for
+> >>>>>> display output processing, as well as a command sequencer.  Add kernel
+> >>>>>> mode setting support for the display controller part with two CRTCs and
+> >>>>>> two primary planes(backed by FetchLayer and FetchWarp respectively).  The
+> >>>>>> registers of the display controller are accessed without command sequencer
+> >>>>>> involved, instead just by using CPU.  The command sequencer is supposed to
+> >>>>>> be used by the blit engine.
+> >>>>>>
+> >>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> >>>>>> ---
+> >>>>>> v6:
+> >>>>>> * No change.
+> >>>>>>
+> >>>>>> v5:
+> >>>>>> * Replace .remove_new with .remove in dc-drv.c. (Uwe)
+> >>>>>>
+> >>>>>> v4:
+> >>>>>> * Move dc_fg_displaymode(), dc_fg_panic_displaymode() and dc_lb_blendcontrol()
+> >>>>>>   function calls from KMS routine to initialization stage. (Dmitry)
+> >>>>>> * Drop dc-crtc.h and dc-plane.h header files and move relevant defines to
+> >>>>>>   appropriate .h header files or .c source files. (Dmitry)
+> >>>>>> * Drop futile "else" clause from dc_crtc_common_irq_handler(). (Dmitry)
+> >>>>>> * Drop dc_drm->pe_rpm_count. (Dmitry)
+> >>>>>> * Drop DC_{CRTCS,ENCODERS,PRIMARYS} macros and only use DC_DISPLAYS. (Dmitry)
+> >>>>>> * Drop drmm_kcalloc() function call to allocate an array for storing IRQs.
+> >>>>>>   Instead, put it in struct dc_crtc.  (Dmitry)
+> >>>>>> * Call devm_request_irq() to request IRQs, instead of using drmm action.
+> >>>>>>   (Dmitry)
+> >>>>>> * Call devm_drm_of_get_bridge() to find the next bridge. (Dmitry)
+> >>>>>> * Select DRM_CLIENT_SELECTION due to rebase.
+> >>>>>> * Select the missing DRM_DISPLAY_HELPER and DRM_BRIDGE_CONNECTOR.
+> >>>>>> * Use DRM_FBDEV_DMA_DRIVER_OPS due to rebase.
+> >>>>>> * Replace drm_fbdev_dma_setup() with drm_client_setup_with_fourcc() due to
+> >>>>>>   rebase.
+> >>>>>> * Replace drmm_add_action_or_reset() with devm_add_action_or_reset() to
+> >>>>>>   register dc_drm_component_unbind_all() action.
+> >>>>>> * Request interrupts in dc_crtc_post_init() after encoder initialization to
+> >>>>>>   make sure next bridge is found first.
+> >>>>>>
+> >>>>>> v3:
+> >>>>>> * No change.
+> >>>>>>
+> >>>>>> v2:
+> >>>>>> * Find next bridge from TCon's port.
+> >>>>>> * Drop drm/drm_module.h include from dc-drv.c.
+> >>>>>>
+> >>>>>>  drivers/gpu/drm/imx/dc/Kconfig    |   5 +
+> >>>>>>  drivers/gpu/drm/imx/dc/Makefile   |   5 +-
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-crtc.c  | 558 ++++++++++++++++++++++++++++++
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-de.h    |   3 +
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-drv.c   | 244 +++++++++++++
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-drv.h   |  19 +
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-kms.c   | 143 ++++++++
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-kms.h   |  58 ++++
+> >>>>>>  drivers/gpu/drm/imx/dc/dc-plane.c | 241 +++++++++++++
+> >>>>>>  9 files changed, 1274 insertions(+), 2 deletions(-)
+> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-crtc.c
+> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-kms.c
+> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-kms.h
+> >>>>>>  create mode 100644 drivers/gpu/drm/imx/dc/dc-plane.c
+> >>>>>>
 
-I understood correctly, so I'll add a bool to enable AB voting, but please
-don't ask me to remove it because it's dead code and useless if only
-enabled on a750+...
+> >>>>>
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static const struct component_master_ops dc_drm_ops = {
+> >>>>>> +  .bind = dc_drm_bind,
+> >>>>>> +  .unbind = dc_drm_unbind,
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static int dc_probe(struct platform_device *pdev)
+> >>>>>> +{
+> >>>>>> +  struct component_match *match = NULL;
+> >>>>>> +  struct dc_priv *priv;
+> >>>>>> +  int ret;
+> >>>>>> +
+> >>>>>> +  priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> >>>>>> +  if (!priv)
+> >>>>>> +          return -ENOMEM;
+> >>>>>> +
+> >>>>>> +  priv->clk_cfg = devm_clk_get(&pdev->dev, NULL);
+> >>>>>> +  if (IS_ERR(priv->clk_cfg))
+> >>>>>> +          return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk_cfg),
+> >>>>>> +                               "failed to get cfg clock\n");
+> >>>>>> +
+> >>>>>> +  dev_set_drvdata(&pdev->dev, priv);
+> >>>>>> +
+> >>>>>> +  ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> >>>>>> +  if (ret)
+> >>>>>> +          return ret;
+> >>>>>> +
+> >>>>>> +  ret = devm_pm_runtime_enable(&pdev->dev);
+> >>>>>> +  if (ret)
+> >>>>>> +          return ret;
+> >>>>>> +
+> >>>>>> +  ret = devm_of_platform_populate(&pdev->dev);
+> >>>>>> +  if (ret)
+> >>>>>> +          return ret;
+> >>>>>> +
+> >>>>>> +  dc_add_components(&pdev->dev, &match);
+> >>>>>> +
+> >>>>>> +  ret = component_master_add_with_match(&pdev->dev, &dc_drm_ops, match);
+> >>>>>> +  if (ret)
+> >>>>>> +          return dev_err_probe(&pdev->dev, ret,
+> >>>>>> +                               "failed to add component master\n");
+> >>>>>> +
+> >>>>>> +  return 0;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static void dc_remove(struct platform_device *pdev)
+> >>>>>> +{
+> >>>>>> +  component_master_del(&pdev->dev, &dc_drm_ops);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int dc_runtime_suspend(struct device *dev)
+> >>>>>> +{
+> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
+> >>>>>> +
+> >>>>>> +  clk_disable_unprepare(priv->clk_cfg);
+> >>>>>> +
+> >>>>>> +  return 0;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int dc_runtime_resume(struct device *dev)
+> >>>>>> +{
+> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
+> >>>>>> +  int ret;
+> >>>>>> +
+> >>>>>> +  ret = clk_prepare_enable(priv->clk_cfg);
+> >>>>>> +  if (ret)
+> >>>>>> +          dev_err(dev, "failed to enable cfg clock: %d\n", ret);
+> >>>>>> +
+> >>>>>> +  return ret;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int dc_suspend(struct device *dev)
+> >>>>>> +{
+> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
+> >>>>>> +
+> >>>>>> +  return drm_mode_config_helper_suspend(priv->drm);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int dc_resume(struct device *dev)
+> >>>>>> +{
+> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(dev);
+> >>>>>> +
+> >>>>>> +  return drm_mode_config_helper_resume(priv->drm);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static void dc_shutdown(struct platform_device *pdev)
+> >>>>>> +{
+> >>>>>> +  struct dc_priv *priv = dev_get_drvdata(&pdev->dev);
+> >>>>>> +
+> >>>>>> +  drm_atomic_helper_shutdown(priv->drm);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static const struct dev_pm_ops dc_pm_ops = {
+> >>>>>> +  RUNTIME_PM_OPS(dc_runtime_suspend, dc_runtime_resume, NULL)
+> >>>>>> +  SYSTEM_SLEEP_PM_OPS(dc_suspend, dc_resume)
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static const struct of_device_id dc_dt_ids[] = {
+> >>>>>> +  { .compatible = "fsl,imx8qxp-dc", },
+> >>>>>> +  { /* sentinel */ }
+> >>>>>> +};
+> >>>>>> +MODULE_DEVICE_TABLE(of, dc_dt_ids);
+> >>>>>> +
+> >>>>>> +static struct platform_driver dc_driver = {
+> >>>>>> +  .probe = dc_probe,
+> >>>>>> +  .remove = dc_remove,
+> >>>>>> +  .shutdown = dc_shutdown,
+> >>>>>> +  .driver = {
+> >>>>>> +          .name = "imx8-dc",
+> >>>>>> +          .of_match_table = dc_dt_ids,
+> >>>>>> +          .pm = pm_sleep_ptr(&dc_pm_ops),
+> >>>>>> +  },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>>  static struct platform_driver * const dc_drivers[] = {
+> >>>>>>    &dc_cf_driver,
+> >>>>>>    &dc_de_driver,
+> >>>>>> @@ -19,6 +262,7 @@ static struct platform_driver * const dc_drivers[] = {
+> >>>>>>    &dc_lb_driver,
+> >>>>>>    &dc_pe_driver,
+> >>>>>>    &dc_tc_driver,
+> >>>>>> +  &dc_driver,
+> >>>>>>  };
+> >>>>>>
+> >>>>>>  static int __init dc_drm_init(void)
+> >>>>>> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.h b/drivers/gpu/drm/imx/dc/dc-drv.h
+> >>>>>> index 3b11f4862c6c..39a771a13933 100644
+> >>>>>> --- a/drivers/gpu/drm/imx/dc/dc-drv.h
+> >>>>>> +++ b/drivers/gpu/drm/imx/dc/dc-drv.h
+> >>>>>> @@ -6,19 +6,38 @@
+> >>>>>>  #ifndef __DC_DRV_H__
+> >>>>>>  #define __DC_DRV_H__
+> >>>>>>
+> >>>>>> +#include <linux/container_of.h>
+> >>>>>>  #include <linux/platform_device.h>
+> >>>>>>
+> >>>>>>  #include <drm/drm_device.h>
+> >>>>>> +#include <drm/drm_encoder.h>
+> >>>>>>
+> >>>>>>  #include "dc-de.h"
+> >>>>>> +#include "dc-kms.h"
+> >>>>>>  #include "dc-pe.h"
+> >>>>>>
+> >>>>>>  struct dc_drm_device {
+> >>>>>>    struct drm_device base;
+> >>>>>> +  struct dc_crtc dc_crtc[DC_DISPLAYS];
+> >>>>>> +  struct dc_plane dc_primary[DC_DISPLAYS];
+> >>>>>> +  struct drm_encoder encoder[DC_DISPLAYS];
+> >>>>>>    struct dc_de *de[DC_DISPLAYS];
+> >>>>>>    struct dc_pe *pe;
+> >>>>>>  };
+> >>>>>>
+> >>>>>> +static inline struct dc_drm_device *to_dc_drm_device(struct drm_device *drm)
+> >>>>>> +{
+> >>>>>> +  return container_of(drm, struct dc_drm_device, base);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +int dc_crtc_init(struct dc_drm_device *dc_drm, int crtc_index);
+> >>>>>> +int dc_crtc_post_init(struct dc_drm_device *dc_drm, int crtc_index);
+> >>>>>> +
+> >>>>>> +int dc_kms_init(struct dc_drm_device *dc_drm);
+> >>>>>> +void dc_kms_uninit(struct dc_drm_device *dc_drm);
+> >>>>>> +
+> >>>>>> +int dc_plane_init(struct dc_drm_device *dc_drm, struct dc_plane *dc_plane);
+> >>>>>> +
+> >>>>>>  extern struct platform_driver dc_cf_driver;
+> >>>>>>  extern struct platform_driver dc_ed_driver;
+> >>>>>>  extern struct platform_driver dc_de_driver;
+> >>>>>> diff --git a/drivers/gpu/drm/imx/dc/dc-kms.c b/drivers/gpu/drm/imx/dc/dc-kms.c
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..2b18aa37a4a8
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/drivers/gpu/drm/imx/dc/dc-kms.c
+> >>>>>> @@ -0,0 +1,143 @@
+> >>>>>> +// SPDX-License-Identifier: GPL-2.0+
+> >>>>>> +/*
+> >>>>>> + * Copyright 2024 NXP
+> >>>>>> + */
+> >>>>>> +
+> >>>>>> +#include <linux/of.h>
+> >>>>>> +#include <linux/of_graph.h>
+> >>>>>> +
+> >>>>>> +#include <drm/drm_atomic_helper.h>
+> >>>>>> +#include <drm/drm_bridge.h>
+> >>>>>> +#include <drm/drm_bridge_connector.h>
+> >>>>>> +#include <drm/drm_connector.h>
+> >>>>>> +#include <drm/drm_crtc.h>
+> >>>>>> +#include <drm/drm_device.h>
+> >>>>>> +#include <drm/drm_encoder.h>
+> >>>>>> +#include <drm/drm_gem_framebuffer_helper.h>
+> >>>>>> +#include <drm/drm_mode_config.h>
+> >>>>>> +#include <drm/drm_print.h>
+> >>>>>> +#include <drm/drm_probe_helper.h>
+> >>>>>> +#include <drm/drm_simple_kms_helper.h>
+> >>>>>> +#include <drm/drm_vblank.h>
+> >>>>>> +
+> >>>>>> +#include "dc-de.h"
+> >>>>>> +#include "dc-drv.h"
+> >>>>>> +#include "dc-kms.h"
+> >>>>>> +
+> >>>>>> +static const struct drm_mode_config_funcs dc_drm_mode_config_funcs = {
+> >>>>>> +  .fb_create = drm_gem_fb_create,
+> >>>>>> +  .atomic_check = drm_atomic_helper_check,
+> >>>>>> +  .atomic_commit = drm_atomic_helper_commit,
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static int dc_kms_init_encoder_per_crtc(struct dc_drm_device *dc_drm,
+> >>>>>> +                                  int crtc_index)
+> >>>>>> +{
+> >>>>>> +  struct dc_crtc *dc_crtc = &dc_drm->dc_crtc[crtc_index];
+> >>>>>> +  struct drm_device *drm = &dc_drm->base;
+> >>>>>> +  struct drm_crtc *crtc = &dc_crtc->base;
+> >>>>>> +  struct drm_connector *connector;
+> >>>>>> +  struct device *dev = drm->dev;
+> >>>>>> +  struct drm_encoder *encoder;
+> >>>>>> +  struct drm_bridge *bridge;
+> >>>>>> +  int ret;
+> >>>>>> +
+> >>>>>> +  bridge = devm_drm_of_get_bridge(dev, dc_crtc->de->tc->dev->of_node,
+> >>>>>> +                                  0, 0);
+> >>>>>> +  if (IS_ERR(bridge)) {
+> >>>>>> +          ret = PTR_ERR(bridge);
+> >>>>>> +          if (ret == -ENODEV)
+> >>>>>> +                  return 0;
+> >>>>>> +
+> >>>>>> +          return dev_err_probe(dev, ret,
+> >>>>>> +                               "failed to find bridge for CRTC%u\n",
+> >>>>>> +                               crtc->index);
+> >>>>>> +  }
+> >>>>>> +
+> >>>>>> +  encoder = &dc_drm->encoder[crtc_index];
+> >>>>>> +  ret = drm_simple_encoder_init(drm, encoder, DRM_MODE_ENCODER_NONE);
+> >>>>>> +  if (ret) {
+> >>>>>> +          dev_err(dev, "failed to initialize encoder for CRTC%u: %d\n",
+> >>>>>> +                  crtc->index, ret);
+> >>>>>> +          return ret;
+> >>>>>> +  }
+> >>>>>> +
+> >>>>>> +  encoder->possible_crtcs = drm_crtc_mask(crtc);
+> >>>>>> +
+> >>>>>> +  ret = drm_bridge_attach(encoder, bridge, NULL,
+> >>>>>> +                          DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> >>>>>> +  if (ret) {
+> >>>>>> +          dev_err(dev,
+> >>>>>> +                  "failed to attach bridge to encoder for CRTC%u: %d\n",
+> >>>>>> +                  crtc->index, ret);
+> >>>>>> +          return ret;
+> >>>>>> +  }
+> >>>>>> +
+> >>>>>> +  connector = drm_bridge_connector_init(drm, encoder);
+> >>>>>> +  if (IS_ERR(connector)) {
+> >>>>>> +          ret = PTR_ERR(connector);
+> >>>>>> +          dev_err(dev, "failed to init bridge connector for CRTC%u: %d\n",
+> >>>>>> +                  crtc->index, ret);
+> >>>>>> +          return ret;
+> >>>>>> +  }
+> >>>>>> +
+> >>>>>> +  ret = drm_connector_attach_encoder(connector, encoder);
+> >>>>>> +  if (ret)
+> >>>>>> +          dev_err(dev,
+> >>>>>> +                  "failed to attach encoder to connector for CRTC%u: %d\n",
+> >>>>>> +                  crtc->index, ret);
+> >>>>>> +
+> >>>>>> +  return ret;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +int dc_kms_init(struct dc_drm_device *dc_drm)
+> >>>>>> +{
+> >>>>>> +  struct drm_device *drm = &dc_drm->base;
+> >>>>>> +  int ret, i;
+> >>>>>> +
+> >>>>>> +  ret = drmm_mode_config_init(drm);
+> >>>>>> +  if (ret)
+> >>>>>> +          return ret;
+> >>>>>> +
+> >>>>>> +  drm->mode_config.min_width = 60;
+> >>>>>> +  drm->mode_config.min_height = 60;
+> >>>>>> +  drm->mode_config.max_width = 8192;
+> >>>>>> +  drm->mode_config.max_height = 8192;
+> >>>>>> +  drm->mode_config.funcs = &dc_drm_mode_config_funcs;
+> >>>>>> +
+> >>>>>> +  drm->vblank_disable_immediate = true;
+> >>>>>> +  drm->max_vblank_count = DC_FRAMEGEN_MAX_FRAME_INDEX;
+> >>>>>> +
+> >>>>>> +  for (i = 0; i < DC_DISPLAYS; i++) {
+> >>>>>> +          ret = dc_crtc_init(dc_drm, i);
+> >>>>>> +          if (ret)
+> >>>>>> +                  return ret;
+> >>>>>> +
+> >>>>>> +          ret = dc_kms_init_encoder_per_crtc(dc_drm, i);
+> >>>>>> +          if (ret)
+> >>>>>> +                  return ret;
+> >>>>>> +  }
+> >>>>>> +
+> >>>>>> +  for (i = 0; i < DC_DISPLAYS; i++) {
+> >>>>>> +          ret = dc_crtc_post_init(dc_drm, i);
+> >>>>>
+> >>>>> Can you use .late_register for this?
+> >>>>
+> >>>> Kerneldoc of struct drm_crtc_funcs::late_register says it's used to register
+> >>>> additional userspace interfaces like debugfs interfaces. And, it seems that
+> >>>> everyone implementing this uses it to add debugfs interfaces. So, it will
+> >>>> kind of abuse it to do CRTC post initialization.
+> >>>
+> >>> Why can't they be requested earlier then?
+> >>
+> >> If I request them earlier in dc_crtc_init(), then they cannot be freed by
+> >> devm_irq_release() when devm_drm_of_get_bridge() called by
+> >> dc_kms_init_encoder_per_crtc() returns -EPROBE_DEFER(which means failing
+> >> to find the first DRM bridge for the CRTC).  Why can't they be freed by
+> >> devm_irq_release()?  Because they are requested by the devices of ExtDsts
+> >> and Display Engines and their drivers are not removed during the probe
+> >> deferral dance.  Furthermore, -EPROBE_DEFER won't be returned after
+> >> dc_crtc_post_init() since the later called drm_vblank_init() doesn't
+> >> return -EPROBE_DEFER anyway, so it's fine to call dc_crtc_post_init() here.
+> >>
+> >> I met the irq free issue on my i.MX8qxp MEK board before, i.e., -EBUSY is
+> >> returned when requesting them again, so it's tested.
+> >
+> > A typical solution is to request all resources before binding the
+> > device as a component. Don't tell me that your interrupt controller is
+> > another component of the DRM device :-)
+>
+> The IRQ handlers are _highly_ related to the CRTC driver(especially the
+> dc_crtc_dec_framecomplete_irq_handler() where vblank is handled), so maybe
+> it's more appropriate to request the IRQs and implement the IRQ handlers in
+> dc-crtc.c instead of doing them in dc-{de,ed}.c. No?
 
-Neil
+And CRTCs don't exist before master_bind(). Ack.
 
-> 
-> Konrad
-
+-- 
+With best wishes
+Dmitry
 
