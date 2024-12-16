@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-447559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6E19F342C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:14:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882469F342F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08773167A90
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:14:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3243618809CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E1313DBBE;
-	Mon, 16 Dec 2024 15:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3AA148314;
+	Mon, 16 Dec 2024 15:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nQvX9kQV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rucnCWFs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916F13C690;
-	Mon, 16 Dec 2024 15:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F21428F1;
+	Mon, 16 Dec 2024 15:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362085; cv=none; b=Gj3czSSXjiOJv7HVlu/QY1R0W9vDG8ZA1CHswKk/8kScVTzCWUmNB2u3mWEpyIJOyyomZA3vCTzHfXu4zeSooVIJbE+gHosTq3iWPsadlTN6j0P9fOZBebdy6us6IVlT9HFZWFCxhAbi3EjT04Xai33M12IDTYvUUy0JpSyPRyQ=
+	t=1734362115; cv=none; b=ARRZpQE27k1SstFdCjU0XaJha5XGwrBMP3f1fLj3ZfZLENv0n5ztTRJOxHmiGKyFdgv3sFlf+2SmLRwwH754KE5R8yNFMdoSF+rbUMIdWqRt+tKRL6j2mOs9R9SfF4LUe17vkAifGN7GX/FgNbE5Dj3Z6HwzgjEB6cXJrwxsLKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362085; c=relaxed/simple;
-	bh=TRzJDG8qpNxuOKS+kC6W4LWtn//Sk7pcdff4uLjlKV8=;
+	s=arc-20240116; t=1734362115; c=relaxed/simple;
+	bh=oqn7m++z92YKzLcM7I7BOCOf+zLfx+DeRE9j+vYm4Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyjSIvUsbAhNApamHqYlh/qzm6h/iCXqlqrw/Mo1CpWGFG0nJ0ugjnsn16hdrI9WvH5NHX0ZvtvIteccCjUTahmmhioe7RRaZG9RNPuPffbQBBej1REHKc56LzA4Ld2APd8jXFtiP7VTj7CBDO3TGqVFMCUyhk49qSYxf3vimQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nQvX9kQV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F0BC4CED0;
-	Mon, 16 Dec 2024 15:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734362084;
-	bh=TRzJDG8qpNxuOKS+kC6W4LWtn//Sk7pcdff4uLjlKV8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nQvX9kQVXQgdNkYBe1+OI2F9+nyxl3Hxai1zykb43Qmm2uTuAEkGPbgcLXU55KE+S
-	 JJhDdcpjGmArH7jJWKLdQHH3a4hIYu4Rbe9Rkd5h8YbwHnm1cRqiEUJBAXGZOrK9Ry
-	 v5XOLFq4GdCVYC1kEoOi/MsHksY0Cvuj3lClNLBA=
-Date: Mon, 16 Dec 2024 16:14:39 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Jann Horn <jannh@google.com>,
-	Hanno =?iso-8859-1?Q?B=F6ck?= <hanno@hboeck.de>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-hardening@vger.kernel.org,
-	regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: Permit some TIOCL_SETSEL modes without CAP_SYS_ADMIN
-Message-ID: <2024121628-naturist-unopposed-44a8@gregkh>
-References: <2024121418-blazer-valiant-c51a@gregkh>
- <20241216150722.4079213-2-gnoack@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMzTk3eL3pEeiOG4Lw1BGYc4+UBM0T7Etgwztc+PvOof5P2zvhoYOGEtOyfzSVxfnZw3q34wpnOeVAbZvyTUvJySYiBmZFdMN75yuJWv3ywPsgzkqZ6sMDa1sNmOLWiNx3fX2qmLmzIv9TyFA8Z5sSGnh+hScIVxh58i3ZaY5Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rucnCWFs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UAxhW2VS3ciMu90+mJWA3Of57pK38CvimvduuwTMsiQ=; b=rucnCWFs3yNleygejbrbYC7yLF
+	QoKqn6iMtUF3avK9eAbl+t+KhAxv5DnXUwpMu3Ckh+ryFjb2gzgm2d1Dn3l4lwHfGb72xPsqczv1a
+	DKlg0xrkDGeMGw2zz9bSNWaQb/SEpZ/xGr8wa7DTxhcdlSPEO223Q6BtShsXDwcQOI++2ydjyKadV
+	zAf5ZNXfIjPFgj9+j3HsWQF0NrQJmFggjdnutB63OZpXAvMICEZH1ZIrPuIx1DAclVZycZnm9Pgd0
+	Peq7Y2fc/pSSj/rW8wMVNwHVRVlzuBxLCK1JyPYF6XPsDqz2lvtHTf/Qy3eNwY7FwxQYVsm3tPUIm
+	jh+TIFJQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNCoP-0000000HNSD-018X;
+	Mon, 16 Dec 2024 15:15:09 +0000
+Date: Mon, 16 Dec 2024 15:15:08 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v4 01/10] ext4: remove writable userspace mappings before
+ truncating page cache
+Message-ID: <Z2BD_JLfuZ9VVwhQ@casper.infradead.org>
+References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+ <20241216013915.3392419-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241216150722.4079213-2-gnoack@google.com>
+In-Reply-To: <20241216013915.3392419-2-yi.zhang@huaweicloud.com>
 
-On Mon, Dec 16, 2024 at 03:07:23PM +0000, Günther Noack wrote:
-> With this, processes without CAP_SYS_ADMIN are able to use TIOCLINUX with
-> subcode TIOCL_SETSEL, in the selection modes TIOCL_SETPOINTER,
-> TIOCL_SELCLEAR and TIOCL_SELMOUSEREPORT.
+On Mon, Dec 16, 2024 at 09:39:06AM +0800, Zhang Yi wrote:
+>  $mkfs.ext4 -b 1024 /dev/vdb
+>  $mount /dev/vdb /mnt
+>  $xfs_io -t -f -c "pwrite -S 0x58 0 4096" -c "mmap -rw 0 4096" \
+>                -c "mwrite -S 0x5a 2048 2048" -c "fzero 2048 2048" \
+>                -c "mwrite -S 0x59 2048 2048" -c "close" /mnt/foo
 > 
-> TIOCL_SETSEL was previously changed to require CAP_SYS_ADMIN, as this IOCTL
-> let callers change the selection buffer and could be used to simulate
-> keypresses.  These three TIOCL_SETSEL selection modes, however, are safe to
-> use, as they do not modify the selection buffer.
+>  $od -Ax -t x1z /mnt/foo
+>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+>  *
+>  000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59
+>  *
+>  001000
 > 
-> This fixes a mouse support regression that affected Emacs (invisible mouse
-> cursor).
-> 
-> Link: https://lore.kernel.org/r/ee3ec63269b43b34e1c90dd8c9743bf8@finder.org
-> Fixes: 8d1b43f6a6df ("tty: Restrict access to TIOCLINUX' copy-and-paste subcommands")
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  drivers/tty/vt/selection.c | 14 ++++++++++++++
->  drivers/tty/vt/vt.c        |  3 +--
->  2 files changed, 15 insertions(+), 2 deletions(-)
+>  $umount /mnt && mount /dev/vdb /mnt
+>  $od -Ax -t x1z /mnt/foo
+>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+>  *
+>  000800 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  *
+>  001000
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- Your patch breaks the build.
-
-- Your patch contains warnings and/or errors noticed by the
-  scripts/checkpatch.pl tool.
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Can you add this to fstests please so we can be sure other filesystems
+don't have the same problem?
 
