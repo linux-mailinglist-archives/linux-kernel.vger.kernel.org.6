@@ -1,187 +1,180 @@
-Return-Path: <linux-kernel+bounces-447303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4843D9F3045
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 110829F3048
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BC116176D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F651633CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF234204C02;
-	Mon, 16 Dec 2024 12:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E12C204592;
+	Mon, 16 Dec 2024 12:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KIOdKTua"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+anelpa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64D738FA6;
-	Mon, 16 Dec 2024 12:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E170C34CC4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351296; cv=none; b=hNB9TouMUH2yAqI8BpO5UWGeGSMAe/4z1zL3+fSvxqfcZhoFMSAkpQg4HSt+hXd+7XkCM//7WR4rv9agq8DADTpibQelF87As2mLoGebwgDW17xA7l0yuT/UX4w8Jw/3b5OTjlDpuN4FDSrxyKK3TpTSQSs9DzLYfii9gHnOP3o=
+	t=1734351346; cv=none; b=GX8srq9yavpo1l+aLsKDGPrDHjlz07xOcgWjZs6H7i1WHY6rXsEmRdyA7j2c91h/5L3z7ftRLKmKD4xO457JamQretYW3iFU4UyH89TVqa3BjWaV3+zHGT/ZDgZ2uhGPEzc8SSkegBhyfbN7ax+HuUDkIcIdyCpBdHowZT8XGiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351296; c=relaxed/simple;
-	bh=7iRF4jqIgBaSkLJGtGcB0vl37xWSezwL8iYt9zrP8lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DctMRIk4Us3/E6yGWJciCCFiJrzgeAflyYR2+Zl6TK9mzh8fWeFGvZXCsfpljC+JTrSxvglj0t4KEJxUCY5y2OmlbjhvlUpJY0Ck6TyBNyC7sdvXYm99rrl7vgrLom6AOwa676bo3ZeAj0c5pj9lJ4V4pnNUjDjBwuPoa7o++u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KIOdKTua; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16EAC4CED0;
-	Mon, 16 Dec 2024 12:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734351295;
-	bh=7iRF4jqIgBaSkLJGtGcB0vl37xWSezwL8iYt9zrP8lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIOdKTuaakr2c0pK++nrvbPEgq2dpHrANHRjJrWtjBOlB1kxnt1qrh7qNoa7+rznY
-	 FZSVC30u6yqX3BlisyXPbiGAgCYPeZgr57P5Csbn+YFPF3kIulFtPa5j8ELA6PyW5U
-	 uQoANz2c0hjhJ3rWfb9WRcZcQDuI7hAwNuT0e2Gc=
-Date: Mon, 16 Dec 2024 13:14:16 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Trevor Gross <tmgross@umich.edu>,
-	Adam Bratschi-Kaye <ark.email@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
- parameter support
-Message-ID: <2024121646-shelve-series-5319@gregkh>
-References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
- <4Dsa69UGULRGsMbRbwOJNp_puyfsSSFt1QTcYU9AL4azd8vbfEFFtc7YNSsGegc40AfCZqVqZETfxg4TggUlSw==@protonmail.internalid>
- <2024121324-overdue-giggly-bdb8@gregkh>
- <87frmrepo5.fsf@kernel.org>
- <I0v8YGJe3e1ex1oF3mki-7QKimYLCJHnBy6g1taHgoOFvpNmQSrSnsMGJyGS064pGJsJDsTsei-pInFRz5INWA==@protonmail.internalid>
- <2024121309-lethargic-ended-5f99@gregkh>
- <87ttb7d24p.fsf@kernel.org>
- <hmmCwoNftQc5Mj4BLjFC2qTABem8CvuXSx3ucXzjIfQSwLjULmZgsw7vpq3Zxy0kk5H3Zjpz-vd4d7E1sb4LHw==@protonmail.internalid>
- <2024121344-excusably-resurrect-d01a@gregkh>
- <87h674c5vq.fsf@kernel.org>
+	s=arc-20240116; t=1734351346; c=relaxed/simple;
+	bh=6LtgPO/DFAIJLqM7AGygH206s98mwXlC7QCJH2Bn+sM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WEGMhx03786vV+Ox6vbwRO/NC0bqbuWR8ivjsmFSdJVMyxhkNDWxEKhXwS3Mjh66jMh21FPlg5RV1YIq95bRzta0DMsoxy4nMnVT1gbjS++y8W0u19cJgpdY8KMjLVVrNXqxWsEuUY4DGTWeSpD6kUuEWhqvLj6uqlBM78sGlt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+anelpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C802FC4CED3;
+	Mon, 16 Dec 2024 12:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734351345;
+	bh=6LtgPO/DFAIJLqM7AGygH206s98mwXlC7QCJH2Bn+sM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=F+anelpaBKzsb7vsOAkla1WPa0/LMAfm+RHKoROj9UzBnkz5ZigU14O2TIdv4vS0h
+	 hdb+IyNYvHK3u9WmC2vkeOZmcB/ILMndEjDCTSt65iWM+MUbcBHeTQZDuQ6ZdR+nH9
+	 /oxT78qw8qRvJZMKqHov1uHl8iN5S1Q5kqhqSeekZWmBBQIF8fPW7/l1qoaG2JsQDG
+	 CvXuLgszwzzzQj4+iohsME6cKaaiO+Q7Etfs+/aXLy43PfXGSeSnaCzR3S7SEbGq1S
+	 IEwuXyuDy2xBHh28RqDrx+NX75QZzjDhKTnqtt1AhWLKJ5haoI6f/aH0gnOyBNJdXn
+	 BZtYf5Z4CUDnQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Simon Trimmer <simont@opensource.cirrus.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] firmware: cs_dsp: avoid large local variables
+Date: Mon, 16 Dec 2024 13:15:35 +0100
+Message-Id: <20241216121541.3455880-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h674c5vq.fsf@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 16, 2024 at 10:51:53AM +0100, Andreas Hindborg wrote:
-> "Greg KH" <gregkh@linuxfoundation.org> writes:
-> 
-> > On Fri, Dec 13, 2024 at 04:38:30PM +0100, Andreas Hindborg wrote:
-> >> "Greg KH" <gregkh@linuxfoundation.org> writes:
-> >> > On Fri, Dec 13, 2024 at 01:24:42PM +0100, Andreas Hindborg wrote:
-> >> >> "Greg KH" <gregkh@linuxfoundation.org> writes:
-> >> >> > On Fri, Dec 13, 2024 at 12:30:45PM +0100, Andreas Hindborg wrote:
-> >> I'm not getting a clear reading on the following, perhaps you can
-> >> clarify:
-> >>
-> >>  - Is the community aligned on dropping module parameters for all new
-> >>    drivers?
-> >>    - If so, was this decided upon at some point or is this a fluid
-> >>      decision that is just manifesting now?
-> >
-> > It's something that I've been saying in review comments of drivers for
-> > many many years now.  Again, it was one of the main reasons we created
-> > configfs and sysfs all those decades ago, because module parameters just
-> > do not work properly for drivers in almost all cases.
-> 
-> Thinking a bit about this - are you sure there are no situations where
-> module parameters is actually the right choice? I could imagine deeply
-> embedded deployments, potentially with all required modules linked in to
-> a static kernel image. It is probably desirable to be able to pass
-> configuration to the modules via the kernel command line in this
-> situation. If not for configuration in the field, then for a development
-> situation.
+From: Arnd Bergmann <arnd@arndb.de>
 
-I'm not saying "no situations at all", I'm saying "almost no situations
-need a module parameter, and almost NO driver needs one."  That does not
-mean "none".
+Having 1280 bytes of local variables on the stack exceeds the limit
+on 32-bit architectures:
 
-> Surely there are also situations in regular PC setups where it is
-> desirable to pass configuration data to a module, so that it is
-> available at load time. With configfs, module initialization becomes a
-> two stage process of first loading and then configuring. That is not
-> always what you would want.
+drivers/firmware/cirrus/test/cs_dsp_test_bin.c: In function 'bin_patch_mixed_packed_unpacked_random':
+drivers/firmware/cirrus/test/cs_dsp_test_bin.c:2097:1: error: the frame size of 1784 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-"regular" PC setups do not want module parameters either, they should
-all be dynamic busses and everything should "just work".
+Use dynamic allocation for the largest two here.
 
-> Since module parameters actually do show up in sysfs as writable
-> entries, when the right flags are passed, they do feel very similar to
-> sysfs/configfs for simple use cases. What are the reasons they should
-> not be usable for these simple use cases?
+Fixes: dd0b6b1f29b9 ("firmware: cs_dsp: Add KUnit testing of bin file download")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2 changes:
+ - use kunit_kmalloc() as suggested by Richard Fitzgerald
+ - use KUNIT_ASSERT_NOT_NULL
+---
+ .../firmware/cirrus/test/cs_dsp_test_bin.c    | 33 +++++++++++--------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
-Because they are almost never a good idea for a driver because drivers
-can control multiple devices and how do you show that in a single value?
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
+index 689190453307..bbff6caee285 100644
+--- a/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
++++ b/drivers/firmware/cirrus/test/cs_dsp_test_bin.c
+@@ -1978,8 +1978,10 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 		 4, 51, 76, 72, 16,  6, 39, 62, 15, 41, 28, 73, 53, 40, 45, 54,
+ 		14, 55, 46, 66, 64, 59, 23,  9, 67, 47, 19, 71, 35, 18, 42,  1,
+ 	};
+-	u32 packed_payload[80][3];
+-	u32 unpacked_payload[80];
++	struct {
++		u32 packed[80][3];
++		u32 unpacked[80];
++	} *payload;
+ 	u32 readback[3];
+ 	unsigned int alg_base_words, patch_pos_words;
+ 	unsigned int alg_base_in_packed_regs, patch_pos_in_packed_regs;
+@@ -1988,8 +1990,11 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 	struct firmware *fw;
+ 	int i;
+ 
+-	get_random_bytes(packed_payload, sizeof(packed_payload));
+-	get_random_bytes(unpacked_payload, sizeof(unpacked_payload));
++	payload = kunit_kmalloc(test, sizeof(*payload), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, payload);
++
++	get_random_bytes(payload->packed, sizeof(payload->packed));
++	get_random_bytes(payload->unpacked, sizeof(payload->unpacked));
+ 
+ 	/* Create a patch entry for every offset in offset_words[] */
+ 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
+@@ -2010,8 +2015,8 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 						  bin_test_mock_algs[0].ver,
+ 						  param->mem_type,
+ 						  payload_offset,
+-						  packed_payload[i],
+-						  sizeof(packed_payload[i]));
++						  payload->packed[i],
++						  sizeof(payload->packed[i]));
+ 		} else {
+ 			payload_offset = offset_words[i] * 4;
+ 			cs_dsp_mock_bin_add_patch(priv->local->bin_builder,
+@@ -2019,8 +2024,8 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 						  bin_test_mock_algs[0].ver,
+ 						  unpacked_mem_type,
+ 						  payload_offset,
+-						  &unpacked_payload[i],
+-						  sizeof(unpacked_payload[i]));
++						  &payload->unpacked[i],
++						  sizeof(payload->unpacked[i]));
+ 		}
+ 	}
+ 
+@@ -2033,7 +2038,7 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 	/*
+ 	 * Readback the packed registers that should have been written.
+ 	 * Place the values into the expected location in readback[] so
+-	 * that the content of readback[] should match packed_payload[]
++	 * that the content of readback[] should match payload->packed[]
+ 	 */
+ 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
+ 		alg_base_words = cs_dsp_mock_xm_header_get_alg_base_in_words(priv,
+@@ -2055,16 +2060,16 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 				regmap_raw_read(priv->dsp->regmap, reg_addr, readback,
+ 						sizeof(readback)),
+ 				0);
+-		KUNIT_EXPECT_MEMEQ(test, readback, packed_payload[i], sizeof(packed_payload[i]));
++		KUNIT_EXPECT_MEMEQ(test, readback, payload->packed[i], sizeof(payload->packed[i]));
+ 
+ 		/* Drop expected writes from the cache */
+-		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(packed_payload[i]));
++		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(payload->packed[i]));
+ 	}
+ 
+ 	/*
+ 	 * Readback the unpacked registers that should have been written.
+ 	 * Place the values into the expected location in readback[] so
+-	 * that the content of readback[] should match unpacked_payload[]
++	 * that the content of readback[] should match payload->unpacked[]
+ 	 */
+ 	for (i = 0; i < ARRAY_SIZE(offset_words); ++i) {
+ 		alg_base_words = cs_dsp_mock_xm_header_get_alg_base_in_words(priv,
+@@ -2085,10 +2090,10 @@ static void bin_patch_mixed_packed_unpacked_random(struct kunit *test)
+ 				regmap_raw_read(priv->dsp->regmap, reg_addr,
+ 						&readback[0], sizeof(readback[0])),
+ 				0);
+-		KUNIT_EXPECT_EQ(test, readback[0], unpacked_payload[i]);
++		KUNIT_EXPECT_EQ(test, readback[0], payload->unpacked[i]);
+ 
+ 		/* Drop expected writes from the cache */
+-		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(unpacked_payload[i]));
++		cs_dsp_mock_regmap_drop_bytes(priv, reg_addr, sizeof(payload->unpacked[i]));
+ 	}
+ 
+ 	/* Drop expected writes and the cache should then be clean */
+-- 
+2.39.5
 
-For non-drivers, it's a different issue, but that's not what you are
-considering here :)
-
-> >>  - Does this ban of module parameters also cover cases where backwards
-> >>    compatibility is desirable?
-> >
-> > No, we don't break existing kernel features, but if you are writing a
-> > new driver, don't add them and then there's no compatibility issue.
-> >
-> > We don't normally allow "rewrites" of drivers, but if we do, yes, you
-> > would have to implement the old features if needed.
-> >
-> > As you just seem to want to write an "example" block driver, no need to
-> > add the module option there, just do it right this time in how to
-> > properly configure things.
-> >
-> >>  - Can we merge this so I can move forward at my current projected
-> >>    course, or should I plan on dealing with not having this available?
-> >
-> > We generally do not want to merge apis without any real users, as it's
-> > hard to justify them, right?  Also, we don't even know if they work
-> > properly or not.
-> 
-> While null_blk is just a piece of testing infrastructure that you would
-> not deploy in a production environment, it is still a "real user". I am
-> sure we can agree on the importance of testing.
-> 
-> The exercise I am undertaking is to produce a drop in replacement of the
-> existing C null_blk driver. If all goes well, we are considering to swap
-> the C implementation for the Rust implementation in X number of years.
-> Granted - a lot of things have to fall into place for that to happen,
-> but that is the plan. This plan does not really work well if the two
-> modules do not have the same interface.
-
-Why do you have to have the same interface?  Why not do it "properly"
-and make it use configfs that way you can have multiple devices and test
-them all at the same time?
-
-As this is "just" a testing driver, there should not be any need to keep
-the same user/kernel api for setting things up, right?
-
-Again, don't make the mistakes we have in the past, drivers should NOT
-be using module parameters.
-
-> I understand that you would like to phase out module parameters, but I
-> don't think blocking their use from Rust is the right way to go about
-> that task. If you really feel that module parameters have no place in
-> new drivers, I would suggest that to be part of review process for each
-> individual new driver - not at the stage of enabling module parameters
-> for Rust in general.
-
-I'm saying that module parameters do NOT belong in a driver, which is
-what you are wanting to do here.  And as for adding new apis, please
-only do so when you have a real user, I don't see a real user for module
-parameters in rust just yet.  If that changes, I'll reconsider my stance :)
-
-thanks,
-
-greg k-h
 
