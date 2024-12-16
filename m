@@ -1,101 +1,126 @@
-Return-Path: <linux-kernel+bounces-447741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654249F3690
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:50:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534AE9F3696
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C8567A127A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:50:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBDF77A1349
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FD920765F;
-	Mon, 16 Dec 2024 16:44:02 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1199207A2D;
+	Mon, 16 Dec 2024 16:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoGule4W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60ECA205510
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A3F207A0D;
+	Mon, 16 Dec 2024 16:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367441; cv=none; b=aWNoWJU+g3hxYENnfE1tpy4onq204KbrVZqwrptkqsM3u9+Tnrt2GYOayH3xWr85DofhIVOAcO3E7y+VG2G81KAoz5v80tB8OLHDXS7LdAYL1F6a7DsdhUrgo3mbQXQ4Fxf9AlX4/AUe1s71HgyiPVPg35FESwY6C1nfC3mRUVs=
+	t=1734367448; cv=none; b=aI1JqT8KmEwehgHBw8YtjVPU+mJaCbrvIB4u4SlIRnByOtebEj9YiKGwdgRQvXJ07pmFdr0NwsFbuqXpwdFS0ZLANl4vrPc2d6Sfo+IYRDHtdfL0+pv9rsoYVF8VHfnmj6eudc/28wKX5tUmwm7p+vgy26mliq7oqOQ+gs0OAQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367441; c=relaxed/simple;
-	bh=RHp0F6UjZX/TfyObz0ZlAnyTx5Pc0w+Qol+a8/W3hFU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eYpZykd+HXxMthvV2/e5dxYkmn/lQXiKfZMlMeCp9kO6FugMiwvJu0CaV9e6YTgrSjXFJEzEIUPgD6hFzSsYaPiU2+NiSczEfd4BoKLVws731ynZz8S7oCApHDZFubEqyY5Z4dPewycaZtK/RxEQ0j9c5dLUaOgj8iTrBH0HUnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a81357cdc7so52976195ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:44:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734367439; x=1734972239;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95swBBkO+qxzNMnZEb/hKv1Q6QW2q7J/I3mxU7TPd78=;
-        b=AAyn1M6d78y75BQMzpR5NoH7XtccD89CNI/7MjxbDAqCu16So5S0ltq7OhvzWTiFLh
-         oUoVv7KottdCKT7W2xmwrHFpie0bIdXqoc850XPUp1hfvOBU4bCDEC0GRLPYXmS/NQkG
-         +33znDu2X7R12olfUCqBC/WujsI3TyfSj3tMV0aOij7L2pG3y5hC3dchBDFcA3Xa2StQ
-         G0guyE8BlaUaKwahtWs9gxlSfKw6EYYHY7nlN7TWslMmNg8S/ktJDEqbxWvB71ZhsUKi
-         3BcelqJM/D327aagdvztXTd2TFJ7H9+f6eo6WkZT81a0se/hPek+Jl4YEZvvdLPInEuz
-         9XKA==
-X-Gm-Message-State: AOJu0Yx7bld5Q1o9FsDADKwiIexN7j0fHh0fPUagv1wQdMJT63iggSvl
-	gzBeEYyd1mnG+UoQ6uf5bu3SHY00YNizThXcPQnhznLPG9JT1c2f6sLU0e7SsfezOLhMMJB5KMy
-	56/sIU0ouuoyNwIauDJbSngGgcuxol0ks4WEDKrv0WWLV9sAMbS0vRRU=
-X-Google-Smtp-Source: AGHT+IHNFGgpY1KfnBTnebtefSVMKS4eQPvDqp82XM35emy9jw+GRszeSha28lkFSWhoTN/teFRCe9sO7PTTCoj/cSXGWEiTnR8S
+	s=arc-20240116; t=1734367448; c=relaxed/simple;
+	bh=snoRALQ5vLKqq7mcGrwha2X8wlly0uvi69XAMV3T24I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFHI+5PP+atz8qWUSgsGdkH/3BHYBWeR/xpcVrOOE2RJd4kFGe9l7d9a/0xkvYKrvmKJ/LtHkyO9MkhbQeVlWlak89drGH+UH7suV1tVnJSteiJTj1Dixp3qvRxXLeaRFl05i+q4YBEkQ+GPVfOfpktn+4sgpxXCpuDRenN6hdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoGule4W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D09C4CEDD;
+	Mon, 16 Dec 2024 16:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734367447;
+	bh=snoRALQ5vLKqq7mcGrwha2X8wlly0uvi69XAMV3T24I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qoGule4W8NC54k6omoNdAcSoIQCDpvbkNrSTqK/DeRrMi3iI3GnkFObkz1RziCW1H
+	 IlE9xrGWHSXT09NGOXsXJDrTRzFBkqJntfObOnK5m4CHqDjgR+SV5FSsGxF8WktAqo
+	 9N3NBUEInaWpvdNV9Q4O3fP7VqZbpJE4nFeIEmoSyhT7G/QbEAIy3ez5jP6PU9uY4x
+	 JkMOaMngYBfWlXwXzUcnuCjQCvitx7gX3N08r+oW7rUw9qmdPFTKfhQ8suVMvsgARw
+	 nfawuBjHyOXedAvgWS2jT0PDg1wDJqVZoUMs/kpVqgLLV4GpoXbUVwJf3Pbp3MPWyq
+	 fb7WHk4irLjbg==
+Date: Mon, 16 Dec 2024 13:44:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Gabriele Monaco <gmonaco@redhat.com>
+Subject: Re: [PATCH] perf ftrace latency: Fix compiler error for clang 12
+Message-ID: <Z2BY1MAUrXPJs1Ak@x1>
+References: <20241214002938.1027546-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156f:b0:3a7:e8df:3fcb with SMTP id
- e9e14a558f8ab-3b02d788a63mr95459545ab.7.1734367439300; Mon, 16 Dec 2024
- 08:43:59 -0800 (PST)
-Date: Mon, 16 Dec 2024 08:43:59 -0800
-In-Reply-To: <675e5ede.050a0220.37aaf.00ed.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <676058cf.050a0220.37aaf.0138.GAE@google.com>
-Subject: Re: [syzbot] Re: kernel BUG in ocfs2_commit_truncate()
-From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241214002938.1027546-1-namhyung@kernel.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Dec 13, 2024 at 04:29:38PM -0800, Namhyung Kim wrote:
+> I noticed this error on CentOS 8.
+> 
+>     CLANG   /build/util/bpf_skel/.tmp/func_latency.bpf.o
+>   Error at line 119: Unsupport signed division for DAG: 0x55829ee68a10: i64 = sdiv 0x55829ee68bb0, 0x55829ee69090, util/bpf_skel/func_latency.bpf.c:119:17 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]Please convert to unsigned div/mod.
+>   fatal error: error in backend: Cannot select: 0x55829ee68a10: i64 = sdiv 0x55829ee68bb0, 0x55829ee69090, util/bpf_skel/func_latency.bpf.c:119:17 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]
+>     0x55829ee68bb0: i64,ch = CopyFromReg 0x55829edc9a78, Register:i64 %5, util/bpf_skel/func_latency.bpf.c:119:17 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]
+>       0x55829ee68e20: i64 = Register %5
+>     0x55829ee69090: i64,ch = load<(volatile dereferenceable load 4 from @bucket_range, !tbaa !160), zext from i32> 0x55829edc9a78, 0x55829ee68fc0, undef:i64, util/bpf_skel/func_latency.bpf.c:119:19 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]
+>       0x55829ee68fc0: i64 = BPFISD::Wrapper TargetGlobalAddress:i64<i32* @bucket_range> 0, util/bpf_skel/func_latency.bpf.c:119:19 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]
+>         0x55829ee68808: i64 = TargetGlobalAddress<i32* @bucket_range> 0, util/bpf_skel/func_latency.bpf.c:119:19 @[ util/bpf_skel/func_latency.bpf.c:84:5 ]
+>       0x55829ee68530: i64 = undef
+>   In function: func_end
+>   PLEASE submit a bug report to https://bugs.llvm.org/ and include the crash backtrace, preprocessed source, and associated run script.
+> 
+> It complains about sdiv which is (s64)delta / (u32)bucket_range.
+> Let's cast the delta to u64 for division.
+> 
+> Fixes: e8536dd47a98b5db ("perf ftrace latency: Introduce --bucket-range to ask for linear bucketing")
+> Cc: Gabriele Monaco <gmonaco@redhat.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-***
+Committer testing:
 
-Subject: Re: kernel BUG in ocfs2_commit_truncate()
-Author: dmantipov@yandex.ru
+Tested on:
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
+  $ head -2 /etc/os-release
+  NAME="Fedora Linux"
+  VERSION="40 (Toolbx Container Image)"
+  $ clang --version |& head -1
+  clang version 18.1.8 (Fedora 18.1.8-1.fc40)
+  $
+  root@number:~# perf ftrace latency --use-nsec --bucket-range=200 --min-latency 250 --max-latency=5000 -T switch_mm_irqs_off -a sleep 10
+  #   DURATION     |      COUNT | GRAPH                                          |
+       0 -  250 ns |         28 | #####                                          |
+     250 -  450 ns |         12 | ##                                             |
+     450 -  650 ns |         10 | #                                              |
+     650 -  850 ns |          9 | #                                              |
+     850 - 1050 ns |         20 | ###                                            |
+    1.05 - 1.25 us |         14 | ##                                             |
+    1.25 - 1.45 us |         16 | ###                                            |
+    1.45 - 1.65 us |          8 | #                                              |
+    1.65 - 1.85 us |         11 | ##                                             |
+    1.85 - 2.05 us |          7 | #                                              |
+    2.05 - 2.25 us |         11 | ##                                             |
+    2.25 - 2.45 us |         10 | #                                              |
+    2.45 - 2.65 us |          7 | #                                              |
+    2.65 - 2.85 us |          8 | #                                              |
+    2.85 - 3.05 us |          7 | #                                              |
+    3.05 - 3.25 us |          7 | #                                              |
+    3.25 - 3.45 us |         10 | #                                              |
+    3.45 - 3.65 us |          5 |                                                |
+    3.65 - 3.85 us |          9 | #                                              |
+    3.85 - 4.05 us |          2 |                                                |
+    4.05 - 4.25 us |          6 | #                                              |
+    4.25 - ...  us |         23 | ####                                           |
+  root@number:~#
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 395e23920632..deb038e9392a 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -7219,12 +7219,19 @@ int ocfs2_commit_truncate(struct ocfs2_super *osb,
- 	struct ocfs2_extent_rec *rec;
- 	struct ocfs2_path *path = NULL;
- 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)di_bh->b_data;
-+	u16 tree_depth = le16_to_cpu(di->id2.i_list.l_tree_depth);
- 	struct ocfs2_extent_list *root_el = &(di->id2.i_list);
- 	u64 refcount_loc = le64_to_cpu(di->i_refcount_loc);
- 	struct ocfs2_extent_tree et;
- 	struct ocfs2_cached_dealloc_ctxt dealloc;
- 	struct ocfs2_refcount_tree *ref_tree = NULL;
- 
-+	if (unlikely(tree_depth >= OCFS2_MAX_PATH_DEPTH)) {
-+		mlog(ML_ERROR, "Corrupted dinode %llu\n",
-+		     (unsigned long long)di_bh->b_blocknr);
-+		return -EINVAL;
-+	}
-+
- 	ocfs2_init_dinode_extent_tree(&et, INODE_CACHE(inode), di_bh);
- 	ocfs2_init_dealloc_ctxt(&dealloc);
- 
+Thanks, applied to perf-tools-next.
+
+- Arnaldo
 
