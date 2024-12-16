@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-447827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47319F3787
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:27:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC019F3790
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F721883575
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A867162B92
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FA92063D1;
-	Mon, 16 Dec 2024 17:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387820629B;
+	Mon, 16 Dec 2024 17:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUB5ADDX"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlnvwOof"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657B381ACA;
-	Mon, 16 Dec 2024 17:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A449581ACA;
+	Mon, 16 Dec 2024 17:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734370016; cv=none; b=qt0+AKut8oRvzJrjlZt5fqVM4wP6OY0fM9Sf6d8Z1FSawhO8Ga4ZnCxfw2+c8TAx3ZN3TptP9XDaqfLw487Fj/4ugIhk97nml1fAVp4J80Vknr3RDxAZKhkAFU5wtwtZzNzFSlD2ycYDX6xA1r3wxJpJ3zbqn9M3naQsuqbsPQs=
+	t=1734370148; cv=none; b=YuG5IW51Xd/yRCCKSYgl06K6EPuLHcPwRY7cgP8riLvNNBkQx+XT/D7gOSbMh107taRfw7XuH6HSQUzQRIZKR4TdqmtqGkG7m+jHLc7tpkWi5+uXG6mEjbGe6D0qZs7iA3OgbCwHvYKKn6a/oDcBHqBJl5Zyr4LISNPqzI7FZtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734370016; c=relaxed/simple;
-	bh=/t1NRYv4/Q5pN1JG7idM3iLXiuadUz5zwHnKIJiHGNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GamhLwvS1KKfuRe68YaulXARoReucVnOORd2FNgSJeJ8lf7CS+UmCwdaWkhH5KY26SxTmHYAB+/h+k/avb6p8YpmynGJmIVd6QwFZ5MGu3UI2kMFmHmGRZk2wDBIXJh+xZn3kDTcNq4IMyMYrqvavlpcFdR/FPlQbRgxvqtphq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUB5ADDX; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-436203f1203so3782405e9.2;
-        Mon, 16 Dec 2024 09:26:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734370013; x=1734974813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ws62IqXxwOmIXvue6QqDBdu01bZQNbrgvdYcyFWCQ+g=;
-        b=KUB5ADDXZH/M5py/ZL53ZgqaeU4U1trfICITuqIw0j+TNNt586cSB3+Sl7/cdV2zDt
-         iy8tC2eXjgSjiwC+E12JldkFeLUg2zT5qjEtzXMUsH9bS086gWGXqRng/bEHA/UkXa1I
-         KZMWpNibw3gv3hL4mZXurdoLEa7ocW2qCxOxEi7EJ8SaBlJPORJn0voDt9eyiwmiQeHK
-         SGoo671aKqlNT/Nhf19PDGW8H4vUoT8EpRtlbb4FGyih/I2VyKLVWEgM2dEJTip0C9QR
-         SVZR6/ly9hn5nTqaQZnfsbkt30he667HHxfLALKxmZZtyKP4ij9kyCGKQnTDGfqVCtsl
-         eIPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734370013; x=1734974813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ws62IqXxwOmIXvue6QqDBdu01bZQNbrgvdYcyFWCQ+g=;
-        b=EqbZCGkVKhputa3JsxSdBCwqSRxozQTtDsyL3ztOXaW0c9pbpGFFHgU6M7eWCFFxSD
-         JV+b694tjbF0IUpKrSWfbtLjFYhjsyfEicJ7CYdczuwEkn9fDa6AtsiD4TffEFWJsFmt
-         Q0+lQN65PkokDlarBudG6f9A0CITl5J9+1pb7L5RIsuvuxWN9bfsMCsskyjSIlzfQgY1
-         QjQ2FZVq/8C2+fn4XIDj0ToJGO6e48yU1cKf2apeKsx544q4E3EfUDizHEK1+R1UZB/U
-         r1q6ytMoOI/9tFYQUiwlT81hMNj5g+GBE1hbzMBIm3b/Lal+owYk+AzGTqCbDlUsZiah
-         QUdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFGjTEWrLsAQIWCVKaAXmp2YAs36WyjvAmBYIIvkTiZdCz08GJDa6c0ElDcNeapxhNAX8=@vger.kernel.org, AJvYcCWD6D3vhRGqwcSDCes82pR+bRf+9+iJJXsmylVLR72GC4YKl4YZyoL9RtrFt76pi2X8TSZc6+Xm@vger.kernel.org, AJvYcCXlnP58leo1oSCBEC/1fA7dTvN2oDgKwRR8e2Z+UX/Hq3WQcB+6DcaMjTw64f6YeYBWkNvzxS0pNISsdj7Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfM7T42+1dMIaBSy5/c5w+dQ1Y8FKsS7ii5OoK92iqZ8NAsGiI
-	CSIag8Y2TPBX6WMXj+4qc+W3dTpm0zYDA80Nk2HmIYJ7FwjBe+5W
-X-Gm-Gg: ASbGncvNh74mEYIB9AZJzdpTrjJaHagTpH3tw6EbRzto7H8Rr1ApJ3/ByaVKKB0gv+w
-	7X3v+vC5cHtlyg4gq0TYrgzY2iTAsK3+MyI6CGwtL6C184MpEEWbMfoG2P1ehKzvr6xkQGtn4wG
-	1SNbVwsObAOItPDkECypsj/m/2UfWZmUum6NhyAi0Fvn/4fdOw/iLRScWLOcdd1vaiw68nzrekt
-	+HKdu3OfwZKB5hXOY0C+7erdlh/SG0WPRWt/0V/5ljw
-X-Google-Smtp-Source: AGHT+IHJMEc5NsNfUNm/SdMJ561r1AUdBtJzRijqI4fw/BK5BRf5cPDJKOpc00nhQoFK0zD4hEpV4Q==
-X-Received: by 2002:a05:600c:1c14:b0:42c:b55f:f4f with SMTP id 5b1f17b1804b1-4362aaa97e7mr44822235e9.6.1734370012348;
-        Mon, 16 Dec 2024 09:26:52 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801a487sm8902263f8f.45.2024.12.16.09.26.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 09:26:51 -0800 (PST)
-Date: Mon, 16 Dec 2024 19:26:48 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next 4/9] igc: Add support for receiving frames with
- all zeroes address
-Message-ID: <20241216172648.q3fxwaxdkvtjqrfn@skbuf>
-References: <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-1-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
+	s=arc-20240116; t=1734370148; c=relaxed/simple;
+	bh=uO4RvUIsNNGHSqvi9NWA9W+sJAdveK70mBR5/s2dV7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kg0u2g5DMyvpcGjom4pvn+TGVmJ7supLUNwfrzirk+CnginsiufWMiwRcvRun4TZsHLsGOp7XU0zRMsAkoPOw7/kbl1QLBkQSkOnCSNa2o36UbDuyQ2fHuaAh9oYQFQvcEVAD1rfc48juzxkRpMMZvUYgClcRgRMG2RNwlfyowM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlnvwOof; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B6BC4CEE2;
+	Mon, 16 Dec 2024 17:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734370148;
+	bh=uO4RvUIsNNGHSqvi9NWA9W+sJAdveK70mBR5/s2dV7o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QlnvwOofwMc2xXqXM79nNYMvdaL2/aqroltkRgfKLvUN9F7yYdB+NGwyKgk4JZIf7
+	 7VaBVkrHNqDQIrMGxyq//QbJjOalGFYk4YEzDg36qwXzqYmifHwLZbRl4Rw+mGwLh9
+	 1qXvB9XbtDxmJ1ujr5bqX50qpqVmMOPHuNr+a+UYI8UIKGX7qwuDH6P/su6JCc05hn
+	 kLPh5mjprCsDgGh9TxpKuiXhzS5wn38yjkCcm4JhQs+dORvspvWYTaLy3uF1eB4QDH
+	 6AWlS6+LbNwTmC/LoKxhu4AuIqoSUCxIzzy+jhOmoOgAHZ9XsxpfFxm/IFE3WVjZXC
+	 lg6YlY+5IjAPA==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3eb7e725aa0so2073465b6e.0;
+        Mon, 16 Dec 2024 09:29:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUR3JiYA4Og2oQE80u/K2DGIpEp+kKXRPfnxUgZtOOqK3s3CM/G2NDZLD+mH2uNx8BlVQa3PWjgGxo=@vger.kernel.org, AJvYcCWjtbEZBxDY/JgaOXBT9x0mElFVrRfhipflRvxtuvltE5vHD0zF83x3CKxaBa4O9Rebpxmze3h3+5JM@vger.kernel.org, AJvYcCXgZDIY7KLN4YfsVmzjAz1k+RMV7rBs4wt2huIhJe9G2/KTFVOn1ZitO9OcgE632PtIrIt6qM0wY0oELP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwByKnM2LzROdvBHB9ZUy/+dvq6xcBspqDuPBNIFubPLYoZqLZh
+	OI5esgXtPmVdy7Mj75sG+vJU+J78cyeOBMjGnj8Tw9Avcf02HWScqiEa53QusO3YubBeqOTdcSU
+	gu/rNnl5AMfITaZVtPs1cCaIBtzg=
+X-Google-Smtp-Source: AGHT+IF3TcMdugshcb0ACvJieCHGeXkqH6Ge96ABjnS17IHSgmIjjh7HLYyc+Hm2VaaAjnQEBPZdSgJ7BTojcSgiNNU=
+X-Received: by 2002:a05:6808:189e:b0:3eb:66d7:a33e with SMTP id
+ 5614622812f47-3eba67f9917mr8762730b6e.5.1734370147442; Mon, 16 Dec 2024
+ 09:29:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
- <20241216064720.931522-5-faizal.abdul.rahim@linux.intel.com>
+References: <20241205232900.GA3072557@bhelgaas> <20241209143821.m4dahsaqeydluyf3@thinkpad>
+ <20241212055920.GB4825@lst.de> <13662231.uLZWGnKmhe@rjwysocki.net>
+ <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
+ <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+ <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <20241216162303.GA26434@lst.de>
+ <CAJZ5v0g8CdGgWA7e6TXpUjYNkU1zX46Rz3ELiun42MayoN0osA@mail.gmail.com> <20241216164830.36lpu6gfnapsdar4@thinkpad>
+In-Reply-To: <20241216164830.36lpu6gfnapsdar4@thinkpad>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 16 Dec 2024 18:28:55 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hxnYere19wXbua6zWEDRDgSPeJgSECugtwfgTP-UN8Bw@mail.gmail.com>
+Message-ID: <CAJZ5v0hxnYere19wXbua6zWEDRDgSPeJgSECugtwfgTP-UN8Bw@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, 
+	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 01:47:15AM -0500, Faizal Rahim wrote:
-> From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> 
-> The frame preemption verification (as defined by IEEE 802.3-2018
-> Section 99.4.3) handshake is done by the driver, the default
-> configuration of the driver is to only receive frames with the driver
-> address.
-> 
-> So, in preparation for that add a second address to the list of
-> acceptable addresses.
-> 
-> Because the frame preemption "verify_enable" toggle only affects the
-> transmission of verification frames, this needs to always be enabled.
-> As that address is invalid, the impact in practical scenarios should
-> be minimal. But still a bummer that we have to do this.
+On Mon, Dec 16, 2024 at 5:48=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Dec 16, 2024 at 05:42:30PM +0100, Rafael J. Wysocki wrote:
+> > On Mon, Dec 16, 2024 at 5:23=E2=80=AFPM Christoph Hellwig <hch@lst.de> =
+wrote:
+> > >
+> > > On Sat, Dec 14, 2024 at 12:00:23PM +0530, Manivannan Sadhasivam wrote=
+:
+> > > > We need a PM core API that tells the device drivers when it is safe=
+ to powerdown
+> > > > the devices. The usecase here is with PCIe based NVMe devices but t=
+he problem is
+> > > > applicable to other devices as well.
+> > >
+> > > Maybe I'm misunderstanding things, but I think the important part is
+> > > to indicate when a suspend actually MUST put the device into D3.  Bec=
+ause
+> > > doing that should always be safe, but not always optimal.
+> >
+> > I'm not aware of any cases when a device must be put into D3cold
+> > (which I think is what you mean) during system-wide suspend.
+> >
+> > Suspend-to-idle on x86 doesn't require this, at least not for
+> > correctness.  I don't think any platforms using DT require it either.
+> >
+>
+> On suspend-to-idle, yes D3Cold doesn't make sense,
 
-Stuff that happened since this patch was written: "ethtool --set-mm
-pmac-enabled on" exists. You don't have to accept verification frames if
-the pMAC is disabled. You can enable the reception of 00:00:00:00:00:00
-using that, and keep it off by default.
+Why?
+
+> but on suspend-to-ram it is pretty much required.
+
+Well, I know for a fact that on x86 platforms ACPI S3 does not require
+putting devices into D3cold in general.
+
+Why is it required for NVMe?
+
+> That applies to DT as well.
+
+Again, why?
 
