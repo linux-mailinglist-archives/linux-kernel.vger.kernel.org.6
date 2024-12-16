@@ -1,123 +1,163 @@
-Return-Path: <linux-kernel+bounces-448179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC63F9F3C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:17:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11409F3C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D341679FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3037C1886583
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB211D31AE;
-	Mon, 16 Dec 2024 21:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB541D516C;
+	Mon, 16 Dec 2024 21:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v7avsQ9R"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fxq8xg8Z"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ABE4437;
-	Mon, 16 Dec 2024 21:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE5A1CD214
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383813; cv=none; b=FfsdoyUcOjM/ZvglB3alkgUhsnqqlGh1PNFzO2jYkKQENCBxslZfVDsmQdQAwq+GtQ/Eo/iThqPlOqAXj4RMvFV5+wBfI9KG3MIntAOGLMwi5mxJ+hAKhXjdzxrwhdauB1k1ivmFbeo5PdI8VQeLx/2Huyw/UYxcdQ+m+BQDdus=
+	t=1734383846; cv=none; b=FkZ/HyvSTCpc2YVHeX/XGP17XVzagEGYVr+ODPqvSJrOtcFanqlyPy1wyRrKadOZeyvB0W8NhjrtDqH3mM0//gJr7dB8/ehQMDYhYje7Zk0fliZ9151iaIbXwRFyoxzYYeDK4i3JSSMhg8Y4CeD0LC7FUbRbyxiUYNAu4MvSvXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383813; c=relaxed/simple;
-	bh=VkckERAarWFZIlrxbb81jRuss4GYws/T2h4m3iqPGa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqInOBto11iD92ezEE3v3Ar6CEactA/OSATTb+7hmem/4EU8czajybGLFeL3LS7tDoitsSzXLdrROJIxqjP94S2x6UGXBXB1exygoQ/fO4u+nd98rH9xE/iSHS5CzeCKF69nMcR0zS0zKJOPRaiqJrTyvI87jcV4PaBLJBQjLTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v7avsQ9R; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Trtl7E7Jonwq4B7a1CmBNlcuzf6xGG9ZkVRpNIjtrHc=; b=v7avsQ9RbthF/C6lTp4GcaHWLz
-	zRLa7pQm4Pr2nGofLk3ai9vj1k9dd5gFTzHUMla7ujS3fOcqfKG/Mect60jPGAcCGMWXGQ6TJ1zox
-	IrMbCXregR0n7M79ITg4E+cvP6QQp0X62i+A8+PtANDTIqyo77y4Vp85LP3jPrLXklXSZkuABDXGY
-	tv9GQE6AeX2/qlr/W7nTyVmYHjWHQAD9qG6uuhrdxx44EQAT4xkXM0jxbjOKfeDgQC1YItZ0QIuSu
-	fbrzZiFEluM8qjZZ1sNHLCpya29xIKlndw5Bs80e3kNhe36r6AwDRS2DLC4X72+VZ19FDMSORK5iO
-	M5LqkDxA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNISC-00000002AGL-2Vbh;
-	Mon, 16 Dec 2024 21:16:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CFA4C30031E; Mon, 16 Dec 2024 22:16:35 +0100 (CET)
-Date: Mon, 16 Dec 2024 22:16:35 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
-	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
-	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
-	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v6 11/16] mm: enforce vma to be in detached state before
- freeing
-Message-ID: <20241216211635.GC9803@noisy.programming.kicks-ass.net>
-References: <20241216192419.2970941-1-surenb@google.com>
- <20241216192419.2970941-12-surenb@google.com>
+	s=arc-20240116; t=1734383846; c=relaxed/simple;
+	bh=4fQYHchrSWa5uLGjxEoj3D06//Sn7ZmscruEw3/0WQA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V4y2E70LCIue1vNb0zu3j+hgvYUxWcPV4VFKhAPLx1Mhf0pNbzsJSutXRPZ648yXbQfSvs9fj7/B5i23oU+FAwaKAepDh5Q7zTbrihtl1Vks9DcOXEeIokgLxVPvYcDALN+98uULO3r1xbqZyPvCs/bFz8He/TH5HS6sU4JMBII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fxq8xg8Z; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467a17055e6so47093061cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:17:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734383843; x=1734988643; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l8AmPG7e7RmI2AaOsk1iihtx1bcIXZSCEYdSKszNNH4=;
+        b=fxq8xg8ZfvL4k+CsJUh3V4P3x6sQwGywrHgEh21SURlsobd2pdgOtqM4o++lNh7vUi
+         mLJYU8OrJ0aJg/UTu/SPkJLoBrcBSvui37hYpGCMzGMM8Zda8GMgswDK9vORG3iUUQlY
+         xH66rIyULQHAEeTYg0Bw+pCU+cURnn8WoRVv0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734383843; x=1734988643;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l8AmPG7e7RmI2AaOsk1iihtx1bcIXZSCEYdSKszNNH4=;
+        b=itaBf4ZhkTq7emA3TE+lZw47EVufYz+xcoJdQQhE7Y13b7cYvtdM8o4gsJN5aifTtv
+         bdVCFVR3MYymnNvq/kYerg0+EFpSytOMed6rfr28SKE4dzUrvcG3/z1gWNT22g+wlQ++
+         YB0t5SzCEsJSd8XQBua5I9/8RoVKono9MNlIqrbL5eXjVBMXN+F7cTaAaVIli2AGQoNj
+         C+3+bv+HvmwUaxvdlsLjOz2T0tDg1dT0b9nf4LolaKk3Cc8SpvgeYDuDdJZzvMTaVHUu
+         unpAxbVaBNu15caoUDs5JXlnlbcCI2wJ8N7Ml2DQlUz/iCE4hJTm7K42nBm1tjI523tU
+         +iHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE8N5PZe8z33WAWf8q47Uyz4coslh49e+HwixAdYBAlbLvsrrkOumcv4m0X0IR1mMGmX7tamk68Rtl8WE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLSBFGBbDcmpCclBKx0kPmzzuxWGHEKLauWxq04BbyeBL0hZ3u
+	c6YsipFZc09QK4AEc3a6F7rWe1xTZLstl6cy2F0hKR9S84Y5WhTbsl8v9C8EnA==
+X-Gm-Gg: ASbGncvE0u2nUAKK9FehCIR3N2TjnzQKTp0ZYGpCHGcR2SLKRT/AO2tqiyLMcrD+s3R
+	py6JdToC6FYEM7Xm+5RJEJ7ufn6P99NyPNwVFLb6SnYGBng5KixPcHMYMU/0nA20cCphijIpxEU
+	oGyy6/PaXum4IDLtAEutaiiiaY2MfmTXf0q+VSiONdFm/90FipjKba3jrD8Obd4tAykya5PT3g6
+	LxjD+f3TAB72lwHli49NYuENYPjnm/p/+wKObdQS32F5GCXJ/BbdVRtIB3m8Nh/WuxS9KAL8+Nk
+	3GvVoknDcqGz0oEfDm6+vERCP3BLLGo=
+X-Google-Smtp-Source: AGHT+IE6nGYwK5u9N5YH85CBS/7ioSAcLwKhUyLy8jZqzGt9r49k/AYODQLmEjFBHtIiJqOxDlKquQ==
+X-Received: by 2002:a05:622a:48f:b0:467:8703:a740 with SMTP id d75a77b69052e-467a5755691mr274120391cf.18.1734383842824;
+        Mon, 16 Dec 2024 13:17:22 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e85c03sm31927501cf.69.2024.12.16.13.17.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 13:17:21 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v5 0/7] ipu6: get rid of all the IS_ENABLED(CONFIG_ACPI)
+Date: Mon, 16 Dec 2024 21:17:14 +0000
+Message-Id: <20241216-fix-ipu-v5-0-3d6b35ddce7b@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216192419.2970941-12-surenb@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANqYYGcC/3XNwQ6CMAwG4FchOzuzlTKYJ9/DeBizwA4I2YRoC
+ O/u4IJRPP5tv78TC+QdBXZKJuZpdMF19xiyQ8JsY+41cXeLmYEAlBKAV+7JXT9wAxVBoUWhFbJ
+ 43XuKq7Xpco25ceHR+ddaPMpl+tsxSi45oCLI0JZ5bs+28V3rhvbY+ZotNSP8ocAFL0ujsiJTp
+ Ktqh6YbBSk2mkYqBKHQtkCj9r7iJ5UbxUhRCiCdG0ul+qLzPL8BI8zt+FIBAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Robert Moore <robert.moore@intel.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-usb@vger.kernel.org, 
+ acpica-devel@lists.linux.dev, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Dec 16, 2024 at 11:24:14AM -0800, Suren Baghdasaryan wrote:
-> exit_mmap() frees vmas without detaching them. This will become a problem
-> when we introduce vma reuse. Ensure that vmas are always detached before
-> being freed.
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  kernel/fork.c |  4 ++++
->  mm/vma.c      | 10 ++++++++--
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 283909d082cb..f1ddfc7b3b48 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -473,6 +473,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
->  
->  void __vm_area_free(struct vm_area_struct *vma)
->  {
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +	/* The vma should be detached while being destroyed. */
-> +	VM_BUG_ON_VMA(!is_vma_detached(vma), vma);
-> +#endif
->  	vma_numab_state_free(vma);
->  	free_anon_vma_name(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
-> diff --git a/mm/vma.c b/mm/vma.c
-> index fbd7254517d6..0436a7d21e01 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -413,9 +413,15 @@ void remove_vma(struct vm_area_struct *vma, bool unreachable)
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
->  	mpol_put(vma_policy(vma));
-> -	if (unreachable)
-> +	if (unreachable) {
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +		if (!is_vma_detached(vma)) {
-> +			vma_start_write(vma);
-> +			vma_mark_detached(vma);
-> +		}
-> +#endif
->  		__vm_area_free(vma);
+We want to be able to compile_test the ipu6 driver in situations with
+!ACPI.
 
-Again, can't you race with lockess RCU lookups?
+In order to do this we had to add some conditional #ifs, which lead to
+false positives on the static analysers.
+
+Let's implement some helpers when !ACPI in the acpi headers to make the
+code more easier to maintain.
+
+To: Rafael J. Wysocki <rafael@kernel.org>
+To: Len Brown <lenb@kernel.org>
+To: Robert Moore <robert.moore@intel.com>
+To: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: acpica-devel@lists.linux.dev
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Changes in v5:
+- Remove Fixes tag
+- redefine acpi_get_physical_device_location() to return bool
+- Link to v4: https://lore.kernel.org/r/20241211-fix-ipu-v4-0-4102e97aceb6@chromium.org
+
+Changes in v4 (Thanks Sakari & Mauro):
+- Squash the two ipu changes and merge everything via ACPI
+- Space after ;
+- move acpi_device_handle to avoid fwd declaration.
+- Link to v3: https://lore.kernel.org/r/20241210-fix-ipu-v3-0-00e409c84a6c@chromium.org
+
+Changes in v3:
+- Prefer static inlines to macros (Thanks Rafael).
+- Link to v2: https://lore.kernel.org/r/20241122-fix-ipu-v2-0-bba65856e9ff@chromium.org
+
+Changes in v2:
+- Add helpers in acpi to avoid conditional compilation
+- Link to v1: https://lore.kernel.org/r/20241122-fix-ipu-v1-1-246e254cb77c@chromium.org
+
+---
+Ricardo Ribalda (7):
+      ACPI: bus: change the prototype for acpi_get_physical_device_location
+      ACPI: bus: implement for_each_acpi_dev_match when !ACPI
+      ACPI: bus: implement acpi_get_physical_device_location when !ACPI
+      ACPI: header: implement acpi_device_handle when !ACPI
+      ACPI: bus: implement for_each_acpi_consumer_dev when !ACPI
+      ACPI: bus: implement acpi_device_hid when !ACPI
+      media: ipu-bridge: Remove unneeded conditional compilations
+
+ drivers/acpi/mipi-disco-img.c        |  3 +--
+ drivers/acpi/scan.c                  |  4 +---
+ drivers/acpi/utils.c                 |  7 +++----
+ drivers/base/physical_location.c     |  4 +---
+ drivers/media/pci/intel/ipu-bridge.c | 29 ++++-------------------------
+ drivers/usb/core/usb-acpi.c          |  3 +--
+ include/acpi/acpi_bus.h              | 23 ++++++++++++++++++++---
+ include/linux/acpi.h                 |  5 +++++
+ 8 files changed, 36 insertions(+), 42 deletions(-)
+---
+base-commit: d216d9cb4dd854ef0a2ec1701f403facb298af51
+change-id: 20241122-fix-ipu-a2fe28908964
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
