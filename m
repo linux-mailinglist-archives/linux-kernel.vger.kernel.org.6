@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-447306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6A39F3050
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:18:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8889F3052
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D0718845AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAE5F166089
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129F020468A;
-	Mon, 16 Dec 2024 12:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219F82046B2;
+	Mon, 16 Dec 2024 12:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMnXtfZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="OC2hXuGG"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4DE34CC4;
-	Mon, 16 Dec 2024 12:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0D31F708E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351480; cv=none; b=EBXqTc008qBaquxrZQWznuQ5jMd1K25Yb476xS63EHvp/0vi9Wmm+Sdv8J31mgHyNJCzTQu8LIVOb+kj9s3hRWzIaid3EdLxuAGNhHRbOktOltC7XfyO4sP1mssuXD4oW0UbknFD2zttKMYlgLZ19EUtaVGcL/7VM3+jdkcoaPs=
+	t=1734351549; cv=none; b=ac7HQ/+89eM2+XWJpOGY1TZHY+Bmsc9xkWLBoOaHSakwTIjB3V7Yq4bLcbUZLGKmPazCItPM5sQT5sHJM2FjJMjDszfG5ypaSQwf5dUkHFZNg9pbDhyAKAGFPKxPJwO5t+EFRyThPWux6arjihnHf8Vkeyj1gkxhSAJaRoSQHT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351480; c=relaxed/simple;
-	bh=9wUkqB8f8eK0RMLaMON1J/gQnYa58rUUdB2ULEUHmzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1QlLSy6hpp3+RfuPkmpucFmmyKMFGYngcSfzXOUe8TgQZvhvUHNAUvUfnHu3ygFPaSI0l8dv08CTTIvw7cnoHawBJ4OZRFUbYejPwA75YSlLdDrsU1+kyfCvKMRHWHDj3RV32Tk3jyMXK0yD0jfNQJshjY98lEBsWtr7CtBmeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMnXtfZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F4C2C4CED0;
-	Mon, 16 Dec 2024 12:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734351478;
-	bh=9wUkqB8f8eK0RMLaMON1J/gQnYa58rUUdB2ULEUHmzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sMnXtfZQp5EbWP1vD5F4aLPSj+F44yU5bQfri0VF6ER9/1j1y1ZVNbZn1oBo2rcQT
-	 CmskZUR2XVc5kajkituXx4xSvlLgz2QE7XdhheQfioWU488mqgvrCKhzAeDKzYgITC
-	 OtyJimBKhvXRGQf9O47IOIPgurSt0vttH5atAgMmEXWEyxBCoVae7DMe8w+PAVAwRk
-	 mzU616Q22h3xl8eGwYfxsLeImgBJeKKc0rUIeuU7dEUi7jQCDQuhR8oCj8eLkKIIe/
-	 dQ++IKBJJsKi1z8kp2q8DU9QlfFd3amokbHgc++IbTguzxUyuq8JIqqMShpJYc5IDJ
-	 ca/EZ76UnrrcQ==
-Date: Mon, 16 Dec 2024 12:17:54 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
- __cpuinfo_store_cpu()
-Message-ID: <709a0e75-0d0c-4bff-b9fd-3bbb55c97bd5@sirena.org.uk>
-References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
- <87a5cysfci.wl-maz@kernel.org>
+	s=arc-20240116; t=1734351549; c=relaxed/simple;
+	bh=loEJ2cAvHS1PBNFJKhLPyvT/66xxJTxwCR6IIL/pFQg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aThq6sWVrDnn1UbZA8S/qKOBXJychfnnPz4freHEF4dJvyQKv4eJP7Yf2quzYR0W0Ljps/yCWjQA/xDbZxxlNnD4jRGK4qO/YeI1lcPWionTya/zdsK8ff/rtOizEema13dP+a6kadlFZPdUD4olw/+6B+JEp0QEPEoFnXScg8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=OC2hXuGG; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa662795ca3so979289566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:19:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1734351546; x=1734956346; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+eh9vCuyZ4u0G7ukXk1jSGQjFjMxa/J+DbFIZMl3no=;
+        b=OC2hXuGGhwEc3PZ1AMIBQhL0aTDgy4KFIlA7yFJy/ZacxciLTerAkG9l0dmZ8Jlc8v
+         d4KLWOGRvwEI7aHe5ZGz8ax7y7tpYqYZFlV3YVSICZvXPhfiaSuwnR0u/+z4yaESoOLR
+         MYn9MJOe0HCcZ6PY91/mwWMWSg/vP5BZlz1hJd3wJnBubMUvo0jHFfL+Fe7fOHgKqq07
+         SztxiImu0OnrFvakRJ1QM8HYL801OmNbQ94/uoDiP0WeC49ciz1oa/F9aP8Gl10EjP/T
+         9iUri/9gP59rf1B2xAHohbrSsTzC+KcJPVB8nFOd+oWvLoZP34/sUH5FXKKXPd1oYFKh
+         zsDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734351546; x=1734956346;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+eh9vCuyZ4u0G7ukXk1jSGQjFjMxa/J+DbFIZMl3no=;
+        b=f7feztEgc9wErWTvun2+YPtommu7cA8vqgZo40Ki84AOJuiaSc7lyIdDHDPqzukL+v
+         g7ozc76FJA+kPbD8JBYCkDy4KataCQ9Y/dNpDGzs3GvPCBktrrRxFldlyknTCL6K572C
+         e7bn9PJHN5vVhoOFrRIzTavTX+doArT7uH3/aXHEFrm3FZzvpSt1+RdUNj0HPOjVaERP
+         f3hM2/UkNfghV8pQGqOEXIx9rEgwwsUuvketWzFKlu07lqSnppcXI9UNQm2IS2CC7Fpd
+         LqRfuxsJ4dsce6e8VR+Rf/yAYXlo0d9pV2fgj8yCVGdkUC/ZvaDJa3ISPoJ5woeC4T7m
+         nnFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTqoHgzDNmZEKDG1t7zXGfBSdZFSAsu3KJT+heBEYGCnW5vP27ZXmG24x0464Wfxvg+0xcnSiDeoszHu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiYpNzQSUn/BDT8pn4KTEhAR+41DiyNQ2z9HBlqx/QUkwkcaBQ
+	DMicMQj0vvswTEmftNxScQpqy3G4o7xoVXxJWPVZwvLWaK6l384tDpYd3yXi+AA=
+X-Gm-Gg: ASbGncuyRyQUpiZxIcjqA94XfKgCHMOVo+C+o5sFK2MdwHSofzcccZO3pONZNZ0tTnh
+	n5L5wk11CfnLYLczFW/6p7clQVWgxaBPMLUlBIxBej9pWck6f/xSUiHv5cpjsdtzwGBVT02Oqx1
+	goYwhi/E2mJ745dn79aJsfCwk8c5pf3H+yS/fzkqLMxKgpQ1cKGPqS7KSRO5L3G1UK/nqUs4X/b
+	TezqR1UKdwhSnf+7UQDG3SL44gQ/01yQoqeIgMHHClUfPcNlg==
+X-Google-Smtp-Source: AGHT+IHBhREBUd2xQnDq0nSySoUVJB7Nq18/B9DYXi9FyrteIejdfYbN2XxQQDiw2T2/psBgqBmIMA==
+X-Received: by 2002:a17:907:6d16:b0:aa6:9229:352a with SMTP id a640c23a62f3a-aa6c4275d77mr1522582166b.26.1734351546033;
+        Mon, 16 Dec 2024 04:19:06 -0800 (PST)
+Received: from cloudflare.com ([2a09:bac5:506b:2387::38a:31])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96359c8dsm324407366b.130.2024.12.16.04.19.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 04:19:05 -0800 (PST)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Cong Wang <xiyou.wangcong@gmail.com>, Jiayuan Chen <mrpre@163.com>
+Cc: bpf@vger.kernel.org,  martin.lau@linux.dev,  ast@kernel.org,
+  edumazet@google.com,  davem@davemloft.net,  dsahern@kernel.org,
+  kuba@kernel.org,  pabeni@redhat.com,  linux-kernel@vger.kernel.org,
+  song@kernel.org,  john.fastabend@gmail.com,  andrii@kernel.org,
+  mhal@rbox.co,  yonghong.song@linux.dev,  daniel@iogearbox.net,
+  horms@kernel.org
+Subject: Re: [PATCH bpf v2 0/2] bpf: fix wrong copied_seq calculation and
+ add tests
+In-Reply-To: <Z14udC8bTilHb3Xs@pop-os.localdomain> (Cong Wang's message of
+	"Sat, 14 Dec 2024 17:18:44 -0800")
+References: <20241209152740.281125-1-mrpre@163.com>
+	<87ttb6w136.fsf@cloudflare.com> <Z14udC8bTilHb3Xs@pop-os.localdomain>
+Date: Mon, 16 Dec 2024 13:19:03 +0100
+Message-ID: <87o71bx1l4.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="E9e43Uydk5bsqLo+"
-Content-Disposition: inline
-In-Reply-To: <87a5cysfci.wl-maz@kernel.org>
-X-Cookie: Be different: conform.
+Content-Type: text/plain
 
+On Sat, Dec 14, 2024 at 05:18 PM -08, Cong Wang wrote:
+> On Sat, Dec 14, 2024 at 07:50:37PM +0100, Jakub Sitnicki wrote:
+>> On Mon, Dec 09, 2024 at 11:27 PM +08, Jiayuan Chen wrote:
+>> 
+>> [...]
+>> 
+>> > We added test cases for bpf + strparser and separated them from
+>> > sockmap_basic. This is because we need to add more test cases for
+>> > strparser in the future.
+>> >
+>> > Fixes: e5c6de5fa025 ("bpf, sockmap: Incorrectly handling copied_seq")
+>> >
+>> > ---
+>> 
+>> I have a question unrelated to the fix itself -
+>> 
+>> Are you an active strparser+verdict sockmap user?
+>> 
+>> I was wondering if we can deprecate strparser if/when KCM time comes
+>
+> I am afraid not.
+>
+> strparser is very different from skb verdict, upper layer (e.g. HTTP)
+> protocol messages may be splitted accross sendmsg() call's, strparser
+> is the only place where we can assemble the messages and parse them as a
+> whole.
+>
+> And I don't think we have to use KCM together with strparser. Therefore,
+> even _if_ KCM can be deprecated, strparse still can't.
 
---E9e43Uydk5bsqLo+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the context. Good to know we have strparser users.
 
-On Sat, Dec 14, 2024 at 10:56:13AM +0000, Marc Zyngier wrote:
+I also wanna ask - did you guys consider migrating
+strp_data_ready->strp_read_sock->...->strp_recv to read_skb /
+tcp_read_skb to prevent the duplicate copied_seq update?
 
-> I don't understand the need to single out SMIDR_EL1. It seems to only
-> make things even more fragile than they already are by adding more
-> synchronisation phases.
+tcp_bpf_read_sock looks awfully lot like tcp_read_skb.
 
-> Why isn't the following a good enough fix? It makes it plain that
-> boot_cpu_data is only a copy of CPU0's initial boot state.
+I realize it is easier said than done because there is an interface
+mismatch - desc.count used to stop reading, and desc.error to signal OOM
+/ need to requeue is missing. And then there is the SW kTLS read_sock
+callback that would need adapting as well.
 
-That would work but it's not clear to me that that is what the intent is
-here.  The current ordering seemed like a strange enough decision to be
-deliberate, though I couldn't identify the reasoning.
-
---E9e43Uydk5bsqLo+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgGnEACgkQJNaLcl1U
-h9AYKAf+MF8iAaNQZfOzVcq7lqkYOmJEIvxdmbZaGy4HG4Qyq6EiHhR9proanw9r
-zFm1HwS/071AORKmuW4ou3GTTKLbJmbFwX/y4JLpunQxncc0IEUqqPRN5d3ilWgV
-avtBILCtQ4ioBR/4BfHUdR3l+pLei3Mm3HiZwzAGt0fcabqieAFGQlrkuu18uum8
-7JMff+9Ki1Ndupfh4W8iVVhsf1cAl4DUw3SA3675SmAgjQdNIltbL1CPTiHpELn9
-ycs9q/OOYvHexiTmEbud95/2d6tfau1vF1NZxP1lxBshdMf4fTx1KfGhSm/TVv1U
-r9VtFi7sySnj59Bjl/JZNJM1Gb22RQ==
-=32wj
------END PGP SIGNATURE-----
-
---E9e43Uydk5bsqLo+--
+Definitely more work, but maybe less code duplication in the long run?
 
