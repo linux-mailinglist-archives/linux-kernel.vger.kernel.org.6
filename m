@@ -1,86 +1,136 @@
-Return-Path: <linux-kernel+bounces-447072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661069F2CF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:28:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E419F2CFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAB61882067
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974061612F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBDC201110;
-	Mon, 16 Dec 2024 09:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pElc97kd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F347200BB9;
-	Mon, 16 Dec 2024 09:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304F82010EB;
+	Mon, 16 Dec 2024 09:29:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA9A1B87C4;
+	Mon, 16 Dec 2024 09:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734341292; cv=none; b=DmMDva+Sh/NOOSkfU1BQXqwacZVRzwbOI5WJ7KagCJdX3zPkxlE4wqnXXuk0xtA6WrfU21Qv9BofXVO+CJ/USkFFvgChs0Z5RZsSNIFLSjqMFJuo9131PXbdHhFPey1WIIVZn2Fy4TI31E1U6A6YGqh1Dc+kFUomAguXfi3igVc=
+	t=1734341358; cv=none; b=Pu9QwzV1idsfDw5vjc00uqLXn7RzT1jiT8ZcI28g/bj59p+snDn8zcTAHL8aSOHbJfXfsN15Y2wxV8gcXnjzYItilDcpe7zqXEHMcBSZK7alNh9KPhAeUzohQxQeRsH/ALql0N+D2Z1TKZ6CYFhbzQhQ900fl8XOq1TuHFqqFUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734341292; c=relaxed/simple;
-	bh=zplvDS/JfEKmgoJ/gVJLJ7g8FjSFAlfcgjYGedG7zmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhNEpucsTl/igQgSavcokk2TFMuAHZElGL46DthD4zOkK8GnjI6k74DalxDsIndEOOOYDpM22csGLiuaufRDAJzRurn69ihXuBedauVS68KBsjpNpkIPZrODmKCgY6h7tfjxwW9NIn9HtYnN3LdT5i0MaZZ+BGZrsQdbuOnWY/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pElc97kd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40C0C4CED0;
-	Mon, 16 Dec 2024 09:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734341291;
-	bh=zplvDS/JfEKmgoJ/gVJLJ7g8FjSFAlfcgjYGedG7zmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pElc97kdQ16eMIdJ0baZfJlFx+orrh97gDCgqBl4L0z4QnDHvBVE7JHL0IOAUT0g9
-	 +bGEXcfrbenR6AFVHKWu90CPoavRiA5G1BH6R8QjWUWOVZKZFcD9MD+HzlIRvnQWIb
-	 AK4pipDyVacG/UcT3D8QDTP8u9r6BJ0TYMcm3Ad5pDTEqOXlh+Lr8k/Kv3vgozNWiO
-	 dWkxH8QCMTZfsSn5D9PNT2IO3QOembvdsREuETSKOsaPBX5QxhSkrEYD7Isu3cBscX
-	 yFiP+ZBhPUktKnF87GMho/D6Dw4WuXgR039vaLugO27/n5PF0jt3xJljlhADiOAH9r
-	 JHnn29sWfMZUw==
-Date: Mon, 16 Dec 2024 10:28:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shimrra Shai <shimrrashai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, heiko@sntech.de, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	robh@kernel.org
-Subject: Re: [PATCH v3 3/3] dt-bindings: arm: rockchip: Add Firefly ITX-3588J
- board
-Message-ID: <x7y24y3bkbj5fzx5pdprjr5umg6egxsy2xscfbj3xgzgzubvdk@ppncjiqoekk7>
-References: <20241215032507.4739-1-shimrrashai@gmail.com>
- <20241215032507.4739-4-shimrrashai@gmail.com>
+	s=arc-20240116; t=1734341358; c=relaxed/simple;
+	bh=7SNDHByJZN/N/alTZ/vDDjLBiORwwXzaGk0GZxKmI0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BQqZ+8CPYqbfa3ClBnjqPV1gDx3okeCElYb/sFRzpxiXV15z9mXYGxkEnywmXoCT05YSUnqKH/706l9JSaANz4vZ9mLHzUKlGwTokznZieL1y8L9taMW5Udz4OTIjOUJCbe2htjxdBIblsId3pDKQv29/JHIl0T8xgT4qUsEQO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46E1A113E;
+	Mon, 16 Dec 2024 01:29:43 -0800 (PST)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E73313F720;
+	Mon, 16 Dec 2024 01:29:12 -0800 (PST)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	aruna.ramakrishna@oracle.com,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	joey.gouly@arm.com,
+	keith.lucas@oracle.com,
+	ryan.roberts@arm.com,
+	shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	x86@kernel.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH] selftests/mm: fix dependency on pkey_util.c
+Date: Mon, 16 Dec 2024 09:28:49 +0000
+Message-ID: <20241216092849.2140850-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <Z19Tl30BuKTfL629@tuxmaker.boeblingen.de.ibm.com>
+References: <Z19Tl30BuKTfL629@tuxmaker.boeblingen.de.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241215032507.4739-4-shimrrashai@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 14, 2024 at 09:24:55PM -0600, Shimrra Shai wrote:
-> Updated DT binding documentation per @Heiko St=C3=BCbner's suggestion, to
-> reflect the bipartite nature of the board.
->=20
-> Signed-off-by: Shimrra Shai <shimrrashai@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
+The pkey* files can only be built on architectures that support
+pkeys (pkey-helpers.h #error's otherwise). Adding pkey_util.c as
+dependency to all $(TEST_GEN_FILES) is therefore a bad idea. Make it
+a dependency of the pkeys tests only.
 
-Order your patches correctly (bindings are always before users), so you
-won't receive feedback of undocumented compatibles. See submitting
-patches in bindings directory.
+Those tests are built in 32/64-bit variants on x86_64 so we need to
+add an explicit dependency there as well.
 
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Alexander,
 
-Best regards,
-Krzysztof
+Thank you for the bug report, that patch indeed breaks all
+architectures that don't support pkeys, I should have realised that!
+This patch should fix it.
+
+Andrew, it would make sense to squash this patch into the original
+("selftests/mm: Use sys_pkey helpers consistently").
+
+Cheers,
+- Kevin
+
+Cc: akpm@linux-foundation.org
+Cc: aruna.ramakrishna@oracle.com
+Cc: catalin.marinas@arm.com
+Cc: dave.hansen@linux.intel.com
+Cc: joey.gouly@arm.com
+Cc: keith.lucas@oracle.com
+Cc: ryan.roberts@arm.com
+Cc: shuah@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: x86@kernel.org
+Cc: linux-s390@vger.kernel.org
+---
+ tools/testing/selftests/mm/Makefile | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index 1f0743d9459d..18041de1aebf 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -147,16 +147,20 @@ TEST_FILES += write_hugetlb_memory.sh
+ 
+ include ../lib.mk
+ 
+-$(TEST_GEN_PROGS): vm_util.c thp_settings.c pkey_util.c
+-$(TEST_GEN_FILES): vm_util.c thp_settings.c pkey_util.c
++$(TEST_GEN_PROGS): vm_util.c thp_settings.c
++$(TEST_GEN_FILES): vm_util.c thp_settings.c
+ 
+ $(OUTPUT)/uffd-stress: uffd-common.c
+ $(OUTPUT)/uffd-unit-tests: uffd-common.c
++$(OUTPUT)/protection_keys: pkey_util.c
++$(OUTPUT)/pkey_sighandler_tests: pkey_util.c
+ 
+ ifeq ($(ARCH),x86_64)
+ BINARIES_32 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_32))
+ BINARIES_64 := $(patsubst %,$(OUTPUT)/%,$(BINARIES_64))
+ 
++$(BINARIES_32) $(BINARIES_64): pkey_util.c
++
+ define gen-target-rule-32
+ $(1) $(1)_32: $(OUTPUT)/$(1)_32
+ .PHONY: $(1) $(1)_32
+-- 
+2.47.0
 
 
