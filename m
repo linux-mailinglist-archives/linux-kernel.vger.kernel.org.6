@@ -1,79 +1,44 @@
-Return-Path: <linux-kernel+bounces-447266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353CB9F2FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:50:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081639F2FE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37F247A1AB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3761F1660DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8D7203D55;
-	Mon, 16 Dec 2024 11:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F8520458A;
+	Mon, 16 Dec 2024 11:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="c9vwyuZ8"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F53C204088
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="AKwuk2sc"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDC82040BC;
+	Mon, 16 Dec 2024 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734349809; cv=none; b=op3bBtqEMaCq56MwABsEpNrTSbIPuOmVU7Pk9345zipuX1NAAsIAkI5FJhtr/FdL5uUWixFnZLWhyFay2RPBr8Rtp7gNOusEXK268yejvYFWEiPPIvAjK2iTK5knaNdRVYzaZYbLYDWo5yMQrvQqT172GTqXBNqJ6839fS2iZEk=
+	t=1734350136; cv=none; b=h/WK12NcW7U5Qopb1qwL2czI8t/L8yoxEQWn9608S4yhjnOwTwJ25/PoJP9Quka9izmvINAIROQRfAMpkqv+MEYphObDJM6LXMn3EWMBMCij0HUSU+4I7aH+TFxfSh2ldMNjGs5RBXF86b8a18YA5HuYCmdzWBH8ZF4EqBGUiB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734349809; c=relaxed/simple;
-	bh=LjoNpo99IS9TQ2tcnB3Fb50v0g/in8V7E04lFrHtrcg=;
+	s=arc-20240116; t=1734350136; c=relaxed/simple;
+	bh=kVAP8PxF3UrpxZw87ELx0B/Q/qq63lJQQJUfxtANVPU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zp+PaVTCz1ul/iIXaoN6W8X0ZJ87XZ5A9sd2KnckdwEgvxlLjyArbFKWJmC53kE92NTTSTP612kr0uYMI+6zajTAJxjB8mhUWHDRk2gAYMgefA3vgU8Gum2YEhbSzm7YJCuxKdAoAUa/yLjmaBlhiavRJKBqnHW3WcRQ/7QSGaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=c9vwyuZ8; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa679ad4265so951370166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:50:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1734349805; x=1734954605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=n4Fnqt3+wn3Jqih2/E06bFWlfYBOS+/nVME6Ot/StK8=;
-        b=c9vwyuZ89rAz7fOyhoTxkT4XTjxhvSfi8DfiW/OjpFNMUsA6v8hG/0DMPbvXC/rz/l
-         mEs7ru+VNaN8SR2XoIjkmkvTCMcWxveJ221IG5428MABbHm2OCcgfwF8MsRA47LsDijz
-         jI5zrkCHtawtSvKKMW8ZdPV6ugWaD45Qfr8WmV07MyZ/uCGM0kl7n5KVYLs+Ct4EMw1n
-         Nlye7HkWVhOLvd6ZSY3O74dwKvlgj/U7iOKklH0TOIGBaVMLFZ4b6wjhYJhbuCmkO7tD
-         WmRYq51FMQ03kdB1nFYWNXaBa+f8fCsp4mt1EULh09x+A5fRqfkkrVMJqmVdNqufzKQe
-         JQ/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734349805; x=1734954605;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4Fnqt3+wn3Jqih2/E06bFWlfYBOS+/nVME6Ot/StK8=;
-        b=csio2+doUJz9kvnqhcjydep+WkT8Oz+TU8SgRWUJfRhdsNVo/ptpeWlIPiIOxofCZ4
-         p/D6X4YCyoHsmeRvjVCwx6pd97ZAD0YGR5TWulWBExhF7hn27YLe7hdjqr2Lh1KYetka
-         YIkxt4VQUnuZojSyIQ2z5wf6hqd7TNDzwuPlAcqeiIM0G9IAaNdCEGSDIDdlWd7TXxAH
-         kN/3sNtZMOAZ/TMSO5fSlTf6748IYF9w0fyaTdp5d0kOowaV0uAX6Vgr+LMPA4gbI4Fk
-         y5hS+FHnUC09jvanQzNMWRKriCk9pUTKFGuy5MIb4rfi/slzMgdKb7FhsIC0rJB63nRg
-         14NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWCL5y7XiMcCvFu1uRYulfIkCozIGEbi5BsZTjuamQVyLJYP16VzBZ0aKf5C/mFvsrWj2O/kI+9wNNIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqsjQTZXCSdDtGBYqaQ1nj9IXuZEBJo3idIrW0vISbTMQut0E7
-	Iz/VirdwBYk0pWPoxRso08uWlzVlmSI00Bf+fI8mnvzeLQ2F4CKPvMg4nzTLGjs=
-X-Gm-Gg: ASbGnct1STju9JJ+pN4rrXAONEwgHFNGtoOSOr6+RzYO93AxS9NGaECYQhIq9v5JyOJ
-	uNDu+hSE5fbiTFFojRfeKXmUtUtwhRIlIBoEtPI9HArl9Gp+b9PFDNUSPF5gYsN4m7mMtluGrMD
-	skNIxNLbWkpRAv2S843SPiRY/5afmdeF32H3Shtyv/WcEn5QL/pcNzYmc5srm2D/g5YlXMchdB/
-	/Sm2Hi8BgNNSROQsTMxo1L1IyLlH0mtB2AZHP1zqXuBuew8xQ8Dk53NagHx7UmcnPPoSEQoCJJQ
-	ygpxzx0Dh7RC44bDkiw=
-X-Google-Smtp-Source: AGHT+IEnfewEiJGs3lq7FqGj7ad6Ew/gCcV3xnhPzkvANe07z2h/NIw9ORmy8DNUwq06lbUogwLfZA==
-X-Received: by 2002:a17:907:7e92:b0:aa6:a9fe:46de with SMTP id a640c23a62f3a-aab7b777564mr1235220266b.19.1734349804846;
-        Mon, 16 Dec 2024 03:50:04 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:f3f5:d43f:11fb:5f45? ([2001:67c:2fbc:1:f3f5:d43f:11fb:5f45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96089f88sm321885466b.91.2024.12.16.03.50.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 03:50:04 -0800 (PST)
-Message-ID: <a1137cc2-6985-44bc-a802-e070da7208dc@openvpn.net>
-Date: Mon, 16 Dec 2024 12:50:53 +0100
+	 In-Reply-To:Content-Type; b=IFa0zVTNxBpozMYoGWOea5w1is0fAZURD8Djaz1rBPVSzytNFJ3bJkgN0nRipPAp+TWqzsG//y29cTy8i924zn11FzNsk0tVfq7r6/eclrwK42Nsi/r3FeZhcto+YJN3x0sM7gYoE2EKDiaZX+7gV4mTOqgLoDFtlAUQt1Qy6jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=AKwuk2sc; arc=none smtp.client-ip=117.135.210.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=vHai0bofydY5qRIK3SpVBL5Nv8an8p0CBft58pGYi0Q=;
+	b=AKwuk2scUnVAC4EwlrIo2GqsmFEisCsrP2hXSTmnaUv9rn7zdoI8r6V68R2p5W
+	+6UL6qcLVL6reTSyUR0eJ2UzC1PTDvlVcv+PwYrYgVodbLQb2Bv0dtToeq+UEGPd
+	7YBLLMqXsDHEsgwTNZj5YVdKJDJbfAcnhXjPb4s3XDcok=
+Received: from [172.21.22.210] (unknown [118.242.3.34])
+	by gzsmtp3 (Coremail) with SMTP id pykvCgC3HlLCFGBnu946Cg--.55143S2;
+	Mon, 16 Dec 2024 19:53:38 +0800 (CST)
+Message-ID: <3e160d54-5860-4616-bd32-5faff3afdb49@126.com>
+Date: Mon, 16 Dec 2024 19:53:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,155 +46,238 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
- willemdebruijn.kernel@gmail.com
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
- <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net> <Z1sNEgQLMzZua3mS@hog>
- <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net> <Z2AKg6ntLd94anHv@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z2AKg6ntLd94anHv@hog>
+Subject: Re: [PATCH V4] mm, compaction: don't use ALLOC_CMA in long term GUP
+ flow
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, david@redhat.com, vbabka@suse.cz, liuzixing@hygon.cn
+References: <1734256867-19614-1-git-send-email-yangge1116@126.com>
+ <f3bf705a-89db-47be-860f-31227b0133a2@linux.alibaba.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <f3bf705a-89db-47be-860f-31227b0133a2@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:pykvCgC3HlLCFGBnu946Cg--.55143S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GrWUuF1fur45Jr1rGw47twb_yoW3tw45pF
+	18Z3W2y395XFy3Cr48tF409F4Fqw4xKF18Ar1Igw1xZa4akF9293WkKFy3AF4UXryYka1Y
+	qFWq9F9ruFsxAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uq2NtUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgW3G2dgFFkEhwAAsa
 
-On 16/12/2024 12:09, Sabrina Dubroca wrote:
-[...]
->> Maybe we should call cancel_sync_work(&ovpn_sock->work) inside
->> ovpn_socket_get()?
->> So the latter will return NULL only when it is sure that the socket has been
->> detached.
+
+
+在 2024/12/16 16:41, Baolin Wang 写道:
+> 
+> 
+> On 2024/12/15 18:01, yangge1116@126.com wrote:
+>> From: yangge <yangge1116@126.com>
 >>
->> At that point we can skip the following return and continue along the "new
->> socket" path.
+>> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+>> in __compaction_suitable()") allow compaction to proceed when free
+>> pages required for compaction reside in the CMA pageblocks, it's
+>> possible that __compaction_suitable() always returns true, and in
+>> some cases, it's not acceptable.
 >>
->> What do you think?
-> 
-> The work may not have been scheduled yet? (small window between the
-> last kref_put and schedule_work)
-> 
-> Maybe a completion [Documentation/scheduler/completion.rst] would
-> solve it (but it makes things even more complex, unfortunately):
-> 
->   - at the end of ovpn_socket_detach: complete(&ovpn_sock->detached);
->   - in ovpn_socket_new when handling EALREADY: wait_for_completion(&ovpn_sock->detached);
->   - in ovpn_socket_new for the new socket: init_completion(&ovpn_sock->detached);
-> 
-> but ovpn_sock could be gone immediately after complete(). Maybe
-> something with completion_done() before the kfree_rcu in
-> ovpn_socket_detach? I'm not that familiar with the completion API.
-> 
-
-It seems the solution we are aiming for is more complex than the concept 
-of ovpn_socket per se :-D
-
-I'll think a bit more about this..maybe we can avoid entering this 
-situation at all..
-
-> 
->> However, this makes we wonder: what happens if we have two racing PEER_NEW
->> with the same non-yet-attached UDP socket?
-> 
-> mhmm, I remember noticing that, but it seems I never mentioned it in
-> my reviews. Sorry.
-> 
->> Maybe we should lock the socket in ovpn_udp_socket_attach() when checking
->> its user-data and setting it (in order to make the test-and-set atomic)?
-> 
-> I'd use the lock to protect all of ovpn_socket_new.
-> ovpn_tcp_socket_attach locks the socket but after doing the initial
-> checks, so 2 callers could both see sock->sk->sk_user_data == NULL and
-> do the full attach. And I don't think unlocking before
-> rcu_assign_sk_user_data is safe for either UDP or TCP.
-
-I tend to agree here. Guarding the whole ovpn_socket_new with 
-lock_sock() seems the right thing to do.
-
-> 
->> I am specifically talking about this in udp.c:
+>> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+>> of memory. I have configured 16GB of CMA memory on each NUMA node,
+>> and starting a 32GB virtual machine with device passthrough is
+>> extremely slow, taking almost an hour.
 >>
->> 345         /* make sure no pre-existing encapsulation handler exists */
->> 346         rcu_read_lock();
->> 347         old_data = rcu_dereference_sk_user_data(sock->sk);
->> 348         if (!old_data) {
->> 349                 /* socket is currently unused - we can take it */
->> 350                 rcu_read_unlock();
->> 351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
->> 352                 return 0;
->> 353         }
+>> During the start-up of the virtual machine, it will call
+>> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+>> Long term GUP cannot allocate memory from CMA area, so a maximum
+>> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+>> machine memory. Since there is 16G of free CMA memory on the NUMA
+>> node, watermark for order-0 always be met for compaction, so
+>> __compaction_suitable() always returns true, even if the node is
+>> unable to allocate non-CMA memory for the virtual machine.
 >>
->> We will end up returning 0 in both contexts and thus allocate two
->> ovpn_sockets instead of re-using the first one we allocated.
+>> For costly allocations, because __compaction_suitable() always
+>> returns true, __alloc_pages_slowpath() can't exit at the appropriate
+>> place, resulting in excessively long virtual machine startup times.
+>> Call trace:
+>> __alloc_pages_slowpath
+>>      if (compact_result == COMPACT_SKIPPED ||
+>>          compact_result == COMPACT_DEFERRED)
+>>          goto nopage; // should exit __alloc_pages_slowpath() from here
 >>
->> Does it make sense?
-> 
-> Yes.
-> 
-> [...]
->>> [I have some more nits/typos here and there but I worry the
->>> maintainers will get "slightly" annoyed if I make you repost 22
->>> patches once again :) -- if that's all I find in the next few days,
->>> everyone might be happier if I stash them and we get them fixed after
->>> merging?]
+>> In order to quickly fall back to remote node, we should remove
+>> ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
+>> in long term GUP flow. After this fix, starting a 32GB virtual machine
+>> with device passthrough takes only a few seconds.
 >>
->> If we have to rework this socket attaching part, it may be worth throwing in
->> those typ0 fixes too :)
+>> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in 
+>> __compaction_suitable()")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: yangge <yangge1116@126.com>
+>> ---
+>>
+>> V4:
+>> - rich the commit log description
+>>
+>> V3:
+>> - fix build errors
+>> - add ALLOC_CMA both in should_continue_reclaim() and compaction_ready()
+>>
+>> V2:
+>> - using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
+>> - rich the commit log description
+>>
+>>   include/linux/compaction.h |  6 ++++--
+>>   mm/compaction.c            | 18 +++++++++++-------
+>>   mm/page_alloc.c            |  4 +++-
+>>   mm/vmscan.c                |  4 ++--
+>>   4 files changed, 20 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+>> index e947764..b4c3ac3 100644
+>> --- a/include/linux/compaction.h
+>> +++ b/include/linux/compaction.h
+>> @@ -90,7 +90,8 @@ extern enum compact_result 
+>> try_to_compact_pages(gfp_t gfp_mask,
+>>           struct page **page);
+>>   extern void reset_isolation_suitable(pg_data_t *pgdat);
+>>   extern bool compaction_suitable(struct zone *zone, int order,
+>> -                           int highest_zoneidx);
+>> +                           int highest_zoneidx,
+>> +                           unsigned int alloc_flags);
+>>   extern void compaction_defer_reset(struct zone *zone, int order,
+>>                   bool alloc_success);
+>> @@ -108,7 +109,8 @@ static inline void 
+>> reset_isolation_suitable(pg_data_t *pgdat)
+>>   }
+>>   static inline bool compaction_suitable(struct zone *zone, int order,
+>> -                              int highest_zoneidx)
+>> +                              int highest_zoneidx,
+>> +                              unsigned int alloc_flags)
+>>   {
+>>       return false;
+>>   }
+>> diff --git a/mm/compaction.c b/mm/compaction.c
+>> index 07bd227..585f5ab 100644
+>> --- a/mm/compaction.c
+>> +++ b/mm/compaction.c
+>> @@ -2381,9 +2381,11 @@ static enum compact_result 
+>> compact_finished(struct compact_control *cc)
+>>   static bool __compaction_suitable(struct zone *zone, int order,
+>>                     int highest_zoneidx,
+>> +                  unsigned int alloc_flags,
+>>                     unsigned long wmark_target)
+>>   {
+>>       unsigned long watermark;
+>> +    bool use_cma;
+>>       /*
+>>        * Watermarks for order-0 must be met for compaction to be able to
+>>        * isolate free pages for migration targets. This means that the
+>> @@ -2395,25 +2397,27 @@ static bool __compaction_suitable(struct zone 
+>> *zone, int order,
+>>        * even if compaction succeeds.
+>>        * For costly orders, we require low watermark instead of min for
+>>        * compaction to proceed to increase its chances.
+>> -     * ALLOC_CMA is used, as pages in CMA pageblocks are considered
+>> -     * suitable migration targets
+>> +     * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
+>> +     * CMA pageblocks are considered suitable migration targets
+>>        */
+>>       watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
+>>                   low_wmark_pages(zone) : min_wmark_pages(zone);
+>>       watermark += compact_gap(order);
+>> +    use_cma = !!(alloc_flags & ALLOC_CMA);
+>>       return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
+>> -                   ALLOC_CMA, wmark_target);
+>> +                   use_cma ? ALLOC_CMA : 0, wmark_target);
 > 
-> ACK, I'll send them out.
-
-Thanks.
-
-Regards,
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
+> Why not just use 'alloc_flags & ALLOC_CMA' instead? then you can remove 
+> the 'use_cma' variable.
+yes, I will change it in next version.
+> 
+>>   }
+>>   /*
+>>    * compaction_suitable: Is this suitable to run compaction on this 
+>> zone now?
+>>    */
+>> -bool compaction_suitable(struct zone *zone, int order, int 
+>> highest_zoneidx)
+>> +bool compaction_suitable(struct zone *zone, int order, int 
+>> highest_zoneidx,
+>> +                   unsigned int alloc_flags)
+>>   {
+>>       enum compact_result compact_result;
+>>       bool suitable;
+>> -    suitable = __compaction_suitable(zone, order, highest_zoneidx,
+>> +    suitable = __compaction_suitable(zone, order, highest_zoneidx, 
+>> alloc_flags,
+>>                        zone_page_state(zone, NR_FREE_PAGES));
+>>       /*
+>>        * fragmentation index determines if allocation failures are due to
+>> @@ -2474,7 +2478,7 @@ bool compaction_zonelist_suitable(struct 
+>> alloc_context *ac, int order,
+>>           available = zone_reclaimable_pages(zone) / order;
+>>           available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+>>           if (__compaction_suitable(zone, order, ac->highest_zoneidx,
+>> -                      available))
+>> +                      alloc_flags, available))
+>>               return true;
+>>       }
+>> @@ -2499,7 +2503,7 @@ compaction_suit_allocation_order(struct zone 
+>> *zone, unsigned int order,
+>>                     alloc_flags))
+>>           return COMPACT_SUCCESS;
+>> -    if (!compaction_suitable(zone, order, highest_zoneidx))
+>> +    if (!compaction_suitable(zone, order, highest_zoneidx, alloc_flags))
+>>           return COMPACT_SKIPPED;
+>>       return COMPACT_CONTINUE;
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index dde19db..9a5dfda 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -2813,6 +2813,7 @@ int __isolate_free_page(struct page *page, 
+>> unsigned int order)
+>>   {
+>>       struct zone *zone = page_zone(page);
+>>       int mt = get_pageblock_migratetype(page);
+>> +    bool pin;
+>>       if (!is_migrate_isolate(mt)) {
+>>           unsigned long watermark;
+>> @@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, 
+>> unsigned int order)
+>>            * exists.
+>>            */
+>>           watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
+>> -        if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
+>> +        pin = !!(current->flags & PF_MEMALLOC_PIN);
+>> +        if (!zone_watermark_ok(zone, 0, watermark, 0, pin ? 0 : 
+>> ALLOC_CMA))
+>>               return 0;
+> 
+> I wonder why not pass ‘cc->alloc_flags’ as a parameter for 
+> __isolate_free_page()?
+Some places that use __isolate_free_page() don't have 'cc->alloc_flags', 
+which leads me to believe that no modification is required.
+I will change it in next version.
+> 
+>>       }
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index 5e03a61..33f5b46 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -5815,7 +5815,7 @@ static inline bool 
+>> should_continue_reclaim(struct pglist_data *pgdat,
+>>                         sc->reclaim_idx, 0))
+>>               return false;
+>> -        if (compaction_suitable(zone, sc->order, sc->reclaim_idx))
+>> +        if (compaction_suitable(zone, sc->order, sc->reclaim_idx, 
+>> ALLOC_CMA))
+>>               return false;
+>>       }
+>> @@ -6043,7 +6043,7 @@ static inline bool compaction_ready(struct zone 
+>> *zone, struct scan_control *sc)
+>>           return true;
+>>       /* Compaction cannot yet proceed. Do reclaim. */
+>> -    if (!compaction_suitable(zone, sc->order, sc->reclaim_idx))
+>> +    if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, 
+>> ALLOC_CMA))
+>>           return false;
+>>       /*
 
 
