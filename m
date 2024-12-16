@@ -1,81 +1,202 @@
-Return-Path: <linux-kernel+bounces-446724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4B59F2876
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D2C9F287A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:19:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8DEF188527E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF49D1885330
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAA12E628;
-	Mon, 16 Dec 2024 02:18:26 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 1FD88F9DD;
-	Mon, 16 Dec 2024 02:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125BE2E859;
+	Mon, 16 Dec 2024 02:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PPTqzWMp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A78F9DD;
+	Mon, 16 Dec 2024 02:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734315505; cv=none; b=saVyJcI/CXt9uW/XvBMgTlrzche57ljkiYHK2d44lL/QiHq7YTzEBnUcpN3ry3nQ2XacIWmRs55oRP13nIWF6sDZYXp1LBjC4tADCfOMTIUhFvZth4zcsEG8nvc8geNdwvsK+dzmnb6zwl83gJJJjxv8/tco14mKBuOikbKAmHo=
+	t=1734315582; cv=none; b=ZakTIbzxjCkpyqzRT7JgsTv9p2m80PJOynEXJBI3btP9Hz5BLgT1a6Y7Hrq7Zs8NzNtyWvnmLwxj/ZtZr6rNPIsRlG2IXB9hiZ53eTrTVUvZ2fWaWUhrTXgUxJzBRhcd61sqkdkTIw5REWpR2FBhTEq7MguX+QPw8AX5yYs7lnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734315505; c=relaxed/simple;
-	bh=DzpS8DJ/6Y7quP7GX/kvjg0BkUPIBrPzsE2Gzg+uEz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mBHEvQTDsAOZ0Zqqwuoxlg2TngUimWjwZdUDJYeyFFpEyqFbglrY2ED8DyuxcyNfJYusP+sqWQH4PDkcMUpdfKBM1tispVbfHkBxKEy3psjdojpA+eaXc2C8jWiJnl5Hzo41uWw56RiFrVZEMksIResiFZj1VgBgNThocKFo2tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [103.163.180.3])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPA id 1A12760276F5B;
-	Mon, 16 Dec 2024 10:18:16 +0800 (CST)
-X-MD-Sfrom: youwan@nfschina.com
-X-MD-SrcIP: 103.163.180.3
-From: Youwan Wang <youwan@nfschina.com>
-To: jikos@kernel.org
-Cc: bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	enze@nfschina.com,
-	Youwan Wang <youwan@nfschina.com>
-Subject: [PATCH] HID: multitouch: Add quirk for Hantick 5288 touchpad
-Date: Mon, 16 Dec 2024 10:18:01 +0800
-Message-Id: <20241216021801.22572-1-youwan@nfschina.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1734315582; c=relaxed/simple;
+	bh=hKzyIpBqw7KkcqlCuzxVcow04rFKSSBvdFMEgjPd8IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DeE9tznEvE6RuAhxND4k+WUb9SEiXx6wA6qzVw1CvkdGh5PmifwIeBLXibqp+an6CwtXVIcavfCLQcmEYCDxw1EuIfqs2U2t8aYLAwL29kHGawYdFcglyJSjdW7ar2MWgcLSsFGgPxWkMjL3w2hxo972G8ge3uRQW+cufu1YwEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PPTqzWMp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG28xsY025873;
+	Mon, 16 Dec 2024 02:19:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DxqPQuZdtSzYqadtsbgVmkNynvY2w4/NYzWtD/niH+M=; b=PPTqzWMp40LW53uG
+	t2+Yd/An6bEnxidi9776V8uE0G+88Okix0mUxWDkONr3/GGBFWGTmeoLRuLyLxU9
+	5KsbDlwCt+yzdeUlr9AcOc/o4HGoKIu4Bvgtvk3fiazcc5pMfmpKDjcyBET+mJSs
+	lalY6xA8Y+YPFWEr1xmUOlKbqY+zoZTdk4mWMYnLpdIrJkj5pvB32ELqwndjLMOf
+	YOGoQ/1EECEvGi5esR7dcBHrvdWLGBWYiHGZV5nmqMUb642Ze5eZ3MN0DBb9SNd4
+	hsUF5SgtoDcWs1gLJQAQ9aIEUI87NwwaDXqTTUCPy7haRHX7lNlZ8yWiL1m1S+sQ
+	3gmifQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jb5rr0k0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 02:19:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BG2JBB5010962
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 02:19:11 GMT
+Received: from [10.110.102.127] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 15 Dec
+ 2024 18:19:10 -0800
+Message-ID: <54188c68-41c7-4a42-9eca-67363b30217a@quicinc.com>
+Date: Sun, 15 Dec 2024 18:19:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/22] drm: Add valid clones check
+To: Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Maxime Ripard
+	<mripard@kernel.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
+ <20240925-hasty-bald-caribou-eedbf5@houat>
+ <80d08449-71de-4a7f-8b2a-8af565d8d701@quicinc.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <80d08449-71de-4a7f-8b2a-8af565d8d701@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: K9r6Da7mMNK9VrorMF6wFaFU1tsW4mz0
+X-Proofpoint-ORIG-GUID: K9r6Da7mMNK9VrorMF6wFaFU1tsW4mz0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ spamscore=0 mlxscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412160017
 
-This device sometimes doesn't send touch release signals when moving
-from >=2 fingers to <2 fingers. Using MT_QUIRK_NOT_SEEN_MEANS_UP instead
-of MT_QUIRK_ALWAYS_VALID makes sure that no touches become stuck.
+Hi Maxime
 
-Signed-off-by: Enze Xie <enze@nfschina.com>
-Signed-off-by: Youwan Wang <youwan@nfschina.com>
----
- drivers/hid/hid-multitouch.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Gentle reminder on this one.
 
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 42c0bd9d2f31..82900857bfd8 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -2314,6 +2314,11 @@ static const struct hid_device_id mt_devices[] = {
- 		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_SIS_TOUCH,
- 			HID_ANY_ID) },
- 
-+	/* Hantick */
-+	{ .driver_data = MT_CLS_NSMU,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-+			   I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288) },
-+
- 	/* Generic MT device */
- 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_MULTITOUCH, HID_ANY_ID, HID_ANY_ID) },
- 
--- 
-2.25.1
+We are looking for some advice on how to go about KUnit for this static 
+function.
 
+Please help with our question below.
+
+Thanks
+
+Abhinav
+
+On 12/6/2024 4:48 PM, Jessica Zhang wrote:
+> 
+> 
+> On 9/25/2024 12:23 AM, Maxime Ripard wrote:
+>> On Tue, Sep 24, 2024 at 03:59:18PM GMT, Jessica Zhang wrote:
+>>> Check that all encoders attached to a given CRTC are valid
+>>> possible_clones of each other.
+>>>
+>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>>> ---
+>>>   drivers/gpu/drm/drm_atomic_helper.c | 23 +++++++++++++++++++++++
+>>>   1 file changed, 23 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c 
+>>> b/drivers/gpu/drm/drm_atomic_helper.c
+>>> index 43cdf39019a4..cc4001804fdc 100644
+>>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>>> @@ -574,6 +574,25 @@ mode_valid(struct drm_atomic_state *state)
+>>>       return 0;
+>>>   }
+>>> +static int drm_atomic_check_valid_clones(struct drm_atomic_state 
+>>> *state,
+>>> +                     struct drm_crtc *crtc)
+>>> +{
+>>> +    struct drm_encoder *drm_enc;
+>>> +    struct drm_crtc_state *crtc_state = 
+>>> drm_atomic_get_new_crtc_state(state,
+>>> +                                      crtc);
+>>> +
+>>> +    drm_for_each_encoder_mask(drm_enc, crtc->dev, 
+>>> crtc_state->encoder_mask) {
+>>> +        if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
+>>> +            crtc_state->encoder_mask) {
+>>> +            DRM_DEBUG("crtc%d failed valid clone check for mask 
+>>> 0x%x\n",
+>>> +                  crtc->base.id, crtc_state->encoder_mask);
+>>> +            return -EINVAL;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>   /**
+>>>    * drm_atomic_helper_check_modeset - validate state object for 
+>>> modeset changes
+>>>    * @dev: DRM device
+>>> @@ -745,6 +764,10 @@ drm_atomic_helper_check_modeset(struct 
+>>> drm_device *dev,
+>>>           ret = drm_atomic_add_affected_planes(state, crtc);
+>>>           if (ret != 0)
+>>>               return ret;
+>>> +
+>>> +        ret = drm_atomic_check_valid_clones(state, crtc);
+>>> +        if (ret != 0)
+>>> +            return ret;
+>>>       }
+>>
+>> Pretty much the same comment, we should have kunit tests for this.
+> 
+> Hey Maxime,
+> 
+> I'm working on the kunit test for this and had a question on the design 
+> for the unit test:
+> 
+> Since this is a static helper that returns a pretty common error code, 
+> how would you recommend going about making sure that 
+> `drm_atomic_check_valid_clones()` specifically is returning the error 
+> (and not a different part of check_modeset) when testing the 
+> check_valid_clones() failure path?
+> 
+> Thanks,
+> 
+> Jessica Zhang
+> 
+>>
+>> Maxime
+> 
 
