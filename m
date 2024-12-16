@@ -1,217 +1,148 @@
-Return-Path: <linux-kernel+bounces-447543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D059F33FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:07:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7398F9F3401
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED3E41663F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F1118819BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1CF137775;
-	Mon, 16 Dec 2024 15:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="betIl4PQ"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D6199B9;
-	Mon, 16 Dec 2024 15:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1B2126C0D;
+	Mon, 16 Dec 2024 15:07:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940E73BBF2;
+	Mon, 16 Dec 2024 15:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361617; cv=none; b=KmImcBpoa3pqswxq6071eBXV3grLBHbrcj9p+feo42Y6G/jop9AEhbks9hJCt7XGYR1h7KlmPA7GDxYBis4N96oXwCj9/Gr6ePQYNoKfMmF2oRwXAnm5LYh6eWm5t0liTkXStK/uXvHj+0sL8BMSej3Z0HPRGq5zMKXI6fztYpI=
+	t=1734361642; cv=none; b=ZD7pIVIsFgkL+hbtsNSaj67C98vHzKCyOBmKtkI/XdgJxuyacdWG/WA+ofh9GzyK662VkNHcTqFXL60zplotozwZlp6Vi8wirYPuvvdZlGt+/C9z1foDsW7vfdvDsR063DQVOVqHADzsivzMEGOXWvcPKGlDfmHhw66lH6JOjfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361617; c=relaxed/simple;
-	bh=TzEoTsBvaYARaeayDsoIBjOQEdXasZhzTjqMqIPOgVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LkWDdcpOhak9OqoETribwtNWH/8J4IKE7C2fKsEnYhmdOyXOTAk5agNrqD7dBAyxDS0ZisREOk2Oj6yoflhi+vlhZAKB6pfp+Dm4HsMoeFk/VOi2HsF4EOcQbv2v472o3S1rJLZz+S53/VzKUPRT5nEChh+2+VRosNF8hUvUxZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=betIl4PQ; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 46778100003;
-	Mon, 16 Dec 2024 18:06:37 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 46778100003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1734361597;
-	bh=sFyGMIe/cWHSGp4/ziUFRDWY1kSa8zme+CKERgruf/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=betIl4PQPP6phE/CC9a3GdUyBBnz4i+4oSHuSspr94SdcUK7J7nh0zA4tWsMmPuER
-	 XR5aJqguIq05yY+7GajqWcQ0HoQLCHSgXpkXGvPW5lNg5+LJCf7Bib+A8M2P1M4r53
-	 5zcLwa6iaSaLNM1/c2xdtXIAnt/vnV/nQCqo4euexYyDlV2usmbmfLBFDcM7pAEsWW
-	 bSewN1Ora7nuaEd/caTSBcg2qJm/q0/2yIlseOwFWr4BBRBx8pYxWilObn8a/ijOMd
-	 D2C9IHKGZJ0ZvC19pq9Z1ilTrBODoOQxMKSO5oZ5Nsdke6nVYdX0J//7YYXeIRuS2G
-	 GZXviGDvIIK4Q==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 16 Dec 2024 18:06:37 +0300 (MSK)
-Message-ID: <609417f4-68c8-a382-0d95-04000c9df5cf@salutedevices.com>
-Date: Mon, 16 Dec 2024 18:06:36 +0300
+	s=arc-20240116; t=1734361642; c=relaxed/simple;
+	bh=SgZjk+8yBlOmzIWfRmxDyNI7Gzu9mkk24E08tKkr/gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9VgZoeZ3xo9+EEKpRZpO1nwZDEwWM9k01PYFRRKz3JPgVbam3vSoPhA8dABruflIUFqo5kjMtcOxIB4t1hKS5OWlubz99CO73kT8ohIhjPiDavMf8CPJaEddtDVRlxHh1eNsWeAPMQQ7x3U3u6Z7F793WHsYuC8kQ9xaWO+RCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 177A0113E;
+	Mon, 16 Dec 2024 07:07:47 -0800 (PST)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2FC93F528;
+	Mon, 16 Dec 2024 07:07:17 -0800 (PST)
+Date: Mon, 16 Dec 2024 15:07:15 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
+ __cpuinfo_store_cpu()
+Message-ID: <Z2BCI61c9QWG7mMB@J2N7QTR9R3.cambridge.arm.com>
+References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
+ <87a5cysfci.wl-maz@kernel.org>
+ <Z2AfOZ82QG_ukWry@J2N7QTR9R3>
+ <865xnjsnqo.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
-Content-Language: en-US
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-CC: Marcel Holtmann <marcel@holtmann.org>, <linux-bluetooth@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <oxffffaa@gmail.com>,
-	<ddrokosov@salutedevices.com>
-References: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
- <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
-From: Arseniy Krasnov <avkrasnov@salutedevices.com>
-In-Reply-To: <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189864 [Dec 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 47 0.3.47 57010b355d009055a5b6c34e0385c69b21a4e07f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/16 12:28:00 #26886242
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <865xnjsnqo.wl-maz@kernel.org>
 
-
-
-On 16.12.2024 17:52, Luiz Augusto von Dentz wrote:
-> Hi Arseniy,
+On Mon, Dec 16, 2024 at 02:31:43PM +0000, Marc Zyngier wrote:
+> On Mon, 16 Dec 2024 12:38:17 +0000,
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> > I think that what we did in commit:
+> > 
+> >    892f7237b3ff ("arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}")
+> > 
+> > ... introduces an anti-pattern that'd be nice to avoid. That broke the
+> > existing split of __cpuinfo_store_cpu() and init_cpu_features(), where
+> > the former read the ID regs, and the latter set up the features
+> > *without* altering the copy of the ID regs that was read. i.e.
+> > init_cpu_features() shouldn't write to its info argument at all.
+> > 
+> > I understand that we have to do something as a bodge for broken FW which
+> > traps SME, but I'd much rather we did that within __cpuinfo_store_cpu().
 > 
-> On Wed, Nov 27, 2024 at 7:38 AM Arseniy Krasnov
-> <avkrasnov@salutedevices.com> wrote:
->>
->> 'hci_register_dev()' calls power up function, which is executed by
->> kworker - 'hci_power_on()'. This function does access to bluetooth chip
->> using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
->> Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
->> if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
->> 'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
->> be executed before setting this bit. In that case HCI init logic fails.
->>
->> Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
->> allows to perform power up logic without original bit set.
->>
->> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
->> ---
->>  drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
->>  drivers/bluetooth/hci_uart.h  |  1 +
->>  2 files changed, 15 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
->> index 30192bb083549..2e20f00649bd7 100644
->> --- a/drivers/bluetooth/hci_ldisc.c
->> +++ b/drivers/bluetooth/hci_ldisc.c
->> @@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct hci_uart *hu)
->>         if (!skb) {
->>                 percpu_down_read(&hu->proto_lock);
->>
->> -               if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
->> +               if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
->> +                   test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->>                         skb = hu->proto->dequeue(hu);
->>
->>                 percpu_up_read(&hu->proto_lock);
->> @@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
->>         if (!percpu_down_read_trylock(&hu->proto_lock))
->>                 return 0;
->>
->> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
->> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
->> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->>                 goto no_schedule;
->>
->>         set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
->> @@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
->>
->>         percpu_down_read(&hu->proto_lock);
->>
->> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
->> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
->> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->>                 percpu_up_read(&hu->proto_lock);
->>                 return -EUNATCH;
->>         }
->> @@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
->>         if (tty != hu->tty)
->>                 return;
->>
->> -       if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
->> +       if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
->> +           test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->>                 hci_uart_tx_wakeup(hu);
->>  }
->>
->> @@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data,
->>
->>         percpu_down_read(&hu->proto_lock);
->>
->> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
->> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
->> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->>                 percpu_up_read(&hu->proto_lock);
->>                 return;
->>         }
->> @@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
->>
->>         hu->proto = p;
->>
->> +       set_bit(HCI_UART_PROTO_INIT, &hu->flags);
->> +
->>         err = hci_uart_register_dev(hu);
->>         if (err) {
->>                 return err;
->>         }
->>
->>         set_bit(HCI_UART_PROTO_READY, &hu->flags);
->> +       clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
+> Honestly, I'd rather revert that patch, together with b3000e2133d8
+> ("arm64: Add the arm64.nosme command line option"). I'm getting tired
+> of the FW nonsense, and we are only allowing vendors to ship untested
+> crap.
 > 
-> This should be quite obvious, why don't you just move the
-> HCI_UART_PROTO_READY above hci_uart_register_dev?
-> 
+> Furthermore, given the state of SME in the kernel, I don't think this
+> is makes any difference. So maybe this is the right time to reset
+> everything to a sane state.
 
-Hi, this is simplest way, but I had doubts that this may be so obvious because
-I don't have enough experience in bt logic.
+Looking again, a revert does look to be the best option.
 
-I'll send v2 with it.
+We removed reg_zcr and reg_smcr in v6.7 in commits:
 
-Thanks
+  abef0695f9665c3d ("arm64/sve: Remove ZCR pseudo register from cpufeature code")
+  391208485c3ad50f ("arm64/sve: Remove SMCR pseudo register from cpufeature code")
 
->>         return 0;
->>  }
->>
->> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
->> index 00bf7ae82c5b7..39f39704be41f 100644
->> --- a/drivers/bluetooth/hci_uart.h
->> +++ b/drivers/bluetooth/hci_uart.h
->> @@ -89,6 +89,7 @@ struct hci_uart {
->>  #define HCI_UART_REGISTERED            1
->>  #define HCI_UART_PROTO_READY           2
->>  #define HCI_UART_NO_SUSPEND_NOTIFIER   3
->> +#define HCI_UART_PROTO_INIT            4
->>
->>  /* TX states  */
->>  #define HCI_UART_SENDING       1
->> --
->> 2.30.1
+As of those commits, ZCR and SCMR no longer matter to
+__cpuinfo_store_cpu(), and only SMIDR_EL1 remains...
+
+Per ARM DDI 0487 L.a, accesses to SMIDR_EL1 never trap to EL3, so we can
+read that safely as long as ID_AA64PFR1_EL1.SME indicates that SME is
+implemented.
+
+Which is to say that if we revert the remaining portion of 892f7237b3ff
+and restore the read of SMIDR, that should be good as far back as v6.7,
+which sounds good to me.
+
+Mark.
+
+> > Can we add something to check whether SME was disabled on the command
+> > line, and use that in __cpuinfo_store_cpu(), effectively reverting
+> > 892f7237b3ff?
 > 
+> Maybe, but that'd be before any sanitisation of the overrides, so it
+> would have to severely limit its scope. Something like this, which I
+> haven't tested:
 > 
+> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+> index d79e88fccdfce..9e9295e045009 100644
+> --- a/arch/arm64/kernel/cpuinfo.c
+> +++ b/arch/arm64/kernel/cpuinfo.c
+> @@ -492,10 +492,22 @@ void cpuinfo_store_cpu(void)
+>  	update_cpu_features(smp_processor_id(), info, &boot_cpu_data);
+>  }
+>  
+> +static void cpuinfo_apply_overrides(struct cpuinfo_arm64 *info)
+> +{
+> +	if (FIELD_GET(ID_AA64PFR0_EL1_SVE, id_aa64pfr0_override.mask) &&
+> +	    !FIELD_GET(ID_AA64PFR0_EL1_SVE, id_aa64pfr0_override.val))
+> +		info->reg_id_aa64pfr0 &= ~ID_AA64PFR0_EL1_SVE;
+> +
+> +	if (FIELD_GET(ID_AA64PFR1_EL1_SME, id_aa64pfr1_override.mask) &&
+> +	    !FIELD_GET(ID_AA64PFR1_EL1_SME, id_aa64pfr1_override.val))
+> +		info->reg_id_aa64pfr1 &= ~ID_AA64PFR1_EL1_SME;
+> +}
+> +
+>  void __init cpuinfo_store_boot_cpu(void)
+>  {
+>  	struct cpuinfo_arm64 *info = &per_cpu(cpu_data, 0);
+>  	__cpuinfo_store_cpu(info);
+> +	cpuinfo_apply_overrides(info);
+>  
+>  	boot_cpu_data = *info;
+>  	init_cpu_features(&boot_cpu_data);
 > 
+> But this will have ripple effects on the rest of the override code
+> (the kernel messages are likely to be wrong).
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
