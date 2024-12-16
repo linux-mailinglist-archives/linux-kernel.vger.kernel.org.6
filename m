@@ -1,212 +1,208 @@
-Return-Path: <linux-kernel+bounces-447527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155EF9F33C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55229F33C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D6A07A24C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:56:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4418E16793F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC32C14B94C;
-	Mon, 16 Dec 2024 14:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3B2132139;
+	Mon, 16 Dec 2024 14:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtgtOEt6"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePym7UBa"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B67207A1D;
-	Mon, 16 Dec 2024 14:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513024B34;
+	Mon, 16 Dec 2024 14:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734360688; cv=none; b=QGQsPlrbMDkBsgeZAAX91lAlHc5sSMZD32POISSjWnYgI19tkr88i6Ayo9fw17ns0HlvvQVyqUMtEIG9MZJhGL9ud+fWThSxtnZz16HKUXobrigrwUcIv5B97LXVWZzm5pjgtqftYfZ2y66BIwIGQQv4ah4a3i026jmOYyOiXmE=
+	t=1734360750; cv=none; b=WHnsZZISW+XXtZXRuF4se1KuGBXH1EofUWcjQKgDGhcYmytIVWwCiIisRtlO1p9jiiLYMCyc+tEUPRMSK7Buh8SWGJDVqijz6tY7v+J8JqvCEfeMxhuH/dtaAXrZLYeI6l4kvJD9P1gq7kR2TxF8nyqIQI6TR6QwozsdjNQSmbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734360688; c=relaxed/simple;
-	bh=AkMTmkKlrQ8VFXVorPrHhF449gun9/lsauN+Wej1SvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cu20Jre5gKYE5CTSC0UAhN00s18E+q+nfnXdO7BkAC7Hn6Xw/M1niwrFYN84YbtIMRjBSM3/KL4oovM0+0rHd7ahUdHH7tb78o1VGdxDyCCEEF5Bj1Uh0gHI+PdxOunildb3QOIZpxNXl2Iljomt0Zadz4ZH8Jb5hPQ1jU7iJcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtgtOEt6; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1734360750; c=relaxed/simple;
+	bh=n7fpU+SC39T8RldMuPqzx9FZJoD/RN0VzaM8P5PZLPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ViiFIJbABw8AusZMc5MV+nJf4mSBnT0zGvFBHFsq5BdQHExinC7xZy/uuahHvKGwhfQgBpfY96eXa0PWJ1USwlmkJ7hwcuTe1gv+6R+/hKPU8o7+m6h9VFWBTPRTz41RstxI3TeArdR3I8vDvMLXoQrdESVjbEolCgvuPMcH2Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePym7UBa; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4362f61757fso30056925e9.2;
-        Mon, 16 Dec 2024 06:51:25 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3022484d4e4so47793631fa.1;
+        Mon, 16 Dec 2024 06:52:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734360684; x=1734965484; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734360743; x=1734965543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EAAKa/iJbcg0hE8bXqvcJeWPfM0/EwIS0mrbbFrulwU=;
-        b=JtgtOEt6eSbfTqAjyslnwMKAHDjhx7IXBmhC4Z5tAfd9+2/s8xLsKn9+BMimHuChHI
-         vHJbIe/iSrbdKY7Hh+pktleVNq9te/mLgbPy1w9HQsteLAyMQWwwYt5+8sYds3zuIqN/
-         A3iUutayo4x28BxqUNVx1jw3TGIsSphIewsHi0Ni9XH0SjwweWvyjm4mFRQ4j8OGHsBO
-         hEU8rmxR6twT1AQo4mZ92xWapkxVm/G3KDaxblYwKjodjtdGH7JJTGx0+kV8WRAhF8ey
-         gC0ATWXzUC1obzQLAaJDyTGH7IY6YAyJ2v7P3SvHPaeQfnHdSRGzi0kXymlTr8q3CueK
-         RYlg==
+        bh=trdXo5m3hzsJ+wm6hIAb/8LUnuB+TKKoS08uSjvrSH4=;
+        b=ePym7UBaP5FTQuSdnn5VlpNX8JhzYN5u3oRu9+epERfsvj+XC3YOOhWzjTeneMOjmu
+         qEQ2o70e3KDlQxam5xFAfNtC/Ni8luj48l03Mz+OZMEhzDDTdd7sTD3+NvcVOMX8+HRU
+         vW0SvvegaxJ4B8Yo2HHKxuox1GAJndEFDHwtn8xyw4p3wpsyR2eGnhO1aM8i0gU3FQvJ
+         cLF9+aH9hgYfAa1RPCjkI+jdfoTM2QPR049pEsSVI3Hx0DQe4e8rio6WXSPQNW0tSqb+
+         b4lRgkCqWFwgiKpYzwZT6dYu0BO4Vzqkdi/Pg2SJBVISbBaXSCMcmh2XqjkoBR/RfTjc
+         g63w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734360684; x=1734965484;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734360743; x=1734965543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EAAKa/iJbcg0hE8bXqvcJeWPfM0/EwIS0mrbbFrulwU=;
-        b=pJ9EtJy3E1p+Ri4TKK79+GFXKMrohAkfKI+YqQrnqfu5AM9igWBWHjkpO8r5i8+Icp
-         IqtDam1KedjCBmdDv1aZDtm8Wx2xMad52Pou3sFVp4T0mLbCHcwHzM+XjevhyrDJMNWR
-         GppTFkGN9PzFPkldCK8GevuUkqkYeNX6qIhFO4rMfG64yltZbGdWQ9c7k/JSCKM0vWK7
-         8Sji8cgbK3zZyMl9kmaLg0nxZQb6jlhmnVW+OpAupWa+MVtetZ3y27ZEjl6lRMOnelYX
-         VabYAsE6rOjZSBi91YBgLhVgrpDNpapsgl0XYssCOGt60HwVNiqih1ZZyHZVEexmA8Bd
-         jNRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7ElhV8kE6tuNPF8v54W2DgyZWg8x2mUhivM1ag84fyahqmigib9DLmG/j2V9EYmFEGsC4arlI7Dpb5ZI=@vger.kernel.org, AJvYcCWg+WsBdo5y46QAs8s0BDESoBiUXUFilKr/2hhvGgUcF9YVwBOtHgON7TWvFAvEckihtDMYXc8IZ963@vger.kernel.org, AJvYcCXgdDOB1HSSf3M93PN3x6TkdcQFX7ZNT0lhw1z1PGEqPvW+pZWMnif18tJ0loZ9Ysl1VUZcra3PC7SG60sz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP1NaMoP83pi/rj8NWMRp5iNtMo+WSOYHyDDSAwfHCdLdfhTWS
-	Trt3EWBzlbS3i4fV/pKnYALV1z13ZhEsUTAfbOTMqwjZvVCUDGwaS/AlGHEb
-X-Gm-Gg: ASbGncvNgCjotCRwbYviOMTsQIDyx71dsveDa68WVgFNF42d3BY7XHdjXVtFD2CqAmm
-	D0o7i29t2SUv7ny0bwbn4iPn0wlCPqb4pJdcOV7WP9LUTR8sd9VWt6SvAbXBcg1EzR+zIrEdMqP
-	JgrzLI6nfl3obwc9hoLqNDSt0MkTnSufzRqSPwkktT+Wg5o1I5xUJ+GDxy9VJsmJJVMnNZ6Uryv
-	UvaawIT3kMlxxVfudtklUX2n4iN9jlRat8M4QiAhXEM24L3yozmIPa+ymz2qpXnAWOEAvouLH74
-	GNEOLDkpDTpGH9yt
-X-Google-Smtp-Source: AGHT+IF6mGQ66zqt23wxmdgyvCpFmx39WbIi+8c7emJk9Jb285zsFEtWpp62qxObMAzNXGOH9H4hJg==
-X-Received: by 2002:a05:600c:a011:b0:434:f819:251a with SMTP id 5b1f17b1804b1-4362aa3a029mr127042805e9.9.1734360684343;
-        Mon, 16 Dec 2024 06:51:24 -0800 (PST)
-Received: from playground.localdomain ([92.120.5.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ed6csm141616455e9.24.2024.12.16.06.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:51:23 -0800 (PST)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mark Brown <broonie@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Frank Li <Frank.li@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] arm64: dts: imx: add imx95 dts for sof
-Date: Mon, 16 Dec 2024 09:50:39 -0500
-Message-Id: <20241216145039.3074-6-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241216145039.3074-1-laurentiumihalcea111@gmail.com>
-References: <20241216145039.3074-1-laurentiumihalcea111@gmail.com>
+        bh=trdXo5m3hzsJ+wm6hIAb/8LUnuB+TKKoS08uSjvrSH4=;
+        b=fVRCn2mEVz4czu/bAfdZL8RuHIgcmf8APYUjxyBnJ4xvlEh59pQThbWvxF/w3nqolM
+         3yDclAnVhcDRJ2PAKfSkBPDhn46rjG/G8yDt1/jRVi1CGtLFCyXQipEEbWDuWfKKtymy
+         vuMyMlwXcYtgj/9TspbzIWEnsnypi+PRtHq4BFzXZykJrvrhSZGsB+8Wga8snQC2FQau
+         yPcyYxnLLcptF67WkaWTi21cKE4CJ/Cth4MZ250aya/Sa8HNR7P28Ea/QaHOxVTl0oeb
+         nO65PCzicZgIWvfMU+djKxl26wlRddBEC7Sw8kgHkXsmgfPgFTTshHxNgxHY9BIEmjwD
+         NJ3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUxusMv6UHM1EJzgHX47QylkbnWi1NU5+/nMzJTeBOWBfAgc4m5kOC0qQSWgi1TwnjqUnhRvE2MJUvd/mY@vger.kernel.org, AJvYcCXajaUa6I8voQTTq5AiIs5XRDBGVeDbQP/4v5mjwlKF2mFVhJA+b4h7Zc9bfOqjLb2J38holF/HWOXUYlKe7GY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSUe8fGCk7s7JazOdNKHWHbNtiVXOs7aPe4/C7bmuQP7VcsK+T
+	T6JdYi1KlrIeH4dtk6GR+daPsHXBoLY9FsfG359g5Z1ChCfClpkPJre2q47CWXrI82+Jsi2wWgw
+	rAbbaRVLeLVj38JLzuBGViTpZ514TmpE3
+X-Gm-Gg: ASbGnctcmdeCI5BR2CkuDRW7c5feJNbpT0V7oYjIAXPDQRhGbKj8kG/77sSg/6q1Y7p
+	k7LqScxXYTZt9+3TxTiAozh3l/f0mwmSdoi3J
+X-Google-Smtp-Source: AGHT+IEIrXZEtRGkQkC/37jybcKymAIgGbmU+DmfCpXu3xlvjD32Aoh7VBkNt/7yUhvF+wthvTwGMMtZ97RlnkbCBUo=
+X-Received: by 2002:a05:651c:2205:b0:302:3a46:10a7 with SMTP id
+ 38308e7fff4ca-304434da015mr73081fa.5.1734360742560; Mon, 16 Dec 2024 06:52:22
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
+In-Reply-To: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 16 Dec 2024 09:52:10 -0500
+Message-ID: <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
+Subject: Re: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, oxffffaa@gmail.com, ddrokosov@salutedevices.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Hi Arseniy,
 
-Add imx95 DTS for SOF usage.
+On Wed, Nov 27, 2024 at 7:38=E2=80=AFAM Arseniy Krasnov
+<avkrasnov@salutedevices.com> wrote:
+>
+> 'hci_register_dev()' calls power up function, which is executed by
+> kworker - 'hci_power_on()'. This function does access to bluetooth chip
+> using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
+> Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
+> if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
+> 'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
+> be executed before setting this bit. In that case HCI init logic fails.
+>
+> Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
+> allows to perform power up logic without original bit set.
+>
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+> ---
+>  drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
+>  drivers/bluetooth/hci_uart.h  |  1 +
+>  2 files changed, 15 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.=
+c
+> index 30192bb083549..2e20f00649bd7 100644
+> --- a/drivers/bluetooth/hci_ldisc.c
+> +++ b/drivers/bluetooth/hci_ldisc.c
+> @@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct=
+ hci_uart *hu)
+>         if (!skb) {
+>                 percpu_down_read(&hu->proto_lock);
+>
+> -               if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+> +               if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
+> +                   test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>                         skb =3D hu->proto->dequeue(hu);
+>
+>                 percpu_up_read(&hu->proto_lock);
+> @@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
+>         if (!percpu_down_read_trylock(&hu->proto_lock))
+>                 return 0;
+>
+> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
+> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>                 goto no_schedule;
+>
+>         set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
+> @@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, =
+struct sk_buff *skb)
+>
+>         percpu_down_read(&hu->proto_lock);
+>
+> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
+>                 percpu_up_read(&hu->proto_lock);
+>                 return -EUNATCH;
+>         }
+> @@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tt=
+y)
+>         if (tty !=3D hu->tty)
+>                 return;
+>
+> -       if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+> +       if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
+> +           test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>                 hci_uart_tx_wakeup(hu);
+>  }
+>
+> @@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *t=
+ty, const u8 *data,
+>
+>         percpu_down_read(&hu->proto_lock);
+>
+> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
+>                 percpu_up_read(&hu->proto_lock);
+>                 return;
+>         }
+> @@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, =
+int id)
+>
+>         hu->proto =3D p;
+>
+> +       set_bit(HCI_UART_PROTO_INIT, &hu->flags);
+> +
+>         err =3D hci_uart_register_dev(hu);
+>         if (err) {
+>                 return err;
+>         }
+>
+>         set_bit(HCI_UART_PROTO_READY, &hu->flags);
+> +       clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/Makefile        |  1 +
- .../dts/freescale/imx95-19x19-evk-sof.dts     | 75 +++++++++++++++++++
- 2 files changed, 76 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx95-19x19-evk-sof.dts
+This should be quite obvious, why don't you just move the
+HCI_UART_PROTO_READY above hci_uart_register_dev?
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 839432153cc7..27f64e333e4b 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -282,6 +282,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxca.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-tqma9352-mba93xxla.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
- 
- imx8mm-kontron-dl-dtbs			:= imx8mm-kontron-bl.dtb imx8mm-kontron-dl.dtbo
- 
-diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk-sof.dts b/arch/arm64/boot/dts/freescale/imx95-19x19-evk-sof.dts
-new file mode 100644
-index 000000000000..8eef83d7bdd7
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk-sof.dts
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx95-19x19-evk.dts"
-+
-+/ {
-+	sof_cpu: cm7-cpu@80000000 {
-+		compatible = "fsl,imx95-cm7-sof";
-+		reg = <0x0 0x80000000 0x0 0x6100000>;
-+		memory-region = <&adma_res>;
-+		mboxes = <&mu7 2 0>, <&mu7 2 1>, <&mu7 3 0>, <&mu7 3 1>;
-+		mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
-+		cpu: port {
-+			cpu_ep: endpoint { remote-endpoint = <&codec_ep>; };
-+		};
-+	};
-+
-+	reserved-memory {
-+		adma_res: memory@86100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x86100000 0x0 0x100000>;
-+			no-map;
-+		};
-+	};
-+
-+	sof-sound-wm8962 {
-+		compatible = "audio-graph-card2";
-+		links = <&cpu>;
-+		label = "wm8962-audio";
-+		hp-det-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_hp>;
-+		widgets =
-+			"Headphone", "Headphones",
-+			"Microphone", "Headset Mic";
-+		routing =
-+			"Headphones", "HPOUTL",
-+			"Headphones", "HPOUTR",
-+			"Headset Mic", "MICBIAS",
-+			"IN3R", "Headset Mic",
-+			"IN1R", "Headset Mic";
-+	};
-+
-+	sound-wm8962 {
-+		status = "disabled";
-+	};
-+
-+};
-+
-+&edma2 {
-+	dma-channel-mask = <0xc0000000>, <0x0>;
-+};
-+
-+&sai3 {
-+	status = "disabled";
-+};
-+
-+&wm8962 {
-+	assigned-clocks = <&scmi_clk IMX95_CLK_AUDIOPLL1_VCO>,
-+			  <&scmi_clk IMX95_CLK_AUDIOPLL2_VCO>,
-+			  <&scmi_clk IMX95_CLK_AUDIOPLL1>,
-+			  <&scmi_clk IMX95_CLK_AUDIOPLL2>,
-+			  <&scmi_clk IMX95_CLK_SAI3>;
-+	assigned-clock-parents = <0>, <0>, <0>, <0>, <&scmi_clk IMX95_CLK_AUDIOPLL1>;
-+	assigned-clock-rates = <3932160000>, <3612672000>,
-+			       <393216000>, <361267200>,
-+			       <12288000>;
-+	port {
-+		codec_ep: endpoint { remote-endpoint = <&cpu_ep>; };
-+	};
-+};
--- 
-2.34.1
+>         return 0;
+>  }
+>
+> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+> index 00bf7ae82c5b7..39f39704be41f 100644
+> --- a/drivers/bluetooth/hci_uart.h
+> +++ b/drivers/bluetooth/hci_uart.h
+> @@ -89,6 +89,7 @@ struct hci_uart {
+>  #define HCI_UART_REGISTERED            1
+>  #define HCI_UART_PROTO_READY           2
+>  #define HCI_UART_NO_SUSPEND_NOTIFIER   3
+> +#define HCI_UART_PROTO_INIT            4
+>
+>  /* TX states  */
+>  #define HCI_UART_SENDING       1
+> --
+> 2.30.1
 
+
+
+--=20
+Luiz Augusto von Dentz
 
