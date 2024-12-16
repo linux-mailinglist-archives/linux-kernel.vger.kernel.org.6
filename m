@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-448110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5059F3B6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:47:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4E19F3B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B41188065B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:47:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80A9818894BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779501DF992;
-	Mon, 16 Dec 2024 20:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03531F1905;
+	Mon, 16 Dec 2024 20:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s/weIBr3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nzd+ovsV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233501D63C5;
-	Mon, 16 Dec 2024 20:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8091F12E6;
+	Mon, 16 Dec 2024 20:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381771; cv=none; b=rvoyQvk2fjEJ6t5R0VmAkZ2Kkpt54lbEfRDCrlYYrzOlT0j7/xGdOIN30hH7eNxROX89HNED1DeK5yLdhGNpKDtNmYVqJqqGDlbKkWDsGf0AcXwzN88cT9JwEWYzzRi/S+oThqjfJol5zsnEwlLym/sywtMaJFv/iKxOuAxVXyY=
+	t=1734381817; cv=none; b=ir3lgmMO83B8ZWtLOB9JgGdXfZfRpiQIeCe92ozytQIWvo1uuQaB59fHt1TMNyWQMotnvd7uHinvheXlxDbgbYOeaub8RvGZ1cYTjR0wsepVVgdwnkGIbqC59aB2OM31/US8kPFMaeqxVHOK8Jea/tzIWCPStitIxyuBqhOP1ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381771; c=relaxed/simple;
-	bh=Wsa0lsfUskZ+wFIP8wYuEeWySF76wctRdDLLa/6PduQ=;
+	s=arc-20240116; t=1734381817; c=relaxed/simple;
+	bh=0BaMYlNAFb9HgkBB2xtOwGy6i64VF7BXefzM3e8O04k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVRscJLTGmqFpAC0wDCmKN7Xq2WIKCnRnAxA/DqJY5cY6fz5GqH4frg1/J0SC3X9dn2oaFkUDheSGXuI8fzej3R6+oifdWyIj35vDrgT6oxLOM0LrObge7Qtd97UkXzq1hNRJErLx7uZsjL8GooYJ7IylOp434xlxx6OGqoXTdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s/weIBr3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XwXXoIySC4SYlAQ92EhSQlV963XBica42YF53fB4Nfc=; b=s/weIBr3ZUWFhT1dOuOQrfM697
-	EJRBQUsxO1C7C2jT8I47s1sgmmUkhiTjVx7KNRbQAFaAfQj3veI6XexdshyhN3yWkWeGXkhE7ayHt
-	f21vxQqSbrR7oAXleQaXIIyjLJEOz9AwvaJZaoXaxUyAGeOw9Yo9aZlP+RKdUAzhhFerVaY97f+wr
-	VfwtdrxtvqsjD7l9Ojt1J2ntkeg8CWWuI2BbECQx5zh0v7Go8gt5bWinHJEsadpAxvf7ZFGxJrbmn
-	amgAgdvHF73Ir1CyCGPK3Cjd3TlAcNtQms+TGN7N5pEDSF20KunDgCmxukaHCyxFxTaIFfL8vQB7J
-	IWZYbvXA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNHv8-00000001vcF-2fiq;
-	Mon, 16 Dec 2024 20:42:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2D82830031E; Mon, 16 Dec 2024 21:42:24 +0100 (CET)
-Date: Mon, 16 Dec 2024 21:42:23 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
-	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
-	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
-	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v6 10/16] mm: replace vm_lock and detached flag with a
- reference count
-Message-ID: <20241216204223.GA9803@noisy.programming.kicks-ass.net>
-References: <20241216192419.2970941-1-surenb@google.com>
- <20241216192419.2970941-11-surenb@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EcKZ74CmdBPLMfAKYcm/df0mbYjMSLkAshEXLlnwtzgqhv3Z1m3mWikXx0w6VKJqdYgpxvSGVH75dL+yk15/5E/030WdHW+F5f/NVcPieLnadmQNmc8XBE8vaWBqHgxwWloizB2pYFkLp6tumDJG4/cImbf+xagdc0Ae5ZUIKF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nzd+ovsV; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734381816; x=1765917816;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0BaMYlNAFb9HgkBB2xtOwGy6i64VF7BXefzM3e8O04k=;
+  b=nzd+ovsVhXJKNZDkOeKBmyzJ6zl34lXDdCtWEt0f69gmWZnc6ft5cTqG
+   UA4tZAKuJKbss4DsbuBD6cipmsxt9fA4/56jWZbWtJj2XxTplVHynve7f
+   5XLt0CVzxlapNVY0WRZedB1tisX9xn2uZGBM6lPgpe2cJMzSZ3Iz6J7q2
+   PbqGsvFPbS5X8liUEu13zIebuJ6fIadevomLwbv29dS3346vNEHDBiJ8I
+   TjJ1ZDmtjc1UV1EPPKCoHOUhHdIsMj6MoPP2dnRTnKzXyzi4wPshEm9bs
+   MyvyJeqd8+hkN7LQYmW0NPPKM6fR2WO1UE44da78bKfX7dvEX76fQ0e2M
+   w==;
+X-CSE-ConnectionGUID: kGe7aa+KTlmTx8jcRajLUg==
+X-CSE-MsgGUID: J5risfCfRvCC0uGXK2N1qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45789175"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="45789175"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 12:43:35 -0800
+X-CSE-ConnectionGUID: gIugq1Y3SxO9rtM/B3lhDg==
+X-CSE-MsgGUID: lIupBWCtQdGweZjkXjkIdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
+   d="scan'208";a="97551785"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 12:43:32 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tNHw8-00000008jD7-10GU;
+	Mon, 16 Dec 2024 22:43:28 +0200
+Date: Mon, 16 Dec 2024 22:43:28 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH tty-next v1 1/4] serial: 8250: Use @ier bits to determine
+ if Rx is stopped
+Message-ID: <Z2CQ8NvNhIOpPcBn@smile.fi.intel.com>
+References: <20241216171244.12783-1-john.ogness@linutronix.de>
+ <20241216171244.12783-2-john.ogness@linutronix.de>
+ <Z2COCeWqyauMYYyk@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,22 +88,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241216192419.2970941-11-surenb@google.com>
+In-Reply-To: <Z2COCeWqyauMYYyk@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Dec 16, 2024 at 11:24:13AM -0800, Suren Baghdasaryan wrote:
-> @@ -734,10 +761,12 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
->  	 * after it has been unlocked.
->  	 * This pairs with RELEASE semantics in vma_end_write_all().
->  	 */
-> +	if (oldcnt & VMA_STATE_LOCKED ||
-> +	    unlikely(vma->vm_lock_seq == raw_read_seqcount(&vma->vm_mm->mm_lock_seq))) {
+On Mon, Dec 16, 2024 at 10:31:06PM +0200, Andy Shevchenko wrote:
+> On Mon, Dec 16, 2024 at 06:18:41PM +0106, John Ogness wrote:
+> > Commit f19c3f6c8109 ("serial: 8250_port: Don't service RX FIFO if
+> > throttled") uses @read_status_mask (bit UART_LSR_DR) to determine
+> > if Rx has been stopped. However, the bit UART_LSR_DR is not
+> > managed properly in @read_status_mask for all Rx stop/start
+> > situations and is therefore not suitable for this purpose.
+> > 
+> > Use the UART_IER_RLSI and UART_IER_RDI bits in @ier instead, as
+> > this is already common in 8250-variants and drivers.
+> 
+> Hmm... IER is Interrupt Enable Register, so it has been programmed to the value
+> we control, on the opposite the LSR is Line Status Register and defines status
+> on the line at the moment of reading. Can you elaborate how your change is correct
+> substitute?
 
-You likely want that unlikely to cover both conditions :-)
+Additionally the common IRQ handler may be called at last in the custom ones
+and hence potentially the value of saved IER might be different to what the
+actual register is programmed to.
 
-> +		vma_refcount_put(vma);
->  		return false;
->  	}
-> +
->  	return true;
->  }
+Besides that I don't remember all of the mysterious ways of DMA. May it affect
+the value of IER and when we swtich from DMA to PIO and vice versa we get an
+incorrect value in the saved variable?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
