@@ -1,163 +1,332 @@
-Return-Path: <linux-kernel+bounces-447417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229C59F31EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:47:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFE29F31EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63CD188960D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5BA41615C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E4E20551E;
-	Mon, 16 Dec 2024 13:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78192204F6B;
+	Mon, 16 Dec 2024 13:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnB6ltlo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="RBJaotQr"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B6D2054E1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD4F2556E;
+	Mon, 16 Dec 2024 13:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734356780; cv=none; b=geKbe5WUVjQJ59/qgbEqArXn5PpESq6qhJ/k2ikCPm/5PDwWjIBG6Y6ELnSmhe0ej1B+znufLs3wRE85vUogzzXPecNYzx4cmyeEA5oKQFcrzdtQv2tWixuRgd+7fhr3xrnOekbAzQWH2ZSf6rYooFlOt5iiKkhg/vptfloQkeY=
+	t=1734356823; cv=none; b=gvIWS3aRza0AXC8frg4DLRSC3eI9aRksGF2LPRrPifS7WAI15SD6p1SnwOYSClJSg1DRBGHIxn42ioFazaUw2ppv6OPCAbPo2WdhNIwJVqTv6obMrlRcSAy3yEH59B1A3/MsR5C1jRgzvtu8IuRJrTYNyFgFZMcfXLyPI34Jzs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734356780; c=relaxed/simple;
-	bh=h680FSarTKxAYGzHO4A3NuyVe7d878RQW85+aBBE0E8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZpOnzMq/mhgJJhFUzMQLGDj2lfEMQqhZkkUzgsHjk93znUh7sNIUpgu5XEe9u22kfeF23cKTlhm+TZHol0/eiUCE4vzZ5K0ciJD19mECKDhVyz0PKc7enuMPGTZq91Vjy6L7Y7ob3FErojz9Zj6fkbwPugvKPZcKtPo999PzrTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnB6ltlo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C875C4CED0;
-	Mon, 16 Dec 2024 13:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734356779;
-	bh=h680FSarTKxAYGzHO4A3NuyVe7d878RQW85+aBBE0E8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AnB6ltlo7qAcNavqKW+JmHhmX6s4dDd+SBXIXjH1S2kTnHp+CQ6PCDgdckXDmlWm9
-	 VyDOqITLxDHvqc04FDxosw4BE4mmInIcMVNWbcHPI7Kt7xZPNsnbHl0PyLlgT9i3CL
-	 JKmLYJGOHArOqzHcenvz5OIVpwJCvPM2l7mbPZnEEudLlu0HQ+r5tvGHkjC4z+gZ7l
-	 z0kpZ1su/jJorccnVjkFYkQC375v3PG6Bq0Oea7QHnI+NkyP4zGcrapJFLERnNT+Wm
-	 88V3c4T4jQm/5qZqXy2ac77rRPvmb80j9w6W2nsSO4XZKXLDdT0SSgpHGjFeJVDFau
-	 w1gE9JQsrY9Tg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1734356823; c=relaxed/simple;
+	bh=oEZfz8WgBmM56yd3PK7lilCZVa2ktDFFPxudBVi2gjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5c0TOTTX2zeBF/iX0GygHBKgeA5DGXEaMpSteUXER22hhMAZsJpWCmzoBllaMJs67zHBCG9diwEnHLE7f387PcpY/U5+XWX8KSYGLx83Sn+kZKJ0wgFXO7I+V5WhfMNwLDbmbSgF5UZGmDRo+f7KwTwUgG5iWjzEVYP6BvgGXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=RBJaotQr; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=9ui19pdFWI6XU8mJCKSrpFmXJFE2UkYGp8t6YsQ9Mj4=; b=RBJaotQr9PEwYK5r
+	MbP3Zeo0v7tgJ8suCINaU/eWxkbK5XGBcq8Q7WMrby8xh6uTDxxZujyt0t5PR0qqHjINa0fWpIuJj
+	/V6p9b5TWfoW3LWE+/+jWn9mUZwyp+bx01dt0fCbBhZ2eMACAYVBy2eCzbSTA4SLnrDc6v9xk1QWP
+	GbANvvGTHjW2UeBdEc8QhQGq1AOWUpk01EDvsf7wKEAeLuzdZf5Ocz3WHsvEPGCJMFtxdH024weAV
+	bz/cfGJ3NmottId76FZhaZ3vimwNGNe3GRuHZSrRAJSGpOB2ZFL7bkGBlLKLMyQ8qCaHfLRkFJE6G
+	pisPZRdbk2CXQ7tU4g==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tNBQx-005cGx-0m;
+	Mon, 16 Dec 2024 13:46:51 +0000
+Date: Mon, 16 Dec 2024 13:46:51 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: kraxel@redhat.com, virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	syzbot+69f5379a1717a0b982a1@syzkaller.appspotmail.com
-Subject: [PATCH] f2fs: fix to do sanity check correctly on i_inline_xattr_size
-Date: Mon, 16 Dec 2024 21:46:00 +0800
-Message-Id: <20241216134600.8308-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: a bochs-drm (?) oops on head
+Message-ID: <Z2AvS_8xgBhnF4CW@gallifrey>
+References: <Z18dbfDAiFadsSdg@gallifrey>
+ <b2e2a217-dced-472f-9084-9822f7e6803c@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <b2e2a217-dced-472f-9084-9822f7e6803c@suse.de>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 13:41:58 up 222 days, 56 min,  1 user,  load average: 0.02, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-syzbot reported an out-of-range access issue as below:
+* Thomas Zimmermann (tzimmermann@suse.de) wrote:
+> Hi
 
-UBSAN: array-index-out-of-bounds in fs/f2fs/f2fs.h:3292:19
-index 18446744073709550491 is out of range for type '__le32[923]' (aka 'unsigned int[923]')
-CPU: 0 UID: 0 PID: 5338 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
- read_inline_xattr+0x273/0x280
- lookup_all_xattrs fs/f2fs/xattr.c:341 [inline]
- f2fs_getxattr+0x57b/0x13b0 fs/f2fs/xattr.c:533
- vfs_getxattr_alloc+0x472/0x5c0 fs/xattr.c:393
- ima_read_xattr+0x38/0x60 security/integrity/ima/ima_appraise.c:229
- process_measurement+0x117a/0x1fb0 security/integrity/ima/ima_main.c:353
- ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
- security_file_post_open+0xb9/0x280 security/security.c:3121
- do_open fs/namei.c:3830 [inline]
- path_openat+0x2ccd/0x3590 fs/namei.c:3987
- do_file_open_root+0x3a7/0x720 fs/namei.c:4039
- file_open_root+0x247/0x2a0 fs/open.c:1382
- do_handle_open+0x85b/0x9d0 fs/fhandle.c:414
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Hi Thomas,
+  Thanks for the reply.
 
-index: 18446744073709550491 (decimal, unsigned long long)
-= 0xfffffffffffffb9b (hexadecimal) = -1125 (decimal, long long)
-UBSAN detects that inline_xattr_addr() tries to access .i_addr[-1125].
+> Am 15.12.24 um 19:18 schrieb Dr. David Alan Gilbert:
+> > Hey Gerd, Thomas,
+> >    I've got the following oops that looks bochs-drm related on the current
+> > HEAD ( 4800575d8c0b2f354ab05ab1c4749e45e213bf73 ) and it's been there
+> > for at least a few days; this is
+> [...]
+> > 
+> > The oops has :
+> > [   78.463760][    T1]  bochs_pci_driver_init+0x8a/0xc0
+> > 
+> > in it, hence why I'm blaming that.
+> > (Other odd observation, the Tuxen flicker heavily during booting!)
+> > 
+> > [   72.756014][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+> > [   72.758258][    T1] [drm] Found bochs VGA, ID 0xb0c5.
+> > [   72.758793][    T1] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
+> > [   72.767777][    T1] [drm] Initialized bochs-drm 1.0.0 for 0000:00:02.0 on minor 2
+> > [   72.839222][    T1] fbcon: bochs-drmdrmfb (fb1) is primary device
+> > [   72.839311][    T1] fbcon: Remapping primary device, fb1, to tty 1-63
+> > [   78.402163][    T1] bochs-drm 0000:00:02.0: [drm] fb1: bochs-drmdrmfb frame buffer device
+> > [   78.459984][    T1] BUG: unable to handle page fault for address: ffff8dd345604004
+> > [   78.463246][    T1] #PF: supervisor write access in kernel mode
+> > [   78.463760][    T1] #PF: error_code(0x0002) - not-present page
+> > [   78.463760][    T1] PGD 72001067 P4D 72001067 PUD 72002067 PMD 7fbe1067 PTE 800ffffffa9fb060
+> > [   78.463760][    T1] Oops: Oops: 0002 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
+> > [   78.463760][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W        N 6.13.0-rc2+ #363 6c653a430ed30aae3dac648429c492a2726da3d7
+> > [   78.463760][    T1] Tainted: [W]=WARN, [N]=TEST
+> > [   78.463760][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+> > [   78.463760][    T1] RIP: 0010:devm_drm_dev_init_release+0x4e/0x140
+> [...]
+> > 
+> > [   78.463760][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> > 
+> > 
+> > The config is a fairly full yes-config ish; see attached.
+> 
+> Thanks for reporting. I've been able to reproduce the problem by setting
+> CONFIG_DEBUG_TEST_DRIVER_REMOVE <https://elixir.bootlin.com/linux/v6.13-rc2/K/ident/CONFIG_DEBUG_TEST_DRIVER_REMOVE>=y.
 
-w/ below testcase, it can reproduce this bug easily:
-- mkfs.f2fs -f -O extra_attr,flexible_inline_xattr /dev/sdb
-- mount -o inline_xattr_size=512 /dev/sdb /mnt/f2fs
-- touch /mnt/f2fs/file
-- umount /mnt/f2fs
-- inject.f2fs --node --mb i_inline --nid 4 --val 0x1 /dev/sdb
-- inject.f2fs --node --mb i_inline_xattr_size --nid 4 --val 2048 /dev/sdb
-- mount /dev/sdb /mnt/f2fs
-- getfattr /mnt/f2fs/file
+Ah OK, so fairly obscure (I'm running something close to a all-yes-config
+because I'm mostly build testing obscure stuff).
 
-The root cause is if metadata of filesystem and inode were fuzzed as below:
-- extra_attr feature is enabled
-- flexible_inline_xattr feature is enabled
-- ri.i_inline_xattr_size = 2048
-- F2FS_EXTRA_ATTR bit in ri.i_inline was not set
+> The attached patch fixes the problem for me. Could you please test and
+> report back the results.
 
-sanity_check_inode() will skip doing sanity check on fi->i_inline_xattr_size,
-result in using invalid inline_xattr_size later incorrectly, fix it.
+That gets me a different oops; this was run with:
+qemu-system-x86_64  -M pc -cpu host --enable-kvm -smp 4 -m 2G -kernel /discs/fast/kernel/arch/x86/boot/bzImage -append "console=tty0 console=ttyS0 root=/dev/vdb1 single" -drive if=virtio,file=/discs/more/images/debian12-64scan.qcow2
 
-Meanwhile, let's fix to check lower boundary for .i_inline_xattr_size w/
-MIN_INLINE_XATTR_SIZE like we did in parse_options().
+It looks to me if it made the mistake of trying to print something in the middle of being removed:
 
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
-Reported-by: syzbot+69f5379a1717a0b982a1@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/674f4e7d.050a0220.17bd51.004f.GAE@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/inode.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+[   73.569852][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+[   73.571802][    T1] [drm] Found bochs VGA, ID 0xb0c5.
+[   73.572787][    T1] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
+[   73.581626][    T1] [drm] Initialized bochs-drm 1.0.0 for 0000:00:02.0 on minor 2
+[   73.650048][    T1] fbcon: bochs-drmdrmfb (fb1) is primary device
+[   73.650134][    T1] fbcon: Remapping primary device, fb1, to tty 1-63
+[   79.276550][    T1] bochs-drm 0000:00:02.0: [drm] fb1: bochs-drmdrmfb frame buffer device
+[   79.346726][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
+[   79.348731][    T1] BUG: kernel NULL pointer dereference, address: 000000000000020c
+[   79.348799][    T1] #PF: supervisor write access in kernel mode
+[   79.348857][    T1] #PF: error_code(0x0002) - not-present page
+[   79.348913][    T1] PGD 0 P4D 0 
+[   79.348999][    T1] Oops: Oops: 0002 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
+[   79.349107][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W        N 6.13.0-rc2+ #373 5a5c0ce8f09b0b72067981f01985e201a0118bb6
+[   79.349268][    T1] Tainted: [W]=WARN, [N]=TEST
+[   79.349313][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+[   79.349377][    T1] RIP: 0010:fbcon_cursor+0xa9/0x3c0
+[   79.349524][    T1] Code: c0 05 00 00 66 89 44 24 06 e8 f3 35 2a fd 0f b7 bb c0 05 00 00 e8 27 b8 e9 fc 49 8d bc 24 0c 02 00 00 49 89 c7 e8 d7 3d 2a fd <45> 89 bc 24 0c 02 00 00 48 8d bd e0 05 00 00 e8 c3 3b 2a fd 44 8b
+[   79.349628][    T1] RSP: 0018:ffffb927800136c0 EFLAGS: 00010046
+[   79.349716][    T1] RAX: 0000000000000000 RBX: ffff9835810a8800 RCX: 0000000000000000
+[   79.349808][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[   79.349879][    T1] RBP: ffff983585d07000 R08: 0000000000000000 R09: 0000000000000000
+[   79.349952][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[   79.350024][    T1] R13: 0000000000000000 R14: ffff983585d075e8 R15: 0000000000000032
+[   79.350101][    T1] FS:  0000000000000000(0000) GS:ffff9835fd200000(0000) knlGS:0000000000000000
+[   79.350196][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   79.350278][    T1] CR2: 000000000000020c CR3: 000000004d920000 CR4: 0000000000350ef0
+[   79.350344][    T1] Call Trace:
+[   79.350373][    T1]  <TASK>
+[   79.350413][    T1]  ? __die+0x23/0x80
+[   79.350540][    T1]  ? page_fault_oops+0x21c/0x240
+[   79.350675][    T1]  ? do_user_addr_fault+0x893/0x1180
+[   79.350798][    T1]  ? srso_return_thunk+0x5/0x7f
+[   79.350904][    T1]  ? exc_page_fault+0x3f/0x180
+[   79.351066][    T1]  ? exc_page_fault+0x87/0x180
+[   79.351211][    T1]  ? asm_exc_page_fault+0x26/0x40
+[   79.351379][    T1]  ? fbcon_cursor+0xa9/0x3c0
+[   79.351542][    T1]  hide_cursor+0x66/0x1c0
+[   79.351656][    T1]  vt_console_print+0x9b1/0xa40
+[   79.351813][    T1]  ? srso_return_thunk+0x5/0x7f
+[   79.351920][    T1]  ? irq_trace+0x84/0xc0
+[   79.352029][    T1]  ? srso_return_thunk+0x5/0x7f
+[   79.352153][    T1]  ? console_emit_next_record+0x1fe/0x440
+[   79.352254][    T1]  console_emit_next_record+0x232/0x440
+[   79.352333][    T1]  ? console_emit_next_record+0x1fe/0x440
+[   79.352450][    T1]  console_flush_all+0x590/0x7c0
+[   79.352531][    T1]  ? console_flush_all+0x26/0x7c0
+[   79.352601][    T1]  console_unlock+0xf9/0x280
+[   79.352601][    T1]  vprintk_emit+0x572/0x5c0
+[   79.352601][    T1]  dev_vprintk_emit+0x70/0xc0
+[   79.352601][    T1]  ? __mutex_lock+0x380/0xd40
+[   79.352601][    T1]  dev_printk_emit+0x7f/0xc0
+[   79.352601][    T1]  __dev_printk+0x89/0x100
+[   79.352601][    T1]  _dev_info+0xba/0xf5
+[   79.352601][    T1]  vga_remove_vgacon.cold+0x18/0xc0
+[   79.352601][    T1]  aperture_remove_conflicting_pci_devices+0x142/0x1c0
+[   79.352601][    T1]  ? __pfx_bochs_pci_probe+0x40/0x40
+[   79.352601][    T1]  bochs_pci_probe+0x30/0x380
+[   79.352601][    T1]  local_pci_probe+0x88/0x100
+[   79.352601][    T1]  pci_call_probe+0x126/0x340
+[   79.352601][    T1]  ? srso_return_thunk+0x5/0x7f
+[   79.352601][    T1]  ? pci_match_device+0x287/0x380
+[   79.352601][    T1]  pci_device_probe+0x154/0x280
+[   79.352601][    T1]  ? __pfx_pci_device_probe+0x40/0x40
+[   79.352601][    T1]  really_probe+0x411/0x780
+[   79.352601][    T1]  __driver_probe_device+0x194/0x280
+[   79.352601][    T1]  driver_probe_device+0x6f/0x1c0
+[   79.352601][    T1]  __driver_attach+0x204/0x380
+[   79.352601][    T1]  ? __pfx___driver_attach+0x40/0x40
+[   79.352601][    T1]  bus_for_each_dev+0xe3/0x180
+[   79.352601][    T1]  driver_attach+0x3a/0x80
+[   79.352601][    T1]  bus_add_driver+0x1fd/0x3c0
+[   79.352601][    T1]  driver_register+0x11d/0x1c0
+[   79.352601][    T1]  __pci_register_driver+0x105/0x140
+[   79.352601][    T1]  bochs_pci_driver_init+0x8a/0xc0
+[   79.352601][    T1]  ? __pfx_bochs_pci_driver_init+0x40/0x40
+[   79.352601][    T1]  do_one_initcall+0xa7/0x500
+[   79.352601][    T1]  do_initcalls+0x1d5/0x240
+[   79.352601][    T1]  kernel_init_freeable+0x1e4/0x280
+[   79.352601][    T1]  ? __pfx_kernel_init+0x40/0x40
+[   79.352601][    T1]  kernel_init+0x2a/0x280
+[   79.352601][    T1]  ret_from_fork+0x4d/0x80
+[   79.352601][    T1]  ? __pfx_kernel_init+0x40/0x40
+[   79.352601][    T1]  ret_from_fork_asm+0x22/0x80
+[   79.352601][    T1]  </TASK>
+[   79.352601][    T1] Modules linked in:
+[   79.352601][    T1] CR2: 000000000000020c
+[   79.352601][    T1] ---[ end trace 0000000000000000 ]---
+[   79.352601][    T1] RIP: 0010:fbcon_cursor+0xa9/0x3c0
+[   79.352601][    T1] Code: c0 05 00 00 66 89 44 24 06 e8 f3 35 2a fd 0f b7 bb c0 05 00 00 e8 27 b8 e9 fc 49 8d bc 24 0c 02 00 00 49 89 c7 e8 d7 3d 2a fd <45> 89 bc 24 0c 02 00 00 48 8d bd e0 05 00 00 e8 c3 3b 2a fd 44 8b
+[   79.352601][    T1] RSP: 0018:ffffb927800136c0 EFLAGS: 00010046
+[   79.352601][    T1] RAX: 0000000000000000 RBX: ffff9835810a8800 RCX: 0000000000000000
+[   79.352601][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[   79.352601][    T1] RBP: ffff983585d07000 R08: 0000000000000000 R09: 0000000000000000
+[   79.352601][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[   79.352601][    T1] R13: 0000000000000000 R14: ffff983585d075e8 R15: 0000000000000032
+[   79.352601][    T1] FS:  0000000000000000(0000) GS:ffff9835fd200000(0000) knlGS:0000000000000000
+[   79.352601][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   79.352601][    T1] CR2: 000000000000020c CR3: 000000004d920000 CR4: 0000000000350ef0
+[   79.352601][    T1] Kernel panic - not syncing: Fatal exception
+[   79.352601][    T1] Kernel Offset: 0xf800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[   79.352601][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 282fd320bdb3..29ccc64faae9 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -302,15 +302,6 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 				  F2FS_TOTAL_EXTRA_ATTR_SIZE);
- 			return false;
- 		}
--		if (f2fs_sb_has_flexible_inline_xattr(sbi) &&
--			f2fs_has_inline_xattr(inode) &&
--			(!fi->i_inline_xattr_size ||
--			fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE)) {
--			f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_inline_xattr_size: %d, max: %lu",
--				  __func__, inode->i_ino, fi->i_inline_xattr_size,
--				  MAX_INLINE_XATTR_SIZE);
--			return false;
--		}
- 		if (f2fs_sb_has_compression(sbi) &&
- 			fi->i_flags & F2FS_COMPR_FL &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize,
-@@ -320,6 +311,16 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		}
- 	}
- 
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi) &&
-+		f2fs_has_inline_xattr(inode) &&
-+		(fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE ||
-+		fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE)) {
-+		f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_inline_xattr_size: %d, min: %u, max: %lu",
-+			  __func__, inode->i_ino, fi->i_inline_xattr_size,
-+			  MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
-+		return false;
-+	}
-+
- 	if (!f2fs_sb_has_extra_attr(sbi)) {
- 		if (f2fs_sb_has_project_quota(sbi)) {
- 			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
+> Best regards
+> Thomas
+> 
+> 
+> > 
+> > Dave
+> > 
+> 
+> -- 
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+
+> From bebba3b34d5df5aa7c882f080633b43ddb87f4ad Mon Sep 17 00:00:00 2001
+> From: Thomas Zimmermann <tzimmermann@suse.de>
+> Date: Mon, 16 Dec 2024 09:21:46 +0100
+> Subject: [PATCH] drm/bochs: Do not put DRM device in PCI remove callback
+> 
+> Removing the bochs PCI device should mark the DRM device as unplugged
+> without removing it. Hence clear the respective call to drm_dev_put()
+> from bochs_pci_remove().
+> 
+> Fixes a double unref in devm_drm_dev_init_release(). An example error
+> message is shown below:
+> 
+> [   32.958338] BUG: KASAN: use-after-free in drm_dev_put.part.0+0x1b/0x90
+> [   32.958850] Write of size 4 at addr ffff888152134004 by task (udev-worker)/591
+> [   32.959574] CPU: 3 UID: 0 PID: 591 Comm: (udev-worker) Tainted: G            E      6.13.0-rc2-1-default+ #3417
+> [   32.960316] Tainted: [E]=UNSIGNED_MODULE
+> [   32.960637] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-2-gc13ff2cd-prebuilt.qemu.org 04/01/2014
+> [   32.961429] Call Trace:
+> [   32.961433]  <TASK>
+> [   32.961439]  dump_stack_lvl+0x68/0x90
+> [   32.961452]  print_address_description.constprop.0+0x88/0x330
+> [   32.961461]  ? preempt_count_sub+0x14/0xc0
+> [   32.961473]  print_report+0xe2/0x1d0
+> [   32.961479]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   32.963725]  ? __virt_addr_valid+0x143/0x320
+> [   32.964077]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   32.964463]  ? drm_dev_put.part.0+0x1b/0x90
+> [   32.964817]  kasan_report+0xce/0x1a0
+> [   32.965123]  ? drm_dev_put.part.0+0x1b/0x90
+> [   32.965474]  kasan_check_range+0xff/0x1c0
+> [   32.965806]  drm_dev_put.part.0+0x1b/0x90
+> [   32.966138]  release_nodes+0x84/0xc0
+> [   32.966447]  devres_release_all+0xd2/0x110
+> [   32.966788]  ? __pfx_devres_release_all+0x10/0x10
+> [   32.967177]  ? preempt_count_sub+0x14/0xc0
+> [   32.967523]  device_unbind_cleanup+0x16/0xc0
+> [   32.967886]  really_probe+0x1b7/0x570
+> [   32.968207]  __driver_probe_device+0xca/0x1b0
+> [   32.968568]  driver_probe_device+0x4a/0xf0
+> [   32.968907]  __driver_attach+0x10b/0x290
+> [   32.969239]  ? __pfx___driver_attach+0x10/0x10
+> [   32.969598]  bus_for_each_dev+0xc0/0x110
+> [   32.969923]  ? __pfx_bus_for_each_dev+0x10/0x10
+> [   32.970291]  ? bus_add_driver+0x17a/0x2b0
+> [   32.970622]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   32.971011]  bus_add_driver+0x19a/0x2b0
+> [   32.971335]  driver_register+0xd8/0x160
+> [   32.971671]  ? __pfx_bochs_pci_driver_init+0x10/0x10 [bochs]
+> [   32.972130]  do_one_initcall+0xba/0x390
+> [...]
+> 
+> After unplugging the DRM device, clients will close their references.
+> Closing the final reference will also release the DRM device.
+> 
+> Reported-by: Dr. David Alan Gilbert <dave@treblig.org>
+> Closes: https://lore.kernel.org/lkml/Z18dbfDAiFadsSdg@gallifrey/
+> Fixes: 04826f588682 ("drm/bochs: Allocate DRM device in struct bochs_device")
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Gerd Hoffmann <kraxel@redhat.com>
+> Cc: virtualization@lists.linux.dev
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/tiny/bochs.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+> index 89a699370a59..c67e1f906785 100644
+> --- a/drivers/gpu/drm/tiny/bochs.c
+> +++ b/drivers/gpu/drm/tiny/bochs.c
+> @@ -757,7 +757,6 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+>  
+>  	drm_dev_unplug(dev);
+>  	drm_atomic_helper_shutdown(dev);
+> -	drm_dev_put(dev);
+>  }
+>  
+>  static void bochs_pci_shutdown(struct pci_dev *pdev)
+> -- 
+> 2.47.1
+> 
+
 -- 
-2.40.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
