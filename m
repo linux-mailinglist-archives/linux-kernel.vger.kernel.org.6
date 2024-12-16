@@ -1,100 +1,118 @@
-Return-Path: <linux-kernel+bounces-447929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157939F38C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:21:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA81B9F38D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14D81618E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E001888067
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91112066DD;
-	Mon, 16 Dec 2024 18:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="qDk+NHtl"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF99206F2A;
+	Mon, 16 Dec 2024 18:21:35 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514D5203D4C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DFD20457E;
+	Mon, 16 Dec 2024 18:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734373256; cv=none; b=czlRMJ9hbpRXf+9WhPvUWMzxzbNtYUrSuTjEPtMQ5PyVfenZkZ7m5255Dwz6aJ8jOVdUcs9TSCilq56r33a0+v3K68R/2N4Htf1kA9ugYv6QXzI7OXvAX4B62NWOwvcXP0SAAyp5k5ukuQiwx6eWI4yceg+hLBfx63YbDBbaUBE=
+	t=1734373295; cv=none; b=RUfxuG0aXdTrtob4+rZohWC2MrGIQYIaWYaDuSbGaQ8A9im9MW5qDrJgJaAEJVpW3ekVRaMTfpXGZCXF+m+5tzOScJfyAeAqIItpko9hLFfniKIQYdG2vmYJJ/m6/BDqIYoUGLIDNGtvT4PA5pXHdPYbtTPNsQ4Snz23Znhk0Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734373256; c=relaxed/simple;
-	bh=Zi6Ycqb0EbzuWuO2jQDrQSbot25zuIRYbx7FLP01Dx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSImcjCEtP5ffQomPoBG1w85JmrfAAplLNANcaZCIctDsVtBUKMZGcNK3o858iW7Vq0lva1laPo6RzA2ry3qvpO8PGsOJ/M3EezrRtloicmECdbhPfuoSEfs9Bu7ScPspywf1G0FTpuRIZjRT06gs7relhtjR0vhJ9yZqLFwuEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=qDk+NHtl; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 19CDC240101
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:20:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1734373246; bh=Zi6Ycqb0EbzuWuO2jQDrQSbot25zuIRYbx7FLP01Dx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=qDk+NHtlqFdcc2ewwnCGNoXBp0PPh05XY6NGywEo1fHHxvbIbEOV6/HmxEpDr4KA2
-	 fKbaYt3DFoAyAsg3KSjITQIx2UHXmOlNjQuwSGWsNVs6JlQO4nN15Dx3HOQVaJTF+o
-	 1LPsEhgMggJl8MeyJgM/MVnwohmdo9UKgweZ+RrEaA9R/em9Wr0ecdgFtV03uo4NeA
-	 KaC2ClymtHEIeE24OtGd8LWrjhjhtB6mjhWjscyLcX7l0EAPavo8klMJMx9KOvl1FK
-	 fkBSRezzmdhZpYHy9/zXWdz7zxud6IG/iAD70H11BtaS/wOLs4VQrZgqgwkb0qxf1L
-	 6y/mY+OvC8pYQ==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4YBpCc5Wm9z6tyG;
-	Mon, 16 Dec 2024 19:20:44 +0100 (CET)
-Date: Mon, 16 Dec 2024 18:20:44 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: j.ne@posteo.net
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] gpio: 74x164: Add latch GPIO support
-Message-ID: <Z2BvfKwdSyu5kzPh@probook>
-References: <20241213-gpio74-v1-0-fa2c089caf41@posteo.net>
- <20241213-gpio74-v1-4-fa2c089caf41@posteo.net>
+	s=arc-20240116; t=1734373295; c=relaxed/simple;
+	bh=evREqE1njeUYk2+Y7GUeTOFW7dF6u/bz8AaPFd+OfYA=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=IpUhasR24caL5hbz4TvfZo94fNJuuvq1FZcwLInCFh1JMNeAURcUU7UuJ85BBfndKBmAAiNArvyjr5ThTcHdwInuOQsXXXP4IRbUbVvwJYZB0N0P5wlBmkzkdZoNo8yqxt+DVG6iydGnyLG5R7+WXLZUoFUa3DQOngWU+O2PkDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:35192)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tNFil-004lrv-IE; Mon, 16 Dec 2024 11:21:31 -0700
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:49960 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tNFik-00FtDO-Lx; Mon, 16 Dec 2024 11:21:31 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,  Thomas Gleixner
+ <tglx@linutronix.de>,  Ming Lei <ming.lei@redhat.com>,  LKML
+ <linux-kernel@vger.kernel.org>,  Linux PM <linux-pm@vger.kernel.org>,
+  Kexec Mailing List <kexec@lists.infradead.org>
+References: <4968818.GXAFRqVoOG@rjwysocki.net>
+	<d29738023f117bbd4031579443e0c2f8f1f78592.camel@infradead.org>
+	<87h673zkhr.fsf_-_@email.froward.int.ebiederm.org>
+	<E64227FF-E6A2-4E2C-85F3-EF1D9EFEC91F@infradead.org>
+Date: Mon, 16 Dec 2024 12:21:01 -0600
+In-Reply-To: <E64227FF-E6A2-4E2C-85F3-EF1D9EFEC91F@infradead.org> (David
+	Woodhouse's message of "Mon, 16 Dec 2024 18:14:17 +0000")
+Message-ID: <87bjxbzdyq.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241213-gpio74-v1-4-fa2c089caf41@posteo.net>
+Content-Type: text/plain
+X-XM-SPF: eid=1tNFik-00FtDO-Lx;;;mid=<87bjxbzdyq.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+z7hsfZYbh2h99As8mJSOdcZfr7Fg2uXQ=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4471]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;David Woodhouse <dwmw2@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 316 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (3.4%), b_tie_ro: 9 (3.0%), parse: 1.40 (0.4%),
+	 extract_message_metadata: 18 (5.7%), get_uri_detail_list: 1.43 (0.5%),
+	 tests_pri_-2000: 22 (7.0%), tests_pri_-1000: 3.7 (1.2%),
+	tests_pri_-950: 1.60 (0.5%), tests_pri_-900: 1.02 (0.3%),
+	tests_pri_-90: 77 (24.3%), check_bayes: 75 (23.8%), b_tokenize: 9
+	(2.8%), b_tok_get_all: 17 (5.5%), b_comp_prob: 2.1 (0.7%),
+	b_tok_touch_all: 43 (13.6%), b_finish: 0.87 (0.3%), tests_pri_0: 167
+	(52.8%), check_dkim_signature: 0.50 (0.2%), check_dkim_adsp: 3.2
+	(1.0%), poll_dns_idle: 1.16 (0.4%), tests_pri_10: 2.1 (0.7%),
+	tests_pri_500: 7 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: Does anyone actually use KEXEC_JUMP?
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: kexec@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, ming.lei@redhat.com, tglx@linutronix.de, rjw@rjwysocki.net, dwmw2@infradead.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On Fri, Dec 13, 2024 at 06:32:50PM +0100, J. Neuschäfer via B4 Relay wrote:
-> From: "J. Neuschäfer" <j.ne@posteo.net>
-> 
-> The Fairchild MM74HC595 and other compatible parts have a latch clock
-> input (also known as storage register clock input), which must be
-> clocked once in order to apply any value that was serially shifted in.
-> 
-> This patch adds driver support for using a GPIO that connects to the
-> latch clock.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+David Woodhouse <dwmw2@infradead.org> writes:
 
-I just noticed that this feature is unnecessary for my use-case:
-The 74HC595 doesn't have a chip-select input, but if the rising-edge
-triggered latch clock input is reinterpreted as an active-low chip
-select, it does the right thing.
+> It isn't broken. I know of it being used a few million times a week.
+>
+> There are corner cases which have never worked right, like the callee
+> putting a different return address for its next invocation, on the
+> stack *above* the address it 'ret's to. Which since the first kjump
+> patch has been the first word of the page *after* the swap page (and
+> is now fixed in my tree). But fundamentally it *does* work.
+>
+> I only started messing with it because I was working on
+> relocate_kernel() and needed to write a test case for it; the fact
+> that I know of it being used in production is actually just a
+> coincidence.
 
-                     _   _       _   _
- shift clock    ____| |_| |_..._| |_| |_________
+Cool.  I had the sense that the original developer never got around
+to using it, so I figured I should check.
 
- latch clock                           * trigger
-                ___                     ________
- chip select#      |___________________|
+Mind if I ask what you know of it being used for?
 
+I had imagined it might be a way to call firmware code preventing the
+need to code of a specific interface for each type of firmware.
 
+Eric
 
- -- jn
 
