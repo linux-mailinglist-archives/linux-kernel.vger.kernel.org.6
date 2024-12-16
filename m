@@ -1,188 +1,129 @@
-Return-Path: <linux-kernel+bounces-447146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAB39F2DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:13:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651D79F2DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9FC18847A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7B91884CB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E7C202C50;
-	Mon, 16 Dec 2024 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B057203D58;
+	Mon, 16 Dec 2024 10:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGPZ7ZjS"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArWhBjJl"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338C0202C37;
-	Mon, 16 Dec 2024 10:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817D72AF03;
+	Mon, 16 Dec 2024 10:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344010; cv=none; b=kekC/0/gXdJopCgnsUkhzdr13y5H9x5VqUJBxBcyqIMIYqXdXkocp7MNOiq0H5cVVJ2tvZnMY/80yRztrtTOLbrMva8mce4yeOpI7h/5FWUrTDbUB/br3SVn7aHgvMVXbLnVYhvmGWPiyxuqrGPArKwYvHdBbxKMhK1W95oTywo=
+	t=1734344026; cv=none; b=KFvlKgOqE8enXyO8gpud4AJUQ9/uo7ht0xhWxQiBuTo0W/pq+RDPBazW8s7Grx4ihG5xsZv0/aUhlTb01wt5492el1JvIn8iiNiG2KuRyGi8D0l8Nmeq4iPihkL6a09dXvfcjCEFJyGtbjdddD2TGNNXJO0tDqwnAObg01WyfJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344010; c=relaxed/simple;
-	bh=i/boAzoNOMo80REOAT5/9vUPnQpsvdZ914c30k9RHrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QIrlsfYProkxLE2bj2BkCnBcX5OQd0Z77ToO9ZECmWOJTJOLNOh8VlXVt1KqKo+BI4a73vBMNirxaxr6Db/0XshHmWad+ewfPWT8k2NQnrXJmMUavPN2HeE+g1GHurYjSaflUjMCqDZC8pTJtaS7syqa08BE44BkKdOrVO1YpMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGPZ7ZjS; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1734344026; c=relaxed/simple;
+	bh=6o4jofo5o0s4egvVbxhwmAn4YH9WdHGRsBXLWeO+DtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=llWH7MRcpQy8dGn/jx8skZVadlDxoccd0lbpK7Y9ONTF97m5uy+cnN8V1Q5NUic78onqaRGtWZpJU+8uPwHSvo7bVxyg/xVU/ONFx3ST9VI8mpnN60w4AUgdKlbKlRbz6QEXsezNbuLCg2CyZkC3/dtVHoST2FM4Maa27ZfTI+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArWhBjJl; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e1fcb0e1so2078985f8f.2;
-        Mon, 16 Dec 2024 02:13:29 -0800 (PST)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-728f1525565so4530416b3a.1;
+        Mon, 16 Dec 2024 02:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734344007; x=1734948807; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1734344025; x=1734948825; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FbXRZmRvesJ4aMa4YletGV3iwBIvD7vMTOjd87bnFd4=;
-        b=CGPZ7ZjSMibUxLGUHrbhzx3SeMiQkp+y7iTaPDb5WwMkW+nWLtqwmhRBhmg+84BG0t
-         KfkAOdDp6+tAVhNgjUu9cGoqKiRa+yrGt3opGY9z4udtceuYXT5IowERE7UgyvMDj6EB
-         s7eAGHBuFhdgHfaVYaYWs7F1o4Bh+ImqP/oQfPRvdOFUG9eGpNbQGppxqV1Bwl1dROfq
-         Epehyl1aOj0lUJvayv6kWpDjFZBk340jnn/UYYyNC3bXNRmm3yIrF7t5UH6e9xKAHqVx
-         Lz+Oliqc553AXIJ91hVsQR4J75qQfiZlVGb5O/wXQvf7WDs0XXFwU/znrY4qa8Axnw3X
-         WhhQ==
+        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
+        b=ArWhBjJl3hPPOaKkIaY/r+yGPfLKSnkKdtF1TEpdvVhnWMOKURtfK/Wn5Ix/UNNpzX
+         pZrrqBnJVHlbkENmVJLNlVaP0hTHxqSN8zJtu3np8YV3WQzU4ZnbFqSRJzhDjS+Yv+lh
+         VZ+4KObdpdXeZOzP7J6NH3YfE4mb2gcewtTPjW0H/rFt7vFyAkkxqvA4RM2KWejpQv5x
+         6C9dvGXjsA4SCWDSU4qzdHbdptEKkGlTwCjtDds/pUGtc3zBBUKhfTHLoEVXAT8LG+64
+         3l1SCjyQChpZQ6AdjHNDjhLv+2L1bxmEamsQkDFoqb5Luj7Asd0eVlTi18xkAj0ava2e
+         s6GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734344007; x=1734948807;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1734344025; x=1734948825;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FbXRZmRvesJ4aMa4YletGV3iwBIvD7vMTOjd87bnFd4=;
-        b=mGxUPe19RKvR5yjMO/PspTMFC12rc4U7ngkbFKvGq62SvyPovDJbQi/hIYc5nDyDjo
-         CTBlvVwXHdd8Uw6DJWutzgUl94GBzD0/2iiwt2igoLoGxMllitXb8doY3/FMOoaUXq1O
-         nVkP/YCe7BtiBC78QGpCRIvsqEydRG48BhRqb2oG1o6yWILCtoIwazeRTmTz9AGTe1NM
-         zzV6JRgeMC/aYEBJkDIuY5KdSruA5LFp92L0jC05vRayqWY7b01NMNq6evVGt1iReA1R
-         70ZeQPaJMyGOacPKq7h8E3lQmNl5Dqp3fcv+G+vb3DNtxRzYZo4RgZSp7BxgkMqZg+z8
-         mXsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfT4y40rUS536OVV6Na6YwJdAlsTtwBRpA0P3nKYF4kvNazOVXZ4iI/FxYUWcMIVEtXihomxgMuc7RNGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBm2slLrZrciH/6tF/vEdIUykd4uaR3mEtsCR2UtFDXzbGDjvj
-	suArd7FqWeRMUurUr4Loc3+/fIOAVORE0cIqblTXFckQV6guIUGom8TjvQ==
-X-Gm-Gg: ASbGncuEQP6GSBOKQqWOHaw/bQyyeIEBFOo9p+prAxEVAfq1f+Nkr47ILxF462AeE6a
-	SIx7OhjiS+FD4ovdjU1YNso9wTD2ysrRfYVOwldSvv3HUzPEnfZBXTjnmWfS4owWpmpjWxlDT3S
-	KZMVJ92vJz0xTCzWOv7GaRKfW75bthj3cJOt4PQBO/eqgzlF5eVKT7ytkhUsUPjcz10EWuBcGqB
-	FOmDQAPuahx38Hwpj29cfsc4dCeiGRiIYNwzwXh1BFxojvrAcPSkuORSbhraKmuh1h/10fFllOo
-	mLmm4kfeVBg2jRNKeUwy
-X-Google-Smtp-Source: AGHT+IG5XVREgv++YwJa1t/IGd32+pWgXzWn0EOf0yZ9XbCmeKp9N2l1rnVFhCkcsPuz1bHaKe0l1w==
-X-Received: by 2002:a05:6000:71e:b0:386:373f:47c4 with SMTP id ffacd0b85a97d-3888e0be376mr9198706f8f.49.1734344007232;
-        Mon, 16 Dec 2024 02:13:27 -0800 (PST)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804d573sm7603900f8f.64.2024.12.16.02.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 02:13:26 -0800 (PST)
-Date: Mon, 16 Dec 2024 11:13:24 +0100
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] dt-bindings: mfd: sprd,sc2731: reference
- sprd,sc2731-efuse bindings
-Message-ID: <Z1_9ROiI2ZHKsbAD@standask-GA-A55M-S2HP>
+        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
+        b=BvT4pudPVPlb4iKaFCjVriJQTM2XQ1ovXhOWJJX9/XHZJLxM06tuvpcO53bImru50u
+         eCvT4kl2Vxc88xpU8zz6iCJEs/jJ35KLYnZX4JPex7oJ9Xomf7DV7UlJ1D97Oyy/ZGqJ
+         Rvw2LoZd+wf4aL+E3FBre6FRsndV44I9sGXMrnrPCZNuWNBT8r9f97h2CR9eSmG/3xx0
+         wF3n2iXF7VMS9U00uHiJ/FXBBXDISvwlPGYBWkrNprxLDwISbqsOzBEuwmjDsds7evRa
+         fovmE5gTJQioUfG7e4zELpVJBPn6fu0bPJmrlcDsFfTxlcTY1NeRO6ZTYAR93lG257QE
+         3ghw==
+X-Forwarded-Encrypted: i=1; AJvYcCUY8Pq35Ai8nboc5CMbQH0A9pYJBAiivv4BxokddKHnyu0ug4lvLY6bO2pJ9x7qC1iytiP1Vme733W8@vger.kernel.org, AJvYcCUgj+VAC9wZScEale4DvdNt6oaQkScbLqvU4dedr0S2X5GbGTg90AxvRBhi+bezyUJDTFJe6sYanOwG@vger.kernel.org, AJvYcCVFeBzHM9UQ22kV5ed0chN0KT+kFeFLr1umx5PCZWCynHEIE1ONeM2uAtRj803fgHYWvpH/6VBSSa24YeBM@vger.kernel.org, AJvYcCWDTIkjNr30p6AOumCmZ5VBQ8PY8TmJ4PwqmZR/c2nWTq8W9dgFXplTD2uaBQ4+Alk+Xj0a8Mbh709IN7nRCw==@vger.kernel.org, AJvYcCXFJ/hXevDkYzQJ1eERqLePiy2/yzSfCcywqxTxPgxv5+L7NwLTguvIDsJM0gt8uyAqfkCc+Q2lcMazrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTe67VOy4vncRMgAkQ0GdDriMtRUv8BENPHvOjbXrwBVJxkU46
+	LSKkU9A+GbvtJf/9Eqrzilwlq3uynuXBk4nJCFbDKlKz3TrAfsJC
+X-Gm-Gg: ASbGncus2+wAW8zO/M4IDWlchL4Qx8c/EiHaaynjcEUCZWuSykEdl6rQWcHcD9tqNoj
+	XLiBaZUepirhuO+nFFomVyqJrHFdE+mh4SkrhMXgXzD4GAk/o6HfqWmU5Rqx8VcVN5iqlq99muG
+	uhzK0hN/75NHl2Qgj6t34NkrblyL3tGs8ad63hFuu7mX0N0WkmJ9bvpIteW5oedQsnzsGQufQp5
+	PUlDj6tLqSA0m3K+EootKncgwXHVIl23OhLDxjy4lNj5zYVX1XUmchop8N+mOYgIGTzUDUcW/kB
+	SlYE+eMwkiwL5gTiQkpgAt0=
+X-Google-Smtp-Source: AGHT+IFq3zJyvoXfAV7XVBdCiDQC4vaO/7xLrUwixiOvu21RBmLw5wfgxXzoYw8zU6Yia4k+KM7puQ==
+X-Received: by 2002:a05:6a20:4304:b0:1e1:bdae:e045 with SMTP id adf61e73a8af0-1e1dfd91980mr18130458637.23.1734344023005;
+        Mon, 16 Dec 2024 02:13:43 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bce39csm4517791b3a.189.2024.12.16.02.13.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 02:13:42 -0800 (PST)
+Message-ID: <843f5270-d715-4c98-b191-1c271eb418c5@gmail.com>
+Date: Mon, 16 Dec 2024 19:13:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] netfs: Remove redundant use of smp_rmb()
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+ Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Zilin Guan <zilin@seu.edu.cn>, Akira Yokosawa <akiyks@gmail.com>
+References: <20241213135013.2964079-1-dhowells@redhat.com>
+ <20241213135013.2964079-7-dhowells@redhat.com>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20241213135013.2964079-7-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Directly reference the sc2731-efuse bindings to simplify the schema.
-Remove the duplicate example from the efuse bindings.
-While at it, add the "pmic_adc" label that was missed during the
-initial YAML conversion.
+David Howells wrote:
+> From: Zilin Guan <zilin@seu.edu.cn>
+> 
+> The function netfs_unbuffered_write_iter_locked() in
+> fs/netfs/direct_write.c contains an unnecessary smp_rmb() call after
+> wait_on_bit(). Since wait_on_bit() already incorporates a memory barrier
+> that ensures the flag update is visible before the function returns, the
+> smp_rmb() provides no additional benefit and incurs unnecessary overhead.
+> 
+> This patch removes the redundant barrier to simplify and optimize the code.
+> 
+> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Akira Yokosawa <akiyks@gmail.com>
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Changes in V4:
-- rebase on next-20241216
-- drop patch 1 (already applied)
-- add the pmic_adc label that was initially missed
+Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
 
-Changes in V3:
-- new patch due to a missing dependency in the MFD tree 
-
-Link to V3: https://lore.kernel.org/lkml/cd8cc95b59c31418b174bba521dd2599a7929fda.1730709384.git.stano.jakubek@gmail.com/
-Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA-A55M-S2HP/
-Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP/
-
- .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 12 ++------
- .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 29 -------------------
- 2 files changed, 2 insertions(+), 39 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-index 8beec7e8e4c6..b023e1ef8d3c 100644
---- a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-+++ b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-@@ -67,15 +67,7 @@ patternProperties:
- 
-   "^efuse@[0-9a-f]+$":
-     type: object
--    additionalProperties: true
--    properties:
--      compatible:
--        enum:
--          - sprd,sc2720-efuse
--          - sprd,sc2721-efuse
--          - sprd,sc2723-efuse
--          - sprd,sc2730-efuse
--          - sprd,sc2731-efuse
-+    $ref: /schemas/nvmem/sprd,sc2731-efuse.yaml#
- 
-   "^fuel-gauge@[0-9a-f]+$":
-     type: object
-@@ -199,7 +191,7 @@ examples:
-           };
-         };
- 
--        adc@480 {
-+        pmic_adc: adc@480 {
-           compatible = "sprd,sc2731-adc";
-           reg = <0x480>;
-           interrupt-parent = <&sc2731_pmic>;
-diff --git a/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-index dc25fe3d1841..8672bde24a9b 100644
---- a/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-@@ -36,33 +36,4 @@ allOf:
-   - $ref: nvmem-deprecated-cells.yaml#
- 
- unevaluatedProperties: false
--
--examples:
--  - |
--    pmic {
--      #address-cells = <1>;
--      #size-cells = <0>;
--
--      efuse@380 {
--        compatible = "sprd,sc2731-efuse";
--        reg = <0x380>;
--        hwlocks = <&hwlock 12>;
--        #address-cells = <1>;
--        #size-cells = <1>;
--
--        /* Data cells */
--        fgu_calib: calib@6 {
--          reg = <0x6 0x2>;
--          bits = <0 9>;
--        };
--
--        adc_big_scale: calib@24 {
--          reg = <0x24 0x2>;
--        };
--
--        adc_small_scale: calib@26 {
--          reg = <0x26 0x2>;
--        };
--      };
--    };
- ...
--- 
-2.43.0
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/20241207021952.2978530-1-zilin@seu.edu.cn/
+> ---
+>  fs/netfs/direct_write.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
 
 
