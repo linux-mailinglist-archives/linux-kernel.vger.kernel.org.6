@@ -1,211 +1,153 @@
-Return-Path: <linux-kernel+bounces-447444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FFC9F3271
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:12:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F337F9F3226
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F10163A05
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B0216700E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319452066FE;
-	Mon, 16 Dec 2024 14:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35F4205AD6;
+	Mon, 16 Dec 2024 14:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSRUP7dc"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kIiEfrtf"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC6A206284;
-	Mon, 16 Dec 2024 14:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA11FF9DA;
+	Mon, 16 Dec 2024 14:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358234; cv=none; b=ijPa7oEWWpKUWZ+hPx2JUxY2We0surQPwa0JfTaQCk0E2JfhT87evLqHqhxYOcEdINIdOJFFa2ee6saDH97TGP471BbNN0kuSdlqCgyIclhy76yjfZXNmuWYDxSLmzMi/Eunst7GMkeKxQHfV4YZP947aNY2gbc//RNT9mRgU8Y=
+	t=1734357769; cv=none; b=urC1XqntdE/ESgsJJ6bHliBHu2TZyTiSy3neeNhFJVZTdQi5LLRY154Dk6CfWCcjF4tmilBtDmga9Q6gephvLns+5/3uzvKxOKgs9MiWfj+rUAgbSKEZrUlxaNxr0FaH5TD3KzL8w1T5SNuhnP4GCVOf2fIzKI+mqh/w1Kd64RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734358234; c=relaxed/simple;
-	bh=IDxhcv0YrqyvrNkAnxSC+WSCaccxp8oEIkrJ4llFEAg=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=aZyVMSpmLvqfu1NPVebUAMaZd2ACVrnIgCbzqXW0NxGe/WPQa+aPDC2iV/L/B/+G2Bk2B6OyCChVl+at2UNlN5tqT8rcyZHoRScy05Ovr4/9xknD/z07a+DcrGRqhdLcBRoFgEkPBuTxgw++Go59rwe4madOEBPz5vmvQbxlH6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TSRUP7dc; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2147848f8f.1;
-        Mon, 16 Dec 2024 06:10:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734358230; x=1734963030; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kHGUggi4KWk7b9dNu2KvnRj9xlQayHW6VmghHC4yAKQ=;
-        b=TSRUP7dcykZQFdJ/hxU36nubZnH1A6Mxy5DUOgX0yijp9d9QRQB8WsI0Mku3RYBa5o
-         y02kpPOFxqj5A2buYPISqAfr8Bz/OXzRL9Nb108GiBenqSPRmkc/N6Uq4y6FmdTZf2XZ
-         Nz+im13BptvnVwMx85Km4L3lPTy93rY1TwPMUYF0ZLkxGPko58MvOtkH7SiHuEi+kj5z
-         KR8IEjBiv/dFQ+4bYjGuIJK1C2NETy7++LtSnfj+KbCUoQzvC/7Gn/OmifoJswszIOvb
-         ceGKQWd/DSmWV911fi1P33zcGDuDhKxfMgsfLHKfaWD1h77qNY+srxD8msZLNpmmQO5G
-         m/Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734358230; x=1734963030;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kHGUggi4KWk7b9dNu2KvnRj9xlQayHW6VmghHC4yAKQ=;
-        b=qSCuZ0QhZzmG5OPtlQKuCH18AHLZXZu4c3AFle2LfKvysrh31rC/anhSFinbZC7Y6f
-         0LRet0MFzS11AxKn+NNPoBxjviG0hjWHHUWetMtsDU88MiGETF+ycC9ppqJbYjlmWiz8
-         5ZvYhhBkI7602lHWPfhNF6bWYTi9uC6cIf7gz+rk6y4yT55/YAXxP/DddYoCaq3cHztn
-         RvuuAJ8doPJLZeGV+ywU1hKqyamVC/LLu7ycgrCYO6h89AmnDhG43irVBVFlWSvlIrrt
-         aRwIK575rUU3XvvV4TYdGWqu7v3uo0R5ci/Be9i3tB/rz6g3tE+z8xtlzVknBpUQWjvB
-         QObw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8FhNr3DYLNrB9jtHCVshTVR4WjGyyGONbAJkqeiR5AUsP2NcsNXlDMJIezhkKE3DYg/fS7/nW@vger.kernel.org, AJvYcCXlxCHfSfzx1piyevkjmsY9BM1cUT0Gd3WxgFQIRjABzUuEAcCjvsiU2+rgxUt/as8sshPfHIdDRgzvQt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypcIdS21Zz2cE8d2LWjdaRb9ffhbdoB8fEqD5/zSIeSwJYEpJf
-	pN1/1vbd5lsrOe+88FqWBPkv168ERarg+TgZaJlAs428qveODMx+bJVUqA==
-X-Gm-Gg: ASbGnct1DIEzfob7gVVdOEx5MJpjxxYmeI8LsZmWhbLLYxfXqNasobMmujQRWK5z0JG
-	FuQM6VpsqwT0rb6FIn3g7T+uvUne0ka4/oJkTR4vohqgDUscDbJOJa705oHN1DzPMjpy0obwaRe
-	2iMO+B123613Rhzet4G4rvB7rlrKuNOE/XtbtpostnwvPKS2773jj43h4UV7QBsKjTEAJbVsY/P
-	Gr61N+vER1/fAI71idBEwmhnAsFgNaii9YETfFr+2JFap4+foR1U0keS5/R3C2Jd34O6g==
-X-Google-Smtp-Source: AGHT+IGtJ4fxS2nw2pH+7WL2/DgrrFUnSjqVji7IeZa5963Kda96Q5zkGx7RLV7LUDhgMfLKtnSI3g==
-X-Received: by 2002:a05:6000:1864:b0:385:df73:2f24 with SMTP id ffacd0b85a97d-3888e0f2d5bmr11187182f8f.39.1734358230282;
-        Mon, 16 Dec 2024 06:10:30 -0800 (PST)
-Received: from imac ([2a02:8010:60a0:0:3011:496e:7793:8f4c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559eb20sm143381465e9.21.2024.12.16.06.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:10:29 -0800 (PST)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: stfomichev@gmail.com,  kuba@kernel.org,  jdamato@fastly.com,
-  pabeni@redhat.com,  davem@davemloft.net,  edumazet@google.com,
-  horms@kernel.org,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] tools: ynl: add install target for generated
- content
-In-Reply-To: <a2e4ffb9cbd4a9c2fd0d7944b603794bff66e593.1734345017.git.jstancek@redhat.com>
-	(Jan Stancek's message of "Mon, 16 Dec 2024 11:41:43 +0100")
-Date: Mon, 16 Dec 2024 14:01:06 +0000
-Message-ID: <m2a5cv917h.fsf@gmail.com>
-References: <cover.1734345017.git.jstancek@redhat.com>
-	<a2e4ffb9cbd4a9c2fd0d7944b603794bff66e593.1734345017.git.jstancek@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1734357769; c=relaxed/simple;
+	bh=UpednncarOQ8uK9wD0CLma7myJeHPhCom6wqghlcoQ8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=ZR0NF6AnTNWx/FbrZn9uGM5OUWNkSWnEUEAPTD3yfbfR8p+SI56jaT+c6no7Y1dcvqUdB3+qcFl8KwHOEfZVREN6+RpFsWdn2OJeRURDfooX3PB7emM4ZpYYeUQkDjF8BefYt/69TmP/A0vOyZbkAhATi3xE4zsTjgi6izLgPfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kIiEfrtf; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 55484C0008;
+	Mon, 16 Dec 2024 14:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734357764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nsC82Wd9lmhMc2NXzvbxJLGnofV5wKYtTRbR551/o5c=;
+	b=kIiEfrtfzMWUuA0roxlDj4ymfnC3HZWYW3Wmn26dipReYS+XJ8NMS0mG+ibMjXcta0D+cI
+	ZfDipGxIEY6C9LRlMI47/F79h9n5KOKRa+HUOieiUFx1E4m3UqMcRaWYRosjO+zu3dDoqv
+	SyI28SdB4oI3/uurYKFAj6zBd6oSJBpNipheV12EjL3ZbayGBC+AAk5Y5s4g216BXjyn7a
+	IC2s+QcBG8RXg0AScGTeeQQn1cnIDrZfHWFUMNRhghEc11mKx/AfUwbgGpLZgWF5JeVa6s
+	mprOI3LEG8ZyRZ5PXvpSZd7oavPsGxo6nTmYr93iduJOp9IvWAfq8vTBsSl11Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 16 Dec 2024 15:02:43 +0100
+Message-Id: <D6D6IL1RNGA8.3U3GIJQJX2L3J@bootlin.com>
+Cc: "Pawel Laszczak" <pawell@cadence.com>, "Roger Quadros"
+ <rogerq@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Mathias Nyman" <mathias.nyman@intel.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <linux-usb@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Peter Chen" <peter.chen@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v6 2/5] usb: cdns3-ti: run HW init at resume() if HW was
+ reset
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
+ <20241214084940.GA4102926@nchen-desktop>
+In-Reply-To: <20241214084940.GA4102926@nchen-desktop>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Jan Stancek <jstancek@redhat.com> writes:
-
-> Generate docs using ynl_gen_rst and add install target for
-> headers, specs and generates rst files.
+On Sat Dec 14, 2024 at 9:49 AM CET, Peter Chen wrote:
+> On 24-12-10 18:13:36, Th=C3=A9o Lebrun wrote:
+> > At runtime_resume(), read the W1 (Wrapper Register 1) register to detec=
+t
+> > if an hardware reset occurred. If it did, run the hardware init sequenc=
+e.
+> >=20
+> > This callback will be called at system-wide resume. Previously, if a
+> > reset occurred during suspend, we would crash. The wrapper config had
+> > not been written, leading to invalid register accesses inside cdns3.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  drivers/usb/cdns3/cdns3-ti.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.=
+c
+> > index d704eb39820ad08a8774be7f00aa473c3ff267c0..d35be7db7616ef5e5bed7db=
+d53b78a094809f7cc 100644
+> > --- a/drivers/usb/cdns3/cdns3-ti.c
+> > +++ b/drivers/usb/cdns3/cdns3-ti.c
+> > @@ -188,6 +188,12 @@ static int cdns_ti_probe(struct platform_device *p=
+dev)
+> >  	data->vbus_divider =3D device_property_read_bool(dev, "ti,vbus-divide=
+r");
+> >  	data->usb2_only =3D device_property_read_bool(dev, "ti,usb2-only");
+> > =20
+> > +	/*
+> > +	 * The call below to pm_runtime_get_sync() MIGHT reset hardware, if i=
+t
+> > +	 * detects it as uninitialised. We want to enforce a reset at probe,
+> > +	 * and so do it manually here. This means the first runtime_resume()
+> > +	 * will be a no-op.
+> > +	 */
+> >  	cdns_ti_reset_and_init_hw(data);
+> > =20
+> >  	pm_runtime_enable(dev);
+> > @@ -232,6 +238,24 @@ static void cdns_ti_remove(struct platform_device =
+*pdev)
+> >  	platform_set_drvdata(pdev, NULL);
+> >  }
+> > =20
+> > +static int cdns_ti_runtime_resume(struct device *dev)
+> > +{
+> > +	const u32 mask =3D USBSS_W1_PWRUP_RST | USBSS_W1_MODESTRAP_SEL;
+> > +	struct cdns_ti *data =3D dev_get_drvdata(dev);
+> > +	u32 w1;
+> > +
+> > +	w1 =3D cdns_ti_readl(data, USBSS_W1);
+> > +	if ((w1 & mask) !=3D mask)
+> > +		cdns_ti_reset_and_init_hw(data);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops cdns_ti_pm_ops =3D {
+> > +	RUNTIME_PM_OPS(NULL, cdns_ti_runtime_resume, NULL)
 >
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> ---
->  tools/net/ynl/generated/.gitignore |  1 +
->  tools/net/ynl/generated/Makefile   | 40 +++++++++++++++++++++++++++---
->  2 files changed, 38 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/net/ynl/generated/.gitignore b/tools/net/ynl/generated/.gitignore
-> index ade488626d26..859a6fb446e1 100644
-> --- a/tools/net/ynl/generated/.gitignore
-> +++ b/tools/net/ynl/generated/.gitignore
-> @@ -1,2 +1,3 @@
->  *-user.c
->  *-user.h
-> +*.rst
-> diff --git a/tools/net/ynl/generated/Makefile b/tools/net/ynl/generated/Makefile
-> index 00af721b1571..208f7fead784 100644
-> --- a/tools/net/ynl/generated/Makefile
-> +++ b/tools/net/ynl/generated/Makefile
-> @@ -7,12 +7,19 @@ ifeq ("$(DEBUG)","1")
->    CFLAGS += -g -fsanitize=address -fsanitize=leak -static-libasan
->  endif
->  
-> +INSTALL	    ?= install
+> Why only runtime resume, but without runtime suspend?
 
-nit: mix of tabs and spaces here
+I don't see any situation where we would want "runtime suspend" be
+equivalent to "reset the cdns3 wrapper". It implies losing child
+states, triggering rediscovery of all USB devices at resume. Is that a
+desired property of runtime suspend on any discoverable bus?
 
-> +prefix      ?= /usr
-> +datarootdir ?= $(prefix)/share
-> +docdir      ?= $(datarootdir)/doc
-> +includedir  ?= $(prefix)/include
-> +
->  include ../Makefile.deps
->  
->  YNL_GEN_ARG_ethtool:=--user-header linux/ethtool_netlink.h \
->  	--exclude-op stats-get
->  
->  TOOL:=../pyynl/ynl_gen_c.py
-> +TOOL_RST:=../pyynl/ynl_gen_rst.py
->  
->  GENS_PATHS=$(shell grep -nrI --files-without-match \
->  		'protocol: netlink' \
-> @@ -22,7 +29,11 @@ SRCS=$(patsubst %,%-user.c,${GENS})
->  HDRS=$(patsubst %,%-user.h,${GENS})
->  OBJS=$(patsubst %,%-user.o,${GENS})
->  
-> -all: protos.a $(HDRS) $(SRCS) $(KHDRS) $(KSRCS) $(UAPI)
-> +SPECS_PATHS=$(wildcard ../../../../Documentation/netlink/specs/*.yaml)
+Sidenote: also, in our implementation, we do the standard thing of using
+pm_runtime_force_suspend|resume() as suspend callback implementations.
+With that, if we did reset the wrapper at suspend, we would:
+ - always have to rediscover USB devices at resume and,
+ - break wakeup sources.
 
-You missed Jakub's request to factor out SPECS_DIR:
+Thanks,
 
-  Maybe factor out:
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-  SPECS_DIR := ../../../../Documentation/netlink/specs
-
-  ? It's pretty long and we repeat it all over the place.
-
-> +SPECS=$(patsubst ../../../../Documentation/netlink/specs/%.yaml,%,${SPECS_PATHS})
-> +RSTS=$(patsubst %,%.rst,${SPECS})
-> +
-> +all: protos.a $(HDRS) $(SRCS) $(KHDRS) $(KSRCS) $(UAPI) $(RSTS)
->  
->  protos.a: $(OBJS)
->  	@echo -e "\tAR $@"
-> @@ -40,8 +51,12 @@ protos.a: $(OBJS)
->  	@echo -e "\tCC $@"
->  	@$(COMPILE.c) $(CFLAGS_$*) -o $@ $<
->  
-> +%.rst: ../../../../Documentation/netlink/specs/%.yaml $(TOOL2)
-
-Did you miss Jakub's review comment: TOOL2 -> TOOL_RST ?
-
-> +	@echo -e "\tGEN_RST $@"
-> +	@$(TOOL_RST) -o $@ -i $<
-> +
->  clean:
-> -	rm -f *.o
-> +	rm -f *.o *.rst
-
-Also Jakub's comment:
-
-  No strong preference but I'd count .rst as final artifacts so I'd clean
-  them up in distclean target only, not the clean target. The distinction
-  itself may be a local custom..
-
->  distclean: clean
->  	rm -f *.c *.h *.a
-> @@ -49,5 +64,24 @@ distclean: clean
->  regen:
->  	@../ynl-regen.sh
->  
-> -.PHONY: all clean distclean regen
-> +install-headers: $(HDRS)
-> +	@echo -e "\tINSTALL generated headers"
-> +	@$(INSTALL) -d $(DESTDIR)$(includedir)/ynl
-> +	@$(INSTALL) -m 0644 *.h $(DESTDIR)$(includedir)/ynl/
-> +
-> +install-rsts: $(RSTS)
-> +	@echo -e "\tINSTALL generated docs"
-> +	@$(INSTALL) -d $(DESTDIR)$(docdir)/ynl
-> +	@$(INSTALL) -m 0644 $(RSTS) $(DESTDIR)$(docdir)/ynl/
-> +
-> +install-specs:
-> +	@echo -e "\tINSTALL specs"
-> +	@$(INSTALL) -d $(DESTDIR)$(datarootdir)/ynl
-> +	@$(INSTALL) -m 0644 ../../../../Documentation/netlink/*.yaml $(DESTDIR)$(datarootdir)/ynl/
-> +	@$(INSTALL) -d $(DESTDIR)$(datarootdir)/ynl/specs
-> +	@$(INSTALL) -m 0644 ../../../../Documentation/netlink/specs/*.yaml $(DESTDIR)$(datarootdir)/ynl/specs/
-> +
-> +install: install-headers install-rsts install-specs
-> +
-> +.PHONY: all clean distclean regen install install-headers install-rsts install-specs
->  .DEFAULT_GOAL: all
 
