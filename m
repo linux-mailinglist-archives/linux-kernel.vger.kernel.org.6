@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-447160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB4D9F2E2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:28:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F889F2E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188A51883306
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F96165D17
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE811203707;
-	Mon, 16 Dec 2024 10:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DB0200118;
+	Mon, 16 Dec 2024 10:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpRxVujJ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKUIfDXR"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A845FBA49;
-	Mon, 16 Dec 2024 10:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618BAA41;
+	Mon, 16 Dec 2024 10:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344898; cv=none; b=RPngOno5f6CwMA/FRUYYDV54/r5Mybzx4ncrdTjti/TQlwyiDqhtncgZVgIAZsibWVc1IWL4wT9Ny6Q+Ix+iS5bZzFRaNieBxhiWIBCBiKNcD0Wqp7tYTbxx6YYVqpKT96d6QFGL+h5sNyaK82gfzv7xO44SUlMOWG9gUn5D6yE=
+	t=1734345083; cv=none; b=SHN5QPlhNp9u+OtJ8PKqiUr9KuKn+vCJYZi7aavxQ4DkEQehUFjziDIRrMVbU1rzerw1/IxsRLJMNm7pag5zQHLQbMn0Zqh9Qhk0w7gp8a/JkaMg9O7BsYyZGvwzFMg420gnMYyFFcpLs+6qwu6bAPPB/q9SPmWfHPXzhnsjp0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344898; c=relaxed/simple;
-	bh=I6SS3jrfUdbjQxbfuV3zgKgJ1lGXHpGlboZOPNu8/w8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QipuQ3j3j9e4UY2yJXnu/HY17+sA3pDQBFrauX097hyBEdrJTY8JbQjKtUFejEB7eaSAUM3xoRcb7VK03o+kZ764sPH0N3i+lcNW3PLxcq4UJUX/LqmNDWIxcGKOosV19lgTrLGX329zgfGfPc09tt0gpzOLFTzgepIZYUhRjDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HpRxVujJ; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1734345083; c=relaxed/simple;
+	bh=d05bZGsIDBz+bWGNCBAD5GvFVO/DoJ9sVfA0O78rFQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zok1xXBDHGuz+6gI1Ih2sheiucmsQFRb/Krn3IdR+2EU5hccR6i1qGz6T3+24cF9fGaKzU0+8hp8igWPlwd7rCDJoaC+9PCEUwLdzDXjjZQ1DsZh56S87foFr98bElTde0HuXHIEogAvjDABOs2i8o+/QPV10cv/d5Q1ayQPsl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKUIfDXR; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso5267235e87.0;
-        Mon, 16 Dec 2024 02:28:16 -0800 (PST)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee6d0a57acso423811a91.1;
+        Mon, 16 Dec 2024 02:31:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734344895; x=1734949695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qo4gtspC0QWz1YSfHZwlyzeb7x8qKi22+rub3ebtAOs=;
-        b=HpRxVujJYKBn+sVWeWIDzkClSd90f2y/PJR83HkRS5h31Acka/NwSYOrvesaCKC52k
-         LxoUF5osFBCfEOm/RrFaoEqG4O4HwDe9XASquG4PgYHbav7r5db36kvPi5Uv0Ariih70
-         DWmjYb3MNX0zk1Yn/IAZtQHG5WEYQo6oFgOU1G/xQlVgppLNo4vKCGa3H4GxRP4plcwV
-         oI2iwTB9PfzcU/0OhWzoHYnAOI3Ex8GeNkdHLCe4SnzcCm/Z5BUv4utOTJ8FOy0XXSYn
-         bx4nT+0fg1wcusx4c92IZo98eUqY7SWNJIyGnaunQMwBy1/rWmSqABLdwq3o3r35Wp6s
-         ASMA==
+        d=gmail.com; s=20230601; t=1734345082; x=1734949882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p0Y1gEL5pKnsD/l19bCFpUiBOCWO+9VOonMM92YkY7o=;
+        b=VKUIfDXRn2QtzYJ1GnHVxubyRXONzyM1UlGrMSBx6s17RIEY12Awo83eopSp5gKGMU
+         PPB9Eq8KAW4dPDUEniYAe+WhKZ1HpwhLuNZ1X1B2NG143+sgmKqo/sY6sblG7f9OmBQk
+         mGPbrTLPLzQeyc5nBUuUTcXP6mRp4Gac5vOcbzaphQcIdT7S6Z4tZfoy2Msh40q0ohID
+         YF1cx/L2idoz+e6wbiW/sfcYnzq8AM3j243WjND2QkO6FpHyY10lrlzmHZoKWKwzwCk8
+         bXzckBB9sjLPnQk8vevEzSBhRffBPaVTJR++UtJlKPQraauZAxgqIf0JRnVaNPJ3T14c
+         KsRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734344895; x=1734949695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qo4gtspC0QWz1YSfHZwlyzeb7x8qKi22+rub3ebtAOs=;
-        b=OKAzlElGSfqjKcQHKpnrWATI6QAykh4+CfJeQeSc6d40DBlw2CJXZZW89XnwCW8cKH
-         oOPJgFlJod2VB9soWdO0ZL75QdQ7HOVtDIkhfhgUdDXEnh12mUTCJV7611EekYWC3V+x
-         98J2gHn0wggyv7GDxby93fEQjBNfju26qSx/cLtpWWQHILJAbNf4D5a7LqGHLJi/dJgq
-         tHP9NGzqJJiH0uqw2W3MXAZlsfOHBpQwNy34RAM+p/RSMs0LI+N1JD60uDZMREb/tA7+
-         gZkfoumw4XuRfTXbJAMOb4sVznVn2DromeSITHKzXDVY/D+R+RT4h0vSq1Infap1hcRj
-         76qA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5jv4S4CPy1NhP9fYbMmEcC0UI4fJw7AvhDQvAiCpfRxkbY6uNzNSRPi+u2OJJrJ8B0OwbGvReU07oFgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3n3ZC7uFBAM3ckR9KH1gnwfCMlgZIDKGsSZPgioLkO4lGimFH
-	qzQtyhcNe/IfE+0Et+dWaOxcgPFbcSWMTgy+cTOTUk44VeavLw0E
-X-Gm-Gg: ASbGnctkxqY+pQYO5cJ3l5mZE65UTSGQvjlPCUbhX0MasZtWeB+Dzggoo2cVMY5DKdF
-	0p4UQ+7vXAHosd3k2VIB1dbBHfy7hCAq5ifJ1HcZMa4X8by9ZIXfCRMGXHYdILjXjnYzKX7dXZd
-	H0qlDjPkkkYG9QV5Xqb/aCP/SE2YClEIyMPXMj0i3HB0lbd8EKfMlJR8oe6rtDg6BNaKcMWeUiC
-	W8jzbfLg1bwyGOLjrOjh6zFlr2rR7BH2Z2vEiDoe6uyy8W9cmBrpW42uMoYkT8Th754ngOZf+TL
-	ICo+Ke+SKzGTo7X19/D4tfQgv8M=
-X-Google-Smtp-Source: AGHT+IHKteDfC2OCM7+VId/zWFwdJEzRXp9u+arJZpLS+qjCfcM0xdomEsTAyrePdyrGdWJsG8L7tg==
-X-Received: by 2002:a05:6512:3c82:b0:540:3579:c647 with SMTP id 2adb3069b0e04-5403579c673mr3819124e87.6.1734344894673;
-        Mon, 16 Dec 2024 02:28:14 -0800 (PST)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c13c3asm783129e87.210.2024.12.16.02.28.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 02:28:13 -0800 (PST)
-Message-ID: <b877f4dd-08a7-4298-80d4-be3570c8fe93@gmail.com>
-Date: Mon, 16 Dec 2024 12:28:12 +0200
+        d=1e100.net; s=20230601; t=1734345082; x=1734949882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p0Y1gEL5pKnsD/l19bCFpUiBOCWO+9VOonMM92YkY7o=;
+        b=XBhaUOcZ3gf5Qu6S+GQvHLbgfy8sRfKe3ddbh12sPmOWOcxFKR/t5qi9tKB5a7pMSD
+         WKfFowMvXN0itX1kltPpdqitEJDCt4gSwCqOKCACocv0jqRAYWhPF6yg9MrMaxH2sTEm
+         NWRW3bHcDxQxoufciMFi5/ZYaQ+OvPWWXsZBLraWxHknl/BP/qCBdT4JC9KgXtjNNfZP
+         YRORoo9CHr15V2mRaZhMmzkk/BiTaYRYGvyKiwj+UU4r0/v+GsM2YauIlcyFOL1R0AsB
+         ZQMY7yMhXRTRCBmjgN4Tir9B4QyIpNK1KyUJHcbuPVraHnmCxiT8ZOdnB5IW0E+7+2Cb
+         +iZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVve1g8EyTdZQJmVq6l7pvmCUjlghbeBBU1kohrLbVDGL9aKRSEgMLfDKwpXuJ/aeCBMsSI4KsldC8Tkw==@vger.kernel.org, AJvYcCWSs03DSd4w+KftqejPW91ngyfjpzVkFbvH+59PD/gXyl13GvhY6mgPpipejiObUYbNkrX8sSWgVZRS2Go=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7VIrhV5xVYlTyq0vh8T04Y/qKDs3NT32aHzezFPT/9pKyYSFK
+	Nht/4KUNx0ajYGHRZHljM/ZJJuvK72FCHlH5pBRSxR7Y7psgzuZC5ndZckYN4jHnA/h3h0QWUwe
+	AU4slonJmh5796HbNsqONN+sTp28tCj2xS9k=
+X-Gm-Gg: ASbGncvYJdoul8La7E+MZ81nj2D4f0shEU7vkZ+TWm1YlFirxUXUbXqoPl0zaUxdnko
+	BrfDHiWkqh8UpbDw/w32gAk47DQoYVy5Ft1j64Q==
+X-Google-Smtp-Source: AGHT+IFh68EReS+hFIr/GB0xTg2bYMoSTewqtgRYu+0xg6FG50x4wwAYS4YEEDcd5tISNjUVpTPHxIURF3jxR6N+gQk=
+X-Received: by 2002:a17:90b:1a85:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-2f28fb605aamr6813303a91.3.1734345081700; Mon, 16 Dec 2024
+ 02:31:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>
-References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com>
- <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
- <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241216162512.064724b9@canb.auug.org.au>
+In-Reply-To: <20241216162512.064724b9@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 16 Dec 2024 11:31:09 +0100
+Message-ID: <CANiq72kv-bjeHtnom2xLqMD92xfogd1hm6yFGg16wpqjhJWMGw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/12/2024 16:27, Alice Ryhl wrote:
-> 
->> +    /// Returns the base address to the allocated region and the dma handle. The caller takes
->> +    /// ownership of the returned resources.
->> +    pub fn into_parts(self) -> (usize, bindings::dma_addr_t) {
->> +        let ret = (self.cpu_addr as _, self.dma_handle);
->> +        core::mem::forget(self);
->> +        ret
->> +    }
-> 
-> Not only does this skip the destructor of `dma_free_attrs`. It also
-> skips the destructor of fields including the `dev` field. Did you
-> intend to leave the refcount on `struct device` without decrementing
-> it?
-> 
+On Mon, Dec 16, 2024 at 6:25=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> After merging the rust tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 
-Good catch. Yeah dev should be decremented here as well.
-Will incorporate fix into next revision.
+Apologies, fixed now, thanks!
 
-Regards,
-Abdiel
+Jocelyn: we are performing the remapping via the new `ffi` crate in
+this cycle. I had to add a change to `drm_panic_qr.rs` to take
+`c_char` instead of `i8` in `drm_panic_qr_generate`, so that types
+match both before and after the remapping. I think this signature
+would have been better anyway, but please let me know if you disagree!
 
+    https://github.com/Rust-for-Linux/linux/commit/e1157aee5f038c2c91af269c=
+d48653133e99f3fb
+
+(Diff copied below too)
+
+Thanks!
+
+Cheers,
+Miguel
+
+[1]
+
+diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr=
+.rs
+index ef2d490965ba..bcf248f69252 100644
+--- a/drivers/gpu/drm/drm_panic_qr.rs
++++ b/drivers/gpu/drm/drm_panic_qr.rs
+@@ -931,7 +931,7 @@ fn draw_all(&mut self, data: impl Iterator<Item =3D u8>=
+) {
+ /// They must remain valid for the duration of the function call.
+ #[no_mangle]
+ pub unsafe extern "C" fn drm_panic_qr_generate(
+-    url: *const i8,
++    url: *const kernel::ffi::c_char,
+     data: *mut u8,
+     data_len: usize,
+     data_size: usize,
 
