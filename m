@@ -1,205 +1,144 @@
-Return-Path: <linux-kernel+bounces-446839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D806B9F29CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:03:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3C99F29D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026631886053
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C0166B21
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0AB1C7B62;
-	Mon, 16 Dec 2024 06:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0688A192B70;
+	Mon, 16 Dec 2024 06:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RqlKUML+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gkfYUpBq"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB11192B70;
-	Mon, 16 Dec 2024 06:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DC6322E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734329013; cv=none; b=h5qAopoEIIoqNa6xrjhRVs/YMbbWgvntWhzaB4ccM3nu5mgVCyUEAo3rDPhkcX6sHRgGOD6SR5bBOSOV1k7YxDT0AiQHt1j0wnpH+F6Sst52Tb7jP85nMGfJt6SKuncWCX0OqzLgNICO75OYlMhP4Ny/JZhKppOSaQR/vpPlOl8=
+	t=1734329037; cv=none; b=CIKZT4XWchzEack7ej/0X8HaFKVfXmgcj7cBuJO10ADQrOF6A17eMeOYuzUPGT7+79vXlyYcVOF3ilNN6B3RyDm9Bp7Z7kV9Xgb1gimG4l3muGoxKV93tzLOqLubYfu8HNYXXlTTAbhyZIGBSUWFo0gnEnXYhT+Zi6IVKvFCO4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734329013; c=relaxed/simple;
-	bh=Kp3xyFWz/0v88Gf9lCCF/jg6HhyIQ70bMmDlTQNGy34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FbmB5M6rsgC6RnTrOaOk1fmjl1Mku95n0y6bCpR4c1WpwUtECof44Z+ChbNGHfLUz9G7RsfXYzKJwwiUneW0eR5LdifX+VgwN+o9lQiG9WUIZqoKRJZAMsdloF29nbbpz4HqCM978jcx/yatK7XSlwNTyxoqv/H+6uLyG3VlFUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RqlKUML+; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734329012; x=1765865012;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Kp3xyFWz/0v88Gf9lCCF/jg6HhyIQ70bMmDlTQNGy34=;
-  b=RqlKUML+lsxOFE3ed/LJo23RQ7NMJmjOB0VRt7guU3hl4m7rkSqaSUem
-   uaof1AljOVFvWZfOKGkg3fVoIahB09xvPUAsmhNnMtTyW1NRp8MKg/rs2
-   0shIGzqxe3/X3+AubeNJJzFtLRB/kE02JrK3S0V5/Y2qniNC2nRnG63B4
-   ZPsmOXW6s9Ksv3RMjx1nyvMaAKYy7a/0jkQIb++jCczvysf1MsZppv80v
-   80XlYrfrQIxPN8ZI44ulo0SdLZOKygXVYCGk8uhPl1/TDiWekpur8MOb0
-   aKFPzSm+3HpUKKHGNpRXwE++wVTQdIREGUMwz4mx+wAfB1UDEX65Z+LCu
-   Q==;
-X-CSE-ConnectionGUID: 1ESOfbjXR7WLBmKnV3KmJg==
-X-CSE-MsgGUID: KMc6HI3CQOq9tZukTycg7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34025178"
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="34025178"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:03:30 -0800
-X-CSE-ConnectionGUID: pzG4dA16RuKsXXmsY274tA==
-X-CSE-MsgGUID: /0V0jTxaShS1V4JayPgpGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96951397"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:03:26 -0800
-Message-ID: <edc7f1f3-e498-44cc-aa3c-994d3f290e01@intel.com>
-Date: Mon, 16 Dec 2024 14:03:23 +0800
+	s=arc-20240116; t=1734329037; c=relaxed/simple;
+	bh=yOIMDtITdjwU8dGlUR5f1kxRPPSJQcdRUFbDxwRHrkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7+oha7+bFSAIlN+tjmbhXCN6as+jj3w8XnQtdahRvMCadi9zL4x5vRd8ODbu2RsF/Sv9nCEOYTRGnG4vAe4rI4PDCapOmJiDbO/LUlH8VLbReQuRmKL46BQM0GSkVKpfOQIQbyY0Zlfr9PkqtrQDe/ddBrNwyF3UrYpJZj2gUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gkfYUpBq; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-728eedfca37so3838949b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:03:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734329035; x=1734933835; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8l56HNoVKCWoq3UFQbYWo8NhPQGEBKhUZs3vIB/kw4s=;
+        b=gkfYUpBqvyEiXJARbueaiqOtQ6w/MIK9IUxJduIfjPEbNcd+YnqmTgjTbIJwNJTRBf
+         Ilc7AAd4WuZ0oid+ofouRJ/0Op10+R5UuS9d4fV9oguvaZ7I4SZL+IyAkJkeTaTS7Haa
+         Rge5w27OiYdJRnAVffmoER6TFQq+dGqZw/Kg12pRRqQ19n3pZcL+B4biRbP4bg0/oDua
+         CUNPmDGMZiQy3aQjQvIM4KCX3/T6E+99r62UVpQTp4OUPXGS0Zmk135ImWd74dgRDbkt
+         3B1lB4pdnhDKUFjk9kkZQZaBlftvJBNPUTzOzwost+Zlm3n48+rP4ZewRGNeclihIH/a
+         xV7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734329035; x=1734933835;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8l56HNoVKCWoq3UFQbYWo8NhPQGEBKhUZs3vIB/kw4s=;
+        b=V4HU0NpgYMnujP9h0Dxc93za5my1GP/+WLzJvGtRTDsjSjOPie1EKRspvaonuJN4Xq
+         4lCiaBVPfkZMV8GORFg1WCOyksPy/TrnuOG+5Mqwn9rc4hKIqERnKPQta4MxOMO367Y3
+         S70N6veEJC9Cv93mRqDZ+rVeDmYkj0w1fxMYPyG3oxG7TcfpkjgHgtVCuq0h+ZeI9Pvr
+         n2J9p1XNzPsVwvvHrK9ic6L0LimVSfR/SNHXdZIZc+H2oR96AgB23IAw5IitrKBs+RoK
+         CR7NBjDBhOc/5pe7xq1UrUdqaUB7CtgiIYQJZkE7jrlYm8BdGsP8UG6klFrBdMXYAQvN
+         p9hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH0KRmKZUThRfiq3E10Y1knWW1lqhFwWdjFhJKIt4iViddTaGuLMG5eoWi99OzfZnnjdj/aAgvKHKOg5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkSfBXcRKBOnRPbCvroE4A33696An9zWBgYYIJMo6nYnFHtbKj
+	wsyFrbkSoKbVrt7mfGS1EEuVGIwVTVnTp80VwxWGkfKoPWLrjZ/7MWq5cmbNLA==
+X-Gm-Gg: ASbGnctiLdwcZ6BBYG0E0Lr/1qn/kj69TwkQH7codxwLBwPjL0dBtR3mlqfYJliM+xU
+	K+YgQLuB33PNmNvbHQgRIZ7O/UQrslwZIgrnFGI3Y3MhpBT03dyA6MOmgDWk0xrKLlQVwWsstAu
+	SzgnBMBba7ghwrFMWbW15PZsj7E1NYKSIYC8gKPSvLIMV/UgnzDTqZvr8OLJsjETKaWwf/o3hG5
+	FH6/j4eTRNHRnh/W36TdSql4yzLWb3V+vN66LMl7b8vl/o23eoMMZmEjLen9rX/Qq4=
+X-Google-Smtp-Source: AGHT+IE89dTdzc53pbTNLiYWQP76UGO9avKXTxiixxWoLDIUfwYBcA6Og+5vQuX+VCSfds7qpcJuug==
+X-Received: by 2002:a05:6a00:17a1:b0:725:e05a:c975 with SMTP id d2e1a72fcca58-7290c264e09mr16165494b3a.19.1734329035071;
+        Sun, 15 Dec 2024 22:03:55 -0800 (PST)
+Received: from thinkpad ([120.60.56.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5664sm3936114b3a.73.2024.12.15.22.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 22:03:54 -0800 (PST)
+Date: Mon, 16 Dec 2024 11:33:37 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: kw@linux.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+	lpieralisi@kernel.org, shuah@kernel.org, kishon@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org, robh@kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Migrate PCI Endpoint Subsystem tests to Kselftest
+Message-ID: <20241216060337.cvhwvdzt34ocg2uf@thinkpad>
+References: <20241211080105.11104-1-manivannan.sadhasivam@linaro.org>
+ <Z1qsIREtdeR38fF6@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
- michael.roth@amd.com, linux-kernel@vger.kernel.org
-References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
- <20241201035358.2193078-5-binbin.wu@linux.intel.com>
- <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
- <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1qsIREtdeR38fF6@ryzen>
 
-On 12/16/2024 9:08 AM, Binbin Wu wrote:
+On Thu, Dec 12, 2024 at 10:25:53AM +0100, Niklas Cassel wrote:
+> Hello Mani,
 > 
+> On Wed, Dec 11, 2024 at 01:31:01PM +0530, Manivannan Sadhasivam wrote:
+> > Hi,
+> > 
+> > This series carries forward the effort to add Kselftest for PCI Endpoint
+> > Subsystem started by Aman Gupta [1] a while ago. I reworked the initial version
+> > based on another patch that fixes the return values of IOCTLs in
+> > pci_endpoint_test driver and did many cleanups. Since the resulting work
+> > modified the initial version substantially, I took over the authorship.
+> > 
+> > This series also incorporates the review comment by Shuah Khan [2] to move the
+> > existing tests from 'tools/pci' to 'tools/testing/kselftest/pci_endpoint' before
+> > migrating to Kselftest framework. I made sure that the tests are executable in
+> > each commit and updated documentation accordingly.
+> > 
+> > NOTE: Patch 1 is strictly not related to this series, but necessary to execute
+> > Kselftests with Qualcomm Endpoint devices. So this can be merged separately.
 > 
+> Having to write a big NOTE is usually a hint that you should just have done
+> things differently :)
 > 
-> On 12/13/2024 5:32 PM, Xiaoyao Li wrote:
->> On 12/1/2024 11:53 AM, Binbin Wu wrote:
->>
-> [...]
->>> +
->>> +static int tdx_map_gpa(struct kvm_vcpu *vcpu)
->>> +{
->>> +    struct vcpu_tdx * tdx = to_tdx(vcpu);
->>> +    u64 gpa = tdvmcall_a0_read(vcpu);
->>
->> We can use kvm_r12_read() directly, which is more intuitive. And we 
->> can drop the MACRO for a0/a1/a2/a3 accessors in patch 022.
-> I am neutral about it.
-> 
-
-a0, a1, a2, a3, are the name convention for KVM's hypercall. It makes 
-sense when serving as the parameters to  __kvm_emulate_hypercall().
-
-However, now __kvm_emulate_hypercall() is made to a MACRO and we don't 
-need the temp variable like a0 = kvm_xx_read().
-
-For TDVMCALL leafs other than normal KVM hypercalls, they are all TDX 
-specific and defined in TDX GHCI spec, a0/a1/a2/a3 makes no sense for them.
-
-> 
->>
->>> +    u64 size = tdvmcall_a1_read(vcpu);
->>> +    u64 ret;
->>> +
->>> +    /*
->>> +     * Converting TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE requires
->>> +     * userspace to enable KVM_CAP_EXIT_HYPERCALL with 
->>> KVM_HC_MAP_GPA_RANGE
->>> +     * bit set.  If not, the error code is not defined in GHCI for 
->>> TDX, use
->>> +     * TDVMCALL_STATUS_INVALID_OPERAND for this case.
->>> +     */
->>> +    if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
->>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
->>> +        goto error;
->>> +    }
->>> +
->>> +    if (gpa + size <= gpa || !kvm_vcpu_is_legal_gpa(vcpu, gpa) ||
->>> +        !kvm_vcpu_is_legal_gpa(vcpu, gpa + size -1) ||
->>> +        (vt_is_tdx_private_gpa(vcpu->kvm, gpa) !=
->>> +         vt_is_tdx_private_gpa(vcpu->kvm, gpa + size -1))) {
->>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
->>> +        goto error;
->>> +    }
->>> +
->>> +    if (!PAGE_ALIGNED(gpa) || !PAGE_ALIGNED(size)) {
->>> +        ret = TDVMCALL_STATUS_ALIGN_ERROR;
->>> +        goto error;
->>> +    }
->>> +
->>> +    tdx->map_gpa_end = gpa + size;
->>> +    tdx->map_gpa_next = gpa;
->>> +
->>> +    __tdx_map_gpa(tdx);
->>> +    /* Forward request to userspace. */
->>> +    return 0;
->>
->> Maybe let __tdx_map_gpa() return a int to decide whether it needs to 
->> return to userspace and
->>
->>     return __tdx_map_gpa(tdx);
->>
->> ?
-> 
-> To save one line of code and the comment?
-
-No. Just I found most of the cases that need to exit to usespace, comes 
-with "return 0" after setting up the run->exit_reason and run->(fields).
-
-> Because MapGPA always goes to userspace, I don't want to make a function 
-> return
-> a int that is a fixed value.
-> And if the multiple comments bother you, I think the comments can be 
-> removed.
-> 
->>
->>
->>> +
->>> +error:
->>> +    tdvmcall_set_return_code(vcpu, ret);
->>> +    kvm_r11_write(vcpu, gpa);
->>> +    return 1;
->>> +}
->>> +
->>>   static int handle_tdvmcall(struct kvm_vcpu *vcpu)
->>>   {
->>>       if (tdvmcall_exit_type(vcpu))
->>>           return tdx_emulate_vmcall(vcpu);
->>>         switch (tdvmcall_leaf(vcpu)) {
->>> +    case TDVMCALL_MAP_GPA:
->>> +        return tdx_map_gpa(vcpu);
->>>       default:
->>>           break;
->>>       }
->>> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
->>> index 1abc94b046a0..bfae70887695 100644
->>> --- a/arch/x86/kvm/vmx/tdx.h
->>> +++ b/arch/x86/kvm/vmx/tdx.h
->>> @@ -71,6 +71,9 @@ struct vcpu_tdx {
->>>         enum tdx_prepare_switch_state prep_switch_state;
->>>       u64 msr_host_kernel_gs_base;
->>> +
->>> +    u64 map_gpa_next;
->>> +    u64 map_gpa_end;
->>>   };
->>>     void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 
->>> field, u64 err);
->>
+> If you need to respin this series, I strongly suggest that you send the
+> Qcom fix separately. It is totally independent, and should be merged ASAP.
 > 
 
+Even though it is an independent fix, it is needed to get Kselftests (also the
+legacy ones) passing without failures. That's why I kept it as patch 1.
+Otherwise, someone may test it and report failures.
+
+> As you know, this series conflicts with:
+> https://lore.kernel.org/linux-pci/20241116032045.2574168-2-cassel@kernel.org/
+> 
+> I don't see any reason why the above patch has not been merged yet,
+> but it would be really nice if the above could be picked up first,
+> so this series could also add a kselftest testcase for the above.
+> 
+
+I was hoping that Greg would pick misc driver changes, but looking at the git
+log of this driver I got to know that the changes were picked by PCI folks only.
+
+@kw: Could you please pick the patch from Niklas?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
