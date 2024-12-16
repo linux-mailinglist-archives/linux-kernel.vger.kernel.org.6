@@ -1,376 +1,127 @@
-Return-Path: <linux-kernel+bounces-448254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9266C9F3DA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:34:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0079F3DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FD5163138
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E8B1884BAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B91D8E18;
-	Mon, 16 Dec 2024 22:33:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156061D5AC6;
-	Mon, 16 Dec 2024 22:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6B41D89F1;
+	Mon, 16 Dec 2024 22:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bUgJRyml"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128701D63F0
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388429; cv=none; b=DWYv9yxvYzIkaN1l/CuyKgR4GEE0ZGa6TuK4Y9SN9+crZbqhEtMblxN/s64cu8PLQ4lyM+ByhzrERsgl7hHIhAUMXvGCCsj4FbKMqjyAOH4cqmx0aax3WFUJoZHYJ9rnBUCZAyTZxh/1nhKPzeDFOea8s0ZOo3rlBlqLMxl4i0c=
+	t=1734388408; cv=none; b=nahdPho6F1UpzcLQmHlbotbyUHbV4Vpok1gMOV7BZDQcbprd8WZ3bPQV9K8H2DiNqXldtwG+mchzB0w+CdsFJ6F7acJimMTJa1jC5aLMUGET8icyFBZ9Nx2Q3bzFK9rsHMJ3zE12YMnXcjR/Wgp4THehJxKZoBg+k01iyCdTz9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388429; c=relaxed/simple;
-	bh=PQzS4WQAw9nV7bI5DZmP1ADIxcQtPHd/qezkN3jwzIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/Dr4Q6sRyNyTt7N1yvItHBAfV5P2hb9L6PnfmOXXIucRpAHx88Rsrccm786wqSBiFnXwBLEEqSIjNubIYV4h6ocJmk1zlUA8AncpFQ17Co1KLFfSiItj1NYb1+AjDsdcUtwY52aQTxmLyL03uKNn63e97c/S3mLtPFmNy0G9m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76476113E;
-	Mon, 16 Dec 2024 14:34:14 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F81A3F58B;
-	Mon, 16 Dec 2024 14:33:39 -0800 (PST)
-Date: Mon, 16 Dec 2024 23:32:54 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
-	x86@kernel.org, linux-doc@vger.kernel.org,
-	Carol Soto <csoto@nvidia.com>,
-	linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v8 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <Z2CqlrtNSyP1rwvv@arm.com>
-References: <20241206135600.4083965-1-beata.michalska@arm.com>
- <20241206135600.4083965-2-beata.michalska@arm.com>
- <3f19c5a8-9ee6-42fe-8b4c-3a66c65c8d35@nvidia.com>
- <955a7947-3053-490e-a803-d55699dddd0c@nvidia.com>
- <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
+	s=arc-20240116; t=1734388408; c=relaxed/simple;
+	bh=AQ6L0FE4N7ae+Cg2Eu7wbgOie9mHJiVhQr34moiqfqI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=RVBr1YMstbHizWKDqlM28A9i/DGildA+WpkE3jw0GK7r4ZU0d4So8iP6wA/H6Qzc2xAahlVfQ25X7NBQSbUolXh5K7HEQclx7MwI/yWO/Ny4/9+IECTEKrjPQXaKsSRJrYQd3yTTCQWHLKy6mDlrCGjz7/ufmTOZW3X6/QrOKm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bUgJRyml; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2eedd15c29eso4065636a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:33:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734388406; x=1734993206; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9jJCzoGzQp+cdjga58qGUwc3ffJR9vhNALvR1f7QLKI=;
+        b=bUgJRymlxUYtLkubw2seHPAskoB6hY8bgUddpHzw1r6UwGxxMKD3Jtf8AfaAPrIu1n
+         73jHT+y6D8Z8QfDC2wqSVn9L0nSFBnhkO2HK0lrmhwkuGBpM10ecYCQN+aVg3Bh9q81n
+         4jyfGxceCKVMKZw0LirEBk+iYusKf5bFAzigNM+Nuq8vZAhEWEZIRomgUHhLpmy0njKT
+         Ga6kWyQZ95nn6fp0gbU4IUIDDStPM1ol56mXtBY4tHpkXrFdKK/trrddUY1VyU8nMQ3R
+         xWUAz9PiZeGC6gxn0N1pd+f9jrh8uYyvrkeqEedR2+S4NkWh3AcYHL/mcAiQf0cTkfuD
+         eLuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734388406; x=1734993206;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jJCzoGzQp+cdjga58qGUwc3ffJR9vhNALvR1f7QLKI=;
+        b=p3ysIBAeT2j1azhebZOYqG70WN8NiCyyjxAsVDFfspmlaKr/cd7DWl1kPbhAW7PbK/
+         8p1aQpDoanipfWQVhfhmKrairyXvdWcAamgneXtwDOBfcQ10+oAkmq4aKam02LhmyLMj
+         WQ3UrnePEP+61F0JidP2gsrU5Jyntbgo7V0GC3r3PpOk9AU7bAthrx+jwcvWwcHxAiWH
+         dI6Auk0v+/AbQaUjZKmmBVE/6x0e+j1quTcI2+AZYERaR8M8iJmUrqVBA9MA1DIUpS10
+         nZ+lAiDZJ027k0iqRqBoCAS4E4w3luFegzAR6FPfnspNhIFKCXBR0SVORv14JVeKr4AH
+         Tucw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5nLf8RkVEENcJl7nWNUPRiNPjQqvYx3IUycMXJHbiX4BQIhjRGLTcjdMEQe3uB5nNOXnEdpTWzMhZReE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUSRPyva/9YFUkB4gQ5fPGxwPSRgoiXbQ5NyyOFRABRJRLUDfn
+	0hCJqnnRrsAcXx9iCvCAuhNxhAHB/e/xf8+mdCh64Prnk35h2usfRevXRcTER5Mt9y3LjD9c6OF
+	Kzw==
+X-Google-Smtp-Source: AGHT+IHhtWHdid0XDbI59B1aoA+CN7rFIH/zmVAk3APPQqAwY7oJZB6TaL0aH/5JThWes+dWQrGdtB7EGl0=
+X-Received: from pjd5.prod.google.com ([2002:a17:90b:54c5:b0:2ef:8eb8:e4eb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c887:b0:2ee:6e22:bfd0
+ with SMTP id 98e67ed59e1d1-2f2d7eece80mr1530327a91.21.1734388406334; Mon, 16
+ Dec 2024 14:33:26 -0800 (PST)
+Date: Mon, 16 Dec 2024 14:33:24 -0800
+In-Reply-To: <20241128005547.4077116-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
+Mime-Version: 1.0
+References: <20241128005547.4077116-1-seanjc@google.com>
+Message-ID: <Z2CqtL1R0-368hO-@google.com>
+Subject: Re: [PATCH v4 00/16] KVM: selftests: "tree" wide overhauls
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Dec 16, 2024 at 04:33:28PM +0800, Kai-Heng Feng wrote:
-> Hi Sumit,
+On Wed, Nov 27, 2024, Sean Christopherson wrote:
+> Two separate series (mmu_stress_test[1] and $ARCH[2]), posted as one to
+> avoid unpleasant conflicts, and because I hope to land both in kvm/next
+> shortly after 6.12-rc1 since they impact all of KVM selftests.
 > 
-> On 2024/12/16 3:11 PM, Sumit Gupta wrote:
-> > 
-> > 
-> > On 16/12/24 11:13, Kai-Heng Feng wrote:
-> > > Hi Beata,
-> > > 
-> > > On 2024/12/6 9:55 PM, Beata Michalska wrote:
-> > > > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > > > and scaling_cur_freq. Both provide slightly different view on the
-> > > > subject and they do come with their own drawbacks.
-> > > > 
-> > > > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > > > rather expensive. Moreover, the information retrieved via this attribute
-> > > > is somewhat short lived as frequency can change at any point of time
-> > > > making it difficult to reason from.
-> > > > 
-> > > > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > > > the actual level of precision (and source of information) varies between
-> > > > architectures making it a bit ambiguous.
-> > > > 
-> > > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > > > distinct interface, exposing an average frequency of a given CPU(s), as
-> > > > reported by the hardware, over a time frame spanning no more than a few
-> > > > milliseconds. As it requires appropriate hardware support, this
-> > > > interface is optional.
-> > > > 
-> > > > Note that under the hood, the new attribute relies on the information
-> > > > provided by arch_freq_get_on_cpu, which, up to this point, has been
-> > > > feeding data for scaling_cur_freq attribute, being the source of
-> > > > ambiguity when it comes to interpretation. This has been amended by
-> > > > restoring the intended behavior for scaling_cur_freq, with a new
-> > > > dedicated config option to maintain status quo for those, who may need
-> > > > it.
-> > > > 
-> > > > CC: Jonathan Corbet <corbet@lwn.net>
-> > > > CC: Thomas Gleixner <tglx@linutronix.de>
-> > > > CC: Ingo Molnar <mingo@redhat.com>
-> > > > CC: Borislav Petkov <bp@alien8.de>
-> > > > CC: Dave Hansen <dave.hansen@linux.intel.com>
-> > > > CC: H. Peter Anvin <hpa@zytor.com>
-> > > > CC: Phil Auld <pauld@redhat.com>
-> > > > CC: x86@kernel.org
-> > > > CC: linux-doc@vger.kernel.org
-> > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > ---
-> > > >   Documentation/admin-guide/pm/cpufreq.rst | 16 ++++++++++-
-> > > >   arch/x86/kernel/cpu/aperfmperf.c         |  2 +-
-> > > >   arch/x86/kernel/cpu/proc.c               |  7 +++--
-> > > >   drivers/cpufreq/Kconfig.x86              | 12 ++++++++
-> > > >   drivers/cpufreq/cpufreq.c                | 36 +++++++++++++++++++++---
-> > > >   include/linux/cpufreq.h                  |  2 +-
-> > > >   6 files changed, 66 insertions(+), 9 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/admin-guide/pm/cpufreq.rst
-> > > > b/Documentation/admin- guide/pm/cpufreq.rst
-> > > > index fe1be4ad88cb..76f3835afe01 100644
-> > > > --- a/Documentation/admin-guide/pm/cpufreq.rst
-> > > > +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> > > > @@ -248,6 +248,19 @@ are the following:
-> > > >       If that frequency cannot be determined, this attribute should not
-> > > >       be present.
-> > > > +``cpuinfo_avg_freq``
-> > > > +        An average frequency (in KHz) of all CPUs belonging to a given policy,
-> > > > +        derived from a hardware provided feedback and reported on a time frame
-> > > > +        spanning at most few milliseconds.
-> > > > +
-> > > > +        This is expected to be based on the frequency the
-> > > > hardware actually runs
-> > > > +        at and, as such, might require specialised hardware
-> > > > support (such as AMU
-> > > > +        extension on ARM). If one cannot be determined, this attribute should
-> > > > +        not be present.
-> > > > +
-> > > > +        Note, that failed attempt to retrieve current frequency for a given
-> > > > +        CPU(s) will result in an appropriate error.
-> > > > +
-> > > >   ``cpuinfo_max_freq``
-> > > >       Maximum possible operating frequency the CPUs belonging to this policy
-> > > >       can run at (in kHz).
-> > > > @@ -293,7 +306,8 @@ are the following:
-> > > >       Some architectures (e.g. ``x86``) may attempt to provide information
-> > > >       more precisely reflecting the current CPU frequency through this
-> > > >       attribute, but that still may not be the exact current CPU frequency as
-> > > > -    seen by the hardware at the moment.
-> > > > +    seen by the hardware at the moment. This behavior though, is only
-> > > > +    available via c:macro:``CPUFREQ_ARCH_CUR_FREQ`` option.
-> > > >   ``scaling_driver``
-> > > >       The scaling driver currently in use.
-> > > > diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-> > > > index 0b69bfbf345d..a00059139ca4 100644
-> > > > --- a/arch/x86/kernel/cpu/aperfmperf.c
-> > > > +++ b/arch/x86/kernel/cpu/aperfmperf.c
-> > > > @@ -413,7 +413,7 @@ void arch_scale_freq_tick(void)
-> > > >    */
-> > > >   #define MAX_SAMPLE_AGE    ((unsigned long)HZ / 50)
-> > > > -unsigned int arch_freq_get_on_cpu(int cpu)
-> > > > +int arch_freq_get_on_cpu(int cpu)
-> > > >   {
-> > > >       struct aperfmperf *s = per_cpu_ptr(&cpu_samples, cpu);
-> > > >       unsigned int seq, freq;
-> > > > diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
-> > > > index e65fae63660e..34d8fb93fb70 100644
-> > > > --- a/arch/x86/kernel/cpu/proc.c
-> > > > +++ b/arch/x86/kernel/cpu/proc.c
-> > > > @@ -86,9 +86,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
-> > > >           seq_printf(m, "microcode\t: 0x%x\n", c->microcode);
-> > > >       if (cpu_has(c, X86_FEATURE_TSC)) {
-> > > > -        unsigned int freq = arch_freq_get_on_cpu(cpu);
-> > > > +        int freq = arch_freq_get_on_cpu(cpu);
-> > > > -        seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq / 1000, (freq % 1000));
-> > > > +        if (freq <= 0)
-> > > > +            seq_puts(m, "cpu MHz\t\t: Unknown\n");
-> > > > +        else
-> > > > +            seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq /
-> > > > 1000, (freq % 1000));
-> > > >       }
-> > > >       /* Cache size */
-> > > > diff --git a/drivers/cpufreq/Kconfig.x86 b/drivers/cpufreq/Kconfig.x86
-> > > > index 97c2d4f15d76..212e1b9afe21 100644
-> > > > --- a/drivers/cpufreq/Kconfig.x86
-> > > > +++ b/drivers/cpufreq/Kconfig.x86
-> > > > @@ -340,3 +340,15 @@ config X86_SPEEDSTEP_RELAXED_CAP_CHECK
-> > > >         option lets the probing code bypass some of those checks if the
-> > > >         parameter "relaxed_check=1" is passed to the module.
-> > > > +config CPUFREQ_ARCH_CUR_FREQ
-> > > > +    default y
-> > > > +    bool "Current frequency derived from HW provided feedback"
-> > > > +    help
-> > > > +      This determines whether the scaling_cur_freq sysfs attribute returns
-> > > > +      the last requested frequency or a more precise value based on hardware
-> > > > +      provided feedback (as architected counters).
-> > > > +      Given that a more precise frequency can now be provided via the
-> > > > +      cpuinfo_avg_cur_freq attribute, by enabling this option,
-> > > > +      scaling_cur_freq maintains the provision of a counter based frequency,
-> > > > +      for compatibility reasons.
-> > > > +
-> > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > index 04fc786dd2c0..70df2a24437b 100644
-> > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > @@ -747,9 +747,14 @@ show_one(cpuinfo_transition_latency,
-> > > > cpuinfo.transition_latency);
-> > > >   show_one(scaling_min_freq, min);
-> > > >   show_one(scaling_max_freq, max);
-> > > > -__weak unsigned int arch_freq_get_on_cpu(int cpu)
-> > > > +__weak int arch_freq_get_on_cpu(int cpu)
-> > > >   {
-> > > > -    return 0;
-> > > > +    return -EOPNOTSUPP;
-> > > > +}
-> > > > +
-> > > > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
-> > > > +{
-> > > > +    return arch_freq_get_on_cpu(policy->cpu) != -EOPNOTSUPP;
-> > > >   }
-> > > >   static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
-> > > > @@ -757,8 +762,11 @@ static ssize_t show_scaling_cur_freq(struct
-> > > > cpufreq_policy *policy, char *buf)
-> > > >       ssize_t ret;
-> > > >       unsigned int freq;
-> > > > -    freq = arch_freq_get_on_cpu(policy->cpu);
-> > > > -    if (freq)
-> > > > +    freq = IS_ENABLED(CONFIG_CPUFREQ_ARCH_CUR_FREQ)
-> > > > +        ? arch_freq_get_on_cpu(policy->cpu)
-> > > > +        : 0;
-> > > > +
-> > > > +    if (freq > 0)
-> > > >           ret = sysfs_emit(buf, "%u\n", freq);
-> > > >       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> > > >           ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
-> > > > @@ -802,6 +810,19 @@ static ssize_t show_cpuinfo_cur_freq(struct
-> > > > cpufreq_policy *policy,
-> > > >       return sysfs_emit(buf, "<unknown>\n");
-> > > >   }
-> > > > +/*
-> > > > + * show_cpuinfo_avg_freq - average CPU frequency as detected by hardware
-> > > > + */
-> > > > +static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
-> > > > +                     char *buf)
-> > > > +{
-> > > > +    int avg_freq = arch_freq_get_on_cpu(policy->cpu);
-> > > 
-> > > We are seeing issues when reading cpuinfo_avg_freq on an ARM64 system:
-> > > 
-> > > $ cat /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq
-> > > cat: /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq:
-> > > Resource temporarily unavailable
-> > > 
-> > > The CPU is in idle state, so arch_freq_get_on_cpu() can't find a
-> > > good alternative source for frequency info.
-> > > 
-> > 
-> > Hi Kai Heng,
-> > This has already been discussed during v7 in [1] & [2].
+> mmu_stress_test
+> ---------------
+> Convert the max_guest_memory_test into a more generic mmu_stress_test.
+> The basic gist of the "conversion" is to have the test do mprotect() on
+> guest memory while vCPUs are accessing said memory, e.g. to verify KVM
+> and mmu_notifiers are working as intended.
 > 
-> Thanks for the info!
-@Sumit: Thank you indeed.
+> The original plan was that patch 3 would be a single patch, but things
+> snowballed in order to rework vcpu_get_reg() to return a value instead
+> of using an out-param.  Having to define a variable just to bump the
+> program counter on arm64 annoyed me.
 > 
-> > In v7, we were returning zero which printed 'unknown'.
-> > The discussion was about printing in more descriptive way or with an
-> > appropriate error code. In v8 we are returning 'EAGAIN' instead of zero.
-> > The final decision was of Maintainers.
+> $ARCH
+> -----
+> Play nice with treewrite builds of unsupported architectures, e.g. arm
+> (32-bit), as KVM selftests' Makefile doesn't do anything to ensure the
+> target architecture is actually one KVM selftests supports.
 > 
-> Is there any cpufreq driver that prints "unknown" or error when CPU is in idle?
-I think at this point, for cpuinfo_cur_freq, one gets either the frequency value
-or 'unknown'. I'm not sure whether there are any drivers that report error upon
-'get'.
-> 
-> I think it's more unsurprising to print the lowest CPU frequency when CPU is
-> in idle state, instead of any other error code.
-With that approach one cannot easily determine whether the CPU is actually
-running at the lowest frequency or it's idle.
-Returning an error also avoids mixing types of data provided by the handler.
+> The last two patches are opportunistic changes (since the above Makefile
+> change will generate conflicts everywhere) to switch to using $(ARCH)
+> instead of the target triple for arch specific directories, e.g. arm64
+> instead of aarch64, mainly so as not to be different from the rest of
+> the kernel.
 
----
-BR
-Beata
-> 
-> Kai-Heng
-> 
-> > 
-> > Viresh,
-> > You have any preference on this?
-> > 
-> > [1] https://lore.kernel.org/lkml/aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com/#t
-> > [2] https://lore.kernel.org/lkml/Zyh-uVSW-0d0r8oB@arm.com/
-> > 
-> > Thank you,
-> > Sumit Gupta
-> > 
-> > > One way to resolve this is to have fallback methods in
-> > > show_cpuinfo_avg_freq() so it will look like this:
-> > > 
-> > > static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
-> > >                                       char *buf)
-> > > {
-> > >          int avg_freq = arch_freq_get_on_cpu(policy->cpu);
-> > >          int ret;
-> > > 
-> > >          if (avg_freq > 0)
-> > >                  ret = sysfs_emit(buf, "%u\n", avg_freq);
-> > >          else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> > >                  ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
-> > >          else
-> > >                  ret = sysfs_emit(buf, "%u\n", policy->cur);
-> > >          return ret;
-> > > }
-> > > 
-> > > But that also makes show_cpuinfo_avg_freq() pretty much the same as
-> > > show_scaling_cur_freq().
-> > > 
-> > > So is it possible to consolidate show_cpuinfo_avg_freq() into
-> > > show_scaling_cur_freq(), by making CONFIG_CPUFREQ_ARCH_CUR_FREQ also
-> > > available to ARM64?
-> > > 
-> > > Kai-Heng
-> > > 
-> > > > +
-> > > > +    if (avg_freq > 0)
-> > > > +        return sysfs_emit(buf, "%u\n", avg_freq);
-> > > > +    return avg_freq != 0 ? avg_freq : -EINVAL;
-> > > > +}
-> > > > +
-> > > >   /*
-> > > >    * show_scaling_governor - show the current policy for the specified CPU
-> > > >    */
-> > > > @@ -964,6 +985,7 @@ static ssize_t show_bios_limit(struct
-> > > > cpufreq_policy *policy, char *buf)
-> > > >   }
-> > > >   cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
-> > > > +cpufreq_freq_attr_ro(cpuinfo_avg_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_min_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_max_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_transition_latency);
-> > > > @@ -1091,6 +1113,12 @@ static int
-> > > > cpufreq_add_dev_interface(struct cpufreq_policy *policy)
-> > > >               return ret;
-> > > >       }
-> > > > +    if (cpufreq_avg_freq_supported(policy)) {
-> > > > +        ret = sysfs_create_file(&policy->kobj, &cpuinfo_avg_freq.attr);
-> > > > +        if (ret)
-> > > > +            return ret;
-> > > > +    }
-> > > > +
-> > > >       ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
-> > > >       if (ret)
-> > > >           return ret;
-> > > > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > > > index d4d2f4d1d7cb..a7b6c0ccf9bc 100644
-> > > > --- a/include/linux/cpufreq.h
-> > > > +++ b/include/linux/cpufreq.h
-> > > > @@ -1194,7 +1194,7 @@ static inline int
-> > > > of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
-> > > >   }
-> > > >   #endif
-> > > > -extern unsigned int arch_freq_get_on_cpu(int cpu);
-> > > > +extern int arch_freq_get_on_cpu(int cpu);
-> > > >   #ifndef arch_set_freq_scale
-> > > >   static __always_inline
-> > > 
-> 
+Paolo,
+
+Unless you or someone else have concerns, can you apply this to kvm/next sooner
+than later?  I'd like to start applying selftests changes for 6.14 and don't want
+generate conflicts, and I really don't want to have to rebase and push this series
+out again.
+
+Thanks!
 
