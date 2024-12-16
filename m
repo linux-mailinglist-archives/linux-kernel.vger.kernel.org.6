@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-447828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC019F3790
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:29:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B849F3795
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A867162B92
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D696C1888DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387820629B;
-	Mon, 16 Dec 2024 17:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CEE2063E3;
+	Mon, 16 Dec 2024 17:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlnvwOof"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dDAxNWif"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A449581ACA;
-	Mon, 16 Dec 2024 17:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BD313B792;
+	Mon, 16 Dec 2024 17:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734370148; cv=none; b=YuG5IW51Xd/yRCCKSYgl06K6EPuLHcPwRY7cgP8riLvNNBkQx+XT/D7gOSbMh107taRfw7XuH6HSQUzQRIZKR4TdqmtqGkG7m+jHLc7tpkWi5+uXG6mEjbGe6D0qZs7iA3OgbCwHvYKKn6a/oDcBHqBJl5Zyr4LISNPqzI7FZtQ=
+	t=1734370240; cv=none; b=VPvW26aJQ0HC6oQJ/M40oaYHzMo/8rd7VkZNHcnvU/X8SrNIbrWOP+V0S85hrfdt2zjiw9ssXLryt4hqxQwzg5oanv/Hgw99QOPhz5MPENnQms7o7Kcq7zF3INhLHB0h2D8L0ushz/Ua4WSHnkM4LmCy23sslwBtLRbO/KwS/ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734370148; c=relaxed/simple;
-	bh=uO4RvUIsNNGHSqvi9NWA9W+sJAdveK70mBR5/s2dV7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kg0u2g5DMyvpcGjom4pvn+TGVmJ7supLUNwfrzirk+CnginsiufWMiwRcvRun4TZsHLsGOp7XU0zRMsAkoPOw7/kbl1QLBkQSkOnCSNa2o36UbDuyQ2fHuaAh9oYQFQvcEVAD1rfc48juzxkRpMMZvUYgClcRgRMG2RNwlfyowM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlnvwOof; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B6BC4CEE2;
-	Mon, 16 Dec 2024 17:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734370148;
-	bh=uO4RvUIsNNGHSqvi9NWA9W+sJAdveK70mBR5/s2dV7o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QlnvwOofwMc2xXqXM79nNYMvdaL2/aqroltkRgfKLvUN9F7yYdB+NGwyKgk4JZIf7
-	 7VaBVkrHNqDQIrMGxyq//QbJjOalGFYk4YEzDg36qwXzqYmifHwLZbRl4Rw+mGwLh9
-	 1qXvB9XbtDxmJ1ujr5bqX50qpqVmMOPHuNr+a+UYI8UIKGX7qwuDH6P/su6JCc05hn
-	 kLPh5mjprCsDgGh9TxpKuiXhzS5wn38yjkCcm4JhQs+dORvspvWYTaLy3uF1eB4QDH
-	 6AWlS6+LbNwTmC/LoKxhu4AuIqoSUCxIzzy+jhOmoOgAHZ9XsxpfFxm/IFE3WVjZXC
-	 lg6YlY+5IjAPA==
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3eb7e725aa0so2073465b6e.0;
-        Mon, 16 Dec 2024 09:29:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUR3JiYA4Og2oQE80u/K2DGIpEp+kKXRPfnxUgZtOOqK3s3CM/G2NDZLD+mH2uNx8BlVQa3PWjgGxo=@vger.kernel.org, AJvYcCWjtbEZBxDY/JgaOXBT9x0mElFVrRfhipflRvxtuvltE5vHD0zF83x3CKxaBa4O9Rebpxmze3h3+5JM@vger.kernel.org, AJvYcCXgZDIY7KLN4YfsVmzjAz1k+RMV7rBs4wt2huIhJe9G2/KTFVOn1ZitO9OcgE632PtIrIt6qM0wY0oELP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwByKnM2LzROdvBHB9ZUy/+dvq6xcBspqDuPBNIFubPLYoZqLZh
-	OI5esgXtPmVdy7Mj75sG+vJU+J78cyeOBMjGnj8Tw9Avcf02HWScqiEa53QusO3YubBeqOTdcSU
-	gu/rNnl5AMfITaZVtPs1cCaIBtzg=
-X-Google-Smtp-Source: AGHT+IF3TcMdugshcb0ACvJieCHGeXkqH6Ge96ABjnS17IHSgmIjjh7HLYyc+Hm2VaaAjnQEBPZdSgJ7BTojcSgiNNU=
-X-Received: by 2002:a05:6808:189e:b0:3eb:66d7:a33e with SMTP id
- 5614622812f47-3eba67f9917mr8762730b6e.5.1734370147442; Mon, 16 Dec 2024
- 09:29:07 -0800 (PST)
+	s=arc-20240116; t=1734370240; c=relaxed/simple;
+	bh=0GHTmDW24yDL/L87YNar8k/bzXJLqW1qzxXU3jUJqm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXUfqfRS+lNyHfroYYUtO8RwZp+NYIQSBRj5RFYfZvzoi5WIzyN34/IGtrBgYIXLV13GuXhfbG1IFTetvKBJ0x+ZfaiSvV/sUmuX8Wp69kP+rL/XJiKH4vF6Y4Ph4dI3X9JgYOlsFHRgXl7lG2DEGa/xdJnWIFeDvZFT924trLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dDAxNWif; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734370238; x=1765906238;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0GHTmDW24yDL/L87YNar8k/bzXJLqW1qzxXU3jUJqm8=;
+  b=dDAxNWifmh/Xkvnj1CJuS8PQ48VIcdD+TUj1IGL4yVBUWt9tGmTvoBta
+   8sYnR+HNhSbuZxhrxl4kDLGOvGwIiSh8M+23HVJgDtBnniMQood5SjM8p
+   mC6MsbHlPszScJUMYEU9kT/vhV2zRocxrQ5WZIVwI8HT38iHK6vfjOabM
+   Yp94VrgjVV7HEXj6uSUisv3vDXYapZHTPyen1d63hcFyB/RE0irbsPu4q
+   +GDqVqdUjSebNDIRqXofPfTVgy19lw6T6gCc+W8syzNZ9B98YvetRiPWR
+   0elNnNZrm5xDBpOcUH3mdhM6xxKdMKQRQQEqWsyVHP29Uwfv6ie9Oh5EF
+   Q==;
+X-CSE-ConnectionGUID: qOGLaWdXQbyqZRy4YA9qnQ==
+X-CSE-MsgGUID: d4N+wPzHTNOSBo9pNTfQVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="38445520"
+X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
+   d="scan'208";a="38445520"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 09:30:37 -0800
+X-CSE-ConnectionGUID: svyeDUJLS5e0ZfTRRRv9iw==
+X-CSE-MsgGUID: EWI4KAF3S7CLXQ763EqQ/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="134602748"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 16 Dec 2024 09:30:34 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tNEvP-000EMq-2r;
+	Mon, 16 Dec 2024 17:30:31 +0000
+Date: Tue, 17 Dec 2024 01:30:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Geoffrey Chien <geoffrey_chien@pegatron.corp-partner.google.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@mediatek.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	herbert1_wu@pegatron.corp-partner.google.com,
+	Thomas_Hsieh@pegatron.corp-partner.google.com,
+	Geoffrey Chien <geoffrey_chien@pegatron.corp-partner.google.com>
+Subject: Re: [PATCH] arm64: dts: mt8186: Add mt8186-skitty
+Message-ID: <202412170154.QsBtjHdl-lkp@intel.com>
+References: <20241216-skitty_kernel-v1-1-bc75dcdfeb57@pegatron.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205232900.GA3072557@bhelgaas> <20241209143821.m4dahsaqeydluyf3@thinkpad>
- <20241212055920.GB4825@lst.de> <13662231.uLZWGnKmhe@rjwysocki.net>
- <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
- <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
- <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <20241216162303.GA26434@lst.de>
- <CAJZ5v0g8CdGgWA7e6TXpUjYNkU1zX46Rz3ELiun42MayoN0osA@mail.gmail.com> <20241216164830.36lpu6gfnapsdar4@thinkpad>
-In-Reply-To: <20241216164830.36lpu6gfnapsdar4@thinkpad>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 16 Dec 2024 18:28:55 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hxnYere19wXbua6zWEDRDgSPeJgSECugtwfgTP-UN8Bw@mail.gmail.com>
-Message-ID: <CAJZ5v0hxnYere19wXbua6zWEDRDgSPeJgSECugtwfgTP-UN8Bw@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, 
-	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216-skitty_kernel-v1-1-bc75dcdfeb57@pegatron.corp-partner.google.com>
 
-On Mon, Dec 16, 2024 at 5:48=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Mon, Dec 16, 2024 at 05:42:30PM +0100, Rafael J. Wysocki wrote:
-> > On Mon, Dec 16, 2024 at 5:23=E2=80=AFPM Christoph Hellwig <hch@lst.de> =
-wrote:
-> > >
-> > > On Sat, Dec 14, 2024 at 12:00:23PM +0530, Manivannan Sadhasivam wrote=
-:
-> > > > We need a PM core API that tells the device drivers when it is safe=
- to powerdown
-> > > > the devices. The usecase here is with PCIe based NVMe devices but t=
-he problem is
-> > > > applicable to other devices as well.
-> > >
-> > > Maybe I'm misunderstanding things, but I think the important part is
-> > > to indicate when a suspend actually MUST put the device into D3.  Bec=
-ause
-> > > doing that should always be safe, but not always optimal.
-> >
-> > I'm not aware of any cases when a device must be put into D3cold
-> > (which I think is what you mean) during system-wide suspend.
-> >
-> > Suspend-to-idle on x86 doesn't require this, at least not for
-> > correctness.  I don't think any platforms using DT require it either.
-> >
->
-> On suspend-to-idle, yes D3Cold doesn't make sense,
+Hi Geoffrey,
 
-Why?
+kernel test robot noticed the following build errors:
 
-> but on suspend-to-ram it is pretty much required.
+[auto build test ERROR on 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8]
 
-Well, I know for a fact that on x86 platforms ACPI S3 does not require
-putting devices into D3cold in general.
+url:    https://github.com/intel-lab-lkp/linux/commits/Geoffrey-Chien/arm64-dts-mt8186-Add-mt8186-skitty/20241216-153651
+base:   78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
+patch link:    https://lore.kernel.org/r/20241216-skitty_kernel-v1-1-bc75dcdfeb57%40pegatron.corp-partner.google.com
+patch subject: [PATCH] arm64: dts: mt8186: Add mt8186-skitty
+config: arm64-randconfig-003-20241216 (https://download.01.org/0day-ci/archive/20241217/202412170154.QsBtjHdl-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241217/202412170154.QsBtjHdl-lkp@intel.com/reproduce)
 
-Why is it required for NVMe?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412170154.QsBtjHdl-lkp@intel.com/
 
-> That applies to DT as well.
+All errors (new ones prefixed by >>):
 
-Again, why?
+>> Error: arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtsi:42.1-8 Label or path target not found
+   FATAL ERROR: Syntax error parsing input tree
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
