@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-447965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2362E9F3953
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:53:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C259F3958
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A73037A2460
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01CCB16A891
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CD9207A16;
-	Mon, 16 Dec 2024 18:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3321225634;
+	Mon, 16 Dec 2024 18:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2Ce5JH7n"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8otgIh2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23583207658
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EF41E493;
+	Mon, 16 Dec 2024 18:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734375202; cv=none; b=j5WPd/gKwePc+lXSj0IqQbC/AIxafKCzYMS4Gbhyi4Tyxu7T76wNQTWyjE3ffIOVz9GSalxrTIzUY7fJ4od8aq0flUX5KSGBapr09nBUXwZJvORyzpTdYAieDSpCMcXmlQblDUaISObRRWNHIhOoyL6EUh/guAayoi6ii3/lbk4=
+	t=1734375230; cv=none; b=s6w9UDOll7P+dpTp7HllVPKlK6cgEZ1UOArvZNSgHxTbw9RDNSy/Y21GxtAxmwWYmlsPZGDaN0biMb3zFTEFj/93YUrGGHqJoYGzwVa9YBg9r6SwkFa7tBEM3yZmFK+53z51ZUHcDcAi13/B45Yawfd6uoVTCyCA/o+tJ2xAnk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734375202; c=relaxed/simple;
-	bh=QksVs/Fxv+cbTfWNhYVGoeCzkAB7AdKcWXZuz26F64A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BECF2gR01lQ2ojLRFPWy0w9BGnfLPvaG6NvBS7PeHtESe5lmbIzHhoKprWhg5LI44Wqt4FcImBgpeaIkjXQ2d+HAVw4jZ2ATsb2WwuNf2MStuROqevxJOdowZ5xnvt1Kt4lABJxp1X9kn7NutVg433m89ByUFZUF3FBCvtUKvP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2Ce5JH7n; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-728e81257bfso3514317b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:53:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734375197; x=1734979997; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LtCDUPpXP7mZ+NtBMUfwJXGAbOMvjyVT6yZDJ43guI=;
-        b=2Ce5JH7nlAQiKQgSJNQp9hOiMBlUa0ogI1g9soqcTageJolocav3FMJclMjYo80/Xy
-         50Vdt282wcQ/vqneHQ2eEtwUKddVZJINPmQSCHnhf5tVXw8EnwvVyOCSXWUACVoSgKfT
-         wSkDXWIb7EbLV7YMbMZIok9pbMWPB/zwoCFZCjqsOGWa2A8xeyCINdk26B+iRdglhvq1
-         efhAJdnqoZlj8mFqA8oDoTEBujTbMrSlf9zz7Eov/hvAkV60HFxIyzg5FmAbPT5xpxgf
-         83TmlXKBsXnorJBeG/ySZZsbbXqggP6OU+fNKGc9hGVmB5Z9NVzrXsHXORa5X9P0My4O
-         09ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734375197; x=1734979997;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5LtCDUPpXP7mZ+NtBMUfwJXGAbOMvjyVT6yZDJ43guI=;
-        b=aR9tIJ1/UbZoE/0cavc8YPrwGkByvKSSy01mB4Iew1ob/+jRE3yqqUfQh5s7mCJpAx
-         rUcyA51hgrDpL+WCnV8H+kxhsfZPFwbLxmYs5fjNXk32wgHdZupp15OxRXJ4dNWDGQoq
-         TuRKLHLQkG5qm1JfCpEQU/7GPFTRgbLnL4mht+ygmml4z4J7VxMoFmXYegUf9MfmD4Fx
-         v8Eh3xYpS5OlGT6aE47jrUrnNHmI8f+KcUrryFgAFpGEM53pGyXmI+VuSUMdjn/+LCdB
-         82yu05xxaW5+tLcQzUSiSCQIoPX2q1bZnkgAo5FooDIn2SkmdMlG+uB7FexwiBBxUQBF
-         cqxQ==
-X-Gm-Message-State: AOJu0YwtEdorf8L+fbemQ07RW1nhR2WP9jZQDFA5pdHuFG17oCGOYhPR
-	yLJGPU9pL8s0H61RCuzOafVrtzW4wtZzQrxw1ismtZRyMcslNcXfwLXYhCB1nPU=
-X-Gm-Gg: ASbGncuYfbM2Euzo4Z3XPKpGMwJO2wFj1athYpy812bsCBNAbDUYARo8HJgMXX+qrrS
-	9NmFQXNGwOkkS9XgQctwGvqsejTT1/KP7RkBWUxxbLDSQJC7FEbLKbH/Jx/QFHyWYgsVLMU+31o
-	+1M3U1i0XB8f0hT/zKpyhk21MEurZiC7eXTalaf7A3Zl2f5TyjGvUfyGfLAGxNuaTLUMUbMLD0Q
-	4Lc45zUxeH9QqbABspv13Lo1OYxTAWF+piShs2UmXEaHrYZvcRWMmo=
-X-Google-Smtp-Source: AGHT+IG7ou0OLntrolix78mJXcOLuespNWbeAilFeGSN0T/emum0szk7WfV9OyOyRpYPPEVP2Vk4Lw==
-X-Received: by 2002:a05:6a20:918b:b0:1e1:9fef:e969 with SMTP id adf61e73a8af0-1e45ab18122mr1137519637.4.1734375197464;
-        Mon, 16 Dec 2024 10:53:17 -0800 (PST)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5c0ef86sm4435890a12.56.2024.12.16.10.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 10:53:17 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Krzysztof Kozlowski
- <krzk@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the omap tree
-In-Reply-To: <20241216113416.3e78369f@canb.auug.org.au>
-References: <20241216113416.3e78369f@canb.auug.org.au>
-Date: Mon, 16 Dec 2024 10:53:16 -0800
-Message-ID: <7ha5cvcvdv.fsf@baylibre.com>
+	s=arc-20240116; t=1734375230; c=relaxed/simple;
+	bh=ZaQG536UeJ963kq03tgE2h6T+EowUyXzuNs7SMRaKlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2h+E/dWVBEfT8VkqFJKyqSJdUi4OZ/z2vZM6wVX+sGRLC22jVK27Wljxs6Vk+BoleKD+qQelZBKrvhrrib66tbiAadoRCYidxCYtfY+PzrgFtgNPnzjJYmjYCQ59WI26QiTrEc4gKpBo1cw5X/RWyELyeYDgwbEobfLCtOOmXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8otgIh2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 044E5C4CED0;
+	Mon, 16 Dec 2024 18:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734375230;
+	bh=ZaQG536UeJ963kq03tgE2h6T+EowUyXzuNs7SMRaKlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R8otgIh2jgktQNerxOEt0HNVjEC7a6nGp4BMqW1POaHQCyjmtN0WuRy6ulaRvqIzF
+	 jisL8eYolS0n2FoDXyATRZFr+62UPu8qqklHXiS4JFF8eWZdseHWJ9RDJpLFLLF4LW
+	 aeqawx4q5SbltF7TMfmX+NqnA4zPHrTUCTDlyj44B38S7cvfRf2Ly5rZ1f74Su5GT6
+	 hW7tfbmJLgujW0MDvf/ezyvXskkAJUVMS1ea2rp1z/58K7GjaATS4S0CviY/won6QA
+	 d7TUcrxvWbtDu6IvGFS1w0QIWlC9S68Cu8yke9aJe7419m2LuxI/mtc1kV/rp8rFVe
+	 2iUA7vjeov33g==
+Date: Mon, 16 Dec 2024 18:53:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	tsbogend@alpha.franken.de, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, markus.stockhausen@gmx.de,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: mfd: Add MDIO interface to
+ rtl9301-switch
+Message-ID: <20241216-neurosis-untagged-86622f8e2163@spud>
+References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
+ <20241216031346.2626805-3-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jgYBn6OpsX/kWRIj"
+Content-Disposition: inline
+In-Reply-To: <20241216031346.2626805-3-chris.packham@alliedtelesis.co.nz>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Hi all,
->
-> The following commit is also in the drivers-memory tree as a different
-> commit (but the same patch):
->
->   56d96fc55390 ("memory: omap-gpmc: deadcode a pair of functions")
->
-> This is commit
->
->   5119e6b44f8a ("memory: omap-gpmc: deadcode a pair of functions")
->
-> in the drivers-memory tree.
+--jgYBn6OpsX/kWRIj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, this one was my fault.  It's now dropped from the omap tree.
+On Mon, Dec 16, 2024 at 04:13:44PM +1300, Chris Packham wrote:
+> The MDIO controller is part of the switch on the RTL9300 family of
+> devices. Add a $ref to the mfd binding for these devices.
+>=20
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>=20
+> Notes:
+>     Changes in v2:
+>     - None
+>=20
+>  .../bindings/mfd/realtek,rtl9301-switch.yaml      | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch=
+=2Eyaml b/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
+> index f053303ab1e6..eeb08e7435fa 100644
+> --- a/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
+> @@ -41,6 +41,9 @@ patternProperties:
+>    'i2c@[0-9a-f]+$':
+>      $ref: /schemas/i2c/realtek,rtl9301-i2c.yaml#
+> =20
+> +  'mdio@[0-9a-f]+$':
+> +    $ref: /schemas/net/realtek,rtl9301-mdio.yaml#
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -110,5 +113,17 @@ examples:
+>            };
+>          };
+>        };
+> +
+> +      mdio0: mdio@ca00 {
 
-Kevin
+Label here is unused, but that alone isn't worth a respin.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> +        compatible =3D "realtek,rtl9301-mdio";
+> +        reg =3D <0xca00 0x200>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        ethernet-phy@0 {
+> +          reg =3D <0>;
+> +          realtek,smi-address =3D <0 1>;
+> +        };
+> +      };
+>      };
+> =20
+> --=20
+> 2.47.1
+>=20
+
+--jgYBn6OpsX/kWRIj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2B3OAAKCRB4tDGHoIJi
+0tNPAP9kLXGhnp5Mms+dsDfuxqUIandWEUoKt4Ixh5bi+dYrSwEA1ue1MsPeWWjB
+34QeWYTeZ9kMn6H8lNlm5SrnR34bNw4=
+=19cX
+-----END PGP SIGNATURE-----
+
+--jgYBn6OpsX/kWRIj--
 
