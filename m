@@ -1,89 +1,103 @@
-Return-Path: <linux-kernel+bounces-446854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13699F2A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:31:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA019F2A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A8A166857
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A22E164CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837C61CCEEC;
-	Mon, 16 Dec 2024 06:31:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87D71C5480;
+	Mon, 16 Dec 2024 06:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0HwM1quH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F11176ADE
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1023DF9D6
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734330665; cv=none; b=I3xxBGK0calM/WHDXTSZgaG/sFuL2mQVKLMsB0wV+yKfTWZZyU7UO3KwJ8TjEIMfdxNOWoV4DXEnkj4XwnEP0n2ElzLndhay2RJemx0UKLLwdkZnWbM4uRo3w0ydfoisMKElWqjPuokH70HPLvX2t7/8nL7q8JEmMDs3dFDFe3Q=
+	t=1734330944; cv=none; b=gzTdMldJPCjVXRSLysT+pYbL3J+PXxB1IEHW9/4lwRp5jG6O6oanvewI55HjJrUhP04qWNN2wjszPvGZLiQlP0z/HLwolgdv5NlD8ahCc1OSTHijGnJxEfh/P5RdSALLx5FteqJAK2VLv6b8tNMjVwD9qcxMiSzZMzUSlwaG73Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734330665; c=relaxed/simple;
-	bh=3E2pDLSWpHz+qKRsyOCvMIVk3xBO/le3IAkheabOoFY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nadFhiYCPPafablJSb9eWzgcHitUitj//lh4rP37NxOGYpu02RSIfKGKQha+oEJsCb8VKjOfqTXIV7/5UMIrd8vtCdeDgxUhQgsPP1jP2r4QJjo54TB4WfPa4CZVtguehPDjL8pXfMawi4NLtf1rYw5huMsdbCcfK+l/KDVGQjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ac98b49e4dso37095445ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 22:31:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734330663; x=1734935463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FGgwY9doc2BDYdLeq+Akm53OqV4dukJ6miTwWudPyro=;
-        b=E38c2UKxT9af7QdKBlZz2NwCDDszPC7mitQlzLDSIh05x1OivNCZqU6I8whyuyWwJi
-         29FBguqfXAeST4yqT9ISFBznjYIlLK3Z62Q55I3Hb7jEFLXGaUXciJl6cwWui0gKYZpv
-         /FAYsCE+9o3BsFMfLFs7Di+vN4SI6eqnjEKw/uAgTaDCSCp19OR2Hg1xvvx6VAWTXAAc
-         n6hbVtoExoYcP6nhUP2mKObum2jqPMuQFJv3WXGh1NCQ7EwURgoXGDHk7ainuMzmYGuu
-         6idisWMXOtkJv5hV7Z3N0X6TzcNQARqcY4c58TVq3qx29mBGne63DKqAlWpiJdYUHUx6
-         yX1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlIeVp7FvqUhlfovgIE6JpMXyoYmGcESu1fAes30V+/WLFWGDJEVl/S/AT37wlsP921cKljzqIdAnTF1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3AjYpHZjVvlmo47owr0iYqf5xeIojmXyrfLpjzi6ZqRfm1Qgu
-	d0uTDmXrMOJVJl1ChiAe7nd5byOZZpgijnOEOw3U+xzEsgMy0wYyBZnjNYF//qvYoWoR0U2p/BG
-	QFNGbhc6i6ro2I3reErFA3z2nx1kBtidna6MwjoMLo7aAr7ZumaIU3G8=
-X-Google-Smtp-Source: AGHT+IHqyW8xz9AMDJraQb4QIo+grq8CirvIaFyaiu/OxyxIYJNdfxD/b3iOyQaCcqMOivRLvs+i9Vhs3cxNSZWzH/wAGnEz188Q
+	s=arc-20240116; t=1734330944; c=relaxed/simple;
+	bh=Lbq/tIiJrkI229WkLrQBi+b5QleLmlBhzxRfSpG84qY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=PAozMNmD624MDwXXAD7E0bO2r2c/8qNa1vxlQ6Do4xmByqc1hR0BaO89n2pjFRdz8D7xxiV8CIWWewzb29/mqH5JAB8Lwd3m4Wi1kRSFGOh6oQ+SnRKe7PQ+wfJHSFeVCUcBc8fSVcUzWzwzT9XzZ9aRcgoQDyoZe1dCsYEmnHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0HwM1quH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04956C4CED0;
+	Mon, 16 Dec 2024 06:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1734330943;
+	bh=Lbq/tIiJrkI229WkLrQBi+b5QleLmlBhzxRfSpG84qY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0HwM1quHf0A5fUdjqjlnqbvUrcOwBwwHb6nk7e5wXsfoRDcimJWjxuaLZZ//sl8PE
+	 QSnk1+UKFCHvQpKGL3GL3+l4fKTFyUKL8XzJ+RM9Q6yQa2nRu0BsTDJsBX4TmbZs69
+	 hHKsGpfWBZVhnxACrueF9qINd9E5ZPm1mSkciTE8=
+Date: Sun, 15 Dec 2024 22:35:42 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Yu Zhao <yuzhao@google.com>, peterz@infradead.org, tglx@linutronix.de,
+ david@redhat.com, jannh@google.com, hughd@google.com, willy@infradead.org,
+ muchun.song@linux.dev, vbabka@kernel.org, lorenzo.stoakes@oracle.com,
+ rientjes@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] Revert "mm: pgtable: make ptlock be freed by RCU"
+Message-Id: <20241215223542.2b8e45a7d68f6ebc71b5ce3a@linux-foundation.org>
+In-Reply-To: <eef6abd4-327b-4f7c-8b3f-b2552fa78952@bytedance.com>
+References: <cover.1734164094.git.zhengqi.arch@bytedance.com>
+	<1fdb3ee32e6958ad82229941b2213ef76b7c4705.1734164094.git.zhengqi.arch@bytedance.com>
+	<CAOUHufaKRXJA=vZucoJMmgQw264LSxWuTtNcFQMLD7UNz_6wyw@mail.gmail.com>
+	<18bc52f4-ab02-495f-8f8f-87f69ea5b914@bytedance.com>
+	<20241215221015.a567dbf38c9a98d672aecd3e@linux-foundation.org>
+	<eef6abd4-327b-4f7c-8b3f-b2552fa78952@bytedance.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cd:b0:3a7:e592:55cd with SMTP id
- e9e14a558f8ab-3aff086d9admr103467895ab.14.1734330662864; Sun, 15 Dec 2024
- 22:31:02 -0800 (PST)
-Date: Sun, 15 Dec 2024 22:31:02 -0800
-In-Reply-To: <PUZPR04MB6316F684BF023564B7DDD812813B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675fc926.050a0220.37aaf.0116.GAE@google.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] INFO: task hung in
- process_measurement (2)
-From: syzbot <syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 16 Dec 2024 14:15:35 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> Hi Andrew,
+> 
+> On 2024/12/16 14:10, Andrew Morton wrote:
+> > On Sun, 15 Dec 2024 14:29:38 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> > 
+> >>>
+> >>> Acked-by: Yu Zhao <yuzhao@google.com>
+> >>
+> >> Thanks! Once the review of this patch series is completed, we can simply
+> >> drop "mm: pgtable: make ptlock be freed by RCU" from mm tree.
+> > 
+> > Can we drop it now and does the remainder of the series "synchronously
+> > scan and reclaim empty user PTE pages v4" remain valid and useful?
+> 
+> The "mm: pgtable: make ptlock be freed by RCU" fixes the UAF issue [1]
+> reported by syzbot. If it is dropped now and this patch series is not
+> merged, the UAF issue will reappear.
+> 
+> [1]. 
+> https://lore.kernel.org/lkml/67548279.050a0220.a30f1.015b.GAE@google.com/
 
-Reported-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
-Tested-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
+OK, so as I understand it,
 
-Tested on:
+- the series "synchronously scan and reclaim empty user PTE pages v4"
+  exposes a use-after-free bug, and fixes that bug with the patch "mm:
+  pgtable: make ptlock be freed by RCU".
 
-commit:         78d4f34e Linux 6.13-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11259ed7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fe704d2356374ad
-dashboard link: https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=105d1730580000
+- The series "move pagetable_*_dtor() to __tlb_remove_table()" fixes
+  that bug in a more desirable way.
 
-Note: testing is done by a robot and is best-effort only.
+- So when the series "move pagetable_*_dtor() to
+  __tlb_remove_table()" is merged into mm-unstable, I drop the patch
+  "mm: pgtable: make ptlock be freed by RCU".
+
+Correct?
 
