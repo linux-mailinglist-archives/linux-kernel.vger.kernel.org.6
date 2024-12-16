@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-448291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA119F3E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:26:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59049F3E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657D016E146
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DC816E268
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD231DDA33;
-	Mon, 16 Dec 2024 23:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722BB1DE2AA;
+	Mon, 16 Dec 2024 23:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ql2yAjwK"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ySu7h231"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7121DD529
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD21DDA35
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734391514; cv=none; b=BAgnMhneXxom7AD0Tjs7ZcHKuRekbnb3BVfKxyKN7yxPBLshJGRTxvFJbZ/UVUx0IfdxtE7xSqM92arY4w5BRv4Xi8v00MTDhcemaVTVBIZ8eK2mZ1yg17K7geHRZCnr/S4q5jZMOsJ9jdXr4iAkfDNmQZALqspeV0+e88cYr+A=
+	t=1734391516; cv=none; b=sVLYj9E+0VFXZ7cve2EbEXslV9Re16F/U04SDi0l+X02BJdb6arQ36l6JLDnWl+lhKDX0uiucAjG6HqhENe5PH8HRi2zSchJqzzWNglY67RGFhGux0te5GqlP45bXLqBVyi8PqrO4zFhgXDSDmfFNo5NZiJsYWAmtVXB3OaqjCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734391514; c=relaxed/simple;
-	bh=6N1g9uANonuB1X5ujQfQoFLZ8OgRQZPDGmKT28hZDMg=;
+	s=arc-20240116; t=1734391516; c=relaxed/simple;
+	bh=iEVYgx/hxX84VyoDEpscAjkrNLwDJylilFK5OuBYN9g=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=J1bCmzbnzV/g/UwZCL6C5yBqdjsxtcNW5iPJAMdYzuH3qF1vHAcOfpGhtslcI56T3anm233wQasLJnEBwAjhOjLXzwHNiRvQUq4i+3a/7pPrTZeuzR36z8+zF2wJvp6JDynGcjxjkfqzlFDJbawaJvE5bKMidu+btO3ywJ/C/V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ql2yAjwK; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=N6CV8uGZ/q6ajoeKe6liOHTcxdKEtew1kiCrSAaD/qQPc9+ZGrjSxgzFeCqYn4eEsQ2SnhWv8kQhK17i3k1F58DZSBXCu43mCUB3GuMyxmeqdvZQp6RRfmccTFLQe36vGYXYdRWh6UnLWek56nISZy4sZHMMewDf+d+NUbsSBcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ySu7h231; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e3886f4cee2so7253973276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:25:13 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e49f3aa78fcso2261316276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734391512; x=1734996312; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734391514; x=1734996314; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZvACGcoM6KJ0hrZi/+tcGlPsYcMWSS3N/4SFXVszCzA=;
-        b=Ql2yAjwKbJFtXxcHsOQYgP8Ar1paSe+Z3C4BvR0Mci8KUNk5rFEc5pY/P9rUD+u9uF
-         IwW/72oP/oMhUlYQOaZvPhk7G2UN9w087pkLc7qkR6iZGw24hrPIr9YjTU18vM8FNDBB
-         txU18nUwzgVj++xoPocDigy6vS+aGRhhzMcJubmVPNX7yYcTy9YthRrIIwlkovTi0ZQC
-         1ziVzpI8r2BfOqCWXwc2hzPK9G+q0o9Lzc2H+wYkw/p/NRdDfM9ONxuUPD67W4WsGUYt
-         Tnsd5HjITisD7vltuT8vywfqrA0IGuNVVNY1l7bYLRRGZphxr7FIKToRqW1C8CovKCJT
-         z1cA==
+        bh=FTHl2TPsCH6LymZInluDoB5DdWMc8GssygaKpaKL3WI=;
+        b=ySu7h23181UwWbX3I1NG9aj9Z7WJvw5rfzZVCunSWu6M5wRL/3MKid1z1Jq1mQF8ss
+         IxdyVPzfn5k25QW60zLy6oMWzCYMrT8VgEB3d4k8OkWkHkj4zaS91IEtyYaFzq46NEH6
+         HYG6YhjSM4J2U5jhQhJYtfbMYlnzfg6JCiDIMzBhBN5rbep3+bLRpMTtyhQoCiGyVlln
+         3wBKCUZqGFlt++BgOnjugtoSPLv85LnUvqH9QosH1VfafJLIK3Q33c5ERQ643iwTCYGq
+         buY/lvfTV7n+P2xfEKoriDujBnvgWhBidSLVu29qRc4PRY8pom/rYVj0B/278AEMLL+M
+         syaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734391512; x=1734996312;
+        d=1e100.net; s=20230601; t=1734391514; x=1734996314;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZvACGcoM6KJ0hrZi/+tcGlPsYcMWSS3N/4SFXVszCzA=;
-        b=WOOlZmPf6dP80xfhPmco4VMSUY3Xw8uEgBEhUg/AQH+W8sqkPFMFLRbVkX9WW6TUNq
-         P6yWJqhqNMXakxLZyjqIpOnu8JfAXrBdlE9gsJEtLMu3vM/6JMOmygZBhJXuibHmxBmq
-         WZhDx9LKIfWv74fIukMVfrEo5m5QcGx1OiP2cVrQ/nXKIK6Y2ElMuaeL5Trgg1fAOwdT
-         F7fHenznqchAxXNk0gDXkPQFaXCxcr1aMzlyehiJpsoi0pffU8HFyD8eSi9c0jNebZCC
-         XVUcsnNxfM0B+PoTHTyzVjCC3/pizj2Irs1q2AKVZrL1+IP/MJgxKT2WJsoBNg45ihk4
-         83Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAq2IPsEquTxilTT/98eoQfWm/+YEGwCGCPcYYS7vs1/RUEn7qs0kX+Y8tPQ/LL0/34AcP17EedD3Gfbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfKamnEAgM0GfV6ldKOg9zVD3XhFcbe/rOTyRJ7mQSk+bn771j
-	6jl24oHZxQwIj7cxiRwk4tZzXdEI8G6BSVn5izDST9o0iNiMYAdGEz9CRJybBUxUvWdw4CfpzY6
-	07u2S5g==
-X-Google-Smtp-Source: AGHT+IFPn3zLwGeYM+WqTOT+tiRtVfhiPONKWI9nlzAPsyTkfAgQ2S20PJn+fhfchxBHApz9migyE/zCITXe
+        bh=FTHl2TPsCH6LymZInluDoB5DdWMc8GssygaKpaKL3WI=;
+        b=WtWZ2dBVznsX7c8HYf6+1gN3pZmQjircHd4fB6rdnE+p8dlD6ZVywbYtWgj60vwNbK
+         2VJrJsBaKZdVsxSBGIL4AxIidmGd0iZThfRpzz7Yl14u5GPTB35KdQJZ12FtsSx8VOb2
+         dJntnDguQUefAnYSLYj6zo5Sfre07xarKPAkwPWD3+MauuuQ4fasWN6RdE2MreXVwZXD
+         9e3P4RTTXbnlsbgzBbYRRjomt895B/djXdUlG85s6O40eFSel7WRjG8e2LrhR5l1Qd/w
+         M73ulccQmDleFRGeGTb2OuNQ6WhcVGQvMy48XVPMXOWPZ+Z2QL6Aydlplrhe7HhoDYP7
+         PuBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlnNQ7hZh/8xwAnL5pulAnELOjW2IjpDSH+UNAKw6mNmRSYx9pa9pHuiLaB5++QHF//R1FU8qOaPzlU/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEWE+X12pR/4bXbOMAmA1+VGOADQ2OqGKQ8Xx2jrbw0WDmuzlt
+	QCmtPamtyHkV69d0hTBph2tNSHl+r7ARApTVuCX85vMuKKquCiM0J52kMo79rJD7JCaON2wJ0Ug
+	TKTsybQ==
+X-Google-Smtp-Source: AGHT+IFd1yidZo4+PCjzzLBKzlvBgB+iWRLxaQKGvW8aqa9jBsNOiHI2lkdQ9omQXubeZJj1mM0cO/8DOG7P
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:b850:b916:18b9:17a7])
- (user=irogers job=sendgmr) by 2002:a25:a209:0:b0:e38:cdae:5fba with SMTP id
- 3f1490d57ef6-e532ba3c549mr588276.3.1734391512421; Mon, 16 Dec 2024 15:25:12
+ (user=irogers job=sendgmr) by 2002:a25:aa51:0:b0:e38:9694:4c6e with SMTP id
+ 3f1490d57ef6-e5325f97ca3mr554276.2.1734391514479; Mon, 16 Dec 2024 15:25:14
  -0800 (PST)
-Date: Mon, 16 Dec 2024 15:24:58 -0800
+Date: Mon, 16 Dec 2024 15:24:59 -0800
 In-Reply-To: <20241216232459.427642-1-irogers@google.com>
-Message-Id: <20241216232459.427642-5-irogers@google.com>
+Message-Id: <20241216232459.427642-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241216232459.427642-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Subject: [PATCH v3 4/5] perf machine: Avoid UB by delaying computing branch entries
+Subject: [PATCH v3 5/5] perf record: Assert synthesized events are 8-byte aligned
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,36 +86,30 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-If the branch_stack is NULL then perf_sample__branch_entries may
-return NULL+1 which triggers ubsan (undefined behavior
-sanitizer). Avoid this by making the computation conditional on branch
-existing.
+Capture that events are 8-byte aligned and avoid later misaligned
+event problems.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/machine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-record.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 84661d950104..7b1e1c254c17 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2670,7 +2670,6 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 					    bool symbols)
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index adbaf80b398c..a5689d0e93ad 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -624,7 +624,10 @@ static int process_synthesized_event(const struct perf_tool *tool,
+ 				     struct machine *machine __maybe_unused)
  {
- 	struct branch_stack *branch = sample->branch_stack;
--	struct branch_entry *entries = perf_sample__branch_entries(sample);
- 	struct ip_callchain *chain = sample->callchain;
- 	int chain_nr = 0;
- 	u8 cpumode = PERF_RECORD_MISC_USER;
-@@ -2712,6 +2711,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 	 */
+ 	struct record *rec = container_of(tool, struct record, tool);
+-	return record__write(rec, NULL, event, event->header.size);
++	size_t size = event->header.size;
++
++	assert(PERF_ALIGN(size, sizeof(u64)) == size);
++	return record__write(rec, NULL, event, size);
+ }
  
- 	if (branch && callchain_param.branch_callstack) {
-+		struct branch_entry *entries = perf_sample__branch_entries(sample);
- 		int nr = min(max_stack, (int)branch->nr);
- 		struct branch_entry be[nr];
- 		struct iterations iter[nr];
+ static struct mutex synth_lock;
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
