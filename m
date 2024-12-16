@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-447890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E87B9F3851
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E39089F3868
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36CA116D12D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2678116D8C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05BE20E717;
-	Mon, 16 Dec 2024 17:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BE72147F4;
+	Mon, 16 Dec 2024 17:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QI064CkY"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AlrSwZGY"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7B920E03F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34409208997
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371919; cv=none; b=LTyiI6CBfYWbiNroaMS9oiwtOYpPdCMqF44kO9Q6N1UxBZQGVcGsxjTbCD5SU9Qwmglqvdn5DT57WHzy6qyxcxNwRibWYLJgDlX8XDBWtuYOyNOjvOxHqXBN8D1JXn8mA4TZk+9l7gfdnmgcxgXVuDpoEuTgjsGD6nhelNoUlZM=
+	t=1734371997; cv=none; b=dxhp/uYH8Ym0+lyQvoAABlqjm/dqrlJBj4KYaCBntppjSFwloY8SgBSNJVll/pdbqZBaG5A3oZm3GLLHBDAkBy+abNe0KcETncFetfAx6A8Iki/+Ihhd5YKe02R+I2ipyb6OcD2tmq2Ymr7zyuOAYQLI5uLzxtBiyQMT8P3fHuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371919; c=relaxed/simple;
-	bh=Tj0Fs/SZ0LdYe4bijqABYQiOrU4v7kAAQllRkbZHx8g=;
+	s=arc-20240116; t=1734371997; c=relaxed/simple;
+	bh=28Xr7YkvGvy9Y8S/3Vzt74Zg34q+9beXJ+u0XQqOY4I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVuZGC/A0DrQAzaAWReX5qTZufDNRpOMdx7ntC6YManOI5kDO/w3j2NO8DPzVEEJmvL7QmBPn0Z6fsCDdYrNT58cUi5czv1SuYdtdtfQ0X1gEJNdljocUsKPv8rLOXucFNZnBi6TMnjbhkE2sa2UCzig7cbYMDdURtbourvY09g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QI064CkY; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467896541e1so7021cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:58:36 -0800 (PST)
+	 To:Cc:Content-Type; b=JgG+scpxrwEGzEf+Lchj6b2vgxmpw8f8x1SOdg7DkPXHc5MwY8wREKg5rNqMjk9VVUr9fONEVzNtEAtyUwzRdydcLNSGMxVDnyu1iyvT1NL9K5qMTFFPjHNedpZen/8ap5vVUPh3GMszcdvLzO80dJLLC3oNDukUSsY4nUAlpUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AlrSwZGY; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso673087866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:59:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734371916; x=1734976716; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1734371993; x=1734976793; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tj0Fs/SZ0LdYe4bijqABYQiOrU4v7kAAQllRkbZHx8g=;
-        b=QI064CkYfuulf880aC0rqJFHI1yxYXnD1F6ALr8gtZc/wZYQW3d1fKmXqWKTZLvZS7
-         wDiNZDU6fZLZPOAybkb3tYINHHG//ANd07NoUlCBuLgmT8WQoczxHqmWQ7ToM1LuUV5/
-         YNwcVwRmToOzR7FkX7AYfNFkZ3dwu2l2ufV+jruc67zwaQ3Rs9keTdw1TWIbxrn9lkdY
-         pbOcUiUCiM6dDW7b8O/xHoXHPRt4t6JpPPR6Ncc7beA2qykFvTVcKxe/KgWbHQszFi7X
-         Jh9kkFC1EJ5sB+FqmadK4ETW3egDfzqBRdUj81Kc4b7D/cMI1PAH8DNQZIPlxUtHfBI+
-         tmJA==
+        bh=PoIqM4lGkZGVXqEUNVkpPEgzopLjXtfITbGUBrnVtJM=;
+        b=AlrSwZGY1sliBGLq3U6sEtlNGmY0QhISb7RbqL9bCDx13g1a7gOXQY6b6fugy7zRhG
+         23rajizJExxY/LPvVhsyh6bo2NoYpBcyFVWDl9mkba/9mOtBFNgnQ4ULAZatYAuDyG17
+         y2LzXnLJ/KB9V86UKALN7SqcI1C1IIYkWwhfY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734371916; x=1734976716;
+        d=1e100.net; s=20230601; t=1734371993; x=1734976793;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tj0Fs/SZ0LdYe4bijqABYQiOrU4v7kAAQllRkbZHx8g=;
-        b=EUFit86G5qqD5wwAi4zPKDk54fuXWgeV6pUcE2NdXm3gqbTPVwbI9VjFt7f82VET5a
-         wIzMPy4fYKo663XLhTe/4RpRadnzTdyntV6Gk1pGus7at2Y6QJNWTCvYnmJIvAhC55Xt
-         jQpSjwBE2ItPWFXiEsmut2w2r9i2s9F3i2oJO0R6WWAOfdvE00pSGO8epPCfiUWx3tk+
-         T3Fxjpqbv7BH2qVooMlsGNY8pDeadc8Dkyb7PDZm5HQras7ewoLotOgyUsxcnoC6nLVY
-         T/KufnrDFYCkywtt+NvoH/NBzRYwncxnITJRbBKCAJmtL+K3mhtOr9XMQxxeT9THqr1J
-         +75A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4fNQJCyrhRTxrhxTvZaYIjKcs+lEYM13y/9Zp03Ugsb1640IrPP45tX+Yi1knx3KUZJOXa8FPH3aLc7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhq3Z334g2JiPARWN6+1OuPnmHuP2Q1qhcn0HQ/J6sBKUR7yEU
-	yP4kmz1drRHiuQF7FUVtz2w2sLdbai3xGQ5DiBeR3foIFhgsmlXd/BjXm2EdIxUuuzwDb9mp539
-	ptCE2KsoKul8Sy0kKQsft7mQY0/XIJjtzhiJP
-X-Gm-Gg: ASbGncufTjZ6L3lPN7HXGivWbmf54rN4tNsAl6v/G3l6siPrvdFN/f61oEK5KwYRpre
-	tWVXZ1w+5kbPpVC0xlqDXyB38oAjmZe3KJ+EGebLREk/vB24fljSJoM7irqMaok5pijGr
-X-Google-Smtp-Source: AGHT+IFekFYYD6IdXMk+zakuU02lMxecxZ/HgX8Res1s/0Gqq9iULJ7g+kDWuvlQtsch8RjuiCMw7JleqzoFJAox6+Q=
-X-Received: by 2002:a05:622a:550:b0:466:8e4d:e981 with SMTP id
- d75a77b69052e-467b48c562dmr8286291cf.3.1734371915660; Mon, 16 Dec 2024
- 09:58:35 -0800 (PST)
+        bh=PoIqM4lGkZGVXqEUNVkpPEgzopLjXtfITbGUBrnVtJM=;
+        b=LwB+eIBAyTH+jjze8bFWQkByhqtqoGyXEC+Q6a8/dSl01nP06VxVi903oINL3zf/8P
+         W7ffyD+qhJlZyyI7G2efnKKn8l2LXeze1kyIPrGDkFULiF4OtlQrxKU7ZhCrtPXgjL6k
+         6g/UVgMkV/YAEtqe84KtFx8NekvIBhGwMOJ3YAxNNv9iboeWXPx5UhwpPcGXv9QWKUjv
+         LsVRRCsmi8pO/XDo0b8gC/9f4GUgXemaBbsUHM8lnS1Stl4ZQtYWTa6fNkyciVYO9sVK
+         VJrN6l815igkmSNIFwURTTyWtbZXYTsz4LRuiHJ+oSgG7qrTUJZ5X0mxqt44QiHfT8rO
+         bmdw==
+X-Gm-Message-State: AOJu0Yx1UfkkuUy4hHV8FauLylGb/NsYqLTW2vyf5j+9cGvI4ebk+FUm
+	q5VEgToe7v3zpb4URDXJ3g3QBOM7Si8e8EJAHIkUWnXzDPsNmQZl37XhiIWGrn/81ozMqrOUU8R
+	dCcE=
+X-Gm-Gg: ASbGncu2pONaj0pPHDLJ0OI1OquFzRJ9qqoj8JRmpURLek2BBPBu7Wf+eMXqUMNeZQB
+	wFRYplM+7P46sGhF4uzRPb6UJaHM7ckpWMpWXW2CVlGSS6S5F6RDXTtTrWV1mj1v6e3nCWCQurp
+	Tv0+jr2jGL4thEEU/OBCHj01XrPyZRQqM55dVxteL+Vtlunc6eX7u1MBNRNHU3NcbBro8ErBUZh
+	ARQjEx+VR44iI7KqjCktiW99hNbKAzHKsOriYQVK3d8xPRq6g7N+v2VGhLIlzXCG94cTPOO5i88
+	JOk0XSLgUZe5Mj26YmlgCvk5H4+uuko=
+X-Google-Smtp-Source: AGHT+IHnjrEvlAWtXK2cOI8tYJNis3DI6gCCfGtoWs8uwZ37ndzqQfwC53clhvpfelyZ24ne7rA6dQ==
+X-Received: by 2002:a17:907:96a8:b0:aa6:6c6b:15fd with SMTP id a640c23a62f3a-aab77909e9amr1389470866b.20.1734371993308;
+        Mon, 16 Dec 2024 09:59:53 -0800 (PST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96068177sm351596666b.57.2024.12.16.09.59.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 09:59:52 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso673083966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:59:52 -0800 (PST)
+X-Received: by 2002:a17:907:3d94:b0:aa6:8676:3b33 with SMTP id
+ a640c23a62f3a-aab77ea5986mr991693366b.47.1734371992249; Mon, 16 Dec 2024
+ 09:59:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119-force-cpu-bug-v1-1-2aa31c6c1ccf@google.com> <20241216171700.GIZ2BgjPerQ8jQlq8S@fat_crate.local>
-In-Reply-To: <20241216171700.GIZ2BgjPerQ8jQlq8S@fat_crate.local>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Mon, 16 Dec 2024 18:58:24 +0100
-X-Gm-Features: AbW1kvaK3B5lvRqsgND-co29rPEZBo1aRssvLsJTm1GqlpHREhU8ZVp3DET3-dI
-Message-ID: <CA+i-1C1HeLfbGg=LdXBYuhXWVPn1O0qtEYxFRYaXPUch4goEtA@mail.gmail.com>
-Subject: Re: [PATCH] x86/bugs: Add force_cpu_bug= cmdline param
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241214182138.4e7984a2@batman.local.home> <CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
+ <20241214220403.03a8f5d0@gandalf.local.home> <20241214221212.38cc22c3@gandalf.local.home>
+ <CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
+ <CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
+ <20241214233855.46ad80e0@gandalf.local.home> <CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
+ <20241215050517.050e9d83@gandalf.local.home> <CAHk-=wh5jE5ARarmYNdL4sja36_e-mnejv3zRMC62Jzn-a3omw@mail.gmail.com>
+ <20241215202404.06f7be8f@batman.local.home>
+In-Reply-To: <20241215202404.06f7be8f@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 16 Dec 2024 09:59:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi-7D-9Lp+bMGyw6nt7y-KBQj4-utWE=8nfLSbs4G-o7A@mail.gmail.com>
+Message-ID: <CAHk-=wi-7D-9Lp+bMGyw6nt7y-KBQj4-utWE=8nfLSbs4G-o7A@mail.gmail.com>
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Dec 2024 at 18:17, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Nov 19, 2024 at 06:43:57PM +0000, Brendan Jackman wrote:
-> > Sometimes it can be very useful to run CPU vulnerability mitigations on
-> > systems where they aren't known to mitigate any real-world
-> > vulnerabilities. This can be handy for mundane reasons like "I wanna
-> > debug this on the machine that quickly", but also for research reasons:
-> > while some mitigations are focussed on individual vulns and uarches,
->
-> Unknown word [focussed] in commit message.
-> Suggestions: ['focused', 'focuses', 'cussed', 'fussed', 'foxed', "focus's", 'flossed', 'coursed', 'focus', 'fused', 'cursed', 'fessed', 'refocused', "ficus's"]
->
-> Spellchecker pls.
->
-> > others are fairly general, and it's strategically useful to have an idea
-> > how they'd perform on systems where we don't currently need them.
->
-> Please use passive voice in your commit message: no "we" or "I", etc,
-> and describe your changes in imperative mood.
->
-> Also, pls read section "2) Describe your changes" in
-> Documentation/process/submitting-patches.rst for more details.
->
-> Also, see section "Changelog" in
-> Documentation/process/maintainer-tip.rst
->
-> Bottom line is: personal pronouns are ambiguous in text, especially with
-> so many parties/companies/etc developing the kernel so let's avoid them
-> please.
->
-> Also check your comments in the code pls.
-
-Ack.
-
-> > As evidence for this being useful, a flag specifically for Retbleed was
-> > added in commit 5c9a92dec323 ("x86/bugs: Add retbleed=force").
+On Sun, 15 Dec 2024 at 17:24, Steven Rostedt <rostedt@goodmis.org> wrote:
 > >
-> > It's a bit unfortunate that we have to do this by bug instead of by
-> > mitigation. However, we don't have clear identifiers for the mitigations
-> > that we do, so I don't think it's practical to do better here than "you
-> > can pretend you're on a vulnerable CPU - now go and read the docs for
-> > the per-vuln cmdline params to figure out how to run the mitigation you
-> > want".
-> >
-> > Being an early_param() means we get to do this before identify_cpu() and
-> > cpu_select_mitigations(). But it's possible there's still other types of
-> > bugs that get setup earlier and might miss this override...
-> >
-> > I've only tested this by booting a QEMU guest and checking /proc/cpuinfo.
+> > IOW, instead of dynamically creating a temporary buffer and adding
+> > that 'x' by hand, why wasn't that just a 'sed' script and done
+> > statically?
 >
-> Right, I don't mind this - question is, how do we make it such that people do
-> not use it in production and then come complaining to us why their CPU is
-> affected.
->
-> Yeah, sure, they better know what they're doing but I've seen pretty evil
-> perversions so far and us giving them enough rope just to shoot themselves is
-> fine.
->
-> What I don't think is fine is for *us* to shoot ourselves in the foot
-> by giving the users such a thing.
->
-> Btw, there's a clearcpuid= cmdline option which has the same potential and
-> that thing taints the kernel. Yours should probably do the same.
+> I'm also OK with that. Should that be done for 6.13 or something to be
+> added for 6.14?
 
-OK yeah, tainting definitely makes sense, I think that goes quite a
-long way to avoid bogus bug reports? I will also update the docs to
-sound scarier.
+So a scripted thing could probably be done right now, assuming it's
+obvious enough. Something like
 
-> And it probably should be called "setcpuid=" as a counterpart to what we have
-> now...
+   git grep -l TP_printk.*%p |
+        xargs sed -i '/TP_printk/s/%p\([^a-zA-Z]\)/%px\1/'
 
-So do you think we should allow setting arbitrary cpu features? That
-seems like a much bigger footgun. But then again, the difference
-between "big footgun" and "very big footgun" is not that important,
-either way it needs to be clear to users that this is a scary red
-button.
+would seem to do the RightThing(tm) for at least simple cases. And I
+didn't actually find any cases of people using %p with precision
+modifiers or anything like that, so "simple cases" seems to be all
+that exists.
+
+What the above does *not* do is handle any multi-line cases, and there
+are probably several of those.
+
+That said, honestly, looking at the resulting diff, I really think a
+lot of those %p users are mindless drivel in the first place, and I am
+not convinced that the real address is even wanted or needed. I think
+people have completely mindlessly added "print out address" without
+any actual reason for it.
+
+I'm seeing things like just random usb_request pointers being printed
+out, and I'm not convinced that is ever really useful or a situation
+where a '%px' is *any* different from a plain '%p' (ie the main thing
+I suspect you can do with that value is just say "it's the same
+request", and the hashed value works just fine for that).
+
+So I am not convinced that the original reason for the mindless
+(runtime) conversion of '%p' to '%px' was really even well-motivated.
+I think it was a bad idea, and implemented badly.
+
+End result: instead of doing that automated sed-script (which is
+certainly easy, but noisy), I actually think it might be much better
+to just remove the runtime '%p' -> '%px' conversion entirely, and see
+if anybody even notices - and then when somebody has a good reason for
+actually caring about a random kernel data structure address, change
+it at *THAT* point.
+
+                 Linus
 
