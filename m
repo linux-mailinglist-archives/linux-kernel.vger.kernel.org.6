@@ -1,180 +1,133 @@
-Return-Path: <linux-kernel+bounces-447678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6A29F35F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:27:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D099F35F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC301188AAB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7E4165DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036A31898F2;
-	Mon, 16 Dec 2024 16:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC342063CB;
+	Mon, 16 Dec 2024 16:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MYS4w2kv"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Iae0Cxoi"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE39200A0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60E20627E;
+	Mon, 16 Dec 2024 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734366350; cv=none; b=rrq3S3x6CgqM1Ncahew79iqQLMdAiefOR0fblK+6GKNjQUhLB0TFhcen2+L2orfDOnM6ij6KKXPDolxMXKJNLnPJItQegH5bDb1fRZxJYH8GvVa2jYpMbvZKlBbGiv3xJXQ+zDr/I3H30b0uEHo9ClvrfUjEcu2tZmVCMqqmz2A=
+	t=1734366433; cv=none; b=gUT7+pMXCzFn41FQsRScYYdkCQSVSjgrxMkKf5wR/9Imry1fmgwEMKvkHd5ijKtIGHFtMN/u72bMZJR4c/JsmRKziT5AQhNqJPIIRgsA/P4Ur/BaT96xMSIeMpv+Ww0GEkhESSPA3uTS6RGfIm00sxeRut3tDd9G36o4/ILxQ0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734366350; c=relaxed/simple;
-	bh=JbvsiqJHkNXY6BJf9zPoKcSEUY/h6OwHRlQi+0L36WQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5Y5aA/o8oikiutS+CDOtDk0BChWV4VZ0f5ko6tSOvUN5f6xqfBevSRU7sNHTn/wYkWhFk7x4FzpxMfjnRdmSz2q8mAl22jJPExbvxGNT8UoGCFdTvwtppgcL/eRTsXJIQirbLcLr8mD60owNYJYctRdYzmXeHtE3QuWQ/5dMRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MYS4w2kv; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385eed29d17so2173548f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:25:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734366347; x=1734971147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B1JBC0yzglAUTPJPyRXxDLADQI+3/EsK5xxpb/QppY0=;
-        b=MYS4w2kvo1uCFzmR1PM0BegT0ZaZo145EtC1S69Zs6WCk3xIbJ1iGwn24HDRbAQbF9
-         nvmr9JSDlWBjsoaoKqlTouJue18d4Gfs2vqx2gLVXo4U2SxVxpCwRz2949yrvyrfeNOO
-         7lRQYK6+EetQUNdNlOzMs8R9BZvFkYbiXk/3hiFYqQ6IrdQXkkvWqWm568Z2mCs7cBmX
-         ml5UQWlm2zrEREJcqfhcQnEohO3Kmpo3EZ1uHoo94J6iuJxhfAnEspW+B3c/SKoZbOmL
-         akbcp7sk/k0EscowB76qv89ZxOoLafB+vyX3Ptn0U8CjlkdFWuYzlb03e16cLOOVR1OY
-         +WYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734366347; x=1734971147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1JBC0yzglAUTPJPyRXxDLADQI+3/EsK5xxpb/QppY0=;
-        b=ETGoVjIn1wgwrtwjrjZbCImK3AInbI1YCg9xMTW+mhwWVFLhix9z4yX3uJdC2CNgfA
-         bM4orUL9LCiUBN6VcES4GDwcOZ6IZU58c49YtHUJlYDwkxqJESOfBnmAb6FVuCZAjEC/
-         H6v23RjHLzUqZRH7/jtOhzlu9CgHGqz3M5zf/viQjRSvW4JrpfGPYyvMbUJyT7ySLGFf
-         br/fPbdJPXgnGYWPrNXOpO5rFdROgkjtB1bgK7Cy7w/aOgNxjj9tt7CkSusAPjcNnc7+
-         qcBKDO6cpu0TK0Vq2gTkms6MiRl8tc6Tc3hLh+2nvuvuJ7izylLA7hM/aTsMNR+hvBZq
-         fx2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUI/mLh+ZaDRyQJBGJ6xnRnrj515WdyOBYe/9zGySEOu58zc/L7qomV41e4Qj6hGTPAzMDGDrpe/zp91RQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztnO8GGOtE+jbSdVhFrAOJdmysQHIK2dFZ8mwct9A1+v24/PMi
-	TLcy+4qZT/jbYhVpWDfWHxgR15B8Ww8BO4/IqgTR9nLk7SVBe9eQLRhj64y3eiMqHgQvKN6/f84
-	Y/TJcwxfTfJdwX3vUwNX0SnbmDQapinau+SKF
-X-Gm-Gg: ASbGncteZgZpEajoFJ9mQwv6UQwaPiKw+dBCa9gOBwuxSu36FLGbMbynHmb424yk1iL
-	CHjOA0HdmdD0nqOYSlVfcQvrP4BtREZYxe8vzbes09/yWJWCaA59p2+oI28LDgKixS3oAlg==
-X-Google-Smtp-Source: AGHT+IHRTldSp79yqNLLeq6Qq+q+4KGHMflo1B58ysZ6ESeNK5Ivs7mdObG/TtxwHRV+DFXh7Xiji2PO9c1XmyQwkC4=
-X-Received: by 2002:a5d:584c:0:b0:386:4a0d:bb21 with SMTP id
- ffacd0b85a97d-38880acda4cmr9693116f8f.22.1734366346756; Mon, 16 Dec 2024
- 08:25:46 -0800 (PST)
+	s=arc-20240116; t=1734366433; c=relaxed/simple;
+	bh=k6ffb1+fE+n5pupONOPXt73A+k8fe584gQa9Ik/Xpjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUk4WamdPur/nhJA9ndJEKerPBdGUd0udUZ9L8qspT3Z3NSjtw0t+Cq5w8ULV/4DEanNMPxl4bksf+mVrVdjc7xsl4qAzPiTvhNpu8ipEZr76szVjLydjU8YZszbvuA5qw2njPuGxkmg0TkTxBOWYVLee1vYP4da4t8sKcz8/z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Iae0Cxoi; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=bu2kx5ccarvn3y99Em/U+b3Zlo5ch2td1EQGdKbcf9U=; b=Iae0CxoiKWel5R+U7fAaIhy4Ax
+	klvtGI5sKG/JH98UBdUH5ppXkVkaN7qU1fh1aTHFHnnv6pBSjGEL5MhpQdZiCIOlWZAPDOl1eQ+zo
+	JVIYUbMNPox2hAORb2ZhVp+BwJcrVi8g0MD6w0jC/XoEBFo+lgZ90xVg2EItjjEYFm/3iObigGlPF
+	5DjLiAp+DL8VQd1kzIpAGVAHgJizLjkOYhaj3y0PBxclJpS8zGZKcEW/K1NjGOzV1uFjT/QlDe7Vb
+	rH6+v5OCv73CBJ8VFVsUmvSN5yTx6lwpyrfjabFajsqhqQVNBjrQEJ+eoaBYrFQCYVfu42RJjEoPs
+	MgxiYB3g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNDw0-00000000Eyx-0jWG;
+	Mon, 16 Dec 2024 16:27:04 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 1/5] squashfs: Use a folio throughout squashfs_read_folio()
+Date: Mon, 16 Dec 2024 16:26:55 +0000
+Message-ID: <20241216162701.57549-1-willy@infradead.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212233333.3743239-1-brianvv@google.com> <20241212233333.3743239-4-brianvv@google.com>
- <bc95ab79-6b4a-41be-b5b7-daaec04f23d0@molgen.mpg.de>
-In-Reply-To: <bc95ab79-6b4a-41be-b5b7-daaec04f23d0@molgen.mpg.de>
-From: Brian Vazquez <brianvv@google.com>
-Date: Mon, 16 Dec 2024 11:25:35 -0500
-Message-ID: <CAMzD94QaBxYF_oqrWTKG1a2gHWbaeHEcCguENRTpgaiJbQXZ9w@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [iwl-next PATCH v3 3/3] idpf: add more info
- during virtchnl transaction time out
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Manoj Vishwanathan <manojvishy@google.com>, Brian Vazquez <brianvv.kernel@gmail.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org, 
-	David Decotigny <decot@google.com>, Vivek Kumar <vivekmr@google.com>, 
-	Anjali Singhai <anjali.singhai@intel.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	emil.s.tantilov@intel.com, Jacob Keller <jacob.e.keller@intel.com>, 
-	Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Thanks for the feedback, I will address it in the next version.
+Use modern folio APIs where they exist and convert back to struct
+page for the internal functions.
 
-On Fri, Dec 13, 2024 at 4:36=E2=80=AFAM Paul Menzel <pmenzel@molgen.mpg.de>=
- wrote:
->
-> Dear Brian, dear Manoj,
->
->
-> Thank you for your patch.
->
-> Am 13.12.24 um 00:33 schrieb Brian Vazquez:
-> > From: Manoj Vishwanathan <manojvishy@google.com>
-> >
-> > Add more information related to the transaction like cookie, vc_op,
-> > salt when transaction times out and include similar information
-> > when transaction salt does not match.
->
-> If possible, the salt mismatch should also go into the summary/title. May=
-be:
->
-> idpf: Add more info during virtchnl transaction timeout/salt mismatch
->
-> > Info output for transaction timeout:
-> > -------------------
-> > (op:5015 cookie:45fe vc_op:5015 salt:45 timeout:60000ms)
-> > -------------------
->
-> For easier comparison, before it was:
->
-> (op 5015, 60000ms)
->
-> > Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
-> > Signed-off-by: Brian Vazquez <brianvv@google.com>
-> > Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> > Reviewed-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-> > ---
-> >   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 13 +++++++++----
-> >   1 file changed, 9 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/=
-net/ethernet/intel/idpf/idpf_virtchnl.c
-> > index 13274544f7f4..c7d82f142f4e 100644
-> > --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> > +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> > @@ -517,8 +516,10 @@ static ssize_t idpf_vc_xn_exec(struct idpf_adapter=
- *adapter,
-> >               retval =3D -ENXIO;
-> >               goto only_unlock;
-> >       case IDPF_VC_XN_WAITING:
-> > -             dev_notice_ratelimited(&adapter->pdev->dev, "Transaction =
-timed-out (op %d, %dms)\n",
-> > -                                    params->vc_op, params->timeout_ms)=
-;
-> > +             dev_notice_ratelimited(&adapter->pdev->dev,
-> > +                                    "Transaction timed-out (op:%d cook=
-ie:%04x vc_op:%d salt:%02x timeout:%dms)\n",
-> > +                                    params->vc_op, cookie, xn->vc_op,
-> > +                                    xn->salt, params->timeout_ms);
-> >               retval =3D -ETIME;
-> >               break;
-> >       case IDPF_VC_XN_COMPLETED_SUCCESS:
-> > @@ -615,8 +613,9 @@ idpf_vc_xn_forward_reply(struct idpf_adapter *adapt=
-er,
-> >       idpf_vc_xn_lock(xn);
-> >       salt =3D FIELD_GET(IDPF_VC_XN_SALT_M, msg_info);
-> >       if (xn->salt !=3D salt) {
-> > -             dev_err_ratelimited(&adapter->pdev->dev, "Transaction sal=
-t does not match (%02x !=3D %02x)\n",
-> > -                                 xn->salt, salt);
-> > +             dev_err_ratelimited(&adapter->pdev->dev, "Transaction sal=
-t does not match (exp:%d@%02x(%d) !=3D got:%d@%02x)\n",
-> > +                                 xn->vc_op, xn->salt, xn->state,
-> > +                                 ctlq_msg->cookie.mbx.chnl_opcode, sal=
-t);
-> >               idpf_vc_xn_unlock(xn);
-> >               return -EINVAL;
-> >       }
->
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
->
->
-> Kind regards,
->
-> Paul
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/squashfs/file.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
+
+diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+index 21aaa96856c1..bc6598c3a48f 100644
+--- a/fs/squashfs/file.c
++++ b/fs/squashfs/file.c
+@@ -445,21 +445,19 @@ static int squashfs_readpage_sparse(struct page *page, int expected)
+ 
+ static int squashfs_read_folio(struct file *file, struct folio *folio)
+ {
+-	struct page *page = &folio->page;
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
+-	int index = page->index >> (msblk->block_log - PAGE_SHIFT);
++	int index = folio->index >> (msblk->block_log - PAGE_SHIFT);
+ 	int file_end = i_size_read(inode) >> msblk->block_log;
+ 	int expected = index == file_end ?
+ 			(i_size_read(inode) & (msblk->block_size - 1)) :
+ 			 msblk->block_size;
+ 	int res = 0;
+-	void *pageaddr;
+ 
+ 	TRACE("Entered squashfs_readpage, page index %lx, start block %llx\n",
+-				page->index, squashfs_i(inode)->start);
++				folio->index, squashfs_i(inode)->start);
+ 
+-	if (page->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
++	if (folio->index >= ((i_size_read(inode) + PAGE_SIZE - 1) >>
+ 					PAGE_SHIFT))
+ 		goto out;
+ 
+@@ -472,23 +470,18 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
+ 			goto out;
+ 
+ 		if (res == 0)
+-			res = squashfs_readpage_sparse(page, expected);
++			res = squashfs_readpage_sparse(&folio->page, expected);
+ 		else
+-			res = squashfs_readpage_block(page, block, res, expected);
++			res = squashfs_readpage_block(&folio->page, block, res, expected);
+ 	} else
+-		res = squashfs_readpage_fragment(page, expected);
++		res = squashfs_readpage_fragment(&folio->page, expected);
+ 
+ 	if (!res)
+ 		return 0;
+ 
+ out:
+-	pageaddr = kmap_atomic(page);
+-	memset(pageaddr, 0, PAGE_SIZE);
+-	kunmap_atomic(pageaddr);
+-	flush_dcache_page(page);
+-	if (res == 0)
+-		SetPageUptodate(page);
+-	unlock_page(page);
++	folio_zero_segment(folio, 0, folio_size(folio));
++	folio_end_read(folio, res == 0);
+ 
+ 	return res;
+ }
+-- 
+2.45.2
+
 
