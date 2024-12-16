@@ -1,118 +1,101 @@
-Return-Path: <linux-kernel+bounces-447739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18C69F368E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:50:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654249F3690
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803751891C31
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:49:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C8567A127A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829BC205507;
-	Mon, 16 Dec 2024 16:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dmusf8Hm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FD920765F;
+	Mon, 16 Dec 2024 16:44:02 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB7E20457E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60ECA205510
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367422; cv=none; b=BcGDLIaKUvfJRKsdsMUV/32FFDoElC2QqTF3LtRQPICRMLq6VLb1Fap/zknMDMcKEc2ppv/h2H3Xk8EdPT67v0DTQ4JkxsEmegVCaZUDHIcPQh9aLZ0moSOsRPeh13nLKEp8YUGpRXdBCNyp1q294rUP1K4NnrBD8VbdGMQzl3M=
+	t=1734367441; cv=none; b=aWNoWJU+g3hxYENnfE1tpy4onq204KbrVZqwrptkqsM3u9+Tnrt2GYOayH3xWr85DofhIVOAcO3E7y+VG2G81KAoz5v80tB8OLHDXS7LdAYL1F6a7DsdhUrgo3mbQXQ4Fxf9AlX4/AUe1s71HgyiPVPg35FESwY6C1nfC3mRUVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367422; c=relaxed/simple;
-	bh=QQWdPEYlmc+nZpMpl4HW1ioNsquXtY6DnMtqhLHrBBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B8fqQ0fsGtwopW8I0Ml0iFEncSq8S0584jdBimpLg7rYuok/VSiyGeGQtdV7DlSjt3a2iRy5b/Fiod1YO+axFqvYKMLkXPnkhNG3Pir9WmAE6DpL69PDbxUhFvkTgOfc23wjjRPsXeth1RvMhK4c0KDePDJogYZPcUr7pkYYIOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dmusf8Hm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361815b96cso28470905e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:43:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734367419; x=1734972219; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eizGnDqNqlNpffP7llVarsh21KPFCtOjd1jz0iLgr2U=;
-        b=dmusf8HmSeJWpefuvUAMrMSBUAq9wAznbx0p8qh+HHRrJVJg9njwCmJEw7WNpVw/+N
-         5Ih3TaMKWNxx6eQB8uvw88wWBkhuhSg3Dind/PM8kojQrf5PMdZIZ0aR7Z72vDwt+7+v
-         F2w9ZXr7ysXlrtm1j39z+fijjEkuuC2VEQpq9p81ptD4ERxMwuMmVAQLDGrWCaSToA+3
-         vUdNLCMNlnwjX0uNqigu9CHhx+ijXdov2NtoFLWvsE5txcMlkwn2uJOuMJ/pBPzEZHJi
-         AoHO/boldi0lFIQ6/buiuV0D43mqW57vWGBI+cR1zHruhB+0Tb3385VCBVFXYCPxxQMN
-         vQhw==
+	s=arc-20240116; t=1734367441; c=relaxed/simple;
+	bh=RHp0F6UjZX/TfyObz0ZlAnyTx5Pc0w+Qol+a8/W3hFU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eYpZykd+HXxMthvV2/e5dxYkmn/lQXiKfZMlMeCp9kO6FugMiwvJu0CaV9e6YTgrSjXFJEzEIUPgD6hFzSsYaPiU2+NiSczEfd4BoKLVws731ynZz8S7oCApHDZFubEqyY5Z4dPewycaZtK/RxEQ0j9c5dLUaOgj8iTrBH0HUnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a81357cdc7so52976195ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:44:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734367419; x=1734972219;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734367439; x=1734972239;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eizGnDqNqlNpffP7llVarsh21KPFCtOjd1jz0iLgr2U=;
-        b=ux707e2Hh7LDk5JXC/tYkGwRE4tXuRqaPQcD2Dc5BtSX6zkJ/wZbq0eWpm8oUyodQr
-         Ed4wvAAphpCaK0fo/fjC0xbj2/b/IKWIuXYKBwq3IMV6uz9d3qcieB48WK71wwIgFAwV
-         XGilsig+ks7NX3ijQtzCvR6zI51kmwgPMCRhS8XRnd84md6QsTtoB0nuyNkmjkyFExU8
-         qieDTsd1r5I53uP9vDKbqH/7CknHqHXCCYQe0Kwi5cWg+FNXBVXSFyOUuzF7Ekblj9w3
-         7XIL1tmT0sHWGMMQ2qhPkHukDoB+P8dt/JDBf/t+IUUzxn5jF638tAk4zxhFql+XdtO+
-         XR6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXW7l1j7YJoxzFEhkqo7bPFLreHe3pDI1Q6zCnt4pv5WA/qjOwXCY7tQVe0t8BK6PeF7Qz+T7YOeX233wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEToTnZArhjvNDV/qQf5Csay2a2PBPmjWu8NSN8EpFSgcoaO4x
-	oUd9cH2o+TGIcYO14LBjavmkQg8461JvjzqOTxLQnMV0FoIHweNTc591nluAyYc=
-X-Gm-Gg: ASbGncudeTgjlCgBRBT4BfhQ80741PKy0ZwTWbKGBqSwxZ3yPQf41R2EdJXv6dZyBwW
-	F5DlOGyUaUPmUDqebYMSKXbCaMPBYHTGsIHwZgt9p4Ko5/fMOdrEE2OzyTd8A3Oh1kjRb6oIWJt
-	m1gJfylwXjn2Zfjg6xlGYN/D7uXD/g7v7iO0HYNTL/LPT/oO+OFHasfJQCbz1FLA9EAohx/qChf
-	H58PnMnxPTxWhvdX5giFvnKqL0/Yo2WqaXhGHyXoSrr/A+37eUTQQGIaA8G
-X-Google-Smtp-Source: AGHT+IEnPqo6gzVE3wILQI2tAtOM1/JutXdXz6dZd9o0VO/c42CFODH3r558QfMtWWjDDh1uD5CYkw==
-X-Received: by 2002:a05:600c:510c:b0:436:1c04:aa8e with SMTP id 5b1f17b1804b1-4362aa3e398mr132593275e9.16.1734367419204;
-        Mon, 16 Dec 2024 08:43:39 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436362b64a5sm91261215e9.29.2024.12.16.08.43.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 08:43:38 -0800 (PST)
-Message-ID: <94bf84a7-13a3-4701-807e-fc0f10d4dc88@suse.com>
-Date: Mon, 16 Dec 2024 17:43:38 +0100
+        bh=95swBBkO+qxzNMnZEb/hKv1Q6QW2q7J/I3mxU7TPd78=;
+        b=AAyn1M6d78y75BQMzpR5NoH7XtccD89CNI/7MjxbDAqCu16So5S0ltq7OhvzWTiFLh
+         oUoVv7KottdCKT7W2xmwrHFpie0bIdXqoc850XPUp1hfvOBU4bCDEC0GRLPYXmS/NQkG
+         +33znDu2X7R12olfUCqBC/WujsI3TyfSj3tMV0aOij7L2pG3y5hC3dchBDFcA3Xa2StQ
+         G0guyE8BlaUaKwahtWs9gxlSfKw6EYYHY7nlN7TWslMmNg8S/ktJDEqbxWvB71ZhsUKi
+         3BcelqJM/D327aagdvztXTd2TFJ7H9+f6eo6WkZT81a0se/hPek+Jl4YEZvvdLPInEuz
+         9XKA==
+X-Gm-Message-State: AOJu0Yx7bld5Q1o9FsDADKwiIexN7j0fHh0fPUagv1wQdMJT63iggSvl
+	gzBeEYyd1mnG+UoQ6uf5bu3SHY00YNizThXcPQnhznLPG9JT1c2f6sLU0e7SsfezOLhMMJB5KMy
+	56/sIU0ouuoyNwIauDJbSngGgcuxol0ks4WEDKrv0WWLV9sAMbS0vRRU=
+X-Google-Smtp-Source: AGHT+IHNFGgpY1KfnBTnebtefSVMKS4eQPvDqp82XM35emy9jw+GRszeSha28lkFSWhoTN/teFRCe9sO7PTTCoj/cSXGWEiTnR8S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2 0/7] module: Strict per-modname namespaces
-To: masahiroy@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org, x86@kernel.org,
- hpa@zytor.com, petr.pavlu@suse.com, samitolvanen@google.com,
- da.gomez@samsung.com, nathan@kernel.org, nicolas@fjasle.eu,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, hch@infradead.org, gregkh@linuxfoundation.org
-References: <20241202145946.108093528@infradead.org>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20241202145946.108093528@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:156f:b0:3a7:e8df:3fcb with SMTP id
+ e9e14a558f8ab-3b02d788a63mr95459545ab.7.1734367439300; Mon, 16 Dec 2024
+ 08:43:59 -0800 (PST)
+Date: Mon, 16 Dec 2024 08:43:59 -0800
+In-Reply-To: <675e5ede.050a0220.37aaf.00ed.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <676058cf.050a0220.37aaf.0138.GAE@google.com>
+Subject: Re: [syzbot] Re: kernel BUG in ocfs2_commit_truncate()
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/2/24 15:59, Peter Zijlstra wrote:
-> Hi!
-> 
-> Implement a means for exports to be available only to an explicit list of named
-> modules. By explicitly limiting the usage of certain exports, the abuse
-> potential/risk is greatly reduced.
-> 
-> The first 'patch' is an awk scripts that cleans up the existing module
-> namespace code along the same lines of commit 33def8498fdd ("treewide: Convert
-> macro and uses of __section(foo) to __section("foo")") and for the same reason,
-> it is not desired for the namespace argument to be a macro expansion itself.
-> 
-> The remainder of the patches introduce the special "MODULE_<modname-list>"
-> namespace, which shall be forbidden from being explicitly imported. A module
-> that matches the simple modname-list will get an implicit import.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-@Masahiro, I'd like to take this on the modules tree for 6.14. Can I get
-an Acked-by you for the changes?
+***
 
--- 
-Thanks,
-Petr
+Subject: Re: kernel BUG in ocfs2_commit_truncate()
+Author: dmantipov@yandex.ru
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
+
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 395e23920632..deb038e9392a 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -7219,12 +7219,19 @@ int ocfs2_commit_truncate(struct ocfs2_super *osb,
+ 	struct ocfs2_extent_rec *rec;
+ 	struct ocfs2_path *path = NULL;
+ 	struct ocfs2_dinode *di = (struct ocfs2_dinode *)di_bh->b_data;
++	u16 tree_depth = le16_to_cpu(di->id2.i_list.l_tree_depth);
+ 	struct ocfs2_extent_list *root_el = &(di->id2.i_list);
+ 	u64 refcount_loc = le64_to_cpu(di->i_refcount_loc);
+ 	struct ocfs2_extent_tree et;
+ 	struct ocfs2_cached_dealloc_ctxt dealloc;
+ 	struct ocfs2_refcount_tree *ref_tree = NULL;
+ 
++	if (unlikely(tree_depth >= OCFS2_MAX_PATH_DEPTH)) {
++		mlog(ML_ERROR, "Corrupted dinode %llu\n",
++		     (unsigned long long)di_bh->b_blocknr);
++		return -EINVAL;
++	}
++
+ 	ocfs2_init_dinode_extent_tree(&et, INODE_CACHE(inode), di_bh);
+ 	ocfs2_init_dealloc_ctxt(&dealloc);
+ 
 
