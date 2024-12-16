@@ -1,140 +1,87 @@
-Return-Path: <linux-kernel+bounces-447064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8C39F2CC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:20:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8989F2CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C7A188413F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F5B1884344
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775D720103B;
-	Mon, 16 Dec 2024 09:20:05 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB820101F;
+	Mon, 16 Dec 2024 09:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EZLce8JO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A6E1B87C4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2901B87C4;
+	Mon, 16 Dec 2024 09:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734340805; cv=none; b=G7NtjRXsM/W4fc0LY/eQY0tzhLuSC6q0RJN+d5TBQT2AS9f2hRDaskVjnDNqaW0BqbVU03IrT/jwzTvUFHR/Fhgxfe4rVzc+pQVJIP5PTVabBgDeseP31zbN4bjWbDtDlDoOaPgIN1W28nyoC5WBIKMkSargYhDulKEOjz3cPFA=
+	t=1734340882; cv=none; b=OkIss+VZc6gGjoFsCGcuSG3JfJDVuNEiY3B5Avd9Kr2q7PFRUW4ciV+2RDQIjYBtQ6yY4iKxZcra8zCOaZR6lyCMbYZ9izS0jI/OAqAORPOn2kV/jblzD49qOmln/7DZomRh/cy2EzkfG72PBxJwB3DdXs68HycxNN7t8dFqfEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734340805; c=relaxed/simple;
-	bh=nAfkE5KL69rWWdYUtkIqB/1eTj75dNe6HapH7wdww6k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=CAHquOeSS6nFwGUnT+L96c7fGAzQK6/phKCKSR0wzRp9nIjVkmCSlzgmllqR0Ku3CcmdpDxI1r8KWuXlS1UNy925dog4PXpTayaoOGqfBsCSWHSFFXi2BFk4eH+9D/CWXNwT033qReA5QG0kE+44gNP7XOUhwbcKDuh5Umkm4GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-40-TWX7wBlFMTCe8lW0s-gXdA-1; Mon, 16 Dec 2024 09:20:00 +0000
-X-MC-Unique: TWX7wBlFMTCe8lW0s-gXdA-1
-X-Mimecast-MFC-AGG-ID: TWX7wBlFMTCe8lW0s-gXdA
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Dec
- 2024 09:18:56 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 16 Dec 2024 09:18:56 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jiri Olsa' <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko
-	<andrii@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, Song Liu
-	<songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
-	<john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
-	<alan.maguire@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
-	<linux-trace-kernel@vger.kernel.org>
-Subject: RE: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
- uprobes
-Thread-Topic: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
- uprobes
-Thread-Index: AQHbS9GTSF5rwnXysUaDsufIVqYKlLLnNYvQgAFWD+SAAA72QA==
-Date: Mon, 16 Dec 2024 09:18:56 +0000
-Message-ID: <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
-References: <20241211133403.208920-1-jolsa@kernel.org>
- <20241211133403.208920-9-jolsa@kernel.org>
- <1521ff93bc0649b0aade9cfc444929ca@AcuMS.aculab.com>
- <20241215141412.GA13580@redhat.com> <Z1_gFymfO3sAwhiY@krava>
-In-Reply-To: <Z1_gFymfO3sAwhiY@krava>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1734340882; c=relaxed/simple;
+	bh=yRGmXTBFVWHYbCsitTNjNMFS+ou4oZ9TyVh4Ku2xXUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPJCkeJjuEPcHESL8Y63LMaaziUTVfxBtMVc/nN0lu8ePYQRb4Z0EzYQU1mbhyqmkdvVjg22tyLG4oxqQeyrgqCVhZjKIkqsrXSBb5hy4WrPB0UlA1ITBa72W4ctlB1/44Ox/KP5WjxnVNKlJ3GFX2eWsngYJYuI7HH1Rz9rnVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EZLce8JO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zBrPx7vCumTQ0Yh6YQVHpRo26AjmieEIpTHXpOhrnJg=; b=EZLce8JO2cULM/LItEkxmEbKDc
+	ZxsxwSr3SKLhn6eEiEYqeVCvQ5R6mSLR3vi4Zp0fiwRg4dlkVhsKeEGLfQ6KUiJR7A+h6k2HHJ/jB
+	Z7YFSqkhPTiNAzsWLyxaGP2JmKhPB3Ey607vpUsmb6JtaqCQAVUf6DxCykQUXBXknces=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tN7Hs-000ZW7-Dp; Mon, 16 Dec 2024 10:21:12 +0100
+Date: Mon, 16 Dec 2024 10:21:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: dsa: qca8k: Fix inconsistent use of
+ jiffies vs milliseconds
+Message-ID: <87195b12-6dfa-4778-b0c0-39f3a64a399e@lunn.ch>
+References: <20241215-qca8k-jiffies-v1-1-5a4d313c76ea@lunn.ch>
+ <20241215231334.imva5oorpyq7lavl@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: EQP3FmJ88Esrwo6uyYTNAxCf5OVmUC73dIfj6073M6k_1734340799
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215231334.imva5oorpyq7lavl@skbuf>
 
-From: Jiri Olsa
-> Sent: 16 December 2024 08:09
->=20
-> On Sun, Dec 15, 2024 at 03:14:13PM +0100, Oleg Nesterov wrote:
-> > On 12/15, David Laight wrote:
-> > >
-> > > From: Jiri Olsa
-> > > > The optimized uprobe path
-> > > >
-> > > >   - checks the original instruction is 5-byte nop (plus other check=
-s)
-> > > >   - adds (or uses existing) user space trampoline and overwrites or=
-iginal
-> > > >     instruction (5-byte nop) with call to user space trampoline
-> > > >   - the user space trampoline executes uprobe syscall that calls re=
-lated uprobe
-> > > >     consumers
-> > > >   - trampoline returns back to next instruction
-> > > ...
-> > >
-> > > How on earth can you safely overwrite a randomly aligned 5 byte instr=
-uction
-> > > that might be being prefetched and executed by another thread of the
-> > > same process.
-> >
-> > uprobe_write_opcode() doesn't overwrite the instruction in place.
-> >
-> > It creates the new page with the same content, overwrites the probed in=
-sn in
-> > that page, then calls __replace_page().
->=20
-> tbh I wasn't completely sure about that as well, I added selftest
-> in patch #11 trying to hit the issue you described and it seems to
-> work ok
+On Mon, Dec 16, 2024 at 01:13:34AM +0200, Vladimir Oltean wrote:
+> On Sun, Dec 15, 2024 at 05:43:55PM +0000, Andrew Lunn wrote:
+> > wait_for_complete_timeout() expects a timeout in jiffies. With the
+> > driver, some call sites converted QCA8K_ETHERNET_TIMEOUT to jiffies,
+> > others did not. Make the code consistent by changes the #define to
+> > include a call to msecs_to_jiffies, and remove all other calls to
+> > msecs_to_jiffies.
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > ---
+> 
+> If my calculations are correct, for CONFIG_HZ=100, 5 jiffies last 50 ms.
+> So, assuming that configuration, the patch would be _decreasing_ the timeout
+> from 50 ms to 5 ms. The change should be tested to confirm it's enough.
+> Christian, could you do that?
 
-Actually hitting the timing window is hard.
-So 'seems to work ok' doesn't really mean much :-)
-It all depends on how hard __replace_page() tries to be atomic.
-The page has to change from one backed by the executable to a private
-one backed by swap - otherwise you can't write to it.
+I've have an qca8k system now, and have tested this patch. However, a
+Tested-by: from Christian would be very welcome.
 
-But the problems arise when the instruction prefetch unit has read
-part of the 5-byte instruction (it might even only read half a cache
-line at a time).
-I'm not sure how long the pipeline can sit in that state - but I
-can do a memory read of a PCIe address that takes ~3000 clocks.
-(And a misaligned AVX-512 read is probably eight 8-byte transfers.)
-
-So I think you need to force an interrupt while the PTE is invalid.
-And that need to be simultaneous on all cpu running that process.
-Stopping the process using ptrace would do it.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+	Andrew
 
