@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-448317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855409F3E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:48:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00739F3E73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F69F188F352
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43868167F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5748C1D95BE;
-	Mon, 16 Dec 2024 23:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC5E1DA109;
+	Mon, 16 Dec 2024 23:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZszwILMo"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nINK7j5P"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FEB42A9B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8342A9B;
+	Mon, 16 Dec 2024 23:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734392879; cv=none; b=G49qpsadM9bQBLqbIXjE04qPB+h/NwyNH6yamNzwf5MuX9o98Wk6bMobEgS7Vdltak6IAsHvk/YbbZJEGVmf3hZeyLyWnlhLM/VeQQF+k3/LCl2oOKQvyMBmm/0FVwbnxI6iFTa6Om5gEKzuF9OTgbWVSHN9Q2YR4b4WBam8JjQ=
+	t=1734392966; cv=none; b=COZTcGVw7+EcaAT9C+JHRVbvPp/zJ5yibVaRFeH2Q4F21UK2/oBDX5JSM/UT3BlPlMM3LHXtgkE2vuV9fXol3Spe8BlHxnlvj1ABeKP13ovq0MV1DLejRTEc9ZsVIB4MFgLl62E/U6QFyhL1wikpq8b2NhjkOWD4WTk4dsDN3VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734392879; c=relaxed/simple;
-	bh=ZF+GHp4mKiw2778Txr5TLw8vV8Wy5MyIoekOj49ijMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OA4ULcAisu2M2joToLLTvGghdKumnTxX0VZcot9oAF6k8MMT+0Yro2Af4h8QGU0g5BDjc5C9yNtoPCdVb4HuRu876rqswHXYOPPwkosR8a45da37KkJBja1zfH5aVng5CUhsV71PhdjwQ8Mr9FhIWx8XhDPXFpCChnN/DmwD44c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZszwILMo; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734392875;
-	bh=ZF+GHp4mKiw2778Txr5TLw8vV8Wy5MyIoekOj49ijMQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZszwILMoCfDGbbRcFEZQGd/vMa3yI4C+Sxucd2DT8xWnoALuZGYRcSYKyi0TxrA4B
-	 XyJT5EVaM7XOwJjkOGQ/Wl2uTTvc/LCoG6mdtEBEaYbcxKEceHNqi+vAdhTT05/Qbe
-	 nxl1Wq17YK4kyD2GGzqUIesnlp2TjG6PL2CS4e8of56cZuFekTJcCz08FbJEyBt/nv
-	 /a10kIrHGVBCVo+6wjmWX5XkvAuV3yrBMJD7lyoM6WJYtMbuof17/C2HSYUhfYPuRV
-	 F31u+Vdm1ZtHsC1VmYe7SCAjkM1vVOVFN7z86OXqas/ROh86EvJj8D56WjUZr1t52b
-	 OnnXjhkoLdydg==
-Received: from [192.168.1.90] (unknown [188.27.48.199])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 29DCB17E0DD7;
-	Tue, 17 Dec 2024 00:47:55 +0100 (CET)
-Message-ID: <d983544b-fbfb-41ed-8af0-31b92e2f904b@collabora.com>
-Date: Tue, 17 Dec 2024 01:47:54 +0200
+	s=arc-20240116; t=1734392966; c=relaxed/simple;
+	bh=L+iq21VNjCG+P2uvEmoH86300hgdxFjXns0/uc32kRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VSTzLwj8N8iYLS4Eps9K8f5grdCNVbQlAI0iF9wwNU6aeemHvmzjb/LY8AA0slIissngxtgJiItkb10bgLsRvrzOny3JV0Ei9OWFU/g+WO0R61QfJjzUoHKqnmOMn2iXH/q6J5UW42xb6qfa1P099a7PTyULjeia9wF5QiPAbdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nINK7j5P; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-728ec840a8aso4975966b3a.0;
+        Mon, 16 Dec 2024 15:49:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734392964; x=1734997764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ix4Gh4iwbkjJuB3qgl+mlNRzP8fScSG0OnzqHfqlJNE=;
+        b=nINK7j5PC8K91qnz998bW7fPD6jVK+XrYI+Y+mm9xlllO5aMCBe25u6Y1VbQEEk6sf
+         8atvdskDZZpctL/elv+dC93sJeqej2z/exjxq9lsx7QB1ylGPeJQxMqVxqJ/fYhUCVrj
+         i1rpkmLEWALj7rJ51f4e9w0FI2tRlF077wGSUL2UJEBPVS0OJg/IlwB/zxVAHxeFjL+f
+         ROnoqTcceRX+LN4MMQryDPrUWFO2jo7DlHV1Vehnvjn38CZtHzXd5/n6WODf++CeAs1l
+         rlNMdqSAgrEi/RHU1jA0Yi78sxmo8/cEqJzcrHuONjFXhwN0Ss0Rpr3keLkI0D/jfJEo
+         kt+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734392964; x=1734997764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ix4Gh4iwbkjJuB3qgl+mlNRzP8fScSG0OnzqHfqlJNE=;
+        b=tYfefp1h9yp+oS5Ck1NcW/e8YXqy8pgJdSNnX/R9MOtsZiYDpv/1pT5cmOcJKyl/Lw
+         ZKeMqmMNx7/n815+X82aJhqSlvXAQCZDr7YLVVCJPcm41BzG6XBdUdpkTslfJyV3+Tiy
+         95ZlBm6pxdyq6k8qVZZCXNRuTvtINr2UiZMzODFVgN46DpFwj1St2UawKV8H8/Vi8lfs
+         vP/Fuw2o6DVogTcRxxAXELtRW6FYrENpNvbOm9TDed5+ys6HZLQiK8T7CN+6oJJptlIu
+         DCNJdUbjYXvP/+5skEHWrAvIGOqhy5l39dL7HUMMVd6amRQ+kvp6wkO8+EmPCHluAJH1
+         QG6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7fpjSOg2fVvTYEOhk4B/w0SM00jRthEaA2AbOiwQRK7pFffbMWapIAnqSo3cdH+Bc9gql0+E4PezSVtc=@vger.kernel.org, AJvYcCXr9n4vgrMSRQBI3HF9vghfea4v9KpiHeyi79AmEPAZYgnrYO80mFfs6pXyTfjRhWTCOZ2gQ6/c@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLUQXaKL363ELzx7HyrkvxIgLqF/BunI4q1+/AdTuSUDr1Xufc
+	ejDsRZ+0qpyAf8002sBay1VDRuvwIuVRxgfp4BpzJX7eK+UpZQTa
+X-Gm-Gg: ASbGncvpZkSEcUndZiV3IwazpLqybItXZHf8PXxcEUPsbsor2DVYj5m9alMpz9PI4tO
+	VNvIiM9hYOnMkAm9tewVzD/jo4YNP0USRrOqahl+LegB+xqGqhwvOIdaaIWK1IGoFOj6UlUGLjE
+	JTPHY2/ago55b/cBFIp40lNPiBG04GX4vawRO3xJ6H0idxF6mNaeAJSdh5kgtiscgXknTq69xEc
+	WQ97rDuPC/bJ4x4aLwu9s78S3vx1EitUYYXwdCrFTpHy4vViuP1AG6K4K4abJp9kWm8F4ql5WA+
+	g85yA0T05WmW
+X-Google-Smtp-Source: AGHT+IGYMsnP5MYv4KoMNICzCXEjaaJx+QNzdrxPI66r0iStuH91FO6jk7p9jIJ0eN870nmzQlLqXA==
+X-Received: by 2002:a05:6a20:734b:b0:1e1:bef7:af57 with SMTP id adf61e73a8af0-1e1dfd70b1cmr23634726637.21.1734392964480;
+        Mon, 16 Dec 2024 15:49:24 -0800 (PST)
+Received: from jmaxwell-thinkpadp1gen4i.rmtau.csb ([125.254.29.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5c3297asm4657901a12.70.2024.12.16.15.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 15:49:24 -0800 (PST)
+From: Jon Maxwell <jmaxwell37@gmail.com>
+To: anthony.l.nguyen@intel.com
+Cc: przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jmaxwell37@gmail.com
+Subject: [net-next] ice: expose non_eop_descs to ethtool
+Date: Tue, 17 Dec 2024 10:48:50 +1100
+Message-ID: <20241216234850.494198-1-jmaxwell37@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/bridge-connector: Prioritize supported_formats
- over ycbcr_420_allowed
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241206-bridge-conn-fmt-prio-v2-1-85c817529b88@collabora.com>
- <uw7uqw6zsmoe2cyxe3mqm3ok43afut47jms37nny6ecl44b5xe@byagwnayplse>
- <d1fe66a7-c495-429d-9908-6f4076a994da@collabora.com>
- <dn625hkcujqlre74wu3hezlcbkxza5urydgcl3kvs3exbr4tl7@rpznp2zefpoe>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <dn625hkcujqlre74wu3hezlcbkxza5urydgcl3kvs3exbr4tl7@rpznp2zefpoe>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/17/24 1:32 AM, Dmitry Baryshkov wrote:
-> On Tue, Dec 17, 2024 at 01:17:48AM +0200, Cristian Ciocaltea wrote:
->> Hi Dmitry,
->>
->> On 12/10/24 3:12 AM, Dmitry Baryshkov wrote:
->>> On Fri, Dec 06, 2024 at 10:00:46PM +0200, Cristian Ciocaltea wrote:
->>>> Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
->>>> supposed to rely on drm_bridge->supported_formats bitmask to advertise
->>>> the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
->>>> the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
->>>> redundant in this particular context.
->>>>
->>>> Moreover, when drm_bridge_connector gets initialised, only
->>>> drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
->>>> the equivalent property of the base drm_connector, which effectively
->>>> discards the formats advertised by the HDMI bridge.
->>>
->>> I think this should be handled in a different way: during HDMI connector
->>> init verify that HDMI_COLORSPACE_YUV420 matches the
->>> drm_connector->ycbcr_420_allowed value and rejects incompatible
->>> connectors.
->>
->> I added a 2nd patch in v3 [1] to perform this verification on HDMI
->> connector init, but I think we still need a proper handling of the
->> inconsistency at bridge[-connector] level. I simplified a bit the initial
->> approach, hopefully that would bring us closer to an acceptable solution.
-> 
-> I'm sorry, I first commented on the new patchseries. I think that the
-> second patch is enough.
+The ixgbe driver exposes non_eop_descs to ethtool. Do the same for ice.
 
-No worries, thanks for your quick review!  Let's move the discussion on
-the new series!
+With this patch:
+
+ethtool -S ens2f0np0 | grep non_eop_descs
+     non_eop_descs: 956719320
+
+Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+---
+ drivers/net/ethernet/intel/ice/ice.h         | 1 +
+ drivers/net/ethernet/intel/ice/ice_ethtool.c | 1 +
+ drivers/net/ethernet/intel/ice/ice_main.c    | 2 ++
+ 3 files changed, 4 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
+index 2f5d6f974185..8ff94400864e 100644
+--- a/drivers/net/ethernet/intel/ice/ice.h
++++ b/drivers/net/ethernet/intel/ice/ice.h
+@@ -345,6 +345,7 @@ struct ice_vsi {
+ 	u32 rx_buf_failed;
+ 	u32 rx_page_failed;
+ 	u16 num_q_vectors;
++	u64 non_eop_descs;
+ 	/* tell if only dynamic irq allocation is allowed */
+ 	bool irq_dyn_alloc;
+ 
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+index 3072634bf049..e85b664fa647 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
+@@ -65,6 +65,7 @@ static const struct ice_stats ice_gstrings_vsi_stats[] = {
+ 	ICE_VSI_STAT("tx_linearize", tx_linearize),
+ 	ICE_VSI_STAT("tx_busy", tx_busy),
+ 	ICE_VSI_STAT("tx_restart", tx_restart),
++	ICE_VSI_STAT("non_eop_descs", non_eop_descs),
+ };
+ 
+ enum ice_ethtool_test_id {
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 0ab35607e5d5..948c38c0770b 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -6896,6 +6896,7 @@ static void ice_update_vsi_ring_stats(struct ice_vsi *vsi)
+ 	vsi->tx_linearize = 0;
+ 	vsi->rx_buf_failed = 0;
+ 	vsi->rx_page_failed = 0;
++	vsi->non_eop_descs = 0;
+ 
+ 	rcu_read_lock();
+ 
+@@ -6916,6 +6917,7 @@ static void ice_update_vsi_ring_stats(struct ice_vsi *vsi)
+ 		vsi_stats->rx_bytes += bytes;
+ 		vsi->rx_buf_failed += ring_stats->rx_stats.alloc_buf_failed;
+ 		vsi->rx_page_failed += ring_stats->rx_stats.alloc_page_failed;
++		vsi->non_eop_descs += ring_stats->rx_stats.non_eop_descs;
+ 	}
+ 
+ 	/* update XDP Tx rings counters */
+-- 
+2.47.1
+
 
