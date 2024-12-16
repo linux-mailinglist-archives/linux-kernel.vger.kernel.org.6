@@ -1,93 +1,252 @@
-Return-Path: <linux-kernel+bounces-447114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1ABD9F2D7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:57:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462999F2D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E1A1885389
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:57:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF966164347
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05FB202C58;
-	Mon, 16 Dec 2024 09:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D8920371A;
+	Mon, 16 Dec 2024 09:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M4KnY6+u"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b0R82nCP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C25203D64
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67CB202C26;
+	Mon, 16 Dec 2024 09:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342950; cv=none; b=rhBkEJ0Zs0BYzK4Yml8FVaCUd6dgbW7+TmgcTvTV6mFSyfJdVkTtU16HuPchQgA78seJrsqUfqEhGcYW+NO6urbLqHWylOB4+KtVwTffLANVaMb8VlBDN6+KJz1y/0XyAuBa90555MlC6EyLVmh7dqeH9dnavGjnP7cnOl0Vi4k=
+	t=1734342981; cv=none; b=YtAK/bQ39dnOy8ieOVzQ7/03ohx/SYxEh0L7+MIv2oGgYDGSnDWSGUEf7zqZr0KHUscOCt02x7DcFyFRF0sOXkx9oD6ZV0Ybuiv13kXcdCR28QGvyqaEwYs8v72sGKk4EYFLbftFxi2Ct6TfPzXMxjfsAfMKmOMX3VWxtr6i9x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342950; c=relaxed/simple;
-	bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=juBZRZw+o5OBhZjZ96LgjewEisPxxshcC/c0QdT+umY9/HN6zF4fjSlljgZMh/YRW3gplSfaH2ierLKIu32yNsE2y/xaC/ggizksZsGMa7lb9IsVv3DNd/Llj/gGLPEuIjBsRo7PltX8MmxPmpqRyH60IvZZrTqPmlSn1mKozLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M4KnY6+u; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679b5c66d0so383061cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:55:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734342947; x=1734947747; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
-        b=M4KnY6+uj4muv/EYfc7oo6TcpdIVp6pQ29M9E7rQv4FVVVHP15F024EZ69ytkkSTAf
-         ItMHjMUHV7XvCAuTAkfkUKWA+6hVg03ieaO/G+94W6j6QI5W18iC539qXWIWMCyp3zPx
-         jdAvBGWBgwl3FF+JSKBV6M2OxV8nLqGFLcKNgIJjUMFvez4qWbYewecouz3EAkkeLDw6
-         u97mnM45j5Raa3UWB4WJha1yzOOMtwGHsOzUgi0Y3d9SwSp6Pb2JE1G66+XSKz3ngNFD
-         Kzl+y2GoANtFqt8IMejbJfhyRljMUtoQIqTSi9jtwtWNj3/t1H4Du/ghLWtw+Id8iRhC
-         59+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342947; x=1734947747;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
-        b=VRT4MgFOJ3pGp3B7nmPlIi0ttDVd5xN7zAbX/ecmGkyxOYwJFmaMUVOu9GzmyxZuvC
-         k8fuGNRLrsXBVs/TqsVoo6J5QTJQaKvIUIVzAno/HSMNrfdA45jYp4mFAiz1jwygUSEE
-         /YbjK92B1OzIgZWs30JcKs+NAtztmtL5riCjHkbpBZRJH21aW96LxYf2koXSBtr9sBdV
-         tIWqPfqpQAbjzKpcaP7snMVbcrwjulSrSdX7Vbz80R+NaquFvfkZq0/l53sFu+vvXZXV
-         EOn41mDC2ktkmQdzSwxsP1pPBqANy8a83Amf4C4sr/GVfAENnBFXrfZGYKi4JaXZbGzw
-         dAAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWxgSpWZ5SLoPZ/Uwhb4iJRfQfXFXGMa7dvcmCbKNAhIM1b+jVeIE5h7T96OgsWXWxuVhVryrbP41yShc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsH1sFJR5Jo9yV2HAiZpL2nlm4vvH1kym8d0fIFdrl9lzWNCRc
-	umQcZHf0HVhtvR4MtdQeT7IWsA63mMg70IyNxatKwum/+vCgL0fTfrAyDOorNZA6hagu9ROP8OU
-	pcMuzVIGYe6HHLpE1F8+HC6zTIlGYQAfx6Ddl
-X-Gm-Gg: ASbGncu+a4FOio25189W/RCxaIpR/VdO8D48mp17wDTSzFNIs3eyByqwmofXd5CLkKZ
-	nJrypsP372YJrd6wo5bGmhZU36ybOMq6FtajumdQy8B6H1KNUxDFGkV1T5xifZZtp6vDA
-X-Google-Smtp-Source: AGHT+IFhMvIXdbRZOcnTLEcbNjsVH96/VrL1zhECcx0p0tNYZx6zpfl70xXcIg6493jrc/wn5pPrjVOSlsL1jiDf7bY=
-X-Received: by 2002:ac8:574e:0:b0:461:3311:8986 with SMTP id
- d75a77b69052e-467b30bdbdamr5040591cf.18.1734342947368; Mon, 16 Dec 2024
- 01:55:47 -0800 (PST)
+	s=arc-20240116; t=1734342981; c=relaxed/simple;
+	bh=pIHZqEF0neNxwQmxNhxbje5qYNAonKyqllihe15PubY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GL3RwXOk7S2rnblMdzLqW139MqRaz4n0bb4uXdKNMn6Nm8EfuiXrl84pRrr16iJnqOYS0NMiPLjVVA2MNYWDwnR7JUs17x010Smrfffzw5tLPZwgB4yEcHpcSSd2Kz87/WneWQPCnClAoLwP3KdnQxiihbyYaHgkufZESm5AERw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b0R82nCP; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734342981; x=1765878981;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pIHZqEF0neNxwQmxNhxbje5qYNAonKyqllihe15PubY=;
+  b=b0R82nCP3JanYWvUcJ2vtM4yXkKZqo2wrNceFfK8TTRQtLyq+HUY1hbX
+   zvlx6MrymQdk1BIBg5MYfxQZ1+RHnFvdd12Cb4caNQWLD5sFsMMeBfE6F
+   H3EN65OrUzf/8/yG4cumpYTFor9V7MJ0GQNRfaC8kGUwWJk/eXAcSXNjq
+   QvXd4yRejqAb1fpmEHli76ZE4szn56JFmiYuXeGLbMU9SElZ+zZZDwfg9
+   JBI1mSrnWULVfAcKq9TzFBdaHwKwpmfNkiGVE+r/vIcrUns/EWVNe5Rvc
+   EsaHPY9r3xLM3FB6Oh6pcuii4W3My3DGz3ZQkwbWD0DsfeF3ivlFzSkBO
+   g==;
+X-CSE-ConnectionGUID: wUXdMzAdSBCD/A6GMJYtjw==
+X-CSE-MsgGUID: CflIntkaQh+bApn6lbwcAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="38494984"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="38494984"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 01:56:20 -0800
+X-CSE-ConnectionGUID: 9pLqZCk2Rn6Y4x7MS4Wywg==
+X-CSE-MsgGUID: rTBh1KIHRW6JqEqk5x/VWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="97951755"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa008.jf.intel.com with SMTP; 16 Dec 2024 01:56:16 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 16 Dec 2024 11:56:15 +0200
+Date: Mon, 16 Dec 2024 11:56:15 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Oliver Facklam <oliver.facklam@zuehlke.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benedict von Heyl <benedict.vonheyl@zuehlke.com>,
+	Mathis Foerst <mathis.foerst@zuehlke.com>,
+	Michael Glettig <michael.glettig@zuehlke.com>
+Subject: Re: [PATCH v3 2/3] usb: typec: hd3ss3220: support configuring port
+ type
+Message-ID: <Z1_5P2zZJBm7Nzut@kuha.fi.intel.com>
+References: <20241211-usb-typec-controller-enhancements-v3-0-e4bc1b6e1441@zuehlke.com>
+ <20241211-usb-typec-controller-enhancements-v3-2-e4bc1b6e1441@zuehlke.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213-objtool-strict-v1-0-fd388f9d971f@google.com>
- <20241213-objtool-strict-v1-1-fd388f9d971f@google.com> <20241214003605.gwlfukj3tdelx4bq@jpoimboe>
-In-Reply-To: <20241214003605.gwlfukj3tdelx4bq@jpoimboe>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Mon, 16 Dec 2024 10:55:34 +0100
-X-Gm-Features: AbW1kvYR2wFvoUWGEr5jX5uwNIWb-PWBSg9rh6xevYSQ8gDOUgZ1biEtXZ_I3t0
-Message-ID: <CA+i-1C3WmjY6rrg9rTpwctMdYKB+u1=dNHEfZz6zPU7RyHdsKg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] objtool: Add --fail-on-warn
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-usb-typec-controller-enhancements-v3-2-e4bc1b6e1441@zuehlke.com>
 
-On Sat, 14 Dec 2024 at 01:36, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> How about "--Werror" to mirror the compiler -Werror option.
+On Wed, Dec 11, 2024 at 05:32:46PM +0100, Oliver Facklam wrote:
+> The TI HD3SS3220 Type-C controller supports configuring the port type
+> it will operate as through the MODE_SELECT field of the General
+> Control Register.
+> 
+> Configure the port type based on the fwnode property "power-role"
+> during probe, if present. If the property is absent, leave the
+> operation mode at the default, which is defined by the PORT pin
+> of the chip.
+> Support configuring the port type through the port_type_set
+> typec_operation as well.
+> 
+> The MODE_SELECT field can only be changed when the controller is in
+> unattached state, so follow the sequence recommended by the datasheet to:
+> 1. disable termination on CC pins to disable the controller
+> 2. change the mode
+> 3. re-enable termination
+> 
+> This will effectively cause a connected device to disconnect
+> for the duration of the mode change.
+> 
+> Signed-off-by: Oliver Facklam <oliver.facklam@zuehlke.com>
 
-Sure, --Werror sounds good to me.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/usb/typec/hd3ss3220.c | 88 ++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 87 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index 56f74bf70895ca701083bde44a5bbe0b691551e1..e2059b925ab15733ff097e940751759ed51e0ab3 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -35,10 +35,16 @@
+>  #define HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS		BIT(4)
+>  
+>  /* Register HD3SS3220_REG_GEN_CTRL*/
+> +#define HD3SS3220_REG_GEN_CTRL_DISABLE_TERM		BIT(0)
+>  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK		(BIT(2) | BIT(1))
+>  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT	0x00
+>  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK	BIT(1)
+>  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC	(BIT(2) | BIT(1))
+> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_MASK		(BIT(5) | BIT(4))
+> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DEFAULT	0x00
+> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DFP		BIT(5)
+> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_UFP		BIT(4)
+> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DRP		(BIT(5) | BIT(4))
+>  
+>  struct hd3ss3220 {
+>  	struct device *dev;
+> @@ -75,6 +81,52 @@ static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opm
+>  				  current_mode);
+>  }
+>  
+> +static int hd3ss3220_set_port_type(struct hd3ss3220 *hd3ss3220, int type)
+> +{
+> +	int mode_select, err;
+> +
+> +	switch (type) {
+> +	case TYPEC_PORT_SRC:
+> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DFP;
+> +		break;
+> +	case TYPEC_PORT_SNK:
+> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_UFP;
+> +		break;
+> +	case TYPEC_PORT_DRP:
+> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DRP;
+> +		break;
+> +	default:
+> +		dev_err(hd3ss3220->dev, "bad port type: %d\n", type);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Disable termination before changing MODE_SELECT as required by datasheet */
+> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM,
+> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM);
+> +	if (err < 0) {
+> +		dev_err(hd3ss3220->dev, "Failed to disable port for mode change: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> +				 HD3SS3220_REG_GEN_CTRL_MODE_SELECT_MASK,
+> +				 mode_select);
+> +	if (err < 0) {
+> +		dev_err(hd3ss3220->dev, "Failed to change mode: %d\n", err);
+> +		regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> +				   HD3SS3220_REG_GEN_CTRL_DISABLE_TERM, 0);
+> +		return err;
+> +	}
+> +
+> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM, 0);
+> +	if (err < 0)
+> +		dev_err(hd3ss3220->dev, "Failed to re-enable port after mode change: %d\n", err);
+> +
+> +	return err;
+> +}
+> +
+>  static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
+>  {
+>  	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> @@ -131,8 +183,16 @@ static int hd3ss3220_dr_set(struct typec_port *port, enum typec_data_role role)
+>  	return ret;
+>  }
+>  
+> +static int hd3ss3220_port_type_set(struct typec_port *port, enum typec_port_type type)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = typec_get_drvdata(port);
+> +
+> +	return hd3ss3220_set_port_type(hd3ss3220, type);
+> +}
+> +
+>  static const struct typec_operations hd3ss3220_ops = {
+> -	.dr_set = hd3ss3220_dr_set
+> +	.dr_set = hd3ss3220_dr_set,
+> +	.port_type_set = hd3ss3220_port_type_set,
+>  };
+>  
+>  static void hd3ss3220_set_role(struct hd3ss3220 *hd3ss3220)
+> @@ -211,6 +271,28 @@ static int hd3ss3220_configure_power_opmode(struct hd3ss3220 *hd3ss3220,
+>  	return hd3ss3220_set_power_opmode(hd3ss3220, power_opmode);
+>  }
+>  
+> +static int hd3ss3220_configure_port_type(struct hd3ss3220 *hd3ss3220,
+> +					 struct fwnode_handle *connector,
+> +					 struct typec_capability *cap)
+> +{
+> +	/*
+> +	 * Port type can be configured through device tree
+> +	 */
+> +	const char *cap_str;
+> +	int ret;
+> +
+> +	ret = fwnode_property_read_string(connector, "power-role", &cap_str);
+> +	if (ret)
+> +		return 0;
+> +
+> +	ret = typec_find_port_power_role(cap_str);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	cap->type = ret;
+> +	return hd3ss3220_set_port_type(hd3ss3220, cap->type);
+> +}
+> +
+>  static const struct regmap_config config = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> @@ -266,6 +348,10 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>  	typec_cap.ops = &hd3ss3220_ops;
+>  	typec_cap.fwnode = connector;
+>  
+> +	ret = hd3ss3220_configure_port_type(hd3ss3220, connector, &typec_cap);
+> +	if (ret < 0)
+> +		goto err_put_role;
+> +
+>  	hd3ss3220->port = typec_register_port(&client->dev, &typec_cap);
+>  	if (IS_ERR(hd3ss3220->port)) {
+>  		ret = PTR_ERR(hd3ss3220->port);
+> 
+> -- 
+> 2.34.1
+
+-- 
+heikki
 
