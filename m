@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-446960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C65B9F2B65
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365949F2B67
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B82188A4E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:03:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C12188A681
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6C02040A8;
-	Mon, 16 Dec 2024 07:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE421FF7AC;
+	Mon, 16 Dec 2024 07:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="IiyXc+Iv"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qPP1Jvt2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C9B203D44;
-	Mon, 16 Dec 2024 07:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C6C1FFC64;
+	Mon, 16 Dec 2024 07:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734335958; cv=none; b=oHYV/ldwE4CkU0A64/QK1KDIOmX5bGRL28VVa2gSuMasEin/uod0wyEQuCQgZjUR7/o9kerUjzR8yU6ni/muKg/OF0Yi4qKI2si67AE4iahzYz8C/4K+aYFxY8SyF8xVM2z2l3qI4lk8a0jV4haCLC+VDlifO1Z7Z6Mn+EO9saY=
+	t=1734335965; cv=none; b=BMZxW2WrclYLy32iZcg5UOVLi52Ree1x7nNvG3h6caqdXoLBT5BvB+ZWA2BsjynTwAkbyrT9j9YB4lTP3830BUFR1WMbJYAgzEBqx1zXPfz4YerRwEzLiGcqXiqTaam9b6DWDrc8d3ucjVp4z67KsnzUxYqArsD7RP9DO6Ffh5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734335958; c=relaxed/simple;
-	bh=hWiwd352gG0Jk0qYwP9z+eCt7x1/kt+aXvZiIcs7bqo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HpwEGLFnTucVx91f0IMROKGJUIBLtljiO7VRqhuWxYKEcgLvkc8Amq5lw0wLz1aDjlc4O1VjX+5/wdRxPW+CjDbtF99LPBbLqL0ZRWGP2DE7dsP7Xy8TJpOY9giX58XQYH4jYALxHjJfqwZH/+KfJdyavZbugJfif/eHnjv5Kc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=IiyXc+Iv; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG7DmDa020853;
-	Sun, 15 Dec 2024 23:58:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=o
-	wPjE3bRvlhjpMJO1d2yUzHys/+I4YY3gxyhpf/M1bw=; b=IiyXc+Ivcb260XPS/
-	5hCeFIPdMcuhnGa/7RjQ1uiJqY7H/Tg/qn2H228mHqV63zWRK0E5OvG2Iip6pdZ7
-	AVmbsnKgijTmlW9+21m4FfpIls3rhAQgjTlMDDtXMIKiI1GtHBXLuLpvuBKi5YCa
-	+UgFEkRkD4Jn9aR1aQaBlA6ZYut0lAvW7uKNz2/8PE2Cqh3dsYSXYJZBkV2OCNe1
-	uI5gJJmlda+ctkzDtPW6EYukzmFBum7gXmFvmsxUObG4/HFGLwL7eBX/JtKTPNIN
-	Ssg/Zuzugz1E5qtrDwY0UT44rN18LjNeYnP6JO4Pw3enbtQq2ObPe+nzb+beyUmY
-	XM0YA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 43hadjrgu2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 15 Dec 2024 23:58:53 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 15 Dec 2024 23:58:53 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 15 Dec 2024 23:58:53 -0800
-Received: from ubuntu-PowerEdge-T110-II.sclab.marvell.com (unknown [10.106.27.86])
-	by maili.marvell.com (Postfix) with ESMTP id 5AF9D3F7091;
-	Sun, 15 Dec 2024 23:58:52 -0800 (PST)
-From: Shinas Rasheed <srasheed@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <hgani@marvell.com>, <sedara@marvell.com>, <vimleshk@marvell.com>,
-        <thaller@redhat.com>, <wizhao@redhat.com>, <kheib@redhat.com>,
-        <konguyen@redhat.com>, <horms@kernel.org>, <einstein.xue@synaxg.com>,
-        "Shinas
- Rasheed" <srasheed@marvell.com>,
-        Veerasenareddy Burru <vburru@marvell.com>,
-        Satananda Burla <sburla@marvell.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net v2 4/4] octeon_ep_vf: remove firmware stats fetch in ndo_get_stats64
-Date: Sun, 15 Dec 2024 23:58:42 -0800
-Message-ID: <20241216075842.2394606-5-srasheed@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241216075842.2394606-1-srasheed@marvell.com>
-References: <20241216075842.2394606-1-srasheed@marvell.com>
+	s=arc-20240116; t=1734335965; c=relaxed/simple;
+	bh=ZJxNjYJAcQD7xS3URzocfolx7l6/wY5FbnRznSfHSbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2GczZo8OiOUQ/H1VhbhrmeWDWYGHFWuW8r3lABOmQXFZd+AkYgPBpNdm+nEIaYuNrA8Xtl7ZNnFlaciQ9a+ZvcO6xmDzeUTtlJcIwv1uBrcDLBluj3AflsqYKmfdibhq6ZS+PuwI0ytKyClTvrkDM2xYsSC466NJsiOm7N+c8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qPP1Jvt2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EA9C4CED0;
+	Mon, 16 Dec 2024 07:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734335964;
+	bh=ZJxNjYJAcQD7xS3URzocfolx7l6/wY5FbnRznSfHSbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qPP1Jvt2P2WRPO9pHj6MaXW6ne68Z26NLkPJlqbgit6WZGxlJ5ub3iDqGGKgmDILz
+	 kV/YpocLyjHX/pQoXSTN+3UCIgtigrooTcLTN1x4JVwDfSLmoH+LYv3qDii/91/LYJ
+	 1PD3g3w95iq0VV/O8tHZmn3sYW0j8y0YKztRsEk0=
+Date: Mon, 16 Dec 2024 08:58:44 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Dave Penkler <dpenkler@gmail.com>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: [PATCH] staging: gpib: Workaround for ppc build failure
+Message-ID: <2024121622-sensitive-curtain-7d45@gregkh>
+References: <20241204134736.6660-1-dpenkler@gmail.com>
+ <b6102c6b-693f-4237-8c0c-83c5936aab3c@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: CG0_WbA_rzFsAGu7zIRDOM0YGH3TO9t0
-X-Proofpoint-ORIG-GUID: CG0_WbA_rzFsAGu7zIRDOM0YGH3TO9t0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6102c6b-693f-4237-8c0c-83c5936aab3c@roeck-us.net>
 
-The per queue stats are available already and are retrieved
-from register reads during ndo_get_stats64. The firmware stats
-fetch call that happens in ndo_get_stats64() is currently not
-required
+On Sun, Dec 15, 2024 at 03:23:55PM -0800, Guenter Roeck wrote:
+> On Wed, Dec 04, 2024 at 02:47:36PM +0100, Dave Penkler wrote:
+> > Make GPIB_FMH depend on !PPC
+> > 
+> > Reported_by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Link: https://lore.kernel.org/all/20241015165538.634707e5@canb.auug.org.au/
+> > 
+> > Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> 
+> This patch just exposes other build failures, for example
+> i386:allyesconfig or x86_64:allyesconfig.
+> 
+> Error log:
+> x86_64-linux-ld: vmlinux.o: in function `fmh_gpib_t1_delay':
+> fmh_gpib.c:(.text+0xfd49dbd): undefined reference to `nec7210_t1_delay'
+> 
+> There are many more missing functions. FWIW, I don't know how this is
+> supposed to work in the first place, since pretty much all gpib Makefiles
+> say
+> 
+> obj-m += <object file>
+> 
+> meaning they won't be built with allyesconfig. fmh_gpib is the only
+> exception with
+> 
+> obj-$(CONFIG_GPIB_FMH) += fmh_gpib.o
+> 
+> which means it _will_ be built with allyesconfig. So it is not surprising
+> that it fails to link allyesconfig builds. Actually, it will fail all builds
+> with CONFIG_GPIB_FMH=y.
 
-Fixes: c3fad23cdc06 ("octeon_ep_vf: add support for ndo ops")
-Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
----
-V2:
-  - No changes
+Arnd has a patch for this that I'll be queueing up this week and getting
+to Linus also this week.
 
-V1: https://lore.kernel.org/all/20241203072130.2316913-5-srasheed@marvell.com/
+thanks,
 
- drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c
-index e6253f85b623..75dd3bd2b9ba 100644
---- a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c
-@@ -800,14 +800,6 @@ static void octep_vf_get_stats64(struct net_device *netdev,
- 	stats->tx_bytes = tx_bytes;
- 	stats->rx_packets = rx_packets;
- 	stats->rx_bytes = rx_bytes;
--	if (!octep_vf_get_if_stats(oct)) {
--		stats->multicast = oct->iface_rx_stats.mcast_pkts;
--		stats->rx_errors = oct->iface_rx_stats.err_pkts;
--		stats->rx_dropped = oct->iface_rx_stats.dropped_pkts_fifo_full +
--				    oct->iface_rx_stats.err_pkts;
--		stats->rx_missed_errors = oct->iface_rx_stats.dropped_pkts_fifo_full;
--		stats->tx_dropped = oct->iface_tx_stats.dropped;
--	}
- }
- 
- /**
--- 
-2.25.1
-
+greg k-h
 
