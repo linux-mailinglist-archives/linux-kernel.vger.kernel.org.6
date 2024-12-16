@@ -1,309 +1,115 @@
-Return-Path: <linux-kernel+bounces-447059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267CF9F2CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:16:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC0C9F2CBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC06C188A96D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2151188B1D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F034D202C26;
-	Mon, 16 Dec 2024 09:16:12 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C78D201020;
+	Mon, 16 Dec 2024 09:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JnWP9Zl2"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD091FFC6E;
-	Mon, 16 Dec 2024 09:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7781FFC46
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734340572; cv=none; b=m4o0GNer9IhaEMdp5aQzE+TzUaanWDPEwlxYuNmLPImJHDvJUkXkBmygfVpPHLJt1FlDjQpWgHNuVJfO8smfSB4/ITzJ2NzABMAkwqgIj5Up0SByCe3VpHhAw+NSjTp87Ldaq3nCX5h4hPnXkbRolix9bm2QT7Ih8wWMTr3/o8o=
+	t=1734340657; cv=none; b=mmtbhaHpr8+I6bM9aP9RyF85f8vWFX+/MjUXqA7UIkfNKz++DTV20sBfJtNNiRPDpbpmJaKNNF1ywBg2inJ0K9axoYBJwrDo2ddCMmq4PHsMxmbglAx6Cpkw7qmwJR+Dkm00arPFPMQf48BcNerjrlyzvDOVomiUAiVV3ORlIeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734340572; c=relaxed/simple;
-	bh=S6GRo0t4CWP4T8IspQawT1xKdLunTDQ3Spf5DGVTn8M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDDpFZNffDHlNxAHuTZF9g3Ngcr8mWtUVaylYHZD1qebs5/kE2Eixt4AG30oq6pM39/vwrTjVaRl5Nlczu7Vxttd/s4P1ZJvGVZpMbDFU4IO/Veysqx0agSHJwO1EsXX5lBRXakn3Eg6auBo7NpBmD2NfP/SENBWfyFuvmZXxGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4YBZ590BNpzqV1W;
-	Mon, 16 Dec 2024 17:14:21 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4B96B1802D0;
-	Mon, 16 Dec 2024 17:16:07 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 16 Dec 2024 17:16:06 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<viresh.kumar@linaro.org>
-CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linuxarm@huawei.com>, <pierre.gondois@arm.com>, <ionela.voinescu@arm.com>,
-	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
-	<lihuisong@huawei.com>, <zhenglifeng1@huawei.com>, <hepeng68@huawei.com>,
-	<fanghao11@huawei.com>
-Subject: [PATCH v3 4/4] cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
-Date: Mon, 16 Dec 2024 17:16:03 +0800
-Message-ID: <20241216091603.1247644-5-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241216091603.1247644-1-zhenglifeng1@huawei.com>
-References: <20241216091603.1247644-1-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1734340657; c=relaxed/simple;
+	bh=1qR5+1H3fLvBgI1LotDXtcQetIxOlpQF0+huH0Qt/4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uqB35N9VvuUsX8zMXClRWHr1sYSv9/5UUknewINcJNG9dS5xJW37qBbOpLQt9LadnSOk84ovGbbiovxB8UQ4drC3GEMNWJ5o/Sw/wdBE/qnnGQo5XLfhfE59oRgbrvBbP2MY7iy28YJSibgW7d8NF5TjAVrGkAubuNwSXBwxsNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JnWP9Zl2; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-303489e8775so16205261fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:17:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734340654; x=1734945454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1qR5+1H3fLvBgI1LotDXtcQetIxOlpQF0+huH0Qt/4E=;
+        b=JnWP9Zl2prbWhXhYSp3bdNi3H4yHDKDKTwK4gXw4cvejsv5XoACLnDpISJub6hYulP
+         GIZ+3aWl3tj/9OTB6n1rhrAV7hwAAbFU6dpWhwB2h25CG+NcS9irBEXJ9AXkYmX97CUP
+         ZJikAotjjdRhvBobpxbhrADNVC+qqtIwMOZ33rhltHd0PNk95jyJ0qFjyVXx+DAIixi7
+         h47Tl2nJvbY9ki+h2FRmZLKnmITYVrv3wRA6pvj3mGLbZM8R2zDUX/gNPbfdfmzU+juS
+         bmRuDVSssi6PYLDugrh/LSUmSFpU6IX5o4kFS54I4GXDZkgzf6Nu4NG67Z1t2IgRCsHJ
+         jiWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734340654; x=1734945454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1qR5+1H3fLvBgI1LotDXtcQetIxOlpQF0+huH0Qt/4E=;
+        b=FUI7uearsycTU6lq3ECSvho9aU2Zrj2Q3z37JKdqJCCWXJ3G7CWzbp8dGaxKssPU3y
+         x7f38cIyf3sTlzGN0oKyw64PwLPRUBm1uwBw8nO82e3N8AKZqYKvzsEcQSL1ZQpBAw9k
+         RZshj6lOhJlOsooipCsUb6Pn0KdY30BDMmNU5WGN+cxPzEQ2AbKLOs1NvWYDQTN846s2
+         CWx3VwEkZfe8lVA/TAPuWaudwH1+9TsZRneu3dBzXzuPu5yAZ4DdLBLcA604g4kiYZKs
+         gIoTwmxPSL4XBL9Bd7fWwfeV9Ij6REGmCPMGy6uO1YZq3LgRVfXMlxRxvZIUlhYWNGqJ
+         qK0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW9qBxJMwvCeG24A29RRrhmn6HjpeLJuh1VVlrWYmm/ecsQHj3m4z5f8DNW6HeBZDzmmADMnltx3FvGKVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfY0dUUXUB5MGcJrKYf68dR6UYd6pEaHWx/Ax6ktzx/qj6CGYD
+	Xk+i54SAVo5Ic2RGiDJMLfiVlttlQlEqAe6oGInsXldIpC9uRn1gFkJ2sqEsnkjfTlGkg52DvzH
+	+eSR6cRuabqYTavOHoRnWem/+ZuRkmk+A/1/uJ3sKcmZRWnql
+X-Gm-Gg: ASbGnctr5yIsI4kwnBfiy1tZ9xUdgwW5YB3EopMoNUPquqYPKE875cT7l/SS4Zeibup
+	r4++Erhg8PNx6dEyZeBoFKjJZYBHEExqqLhE1vq9Me+6I7wdEkVbTZ+Z+I95W9JQnK9f7xA==
+X-Google-Smtp-Source: AGHT+IEOwduo8usaj8ZRTiMKvnDvI/sKvG+uXPsesp8eVxzp1U/WEzzEulhhST+phRCarmJrvrroOrMmTlHcWhwZgzA=
+X-Received: by 2002:a2e:bc09:0:b0:302:2bd8:2687 with SMTP id
+ 38308e7fff4ca-30254530bc4mr33805791fa.12.1734340654051; Mon, 16 Dec 2024
+ 01:17:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+References: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
+ <20241211-aaeon-up-board-pinctrl-support-v1-3-24719be27631@bootlin.com>
+In-Reply-To: <20241211-aaeon-up-board-pinctrl-support-v1-3-24719be27631@bootlin.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 16 Dec 2024 10:17:23 +0100
+Message-ID: <CAMRc=MfUDGaW1cBrsLzAZ6GORFFv5fAjEKXu7esO44v4XckheQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] gpiolib: add gpiochip_add_pinlist_range() function
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
-driver.
+On Wed, Dec 11, 2024 at 5:27=E2=80=AFPM Thomas Richard
+<thomas.richard@bootlin.com> wrote:
+>
+> Add gpiochip_add_pinlist_range() function to add a range for GPIO <-> pin
+> mapping, using a list of non consecutive pins.
+> Previously, it was only possible to add range of consecutive pins using
+> gpiochip_add_pin_range().
+>
+> The struct pinctrl_gpio_range has a 'pins' member which allows to set a
+> list of pins (which can be non consecutive). gpiochip_add_pinlist_range()
+> is identical to gpiochip_add_pin_range(), except it set 'pins' member
+> instead of 'pin_base' member.
+>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+> ---
 
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
----
- .../ABI/testing/sysfs-devices-system-cpu      |  54 ++++++++
- drivers/cpufreq/cppc_cpufreq.c                | 129 ++++++++++++++++++
- include/acpi/cppc_acpi.h                      |   9 ++
- 3 files changed, 192 insertions(+)
+I don't have anything against this change so in any case:
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 206079d3bd5b..3d87c3bb3fe2 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -268,6 +268,60 @@ Description:	Discover CPUs in the same CPU frequency coordination domain
- 		This file is only present if the acpi-cpufreq or the cppc-cpufreq
- 		drivers are in use.
- 
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_select
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Autonomous selection enable
-+
-+		Read/write interface to control autonomous selection enable
-+			Read returns autonomous selection status:
-+				0: autonomous selection is disabled
-+				1: autonomous selection is enabled
-+
-+			Write 'y' or '1' or 'on' to enable autonomous selection.
-+			Write 'n' or '0' or 'off' to disable autonomous selection.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_act_window
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Autonomous activity window
-+
-+		This file indicates a moving utilization sensitivity window to
-+		the platform's autonomous selection policy.
-+
-+		Read/write an integer represents autonomous activity window (in
-+		microseconds) from/to this file. The max value to write is
-+		1270000000 but the max significand is 127. This means that if 128
-+		is written to this file, 127 will be stored. If the value is
-+		greater than 130, only the first two digits will be saved as
-+		significand.
-+
-+		Writing a zero value to this file enable the platform to
-+		determine an appropriate Activity Window depending on the workload.
-+
-+		Writing to this file only has meaning when Autonomous Selection is
-+		enabled.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/energy_perf
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Energy performance preference
-+
-+		Read/write an 8-bit integer from/to this file. This file
-+		represents a range of values from 0 (performance preference) to
-+		0xFF (energy efficiency preference) that influences the rate of
-+		performance increase/decrease and the result of the hardware's
-+		energy efficiency and performance optimization policies.
-+
-+		Writing to this file only has meaning when Autonomous Selection is
-+		enabled.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
- 
- What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
- Date:		August 2008
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 2b8708475ac7..111fab50b7a0 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -792,10 +792,139 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
- 
- 	return cpufreq_show_cpus(cpu_data->shared_cpu_map, buf);
- }
-+
-+static ssize_t show_auto_select(struct cpufreq_policy *policy, char *buf)
-+{
-+	u64 val;
-+	int ret;
-+
-+	ret = cppc_get_auto_sel(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%llu\n", val);
-+}
-+
-+static ssize_t store_auto_select(struct cpufreq_policy *policy,
-+				 const char *buf, size_t count)
-+{
-+	bool val;
-+	int ret;
-+
-+	ret = kstrtobool(buf, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = cppc_set_auto_sel(policy->cpu, val);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
-+{
-+	unsigned int exp;
-+	u64 val, sig;
-+	int ret;
-+
-+	ret = cppc_get_auto_act_window(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	sig = val & CPPC_AUTO_ACT_WINDOW_MAX_SIG;
-+	exp = (val >> CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) & CPPC_AUTO_ACT_WINDOW_MAX_EXP;
-+
-+	return sysfs_emit(buf, "%llu\n", sig * int_pow(10, exp));
-+}
-+
-+static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
-+				     const char *buf, size_t count)
-+{
-+	unsigned long usec;
-+	int digits = 0;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &usec);
-+	if (ret)
-+		return ret;
-+
-+	if (usec > CPPC_AUTO_ACT_WINDOW_MAX_SIG * int_pow(10, CPPC_AUTO_ACT_WINDOW_MAX_EXP))
-+		return -EINVAL;
-+
-+	while (usec > CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH) {
-+		usec /= 10;
-+		digits += 1;
-+	}
-+
-+	if (usec > CPPC_AUTO_ACT_WINDOW_MAX_SIG)
-+		usec = CPPC_AUTO_ACT_WINDOW_MAX_SIG;
-+
-+	ret = cppc_set_auto_act_window(policy->cpu,
-+				       (digits << CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) + usec);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t show_energy_perf(struct cpufreq_policy *policy, char *buf)
-+{
-+	u64 val;
-+	int ret;
-+
-+	ret = cppc_get_epp_perf(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%llu\n", val);
-+}
-+
-+static ssize_t store_energy_perf(struct cpufreq_policy *policy,
-+				 const char *buf, size_t count)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val > CPPC_ENERGY_PERF_MAX)
-+		return -EINVAL;
-+
-+	ret = cppc_set_epp(policy->cpu, val);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
- cpufreq_freq_attr_ro(freqdomain_cpus);
-+cpufreq_freq_attr_rw(auto_select);
-+cpufreq_freq_attr_rw(auto_act_window);
-+cpufreq_freq_attr_rw(energy_perf);
- 
- static struct freq_attr *cppc_cpufreq_attr[] = {
- 	&freqdomain_cpus,
-+	&auto_select,
-+	&auto_act_window,
-+	&energy_perf,
- 	NULL,
- };
- 
-diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-index 134931b081a0..8176fca4c86b 100644
---- a/include/acpi/cppc_acpi.h
-+++ b/include/acpi/cppc_acpi.h
-@@ -32,6 +32,15 @@
- #define	CMD_READ 0
- #define	CMD_WRITE 1
- 
-+#define CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE	(7)
-+#define CPPC_AUTO_ACT_WINDOW_EXP_BIT_SIZE	(3)
-+#define CPPC_AUTO_ACT_WINDOW_MAX_SIG	((1 << CPPC_AUTO_ACT_WINDOW_SIG_BIT_SIZE) - 1)
-+#define CPPC_AUTO_ACT_WINDOW_MAX_EXP	((1 << CPPC_AUTO_ACT_WINDOW_EXP_BIT_SIZE) - 1)
-+/* CPPC_AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
-+#define CPPC_AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
-+
-+#define CPPC_ENERGY_PERF_MAX	(0xFF)
-+
- /* Each register has the folowing format. */
- struct cpc_reg {
- 	u8 descriptor;
--- 
-2.33.0
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+But may I suggest the name to be changed to
+gpiochip_add_pin_range_sparse() for a better indication of its
+purpose?
+
+Bart
 
