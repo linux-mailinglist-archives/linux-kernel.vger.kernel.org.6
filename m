@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-447140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F19F2DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:09:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19D49F2DD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD61B1888958
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288C61883D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556F5202C2D;
-	Mon, 16 Dec 2024 10:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EF3202C51;
+	Mon, 16 Dec 2024 10:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Hzyq0Oh5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F07202C4F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNiTDxR6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9DD2010EF;
+	Mon, 16 Dec 2024 10:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343700; cv=none; b=s+vHPgcYujkLbL8RzqEPxUByeKn6rawJUkc7ICIU+Zop/QEgSzLJVZCUJldAYcedwUnWSly1l1qqfDWTzLV2MQj92/eXez3Y834qTOIoPVg5eVEEurKfUF+ctgQCq22EJF52SAgcCFgHKtb6PLXrVOR5f/Ql4rCW5tE5FgF7/xA=
+	t=1734343693; cv=none; b=M4Lo6+ObM9KUCrYAZDmXlAHjpDe4r5DyiuP+qDPJhRvtRm6H7Cd9RK8rXZZZHyMt2gPaFxGswcS3T1lDiCvXmFSTEi79OmsR55XmlYVzOD0rA3c+SwEYziISwO+cOosHkh0WUZP/C6VsEf/wZmAuHCkMcCsJBJfp/cbGWfSB8II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343700; c=relaxed/simple;
-	bh=mgCNpCWyAwdq2LpeJX81AtExmp/v8YsfFzgHrS+rTsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ubYF9HfrIK95rRSl7rDk+dQhUfxyWZPZ1TmVB0vGFPh6EZCLWGm1XYQmNwKajD5Urdwq298tIlcp3stRnPfMOYuFDkeG66hut3RmUrp9OS6WYNjEeBXsPuS6wx3QqdW+6ox+Ioa7eYDlFVMG00U/J2DccatTt+oWdEQqRLxWH/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Hzyq0Oh5; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=Hu/Hk
-	WJsufjsnAhs5V/fCrWR+2p7iuXYpq5tnEE/SaU=; b=Hzyq0Oh5DOBCd7GfrhB6G
-	VgQgwbfTRNadhG6UQY+e2GSCAlUx3aQKhsuIoPeznMyPkgI+4sxLngq7OgRsWCR2
-	BCgZ05X+zY2vP8k2SrU8HQ1J2vDd1r6ZJmJSWgvQIUOBmkPcHmVzECsdc2eBI//m
-	VC3+Hlxzo9OwZ2p0eEslMU=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3NzDs+19nesfFAw--.35836S2;
-	Mon, 16 Dec 2024 18:07:43 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: kishon@kernel.org,
-	linux-phy@lists.infradead.org,
-	vkoul@kernel.org
-Cc: heiko@sntech.de,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	kever.yang@rock-chips.com,
-	sebastian.reichel@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v2] phy: rockchip: phy-rockchip-typec: Fix Copyright description
-Date: Mon, 16 Dec 2024 18:07:24 +0800
-Message-ID: <20241216100739.3726293-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1734343693; c=relaxed/simple;
+	bh=X5Z+IXmO0qKaN/lunFl6z0UWeW3fLnADEWChSD7a5wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjZzU32jvSjEUMEXUDHWJCqPstcnUyBlZGzS8ZTi+iWaECipfREJ8ohuc3eW2unPcVXyemvS4kaje6fYxoxi5YVk9VUkAQ+iKYMYS8ilQAjIQzQh6S3XpfCyXH4aikL5LucK0cRV7xnXFvRQsWU9qqcO4NLvUW1EHCu7cfpiexA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNiTDxR6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94335C4CED0;
+	Mon, 16 Dec 2024 10:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734343692;
+	bh=X5Z+IXmO0qKaN/lunFl6z0UWeW3fLnADEWChSD7a5wE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iNiTDxR6pFToe67puHvWwXRuGXo6Vf/FNXHe43S5vgKXZ/DuXKfmW2sv525g4yOZq
+	 LLRjgiLR7sHaXm/g06Qi5Vi0qFMoR2pWcpfbHdL6+YiTGYcpYG8mMg4AAxA7bEvzDO
+	 QGNjCH0kO37LvGR2GDdoU06VDxhsviR0sQcDQ77r0p3Pho0+5Le+mXaaVeAcAqpInG
+	 4ZM6f2c2yqm7A4Cdr79ME74Rd/yhdAGXpMISuP+B9Ud3MvdJSl9Me9aSdUj9ngpqsB
+	 eERMX9qpgXdK6uK7liQ8yfHU4XKYwK402cCkL/B6m20sYKK+u/asPgKlbK30f/Jnwg
+	 7Z7b43UY8/V3w==
+Date: Mon, 16 Dec 2024 11:08:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: sophgo: add clock controller for
+ SG2044
+Message-ID: <ld5mr252gnj5qd7qksf3lbd2iwldm3vdiqhu6ji7ipnhc342fa@phqq3xzgsn22>
+References: <20241209082132.752775-1-inochiama@gmail.com>
+ <20241209082132.752775-2-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3NzDs+19nesfFAw--.35836S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruF1UCrW8uw4rZF1rCw1kGrg_yoWDtFX_K3
-	WSvw1UXr4ktFZ5Aw1DJayxW34qya4j9a1kuFsayF98J3WDt34vqrykXr12qF15GF4SkrZ7
-	Cas0vFy7AFyaqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1LFxUUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwa3Xmdf8wjfLAACsu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241209082132.752775-2-inochiama@gmail.com>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Mon, Dec 09, 2024 at 04:21:30PM +0800, Inochi Amaoto wrote:
+> The clock controller on the SG2044 provides common clock function
+> for all IPs on the SoC. This device requires PLL clock to function
+> normally.
+> 
+> Add definition for the clock controller of the SG2044 SoC.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  .../bindings/clock/sophgo,sg2044-clk.yaml     |  40 +++++
+>  include/dt-bindings/clock/sophgo,sg2044-clk.h | 170 ++++++++++++++++++
+>  2 files changed, 210 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
 
-The company name has update to Rockchip Electronics Co., Ltd.
-since 2021.
-And change Co.Ltd to Co., Ltd. to fix mail server warning:
-DBL_SPAM(6.50)[co.ltd:url];
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-
----
-
-Changes in v2:
--  Use uppercase (C) part for consistency.
-
- drivers/phy/rockchip/phy-rockchip-typec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/phy/rockchip/phy-rockchip-typec.c b/drivers/phy/rockchip/phy-rockchip-typec.c
-index 122ae0fdc785..d9701b6106d5 100644
---- a/drivers/phy/rockchip/phy-rockchip-typec.c
-+++ b/drivers/phy/rockchip/phy-rockchip-typec.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  *         Kever Yang <kever.yang@rock-chips.com>
-  *
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
