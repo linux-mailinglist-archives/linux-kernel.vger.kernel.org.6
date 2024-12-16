@@ -1,111 +1,97 @@
-Return-Path: <linux-kernel+bounces-447568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7A39F344C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1377B9F3451
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1394218845FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:19:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3094E7A2BA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C26881ACA;
-	Mon, 16 Dec 2024 15:19:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453A45647F;
+	Mon, 16 Dec 2024 15:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZ6by4yZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74A8140E30;
-	Mon, 16 Dec 2024 15:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C757143725;
+	Mon, 16 Dec 2024 15:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362378; cv=none; b=V2bWBTcH0nwG1R8J0oBbwFf4vbfGyzMd9kyxvepz+MVGjONwTW8KnMTEy16zw4OcnIdhYDcHnRu8UnpmV72VQUQxSmhGH0z97XE6VeWH+aj3WxsmwYc8APPdbqghZlH/QMjSeoR+5+Lkfj7xwmc9DFuSJ7VBw3TRC2vznrwwToE=
+	t=1734362425; cv=none; b=q/Wg2n3xYsf/GXLrDG0hyplxPWGZIIjeEMt8YQDZkIxq/jhweSPCfkiVwz9rFquA61FRcibS0+wfUhoPBIjr8aUx7WLx4ZMRtSs60DLX7rE4QxLSgiFe8nse1ICxXBGIDZj9dwxoehCQo1yX0V/vmhp9yeWFBz0T0YwvFHJHYFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362378; c=relaxed/simple;
-	bh=lagOO5sDXuuSCCNoTaB1Jk6FpFJAVvwfO8ybd8xx2Mk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Db9/AejqRoLHaQ+QN+ITJkV0kLE7bwrO3OPjMdGIjQVQjZNFwEd9JGLoHYLoD0ygd+i+SDwQk8vujCZ3H2aUEgOha9auCq7FHQ9854H2mU26QDrv6ZuFgX7aaRGMu+8GIrvJfwEtcH2fR0iiNcBk9WEHUsqusZtoywxwyynedm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YBk4w3Vywz6K6wk;
-	Mon, 16 Dec 2024 23:14:40 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1A67F1408F9;
-	Mon, 16 Dec 2024 23:19:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Dec
- 2024 16:19:33 +0100
-Date: Mon, 16 Dec 2024 15:19:31 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Tejun Heo <tj@kernel.org>, Josef Bacik
-	<josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, Boris Burkov
-	<boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
- Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
-	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v3 5/9] driver core: Move true expression out of if
- condition in API device_find_child()
-Message-ID: <20241216151931.00006519@huawei.com>
-In-Reply-To: <20241212-class_fix-v3-5-04e20c4f0971@quicinc.com>
-References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
-	<20241212-class_fix-v3-5-04e20c4f0971@quicinc.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1734362425; c=relaxed/simple;
+	bh=niuP99foet4I342cbmg1ad+24zmVWlrRXskx/PKgMeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5GGD3jiEgM74sr0SiMlAycrnyBKqxxgGN06oL8iOOcH9lQCiC4FLgZSN3A3XjBmNgjdQ+McN31InIuB0GoDsNEWo5h63ElWda4a5P95qQCE6vKrtuIkq6JlWKhOXRzPo6S7G6uk7WxpsY0INlE8iF/qlqYEWApLqj+jldGSn58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZ6by4yZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD1CC4CED0;
+	Mon, 16 Dec 2024 15:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734362425;
+	bh=niuP99foet4I342cbmg1ad+24zmVWlrRXskx/PKgMeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AZ6by4yZy5p8vmJWprcWcSzejs0HD301qf7H6WGL/P6uFexO/i9/4THiOROKKjpTp
+	 p3lnXZsO3Ls16sah2Fl6o7xN+KkkINT5geZugNL2AyxnQXoGRA3f1PYnqdw3nEuUBH
+	 A4xbs63Q6+6yfgaTtYomCnJ+Z0lEmm4Ylnlrjw6T5o3HkJWcOvk8u+3fVkmQSiTMpw
+	 sHgOFR4GQdICKtqjuAuasMCZvCT+a6wjiuccd9G+hR9T2pIro+v8Ik7Kwd88rGsIgL
+	 rb9WtkeQJBDgFk5SjIpmu86iRrWrFzyJaZp7FcjmvK/HhV1bDdAlLNJ2EWb/s8KNnM
+	 /5ARr9FnqUtXg==
+Date: Mon, 16 Dec 2024 15:20:20 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH V2 08/46] arm64/sysreg: Add register fields for
+ HFGRTR2_EL2
+Message-ID: <4830a422-9acc-4d2e-86e7-7e75af340dea@sirena.org.uk>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+ <20241210055311.780688-9-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gbV1zyZYu1Z/82Fp"
+Content-Disposition: inline
+In-Reply-To: <20241210055311.780688-9-anshuman.khandual@arm.com>
+X-Cookie: Be different: conform.
 
-On Thu, 12 Dec 2024 21:38:41 +0800
-Zijun Hu <zijun_hu@icloud.com> wrote:
 
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> For device_find_child(), get_device() in the if condition always returns
-> true, move it to if body to make the API's logic more clearer.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-I'd squash with previous 2.  They are all the same change in the same
-area of the kernel.
+--gbV1zyZYu1Z/82Fp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Jonathan
+On Tue, Dec 10, 2024 at 11:22:33AM +0530, Anshuman Khandual wrote:
+> This adds register fields for HFGRTR2_EL2 as per the definitions based
+> on DDI0601 2024-09.
 
-> ---
->  drivers/base/core.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 8bdbc9e657e832a063542391426f570ccb5c18b9..69bb6bf4bd12395226ee3c99e2f63d15c7e342a5 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4089,9 +4089,12 @@ struct device *device_find_child(struct device *parent, const void *data,
->  		return NULL;
->  
->  	klist_iter_init(&parent->p->klist_children, &i);
-> -	while ((child = next_device(&i)))
-> -		if (match(child, data) && get_device(child))
-> +	while ((child = next_device(&i))) {
-> +		if (match(child, data)) {
-> +			get_device(child);
->  			break;
-> +		}
-> +	}
->  	klist_iter_exit(&i);
->  	return child;
->  }
-> 
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
+--gbV1zyZYu1Z/82Fp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgRTMACgkQJNaLcl1U
+h9Cr+Af/be1pfnGEb8Mpa6M3rCI0zQapxUu/nCyhxYEhFwSgpJKVWvmG8wKwfN5r
+ecIGCKLibBIafWvty9jw5oEbM+FYxc5Joqop8XlJ0MxphUH1wiu8Qgui1hcvDzCI
+p3src1DgDTlRMnrWCaukPFpVXz6Cp99JpV1OzbfrLFcqLemdEaeuUB7bt8qWFktY
+kE8BC3XoDUq5GzU17ZmfEIEBlNmzY27YBUA+5tx9RF58jC4WJ4Sluznfm9kGQlgc
+SrwdZ/TmsVm+qSbY9yNl/Y5eeLG3J9dNr8+zEJtzUU0GbBG5jVf4KkjpyFkLOLjx
+ih6XgEVmGbb+L2n2jishqNTXwKJ+ow==
+=9/v5
+-----END PGP SIGNATURE-----
+
+--gbV1zyZYu1Z/82Fp--
 
