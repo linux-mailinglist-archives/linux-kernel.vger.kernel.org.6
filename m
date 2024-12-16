@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-447576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5129F3464
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:24:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329229F346D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8461B18883A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C8E1631B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525C0146A60;
-	Mon, 16 Dec 2024 15:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B81482E1;
+	Mon, 16 Dec 2024 15:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="id+CL++u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8Qilrik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F00145A16
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1FD137775;
+	Mon, 16 Dec 2024 15:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362608; cv=none; b=M3mmtphC4shWfs1J+n3JkTLVSlE0jNPtZHEytq3I/IksTN/EPaf4be1XMnZdCP5BIlEgyzUG5LdHCLq3th8N2DS0oWDT0XuzPlI/UMo6sVEA1pXKgzJXtocNL19Ruf4CS+Sz+KHiLW1XvpySp8/TSvigAj08LsOgHH1vyqiLmv0=
+	t=1734362669; cv=none; b=AWfo9/ojJQOnp6EooxwZsEJ91acZvPFqk9s29KSSRvTpGeETkRTYW1Bst8iu5on9VnTa/D+QMiMLUlUgKwx0g8VTQwqf1PWQ0j4Xflyqx8dJbZ0gQ6xhvIkXhT8gq/ZugWgyMlVZIjdWifJwB6liknYifCI0/uZbX1FoF5DC0/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362608; c=relaxed/simple;
-	bh=QtQQsUiJel4bUfPgyvGeB68f8I6g4jzU2Xy/nrs5h8w=;
+	s=arc-20240116; t=1734362669; c=relaxed/simple;
+	bh=agePObKTKIqacVCU4rIa9k5erBpScbul3raudsvvu8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rk26mtl21WlGTrXQOhgYmsEiJrxWVCkNgg27k4DMobz8IZU/DRfLH2gEjWbflNfAWU8GwQU3l5o+4USSHM23Iqr9aZS1kfSQr1EfOLKhJQF1gjTJEiNDAfiLySjK8lU6aZoLnrjcvfsea5Jl8eBG1+BsPJrtwUuHOVmOkS2EO40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=id+CL++u; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734362606;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22hfpCiAB76G1lhRVgQIdpwqzCYya1oQySaYuhV9NKI=;
-	b=id+CL++uo4rd+DTZq/YmaLWz8SsKByr4z4QkXPt37wm8XPhEK4NHwxZxtumD8u4qn0Ewjm
-	hm47r/bPQgUrFk8+/YznJFJZrSO8xSLvc18iPzxitaprJZLmaSTuqJ5fVykEGavuCuQ7eF
-	Z3q/K6Fa5KMjBFKZ+R5bBgmpOlzfsHE=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-gj08dVGqOsuJi_B7aO_3EQ-1; Mon, 16 Dec 2024 10:23:23 -0500
-X-MC-Unique: gj08dVGqOsuJi_B7aO_3EQ-1
-X-Mimecast-MFC-AGG-ID: gj08dVGqOsuJi_B7aO_3EQ
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d89a389ee9so98594536d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:23:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734362603; x=1734967403;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22hfpCiAB76G1lhRVgQIdpwqzCYya1oQySaYuhV9NKI=;
-        b=nmbFmETmtvX+F5WKqURnhIXWzPbgL5nAxI+xSfyDeENVg9Wwj8sYT+cFoRHbm5yLZ5
-         inYDD6bSj9p35FF8UV6Vuns28YTuAnlVk+GTi9nvGaGpnaEW/NmFLidQxNNywArdnCb1
-         m7R9/DIPNkeceRpGVfvhT8JnRVTP1WyBOXIl51FC7lf5ORUpQt643tRqPqRTduraPURK
-         wPl1xhIwKOy4zyeT2UNLrPFFeexbBUX3TDtgJk6dzNNu/LLPsG2A90vI4TlGsRVYowdx
-         JGkyTarTreiOMyTIVsdLVxOttFkbzebk1P4fsGJVhRUx8JWeqklVhpH+Bo0XoKpdH6n9
-         ji8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXab62HcsWAdC+92VJ82x8w4TzrcNiL34vwKdwuguifv5RAGuhaO3QgHlkd7QBE3b37O7INL1ZRCJ1NGHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCeGI1/OtNjptZyu8u4Vojt/poLrBWz/yGZE00CyRqJ2iQeuR9
-	Ba/8bc1KvLvu7Ct17EErtMAX5c5uSdKWCvy+aU0q9gF6bJafuaOvsuO//dMcmfUyuP6nN61ZyRU
-	O1sft7WUJolmJoLZS3Kyuvr/Ukq3SVSsiOJMCEqduncJHMBjxqtIncjEuUW0B5w==
-X-Gm-Gg: ASbGncuFOA7HXAgP0Rmc32NsvRH514BAKjwBPO8VXgeHj0rT4UWdowNqSiXIZiKBuNw
-	Hh+TsQGJnpDQ/0RcpnnfAstnar6S6r0O2b/S3r6PplnUSJeD1pJyfe9m1OhpDJZxHijGbt85BQD
-	vhQtbGYfPb98NJZ871I8MPEarb14qrYE2QRErNiz84pPRpUjIEn2pR8SupKpe/eUPYoGW7QSQhW
-	UiEjPly3xjiuCqlPQ/4ZzDU8/RbE12tzRjcylNyXTy91PmUbZ+sG+/6Zcz6DQ4gleSlUwyLlyBf
-	RV7ZI0JR6o7oFwljiMITz6vyfgoasMSNvPQ8E1CFeEo=
-X-Received: by 2002:a05:6214:194e:b0:6d4:2646:109c with SMTP id 6a1803df08f44-6dc844afed0mr215332106d6.3.1734362602943;
-        Mon, 16 Dec 2024 07:23:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH7QXHgGXzgEjQZ3uTdpr42Buq+L+mX3JmSnr4maysHO6br7rvRW5Vl5hNJwPdDyY7Ey/ZXYQ==
-X-Received: by 2002:a05:6214:194e:b0:6d4:2646:109c with SMTP id 6a1803df08f44-6dc844afed0mr215331766d6.3.1734362602600;
-        Mon, 16 Dec 2024 07:23:22 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-197-226.as13285.net. [80.47.197.226])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd279544sm28346516d6.70.2024.12.16.07.23.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 07:23:22 -0800 (PST)
-Date: Mon, 16 Dec 2024 15:23:18 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ranguvar <ranguvar@ranguvar.io>, Juri Lelli <juri.lelli@gmail.com>, 
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>, "regressions@leemhuis.info" <regressions@leemhuis.info>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	juri.lelli@redhat.com
-Subject: Re: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM
- guest
-Message-ID: <gvam6amt25mlvpxlpcra2caesdfpr5a75cba3e4n373tzqld3k@ciutribtvmjj>
-References: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io>
- <20241214185248.GE10560@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tu9k9HaGq6Mg/YLjliq1VdKZmSGzu0/ZXXc1QAml56spnjV3e5bBsdfLSFCC4ALTzFqtYnp75psZBXvaBgvCV3X3VQg96Psf24iVZ8ZRQVui82+G3ryv5HdX0owrC9fJOfUVH49AXQVuTA4d51QZraox8Mt0ZQdV3M/7FXSXRjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8Qilrik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4224EC4CED0;
+	Mon, 16 Dec 2024 15:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734362668;
+	bh=agePObKTKIqacVCU4rIa9k5erBpScbul3raudsvvu8Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8QilrikF4NVH5daF8JcBRrPWW47IJcOfuBDqzAMfQm21R3U9vJi2tRp0R2CDW5KU
+	 5PerJeZDcm3voWMl8+EWYdNddW85QuUfUafcbTx+kTzNF4sUCjQ04UEDh3ph0PXAK1
+	 Z1NHTk8NagW8X10YnpCm7uKgRzHBWxsZCPpk+vfi7gkeip02Qs/Q8sl/IQN5ggPRnQ
+	 tiHqOSurdrARlgyv2rqjrH4jQgTA3uj8xMbUR/Tvgx4pm5Yzx2pKbbGLHs+Ow+FAJU
+	 9K5AFnij63nj1RL4yi2Lsp6+ZMP3PJrfPu/BXSpKNpcMrIG6YSDc/i3Kquo7nCV5DK
+	 MNuZMdT+4DpXQ==
+Date: Mon, 16 Dec 2024 16:24:26 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Harry Wentland <harry.wentland@amd.com>, 
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Message-ID: <20241216-observant-spiritual-wolf-564ee3@houat>
+References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+ <xchjpeykkqwlpniaspbzitaozuoltoq7aturtu7jq6z4lcxh77@y7t5ge2sa4er>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="yj5x4y56pv6ag7wh"
 Content-Disposition: inline
-In-Reply-To: <20241214185248.GE10560@noisy.programming.kicks-ass.net>
+In-Reply-To: <xchjpeykkqwlpniaspbzitaozuoltoq7aturtu7jq6z4lcxh77@y7t5ge2sa4er>
 
-On 14/12/24 19:52, Peter Zijlstra wrote:
-> On Sat, Dec 14, 2024 at 06:32:57AM +0000, Ranguvar wrote:
-> > Hello, all,
-> > 
-> > Any assistance with proper format and process is appreciated as I am new to these lists.
-> > After the commit bd9bbc96e835 "sched: Rework dl_server" I am no longer able to boot my Windows 11 23H2 guest using pinned/exclusive CPU cores and passing a PCIe graphics card.
-> > This setup worked for me since at least 5.10, likely earlier, with minimal changes.
-> > 
-> > Most or all cores assigned to guest VM report 100% usage, and many tasks on the host hang indefinitely (10min+) until the guest is forcibly stopped.
-> > This happens only once the Windows kernel begins loading - its spinner appears and freezes.
-> > 
-> > Still broken on 6.13-rc2, as well as 6.12.4 from Arch's repository.
-> > When testing these, the failure is similar, but tasks on the host are slow to execute instead of stalling indefinitely, and hung tasks are not reported in dmesg. Only one guest core may show 100% utilization instead of many or all of them. This seems to be due to a separate regression which also impacts my usecase [0].
-> > After patching it [1], I then find the same behavior as bd9bbc96e835, with hung tasks on host.
-> > 
-> > git bisect log: [2]
-> > dmesg from 6.11.0-rc1-1-git-00057-gbd9bbc96e835, with decoded hung task backtraces: [3]
-> > dmesg from arch 6.12.4: [4]
-> > dmesg from arch 6.12.4 patched for svm.c regression, has hung tasks, backtraces could not be decoded: [5]
-> > config for 6.11.0-rc1-1-git-00057-gbd9bbc96e835: [6]
-> > config for arch 6.12.4: [7]
-> > 
-> > If it helps, my host uses an AMD Ryzen 5950X CPU with latest UEFI and AMD WX 5100 (Polaris, GCN 4.0) PCIe graphics.
-> > I use libvirt 10.10 and qemu 9.1.2, and I am passing three PCIe devices each from dedicated IOMMU groups: NVIDIA RTX 3090 graphics, a Renesas uPD720201 USB controller, and a Samsung 970 EVO NVMe disk.
-> > 
-> > I have in kernel cmdline `iommu=pt isolcpus=1-7,17-23 rcu_nocbs=1-7,17-23 nohz_full=1-7,17-23`.
-> > Removing iommu=pt does not produce a change, and dropping the core isolation freezes the host on VM startup.
-> > Enabling/disabling kvm_amd.nested or kvm.enable_virt_at_load did not produce a change.
-> > 
-> > Thank you for your attention.
-> > - Devin
-> > 
-> > #regzbot introduced: bd9bbc96e8356886971317f57994247ca491dbf1
-> > 
-> > [0]: https://lore.kernel.org/regressions/52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org/
-> > [1]: https://lore.kernel.org/regressions/376c445a-9437-4bdd-9b67-e7ce786ae2c4@mailbox.org/
-> > [2]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/bisect.log
-> > [3]: https://ranguvar.io/pub/paste/linux-6.12-vm-regression/dmesg-6.11.0-rc1-1-git-00057-gbd9bbc96e835-decoded.log
-> 
-> Hmm, this has:
-> 
-> [  978.035637] sched: DL replenish lagged too much
-> 
-> Juri, have we seen that before?
 
-Not in the context of dl_server. Hummm, looks like replenishment wasn't
-able to catch up with the clock or something like that (e.g.
-replenishment didn't happen for a long time).
+--yj5x4y56pv6ag7wh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+MIME-Version: 1.0
 
+On Mon, Dec 16, 2024 at 01:24:29PM +0200, Dmitry Baryshkov wrote:
+> On Fri, Dec 06, 2024 at 11:43:03AM +0200, Dmitry Baryshkov wrote:
+> > The connector->eld is accessed by the .get_eld() callback. This access
+> > can collide with the drm_edid_to_eld() updating the data at the same
+> > time. Add drm_connector.eld_mutex to protect the data from concurrenct
+> > access.
+> >=20
+> > The individual drivers were just compile tested. I propose to merge the
+> > drm_connector and bridge drivers through drm-misc, allowing other
+> > maintainers either to ack merging through drm-misc or merging the
+> > drm-misc into their tree and then picking up correcponding patch.
+> >=20
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> > Changes in v2:
+> > - Also take the mutex in clear_eld() (Jani)
+> > - Rebased on top of linux-next + drm-misc-next to solve build error
+> > - Link to v1: https://lore.kernel.org/r/20241201-drm-connector-eld-mute=
+x-v1-0-ba56a6545c03@linaro.org
+> >=20
+> > ---
+> > Dmitry Baryshkov (10):
+> >       drm/connector: add mutex to protect ELD from concurrent access
+> >       drm/bridge: anx7625: use eld_mutex to protect access to connector=
+->eld
+> >       drm/bridge: ite-it66121: use eld_mutex to protect access to conne=
+ctor->eld
+> >       drm/amd/display: use eld_mutex to protect access to connector->eld
+> >       drm/exynos: hdmi: use eld_mutex to protect access to connector->e=
+ld
+> >       drm/i915/audio: use eld_mutex to protect access to connector->eld
+> >       drm/msm/dp: use eld_mutex to protect access to connector->eld
+> >       drm/radeon: use eld_mutex to protect access to connector->eld
+> >       drm/sti: hdmi: use eld_mutex to protect access to connector->eld
+> >       drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
+>=20
+> Granted the lack of reviews from AMD maintainers and granted that the
+> rest of the series was reviewed and acked, is it suitable to leave those
+> two patches out and merge the rest through drm-misc-next?
+
+Sounds reasonable to me
+
+Maxime
+
+--yj5x4y56pv6ag7wh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2BGJAAKCRAnX84Zoj2+
+dqCXAX9SjWwvOgFzh4mNa6iVP75JAzbqRH60uqV3o0fzLR0EpZr5ExXJlgdvDTJ1
+pqDitiQBf0gV4LWjS6KxH0jldZncnMFDYupvJiMgktWoAluECsTRw5fKWW43ccUY
+56/fJ5jxEg==
+=4rTF
+-----END PGP SIGNATURE-----
+
+--yj5x4y56pv6ag7wh--
 
