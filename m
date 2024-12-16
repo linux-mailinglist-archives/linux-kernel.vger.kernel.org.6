@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-447774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44359F36E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:02:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7869F36C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AED18926D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664DB1892C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3627220B1E0;
-	Mon, 16 Dec 2024 16:53:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5679E20ADEC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93902207DE0;
+	Mon, 16 Dec 2024 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SUHx6vXo"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641CF126BF7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368031; cv=none; b=PuS+nykRnwCrl7W9bcvpydiTXxrYHW7NZpKw0b4Z/txnO+QZ3iCL8oq3lwrt4qp/F/L260ZJKW+ogjJZ6BIOGRLU0dfOwdZ7SqRWqDZxyvSqH1cQa5MUP1yVcYt6+MFXGI4yq8FJEnms8iGB7GSG/7T0fXTdWGVgMVMFXsS7ffs=
+	t=1734367879; cv=none; b=c61yCuFLy18R24nOtdKQRoJG7y2uOg/xAFtSHiXJPmLpg9Lv65FcfqFFNfq/QIBKlpJE9pcn9i2oBNaNQDwbKUhql5yKGE0UwW2fRTzbew1gyzDcMuO9BAIvzLhaXWL6D5vBqv+PE4Uej+Dku3MOFQ1meDXyPhfqg0hAqg+o1ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368031; c=relaxed/simple;
-	bh=/XCD4xAd14x2YIkaw5c8j44TIdHV/AaMQm1xOv/49dc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uh8xvoxso9EaDYvtrxNGgmQFkLXFCeNLQuCSbB3oOIS6TzMb83EQh4lrqUGeANq0pQwsyZdMqnKqM7V4c1mzjo50suDxnhs1Wf2nO3BtDaAaVaLgC99YRxoL9NzLDywX5vdH+ofgPw2Zc/2IS/qxoPK58VwqhhKrwb1QaZfL4r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0479416F8;
-	Mon, 16 Dec 2024 08:54:18 -0800 (PST)
-Received: from K4MQJ0H1H2.arm.com (unknown [10.163.78.212])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1A31E3F528;
-	Mon, 16 Dec 2024 08:53:38 -0800 (PST)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	srivatsa@csail.mit.edu,
-	haowenchao22@gmail.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	wangkefeng.wang@huawei.com,
-	ziy@nvidia.com,
-	jglisse@google.com,
-	surenb@google.com,
-	vishal.moola@gmail.com,
-	zokeefe@google.com,
-	zhengqi.arch@bytedance.com,
-	jhubbard@nvidia.com,
-	21cnbao@gmail.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [RFC PATCH 12/12] selftests/mm: khugepaged: Enlighten for mTHP collapse
-Date: Mon, 16 Dec 2024 22:21:05 +0530
-Message-Id: <20241216165105.56185-13-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241216165105.56185-1-dev.jain@arm.com>
-References: <20241216165105.56185-1-dev.jain@arm.com>
+	s=arc-20240116; t=1734367879; c=relaxed/simple;
+	bh=qJWpvMvaRyRncie5h9SvPMSV7VD+M79aQruQQoCxMhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGSazZaKZacxYa6G/A0mFJRdriiiQXAQtyV9af/QyAEhapF8IEkJYT7w630qzJKqTBMKxRdmdysWEycgVMAfHeSmbMVAMAqEh4Ysyt4Ff9feLhZuqefSsDxLYhlrS3Sd1ZeEEqTPLm8y22rp0w1OLGXoN8AQOdAasa8vYRSmz2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SUHx6vXo; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21619108a6bso32382465ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734367877; x=1734972677; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AhE+DSypq3SjpYtMHh6sKFtWdmcn5TW3B/Ayo8044zE=;
+        b=SUHx6vXoeJSNzsZ9GfSzXqFOh/aWEPLxD7gtJNhH080rLWxCbwITDydd45Sqthk7CX
+         ijETNMdMUSgInsEag34xlN6slqBfxsX27b9zhRPVa3e9Gr894XKOweBpLpKy9Lonnv9j
+         wLhvh6+nQpnOptHrBQD1ALyZ0GbZs7yz2pSEI6tMIvbIzy3iZjSyk+ZNC340taplG1D4
+         NCzlZBs6kF3gWMzEvldz5BrxfEcaLe56yWjexEPIq1GZk8If6JsdVJXmG4GgA5bpLJ05
+         jRvO98uCxhQFWOH27/L1zRm/HndLzZzVIk3I0K1drHOlqUvRnL/pDezAQa4E6qYyZo1A
+         VC0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734367877; x=1734972677;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AhE+DSypq3SjpYtMHh6sKFtWdmcn5TW3B/Ayo8044zE=;
+        b=mD39XD5OF1kMAIzH6CkllnMP1LYS5onG9kKDonNHx4+3Q0tph3BQv0Lz4BWcTp4Nog
+         1DLe9V5x4nWgYo8b9Gjkj/bLbGFEQUy++NUdtqksI8tCW3VAmg0xaImBb6JLZ/oQDq3B
+         1pAAHGDYYHQpT2vE5YFEZD++L4SOCq7fWBeJcVM43GfBHnEeEzuUI4o2+1oUOEk9BLZJ
+         je12skSu8acLiKE7WFR0sSEPpvklpWtRCGpKBRvqi9d9CVx7mMwSXsvKYOTcDEGhvoZm
+         4UeLdDR5ldd+Aq4eBbRjIMYKa+nfuwInLpXOFec2xBWXb/UFR6XMBJKEaMjwgxo/2Ihr
+         tOYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5iqzOYN9VWQDJdoUlEpZSpSQWQVaAnSowHA0klWyWGRdU/stJXWv9MjJl8TDTluo46fTmYlJU0iyGmlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9AVZbjJ1xsTJ3VaDm4lungm86G0pAU34o87m/uYqsjOBahHuM
+	LCPaWBeQG6JOSeVC3tudrOpbt8f2AuvQr9DGdnr2jngwB5vt8p/mKDHslYXfT6Y=
+X-Gm-Gg: ASbGnctg3yJl/urAX8+dItn1PaRQupiTnTm+22NTWBoJiEFJmJNDRTdVvKwPvKhm8eB
+	YV5NvR7pCGI4LbEzVM+9ovrzrPEnK2r2KBDMogwfxbJGO5drGpcfRpITIVAXN09TZ8bo/KqJCHW
+	Njvr2nnzQHtqU7HaeO78ohjIPJXH4bSCSAaNa+oeME0IQQ+zD8+MSkjUNrZ/hkELy5T3+GR4ipE
+	X1zfyPGII+pF7fbU8L9g5v8+nIE4PuYjkEZR6Vm7F2Bgatn3vs7l7yXfN04
+X-Google-Smtp-Source: AGHT+IFdkBr1xidp7KbBA40XTCMNem9kWeuB09hpRbnYxb2m5xLWJETb06A1ncuzZHM9HfB1Sr5h4g==
+X-Received: by 2002:a17:90b:2e41:b0:2ee:b6c5:1def with SMTP id 98e67ed59e1d1-2f28fa54f64mr20741065a91.8.1734367876736;
+        Mon, 16 Dec 2024 08:51:16 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:13e6:498b:6054:9f90])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e500b8sm43931565ad.123.2024.12.16.08.51.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 08:51:16 -0800 (PST)
+Date: Mon, 16 Dec 2024 09:51:13 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Only populate devices for SCP
+ cores
+Message-ID: <Z2Baga9gSFLlmXll@p14s>
+References: <20241211072009.120511-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211072009.120511-1-wenst@chromium.org>
 
-One of the testcases triggers a CoW on the 255th page (0-indexing) with
-max_ptes_shared = 256. This leads to 0-254 pages (255 in number) being unshared,
-and 257 pages shared, exceeding the constraint. Suppose we run the test as
-./khugepaged -s 2. Therefore, khugepaged starts collapsing the range to order-2
-folios, since PMD-collapse will fail due to the constraint.
-When the scan reaches 254-257 PTE range, because at least one PTE in this range
-is writable, with other 3 being read-only, khugepaged collapses this into an
-order-2 mTHP, resulting in 3 extra PTEs getting unshared. After this, we encounter
-a 4-sized chunk of read-only PTEs, and mTHP collapse stops according to the scaled
-constraint, but the number of shared PTEs have now come under the constraint for
-PMD-sized THPs. Therefore, the next scan of khugepaged will be able to collapse
-this range into a PMD-mapped hugepage, leading to failure of this subtest. Fix
-this by reducing the CoW range.
+On Wed, Dec 11, 2024 at 03:20:07PM +0800, Chen-Yu Tsai wrote:
+> When multi-core SCP support was added, the driver was made to populate
+> platform devices for all the sub-nodes. This ended up adding platform
+> devices for the rpmsg sub-nodes as well, which never actually get used,
+> since rpmsg devices are registered through the rpmsg interface.
+> 
+> Limit of_platform_populate() to just populating the SCP cores with a
+> compatible string match list.
+> 
+> Fixes: 1fdbf0cdde98 ("remoteproc: mediatek: Probe SCP cluster on multi-core SCP")
+> Cc: Tinghan Shen <tinghan.shen@mediatek.com>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Changes since v1:
+> - Fix commit subject: populate devices *for* SCP cores
+> ---
+>  drivers/remoteproc/mtk_scp.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
 
-Note: The only objective of this patch is to make the test work for the PMD-case;
-no extension has been made for testing for mTHPs.
+I have applied this patch.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- tools/testing/selftests/mm/khugepaged.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks,
+Mathieu
 
-diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
-index 8a4d34cce36b..143c4ad9f6a1 100644
---- a/tools/testing/selftests/mm/khugepaged.c
-+++ b/tools/testing/selftests/mm/khugepaged.c
-@@ -981,6 +981,7 @@ static void collapse_fork_compound(struct collapse_context *c, struct mem_ops *o
- static void collapse_max_ptes_shared(struct collapse_context *c, struct mem_ops *ops)
- {
- 	int max_ptes_shared = thp_read_num("khugepaged/max_ptes_shared");
-+	int fault_nr_pages = is_anon(ops) ? 1 << anon_order : 1;
- 	int wstatus;
- 	void *p;
- 
-@@ -997,8 +998,8 @@ static void collapse_max_ptes_shared(struct collapse_context *c, struct mem_ops
- 			fail("Fail");
- 
- 		printf("Trigger CoW on page %d of %d...",
--				hpage_pmd_nr - max_ptes_shared - 1, hpage_pmd_nr);
--		ops->fault(p, 0, (hpage_pmd_nr - max_ptes_shared - 1) * page_size);
-+				hpage_pmd_nr - max_ptes_shared - fault_nr_pages, hpage_pmd_nr);
-+		ops->fault(p, 0, (hpage_pmd_nr - max_ptes_shared - fault_nr_pages) * page_size);
- 		if (ops->check_huge(p, 0))
- 			success("OK");
- 		else
--- 
-2.30.2
-
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 0f4a7065d0bd..8206a1766481 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1326,6 +1326,11 @@ static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_clus
+>  	return ret;
+>  }
+>  
+> +static const struct of_device_id scp_core_match[] = {
+> +	{ .compatible = "mediatek,scp-core" },
+> +	{}
+> +};
+> +
+>  static int scp_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1357,13 +1362,15 @@ static int scp_probe(struct platform_device *pdev)
+>  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
+>  	mutex_init(&scp_cluster->cluster_lock);
+>  
+> -	ret = devm_of_platform_populate(dev);
+> +	ret = of_platform_populate(dev_of_node(dev), scp_core_match, NULL, dev);
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
+>  
+>  	ret = scp_cluster_init(pdev, scp_cluster);
+> -	if (ret)
+> +	if (ret) {
+> +		of_platform_depopulate(dev);
+>  		return ret;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1379,6 +1386,7 @@ static void scp_remove(struct platform_device *pdev)
+>  		rproc_del(scp->rproc);
+>  		scp_free(scp);
+>  	}
+> +	of_platform_depopulate(&pdev->dev);
+>  	mutex_destroy(&scp_cluster->cluster_lock);
+>  }
+>  
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
