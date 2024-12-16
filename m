@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-447666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDADA9F35C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:21:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806A29F35D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC141697A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DE7188E4CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE29202C3E;
-	Mon, 16 Dec 2024 16:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC25D1494CF;
+	Mon, 16 Dec 2024 16:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="qCv+8yRB"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRc+sn+r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7351898F2
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FA5146A71;
+	Mon, 16 Dec 2024 16:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734366020; cv=none; b=lg1M3suT7iBHbXRjH7WjmNFVyU3q6kRGsSZctNkVFGFshSCIlL+1ehfverzJyu1ItNHGbkZNO/hm7vmN788tptrjvzuuBQG9CHWDZdWeBVHvRqgsFTQipgorn5EqhC7agP3Xs8v8NWDZW8SRZNkjN9tKRhyuz4Qx9Hz1QnKHTYE=
+	t=1734366030; cv=none; b=HOT32iuBz0fT1mrZrwVvAlPDLSBBhBvZQuaEfsF6BBJjyMvb4DSRrfqzHGCviiK9So8qe796L3kUu736awt6pdNKM8D5Lw8ZINc0Knqsjopy/qQpCujh0FM7vfwbBRGuqWF42VKjKmaLQgvSdEIJqCXMSUUyS3ryCrkmgb45cKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734366020; c=relaxed/simple;
-	bh=eWoOBHPDJmcteLCDTseNxkpbt8QoQjJ9yTA38acY4W8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p5q7hRX1wNiLWi5g6/c4x4JY+HO9DcyEF/NvKYw9S3no5XR7tGjAj138de12/NKu5BBUrFrhDj6Tx0UPYDppfekYfHnIOSaCTrdukvAt73Ejc97tqikclUpVGWe/2NTDG774JJiKrywEkD44R8nUY6NP85j+K499UkaZ/AZk3pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=qCv+8yRB; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so7338966a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:20:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1734366016; x=1734970816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eWoOBHPDJmcteLCDTseNxkpbt8QoQjJ9yTA38acY4W8=;
-        b=qCv+8yRBMdZT/h9HF0PJpS8m5ygz+KhdLd4QJgPA8ZalK9D0BKOt7CRb0WF7ucBIEK
-         lIldP+Q2jQQE82J+Xeb9lZq8DcVPjhG3OSIV/TyrijAM5SXTCv+/JvPjiSg3npeArpmZ
-         L2suKQlhVVt8p3l5X7gw6jIJiEwdfiWInzAomg0o2UFXsqx4YFe52PsLX7qsDhcsAL/8
-         a+ucKJMkbYfIopsOLww8IXSsd9Dmus1raEyO1wR8GWgpLuCLxpQKDo7pjx+k2/7NXbvx
-         ircLkSF5BSejJ5Q33TjmNIR6oT69NFpWyEEuEbL8JJSkfom+leS+61xklbD/jVpYArXF
-         xzUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734366016; x=1734970816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eWoOBHPDJmcteLCDTseNxkpbt8QoQjJ9yTA38acY4W8=;
-        b=h9e/6TJ2HL148LpewUBEPwUq4PYlInzvb7VVcdIrz0+cMCUfUwR5BVSzbXURP7HjHK
-         McZdZc0cfLds3fVDqt7g1bte1KCtUXncjS/6EwDhAgnalx6AROQMPVgtHwuKPoDttcW+
-         5tJl1oxVeDzoR3JVnoIqLK1m3XVRcniU+Zqof7gY03zrvkk6az/kM/XPTr8HMQwwiapt
-         M2DjADesqCK12XrXe5AJuxAqBSlym4OPgHNsK5CEEPzgPTwWcWqzPiak+PUcggdoPRZp
-         rdUVeA4tt/Rnux6A/FpX40Qstifhma5EiJYFz2FW8QC8nahH1dG2Ow809KosjgVE4VAk
-         0dPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZidbVZdHnFFe1jLTYPEEsU3p0bKGPyfFskSSC0qApKrkgvV3qMRoB9xT7XAn96wPlGaRgA/cbfm+o3Ts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6EUInY/lKuucfyggZXVG9oNVwTKB4V7IM5Kmmcx11QCsvXDh5
-	xBLz6AEqg3ro5RqjUEVNKYTuqoZJ0pQn2kSbx9eIJSRT7yi6vTmol/wTJGa3kWoPC/AbFR807dE
-	tdGIEtaX6RdBFAFF37pwLxFnXr2/fdeP90B9dQQ==
-X-Gm-Gg: ASbGnct4iksezUdiawywwjZZ7tryeadLJ9tGhgoA61HNLrx7+ZHnoGyNVciKDeAL2to
-	+QSiJPsds9uRlocZ+CwW4ISkCNz/yO51uheA0LkDfK39iMU++vPa2Sg==
-X-Google-Smtp-Source: AGHT+IHol/awQfY1ljmVfT/oHEcR0WUOqBOGCTerL1qGCz+dHa5zZojk98zElKTsZcL+frHiYWPGH0/LMeYQui5kmhA=
-X-Received: by 2002:a05:6402:270d:b0:5cf:e894:8de9 with SMTP id
- 4fb4d7f45d1cf-5d63c2f8cf2mr13942816a12.3.1734366016562; Mon, 16 Dec 2024
- 08:20:16 -0800 (PST)
+	s=arc-20240116; t=1734366030; c=relaxed/simple;
+	bh=FRE0tnmdPZcvIgR7EVR87njVhzKUC6TYSG3OdJHFNMw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Ne4W9pE4MASlbBdRaYs7GIRT5psevh4+VBFMr23KM6LBn8l4Ea4YQRBTwNBs2HzyXkHgFViIhIjiE7GLC9D2WYzDG25eANp0aFYw0jyKUvipTenxhBmtJsNNuXpk1ssLknvuI2+iRnBusPaqSmgCxFlswS49OLWkB6jstlSy4cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRc+sn+r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46085C4CED0;
+	Mon, 16 Dec 2024 16:20:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734366025;
+	bh=FRE0tnmdPZcvIgR7EVR87njVhzKUC6TYSG3OdJHFNMw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=dRc+sn+reUTf5Ng2RmTvjGbDyUqn6S5cWeO793fM9stsagGakiZchfqarwDyJj1Or
+	 CMmq5/mqbOjLbYs7FmpZTMmZXV116uTW3V3aJbdc7NmjqjZAvKIiJ3t5ZcdtyDWGwj
+	 hf75Qp5jGLqCwDrZ/YnGf1dPh64zkLvE1mOAsKfYq9N8yibUH0K25QH19Ya1NPdlh4
+	 0wyQUnBaFsApborre6WqrcDbIBcrTmLIOQa1xj+YmLRq4WSCzBJ1xcepclIHBgr4Qo
+	 uk031+KLsErzEpKQ/t5yBhH2qpUM7ZdKZDI7Pijxzh/QbpXpnL5Khc/M0o6NsNkVWw
+	 e0FV5ta9Qs0ZA==
+Date: Mon, 16 Dec 2024 10:20:18 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213190119.3449103-1-matt@readmodwrite.com> <CAFULd4Zrnn=1=1AP329Qw23b0Ume2A5Z-U2q-M62L1gcpJD4pg@mail.gmail.com>
-In-Reply-To: <CAFULd4Zrnn=1=1AP329Qw23b0Ume2A5Z-U2q-M62L1gcpJD4pg@mail.gmail.com>
-From: Matt Fleming <matt@readmodwrite.com>
-Date: Mon, 16 Dec 2024 16:20:06 +0000
-Message-ID: <CAENh_SRw-L3UtBiz2xg_X4szdMJmNg118gL8f2g8gN5w6hc3Nw@mail.gmail.com>
-Subject: Re: CONFIG_KASAN triggers ASAN bug in GCC 13.3.0 and 14.1.0
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Jakub Jelinek <jakub@redhat.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-iio@vger.kernel.org, 
+ Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Shen Jianping <Jianping.Shen@de.bosch.com>, 
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Ramona Gradinariu <ramona.gradinariu@analog.com>, robi_budai@yahoo.com, 
+ Michael Hennerich <Michael.Hennerich@analog.com>
+To: Robert Budai <robert.budai@analog.com>
+In-Reply-To: <20241216144818.25344-6-robert.budai@analog.com>
+References: <20241216144818.25344-1-robert.budai@analog.com>
+ <20241216144818.25344-6-robert.budai@analog.com>
+Message-Id: <173436601809.266177.9235347510017778523.robh@kernel.org>
+Subject: Re: [PATCH v3 5/7] dt-bindings: iio: Add adis16550 bindings
 
-On Sat, Dec 14, 2024 at 1:17=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wro=
-te:
->
-> Does your config include CONFIG_UBSAN_BOOL=3Dy ?
 
-Yes, it does!
+On Mon, 16 Dec 2024 16:48:11 +0200, Robert Budai wrote:
+> Document the ADIS16550 device devicetree bindings.
+> 
+> Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> Signed-off-by: Robert Budai <robert.budai@analog.com>
+> ---
+> 
+> v3:
+> - changed sync type to integer
+> - conditioned clock only on scaled-sync
+> - added: unevaluatedProperties false
+> 
+>  .../bindings/iio/imu/adi,adis16550.yaml       | 93 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 ++
+>  2 files changed, 102 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> 
 
-> There is a rare interaction between CONFIG_KASAN and CONFIG_UBSAN_BOOL
-> (aka -fsanitize=3Dbool), reported in [1] and fixed for gcc-14.2 in [2].
->
-> [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D111736#c42
->
-> [2] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D115172
->
-> Otherwise, please attach your .config, and I'll look into this issue.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks. Disabling CONFIG_UBSAN_BOOL does indeed make the kernels boot again=
-.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml:45:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
 
-Should CONFIG_UBSAN_BOOL have a dependency on GCC 14.4+ ?
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: ignoring, error in schema: allOf: 0: if: properties: adi,sync-mode
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: allOf:0:if:properties:adi,sync-mode: 1 is not of type 'object', 'boolean'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: allOf:0:if:properties:adi,sync-mode: 1 is not of type 'object', 'boolean'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: properties:clocks: 'anyOf' conditional failed, one must be fixed:
+	'adi,sync-mode' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
+	'type' was expected
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
+	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml: properties:clocks: 'anyOf' conditional failed, one must be fixed:
+		'adi,sync-mode' is not one of ['maxItems', 'description', 'deprecated']
+			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+		Additional properties are not allowed ('adi,sync-mode' was unexpected)
+			hint: Arrays must be described with a combination of minItems/maxItems/items
+		'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+		'adi,sync-mode' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+		1 is less than the minimum of 2
+			hint: Arrays must be described with a combination of minItems/maxItems/items
+		hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+		from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
+	'maxItems' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
+	'adi,sync-mode' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
+	'type' is a required property
+		hint: DT nodes ("object" type in schemas) can only use a subset of json-schema keywords
+	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
+Documentation/devicetree/bindings/iio/imu/adi,adis16550.example.dtb: /example-0/spi/imu@0: failed to match any schema with compatible: ['adi,adis16550']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241216144818.25344-6-robert.budai@analog.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
