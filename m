@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-447103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3979F2D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:50:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C17C9F2D5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C621168191
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7343168383
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0039A201264;
-	Mon, 16 Dec 2024 09:50:44 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E61202C21;
+	Mon, 16 Dec 2024 09:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XF2GKj6k"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509001804E;
-	Mon, 16 Dec 2024 09:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D39F1FFC60;
+	Mon, 16 Dec 2024 09:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342643; cv=none; b=uHALOf+dB5ZuI4HBWNzpYjjKZM3hffYBxC65YhsVLKqIK0aMJg70mbWeexTzL56/iPjKfLVfwlV2DTppskuJWOSq9qMnlhquV08m5IhZj03SUoevwAezTpJx9iDRmnkYAT40rTGJXfZoEHWZ4LJ19yeNlv11M8iTWSOPakcwp9w=
+	t=1734342657; cv=none; b=fosu7kn7grmOax/7fUo0BH7ynsOkIi5cLNUdSGK91zVGu4k8ZiqJVcDFlBtiZnYCj7kW/jqaCBjijNNlGR/uR7WadGGVID7m+PVC3SeU6YApvJJ4rAnHO8GWZkQddtNgfj7aNcyOTuCy6SJaWo7S6mnhFdZnKU0kuro7JaSn7WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342643; c=relaxed/simple;
-	bh=dtAoDEbX46mZegb7X6Da4LHRZfjcermuAfvrjrI63CM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gzPr3kQz4P0Pbv7VHwGEt7j9QEdSzU68UFuVI0kRNJNTuc10xd0sUSDGrpfRdKpf+kuBfJ2PN8a9xHwrVXsExVTtFqQrcnsAkjsojj3ubw5LYsy1lYcvcZsXf7pQlo7fLrQ+NptCcsy0WE0cNQ8bCiQIfq0NxvzSV53kpzCTPn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51619b06a1cso2083582e0c.3;
-        Mon, 16 Dec 2024 01:50:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342639; x=1734947439;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nEQxriZsKIJoW//6ZrtlM9VA8MpLHKD2JU7uy8gFOdM=;
-        b=DzZsaGuG2Ika+FYqNvQQdFvYUqizyp/9otpVxzk/ZQBd1VpVPY76wj7Z4T32fK9xM8
-         slwRyGNnZivf2Dp43ezT9wz8EvXbvF+82bxO7zO95dMgM7NBLs39ZgunyvHb1cJD5Ux2
-         +JMIMBNzI5ooCS5EkWpWT7SU5Zx3qzzJ5Vg7HLWoxzscdJ0raNAlcXY2zTeniKm7Wwhd
-         hTU4NvIbbYxTWZX2uJaGIl5UbepRky1d+POfOGsezwabb+xfEYqnRTAkBibEVKXSsmhK
-         PWbypb2SfirSWz8cQzmEZGPiR+UnJung/5b8Mh8lnOo+6QXhfBSljZ2BsxoeT+KwFWyb
-         ifVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiStQDapC/QgWDbJm1ZhFE8ee5fK8UV6Wsl/utmrobLY8o5JIc7aGj0h64sE69KwIicy+TIP4+LOsTAA==@vger.kernel.org, AJvYcCV96Vmp8sED39wv+TgC9F5bAfS1Iy44vzNW/Y77ONgqhyBB/JzWQHR3BfQbqddjblPfzwh5EcFE3rh+iDQC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsBSBk32NosTMZcAx84ExjV2c57OulTJe4+5I0z7q8nUZOY4JZ
-	Ccvb0CcPib0ZomkuI5OoiY8aokLUoTBOZEd8xwrY3b96mxd2z690ey5Fub+P
-X-Gm-Gg: ASbGncugyEXqaPD6DnjHVAoBTGgjFc/4zAwMp4SKrVmoHhBhSgpMislgVeSjKUUT3H1
-	A5WBsolD7wJTySTmHNNJ8hlvzSQJOzLm0f4oXeZeQYq/CXpWxtXY5aQePlVTCoO0eV5nLyNiRN2
-	WOtRt/OeV6ywNe0WR8RyqjXXGviLGu9V2lBXPm+ELk/ir9DNisfQF3hQ8SwRnSFivJVITuLzpHN
-	TaXLrksNYodMzH8555XD1275WlTF0lfoABzk3s2AQye2YYkUlueQ2Y7mKrEaqlrMQtgsNA5Lfne
-	8qyGLCcWZAIGOMEFAc1srCU=
-X-Google-Smtp-Source: AGHT+IG0LP+HNGEatty8YkJZ+h+ttV2GofdRa4rDVB0sipwEqaFLFA3U3tJSgVj5eiY2Tj3Ce77p1g==
-X-Received: by 2002:a05:6122:1d43:b0:516:1ab2:9955 with SMTP id 71dfb90a1353d-518ca3b6a2fmr11218971e0c.6.1734342639607;
-        Mon, 16 Dec 2024 01:50:39 -0800 (PST)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-519eb6fcd1asm546090e0c.33.2024.12.16.01.50.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 01:50:39 -0800 (PST)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51623968932so2117457e0c.1;
-        Mon, 16 Dec 2024 01:50:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXkxmw6E8QhlrGV7g1SYN6qY+vPKWiDQ9mjPcRaCNQaM1MzIHVaZidkfDjAFzJ5Gbxydg+QRxXpDp9WcVQZ@vger.kernel.org, AJvYcCXm65wQyiCXetAVCww35jCLibBTOE2+zjMi1BtLlLg2PAyQvNb+WLndeFc73vIlj/BRZuj4dvN2lDtw0g==@vger.kernel.org
-X-Received: by 2002:a05:6102:32c1:b0:4b2:5c4b:517d with SMTP id
- ada2fe7eead31-4b25d99ee96mr11219600137.10.1734342638986; Mon, 16 Dec 2024
- 01:50:38 -0800 (PST)
+	s=arc-20240116; t=1734342657; c=relaxed/simple;
+	bh=OXH3vzFbTKiksm17WzE85cZSQvrh0pzJ0BYKopvv0Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZvRW5PLixehAqqMfbFXP74CbhVBm/xCPg+C8otMsw2nac/dZMZTDUBqXGxaf+0E8jyT5qSrxMkow4TB+SLkmqp4RsW7ZqfFKW8oQlTpQn3CMBqEJcfX440TXV50oHuFQekTK9wGna8qFdkvfuVBQ6eQohV41p17LeSoV2sV/M4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XF2GKj6k; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iD1FEhJZlGeiVYsnMDwAlowtkHpoTLbshiukFYl2KaM=; b=XF2GKj6kJU5FS/X7QTlAiTDM3w
+	HegibULLdFbidcbNg5A5MXK/3sOhmGXp1XP55C5to6NonW7yLtrVwZYYe5kTbvsRvijURfDITzRzy
+	zH/5g4Pq9oH2K59QGmikgaqokEUQUibDPFgoggiKo/ttkp+Ka+fOpQal4IBdxyHYh+tE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tN7kV-000ZuS-3W; Mon, 16 Dec 2024 10:50:47 +0100
+Date: Mon, 16 Dec 2024 10:50:47 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mattias Forsblad <mattias.forsblad@gmail.com>
+Subject: Re: [PATCH 0/3] dsa: mv88e6xxx: Add RMU enable/disable ops
+Message-ID: <289fa600-c722-48d7-bfb9-80ff31256cb5@lunn.ch>
+References: <20241215-v6-13-rc1-net-next-mv88e6xxx-rmu-ops-v1-0-87671db17a65@lunn.ch>
+ <20241215225910.sbiav4umxiymafj2@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com> <20241214085833.8695-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20241214085833.8695-3-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Dec 2024 10:50:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVg84XWfjXRmt8Hw1Gwh71-QOwo8jRRzWDSt1r2SEgQ9w@mail.gmail.com>
-Message-ID: <CAMuHMdVg84XWfjXRmt8Hw1Gwh71-QOwo8jRRzWDSt1r2SEgQ9w@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] hwmon: (spd5118) Use generic parity calculation
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215225910.sbiav4umxiymafj2@skbuf>
 
-On Sat, Dec 14, 2024 at 9:58=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Make use of the new generic helper for calculating the parity.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Dec 16, 2024 at 12:59:10AM +0200, Vladimir Oltean wrote:
+> Hi Andrew,
+> 
+> On Sun, Dec 15, 2024 at 05:30:02PM +0000, Andrew Lunn wrote:
+> > Add internal APIs for enabling the Remote Management Unit, and
+> > extending the existing implementation to other families. Actually
+> > making use of the RMU is not included here, that will be part of a
+> > later big patch set, which without this preliminary patchset would be
+> > too big.
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > ---
+> 
+> How big is the later patch set? Too big to accept even one more patch?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The patchset is 21 patches, if i only support one switch family.
 
-Gr{oetje,eeting}s,
+I can remove a couple of patches, getting statistics via RMU, and
+timing the RMU vs MDIO and disabling RMU if it is slower.
 
-                        Geert
+The other way i can slice it is split it into two patchsets:
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+1) incremental modifications to qca8k to centralise code
+2) implement the mv88e6xxx changes to add RMU to it.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I did not really want to slice it like this, because the central API
+is designed around what both QCA8K and Marvell needs, and hopefully is
+generic enough for other devices. But there might be questions asked
+when you can only see the qca8k refactor without the Marvell parts.
+
+I can maybe squash some of the QCA patches together. Previously i was
+doing lots of simple changes because i did not have hardware to test
+on. I do have a QCA8K test system now.
+
+> There is a risk that the RMU effort gets abandoned before it becomes
+> functional. And in that case, we will have a newly introduced rmu_enable()
+> operation which does nothing.
+
+True, but i'm more motivated this time, i'm getting paid for the work :-)
+
+And there is one other interested party as well that i know of.
+
+This patch series is fully self contained, so it easy to revert, if
+this ends up going nowhere.
+
+	Andrew
 
