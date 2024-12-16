@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-447262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACC39F2FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:44:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2B49F2FC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C131883560
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B87FE7A1700
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6832046A7;
-	Mon, 16 Dec 2024 11:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B557204096;
+	Mon, 16 Dec 2024 11:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="ghpk8Kob";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NK+Ddy1N"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hMacY/PD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E3C204595;
-	Mon, 16 Dec 2024 11:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8721820012C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734349430; cv=none; b=ZcJZAIRVYOAKyYN2QVhXXxWwhYzZFZpSC3zI5J9SDBEiKnXq27jQ4RzWoVub2bysTnOy52PYAOP6sHkn0/AuKcBOZKBsb+5kHLHNeG9GDViaVnKqZC7x7H5s1IKYUyd8C22CaamajSku8ZQXf8jvBV/JxHW7O2/u7A2li3eUKnI=
+	t=1734349669; cv=none; b=KPhiAdphF+BNLWdxv6E6e3uWHS2mTOX45D6W6lMl6CLO4jPQE/+O+teqDA99su80xTYj37stvnCdobFF1ovaDfdkuDVnDm4OCPvur+GzPe97wZS6xkIkDppZvJc1F1A/oR+avkHe6Wb9mX2fKoLOuNgZ0odl86NEpGMNGKqRAKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734349430; c=relaxed/simple;
-	bh=+LEGVFBSxypDm/FSzGeDaE+twdIyDmd1Fh+q4tlS6Y8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IgBkRSuFCQ3C14DHGhKPXgrRPlZPqVE1+sLD7cod5rXRMLd6GAfqpWxIsC09Fpyljhp9ne7Fs84Yk2SEm1Ec5aoCSHHQKer/BvVH5u36AtsJU3eLDRGnPJewF4vOkHGoPbmKwhDKASR9F/X9vhJnU/My5q50Vo3H7qGj03Kliro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=ghpk8Kob; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NK+Ddy1N; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C3C5111400EE;
-	Mon, 16 Dec 2024 06:43:46 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 16 Dec 2024 06:43:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734349426;
-	 x=1734435826; bh=z9j4g314qRp+uvtm3fdfTzVHKZRmV/loMgiI78Ackoc=; b=
-	ghpk8KobgVLPbc7IsrAsyDmQOsMeBEwQqSf3AuQXWjbf5mEN5wqkt4uildSaHzY2
-	ImOnEpp9aRJIzg4OIZ0oHa9EMPRloTjD+aBKNtvZXkeEK/TEnfeAQ2N6mgPvSEb6
-	yTWNzxk059KPpBJu+b10glqQEBavp8zlyODzZimjOw5by0Dn4R34VyB0x2NK0kcj
-	11Dj3HC0NfKONUvyQSv/kPbh/n6JEDJ8J5oSJIGmPr5ej8E67AeFel6sX506AjLE
-	OyOLfrpH9KnDACRrRTANml/ffsJb78Rvi5LPLmauyCJhShh25+inuSJpiJLaNcPD
-	m728cBWV85ptG/32ZNCnxQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734349426; x=
-	1734435826; bh=z9j4g314qRp+uvtm3fdfTzVHKZRmV/loMgiI78Ackoc=; b=N
-	K+Ddy1NT4cM1vbgmmixSquCJTvWakS8jZ2cgIeSnfjEnoy/sWc5cUZ8tXnQZQLN+
-	v+ut5m6y9EttwNjo1hMBGwIogdWh2qiKDRlbCu7FwZ9fVuSYKTOn5x1+pOsr66xX
-	WE8NqGKiGsfhfWWECmmZOwroYRxKb7ev18NVW2Woo9D/gJV3B5vxor3EMo2xpB1w
-	5jI4zGEoJYRelNREskVzR1qyx/afVXB/PgMK/b/7/dbOg9AJN4yq2r9Ouhq2OR4t
-	Yqa50V1Umn4h1HtXCWxrpiqzmRb6/81mMiwKc81iG4athZ2/EwJAhgz60sr6UGIS
-	vN7eoTJxVFbJLLaBFRYZw==
-X-ME-Sender: <xms:cRJgZy9yojoLa0pEK0KbDhaKop7EUqK1e3BkHC7SK8eIeGhedJoK9w>
-    <xme:cRJgZyv0Cje8oBIkG9GH7GMPEAMfwvsxvLTdmFwmCwjUCNiARPYVqCb6KhCgbGVv8
-    IVy74jHzu0l6x_hDg>
-X-ME-Received: <xmr:cRJgZ4DwDKCwJc8JiJzW-ZsRTs39im6Tt4vU7UbZx2wjotcr9YFUK4VVgh7fMvGXF9Bn_uyvQyGyeMy5p-i7VtdPvlWrXAU68Coj>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleefgdefudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomheptehlihgtvgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecugg
-    ftrfgrthhtvghrnhepfefguefgtdeghfeuieduffejhfevueehueehkedvteefgfehhedt
-    ffdutdfgudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homheprghlihgtvgesrhihhhhlrdhiohdpnhgspghrtghpthhtohepvdefpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlhiesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghsseho
-    rhgrtghlvgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtiidprhgtph
-    htthhopehjhhhusggsrghrugesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhhirghm
-    rdhhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrkhhpmheslhhinh
-    hugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:cRJgZ6fSeMAORWITVU0GpWrWM5AkYWcz0mb3oPAbD-sq5nCT4yBxew>
-    <xmx:cRJgZ3N_68B46R30fMj15_eGV3bnNz-u9u5_L1aiUZMzi8gDb2vF1Q>
-    <xmx:cRJgZ0kysXF_2JQMpve0XqkCHIVH0RlpjtwImWG1OaoTdFq_hbPAKg>
-    <xmx:cRJgZ5uQibfxXH8aLLrgjn8expnal7dMV7dZMl7M2btSB1NFtXLBcA>
-    <xmx:chJgZ6NVLJYvPMegkVMs9mGivqIbaW3Ybj7OHW-zy10pr9FTa44fzTYH>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Dec 2024 06:43:40 -0500 (EST)
-Message-ID: <b5009cc4-61a5-4f55-9fb1-ca6ff1163c08@ryhl.io>
-Date: Mon, 16 Dec 2024 12:46:55 +0100
+	s=arc-20240116; t=1734349669; c=relaxed/simple;
+	bh=b/jnVnpWxsgsujPLPcohF02Om3SRNnOQCq/3TSfEFrg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HinKj6DWt53oLKkL7tu39+0MLADeEycLk12z/o6h76dQfPucSbmzd+Pc70zzrwKjM9DBMPU/LZPnqKeC6K8v2gD572YQLO2ptk5rs0MLCz+Y3mamD36Pruv0oOj5Z3daZVpTAcqM4z1uwn6Qqv9wbZ22I5dtYb1UOiueKifMKgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hMacY/PD; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734349667; x=1765885667;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=b/jnVnpWxsgsujPLPcohF02Om3SRNnOQCq/3TSfEFrg=;
+  b=hMacY/PDMGImbV80bGQ35VpGevSR6FdkGGwvQKAUZInpLWEkI0hn2d7+
+   Hw58P3UYYk6uN3f98egRzycMF0IGp8rrmDOy28w74PP22tKZ42FwDjIi7
+   2ib/wt9WfJY+qT+5Q1xp3Ptfk7JnGnD892LhOx9emSRc6hqiuXJ+T22mx
+   9XF1YAvzrr6siZnzNgwmpXMwTwN1/Xnm0zdmSyzKCpidduVsSB7JXJSFw
+   Ha4FgRHY8W7kfqhLp0ZG6pWhsaIIkDO4ObeOoLzZrVgtMZLMbOSGovx/Z
+   mbXjAQLHrgCX0F5DI424tMZju40jUlYgt1aOIweWXB2rzk/8T3DoECsHx
+   A==;
+X-CSE-ConnectionGUID: FGepXKmITWmrAfsobqAhmg==
+X-CSE-MsgGUID: yUqZDV7MQf63Qu+ofBx4lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="52144724"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="52144724"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 03:47:47 -0800
+X-CSE-ConnectionGUID: ibVkrFHNQ56/atLPvsZSZg==
+X-CSE-MsgGUID: dFEPEd+kTEamIvmrKVQJlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="102046463"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.245])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 03:47:40 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Maarten
+ Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Qiang Yu <yuq825@gmail.com>, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Alex
+ Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Harry
+ Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo
+ Siqueira <Rodrigo.Siqueira@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ lima@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+Subject: Re: [PATCH 1/5] drm/sysfs: Constify 'struct bin_attribute'
+In-Reply-To: <20241216-sysfs-const-bin_attr-drm-v1-1-210f2b36b9bf@weissschuh.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241216-sysfs-const-bin_attr-drm-v1-0-210f2b36b9bf@weissschuh.net>
+ <20241216-sysfs-const-bin_attr-drm-v1-1-210f2b36b9bf@weissschuh.net>
+Date: Mon, 16 Dec 2024 13:47:37 +0200
+Message-ID: <87r067svc6.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/8] Rust support for mm_struct, vm_area_struct, and
- mmap
-To: Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
- Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-References: <nGnC07PmUqofHiX7HfZAOCIK1-CPS7DF8kdGhDgJgPts5KYrCrimmovP-4YMVgI7WRmFnGwbdndTtxCfp278cg==@protonmail.internalid>
- <20241211-vma-v11-0-466640428fc3@google.com> <87cyhrdh2w.fsf@kernel.org>
-Content-Language: en-US, da
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <87cyhrdh2w.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12/16/24 12:04 PM, Andreas Hindborg wrote:
-> Hi Alice,
-> 
-> Applied on top of v6.13-rc2 and tried to build:
-> 
-> error[E0277]: the trait bound `ARef<Task>: From<&CurrentTask>` is not satisfied
->      --> rust/doctests_kernel_generated.rs:6884:22
->       |
-> 6884 |             creator: current!().into(),
->       |                      ^^^^^^^^^^ ---- required by a bound introduced by this call
->       |                      |
->       |                      the trait `From<&CurrentTask>` is not implemented for `ARef<Task>`, which is required by `&CurrentTask: Into<_>`
->       |                      this tail expression is of type `&CurrentTask`
->       |
->       = help: the trait `From<&Task>` is implemented for `ARef<Task>`
->       = help: for that trait implementation, expected `Task`, found `CurrentTask`
->       = note: required for `&CurrentTask` to implement `Into<ARef<Task>>`
-> 
-> error: aborting due to 1 previous error
-Ah, thanks. Looks like a documentation test that needs to be adjusted.
+On Mon, 16 Dec 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
 
-Alice
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+> ---
+>  drivers/gpu/drm/drm_sysfs.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
+> index fb3bbb6adcd16f3f325a2ae8e35f41851c00b272..60c1f26edb6fad23153c32a29=
+fd3be02700fc938 100644
+> --- a/drivers/gpu/drm/drm_sysfs.c
+> +++ b/drivers/gpu/drm/drm_sysfs.c
+> @@ -261,7 +261,7 @@ static ssize_t enabled_show(struct device *device,
+>  }
+>=20=20
+>  static ssize_t edid_show(struct file *filp, struct kobject *kobj,
+> -			 struct bin_attribute *attr, char *buf, loff_t off,
+> +			 const struct bin_attribute *attr, char *buf, loff_t off,
+>  			 size_t count)
+>  {
+>  	struct device *connector_dev =3D kobj_to_dev(kobj);
+> @@ -315,21 +315,21 @@ static struct attribute *connector_dev_attrs[] =3D {
+>  	NULL
+>  };
+>=20=20
+> -static struct bin_attribute edid_attr =3D {
+> +static const struct bin_attribute edid_attr =3D {
+>  	.attr.name =3D "edid",
+>  	.attr.mode =3D 0444,
+>  	.size =3D 0,
+> -	.read =3D edid_show,
+> +	.read_new =3D edid_show,
+>  };
+>=20=20
+> -static struct bin_attribute *connector_bin_attrs[] =3D {
+> +static const struct bin_attribute *const connector_bin_attrs[] =3D {
+>  	&edid_attr,
+>  	NULL
+>  };
+>=20=20
+>  static const struct attribute_group connector_dev_group =3D {
+>  	.attrs =3D connector_dev_attrs,
+> -	.bin_attrs =3D connector_bin_attrs,
+> +	.bin_attrs_new =3D connector_bin_attrs,
+>  };
+>=20=20
+>  static const struct attribute_group *connector_dev_groups[] =3D {
+
+--=20
+Jani Nikula, Intel
 
