@@ -1,162 +1,120 @@
-Return-Path: <linux-kernel+bounces-448260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F1F9F3DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:52:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AEE9F3DCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2325618894E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C76716AA6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40D01D8A0D;
-	Mon, 16 Dec 2024 22:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527031D8A0D;
+	Mon, 16 Dec 2024 22:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="pWFiYI/Y"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Nl/1ALuF"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2991CDFD3
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF61CDFD3
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734389528; cv=none; b=gXcFmb6ad1dOmI75fw6a+lkDgFD4xPOOungbAm0FBlX7cJWg6Gr0Ca/zwKxD2LCyuWU60AmmdsV8c618NEAzUdRRM4ePXq8iH8wuimZ+3opgNrv8tix6XCaxEGRyg2J/HNxiUkHmALRAvVNXIWHpcUOvPOWxoKDBTk+Mwvs61Qo=
+	t=1734389686; cv=none; b=RopcSLdwJwfnS+yzojJdzhIHi6EPia6UKK2RuPkLQMf1inbcgxSxtdFdx6t5QkN9ZfCIr2zJnKRBRl646rdydlBc7wrkoZ8rlfGOl5YnTMxhA1VHOJ7dKTc5VyNGE2NSg/LXgiCOroeAZ+zX8xJj1aesi/q+xCciYMSv6/6vxeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734389528; c=relaxed/simple;
-	bh=FcUBWyXDZecIEy6Q87xqXVbm9gcWUwTcI34wQnP3moc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=vE04AfY8Nldv5y8fVPinf0gyOW5LJVDk4I6D96OPn7p5wt2SJKN4r3jcCO+vLvUPOqqnBi7XpLtiOwAotsXCYmNtXmRFDkPj9V7vRdT+L4yFjfjA897+WebK/sYn0JgvlHHstL14fi7GzPHVGOrHiCN1xM31z1SmQXomehvKVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=pWFiYI/Y; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361815b96cso30761035e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:52:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jrtc27.com; s=gmail.jrtc27.user; t=1734389525; x=1734994325; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5tUwsx0D7P57hByBMwwxCDPgoIVojOI2sOGJ5I23n0Q=;
-        b=pWFiYI/YWRhu+Zd4Z9Ymw+1Bkso0K99RJhg1zWVeqWlVBvzzpZGXOsHVy7HxdpwSct
-         FcheyJCtUMYw5CI6zyMQrehGuVHFxF/yKCC0LYmAztPTcvTSFiqfPZ+dwH5RV8ijYv3F
-         Yppqb4IaoHYEg86T9YHwl3KtcWspxf2mSnhMXnJ7pWz/g7AUAC9uKgJdMgr/1KK5Vfqn
-         34h2DAY3Zl+XZ0ddE/RNdtJiN+4MRMBLeEEkwVCM1jHnAb+XKfQDEh0tG6n4VAzv/6EO
-         s5jFe/R65tBirsumARtZ0U7oHdDTnrGccFR+0manPzipX7g6RDEYIkKr+wro16Ax1qML
-         Zbww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734389525; x=1734994325;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5tUwsx0D7P57hByBMwwxCDPgoIVojOI2sOGJ5I23n0Q=;
-        b=GSnjVocfA5+jv8aJV8m7t3PgohdCagM8eG22sI45XpPLWKRP8/JW0W7N0xzzbKKn6Z
-         YeHIP0SYgqofckGRTLf4C+h0fEWUvUACIXDvo3AG0y51vypuE9SEfgzdQY2mK98mAJGW
-         zYpOiprxIG5uIXSbHJxHztfrsSltJMqqVvrW9zkYVHlEPuxHmBQvXxPBjpNaxSXRi1jv
-         cyGyyn/Uzd/dP+2b10/05NXCwqU3dLmpObh2aDjbUbXO4qPxiJCVuaSLpOb5Dtr1a0fp
-         yuCE/ov4raSWUM6T6V9rJUYz+tILckvj4hw5tDjLillRWNxgPDSm8J7R2LmVNgIsWRtt
-         h0CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtni4tDHwjYhA7oG/M1NX6ekg/Xcct376mH+i6NGuxDG8sjFhjXNNUpwbYzEg9tkTZ8wx8vNzprcI6fIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2onW/OxDx8tDib9vpajWC35WnopJpkFuYV0bvA/Id7cm79nWe
-	Xpo4/QMM4+XKqOXIkvzL03cozLjd76E1Klks/28Wj9uBjGwyc1GljXKvhTYso34=
-X-Gm-Gg: ASbGncsJWNhmKm0uGAaKBb9ythv4PylRF2ubdKkj+9MZaK2iz3p8fG5WTLY0dgioY2v
-	nd6JZty9fcXsbgW/3c1X72sOtT/aAz0WQ6bmaodwNmw06GfWJudHWEkvK6gYMmpbxDU+X/qc5iK
-	WuTm24HZVsCCmatqJxK/jnJmrE0spFcXC+8/3gUxMvWqBzjGwj10LyTXNZ2TJAoPK5T74IfVzB9
-	g0obOzizGWGakjt+PJNv26Ik+p/ZCwncueAVY0S5EOSkp61tXm7CybPI1Nf29BStRbNVA==
-X-Google-Smtp-Source: AGHT+IGkXkCZ1V8JrmSX24LbWgYC0WbYIpEMJ6w9YigeL1K3Q2t7aofiKXEhAFod/RI2RSkoUoNckQ==
-X-Received: by 2002:a05:600c:511a:b0:434:a7e7:a1ca with SMTP id 5b1f17b1804b1-4362aa9dd9emr108990445e9.20.1734389524669;
-        Mon, 16 Dec 2024 14:52:04 -0800 (PST)
-Received: from smtpclient.apple ([131.111.5.201])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c462sm153527565e9.14.2024.12.16.14.52.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2024 14:52:04 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1734389686; c=relaxed/simple;
+	bh=NH3AgonOJDLYtaMkD1sV08KHOIcuLuMJl/JutU6HH7U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rNREka1orbUrId+lb7gr69nPt4s0gG7Ps3FCGgzC1MNTC+V8Y19BgVhO0I4rpDaqlnYk/YQc3SSY3QDRVukZYTKjxYjV/69dYRVufouHLAJWdCSOlc47SInrWCHPP4H75xJK8MJOHx/55LLLusjmxOlk0aXr03+hEieJ4hJ+gIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Nl/1ALuF; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734389682;
+	bh=NH3AgonOJDLYtaMkD1sV08KHOIcuLuMJl/JutU6HH7U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Nl/1ALuFWj3sUR3E4s/v6QMzrysbxrVcF5j3O7Wd2Y3monQfvs6cMST3MZT2wMggZ
+	 CWUqDl+pGrrVsF6m7H6I0jq/iwAElHQ0v8Q/JxDOv5iEm6YJjpJWEmDTGoyYtoKpJF
+	 4QNfLEWdHwdc4WjY0Jv2HR5tInnWGQJfgBKaN0Vw0rRlbGH6NMowkE2mjw1dj5uCPu
+	 CAi7OIJTUXm0LupMHNwfDgw9ww0wWlB6TzCDh5j/DwenGXyzpP64L+VslCxpqcIjnJ
+	 QbiFNytHL246GcB873p9TW+bqIgJJ8MOjJ8qetYJF76rh++0Qw3Uz6DwUIWfn4lbA9
+	 too6snvtzUTeQ==
+Received: from localhost (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9430217E3830;
+	Mon, 16 Dec 2024 23:54:42 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v3 0/2] Fix ycbcr_420_allowed inconsistency for HDMI
+ bridges
+Date: Tue, 17 Dec 2024 00:54:06 +0200
+Message-Id: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v3 1/3] dt-bindings: riscv: add bfloat16 ISA extension
- description
-From: Jessica Clarke <jrtc27@jrtc27.com>
-In-Reply-To: <5e878b5b-b49d-4757-8f7e-4b323a4998b3@sifive.com>
-Date: Mon, 16 Dec 2024 22:51:53 +0000
-Cc: Inochi Amaoto <inochiama@gmail.com>,
- linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org,
- Yixun Lan <dlan@gentoo.org>,
- Longbin Li <looong.bin@gmail.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Chen Wang <unicorn_wang@outlook.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
- Evan Green <evan@rivosinc.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Jesse Taube <jesse@rivosinc.com>,
- Andy Chiu <andybnac@gmail.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F52E8856-7602-4E4B-8932-2B13AAA30822@jrtc27.com>
-References: <20241206055829.1059293-1-inochiama@gmail.com>
- <20241206055829.1059293-2-inochiama@gmail.com>
- <5e878b5b-b49d-4757-8f7e-4b323a4998b3@sifive.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI6vYGcC/4XNTQrDIBAF4KsU17U4Gn/aVe9RuohGGyHRoEFaQ
+ u5ek02hUMqs3oP3zYKyTd5mdDksKNnis4+hBnY8INO34WGx72pGlNAGgBGsk+9qa2II2I0znpK
+ P2HCQBhoibcdRnU7JOv/c2du95t7nOabX/qXA1v4BC+B6jdBCMAfSsauJw9DqmNqTiSPa0EI/E
+ CXiB0QrpLhRIDk9a6W+oXVd31MPNtsFAQAA
+X-Change-ID: 20241130-bridge-conn-fmt-prio-c517c1407ed5
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On 16 Dec 2024, at 22:00, Samuel Holland <samuel.holland@sifive.com> =
-wrote:
->=20
-> On 2024-12-05 11:58 PM, Inochi Amaoto wrote:
->> Add description for the BFloat16 precision Floating-Point ISA =
-extension,
->> (Zfbfmin, Zvfbfmin, Zvfbfwma). which was ratified in commit 4dc23d62
->> ("Added Chapter title to BF16") of the riscv-isa-manual.
->>=20
->> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
->> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
->> .../devicetree/bindings/riscv/extensions.yaml | 45 =
-+++++++++++++++++++
->> 1 file changed, 45 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
-b/Documentation/devicetree/bindings/riscv/extensions.yaml
->> index 9c7dd7e75e0c..0a1f1a76d129 100644
->> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
->> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
->> @@ -329,6 +329,12 @@ properties:
->>             instructions, as ratified in commit 056b6ff ("Zfa is =
-ratified") of
->>             riscv-isa-manual.
->>=20
->> +        - const: zfbfmin
->> +          description:
->> +            The standard Zfbfmin extension which provides minimal =
-support for
->> +            16-bit half-precision brain floating-point instructions, =
-as ratified
->=20
-> I think you mean "binary" here and in the entries below, not =
-"brain=E2=80=9D.
+Bridges with DRM_BRIDGE_OP_HDMI set in drm_bridge->ops are expected to
+rely on drm_bridge->supported_formats to advertise the supported
+colorspaces, including HDMI_COLORSPACE_YUV420.
 
-No, that=E2=80=99s Zfhmin / FP16 / binary16, not Zfbfmin / BF16 / =
-BFloat16? The
-B is for Brain as it came out of Google Brain.
+However, when drm_bridge_connector gets initialised, only
+drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
+the drm_connector->ycbcr_420_allowed, which effectively discards the
+formats advertised by the HDMI bridge.
 
-https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
+This patchset tries to address the issue by prioritizing
+supported_formats over ycbcr_420_allowed.
 
-Jess
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v3:
+- Simplified the inconsistency handling by overwriting ycbcr_420_allowed
+  for HDMI bridges before adding them to the global bridge list
+- Added a 2nd patch to check if supported_formats matches
+  ycbcr_420_allowed on HDMI connector initialization (Dmitry)
+- Link to v2: https://lore.kernel.org/r/20241206-bridge-conn-fmt-prio-v2-1-85c817529b88@collabora.com
+
+Changes in v2:
+- Wrapped HDMI_COLORSPACE_YUV420 flag in the BIT() macro to properly
+  check its presence in supported_formats
+- Ensured YUV420 gets removed from the bitmask passed to
+  drmm_connector_hdmi_init() when ycbcr_420_allowed is not set
+- Link to v1: https://lore.kernel.org/r/20241130-bridge-conn-fmt-prio-v1-1-146b663f17f3@collabora.com
+
+---
+Cristian Ciocaltea (2):
+      drm/bridge-connector: Prioritize supported_formats over ycbcr_420_allowed
+      drm/connector: hdmi: Validate supported_formats matches ycbcr_420_allowed
+
+ drivers/gpu/drm/display/drm_bridge_connector.c | 8 ++++++--
+ drivers/gpu/drm/drm_bridge.c                   | 4 ++++
+ drivers/gpu/drm/drm_connector.c                | 3 +++
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+---
+base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+change-id: 20241130-bridge-conn-fmt-prio-c517c1407ed5
 
 
