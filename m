@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-448256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50CA79F3DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:40:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D149F3DB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01FFA7A201F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 473207A2047
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613431D89F0;
-	Mon, 16 Dec 2024 22:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685F1D8A10;
+	Mon, 16 Dec 2024 22:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gkGi2tN5"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Km8BpZP8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7336B1D63C3
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9AF1D5AC6;
+	Mon, 16 Dec 2024 22:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388824; cv=none; b=suULTU9QBisXWKCk1Au43DIQDoGkAlbYdGCU/L4MsKhRw0p6s7GZsCD+H2wGlvnFAmjotddx7yt0oyGwV0cg7pDFUI3/rlcFo/DpUuOlAi0FtodXcVSoKDuUx1dvxp7FxRlxZn+1NYTP5a52SzGXW3FSH6u/TqGqL1ecv8GCziI=
+	t=1734388989; cv=none; b=HjF+ElpRudUi4wwpDA8S6qq94zVYke45osuJzt1izXwe4fVkW9cOwnv5XvGilpF4OFh4Bj4McWd7+GTjELxi21UOEOeabEGs2vUjpldXiM514Px8Nd+gmAoTNESHW5cmlAUTvbQFfJ7VeWIWW/Qf67wwyMHKWv88wnwvbS8CLvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388824; c=relaxed/simple;
-	bh=LPxqO5sruL5wAnnS8nh07GZAAYVtACCopS9IRmn6dy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thhczHdtSHno9C8eSnbYA9TwyI7lkOiA8vHEUOBclIUeGH/wAGms2VZgLdHvKNazGLewgp+8MQwdoE/s4ifgoP0PfUQ1NP7o16p4XgAxOaak7Ra2ZEKzBL5kd/4ZEObunP9Q15e+HamhtnLU7RvPsC98nwnSzGVhYKsVNxNHf4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gkGi2tN5; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43622267b2eso49323595e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:40:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734388821; x=1734993621; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4vHnKJxyZLqrZlZyIcpuJLCtn/KyIuO/X8nFh1d78Q=;
-        b=gkGi2tN5/ER5A3fl46+m4JcCcUoIRDvtND8rcENXKxhPVWY+phHmZMEQslvuAX4/w+
-         Uq7OBBIogN1tREGefktKuplsJDcxlxinahmZSrvJs0aqlqbH8QM6y7GtGSaOSEfe46aX
-         3fbLYHZztqv8uCE2T0PKDjTRy23F0NnS0ShI83AfioxJx/EwdUf1WXv84ksnqAoTBPNX
-         KK22jXUUu1IMPL+oSDU/zxSib8Jq5iWQphjKFUCo80HiYmXlZ/Loch0wHarZN7iOFXEm
-         GWT2pDOALX03F+GLjMG0H35oZ4addf+xezLDcs1Fh8RnsmzCjyv493A18IwjNvRqaLgf
-         olvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734388821; x=1734993621;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j4vHnKJxyZLqrZlZyIcpuJLCtn/KyIuO/X8nFh1d78Q=;
-        b=oLpt4ylye/uKuihlf9Ynv3JpVYiK0feLEwyZc1c08xUmRmPNAUd1N9RNrBUphk5FFG
-         Xwli1sS7KaB03DZiAPuoxko8zAVd3IECoC5Z2+5c/loxsQzksT51x1ogk+ByAGn11Scu
-         az4yuVOOv0qX1oQoPG2eZjIiDsETt6bIiv1czFDE19IU4xrge4Jtwcoqq8KRzBwaamus
-         BYSMoBo1IEpnCmIrrjEj60ZAYX+WtYqywCFjlpFMjyzt0d6VG2P9jAfv74BF4MYA4mEC
-         cl5cvZAACXtZhhswoKEyG0Btt7WThMDAcBBcDS6TJ13gWkw/y48s5MT31sLTUiJ5b3BB
-         tYyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVM3TIEwpgq0kBhjdE5cYTqa8Fo0rovGlJs5HevVZLnkvdfWnMu7a9qlU9d9Q28kaaKC3eKL88ZYq+O2+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKW0J0tBc6K9CSnCwZnmFlEst6rOr4IIio+CIm2gChgdOrKeRN
-	CMPQc86L980DF4VaUzaJatjYR0YHrccACrZNTzHzU63O+Gd6+yA0MKaHaz+Yw24=
-X-Gm-Gg: ASbGnct+Ngd1phOCqzeGAChkAbQkcvFoJhVqElw+9I3K2x5AwmKG3M47WSVdeEIPGfI
-	iDiSWmpy0umX/zoteAyXrB673L8lidoWkz167TrxJOqh7a8XxNnT+/3lXEby7vAdQ9tzqwTGBie
-	tV1lA9kVoy0M11eVHMx/uQ1U+QwTkNxqzIEQMxcBpRnvJv+w0pbsTK39wJa/JbU6WZ/zUQrI7+A
-	w0jfbqOuxMSPRpEW2LebXGs0AfdMBvHUg2mSKCorN7labVMm6RmXHxIfzFeqEbfELy2lDNMYJES
-	bAD5zC7H
-X-Google-Smtp-Source: AGHT+IEIwbbtteuEEUgdXkZoDBEWRsa6tuS4jIAHkiUX1OwkeXYELGkuqROwTiXRzGLuwnFDtA/GFw==
-X-Received: by 2002:a5d:5f88:0:b0:385:e37a:2a58 with SMTP id ffacd0b85a97d-38880ac2841mr13330177f8f.1.1734388820426;
-        Mon, 16 Dec 2024 14:40:20 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918b78f42sm5462100b3a.108.2024.12.16.14.40.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 14:40:19 -0800 (PST)
-Message-ID: <25ab4458-06a4-46a3-b42b-a7dc52d44b1e@suse.com>
-Date: Tue, 17 Dec 2024 09:10:14 +1030
+	s=arc-20240116; t=1734388989; c=relaxed/simple;
+	bh=lGM80qH8pnV5C/dirqqgdp+OaWvFZgQ1uxawsXFyY1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jmfbegi31xy8GLI00gYjgZpiE9zCypamRuGWZrStha5NXFU/prBYiB9jVQQRiAQUYWlfQ9++VsNGmVaB2v2zA6wadyh7SGIgMoHR6vGWqGb00Y7MjXrIBeVOMsVlGvx0iXcxtLxzF2wCkSikLt8Lys3M78IcZmW+a9cVLK2Klec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Km8BpZP8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGH9U2P016945;
+	Mon, 16 Dec 2024 22:42:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	H2L8uVyKd4qvBkJbrYXcMZ2oODeoHo/p2so9JSQLiHU=; b=Km8BpZP87w8cOaeD
+	lKNUocOIKw585GAP3iMvcP0klGWDTepIqVYgedxH475QJbvtarzIVuxCQ2ljimr8
+	kPFlf6eXRKQNCH6ZrvpbEJ5TPIM5dD7CXgm14+fAt7TRO+na6tQqTWzAv6F9t6Nl
+	Fo7fm2wU/WxJovo6wHxPdFmSvNbhwpZsy15mHLXT6cOdEvy0hx6cIu0xB4/oo5aG
+	58zRYlzrcyWjQovBJhLCWu8o0vZ6jPK9yAf8yg2Y0yosnq+lya90tRjhTEzi9qnH
+	174Jsj2tESdNYMjv2cjsEZweeFSqbdfmGyvx9Nna7x/9zXYLpgijP6PYPkn9VCzL
+	kkP3Pg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jrc1rqcu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:42:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGMgvIL001796
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:42:57 GMT
+Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 14:42:56 -0800
+Message-ID: <dadf64ae-348c-49bf-b5cd-6b37a81ecf20@quicinc.com>
+Date: Mon, 16 Dec 2024 14:42:55 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,90 +64,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] rbtree: add rb_find_add_cached() to rbtree.h
-To: Peter Zijlstra <peterz@infradead.org>, Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: "Roger L. Beckermeyer III" <beckerlee3@gmail.com>, dsterba@suse.cz,
- oleg@redhat.com, mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- josef@toxicpanda.com, linux-btrfs@vger.kernel.org, lkp@intel.com
-References: <cover.1733850317.git.beckerlee3@gmail.com>
- <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
- <20241213090613.GC21636@noisy.programming.kicks-ass.net>
- <ad36347a-14a5-41d4-82d5-f557a0a7f08c@gmx.com>
- <20241216222225.GF9803@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 7/8] drm/msm/dpu: link DSPP_2/_3 blocks on X1E80100
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Robert Foss <rfoss@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Richard Acayan
+	<mailingradian@gmail.com>
+CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
+ <20241216-dpu-fix-catalog-v1-7-15bf0807dba1@linaro.org>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20241216222225.GF9803@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-dpu-fix-catalog-v1-7-15bf0807dba1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dK4aoDXc8E2edzBaK6_YWLW8j7Og53v0
+X-Proofpoint-ORIG-GUID: dK4aoDXc8E2edzBaK6_YWLW8j7Og53v0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0
+ mlxlogscore=881 mlxscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412160186
 
 
 
-在 2024/12/17 08:52, Peter Zijlstra 写道:
-> On Tue, Dec 17, 2024 at 08:43:26AM +1030, Qu Wenruo wrote:
->>
->>
->> 在 2024/12/13 19:36, Peter Zijlstra 写道:
->>> On Thu, Dec 12, 2024 at 10:46:18AM -0600, Roger L. Beckermeyer III wrote:
->>>> Adds rb_find_add_cached() as a helper function for use with
->>>> red-black trees. Used in btrfs to reduce boilerplate code.
->>>>
->>>> Suggested-by: Josef Bacik <josef@toxicpanda.com>
->>>> Signed-off-by: Roger L. Beckermeyer III <beckerlee3@gmail.com>
->>>
->>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>
->> I guess it's fine to merge this change through btrfs tree?
+On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
+> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
 > 
-> Yeah, I think so. I don't think there's anything else pending for this
-> file -- its not touched much.
+> Fixes: e3b1f369db5a ("drm/msm/dpu: Add X1E80100 support")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
->>
->> Just curious about the existing cmp() and less() functions, as they only
->> accept the exist node as const.
->>
->> I'm wondering if this is intentional to allow the less/cmp() functions
->> to modify the new node if needed.
->> As I normally assume such cmp()/less() should never touch any node nor
->> its entries.
-> 
-> Oh yeah, they probably should not. I think it's just because the
-> callchain as a whole does not have const on the new node (for obvious
-> raisins), and I failed to put it on for the comparators.
-> 
-> You could add it (and fix up the whole tree) and see if anything comes
-> apart.
-> 
-Thanks for confirming this.
 
-I'll make the cmp() for the new helper to accept all const parameter, 
-and give a try to do a tree-wide cleanup to make existing cmp/less() to 
-accept all const parameters. (pretty sure a lot of things will fall 
-apart though).
-
-Thanks,
-Qu
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
