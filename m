@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-447557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B039F3427
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:13:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED699F342A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237531679AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:13:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917497A124D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC131428F1;
-	Mon, 16 Dec 2024 15:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otuodDfA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E56A143725;
+	Mon, 16 Dec 2024 15:14:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AD4137775;
-	Mon, 16 Dec 2024 15:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34851304AB;
+	Mon, 16 Dec 2024 15:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361961; cv=none; b=ipkf27Vlp+M620u2v10ibEg+ju21NL5fllMr1i+qW9YKrcRqG8mRpn7tljWB5wR2hYllwnnDpMGJxGBfX9Lc6urz/7mEIkXlG/8RoKbvs4B5H/tOmMakNKcFf01p4wRp2fyln7r3TdoTg0dVX9MY+ZPKampqxknUGLCBQvZcXYQ=
+	t=1734362048; cv=none; b=Lfkhj99sZUZxxtiVqgf3EkK3o+FTEmgd7DZ1OQBYtTcxF/27lzylJjcZYeFZycY2iI1J6YnVH/CtjzZsUMOgdSg5+/Xi1PkWvLbMSeBVTBs2n4sGeKPpkj9GJVQjvKr1IULidCWe2uHr4BEbsyFSXlln/jV0v/o0HKB2wFflneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361961; c=relaxed/simple;
-	bh=wICNgf+IR97xFy25oLTLwYecGz7p9oalZishcLcdo4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GoyoVVP5Vw+6ZQ0DUFPRcJ2bFXUHMor1hoAg9FRxu4ivsYI4QFDjb2sXHHBV+kaV2De5ALZkYSWMGvt1nqfbjuLmRTfNzG+aN9OKW3b6NOXFRL2GLCNbAT8tK7FOMtwRORVSqDvzV7jVmFJvg1+KJ25Ht+jcClB5fQ3oNTjBsZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otuodDfA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38A9C4CED0;
-	Mon, 16 Dec 2024 15:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734361961;
-	bh=wICNgf+IR97xFy25oLTLwYecGz7p9oalZishcLcdo4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=otuodDfADecik5dK4A+tvJlOPIlqUWxqN82gnV2UUQLF2EID4UGmWjZlMD9HWIY1D
-	 Fchlfp0Af3b4L18QVne282kKyeBqiPkAMXZyLyysO726seCflHNOTQMocYTA24YSse
-	 sh6FTadku2KIEU8lgEAWYIPE0vi0/HCbdoR7qVQwzqZStEAtZgV7p29UbStvU+sacX
-	 YsQeyrxrxRN+6uzooFaNlaBckOtCP38KhI7KNQD0nVhP4WeRILvxemZv5kk2JV8eNp
-	 dSz7paiM4H/y4tq3dQMlbDHHdGdJxKvr4NYYlD4VQ0re2qaCyCbJG5rLDeU55NOwXB
-	 ZDmW8v19na22A==
-Date: Mon, 16 Dec 2024 15:12:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 04/46] arm64/sysreg: Update register fields for
- TRBIDR_EL1
-Message-ID: <1c1c9117-e2b2-49e7-9bdb-7ac6a184d7fd@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-5-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1734362048; c=relaxed/simple;
+	bh=UTmAQ3gsUGW+ygdC2778WAcuFjzVeA37GZ135sqL5b0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=trrHWt+Xx7nWCTrG5rlBgStLqMMiwjXqLPBgh+JxHPik8PDRbKg1gsVYZRJNfDRXsaDuSABZCqRraIbrxa5pbG039DqpmeWLLlw1aaaOLjXew/q1hO3XEUgN8Pq/cOQ1JPlqkurTSfaQbWIhzR9+/M8Fh2Ab0mmSnziXkyQMy10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YBk303lNxz6LDXj;
+	Mon, 16 Dec 2024 23:13:00 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8B2BC140A90;
+	Mon, 16 Dec 2024 23:14:02 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Dec
+ 2024 16:14:01 +0100
+Date: Mon, 16 Dec 2024 15:14:00 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Tejun Heo <tj@kernel.org>, Josef Bacik
+	<josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, Boris Burkov
+	<boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
+	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v3 3/9] driver core: bus: Move true expression out of if
+ condition in API bus_find_device()
+Message-ID: <20241216151400.00006242@huawei.com>
+In-Reply-To: <20241212-class_fix-v3-3-04e20c4f0971@quicinc.com>
+References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
+	<20241212-class_fix-v3-3-04e20c4f0971@quicinc.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7ZdiaP7+I8rZlyon"
-Content-Disposition: inline
-In-Reply-To: <20241210055311.780688-5-anshuman.khandual@arm.com>
-X-Cookie: Be different: conform.
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu, 12 Dec 2024 21:38:39 +0800
+Zijun Hu <zijun_hu@icloud.com> wrote:
 
---7ZdiaP7+I8rZlyon
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> For bus_find_device(), get_device() in the if condition always returns
+> true, move it to if body to make the API's logic more clearer.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+I agree this is easier to read and the reasoning is sound.
 
-On Tue, Dec 10, 2024 at 11:22:29AM +0530, Anshuman Khandual wrote:
-> This adds register fields for TRBIDR_EL1 as per the definitions based
-> on DDI0601 2024-09.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/base/bus.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index 657c93c38b0dc2a2247e5f482fadd3a9376a58e8..73a56f376d3a05962ce0931a2fe8b4d8839157f2 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -402,9 +402,12 @@ struct device *bus_find_device(const struct bus_type *bus,
+>  
+>  	klist_iter_init_node(&sp->klist_devices, &i,
+>  			     (start ? &start->p->knode_bus : NULL));
+> -	while ((dev = next_device(&i)))
+> -		if (match(dev, data) && get_device(dev))
+> +	while ((dev = next_device(&i))) {
+> +		if (match(dev, data)) {
+> +			get_device(dev);
+>  			break;
+> +		}
+> +	}
+>  	klist_iter_exit(&i);
+>  	subsys_put(sp);
+>  	return dev;
+> 
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---7ZdiaP7+I8rZlyon
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgQ2MACgkQJNaLcl1U
-h9CPyAf8DgQ5EoPnHTekTgf01FLNQxvy+tdd5SLWHfOh6ppF6KvXlm0TcSi5PgAu
-aSCjY9LePmuBhI1O1TwEhN0z+/n7UyXrVNMYRDuV4H0JlUBMgPra1udLCQY1OlXu
-G6IKghirOgsOKT4kZop/A/6MXyE3hrdMlYUjieSRAW0f9K+MKLyEefLkGbXYVJIq
-Hy+7fdr0rKP0ObUy6a53c5qpU3WqlGbBA+6MHT/CfyIM3wnWSdAD0hfxIbdqFnRh
-qm4dB5ri8k5XGzemPWwLnjIEjIaPCXkPCBm+JaZd4M++U4JG849hB6zzAFr7V4Dy
-L1f7nGYmPjNsp0HCoNLdxsrdhQBNog==
-=7nTo
------END PGP SIGNATURE-----
-
---7ZdiaP7+I8rZlyon--
 
