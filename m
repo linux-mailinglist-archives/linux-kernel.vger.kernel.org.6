@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-447003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61299F2BE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:30:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C769F2BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1609D1886D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 798577A298D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFDA202C31;
-	Mon, 16 Dec 2024 08:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3D1FFC47;
+	Mon, 16 Dec 2024 08:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2fiaeDgl"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hlY5Jgct"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F9D1FFC68;
-	Mon, 16 Dec 2024 08:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C871C3318
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734337685; cv=none; b=RA8xPa97xjBAm4eCUMla1mSqUft0IuMlM7JKKUyV4fkaS3A0HecFrthpFgB422HrA9JZSQRoRcIrw30CPaUVGhA75BJznfRcu3z6Csc5pkp1jom8lSanH6M/lORySLTU7cSi0oTwl+E9vNTR8eRupBR9OLBtlpNFTHuFjhXtZ6c=
+	t=1734337949; cv=none; b=Z/wPHwk3ExHYcks8CGTAMN1WLVS0hNl8xs0Miqmr9OijEifOCWdRL77/cLlOQNIqciQ02GtrNpNoHmcD44ULqp3EzxQ/5kQB85BgrZEbgEzoQaCx+hTWzwZLwlXA71WV/TOYE9PhAekNQ0RiYGfIDX1/1krqbkeOJMUxjWVwavE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734337685; c=relaxed/simple;
-	bh=xl1rDn+F0eLGmHB47TDSI4NS49V4eSPBEvs8FW1LsMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGFfSyQKHvaWh8cQ1xl131nHTScsktGITVslGw6Oqgi9YPsJpoO64SvnahLs+MszqqzdYMiMGwmyjixxtZWn4NMx94Cx2gj1NN0GOdB31HWdscXHV+dYDqTw4rJJ+O0+GRjvFMUYfai/V9KLlkPrHo0WzhseMfWP8mwlF7VCvUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2fiaeDgl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jjWgVLfbwHLKJTX/qoIXpYAffeReOjn5bgfUy2Y1MPw=; b=2fiaeDgleW1vW39/fYA+6qZp9D
-	4MBdD9TzYcyJKNKTU9BwNIwtoBfGasLLQjTyB6BSPHO4bEFcAPpIuKucTGG2bf5jDeshPv6R1j/ar
-	ou6d4kZO1g+CptI82Bmb4xOQHTI4YRCAWEA5V90xMl/J2Gf1diK+yA1CqUoD52ZuLVP6oFn34QQhH
-	/pVLAgKWZhfB8UqQZ9m1Cr6O6SGATz4MGKQLQ0DWzePgCMf/gE0ZdvRvSE+2gZhevVrPhktJKRDRS
-	IrD/HRr2XENExbzHd7sHOtov2UlWMk3+m5Ive0MsynETzdMrmTTgMHgb1CTktDXQzeyVjTdxTF0sy
-	rBopI04A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tN6SO-00000009OX1-3488;
-	Mon, 16 Dec 2024 08:28:00 +0000
-Date: Mon, 16 Dec 2024 00:28:00 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH 1/3] include/linux.h: use linux/magic.h to get
- XFS_SUPER_MAGIC
-Message-ID: <Z1_kkCNX9dL0hwPf@infradead.org>
-References: <cover.1734253505.git.ojaswin@linux.ibm.com>
- <713c4e61358b95bbdf95daca094abc73a230e52f.1734253505.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1734337949; c=relaxed/simple;
+	bh=stz1SJq/Snyh4whvwTjwKWhJ4BJeLSUDWvVT8RfU/qE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TAkCVClBy7IY4TVEwwpeVhBDQj8h1iT1wAJoGt2vOi6Xb7wEFY4GC/aTG129IEU6gfcVQAOjfcH7T3IYikUNf2LtyMzg6K29WtfWGcOJvyCZF2FESiCJCRXx+AU1yrFghUHkqGxvoo22kqQPr7NJR8Xu220Y4O44LZak6z0/XZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hlY5Jgct; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43624b2d453so42271215e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:32:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734337946; x=1734942746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GLkgv4Tj9vskkWftFwtwTzw0pR5u98oJo45zy3Xi1Q8=;
+        b=hlY5JgctnfSuk1nBtsv+wZXW345ik8bsSvARfnCDKps0KGTfLVzWtiLYho3ZAWpc32
+         BA18j7iR3W3JWuI99jJ0LJjSwZOEKB5Ah1+qMN0yexGQV1alcW4ux2NGpCwhPrYU+heW
+         SrBzQLozaZce0+p7xqP8tqgtGAps/snsnfynsZhdX0K64V45VVeTgFyaRodjN9V1wlqu
+         B+S/u0pteIewCF9WElgin98wO9m7OAiQ/jjp1/4X0Eccrl2dyDlNl8YDO9JNGX4LUeJx
+         obTBEBZnXxnt5UNCHtdUaZQE+vc8HQLUCv/yjPvTafmys2fUzkTrpqoLTW66/XwubgP3
+         VOCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734337946; x=1734942746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GLkgv4Tj9vskkWftFwtwTzw0pR5u98oJo45zy3Xi1Q8=;
+        b=N6wJ7TEQS4O3d5NNdmIVT9NInFNjWtEU0PiDz6rv7uWw2jJJkfeX9bMcdO+BmrcL6Z
+         ID4gomYPmGSq4mpjLahvy2NtDzuFwktJbEPw6Jfis/sRHffp7MnPVlxvCSDX5lLnGg+s
+         vrsJy1JbY9bDnfgR8pE9s232fQVzuQ9rGHgTHFgTZD+GdddLMR3kwtJ1q2lCA70BZdHL
+         nyYpbczdqmhBTzxK79ZibZYsI1Gm1akJAnD1cm6WhXda8se7/GzBmcfjSalibe+Xph5D
+         WjRpy6Tkezdh+lauk7gvw/dFnC4Z2uke9be2ORgxDT0CkUDS9goh3LS0ya4MEpfjAzwZ
+         0w1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUpFFzr/4JUlt0rtNiDXIHy1ejDWAlhGUP3EtZ0Q142pTE6dq8hadCbhr5E5eQ7s9X8QdzoZ7A9ssNE93A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlW9MyXdy5tDfRchZjOZg83LzLbaNCaIZBH2OfvWNSEVx/1ygq
+	nPlANGe6AuwchV4hZ+/8YVXRtXtKE7ttv2rrwfv/LlAk6gZHI4jvsKs4Q70C8YA=
+X-Gm-Gg: ASbGncur82hN4J8vO3EUON34qzNyb1bZeRITTNQQeKJwG6xvesnXtJoIIX8Zh7wlVjg
+	64W/Z5lu3lOB6is5D9PfxLctZNj6jXD8XYfP23iikKvHpNQNrmmjmwJYbe9c9X98GalRKa0nvhB
+	ldzF3XWpCoFYYaC3gmXQKR+Swc+J0gq4DaZ7ajWUERVcsgbEobWoSxppplvzEtrbXyELajL6hWE
+	Br/JYwmm1Lf7VsoMv+5TbRJyNN5l52+D/U7tvFb0MjqJEOoxQZt1Vj0
+X-Google-Smtp-Source: AGHT+IHpEDK9LPFIzTbxV5qeAnXs2TL2pQ/3jIs5yECkuUiId6xGZT2w1z9K8k3JSr/vVH+sjvZBNw==
+X-Received: by 2002:a05:600c:a089:b0:431:4f29:9539 with SMTP id 5b1f17b1804b1-4362aaa652emr93906875e9.32.1734337945954;
+        Mon, 16 Dec 2024 00:32:25 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ddd7:943f:c7de:9971])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801acfdsm7384843f8f.57.2024.12.16.00.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 00:32:25 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] Input: davinci-keyscan: remove leftover header
+Date: Mon, 16 Dec 2024 09:32:17 +0100
+Message-ID: <20241216083218.22926-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <713c4e61358b95bbdf95daca094abc73a230e52f.1734253505.git.ojaswin@linux.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 15, 2024 at 02:47:15PM +0530, Ojaswin Mujoo wrote:
-> -	return (statfsbuf.f_type == 0x58465342);	/* XFSB */
-> +	return (statfsbuf.f_type == XFS_SUPER_MAGIC);
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Might be worth dropping the superfluous braces here while you're at it.
+The corresponding driver was removed two years ago but the platform data
+header was left behind. Remove it now.
 
-Otherwise looks good:
+Fixes: 3c9cb34939fb ("input: remove davinci keyboard driver")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ include/linux/platform_data/keyscan-davinci.h | 29 -------------------
+ 1 file changed, 29 deletions(-)
+ delete mode 100644 include/linux/platform_data/keyscan-davinci.h
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+diff --git a/include/linux/platform_data/keyscan-davinci.h b/include/linux/platform_data/keyscan-davinci.h
+deleted file mode 100644
+index 260d596ba0afe..0000000000000
+--- a/include/linux/platform_data/keyscan-davinci.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * Copyright (C) 2009 Texas Instruments, Inc
+- *
+- * Author: Miguel Aguilar <miguel.aguilar@ridgerun.com>
+- */
+-
+-#ifndef DAVINCI_KEYSCAN_H
+-#define DAVINCI_KEYSCAN_H
+-
+-#include <linux/io.h>
+-
+-enum davinci_matrix_types {
+-	DAVINCI_KEYSCAN_MATRIX_4X4,
+-	DAVINCI_KEYSCAN_MATRIX_5X3,
+-};
+-
+-struct davinci_ks_platform_data {
+-	int		(*device_enable)(struct device *dev);
+-	unsigned short	*keymap;
+-	u32		keymapsize;
+-	u8		rep:1;
+-	u8		strobe;
+-	u8		interval;
+-	u8		matrix_type;
+-};
+-
+-#endif
+-
+-- 
+2.30.2
 
 
