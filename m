@@ -1,402 +1,376 @@
-Return-Path: <linux-kernel+bounces-448250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6729F3D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:31:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9266C9F3DA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2FF1636B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:31:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FD5163138
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241731D8E18;
-	Mon, 16 Dec 2024 22:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PGT8DDz/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6151D63D0;
-	Mon, 16 Dec 2024 22:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B91D8E18;
+	Mon, 16 Dec 2024 22:33:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156061D5AC6;
+	Mon, 16 Dec 2024 22:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388271; cv=none; b=dWy5KlW96TlujnLXGmzQnzgNAQXKiac2jx8ADGK/kSKAQPfPI0J3/wP+v3vjCmczaJnrdgqrddIQnSh5CCun3xLk0cpjPy94WBnLwi0nuR/Ak8+n/RJH+8t3xSDi1WKgMjZjEwnYa0Lm2aOxpIrOnKeJoauBEmUzsqE6Xer0dYw=
+	t=1734388429; cv=none; b=DWYv9yxvYzIkaN1l/CuyKgR4GEE0ZGa6TuK4Y9SN9+crZbqhEtMblxN/s64cu8PLQ4lyM+ByhzrERsgl7hHIhAUMXvGCCsj4FbKMqjyAOH4cqmx0aax3WFUJoZHYJ9rnBUCZAyTZxh/1nhKPzeDFOea8s0ZOo3rlBlqLMxl4i0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388271; c=relaxed/simple;
-	bh=ctl3bxN3cjXMThTaJ3ImiAvIElLfjJ6pjcgCuHiYIqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fJbKLWjiaikgVRhDQLeQDVHxf13lWEzwOmMfhsFpKlA8YANRUQa/vgPoF6oAV4ECGM5WwniSivLVDBng92MRE5gZybki6w7uASxxt4c07PXVnsNdRKrTAz546ln2JleXDtLGthqVs6fBCLhzCOHnNRGKWzLI0912li9Ud+PsE1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PGT8DDz/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGHESCP027410;
-	Mon, 16 Dec 2024 22:30:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=p1hi4F
-	JUjid+yFe8Qes6T4zCL3BTQWsebHAP9J2qHis=; b=PGT8DDz/TypR0RQRiaFDWs
-	IFN3Vj3/1SWmknVhU355M5cyRw3JRiSUitSeqDrZEEwGN2VJUSq1H25pm7Jgj+VL
-	kyFFDHTnka13P3AYIvG5XnDCTBk96JoMoxaRUgRiIFeQWv9KyrXo4X9U+X3+CPta
-	czG0i1DoSemed4gY4BeV0cGmTlWvH6FBFdWCN947v9KMP03ZnLg9JmYaSSwdXTzj
-	VO4yyunWg3k+7nCHKHK5t4Qfr3BK0xMM7zkV3870xVvaBGcPoZUv2v6wWxBTjrDm
-	Lei6TagkuIXmw7fuYZlHa0R6GKU7Jslqyc2pQ1CHJQN2w+N/Od63ootl82D+u9cg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2bvff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:30:34 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BGMSigS012356;
-	Mon, 16 Dec 2024 22:30:33 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2bvfa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:30:33 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGLIwGP014961;
-	Mon, 16 Dec 2024 22:30:32 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqy0529-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:30:32 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGMUWjX39256376
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 22:30:32 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 137D35808B;
-	Mon, 16 Dec 2024 22:30:32 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A6FB5807E;
-	Mon, 16 Dec 2024 22:30:29 +0000 (GMT)
-Received: from [9.61.165.36] (unknown [9.61.165.36])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Dec 2024 22:30:29 +0000 (GMT)
-Message-ID: <25235d06-6f2a-427a-aead-437a8a7deb0d@linux.ibm.com>
-Date: Mon, 16 Dec 2024 16:30:28 -0600
+	s=arc-20240116; t=1734388429; c=relaxed/simple;
+	bh=PQzS4WQAw9nV7bI5DZmP1ADIxcQtPHd/qezkN3jwzIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/Dr4Q6sRyNyTt7N1yvItHBAfV5P2hb9L6PnfmOXXIucRpAHx88Rsrccm786wqSBiFnXwBLEEqSIjNubIYV4h6ocJmk1zlUA8AncpFQ17Co1KLFfSiItj1NYb1+AjDsdcUtwY52aQTxmLyL03uKNn63e97c/S3mLtPFmNy0G9m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76476113E;
+	Mon, 16 Dec 2024 14:34:14 -0800 (PST)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F81A3F58B;
+	Mon, 16 Dec 2024 14:33:39 -0800 (PST)
+Date: Mon, 16 Dec 2024 23:32:54 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com, zhanjie9@hisilicon.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
+	x86@kernel.org, linux-doc@vger.kernel.org,
+	Carol Soto <csoto@nvidia.com>,
+	linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v8 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+Message-ID: <Z2CqlrtNSyP1rwvv@arm.com>
+References: <20241206135600.4083965-1-beata.michalska@arm.com>
+ <20241206135600.4083965-2-beata.michalska@arm.com>
+ <3f19c5a8-9ee6-42fe-8b4c-3a66c65c8d35@nvidia.com>
+ <955a7947-3053-490e-a803-d55699dddd0c@nvidia.com>
+ <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] hwmon: (pmbus/crps) Add Intel CRPS185 power supply
-To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
-        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
-        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
-        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
-        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
-        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
-References: <20241216175044.4144442-1-ninad@linux.ibm.com>
- <20241216175044.4144442-3-ninad@linux.ibm.com>
- <68f5d2e1-10e8-4441-9338-e2a385a9c2b1@roeck-us.net>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <68f5d2e1-10e8-4441-9338-e2a385a9c2b1@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EuI_GqVtvakoH0HtW9RUxAPe1-QfolCZ
-X-Proofpoint-GUID: GJBYu2uHLfqxzDIAGDQ0O5ZMray0nIfP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 malwarescore=0 impostorscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160184
+In-Reply-To: <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
 
-Hi Guenter,
+On Mon, Dec 16, 2024 at 04:33:28PM +0800, Kai-Heng Feng wrote:
+> Hi Sumit,
+> 
+> On 2024/12/16 3:11 PM, Sumit Gupta wrote:
+> > 
+> > 
+> > On 16/12/24 11:13, Kai-Heng Feng wrote:
+> > > Hi Beata,
+> > > 
+> > > On 2024/12/6 9:55 PM, Beata Michalska wrote:
+> > > > Currently the CPUFreq core exposes two sysfs attributes that can be used
+> > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> > > > and scaling_cur_freq. Both provide slightly different view on the
+> > > > subject and they do come with their own drawbacks.
+> > > > 
+> > > > cpuinfo_cur_freq provides higher precision though at a cost of being
+> > > > rather expensive. Moreover, the information retrieved via this attribute
+> > > > is somewhat short lived as frequency can change at any point of time
+> > > > making it difficult to reason from.
+> > > > 
+> > > > scaling_cur_freq, on the other hand, tends to be less accurate but then
+> > > > the actual level of precision (and source of information) varies between
+> > > > architectures making it a bit ambiguous.
+> > > > 
+> > > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
+> > > > distinct interface, exposing an average frequency of a given CPU(s), as
+> > > > reported by the hardware, over a time frame spanning no more than a few
+> > > > milliseconds. As it requires appropriate hardware support, this
+> > > > interface is optional.
+> > > > 
+> > > > Note that under the hood, the new attribute relies on the information
+> > > > provided by arch_freq_get_on_cpu, which, up to this point, has been
+> > > > feeding data for scaling_cur_freq attribute, being the source of
+> > > > ambiguity when it comes to interpretation. This has been amended by
+> > > > restoring the intended behavior for scaling_cur_freq, with a new
+> > > > dedicated config option to maintain status quo for those, who may need
+> > > > it.
+> > > > 
+> > > > CC: Jonathan Corbet <corbet@lwn.net>
+> > > > CC: Thomas Gleixner <tglx@linutronix.de>
+> > > > CC: Ingo Molnar <mingo@redhat.com>
+> > > > CC: Borislav Petkov <bp@alien8.de>
+> > > > CC: Dave Hansen <dave.hansen@linux.intel.com>
+> > > > CC: H. Peter Anvin <hpa@zytor.com>
+> > > > CC: Phil Auld <pauld@redhat.com>
+> > > > CC: x86@kernel.org
+> > > > CC: linux-doc@vger.kernel.org
+> > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > > > ---
+> > > >   Documentation/admin-guide/pm/cpufreq.rst | 16 ++++++++++-
+> > > >   arch/x86/kernel/cpu/aperfmperf.c         |  2 +-
+> > > >   arch/x86/kernel/cpu/proc.c               |  7 +++--
+> > > >   drivers/cpufreq/Kconfig.x86              | 12 ++++++++
+> > > >   drivers/cpufreq/cpufreq.c                | 36 +++++++++++++++++++++---
+> > > >   include/linux/cpufreq.h                  |  2 +-
+> > > >   6 files changed, 66 insertions(+), 9 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/admin-guide/pm/cpufreq.rst
+> > > > b/Documentation/admin- guide/pm/cpufreq.rst
+> > > > index fe1be4ad88cb..76f3835afe01 100644
+> > > > --- a/Documentation/admin-guide/pm/cpufreq.rst
+> > > > +++ b/Documentation/admin-guide/pm/cpufreq.rst
+> > > > @@ -248,6 +248,19 @@ are the following:
+> > > >       If that frequency cannot be determined, this attribute should not
+> > > >       be present.
+> > > > +``cpuinfo_avg_freq``
+> > > > +        An average frequency (in KHz) of all CPUs belonging to a given policy,
+> > > > +        derived from a hardware provided feedback and reported on a time frame
+> > > > +        spanning at most few milliseconds.
+> > > > +
+> > > > +        This is expected to be based on the frequency the
+> > > > hardware actually runs
+> > > > +        at and, as such, might require specialised hardware
+> > > > support (such as AMU
+> > > > +        extension on ARM). If one cannot be determined, this attribute should
+> > > > +        not be present.
+> > > > +
+> > > > +        Note, that failed attempt to retrieve current frequency for a given
+> > > > +        CPU(s) will result in an appropriate error.
+> > > > +
+> > > >   ``cpuinfo_max_freq``
+> > > >       Maximum possible operating frequency the CPUs belonging to this policy
+> > > >       can run at (in kHz).
+> > > > @@ -293,7 +306,8 @@ are the following:
+> > > >       Some architectures (e.g. ``x86``) may attempt to provide information
+> > > >       more precisely reflecting the current CPU frequency through this
+> > > >       attribute, but that still may not be the exact current CPU frequency as
+> > > > -    seen by the hardware at the moment.
+> > > > +    seen by the hardware at the moment. This behavior though, is only
+> > > > +    available via c:macro:``CPUFREQ_ARCH_CUR_FREQ`` option.
+> > > >   ``scaling_driver``
+> > > >       The scaling driver currently in use.
+> > > > diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+> > > > index 0b69bfbf345d..a00059139ca4 100644
+> > > > --- a/arch/x86/kernel/cpu/aperfmperf.c
+> > > > +++ b/arch/x86/kernel/cpu/aperfmperf.c
+> > > > @@ -413,7 +413,7 @@ void arch_scale_freq_tick(void)
+> > > >    */
+> > > >   #define MAX_SAMPLE_AGE    ((unsigned long)HZ / 50)
+> > > > -unsigned int arch_freq_get_on_cpu(int cpu)
+> > > > +int arch_freq_get_on_cpu(int cpu)
+> > > >   {
+> > > >       struct aperfmperf *s = per_cpu_ptr(&cpu_samples, cpu);
+> > > >       unsigned int seq, freq;
+> > > > diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+> > > > index e65fae63660e..34d8fb93fb70 100644
+> > > > --- a/arch/x86/kernel/cpu/proc.c
+> > > > +++ b/arch/x86/kernel/cpu/proc.c
+> > > > @@ -86,9 +86,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+> > > >           seq_printf(m, "microcode\t: 0x%x\n", c->microcode);
+> > > >       if (cpu_has(c, X86_FEATURE_TSC)) {
+> > > > -        unsigned int freq = arch_freq_get_on_cpu(cpu);
+> > > > +        int freq = arch_freq_get_on_cpu(cpu);
+> > > > -        seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq / 1000, (freq % 1000));
+> > > > +        if (freq <= 0)
+> > > > +            seq_puts(m, "cpu MHz\t\t: Unknown\n");
+> > > > +        else
+> > > > +            seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq /
+> > > > 1000, (freq % 1000));
+> > > >       }
+> > > >       /* Cache size */
+> > > > diff --git a/drivers/cpufreq/Kconfig.x86 b/drivers/cpufreq/Kconfig.x86
+> > > > index 97c2d4f15d76..212e1b9afe21 100644
+> > > > --- a/drivers/cpufreq/Kconfig.x86
+> > > > +++ b/drivers/cpufreq/Kconfig.x86
+> > > > @@ -340,3 +340,15 @@ config X86_SPEEDSTEP_RELAXED_CAP_CHECK
+> > > >         option lets the probing code bypass some of those checks if the
+> > > >         parameter "relaxed_check=1" is passed to the module.
+> > > > +config CPUFREQ_ARCH_CUR_FREQ
+> > > > +    default y
+> > > > +    bool "Current frequency derived from HW provided feedback"
+> > > > +    help
+> > > > +      This determines whether the scaling_cur_freq sysfs attribute returns
+> > > > +      the last requested frequency or a more precise value based on hardware
+> > > > +      provided feedback (as architected counters).
+> > > > +      Given that a more precise frequency can now be provided via the
+> > > > +      cpuinfo_avg_cur_freq attribute, by enabling this option,
+> > > > +      scaling_cur_freq maintains the provision of a counter based frequency,
+> > > > +      for compatibility reasons.
+> > > > +
+> > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > > index 04fc786dd2c0..70df2a24437b 100644
+> > > > --- a/drivers/cpufreq/cpufreq.c
+> > > > +++ b/drivers/cpufreq/cpufreq.c
+> > > > @@ -747,9 +747,14 @@ show_one(cpuinfo_transition_latency,
+> > > > cpuinfo.transition_latency);
+> > > >   show_one(scaling_min_freq, min);
+> > > >   show_one(scaling_max_freq, max);
+> > > > -__weak unsigned int arch_freq_get_on_cpu(int cpu)
+> > > > +__weak int arch_freq_get_on_cpu(int cpu)
+> > > >   {
+> > > > -    return 0;
+> > > > +    return -EOPNOTSUPP;
+> > > > +}
+> > > > +
+> > > > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
+> > > > +{
+> > > > +    return arch_freq_get_on_cpu(policy->cpu) != -EOPNOTSUPP;
+> > > >   }
+> > > >   static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+> > > > @@ -757,8 +762,11 @@ static ssize_t show_scaling_cur_freq(struct
+> > > > cpufreq_policy *policy, char *buf)
+> > > >       ssize_t ret;
+> > > >       unsigned int freq;
+> > > > -    freq = arch_freq_get_on_cpu(policy->cpu);
+> > > > -    if (freq)
+> > > > +    freq = IS_ENABLED(CONFIG_CPUFREQ_ARCH_CUR_FREQ)
+> > > > +        ? arch_freq_get_on_cpu(policy->cpu)
+> > > > +        : 0;
+> > > > +
+> > > > +    if (freq > 0)
+> > > >           ret = sysfs_emit(buf, "%u\n", freq);
+> > > >       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
+> > > >           ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
+> > > > @@ -802,6 +810,19 @@ static ssize_t show_cpuinfo_cur_freq(struct
+> > > > cpufreq_policy *policy,
+> > > >       return sysfs_emit(buf, "<unknown>\n");
+> > > >   }
+> > > > +/*
+> > > > + * show_cpuinfo_avg_freq - average CPU frequency as detected by hardware
+> > > > + */
+> > > > +static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
+> > > > +                     char *buf)
+> > > > +{
+> > > > +    int avg_freq = arch_freq_get_on_cpu(policy->cpu);
+> > > 
+> > > We are seeing issues when reading cpuinfo_avg_freq on an ARM64 system:
+> > > 
+> > > $ cat /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq
+> > > cat: /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq:
+> > > Resource temporarily unavailable
+> > > 
+> > > The CPU is in idle state, so arch_freq_get_on_cpu() can't find a
+> > > good alternative source for frequency info.
+> > > 
+> > 
+> > Hi Kai Heng,
+> > This has already been discussed during v7 in [1] & [2].
+> 
+> Thanks for the info!
+@Sumit: Thank you indeed.
+> 
+> > In v7, we were returning zero which printed 'unknown'.
+> > The discussion was about printing in more descriptive way or with an
+> > appropriate error code. In v8 we are returning 'EAGAIN' instead of zero.
+> > The final decision was of Maintainers.
+> 
+> Is there any cpufreq driver that prints "unknown" or error when CPU is in idle?
+I think at this point, for cpuinfo_cur_freq, one gets either the frequency value
+or 'unknown'. I'm not sure whether there are any drivers that report error upon
+'get'.
+> 
+> I think it's more unsurprising to print the lowest CPU frequency when CPU is
+> in idle state, instead of any other error code.
+With that approach one cannot easily determine whether the CPU is actually
+running at the lowest frequency or it's idle.
+Returning an error also avoids mixing types of data provided by the handler.
 
-Thanks for the review.
-
-On 12/16/24 12:26, Guenter Roeck wrote:
-> On 12/16/24 09:50, Ninad Palsule wrote:
->> Add the driver to monitor Intel common redundant power supply (crps185)
->> with hwmon over pmbus.
->>
->> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
->> ---
->> Â  Documentation/hwmon/crps.rstÂ  | 97 +++++++++++++++++++++++++++++++++++
->> Â  Documentation/hwmon/index.rst |Â  1 +
->> Â  MAINTAINERSÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |Â  7 +++
->> Â  drivers/hwmon/pmbus/KconfigÂ Â  |Â  9 ++++
->> Â  drivers/hwmon/pmbus/MakefileÂ  |Â  1 +
->> Â  drivers/hwmon/pmbus/crps.cÂ Â Â  | 79 ++++++++++++++++++++++++++++
->> Â  6 files changed, 194 insertions(+)
->> Â  create mode 100644 Documentation/hwmon/crps.rst
->> Â  create mode 100644 drivers/hwmon/pmbus/crps.c
->>
->> diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
->> new file mode 100644
->> index 000000000000..74570ed1e978
->> --- /dev/null
->> +++ b/Documentation/hwmon/crps.rst
->> @@ -0,0 +1,97 @@
->> +.. SPDX-License-Identifier: GPL-2.0-or-later
->> +
->> +Kernel driver crps
->> +==================
->> +
->> +Supported chips:
->> +
->> +Â  * Intel CRPS185
->> +
->> +Â Â Â  Prefix: 'crps185'
->> +
->> +Â Â Â  Addresses scanned: -
->> +
->> +Â Â Â  Datasheet: Publicly not available.
->
-> Maybe "Only available under NDA". Or at least that is what I found.
-Updated as per your suggestion.
->
->> +
->> +Authors:
->> +Â Â Â  Ninad Palsule <ninad@linux.ibm.com>
->> +
->> +
->> +Description
->> +-----------
->> +
->> +This driver implements support for Intel Common Redundant Power 
->> supply with
->> +PMBus support.
->> +
->> +The driver is a client driver to the core PMBus driver.
->> +Please see Documentation/hwmon/pmbus.rst for details on PMBus client 
->> drivers.
->> +
->> +
->> +Usage Notes
->> +-----------
->> +
->> +This driver does not auto-detect devices. You will have to 
->> instantiate the
->> +devices explicitly. Please see 
->> Documentation/i2c/instantiating-devices.rst for
->> +details.
->> +
->> +
->> +Sysfs entries
->> +-------------
->> +
->> +======================= 
->> ======================================================
->> +curr1_labelÂ Â Â Â Â Â Â  "iin"
->> +curr1_inputÂ Â Â Â Â Â Â  Measured input current
->> +curr1_maxÂ Â Â Â Â Â Â  Maximum input current
->> +curr1_max_alarmÂ Â Â Â Â Â Â Â  Input maximum current high alarm
->> +curr1_critÂ Â Â Â Â Â Â Â Â Â Â Â Â  Critial high input current
->> +curr1_crit_alarmÂ Â Â Â Â Â Â  Input critical current high alarm
->> +curr1_rated_maxÂ Â Â Â Â Â Â  Maximum rated input current
->> +
->> +curr2_labelÂ Â Â Â Â Â Â  "iout1"
->> +curr2_inputÂ Â Â Â Â Â Â  Measured output current
->> +curr2_maxÂ Â Â Â Â Â Â  Maximum output current
->> +curr2_max_alarmÂ Â Â Â Â Â Â Â  Output maximum current high alarm
->> +curr2_critÂ Â Â Â Â Â Â Â Â Â Â  Critial high output current
->> +curr2_crit_alarmÂ Â Â Â Â Â Â  Output critical current high alarm
->> +curr2_rated_maxÂ Â Â Â Â Â Â  Maximum rated output current
->> +
->> +in1_labelÂ Â Â Â Â Â Â  "vin"
->> +in1_inputÂ Â Â Â Â Â Â  Measured input voltage
->> +in1_critÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â  Critical input over voltage
->> +in1_crit_alarmÂ Â Â Â Â Â Â Â Â  Critical input over voltage alarm
->> +in1_maxÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  Maximum input over voltage
->> +in1_max_alarmÂ Â Â Â Â Â Â Â Â Â  Maximum input over voltage alarm
->> +in1_rated_minÂ Â Â Â Â Â Â  Minimum rated input voltage
->> +in1_rated_maxÂ Â Â Â Â Â Â  Maximum rated input voltage
->> +
->> +in2_labelÂ Â Â Â Â Â Â  "vout1"
->> +in2_inputÂ Â Â Â Â Â Â  Measured input voltage
->> +in2_critÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â  Critical input over voltage
->> +in2_crit_alarmÂ Â Â Â Â Â Â Â Â  Critical input over voltage alarm
->> +in2_lcritÂ Â Â Â Â Â Â Â Â Â Â Â Â Â  Critical input under voltage fault
->> +in2_lcrit_alarmÂ Â Â Â Â Â Â Â  Critical input under voltage fault alarm
->> +in2_maxÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  Maximum input over voltage
->> +in2_max_alarmÂ Â Â Â Â Â Â Â Â Â  Maximum input over voltage alarm
->> +in2_minÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  Minimum input under voltage warning
->> +in2_min_alarmÂ Â Â Â Â Â Â Â Â Â  Minimum input under voltage warning alarm
->> +in2_rated_minÂ Â Â Â Â Â Â  Minimum rated input voltage
->> +in2_rated_maxÂ Â Â Â Â Â Â  Maximum rated input voltage
->> +
->> +power1_labelÂ Â Â Â Â Â Â  "pin"
->> +power1_inputÂ Â Â Â Â Â Â  Measured input power
->> +power1_alarmÂ Â Â Â Â Â Â  Input power high alarm
->> +power1_maxÂ Â Â Â Â Â Â Â Â  Maximum input power
->> +power1_rated_maxÂ Â Â Â Â Â Â  Maximum rated input power
->> +
->> +temp[1-2]_inputÂ Â Â Â Â Â Â  Measured temperature
->> +temp[1-2]_critÂ Â Â Â Â Â Â Â  Critical temperature
->> +temp[1-2]_crit_alarmÂ Â Â  Critical temperature alarm
->> +temp[1-2]_maxÂ Â Â Â Â Â Â Â Â  Maximum temperature
->> +temp[1-2]_max_alarmÂ Â Â Â  Maximum temperature alarm
->> +temp[1-2]_rated_maxÂ Â Â Â  Maximum rated temperature
->> +
->> +fan1_alarmÂ Â Â Â Â Â Â  Fan 1 warning.
->> +fan1_faultÂ Â Â Â Â Â Â  Fan 1 fault.
->> +fan1_inputÂ Â Â Â Â Â Â  Fan 1 speed in RPM.
->> +fan1_targetÂ Â Â Â Â Â Â Â Â Â Â Â  Fan 1 target.
->> +======================= 
->> ======================================================
->
-> Does this pass "make htmldocs" ?
-
-Yes, I don't get any error. I run following command on the top level 
-directory.
-
-export ARCH=arm;export CROSS_COMPILE="arm-linux-gnueabi-";make htmldocs
-
->
->
->> diff --git a/Documentation/hwmon/index.rst 
->> b/Documentation/hwmon/index.rst
->> index 1a3cb0a59f72..b1ea445479b0 100644
->> --- a/Documentation/hwmon/index.rst
->> +++ b/Documentation/hwmon/index.rst
->> @@ -58,6 +58,7 @@ Hardware Monitoring Kernel Drivers
->> Â Â Â Â  corsair-cpro
->> Â Â Â Â  corsair-psu
->> Â Â Â Â  cros_ec_hwmon
->> +Â Â  crps
->> Â Â Â Â  da9052
->> Â Â Â Â  da9055
->> Â Â Â Â  dell-smm-hwmon
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 637ddd44245f..e99f26f75733 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -6100,6 +6100,13 @@ L:Â Â Â  linux-input@vger.kernel.org
->> Â  S:Â Â Â  Maintained
->> Â  F:Â Â Â  drivers/hid/hid-creative-sb0540.c
->> Â  +INTEL CRPS COMMON REDUNDANT PSU DRIVER
->> +M:Â Â Â  Ninad Palsule <ninad@linux.ibm.com>
->> +L:Â Â Â  linux-hwmon@vger.kernel.org
->> +S:Â Â Â  Maintained
->> +F:Â Â Â  Documentation/hwmon/crps.rst
->> +F:Â Â Â  drivers/hwmon/pmbus/crps.c
->> +
->> Â  CRYPTO API
->> Â  M:Â Â Â  Herbert Xu <herbert@gondor.apana.org.au>
->> Â  M:Â Â Â  "David S. Miller" <davem@davemloft.net>
->> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
->> index 22418a05ced0..43b6df04e0f9 100644
->> --- a/drivers/hwmon/pmbus/Kconfig
->> +++ b/drivers/hwmon/pmbus/Kconfig
->> @@ -85,6 +85,15 @@ config SENSORS_BPA_RS600
->> Â Â Â Â Â Â Â  This driver can also be built as a module. If so, the module 
->> will
->> Â Â Â Â Â Â Â  be called bpa-rs600.
->> Â  +config SENSORS_CRPS
->> +Â Â Â  tristate "Intel Common Redundant Power Supply"
->> +Â Â Â  help
->> +Â Â Â Â Â  If you say yes here you get hardware monitoring support for 
->> the Intel
->> +Â Â Â Â Â  Common Redundant Power Supply.
->> +
->> +Â Â Â Â Â  This driver can also be built as a module. If so, the module will
->> +Â Â Â Â Â  be called crps.
->> +
->> Â  config SENSORS_DELTA_AHE50DC_FAN
->> Â Â Â Â Â  tristate "Delta AHE-50DC fan control module"
->> Â Â Â Â Â  help
->> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
->> index 3d3183f8d2a7..c7eb7739b7f8 100644
->> --- a/drivers/hwmon/pmbus/Makefile
->> +++ b/drivers/hwmon/pmbus/Makefile
->> @@ -62,3 +62,4 @@ obj-$(CONFIG_SENSORS_XDPE122)Â Â Â  += xdpe12284.o
->> Â  obj-$(CONFIG_SENSORS_XDPE152)Â Â Â  += xdpe152c4.o
->> Â  obj-$(CONFIG_SENSORS_ZL6100)Â Â Â  += zl6100.o
->> Â  obj-$(CONFIG_SENSORS_PIM4328)Â Â Â  += pim4328.o
->> +obj-$(CONFIG_SENSORS_CRPS)Â Â Â  += crps.o
->> diff --git a/drivers/hwmon/pmbus/crps.c b/drivers/hwmon/pmbus/crps.c
->> new file mode 100644
->> index 000000000000..09425c404fc8
->> --- /dev/null
->> +++ b/drivers/hwmon/pmbus/crps.c
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Copyright 2024 IBM Corp.
->> + */
->> +
->> +#include <linux/i2c.h>
->> +#include <linux/of.h>
->> +#include <linux/pmbus.h>
->> +
->> +#include "pmbus.h"
->> +
->> +static const struct i2c_device_id crps_id[] = {
->> +Â Â Â  { "intel_crps185" },
->> +Â Â Â  {}
->> +};
->> +MODULE_DEVICE_TABLE(i2c, crps_id);
->> +
->> +static struct pmbus_driver_info crps_info = {
->> +Â Â Â  .pages = 1,
->> +Â Â Â  /* PSU uses default linear data format. */
->> +Â Â Â  .func[0] = PMBUS_HAVE_PIN | PMBUS_HAVE_IOUT |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_IIN |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_STATUS_TEMP |
->> +Â Â Â Â Â Â Â  PMBUS_HAVE_FAN12 | PMBUS_HAVE_STATUS_FAN12,
->> +};
->> +
->> +static int crps_probe(struct i2c_client *client)
->> +{
->> +Â Â Â  int rc;
->> +Â Â Â  struct device *dev = &client->dev;
->> +Â Â Â  char buf[I2C_SMBUS_BLOCK_MAX + 2] = { 0 };
->> +
->> +Â Â Â  rc = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
->> +Â Â Â  if (rc < 0) {
->> +Â Â Â Â Â Â Â  dev_err_probe(dev, rc, "Failed to read PMBUS_MFR_MODEL\n");
->> +Â Â Â Â Â Â Â  return rc;
->
-> Â Â Â Â Â Â Â  return dev_err_probe(...);
->
->> +Â Â Â  }
->> +
->> +Â Â Â  if (strncmp(buf, "03NK260", 7) == 7) {
->
-> strncmp() never returns 7. You probably want something like
->
-> Â Â Â Â if (rc != 7 || strncmp(buf, "03NK260", 7)) {
-My bad. Fixed it.
->
->> +Â Â Â Â Â Â Â  buf[rc] = '\0';
->> +Â Â Â Â Â Â Â  dev_err_probe(dev, -ENODEV, "Model '%s' not supported\n", buf);
->
-> Â Â Â Â Â Â Â  return dev_err_probe(...);
-Fixed.
->
->> +Â Â Â Â Â Â Â  return -ENODEV;
->> +Â Â Â  }
->> +
->> +Â Â Â  rc = pmbus_do_probe(client, &crps_info);
->> +Â Â Â  if (rc) {
->> +Â Â Â Â Â Â Â  dev_err_probe(dev, rc, "Failed to probe %d\n", rc);
->
-> dev_err_probe() already handles the error, and a message such as
-> "failed to probe -22" isn't very useful anyway. Also,
-> Â Â Â Â Â Â Â  return dev_err_probe(...);
-Fixed.
-
-
-Thanks and regards,
-
-Ninad Palsule
-
+---
+BR
+Beata
+> 
+> Kai-Heng
+> 
+> > 
+> > Viresh,
+> > You have any preference on this?
+> > 
+> > [1] https://lore.kernel.org/lkml/aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com/#t
+> > [2] https://lore.kernel.org/lkml/Zyh-uVSW-0d0r8oB@arm.com/
+> > 
+> > Thank you,
+> > Sumit Gupta
+> > 
+> > > One way to resolve this is to have fallback methods in
+> > > show_cpuinfo_avg_freq() so it will look like this:
+> > > 
+> > > static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
+> > >                                       char *buf)
+> > > {
+> > >          int avg_freq = arch_freq_get_on_cpu(policy->cpu);
+> > >          int ret;
+> > > 
+> > >          if (avg_freq > 0)
+> > >                  ret = sysfs_emit(buf, "%u\n", avg_freq);
+> > >          else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
+> > >                  ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
+> > >          else
+> > >                  ret = sysfs_emit(buf, "%u\n", policy->cur);
+> > >          return ret;
+> > > }
+> > > 
+> > > But that also makes show_cpuinfo_avg_freq() pretty much the same as
+> > > show_scaling_cur_freq().
+> > > 
+> > > So is it possible to consolidate show_cpuinfo_avg_freq() into
+> > > show_scaling_cur_freq(), by making CONFIG_CPUFREQ_ARCH_CUR_FREQ also
+> > > available to ARM64?
+> > > 
+> > > Kai-Heng
+> > > 
+> > > > +
+> > > > +    if (avg_freq > 0)
+> > > > +        return sysfs_emit(buf, "%u\n", avg_freq);
+> > > > +    return avg_freq != 0 ? avg_freq : -EINVAL;
+> > > > +}
+> > > > +
+> > > >   /*
+> > > >    * show_scaling_governor - show the current policy for the specified CPU
+> > > >    */
+> > > > @@ -964,6 +985,7 @@ static ssize_t show_bios_limit(struct
+> > > > cpufreq_policy *policy, char *buf)
+> > > >   }
+> > > >   cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
+> > > > +cpufreq_freq_attr_ro(cpuinfo_avg_freq);
+> > > >   cpufreq_freq_attr_ro(cpuinfo_min_freq);
+> > > >   cpufreq_freq_attr_ro(cpuinfo_max_freq);
+> > > >   cpufreq_freq_attr_ro(cpuinfo_transition_latency);
+> > > > @@ -1091,6 +1113,12 @@ static int
+> > > > cpufreq_add_dev_interface(struct cpufreq_policy *policy)
+> > > >               return ret;
+> > > >       }
+> > > > +    if (cpufreq_avg_freq_supported(policy)) {
+> > > > +        ret = sysfs_create_file(&policy->kobj, &cpuinfo_avg_freq.attr);
+> > > > +        if (ret)
+> > > > +            return ret;
+> > > > +    }
+> > > > +
+> > > >       ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
+> > > >       if (ret)
+> > > >           return ret;
+> > > > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> > > > index d4d2f4d1d7cb..a7b6c0ccf9bc 100644
+> > > > --- a/include/linux/cpufreq.h
+> > > > +++ b/include/linux/cpufreq.h
+> > > > @@ -1194,7 +1194,7 @@ static inline int
+> > > > of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
+> > > >   }
+> > > >   #endif
+> > > > -extern unsigned int arch_freq_get_on_cpu(int cpu);
+> > > > +extern int arch_freq_get_on_cpu(int cpu);
+> > > >   #ifndef arch_set_freq_scale
+> > > >   static __always_inline
+> > > 
+> 
 
