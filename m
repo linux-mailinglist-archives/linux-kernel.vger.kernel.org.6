@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-447424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D89E9F3209
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:55:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535289F3212
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070B11884AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:55:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3946F166756
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCBE205ABE;
-	Mon, 16 Dec 2024 13:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E73F205ADC;
+	Mon, 16 Dec 2024 13:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="gB8TxqS3"
-Received: from out30-87.freemail.mail.aliyun.com (out30-87.freemail.mail.aliyun.com [115.124.30.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CvNmGMQ6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0363F29CA;
-	Mon, 16 Dec 2024 13:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF97B29CA;
+	Mon, 16 Dec 2024 13:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734357298; cv=none; b=ks+QHDF6ZtJvTnSIT9BCtPkWANgAjN272HOUdhohWwo4M7vwQVJc9T20PQqMtnNrg76vuscmqp+kY3oUO093UlyZwkB+Z57SQH0kAxdzZrOCQgC48FfMiMAInnv6K8iwJBcpjdsdmjp3+PI5fRSKlo2iybLIql49FmG9puyEChA=
+	t=1734357452; cv=none; b=QU+PGKfC7ntNoP0R1MaNyM2FxnoMTR1M5H+pKmOI2Zn2Hsq11s5izX+ewi7IRctT+WThSzCM+iT8iraDtlml6KoLZAJtgY948Ud+MDZ4lL6NJEpDyxi8Z7OcPIYAZeyTvSD/ReMuTAU6/J33zkD1rIXjhwmPQzZjIfiBq1Z3L5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734357298; c=relaxed/simple;
-	bh=q2+3SRjF9qbMNvP+247J8CdWSaf4GYae5QBp9nFhcHY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zq/T3x/je6yc/TKcJm+Z7qRF60lnZX9zS5vv2BAp9JWIf75geb3qeyEzXueylTnZDoNEv3kFbG90i0dAqoVMCdKWZ+SkRV8zXoYcQXpulInEHL7cgl3F7lH7/oVFtxLdVNzmPvKvlDLVo31DFewPDyRWKbM8gqfFwlCIqC9kcbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com; spf=pass smtp.mailfrom=aliyun.com; dkim=pass (1024-bit key) header.d=aliyun.com header.i=@aliyun.com header.b=gB8TxqS3; arc=none smtp.client-ip=115.124.30.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliyun.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliyun.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=aliyun.com; s=s1024;
-	t=1734357293; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=/v8vSp8uWtypDFIWVXVjjX5GA/863eX9W8qS19nLx9E=;
-	b=gB8TxqS3mKywD1XJN5jXMqtXARlQ5Gp0hbSpLX07f1hS4vVeocwXipOqf6YEdmGoiLf+shHmaCAws9CNk80MEy9IFZ80JS51iJTkknEiYfLWPgjbMpv9RCsKeCdnElRxyyiBQ17IWEdwwLbMdXJAhfupLUFrMNVhUYYsoVVSHss=
-Received: from oslab..(mailfrom:shunlizhou@aliyun.com fp:SMTPD_---0WLdRvjW_1734357291 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 16 Dec 2024 21:54:52 +0800
-From: shunlizhou@aliyun.com
-To: jv@jvosburgh.net,
-	andy@greyhouse.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shunlizhou <shunlizhou@aliyun.com>
-Subject: [PATCH] docs: net: bonding: fix typos
-Date: Mon, 16 Dec 2024 13:54:46 +0000
-Message-Id: <20241216135447.57681-1-shunlizhou@aliyun.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734357452; c=relaxed/simple;
+	bh=asW/rEU97Lhupbtp+ldMp9ntQdvITH9HiMPFa8DHXXU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mjypnTvzrP0IL366geKqEU+B8JzOIRSXN/Kzkt/vxtnYl2FY39e61Yo279x9y24jbgn+0cv5FcqhWx/avif59qPR43qk3fLeaVNC+ouDPYlfScAD7GnmV6HEZjr43mt2rvGcdd7JOqAVOadSiTRC2fPkaAH1Cv29+prhv7l0lsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CvNmGMQ6; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734357451; x=1765893451;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=asW/rEU97Lhupbtp+ldMp9ntQdvITH9HiMPFa8DHXXU=;
+  b=CvNmGMQ6AYqJjGOyKKU6MoQACL9olKgfBKDe/64qjkJCd3T8i039axKt
+   ufHiaOc4KD2xpMQJYkluiLzmXNVT/qOfhRtTUtYKbtaU0IURqvgn2U115
+   9puY2fSfOR68tsv82fGgrqOsw4fujVDV1qErjd+9xlUa986u9802u6PfX
+   JSD+gLuajdfzvvEgQ1R27cKDn6iCUERMhmNpbYVTnxbGYr0O1gTmTx+56
+   JKDAftrsPCGdnAWDzqZHQ4y0neC9sbpfctM23ttVQJ8a44Res9EUo2ZES
+   cOcBrnhVckRJw44MHyGWuwg1sv8UpvrYiN8YZIoQwnO/Sq+evUSndGiJk
+   Q==;
+X-CSE-ConnectionGUID: eWgx9HNnRAyfqGGWPMA4mw==
+X-CSE-MsgGUID: Qh8+q7+2QX2eMtlP3MXnoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="22327530"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="22327530"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:57:30 -0800
+X-CSE-ConnectionGUID: XOBIYAXUQuSw0lBEwcrp+A==
+X-CSE-MsgGUID: 76n3K51WRmioP0fo0HJzmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="96971982"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.29])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:57:25 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 16 Dec 2024 15:57:23 +0200 (EET)
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+cc: x86@kernel.org, tony.luck@intel.com, mario.limonciello@amd.com, 
+    bhelgaas@google.com, jdelvare@suse.com, linux@roeck-us.net, 
+    clemens@ladisch.de, Shyam-sundar.S-k@amd.com, 
+    Hans de Goede <hdegoede@redhat.com>, naveenkrishna.chatradhi@amd.com, 
+    suma.hegde@amd.com, LKML <linux-kernel@vger.kernel.org>, 
+    linux-edac@vger.kernel.org, linux-pci@vger.kernel.org, 
+    linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2.1] x86/amd_node, platform/x86/amd/hsmp: Have HSMP use
+ SMN through AMD_NODE
+In-Reply-To: <20241212214637.GA80677@yaz-khff2.amd.com>
+Message-ID: <ff59d4e9-15da-37b3-1a8c-1ae688fa4094@linux.intel.com>
+References: <20241212172711.1944927-1-yazen.ghannam@amd.com> <65375593-f2e0-e03b-7e7f-ad8be58772d4@linux.intel.com> <20241212214637.GA80677@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-1223704678-1734357443=:941"
 
-From: shunlizhou <shunlizhou@aliyun.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-The bonding documentation had several "insure" which is not
-properly used in the context. Suggest to change to "ensure"
-to improve readability.
+--8323328-1223704678-1734357443=:941
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: shunlizhou <shunlizhou@aliyun.com>
----
- Documentation/networking/bonding.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Thu, 12 Dec 2024, Yazen Ghannam wrote:
 
-diff --git a/Documentation/networking/bonding.rst b/Documentation/networking/bonding.rst
-index 7c8d22d68682..a4c1291d2561 100644
---- a/Documentation/networking/bonding.rst
-+++ b/Documentation/networking/bonding.rst
-@@ -1963,7 +1963,7 @@ obtain its hardware address from the first slave, which might not
- match the hardware address of the VLAN interfaces (which was
- ultimately copied from an earlier slave).
- 
--There are two methods to insure that the VLAN device operates
-+There are two methods to ensure that the VLAN device operates
- with the correct hardware address if all slaves are removed from a
- bond interface:
- 
-@@ -2078,7 +2078,7 @@ as an unsolicited ARP reply (because ARP matches replies on an
- interface basis), and is discarded.  The MII monitor is not affected
- by the state of the routing table.
- 
--The solution here is simply to insure that slaves do not have
-+The solution here is simply to ensure that slaves do not have
- routes of their own, and if for some reason they must, those routes do
- not supersede routes of their master.  This should generally be the
- case, but unusual configurations or errant manual or automatic static
-@@ -2295,7 +2295,7 @@ active-backup:
- 	the switches have an ISL and play together well.  If the
- 	network configuration is such that one switch is specifically
- 	a backup switch (e.g., has lower capacity, higher cost, etc),
--	then the primary option can be used to insure that the
-+	then the primary option can be used to ensure that the
- 	preferred link is always used when it is available.
- 
- broadcast:
-@@ -2322,7 +2322,7 @@ monitor can provide a higher level of reliability in detecting end to
- end connectivity failures (which may be caused by the failure of any
- individual component to pass traffic for any reason).  Additionally,
- the ARP monitor should be configured with multiple targets (at least
--one for each switch in the network).  This will insure that,
-+one for each switch in the network).  This will ensure that,
- regardless of which switch is active, the ARP monitor has a suitable
- target to query.
- 
--- 
-2.34.1
+> On Thu, Dec 12, 2024 at 08:50:26PM +0200, Ilpo J=E4rvinen wrote:
+> > On Thu, 12 Dec 2024, Yazen Ghannam wrote:
+> > > @@ -95,7 +80,12 @@ static umode_t hsmp_is_sock_attr_visible(struct ko=
+bject *kobj,
+> > >   * Static array of 8 + 1(for NULL) elements is created below
+> > >   * to create sysfs groups for sockets.
+> > >   * is_bin_visible function is used to show / hide the necessary grou=
+ps.
+> > > + *
+> > > + * Validate the maximum number against MAX_AMD_NUM_NODES. If this ch=
+anges,
+> > > + * then the attributes and groups below must be adjusted.
+> > >   */
+> > > +static_assert(MAX_AMD_NUM_NODES =3D=3D 8);
+> >=20
+> > Please also add the #include for it.
+> >
+>=20
+> Just to confirm, you mean for static_assert()?
+>=20
+>   #include <linux/build_bug.h>
 
+I saw you already made that change but yes, it is what I meant.
+
+--=20
+ i.
+
+--8323328-1223704678-1734357443=:941--
 
