@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-447823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1979F377E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:25:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690469F3780
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEC11881C6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E167A1882BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C771C205E25;
-	Mon, 16 Dec 2024 17:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EE6206F0F;
+	Mon, 16 Dec 2024 17:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hNg7IHbR"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="a8e3Hmj7"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1482054E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC874205E01;
 	Mon, 16 Dec 2024 17:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734369920; cv=none; b=V1MtF/D1pIl7sYFT0h3nXuapW9QKgd6crnWjw1uCSd6BsahZbOMGAb6T8If/9RSz1TNf40pXbMNojR3y6VdAujTwNpXNQfIbpTB1yPOQ79POPNPqEzaBukj2f70ajKadvBZOUziWLUaJbqY8TJWZ7hKU5RF5xybH3GykcOZM5zo=
+	t=1734369921; cv=none; b=srG+0KOuYVxGtr7ga3S48LIFizwxMV9sqcVDzqm9PvclWMtwKEkof/GrF7KH3CTrSuLQ9uGJaGcD3VpWR4DcHLUKeHtO62mvm7hYfHpV3EftRUgzmuXNBwbTUq5+j0BzFkT3niHIXP3Zxw1dX+Df8kdoaJdBtiRTYKtZPfxudGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734369920; c=relaxed/simple;
-	bh=jHHrTA7ih/jyCQ+/uc6W9zu6mt08zZM88z87eEp+ahQ=;
+	s=arc-20240116; t=1734369921; c=relaxed/simple;
+	bh=afBfdADjktM8+i8Dk+LpQQ8DfaQoCenCEC7qVfZgIas=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z+UA8t7eV9ha2E+lRnyVCUApiFG/BwXR7JjaxV1bnnlMEdUBpmkRUFKtK5AZ2NfXjhp+XOIumxxzxNSZZ6WHjVLX9+E+T3tyBA2vm74iP91tJhz13ec0Oa1zqFnmZa6QCVo8tjpy+AMd9IX26CumtkBEO8VvJmptjspKJT28VIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hNg7IHbR; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=V6sVZJHaXhU/2/GV9xn63LvWP7OCUvX7gDlvtNAhu9lbayoi/zYWp9kkIGFP/iOCo5GfAczDtIgaqZXUNyyzLkxeiXJu1m8Xm9BOPMXLwc0rvr4AnLnEu4HRT9RZ7cU57lEl4w8aYsLdxVxOmEWD4cGTKkeNLZ1NRdZubdPaeFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=a8e3Hmj7; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1734369915;
-	bh=jHHrTA7ih/jyCQ+/uc6W9zu6mt08zZM88z87eEp+ahQ=;
+	bh=afBfdADjktM8+i8Dk+LpQQ8DfaQoCenCEC7qVfZgIas=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hNg7IHbRWS/Qdbu4rJ4iCGtYloYg0fZnEum3Yi017/KLihiTszAm4qelUQO0dYZF5
-	 9vaTsf7gmKCfrOcLmJ7sslf02NLG3XBnOAUNBhnUQKESdPIW9mwUy4hPUYUrpG0IVW
-	 MNTov416imcPwmae4r2oNg4daX/RATYrJR9OH7Yk=
+	b=a8e3Hmj7A6vP/czBlRA9pxpIFTNjXIy3/95al12+x6DXqkZdV4oZ0SUytbMAJpqyP
+	 0JOXXsscFur+lC8noQzNn/NAW0lPh4cgUKd8JX9QoGNCP7wGWoqHhasJBSZLqXcaCQ
+	 AtKHj9SDHrWs/Oq+ZCatjjQBNOe8NG32j32sxpw8=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 16 Dec 2024 18:25:08 +0100
-Subject: [PATCH 1/3] params: Prepare for 'const struct module_attribute *'
+Date: Mon, 16 Dec 2024 18:25:09 +0100
+Subject: [PATCH 2/3] module: Handle 'struct module_version_attribute' as
+ const
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241216-sysfs-const-attr-module-v1-1-3790b53e0abf@weissschuh.net>
+Message-Id: <20241216-sysfs-const-attr-module-v1-2-3790b53e0abf@weissschuh.net>
 References: <20241216-sysfs-const-attr-module-v1-0-3790b53e0abf@weissschuh.net>
 In-Reply-To: <20241216-sysfs-const-attr-module-v1-0-3790b53e0abf@weissschuh.net>
 To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
@@ -57,53 +58,52 @@ To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
 Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734369915; l=1487;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734369915; l=1698;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=jHHrTA7ih/jyCQ+/uc6W9zu6mt08zZM88z87eEp+ahQ=;
- b=yZD6mcnvdn+Hg4BhmDMmWIBtkXXlRvonLqPHDvnDOX/LRefhU+G2QA5zuq2JGf2fxprmHvBYH
- fKaluj89xQMAJKGrNNoBnd6sMWU+9dzlLv7xjvckQrTZwhtHkX876xq
+ bh=afBfdADjktM8+i8Dk+LpQQ8DfaQoCenCEC7qVfZgIas=;
+ b=qbXI4BdDazUuUKq3CRH3ac1wEt4oVU5O1pTUOy/Lf8Cim0uhLOPQIoykuFdOXRgVLv/gCrhk0
+ 9O7XA5hOLcICSd2rjc1xPGR/Do3a8JUFLibttaruRTSKcBQHR8HtWkL
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The 'struct module_attribute' sysfs callbacks are about to change to
-receive a 'const struct module_attribute *' parameter.
-Prepare for that by avoid casting away the constness through
-container_of() and using const pointers to 'struct param_attribute'.
+The structure is always read-only due to its placement in the read-only
+section __modver. Reflect this at its usage sites.
+Also prepare for the const handling of 'struct module_attribute' itself.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- kernel/params.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/module.h | 2 +-
+ kernel/params.c        | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 94acbacdcdf189e27013088de2202bccac9717e0..de2f2293204a4681072fba9ea3439e5582c81fbf 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -275,7 +275,7 @@ extern typeof(name) __mod_device_table__##type##__##name		\
+ #else
+ #define MODULE_VERSION(_version)					\
+ 	MODULE_INFO(version, _version);					\
+-	static struct module_version_attribute __modver_attr		\
++	static const struct module_version_attribute __modver_attr	\
+ 		__used __section("__modver")				\
+ 		__aligned(__alignof__(struct module_version_attribute)) \
+ 		= {							\
 diff --git a/kernel/params.c b/kernel/params.c
-index 2e447f8ae183e7ec6d1815c862e0cec6572099d4..e90733824528eacc77046f85c9ab4243467ca841 100644
+index e90733824528eacc77046f85c9ab4243467ca841..763261a7fef94d02503fa0d365d155c223fc382b 100644
 --- a/kernel/params.c
 +++ b/kernel/params.c
-@@ -555,13 +555,13 @@ struct module_param_attrs
- };
- 
- #ifdef CONFIG_SYSFS
--#define to_param_attr(n) container_of(n, struct param_attribute, mattr)
-+#define to_param_attr(n) container_of_const(n, struct param_attribute, mattr)
- 
- static ssize_t param_attr_show(struct module_attribute *mattr,
- 			       struct module_kobject *mk, char *buf)
+@@ -860,8 +860,8 @@ static void __init param_sysfs_builtin(void)
+ ssize_t __modver_version_show(struct module_attribute *mattr,
+ 			      struct module_kobject *mk, char *buf)
  {
- 	int count;
--	struct param_attribute *attribute = to_param_attr(mattr);
-+	const struct param_attribute *attribute = to_param_attr(mattr);
+-	struct module_version_attribute *vattr =
+-		container_of(mattr, struct module_version_attribute, mattr);
++	const struct module_version_attribute *vattr =
++		container_of_const(mattr, struct module_version_attribute, mattr);
  
- 	if (!attribute->param->ops->get)
- 		return -EPERM;
-@@ -578,7 +578,7 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- 				const char *buf, size_t len)
- {
-  	int err;
--	struct param_attribute *attribute = to_param_attr(mattr);
-+	const struct param_attribute *attribute = to_param_attr(mattr);
- 
- 	if (!attribute->param->ops->set)
- 		return -EPERM;
+ 	return scnprintf(buf, PAGE_SIZE, "%s\n", vattr->version);
+ }
 
 -- 
 2.47.1
