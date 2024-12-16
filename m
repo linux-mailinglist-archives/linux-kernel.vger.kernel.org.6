@@ -1,438 +1,248 @@
-Return-Path: <linux-kernel+bounces-447847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621A19F37CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16379F37CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BC188EDF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA3F7A2F66
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8335B2066FF;
-	Mon, 16 Dec 2024 17:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27D9206F33;
+	Mon, 16 Dec 2024 17:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uIVjEACD"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B8m/idKZ"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2087.outbound.protection.outlook.com [40.107.100.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D8C2066DC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371260; cv=none; b=NeK2hnoIAcFCfPkm1cmNTpJtLUQMS6Q/J02xHVjjehTnYEQbXWjZ0D1cdTJwW02yaOcNNADxxQmbsuV8aXb9jyRmC1w74EGxolMg9Y9qrskCZXnfEyqzmDVbO2i0vLpPDsCYMb6csi6sKeychfOJrEte48sGoqXz0e/aOQ1axLo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371260; c=relaxed/simple;
-	bh=wrQ8wIHVZQtaics68xjL1ValwpddiW4LWarc3YMsN3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOxPpOw6pBiqIE+NJ9cFRemuQt7j/UPbyrNR/x/Fh0ACGUC0mq3z4GzalQujo7YczIAx4nwX20/2v/V0+/gvhHBXEd2jHC5Ns3kKp9rabQC2BRJReZCGBYb5Ck5c6tgOGBWH3BCOrEtjPpDPuwxhUq0birB/yLlpDW22X3qOV6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uIVjEACD; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3022c61557cso46084111fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734371256; x=1734976056; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJRLQvoiM2uK9G/IvN+jPx+hGzx5GhhUNmirbsQlJV8=;
-        b=uIVjEACD3XnhJE4WoAw/Gvr+eFsokxN63ZGW6U604nNWscrc4GNGyafA/RiSjVktVL
-         52TlgjIwn8PUeGZvzvnmdW/NEK8cn9RS18twkiC+Xkf2fN+WHZ0CGQ6k0jIfGzFMsl8k
-         KQ9O+5BQucfC1i7OlKtN+ptHPOot3JtIng9qLTunYQj6ssxWYaic+0QjlPLGas6wJuek
-         UWG/SrwmXLx+Vzhdhcw6ryaAag82dosdukOWOeyeLkg1Uti2wt2RG6DZ21Fiz5Qn6BRB
-         J6twOgIBlLUPRgSdudXZbJqgr4E5GxwRwmxwHXLP/2oZPk/XUwbvOoA0fykBMQ8mD2z9
-         1mpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734371257; x=1734976057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJRLQvoiM2uK9G/IvN+jPx+hGzx5GhhUNmirbsQlJV8=;
-        b=LVRlFsGic8gZzzgMs3/vrAX6n9nY46Bp8i/7VRfSELzWHfuh0KLnhgKJ/UC1QPtJTK
-         wh5Flp1e8dfJKabdgb7ST7XIPqo6AzIZB0JJ5EzlFW21agsvLoLNAUggWgSFgmRY4NRn
-         oO4KjZKOiXK59bOC6mSMiRH282cnIwkMfb9t8F5TBUPMbbZf9wGQ2O5drCnjYJsWKTVy
-         2trqoKWO5p7t2uGRaAUpDiHJOokMb8EXX5Ckd2r1s0dlPLRjw748XGzMIk8hdJeeCRAu
-         gLWzfEU/dHxSzssaLiY015U0mEy9yXOJGsilC59e97GUIzpWuI3lfrDs4q1GGBx2a3ED
-         VaUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVIHbBDZjWhCnNLW51DO4Ec5RfaNlgQihdgPighky9w6CMUBHxs8mNBoV6CbOWH9NQqwbLKe4NmpQltm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWA7XatRtqvMoh3XztVvwB/BC3VOwna/dGeSgWFdbFZwW+LUf9
-	7V7c19Z8Bufh1apC3QIvTm2mcM1f2BidNhYEuwxK2X9dTNfe5NXPnOp/iSZ0xXA=
-X-Gm-Gg: ASbGncv/W5ITALGYiwlIciVphWf4qhDA2Q6Qg5Zb/mRDX7ocmbVRsUUspGzTuU3iZQ4
-	e7JQta+umXnmhDFsEhMsjbDF0RCG1aDujbglE4OGnWptxarzn0FZcZzpTOy6JyTGFLKT6/sUEvs
-	iL0E6Wz4sY22DP1i9dzT9xM3dZNWUBFwzeVa812KuKZSCGDYHXYChzgKpIi++J1YYijNGqKTLTQ
-	e0vZBvMbwNdairsH1ZnwvWVS9EU9ZCB+0/VgfPZ0ZrGI5+xhrNau0gSd89xxJaM05YcPw7MR9zX
-	uy3WSmfOuioxkRSOqTHNeOMRL923q/vMy5Nx
-X-Google-Smtp-Source: AGHT+IE7Nu2UZ05CbJ5TijHkK7V7tWXZvLvPyH+Y6uLbXlSNImUM95D3nGxGooUa/clMhfRqrHaYLA==
-X-Received: by 2002:a05:651c:501:b0:302:34da:ac30 with SMTP id 38308e7fff4ca-302544617f2mr44913431fa.18.1734371256503;
-        Mon, 16 Dec 2024 09:47:36 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30344062bd3sm9649911fa.66.2024.12.16.09.47.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 09:47:35 -0800 (PST)
-Date: Mon, 16 Dec 2024 19:47:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
- helpers
-Message-ID: <exocd3b65cy6cy5w47cwx3ykn54ncf34hwyj7ffihs5jjzean5@y677uywnlah2>
-References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
- <20241206-drm-bridge-hdmi-connector-v6-3-50dc145a9c06@linaro.org>
- <20241216-heretic-mackerel-of-wholeness-fcfed7@houat>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5742066E0;
+	Mon, 16 Dec 2024 17:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734371263; cv=fail; b=RUAG7Uo12GAqBfu04czSRALtmzE3smFheKqrtUDBAVjMwuJYcL619jwp1M6pjFXJOgLmUPH2TT6por6Md1H0Yriao6RXVeGrkcxPDQf5ChfBI0Scc2sk4PAIhDB/Y4x5fhxQk7DcZ6OmuJb3VMMV3eKVPuc8JV/+1JbopBBfyAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734371263; c=relaxed/simple;
+	bh=hWTxXALnKyXjURScR2nCdUt5giDQ4a75MPqEnGD9L4Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ei6+wvwxEDYr7ssabt0L305R4NfY2LQN85czcjojVOwCNJgxabzKZ+LMQikpb8hdjEKCuTicly4+giBAA4xcChm8QxCTy4KrFwFp6Z9egWdQzdhhturI3dJeycp2L933j5FhidsA83s2+rElXQReQHtYfXnFEBo0iQO/5UXx/48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B8m/idKZ; arc=fail smtp.client-ip=40.107.100.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p7vMTrSUWbHHbnQGHAGAEq4d1twVE2Yml42w6z97oc0GoL60JlrewaH+PkUvD7HcV0Jicy5o6DGMQZRn/suHFzWEpX+9Axuq9gE1AOy356hSthGKzPgEegJzQe6i0kkL2LxcFUOKv/ChmHp4AQlfnOr1k/pHgPJDrM+s8MFXDxB9DKJVnDM14L+Ah5BvUQzyxJ9YOTBdy21WUButyBGX38vLole/ydLI6D+EsOugPKHqmzOaXPVJwMnlAn9rr8NxUlNybq6/tp1FXw/kLFisWdXGp6yq3bYD+hX9+AvJwugZiYtFviyyvFudojIesXWUX+cUN6Hpox5ZGdNdZysGQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y0TIfG75wJO5lrMLZtdzhGADL0JGb9XEc+PuAWLT5vQ=;
+ b=JOffgMo0swXKlzBy/glxCCdazWGQQ4xbFDHspmZsaX/D/gvAi1UrJgcoqFeD/4mF1CpJ2BPGsyMnp6CAAH/kPJuIpu9iVOjESLZobiNVTkmDF37ArX9se24bWCyBV84awWbpznBhQeBMma4t5fD2+vYzDIb+QL4mF47B1X+VKeZK8NW79CpdpJ/tFCk/4P+ZN7Mnp1CIZJh4L5Kgmrjw2ed1uSG8Ng8CWOvyTXgBN6JCR/hEogv0FGdMkkZNY2EngtdgL7fee/Cf7uNUFqo/7IwnsTG7U3sBDlQhrEv7+PxXCS3w1tnkuP8c2GBCBpA/w/8HYJ4o9OzOeSnghzdEUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y0TIfG75wJO5lrMLZtdzhGADL0JGb9XEc+PuAWLT5vQ=;
+ b=B8m/idKZTBYiH6gBtoeAzE4E4HiheDsmop5doGS/loQNINe51G55UgxhRiV0xqblFLERB22AnWADPB+KBbO0vBOy+LwysVmDbv2y/8LcYbHiy0m9DLA8WWE3IOI9aiX49jMeBE2uoNledTf4YpLR5oFSvsPvrqx56dJHcMg5Ffo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
+ by MN0PR12MB6197.namprd12.prod.outlook.com (2603:10b6:208:3c6::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
+ 2024 17:47:36 +0000
+Received: from CH2PR12MB4956.namprd12.prod.outlook.com
+ ([fe80::fa2c:c4d3:e069:248d]) by CH2PR12MB4956.namprd12.prod.outlook.com
+ ([fe80::fa2c:c4d3:e069:248d%6]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 17:47:36 +0000
+Message-ID: <65a1d19e-e793-4371-a33d-e2374908d7f8@amd.com>
+Date: Mon, 16 Dec 2024 11:47:33 -0600
+User-Agent: Mozilla Thunderbird
+Reply-To: tanmay.shah@amd.com
+Subject: Re: [PATCH v2] mailbox: zynqmp: Remove invalid __percpu annotation in
+ zynqmp_ipi_probe()
+To: Michal Simek <michal.simek@amd.com>, Uros Bizjak <ubizjak@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>
+References: <20241214091327.4716-1-ubizjak@gmail.com>
+ <25eb1e35-83b0-46f4-9a9c-138c89665e05@amd.com>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <25eb1e35-83b0-46f4-9a9c-138c89665e05@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR01CA0008.prod.exchangelabs.com (2603:10b6:805:b6::21)
+ To CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216-heretic-mackerel-of-wholeness-fcfed7@houat>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4956:EE_|MN0PR12MB6197:EE_
+X-MS-Office365-Filtering-Correlation-Id: b321ffc2-5373-4c7e-cb3d-08dd1df9b9e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y0lOeHUvbTNjZUN0ek9kQ25URytuL2ZXb0pYSjhISVpzcVBSaUFGUlRBNDk2?=
+ =?utf-8?B?L3o0NXRIYnh2TnZLTHdTbksrT00yTkpWeU9rVmxncVdvaGpsWjlqSnVKN0dh?=
+ =?utf-8?B?UEttb1k3UlZjRjVveFpYSUFUa3FmcXF5NmdBNUlpTkVZcVF6bE1ZZFlFWGRa?=
+ =?utf-8?B?eHZtRHI5MGRLK0plaW5hU2d0dm9SZUpnMjFvckYxbWJjalhGUEJ1Zm40YUhL?=
+ =?utf-8?B?SjluYlNaU1l0WVB3cHNONzZMNE1mMnFOa3hUd2thYkpNYWVSL2x3ei80WDhS?=
+ =?utf-8?B?YWhGbEIrZlFuS2RHbzJzWFVVdjZFUCtiUEJGcjlQYjQ5RTgrcDUwVEpkOEh1?=
+ =?utf-8?B?enVnd09pK2JIbGY0cmdhYW13MnJkZ2w0NlpKNVkrUm5QSFczYm8zR0FHa0RP?=
+ =?utf-8?B?cVovNEtQdWM2dXNDTXhXR3NSUnQ1bVEwb05TS1ZqZTFiYkppSk5OaFduVS90?=
+ =?utf-8?B?YmxseEQ2T3lEN0wrMHE4ZXlGbU1LcEJGbU9DVVdVdEExK2dpZjZ1Tnl0Uzl6?=
+ =?utf-8?B?VGRydWRUZUJ1ZVJMc05ZeVdoSTVPUWFFSUVnTFM5alk4OW54blQ0d0IzYllG?=
+ =?utf-8?B?Y3hxSXZQVzlqSGhWWGxxZTdqd2poNm9lMmlFTzJPQy9DVlJpQ204U0UwTUoz?=
+ =?utf-8?B?ejdBNnpFOFpVemNkSThkaW5IeGdSL1dsSHVhU1QyM1I5YkE0Uk5lajBLeG8x?=
+ =?utf-8?B?UWlaNDhQbU53eWlLVi9OT2dQVU1hWDdDNjU3OTdJZWxEVmxmMlV6MVNWM2Yy?=
+ =?utf-8?B?Mm1seTdFL0p0WDFWWWJPeXh1RmdMc0swN3hsblVoc2l2bjI0SEhkcVV6b2pE?=
+ =?utf-8?B?VmtqNnRXenVNTDhINmZ4eGxCOUlFbEFhYzluUGJMLzJlMFlBQ2V4aTRXS2J0?=
+ =?utf-8?B?QUl0eGFjRFRWNlM3dVFnMUFKOVhmWHdQUEtQdHJvazZ3NXdLTmMrNlNJZVZt?=
+ =?utf-8?B?dzB5V250VXhlVEJxd2lMQllaS0Y0bVJ6UW04bHlnTk11Wk8wOW16b1I3NXIz?=
+ =?utf-8?B?ZFlNUCtreG1Ma3JpUU0vSk44YmN4c21ydWpRWS9BcW1BeUNRR3hMTTQ1RnBE?=
+ =?utf-8?B?WWEvUXF1L3FJdVM1ME04Sk5pUFphWVZhbm5QSWdxWEk2MU53czBIcGk5OGRh?=
+ =?utf-8?B?S3cxYVFtc2xqQUVBU0ZEamVtQ3ZxTFQzc095RTV5cTNLYTNaRUIrVXo3UVF2?=
+ =?utf-8?B?WUFxVS9nOXhyeXZxMlUrZXpjalFaRjJHQitKckNxbnVqLzVNQ2dVZWcxb2d6?=
+ =?utf-8?B?Q1dwVFBIQU1lVmYwTWQ0a0tRYnNieXlDOWMxSHRQMVluV2dFRWd3ZENDTWth?=
+ =?utf-8?B?MWFvUGRnTGVvc0JEdE5aMmUyL2oxYWxsSFU3UysvUEthbXB4Ny8vN25QN3li?=
+ =?utf-8?B?WnFKQzJDV1VKaFBwS3VmdUV6MU5vSGYzV3FBZEpTblV4WHhKZURLaWVlbGM4?=
+ =?utf-8?B?ZktLNWg3VlRvcGpVR2IxeUIxMzZ2WXo2ZHdUb2lDcGcvVDg1aUc0elJyM3Vk?=
+ =?utf-8?B?M1pQVGdQRzZwU1RWRnRGK05VcHg0V1BYOURpVHBMY0lqQ2k5THhiWHBCakho?=
+ =?utf-8?B?ZXl0U3d6ZG9tQWJkeHNjUVBoYUYzYmJKTktybVlXbHJNT0xlbW9iVHRCTHM0?=
+ =?utf-8?B?eXUvZVJmdFZLVXRsdFJQMzM1K2RzYktaRVBHOTFHajNHVDVxZzZpclA1MUFi?=
+ =?utf-8?B?MXZCSHJyemhkTUlUUFd2R3k4NHNHc2JnbWgwYkRKa1FyUnQwQUsybTNJcWxF?=
+ =?utf-8?B?bzdnaUtIaVBnZjdldHc2cFFrTU9sRTlxL1pGTm5HdXRDZmZlajNJbUI3Q3dM?=
+ =?utf-8?B?Q0d0OG9rQnMrUDY1SEN2T2NVZUVXWENxU0xaUzBOZXVRaFhyWTR4ZmVLYUZv?=
+ =?utf-8?Q?MrZoXzP0ozn+q?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4956.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L0djdDZRNmhpR0tNWS81SG1tb3Uva2ZLUzRhdlUxdUNldjNVdkdwbzFiR04y?=
+ =?utf-8?B?Qm80L0IyZk5xNDU2aUlDSzRLdEFpV3p0VG44dCtuQ2dVOGhtZGdJaU9RNGFY?=
+ =?utf-8?B?Y1dsM3E2S2RLSlhnTGdwRVFudExobWxObTVQTDhlTGh0aDZ2cWJmRFVRYWE4?=
+ =?utf-8?B?di9lUFhiUi9samNTYk1MMFU0ZDJZL2dWdmZjbXE5NEVyV0wvZTVBNzlUS1k5?=
+ =?utf-8?B?bFRlWUZLM0tiUVhyWXZmUFFvcjM0c2E2TkJvZVNFMmY4VUF5OUpVUW5VaFZy?=
+ =?utf-8?B?dWxzNTVQd3lWek5GWkJiaUhBUzRLNDdGek5MNGJQZDI3Yi9nN0tRVmVrVTgw?=
+ =?utf-8?B?N2xrS1J4VlJqbFQvd2tNUXpXUEF1b2FXNEU4RWx4L3Jmd2xoWWw0dDZDYTRm?=
+ =?utf-8?B?WWFqS09tYTl4S3RMQzBJTFhKNjVWU0NIRXJ5R212d3VNa2V5VWh3VnZjR2Fx?=
+ =?utf-8?B?dkszS3dKNnNIYlFqdTNvQ0Nud0g1Ukt5OHB0ZXl2OWkzZkJobUZxcldSM3Bv?=
+ =?utf-8?B?b0J6SjF5SnM0b2FHOVhUZ1QzVmsrOEJCTzZ4QlZ4ZmFvUExmN3ZDM0VFWHd0?=
+ =?utf-8?B?dFZOSG8rQmVGYW1Jb0p1eGlFVTdZS2g4SHIzVFZsNERSTk44dWJ3Y2Z6VUh1?=
+ =?utf-8?B?aVdjcDRicXkwaHNidG5UM21icFFUdTlFTGtnTVo5UGFvSEJkOGZ1Nm5OZGcw?=
+ =?utf-8?B?OUp2ZGZNNUhsSmYxeFF6V2JqUnJ6T2NBd3lQTEJESWw4RVJpY3kwWk8wa0dR?=
+ =?utf-8?B?UHp2T3M1V1JjTE5vNVlmdkZRNFl4UXhjR0puVVRETmc3ano1MGJ1Q3dCaVVL?=
+ =?utf-8?B?a2JBaG1iNjNXZFhlY3IxTDRmd3RPcWpseVhwNTFuc21hTG53TjlOQitLemVQ?=
+ =?utf-8?B?TzJKczZoaldxSE8xRFBqNWpIZzB2U2lyTzB0Qy9NUjVoZktROThBcC8wUWt6?=
+ =?utf-8?B?WFFyeFEyRWZ0K3JkajJWOWNBZmJyZ1JHZ3IxcktrMjZvZG00ODBVd3k0Nnds?=
+ =?utf-8?B?NWVJbzYvd0tmdWlzWi8zNjZicGFLZ2c3V0QyY2x2ZWoycjh5a255UlJmR2ZQ?=
+ =?utf-8?B?ckFoWnZWSEd3WGdQdnl1UzBBblJkYXRKNjZmUGp1b0RyTVhvLzNydTM4QmFn?=
+ =?utf-8?B?N0RKTGJyRmxYa1VrK1k4RGpKT3ZGWkE1YWxVdEt2U2hvZmRqd3BYaU9GSy9C?=
+ =?utf-8?B?bEJENks5K21EOEprNDNINzNNbWhxamdtQ0RjOE5SWG9LdU56V0tFb0tidkNN?=
+ =?utf-8?B?SW9sREtkUXJEYUswMll2aTg3RTBhZld6L29KY0QzamQyYklWdWdwdnpUT0xx?=
+ =?utf-8?B?Rk81bHdkNFN0SmV3aDV1R3JJV3VIeWVOQ0d2LzJROHVxL2VzZTl0RXdFQ0Ny?=
+ =?utf-8?B?UjNOUzVtT1BxYkhvQjM5b014ak9idGg3cmpLbXZzakhzNFVlSU92YmhRbnJU?=
+ =?utf-8?B?VDNoSFpQY2JUMXNZUWVsR2dxYW9obmdYOHFlT0dMVTBidVR1TFErWTljQnBS?=
+ =?utf-8?B?aWxNY1JqSHNNZ3g5Uld5QUxXamVWWnYwYVNBc0RBS0xwdHBDUER2V0J6U1Az?=
+ =?utf-8?B?MDFMeDF1K1c1ckpXK1NBMmZLN2p1WUovSlJlSVBaNndub1lHcjFMaDU2RFNh?=
+ =?utf-8?B?dVNlZ3ljNllld1UrZUZYbzAwTTZQNHpnVXRjWjJIdkxmd1REUGFhWFFtYUVK?=
+ =?utf-8?B?WUlFRGFPbWp4L0xnU2NUZlNrdXFJYkt2NjIvdWNrR1p1czJvZk9odkt4Q2p0?=
+ =?utf-8?B?ZnBCM0hmS1pXU0hwZ1lyakc5NUh2NkVYMUZTdDdGblVXR1ByOWl0aVFqMGlq?=
+ =?utf-8?B?bzRDT2dJNVk4U2JPQWh3QURPMDFITmhvUnFUL3R6RUtxQkN3S25lRXdMSGVs?=
+ =?utf-8?B?eTlDSkJBV1hwLzZlc1dXR2tZek0wcU9jWGhSMGJkL1IvU2lOaGx2ckp5czIy?=
+ =?utf-8?B?K3hLUVA5d2VESWQ2QTN5WWordHBXMXUrNko3aVpqUUFIZ1VKWHNRN0ZtaUp4?=
+ =?utf-8?B?aE8wWjNpSEpybHZDZk04Z1RMMk9sS0FpcWlyWnZQOFgyTUlsYWN1bThHcHNQ?=
+ =?utf-8?B?bUZOOUZmeEQ5Y0dMdExPUVVweUJWTHUxamNNelphaGM0cndIQWZncE5kT3Nh?=
+ =?utf-8?Q?7KVtomLhwi3zTii904ZlFjpyL?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b321ffc2-5373-4c7e-cb3d-08dd1df9b9e6
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4956.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 17:47:36.1094
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 55UiCF1MLpqCC6vFTYnBwb+pAKtfb2EaDNKonsmApPA1lQOBNwCJHYkH8gP277hT
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6197
 
-On Mon, Dec 16, 2024 at 06:04:41PM +0100, Maxime Ripard wrote:
-> Hi,
-> 
-> On Fri, Dec 06, 2024 at 12:15:57PM +0200, Dmitry Baryshkov wrote:
-> > Several DRM drivers implement HDMI codec support (despite its name it
-> > applies to both HDMI and DisplayPort drivers). Implement generic
-> > framework to be used by these drivers. This removes a requirement to
-> > implement get_eld() callback and provides default implementation for
-> > codec's plug handling.
-> > 
-> > The framework is integrated with the DRM HDMI Connector framework, but
-> > can be used by DisplayPort drivers.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/Makefile                   |   1 +
-> >  drivers/gpu/drm/drm_connector.c            |   5 +
-> >  drivers/gpu/drm/drm_connector_hdmi_codec.c | 185 +++++++++++++++++++++++++++++
-> >  include/drm/drm_connector.h                |  80 +++++++++++++
-> >  4 files changed, 271 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> > index 1677c1f335fbb0c6114bdb4cc0b12eb407d84564..afdd9268ca23ac7602e73bbe45f3f9cd090a3afd 100644
-> > --- a/drivers/gpu/drm/Makefile
-> > +++ b/drivers/gpu/drm/Makefile
-> > @@ -42,6 +42,7 @@ drm-y := \
-> >  	drm_cache.o \
-> >  	drm_color_mgmt.o \
-> >  	drm_connector.o \
-> > +	drm_connector_hdmi_codec.o \
-> >  	drm_crtc.o \
-> >  	drm_displayid.o \
-> >  	drm_drv.o \
-> > diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> > index bbdaaf7022b62d84594a29f1b60144920903a99a..4abfbded962bf45b793a2bd5b1b5c4d9f478a1f7 100644
-> > --- a/drivers/gpu/drm/drm_connector.c
-> > +++ b/drivers/gpu/drm/drm_connector.c
-> > @@ -33,6 +33,7 @@
-> >  #include <drm/drm_sysfs.h>
-> >  #include <drm/drm_utils.h>
-> >  
-> > +#include <linux/platform_device.h>
-> >  #include <linux/property.h>
-> >  #include <linux/uaccess.h>
-> >  
-> > @@ -280,6 +281,7 @@ static int __drm_connector_init(struct drm_device *dev,
-> >  	mutex_init(&connector->eld_mutex);
-> >  	mutex_init(&connector->edid_override_mutex);
-> >  	mutex_init(&connector->hdmi.infoframes.lock);
-> > +	mutex_init(&connector->hdmi_codec.lock);
-> >  	connector->edid_blob_ptr = NULL;
-> >  	connector->epoch_counter = 0;
-> >  	connector->tile_blob_ptr = NULL;
-> > @@ -632,6 +634,8 @@ void drm_connector_cleanup(struct drm_connector *connector)
-> >  		    DRM_CONNECTOR_REGISTERED))
-> >  		drm_connector_unregister(connector);
-> >  
-> > +	platform_device_unregister(connector->hdmi_codec.codec_pdev);
-> > +
-> >  	if (connector->privacy_screen) {
-> >  		drm_privacy_screen_put(connector->privacy_screen);
-> >  		connector->privacy_screen = NULL;
-> > @@ -670,6 +674,7 @@ void drm_connector_cleanup(struct drm_connector *connector)
-> >  		connector->funcs->atomic_destroy_state(connector,
-> >  						       connector->state);
-> >  
-> > +	mutex_destroy(&connector->hdmi_codec.lock);
-> >  	mutex_destroy(&connector->hdmi.infoframes.lock);
-> >  	mutex_destroy(&connector->mutex);
-> >  
-> > diff --git a/drivers/gpu/drm/drm_connector_hdmi_codec.c b/drivers/gpu/drm/drm_connector_hdmi_codec.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..1934fb53b4d128434559970c9fea548bbc4bedda
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/drm_connector_hdmi_codec.c
-> > @@ -0,0 +1,185 @@
-> > +// SPDX-License-Identifier: MIT
-> > +/*
-> > + * Copyright (c) 2024 Linaro Ltd
-> > + */
-> > +
-> > +#include <linux/mutex.h>
-> > +#include <linux/of_graph.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <drm/drm_connector.h>
-> > +#include <drm/drm_device.h>
-> > +
-> > +#include <sound/hdmi-codec.h>
-> > +
-> > +static int drm_connector_hdmi_codec_audio_startup(struct device *dev, void *data)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +	const struct drm_connector_hdmi_codec_funcs *funcs =
-> > +		connector->hdmi.funcs->codec_funcs;
-> > +
-> > +	if (funcs->audio_startup)
-> > +		return funcs->audio_startup(connector);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int drm_connector_hdmi_codec_prepare(struct device *dev, void *data,
-> > +					    struct hdmi_codec_daifmt *fmt,
-> > +					    struct hdmi_codec_params *hparms)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +	const struct drm_connector_hdmi_codec_funcs *funcs =
-> > +		connector->hdmi.funcs->codec_funcs;
-> > +
-> > +	return funcs->prepare(connector, fmt, hparms);
-> > +}
-> > +
-> > +static void drm_connector_hdmi_codec_audio_shutdown(struct device *dev, void *data)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +	const struct drm_connector_hdmi_codec_funcs *funcs =
-> > +		connector->hdmi.funcs->codec_funcs;
-> > +
-> > +	return funcs->audio_shutdown(connector);
-> > +}
-> > +
-> > +static int drm_connector_hdmi_codec_mute_stream(struct device *dev, void *data,
-> > +						bool enable, int direction)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +	const struct drm_connector_hdmi_codec_funcs *funcs =
-> > +		connector->hdmi.funcs->codec_funcs;
-> > +
-> > +	if (funcs->mute_stream)
-> > +		return funcs->mute_stream(connector, enable, direction);
-> > +
-> > +	return -ENOTSUPP;
-> > +}
-> > +
-> > +static int drm_connector_hdmi_codec_get_dai_id(struct snd_soc_component *comment,
-> > +		  struct device_node *endpoint,
-> > +		  void *data)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +	struct of_endpoint of_ep;
-> > +	int ret;
-> > +
-> > +	if (connector->hdmi_codec.dai_port < 0)
-> > +		return -ENOTSUPP;
-> > +
-> > +	ret = of_graph_parse_endpoint(endpoint, &of_ep);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (of_ep.port == connector->hdmi_codec.dai_port)
-> > +		return 0;
-> > +
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +static int drm_connector_hdmi_codec_get_eld(struct device *dev, void *data,
-> > +					    uint8_t *buf, size_t len)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +
-> > +	mutex_lock(&connector->eld_mutex);
-> > +	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
-> > +	mutex_unlock(&connector->eld_mutex);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int drm_connector_hdmi_codec_hook_plugged_cb(struct device *dev,
-> > +						    void *data,
-> > +						    hdmi_codec_plugged_cb fn,
-> > +						    struct device *codec_dev)
-> > +{
-> > +	struct drm_connector *connector = data;
-> > +
-> > +	mutex_lock(&connector->hdmi_codec.lock);
-> > +
-> > +	connector->hdmi_codec.plugged_cb = fn;
-> > +	connector->hdmi_codec.plugged_cb_dev = codec_dev;
-> > +
-> > +	fn(codec_dev, connector->hdmi_codec.last_state);
-> > +
-> > +	mutex_unlock(&connector->hdmi_codec.lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +void drm_connector_hdmi_codec_plugged_notify(struct drm_connector *connector,
-> > +					     bool plugged)
-> > +{
-> > +	mutex_lock(&connector->hdmi_codec.lock);
-> > +
-> > +	connector->hdmi_codec.last_state = plugged;
-> > +
-> > +	if (connector->hdmi_codec.plugged_cb &&
-> > +	    connector->hdmi_codec.plugged_cb_dev)
-> > +		connector->hdmi_codec.plugged_cb(connector->hdmi_codec.plugged_cb_dev,
-> > +						 connector->hdmi_codec.last_state);
-> > +
-> > +	mutex_unlock(&connector->hdmi_codec.lock);
-> > +}
-> > +EXPORT_SYMBOL(drm_connector_hdmi_codec_plugged_notify);
-> > +
-> > +static const struct hdmi_codec_ops drm_connector_hdmi_codec_ops = {
-> > +	.audio_startup = drm_connector_hdmi_codec_audio_startup,
-> > +	.prepare = drm_connector_hdmi_codec_prepare,
-> > +	.audio_shutdown = drm_connector_hdmi_codec_audio_shutdown,
-> > +	.mute_stream = drm_connector_hdmi_codec_mute_stream,
-> > +	.get_eld = drm_connector_hdmi_codec_get_eld,
-> > +	.get_dai_id = drm_connector_hdmi_codec_get_dai_id,
-> > +	.hook_plugged_cb = drm_connector_hdmi_codec_hook_plugged_cb,
-> > +};
-> > +
-> > +/**
-> > + * drm_connector_hdmi_codec_init - Initialize HDMI Codec device for the DRM connector
-> 
-> I think it'd be better to call it drm_connector_hdmi_audio_init over
-> drm_connector_hdmi_codec_init (feature over implementation).
-> 
-> > + * @connector: A pointer to the connector to allocate codec for
-> > + * @hdmi_codec_dev: device to be used as a parent for the HDMI Codec
-> > + * @max_i2s_playback_channels: maximum number of playback I2S channels
-> > + * @spdif_playback: set if HDMI codec has S/PDIF playback port
-> > + * @dai_port: sound DAI port, -1 if it is not enabled
-> > + *
-> > + * Create a HDMI codec device to be used with the specified connector.
-> > + *
-> > + * Returns:
-> > + * Zero on success, error code on failure.
-> > + */
-> > +int drm_connector_hdmi_codec_init(struct drm_connector *connector,
-> > +				  struct device *hdmi_codec_dev,
-> > +				  unsigned int max_i2s_playback_channels,
-> > +				  bool spdif_playback,
-> > +				  int dai_port)
-> > +{
-> > +	struct hdmi_codec_pdata codec_pdata = {
-> > +		.ops = &drm_connector_hdmi_codec_ops,
-> > +		.max_i2s_channels = max_i2s_playback_channels,
-> > +		.i2s = !!max_i2s_playback_channels,
-> > +		.spdif = spdif_playback,
-> > +		.no_i2s_capture = true,
-> > +		.no_spdif_capture = true,
-> > +		.data = connector,
-> > +	};
-> > +	struct platform_device *pdev;
-> > +
-> > +	connector->hdmi_codec.dai_port = dai_port;
-> > +
-> > +	if (!connector->hdmi.funcs->codec_funcs->prepare ||
-> > +	    !connector->hdmi.funcs->codec_funcs->audio_shutdown)
-> > +		return -EINVAL;
-> > +
-> > +	pdev = platform_device_register_data(hdmi_codec_dev,
-> > +					     HDMI_CODEC_DRV_NAME,
-> > +					     PLATFORM_DEVID_AUTO,
-> > +					     &codec_pdata, sizeof(codec_pdata));
-> > +	if (IS_ERR(pdev))
-> > +		return PTR_ERR(pdev);
-> > +
-> > +	connector->hdmi_codec.codec_pdev = pdev;
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL(drm_connector_hdmi_codec_init);
-> > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> > index 1e2b25e204cb523d61d30f5409faa059bf2b86eb..1d113c0ceec7ce8196a412d7c00a1737175c6fbe 100644
-> > --- a/include/drm/drm_connector.h
-> > +++ b/include/drm/drm_connector.h
-> > @@ -46,6 +46,8 @@ struct drm_property_blob;
-> >  struct drm_printer;
-> >  struct drm_privacy_screen;
-> >  struct edid;
-> > +struct hdmi_codec_daifmt;
-> > +struct hdmi_codec_params;
-> >  struct i2c_adapter;
-> >  
-> >  enum drm_connector_force {
-> > @@ -1141,6 +1143,52 @@ struct drm_connector_state {
-> >  	struct drm_connector_hdmi_state hdmi;
-> >  };
-> >  
-> > +struct drm_connector_hdmi_codec_funcs {
-> > +	/**
-> > +	 * @audio_startup:
-> > +	 *
-> > +	 * Called when ASoC starts an audio stream setup. The
-> > +	 * @hdmi_audio_startup is optional.
-> > +	 *
-> > +	 * Returns:
-> > +	 * 0 on success, a negative error code otherwise
-> > +	 */
-> > +	int (*audio_startup)(struct drm_connector *connector);
-> > +
-> > +	/**
-> > +	 * @prepare:
-> > +	 * Configures HDMI-encoder for audio stream. Can be called
-> > +	 * multiple times for each setup. Mandatory.
-> > +	 *
-> > +	 * Returns:
-> > +	 * 0 on success, a negative error code otherwise
-> > +	 */
-> > +	int (*prepare)(struct drm_connector *connector,
-> > +		       struct hdmi_codec_daifmt *fmt,
-> > +		       struct hdmi_codec_params *hparms);
-> 
-> Missing newline
-> 
-> > +	/**
-> > +	 * @audio_shutdown:
-> > +	 *
-> > +	 * Shut down the audio stream. Mandatory.
-> > +	 *
-> > +	 * Returns:
-> > +	 * 0 on success, a negative error code otherwise
-> > +	 */
-> > +	void (*audio_shutdown)(struct drm_connector *connector);
-> 
-> And thus we can probably just call that one shutdown?
+Reviewed-by: Tanmay Shah <tanmay.shah@amd.com>
 
-It should be called automatically by the sound system. I'd rather not
-call items directly that we are not supposed to call.
+On 12/16/24 1:16 AM, Michal Simek wrote:
+> 
+> 
+> On 12/14/24 10:12, Uros Bizjak wrote:
+>> struct zynqmp_ipi_pdata __percpu *pdata is not a per-cpu variable,
+>> so it should not be annotated with __percpu annotation.
+>>
+>> Remove invalid __percpu annotation to fix several
+>>
+>> zynqmp-ipi-mailbox.c:920:15: warning: incorrect type in assignment 
+>> (different address spaces)
+>> zynqmp-ipi-mailbox.c:920:15:    expected struct zynqmp_ipi_pdata 
+>> [noderef] __percpu *pdata
+>> zynqmp-ipi-mailbox.c:920:15:    got void *
+>> zynqmp-ipi-mailbox.c:927:56: warning: incorrect type in argument 3 
+>> (different address spaces)
+>> zynqmp-ipi-mailbox.c:927:56:    expected unsigned int [usertype] 
+>> *out_value
+>> zynqmp-ipi-mailbox.c:927:56:    got unsigned int [noderef] __percpu *
+>> ...
+>>
+>> and several
+>>
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:924:9: warning: dereference of 
+>> noderef expression
+>> ...
+>>
+>> sparse warnings.
+>>
+>> There were no changes in the resulting object file.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 6ffb1635341b ("mailbox: zynqmp: handle SGI for shared IPI")
+>> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+>> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+>> Cc: Michal Simek <michal.simek@amd.com>
+>> Cc: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>> v2: - Fix typo in commit message
+>>      - Add Fixes and Cc: stable.
+>> ---
+>>   drivers/mailbox/zynqmp-ipi-mailbox.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/ 
+>> zynqmp-ipi-mailbox.c
+>> index aa5249da59b2..0c143beaafda 100644
+>> --- a/drivers/mailbox/zynqmp-ipi-mailbox.c
+>> +++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+>> @@ -905,7 +905,7 @@ static int zynqmp_ipi_probe(struct platform_device 
+>> *pdev)
+>>   {
+>>       struct device *dev = &pdev->dev;
+>>       struct device_node *nc, *np = pdev->dev.of_node;
+>> -    struct zynqmp_ipi_pdata __percpu *pdata;
+>> +    struct zynqmp_ipi_pdata *pdata;
+>>       struct of_phandle_args out_irq;
+>>       struct zynqmp_ipi_mbox *mbox;
+>>       int num_mboxes, ret = -EINVAL;
+> 
+> Tanmay: Please take a look
+> 
+> I think this patch is correct. Pdata structure is allocated only once 
+> not for every CPU and marking here is not correct. Information from 
+> zynqmp_ipi_pdata are likely fixed and the same for every CPU. Only IRQ 
+> handling is done per cpu basis but that's it.
+> 
+> Reviewed-by: Michal Simek <michal.simek@amd.com>
+> 
+> Thanks,
+> Michal
+> 
 
--- 
-With best wishes
-Dmitry
 
