@@ -1,100 +1,304 @@
-Return-Path: <linux-kernel+bounces-447121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5DF9F2DA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:01:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45DB9F2DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049B7166E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF31883E88
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4D6201110;
-	Mon, 16 Dec 2024 10:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F594202F8C;
+	Mon, 16 Dec 2024 10:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ipKaYN8k"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="fXP8kj+P"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBE01C54BE
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE21202C4F;
+	Mon, 16 Dec 2024 10:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343274; cv=none; b=JDBV6n9/HKO/cf52dWnW+EEypVISApPCkrk8yOktZw3+NkgJpLTMAO8aGasv/d4dvtxKtT2BQQXqsDQ3IOC0iE3Y1rf6xGaOYrN2csv4Cy0cLPdvaYY/gzBN1lp7V71fJaE9VsnzM5khbUIu9jUEVByz6Qu6FRC3uvTqTI3SBPk=
+	t=1734343585; cv=none; b=hvbOJuaOrCfiej+D5OhaO5MuVRgVcMypVq+HvhHcWWKNww4R0QUGqlayEZZe3EBSK3FcQ83bXEATy52TlieKzU6bLL4+vahaJUIQE9E3Ry1ReQ6KSXY9/HuptOgBmVdx1Xd/Dmd5Rpuith8yl9VIIKRv2qgkcKCS1VMABlQ+BPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343274; c=relaxed/simple;
-	bh=8o5jTEa5ebzOtzZM3gpGo3F5kdkUdqu2jYjbHg/1rL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xw50B0EIocfJidC1gqZs6fzKlINnzsmp6rcMAC4rMCMm4VtQqqSFwxj8fNOiT+CPYZb0l63ywxraKg6D+58d3dKFHdaocVTWmOQkX+XF9Ek41cJcb9KcFdi5A0kglCovjOKxrEKOs9DSWyowSaGvcMtRldwtRx79Rw+Dnwcpqz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ipKaYN8k; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4679b5c66d0so384321cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 02:01:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734343271; x=1734948071; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fwq5ggD/nJ1Jxh/jaamtYJrA0D6FiVs9BLcdVRZw1ww=;
-        b=ipKaYN8kPyBHJFXpafErK0vga4oOXRuEHtVw4v8hbMgNCfDrKaBzLHw3wC0qdtTz+n
-         IUzkKL1ikjNaFdKxj8xap0mWN4EF7CD5gQro5H+W4RFGsxR0Zu0n7geOPKQCtGvLNWs3
-         goBZ0Gxo29JrEwo6TbXUvMOyWubyFAWznyGE4n5M71aSnsc6qTO15AXdJB471PrtFX/m
-         q77/2drJNAHyK7HiUwOTJfC5r6yR8wUpM66lJCHbzccjtWH0Mmeik+5RYzk/ehMVELrf
-         4flxHdg4BScGW9sC5rxubbvfB+Tys/cdAdKDMlMHHneyRXj7mk/jtsgKu58mHBid7JtE
-         gGKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734343271; x=1734948071;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fwq5ggD/nJ1Jxh/jaamtYJrA0D6FiVs9BLcdVRZw1ww=;
-        b=bO1QUtJ5gFaqwpqt8DAcCau0QLsOE4I/BW+ig1edL6v9ECgEKnTd60fJNmi6kAksAn
-         xPyK25vISwUKjw5n/s0M5XS10stPzI08UVLX+ybz6p1oxJLfEe5/9j7CqCMTHH6uYFWS
-         HQzf9gO+XwmVuEf4roD0ljkMNehYzqsh1f5NS2YXCmO2X9Dzk3iAGtcx0Ju+vqt/2utD
-         sOsBbJTeP2G5NeELt51Wizw63GQtbWFv365DivkSJ48h6p3OqpPxok2xwEIYauqrMhIn
-         V1udn9aNzPPNIRtQyMhr28VLgdvGh5xbsppKwyXwDXA7Bv0O5Nhlo2k6gOli/R9XHLLw
-         CjnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdsQxWiUrLqFYJX7iGRWyW+opVKBatB52xGauqcONJDjWRoj/FiataSCouzwYphqaDomDUsggO78x7C4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5a1QHiFFRu76ME7r1Qbf8IUiZAX/jZt3YTWfq8LUTAs+xBdsy
-	ouk6kWryzBSEXVEvnGLPULU5XV1YIEgFQWtzwGAffyf6UDa4603YyeTh6rQ65zq4X5ugzraIFzn
-	P0vrTr42egDnamAFfmObREG7ajEwCrL7nTOCP70B6LJmuWKI34LpL5GM=
-X-Gm-Gg: ASbGncspd3fX0wpEUMYG2cQbGdZo2qD3IJXaWfuFTWHI8qc/emep9r1cfJWmrY1DqQk
-	yvAxNLoL3HLXMnGYZJAGcJNiroS7p6aI8jDAVNejg61KZ2AcXr5r3PRzTa8gN+ykabJFx
-X-Google-Smtp-Source: AGHT+IF5D+bUUP/otSIqXEjmjhLQdoX5kqC6bDKYp+Tf1iVR1unOxp0lNb68N/rNej8OuotRJ1wjQNALfXpxk6UU8sM=
-X-Received: by 2002:ac8:5d4c:0:b0:463:6fc7:e7cb with SMTP id
- d75a77b69052e-467b4a283a4mr5464631cf.11.1734343271175; Mon, 16 Dec 2024
- 02:01:11 -0800 (PST)
+	s=arc-20240116; t=1734343585; c=relaxed/simple;
+	bh=+UhIP1nfFyHeZ808tfIldBDwi0u0Oe9coKVU3RmIjCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H/oGACdiAPl3qC4kbIxkLi2PaOge6nXuaHUXuHXbY0to1Yrn6Xopz6bl3Dv6lB87pNHLFWGkd5gt5RFt27kEWFQTgMZmtT+jOXfuiu2sqjhZfDVrpX3VBcKARw0Mx4I+YZuydw2z6nedFQ9MBb7DYB+bj88UL0Gin751JBUjTXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=fXP8kj+P; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG745SY008787;
+	Mon, 16 Dec 2024 11:05:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	OKGfjVGwMA/zsXl85TBgrTG1yFr1Bpuudax75G1PJyQ=; b=fXP8kj+PXuOe+q7g
+	HWsi8AXR6+2S/YJFvJyjo5B8/J8SZ/PgjJZO+Of52bB+dOlv0zVbDyo/ZwPfaUmy
+	T3dc7TaemCDJOGzhqR7vOZ5PZvsN8jzFTQXYkmjMRyAJMFKISkyNL2rlBbnuyv56
+	D7ZrKg1d7ky6Z4zHKE42/TKGZ1AzcQWvDm9hrj1RWI0y1ViwXfIJY7ej/8sxyDDE
+	yqwdaL/YXHxf9ARpkUqKqZYDN9gw8BSFqAvoUjAkj9kYdIpoNL+GOcw1YodPvNo8
+	C+0wmzDmwWEaFlvmiGNP3+u5tRGT9M3ZfaKok2qAUL4JUgdx6gdntFeybkG92w74
+	CNu3JA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43jfg8ru40-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 11:05:23 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 61FE540046;
+	Mon, 16 Dec 2024 11:03:58 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AF45826AD7C;
+	Mon, 16 Dec 2024 11:02:09 +0100 (CET)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Dec
+ 2024 11:02:08 +0100
+Message-ID: <4e257489-4d90-4e47-a4d9-a2444627c356@foss.st.com>
+Date: Mon, 16 Dec 2024 11:02:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213-objtool-strict-v1-0-fd388f9d971f@google.com>
- <20241213-objtool-strict-v1-2-fd388f9d971f@google.com> <20241214005223.f2fansikbwovm3oo@jpoimboe>
-In-Reply-To: <20241214005223.f2fansikbwovm3oo@jpoimboe>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Mon, 16 Dec 2024 11:00:58 +0100
-X-Gm-Features: AbW1kvYh0Qp40TndjYKL3Uwl01lOD3gETa_kj_WPV9X2f7Vg1GPRlPG5NP24GBw
-Message-ID: <CA+i-1C20dBQGYU0gAJ7BGfo7ShSYSuZgB0Gr_Y-ei9gqXq83zw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: Add option to fail build on vmlinux objtool issues
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] PCI: stm32: Add PCIe endpoint support for
+ STM32MP25
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
+ <20241126155119.1574564-5-christian.bruel@foss.st.com>
+ <20241203152230.5mdrt27u5u5ecwcz@thinkpad>
+Content-Language: en-US
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <20241203152230.5mdrt27u5u5ecwcz@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Sat, 14 Dec 2024 at 01:52, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> Note that *any* objtool warning has a good change of being a major bug
-> in the kernel or compiler which could result in crashing the kernel or
-> breaking the livepatch consistency model.  So the option shouldn't be
-> restricted to noinstr builds only.  In which case it should be called
-> CONFIG_OBJTOOL_WERROR, analagous to CONFIG_WERROR.
+Hi Manivanna,
 
-Sure, sounds good too.
+On 12/3/24 16:22, Manivannan Sadhasivam wrote:
+> On Tue, Nov 26, 2024 at 04:51:18PM +0100, Christian Bruel wrote:
+> 
+> [...]
+> 
+>> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +	int ret;
+>> +
+>> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+>> +		dev_dbg(pci->dev, "Link is already enabled\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	ret = stm32_pcie_enable_link(pci);
+>> +	if (ret) {
+>> +		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
+>> +		return ret;
+>> +	}
+> 
+> How the REFCLK is supplied to the endpoint? From host or generated locally?
 
-Just to make sure I'm on the same page - are you saying I should add
-the flag to $(objtool-args-y) instead of $(vmlinux-objtool-args-y)?
+ From Host only, we don't support the separated clock model.
+
+> 
+>> +
+>> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+>> +
+>> +	enable_irq(stm32_pcie->perst_irq);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +
+>> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
+>> +		dev_dbg(pci->dev, "Link is already disabled\n");
+>> +		return;
+>> +	}
+>> +
+>> +	disable_irq(stm32_pcie->perst_irq);
+>> +
+>> +	stm32_pcie_disable_link(pci);
+>> +
+>> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
+>> +}
+>> +
+>> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> +				unsigned int type, u16 interrupt_num)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +
+>> +	switch (type) {
+>> +	case PCI_IRQ_INTX:
+>> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
+>> +	case PCI_IRQ_MSI:
+>> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+>> +	default:
+>> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static const struct pci_epc_features stm32_pcie_epc_features = {
+>> +	.msi_capable = true,
+>> +	.align = 1 << 16,
+> 
+> Use SZ_64K
+> 
+
+OK
+
+>> +};
+>> +
+> 
+> [...]
+> 
+>> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+>> +			     struct platform_device *pdev)
+>> +{
+>> +	struct dw_pcie *pci = stm32_pcie->pci;
+>> +	struct dw_pcie_ep *ep = &pci->ep;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +				 STM32MP25_PCIECR_TYPE_MASK,
+>> +				 STM32MP25_PCIECR_EP);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+> 
+> You might want to do runtime resume before accessing regmap.
+
+OK
+
+>> +
+>> +	reset_control_assert(stm32_pcie->rst);
+>> +	reset_control_deassert(stm32_pcie->rst);
+>> +
+>> +	ep->ops = &stm32_pcie_ep_ops;
+>> +
+>> +	ret = dw_pcie_ep_init(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+>> +		goto err_init;
+>> +	}
+>> +
+>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+>> +		goto err_clk;
+>> +	}
+>> +
+>> +	ret = dw_pcie_ep_init_registers(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+>> +		goto err_init_regs;
+>> +	}
+>> +
+>> +	pci_epc_init_notify(ep->epc);
+>> +
+>> +	return 0;
+>> +
+>> +err_init_regs:
+>> +	stm32_pcie_disable_resources(stm32_pcie);
+>> +
+>> +err_clk:
+>> +	dw_pcie_ep_deinit(ep);
+>> +
+>> +err_init:
+>> +	pm_runtime_put_sync(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static int stm32_pcie_probe(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie;
+>> +	struct dw_pcie *dw;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+>> +	if (!stm32_pcie)
+>> +		return -ENOMEM;
+>> +
+>> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
+>> +	if (!dw)
+>> +		return -ENOMEM;
+> 
+> Why can't you allocate it statically inside 'struct stm32_pcie'?
+
+Will do
+
+> 
+>> +
+>> +	stm32_pcie->pci = dw;
+>> +
+>> +	dw->dev = dev;
+>> +	dw->ops = &dw_pcie_ops;
+>> +
+>> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
+>> +	if (IS_ERR(stm32_pcie->regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
+>> +				     "No syscfg specified\n");
+>> +
+>> +	stm32_pcie->phy = devm_phy_get(dev, "pcie-phy");
+>> +	if (IS_ERR(stm32_pcie->phy))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
+>> +				     "failed to get pcie-phy\n");
+>> +
+>> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->clk))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
+>> +				     "Failed to get PCIe clock source\n");
+>> +
+>> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
+>> +	if (IS_ERR(stm32_pcie->rst))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
+>> +				     "Failed to get PCIe reset\n");
+>> +
+>> +	stm32_pcie->perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
+>> +	if (IS_ERR(stm32_pcie->perst_gpio))
+>> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
+>> +				     "Failed to get reset GPIO\n");
+>> +
+>> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
+> 
+> Hmm, so PHY mode is common for both endpoint and host?
+
+Yes it is. We need to init the phy here because it is a clock source for 
+the PCIe core clk
+
+Thanks
+
+Christian
+
+> 
+> - Mani
+> 
 
