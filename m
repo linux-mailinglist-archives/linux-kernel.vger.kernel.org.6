@@ -1,179 +1,111 @@
-Return-Path: <linux-kernel+bounces-447051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679A29F2C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:09:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A9E9F2C9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960081679AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BACA1889AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED25200BB3;
-	Mon, 16 Dec 2024 09:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD2200BB4;
+	Mon, 16 Dec 2024 09:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cctCAbYR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LgjlQtsF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5582E628;
-	Mon, 16 Dec 2024 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F96D2E628;
+	Mon, 16 Dec 2024 09:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734340187; cv=none; b=cN4tkCmk8To/IUy+k/HWw2kwdnn6BTvhr077BbOnjyR/vJn4LVA4fhrA/UuTvGXK7QIC6Y3kYYAaOsaSIukarIK6dmEt4Mc1GtuxzzPGMP3W1FMLSsj7zCWLV1M3gnAqePhNM4PjIWveaEzEnbpWLxmdJOCoRatNpwzWR2FwRX0=
+	t=1734340315; cv=none; b=IJkEz76JFscEjusV/XMXxGHaqFwKQDOEQH/qGn7VdsSIu3ZXn7F+WPmB2YrbVYg7UlHOr1xr48CtU7UL2Otjtymkqg5xRuGEbNa5RxcHZ6BZD3HZTt8mFWy2HHWIa34MAeEAUIfNu0SSImqMr+lhsoX+sVpQclGxZXjC4vRUpOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734340187; c=relaxed/simple;
-	bh=X52xQmeRvmCvazkS+Ms21FXQkeUYcg+KEnCBdAPKsKo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CKEFeoczdMPrbGhuBeakgttgkwgLHBCKmON79sWTm+OMf7JbUp4NbZ+CGSFD2LzpRJnpO37zf97B0fcQHL2XVk7a/ER0jrwK6TCYrXZogzoDb3DlBUqBehGY1lFKrFKsCbXKK9szp7hQdmC+OIa2ONYWswTdHNwW7ndFuHAeHnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cctCAbYR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E26C4CED0;
-	Mon, 16 Dec 2024 09:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734340187;
-	bh=X52xQmeRvmCvazkS+Ms21FXQkeUYcg+KEnCBdAPKsKo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cctCAbYRWrbjXJfufpjd3nowwqC8anwHN+n/Cri5Idn30lAdBNwV6ukV+FhLxN4xu
-	 RixlyaxLA+gaXA8zfaPlEEyCtfD9q3Hnp7Y03dxGLiZe0uKN/iIkdGb8Sg/zflkiUI
-	 TEuK+OsWXpkLeI+EyJpud0ZccLBwiGjfWtpPldmJJ2JUKcM4IQLjblY2liAQ2txwrA
-	 i3O064JoMU0hGmplKCxW/GdTJtgAqiKzNV/ME9afxSKbMIybmAe8/ahj77qIGJ11GX
-	 3wNuYE9adGfLMkhqfYmW69HA7bS7pWeZRRbLMuZJy8bXdC7rbZ6/0FJDivTjIdTj2u
-	 tas1YxZ2spVHQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tN76m-0046dr-RG;
-	Mon, 16 Dec 2024 09:09:44 +0000
-Date: Mon, 16 Dec 2024 09:09:43 +0000
-Message-ID: <867c80ro2w.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com>
-Cc: catalin.marinas@arm.com,
-	joey.gouly@arm.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	suzuki.poulose@arm.com,
-	syzkaller-bugs@googlegroups.com,
-	will@kernel.org,
-	yuzenghui@huawei.com
-Subject: Re: [syzbot] [kvmarm?] BUG: unable to handle kernel paging request in __hwasan_check_x0_ADDR
-In-Reply-To: <675aa352.050a0220.1ac542.0018.GAE@google.com>
-References: <675aa352.050a0220.1ac542.0018.GAE@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734340315; c=relaxed/simple;
+	bh=jc+ktQpe1snGAisoPsN0qsFlu6le9/TqPnUf04ohDYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dUt9IhzOQZjIigNx8S/ocQv4xnmrbmJX5rWOSQgRoo7Bc6QJKKAOqE+EFpDZfGos4p+4NkUhdiF5zR6JsD9681uTerZuqgZkJWYVNi3riss94upbyScdGBTlwogcMnKyoJfau/qzZCBJCp6lBrS6k8TyUxRKTXWRi6fgqcM/c3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LgjlQtsF; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG85Um5027009;
+	Mon, 16 Dec 2024 09:11:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pp1; bh=jc+ktQpe1snGAisoPsN0qsFlu6le9/TqPnUf04ohDYE=; b=LgjlQtsF
+	uCWedpcoooVezw6YEMeSvHgzLqd9LocHH2MRUbSTRMZ7w9QACBO2I3GgqW5I/9il
+	gcgr44ZNVF2FsuX6nJF/TcHum9wzmG+STIZfKut3ClrLhGQOlG7mCcw0dkS8kuyq
+	vJMLWmWaK2jfbGBuP4w1sO53a+XgEp2Z6M2Ib2Dcem7YfjK34RhwXYVRdlaAqXbK
+	NY4zifyNvNP0t5jYAy6QfudDIG1uobDdf2HLVykLm4grP1YhVP1papB7yFZtfrOm
+	8XZ7TGxbLJigvyX+UHlCYZsJo3T0REFRfmX0wzevYQfCzcx8Q/qoumuWlr72GjAn
+	TVXbk6bAMpcxnA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd289fa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 09:11:51 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BG97mSa025745;
+	Mon, 16 Dec 2024 09:11:51 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd289f7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 09:11:51 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG56cqV024044;
+	Mon, 16 Dec 2024 09:11:50 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hnuk54c8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 09:11:50 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BG9BmiQ29295160
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 09:11:49 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D4BBF2004D;
+	Mon, 16 Dec 2024 09:11:48 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C4AB20040;
+	Mon, 16 Dec 2024 09:11:48 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.179.5.32])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 16 Dec 2024 09:11:48 +0000 (GMT)
+Date: Mon, 16 Dec 2024 10:11:46 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: GPIB build failures
+Message-ID: <Z1/u0u9Nu4aEHA5h@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com, catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: n7FPiz6nEczHTxmAXZPgqfP8F6fAcdDe
+X-Proofpoint-GUID: swZOic95wKZ-YcZEdGzI69jv_opTL1sv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011
+ mlxlogscore=588 priorityscore=1501 malwarescore=0 impostorscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160074
 
-On Thu, 12 Dec 2024 08:48:18 +0000,
-syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com> wrote:
-> 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    5db899a34f75 Merge remote-tracking branch 'kernel/kvmarm/n..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16db78f8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fde68ab6d6c8c8ab
-> dashboard link: https://syzkaller.appspot.com/bug?extid=67a9ec5b1706e0184581
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-5db899a3.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4938b757ff4a/vmlinux-5db899a3.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/936938b47987/Image-5db899a3.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com
-> 
-> Unable to handle kernel paging request at virtual address efff800000000137
-> KASAN: probably user-memory-access in range [0x0000000000001370-0x000000000000137f]
-> Mem abort info:
->   ESR = 0x0000000096000005
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x05: level 1 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> swapper pgtable: 4k pages, 52-bit VAs, pgdp=0000000044a53000
-> [efff800000000137] pgd=1000000049992003, p4d=1000000049993003, pud=0000000000000000
-> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 6560 Comm: syz.2.929 Not tainted 6.12.0-rc7-syzkaller-g5db899a34f75 #0
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 80402009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : __hwasan_check_x0_67043363+0x4/0x30
-> lr : vgic_get_irq+0x7c/0x3d4 arch/arm64/kvm/vgic/vgic.c:93
-> sp : ffff80008c597650
-> x29: ffff80008c597660 x28: 00000000000000e0 x27: 0000000000000004
-> x26: 0000000000000002 x25: ffff800083a7fe20 x24: 16f0000014accd90
-> x23: 16f0000014acb9a0 x22: 0000000000000000 x21: a9ff80008c583000
-> x20: 0000000000000001 x19: efff800000000000 x18: 0000000000000005
-> x17: 0000000000000000 x16: 0000000000000137 x15: 0000000000000000
-> x14: 0000000000000002 x13: 0000000000000003 x12: 70f000000a33ba80
-> x11: 0000000000080000 x10: 0000000000001378 x9 : efff800000000000
-> x8 : 0000000000000001 x7 : 0000000000000001 x6 : 0000000000000001
-> x5 : ffff80008c597858 x4 : ffff8000800f2b38 x3 : ffff8000800f7a00
-> x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000001378
-> Call trace:
->  __hwasan_check_x0_67043363+0x4/0x30
->  vgic_mmio_write_invlpi+0xb0/0x174 arch/arm64/kvm/vgic/vgic-mmio-v3.c:546
->  dispatch_mmio_write+0x2a4/0x308
->  kvm_iodevice_write include/kvm/iodev.h:54 [inline]
->  __kvm_io_bus_write+0x290/0x340 virt/kvm/kvm_main.c:5852
->  kvm_io_bus_write+0x100/0x1bc virt/kvm/kvm_main.c:5877
->  io_mem_abort+0x4b8/0x7a0 arch/arm64/kvm/mmio.c:204
->  kvm_handle_guest_abort+0xb4c/0x1c64 arch/arm64/kvm/mmu.c:1880
->  handle_trap_exceptions arch/arm64/kvm/handle_exit.c:351 [inline]
->  handle_exit+0x1a0/0x274 arch/arm64/kvm/handle_exit.c:381
->  kvm_arch_vcpu_ioctl_run+0xbc0/0x15b0 arch/arm64/kvm/arm.c:1279
->  kvm_vcpu_ioctl+0x660/0xf78 virt/kvm/kvm_main.c:4475
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> Code: a90efbfd d2800441 143a3ed3 9344dc10 (38706930)
+Hi Dave,
 
-This seems to be something that is already handled by d561491ba927c
-("KVM: arm64: vgic-v3: Sanitise guest writes to GICR_INVLPIR"), which
-made it into 6.13-rc1.
+Drivers in drivers/staging/gpib/ cause multiple build errors (I guess not only)
+on s390, when allyesconfig configuration is used. Please, let me know if I am
+missing something.
 
-The branch you are using doesn't seem to contain that particular
-commit. I have now updated it to -rc3, which should plug that issue.
-
-Let me know if it keeps appearing.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks!
 
