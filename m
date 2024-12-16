@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-448064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19599F3A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:14:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7A39F3A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC1737A4405
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:14:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E3016D6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FF81D54EF;
-	Mon, 16 Dec 2024 20:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD8B1D63C0;
+	Mon, 16 Dec 2024 20:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GFS9j/hU"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VhRkQidi"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B821D1730
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386E01D515B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734379998; cv=none; b=uqy4/BSxX0YrF2HTPmHjkBcvsSVhnjC+D0Rsu0hI6r7eFnfuyowZkhTWKvTHqeng06Pn2lskvk6In0rPRRDwdbSUotYp8DuoH5RUllGxHp2A9CrXLMq/6Scer1tgUAYCntaS+KGkBSJx2/6kCbItPZ9G9RmL2N5/F3xvVBzfEDU=
+	t=1734380000; cv=none; b=DEVAJ7enNSCL+fW8hyM8PGGm8717f8NE5+J4FkrbA1m6JIbfm2enSctwTnZkII6qY++ifpDBfjBKtgIhC69dZ72cGNO/EJAr3uhh8omzdiPWEqoDig8qqgT8uCV+ZdyVA5B0UF3Nr5ubzmoy9Gp75hErzsNvENFcRGkMaqLwf1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734379998; c=relaxed/simple;
-	bh=RYk23+XCY5BrG85isbX7d7sB012sPIA2IgncWgxuiqg=;
+	s=arc-20240116; t=1734380000; c=relaxed/simple;
+	bh=kgkb/U2cImJvjDQzwb8/y9+msWpDFa2mSq28GSAc/qE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dPWI3aGFPTPm9MKJ4qg27V0jpyRoHMLBAssaZ0iff7ns/tPb7QLCEv8YISR6qY80EdBu+mIQoNniLr5mVVPMwpolwgKdBxR/HDPWI5qEW9G61UoRYEswZZnBa08ZsJMQzWvVJgT941eMoM8akDRWbEq2PwYdq2c4Wo+pARJpYbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GFS9j/hU; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=H+tvL/xGhH9zBK/+napt741v83Ri4iWLhzMvvvd413h5wn6DK510yCgcC6J/hUmabv0oMDu3PKkjeu3bjBpJHChlq8Xh6yflH5ES2Ks9tUhTmMf2/3fE3EE+Ap7XrSj2Flci3ofpX1dHblZpNmDLMFNpsjBZ6gdYCmsEj9wb5s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VhRkQidi; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso24238215e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:13:16 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436281c8a38so29761985e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:13:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734379995; x=1734984795; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1734379996; x=1734984796; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BWohpvsaidJAImWnCCb6nIgTAJEp6TGh7j1uXezpKLk=;
-        b=GFS9j/hUxZi7Nts6eGzuXbKr+jHXI/SNhfH5FkHHdePGaYX0hcwH5QGIlcAK7jNe7b
-         I0chkwGBOiqx/JKMEEUIP5oNweEhKPXF1K0JceG8GcS5wj1PIDHUKTRaYZf7VSZMs523
-         LQRJcs8aCSjR7MK0Nau2gnzqc6AEZMT2StQrXWaTOymXQf43RfZB/jTF0ywQkJASRLx7
-         tOuAEHkrziM8JqN7cC/r9fJAdxZ1K4HP9bV5MuTQJV1Q1fWxfdseOSbG+ybaiGIqXfAu
-         5tJSPTTXhF8JW2tKGfQ08nPpgLy+DeUc+/7C+suQF6LnCi30fWKVWv6BTRYPFZxjeshG
-         qt3Q==
+        bh=EcO2b6bGyel//lc1A0Ez4rBVc7IGRT8q21dTkVTikaM=;
+        b=VhRkQidiGWPYcJ9IIIzhgYGLRKgM2w4nOb14HB5O/N9dGsfwmKuDtdGxxwFQ/fjG31
+         RzDjrNz/TPkcarDFKOGwwrlfmmHIOagcUITIoxRhX2aenUXQMS7q+s1OEJ8ZAIaDSbff
+         I0zVFMddEEGwYUN6DzKqxB/bX/tShF7p5nkcxWeqU2jND/ztxbA+23K8JEoyP5u6LY+l
+         dqYwaMmEkR03fZYlitifcaNXIJUV0pPGZlBT7sMDM5jujBP5PxBxefxHrjR6KqdPFg+r
+         /FrCuEOmwZoq9GX841roG0ByncxjA7S22mQSh/1gbod2NHdkT0muodD5U2N7s0UuJocd
+         1fWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734379995; x=1734984795;
+        d=1e100.net; s=20230601; t=1734379996; x=1734984796;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BWohpvsaidJAImWnCCb6nIgTAJEp6TGh7j1uXezpKLk=;
-        b=wQ+/qrtRQfGr4ykWaL1NaVI0BbIjCoz5XEkHs6XEPm3nwSalgtqOl/DCHrHjLz4t2H
-         k49miuVDIAYZk6HpiAE7JkpgEkie2h5KAOdGKH+bm1PU+FvMu4VZXP3mXqH5zLMeJJdr
-         m/XQGVsdeuzJvbr0wEPk2+MFajVBEc67m57VBv+cUIuh1EUCsnFHZ6FBeChg+WWQDpSh
-         qdikdyXsijeHXBzlRAdzPjzlmq3V3tDVU2myF1eifJ1nnkjixAodl3oo9X08OlG4zF9P
-         BH/gFLClVGfDZSEgMWongG5A+RzEgZMIRAUMhha9xGJIEWNzDVRCRn7nB7L6FwwFyBui
-         idqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXMw+4MndmjLz9sdVJs+lkxfI8n3RmHK9ATHCtCR0aAtEHFPUOvT4dYWolm/ySfFiGPVE+mv4spxpcYTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3RLLl4i4+uECjHsrkIbsKqGs5CDe2EZwynpa5bSh1Plb0b7ki
-	rjM/Jpin447QwyWbtF9OsE1Y73fGZIlhe03rH92Z5w+oI+uxu3EHYyLGqcad/FA=
-X-Gm-Gg: ASbGnctIOUY/m1I44CzPSk7touPCPq016A2uSTovyk4AcSu7j3vHFgacDUhyMvOm1RK
-	UMKfDJsrpos7XbyMyeLOyA+99ufsQczM0cLWn8Z2uD2Mh7QIt2OsZVi8vM4ghF5UxJUThxVJsel
-	b/YiNZYRro89aRyxGQfHwe8FaJ+0iVHWVHHJxPyfjoWpEQZVnUWsYCuEk4oPGczI8Pbef/exlL1
-	H9zIes8CLdA5vLqtiMuD4XeJ7PTKpb2srhkaNTE5NKQyj7pU4GVwU+5dQ==
-X-Google-Smtp-Source: AGHT+IHJNXDQlYkb8clBBC3f+NAsF9zFsTHuTzAExcEQsQ+x/QllJKlwA0cXeJSh82Dvjt73cqZ58g==
-X-Received: by 2002:a05:600c:1c1c:b0:434:f953:eed with SMTP id 5b1f17b1804b1-4362aab0ec4mr135894205e9.30.1734379994894;
-        Mon, 16 Dec 2024 12:13:14 -0800 (PST)
+        bh=EcO2b6bGyel//lc1A0Ez4rBVc7IGRT8q21dTkVTikaM=;
+        b=LpxgYdD7aeAfk1olWtNd6pic5jiXdMzY6Dyrqt7DD3e6LuZZtWXMZDdf/WCjBSQbzY
+         U9eAtYHwnCSKM3iZs3qtVW8w9l8IS8SnTNv101dyqR9np6xVs7VsmbDDjQRA1ixq/aaU
+         J0m6TdWp5t501SpADuFtuhsxrqr3PP0n12GSsKVKlLGm6SgZRQfqGYXA6Bl4k/vrr1yM
+         6wwRlTk7M9XRRZ/tmlSdmozza80AJYd9godf2re38MDjGB+Xlgz35tfHjvZqG5MJsJoK
+         ZO19lXW3vTjPNrKpj1942BBHG+IrU8AzkRiPOxFg4wah3j5wGBwast+oqVrBTKmya4qS
+         VfWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXv3gajDAL9kS3z7apGLLS/BooTaEqkPbe05uSVjSQTP8zB+lcGUY+eeckUskPO05X+xhmFj98fyfiTbuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxRsKtZT4QLxCw3aZBLZjrdAcT+6po4F5wUp2iHGfmbQ3YaxLS
+	+hf9wsL5f689XMTMf4lM+WiWDY1oIMVoJU2XBtkDGBv4nZgZpjcUcgU7ogiXh8k=
+X-Gm-Gg: ASbGncuteIB2L6CZWUj4WcbF7gOBbYINCtuKKhRqBqzE3I6AqzF92zW9C28u5Y8b562
+	NeW0/PDpbL3nJHPzZ8RI51q6UO5umTtFHn1LOx/lvjz1eVzT4Sk2I5bpjXubq8wgBGYoLudz34X
+	TVWUEEbMqTmjHBUKEF4+kVjgerf4AiSExGaheXT6ASo0SOfMlkMuRDgbhOOkl4SU7XCQaXlNCs6
+	dzfk7GvDHiDFwuPtQOP7TDj9xVezcWzXtwul1OrYGI6dD+e0pw+lRpXKA==
+X-Google-Smtp-Source: AGHT+IE1+7v6rC9j0mpAzs7abmQ8Ecbmx3mX7nPYgbcuKpdGXUfmDxdl7UNMEdc42gIrM1YtJroZEA==
+X-Received: by 2002:a05:600c:1da1:b0:431:547e:81d0 with SMTP id 5b1f17b1804b1-4362aa4386dmr122477995e9.11.1734379996481;
+        Mon, 16 Dec 2024 12:13:16 -0800 (PST)
 Received: from blackbook2.suse.cz ([84.19.86.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4364a379d69sm473715e9.0.2024.12.16.12.13.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4364a379d69sm473715e9.0.2024.12.16.12.13.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 12:13:14 -0800 (PST)
+        Mon, 16 Dec 2024 12:13:16 -0800 (PST)
 From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
 To: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: Ingo Molnar <mingo@redhat.com>,
 	Mel Gorman <mgorman@suse.de>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Frederic Weisbecker <fweisbecker@suse.com>
-Subject: [RFC PATCH 3/9] sched: Always initialize rt_rq's task_group
-Date: Mon, 16 Dec 2024 21:12:59 +0100
-Message-ID: <20241216201305.19761-4-mkoutny@suse.com>
+Subject: [RFC PATCH 4/9] sched: Add commadline option for RT_GROUP_SCHED toggling
+Date: Mon, 16 Dec 2024 21:13:00 +0100
+Message-ID: <20241216201305.19761-5-mkoutny@suse.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241216201305.19761-1-mkoutny@suse.com>
 References: <20241216201305.19761-1-mkoutny@suse.com>
@@ -98,67 +98,119 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-rt_rq->tg may be NULL which denotes the root task_group.
-Store the pointer to root_task_group directly so that callers may use
-rt_rq->tg homogenously.
-
-root_task_group exists always with CONFIG_CGROUPS_SCHED,
-CONFIG_RT_GROUP_SCHED depends on that.
-
-This changes root level rt_rq's default limit from infinity to the
-value of (originally) global RT throttling.
+Only simple implementation with a static key wrapper, it will be wired
+in later.
 
 Signed-off-by: Michal Koutný <mkoutny@suse.com>
 ---
- kernel/sched/rt.c    | 7 ++-----
- kernel/sched/sched.h | 2 ++
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  5 ++++
+ init/Kconfig                                  | 11 ++++++++
+ kernel/sched/core.c                           | 25 +++++++++++++++++++
+ kernel/sched/sched.h                          | 17 +++++++++++++
+ 4 files changed, 58 insertions(+)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 1940301c40f7d..41fed8865cb09 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -89,6 +89,7 @@ void init_rt_rq(struct rt_rq *rt_rq)
- 	rt_rq->rt_throttled = 0;
- 	rt_rq->rt_runtime = 0;
- 	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
-+	rt_rq->tg = &root_task_group;
- #endif
- }
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 3872bc6ec49d6..1c890c9ad8716 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5937,6 +5937,11 @@
+ 			Memory area to be used by remote processor image,
+ 			managed by CMA.
  
-@@ -484,9 +485,6 @@ static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
++	rt_group_sched=	[KNL] Enable or disable SCHED_RR/FIFO group scheduling
++			when CONFIG_RT_GROUP_SCHED=y. Defaults to
++			!CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED.
++			Format: <bool>
++
+ 	rw		[KNL] Mount root device read-write on boot
  
- static inline u64 sched_rt_runtime(struct rt_rq *rt_rq)
+ 	S		[KNL] Run init in single mode
+diff --git a/init/Kconfig b/init/Kconfig
+index a20e6efd3f0fb..7823e5ac0311d 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1076,6 +1076,17 @@ config RT_GROUP_SCHED
+ 	  realtime bandwidth for them.
+ 	  See Documentation/scheduler/sched-rt-group.rst for more information.
+ 
++config RT_GROUP_SCHED_DEFAULT_DISABLED
++	bool "Require boot parameter to enable group scheduling for SCHED_RR/FIFO"
++	depends on RT_GROUP_SCHED
++	default n
++	help
++	  When set, the RT group scheduling is disabled by default. The option
++	  is in inverted form so that mere RT_GROUP_SCHED enables the group
++	  scheduling.
++
++	  Say N if unsure.
++
+ config EXT_GROUP_SCHED
+ 	bool
+ 	depends on SCHED_CLASS_EXT && CGROUP_SCHED
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c6d8232ad9eea..47898f895a5a3 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -9844,6 +9844,31 @@ static struct cftype cpu_legacy_files[] = {
+ 	{ }	/* Terminate */
+ };
+ 
++#ifdef CONFIG_RT_GROUP_SCHED
++# ifdef RT_GROUP_SCHED_DEFAULT_DISABLED
++DEFINE_STATIC_KEY_FALSE(rt_group_sched);
++# else
++DEFINE_STATIC_KEY_TRUE(rt_group_sched);
++# endif
++
++static int __init setup_rt_group_sched(char *str)
++{
++	long val;
++
++	if (kstrtol(str, 0, &val) || val < 0 || val > 1) {
++		pr_warn("Unable to set rt_group_sched\n");
++		return 1;
++	}
++	if (val)
++		static_branch_enable(&rt_group_sched);
++	else
++		static_branch_disable(&rt_group_sched);
++
++	return 1;
++}
++__setup("rt_group_sched=", setup_rt_group_sched);
++#endif /* CONFIG_RT_GROUP_SCHED */
++
+ static int cpu_extra_stat_show(struct seq_file *sf,
+ 			       struct cgroup_subsys_state *css)
  {
--	if (!rt_rq->tg)
--		return RUNTIME_INF;
--
- 	return rt_rq->rt_runtime;
- }
- 
-@@ -1156,8 +1154,7 @@ inc_rt_group(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
- 	if (rt_se_boosted(rt_se))
- 		rt_rq->rt_nr_boosted++;
- 
--	if (rt_rq->tg)
--		start_rt_bandwidth(&rt_rq->tg->rt_bandwidth);
-+	start_rt_bandwidth(&rt_rq->tg->rt_bandwidth);
- }
- 
- static void
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 76f5f53a645fc..38325bd32a0e0 100644
+index 38325bd32a0e0..1c457dc1472a3 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -820,6 +820,8 @@ struct rt_rq {
- 	unsigned int		rt_nr_boosted;
+@@ -1501,6 +1501,23 @@ static inline bool sched_group_cookie_match(struct rq *rq,
+ }
  
- 	struct rq		*rq;
-+#endif
-+#ifdef CONFIG_CGROUP_SCHED
- 	struct task_group	*tg;
- #endif
- };
+ #endif /* !CONFIG_SCHED_CORE */
++#ifdef CONFIG_RT_GROUP_SCHED
++# ifdef RT_GROUP_SCHED_DEFAULT_DISABLED
++DECLARE_STATIC_KEY_FALSE(rt_group_sched);
++static inline bool rt_group_sched_enabled(void)
++{
++	return static_branch_unlikely(&rt_group_sched);
++}
++# else
++DECLARE_STATIC_KEY_TRUE(rt_group_sched);
++static inline bool rt_group_sched_enabled(void)
++{
++	return static_branch_likely(&rt_group_sched);
++}
++# endif /* RT_GROUP_SCHED_DEFAULT_DISABLED */
++#else
++# define rt_group_sched_enabled()	false
++#endif /* CONFIG_RT_GROUP_SCHED */
+ 
+ static inline void lockdep_assert_rq_held(struct rq *rq)
+ {
 -- 
 2.47.1
 
