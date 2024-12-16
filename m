@@ -1,195 +1,93 @@
-Return-Path: <linux-kernel+bounces-447109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56C99F2D6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:55:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1ABD9F2D7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9BE67A171F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E1A1885389
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224AE201026;
-	Mon, 16 Dec 2024 09:55:24 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05FB202C58;
+	Mon, 16 Dec 2024 09:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M4KnY6+u"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8F0201005
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C25203D64
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734342923; cv=none; b=BLLNkAzo/kv3NHZiMgoClkBo1xEPTOUEP8Kxbr8ohrlZk5tXkjo/wS25bTiyqEB5syDAqtLMFJFysakWuY2AJN3VeYDG3SuWL6/4SZNJ/7hEWUJzEIQZ7hcFyqbO+kl5cTZ47fMK5PRasaHiuaRcP/QV+3miGMo0XpeQOezn0zc=
+	t=1734342950; cv=none; b=rhBkEJ0Zs0BYzK4Yml8FVaCUd6dgbW7+TmgcTvTV6mFSyfJdVkTtU16HuPchQgA78seJrsqUfqEhGcYW+NO6urbLqHWylOB4+KtVwTffLANVaMb8VlBDN6+KJz1y/0XyAuBa90555MlC6EyLVmh7dqeH9dnavGjnP7cnOl0Vi4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734342923; c=relaxed/simple;
-	bh=dHV/ZgWHFPAmXz+2JlTvxNjPV8275MuS6r+tMv6RFts=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T2TKReSvPBKJCJaSRYuRN5rVeE1IxgpQNMXUB1x0wOyj2mZxsEP7M25CI5Kncjs2s4+QVNPO1NCOU5vsXMa1PDIAPxSabc1UBTRylJxXLEuqsV2C5OAG+g8Tq8iVMe3bv4U6MnLM/OfdK4JVxMQTardWpxQ9I6+7pI/3D7jsskU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-844dadd9bdcso735967339f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:55:21 -0800 (PST)
+	s=arc-20240116; t=1734342950; c=relaxed/simple;
+	bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=juBZRZw+o5OBhZjZ96LgjewEisPxxshcC/c0QdT+umY9/HN6zF4fjSlljgZMh/YRW3gplSfaH2ierLKIu32yNsE2y/xaC/ggizksZsGMa7lb9IsVv3DNd/Llj/gGLPEuIjBsRo7PltX8MmxPmpqRyH60IvZZrTqPmlSn1mKozLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M4KnY6+u; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679b5c66d0so383061cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:55:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734342947; x=1734947747; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
+        b=M4KnY6+uj4muv/EYfc7oo6TcpdIVp6pQ29M9E7rQv4FVVVHP15F024EZ69ytkkSTAf
+         ItMHjMUHV7XvCAuTAkfkUKWA+6hVg03ieaO/G+94W6j6QI5W18iC539qXWIWMCyp3zPx
+         jdAvBGWBgwl3FF+JSKBV6M2OxV8nLqGFLcKNgIJjUMFvez4qWbYewecouz3EAkkeLDw6
+         u97mnM45j5Raa3UWB4WJha1yzOOMtwGHsOzUgi0Y3d9SwSp6Pb2JE1G66+XSKz3ngNFD
+         Kzl+y2GoANtFqt8IMejbJfhyRljMUtoQIqTSi9jtwtWNj3/t1H4Du/ghLWtw+Id8iRhC
+         59+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734342921; x=1734947721;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G2dM8c7wOazd4HvHKBAOliKpjEEJQbu4B0++LR6egJo=;
-        b=b8YkbIRj7by33X0Fg7e0JAC5p9rndfhhNaVUpGtJ0tffG0b0xtScA8PeYCBRvr4kME
-         zrWWV/694ylkOcgVxD1fE2H4Mf5EKx002C0jGdckySVXpfBUCzh8ebKBcCrAqf4/3hLK
-         AeltdQQm+79sLsIGIexLTZ54tAbjdK4TtLv9YFDKDF/lNaUh9e6ifX9gY904vDoo2oni
-         xKr4MvvpceKGhVKlvr5S6CG6XIznxPf7WQg2Uqyu1SM0inMsBwwu0AYqYlZu9uxZ/AFL
-         6dm74VcG1s7EuUMWPLHqpBL1d4HYwiuVkXIrJI4fakI98tKjJkyDhp2N7H0Qcs+Dnx07
-         r2PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5nJ0JzNQd2H48cvNl0DioL0qyURZQw6/KSaV4ZQA4qIVNEkh4mth7wzrZMgJF9nwnzvcjU4Az/7YypKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUJuwxxsyEHMTLbJSmWrlZTm30vPRCKTyc6CW6nJUyoualxf+8
-	gpYT0iPipsFTzboQkgAcMr4l9kdAVs9nTzBXZy/12pHxGkkbH0l1TRzPOXCEsVtQAVN/OHJeTtu
-	+KeIFHqaW108/kXGJaTDcixUaLhGbG5LS20lUsB176Yzt+hjqoXNrTRA=
-X-Google-Smtp-Source: AGHT+IFg5RI5ZQe9ZHKRxgC3zzAb8krRBFJIxcogaqAOFViZsNEH/7VIEDIpfpxxDamX3hdhVg3KYGiEp/P0o/WO4lxuRnkm1j/F
+        d=1e100.net; s=20230601; t=1734342947; x=1734947747;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kwbicLQAaZ25kUVEuKSW5PKae5KTmR13E/wKvhnjD1c=;
+        b=VRT4MgFOJ3pGp3B7nmPlIi0ttDVd5xN7zAbX/ecmGkyxOYwJFmaMUVOu9GzmyxZuvC
+         k8fuGNRLrsXBVs/TqsVoo6J5QTJQaKvIUIVzAno/HSMNrfdA45jYp4mFAiz1jwygUSEE
+         /YbjK92B1OzIgZWs30JcKs+NAtztmtL5riCjHkbpBZRJH21aW96LxYf2koXSBtr9sBdV
+         tIWqPfqpQAbjzKpcaP7snMVbcrwjulSrSdX7Vbz80R+NaquFvfkZq0/l53sFu+vvXZXV
+         EOn41mDC2ktkmQdzSwxsP1pPBqANy8a83Amf4C4sr/GVfAENnBFXrfZGYKi4JaXZbGzw
+         dAAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWxgSpWZ5SLoPZ/Uwhb4iJRfQfXFXGMa7dvcmCbKNAhIM1b+jVeIE5h7T96OgsWXWxuVhVryrbP41yShc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsH1sFJR5Jo9yV2HAiZpL2nlm4vvH1kym8d0fIFdrl9lzWNCRc
+	umQcZHf0HVhtvR4MtdQeT7IWsA63mMg70IyNxatKwum/+vCgL0fTfrAyDOorNZA6hagu9ROP8OU
+	pcMuzVIGYe6HHLpE1F8+HC6zTIlGYQAfx6Ddl
+X-Gm-Gg: ASbGncu+a4FOio25189W/RCxaIpR/VdO8D48mp17wDTSzFNIs3eyByqwmofXd5CLkKZ
+	nJrypsP372YJrd6wo5bGmhZU36ybOMq6FtajumdQy8B6H1KNUxDFGkV1T5xifZZtp6vDA
+X-Google-Smtp-Source: AGHT+IFhMvIXdbRZOcnTLEcbNjsVH96/VrL1zhECcx0p0tNYZx6zpfl70xXcIg6493jrc/wn5pPrjVOSlsL1jiDf7bY=
+X-Received: by 2002:ac8:574e:0:b0:461:3311:8986 with SMTP id
+ d75a77b69052e-467b30bdbdamr5040591cf.18.1734342947368; Mon, 16 Dec 2024
+ 01:55:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3288:b0:3a7:159d:2dd8 with SMTP id
- e9e14a558f8ab-3afedc1a255mr124360125ab.7.1734342921338; Mon, 16 Dec 2024
- 01:55:21 -0800 (PST)
-Date: Mon, 16 Dec 2024 01:55:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675ff909.050a0220.37aaf.012b.GAE@google.com>
-Subject: [syzbot] [tomoyo?] general protection fault in tomoyo_check_acl (4)
-From: syzbot <syzbot+2232f2316fe61cb50344@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-dev-en@lists.osdn.me
+References: <20241213-objtool-strict-v1-0-fd388f9d971f@google.com>
+ <20241213-objtool-strict-v1-1-fd388f9d971f@google.com> <20241214003605.gwlfukj3tdelx4bq@jpoimboe>
+In-Reply-To: <20241214003605.gwlfukj3tdelx4bq@jpoimboe>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Mon, 16 Dec 2024 10:55:34 +0100
+X-Gm-Features: AbW1kvYR2wFvoUWGEr5jX5uwNIWb-PWBSg9rh6xevYSQ8gDOUgZ1biEtXZ_I3t0
+Message-ID: <CA+i-1C3WmjY6rrg9rTpwctMdYKB+u1=dNHEfZz6zPU7RyHdsKg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] objtool: Add --fail-on-warn
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Sat, 14 Dec 2024 at 01:36, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> How about "--Werror" to mirror the compiler -Werror option.
 
-syzbot found the following issue on:
-
-HEAD commit:    2d8308bf5b67 Merge tag 'scsi-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10507cdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2232f2316fe61cb50344
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/66039e873a32/disk-2d8308bf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/60744ba3f743/vmlinux-2d8308bf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/25731ba013ad/bzImage-2d8308bf.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2232f2316fe61cb50344@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 15160 Comm: scsi_id Not tainted 6.13.0-rc2-syzkaller-00362-g2d8308bf5b67 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:tomoyo_check_acl+0xb0/0x410 security/tomoyo/domain.c:173
-Code: 00 0f 85 57 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fc 01 00 00 e8 c1 0d 48 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 cc 02 00 00 44 0f b6 7b 18 31
-RSP: 0018:ffffc9000c087718 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: ffffffff8451302f RDI: 0000000000000018
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffc9000c087808
-R13: ffff888028c55690 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f24ab591ba8 CR3: 000000003bf9a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- tomoyo_path_permission security/tomoyo/file.c:586 [inline]
- tomoyo_path_permission+0x1ff/0x3b0 security/tomoyo/file.c:573
- tomoyo_check_open_permission+0x37d/0x3c0 security/tomoyo/file.c:777
- tomoyo_file_open+0x6b/0x90 security/tomoyo/tomoyo.c:334
- security_file_open+0x84/0x1e0 security/security.c:3105
- do_dentry_open+0x57e/0x1ea0 fs/open.c:928
- vfs_open+0x82/0x3f0 fs/open.c:1075
- do_open fs/namei.c:3828 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3987
- do_filp_open+0x20c/0x470 fs/namei.c:4014
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f24ab607a46
-Code: 10 00 00 00 44 8b 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 44 89 c2 4c 89 ce bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 0c f7 d8 89 05 0a 48 01 00 48 83 c8 ff c3 31
-RSP: 002b:00007ffc0a43e228 EFLAGS: 00000287 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007ffc0a43e488 RCX: 00007f24ab607a46
-RDX: 0000000000080000 RSI: 00007ffc0a43e2a0 RDI: 00000000ffffff9c
-RBP: 00007ffc0a43e290 R08: 0000000000080000 R09: 00007ffc0a43e2a0
-R10: 0000000000000000 R11: 0000000000000287 R12: 00007ffc0a43e2a0
-R13: 0000000000000009 R14: 00007ffc0a43e46f R15: 00000000ffffffff
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_check_acl+0xb0/0x410 security/tomoyo/domain.c:173
-Code: 00 0f 85 57 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fc 01 00 00 e8 c1 0d 48 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 cc 02 00 00 44 0f b6 7b 18 31
-RSP: 0018:ffffc9000c087718 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: ffffffff8451302f RDI: 0000000000000018
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffc9000c087808
-R13: ffff888028c55690 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32016ff8 CR3: 000000003bf9a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	00 0f                	add    %cl,(%rdi)
-   2:	85 57 03             	test   %edx,0x3(%rdi)
-   5:	00 00                	add    %al,(%rax)
-   7:	49 8b 5d 00          	mov    0x0(%r13),%rbx
-   b:	49 39 dd             	cmp    %rbx,%r13
-   e:	0f 84 fc 01 00 00    	je     0x210
-  14:	e8 c1 0d 48 fd       	call   0xfd480dda
-  19:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
-  1d:	48 89 f8             	mov    %rdi,%rax
-  20:	48 89 fa             	mov    %rdi,%rdx
-  23:	48 c1 e8 03          	shr    $0x3,%rax
-  27:	83 e2 07             	and    $0x7,%edx
-* 2a:	0f b6 04 28          	movzbl (%rax,%rbp,1),%eax <-- trapping instruction
-  2e:	38 d0                	cmp    %dl,%al
-  30:	7f 08                	jg     0x3a
-  32:	84 c0                	test   %al,%al
-  34:	0f 85 cc 02 00 00    	jne    0x306
-  3a:	44 0f b6 7b 18       	movzbl 0x18(%rbx),%r15d
-  3f:	31                   	.byte 0x31
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Sure, --Werror sounds good to me.
 
