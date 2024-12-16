@@ -1,97 +1,89 @@
-Return-Path: <linux-kernel+bounces-447571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1377B9F3451
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:20:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E7A9F3457
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3094E7A2BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:20:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65034168A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453A45647F;
-	Mon, 16 Dec 2024 15:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZ6by4yZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D901146A6C;
+	Mon, 16 Dec 2024 15:21:16 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C757143725;
-	Mon, 16 Dec 2024 15:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEE581ACA;
+	Mon, 16 Dec 2024 15:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362425; cv=none; b=q/Wg2n3xYsf/GXLrDG0hyplxPWGZIIjeEMt8YQDZkIxq/jhweSPCfkiVwz9rFquA61FRcibS0+wfUhoPBIjr8aUx7WLx4ZMRtSs60DLX7rE4QxLSgiFe8nse1ICxXBGIDZj9dwxoehCQo1yX0V/vmhp9yeWFBz0T0YwvFHJHYFI=
+	t=1734362475; cv=none; b=AgQwTbZ1PK54M70jwZ8W1hUN/9yCqSwYXyM1yzfcgBM07y2YbBOdrnogjHdBoGIg1Ux6s/yKMuMBQ6N4i7zsaSZ57shRPQCN9tnK50E5ZnKYSW08tg7XN9rrWIE5icypRo1SQi6bU6XpX5beCaZ2RAVJkVe/8Uhi+MVOGBDeO0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362425; c=relaxed/simple;
-	bh=niuP99foet4I342cbmg1ad+24zmVWlrRXskx/PKgMeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5GGD3jiEgM74sr0SiMlAycrnyBKqxxgGN06oL8iOOcH9lQCiC4FLgZSN3A3XjBmNgjdQ+McN31InIuB0GoDsNEWo5h63ElWda4a5P95qQCE6vKrtuIkq6JlWKhOXRzPo6S7G6uk7WxpsY0INlE8iF/qlqYEWApLqj+jldGSn58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZ6by4yZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD1CC4CED0;
-	Mon, 16 Dec 2024 15:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734362425;
-	bh=niuP99foet4I342cbmg1ad+24zmVWlrRXskx/PKgMeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AZ6by4yZy5p8vmJWprcWcSzejs0HD301qf7H6WGL/P6uFexO/i9/4THiOROKKjpTp
-	 p3lnXZsO3Ls16sah2Fl6o7xN+KkkINT5geZugNL2AyxnQXoGRA3f1PYnqdw3nEuUBH
-	 A4xbs63Q6+6yfgaTtYomCnJ+Z0lEmm4Ylnlrjw6T5o3HkJWcOvk8u+3fVkmQSiTMpw
-	 sHgOFR4GQdICKtqjuAuasMCZvCT+a6wjiuccd9G+hR9T2pIro+v8Ik7Kwd88rGsIgL
-	 rb9WtkeQJBDgFk5SjIpmu86iRrWrFzyJaZp7FcjmvK/HhV1bDdAlLNJ2EWb/s8KNnM
-	 /5ARr9FnqUtXg==
-Date: Mon, 16 Dec 2024 15:20:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 08/46] arm64/sysreg: Add register fields for
- HFGRTR2_EL2
-Message-ID: <4830a422-9acc-4d2e-86e7-7e75af340dea@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-9-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1734362475; c=relaxed/simple;
+	bh=aYXo5v2Yo9uzhjj6CHEdDeXbI+DPIxXZvbaUn/mWw5k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lGhaYC54opbLSsgBwu03b6wfrV1zhvWJT1tX/ePQFVrV0OCCR8PZmn8uI0oY23ze1jZrWBmJ1TN2BpVHIgI/WpkHC9bG04+fjSex7n6ge+n6thgR0LAAvXaJY5Q6gP9nrH6wD7DizWft2LEByR2j+xT6PpUAqNZJuscvvSnSE38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YBk8N6J7Gz6K5VY;
+	Mon, 16 Dec 2024 23:17:40 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2D3181400E3;
+	Mon, 16 Dec 2024 23:21:11 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Dec
+ 2024 16:21:10 +0100
+Date: Mon, 16 Dec 2024 15:21:08 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Tejun Heo <tj@kernel.org>, Josef Bacik
+	<josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, Boris Burkov
+	<boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
+	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v3 6/9] driver core: Rename declaration parameter name
+ for API device_find_child() cluster
+Message-ID: <20241216152108.00007f7d@huawei.com>
+In-Reply-To: <20241212-class_fix-v3-6-04e20c4f0971@quicinc.com>
+References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
+	<20241212-class_fix-v3-6-04e20c4f0971@quicinc.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gbV1zyZYu1Z/82Fp"
-Content-Disposition: inline
-In-Reply-To: <20241210055311.780688-9-anshuman.khandual@arm.com>
-X-Cookie: Be different: conform.
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Thu, 12 Dec 2024 21:38:42 +0800
+Zijun Hu <zijun_hu@icloud.com> wrote:
 
---gbV1zyZYu1Z/82Fp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Dec 10, 2024 at 11:22:33AM +0530, Anshuman Khandual wrote:
-> This adds register fields for HFGRTR2_EL2 as per the definitions based
-> on DDI0601 2024-09.
-
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---gbV1zyZYu1Z/82Fp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgRTMACgkQJNaLcl1U
-h9Cr+Af/be1pfnGEb8Mpa6M3rCI0zQapxUu/nCyhxYEhFwSgpJKVWvmG8wKwfN5r
-ecIGCKLibBIafWvty9jw5oEbM+FYxc5Joqop8XlJ0MxphUH1wiu8Qgui1hcvDzCI
-p3src1DgDTlRMnrWCaukPFpVXz6Cp99JpV1OzbfrLFcqLemdEaeuUB7bt8qWFktY
-kE8BC3XoDUq5GzU17ZmfEIEBlNmzY27YBUA+5tx9RF58jC4WJ4Sluznfm9kGQlgc
-SrwdZ/TmsVm+qSbY9yNl/Y5eeLG3J9dNr8+zEJtzUU0GbBG5jVf4KkjpyFkLOLjx
-ih6XgEVmGbb+L2n2jishqNTXwKJ+ow==
-=9/v5
------END PGP SIGNATURE-----
-
---gbV1zyZYu1Z/82Fp--
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> For APIs:
+> device_find_child()
+> device_for_each_child()
+> device_for_each_child_reverse()
+> 
+> Their declaration has parameter name 'dev', but their defination
+> changes the name to 'parent'.
+> 
+> Rename declaration name to defination 'parent' to make both have
+> the same name.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
