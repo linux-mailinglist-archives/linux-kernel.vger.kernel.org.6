@@ -1,318 +1,105 @@
-Return-Path: <linux-kernel+bounces-448096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BFD9F3B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:40:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00479F3B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6791E7A2C92
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B47E18801CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6C41D2785;
-	Mon, 16 Dec 2024 20:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCAE1D5178;
+	Mon, 16 Dec 2024 20:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SGC5VK+O"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b="Da7rTmwE"
+Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F30C1D5150
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381522; cv=fail; b=YoSz7aSe9EesR+nr/imChsV6IT7qOjL6+hA2fgHYbBNMF/3nH8w84YeKBVAaHqbVEB57d01NV0zQLfhxta52ifnbm3VQB0ssbxpTjM+562/7eu+P8bDnP69o5gm89kHLqfgc5LteKYbaIa2mKqgvKBnXYgxciloTam/Q9RqSl8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381522; c=relaxed/simple;
-	bh=3qC2FBof25IO2KWu2psTz50MdG+mKBhWpLODtNS/tsQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ktV2Iic7Ni07YijL8961x0Vo73qC1rpK6hFwXNpSo/Jkz6ajiDfteGYtyrgxFcqw35u+zq6OFEnvLnlIFXLZD8ff/NjQmYPZgsSOlJWoVm/U8N/kt4o/LiEoyoJxnAvxnN36yM/tNxiur1pCXqBh0vw5qsBapEzm6cr52Y5LlbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SGC5VK+O; arc=fail smtp.client-ip=40.107.102.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AvNHica7IxOTpimXLgoikdRTk760S18BeYtiWF1f2fawXcyy5dcVFH06C87qf6SKKFBFoi0rE8VhMlOYbMi0KzZ7a3duIzy8HlwnHGutDCKBdnd+A0ZvBKMIYgD2Y7XcJiTsxemtweJ1J96NiD4rf/2FbQCKfWbJmrPR0EMyVeSDjxZuEUwOdEil6SDoYspmxX7bMJefCmvsjLgwxdLjK679qB9GCM48Jljk6sj4ObwDXtd4sil0jSMa4QpFGoEbEHIZqzf6GRgNZJ02dltNgQIc7RGNLLWDQOvro8TSm6g9s8gnipgr3pwD3/hMWc9B7YbDSTe+IHGEjGs72lT+DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tDz1mifVGA8ZVqIvERai9aNE49Jv550lMZr/tHefoDE=;
- b=o9CIixOnq4RjrzftUNCmSr5yEdpSOPlZjD8ZaC3QIpLFKo486dwu4IFxW9HTXJbVQ9iMgvKxDhfpwll2GdloDYkFVxO+OZkcrO4YNG9pj8hoahBqiun0rQBnmbyXfKjoOZV566VPr6BaxeIM1AFiXfLOdzols4C/lQmtkFDCCtvNcaV/izI/5RbclyLoJGFxb49lolTVDlc8oWxXdBo0h7q39bJKxtyRo+bZUqjGhEwg6xjGaU2nUY6MFqJEE/+6miqCFO8syTG9sw4EpV82ZSLM1ICSFhD30uhHKSlMe1Fdp1BGKjnK07accBLW+vyoziCVeMG+deSdK98kbawaHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tDz1mifVGA8ZVqIvERai9aNE49Jv550lMZr/tHefoDE=;
- b=SGC5VK+O9ggZh/NSDfOF8TILOfLUXQw25j+BHlklxPHA+TasNOFG672VI3WAqdYBfEfsnVj6ZUFVG2KrD9IkqV8QBeYi4K+piYswQoJLdFByv50Lgd9ASzFzO/H3BRak1PuUIBkwgl0bJBrnkI3g2jtsTIYgUX0q1OG77lT6EaE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SN7PR12MB7180.namprd12.prod.outlook.com (2603:10b6:806:2a8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
- 2024 20:38:38 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
- 20:38:38 +0000
-Message-ID: <050b7fac-1ebd-46a0-840e-2df8c82136ae@amd.com>
-Date: Mon, 16 Dec 2024 14:38:36 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 5/5] accel/amdxdna: Add zero check for pad in ioctl
- input structures
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, min.ma@amd.com, max.zhen@amd.com,
- sonal.santan@amd.com, king.tam@amd.com
-References: <20241213232933.1545388-1-lizhi.hou@amd.com>
- <20241213232933.1545388-6-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241213232933.1545388-6-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR03CA0021.namprd03.prod.outlook.com
- (2603:10b6:806:2d3::24) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769071D45EF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734381633; cv=none; b=hQerD5c8YP4fXXPJzcHwvq45uFjaoO6PUIBLwJ4y5u9qXCd7aLlPA12wTHdg7w7HQgwdL6DqHdDBSJDlxEE20bS1oXwTlWkm48J6nlXfWrGiBYJSAc5f3qriWoJZV2sLUf+JZ5XloBEQakn0J6GEJWbD3V296RaneFlOh+Y5F18=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734381633; c=relaxed/simple;
+	bh=RU5BkYL8V+CfpqXLSJHZSHYMYQl+nYMNgsff/LFSdbc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=If8uTSbp6U5DMCv5lx63wb9MN/3Lq8YLnhktSmSWRqv6LXAhbWrvxuj74BeLIufAG9yECATfJ8iHXvuy3qJTPUGErZhuL2V5t/kDJEwOvVph4gUiCAncHiRXqjuLU5P33RCW72U4ETi0ErhA80WsKwxpLEgaYJYVAYrIwuD40NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io; spf=pass smtp.mailfrom=ranguvar.io; dkim=pass (2048-bit key) header.d=ranguvar.io header.i=@ranguvar.io header.b=Da7rTmwE; arc=none smtp.client-ip=79.135.106.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ranguvar.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ranguvar.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ranguvar.io;
+	s=protonmail3; t=1734381622; x=1734640822;
+	bh=RU5BkYL8V+CfpqXLSJHZSHYMYQl+nYMNgsff/LFSdbc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Da7rTmwEKuJc5arr9F/4ctWbg6jnlkvCmVxAp+eab9pr1SV1T8FXa6d7GYhSmeJpV
+	 LMhpbI4wvnaZdAapRke5wnLacgIeSzQ4gSuSNtGhiVoJFuZ8WqPaSvnqdV7DTGJPZ2
+	 cIueUHs5BgMCEsrySs/frTWKVAFwhZVJSZ0nAGog2UTatYR8N8RRtMKIvvXlPczxET
+	 X45y+TZkKZZBfbITuSLoTQjTRxKxCxFZLqq2IWG45Rdw1ohXCDK0syY+ORR1QlLIdF
+	 uNLDQSC0mPlZLWqNoKiBhpB0/OC8AhPu7S0431TiyU0959DxdWloHC/e/O3o6A2PZG
+	 OZDJAOaFfp8ZQ==
+Date: Mon, 16 Dec 2024 20:40:18 +0000
+To: Sean Christopherson <seanjc@google.com>
+From: Ranguvar <ranguvar@ranguvar.io>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@gmail.com>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>, "regressions@leemhuis.info" <regressions@leemhuis.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [REGRESSION][BISECTED] from bd9bbc96e835: cannot boot Win11 KVM guest
+Message-ID: <b6d8WzC2p_tpdLs36QeL_oqtEKy_pRy-PdeOxa08JtTcPhHNNOCjN73b799C0gv8NnmIJKH9gD6J4W-Dv5JKEVdrbMoVUp3wSOrqEY_LrDg=@ranguvar.io>
+In-Reply-To: <Z2BaZSKtaAPGSCqb@google.com>
+References: <jGQc86Npv2BVcA61A7EPFQYcclIuxb07m-UqU0w22FA8_o3-0_xc6OQPp_CHDBZhId9acH4hyiOqki9w7Q0-WmuoVqsCoQfefaHNdfcV2ww=@ranguvar.io> <20241214185248.GE10560@noisy.programming.kicks-ass.net> <gvam6amt25mlvpxlpcra2caesdfpr5a75cba3e4n373tzqld3k@ciutribtvmjj> <Z2BaZSKtaAPGSCqb@google.com>
+Feedback-ID: 7618196:user:proton
+X-Pm-Message-ID: cb7daf2d21f0020e7d28b64803a9024a5c888504
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB7180:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1a8f3c6-daca-41e4-089f-08dd1e119ec4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TURoaWlqWnNmWWgvU0Nhb21aMHBqbm1DNjRLeFgvL1l3RWFhcFNoZXFWRG5t?=
- =?utf-8?B?SmhVRkZ2Q1NBU1Fyd3RCQmN6dlpWSkIvWEd3L3lNY0o2YktFcWNLVHdtRnZO?=
- =?utf-8?B?aDB2V09ZcWdUaWZGdFlJTGtiUWZqQjNvQklQQ0x5V1o1elduempxS3dFbGtP?=
- =?utf-8?B?V2YxaXk3a2hiZCtLSEFkNDhrTHRUUDBocy9yMDhobjNTVldGYVAyVE1PdTVC?=
- =?utf-8?B?NWt3WnIrMGFLTm4xS2RNb1pKbHRQcDhiRFZ1RUxRQ1ErWG1NQWNKc3Y1dWpz?=
- =?utf-8?B?dy9valdZNE9GdEd1Vnk1RDdkeWxaMkowMFNyTmFWL1c1T0VnYUEvcE04QUJn?=
- =?utf-8?B?MmNwbDIweVc2ckw1ZVIxclFPdERxeVhWV09mRkRvTmliV25SV0psY3hPK0Vy?=
- =?utf-8?B?bmM3bHZ6RmlkZWw5UXVZMmswZFl4NERycU93aWdCL0JjY0Q0djE1STRudEcx?=
- =?utf-8?B?QTdRY3B1WDJ3OS9HZXFJLzN5NTdPYStvdkNNVmhzTENHQmptQUMyWGZvdWRG?=
- =?utf-8?B?amtOZlJHQUJQbmlVUFVUQzdIcklZOWtlM3daRkZ6L2JscS9VSFZCZTZ1dTFR?=
- =?utf-8?B?bFdyd1Z1WUFLQzAwMDNyenE0bHB2cCtGVk1wamVEaUU3NCs1WGZzMFNONHl0?=
- =?utf-8?B?VEhUVVU1bHI5ZFdISUZrYks1OGV5TkE0ZHlrdzFKYk8yRWQwUk1FVzd4L1o5?=
- =?utf-8?B?WCtWL2x0Ukw1cGsyaTNjaEFyYnczVmlnSlI5QUdjdlZFaEdSSXcyUXp6YmNP?=
- =?utf-8?B?QjRweFo1QzBnQUcyMzR0djVoZXdKcmFXRmFCYlJYN3VGRzM3VWZjRGx2WWJW?=
- =?utf-8?B?QXlKQ1JOaXpwUEgzbTRaaW5NcmNoTDZpeGhVeXhwRTJEdVRLa0IvNUNFKzhF?=
- =?utf-8?B?d2pVWEN1OEprbTNwU0dvdS95WXBjbHpWTHphdTJocDhrNkpEWkd2MmtZOVAx?=
- =?utf-8?B?SGdiYVZnZGMva3NwTTFkaG1ZaWNIaXB2REpCK3NyRm42TWJNQnNWd2xiN242?=
- =?utf-8?B?bjgwRWNWVlQ0S1lZK0N6VFhIaE0wYWs1a2VHbWVkMkltNzRnZ2cyTURlWHBU?=
- =?utf-8?B?ZCtjekxLUmIrZFp5Q1l1YnliM1dTekw5VHAwZUZrMGp1THFyZjZWbllRWVFO?=
- =?utf-8?B?cFE3UmVJanU4U0VRTldDand2RUlGTDNKbityWG1lK01UT0lmSXlkck1OM05L?=
- =?utf-8?B?OW15SGR6QU8xZ2o0UnU1NDZmWjJrU0xZV3FvOVVYVFc1YXp5dGZXOGIwZm9x?=
- =?utf-8?B?bFRtTVU4TXpVZk9pRGNLdWoxYUlSQW9kaHJBYzl2dVFMM3JHdFhVbEVqKy8w?=
- =?utf-8?B?SHRVZU1xb2g1SkdiRVpMUXJlZjB6b0JUNDdEUjNwYzUvM3U5Rzhkcm5iU2pC?=
- =?utf-8?B?RmpFU0wzNEJFY1ZNZVVnZS9XZVJuMWZ3UlJZNXk3WFRLcHEyaUpJeE5BdmJw?=
- =?utf-8?B?ZzhWanNLWmxjR3N5MVJBb3lHdkZCKzYxdXA0QlZ4ZFJYcC9paUthN25kZ3Bn?=
- =?utf-8?B?Z2IrejVIaXp4S3YyeElmRVFuSE9sUzgycXZMVTNmS01vVnc5R1dVY3RUU3Vq?=
- =?utf-8?B?M2pMRmE1NFBqZkh6bGF0bFJOc3RZVitZOC9ZSjFiSnlzNWg4QVQ5T0RZS1lX?=
- =?utf-8?B?WVMwNWloWlJmQzBqVWo2cDIxc0tTbmdWNDJOZnQxRFZSeThjazNRUWlTQjFR?=
- =?utf-8?B?bjhyRnI0ZmNhY3A0MnNXQlYzc2t3MDllMXY0VHdzR3l0R1VvL1FMU21Zcnpy?=
- =?utf-8?B?VU5yY1pzMjF2aElMbk8wVEdORkhyZWFSbVpnTDJFWU1WYlJJWHluU2VqV25Y?=
- =?utf-8?B?OFY4QzVpYytYMHY5dnNIRmNBV3k5Q29mc0NMRU5DRG54N01XRlRQZVRrUzI5?=
- =?utf-8?Q?upbjngeiupWBc?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1R2NWxZUndmWThQa2dKVHlmWm03M1pzb3BwVkFTTSt3Z24yZmJ0ZkE5Nm9j?=
- =?utf-8?B?RUQvQi9GUE42WXFaK2FWMTEvVmVqL3p3UmhhNG9oKzY3L0ovMEUwQjNoVldO?=
- =?utf-8?B?ZGRYcUk0M3pVa1VtTTd3UG9Pbm1Ud0l0L05sRm8zTEpMYmlTL1hrTkhNRTlx?=
- =?utf-8?B?aDV0Wk55VURzWjU1MVN2cEJOZUJST0dnclBqbThQNUZ3a2dwR0lYRTdyNjBP?=
- =?utf-8?B?S243VXFMcDNkYmhlTllZR2Nkd3F6NEhkVE41cEo2bis0bHF1bi8veVZpcGhO?=
- =?utf-8?B?SXF6bEp1eFdRTjNFeVo1V0srQTVZNXhGV1JQQzNJVmNBMGMzRkF1WWQydkpk?=
- =?utf-8?B?cDAyZXNrWDNPWk9MMXFvbDg1cmZWTEdzVkd3OXB3YkhrQzBveVNrUGlRbERz?=
- =?utf-8?B?dm0zR2ZsOWxYZWdwaWtrSXF1S1IydmZ1STBsZlNpOFg3cHRrNnJHcW5kZzdZ?=
- =?utf-8?B?TjZCcC9qRXdGR2hNeEJFQm9qQlB3Nnp2MlpJK2dYU0JIcmFkZFZzdjZCWWtM?=
- =?utf-8?B?NnUxRSsxYkUvMHhHb1oxbjlmZWcwSGM2K3RQamQzRXBrOVdBbm04bWkwTFNo?=
- =?utf-8?B?aWtoQzl5ZUVIQUZ4OTJjSi9ocE5jNFQyUTRnMGVSWjJ4TDl4T1pBVk1tTmpH?=
- =?utf-8?B?VzVMMlhwUTFMMURCbCt5Vk5yZ1FqRnBRM0ZxdDlsbkJ4QmttYXFWaSs2UFdu?=
- =?utf-8?B?akFJcTVzQktQZ2I5L3NQTnh2S0hVMGdGYmY4aW92SzNvRTlUY3N4dDdPR2pv?=
- =?utf-8?B?dWdmdHU0RE9zNTNkSFl5S1ZsZzgzZEZwZzRBOHhNM1AvZUtzVWFDT3M0d1hq?=
- =?utf-8?B?YTVic1haRVlBQUEybWlFM2twR1BjQXl3RWs3UTc2anFSa25LRlRXMnNka1hl?=
- =?utf-8?B?UkdXeXRZcGVlM081N0w3UmhLa3VRVUdYZWdSemJBckZsbXdseGlhNUVWOFZH?=
- =?utf-8?B?djB5Yy9saVVnOHUvVEcwVTh1MjUvbFZ3RFRURTRRdk5xK2dYVnZpVmFrNzdE?=
- =?utf-8?B?R0Vxbi96VnB2WkpTbmtTN09QalZYcE1CMUc5UlJ3THh2dGNIK1dWSUJpV203?=
- =?utf-8?B?bi9JYUJlTmhaYTJrMXdVbEdjdE9LcW9HcSt6MThUd3pXMHJyVXZUeUwzNW15?=
- =?utf-8?B?c3YrbHRvTVNyVmRkSlFxYUNuRVFHV0s2UnkyWHpQbTNSdENadDRmMnhTRVUv?=
- =?utf-8?B?QWxJZzc4bm03Y284d3ZCNVBVZnN1enUyazhyemlaZWVNeUpqVHB6RVRkcGRk?=
- =?utf-8?B?VG40ZkQ0d3ArUEtJNE5lVzZySzhCMitoYzczeWpVWXFES1dVb1FIWXV6SnUv?=
- =?utf-8?B?VEl2L0NiSTgwZFRld2M2SUltUlhpcjE0OCtYbGI4aGlSVkdlRUNjWWNCbHJv?=
- =?utf-8?B?UURsQ2lML2VNR3krbkU3T2lZUElsQ2hvbWNKUkRxNHg5SlZId3dMVG14RHpy?=
- =?utf-8?B?MTR3KzVNUFJJcHZwME01L3ducVN4b0ZQUGx6bGtGSlZKVE04M2R1ZUcyakJu?=
- =?utf-8?B?dTRsUWZ4dy94TXNWMmhhNFc5ZXl1cUI1SFZIT1A1eTkyeUdBdDY0bS9LVW0w?=
- =?utf-8?B?TkFZamlFb21YTHE3TFJwb05hZ0hXbUpjUHZybnhKcGR0aUJDR0FlY21yWUlq?=
- =?utf-8?B?MDJ0STFmYUpxd0hTVUhHQ2NJLzg5aEdYc3BhRzlWdDcvMmFPa3JhalJUcmR2?=
- =?utf-8?B?blc5eVN3NzlBc2dBVVBCMkRBU3hmbDNTbDlpdHgrRVZ1TE14WGRaalVEd0pa?=
- =?utf-8?B?czJJOTI0R1RkTm92RG5oNUVxNGVHTDJzOTFtNi9JYWx0VkpTQUloQk9nVnM4?=
- =?utf-8?B?VkxyS2FBemU5WVhoRGJZV2l5bE1SVStDYkNnSm9yWTZwcTFMcCt2a1N2bWdI?=
- =?utf-8?B?YUpyYmV5Z0lCZHVKWlhUcEVtcmxZSldXY1hnZEZYYVU4WU01UWFGSlROcjZq?=
- =?utf-8?B?bkhsRHhZK2tiVkxQN1pzaSt6c3o1SFMyb1Vnd0RMUGwyNFhyRTBIaTR6RE9O?=
- =?utf-8?B?ZjY4RTNMWGdkUFdxVzl5ZkNCbllZVHI0WE4vWDdORFZIT1FDYjNYRi9zSk85?=
- =?utf-8?B?d1NPRUhmeGR2MGpaSUVtaURCNm0ycUp4UDIwSjh1ODB3M05BNFJ2UGFkWTl5?=
- =?utf-8?Q?SBByNaF22gk6dkpU92g8t4g3M?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1a8f3c6-daca-41e4-089f-08dd1e119ec4
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 20:38:38.5101
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qkcc3FOuiMPKv7VuMAL9lSOqowUqLEG2xG3xZVOOAf6C5iyhBwXBTjnKUBEYvzvH2+EUO8W/jgVL087ZBZFpiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12/13/2024 17:29, Lizhi Hou wrote:
-> For input structures, it is better to check if the pad is zero.
-> Thus, the pad bytes might be usable in the future.
-> 
+On Monday, December 16th, 2024 at 16:50, Sean Christopherson <seanjc@google=
+.com> wrote:
+>=20
+> On Mon, Dec 16, 2024, Juri Lelli wrote:
+>=20
+> > On 14/12/24 19:52, Peter Zijlstra wrote:
+> >=20
+> > > On Sat, Dec 14, 2024 at 06:32:57AM +0000, Ranguvar wrote:
+> > >=20
+> > > > I have in kernel cmdline `iommu=3Dpt isolcpus=3D1-7,17-23 rcu_nocbs=
+=3D1-7,17-23 nohz_full=3D1-7,17-23`. Removing iommu=3Dpt does not produce a=
+ change, and
+> > > > dropping the core isolation freezes the host on VM startup.
+>=20
+> As in, dropping all of isolcpus, rcu_nocbs, and nohz_full? Or just droppi=
+ng
+> isolcpus?
 
-IIRC you should pick up:
-Suggested-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Thanks for looking.
+I had dropped all three, but not altered the VM guest config, which is:
 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->   drivers/accel/amdxdna/aie2_ctx.c     |  3 +++
->   drivers/accel/amdxdna/aie2_message.c |  3 +++
->   drivers/accel/amdxdna/amdxdna_ctx.c  |  6 ++++++
->   drivers/accel/amdxdna/amdxdna_gem.c  |  2 +-
->   include/uapi/drm/amdxdna_accel.h     | 11 +++++------
->   5 files changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-> index cdeead75c6f5..9facf45818f9 100644
-> --- a/drivers/accel/amdxdna/aie2_ctx.c
-> +++ b/drivers/accel/amdxdna/aie2_ctx.c
-> @@ -690,6 +690,9 @@ static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void *buf, u32 size
->   	int ret;
->   
->   	XDNA_DBG(xdna, "Config %d CU to %s", config->num_cus, hwctx->name);
-> +	if (XDNA_MBZ_DBG(xdna, config->pad, sizeof(config->pad)))
-> +		return -EINVAL;
-> +
->   	if (hwctx->status != HWCTX_STAT_INIT) {
->   		XDNA_ERR(xdna, "Not support re-config CU");
->   		return -EINVAL;
-> diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-> index b2ca78cfd0a7..9e2c9a44f76a 100644
-> --- a/drivers/accel/amdxdna/aie2_message.c
-> +++ b/drivers/accel/amdxdna/aie2_message.c
-> @@ -395,6 +395,9 @@ int aie2_config_cu(struct amdxdna_hwctx *hwctx)
->   	for (i = 0; i < hwctx->cus->num_cus; i++) {
->   		struct amdxdna_cu_config *cu = &hwctx->cus->cu_configs[i];
->   
-> +		if (XDNA_MBZ_DBG(xdna, cu->pad, sizeof(cu->pad)))
-> +			return -EINVAL;
-> +
->   		gobj = drm_gem_object_lookup(hwctx->client->filp, cu->cu_bo);
->   		if (!gobj) {
->   			XDNA_ERR(xdna, "Lookup GEM object failed");
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-> index 324f35c43f6c..d11b1c83d9c3 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-> @@ -243,6 +243,9 @@ int amdxdna_drm_destroy_hwctx_ioctl(struct drm_device *dev, void *data, struct d
->   	struct amdxdna_hwctx *hwctx;
->   	int ret = 0, idx;
->   
-> +	if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
-> +		return -EINVAL;
-> +
->   	if (!drm_dev_enter(dev, &idx))
->   		return -ENODEV;
->   
-> @@ -277,6 +280,9 @@ int amdxdna_drm_config_hwctx_ioctl(struct drm_device *dev, void *data, struct dr
->   	void *buf;
->   	u64 val;
->   
-> +	if (XDNA_MBZ_DBG(xdna, &args->pad, sizeof(args->pad)))
-> +		return -EINVAL;
-> +
->   	if (!xdna->dev_info->ops->hwctx_config)
->   		return -EOPNOTSUPP;
->   
-> diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
-> index 4dfeca306d98..606433d73236 100644
-> --- a/drivers/accel/amdxdna/amdxdna_gem.c
-> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
-> @@ -552,7 +552,7 @@ int amdxdna_drm_get_bo_info_ioctl(struct drm_device *dev, void *data, struct drm
->   	struct drm_gem_object *gobj;
->   	int ret = 0;
->   
-> -	if (args->ext || args->ext_flags)
-> +	if (args->ext || args->ext_flags || args->pad)
->   		return -EINVAL;
->   
->   	gobj = drm_gem_object_lookup(filp, args->handle);
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index e4edb52bc27b..a706ead39082 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -87,7 +87,7 @@ struct amdxdna_drm_create_hwctx {
->   /**
->    * struct amdxdna_drm_destroy_hwctx - Destroy hardware context.
->    * @handle: Hardware context handle.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    */
->   struct amdxdna_drm_destroy_hwctx {
->   	__u32 handle;
-> @@ -98,7 +98,7 @@ struct amdxdna_drm_destroy_hwctx {
->    * struct amdxdna_cu_config - configuration for one CU
->    * @cu_bo: CU configuration buffer bo handle.
->    * @cu_func: Function of a CU.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    */
->   struct amdxdna_cu_config {
->   	__u32 cu_bo;
-> @@ -109,7 +109,7 @@ struct amdxdna_cu_config {
->   /**
->    * struct amdxdna_hwctx_param_config_cu - configuration for CUs in hardware context
->    * @num_cus: Number of CUs to configure.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    * @cu_configs: Array of CU configurations of struct amdxdna_cu_config.
->    */
->   struct amdxdna_hwctx_param_config_cu {
-> @@ -122,7 +122,6 @@ enum amdxdna_drm_config_hwctx_param {
->   	DRM_AMDXDNA_HWCTX_CONFIG_CU,
->   	DRM_AMDXDNA_HWCTX_ASSIGN_DBG_BUF,
->   	DRM_AMDXDNA_HWCTX_REMOVE_DBG_BUF,
-> -	DRM_AMDXDNA_HWCTX_CONFIG_NUM
+<cputune>
+<vcpupin vcpu=3D'0' cpuset=3D'2'/>
+<vcpupin vcpu=3D'1' cpuset=3D'18'/>
+...
+<vcpupin vcpu=3D'11' cpuset=3D'23'/>
+<emulatorpin cpuset=3D'1,17'/>
+<iothreadpin iothread=3D'1' cpuset=3D'1,17'/>
+<vcpusched vcpus=3D'0' scheduler=3D'fifo' priority=3D'95'/>
+...
+<iothreadsched iothreads=3D'1' scheduler=3D'fifo' priority=3D'50'/>
+</cputune>
 
-This change actually meant here?  It seems like it should be it's own 
-change.
+CPU mode is host-passthrough, cache mode is passthrough.
 
->   };
->   
->   /**
-> @@ -133,7 +132,7 @@ enum amdxdna_drm_config_hwctx_param {
->    * @param_val: A structure specified by the param_type struct member.
->    * @param_val_size: Size of the parameter buffer pointed to by the param_val.
->    *		    If param_val is not a pointer, driver can ignore this.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    *
->    * Note: if the param_val is a pointer pointing to a buffer, the maximum size
->    * of the buffer is 4KiB(PAGE_SIZE).
-> @@ -175,7 +174,7 @@ struct amdxdna_drm_create_bo {
->    * @ext: MBZ.
->    * @ext_flags: MBZ.
->    * @handle: DRM buffer object handle.
-> - * @pad: Structure padding.
-> + * @pad: MBZ.
->    * @map_offset: Returned DRM fake offset for mmap().
->    * @vaddr: Returned user VA of buffer. 0 in case user needs mmap().
->    * @xdna_addr: Returned XDNA device virtual address.
-
+The 24GB VRAM did cause trouble when setting up resizeable BAR months ago a=
+s well. It necessitated a special qemu config:
+<qemu:commandline>
+<qemu:arg value=3D'-fw_cfg'/>
+<qemu:arg value=3D'opt/ovmf/PciMmio64Mb,string=3D65536'/>
+</qemu:commandline>
 
