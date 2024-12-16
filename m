@@ -1,167 +1,162 @@
-Return-Path: <linux-kernel+bounces-448259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF499F3DB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F1F9F3DC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F129188726A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2325618894E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554CE1D89F7;
-	Mon, 16 Dec 2024 22:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40D01D8A0D;
+	Mon, 16 Dec 2024 22:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wc48ARLE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="pWFiYI/Y"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4DA143723;
-	Mon, 16 Dec 2024 22:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2991CDFD3
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734389183; cv=none; b=j6AWxXHN9nkZN+e5mscuvsRLFGyXhGBth8vdMcojT2lgYSAikDiCfbbzc9YyIPRH47JtaZ7ApjRLFSkWJupqkq+dVLAkvK60JYRAHUrj4AcVRgTvZ7IRkhB3kgB/tIe3mdwAlXVOEpmWM1gup0OogiGAlrrQk/mD7UqQhYkK9/Y=
+	t=1734389528; cv=none; b=gXcFmb6ad1dOmI75fw6a+lkDgFD4xPOOungbAm0FBlX7cJWg6Gr0Ca/zwKxD2LCyuWU60AmmdsV8c618NEAzUdRRM4ePXq8iH8wuimZ+3opgNrv8tix6XCaxEGRyg2J/HNxiUkHmALRAvVNXIWHpcUOvPOWxoKDBTk+Mwvs61Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734389183; c=relaxed/simple;
-	bh=4wH/InQ1C6Dd5ZPK0n0yH01mn76sjusAGRvS82//O+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d1LoZqeJIG63X/dUZx7ZjlsCV+P8h+SOtsE2TSqnf6ydSyKIMufdYY5pnGHUR0hYtsj3dHpyeaTuTU7odvDzn7vn1ZEgMcfEEgVOZ4QvCt19XiRaXc4O1I8lqKBJwEHtmNzw45LRDz7Za3r9+bB+WCWQ5dzHZlklu00fAJjszeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wc48ARLE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKM93f030386;
-	Mon, 16 Dec 2024 22:46:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O8GwVu2m059IicnAysIcT3Yi14FZ4JYh3//9QPPQ3lQ=; b=Wc48ARLElOIA3hul
-	XiNoLTDh250LhRHbXwf7Pcum8UE+3mD91R3IUHbAWAK3lO/DSuYeR0hqUXXao7Is
-	g1EKz/VWZW0LJdLLzXyHanJLP7HcaGvzA3KHDbLT/rwYmFSpk1Yvp//DY9lkkmCv
-	y//b78Wur8qzLXvQuNJJqS+iJIWuU3EGDP/eDcxAEm9g+vnfpUof+aO0AmI0qydd
-	Ee/GQARreIfz2tqEs7JYFaCtDCiEppbR6TrOa1b/LNDnUYekFUGDQ3bE+8WHUq7o
-	snxKfZ5vfXLwMq7hrXbQaN3a81UkAkLkQDHNYrVaf0CdWunQyUTBUOXoT0Y52Wc1
-	tTczcA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61r8sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:46:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGMkBTj001585
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:46:11 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 14:46:10 -0800
-Message-ID: <ee04bf79-5a47-4a91-9aa2-cf0b909c6dea@quicinc.com>
-Date: Mon, 16 Dec 2024 14:46:09 -0800
+	s=arc-20240116; t=1734389528; c=relaxed/simple;
+	bh=FcUBWyXDZecIEy6Q87xqXVbm9gcWUwTcI34wQnP3moc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=vE04AfY8Nldv5y8fVPinf0gyOW5LJVDk4I6D96OPn7p5wt2SJKN4r3jcCO+vLvUPOqqnBi7XpLtiOwAotsXCYmNtXmRFDkPj9V7vRdT+L4yFjfjA897+WebK/sYn0JgvlHHstL14fi7GzPHVGOrHiCN1xM31z1SmQXomehvKVRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=pWFiYI/Y; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361815b96cso30761035e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:52:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jrtc27.com; s=gmail.jrtc27.user; t=1734389525; x=1734994325; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5tUwsx0D7P57hByBMwwxCDPgoIVojOI2sOGJ5I23n0Q=;
+        b=pWFiYI/YWRhu+Zd4Z9Ymw+1Bkso0K99RJhg1zWVeqWlVBvzzpZGXOsHVy7HxdpwSct
+         FcheyJCtUMYw5CI6zyMQrehGuVHFxF/yKCC0LYmAztPTcvTSFiqfPZ+dwH5RV8ijYv3F
+         Yppqb4IaoHYEg86T9YHwl3KtcWspxf2mSnhMXnJ7pWz/g7AUAC9uKgJdMgr/1KK5Vfqn
+         34h2DAY3Zl+XZ0ddE/RNdtJiN+4MRMBLeEEkwVCM1jHnAb+XKfQDEh0tG6n4VAzv/6EO
+         s5jFe/R65tBirsumARtZ0U7oHdDTnrGccFR+0manPzipX7g6RDEYIkKr+wro16Ax1qML
+         Zbww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734389525; x=1734994325;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5tUwsx0D7P57hByBMwwxCDPgoIVojOI2sOGJ5I23n0Q=;
+        b=GSnjVocfA5+jv8aJV8m7t3PgohdCagM8eG22sI45XpPLWKRP8/JW0W7N0xzzbKKn6Z
+         YeHIP0SYgqofckGRTLf4C+h0fEWUvUACIXDvo3AG0y51vypuE9SEfgzdQY2mK98mAJGW
+         zYpOiprxIG5uIXSbHJxHztfrsSltJMqqVvrW9zkYVHlEPuxHmBQvXxPBjpNaxSXRi1jv
+         cyGyyn/Uzd/dP+2b10/05NXCwqU3dLmpObh2aDjbUbXO4qPxiJCVuaSLpOb5Dtr1a0fp
+         yuCE/ov4raSWUM6T6V9rJUYz+tILckvj4hw5tDjLillRWNxgPDSm8J7R2LmVNgIsWRtt
+         h0CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtni4tDHwjYhA7oG/M1NX6ekg/Xcct376mH+i6NGuxDG8sjFhjXNNUpwbYzEg9tkTZ8wx8vNzprcI6fIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2onW/OxDx8tDib9vpajWC35WnopJpkFuYV0bvA/Id7cm79nWe
+	Xpo4/QMM4+XKqOXIkvzL03cozLjd76E1Klks/28Wj9uBjGwyc1GljXKvhTYso34=
+X-Gm-Gg: ASbGncsJWNhmKm0uGAaKBb9ythv4PylRF2ubdKkj+9MZaK2iz3p8fG5WTLY0dgioY2v
+	nd6JZty9fcXsbgW/3c1X72sOtT/aAz0WQ6bmaodwNmw06GfWJudHWEkvK6gYMmpbxDU+X/qc5iK
+	WuTm24HZVsCCmatqJxK/jnJmrE0spFcXC+8/3gUxMvWqBzjGwj10LyTXNZ2TJAoPK5T74IfVzB9
+	g0obOzizGWGakjt+PJNv26Ik+p/ZCwncueAVY0S5EOSkp61tXm7CybPI1Nf29BStRbNVA==
+X-Google-Smtp-Source: AGHT+IGkXkCZ1V8JrmSX24LbWgYC0WbYIpEMJ6w9YigeL1K3Q2t7aofiKXEhAFod/RI2RSkoUoNckQ==
+X-Received: by 2002:a05:600c:511a:b0:434:a7e7:a1ca with SMTP id 5b1f17b1804b1-4362aa9dd9emr108990445e9.20.1734389524669;
+        Mon, 16 Dec 2024 14:52:04 -0800 (PST)
+Received: from smtpclient.apple ([131.111.5.201])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c462sm153527565e9.14.2024.12.16.14.52.03
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Dec 2024 14:52:04 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] drm/msm/dpu: link DSPP_2/_3 blocks on SM8150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Robert Foss <rfoss@kernel.org>,
-        Neil
- Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Richard Acayan <mailingradian@gmail.com>,
-        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
- <20241216-dpu-fix-catalog-v1-1-15bf0807dba1@linaro.org>
- <d6be6564-ce24-4a27-a014-45aa9ff28d24@quicinc.com>
- <og2qlg7fy3gwh3uv7nvmqxmjbzqpdeuekefflzgdet4vnltdtr@q7suuz4ujxp5>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <og2qlg7fy3gwh3uv7nvmqxmjbzqpdeuekefflzgdet4vnltdtr@q7suuz4ujxp5>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mrUyvHh6U7jX1oCMrakJ1MxamOyn5_Ev
-X-Proofpoint-ORIG-GUID: mrUyvHh6U7jX1oCMrakJ1MxamOyn5_Ev
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412160187
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v3 1/3] dt-bindings: riscv: add bfloat16 ISA extension
+ description
+From: Jessica Clarke <jrtc27@jrtc27.com>
+In-Reply-To: <5e878b5b-b49d-4757-8f7e-4b323a4998b3@sifive.com>
+Date: Mon, 16 Dec 2024 22:51:53 +0000
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+ linux-doc@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ Yixun Lan <dlan@gentoo.org>,
+ Longbin Li <looong.bin@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Chen Wang <unicorn_wang@outlook.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Evan Green <evan@rivosinc.com>,
+ Charlie Jenkins <charlie@rivosinc.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Jesse Taube <jesse@rivosinc.com>,
+ Andy Chiu <andybnac@gmail.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F52E8856-7602-4E4B-8932-2B13AAA30822@jrtc27.com>
+References: <20241206055829.1059293-1-inochiama@gmail.com>
+ <20241206055829.1059293-2-inochiama@gmail.com>
+ <5e878b5b-b49d-4757-8f7e-4b323a4998b3@sifive.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
+On 16 Dec 2024, at 22:00, Samuel Holland <samuel.holland@sifive.com> =
+wrote:
+>=20
+> On 2024-12-05 11:58 PM, Inochi Amaoto wrote:
+>> Add description for the BFloat16 precision Floating-Point ISA =
+extension,
+>> (Zfbfmin, Zvfbfmin, Zvfbfwma). which was ratified in commit 4dc23d62
+>> ("Added Chapter title to BF16") of the riscv-isa-manual.
+>>=20
+>> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>> ---
+>> .../devicetree/bindings/riscv/extensions.yaml | 45 =
++++++++++++++++++++
+>> 1 file changed, 45 insertions(+)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
+b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> index 9c7dd7e75e0c..0a1f1a76d129 100644
+>> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> @@ -329,6 +329,12 @@ properties:
+>>             instructions, as ratified in commit 056b6ff ("Zfa is =
+ratified") of
+>>             riscv-isa-manual.
+>>=20
+>> +        - const: zfbfmin
+>> +          description:
+>> +            The standard Zfbfmin extension which provides minimal =
+support for
+>> +            16-bit half-precision brain floating-point instructions, =
+as ratified
+>=20
+> I think you mean "binary" here and in the entries below, not =
+"brain=E2=80=9D.
 
+No, that=E2=80=99s Zfhmin / FP16 / binary16, not Zfbfmin / BF16 / =
+BFloat16? The
+B is for Brain as it came out of Google Brain.
 
-On 12/16/2024 2:21 PM, Dmitry Baryshkov wrote:
-> On Mon, Dec 16, 2024 at 01:11:35PM -0800, Abhinav Kumar wrote:
->>
->>
->> On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
->>> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
->>>
->>> Fixes: 05ae91d960fd ("drm/msm/dpu: enable DSPP support on SM8[12]50")
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>
->> Change looks fine
->>
->> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>
->> One question below (not tied to the change but arose due to it):
->>
->>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
->>> index 6ccfde82fecdb4e3612df161814b16f7af40ca5f..421afacb7248039abd9fb66bcb73b756ae0d640a 100644
->>> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
->>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
->>> @@ -164,6 +164,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
->>>    		.sblk = &sdm845_lm_sblk,
->>>    		.lm_pair = LM_3,
->>>    		.pingpong = PINGPONG_2,
->>> +		.dspp = DSPP_2,
->>>    	}, {
->>>    		.name = "lm_3", .id = LM_3,
->>>    		.base = 0x47000, .len = 0x320,
->>> @@ -171,6 +172,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
->>>    		.sblk = &sdm845_lm_sblk,
->>>    		.lm_pair = LM_2,
->>>    		.pingpong = PINGPONG_3,
->>> +		.dspp = DSPP_3,
->>>    	}, {
->>>    		.name = "lm_4", .id = LM_4,
->>>    		.base = 0x48000, .len = 0x320,
->>>
->>
->> the consumer of .dspp seems to be in the RM code which is used to map the
->> DSPP to encoder_id but is there really any case where lm_id != dspp_id ... I
->> guess I am missing the context of why DSPP id needs to be tracked as LMs and
->> DSPPs go together. Let me also check this part internally.
-> 
-> For example check the SDM845, the LM_5 is tied to DSPP_3.
-> 
-> LM | DSPP
-> ---------
-> 0  |  0
-> 1  |  1
-> 2  |  2
-> 5  |  3
-> 
+https://en.wikipedia.org/wiki/Bfloat16_floating-point_format
 
-Ah ... yes ... seems like sdm845 is the only one having this anomaly.
+Jess
 
-Thanks for clarifying.
 
