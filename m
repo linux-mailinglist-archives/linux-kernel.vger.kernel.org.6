@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-447692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D959F360A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:31:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C4F9F3614
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 986AE16646F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC7E1675A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EA11FF7D4;
-	Mon, 16 Dec 2024 16:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5DB207DFE;
+	Mon, 16 Dec 2024 16:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Roi7m7tT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n9Gxngyr"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11C1885A5;
-	Mon, 16 Dec 2024 16:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A23A207A33
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734366559; cv=none; b=PP1eZe+oBAVT5hh7aVr9Gia3P7878GDMXNf40edjK6hVP/wpf4eDxJEU2xoIR/o16GhAc3861vQ3H35W9WoFXGEuyTL6JDs90tW4dvq0w41YrwIFIFHK9USlxPqGET1PBZTFXa2wwLvbClJVyC2pMzM7SiIVMayUNJn82FYxSmM=
+	t=1734366574; cv=none; b=SUcOHgqfXOrq1+gW2IQ5NjB0qVsmlpa89zaTAO+7AQHUU6+ZVjArmbm7f7sFZSFa2hP++wS9dBVXsf6a6dKN3AQMLHyMELS10+d9whpLp3S2xOIseEaw2n5ozhrMITGTci2UHo+1gK3ikm+96WNsvUMWCisVA0jPDzowmum4crM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734366559; c=relaxed/simple;
-	bh=eTH5PAJYArUjyYFUhkavXr9IHbyJp0cHmZVtDEdnjTA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=G9vQ0uIVuMAa0Mex9dfbX87N0oIHitOwO61xb6Gzhv7hL3arywbi5zSbeBL2akj6NMjGoQXuMfKxR8MLEAY08vmvMBxFCkwcFhnABz1mGSMGqd/3FfV8IdGz66I/KUTNSwiUfSW7USMLL0LWug3elMsb3zrDpdmc0T6/m72vEys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Roi7m7tT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76040C4CED0;
-	Mon, 16 Dec 2024 16:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734366558;
-	bh=eTH5PAJYArUjyYFUhkavXr9IHbyJp0cHmZVtDEdnjTA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Roi7m7tTvG8r+dOMRufBtBzf5LMU1seuLVmkSmHbU3rEmITSOGpJPXpjrhRr6X/Hw
-	 HjJNiLkX/IW0bMxbpw8I7wXh2MYhrvMJhlBy9D5p7t7HDayiUqPKsRawGDGMovBNlS
-	 avFCa7hVK+M+YD265Uh72h9hwn8tGEtfrsQuVmO6n24edW5BlwsRWomv+RYm5062dz
-	 ITYKSdLGCLsY/0nuuRu3xeW+So58/l4eeCXi4FPGK0wtN10XmDGoDR4YfAIyqSobCa
-	 EKeJEo+JrYhxJiit9foSGLVBy/GqYkyGTePRQtBGUgGQvaGbbHcSryDpo13zLU/db7
-	 8vatbl3MVjO4w==
-Date: Mon, 16 Dec 2024 10:29:15 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1734366574; c=relaxed/simple;
+	bh=meBuQTqibPCoCdQtPAplVWCvCzXcGb+673eHerIjR58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pD5QZ2YAe3UviZUvMN8pkcjLHBk1zcziAfUpEa4Hyf/X+qCgedLhVppqv138JmT5AlKnfSrV+Tg1Sl3D9Q837sj73NhTAPA984pv5Ji26XJjEbenqHLLpF6rL4BjeF51XYEnsucgxs4WXOqUyGmn/B29fCVSCHPUnJ+hobQLJH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n9Gxngyr; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-72909c459c4so2692399b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:29:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734366572; x=1734971372; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Z59GLf8XiBlzN9yul/97/9j8EsBiViggAMyWm18iOo=;
+        b=n9GxngyrYMbk9LZD4DISQHuePWYstw4KQq8OqQGsjcRNmMvo+VKKCrZGNTusEl9H1b
+         BgtgfYuuPxAVl3bHYBqOL63EQAhxzo4GOJF9tnG+tjX3X8YyEx2UWEuUWf01AwyYJpSv
+         t3l5YbMA4N3rLtin36AAl08WC1tdZRaI5hEEA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734366572; x=1734971372;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9Z59GLf8XiBlzN9yul/97/9j8EsBiViggAMyWm18iOo=;
+        b=masG1ZVAHa/JYyxD8FhHlGasLV/2WHPV+c3rAykLsifaG+zxditcomRsEjUSVckwEQ
+         JkpXaL5TcXrSd04nauENGHv6ex0295WiblpElWFdD0KcR0SaKLkP5KyNoFi5F8bh/7Un
+         OI8zOMF6y9/VRQcIhdo+jdrioymp4R0LpWIvKYw6fjGU1/FFqHzys+P9yedr4gApRYWE
+         CXdFPEJYtyiVeTiuUY9g71y52RTSM5Et/32s8OU1wKVCkg3wLtDkNFrobfs5rvB8eluW
+         sdwHfQ8U4BL+j4VF25fDcKK0w8cqv/8wyBJDyxMbKlX0iBHfSKiblPScGmPpSgpaRtCk
+         GevA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1btEuB93dh82c4Y4Dv0fFN+H/p/88KsKsH0PPuYhlyEcIqnp7CxPhwo+rCThVHxMXWXVui7GycKNz/+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI2WG+PggdbyET4oKUdLZzGqS9SLcoqqLzD71p50g81E22NyDP
+	8EFi1KBZ6YWxF5cnraJiTxane9wdXi17mfg6oSD2yI2Py0R5wmI7vBvKObjpkk7uBzYR4+lX+28
+	=
+X-Gm-Gg: ASbGncuOOPRYKoZUWY6ViGzPUVPocrGXAoY3jAXynyx2NV9FntJAGWmriLs+a569awa
+	imFC3SQ+0NHAA1Q34VEjnvWf9HfsuXYiZ3HN6Sp+MAq2iiUvSjJnMIZMwgPYLvU9fogf4Ix2AJ9
+	BhZS98UlQKXly3NNQVx1+ogW0U57q4Y3A9lfr0hYvI/hgOpfo1hPxR9GOQ/q6BJycaKj46t1s8n
+	BJK8l/5D2pQ0jwk8aUCqsVsKnokxgTFAg9iY6yx91tswQgPxNViartp4nM9JamcgTAzpd/rS/6i
+	AkGuON+PSKBp5k8uZtWhmkU=
+X-Google-Smtp-Source: AGHT+IEKWZngvXh0L7tfITCEkUVaACE3nGn/f03qZFFxRJXSNNY7GQXwkVjtU5Co8RMjn/US5G/xjQ==
+X-Received: by 2002:a05:6a00:90a5:b0:728:e745:23d8 with SMTP id d2e1a72fcca58-7290c261b59mr20466984b3a.24.1734366571805;
+        Mon, 16 Dec 2024 08:29:31 -0800 (PST)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com. [209.85.215.171])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bad9d2sm4949505b3a.157.2024.12.16.08.29.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 08:29:30 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc88476a02so3303372a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:29:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWx8m/xqxTz8+Uq87b0jZD7Ix+BVswJYs6SDS8WI95UUUOGDllyydHG3NHt+iz4ypSAXH8VGhCTZx76Q/w=@vger.kernel.org
+X-Received: by 2002:a17:90b:5105:b0:2ee:ed07:d6d2 with SMTP id
+ 98e67ed59e1d1-2f2902ac693mr18968712a91.37.1734366569425; Mon, 16 Dec 2024
+ 08:29:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: andrew@codeconstruct.com.au, linux-arm-kernel@lists.infradead.org, 
- krzk+dt@kernel.org, eajames@linux.ibm.com, joel@jms.id.au, 
- devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org
-To: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <20241213145037.3784931-1-ninad@linux.ibm.com>
-References: <20241213145037.3784931-1-ninad@linux.ibm.com>
-Message-Id: <173436597537.264948.12611164276777551472.robh@kernel.org>
-Subject: Re: [PATCH v1 0/8] DTS updates for system1 BMC
+References: <20241216-ipu-doc-v1-1-e07f0b4f9065@chromium.org> <Z2BOAHleNCsuCoHq@kekkonen.localdomain>
+In-Reply-To: <Z2BOAHleNCsuCoHq@kekkonen.localdomain>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 16 Dec 2024 17:29:17 +0100
+X-Gmail-Original-Message-ID: <CANiDSCv6vC5uzeswB__biC42j=01-kZkoKYW2FQv-cDAULiKtg@mail.gmail.com>
+X-Gm-Features: AbW1kvZi_6EfyZOTZs3A0KuJkDkszn8E8Jb-ClaSZjICowH_1EO2R4Flpkq-6vk
+Message-ID: <CANiDSCv6vC5uzeswB__biC42j=01-kZkoKYW2FQv-cDAULiKtg@mail.gmail.com>
+Subject: Re: [PATCH] media: Documentation: ipu3: Remove unused footnotes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 16 Dec 2024 at 16:58, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Ricardo,
+>
+> On Mon, Dec 16, 2024 at 03:51:28PM +0000, Ricardo Ribalda wrote:
+> > These footnotes are not used, or they are used in a codeblock:
+> > Documentation/media/admin-guide/ipu3.rst:592: WARNING: Footnote [#] is not referenced. [ref.footnote]
+> > Documentation/media/admin-guide/ipu3.rst:598: WARNING: Footnote [#] is not referenced. [ref.footnote]
+> >
+> > Remove them for now.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>
+> You seem to have written the same patch I have. :-)
+>
+> I'm about to send a PR soon, however if you can get this merged before
+> that, let me know and feel free to add:
+>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-On Fri, 13 Dec 2024 08:50:26 -0600, Ninad Palsule wrote:
-> Hello
-> 
-> Please review the patch set. It has various device tree changes for
-> system1 BMC after hardware testing.
-> 
-> NINAD PALSULE (7):
->   ARM: dts: aspeed: system1: Add IPMB device
->   ARM: dts: aspeed: system1: Add GPIO line name
->   ARM: dts: aspeed: system1: Add RGMII support
->   ARM: dts: aspeed: system1: Reduce sgpio speed
->   ARM: dts: aspeed: system1: Update LED gpio name
->   ARM: dts: aspeed: system1: Remove VRs max8952
->   ARM: dts: aspeed: system1: Mark GPIO line high/low
-> 
-> Ninad Palsule (1):
->   ARM: dts: aspeed: system1: Disable gpio pull down
-> 
->  .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 178 ++++++++++++------
->  1 file changed, 119 insertions(+), 59 deletions(-)
-> 
+Let's land your patch. I already marked this as duplicate.
+
+Thanks!
+
+>
 > --
-> 2.43.0
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-ibm-system1.dtb' for 20241213145037.3784931-1-ninad@linux.ibm.com:
-
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: ethernet@1e660000: phy-mode:0: 'rgmii-rxid' is not one of ['rgmii', 'rmii']
-	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: gpio@1e780000: 'fan_controller_reset', 'isolate_errs_cpu1', 'rtc_reset', 'srtc_reset' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/gpio/aspeed,ast2400-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: rtc_reset: $nodename:0: 'rtc_reset' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: srtc_reset: $nodename:0: 'srtc_reset' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: fan_controller_reset: $nodename:0: 'fan_controller_reset' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: isolate_errs_cpu1: $nodename:0: 'isolate_errs_cpu1' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb@1e780000/bus@1e78a000/i2c@280/bmc_slave@10: failed to match any schema with compatible: ['ipmb-dev']
+> Sakari Ailus
 
 
 
-
-
+-- 
+Ricardo Ribalda
 
