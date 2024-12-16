@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-447301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB9D9F303D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:13:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29F79F303B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340EB1885047
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:13:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4E527A3788
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910E5205AD1;
-	Mon, 16 Dec 2024 12:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58F920551E;
+	Mon, 16 Dec 2024 12:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="AvEz7mgn"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7GxRNSI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393F22046BA;
-	Mon, 16 Dec 2024 12:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0889F2046B2;
+	Mon, 16 Dec 2024 12:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351108; cv=none; b=pj4P5w3M3lvVy1wU8J88DdH7zbwbUvbZt/118EoMfXuU+LJlK2BTrQK27gLhgEW4rfId9u41OWEkd5xqBu2P19+7aYkaM2Y6dwsvFprokA8bzVmsE6c6d/xmsWFqLf0QWmS4EtkmFEU/Xy9tDmRppxs5gpIOo4YPkiD8trqEdLg=
+	t=1734351095; cv=none; b=aGpIsj1Zw6AHiQcPzR5dfbmHnCXO1LIzHKunqlklV5gmoaIzO9YJDDPPVYJ8dZPhWLiw/xSrzRvDd5ZyNkxhiaYSuqoQsm+X1s/mlenBYurcSV49PzQIMobaLm3GnbYmfB4CDpO93p+6v6ny9XMAK3ZpJ8NtcRyX54a37UIbCLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351108; c=relaxed/simple;
-	bh=/uPilcPPSkM0vFf7CZp7ih66ufLi2xO3rEUxtf1Dzh8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eL1OCaJAeWJBNtdgde+HvQJrhMFQOHccyam4h0gEchk0QgMrS7Wws85zjVMbgM3KXeCPSmQ+/tgevq2oZ/ZM3atxoKOz6aaBvBN8adzPcDPK1tKLUKds71uWtv31mFoUq4VGrkFJjIM9/zsK6S0ZexP0oZcfPGoJsUPMXzRX4yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=AvEz7mgn; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1734351107; x=1765887107;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/uPilcPPSkM0vFf7CZp7ih66ufLi2xO3rEUxtf1Dzh8=;
-  b=AvEz7mgnA8QDnTyvXhbj1cgm6Q5mMzmXV9oVNBYa/sswpoxsZYQ3KL2h
-   SoyeFFrqaTMsxhgvmY8uiqWwaALZ5Sp/UO9dDMDYaKDTlVoyBtv/U3ikP
-   LYii1QTG4orh3IPOwKWxY8ITcbuu8iTQ2H4o/RdAMUd1TvRo+QOGlKdrt
-   b39bFs3wX/D+bsnPLEw/uvyRP9v6XT5gfaDmsfbclsUyLX7Fqbxt5a3T8
-   p0vUJULK3bzp1nvQT2bE9jW+SIHKFUMYqnd4EMIkgfMyxUYbIqt2UkyGQ
-   Rbapm9WxOjQO1k1q2QQWc4nfmFRL+4dTl6bIKaTxm3JF8Kge1EffKxYIz
-   Q==;
-X-CSE-ConnectionGUID: pK+G4L7kQ0aeZKZcimCaNA==
-X-CSE-MsgGUID: AxFEMPyOT+abSUdbeMU9OQ==
-X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="scan'208";a="35580346"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Dec 2024 05:11:46 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Dec 2024 05:10:44 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 16 Dec 2024 05:10:41 -0700
-Date: Mon, 16 Dec 2024 12:10:40 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
- Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>, <jacob.e.keller@intel.com>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<robert.marko@sartura.hr>
-Subject: Re: [PATCH net-next v4 6/9] net: sparx5: verify RGMII speeds
-Message-ID: <20241216121040.2dpxb7mv6h3u3r42@DEN-DL-M70577>
-References: <20241213-sparx5-lan969x-switch-driver-4-v4-0-d1a72c9c4714@microchip.com>
- <20241213-sparx5-lan969x-switch-driver-4-v4-6-d1a72c9c4714@microchip.com>
- <Z1yPq6OEziTNjWHK@shell.armlinux.org.uk>
+	s=arc-20240116; t=1734351095; c=relaxed/simple;
+	bh=ciQCs46G5sP2n0VuQw3RaBYOH04XxMT9t62CwWEmgVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kc280EaLSmD7KuiIrf31GGK3cJ0g9RoHQDH5OLpkiMhjkO3cGGUYjr65lQ5y+Ed7Pko7ONJDnPkejmhBkIiimT/KQrf9YrHxvPJWTm1zRKyLvyapgZDisUf16wyxvhwZjV7BHJqmLrvYKqP0HM5hK1zgrj6vzL8BSDbh6tuP1nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7GxRNSI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD6FFC4CED0;
+	Mon, 16 Dec 2024 12:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734351094;
+	bh=ciQCs46G5sP2n0VuQw3RaBYOH04XxMT9t62CwWEmgVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l7GxRNSIk1Afq65WH5PkH8PCsoT7vQJVWefnlgKwbUMgtJdB6SSE8JQ2d1aQwzV4n
+	 uklRpKkXP2LaD/x/Lo2ZPnG0TQ9N9CXSobFkNbWTGesbtrFXFRt0uaJ11s9PoI2MRX
+	 4XCiLWNZt//8meflzxxfVrOQlz+RIlJn2/O4ctdoae+8EFlfSyMl/eDjiU7KbYyEv7
+	 TckEuaj07TWEjfkqqu9iHhbeOPDWGnSUeu+gbMLug+LOKhvOg/e4Luw5af5o2S++qI
+	 QFDZEf3Nt3+rzxgN52eXusaK/VDPivBUfcyyvYm0OyhYO8qgG4VrCGngYOGZYENH13
+	 yQNjuXmxk4tgw==
+Date: Mon, 16 Dec 2024 13:11:28 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Additional miscdevice fops parameters
+Message-ID: <Z2AY8D3pni7wxWD1@cassiopeiae>
+References: <20241210-miscdevice-file-param-v3-0-b2a79b666dc5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1yPq6OEziTNjWHK@shell.armlinux.org.uk>
+In-Reply-To: <20241210-miscdevice-file-param-v3-0-b2a79b666dc5@google.com>
 
-> On Fri, Dec 13, 2024 at 02:41:05PM +0100, Daniel Machon wrote:
-> > When doing a port config, we verify the port speed against the PHY mode
-> > and supported speeds of that PHY mode. Add checks for the four RGMII phy
-> > modes: RGMII, RGMII_ID, RGMII_TXID and RGMII_RXID.
-> >
-> > Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-> > Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+On Tue, Dec 10, 2024 at 09:38:59AM +0000, Alice Ryhl wrote:
+> This could not land with the base miscdevice abstractions due to the
+> dependency on File.
 > 
-> You do realise that phylink knows what speeds each interface supports
-> (see phylink_get_capabilities()) and restricts the media advertisement
-> to ensure that ethtool link modes that can't be supported by the MAC
-> capabilities and set of interfaces that would be used are not
-> advertised.
+> The last two patches enable you to use the `dev_*` macros to print
+> messages in miscdevice drivers.
 > 
-> This should mean none of your verification ever triggers. If it does,
-> then I'd like to know about it.
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Yes, I agree. Having an extra look at phylink, these checks should not trigger
-at all.
+For the series,
 
-As it is, the default switch case is to throw an error, so without this
-addition, the sparx5_port_verify_speed() function will fail when the PHY mode
-is any of RGMII{_ID,_TXID,_RXID}. This patch just follows the established
-pattern of adding the new PHY mode and checking the speed. TBH, I think that
-all the checks in this function can be removed entirely, but that is something
-I would like to verify and follow up on in a separate series, if that is OK? 
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-Thanks.
-
-/Daniel
-
+> ---
+> Changes in v3:
+> - Fix build error in fops->open() patch.
+> - Improve wording of some comments in fops->open() patch.
+> - Update commit message with more info on why `struct miscdevice` is
+>   only made available in fops->open() and not other hooks.
+> - Include Lee's device accessor patch, since it's a needed component to
+>   use the `dev_*` printing macros with miscdevice.
+> - Link to v2: https://lore.kernel.org/r/20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com
+> 
+> Changes in v2:
+> - Access the `struct miscdevice` from fops->open().
+> - Link to v1: https://lore.kernel.org/r/20241203-miscdevice-file-param-v1-1-1d6622978480@google.com
+> 
+> ---
+> Alice Ryhl (2):
+>       rust: miscdevice: access file in fops
+>       rust: miscdevice: access the `struct miscdevice` from fops->open()
+> 
+> Lee Jones (1):
+>       rust: miscdevice: Provide accessor to pull out miscdevice::this_device
+> 
+>  rust/kernel/miscdevice.rs | 66 +++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 55 insertions(+), 11 deletions(-)
+> ---
+> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+> change-id: 20241203-miscdevice-file-param-5df7f75861da
+> 
+> Best regards,
+> -- 
+> Alice Ryhl <aliceryhl@google.com>
+> 
+> 
 
