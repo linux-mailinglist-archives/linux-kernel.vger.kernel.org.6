@@ -1,150 +1,369 @@
-Return-Path: <linux-kernel+bounces-447577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329229F346D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:24:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5101E9F3472
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C8E1631B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891EB166E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68B81482E1;
-	Mon, 16 Dec 2024 15:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD1E145FE8;
+	Mon, 16 Dec 2024 15:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8Qilrik"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruW8bxYt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydutSlNK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruW8bxYt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydutSlNK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1FD137775;
-	Mon, 16 Dec 2024 15:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BA013B7BC;
+	Mon, 16 Dec 2024 15:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362669; cv=none; b=AWfo9/ojJQOnp6EooxwZsEJ91acZvPFqk9s29KSSRvTpGeETkRTYW1Bst8iu5on9VnTa/D+QMiMLUlUgKwx0g8VTQwqf1PWQ0j4Xflyqx8dJbZ0gQ6xhvIkXhT8gq/ZugWgyMlVZIjdWifJwB6liknYifCI0/uZbX1FoF5DC0/A=
+	t=1734362686; cv=none; b=SdTEWQ3aPp6ZwsnYwsxa1AxtE1WmQvATurV20zlY82HPimqTVA8x5yBxc5glsGw6k6PZzwJBPlyCayo7Yh6GN8ryQ57WkVdhPvjd3DYl/R8sTkXHpjpVYK3KxqWL/CnRKal2VH3SOSRaSL++wT4Vfq/zBOQGVMskKLiRwVGoFSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362669; c=relaxed/simple;
-	bh=agePObKTKIqacVCU4rIa9k5erBpScbul3raudsvvu8Y=;
+	s=arc-20240116; t=1734362686; c=relaxed/simple;
+	bh=jEvwFMbNVVsOIfG01HbGwH6lEGq2ZEPsQzp0nvpX8hE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tu9k9HaGq6Mg/YLjliq1VdKZmSGzu0/ZXXc1QAml56spnjV3e5bBsdfLSFCC4ALTzFqtYnp75psZBXvaBgvCV3X3VQg96Psf24iVZ8ZRQVui82+G3ryv5HdX0owrC9fJOfUVH49AXQVuTA4d51QZraox8Mt0ZQdV3M/7FXSXRjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8Qilrik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4224EC4CED0;
-	Mon, 16 Dec 2024 15:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734362668;
-	bh=agePObKTKIqacVCU4rIa9k5erBpScbul3raudsvvu8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b8QilrikF4NVH5daF8JcBRrPWW47IJcOfuBDqzAMfQm21R3U9vJi2tRp0R2CDW5KU
-	 5PerJeZDcm3voWMl8+EWYdNddW85QuUfUafcbTx+kTzNF4sUCjQ04UEDh3ph0PXAK1
-	 Z1NHTk8NagW8X10YnpCm7uKgRzHBWxsZCPpk+vfi7gkeip02Qs/Q8sl/IQN5ggPRnQ
-	 tiHqOSurdrARlgyv2rqjrH4jQgTA3uj8xMbUR/Tvgx4pm5Yzx2pKbbGLHs+Ow+FAJU
-	 9K5AFnij63nj1RL4yi2Lsp6+ZMP3PJrfPu/BXSpKNpcMrIG6YSDc/i3Kquo7nCV5DK
-	 MNuZMdT+4DpXQ==
-Date: Mon, 16 Dec 2024 16:24:26 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect
- connector->eld
-Message-ID: <20241216-observant-spiritual-wolf-564ee3@houat>
-References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
- <xchjpeykkqwlpniaspbzitaozuoltoq7aturtu7jq6z4lcxh77@y7t5ge2sa4er>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZL6D2hkOjcwa8NfjsTvcUe2yYiU1aeuKR0pENP1aauoZot0DHZDZs89YdfjI7vG9BOiSw+f83E393ejNaj4/h79XEDH2u/NDfz1Vz7FqnLP7mYhQodYMkBGlLaP5y31Q0CyJP6E6+mlbFGOu0CqH5FMWcwNm/qIOntUxPxwiXiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruW8bxYt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydutSlNK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruW8bxYt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydutSlNK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8A6951F385;
+	Mon, 16 Dec 2024 15:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734362682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5PoZvQ9WmZd4gLIo5PU5zQB0sptKp16IF9exvOst5Q4=;
+	b=ruW8bxYtAKzeKRY/quJvFhN/Rxu4fGe253q59uy5kPWARgSwOfmilEsdQQTsb1y+R3hu4e
+	bv+2bWcjrrvn++RcyFY2B0TNRHFIZ1ScKMKtAGtRB1HeZA7gHy+D1kJlORjtIngx7bLdcc
+	wgbYTHrH2jGRbGfGrjWTYdWJ0D6mSPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734362682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5PoZvQ9WmZd4gLIo5PU5zQB0sptKp16IF9exvOst5Q4=;
+	b=ydutSlNKBiiSCxR4vSni2/f8HUb8wnghluHjEHpoMOghnKZoaWBDurfIu0TgF2aY/HyE/V
+	MBn2BgguaW6ELJBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734362682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5PoZvQ9WmZd4gLIo5PU5zQB0sptKp16IF9exvOst5Q4=;
+	b=ruW8bxYtAKzeKRY/quJvFhN/Rxu4fGe253q59uy5kPWARgSwOfmilEsdQQTsb1y+R3hu4e
+	bv+2bWcjrrvn++RcyFY2B0TNRHFIZ1ScKMKtAGtRB1HeZA7gHy+D1kJlORjtIngx7bLdcc
+	wgbYTHrH2jGRbGfGrjWTYdWJ0D6mSPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734362682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5PoZvQ9WmZd4gLIo5PU5zQB0sptKp16IF9exvOst5Q4=;
+	b=ydutSlNKBiiSCxR4vSni2/f8HUb8wnghluHjEHpoMOghnKZoaWBDurfIu0TgF2aY/HyE/V
+	MBn2BgguaW6ELJBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 786E713418;
+	Mon, 16 Dec 2024 15:24:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SAtgHTpGYGcJFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Dec 2024 15:24:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2AFCDA09C6; Mon, 16 Dec 2024 16:24:42 +0100 (CET)
+Date: Mon, 16 Dec 2024 16:24:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v4 05/10] ext4: refactor ext4_zero_range()
+Message-ID: <20241216152442.7vg4x6cpuj26gurb@quack3>
+References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+ <20241216013915.3392419-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="yj5x4y56pv6ag7wh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xchjpeykkqwlpniaspbzitaozuoltoq7aturtu7jq6z4lcxh77@y7t5ge2sa4er>
+In-Reply-To: <20241216013915.3392419-6-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
+On Mon 16-12-24 09:39:10, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The current implementation of ext4_zero_range() contains complex
+> position calculations and stale error tags. To improve the code's
+> clarity and maintainability, it is essential to clean up the code and
+> improve its readability, this can be achieved by: a) simplifying and
+> renaming variables, making the style the same as ext4_punch_hole(); b)
+> eliminating unnecessary position calculations, writing back all data in
+> data=journal mode, and drop page cache from the original offset to the
+> end, rather than using aligned blocks; c) renaming the stale out_mutex
+> tags.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
---yj5x4y56pv6ag7wh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect
- connector->eld
-MIME-Version: 1.0
+Looks good. Feel free to add:
 
-On Mon, Dec 16, 2024 at 01:24:29PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Dec 06, 2024 at 11:43:03AM +0200, Dmitry Baryshkov wrote:
-> > The connector->eld is accessed by the .get_eld() callback. This access
-> > can collide with the drm_edid_to_eld() updating the data at the same
-> > time. Add drm_connector.eld_mutex to protect the data from concurrenct
-> > access.
-> >=20
-> > The individual drivers were just compile tested. I propose to merge the
-> > drm_connector and bridge drivers through drm-misc, allowing other
-> > maintainers either to ack merging through drm-misc or merging the
-> > drm-misc into their tree and then picking up correcponding patch.
-> >=20
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> > Changes in v2:
-> > - Also take the mutex in clear_eld() (Jani)
-> > - Rebased on top of linux-next + drm-misc-next to solve build error
-> > - Link to v1: https://lore.kernel.org/r/20241201-drm-connector-eld-mute=
-x-v1-0-ba56a6545c03@linaro.org
-> >=20
-> > ---
-> > Dmitry Baryshkov (10):
-> >       drm/connector: add mutex to protect ELD from concurrent access
-> >       drm/bridge: anx7625: use eld_mutex to protect access to connector=
-->eld
-> >       drm/bridge: ite-it66121: use eld_mutex to protect access to conne=
-ctor->eld
-> >       drm/amd/display: use eld_mutex to protect access to connector->eld
-> >       drm/exynos: hdmi: use eld_mutex to protect access to connector->e=
-ld
-> >       drm/i915/audio: use eld_mutex to protect access to connector->eld
-> >       drm/msm/dp: use eld_mutex to protect access to connector->eld
-> >       drm/radeon: use eld_mutex to protect access to connector->eld
-> >       drm/sti: hdmi: use eld_mutex to protect access to connector->eld
-> >       drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
->=20
-> Granted the lack of reviews from AMD maintainers and granted that the
-> rest of the series was reviewed and acked, is it suitable to leave those
-> two patches out and merge the rest through drm-misc-next?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Sounds reasonable to me
+								Honza
 
-Maxime
-
---yj5x4y56pv6ag7wh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2BGJAAKCRAnX84Zoj2+
-dqCXAX9SjWwvOgFzh4mNa6iVP75JAzbqRH60uqV3o0fzLR0EpZr5ExXJlgdvDTJ1
-pqDitiQBf0gV4LWjS6KxH0jldZncnMFDYupvJiMgktWoAluECsTRw5fKWW43ccUY
-56/fJ5jxEg==
-=4rTF
------END PGP SIGNATURE-----
-
---yj5x4y56pv6ag7wh--
+> ---
+>  fs/ext4/extents.c | 142 +++++++++++++++++++---------------------------
+>  1 file changed, 57 insertions(+), 85 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 7fb38aab241d..97ad6fea58d3 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4570,40 +4570,15 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>  	struct inode *inode = file_inode(file);
+>  	struct address_space *mapping = file->f_mapping;
+>  	handle_t *handle = NULL;
+> -	unsigned int max_blocks;
+>  	loff_t new_size = 0;
+> -	int ret = 0;
+> -	int flags;
+> -	int credits;
+> -	int partial_begin, partial_end;
+> -	loff_t start, end;
+> -	ext4_lblk_t lblk;
+> +	loff_t end = offset + len;
+> +	ext4_lblk_t start_lblk, end_lblk;
+> +	unsigned int blocksize = i_blocksize(inode);
+>  	unsigned int blkbits = inode->i_blkbits;
+> +	int ret, flags, credits;
+>  
+>  	trace_ext4_zero_range(inode, offset, len, mode);
+>  
+> -	/*
+> -	 * Round up offset. This is not fallocate, we need to zero out
+> -	 * blocks, so convert interior block aligned part of the range to
+> -	 * unwritten and possibly manually zero out unaligned parts of the
+> -	 * range. Here, start and partial_begin are inclusive, end and
+> -	 * partial_end are exclusive.
+> -	 */
+> -	start = round_up(offset, 1 << blkbits);
+> -	end = round_down((offset + len), 1 << blkbits);
+> -
+> -	if (start < offset || end > offset + len)
+> -		return -EINVAL;
+> -	partial_begin = offset & ((1 << blkbits) - 1);
+> -	partial_end = (offset + len) & ((1 << blkbits) - 1);
+> -
+> -	lblk = start >> blkbits;
+> -	max_blocks = (end >> blkbits);
+> -	if (max_blocks < lblk)
+> -		max_blocks = 0;
+> -	else
+> -		max_blocks -= lblk;
+> -
+>  	inode_lock(inode);
+>  
+>  	/*
+> @@ -4611,77 +4586,70 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>  	 */
+>  	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
+>  		ret = -EOPNOTSUPP;
+> -		goto out_mutex;
+> +		goto out;
+>  	}
+>  
+>  	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
+> -	    (offset + len > inode->i_size ||
+> -	     offset + len > EXT4_I(inode)->i_disksize)) {
+> -		new_size = offset + len;
+> +	    (end > inode->i_size || end > EXT4_I(inode)->i_disksize)) {
+> +		new_size = end;
+>  		ret = inode_newsize_ok(inode, new_size);
+>  		if (ret)
+> -			goto out_mutex;
+> +			goto out;
+>  	}
+>  
+> -	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
+> -
+>  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
+>  	inode_dio_wait(inode);
+>  
+>  	ret = file_modified(file);
+>  	if (ret)
+> -		goto out_mutex;
+> -
+> -	/* Preallocate the range including the unaligned edges */
+> -	if (partial_begin || partial_end) {
+> -		ret = ext4_alloc_file_blocks(file,
+> -				round_down(offset, 1 << blkbits) >> blkbits,
+> -				(round_up((offset + len), 1 << blkbits) -
+> -				 round_down(offset, 1 << blkbits)) >> blkbits,
+> -				new_size, flags);
+> -		if (ret)
+> -			goto out_mutex;
+> +		goto out;
+>  
+> -	}
+> +	/*
+> +	 * Prevent page faults from reinstantiating pages we have released
+> +	 * from page cache.
+> +	 */
+> +	filemap_invalidate_lock(mapping);
+>  
+> -	/* Zero range excluding the unaligned edges */
+> -	if (max_blocks > 0) {
+> -		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
+> -			  EXT4_EX_NOCACHE);
+> +	ret = ext4_break_layouts(inode);
+> +	if (ret)
+> +		goto out_invalidate_lock;
+>  
+> -		/*
+> -		 * Prevent page faults from reinstantiating pages we have
+> -		 * released from page cache.
+> -		 */
+> -		filemap_invalidate_lock(mapping);
+> +	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
+> +	/* Preallocate the range including the unaligned edges */
+> +	if (!IS_ALIGNED(offset | end, blocksize)) {
+> +		ext4_lblk_t alloc_lblk = offset >> blkbits;
+> +		ext4_lblk_t len_lblk = EXT4_MAX_BLOCKS(len, offset, blkbits);
+>  
+> -		ret = ext4_break_layouts(inode);
+> -		if (ret) {
+> -			filemap_invalidate_unlock(mapping);
+> -			goto out_mutex;
+> -		}
+> +		ret = ext4_alloc_file_blocks(file, alloc_lblk, len_lblk,
+> +					     new_size, flags);
+> +		if (ret)
+> +			goto out_invalidate_lock;
+> +	}
+>  
+> -		ret = ext4_update_disksize_before_punch(inode, offset, len);
+> -		if (ret) {
+> -			filemap_invalidate_unlock(mapping);
+> -			goto out_mutex;
+> -		}
+> +	ret = ext4_update_disksize_before_punch(inode, offset, len);
+> +	if (ret)
+> +		goto out_invalidate_lock;
+>  
+> -		/* Now release the pages and zero block aligned part of pages */
+> -		ret = ext4_truncate_page_cache_block_range(inode, start, end);
+> -		if (ret) {
+> -			filemap_invalidate_unlock(mapping);
+> -			goto out_mutex;
+> -		}
+> +	/* Now release the pages and zero block aligned part of pages */
+> +	ret = ext4_truncate_page_cache_block_range(inode, offset, end);
+> +	if (ret)
+> +		goto out_invalidate_lock;
+>  
+> -		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
+> -					     flags);
+> -		filemap_invalidate_unlock(mapping);
+> +	/* Zero range excluding the unaligned edges */
+> +	start_lblk = EXT4_B_TO_LBLK(inode, offset);
+> +	end_lblk = end >> blkbits;
+> +	if (end_lblk > start_lblk) {
+> +		ext4_lblk_t zero_blks = end_lblk - start_lblk;
+> +
+> +		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
+> +		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
+> +					     new_size, flags);
+>  		if (ret)
+> -			goto out_mutex;
+> +			goto out_invalidate_lock;
+>  	}
+> -	if (!partial_begin && !partial_end)
+> -		goto out_mutex;
+> +	/* Finish zeroing out if it doesn't contain partial block */
+> +	if (IS_ALIGNED(offset | end, blocksize))
+> +		goto out_invalidate_lock;
+>  
+>  	/*
+>  	 * In worst case we have to writeout two nonadjacent unwritten
+> @@ -4694,25 +4662,29 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>  	if (IS_ERR(handle)) {
+>  		ret = PTR_ERR(handle);
+>  		ext4_std_error(inode->i_sb, ret);
+> -		goto out_mutex;
+> +		goto out_invalidate_lock;
+>  	}
+>  
+> +	/* Zero out partial block at the edges of the range */
+> +	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
+> +	if (ret)
+> +		goto out_handle;
+> +
+>  	if (new_size)
+>  		ext4_update_inode_size(inode, new_size);
+>  	ret = ext4_mark_inode_dirty(handle, inode);
+>  	if (unlikely(ret))
+>  		goto out_handle;
+> -	/* Zero out partial block at the edges of the range */
+> -	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
+> -	if (ret >= 0)
+> -		ext4_update_inode_fsync_trans(handle, inode, 1);
+>  
+> +	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  	if (file->f_flags & O_SYNC)
+>  		ext4_handle_sync(handle);
+>  
+>  out_handle:
+>  	ext4_journal_stop(handle);
+> -out_mutex:
+> +out_invalidate_lock:
+> +	filemap_invalidate_unlock(mapping);
+> +out:
+>  	inode_unlock(inode);
+>  	return ret;
+>  }
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
