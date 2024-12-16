@@ -1,183 +1,127 @@
-Return-Path: <linux-kernel+bounces-447145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C789F2DE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:11:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A389F2DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C795D1882C6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BB816172B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565F22036E4;
-	Mon, 16 Dec 2024 10:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F132036FC;
+	Mon, 16 Dec 2024 10:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VU9yAmyb"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BTUZLw1H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0FD202C37;
-	Mon, 16 Dec 2024 10:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F362036ED
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343900; cv=none; b=QEyy60KbTKCSqHi0azTOcp6uphQGudZDqIH7QVsxFYfbNVKNZacrlg+LR/2PKS/lItJfK3bn2Zi9IapSMAiPiH5IfuJWBPlN9/XDc6dSWe+b/Im80cBdUNM8I63Z8ssI6X6LwgS8iqQH6+5VrpSzR7/Me93ZsBNfcuBqjPyzFkc=
+	t=1734344017; cv=none; b=M1bIf0INdkGLZVTFz+rsJWir+fxsPSseAmkJDEOM1biPL5WKWvkaFvIRqi/N3WH1Tocu3UYrqibkeRD0oxS3tfFpLroEDqBci68VzM4Z/aM56ndith7dB4Hi6dgzc865AamVELO0VoeMG0d06c0Bg3bmcI7TKWdeCn1Z1wl7Tlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343900; c=relaxed/simple;
-	bh=rerkDv4+3ixVJGqlsrEPNvGYbtkP0sOJsqUbWCAaK68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nq2pQac55EAsTRe8/ZuSElpqzLIQVvE5kcpsqINJj772vFihqSE02DbA4UqBmjWp1oMALUhkp+IhE4bCU0aYXFOBYy9Jaepn0nZv0d1yEcmqS3S0MqFkvQ7hAdEqx7eirwdQhK7u4VGwlSbVIi7Yp2vQ1ouzli8F8WK4NYpP6fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VU9yAmyb; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-725dc290c00so3763751b3a.0;
-        Mon, 16 Dec 2024 02:11:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734343898; x=1734948698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l+ixtMUrgX7I9rD5qvImPgp6IqifPuxLwfcX3hM//qc=;
-        b=VU9yAmybm0sskcfNoQ0Q30POeXon5zfQAhCVK03eKlu7Lm4f8NqIYolFjwSUjUGwqa
-         64NsuJqrruHPvAqx8O33+WBr7+hiNBkpCc8wMhvoXy93Xo3AwEVzIYyKUnMlxPZRnxHE
-         waG3Ds5zsA1OzWLIZEzIVsPfFfTSGeu9rjIqYqCjpzroCDogIs0oH5T5iiKdnmNTzARf
-         R+1ct7QF6dljhd5oAUPfB32ajrTGi2Ft/ifBBUrs7q8pt7XwMGnjZH9Ah8C9OL6Gu/fW
-         /rKaXDOtxbpeBoNiSbkdgzLPjyaueT8Q9cCIsExWMcxGHSN04GlVuzrsfkbyqw+U3lKq
-         vVJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734343898; x=1734948698;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l+ixtMUrgX7I9rD5qvImPgp6IqifPuxLwfcX3hM//qc=;
-        b=FVSUFScJZ+ECR+TxvrpIN0LYniX5HIJy1CnkXz8KtsSiREAVk6/WoCJ3+MhKn3XDtk
-         7kZ37ewtS2VaDMdBq5eXCHlpCP9haS6x2/Pf4jjQr0kJYxYsfl01FrpTIHLZ9zaf8wca
-         fVox3hQ/JU4R/i0BwyFh/5bimFzuzA+gSr9hLpOEnBS+XJClCkXNmumjpU9CC8EvYnpp
-         Y8yloePnGb9nlnH/02B0vvxGXjGj2clrvdLB5cnyqQ0u+BUr/EMR289RskoT/c3BzF38
-         Nf1fuVz0E20c4YLgqu6j/B0f8lMCKgNRWt/Sp5mH9aCLl8ME52PxaghSyRrsh6q7Mnq3
-         0Y5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU2yvOqhtoN+orqFev+7bJDudHvO1OeEyMWYtKuCqUbd1Vkztz+vGzLkelambC4UYxsAItKndi+Yrqmog==@vger.kernel.org, AJvYcCU33C9oUmh3pNt2C5d/AF2JmKz55j89elgeGdYCftUkYI/lEW3swm/hWl7O7TyK27eDC0pcITeJcwe3@vger.kernel.org, AJvYcCUUUZsIZefUs3BYsyD0T9H/kHdloggMFc2olvXF71D2dhC7eu1twVlQ26aG7/4/ZkXLSx+aXa0KhQHc@vger.kernel.org, AJvYcCUotRoFq4Z1s48u8LYzA1zqIjHikXoy34bDifa45YRh1gBPCLTXdZ6DxO/7DzKu+txu6lVvMSBHl/xZ62cb@vger.kernel.org, AJvYcCVPHCS1Sw5pXOxak+lyqwt5LWnjrBYqiM2Wpx3FE1H14caq5Nd5cUvSjWy+3xVrjzEnanjaCDubOkG2rBx+xw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaRVxh9v/NktJRWypb/uSFzUHXxcGW/+IQw0i1rG5aZpqJlu5Y
-	YAUtlvxv3n7yxFJYENqqBoXCvNr+J4y3tczqnDIdow8hoD2AhESZ
-X-Gm-Gg: ASbGnctalaGf+cBY5ST9u26WoMVag4PYarq6PT2EftQKpuRGA4x8UQ8FNgxR0+u98Zg
-	kPY1CSA3bIqGNMm6Ha/oaVCPUOqi5F68Q5luzFaggw8ecIrqplPGyUq+W/byEb69r6e3SFVKBHU
-	yHSIlqw+/AVQ2/qIJVP7XW1qB7YWvDpVZszpv6RUJyNQrADD7pHDdxVI4JxX6WCQMfAK5330/Cy
-	DCOzx0YXvbu7A3yApxH6EoktxFP2uM9TXzRUNphYhf4NGTHMKfeW8YKojFGEgg9oBP8f0WbCC/X
-	dsOfkgnERA9o+stfLlzxa7A=
-X-Google-Smtp-Source: AGHT+IGkvlAjtALOBMooHfO7cK9L9lvwDBwHCDIhwn8y88sRHLlwLffLXlgmsZ5Mm6dr710N1QQFRg==
-X-Received: by 2002:a05:6a20:a11c:b0:1e1:e1c0:1c05 with SMTP id adf61e73a8af0-1e1e1c0202amr16720966637.9.1734343898208;
-        Mon, 16 Dec 2024 02:11:38 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5c3a513sm3824066a12.72.2024.12.16.02.11.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 02:11:37 -0800 (PST)
-Message-ID: <554ff96b-5be5-46b0-ac8b-f178394856f3@gmail.com>
-Date: Mon, 16 Dec 2024 19:11:33 +0900
+	s=arc-20240116; t=1734344017; c=relaxed/simple;
+	bh=MQK+wr+Xv+qZBf/YdEN80HGnJtSnQGXQbvv3yurqpYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmxxA4BBfwrJDVJRTsfoQseJ8gqoQWSaDb5VzP4D9/VhPPLKahWXQ+WxyLf6+lx/wR0hgwAkKXtaw8C1Co/aUIFf7ak1MlTFKbZW35iw5+iv9XQASmIqHXVEzVD8N5HjtKVSrSqH8CUV7t3WFGFDTlpHsB9oxdEe6nUR6V8JKII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BTUZLw1H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734344014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MQK+wr+Xv+qZBf/YdEN80HGnJtSnQGXQbvv3yurqpYU=;
+	b=BTUZLw1HwtpximpsAkw+dryy6os28MnDMJMuybJoG5w3fLhuf2ezrYuZ56DP90WKlMIRnq
+	p0c0kWhxrw9klcsl2ngEPXPDkKv2XV02di7gYoV4jEdRyg6nOoaeOpC42wQNFtbrl6e1J3
+	AB7FnqY0mOHEXTCwDKFmBk2RyoAzRv4=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-QwhyTaoPMDuCud5HOOU3ZQ-1; Mon,
+ 16 Dec 2024 05:13:30 -0500
+X-MC-Unique: QwhyTaoPMDuCud5HOOU3ZQ-1
+X-Mimecast-MFC-AGG-ID: QwhyTaoPMDuCud5HOOU3ZQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 572D61955F45;
+	Mon, 16 Dec 2024 10:13:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.224])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4E8191956088;
+	Mon, 16 Dec 2024 10:13:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 16 Dec 2024 11:13:04 +0100 (CET)
+Date: Mon, 16 Dec 2024 11:12:58 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: 'Jiri Olsa' <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <20241216101258.GA374@redhat.com>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-9-jolsa@kernel.org>
+ <1521ff93bc0649b0aade9cfc444929ca@AcuMS.aculab.com>
+ <20241215141412.GA13580@redhat.com>
+ <Z1_gFymfO3sAwhiY@krava>
+ <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] netfs: Fix missing barriers by using
- clear_and_wake_up_bit()
-To: David Howells <dhowells@redhat.com>, "Paul E. McKenney"
- <paulmck@kernel.org>
-Cc: Christian Brauner <christian@brauner.io>,
- Max Kellermann <max.kellermann@ionos.com>, Ilya Dryomov
- <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Zilin Guan <zilin@seu.edu.cn>, Akira Yokosawa <akiyks@gmail.com>
-References: <27fff669-bec4-4255-ba2f-4b154b474d97@gmail.com>
- <20241213135013.2964079-1-dhowells@redhat.com>
- <20241213135013.2964079-8-dhowells@redhat.com>
- <3332016.1734183881@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <3332016.1734183881@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-David Howells wrote:
-> [Adding Paul McKenney as he's the expert.]
-> 
-> Akira Yokosawa <akiyks@gmail.com> wrote:
-> 
->> David Howells wrote:
->>> Use clear_and_wake_up_bit() rather than something like:
->>>
->>> 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
->>> 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
->>>
->>> as there needs to be a barrier inserted between which is present in
->>> clear_and_wake_up_bit().
->>
->> If I am reading the kernel-doc comment of clear_bit_unlock() [1, 2]:
->>
->>     This operation is atomic and provides release barrier semantics.
->>
->> correctly, there already seems to be a barrier which should be
->> good enough.
->>
->> [1]: https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.clear_bit_unlock
->> [2]: include/asm-generic/bitops/instrumented-lock.h
->>
->>>
->>> Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
->>> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
->>
->> So I'm not sure this fixes anything.
->>
->> What am I missing?
-> 
-> We may need two barriers.  You have three things to synchronise:
-> 
->  (1) The stuff you did before unlocking.
-> 
->  (2) The lock bit.
-> 
->  (3) The task state.
-> 
-> clear_bit_unlock() interposes a release barrier between (1) and (2).
-> 
-> Neither clear_bit_unlock() nor wake_up_bit(), however, necessarily interpose a
-> barrier between (2) and (3).
+David,
 
-Got it!
+let me say first that my understanding of this magic is very limited,
+please correct me.
 
-I was confused because I compared kernel-doc comments of clear_bit_unlock()
-and clear_and_wake_up_bit() only, without looking at latter's code.
+On 12/16, David Laight wrote:
+>
+> It all depends on how hard __replace_page() tries to be atomic.
+> The page has to change from one backed by the executable to a private
+> one backed by swap - otherwise you can't write to it.
 
-clear_and_wake_up_bit() has this description in its kernel-doc:
+This is what uprobe_write_opcode() does,
 
- * The designated bit is cleared and any tasks waiting in wait_on_bit()
- * or similar will be woken.  This call has RELEASE semantics so that
- * any changes to memory made before this call are guaranteed to be visible
- * after the corresponding wait_on_bit() completes.
+> But the problems arise when the instruction prefetch unit has read
+> part of the 5-byte instruction (it might even only read half a cache
+> line at a time).
+> I'm not sure how long the pipeline can sit in that state - but I
+> can do a memory read of a PCIe address that takes ~3000 clocks.
+> (And a misaligned AVX-512 read is probably eight 8-byte transfers.)
+>
+> So I think you need to force an interrupt while the PTE is invalid.
+> And that need to be simultaneous on all cpu running that process.
 
-, without any mention of additional full barrier at your (3) above.
+__replace_page() does ptep_get_and_clear(old_pte) + flush_tlb_page().
 
-It might be worth mentioning it there.
+That's not enough?
 
-Thoughts?
+> Stopping the process using ptrace would do it.
 
-FWIW,
+Not an option :/
 
-Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-
->                               I'm not sure it entirely matters, but it seems
-> that since we have a function that combines the two, we should probably use
-> it - though, granted, it might not actually be a fix.
-
-Looks like it should matter where smp_mb__after_atomic() is stronger than
-a plain barrier().
-
-Akira
+Oleg.
 
 
