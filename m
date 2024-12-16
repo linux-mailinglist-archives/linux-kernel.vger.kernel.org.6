@@ -1,135 +1,137 @@
-Return-Path: <linux-kernel+bounces-446722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE5789F2871
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:15:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8299F286F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B0D1885275
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:15:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A127E16441E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D842E822;
-	Mon, 16 Dec 2024 02:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A343B19A;
+	Mon, 16 Dec 2024 02:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieQYgobW"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IcIANeON"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC268F9DD;
-	Mon, 16 Dec 2024 02:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0302AD2C;
+	Mon, 16 Dec 2024 02:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734315336; cv=none; b=BW0sc5QU1PddBFhweYKwPkskZhvDXVEdXa0zHK7FHyD4HoH0O4m+gIXAKNsDBxZl1IIWY8lRZw5Xbl5dxpSs2of+ZLSDt610Af5Ngserf/JLIoBAV0OQgEpRZsMxBd2M0UAyU4MjO5E1rILBIEsXs/1x7q82vffKKvxSciDoA4o=
+	t=1734315322; cv=none; b=W8SS+i0sPFs13bXF1LKKqAZoJ5TQ75KGzpKfRKQtwo9qwt9QLro8l3xRH/PM11qfBtWp/WZ+udI7CVPmK5C6f5Sp3X/40WjTw14vkcRs7/p6eOyjXwqJS1nc9/TFubTsQm9Na1+qGgunFde2GjYHDr2lJMpXZ8XjDMETv1wi9ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734315336; c=relaxed/simple;
-	bh=g1ew64RhiorXQF0KIQimayCQ3duY7awXhUEcCjeyyvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VRCvXBjmDbpx157VXg3irWQgyugl+jvMa+ovlgjX6jA0WLqW5wBYlL3aucWxQ0aVhQFqZh9Oc9usXxBuwDfBYODwZhGIEGMPQrruMTQWDAP3aLPYCNiFlx7yQSd2UHsW/TOGx35VUHF2Z4m/pXnCnIM7/ytcwc8Cwt29dmPqCJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieQYgobW; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21661be2c2dso25127295ad.1;
-        Sun, 15 Dec 2024 18:15:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734315334; x=1734920134; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DegakvG+kcadAkVPXaNTk+h1UmQKvrfimmgaThYkXXA=;
-        b=ieQYgobWg7Q6GCSC/cDMMNZJQm2dWybNHRsOgiwiPi/rPUJZgbSRAkrDWREIhRf4OW
-         MjnIasP2pyVGHK3aD4HRu883g2DYy86pzvNRV+KkIfkZiuNH/JPcOufuH6iaVIvaB3aX
-         6XTVZaKTMJhaC0/Xni86gofcqfiyYtd7Rz1pg/xBX+XHF3+DBmv7blN40Jm5U+6MZuk5
-         dSLOrDW9j5knUezrM7c3UKZIzyiZsg3KkusaXUoNvBYXEuBzbJnHuAYECG6vt1Woy/nm
-         rTX9ihsZ6dtEKkNOYF4m3DrHnbsROj8zNd3D7JTuppulB0v/c5C++QanGMWD8WQyqpk+
-         pCjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734315334; x=1734920134;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DegakvG+kcadAkVPXaNTk+h1UmQKvrfimmgaThYkXXA=;
-        b=DwpxO4JrsuCt/34hx3v4t0+PGjmYbxeELGIU5tB+C6x7xhjzRpTvzyz9LJ+nlP8NgK
-         epyJ1UsOzFaHgKB8ezQrtUcuAKHDwyFwAvyhI54Uo42tJslu8rfN9B+7NvQtSWW/VeUJ
-         T4QcYskqr287elVlvnAD9xecsdte0ESVXGkddGu3P82wU2iqcdYUpzeE/M259IevT5OW
-         ZME7lQH86pq6rPSTUZSJJA+P9L2NYo7S0IuqbmsRgF5MuVrJWiPwRaT2TggkdYpk/UQp
-         uXj6oo2/r5++sEoXOZv01JppxbX+m3780xskAD4mO8JFKcglyY3h0PZ0cmyf70IHnZrS
-         OC1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUccUzimbMz+L/+uIuP7fmNkIGX1o8X4RqrBzV9uJ/JUNAgTImlxw6AoBsslH9EHC27H89j4TpKunzXzxI=@vger.kernel.org, AJvYcCXyNlIgjIgCWYLErAG+eoyus1uiRkFXkXndQWInpPtOG9r6nRsdQUNGwI3yYTQMHFGGhQqHvobEKg2z54OkHlEQ1vxtz+fg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw16DsdXO1To5OkAVySVbRGPxElP2147GyUEj3b2NWNWipkoUR9
-	gfChyj0oqQcqWTLtQBBI9/GInuUSXbXRtjwoB6/QjzA6ZXX4p5Vp
-X-Gm-Gg: ASbGncuULrT3iZfaDkynWhEveBDamdcQODImZRS/LM1G+hxVVVxpjeDYnVqtXN3DXDB
-	8XMGE979YcibqvkvQaXtPuUEseox+bOQna0cnzxJCsc2sfrZD/2E535l9sb0TFCR6TNPnx4RcNb
-	nI+a1yxR7dgnP0z/j3eRl27GUIjUbTcLv+nf4pQh4q79F0hBOrgZCniv6jTaaK6d0q3Jr+wlsxM
-	s3MsCWEnC406OnTLRIHiq7+36hakq5v+7kuqqbZaCcVesW0IgrhiHrJ16ObCLsLrjrCvroy
-X-Google-Smtp-Source: AGHT+IH1wW0tKh8Z49W70H8AdbhL/CTjNrnMQ73ELFzK8oUZJlcbfFxMG+Du9/H8mOt8pY/bLMX/+A==
-X-Received: by 2002:a17:903:41cd:b0:215:8ca3:3bac with SMTP id d9443c01a7336-218929a1f14mr155514245ad.16.1734315333869;
-        Sun, 15 Dec 2024 18:15:33 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:d782:c275:5ae5:7e7b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e5404csm32452495ad.150.2024.12.15.18.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 18:15:33 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	serge@hallyn.com,
-	syzkaller-bugs@googlegroups.com,
-	takedakn@nttdata.co.jp,
-	tomoyo-dev-en@lists.osdn.me
-Subject: [PATCH] tomoyo: Reject excessively long lines
-Date: Sun, 15 Dec 2024 18:14:58 -0800
-Message-ID: <20241216021459.178759-2-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
-References: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+	s=arc-20240116; t=1734315322; c=relaxed/simple;
+	bh=viMTA3KontE6bymRa2un1KK0eCHT3PdKd0fxyrsDGpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nMZznEGiWp3KWbFoyi8qvCAIxeCh4lsq8ZLqiuYjLdMp+n1V1pgk5hzaEcfwdeZKXUDtGop0lj9e97XZ30mlx57h2nFMxUQg/QXSZ9tpqvA9pD7K1IU/dqDpb0aAitGZqQE/U/lSZa17M3unI1itL3BSvoerBAf5gK+9oc+m2G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IcIANeON; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1734315313;
+	bh=U69ogNzUgdNWshqhg3jvFGYJfG1yy7B46bJom/jIT4o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IcIANeONm4tHkQj4BZnzN/Ch9o9v+kcuA1GfBsa06vYdzgNApv/oNOLnBt1retEux
+	 YZCIFB1jta4Mpv4s/P+NFHAwQXjAJ3mWuxd88PZtlopu2vPB2Ei1PoKMD6CiPD58cN
+	 WoZJkKboQnYHdgcpCoJvlUSimTHbaZuZ5Q0hyLKAjLZgGiGslilG8vsPXOozB7qyeH
+	 egeAGYuAN070Yf3peveSSiYlWv+VEnknVeGY1spccAVMlxG2b1ZfA9GSMKeTZQ278e
+	 OxlVNpQpfRvyhYSbAt9x787gyL5jDU8tm+Dnx1FZyG6tCTG/azO6VrUI5qdpcry7Bg
+	 igmk3uKBysCsg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4YBNnY1bWLz4wc2;
+	Mon, 16 Dec 2024 13:15:13 +1100 (AEDT)
+Date: Mon, 16 Dec 2024 13:15:17 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Message-ID: <20241216131517.6413c3ac@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/UuMtHmuv+b_=rBDhBaCBU8b";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-syzbot creates an anonymous memory region, and then issues a
-write syscall from the new memory region to a sysfs entry controlled by
-tomoyo, specifying a buffer size of just under 2 GB (the actual size of
-the buffer is ~32 MB). Because tomoyo_write_control will double the
-size of head->write_buf every time it runs out of space for the current
-line, and everything in the zero-initialized buffer is on the same line,
-the function will eventually issue a kzalloc with a size that is too large,
-triggering the warning.
+--Sig_/UuMtHmuv+b_=rBDhBaCBU8b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reject writes with excessively long lines.
+Hi all,
 
-Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
-Signed-off-by: Leo Stone <leocstone@gmail.com>
----
- security/tomoyo/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Today's linux-next merge of the mfd tree got a conflict in:
 
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 5c7b059a332a..0c75be949c9d 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -2665,6 +2665,10 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
- 
- 		if (head->w.avail >= head->writebuf_size - 1) {
- 			const int len = head->writebuf_size * 2;
-+			if (len > KMALLOC_MAX_SIZE) {
-+				error = -EINVAL;
-+				break;
-+			}
- 			char *cp = kzalloc(len, GFP_NOFS);
- 
- 			if (!cp) {
--- 
-2.43.0
+  drivers/mfd/cs42l43.c
 
+between commit:
+
+  cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+
+from Linus' tree and commit:
+
+  c5bb88eac10f ("mfd: cs42l43: Use devres for remove as well")
+
+from the mfd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/mfd/cs42l43.c
+index b5ab5e613db7,beb63c4efd21..000000000000
+--- a/drivers/mfd/cs42l43.c
++++ b/drivers/mfd/cs42l43.c
+@@@ -1096,16 -1113,8 +1113,8 @@@ int cs42l43_dev_probe(struct cs42l43 *c
+ =20
+  	return 0;
+  }
+ -EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, MFD_CS42L43);
+ +EXPORT_SYMBOL_NS_GPL(cs42l43_dev_probe, "MFD_CS42L43");
+ =20
+- void cs42l43_dev_remove(struct cs42l43 *cs42l43)
+- {
+- 	cancel_work_sync(&cs42l43->boot_work);
+-=20
+- 	cs42l43_power_down(cs42l43);
+- }
+- EXPORT_SYMBOL_NS_GPL(cs42l43_dev_remove, "MFD_CS42L43");
+-=20
+  static int cs42l43_suspend(struct device *dev)
+  {
+  	struct cs42l43 *cs42l43 =3D dev_get_drvdata(dev);
+
+--Sig_/UuMtHmuv+b_=rBDhBaCBU8b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdfjTUACgkQAVBC80lX
+0Gw2tQf/SFIKyLQH7vUwpM1Valfhxeht4S1kBbmngW8BO3GlLMnQaX7Xhkpj1fPM
+dglYwnz3YXC7Xpoa1dT1CtrHgG3sfplHLSS4RaS3kLy33B5PZT2sX2IHNwPqd3FN
+rXKVaCEsZmo/eEkjj8VZNKMpBYpznUZioGtFDBTrBUln6pn8by7LWm4+5ELls4WS
+o5nla2CkaQsBveB+M2BeNlFF6cbazYXgAqs1WHF/uk89kxKR3IiZ05jm9HkxiD9o
+jCMOnyYYofKNZPEA2l810Ccxoln83om+GaciV7LIiQITgz1ZYW7Cpw6jnTb3Ooqe
+luk7fBusuH3fWhHiaVVu6zsCIOW+8g==
+=fhfk
+-----END PGP SIGNATURE-----
+
+--Sig_/UuMtHmuv+b_=rBDhBaCBU8b--
 
