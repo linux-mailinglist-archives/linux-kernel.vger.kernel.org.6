@@ -1,128 +1,172 @@
-Return-Path: <linux-kernel+bounces-447310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7030A9F3060
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:20:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B82E9F3071
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:22:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C2A16709D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC34B188430A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C5F204C02;
-	Mon, 16 Dec 2024 12:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D91204C01;
+	Mon, 16 Dec 2024 12:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j/wMSdQd"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr/j62SJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47EB202F7E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1C120012C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351633; cv=none; b=tghxKNIQaqUdLPbQhqFC6liZsh2RbscwTZK0r6yqzkwlOOJ9k1NFDhkt6DAX0yBTmS5SovDpcPNbEfDI/vu3geeWYEpGANQlIac+sOUzBcxuJKD78Gy5IN/VElvhwKCk/zLN/An+WnB/atsa/4UigjG9ga9eZwzvibvF8F0HzsQ=
+	t=1734351765; cv=none; b=Riq6QzZS81MbnUXaTCuP1ArbMLB0HFDSbEAYUqar3FTFMHe4fmkKE4ZZZ+jhozuog96FIyCRWXim6K0en/VVv3O5nlM+6mJihW9Y8m5rxykqpcxfP4Oxbeolas/V1nGZxb566aW5GyNWoLQJ/pYv6qY9T+Xojxhzu6q/mFGFEJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351633; c=relaxed/simple;
-	bh=6uSzS295pBUph9/CaqG8BNCeLzLkb5Xo0dFAAPEqQAI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AxbltXi85nKzy5BImiV/Uet2mQkOXDRIJStDPnqWG3luK3HCHGXXhmlI/ocKWFjH+YyEl8nJN+lGQAs+M1hwM2haIzgyIbeXM6v9Dem/JPG6mLFY5tHVlRLEhmTdX70698S9rxfE3aHhxRZZ5lW0Ir5mderqqgPCGb3FzTsfjMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j/wMSdQd; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734351628;
-	bh=6uSzS295pBUph9/CaqG8BNCeLzLkb5Xo0dFAAPEqQAI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=j/wMSdQdDGGFIzx0EsKaPKVvzdrbfybSr8XN5+ubf30Z0VpxqWk8m+s/Z6np1Zagb
-	 BrIruhNYbv8Dz8C4IikA4iTTAbtVtinJ8EAsCCPC/hOhVBP/Vxtzd7E3Kq1FDxrLKZ
-	 wBEmKtO2D87rKXIQdiFGcOG3hCmnKiBHiYev7t1s=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 16 Dec 2024 13:20:25 +0100
-Subject: [PATCH] mm/page_idle: Constify 'struct bin_attribute'
+	s=arc-20240116; t=1734351765; c=relaxed/simple;
+	bh=WUeVZeNcY07UHuAcAEKLKwvqI2g/xCzB3T8DU3xLl4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQh+JOszJnDNwVWg5a4UTofQ0oQ6UKaPPNqEp/2uK8ftu817FjuePUNH/6x37dPwJoYZf7s91VHeUVAAvZCkfSXA7R3zcik7At56z032lC+qDXGRoUWHg9avdYqUAMYQiYC0ub46mDT3eNBtgFhYRzVQm5zXadZE5LxnOhBEl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr/j62SJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734351762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5IyPoQnMUSRrw4hzgNLn0p2ekpsZi83fqnwbnPuf+9Q=;
+	b=fr/j62SJ7NcWFtVK2ovzdZ1VlOz9z1+5SBSF/DJLiNaG738AXWGbqEGUl2CsEoNeY3GG/8
+	GmrAiTQBzb2vbT17mEIgZYmsXKVuByDmykV5jXwOSra1OI022jjflbPImh0f0GULUXx5U5
+	4rY8TX6UMr/IIUxyVmKTRl4LuvpVgY8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-V8jxa8ICOk6dUpSsE9D0xg-1; Mon,
+ 16 Dec 2024 07:22:37 -0500
+X-MC-Unique: V8jxa8ICOk6dUpSsE9D0xg-1
+X-Mimecast-MFC-AGG-ID: V8jxa8ICOk6dUpSsE9D0xg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 233061955F56;
+	Mon, 16 Dec 2024 12:22:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.224])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0D90E19560A2;
+	Mon, 16 Dec 2024 12:22:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 16 Dec 2024 13:22:11 +0100 (CET)
+Date: Mon, 16 Dec 2024 13:22:05 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	'Jiri Olsa' <olsajiri@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <20241216122204.GB374@redhat.com>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-9-jolsa@kernel.org>
+ <1521ff93bc0649b0aade9cfc444929ca@AcuMS.aculab.com>
+ <20241215141412.GA13580@redhat.com>
+ <Z1_gFymfO3sAwhiY@krava>
+ <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
+ <20241216101258.GA374@redhat.com>
+ <0916e24539ba4bae9fb729198b033bd7@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241216-sysfs-const-bin_attr-page_idle-v1-1-cc01ecc55196@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAAgbYGcC/x3NQQqDMBBG4avIrDtgglrsVUoJUf/YAYmSCdIi3
- t3g8tu8d5AiCZRe1UEJu6isscA8Khq/Ps5gmYrJ1rYx1nSsfw3K4xo18yDR+ZwTb36Gk2kBt/B
- Dhx7POgQqkS0hyO8evD/neQFRxlU1cAAAAA==
-X-Change-ID: 20241216-sysfs-const-bin_attr-page_idle-5eab6e9e70ff
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734351627; l=2099;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=6uSzS295pBUph9/CaqG8BNCeLzLkb5Xo0dFAAPEqQAI=;
- b=sSim89Ek+/uC5QVd1ArbYMoQroruCbMMnZhJ0yx4TrtO6A5rtACkY3y/xeO6kDGF7KhKkdnSj
- ykCcV1XTL/qCU7lrHaYDx/OLG+XChsgtW6/IXafZhjzeqKRfueekR6z
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0916e24539ba4bae9fb729198b033bd7@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The sysfs core now allows instances of 'struct bin_attribute' to be
-moved into read-only memory. Make use of that to protect them against
-accidental or malicious modifications.
+OK, thanks, I am starting to share your concerns...
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- mm/page_idle.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Oleg.
 
-diff --git a/mm/page_idle.c b/mm/page_idle.c
-index 41ea77f22011ebc88cd0fe1e40abad6d11ff9b08..947c7c7a37289ad386f140047f733d4388833546 100644
---- a/mm/page_idle.c
-+++ b/mm/page_idle.c
-@@ -112,7 +112,7 @@ static void page_idle_clear_pte_refs(struct folio *folio)
- }
- 
- static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
--				     struct bin_attribute *attr, char *buf,
-+				     const struct bin_attribute *attr, char *buf,
- 				     loff_t pos, size_t count)
- {
- 	u64 *out = (u64 *)buf;
-@@ -157,7 +157,7 @@ static ssize_t page_idle_bitmap_read(struct file *file, struct kobject *kobj,
- }
- 
- static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
--				      struct bin_attribute *attr, char *buf,
-+				      const struct bin_attribute *attr, char *buf,
- 				      loff_t pos, size_t count)
- {
- 	const u64 *in = (u64 *)buf;
-@@ -193,17 +193,17 @@ static ssize_t page_idle_bitmap_write(struct file *file, struct kobject *kobj,
- 	return (char *)in - buf;
- }
- 
--static struct bin_attribute page_idle_bitmap_attr =
-+static const struct bin_attribute page_idle_bitmap_attr =
- 		__BIN_ATTR(bitmap, 0600,
- 			   page_idle_bitmap_read, page_idle_bitmap_write, 0);
- 
--static struct bin_attribute *page_idle_bin_attrs[] = {
-+static const struct bin_attribute *const page_idle_bin_attrs[] = {
- 	&page_idle_bitmap_attr,
- 	NULL,
- };
- 
- static const struct attribute_group page_idle_attr_group = {
--	.bin_attrs = page_idle_bin_attrs,
-+	.bin_attrs_new = page_idle_bin_attrs,
- 	.name = "page_idle",
- };
- 
-
----
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-change-id: 20241216-sysfs-const-bin_attr-page_idle-5eab6e9e70ff
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+On 12/16, David Laight wrote:
+>
+> From: Oleg Nesterov
+> > Sent: 16 December 2024 10:13
+> >
+> > David,
+> >
+> > let me say first that my understanding of this magic is very limited,
+> > please correct me.
+>
+> I only (half) understand what the 'magic' has to accomplish and
+> some of the pitfalls.
+>
+> I've copied linux-mm - someone there might know more.
+>
+> > On 12/16, David Laight wrote:
+> > >
+> > > It all depends on how hard __replace_page() tries to be atomic.
+> > > The page has to change from one backed by the executable to a private
+> > > one backed by swap - otherwise you can't write to it.
+> >
+> > This is what uprobe_write_opcode() does,
+>
+> And will be enough for single byte changes - they'll be picked up
+> at some point after the change.
+>
+> > > But the problems arise when the instruction prefetch unit has read
+> > > part of the 5-byte instruction (it might even only read half a cache
+> > > line at a time).
+> > > I'm not sure how long the pipeline can sit in that state - but I
+> > > can do a memory read of a PCIe address that takes ~3000 clocks.
+> > > (And a misaligned AVX-512 read is probably eight 8-byte transfers.)
+> > >
+> > > So I think you need to force an interrupt while the PTE is invalid.
+> > > And that need to be simultaneous on all cpu running that process.
+> >
+> > __replace_page() does ptep_get_and_clear(old_pte) + flush_tlb_page().
+> >
+> > That's not enough?
+>
+> I doubt it. As I understand it.
+> The hardware page tables will be shared by all the threads of a process.
+> So unless you hard synchronise all the cpu (and flush the TLB) while the
+> PTE is being changed there is always the possibility of a cpu picking up
+> the new PTE before the IPI that (I presume) flush_tlb_page() generates
+> is processed.
+> If that happens when the instruction you are patching is part-read into
+> the instruction decode buffer then you'll execute a mismatch of the two
+> instructions.
+>
+> I can't remember the outcome of discussions about live-patching kernel
+> code - and I'm sure that was aligned 32bit writes.
+>
+> >
+> > > Stopping the process using ptrace would do it.
+> >
+> > Not an option :/
+>
+> Thought you'd say that.
+>
+> 	David
+>
+> >
+> > Oleg.
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+>
 
 
