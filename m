@@ -1,188 +1,211 @@
-Return-Path: <linux-kernel+bounces-447431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B5A9F3238
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:05:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FFC9F3271
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38069167F31
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F10163A05
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E21205E02;
-	Mon, 16 Dec 2024 14:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319452066FE;
+	Mon, 16 Dec 2024 14:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="lKQXyxcP"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSRUP7dc"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6691F9DA;
-	Mon, 16 Dec 2024 14:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC6A206284;
+	Mon, 16 Dec 2024 14:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734357944; cv=none; b=bkU3hr4Hla/Axol/ENVT3CH1N8Sr9QpilSlXyDh3tKA9FLoUfSFQDgjnfMcIzJsAV055cuo1ZkkfyD+/tLovY0rOh1U7cHD47m0zFQAfC2/mhUO8w1CySXeL26YlT3+zp7AcRp28r7PcGawh2QngQ7S+cl8hdIpdX5vChcE1iAw=
+	t=1734358234; cv=none; b=ijPa7oEWWpKUWZ+hPx2JUxY2We0surQPwa0JfTaQCk0E2JfhT87evLqHqhxYOcEdINIdOJFFa2ee6saDH97TGP471BbNN0kuSdlqCgyIclhy76yjfZXNmuWYDxSLmzMi/Eunst7GMkeKxQHfV4YZP947aNY2gbc//RNT9mRgU8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734357944; c=relaxed/simple;
-	bh=pPerfZEbJtBY3ypppTbyVtIx9qnt6U/cYwaJ7K/ilTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IcyQVMmsF4Tv6XLsn7K95sZoWgN6gvkNgbN5oybGiQj6JAUaGVcuGx0ASMb4J8XYJZTuOG1bJphtyyGimP/Su8PQjsNUaiPGA9jX1pRLsYn7hRrkqUMEVZzcNgbFqddvXXP8DK+VYeInqHp+lxDkaSXm8dC/yJqvtyRWC7/RvhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=lKQXyxcP; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGBSXHC019814;
-	Mon, 16 Dec 2024 15:03:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	zg4ilhS7TTTXcjH+uIPD/koI66ea2Qpvy0x9hiKQl8Y=; b=lKQXyxcP27EDP2SN
-	0Op6pw5jUuTudTT1tjc1Ox1RMd+Bs1nVCHNRFoAibKwrCoxzwXiAvMDKo8RG5zTW
-	gSVmLkgZDsS8TwhTT3AXTQD9LVhpZTcwFSmeWlhCqTkTpvF5/omg4n7PSl0WLVPe
-	uUVKQBCyxdf46N8npdM9WTXr/rJbFp8SDLwl71zoU/NeJJW1ZG0BU0MK6Ul+NNuq
-	KgbNQoimNYQZuRLQbp8Zwv1gzQ8/BSRqrwKBh6x83P0scZoumiYKAus+IJsq8SGq
-	KO//wHf0gnLp2zoJdrnuuh4jwZYN5EkuMZjBdnNI42j5M+BgaPbGtwtNlsOomhc1
-	F9Ydbg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43jeeyj1h0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 15:03:33 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F2E9840044;
-	Mon, 16 Dec 2024 15:02:07 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 66AB926E55B;
-	Mon, 16 Dec 2024 15:01:00 +0100 (CET)
-Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Dec
- 2024 15:00:59 +0100
-Message-ID: <ef02ddbf-0838-4616-a3c5-ef7ab55de3c9@foss.st.com>
-Date: Mon, 16 Dec 2024 15:00:58 +0100
+	s=arc-20240116; t=1734358234; c=relaxed/simple;
+	bh=IDxhcv0YrqyvrNkAnxSC+WSCaccxp8oEIkrJ4llFEAg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=aZyVMSpmLvqfu1NPVebUAMaZd2ACVrnIgCbzqXW0NxGe/WPQa+aPDC2iV/L/B/+G2Bk2B6OyCChVl+at2UNlN5tqT8rcyZHoRScy05Ovr4/9xknD/z07a+DcrGRqhdLcBRoFgEkPBuTxgw++Go59rwe4madOEBPz5vmvQbxlH6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TSRUP7dc; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2147848f8f.1;
+        Mon, 16 Dec 2024 06:10:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734358230; x=1734963030; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kHGUggi4KWk7b9dNu2KvnRj9xlQayHW6VmghHC4yAKQ=;
+        b=TSRUP7dcykZQFdJ/hxU36nubZnH1A6Mxy5DUOgX0yijp9d9QRQB8WsI0Mku3RYBa5o
+         y02kpPOFxqj5A2buYPISqAfr8Bz/OXzRL9Nb108GiBenqSPRmkc/N6Uq4y6FmdTZf2XZ
+         Nz+im13BptvnVwMx85Km4L3lPTy93rY1TwPMUYF0ZLkxGPko58MvOtkH7SiHuEi+kj5z
+         KR8IEjBiv/dFQ+4bYjGuIJK1C2NETy7++LtSnfj+KbCUoQzvC/7Gn/OmifoJswszIOvb
+         ceGKQWd/DSmWV911fi1P33zcGDuDhKxfMgsfLHKfaWD1h77qNY+srxD8msZLNpmmQO5G
+         m/Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734358230; x=1734963030;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kHGUggi4KWk7b9dNu2KvnRj9xlQayHW6VmghHC4yAKQ=;
+        b=qSCuZ0QhZzmG5OPtlQKuCH18AHLZXZu4c3AFle2LfKvysrh31rC/anhSFinbZC7Y6f
+         0LRet0MFzS11AxKn+NNPoBxjviG0hjWHHUWetMtsDU88MiGETF+ycC9ppqJbYjlmWiz8
+         5ZvYhhBkI7602lHWPfhNF6bWYTi9uC6cIf7gz+rk6y4yT55/YAXxP/DddYoCaq3cHztn
+         RvuuAJ8doPJLZeGV+ywU1hKqyamVC/LLu7ycgrCYO6h89AmnDhG43irVBVFlWSvlIrrt
+         aRwIK575rUU3XvvV4TYdGWqu7v3uo0R5ci/Be9i3tB/rz6g3tE+z8xtlzVknBpUQWjvB
+         QObw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8FhNr3DYLNrB9jtHCVshTVR4WjGyyGONbAJkqeiR5AUsP2NcsNXlDMJIezhkKE3DYg/fS7/nW@vger.kernel.org, AJvYcCXlxCHfSfzx1piyevkjmsY9BM1cUT0Gd3WxgFQIRjABzUuEAcCjvsiU2+rgxUt/as8sshPfHIdDRgzvQt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypcIdS21Zz2cE8d2LWjdaRb9ffhbdoB8fEqD5/zSIeSwJYEpJf
+	pN1/1vbd5lsrOe+88FqWBPkv168ERarg+TgZaJlAs428qveODMx+bJVUqA==
+X-Gm-Gg: ASbGnct1DIEzfob7gVVdOEx5MJpjxxYmeI8LsZmWhbLLYxfXqNasobMmujQRWK5z0JG
+	FuQM6VpsqwT0rb6FIn3g7T+uvUne0ka4/oJkTR4vohqgDUscDbJOJa705oHN1DzPMjpy0obwaRe
+	2iMO+B123613Rhzet4G4rvB7rlrKuNOE/XtbtpostnwvPKS2773jj43h4UV7QBsKjTEAJbVsY/P
+	Gr61N+vER1/fAI71idBEwmhnAsFgNaii9YETfFr+2JFap4+foR1U0keS5/R3C2Jd34O6g==
+X-Google-Smtp-Source: AGHT+IGtJ4fxS2nw2pH+7WL2/DgrrFUnSjqVji7IeZa5963Kda96Q5zkGx7RLV7LUDhgMfLKtnSI3g==
+X-Received: by 2002:a05:6000:1864:b0:385:df73:2f24 with SMTP id ffacd0b85a97d-3888e0f2d5bmr11187182f8f.39.1734358230282;
+        Mon, 16 Dec 2024 06:10:30 -0800 (PST)
+Received: from imac ([2a02:8010:60a0:0:3011:496e:7793:8f4c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559eb20sm143381465e9.21.2024.12.16.06.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 06:10:29 -0800 (PST)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: stfomichev@gmail.com,  kuba@kernel.org,  jdamato@fastly.com,
+  pabeni@redhat.com,  davem@davemloft.net,  edumazet@google.com,
+  horms@kernel.org,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] tools: ynl: add install target for generated
+ content
+In-Reply-To: <a2e4ffb9cbd4a9c2fd0d7944b603794bff66e593.1734345017.git.jstancek@redhat.com>
+	(Jan Stancek's message of "Mon, 16 Dec 2024 11:41:43 +0100")
+Date: Mon, 16 Dec 2024 14:01:06 +0000
+Message-ID: <m2a5cv917h.fsf@gmail.com>
+References: <cover.1734345017.git.jstancek@redhat.com>
+	<a2e4ffb9cbd4a9c2fd0d7944b603794bff66e593.1734345017.git.jstancek@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] PCI: stm32: Add PCIe endpoint support for
- STM32MP25
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
-        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241205172738.GA3054352@bhelgaas>
-Content-Language: en-US
-From: Christian Bruel <christian.bruel@foss.st.com>
-In-Reply-To: <20241205172738.GA3054352@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain
 
+Jan Stancek <jstancek@redhat.com> writes:
 
+> Generate docs using ynl_gen_rst and add install target for
+> headers, specs and generates rst files.
+>
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+> ---
+>  tools/net/ynl/generated/.gitignore |  1 +
+>  tools/net/ynl/generated/Makefile   | 40 +++++++++++++++++++++++++++---
+>  2 files changed, 38 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/net/ynl/generated/.gitignore b/tools/net/ynl/generated/.gitignore
+> index ade488626d26..859a6fb446e1 100644
+> --- a/tools/net/ynl/generated/.gitignore
+> +++ b/tools/net/ynl/generated/.gitignore
+> @@ -1,2 +1,3 @@
+>  *-user.c
+>  *-user.h
+> +*.rst
+> diff --git a/tools/net/ynl/generated/Makefile b/tools/net/ynl/generated/Makefile
+> index 00af721b1571..208f7fead784 100644
+> --- a/tools/net/ynl/generated/Makefile
+> +++ b/tools/net/ynl/generated/Makefile
+> @@ -7,12 +7,19 @@ ifeq ("$(DEBUG)","1")
+>    CFLAGS += -g -fsanitize=address -fsanitize=leak -static-libasan
+>  endif
+>  
+> +INSTALL	    ?= install
 
-On 12/5/24 18:27, Bjorn Helgaas wrote:
-> On Tue, Nov 26, 2024 at 04:51:18PM +0100, Christian Bruel wrote:
->> Add driver to configure the STM32MP25 SoC PCIe Gen2 controller based on the
->> DesignWare PCIe core in endpoint mode.
-> 
->> +config PCIE_STM32_EP
->> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
->> +	depends on ARCH_STM32 || COMPILE_TEST
->> +	depends on PCI_ENDPOINT
->> +	select PCIE_DW_EP
->> +	help
->> +	  Enables endpoint support for DesignWare core based PCIe controller in found
->> +	  in STM32MP25 SoC.
-> 
-> s/in found in/in/ (or "found in" if you prefer)
-> 
-> Wrap so help text fits in 80 columns when for "make menuconfig".
-> 
->> +static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
->> +	enum pci_barno bar;
->> +
->> +	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++)
->> +		dw_pcie_ep_reset_bar(pci, bar);
->> +
->> +	/* Defer Completion Requests until link started */
-> 
-> I asked about this before [1] but didn't finish the conversation.  My
-> main point is that I think "Completion Request" is a misnomer.
-> There's a "Configuration Request" and a "Completion," but no such
-> thing as a "Completion Request."
-> 
-> Based on your previous response, I think this should say something
-> like "respond to config requests with Request Retry Status (RRS) until
-> we're prepared to handle them."
+nit: mix of tabs and spaces here
 
-OK thanks for the phrasing. This is inline with the DWC doc:
-"... controller completes incoming configuration requests with a
-configuration request retry status."
-The only thing is that the PCIe specs talks about CRS, not RRS.
+> +prefix      ?= /usr
+> +datarootdir ?= $(prefix)/share
+> +docdir      ?= $(datarootdir)/doc
+> +includedir  ?= $(prefix)/include
+> +
+>  include ../Makefile.deps
+>  
+>  YNL_GEN_ARG_ethtool:=--user-header linux/ethtool_netlink.h \
+>  	--exclude-op stats-get
+>  
+>  TOOL:=../pyynl/ynl_gen_c.py
+> +TOOL_RST:=../pyynl/ynl_gen_rst.py
+>  
+>  GENS_PATHS=$(shell grep -nrI --files-without-match \
+>  		'protocol: netlink' \
+> @@ -22,7 +29,11 @@ SRCS=$(patsubst %,%-user.c,${GENS})
+>  HDRS=$(patsubst %,%-user.h,${GENS})
+>  OBJS=$(patsubst %,%-user.o,${GENS})
+>  
+> -all: protos.a $(HDRS) $(SRCS) $(KHDRS) $(KSRCS) $(UAPI)
+> +SPECS_PATHS=$(wildcard ../../../../Documentation/netlink/specs/*.yaml)
 
-so slightly change to
-"respond to config requests with Configuration Request Retry Status 
-(CRS) until we're prepared to handle them."
+You missed Jakub's request to factor out SPECS_DIR:
 
+  Maybe factor out:
 
-> 
->> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
->> +			   STM32MP25_PCIECR_REQ_RETRY_EN,
->> +			   STM32MP25_PCIECR_REQ_RETRY_EN);
->> +}
->> +
->> +static int stm32_pcie_enable_link(struct dw_pcie *pci)
->> +{
->> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
->> +	int ret;
->> +
->> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
->> +			   STM32MP25_PCIECR_LTSSM_EN,
->> +			   STM32MP25_PCIECR_LTSSM_EN);
->> +
->> +	ret = dw_pcie_wait_for_link(pci);
->> +	if (ret)
->> +		return ret;
->> +
->> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
->> +			   STM32MP25_PCIECR_REQ_RETRY_EN,
->> +			   0);
-> 
-> And I assume this means the endpoint will accept config requests and
-> handle them normally instead of responding with RRS.
-> 
-> Strictly speaking this is a different condition than "the link is up"
-> because the link must be up in order to even receive a config request.
-> The purpose of RRS is for devices that need more initialization time
-> after the link is up before they can respond to config requests.
-> 
-> The fact that the hardware provides this bit makes me think the
-> designer anticipated that the link might come up before the rest of
-> the device is fully initialized.
+  SPECS_DIR := ../../../../Documentation/netlink/specs
 
-Agree, this there are 2 conditions in this function: link is up + 
-accepting config requests. I'll split or rename
+  ? It's pretty long and we repeat it all over the place.
 
-Thanks
-Christian
-> 
-> Bjorn
-> 
-> [1] https://lore.kernel.org/r/20241112203846.GA1856246@bhelgaas
-> 
+> +SPECS=$(patsubst ../../../../Documentation/netlink/specs/%.yaml,%,${SPECS_PATHS})
+> +RSTS=$(patsubst %,%.rst,${SPECS})
+> +
+> +all: protos.a $(HDRS) $(SRCS) $(KHDRS) $(KSRCS) $(UAPI) $(RSTS)
+>  
+>  protos.a: $(OBJS)
+>  	@echo -e "\tAR $@"
+> @@ -40,8 +51,12 @@ protos.a: $(OBJS)
+>  	@echo -e "\tCC $@"
+>  	@$(COMPILE.c) $(CFLAGS_$*) -o $@ $<
+>  
+> +%.rst: ../../../../Documentation/netlink/specs/%.yaml $(TOOL2)
+
+Did you miss Jakub's review comment: TOOL2 -> TOOL_RST ?
+
+> +	@echo -e "\tGEN_RST $@"
+> +	@$(TOOL_RST) -o $@ -i $<
+> +
+>  clean:
+> -	rm -f *.o
+> +	rm -f *.o *.rst
+
+Also Jakub's comment:
+
+  No strong preference but I'd count .rst as final artifacts so I'd clean
+  them up in distclean target only, not the clean target. The distinction
+  itself may be a local custom..
+
+>  distclean: clean
+>  	rm -f *.c *.h *.a
+> @@ -49,5 +64,24 @@ distclean: clean
+>  regen:
+>  	@../ynl-regen.sh
+>  
+> -.PHONY: all clean distclean regen
+> +install-headers: $(HDRS)
+> +	@echo -e "\tINSTALL generated headers"
+> +	@$(INSTALL) -d $(DESTDIR)$(includedir)/ynl
+> +	@$(INSTALL) -m 0644 *.h $(DESTDIR)$(includedir)/ynl/
+> +
+> +install-rsts: $(RSTS)
+> +	@echo -e "\tINSTALL generated docs"
+> +	@$(INSTALL) -d $(DESTDIR)$(docdir)/ynl
+> +	@$(INSTALL) -m 0644 $(RSTS) $(DESTDIR)$(docdir)/ynl/
+> +
+> +install-specs:
+> +	@echo -e "\tINSTALL specs"
+> +	@$(INSTALL) -d $(DESTDIR)$(datarootdir)/ynl
+> +	@$(INSTALL) -m 0644 ../../../../Documentation/netlink/*.yaml $(DESTDIR)$(datarootdir)/ynl/
+> +	@$(INSTALL) -d $(DESTDIR)$(datarootdir)/ynl/specs
+> +	@$(INSTALL) -m 0644 ../../../../Documentation/netlink/specs/*.yaml $(DESTDIR)$(datarootdir)/ynl/specs/
+> +
+> +install: install-headers install-rsts install-specs
+> +
+> +.PHONY: all clean distclean regen install install-headers install-rsts install-specs
+>  .DEFAULT_GOAL: all
 
