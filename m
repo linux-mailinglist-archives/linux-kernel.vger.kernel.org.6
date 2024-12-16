@@ -1,166 +1,215 @@
-Return-Path: <linux-kernel+bounces-447602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513309F34CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:41:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F8F9F34B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDE8161C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:41:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D3D7A1F3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE014EC4B;
-	Mon, 16 Dec 2024 15:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED4514A0A8;
+	Mon, 16 Dec 2024 15:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r/rFzRaH"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bQWQIoGN"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60848360;
-	Mon, 16 Dec 2024 15:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956E81428E7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734363658; cv=none; b=mQy02Yh5zGS4cLVp+ovZUvl5vQe2st2dz49AH5ORKKe25VMttEkq+RTTdmPdQHHpF5EmlEKxW+1BwnMgDA92ZiR4GcAQZxT7MGqX3rl+OsyNwSeJcMdFJvc+pNQjqGG/tLay84oX7DrGRaK3UYvkssaM2NHxEck7SnhY885Bqjo=
+	t=1734363558; cv=none; b=b0JExJwgUxbftUCPB2WS8P3QbHm5dgz46WXejQDTHgcZEH99mpsx3qZ1LagpA6q4WVQ4kbsXDjX0hIJFnvfPYifG+HvqHF5hdJlQHih9SzVyF960CJXS6zFjjZxPhdo3F9J8WscvjHeqlHL85+G4TZ4d7kQDhpePSA7ivtkP4e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734363658; c=relaxed/simple;
-	bh=JYHYIHdthW37euPS1gVIzPnw6++o9+7WFxj2lRorT14=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Np949ymWIsQcUYg1mAXKlS8XnSqmTJNYZ4atQUQXgD4WUWm6c+Kd0XVmswfM2Q9We2upaPkbxgp9R+lfELRIr4dmeACcdtNndSQbZCum3Wm3scVq4gpD/rhgZ538g61bBWYSOThWALkXda3+lbc1GqHwKuD0IVVgJwFus1vdHB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r/rFzRaH; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGEYN89030036;
-	Mon, 16 Dec 2024 16:40:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	oyvfV+AYwDjBOXDtTWGqGeG/DtUzeN6+72wCHLNtRTI=; b=r/rFzRaHcJBnwpyu
-	wgMwaZrS9W+xmRnmEEXU6/ksTqmhA1XAI6vxvbsmJC0oT2kw2GjSzCsJIUVxVeiu
-	Zjw3/Fzke9nu9/65ch70VMTob8/SM4kMzldmzJ2V05MXypDMQjlTYoIqPzfbPmEq
-	rgINum/MSpBogQ3d9lOQo0I1J6HDiWzkX5ExT+viks5PrQFm5aqxlp2e+rA4xeIO
-	ImQQt0cjpSxe0ZqakelkjCUrgrc1t7sOjP6By74bVzzy9pdc7BPu0AJlOYKoKEPT
-	y6QiW5tOUabtelsCyq7cJhMR9AHgehQy1/93lYgkF8BZLx99MPTxc8EtFnFitmwX
-	Tp1pmQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43jp3987c9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 16:40:46 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 386384004B;
-	Mon, 16 Dec 2024 16:39:52 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8D395285ED5;
-	Mon, 16 Dec 2024 16:39:23 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Dec
- 2024 16:39:23 +0100
-Received: from localhost (10.252.30.129) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Dec
- 2024 16:39:23 +0100
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-To: <alexandre.torgue@foss.st.com>
-CC: <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <fabrice.gasnier@foss.st.com>, <olivier.moysan@foss.st.com>
-Subject: [PATCH 5/5] ARM: dts: stm32: add counter subnodes on stm32mp157 dk boards
-Date: Mon, 16 Dec 2024 16:39:08 +0100
-Message-ID: <20241216153908.3069548-6-fabrice.gasnier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241216153908.3069548-1-fabrice.gasnier@foss.st.com>
-References: <20241216153908.3069548-1-fabrice.gasnier@foss.st.com>
+	s=arc-20240116; t=1734363558; c=relaxed/simple;
+	bh=b6PN9Nh4fmOqeYnSlL9UJcIoOtZBnZueDxzv5gnseBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYw5EaeNBnXcX43x43Dv8K0kAoaE6en4+o/JWwkx42skV4e1d+TC6ECQ9TXbGm0XZyn+Aabc4vFVpVsI3409qHLj/2dh/tiSLG0T5O9z+0J5jjd0c3753+JCESue2ev3osCEvv1Pwc2pk6+Km9rQ2fLCVRLSKPNHT4do5v07oDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bQWQIoGN; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa692211331so812805466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:39:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1734363554; x=1734968354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k20My130rzARwyOvgTU0vCNVESW9H6oT+V38TS25XZ8=;
+        b=bQWQIoGNjLx/aO9vdDuvNpIde07aJ2j8s+LqIm6EQYiChX7SPGm8Psn4aHh4RUSzxw
+         BmHEupXH2GM3XyGq5JyFiujvnZj+YgIBxxCQblHHgjNzs9dQwrDrap5ILv67wFiPbCps
+         v/HXxAkqilZUo5kBh7b5zWBCu+eJlW3hAwhjpqeI+S7bkInlpq6dcMurBayMihFaYzLO
+         HnPypPZIF1Il1pU5SvgGLUJ/ka+Mw5O41e0vy8ToSIWjMFZFK/V4cu5cq0L9k2SYk+Py
+         9dxj/PnV+DaSAxBgBt8H7lHh6pZ1511LugxFN+42uUI1ld0P/9/SQHXvxVL5CDOPMxvJ
+         Cuxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734363554; x=1734968354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k20My130rzARwyOvgTU0vCNVESW9H6oT+V38TS25XZ8=;
+        b=oZfOLbbDraQVcs0HGEO16mGFqCjdjTUeZvmiYQn8GvLB0r7PlPP4+RRdCZMFK4qIkc
+         SasJs/wsJMuX9vByQyeL8OHJ7pCQ9ftAtYx3/vhO8qcsF8tS1ZhnYjcMOYgbPf2LnQay
+         YWpmHvMtN0pZyA3/hcItPhq/KxTowmvUrSqS9bpNjUY7vrC1Ky6dBUd0ZwDa7Pub6yVF
+         i78Eg5NuNljBwM5wQcpml5bqkd1MdilaP8Hhq4eeqxwEpNJLjJatNMsyeFE6iOTmOjUv
+         8UG01KQQqGquMXicJeBvLOLjKjtBgtDm50XZXhnnD8RkzXk4pFEniBjRWlID5NMC4b2v
+         TVaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZMFNOfYFONtnzxPW3R9PY4G2mHn1i23djSRuddRXkwbDBgtjPV+PMqJ1LFBg7OvMmXK+e5linlI41jug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx985NCN5Sgix4S5p37T9UJ/RMNEkCuSQlF7lZ5Q8ualSIVnnMO
+	3oOGoShrbsysh27vDL0b9kuDEqHqgjJCLXd+HC052FU4FkjY3F/mUWyPYOKRICc=
+X-Gm-Gg: ASbGncstRXbtoYOsBGDOnnJ/sGTOD8/0SdduLVuG4G3LAxreIcB+GSfLx0IqcbIFBRb
+	dvpPTqpowoDKeSCHbhOE27+nzpUphJIYVqQNbsbK+NhQAaxzDDfQLnyqm3ZyqhyuIv9i3ASJIih
+	NMHBE1NnrtSpU58m70LSquWLcFo1GaEp4vB92E9ty1speJQtNLNDf62bdGMh1MkYw7LLN1eaAbA
+	Um+BYzJmYYAeOR6B7UyrDz9JbldMqaVI65DCUTwMtvV6eqVn0Km8wkTqg8kMDI3nBs=
+X-Google-Smtp-Source: AGHT+IFtdy6Z+Mdf9GGMuy0jIu5mLADOTup4p6tdMqMZcd7gLMcs48qXum9ADc9H8rCu/BNEGRvYfw==
+X-Received: by 2002:a17:906:32d0:b0:aab:da38:1293 with SMTP id a640c23a62f3a-aabda381364mr40185266b.4.1734363553856;
+        Mon, 16 Dec 2024 07:39:13 -0800 (PST)
+Received: from localhost (109-81-89-64.rct.o2.cz. [109.81.89.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96359e50sm348643666b.126.2024.12.16.07.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 07:39:13 -0800 (PST)
+Date: Mon, 16 Dec 2024 16:39:12 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Rik van Riel <riel@surriel.com>,
+	Balbir Singh <balbirs@nvidia.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	hakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
+Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
+Message-ID: <Z2BJoDsMeKi4LQGe@tiehlicka>
+References: <20241212115754.38f798b3@fangorn>
+ <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
+ <20241212183012.GB1026@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212183012.GB1026@cmpxchg.org>
 
-Enable the counter nodes without dedicated pins. With such configuration,
-the counter interface can be used on internal clock to generate events.
+On Thu 12-12-24 13:30:12, Johannes Weiner wrote:
+[...]
+> So I'm also inclined to think this needs a reclaim/memcg-side fix. We
+> have a somewhat tumultous history of policy in that space:
+> 
+> commit 7775face207922ea62a4e96b9cd45abfdc7b9840
+> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date:   Tue Mar 5 15:46:47 2019 -0800
+> 
+>     memcg: killed threads should not invoke memcg OOM killer
+> 
+> allowed dying tasks to simply force all charges and move on. This
+> turned out to be too aggressive; there were instances of exiting,
+> uncontained memcg tasks causing global OOMs. This lead to that:
+> 
+> commit a4ebf1b6ca1e011289677239a2a361fde4a88076
+> Author: Vasily Averin <vasily.averin@linux.dev>
+> Date:   Fri Nov 5 13:38:09 2021 -0700
+> 
+>     memcg: prohibit unconditional exceeding the limit of dying tasks
+> 
+> which reverted the bypass rather thoroughly. Now NO dying tasks, *not
+> even OOM victims*, can force charges. I am not sure this is correct,
+> either:
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
----
- arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+IIRC the reason going this route was a lack of per-memcg oom reserves.
+Global oom victims are getting some slack because the amount of reserves
+be bound. This is not the case for memcgs though.
 
-diff --git a/arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi b/arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi
-index f7634c51efb2..a5511b1f0ce3 100644
---- a/arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi
-@@ -570,6 +570,9 @@ &timers1 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	pwm {
- 		pinctrl-0 = <&pwm1_pins_a>;
- 		pinctrl-1 = <&pwm1_sleep_pins_a>;
-@@ -585,6 +588,9 @@ &timers3 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	pwm {
- 		pinctrl-0 = <&pwm3_pins_a>;
- 		pinctrl-1 = <&pwm3_sleep_pins_a>;
-@@ -600,6 +606,9 @@ &timers4 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	pwm {
- 		pinctrl-0 = <&pwm4_pins_a &pwm4_pins_b>;
- 		pinctrl-1 = <&pwm4_sleep_pins_a &pwm4_sleep_pins_b>;
-@@ -615,6 +624,9 @@ &timers5 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	pwm {
- 		pinctrl-0 = <&pwm5_pins_a>;
- 		pinctrl-1 = <&pwm5_sleep_pins_a>;
-@@ -630,6 +642,9 @@ &timers6 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	timer@5 {
- 		status = "okay";
- 	};
-@@ -639,6 +654,9 @@ &timers12 {
- 	/delete-property/dmas;
- 	/delete-property/dma-names;
- 	status = "disabled";
-+	counter {
-+		status = "okay";
-+	};
- 	pwm {
- 		pinctrl-0 = <&pwm12_pins_a>;
- 		pinctrl-1 = <&pwm12_sleep_pins_a>;
+> If we return -ENOMEM to an OOM victim in a fault, the fault handler
+> will re-trigger OOM, which will find the existing OOM victim and do
+> nothing, then restart the fault.
+
+IIRC the task will handle the pending SIGKILL if the #PF fails. If the
+charge happens from the exit path then we rely on ENOMEM returned from
+gup as a signal to back off. Do we have any caller that keeps retrying
+on ENOMEM?
+
+> This is a memory deadlock. The page
+> allocator gives OOM victims access to reserves for that reason.
+
+> Actually, it looks even worse. For some reason we're not triggering
+> OOM from dying tasks:
+> 
+>         ret = task_is_dying() || out_of_memory(&oc);
+> 
+> Even though dying tasks are in no way privileged or allowed to exit
+> expediently. Why shouldn't they trigger the OOM killer like anybody
+> else trying to allocate memory?
+
+Good question! I suspect this early bail out is based on an assumption
+that a dying task will free up the memory soon so oom killer is
+unnecessary.
+
+> As it stands, it seems we have dying tasks getting trapped in an
+> endless fault->reclaim cycle; with no access to the OOM killer and no
+> access to reserves. Presumably this is what's going on here?
+
+As mentioned above this seems really surprising and it would indicate
+that something in the exit path would keep retrying when getting ENOMEM
+from gup or GFP_ACCOUNT allocation. GFP_NOFAIL requests are allowed to
+over-consume.
+
+> I think we want something like this:
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 53db98d2c4a1..be6b6e72bde5 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1596,11 +1596,7 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (mem_cgroup_margin(memcg) >= (1 << order))
+>  		goto unlock;
+>  
+> -	/*
+> -	 * A few threads which were not waiting at mutex_lock_killable() can
+> -	 * fail to bail out. Therefore, check again after holding oom_lock.
+> -	 */
+> -	ret = task_is_dying() || out_of_memory(&oc);
+> +	ret = out_of_memory(&oc);
+
+I am not against this as it would allow to do an async oom_reaper memory
+reclaim in the worst case. This could potentially reintroduce the "No
+victim available" case described by 7775face2079 ("memcg: killed threads
+should not invoke memcg OOM killer") but that seemed to be a very
+specific and artificial usecase IIRC.
+
+>  
+>  unlock:
+>  	mutex_unlock(&oom_lock);
+> @@ -2198,6 +2194,9 @@ int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (unlikely(current->flags & PF_MEMALLOC))
+>  		goto force;
+>  
+> +	if (unlikely(tsk_is_oom_victim(current)))
+> +		goto force;
+> +
+>  	if (unlikely(task_in_memcg_oom(current)))
+>  		goto nomem;
+
+This is more problematic as it doesn't cap a potential runaway and
+eventual global OOM which is not really great. In the past this could be
+possible through vmalloc which didn't bail out early for killed tasks.
+That risk has been mitigated by dd544141b9eb ("vmalloc: back off when
+the current task is OOM-killed"). I would like to keep some sort of
+protection from those runaways. Whether that is a limited "reserve" for
+oom victims that would be per memcg or do no let them consume above the
+hard limit at all. Fundamentally a limited reserves doesn't solve the
+underlying problem, it just make it less likely so the latter would be
+preferred by me TBH.
+
+Before we do that it would be really good to understand the source of
+those retries. Maybe I am missing something really obvious but those
+shouldn't really happen. 
+
 -- 
-2.25.1
-
+Michal Hocko
+SUSE Labs
 
