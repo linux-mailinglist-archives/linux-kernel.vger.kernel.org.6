@@ -1,65 +1,52 @@
-Return-Path: <linux-kernel+bounces-446937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7216A9F2B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A219F2AC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:16:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEFDE163C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627111613B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA88F1FF615;
-	Mon, 16 Dec 2024 07:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ObbzxO3Z"
-Received: from mail-m127161.xmail.ntesmail.com (mail-m127161.xmail.ntesmail.com [115.236.127.161])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5201CEEB8;
+	Mon, 16 Dec 2024 07:15:50 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3851AAA24;
-	Mon, 16 Dec 2024 07:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3D714D29B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734335360; cv=none; b=c70fQGYNGIJYhhhZMqBhDtxsWJk4YpIR+jtUwqsXNkA9C+IcXePaKahAIneokxWliqCTHWWgqmfcmAA01+ne+OLvViZP9B35sYICW1eBoBvXsCrbZxi7cssxRZH49iT70FkQ23bJDiHZlfdOXdTddUMC0pBTFOxfTI/XicRu95w=
+	t=1734333350; cv=none; b=UeOsu+Eqxswh9Du78FvuUUSTOqmyw6TnGhvWO4dK3+9tadVKd6bIIVvvvDgKw4/fteACzjSKmrZrhoYpyEqMcnVSNnHKHdZjS/UoO7r8Rkkfp5klIsuJiutcSGYUG5/30fJVxKgIYwrYywfcSsz70OB5itPu3CtRl2as9RxLe+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734335360; c=relaxed/simple;
-	bh=FvrLiLtbSDNnfBPjBpN5SkxWu5egWUxGZ/8lK3D4v68=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rO9NmQzFOaj8SHro3DGQTi7mULLHgcVJraSgbD9h0bkFYVkGNQayVew/CTo1QUNX5zZ7ZIZdW4IFTI7UoH7qh/7kw5nl0AQoKgE8MeNQkgGe4R8LgJZ679RyhSLgvLgqOmhXx6f09Y9Ej3NuS1pn6MYmi/owy76sotK6raUH2Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ObbzxO3Z; arc=none smtp.client-ip=115.236.127.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5cf7993e;
-	Mon, 16 Dec 2024 11:13:08 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rfoss@kernel.org,
-	vkoul@kernel.org,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	l.stach@pengutronix.de,
-	andy.yan@rock-chips.com,
-	hjc@rock-chips.com,
-	algea.cao@rock-chips.com,
-	kever.yang@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2 11/11] arm64: dts: rockchip: Add nodes related to eDP1 for RK3588
-Date: Mon, 16 Dec 2024 11:12:25 +0800
-Message-Id: <20241216031225.3746-12-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1734333350; c=relaxed/simple;
+	bh=QUmWI4zrJyNTOSh7MRrhpfk5KNWEvFvCptj46r1AYsg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GtY8+Sua6ONkbe0SHB1+fVunje0CDlYjhIOxaI98t70dAqLCkdYk+0OG0PkVxPrk74allV6DE9L2dh6WsxrjgkK9b1+exmWyHNls2t7LhrK6wPzqqV5l/rENNO5xmCSKIENmr+G6CXOE3LwPZA4l1UKgOsXF/JNO9Hzt8rJ1Ejk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4YBWPM5n2Yz1kw5J;
+	Mon, 16 Dec 2024 15:13:11 +0800 (CST)
+Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93B871400F4;
+	Mon, 16 Dec 2024 15:15:43 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemg200013.china.huawei.com
+ (7.202.181.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 16 Dec
+ 2024 15:15:39 +0800
+From: Liu Shixin <liushixin2@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
+	<muchun.song@linux.dev>, Kenneth W Chen <kenneth.w.chen@intel.com>, Kefeng
+ Wang <wangkefeng.wang@huawei.com>, Nanyong Sun <sunnanyong@huawei.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Liu Shixin
+	<liushixin2@huawei.com>
+Subject: [PATCH v2] mm: hugetlb: independent PMD page table shared count
+Date: Mon, 16 Dec 2024 15:11:47 +0800
+Message-ID: <20241216071147.3984217-1-liushixin2@huawei.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241216031225.3746-1-damon.ding@rock-chips.com>
-References: <20241216031225.3746-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,116 +54,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhkZS1YeT08eGElDT09KQkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93cd7490e403a3kunm5cf7993e
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PhQ6NRw5EzIJSSEtFE8#QkIM
-	H0swCgFVSlVKTEhPSEpDTEJLT0NCVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQ0lCNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=ObbzxO3ZYBIEacGgl+8dc20s4yn7Vp8x/wYPQrPif0dAonoeCtFJil9+Ju3kk7EACCANXJs8opQge2Qmy0JOtib1KTMzGtjZrQ5b4ZGRmkVnzz151+Jwy5UsLL2Qm+Oo7oKeJy+AWQ5sRRDie/jxGyMleyltACy2vhhXKV8fS5Y=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=cAtS5tAFtjz6hZ6HldahUJm+IWPmGZTig9XKH9PZYVc=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg200013.china.huawei.com (7.202.181.64)
 
-The related nodes are hdptxphy1_grf, hdptxphy1 and edp1. And the
-aliases edp0 and edp1 are added to separate two independent eDP
-devices.
+The folio refcount may be increased unexpectly through try_get_folio() by
+caller such as split_huge_pages. In huge_pmd_unshare(), we use refcount to
+check whether a pmd page table is shared. The check is incorrect if the
+refcount is increased by the above caller, and this can cause the page
+table leaked:
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+ BUG: Bad page state in process sh  pfn:109324
+ page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x66 pfn:0x109324
+ flags: 0x17ffff800000000(node=0|zone=2|lastcpupid=0xfffff)
+ page_type: f2(table)
+ raw: 017ffff800000000 0000000000000000 0000000000000000 0000000000000000
+ raw: 0000000000000066 0000000000000000 00000000f2000000 0000000000000000
+ page dumped because: nonzero mapcount
+ ...
+ CPU: 31 UID: 0 PID: 7515 Comm: sh Kdump: loaded Tainted: G    B              6.13.0-rc2master+ #7
+ Tainted: [B]=BAD_PAGE
+ Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+ Call trace:
+  show_stack+0x20/0x38 (C)
+  dump_stack_lvl+0x80/0xf8
+  dump_stack+0x18/0x28
+  bad_page+0x8c/0x130
+  free_page_is_bad_report+0xa4/0xb0
+  free_unref_page+0x3cc/0x620
+  __folio_put+0xf4/0x158
+  split_huge_pages_all+0x1e0/0x3e8
+  split_huge_pages_write+0x25c/0x2d8
+  full_proxy_write+0x64/0xd8
+  vfs_write+0xcc/0x280
+  ksys_write+0x70/0x110
+  __arm64_sys_write+0x24/0x38
+  invoke_syscall+0x50/0x120
+  el0_svc_common.constprop.0+0xc8/0xf0
+  do_el0_svc+0x24/0x38
+  el0_svc+0x34/0x128
+  el0t_64_sync_handler+0xc8/0xd0
+  el0t_64_sync+0x190/0x198
+
+The issue may be triggered by damon, offline_page, page_idle, etc, which
+will increase the refcount of page table.
+
+Fix it by introducing independent PMD page table shared count.
+As described by comment, pt_index/pt_mm/pt_frag_refcount are used for
+s390 gmap, x86 pgds and powerpc, pt_share_count is used for x86/arm64/riscv
+pmds, so we can reuse the field as pt_share_count.
+
+Fixes: 39dde65c9940 ("[PATCH] shared page table for hugetlb page")
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 ---
- .../arm64/boot/dts/rockchip/rk3588-extra.dtsi | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
+v1->v2: Fix build error when !CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING and
+	modify the changelog.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-index 0ce0934ec6b7..17cc0b619744 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-@@ -7,6 +7,11 @@
- #include "rk3588-extra-pinctrl.dtsi"
- 
- / {
-+	aliases {
-+		edp0 = &edp0;
-+		edp1 = &edp1;
-+	};
-+
- 	usb_host1_xhci: usb@fc400000 {
- 		compatible = "rockchip,rk3588-dwc3", "snps,dwc3";
- 		reg = <0x0 0xfc400000 0x0 0x400000>;
-@@ -67,6 +72,11 @@ u2phy1_otg: otg-port {
- 		};
+ include/linux/mm.h       |  1 +
+ include/linux/mm_types.h | 30 ++++++++++++++++++++++++++++++
+ mm/hugetlb.c             | 16 +++++++---------
+ 3 files changed, 38 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c39c4945946c..50fbf2a1b0ad 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3115,6 +3115,7 @@ static inline bool pagetable_pmd_ctor(struct ptdesc *ptdesc)
+ 	if (!pmd_ptlock_init(ptdesc))
+ 		return false;
+ 	__folio_set_pgtable(folio);
++	ptdesc_pmd_pts_init(ptdesc);
+ 	lruvec_stat_add_folio(folio, NR_PAGETABLE);
+ 	return true;
+ }
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 7361a8f3ab68..332cee285662 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -445,6 +445,7 @@ FOLIO_MATCH(compound_head, _head_2a);
+  * @pt_index:         Used for s390 gmap.
+  * @pt_mm:            Used for x86 pgds.
+  * @pt_frag_refcount: For fragmented page table tracking. Powerpc only.
++ * @pt_share_count:   Used for HugeTLB PMD page table share count.
+  * @_pt_pad_2:        Padding to ensure proper alignment.
+  * @ptl:              Lock for the page table.
+  * @__page_type:      Same as page->page_type. Unused for page tables.
+@@ -471,6 +472,9 @@ struct ptdesc {
+ 		pgoff_t pt_index;
+ 		struct mm_struct *pt_mm;
+ 		atomic_t pt_frag_refcount;
++#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
++		atomic_t pt_share_count;
++#endif
  	};
  
-+	hdptxphy1_grf: syscon@fd5e4000 {
-+		compatible = "rockchip,rk3588-hdptxphy-grf", "syscon";
-+		reg = <0x0 0xfd5e4000 0x0 0x100>;
-+	};
-+
- 	i2s8_8ch: i2s@fddc8000 {
- 		compatible = "rockchip,rk3588-i2s-tdm";
- 		reg = <0x0 0xfddc8000 0x0 0x1000>;
-@@ -135,6 +145,35 @@ i2s10_8ch: i2s@fde00000 {
- 		status = "disabled";
- 	};
+ 	union {
+@@ -516,6 +520,32 @@ static_assert(sizeof(struct ptdesc) <= sizeof(struct page));
+ 	const struct page *:		(const struct ptdesc *)(p),	\
+ 	struct page *:			(struct ptdesc *)(p)))
  
-+	edp1: edp@fded0000 {
-+		compatible = "rockchip,rk3588-edp";
-+		reg = <0x0 0xfded0000 0x0 0x1000>;
-+		clocks = <&cru CLK_EDP1_24M>, <&cru PCLK_EDP1>, <&cru CLK_EDP1_200M>;
-+		clock-names = "dp", "pclk", "spdif";
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH 0>;
-+		phys = <&hdptxphy1>;
-+		phy-names = "dp";
-+		power-domains = <&power RK3588_PD_VO1>;
-+		resets = <&cru SRST_EDP1_24M>, <&cru SRST_P_EDP1>;
-+		reset-names = "dp", "apb";
-+		rockchip,grf = <&vo1_grf>;
-+		#sound-dai-cells = <1>;
-+		status = "disabled";
++#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
++static inline void ptdesc_pmd_pts_init(struct ptdesc *ptdesc)
++{
++	atomic_set(&ptdesc->pt_share_count, 0);
++}
 +
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++static inline void ptdesc_pmd_pts_inc(struct ptdesc *ptdesc)
++{
++	atomic_inc(&ptdesc->pt_share_count);
++}
 +
-+			edp1_in: port@0 {
-+				reg = <0>;
-+			};
++static inline void ptdesc_pmd_pts_dec(struct ptdesc *ptdesc)
++{
++	atomic_dec(&ptdesc->pt_share_count);
++}
 +
-+			edp1_out: port@1 {
-+				reg = <1>;
-+			};
-+		};
-+	};
++static inline int ptdesc_pmd_pts_count(struct ptdesc *ptdesc)
++{
++	return atomic_read(&ptdesc->pt_share_count);
++}
++#else
++static inline void ptdesc_pmd_pts_init(struct ptdesc *ptdesc)
++{
++}
++#endif
 +
- 	pcie3x4: pcie@fe150000 {
- 		compatible = "rockchip,rk3588-pcie", "rockchip,rk3568-pcie";
- 		#address-cells = <3>;
-@@ -395,6 +434,22 @@ sata-port@0 {
- 		};
- 	};
+ /*
+  * Used for sizing the vmemmap region on some architectures
+  */
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ea2ed8e301ef..60846b060b87 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -7212,7 +7212,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			spte = hugetlb_walk(svma, saddr,
+ 					    vma_mmu_pagesize(svma));
+ 			if (spte) {
+-				get_page(virt_to_page(spte));
++				ptdesc_pmd_pts_inc(virt_to_ptdesc(spte));
+ 				break;
+ 			}
+ 		}
+@@ -7227,7 +7227,7 @@ pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				(pmd_t *)((unsigned long)spte & PAGE_MASK));
+ 		mm_inc_nr_pmds(mm);
+ 	} else {
+-		put_page(virt_to_page(spte));
++		ptdesc_pmd_pts_dec(virt_to_ptdesc(spte));
+ 	}
+ 	spin_unlock(&mm->page_table_lock);
+ out:
+@@ -7239,10 +7239,6 @@ pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
+ /*
+  * unmap huge page backed by shared pte.
+  *
+- * Hugetlb pte page is ref counted at the time of mapping.  If pte is shared
+- * indicated by page_count > 1, unmap is achieved by clearing pud and
+- * decrementing the ref count. If count == 1, the pte page is not shared.
+- *
+  * Called with page table lock held.
+  *
+  * returns: 1 successfully unmapped a shared pte page
+@@ -7251,18 +7247,20 @@ pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
+ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
+ 					unsigned long addr, pte_t *ptep)
+ {
++	unsigned long sz = huge_page_size(hstate_vma(vma));
+ 	pgd_t *pgd = pgd_offset(mm, addr);
+ 	p4d_t *p4d = p4d_offset(pgd, addr);
+ 	pud_t *pud = pud_offset(p4d, addr);
  
-+	hdptxphy1: phy@fed70000 {
-+		compatible = "rockchip,rk3588-hdptx-phy";
-+		reg = <0x0 0xfed70000 0x0 0x2000>;
-+		clocks = <&cru CLK_USB2PHY_HDPTXRXPHY_REF>, <&cru PCLK_HDPTX1>;
-+		clock-names = "ref", "apb";
-+		#phy-cells = <0>;
-+		resets = <&cru SRST_HDPTX1>, <&cru SRST_P_HDPTX1>,
-+			 <&cru SRST_HDPTX1_INIT>, <&cru SRST_HDPTX1_CMN>,
-+			 <&cru SRST_HDPTX1_LANE>, <&cru SRST_HDPTX1_ROPLL>,
-+			 <&cru SRST_HDPTX1_LCPLL>;
-+		reset-names = "phy", "apb", "init", "cmn", "lane", "ropll",
-+			      "lcpll";
-+		rockchip,grf = <&hdptxphy1_grf>;
-+		status = "disabled";
-+	};
-+
- 	usbdp_phy1: phy@fed90000 {
- 		compatible = "rockchip,rk3588-usbdp-phy";
- 		reg = <0x0 0xfed90000 0x0 0x10000>;
+ 	i_mmap_assert_write_locked(vma->vm_file->f_mapping);
+ 	hugetlb_vma_assert_locked(vma);
+-	BUG_ON(page_count(virt_to_page(ptep)) == 0);
+-	if (page_count(virt_to_page(ptep)) == 1)
++	if (sz != PMD_SIZE)
++		return 0;
++	if (!ptdesc_pmd_pts_count(virt_to_ptdesc(ptep)))
+ 		return 0;
+ 
+ 	pud_clear(pud);
+-	put_page(virt_to_page(ptep));
++	ptdesc_pmd_pts_dec(virt_to_ptdesc(ptep));
+ 	mm_dec_nr_pmds(mm);
+ 	return 1;
+ }
 -- 
 2.34.1
 
