@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-447941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAACC9F38FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC139F38FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE4C018909B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956171891693
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36257206F2B;
-	Mon, 16 Dec 2024 18:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE263206F3B;
+	Mon, 16 Dec 2024 18:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RFIkBecB"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hzIXKspo"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A807206F0F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D8E1CB31D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734373769; cv=none; b=GKq9mGADOUy/TBux3pfrRDx8b3e66R0vXJsdtyBKyjZF/X/4d96BMCNzWt8zUC365PeB7CHCWLOGyjZ94tAUqX4kKPzQ8ArowewWvImJgYm++uqooGhsO5BzABJwPD8J4naUZvToXrzxrVbbwcKny/LRfhChD27j3SNY6T+wPIE=
+	t=1734373801; cv=none; b=Cb5/RN2w+b2LN/PZQVfyq5f5nnZTRuRKXzsCZ4C8+9ntUf2TAdmKNG9H8eSMJZLqMwJ0veNAmcJ1KKGAM63kWxBeOnx1Q6s92YqCLvDP/uKsrMAmIFlkGc6rmBzT+Qt4mc02boIVsLd8ESa6zDj/uMKMVLc4bKubNvkaqcZ+B3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734373769; c=relaxed/simple;
-	bh=GR1waToDgrCuopV4sJNgGblNy716dPbxfdvbcwPcWso=;
+	s=arc-20240116; t=1734373801; c=relaxed/simple;
+	bh=D6BkjH67J+jGm+KB+qtNt47cbbPwybjknONYRIcntzc=;
 	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CFxHyZHwYtTyboUyNjQuSAVukXdH3pC+0Urgmk0oX+4WfvITS85xcOuv5AYnbVSKQTXHBnnLAmCSZ/jLblHIJjqTxqic8AHtwqyXe8tjkye7B+O+MnehN8IxK17crdg8+epf/TXtCKlJY3WJcEtRRaiKmf5cE00SMjY0VP5kspE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RFIkBecB; arc=none smtp.client-ip=209.85.128.181
+	 To:Cc:Content-Type; b=qsFbI1wLU5AjYzzGqe1pi77+XMDzWTIlbHMRC31N5SRaELADjpl6tQWJdhFPBDLVk4oET3sSkUUuBc6+Y4Fu8kcuXO080U+u8alC+o8eBabFQ9uwPrswUfEvXgDoZ7V4YL9kZaGmvVkngWKDPNKda4eCW7Zby/uiq6rGTVLkLn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hzIXKspo; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ef66a7ac14so51406437b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:29:26 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6f0054cb797so35490317b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:29:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734373766; x=1734978566; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1734373799; x=1734978599; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GR1waToDgrCuopV4sJNgGblNy716dPbxfdvbcwPcWso=;
-        b=RFIkBecBjNqjeoYxVmXSrDHc09wE6avr6cSxLhvDMzz7i9eKzBgYZStqGHW/uPzrlM
-         2gAd1SunVIgCUarHTox6+LoHde3rv9rnWk8pG3nTGYlAqAL1dJQCi/Adao/PSmKqe0oV
-         OBoqUgWvhXrMSiTZFtoNqDIfhveIiuZ2LLmCI=
+        bh=D6BkjH67J+jGm+KB+qtNt47cbbPwybjknONYRIcntzc=;
+        b=hzIXKspoPr8yLJl/ZlJNV7fnBIGtdlFUDvTBuMQ8ELR6LffTieTAahyjqzRl54BQFk
+         /NryktWVmYlKOTV/Wkn1AugP7dwKIUErOzTgRdE7+xN5higb/ij3YU/jmxO10vFyTorj
+         ThuL57tTEB2FLO8Oc1k124WWyeoLw7bxmid0w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734373766; x=1734978566;
+        d=1e100.net; s=20230601; t=1734373799; x=1734978599;
         h=cc:to:subject:message-id:date:user-agent:from:references
          :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GR1waToDgrCuopV4sJNgGblNy716dPbxfdvbcwPcWso=;
-        b=K9h4BAie/Zi9TbZiENL3aBROIa08Yob6sYBuedFqAvJ0ekNkjaI5EygQMuKMCHSPwp
-         WJJJl3RK9aVUnY+LOzryIlJJqmx0fDgsv7Ru0yAqE3LOCz6voCjHKPESFkmYxpXJlYQl
-         BgyL8eak7CPtNpSUH/EYNHhf45YoKhZkFlkqm+PAXpH1C1WkyxB6P/0xJVRlcDNKeZ/m
-         FsgCtW4Bo0r9Z4jT/SzIknOGo7EcLjrpwzJnR25qDDFLJ52FK+KA4RfbOy4w+4JwZ6f+
-         LgrkN3Wtw/WHz3RNsHtOkphkl78DVfYFzzgY3/gz+52q9qOm9iAsPGIO/Em4wmryE6jF
-         N8rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ0GLTSyyMy7I0E1FfVmoaeTO+41FoqknPu61fvNu7SDY01kUeR/tqFXJPCg82FS8MUn+6TtKsqgYFQ38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7c6G7VyWYkBClyukDxEQax1F8VlFj2g6QIzA6/u+mdhRz/WUg
-	CTgrovzai2oWqhtXKf6Y6J7ZXf2J6TZPTUeqRoXIvb0kyM5JDnkRaAxispllBfmsi+CpCla24XK
-	+KhzyTE8KKO/kzeoyBjR5z6FSPF+4MFa6kcyH
-X-Gm-Gg: ASbGncsiq5/McbLUI3TSNt5zW3zfzVT28+0LDnvlcPGoIuoOkBIjt7OBaChruSYSufh
-	aghsb86zaRz8U1UvHP7yhx/fFWsnPtvRXjXuTSwzpodVjMJrklJgJNrbL9Ot804mn3w==
-X-Google-Smtp-Source: AGHT+IH1rrCqzyUmv/+ovkxDTTujqBxDtcReQhBBlksOzIUEXVcbUlAtrkHnUp3TKKoOBpjZ9dyQODPY9A4b8x3dvxM=
-X-Received: by 2002:a05:690c:48c9:b0:664:74cd:5548 with SMTP id
- 00721157ae682-6f2bb9a5b62mr5055197b3.1.1734373766242; Mon, 16 Dec 2024
- 10:29:26 -0800 (PST)
+        bh=D6BkjH67J+jGm+KB+qtNt47cbbPwybjknONYRIcntzc=;
+        b=np+qnK0vLxcKaFwmjjQBcKULGdVYylJ3t8AZBz7YYzg49h/PAZCGsK5hrqfM5oPP1a
+         pRHKE9/6YvhLxOUR1AoB/TY4woclebQTnJgqmKYzcIvW5WifvcaEGC8F0wQcATcYJyTd
+         WFdZH6UX9jayv4bPo6Hj1wOpGhBNO1Vq+SJxkEbdN8xzYhryNI2EdFpXuAAoQ9Q4tTN0
+         OQvnQJlf1mcgo3rPCWV5a7cTC7lCoZER/KXtjoSez1Yaj4I3L7K8FIiIfFfyCXxXANeZ
+         C6W5RC1JKhX+U6rKNZlCuOyocmQjT4VUkIq4A60YrmAiBu6W1AjfNWBj59N2G+IOSG2h
+         vsqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiWkLDof/0KXogkuKiFAx6nj7t+3joh21RGY8YHWBdUMIaIFVqAxQrDY9gICq588n4Q5s/QjWpQrTBxAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNEfx1mAzTrhLU8cDOkYaE2Dxdq32gWJZLFYuxRAuK+6YU4Hjk
+	T+Ew8hFwtrh2yy//AoU/zeuBv/E1dbvJ2IkB/P+YINOuQe3ZR7UC+ls6/ikYP0TiTR9qQbkHkec
+	wjRM2N9oLOtG9KvRQy0yQ0BnM6XFnvY64+xTq
+X-Gm-Gg: ASbGncuodhoxTZB7FDAeJwqGe7ehNc0tojnFGVar3g2rFwOb/z87ANzPYRbz0SOf+8L
+	ZcCmLV/TGmkDdi/VB5J2RkfJFyc+cZm/Z4VqlUo9BhQUcK2xLe6NSre7U/YW81RCCyA==
+X-Google-Smtp-Source: AGHT+IFec3otTchyFxbDJfKFBz47WzGfI8yjCwnobgW8mFZyVIcbwLvFYT+D1W5djrG5rBzv+7Jo60SR7JxAagJAj/U=
+X-Received: by 2002:a05:690c:6005:b0:6ef:4ed2:7dec with SMTP id
+ 00721157ae682-6f279adac53mr117919057b3.8.1734373799003; Mon, 16 Dec 2024
+ 10:29:59 -0800 (PST)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 16 Dec 2024 10:29:25 -0800
+ HTTPREST; Mon, 16 Dec 2024 10:29:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org> <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
+In-Reply-To: <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
+References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org> <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
 From: Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Mon, 16 Dec 2024 10:29:25 -0800
-Message-ID: <CAE-0n527-TKS2Y=SsmALOKrx_QrzT4=j_dTyNgk9A_RDQzVcWg@mail.gmail.com>
-Subject: Re: [PATCH v4 06/16] drm/msm/dp: split MMSS_DP_DSC_DTO register write
- to a separate function
+Date: Mon, 16 Dec 2024 10:29:58 -0800
+Message-ID: <CAE-0n52Uj6h=X2PqZcPBnPDR_vVfi4_Y_miG-dTPP6FzH8rtag@mail.gmail.com>
+Subject: Re: [PATCH v4 15/16] drm/msm/dp: read hw revision only once
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
 	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
@@ -88,10 +87,10 @@ Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Quoting Dmitry Baryshkov (2024-12-15 14:44:11)
-> It's the dp_panel's duty to clear the MMSS_DP_DSC_DTO register. Once DP
-> driver gets DSC support, it will handle that register in other places
-> too. Split a call to write 0x0 to that register to a separate function.
+Quoting Dmitry Baryshkov (2024-12-15 14:44:20)
+> There is little point in rereading DP controller revision over and over
+> again. Read it once, after the first software reset and propagate it to
+> the dp_panel module.
 >
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
