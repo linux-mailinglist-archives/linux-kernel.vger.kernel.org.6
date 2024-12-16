@@ -1,273 +1,152 @@
-Return-Path: <linux-kernel+bounces-447204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975499F2EDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:10:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25CF9F2EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC814165E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9FC167218
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679392040B3;
-	Mon, 16 Dec 2024 11:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="RTlmaYDF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RjpzLea7"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E86204568;
+	Mon, 16 Dec 2024 11:11:31 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FC0203D7F;
-	Mon, 16 Dec 2024 11:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE22204097
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734347403; cv=none; b=PAHhMQF8fU/qok4P9Ai+v0icu+/J+PL5UMR4GNlPZ4E0zHoFV2mDb/WnG7hDX9s/xCyAJucJoLYMqzfyR8ck9cV0bp7afYW0uuuiVVhGelyQCAfCFqTydPnf4E1lv9W4/rpDvpdUBDSTUPIvsR3s1FcIK+n5g0OnFw9DwQsH/EQ=
+	t=1734347491; cv=none; b=FYfgIWDyKBjgiq+gE/bV03TMKzPI9DDV6XUZBUSdpYETR/TV/qKjhLYrcKylaRyXkKNPEdGSvYPQz+xvofcoVoiqUSavAJH4oqXt7AgL0fk5Cq0SpY3X6qsJn7RafpOIRe8RNTweChHbDPie/TAMzJyH/mOjG8bHENKNxKRU8Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734347403; c=relaxed/simple;
-	bh=xn95Pi4umwEL5V6TEFqfsF5iwXrY6u8D2aQGSHcBbdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL8gH0KTiJ6gE8p07EFTCXJIfyIQL52J5OS3inFO43r3kvc6V8sahkv6lU2BOu+1smMsGlfGKJQUOxryh6OPhVUNmZFhXFT0spHt0xpH1I4RIlNWLx5eI1h/jhz3cHUTR4pDyEBaKnTM88BiBJWnYovpOi2QQ3H0oZvg1SzzOTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=RTlmaYDF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RjpzLea7; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id CE0E313838F6;
-	Mon, 16 Dec 2024 06:09:57 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 16 Dec 2024 06:09:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1734347397; x=
-	1734433797; bh=ScOq+swQzHKW0GAW9g0fDYWS5GmMw3Ms2ywzxyyuIZ8=; b=R
-	TlmaYDF8bHiHa1upgTGd64ZNqHtz7JYzrB5plbvPx557SvTAFFlzXjHynQkbqn6P
-	lWLWbWWoXyHEbyJmYeaepWbr0JYij0PEiZFd2IWv2dEBAuKdYKe5YgX5nuGmIA0s
-	CkkYUpa9HhEQ4UV7JJpFEkIQ/318AFrK8SBZ+3AvUa0hIMUcAXC9Um8SpVbIg9rt
-	clUSR9K4KiCWcJkDKO7Js++NOOwC7H4RsrEolrf3mJmHrZEeLLN18UiZaxbN4aaB
-	CQ6ycKEwOKBZQ4IRJrXKkh/D4J3kRwiOLYlnQuctdn+gUvGOLDMT54heeNSAHEXn
-	mphhY2vT7Uqeq7trUlJhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734347397; x=1734433797; bh=ScOq+swQzHKW0GAW9g0fDYWS5GmMw3Ms2yw
-	zxyyuIZ8=; b=RjpzLea7xVwGsrWp66aQvY6fMFRRKzDEq8zPSjc3PfyVFNZYuYB
-	kS9GSJECA95Vzg8fYIcpEDJThXuW82wBvsdTFsrpx29XoHQ5WMizC/aVupZ2sUSa
-	OYnQlbqsu7Sq5Z041jyXsW5iyqIKDjXRNiDdtON4ak1odS/CZhIOgeqQDWnlIdG1
-	HOY99mSc4TF5Jaqm+87HGsSxmbNDRxWdjZd3gpTiDAPkp5uty+VXh3zTFI5bAiA/
-	ZSJ0vgl2Q3vRCSHWKLwspGE2t1Huu7/z7Uw6J2JtiNpIoKnTWwJJ7wgdqcA5b3tO
-	gaeD5saDgMXEV53RSqzb3os/8TK6WvJPD0Q==
-X-ME-Sender: <xms:hQpgZ-vQDKU4jzgdouM_9L7o5_hQjLnXO37wwZlLVPdjVxuxvHRYUA>
-    <xme:hQpgZzcywnSuh5Ugm8KSwxJkI33JhiJyB4eEki-WoRKDMRm8WADFihTF0AxDd75tL
-    EYorYyexXFAXl31H2c>
-X-ME-Received: <xmr:hQpgZ5wj4SMCDnl-yYJ7tzp_350RAMpRy9tS0mQxnlWdhFMhX9YXwUXtAw4W>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleefgddvgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
-    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
-    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
-    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
-    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
-    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    eprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:hQpgZ5O9je3oFbYEZX4Ggm67R2SV680KnPR16lCKsuGi9uuCMbD2yA>
-    <xmx:hQpgZ--Nc_coUJ7r8yXyPOtiNiQnOTK6dVg_KnNIqRlT7dSqDgh0IA>
-    <xmx:hQpgZxXF8shc7m8X3pDwOw1a-Jntm-CdETg8_CsFczuJ5hlCJ4h4zw>
-    <xmx:hQpgZ3dZaAQMkH95u55RY5bcLJHpaUgRWItm33KJlIT1jcXSMoZhqg>
-    <xmx:hQpgZyWgcFMQvCPAKNZc6dJZm0Y600eTPaYCZEWmi8o7ToTRei_Wc3_h>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Dec 2024 06:09:56 -0500 (EST)
-Date: Mon, 16 Dec 2024 12:09:55 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	willemdebruijn.kernel@gmail.com
-Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
-Message-ID: <Z2AKg6ntLd94anHv@hog>
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
- <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net>
- <Z1sNEgQLMzZua3mS@hog>
- <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
+	s=arc-20240116; t=1734347491; c=relaxed/simple;
+	bh=N2vdhFMCwt7nl3aR3OnWzK7YbPyMRZ+JlQNLQWrzIEU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=FCx6rRgHk0bdT9L/c39D3lOdigrGqtr+shPxWm7Gkb4Nq0E7cBOgC+XG6gz9sDBaiCrXkHWPFJhEAsEWbrhq2+cb5e+KOvqTV+bIyxMhIyNmAlIkAWKppx8YYOHmXQ6EhzAfzXmsJZGHi/6f4x+YBaHrc7O2EHwnEDAB9k4D1GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-78-kvkqQzWQOWCezDNdN5gTxA-1; Mon, 16 Dec 2024 11:11:27 +0000
+X-MC-Unique: kvkqQzWQOWCezDNdN5gTxA-1
+X-Mimecast-MFC-AGG-ID: kvkqQzWQOWCezDNdN5gTxA
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Dec
+ 2024 11:10:23 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 16 Dec 2024 11:10:23 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Oleg Nesterov' <oleg@redhat.com>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>
+CC: 'Jiri Olsa' <olsajiri@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, Song Liu <songliubraving@fb.com>, Yonghong Song
+	<yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
+	<haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+	<mhiramat@kernel.org>, Alan Maguire <alan.maguire@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
+Subject: RE: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
+ uprobes
+Thread-Topic: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
+ uprobes
+Thread-Index: AQHbS9GTSF5rwnXysUaDsufIVqYKlLLnNYvQgAFWD+SAAA72QIAAE/UAgAAKdkA=
+Date: Mon, 16 Dec 2024 11:10:23 +0000
+Message-ID: <0916e24539ba4bae9fb729198b033bd7@AcuMS.aculab.com>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-9-jolsa@kernel.org>
+ <1521ff93bc0649b0aade9cfc444929ca@AcuMS.aculab.com>
+ <20241215141412.GA13580@redhat.com> <Z1_gFymfO3sAwhiY@krava>
+ <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
+ <20241216101258.GA374@redhat.com>
+In-Reply-To: <20241216101258.GA374@redhat.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 1SDhE-epYsCCxxWvRmC_OwT-C7OXLvEcMAQSwNvj5eg_1734347486
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-2024-12-12, 23:46:11 +0100, Antonio Quartulli wrote:
-> On 12/12/2024 17:19, Sabrina Dubroca wrote:
-> > 2024-12-11, 22:15:10 +0100, Antonio Quartulli wrote:
-> > > +static struct ovpn_socket *ovpn_socket_get(struct socket *sock)
-> > > +{
-> > > +	struct ovpn_socket *ovpn_sock;
-> > > +
-> > > +	rcu_read_lock();
-> > > +	ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
-> > > +	if (WARN_ON(!ovpn_socket_hold(ovpn_sock)))
-> > 
-> > Could we hit this situation when we're removing the last peer (so
-> > detaching its socket) just as we're adding a new one? ovpn_socket_new
-> > finds the socket already attached and goes through the EALREADY path,
-> > but the refcount has already dropped to 0?
-> > 
-> 
-> hm good point.
-> 
-> > Then we'd also return NULL from ovpn_socket_new [1], which I don't
-> > think is handled well by the caller (at least the netdev_dbg call at
-> > the end of ovpn_nl_peer_modify, maybe other spots too).
-> > 
-> > (I guess it's not an issue you would see with the existing userspace
-> > if it's single-threaded)
-> 
-> The TCP patch 11/22 will convert the socket release routine to a scheduled
-> worker.
+From: Oleg Nesterov
+> Sent: 16 December 2024 10:13
+>=20
+> David,
+>=20
+> let me say first that my understanding of this magic is very limited,
+> please correct me.
 
-Oh right, I forgot about that.
+I only (half) understand what the 'magic' has to accomplish and
+some of the pitfalls.
 
-> This means we can have the following flow:
-> 1) userspace deletes a peer -> peer drops its reference to the ovpn_socket
-> 2) ovpn_socket refcnt may hit 0 -> cleanup/detach work is scheduled, but not
-> yet executed
-> 3) userspace adds a new peer -> attach returns -EALREADY but refcnt is 0
-> 
-> So not so impossible, even with a single-threaded userspace software.
+I've copied linux-mm - someone there might know more.
 
-True, that seems possible.
+> On 12/16, David Laight wrote:
+> >
+> > It all depends on how hard __replace_page() tries to be atomic.
+> > The page has to change from one backed by the executable to a private
+> > one backed by swap - otherwise you can't write to it.
+>=20
+> This is what uprobe_write_opcode() does,
 
-> > [...]
-> > > +struct ovpn_socket *ovpn_socket_new(struct socket *sock, struct ovpn_peer *peer)
-> > > +{
-> > > +	struct ovpn_socket *ovpn_sock;
-> > > +	int ret;
-> > > +
-> > > +	ret = ovpn_socket_attach(sock, peer);
-> > > +	if (ret < 0 && ret != -EALREADY)
-> > > +		return ERR_PTR(ret);
-> > > +
-> > > +	/* if this socket is already owned by this interface, just increase the
-> > > +	 * refcounter and use it as expected.
-> > > +	 *
-> > > +	 * Since UDP sockets can be used to talk to multiple remote endpoints,
-> > > +	 * openvpn normally instantiates only one socket and shares it among all
-> > > +	 * its peers. For this reason, when we find out that a socket is already
-> > > +	 * used for some other peer in *this* instance, we can happily increase
-> > > +	 * its refcounter and use it normally.
-> > > +	 */
-> > > +	if (ret == -EALREADY) {
-> > > +		/* caller is expected to increase the sock refcounter before
-> > > +		 * passing it to this function. For this reason we drop it if
-> > > +		 * not needed, like when this socket is already owned.
-> > > +		 */
-> > > +		ovpn_sock = ovpn_socket_get(sock);
-> > > +		sockfd_put(sock);
-> > 
-> > [1] so we would need to add
-> > 
-> >      if (!ovpn_sock)
-> >          return -EAGAIN;
-> 
-> I am not sure returning -EAGAIN is the right move at this point.
-> We don't know when the scheduled worker will execute, so we don't know when
-> to try again.
+And will be enough for single byte changes - they'll be picked up
+at some point after the change.
 
-Right.
+> > But the problems arise when the instruction prefetch unit has read
+> > part of the 5-byte instruction (it might even only read half a cache
+> > line at a time).
+> > I'm not sure how long the pipeline can sit in that state - but I
+> > can do a memory read of a PCIe address that takes ~3000 clocks.
+> > (And a misaligned AVX-512 read is probably eight 8-byte transfers.)
+> >
+> > So I think you need to force an interrupt while the PTE is invalid.
+> > And that need to be simultaneous on all cpu running that process.
+>=20
+> __replace_page() does ptep_get_and_clear(old_pte) + flush_tlb_page().
+>=20
+> That's not enough?
 
-> Maybe we should call cancel_sync_work(&ovpn_sock->work) inside
-> ovpn_socket_get()?
-> So the latter will return NULL only when it is sure that the socket has been
-> detached.
-> 
-> At that point we can skip the following return and continue along the "new
-> socket" path.
-> 
-> What do you think?
+I doubt it. As I understand it.
+The hardware page tables will be shared by all the threads of a process.
+So unless you hard synchronise all the cpu (and flush the TLB) while the
+PTE is being changed there is always the possibility of a cpu picking up
+the new PTE before the IPI that (I presume) flush_tlb_page() generates
+is processed.
+If that happens when the instruction you are patching is part-read into
+the instruction decode buffer then you'll execute a mismatch of the two
+instructions.
 
-The work may not have been scheduled yet? (small window between the
-last kref_put and schedule_work)
+I can't remember the outcome of discussions about live-patching kernel
+code - and I'm sure that was aligned 32bit writes.
 
-Maybe a completion [Documentation/scheduler/completion.rst] would
-solve it (but it makes things even more complex, unfortunately):
+>=20
+> > Stopping the process using ptrace would do it.
+>=20
+> Not an option :/
 
- - at the end of ovpn_socket_detach: complete(&ovpn_sock->detached);
- - in ovpn_socket_new when handling EALREADY: wait_for_completion(&ovpn_sock->detached);
- - in ovpn_socket_new for the new socket: init_completion(&ovpn_sock->detached);
+Thought you'd say that.
 
-but ovpn_sock could be gone immediately after complete(). Maybe
-something with completion_done() before the kfree_rcu in
-ovpn_socket_detach? I'm not that familiar with the completion API.
+=09David
 
+>=20
+> Oleg.
 
-> However, this makes we wonder: what happens if we have two racing PEER_NEW
-> with the same non-yet-attached UDP socket?
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-mhmm, I remember noticing that, but it seems I never mentioned it in
-my reviews. Sorry.
-
-> Maybe we should lock the socket in ovpn_udp_socket_attach() when checking
-> its user-data and setting it (in order to make the test-and-set atomic)?
-
-I'd use the lock to protect all of ovpn_socket_new.
-ovpn_tcp_socket_attach locks the socket but after doing the initial
-checks, so 2 callers could both see sock->sk->sk_user_data == NULL and
-do the full attach. And I don't think unlocking before
-rcu_assign_sk_user_data is safe for either UDP or TCP.
-
-> I am specifically talking about this in udp.c:
-> 
-> 345         /* make sure no pre-existing encapsulation handler exists */
-> 346         rcu_read_lock();
-> 347         old_data = rcu_dereference_sk_user_data(sock->sk);
-> 348         if (!old_data) {
-> 349                 /* socket is currently unused - we can take it */
-> 350                 rcu_read_unlock();
-> 351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
-> 352                 return 0;
-> 353         }
-> 
-> We will end up returning 0 in both contexts and thus allocate two
-> ovpn_sockets instead of re-using the first one we allocated.
-> 
-> Does it make sense?
-
-Yes.
-
-[...]
-> > [I have some more nits/typos here and there but I worry the
-> > maintainers will get "slightly" annoyed if I make you repost 22
-> > patches once again :) -- if that's all I find in the next few days,
-> > everyone might be happier if I stash them and we get them fixed after
-> > merging?]
-> 
-> If we have to rework this socket attaching part, it may be worth throwing in
-> those typ0 fixes too :)
-
-ACK, I'll send them out.
-
-> Thanks a lot.
-
-Thanks again for your patience.
-
--- 
-Sabrina
 
