@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-448292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59049F3E38
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:26:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6249F3E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DC816E268
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EBAE188A2E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722BB1DE2AA;
-	Mon, 16 Dec 2024 23:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E481D9346;
+	Mon, 16 Dec 2024 23:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ySu7h231"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kgb1gymn"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD21DDA35
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4C1D5178
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734391516; cv=none; b=sVLYj9E+0VFXZ7cve2EbEXslV9Re16F/U04SDi0l+X02BJdb6arQ36l6JLDnWl+lhKDX0uiucAjG6HqhENe5PH8HRi2zSchJqzzWNglY67RGFhGux0te5GqlP45bXLqBVyi8PqrO4zFhgXDSDmfFNo5NZiJsYWAmtVXB3OaqjCk=
+	t=1734391595; cv=none; b=HP9qfTndgp+KmzlmCJkV1KafzCaQDP4nvBGsYtj/XnFSqJtBIREkTkFD4o3oUfD1FTZYHu1Msy9Qq12PaM8Oyl/CvTCc3Z0ZMqZXc97ObyybEZfTGjYFzWjzyI1Mrm41STZD9RuZRE5XRAz0BE2PIrzZGzEVf+XT5+QoGsET64s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734391516; c=relaxed/simple;
-	bh=iEVYgx/hxX84VyoDEpscAjkrNLwDJylilFK5OuBYN9g=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=N6CV8uGZ/q6ajoeKe6liOHTcxdKEtew1kiCrSAaD/qQPc9+ZGrjSxgzFeCqYn4eEsQ2SnhWv8kQhK17i3k1F58DZSBXCu43mCUB3GuMyxmeqdvZQp6RRfmccTFLQe36vGYXYdRWh6UnLWek56nISZy4sZHMMewDf+d+NUbsSBcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ySu7h231; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e49f3aa78fcso2261316276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:25:15 -0800 (PST)
+	s=arc-20240116; t=1734391595; c=relaxed/simple;
+	bh=Bz72pufGL0tkgJAeN9WvIrOjhkF9kFJ+hIN24aXg7Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9JmomJOgHvJrFRLjGpeqLC0MREhc47JGND+mQ6v+4ZVsy76XUfN1Gmsk5Gt+5UQwYCmTr3b2tlON6b37uPBCMjMz/eSUAC76U1aHv+hhbDr34tyqJ/r1UHQ7Z6CqPMc6vcn5Z1uk9QwqMYYGqpuSmpbGQONcR7sp9vRDKuDuyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kgb1gymn; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53df6322ea7so6460120e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:26:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734391514; x=1734996314; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FTHl2TPsCH6LymZInluDoB5DdWMc8GssygaKpaKL3WI=;
-        b=ySu7h23181UwWbX3I1NG9aj9Z7WJvw5rfzZVCunSWu6M5wRL/3MKid1z1Jq1mQF8ss
-         IxdyVPzfn5k25QW60zLy6oMWzCYMrT8VgEB3d4k8OkWkHkj4zaS91IEtyYaFzq46NEH6
-         HYG6YhjSM4J2U5jhQhJYtfbMYlnzfg6JCiDIMzBhBN5rbep3+bLRpMTtyhQoCiGyVlln
-         3wBKCUZqGFlt++BgOnjugtoSPLv85LnUvqH9QosH1VfafJLIK3Q33c5ERQ643iwTCYGq
-         buY/lvfTV7n+P2xfEKoriDujBnvgWhBidSLVu29qRc4PRY8pom/rYVj0B/278AEMLL+M
-         syaQ==
+        d=linaro.org; s=google; t=1734391592; x=1734996392; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ga5plnRRD21rZgiC5DgyaFqBZPJrKxo5KG3LNUuDhLk=;
+        b=Kgb1gymn7TU9HjaHZfD9af7Y921AA8XHrNbPX3+P7QMP4QuQWF0IRb1fTYIHgTCkxS
+         2iZyl+fNdyW/A7Yv2bmUwmSneLs0CLHVTFRBUhnd8gNV3PIuZ1Ldr+0BldIGx2FUbp8q
+         P/E1kdD25111qJV2GAtYFgu6q+dFdsTxPsQorJhtlOkFjJuWjMwfSG4Ae14EQ01n4c+W
+         M18H2Ih4+qKIjnFPlkWWYdN+1lOkcCOMo38BP4ELXadN/0PJ1KwsAGpoISToddjwWbWO
+         hFGnbiQkFBZUiLCoUGo06H6mprIMdDrs42NEEemy3gwm+ftrUunw0M95HFWWagF97RVq
+         X+DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734391514; x=1734996314;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FTHl2TPsCH6LymZInluDoB5DdWMc8GssygaKpaKL3WI=;
-        b=WtWZ2dBVznsX7c8HYf6+1gN3pZmQjircHd4fB6rdnE+p8dlD6ZVywbYtWgj60vwNbK
-         2VJrJsBaKZdVsxSBGIL4AxIidmGd0iZThfRpzz7Yl14u5GPTB35KdQJZ12FtsSx8VOb2
-         dJntnDguQUefAnYSLYj6zo5Sfre07xarKPAkwPWD3+MauuuQ4fasWN6RdE2MreXVwZXD
-         9e3P4RTTXbnlsbgzBbYRRjomt895B/djXdUlG85s6O40eFSel7WRjG8e2LrhR5l1Qd/w
-         M73ulccQmDleFRGeGTb2OuNQ6WhcVGQvMy48XVPMXOWPZ+Z2QL6Aydlplrhe7HhoDYP7
-         PuBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlnNQ7hZh/8xwAnL5pulAnELOjW2IjpDSH+UNAKw6mNmRSYx9pa9pHuiLaB5++QHF//R1FU8qOaPzlU/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEWE+X12pR/4bXbOMAmA1+VGOADQ2OqGKQ8Xx2jrbw0WDmuzlt
-	QCmtPamtyHkV69d0hTBph2tNSHl+r7ARApTVuCX85vMuKKquCiM0J52kMo79rJD7JCaON2wJ0Ug
-	TKTsybQ==
-X-Google-Smtp-Source: AGHT+IFd1yidZo4+PCjzzLBKzlvBgB+iWRLxaQKGvW8aqa9jBsNOiHI2lkdQ9omQXubeZJj1mM0cO/8DOG7P
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:b850:b916:18b9:17a7])
- (user=irogers job=sendgmr) by 2002:a25:aa51:0:b0:e38:9694:4c6e with SMTP id
- 3f1490d57ef6-e5325f97ca3mr554276.2.1734391514479; Mon, 16 Dec 2024 15:25:14
- -0800 (PST)
-Date: Mon, 16 Dec 2024 15:24:59 -0800
-In-Reply-To: <20241216232459.427642-1-irogers@google.com>
-Message-Id: <20241216232459.427642-6-irogers@google.com>
+        d=1e100.net; s=20230601; t=1734391592; x=1734996392;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ga5plnRRD21rZgiC5DgyaFqBZPJrKxo5KG3LNUuDhLk=;
+        b=ShRpC0MIPuEE9bKmf4qlOhGRO1/S1szh034WpHCSrQQ4Yp6ZcrFpv7hSLWMY7k/UXz
+         jTAll2cN1N9kj1u/ktPHVrJYdQ+3w+AbLPd0agmOG/wJrQruGsfiAhoghAGUIQ3J8UgB
+         CSeFQe1/o042d+ef6AC0qmwAqmbTIiU6vSXlPuxPGy+ZzfW5YNixxRhhFSassRgZnwpe
+         yHAJ0SrEIf+r6PStY39/dn0yII9baPPaOHHJHC+QI9LoanvWx+rqU19NrFQxpNSrAJcF
+         FiY/PGfWkRnsceDrjAlin30bYZvhqxPF2QEvARJNizKAXArpSlE53sS1MlwYDxxQ2oj6
+         do/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwFWfc9bn7ykO0hchk823kocqcAXkQrYsPejFdxOvT9AHxp5lbUJ4trUmkWMkSgjF/YEFXh23+ZsrSgq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZnmhartO9oa1ud0Z3ovJzhQp04ythoZTcEyBqRB4aQseOHsdp
+	sK6GtwFchEFmTjkAnEo8FJSlG+mrHgJiJGyXWmqSdSojTtmaJvO2vp+IuFsrGls=
+X-Gm-Gg: ASbGncvmXh50euathOdAqF4GMNMTDk/BEInzy3PjIdGFSdJ768zp0GF9NAvLFOXDNQX
+	AnFKSlt/9QqZgsZPlnAski04yMxiTGLAysslk1bekL5natHPCklBDkgiQvJbZPEUITfvHRcm0LS
+	A/2nVq511WVItQfrnqAUl2ZZn+C4nH1TXjMNW0IwDslCby8lmeRLr9Hr161K2pufUI24kbu1mCE
+	R7kph6zp1yh0gorg7il1IWIcAo8meLhhsTAvg42iPdI/pOqgjxe9zBmZaU/EC0hyCmY7t28ZKHa
+	G4/QE5rwaWqmQvkGZuzMfB+4fQIjH2bhGuVK
+X-Google-Smtp-Source: AGHT+IGJqsn7bXTR3lEoGpFZPPm/vHrxJicdtdEx5gqHp7xCDLE0cMihc/n6szg+zYkNGeZh6CjlYg==
+X-Received: by 2002:a05:6512:3049:b0:540:1b41:c75f with SMTP id 2adb3069b0e04-5409054bf54mr5448476e87.16.1734391591836;
+        Mon, 16 Dec 2024 15:26:31 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c13c97sm985014e87.215.2024.12.16.15.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 15:26:30 -0800 (PST)
+Date: Tue, 17 Dec 2024 01:26:28 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] drm/connector: hdmi: Validate supported_formats
+ matches ycbcr_420_allowed
+Message-ID: <3djtdbyy3ndeb5cg4ndlelsnhxcd3jcve5pydvmvsjqp5yfxnr@6lkglusanztr>
+References: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
+ <20241217-bridge-conn-fmt-prio-v3-2-3ecb3c8fc06f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241216232459.427642-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Subject: [PATCH v3 5/5] perf record: Assert synthesized events are 8-byte aligned
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217-bridge-conn-fmt-prio-v3-2-3ecb3c8fc06f@collabora.com>
 
-Capture that events are 8-byte aligned and avoid later misaligned
-event problems.
+On Tue, Dec 17, 2024 at 12:54:08AM +0200, Cristian Ciocaltea wrote:
+> Ensure HDMI connector initialization fails when the presence of
+> HDMI_COLORSPACE_YUV420 in the given supported_formats bitmask doesn't
+> match the value of drm_connector->ycbcr_420_allowed.
+> 
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_connector.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-record.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index adbaf80b398c..a5689d0e93ad 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -624,7 +624,10 @@ static int process_synthesized_event(const struct perf_tool *tool,
- 				     struct machine *machine __maybe_unused)
- {
- 	struct record *rec = container_of(tool, struct record, tool);
--	return record__write(rec, NULL, event, event->header.size);
-+	size_t size = event->header.size;
-+
-+	assert(PERF_ALIGN(size, sizeof(u64)) == size);
-+	return record__write(rec, NULL, event, size);
- }
- 
- static struct mutex synth_lock;
 -- 
-2.47.1.613.gc27f4b7a9f-goog
-
+With best wishes
+Dmitry
 
