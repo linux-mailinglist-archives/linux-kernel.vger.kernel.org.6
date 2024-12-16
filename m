@@ -1,174 +1,101 @@
-Return-Path: <linux-kernel+bounces-447005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063309F2BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:32:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E319F2BF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7300E18844DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 554EF188870F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1B1FFC63;
-	Mon, 16 Dec 2024 08:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F31B1FFC53;
+	Mon, 16 Dec 2024 08:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3GvNPCO"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DydwwEHV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D75F1C3BF4;
-	Mon, 16 Dec 2024 08:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A191CEAD5;
+	Mon, 16 Dec 2024 08:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734337950; cv=none; b=c870929VeebhfYLG3+dwGggF1oqD7d7PQ7vQ/27ghLDtecE6fSYdzXZbBdv19WIbodlVckZgESxl1cQMIDFLbjv/9YUIiGp350miIpc78XI3npyiSdu0C1DWu4xKw4aWJQEG/OZQrDQUIQuKqaPJ+pcH20/+/Ga/R0GSR5b0gFs=
+	t=1734337975; cv=none; b=lmcnuDNCc7Y/CESQWY6Rz9dWhI/xqPYN7M41A98O+ygM/iOz4LLKhlwTkUWTYejrUlmxd4lm3Wk6fya4lgodxHMimly5KQPBpgTIAx3+fUb93TBCZ1e1iKDY1VSyKlv/kVgS2/VPq9Qf+srJZqgeO8/kHJJ9kzzyft3eXNtLtMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734337950; c=relaxed/simple;
-	bh=tmc63graJPe0UKWyx4vkNpNO+m+4ga2BW8sW6KWUPfo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZM6J7cory3c4/wWcg2p/zeZ21Y3gSTSQHvl51FglJL2jqCFQZq/AbV9DaxDymYTBsCztz4VcE7cQP0iCmJpCKIlQXD5fW3zG5nbodxNpS0/ax5OZvDG8GNloZ6M5Oh+yvnQ9UdsEgE4+dZiMz3EGTOJZFAN4CdkL7jMP55Qpmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3GvNPCO; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3e829ff44so8963249a12.0;
-        Mon, 16 Dec 2024 00:32:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734337946; x=1734942746; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DStXmAP1zl+BtmnNqXwLVT5eG0QidhabsDYM+Bje4Ck=;
-        b=I3GvNPCO5p+9XNgF6Va65LxdhxBL0T86gnWtOE1KlNDWstydbGunyHt2Ok4Td6nrQP
-         o2sXU7WJXc1sitcCjJZrA0V6YA470gGOYGBJSPtJmCVfenYkEYRL8GXxKl8iBvmsTJWk
-         6KogrG2fcDYfeA7QtZqHhDb15k2Kx+l6bPy/0wHA9HhTNJn0mo0sf+vQIdQODguDok0e
-         ZdVHYmD0OkOFjWu9kZIJBb5X+0OG6+fSiXpg6sV7X1Uks9jmASNzAGEJ78RGYy58zx53
-         gXnSHyp/cpr91IbZAUQj7+7WoRvIT1syNw8o460zAHNC0dh1yrxiHRHcgiV6c8y7llxC
-         /eMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734337946; x=1734942746;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DStXmAP1zl+BtmnNqXwLVT5eG0QidhabsDYM+Bje4Ck=;
-        b=GyffBiPlyHHmi7vyZm+lKbEDkz44UHyt1JwOhSEAcLzOSxqDRjIICPH00VB3b7z9WR
-         JuI5NzHR1aur6FbGKWwpX/2aLyRR75otCWvug4ufnlt4dpUFJhAFLAI+qEvabOe5BHRk
-         apXIX2+zvkE5T6MQjT+bAMqKgUwUfSfIuxTv88zrm1k3STo+y+U9h1IgmvbNmYaLEChC
-         Br4KEa/Qp1Cg5rnwdNrc4hJl0QMUw1+2u3EbpEOd/ZfynwLb7cRwBXYxVI4AAGc4IChR
-         zTR33zsgmG6KSH/QkaoM4sykn1JkwEbrlxOD1Ao09ZyGkUm1ovmNUcHSlpCn672ilQtN
-         CNqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaECX4MD7lnZW5bC5NqwgGD0RTn7MT2mAFHzyDXADrT/6emCRAsqQ1GVujVCudEeakFBU=@vger.kernel.org, AJvYcCXD47OcFGR6RngK/effPIbsAZ2IouEvQkqDd4QdmEmt7orw5uLxTCFDAkwqHC0hpu7BT5bEnkW0WqtpWGp13i9fFP/J@vger.kernel.org, AJvYcCXj58Ji6r1JXNMCIgB5815WJjjK+hTLn0BImSeJJNtIIlAatyMZajDO9e/zM/kIH6jkkovKjM3X77hVhFMe@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUIQTUgZLhxiXUzOso9YFZFfoEcrffz+/q6fvzQDkyI0X04AWf
-	VK45Omhy4EHVfJfCiJEUGnZUeAp5rXdc6BQKHCcLHuJUefVxeCvS
-X-Gm-Gg: ASbGncvi8SF7GOkgbk2eJ9uQMrckTUcYY/NGFTfJfxJ8+z/GSTux6zYK0ocnjFcUpmg
-	pQ1UtmXMenkQMxpHMeUV5PFxBzK8F91JtjDHTzGHjdbOltgI6L//gVwgdfnOcAZkrhpuALNj0Uf
-	n4R/oZQmRg/eI/DjAK5wGZFUKEru7n6Bv5RxP+EAxkM73VBrWncR9dugxYfT/JJ4IVgUroe5C1S
-	AKKO+CrcZF1bTfFYdUUgG4QPRhuRIR39V7PbHxWVy4l0iC7yef9iPIPXLmt1fh2LfRx2nlIwOLX
-	MNIOWsoJlaerc0nfkanaxHa6YBpr/g==
-X-Google-Smtp-Source: AGHT+IFbJzgNGleaCl6XYHSoPut73f3e6DblPj/2gHplP/KlT1RUtBIX0KhXN+QPge/sy3mCbplt0A==
-X-Received: by 2002:a17:907:980b:b0:a9a:6c41:50a8 with SMTP id a640c23a62f3a-aa6c418018bmr1518123966b.17.1734337945778;
-        Mon, 16 Dec 2024 00:32:25 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963ce30asm300285566b.200.2024.12.16.00.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 00:32:25 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 16 Dec 2024 09:32:23 +0100
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 09/13] selftests/bpf: Use 5-byte nop for x86
- usdt probes
-Message-ID: <Z1_ll7ArngBWpx4N@krava>
-References: <20241211133403.208920-1-jolsa@kernel.org>
- <20241211133403.208920-10-jolsa@kernel.org>
- <CAEf4BzbF1Ei-MkKOM9N2nCRspVXpVLhpAYZFaaOUpDJ4HgJ6jA@mail.gmail.com>
+	s=arc-20240116; t=1734337975; c=relaxed/simple;
+	bh=olVS1kY17WrcCv3kW793pCXAc2bhMbq54Nxa5kggo2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=shlTuxBdT1nWkhzUp0dl/ALsbtfpmK++UTlqeZ4P+KnEkECHM9YkaayHA6yP7+VJurA7x6u5FBUkkSK6R6QFUtDXChugkZr2lQl+Of0emwGPJ5QF7ZlFh/ENXRyQAZazbis6DWSWr7FrvGUeu0A73IQVGN8W/mcO8GfV4DaOyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DydwwEHV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E694EC4CED0;
+	Mon, 16 Dec 2024 08:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734337975;
+	bh=olVS1kY17WrcCv3kW793pCXAc2bhMbq54Nxa5kggo2w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DydwwEHVVJ2uxhaLVBGXpepl8IbQCawS8vI+buXtQh4ej8pIzEKoM2nfHGoHrJt1V
+	 455BaPLqXlwxBlrdSI/V7Pm3kxU5I9U8l0ipjuvQiMAVJwdGCx5DyRv6wtoa9aHxNU
+	 6NO8koBNCmQEmMEgxMIL9xATnvE7v9+JF2krMIhsyYv10vMjJYKElPGb67zXi0d+72
+	 3IJ9w1LdZSgRbQJo8zT6hL1iyVnIZk9xyJB4kZkBXi9CM/EbQjeIyJ8GLTOC9gg6tH
+	 xi8SQ7x4cth8GtQLd+/uFmrjpxFfcO+ncASdtf8jHpyx4z2lEViEK0gBY2NyE53g8p
+	 gK4GEIeCcdy9w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Anand Jain <anand.jain@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Qu Wenruo <wqu@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Boris Burkov <boris@bur.io>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: avoid opencoded 64-bit div/mod operation
+Date: Mon, 16 Dec 2024 09:32:37 +0100
+Message-Id: <20241216083248.1816638-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbF1Ei-MkKOM9N2nCRspVXpVLhpAYZFaaOUpDJ4HgJ6jA@mail.gmail.com>
 
-On Fri, Dec 13, 2024 at 01:58:33PM -0800, Andrii Nakryiko wrote:
-> On Wed, Dec 11, 2024 at 5:35 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > Using 5-byte nop for x86 usdt probes so we can switch
-> > to optimized uprobe them.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/testing/selftests/bpf/sdt.h | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> 
-> This change will make it impossible to run latest selftests on older
-> kernels. Let's do what we did with -DENABLE_ATOMICS_TESTS and allow to
-> disable this through Makefile, ok?
+From: Arnd Bergmann <arnd@arndb.de>
 
-ok, I wanted to start addressing this after this version
+Dividing 64-bit numbers causes a link failure on 32-bit builds:
 
-so the problem is using this macro with nop5 in application running
-on older kernels that do not have nop5 emulation and uprobe syscall
-optimization, because uprobe/usdt on top of nop5 (single-stepped)
-will be slower than on top of current nop1 (emulated)
+arm-linux-gnueabi-ld: fs/btrfs/sysfs.o: in function `btrfs_read_policy_store':
+sysfs.c:(.text+0x3ce0): undefined reference to `__aeabi_ldivmod'
 
-AFAICS selftests should still work, just bit slower due to nop5 emulation
+Use an explicit call to div_u64_rem() here to work around this. It would
+be possible to optimize this further, but this is not a performance
+critical operation.
 
-one part of the solution would be to backport [1] to stable kernels
-which is an easy fix (even though it needs changes now)
+Fixes: 185fa5c7ac5a ("btrfs: introduce RAID1 round-robin read balancing")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/btrfs/sysfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-if that's not enough we'd need to come up with that nop1/nop5 macro
-solution, where tooling (libbpf with extra data in usdt note) would
-install uprobe on top of nop1 on older kernels and on top of nop5 on
-new ones.. but that'd need more work of course
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 50bc4b6cb821..67bc8fa4d6ab 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -1433,7 +1433,9 @@ static ssize_t btrfs_read_policy_store(struct kobject *kobj,
+ #ifdef CONFIG_BTRFS_EXPERIMENTAL
+ 	if (index == BTRFS_READ_POLICY_RR) {
+ 		if (value != -1) {
+-			if ((value % fs_devices->fs_info->sectorsize) != 0) {
++			u32 rem;
++			div_u64_rem(value, fs_devices->fs_info->sectorsize, &rem);
++			if (rem) {
+ 				btrfs_err(fs_devices->fs_info,
+ "read_policy: min_contiguous_read %lld should be multiples of the sectorsize %u",
+ 					  value, fs_devices->fs_info->sectorsize);
+-- 
+2.39.5
 
-jirka
-
-
-[1] patch#7 - uprobes/x86: Add support to emulate nop5 instruction
-
-
-> 
-> 
-> > diff --git a/tools/testing/selftests/bpf/sdt.h b/tools/testing/selftests/bpf/sdt.h
-> > index ca0162b4dc57..7ac9291f45f1 100644
-> > --- a/tools/testing/selftests/bpf/sdt.h
-> > +++ b/tools/testing/selftests/bpf/sdt.h
-> > @@ -234,6 +234,13 @@ __extension__ extern unsigned long long __sdt_unsp;
-> >  #define _SDT_NOP       nop
-> >  #endif
-> >
-> > +/* Use 5 byte nop for x86_64 to allow optimizing uprobes. */
-> > +#if defined(__x86_64__)
-> > +# define _SDT_DEF_NOP _SDT_ASM_5(990:  .byte 0x0f, 0x1f, 0x44, 0x00, 0x00)
-> > +#else
-> > +# define _SDT_DEF_NOP _SDT_ASM_1(990:  _SDT_NOP)
-> > +#endif
-> > +
-> >  #define _SDT_NOTE_NAME "stapsdt"
-> >  #define _SDT_NOTE_TYPE 3
-> >
-> > @@ -286,7 +293,7 @@ __extension__ extern unsigned long long __sdt_unsp;
-> >
-> >  #define _SDT_ASM_BODY(provider, name, pack_args, args, ...)                  \
-> >    _SDT_DEF_MACROS                                                            \
-> > -  _SDT_ASM_1(990:      _SDT_NOP)                                             \
-> > +  _SDT_DEF_NOP                                                               \
-> >    _SDT_ASM_3(          .pushsection .note.stapsdt,_SDT_ASM_AUTOGROUP,"note") \
-> >    _SDT_ASM_1(          .balign 4)                                            \
-> >    _SDT_ASM_3(          .4byte 992f-991f, 994f-993f, _SDT_NOTE_TYPE)          \
-> > --
-> > 2.47.0
-> >
 
