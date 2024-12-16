@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-446918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171729F2AEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9A79F2AF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D736160F09
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCE716134F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE2D1CDFDE;
-	Mon, 16 Dec 2024 07:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA681CCEF8;
+	Mon, 16 Dec 2024 07:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elj6vRug"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akmXyn2j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A70192D69;
-	Mon, 16 Dec 2024 07:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C19192D69;
+	Mon, 16 Dec 2024 07:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734334104; cv=none; b=tH0hj9RR5cAcAM4we9Rj2IVKaiy7/ficL4h/8U6brBDbKqylgpIvTxK5FrRaujUYbk32r13ZumtZ//FU46UVQitvv0BG1tYCcdoY7OvOZKHOGfNCmLDuvYfQWnPv/9Mt9f88fvd9YhCY2gK7sP1X7LMKzIxi/GQvI2J/G/Hn/Zc=
+	t=1734334172; cv=none; b=vAYg9aOHG5jvmu5UYm7c0C1RimJJTgpLmSNPaMShg6ZlKanDWL9IwQkJDMDq5bHxaQB/HwTQhc6du0Anr4Q8/32RAEvSF3vA1sSMigiso5iPiS879drpGc3xtk+jnEiQ8f7RADuwaw4hM5M0FYzPxx84lrnX37RzpysJR0IHkn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734334104; c=relaxed/simple;
-	bh=30F4QuZ9esXdc1IwL7KRSFkAK8vaLkyBruyPhStEfUc=;
+	s=arc-20240116; t=1734334172; c=relaxed/simple;
+	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZlCc4VzLSn8Q7guorHf76+ByfY/Ju4QsS1DMVwM3hI2Ml4ZgTYKa4H85FimJIjm1aCtoU/KFnwOh2nAoooQQNbO+iQzTojuu3g9vdHHVNiFQ5wQkj8UgZhvg3vQZkLXvcb5/L8+/he6tS9Vqv4ol0IL9/1/0rdOyxQSaRx0mrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elj6vRug; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8440C4CED0;
-	Mon, 16 Dec 2024 07:28:19 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jqMuxjZCPU3uY6/XZA0V3qWBr0X47owaLqdl0vHowymsSu9Lvn4AgFkFmjLru01JWV68fI4CVGWmwqkI7JMbTacy1uNOkBIsMSrjoWlxWIneVB2mK7E5L2JxxZKRypVJbXtUddlTlo47LoKKp4C+kuvFRmwcAu+fzq/yt/J9nfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akmXyn2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31887C4CED0;
+	Mon, 16 Dec 2024 07:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734334103;
-	bh=30F4QuZ9esXdc1IwL7KRSFkAK8vaLkyBruyPhStEfUc=;
+	s=k20201202; t=1734334171;
+	bh=etGS0csDpiA+E+MJtDilgvvHn/YKInaVDfSnSR1CmSc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=elj6vRugCkqe5XCvkQXrBbNbfv/5NVbz8CDssDiUteYjewHs/80YqJr5XDbaa4iCb
-	 iuAHsb8Jign1l0WxgOmf4jRNRsz9BTplBGQosbgrbqyFzAaCPgsoPC+uIsFSMmTxqA
-	 58ctjnoh49o7zmjh9r1zlCSbp97jqhy51eC2enowASlWW9MhTHq7V1h/9PVlYJUfH3
-	 2glkCRhjSTlC6nfVtQRMu9yB8moDkWtsBt9Q30JCiZdSkw8fpD+dBOZb0o5dNxtOp7
-	 w7ldM0L+V3Jwb3X/zwxcx7yFUAhb0Shno/6HBj7Lms0zT/ZrsujJ68YGLZCn8yTKz7
-	 Htijc7xPdm12g==
-Message-ID: <1bbab4d4-d23f-4e9b-8c12-e303d347cea2@kernel.org>
-Date: Mon, 16 Dec 2024 08:28:16 +0100
+	b=akmXyn2jfDilSj2r94s1ULYl7iiXgEqAJEVozPTniguACWUbfUmBdnVueBJrwU+l1
+	 aKls2K/Ek8h8Trh0D0/q+bBHnL3ZrbLx+I1uCwtT5sJt7rYMtSkIVBQm8RyrqUjhjM
+	 pmvlI7Lhtw6HjiJBh3Jc8C/AoQZBtW/gXoARUVDNpu0d94x+qXTajKsLFn6+q91eC+
+	 GWwCmmzrkWHD/gCQKZwGOLcODobA2bQSGwm56AjfOcSqi0tkb2S5H/hWasRKT2FNsd
+	 4Kzvpf/H7KNEr3Bj9CpcW4HDIaqIGLUGI9w7OebL2kkHWYwLp+lXoj3YTaF8BMEwR7
+	 2xSIWmPMuccfQ==
+Message-ID: <d2b9bcba-703c-4d5e-8677-65cacc8f2636@kernel.org>
+Date: Mon, 16 Dec 2024 08:29:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: usb: gpio-sbu-mux: Add an entry for
- FSUSB42
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan@kernel.org>
-References: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
- <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
+References: <20241211112253.27905-1-ansuelsmth@gmail.com>
+ <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
+ <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,23 +104,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
+In-Reply-To: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/12/2024 14:08, Stephan Gerhold wrote:
-> Add a compatible entry for the onsemi FSUSB42 USB switch, which can be used
-> for switching orientation of the SBU lines in USB Type-C applications.
+On 13/12/2024 12:16, Christian Marangi wrote:
+> On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
+>> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
+>>> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+>>> between 200MHz and 150MHz.
+>>>
+>>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>>> ---
+>>>  include/dt-bindings/clock/en7523-clk.h | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+>>> index 717d23a5e5ae..78d16068228a 100644
+>>> --- a/include/dt-bindings/clock/en7523-clk.h
+>>> +++ b/include/dt-bindings/clock/en7523-clk.h
+>>> @@ -11,7 +11,8 @@
+>>>  #define EN7523_CLK_NPU		5
+>>>  #define EN7523_CLK_CRYPTO	6
+>>>  #define EN7523_CLK_PCIE		7
+>>> +#define EN7581_CLK_EMMC		8
+>>>  
+>>> -#define EN7523_NUM_CLOCKS	8
+>>> +#define EN7523_NUM_CLOCKS	9
+>>
+>> This cannot change.
+>>
+>> If this changes, then it is not a binding and first drop it in separate
+>> patch.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Drivers work as-is with the existing fallback compatible.
+> Hi Krzysztof,
 > 
-> Link to datasheet: https://www.onsemi.com/pdf/datasheet/fsusb42-d.pdf
+> maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
+> give more info about this... It's not clear to me why NUM_CLOCKS is
+> needed considering is only needed in clk-en7523.c to probe the driver
+> and allock memory...
 > 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
+> Anyway is a different define OK for you?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+I don't understand. You just added that enum with corrected number...
+Anyway, review does not change. Number of clocks is not a binding. Drop
+or don't touch.
 
 Best regards,
 Krzysztof
