@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-446668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6879F27C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CAB9F27C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD991886550
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EF41886304
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAAB175B1;
-	Mon, 16 Dec 2024 01:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8634171BB;
+	Mon, 16 Dec 2024 01:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hh+vrx8x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3rjD+Mh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3F0E57D;
-	Mon, 16 Dec 2024 01:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E09FBE4F;
+	Mon, 16 Dec 2024 01:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734312472; cv=none; b=OFtR79XIa1jPL8/usKo3GFepwmehk0lh1Fg9pCSv4REVoaYZo4f2xbgIzcCCfSf/4jO5JArMODjQpEAnRHidPPQuvVpbweysJ/7GXcngEjcLWYS3WCP+eKzmFH3yiNu2jmU9+4LgGK2kE7rZ+Cf5VDCwMJSaVEyM0GyOLA6fXUU=
+	t=1734312731; cv=none; b=ZAHpOuPKvLzFHDFRow5+ZmIcr4PG4mhKW0xy1N17S4+xrglndsnuoVeeBcY0YGFSelWoLpUhTnM54B4C51hJI5e2iKRvLSPvc9TUwnh9HxQbJd4BXH0/IB180pmEIY5aCSN3JYro3/EFVHJnuLr61MaJ55GrLNG1cckelENGDok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734312472; c=relaxed/simple;
-	bh=8mG+G/lK51j1vgDOIaBJx5cjCjXLy2marSPSfx8iBC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a2L3Wa3AUVvT6Jf4k3vrDilYs+Mo4Najfn62kpMokBqefLmTaG/BorO7FxxYI8ibxYbrI/0PRlrBQgkNxVpSyPzcf27bl3qXdWzPlVJUtvnvSinKL+aCIItP4xyuxu3SIEN7Kj9pKnQeKqkYx/oxrQb+hCoh1ef9wU5sEqUY/MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hh+vrx8x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B1FC4CECE;
-	Mon, 16 Dec 2024 01:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734312472;
-	bh=8mG+G/lK51j1vgDOIaBJx5cjCjXLy2marSPSfx8iBC4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hh+vrx8xvhqD4CYZmHh0nAY6phw4RNYcY3BXm5Ilc4N5fMGn9tythzCWilO9fqeNB
-	 3qqaxVdOZ7j6N2g5iUs6VpL/tNs8bpBBnAnYHzLM4hZb2hhCajk2+gRybkgZsGb8Ne
-	 77Lq7BlIzpxDR1waboEXAWEcR2sFF+EH90T3/N27g3+PYYIjr3jeIdVuojPVg5hhLj
-	 WB6Fxd6DIVeTzwaRn3Igy8XaH/NKAU9/PRKOOcD8wmo7F12rMdaHoCPNg2yWT3ZWQ4
-	 iu0pkiMimLcXSGh3xBAlDDfx1FHX0oV4z420gjgs4B2sigZWONFeGnBaxqf115NDZ5
-	 qErUpcoPbzzOA==
-From: Kees Cook <kees@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <kees@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	regressions@lists.linux.dev,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] docs: git SHA prefixes are for humans
-Date: Sun, 15 Dec 2024 17:27:47 -0800
-Message-Id: <20241216012743.work.705-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734312731; c=relaxed/simple;
+	bh=/3VDW4mHao6RpPast7zxxfBlS9SotnYce1mppF3+j9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oi58sP169lQlQ0uZsuJ6n3+HBIKVzwPo8e763VfejpajFt1UPXTZ08ngNSesv/ODWfqd8bP948K4kVxOuEC/V1kno+wJmrNYeBra8VhujL+Fa9Tl4KAxxNrD/f8U0Cnm1JsPJ3Mm0MzfVnolCn4/GcNzLb1nhJC4Shhg0f9ZWmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3rjD+Mh; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734312729; x=1765848729;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/3VDW4mHao6RpPast7zxxfBlS9SotnYce1mppF3+j9k=;
+  b=L3rjD+MhNIjEfMX/+G+CufGITwGu6AxnvF/afQ63hqK6qD4VD5F0XT8q
+   QQggTP/7C5QtKs1ppUC7cXQn14ia5BMfqLYWlnW2wI1uVkNN3uhxEtojQ
+   IYqZIu+NHFjnjVit4K9Tp7KLYxQgFtKmtthaG5jm/lw4g4jn1sZkYjYav
+   EgCm+AVlXnG4ldEoI0mKyH8OgQNmducfdyRkERhh9DcFDr4TngPiXv4PV
+   NhU1JMgQHV/L5xrAagqA7Iq8qBL29CmhBu7RiDJSWn0GMD1zxHZIW0FmU
+   VYg/UQX6qVdfkEIojhZrYeMtS13WSPi1rr7TmxOyHkrFhtMijFouNUlsn
+   A==;
+X-CSE-ConnectionGUID: vDL95XuqQ2iv3+SJp2rV7g==
+X-CSE-MsgGUID: h4pWJzwORJOfT+SM+7Jgpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="45293656"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="45293656"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 17:32:08 -0800
+X-CSE-ConnectionGUID: eYU38wyDQ66NIMcdlkDj7g==
+X-CSE-MsgGUID: yA3LqFlIRnObOZIN+lRlYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="97850166"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Dec 2024 17:32:06 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tMzxq-000Dw6-1j;
+	Mon, 16 Dec 2024 01:32:02 +0000
+Date: Mon, 16 Dec 2024 09:31:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
+	peterz@infradead.org, dave.hansen@linux.intel.com,
+	gautham.shenoy@amd.com, tglx@linutronix.de, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, patryk.wlazlyn@linux.intel.com
+Subject: Re: [PATCH v8 3/4] intel_idle: Provide the default enter_dead()
+ handler
+Message-ID: <202412160941.mXBc9usk-lkp@intel.com>
+References: <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3675; i=kees@kernel.org; h=from:subject:message-id; bh=8mG+G/lK51j1vgDOIaBJx5cjCjXLy2marSPSfx8iBC4=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnxTcLb9531ujFl9rnQdZ/YirbbPVmbb1x1v5X32F/Vm nXNzvuSO0pZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACbyZQPDP5MMgd1HvcWfSXnp sXCt1WYPL9vZF75NqK40RulHfeH+ZQz/i24dSft1IpbdleulbfjCmV3uTs87zj7ZvDjWomGKj9B VBgA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204140828.11699-4-patryk.wlazlyn@linux.intel.com>
 
-Clarify that the preferred git SHA abbreviation length for the Fixes
-tag is 12 characters[1], as the tag is intended for humans (though, yes,
-it is parsed by machines too). Collision resolution needs to be performed
-using the parenthetical patch Subject that follows the abbreviated hash.
+Hi Patryk,
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/all/CAHk-=wiwAz3UgPOWK3RdGXDnTRHcwVbxpuxCQt_0SoAJC-oGXQ@mail.gmail.com [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: regressions@lists.linux.dev
-Cc: workflows@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
----
- Documentation/process/handling-regressions.rst | 4 ++--
- Documentation/process/maintainer-tip.rst       | 4 ++--
- Documentation/process/submitting-patches.rst   | 6 ++++++
- 3 files changed, 10 insertions(+), 4 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/Documentation/process/handling-regressions.rst b/Documentation/process/handling-regressions.rst
-index 1f5ab49c48a4..a0e8715c6cd3 100644
---- a/Documentation/process/handling-regressions.rst
-+++ b/Documentation/process/handling-regressions.rst
-@@ -29,9 +29,9 @@ The important bits (aka "The TL;DR")
-     * For mailed reports, check if the reporter included a line like ``#regzbot
-       introduced: v5.13..v5.14-rc1``. If not, send a reply (with the regressions
-       list in CC) containing a paragraph like the following, which tells regzbot
--      when the issue started to happen::
-+      when the issue started to happen, preferably with a full git SHA::
- 
--       #regzbot ^introduced: 1f2e3d4c5b6a
-+       #regzbot ^introduced: 1f2e3d4c5b6a1524e886b7f1b8a0c1fc7321cac2
- 
-     * When forwarding reports from a bug tracker to the regressions list (see
-       above), include a paragraph like the following::
-diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-index e374b67b3277..658b489705be 100644
---- a/Documentation/process/maintainer-tip.rst
-+++ b/Documentation/process/maintainer-tip.rst
-@@ -284,7 +284,7 @@ following tag ordering scheme:
- 
-      Commit
- 
--       abcdef012345678 ("x86/xxx: Replace foo with bar")
-+       ab0123456789 ("x86/xxx: Replace foo with bar")
- 
-      left an unused instance of variable foo around. Remove it.
- 
-@@ -295,7 +295,7 @@ following tag ordering scheme:
-      The recent replacement of foo with bar left an unused instance of
-      variable foo around. Remove it.
- 
--     Fixes: abcdef012345678 ("x86/xxx: Replace foo with bar")
-+     Fixes: ab0123456789 ("x86/xxx: Replace foo with bar")
-      Signed-off-by: J.Dev <j.dev@mail>
- 
-    The latter puts the information about the patch into the focus and
-diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
-index 1518bd57adab..efd4fb1109e9 100644
---- a/Documentation/process/submitting-patches.rst
-+++ b/Documentation/process/submitting-patches.rst
-@@ -163,6 +163,12 @@ An example call::
- 	$ git log -1 --pretty=fixes 54a4f0239f2e
- 	Fixes: 54a4f0239f2e ("KVM: MMU: make kvm_mmu_zap_page() return the number of pages it actually freed")
- 
-+Note that the "Fixes" tag, while it does get parsed by machines, is intended
-+for humans (hence the Subject portion). It is preferred that hashes remain at
-+12 characters even in the face of prefix collisions. When encountering hash
-+prefix collisions, tools (and humans) need to resolve such collisions using
-+the parenthetical patch Subject.
-+
- .. _split_changes:
- 
- Separate your changes
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.13-rc2 next-20241213]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Patryk-Wlazlyn/x86-smp-Allow-calling-mwait_play_dead-with-an-arbitrary-hint/20241204-221157
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241204140828.11699-4-patryk.wlazlyn%40linux.intel.com
+patch subject: [PATCH v8 3/4] intel_idle: Provide the default enter_dead() handler
+config: x86_64-randconfig-071-20241216 (https://download.01.org/0day-ci/archive/20241216/202412160941.mXBc9usk-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241216/202412160941.mXBc9usk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412160941.mXBc9usk-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   vmlinux.o: warning: objtool: acpi_processor_ffh_play_dead+0xbe: mwait_play_dead() is missing a __noreturn annotation
+>> vmlinux.o: warning: objtool: intel_idle_enter_dead+0x29: mwait_play_dead() is missing a __noreturn annotation
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
