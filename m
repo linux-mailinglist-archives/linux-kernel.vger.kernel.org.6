@@ -1,82 +1,169 @@
-Return-Path: <linux-kernel+bounces-447927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A699F38BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:19:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D69F38D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5808916A378
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DDD1891591
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5A72063C5;
-	Mon, 16 Dec 2024 18:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0D7206F0B;
+	Mon, 16 Dec 2024 18:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pzbf2BZg"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZgvkOpi"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226A520626B
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5520626B;
+	Mon, 16 Dec 2024 18:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734373145; cv=none; b=cky2DPUpdWQqIhaZ1DX4O09gkhPet0BT7IjPw3Dlull1S/I5iAbct5jVE8qB98R3ic0Nkw3pny5TXGDnVYOhqVWsyR8vj/DBCEgKATfdobtnl9wvbwuC7KoV0pWcc5vXkUiYC+QU0SX4azYJpmDuEqUOpkYrz2aPx3Xl0aO96bw=
+	t=1734373157; cv=none; b=D7LlX7YkhUwTNkEmTv8fwrFysJdGVpBF8T5sJCmLKS18RDGu1q8bVIc4V7vQzAgZuJ2cwRaYVD5t1RvxsBEa6h42k3CDsfmVVsbmkgHf3Y46SuvPmtWZ6yOE/E+ctHfm3NDeqcyhaZ5FS9sGiYnVM+3ZiYfd8vlgTZkwZcq+7vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734373145; c=relaxed/simple;
-	bh=XeADyxpmxvEtydFIGRMY2qnAnOg/81ED90oQ6Jejlz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcxkEreJ1hRNZoUObr1niwgSEYjTaTSWa7QjwZKxGS/SsEEqdZErBvI/3geZjM2JtacicYWFxBd79atPw8MStlcEXVQPpamnpRK3FkwmA7mhBILJbjLuwWw/XgN31/rWV1XaJyQFuqVkZT2yPL76pwB4ffDJlnSasrLF/g0+mIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pzbf2BZg; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4ed0fa29-dd37-4a7e-8ba6-c84af9d735d6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734373140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hx9bZkqjNfX4MWYa0iqLCx36co82y3p1t4Gc07zmj2k=;
-	b=pzbf2BZg2GMFupJ4xWvqp0O6robV7hOTxw+PkeddgVQtAmxaX7aphfY0Epcktr5oIEm/Ta
-	/99rQ1hfQTfwnGGLp6yOz12wDh9CYk8vdY2HtKnGUFDtLxcOhkZqR9a07EZRKC0Am1OxSo
-	nlJZc7OIhUKYMGeC9dnNg3ovO4r6gOw=
-Date: Mon, 16 Dec 2024 10:18:45 -0800
+	s=arc-20240116; t=1734373157; c=relaxed/simple;
+	bh=Zv7B9tNICPDPrSc3h3UnTsMqDKo2tk/1m7jnN8ytjaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m0UEx7ebNxJpA9maLPDdQmHfx1jzN5KRFsqvbjS9PNWcAGhH8t4eQez9jYVcchA2huX99+nyjsrojCUO5zNUkvqz9/SUlV43ZKWHeBGeH3xywW3z/VEfS530D854pA7CK5vXhCisdet3yK+ZJ3karC4wYDVeyOKKKVf26XJjcag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZgvkOpi; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afe99e5229so1206125137.3;
+        Mon, 16 Dec 2024 10:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734373154; x=1734977954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdeF5q7i1gbyNrk3Je5nKgO+rHwF/IkRFyoP6STYyN4=;
+        b=XZgvkOpiNGn+nucHjfiWnV4aKBoHevHEAktWfnww9KaGjtN6Jp/ZmcxXNKWG+O5iE9
+         HPUGU1zqE8wNUEVxqIHQHX5P/Mu9ld+5fIdgD/iNhPkr/BXBQ+NXvXSbYp7TnMY2ZBYA
+         GQrwFkOgiav9B3Fg5EpuY30kaAtMf7NKS+xpoFLR68TH3P9iKUHN8K3kl/5wmXJZPW7F
+         Kav/wG0pOaoFCzch4KNYOtBLUjJAbN7YuLvg6/3Vuv3U4VBZGiJ5dLQzrGcS8frsH+Qu
+         kYy2KXmC+Bii+Fhmfx+ZC+ncWz+Z3bWUel6QbDRSDY693B3+9jlo9qyLyMVC6IvTfnsm
+         mpog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734373154; x=1734977954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CdeF5q7i1gbyNrk3Je5nKgO+rHwF/IkRFyoP6STYyN4=;
+        b=qulkTgoyPCFofqqfJhW7mJtxnX0oXSKOHpV+PCr+JsOxwYHSUGAkhD9ECru5RRh6So
+         LPZJCf8vFQ3VMSAnsvmopmR6oaaQrCGmNS6lU5ZcJT1sTsFZCcCH4H4F0iglyVLKDZvg
+         SFWuRccQkJq1THr7I8MPYK/SOsczVUhxlKVB99zHWt7syTYw6ZINseiEmBo1Pz+Knjm2
+         2QIx3kyoO2p4s9zDGeUNd89D8PDAW6c37plAa4jeYkG0h9P/YJl9bhHFcmRNvjz3cGy+
+         8TUDK1EuX2uOOzdfiHmBl/da8p8Z98FjbGZNbDbYrkU8HND7Iw8N+u1C422ZHhxiC7FB
+         cwOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWb7qL2qN1OWv0a1aq9UEbs2nBHdH4IRJW5r2yMaGiTEwxGOCB50Ao4iWsJSOavVBbP+Xay2q1lrWM=@vger.kernel.org, AJvYcCWxIulA0JAS/nkvISvmIEthsaB6Li4NwyMsSn1+zBgz5EPtj7CaFiatuGHpBGmvj4+zgFORVFrUgGuxZGOg@vger.kernel.org, AJvYcCX/qawaBC9+8MePDGXB/f4sIz3a46IdN6kEy3ZUHWBGEhgE6+NSBtHciTK4YwZgnzpLJzv/bwy02YeAufc8kxQORNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjlTjSNMnYUn39wBylSPtodn+5VtPCBJfN5GwPgeA7fmqG86dE
+	r9zqYBw46nIDwELKaEt+pSrCqWC+MxnciFwlz/Nic1gj0TNL8bR0uNwkHO8K1RhPs0U3T2BgpWQ
+	XU6wD+8dD95BVCAXzt6iszltJFq+m19Ly
+X-Gm-Gg: ASbGncvXdVRdUib4unXUoxlnx5jEmYzDyMQLkFZrcCBZPkaXpV+voWRPPWFBWlEgWgd
+	txk8y85w0C0YsB6tMVVJXIrWthvsaTn6kmpDohLgezGJBCMlPmmhMfHyyg2CnLxA/pcmvib8=
+X-Google-Smtp-Source: AGHT+IHuRtV0VqTpR8F312k7i39uYNWuYt0c0s3u+r5PirYWGtltTl7ePHRkVUyGmT8xDquaDD6p5TTIZU3FGFqoUrs=
+X-Received: by 2002:a05:6122:2a05:b0:518:6286:87a4 with SMTP id
+ 71dfb90a1353d-518ca251874mr12461414e0c.4.1734373154522; Mon, 16 Dec 2024
+ 10:19:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v5 2/5] bpf: tcp: Mark bpf_load_hdr_opt() arg2 as
- read-write
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: pabeni@redhat.com, kuba@kernel.org, andrii@kernel.org, ast@kernel.org,
- edumazet@google.com, memxor@gmail.com, davem@davemloft.net,
- daniel@iogearbox.net, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, horms@kernel.org,
- bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1734045451.git.dxu@dxuuu.xyz>
- <3de5c7e513e3161e040ee0ad6eb8cc4b7d71aa4c.1734045451.git.dxu@dxuuu.xyz>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Content-Language: en-US
-In-Reply-To: <3de5c7e513e3161e040ee0ad6eb8cc4b7d71aa4c.1734045451.git.dxu@dxuuu.xyz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241213175828.909987-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 16 Dec 2024 18:18:48 +0000
+Message-ID: <CA+V-a8sAiMTC9Y3vrOKshMZSFLzN0QczMk9B-++LyToG1r+qzw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] i2c: riic: Add `riic_bus_barrier()` to check bus availability
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/24 3:22 PM, Daniel Xu wrote:
-> MEM_WRITE attribute is defined as: "Non-presence of MEM_WRITE means that
-> MEM is only being read". bpf_load_hdr_opt() both reads and writes from
-> its arg2 - void *search_res.
-> 
-> This matters a lot for the next commit where we more precisely track
-> stack accesses. Without this annotation, the verifier will make false
-> assumptions about the contents of memory written to by helpers and
-> possibly prune valid branches.
+Hi Geert,
 
-Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
+Thank you for the review.
 
+On Mon, Dec 16, 2024 at 4:09=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Introduce a new `riic_bus_barrier()` function to verify bus availabilit=
+y
+> > before initiating an I2C transfer. This function enhances the bus
+> > arbitration check by ensuring that the SDA and SCL lines are not held l=
+ow,
+> > in addition to checking the BBSY flag using `readb_poll_timeout()`.
+> >
+> > Previously, only the BBSY flag was checked to determine bus availabilit=
+y.
+> > However, it is possible for the SDA line to remain low even when BBSY =
+=3D 0.
+> > This new implementation performs an additional check on the SDA and SCL
+> > lines to avoid potential bus contention issues.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/i2c/busses/i2c-riic.c
+> > +++ b/drivers/i2c/busses/i2c-riic.c
+>
+> > @@ -135,6 +138,27 @@ static inline void riic_clear_set_bit(struct riic_=
+dev *riic, u8 clear, u8 set, u
+> >         riic_writeb(riic, (riic_readb(riic, reg) & ~clear) | set, reg);
+> >  }
+> >
+> > +static int riic_bus_barrier(struct riic_dev *riic)
+> > +{
+> > +       int ret;
+> > +       u8 val;
+> > +
+> > +       /*
+> > +        * The SDA line can still be low even when BBSY =3D 0. Therefor=
+e, after checking
+> > +        * the BBSY flag, also verify that the SDA and SCL lines are no=
+t being held low.
+> > +        */
+> > +       ret =3D readb_poll_timeout(riic->base + riic->info->regs[RIIC_I=
+CCR2], val,
+> > +                                !(val & ICCR2_BBSY), 10, riic->adapter=
+.timeout);
+> > +       if (ret)
+> > +               return -EBUSY;
+> > +
+> > +       if (!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SDAI) ||
+> > +           !(riic_readb(riic, RIIC_ICCR1) & ICCR1_SCLI))
+>
+> Surely you can read the register once, and check both bits?
+>
+Agreed, I will add a helper func for this something like below, as
+this can be re-used in patch 9/9
+
+static inline bool riic_lines_ok(struct riic_dev *riic)
+{
+    u8 reg =3D riic_readb(riic, RIIC_ICCR1);
+
+    if (!(reg & ICCR1_SDAI) || !(reg & ICCR1_SCLI))
+        return false;
+
+    return true;
+}
+
+Cheers,
+Prabhakar
 
