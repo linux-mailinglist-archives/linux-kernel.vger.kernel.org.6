@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-447782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461AB9F36EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:03:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBA79F36EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F62816F17A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69EE16F5C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9538207A19;
-	Mon, 16 Dec 2024 16:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6638114A0A8;
+	Mon, 16 Dec 2024 16:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vkk1Pycf"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmVwFrWX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA43205E01
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A51126BF7;
+	Mon, 16 Dec 2024 16:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368222; cv=none; b=k388/0OEZ/1jQ2KOuSKiWS0xyMlLm7pUcn2xkpS9eIjrtD+0SHqHeZ2w1hQO7C8ZrNtJ29IpN0uuk9owa/xki+vJywcRjLpocavW6SsG4deGE8qtP3CJt/CfVxT5clbmfRTV2QbzcJr2VacnvpsAI2JZTDdMXTSn8sGmdJKj1BA=
+	t=1734368279; cv=none; b=Ky9U55do/UP9ABVX7zfoF1zgF6ccPqHZsGVaG5rJKv/kSj85R1fc3lc9YNzh1hDkdjVpvo25oxX1uLux0VukwBGQnrzqiCKvqfC3dCJYwXvElklWWwdl1AhfLVOvv5rg3/8T3HLDs44mgjRuQrHOHySuVb4U+FkNYOf+Q4m2dAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368222; c=relaxed/simple;
-	bh=tUN6QyLrUQtqswwv+FWZ6ZBH4o75Y0O/ZF/rjsabplQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Nhk5EbhzacCc/lonOovFrXfoX7O7HZ+9vfBtLU6cQPFPKYUAMczWCj+JE5Xy3lAQkhsXoqwlc96giTaQJEHPThE7cSQPivDpoaDUXfQmFxxWQpeEhKHZqr+dReMm+cZzVxoxzauyag63T37UNg59X87vSpb3GiLR05zcW+wTSYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vkk1Pycf; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a814c54742so425055ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:57:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734368220; x=1734973020; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tUN6QyLrUQtqswwv+FWZ6ZBH4o75Y0O/ZF/rjsabplQ=;
-        b=vkk1Pycfezmlwrvk22zev0avWgwLpfTXeZQLZz83AbQ1URk5LPT+41yyvWYUXXToXg
-         ZyFLGp8gIshQhVLuCuPFNkgAFp+41+wBvpTOiO9VT0Vp3J/cwoKuoJurKDxjif4kih07
-         nxV6H+7lIF6fMtWWPiO2I3FCzz2vZwHTYUuUwzd++nX+oFvjvvbkEivtWoyah0NCSW6d
-         Db5JKq57LS6E4ZhQBZ4sxS/VcZCTE+y0W2A/WngBk9QEj0/KZkgFV4qD37IJ2Hv3PZmJ
-         0j0Jvu8JWM3BvkqjNnRZwXYwWV+tUDKFpZMwVTHDemKh4DO2COUS1tHDUtTn+CK5ukKM
-         bfZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734368220; x=1734973020;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tUN6QyLrUQtqswwv+FWZ6ZBH4o75Y0O/ZF/rjsabplQ=;
-        b=qKB0XLO9uUFvlzDXoqX7XyONcp5AixC7Y+L953SFFJGo6wg0VjhDawrgzdUBDuOLnL
-         euN1LL1B0u9IPyziPyo/0PQb+8n40v3Pxbkt0B5jeGx3lsurpWUsQDd07KWSjIsJc2Bb
-         rDNWgG5sNa5pkc0ArAT9CBFTnmPqsXNvQmkOA0Nyg+wuqtEO6fKztrGHZ9onGeKVPwj4
-         8ebk6QJlfsJmKL65yW6CCHt8xsxGA2PNAbQf2WcBI10PCJ+hZIeh6/5H1y8rwObDgN2V
-         xo6iC0v17t7/sxj8LTaq6eYVv727oz8RwMXL+x75Vc04/EEXRYMnBk3GR9slckj+dwLY
-         1SXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVNpSdENjXJL3/sZ5EAfx86j/NC5AGNL+FEb7V1da3V/QcbrQy7mmKdrj8mHDie9woK5jfbLs+Lx2Jhfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxngi5Gj+fdGkPd4rw/0cjO2w3LTCuKDE+fAJkMfihkzaKNGINf
-	QsaxNIeOTE70DZ/sI8MIQkvVHrUm5DfYnDrE5uL0cO3TP5FvIO2OMys7BsreogU1gBga3MS7ZzY
-	5gShgWFOVe2VCV1YOBAdViusRzew3BuWFTnqQ
-X-Gm-Gg: ASbGncslMyUqbPA24SHTLRX/aDPwZDbwv8C0tAq5OMZLe9rwVojy7/i9Cw8IaZrE1Fy
-	+TKEeDY2EKnjZciiarGyaAQoeax4MSWdDrPHwFMw=
-X-Google-Smtp-Source: AGHT+IFenKD4P/KhIiSws3yn5GuMSBGYBSQhOYwGdU+AxUyjmLfeKG1/Yy+/zpPC+OKRBfJ/iyoKqrB/AotlSl2jNqU=
-X-Received: by 2002:a92:ccd0:0:b0:3a7:a468:69e0 with SMTP id
- e9e14a558f8ab-3b2c2a279dcmr5132185ab.1.1734368219531; Mon, 16 Dec 2024
- 08:56:59 -0800 (PST)
+	s=arc-20240116; t=1734368279; c=relaxed/simple;
+	bh=2g/ijjRAvwPbHRj0gGJmC78zGvQSCovuTyTercaC5Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAoW4I46rqVtFZlkwoTp8lXdDJFBq3JgxtkjdB1kkya82Z5KDNS1oYsH89BEe/oqLfiz/4yza8tdIZ4n3L9YPWXxsudhwqK5b0f/b5+eNZlhHs+0KZZ1ckTCZIARxfM3EHtraymzt8v6AblJw62YFAquwVyAWGrfbMRmQS75i28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmVwFrWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE15C4CED0;
+	Mon, 16 Dec 2024 16:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734368279;
+	bh=2g/ijjRAvwPbHRj0gGJmC78zGvQSCovuTyTercaC5Uk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lmVwFrWXBe75ZGC/+7NSZeoc53qoFHfY+EhL8UfcZe6SnJQKPkmFVTAndYXgEHbGu
+	 53fNGgaGkFe/CuakWOH1ocX2zfg4ZSWWX9hIFnba2QMpNggfzSn18IdKgLBktUUt2G
+	 5ydztzXTWsCgjL/q60w94QJ03ffAbQCD6HJXvyODBqSkQwEHSFMS1XpNnspnVPWR3H
+	 IV3P7dI6sbC5LV9AywNIVh7nkFBmQeTAfnydfM/T+ewuqRCx0I56Twr4WAppUoRHQI
+	 w7hEsMUnRo8Uk6VDWWs/8tMGcJkobxCuniHSzJUDSOiygs7t3rqC89NvlwWIxlCX03
+	 1524XMJkMGMnw==
+Date: Mon, 16 Dec 2024 08:57:57 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Daniel Gomez <da.gomez@samsung.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>, linux-arch@vger.kernel.org,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: keep symbols for symbol_get() even with
+ CONFIG_TRIM_UNUSED_KSYMS
+Message-ID: <Z2BcFZ89wCLHm8YW@bombadil.infradead.org>
+References: <20241214105726.92557-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216014637.304761-1-irogers@google.com> <20241216014637.304761-2-irogers@google.com>
-In-Reply-To: <20241216014637.304761-2-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 16 Dec 2024 08:56:47 -0800
-Message-ID: <CAP-5=fXsO2i6UE6FrQFLOyJP4xbH1E0-2W5b1ejN=MsGs0d0QQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] perf header: Write out even empty die_cpus_list
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
-	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241214105726.92557-1-masahiroy@kernel.org>
 
-On Sun, Dec 15, 2024 at 5:46=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> Reading the CPU topology is tolerant to the dies_cpus_list being
-> missing by using the feature's size in the data file/pipe. However,
-> the feature's size is just the header size and may be
-> unaligned. Making the header size aligned breaks detecting a missing
-> die_cpus_list. To allow the header size to be aligned always write the
-> die_cpus_lists even if empty.
->
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Sat, Dec 14, 2024 at 07:57:20PM +0900, Masahiro Yamada wrote:
+> Linus observed that the symbol_request(utf8_data_table) call fails when
+> CONFIG_UNICODE=y and CONFIG_TRIM_UNUSED_KSYMS=y.
+> 
+> symbol_get() relies on the symbol data being present in the ksymtab for
+> symbol lookups. However, EXPORT_SYMBOL_GPL(utf8_data_table) is dropped
+> due to CONFIG_TRIM_UNUSED_KSYMS, as no module references it in this case.
+> 
+> Probably, this has been broken since commit dbacb0ef670d ("kconfig option
+> for TRIM_UNUSED_KSYMS").
+> 
+> This commit addresses the issue by leveraging modpost. Symbol names
+> passed to symbol_get() are recorded in the special .no_trim_symbol
+> section, which is then parsed by modpost to forcibly keep such symbols.
+> The .no_trim_symbol section is discarded by the linker scripts, so there
+> is no impact on the size of the final vmlinux or modules.
+> 
+> This commit cannot resolve the issue for direct calls to __symbol_get()
+> because the symbol name is not known at compile-time.
+> 
+> Although symbol_get() may eventually be deprecated, this workaround
+> should be good enough meanwhile.
+> 
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-This change breaks the "Session topology" test on ARM with "Cpu map -
-Die ID doesn't match" . One die id is -1 and the other is 0. I'll look
-into addressing this in v3.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Thanks,
-Ian
+  Luis
 
