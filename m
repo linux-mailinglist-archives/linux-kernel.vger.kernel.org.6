@@ -1,113 +1,217 @@
-Return-Path: <linux-kernel+bounces-447542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D181A9F33FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:05:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D059F33FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE671881D82
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:05:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED3E41663F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EEF132139;
-	Mon, 16 Dec 2024 15:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1CF137775;
+	Mon, 16 Dec 2024 15:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZMKhukK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="betIl4PQ"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C85199B9;
-	Mon, 16 Dec 2024 15:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D6199B9;
+	Mon, 16 Dec 2024 15:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361549; cv=none; b=bAnHrwFnG1rLJ044wf9KarjfNVV+fgVULEqC5etBHE5WYpiGImbdJMn5fVo2vb65yI93cw2qz7EA4G1U0BjqK4khx6KVEu5vwcbIJmRxT9HmStS0sPh6XN4zf2D/b9Xa3YAB3N1lNck4raGDQKO87t9k6byl5oHYNSpN2N0shLE=
+	t=1734361617; cv=none; b=KmImcBpoa3pqswxq6071eBXV3grLBHbrcj9p+feo42Y6G/jop9AEhbks9hJCt7XGYR1h7KlmPA7GDxYBis4N96oXwCj9/Gr6ePQYNoKfMmF2oRwXAnm5LYh6eWm5t0liTkXStK/uXvHj+0sL8BMSej3Z0HPRGq5zMKXI6fztYpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361549; c=relaxed/simple;
-	bh=tIdFuiLb3rusJpAdSMP7WjnLxa5HWfHnlLwtg03T/JM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhsaqxxMACv3LUWaqOSs6TrQTVKdLJuIwO+YLn29htf2uDAlk0w3E7tBWeBgzUqvKhR8Irz55srdfjmERoaxxovqHafWt02WynUCKklE7Rk4zSAEleL2WLnYdGvHHpaZ0ac4OE++E/tMJmuwk5YHTxesz+92LYUNuNH0TspQpCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZMKhukK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BDBC4CEDD;
-	Mon, 16 Dec 2024 15:05:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734361548;
-	bh=tIdFuiLb3rusJpAdSMP7WjnLxa5HWfHnlLwtg03T/JM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZMKhukKWnoBFUlSjwHUQUkCf+Sxv5EBpSNvEqrsh9wzufQiR3BXbv+98ABYURrHE
-	 uarkrXb0TDr4MRrX1zCV5a3MW8XAkpCX6Ef03LbJ3Cijx+8pI31/TawQ2DtNNdF4vu
-	 JtpIiVQRWcAIWl5K1RoaMRWLy43Iv1AosC03BD8WI3wes2/8hlENJCLY5NYONkF3ZK
-	 /WuXf7zno0laeVB0SpZBm4p5mGZg0/3kCMDFpwWJnM9w8HRKDAj70Kkreumu5VsHco
-	 z6m9Ae9yWH/qNvhsY+9/LY6fxbsh9pzithCNd1wYkiW/cCrwFiiJT2f72jORBBSAJS
-	 uc7byt1/Od7hA==
-Date: Mon, 16 Dec 2024 15:05:44 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
- __cpuinfo_store_cpu()
-Message-ID: <c0501e6c-7657-4885-abfa-1c0753c0e063@sirena.org.uk>
-References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
- <87a5cysfci.wl-maz@kernel.org>
- <Z2AfOZ82QG_ukWry@J2N7QTR9R3>
- <865xnjsnqo.wl-maz@kernel.org>
+	s=arc-20240116; t=1734361617; c=relaxed/simple;
+	bh=TzEoTsBvaYARaeayDsoIBjOQEdXasZhzTjqMqIPOgVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LkWDdcpOhak9OqoETribwtNWH/8J4IKE7C2fKsEnYhmdOyXOTAk5agNrqD7dBAyxDS0ZisREOk2Oj6yoflhi+vlhZAKB6pfp+Dm4HsMoeFk/VOi2HsF4EOcQbv2v472o3S1rJLZz+S53/VzKUPRT5nEChh+2+VRosNF8hUvUxZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=betIl4PQ; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 46778100003;
+	Mon, 16 Dec 2024 18:06:37 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 46778100003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1734361597;
+	bh=sFyGMIe/cWHSGp4/ziUFRDWY1kSa8zme+CKERgruf/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=betIl4PQPP6phE/CC9a3GdUyBBnz4i+4oSHuSspr94SdcUK7J7nh0zA4tWsMmPuER
+	 XR5aJqguIq05yY+7GajqWcQ0HoQLCHSgXpkXGvPW5lNg5+LJCf7Bib+A8M2P1M4r53
+	 5zcLwa6iaSaLNM1/c2xdtXIAnt/vnV/nQCqo4euexYyDlV2usmbmfLBFDcM7pAEsWW
+	 bSewN1Ora7nuaEd/caTSBcg2qJm/q0/2yIlseOwFWr4BBRBx8pYxWilObn8a/ijOMd
+	 D2C9IHKGZJ0ZvC19pq9Z1ilTrBODoOQxMKSO5oZ5Nsdke6nVYdX0J//7YYXeIRuS2G
+	 GZXviGDvIIK4Q==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 16 Dec 2024 18:06:37 +0300 (MSK)
+Message-ID: <609417f4-68c8-a382-0d95-04000c9df5cf@salutedevices.com>
+Date: Mon, 16 Dec 2024 18:06:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rYVWTQ29yACSStov"
-Content-Disposition: inline
-In-Reply-To: <865xnjsnqo.wl-maz@kernel.org>
-X-Cookie: Be different: conform.
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
+Content-Language: en-US
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+CC: Marcel Holtmann <marcel@holtmann.org>, <linux-bluetooth@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <oxffffaa@gmail.com>,
+	<ddrokosov@salutedevices.com>
+References: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
+ <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+In-Reply-To: <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189864 [Dec 16 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 47 0.3.47 57010b355d009055a5b6c34e0385c69b21a4e07f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/16 12:28:00 #26886242
+X-KSMG-AntiVirus-Status: Clean, skipped
 
 
---rYVWTQ29yACSStov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Dec 16, 2024 at 02:31:43PM +0000, Marc Zyngier wrote:
-> Mark Rutland <mark.rutland@arm.com> wrote:
+On 16.12.2024 17:52, Luiz Augusto von Dentz wrote:
+> Hi Arseniy,
+> 
+> On Wed, Nov 27, 2024 at 7:38 AM Arseniy Krasnov
+> <avkrasnov@salutedevices.com> wrote:
+>>
+>> 'hci_register_dev()' calls power up function, which is executed by
+>> kworker - 'hci_power_on()'. This function does access to bluetooth chip
+>> using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
+>> Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
+>> if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
+>> 'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
+>> be executed before setting this bit. In that case HCI init logic fails.
+>>
+>> Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
+>> allows to perform power up logic without original bit set.
+>>
+>> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+>> ---
+>>  drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
+>>  drivers/bluetooth/hci_uart.h  |  1 +
+>>  2 files changed, 15 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+>> index 30192bb083549..2e20f00649bd7 100644
+>> --- a/drivers/bluetooth/hci_ldisc.c
+>> +++ b/drivers/bluetooth/hci_ldisc.c
+>> @@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct hci_uart *hu)
+>>         if (!skb) {
+>>                 percpu_down_read(&hu->proto_lock);
+>>
+>> -               if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+>> +               if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
+>> +                   test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>>                         skb = hu->proto->dequeue(hu);
+>>
+>>                 percpu_up_read(&hu->proto_lock);
+>> @@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
+>>         if (!percpu_down_read_trylock(&hu->proto_lock))
+>>                 return 0;
+>>
+>> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
+>> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+>> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>>                 goto no_schedule;
+>>
+>>         set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
+>> @@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+>>
+>>         percpu_down_read(&hu->proto_lock);
+>>
+>> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+>> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+>> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
+>>                 percpu_up_read(&hu->proto_lock);
+>>                 return -EUNATCH;
+>>         }
+>> @@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
+>>         if (tty != hu->tty)
+>>                 return;
+>>
+>> -       if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+>> +       if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
+>> +           test_bit(HCI_UART_PROTO_INIT, &hu->flags))
+>>                 hci_uart_tx_wakeup(hu);
+>>  }
+>>
+>> @@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data,
+>>
+>>         percpu_down_read(&hu->proto_lock);
+>>
+>> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+>> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
+>> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
+>>                 percpu_up_read(&hu->proto_lock);
+>>                 return;
+>>         }
+>> @@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
+>>
+>>         hu->proto = p;
+>>
+>> +       set_bit(HCI_UART_PROTO_INIT, &hu->flags);
+>> +
+>>         err = hci_uart_register_dev(hu);
+>>         if (err) {
+>>                 return err;
+>>         }
+>>
+>>         set_bit(HCI_UART_PROTO_READY, &hu->flags);
+>> +       clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
+> 
+> This should be quite obvious, why don't you just move the
+> HCI_UART_PROTO_READY above hci_uart_register_dev?
+> 
 
-> > I understand that we have to do something as a bodge for broken FW which
-> > traps SME, but I'd much rather we did that within __cpuinfo_store_cpu().
+Hi, this is simplest way, but I had doubts that this may be so obvious because
+I don't have enough experience in bt logic.
 
-> Honestly, I'd rather revert that patch, together with b3000e2133d8
-> ("arm64: Add the arm64.nosme command line option"). I'm getting tired
-> of the FW nonsense, and we are only allowing vendors to ship untested
-> crap.
+I'll send v2 with it.
 
-I'd certainly be happy to remove the override for SME, the circumstances
-that lead to the need to override SVE are much less likely to occur with
-SME.  We can add it again later if there's a need for it.
+Thanks
 
-> Furthermore, given the state of SME in the kernel, I don't think this
-> is makes any difference. So maybe this is the right time to reset
-> everything to a sane state.
-
-I'm not aware of any issues that don't have fixes on the list (the fixes
-have all been on the list for about a month, apart from this one).
-
---rYVWTQ29yACSStov
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgQccACgkQJNaLcl1U
-h9CjQQf+KATDHPC+FxibIGuzocFvYNi2gMtyaa0fWsGVNddEp+BzHwP015ssdDKl
-JteEjEknFyE7l9Y0F6bePJqYx/L/MIag8IweEZ5XWLAIOH6aMAameWJaewCa9kLW
-PqVq30dEYb/pcV0GcuntAsVUekhHKf73mZui0RXugGWnwA6Bbz0GSE5OYig2vhsX
-E8vc/V/SUm1eUmfAno7lV0cesuM31qtKlppJgxtoTELP/WbRwCGCIzVz/xZ+LtWP
-5N2NxHPjOeZefcRfu6emhVpeWiAjB9lLsDiB+4q2mLXe1tngZKjVrdE8ZEHuFpBe
-9n2oYo4dQRPsmqDsgByqvKgusClUGw==
-=xWKA
------END PGP SIGNATURE-----
-
---rYVWTQ29yACSStov--
+>>         return 0;
+>>  }
+>>
+>> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+>> index 00bf7ae82c5b7..39f39704be41f 100644
+>> --- a/drivers/bluetooth/hci_uart.h
+>> +++ b/drivers/bluetooth/hci_uart.h
+>> @@ -89,6 +89,7 @@ struct hci_uart {
+>>  #define HCI_UART_REGISTERED            1
+>>  #define HCI_UART_PROTO_READY           2
+>>  #define HCI_UART_NO_SUSPEND_NOTIFIER   3
+>> +#define HCI_UART_PROTO_INIT            4
+>>
+>>  /* TX states  */
+>>  #define HCI_UART_SENDING       1
+>> --
+>> 2.30.1
+> 
+> 
+> 
 
