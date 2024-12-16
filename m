@@ -1,181 +1,126 @@
-Return-Path: <linux-kernel+bounces-446733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75EFF9F288B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:54:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5234A9F2892
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA8A31885BD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:54:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8584D7A115E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917FC42065;
-	Mon, 16 Dec 2024 02:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A8513FD83;
+	Mon, 16 Dec 2024 03:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="SVwj0Ozs"
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWNRbPrr"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335231798C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 02:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428B3175B1;
+	Mon, 16 Dec 2024 03:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734317672; cv=none; b=lrG/jFpMf4hz/grfwe+YNvJFPHYLYcki8/1uiylSqMul/CBcXKmKzfh7TXfQa457KMNf8hAsEOnLfGCgrr4p1v2vD+UJKjypxYJ2cB/Svt9171LrhegOtBA8YPjYI0m+oAsAwuMxy1XF39jYdGqk18NaxB8FKaJKgFUSEKcRLCs=
+	t=1734318163; cv=none; b=YbCVQLV/am61gAkZhutfCrd89KQxt2DU72yzGrLDdoUCIkTGWvaa5opPQRxzp/ZIb642jkP2udGeHPt1kWKOGqlNcPD+Fkz7Gp9i1syighhrc2FQPNI2DXf2aFmLlqmX5hjJZPR8oj+1lYT5xQgZTSR/IIGRHOkMY8dh5s2oOVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734317672; c=relaxed/simple;
-	bh=CLoBuJXGEm/zDCZap+soCSnvsXt+AntP751DuKilTRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iwChLsSU4zvAeOrU5CehErbsNTb7eJC3FMkuG4PACP/bqudyQYmFg6tIUSwg+4wxuE+FhDpO/mdednc+gtDwESPA5KBuqiSHyMs4zP0a+CzXvFSqLWPhurH8sPGhTb+ugCK7ai3JDY1he3TZj8ihRRvXbTtUKFLg+65+ZAhd0js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=SVwj0Ozs; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1734317597;
-	bh=CLoBuJXGEm/zDCZap+soCSnvsXt+AntP751DuKilTRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=SVwj0OzsYwromMyMnOEgvaGoIbVyJhnPh69FHWzvn4CSB5maCIceJXf6GIz9t3C6r
-	 yfzezuUzLbP4BP4qyxO5dXZFEeOrApMoY+N7vbEVkVjb+qxQL1gamUV/gkTS15EG31
-	 0Sul8tFZyysGuLOF0KW4BHBWokJM7tjoOKmEPlRE=
-X-QQ-mid: bizesmtpip4t1734317586tjp0jcg
-X-QQ-Originating-IP: ZIVZBa/vHbFBnVHArMnk6uJwiV1kjPaopOprFHgnjgc=
-Received: from [IPV6:240e:668:120a::206:15b] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 16 Dec 2024 10:53:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10692238767205106347
-Message-ID: <9530467A5B20A41A+9201c703-5713-4f83-971c-0b5dbfd6c20d@uniontech.com>
-Date: Mon, 16 Dec 2024 10:53:03 +0800
+	s=arc-20240116; t=1734318163; c=relaxed/simple;
+	bh=wZSF/1Moz2fJ8cmJfElnDgiqM6ILDkxCuvgUaTDyYQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lk5+kxhT7hXw1hMwq4n29bbela48t/ibTA/4i3URVSEyK8f5UmsYkr4L7Dmc1lQRQtpfsuF0QU4gLk24HKJWH6nO1QuD8ZcPrwWrgw0Q/2wJXtwECeaiihMbwZ/rbdIB0q+rQgFmmbM7atQmMFp6jBiWimvOzjoK+zjneH0jjrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWNRbPrr; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21636268e43so44295845ad.2;
+        Sun, 15 Dec 2024 19:02:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734318161; x=1734922961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=//C1ShOl3HMrG7+AaGRFnMR1DR2xz1w/54bVQBlCj6Y=;
+        b=iWNRbPrr/EUphvhLMEob0hLjvR0HMi7EbLEWT3SIvPUC3N5RXsXmnm94Pi2s4TsY4t
+         kiOkx6NDNfUExnnBjiAVYI6qTSk80V7iPpWz/UvNmmfZLkPWmlhNEXwFaDu75/X1wMiB
+         uqfgjSSip3XUo4Bdy7DVSLk/m1WX9Csyv7Cn56cwQbfEymJUlGK+xNuuSCQjjsMtAwQ7
+         1KYP1KfYRE5CuE93e8oLiUucQcVTiPFhO9cSU9d1baixyY6zcALCplPnmej7UuAOv5lv
+         iyVHqxQpBlvvsXbaZNJfm0heKNWPI3QcTUl8MJlKoRdmfsu/vTjRLu0OPtwR6UN37rTb
+         9Fjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734318161; x=1734922961;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=//C1ShOl3HMrG7+AaGRFnMR1DR2xz1w/54bVQBlCj6Y=;
+        b=PgIquntdnU5e4jqzN890O3XwcLSMBuKlR3PckoMYyGCdwu2IYgDhS/OshgMx2c0/tx
+         /ryzUufGSAkTdgH8WVUuRPbY+d3jNPO1iEkTigpLACu0vsxcO1PvxP8T/SyyMDHCgwOY
+         tuRwH+nhNj3fbEAiBe2RI0Z1E4Dtr/d8Ad7qv6JMt5kc26YyoRx3nxmZRN9V8RJZLFKs
+         37EfnHFKV0Ho5oXu/a1A9OQPqVhXpJQ8v8HnK93Ui1FzB4oY1YabWj1ZH6ikxe7NYXmp
+         CN8X8qWG8hLXDVZsgat4VRUJJASchGKeYA9RVFiaD8mplrGzAPDFfyEEdpDOw/EWLk3X
+         UKzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCs5dXLj1mVQvGSI0bFO6Xjt/JOJLrZNU4LHKKZPExf82GEkuUzrgERb5ax9WkKCvr8/B6cZqGxvgWeCI=@vger.kernel.org, AJvYcCXdTffijJzE0agKK8ngXO4RcrT/LrvPXY0sLjk90cHpx57YVEyjDImhKGcpWOVhMnStC29Rb2XsxRS/Nh4lG66j73vVULIu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSisYwqj2P0xKlYhSBOt0Xe56K77LVDZwSRVJXuQS2pIjcQiB6
+	PjS2XCyzDxDyQbts0WZol7V+DjbL9WakFXmY7EP5Fdpbr+Y6v6y9
+X-Gm-Gg: ASbGncs0a6aoPMYE4KsAh62HHfiGDTIc4FDZb8G8S3ZlHkwzg5Eo7n+w58ES+3IYWYm
+	0ppMZ4OxD3XK7KRuZFvWAM75uFTGeQF8jwQ5oMeiY0sAYSnQh4+u4okuSCq3Ife4Ys1Msuu1Tcg
+	OkUT67XvRGMzcuaRbZ6l6BmvhtO8VvQE+xp0OKjWvgPmTeyT/yN0n7C+TZZikWzR/vsb3exJFsr
+	fCxKGNK+ntxTLWSAq1zBiaQ77uc9loofKQDe3D93axBHtdLza7Sv23CN5OOptIWcYk84bjr
+X-Google-Smtp-Source: AGHT+IGw2rx0VBojBUA7chJeZwjuHK7yo5V98FM0S3GHGQDraiwOaBRtEu+HvvJdrM2/BVpK6uNvSA==
+X-Received: by 2002:a17:902:ecc9:b0:215:a3fd:61f5 with SMTP id d9443c01a7336-21892981131mr142938915ad.5.1734318161410;
+        Sun, 15 Dec 2024 19:02:41 -0800 (PST)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:d782:c275:5ae5:7e7b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e6d918sm32600035ad.262.2024.12.15.19.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 19:02:41 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
+Cc: Leo Stone <leocstone@gmail.com>,
+	jmorris@namei.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	mortonm@chromium.org,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] lsm: check size of writes
+Date: Sun, 15 Dec 2024 19:02:11 -0800
+Message-ID: <20241216030213.246804-2-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <675f513a.050a0220.37aaf.0106.GAE@google.com>
+References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] scripts/spelling.txt: add GPL-2.0+
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Simon Horman <horms@kernel.org>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Colin Ian King <colin.i.king@gmail.com>, Yu Jiaoliang
- <yujiaoliang@vivo.com>, linux-kernel@vger.kernel.org
-References: <20241215025104.70096-1-heinrich.schuchardt@canonical.com>
- <20241215025104.70096-3-heinrich.schuchardt@canonical.com>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <20241215025104.70096-3-heinrich.schuchardt@canonical.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------z9lpoiw2GQxJcfbTkA50S5hm"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N3tmGSw0vHb4R54eMa2nLPGcGsHcwY9uuNJ2Xlznb/vbSpjn6ChQEK6+
-	HHQ/JNZTERTMnNM1cTPNnue+IP/2fYRtc9rQejl1PH0BpSzURWMJoD8eCMotwUwDFyyDrNq
-	WVp7k4k8S0bnCWf4aYeJpX7Wd6JsU9vWgEJBTFED1go/yCk77qe43B08OV+jH6502LEuGzC
-	Amxq1xgRXlCaq/hEAm2Ic8N9aL3Qm6Elrd/lZAzsGsnqMQDXpdU5XkTZrLEfiuLoXEUpdyE
-	uqjAhSdQ42VOt8nTKN9Qum5AV8UyYllXasiTgmOtoVOV+Lr9fM9BiA7HDrr2/pWI4YjnRzx
-	ASKseNdZ9vZxgph0qXjIeY66vlkjAKYA966abqzZYyFoWmeybfx5TdBnna0C/vjJX22zd+e
-	w1ZJqtgsDURn3AityE5hRFpmepBQgRutA/703qVEzcbjBjfcUhJne8VeVWW017OU7AX8YO9
-	BoeN4s+KA9OXyc1YKba+W3cHerX2BlE2KkXadq4uz5Yp5jUlvkIeU5d/NunFtYDB1DvS7po
-	eH5oTG4qsTvSJdM441dCqQXZd68s7rNW6brhsVpEqgmucqBMBYup432F3aOPjxQi0uKLeaj
-	RqhyjifCXLl/51ghe2xAEux831zekQQhK08G2OYe98eSWZ4au8RJMyCcLbDJMbBH56Rb6jX
-	PzMSzbE2cy9nKN7Dy90vmxyX+4/NfHdOT383JZLHn8yavcK8deMeL8LhduzjOu4WyYeZl27
-	DqodCkamf8V79Wzm+DSZh1oDQujSwLEIsjx1TSaBrCbxkMEjpNrMb2pv7buQlRv6HsJo0wH
-	9oWKPUas3SkuFxSy2rHW+ptH9lecsSJJHH4fh+AIuMafbvBdBS5SuylXccdCr/wmtungHaB
-	rouaoYvoFt9TesAe3xXZCvHHcn/s/PDVZaxLUtladsBLk/4FnymJDfHdatuXzhMa6muYzQz
-	5yFCdeySUdT5p0HsDudAa/NA/g8NrIH/V7xTG1RKNs8rhyHAdd3vrWQZAGuv0c3fbR/K5K8
-	2sKhCJeIXdDRzhK68p
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------z9lpoiw2GQxJcfbTkA50S5hm
-Content-Type: multipart/mixed; boundary="------------R2XxZZdUm61cDF0rQg7onIzi";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Simon Horman <horms@kernel.org>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Colin Ian King <colin.i.king@gmail.com>, Yu Jiaoliang
- <yujiaoliang@vivo.com>, linux-kernel@vger.kernel.org
-Message-ID: <9201c703-5713-4f83-971c-0b5dbfd6c20d@uniontech.com>
-Subject: Re: [PATCH 2/2] scripts/spelling.txt: add GPL-2.0+
-References: <20241215025104.70096-1-heinrich.schuchardt@canonical.com>
- <20241215025104.70096-3-heinrich.schuchardt@canonical.com>
-In-Reply-To: <20241215025104.70096-3-heinrich.schuchardt@canonical.com>
+syzbot attempts to write a buffer with a large size to a sysfs entry
+with writes handled by safesetid_gid_file_write(), triggering a warning
+in kmalloc.
 
---------------R2XxZZdUm61cDF0rQg7onIzi
-Content-Type: multipart/mixed; boundary="------------SK1A4vYGZGsxN4huhTaOxoO1"
+Check the size specified for write buffers before allocating.
 
---------------SK1A4vYGZGsxN4huhTaOxoO1
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+ security/safesetid/securityfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-T24gMjAyNC8xMi8xNSAxMDo1MSwgSGVpbnJpY2ggU2NodWNoYXJkdCB3cm90ZToNCg0KPiBU
-aGUgY29ycmVjdCBTUERYIGlkZW50aWZpZXIgZm9yIHRoZSAnR05VIEdlbmVyYWwgUHVibGlj
-IExpY2Vuc2UgdjIuMCBvcg0KPiBsYXRlcicgaXMgR1BMLTIuMC1vci1sYXRlci4NCj4NCj4g
-TGluazogaHR0cHM6Ly9zcGR4Lm9yZy9saWNlbnNlcy9HUEwtMi4wLW9yLWxhdGVyLmh0bWwN
-Cj4gU2lnbmVkLW9mZi1ieTogSGVpbnJpY2ggU2NodWNoYXJkdCA8aGVpbnJpY2guc2NodWNo
-YXJkdEBjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gICBzY3JpcHRzL3NwZWxsaW5nLnR4dCB8
-IDEgKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPg0KPiBkaWZmIC0t
-Z2l0IGEvc2NyaXB0cy9zcGVsbGluZy50eHQgYi9zY3JpcHRzL3NwZWxsaW5nLnR4dA0KPiBp
-bmRleCAyZGVjYzUwZjVhNmUuLjhjYzU5ZWU2ODkyOCAxMDA2NDQNCj4gLS0tIGEvc2NyaXB0
-cy9zcGVsbGluZy50eHQNCj4gKysrIGIvc2NyaXB0cy9zcGVsbGluZy50eHQNCg0KVGhpcyBp
-c24ndCBhIHR5cG8uDQoNClVzaW5nIHNwZWxsaW5nLnR4dCB0byBjaGVjayB0aGlzIGlzbid0
-IHRoZSByaWdodCBhcHByb2FjaC4NCg0KDQpUaGFua3MsDQotLSANCldhbmdZdWxpDQo=
---------------SK1A4vYGZGsxN4huhTaOxoO1
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------SK1A4vYGZGsxN4huhTaOxoO1--
-
---------------R2XxZZdUm61cDF0rQg7onIzi--
-
---------------z9lpoiw2GQxJcfbTkA50S5hm
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ1+WDwUDAAAAAAAKCRDF2h8wRvQL7mA6
-AQDCOzjsbL9qWvq6B0RF9rb0fMud8XsrWOF+24tqwKocmQD9GToA3iBEpSwGUmtTLMN0RBuFtI/Q
-gHxcwcLFOHnqKAg=
-=9Hwc
------END PGP SIGNATURE-----
-
---------------z9lpoiw2GQxJcfbTkA50S5hm--
+diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+index 25310468bcdd..5eba4c7f8d9e 100644
+--- a/security/safesetid/securityfs.c
++++ b/security/safesetid/securityfs.c
+@@ -254,7 +254,7 @@ static ssize_t safesetid_gid_file_write(struct file *file,
+ 	if (!file_ns_capable(file, &init_user_ns, CAP_MAC_ADMIN))
+ 		return -EPERM;
+ 
+-	if (*ppos != 0)
++	if (*ppos != 0 || len >= KMALLOC_MAX_SIZE)
+ 		return -EINVAL;
+ 
+ 	return handle_policy_update(file, buf, len, GID);
+-- 
+2.43.0
 
 
