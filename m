@@ -1,104 +1,171 @@
-Return-Path: <linux-kernel+bounces-447015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C69C9F2C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 759169F2C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0CE166EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A49121672FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4307D1FFC41;
-	Mon, 16 Dec 2024 08:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88191FFC73;
+	Mon, 16 Dec 2024 08:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1lIz0zXr"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="EB4njlJ7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55B21FF7DB
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D377B1FFC46;
+	Mon, 16 Dec 2024 08:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734338278; cv=none; b=dsAnKEHsQzHjd2uVTY4L2BnD4HV/NsX62MJ6l+3MH0i9eIO2U1VNsCjIAg8RBR05HnfPXL82CENYot6pIyDvE69ppFX/iHY7WBgDeSMMZmUOUy7840sjeVwK5LRJj0cwN9fgTWjjhOkSsB04avHdwslluEoNBK5C1nqwi0ndh0g=
+	t=1734338295; cv=none; b=BGmxprPnl87o8oseTBRQyREypxRS4hupyV9VcSWiM3Q/Bw2dxbPnM9wcYjocaI+ewqrddsCsDb7ethscyP68Uijlxa+dOXGYME4Vxq7faVzcSl3hbqJzaF2R6zoQ6TKlDW4BjYQs+kRydwky7fx/br3GwpVd9m4IbChFl2/GGtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734338278; c=relaxed/simple;
-	bh=dwL4oyCtuYrCZ6yF/bR5QHEDHgK3LUp6b+1GIr7tsfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t16h2/5yaRmoMMduQrk9+86YGQqHNCeJv5gufIYjm7KjkB13GMkV0QB+J/A5acgdj807foinG5iUOmGOk7yoFcYIvmJ+YW0PowVidSTQlayY7NdvT3Z/OzB8Y6WMVta1MqI3Q9fpjQ5GVXbUG0afyj5Ya9mDjIot8/3UpmUHvvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1lIz0zXr; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-303548a9361so6455671fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:37:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734338275; x=1734943075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhuQsaT5H6o7+J7ElfZP8hf7dLA1Xda/1J2z/GHfUlo=;
-        b=1lIz0zXrxz2Bt+ACzNhoBTs3FLt82bLmCAH1FFEVb5mEbrHWyKrtzKOf3XMJMsxe7x
-         Ssq/KcYTCWCVmG8ntLAbrZVxwSFeQpAmALvxJxOb4L7alPYPKr3COq6PacxIA4fSsLmt
-         v0rm1ASu+hDoNnhX2z58UfH/t9xYraXG7eXc4oCTAQ1+8HecsSGBqo0TY74ypooJ92Pq
-         caelUONH7mdLP7TQh6REAVkHM4OUo4/TpFyyUAoobM5no8Fd2XUcUXFXgLxONlwrdb1A
-         yzwc1/J/qsag14rlb2xOKoEBfQQj3pm2OYqBVe4569zPAFFX+esaMmJELkYaMDPTJ/R0
-         UPvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734338275; x=1734943075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PhuQsaT5H6o7+J7ElfZP8hf7dLA1Xda/1J2z/GHfUlo=;
-        b=N51UxJcLUWPghTHLQ8XZ5Za8CUnLmeFKNKX8DAuLTo6Q7xGX1Il6KCVnU48LRfn+gt
-         /105qdUx8BsjJEa4KRFxiHixc6W1ssScv+/3bDAj4WBOCWgdbFmRYF9a+gRDoUO410gI
-         c4ENvlE43bsHZurQrU52oYsbkDUJ0qSgLe5i8vKMmPYiTFU73EwgQjjmfzG8i9Zz9zpA
-         Bx4M3MQAQH/hRutExquKTU/++aS4hAy8Q37w4zF4yr3k/60MxkhgZdg1JbKwhKGFm5gz
-         pMod9R5BegODZYGwOAoAzbTuT/zRFmqbXZ0/6wRfYf1kEHpOw8tSR7HunisSJvAs88it
-         jV7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUp84S/m5eXIhyxwT7gtRKvkk8nOMjsFB2BZzLN/A+URTM7Ay8zTTzekkCiyDfS+M8W6tM19QW1iVaWmQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYlfz6fpL+LW9QJiIoB6QfhUs+/b3A4v9qE7sSRJ9cNcH3P3pR
-	73QPrM1onj+VwbBv76v/PZac4zxCLL4JpY8dR6mFybMtmTvsb8xBjUaGQbCcODEYGAvM9FJTCrx
-	fwoowwLLaHW1GO/3YS1vf+zF+SEX8ZzigoAv8oQ==
-X-Gm-Gg: ASbGnct07CCCkkAYgKYUDd5/CHICXGvqaARoMVAUwRpRblrOBTzjYhH3Rl+ivZ9Br1g
-	xsJ6pWb/u7AiBZLBCuaPmfc5pk2WRab1Zzn1Qj5d/Rghi+Ls0gh1wiPSb/LzE2ParMv2xNQ==
-X-Google-Smtp-Source: AGHT+IHGoOBxZInoO9/bLGpfbpoKkckOqpofRNQ0i1v/Phpq4yTUAC0eZCfCprZDfuAMk0DaFCGKGOn7jaMLHHmiaik=
-X-Received: by 2002:a2e:a7c1:0:b0:302:1861:6de7 with SMTP id
- 38308e7fff4ca-3025448d109mr35383821fa.24.1734338274879; Mon, 16 Dec 2024
- 00:37:54 -0800 (PST)
+	s=arc-20240116; t=1734338295; c=relaxed/simple;
+	bh=+0CRY7YoBxaiDhSiQ9UO3uPz+oVPE9BxAjrUiun3BRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jC0HMOciX6ZiAXDMfev+xfENQNM+aXOIQjcNX6FwbAKt1wy0nguHGdEHwxcseNigKcR7bnKgFuHDSGMopmGqnm6QM2fo8LRCTA5kb5XPm7bCZgkiW1CpBUwhTT63U3UZfEbtchpWHOfZ1X9GQ/SzdWtyvvr0XWIHmoIVxSCjvYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=EB4njlJ7; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1734338272; x=1734943072; i=quwenruo.btrfs@gmx.com;
+	bh=VVo2iQa2OqykvIwVRX3t3WWQluYM++WCOu7KRLbe2VQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=EB4njlJ7wZnJaGYtLcT5vckcUxTR79uaNWEI3AvXG8dCQcymyi5+Cu3ZgSm97tAx
+	 4ul2qBINy5+SaS/p1CuWazDdo7t5XkACWJS7bSoVmaf3I5u/UmIC3ckllvZeJlwYG
+	 yO2DRmMSjt07cBK3XWkWXnC9gHF/pHwd+H1BkKocbvzgQ4qbDXlOFEOlzUUeBI5Sq
+	 NkP0xF9Q+dbBWcDPXCPFpEbn+C8LxmdIBzpGJsafnoFUUEm4NE/MB5F9rLtOk7SVM
+	 CKnMK/meNfc+50wqAmERE3sHQNowPOXLiMaUanpr+DbvVxpurErUD+IOYk9kqtmaJ
+	 v1B80kv9b5qh8EGO2w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MQv8x-1sz7ns1zUd-00MfFM; Mon, 16
+ Dec 2024 09:37:52 +0100
+Message-ID: <b46ad433-04a5-47d4-9cd0-84f4ab3b86e5@gmx.com>
+Date: Mon, 16 Dec 2024 19:07:45 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202165723.17292-1-brgl@bgdev.pl>
-In-Reply-To: <20241202165723.17292-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 16 Dec 2024 09:37:44 +0100
-Message-ID: <CAMRc=MeNCj0kY8OGxyHMa9pOEtSeEysOhrP5cVcwyTUdF95dkA@mail.gmail.com>
-Subject: Re: [PATCH] interconnect: icc-clk: check return values of devm_kasprintf()
-To: Georgi Djakov <djakov@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: avoid opencoded 64-bit div/mod operation
+To: Arnd Bergmann <arnd@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Anand Jain <anand.jain@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Qu Wenruo <wqu@suse.com>,
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, Boris Burkov
+ <boris@bur.io>, Naohiro Aota <naohiro.aota@wdc.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241216083248.1816638-1-arnd@kernel.org>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20241216083248.1816638-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7bemtGciY5P/jAHqXkVt/PZ+Bs2Ujc7n2pNW8RISo5qGIkVwrN+
+ zajiPZzTePtr2FtAQhpAvSL4ILIa+isH85zr9zOUK2itUtl8UiBsG5j91XsXfoFXzVVnOel
+ 0ECIsIKVdZUWNH2I7uuOnLOduOcb7lpK3vNnqBXZmQFEY8TG4WHb3jBPKHmYuwoyJgACtU5
+ hG7AbXewACfXBk7tGvb6A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OhJPsoBUczw=;JUrKA7cTwWqoXTSnOCFv08Gm+W9
+ f7WO0ThjOom9fV1w22HsqBRJLT/2+NhcKjSZ2gbk/p2kO5jmgTWPyHfNjMv/4iHe+ObqcCsTo
+ lMjTrXb3RK5ocCidCmLQ9Y+fo9/P+T5D0rmK2askasnQ/Scw3Di2i7VaA80GHOKKN8wSwMvSe
+ DR2cnMeI0jV0yvcIvoNEzps5ZpNxF5yGIueS44Q9cOMwnGSuGMz2R3nr3DocGK2OosuU6lFvj
+ mLcc9wjD7dGHSQ99FlW4+8Tg6nYXupQLDX0gpvTqiT82f8kaBoplD7+nJ2gGieYFGbtIqRIyg
+ l6sNeEZQdpqIXFNe+OOoTFFYS0hn8wfOmnW1HsH+67MgVp/qUwReqik78KSNXPqgTJdz8hYEA
+ qCg24YTaSut2ZcAup/CIyu8Fag2fmioR7onYOvFA/OYCVJ9KnWCc6wS9boQFvsTQqfhjk2z3Z
+ sRWAxq0wdYtcB+WBNTnniqFOHwpCzxAQ3mAYW/YC4O1zjDFwrfgFT+afMHTkhVMxrVRiK8AzS
+ Aobrtcq0Pzkb73zVK2FRsUSxstqabJa5zGxMPGjGMddhnlkGonNR6k9XZxXKhQBCSdaPuiC/i
+ /QjXZ+RSWDdlTgppEEu4HE8/IZZIncokil0gUkunbBIV+Y8TZC0IIshJr9SPGj3OFP8kRVcCl
+ qy+8GyMPj9uoRm+NT+/4Gxc8k/3iA3ZWfbb4d4pOH05RkSz9McGET8qjULA3ooB+VSREqFver
+ wcR1h/N1mG6GdW3SBFQxf7LJI0d5P73TyLrjIhF45H1XGDcwMCihmn1wYlHZ56Utp/NvzKrbE
+ nES+/O0Wos4miWXnbNfNr/Uez6L2V+IcB+LFVlsaSw2kIHhSLpfGolqSNnP18HFEt1JFoEydX
+ 6sC2V2ViVNoAhyA3+KctYmi384d1A+NjPPmjewiLzzQnj1o8BRirXbvBLmULhMVo0mJFqc0p2
+ bOX+MnMKY0hk+Fd9a86Aws9g7cHOdzLwtaF+eaCrHzPITJpl5A8+FvjlNBQuDJNk5oa41ADi0
+ 1xphE4NrzHW7GMyW34zVulhPiQ/TRUlkRWVs/DR/N/V/zDKla/+2nXlb4XJVfBXdFZ4szzaHx
+ dXAOl/HDhXHJaLz3oahWgezETZRsWS
 
-On Mon, Dec 2, 2024 at 5:57=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
+
+
+=E5=9C=A8 2024/12/16 19:02, Arnd Bergmann =E5=86=99=E9=81=93:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Dividing 64-bit numbers causes a link failure on 32-bit builds:
 >
-> devm_kasprintf() can fail and return NULL, add missing return value
-> checks.
+> arm-linux-gnueabi-ld: fs/btrfs/sysfs.o: in function `btrfs_read_policy_s=
+tore':
+> sysfs.c:(.text+0x3ce0): undefined reference to `__aeabi_ldivmod'
 >
-> Fixes: 0ac2a08f42ce ("interconnect: add clk-based icc provider support")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Use an explicit call to div_u64_rem() here to work around this. It would
+> be possible to optimize this further, but this is not a performance
+> critical operation.
+>
+> Fixes: 185fa5c7ac5a ("btrfs: introduce RAID1 round-robin read balancing"=
+)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/interconnect/icc-clk.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>   fs/btrfs/sysfs.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+> index 50bc4b6cb821..67bc8fa4d6ab 100644
+> --- a/fs/btrfs/sysfs.c
+> +++ b/fs/btrfs/sysfs.c
+> @@ -1433,7 +1433,9 @@ static ssize_t btrfs_read_policy_store(struct kobj=
+ect *kobj,
+>   #ifdef CONFIG_BTRFS_EXPERIMENTAL
+>   	if (index =3D=3D BTRFS_READ_POLICY_RR) {
+>   		if (value !=3D -1) {
+> -			if ((value % fs_devices->fs_info->sectorsize) !=3D 0) {
+> +			u32 rem;
+> +			div_u64_rem(value, fs_devices->fs_info->sectorsize, &rem);
 
-Gentle ping.
+The original check is already bad, it's just a IS_ALIGNED().
 
-Bart
+So a much simpler solution is:
+
++			if (!IS_ALIGNED(value, fs_info->sectorsize)) {
+
+Thanks,
+Qu
+
+> +			if (rem) {
+>   				btrfs_err(fs_devices->fs_info,
+>   "read_policy: min_contiguous_read %lld should be multiples of the sect=
+orsize %u",
+>   					  value, fs_devices->fs_info->sectorsize);
+
 
