@@ -1,97 +1,120 @@
-Return-Path: <linux-kernel+bounces-448233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A0B9F3D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:11:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB41F9F3D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5ABE16C0AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C46A16EB59
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63971D5AD1;
-	Mon, 16 Dec 2024 22:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5511D54F4;
+	Mon, 16 Dec 2024 22:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAuDIdXR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OiUiqMJR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1EA1D1F6B;
-	Mon, 16 Dec 2024 22:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742B7BA49;
+	Mon, 16 Dec 2024 22:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734387088; cv=none; b=eYlpL4lezDjhxGTnkkTBOfC+RVYhrjJDyJ4sGrL25Z84PC0Vh8k+ANEDb/hI0PKRDHYncbhXEpppBLrvMbu6OYCejWihtR20p5f6os07zGJ9D1KPrjYFvlmZ+AT98pg3f79ZcjO/P788ydiuQE54vVUilTPjrdVNboSxPb2lfy0=
+	t=1734387196; cv=none; b=uKJiki5CuFzy4itMKML+jjBHVZPwhIN6H701Cx+I+90agfJM8/XBSJ3QTSqQDxBiazgs9zcqC+bmW0JhNsdQyjlIoh4kImd+uijvcf343WVD2HZtOIxSi9uP0OIB86mCYASAz14HQpkRJA6uONHutl8lHo9XQspNNzm+WTM3o4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734387088; c=relaxed/simple;
-	bh=aV1J6MifAqAJ1Jq0WWRrntWcl/8qrLrWiHHgvEodlsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzeGQ2rHbCT74YGuYhXqErOEn9nCGrc+i15udPV4HXtMwmNUYY4A4NUMkjfAW9oNifKeh2cU+uiXsopy0S7e5edq9bARUHhywj7Oyq1P5yEDG1aVt2gSji9Yz1l3ROAdtRdnCVCxUy/fZGeKHg43v67A+EFLY7VH3AyPtZoXmC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAuDIdXR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7589FC4CED0;
-	Mon, 16 Dec 2024 22:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734387087;
-	bh=aV1J6MifAqAJ1Jq0WWRrntWcl/8qrLrWiHHgvEodlsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QAuDIdXRxiy7LoqcKDg1yIU7cZNBbFDNz3F2w/LHl5+U5qirzcXDa34q4UXCS/xhE
-	 KqcQwIuU+oalAdVZX0SyacRyvHw02C3cbodn21yVcr6O5TtLTL9Tcf440XUSbcS2Y5
-	 HUQ/tLEbkGaisiKIRb/0DyKLYnzP9rEA8Pz/mulFHoYVUjgvbXEHlioKjASJW/0zcL
-	 eq0oW41Z1rPxbFIGjSaEvvi0h1myyyhwo/km4hf7YW21rODc39/gDtVagtMcahl+UR
-	 nTgAf1TlRKGh6UX/lt6QwsQM+wXKxGylh+SEa5xTM/C1NS29u6rlAB7eFPuslPn4CL
-	 fxAlPpAdRjJ+Q==
-Date: Mon, 16 Dec 2024 22:11:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 12/46] arm64/sysreg: Add register fields for
- TRBMPAM_EL1
-Message-ID: <01ca449e-b34d-4833-941a-4aaeb197b28c@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-13-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1734387196; c=relaxed/simple;
+	bh=0BswZyPyChFCz5Tl2qKFyMHZF6Hn4gYaTAiG4dey1m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j6FwbB8QijhnbRFXwCX80aoU1QtBfoMp6ldr7TivE8nrsfLHRZ0M8VTZwNtjnwn/M4ESM82OlLXyYNtyzKR7D/RDYUYUYdlRNVyogwB8BlrGzqNf5GXfESZA+ajBlFw4kTSlk+6pucm55eRHO7Wz7UnECT9PTJf8oI4tgyGMb20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OiUiqMJR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIwdRr010436;
+	Mon, 16 Dec 2024 22:13:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/Hj/WqZyL8qEpAI1p8AHke9DYvW5avtzHISioolLT/s=; b=OiUiqMJR8g7U3gMT
+	gy4xFiZ4z5RJB28YW2ZYpFNI8sUXY48cVX+NYq1Lp/Qc7b3fkXC7ZJl2nupPKWaB
+	s7rigKudDVsHXL225kJwI3hUmUPhmG4XRuTMIFuNWTnUQcOf/QFsEDNfh+CsdwXu
+	+pEh9CTyqWDwqqJ9esFaM7ilbxTDliCMj29GgJ4D91azxTiyrdD5EbEiqtE88/+1
+	XiaKkxuSt8TukYRTWOJBMl4rEGB0ZfIchEQqFVeaqyOeuGuY5JFqxHKSnpcNVA0s
+	gkrhsTldofHof1E5dVufJvlyjhI3On6QyngUjJuZKcbzGmxU2gN3lL2kdeAklQyU
+	YMP8Uw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsy70c62-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:13:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGMD4Ik010811
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 22:13:04 GMT
+Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 14:13:03 -0800
+Message-ID: <7c587ec3-2fa3-463b-9e68-e177ceb893dc@quicinc.com>
+Date: Mon, 16 Dec 2024 14:13:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Z7aSgB+b+DyrUt5q"
-Content-Disposition: inline
-In-Reply-To: <20241210055311.780688-13-anshuman.khandual@arm.com>
-X-Cookie: Be different: conform.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] drm/msm/dpu: link DSPP_2/_3 blocks on SM8550
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Robert Foss <rfoss@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Richard Acayan
+	<mailingradian@gmail.com>
+CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
+ <20241216-dpu-fix-catalog-v1-5-15bf0807dba1@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-dpu-fix-catalog-v1-5-15bf0807dba1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Vs_9OXDpDO1IDznEB28fWqjqmcQTOCSC
+X-Proofpoint-GUID: Vs_9OXDpDO1IDznEB28fWqjqmcQTOCSC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=885 clxscore=1015
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160182
 
 
---Z7aSgB+b+DyrUt5q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Dec 10, 2024 at 11:22:37AM +0530, Anshuman Khandual wrote:
-> This adds register fields for TRBMPAM_EL1 as per the definitions based
-> on DDI0601 2024-09.
+On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
+> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
+> 
+> Fixes: efcd0107727c ("drm/msm/dpu: add support for SM8550")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
 
---Z7aSgB+b+DyrUt5q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgpYoACgkQJNaLcl1U
-h9DhWAf8DObkHaJw3p45M7h0LKyURhsSBHONCy1NsNNHrMKVgjxmWILSQusHgA5Y
-JlqE4pb1xspixa/eB+wbdC8QOb0tdJ0e/9aWxlJe2C96HTawajMmsC6Ne/++IC7S
-d/0ShOIWFn/QPcSChyIdf/5Su8SG2qSYdmRMpvKfYCwrEXz0WQzlojwNk2nebOzM
-CtOWpyJ+EgihefQbW4l/rjUo5MwXFchsxylpkKQ4xX6gdIpJm+iSDe2OG4T2N+ut
-NKiXPTZAt5bu6JR6dpl8Ua3W7JjAzQzl/PvdBUt/m0/1Lohkm5JuCv59n5UEfefF
-VSEc/dpRvMZMus5QDA8q5PQUkj60gw==
-=32OO
------END PGP SIGNATURE-----
-
---Z7aSgB+b+DyrUt5q--
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
