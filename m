@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-446948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B1B9F2B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9179F2B61
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CDC161984
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B94167921
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D738200109;
-	Mon, 16 Dec 2024 07:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003AA203D5D;
+	Mon, 16 Dec 2024 07:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpXI+CWd"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ZuEBZk1j"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93E01FF7A0;
-	Mon, 16 Dec 2024 07:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF70202F7E;
+	Mon, 16 Dec 2024 07:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734335920; cv=none; b=Ca9tObmdkGXmUVKqNba4knYd2tzzd8j9ixPKj2zt5u4Q26rD7lbqABDcBwhTH8EsS+tQ+0ijXmem9VRiPD4SXGrwGcHMnbQMn6jFztofnWjWu0XiW+pBUSAjuffRUKmg6vSa6M81C+SweWxKEyWhtuv3WLJzC8W1cJt6lulRKeU=
+	t=1734335957; cv=none; b=dkXeqvcjM87GQ/qWY+IikCTgqG20xZ8gzgbkLa4C34RatXuCwTLdvj8pkqa1Usv1V25pnL4E00/5BXyup6L5k3yG1SA9ynFsj/qgfvx3AMOPYW3SXL6ukHaHYO1FYN/qWp/+PknOvEkG0njHF0AigNy2okieDEvOH4O5NUzyF8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734335920; c=relaxed/simple;
-	bh=xxP4Z5o9HC+CaQkoHHMM/63ysOrKemXE9vQLBvlDMwE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qk9jz83XxY/Hc7QrSPv0M+mQF4ICysiZmpeI7vI0Jm9Z5T19Ewxjc0PY7Xo84IiNijwJsLb2TYjklDXOrrLqDjF9P6De/o+C8oClQ8Y+p7yk8g4o3Xud60hw9jPpSi2Oa/0ok4yyVpsWhn4pi/9xu+1wcv6ErqffpXBbk2dYVoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpXI+CWd; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so41742585e9.0;
-        Sun, 15 Dec 2024 23:58:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734335917; x=1734940717; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dHQDsilWcBWo2qLCl2rPtBaAp/SgERxJlUjllIz41wE=;
-        b=RpXI+CWdkCXznmhbK0cW94thH4nBu+iHSFeuSQ40XWOTtCgiv1oV0MI8wReY0jmV19
-         ylY/RQm1DhLJhrX3Jf4DZuHaiToRMXwySF5W3y/Rnp/h0+/MAXcz9tf2ucnaKJ/Zp/+D
-         hmus/B3jJQg4igSndQQ/Zkva4zkH5+LxJQv3bkFjHCifATCQLYkcwFQ9DqyTpiLcwc6U
-         5wWW/qTZHlES5c5Qk1a7t9ITgFf8dKJnzkFHIHhMXTJ3L7XKF3hHv1XW0v8hWmYvo79c
-         qcfsdbaVW8uXXtgqcYAw+pqH+jn2i9h8IY69zVCy5JXzLwuDj+TPim/QFbfBv+o4xPn/
-         7SQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734335917; x=1734940717;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dHQDsilWcBWo2qLCl2rPtBaAp/SgERxJlUjllIz41wE=;
-        b=W/K7r+803gxd2/3zHQexDUAMPHmIPofVE38VF9tV/KRqBCDqfrp+igFrgj9+rNhjEO
-         TKcWwy4aR7es6+Ro32kligrd/LBFWhiqKIfnlZNJ8vQtNM77lYi3nVZPMnlHiVDA3QzQ
-         nzaHWRbOfTG7OtwEafG7AL7jbcL7ZuPkSyEiw8Bq43e+F25fz+TJ9gHqACUzDjAazPvp
-         sJxnHUyIdLMVlLxbLtBn6aRWNcEk9f/6/LTXq5zIQ+YEaTlhaXuVW1I3q5nb0azGCr+J
-         ca0P0TQbsFrlDZfeikKjZEiG/5b3zBs22uVkyVcwMNOG9mzVquDUqbPWbRRcEIH2ptHs
-         dqMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKSaDXr8AkR7YsLgj4XUx3NPAjrefK/SBaqEeRNz3dvyqt0gF9Cz3jl2BsXkDvHj/oQoC3jDgQUNEVfaCldtHae7t2@vger.kernel.org, AJvYcCXPL4X/cePqYGJInQHdCSdWhDQmMe82XpmOnqacOr0rICnas4c5Pxm5uSDJ0aIj07P4SZA=@vger.kernel.org, AJvYcCXoXL1rOOwbfujoNWzBXJGrf0Xh23tl8Mu6ZU3RdqES13wKqQQX6n5cZnVlmDaiJZOT54WkOpsZ8u6Ph4q+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxScFR98Yda/08OFoHs20fLWNIByIqzkRecHZkCa9ZvjL/sv+pX
-	HIzclvBRVKj6xzObhx4lRWVJFkoedOcak4mVrLYwJeePz8E27R6I
-X-Gm-Gg: ASbGncvSE1eCkLSroq2IrEl1vcDRs05BE60jNCbm89jluaOS7xW5NepPWG68t3RYgjV
-	NhxtyGu4R3dB0UBoQkxxDTinKpiS7VlysoUm7jyOsxWWKFWWD+VDN1Q2FmhgCvhdspFxbr3wRIb
-	gv1dbLSxezXjzHVtg7+SuOHgnuqwXMvlZzuNWBWBAUnsQmRxlbP8AVbeI2sIkySA83Gl7mZygbJ
-	shv+4PzAtCXGWJEi1zsGoc2UrJ5ICvIInzM7DpanHOgJXw+qyiraYN6SPLyB1cUCuHdNdcLtvYa
-	31NAAh3eKPZL6N5/FNLzIUS2utfVag==
-X-Google-Smtp-Source: AGHT+IG/4I2JC5fgqyp/23EduntPTpbxZSHFCoLpI3oPiFb4SWfRzjunZM36hG2rKeMElQCUWNQCZA==
-X-Received: by 2002:a05:600c:3503:b0:434:ff25:19a0 with SMTP id 5b1f17b1804b1-4362aa94379mr96018225e9.21.1734335916924;
-        Sun, 15 Dec 2024 23:58:36 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706588sm134755195e9.29.2024.12.15.23.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 23:58:36 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 16 Dec 2024 08:58:34 +0100
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 10/13] selftests/bpf: Add uprobe/usdt optimized
- test
-Message-ID: <Z1_dqhXexpBz3oYB@krava>
-References: <20241211133403.208920-1-jolsa@kernel.org>
- <20241211133403.208920-11-jolsa@kernel.org>
- <CAEf4BzY=MOmqsuuL3iOyeaVGd63-6wdo9uU+6QhjbUOvgp=iVA@mail.gmail.com>
+	s=arc-20240116; t=1734335957; c=relaxed/simple;
+	bh=pFEcSClKvkGj7FkvYjSlcEpeSnnU85ooA6Ex4oYkS40=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ji+wv4SYr2f7+ZDu+mYCDq3MsN7OQiyVhFfgHDfaOzttrW7/xuMRbL6/vhReR7PcKcS2Bvn91y8xAwV/ZZhV85K9KmCuzbcatQje+d5L79i+C4qW0Xw/I67SiE/IO0S+xFznbiEXRDDjaNfAXmpXrEPsdYmkMsJiZSqm8EcEeYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ZuEBZk1j; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG7D0BR019859;
+	Sun, 15 Dec 2024 23:58:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=jaEZNOc1ShPcIIWp365ZxO0
+	k1RA2M//O3E2TA71sIxI=; b=ZuEBZk1j4vekZCL59gBdDlkHfhj8IrSBCJ1fAqz
+	t56I6QGwNfkY6ho7zqd1pX/wG4qxhnOIHNH3rMYF1h9QLIQGYBM7ZLybla9GrRSd
+	yMopAdsaNeYEqETJVCAPW4DnjTYWm/zeq5MZLrO/UPIpV/0vOhsqtyDy1A2CFTit
+	WCmZHoZd1k+0zpq8r9BV7YBgVKFLouyFeI845nyUjwzURboZXBzuwr7bcNRHTzSP
+	mF6a3hZpqQbGaSTv0H+d7818CwdvmJwJxFQFefVLnn3v0oQmqtBb1CWswNMtlgnl
+	C1Rp/DqLe3prcvHa2+WFbkyFQx8o1zz9p2dBHtXgDBi8uyw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 43hadjrgtt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 15 Dec 2024 23:58:45 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 15 Dec 2024 23:58:44 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 15 Dec 2024 23:58:44 -0800
+Received: from ubuntu-PowerEdge-T110-II.sclab.marvell.com (unknown [10.106.27.86])
+	by maili.marvell.com (Postfix) with ESMTP id D794C3F7091;
+	Sun, 15 Dec 2024 23:58:43 -0800 (PST)
+From: Shinas Rasheed <srasheed@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <hgani@marvell.com>, <sedara@marvell.com>, <vimleshk@marvell.com>,
+        <thaller@redhat.com>, <wizhao@redhat.com>, <kheib@redhat.com>,
+        <konguyen@redhat.com>, <horms@kernel.org>, <einstein.xue@synaxg.com>,
+        "Shinas
+ Rasheed" <srasheed@marvell.com>
+Subject: [PATCH net v2 0/4] Fix race conditions in ndo_get_stats64
+Date: Sun, 15 Dec 2024 23:58:38 -0800
+Message-ID: <20241216075842.2394606-1-srasheed@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzY=MOmqsuuL3iOyeaVGd63-6wdo9uU+6QhjbUOvgp=iVA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: yK1O-Ev0N3XruFaFrOIm_6jbYO2M2Xko
+X-Proofpoint-ORIG-GUID: yK1O-Ev0N3XruFaFrOIm_6jbYO2M2Xko
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri, Dec 13, 2024 at 01:58:38PM -0800, Andrii Nakryiko wrote:
+Fix race conditions in ndo_get_stats64 by implementing a state variable
+check, and remove unnecessary firmware stats fetch which is currently
+unnecessary
 
-SNIP
+Changes:
+V2:
+  - Changed sync mechanism to fix race conditions from using an atomic
+    set_bit ops to a much simpler synchronize_net()
 
-> > +static int find_uprobes_trampoline(void **start, void **end)
-> > +{
-> > +       char line[128];
-> > +       int ret = -1;
-> > +       FILE *maps;
-> > +
-> > +       maps = fopen("/proc/self/maps", "r");
-> > +       if (!maps) {
-> > +               fprintf(stderr, "cannot open maps\n");
-> > +               return -1;
-> > +       }
-> > +
-> > +       while (fgets(line, sizeof(line), maps)) {
-> > +               int m = -1;
-> > +
-> > +               /* We care only about private r-x mappings. */
-> > +               if (sscanf(line, "%p-%p r-xp %*x %*x:%*x %*u %n", start, end, &m) != 2)
-> > +                       continue;
-> > +               if (m < 0)
-> > +                       continue;
-> > +               if (!strncmp(&line[m], TRAMP, sizeof(TRAMP)-1)) {
-> > +                       ret = 0;
-> > +                       break;
-> > +               }
-> > +       }
-> 
-> you could have used PROCMAP_QUERY ;)
+V1: https://lore.kernel.org/all/20241203072130.2316913-1-srasheed@marvell.com/
 
-true ;-) will check on that in new version
+Shinas Rasheed (4):
+  octeon_ep: fix race conditions in ndo_get_stats64
+  octeon_ep: remove firmware stats fetch in ndo_get_stats64
+  octeon_ep_vf: fix race conditions in ndo_get_stats64
+  octeon_ep_vf: remove firmware stats fetch in ndo_get_stats64
 
-thanks,
-jirka
+ drivers/net/ethernet/marvell/octeon_ep/octep_main.c   | 11 +----------
+ .../net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c |  9 +--------
+ 2 files changed, 2 insertions(+), 18 deletions(-)
 
-> 
-> > +
-> > +       fclose(maps);
-> > +       return ret;
-> > +}
-> > +
-> 
-> [...]
+-- 
+2.25.1
+
 
