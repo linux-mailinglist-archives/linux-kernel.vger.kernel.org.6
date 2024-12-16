@@ -1,96 +1,169 @@
-Return-Path: <linux-kernel+bounces-448153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4259F3C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5D39F3C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B5D164760
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3DA162B31
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE071DB53A;
-	Mon, 16 Dec 2024 20:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56F71DB958;
+	Mon, 16 Dec 2024 20:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ry74bAht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtGXR2Rn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FAC1D54D6;
-	Mon, 16 Dec 2024 20:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E53F1D54D6;
+	Mon, 16 Dec 2024 20:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734382660; cv=none; b=j875MrFSFHsD/aStX3cIC39Ks+wJVQC2lbKhUS46g/SsvdxVv46FHV4ICFIjn47ECU3Ee/9TJ2eND5Nn5DZ89Knjznq0PmUGG4hOrEKJ9RVjg2pp1/bVrNDA0rFbX5s6k6VxcktlypZavk4owNSsEfGIfUgyedu28yAYnbYPIqA=
+	t=1734382768; cv=none; b=GU/4B0zUj7PYuH3IHREEKb6CZrQyVJje9krLqOtrxpR+uqk7bdDNQsfPW0adT2KUPhnOkBbjXFk7ORH9pY124d8Iia7tduVfnvaSBURPfBSK9IKBe/AnOlRxNfOxpdrshPXPybYD6kboJxZP7HHvaAFXpXZXGtd2BEM/EvaWfiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734382660; c=relaxed/simple;
-	bh=dUCokILFAhe1TeQ8AP9BFXp7WcCOGZ9VoQeUHpvzSVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfuLFQ6HzjKS8eEks4GsGvn1EL0cP05sla7GFM3fPTgjE3MT4wuPSsxqwVER0utefkvTneK+KmSLA1iuSyEeKbiI6Dz79sTlwqiaI0cB8+X96nhfFMuiCHdadeg+rfaFvh1yRMFZKSVpElHyQ8bYqMRGZuYzdi+PtmnA5HVgIAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ry74bAht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79813C4CED0;
-	Mon, 16 Dec 2024 20:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734382659;
-	bh=dUCokILFAhe1TeQ8AP9BFXp7WcCOGZ9VoQeUHpvzSVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ry74bAht+j7Yb+3PLt9ikvHcUjFI/Rjq96N/KKb/4PjRcvJCCJEbWNEe0L4HZY2xU
-	 fIAwLehF3EgBLz5RvEybSN08cu6WQ+RnX0qA8eTFCl55Eo4pcuAzDETyoF7LUXpn2r
-	 hcXBuQYcHT0lNg81f49GHQyAdDBAl6TbBMtN6EOzTimXXiWudQ1XQfmby0FnXPzy+x
-	 C9EIR7+kRU+ABKboDqo1tui044995Csa5BaQxBeRUSICMz43wbpug6moFz7te7PG8L
-	 M0qtUgRXMG7WXlPLiHeRBCatW9WbEGb/xAWDaJnP7mOZSDcPJv90SNfR6TNuhkkSDB
-	 83UO7/cSSyZoA==
-Date: Mon, 16 Dec 2024 20:57:34 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
-	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 10/46] arm64/sysreg: Add register fields for MDSELR_EL1
-Message-ID: <9004e368-6e0d-4313-8ae7-62e3200697f7@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-11-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1734382768; c=relaxed/simple;
+	bh=cD5PM7OGDDTiHdvXQsHPGQgbA8luRKyaLq6yhmbNZUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AypXREInqFaz3neSPIuF5n2nb3dqeNpFidxLRzPeX7+Uv0xWHbYsJzIfRX2rRyINl/vHgSraBQGhotXMubuMxcaMnKW/Tfbzgrvr2Y3LNveAqt9J/3WXaZEeP7lmkPAL4qWx/GZlEAq9U1ICXqlSYTbF7tOZRGV13feYq1hztig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtGXR2Rn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2399330f8f.1;
+        Mon, 16 Dec 2024 12:59:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734382765; x=1734987565; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6g8Hes4zmmKkaO7fy47WaMEtflUT5zhFAF/15yb5xHw=;
+        b=QtGXR2RnpCDns4PHLZK0iGG5RtfaWWChtAXDHoBZrHzg2IzGXMY7nwHsStgmbWuYWt
+         GKELI1EYBU8CclVw16SvEfQmnc/ezF07yH3qn6Z2mgcisl5IicV6WeYdP073rc2tXn+1
+         hqY2zAWGqAAH1mLVgOHJQA4fNk5/YI+qoHFY/19zkygDuDYFroM+fF3gxmLL8ACcftBU
+         hAnY9KbfstTtvL2oNG2LTOCo6QA1r8wbqwRTJbKcK//rqqpw55mB93fw3KcD9IAq1otX
+         4OXyo4XdD53G4d71FE/txJcAxabdVf8o0EZMtUmAIPQ68bW01XgG9+VfKHqnG9KI+Gm+
+         nlRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734382765; x=1734987565;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6g8Hes4zmmKkaO7fy47WaMEtflUT5zhFAF/15yb5xHw=;
+        b=j6/C9VtbTRrztX5878beRpBmzHTVIyYSBifqVPj07nTKff6hUhtCUymx8YQLZ6a237
+         QbQdi+tXfWnKhY5ZOixZaSyaEumaFgKuNUA/jV3yigxB0e9AZoWxWa8xu3axwK4ajTur
+         nr76HTxSXdtjIgwAXG/7XKjnYGD+tWVmz0XLL+PW/KSujV4npY0bDXWYudhYHf4QT+xx
+         34qQUhv2UwzXdongDvNQdp2Enln1cLXECcoDLPb9Ps8nQMMi/pK01BsK51dlqrmyMNds
+         O2C4qTcCLU4QOEOgH2iL5W9NuIuMJa+FR7bbFt/rZOgrvk4DnUTp6NXV++pdBnqaaC/9
+         hrhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW59ySkXRSLANiM6Y4qtUjR2728mZiNFJ7MNYaQwlv4soWLFCSRGceAbG8pOvHqth08cyeY3fDEVpMRKfq0@vger.kernel.org, AJvYcCWCkbi8dFSbCUTbN8+Eom7EYigNv9YhblBMf/n619IfZnaeIkcp1ycRDHi5WYMLKS8OLqaqW3FvvY5pSmV1bP2yDsY=@vger.kernel.org, AJvYcCWdhmC6KnAwZIRrz/NN/lifJq8F6Y5H1fKZAYU1CGYQ8GV9w4MDqoqjQGrbuc2kY59ACxF5dBouC5/H@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBCF3iLxaLZmQxprcuOccb+UXYy7CjQKYAT5a7kgi/LjPt3Mvf
+	RbHR6G8V69JcI+/m/VNx/1sZMdlYbzDmU6nZX1p854TGOddaijpvfaIMUjtW
+X-Gm-Gg: ASbGncsxtkdnBobTf/lwF7QQiqJPc1zRhMFUk5W89GDhRVIynep50FdkVlwijs//U5V
+	fY/yChHI9C++7pEOJPjYOA0/LRZEU/sVNLSc8f2G6rpacF2OfIh1OZZ8FHA6vcmGQLbcsOu0ND3
+	m77lguBvJyZfuUX7U2kULz4aWC8WolAGsv2ks5FOTy7bTi2ZwK0Bwwuq9UY7SqBrUHCQk/XcLYT
+	AldICVi8yNi50XUy7o2ZlduGRcc0lbN7erO5Zkyz9nx/OoZ/xo/d2BnCpAH1HLhBEjW+kZhq2jM
+	2b2gFVoo9uYpacOA0kr5L5vuLTFqkr4EUxo=
+X-Google-Smtp-Source: AGHT+IE/0Wkla3cwdqnUeqQ2X/Luzdc4zJBTGrYgLR8XdM5elRTWNQcVFl4OcK4YhrAEI1OsqZGtlg==
+X-Received: by 2002:a05:6000:708:b0:386:3327:bf85 with SMTP id ffacd0b85a97d-3889ad337b0mr11100443f8f.53.1734382764411;
+        Mon, 16 Dec 2024 12:59:24 -0800 (PST)
+Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80470afsm9286956f8f.75.2024.12.16.12.59.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 12:59:24 -0800 (PST)
+Message-ID: <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
+Date: Mon, 16 Dec 2024 22:59:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iHVTl3Ik9oIY/II9"
-Content-Disposition: inline
-In-Reply-To: <20241210055311.780688-11-anshuman.khandual@arm.com>
-X-Cookie: Be different: conform.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
+ samsung,exynos8895-hsi2c compatible
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti
+ <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
+ <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 12/16/24 10:44, Krzysztof Kozlowski wrote:
+> On 14/12/2024 23:04, Ivaylo Ivanov wrote:
+>> Add samsung,exynos8895-hsi2c dedicated compatible for representing
+>> I2C of Exynos8895 SoC. Since there are I2C buses that aren't implemented
+>> as a part of USIv1 blocks, they only require a single clock.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  .../devicetree/bindings/i2c/i2c-exynos5.yaml  | 26 ++++++++++++++++---
+>>  1 file changed, 23 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>> index cc8bba553..b029be88e 100644
+>> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>> @@ -25,6 +25,7 @@ properties:
+>>            - samsung,exynos5250-hsi2c    # Exynos5250 and Exynos5420
+>>            - samsung,exynos5260-hsi2c    # Exynos5260
+>>            - samsung,exynos7-hsi2c       # Exynos7
+>> +          - samsung,exynos8895-hsi2c
+>>            - samsung,exynosautov9-hsi2c
+>>        - items:
+>>            - enum:
+>> @@ -94,9 +95,28 @@ allOf:
+>>          - clock-names
+>>  
+>>      else:
+>> -      properties:
+>> -        clocks:
+>> -          maxItems: 1
+>> +      if:
+>> +        properties:
+>> +          compatible:
+>> +            contains:
+>> +              enum:
+>> +                - samsung,exynos8895-hsi2c
+>> +
+>> +      then:
+>> +        properties:
+>> +          clocks:
+> Missing minItems
+>
+>> +            maxItems: 2
+>> +
+>> +          clock-names:
+> Ditto
+>
+>> +            maxItems: 2
+>> +
+>> +        required:
+>> +          - clock-names
+> I don't understand why do you need second, same branch in if, basically
 
---iHVTl3Ik9oIY/II9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Because, as I stated in the commit message, we have HSI2C controllers
+both implemented in USIv1 blocks and outside. These that are a part of
+USIv1 need 2 clocks, and those that aren't have only one. So it's not
+a duplicate for the previous - autov9 sets a minitems of 2 and the
+others have a maxitems of 1.
 
-On Tue, Dec 10, 2024 at 11:22:35AM +0530, Anshuman Khandual wrote:
-> This adds register fields for MDSELR_EL1 as per the definitions based
-> on DDI0601 2024-09.
+Best regards,
+Ivo
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+> duplicating previous. But regardless of that, no nesting of ifs. Define
+> clocks for all variants explicitly.
+>
+> Best regards,
+> Krzysztof
 
---iHVTl3Ik9oIY/II9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdglD0ACgkQJNaLcl1U
-h9AOFwf7BA2WfqloQj9HA2ADyHaPT54vh7gI/1Ca4P+RV6QXVNk8heRuDU4KGu/v
-R4G59TH4DzmpTitMKTuJRVfCbRGx9ye++8k6cRRcvoT2Zmj6u0HbdmP05MSGczl0
-d3D2VApNIWS0WJuSsyuq1AUZ5Wt0/mHnXr5nqQxVevGW41Fc+w37y0ccjOVsDjRE
-DoudrfrUL9Fx9pnwyt+kDsVYqzS2+zYawsDtCAagiesIqEI34AMCMhcYPLkICQ8G
-YuE76bqbaKQNBYaVQ8nhQy3mP4HzTOKtgIW5wHT0zMolTGW/HvUmRZF1Yq4N90ox
-JPWfTzzY9Ev15BDJiGuzmPHPttHM8A==
-=ObPL
------END PGP SIGNATURE-----
-
---iHVTl3Ik9oIY/II9--
 
