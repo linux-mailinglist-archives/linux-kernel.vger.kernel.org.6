@@ -1,116 +1,71 @@
-Return-Path: <linux-kernel+bounces-447655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7B89F35AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:19:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A769F35A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79B38188D58C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB3B162FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A482066EC;
-	Mon, 16 Dec 2024 16:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2232063E0;
+	Mon, 16 Dec 2024 16:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWRI19WO"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcYbxc4r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2D22066D1;
-	Mon, 16 Dec 2024 16:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FB014D6EB;
+	Mon, 16 Dec 2024 16:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734365653; cv=none; b=R0biebMCYHbUs0ve/sE3p+HUZIaRtzuolk+E5Rp35/YjzOIl81tj2dQ6l5X7b5hZfsWu320hm/6DXV7JSyl8wmwOdiKpaJEWefhq3BCMhpqjH3eqNM15rg60kHTdph7IVy0/jykDRcpDYGpzP7Nf5nE6J+htEjXIrHVQY6Insrk=
+	t=1734365645; cv=none; b=N9zC0PFvbmYuZ8igPrbAPg6rBWdeMLehq7bhV+ySYrUN2xtAYETPBYv6nDSkMaCSmxDGR5r19g/uIN058OrBt5M5ffq2SKLwjld8j+Kg/UCpuRzeeUciNXAV4i4ca4ZnDqoxkFnHxb0vh21RALRayTASl4y+9DxpYsnLWM/Y1WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734365653; c=relaxed/simple;
-	bh=Sn3chrE/m9+5fI4KxN090tU8mgWC4Aj8lyQMOoz6teM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u6XXWSVBPefUDH1jnLWPYRivJ7Dy33EJJ7Edi3xF8QWQsEpUYArYn+o88N6IF9VFEyTbP9JGhY4dmHnMp90Ucl8CADIU+p+hfxPlGSfeqq0anfO5XBAWxQ7451dDn74rlaEJ/dauE4ABXWSzskGv38Z/gPF0i4y14GeVDiA6z48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWRI19WO; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so7314329a12.1;
-        Mon, 16 Dec 2024 08:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734365650; x=1734970450; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZHJ2lOqPcI4uWgZuisuf6hiF/EJ4Ewdtymu38Ng39Fs=;
-        b=hWRI19WOvDHBJLOq6US846HUQfNvNvTYmuy8lYk9lJJ+DOMmOLh1QNRmCXVc1xeGp2
-         hhZ0wbV3/yodngnNeeds+8yPa+kd43XA4u2HbrKipPRjjsmDzeO2J9coA0p62F8QAy4I
-         2Pyi2gjhsIuxSvdMWayIc0vF544D/RswAo3cNta+BgTaPs0YM7/qo47dN0EFaVNNWeBo
-         JKxdOFjndP6CEj7uDg/Sad8shtxXKrZnpTVvdLetduUFybW//XNyHH8wdqQjHIyIYU8r
-         Lxd4xiz4LIxjj0Tco7RI80Xp2FTsZsny1voJiAbi2JScWf/vVUHFQsXbHY9q0zjQk0Vc
-         JEIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734365650; x=1734970450;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZHJ2lOqPcI4uWgZuisuf6hiF/EJ4Ewdtymu38Ng39Fs=;
-        b=Q+NP5qfU2eEwoUVTBh9G2beuvpgxU9wGSa5XS75O7Mvmj9tzQ66wWOT8uOgLDLM1OI
-         ptdv9cyyflTqJXBXdu77fpdsXZORxlHI5O4dfJgAehx1stMal8grAAzW2/eCMUtgQ+Sh
-         iDRuaGWdThXy4gzMLst4fshuf6YqYCRkmiQvewCNwOySG6dmTogSuY7iDDfhaQEl7SNn
-         ZcYQpIh/ruS5shtKpPna8uxMenibWe45jwRIrhK4U31VJrf/U+UhUn0McndW1a1cbrbp
-         xDq1D6xr2mA1gbwPOo1Z/ABJBl91mK5pgawLyuPDU/8uUnChaO/y45ZBISx5gClNJEWc
-         cIWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpm+L6aZbXEGhuw0domRXexmcacGr9LkmU2nX3WLY3oVJw+jd5uno4ADOv9ZepvAwKkafT3H7lBRtwRcTl@vger.kernel.org, AJvYcCWe/EKMoH6RYwdDRF1yPBQFvkfuKG0CLgqsNP+DuIPgU+btFiXlVBrSFFT0/AuPZzN4BWIxcqr0aXfrn6Q=@vger.kernel.org, AJvYcCX0dEUtHvLHIKDz9dVFzgz+9cLziMQ+sim9f9WH6+JBkarjR4nOSHDq5NJXiQrSHuI2lsHxaAvSMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy59TYO+NszgLlqJXBc7GGp8lxvY6LdDMsK5l7FbH/KFXOzxV52
-	GIKRBGCunO3SOWQYgifGKyXFFtqJ8hIwUZvbSRNgHbtKRWC0/B5EOUqV/JR6yXjOwwxF+xp2EBP
-	4QY2s3Y2E8Cmp1g1LrowoRGiTHJmx4Q==
-X-Gm-Gg: ASbGncsE3LXxaKlfaOblEy5mRImza0CM2msbqDhSLR5uMZOG4QAdsgJjX+QCXdOgOKm
-	TiLYFsdw94OpHPnR9FkXeI9dDFTScRQXL1+7t
-X-Google-Smtp-Source: AGHT+IGpUyDeh2IFWn704xO0ehU/HUo5hO1pZVdfXYwfm9voS07OecSnnJ41T38qduxnCKav2XsaiBT/Q8IVjk4NfGI=
-X-Received: by 2002:a05:6402:1914:b0:5d0:d91d:c195 with SMTP id
- 4fb4d7f45d1cf-5d63c42dd88mr11156129a12.32.1734365649482; Mon, 16 Dec 2024
- 08:14:09 -0800 (PST)
+	s=arc-20240116; t=1734365645; c=relaxed/simple;
+	bh=cSJ22Debhf9nuQXNk7DVXyxrXy76QvlwtjrA0/hy5ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1BdkYfYip4YFT5GbGFLSKuVq6p6up2nXKJjpzCsVT2bUYl89JjKO9GCDnV3/vGmVKUFQAoDkd3f2VrgLDwgrU6WMhpOdF2ioo6uFS4FdepIVB6eB9QSyslWPV0A9SeCUaWdPeLPrCNmy1Zx5sA4b5IM0TOmFqMUHfNQ4TXNeq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcYbxc4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CACC4CED4;
+	Mon, 16 Dec 2024 16:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734365645;
+	bh=cSJ22Debhf9nuQXNk7DVXyxrXy76QvlwtjrA0/hy5ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pcYbxc4rK+heeLnv8W1+ynvmGxAs4yr62bEfB0OVgC3zJX0EA0GLVZ0x6ygRowaNg
+	 umuv5l05LukmAKylAleoYPL/Tw5TBQ4dVDrYBq8pOlN9EjKk3kZW+i955Qm9HvORoJ
+	 nMrtLF1m6R7EfT95Y3HcQyu+DUw2hlyLksXkoQLXnEJdn/MAkyi0MSAW+QTqO2PBHe
+	 pJJPcXirwGRTC5co920pr+fllSThQUwkwx646MufMVUHgZZ0+s9A5QyNF4QASCDk52
+	 KhCSF9CanHa+vrjpEK/ls/0AWx+oTb1Z5N7hqWQ3QzqZOn+odXx+34dmxijHoxUYgu
+	 SIjeBXsA9mphw==
+Date: Mon, 16 Dec 2024 16:14:01 +0000
+From: Simon Horman <horms@kernel.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: jes@trained-monkey.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] hippi: Remove unused hippi_neigh_setup_dev
+Message-ID: <20241216161401.GG780307@kernel.org>
+References: <20241215022618.181756-1-linux@treblig.org>
+ <Z14-sYvgzEPZSTyR@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203121424.19887-1-mengferry@linux.alibaba.com> <Z2BNHWFWgLjEMiAn@infradead.org>
-In-Reply-To: <Z2BNHWFWgLjEMiAn@infradead.org>
-From: Stefan Hajnoczi <stefanha@gmail.com>
-Date: Mon, 16 Dec 2024 11:13:57 -0500
-Message-ID: <CAJSP0QXU_uNqL-9LmLRkDdPPSdUAGdesQ2DFuCMHnjyEuREvXQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
-To: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Ferry Meng <mengferry@linux.alibaba.com>, "Michael S . Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, linux-block@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z14-sYvgzEPZSTyR@gallifrey>
 
-On Mon, 16 Dec 2024 at 10:54, Christoph Hellwig <hch@infradead.org> wrote:
->
-> Hacking passthrough into virtio_blk seems like not very good layering.
-> If you have a use case where you want to use the core kernel virtio code
-> but not the protocol drivers we'll probably need a virtqueue passthrough
-> option of some kind.
+On Sun, Dec 15, 2024 at 02:28:01AM +0000, Dr. David Alan Gilbert wrote:
+> Note the hippi list address bounces:
+> 
+> <linux-hippi@sunsite.dk>:
+> Sorry, no mailbox here by that name. (#5.1.1)
 
-I think people are finding that submitting I/O via uring_cmd is faster
-than traditional io_uring. The use case isn't really passthrough, it's
-bypass :).
-
-That's why I asked Jens to weigh in on whether there is a generic
-block layer solution here. If uring_cmd is faster then maybe a generic
-uring_cmd I/O interface can be defined without tying applications to
-device-specific commands. Or maybe the traditional io_uring code path
-can be optimized so that bypass is no longer attractive.
-
-The virtio-level virtqueue passthrough idea is interesting for use
-cases that mix passthrough applications with non-passthrough
-applications. VFIO isn't enough because it prevents sharing and
-excludes non-passthrough applications. Something similar to  VDPA
-might be able to pass through just a subset of virtqueues that
-userspace could access via the vhost_vdpa driver. This approach
-doesn't scale if many applications are running at the same time
-because the number of virtqueues is finite and often the same as the
-number of CPUs.
-
-Stefan
+I suggest submitting a patch to MAINTAINERS to drop the that ML from there.
+In general, patches for MAINTAINERS can be targeted at net.
 
