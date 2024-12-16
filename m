@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-447473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8391E9F330D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67119F32FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E1516B7BC
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B778E18823D6
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA22063F3;
-	Mon, 16 Dec 2024 14:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A831C205ADE;
+	Mon, 16 Dec 2024 14:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="EKTQ5+0I"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTFUOHlW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94F52063D2;
-	Mon, 16 Dec 2024 14:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C5020629F;
+	Mon, 16 Dec 2024 14:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358729; cv=none; b=paWyWYblKZuKIDorOFVUNeX9SPPZ8U/CF3YT6bgWQtKZ9aQsl1nVVSAeQTvqaiVv9l025mUsHbDR4S4Q3NAQn/4V1etESIBbyMuJo89A8B+UX7LAOmq+xS0cWnfYsYlRmmUK+0AE3dl0xdxlgRU5n9idGmRLuU/dZzNBf4CE9oM=
+	t=1734358729; cv=none; b=HFDediiUxBQlW6tAHNk59Po3w8Osz/5j1bxClAiezSazs5yukOB266g9BMuS11GfEbNuuPOE3HyJ1zxF0uFf5NJ6DkdQ9xIFQWkDAUUJRIGMk5OOSy+uSlmP4DJEATDABfvLR4G5NS/OkjeTh9v/AapYMylJD45vDg13iBMZiPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734358729; c=relaxed/simple;
-	bh=PxrPr/Krj1U8XTgIJLipME3FysDYl/LFJ6QaZJvD214=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oCpP4Qfkxs6VkR22oVFWYHSBqX2iTFo3lQ4h0Kv65f1IwvdmuhM1PkUFvCwd0JSE57HnlnqaoMET0KCc0iLxNJ1Pce5+3K57DoSPT/T5XnOQjRfd1MtpJwDWdwBVvFpKi3+BOJBEtvzOAjdfGbhbFJTS3yTQGG2ZjWisRWVEcec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=EKTQ5+0I; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6eff5ad69a1so33083627b3.3;
-        Mon, 16 Dec 2024 06:18:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1734358727; x=1734963527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6B6xbMJ3heJG4U9cdD+cnJPtEtdixFqaU+BhqzcXQco=;
-        b=EKTQ5+0IHRyccaa3l9ba2bzBEjTNcqIEokVaId4oJcDFiGjMoWlymDkKDmWINXR9mC
-         MjU57+22USB2aag3efBA8ty7Tl20cZ7uKSmJbcJh7cZLHgNo5x9RpFRTbXgmloA0If66
-         ARifvEFhMn5c2EPNJ8vgVaeGVXHIEJOC34rmiBN7S0+vOzptGVfmo3CzBXcIMSihjoe0
-         9croGRceC6xYEan7FoWMXamHW1JYfQFio4JQdRvoUrURI2jCSHYwvx5NWHkf+Su4hDSw
-         nGfOVWIDowMgu1g44wkL0E7rA+qQWoZJER4mt7ylKeIABf3jiHOv1nI3DiHpPDyotzzJ
-         Akww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734358727; x=1734963527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6B6xbMJ3heJG4U9cdD+cnJPtEtdixFqaU+BhqzcXQco=;
-        b=Z8jA8vMrdhnjlIqzSNyW0DhsCAIeKlTMeGCnAnV+M8fgX5hWGrCSlax4cs/dg1IxEO
-         pRq/4EZ4O1nb/nAxHj4OB1HmjHly8dnffVrHd4FeZeb1wa0ShtwIKuruoT8dC7EQQOlI
-         HkfB/lJ91x+5pIyEQMvrNgqxRkhenRMJS3z6gNGNiy/dw1gb21CaIMe0xHaDqpP8kgoN
-         YuiuRig4GS9l2tyAEU+M+npY2TR4D7QPWlXhgqaar5T0L/e77Wg/6fg5WrcITeU8iu7b
-         0e2LKAkD/B8Or2EbGBJ+vOS4qza377dsplkp2DNqcckdicAnky0Osx6d9lXu+o45gMkw
-         mF9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFZhIInmm5Jh0jhOCSNQ7ty4QP2GoZElRJyDJ5LXOvaHNp/L8l0+P7Z6aCepdfxheJWXpOb/XQFg==@vger.kernel.org, AJvYcCXKxhAMqoPOxRk+iBhBlK7WBKpSPGTLdQjZo0bfeNLCYm5T83P0R4TbLaMVJL7+EMo/xk3hqLhxptx26+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdSg1o7i8ZX2v8j6ZvGlgjOMXnbiDqQYpKw4jUb0OxJgFhZAO8
-	JC37Y6hvBTDeC8+g9w8TX1J9DTlbu5wQaQWtbzsFMRS3515dSj9ZhSdFJR2ucE9uZmfowk1ZOYx
-	wmhy9HbmhlMYj7XjmggNzqJfPsnI=
-X-Gm-Gg: ASbGnctR/mE7OyJhx6ryUiuJlaDdL5rYSfIozz6gACjZ0ukSFiUE/iIvZLZIGUiYwy7
-	RvLMP9N5L8k12L3PMFlPcvg0bZJlcbm6eyMfA
-X-Google-Smtp-Source: AGHT+IE7O106teXGJgMuGx92iD9nbQNfIz/hXI//hj3qWeavajLtySdJCUp1biONYIUYbr8j2P9w55vT0Z/+jp/sZZo=
-X-Received: by 2002:a05:690c:6113:b0:6ef:a5bf:510b with SMTP id
- 00721157ae682-6f279ad838bmr109461637b3.1.1734358726938; Mon, 16 Dec 2024
- 06:18:46 -0800 (PST)
+	bh=r6E23SJ4NnZ0p4J6lfmWJy3886HYCKhaM5ebito097Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwIRlhNcx1YGfHrH2xkkFqG6gGTK718TFxMX9vAedUEVEr0vaNc5qkB2/3YyUKniZWdIcOtzWAj6scwsFGOYZuOAeJjxrSg+MbKSuNnGX9A33iSzElv6mTvySxFnJZcXpgt0GO/q2jbIr3B4ZmwXqqga90yVDJjKx0aKseYbXbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTFUOHlW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5631CC4CED7;
+	Mon, 16 Dec 2024 14:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734358728;
+	bh=r6E23SJ4NnZ0p4J6lfmWJy3886HYCKhaM5ebito097Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NTFUOHlWU9dh0laVfqTmC8ijE2UkEjvZVlVxgqpslvt8Zz3fLqFDZ2K0t2mYgylcH
+	 chBzA4IVhAjg1gnwmv2Wz036/a5CtySTl2dqMFYk4gldmv3D2UmzI8z67o8H0z+CNB
+	 xALkysus5ZvsIi1IkM2Dx40oyYI2X4j5wEcCBZYjV0jhlgiXeif+TfrrQ/ivSgSLmY
+	 zN9KaAZz+6VNQ7r1z+XSU1pfd0Y8O+DEPNo2XdxA1d6Sm5791Azc5GEM2T7MxemRmW
+	 fbEjXc17ZFqF+r2mcFv30/jdJi+cfqCjPQQ9iEd0k64aGsrQnDZLgOuCZPh85JoQQP
+	 Hc8XOm6nl4Sfg==
+Date: Mon, 16 Dec 2024 08:18:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for
+ gs101-pmu
+Message-ID: <20241216141846.GA71151-robh@kernel.org>
+References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
+ <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125110646.50799-1-cgoettsche@seltendoof.de>
- <e43da8418fc54a5eba7cdbb594b24bb9@paul-moore.com> <f7bfbf89d2ac4b929637bbb25f749c96@AcuMS.aculab.com>
- <CAHk-=wgraNfcOCZ4n_C+ircQkD_AhsPM-=z7snt+eLgE-6otkg@mail.gmail.com> <CAHC9VhSDfn5QgQsF9qq6-k67bQB_M6UZoLODDYs4qkwHcr4-gw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSDfn5QgQsF9qq6-k67bQB_M6UZoLODDYs4qkwHcr4-gw@mail.gmail.com>
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Mon, 16 Dec 2024 15:18:36 +0100
-Message-ID: <CAJ2a_DdBTwiu5cXzL+eojJzjTCT6CWSKASXiUYRXZSDKqztyXA@mail.gmail.com>
-Subject: Re: [PATCH] selinux: use native iterator types
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
 
-On Sat, 14 Dec 2024 at 23:48, Paul Moore <paul@paul-moore.com> wrote:
->
-> On Sat, Dec 14, 2024 at 4:10=E2=80=AFPM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Sat, 14 Dec 2024 at 13:08, David Laight <David.Laight@aculab.com> wr=
-ote:
-> > >
-> > > Isn't this an example of why -Wsign-compare is entirely stupid and is=
-n't enabled
-> > > in the normal kernel build?
-> >
-> > Yes. Please don't try to "fix" the warnings pointed out by that
-> > completely broken warning.
-> >
-> > I don't understand why some people seem to think "more warnings good".
-> >
-> > -Wsign-compare is actively detrimental, and causes people to write
-> > worse code (and often causes mindless type conversions that then
-> > result in actual real bugs).
+On Fri, Dec 13, 2024 at 04:44:39PM +0000, Peter Griffin wrote:
+> To avoid dtschema warnings allow google,gs101-pmu to have
+> two reg regions.
 
-I somehow like compiler warnings since for me they offload some trains
-of thought and let me concentrate more an the overall code structure.
-Also while not building the kernel with this warning, I like to enable
-it in the language server in my editor.
-And sometimes a warning can point at a real issue, see a65d9d1d893b
-("ima: uncover hidden variable in ima_match_rules()").
+It's not a "simple" syscon if you have 2 regions, so put it in its own 
+schema doc.
 
-> I'm not going to argue the usefulness of '-Wsign-compare' in a general
-> sense, but I will say that in my opinion the changes proposed by
-> Christian in this patch are correct and an improvement which is why I
-> merged the code.  If anyone has an objection to this particular path,
-> especially if you believe this introduces a bug, please let us know.
->
-> --
-> paul-moore.com
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> I don't really like this patch, but also didn't want to submit the series
+> with a dtschema warning ;-)
+> 
+> Possibly a better solution is when Robs patch
+> `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
+> 
+> gets updated with a v2, we could remove syscon compatible from
+> gs101.dtsi (an ABI issue). If I understood his patch correctly,
+> it would mean this yaml update would then no longer be required.
+
+Whether you can tolerate an ABI issue is up to you.
+
+Rob
 
