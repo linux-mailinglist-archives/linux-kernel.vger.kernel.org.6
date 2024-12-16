@@ -1,127 +1,212 @@
-Return-Path: <linux-kernel+bounces-448017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359D99F39E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:30:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130D79F39E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D6116D153
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341C4188BB2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33EB208978;
-	Mon, 16 Dec 2024 19:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D95209668;
+	Mon, 16 Dec 2024 19:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RceAWJ5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EPfp+f9Z"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2B0206F35;
-	Mon, 16 Dec 2024 19:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D22207DF4;
+	Mon, 16 Dec 2024 19:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377388; cv=none; b=lrZXCR3k5P+qQnnLRvRVfq4RuRB77HeRQ8TeAfA55kmJr0p7lU7tlEyL12lkg8TIafoOS7++0pY2pqP2sVchIikRtf9OndKuyNG6lNZwqKGg5TUbShAocq5+cCax0e0NxXxRqlttPCXx525j8f/6pyKgY9maM6cFj4gpACtDdHI=
+	t=1734377388; cv=none; b=h8h4BL/mGBlYgRqYj6BplM807PG+xayQxr/0YrKPzQwu8KCmP1kLtuLsVNBV31MvVro+lQHyQZDo+CoKs844upJUzkI3VvCjvA7rZKGsbfX+cqixnAgc9i1SWhaAm9LTXYom77xfGzKvHsdbMJ7PZlwmVVvES/G8J+b6XBEUHDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734377388; c=relaxed/simple;
-	bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Egll8SH6sb6nhRrDaioF27RGEvSzdQOM2+6jwbQTjM6CdkxBWAGLCOevGkBDPfZQMN6a/LNzIKPI9YYPuP0MKPfy1IsMM0cpWj87jKgZosMVB0gAuSFHXwN2QSMPDppSjy7SwHRM95eFgpmmAE4u9kDIgAWiUz6d9ETvFQTZzGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RceAWJ5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C88EC4CED0;
-	Mon, 16 Dec 2024 19:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734377387;
-	bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
-	h=From:Date:Subject:To:Cc:From;
-	b=RceAWJ5Q2b4cYp49HafjaGkvIF9zm69/z/2HLKc3IS9jz5zzn38GD+oTZSnh2IbYc
-	 jr+FOGAmx09yngJSQoX/EYvhpQNh9STzPtn0RqhJ/PSyAPPXLtlmHYXc7KdNDDUhAJ
-	 tcBc1lJv/sytueVF9aHmsvhJC06GcDzdMSuPfzI7yHeQQLR9nLWrKQto8qFTJhhAiF
-	 VQwcTGXNvF7V2nZOyYp+r1YhWaoAYRiJvOaOvGB92CEOa9edLORlo1EAslUr9y/KCC
-	 DCIw9DDaSLGIseq2rxT1fqdK9+Gsz1Ov0gw8UN1e9QvGgV7eqS2Ofxbxy08XEY0gm0
-	 T3kdVHQTcTJPw==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 16 Dec 2024 19:28:24 +0000
-Subject: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming
- unwritable
+	bh=h8qaNQWxciY7ClWqxrYiTTUhLaN4zKXcwmLTSM1HB+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TMrXz1hQGqsBrhtpu+QAJbdQXCgLlxbqU9KyqTmArOstKUicjAY8jKH81W0WL7RcvseCw0Hdi1LkCN/8OI/8Jb0+pPIzJNAiT9E3DSzWkeJiau5WfC/KySEWJ44yxfLvJOcmw3dmYkoIMObgD88R4BGNvQs3jw89/v3RGZ+sf9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EPfp+f9Z; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGE6Gnj011286;
+	Mon, 16 Dec 2024 19:29:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2P8mFH
+	wtitOPgTFCgxP0Y05pnjWJpATlTugFnwYeEEc=; b=EPfp+f9ZMh71Wbs77f5ZmH
+	vC1IC/9xyyvDD90uBsgZUQIQX0uhP25WaHw+z4PvzRdN4/k+0UC2YlSVTbJteYU0
+	w9FnXokEgmRg9WpFb3/Y6/8n/XzOlc05bRXJcTo5swtL1HSIxXsBq2/kuLPwKMkw
+	CX+dhiNKbpOG1wvLp025t87JipZi2nbv92OcFiw/+Qyya8QfRQ2iFY2wq0Kayhuo
+	6ISUmmHhpeA65Zi5bA3KBY3y9bw1q9mzIk662dVE/Pnk9e2qF6l593Ooszsg2mrQ
+	+oxQdO0mPtdiYwp5LpQKygDWqAyXKKhfoBpZCLoa0pWZkN+Gji3L9+s/51YrSkaw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jnp4hn10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:29:35 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGH50w2014320;
+	Mon, 16 Dec 2024 19:29:34 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqxyjus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:29:34 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGJTYWs53084488
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 19:29:34 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3042358052;
+	Mon, 16 Dec 2024 19:29:34 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CA21C5805D;
+	Mon, 16 Dec 2024 19:29:33 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Dec 2024 19:29:33 +0000 (GMT)
+Message-ID: <709d3abb-d94d-44fc-a730-054139b13188@linux.ibm.com>
+Date: Mon, 16 Dec 2024 14:29:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm/eventlog: Limit memory allocations for event logs
+ with excessive size
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andy Liang <andy.liang@hpe.com>,
+        Takashi Iwai <tiwai@suse.de>
+References: <20241210222608.598424-1-stefanb@linux.ibm.com>
+ <D6B49LBSZXN4.3V519030X0YCG@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <D6B49LBSZXN4.3V519030X0YCG@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFd/YGcC/x3MSQqAMAxA0atI1gZsndCriIvWRg3iQCMiiHc3u
- Pzw+A8IRSaBNnkg0sXC+6Zh0gSG2W0TIQdtsJktjDUVLteKLq5VgSPfKHQqQCccPJ+CjadAtvS
- 1Czno44ik7P93/ft+dELguG8AAAA=
-X-Change-ID: 20241216-kvm-arm64-fix-set-id-asidbits-9bede25b7ad3
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2077; i=broonie@kernel.org;
- h=from:subject:message-id; bh=zob8cBbXpNsaY9MTVMiTWopsdDQ7UbvHJyGMOED+hro=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnYH+o8aXSlFkq0JGBg1lM1VwGO+DbhuBYGgA0lSnu
- em750Y2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ2B/qAAKCRAk1otyXVSH0HySB/
- 9KXCZ0JRJ0FegaopfpAL6MwAVzZ47XDi1i0B4ODxl5pBgFCnLOSZOzxG1WNdAKaNxymgQOG9TyZNq+
- 7ReuXTGTiZspw2CqVdH3ypZNWzIgfkRzNg8hYx+nli6lddmcubxQE94D75DmMTJAAz+jZVraqxmSSs
- vlZxm1WG8s1gN5WfYEwkrsnxQkCsjDoRTlVKg4oVOs6X7Kc3ePbuvIwk1exGMWGZ8uHUaTab9+r5sl
- ej+WQt7MSuXLY2ymYH6oaITPjt+FJM0kDNg6k1J962MLyfQEMkpS3m2z36sGgVFlsspasqbgMStuif
- qk7g0Ba+4gaA/8CXKp9bQ91TfgI9K/
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DizIJ6cD1g-wiCUpkM5zi-ZKM6_Ey2KI
+X-Proofpoint-ORIG-GUID: DizIJ6cD1g-wiCUpkM5zi-ZKM6_Ey2KI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160161
 
-In commit 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits
-to be overridden") we made that bitfield in the ID registers unwritable
-however the change neglected to make the corresponding update to set_id_regs
-resulting in it failing:
 
-# ok 56 ID_AA64MMFR0_EL1_BIGEND
-# ==== Test Assertion Failure ====
-#   aarch64/set_id_regs.c:434: masks[idx] & ftr_bits[j].mask == ftr_bits[j].mask
-#   pid=5566 tid=5566 errno=22 - Invalid argument
-#      1	0x00000000004034a7: test_vm_ftr_id_regs at set_id_regs.c:434
-#      2	0x0000000000401b53: main at set_id_regs.c:684
-#      3	0x0000ffff8e6b7543: ?? ??:0
-#      4	0x0000ffff8e6b7617: ?? ??:0
-#      5	0x0000000000401e6f: _start at ??:?
-#   0 != 0xf0 (masks[idx] & ftr_bits[j].mask != ftr_bits[j].mask)
-not ok 8 selftests: kvm: set_id_regs # exit=254
 
-Remove ID_AA64MMFR1_EL1.ASIDBITS from the set of bitfields we test for
-writeability.
+On 12/13/24 10:51 PM, Jarkko Sakkinen wrote:
+> On Wed Dec 11, 2024 at 12:26 AM EET, Stefan Berger wrote:
+>> The TPM2 ACPI BIOS eventlog of a particular machine indicates that the
+>> length of the log is 4MB, even though the actual length of its useful data,
+>> when dumped, are only 69kb. To avoid allocating excessive amounts of memory
+>> for the event log, limit the size of any eventlog to 128kb. This should be
+>> sufficient memory and also not unnecessarily truncate event logs on any
+>> other machine.
+>>
+>> Reported-by: Andy Liang <andy.liang@hpe.com>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219495
+>> Cc: Takashi Iwai <tiwai@suse.de>
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   drivers/char/tpm/eventlog/acpi.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
+>> index 69533d0bfb51..701fd7d4cc28 100644
+>> --- a/drivers/char/tpm/eventlog/acpi.c
+>> +++ b/drivers/char/tpm/eventlog/acpi.c
+>> @@ -26,6 +26,8 @@
+>>   #include "../tpm.h"
+>>   #include "common.h"
+>>   
+>> +#define MAX_TPM_LOG_LEN		(128 * 1024)
+> 
+> Instead, to common.h:
+> 
+> /*
+>   * Cap the log size to the given number of bytes. Applied to the TPM2
+>   * ACPI logs.
+>   */
+> #define TPM_MAX_LOG_SIZE (128 * 1024)
 
-Fixes: 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 1 -
- 1 file changed, 1 deletion(-)
+Done.
 
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index a79b7f18452d2ec336ae623b8aa5c9cf329b6b4e..3a97c160b5fec990aaf8dfaf100a907b913f057c 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -152,7 +152,6 @@ static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGENDEL0, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, SNSMEM, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, BIGEND, 0),
--	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ASIDBITS, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, PARANGE, 0),
- 	REG_FTR_END,
- };
+> 
+>>
+>> +
+>>   struct acpi_tcpa {
+>>   	struct acpi_table_header hdr;
+>>   	u16 platform_class;
+>> @@ -135,6 +137,12 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+>>   		return -EIO;
+>>   	}
+>>   
+>> +	if (len > MAX_TPM_LOG_LEN) {
+>> +		dev_warn(&chip->dev, "Excessive TCPA log len %llu truncated to %u bytes\n",
+>> +			 len, MAX_TPM_LOG_LEN);
+>> +		len = MAX_TPM_LOG_LEN;
+>> +	}
+> 
+> First, you are changing also TPM1 code path. Also in the case of
 
----
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-change-id: 20241216-kvm-arm64-fix-set-id-asidbits-9bede25b7ad3
+Ok, let's move it into the TPM2 code path then.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> TPM2 code path the log message is incorrect as TCPA does not exist.
+> 
+> Second, this does not make sense as the log ends up to be corrupted
+> (i.e. not complete).
+
+Truncating the log is something I am trying to prevent by giving it a 
+generous size of 128 kb:
+"To avoid allocating excessive amounts of memory
+for the event log, limit the size of any eventlog to 128kb. This should be
+sufficient memory and also not unnecessarily truncate event logs on any
+other machine."
+
+The 8MB the machine with the faulty BIOS indicates are holding 69kb of 
+log data at the beginning and then unnecessary data after that. So 
+truncating this one to 128kb doesn't affect the 69kb at the beginning.
+
+> 
+> Instead, in the TPM2 code path:
+> 
+> 		start = tpm2_phy->log_area_start_address;
+> 		if (!start || !len) {
+> 			acpi_put_table((struct acpi_table_header *)tbl);
+> 			return -ENODEV;
+> 		}
+> 
+> 		if (len > TPM_MAX_LOG_SIZE) {
+> 			dev_warn(&chip->dev, "Excessive TPM2 log size of %llu bytes (> %u)\n",
+> 				 len, MAX_TPM_LOG_LEN);
+> 			log->bios_event_log = start;
+> 			chip->flags |= TPM_CHIP_FLAG_TPM2_ACPI;
+> 			return 0;
+> 		}
+> 
+> This can then be used in tpm2.c to create a "slow path" in tpm2.c for
+> parsing TPM2 ACPI log directly by mapping IO memory.
+
+I thought the problem when getting request for 8MB is the code a bit 
+further below from here that cannot allocated the 8MB.
+
+  	/* malloc EventLog space */
+  	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
+  	if (!log->bios_event_log)
+
+
+
+
+
+> 
+> BR, Jarkko
 
 
