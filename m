@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-447879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F159F3841
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB04B9F3846
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:03:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD64818842A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E251893D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A8E206F27;
-	Mon, 16 Dec 2024 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3980F20C47F;
+	Mon, 16 Dec 2024 17:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2gxsCuUD"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gl2EJSpR"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCF420B7EC
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C00920C00F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371899; cv=none; b=sIBarygE+nUAHjmYAOYDMIghYCC/VCF2yAGwUrxuAQFl4oJ2DDAVuB8HV1b5DLqFHYNmL/vx0rgqwhAYtfGmS5zL3gKGCqs/kdqPAqxHR/bxUOLPRGt48KZsy54ZNzd8Lc/2j3aBFOXanvxg57boO9B4y8fwqiC1cZwXCWFs9io=
+	t=1734371901; cv=none; b=r9JhDrO+bQQii+wNKwlwoSTbA4PQmnc6Mb/sstlfRjmktV92bRXuAT9mbWnbHgamPNueEGKvhJYEIybBw/F3H9UaerWTvwzdJIqTvtf/6TCczGifQC5kt1J/hYVw8aptkdHPQMGYh+JplTcow0mbm9ybDUlmVY30A/GLJK7ZR3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371899; c=relaxed/simple;
-	bh=Es7cr26j70mP+64KpnhVcXIimoA87KfgbKi9ahJYCeU=;
+	s=arc-20240116; t=1734371901; c=relaxed/simple;
+	bh=Pu9tKXL90m4hHLgJh+PJUU+2uRo8c/dROvim4hY2yzA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XxYSVSKF8qciICnIZdEkKZqvrvT2lvgBjovCuuncQ3O9UDSqyPdlNoMxqQdR+ZHggubb2t6QJo47/8Kt8M8HW/cc80wGtoQYwSbRH7/ALAjMLQlMPgPthJbri7qEX9ZV7orDJZPwbqG5XiHfwp8au3u67YMwXhE9s/YPSa6kzLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2gxsCuUD; arc=none smtp.client-ip=209.85.208.73
+	 To:Cc:Content-Type; b=d0vpymEVmva7kMv5CkvxJ91FyC52lp1xhLcZS2eW3sOPZ16f2f3AxXnjk7lidCkC6CfjB6CsK4TVsT+GJSWaag/t+NLoRvDz7tO9ZBp4ngLjcF8pVr0qVoByjJikVIcsVuzZS0ZQ2e2wcqTax4mZQtsfXyA8/418H1pEeJA+m/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gl2EJSpR; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5d3fe991854so4648270a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:58:17 -0800 (PST)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5d3c284eba0so6275565a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734371896; x=1734976696; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734371898; x=1734976698; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dMBJ8qv477+/KhCtyqixNk1hTPuipFTJvx4sNjSPhX0=;
-        b=2gxsCuUDtOleiNFkCdcuiNTD8JyhGEAV4h430hdCbO8GuWXR45pfhlKz6YC6x+Zlin
-         3AxuzB5uLHnwL31Ny8fRDOO/0o6u4HS5QvGgnXu2hDCwfAK7G61ew/+Dpd9VbtJjJbyf
-         fMYgDACSUdjdIrpHbhyKRakCNSlkZwiXiKcxYr4MkFauVSs5RagYfmhxgOfYkHpmaXdV
-         cU1UhybHzoi+UoLabAUWHOKdb4efM438noxgz2Tk3u7jsmwQT1OGlJI4TwGoHpnEqeJp
-         3OBX3XhTpT0YkXdzzoig0KepK3vEbniaeYZI9//pBQStUj29TFDac0tTvGquDaGEZUxk
-         gh9A==
+        bh=6dFW7RUrUetXxVFNK2ULy2Fjq1gVFLFzwOzuHDurHwY=;
+        b=gl2EJSpROTNrWJWhBIOLCi3ZxZJL5mWLRPukobL/iXk8bhkADlhL+AF/KMjZX+8zi8
+         8F87qbQbOEeLoj2TIhOFlh42qt6YVUbUguKTqHKZyemuIDEojSYVBomr2Xb5oCM21ufQ
+         FBG9EHE0mw6MnxIw1H+Y9cnvtvEaINsecJwvfWLc8K5rEDwkqGh6ZtgnXeTfogPRvUrR
+         UfHBhzixkZBaPPNn6HA9R1EtY0AfIiyhP1dH+ynS0OPRPQMVxJUkbQvSKLnymdYyeXc4
+         MDPA4IrU5ykKEUNoslC0ho96qAD+1NtRjKaQ4Yt8SAdGwu6dB5g0bMn8WuBXwrfiDe0j
+         YvMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734371896; x=1734976696;
+        d=1e100.net; s=20230601; t=1734371898; x=1734976698;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dMBJ8qv477+/KhCtyqixNk1hTPuipFTJvx4sNjSPhX0=;
-        b=UhDaXbU5En/xyTp8cNoHPrClzA/fbydAL6llFkVNb66ijyZ6exnhj5q/j1d1l9aUWj
-         LrypdCecZNIHJUq3pvr5eZ/DqM26ufNboUD5OfoRGQUpxRAXlpV9B8o22XAyc+wOO59i
-         +gBrhWdBEZKtbrdXfesp67ht9eNxTsQbLHEXQMkBlHcFQBe3yIrt8RXsBUEkmegcdyo7
-         887yYFvo09OPUonghmjpQTqzCksc1EwhBBqGDQgYRKIO1OuVYI28pLcf+rNgJwvfrUB5
-         HWQ7XcwQ/xgrmhjEXlwh7aVY/0so1aUWsntM20WqvA+3kS3hXzjFjXfhWk7brvQSKjSv
-         vOqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKetfbUJLjFJCN/3bYX5r1tdcVwgmeV/vMwdM3jUODILciu04CRNoAG0wlTfcCnvPhq6l0/Qm9RBKAbIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo30Kk1BhSBplFWzn2SxIIXsPw3jgI3miRBf0Dg+FR27il7sdI
-	BSnomMloi1kG6IEI8MWelbTaU/BgU1KzSfIuSg6L2vH8muAKlXG0YNgfR/1eXvBj324a5v+G0bW
-	SoohNdw==
-X-Google-Smtp-Source: AGHT+IG78GpSrIyP8EQZsymolUELoZAfYkZfqZ5uAr74kYA6Of93xC43jJPtt/eSfM7J/zSOVAI94LqFwgRU
-X-Received: from edber15.prod.google.com ([2002:a05:6402:448f:b0:5d6:3c96:bb82])
- (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:2695:b0:5cf:e71c:ff88
- with SMTP id 4fb4d7f45d1cf-5d7d4053910mr586302a12.4.1734371895963; Mon, 16
- Dec 2024 09:58:15 -0800 (PST)
-Date: Mon, 16 Dec 2024 17:57:50 +0000
+        bh=6dFW7RUrUetXxVFNK2ULy2Fjq1gVFLFzwOzuHDurHwY=;
+        b=A0SPzNgfc/u2hn2kB9kX3vEPzZjqbB4fQKJA8YAojzShj5ug5L5IjPO8Nb/kK3AZZj
+         aIAyQ9g3pA1JQDnppG4Q5ZYdHHEsNCv0v8URq3QAaKkr4aTJxxqTcd4WE1MKTi82uPWn
+         3JVeLKpP3BqqMI9fDOe+FDF71/nmJ8iNCl08X9C1nYctsFQA65Otbn4ywLZjT7t+2sXh
+         KSglBJ6qdwmFOuhmC5LQs1IG4f/lZgVZ888fFMKbvtrJQpxGWJiPHBs9KbzIyfCg1B9A
+         KDjiLZaQ/xYrdOjoJ6HtMcqZ/YGyYJpPweXHDh3ryUu7204SSHqqgGE6Scl7kISNnZe2
+         mlGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnWUXs0JGchbKqvN/oH46NdG1mBZ80SxJRRaheNi/P3dl1cY6OlsKnNJXcchtoRyYYUQ3uV2t5b24zFLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZie48Se8SOFkCTXwi8COZ7WQHRL/fmWXjr57zjxWT9/QR3nUI
+	WRwYm3k7cQsO6CZeIs7H+k8S3UVGVCgsCTs9+WJopLMhA4uMw9pmN8j2p0goIBXe7PMNMU38Cy7
+	Zw8MWVQ==
+X-Google-Smtp-Source: AGHT+IGc0SKdQx4fRg/2UZZOEnFM7Ob6WE6YJF9bkeGHxvuSwv02bVDmCemOOlGDIUPuD02qJQBB9v2MqSc7
+X-Received: from edxk18.prod.google.com ([2002:a05:6402:12d2:b0:5d0:2300:5be])
+ (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:3551:b0:5d0:d84c:abb3
+ with SMTP id 4fb4d7f45d1cf-5d63c3b1c3bmr12340959a12.26.1734371898142; Mon, 16
+ Dec 2024 09:58:18 -0800 (PST)
+Date: Mon, 16 Dec 2024 17:57:51 +0000
 In-Reply-To: <20241216175803.2716565-1-qperret@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241216175803.2716565-1-qperret@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241216175803.2716565-6-qperret@google.com>
-Subject: [PATCH v3 05/18] KVM: arm64: Pass walk flags to kvm_pgtable_stage2_mkyoung
+Message-ID: <20241216175803.2716565-7-qperret@google.com>
+Subject: [PATCH v3 06/18] KVM: arm64: Pass walk flags to kvm_pgtable_stage2_relax_perms
 From: Quentin Perret <qperret@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -85,81 +85,92 @@ Cc: Fuad Tabba <tabba@google.com>, Vincent Donnefort <vdonnefort@google.com>,
 	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-kvm_pgtable_stage2_mkyoung currently assumes that it is being called
-from a 'shared' walker, which will not be true once called from pKVM.
-To allow for the re-use of that function, make the walk flags one of
-its parameters.
+kvm_pgtable_stage2_relax_perms currently assumes that it is being called
+from a 'shared' walker, which will not be true once called from pKVM. To
+allow for the re-use of that function, make the walk flags one of its
+parameters.
 
 Signed-off-by: Quentin Perret <qperret@google.com>
 ---
  arch/arm64/include/asm/kvm_pgtable.h | 4 +++-
- arch/arm64/kvm/hyp/pgtable.c         | 7 +++----
- arch/arm64/kvm/mmu.c                 | 3 ++-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+ arch/arm64/kvm/hyp/pgtable.c         | 6 ++----
+ arch/arm64/kvm/mmu.c                 | 7 +++----
+ 3 files changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-index aab04097b505..38b7ec1c8614 100644
+index 38b7ec1c8614..c2f4149283ef 100644
 --- a/arch/arm64/include/asm/kvm_pgtable.h
 +++ b/arch/arm64/include/asm/kvm_pgtable.h
-@@ -669,13 +669,15 @@ int kvm_pgtable_stage2_wrprotect(struct kvm_pgtable *pgt, u64 addr, u64 size);
-  * kvm_pgtable_stage2_mkyoung() - Set the access flag in a page-table entry.
+@@ -707,6 +707,7 @@ bool kvm_pgtable_stage2_test_clear_young(struct kvm_pgtable *pgt, u64 addr,
   * @pgt:	Page-table structure initialised by kvm_pgtable_stage2_init*().
   * @addr:	Intermediate physical address to identify the page-table entry.
+  * @prot:	Additional permissions to grant for the mapping.
 + * @flags:	Flags to control the page-table walk (ex. a shared walk)
   *
   * The offset of @addr within a page is ignored.
   *
-  * If there is a valid, leaf page-table entry used to translate @addr, then
-  * set the access flag in that entry.
+@@ -719,7 +720,8 @@ bool kvm_pgtable_stage2_test_clear_young(struct kvm_pgtable *pgt, u64 addr,
+  * Return: 0 on success, negative error code on failure.
   */
--void kvm_pgtable_stage2_mkyoung(struct kvm_pgtable *pgt, u64 addr);
-+void kvm_pgtable_stage2_mkyoung(struct kvm_pgtable *pgt, u64 addr,
-+				enum kvm_pgtable_walk_flags flags);
+ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+-				   enum kvm_pgtable_prot prot);
++				   enum kvm_pgtable_prot prot,
++				   enum kvm_pgtable_walk_flags flags);
  
  /**
-  * kvm_pgtable_stage2_test_clear_young() - Test and optionally clear the access
+  * kvm_pgtable_stage2_flush_range() - Clean and invalidate data cache to Point
 diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index 40bd55966540..0470aedb4bf4 100644
+index 0470aedb4bf4..b7a3b5363235 100644
 --- a/arch/arm64/kvm/hyp/pgtable.c
 +++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -1245,14 +1245,13 @@ int kvm_pgtable_stage2_wrprotect(struct kvm_pgtable *pgt, u64 addr, u64 size)
- 					NULL, NULL, 0);
+@@ -1307,7 +1307,7 @@ bool kvm_pgtable_stage2_test_clear_young(struct kvm_pgtable *pgt, u64 addr,
  }
  
--void kvm_pgtable_stage2_mkyoung(struct kvm_pgtable *pgt, u64 addr)
-+void kvm_pgtable_stage2_mkyoung(struct kvm_pgtable *pgt, u64 addr,
-+				enum kvm_pgtable_walk_flags flags)
+ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+-				   enum kvm_pgtable_prot prot)
++				   enum kvm_pgtable_prot prot, enum kvm_pgtable_walk_flags flags)
  {
  	int ret;
+ 	s8 level;
+@@ -1325,9 +1325,7 @@ int kvm_pgtable_stage2_relax_perms(struct kvm_pgtable *pgt, u64 addr,
+ 	if (prot & KVM_PGTABLE_PROT_X)
+ 		clr |= KVM_PTE_LEAF_ATTR_HI_S2_XN;
  
- 	ret = stage2_update_leaf_attrs(pgt, addr, 1, KVM_PTE_LEAF_ATTR_LO_S2_AF, 0,
--				       NULL, NULL,
+-	ret = stage2_update_leaf_attrs(pgt, addr, 1, set, clr, NULL, &level,
 -				       KVM_PGTABLE_WALK_HANDLE_FAULT |
 -				       KVM_PGTABLE_WALK_SHARED);
-+				       NULL, NULL, flags);
- 	if (!ret)
- 		dsb(ishst);
- }
++	ret = stage2_update_leaf_attrs(pgt, addr, 1, set, clr, NULL, &level, flags);
+ 	if (!ret || ret == -EAGAIN)
+ 		kvm_call_hyp(__kvm_tlb_flush_vmid_ipa_nsh, pgt->mmu, addr, level);
+ 	return ret;
 diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index c9d46ad57e52..a2339b76c826 100644
+index a2339b76c826..641e4fec1659 100644
 --- a/arch/arm64/kvm/mmu.c
 +++ b/arch/arm64/kvm/mmu.c
-@@ -1718,13 +1718,14 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- /* Resolve the access fault by making the page young again. */
- static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
- {
+@@ -1452,6 +1452,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	enum kvm_pgtable_prot prot = KVM_PGTABLE_PROT_R;
+ 	struct kvm_pgtable *pgt;
+ 	struct page *page;
 +	enum kvm_pgtable_walk_flags flags = KVM_PGTABLE_WALK_HANDLE_FAULT | KVM_PGTABLE_WALK_SHARED;
- 	struct kvm_s2_mmu *mmu;
  
- 	trace_kvm_access_fault(fault_ipa);
+ 	if (fault_is_perm)
+ 		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
+@@ -1695,13 +1696,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		 * PTE, which will be preserved.
+ 		 */
+ 		prot &= ~KVM_NV_GUEST_MAP_SZ;
+-		ret = kvm_pgtable_stage2_relax_perms(pgt, fault_ipa, prot);
++		ret = kvm_pgtable_stage2_relax_perms(pgt, fault_ipa, prot, flags);
+ 	} else {
+ 		ret = kvm_pgtable_stage2_map(pgt, fault_ipa, vma_pagesize,
+ 					     __pfn_to_phys(pfn), prot,
+-					     memcache,
+-					     KVM_PGTABLE_WALK_HANDLE_FAULT |
+-					     KVM_PGTABLE_WALK_SHARED);
++					     memcache, flags);
+ 	}
  
- 	read_lock(&vcpu->kvm->mmu_lock);
- 	mmu = vcpu->arch.hw_mmu;
--	kvm_pgtable_stage2_mkyoung(mmu->pgt, fault_ipa);
-+	kvm_pgtable_stage2_mkyoung(mmu->pgt, fault_ipa, flags);
- 	read_unlock(&vcpu->kvm->mmu_lock);
- }
- 
+ out_unlock:
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
