@@ -1,84 +1,208 @@
-Return-Path: <linux-kernel+bounces-446968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863E49F2B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2779F2B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE355188A7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F6418836F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AC71FF615;
-	Mon, 16 Dec 2024 08:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438141FF7C0;
+	Mon, 16 Dec 2024 08:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OfUN9qq8"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ycsasqec"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A70171BB
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CF01CEAD5;
+	Mon, 16 Dec 2024 08:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734336420; cv=none; b=R1t+98yDPIXtdFxEuhtwSLDbfTjBnY98EFwNoYbMGbUUcxP4OVC7sTSR6ew+UWdHT9H9BCXyY7UpoU7a1oFIUC5m+1A1BqCV0/bYb90lyen6LmHJH2pAXqo7STaUpg8a8Jzpg/1K1ZG3Bcipe33fnUqupBFIUMzju6qv12IVNUQ=
+	t=1734336509; cv=none; b=e/qwihzqLvvNU/WKkFODUBdQ40CSmJBXIR1bhkmGRB7knGfc8mQFIuPeOl/xTshcu4RGEWTbtzcbgDeJqTrhP0PwJHaCaC0B3dgkoUCn8WNnh4bG++GNN8S1UKoV0lSc5KcqfZfYD0XeYX69kU0xhY/gBzq39i+yUGe25/GtgQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734336420; c=relaxed/simple;
-	bh=1OaS7UcTEA33TtpVR8+/noQ7tU4MtIpesSF97Z2/8tk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dHrDj4iJ6FlxPjBesn+8OEI7GfmysaZR5CmN27SVEL0p5/Iefscxudq75ZgqnieZiuwHRXBGBglpHd2Qv9TV4Q3jTuSt9WMp9/jGeWlntT4S/DlzMYqyHkP27VwkY9Dhxsy4b9VqcxK9PU2We/1DPmf0AStIyB5WNGBIwY75i8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OfUN9qq8; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ykA8HuFeO2n9T33KOENfQTgct9xH6AMqa65lfTAavAs=; b=OfUN9qq8QBMIKqzkSTNA6oo+1w
-	nyIpksqusAh8oyE7v1ko9vZ54cD4+HGcKA8JGaESkRP8ra9XuRRQW+H1sFc+Hp3EH7vJJnPrrF8L0
-	1KO872C3v0n5Tcb7NFZSLH72RlzlU9ncumD+pKzRPIH16b2eK0JnOg1Qq+MVrTYfOjIpxr5NRiF6M
-	ERCqI6ro/T9y/+RltH5UURIuw++KlPvzuHv8PxK/xt1FaoRC61Ljc8M197JbMhwwG2z54rp5eTeWC
-	aW/npIjztmeG0Ppmo+Evw9djr8vzmIJWhxNE4S/cv9K9dThR2myxXBuepZirty5G+9k4r1xqJripN
-	N1PE6M/Q==;
-Received: from i5e86190a.versanet.de ([94.134.25.10] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tN67y-0002wV-1N; Mon, 16 Dec 2024 09:06:54 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: kishon@kernel.org, linux-phy@lists.infradead.org, vkoul@kernel.org,
- Andy Yan <andyshrk@163.com>
-Cc: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- kever.yang@rock-chips.com, sebastian.reichel@collabora.com,
- Andy Yan <andy.yan@rock-chips.com>
-Subject:
- Re: [PATCH] phy: rockchip: phy-rockchip-typec: Fix Copyright description
-Date: Mon, 16 Dec 2024 09:06:53 +0100
-Message-ID: <1813498.VLH7GnMWUR@diego>
-In-Reply-To: <20241215092441.3447155-1-andyshrk@163.com>
-References: <20241215092441.3447155-1-andyshrk@163.com>
+	s=arc-20240116; t=1734336509; c=relaxed/simple;
+	bh=vKRg9IvjfK+czGohhlnN+R6sJwilUcCYTWCQQeDkfgY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3xl7Sj9bg4/GTNKx0mL9pvIJELhZd7tV+qw8Ao4qE+P0Vjcco16sQcvpiRx7L4kkmcyKog6+FpNe619aGCjF0+0emEa8IVD1b1OfFx7mgzS6tm5pw2HcPBAbGvBekS4AtK8WZ/vM0nHtefrGixOlEwzDItd702d6XRosbpNpV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ycsasqec; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG70dj2009305;
+	Mon, 16 Dec 2024 08:08:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZXXxk4rz1MSk4Nse1rMuOF
+	VjQQ+tODMhIlyfIHY/zUk=; b=YcsasqecQmGOw7t/saWssRQq62BWhW1VJ5lBEc
+	F49tHvzjKr//LEKIQF3fgn6EPQ4py+2Dxy5XnRZ2oMe+YRuXU6zPuis1ZdJ/yEzj
+	nWtVMgmdkYelIff5PgOyfRvI/GD13sgSM1SiWIobTtMAY9ZKM/Q7XfNOZsOTKapA
+	6Es4MEUaXtferPOOGLwGxqMDFGv6ajg9mq+mrJ4uhWIZVAMR2coJKicjTekj1efI
+	SosDDjLfAtyjzemNXArvbcwd+UuomEpguBkRLP90SgjjvYpAG93L2Y3cwYRCUSGa
+	nFRxJM8DO7H69Y35Zqig+tDSjaJfhHUvYh/mSlQYWMeRwI6w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jfemg5ur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 08:08:17 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BG88HVs019279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 08:08:17 GMT
+Received: from chejiang-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 16 Dec 2024 00:08:13 -0800
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg
+	<johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: Simon Horman <horms@kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
+        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <quic_mohamull@quicinc.com>
+Subject: [PATCH v1] Bluetooth: hci_sync: Fix disconnect complete event timeout issue
+Date: Mon, 16 Dec 2024 16:07:58 +0800
+Message-ID: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3GikgXpARt62adh3mqDkazdpc5kVy8Oz
+X-Proofpoint-ORIG-GUID: 3GikgXpARt62adh3mqDkazdpc5kVy8Oz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ mlxscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160066
 
-Am Sonntag, 15. Dezember 2024, 10:24:40 CET schrieb Andy Yan:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> The company name has update to Rockchip Electronics Co., Ltd.
-> since 2021.
-> And change Co.Ltd to Co., Ltd. to fix mail server warning:
-> DBL_SPAM(6.50)[co.ltd:url];
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Sometimes, the remote device doesn't acknowledge the LL_TERMINATE_IND
+in time, requiring the controller to wait for the supervision timeout,
+which may exceed 2 seconds. In the current implementation, the
+HCI_EV_DISCONN_COMPLETE event is ignored if it arrives late, since
+the hci_abort_conn_sync has cleaned up the connection after 2 seconds.
+This causes the mgmt to get stuck, resulting in bluetoothd waiting
+indefinitely for the mgmt response to the disconnect. To recover,
+restarting bluetoothd is necessary.
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+bluetoothctl log like this:
+[Designer Mouse]# disconnect D9:B5:6C:F2:51:91
+Attempting to disconnect from D9:B5:6C:F2:51:91
+[Designer Mouse]#
+[Designer Mouse]# power off
+[Designer Mouse]#
+Failed to set power off: org.freedesktop.DBus.Error.NoReply.
 
+Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+---
+ include/net/bluetooth/hci_core.h |  2 ++
+ net/bluetooth/hci_conn.c         |  9 +++++++++
+ net/bluetooth/hci_event.c        |  9 +++++++++
+ net/bluetooth/hci_sync.c         | 18 ++++++++++++++++++
+ 4 files changed, 38 insertions(+)
+
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 734cd50cd..2ab079dcf 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -753,6 +753,8 @@ struct hci_conn {
+ 
+ 	struct bt_codec codec;
+ 
++	struct completion disc_ev_comp;
++
+ 	void (*connect_cfm_cb)	(struct hci_conn *conn, u8 status);
+ 	void (*security_cfm_cb)	(struct hci_conn *conn, u8 status);
+ 	void (*disconn_cfm_cb)	(struct hci_conn *conn, u8 reason);
+diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
+index d097e308a..e0244e191 100644
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1028,6 +1028,15 @@ static struct hci_conn *__hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t
+ 
+ 	hci_conn_init_sysfs(conn);
+ 
++	/* This disc_ev_comp is inited when we send a disconnect request to
++	 * the remote device but fail to receive the disconnect complete
++	 * event within the expected time (2 seconds). This occurs because
++	 * the remote device doesn't ack the terminate indication, forcing
++	 * the controller to wait for the supervision timeout.
++	 */
++	init_completion(&conn->disc_ev_comp);
++	complete(&conn->disc_ev_comp);
++
+ 	return conn;
+ }
+ 
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 2cc7a9306..60ecb2b18 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -3366,6 +3366,15 @@ static void hci_disconn_complete_evt(struct hci_dev *hdev, void *data,
+ 	if (!conn)
+ 		goto unlock;
+ 
++	/* Wake up disc_ev_comp here is ok. Since we hold the hdev lock
++	 * hci_abort_conn_sync will wait hdev lock release to continue.
++	 */
++	if (!completion_done(&conn->disc_ev_comp)) {
++		complete(&conn->disc_ev_comp);
++		/* Add some delay for hci_abort_conn_sync to handle the complete */
++		usleep_range(100, 1000);
++	}
++
+ 	if (ev->status) {
+ 		mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
+ 				       conn->dst_type, ev->status);
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 0badec712..783d04b57 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -5590,6 +5590,24 @@ int hci_abort_conn_sync(struct hci_dev *hdev, struct hci_conn *conn, u8 reason)
+ 		break;
+ 	}
+ 
++	/* Check whether the connection is successfully disconnected.
++	 * Sometimes the remote device doesn't acknowledge the
++	 * LL_TERMINATE_IND in time, requiring the controller to wait
++	 * for the supervision timeout, which may exceed 2 seconds. In
++	 * this case, we need to wait for the HCI_EV_DISCONN_COMPLETE
++	 * event before cleaning up the connection.
++	 */
++	if (err == -ETIMEDOUT) {
++		u32 idle_delay = msecs_to_jiffies(10 * conn->le_supv_timeout);
++
++		reinit_completion(&conn->disc_ev_comp);
++		if (!wait_for_completion_timeout(&conn->disc_ev_comp, idle_delay)) {
++			bt_dev_warn(hdev, "Failed to get complete");
++			mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
++					       conn->dst_type, conn->abort_reason);
++		}
++	}
++
+ 	hci_dev_lock(hdev);
+ 
+ 	/* Check if the connection has been cleaned up concurrently */
+
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
+-- 
+2.34.1
 
 
