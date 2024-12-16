@@ -1,169 +1,87 @@
-Return-Path: <linux-kernel+bounces-447791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F709F3705
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:08:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AECC9F3706
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FD91893096
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC388161347
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEAF204566;
-	Mon, 16 Dec 2024 17:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pSqpYe6h"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1E9203D5E;
+	Mon, 16 Dec 2024 17:09:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884B11C54A6
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9AA1C9B9B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368864; cv=none; b=a47FWyJwQ3idjmnp0nH1G/3st5Qb14LF1W/KsXOPLoMPvZLp10gB6j4ndpEpCW/GGz6hLNUpISkcdVlBmAUWUWX2cjWiWbW1Ly2uVx622WiMYjhGa8JuMV5c/AbvOR434NzwDAXk3YIlfOVngELOltrg55OuSTyhk2ipsUK/Q20=
+	t=1734368944; cv=none; b=bzBA8XexfpJBj53WwtLBwJ1NyvuBPRL26x6tAGq4zkgswuuzz1OXsfYqO4cgpwFtYa/gA5RgGU2mIEnCtBPTljYIKTNCM/+n1WFHUlp20JdgLwOe2ymmB5q1Ebx41yd4cXWyMtX9NSOFVv751BKVdhQFgpbHzMSKq8l4fUICNO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368864; c=relaxed/simple;
-	bh=E5/d+dReIUhXuHg1v7oS8ktr7gb/WIyds77UdfRtRzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJ0n49FO13jJ0rHYrCBv+/O7fnO+J1c7GzPEXmvEOppVAiuOJ7DkA92xJOqSDNxOa0hsgT+x8k1fmBet9YCgtpVTJxuHlZoJN8E21RIDX/WtVRYameSzeYkf2f8VUvvEfXhkCBEIhlaYwBvQ1tDkpvn9AiZK38+JpVeMtiCGJXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pSqpYe6h; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Iaz1+7lGVC6B2me2Y4rdlfpafrRn2ZXS3uJsTcllWUc=; b=pSqpYe6h9U7cQYccX/5H2Wa5iw
-	O8xSW3tR0XEml5PHVhlGxEtjv+Mdn8P2J+kbpPc7n75r/qlIHCcr+fRriiXlbxJuMwzJ1kv8DPpFO
-	UyWqeJWJXd96I0mIQ6BCzX4q+FfRYMufNXvvbTdyN2DOj40NHFZo65L0C8/k7LurZDAaevb29LwQb
-	oPW8AJ0DlwwqWEe5GjpDxtDpaLpzo9azINnmxsk3wtThV6WGL0j3n1/zaw/WctQYvYa0pboZZuOEK
-	ePogUSS2QA+Hx2FRGZZ95DFNSIxjPzFvRgI/ApYuy5RCbVaNOEqVp9mDgj4ExFZxoNqGcxjz4c9Dk
-	0F2kiVoQ==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNEZD-00000004uZn-0hyj;
-	Mon, 16 Dec 2024 17:07:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B1A9D3003FF; Mon, 16 Dec 2024 18:07:34 +0100 (CET)
-Date: Mon, 16 Dec 2024 18:07:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
- task_struct::blocked_on
-Message-ID: <20241216170734.GG12500@noisy.programming.kicks-ass.net>
-References: <20241125195204.2374458-1-jstultz@google.com>
- <20241125195204.2374458-3-jstultz@google.com>
- <20241213232214.GA17501@noisy.programming.kicks-ass.net>
- <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
- <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1734368944; c=relaxed/simple;
+	bh=vGh+vjiWCmgl2N1Jja9qmEZA57c3O5o3k2pXsnEoJFQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bmUrItewcrb5mQyUTSeCGcjjlswpvsvwDrNOdaaKDi6bxyJSWHVZp4VVRjLRrM0KSx2UZX5znawtmgpVixVAA3C6DNmmVY1mCni+rPWKSIZoynQF7wL3PShEBYdUVm0rQsEEE0Lu2DPc5q+qzoCrAlR8+bwM0JZrZCnzKD+AqrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-844cffcb685so366090239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:09:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734368942; x=1734973742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y1IVfTym+dQAgGcjXOI2PlYHbpUuq0ZaBK9RUpEwSZA=;
+        b=pCUv+TSQoCEHWIXFrass0uGqZRaKzYQiH5+LERmotUDDlXbGoKL07AeQEuZP3re6n/
+         v4UpzLbwVoEkVHnVyD2dPCBdE+wlbt3Pg09CQxOex+4SXtS+v2qBXA5PNFPYBLSfCg4a
+         VZzhyCuIfhth0ysiwFWErWZYmyhSES7RIdCDverfRq+HfPT4iRtM3rlxx4qnIIB9V29i
+         DZu56hBovJ1/96GlTHLbHbu+9fw4fDQ3zFIXkx4DS+cHjYcG6BSanFbwlwlWDDS5e/sh
+         vVjia24I4BlVLys7I/tOAWpBJZ7syPm5wUt5fi4qyqf+ZC6pgx+JPiN2OGtD/+ijcZhU
+         gM/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqJn1KAn5OKu7rQGmxzocJiKZH9QzBZRZ8vjWT7xI4LoxqnSy1s1HW5kD8yLHwJgMoW4nUnNwl4zUt0O8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaPOL1gBN/yuFvoUyCKwi6RButwmIFN1uwms6s/o1DBaYxIww
+	J1DvMUGNhucGBcUZvhlMgLw2rq5g4dh2VUEk3IJnlOFqx7gKon2cUeXpUb4yJFcDQB+LDXNI9HR
+	UhAbAJ/Yrlullxc0lz5Dx5XqOXngm5R5DeuiKhl39bTHGsBvuyZFWVCg=
+X-Google-Smtp-Source: AGHT+IGb1KKFSNlFWIiws52V+46CQgj9Gu6JQmqOX92ts+FppMK3cos/qyLNW6fTXjZfXZptWPQsOb1uO+XiKmprVy6zV8dbeWSc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+X-Received: by 2002:a05:6e02:20c2:b0:3a7:d84c:f2a0 with SMTP id
+ e9e14a558f8ab-3aff69e2d54mr107591785ab.7.1734368942008; Mon, 16 Dec 2024
+ 09:09:02 -0800 (PST)
+Date: Mon, 16 Dec 2024 09:09:01 -0800
+In-Reply-To: <20241216164356.v_RSK%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67605ead.050a0220.37aaf.0139.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 16, 2024 at 05:54:19PM +0100, Peter Zijlstra wrote:
+Hello,
 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 6eaffa913495..30d7371bb5c4 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4035,6 +4035,53 @@ static inline void activate_blocked_entities(struct rq *target_rq,
->  }
->  #endif /* CONFIG_SCHED_PROXY_EXEC */
->  
-> +struct task_struct *proxy_handoff(struct mutex *lock);
-> +{
-> +	struct task_struct *next;
-> +
-> +	if (!sched_proxy_exec())
-> +		return NULL;
-> +
-> +	/*
-> +	 * current->blocked_donor can't change if we can't schedule
-> +	 * caller needs to do this, since its needs stabiliy of return value
-> +	 */
-> +	lockdep_assert_preemption_disabled();
-> +	next = current->blocked_donor;
-> +	if (!next)
-> +		return NULL;
-> +
-> +	scoped_guard (task_rq_lock, next) {
-> +		/*
-> +		 * current->blocked_donor had better be on the same CPU as current
-> +		 */
-> +		WARN_ON_ONCE(scope.rq != this_rq());
-> +
-> +		scoped_guard (raw_spin_lock, next->blocked_lock) {
-> +			/*
-> +			 * WARN_ON on this? How can this happen
-> +			 */
-> +			if (next->blocked_on != lock)
-> +				return NULL;
-> +		}
-> +
-> +		/*
-> +		 * blocked_on relation is stable, since we hold both
-> +		 * next->pi_lock and it's rq->lock
-> +		 *
-> +		 * OK -- we have a donor, it is blocked on the lock we're about
-> +		 * to release and it cannot run on this CPU -- fixies are
-> +		 * required.
-> +		 *
-> +		 * Dequeue the task, such that ttwu() can fix up the placement thing.
-> +		 */
-> +		if (!is_cpu_allowed(next, cpu_of(scope.rq)))
-> +			deactivate_task(scope.rq, next, DEQUEUE_SLEEP);
-> +	}
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It is probably better to do:
+Reported-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
+Tested-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
 
-	scoped_guard (raw_spin_lock_irq, next->pi_lock) {
+Tested on:
 
-		int cpu = smp_processor_id();
-		WARN_ON_ONCE(task_cpu(next) != cpu);
+commit:         78d4f34e Linux 6.13-rc3
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1159c7e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=abd9cdd473cf7437
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e99730580000
 
-		...
-
-		if (!is_cpu_allowed(next, cpu)) {
-			struct rq_flags rf;
-			struct rq *rq;
-			rq = __task_rq_lock(next, &rf);
-			deactivate_task(rq, next, DEQUEUE_SLEEP);
-			__task_rq_unlock(rq, &rf);
-		}
-	}	
-
-In order to minize the amount or rq->lock'ing.
-
-> +
-> +	return next;
-> +}
-> +
->  #ifdef CONFIG_SMP
->  static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
->  {
+Note: testing is done by a robot and is best-effort only.
 
