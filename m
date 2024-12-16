@@ -1,86 +1,174 @@
-Return-Path: <linux-kernel+bounces-446939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022009F2B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:53:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667BE9F2B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED68166005
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2981664D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C7B1FF60F;
-	Mon, 16 Dec 2024 07:53:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C48433C8
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45BF1FF61B;
+	Mon, 16 Dec 2024 07:54:03 +0000 (UTC)
+Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B2B433C8;
+	Mon, 16 Dec 2024 07:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734335587; cv=none; b=M3PjdFgQvDG2yoVrN2QD4xCIYZCXGva2OvP6MTVJwscuy4Akpza7/H/q0BZ+OqwhO5iHhodRdqxEsCE1ntYaeCrtiFgGmtDbGhKzibHszBcqBcMjjW7o+AIb60RPJc3oOfHPnOBvo91YJS7djTolOplNPpUnqR56D6Ccsv3ZW80=
+	t=1734335643; cv=none; b=D1IFvT5+VZrzWvUHCPXjK9mzbxFJgk4o40ywrCmk/yo3q7b+Xr3DrPkYEHblVfCMUTYJo1BBPU/RIyy7jeBt8sPMA5furdyWhbrwKNO9TqU75XChg3EkGns0nOtD/K0dIWTSYDp7wu47LKXoc7CWiqJDCO2sDJj204ZHz02Clxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734335587; c=relaxed/simple;
-	bh=w54hLSFKxE5Ar8e0Cj66FprPlXsItKo6HWzpsL93LjQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=m8YUMPMyy5sr3KxwtMcduwm+xx327JdHS79TEqWq/ZEn3+II2kbQ66+9+5CUthvV5oTY6pkclZ1tFtkWHiHHfq0lNnlLfTAlnaMeVytJKISrg7TDlIPMLtqxSW3cYENNzXLKhRO5Vjib+ACB9boWY65ZFceoPptt+UY6JdYW/Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so84248955ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 23:53:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734335585; x=1734940385;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bWUFqE+SpM8lm+3qxnZkuLFqP8cGU32BOXiglbOYi2M=;
-        b=QtJb1ER6t214c1oYRmPH3dFPps7HmeL8RBjTqZKFdRXP/EJRK/shPwy60KwLVdy3PA
-         c9q+vHH8tlC5YzjO8pG4llh+MwMsBLX6cxUIHwvd+q0uR18hTQd/EufDKJm66J2zOzfZ
-         TTwQ3C4/YBdFmbRZrEURKNDPfld3ITwdvRoE7O4Z+6yV1rVIv4Nk6RIoxj8BY5kgh0OS
-         el9OwowMjVmToO2QSdeUngzHWHL+e34+y9BrarR/rd03Uw/JjuhAagfQMD/1OG/N4VAM
-         9p1cmX3GZlKfcottuWQo2lJAiQICKOtTeDuilAjZw0EfkpjWkY0dI8zezUGWSLXH97Q1
-         r9zw==
-X-Gm-Message-State: AOJu0Yx/BpnSfiAG5t4oyv5ytXkykYdhTiqu7C2nBsTUFmRr6rEFOxgQ
-	4y96bcUlW99IUPySMHS1yghf3wFUZRB3N2Ci9RMOlTI6I0CYVbMuYdAYaDRpaRDOEeYd2+4WW6r
-	EOXygQsFe9vEeTe1afQfX4U5XCi+RX8FQMk91cJhLgDHgxbjH4xXwHCs=
-X-Google-Smtp-Source: AGHT+IEM9PZUY19xBjksEavReGbu+7nrjWPyhitCqJFjkkUECyQELs4QSqJXhsTfRHqi7ulSR9JZvgDnR8Zoml4cHvAm6sfs9BxE
+	s=arc-20240116; t=1734335643; c=relaxed/simple;
+	bh=4YUi9IIN+FDfpxF4emlc22UqQohODEXavHnNVnPLZE8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XsEI2D/qelcIV6RQIGCEF/SsG2+0dAXEBOYCXHzp2mUYCe1uf+StLETdgRccncRtV+QvU0qOA5+hqxMrysATXfOouJ+1bB1eNLoZai1z/IzIfccYdyg0pYZO0m16ADaiKrm+UVk+82qD6GP5TLoY3RlaI2W+AnmbvB7Sxd08Wj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc59-7a9ff700000194b3-e2-675fdc8c7271
+Message-ID: <7ed89f33-6ba0-44c7-b4ea-0c72029fa33b@sk.com>
+Date: Mon, 16 Dec 2024 16:53:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a44:b0:3a3:b5ba:bfba with SMTP id
- e9e14a558f8ab-3aff06828a5mr108096505ab.15.1734335584958; Sun, 15 Dec 2024
- 23:53:04 -0800 (PST)
-Date: Sun, 15 Dec 2024 23:53:04 -0800
-In-Reply-To: <20241216072034.2513188-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675fdc60.050a0220.37aaf.011b.GAE@google.com>
-Subject: Re: [syzbot] [tomoyo?] WARNING in tomoyo_write_control
-From: syzbot <syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, 42.hyeyoo@gmail.com,
+ "gourry@gourry.net" <gourry@gourry.net>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ =?UTF-8?B?6rmA7ZmN6recKEtJTSBIT05HR1lVKSBTeXN0ZW0gU1c=?=
+ <honggyu.kim@sk.com>,
+ "ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+ =?UTF-8?B?6rmA65296riwKEtJTSBSQUtJRSkgU3lzdGVtIFNX?= <rakie.kim@sk.com>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+ "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+ "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "horen.chuang@linux.dev" <horen.chuang@linux.dev>,
+ "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: Re: [External Mail] [RFC PATCH] mm/mempolicy: Weighted interleave
+ auto-tuning
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
+ <20241213195754.2676135-1-joshua.hahnjy@gmail.com>
+Content-Language: en-US
+From: Hyeonggon Yoo <hyeonggon.yoo@sk.com>
+In-Reply-To: <20241213195754.2676135-1-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsXC9ZZnkW7Pnfh0gw8LVCwm9hhYzFm/hs1i
+	+tQLjBYnbjayWfy8e5zdonnxejaL1Zt8LW73n2O1WLXwGpvF8a3z2C32XQSq3fnwLZvF8n39
+	jBaXd81hs7i35j+rxdwvU5ktVq/JcBD0OPzmPbPHzll32T262y6ze7QcecvqsXjPSyaPTas6
+	2Tw2fZrE7nFixm8Wj50PLT0WNkxl9tg/dw27x7mLFR6fN8kF8EZx2aSk5mSWpRbp2yVwZczq
+	7mIpeCle0fh8BmsD41ThLkZODgkBE4mV+6ayw9gzn21mBrF5BSwlPq36wgRiswioSkzsu8cK
+	EReUODnzCQuILSogL3H/1gywXmaB1+wS3R+dQWxhgRiJ7XeWM4LYIgKaEidaJ4HNFBLIkzi2
+	djkzRL24xK0n84Hmc3CwCWhJ7OhMBQlzCthLfL92nhWixEyia2sXI4QtL7H97RygVi6gM0+x
+	SyzoP8wCcbOkxMEVN1gmMArOQnLeLCQrZiGZNQvJrAWMLKsYRTLzynITM3OM9YqzMyrzMiv0
+	kvNzNzECY3dZ7Z/IHYzfLgQfYhTgYFTi4b1wKS5diDWxrLgy9xCjBAezkghvjUlsuhBvSmJl
+	VWpRfnxRaU5q8SFGaQ4WJXFeo2/lKUIC6YklqdmpqQWpRTBZJg5OqQbGOjXrw2uX3MqV5WP+
+	nsYa07ieeePlBc+9vKquRU1O7Snem7qIOUSg99BZNrl8ljnf5WqcE596f41PUZUwvvVf1+5h
+	uCf36Yprc8P3BwXua3XL1GL8ed6zu8LXZ6HF7d+Bcy4/mTRHZfGUzI8Cr5mOXHQ0eHYpwOE9
+	k7Sx6Qv9ssSLwTxr2w8osRRnJBpqMRcVJwIAlZmsEdkCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsXCNUOnRLfnTny6wfwlrBYTewws5qxfw2Yx
+	feoFRosTNxvZLH7ePc5u0bx4PZvF6k2+Fp+fvWa2uN1/jtVi1cJrbBbHt85jt9h3Eajh8NyT
+	rBY7H75ls1i+r5/R4vKuOWwW99b8Z7WY+2Uqs8Wha89ZLVavyXAQ8Tj85j2zx85Zd9k9utsu
+	s3u0HHnL6rF4z0smj02rOtk8Nn2axO5xYsZvFo+dDy09FjZMZfbYP3cNu8e5ixUe3257eCx+
+	8YHJ4/MmuQD+KC6blNSczLLUIn27BK6MWd1dLAUvxSsan89gbWCcKtzFyMkhIWAiMfPZZmYQ
+	m1fAUuLTqi9MIDaLgKrExL57rBBxQYmTM5+wgNiiAvIS92/NYAexmQVes0t0f3QGsYUFYiS2
+	31nOCGKLCGhKnGidBDZTSCBP4tja5cwQ9eISt57MB5rPwcEmoCWxozMVJMwpYC/x/dp5VogS
+	M4murV2MELa8xPa3c5gnMPLNQnLFLCSTZiFpmYWkZQEjyypGkcy8stzEzBwzveLsjMq8zAq9
+	5PzcTYzACF1W+2fSDsZvl90PMQpwMCrx8F64FJcuxJpYVlyZe4hRgoNZSYS3xiQ2XYg3JbGy
+	KrUoP76oNCe1+BCjNAeLkjivV3hqgpBAemJJanZqakFqEUyWiYNTqoHR8P3iud1rdubmmW1I
+	XWe7JJ6tmvVhTuzWH4eOTN6UNf+3pn3y6wgv9QVcdqbTjC+xrGK4eXax90f2G4asXtza2fsY
+	p0kY/zE/Vr5ht/eOB5lOOjxviidfLt8+LWv3g8bL2980VC1fKpKyP8MhVu9Aw/ZDCy+n3Pfl
+	UdjVFie1puX37kf/mNM7lViKMxINtZiLihMBvS4OA8wCAAA=
+X-CFilter-Loop: Reflected
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
-Tested-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+On 2024-12-14 4:57 AM, Joshua Hahn wrote:
+> On Fri, 13 Dec 2024 15:19:20 +0900 Hyeonggon Yoo <hyeonggon.yoo@sk.com> wrote:
+> 
+>> On 2024-12-11 06:54 AM, Joshua Hahn wrote:
+>>> This patch introduces an auto-configuration for the interleave weights
+>>> that aims to balance the two goals of setting node weights to be
+>>> proportional to their bandwidths and keeping the weight values low.
+>>> This balance is controlled by a value max_node_weight, which defines the
+>>> maximum weight a single node can take.
+>>
+>> Hi Joshua,
+>>
+>> I am wondering how this is going to work for host memory + CXL memory
+>> interleaving. I guess by "the ACPI table" you mean the ACPI HMAT or CXL
+>> CDAT, both of which does not provide the bandwidth of host memory.
+>> If this feature does not consider the bandwidth of host memory, manual
+>> configuration will be inevitable anyway.
+> 
+> Hi Hyeonggon,
+> 
+> Thank you for reviewing my patch!
 
-Tested on:
+No problem :)
 
-commit:         78d4f34e Linux 6.13-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14eafcdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9cac7e24ceea492
-dashboard link: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=149947e8580000
+> As Gregory showed in his reply, I think it would be possible to get host bandwidth information
+> using the ACPI HMAT.
 
-Note: testing is done by a robot and is best-effort only.
+You're right. I was wrong. I checked on our server, and its bandwidth 
+information was valid for both local memory and CXL memory. Sorry for
+the noise.
+
+> [-----8<-----]
+> 
+>>> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/max_node_weight
+>>> +Date:		December 2024
+>>> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
+>>> +Description:	Weight limiting / scaling interface
+>>> +
+>>> +		The maximum interleave weight for a memory node. When it is
+>>> +		updated, any previous changes to interleave weights (i.e. via
+>>> +		the nodeN sysfs interfaces) are ignored, and new weights are
+>>> +		calculated using ACPI-reported bandwidths and scaled.
+>>> +
+>>
+>> At first this paragraph sounded like "previously stored weights are
+>> discarded after setting max_node_weight", but I think you mean
+>> "User can override the default values, but defaults values are
+>> calculated regardless of the values set by the user". Right?
+> 
+> In the implementation, the first way you interpreted is the correct
+> description. That is, if a user manually changes a ndoe weight,
+> then updates the max_node_weight, the previous manual change will
+> be overwritten by the newly scaled values.
+ >
+> Does this behavior make sense?
+
+Ok. then current implementation overwrites the node weights
+previously set by the user.
+
+I think it makes sense to re-scale all nodes and overwrite manually set 
+node weights, because it's what the knob is meant to do, and the user 
+still can override the weight by setting node weight after updating
+max_node_weight.
+
+By the way, could you please explain which part of this patch implements
+this rule? IIUC it does not invalidate iw_table after updating these
+default values, which makes get_il_weight() to use manully set node 
+weights even after updating max_node_weight. (Or probably I just
+misunderstood the code?)
+
+> Have a great day!
+
+Have a great day too :)
+
+--
+Hyeonggon
 
