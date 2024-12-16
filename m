@@ -1,154 +1,235 @@
-Return-Path: <linux-kernel+bounces-447276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFEF49F2FD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:52:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353CB9F2FC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE47B1887E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:52:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37F247A1AB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B6C20626E;
-	Mon, 16 Dec 2024 11:50:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91063205E3E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8D7203D55;
+	Mon, 16 Dec 2024 11:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="c9vwyuZ8"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F53C204088
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734349834; cv=none; b=oS66yT2mvfwdewqw2i/tkcVf2thjyERm5Je5t0hmKrDg2a5CMGRD4Ho6cfEqGubT8f+bjqKvrv+XkZcf5J4Sbxg7FaI5R9bNWVRGuI1s6jSBmffozLyodsD6Gnen2Nr4atBUAOOz8JdY/rmtQ/m8cI4yfmVo/VBuvyW3/ENsk8k=
+	t=1734349809; cv=none; b=op3bBtqEMaCq56MwABsEpNrTSbIPuOmVU7Pk9345zipuX1NAAsIAkI5FJhtr/FdL5uUWixFnZLWhyFay2RPBr8Rtp7gNOusEXK268yejvYFWEiPPIvAjK2iTK5knaNdRVYzaZYbLYDWo5yMQrvQqT172GTqXBNqJ6839fS2iZEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734349834; c=relaxed/simple;
-	bh=gFaoFu9KKvHqNDT9slT8K/JDLRz71AvbwCXWYMx9Kng=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NW4BoyZWTLT5juKgc/mwBSj70GDHgNrz1H24rbDnI6kYUGNjSyM5eNLwXHsoIu2yrOkPZoX6V3yvFTAOxFzeoZdg0U0iUNh+rTfOv8ZpRo5ueQ1mRk/bDikGYuWBpZjN6wcQvSbtT3Jp+hV0xSnGunV85sdBLw2diEkoykWI54Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2030C113E;
-	Mon, 16 Dec 2024 03:51:00 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0660E3F58B;
-	Mon, 16 Dec 2024 03:50:29 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: suzuki.poulose@arm.com,
-	mike.leach@linaro.org,
-	james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org
-Cc: coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v3 9/9] coresight/ultrasoc: change cti_drvdata spinlock's type to raw_spinlock_t
-Date: Mon, 16 Dec 2024 11:50:06 +0000
-Message-Id: <20241216115006.415861-10-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241216115006.415861-1-yeoreum.yun@arm.com>
-References: <20241216115006.415861-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1734349809; c=relaxed/simple;
+	bh=LjoNpo99IS9TQ2tcnB3Fb50v0g/in8V7E04lFrHtrcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zp+PaVTCz1ul/iIXaoN6W8X0ZJ87XZ5A9sd2KnckdwEgvxlLjyArbFKWJmC53kE92NTTSTP612kr0uYMI+6zajTAJxjB8mhUWHDRk2gAYMgefA3vgU8Gum2YEhbSzm7YJCuxKdAoAUa/yLjmaBlhiavRJKBqnHW3WcRQ/7QSGaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=c9vwyuZ8; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa679ad4265so951370166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:50:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1734349805; x=1734954605; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=n4Fnqt3+wn3Jqih2/E06bFWlfYBOS+/nVME6Ot/StK8=;
+        b=c9vwyuZ89rAz7fOyhoTxkT4XTjxhvSfi8DfiW/OjpFNMUsA6v8hG/0DMPbvXC/rz/l
+         mEs7ru+VNaN8SR2XoIjkmkvTCMcWxveJ221IG5428MABbHm2OCcgfwF8MsRA47LsDijz
+         jI5zrkCHtawtSvKKMW8ZdPV6ugWaD45Qfr8WmV07MyZ/uCGM0kl7n5KVYLs+Ct4EMw1n
+         Nlye7HkWVhOLvd6ZSY3O74dwKvlgj/U7iOKklH0TOIGBaVMLFZ4b6wjhYJhbuCmkO7tD
+         WmRYq51FMQ03kdB1nFYWNXaBa+f8fCsp4mt1EULh09x+A5fRqfkkrVMJqmVdNqufzKQe
+         JQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734349805; x=1734954605;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n4Fnqt3+wn3Jqih2/E06bFWlfYBOS+/nVME6Ot/StK8=;
+        b=csio2+doUJz9kvnqhcjydep+WkT8Oz+TU8SgRWUJfRhdsNVo/ptpeWlIPiIOxofCZ4
+         p/D6X4YCyoHsmeRvjVCwx6pd97ZAD0YGR5TWulWBExhF7hn27YLe7hdjqr2Lh1KYetka
+         YIkxt4VQUnuZojSyIQ2z5wf6hqd7TNDzwuPlAcqeiIM0G9IAaNdCEGSDIDdlWd7TXxAH
+         kN/3sNtZMOAZ/TMSO5fSlTf6748IYF9w0fyaTdp5d0kOowaV0uAX6Vgr+LMPA4gbI4Fk
+         y5hS+FHnUC09jvanQzNMWRKriCk9pUTKFGuy5MIb4rfi/slzMgdKb7FhsIC0rJB63nRg
+         14NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWCL5y7XiMcCvFu1uRYulfIkCozIGEbi5BsZTjuamQVyLJYP16VzBZ0aKf5C/mFvsrWj2O/kI+9wNNIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqsjQTZXCSdDtGBYqaQ1nj9IXuZEBJo3idIrW0vISbTMQut0E7
+	Iz/VirdwBYk0pWPoxRso08uWlzVlmSI00Bf+fI8mnvzeLQ2F4CKPvMg4nzTLGjs=
+X-Gm-Gg: ASbGnct1STju9JJ+pN4rrXAONEwgHFNGtoOSOr6+RzYO93AxS9NGaECYQhIq9v5JyOJ
+	uNDu+hSE5fbiTFFojRfeKXmUtUtwhRIlIBoEtPI9HArl9Gp+b9PFDNUSPF5gYsN4m7mMtluGrMD
+	skNIxNLbWkpRAv2S843SPiRY/5afmdeF32H3Shtyv/WcEn5QL/pcNzYmc5srm2D/g5YlXMchdB/
+	/Sm2Hi8BgNNSROQsTMxo1L1IyLlH0mtB2AZHP1zqXuBuew8xQ8Dk53NagHx7UmcnPPoSEQoCJJQ
+	ygpxzx0Dh7RC44bDkiw=
+X-Google-Smtp-Source: AGHT+IEnfewEiJGs3lq7FqGj7ad6Ew/gCcV3xnhPzkvANe07z2h/NIw9ORmy8DNUwq06lbUogwLfZA==
+X-Received: by 2002:a17:907:7e92:b0:aa6:a9fe:46de with SMTP id a640c23a62f3a-aab7b777564mr1235220266b.19.1734349804846;
+        Mon, 16 Dec 2024 03:50:04 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:f3f5:d43f:11fb:5f45? ([2001:67c:2fbc:1:f3f5:d43f:11fb:5f45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96089f88sm321885466b.91.2024.12.16.03.50.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 03:50:04 -0800 (PST)
+Message-ID: <a1137cc2-6985-44bc-a802-e070da7208dc@openvpn.net>
+Date: Mon, 16 Dec 2024 12:50:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+ willemdebruijn.kernel@gmail.com
+References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
+ <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net> <Z1sNEgQLMzZua3mS@hog>
+ <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net> <Z2AKg6ntLd94anHv@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z2AKg6ntLd94anHv@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In ultrasoc-smb drivers, smb_drv_data->spinlock can be held
-during __schedule() by perf_event_task_sched_out()/in().
+On 16/12/2024 12:09, Sabrina Dubroca wrote:
+[...]
+>> Maybe we should call cancel_sync_work(&ovpn_sock->work) inside
+>> ovpn_socket_get()?
+>> So the latter will return NULL only when it is sure that the socket has been
+>> detached.
+>>
+>> At that point we can skip the following return and continue along the "new
+>> socket" path.
+>>
+>> What do you think?
+> 
+> The work may not have been scheduled yet? (small window between the
+> last kref_put and schedule_work)
+> 
+> Maybe a completion [Documentation/scheduler/completion.rst] would
+> solve it (but it makes things even more complex, unfortunately):
+> 
+>   - at the end of ovpn_socket_detach: complete(&ovpn_sock->detached);
+>   - in ovpn_socket_new when handling EALREADY: wait_for_completion(&ovpn_sock->detached);
+>   - in ovpn_socket_new for the new socket: init_completion(&ovpn_sock->detached);
+> 
+> but ovpn_sock could be gone immediately after complete(). Maybe
+> something with completion_done() before the kfree_rcu in
+> ovpn_socket_detach? I'm not that familiar with the completion API.
+> 
 
-Since smb__drv_data->spinlock type is spinlock_t and
-perf_event_task_sched_out()/in() is called after acquiring rq_lock,
-which is raw_spinlock_t (an unsleepable lock),
-this poses an issue in PREEMPT_RT kernel where spinlock_t is sleepable.
+It seems the solution we are aiming for is more complex than the concept 
+of ovpn_socket per se :-D
 
-To address this, change type smb_drv_data->spinlock in ultrasoc-smb drivers,
-which can be called by perf_event_task_sched_out()/in(),
-from spinlock_t to raw_spinlock_t.
+I'll think a bit more about this..maybe we can avoid entering this 
+situation at all..
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- drivers/hwtracing/coresight/ultrasoc-smb.c | 12 ++++++------
- drivers/hwtracing/coresight/ultrasoc-smb.h |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+>> However, this makes we wonder: what happens if we have two racing PEER_NEW
+>> with the same non-yet-attached UDP socket?
+> 
+> mhmm, I remember noticing that, but it seems I never mentioned it in
+> my reviews. Sorry.
+> 
+>> Maybe we should lock the socket in ovpn_udp_socket_attach() when checking
+>> its user-data and setting it (in order to make the test-and-set atomic)?
+> 
+> I'd use the lock to protect all of ovpn_socket_new.
+> ovpn_tcp_socket_attach locks the socket but after doing the initial
+> checks, so 2 callers could both see sock->sk->sk_user_data == NULL and
+> do the full attach. And I don't think unlocking before
+> rcu_assign_sk_user_data is safe for either UDP or TCP.
 
-diff --git a/drivers/hwtracing/coresight/ultrasoc-smb.c b/drivers/hwtracing/coresight/ultrasoc-smb.c
-index dc3c9504dd7c..26cfc939e5bd 100644
---- a/drivers/hwtracing/coresight/ultrasoc-smb.c
-+++ b/drivers/hwtracing/coresight/ultrasoc-smb.c
-@@ -98,7 +98,7 @@ static int smb_open(struct inode *inode, struct file *file)
- 	struct smb_drv_data *drvdata = container_of(file->private_data,
- 					struct smb_drv_data, miscdev);
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	if (drvdata->reading)
- 		return -EBUSY;
-@@ -152,7 +152,7 @@ static int smb_release(struct inode *inode, struct file *file)
- 	struct smb_drv_data *drvdata = container_of(file->private_data,
- 					struct smb_drv_data, miscdev);
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 	drvdata->reading = false;
- 
- 	return 0;
-@@ -245,7 +245,7 @@ static int smb_enable(struct coresight_device *csdev, enum cs_mode mode,
- 	struct smb_drv_data *drvdata = dev_get_drvdata(csdev->dev.parent);
- 	int ret = 0;
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	/* Do nothing, the trace data is reading by other interface now */
- 	if (drvdata->reading)
-@@ -280,7 +280,7 @@ static int smb_disable(struct coresight_device *csdev)
- {
- 	struct smb_drv_data *drvdata = dev_get_drvdata(csdev->dev.parent);
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	if (drvdata->reading)
- 		return -EBUSY;
-@@ -378,7 +378,7 @@ static unsigned long smb_update_buffer(struct coresight_device *csdev,
- 	if (!buf)
- 		return 0;
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	/* Don't do anything if another tracer is using this sink. */
- 	if (csdev->refcnt != 1)
-@@ -563,7 +563,7 @@ static int smb_probe(struct platform_device *pdev)
- 
- 	smb_reset_buffer(drvdata);
- 	platform_set_drvdata(pdev, drvdata);
--	spin_lock_init(&drvdata->spinlock);
-+	raw_spin_lock_init(&drvdata->spinlock);
- 	drvdata->pid = -1;
- 
- 	ret = smb_register_sink(pdev, drvdata);
-diff --git a/drivers/hwtracing/coresight/ultrasoc-smb.h b/drivers/hwtracing/coresight/ultrasoc-smb.h
-index a91d39cfccb8..c4c111275627 100644
---- a/drivers/hwtracing/coresight/ultrasoc-smb.h
-+++ b/drivers/hwtracing/coresight/ultrasoc-smb.h
-@@ -115,7 +115,7 @@ struct smb_drv_data {
- 	struct coresight_device	*csdev;
- 	struct smb_data_buffer sdb;
- 	struct miscdevice miscdev;
--	spinlock_t spinlock;
-+	raw_spinlock_t spinlock;
- 	bool reading;
- 	pid_t pid;
- };
+I tend to agree here. Guarding the whole ovpn_socket_new with 
+lock_sock() seems the right thing to do.
+
+> 
+>> I am specifically talking about this in udp.c:
+>>
+>> 345         /* make sure no pre-existing encapsulation handler exists */
+>> 346         rcu_read_lock();
+>> 347         old_data = rcu_dereference_sk_user_data(sock->sk);
+>> 348         if (!old_data) {
+>> 349                 /* socket is currently unused - we can take it */
+>> 350                 rcu_read_unlock();
+>> 351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
+>> 352                 return 0;
+>> 353         }
+>>
+>> We will end up returning 0 in both contexts and thus allocate two
+>> ovpn_sockets instead of re-using the first one we allocated.
+>>
+>> Does it make sense?
+> 
+> Yes.
+> 
+> [...]
+>>> [I have some more nits/typos here and there but I worry the
+>>> maintainers will get "slightly" annoyed if I make you repost 22
+>>> patches once again :) -- if that's all I find in the next few days,
+>>> everyone might be happier if I stash them and we get them fixed after
+>>> merging?]
+>>
+>> If we have to rework this socket attaching part, it may be worth throwing in
+>> those typ0 fixes too :)
+> 
+> ACK, I'll send them out.
+
+Thanks.
+
+Regards,
+
+
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+Antonio Quartulli
+OpenVPN Inc.
 
 
