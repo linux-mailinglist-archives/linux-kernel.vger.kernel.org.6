@@ -1,97 +1,146 @@
-Return-Path: <linux-kernel+bounces-448276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA369F3E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:10:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15099F3E15
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51A5F16B845
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5730B1884711
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974581D9339;
-	Mon, 16 Dec 2024 23:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462AE1DA0F1;
+	Mon, 16 Dec 2024 23:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Tij3HmyY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Eytt7KwO"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507C5653;
-	Mon, 16 Dec 2024 23:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB91D5ADB
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734390610; cv=none; b=WPPZUvYtfTyAnpQvl9wP3SU15eGl+WeK2Ra5iVFc55UOnPM/BQ6KXpRn3RvdVCHro2TG0LZRnWkXAdkR49SxcHLRBqxbdq357vx+6TDfwb1HL7S1J75TS4kToaAKPs4zT/gHHflp7LafNPOUCjRMesbrJMF6iRh2CleX+iGdT7I=
+	t=1734390806; cv=none; b=JDo1BRmxyNg0w3aewuZpgfp6BOYdcrwkXs6Uxj68vPZ4cZvMqPzONY0Tx//GaYQxAehq0fYX0XukbCwB74kAWYk2bJSYxD1nxJtTJdAp59CAcWZTMorLwApjShYrOOJyiG5gcb71bctHFZ8ujY8qmxFZD3b1cCwjpKvywWMazwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734390610; c=relaxed/simple;
-	bh=QlBcCsa9rqJa3IlOgPtbSnLtN0HKwL8f0kCn9NHOeGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kq/DHg/qQdL8YNLCqLscqEEEFn6LH9216UpCvn37Kd4/BZMwqcUmVOmWQPP90J40nZniW/ED/WM0wAj16RUY0DW4R4CyJgiaWIZ3F2UAWJ77fCy7JpRqTLBy16yy5B87JIU1j5WtqKQqR3yWzE33QSfvGOojGcLDXm2+pxzsBI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Tij3HmyY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=O7ayzBDb1owGXw4wlr8s6CWivxZSkqrBGT0EtZZfKbY=; b=Tij3HmyYrJ9F5EYjUB0Rw8xTiQ
-	OlpXytZy26ZrPaiQAL398NSbmHY7KZRmBTzcxJkP/pERsD1upSaJ0hAznPtaYpdL++eezJgcBgsNO
-	iJbj+C7J+lvcWgzSWJR0lLekmBI83eSb5Ol2fwufUsF+x+uqohVyVroCbebpgkaXMXao=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tNKCp-000ljk-HK; Tue, 17 Dec 2024 00:08:51 +0100
-Date: Tue, 17 Dec 2024 00:08:51 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: qca8k: Fix inconsistent use of
- jiffies vs milliseconds
-Message-ID: <6f1c3d1f-8059-4038-bc2c-5729254a5b38@lunn.ch>
-References: <20241215-qca8k-jiffies-v1-1-5a4d313c76ea@lunn.ch>
- <20241215231334.imva5oorpyq7lavl@skbuf>
- <87195b12-6dfa-4778-b0c0-39f3a64a399e@lunn.ch>
- <676085a7.050a0220.1e6031.2193@mx.google.com>
+	s=arc-20240116; t=1734390806; c=relaxed/simple;
+	bh=IOgGM2w7pk3oigV1gqLUmR9Qqpa9O/Il6zfGw3fe3jI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TSN+UFXm70/AqGqWJNke860x79g6S7HRy/kCMZi4DQBkq7f+9W2R9NelPMyJGJ6B7LZMrogoW8OxdRuwTimVbOBcxXusAtHlQd5dG4c582XdSmw6T1qNa+F2W0uAipn3cpCSS6SnSHWv2wcNdEnNAIiUr8e5tzc49cR4hZqRk9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Eytt7KwO; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21631789fcdso37226645ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:13:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734390804; x=1734995604; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Cbp0zEgt8sYGgGttOagenj605vUWFx5sipZ2Yl2U3s=;
+        b=Eytt7KwO0WU2hyUIdW/6GWYKKe++eJXTFSyWcq8AVT9BM8fYi87jMhv+4jfU4DW/SM
+         hyLHneNQV0xzTXpk3yPCrpVdUrEIFzxcnMLVAN8Seik2D5kEC5bk9Qp4NYt2kqf1VUOs
+         AztXLshVs0dm5EEM+UKBfE25F8xJF5lP6qP9kmtIg8d83NTQRbWfK2O4Ky0A1mdIva3s
+         FbBBy/+qT1gBazRFleWvObp37aF/olvT93vmxU41bjTaTJ1m/YG5UY89kW8JloxQB4sv
+         q4Aik/spGo3H7zJuXsuJTNyQjRm4ZabM4mdtwH7f74EH68eGaQzuJCQ1L3bNQpnOX0lH
+         kd0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734390804; x=1734995604;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Cbp0zEgt8sYGgGttOagenj605vUWFx5sipZ2Yl2U3s=;
+        b=rQuK1ASJ6bl3sVfQfPg8/Me9HtVrHVQyOwO/xhXgAe0bXHImFbd/G5u5M7P3pd/HOH
+         li4jGNIKbF3gvLCrjh9Vxd0OXaqh5/mTFbHQzDYvzF0OaRWmSzjtmg8UD4hzvZ6MENLQ
+         sEMZyUkhj3ZOXjRhbXllLYWUklBsmDlUWrxwfivKkKfqDFYEvFIO+PVLcVC6zpy2IYqX
+         AdYNSoNlG3y99GZiec36zu9UM1n4BUqFORWsHQ7XTLRdvs8Oo1cSfC/dUtOHW002s3pl
+         Ch4bkCAlXDSiUUfqD2JDQ+19L5N0pqnWK0QLLrV+A91jlaLjQOd6N3rfptRNA8+S6oTh
+         GZjw==
+X-Gm-Message-State: AOJu0YyHdWaT+baB8GL3/cRnwwSeTbZxsgMkjudscCTLK0GvfxLZYurD
+	14kxnUeVZPiftNKBQA5MHOT59wU0210WYv1KaGIpmxF+CNFA2XE76U7iY66FP7s=
+X-Gm-Gg: ASbGnctG4/gVT7N46LOGLZHCCvLyKYF2g4TPhj+33WP+H2cfOsDOLTHnaam0Wk6mP0E
+	hGNyf6vymvn0IaiaZCU+ng9jihTlCD/NSV0fBMsW/Rc6xKXZEcTNe+2NJwzV1Rw3R25erfPQIsT
+	Eu2MkH4Gx5oTWR8SfSlvNIYtRC7BhU5ZBAV9RyJJ8mpODnyKqzCvTljuPWymUjv++eC8RxVXAQx
+	XOYPH10wE4/kBa5hdnRjfxt9jd4++6p6vjucY3Z2FnG6CqJodSppjwGuzVBTziezhEnyKK5
+X-Google-Smtp-Source: AGHT+IFjshciKlmIzBIB1jw3LAR8ZYMAQPyyhOAHw8JXPxmnDCkeL3I1RpqctkebF7xjVj+9QrljiQ==
+X-Received: by 2002:a17:902:e94d:b0:215:b18d:ca with SMTP id d9443c01a7336-218c9262d3fmr19286865ad.18.1734390804203;
+        Mon, 16 Dec 2024 15:13:24 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dcc47bsm48333255ad.63.2024.12.16.15.13.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 15:13:23 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH 0/2] perf: tests: Fix object code reading test for riscv
+Date: Mon, 16 Dec 2024 15:12:50 -0800
+Message-Id: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <676085a7.050a0220.1e6031.2193@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPKzYGcC/x3MQQqAIBBA0avErBNyLIiuEiFqY00LixEikO6et
+ Hzw+QUyCVOGqSkgdHPmM1XotoGwu7SR4rUasMNeozbqIok28mOFc7jt6Q8r5FZOmwrOxw49mTA
+ OUAeXUA3/+by87wdZlscZbAAAAA==
+X-Change-ID: 20241213-perf_fix_riscv_obj_reading-cabf02be3c85
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Nelson Chu <nelson@rivosinc.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, llvm@lists.linux.dev, 
+ linux-perf-users@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1133; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=IOgGM2w7pk3oigV1gqLUmR9Qqpa9O/Il6zfGw3fe3jI=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rCFo5+3e1tQisqpS6cac/wyM1MmJaWySK9PGtBBvOv0
+ 6Xbun91lLIwiHEwyIopsvBca2BuvaNfdlS0bALMHFYmkCEMXJwCMBG+LEaGb7e2ZHT+jXg/4T8D
+ c2X1sxcK2mW1O46Jy13fG73kPPv5XEaGxZM1Cxg2/bUOU7Tlnu+i9MlYSu3ZjWSraXInZx/vuze
+ VAwA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On Mon, Dec 16, 2024 at 08:55:13PM +0100, Christian Marangi wrote:
-> On Mon, Dec 16, 2024 at 10:21:12AM +0100, Andrew Lunn wrote:
-> > On Mon, Dec 16, 2024 at 01:13:34AM +0200, Vladimir Oltean wrote:
-> > > On Sun, Dec 15, 2024 at 05:43:55PM +0000, Andrew Lunn wrote:
-> > > > wait_for_complete_timeout() expects a timeout in jiffies. With the
-> > > > driver, some call sites converted QCA8K_ETHERNET_TIMEOUT to jiffies,
-> > > > others did not. Make the code consistent by changes the #define to
-> > > > include a call to msecs_to_jiffies, and remove all other calls to
-> > > > msecs_to_jiffies.
-> > > > 
-> > > > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> > > > ---
-> > > 
-> > > If my calculations are correct, for CONFIG_HZ=100, 5 jiffies last 50 ms.
-> > > So, assuming that configuration, the patch would be _decreasing_ the timeout
-> > > from 50 ms to 5 ms. The change should be tested to confirm it's enough.
-> > > Christian, could you do that?
-> > 
-> > I've have an qca8k system now, and have tested this patch. However, a
-> > Tested-by: from Christian would be very welcome.
-> >
-> 
-> Hi need 1-2 days to test this, hope that is O.K.
+There was a breaking change to binutils objdump that causes partial
+instructions to no longer be dumped. This behavior is different from
+what the "Object code reading" test expects. Add a Kconfig variable that
+checks the version of objdump and conditionally enables the perf test
+fix for riscv objdump versions effected by this issue.
 
-That is fine, I don't really expect the remaining patches will go
-anywhere until next year, with net-next closing soon.
+A binutils patch has been sent as well to fix this in objdump [1].
 
-	Andrew
+Link:
+https://sourceware.org/pipermail/binutils/2024-December/138139.html [1]
+
+To: 
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+Charlie Jenkins (2):
+      kbuild: Check version of objdump
+      tools: perf: tests: Fix code reading for riscv
+
+ arch/riscv/Kconfig              |  5 +++
+ init/Kconfig                    | 10 ++++++
+ scripts/Kconfig.include         |  6 ++++
+ scripts/objdump-version.sh      | 69 +++++++++++++++++++++++++++++++++++++++++
+ tools/perf/tests/code-reading.c | 17 +++++++++-
+ 5 files changed, 106 insertions(+), 1 deletion(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20241213-perf_fix_riscv_obj_reading-cabf02be3c85
+-- 
+- Charlie
+
 
