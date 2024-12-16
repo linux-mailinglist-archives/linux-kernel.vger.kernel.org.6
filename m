@@ -1,208 +1,130 @@
-Return-Path: <linux-kernel+bounces-447529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55229F33C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:57:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5437C9F33D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4418E16793F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCFB18869CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3B2132139;
-	Mon, 16 Dec 2024 14:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF9014265F;
+	Mon, 16 Dec 2024 14:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePym7UBa"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="khiFj1hZ"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513024B34;
-	Mon, 16 Dec 2024 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B05113DBBE
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734360750; cv=none; b=WHnsZZISW+XXtZXRuF4se1KuGBXH1EofUWcjQKgDGhcYmytIVWwCiIisRtlO1p9jiiLYMCyc+tEUPRMSK7Buh8SWGJDVqijz6tY7v+J8JqvCEfeMxhuH/dtaAXrZLYeI6l4kvJD9P1gq7kR2TxF8nyqIQI6TR6QwozsdjNQSmbY=
+	t=1734360855; cv=none; b=HdiLKQHdne9kQTXCgcQM8WH00D/MnQ6cIESsin2c3dEW7st50cbTeOyiKiwlivNULCNLuJu0cOdgBtHayehTrYxTM+CV6cAmAIBjkunv1ehC6pj12w1clhysu2l3aWg+Tk532AxiVAdcR/Gc3dvq+uS1I86LeBmxw/HnC1wgs7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734360750; c=relaxed/simple;
-	bh=n7fpU+SC39T8RldMuPqzx9FZJoD/RN0VzaM8P5PZLPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ViiFIJbABw8AusZMc5MV+nJf4mSBnT0zGvFBHFsq5BdQHExinC7xZy/uuahHvKGwhfQgBpfY96eXa0PWJ1USwlmkJ7hwcuTe1gv+6R+/hKPU8o7+m6h9VFWBTPRTz41RstxI3TeArdR3I8vDvMLXoQrdESVjbEolCgvuPMcH2Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePym7UBa; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3022484d4e4so47793631fa.1;
-        Mon, 16 Dec 2024 06:52:24 -0800 (PST)
+	s=arc-20240116; t=1734360855; c=relaxed/simple;
+	bh=bn3iJLzlKSMWMJtRrej6vZqzCfJ4v28p5CBRgpdTTFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O2Kif4/NrxGGuTdb3o+FEXFM4Y5m32LTE6C3oZXG04hm19PSDad57dTDHbyT8i5IYhWcZHjq1cXpDWkYmg6iDhnNIhmfAEbzqn8AlIlom7M5T2UAeGZYfhbPEyVREtrW2LAdYY7xq70F6JcIuo4IqTiYbaDM81RdZUncEMpQtdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com; spf=none smtp.mailfrom=hefring.com; dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b=khiFj1hZ; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hefring.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6e9586b82so320632185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:54:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734360743; x=1734965543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=trdXo5m3hzsJ+wm6hIAb/8LUnuB+TKKoS08uSjvrSH4=;
-        b=ePym7UBaP5FTQuSdnn5VlpNX8JhzYN5u3oRu9+epERfsvj+XC3YOOhWzjTeneMOjmu
-         qEQ2o70e3KDlQxam5xFAfNtC/Ni8luj48l03Mz+OZMEhzDDTdd7sTD3+NvcVOMX8+HRU
-         vW0SvvegaxJ4B8Yo2HHKxuox1GAJndEFDHwtn8xyw4p3wpsyR2eGnhO1aM8i0gU3FQvJ
-         cLF9+aH9hgYfAa1RPCjkI+jdfoTM2QPR049pEsSVI3Hx0DQe4e8rio6WXSPQNW0tSqb+
-         b4lRgkCqWFwgiKpYzwZT6dYu0BO4Vzqkdi/Pg2SJBVISbBaXSCMcmh2XqjkoBR/RfTjc
-         g63w==
+        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1734360851; x=1734965651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrDI54RrtTH587z61yGqvhuIg5ioNpJ5JcTwNcL7S14=;
+        b=khiFj1hZMQfNWK+ChbH/E99KZuHkO5g4IZLGAdgr4R83qQJjPqDjs6FffVn3Zo1Ll5
+         wk+hvB2UlOlbhckPaUAGiuBBuT6AHhqv8YlDYPXqpmuBImzA3cUBxYa9he4GOXKe2EOX
+         5aHWLX2anL8xlKdEuSnYeBxEJwfX59rDXorKOprZIEaJvOpkkAyvyGiqATgSQu43Fa+C
+         DueWVt1evD4LhcOfyVCz8ETEOoDL6E1vFRQCEGPWB66mWgGvt7ctQoBXkulyc4b81321
+         0zEXD0z6UiH1B2qUbaJR/0SuKpf7o2mf0pknQReTy4i0IimI+BmY39IWhEwAUzsQs0NH
+         5W5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734360743; x=1734965543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=trdXo5m3hzsJ+wm6hIAb/8LUnuB+TKKoS08uSjvrSH4=;
-        b=fVRCn2mEVz4czu/bAfdZL8RuHIgcmf8APYUjxyBnJ4xvlEh59pQThbWvxF/w3nqolM
-         3yDclAnVhcDRJ2PAKfSkBPDhn46rjG/G8yDt1/jRVi1CGtLFCyXQipEEbWDuWfKKtymy
-         vuMyMlwXcYtgj/9TspbzIWEnsnypi+PRtHq4BFzXZykJrvrhSZGsB+8Wga8snQC2FQau
-         yPcyYxnLLcptF67WkaWTi21cKE4CJ/Cth4MZ250aya/Sa8HNR7P28Ea/QaHOxVTl0oeb
-         nO65PCzicZgIWvfMU+djKxl26wlRddBEC7Sw8kgHkXsmgfPgFTTshHxNgxHY9BIEmjwD
-         NJ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWUxusMv6UHM1EJzgHX47QylkbnWi1NU5+/nMzJTeBOWBfAgc4m5kOC0qQSWgi1TwnjqUnhRvE2MJUvd/mY@vger.kernel.org, AJvYcCXajaUa6I8voQTTq5AiIs5XRDBGVeDbQP/4v5mjwlKF2mFVhJA+b4h7Zc9bfOqjLb2J38holF/HWOXUYlKe7GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSUe8fGCk7s7JazOdNKHWHbNtiVXOs7aPe4/C7bmuQP7VcsK+T
-	T6JdYi1KlrIeH4dtk6GR+daPsHXBoLY9FsfG359g5Z1ChCfClpkPJre2q47CWXrI82+Jsi2wWgw
-	rAbbaRVLeLVj38JLzuBGViTpZ514TmpE3
-X-Gm-Gg: ASbGnctcmdeCI5BR2CkuDRW7c5feJNbpT0V7oYjIAXPDQRhGbKj8kG/77sSg/6q1Y7p
-	k7LqScxXYTZt9+3TxTiAozh3l/f0mwmSdoi3J
-X-Google-Smtp-Source: AGHT+IEIrXZEtRGkQkC/37jybcKymAIgGbmU+DmfCpXu3xlvjD32Aoh7VBkNt/7yUhvF+wthvTwGMMtZ97RlnkbCBUo=
-X-Received: by 2002:a05:651c:2205:b0:302:3a46:10a7 with SMTP id
- 38308e7fff4ca-304434da015mr73081fa.5.1734360742560; Mon, 16 Dec 2024 06:52:22
- -0800 (PST)
+        d=1e100.net; s=20230601; t=1734360851; x=1734965651;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xrDI54RrtTH587z61yGqvhuIg5ioNpJ5JcTwNcL7S14=;
+        b=oaJZiSusY2A5unNb3Ss6fYAU6KifyPCAaWmiYr5bIUkxvdwceVln819XijpGYZ2D3M
+         oeFUSfdN8y7WS8CFlVaRg1rSOp8M1HBEWt+wbUeqP2lrJTJjSr4tZ54X2ObR5WmH7QoR
+         h2rLfZ9OxsQ96fOSdO5oSbV3fKQr82i8mxURZ1fsbKxJTWeVkVCLb/pBSnHEG+7E01Xf
+         4OSNcn9I12tVvzRoN2G/g1mtsQDN45sYCuR9lGVOnawoj08tpvJ/hI0/NL33RH+AiuOe
+         thJQwMG3vfJwEzpfHn7WZlWZ6kIH/T6dlVuOv0SKkY/9ngm4UR/94LqZeBQwCVSEXrJL
+         YSCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUmOlWtR61s3hLqNFGvkB1gamcLhD0P/kzPsJg4CotTUIWOpH+Hz4T0bxj4OjMJw94VNyOLOvs4C9c3Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHFFtwfZ9FneGffFV2Zv/XRseONtPb0mAKSoq/45Ug32VYH7ZM
+	YNh2jhXFfwv/bE3xfu7mD8TwnwXizvKxoXfo7oaN5z2TrDXa81aT4vDcBof5HnY=
+X-Gm-Gg: ASbGnctnebRzhFpQQZyM4pQ/zNCX2SaqiDbn8RU4gMXSere4lXldPw1wPO9oOst4wTr
+	r7nVD/H1Yd9iDcPGMpEH6d7s+dWhB6OH/vGVdgG1JAJU9SsseseZKuDCOcuFg5VuzF1wLumuZER
+	C4hAleVuhQiQaUkvO3sSyOtphcp772+sPA+KT2YbjQ4MlxuhPGO19RH34TCfD4qcxKfCK6FsZLl
+	UWzpycItSrMQqsFefi+BcP2A6CIH2dmODNuiKXOARezZz1DdcgkPOj9QJUs6wWr2/HJPf8Tba5L
+X-Google-Smtp-Source: AGHT+IEejh93L0FZI+AsvKAjo6R6QN8N65ppACXanwMRaMhjPpRdaO8GmKLrZ1p3hnkSIvCPYIc0vQ==
+X-Received: by 2002:a05:620a:4889:b0:7b6:d939:f958 with SMTP id af79cd13be357-7b6fbee8df9mr2384495685a.25.1734360851084;
+        Mon, 16 Dec 2024 06:54:11 -0800 (PST)
+Received: from localhost.localdomain ([50.212.55.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7047aa633sm230461085a.10.2024.12.16.06.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 06:54:10 -0800 (PST)
+From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	Ben Wolsieffer <ben.wolsieffer@hefring.com>
+Subject: [PATCH] serial: stm32: use port lock wrappers for break control
+Date: Mon, 16 Dec 2024 09:53:23 -0500
+Message-ID: <20241216145323.111612-1-ben.wolsieffer@hefring.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
-In-Reply-To: <a1db0c90-1803-e01c-3e23-d18e4343a4eb@salutedevices.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 16 Dec 2024 09:52:10 -0500
-Message-ID: <CABBYNZL6ZJkf=jQpdUyxYxZZwqRjHxWzDk4nCb74xdB78-33yg@mail.gmail.com>
-Subject: Re: [PATCH v1] Bluetooth: hci_uart: fix race during initialization
-To: Arseniy Krasnov <avkrasnov@salutedevices.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, oxffffaa@gmail.com, ddrokosov@salutedevices.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Arseniy,
+Commit 30e945861f3b ("serial: stm32: add support for break control")
+added another usage of the port lock, but was merged on the same day as
+c5d06662551c ("serial: stm32: Use port lock wrappers"), therefore the
+latter did not update this usage to use the port lock wrappers.
 
-On Wed, Nov 27, 2024 at 7:38=E2=80=AFAM Arseniy Krasnov
-<avkrasnov@salutedevices.com> wrote:
->
-> 'hci_register_dev()' calls power up function, which is executed by
-> kworker - 'hci_power_on()'. This function does access to bluetooth chip
-> using callbacks from 'hci_ldisc.c', for example 'hci_uart_send_frame()'.
-> Now 'hci_uart_send_frame()' checks 'HCI_UART_PROTO_READY' bit set, and
-> if not - it fails. Problem is that 'HCI_UART_PROTO_READY' is set after
-> 'hci_register_dev()', and there is tiny chance that 'hci_power_on()' will
-> be executed before setting this bit. In that case HCI init logic fails.
->
-> Patch adds one more bit in addition to 'HCI_UART_PROTO_READY' which
-> allows to perform power up logic without original bit set.
->
-> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-> ---
->  drivers/bluetooth/hci_ldisc.c | 19 ++++++++++++++-----
->  drivers/bluetooth/hci_uart.h  |  1 +
->  2 files changed, 15 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.=
-c
-> index 30192bb083549..2e20f00649bd7 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -102,7 +102,8 @@ static inline struct sk_buff *hci_uart_dequeue(struct=
- hci_uart *hu)
->         if (!skb) {
->                 percpu_down_read(&hu->proto_lock);
->
-> -               if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +               if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-> +                   test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->                         skb =3D hu->proto->dequeue(hu);
->
->                 percpu_up_read(&hu->proto_lock);
-> @@ -124,7 +125,8 @@ int hci_uart_tx_wakeup(struct hci_uart *hu)
->         if (!percpu_down_read_trylock(&hu->proto_lock))
->                 return 0;
->
-> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->                 goto no_schedule;
->
->         set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
-> @@ -278,7 +280,8 @@ static int hci_uart_send_frame(struct hci_dev *hdev, =
-struct sk_buff *skb)
->
->         percpu_down_read(&hu->proto_lock);
->
-> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->                 percpu_up_read(&hu->proto_lock);
->                 return -EUNATCH;
->         }
-> @@ -582,7 +585,8 @@ static void hci_uart_tty_wakeup(struct tty_struct *tt=
-y)
->         if (tty !=3D hu->tty)
->                 return;
->
-> -       if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-> +       if (test_bit(HCI_UART_PROTO_READY, &hu->flags) ||
-> +           test_bit(HCI_UART_PROTO_INIT, &hu->flags))
->                 hci_uart_tx_wakeup(hu);
->  }
->
-> @@ -608,7 +612,8 @@ static void hci_uart_tty_receive(struct tty_struct *t=
-ty, const u8 *data,
->
->         percpu_down_read(&hu->proto_lock);
->
-> -       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags)) {
-> +       if (!test_bit(HCI_UART_PROTO_READY, &hu->flags) &&
-> +           !test_bit(HCI_UART_PROTO_INIT, &hu->flags)) {
->                 percpu_up_read(&hu->proto_lock);
->                 return;
->         }
-> @@ -704,12 +709,16 @@ static int hci_uart_set_proto(struct hci_uart *hu, =
-int id)
->
->         hu->proto =3D p;
->
-> +       set_bit(HCI_UART_PROTO_INIT, &hu->flags);
-> +
->         err =3D hci_uart_register_dev(hu);
->         if (err) {
->                 return err;
->         }
->
->         set_bit(HCI_UART_PROTO_READY, &hu->flags);
-> +       clear_bit(HCI_UART_PROTO_INIT, &hu->flags);
+Fixes: c5d06662551c ("serial: stm32: Use port lock wrappers")
+Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+---
+ drivers/tty/serial/stm32-usart.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This should be quite obvious, why don't you just move the
-HCI_UART_PROTO_READY above hci_uart_register_dev?
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index 7dc254546075..1ec5d8c3aef8 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -1051,14 +1051,14 @@ static void stm32_usart_break_ctl(struct uart_port *port, int break_state)
+ 	const struct stm32_usart_offsets *ofs = &stm32_port->info->ofs;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&port->lock, flags);
++	uart_port_lock_irqsave(port, &flags);
+ 
+ 	if (break_state)
+ 		stm32_usart_set_bits(port, ofs->rqr, USART_RQR_SBKRQ);
+ 	else
+ 		stm32_usart_clr_bits(port, ofs->rqr, USART_RQR_SBKRQ);
+ 
+-	spin_unlock_irqrestore(&port->lock, flags);
++	uart_port_unlock_irqrestore(port, flags);
+ }
+ 
+ static int stm32_usart_startup(struct uart_port *port)
+-- 
+2.46.1
 
->         return 0;
->  }
->
-> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-> index 00bf7ae82c5b7..39f39704be41f 100644
-> --- a/drivers/bluetooth/hci_uart.h
-> +++ b/drivers/bluetooth/hci_uart.h
-> @@ -89,6 +89,7 @@ struct hci_uart {
->  #define HCI_UART_REGISTERED            1
->  #define HCI_UART_PROTO_READY           2
->  #define HCI_UART_NO_SUSPEND_NOTIFIER   3
-> +#define HCI_UART_PROTO_INIT            4
->
->  /* TX states  */
->  #define HCI_UART_SENDING       1
-> --
-> 2.30.1
-
-
-
---=20
-Luiz Augusto von Dentz
 
