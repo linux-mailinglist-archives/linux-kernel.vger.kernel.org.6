@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-446880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A099F2A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:56:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACE29F2A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DE5188170E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:56:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50F0C7A354B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68FD1CEAB3;
-	Mon, 16 Dec 2024 06:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6381CDFD3;
+	Mon, 16 Dec 2024 06:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ENDV3yax"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xv2Pc6jt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC8AA48;
-	Mon, 16 Dec 2024 06:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB0914D2B7;
+	Mon, 16 Dec 2024 06:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734332195; cv=none; b=jow46FZsY5liJVjWFnWLL8NL1Vwo8BtdlqUnxqHLxPhBOL5YM18w1s17iB7UT3J6ZN4h+Z6Dkn3d5TgrmfPzpouXuBukT7hkhYNKWy8ouge+yBvv3eRQo4CE33HBXw1a8pUhLqsraJadXeLgn5Bahxw4idsQcJwrn0ZsR/Xhbec=
+	t=1734332249; cv=none; b=JgOK0LBLhDriyp9bm9Kb0PkTzkkswH8pgeE4x7MU6C1lrvG4Cz5CYCiYui0R4O2nyaJ3im055jTJq5iaMCOAmbisQZEf9/hrsZDJoTl2gVoDAXtqP+NN/S0RgZ6fgpni+NSNb2NamkmtQOlewyhfDbmEmWkQCVP7toVheJurTYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734332195; c=relaxed/simple;
-	bh=ftskE+QtxDhlmcORVXwP+OJcZHGw9a86/SPZCHQE+gw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NlNbeG2hIDZ9ab0X/GJitLQITuVYpiiVXNMuv4D3icIBa9+GLDyyGfpbWbwJ4plpCtm8bXBNGVa8ujm2KdSOZ6r//aDIKM/E8gdSZAsKSLOMGTt9EHz92HHdYcPi3I64zM1QXMJd/Xnt77uaFiVf6CQYjN1Y+JARQeMUrTKchSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ENDV3yax; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BFN9s6D029690;
-	Mon, 16 Dec 2024 06:56:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fzDziw1L8O2yPx8vToygw0npA8B/Iof32Zl5VGQUkO0=; b=ENDV3yaxnqMKGnHZ
-	ZnTVGpGERANwsFRu79rEgJU6CdCzhw6tfoNKx3koGX1Bdz21dWTax6HhgMynLWRm
-	w1dM/ocvfFBq+hcAgOGlvpWvGb+MEBUF7VZa7pmxi3IpNNGpEGj5YwD9lo0xtBWK
-	RyIjPfNUrp1GAsauyF4hXFnhB6ZjGUvxiRJoTZiy8Jvw5sKxEQKmdMu72d/fYmIX
-	nPQPLERF4BzKZ10lQkDGexD4XP1bYnc2ip/so5l7YloJDk8pwLOAJV7PSYIoe0UA
-	hYtSRjYehEzlcgYEgjoKIxAOhMyCT5In7QqAbVmx6NQnTj5mtYMinXyf5+qZO5wj
-	LNlooA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43hyy61j2u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 06:56:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BG6uP3R028322
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 06:56:25 GMT
-Received: from [10.253.15.72] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 15 Dec
- 2024 22:56:21 -0800
-Message-ID: <581776bc-f3bc-44c1-b7c0-4c2e637fcd67@quicinc.com>
-Date: Mon, 16 Dec 2024 14:56:13 +0800
+	s=arc-20240116; t=1734332249; c=relaxed/simple;
+	bh=mE6dYNIlY28OWcfnd/CJnogiqYFMZrcABGluAIq6/HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ooiTOf+ei0B1ld56YOdcufy8t54Uxq4kh1G/d3LJLz6gOrvPKfRYiVleM+cc8cmhTVf5jamFri71VqZion8n0+uaI1RNcqibYZR6Z1QrtyHXQGZ1Vmq+zIxBO8zC10U8QU3QzHSDJ7jfhESIo4M+pqi61xdo/YE/tHYfWGO28uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xv2Pc6jt; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734332248; x=1765868248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mE6dYNIlY28OWcfnd/CJnogiqYFMZrcABGluAIq6/HE=;
+  b=Xv2Pc6jtelsKUpMj34zbPafF6qMowxJ2bxo9u9t+frFc4uxTJe+h6ofl
+   4s35Yl3tGvfb8vpADXzyxeJhzB598LYOK0VdVokNnlseg4ohj5cy+bzpd
+   jcQ79B17IZhQLGZes3vSZNCa7wKV43n5SBHqLBm7kYA/7xXH0SNgQih1Y
+   TkZX3/2jqpJV3e680SWa2uxcpkPUmJxMrI0n/xfCz78V4ifqiHUP6HXIN
+   9lICjVGgAQPZrjPUrdMXExGVERuABbhDQiH0VpGZS1wyztiKNChMRlrKh
+   fuz+ilc3xkn1t8Fzl/ntDueyI18mMbrulV5QPvKWVOSPE/J927dmxrRGk
+   w==;
+X-CSE-ConnectionGUID: qpURufUXTBKSC9VxfogG/w==
+X-CSE-MsgGUID: f+vNz9FEQtaNarDfnpZsuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34437845"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="34437845"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:57:26 -0800
+X-CSE-ConnectionGUID: rK+hPPh9QICvnGMn5ZMo5Q==
+X-CSE-MsgGUID: b8UfaVs6SniBj6Oqi74eFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="96859421"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 15 Dec 2024 22:57:21 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0E771329; Mon, 16 Dec 2024 08:57:19 +0200 (EET)
+Date: Mon, 16 Dec 2024 08:57:19 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Niklas Schnelle <niks@kernel.org>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
+ 2.5 GT/s
+Message-ID: <20241216065719.GA3713119@black.fi.intel.com>
+References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
+ <Z1gSZCdv3fwnRRNk@wunner.de>
+ <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+ <Z1lF468L8c84QJkD@wunner.de>
+ <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
+ <Z1qoDmF6urJDN5jh@wunner.de>
+ <97bbbdecb8c65cfa2625b47aa2585a7417ddcb81.camel@linux.ibm.com>
+ <Z1rX1BgdsPHIHOv4@wunner.de>
+ <1dcc3ca74c3fbb3b4a1adcafb648dfd2501310f1.camel@kernel.org>
+ <Z1vyLNW20RuVaZe5@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
- <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
- <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
- <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
- <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
- <2e518360-be24-45d8-914d-1045c6771620@quicinc.com>
- <31a87bd9-4ffb-4d5a-a77b-7411234f1a03@lunn.ch>
-Content-Language: en-US
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-In-Reply-To: <31a87bd9-4ffb-4d5a-a77b-7411234f1a03@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: p7cRialJIJztNMiDYk7O9cRK4dw7Z5BK
-X-Proofpoint-ORIG-GUID: p7cRialJIJztNMiDYk7O9cRK4dw7Z5BK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- bulkscore=0 impostorscore=0 phishscore=0 spamscore=0 priorityscore=1501
- malwarescore=0 lowpriorityscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160056
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z1vyLNW20RuVaZe5@wunner.de>
 
+On Fri, Dec 13, 2024 at 09:37:00AM +0100, Lukas Wunner wrote:
+> On Thu, Dec 12, 2024 at 09:40:04PM +0100, Niklas Schnelle wrote:
+> > On Thu, 2024-12-12 at 13:32 +0100, Lukas Wunner wrote:
+> > > pcie_get_supported_speeds() is used to fill in the supported_speeds
+> > > field in struct pci_dev.
+> > > 
+> > > And that field is used in a number of places (exposure of the max link
+> > > speed in sysfs, delay handling in pci_bridge_wait_for_secondary_bus(),
+> > > link tuning in radeon/amdgpu drivers, etc).
+> > 
+> > Side question. If this is used in radeon/amdgpu could detecting the
+> > thunderbolt port's max link speed as 2.5 GT/s cause issues for external
+> > GPUs?
+> 
+> I don't think so:
+> 
+> An attached Thunderbolt gadget (e.g. eGPU) is visible to the OS as a
+> PCIe switch.  A portion of the Switch Downstream Ports is used to
+> attach Endpoints (e.g. GPU) and the remainder is used for tunneling,
+> i.e. to extend the hierarchy further if multiple Thunderbolt devices
+> are daisy-chained.
+> 
+> My expectation is that the Max Link Speed is 8 GT/s on those Downstream
+> Ports leading to Endpoints and 2.5 GT/s on those Downstream Ports used
+> for tunneling (to conform with the USB4/Thunderbolt spec).  In other words,
+> the Supported Link Speeds is the same on all of them, but Max Link Speed
+> is reduced to 2.5 GT/s on so-called PCIe Adapters (in USB4/Thunderbolt
+> terminology).
+> 
+> The PCIe Adapters encapsulate PCIe TLPs into Thunderbolt packets and
+> send them over the Thunderbolt fabric, and similarly decapsulate TLPs
+> received from the fabric.
+> 
+> There are some illustrations available here which explain the distinction
+> between the two types of Downstream Ports:
+> 
+> https://developer.apple.com/library/archive/documentation/HardwareDrivers/Conceptual/ThunderboltDevGuide/Basics/Basics.html
+> 
+> I'm hoping Mika or Ilpo can verify the above information.  I have
+> lspci dumps here of MeteorLake-P and BarlowRidge host controllers,
+> but without any attached USB4/Thunderbolt gadgets.
 
+That's right.
 
-On 2024-12-10 12:09, Andrew Lunn wrote:
->> As previously mentioned, using 'rgmii' will enable EMAC to provide the delay
->> while disabling the delay for EPHY. So there's won't be double delay.
->>
->> Additionally, the current implementation of the QCOM driver code exclusively
->> supports this mode, with the entire initialization sequence of EMAC designed
->> and fixed for this specific mode.
-> 
-> OK. If it is impossible to disable these delays, you need to validate
-> phy-mode. Only rgmii-id is allowed. Anybody trying to build a board
-> using extra long clock lines is out of luck. It does not happen very
-> often, but there are a small number of boards which do this, and the
-> definitions of phy-mode are designed to support them.
-> 
->> I'm not sure if there's a disagreement about the definition or a
->> misunderstanding with other vendors. From my understanding, 'rgmii' should
->> not imply that the delay must be provided by the board, based on both the
->> definition in the dt-binding file and the implementations by other EMAC
->> vendors. Most EMAC drivers provide the delay in this mode.
-> 
-> Nope. You are wrong. I've been enforcing this meaning for maybe the
-> last 10 years. You can go search the email archive for netdev. Before
-> that, we had a bit of a mess, developers were getting it wrong, and
-> reviewing was not as good. And i don't review everything, so some bad
-> code does get passed me every so often, e.g. if found out today that
-> TI AM62 got this wrong, they hard code TX delays in the MAC, and DT
-> developers have been using rgmii-rxid, not rgmii-id, and the MAC
-> driver is missing the mask operation before calling phy_connect.
-> 
->> I confirmed that there is no delay on the qcs615-ride board., and the QCOM
->> EMAC driver will adds the delay by shifting the clock after receiving
->> PHY_INTERFACE_MODE_RGMII.
-> 
-> Which is wrong. Because you cannot disable the delay,
-> PHY_INTERFACE_MODE_RGMII should return in EINVAL, or maybe
-> EOPNOTSUPP. Your hardware only supports PHY_INTERFACE_MODE_RGMII_ID,
-> and you need to mask what you pass to phylib/phylink to make it clear
-> the MAC has added the delays.
-> 
-> 	Andrew
-I intend to follow these steps. Could you please check if they are correct?
-1. Add a new flag in DTS to inform the MAC driver to include the delay 
-when configured with 'rgmii-id'. Without this flag, the MAC driver will 
-not be aware of the need for the delay.
-2. In the driver, if this flag is set to true, change the phy_mode to 
-PHY_INTERFACE_MODE_RGMII to instruct the PHY not to add the delay.
-
--- 
-Best Regards,
-Yijie
-
+The bandwidth in the PCIe tunnel is dynamic but the adapters announce Gen 1
+x 4 according to USB4 spec. You can get up to the 90% of the available
+TB/USB4 link bandwidth for PCIe depending what is being tunneled. Graphics
+drivers should not really look for these "virtual" PCIe links but instead
+the native link if they need to.
 
