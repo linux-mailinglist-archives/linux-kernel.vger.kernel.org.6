@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-448303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E179F3E50
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:38:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348AF9F3E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B14161E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A92188D2FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DF21DC04B;
-	Mon, 16 Dec 2024 23:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFA61DD54C;
+	Mon, 16 Dec 2024 23:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vyMpdeUQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gY/TwmhM"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E314F1D5AB6
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521681DACAF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734392259; cv=none; b=QC8Datejon/4O+9awDw7qi4koVaxPP1fm4MdjuTpI+U71Co9VBt4mmWAiMwOc8ahiCH5kUJRHUy2/DvDJhM38k+AM69b+xEba9zKk9gznuhCye/GEO0NJdDH63hmoJksdEvwSzZqb4oQ0SQHPpD2nHnjf5yi2n2OGjCssiLUZeU=
+	t=1734392260; cv=none; b=gxPMqb7TU4eRm83AKdxz1OryDurt9Li3PKFZXWzKQVAWbFAAIj3GEYLk9V0/Jqqa1zoNbjWjx2TWOfUSsvuovzaLKkK0nbWKT5Ox+CSngFRxBD0Vz5YQ8/fwY8JC+sLZLMbQ3FL4s9qhPR+8qOcBVUxWnrFFQC/37qhvj5dmWZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734392259; c=relaxed/simple;
-	bh=K1W4o2sZdF5lVYRGfeks7NhzGm/Jy2da4/Mpm9653ds=;
+	s=arc-20240116; t=1734392260; c=relaxed/simple;
+	bh=J15PTcLBO+YxoVKNHZq8FmvDQXS8n+Mg0vCpOx+RUxs=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eTtNlGioBLNjq9aBi8FRvXr4Io8nuwQFD6GRGvsY2LeZ5LbstzAgoARP9KHph5XBovbzVtT4ICYlCIqhxs/RW2IdEGcu5SN2ixT8kGZEtUhLskttip15qxCAZDcLDZCugVbob6niByTFn7Vc5e980RCqrGJFoCWoS7U1uTJP3q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vyMpdeUQ; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=qTYWC2G87XmgKUrUjiqhebaggkti3elkZGKEKbTtj4REg1xeUNpJqpuAhcKfpFvXWZEtLb3yDock2AODhD1I8tspK4ndNZEP+vDV9O3hRmKuGOxzMW83eEEueBz+aH2sngPZ0IRQ4nd7ktybifrNeoouQYfAWGy6SKpp0+VS2wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gY/TwmhM; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From:Reply-To:
 	Cc:Content-Type:Content-ID:Content-Description;
-	bh=CrhFZ3L2x07bub/40Vp59il27O/SizC8zFhP7HAHpi8=; b=vyMpdeUQOKLY34lxdul443TXiG
-	SsMDdVpmb/GQZVDcjd8ZpZzYRiiaZy/H3uHDFcO/N+ZO9pYSVzqUDUMkCdfPv5vaADFjzdpBHrD4T
-	J69AC1a41R3X6VWqPzkUEURqV6zbgPEIR0h5utxro0iKiHRxJ02vmxtSkrvm5J8MnYFU2vgflSgN7
-	Oz5wxizXbR0DgaEHbku7Z5p0Rvt0ltgt+Wg5vXD2v1rJZ2MHUonMgtiQTwVdB40gQAAuhsu7NUNPA
-	fRjhmyBKf9F3PrTqCT6MtUvAKXyrCxKpjfMQJgWMBaCbyH9aX/HZ+TA7uL1dENbB/lntQxAHroFm0
-	eRvnKMrg==;
+	bh=zzCHIqIiQJDgySmzgmnKF8ZlcgBrOOsvhFm4kYphShs=; b=gY/TwmhMVrUX4ruTov+kQpAeXq
+	vUof0P+v8tmNgZzieQgAPFNfKsdCHZ/fwo462vl2AG6mOxorwVgsneYQhjXjghSswbLIN6yyq2tG4
+	MLM5EBtf9WXI43ph0N7ap72TpygIWsaBhtBU+fFNKjt/VY3Rpmjp1TLnWE0uLjvSh15dTjVNS0Zqq
+	xsxKda+QdQW9Z/ITvj5zEnY921zH0MMyZEtqdA6/StFGUzAoRPMx0NaN6IQY4fANl3FpmUJQlxLGP
+	TX9n2KDYVOHgvF5DsVSzF60WeTB/u/TkkLqwmClvBnb+T2Wv3wqAtEWxJKwwFM/tQCqlMGEFmxN56
+	4l17Grwg==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNKeA-000000034nW-1rMG;
+	id 1tNKeA-000000034nX-25us;
 	Mon, 16 Dec 2024 23:37:06 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNKeA-0000000DeW6-0Alp;
+	id 1tNKeA-0000000DeW9-0Qg3;
 	Mon, 16 Dec 2024 23:37:06 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -80,9 +80,9 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	bsz@amazon.de,
 	nathan@kernel.org
-Subject: [PATCH 2/9] x86/kexec: Ensure preserve_context flag is set on return to kernel
-Date: Mon, 16 Dec 2024 23:24:09 +0000
-Message-ID: <20241216233704.3208607-3-dwmw2@infradead.org>
+Subject: [PATCH 3/9] x86/kexec: Use correct swap page in swap_pages function
+Date: Mon, 16 Dec 2024 23:24:10 +0000
+Message-ID: <20241216233704.3208607-4-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241216233704.3208607-1-dwmw2@infradead.org>
 References: <20241216233704.3208607-1-dwmw2@infradead.org>
@@ -98,29 +98,59 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-The swap_pages function will only actually *swap*, as its name implies,
-if the preserve_context flag in the %r11 register is non-zero. On the
-way back from a ::preserve_context kexec, ensure that the %r11 register
-is non-zero so that the pages get swapped back.
+The swap_pages function expects the swap page to be in %r10, but there
+was no documentation to that effect. Once upon a time the setup code
+used to load its value from a kernel virtual address and save it to an
+address which is accessible in the identity-mapped page tables, and
+*happened* to use %r10 to do so, with no comment that it was left there
+on *purpose* instead of just being a scratch register. Once that was no
+longer necessary, %r10 just holds whatever the kernel happened to leave
+in it.
 
-Fixes: 9e5683e2d0b5 ("x86/kexec: Only swap pages for ::preserve_context mode")
+Now that the original value passed by the kernel is accessible via
+%rip-relative addressing, load directly from there instead of using %r10
+for it. But document the other parameters that the swap_pages function
+*does* expect in registers.
+
+Fixes: b3adabae8a96 ("x86/kexec: Drop page_list argument from relocate_kernel()")
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/kernel/relocate_kernel_64.S | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/relocate_kernel_64.S | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 9bd601dd8659..1a52e4339c1d 100644
+index 1a52e4339c1d..0d6fce1e0a32 100644
 --- a/arch/x86/kernel/relocate_kernel_64.S
 +++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -220,6 +220,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	movq	kexec_pa_table_page(%rip), %rax
- 	movq	%rax, %cr3
- 	lea	PAGE_SIZE(%r8), %rsp
-+	movq	$1, %r11	/* Ensure preserve_context flag is set */
- 	call	swap_pages
- 	movq	kexec_va_control_page(%rip), %rax
- 	addq	$(virtual_mapped - relocate_kernel), %rax
+@@ -264,6 +264,10 @@ SYM_CODE_END(virtual_mapped)
+ 	/* Do the copies */
+ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	UNWIND_HINT_END_OF_STACK
++	/*
++	 * %rdi indirection page
++	 * %r11 preserve_context
++	 */
+ 	movq	%rdi, %rcx	/* Put the indirection_page in %rcx */
+ 	xorl	%edi, %edi
+ 	xorl	%esi, %esi
+@@ -302,7 +306,7 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 	jz	.Lnoswap
+ 
+ 	/* copy source page to swap page */
+-	movq	%r10, %rdi
++	movq	kexec_pa_swap_page(%rip), %rdi
+ 	movl	$512, %ecx
+ 	rep ; movsq
+ 
+@@ -314,7 +318,7 @@ SYM_CODE_START_LOCAL_NOALIGN(swap_pages)
+ 
+ 	/* copy swap page to destination page */
+ 	movq	%rdx, %rdi
+-	movq	%r10, %rsi
++	movq	kexec_pa_swap_page(%rip), %rsi
+ .Lnoswap:
+ 	movl	$512, %ecx
+ 	rep ; movsq
 -- 
 2.47.0
 
