@@ -1,81 +1,153 @@
-Return-Path: <linux-kernel+bounces-447130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517439F2DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:05:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315059F2DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FE91887819
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05E6188295E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF586202C3A;
-	Mon, 16 Dec 2024 10:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515B82036F0;
+	Mon, 16 Dec 2024 10:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/nNDfii"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5FC1B6D1A;
-	Mon, 16 Dec 2024 10:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="U8C2QkU6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BBD202C43;
+	Mon, 16 Dec 2024 10:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343485; cv=none; b=kF65zPlazoC6Ua4mcEAJd3VZnWjVR2jWyuJzvON0khttXZKzsNSb5/6UL5i7dR6BuZFBfZ5w+lwe+Jnn4lqaMStZ1eRYh9QGosVPTxd8JMdsTFAo2AvGeFQp9D1RhB3uiqyN+wvpRyT7CUX194+DxsXMWDkBqqVe1X0hREDhV2Y=
+	t=1734343556; cv=none; b=LLhWiXpeBkYmTFa2jAgG0OfHK2z5LToP/c2FnbDsaXLF00qoMFGP0FuHuL1CBfe1Kse43QmYUXJfjt9dYj2X7a8dlehWIPcaulkhli4aOvkmw/68pDunDCpIvwFuXsKzR4n5UrCSrAt8LWO8/xMp11VSjO9WYt/9Hg5I8r+vfd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343485; c=relaxed/simple;
-	bh=h3soJ/GHXkglGzwy5t8lMwa1WecVZ+A4tzP9OiFFs0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5rxUDaPZwo2iKmfGNBy95qDnm4z3K6rbrYQDePSjzDgHp5GGCHf0A8ZZRaG2Eza8Lc+bXKzUyPNKPX7BzeeJ0tBa7aX2/weRledjJ/DUvkq8A6SAuEz5Klib3LTRATh+XsmY09RUKadAr+4V8R2OgHBeoSQndtAkOcapPCJUtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/nNDfii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D81C4CED0;
-	Mon, 16 Dec 2024 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734343484;
-	bh=h3soJ/GHXkglGzwy5t8lMwa1WecVZ+A4tzP9OiFFs0Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y/nNDfiiC2ajeCwW6rWTUCQkCQIfOjjUNv2t6PsGHaBBVHmwoXWXV2VWugaPfsmsD
-	 xwUXl8twRFFBOSTAjJL8i0DkEgSDvJcZtGE5GZCRXQk5yi12c9w5n6gWZhB00fQDDp
-	 3Na9pEYCULKLBs5Iqw58dl/uSvcBXJcXyY65jS/uAvXjoK3jXpQQeSODWnFZ1IHhi8
-	 f10ORT3zFI+2TeeG29kl4Heo1DUHZDNN3JvBYHFomchuQF4PwR+f0OlZtumvFdxMMO
-	 eD2EIiLVmbxelXmv8mXQhqKHFEYneGeN2RyBvyR+sOwuIh+FuFd336/ayPvL8JhQve
-	 SKf8xYxsj5qwA==
-Date: Mon, 16 Dec 2024 11:04:40 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: power: supply: gpio-charger: add
- support for default charge current limit
-Message-ID: <2tk4mnzzhr3se3sts7gyt27izhlsmzajvdgfszubgy74wggeom@kggdt4go667b>
-References: <20241213-default-charge-current-limit-v2-0-45886fce905c@liebherr.com>
- <20241213-default-charge-current-limit-v2-1-45886fce905c@liebherr.com>
+	s=arc-20240116; t=1734343556; c=relaxed/simple;
+	bh=tcvcrEXa4z8aAmbxJaCBSKqscDZgaCP4yn9hBrRWWvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SdYxZUWt/iMfij1S53Pr7IhxT+kd5gL8fSQjoxzMZTG+lI1HRlWaRHThldHmSknyiXJgzUOp4zKO0SNyxQ9mVC2XM/jMwHAQOtdcCin0qCS2YbNgcfP8TJNn71Hq0Sh3f1cIbj420g6uHWclrWcXO1OH6shYoB+/TyTx+XSbb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=U8C2QkU6; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=aJZhM
+	nQQFM1POYULiipN3Rj2mbeFt5B/wTFTnYMR9LI=; b=U8C2QkU6EpnR9A+MCs2LL
+	U8BtscA1UMCT26xi1nRWUB++fvf7wnGg2x8tL2D/S+WRgb4RdGogaPadTC2FKarm
+	oWkJXaP3gGxC6qIQiZ6xvjKpTdSJqKotIcND17C0dxNb80hSpR526FPtPoN89+Xe
+	yOFM7c53V/xwCZt5iRcihI=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3T3c9+19n8_S6Aw--.40279S2;
+	Mon, 16 Dec 2024 18:04:49 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: mchehab@kernel.org,
+	linux-media@vger.kernel.org,
+	ezequiel@vanguardiasur.com.ar
+Cc: heiko@sntech.de,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	kever.yang@rock-chips.com,
+	sebastian.reichel@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2] media: rockchip: rga: Fix Copyright description
+Date: Mon, 16 Dec 2024 18:04:43 +0800
+Message-ID: <20241216100444.3726048-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241213-default-charge-current-limit-v2-1-45886fce905c@liebherr.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3T3c9+19n8_S6Aw--.40279S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWkAry5uF43AFWxXr1UJrb_yoW5uF1kpa
+	1Du3s7ArW7GrWjgw1kJ3ZxCFZ8t3ZavayUGFWS9ws3ZFn29rWUK34DXas5Ar9rXr17Cay3
+	tw4Yq347JF4avr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMBTOUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQW3Xmdf+hMiTgAAs4
 
-On Fri, Dec 13, 2024 at 08:32:33PM +0100, Dimitri Fedrau wrote:
-> With DT properties charge-current-limit-gpios and
-> charge-current-limit-mapping one can define charge current limits in uA
-> using up to 32 GPIOs. Add property charge-current-limit-default-microamp
-> which selects a default charge current limit that must be listed in
-> charge-current-limit-mapping.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Last time you wrote the point of it is to avoid defaulting to 0 A for
-charging, because existing implementation uses smallest possible value.
-This is supposed to be here in commit msg.
+The company name has update to Rockchip Electronics Co., Ltd.
+since 2021.
+And change Co.Ltd to Co., Ltd. to fix mail server warning:
+DBL_SPAM(6.50)[co.ltd:url];
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Reviewed-by: Kever Yang <kever.yang@rock-chips.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-Best regards,
-Krzysztof
+---
+
+Changes in v2:
+-  Use uppercase (c) part for consistency.
+
+ drivers/media/platform/rockchip/rga/rga-buf.c | 2 +-
+ drivers/media/platform/rockchip/rga/rga-hw.c  | 2 +-
+ drivers/media/platform/rockchip/rga/rga-hw.h  | 2 +-
+ drivers/media/platform/rockchip/rga/rga.c     | 2 +-
+ drivers/media/platform/rockchip/rga/rga.h     | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rga/rga-buf.c b/drivers/media/platform/rockchip/rga/rga-buf.c
+index 8a48e9d91f96..4396348811c8 100644
+--- a/drivers/media/platform/rockchip/rga/rga-buf.c
++++ b/drivers/media/platform/rockchip/rga/rga-buf.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) 2017 Fuzhou Rockchip Electronics Co.Ltd
++ * Copyright (C) 2017 Rockchip Electronics Co., Ltd.
+  * Author: Jacob Chen <jacob-chen@iotwrt.com>
+  */
+ 
+diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c b/drivers/media/platform/rockchip/rga/rga-hw.c
+index 11c3d7234757..bf55beec0fac 100644
+--- a/drivers/media/platform/rockchip/rga/rga-hw.c
++++ b/drivers/media/platform/rockchip/rga/rga-hw.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
++ * Copyright (C) Rockchip Electronics Co., Ltd.
+  * Author: Jacob Chen <jacob-chen@iotwrt.com>
+  */
+ 
+diff --git a/drivers/media/platform/rockchip/rga/rga-hw.h b/drivers/media/platform/rockchip/rga/rga-hw.h
+index e8917e5630a4..cc6bd7f5b030 100644
+--- a/drivers/media/platform/rockchip/rga/rga-hw.h
++++ b/drivers/media/platform/rockchip/rga/rga-hw.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
++ * Copyright (C) Rockchip Electronics Co., Ltd.
+  * Author: Jacob Chen <jacob-chen@iotwrt.com>
+  */
+ #ifndef __RGA_HW_H__
+diff --git a/drivers/media/platform/rockchip/rga/rga.c b/drivers/media/platform/rockchip/rga/rga.c
+index 1739ac0c8e92..3dccab5fa4a1 100644
+--- a/drivers/media/platform/rockchip/rga/rga.c
++++ b/drivers/media/platform/rockchip/rga/rga.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
++ * Copyright (C) Rockchip Electronics Co., Ltd.
+  * Author: Jacob Chen <jacob-chen@iotwrt.com>
+  */
+ 
+diff --git a/drivers/media/platform/rockchip/rga/rga.h b/drivers/media/platform/rockchip/rga/rga.h
+index 8105bb2efe57..530e12de73c4 100644
+--- a/drivers/media/platform/rockchip/rga/rga.h
++++ b/drivers/media/platform/rockchip/rga/rga.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
++ * Copyright (C) Rockchip Electronics Co., Ltd.
+  * Author: Jacob Chen <jacob-chen@iotwrt.com>
+  */
+ #ifndef __RGA_H__
+-- 
+2.34.1
 
 
