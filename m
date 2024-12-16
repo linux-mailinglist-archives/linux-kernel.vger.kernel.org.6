@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-447613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690F39F34E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C239F34EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4B0188496F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256EF18849EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588881494DC;
-	Mon, 16 Dec 2024 15:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCAihe3h"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701B81494D4;
+	Mon, 16 Dec 2024 15:49:29 +0000 (UTC)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A7753E23;
-	Mon, 16 Dec 2024 15:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CA353E23;
+	Mon, 16 Dec 2024 15:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364116; cv=none; b=ljC489C5fZCcaTDDjMChKXLeyd0U0BF2ThVRkjRohvHIq8D1D08GmEqevJomW1MEPmJms1w/6tVT59nTFERDfHpGB8cNOj5OUblRM4h9H769WPQc3e0SoQQQ8E6MWEb2XAYNrgjGZNnEOfDf5Hi2ryIHt2eWQyZub8y9M7d/Mf4=
+	t=1734364169; cv=none; b=TQVor8NLRBWV1RtNeJy4O7m3AKfaCVElLJ28t3RjcxAv4W62WHNzxPFi9bQZSgPAiKyyK06IYQUZVxMCHmCihcHIt/fBv4x93Pmb6eXr4LI0cfLHZLclr5DiMdlosCb5cMXX3LtdKK1JEYCORm/0bOnDC1A/Iyhc2GEu5kV8otw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364116; c=relaxed/simple;
-	bh=kGbZ7NqEnBAwCOzYxMyAeLrgogRuew36P4L0wzBun4I=;
+	s=arc-20240116; t=1734364169; c=relaxed/simple;
+	bh=s42BqmLsAbRDynFfUKXg6KjrzQKhyfgEU22z4jU8cJY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TqbXO034mRln2mmgB3TbcyCyNHNgxP+P10QySBJRE4UJPVf7Ym/RgwRvYhn3eM39S6NDW1xGcVOFHYBy2JWif3G3GKRntA6E235ltop0ALjmH1Zg8uQhe9JK0Ookeg+oujYqasDYwMH4Q1/gx3UEhk9C9SoS7DN5nFBKraBhPMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCAihe3h; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=O2sk8Qt7BqBBx1k3eI6PC7awlDEmsGF1mIPl4d1qFonHe/1I2h1sJgxoqWUzlG7zNraZ5//w5c7d/no8E7Hw0ZAPXWbehozImV2i6z2kNNkaIw2N9XD/q9ayPFmT+qcE/Ij7/No7V5pR/spMwhcGqzvrB+BKkqsdcNG1VO5A+zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee7c059b97so764551a91.0;
-        Mon, 16 Dec 2024 07:48:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734364115; x=1734968915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pCyg2R9ae6q3J3HI3LMA0B4dQRci3oFcga8rAAxtT9o=;
-        b=BCAihe3hwCsxb02ZOxyPKQVfAW+gicYfgcs9eRauD8uDJH+gPQmTdyPUq5Rsh3dBiI
-         8xDIX6McBXl/vF0osMELKaj4cPy5JKmC4NyX79yLTIQR1zTfvGasBqL6cApUlGbz43mR
-         Eo1xwnLaLD+lNEuPitK0kqGnQxz6KSVzz3E3K6oLGYbByYq2mepPgpNtwldm7IpfShnm
-         nYJLmPtt2KdLIoRG+toHbqLLqbFYtLph7keAVDE/Vcxa4u/i6fFY7US93++4SwLUEpUB
-         czfaPdnouOaOCvfwZPzDK0D73UAh9DqWMX2Rps4cppgjdVuSj+kiZ3u+ZyCR8n5MRziH
-         oDVg==
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afe99e5229so1156033137.3;
+        Mon, 16 Dec 2024 07:49:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364115; x=1734968915;
+        d=1e100.net; s=20230601; t=1734364165; x=1734968965;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pCyg2R9ae6q3J3HI3LMA0B4dQRci3oFcga8rAAxtT9o=;
-        b=mxK8UeSd2t/tqViPKen/dblXaI6+985aCRuejA6+hJ0ti6GNx5+0Gu4sgER0MTLgCE
-         Vgi1Q6ScKl9Bd1SyrLuCd/H5xz0eWDulRxsJKXwR8pz5Qyzymnk5x0W5W5K8oI8izBix
-         8My9E8DrG/Rsi9Uq8ZJHBmZS2Vd1TUOUEtYglYep6b81yck7lhmiuGlJ1flSN9wfl/C1
-         fkLGycxRBbrud7ikjpm2++2ZfDLrQEs0PaPrb8pvtrZBrg3d7hVa4CTd/uSkm+dSgzzR
-         6CHvMQfdJ3ssujv20ZGudlCOALMPdblougs5ADQtP+xnTl5z0HiogDZLE0yilkJ4434t
-         MFzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqquptP0kRg930HtZCjNnTh30vuAT1ys2JlpaJ35eKZWQaR3jgfYr2rAD0uLkRe3zeOJoXH3QN2e7H6ls3kME=@vger.kernel.org, AJvYcCUxYxJnyID5hMB32+BXYiDPotqY+8UK0ILgt5pPCeH3vS1X7NNRNthCa9U02512habRrsVW9xuZxfJXYlnB@vger.kernel.org, AJvYcCVBgvR0pWUbXQDG/tmu5XqEozzl4ZlPK3/2Yg2vQEmQ444otmVkpY1iVbQtmUwOUJ7OklL0eNXyt+FRj9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6/zR3HmK2BjvC6MUkjeFShHpBBECcvziWbqm9i4sztjKY016r
-	BdpPxkibb+vKro9hbWYDrmSgX+ikdPD73IcenYJoPIG9aL6OeHF1WX8pOi+WrhXfk0KX9mT/81y
-	Voz3hVvhdeyaLsmuJd0WqzHCvy1k=
-X-Gm-Gg: ASbGncuDEGbvbABfo3icKqzgPWW6jJXG4Wm2raSw6i2DEjTsbnLYe/pdSaoxCDGrs3S
-	OP/pwmv/GWS5lh5e8sgivH6hhD77jlmoPRnqRVQ==
-X-Google-Smtp-Source: AGHT+IF1h3ZqTQb/vuAJYpU3eBygJPGLyROOe4tTXVSMcOhJ/PkrHPs9pNaQs2rToTt6ocbxCSbN7DfEWISNJQ4yIho=
-X-Received: by 2002:a17:90b:17c6:b0:2ea:5e0c:2851 with SMTP id
- 98e67ed59e1d1-2f28f85e830mr7140654a91.0.1734364114717; Mon, 16 Dec 2024
- 07:48:34 -0800 (PST)
+        bh=c/KK/DGJLlVcpaa/VzBQSTqWfD255PNzKjWR8sXYI7A=;
+        b=kEvuF8Tq/h+AtNg7+g6cEusn2p6nji0mw5t9Fc6jTNaQIAIRDbVKfP74nILEuW7EQo
+         6/Uuo4psv5da6atO9qhvlKgfRUEXvNDJNlYX40SXrIpKJ6iNgBXGnuVECFVRQmISeg1z
+         Jia/4AGhTiK53ncclal5QP67k5/heKL/mypyIGvzDKRwHJlWudzKFA1xyYO5kNKiZWs1
+         YGCUENeOWUaf8oFGyf/TR5+S+67x44MUV4ppj84IIXPPIMMVOLBvdewhymJuEdfdqZoo
+         8QMkt0t4t1fn7ITYk/pFgi5SSwP6QvL3JrjS+8ylZsGhy/7OMN8fLwcisijloj3OK4so
+         mUxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUc/Uq03VhipeGAJH7dr3+alLJ03wJgBm1U8xcT6eg6uHO1Owm+pxYNZgKPsmycD4Uq2MPtzdXcilM=@vger.kernel.org, AJvYcCVHMJ+IzP9WC28saQ/7vb0BU5YzDqf6UUG5t0r5FIN27BOE8aBpTg3PFaeRsLDwjQDQmNqWF1W+dELPlAWciRFXG4s=@vger.kernel.org, AJvYcCXZbTFnUDDlPOFEZcQv2Trw5N6Zg0NlipSg5NWmtk6B+o9rncJ0HyFVBACLfx+ijo/ACdOuiiShW09UMiV6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEgqX3fcu4nh4sPjGqfsjvfhUQBxec6fnPRELXqCual9KdlsyI
+	hBjv6555kKJjMIhnBHX0CUTEZyf8mMOibPws+vHpShsw7GKXpBn0MiL03SH2
+X-Gm-Gg: ASbGncuoDf5r9cnheYtXUcD0rSz4KkrXxVS5Ve/6ZvGn/jOgs8UvNY39GNWke0eDo9D
+	+TjPNvgqzbmS6Gq+IzUDXLg3UCdS5Fks1oK+/mExdMNn9QPhvjW3H4savoafVp76+8uuwpeEAWC
+	3RdXYIp7UX6nCwf466b4CLJxzcEIHBa9MncjDS6EgDU8Rf6C0HfSo++SZ809cB6QfUv0SsSWgb5
+	dShy0E/2IpaOf/1tK9afxf2MlZGW76ScgTl5L4NuUxiOzD81QJcxD3V+Uh1L1YDa1gjCGLnmE3S
+	w5G3mQZpminxDmFO0KA=
+X-Google-Smtp-Source: AGHT+IFjih+VTcHFPGNtfAmhoPGHcjA8g3KWaTXEv+ZyRk3LPdNsxLYyzKVtorNpCJvJrCYkjK/cgw==
+X-Received: by 2002:a05:6102:4429:b0:4af:e4fb:2f0b with SMTP id ada2fe7eead31-4b25db3b229mr11907127137.22.1734364165337;
+        Mon, 16 Dec 2024 07:49:25 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-860ab587109sm927395241.11.2024.12.16.07.49.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 07:49:24 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85b83479f45so732270241.0;
+        Mon, 16 Dec 2024 07:49:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUHCMT7WnWUg0OYEChytPhiIuBywsvuK7Oyt9fd722GOZr72l61hHVRdcPj0NLNXikYuPua49XWzFEO0p7A@vger.kernel.org, AJvYcCV/TpBFeu6LYYtjpC4y7ECCXbs410E3Ps1y9uoTS7M4wNcgX9bfo+aonD+JhNJMikllNzLw44jiTzk=@vger.kernel.org, AJvYcCXLyHzuBCYIcuuOHsi9Rvxzx1LdU5Gh/PsP864MDHrLs9NxObIZew5L6dZL0G/c/TEWLOvgGh2UWr5ZH+OKgug1WVE=@vger.kernel.org
+X-Received: by 2002:a05:6122:2089:b0:516:11c9:f46 with SMTP id
+ 71dfb90a1353d-518ca32eecamr11929977e0c.12.1734364163493; Mon, 16 Dec 2024
+ 07:49:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <I0v8YGJe3e1ex1oF3mki-7QKimYLCJHnBy6g1taHgoOFvpNmQSrSnsMGJyGS064pGJsJDsTsei-pInFRz5INWA==@protonmail.internalid>
- <2024121309-lethargic-ended-5f99@gregkh> <87ttb7d24p.fsf@kernel.org>
- <hmmCwoNftQc5Mj4BLjFC2qTABem8CvuXSx3ucXzjIfQSwLjULmZgsw7vpq3Zxy0kk5H3Zjpz-vd4d7E1sb4LHw==@protonmail.internalid>
- <2024121344-excusably-resurrect-d01a@gregkh> <87h674c5vq.fsf@kernel.org>
- <UW-ATumT4L-13ZXX-lO1inQGeZK7VgQWNAHE3688ulGj-rvzxWkUdrmnAUlufI1W5-9d6vzH3TXZ4VOmYh9wxA==@protonmail.internalid>
- <2024121646-shelve-series-5319@gregkh> <877c7zbx2u.fsf@kernel.org>
- <8e1b5c5e-52ae-4332-a49c-990add7611f6@kernel.dk> <2024121630-steed-grating-6352@gregkh>
- <64a40555-e3f8-4671-8ece-3c3b677ccdfb@kernel.dk> <CANiq72=01Oaszr08hV2ABLbd0RJt9oO=j=aWAizbbCUg+T+aNQ@mail.gmail.com>
-In-Reply-To: <CANiq72=01Oaszr08hV2ABLbd0RJt9oO=j=aWAizbbCUg+T+aNQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 16 Dec 2024 16:48:21 +0100
-Message-ID: <CANiq72n+XM9qgMGq_94OOawOU0NC+7b=mF1dpSSBq2_AtVJung@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
- parameter support
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241213175828.909987-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 16:49:11 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX6Lhv3CmLa461fn1pbdh077sOe08Q6VcBiZmv0ZcNNfg@mail.gmail.com>
+Message-ID: <CAMuHMdX6Lhv3CmLa461fn1pbdh077sOe08Q6VcBiZmv0ZcNNfg@mail.gmail.com>
+Subject: Re: [PATCH 2/9] i2c: riic: Use local `dev` pointer in `dev_err_probe()`
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 4:39=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Agreed. I would suggest to consider marking it as a Rust reference
-> driver, since it is a prime candidate for it:
+> Update the `riic_init_hw()` function to use the local `dev` pointer in
+> calls to `dev_err_probe()`. Previously, `riic_init_hw()` used
+> `riic->adapter.dev` in error reporting. Since this function is invoked
+> during the probe phase, the I2C adapter is not yet initialized, leading t=
+o
+> `(null) ...` being printed in error messages. This patch fixes the issue =
+by
+> consistently using the local `dev` pointer, which points to
+> `riic->adapter.dev.parent`.
 >
->     https://rust-for-linux.com/rust-reference-drivers
+> Additionally, replace `dev_err()` with `dev_err_probe()` throughout
+> `riic_init_hw()` for consistency.
 >
-> That way, it is clearer that the duplication is meant to build the
-> abstractions and temporary in the long-term.
->
-> Then we can also easily track which ones are meant to be those, and
-> Greg can get justifiably angry at you/us if the duplication isn't
-> resolved when the right time comes... :)
+> Fixes: d982d66514192 ("i2c: riic: remove clock and frequency restrictions=
+")
+> Fixes: 71dacb2565ed (i2c: riic: Simplify unsupported bus speed handling")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-By the way, I half-jokingly suggested this elsewhere, but we could
-trivially allow module parameters only for particular modules, i.e.
-only allow to use the `params` key here if the name matches `rnull`
-(or if they set a special flag or whatever).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes, it is a hack, but it would give people pause when trying to use
-the feature, i.e. to think twice. And, to me, it makes sense to
-encode/acknowledge this kind of thing explicitly anyway.
+Gr{oetje,eeting}s,
 
-So if that would unblock this and reduce the chance of repeating
-mistakes of the past, then we can easily do that too.
+                        Geert
 
-Cheers,
-Miguel
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
