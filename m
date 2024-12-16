@@ -1,169 +1,100 @@
-Return-Path: <linux-kernel+bounces-447928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D69F38D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:23:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157939F38C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DDD1891591
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14D81618E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0D7206F0B;
-	Mon, 16 Dec 2024 18:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91112066DD;
+	Mon, 16 Dec 2024 18:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZgvkOpi"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="qDk+NHtl"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5520626B;
-	Mon, 16 Dec 2024 18:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514D5203D4C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734373157; cv=none; b=D7LlX7YkhUwTNkEmTv8fwrFysJdGVpBF8T5sJCmLKS18RDGu1q8bVIc4V7vQzAgZuJ2cwRaYVD5t1RvxsBEa6h42k3CDsfmVVsbmkgHf3Y46SuvPmtWZ6yOE/E+ctHfm3NDeqcyhaZ5FS9sGiYnVM+3ZiYfd8vlgTZkwZcq+7vw=
+	t=1734373256; cv=none; b=czlRMJ9hbpRXf+9WhPvUWMzxzbNtYUrSuTjEPtMQ5PyVfenZkZ7m5255Dwz6aJ8jOVdUcs9TSCilq56r33a0+v3K68R/2N4Htf1kA9ugYv6QXzI7OXvAX4B62NWOwvcXP0SAAyp5k5ukuQiwx6eWI4yceg+hLBfx63YbDBbaUBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734373157; c=relaxed/simple;
-	bh=Zv7B9tNICPDPrSc3h3UnTsMqDKo2tk/1m7jnN8ytjaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0UEx7ebNxJpA9maLPDdQmHfx1jzN5KRFsqvbjS9PNWcAGhH8t4eQez9jYVcchA2huX99+nyjsrojCUO5zNUkvqz9/SUlV43ZKWHeBGeH3xywW3z/VEfS530D854pA7CK5vXhCisdet3yK+ZJ3karC4wYDVeyOKKKVf26XJjcag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZgvkOpi; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afe99e5229so1206125137.3;
-        Mon, 16 Dec 2024 10:19:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734373154; x=1734977954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CdeF5q7i1gbyNrk3Je5nKgO+rHwF/IkRFyoP6STYyN4=;
-        b=XZgvkOpiNGn+nucHjfiWnV4aKBoHevHEAktWfnww9KaGjtN6Jp/ZmcxXNKWG+O5iE9
-         HPUGU1zqE8wNUEVxqIHQHX5P/Mu9ld+5fIdgD/iNhPkr/BXBQ+NXvXSbYp7TnMY2ZBYA
-         GQrwFkOgiav9B3Fg5EpuY30kaAtMf7NKS+xpoFLR68TH3P9iKUHN8K3kl/5wmXJZPW7F
-         Kav/wG0pOaoFCzch4KNYOtBLUjJAbN7YuLvg6/3Vuv3U4VBZGiJ5dLQzrGcS8frsH+Qu
-         kYy2KXmC+Bii+Fhmfx+ZC+ncWz+Z3bWUel6QbDRSDY693B3+9jlo9qyLyMVC6IvTfnsm
-         mpog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734373154; x=1734977954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CdeF5q7i1gbyNrk3Je5nKgO+rHwF/IkRFyoP6STYyN4=;
-        b=qulkTgoyPCFofqqfJhW7mJtxnX0oXSKOHpV+PCr+JsOxwYHSUGAkhD9ECru5RRh6So
-         LPZJCf8vFQ3VMSAnsvmopmR6oaaQrCGmNS6lU5ZcJT1sTsFZCcCH4H4F0iglyVLKDZvg
-         SFWuRccQkJq1THr7I8MPYK/SOsczVUhxlKVB99zHWt7syTYw6ZINseiEmBo1Pz+Knjm2
-         2QIx3kyoO2p4s9zDGeUNd89D8PDAW6c37plAa4jeYkG0h9P/YJl9bhHFcmRNvjz3cGy+
-         8TUDK1EuX2uOOzdfiHmBl/da8p8Z98FjbGZNbDbYrkU8HND7Iw8N+u1C422ZHhxiC7FB
-         cwOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWb7qL2qN1OWv0a1aq9UEbs2nBHdH4IRJW5r2yMaGiTEwxGOCB50Ao4iWsJSOavVBbP+Xay2q1lrWM=@vger.kernel.org, AJvYcCWxIulA0JAS/nkvISvmIEthsaB6Li4NwyMsSn1+zBgz5EPtj7CaFiatuGHpBGmvj4+zgFORVFrUgGuxZGOg@vger.kernel.org, AJvYcCX/qawaBC9+8MePDGXB/f4sIz3a46IdN6kEy3ZUHWBGEhgE6+NSBtHciTK4YwZgnzpLJzv/bwy02YeAufc8kxQORNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjlTjSNMnYUn39wBylSPtodn+5VtPCBJfN5GwPgeA7fmqG86dE
-	r9zqYBw46nIDwELKaEt+pSrCqWC+MxnciFwlz/Nic1gj0TNL8bR0uNwkHO8K1RhPs0U3T2BgpWQ
-	XU6wD+8dD95BVCAXzt6iszltJFq+m19Ly
-X-Gm-Gg: ASbGncvXdVRdUib4unXUoxlnx5jEmYzDyMQLkFZrcCBZPkaXpV+voWRPPWFBWlEgWgd
-	txk8y85w0C0YsB6tMVVJXIrWthvsaTn6kmpDohLgezGJBCMlPmmhMfHyyg2CnLxA/pcmvib8=
-X-Google-Smtp-Source: AGHT+IHuRtV0VqTpR8F312k7i39uYNWuYt0c0s3u+r5PirYWGtltTl7ePHRkVUyGmT8xDquaDD6p5TTIZU3FGFqoUrs=
-X-Received: by 2002:a05:6122:2a05:b0:518:6286:87a4 with SMTP id
- 71dfb90a1353d-518ca251874mr12461414e0c.4.1734373154522; Mon, 16 Dec 2024
- 10:19:14 -0800 (PST)
+	s=arc-20240116; t=1734373256; c=relaxed/simple;
+	bh=Zi6Ycqb0EbzuWuO2jQDrQSbot25zuIRYbx7FLP01Dx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSImcjCEtP5ffQomPoBG1w85JmrfAAplLNANcaZCIctDsVtBUKMZGcNK3o858iW7Vq0lva1laPo6RzA2ry3qvpO8PGsOJ/M3EezrRtloicmECdbhPfuoSEfs9Bu7ScPspywf1G0FTpuRIZjRT06gs7relhtjR0vhJ9yZqLFwuEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=qDk+NHtl; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 19CDC240101
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:20:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1734373246; bh=Zi6Ycqb0EbzuWuO2jQDrQSbot25zuIRYbx7FLP01Dx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=qDk+NHtlqFdcc2ewwnCGNoXBp0PPh05XY6NGywEo1fHHxvbIbEOV6/HmxEpDr4KA2
+	 fKbaYt3DFoAyAsg3KSjITQIx2UHXmOlNjQuwSGWsNVs6JlQO4nN15Dx3HOQVaJTF+o
+	 1LPsEhgMggJl8MeyJgM/MVnwohmdo9UKgweZ+RrEaA9R/em9Wr0ecdgFtV03uo4NeA
+	 KaC2ClymtHEIeE24OtGd8LWrjhjhtB6mjhWjscyLcX7l0EAPavo8klMJMx9KOvl1FK
+	 fkBSRezzmdhZpYHy9/zXWdz7zxud6IG/iAD70H11BtaS/wOLs4VQrZgqgwkb0qxf1L
+	 6y/mY+OvC8pYQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4YBpCc5Wm9z6tyG;
+	Mon, 16 Dec 2024 19:20:44 +0100 (CET)
+Date: Mon, 16 Dec 2024 18:20:44 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: j.ne@posteo.net
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] gpio: 74x164: Add latch GPIO support
+Message-ID: <Z2BvfKwdSyu5kzPh@probook>
+References: <20241213-gpio74-v1-0-fa2c089caf41@posteo.net>
+ <20241213-gpio74-v1-4-fa2c089caf41@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241213175828.909987-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWudD=AB9WKB8qYj8zoDVX+sCH+RyyjHEhU2DD=0Y++aA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 16 Dec 2024 18:18:48 +0000
-Message-ID: <CA+V-a8sAiMTC9Y3vrOKshMZSFLzN0QczMk9B-++LyToG1r+qzw@mail.gmail.com>
-Subject: Re: [PATCH 8/9] i2c: riic: Add `riic_bus_barrier()` to check bus availability
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241213-gpio74-v1-4-fa2c089caf41@posteo.net>
 
-Hi Geert,
+On Fri, Dec 13, 2024 at 06:32:50PM +0100, J. Neuschäfer via B4 Relay wrote:
+> From: "J. Neuschäfer" <j.ne@posteo.net>
+> 
+> The Fairchild MM74HC595 and other compatible parts have a latch clock
+> input (also known as storage register clock input), which must be
+> clocked once in order to apply any value that was serially shifted in.
+> 
+> This patch adds driver support for using a GPIO that connects to the
+> latch clock.
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 
-Thank you for the review.
+I just noticed that this feature is unnecessary for my use-case:
+The 74HC595 doesn't have a chip-select input, but if the rising-edge
+triggered latch clock input is reinterpreted as an active-low chip
+select, it does the right thing.
 
-On Mon, Dec 16, 2024 at 4:09=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Introduce a new `riic_bus_barrier()` function to verify bus availabilit=
-y
-> > before initiating an I2C transfer. This function enhances the bus
-> > arbitration check by ensuring that the SDA and SCL lines are not held l=
-ow,
-> > in addition to checking the BBSY flag using `readb_poll_timeout()`.
-> >
-> > Previously, only the BBSY flag was checked to determine bus availabilit=
-y.
-> > However, it is possible for the SDA line to remain low even when BBSY =
-=3D 0.
-> > This new implementation performs an additional check on the SDA and SCL
-> > lines to avoid potential bus contention issues.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/i2c/busses/i2c-riic.c
-> > +++ b/drivers/i2c/busses/i2c-riic.c
->
-> > @@ -135,6 +138,27 @@ static inline void riic_clear_set_bit(struct riic_=
-dev *riic, u8 clear, u8 set, u
-> >         riic_writeb(riic, (riic_readb(riic, reg) & ~clear) | set, reg);
-> >  }
-> >
-> > +static int riic_bus_barrier(struct riic_dev *riic)
-> > +{
-> > +       int ret;
-> > +       u8 val;
-> > +
-> > +       /*
-> > +        * The SDA line can still be low even when BBSY =3D 0. Therefor=
-e, after checking
-> > +        * the BBSY flag, also verify that the SDA and SCL lines are no=
-t being held low.
-> > +        */
-> > +       ret =3D readb_poll_timeout(riic->base + riic->info->regs[RIIC_I=
-CCR2], val,
-> > +                                !(val & ICCR2_BBSY), 10, riic->adapter=
-.timeout);
-> > +       if (ret)
-> > +               return -EBUSY;
-> > +
-> > +       if (!(riic_readb(riic, RIIC_ICCR1) & ICCR1_SDAI) ||
-> > +           !(riic_readb(riic, RIIC_ICCR1) & ICCR1_SCLI))
->
-> Surely you can read the register once, and check both bits?
->
-Agreed, I will add a helper func for this something like below, as
-this can be re-used in patch 9/9
+                     _   _       _   _
+ shift clock    ____| |_| |_..._| |_| |_________
 
-static inline bool riic_lines_ok(struct riic_dev *riic)
-{
-    u8 reg =3D riic_readb(riic, RIIC_ICCR1);
+ latch clock                           * trigger
+                ___                     ________
+ chip select#      |___________________|
 
-    if (!(reg & ICCR1_SDAI) || !(reg & ICCR1_SCLI))
-        return false;
 
-    return true;
-}
 
-Cheers,
-Prabhakar
+ -- jn
 
