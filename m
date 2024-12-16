@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-447152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C8C9F2E02
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:16:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB439F2E03
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198FE163D27
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EA1188466A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E47203709;
-	Mon, 16 Dec 2024 10:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039BF202F67;
+	Mon, 16 Dec 2024 10:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TC9dxZs/"
-Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHCdnlIh"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2C3154C0F;
-	Mon, 16 Dec 2024 10:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EE12010EF;
+	Mon, 16 Dec 2024 10:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344151; cv=none; b=Vmj7RP4OjJo0wgQWO5QegMiG7LWj6eRFZHIqIpOnI/Gf4MeutcqLeQWXPR+ZXYEDRreLw6VS7Exv1gzq+dN3NFJFMktJTy32HjlXMetcJ9EUSgqjliZ4H+lSaoGnYz1fLhfgs6OKj5ILwARkasAepT+Bul1hoR7xVnuy0cpMfJI=
+	t=1734344190; cv=none; b=FhajHiftImOZ7inOh3c4gKuIT/2NZ5nxT9HEnPaMBfFWZcs4lKncwnFTWTN4wUObypt8RNyaZwWRJOS8AB94zC5Kfb69NjQNpPbP92zjQKLjgLmxKS8xd68ZMDBTn3ETPn7TFlNDjedx+JXsFpAm+Vm9wUtCKWwP4cWHMn+SGJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344151; c=relaxed/simple;
-	bh=5ggMXUrSNeavJL9/QlVA/KsDfdnXPINB1sEk37E28V4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OX63s6KUKWAL23FY3Vvw1IYMiPTsjk/H2JsCKDtg40IDE6OD5IauPFXSDzln0ciX85/cZ/fjCoCTcdPdFp4x21lx8zA9b53co7Nass2d8LADV40ifPDE2fKYiAn7VIwnfXZNhibTkM5nrfDv46mb8rxz6IvWmG/rS3n0IWhGM0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TC9dxZs/; arc=none smtp.client-ip=101.71.155.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5dd55b80;
-	Mon, 16 Dec 2024 18:15:38 +0800 (GMT+08:00)
-Message-ID: <d0f89644-77b9-4bcd-9fab-42a10185c72f@rock-chips.com>
-Date: Mon, 16 Dec 2024 18:15:38 +0800
+	s=arc-20240116; t=1734344190; c=relaxed/simple;
+	bh=SDC8DYgq0QRPUI5/JSLftKj09uGEhrmO9h9wY+FQds0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S4apq04oZqGpLAfc81E+RhhZZTUnoAhLwJN2QSqg4KmdTHPJUu5nnT/KeyNsEnlg8zxy0ZM7BG3FTRx0aiEt0hThWcws4oVh7y7IfhgXVjfvtGWdNWzXe/zUmNqtkdwwQxYkkTl6w/Btsb9vwpHaUNlEua1amwq34RBgJ22eVl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHCdnlIh; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-844ce6d0716so306400739f.1;
+        Mon, 16 Dec 2024 02:16:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734344188; x=1734948988; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=arlzLbfF5Z1aZwt8xNa4teVCaw1AO6mjelD0VLM9WsY=;
+        b=cHCdnlIhztIt/6hh8wVOqb0KNJz0wOwjC+rkaTjVIkzXhfm/b5PsZukEdRclvW2SaO
+         4nCV9d5sxMaH4fLeKoRqnNtjLmIAgt4L6OqXTDAKYh7/kj/ryCK4G89rQNgbXv4Ty7Jp
+         UaiBqrt2tTn/T4p57qX/1Hosc2dPy22/WxEFcFlKFIf24w/lDqfG8FZlcXgAJfHJYAup
+         r50rHmY6Dj9qE/1zVxO7I4jzjECG7Uctdc8ONIsHOuDUXk+IuJLYRUaJ2P8/S3YiGNRB
+         JUVYUawavJr7zchcFFr9pg8oDs5QacQqQYiQ7yx8xGrff5GghCksA0o0pVDSyBc5ppvV
+         E+tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734344188; x=1734948988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=arlzLbfF5Z1aZwt8xNa4teVCaw1AO6mjelD0VLM9WsY=;
+        b=vi463hF80D5q0jvXt1g0JDJuWfdiBLehvt/ZYY+TPBS6NxCU+zGZCdD2WmPZyEQndY
+         /2GY3mn2pJcyv7wEkA6/L5tEzGbQz0wzmMWuo6xDV8oYuWDEzM9wTbfWsJLMoU64ZYeq
+         KnazjPDrZH490eSrCPad8x2Ji+VIYs/LxD8BQ9nin3BI3YGmzmJPafXILpJE6qTGlnfx
+         TiR93gYTxc/a3BObYIsfWfy1lMHYSAM3hEOJouUkyEc8ky2OE3L24aNTuiLxm3TJGQM6
+         EEz6iqlaFENfQgOizjHHtgx2CeSpljcSU3lH3YJzCOuEWrfMJhKMnTG39LP+mXQ0pqQU
+         kjwA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/dgsBc2I+1eXRf83cWCZw+lmyU6beN/dNKgToKLgBkw/lW/i5t4KvqrKjDyq6XKITL19waL2CZ+2b3jE=@vger.kernel.org, AJvYcCXzxxgDPpmOo0mL7Rr3FlwmqUbNu1VioRaCD8CkoAC4K/kWvYwyY6a1u3HQWnZin9mAVcXfWQjf32v9LGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1Y8777L41peTtnmEUmaj08begcL7dGEAZKNOGPkYxD+kLtRDE
+	7BIGr1Lx0SV6zQ5cxZ4hiRaAQd+8TXbIuXhSs3s0bLvMdSZzyx5olHo5SupYZoSGG2Ni9UFzHYQ
+	krEgntMzZWWwrPwRaMhnoZfRq4NI=
+X-Gm-Gg: ASbGncs0TLnpherOZRxy/MQIpCbDs2OQpeuniADeCQ2i26woBKFF8jE6xLuBLsQo/Pd
+	Z3WOrdH7luVkNWRV4yJPbg0LsrW1Hjkv7GTYdzg==
+X-Google-Smtp-Source: AGHT+IFvlcI3QH1Xvp1AI5KoCszLVW+PP0PTZAEx0Ng5Fuo074FICWOlvUIc4gWZf4SF1oGbhPxxmkXeQyJu107AnVE=
+X-Received: by 2002:a05:6e02:20ea:b0:3a7:e8e1:cbc9 with SMTP id
+ e9e14a558f8ab-3aff8aa41a0mr107368285ab.22.1734344188094; Mon, 16 Dec 2024
+ 02:16:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/11] arm64: dts: rockchip: Enable eDP0 display on
- RK3588S EVB1 board
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org,
- sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com,
- l.stach@pengutronix.de, andy.yan@rock-chips.com, hjc@rock-chips.com,
- algea.cao@rock-chips.com, kever.yang@rock-chips.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-References: <20241216031225.3746-1-damon.ding@rock-chips.com>
- <20241216031225.3746-11-damon.ding@rock-chips.com>
- <ay2im4itrj3k4p2ksobgsk77b7m4laaxctkfcpffqxj5ttxenm@mzdizmf3mlcb>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <ay2im4itrj3k4p2ksobgsk77b7m4laaxctkfcpffqxj5ttxenm@mzdizmf3mlcb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh0fHVYYQxlMQh9DS0lMGEhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93cef75dd303a3kunm5dd55b80
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pxw6TCo6LjIREBkNNwNINi8T
-	VjAwCw1VSlVKTEhPSE9PSkhCQkhCVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJS09KNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=TC9dxZs/icAtO8OBygxS0RnpXEPu9qYtxe8eogDOgm3/nfYNDxZL7DAwNK72v5fA1kE1RnEuSUkU6dFhcd5nbWBqLdG0NiliydADY/owu7A8t1jtyNkaGpqpmRY3ifAaE2oMxgKBvn2obvJIaxk6h2pfI+KeVfL0pujMSR5MSyY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=bIZOhBSbBlumClO+5WBpvKWp8vXqGKwf+GCHshUCQ6I=;
-	h=date:mime-version:subject:message-id:from;
+References: <20241216093410.377112-1-arnd@kernel.org> <20241216093410.377112-2-arnd@kernel.org>
+In-Reply-To: <20241216093410.377112-2-arnd@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 16 Dec 2024 18:16:14 +0800
+Message-ID: <CAA+D8APw7XeTKm59EiG1teY5SFhRcM8WotQPuxnjL5AVNTHVyg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ALSA: compress_offload: avoid 64-bit get_user()
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	=?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Yu Jiaoliang <yujiaoliang@vivo.com>, 
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Mon, Dec 16, 2024 at 5:34=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> On some architectures, get_user() cannot read a 64-bit user variable:
+>
+> arm-linux-gnueabi-ld: sound/core/compress_offload.o: in function `snd_com=
+pr_ioctl':
+> compress_offload.c:(.text.snd_compr_ioctl+0x538): undefined reference to =
+`__get_user_bad'
+>
+> Use an equivalent copy_from_user() instead.
+>
+> Fixes: 04177158cf98 ("ALSA: compress_offload: introduce accel operation m=
+ode")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On 2024/12/16 17:06, Dmitry Baryshkov wrote:
-> On Mon, Dec 16, 2024 at 11:12:24AM +0800, Damon Ding wrote:
->> Add the necessary DT changes to enable eDP0 on RK3588S EVB1 board:
->> - Add edp-panel node
->> - Set pinctrl of pwm12 for backlight
->> - Enable edp0/hdptxphy0/vp2
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ---
->>
->> Changes in v2:
->> - Remove brightness-levels and default-brightness-level properties in
->>    backlight node.
->> - Add the detail DT changes to commit message.
->> ---
->>   .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 50 +++++++++++++++++++
->>   1 file changed, 50 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
->> index bc4077575beb..5c1ea25b6524 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
->> @@ -9,6 +9,7 @@
->>   #include <dt-bindings/gpio/gpio.h>
->>   #include <dt-bindings/input/input.h>
->>   #include <dt-bindings/pinctrl/rockchip.h>
->> +#include <dt-bindings/soc/rockchip,vop2.h>
->>   #include <dt-bindings/usb/pd.h>
->>   #include "rk3588s.dtsi"
->>   
->> @@ -120,6 +121,18 @@ backlight: backlight {
->>   		pwms = <&pwm12 0 25000 0>;
->>   	};
->>   
->> +	edp_panel: edp-panel {
->> +		compatible = "lg,lp079qx1-sp0v";
-> 
-> Please use aux-bus and a generic "edp-panel" entry for newer platforms
-> instead of declaring the panel on the platform bus. Placing eDP panels
-> on the platform bus has been deprecated for quite a while.
+Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
 
-I will apply the aux-bus in the next version. :-)
+Best regards
+Shengjiu Wang
 
-> 
->> +		backlight = <&backlight>;
->> +		power-supply = <&vcc3v3_lcd_edp>;
->> +
->> +		port {
->> +			panel_in_edp: endpoint {
->> +				remote-endpoint = <&edp_out_panel>;
->> +			};
->> +		};
->> +	};
->> +
->>   	combophy_avdd0v85: regulator-combophy-avdd0v85 {
->>   		compatible = "regulator-fixed";
->>   		regulator-name = "combophy_avdd0v85";
-> 
-Best regards,
-Damon
+> ---
+>  sound/core/compress_offload.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.=
+c
+> index ec2485c00e49..1d6769a66810 100644
+> --- a/sound/core/compress_offload.c
+> +++ b/sound/core/compress_offload.c
+> @@ -1180,9 +1180,9 @@ static int snd_compr_task_seq(struct snd_compr_stre=
+am *stream, unsigned long arg
+>
+>         if (stream->runtime->state !=3D SNDRV_PCM_STATE_SETUP)
+>                 return -EPERM;
+> -       retval =3D get_user(seqno, (__u64 __user *)arg);
+> -       if (retval < 0)
+> -               return retval;
+> +       retval =3D copy_from_user(&seqno, (__u64 __user *)arg, sizeof(seq=
+no));
+> +       if (retval)
+> +               return -EFAULT;
+>         retval =3D 0;
+>         if (seqno =3D=3D 0) {
+>                 list_for_each_entry_reverse(task, &stream->runtime->tasks=
+, list)
+> --
+> 2.39.5
+>
+>
 
