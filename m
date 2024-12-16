@@ -1,198 +1,133 @@
-Return-Path: <linux-kernel+bounces-447261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1C19F2FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6065D9F2FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09ABF162F61
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F043163060
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BBB204578;
-	Mon, 16 Dec 2024 11:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D70D2040BC;
+	Mon, 16 Dec 2024 11:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="moh4lp8Y"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBtpCDPi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8243203D50;
-	Mon, 16 Dec 2024 11:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734349425; cv=fail; b=OSfMgdyp6AVsgTZYUEej7RA0TyFOBQ1kfFOXJBe2lOE7Hg2oD4NPVrkuTnEo8qGj6Q4CsWKI0lb8aW8EnzTt8n/IqZuRN6G8NE3Amz5hEa63WsUjUFapu8h6v0iSkQtyTGbu+2aBEdcSMYHkG8iOio5hpsadYTJ6ABDdfk1qtGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734349425; c=relaxed/simple;
-	bh=TflrNTmd1SALRlpC5zbUAXWdiGJrrunK5AzYWN4lW7I=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=f2tJyF/IPcGgOw7+VkgcJIsT6FZZBjKx9qnOU0osYgteQCxrpDbhztVNM3LfGtSd6TbaO0t2Vc7zvfYZT0BD4OUdnCv4/nLvkINicMSUPvA2M9IsNcaHKmsQiL8+u0Ie/+smwPGTbm+hihXVxQunkDf9B5zBZ1fOgBuD67tpJAw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=moh4lp8Y; arc=fail smtp.client-ip=40.107.223.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KOBMM3pBMpFrwMrDAOFbD/+gz+eaVwIZEw6chTzcYwhUQbE485nU2qS+5jXXiDREbZB6x5oS/K7IpVDRJfbw86QXqWAauiXbNfm49vrAaNS//p3fhHJ9o2IbTDPJ/3DH93fW4vIqYKtutqaje1QDj7HxRYlYXid5K1yVmB40Y98tiPiRFW8CdNkrOoEHHsP6iySFqOsHn7GYLgf99i3aa+2kSPCf2Tri7uS4pyB9DPHfdhc3FkuXXmufvPqG778NlMBVC/FSShWitkdMWN3q9grWefmZ/TvW3ig/HKvqGhmS977eQCGh4qjIiMajRe+FXYz+Mn2Ro18oIoK0YdguzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p9RBbGB6nh3+BHU4D87ZyfIb21nN4y9mz/daBZpyDMA=;
- b=rPqCXAgFguK73QtxwV/OxXD81TWDFds82VeGQxkgdmYqPpqyyjxJSeUi4onh4zQ0dxUNWFD7r0/mCELLhExrHc56ubuC5NDhnMPfU1puDWijGBg6kfzQWL/HTVSBbOSBZUsSB83OSPvRQ6QKa3qcBxl4rdqNMDaLSUPH/koG3GzWSJiHrpLm0eQZrhW0femtt1xwkeIsSk19JnHL1sEqoiXEzIr12HTU5nF2Jn+H9fW16qusAJysHaa3x6V/RcwfS77ccYaHKWe1udb45GCbUkWfLrMSPFABkivCAg5F4C6DE0khICFBusOgW4jnS6U4LVCc6MLFQZI12LltEA3uyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p9RBbGB6nh3+BHU4D87ZyfIb21nN4y9mz/daBZpyDMA=;
- b=moh4lp8Y5ZgZLVQZEy7dm5UASSpgDYSX8ufvT2dZ2ZlQ7RSY9pIxLiXolbvmsjRYQ8+CUD7bnIPOcV58LoEPFey6ROsnyWmX9tKBvHYJJzGdJnOPzBwqQyQOAn1a0QqixgzSmUWm1tvdkkoKbRjKolqjezc+eykMffUzdiWV7pMLUZRLhGvaiomLpIYTpaN8iLCRvKhBloE9N0WZyJhiuyg9kdamSmhRZC7AaZiYlkqOO7ph9zdEYwVT+Hatl6BTLakYYpINIS2Z1gtawqzZW0mpMlJTik3dq/2W0yeNHy8G6j+sKVOTv/Ah0Xv8w6k5fZtjz9aTPRObo5d2LjBcPQ==
-Received: from CH2PR18CA0016.namprd18.prod.outlook.com (2603:10b6:610:4f::26)
- by DS0PR12MB9273.namprd12.prod.outlook.com (2603:10b6:8:193::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.17; Mon, 16 Dec
- 2024 11:43:40 +0000
-Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
- (2603:10b6:610:4f:cafe::53) by CH2PR18CA0016.outlook.office365.com
- (2603:10b6:610:4f::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.20 via Frontend Transport; Mon,
- 16 Dec 2024 11:43:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.15 via Frontend Transport; Mon, 16 Dec 2024 11:43:40 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 16 Dec
- 2024 03:43:40 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 16 Dec 2024 03:43:39 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Mon, 16 Dec 2024 03:43:39 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc2 review
-In-Reply-To: <20241213150009.122200534@linuxfoundation.org>
-References: <20241213150009.122200534@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC49203D5C
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734349522; cv=none; b=UHbepoO55bdJrOT7PYzozVpw6ixCmYrZePyHJTuBQ6WuOwMpCpxuUsDy2+32uXcB2K8Y77095Yy31bSJGUQjCqnbZ5y0yMSemXnajWNc/Z4klNA6uHc0ZZaI0/gNrxqvahz96E+uHuN87ZYM+H7oZOMtR4HBOyZJDyuNz+6JQog=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734349522; c=relaxed/simple;
+	bh=WTOoaCm/YBEOFwnlmetmHLAw1bQPebroxLWPCI/KuzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YT4EnlIesmNGJXnfGkbGUlGTeWBxuVIBZBFssiEoW7huUuZEFDC5tRl/N+mbUTlh0UZe+H9fT3WCSPGmES4M02WwByrzIknKBRFTAu12McNm3gWuAVEql8WGYyja92TCBu3cfTgPEp5IF7I/DkZ3CiywtQXobB/ieUMBc8wcybI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBtpCDPi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6361C4CED0;
+	Mon, 16 Dec 2024 11:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734349521;
+	bh=WTOoaCm/YBEOFwnlmetmHLAw1bQPebroxLWPCI/KuzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBtpCDPiiLGdhIMrs2nzQ0gaX8GQiSsbg9IRMMdwgeEWTJCnNRfPkkmDlopn93+fP
+	 u5oSbwSqUdfqmE7hS5WiQX1dzbzp45l3N5c4e1ehPquM9rmKBbnMys3d+m7/y4n1H5
+	 bQ8ad1/0Pm75iGknuobmgc+RpZi27qyyPKi2Hgc6wOPPiSkZnW2oVouZWDszqNicHG
+	 XCZdZTb6GR2y6wanoeCcIoaaSmBmm7B3dgC5u0IThQejxFZQO1OcPn1+wAVQD92V/c
+	 UHnZVrhmspfqU2KxRdnpsLGXuFBB6DvgjYcHmDphhnmKJHYNmqUFcotBPusfs+7u2B
+	 vqn1QQEUnY/vg==
+Date: Mon, 16 Dec 2024 12:45:15 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <Z2ASy3TQ4suupdvd@cassiopeiae>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <66cb808c-bb6d-4c7e-a1f5-5a9b0a185870@drhqmail202.nvidia.com>
-Date: Mon, 16 Dec 2024 03:43:39 -0800
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|DS0PR12MB9273:EE_
-X-MS-Office365-Filtering-Correlation-Id: 953520ea-baca-4479-5817-08dd1dc6e31f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SmJzcnFXOTR0WFRsMnA4ZjFIc3hZaGFTV3ltNTBVNXBibmVtUGhGMnNqNzE1?=
- =?utf-8?B?bzBTZzJ2TUdqRW5lWHk4NzBOcUMrcVAyd2RydHJPbzJqVVFzVDRUdjJzZEN4?=
- =?utf-8?B?cDVIMk1RTm51YjhoMnF1ejUwU0tqbjNpWWhPZ0VEaytqV0JjZEJvcmxqdFVK?=
- =?utf-8?B?QzBRRlRCVEdvMWpUcHdHUWpXdkZQYlZ6empQd3ROc3Nvd2diUTgyT0xvaFFw?=
- =?utf-8?B?b0wybWNJSzFXUTVRdno3a1ZHMHFQR0RpSDd2ZkdXMGZPVUtxQjRYeHJhb1Vq?=
- =?utf-8?B?alFTclFSY2h1MlE0ME52SlVKdTFELy9nTWE0RHJpZlJNYjZhdktxOUhUb2F0?=
- =?utf-8?B?ek11UGUwL0hITWw3bkdISXl0R1ZvU1BCbFN1QmI3YlBVQWxrTHNRdVdhMHhK?=
- =?utf-8?B?KzkvaUZ3K1pVV1YzYTJ5VHZHc3ZjNWxLQ1hWeDF6N0xqSWk3SzFzS01jeFZY?=
- =?utf-8?B?aGREOHFFS0RmZUV0YTNOSmJGb0ZxbnZHY3dNV09hQVNZaU9DcTFDVGJTdjV2?=
- =?utf-8?B?SlMvMWtGdmxOREM2UGk5MVV4d2pqZG9vR01HOUt0MlZobS84YTRWUkIwOXhp?=
- =?utf-8?B?OTNtMGFaYU14RVYxNUt4Wk9SQ1dJelMydGVZa0JxcWZkeUVCaE8zcURmaG93?=
- =?utf-8?B?S2JhcGlDNy9BQ2xQNlcvNUw4dWY5QXBVdWlmK1VrZ2Z0UmM4aXY1cXI5MW5N?=
- =?utf-8?B?YmVaWW05cHJQakZseXVubmxIVDhFVmp0WlA1K3JkNExyU29GMVFvNnNPeVRi?=
- =?utf-8?B?Zi9WSTZseXV2Vld2QjkwZmZvRWlKN3h1dmJLelpvRUhBRHhweXB3ZmxIaUVw?=
- =?utf-8?B?WFUwaVh1UjZ4bTJsNXlWZFovR0NBVy9EL1dkME1lZzRoL2xGT2hoU1lEYW50?=
- =?utf-8?B?WVRmczNHcnZWbUd5TTVKTG44L0s2UWJCY2wrRGRybTJsVkx1TTc3N2FDcmh3?=
- =?utf-8?B?MjdpL0hKTS9yRnpKWFlTWXVLdzFKTzJyajUxM2dkSUY5bkNOblNveHVsd0tu?=
- =?utf-8?B?SlZjb1R0eU9hOCttYmVzUkdVcXNnbHFPMDJhcjlwdGlRT2lXZHAyTzlOQzdt?=
- =?utf-8?B?VUNubHJmcGgzZCtUTkZ0TXp3QXlSV0pKR0RyNXhnWTFVZEFEbzF6UmZTZ05w?=
- =?utf-8?B?N29yMlRIQmQ4UzlxUjV3Z2lpRjl4SFBiekV6ZWc0ZEN4RlhBbVkzbVhibkhE?=
- =?utf-8?B?TFNaS1RuaVR4S0xxd0VkTGNzUnR5SllvSnFhNkxpaS9tYk1mOEZiYXhHM2F3?=
- =?utf-8?B?bjd1YWxZR25leWxSYmp0cmJENDJrNXU1S3NpTkFuQ2VzNDV1T0k0RmViMEJU?=
- =?utf-8?B?YVJHeU1nZ2RCejhXR0IzVTZXWEwraVdaNUtjbUVCbmVhaEpvQnF4M0JidVRm?=
- =?utf-8?B?dHQ3MXJGM3VRd3RHWHl6RmMvTlJSVFFBQ3BvQjE4NXk2akRNSmNLNWMwNVFF?=
- =?utf-8?B?S050Q1AzY3A1WE4zSmpnd2J1aUhsOFRaZUtsajMrNXh6Sjh4UHNBeGlYc0Vj?=
- =?utf-8?B?U3JneFFySWdZNE9IQUxhWWgybmdIaUdnZW11VDV1ZTJQTDhSOUtMS0FWbWU3?=
- =?utf-8?B?SUJubmpCN1dObzI5cmpZOUUzRzF6dDRXTzAxcEpoWmpsaUNLWk9lQysvc3pB?=
- =?utf-8?B?M1k1NXhCNjhHYVR3a1ZUby9KREpOdS9XQW1uWDdXdk9ld1dzMWlvbEpjL2M3?=
- =?utf-8?B?SkFKK25RRCt5TloraGV1b1BRU3FHU2w3dzFmUGZ3eEVqcFEya2JFR3ZqZVNq?=
- =?utf-8?B?UGdwWkZ2R1lISVdJejEyKzE1MDAzQUxLb3VGU3FBWC93R2M4MVlORDBMRk0r?=
- =?utf-8?B?Zjdud2lTdTh1amNQelFmSDBadmg4UFlsRVlrbTZuamxVeWM2bmZZd1l4M3Qv?=
- =?utf-8?B?ZXVXbUw0a1NzQ1ExS0I3RFB2N0xJQVUwcnRNZXFQbDR0S2VsUkZMRGFOM0tz?=
- =?utf-8?B?YVJBYWRkc1VZQ0NMUC9DQktHeko2MVdPenVFRDI4OU1wajJKK1BnREg5QVpY?=
- =?utf-8?Q?0MYFs77nwUmhZtch2cqBMKRBAZk7l8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 11:43:40.6440
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 953520ea-baca-4479-5817-08dd1dc6e31f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A349.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9273
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
 
-On Fri, 13 Dec 2024 16:04:17 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.120 release.
-> There are 772 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> The nouveau driver is the only user of the drm_encoder_slave interface.
+> Demote it from KMS helpers module to the nouveau driver itself, moving
+> corresponding I2C encoders to be handled by nouveau driver too.
+
+I understand nouveau is the only driver using this interface (and the
+corresponding i2c encoders).
+
+However, I'm not quite seeing the advantage of folding the interface (including
+the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+the subsystem in any way / does prevent the subsystem from moving forward.
+
+Can't we just keep it as it is?
+
 > 
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
+> Ideally those two drivers should be converted to the drm_bridge
+> interface, but it's unclear if it's worth spending time on that.
+
+Probably not.
+
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.120-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Changes in v2:
+> - Renamed symbols in defconfig (Laurent)
+> - Added missing Kbuild file (Laurent, LKP)
+> - Renamed guarding defines in include files.
+> - Dropped mentions of two removed functions.
+> - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
 > 
-> thanks,
+> ---
+> Dmitry Baryshkov (2):
+>       drm/nouveau: incorporate I2C TV encoder drivers
+>       drm/nouveau: vendor in drm_encoder_slave API
 > 
-> greg k-h
-
-All tests passing for Tegra ...
-
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    115 tests:	115 pass, 0 fail
-
-Linux version:	6.1.120-rc2-gcb4fbe91b7b2
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+>  arch/arm/configs/multi_v7_defconfig                |   4 +-
+>  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+>  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+>  drivers/gpu/drm/Makefile                           |   1 -
+>  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+>  drivers/gpu/drm/i2c/Makefile                       |   6 --
+>  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+>  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+>  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+>  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+>  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+>  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+>  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+>  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+>  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+>  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+>  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+>  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+>  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+>  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+>  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+>  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+>  22 files changed, 172 insertions(+), 232 deletions(-)
+> ---
+> base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+> change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
