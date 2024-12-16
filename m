@@ -1,148 +1,169 @@
-Return-Path: <linux-kernel+bounces-448151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DDF9F3C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBA99F3C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260C0189053A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6D66188D83E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA54D1DA614;
-	Mon, 16 Dec 2024 20:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E381EE00D;
+	Mon, 16 Dec 2024 21:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT2xG2cM"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiMO/hLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF2A1D5165;
-	Mon, 16 Dec 2024 20:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441901DD54C;
+	Mon, 16 Dec 2024 21:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734382498; cv=none; b=noQsqA7ZwfWy8fEZl/ZygRYar58nTOB6wZIjqLtZzrLwcqu3mEi6At8MGw4OoK4hwkSRGDzOpSuCNzQHts0h9c9W9k7dQuuoMIuXDJwFNsaJv5EcMm1XPUDY4KED7ZKJJWxBvfG1q/+gRy83lF72X94Um2u58p0gN1I8F84QyUw=
+	t=1734382892; cv=none; b=TxX7jXy/aOCmffT/TE9v6DLAIUa2E++NMFppi3/bkZQDFy7JVSIa58xX5o1E3FzQDuZHqaqgHwbrtgmzO67mwk4XU+oxE70sKsddEeQBPmy7VpuNXRC2oI9/f00uurxw2mkZk34qem2bIxzw6D+xWzt4HH2a1CcyzS7wiOqEPxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734382498; c=relaxed/simple;
-	bh=geG/YKx27V/zlwg0MEi0DPulSqUKvqAC78Zqn7duPTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YrI7XrFBPtYQnDORpxpvcEUtJTjmjFiIIbUFS8BY3AlPgOy6gNGE9FFWkwZh+2ZdEw+Bjje9EmdtLb6xubPphEY9AqI2C83Se91rXzOZJLTchdho/oEH+DzRLt61lj+2xAPFouWv2jNDf33iQEihxfDAWoujzmEVq6d82ohRtoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT2xG2cM; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844e39439abso115703039f.1;
-        Mon, 16 Dec 2024 12:54:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734382496; x=1734987296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pGu56YKO1XlSS7wwJkm05qsGyYVWIdWmEMISHyf2DmA=;
-        b=cT2xG2cMY7DVo+jtWcwjK+FsO6SB6xoolBOa/k33QmYvCAk07DOZzHLauNmyEO1XA5
-         03Fr95tpAXMB2EmxgeLSGTlZP2KECbVIQ/ThKXoJm6b+q473EhWSPAts/7gigNAkd8cC
-         lPcSe6M0euqfJ5Pj2L5gk0ENfkG60kp1WnHLNg4LtYO7PjmZcXC2j10UTpp8RLLlw/00
-         WmLOAUfHS3KA1lNECPfhdbslmuQ+H269PprwwSxVnsekjTk+pN7I4BECQFDi45O6tB6r
-         PFwNU6I5I1MIcFUpR0VuSCE2axalfATWNimnFLVOszcdQtOzXgeq7SX9qw4E9PWE5qgA
-         AaWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734382496; x=1734987296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pGu56YKO1XlSS7wwJkm05qsGyYVWIdWmEMISHyf2DmA=;
-        b=Nv2NekdpkganyIOJ/LSiB/DtCUl3PaOVFzhlqTAGkt3tVW64+gBXC9wVPouYdklC3h
-         O6P+NZ13vFW9LixiSOiNuRhAVaw26pV/BNL+xGDwFr4IdmMvCdUdZJ914A0lwj4AYifu
-         LgbaO9YGpGAulTTTC84mHw77Se+7HEAE2qAiTk8i42OGnEbOvu/DkQlNF7+rGk6kZsj6
-         I83Jem1sS/d9LyXpKtaVk/Fuc6s7H0z3LlNu81ut6Ffg0NDiydsuUC1EL7azmv060nS9
-         NoOomdhZPX/FTuOZEVcrrgBrCYuN1QWjdeEaYeAs/w58CjQFSOotidKgDrdqj6/p6jAM
-         +nCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Ga6hil3ebkrz1RsdCrb4Dkax6gS1kwclba09aZCZEBZzWch0PV+Uk+1SMll6xqrS7wez10bDpxFSptPT@vger.kernel.org, AJvYcCXij+URv/6CAvVyDoqpArFLbn6Gn2Ggy7B8U6XQLwB58HjU39GQCtmvz+ga+rrm8G6PvnIDgWAGwECdUt7e@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwK+tBesApzhUyRMpipPgSgugwk0i1j54NhLRHtFlFk8lSpCf
-	7eYkhLBfyM89U31ALIW+BO8ezL2gFJv1/CsAI8fzUKt8fzgbbavoFvepCyXtCqKjsGYFHbe4Xyc
-	lY9DTCWvma3xMjjtbt8X8LiLvQos=
-X-Gm-Gg: ASbGnctl+fhw78DKsQxNxZv1NR2BRaOsQ1ivLQtMWmOoSv6zETn/ATMUT1VBQauit+z
-	d1PeorWzOPojnOhhdA09uSDoW3SyzSfDscYwRZ+0BfgLpcKU3D+4QaLl7Y5u1TR81fsQ1
-X-Google-Smtp-Source: AGHT+IE6NSDPDfv/Nr17YFiwuwQ8NV0QFzK1yfUD5+dRWkpGvLeKWKyM4SsI5zKJl53NjUsanNs56HL6Xdim8pgvJWw=
-X-Received: by 2002:a05:6e02:1a07:b0:3ab:4bea:df97 with SMTP id
- e9e14a558f8ab-3affbbb656fmr160374485ab.23.1734382495871; Mon, 16 Dec 2024
- 12:54:55 -0800 (PST)
+	s=arc-20240116; t=1734382892; c=relaxed/simple;
+	bh=6cmEGBmf36veit8RAD1wqzyDYYwOBtBNXEx1H15Ah0M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WqbjxJeBN+1mbPdiGyjyJAL6hzVd6iBQ0c1iAZzawnzZSJQR/xVmun0eu6xRrXI/H1vQJqqvnocvolUStxOICnNLyn5GFLAOOiGF6NoOdvEfR1pt3A0eiItCcgpgrlxUJUjr1mgC/pTP2xpQoa5zNAkyWg6786S+DWxLWAxbDbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiMO/hLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D14F9C4CED0;
+	Mon, 16 Dec 2024 21:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734382891;
+	bh=6cmEGBmf36veit8RAD1wqzyDYYwOBtBNXEx1H15Ah0M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=kiMO/hLFV5ElXfAt1xVc/PzprqMk6X+IbXUwiT2YaUsy8u9NNAl4RjNWpvBSV7qkr
+	 pk7EIaTjoPJjEETrzh1VNnM4hJmSqDvvh1ip8ZLgU9yrEZBcNz7OvRFPh7DYlG6DFj
+	 1hhBgJr54q4oZchXrp/k1/oW+zUEWukJ/dr4Ufpp8wwSYN+5vW5iX6xBWQQsyBtTtH
+	 xCjv8hXM5pwDZ/+ulYZfnIKTNIjOk5xY2aTF/lcKIEAd3WbZatkKRSh5tDyhUTar8H
+	 r726pUK1GvegwBsv0hvBTMNW5E1qiPK5JnZNRjq57KOP0sxBD/oXjML9hlf7eY6M+p
+	 4Me84+y0dlseA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE001E7717F;
+	Mon, 16 Dec 2024 21:01:31 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v4 00/13] media: i2c: imx214: Miscellaneous cleanups and
+ improvements
+Date: Mon, 16 Dec 2024 22:00:46 +0100
+Message-Id: <20241216-imx214-v4-0-8cbda160fbce@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216171017.4881-1-robdclark@gmail.com> <a15a7594-8793-478b-a86e-81a06812e4ff@quicinc.com>
-In-Reply-To: <a15a7594-8793-478b-a86e-81a06812e4ff@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 16 Dec 2024 12:54:43 -0800
-Message-ID: <CAF6AEGsFeibyH5_a7m=9PMKReD4Xb+c=dEGsbCN0_UHiJK1vbA@mail.gmail.com>
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Only enable stall on smmu-v2
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAP6UYGcC/2XN0Q6CIBTG8VdpXEeDAwp01Xu0LgCPyUXqxJzlf
+ PfQlm11+Z3x+zORiF3ASI67iXQ4hBiaOg253xFf2fqKNBRpE2AgmeaahtsIXFItQCotvXKIJD1
+ uOyzDuIbOl7SrEPume6zdgS/Xd8Iw+CQGThn1JvfOGm0Ez062Df0z+uqAd7JEBtggZ8A3CAmWr
+ gCBxmSS4z8UXwhMbVAkaF3ObKkQze+P8zy/ABnu8h0QAQAA
+X-Change-ID: 20240818-imx214-8324784c7bee
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Vincent Knecht <vincent.knecht@mailoo.org>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734382889; l=3433;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=6cmEGBmf36veit8RAD1wqzyDYYwOBtBNXEx1H15Ah0M=;
+ b=EHfC7AL8dJQADMDbAL4P/CKLIviut5r5NixmWIuMRzSFr0QF5xle8MOcbtWRbgGRlNhqxrhd6
+ jaevR7sxKU1BAURvSXgndxBaI1vxq45lb2HDpA7I3QTj+28r3K+h+On
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Mon, Dec 16, 2024 at 12:28=E2=80=AFPM Akhil P Oommen
-<quic_akhilpo@quicinc.com> wrote:
->
-> On 12/16/2024 10:40 PM, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > On mmu-500, stall-on-fault seems to stall all context banks, causing th=
-e
-> > GMU to misbehave.  So limit this feature to smmu-v2 for now.
-> >
-> > This fixes an issue with an older mesa bug taking outo the system
-> > because of GMU going off into the year.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu=
-/arm/arm-smmu/arm-smmu-qcom.c
-> > index c4c52f7bd09a..1c881e88fc4d 100644
-> > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > @@ -331,8 +331,10 @@ static int qcom_adreno_smmu_init_context(struct ar=
-m_smmu_domain *smmu_domain,
-> >       priv->get_ttbr1_cfg =3D qcom_adreno_smmu_get_ttbr1_cfg;
-> >       priv->set_ttbr0_cfg =3D qcom_adreno_smmu_set_ttbr0_cfg;
-> >       priv->get_fault_info =3D qcom_adreno_smmu_get_fault_info;
-> > -     priv->set_stall =3D qcom_adreno_smmu_set_stall;
-> > -     priv->resume_translation =3D qcom_adreno_smmu_resume_translation;
-> > +     if (of_device_is_compatible(np, "qcom,smmu-v2")) {
-> > +             priv->set_stall =3D qcom_adreno_smmu_set_stall;
-> > +             priv->resume_translation =3D qcom_adreno_smmu_resume_tran=
-slation;
-> > +     }
->
-> Shall we disable this from the driver instead? A debugfs knob to trigger
-> coredump after a pagefault is very convenient.
+This patch series is a collection of miscellaneous cleanups and
+improvements to the imx214 driver.
 
-It would require the driver to find the compatible for the smmu, so it
-could differentiate btwn smmu-v2 and mmu-500, which seemed like it
-might be a bit uglier.
+The series converts the driver to the CCI helpers and adds controls
+needed to make the driver work with libcamera.
 
-Ideally/hopefully we could figure out how to make GMU a bit more
-resilient in the face of stalled translations, because it is useful to
-get accurate devcore dumps on smmu faults.  At that point we could
-revert this change.
+The changes are inspired by the imx219 driver.
 
-BR,
--R
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v4:
+- Drop function name from dev error message
+- Initialize *format to fix compile error
+- Improve comment "Update {FPS -> blank} limit"
+- Improve code formatting
+- Warn once on usage of frame_interval functions
+- Fix commit message
+- Add patch to fix clock handling on probe error or remove
+- Warn if number of DT provided link frequencies != 1
+- Add A-b tags
+- Link to v3: https://lore.kernel.org/r/20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu
 
->
-> -Akhil
->
-> >       priv->set_prr_bit =3D NULL;
-> >       priv->set_prr_addr =3D NULL;
-> >
->
+Changes in v3:
+- Also keep previous link freq for backward compatibility
+- Move link freq patch to the end of the series
+- Remove return-early check from imx214_set_format()
+- Remove unneeded struct imx214 function parameter
+- Use correct ret value on number of data lanes error
+- Revert changing order (imx214_parse_fwnode, devm_kzalloc)
+- Fix typo
+- Remove unused definition IMX214_EXPOSURE_MAX
+- Don't set FPS to default
+- Simplify exposure_def definition
+- Set state and format only if control id is V4L2_CID_VBLANK
+- Restore Ricardo's message to Sony
+- Drop "media: i2c: imx214: Extract format and crop settings" patch
+- Add A-b tag
+- Link to v2: https://lore.kernel.org/r/20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu
+
+Changes in v2:
+- Add patch to fix link frequency
+- Don't use and remove fmt and crop from struct imx214
+- Squash patch 1/13 and 2/13
+- Only check if #lanes == 4
+- Add comment that enum_frame_interval() shouldn't be used by userspace
+- Set V4L2_CID_VBLANK step size to 2 (according to datasheet Table 4-4)
+- Increase IMX214_VBLANK_MIN to limit max frame rate of full resolution
+  to the documented 30 fps
+- As bpp is always 10, simplify setting IMX214_REG_CSI_DATA_FORMAT and
+  IMX214_REG_OPPXCK_DIV
+- Simplify imx214_get_format_code()
+- Cluster hflip and vflip
+- Remove kernel log note from 11/13, issue was fixed by a kernel update
+- Add A-b tags
+- Link to v1: https://lore.kernel.org/r/20240902-imx214-v1-0-c96cba989315@apitzsch.eu
+
+---
+André Apitzsch (13):
+      media: i2c: imx214: Use subdev active state
+      media: i2c: imx214: Simplify with dev_err_probe()
+      media: i2c: imx214: Convert to CCI register access helpers
+      media: i2c: imx214: Replace register addresses with macros
+      media: i2c: imx214: Drop IMX214_REG_EXPOSURE from mode reg arrays
+      media: i2c: imx214: Check number of lanes from device tree
+      media: i2c: imx214: Add vblank and hblank controls
+      media: i2c: imx214: Implement vflip/hflip controls
+      media: i2c: imx214: Add analogue/digital gain control
+      media: i2c: imx214: Verify chip ID
+      media: i2c: imx214: Add test pattern control
+      media: i2c: imx214: Fix clock handling on probe error or remove
+      media: i2c: imx214: Fix link frequency validation
+
+ drivers/media/i2c/Kconfig  |    1 +
+ drivers/media/i2c/imx214.c | 1267 ++++++++++++++++++++++++++------------------
+ 2 files changed, 753 insertions(+), 515 deletions(-)
+---
+base-commit: 62f608176a46b6a794725022101d0d7f42faedb9
+change-id: 20240818-imx214-8324784c7bee
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
