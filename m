@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-447336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054999F30BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:42:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BDB9F30C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2360166AF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5BF16691F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2A204F9F;
-	Mon, 16 Dec 2024 12:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJWmWmDd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5248204F87
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C68204F66;
+	Mon, 16 Dec 2024 12:44:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6781B2194;
+	Mon, 16 Dec 2024 12:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734352923; cv=none; b=SKBRsLKy+mkn3+PNj3sIcdXSB7i+JPQrwqGRd7J81aDcfK38wEZpcqVAwR7fPMmFu/35MyYjhh7KnOb2ik1BhCLSJzNdeuQnTuskEaZCxdEpWlOGo5VWP4t+ua0FRUTfing2Y+IfSU6kx3eklWtXXtJhrXmwlBEQVMarsPucBA8=
+	t=1734353062; cv=none; b=SIUV4aiu/S3ClIW4ksICG3yMU3Uj3wwY5h59BpIZPX2nm3C5tE7BDnl94wFGBYMRcpKa+GSnknx0raeXQnyfdg/o9sZoDo23/et9ncQbU3+lxzx1oN6rVJN2aLL3xyMKpK4GQ9ByFHwWcmyStaKxlBG4oB5fspDywF6paZk/ykg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734352923; c=relaxed/simple;
-	bh=v6bL/smeZNF++oogcyHNFgbpXP30gkHynV4auvO0VeE=;
+	s=arc-20240116; t=1734353062; c=relaxed/simple;
+	bh=mdyk0+RTCkImQZ5q/Ftw31UReT/oCA3ZYluQFsHcnfU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8QIZ/rs+Zlbkl7Cd+BylTk5EILVBD6PrYICQ4omCDkjfVz4iyxdZAVv8HhQfbGs93du/W5oqyvnFAYCAOvYQssRT3uFfP5Fhi4fSHK6oVdtbR6dItVKtVoddim5bBr17qWPTRTbyZ/DbrsTPHSF4nFedz4s2sXE8XxL3SxFwWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJWmWmDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE179C4CEE0;
-	Mon, 16 Dec 2024 12:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734352922;
-	bh=v6bL/smeZNF++oogcyHNFgbpXP30gkHynV4auvO0VeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJWmWmDdDfMI2GOaNXhSzIY33H+b6BHPsMyLEFeqHMuN4/I7EohkIuGs2lSBc+aXM
-	 3R/qkicWrfFuGyZ+7sonLtz3Zg8h06/Zad1QPoh1JsZel7jFkU6JAPp3Q4hB71lDEy
-	 C0AtZRZriKH7uK8zw9Zf4pahGco4GwcaPMZ6rDlfeb/Q8YoriaMh7jWFxL/NhKmFEZ
-	 SoRj/g99ZFCX7PeQUJfAE6yUwXb2J9mjtDF7RDfQjySrzUowWDCJN5qYwzi4cTFj+c
-	 WIIRB1OXGT34BY/JumKoCaIz3qANKkWlO5Vt5ayG46UJ2HwIcum4wD61yINg3VtiCM
-	 ifB5FEqVBnBjA==
-Date: Mon, 16 Dec 2024 13:41:56 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
-Message-ID: <Z2AgFHV2BaaZYGTx@cassiopeiae>
-References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
- <Z2ASy3TQ4suupdvd@cassiopeiae>
- <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
- <20241216121651.GP32204@pendragon.ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+mMbsxXNwLMJ2NusIGkquY3XSgp9ISAO7EpxcWWHIYQ+cbBk+3BlwPx1BP9d7kjc/4t0xNPVYU17E4jHVwIJiEUGuDmStix98u8txnOBIMLYrdNd9v6RrL4YIIObzjuP33Ti5P3IJQneCZSkJzxltm3PCo+i/vOkxfR0T/X+9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFC18113E;
+	Mon, 16 Dec 2024 04:44:46 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D5163F58B;
+	Mon, 16 Dec 2024 04:44:16 -0800 (PST)
+Date: Mon, 16 Dec 2024 12:44:14 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
+ __cpuinfo_store_cpu()
+Message-ID: <Z2Agntn52mY5bSTp@J2N7QTR9R3>
+References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
+ <87a5cysfci.wl-maz@kernel.org>
+ <709a0e75-0d0c-4bff-b9fd-3bbb55c97bd5@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,98 +54,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241216121651.GP32204@pendragon.ideasonboard.com>
+In-Reply-To: <709a0e75-0d0c-4bff-b9fd-3bbb55c97bd5@sirena.org.uk>
 
-On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
-> On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
-> > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
-> > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
-> > > > The nouveau driver is the only user of the drm_encoder_slave interface.
-> > > > Demote it from KMS helpers module to the nouveau driver itself, moving
-> > > > corresponding I2C encoders to be handled by nouveau driver too.
-> > > 
-> > > I understand nouveau is the only driver using this interface (and the
-> > > corresponding i2c encoders).
-> > > 
-> > > However, I'm not quite seeing the advantage of folding the interface (including
-> > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
-> > > the subsystem in any way / does prevent the subsystem from moving forward.
-> > > 
-> > > Can't we just keep it as it is?
-> > 
-> > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
-> > take (a little bit) of space on every system. The nouveau situation
-> > isn't unique, other drivers (i915, ast) also incorporate the code for
-> > I2C backends. For the further discussion see the thread starting from
-> > Laurent's email ([1]).
-> > 
-> > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
-
-The drm_encoder_slave code it's rather small, but I guess this can be used as
-argument for both, keeping it where it is and moving it.
-
-If you want to move it to nouveau, I'm not going to object. But please fold the
-helper code, such that we aren't left with unused functions and unnecessary
-function pointer indirections through struct drm_encoder_slave_funcs.
-
+On Mon, Dec 16, 2024 at 12:17:54PM +0000, Mark Brown wrote:
+> On Sat, Dec 14, 2024 at 10:56:13AM +0000, Marc Zyngier wrote:
 > 
-> It's also a question of whether maintenance of this code based used by
-> the nouveau driver only should be the responsibility of the drm-misc
-> community or the nouveau driver maintainers.
+> > I don't understand the need to single out SMIDR_EL1. It seems to only
+> > make things even more fragile than they already are by adding more
+> > synchronisation phases.
+> 
+> > Why isn't the following a good enough fix? It makes it plain that
+> > boot_cpu_data is only a copy of CPU0's initial boot state.
+> 
+> That would work but it's not clear to me that that is what the intent is
+> here.  The current ordering seemed like a strange enough decision to be
+> deliberate, though I couldn't identify the reasoning.
 
-Good question. It's common infrastructure; do we expect / require the last user
-of such infrastructure to take ownership?
+The original intent was that __cpuinfo_store_cpu() read *all* of a CPU's
+implemented ID regs, and init_cpu_features() initialised the expected
+system features based on the boot CPU's ID regs.
 
-> 
-> > > > Ideally those two drivers should be converted to the drm_bridge
-> > > > interface, but it's unclear if it's worth spending time on that.
-> > > 
-> > > Probably not.
-> > > 
-> > > > 
-> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > ---
-> > > > Changes in v2:
-> > > > - Renamed symbols in defconfig (Laurent)
-> > > > - Added missing Kbuild file (Laurent, LKP)
-> > > > - Renamed guarding defines in include files.
-> > > > - Dropped mentions of two removed functions.
-> > > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
-> > > > 
-> > > > ---
-> > > > Dmitry Baryshkov (2):
-> > > >       drm/nouveau: incorporate I2C TV encoder drivers
-> > > >       drm/nouveau: vendor in drm_encoder_slave API
-> > > > 
-> > > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
-> > > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
-> > > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
-> > > >  drivers/gpu/drm/Makefile                           |   1 -
-> > > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
-> > > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
-> > > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
-> > > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
-> > > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
-> > > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
-> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
-> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
-> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
-> > > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
-> > > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
-> > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
-> > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
-> > > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
-> > > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
-> > > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
-> > > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
-> > > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
-> > > >  22 files changed, 172 insertions(+), 232 deletions(-)
-> > > > ---
-> > > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-> > > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+The expectation was that init_cpu_features() would only consume the
+register values, and would not alter the cpuinfo_arm64 values, so the
+order of:
+
+	boot_cpu_data = *info;
+	init_cpu_features(&boot_cpu_data);
+
+... didn't matter either way, and using '&boot_cpu_data' was intended to
+make it clear that the features were based on the boot CPU's info, even
+if you just grepped for that and didn't see the surrounding context.
+
+I think the real fix here is to move the reading back into
+__cpuinfo_store_cpu(), but to have an explicit check that SME has been
+disabled on the commandline, with a comment explaining that this is a
+bodge for broken FW which traps the SME ID regs.
+
+Mark.
 
