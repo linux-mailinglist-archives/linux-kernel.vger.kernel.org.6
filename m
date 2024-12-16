@@ -1,303 +1,153 @@
-Return-Path: <linux-kernel+bounces-447622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F0D9F350F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA59A9F3510
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 386D61888E1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB049188A21B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E414A095;
-	Mon, 16 Dec 2024 15:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FB1149C57;
+	Mon, 16 Dec 2024 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUrinMkA"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OELftRuS"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15802148FF0;
-	Mon, 16 Dec 2024 15:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E72148FF0;
+	Mon, 16 Dec 2024 15:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364473; cv=none; b=pBsejjEnAGX+yz5mJC+J6kNI3ZxKY1A4ocWpN/p8TeytpvI112rXrL+F5PqHh6+PCnqE+KJ2aG9YVaskQ2Hr8spS7xLX9yzax7SHmLSBRH/9Qgur9KOcpIZB9LIoflf7nlWMEnN6Uu5yqct5DqQAm+89bNysrvOAYO1H90mc3Us=
+	t=1734364513; cv=none; b=moujv59SjFAz0qVyH16cKAjmwH/qU8AeMkxolrX3vv2G6g3RgFzIp6ZrPHtW6qz7W0n8ufoVzdo0SfmZmkZ+gnaVcAkPHot5QpAYgrtL+l0ZUl5NemWczFjBac3WdFmijPA+zIQsby7T/es5HMynW/Fm+wMXvApAKgcG1paq+Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364473; c=relaxed/simple;
-	bh=+83zYRMAF/jP5mKQ7uCW/L+urZDiVwytg7d/dmrTXTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UrUuDUoIseuzLYwhm4r3szoHu1nUkJYk/ocDPq2XzZEb+KrQX4TxgljW98xS9POKJ+WuLsPZV2flwRv046kQXHeKnmEgFP9AWGaYSvBoNcSJR08QHjv932Z8a/SxdNrNy7v94Av+DvdWtjG4c1ifiIlvBt+x9jn9+kSx6q4VbGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUrinMkA; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1734364513; c=relaxed/simple;
+	bh=0nbYvfl+FMgWZxD4rgk2dorGGAfwN2+YLxXB8iZH/3o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0KGWTrt44p+U0gbqvfTTN6cRsUc+licYecTWVV3FfTHho9/mrSxabVViIRP9ioNSijOSnRLEwL2XPxTmNPVdhLGkXkncpUyOoi5lrvRpc3WkcV9hl+GHlBBQtOEfEyRjrmAjCegU4xvjYa73wShduro6nxaoDOKT95Q6Fl9Gfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OELftRuS; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4678cce3d60so46814961cf.2;
-        Mon, 16 Dec 2024 07:54:30 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53df80eeeedso4265202e87.2;
+        Mon, 16 Dec 2024 07:55:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734364470; x=1734969270; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTggA1bnHvpEMfZwgK1APAxN2uONgVxmwIsfS4Q5qnk=;
-        b=QUrinMkAUvoBVCa42wYumz/SvBBVzANvuEORrG/AgA0ozE3tWFQz4inSwaSf2d39gk
-         zlKf/69/GxvnWhqARMRo6G0qmSbmeSDpx/tNv1P0iYsfhjeSXdDZkYWUT9PdWaq6pXiA
-         6QikX9s7Dwrvwy7F3IjUJpBGEqOL+H4azgJCynim6wuZiVOUlTrEq4eFKaGN9Db78H+R
-         NEy9P+dF7PeLaXpsBqCU9DkVcLX56GD4+gv/umHsHsbbAObRTofDofvcc744eIJg+zzR
-         mG+echork03XUhbRXrrcg8qHYNhweXx1fGUXDXh/LfXHeTnoyjIhzeFulUncEB6Sx0hy
-         XgHA==
+        d=gmail.com; s=20230601; t=1734364509; x=1734969309; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4MwxGKXkpnGddxZqvozu7EvMBr4y+Sd/gZ/o7FRr8o=;
+        b=OELftRuS15HJxjrVRkHmrivD7n9FGCQaPJ6bSlW9XyODYvT0mleHJbdGHTy1TlJT9j
+         ETE8D7CYMKcDvomj7wGs+T9OqDctP7mm4nYz/Qlcafh0TAzskmlp/+xDOFflB9X6M3A9
+         Sjo4ul1TCAyzBH2Ssy3TZVeZ0nyFi9X1CbolgjQCnGEJ9kZC4uSGMVC+f0WfYDr8KEhe
+         i0wwEWqAe6q5UF2IT09VsJtpAJAqyzlTnX3fhhPIfAqZnD0RsmtMx2rE8rNp01FjUyH/
+         Qf3SrAfqIcMZ5Ta6D5dbAhDhERtRMC6HtJZbrRuLdVOWldubmjti4ZWhgEPWelhkzncm
+         IvNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364470; x=1734969270;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pTggA1bnHvpEMfZwgK1APAxN2uONgVxmwIsfS4Q5qnk=;
-        b=dvXnh6VMaVSoZPxFUFb1yCKEvwh9/c0bgkSJmdfHckvXl2uVKFcG8TSdOoTZtN9i/V
-         GPRNJm+8oEgKBARe9ag6wGPTSyd6JMEn08eRyuObfo+oGcTHiJUoF6u+daSNlNzPeqbz
-         EmOPSauL2qCksy+Lq42BsSdJ2JMczyn7uVmldL7NgnWtwDQWoM1XTJIgzijTRYMArphr
-         F/isWmmGLXn4bGuxwBOmrgyDF2fRAwQWKLTwVQJcxC/yOEe3Yrht22m/ndj1fdmDYh6j
-         qZcN8AeJFSPg6ljUd4RfDMSIiVTPjdEqnxsHNdDZW96c3KgbyWr+a+g32gcP8rYnKK2e
-         oQ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsICnlZMKuRSe4DySej2Qo7FzHO1zHlkn1N+pEA2ypZnF5nUU6BicsYYL1yBFkEMPqcPETaaNQFB+SPVw=@vger.kernel.org, AJvYcCXPd8Id0eq+Xup+XOHhhBUAiqgSEAElS0odqqemRynlnBALa5kDy0rwdwA2qnCAzfy6EfEnlhmnOL3AwAkrQdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu5cIM5VCjTeLDuLjppMODsezz5//T4VxvgCtIc+YXIFdnipk3
-	aSfQeo+IV7axlelBn0ooJCovqbI7OAKEgn59ts7GV1DZcPqplPeL
-X-Gm-Gg: ASbGncviuUHaVkpFT+Nsa8CY5Z323Ks3vHXKIJwQkpiWWAQ67gm7ElkksiSl1HQHUFK
-	61zm0Mq6mPw3w5RUh/8Z7NhwvbpedzP0yV7CnKDsUmEYVSdCOzGdaKv8vlhTMbNZ3Qm0TH0vcMw
-	HYvwx5V0asAyU0jYZyiUoifxNKzCq/3EPJWFrLIEwnARWo/1Ws5RxovI7u6/CsMYbICREXxOuVw
-	3rBo6GQQDQE1LpwbcXeU1yBwnddEzO3DsReIZlqrN2DDaHbSgeCwdxmvLtrcead/E1EJoe2CSCH
-	WmD+PMrbQKULGUMMXC0I105Gf5WLLlxtWdNEECR/ucTkjiW60iucD/jsWXSn
-X-Google-Smtp-Source: AGHT+IGR/JnsvSK+RMw7qH/LPKg98weEdrCbFDB7uG5WpOwgIJbT98+V7unB8Q5oKguCG1wzxqoWQA==
-X-Received: by 2002:a05:622a:1181:b0:45f:bc9e:c69c with SMTP id d75a77b69052e-467a57192dbmr188075641cf.7.1734364469722;
-        Mon, 16 Dec 2024 07:54:29 -0800 (PST)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:7214])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2e8195csm29030611cf.57.2024.12.16.07.54.28
+        d=1e100.net; s=20230601; t=1734364509; x=1734969309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4MwxGKXkpnGddxZqvozu7EvMBr4y+Sd/gZ/o7FRr8o=;
+        b=kmOiFPPMP47ReS2DXbOXuEMEWee0p9n8JtoGc+Rixt8+0G2gbAvZvq0Y+nh6MGso0l
+         ho8aIV9eBj3+dM3KRKAip1lN4rkkwWElKdrI+cdC1eJX5KxPhsq75CdQLtGTGrVyOIAM
+         MYfMMxLfA+NFFqYEwJYbMCtWxdhQWbCJwSVbkzPjHmQblWE1zXPVPUVpWDunoTKKAB6s
+         +dHbG3jBf4alxmH2q/k3W3eLvY52KyzLVzRfsAdNTBLKNxmgiw1qzNTda8733tAJkqw5
+         IKzKgmzUI+XrRfx9bNGvC9GM11jzSB+47Q/4nDDdBRbzGPKlDuriILYpgl3H79pnGV0d
+         BzRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUp2QdAK4O+yAD9jhsG4NioKX/vmmOW60X5/sAO+487O4Ic2yVkv2iA7gzYdp2SqpVgobWi8LUchVBZQE=@vger.kernel.org, AJvYcCVXDTkdM8eaOiB5Oe3xYdlzXuBJ19BUrQHABoduh1GfRVFkh4rbMH9l6bwuGvWsDIroi1gM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTpJCDjdQ93TN/Ck/L4Rt+BA4MbczSujPCtL7+JSOyBG01O2MA
+	vgX7DMzme/bdMqWBVtGHog0f9A4plVts4q9cBPLRt2oHXKNUnLYvlLwdgw==
+X-Gm-Gg: ASbGnct2kKln6/GdFitrwnX7qIbrvxd/gejvkGcogrDWoo50vBrXWX32lC9GeUIiDSh
+	mM938bRDdaedSjMs/MAdlQ/gJA7VAnezz07gcpMFjWNhh3wB4PnZGrDaMAPr2dPUB3XxxN4L+zG
+	fdcxZZ/5EmlnaGQqQ3nVQDJk3vuLXcp2iN1bxXwjPUT5uIC5fSeE07Gt4ZVac+bJMGZWjVV8p2d
+	Llx2vl+PQXOaQG60snE5BOk2vuRa2GEDuEQmVZOhiG++qG9jTrGeTpk/JYppAP1oHkdecJkP5j7
+	mRc=
+X-Google-Smtp-Source: AGHT+IHipyXOifaP3+K8iCuvtXiW/zxJYksucwXX40y1wvFiHnYHMPRUzU0JA19SL9iMQXrpedJa8Q==
+X-Received: by 2002:a05:6512:31c6:b0:540:3561:666f with SMTP id 2adb3069b0e04-5409055837amr4569357e87.20.1734364509284;
+        Mon, 16 Dec 2024 07:55:09 -0800 (PST)
+Received: from pc636 (host-95-203-7-38.mobileonline.telia.com. [95.203.7.38])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c005besm910045e87.167.2024.12.16.07.55.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 07:54:28 -0800 (PST)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 16 Dec 2024 10:54:22 -0500
-Subject: [PATCH v7] rust: use host dylib naming convention
+        Mon, 16 Dec 2024 07:55:08 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 16 Dec 2024 16:55:06 +0100
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2 0/5] Move kvfree_rcu() into SLAB (v2)
+Message-ID: <Z2BNWpkruY6rJv6A@pc636>
+References: <20241212180208.274813-1-urezki@gmail.com>
+ <17476947-d447-4de3-87bb-97d5f3c0497d@suse.cz>
+ <Z2AJCI3cIR9ETFFu@pc636>
+ <d352db4f-4bb8-4300-b235-bbd1bdb3aa21@suse.cz>
+ <Z2BKLzOGv_Ki_7fj@pc636>
+ <6fb206de-0185-4026-a6f5-1d150752d8d0@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-b4-dylib-host-macos-v7-1-cfc507681447@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAC1NYGcC/33OvQ6DIBiF4VtpmPsZoPhDp95H4wCI8iUiDRhTY
- 7z3opNTx3c4T85Gko1oE3neNhLtggnDlKO+34hxahosYJebcMoFo6wCLaBbR9TgQprBKxMSsKo
- ua/MoqRaS5OUn2h6/p/puc/cxeJhdtOpi0YZz0TBaNCI3MJiVx9i9Bq9wLEzwh+QwzSGu572lO
- rz/T5YqQ1pbpUvKJZPywrX7vv8A0zjbb/AAAAA=
-X-Change-ID: 20241016-b4-dylib-host-macos-16757c350b49
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
- Fiona Behrens <me@kloenk.dev>, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fb206de-0185-4026-a6f5-1d150752d8d0@suse.cz>
 
-Because the `macros` crate exposes procedural macros, it must be
-compiled as a dynamic library (so it can be loaded by the compiler at
-compile-time).
+On Mon, Dec 16, 2024 at 04:44:41PM +0100, Vlastimil Babka wrote:
+> On 12/16/24 16:41, Uladzislau Rezki wrote:
+> > On Mon, Dec 16, 2024 at 03:20:44PM +0100, Vlastimil Babka wrote:
+> >> On 12/16/24 12:03, Uladzislau Rezki wrote:
+> >> > On Sun, Dec 15, 2024 at 06:30:02PM +0100, Vlastimil Babka wrote:
+> >> >> On 12/12/24 19:02, Uladzislau Rezki (Sony) wrote:
+> >> >> > Hello!
+> >> >> > 
+> >> >> > This is v2. It is based on the Linux 6.13-rc2. The first version is
+> >> >> > here:
+> >> >> > 
+> >> >> > https://lore.kernel.org/linux-mm/20241210164035.3391747-4-urezki@gmail.com/T/
+> >> >> > 
+> >> >> > The difference between v1 and v2 is that, the preparation process is
+> >> >> > done in original place instead and after that there is one final move.
+> >> >> 
+> >> >> Looks good, will include in slab/for-next
+> >> >> 
+> >> >> I think patch 5 should add more explanation to the commit message - the
+> >> >> subthread started by Christoph could provide content :) Can you summarize so
+> >> >> I can amend the commit log?
+> >> >> 
+> >> > I will :)
+> >> > 
+> >> >> Also how about a followup patch moving the rcu-tiny implementation of
+> >> >> kvfree_call_rcu()?
+> >> >> 
+> >> > As, Paul already noted, it would make sense. Or just remove a tiny
+> >> > implementation.
+> >> 
+> >> AFAICS tiny rcu is for !SMP systems. Do they benefit from the "full"
+> >> implementation with all the batching etc or would that be unnecessary overhead?
+> >> 
+> > Yes, it is for a really small systems with low amount of memory. I see
+> > only one overhead it is about driving objects in pages. For a small
+> > system it can be critical because we allocate.
+> > 
+> > From the other hand, for a tiny variant we can modify the normal variant
+> > by bypassing batching logic, thus do not consume memory(for Tiny case)
+> > i.e. merge it to a normal kvfree_rcu() path.
+> 
+> Maybe we could change it to use CONFIG_SLUB_TINY as that has similar use
+> case (less memory usage on low memory system, tradeoff for worse performance).
+> 
+Yep, i also was thinking about that without saying it :)
 
-Before this change the resulting artifact was always named
-`libmacros.so`, which works on hosts where this matches the naming
-convention for dynamic libraries. However the proper name on macOS would
-be `libmacros.dylib`.
-
-This turns out to matter even when the dependency is passed with a path
-(`--extern macros=path/to/libmacros.so` rather than `--extern macros`)
-because rustc uses the file name to infer the type of the library (see
-link). This is because there's no way to specify both the path to and
-the type of the external library via CLI flags. The compiler could
-speculatively parse the file to determine its type, but it does not do
-so today.
-
-This means that libraries that match neither rustc's naming convention
-for static libraries nor the platform's naming convention for dynamic
-libraries are *rejected*.
-
-The only solution I've found is to follow the host platform's naming
-convention. This patch does that by querying the compiler to determine
-the appropriate name for the artifact. This allows the kernel to build
-with CONFIG_RUST=y on macOS.
-
-Link: https://github.com/rust-lang/rust/blob/d829780/compiler/rustc_metadata/src/locator.rs#L728-L752
-Tested-by: Daniel Gomez <da.gomez@samsung.com>
-Co-developed-by: Fiona Behrens <me@kloenk.dev>
-Signed-off-by: Fiona Behrens <me@kloenk.dev>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
-Changes in v7:
-- Rebase on d072acda4862 ("rust: use custom FFI integer types") [0]
-- Link: https://lore.kernel.org/all/20240913213041.395655-4-gary@garyguo.net/ [0]
-- Link to v6: https://lore.kernel.org/r/20241016-b4-dylib-host-macos-v6-1-bbeab5029199@gmail.com
-
-Changes in V6: Removed setting `no-clean-files`. Rewrote description.
-
-Changes in V5: Added missing `shell` in rust/Makefile.
-
-Changes in V4: Added motivation. Added missing Signed-off-by.
-
-Changes in V3: Added .strip() to rustc output to remove errant newline.
-
-Changes in V2:
-- De-duplicated and sorted imports.
-- Changed Signed-off-by to Co-developed-by.
----
- .gitignore                        |  1 +
- Makefile                          |  2 +-
- rust/Makefile                     | 20 +++++++++++---------
- scripts/generate_rust_analyzer.py | 15 +++++++++++----
- 4 files changed, 24 insertions(+), 14 deletions(-)
-
-diff --git a/.gitignore b/.gitignore
-index 6839cf84acda0d2d3c236a2e42b0cb0fe1b14965..5937c74d3dc1e4ca56d93ea0b8d5ff9fc64ec839 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -22,6 +22,7 @@
- *.dtb.S
- *.dtbo.S
- *.dwo
-+*.dylib
- *.elf
- *.gcno
- *.gcda
-diff --git a/Makefile b/Makefile
-index e5b8a8832c0caa16fa05159611dc2529066095c1..80d9943d9744f8288d3fc88bed8213988b0d15c2 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1571,7 +1571,7 @@ MRPROPER_FILES += include/config include/generated          \
- 		  certs/x509.genkey \
- 		  vmlinux-gdb.py \
- 		  rpmbuild \
--		  rust/libmacros.so
-+		  rust/libmacros.so rust/libmacros.dylib
- 
- # clean - Delete most, but leave enough to build external modules
- #
-diff --git a/rust/Makefile b/rust/Makefile
-index a40a3936126d603836e0ec9b42a1285916b60e45..c95d7294f4425a7875a177d005bf0b28d0a9cfb2 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -11,9 +11,6 @@ always-$(CONFIG_RUST) += exports_core_generated.h
- obj-$(CONFIG_RUST) += helpers/helpers.o
- CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
- 
--always-$(CONFIG_RUST) += libmacros.so
--no-clean-files += libmacros.so
--
- always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
- obj-$(CONFIG_RUST) += bindings.o kernel.o
- always-$(CONFIG_RUST) += exports_helpers_generated.h \
-@@ -38,9 +35,14 @@ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.o
- 
- always-$(subst y,$(CONFIG_RUST),$(CONFIG_JUMP_LABEL)) += kernel/generated_arch_static_branch_asm.rs
- 
--# Avoids running `$(RUSTC)` for the sysroot when it may not be available.
-+# Avoids running `$(RUSTC)` when it may not be available.
- ifdef CONFIG_RUST
- 
-+libmacros_name := $(shell $(RUSTC) --print file-names --crate-name macros --crate-type proc-macro - < /dev/null)
-+libmacros_extension := $(patsubst libmacros.%,%,$(libmacros_name))
-+
-+always-$(CONFIG_RUST) += $(libmacros_name)
-+
- # `$(rust_flags)` is passed in case the user added `--sysroot`.
- rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
- rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
-@@ -109,10 +111,10 @@ rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
- 	+$(call if_changed,rustdoc)
- 
- rustdoc-kernel: private rustc_target_flags = --extern ffi \
--    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
-+    --extern build_error --extern macros \
-     --extern bindings --extern uapi
- rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-ffi rustdoc-macros \
--    rustdoc-compiler_builtins $(obj)/libmacros.so \
-+    rustdoc-compiler_builtins $(obj)/$(libmacros_name) \
-     $(obj)/bindings.o FORCE
- 	+$(call if_changed,rustdoc)
- 
-@@ -362,10 +364,10 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
- 		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
- 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
- 		--crate-type proc-macro \
--		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
-+		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) $<
- 
- # Procedural macros can only be used with the `rustc` that compiled it.
--$(obj)/libmacros.so: $(src)/macros/lib.rs FORCE
-+$(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
- 	+$(call if_changed_dep,rustc_procmacro)
- 
- quiet_cmd_rustc_library = $(if $(skip_clippy),RUSTC,$(RUSTC_OR_CLIPPY_QUIET)) L $@
-@@ -443,7 +445,7 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
- $(obj)/kernel.o: private rustc_target_flags = --extern ffi \
-     --extern build_error --extern macros --extern bindings --extern uapi
- $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/build_error.o \
--    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
-+    $(obj)/$(libmacros_name) $(obj)/bindings.o $(obj)/uapi.o FORCE
- 	+$(call if_changed_rule,rustc_library)
- 
- ifdef CONFIG_JUMP_LABEL
-diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index 09e1d166d8d236fcf8c2b2375624b243ebf6e7f7..aa8ea1a4dbe5f9037c8c231d87ddc8d95c297f12 100755
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@ -8,6 +8,7 @@ import json
- import logging
- import os
- import pathlib
-+import subprocess
- import sys
- 
- def args_crates_cfgs(cfgs):
-@@ -35,8 +36,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-     crates_cfgs = args_crates_cfgs(cfgs)
- 
-     def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
--        crates_indexes[display_name] = len(crates)
--        crates.append({
-+        crate = {
-             "display_name": display_name,
-             "root_module": str(root_module),
-             "is_workspace_member": is_workspace_member,
-@@ -47,7 +47,15 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-             "env": {
-                 "RUST_MODFILE": "This is only for rust-analyzer"
-             }
--        })
-+        }
-+        if is_proc_macro:
-+            proc_macro_dylib_name = subprocess.check_output(
-+                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
-+                stdin=subprocess.DEVNULL,
-+            ).decode('utf-8').strip()
-+            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
-+        crates_indexes[display_name] = len(crates)
-+        crates.append(crate)
- 
-     # First, the ones in `rust/` since they are a bit special.
-     append_crate(
-@@ -70,7 +78,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-         [],
-         is_proc_macro=True,
-     )
--    crates[-1]["proc_macro_dylib_path"] = f"{objtree}/rust/libmacros.so"
- 
-     append_crate(
-         "build_error",
-
----
-base-commit: 92797e9898f1093641b5b28f6cf5f12da3448a45
-change-id: 20241016-b4-dylib-host-macos-16757c350b49
-
-Best regards,
--- 
-Tamir Duberstein <tamird@gmail.com>
-
+--
+Uladzislau Rezki
 
