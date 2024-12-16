@@ -1,211 +1,144 @@
-Return-Path: <linux-kernel+bounces-447433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEEA9F3243
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:07:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A039C9F32EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8903F1679E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE881699BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9C5205E22;
-	Mon, 16 Dec 2024 14:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A6B2066C1;
+	Mon, 16 Dec 2024 14:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bfnpS8kf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dFywmTWX"
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC79205AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3C9205E3B;
+	Mon, 16 Dec 2024 14:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358035; cv=none; b=ld5bDLn9xt2EkrSCe8WX79+xuQ0HmohGdb8FEp2VDDC5Ou96HQAMoGT5x+W6ZPdK9bdOHs337TDDQz8rArfgPbiGMkYLJnRpd84RSfUWkQ+ir9bDe9jw+RY3A0Z9O9wneR+7E9h5k40Dtszx7l+CUo+OeeURsyUIyVHx1a6rkBk=
+	t=1734358453; cv=none; b=PyCL1Hht5JXIBx6Ea3SK589/+K+uuyaqP4KDwkSmJnUiFGWBAIWUVYun2xFm7DU8XC7trVq11mlMi7ud51FlLEdAHehofyO9A6yx5rRR0L+3r0iOSkvXQDSSA4kGH60NnZ67veT/kY1tJ0B5poEY8XE6tkJHqli+dU6JYszkr3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734358035; c=relaxed/simple;
-	bh=R0r6kyXtqnw9oAO0kUc+2aV4wsHJJzh2fmz7yt1ZKQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiG0m7RI745bvy78Cy+qEwssXIdPvRZYnzeAf+mAwFVowEMSGEh4R6Tgf6mGolqcWAtln0KDKKapkj1zI1Elm6OAPLxYcZc7N89Y1FklS68h1PZ8c3T2AebsfCtnhEn82TC2tQwX1ZbiYnlZQ9LoKHeA2eTxGYcnv3or3fZA79M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bfnpS8kf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734358032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vx9u29TJnDx+NQoG8CYOpQFQkYPuT5i21NbIJ3rQxpI=;
-	b=bfnpS8kfi5ykgZAlfo5rPgxRphMY/dMO7o3tPF0+szbtViFeNsRmSa9badb47uzHJ4Vgiw
-	gVd9BeQeJb7Mhzfj0YpKDifbVXr/HSMQDsX5UpXvzTD4HTo9mL3PxnVH+XUXg8f2WjNug2
-	4fWuS/66cEJTNV4R1a/PSBPF17uTUVo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-oZvVxXzGNp6bG1HDVXhQCQ-1; Mon, 16 Dec 2024 09:07:11 -0500
-X-MC-Unique: oZvVxXzGNp6bG1HDVXhQCQ-1
-X-Mimecast-MFC-AGG-ID: oZvVxXzGNp6bG1HDVXhQCQ
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385fdff9db5so1158661f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:07:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734358030; x=1734962830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vx9u29TJnDx+NQoG8CYOpQFQkYPuT5i21NbIJ3rQxpI=;
-        b=pWBrd05nleipo7pJetrk188gPeGKk9quY5iiE2wJTpaZzJJSU5XqYnFL0fqHw2ctwE
-         dv2JS3NLZ31of1JtRURi/7ZocynfgbCEtA1R6fMl46kCo/vECtiMoR8F2j2nZsKOwf3i
-         IyUDXJ6AlH3AlSykAPK1SdNapV73yIHRoGIcblMKkJhPZx36WpS5UwBZySOYIIkpSSs1
-         nQ5riQ/sOUdtm+Zq1H2tMENQ3E7jl4HEJE2d7o7wMXy8V670/aQT05kSqsneG/zWzyaB
-         /PksBlKM2GaWws/mgvdTzWguzMagySJ1SgZJFA5hZqk0Czj2WJRnPfY+zkvDOsq3FH4N
-         f8Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO720dagfvoHRtmNHAhe86yhWDz02ki1i5oUYdJRMbU8KrMEtQcophrjK/OlfTNqLQwQmEo8YDOA1viDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJY7G5f7BS5ozTB/WUPeBxkwqqF8aab4tDmq6MVs8Ve/olTWyn
-	x4NZ1Vookpwu5Z2t7U+atKey7J7+WQVPJwoNuBTxWo6s11GPpeM17/OwLILxQx/KxoxCNhj7n7g
-	x74Cr2Tw3t5icAZcgP9UM2enmbPEJ8NqlQ+1+U9c0zRK6m+J3rg/kIJMcUx76lA==
-X-Gm-Gg: ASbGncsI8e2nkhpg+F3G1RYHKJk4Cq16aJzJdKgG6U3S9xA4z+EHYlkcJIAxK1mCT/C
-	d8B3Vw6bEejvzB2WPEWEzfyAGk4rbrCxNYwg/rNQ8pklWA26tO+Liy3vA1v90xalCRmGnsM7VAm
-	6hGeIfJA9GkCQygBNzXQoZhiRDXSkZ6QmolttzRdYmmczIq1e/SNKGRotGKKJHpluREr7cvKhW8
-	h30WzDmvaA1clWaXqR8twfhXiAoagEbJ9sFnrpHYngMjC6bqh84
-X-Received: by 2002:a05:6000:400b:b0:385:f398:3e2 with SMTP id ffacd0b85a97d-3888e0b8ac2mr10303692f8f.37.1734358029442;
-        Mon, 16 Dec 2024 06:07:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGyZ0+O4kIxKWHQmAwP9mPVHk0LghHzqDQ6QyhAYSUm6qYdEdlC5E3x4M+gkrrJ6yoDU0YReQ==
-X-Received: by 2002:a05:6000:400b:b0:385:f398:3e2 with SMTP id ffacd0b85a97d-3888e0b8ac2mr10303638f8f.37.1734358028978;
-        Mon, 16 Dec 2024 06:07:08 -0800 (PST)
-Received: from cassiopeiae ([2a00:79c0:644:6900:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80613a9sm8199671f8f.101.2024.12.16.06.07.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:07:08 -0800 (PST)
-Date: Mon, 16 Dec 2024 15:07:06 +0100
-From: Danilo Krummrich <dakr@redhat.com>
-To: Zhanxin Qi <zhanxin@nfschina.com>
-Cc: kherbst@redhat.com, lyude@redhat.com, airlied@gmail.com,
-	simona@ffwll.ch, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Duanjun Li <duanjun@nfschina.com>
-Subject: Re: [PATCH v1 v1] drm/nouveau: Fix memory leak in
- nvbios_iccsense_parse
-Message-ID: <Z2A0CuGRJD-asF3y@cassiopeiae>
-References: <Z1_2sugsla44LgIz@cassiopeiae>
- <20241216130303.246223-1-zhanxin@nfschina.com>
+	s=arc-20240116; t=1734358453; c=relaxed/simple;
+	bh=Lab8uBkoiiDISVjxkdymFR9/9sEdfGxnbo81pkp2ecA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qqBl86OizOL7OUqkvbqTUjqL+XxpucqJxGgvmAVmTAObKAALMd2e8/B9+XqVSdKtqwywDCb2PceVqFWNxH28HDFDPJChXHGigF1JrvXySIKjvLMlnBFi+rh7Q7fazgA/PuxHsEpyvfWo4ext1hHs9S5IJj/ENXb8jdAXPSWQhmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dFywmTWX; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1734358447; bh=IORjVDWw9PVe8SQPp6GdmklSQwTD9Lex2dxUowqavTY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dFywmTWXuxBhOKyAEmLFTZus9m4bfrsWlh3bV5SAGEoZrDIOxum0ISqozZLSYuqqb
+	 Yn4SLcinuioRIKEP74ofQBRIli/9MPKfEBDTa96Ve4ghRKqBDyDE/mqHxfqF1hHqwo
+	 tvcdwzaEEeFflmW9rT4ONDsIkx45YpUr0rFmgPJk=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 1F82E847; Mon, 16 Dec 2024 22:07:56 +0800
+X-QQ-mid: xmsmtpt1734358076t4cw6z6sy
+Message-ID: <tencent_E036A29600368E4A2075A7774D67023CFD09@qq.com>
+X-QQ-XMAILINFO: Mw5V7KuSxHjfshEbLKBaYpHNs9f8PO4duBsWltGCidOguOVaYfh6cm6CMRRR0Q
+	 XHC8WXjVLgmWKoWRcNm3xli7h0s0tPapEIYCRH7eWgV1tkkGubkVywRj4bmrP06gk3YY3HtipO4r
+	 FWLnUbHSujKBlhB9Nf2OYoC9kOcAUC/CDZpYjg8iRguWuZPSZ5sJBJKXKRFzdduZzGzpw8YRtDe3
+	 fd63UoFfbhW3tajNxr/QrAzlPc1KH7tXywfJZXeSNor8k9n1rklMd07VtKQdmwunM9G+j5eDSy4t
+	 0+kPJ7tQIEZYbwSj5cYpe5fT3X/Be1Aob4CZC7eYJVAMLhQyaeo+Rk8L5R53ViEpCjavyneFatNg
+	 aakW8G/bt1oMSOmeZJ4iL6Flp9vttWMQsC9xTQUC3hf1zm/O4NE9Qg8HnTBhjiPuPUDtNSAda8m3
+	 jyI1WP0sRGYPmJJq5muHZnPg0GwGEADV/7zCj37UCbz9n4FVLEkGqAQ3yyoEFL2VkbR3GizK0Wcy
+	 q+mnUm1gvyg31Hmw9UpzmuVV0RKjJqzIATp6IXnpYsCm+K3pW6VwTPrB9UegX4Q2nF/k/QK1eyP6
+	 dw0q050HtJ9LiuB5PkVv0IW9j+DT0lEl78mwpwc0HuSNYQztqhoJhBWjrOMXIBnO8LRWdfLiprAH
+	 rx8zxIAgp8e9MXa/RDyv27vdB38gYaUV2L2gXgDmMHkOJNAVQv2gyLeDXAv+GJjbeM975PjW/db5
+	 iOFxGfTK+eKRFW+qWEkX+LQTe8w+sEKDOWCGw+d7SJ+ku6ctTxfOFxC6PvjPVFPyxdpj5vZ97atE
+	 Ylqs7eknhHhvWnYjoznJKEtDW9/Tuk3U0lO/zZSra7BqfDwJiJFox3LcKAIcTlqHSc+FQIdkmVVS
+	 MFuiTADFX8esAIHG58ysROX0OUK9N8hg==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+345e4443a21200874b18@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] ring-buffer: Fix a oob in __rb_map_vma
+Date: Mon, 16 Dec 2024 22:07:57 +0800
+X-OQ-MSGID: <20241216140756.2403238-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <675fe376.050a0220.37aaf.011e.GAE@google.com>
+References: <675fe376.050a0220.37aaf.011e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216130303.246223-1-zhanxin@nfschina.com>
+Content-Transfer-Encoding: 8bit
 
-The version after the inital one should be "v2". You can use
+syzbot report a slab-out-of-bounds in __rb_map_vma. [1]
 
-git format-patch -v{VERSION_NUMBER} for this.
+Overflow occurred when performing the following calculation:
+nr_pages = ((nr_subbufs + 1) << subbuf_order) - pgoff;
 
-On Mon, Dec 16, 2024 at 09:03:03PM +0800, Zhanxin Qi wrote:
-> The nvbios_iccsense_parse function allocates memory for sensor data
-> but fails to free it when the function exits, leading to a memory
-> leak. Add proper cleanup to free the allocated memory.
-> 
-> Fixes: 39b7e6e547ff ("drm/nouveau/nvbios/iccsense: add parsing of the SENSE table")
+Add a check before the calculation to avoid this problem.
 
-This should be
+[1]
+BUG: KASAN: slab-out-of-bounds in __rb_map_vma+0x9ab/0xae0 kernel/trace/ring_buffer.c:7058
+Read of size 8 at addr ffff8880767dd2b8 by task syz-executor187/5836
 
-Fixes: b71c0892631a ("drm/nouveau/iccsense: implement for ina209, ina219 and ina3221")
+CPU: 0 UID: 0 PID: 5836 Comm: syz-executor187 Not tainted 6.13.0-rc2-syzkaller-00159-gf932fb9b4074 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:489
+ kasan_report+0xd9/0x110 mm/kasan/report.c:602
+ __rb_map_vma+0x9ab/0xae0 kernel/trace/ring_buffer.c:7058
+ ring_buffer_map+0x56e/0x9b0 kernel/trace/ring_buffer.c:7138
+ tracing_buffers_mmap+0xa6/0x120 kernel/trace/trace.c:8482
+ call_mmap include/linux/fs.h:2183 [inline]
+ mmap_file mm/internal.h:124 [inline]
+ __mmap_new_file_vma mm/vma.c:2291 [inline]
+ __mmap_new_vma mm/vma.c:2355 [inline]
+ __mmap_region+0x1786/0x2670 mm/vma.c:2456
+ mmap_region+0x127/0x320 mm/mmap.c:1348
+ do_mmap+0xc00/0xfc0 mm/mmap.c:496
+ vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
+ ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
+ __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
+ __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
+ __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-instead.
+Reported-by: syzbot+345e4443a21200874b18@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=345e4443a21200874b18
+Tested-by: syzbot+345e4443a21200874b18@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ kernel/trace/ring_buffer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The function introduced by 39b7e6e547ff ("drm/nouveau/nvbios/iccsense: add
-parsing of the SENSE table") is correct, but the other commit did not clean up
-after using it.
-
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zhanxin Qi <zhanxin@nfschina.com>
-> Signed-off-by: Duanjun Li <duanjun@nfschina.com>
-
-Why is there also Duanjun's SOB? If there is a co-author, this should be
-indicated with a "Co-developed-by" tag. Adding the SOB only is not sufficient,
-please see [1].
-
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-
-Please don't add my SOB to your commits -- I'll add it when I apply the patch.
-Please also see [1].
-
-[1] https://docs.kernel.org/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
-
-> ---
->  .../include/nvkm/subdev/bios/iccsense.h       |  2 ++
->  .../drm/nouveau/nvkm/subdev/bios/iccsense.c   | 20 +++++++++++++++++++
->  .../drm/nouveau/nvkm/subdev/iccsense/base.c   |  3 +++
->  3 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-> index 4c108fd2c805..8bfc28c3f7a7 100644
-> --- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-> +++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
-> @@ -20,4 +20,6 @@ struct nvbios_iccsense {
->  };
->  
->  int nvbios_iccsense_parse(struct nvkm_bios *, struct nvbios_iccsense *);
-> +
-> +void nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense);
->  #endif
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-> index dea444d48f94..38fcc91ffea6 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
-> @@ -56,6 +56,19 @@ nvbios_iccsense_table(struct nvkm_bios *bios, u8 *ver, u8 *hdr, u8 *cnt,
->  	return 0;
->  }
->  
-> +/**
-> + * nvbios_iccsense_parse - Parse ICCSENSE table from VBIOS
-> + * @bios: VBIOS base pointer
-> + * @iccsense: ICCSENSE table structure to fill
-> + *
-> + * Parses the ICCSENSE table from VBIOS and fills the provided structure.
-> + * The caller must invoke nvbios_iccsense_cleanup() after successful parsing
-> + * to free the allocated rail resources.
-> + *
-> + * Returns:
-> + *   0        - Success
-> + *   -ENODEV  - Table not found
-> + */
-
-Looks good, thanks for adding this!
-
->  int
->  nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
->  {
-> @@ -127,3 +140,10 @@ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
->  
->  	return 0;
->  }
-> +
-> +void
-> +nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense)
-> +{
-> +	kfree(iccsense->rail);
-> +	iccsense->rail = NULL;
-> +}
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-> index 8f0ccd3664eb..4c1759ecce38 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
-> @@ -291,6 +291,9 @@ nvkm_iccsense_oneinit(struct nvkm_subdev *subdev)
->  			list_add_tail(&rail->head, &iccsense->rails);
->  		}
->  	}
-> +
-> +	nvbios_iccsense_cleanup(&stbl);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.30.2
-> 
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 7e257e855dd1..15c43d7415d5 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -7019,6 +7019,9 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
+ 	lockdep_assert_held(&cpu_buffer->mapping_lock);
+ 
+ 	nr_subbufs = cpu_buffer->nr_pages + 1; /* + reader-subbuf */
++	if (((nr_subbufs + 1) << subbuf_order) < pgoff)
++		return -EINVAL;
++
+ 	nr_pages = ((nr_subbufs + 1) << subbuf_order) - pgoff; /* + meta-page */
+ 
+ 	nr_vma_pages = vma_pages(vma);
+-- 
+2.47.0
 
 
