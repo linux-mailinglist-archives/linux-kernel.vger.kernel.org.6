@@ -1,52 +1,102 @@
-Return-Path: <linux-kernel+bounces-447544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7398F9F3401
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E999F3405
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F1118819BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:07:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D911881876
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1B2126C0D;
-	Mon, 16 Dec 2024 15:07:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940E73BBF2;
-	Mon, 16 Dec 2024 15:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE0F13C690;
+	Mon, 16 Dec 2024 15:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uIg9t4hd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4PFMQ9YD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uIg9t4hd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4PFMQ9YD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809C980C0C;
+	Mon, 16 Dec 2024 15:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361642; cv=none; b=ZD7pIVIsFgkL+hbtsNSaj67C98vHzKCyOBmKtkI/XdgJxuyacdWG/WA+ofh9GzyK662VkNHcTqFXL60zplotozwZlp6Vi8wirYPuvvdZlGt+/C9z1foDsW7vfdvDsR063DQVOVqHADzsivzMEGOXWvcPKGlDfmHhw66lH6JOjfM=
+	t=1734361672; cv=none; b=L69lSWS2Q0wDSJwdI1dfiJeG5WhxolCgMb11EQoCqZxlfcppHaM85JEJjxKVFbwtSA1llROJLJuI2XXY0nR1Vlr7fMtEAL8IwiUlwkqgU9KdViSIFQMkucv+OQsXQZZCWEufdR3GfrhESFdke9nZQu9SP05SdbhfLa6yuhKpwpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361642; c=relaxed/simple;
-	bh=SgZjk+8yBlOmzIWfRmxDyNI7Gzu9mkk24E08tKkr/gE=;
+	s=arc-20240116; t=1734361672; c=relaxed/simple;
+	bh=/NBlow0EvoYA8m9kIaEaSxfBaKp1qovi3EzMyrS2i7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9VgZoeZ3xo9+EEKpRZpO1nwZDEwWM9k01PYFRRKz3JPgVbam3vSoPhA8dABruflIUFqo5kjMtcOxIB4t1hKS5OWlubz99CO73kT8ohIhjPiDavMf8CPJaEddtDVRlxHh1eNsWeAPMQQ7x3U3u6Z7F793WHsYuC8kQ9xaWO+RCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 177A0113E;
-	Mon, 16 Dec 2024 07:07:47 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2FC93F528;
-	Mon, 16 Dec 2024 07:07:17 -0800 (PST)
-Date: Mon, 16 Dec 2024 15:07:15 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
- __cpuinfo_store_cpu()
-Message-ID: <Z2BCI61c9QWG7mMB@J2N7QTR9R3.cambridge.arm.com>
-References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
- <87a5cysfci.wl-maz@kernel.org>
- <Z2AfOZ82QG_ukWry@J2N7QTR9R3>
- <865xnjsnqo.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZHA+OgnDF6491y+T2bMQujVLGfKz7ZQFVX6+nGmeZDj4rpvLXF5QBjcpK6OeCLFrHgAnE3og+vsv2le/dCeZPMY3hi/kYEE3c6BhtC4u6yRKf//iLQb+9z7/giENBNxgfCYwjgVVV53Zxrh3ZlYag7pewOSetWQWJoj4ieGUb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uIg9t4hd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4PFMQ9YD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uIg9t4hd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4PFMQ9YD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9E5FA2110B;
+	Mon, 16 Dec 2024 15:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734361666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJv6d1i9PO1pRdNyHpHYej6ek7lSKnKm24AKkNOM/uM=;
+	b=uIg9t4hdn/QoDjq2qFisPDKKt7x0NyITeIj6dwE2W5jOR1YgeX3wdmiPmNVxjHLk0t0KAd
+	/0WOwcqaWkWu6Vg4YUB2hZdKRU0DwQRoOSDrK/NnBfr309nVy79+hotZh7SrJLbWwmy5Ot
+	I4DWYPzBRGSy0U0uad9cBtwKQVE99JA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734361666;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJv6d1i9PO1pRdNyHpHYej6ek7lSKnKm24AKkNOM/uM=;
+	b=4PFMQ9YDfA/dRe/lWSrURuhNun+OJWFEOd6iK26VGuxIFkHNmNEdBu5wpTUcfZwMo83BKR
+	k7W1uMat+lBsPqDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uIg9t4hd;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4PFMQ9YD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734361666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJv6d1i9PO1pRdNyHpHYej6ek7lSKnKm24AKkNOM/uM=;
+	b=uIg9t4hdn/QoDjq2qFisPDKKt7x0NyITeIj6dwE2W5jOR1YgeX3wdmiPmNVxjHLk0t0KAd
+	/0WOwcqaWkWu6Vg4YUB2hZdKRU0DwQRoOSDrK/NnBfr309nVy79+hotZh7SrJLbWwmy5Ot
+	I4DWYPzBRGSy0U0uad9cBtwKQVE99JA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734361666;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJv6d1i9PO1pRdNyHpHYej6ek7lSKnKm24AKkNOM/uM=;
+	b=4PFMQ9YDfA/dRe/lWSrURuhNun+OJWFEOd6iK26VGuxIFkHNmNEdBu5wpTUcfZwMo83BKR
+	k7W1uMat+lBsPqDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9160713418;
+	Mon, 16 Dec 2024 15:07:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CTt8I0JCYGedDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Dec 2024 15:07:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 53638A0935; Mon, 16 Dec 2024 16:07:42 +0100 (CET)
+Date: Mon, 16 Dec 2024 16:07:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v4 04/10] ext4: refactor ext4_punch_hole()
+Message-ID: <20241216150742.hioqpy7t2vf3knri@quack3>
+References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+ <20241216013915.3392419-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,94 +105,274 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <865xnjsnqo.wl-maz@kernel.org>
+In-Reply-To: <20241216013915.3392419-5-yi.zhang@huaweicloud.com>
+X-Rspamd-Queue-Id: 9E5FA2110B
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Dec 16, 2024 at 02:31:43PM +0000, Marc Zyngier wrote:
-> On Mon, 16 Dec 2024 12:38:17 +0000,
-> Mark Rutland <mark.rutland@arm.com> wrote:
-> > I think that what we did in commit:
-> > 
-> >    892f7237b3ff ("arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}")
-> > 
-> > ... introduces an anti-pattern that'd be nice to avoid. That broke the
-> > existing split of __cpuinfo_store_cpu() and init_cpu_features(), where
-> > the former read the ID regs, and the latter set up the features
-> > *without* altering the copy of the ID regs that was read. i.e.
-> > init_cpu_features() shouldn't write to its info argument at all.
-> > 
-> > I understand that we have to do something as a bodge for broken FW which
-> > traps SME, but I'd much rather we did that within __cpuinfo_store_cpu().
+On Mon 16-12-24 09:39:09, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Honestly, I'd rather revert that patch, together with b3000e2133d8
-> ("arm64: Add the arm64.nosme command line option"). I'm getting tired
-> of the FW nonsense, and we are only allowing vendors to ship untested
-> crap.
+> The current implementation of ext4_punch_hole() contains complex
+> position calculations and stale error tags. To improve the code's
+> clarity and maintainability, it is essential to clean up the code and
+> improve its readability, this can be achieved by: a) simplifying and
+> renaming variables; b) eliminating unnecessary position calculations;
+> c) writing back all data in data=journal mode, and drop page cache from
+> the original offset to the end, rather than using aligned blocks,
+> d) renaming the stale error tags.
 > 
-> Furthermore, given the state of SME in the kernel, I don't think this
-> is makes any difference. So maybe this is the right time to reset
-> everything to a sane state.
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Looking again, a revert does look to be the best option.
+Looks good to me. Feel free to add:
 
-We removed reg_zcr and reg_smcr in v6.7 in commits:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-  abef0695f9665c3d ("arm64/sve: Remove ZCR pseudo register from cpufeature code")
-  391208485c3ad50f ("arm64/sve: Remove SMCR pseudo register from cpufeature code")
+								Honza
 
-As of those commits, ZCR and SCMR no longer matter to
-__cpuinfo_store_cpu(), and only SMIDR_EL1 remains...
-
-Per ARM DDI 0487 L.a, accesses to SMIDR_EL1 never trap to EL3, so we can
-read that safely as long as ID_AA64PFR1_EL1.SME indicates that SME is
-implemented.
-
-Which is to say that if we revert the remaining portion of 892f7237b3ff
-and restore the read of SMIDR, that should be good as far back as v6.7,
-which sounds good to me.
-
-Mark.
-
-> > Can we add something to check whether SME was disabled on the command
-> > line, and use that in __cpuinfo_store_cpu(), effectively reverting
-> > 892f7237b3ff?
+> ---
+>  fs/ext4/ext4.h  |   2 +
+>  fs/ext4/inode.c | 119 +++++++++++++++++++++---------------------------
+>  2 files changed, 55 insertions(+), 66 deletions(-)
 > 
-> Maybe, but that'd be before any sanitisation of the overrides, so it
-> would have to severely limit its scope. Something like this, which I
-> haven't tested:
-> 
-> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-> index d79e88fccdfce..9e9295e045009 100644
-> --- a/arch/arm64/kernel/cpuinfo.c
-> +++ b/arch/arm64/kernel/cpuinfo.c
-> @@ -492,10 +492,22 @@ void cpuinfo_store_cpu(void)
->  	update_cpu_features(smp_processor_id(), info, &boot_cpu_data);
->  }
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 8843929b46ce..8be06d5f5b43 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -367,6 +367,8 @@ struct ext4_io_submit {
+>  #define EXT4_MAX_BLOCKS(size, offset, blkbits) \
+>  	((EXT4_BLOCK_ALIGN(size + offset, blkbits) >> blkbits) - (offset >> \
+>  								  blkbits))
+> +#define EXT4_B_TO_LBLK(inode, offset) \
+> +	(round_up((offset), i_blocksize(inode)) >> (inode)->i_blkbits)
 >  
-> +static void cpuinfo_apply_overrides(struct cpuinfo_arm64 *info)
-> +{
-> +	if (FIELD_GET(ID_AA64PFR0_EL1_SVE, id_aa64pfr0_override.mask) &&
-> +	    !FIELD_GET(ID_AA64PFR0_EL1_SVE, id_aa64pfr0_override.val))
-> +		info->reg_id_aa64pfr0 &= ~ID_AA64PFR0_EL1_SVE;
-> +
-> +	if (FIELD_GET(ID_AA64PFR1_EL1_SME, id_aa64pfr1_override.mask) &&
-> +	    !FIELD_GET(ID_AA64PFR1_EL1_SME, id_aa64pfr1_override.val))
-> +		info->reg_id_aa64pfr1 &= ~ID_AA64PFR1_EL1_SME;
-> +}
-> +
->  void __init cpuinfo_store_boot_cpu(void)
+>  /* Translate a block number to a cluster number */
+>  #define EXT4_B2C(sbi, blk)	((blk) >> (sbi)->s_cluster_bits)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index a5ba2b71d508..7720d3700b27 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4008,13 +4008,13 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
 >  {
->  	struct cpuinfo_arm64 *info = &per_cpu(cpu_data, 0);
->  	__cpuinfo_store_cpu(info);
-> +	cpuinfo_apply_overrides(info);
+>  	struct inode *inode = file_inode(file);
+>  	struct super_block *sb = inode->i_sb;
+> -	ext4_lblk_t first_block, stop_block;
+> +	ext4_lblk_t start_lblk, end_lblk;
+>  	struct address_space *mapping = inode->i_mapping;
+> -	loff_t first_block_offset, last_block_offset, max_length;
+> -	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +	loff_t max_end = EXT4_SB(sb)->s_bitmap_maxbytes - sb->s_blocksize;
+> +	loff_t end = offset + length;
+>  	handle_t *handle;
+>  	unsigned int credits;
+> -	int ret = 0, ret2 = 0;
+> +	int ret = 0;
 >  
->  	boot_cpu_data = *info;
->  	init_cpu_features(&boot_cpu_data);
-> 
-> But this will have ripple effects on the rest of the override code
-> (the kernel messages are likely to be wrong).
-> 
-> 	M.
-> 
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>  
+> @@ -4022,36 +4022,27 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	/* No need to punch hole beyond i_size */
+>  	if (offset >= inode->i_size)
+> -		goto out_mutex;
+> +		goto out;
+>  
+>  	/*
+> -	 * If the hole extends beyond i_size, set the hole
+> -	 * to end after the page that contains i_size
+> +	 * If the hole extends beyond i_size, set the hole to end after
+> +	 * the page that contains i_size, and also make sure that the hole
+> +	 * within one block before last range.
+>  	 */
+> -	if (offset + length > inode->i_size) {
+> -		length = inode->i_size +
+> -		   PAGE_SIZE - (inode->i_size & (PAGE_SIZE - 1)) -
+> -		   offset;
+> -	}
+> +	if (end > inode->i_size)
+> +		end = round_up(inode->i_size, PAGE_SIZE);
+> +	if (end > max_end)
+> +		end = max_end;
+> +	length = end - offset;
+>  
+>  	/*
+> -	 * For punch hole the length + offset needs to be within one block
+> -	 * before last range. Adjust the length if it goes beyond that limit.
+> +	 * Attach jinode to inode for jbd2 if we do any zeroing of partial
+> +	 * block.
+>  	 */
+> -	max_length = sbi->s_bitmap_maxbytes - inode->i_sb->s_blocksize;
+> -	if (offset + length > max_length)
+> -		length = max_length - offset;
+> -
+> -	if (offset & (sb->s_blocksize - 1) ||
+> -	    (offset + length) & (sb->s_blocksize - 1)) {
+> -		/*
+> -		 * Attach jinode to inode for jbd2 if we do any zeroing of
+> -		 * partial block
+> -		 */
+> +	if (!IS_ALIGNED(offset | end, sb->s_blocksize)) {
+>  		ret = ext4_inode_attach_jinode(inode);
+>  		if (ret < 0)
+> -			goto out_mutex;
+> -
+> +			goto out;
+>  	}
+>  
+>  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
+> @@ -4059,7 +4050,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	ret = file_modified(file);
+>  	if (ret)
+> -		goto out_mutex;
+> +		goto out;
+>  
+>  	/*
+>  	 * Prevent page faults from reinstantiating pages we have released from
+> @@ -4069,22 +4060,16 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	ret = ext4_break_layouts(inode);
+>  	if (ret)
+> -		goto out_dio;
+> +		goto out_invalidate_lock;
+>  
+> -	first_block_offset = round_up(offset, sb->s_blocksize);
+> -	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
+> +	ret = ext4_update_disksize_before_punch(inode, offset, length);
+> +	if (ret)
+> +		goto out_invalidate_lock;
+>  
+>  	/* Now release the pages and zero block aligned part of pages*/
+> -	if (last_block_offset > first_block_offset) {
+> -		ret = ext4_update_disksize_before_punch(inode, offset, length);
+> -		if (ret)
+> -			goto out_dio;
+> -
+> -		ret = ext4_truncate_page_cache_block_range(inode,
+> -				first_block_offset, last_block_offset + 1);
+> -		if (ret)
+> -			goto out_dio;
+> -	}
+> +	ret = ext4_truncate_page_cache_block_range(inode, offset, end);
+> +	if (ret)
+> +		goto out_invalidate_lock;
+>  
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>  		credits = ext4_writepage_trans_blocks(inode);
+> @@ -4094,52 +4079,54 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	if (IS_ERR(handle)) {
+>  		ret = PTR_ERR(handle);
+>  		ext4_std_error(sb, ret);
+> -		goto out_dio;
+> +		goto out_invalidate_lock;
+>  	}
+>  
+> -	ret = ext4_zero_partial_blocks(handle, inode, offset,
+> -				       length);
+> +	ret = ext4_zero_partial_blocks(handle, inode, offset, length);
+>  	if (ret)
+> -		goto out_stop;
+> -
+> -	first_block = (offset + sb->s_blocksize - 1) >>
+> -		EXT4_BLOCK_SIZE_BITS(sb);
+> -	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
+> +		goto out_handle;
+>  
+>  	/* If there are blocks to remove, do it */
+> -	if (stop_block > first_block) {
+> -		ext4_lblk_t hole_len = stop_block - first_block;
+> +	start_lblk = EXT4_B_TO_LBLK(inode, offset);
+> +	end_lblk = end >> inode->i_blkbits;
+> +
+> +	if (end_lblk > start_lblk) {
+> +		ext4_lblk_t hole_len = end_lblk - start_lblk;
+>  
+>  		down_write(&EXT4_I(inode)->i_data_sem);
+>  		ext4_discard_preallocations(inode);
+>  
+> -		ext4_es_remove_extent(inode, first_block, hole_len);
+> +		ext4_es_remove_extent(inode, start_lblk, hole_len);
+>  
+>  		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> -			ret = ext4_ext_remove_space(inode, first_block,
+> -						    stop_block - 1);
+> +			ret = ext4_ext_remove_space(inode, start_lblk,
+> +						    end_lblk - 1);
+>  		else
+> -			ret = ext4_ind_remove_space(handle, inode, first_block,
+> -						    stop_block);
+> +			ret = ext4_ind_remove_space(handle, inode, start_lblk,
+> +						    end_lblk);
+> +		if (ret) {
+> +			up_write(&EXT4_I(inode)->i_data_sem);
+> +			goto out_handle;
+> +		}
+>  
+> -		ext4_es_insert_extent(inode, first_block, hole_len, ~0,
+> +		ext4_es_insert_extent(inode, start_lblk, hole_len, ~0,
+>  				      EXTENT_STATUS_HOLE, 0);
+>  		up_write(&EXT4_I(inode)->i_data_sem);
+>  	}
+> -	ext4_fc_track_range(handle, inode, first_block, stop_block);
+> +	ext4_fc_track_range(handle, inode, start_lblk, end_lblk);
+> +
+> +	ret = ext4_mark_inode_dirty(handle, inode);
+> +	if (unlikely(ret))
+> +		goto out_handle;
+> +
+> +	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  	if (IS_SYNC(inode))
+>  		ext4_handle_sync(handle);
+> -
+> -	ret2 = ext4_mark_inode_dirty(handle, inode);
+> -	if (unlikely(ret2))
+> -		ret = ret2;
+> -	if (ret >= 0)
+> -		ext4_update_inode_fsync_trans(handle, inode, 1);
+> -out_stop:
+> +out_handle:
+>  	ext4_journal_stop(handle);
+> -out_dio:
+> +out_invalidate_lock:
+>  	filemap_invalidate_unlock(mapping);
+> -out_mutex:
+> +out:
+>  	inode_unlock(inode);
+>  	return ret;
+>  }
 > -- 
-> Without deviation from the norm, progress is not possible.
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
