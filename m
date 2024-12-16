@@ -1,194 +1,148 @@
-Return-Path: <linux-kernel+bounces-447394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C7C9F3195
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:34:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3679F319D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD937A3095
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:34:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A67188AD36
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F84D207658;
-	Mon, 16 Dec 2024 13:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3yjP0Cl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFAE205E05;
+	Mon, 16 Dec 2024 13:33:37 +0000 (UTC)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987A204C25
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550772629C;
+	Mon, 16 Dec 2024 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355861; cv=none; b=nELBvjm0snY/K7cF2gp12z6TC5F4JKFZeIhocaNDIFC54EkehTjxjfptZm7vNwd7x4bYTqOlmcDarJ4HObDAw0pe+HVSJiIvEW6nEDLgLADvknDx4/7Px1mUUczCf0/ew1bTFS/QU4H6y3hKTmTbplCQ5yvYczjvJrYsOsuRM5Q=
+	t=1734356017; cv=none; b=W8WYNE0uFezm2gdJnBJd1+WnRdh/pf6WZ7x5YGZl3+WJ34qz2lV/a2BlY6iXrPheSTBOHHWbQk2qc6MuU9M/0KDTT965BBhhTkpeQ0jwDcxY9AaMhng48OLe+zKMRI6HnjCz9Vpl+CYd2kaVFlX4pLYShmAzcOBgDnRHl2YjsR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355861; c=relaxed/simple;
-	bh=hBw7RRtzB4nbDxsid/Mm8Wl2admJ4GL8pyzglKXg2xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSvwEt5nfxhdiB6RgAVA4z2RO47kxZ1M+80TaOakoY6smt5t/NpmXrebprrPh+V5Wp68mBroS12BjS7yCrMlT14Ye6mcJhU7/W+yc3TF31YGsTo4+lyW4VZsJ8lpOIV31K0jA4g5FuYt0VSDToTp8xu6YUgnT3T/HPXvBsPknF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3yjP0Cl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9ECC4CEDE;
-	Mon, 16 Dec 2024 13:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734355861;
-	bh=hBw7RRtzB4nbDxsid/Mm8Wl2admJ4GL8pyzglKXg2xU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d3yjP0Cl53AVXVcQEDyPQI6GJR3n6ckCK7SopJur72blRDZiPwibK8Mm+K8aE/1XZ
-	 ZPdCV+uwbu1CY3hfAZzzSkdgAXxrORNR4GziMlpis/R1vgcJ19OiFdUT7cc8nDQ8ah
-	 H5n19MZUmjtt1nTAxf77hk24/zu+Sp1qN18qnvpPk9ad+VZTTs1+e0A2T1NQC1JB4f
-	 2DhJR87A3rEhWUcQkqTxOZI/hkGxAETkJ8TAcp3L73tbiy5MI/pms9F+DN20vnXFX8
-	 c/x1BqYASNjNHM+GeQinYAP8SHTnUT11d5bodTsJgifMCSZRY6dUTUXcWknwXwnpWM
-	 DTG/GK1cvwHvg==
-Date: Mon, 16 Dec 2024 14:30:55 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
-Message-ID: <Z2Arj_cLW-aY5cnD@cassiopeiae>
-References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
- <Z2ASy3TQ4suupdvd@cassiopeiae>
- <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
- <20241216121651.GP32204@pendragon.ideasonboard.com>
- <Z2AgFHV2BaaZYGTx@cassiopeiae>
- <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
+	s=arc-20240116; t=1734356017; c=relaxed/simple;
+	bh=/ZHLX7pS2TYrCKb1KFxzJ/agCTsC58ROi/NT2ImpY1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fuk5x5dZlObsIsjKDvPhNEjLnnP0HURdc2liXXQzFw3oNHjCIkM/IwHUM7Q2WaSVes9bDrYmjyXbUYZ63pWB8wsSzph1HSZpCsPa2IOet/PtG6d8onM4KN+D+B8Y0VPTBg+vNTCwVhZXCTXvfx9GOXuPBzG76AMkKRN3drKYhU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4affd0fb6adso1040505137.1;
+        Mon, 16 Dec 2024 05:33:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734356012; x=1734960812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2YeQ/juaU1aTYjB8NikAS7tXvAIBonFs53JoSLLpdzU=;
+        b=qnjtPeh8cSCZ3aw9gYwdEoeAiQAoOR45ZsZ6AirPb/00leDDmQJNwi5lPWhUkm1Cb9
+         9oMiWA22giSS1aWIKJ0sAC3DnllvRVlm+F1V15d5YH4T6gLpK3ArtjOp2k9uJ/iCShf4
+         s9IOmcUsdOki0ojbMOfh9GTBjhtD3GVfFLKZd/9HzzqMOmM4WdxKUZbwz0KZs+csmBYr
+         +Y262DQr6/ynKE391UxLvOfVzTpDIq7zTxxoRLgv1t+l8e1fbVoZrvG9jLGsJ6jsZuHD
+         mnH3g/j/MODRsxj8xzMKfAwaJY3XxmU4+pW5IIck9A3JQlwB1+dV5I3o5jOg0SqOC89c
+         TrmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU72BEgMmiAqB2qZ64gQk9jqzjoHqiQe+bhhzmb3BM43H6xKU3bLUQXXJ9wvYVI9BpGfYNjXYXDYGGqaKyN@vger.kernel.org, AJvYcCUXMz7Qnt6JNzCtN182v65t9ZhkoifYu/hKdLO+xfBuZy0JwGaTYDZgqKtIKvzCkTVhWwgPjtsz6gKqzJoWsTptwDs=@vger.kernel.org, AJvYcCV/M3gQdvRnlRsbUjmaGLkqKhrbw5Gi6RjTdJM+tsMz3vr5oZYOjXKk4n10LOxccNPn1TQLaxByXT1K@vger.kernel.org, AJvYcCWwkjiIVYw3GJJ3CYfiBIAoAi0bs26kCHtd0w2UVzwUGVFwqADiRVmjntHtfksCzRxdNbBEeIDyHGsB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDA6FtdVN0azzK2nnFADbaIYDGK9rugzNxq7cieIRF+8X1D6XD
+	EWmRqq+r95RkrVb5xSilMBdyDYWjyPv7FIpK/M/9LU0EZUmXNPdp33cLSUrZ
+X-Gm-Gg: ASbGnct6AfU/WFT9xO4dDNZZybnF0TNpX2ipIqASI386kjlfwshFkCGxwK2j+BF3Oow
+	x3fHhWPpGkFTO2xoBixBQ+UpViV3qu8wE+0Ed8URMxAqwmFJ4MtvDFbZp6SAjnI/H4P0xAlLlD2
+	McBXHSoFbQO6vdVSjxnYCcRu7j+hllskx/UjkIQvS0rdM2eikKo1CCJ8bNsJl4lZxLRIg0UePuG
+	S4vzhf044X9lLRXsaS7pvxgOk/Ah5px6G08Km7OZJi+x7LI/AxEeakhdxze5vkryQNan479Q943
+	vi172ZIhqwTcr3sRNO8=
+X-Google-Smtp-Source: AGHT+IG3cWzqsckGVqnZxVs+MG5R8tf/WggJwYXvY4XH8HoHD/9rMk7zbIXTYHMdlVsK5CSDAIahCw==
+X-Received: by 2002:a05:6102:418e:b0:4b1:1b33:eb0f with SMTP id ada2fe7eead31-4b25db3f6a0mr10921745137.24.1734356011808;
+        Mon, 16 Dec 2024 05:33:31 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b27023368esm816594137.11.2024.12.16.05.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 05:33:30 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afefc876c6so1100594137.2;
+        Mon, 16 Dec 2024 05:33:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVJq6WNQgyRcbQYhcS6aeUOJQ3bm5muFWGQ0r2eokoKc8souk+CVU8YOz2c3LLxwD9wunJvvBOq/L/y@vger.kernel.org, AJvYcCVdEdmiboFXN7usU0ZXAY//mjOyOVfrVUPScBx1F0Vzv0IKW2u/K2wWzMYmgzxfAiCF3qslpy0oBqSonD/7@vger.kernel.org, AJvYcCX1drt9s5D6jV6uiG/5mqAyruiIXUwDs36jvRnr7f/FXlQMvb5jTcvxClk1efXx5IjIt/hZrwwrpbW89FDfOlnu+Ho=@vger.kernel.org, AJvYcCXnJsjwTUgifohk6VIiUFGBrjCUAOZPD6+259m9CtZ25R8YROe0ml9kxiMx2NktPVbSU9kser8tyJuO@vger.kernel.org
+X-Received: by 2002:a05:6102:b02:b0:4af:dcbe:4767 with SMTP id
+ ada2fe7eead31-4b25d98d34bmr10283091137.10.1734356010555; Mon, 16 Dec 2024
+ 05:33:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com> <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
+In-Reply-To: <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 14:33:19 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
+Message-ID: <CAMuHMdXkXx6+0nJn+uLCAWOXvEYWLJXzLu9J7ksinn_z3bEfHQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
+ DisplayPort support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 02:58:59PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Dec 16, 2024 at 01:41:56PM +0100, Danilo Krummrich wrote:
-> > On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
-> > > On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
-> > > > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
-> > > > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
-> > > > > > The nouveau driver is the only user of the drm_encoder_slave interface.
-> > > > > > Demote it from KMS helpers module to the nouveau driver itself, moving
-> > > > > > corresponding I2C encoders to be handled by nouveau driver too.
-> > > > > 
-> > > > > I understand nouveau is the only driver using this interface (and the
-> > > > > corresponding i2c encoders).
-> > > > > 
-> > > > > However, I'm not quite seeing the advantage of folding the interface (including
-> > > > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
-> > > > > the subsystem in any way / does prevent the subsystem from moving forward.
-> > > > > 
-> > > > > Can't we just keep it as it is?
-> > > > 
-> > > > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
-> > > > take (a little bit) of space on every system. The nouveau situation
-> > > > isn't unique, other drivers (i915, ast) also incorporate the code for
-> > > > I2C backends. For the further discussion see the thread starting from
-> > > > Laurent's email ([1]).
-> > > > 
-> > > > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
-> > 
-> > The drm_encoder_slave code it's rather small, but I guess this can be used as
-> > argument for both, keeping it where it is and moving it.
-> > 
-> > If you want to move it to nouveau, I'm not going to object. But please fold the
-> > helper code, such that we aren't left with unused functions and unnecessary
-> > function pointer indirections through struct drm_encoder_slave_funcs.
-> 
-> This is more or less what I've done. Or would you prefer to keep the
-> wrapping functions that just execute the callback? I can change the
-> patchset accordingly.
+Hi Tomi,
 
-No, I think it's good indeed -- st a first glance it looked like there's more to
-get rid of.
+On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>
+> Add support for the mini DP output on the Gray Hawk board.
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-There are just a few more nits, I'll go ahead and add comments in the
-corresponding patches.
+Thanks for your patch, which is now commit b1000645dc29701f
+("arm64: dts: renesas: gray-hawk-single: Add DisplayPort support")
+in renesas-devel/renesas-dts-for-v6.14.
 
-> 
-> > 
-> > > 
-> > > It's also a question of whether maintenance of this code based used by
-> > > the nouveau driver only should be the responsibility of the drm-misc
-> > > community or the nouveau driver maintainers.
-> > 
-> > Good question. It's common infrastructure; do we expect / require the last user
-> > of such infrastructure to take ownership?
-> 
-> Unfortunately it's more like 'the only one' :-( In other words, if we
+Apparently this patch breaks s2idle on Gray Hawk Single when "[PATCH
+v3 06/10] drm/rcar-du: dsi: Add r8a779h0 support" is not present, or
+when CONFIG_DRM_RCAR_USE_MIPI_DSI is not enabled. If the DSI driver
+is not available, the ti_sn65dsi86.bridge part fails to probe with
+-EPROBE_DEFER and "failed to attach dsi host".  Still, the sn65dsi86
+driver must do something critical, as resuming from s2idle now hangs.
+I haven't identified yet where exactly it hangs.
 
-I can't see a major difference between "last one" and "only one" in this
-context.
+As a result, s2idle is broken in current renesas-devel, which only
+has the DTS changes.  Perhaps I should drop the DTS until the issue
+is resolved?
 
-> were expecting other users, there would not be such a move. But
-> hopefully all new drivers will use bridges infrastructure.
+However, I suspect White Hawk has the same issue (if
+CONFIG_DRM_RCAR_USE_MIPI_DSI=3Dn), but I cannot verify as my local White
+Hawk is currently not available for kernel testing.
 
-Agreed, but I don't think it answers my question.
+Do you have a clue?
+Thanks!
 
-> 
-> > 
-> > > 
-> > > > > > Ideally those two drivers should be converted to the drm_bridge
-> > > > > > interface, but it's unclear if it's worth spending time on that.
-> > > > > 
-> > > > > Probably not.
-> > > > > 
-> > > > > > 
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > ---
-> > > > > > Changes in v2:
-> > > > > > - Renamed symbols in defconfig (Laurent)
-> > > > > > - Added missing Kbuild file (Laurent, LKP)
-> > > > > > - Renamed guarding defines in include files.
-> > > > > > - Dropped mentions of two removed functions.
-> > > > > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
-> > > > > > 
-> > > > > > ---
-> > > > > > Dmitry Baryshkov (2):
-> > > > > >       drm/nouveau: incorporate I2C TV encoder drivers
-> > > > > >       drm/nouveau: vendor in drm_encoder_slave API
-> > > > > > 
-> > > > > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
-> > > > > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
-> > > > > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
-> > > > > >  drivers/gpu/drm/Makefile                           |   1 -
-> > > > > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
-> > > > > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
-> > > > > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
-> > > > > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
-> > > > > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
-> > > > > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
-> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
-> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
-> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
-> > > > > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
-> > > > > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
-> > > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
-> > > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
-> > > > > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
-> > > > > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
-> > > > > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
-> > > > > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
-> > > > > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
-> > > > > >  22 files changed, 172 insertions(+), 232 deletions(-)
-> > > > > > ---
-> > > > > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-> > > > > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
-> > > 
-> > > -- 
-> > > Regards,
-> > > 
-> > > Laurent Pinchart
-> 
-> -- 
-> With best wishes
-> Dmitry
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
