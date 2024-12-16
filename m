@@ -1,171 +1,252 @@
-Return-Path: <linux-kernel+bounces-447592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3569F34A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:39:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411979F34AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3067A1E79
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 870141888764
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F4E149DF7;
-	Mon, 16 Dec 2024 15:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5D414A0BC;
+	Mon, 16 Dec 2024 15:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTer/HKO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuF0aSGZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D6B1494B0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F001428E7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734363530; cv=none; b=JcZBHnx8Cu5caLkNJ32SfXJ/CRh2pMun3lG3RkOr35oyHQnOrKBc0wU8CfjlXxH4kvxfofqoqWWRtctCr3KrThp4RoS84B1TiMtlHr8YWVLOAIzWl0FQalUIIJMalX+AAgW155FLlYKaULs7eUB9YNDGtmdsL+yiRzGLkIkcsQs=
+	t=1734363547; cv=none; b=SbBTforqzSMYQJQH03TBKM7hnfyXZY3NAwcE2ub4PdJuhVlnymgMbyu6gOvlluyVVw2EGgBhviWO/tAYR+GpSHgIvgKFjqjZz1zFZExnIIxwNr6EmKCn6sW/k1GtUqrhPFAS3iQd2tnxmO7IH1iGPWJA2ypGsVCL75F4SJDgXds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734363530; c=relaxed/simple;
-	bh=PjgTGWa37ZcSr/2jgtcKaCjNlthVOPFoC83gHM/tQRI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HuhzdKW+udVylxA29+FPZ/ZAlCrpifh1vcx//TyFjGrF1bmWlUuqQ4Frl7cHe4pTUIyfyRlX4ZosRjd42MedpIG7vg1DGumu6vUmT1MQrt9G0U6h48kGWcYG3dzb5STbLPee3PkSNzaK/n6lO/Xeiw1DFspIi8tAW3Zg0pP0l+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTer/HKO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3294C4CED0;
-	Mon, 16 Dec 2024 15:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734363530;
-	bh=PjgTGWa37ZcSr/2jgtcKaCjNlthVOPFoC83gHM/tQRI=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=fTer/HKOcTJYfAqsOMfMTG5P8+w6VIESaiXd7pxu4EJGQj7KkBZgVF3uj7iEUwB8q
-	 1eqJcKe+N3h0IGnwKW1c51Vivj4kPlQCdBFVRN6WDEv4QekBxgnRzt8TsnQMsrMR1C
-	 mfrg9EtmoBEEX9heIfUa3E0CERcV/3FDbDJSe6CjCZkdPXqMnV4sWZFOisLr5ceMiv
-	 4/A/5lnEspgPjS1mD7YsRzsVOiplC+ohzY8pln4l5mywKF+FPVK4expNxDjQtE4ACD
-	 ID3FCVOwgQt49usW+bBc2aUbO8sH3d9y9JFiLKr34g8rBwJn1H9VOuQFSxBpEfq4f3
-	 02pD2WwmvydfA==
-Message-ID: <8530b8c3-ba11-42f8-970f-1cd5d729fc0f@kernel.org>
-Date: Mon, 16 Dec 2024 23:38:48 +0800
+	s=arc-20240116; t=1734363547; c=relaxed/simple;
+	bh=nuT0nK01yCIltVLcHYhYzvdvLbfvdKHa+74fwmMyygQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=annZX/5x72cyLCjkyhjtNYhNblKoTnmjtYIpnuQ30uSY+Q+Ce5SYJrtBsV2vFie0CynUDWZLTVa/xgtSVLJ+9ISZs6MW1Gi6HZDj+gs8PFYK1MYxLOhVBrL1VLzhRvbnxLcI0q82ItgiQADsy9wxNVEK9F+rZuIFXPF1kgKoCwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuF0aSGZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734363544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D3+Ze8HsLa1EWfi1qHm76RqP+hqD/Snv65gqGa/Kezw=;
+	b=TuF0aSGZM/a/fZRsIh50s+yXNOMFIUSqpaEfZMaXplZpNVY4BrXHhzm/LhnDvWqjqaWlVD
+	En+CHBTN/TNb5YJisNNuLLLDkc1i5UZj8OPGN3X8NJrsgIVKFF0KfX+ZvzxMo7eSQsN4aL
+	yruC4af0w/JR8+dFXuOGrtMZHrcTBfY=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-529-7nC9uwKAOAq_QrMQucv-eQ-1; Mon, 16 Dec 2024 10:39:03 -0500
+X-MC-Unique: 7nC9uwKAOAq_QrMQucv-eQ-1
+X-Mimecast-MFC-AGG-ID: 7nC9uwKAOAq_QrMQucv-eQ
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ac98b49e4dso41593525ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 07:39:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734363542; x=1734968342;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3+Ze8HsLa1EWfi1qHm76RqP+hqD/Snv65gqGa/Kezw=;
+        b=X0vzlt4RmnM2v2hbxUFUbhfzJxcoPV98fj1ETg3ZwthClW0y+wBHesWt/7yzil9O6c
+         Ssyxzby/8kJL3Tyw5GPb89HnZr12ZRzQbNgA1vSXqE1XWOIa6NWTP32JsbS1Si0Q5Cy/
+         utJ0j17kM461uII5hFvgK+APikgM4Ikt5PByYO3lOSPDItbr0z7KjY+3HebL3iP1mUuS
+         rAReY9RNJoViqS80lnka39lbig/uDAg110Mr7hojJM57AXDOb/BAc1pFb/5HkzMLI4+B
+         v7VDaOy66jMbsahdgDY9UMGaEGDUxZ6nKqXp09yuAxBvDrvW9I3+83Xur3ZQNccVxMXG
+         eqoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJCqkt4MK4LIcCTBRx7h5CPnSUyGVvfbvA0KWl8aK6hFqu1y7Omp0YAfJyP8tARQxofhwObZDoIuqRAfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRCcJGrXfOWBLFt5p6rYoAGxktLKPk8BfK4ENM3D7P9vSNAym0
+	tAAeXAW2ATQqUD/852n6huK2vKT0XhjA2fiskLZcJrsxRoP+btO/9Fqn+GYhjvW31rCocQO5sYO
+	XcbjfgeEy+49sqyYVqO6Kx+AakfI2RxlhV+yY9rsrl8ZyCpyJtL4GJfT/ew4Y/w==
+X-Gm-Gg: ASbGnctzTtU1zZZI/lz+F0zCJ0TzMxGKa9192v6vsyORQMkvMlHzsZ8zIHj1M5M71F2
+	mFsZ1mr0+Qs3bvmCWjU0AY3kAguwhMoPc0JihEKJVxbrlBXi1jicls4N7giW4ro4gaOb+Xudrqt
+	KfegEXvRi5x4JCkVYZ9LVUkPXsFDcjUlT3aCwAJoWkfOHnhstrVGqb/oE7rJzJNclRduwCFwRsn
+	h0uN4SCeWFXuHiIPr1ApkJEwBTFz6EdJurgwKkCaYdBWCh8TxS1mSljRJ7iDynEa/BLv7OSXBkG
+	r0WbCpTo83WblEcYP/M/vJWQjJalE9NYdnTT2tMbAw==
+X-Received: by 2002:a05:6e02:17c7:b0:3a7:fe8c:b004 with SMTP id e9e14a558f8ab-3aff0398fe6mr110904125ab.11.1734363542353;
+        Mon, 16 Dec 2024 07:39:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHdthAoxKahA0IgjKrDgcp02WZX60JRFL5mNWkCZNI8fxYIaylalN7Uf3I5h1KQMrmhF8HFUQ==
+X-Received: by 2002:a05:6e02:17c7:b0:3a7:fe8c:b004 with SMTP id e9e14a558f8ab-3aff0398fe6mr110903845ab.11.1734363541977;
+        Mon, 16 Dec 2024 07:39:01 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e5e09471dasm1213422173.34.2024.12.16.07.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 07:39:00 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Steve Wahl <steve.wahl@hpe.com>, Steve Wahl <steve.wahl@hpe.com>, Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org, K Prateek Nayak
+ <kprateek.nayak@amd.com>, Vishal Chourasia <vishalc@linux.ibm.com>, samir
+ <samir@linux.ibm.com>
+Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
+Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
+In-Reply-To: <20241031200431.182443-1-steve.wahl@hpe.com>
+References: <20241031200431.182443-1-steve.wahl@hpe.com>
+Date: Mon, 16 Dec 2024 16:38:57 +0100
+Message-ID: <xhsmhttb3fxim.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Yeongjin Gil <youngjin.gil@samsung.com>,
- daehojeong@google.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>,
- Sunmin Jeong <s_min.jeong@samsung.com>, Jaewook Kim <jw5454.kim@samsung.com>
-Subject: Re: [PATCH v2] f2fs: compress: don't redirty sparse cluster during
- {,de}compress
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-References: <CGME20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7@epcas1p3.samsung.com>
- <20240819083430.31852-1-youngjin.gil@samsung.com>
- <644671fc-b35d-4c53-ae25-356963466339@stanley.mountain>
- <Z1sLKDtRa3wX2Z9g@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <Z1sLKDtRa3wX2Z9g@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 2024/12/13 0:11, Jaegeuk Kim wrote:
-> On 12/12, Dan Carpenter wrote:
->> On Mon, Aug 19, 2024 at 05:34:30PM +0900, Yeongjin Gil wrote:
->>> In f2fs_do_write_data_page, when the data block is NULL_ADDR, it skips
->>> writepage considering that it has been already truncated.
->>> This results in an infinite loop as the PAGECACHE_TAG_TOWRITE tag is not
->>> cleared during the writeback process for a compressed file including
->>> NULL_ADDR in compress_mode=user.
->>>
->>> This is the reproduction process:
->>>
->>> 1. dd if=/dev/zero bs=4096 count=1024 seek=1024 of=testfile
->>> 2. f2fs_io compress testfile
->>> 3. dd if=/dev/zero bs=4096 count=1 conv=notrunc of=testfile
->>> 4. f2fs_io decompress testfile
->>>
->>> To prevent the problem, let's check whether the cluster is fully
->>> allocated before redirty its pages.
->>>
->>
->> We were discussing how to detect these sorts of things in the future.
->> Presumably a user found this by chance?  Xfstests has two tests which deal
->> with compression tests/f2fs/002 and tests/f2fs/007.  But it feels like
->> xfstests is not really the right place for this sort of thing, it would
->> be better as part of some sort of fuzz testing.
->>
->> What do you think?
-> 
-> Yeah, agreed that we must have tests to catch this. One way may be creating
-> some basic disk images having some possible valid layout to see f2fs can
-> work as intended. I feel we can put it in xfstests as wel?
- > > Chao, thoughts?
 
-Hi Jaegeuk, Dan,
+Hi,
 
-I'd like to continue to add regression testcases like f2fs/[003-008]
-to xfstests, so that, we can make sure last change of f2fs won't cause
-any regression by checking w/ those testcases.
+Sorry it took me this long to get to this.
 
-Recently, Sheng Yong has introduced a new tool named inject.f2fs [1], and
-then, built an auto testsuit in f2fs-tools based on inject.f2fs [2], w/
-this testsuit, we can construct image by injecting specified fields, and
-check the image w/ fsck to see whether result is as expected.
+On 31/10/24 15:04, Steve Wahl wrote:
+> Use a different approach to topology_span_sane(), that checks for the
+> same constraint of no partial overlaps for any two CPU sets for
+> non-NUMA topology levels, but does so in a way that is O(N) rather
+> than O(N^2).
+>
+> Instead of comparing with all other masks to detect collisions, keep
+> one mask that includes all CPUs seen so far and detect collisions with
+> a single cpumask_intersects test.
+>
+> If the current mask has no collisions with previously seen masks, it
+> should be a new mask, which can be uniquely identified ("id") by the
+> lowest bit set in this mask.  Mark that we've seen a mask with this
+> id, and add the CPUs in this mask to the list of those seen.
+>
+> If the current mask does collide with previously seen masks, it should
+> be exactly equal to a mask seen before, identified once again by the
+> lowest bit the current mask has set.  It's an error if we haven't seen
+> a mask with that id, or if the current mask doesn't match the one we
+> get by looking up that id.
+>
+> Move the topology_span_sane() check out of the existing topology level
+> loop, let it do its own looping to match the needs of this algorithm.
+>
+> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
+> the average time to take one processor offline is reduced from 2.18
+> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
+> 34m49.765s without this change, 16m10.038s with this change in place.)
+>
+> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+> ---
+>
+> Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
+> simplifies the code, and eliminates the erroneous use of
+> num_possible_cpus() that Peter Zijlstra noted.
+>
+> Version 1 discussion:
+>     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
+>
+>  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
+>  1 file changed, 48 insertions(+), 25 deletions(-)
+>
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9748a4c8d668..6a2a3e91d59e 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+>  
+>  /*
+>   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
+> - * any two given CPUs at this (non-NUMA) topology level.
+> + * any two given CPUs on non-NUMA topology levels.
+>   */
+> -static bool topology_span_sane(struct sched_domain_topology_level *tl,
+> -			      const struct cpumask *cpu_map, int cpu)
+> +static bool topology_span_sane(const struct cpumask *cpu_map)
+>  {
+> -	int i = cpu + 1;
+> +	struct sched_domain_topology_level *tl;
+> +	struct cpumask *covered, *id_seen;
+> +	int cpu;
+>  
+> -	/* NUMA levels are allowed to overlap */
+> -	if (tl->flags & SDTL_OVERLAP)
+> -		return true;
+> +	lockdep_assert_held(&sched_domains_mutex);
+> +	covered = sched_domains_tmpmask;
+> +	id_seen = sched_domains_tmpmask2;
+> +
+> +	for_each_sd_topology(tl) {
+> +
+> +		/* NUMA levels are allowed to overlap */
+> +		if (tl->flags & SDTL_OVERLAP)
+> +			continue;
+> +
+> +		cpumask_clear(covered);
+> +		cpumask_clear(id_seen);
+>  
+> -	/*
+> -	 * Non-NUMA levels cannot partially overlap - they must be either
+> -	 * completely equal or completely disjoint. Otherwise we can end up
+> -	 * breaking the sched_group lists - i.e. a later get_group() pass
+> -	 * breaks the linking done for an earlier span.
+> -	 */
+> -	for_each_cpu_from(i, cpu_map) {
+>  		/*
+> -		 * We should 'and' all those masks with 'cpu_map' to exactly
+> -		 * match the topology we're about to build, but that can only
+> -		 * remove CPUs, which only lessens our ability to detect
+> -		 * overlaps
+> +		 * Non-NUMA levels cannot partially overlap - they must be either
+> +		 * completely equal or completely disjoint. Otherwise we can end up
+> +		 * breaking the sched_group lists - i.e. a later get_group() pass
+> +		 * breaks the linking done for an earlier span.
+>  		 */
+> -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
+> -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
+> -			return false;
+> +		for_each_cpu(cpu, cpu_map) {
+> +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
+> +			int id;
+> +
+> +			/* lowest bit set in this mask is used as a unique id */
+> +			id = cpumask_first(tl_cpu_mask);
+> +
 
-IMO, it's fine to add new testcases into testsuit to check whether f2fs'
-behavior is as expected on constructed image w/ valid data layout.
+Using the first CPU like we do in get_group() is clever; if we've seen the
+first CPU then the spans must exactly match; else it must be a completely
+new span.
 
-So, regression testcase goes into xfstests, and fuzz/common image testcase
-goes into testsuit of f2fs-tools? what do you think?
 
-[1] "f2fs-tools: introduce inject.f2fs" https://lore.kernel.org/linux-f2fs-devel/20240704025740.527171-1-shengyong@oppo.com/
-[2] "f2fs-tools: add testcases" https://lore.kernel.org/linux-f2fs-devel/20241029120956.4186731-1-shengyong@oppo.com/
+> +			/* if this mask doesn't collide with what we've already seen */
+> +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
+> +				/* Really odd case when cpu != id, likely not sane */
+> +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
+> +					return false;
+> +				if (cpumask_test_and_set_cpu(id, id_seen))
+> +					return false;
+> +				cpumask_or(covered, tl_cpu_mask, covered);
+> +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
+> +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
+> +				/*
+> +				 * a collision with covered should have exactly matched
+> +				 * a previously seen mask with the same id
+> +				 */
+> +				return false;
+> +			}
 
-Thanks,
 
-> 
->>
->> regards,
->> dan carpenter
+Per the previous comment, if you hinge the condition on @id itself,
+couldn't you "simplify" it as below?
+
+	if (cpumask_test_cpu(id, id_seen)) {
+		/* First CPU has already been seen, ensure identical spans */
+		if (!cpumask_equal(tl->mask(id), tl_cpu_mask))
+			return false;
+	} else {
+		/* First CPU hasn't been seen before, ensure it's a completely new span */
+		if (cpumask_intersects(tl_cpu_mask, covered))
+			return false;
+
+		cpumask_or(covered, covered, tl_cpu_mask);
+		cpumask_set_cpu(id, id_seen);
+	}
 
 
