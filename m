@@ -1,160 +1,473 @@
-Return-Path: <linux-kernel+bounces-447039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E13A9F2C69
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC179F2C74
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5BD51887DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14335161B13
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4522720010B;
-	Mon, 16 Dec 2024 08:56:30 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F2120124F;
+	Mon, 16 Dec 2024 08:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0Ks55wd"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43423200109
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0F7200B8C;
+	Mon, 16 Dec 2024 08:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734339389; cv=none; b=uiehi07OF80INm483XSbbtFZtdl4LOkyIIFEr7zl4/Xil8iIi74VT6TH6/cLgFaSxhmTeeOwGt+PMiI/dPR9IhFHwoaIvWu7JgmjiRe50w7EgvXa3sYcQN26rrAgkoRy6g27M2fKdGX5w243mbFucCRfoj0l95OE4ZM5oc6nxkw=
+	t=1734339408; cv=none; b=hc5TW7PguVqiefJUUMWVkIiEjxWn2yvJgqxBUgZ73Zvk6nVTbdiLVr6vjf0rDQ+HyJSezjnJuhmIWCTiPX0RHDM2y7sUiq55ltJ8F2lEnY927+gJvFQEpjy5kCMDJyJvrOtCETB073omU8eFvu9Kwjv895m0ITEI/WQpqrBHDbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734339389; c=relaxed/simple;
-	bh=qHy8pe6BJZ/CNAHEzIVHbAuPyQL9DFoR782xOYMDW3M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lrx5CCyYx1p99an+9BGC5ChLwKJAR/oIYKFocQRsy+/bp9QUU2NS8vdqul12E5hsMP+C2AcY4WmEyF7Ln8R/6+wHn7OYHTwYLlwJ5CEhpATUpzJSz0X1J1FSBqiJKyBTD/CObRfRK1ax01uB6oPZrbp30rWSdprAmbxHZEfqI6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so85146205ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:56:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734339387; x=1734944187;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1734339408; c=relaxed/simple;
+	bh=tfbUP9gjJDGiJPTIqFiPdMEMEkKSRuNhcd5l9B9OJ/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M5r5A54WYvsVkdK+k/n7Iz5ko9B2sRi26+dZxi3r23yXKTzRr1WNq1b4fxDP2DL9DigwPMW/GB/FO8caW3+iv2+f+oN1FDvPwveFcSf8KgYuBXaIIqC6+SzwfiX5jzyMXrjBEw+XaUll9mLhe/0DARltb8J30QL5u8GKK7e214I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0Ks55wd; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30034ad2ca3so32154881fa.1;
+        Mon, 16 Dec 2024 00:56:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734339404; x=1734944204; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=l60Dua/WtRR5J4wn9Myw1KA8V4e7z1uHssTczWLt9JY=;
-        b=f1kEgv2Q09TTR+jxw3SHDOEuEVdOEHYu7ru1Uw1H7aE17EhoTHs9S+E4P7zhMFoZAY
-         p+vax05QU1XTqaBz3oStYVVGCRArGVa4ZK8QiPaeYvp7YYSPLZr43AqqImHWINIA7Ii1
-         c4dLTz11NvBQiIoKRLraroYEedh4Nd/EPB5saVrKOWggssmPSHgcgbQjKdQuWdlLAIdB
-         XbL6JInCbed3VvGaElG+IYYdThRpP8rTxBzZhIFUqdc/90XzYXunT73QPbwVR+PA2w1W
-         3qWEYvy57KYHck2agup/s0bmtx2PqdrKRgLfVSqJtj3AJDPHy7A1WGSziWmZnr+ABwMV
-         2Mqw==
-X-Gm-Message-State: AOJu0YzTqk7uudxFfwk2XObZqJMT4bWbU1j90xQReyMAtEnhjLNBaPEB
-	s1na5RTdf2zrSJEqTV0a6KwvSSyvRHDfCb8bobyhKXorJBgpXPrBHlM8x0YzvOSloHcrL2+ZnnO
-	997SH8lSCU9eEKJT+Zclk+EDHJcvIcbegEhbALRjDNrqiZGVqfih35yK7TQ==
-X-Google-Smtp-Source: AGHT+IEzamfjcvk4wbGxi4HkqRFj7xXF3MP0C4LAUNUsuYXgZa/dX56WSWA9Ds7VgnsqMfxRudxB5Uo/wb4TS0q2LtXElAECnGcN
+        bh=626pWv5KSy+d5fJyUTQWTlBU9Lgvvvj33oOG+jYjkv0=;
+        b=i0Ks55wdt8p0o7dCT7Z0MXpxZmMhc1ef5FbTht3p+vGedmTgOeucvQMNwieOrCm8W6
+         CwQ3LHTh5QITNHopFkLqlSFYScGLchBYOY4TtZjrC/EIaP5bgCve3Hn2wNlPVJdKIoYk
+         v9FxKbJ8LpmCNSRrEpdXx9R59EpSBkM6VO6BP8JkoahJhwIXDsiZ9aqS+ucc8e91jVob
+         3xZ+hOtNBkE2TJ0u2qdplf89AhdG+lXBpy+nYke2EIx41bX2eBML9l0ny/pjzcZyXMWH
+         OfwG1lB4QLHQEoPlhwiREHxM38L7E3RMI/FXY6lcSzSKEZhsJnFtJLNdqqPNzn+bNOU8
+         PvJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734339404; x=1734944204;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=626pWv5KSy+d5fJyUTQWTlBU9Lgvvvj33oOG+jYjkv0=;
+        b=pvnRMaa2gkAhGJ3A9gTeFYY9d91OziXhDPUNZpTB1He1qLqdcSLFmg0PzuwvoWYL3D
+         Hvk+WnrHzOKemjg3ZtxOVgJdn0ks1Irq4DUPsY6uPvSWNI6ZIUsMTiP9zvLN5x126Ad/
+         y6QLN/vZp+XKU8816P3H936pUuU+G9ZrpYyBjCBnqxzwSyDQI1oAKk2SdJXGChbh3t89
+         xS6+UjPMR6LaXDC4+spBBwClnejWwUxAsLyTgN6cdLoAu7O8TY+ddC+S9HsXK7wkyyPA
+         kEjKuNDfO9faKH4LzUO4yQ6+i6QH8ObslcanQ0ChJ93Gb37sgfogpgVdD6SVW8PDc2QV
+         D+AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpWDdrnRWpYuqZLJ48qQXN6i3LXTI/dgtmkW8G51Pa2zugsj8Bgtxmva/P7z3iBLFW/S2ZezHhQPbVR/2r@vger.kernel.org, AJvYcCWA5QokS0PvMhnonkolgsuXJxMfUnzE5COnNolN3ecld3aAb/YKNYmOtZlMcopVdHZIReIzW1LegIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHMIXSRdvkMBGQpnrAZ82/SVkmXdIpRZBMKLuEfSma0oxchSEj
+	KlrgFTEdrkQoj0cNQVDJWWaDGWB/2Ps6MYtXSOHXALXyTjBT1/aU
+X-Gm-Gg: ASbGncvPjOY5jUwCdzXPw1HJx8XA/ulTVPG9BC7/0OBf9VFXmdqU2cFeU3dtOEKpSkJ
+	6rWAb01eQmPWlv90hyadH/+M27wZXV+ftwGlSKxZcX6vFG9GllhUlwX+A7t68zS/awquDO6gDh/
+	TGs+6yE+1rD3zlEb2ANXWpTkivYgPcNjIL+/MKBtTwcfbMf2tXOK5U85C8LG+5se1cv2pnNkuK2
+	6a/1EAUppId0zw3w8EAZkVEPptRlEqYOhD6pQ2B0ZR2QwD0w1/w8pInWyw=
+X-Google-Smtp-Source: AGHT+IG3Oh337cUx8Oy+qqjyTPg8NGVyK3fDHAmv4fQ//dttOmRU51JIvzr7qeqQXMoU/yfI7RqujA==
+X-Received: by 2002:a2e:a30e:0:b0:2ff:df01:2b43 with SMTP id 38308e7fff4ca-3025447b0a9mr31724281fa.18.1734339404090;
+        Mon, 16 Dec 2024 00:56:44 -0800 (PST)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a5fbcsm8358901fa.105.2024.12.16.00.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 00:56:42 -0800 (PST)
+Date: Mon, 16 Dec 2024 10:56:37 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] iio: gts: Simplify available scale table build
+Message-ID: <Z1_rRXqdhxhL6wBw@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cf:b0:3a7:6a98:3fdf with SMTP id
- e9e14a558f8ab-3afeee7a120mr89281705ab.14.1734339387306; Mon, 16 Dec 2024
- 00:56:27 -0800 (PST)
-Date: Mon, 16 Dec 2024 00:56:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675feb3b.050a0220.37aaf.0120.GAE@google.com>
-Subject: [syzbot] [trace?] WARNING in ring_buffer_map
-From: syzbot <syzbot+648bb824605554d08bff@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1764b20f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=648bb824605554d08bff
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150b04f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130b04f8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b85403132ddc/disk-f92f4749.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20613d034287/vmlinux-f92f4749.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d1ea80bf7e4e/bzImage-f92f4749.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+648bb824605554d08bff@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5834 at kernel/trace/ring_buffer.c:7061 __rb_map_vma+0x881/0xae0 kernel/trace/ring_buffer.c:7061
-Modules linked in:
-CPU: 1 UID: 0 PID: 5834 Comm: syz-executor239 Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:__rb_map_vma+0x881/0xae0 kernel/trace/ring_buffer.c:7061
-Code: 04 25 28 00 00 00 0f 85 11 02 00 00 48 81 c4 b0 00 00 00 89 d8 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 40 7c fd ff 90 <0f> 0b 90 bb ea ff ff ff eb 96 e8 30 7c fd ff 48 8b 44 24 20 be ff
-RSP: 0018:ffffc90003a27790 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000000007ff RCX: ffffffff819bbf0b
-RDX: ffff888059005a00 RSI: ffffffff819bc1b0 RDI: 0000000000000006
-RBP: ffff888078d9c578 R08: 0000000000000006 R09: 00000000000007ff
-R10: 0000000000000003 R11: ffffffff8b200130 R12: ffffea000007bb80
-R13: ffff88807ab41bc0 R14: 0000000000000003 R15: 0000000000000001
-FS:  0000555581f4d480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f183f3b20f0 CR3: 0000000032d56000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ring_buffer_map+0x56e/0x9b0 kernel/trace/ring_buffer.c:7138
- tracing_buffers_mmap+0xa6/0x120 kernel/trace/trace.c:8482
- call_mmap include/linux/fs.h:2183 [inline]
- mmap_file mm/internal.h:124 [inline]
- __mmap_new_file_vma mm/vma.c:2291 [inline]
- __mmap_new_vma mm/vma.c:2355 [inline]
- __mmap_region+0x1786/0x2670 mm/vma.c:2456
- mmap_region+0x127/0x320 mm/mmap.c:1348
- do_mmap+0xc00/0xfc0 mm/mmap.c:496
- vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
- ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f183f33c5d9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd6456a698 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f183f33c5d9
-RDX: 0000000000000009 RSI: 0000000000001000 RDI: 0000000020ffe000
-RBP: 00007f183f3831e4 R08: 0000000000000003 R09: 0000000000800000
-R10: 0000000000000011 R11: 0000000000000246 R12: 00007f183f38917c
-R13: 00007f183f383169 R14: 00007ffd6456a6f0 R15: 00007f183f3b441c
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eo02nJzJzcUjPyry"
+Content-Disposition: inline
 
 
+--eo02nJzJzcUjPyry
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Make available scale building more clear. This hurts the performance
+quite a bit by looping throgh the scales many times instead of doing
+everything in one loop. It however simplifies logic by:
+ - decoupling the gain and scale allocations & computations
+ - keeping the temporary 'per_time_gains' table inside the
+   per_time_scales computation function.
+ - separating building the 'all scales' table in own function and doing
+   it based on the already computed per-time scales.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Revision history:
+ v2:
+    - Add a few comments
+    - Use more descriptive variable name
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This is still only tested using the kunit tests. All further testing is
+still highly appreciated!
+---
+ drivers/iio/industrialio-gts-helper.c | 272 ++++++++++++++++----------
+ 1 file changed, 174 insertions(+), 98 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrial=
+io-gts-helper.c
+index 291c0fc332c9..65697be58a10 100644
+--- a/drivers/iio/industrialio-gts-helper.c
++++ b/drivers/iio/industrialio-gts-helper.c
+@@ -160,16 +160,123 @@ static void iio_gts_purge_avail_scale_table(struct i=
+io_gts *gts)
+ 	gts->num_avail_all_scales =3D 0;
+ }
+=20
++static int scale_eq(int *sc1, int *sc2)
++{
++	return sc1[0] =3D=3D sc2[0] && sc1[1] =3D=3D sc2[1];
++}
++
++static int scale_smaller(int *sc1, int *sc2)
++{
++	if (sc1[0] !=3D sc2[0])
++		return sc1[0] < sc2[0];
++
++	/* If integer parts are equal, fixp parts */
++	return sc1[1] < sc2[1];
++}
++
++/*
++ * Do a single table listing all the unique scales that any combination of
++ * supported gains and times can provide.
++ */
++static int do_combined_scaletable(struct iio_gts *gts,
++				  size_t all_scales_tbl_bytes)
++{
++	int t_idx, i, new_idx;
++	int **scales =3D gts->per_time_avail_scale_tables;
++	int *all_scales =3D kcalloc(gts->num_itime, all_scales_tbl_bytes,
++				  GFP_KERNEL);
++
++	if (!all_scales)
++		return -ENOMEM;
++	/*
++	 * Create table containing all of the supported scales by looping
++	 * through all of the per-time scales and copying the unique scales
++	 * into one sorted table.
++	 *
++	 * We assume all the gains for same integration time were unique.
++	 * It is likely the first time table had greatest time multiplier as
++	 * the times are in the order of preference and greater times are
++	 * usually preferred. Hence we start from the last table which is likely
++	 * to have the smallest total gains.
++	 */
++	t_idx =3D gts->num_itime - 1;
++	memcpy(all_scales, scales[t_idx], all_scales_tbl_bytes);
++	new_idx =3D gts->num_hwgain * 2;
++
++	while (t_idx-- > 0) {
++		for (i =3D 0; i < gts->num_hwgain ; i++) {
++			int *candidate =3D &scales[t_idx][i * 2];
++			int chk;
++
++			if (scale_smaller(candidate, &all_scales[new_idx - 2])) {
++				all_scales[new_idx] =3D candidate[0];
++				all_scales[new_idx + 1] =3D candidate[1];
++				new_idx +=3D 2;
++
++				continue;
++			}
++			for (chk =3D 0; chk < new_idx; chk +=3D 2)
++				if (!scale_smaller(candidate, &all_scales[chk]))
++					break;
++
++			if (scale_eq(candidate, &all_scales[chk]))
++				continue;
++
++			memmove(&all_scales[chk + 2], &all_scales[chk],
++				(new_idx - chk) * sizeof(int));
++			all_scales[chk] =3D candidate[0];
++			all_scales[chk + 1] =3D candidate[1];
++			new_idx +=3D 2;
++		}
++	}
++
++	gts->num_avail_all_scales =3D new_idx / 2;
++	gts->avail_all_scales_table =3D all_scales;
++
++	return 0;
++}
++
++static void iio_gts_free_int_table_array(int **arr, int num_tables)
++{
++	int i;
++
++	for (i =3D 0; i < num_tables; i++)
++		kfree(arr[i]);
++
++	kfree(arr);
++}
++
++static int iio_gts_alloc_int_table_array(int ***arr, int num_tables, int n=
+um_table_items)
++{
++	int i, **tmp;
++
++	tmp =3D kcalloc(num_tables, sizeof(**arr), GFP_KERNEL);
++	if (!tmp)
++		return -ENOMEM;
++
++	for (i =3D 0; i < num_tables; i++) {
++		tmp[i] =3D kcalloc(num_table_items, sizeof(int), GFP_KERNEL);
++		if (!tmp[i])
++			goto err_free;
++	}
++
++	*arr =3D tmp;
++
++	return 0;
++err_free:
++	iio_gts_free_int_table_array(tmp, i);
++
++	return -ENOMEM;
++}
++
+ static int iio_gts_gain_cmp(const void *a, const void *b)
+ {
+ 	return *(int *)a - *(int *)b;
+ }
+=20
+-static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **sca=
+les)
++static int fill_and_sort_scaletables(struct iio_gts *gts, int **gains, int=
+ **scales)
+ {
+-	int i, j, new_idx, time_idx, ret =3D 0;
+-	int *all_gains;
+-	size_t gain_bytes;
++	int i, j, ret;
+=20
+ 	for (i =3D 0; i < gts->num_itime; i++) {
+ 		/*
+@@ -189,71 +296,69 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
+nt **gains, int **scales)
+ 		}
+ 	}
+=20
+-	gain_bytes =3D array_size(gts->num_hwgain, sizeof(int));
+-	all_gains =3D kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
+-	if (!all_gains)
+-		return -ENOMEM;
++	return 0;
++}
++
++static void compute_per_time_gains(struct iio_gts *gts, int **gains)
++{
++	int i, j;
++
++	for (i =3D 0; i < gts->num_itime; i++) {
++		for (j =3D 0; j < gts->num_hwgain; j++)
++			gains[i][j] =3D gts->hwgain_table[j].gain *
++				      gts->itime_table[i].mul;
++	}
++}
++
++static int compute_per_time_tables(struct iio_gts *gts, int **scales)
++{
++	int **per_time_gains;
++	int ret;
+=20
+ 	/*
+-	 * We assume all the gains for same integration time were unique.
+-	 * It is likely the first time table had greatest time multiplier as
+-	 * the times are in the order of preference and greater times are
+-	 * usually preferred. Hence we start from the last table which is likely
+-	 * to have the smallest total gains.
++	 * Create a temporary array of the 'total gains' for each integration
++	 * time.
+ 	 */
+-	time_idx =3D gts->num_itime - 1;
+-	memcpy(all_gains, gains[time_idx], gain_bytes);
+-	new_idx =3D gts->num_hwgain;
++	ret =3D iio_gts_alloc_int_table_array(&per_time_gains, gts->num_itime,
++					    gts->num_hwgain);
++	if (ret)
++		return ret;
+=20
+-	while (time_idx-- > 0) {
+-		for (j =3D 0; j < gts->num_hwgain; j++) {
+-			int candidate =3D gains[time_idx][j];
+-			int chk;
++	compute_per_time_gains(gts, per_time_gains);
+=20
+-			if (candidate > all_gains[new_idx - 1]) {
+-				all_gains[new_idx] =3D candidate;
+-				new_idx++;
++	/* Convert the gains to scales and populate the scale tables */
++	ret =3D fill_and_sort_scaletables(gts, per_time_gains, scales);
+=20
+-				continue;
+-			}
+-			for (chk =3D 0; chk < new_idx; chk++)
+-				if (candidate <=3D all_gains[chk])
+-					break;
++	iio_gts_free_int_table_array(per_time_gains, gts->num_itime);
+=20
+-			if (candidate =3D=3D all_gains[chk])
+-				continue;
++	return ret;
++}
+=20
+-			memmove(&all_gains[chk + 1], &all_gains[chk],
+-				(new_idx - chk) * sizeof(int));
+-			all_gains[chk] =3D candidate;
+-			new_idx++;
+-		}
+-	}
++/*
++ * Create a table of supported scales for each supported integration time.
++ * This can be used as available_scales by drivers which don't allow scale
++ * setting to change the integration time to display correct set of scales
++ * depending on the used integration time.
++ */
++static int **create_per_time_scales(struct iio_gts *gts)
++{
++	int **per_time_scales, ret;
+=20
+-	gts->avail_all_scales_table =3D kcalloc(new_idx, 2 * sizeof(int),
+-					      GFP_KERNEL);
+-	if (!gts->avail_all_scales_table) {
+-		ret =3D -ENOMEM;
+-		goto free_out;
+-	}
+-	gts->num_avail_all_scales =3D new_idx;
++	ret =3D iio_gts_alloc_int_table_array(&per_time_scales, gts->num_itime,
++					    gts->num_hwgain * 2);
++	if (ret)
++		return ERR_PTR(ret);
+=20
+-	for (i =3D 0; i < gts->num_avail_all_scales; i++) {
+-		ret =3D iio_gts_total_gain_to_scale(gts, all_gains[i],
+-					&gts->avail_all_scales_table[i * 2],
+-					&gts->avail_all_scales_table[i * 2 + 1]);
++	ret =3D compute_per_time_tables(gts, per_time_scales);
++	if (ret)
++		goto err_out;
+=20
+-		if (ret) {
+-			kfree(gts->avail_all_scales_table);
+-			gts->num_avail_all_scales =3D 0;
+-			goto free_out;
+-		}
+-	}
++	return per_time_scales;
+=20
+-free_out:
+-	kfree(all_gains);
++err_out:
++	iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
+=20
+-	return ret;
++	return ERR_PTR(ret);
+ }
+=20
+ /**
+@@ -275,55 +380,26 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
+nt **gains, int **scales)
+  */
+ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
+ {
+-	int **per_time_gains, **per_time_scales, i, j, ret =3D -ENOMEM;
+-
+-	per_time_gains =3D kcalloc(gts->num_itime, sizeof(*per_time_gains), GFP_K=
+ERNEL);
+-	if (!per_time_gains)
+-		return ret;
+-
+-	per_time_scales =3D kcalloc(gts->num_itime, sizeof(*per_time_scales), GFP=
+_KERNEL);
+-	if (!per_time_scales)
+-		goto free_gains;
++	int ret, all_scales_tbl_bytes;
++	int **per_time_scales;
+=20
+-	for (i =3D 0; i < gts->num_itime; i++) {
+-		per_time_scales[i] =3D kcalloc(gts->num_hwgain, 2 * sizeof(int),
+-					     GFP_KERNEL);
+-		if (!per_time_scales[i])
+-			goto err_free_out;
+-
+-		per_time_gains[i] =3D kcalloc(gts->num_hwgain, sizeof(int),
+-					    GFP_KERNEL);
+-		if (!per_time_gains[i]) {
+-			kfree(per_time_scales[i]);
+-			goto err_free_out;
+-		}
+-
+-		for (j =3D 0; j < gts->num_hwgain; j++)
+-			per_time_gains[i][j] =3D gts->hwgain_table[j].gain *
+-					       gts->itime_table[i].mul;
+-	}
++	if (unlikely(check_mul_overflow(gts->num_hwgain, 2 * sizeof(int),
++					&all_scales_tbl_bytes)))
++		return -EOVERFLOW;
+=20
+-	ret =3D gain_to_scaletables(gts, per_time_gains, per_time_scales);
+-	if (ret)
+-		goto err_free_out;
++	per_time_scales =3D create_per_time_scales(gts);
++	if (IS_ERR(per_time_scales))
++		return PTR_ERR(per_time_scales);
+=20
+-	for (i =3D 0; i < gts->num_itime; i++)
+-		kfree(per_time_gains[i]);
+-	kfree(per_time_gains);
+ 	gts->per_time_avail_scale_tables =3D per_time_scales;
+=20
+-	return 0;
+-
+-err_free_out:
+-	for (i--; i >=3D 0; i--) {
+-		kfree(per_time_scales[i]);
+-		kfree(per_time_gains[i]);
++	ret =3D do_combined_scaletable(gts, all_scales_tbl_bytes);
++	if (ret) {
++		iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
++		return ret;
+ 	}
+-	kfree(per_time_scales);
+-free_gains:
+-	kfree(per_time_gains);
+=20
+-	return ret;
++	return 0;
+ }
+=20
+ static void iio_gts_us_to_int_micro(int *time_us, int *int_micro_times,
+--=20
+2.47.0
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+--eo02nJzJzcUjPyry
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-----BEGIN PGP SIGNATURE-----
 
-If you want to undo deduplication, reply with:
-#syz undup
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdf60EACgkQeFA3/03a
+ocWsLwf/coSoYvQ6FJiP/WDFlXtYTHiNisdHqHJfZddfnCbTSmHp3k8f3OcKHJhl
+Dw4II4slg/o7JeEPq2bQQkghOh5nTduDRvTkAYunZ3OCqjBSnUeelcXtPuEEdy2H
+0WKeZxEOF2flmgQDM65sWdfGCEeRh4V4D0nzmG3xUo8G4C2gLylflEW2qR+ktvX1
+YmUucIyvgp6g7SzEGQZPIhFe9MfIiH+YqzmUk0FZm0Zw0io4mudfI7gMSEndIN2E
+f+dzALyEABuntcOacQZrbhy4dw0Lovxvl6tvd8KRGsE/ZIzoIzpG8YqFO7yf6bDG
+Mo1KsWauX9pagkQJI/F7n0KAVhze3g==
+=iwJ3
+-----END PGP SIGNATURE-----
+
+--eo02nJzJzcUjPyry--
 
