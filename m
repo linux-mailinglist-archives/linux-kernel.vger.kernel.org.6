@@ -1,194 +1,101 @@
-Return-Path: <linux-kernel+bounces-448213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E9F3D02
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:47:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A0E9F3D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390F31888005
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:47:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A9241887363
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E921D61B5;
-	Mon, 16 Dec 2024 21:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705DD1D5CFD;
+	Mon, 16 Dec 2024 21:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="CSg7z1OI"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mllLAmIu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B70F1D434F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17171D47AC;
+	Mon, 16 Dec 2024 21:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734385636; cv=none; b=CZG1rVd3xDQg3HOfgB9+ExrhrGgs8UfQksNtG8rdtQ6ST2f1nVE8Gx/H+/TLbvAXcHnEEcBH9NaxfEO0z92oZVjZK5pre6AHg+GcIrZgb8x0QFf4LO68oyNPvqztf88mQetIufxB0gKO8KAOFA80JB8ABULgIdYpcjctX5sQHok=
+	t=1734385745; cv=none; b=WT7bXqimBwI+rpOmD1PX8pcSXJeHuQV1JWRqVpGZYq2ngJsxbb8gAaiZujr8lHBdYQul+YGJMh0YhS4TAEKoTIqYLXXNJX6evIwdXZU8RKlm5Cm0j4ZQE9m4uX8qgXYILjrXsIoTK8M6Y2fU2+hf+QvJBL46IWk4kdq6Ekudsnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734385636; c=relaxed/simple;
-	bh=GiyAav8BXYZqsXgqsh8Cs6jCSKLPXEo+MstoFe/VrbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YS4x7j+9/PYbUFqZg6o9KlZIofr3ld5Y7k+8F1apHsuLKMsiclTXNduifiyjsdc7TAIHoeYJdoXQeLgewoGtxa6By4QvHxyONORyTsoVq9Cn4dyt1lbHCUSZMgtWrwhjiC9zIzWtwljdk5f/Bj1JkYJSbSyXEdN7bS8ototAmHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=CSg7z1OI; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 364B82C097F;
-	Tue, 17 Dec 2024 10:47:10 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734385630;
-	bh=uEtrjirkbc1c4fmNTn0NYmmHEdfisUyR/ER4gLI/RxU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CSg7z1OIjwq88geczSeena6WKBRg20FTTzI2SMWTMmyRdN94yEDMmmAKlWh3vE2tz
-	 Qb80rM80KKlnFp5P/W4IZawAVtp9MB0sjqXwWxAjLZrQVQLX0E/30mLRdxTElenDBQ
-	 /EhVYUuqqUz3ctynpprlRriQzTo0sdYChJFfeBY5SLDsb/cO9Tqk51c/ux5KUdyQOK
-	 8Ns8KXPTJkyO+CWtd0PmPqNUryXJv25BFLSmN1xomxrRaZe8hE6sZgWqeqjjUEWPXa
-	 dY2JsXE+RDj6lYh6WFjQqeVoG/A6AABYDJyFwzlNHcNc7NKgiHKaNitmQVPpqfcJ/f
-	 gC2SPC8zQftUA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67609fde0000>; Tue, 17 Dec 2024 10:47:10 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 0E73713ED95;
-	Tue, 17 Dec 2024 10:47:10 +1300 (NZDT)
-Message-ID: <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
-Date: Tue, 17 Dec 2024 10:47:10 +1300
+	s=arc-20240116; t=1734385745; c=relaxed/simple;
+	bh=ZIoQPyeoC0d8HE8S51eRA47tNK9PF0M3hI/o0xDvkuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJR6A+Sn3TeCe3HmfLnmV/EJ5I+QGowXjdS7bpu6rdD2aU6+ROffs7Fm1X2Lc//1lQDAp78R+rY8xvRGWx0LRAvfN30I4U1N07eDZrdfqCDcJaDGLM/o68ngRD4ghAS67v5vRQP7u7BwTcyXAmkLs+t7EkQQ1oQIC0weVx3Q9Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mllLAmIu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E36FC4CED0;
+	Mon, 16 Dec 2024 21:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734385745;
+	bh=ZIoQPyeoC0d8HE8S51eRA47tNK9PF0M3hI/o0xDvkuQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mllLAmIuLztFviM/jMF1PGcbVVYcOhEbiOdziXUdlTU49nzlucu967paitTJX4jJL
+	 YU/qPyopTd46zDqAhhK3iSCI49CEFEDPH01AZBXCt3E4fgOXwH93yplxML0Q9396+w
+	 xHqmEeA6IcUW5RdYDPlf81650bFRVQ33o4HZkVAGuBMkROkcaQEyIbfuzaSB1+66VT
+	 3y1JhxN8hxBHKcsTMHUN98525WKbqN/5iyTlbMCGa+jIUTALUvorzzNYjeZRYDOqXw
+	 +orAVBro8R7ze7Dy8Rnw2v5E+fVRX1m5EDShKX4hjqHcNLo0s81/q6U3iM2eW/NDui
+	 N0q7iLje3EtwA==
+Date: Mon, 16 Dec 2024 21:48:59 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: konradybcio@kernel.org, andersson@kernel.org,
+	srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com,
+	perex@perex.cz, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] ASoC: qcom: common: set codecless link to be a
+ backend
+Message-ID: <4a85f858-5350-403f-a862-9966f542d3b6@sirena.org.uk>
+References: <20241205023344.2232529-1-alexey.klimov@linaro.org>
+ <20241205023344.2232529-2-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO driver
-To: Simon Horman <horms@kernel.org>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
- hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
- <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
- <20241216164814.GH780307@kernel.org>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20241216164814.GH780307@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=67609fde a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=KkFew8YCm9Hy8_kfsgoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JzRM4fzI72YszvM/"
+Content-Disposition: inline
+In-Reply-To: <20241205023344.2232529-2-alexey.klimov@linaro.org>
+X-Cookie: Be different: conform.
 
 
-On 17/12/2024 05:48, Simon Horman wrote:
-> On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
->> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
->> switches with integrated SoC. There are 4 physical SMI interfaces on the
->> RTL9300 but access is done using the switch ports so a single MDIO bus
->> is presented to the rest of the system.
->>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ...
->
->> diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-realtek-rtl.c
-> ...
->
->> +#define MAX_SMI_BUSSES  4
->> +#define MAX_SMI_ADDR	0x1f
->> +
->> +struct realtek_mdio_priv {
->> +	struct regmap *regmap;
->> +	u8 smi_bus[MAX_PORTS];
->> +	u8 smi_addr[MAX_PORTS];
->> +	bool smi_bus_isc45[MAX_SMI_BUSSES];
->> +	u32 reg_base;
->> +};
-> ...
->
->> +static int realtek_mdiobus_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct realtek_mdio_priv *priv;
->> +	struct fwnode_handle *child;
->> +	struct mii_bus *bus;
->> +	int err;
->> +
->> +	bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
->> +	if (!bus)
->> +		return -ENOMEM;
->> +
->> +	bus->name = "Reaktek Switch MDIO Bus";
->> +	bus->read = realtek_mdio_read_c22;
->> +	bus->write = realtek_mdio_write_c22;
->> +	bus->read_c45 = realtek_mdio_read_c45;
->> +	bus->write_c45 =  realtek_mdio_write_c45;
->> +	bus->parent = dev;
->> +	priv = bus->priv;
->> +
->> +	priv->regmap = syscon_node_to_regmap(dev->parent->of_node);
->> +	if (IS_ERR(priv->regmap))
->> +		return PTR_ERR(priv->regmap);
->> +
->> +	err = device_property_read_u32(dev, "reg", &priv->reg_base);
->> +	if (err)
->> +		return err;
->> +
->> +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
->> +
->> +	device_for_each_child_node(dev, child) {
->> +		u32 pn, smi_addr[2];
->> +
->> +		err = fwnode_property_read_u32(child, "reg", &pn);
->> +		if (err)
->> +			return err;
->> +
->> +		if (pn >= MAX_PORTS)
->> +			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
->> +
->> +		err = fwnode_property_read_u32_array(child, "realtek,smi-address", smi_addr, 2);
->> +		if (err) {
->> +			smi_addr[0] = 0;
->> +			smi_addr[1] = pn;
->> +		}
->> +
->> +		if (smi_addr[0] > MAX_SMI_BUSSES)
-> Hi Chris,
->
-> Should this condition be
->
-> 		if (smi_addr[0] >= MAX_SMI_BUSSES)
-Yes. You are correct.
->> +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
->> +					     smi_addr[0]);
->> +
->> +		if (smi_addr[1] > MAX_SMI_ADDR)
->> +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
->> +
->> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
->> +			priv->smi_bus_isc45[smi_addr[0]] = true;
-> Otherwise it seems that smi_bus_isc45 may overflow here.
->
-> Flagged by Smatch.
+--JzRM4fzI72YszvM/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sounds like something I should start looking at for myself. Have you got 
-a link to share?
+On Thu, Dec 05, 2024 at 02:33:42AM +0000, Alexey Klimov wrote:
+> When codec subnode is missing in DAI link description in DT
+> the DAI link codec will be set to a dummy codec and link will be
+> recognised as front end. Any playback attempt will fail since it
+> will not be able to install hardware parameters. Fix this by
+> setting codecless link to be a back end.
 
->> +
->> +		priv->smi_bus[pn] = smi_addr[0];
->> +		priv->smi_addr[pn] = smi_addr[1];
->> +	}
->> +
->> +	err = realtek_mdiobus_init(priv);
->> +	if (err)
->> +		return dev_err_probe(dev, err, "failed to initialise MDIO bus controller\n");
->> +
->> +	err = devm_of_mdiobus_register(dev, bus, dev->of_node);
->> +	if (err)
->> +		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
->> +
->> +	return 0;
->> +}
-> ...
->
+This is intentional, the sound card should be properly described in the
+DT - if there's an expansion board used the description for that should
+say what sort of CODEC is there.
+
+--JzRM4fzI72YszvM/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgoEoACgkQJNaLcl1U
+h9AXjgf+O24bBTPBqVTzzxYzWAYsuB9RcvwV1ZXSTC19I4g1/hPH/DeXUCQnXQJ4
+UoEaW4w6Xyxhjy0jcXeS/N05zmtfe4oVptsHreQiOlUvsKeCMlIPxw6mgzF+6ds7
+TYAoAUwxVEToGVEva5RXsCvnKPz4toKMLvkxSONvl1mQjgcEdijpC9ZwSf5nH4eI
+iqFB6K1h5WNFloJ+iR5V8L9D6ik23tEEQDQMJtzCPCQaf5NSIuYHdU0a/Cesbgf/
+1ZcURE8ezvzrpUBczRlQzVOdoipiigQY0UkO0Xx6cgOMy4jBOCgHY6hjB/RnO3JR
+5Gur2GfOq8jQ75JsEIHcSlCM0LN3aA==
+=0ibu
+-----END PGP SIGNATURE-----
+
+--JzRM4fzI72YszvM/--
 
