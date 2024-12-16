@@ -1,86 +1,45 @@
-Return-Path: <linux-kernel+bounces-447288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583F89F3010
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:06:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736F9F3018
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80277161708
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F3647A2754
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C7A204C1B;
-	Mon, 16 Dec 2024 12:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFAD204C07;
+	Mon, 16 Dec 2024 12:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eJJhjJQA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B0m6Ufqb"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B642E204C12
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DACB38FA6;
+	Mon, 16 Dec 2024 12:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734350750; cv=none; b=qVsVCkUjhPabWs6VVBq1yrNbIxek/JRoZLOcIKAzm1C6J9ChZtIFzhccplwuSLEkOOnp50n5LK2qLgHglqmA09gsMwtEQBvzNtyzOny2XAqMRLHyYidLWRl9xvNyTBLIrgl4/3s9B+Jp2SFVyg4MDhrgVWzcIJ8AQQ5bn+L0k6U=
+	t=1734350843; cv=none; b=n/2JycBHXmxakdm9iEiAtVNKcR3jb9RcYdeuMFZ07qQ4Y8uQNV6bpwsTYgjfP2eiepYlQjeLI0YVPEcQYG8GK4hItUNwjlWQKTy4x26n8A10nFGLMgovncrcAmHpC8KOBY3wdiL82NU1/BENxfXKIdSW6uXGY3xyqiyvsgxq40c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734350750; c=relaxed/simple;
-	bh=br4Inlr1OYwkQ4DcqTTZJifF6KCfFQoqEw3+vLT1824=;
+	s=arc-20240116; t=1734350843; c=relaxed/simple;
+	bh=iqh5XOjrIPBtDSeYr9JPy6x0FGs3THMaULE0vFFzThQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J31WVUJq1sDODL6Ebme/LZooK+1/Y9vpHFEwZ3i7udnP/yNOZxMaStHiFwjkPrll6qr/yTpy2TJEG7IZje8xI6fS8gt76YpCEDTAyPLAcFwkrhQno9tJUI4+V0scEE/aoVrnolvnQsGLw7Xn+tWXN7+RJnwHd2YH1WW8dvf+MNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eJJhjJQA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG86x2s001737
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:05:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nozNBImrI0flQxop21C9levd721Nd++WaY3xG3YzRL8=; b=eJJhjJQA5mcOLeLf
-	DEXI/VxmbwVAt3hqafOOpQepPggnSHfVc6eHRPGH57MO4Ih6Xgq9ExGYOksNDpz6
-	Q8oZzqtc3CxUrXyTU3uP1+r3AUsV141RuhKsyfq9E5n/kSxkXMV2v6zryxI2MMbD
-	wCqNRr/N3DVUsyuDBRuBOBtr4u2s5d2J+9wylIBFekAsZr8USm7arBkffJiCu4sG
-	yaazRHG+XBMkPwYZAWAjUd2t9+ZDL3BiKNUP5mNrgVcS2ebR4SIaNcHY1N5unmZF
-	QJ/zDJqyibSNwM0hpefLL67/f6cstqRIiMGqNDxII8sFVPh5GXxf4u9CpQciQymx
-	ly1tEw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jgdhgn3k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:05:47 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8a3cb9dbfso9380926d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:05:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734350746; x=1734955546;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nozNBImrI0flQxop21C9levd721Nd++WaY3xG3YzRL8=;
-        b=KjZJcFnEGKCnRg9xnEv/QEFuq+u/jxh7gqTlnnmC8gMT3L7sk9y6fOsvhz2ZHEyCvz
-         yWPzj4YVjYa5ZgrWCKHh7yGKhWPycFMz1++kVoQVmL6cUU4DKFpuXGXnacYSs2PdJw5N
-         W2OMwvu3TjVOl686sOTgXyBBxCjJH5JpD7WN4WqGxRvXPQKPzgGAa+QibcDpdNsb452y
-         naZSQegYLI1DkqAaW/qSDs1n5ga8eRIuAy9iSqpFnfG+JYBm18ElNjoZj68ca+n56+/z
-         tw/PEAgrHYkfM4nnliLzaM9VAc7sA/PHqfZD9mxyB8zDUUls7sTnG68V/8hHnpr6xkFO
-         ItGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYzC8qXLA/uNXcppZHFvxhnarSkpT85D+OHFg3ZLBXPPH5cpDhJzWP6zZu0xack/IKlGHMtp8QdWp/Mv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC8cAysqzftM9Zm0L5sFADRTjtx1NcD6wqA4nhpOg1g1Vd5xXq
-	vtklFHFplXNcN5dYffvnCzHF+LTg7HU46zzgT3br9x8cO5l+NU5YHPTjW+vwMEK7650amXnfVhQ
-	RKnQAQbL1nUwM4hUsD4TF7oaEXe34jfXV/im/ZIwtHQUCwJYajiWXTHipMMJB8RU=
-X-Gm-Gg: ASbGncuPxVAQopgi5lYZ51knAtbmRsZ/LQxYO4FRD7DIgTXZomqAZZR1qpdpblAq4Ru
-	qI8xeUjNnIeF1SfvzFEhWl7M/vpbYeSFRbPycrndd0/dSIVN/+0FsZMCUbQbxi6DeR/jQ/tgD/A
-	loQ0cHgHfKBWmWkSjleZJVvldOUYUk3Q3wHy/XrPHaeR54Q/JIHnGjGzau16Jtqr2b+o75uNLjt
-	Eoqsa5AFu1OSjSLdgkbDZUJ8TTW3lmf2hDL5+tpPg1zVFN29daB1MVGB88njtNUwdVuuOwz6pUr
-	4hltUdg7Rv24YHzzercyQkT8YyxNJ5Rx6xk=
-X-Received: by 2002:a05:6214:27e5:b0:6d8:a723:6990 with SMTP id 6a1803df08f44-6dc9684f7camr74570566d6.7.1734350746659;
-        Mon, 16 Dec 2024 04:05:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHeXN80xQXmAhwdOx8Qvq8LX1rjnJEvO+IAfXQhj1EJOLdCPH2AIDU5QEJn1/k/Qfvf2stHuA==
-X-Received: by 2002:a05:6214:27e5:b0:6d8:a723:6990 with SMTP id 6a1803df08f44-6dc9684f7camr74570366d6.7.1734350746286;
-        Mon, 16 Dec 2024 04:05:46 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96068928sm322936866b.70.2024.12.16.04.05.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 04:05:45 -0800 (PST)
-Message-ID: <b17f1675-9ffc-472c-9dc8-50fbae5d18b3@oss.qualcomm.com>
-Date: Mon, 16 Dec 2024 13:05:41 +0100
+	 In-Reply-To:Content-Type; b=f2uIaCe3APA2iiwtOjZnE0PS0Iul08Q6rRKAEwSit8NbMA75DuHUtWYV1fs6OLTk/S9Vi5KNKL3dvNdrfvYeVtNZcnzUmuPI6aKT1jbE+V2qm8eJ86yDYNeI2KeUDBzst7WPvjRoogV6cF9Jos4RiE10ECfOne0nGNrPnDFkKPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B0m6Ufqb; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734350832; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=1OmVpZqZxthyjz0j/R+PbOfKwTbA3aCpAvSvnBaqQIs=;
+	b=B0m6UfqbZvOm6pH/oHifyK8Cuqod1lUEKNN7L7R0PgpptP9LXuThSg4okyO3zVvImDFNzD+llOaCEcO65fYaGINp/kG9h0GGtjrCSAncp4PO5CQYQ9WgDCezfyDDTIkZkIjE7sLvhKSYVFBFRFcROD4hatRLTHoBSGwkx9t0zIk=
+Received: from 30.221.131.67(mailfrom:mengferry@linux.alibaba.com fp:SMTPD_---0WLazs5j_1734350830 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 16 Dec 2024 20:07:11 +0800
+Message-ID: <60fd6f1a-ddf5-4b53-8353-18dcd8f6f93c@linux.alibaba.com>
+Date: Mon, 16 Dec 2024 20:07:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,61 +47,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] phy: qcom: Introduce PCIe UNIPHY 28LP driver
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-        robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-        conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, p.zabel@pengutronix.de,
-        quic_nsekar@quicinc.com, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org
-References: <20241204113329.3195627-1-quic_varada@quicinc.com>
- <20241204113329.3195627-3-quic_varada@quicinc.com>
- <710aa948-d27f-49f6-a4a8-73f6208502c3@oss.qualcomm.com>
- <Z1/JG+RkTBW9JuMO@hu-varada-blr.qualcomm.com>
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for
+ virtio-blk
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+ <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com>
+ <CACGkMEuAgAcCDrCMhNHr7gcRB6NtMPPLdSFAOGdt4dXGoQr4Yg@mail.gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z1/JG+RkTBW9JuMO@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: VRKZQJOHumSCI7kJpZCqRg_fhMWt8WUi
-X-Proofpoint-ORIG-GUID: VRKZQJOHumSCI7kJpZCqRg_fhMWt8WUi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=843 mlxscore=0
- phishscore=0 clxscore=1015 suspectscore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160101
+From: Ferry Meng <mengferry@linux.alibaba.com>
+In-Reply-To: <CACGkMEuAgAcCDrCMhNHr7gcRB6NtMPPLdSFAOGdt4dXGoQr4Yg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 16.12.2024 7:30 AM, Varadarajan Narayanan wrote:
-> On Thu, Dec 05, 2024 at 05:40:15PM +0100, Konrad Dybcio wrote:
->> On 4.12.2024 12:33 PM, Varadarajan Narayanan wrote:
->>> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
->>>
->>> Add Qualcomm PCIe UNIPHY 28LP driver support present
->>> in Qualcomm IPQ5332 SoC and the phy init sequence.
->>>
->>> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
 
-[...]
-
->>> +MODULE_LICENSE("Dual BSD/GPL");
+On 12/16/24 3:38 PM, Jason Wang wrote:
+> On Mon, Dec 16, 2024 at 10:01 AM Ferry Meng <mengferry@linux.alibaba.com> wrote:
 >>
->> I think this is too vague, there are many BSD variants
-> 
-> Will change it to "GPL v2"
+>> On 12/3/24 8:14 PM, Ferry Meng wrote:
+>>> We seek to develop a more flexible way to use virtio-blk and bypass the block
+>>> layer logic in order to accomplish certain performance optimizations. As a
+>>> result, we referred to the implementation of io_uring passthrough in NVMe
+>>> and implemented it in the virtio-blk driver. This patch series adds io_uring
+>>> passthrough support for virtio-blk devices, resulting in lower submit latency
+>>> and increased flexibility when utilizing virtio-blk.
+>>>
+>>> To test this patch series, I changed fio's code:
+>>> 1. Added virtio-blk support to engines/io_uring.c.
+>>> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+>>> Link: https://github.com/jdmfr/fio
+>>>
+>>> Using t/io_uring-vblk, the performance of virtio-blk based on uring-cmd
+>>> scales better than block device access. (such as below, Virtio-Blk with QEMU,
+>>> 1-depth fio)
+>>> (passthru) read: IOPS=17.2k, BW=67.4MiB/s (70.6MB/s)
+>>> slat (nsec): min=2907, max=43592, avg=3981.87, stdev=595.10
+>>> clat (usec): min=38, max=285,avg=53.47, stdev= 8.28
+>>> lat (usec): min=44, max=288, avg=57.45, stdev= 8.28
+>>> (block) read: IOPS=15.3k, BW=59.8MiB/s (62.7MB/s)
+>>> slat (nsec): min=3408, max=35366, avg=5102.17, stdev=790.79
+>>> clat (usec): min=35, max=343, avg=59.63, stdev=10.26
+>>> lat (usec): min=43, max=349, avg=64.73, stdev=10.21
+>>>
+>>> Testing the virtio-blk device with fio using 'engines=io_uring_cmd'
+>>> and 'engines=io_uring' also demonstrates improvements in submit latency.
+>>> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u1 /dev/vdcc0
+>>> IOPS=189.80K, BW=741MiB/s, IOS/call=4/3
+>>> IOPS=187.68K, BW=733MiB/s, IOS/call=4/3
+>>> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -O0 -n1 -u0 /dev/vdc
+>>> IOPS=101.51K, BW=396MiB/s, IOS/call=4/3
+>>> IOPS=100.01K, BW=390MiB/s, IOS/call=4/4
+>>>
+>>> The performance overhead of submitting IO can be decreased by 25% overall
+>>> with this patch series. The implementation primarily references 'nvme io_uring
+>>> passthrough', supporting io_uring_cmd through a separate character interface
+>>> (temporarily named /dev/vdXc0). Since this is an early version, many
+>>> details need to be taken into account and redesigned, like:
+>>> ● Currently, it only considers READ/WRITE scenarios, some more complex operations
+>>> not included like discard or zone ops.(Normal sqe64 is sufficient, in my opinion;
+>>> following upgrades, sqe128 and cqe32 might not be needed).
+>>> ● ......
+>>>
+>>> I would appreciate any useful recommendations.
+>>>
+>>> Ferry Meng (3):
+>>>     virtio-blk: add virtio-blk chardev support.
+>>>     virtio-blk: add uring_cmd support for I/O passthru on chardev.
+>>>     virtio-blk: add uring_cmd iopoll support.
+>>>
+>>>    drivers/block/virtio_blk.c      | 325 +++++++++++++++++++++++++++++++-
+>>>    include/uapi/linux/virtio_blk.h |  16 ++
+>>>    2 files changed, 336 insertions(+), 5 deletions(-)
+>> Hi, Micheal & Jason :
+>>
+>> What about yours' opinion? As virtio-blk maintainer. Looking forward to
+>> your reply.
+>>
+>> Thanks
+> If I understand this correctly, this proposal wants to make io_uring a
+> transport of the virito-blk command. So the application doesn't need
+> to worry about compatibility etc. This seems to be fine.
+>
+> But I wonder what's the security consideration, for example do we
+> allow all virtio-blk commands to be passthroughs and why.
 
-Checkpatch will ask you to say "GPL" instead.
+About 'security consideration', the generic char-dev belongs to root, so 
+only root can use this passthrough path.
 
-If you want to preserve the dual licensing, maybe consult with
-legal whether MIT/GPL could be used instead
+On the other hand, to what I know, virtio-blk commands are all related 
+to 'I/O operations', so we can support all those opcodes with bypassing 
+vfs&block layer (if we want). I just realized the most  basic read/write 
+in this RFC patch series, others will be considered later.
 
-Konrad
+> Thanks
+>
 
