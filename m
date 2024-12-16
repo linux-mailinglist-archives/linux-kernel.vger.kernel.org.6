@@ -1,304 +1,177 @@
-Return-Path: <linux-kernel+bounces-447136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45DB9F2DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D840E9F2DB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF31883E88
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279621889894
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F594202F8C;
-	Mon, 16 Dec 2024 10:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABD2202F8C;
+	Mon, 16 Dec 2024 10:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="fXP8kj+P"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T9pqEC0p"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE21202C4F;
-	Mon, 16 Dec 2024 10:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75446202F7C;
+	Mon, 16 Dec 2024 10:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343585; cv=none; b=hvbOJuaOrCfiej+D5OhaO5MuVRgVcMypVq+HvhHcWWKNww4R0QUGqlayEZZe3EBSK3FcQ83bXEATy52TlieKzU6bLL4+vahaJUIQE9E3Ry1ReQ6KSXY9/HuptOgBmVdx1Xd/Dmd5Rpuith8yl9VIIKRv2qgkcKCS1VMABlQ+BPk=
+	t=1734343369; cv=none; b=Eb9sDgARNvWBeR+XpJfCa1RYfL11xMGctws4at03tEnjJ00X6sfWBGEbnWTNUo4RrucRrqXucU1PuyxuEspjqS94Ng14L1hAT1qkpbgljZKQ8On9kmbbDHwVN0B6UP20duKFDpovuKyumTgBQUmReDNnjzH9sDOzDDKQxCC09CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343585; c=relaxed/simple;
-	bh=+UhIP1nfFyHeZ808tfIldBDwi0u0Oe9coKVU3RmIjCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H/oGACdiAPl3qC4kbIxkLi2PaOge6nXuaHUXuHXbY0to1Yrn6Xopz6bl3Dv6lB87pNHLFWGkd5gt5RFt27kEWFQTgMZmtT+jOXfuiu2sqjhZfDVrpX3VBcKARw0Mx4I+YZuydw2z6nedFQ9MBb7DYB+bj88UL0Gin751JBUjTXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=fXP8kj+P; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG745SY008787;
-	Mon, 16 Dec 2024 11:05:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	OKGfjVGwMA/zsXl85TBgrTG1yFr1Bpuudax75G1PJyQ=; b=fXP8kj+PXuOe+q7g
-	HWsi8AXR6+2S/YJFvJyjo5B8/J8SZ/PgjJZO+Of52bB+dOlv0zVbDyo/ZwPfaUmy
-	T3dc7TaemCDJOGzhqR7vOZ5PZvsN8jzFTQXYkmjMRyAJMFKISkyNL2rlBbnuyv56
-	D7ZrKg1d7ky6Z4zHKE42/TKGZ1AzcQWvDm9hrj1RWI0y1ViwXfIJY7ej/8sxyDDE
-	yqwdaL/YXHxf9ARpkUqKqZYDN9gw8BSFqAvoUjAkj9kYdIpoNL+GOcw1YodPvNo8
-	C+0wmzDmwWEaFlvmiGNP3+u5tRGT9M3ZfaKok2qAUL4JUgdx6gdntFeybkG92w74
-	CNu3JA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43jfg8ru40-1
+	s=arc-20240116; t=1734343369; c=relaxed/simple;
+	bh=fdcJgULOjQL+Z6+pomzxQPrgHzhLspJqOhTDyxL5yBk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=HTomKNTHliBvvtfcNX1TC86ttEsRcFlxWBitZBNXBFyIMmLTnYs0YGUZbNFVzgIS3hqWbuR19esozUqn1v+ruNHdSGLa6VIC5uvvTkoEO8cQl6V2rzjAr2aBJaI0yE1Li+6Tb3tTSxBxaPNmB0JfoVxs2unS3PwnuB2rL6jHad8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T9pqEC0p; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG3qPq8011656;
+	Mon, 16 Dec 2024 10:02:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=GMfSVZ
+	rUKd+3JsU6/oSzmVKPJb1iTEVgft5NcsULspk=; b=T9pqEC0p1qUk7+oYu3PIQq
+	CSz5mDb6lSXiu2sX0KHl5RKrS7i6NGrXe4fhWxF/c4KlTTxeaZ22eMoC9fTpxNRc
+	BoWbVYzCXD54smos6ME2OZx8228kApWFBt3vfO0BLgj96e3CZha7ecM8K1UPk+Q7
+	mtoo1g1yaNSpQoaGtwfRwIwN+GIQAUyzo8gRkisJNnyhoPpFLRkwrBCkrpW4r/t2
+	eW/2sl8bM+6sZmnX3hF86fKZBevqeQGgrUMqor/3HAfZzwwsR6RAv0P1gcmIAyNU
+	3pezeX86vscGEMXEIS+RUF/in5XqFYoSS1coWy1ecUfcRnkmMHrkAx5NpnjtpsiA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpb1h8g-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 11:05:23 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 61FE540046;
-	Mon, 16 Dec 2024 11:03:58 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AF45826AD7C;
-	Mon, 16 Dec 2024 11:02:09 +0100 (CET)
-Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 16 Dec
- 2024 11:02:08 +0100
-Message-ID: <4e257489-4d90-4e47-a4d9-a2444627c356@foss.st.com>
-Date: Mon, 16 Dec 2024 11:02:07 +0100
+	Mon, 16 Dec 2024 10:02:39 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BG9vNn3003775;
+	Mon, 16 Dec 2024 10:02:39 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jcpb1h8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 10:02:39 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG8JUWY029329;
+	Mon, 16 Dec 2024 10:02:37 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hmbsdk8n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 10:02:37 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGA2Ykw48759252
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 10:02:34 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5D76020063;
+	Mon, 16 Dec 2024 10:02:34 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 58F192005A;
+	Mon, 16 Dec 2024 10:02:27 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.241.124])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 16 Dec 2024 10:02:26 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] PCI: stm32: Add PCIe endpoint support for
- STM32MP25
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
-        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241126155119.1574564-1-christian.bruel@foss.st.com>
- <20241126155119.1574564-5-christian.bruel@foss.st.com>
- <20241203152230.5mdrt27u5u5ecwcz@thinkpad>
-Content-Language: en-US
-From: Christian Bruel <christian.bruel@foss.st.com>
-In-Reply-To: <20241203152230.5mdrt27u5u5ecwcz@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH] tools/perf/arch/powerpc: Add register mask for power11
+ PVR in extended regs
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <2907ca2f-b973-42fd-ae03-99732dfda7a1@linux.ibm.com>
+Date: Mon, 16 Dec 2024 15:32:12 +0530
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.ibm.com, disgoel@linux.vnet.ibm.com,
+        hbathini@linux.ibm.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0402AAF0-5498-48C7-BEBA-2C0B7508D9E2@linux.vnet.ibm.com>
+References: <20241206135637.36166-1-atrajeev@linux.vnet.ibm.com>
+ <2907ca2f-b973-42fd-ae03-99732dfda7a1@linux.ibm.com>
+To: kajoljain <kjain@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: r-IvdmR-sjJKaBbc_LpFv8jeup8W4K4o
+X-Proofpoint-GUID: pkGSb33H05pQcJrbwsQWXg2E2tI0LIeF
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 spamscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412160083
 
-Hi Manivanna,
 
-On 12/3/24 16:22, Manivannan Sadhasivam wrote:
-> On Tue, Nov 26, 2024 at 04:51:18PM +0100, Christian Bruel wrote:
-> 
-> [...]
-> 
->> +static int stm32_pcie_start_link(struct dw_pcie *pci)
->> +{
->> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
->> +	int ret;
->> +
->> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
->> +		dev_dbg(pci->dev, "Link is already enabled\n");
->> +		return 0;
->> +	}
->> +
->> +	ret = stm32_pcie_enable_link(pci);
->> +	if (ret) {
->> +		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
->> +		return ret;
->> +	}
-> 
-> How the REFCLK is supplied to the endpoint? From host or generated locally?
 
- From Host only, we don't support the separated clock model.
+> On 11 Dec 2024, at 5:32=E2=80=AFPM, kajoljain <kjain@linux.ibm.com> =
+wrote:
+>=20
+>=20
+>=20
+> On 12/6/24 19:26, Athira Rajeev wrote:
+>> Perf tools side uses extended mask to display the platform
+>> supported register names (with -I? option) to the user
+>> and also send this mask to the kernel to capture the extended =
+registers
+>> as part of each sample. This mask value is decided based on
+>> the processor version ( from PVR ).
+>>=20
+>> Add PVR value for power11 to enable capturing the extended regs
+>> as part of sample in power11.
+>=20
+> Patch looks fine to me.
+>=20
+> Reviewed-by: Kajol Jain <kjain@linux.ibm.com>
 
-> 
->> +
->> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
->> +
->> +	enable_irq(stm32_pcie->perst_irq);
->> +
->> +	return 0;
->> +}
->> +
->> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
->> +{
->> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
->> +
->> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
->> +		dev_dbg(pci->dev, "Link is already disabled\n");
->> +		return;
->> +	}
->> +
->> +	disable_irq(stm32_pcie->perst_irq);
->> +
->> +	stm32_pcie_disable_link(pci);
->> +
->> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
->> +}
->> +
->> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->> +				unsigned int type, u16 interrupt_num)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +
->> +	switch (type) {
->> +	case PCI_IRQ_INTX:
->> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
->> +	case PCI_IRQ_MSI:
->> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
->> +	default:
->> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
->> +		return -EINVAL;
->> +	}
->> +}
->> +
->> +static const struct pci_epc_features stm32_pcie_epc_features = {
->> +	.msi_capable = true,
->> +	.align = 1 << 16,
-> 
-> Use SZ_64K
-> 
+Hi
 
-OK
-
->> +};
->> +
-> 
-> [...]
-> 
->> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
->> +			     struct platform_device *pdev)
->> +{
->> +	struct dw_pcie *pci = stm32_pcie->pci;
->> +	struct dw_pcie_ep *ep = &pci->ep;
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
->> +				 STM32MP25_PCIECR_TYPE_MASK,
->> +				 STM32MP25_PCIECR_EP);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret < 0) {
->> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
->> +		return ret;
->> +	}
-> 
-> You might want to do runtime resume before accessing regmap.
-
-OK
-
->> +
->> +	reset_control_assert(stm32_pcie->rst);
->> +	reset_control_deassert(stm32_pcie->rst);
->> +
->> +	ep->ops = &stm32_pcie_ep_ops;
->> +
->> +	ret = dw_pcie_ep_init(ep);
->> +	if (ret) {
->> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
->> +		goto err_init;
->> +	}
->> +
->> +	ret = stm32_pcie_enable_resources(stm32_pcie);
->> +	if (ret) {
->> +		dev_err(dev, "failed to enable resources: %d\n", ret);
->> +		goto err_clk;
->> +	}
->> +
->> +	ret = dw_pcie_ep_init_registers(ep);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
->> +		goto err_init_regs;
->> +	}
->> +
->> +	pci_epc_init_notify(ep->epc);
->> +
->> +	return 0;
->> +
->> +err_init_regs:
->> +	stm32_pcie_disable_resources(stm32_pcie);
->> +
->> +err_clk:
->> +	dw_pcie_ep_deinit(ep);
->> +
->> +err_init:
->> +	pm_runtime_put_sync(dev);
->> +	return ret;
->> +}
->> +
->> +static int stm32_pcie_probe(struct platform_device *pdev)
->> +{
->> +	struct stm32_pcie *stm32_pcie;
->> +	struct dw_pcie *dw;
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
->> +	if (!stm32_pcie)
->> +		return -ENOMEM;
->> +
->> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
->> +	if (!dw)
->> +		return -ENOMEM;
-> 
-> Why can't you allocate it statically inside 'struct stm32_pcie'?
-
-Will do
-
-> 
->> +
->> +	stm32_pcie->pci = dw;
->> +
->> +	dw->dev = dev;
->> +	dw->ops = &dw_pcie_ops;
->> +
->> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
->> +	if (IS_ERR(stm32_pcie->regmap))
->> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
->> +				     "No syscfg specified\n");
->> +
->> +	stm32_pcie->phy = devm_phy_get(dev, "pcie-phy");
->> +	if (IS_ERR(stm32_pcie->phy))
->> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
->> +				     "failed to get pcie-phy\n");
->> +
->> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
->> +	if (IS_ERR(stm32_pcie->clk))
->> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
->> +				     "Failed to get PCIe clock source\n");
->> +
->> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
->> +	if (IS_ERR(stm32_pcie->rst))
->> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
->> +				     "Failed to get PCIe reset\n");
->> +
->> +	stm32_pcie->perst_gpio = devm_gpiod_get(dev, "reset", GPIOD_IN);
->> +	if (IS_ERR(stm32_pcie->perst_gpio))
->> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
->> +				     "Failed to get reset GPIO\n");
->> +
->> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
-> 
-> Hmm, so PHY mode is common for both endpoint and host?
-
-Yes it is. We need to init the phy here because it is a clock source for 
-the PCIe core clk
+Can we please pull in this patch if it looks fine.
 
 Thanks
+Athira
+>=20
+>=20
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>>=20
+>> tools/perf/arch/powerpc/util/perf_regs.c | 3 ++-
+>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/tools/perf/arch/powerpc/util/perf_regs.c =
+b/tools/perf/arch/powerpc/util/perf_regs.c
+>> index e8e6e6fc6f17..bd36cfd420a2 100644
+>> --- a/tools/perf/arch/powerpc/util/perf_regs.c
+>> +++ b/tools/perf/arch/powerpc/util/perf_regs.c
+>> @@ -16,6 +16,7 @@
+>>=20
+>> #define PVR_POWER9 0x004E
+>> #define PVR_POWER10 0x0080
+>> +#define PVR_POWER11 0x0082
+>>=20
+>> static const struct sample_reg sample_reg_masks[] =3D {
+>> SMPL_REG(r0, PERF_REG_POWERPC_R0),
+>> @@ -207,7 +208,7 @@ uint64_t arch__intr_reg_mask(void)
+>> version =3D (((mfspr(SPRN_PVR)) >>  16) & 0xFFFF);
+>> if (version =3D=3D PVR_POWER9)
+>> extended_mask =3D PERF_REG_PMU_MASK_300;
+>> - else if (version =3D=3D PVR_POWER10)
+>> + else if ((version =3D=3D PVR_POWER10) || (version =3D=3D =
+PVR_POWER11))
+>> extended_mask =3D PERF_REG_PMU_MASK_31;
+>> else
+>> return mask;
+>=20
 
-Christian
-
-> 
-> - Mani
-> 
 
