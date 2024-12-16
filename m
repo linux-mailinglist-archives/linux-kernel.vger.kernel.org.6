@@ -1,92 +1,166 @@
-Return-Path: <linux-kernel+bounces-447472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67119F32FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 565879F3309
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B778E18823D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150D518894D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A831C205ADE;
-	Mon, 16 Dec 2024 14:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA588205E2E;
+	Mon, 16 Dec 2024 14:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTFUOHlW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="aM+vlB7q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LL3bWYPF"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C5020629F;
-	Mon, 16 Dec 2024 14:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025FB1EEE0;
+	Mon, 16 Dec 2024 14:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358729; cv=none; b=HFDediiUxBQlW6tAHNk59Po3w8Osz/5j1bxClAiezSazs5yukOB266g9BMuS11GfEbNuuPOE3HyJ1zxF0uFf5NJ6DkdQ9xIFQWkDAUUJRIGMk5OOSy+uSlmP4DJEATDABfvLR4G5NS/OkjeTh9v/AapYMylJD45vDg13iBMZiPo=
+	t=1734358805; cv=none; b=OwJ2LiYqM6ND6YhtAaSZcFZxDb27M2/68vlMTyuSXC8TyiVthIAT6qnDTIQsizMmGjSf3Ni6XpuJdZurUxYEbzwyZxi4QnIjw9vsNZMWu8Q2YzV8ZAdgDrcCwtHchSWkhoEom7B452U5/C0uxf39JvokHqNiJNsvcUJHYA+9rwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734358729; c=relaxed/simple;
-	bh=r6E23SJ4NnZ0p4J6lfmWJy3886HYCKhaM5ebito097Q=;
+	s=arc-20240116; t=1734358805; c=relaxed/simple;
+	bh=Tweej7hC2L9VaOw7rmTTdv3IYjt7RDJwGMsELhe/dho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwIRlhNcx1YGfHrH2xkkFqG6gGTK718TFxMX9vAedUEVEr0vaNc5qkB2/3YyUKniZWdIcOtzWAj6scwsFGOYZuOAeJjxrSg+MbKSuNnGX9A33iSzElv6mTvySxFnJZcXpgt0GO/q2jbIr3B4ZmwXqqga90yVDJjKx0aKseYbXbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTFUOHlW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5631CC4CED7;
-	Mon, 16 Dec 2024 14:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734358728;
-	bh=r6E23SJ4NnZ0p4J6lfmWJy3886HYCKhaM5ebito097Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NTFUOHlWU9dh0laVfqTmC8ijE2UkEjvZVlVxgqpslvt8Zz3fLqFDZ2K0t2mYgylcH
-	 chBzA4IVhAjg1gnwmv2Wz036/a5CtySTl2dqMFYk4gldmv3D2UmzI8z67o8H0z+CNB
-	 xALkysus5ZvsIi1IkM2Dx40oyYI2X4j5wEcCBZYjV0jhlgiXeif+TfrrQ/ivSgSLmY
-	 zN9KaAZz+6VNQ7r1z+XSU1pfd0Y8O+DEPNo2XdxA1d6Sm5791Azc5GEM2T7MxemRmW
-	 fbEjXc17ZFqF+r2mcFv30/jdJi+cfqCjPQQ9iEd0k64aGsrQnDZLgOuCZPh85JoQQP
-	 Hc8XOm6nl4Sfg==
-Date: Mon, 16 Dec 2024 08:18:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	willmcvicker@google.com, kernel-team@android.com
-Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for
- gs101-pmu
-Message-ID: <20241216141846.GA71151-robh@kernel.org>
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
- <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6zva1QWzN0j0Nr5oXvLp19jAzJUk+knhex6JFwwl2g41YN7SqzqBW8d1Tno308UnKM2AcVcPZ9jX51WHjW/TOnUAqRR+AiX3Gzg29qdgPaMxpyiZKk9oa5C3pfO0kmJ/kLBd7vpG7HlRnGtcggCZbHe2r8XllfQ+4qkeVWJd5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=aM+vlB7q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LL3bWYPF; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id AB3361140164;
+	Mon, 16 Dec 2024 09:20:00 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 16 Dec 2024 09:20:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1734358800; x=
+	1734445200; bh=XGcurLKIDnOqFOPyFDifM0TD7G50AKV8V+HLKIswVfo=; b=a
+	M+vlB7qG9+O8XGN3kM8Ol5hOvq4H7BI8MYBZVoORuNDV8I1FcJ7kBOnTY+8eQZRE
+	6EJiZARKVqqeemobY/tH9QCt5kv7P8+Vl28183hTXI+7zax6h0ighGqk8YfDe9pv
+	TnwUxCBMgW5ivnhWswgVEtenrCK+gmHimQAJR6CrxakVjWAevMMMsVEODuzR+vfN
+	dDkjg+C+XFozLdxcOjC3MS2j4vuF5romE6giMjaGRwiNUjwRbtY9spkXBBeneF1g
+	5FHPDZHVUobnfdjK4P3r5YTTw6MX+6anQ5WyReXfB75JhI85fH9ek6LVAV6svrrS
+	9Vv4JZ9LTKCWZdIQIldiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734358800; x=1734445200; bh=XGcurLKIDnOqFOPyFDifM0TD7G50AKV8V+H
+	LKIswVfo=; b=LL3bWYPFSTLqkOxTvA43j6n9YdZnFtWQ7R2iitkjkIQY5Fl4X3R
+	yp8LEXHeNBrU6BO9Cx3wPmrzHr1aQi4O9veJKreigEFEAAPv4H3SKKe/5F+Ca9u4
+	i0dK+BmFbRZYGliqY1SsM8Ranv2m1Mr4HCYcWe5flpzvcGn75nXurHRz4xcOqYf9
+	OMpk7BNQvCclaKhEZHMdZK/9hNCFXvnt8k3/7d9T55C85aHEcSGgkJ6bjBloYt4B
+	HriKvtVdVMCirPLuJfxGnZwP3nP5xkrAUYeOLliTWyfq18Gd744G0TkhK8KsZkDQ
+	Qjl/uGGcaju6GJSvM9NgndKp4Jmsbizna/Q==
+X-ME-Sender: <xms:DzdgZ6fUiDMe9bLeYgxgDRxm6qOhG6srQfBGh7MStXgyUCZVZ_vYzw>
+    <xme:DzdgZ0OxOgQ9gdUOuYCXGf05pDYyrRtZhz3-7mna0O85kcQbej_CVLQe3zsl5aJOL
+    oYbwVGZYv-2Z3n8660>
+X-ME-Received: <xmr:DzdgZ7gDZANjjtJidBMsqCwuDdiWA2D67jOP-b5PlqwFq9blW6y9BNusRBtr>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleefgdeivdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
+    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    eprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
+X-ME-Proxy: <xmx:DzdgZ39RcI-HODQ8lsH5r9DnC5VRd1ItG4tM09Uim66-L03zmPqyqw>
+    <xmx:DzdgZ2uRYnvBNCCeen_y0m2R2WBFgA2ajSnBQNCmM9KQ3-_pthsBUQ>
+    <xmx:DzdgZ-GoKHH1ilGo131TTK9a_NpAN0IZxqBlAMyulmrUNtTIzfeVbg>
+    <xmx:DzdgZ1OfE_asBh2sWZ38DT-Mvionha0SBdQDfr1bqEdKXkhHo70KDQ>
+    <xmx:EDdgZ2EmKcCruuqqYMoW1w2w-6CHNVfBcBxyPgz-OQpuMipdgmEJXo5j>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 16 Dec 2024 09:19:59 -0500 (EST)
+Date: Mon, 16 Dec 2024 15:19:57 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+	dsahern@kernel.org
+Subject: Re: [PATCH net-next v15 11/22] ovpn: implement TCP transport
+Message-ID: <Z2A3DW2GeMVzBa4R@hog>
+References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
+ <20241211-b4-ovpn-v15-11-314e2cad0618@openvpn.net>
+ <Z2AyLOMazyOCDopc@hog>
+ <dcb961a8-e0ba-49ea-b1ef-f52439713588@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
+In-Reply-To: <dcb961a8-e0ba-49ea-b1ef-f52439713588@openvpn.net>
 
-On Fri, Dec 13, 2024 at 04:44:39PM +0000, Peter Griffin wrote:
-> To avoid dtschema warnings allow google,gs101-pmu to have
-> two reg regions.
-
-It's not a "simple" syscon if you have 2 regions, so put it in its own 
-schema doc.
-
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> I don't really like this patch, but also didn't want to submit the series
-> with a dtschema warning ;-)
+2024-12-16, 15:09:17 +0100, Antonio Quartulli wrote:
+> On 16/12/2024 14:59, Sabrina Dubroca wrote:
+> > 2024-12-11, 22:15:15 +0100, Antonio Quartulli wrote:
+> > > +static void ovpn_tcp_close(struct sock *sk, long timeout)
+> > > +{
+> > > +	struct ovpn_socket *sock;
+> > > +
+> > > +	rcu_read_lock();
+> > 
+> > [can't sleep until unlock]
+> > 
+> > > +	sock = rcu_dereference_sk_user_data(sk);
+> > > +
+> > > +	strp_stop(&sock->peer->tcp.strp);
+> > > +
+> > > +	tcp_close(sk, timeout);
+> > 
+> > 
+> >      void tcp_close(struct sock *sk, long timeout)
+> >      {
+> >      	lock_sock(sk);
+> > 
+> > but this can sleep.
 > 
-> Possibly a better solution is when Robs patch
-> `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
+> Ouch.. I wonder why I have never seen the might_sleep() trigger this, but
+> probably that's due to the fact that we hardly hit this cb in the classic
+> use case.
+
+Probably. You'd only see it when you close the TCP socket before
+detaching (otherwise the close CB is restored to tcp_close), which I
+guess ovpn never does.
+
 > 
-> gets updated with a v2, we could remove syscon compatible from
-> gs101.dtsi (an ABI issue). If I understood his patch correctly,
-> it would mean this yaml update would then no longer be required.
+> > 
+> > Is there anything that prevents delaying tcp_close until after
+> > ovpn_peer_del and rcu_read_unlock?
+> 
+> not really.
+> 
+> > 
+> > > +	ovpn_peer_del(sock->peer, OVPN_DEL_PEER_REASON_TRANSPORT_ERROR);
+> > > +	rcu_read_unlock();
+> 
+> I will move the tcp_close() here.
 
-Whether you can tolerate an ABI issue is up to you.
+Thanks.
 
-Rob
+-- 
+Sabrina
 
