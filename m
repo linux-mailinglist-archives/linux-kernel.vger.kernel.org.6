@@ -1,333 +1,211 @@
-Return-Path: <linux-kernel+bounces-447370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3129F3145
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:10:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7239F3149
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5457318839A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:10:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873601883760
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77866205E11;
-	Mon, 16 Dec 2024 13:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCB020550E;
+	Mon, 16 Dec 2024 13:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fbli0Etb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fzXJubo4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D56205AAF
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354574; cv=none; b=LkBTDU+SwIOJzocaqe1E8wbsoBXv/53HH7Gl872rMyFkQpg0n63uY4xUPz2twCjLBCeWRPJqUWLf2E3bsEuZU14Yi6TUT50UGiZ7VPS/2FaaCvaqhjuD2O8kotxHhmqlcby5h+KYVP3NH6TyibShea4x2by+hZANCzm44/ePoiQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354574; c=relaxed/simple;
-	bh=T70vG6L8jn8l8he2hnx4huyfOdSMAiIoBEhRIs90Qaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b3/nduBzwDt1oce4AqKCQwQ8fMEqtsjR3ccgQ+fksFc/Fftj/7owsvERNSYw/roaWU1MolQdnrsjxZFALjgj0VTb+Wae8vEd4q9x01qc0AYi6+r/bK6x9oatpoiRDG+T2rqJ18UUlrtaUi0SHNe93cJMjdYsSrLyPtsCz4gc8Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fbli0Etb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734354572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uZtDN64Xh2i1EouKa8fldcRUrzUUze6qMnOFRIwRqYA=;
-	b=fbli0Etb69xd47RyS7Jvx34l+cvwN+zS0JYqfzeyqmPvxpLa0zJ3IsEnTJ21xAMGC4MGGj
-	UQ6IeuVFaRRDsg2qlG54wsSnH5u4IuecA/a8kTzolY5dZaN6ApksGiTXPR8fODP1Rq4qsi
-	/KwT2t/5h3DudZVg0VARVDvjqZbRfD0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-70-MiaLR4PnNt-nwN18nbzrrQ-1; Mon,
- 16 Dec 2024 08:09:29 -0500
-X-MC-Unique: MiaLR4PnNt-nwN18nbzrrQ-1
-X-Mimecast-MFC-AGG-ID: MiaLR4PnNt-nwN18nbzrrQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 101CD19560B3;
-	Mon, 16 Dec 2024 13:09:28 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.193.102])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E51BA1956052;
-	Mon, 16 Dec 2024 13:09:24 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Shuah Khan <shuah@kernel.org>
-Subject: [PATCH v3 3/3] rseq/selftests: Add test for mm_cid compaction
-Date: Mon, 16 Dec 2024 14:09:09 +0100
-Message-ID: <20241216130909.240042-4-gmonaco@redhat.com>
-In-Reply-To: <20241216130909.240042-1-gmonaco@redhat.com>
-References: <20241216130909.240042-1-gmonaco@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA002054FE;
+	Mon, 16 Dec 2024 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734354590; cv=fail; b=SUVbN9qLye7xqC7idSyqyr99OcIW88uGHAG+xdBV8KQYYFluKHvSKVrfDmZx8W7bus8nOHplkAqxaiJzVtHfu9NGIyCBRtRLsfmwT+doWuv4C2aooHIBa2/sMGYrUO8oMwPakC3g3qHp4P515gQKaIBJ2AtyWd6bWjPcwy4WTG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734354590; c=relaxed/simple;
+	bh=57UR0fWG9Q+ErzUnmU1qhqf7Ea3HHoADNbJ5sJ+OxvY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BL128/j0V90q54bi87mx/biww/iKfAt9GP8+4oIjHSNkyHbEeb0fSzZ9AZ2owxVF1nX3l/hVThkqE58ahrJQe4MUgCEnK1DhNHHG+5aTUOPXhAQhM0MQwIP3TnowSnJMFhGAZyo8E2x8ZGNT85pdNpq/PIAeOL93/PFoTt2qVFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fzXJubo4; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734354588; x=1765890588;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=57UR0fWG9Q+ErzUnmU1qhqf7Ea3HHoADNbJ5sJ+OxvY=;
+  b=fzXJubo4jEt8kkhqQ12gbK+j22QtaZ4YGJLhc99aULWs2fsSi3KYfLjZ
+   XX09mQe+fSfdtPuUcMNj7b/M2LrergE9a/f29wuzWewnOFeej/52CSBAT
+   itASdjeSBDzxggwGslWD1Lcw6RXS/IsBRUVMZtow8xRg8NY2lf7Zr7vUH
+   7fr6UDvSu3w5zcBd6t4O7SHXKdcN6pc22TskNiQD5IEAS7KdNj5+eVkuG
+   XTwtWfIBlIk14HIOlJqAYFvS/9HULHqS2cNJHAgUGH7XBMre+fHPLRtdB
+   7g6eq9EOdw/FCZ//7tDLcQ2OI5bZ0xE69tDp6Xh3YQ13z6T/8HiwpMFMX
+   Q==;
+X-CSE-ConnectionGUID: vzJ/rd1ESba6yCbrWtZVRg==
+X-CSE-MsgGUID: Ns/W2dOPTQiahtwT73S4Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46131118"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="46131118"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:09:48 -0800
+X-CSE-ConnectionGUID: gUmwge+fTfqZGS7Rg7Cl3w==
+X-CSE-MsgGUID: LEc0qDEwQY+aKRnvSyirjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="102216633"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Dec 2024 05:09:48 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:09:47 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Mon, 16 Dec 2024 05:09:47 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:09:47 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WUKbFhRrU8rdrC0KwSQ1mEIHX1FmEhdlmvHh5zMn21aSCjgHXLOVxH3qe2zV++aGfaefeVp6tew/nNGh6JvntKSL7VDf8cMAgp/hVM+W/ph+rhh6tnIbGF7fTvKDYAo5lppJIx/O3bZHwmbYEFMV5FRJq+Q3T3eoa2d0QQPojRMrUUPHVDLfde6l035o/4dZGx5gx9pp//hxQH1idWHYF75fchSLky53jehJYnFmx72ccs8JuDUfkgWhBzOmtC2KzAIofmj4R2ix754sYBxce64sft3S/jBIGEU2nEMVNmaLaLvBr9RFGR3Q3kLpCv/eSZBoonmhmXaB2WA/LKMXJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d6vQm/gV59eMVQbLKxetpUhiY2Ed2xDcrG5MjWH5sYA=;
+ b=O1vaqNGTDkog6cZdABA2xBYgqzdz5TGlWLAdxmHPOCcWCVRX1l11qCOYoCfI1ZSFrhH+7PyLklzCUsBvbWaZtmMFGKGEZnH3a6QDF/51ClD2++HRt70WFyrAQeCB7P6WcqrXjGScIaFYwqGgKM1XecH5XgHMi6LrMcIeAC/2oUhC7Vc1zZeG8KdgU4afI8Ul82WCnIthu2oQJqpvyZDYHQihau1ss7btULGZawdYcaUaxETDsnUoQPQBb0nqPylWO2eP3QTASz5yrzazPG9p+bhXd+esX98iycfX+an5PDyUxRDyHcHUJRxRNI+VBh6SOM75phW2rysU2bBmfSWKIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
+ by DS0PR11MB6471.namprd11.prod.outlook.com (2603:10b6:8:c1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
+ 2024 13:09:45 +0000
+Received: from MN0PR11MB6231.namprd11.prod.outlook.com
+ ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
+ ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 13:09:45 +0000
+Date: Mon, 16 Dec 2024 14:09:39 +0100
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+CC: <shuah@kernel.org>, <fenghua.yu@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
+Subject: Re: [PATCH v7 0/2] selftests/resctrl: SNC kernel support discovery
+Message-ID: <artiz7pangcy2bgfyhbhiv3rag2p4idyf4s56n4chat7cfuxtf@mj2bj3hejgge>
+References: <cover.1733741950.git.maciej.wieczor-retman@intel.com>
+ <ca2b665a-79da-40b6-93e1-533fe1c46cda@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca2b665a-79da-40b6-93e1-533fe1c46cda@intel.com>
+X-ClientProxiedBy: DU7P251CA0015.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:551::6) To MN0PR11MB6231.namprd11.prod.outlook.com
+ (2603:10b6:208:3c4::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|DS0PR11MB6471:EE_
+X-MS-Office365-Filtering-Correlation-Id: 955db382-0cbd-4b8f-4a85-08dd1dd2e91f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?9TktmFPDZKoOLtudhQ3uIiQdS5cvVI8D0stJzm36l9M09e/I87M2XQbYpM?=
+ =?iso-8859-1?Q?PpU1aSW8AMOsyxUA+luMQZoSfdwBxa+HPar39VLuf7zmBpTE6f/p7hRDgq?=
+ =?iso-8859-1?Q?rUJEXQ/LKXBpPqMeWYda2NTGZtBFKSjq9j+4T/Yn+kd2fbedUdq0ECqara?=
+ =?iso-8859-1?Q?F5ixQPoNGLg1jBwPazgI4B+a5gZZlrqsM35GVf9JF8pfQD7agLfU4UU+q2?=
+ =?iso-8859-1?Q?gYvJXNk8uwvztSg7sGkK9g1ryxFGm6FyRDXP3ExIY3iNfxXHuAqvGL4255?=
+ =?iso-8859-1?Q?X4Qdo4SVqu+3wo+eEDW8VDtU262SwvgwP0vpijEQSnxbmfg6QUSivdVcy9?=
+ =?iso-8859-1?Q?AFrlbhl3mv5GVARwC+4BKTNFCF/lKI43h0OFOvV6yev9OLko0wjdIvplxD?=
+ =?iso-8859-1?Q?orfkkJsREZ8Ju1hLiFWPy5sxDppy3ojrXnYuPVzb8OynwM7Qd7pbUKcU5S?=
+ =?iso-8859-1?Q?qWKVAIS0c3Mh3wOU+oIuJToQU040Pd2XxDqoq3SHrFFhYZWfCUD97PTUqR?=
+ =?iso-8859-1?Q?Z8Kta5VQv0vNBUQ6/XhTo+JABp8kbGxSqP++p90163H1RuwLnLYJOqx6NE?=
+ =?iso-8859-1?Q?x3a7/xu40sur4AK5W83klE3bUkkif8iFNj8FBuNDraaAtFg/a6YH0lZ5+L?=
+ =?iso-8859-1?Q?lohtW6zh0Tl3j1ObqIVMoAVffbP9U67q9reCA7Wg+MDIFfn9o8rDuWCl6C?=
+ =?iso-8859-1?Q?2V7q6CFj5kSeWeiKlyai8BpjmsxC4vNli7OiixXOiGE9/v9AgpGdnh3VG6?=
+ =?iso-8859-1?Q?WKkbzRGVzf2OO9uDYQP7J5dh5zRext0wCiJgs8c17HIkbEROuGTVPt+VC2?=
+ =?iso-8859-1?Q?y1V9F+vCr10qtRQLDpE29Wz+EGS6Qhmuxz1BjCO3IChx+2jx+XRAyIU8fY?=
+ =?iso-8859-1?Q?BZSmrviqoacMqS5qGeecEhKiFqTsvLk3R9Yz7ojGPMii9WOlwzaf6O4AXK?=
+ =?iso-8859-1?Q?h2wUKc5ZVme4oQZhTG411yDoK2vgdrLKSOLn3H1nlkitfav3HPxzoJuXoi?=
+ =?iso-8859-1?Q?6YH9TNntGEvUmN6AF4iMsGxoDrSE/+lDmIK/RWKXSOe8+iEsaedjr7aYAQ?=
+ =?iso-8859-1?Q?mYfkZ+qJv7ZJj5JqkA+EOFc6348p4crsbkikhbA2JUTs64WbC1QuimnHIx?=
+ =?iso-8859-1?Q?XiwGazATTFWvjwVkPViz2HdFXNCX1cklLyFq3cTBD2kqWPwdLzmO3nKg8A?=
+ =?iso-8859-1?Q?3JggYwL55gMNXe/rCmF3rmVQzWT9OQQOQ3SpzR4Jp3Yh/tsOkKBLjuAicv?=
+ =?iso-8859-1?Q?yZOyPqTc/AcBpvvWFswIA4PxvPbqCFVWzcJ9JucSGfmTiYH7bXwZ9S+iFd?=
+ =?iso-8859-1?Q?2YRf82KzD/sIQfkUe0958lBXUHycgsM3WyHYFZxchLdo3KR5YWfaeq7lii?=
+ =?iso-8859-1?Q?iMBGl2UGNNk5VDKCMRNakDqtNqaF66gjib3CyaNIXcDS7qBRqTCDlpvTOz?=
+ =?iso-8859-1?Q?J2GVfVsDzfRwA7om?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?OAmZ9Y0KMuByE4AGUcTSYj7Mvj6CFC5CDPi39mReWkPxmKPPCTVwZcqhat?=
+ =?iso-8859-1?Q?bAtizUIwNT6rdEaM23KuBbklw96vkEcKpcLM6ejjE6NCiFhyTifNvpHmOT?=
+ =?iso-8859-1?Q?qVB4uFIqn+JLlslQXA2PxyKe6n09tMSHBxgfG/eOZgcolMWJUnzXYj1Xqk?=
+ =?iso-8859-1?Q?Ek130cNyh0uqDH55ux2LgXsAucAOuJ6VB/Rztxrz8kfMNWoC7ra70NNxV3?=
+ =?iso-8859-1?Q?rw/XMHB4h1c3kzMHy/AyaLN6ijP0ZRRWt1jtGwbZE6lhC0c+dO3pWnnRGy?=
+ =?iso-8859-1?Q?JLtYTaHdVhnvJcEraOPU9Eyw+MX7TBjv9JbQDamFCdtqPrhVhFg/KnopQw?=
+ =?iso-8859-1?Q?Cv1oEE23iJrpB4lg49L7NeM/zZzDOjHe6i3FxXnmfzYOtqY+nqbNEoJGvC?=
+ =?iso-8859-1?Q?2+O039o74KfoVAYodkjyB/Wg/bscTRFGnnNV+OUR3GnUNlOgQEBIKAlXgG?=
+ =?iso-8859-1?Q?2kEUGiy+q3nbyyaknwWDaENTps8rcOxrzYaWaSJU3K1uCK+b1uKCymGoUw?=
+ =?iso-8859-1?Q?IQ9kuLvjAnI+jd4veGear7SsYlx/4Hf6Y6Ldjgx7PHUQRu29HGghbNhjmR?=
+ =?iso-8859-1?Q?cPaMnV81gAenL8/qgyMBJLaoarmknR3eU5v3U4mAl84Bq4OPQZWq4VHh5z?=
+ =?iso-8859-1?Q?bvPx3YdrDzQ5YCCpUQnr3Lihcb+STf9Pixk2dogOC1a43HOvvCo0of7vxq?=
+ =?iso-8859-1?Q?kidsmCL9yR76FYz9z3xhqBe2fXcZ68ueTlSv9r67nlnWJpuiFMomp7ygB8?=
+ =?iso-8859-1?Q?V1lMQl/XizxXh7PHnqLsYh+1xVWHlkAmxD44PUuLIECCZalqrdROTIqxRT?=
+ =?iso-8859-1?Q?KM9lRxx0tjwjo++HB2Jq8U8HUW/QLz4I4wNZluIlBODYjWwOgcjC50rONM?=
+ =?iso-8859-1?Q?SercjiMx6h4mCjWL7Y6ThmxHAnqC5p2Qv+zSQrlf0SBAUjOT4XnhL82Jjb?=
+ =?iso-8859-1?Q?G5Q7wmKhb0hyDIVixSOISikjbaqeja9xL2m1KrrjnEEiqOrXITPiwgIvKu?=
+ =?iso-8859-1?Q?m3vsE99QCYFz6kUPD4OMDtarpbBDNhGbHJXWyWqq5ygPHX/pbnpQEI+BFm?=
+ =?iso-8859-1?Q?/XY7JnYf1Cgh4SmupaTxYKT4RzuejaHyRF7W46H02pK2/gOirj00ukqRJS?=
+ =?iso-8859-1?Q?GYK3LtcYKu7d63nQC7TBGW9RGoDTu6Tot6mx94I7WpVD3BTwPyDJ382H0A?=
+ =?iso-8859-1?Q?9jbAfBOj1YFYKDuVeuAFZxZrYZOw0ALmQyjC5cLZiH7cLqNaGPOsJhuA3w?=
+ =?iso-8859-1?Q?rjucCGXQsBCcx1A5ULadQ6Detbyo1WkGjBMSPEorkpWeegMqi6U8e9mCRM?=
+ =?iso-8859-1?Q?NxkuHBOh+J8HVICZ5ZOIqwzE4qYjBbBl7g/tZMUMZVBJGBzvMgClAZdCAv?=
+ =?iso-8859-1?Q?ZQDgPPDelTa6NDh3NqDtD22amoV1RSsw4VSN2c/TuVvo/kagtULUhUh/lc?=
+ =?iso-8859-1?Q?EgmEXaXbeMM3U1K3eDeqd49Z/bLi+D/VJzc5spk1jObJHUdW83Y4yMlt8w?=
+ =?iso-8859-1?Q?s/TZz5pZIIGVBc+IAKN3ixwXKoR6WdDheT5q9BWRsouAmVkimidLV4y/mU?=
+ =?iso-8859-1?Q?evu65itUYn7dHVopXxomnjaODd4quPW/yei6KLm3oDHH0C5Axn9iuEOC/l?=
+ =?iso-8859-1?Q?w/rICQABxkJKLbcffRBQ/twj30WScraHd9t9WjBTcPMX19l0ceJxbCC0w+?=
+ =?iso-8859-1?Q?OqNjlbeRXOGD/mK6fAY=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 955db382-0cbd-4b8f-4a85-08dd1dd2e91f
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 13:09:45.0491
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KFJ1V6mCAioPHYXVXC0cY9pvbZ8L5N6ktgAg8A0Zm1YNClctdXpHdQmptwliPpKwH+NTBdrlggbXQ+SepaOeNEv49cTEwNNgKSDXtL2sxxo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6471
+X-OriginatorOrg: intel.com
 
-A task in the kernel (task_mm_cid_work) runs somewhat periodically to
-compact the mm_cid for each process, this test tries to validate that
-it runs correctly and timely.
+On 2024-12-09 at 11:19:32 -0800, Reinette Chatre wrote:
+>Hi Maciej,
+>
+>On 12/9/24 3:09 AM, Maciej Wieczor-Retman wrote:
+>> 
+>> Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
+>> into multiple NUMA nodes. When enabled, NUMA-aware applications can
+>> achieve better performance on bigger server platforms.
+>> 
+>> SNC support in the kernel was merged into x86/cache [1]. With SNC enabled
+>
+>Please note that this work has since been merged and can be found in
+>kernels starting with v6.11.
+>
+>Reinette
 
-The test spawns 1 thread pinned to each CPU, then each thread, including
-the main one, runs in short bursts for some time. During this period, the
-mm_cids should be spanning all numbers between 0 and nproc.
+Thanks, I'll correct my statement.
 
-At the end of this phase, a thread with high enough mm_cid (>= nproc/2)
-is selected to be the new leader, all other threads terminate.
-
-After some time, the only running thread should see 0 as mm_cid, if that
-doesn't happen, the compaction mechanism didn't work and the test fails.
-
-The test never fails if only 1 core is available, in which case, we
-cannot test anything as the only available mm_cid is 0.
-
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- tools/testing/selftests/rseq/.gitignore       |   1 +
- tools/testing/selftests/rseq/Makefile         |   2 +-
- .../selftests/rseq/mm_cid_compaction_test.c   | 190 ++++++++++++++++++
- 3 files changed, 192 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
-
-diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
-index 16496de5f6ce..2c89f97e4f73 100644
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -3,6 +3,7 @@ basic_percpu_ops_test
- basic_percpu_ops_mm_cid_test
- basic_test
- basic_rseq_op_test
-+mm_cid_compaction_test
- param_test
- param_test_benchmark
- param_test_compare_twice
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb58..ce1b38f46a35 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
- 
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
--		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
-+		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice mm_cid_compaction_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/mm_cid_compaction_test.c b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-new file mode 100644
-index 000000000000..e5557b38a4e9
---- /dev/null
-+++ b/tools/testing/selftests/rseq/mm_cid_compaction_test.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <stddef.h>
-+
-+#include "../kselftest.h"
-+#include "rseq.h"
-+
-+#define VERBOSE 0
-+#define printf_verbose(fmt, ...)                    \
-+	do {                                        \
-+		if (VERBOSE)                        \
-+			printf(fmt, ##__VA_ARGS__); \
-+	} while (0)
-+
-+/* 0.5 s */
-+#define RUNNER_PERIOD 500000
-+/* Number of runs before we terminate or get the token */
-+#define THREAD_RUNS 5
-+
-+/*
-+ * Number of times we check that the mm_cid were compacted.
-+ * Checks are repeated every RUNNER_PERIOD
-+ */
-+#define MM_CID_COMPACT_TIMEOUT 10
-+
-+struct thread_args {
-+	int cpu;
-+	int num_cpus;
-+	pthread_mutex_t *token;
-+	pthread_t *tinfo;
-+	struct thread_args *args_head;
-+};
-+
-+static void *thread_runner(void *arg)
-+{
-+	struct thread_args *args = arg;
-+	int i, ret, curr_mm_cid;
-+	cpu_set_t affinity;
-+
-+	CPU_ZERO(&affinity);
-+	CPU_SET(args->cpu, &affinity);
-+	ret = pthread_setaffinity_np(pthread_self(), sizeof(affinity), &affinity);
-+	if (ret) {
-+		fprintf(stderr,
-+			"Error: failed to set affinity to thread %d (%d): %s\n",
-+			args->cpu, ret, strerror(ret));
-+		assert(ret == 0);
-+	}
-+	for (i = 0; i < THREAD_RUNS; i++)
-+		usleep(RUNNER_PERIOD);
-+	curr_mm_cid = rseq_current_mm_cid();
-+	/*
-+	 * We select one thread with high enough mm_cid to be the new leader
-+	 * all other threads (including the main thread) will terminate
-+	 * After some time, the mm_cid of the only remaining thread should
-+	 * converge to 0, if not, the test fails
-+	 */
-+	if (curr_mm_cid >= args->num_cpus / 2 &&
-+	    !pthread_mutex_trylock(args->token)) {
-+		printf_verbose("cpu%d has %d and will be the new leader\n",
-+			       sched_getcpu(), curr_mm_cid);
-+		for (i = 0; i < args->num_cpus; i++) {
-+			if (args->tinfo[i] == pthread_self())
-+				continue;
-+			ret = pthread_join(args->tinfo[i], NULL);
-+			if (ret) {
-+				fprintf(stderr,
-+					"Error: failed to join thread %d (%d): %s\n",
-+					i, ret, strerror(ret));
-+				assert(ret == 0);
-+			}
-+		}
-+		free(args->tinfo);
-+		free(args->token);
-+		free(args->args_head);
-+
-+		for (i = 0; i < MM_CID_COMPACT_TIMEOUT; i++) {
-+			curr_mm_cid = rseq_current_mm_cid();
-+			printf_verbose("run %d: mm_cid %d on cpu%d\n", i,
-+				       curr_mm_cid, sched_getcpu());
-+			if (curr_mm_cid == 0) {
-+				printf_verbose(
-+					"mm_cids successfully compacted, exiting\n");
-+				pthread_exit(NULL);
-+			}
-+			usleep(RUNNER_PERIOD);
-+		}
-+		assert(false);
-+	}
-+	printf_verbose("cpu%d has %d and is going to terminate\n",
-+		       sched_getcpu(), curr_mm_cid);
-+	pthread_exit(NULL);
-+}
-+
-+void test_mm_cid_compaction(void)
-+{
-+	cpu_set_t affinity;
-+	int i, j, ret, num_threads;
-+	pthread_t *tinfo;
-+	pthread_mutex_t *token;
-+	struct thread_args *args;
-+
-+	sched_getaffinity(0, sizeof(affinity), &affinity);
-+	num_threads = CPU_COUNT(&affinity);
-+	tinfo = calloc(num_threads, sizeof(*tinfo));
-+	if (!tinfo) {
-+		fprintf(stderr, "Error: failed to allocate tinfo(%d): %s\n",
-+			errno, strerror(errno));
-+		assert(ret == 0);
-+	}
-+	args = calloc(num_threads, sizeof(*args));
-+	if (!args) {
-+		fprintf(stderr, "Error: failed to allocate args(%d): %s\n",
-+			errno, strerror(errno));
-+		assert(ret == 0);
-+	}
-+	token = calloc(num_threads, sizeof(*token));
-+	if (!token) {
-+		fprintf(stderr, "Error: failed to allocate token(%d): %s\n",
-+			errno, strerror(errno));
-+		assert(ret == 0);
-+	}
-+	if (num_threads == 1) {
-+		printf_verbose(
-+			"Running on a single cpu, cannot test anything\n");
-+		return;
-+	}
-+	pthread_mutex_init(token, NULL);
-+	/* The main thread runs on CPU0 */
-+	for (i = 0, j = 0; i < CPU_SETSIZE && j < num_threads; i++) {
-+		if (CPU_ISSET(i, &affinity)) {
-+			args[j].num_cpus = num_threads;
-+			args[j].tinfo = tinfo;
-+			args[j].token = token;
-+			args[j].cpu = i;
-+			args[j].args_head = args;
-+			if (!j) {
-+				/* The first thread is the main one */
-+				tinfo[0] = pthread_self();
-+				++j;
-+				continue;
-+			}
-+			ret = pthread_create(&tinfo[j], NULL, thread_runner,
-+					     &args[j]);
-+			if (ret) {
-+				fprintf(stderr,
-+					"Error: failed to create thread(%d): %s\n",
-+					ret, strerror(ret));
-+				assert(ret == 0);
-+			}
-+			++j;
-+		}
-+	}
-+	printf_verbose("Started %d threads\n", num_threads);
-+
-+	/* Also main thread will terminate if it is not selected as leader */
-+	thread_runner(&args[0]);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	if (rseq_register_current_thread()) {
-+		fprintf(stderr,
-+			"Error: rseq_register_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
-+		goto error;
-+	}
-+	if (!rseq_mm_cid_available()) {
-+		fprintf(stderr, "Error: rseq_mm_cid unavailable\n");
-+		goto error;
-+	}
-+	test_mm_cid_compaction();
-+	if (rseq_unregister_current_thread()) {
-+		fprintf(stderr,
-+			"Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
-+			errno, strerror(errno));
-+		goto error;
-+	}
-+	return 0;
-+
-+error:
-+	return -1;
-+}
 -- 
-2.47.1
-
+Kind regards
+Maciej Wieczór-Retman
 
