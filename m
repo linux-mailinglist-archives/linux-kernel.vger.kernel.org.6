@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-447212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B919F2EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:20:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29899F2F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0FFD166EDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DAF418853ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D43D2040BC;
-	Mon, 16 Dec 2024 11:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90D1204563;
+	Mon, 16 Dec 2024 11:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYcMGHKJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjbyiY94"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7A420100C;
-	Mon, 16 Dec 2024 11:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF1920100C;
+	Mon, 16 Dec 2024 11:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734348038; cv=none; b=NfCxS5hn2OAKezs7LV6F9CzujNIPYT1zQfIgXJvMxB+11gbx7gXJL80ezZ+0GyLR6akzFGQhDAmoV+l8fsmysyBPvqAAdEgm8TWjyHgu/y8UYHtjcdKoOXRqJjRHNY5E4ePSnhTTsUmDXy1GLVfzHcR4brTKgPsta9jZ72Z/czo=
+	t=1734348103; cv=none; b=TGdzkTx7jXuXuuDQr/PHAmhXgotQPdpZM71kR2sBjRXaYqrSvy+GLILgZOI3qgqLmtkHSfZ26PJN3oQYHsX/kq3j6GcrZYjx3Ma/uLA+p0DEBRl42u9o8GbyPmiFj7LgajtrqWYZLzUWWF1t/qy/7AB5CugvhJLQumKvGIaUV1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734348038; c=relaxed/simple;
-	bh=TfZiNn/kBFDqt3Y7WGY496OtgczFUJlmmxSq1EkrI+w=;
+	s=arc-20240116; t=1734348103; c=relaxed/simple;
+	bh=Ol6PtMikkJyTFr9dgZFn9grVHoVbWgOPbh/5kb0IPps=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nbouMUCMCvH3Kg1LJPfylJyiGgATPCfYU34879uYRKtSNQgyZCsCvIx0NWmNK/M3v0oMiuRrkDJnr/thxBGmPxOlAd5ENXxYes7bsCPb+H7Pv7Rl3CQG7gboxhOqKeWrzdcxI8RDe7GwnN/J2a7VuIEodqZ880jjFtww7DnZHUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYcMGHKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B39C4CED0;
-	Mon, 16 Dec 2024 11:20:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tVgRoOaGDtcPyraaYFdlsVcqNjXMCBCzZzaYwp01KhGIRkoAFb3JYDklHoskGdO16GrgT4s3fzP4LHh97qFMNh3L8mjnm8mTc57MTeLzWe9Yfezz8tHOrhGnukKeVrlc5Q9DWts51dp05fJY/XbZLOPxkZ3LfKafNisGNlXtRfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjbyiY94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF14FC4CED0;
+	Mon, 16 Dec 2024 11:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734348038;
-	bh=TfZiNn/kBFDqt3Y7WGY496OtgczFUJlmmxSq1EkrI+w=;
+	s=k20201202; t=1734348102;
+	bh=Ol6PtMikkJyTFr9dgZFn9grVHoVbWgOPbh/5kb0IPps=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OYcMGHKJC63ZqnSBvLa8udI6F9L723WK+2luRe3NL1VLMLiHWzDt9e4wNN1E7EtO9
-	 PlYLhrFdAYWcpfXJT1fOTMGGBugRjlay1YFiDCscVf3Rmf37xAm73TGRTqZd2bRwlI
-	 HIDcgMwYjUDT82GvHAbMwU6oLL2j+BqKLv3C4VD1eZQn/z1IXQ5NykeEP1MPHhjtwZ
-	 alxaB1YSE1SlWqRM+oRyGT3L4RmbBVerVE2p0ipJ0WQl7Ve6z4yLhfxqHDog2xAHob
-	 jcRYnxigBqDcQGIRitk5gzsOAviOggx5F41IFZv9jc83OeCU68dOzLZgoVHyWqqdjA
-	 Uu39aDEq7xMOA==
-Message-ID: <9bc048db-a4b9-42e5-ab66-261ef5b00e3a@kernel.org>
-Date: Mon, 16 Dec 2024 12:20:31 +0100
+	b=JjbyiY94xmLp6YSCuClK6PE+/i1JhmCAuGa+ZD5WssPls4G3jFGKrVkKZbXHDYZv4
+	 Deg6rUCVkUCLc5oVavAwrNwDtviwUmw9LkSIAZS/sujyyzWgoe3R+i3vYdDzd7ZB/l
+	 hhaqn0FmNWQVl/Jokn2kk/B4qb77HahMP9HbVWCqfVYCqrYC3uTjAbxyQxqXXYRfWQ
+	 ShhwTGC/6fLmp1k8JgnyT5ZSi+cLMk+bCtOwKB8AXdPlvndPmVlx6SCfik0hIAT7Ns
+	 JADs1znQoJoDceHJhVXSw0xr/d0zepyZQNLwSMoG2tLlCzqwYfESYRhy0lYVPNDrha
+	 NEs/V5V25AMIw==
+Message-ID: <3fe71f37-8737-43ed-a2dd-1435ece375e6@kernel.org>
+Date: Mon, 16 Dec 2024 12:21:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: Add support for master clock
- frequency
+Subject: Re: [PATCH v1 2/2] ASoC: sgtl5000: Introduce "mclk-rate" Property for
+ Device Tree Configuration
 To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
  Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -61,7 +61,7 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, quic_mohsquicinc.com@qualcomm.com,
  kernel@quicinc.com
 References: <20241216110341.3707-1-quic_pkumpatl@quicinc.com>
- <20241216110341.3707-2-quic_pkumpatl@quicinc.com>
+ <20241216110341.3707-3-quic_pkumpatl@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,22 +107,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241216110341.3707-2-quic_pkumpatl@quicinc.com>
+In-Reply-To: <20241216110341.3707-3-quic_pkumpatl@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/12/2024 12:03, Prasad Kumpatla wrote:
-> Introduce a property specifies the frequency of the master clock
-> provided to the codec slave. The slave has the capability to adjust
-> the frequency according to user needs in the defined range.
-
-
-You are duplicating existing assigned-clocks properties.
-
+> Introduce the "mclk-rate" property, enabling the configuration of the
+> Master Clock (MCLK) via the device tree. The Codec Slave supports
+> a defined range of frequencies, and users can request the desired rate
+> from the Master, using `clk_set_rate()`. If the property is not specified,
+> the default MCLK frequency will be applied.
 > 
-> Also fixed yamllint check errors.
+> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> ---
+>  sound/soc/codecs/sgtl5000.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+> index 7aa89e34657e..7e134a3219c7 100644
+> --- a/sound/soc/codecs/sgtl5000.c
+> +++ b/sound/soc/codecs/sgtl5000.c
+> @@ -1615,6 +1615,16 @@ static int sgtl5000_i2c_probe(struct i2c_client *client)
+>  		goto disable_regs;
+>  	}
+>  
+> +	if (!of_property_read_u32(np, "mclk-rate", &value)) {
 
-Which ones?
+No, NAK, you just reimplemented legacy clock-frequency property
+duplicating existing assigned-clocks properties.
 
 Best regards,
 Krzysztof
