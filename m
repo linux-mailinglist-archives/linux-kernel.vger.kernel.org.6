@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-447384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C49F3174
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:25:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E939F317A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31931887BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C680D164BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33C5204F6B;
-	Mon, 16 Dec 2024 13:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D656205E02;
+	Mon, 16 Dec 2024 13:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OCq5KQT+"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EUpcv9Jh"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EBB204C2C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AEB205AB1
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355534; cv=none; b=h5FrGanquAi1hU+4Cz2/Ru1L3VUcsyPNphJwOk6lDiFQRTmWnzonARm+12PhZVc6AhblNuV2MvbMWRn8sG6FNsRx71BvDnZ+YfmQqXc1j5p5ViX4OjDbGMjW0KAqXDmMdrO46TU42vviPhWnfDWOtdEdehC+nokUnEA5ekI8bJU=
+	t=1734355539; cv=none; b=FYJyE50qYvHrpJaWltW2ggAuKwyPr06t4bu8r6xvQGjeD65e2K9tlAECXCr3k1wxSpEf+lMB74+YDDM7QH71cfhiGBxZOySBDqNBFT1u8X9va9MkobFocF5cmdwRcTWfZd5lU4Y5QGnTUF4MnPM7Lvy1Ane1i6CI0U5QkKxJfws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355534; c=relaxed/simple;
-	bh=7ULigbOnnScbT/F4dUWjmj84HHqc3JQtskvaGcqB7D8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UlLmWaTprtGqpl3tfa++vHe5eAY+RjSGWEN2Knpun8E1BvrcK4Vdc0YndwRhPjbyDGvebqHcYiNivfnpvsn4nHkg4SiD34mivUnx57PhQwUP+GQCNUooxW7i1w1UEnUxpwgsxceF5M23EG4vtrcdjFyr5xxRThsFXXW55MdxC/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OCq5KQT+; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436345cc17bso17577065e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:25:30 -0800 (PST)
+	s=arc-20240116; t=1734355539; c=relaxed/simple;
+	bh=NndeOH6sd65ORicRkF+Jky+H97Q2/FBkQEok6InkZT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TJ2spYz6mRepW8WzpF08VO5Oe9gS8D3vOgFTI8biaV+cuz1LGyqB6WQ0G8ygpnwbvBMaS1QXqOSrC5QpWENCl4ozl74okxA2oHV38FDZS3aoh9+RJwy78SbfXtVS5gZLc0+ObAeC5RI2BYcYpATBlWLfVEzwmO8ikg7B2R7LNuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EUpcv9Jh; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385e2880606so3769195f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:25:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734355529; x=1734960329; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/+mqcC4nUfs+PmDPNc0X6w6K0gFUO863U6TSJc51xeI=;
-        b=OCq5KQT+qO38W7l3itxgjkRyrMvcatXrITT4hxtvSPxmQTBGFbSyN9JE3QGXSdxRJr
-         y1Jx0u6A4ThPIW9fMEXb+UKxPaZjC0EGhRS0wPUBZsNvCZzNzWHhVnFo7jOgfVkLpCQ6
-         /+C6PYUplV2Qa+ZJgkNJzFB5hUjb/mOXgdoORsj0YW7kwK0JyZFVlS/ziH3t7EzY4llv
-         C/8/IcGZvwjhal5pnHclD/vY251aXPeke5QkhB5VJw9mO8gMx04vD3R/YLaOX13T8+z5
-         Nx27VUsPkbT5q452wbAPmim6TsFKpuZf2OVVrT7nVGVUlyB1MLYiXXym8YBb/LWtCNam
-         TL/w==
+        d=suse.com; s=google; t=1734355536; x=1734960336; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=STePF4alhOUCMJb60WwslpIUy0epmImIHj5n/B736B8=;
+        b=EUpcv9JhDG+2+g4LGiJBH1hjfimm5Q0kzVNJbo3NAy1yLnwroXqbQ0NS/QZp5EYQVV
+         /5ImGO+ypVik5s8CR5Vcas9g9zsw8KiGgkktNCkfbrVT30JlWJRm9JScQfidsojKDP6F
+         LyqMVkm8eXmX87BJzpX5OFKwwtXff544hFQJS57sNf3lS6PQqdZwViSyNgKWRHDwq0ZR
+         MLC0oapa2oLutHV2lmPGbmwHMklOpIvP2sXkAK1dLPzoPodLhxemY1HBI/g7W0KhqPCM
+         HAJtOW1vcBxejpgdrTVniY212gDzGYMNv5gNiB1JYwHGtNVuSIMr1GVxc/Gvq8XdaJiP
+         /rLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734355529; x=1734960329;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+mqcC4nUfs+PmDPNc0X6w6K0gFUO863U6TSJc51xeI=;
-        b=e2GOu0Cz/8lM4lwuQPtuC7cH2L99rQ2qgKHEYToemR5m3FuOmjOIOtB5xaPDNIm8S2
-         vZCVHgoVX5id6Zra59OiwjwKXdR8Exyf2G9GNfitrtujHF/E0OF3yv3CSm0sl2iQgoXD
-         nEEMucdfNxWeHUXDdYa6lcFBlU1Qy9FI1rdtwN2f0U2u/DvalTKFvXS2gNTq1XdSmbqw
-         5A/OCM3ckJi2EGLpFYjKG9Zf8Jo8xx7jRCH9Dk5MEaws6wAQWNaQq1r2Q+7efPGHLAMW
-         mw0lo9MHO9lEd96+Dy0+JqB+iJQJczya42a/3Cn0uYg/wf0w9Z3anPGomAphmKUjYE2O
-         y6Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDlk41pPpOpajyjnwiOPVIuHRTrP+kE0lO6e4rMmq18TyfhypHnqxIqcwJEEFyjtUhCPRlzw7zPdI5H8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycbvuNeE74gePGmvqYJW+V+nRnPkeQZ4+jGAK0dHWyRLge/MF5
-	9b8lXBaOAj7I6NXc/nf4neLAxeyNZabrQQqenFJKQhPEOnsB5sYetGw+Hly0UB0=
-X-Gm-Gg: ASbGncsSjBGlh55H6MB/6oKGE6L89U0zUMSHzrXKv6so738ekHkWKFuGJdpRoXy339A
-	oD3rSgCV4dr9aF+uAzDB8QuLufjiGoeKctT6IwLxgbTM0lmdTq4+T4SDatNqdZrodFM38QKq4xR
-	uPH8y70Yd7rQ2NbBhf2nPFRqwBL1Ass5DFLCSmAc1WJV3YnuHba6eY5H29a0532Ny5FkXSgwVmf
-	aFVbC9IVlZkTh8SHi+YX4XbC3kcTp6KEPi9SAFW0pn1+yvXRL+E6ciu
-X-Google-Smtp-Source: AGHT+IGIyE4iqHy6qjfXtXiJhLI3MnMB4y90ql3yNDbrxX8BJ9U/zPgLvNusMt/FrTysNv6gm8bzUA==
-X-Received: by 2002:a5d:6481:0:b0:386:4277:6cf1 with SMTP id ffacd0b85a97d-3888e0b5977mr11178475f8f.39.1734355529380;
-        Mon, 16 Dec 2024 05:25:29 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1663:6fb7:239c:2f51])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80601desm8136387f8f.90.2024.12.16.05.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 05:25:28 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Jiucheng Xu
- <jiucheng.xu@amlogic.com>,  Stephen Boyd <sboyd@kernel.org>,  Arnd
- Bergmann <arnd@arndb.de>,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] reset: amlogic: rework auxiliary reset support
-In-Reply-To: <20241209-meson-rst-aux-rework-v1-0-d2afb69cc72e@baylibre.com>
-	(Jerome Brunet's message of "Mon, 09 Dec 2024 17:04:33 +0100")
-References: <20241209-meson-rst-aux-rework-v1-0-d2afb69cc72e@baylibre.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 16 Dec 2024 14:25:28 +0100
-Message-ID: <1jmsgv220n.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1734355536; x=1734960336;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=STePF4alhOUCMJb60WwslpIUy0epmImIHj5n/B736B8=;
+        b=u0ezWzMP7yJyj6BivdboLKHkr3GFHKmcyiDBJ8j/eOFBWAqzMdE0dxjXyUHZD+8g6y
+         XwLqJ/tBbUimYyTIoKYu3bIjwc58EPIetmE0m2IatsIu7CEWPfzFftjrihHgNhbHHIDu
+         GfvKZDF8APEXo7xRnnI67SStpDAnCPzIgy8NbUFJ6P/KUr0ZbuirI01wFTLN3MW4ILYa
+         KXnBvNNoDZ3LID25a1JDz/y4GBlerK5JOuFqF2UNoa0zz2NT5V6oGF/uwLDUb0cgA2um
+         hocTgPYUiEWTf1OEYmKJ3tALb/TQ7J9ZDyY8dmjATDsGflaEQWlsk9HPYxruuuEutltT
+         LFvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMXqlhiof+qTuj58QyuxubMyfFtk0YlyYFAAtRpQyuVatlIrT5pY46LBYlolkUVSddxqgx+yX57uhPbPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQS7FFX/mRC7iiUO79gd5JO0WCaE5OxhetVbG+qVhrxiZTOGT7
+	J9deMGuLKGngas2MhdMy3ZIgOq50F3eWdXLlJEaQOKphVk+UmzOInWLSx6IDIUo=
+X-Gm-Gg: ASbGncsU26mTY/OAc43Vodf5yR0nZDDA2jQfIluCPrRqOQ3Kq38Kw98Kcnjh8vtipVr
+	L4z2XImVFmQaeninwfPpTc2eU6sB+6ptFcVOHAeUcOUzmECH7j4jUGaeRRk7Oq9KjuD4UhaShnC
+	tcPiYyK2kQjdZSeCs5efCV+CE1Zg52+GckqsQBImum0u6yZnd5g+pAzb276QGKVAkydhXwHOSWm
+	d0wc7L1OdQJaPe1iLCIBoMcXw3tYar1yW0tbFZ7ks70+HdAHKsi3FDYSad/
+X-Google-Smtp-Source: AGHT+IGqoSYH/VA6fKloW87cFzqLGeD30iZmGbWZZas/HuP1gKITI6KUoUpWyXXkXirFAcpa9znGog==
+X-Received: by 2002:adf:eec3:0:b0:388:c75d:be97 with SMTP id ffacd0b85a97d-388c75dbeaamr7310161f8f.11.1734355535593;
+        Mon, 16 Dec 2024 05:25:35 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804a34fsm8253045f8f.76.2024.12.16.05.25.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 05:25:35 -0800 (PST)
+Message-ID: <e522ec59-6ee6-4c11-8a4f-91a683e6435c@suse.com>
+Date: Mon, 16 Dec 2024 14:25:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/5] Documentation/kbuild: Document storage of symbol
+ information
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20241123-extended-modversions-v10-0-0fa754ffdee3@google.com>
+ <20241123-extended-modversions-v10-4-0fa754ffdee3@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241123-extended-modversions-v10-4-0fa754ffdee3@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 09 Dec 2024 at 17:04, Jerome Brunet <jbrunet@baylibre.com> wrote:
-
-> The current implementation of auxiliary reset controller, with the
-> registration helper in the same module as the driver code, does not
-> allow to properly decouple the registered auxiliary driver from
-> the registering one.
->
-> This patchset removes the registration helper from the auxiliary reset
-> driver and changes how regmap is passed, to simplify the interface a bit.
->
-> This patcheset depends on:
-> commit 5ae1a43486fb ("clk: amlogic: axg-audio: revert reset implementation")
->
-> The above removes the only user of the auxiliary reset controller, restoring
-> old implementation as a temporary solution, while it is reworked.
->
-> The commit has been applied to clock fixes [1] branch and will eventually
-> make its way to an rc release.
->
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-fixes&id=5ae1a43486fb3febd5ce78da13eb354f16d049e0
-
-Hi Philipp,
-
-FYI, the dependency above has made it to v6.13-rc3
-
-Cheers
-
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On 11/23/24 03:42, Matthew Maurer wrote:
+> Document where exported and imported symbols are kept, format options,
+> and limitations.
+> 
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
 > ---
-> Jerome Brunet (2):
->       reset: amlogic: aux: get regmap through parent device
->       reset: amlogic: aux: drop aux registration helper
->
->  drivers/reset/amlogic/reset-meson-aux.c | 85 +++------------------------------
->  include/soc/amlogic/reset-meson-aux.h   | 23 ---------
->  2 files changed, 6 insertions(+), 102 deletions(-)
-> ---
-> base-commit: 3d99f9231bedcf9acfb965a97645a8ecfa93a40d
-> change-id: 20241209-meson-rst-aux-rework-e26c716c6762
-> prerequisite-change-id: 20241127-clk-audio-fix-rst-missing-0b80628d934b:v2
-> prerequisite-patch-id: 8bf55ab8ba9db1abea5df2554864a2f4f9c72e77
->
-> Best regards,
+>  Documentation/kbuild/modules.rst | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+> index 101de236cd0c9abe1f5684d80063ff3f9a7fc673..c32e3ed67cd26070f6929f6ad98c4308a1ab71f8 100644
+> --- a/Documentation/kbuild/modules.rst
+> +++ b/Documentation/kbuild/modules.rst
+> @@ -423,6 +423,26 @@ Symbols From the Kernel (vmlinux + modules)
+>  	1) It lists all exported symbols from vmlinux and all modules.
+>  	2) It lists the CRC if CONFIG_MODVERSIONS is enabled.
+>  
+> +Version Information Formats
+> +---------------------------
+> +
+> +	Exported symbols have information stored in __ksymtab or __ksymtab_gpl
+> +	sections. Symbol names and namespaces are stored in __kstrtab and
+> +	__kstrtabns respectively, using a format similar to the string table
+> +	used for ELF. If CONFIG_MODVERSIONS is enabled, the CRCs corresponding
+> +	to exported symbols will be added to the __kcrctab or __kcrctab_gpl.
+
+The second sentence should be that symbol names and namespaces of
+exported symbols are both stored in the __ksymtab_strings section.
+
+> +
+> +	If CONFIG_BASIC_MODVERSIONS is enabled (default with
+> +	CONFIG_MODVERSIONS), imported symbols will have their symbol name and
+> +	CRC stored in the __versions section of the importing module. This
+> +	mode only supports symbols of length up to 64 bytes.
+> +
+> +	If CONFIG_EXTENDED_MODVERSIONS is enabled (required to enable both
+> +	CONFIG_MODVERSIONS and CONFIG_RUST at the same time), imported symbols
+> +	will have their symbol name recorded in the __version_ext_names
+> +	section as a series of concatenated, null-terminated strings. CRCs for
+> +	these symbols will be recorded in the __version_ext_crcs section.
+> +
+>  Symbols and External Modules
+>  ----------------------------
+>  
+> 
 
 -- 
-Jerome
+Thanks,
+Petr
 
