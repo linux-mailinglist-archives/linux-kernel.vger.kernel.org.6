@@ -1,229 +1,95 @@
-Return-Path: <linux-kernel+bounces-447535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ED79F33D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:59:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A194D9F33E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEA6E164041
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DC7188AD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FF077F10;
-	Mon, 16 Dec 2024 14:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D01304AB;
+	Mon, 16 Dec 2024 14:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="ok6tCfPp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C8wjjAlx"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpUw+ffu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFC35A7B8;
-	Mon, 16 Dec 2024 14:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ECA84A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361120; cv=none; b=BU/L26lD3tBykVOxFMr5SHzwAxPXS5tKuzeifZEJFF/PN7K2+0pvHV7/HtSwhWCSwAm7xc/1kUAuks6jsJaRhKqKCSJz5Oymqw1MDwO8GkluhZ7RInNbpogPbExsi4qfAm+KiHLghilKX7NXuGs4Yf6Jo0vDDmp0LC9GP2GBjN0=
+	t=1734361155; cv=none; b=PTLrAue0qCy0bZWl80NPCPkuaT3PK5IDKLH6R6wWkWBtShm8Ns7hUX1f/RbdMGUwNm9PwpAd5qESibyxOMl7lW914GnNamJmnlKLcXv6KuWyVf69TkbYWMljTau7fzLYLnDzfrbv/eqYmaoS9po/hICNcecyf6kC9X/fndBMGdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361120; c=relaxed/simple;
-	bh=nlf0Yxx6UKvn6nqsgP+w5Iqpx0SjIQugHe3KgYtgA4o=;
+	s=arc-20240116; t=1734361155; c=relaxed/simple;
+	bh=CnvCaWfgDwIgWkQpCmUclLH+JSJGlMt1flV6kcuDogg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1qTq2KG346E6NazA1IEPV2wsHJ9eb3XAz2XTyT0n5gx77n5yhorbnm6yle8kx8JkjkGBkMr7OdCgLVwTWHWSjB6zw3FhV3f/O3yu69VYICZTVAH+ArXlwnb3fAFgBDFJL6qifrvJfGduNssojnB8VwGX14OtImPIX1E91RSX8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=ok6tCfPp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C8wjjAlx; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9673E114010F;
-	Mon, 16 Dec 2024 09:58:35 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Mon, 16 Dec 2024 09:58:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1734361115; x=
-	1734447515; bh=4XBq1mDxi4SzfyCw4lX9Mf93iiY2ozvFddpAqp2jBbI=; b=o
-	k6tCfPpSyBuTLktjGCYrQRJ33/Y/XVp4LE3CCECtGCy6l1wjV2omsWAmIDEplrB5
-	jD8SRZAV9F0ZQzauG6Kt8N8HW/ceFgYBgkMob/gOlsOtz2OKOI1r/ypmvsSSNKZj
-	p5Sjd0J3szY7Ti86BbOaxci9rnl6kHAUhyOcpCuyZmqaeoJDzdIrSZkSxQTrSY8a
-	VsCYo05pp7B5XXjtsFjDTFYXoxlJ6Iz74eCo3mCqNk7w8xVwCHvsQjXJCJmr66fG
-	kiQrfQ6pwW8sonTpLOp9oVPEraEM4DTpm6jNTBn0HJFIq5jND2LzFJ+o8O3COT8X
-	nGttWaURPcbExRqJ7wotQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734361115; x=1734447515; bh=4XBq1mDxi4SzfyCw4lX9Mf93iiY2ozvFddp
-	Aqp2jBbI=; b=C8wjjAlxif49JI+JhLz1wv0qjYaK1qSjvfb8JTp1pAd2+A6Gcan
-	I+bZPysIaWZTnS603Z7wxwOyIrTVS0dY5yJmtZLgRKECNNcd+g1TH41XFs4LFCxV
-	bwz9hAEOWYr4b+TdJyySnQ/YosluHGPbGv4E5T9hnXATfODNvdvFsGbUrqIWHMip
-	YDdGAJ9xRdTKsuP86i8hP6eDbr3SOboVRyWshfNcucz5Hsg3jHuOfa0R4eUTUhXF
-	VyF/S8Sg4R6OSiqtTkY/7c8Rq7d+mLLjs3iixdePcli7RkrKEegg4IQDRkUrRzNb
-	7gIoE7sWByL3iDmyTig8X8xAMqnhGLhcKYQ==
-X-ME-Sender: <xms:GkBgZ4VrCg3dcohlirDETmkXNKx_OW78OOvR19qK--DIYJMbF5e3wQ>
-    <xme:GkBgZ8lhm6ZsL5CYplEYlhvi9VDeW0VdaOEN8-TDPZmA1gH-0jALSILaK_lZ8Scgm
-    GzBKBkjHziEjc3lqpk>
-X-ME-Received: <xmr:GkBgZ8aQr_T8lAGtx4Rwd8TbhcaylKKBM8OKj_65ATTDpR49SPJknPeKIswN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleefgdejtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
-    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
-    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
-    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
-    tghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
-    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggv
-    nhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    eprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthh
-X-ME-Proxy: <xmx:GkBgZ3X0PVoI_t3tK6BIujJsa1Q9LlyLlx0tAHxrEuoFMsaQUrnyhw>
-    <xmx:GkBgZyn4ISTQxv5EteUGO_Qh4JV9NQ0ev-iSucareyFPwIrPKXIdXA>
-    <xmx:GkBgZ8cbHrywgPoI-f9_wUssqu-R6bOn39750nrG-1iAK7OibpXmIg>
-    <xmx:GkBgZ0Ev2MVFBa2FwF1BYaK2Me71DtmrPc_ru2wUeMIUEH66iFh5Cw>
-    <xmx:G0BgZ4khlVxkMABGmB0LZSGMij5t7y7N0YsJa1oLI9GHSNqXJ9aiehke>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Dec 2024 09:58:34 -0500 (EST)
-Date: Mon, 16 Dec 2024 15:58:32 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v15 09/22] ovpn: implement packet processing
-Message-ID: <Z2BAGHX2Dd8Gjagz@hog>
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
- <20241211-b4-ovpn-v15-9-314e2cad0618@openvpn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aae3712Kos+/vDftVvDqUqgoy5q4Qy1+SeBZ2y9+wA03sJShX++w9/8EbtnAtlnM1l98qpX+y9IeVhXWlLNvPvzABJgMno/Hkm4Z01ZfHhkZhhQ3vNApFIZTSbn9um4Lgbi+Uh4T45Y/MWm4ITZoyqlYzAOXeDZWZ6OoRpAOq1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpUw+ffu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194C5C4CED0;
+	Mon, 16 Dec 2024 14:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734361154;
+	bh=CnvCaWfgDwIgWkQpCmUclLH+JSJGlMt1flV6kcuDogg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tpUw+ffutRGge33RcZNfYtcrP4tvXIGpc2EocSBMRUa3L0AKfWgSvhR4xUJuAjG2L
+	 JYuVLSdn4gSFYNJ+hVPasm9euCexo1DmxJet8DCJEn7/FboftWcrwgogu5WsUBwmP7
+	 UmG3dh8jisxi6QzFn/u9yS8pYU6MAVpw0wpeNW615w175U8G3dQYEgztV8KASfe1QH
+	 aM5eDBV7FtIOk5Nq8zZv50Ye+NJAvVaJ5l0y2UjbCmFjwAuYqu04x9Ay8J41ZKE1/A
+	 fye1EBBDzjFEVlXLnuAUc5MQ4mADgp4Ug7mr8K+I0UjoLsviGbBY630gMhoaLeG2+/
+	 zKZ448pI4jznQ==
+Date: Mon, 16 Dec 2024 09:59:12 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] arm64 fixes for 6.13-rc3
+Message-ID: <Z2BAQEuXJg01qWDp@lappy>
+References: <Z1xx0ha7lbKkdhRC@arm.com>
+ <Z18MixiGByAqDYLC@lappy>
+ <Z1_6ukG_Lc5leG1o@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20241211-b4-ovpn-v15-9-314e2cad0618@openvpn.net>
+In-Reply-To: <Z1_6ukG_Lc5leG1o@J2N7QTR9R3>
 
-(just a few nits here)
+On Mon, Dec 16, 2024 at 10:02:34AM +0000, Mark Rutland wrote:
+>On Sun, Dec 15, 2024 at 12:06:19PM -0500, Sasha Levin wrote:
+>> On Fri, Dec 13, 2024 at 05:41:38PM +0000, Catalin Marinas wrote:
+>> > - arm64 stacktrace: address some fallout from the recent changes to
+>> >  unwinding across exception boundaries
+>>
+>> Hi Catalin, Mark,
+>>
+>> It seems that kselftests can hit a warning that was addressed in the
+>> commit above:
+>
+>I assume you're referring to commit:
+>
+>  32ed1205682ec42a ("arm64: stacktrace: Skip reporting LR at exception boundaries")
+>
+>... ?
 
-2024-12-11, 22:15:13 +0100, Antonio Quartulli wrote:
-> +static inline struct ovpn_crypto_key_slot *
-> +ovpn_crypto_key_id_to_slot(const struct ovpn_crypto_state *cs, u8 key_id)
-> +{
-> +	struct ovpn_crypto_key_slot *ks;
-> +	u8 idx;
-> +
-> +	if (unlikely(!cs))
-> +		return NULL;
-> +
-> +	rcu_read_lock();
-> +	idx = cs->primary_idx;
-> +	ks = rcu_dereference(cs->slots[idx]);
-> +	if (ks && ks->key_id == key_id) {
-> +		if (unlikely(!ovpn_crypto_key_slot_hold(ks)))
-> +			ks = NULL;
-> +		goto out;
-> +	}
-> +
-> +	ks = rcu_dereference(cs->slots[idx ^ 1]);
+I was actually thinking 65ac33bed8b9 ("arm64: stacktrace: Don't WARN
+when unwinding other tasks"), sorry for the confusion
 
-nit: for consistency with the other uses of the secondary slot, I'd
-switch that to cs->slots[!idx]
+>That was intended to fix this specific issue, as explained in the commit
+>message (with a very similar splat from running the ftrace kselftests).
+>
+>Am I missing something? i.e. are you saying it *doesn't* fix that?
 
-[...]
-> +int ovpn_aead_encrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
-> +		      struct sk_buff *skb)
-> +{
-[...]
-> +	/* add packet op as head of additional data */
-> +	op = ovpn_opcode_compose(OVPN_DATA_V2, ks->key_id, peer->id);
-> +	__skb_push(skb, OVPN_OPCODE_SIZE);
-> +	BUILD_BUG_ON(sizeof(op) != OVPN_OPCODE_SIZE);
-> +	*((__force __be32 *)skb->data) = htonl(op);
-> +
-> +	/* AEAD Additional data */
-> +	sg_set_buf(sg, skb->data, OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE);
-
-You could add
-
-#define OVPN_AAD_SIZE (OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE)
-
-and then use it in a few places in ovpn_aead_encrypt and
-ovpn_aead_decrypt.
-
-
-[...]
-> +int ovpn_aead_decrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
-> +		      struct sk_buff *skb)
-> +{
-> +	const unsigned int tag_size = crypto_aead_authsize(ks->decrypt);
-> +	int ret, payload_len, nfrags;
-> +	unsigned int payload_offset;
-> +	struct aead_request *req;
-> +	struct sk_buff *trailer;
-> +	struct scatterlist *sg;
-> +	u8 iv[OVPN_NONCE_SIZE];
-> +	unsigned int sg_len;
-> +
-> +	payload_offset = OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE + tag_size;
-
-OVPN_AAD_SIZE + tag_size
-
-
-[...]
-> +	sg_init_table(sg, nfrags + 2);
-> +
-> +	/* packet op is head of additional data */
-> +	sg_len = OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE;
-
-This variable can probably be dropped if you add OVPN_AAD_SIZE.
-
-[...]
-> +	/* setup async crypto operation */
-> +	aead_request_set_tfm(req, ks->decrypt);
-> +	aead_request_set_callback(req, 0, ovpn_decrypt_post, skb);
-> +	aead_request_set_crypt(req, sg, sg, payload_len + tag_size, iv);
-> +
-> +	aead_request_set_ad(req, OVPN_NONCE_WIRE_SIZE + OVPN_OPCODE_SIZE);
-
-and this op is flipped but it's still OVPN_AAD_SIZE.
-
-> +
-> +	/* decrypt it */
-> +	return crypto_aead_decrypt(req);
-> +free_sg:
-> +	kfree(ovpn_skb_cb(skb)->sg);
-> +	ovpn_skb_cb(skb)->sg = NULL;
-> +	return ret;
-> +}
-> +
-
-[...]
-> @@ -80,7 +83,10 @@ static void ovpn_peer_release_rcu(struct rcu_head *head)
->   */
->  static void ovpn_peer_release(struct ovpn_peer *peer)
->  {
-> +	ovpn_crypto_state_release(&peer->crypto);
-> +	spin_lock_bh(&peer->lock);
->  	ovpn_bind_reset(peer, NULL);
-
-At this point in the series, ovpn_bind_reset also tries to take
-peer->lock (gets fixed in the "peer floating" patch).
-
-(but if you're tired of moving chunks around, I can live with it)
-
-> +	spin_unlock_bh(&peer->lock);
->  	netdev_put(peer->ovpn->dev, &peer->ovpn->dev_tracker);
->  	call_rcu(&peer->rcu, ovpn_peer_release_rcu);
->  }
+Right - LKFT is able to trigger the warning I copied on Linus's tree.
 
 -- 
-Sabrina
+Thanks,
+Sasha
 
