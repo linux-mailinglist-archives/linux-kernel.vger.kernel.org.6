@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-447170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119349F2E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:42:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79BC9F2E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCDC162D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF91B1885993
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14624204087;
-	Mon, 16 Dec 2024 10:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B1C203D51;
+	Mon, 16 Dec 2024 10:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGvVKPCX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vh+1EsZG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6C8203D6D;
-	Mon, 16 Dec 2024 10:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAD4203D44
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734345702; cv=none; b=a5V1BjcIBAknkHZXLEmbaYJ9b72DHJpBBMx60r2yQJHSa7seGhHHP6YLPHdgQEaDlV9I90dHJccvRs2vw3EluM4sSQu8kWXrER2i41SW370dEg/oOsZfUgS7i6OToam7jWmpXGhP/9yrjK+jRg1puk7LU/EUDAJlojgvFhARCIo=
+	t=1734345727; cv=none; b=Xy7oRV23MUtcbFn8vAVqirMBrxiSvPn7z3G8WE+4R8Bi8r+aaHSPuHSRnYyYQnT+lFasnhVFn2Iq3BwJrAEj0e2IcHWSvZYmyRS7ZJFBGbiGrh9D8bUin2X1ysOzoyy2vV6e+ZT5P23spGO31Tcja6pMELSWRK9/Aely90X2W+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734345702; c=relaxed/simple;
-	bh=mljov7sKFphAAju6hgObLkzU6ii6fcbdLfyoYgfipWs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Jt5B8akycH2/bpZ3zB8v5kE+5X11M3TxM8WrpW6XOTfceshbNKfRDtp3imsFqXqf9k5PUY2HyFLMrtVpRa4PItj1Sy3UYSofF4yEesX6gPRd40xkXOM+TwoLxKR4PWKXM0K09qZDBhPwP/X4mQQN2cJ9VezBQLgLkcuidq4lUKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGvVKPCX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11BBFC4CEDF;
-	Mon, 16 Dec 2024 10:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734345702;
-	bh=mljov7sKFphAAju6hgObLkzU6ii6fcbdLfyoYgfipWs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=TGvVKPCXjpQnWXD3XCgdSYz0796+AqWhjBQsUuDnagoHds/uWQGaUKHxZfVLQ8iXs
-	 rDVmTTtdVRT2rLgKhKauILmwbz2RtwwVvY7Z0kWfgQbcX5OGhCQRheVQvDaeY0ak/z
-	 Pbl3FdZBeGiK3aBQIPCPt/5Q6ma9UpSQXl9/kjlpDKfT8M/Xx8hVbe+8ACTy10n/z7
-	 I5dddbyWIOgg57zGySccXn/dxkTTsNmUSV9HeplQs+iObD4+9fDfEe2cXuzEVf46nV
-	 jUbsi6kblzap9CC4cHZW+XCO1MtTURTQICo7u8zDxGcNcOFClT15wcJFFU35y8+/4t
-	 XupaM2tOmxNwA==
-Date: Mon, 16 Dec 2024 04:41:40 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1734345727; c=relaxed/simple;
+	bh=1Ft7el1yFPJlxwx0pG7X3rzeL5zNVIzh7CkXKYoDuzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=KJZZzdTfbSclvxR1Lw2SMDXm1ax42m1pVLN9pyrUeULaFmEjv2ogF40/hTLxuUa3EiOrlVhxwscKRKQieBR2APyHkqpcoV17zynm+kPdip7O7S919YyhSbZOtUS2ChgYaZbWqepPjb1JIXHiaZE0vq9/aWTdZ12mg7taop25SVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vh+1EsZG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734345725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b6WZV2gnPOdEzOnB+Nf0v4whMjuuUE+0WdddyVdZ5I0=;
+	b=Vh+1EsZGqi8RG8HN7yPpIvDWXyIsL6NMf3hYe5cbnn0sGu80TDDGMhpAZZs52HaOo6XCxl
+	t+MEaSDUUaM0IqqEO4OToVPmt5rkJPJzo1MfPXaM0paopj1ma+BKOgTugbm1D/qRhp2wto
+	hara7lK2YrWFKGMhxn7AqWXzGcUCwHQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-KyyDpGU9OK2p9uCPWi9AIg-1; Mon,
+ 16 Dec 2024 05:42:01 -0500
+X-MC-Unique: KyyDpGU9OK2p9uCPWi9AIg-1
+X-Mimecast-MFC-AGG-ID: KyyDpGU9OK2p9uCPWi9AIg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6DFD19560B0;
+	Mon, 16 Dec 2024 10:41:59 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.45.225.0])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E7FB73000197;
+	Mon, 16 Dec 2024 10:41:55 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: donald.hunter@gmail.com,
+	stfomichev@gmail.com,
+	kuba@kernel.org,
+	jdamato@fastly.com
+Cc: pabeni@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jstancek@redhat.com
+Subject: [PATCH v3 0/4] tools: ynl: add install target
+Date: Mon, 16 Dec 2024 11:41:40 +0100
+Message-ID: <cover.1734345017.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Jassi Brar <jassisinghbrar@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Anup Patel <anup@brainfault.org>, Sunil V L <sunilvl@ventanamicro.com>, 
- Andrew Jones <ajones@ventanamicro.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Atish Patra <atishp@atishpatra.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-In-Reply-To: <20241216084817.373131-8-apatel@ventanamicro.com>
-References: <20241216084817.373131-1-apatel@ventanamicro.com>
- <20241216084817.373131-8-apatel@ventanamicro.com>
-Message-Id: <173434569718.3760744.3925940874684255534.robh@kernel.org>
-Subject: Re: [RFC PATCH 7/8] dt-bindings: clock: Add bindings for RISC-V
- RPMI clock service group
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+
+This series adds an install target for ynl. The python code
+is moved to a subdirectory, so it can be used as a package
+with flat layout, as well as directly from the tree.
+
+To try the install as a non-root user you can run:
+  $ mkdir /tmp/myroot
+  $ make DESTDIR=/tmp/myroot install
+
+  $ PATH="/tmp/myroot/usr/bin:$PATH" PYTHONPATH="$(ls -1d /tmp/myroot/usr/lib/python*/site-packages)" ynl --help
+
+Proposed install layout is described in last patch.
+
+Changes in v3:
+- dropped symlinks
+- added install-headers install-rsts install-specs to PHONY target in generated/Makefile
+- install headers from lib and generated directories to /usr/include/ynl
+
+Changes in v2:
+- squashed 1st and 2nd patch together
+- added symlinks for original user-facing scripts for backwards compatibility
+- updated also Documentation and selftests references
+  (tested Doc build and selftests ping.py test)
 
 
-On Mon, 16 Dec 2024 14:18:16 +0530, Anup Patel wrote:
-> Add device tree bindings for the clock service group defined by the
-> RISC-V platform management interface (RPMI) specification.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  .../bindings/clock/riscv,rpmi-clock.yaml      | 78 +++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
-> 
+Jan Stancek (4):
+  tools: ynl: move python code to separate sub-directory
+  tools: ynl: add initial pyproject.toml for packaging
+  tools: ynl: add install target for generated content
+  tools: ynl: add main install target
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ Documentation/Makefile                        |  2 +-
+ Documentation/networking/multi-pf-netdev.rst  |  4 +-
+ Documentation/networking/napi.rst             |  4 +-
+ .../networking/netlink_spec/readme.txt        |  2 +-
+ .../userspace-api/netlink/intro-specs.rst     |  8 ++--
+ tools/net/ynl/Makefile                        | 29 ++++++++++++-
+ tools/net/ynl/generated/.gitignore            |  1 +
+ tools/net/ynl/generated/Makefile              | 42 +++++++++++++++++--
+ tools/net/ynl/lib/.gitignore                  |  1 -
+ tools/net/ynl/lib/Makefile                    |  1 -
+ tools/net/ynl/pyproject.toml                  | 26 ++++++++++++
+ tools/net/ynl/pyynl/.gitignore                |  2 +
+ tools/net/ynl/pyynl/__init__.py               |  0
+ tools/net/ynl/{ => pyynl}/cli.py              |  0
+ tools/net/ynl/{ => pyynl}/ethtool.py          |  0
+ tools/net/ynl/{ => pyynl}/lib/__init__.py     |  0
+ tools/net/ynl/{ => pyynl}/lib/nlspec.py       |  0
+ tools/net/ynl/{ => pyynl}/lib/ynl.py          |  0
+ .../ynl/{ynl-gen-c.py => pyynl/ynl_gen_c.py}  |  0
+ .../{ynl-gen-rst.py => pyynl/ynl_gen_rst.py}  |  0
+ tools/net/ynl/ynl-regen.sh                    |  2 +-
+ tools/testing/selftests/net/lib/py/ynl.py     |  4 +-
+ tools/testing/selftests/net/ynl.mk            |  3 +-
+ 23 files changed, 110 insertions(+), 21 deletions(-)
+ create mode 100644 tools/net/ynl/pyproject.toml
+ create mode 100644 tools/net/ynl/pyynl/.gitignore
+ create mode 100644 tools/net/ynl/pyynl/__init__.py
+ rename tools/net/ynl/{ => pyynl}/cli.py (100%)
+ rename tools/net/ynl/{ => pyynl}/ethtool.py (100%)
+ rename tools/net/ynl/{ => pyynl}/lib/__init__.py (100%)
+ rename tools/net/ynl/{ => pyynl}/lib/nlspec.py (100%)
+ rename tools/net/ynl/{ => pyynl}/lib/ynl.py (100%)
+ rename tools/net/ynl/{ynl-gen-c.py => pyynl/ynl_gen_c.py} (100%)
+ rename tools/net/ynl/{ynl-gen-rst.py => pyynl/ynl_gen_rst.py} (100%)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml: properties:mboxes: 'anyOf' conditional failed, one must be fixed:
-	'minItems' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/mailbox.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml: properties:mboxes: 'anyOf' conditional failed, one must be fixed:
-	'minItems' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/mailbox.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241216084817.373131-8-apatel@ventanamicro.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.43.0
 
 
