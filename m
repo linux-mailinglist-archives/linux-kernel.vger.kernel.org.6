@@ -1,287 +1,298 @@
-Return-Path: <linux-kernel+bounces-447851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608C19F37E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:51:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD769F3802
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94BC1167959
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8421884800
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE99206F3D;
-	Mon, 16 Dec 2024 17:51:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1B42063C4;
-	Mon, 16 Dec 2024 17:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D4D2066F9;
+	Mon, 16 Dec 2024 17:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JiQ2VrgG"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4F2063C4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371471; cv=none; b=PYqunYyeD1MsWDoPBwULRndMh3WvSNo/nHqggd6j92i170aVBcW6qgdo2nhP+Se7UUv/vIATZo5ODzrQQ7gDcU3r1s1sVoEkN1mm/mlhOveEPDS42dyYsecFEs+nguev0ZNpoZHBAg1DyPg69gDKtllaYJ6Vht5iKv0rh+Gj64s=
+	t=1734371549; cv=none; b=Z2o7el02e72sDO+kjJti9ZM85tdQS/anr5ZJJoEmj4ISULoloMpgtL2PlQIQTYk7cQCnWZVFZNJ3EXhCl7hoezEunG4xI2dPVb5VI5xSlFkeZkEb2ZY08SelJkE57NwBARXr1i87af1xpHV3wGBchMFtimQsVdauTxaXe8KUMDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371471; c=relaxed/simple;
-	bh=rBCWtRTu5Vr8cgrNPrVT8W5KU7Hajgp2sLYgmxLWcRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AgpjhYoVNH9SXMUVwpVx+7LGjf1LhrzL/YrRAZ4zzf4gYSql2Lwixwqz49uoEbc+vUMd+F6NFrZYsXK32m+sAVuFWw3gMLSu9Qfv5+YRJ+uZ9VpKzKtAgOgSnhx488EVcLo02EwV/CI3Mw+PI9gZedgJNHSbOAdceHf6dXDHVm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65D33106F;
-	Mon, 16 Dec 2024 09:51:35 -0800 (PST)
-Received: from [10.57.71.247] (unknown [10.57.71.247])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4F4BF3F58B;
-	Mon, 16 Dec 2024 09:51:04 -0800 (PST)
-Message-ID: <e88930d3-f933-41a3-a698-3a34633e5019@arm.com>
-Date: Mon, 16 Dec 2024 17:51:03 +0000
+	s=arc-20240116; t=1734371549; c=relaxed/simple;
+	bh=iQRgE9Rcu1KUs6xXY8YfJ2nds9R5OXRboroFHyRVbao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTAZdlT/rhsj+K/oPE1fnQIv0Rcos7rvBao8tvq0T2/etAuNXfsHHrmItMfKCTeq+pOsi7p0p05ALpmFCU9TA4RobIGP/4FrNpkiAvHFk+fa4z+pJTbHP0cKY1eK/vdBEfw8Eiwl28TIRZuvdbCH8HJrLvfRmWMbko0hOpgDERk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JiQ2VrgG; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-218c80a97caso1912775ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734371547; x=1734976347; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AGS1MlFpafeO/WKDSXrB+UcdagNLniFx8svINS1DDrg=;
+        b=JiQ2VrgGhjfu8N+ZKprGnywp2Q+Pmmucifes9BMAOq4+YdXYVVfDX+xNgHneRohy4k
+         IC0TG6fG/DeTCQyjzPnHlQ4B3f7qOF3qW1h/xnqaAjwi5ZspCSnNyYo/bzmVKkiIL/T5
+         z43g4YF8+QLbohb2I3uKjZmNwVZpVLzpT3ZKATthqZAENOscPrhRlBJlHRV8j6RxwRR2
+         eaEY2lThwACcVULG6elxGWsMCf0YE6y0qdV6E8euEattv/8FOehS7ohH/V4SKk9r5wt5
+         dV+YGiAJtgYXfu2HfyvxxxY7U/vZIJNW69+c4C2TPPHP0HcxqxQ/4ZJWwZwQqsBcVtQh
+         Wzmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734371547; x=1734976347;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AGS1MlFpafeO/WKDSXrB+UcdagNLniFx8svINS1DDrg=;
+        b=AxR4WLrTx+uX5FM9aDPDQVYCLYnt6J4RfJJupCFanD3E3CUVmM9/3oQpAf21KSjuEZ
+         +WEQczZEbTjRi/PPMDMeeRAuQ+FTLrLUwGl+oWYCkaIrHotgOnZxK0UvA/cnhgpPOa7Y
+         6YgLjDpjt1y3kQZvvkgu7uMDQ3nZ8nDgTiTVohFVg62Si6YGop7Yk82KlZXSMWnZtloC
+         PyS/KvUKjPXzTwblqf5q8AGyJpE/kQl/KUQ1HeLyv4qbzzzu2EAKx/QZj65X3ngqYq1O
+         o+78wfpfk40PeyFDGQEJBjBpJP+HHxnWyE2/v2uDSoIclJw4V9eJbZbRf1OSMgF9qYxG
+         lGqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEvpoN/NcyQu8EGlpBXhhkXUylVPfkb9OIt6PovwBByJNHg+FIt7x8Z0VdTzxRVE5Sh9JJCPvIIPk4z2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgh+PLXOvPKpS/6m73ygMS47KUpBwvioGz5j0Q0qgK/6wWCDsE
+	ftrO4AM5uIyhGdS+xtLf3rq3Ob/TkFVE4ckbm078nQxJGG0BXmNl3mZmgqI9rw==
+X-Gm-Gg: ASbGnctUptYCe+7v6dmXSrPhGvBDI2uPex5rPpv+grqvA5kVq4CKqHGMpseztEeyWro
+	9f5W915NUMvAHuoHTmzLIKcXX2SY9jkMUj+lSaIfyHB8+Ip33X6JOK9QRDq7upD1cuSnu2cHGQV
+	VzYh8xcSY4+vhZzpK3OVyvtBY7dkkRgyx46c8ZAsF1y0FGjajUQGeOr+O/lFyY/6t24fOJX10pa
+	T9pm8a3gVrDsSW82wj7q5gXmnlFO9gEo6McnXDejxoH2mpCtWmMAq14ByYK0oxQbeCY
+X-Google-Smtp-Source: AGHT+IGvWV6mfCj2/Ercn+vVqs5fNl4+6j1t5Xlmhx+sET9hOWmhhuc1oXLoQDebjet3XKapMZVhsw==
+X-Received: by 2002:a17:902:ec89:b0:215:7421:27c with SMTP id d9443c01a7336-21892a01fddmr196614925ad.29.1734371547288;
+        Mon, 16 Dec 2024 09:52:27 -0800 (PST)
+Received: from thinkpad ([120.56.200.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e50299sm45812965ad.143.2024.12.16.09.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 09:52:26 -0800 (PST)
+Date: Mon, 16 Dec 2024 23:22:10 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org,
+	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
+ the user
+Message-ID: <20241216175210.mnc5kp6646sq7vzm@thinkpad>
+References: <20241209143821.m4dahsaqeydluyf3@thinkpad>
+ <20241212055920.GB4825@lst.de>
+ <13662231.uLZWGnKmhe@rjwysocki.net>
+ <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
+ <20241212151354.GA7708@lst.de>
+ <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+ <20241214063023.4tdvjbqd2lrylb7o@thinkpad>
+ <CAJZ5v0gLMx+tBo+MA3AQZ7qP28Z91d04oVBHVeTNcd-QD=kJZg@mail.gmail.com>
+ <20241216171108.6ssulem3276rkycb@thinkpad>
+ <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/43] arm64: RME: Add SMC definitions for calling the
- RMM
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20241212155610.76522-1-steven.price@arm.com>
- <20241212155610.76522-5-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241212155610.76522-5-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
 
-On 12/12/2024 15:55, Steven Price wrote:
-> The RMM (Realm Management Monitor) provides functionality that can be
-> accessed by SMC calls from the host.
+On Mon, Dec 16, 2024 at 06:35:52PM +0100, Rafael J. Wysocki wrote:
+> On Mon, Dec 16, 2024 at 6:11 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Mon, Dec 16, 2024 at 05:24:40PM +0100, Rafael J. Wysocki wrote:
+> > > On Sat, Dec 14, 2024 at 7:30 AM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Fri, Dec 13, 2024 at 03:35:15PM +0100, Rafael J. Wysocki wrote:
+> > > > > On Thu, Dec 12, 2024 at 4:14 PM Christoph Hellwig <hch@lst.de> wrote:
+> > > > > >
+> > > > > > On Thu, Dec 12, 2024 at 01:49:15PM +0100, Ulf Hansson wrote:
+> > > > > > > Right. This seems to somewhat work for ACPI types of systems, because
+> > > > > > > ACPI is controlling the low power state for all the devices. Based on
+> > > > > > > the requested system wide low power state, ACPI can then decide to
+> > > > > > > call pm_set_suspend_via_firmware() or not.
+> > > > > > >
+> > > > > > > Still there is a problem with this for ACPI too.
+> > > > > > >
+> > > > > > > How does ACPI know whether it's actually a good idea to keep the NVMe
+> > > > > > > storage powered in s2idle (ACPI calls pm_set_suspend_via_firmware()
+> > > > > > > only for S2R and S2disk!?)? Especially when my laptop only supports
+> > > > > > > s2idle and that's what I will use when I close the lid. In this way,
+> > > > > > > the NMVe storage will certainly contribute to draining the battery,
+> > > > > > > especially when I won't be using my laptop for a couple of days.
+> > > > > > >
+> > > > > > > In my opinion, we need a better approach that is both flexible and
+> > > > > > > that dynamically adjusts based upon the use case.
+> > > > > >
+> > > > > > Agreed.  I'd be happy to work with the PM maintainers to do this,
+> > > > > > but I don't really know enough about the PM core to drive it
+> > > > > > (as the reply from Rafael to my mail makes pretty clear :))
+> > > > >
+> > > > > I'm here to help.
+> > > > >
+> > > > > Let me know what exactly you want to achieve and we'll see how to make it work.
+> > > >
+> > > > I'll try to summarize the requirement here since I started this thread:
+> > > >
+> > > > Problem statement
+> > > > =================
+> > > >
+> > > > We need a PM core API that tells the device drivers when it is safe to powerdown
+> > > > the devices. The usecase here is with PCIe based NVMe devices but the problem is
+> > > > applicable to other devices as well.
+> > > >
+> > > > Drivers are relying on couple of options now:
+> > > >
+> > > > 1. If pm_suspend_via_firmware() returns true, then drivers will shutdown the
+> > > > device assuming that the firmware is going to handle the suspend. But this API
+> > > > is currently used only by ACPI. Even there, ACPI relies on S2R being supported
+> > > > by the platform and it sets pm_set_suspend_via_firmware() only when the suspend
+> > > > is S2R. But if the platform doesn't support S2R (current case of most of the
+> > > > Qcom SoCs), then pm_suspend_via_firmware() will return false and NVMe won't be
+> > > > powered down draining the battery.
+> > >
+> > > So my question here would be why is it not powered down always during
+> > > system-wide suspend?
+> > >
+> > > Why exactly is it necessary to distinguish one case from the other
+> > > (assuming that we are talking about system-wide suspend only)?
+> > >
+> >
+> > To support Android like usecase with firmware that only supports
+> > suspend-to-idle (Qcom platforms). This usecase is not applicable right now, but
+> > one can't just rule out the possibility in the near future.
 > 
-> The SMC definitions are based on DEN0137[1] version 1.0-rel0
+> This doesn't explain anything to me, sorry.
 > 
-> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
+> > And the problem is that we need to support both Android and non-Android systems
+> > with same firmware :/
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v5:
->   * Sorted the SMC #defines by value.
->   * Renamed SMI_RxI_CALL to SMI_RMI_CALL since the macro is only used for
->     RMI calls.
->   * Renamed REC_GIC_NUM_LRS to REC_MAX_GIC_NUM_LRS since the actual
->     number of available list registers could be lower.
->   * Provided a define for the reserved fields of FeatureRegister0.
->   * Fix inconsistent names for padding fields.
-> Changes since v4:
->   * Update to point to final released RMM spec.
->   * Minor rearrangements.
-> Changes since v3:
->   * Update to match RMM spec v1.0-rel0-rc1.
-> Changes since v2:
->   * Fix specification link.
->   * Rename rec_entry->rec_enter to match spec.
->   * Fix size of pmu_ovf_status to match spec.
-> ---
->   arch/arm64/include/asm/rmi_smc.h | 259 +++++++++++++++++++++++++++++++
->   1 file changed, 259 insertions(+)
->   create mode 100644 arch/arm64/include/asm/rmi_smc.h
+> So what technically is the problem?
 > 
-> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-> new file mode 100644
-> index 000000000000..eec659e284cd
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rmi_smc.h
-> @@ -0,0 +1,259 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023-2024 ARM Ltd.
-> + *
-> + * The values and structures in this file are from the Realm Management Monitor
-> + * specification (DEN0137) version 1.0-rel0:
-> + * https://developer.arm.com/documentation/den0137/1-0rel0/
-> + */
-> +
-> +#ifndef __ASM_RME_SMC_H
-> +#define __ASM_RME_SMC_H
-> +
-> +#include <linux/arm-smccc.h>
-> +
-> +#define SMC_RMI_CALL(func)				\
-> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
-> +			   ARM_SMCCC_SMC_64,		\
-> +			   ARM_SMCCC_OWNER_STANDARD,	\
-> +			   (func))
-> +
-> +#define SMC_RMI_VERSION			SMC_RMI_CALL(0x0150)
-> +#define SMC_RMI_GRANULE_DELEGATE	SMC_RMI_CALL(0x0151)
-> +#define SMC_RMI_GRANULE_UNDELEGATE	SMC_RMI_CALL(0x0152)
-> +#define SMC_RMI_DATA_CREATE		SMC_RMI_CALL(0x0153)
-> +#define SMC_RMI_DATA_CREATE_UNKNOWN	SMC_RMI_CALL(0x0154)
-> +#define SMC_RMI_DATA_DESTROY		SMC_RMI_CALL(0x0155)
-> +
-> +#define SMC_RMI_REALM_ACTIVATE		SMC_RMI_CALL(0x0157)
-> +#define SMC_RMI_REALM_CREATE		SMC_RMI_CALL(0x0158)
-> +#define SMC_RMI_REALM_DESTROY		SMC_RMI_CALL(0x0159)
-> +#define SMC_RMI_REC_CREATE		SMC_RMI_CALL(0x015a)
-> +#define SMC_RMI_REC_DESTROY		SMC_RMI_CALL(0x015b)
-> +#define SMC_RMI_REC_ENTER		SMC_RMI_CALL(0x015c)
-> +#define SMC_RMI_RTT_CREATE		SMC_RMI_CALL(0x015d)
-> +#define SMC_RMI_RTT_DESTROY		SMC_RMI_CALL(0x015e)
-> +#define SMC_RMI_RTT_MAP_UNPROTECTED	SMC_RMI_CALL(0x015f)
-> +
-> +#define SMC_RMI_RTT_READ_ENTRY		SMC_RMI_CALL(0x0161)
-> +#define SMC_RMI_RTT_UNMAP_UNPROTECTED	SMC_RMI_CALL(0x0162)
-> +
-> +#define SMC_RMI_PSCI_COMPLETE		SMC_RMI_CALL(0x0164)
-> +#define SMC_RMI_FEATURES		SMC_RMI_CALL(0x0165)
-> +#define SMC_RMI_RTT_FOLD		SMC_RMI_CALL(0x0166)
-> +#define SMC_RMI_REC_AUX_COUNT		SMC_RMI_CALL(0x0167)
-> +#define SMC_RMI_RTT_INIT_RIPAS		SMC_RMI_CALL(0x0168)
-> +#define SMC_RMI_RTT_SET_RIPAS		SMC_RMI_CALL(0x0169)
-> +
-> +#define RMI_ABI_MAJOR_VERSION	1
-> +#define RMI_ABI_MINOR_VERSION	0
-> +
-> +#define RMI_ABI_VERSION_GET_MAJOR(version) ((version) >> 16)
-> +#define RMI_ABI_VERSION_GET_MINOR(version) ((version) & 0xFFFF)
-> +#define RMI_ABI_VERSION(major, minor)      (((major) << 16) | (minor))
-> +
-> +#define RMI_UNASSIGNED			0
-> +#define RMI_ASSIGNED			1
-> +#define RMI_TABLE			2
-> +
-> +#define RMI_RETURN_STATUS(ret)		((ret) & 0xFF)
-> +#define RMI_RETURN_INDEX(ret)		(((ret) >> 8) & 0xFF)
-> +
-> +#define RMI_SUCCESS		0
-> +#define RMI_ERROR_INPUT		1
-> +#define RMI_ERROR_REALM		2
-> +#define RMI_ERROR_REC		3
-> +#define RMI_ERROR_RTT		4
-> +
-> +enum rmi_ripas {
-> +	RMI_EMPTY = 0,
-> +	RMI_RAM = 1,
-> +	RMI_DESTROYED = 2,
-> +};
-> +
-> +#define RMI_NO_MEASURE_CONTENT	0
-> +#define RMI_MEASURE_CONTENT	1
-> +
-> +#define RMI_FEATURE_REGISTER_0_S2SZ		GENMASK(7, 0)
-> +#define RMI_FEATURE_REGISTER_0_LPA2		BIT(8)
-> +#define RMI_FEATURE_REGISTER_0_SVE_EN		BIT(9)
-> +#define RMI_FEATURE_REGISTER_0_SVE_VL		GENMASK(13, 10)
-> +#define RMI_FEATURE_REGISTER_0_NUM_BPS		GENMASK(19, 14)
-> +#define RMI_FEATURE_REGISTER_0_NUM_WPS		GENMASK(25, 20)
-> +#define RMI_FEATURE_REGISTER_0_PMU_EN		BIT(26)
-> +#define RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS	GENMASK(31, 27)
-> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_256	BIT(32)
-> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_512	BIT(33)
-> +#define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
-> +#define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
-> +#define RMI_FEATURE_REGISTER_0_Reserved		GENMASK(63, 42)
-> +
-> +#define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
-> +#define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
-> +#define RMI_REALM_PARAM_FLAG_PMU		BIT(2)
-> +
-> +/*
-> + * Note many of these fields are smaller than u64 but all fields have u64
-> + * alignment, so use u64 to ensure correct alignment.
-> + */
-> +struct realm_params {
-> +	union { /* 0x0 */
-> +		struct {
-> +			u64 flags;
-> +			u64 s2sz;
-> +			u64 sve_vl;
-> +			u64 num_bps;
-> +			u64 num_wps;
-> +			u64 pmu_num_ctrs;
-> +			u64 hash_algo;
-> +		};
-> +		u8 padding0[0x400];
-> +	};
-> +	union { /* 0x400 */
-> +		u8 rpv[64];
-> +		u8 padding1[0x400];
-> +	};
-> +	union { /* 0x800 */
-> +		struct {
-> +			u64 vmid;
-> +			u64 rtt_base;
-> +			s64 rtt_level_start;
-> +			u64 rtt_num_start;
-> +		};
-> +		u8 padding2[0x800];
-> +	};
-> +};
-> +
-> +/*
-> + * The number of GPRs (starting from X0) that are
-> + * configured by the host when a REC is created.
-> + */
-> +#define REC_CREATE_NR_GPRS		8
-> +
-> +#define REC_PARAMS_FLAG_RUNNABLE	BIT_ULL(0)
-> +
-> +#define REC_PARAMS_AUX_GRANULES		16
-> +
-> +struct rec_params {
-> +	union { /* 0x0 */
-> +		u64 flags;
-> +		u8 padding0[0x100];
-> +	};
-> +	union { /* 0x100 */
-> +		u64 mpidr;
-> +		u8 padding1[0x100];
-> +	};
-> +	union { /* 0x200 */
-> +		u64 pc;
-> +		u8 padding2[0x100];
-> +	};
-> +	union { /* 0x300 */
-> +		u64 gprs[REC_CREATE_NR_GPRS];
-> +		u8 padding3[0x500];
-> +	};
-> +	union { /* 0x800 */
-> +		struct {
-> +			u64 num_rec_aux;
-> +			u64 aux[REC_PARAMS_AUX_GRANULES];
-> +		};
-> +		u8 padding4[0x800];
-> +	};
-> +};
-> +
-> +#define REC_ENTER_EMULATED_MMIO		BIT(0)
-> +#define REC_ENTER_INJECT_SEA		BIT(1)
-> +#define REC_ENTER_TRAP_WFI		BIT(2)
-> +#define REC_ENTER_TRAP_WFE		BIT(3)
-> +#define REC_ENTER_RIPAS_RESPONSE	BIT(4)
-> +
 
-Minor nit: Everywhere else, the flags bit definitions indicate
+NVMe wear out is the problem.
 
-OBJECT_FLAG_xyz
+> > > There are drivers that use pm_suspend_via_firmware() to check whether
+> > > or not something special needs to be done to the device because if
+> > > "false" is returned, the platform firmware is not going to remove
+> > > power from it.
+> > >
+> > > However, you seem to be talking about the opposite, so doing something
+> > > special to the device if "true" is returned.  I'm not sure why this is
+> > > necessary.
+> > >
+> >
+> > Because, since 'false' is returned, drivers like NVMe are assuming that the
+> > platform won't remove power on all DT systems and they just keep the devices in
+> > low power state (not powering them down). But why would I want my NVMe in DT
+> > based laptop to be always powered in system suspend?
+> 
+> Because it causes the system to use less energy when suspended.
+> 
 
-inline with that should this be :
+But the NVMe driver would be still operational. Powering it down would cause the
+system to use much less energy. There is also a case where some devices like
+(Laptops made out of Qcom SCX Gen3 SoCs) require all the PCIe devices to be
+powered down in order for the SoC to reach its low power state (CX power
+collapse in Qcom terms). If not, the SoC would continue to draw more power
+leading to battery draining quickly. This platform is supported in upstream and
+we keep the PCIe interconnect voted during suspend as the NVMe driver is
+expecting the device to retain its state during resume. Because of this
+requirement, this platform is not reaching SoC level low power state with
+upstream kernel.
 
-REC_ENTER_FLAG_xyz ?
+> > > > If the platform is using DT, then there is no entity setting
+> > > > pm_set_suspend_via_firmware().
+> > >
+> > > That's true and so the assumption is that in this case the handling of
+> > > all devices will always be the same regardless of which flavor of
+> > > system suspend is chosen by user space.
+> > >
+> >
+> > Right and that's why the above concern is raised.
+> 
+> And it is still unclear to me what the problem with it is.
+> 
+> What exactly can go wrong?
+> 
+> > > > So NVMe will be kept in low power state all the
+> > > > time (still draining the battery).
+> > >
+> > > So what would be the problem with powering it down unconditionally?
+> > >
+> >
+> > I'm not sure how would you do that (by checking dev_of_node()?). Even so, it
+> > will wear out the NVMe devices if used in Android tablets etc...
+> 
+> I understand the wear-out concern.
+> 
+> Is there anything else?
+> 
 
+No, that's the only concern.
 
-Rest looks fine to me
+> > > > There were attempts to set this flag from
+> > > > PSCI [1], but there were objections on setting this flag when PSCI_SUSPEND is
+> > > > not supported by the platform (again, the case with Qcom SoCs). Even if this
+> > > > approach succeeds, then there are concerns that if the platform is used in an
+> > > > OS like Android where the S2Idle cycle is far more high, NVMe will wear out
+> > > > very quickly.
+> > >
+> > > I see.
+> > >
+> > > > So this is where the forthcoming API need to "dynamically adjusts
+> > > > based upon the use case" as quoted by Ulf in his previous reply. One way to
+> > > > achieve would be by giving the flexibility to the userspace to choose the
+> > > > suspend state (if platform has options to select). UFS does something similar
+> > > > with 'spm_lvl' [2] sysfs attribute that I believe Android userspace itself makes
+> > > > use of.
+> > >
+> > > Before we're talking about APIs, let's talk about the desired behavior.
+> > >
+> > > It looks like there are cases in which you'd want to turn the device
+> > > off completely (say put it into D3cold in the PCI terminology) and
+> > > there are cases in which you'd want it to stay in a somewhat-powered
+> > > low-power state.
+> > >
+> > > It is unclear to me what they are at this point.
+> > >
+> >
+> > I hope that my above explanation clarifies.
+> 
+> Sorry, but not really.
+> 
+> > Here is the short version of the suspend requirement across platforms:
+> >
+> > 1. D3Cold (power down) - Laptops/Automotive
+> > 2. D3hot (low power) - Android Tablets
+> 
+> Where do the above requirements come from?
+> 
 
-Suzuki
+In my case, it is coming from the SoC vendor, Qcom.
 
+> > FWIW, I did receive feedback from people asking to just ignore the Android
+> > usecase and always power down the devices for DT platforms. But I happen to
+> > disagree with them. Let me know if I was wrong and I should not worry about
+> > Android usecase as it is for the future.
+> 
+> I'm not sure what you mean by the "Android usecase" TBH.  Do you mean
+> the wear-out concern in the Android usage scenario or is there more to
+> it?
+
+No, just the wear out concern in Android usecase.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
