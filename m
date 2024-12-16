@@ -1,110 +1,89 @@
-Return-Path: <linux-kernel+bounces-447837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3EE9F37AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:36:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0A59F37A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 273957A5AA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:36:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DD5E164AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35C2206F27;
-	Mon, 16 Dec 2024 17:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0481A2066E6;
+	Mon, 16 Dec 2024 17:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MSxLuYEp"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jpw4yZVs"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E38E2063E3;
-	Mon, 16 Dec 2024 17:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734370568; cv=pass; b=hHvLzex43ZjeOHPnIxV3lgi8+vXM0PYTKk1VlyLvNpOqJzc0Tu49g2LoHNMV8lFJCyy1Gtx4H+hkRPsbZMwfcxndRUZFjn9AOpSW1uh82j8ug8++VTJVy39a5agjjYlREYe2gRe4cIVC2gw3wKo/Q/oemwhfIYBVt7Bj5NYJyWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734370568; c=relaxed/simple;
-	bh=4uLbzSoIoihEXjiVN7XdeY2bXtTwXBtAxxgJ+Vhg0QU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GnuMpuHm0O4redncHkwPu/r8xalPJZuhFiEgiIhPQ9zev7BokpPoM9vMogmJQqkx16sVFJ1xmy0rzrPtw+ZpCwtL2vtO/18LGgnTpWqMSakKlDH2Y8o26mA/gFvHP3X3OTcqyim1wBvIrUaWO0qNkfavqPcL/0GF/aBotZqd3SQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MSxLuYEp; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1734370532; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Vp0Iu6WdbMoF1nXM5SnCyiFrgm+BDTTNnovEHr3eLz0NQKz/zfx5bJiDUaqTLXmjF/IrctuEI+gH9FH2yuTHr4mKE8vjWNgQLdOCcNLlLWX+VuREs3+vFPezAQ+a5uG0QzMVqUs7PHKCSEJaPqKy8BNTNMxyxicXMqB09eHc/6E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734370532; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4+hbfmOKjnlASf4EoCiuUoXr7Qw32w/Un/7tGNMOLBU=; 
-	b=HQDuLCTZ4BGk/ey1MN57Y7Uzrf95t624UDRepS6W8RrQVfOU9woYFYU0R3qBb0gOXyNncdwA0eqyXxb9oCR31KMAlDpIzGDGEafpS98PielASxILX6jmfdmIdN6TK+rtOTHo79tGZKKWCn9IXklj8/zyig50B8OqEbNnYVnPasU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734370532;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=4+hbfmOKjnlASf4EoCiuUoXr7Qw32w/Un/7tGNMOLBU=;
-	b=MSxLuYEpwZ0O8h0j+Rypp0FGvTc0pvs9ZgT8QwNZx7mgRBcUDkFoHWWd74rwVB+v
-	39XLkxIwAO6l4YoVHfRwn4Szqs4S1o9C8AvY0DNWbzlw+QbSluj72kknxpDK4vd0HsW
-	RlsqBp4epFR4A7FlQHsZf009W4uGWKV48qja8Y5XdL+0r/vGdV73AJE9PQq8LKQQpy5
-	BfjICz3nSFvNtAfyZhW5vRsvjc+VWJLE+h6hTX9leRL+rMI+IL86anX1HpdP6svU7Kr
-	JLDL/FWN8jViUZgWBukOTqDWUJLKQsIuvI1jx1nggx9XNk9/ALdSIayuGvyj02fadTf
-	z+qwqyv/Vw==
-Received: by mx.zohomail.com with SMTPS id 1734370530165398.6022361701732;
-	Mon, 16 Dec 2024 09:35:30 -0800 (PST)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	kexec@lists.infradead.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH] mips: disable CRASH_DUMP by default
-Date: Tue, 17 Dec 2024 01:35:14 +0800
-Message-ID: <20241216173514.495638-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.47.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466BB2066D8
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734370531; cv=none; b=lPnQUgvFXMkcxFXA+uB2d+umxQc1SrGTkaux4GOfjWFCvZphnEl27DL+t17O7/m4m/j+ehY6bu2/ENThALJ2pXuwoWhFh27hDCXp1M6NwsjZviN1p/Ti9JrElpaB8q/PdHI1JzVLYauVvQlJ+1iKBuFGu5qUDVYtZaedMid9z8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734370531; c=relaxed/simple;
+	bh=WnpVBajfzmZCV34B8hmzi2AaNBqNVUMchRAMF36FKUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z7SyXQis8EkntCTxTuzFEtyqKqtxVb1nG4sX1o8ZDdxdVSRSuieUE1ssniV4qRAMHmw1rxgZnXA6m3NRX0Esg8pzu5Wgf3v1nV9REbl123AqFEwtOq0Nrw8nsAjXOmTnM9h1oKUEnK1uPTOy9mo+mdfzOGp88yyKtajWK5YVYaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jpw4yZVs; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3eb98099-75da-4464-97d1-9e8538375e34@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734370527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WnpVBajfzmZCV34B8hmzi2AaNBqNVUMchRAMF36FKUY=;
+	b=jpw4yZVs57KIzpEgNmhULeXOroVexIBVS5gbsRmOYICBGRn5q4mcG0Qu0QL3msOTwgn7ZJ
+	z7eztt8maF+6up3OWSS30nBigsb6uD1D4p2QmqP0sY/bapRR/jCnkKDgkUuaZiA4NHqXxx
+	ABwFJvwiuyxA/8RMPOnLlPh2hFfizR0=
+Date: Mon, 16 Dec 2024 11:35:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Subject: Re: [PATCH] soundwire: intel_auxdevice: Don't disable IRQs before
+ removing children
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, vkoul@kernel.org
+Cc: peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
+ sanyog.r.kale@intel.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+References: <20241212110221.1509163-1-ckeepax@opensource.cirrus.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+In-Reply-To: <20241212110221.1509163-1-ckeepax@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On MIPS, the space of a crash dump kernel needs to be manually specified
-by both the debugee and the crash dump kernel PHYSICAL_START config
-option, and the default PHYSICAL_START config will make the kernel
-load quite higher, which isn't acceptable when using as a daily use
-kernel (and will even confuse some naive Loongson-3 bootloaders).
+On 12/12/24 5:02 AM, Charles Keepax wrote:
+> Currently the auxiliary device for the link disables IRQs before it
+> calls sdw_bus_master_delete(). This has the side effect that
+> none of the devices on the link can access their own registers whilst
+> their remove functions run, because the IRQs are required for bus
+> transactions to function. Obviously, devices should be able to access
+> their own registers during disable to park the device suitably.
 
-So I don't think a MIPS kernel should be built as a crash dump kernel by
-default, therefore this patch disables selecting CRASH_DUMP by default.
+What does 'park the device suitably' mean really? That sounds scary. What happens if the manager abruptly ceases to operate and yanks the power? Does the device catch on fire? On a related note, the manager should *never* expect to find the device in a 'suitable' state but always proceed with complete re-initialization.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
- arch/mips/Kconfig | 3 ---
- 1 file changed, 3 deletions(-)
+It would be good to expand on the issue, introducing new locks is one of those "no good deed goes unpunished" situations.
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index a33f05e1ad6d3..f80ea80d792f5 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2873,9 +2873,6 @@ config ARCH_SUPPORTS_KEXEC
- config ARCH_SUPPORTS_CRASH_DUMP
- 	def_bool y
- 
--config ARCH_DEFAULT_CRASH_DUMP
--	def_bool y
--
- config PHYSICAL_START
- 	hex "Physical address where the kernel is loaded"
- 	default "0xffffffff84000000"
--- 
-2.47.1
+> It would appear the reason for the disabling of the IRQs is that the IRQ
+> handler iterates through a linked list of all the links, once a link is
+> removed the memory pointed at by this linked list is freed, but not
+> removed from the linked_list itself. Add a list_del() for the linked
+> list item, note whilst the list itself is contained in the intel_init
+> portion of the code, the list remove needs to be attached to the
+> auxiliary device for the link, since that owns the memory that the list
+> points at. Locking is also required to ensure the IRQ handler runs
+> before or after any additions/removals from the list.
 
+that sounds very detailed but the initial reason for all this is still unclear.
 
