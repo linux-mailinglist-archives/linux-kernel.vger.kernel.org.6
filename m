@@ -1,107 +1,130 @@
-Return-Path: <linux-kernel+bounces-448188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484669F3CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:20:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F27C9F3CB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3E7167E99
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464C81892868
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9776E1D5161;
-	Mon, 16 Dec 2024 21:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B078F1D61A7;
+	Mon, 16 Dec 2024 21:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQksDd12"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Exo/K1NW"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4938414B94C;
-	Mon, 16 Dec 2024 21:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99E01B5EB5;
+	Mon, 16 Dec 2024 21:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383894; cv=none; b=M7K5XK//As7xTNZfMYVmRfffUwEF9FMGrSAPAKQJldGm77vBoalg5Lxj9PCnAvda/rnb8021F4oRmqz9Z2Ng4MIqPMn5Dm6ut6KPJCkbS+94QwZVuRiSDWeI/e79RaBpT4wMBvwvHzx4Rxo7ymzh5cED1Z+X2A3eWh/NaxwZZLo=
+	t=1734383946; cv=none; b=pNsH4roCh7azDm52oil0Do37hyg0tSqQjJlWHomH5gtY3MXLzLZ/hsfgz4JxEurUnlcd3orFWywGgJcT0hSPk4ec3zFDky6JPIrXkV2a/54xAKrs59Tm9RsBQf0uQvyKNJWxx3up9EZGvB0EQaAVlilwtWFXvwyZZagf2Q9YmVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383894; c=relaxed/simple;
-	bh=paOLajdEu9vycL6UvR1V3qrBl7DqDxbhyJBR8TB76RU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oezZDhhWgc1SXKcZb2Kk4dWtHN0K9o6lWI8rkRz2nitKfP7gzlg/XFOKA2OIlUV1wWUsgT0gLazb8Oq1SfnwnmrPNGW7wE9C5OK6M+A2yVsXfa8I1jK15Q3hF+wkxlW9S/9mgoCqlsmSrykVAKwEsUCs14HcbBdpI+Ymeht0Yx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQksDd12; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734383893; x=1765919893;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=paOLajdEu9vycL6UvR1V3qrBl7DqDxbhyJBR8TB76RU=;
-  b=WQksDd12YT7WSnJVmjbsf7VTABX+50KBTX95Othn2WnzvB2N6/4HddyR
-   DzWFsVphPk68jJOEXdXmKC76WjEohTZXRLgjFMNOe34WaEKJ8aQ6Ati/L
-   uNMX7Z3h0rNcxXWeLXPM0B+leB3mHPiHcRG8/Ga9jsiYYsiEuMijSAmvr
-   kaOPwGcJ+0Id96bRKIJLI5rv6g7fVQtyB1KMYkmJS257y26Gj6qV6iZTA
-   hg0PzE40CEXjbe61TZLS5+bwbYBXgmRxZbII+R1JXDaHqhR5Z6Ts4R93r
-   aw41SYjuSO77IIZoZ6sijtTD7enaWbuYKGfEJI1yBdeRCRNXye0gnvLr8
-   w==;
-X-CSE-ConnectionGUID: RuXpPW1/RU2cJFroyJLGuw==
-X-CSE-MsgGUID: 76NDIWI7R/KCdESbYaIQpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="45484871"
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="45484871"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 13:18:12 -0800
-X-CSE-ConnectionGUID: Uba2lp7qS+mJHzVGrAwPFw==
-X-CSE-MsgGUID: Cg+8coEYQGexBbr2LkTVJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="97781261"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by orviesa007.jf.intel.com with ESMTP; 16 Dec 2024 13:18:12 -0800
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	rui.zhang@intel.com,
-	daniel.lezcano@linaro.org,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/2] thermal: intel: int340x: Panther Lake power floor and workload hint support
-Date: Mon, 16 Dec 2024 13:18:10 -0800
-Message-ID: <20241216211810.1207028-2-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241216211810.1207028-1-srinivas.pandruvada@linux.intel.com>
-References: <20241216211810.1207028-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1734383946; c=relaxed/simple;
+	bh=ek+xYaJy87EX5UEGxygqRG6doJzbHOhTzFII2PC4n9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lxh6TM8i9gZ8nRlUoSqj9OeGhQywcNOx31n4l1AEQ5JFeaGS4iFWNemJWKcw+QWC9i5Tc7u0KuF37A8jmaPVGwtN9efwlo2aIBAKC5cX5/INVtZ0wKl0In0+CMdMcgDypiUB+/7Y7VLUMsl8FOx8waKeD3a4kddeqAE3DZ1gdRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Exo/K1NW; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aq6kZVM12fgWzF+pq/rgcXR/bLmQmlEHBp3Dopc19M4=; b=Exo/K1NWyblsPnEfeIij0yFOdP
+	mvrvETCJ6OQxMElyMkEOlQEEqCGu5JjNEtupMxwAShKwoU8WJ0N20jA0jpVkUG5P/ZZlKKWDkcXcv
+	w8sFnvZ1Zl2UZd5oBNsEDp2JFnr9MCRUWhKljJivlQx3bxdwYUKhCtmUaiHzPdZl5oQq5Qah8P1tF
+	cjsDLAbMDqO9DT6BdJMPBZN/NsOzI7uB0FEFXcsVyw+6tv+WDSU+ivXUsi4cF3zKkDH2N6SIJELtH
+	QtLhBxviq9TJ8PBHoUGwsk70cr4DlrecqtOGGP4tSa94PF/qqWDc+MHvRquzAzmP9v80pHCkmiNPp
+	7GToNoCg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNITz-00000004wgd-1GY9;
+	Mon, 16 Dec 2024 21:18:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D7EBE30031E; Mon, 16 Dec 2024 22:18:26 +0100 (CET)
+Date: Mon, 16 Dec 2024 22:18:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v6 11/16] mm: enforce vma to be in detached state before
+ freeing
+Message-ID: <20241216211826.GA33253@noisy.programming.kicks-ass.net>
+References: <20241216192419.2970941-1-surenb@google.com>
+ <20241216192419.2970941-12-surenb@google.com>
+ <20241216211635.GC9803@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216211635.GC9803@noisy.programming.kicks-ass.net>
 
-Panther Lake follows same register set as Lunar Lake. Enable feature
-flags to support workload hints and power floor status.
+On Mon, Dec 16, 2024 at 10:16:35PM +0100, Peter Zijlstra wrote:
+> On Mon, Dec 16, 2024 at 11:24:14AM -0800, Suren Baghdasaryan wrote:
+> > exit_mmap() frees vmas without detaching them. This will become a problem
+> > when we introduce vma reuse. Ensure that vmas are always detached before
+> > being freed.
+> > 
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  kernel/fork.c |  4 ++++
+> >  mm/vma.c      | 10 ++++++++--
+> >  2 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 283909d082cb..f1ddfc7b3b48 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -473,6 +473,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+> >  
+> >  void __vm_area_free(struct vm_area_struct *vma)
+> >  {
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +	/* The vma should be detached while being destroyed. */
+> > +	VM_BUG_ON_VMA(!is_vma_detached(vma), vma);
+> > +#endif
+> >  	vma_numab_state_free(vma);
+> >  	free_anon_vma_name(vma);
+> >  	kmem_cache_free(vm_area_cachep, vma);
+> > diff --git a/mm/vma.c b/mm/vma.c
+> > index fbd7254517d6..0436a7d21e01 100644
+> > --- a/mm/vma.c
+> > +++ b/mm/vma.c
+> > @@ -413,9 +413,15 @@ void remove_vma(struct vm_area_struct *vma, bool unreachable)
+> >  	if (vma->vm_file)
+> >  		fput(vma->vm_file);
+> >  	mpol_put(vma_policy(vma));
+> > -	if (unreachable)
+> > +	if (unreachable) {
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +		if (!is_vma_detached(vma)) {
+> > +			vma_start_write(vma);
+> > +			vma_mark_detached(vma);
+> > +		}
+> > +#endif
+> >  		__vm_area_free(vma);
+> 
+> Again, can't you race with lockess RCU lookups?
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../intel/int340x_thermal/processor_thermal_device_pci.c       | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-index fb3820e72c11..1b8ee61cb924 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-@@ -496,7 +496,8 @@ static const struct pci_device_id proc_thermal_pci_ids[] = {
- 	{ PCI_DEVICE_DATA(INTEL, RPL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
- 	  PROC_THERMAL_FEATURE_FIVR | PROC_THERMAL_FEATURE_DVFS | PROC_THERMAL_FEATURE_WT_REQ) },
- 	{ PCI_DEVICE_DATA(INTEL, PTL_THERMAL, PROC_THERMAL_FEATURE_RAPL |
--	  PROC_THERMAL_FEATURE_DLVR) },
-+	  PROC_THERMAL_FEATURE_DLVR | PROC_THERMAL_FEATURE_MSI_SUPPORT |
-+	  PROC_THERMAL_FEATURE_WT_HINT | PROC_THERMAL_FEATURE_POWER_FLOOR) },
- 	{ },
- };
- 
--- 
-2.47.1
-
+Ah, no, removing vma requires holding mmap_lock for writing and having
+the vma locked, which would ensure preceding RCU readers are complete
+(per the LOCK_OFFSET waiter thing) and new RCU readers are rejected for
+the vma sequence thing.
 
