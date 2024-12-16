@@ -1,183 +1,233 @@
-Return-Path: <linux-kernel+bounces-447488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A86A9F3344
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:32:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FD09F3348
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2632418843DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:32:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A447A2095
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC285204569;
-	Mon, 16 Dec 2024 14:32:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D3C18E25;
-	Mon, 16 Dec 2024 14:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72336205E25;
+	Mon, 16 Dec 2024 14:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEbQl3ps"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68321DDE9;
+	Mon, 16 Dec 2024 14:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734359520; cv=none; b=JYMoaZz56QaxrftxOqop1U2PpVWokflHtW/C4cN/AF3rrRu7RMk/JFH1lqcgqzL3jNQtx3G4FDd7tTIRVftC5v+m4mK+IZqYy8OnNBCndiCwLZtvwJh2AF1SipWZJUuyYs4KlKyHCzi+0DTIs0W2lSHwC1al50YU2T7e/ise1VQ=
+	t=1734359590; cv=none; b=Njml/R0d+Cz3U2gdR5VVUXOjOKvxGla8lvBPW6avRDMer2hA+J/E0wKbMU8Z40w/b4EccdSD+MBBg/h1wVw81EL0U9QqJf1b3aX5D3NYn+b73BBsdyOKcM+CanIg7gVEPwjL57KTQSOSNkfbOTOvxGyYLwJAloG+WCSXDutEjxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734359520; c=relaxed/simple;
-	bh=dglKhAEZ5GcPn4/vHvJBOyuC1GCMSzd1CLig1Ni8yA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3v7byD1OBcl2Gwyb7Eyss/bJ5269QT1O3CMm4X8OyRIpzvvkzeDOPjrn0rnr89/61aZahu7gv+cqPW4l8A3wshY8XB1HgWB3cLTqw4Ru8hEqY7hBgQ4b+L5w1xM0eocD78sch39bbVG6yZWs4jUmE8v7R0mXjGfUxIOs8kQyEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50212113E;
-	Mon, 16 Dec 2024 06:32:25 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7D693F58B;
-	Mon, 16 Dec 2024 06:31:55 -0800 (PST)
-Date: Mon, 16 Dec 2024 14:31:47 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to
- __cpuinfo_store_cpu()
-Message-ID: <Z2A502_EpqvLYN8g@J2N7QTR9R3.cambridge.arm.com>
-References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
- <87a5cysfci.wl-maz@kernel.org>
- <709a0e75-0d0c-4bff-b9fd-3bbb55c97bd5@sirena.org.uk>
- <Z2Agntn52mY5bSTp@J2N7QTR9R3>
- <855dbb91-db37-4178-bd0b-511994d3aef7@sirena.org.uk>
+	s=arc-20240116; t=1734359590; c=relaxed/simple;
+	bh=8xMQSMajVdEloFdHjNjiGT8ocden+NeG4pG+oObPpxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Se5FoGjCNfaZxiePeQmzXyqZPzkEKpgR1F09EhIO6SCZtpnixuYzStocbQrJODetwGKRnK7JNwg0FyqV8ArXUiDA7ILLArRXQIAPkeukzmB19L3Niw0LpwhEofr4+L2fLLqYZ/LxdTSSMVgLsm6XKsu2e2gUSWb/z6hOhB1AkcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEbQl3ps; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53e3778bffdso4412754e87.0;
+        Mon, 16 Dec 2024 06:33:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734359587; x=1734964387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UcGJusMROs1d9U6OcF/dUgFih+81cOor/KxZG4XJKuc=;
+        b=aEbQl3psbb8Tp2lwTDGB7rEoDiwmoHQrIFjMuTzxBaksj8/oG/OyZV/j6NiSDvgpfN
+         OpoBh1ShtoTs+3gRMN3w4eX3HN9CFaZjg4BimsLK1WR9nQTtIO70BtbWts6p0rzUa+li
+         KIq6FhOfqUbicGn6e/QvvIfEUubexDfQ9Go0GDLRBOqy7cM65RmDmS8kkHnqJS4wjzPV
+         QEFN2aQLvNQumxOooFyyndb2IBxkhd65BpD/ZQdDyeeGEmjpRd7rVFDs023NZDOuU++7
+         hONgmEhUqUkK9FCvTiuUZ/u6q1+p6HHEc4VjrHytk5PzVf6LMHgL8u4uwTIWDLqjRmPk
+         KNXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734359587; x=1734964387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UcGJusMROs1d9U6OcF/dUgFih+81cOor/KxZG4XJKuc=;
+        b=H60btENafmSO4TIDaHiJUS4FGYSCYJiovgtmUEb9Yp1bXsyID7ltIyREpPUNCMMs6H
+         UrlF6GnsTWEvI2W1PCF3Oq3ZrRNvsgJsz+j7p98BGZFK8NlHpnstEUmnQiIrhJTokUUN
+         +N4My77Ssd+BlPjDQqnKXKG+VJz/Cd270kZMyoV/pxPESbmd17YtavRMoUxxs5UxQihg
+         JrfUh00m1PEQmCiR0ulb3k2HGlEnv3J+PCTk0YvTE4cyvSEhygFcGMtHYA2e1MrDX5Ay
+         kge9QjvgZGu54cxdLMz33EPAj7/dWGjjPaus0764AUesHeyldi88ttn51SWkLGgvQT7x
+         8zlg==
+X-Forwarded-Encrypted: i=1; AJvYcCU16G9GXMkeEiNwe7EwlMHltibJSXoAGdRflYVxeHFQiFtzrQIkBDh0f+rcXlHJWCOciKHJs4OI@vger.kernel.org, AJvYcCW9yMtJGIg4KZ7duIW8s6nKhZ06JRvCsUqF7eUnpub9lOIVIP1mp5DqLVY1/fv/Pm3d7ADOwrn9W8iomJ2cX9s=@vger.kernel.org, AJvYcCWAqlUlGxfXVuxIAgfCdYng8SjFk9tTXRrzmsTEk+nP3sXKIqfyk1OzhrxqO098BluIYsu+cCpkXUPM4CJb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7gbypabxdszfYiZCzeQeluuJglDRwKpanpHIvjQKpuMCEZq5N
+	5nRu3Wda/kVsg0WYLwyeWS/OYzXDQeDsJUAyrEe/kuzt0elEyxOzJCGDEvPJtMlgb52P1d4D1v8
+	31hHUqWpL7R+R1H5HCreYb6F9Lm3wnmdy
+X-Gm-Gg: ASbGncujnBcp+vYl0RaI/rSKNZBFyAh2sBxXl22wdyhvb9UFqLzSr4OphyHBnx27B9M
+	INit/8zV4naWEecSMKWxbH/iXI5zjrQKtMNwi
+X-Google-Smtp-Source: AGHT+IELpcpoOMr0HZIYsbPkHXhRImQ+VIsxUYWZmevTZLApJPoAOQq0DMX0ucJCu/DDTc7ZaIih4Z12yiHzp+r6PE8=
+X-Received: by 2002:a05:6512:39c8:b0:540:1b7e:7b4a with SMTP id
+ 2adb3069b0e04-540905955d7mr4268744e87.36.1734359586622; Mon, 16 Dec 2024
+ 06:33:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <855dbb91-db37-4178-bd0b-511994d3aef7@sirena.org.uk>
+References: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
+In-Reply-To: <20241216080758.3450976-1-quic_chejiang@quicinc.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 16 Dec 2024 09:32:53 -0500
+Message-ID: <CABBYNZLRdu_f9eNEapPp5mNqgcUE0jby5VPpaMaArY_FjyjB8Q@mail.gmail.com>
+Subject: Re: [PATCH v1] Bluetooth: hci_sync: Fix disconnect complete event
+ timeout issue
+To: Cheng Jiang <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_jiaymao@quicinc.com, 
+	quic_shuaz@quicinc.com, quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 01:23:55PM +0000, Mark Brown wrote:
-> On Mon, Dec 16, 2024 at 12:44:14PM +0000, Mark Rutland wrote:
-> 
-> > ... didn't matter either way, and using '&boot_cpu_data' was intended to
-> > make it clear that the features were based on the boot CPU's info, even
-> > if you just grepped for that and didn't see the surrounding context.
-> 
-> Right, that was my best guess as to what was supposed to be going on
-> but it wasn't super clear.  The code could use some more comments.
-> 
-> > I think the real fix here is to move the reading back into
-> > __cpuinfo_store_cpu(), but to have an explicit check that SME has been
-> > disabled on the commandline, with a comment explaining that this is a
-> > bodge for broken FW which traps the SME ID regs.
-> 
-> That should be doable.
-> 
-> There's a few other similar ID registers (eg, we already read GMID_EL1
-> and MPAMIDR_EL1) make me a bit nervous that we might need to generalise
-> it a bit, but we can deal with that if it comes up.  Even for SME the
-> disable was added speculatively, the factors that made this come up for
-> SVE are less likely to be an issue with SME.
+Hi Cheng,
 
-FWIW, I had a quick go (with only the SME case), and I think the shape
-that we want is roughly as below, which I think is easy to generalise to
-those other cases.
+On Mon, Dec 16, 2024 at 3:08=E2=80=AFAM Cheng Jiang <quic_chejiang@quicinc.=
+com> wrote:
+>
+> Sometimes, the remote device doesn't acknowledge the LL_TERMINATE_IND
+> in time, requiring the controller to wait for the supervision timeout,
+> which may exceed 2 seconds. In the current implementation, the
+> HCI_EV_DISCONN_COMPLETE event is ignored if it arrives late, since
+> the hci_abort_conn_sync has cleaned up the connection after 2 seconds.
+> This causes the mgmt to get stuck, resulting in bluetoothd waiting
+> indefinitely for the mgmt response to the disconnect. To recover,
+> restarting bluetoothd is necessary.
+>
+> bluetoothctl log like this:
+> [Designer Mouse]# disconnect D9:B5:6C:F2:51:91
+> Attempting to disconnect from D9:B5:6C:F2:51:91
+> [Designer Mouse]#
+> [Designer Mouse]# power off
+> [Designer Mouse]#
+> Failed to set power off: org.freedesktop.DBus.Error.NoReply.
+>
+> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> ---
+>  include/net/bluetooth/hci_core.h |  2 ++
+>  net/bluetooth/hci_conn.c         |  9 +++++++++
+>  net/bluetooth/hci_event.c        |  9 +++++++++
+>  net/bluetooth/hci_sync.c         | 18 ++++++++++++++++++
+>  4 files changed, 38 insertions(+)
+>
+> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci=
+_core.h
+> index 734cd50cd..2ab079dcf 100644
+> --- a/include/net/bluetooth/hci_core.h
+> +++ b/include/net/bluetooth/hci_core.h
+> @@ -753,6 +753,8 @@ struct hci_conn {
+>
+>         struct bt_codec codec;
+>
+> +       struct completion disc_ev_comp;
+> +
+>         void (*connect_cfm_cb)  (struct hci_conn *conn, u8 status);
+>         void (*security_cfm_cb) (struct hci_conn *conn, u8 status);
+>         void (*disconn_cfm_cb)  (struct hci_conn *conn, u8 reason);
+> diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
+> index d097e308a..e0244e191 100644
+> --- a/net/bluetooth/hci_conn.c
+> +++ b/net/bluetooth/hci_conn.c
+> @@ -1028,6 +1028,15 @@ static struct hci_conn *__hci_conn_add(struct hci_=
+dev *hdev, int type, bdaddr_t
+>
+>         hci_conn_init_sysfs(conn);
+>
+> +       /* This disc_ev_comp is inited when we send a disconnect request =
+to
+> +        * the remote device but fail to receive the disconnect complete
+> +        * event within the expected time (2 seconds). This occurs becaus=
+e
+> +        * the remote device doesn't ack the terminate indication, forcin=
+g
+> +        * the controller to wait for the supervision timeout.
+> +        */
+> +       init_completion(&conn->disc_ev_comp);
+> +       complete(&conn->disc_ev_comp);
+> +
+>         return conn;
+>  }
+>
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 2cc7a9306..60ecb2b18 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -3366,6 +3366,15 @@ static void hci_disconn_complete_evt(struct hci_de=
+v *hdev, void *data,
+>         if (!conn)
+>                 goto unlock;
+>
+> +       /* Wake up disc_ev_comp here is ok. Since we hold the hdev lock
+> +        * hci_abort_conn_sync will wait hdev lock release to continue.
+> +        */
+> +       if (!completion_done(&conn->disc_ev_comp)) {
+> +               complete(&conn->disc_ev_comp);
+> +               /* Add some delay for hci_abort_conn_sync to handle the c=
+omplete */
+> +               usleep_range(100, 1000);
+> +       }
+> +
+>         if (ev->status) {
+>                 mgmt_disconnect_failed(hdev, &conn->dst, conn->type,
+>                                        conn->dst_type, ev->status);
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index 0badec712..783d04b57 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -5590,6 +5590,24 @@ int hci_abort_conn_sync(struct hci_dev *hdev, stru=
+ct hci_conn *conn, u8 reason)
+>                 break;
+>         }
+>
+> +       /* Check whether the connection is successfully disconnected.
+> +        * Sometimes the remote device doesn't acknowledge the
+> +        * LL_TERMINATE_IND in time, requiring the controller to wait
+> +        * for the supervision timeout, which may exceed 2 seconds. In
+> +        * this case, we need to wait for the HCI_EV_DISCONN_COMPLETE
+> +        * event before cleaning up the connection.
+> +        */
+> +       if (err =3D=3D -ETIMEDOUT) {
+> +               u32 idle_delay =3D msecs_to_jiffies(10 * conn->le_supv_ti=
+meout);
+> +
+> +               reinit_completion(&conn->disc_ev_comp);
+> +               if (!wait_for_completion_timeout(&conn->disc_ev_comp, idl=
+e_delay)) {
+> +                       bt_dev_warn(hdev, "Failed to get complete");
+> +                       mgmt_disconnect_failed(hdev, &conn->dst, conn->ty=
+pe,
+> +                                              conn->dst_type, conn->abor=
+t_reason);
+> +               }
+> +       }
 
-MarcZ, thoughts?
+Why don't we just set the supervision timeout as timeout then? If we
+will have to wait for it anyway just change hci_disconnect_sync to use
+10 * conn->le_supv_timeout as timeout instead.
 
-Mark.
+That said, we really need to fix bluetoothd if it is not able to be
+cleaned up if SET_POWERED command fails, but it looks like it is
+handling errors correctly so it sounds like something else is at play.
 
----->8----
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 8b4e5a3cd24c8..f16eb99c10723 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -91,6 +91,16 @@ struct arm64_ftr_override {
- 	u64		mask;
- };
- 
-+static inline u64
-+arm64_ftr_override_apply(const struct arm64_ftr_override *override,
-+			 u64 val)
-+{
-+	val &= ~override->mask;
-+	val |= override->val & override->mask;
-+
-+	return val;
-+}
-+
- /*
-  * @arm64_ftr_reg - Feature register
-  * @strict_mask		Bits which should match across all CPUs for sanity.
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 6ce71f444ed84..faad7d3e4cf5f 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1167,12 +1167,6 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
- 		unsigned long cpacr = cpacr_save_enable_kernel_sme();
- 
--		/*
--		 * We mask out SMPS since even if the hardware
--		 * supports priorities the kernel does not at present
--		 * and we block access to them.
--		 */
--		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
- 		vec_init_vq_map(ARM64_VEC_SME);
- 
- 		cpacr_restore(cpacr);
-@@ -1550,10 +1544,8 @@ u64 __read_sysreg_by_encoding(u32 sys_id)
- 	}
- 
- 	regp  = get_arm64_ftr_reg(sys_id);
--	if (regp) {
--		val &= ~regp->override->mask;
--		val |= (regp->override->val & regp->override->mask);
--	}
-+	if (regp)
-+		val = arm64_ftr_override_apply(regp->override, val);
- 
- 	return val;
- }
-diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-index d79e88fccdfce..1460e3541132f 100644
---- a/arch/arm64/kernel/cpuinfo.c
-+++ b/arch/arm64/kernel/cpuinfo.c
-@@ -439,6 +439,24 @@ static void __cpuinfo_store_cpu_32bit(struct cpuinfo_32bit *info)
- 	info->reg_mvfr2 = read_cpuid(MVFR2_EL1);
- }
- 
-+static void __cpuinfo_store_cpu_sme(struct cpuinfo_arm64 *info)
-+{
-+	/*
-+	 * TODO: explain that this bodge is to avoid trapping.
-+	 */
-+	u64 pfr1 = info->reg_id_aa64pfr1;
-+	pfr1 = arm64_ftr_override_apply(&id_aa64pfr1_override, pfr1);
-+	if (!id_aa64pfr1_sme(pfr1))
-+		return;
-+
-+	/*
-+	 * We mask out SMPS since even if the hardware
-+	 * supports priorities the kernel does not at present
-+	 * and we block access to them.
-+	 */
-+	info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
-+}
-+
- static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
- {
- 	info->reg_cntfrq = arch_timer_get_cntfrq();
-@@ -482,6 +500,8 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
- 	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
- 		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
- 
-+	__cpuinfo_store_cpu_sme(info);
-+
- 	cpuinfo_detect_icache_policy(info);
- }
- 
+>         hci_dev_lock(hdev);
+>
+>         /* Check if the connection has been cleaned up concurrently */
+>
+> base-commit: e25c8d66f6786300b680866c0e0139981273feba
+> --
+> 2.34.1
+>
 
 
+--=20
+Luiz Augusto von Dentz
 
