@@ -1,168 +1,147 @@
-Return-Path: <linux-kernel+bounces-447214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33F09F2F06
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:22:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8669F2F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F38091670FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E557A1B4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC54204569;
-	Mon, 16 Dec 2024 11:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75396204577;
+	Mon, 16 Dec 2024 11:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWkMryo8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="optb0I5c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC55D20100C;
-	Mon, 16 Dec 2024 11:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F04204570;
+	Mon, 16 Dec 2024 11:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734348159; cv=none; b=QWCGJ9mvNiJwonzmmKQSBGnFPiQ8VciB3DCTbQ7t/MKmtqDXDK8Y9U1g7/6yZDDM4nsg3ZIiNopxL+ADGMNC+wmCI32F3c92qHtmcxVsWPVSUBHirOXnEdW4JEBAl10POtgfgPEpCFJWWX3JfPXtOnfbsrCoiWx26XLRLp1htX4=
+	t=1734348245; cv=none; b=DI9+lpok0O6Hg2Eo+uv7Ot/Vvoof+XWGsfhjJYzw6GzvMQmR56H2NSdK9ym7egzcnUPC1jIW6/ypSdv4Mo8vLHTj87ofa0+5E8F+8pcddyzpD5ZVCcFbzdEgKiHn0Nkd3MqAGx/IRSOjM2PBW3+PzgFxlyeNhO70rs2x4Nc9wvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734348159; c=relaxed/simple;
-	bh=qPq0Nt6Zf8yCjcNQ/PAEykhRaOf9EUh0LiugO8xcgig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h30rELZERsjhMWi02Dp/d7svfhNhGRQoI0wendBwN9fcj5rBETKMFvS0b3giVr4hdcHB1OOakyaXc7R3EwwR5I4nC7PKExWoo0bpkSKNK1c+U6WqBTjZXS5MWZ3TqxKdafV8W1Jh9X+8wRiFSRR03zhxMqK7hcps+1J/YrjQvlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWkMryo8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 311ABC4CED0;
-	Mon, 16 Dec 2024 11:22:29 +0000 (UTC)
+	s=arc-20240116; t=1734348245; c=relaxed/simple;
+	bh=FHDzRf9XplQIVKV5ZROwjyH68Lcb6hQK4EdGbC6roFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hdxa5Ot8D0AdEcAFmN10NJGc1idARza2GDZlwOcFBPUwHuXGON8QRqoYDVJysOj7UWlGmkGVflyv0L3qV7jlx2BOzM0FUPyHT0DGxuIexx33+WeJYXcc63uEqVQrIDFg3BEakgM+J6tiwkrgWUCX+5cUe/XSDqh9cKJuh6tR8iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=optb0I5c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D17C4CEE1;
+	Mon, 16 Dec 2024 11:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734348159;
-	bh=qPq0Nt6Zf8yCjcNQ/PAEykhRaOf9EUh0LiugO8xcgig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rWkMryo8Dr0o+kiePU80vzm+BsiluBhhi89+ze5cPzKb3OrSoa92M3F/qy/zR5Yzx
-	 Oehc46xHzuPUj/bfZEynKxzBXKDduFe5ZPAuhUdUpYTe/66OxWikrvT5xmpNEsE5mf
-	 v8HXgpTb+3oL2w/n7sSOCruhpyYnI6D8IvclbRu834NBVOIGm2ows/2UiLmunT05+a
-	 VW/Dvz49XlkFEqqdjbZE8YyZ6+jqMCrirO/nMhdlpkMou53ETafUvbP1TT5amXJ4tY
-	 8ZS6zHcewIH3Qo8laNPNpgs2LxY0+mQBTDmFdGSVBPzYsOlQPIMHmRh31+fAnGrjoy
-	 1x+YFadYgHBUw==
-Message-ID: <32677f46-da3e-4f89-abb7-02fdb4f6b268@kernel.org>
-Date: Mon, 16 Dec 2024 12:22:27 +0100
+	s=k20201202; t=1734348245;
+	bh=FHDzRf9XplQIVKV5ZROwjyH68Lcb6hQK4EdGbC6roFI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=optb0I5cJBzbAkDyaGFC3k3SqUFYWu96CozIYWuMXcv702+OZSM6jZS2sMI5Nn6gz
+	 8EEU2RGh9JX7EONnxhYll4VH1KMw369DeLYRYgdmqKeTAP4lRoYn2VthABeTAbCtS4
+	 n4VtHx9lPoHzdlXOwxX0BeAKYF6BofQ4+mgXUKHSyORV+Djx4VjtxDVxNaLAZcUd8+
+	 bJAT/ms12lwIBa+hAEw2esLWxIHO6hfu2xTwRr2Hf5p3GrlqSUkv4npbjcOKhVnDVc
+	 vONpPzmMa/3Wl3o5pjpeHxoTn6DFp3I+5zj4zqCXJWFm6Iow9LDIHVVE2eDjOAXRJG
+	 I3L/CbRSY7iBw==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa692211331so764318166b.1;
+        Mon, 16 Dec 2024 03:24:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVoUz1FhCBaepGhu1dMJIXfL36qSiWVlHEKttkaITM21g8EtsBfmd3MavkfceIf4lyKNDcGEr0p5u6resID@vger.kernel.org, AJvYcCWgldeozGl3ANWyPombVlpSnlWrg0JBp+6AIUq/sMpG/Q5EZXUdPMttNLwINoEvuPCA1Ic9WGtLK8aNaw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1vsVWTv7TRdSRkuf42ws/FKusWPoUyNZEsit6pA8M2mlpc07y
+	A8bSiRlnRvLH/UGursdxclRtxp56LiCgAtpU/OCx/3cYF/ATlmoEMfqf/59vcvU6U4O1vltNRIT
+	m7kFbpg6mo+0NMkd/AEty09XZH5Q=
+X-Google-Smtp-Source: AGHT+IENINiS+xOG/vwpVS/Z2cnq/8d8ukc2aBTZA1Jpqg5Mq+e+pXbqSjSQlgakgIL9FZ3VOqL7ZvYA/IYVm3z1Roo=
+X-Received: by 2002:a17:907:3eaa:b0:aa6:abe7:ff49 with SMTP id
+ a640c23a62f3a-aab7b7607camr1039010266b.16.1734348243870; Mon, 16 Dec 2024
+ 03:24:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] dt-bindings: display: renesas,du: Add missing
- maxItems
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
- <20241213-rcar-gh-dsi-v4-3-f8e41425207b@ideasonboard.com>
- <l2r53ipif43k7kkjqc66z2mq6tyw6niiz4t4nnfge23hygx2pw@xrgk4mv5ljzx>
- <20241216083239.GC32204@pendragon.ideasonboard.com>
- <12d157af-e309-4c8d-9c14-bd0e9da8194d@kernel.org>
- <c64b11a0-1720-418e-bb7a-06c2c0ac191e@ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <c64b11a0-1720-418e-bb7a-06c2c0ac191e@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241216-btrfs_need_stripe_tree_update-cleanups-v2-0-42b6d0274da7@kernel.org>
+ <20241216-btrfs_need_stripe_tree_update-cleanups-v2-2-42b6d0274da7@kernel.org>
+In-Reply-To: <20241216-btrfs_need_stripe_tree_update-cleanups-v2-2-42b6d0274da7@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Mon, 16 Dec 2024 11:23:26 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H77_ZVMKhDX-hKc6FuA4XRxG6y1N15H2ukeg9434vEecQ@mail.gmail.com>
+Message-ID: <CAL3q7H77_ZVMKhDX-hKc6FuA4XRxG6y1N15H2ukeg9434vEecQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] btrfs: cache RAID stripe tree decision in btrfs_io_context
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Filipe Manana <fdmanana@suse.com>, Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/12/2024 11:54, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 16/12/2024 12:42, Krzysztof Kozlowski wrote:
->> On 16/12/2024 09:32, Laurent Pinchart wrote:
->>> Hi Krzysztof,
->>>
->>> On Mon, Dec 16, 2024 at 08:58:49AM +0100, Krzysztof Kozlowski wrote:
->>>> On Fri, Dec 13, 2024 at 04:02:59PM +0200, Tomi Valkeinen wrote:
->>>>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>>>
->>>>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
->>>>> properties. As the amount of cmms or vsps is always a fixed amount, set
->>>>> the maxItems to match the minItems.
->>>>>
->>>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>>>> ---
->>>>>   Documentation/devicetree/bindings/display/renesas,du.yaml | 10 ++++++++++
->>>>>   1 file changed, 10 insertions(+)
->>>>
->>>> The top level property should define widest constraints as well.
->>>
->>> I'm curious, why is that ? I understand why a top-level default would
->>> make sense when it's optionally overridden by model-specific values, but
->>> in this case there's no such default. Every SoC has its own fixed value.
->>
->> Because otherwise top level property does not have proper description
->> and we expect properties to be defined at top-level.
-> 
-> As we don't know what is the maximum number of items for future SoCs, 
-> should we then use a number that'll surely be big enough? At the moment 
-> the max cmms seems to be 4, so maybe 16 would be safely big enough. But 
-> is it then better to be extra safe, and use, say, maxItems 256?
+On Mon, Dec 16, 2024 at 8:11=E2=80=AFAM Johannes Thumshirn <jth@kernel.org>=
+ wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Cache the decision if a particular I/O needs to update RAID stripe tree
+> entries in struct btrfs_io_context.
+>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-No, look at all other bindings. Widest constraints for ONLY these
-devices. We do not talk about future SoCs here.
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-Best regards,
-Krzysztof
+Looks good, thanks.
+
+
+> ---
+>  fs/btrfs/bio.c     | 3 +--
+>  fs/btrfs/volumes.c | 1 +
+>  fs/btrfs/volumes.h | 1 +
+>  3 files changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+> index 7ea6f0b43b95072b380172dc16e3c0de208a952b..bc80ee4f95a5a8de05f2664f6=
+8ac4fcb62864d7b 100644
+> --- a/fs/btrfs/bio.c
+> +++ b/fs/btrfs/bio.c
+> @@ -725,8 +725,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio=
+, int mirror_num)
+>                         bio->bi_opf |=3D REQ_OP_ZONE_APPEND;
+>                 }
+>
+> -               if (is_data_bbio(bbio) && bioc &&
+> -                   btrfs_need_stripe_tree_update(bioc->fs_info, bioc->ma=
+p_type)) {
+> +               if (is_data_bbio(bbio) && bioc && bioc->use_rst) {
+>                         /*
+>                          * No locking for the list update, as we only add=
+ to
+>                          * the list in the I/O submission path, and list
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index fa190f7108545eacf82ef2b5f1f3838d56ca683e..088ba0499e184c93a402a3f92=
+167cccfa33eec58 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6663,6 +6663,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>                 goto out;
+>         }
+>         bioc->map_type =3D map->type;
+> +       bioc->use_rst =3D io_geom.use_rst;
+>
+>         /*
+>          * For RAID56 full map, we need to make sure the stripes[] follow=
+s the
+> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+> index 3a416b1bc24cb0735c783de90fb7490d795d7d96..10bdd731e3fcc889237b4e1b0=
+5cc9389bc937659 100644
+> --- a/fs/btrfs/volumes.h
+> +++ b/fs/btrfs/volumes.h
+> @@ -485,6 +485,7 @@ struct btrfs_io_context {
+>         struct bio *orig_bio;
+>         atomic_t error;
+>         u16 max_errors;
+> +       bool use_rst;
+>
+>         u64 logical;
+>         u64 size;
+>
+> --
+> 2.43.0
+>
+>
 
