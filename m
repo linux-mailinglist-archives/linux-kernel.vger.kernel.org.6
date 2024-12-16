@@ -1,298 +1,432 @@
-Return-Path: <linux-kernel+bounces-447776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0D49F36D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676DC9F36DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47D7E1638B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CC916CCA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAB3209691;
-	Mon, 16 Dec 2024 16:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACF1204C03;
+	Mon, 16 Dec 2024 16:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Of1+CeMK"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VofV6IUa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9222063C9
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBAF14B086;
+	Mon, 16 Dec 2024 16:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734368075; cv=none; b=MoyluSWed7P4j7wAeZpA+XuI5GfVegyEKq8s+F33vXNTyQzme6pRnriHsuMGhf6Q6Cfau4sEKhDQYtHjCXGFIreIrZvrw47ZAM400yRcCfUJBkgOMTVUuD/aBnG7IgqyaTqeHDE55iER8ueownExREBxy9rbUC9AkSKrA7lSVt4=
+	t=1734368115; cv=none; b=Lb4H4ZHOIPQ630wiV/QpIeMwn+fLul3sqwm96yHcS/ViGDNEOR7tTGoNEGqE+8zfVqWh8S6S7xR6m0yT/rc0OmI/Wx/suOE+6I0N3UbkAdWj1hOMMyAGPTtSjGdZiPa1w8U+47HLcUgFhFkZn0XGOu+XpWxfIiKapf5o0qlOkM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734368075; c=relaxed/simple;
-	bh=7A0davVIwiuSEmuPTLBJUHT0Al8qNb8UxsZyk/HAbe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qLu8ntimJFR5uPZnh9Rp2V+DvfNmxXS+lkbPIOeveV+NPLYcW3XK2v/9WwtikL8Sk7DgDflHNcRE0weOXqiK2m6sYaIbN0HZXh0mB+lVVxWcbtdhUrdVS2Bs4cryQQLQsNgLmFrsteHAu2MkFnRT8RWw4khpESYF2beEmms27dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Of1+CeMK; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=96t2WbR0Dygs8PZjguz/sy8Oqz4g6k7vcC/SQJy+9II=; b=Of1+CeMK7FyrRDMltZ6Rxnhb77
-	xWhWmFa7EluvfpevIm2QjXeSq6ZGGvGwaFOOep6PvznRBmWgeatpM1IYmr/wIugw5NgCF+Y3NQe2r
-	WcMbHCrjQtMv+AdCdAUP+TU8wJuRbb7qhk5tnannxubvZDhOvxcQ+2lYA56IIm4FDxYCec0CfvsvX
-	KeKjGRwREIUCvW79jTx/FH3gUcgNbLQAtCQcELjXWt603cJIbkCBG1HZBozMMH6xAkjzL6aFJvBe4
-	D+jIA8HRHNMcGn/1LSowAYg4S70cDenjQD4MuxDqzX5QxI4OdSWvVvfLCDJzot0PFBc9jLgO3L6/9
-	at2O3mUw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNEMO-00000004uHG-1RR3;
-	Mon, 16 Dec 2024 16:54:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 480C830031E; Mon, 16 Dec 2024 17:54:19 +0100 (CET)
-Date: Mon, 16 Dec 2024 17:54:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
- task_struct::blocked_on
-Message-ID: <20241216165419.GE35539@noisy.programming.kicks-ass.net>
-References: <20241125195204.2374458-1-jstultz@google.com>
- <20241125195204.2374458-3-jstultz@google.com>
- <20241213232214.GA17501@noisy.programming.kicks-ass.net>
- <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+	s=arc-20240116; t=1734368115; c=relaxed/simple;
+	bh=C2u03fwXwxsZXOswCApxo/HFEjBIJEH8uuXnSb3scD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RKHPXB6koVqEZ/WQ9+KzEvhSHRywt4afBytYvqtAfXXp2v0IJJj6Y7AuGYlclqyVVl65GX4yrbGUK0dlYFYfZfS7G+UdDRStVtjchhV9E20vcipA7xBWpAqS5psLjs4UBOyKmyEQnJJ3uV+qICcBY6tm7HVljpJu/yp5eQxOsrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VofV6IUa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGE5egF013363;
+	Mon, 16 Dec 2024 16:54:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ddABALJ11IrdBJAr4LsNM0q2aLFx4fQQqbOp3L9dSfA=; b=VofV6IUaNOBxfAqG
+	iB7g051A4Lj5WxPqnK7AZxFFSMPSfWv1F7OV52mTH+APfLWcSfH74ztZ5IiPZSsb
+	6e7PASfDKr+YAmvTFSIZq/RcFxfVp2b8JXLLbdZmU902N7YFNgOf6EiYamZi7pGj
+	CbFr3BM0qPDxsIEzXzZTxX/ni026M0nzoKWTwr9xWlmpT4XFR7RthBoPCkXoPi2D
+	ATL7ztQVi4WXylrtmEfmqwOoCXMxJQmF0dK2B33a7JNbmuikM5rqqgx5KXNY9BgY
+	v+GX3HGSPyF663l/AKN/ukk1QTC7xLKyiXTPMedFbsj6KM7wkrczQ57j41EDpNoa
+	6AXYAQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jnnureh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 16:54:58 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGGsvEk023069
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 16:54:57 GMT
+Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 08:54:52 -0800
+Message-ID: <ae351364-7590-4080-baea-80133c79c86f@quicinc.com>
+Date: Mon, 16 Dec 2024 22:24:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] drm/msm: Add UABI to request perfcntr usage
+To: Antonino Maniscalco <antomani103@gmail.com>,
+        Rob Clark
+	<robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>
+CC: <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+        "Rob
+ Clark" <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        open list
+	<linux-kernel@vger.kernel.org>
+References: <20241205165419.54080-1-robdclark@gmail.com>
+ <eca60b8e-8a8a-41c4-816a-d084822646f1@quicinc.com>
+ <de6cfac6-84a0-4160-b279-c23e10f96872@gmail.com>
+ <96e918d7-6e29-4d0a-8e9d-b77232c37ef0@quicinc.com>
+ <30fadc96-d531-4cde-a717-c5983908ea04@gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <30fadc96-d531-4cde-a717-c5983908ea04@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xPZetAP_6VZpC5GgMyA2Pc8as0MG_A_U
+X-Proofpoint-ORIG-GUID: xPZetAP_6VZpC5GgMyA2Pc8as0MG_A_U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ mlxscore=0 phishscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412160140
 
-On Fri, Dec 13, 2024 at 07:39:57PM -0800, John Stultz wrote:
-> On Fri, Dec 13, 2024 at 3:22 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Nov 25, 2024 at 11:51:56AM -0800, John Stultz wrote:
-> >
-> > > Also add a blocked_on_state value so we can distinguish when a
-> > > task is blocked_on a mutex, but is either blocked, waking up, or
-> > > runnable (such that it can try to acquire the lock its blocked
-> > > on).
-> > >
-> > > This avoids some of the subtle & racy games where the blocked_on
-> > > state gets cleared, only to have it re-added by the
-> > > mutex_lock_slowpath call when it tries to acquire the lock on
-> > > wakeup
-> >
-> > If you can remember those sublte cases, I'm sure our future selves
-> > would've loved it if you wrote a comment to go with these states :-)
+On 12/13/2024 10:40 PM, Antonino Maniscalco wrote:
+> On 12/13/24 5:50 PM, Akhil P Oommen wrote:
+>> On 12/12/2024 9:44 PM, Antonino Maniscalco wrote:
+>>> On 12/12/24 4:58 PM, Akhil P Oommen wrote:
+>>>> On 12/5/2024 10:24 PM, Rob Clark wrote:
+>>>>> From: Rob Clark <robdclark@chromium.org>
+>>>>>
+>>>>> Performance counter usage falls into two categories:
+>>>>>
+>>>>> 1. Local usage, where the counter configuration, start, and end read
+>>>>>      happen within (locally to) a single SUBMIT.  In this case,
+>>>>> there is
+>>>>>      no dependency on counter configuration or values between submits,
+>>>>> and
+>>>>>      in fact counters are normally cleared on context switches,
+>>>>> making it
+>>>>>      impossible to rely on cross-submit state.
+>>>>>
+>>>>> 2. Global usage, where a single privilaged daemon/process is sampling
+>>>>>      counter values across all processes for profiling.
+>>>>>
+>>>>> The two categories are mutually exclusive.  While you can have many
+>>>>> processes making local counter usage, you cannot combine global and
+>>>>> local usage without the two stepping on each others feet (by changing
+>>>>> counter configuration).
+>>>>>
+>>>>> For global counter usage, there is already a SYSPROF param (since
+>>>>> global
+>>>>> counter usage requires disabling counter clearing on context switch).
+>>>>> This patch adds a REQ_CNTRS param to request local counter usage.  If
+>>>>> one or more processes has requested counter usage, then a SYSPROF
+>>>>> request will fail with -EBUSY.  And if SYSPROF is active, then
+>>>>> REQ_CNTRS
+>>>>> will fail with -EBUSY, maintaining the mutual exclusivity.
+>>>>>
+>>>>> This is purely an advisory interface to help coordinate userspace.
+>>>>> There is no real means of enforcement, but the worst that can
+>>>>> happen if
+>>>>> userspace ignores a REQ_CNTRS failure is that you'll get nonsense
+>>>>> profiling data.
+>>>>>
+>>>>> Signed-off-by: Rob Clark <robdclark@chromium.org>
+>>>>> ---
+>>>>> kgsl takes a different approach, which involves a lot more UABI for
+>>>>> assigning counters to different processes.  But I think by taking
+>>>>> advantage of the fact that mesa (freedreno+turnip) reconfigure the
+>>>>> counters they need in each SUBMIT, for their respective gl/vk perf-
+>>>>> counter extensions, we can take this simpler approach.
+>>>>
+>>>> KGSL's approach is preemption and ifpc safe (also whatever HW changes
+>>>> that will come up in future generations). How will we ensure that here?
+>>>>
+>>>> I have plans to bring up IFPC support in near future. Also, I
+>>>> brought up
+>>>> this point during preemption series. But from the responses, I felt
+>>>> that
+>>>> profiling was not considered a serious usecase. Still I wonder how the
+>>>> perfcounter extensions work accurately with preemption.
+>>>
+>>> So back then I implemented the postamble IB to clear perf counters and
+>>> that gets disabled when sysprof (so global usage) is happening. The
+>>> kernel is oblivious to "Local isage" of profiling but in that case
+>>> really what we want to do is disable preemption which in my
+>>> understanding can be done from userspace with a PKT. In my understanding
+>>> this had us covered for all usecases.
+>>
+>> I think this wasn't mentioned at that time. Which UMD PKT in a6x+ did
+>> you mean?
 > 
-> Thanks so much for the review feedback! I really appreciate it!
+> Ah, I thought it wasmentioned, sorry.
+> The packet I was referring to is:
+>     <doc> Make next dword 1 to disable preemption, 0 to re-enable it. </
+> doc>
+>     <value name="CP_PREEMPT_DISABLE" value="0x6c" variants="A6XX"/>
+
+Ah! Okay. I think this packet is not used by the downstream blob. IMO,
+disabling preemption is still a suboptimal solution.
+
 > 
-> So yes, the description can use improvement here. I at one time had
-> 3-4 separate very fine grained patches (see the top 4 patches here:
-> https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v7-6.7-rc6-fine-grained/?after=c4cad6e353c00254a2dfbb227ef81d8c3827427d+35)
-> that I rolled into one when sending out(mostly to avoid overwhelming
-> folks), but the squished commit description isn't as clear.
-> So if it's helpful I can split this back out?
+> BTW you mentioned wanting to look into IFPC. Since I too wanted to look
+> into implementing it wonder if you could let me know when you planned on
+> working on it.
+
+I have few patches in progress. Nothing final yet and need verification
+on the hw side. Also, I need to do some housekeeping here to debug gmu
+issues since IFPC increases the probability of those a lot.
+
+I will try to send out the patches very soon.
+
+-Akhil.
+
 > 
-> I'll also add some better comments as well.
-
-Not sure yet about splitting back out -- let me try and figure out what
-all is actually done / needed.
-
-So blocked_lock started out as another lock around ttwu(), in order to
-serialize the task wakeup vs reading a remote ->blocked_on relation.
-
-Since we do this with rq->lock held, it can't be ->pi_lock, and hence
-->blocked_lock was born.
-
-Later patches appear to have moved it into mutex, mirroring the
-->wait_lock -- this is probably better.
-
-/me goes chase that state thing for a bit..
-
-So, this all seems to have started with:
-
-  https://github.com/johnstultz-work/linux-dev/commit/c122552e07b75bb39d0297431799801de30f147f
-
-
-> > > @@ -627,6 +628,7 @@ __mutex_lock_common(struct mutex *lock, unsigned int state, unsigned int subclas
-> > >                       goto err_early_kill;
-> > >       }
-> > >
-> > > +     set_task_blocked_on(current, lock);
-> > >       set_current_state(state);
-> >
-> > blocked_on_state mirrors task-state
+>>
+>> -Akhil.
+>>
+>>>
+>>> So what would you expect instead we should do kernel side to make
+>>> profiling preemption safe?
+>>>
+>>>>
+>>>> -Akhil
+>>>>
+>>>>>
+>>>>>    drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +
+>>>>>    drivers/gpu/drm/msm/msm_drv.c           |  5 ++-
+>>>>>    drivers/gpu/drm/msm/msm_gpu.c           |  1 +
+>>>>>    drivers/gpu/drm/msm/msm_gpu.h           | 29 +++++++++++++-
+>>>>>    drivers/gpu/drm/msm/msm_submitqueue.c   | 52 +++++++++++++++++++
+>>>>> +++++-
+>>>>>    include/uapi/drm/msm_drm.h              |  1 +
+>>>>>    6 files changed, 85 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/
+>>>>> drm/msm/adreno/adreno_gpu.c
+>>>>> index 31bbf2c83de4..f688e37059b8 100644
+>>>>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>>>>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>>>>> @@ -441,6 +441,8 @@ int adreno_set_param(struct msm_gpu *gpu, struct
+>>>>> msm_file_private *ctx,
+>>>>>            if (!capable(CAP_SYS_ADMIN))
+>>>>>                return UERR(EPERM, drm, "invalid permissions");
+>>>>>            return msm_file_private_set_sysprof(ctx, gpu, value);
+>>>>> +    case MSM_PARAM_REQ_CNTRS:
+>>>>> +        return msm_file_private_request_counters(ctx, gpu, value);
+>>>>>        default:
+>>>>>            return UERR(EINVAL, drm, "%s: invalid param: %u", gpu-
+>>>>>> name, param);
+>>>>>        }
+>>>>> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/
+>>>>> msm_drv.c
+>>>>> index 6416d2cb4efc..bf8314ff4a25 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_drv.c
+>>>>> +++ b/drivers/gpu/drm/msm/msm_drv.c
+>>>>> @@ -377,9 +377,12 @@ static void msm_postclose(struct drm_device
+>>>>> *dev, struct drm_file *file)
+>>>>>         * It is not possible to set sysprof param to non-zero if gpu
+>>>>>         * is not initialized:
+>>>>>         */
+>>>>> -    if (priv->gpu)
+>>>>> +    if (ctx->sysprof)
+>>>>>            msm_file_private_set_sysprof(ctx, priv->gpu, 0);
+>>>>>    +    if (ctx->counters_requested)
+>>>>> +        msm_file_private_request_counters(ctx, priv->gpu, 0);
+>>>>> +
+>>>>>        context_close(ctx);
+>>>>>    }
+>>>>>    diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/
+>>>>> msm_gpu.c
+>>>>> index 82f204f3bb8f..013b59ca3bb1 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_gpu.c
+>>>>> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+>>>>> @@ -991,6 +991,7 @@ int msm_gpu_init(struct drm_device *drm, struct
+>>>>> platform_device *pdev,
+>>>>>        gpu->nr_rings = nr_rings;
+>>>>>          refcount_set(&gpu->sysprof_active, 1);
+>>>>> +    refcount_set(&gpu->local_counters_active, 1);
+>>>>>          return 0;
+>>>>>    diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/
+>>>>> msm_gpu.h
+>>>>> index e25009150579..83c61e523b1b 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_gpu.h
+>>>>> +++ b/drivers/gpu/drm/msm/msm_gpu.h
+>>>>> @@ -195,12 +195,28 @@ struct msm_gpu {
+>>>>>        int nr_rings;
+>>>>>          /**
+>>>>> -     * sysprof_active:
+>>>>> +     * @sysprof_active:
+>>>>>         *
+>>>>> -     * The count of contexts that have enabled system profiling.
+>>>>> +     * The count of contexts that have enabled system profiling plus
+>>>>> one.
+>>>>> +     *
+>>>>> +     * Note: refcount_t does not like 0->1 transitions.. we want to
+>>>>> keep
+>>>>> +     * the under/overflow checks that refcount_t provides, but allow
+>>>>> +     * multiple on/off transitions so we track the logical value
+>>>>> plus one.)
+>>>>>         */
+>>>>>        refcount_t sysprof_active;
+>>>>>    +    /**
+>>>>> +     * @local_counters_active:
+>>>>> +     *
+>>>>> +     * The count of contexts that have requested local (intra-submit)
+>>>>> +     * performance counter usage plus one.
+>>>>> +     *
+>>>>> +     * Note: refcount_t does not like 0->1 transitions.. we want to
+>>>>> keep
+>>>>> +     * the under/overflow checks that refcount_t provides, but allow
+>>>>> +     * multiple on/off transitions so we track the logical value
+>>>>> plus one.)
+>>>>> +     */
+>>>>> +    refcount_t local_counters_active;
+>>>>> +
+>>>>>        /**
+>>>>>         * lock:
+>>>>>         *
+>>>>> @@ -383,6 +399,13 @@ struct msm_file_private {
+>>>>>         */
+>>>>>        int sysprof;
+>>>>>    +    /**
+>>>>> +     * @counters_requested:
+>>>>> +     *
+>>>>> +     * Has the context requested local perfcntr usage.
+>>>>> +     */
+>>>>> +    bool counters_requested;
+>>>>> +
+>>>>>        /**
+>>>>>         * comm: Overridden task comm, see MSM_PARAM_COMM
+>>>>>         *
+>>>>> @@ -626,6 +649,8 @@ void msm_submitqueue_destroy(struct kref *kref);
+>>>>>      int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+>>>>>                     struct msm_gpu *gpu, int sysprof);
+>>>>> +int msm_file_private_request_counters(struct msm_file_private *ctx,
+>>>>> +                      struct msm_gpu *gpu, int reqcntrs);
+>>>>>    void __msm_file_private_destroy(struct kref *kref);
+>>>>>      static inline void msm_file_private_put(struct msm_file_private
+>>>>> *ctx)
+>>>>> diff --git a/drivers/gpu/drm/msm/msm_submitqueue.c b/drivers/gpu/drm/
+>>>>> msm/msm_submitqueue.c
+>>>>> index 7fed1de63b5d..1e1e21e6f7ae 100644
+>>>>> --- a/drivers/gpu/drm/msm/msm_submitqueue.c
+>>>>> +++ b/drivers/gpu/drm/msm/msm_submitqueue.c
+>>>>> @@ -10,6 +10,15 @@
+>>>>>    int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+>>>>>                     struct msm_gpu *gpu, int sysprof)
+>>>>>    {
+>>>>> +    int ret = 0;
+>>>>> +
+>>>>> +    mutex_lock(&gpu->lock);
+>>>>> +
+>>>>> +    if (sysprof && (refcount_read(&gpu->local_counters_active) >
+>>>>> 1)) {
+>>>>> +        ret = UERR(EBUSY, gpu->dev, "Local counter usage active");
+>>>>> +        goto out_unlock;
+>>>>> +    }
+>>>>> +
+>>>>>        /*
+>>>>>         * Since pm_runtime and sysprof_active are both refcounts, we
+>>>>>         * call apply the new value first, and then unwind the previous
+>>>>> @@ -18,7 +27,8 @@ int msm_file_private_set_sysprof(struct
+>>>>> msm_file_private *ctx,
+>>>>>          switch (sysprof) {
+>>>>>        default:
+>>>>> -        return UERR(EINVAL, gpu->dev, "Invalid sysprof: %d",
+>>>>> sysprof);
+>>>>> +        ret = UERR(EINVAL, gpu->dev, "Invalid sysprof: %d", sysprof);
+>>>>> +        goto out_unlock;
+>>>>>        case 2:
+>>>>>            pm_runtime_get_sync(&gpu->pdev->dev);
+>>>>>            fallthrough;
+>>>>> @@ -43,7 +53,45 @@ int msm_file_private_set_sysprof(struct
+>>>>> msm_file_private *ctx,
+>>>>>          ctx->sysprof = sysprof;
+>>>>>    -    return 0;
+>>>>> +out_unlock:
+>>>>> +    mutex_unlock(&gpu->lock);
+>>>>> +
+>>>>> +    return ret;
+>>>>> +}
+>>>>> +
+>>>>> +int msm_file_private_request_counters(struct msm_file_private *ctx,
+>>>>> +                      struct msm_gpu *gpu, int reqctrs)
+>>>>> +{
+>>>>> +    int ret = 0;
+>>>>> +
+>>>>> +    mutex_lock(&gpu->lock);
+>>>>> +
+>>>>> +    if (reqctrs && (refcount_read(&gpu->sysprof_active) > 1)) {
+>>>>> +        ret = UERR(EBUSY, gpu->dev, "System profiling active");
+>>>>> +        goto out_unlock;
+>>>>> +    }
+>>>>> +
+>>>>> +    if (reqctrs) {
+>>>>> +        if (ctx->counters_requested) {
+>>>>> +            ret = UERR(EINVAL, gpu->dev, "Already requested");
+>>>>> +            goto out_unlock;
+>>>>> +        }
+>>>>> +
+>>>>> +        ctx->counters_requested = true;
+>>>>> +        refcount_inc(&gpu->local_counters_active);
+>>>>> +    } else {
+>>>>> +        if (!ctx->counters_requested) {
+>>>>> +            ret = UERR(EINVAL, gpu->dev, "Not requested");
+>>>>> +            goto out_unlock;
+>>>>> +        }
+>>>>> +        refcount_dec(&gpu->local_counters_active);
+>>>>> +        ctx->counters_requested = false;
+>>>>> +    }
+>>>>> +
+>>>>> +out_unlock:
+>>>>> +    mutex_unlock(&gpu->lock);
+>>>>> +
+>>>>> +    return ret;
+>>>>>    }
+>>>>>      void __msm_file_private_destroy(struct kref *kref)
+>>>>> diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+>>>>> index 2342cb90857e..ae7fb355e4a1 100644
+>>>>> --- a/include/uapi/drm/msm_drm.h
+>>>>> +++ b/include/uapi/drm/msm_drm.h
+>>>>> @@ -91,6 +91,7 @@ struct drm_msm_timespec {
+>>>>>    #define MSM_PARAM_UBWC_SWIZZLE 0x12 /* RO */
+>>>>>    #define MSM_PARAM_MACROTILE_MODE 0x13 /* RO */
+>>>>>    #define MSM_PARAM_UCHE_TRAP_BASE 0x14 /* RO */
+>>>>> +#define MSM_PARAM_REQ_CNTRS  0x15 /* WO: request "local" (intra-
+>>>>> submit) perfcntr usage  */
+>>>>>      /* For backwards compat.  The original support for preemption was
+>>>>> based on
+>>>>>     * a single ring per priority level so # of priority levels equals
+>>>>> the #
+>>>>
+>>>
+>>>
+>>> Best regards,
+>>
 > 
-> Yea. I know I always move a little fast in my talks but at OSPM and
-> LPC, but I've raised the point that the blocked_on_state very much
-> seems like it aliases the task->__state.
-> (See slide 26: https://lpc.events/event/18/contributions/1887/attachments/1402/3074/LPC_%20Proxy%20Exec%20deep%20dive%20outline.pdf)
 > 
-> I've not quite worked out how to integrate it though.
-> 
-> My initial introduction of the blocked_on_state was mostly to help
-> detangle the code, as there were a number of cases originally where in
-> order to let the task be selected to try to acquire the mutex, we
-> cleared the task->blocked_on pointer.  But this often ran into races
-> with ttwu, as if it cleared the blocked_on pointer, the task could get
-> selected to run before the return migration happened. So having the
-> tri-state BLOCKED->WAKING->RUNNABLE be explicit helped ensure we
-> enforced the rules properly so we didn't run on the wrong cpu.
+> Best regards,
 
-Right, so we already have a TASK_WAKING state, that is that
-intermediate. But let me try and get a feel for how things relate;
-TASK_WAKING is after we've determined it is elegible for wakeup, but
-before it is enqueued -- eg. it sits on the wakelist.
-
-This BO_WAKING is not quite that. It happens before doing the actual
-wakeup.
-
-Also, when I pull your proxy-exec-v7-6.7-rc6-fine-gained and put that
-next to your slides, I'm a little confused.
-
-Specifically, slide 27 talks about a modification to try_to_wake_up() in
-order to force the task into ttwu_runnable() such that it then hits
-proxy_needs_return(). This latter part I can find, but not the former.
-
-/me puzzles
-
-Hmm, since a blocked task is on the runqueue and all that, you should
-always walk that path, anything else would be buggy.
-
-So fundamentally the problem is that you want to do a reverse migration
--- it needs to go back to a CPU where it is allowed to run. The way it
-does this is to dequeue itself and let ttwu continue and clean up the
-mess.
-
-This all makes sense, but why can't you do this on the waking side? That
-is, instead of setting BO_WAKING, do this whole if (!is_cpu_allowed())
-deactivate_task() thing right there, before issuing the wakeup.
-
-Notably, that sched_proxy_exec() block in __mutex_unlock_slowpath():
-
- - probably doesn't need current->blocked_lock, current isn't blocked
- 
- - probably doesn't need lock->wait_lock, donor is stable under
-   preempt_disable().
-
-
-Something like the completely untested below (also, ttwu path needs
-surgery now):
-
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 2711af8c0052..47cfa01cd066 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -946,32 +946,11 @@ static noinline void __sched __mutex_unlock_slowpath(struct mutex *lock, unsigne
- 	}
- 
- 	preempt_disable();
-+	next = proxy_handoff(lock);
-+
- 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
- 	debug_mutex_unlock(lock);
- 
--	if (sched_proxy_exec()) {
--		raw_spin_lock(&current->blocked_lock);
--		/*
--		 * If we have a task boosting current, and that task was boosting
--		 * current through this lock, hand the lock to that task, as that
--		 * is the highest waiter, as selected by the scheduling function.
--		 */
--		donor = current->blocked_donor;
--		if (donor) {
--			struct mutex *next_lock;
--
--			raw_spin_lock_nested(&donor->blocked_lock, SINGLE_DEPTH_NESTING);
--			next_lock = get_task_blocked_on(donor);
--			if (next_lock == lock) {
--				next = donor;
--				donor->blocked_on_state = BO_WAKING;
--				wake_q_add(&wake_q, donor);
--				current->blocked_donor = NULL;
--			}
--			raw_spin_unlock(&donor->blocked_lock);
--		}
--	}
--
- 	/*
- 	 * Failing that, pick any on the wait list.
- 	 */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 6eaffa913495..30d7371bb5c4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4035,6 +4035,53 @@ static inline void activate_blocked_entities(struct rq *target_rq,
- }
- #endif /* CONFIG_SCHED_PROXY_EXEC */
- 
-+struct task_struct *proxy_handoff(struct mutex *lock);
-+{
-+	struct task_struct *next;
-+
-+	if (!sched_proxy_exec())
-+		return NULL;
-+
-+	/*
-+	 * current->blocked_donor can't change if we can't schedule
-+	 * caller needs to do this, since its needs stabiliy of return value
-+	 */
-+	lockdep_assert_preemption_disabled();
-+	next = current->blocked_donor;
-+	if (!next)
-+		return NULL;
-+
-+	scoped_guard (task_rq_lock, next) {
-+		/*
-+		 * current->blocked_donor had better be on the same CPU as current
-+		 */
-+		WARN_ON_ONCE(scope.rq != this_rq());
-+
-+		scoped_guard (raw_spin_lock, next->blocked_lock) {
-+			/*
-+			 * WARN_ON on this? How can this happen
-+			 */
-+			if (next->blocked_on != lock)
-+				return NULL;
-+		}
-+
-+		/*
-+		 * blocked_on relation is stable, since we hold both
-+		 * next->pi_lock and it's rq->lock
-+		 *
-+		 * OK -- we have a donor, it is blocked on the lock we're about
-+		 * to release and it cannot run on this CPU -- fixies are
-+		 * required.
-+		 *
-+		 * Dequeue the task, such that ttwu() can fix up the placement thing.
-+		 */
-+		if (!is_cpu_allowed(next, cpu_of(scope.rq)))
-+			deactivate_task(scope.rq, next, DEQUEUE_SLEEP);
-+	}
-+
-+	return next;
-+}
-+
- #ifdef CONFIG_SMP
- static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
- {
 
