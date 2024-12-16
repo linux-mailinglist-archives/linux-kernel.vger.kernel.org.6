@@ -1,187 +1,175 @@
-Return-Path: <linux-kernel+bounces-448033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D349F3A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:46:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2799F3A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ABE716CCDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:46:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52741882DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EBB20C49C;
-	Mon, 16 Dec 2024 19:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2620C48A;
+	Mon, 16 Dec 2024 19:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZFPw3/76"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KvftCxGn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD0414A4D4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1263514A4D4;
+	Mon, 16 Dec 2024 19:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378382; cv=none; b=NiUQ+p8JX6fjCVtxHWlW4xSRHWzrQU9vKGbYwYukE3jS27DMkfZh+96WMqOcczACxgY8r609UZx8XPosjlrd3oa5vABynN6aVUrcHu11V0kJ4syH867GUNCm8IjXaz2nzyJkdkglyexRd8GF+gf4U5VxEfQYyqhr9Ddycfrk1lQ=
+	t=1734378393; cv=none; b=HIpAcvjAMMuJtIPPkH2JL0Gq8CyPpveO5UzJ2Ao89MGy89QA3Adjp4ZFZZ5YMd+FQMoHjYTsW31J2zU8CV0nadOHpifJWkwk8RUtYk5aWPRqhuANnyuQuvGi3LgP4cYztJ7sqLyKLW7X5nEgRH3U5x7+XyhTQmU9e1h62yFTxzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378382; c=relaxed/simple;
-	bh=j6tAfhrAKfM+BxyKJyBCAECpbjqe9JSVwIYSxNWXM9A=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hKEFJdFG6aaBCjUwiD+ipkLHwo5LH4pdH+Rjk7D6vqBKdyLN+gvRZ0vy/3mzVd5OEmJJ1dSTQA/sem+Xw2b6XVp9ioTjgRl4acMceUxaFggxqnGSpyl0v7HWqtsKXwXet1iPRjxAQm/HrEBvGFBFvwLHy34iwaILExGxqwoI028=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZFPw3/76; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4679d366adeso42902121cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734378378; x=1734983178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:user-agent
-         :from:references:in-reply-to:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dj4MkECiGqrOXQxpuQLD4yCOwjnhMEXT22q3KbMrq/k=;
-        b=ZFPw3/76A+yR8hZsJ8MPg7v6Y914MtWiHLvgR2dCVYvNOlQm3YOkHnDApNm+AyVb05
-         N8d5RsgitKo2TLqOehTerc1s26A/3RVTI+PiXCEGUXy7Lv8t8ys4eeQGx0ZQFblvtdgg
-         iKwS9hZQqj9fk6Ezreu+1DgCvPYCxPj/Mgrek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734378378; x=1734983178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:user-agent
-         :from:references:in-reply-to:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Dj4MkECiGqrOXQxpuQLD4yCOwjnhMEXT22q3KbMrq/k=;
-        b=RdHDts1R3xiO7MFwJ1XCIoCwWkgIOVw5m7DKecfbwdf4aVRyZq8htXrNSzhoqmx8sP
-         g3NM1VUOdX7fvJZGRTGjUPf4Wt4e2/wWC7fvzcoHIteuY+GtfK3Wt9s16raGpgrVi06y
-         AywgvjqntueR+7Yx2Zp/xR63GwKYiOhr3pxFpw3LfDQTNmozmypEzyYFDk08KCJ6wHus
-         VqCS8x8ubgI4VVXWEC/7disn0m6TvFItFGVN/Jo2N68rFKMS6Rg6nOoFBR/0eRHWqfJV
-         YfwtaSGLfPZ2FCoZaoMZRCx5jQ3Iv/5ge02fHvYC3CNKBq99/GpZJaUKPDP4C+XBz+62
-         7E1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVO4hlFmPcTj2scJIbNwaRvqnKa8+YzXpkFZn6f9g8hZwQEsG5vfFasj205HpYvOibG7Nfmj1acZ7f1sFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBM9/UEICGitkQ+nP9n6QCi5H2Yy4GFIlkzbQeEXBnnITv5tjI
-	QWQLPL/3uiK/RcvgkzT9FNzrFLm4U3+rT+FKA40X5zSGn6tpAU/Ibj1MxVXnzOsC9kBNbdM6u29
-	QxUM63fHqp1YKGF4J5n6/RKfjCMRfjau88TGm
-X-Gm-Gg: ASbGncvjDiRldLUdLt+GyS5o+gjVnNuocLeIttpH0Kp/EHqg6l511g2gNbpHAwDh+OL
-	fcOAx+RzEd6WapS54SPPr4voibuHOxU8gEe9XdluQXVzsuhEvzUIMbz/svuwku+RMbw==
-X-Google-Smtp-Source: AGHT+IHGV/UEHN7glrKn45Rm7GMxGUJA8r5aYXDp4ruex87I6ZIK8597fD+gsMJMcB3UPXYWmc3P1FV2kT6S+lFHJd4=
-X-Received: by 2002:ac8:5a50:0:b0:467:72c1:7084 with SMTP id
- d75a77b69052e-468f8c06fc3mr12036341cf.0.1734378378091; Mon, 16 Dec 2024
- 11:46:18 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 16 Dec 2024 11:46:16 -0800
+	s=arc-20240116; t=1734378393; c=relaxed/simple;
+	bh=RLUntgJcAtM8NP7THRlyqK5g3ipxcNtp7E3Czb/3EgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HEcI+tDVg1LvgdJ9rPskYYZLQOFYNALCijAP/YPHmXI/v72cZyIueHk4OiIsy0hf5D60JISsKrssyw0fhnjuj2MhnIETN6tDklfnugTQWiNqygBPhF55xIqeEucD5L23p+NEesIt2r/22ZGCYZyyfD+MWAhjG6I6Kb5bYw8n0hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KvftCxGn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGFgVke015402;
+	Mon, 16 Dec 2024 19:46:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EZX1kqIMLz6GdpHdIEmLG54+LmHa25JfHQjG5BAGSMM=; b=KvftCxGnxFlSx1yh
+	rHIZsr2++G/odbS0eRoCbSU9G0JpbmUFji0PBhIcU7uB+A5DuS+ZbxmtgKKnARMI
+	xJIh7IgLTd81qfj2K1acU8D6ZMki2qDInB4okt/wyPotWF68pLpXoE3u/nVTTftS
+	En+EsTN6P17vD1G/qCdI2khjrknHQsqMUgLVgiAT9umgPzfFVgt2VJPan5Fqw66i
+	dC5AE3XUEbpKCaoe9F6oYI+nOYBGK9rvZbpImaFOaur15J5KtrsApxQXQOfM0qJg
+	GM2qVVb1DHunyg9lV3vo72ANZ88hGMYAwIc/QRZOv9mCczx6UqeRi3uC2aEfsY5V
+	dl2TRA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jq350m91-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:46:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJkOsC005915
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:46:24 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 11:46:22 -0800
+Message-ID: <9fb5986b-f375-4300-b50c-92bb9c0b4399@quicinc.com>
+Date: Mon, 16 Dec 2024 11:46:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CANFp7mU=wjXc6FrdzWT5oe25wtZnxOXvpVmbMqeVhOeEUchpcA@mail.gmail.com>
-References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
- <20241206153813.v4.5.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid>
- <CAE-0n513GoDKW7mA_rjCLsgZZFq=CEb5S8WLYr2rskq8fJW9LA@mail.gmail.com> <CANFp7mU=wjXc6FrdzWT5oe25wtZnxOXvpVmbMqeVhOeEUchpcA@mail.gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Mon, 16 Dec 2024 11:46:16 -0800
-Message-ID: <CAE-0n52dZONV2Fj=N4f85ttGRg+yyvOSXQoD50oFc9B7LBgtPA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] platform/chrome: cros_ec_typec: Displayport support
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: chrome-platform@lists.linux.dev, heikki.krogerus@linux.intel.com, 
-	linux-usb@vger.kernel.org, tzungbi@kernel.org, akuchynski@google.com, 
-	pmalani@chromium.org, jthies@google.com, dmitry.baryshkov@linaro.org, 
-	badhri@google.com, rdbabiera@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/16] drm/msm/dp: split MMSS_DP_DSC_DTO register write
+ to a separate function
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>
+CC: Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
+ <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-fd-dp-audio-fixup-v4-6-f8d1961cf22f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EvqjYVgfZqa5_ucbbtS9wEPbQs__TbEy
+X-Proofpoint-ORIG-GUID: EvqjYVgfZqa5_ucbbtS9wEPbQs__TbEy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999 impostorscore=0
+ mlxscore=0 suspectscore=0 bulkscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160163
 
-Quoting Abhishek Pandit-Subedi (2024-12-13 10:29:51)
-> On Tue, Dec 10, 2024 at 4:08=E2=80=AFPM Stephen Boyd <swboyd@chromium.org=
-> wrote:
-> >
-> > Quoting Abhishek Pandit-Subedi (2024-12-06 15:38:16)
-> > > diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers/p=
-latform/chrome/cros_typec_altmode.c
-> > > new file mode 100644
-> > > index 000000000000..bb7c7ad2ff6e
-> > > --- /dev/null
-> > > +++ b/drivers/platform/chrome/cros_typec_altmode.c
-> > > @@ -0,0 +1,281 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * Alt-mode implementation on ChromeOS EC.
-> > > + *
-> > > + * Copyright 2024 Google LLC
-> > > + * Author: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > > + */
-> > > +#include "cros_ec_typec.h"
-> > > +
-> > > +#include <linux/usb/typec_dp.h>
-> > > +#include <linux/usb/pd_vdo.h>
-> >
-> > Please include workqueue.h, mutex.h, etc. for things used in this file.
-> Done. Btw, is there a script that does this for you in the kernel like
-> include-what-you-use does for userspace?
 
-I'm not aware of one.
 
->
-> >
-> > > +
-> > > +#include "cros_typec_altmode.h"
-> > > +
-> > > +struct cros_typec_altmode_data {
-> > > +       struct work_struct work;
-> > > +       struct cros_typec_port *port;
-> > > +       struct typec_altmode *alt;
-> > > +       bool ap_mode_entry;
-> >
-> > The UCSI driver (drivers/usb/typec/ucsi/displayport.c) calls this
-> > 'override', can it be named the same thing? I also see that the UCSI
-> > driver has two bools, 'override' and 'initialized', which seems to be t=
-o
-> > support a DP_CMD_CONFIGURE that will respond with an ACK and then the
-> > next DP_CMD_CONFIGURE will call ucsi_altmode_update_active() to set the
-> > altmode as active. Maybe the same method can be followed here so that o=
-n
-> > older chromebooks where EC is in control of mode entry we can emulate
-> > entering the mode?
->
-> The reason it's called `override` in UCSI is because the feature is
-> called "alternate mode override supported". When this optional bit is
-> set, the UCSI method "SET_NEW_CAM" can be used to change what
-> alternate mode is active. However, it behaves differently from cros_ec
-> because even when override is set, the PD controller can/will still
-> autonomously enter a mode on connection. Whereas on cros_ec_typec, if
-> you set "ap-driven-mode", the EC will not enter any modes until the AP
-> tells it to.
+On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
+> It's the dp_panel's duty to clear the MMSS_DP_DSC_DTO register. Once DP
+> driver gets DSC support, it will handle that register in other places
+> too. Split a call to write 0x0 to that register to a separate function.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_catalog.c | 8 ++++++++
+>   drivers/gpu/drm/msm/dp/dp_catalog.h | 2 ++
+>   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 2 ++
+>   3 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> index 7b7eadb2f83b169d8df27ee93589abe05b38f3ae..354ec834f9357c4797fc08a4532e69acc67b4317 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> @@ -1039,6 +1039,14 @@ void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog)
+>   	msm_dp_write_p0(catalog, MMSS_DP_TIMING_ENGINE_EN, 0x0);
+>   }
+>   
+> +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog)
+> +{
+> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
+> +				struct msm_dp_catalog_private, msm_dp_catalog);
+> +
+> +	msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
+> +}
 
-Ok, got it.
+This is already done msm_dp_catalog_ctrl_config_msa(), this is either a 
+duplicate or redundant.
 
->
-> Also, the reason the UCSI driver does the DP_CMD_CONFIGURE dance is
-> because the UCSI command, SET_NEW_CAM, requires the DP configuration
-> VDO as a parameter. Since UCSI doesn't define a VDM mechanism, the
-> UCSI driver fakes the ".entry" call and then uses the first
-> DP_CONFIGURE to do the actual entry. This also doesn't match the
-> cros_ec driver (either ap-driven or not) because the interface does
-> not allow setting the DP VDO at all. DP_CONFIGURE will be generated
-> and consumed entirely within the EC and all we can really use is the
-> mux update to generate a status update for the DP state machine.
+void msm_dp_catalog_ctrl_config_msa(..........)
+{
+	**********
+         msm_dp_write_link(catalog, REG_DP_SOFTWARE_NVID, nvid);
+         msm_dp_write_p0(catalog, MMSS_DP_DSC_DTO, 0x0);
+}
 
-Is the 'initialized' dance the fake ".entry"? I want the not ap-driven
-(ec-driven?) mode to work with this series, and specifically not print
-an error message. I'm guessing that to do that we should fake ".entry"
-when the EC is in control of the mode entry. Or is there some way to
-jump the state machine forward for the port altmode so that it is
-already entered? I think to get the device to show the pin configuration
-and mode like "source" vs. "sink" or "usb" we need to spoof multiple
-VDMs.
-
->
-> Right now, EC driven Chromebooks will simply report active/inactive
-> for DP without reporting any configuration/status info. If you want to
-> handle DP_CONFIGURE and DP_STATUS from the altmode driver, you'll need
-> to fake the interactions in the port driver in a subsequent CL.
->
-
-Ok. I'd very much like to do that because I need to make the displayport
-partner altmode driver work to the point that it calls
-drm_connector_oob_hotplug_event(). Do we need to spoof a
-DP_CMD_STATUS_UPDATE on mode entry when the EC indicates that DP mode is
-entered on a port?
+> +
+>   static void __iomem *msm_dp_ioremap(struct platform_device *pdev, int idx, size_t *len)
+>   {
+>   	struct resource *res;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+> index 6678b0ac9a67881244884d59487fa288d33d1be7..08bb42e91b779633875dbeb4130bc55a6571cfb1 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+> @@ -92,6 +92,8 @@ void msm_dp_catalog_panel_tpg_enable(struct msm_dp_catalog *msm_dp_catalog,
+>   				struct drm_display_mode *drm_mode);
+>   void msm_dp_catalog_panel_tpg_disable(struct msm_dp_catalog *msm_dp_catalog);
+>   
+> +void msm_dp_catalog_panel_clear_dsc_dto(struct msm_dp_catalog *msm_dp_catalog);
+> +
+>   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
+>   
+>   /* DP Audio APIs */
+> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> index 9c463ae2f8fae916661fef1c7e225f55c1026478..b9c461fee96f8fae9259ce03a32e1155b42d17bb 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
+> @@ -2011,6 +2011,8 @@ int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, bool force_link_train
+>   		pixel_rate_orig,
+>   		ctrl->panel->msm_dp_mode.out_fmt_is_yuv_420);
+>   
+> +	msm_dp_catalog_panel_clear_dsc_dto(ctrl->catalog);
+> +
+>   	msm_dp_ctrl_setup_tr_unit(ctrl);
+>   
+>   	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, DP_STATE_CTRL_SEND_VIDEO);
+> 
 
