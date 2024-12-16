@@ -1,142 +1,247 @@
-Return-Path: <linux-kernel+bounces-448196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676AE9F3CB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:23:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C169F3CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061F816A86D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:23:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF201882913
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035BD1D2F50;
-	Mon, 16 Dec 2024 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2DD1D45FC;
+	Mon, 16 Dec 2024 21:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZgeCm/t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wRhM6CQK"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2481214B94C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C221B9831
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 21:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734384201; cv=none; b=HpNcOqsA2KPZxihRkd2M7XVBppFrogjRlrhlSCvBJbEOpXeZMR12gAQOnA/DrUwNBoLbn3PqAniJ22W5HG41zIoDwl/LUJ3sc+hPBm5DrcJDiPopMkznHM9mIAvI0rfykOJhFVnF9VVn3vZ0oVf2xOiwl9/DrfXbf/KhXaWLxmg=
+	t=1734384422; cv=none; b=m8ridoM9F1/YNSW7V3+w71eUJzPNZ7B16ke8LpQUOrpUVIUk1CuAoNRAfMyx85GcjXHdxEtd+hrqatJW0kxsOhjyUxY7TZpA9M98DJx3KKTcFv+By6pVdDz4REHcKOdoNDW9Cdaq/mIy7CRYjCnoO/NcPzff+50ysMyQr6QmadI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734384201; c=relaxed/simple;
-	bh=Ii1jXPDt93xKlpHhmSPLWhWk7lJDq+DYcENz9iW6Szw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cKJTl7+nD6d1GYnfNIqtCyhKj/ZAFGC9hhncs9zZSd6qIeMZAUZ4hF9FVIIS0T/kdg9YFmr45dlVRLyzbATUOOJW/+2miCGrVz7oRriHKMxf2twGN8ub3iKsB2md81adR+eQ3W8BwvJk/5Cf2KWZSUaJVinmf+hDy0Lr121qF+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZgeCm/t; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734384199; x=1765920199;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ii1jXPDt93xKlpHhmSPLWhWk7lJDq+DYcENz9iW6Szw=;
-  b=JZgeCm/tlnEXZa5aHeuIR08170H+v7LYkJXOYv2n7NZYDsjStLDnBOSP
-   mVHb/bTDcYU4d3QscjcaCMyDs6BYmy8ATfy5JYPfdlu+XaslqOJxFxRnx
-   xlHkvTd+isap7r8QyLcczYgE3I1NBtvD60/3xudan0JqckMHXi3iFTQZF
-   l0xVmHfsue+rdbkkWWI/StXv8gmOSZ9EF/gv3kaVSS+NdSP5YB13brAmm
-   R2PFn162YfTPUjUwatogIU1XeBfZv+YQrcVOxGxRTFRnD+8LGZpzSyd7X
-   uk1OJftygePTez/z4NhPDB9gjVITgnkXxRLyf8Ec3ch+dOSIW5qsGbdDF
-   w==;
-X-CSE-ConnectionGUID: B9e49mZiRUKcGcuqBeH6Ow==
-X-CSE-MsgGUID: z9s8FSjiTj+hDrn6UF0ZpA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="45485635"
-X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
-   d="scan'208";a="45485635"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 13:23:18 -0800
-X-CSE-ConnectionGUID: 7QXgSUmySmOquw9/Pq7UDA==
-X-CSE-MsgGUID: Qe7wwYS5QPiGkoSF75Qzog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="97783192"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.220.15]) ([10.124.220.15])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 13:23:18 -0800
-Message-ID: <d1a133d4-ec9e-4857-ad24-cfdc7724d46f@intel.com>
-Date: Mon, 16 Dec 2024 13:23:18 -0800
+	s=arc-20240116; t=1734384422; c=relaxed/simple;
+	bh=7gtt4gGt+C9ZyoMeBsZyad3EOLU85ulXp337SNzEloI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qa1YkvAbjJIU6bJUBpZlnxKdq5AhyhOh04aTdaP2G4XHW/LMv7QhuJb7NjrObvciNmvcVnDrLtOPRnoC31V+ddysEtLz/OuQfOfMI+0GUvxI0BF6SQOZE8b197wC9O8HS524mfc/HbivUysM6MWmZ8nGSsnFcfgbUvvzgFTlRAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wRhM6CQK; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso28525275e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:27:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734384419; x=1734989219; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n5G559HpLt4aEfWtIVUG4rXUzdjY8b0oIHa1lhrQ+pY=;
+        b=wRhM6CQKARSDB3d+S/dYY3o1WFZ1Rs+/2Wp9aNAFL+guLgV4qdbA25BM0Nk0QvBCjv
+         MGJsRhEP66FsQdn5un4CwqsteElewC2R2W8SlqTssVrU7idQRL1K3yapqkRSp7ibulD9
+         DZlGwk5wkp84W9iIC5Kst+ZsWzeJi4ZKTg1+jgYjBg4cxEimN3oaxInm0e0GnGJFxxZ/
+         dhJOkKhvBXkmHseJwe+6ObwW0Yu0XYZtrlRB2+o41Mra3j9qxDjB5XKVyRz3R+loLlXn
+         pGZkGWtOBt7sKGR4DRxXW4iXFLO5JMiSGcuZLVpA3wxlIXKzZlOedN0aLY+jRHLqffIE
+         7mvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734384419; x=1734989219;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n5G559HpLt4aEfWtIVUG4rXUzdjY8b0oIHa1lhrQ+pY=;
+        b=flS+ncbtvgMC4n3hWmbxIB2U+z0GNx3rm/n4LtdKXzv4u4zuTsrRZkiGvvbxQYNEzL
+         sfMnNOHyrqkKt35Rd7AsIEQjtRzK/aNmRTy5PHNxZMODOgs4QIn9uwLDUZOulbzrAvyF
+         WCC1WxZxhySFw8LtZ1XP97HIpM++IEDefmVoCY00viRGC0EI9h9BM3XYaeuU6QmNNINI
+         P+T3QrO6KURjJZrTJJ91RS8ceW8/HiiEzu0VvbuCLm/rYt7oEmJV4dJUq24pHzgoej2a
+         FO5aoj+TUi8hXLFCGtCz6wO8HGtRFhPcivGrjiWB2O54l+oZf/qKUuoHb2aKhpeYplyu
+         7ftg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZqDCIFhFlM6oRTDH4EJ8rxLD3KW0mlgmCOnDRLSXT0H0ZTKS9AchJKPfCi3JYep4ax94ysInJQglYIPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySM6OFlZTy1KX3In+StMngc9VNqDjJrdozMD0yuo0+O6+O64Ga
+	FSJ8jNtbU0rZj8pYqQq53gEs3/GL25xgEzZQajkZTytK80hCKxFzHjdR5URN5+g=
+X-Gm-Gg: ASbGncuKVt854eTfqxGXVyV/WKaX3W5Tu/oqekM+TY3+wl7tqQJBd4oKX+DL/0KKiQC
+	E2xoq4M59cQ3xULsC2fXmQw6MaojwayBwAPv4fTptJUzzjUNLFpeUUczRooNXgRleSQcDtbL0+4
+	Jq8DfgZ6AJw/Ks3X1qLtLpnO0glNC8fwt0lVhGj+f8rtUANjBC5CzthbDEpzTmXHTGx7amqssH5
+	vv+a/Lxyx/3Pf3T97tqAaqx/H04VLJKJGkOUv2AKHxuWs4UE1rsCisK0bQByq7aB090xEvFoIWk
+	ZXMLHVc=
+X-Google-Smtp-Source: AGHT+IEo1bL0cfkP7m6UyQbfRWvP2WxrjuK8walOVADJ4MIniSUmVjsXs95FJf4lPsfPKATFiweskg==
+X-Received: by 2002:a05:600c:1ca4:b0:434:ff08:202e with SMTP id 5b1f17b1804b1-4364816a219mr7698535e9.8.1734384418665;
+        Mon, 16 Dec 2024 13:26:58 -0800 (PST)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706c82sm151057485e9.35.2024.12.16.13.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 13:26:57 -0800 (PST)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: rafael@kernel.org
+Cc: quic_manafm@quicinc.com,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org (open list:THERMAL),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] thermal/thresholds: Fix boundaries and detection routine
+Date: Mon, 16 Dec 2024 22:26:44 +0100
+Message-ID: <20241216212644.1145122-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] x86/fpu: Remove unnecessary CPUID level check
-To: "Chang S. Bae" <chang.seok.bae@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, tglx@linutronix.de, bp@alien8.de, rafael@kernel.org,
- lenb@kernel.org, dave.jiang@intel.com, irenic.rajneesh@gmail.com,
- david.e.box@intel.com
-References: <20241213205026.25B1D283@davehans-spike.ostc.intel.com>
- <20241213205038.6E71F9A4@davehans-spike.ostc.intel.com>
- <f3d50e5c-5779-4cf4-b279-31eeef2462c6@intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <f3d50e5c-5779-4cf4-b279-31eeef2462c6@intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 12/16/24 11:05, Chang S. Bae wrote:
-...> Then, the sanity check introduced in this code path appears redundant:
-> 
-> xsave_init()
-> -> xstate_enable_boot_cpu()
->     -> setup_xstate_init()
->         -> setup_xstate_features()
-> 
-> Reviewed-by: Chang S. Bae <chang.seok.bae@intel.com>
+The current implementation does not work if the thermal zone is
+interrupt driven only.
 
-Yeah, good point. Thanks for the review!
+The boundaries are not correctly checked and computed as it happens
+only when the temperature is increasing or decreasing.
 
-BTW, I do still want to make this into a _generic_ warning so that all
-cpuid*() users get warned if they go reading leafs that are too high.
-But I'll do that in another series.
+The problem arises because the routine to detect when we cross a
+threshold is correlated with the computation of the boundaries. We
+assume we have to recompute the boundaries when a threshold is crossed
+but actually we should do that even if the it is not the case.
+
+Mixing the boundaries computation and the threshold detection for the
+sake of optimizing the routine is much more complex as it appears
+intuitively and prone to errors.
+
+This fix separates the boundaries computation and the threshold
+crossing detection into different routines. The result is a code much
+more simple to understand, thus easier to maintain.
+
+The drawback is we browse the thresholds list several time but we can
+consider that as neglictible because that happens when the temperature
+is updated. There are certainly some aeras to improve in the
+temperature update routine but it would be not adequate as this change
+aims to fix the thresholds for v6.13.
+
+Fixes: 445936f9e258 ("thermal: core: Add user thresholds support")
+Tested-by: Daniel Lezcano <daniel.lezcano@linaro.org> # rock5b, Lenovo x13s
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+  -V2: Fix the conditions for the temperature crossing the way down
+---
+ drivers/thermal/thermal_thresholds.c | 68 +++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
+index d9b2a0bb44fc..38f5fd0e8930 100644
+--- a/drivers/thermal/thermal_thresholds.c
++++ b/drivers/thermal/thermal_thresholds.c
+@@ -69,58 +69,60 @@ static struct user_threshold *__thermal_thresholds_find(const struct list_head *
+ 	return NULL;
+ }
+ 
+-static bool __thermal_threshold_is_crossed(struct user_threshold *threshold, int temperature,
+-					   int last_temperature, int direction,
+-					   int *low, int *high)
++static bool thermal_thresholds_handle_raising(struct list_head *thresholds, int temperature,
++					      int last_temperature)
+ {
++	struct user_threshold *t;
+ 
+-	if (temperature >= threshold->temperature) {
+-		if (threshold->temperature > *low &&
+-		    THERMAL_THRESHOLD_WAY_DOWN & threshold->direction)
+-			*low = threshold->temperature;
++	list_for_each_entry(t, thresholds, list_node) {
+ 
+-		if (last_temperature < threshold->temperature &&
+-		    threshold->direction & direction)
+-			return true;
+-	} else {
+-		if (threshold->temperature < *high && THERMAL_THRESHOLD_WAY_UP
+-		    & threshold->direction)
+-			*high = threshold->temperature;
++		if (!(t->direction & THERMAL_THRESHOLD_WAY_UP))
++		    continue;
+ 
+-		if (last_temperature >= threshold->temperature &&
+-		    threshold->direction & direction)
++		if (temperature >= t->temperature &&
++		    last_temperature < t->temperature)
+ 			return true;
+ 	}
+ 
+ 	return false;
+ }
+ 
+-static bool thermal_thresholds_handle_raising(struct list_head *thresholds, int temperature,
+-					      int last_temperature, int *low, int *high)
++static bool thermal_thresholds_handle_dropping(struct list_head *thresholds, int temperature,
++					       int last_temperature)
+ {
+ 	struct user_threshold *t;
+ 
+-	list_for_each_entry(t, thresholds, list_node) {
+-		if (__thermal_threshold_is_crossed(t, temperature, last_temperature,
+-						   THERMAL_THRESHOLD_WAY_UP, low, high))
++	list_for_each_entry_reverse(t, thresholds, list_node) {
++
++		if (!(t->direction & THERMAL_THRESHOLD_WAY_DOWN))
++		    continue;
++
++		if (temperature <= t->temperature &&
++		    last_temperature > t->temperature)
+ 			return true;
+ 	}
+ 
+ 	return false;
+ }
+ 
+-static bool thermal_thresholds_handle_dropping(struct list_head *thresholds, int temperature,
+-					       int last_temperature, int *low, int *high)
++static void thermal_threshold_find_boundaries(struct list_head *thresholds, int temperature,
++					      int *low, int *high)
+ {
+ 	struct user_threshold *t;
+ 
+-	list_for_each_entry_reverse(t, thresholds, list_node) {
+-		if (__thermal_threshold_is_crossed(t, temperature, last_temperature,
+-						   THERMAL_THRESHOLD_WAY_DOWN, low, high))
+-			return true;
++	list_for_each_entry(t, thresholds, list_node) {
++		if (temperature < t->temperature &&
++		    (t->direction & THERMAL_THRESHOLD_WAY_UP) &&
++		    *high > t->temperature)
++			*high = t->temperature;
+ 	}
+ 
+-	return false;
++	list_for_each_entry_reverse(t, thresholds, list_node) {
++		if (temperature > t->temperature &&
++		    (t->direction & THERMAL_THRESHOLD_WAY_DOWN) &&
++		    *low < t->temperature)
++			*low = t->temperature;
++	}
+ }
+ 
+ void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *high)
+@@ -132,6 +134,8 @@ void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *hi
+ 
+ 	lockdep_assert_held(&tz->lock);
+ 
++	thermal_threshold_find_boundaries(thresholds, temperature, low, high);
++
+ 	/*
+ 	 * We need a second update in order to detect a threshold being crossed
+ 	 */
+@@ -151,12 +155,12 @@ void thermal_thresholds_handle(struct thermal_zone_device *tz, int *low, int *hi
+ 	 * - decreased : thresholds are crossed the way down
+ 	 */
+ 	if (temperature > last_temperature) {
+-		if (thermal_thresholds_handle_raising(thresholds, temperature,
+-						      last_temperature, low, high))
++		if (thermal_thresholds_handle_raising(thresholds,
++						      temperature, last_temperature))
+ 			thermal_notify_threshold_up(tz);
+ 	} else {
+-		if (thermal_thresholds_handle_dropping(thresholds, temperature,
+-						       last_temperature, low, high))
++		if (thermal_thresholds_handle_dropping(thresholds,
++						       temperature, last_temperature))
+ 			thermal_notify_threshold_down(tz);
+ 	}
+ }
+-- 
+2.43.0
+
 
