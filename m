@@ -1,182 +1,134 @@
-Return-Path: <linux-kernel+bounces-448280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399719F3E1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:14:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534529F3E1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:15:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1EA16DEB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E55816DEE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8701DAC95;
-	Mon, 16 Dec 2024 23:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EBE1D90C8;
+	Mon, 16 Dec 2024 23:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rLzNy+Zo"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EczuVcps"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA80B1DB372
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2611D54EF;
+	Mon, 16 Dec 2024 23:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734390811; cv=none; b=p1garrThoNzM6Oh3eNWjkL5a4XQi+etehGiXTiDRX5EDjt4j/g6vTa/Duzj1Lxs7j7i974BcxPpReOSaAlo2xDjCqQITFNox/eDPlfoGjGcP84nGfvG/GEK3Lp5V1m93j4RdgkRCYRSzjN69/ewpFzSNl538/U4BE0xEJbI0zSs=
+	t=1734390914; cv=none; b=JKA690Kt+KixzfgX2bhrxNtO2YHYY24JnSjTU0twnhk1aRfs0dqjmjUDh8LQtovcOwxKwoRfqlePnk6wlxk2+ihWf2ujT+XkITw4DfVW9W6sdShD5qI+/1VRdBhwEumAVEOKjss5mnRbInU+KX3ILOdR1YGqs6DoJn5i/qoquLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734390811; c=relaxed/simple;
-	bh=k4Sj7dM5EROtRyKRIxtv+8o9o4DaFse9qSyIbzlZ98Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lOrC3MFlVvDI7MhsnEUVDSj2oNvZmkn92ZqWniBVW+7zkK78rFf+lmvWL9zWeA6W1enaOqdLRGlKmmrdpQNYbXHF0S+kwbDVzIizt0odwKV/it7E5fReEuo1NZykIZTEjfvkGgUOsxpWRExg/OVy4AteregiV1bWUwJVp8l1WFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rLzNy+Zo; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21669fd5c7cso40301285ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:13:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734390809; x=1734995609; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sm+gy0vg6ADpwKtQUne3ds2s3sgHguLz0qdVVhDqizo=;
-        b=rLzNy+ZoD62XrVBG36DyvneX+0xpq7HIHUzxZgHPmXBc9QEUE5T62rTbzpje8A9xcz
-         n/NzfEDKmuP3+oXVhcadC8LYl74usW5a8YoL2U4UhvDPN4gFnfv8Eim9I4SfJplAQGgX
-         6iTdSPXU7hLhW6VrjxXpl571KVK7PRLaEa1rTcJIGdJNU32cMQAskfTyef9AKRH7SHwV
-         T8uye/SUoIQZI405B38FMIYd7XH6DTqQnQGWy+AnMOrNYbaCWTkNeNutwJdunKlHOpxR
-         lWz1XL79M5qJnS4WSp8by4kzqYq+B7yzWyXH2Pq4m1fsN5jHcsSv3Tx2b6jhpwPLM4Ou
-         MtCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734390809; x=1734995609;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sm+gy0vg6ADpwKtQUne3ds2s3sgHguLz0qdVVhDqizo=;
-        b=wrTDr2c0sweFFaF9KTaKcuKC1AYL4WzMnUE04jUGCiSuaH7SITj4MX30IL2K6gGbrv
-         gT4dJ+AXOfFnHHpq3HU4Tx77aUwzu1GhaH8h3vVpbgJH/Thew3wP84S0XZUFGTVops7S
-         8PMmVmgTn8sQAYCBJlg1UxeM/boosBbCK7v7Dp+31jLISYq/yYiLuVrMmsifA/oS1wKH
-         aS9BN1kSMsEkt6/7WlkZ6VgE3dmB9kxJoD+vKtzf6raL7mpys5KdRie/eCtw77oH86oi
-         bzHvYQ9y8Hhux2iFninjE7XhLnjIAd1mEWn92lsttQLWy+XkMfc3wWyLOol1kLmtX+hI
-         +7FQ==
-X-Gm-Message-State: AOJu0YwBoGFTMmVGCTgLIYFy0C9bvDcib7h4hVWvaUAJhlSZMWO0nvKV
-	FfhzM89qxbqYr+qTYq2GiKDELOgf+DL90okyjL9ai4eooPVJibP/JLr9NSuAenI=
-X-Gm-Gg: ASbGncttX3lkenG9jZhu/V7SBXnpNJM0jXEMTh5Ga3wFxARpacu0rOEy860+hKhytaO
-	g1m1Vxx5wejTCptQzHMPpNtqpnJr758CavLvZG3S4paPz9mdunzpjhnI/2XsR2Swo41SjjF8/Hh
-	A82oFywQO9UqSKr+gXMC/y88zq9ceBcfpHnuFhkJbHv/Qyjf09jWDhoX623JRlq8Xf80k51SSF3
-	XRFSNa43hBtvU4xksYI2wlQeekh5P8JlpmAkVK2y6e11tE4JH8CkUewNcCTHApy2HRtCiVl
-X-Google-Smtp-Source: AGHT+IEUS1KQ0ef501yi9KQdApUOJap2Q7VLgsPuhiCn2hfgEw7VxTtRPysE5A5XxEfaj3jPqra1Kw==
-X-Received: by 2002:a17:902:ecd1:b0:216:3eaf:3781 with SMTP id d9443c01a7336-21892a58734mr187815855ad.43.1734390808967;
-        Mon, 16 Dec 2024 15:13:28 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dcc47bsm48333255ad.63.2024.12.16.15.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 15:13:28 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Mon, 16 Dec 2024 15:12:52 -0800
-Subject: [PATCH 2/2] tools: perf: tests: Fix code reading for riscv
+	s=arc-20240116; t=1734390914; c=relaxed/simple;
+	bh=WDQGE0FFR/+3pDl5MBnQd9HPJMHqNLi1cxrtKgTsVJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhDRyTRdAhndHjfkcw8fHC/RJ0ioMwo60E2H4uueXMb0AC3DkKQki8Oox8w2yaOdpTzY5G0jT9+aKr7fOhZ6jqcB+HmrObsL22I420/Vz2nYw5XcGEzQyYdGgz5kF9PBd91Y0f1AdDWsWYJ2DfNghqaSxREKCctBt6lUqdQ81IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EczuVcps; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B59BC4CED0;
+	Mon, 16 Dec 2024 23:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734390913;
+	bh=WDQGE0FFR/+3pDl5MBnQd9HPJMHqNLi1cxrtKgTsVJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EczuVcpsRKVXCx0lYb5AdO0DfZtDyc0OfdX1XCRaKY5G5FnncKpFRuGDSEv498F0s
+	 +xX0kftqNilbwMoL2B+3vy3htfse1J7b8bjov9lXk5bjaIjiJ76zV4f/IFD/Btq8V5
+	 SUBv8c03T+udxenBUuYd1ge/HiudjWA3JyPw8kUpcwA+SLs0gGJ4bWjxSFZ4aY4uKo
+	 eV3VsryU7XdRnzIrwuSEHgPv0EzUQS0Ypm8N/pd77nza1oTR7GJd3XqvPD9YCs4EvA
+	 aX/hKsqvcqDkPjRb/v/kmCD+5Jkf32MjNqVkKObramCBDQUdMnw92l+O9fujlq5uZK
+	 cmJO8DGbuxH3A==
+Date: Mon, 16 Dec 2024 17:15:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
+Message-ID: <20241216231505.GA601635-robh@kernel.org>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+ <20241210055311.780688-19-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-perf_fix_riscv_obj_reading-v1-2-b75962660a9b@rivosinc.com>
-References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
-In-Reply-To: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Nelson Chu <nelson@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- linux-riscv@lists.infradead.org, llvm@lists.linux.dev, 
- linux-perf-users@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2802; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=k4Sj7dM5EROtRyKRIxtv+8o9o4DaFse9qSyIbzlZ98Q=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rCFsHN62Zdecfs+JNP2uLlep5+jx3vdkTV/r39gW3+i
- RnX8+22dZSyMIhxMMiKKbLwXGtgbr2jX3ZUtGwCzBxWJpAhDFycAjCR+wmMDF+2JGUuPhm4eJ+U
- wobqzxGrOt5EMjWvrZGL5XpxZAfXtzWMDFOnT7tTaS962CctyFjKfIG1dduJX4UMnUpCpZ6iYvz
- KnAA=
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210055311.780688-19-anshuman.khandual@arm.com>
 
-After binutils commit e43d876 which was first included in binutils 2.41,
-riscv no longer supports dumping in the middle of instructions. Increase
-the objdump window by 2-bytes to ensure that any instruction that sits
-on the boundary of the specified stop-address is not cut in half.
+On Tue, Dec 10, 2024 at 11:22:43AM +0530, Anshuman Khandual wrote:
+> This adds register fields for PMUACR_EL1 as per the definitions based
+> on DDI0601 2024-09.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/tools/sysreg | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+> index 214ad6da1dff..462adb8031ca 100644
+> --- a/arch/arm64/tools/sysreg
+> +++ b/arch/arm64/tools/sysreg
+> @@ -2349,6 +2349,43 @@ Res0	63:5
+>  Field	4:0	SEL
+>  EndSysreg
+>  
+> +Sysreg	PMUACR_EL1	3	0	9	14	4
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- arch/riscv/Kconfig              |  5 +++++
- tools/perf/tests/code-reading.c | 17 ++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+I already added this and various other PMUv3.9 registers you've added 
+here in v6.12 and v6.13. So are you on an old base or the tool allows 
+multiple definitions? If the latter, that should be fixed.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index d4a7ca0388c071b536df59c0eb11d55f9080c7cd..f164047471267936bc62389b7d7d9a7cbdca8f97 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -229,6 +229,11 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
- 	def_bool CC_IS_GCC
- 	depends on $(cc-option,-fpatchable-function-entry=8)
- 
-+config RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION
-+	# Some versions of objdump do not support dumping partial instructions
-+	def_bool y
-+	depends on !(OBJDUMP_IS_GNU && OBJDUMP_VERSION > 24100)
-+
- config HAVE_SHADOW_CALL_STACK
- 	def_bool $(cc-option,-fsanitize=shadow-call-stack)
- 	# https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 27c82cfb7e7de42284bf5af9cf7594a3a963052e..605f4a8e1dbc00d8a572503f45053c2f30ad19e3 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <errno.h>
-+#include <linux/kconfig.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <inttypes.h>
-@@ -183,9 +184,23 @@ static int read_via_objdump(const char *filename, u64 addr, void *buf,
- 	const char *fmt;
- 	FILE *f;
- 	int ret;
-+	u64 stop_address = addr + len;
-+
-+	if (IS_ENABLED(__riscv) && !IS_ENABLED(CONFIG_RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION)) {
-+		/*
-+		 * On some versions of riscv objdump, dumping in the middle of
-+		 * instructions is not supported. riscv instructions are aligned along
-+		 * 2-byte intervals and can be either 2-bytes or 4-bytes. This makes it
-+		 * possible that the stop-address lands in the middle of a 4-byte
-+		 * instruction. Increase the stop_address by two to ensure an
-+		 * instruction is not cut in half, but leave the len as-is so only the
-+		 * expected number of bytes are collected.
-+		 */
-+		stop_address += 2;
-+	}
- 
- 	fmt = "%s -z -d --start-address=0x%"PRIx64" --stop-address=0x%"PRIx64" %s";
--	ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, addr + len,
-+	ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, stop_address,
- 		       filename);
- 	if (ret <= 0 || (size_t)ret >= sizeof(cmd))
- 		return -1;
+> +Res0	63:33
+> +Field	32	FM
+> +Field	31	C
+> +Field	30	P30
+> +Field	29	P29
+> +Field	28	P28
+> +Field	27	P27
+> +Field	26	P26
+> +Field	25	P25
+> +Field	24	P24
+> +Field	23	P23
+> +Field	22	P22
+> +Field	21	P21
+> +Field	20	P20
+> +Field	19	P19
+> +Field	18	P18
+> +Field	17	P17
+> +Field	16	P16
+> +Field	15	P15
+> +Field	14	P14
+> +Field	13	P13
+> +Field	12	P12
+> +Field	11	P11
+> +Field	10	P10
+> +Field	9	P9
+> +Field	8	P8
+> +Field	7	P7
+> +Field	6	P6
+> +Field	5	P5
+> +Field	4	P4
+> +Field	3	P3
+> +Field	2	P2
+> +Field	1	P1
+> +Field	0	P0
 
--- 
-2.34.1
+We're never going to use Pnn defines. This is just useless bloat unless 
+we're aiming to top amd gpu defines LOC.
 
+Rob
 
