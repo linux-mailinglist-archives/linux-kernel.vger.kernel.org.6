@@ -1,130 +1,256 @@
-Return-Path: <linux-kernel+bounces-447531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5437C9F33D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:58:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9302A9F33D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCFB18869CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDA81883C42
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF9014265F;
-	Mon, 16 Dec 2024 14:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9F137745;
+	Mon, 16 Dec 2024 14:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="khiFj1hZ"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="17K1IZE5"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2058.outbound.protection.outlook.com [40.107.101.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B05113DBBE
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734360855; cv=none; b=HdiLKQHdne9kQTXCgcQM8WH00D/MnQ6cIESsin2c3dEW7st50cbTeOyiKiwlivNULCNLuJu0cOdgBtHayehTrYxTM+CV6cAmAIBjkunv1ehC6pj12w1clhysu2l3aWg+Tk532AxiVAdcR/Gc3dvq+uS1I86LeBmxw/HnC1wgs7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734360855; c=relaxed/simple;
-	bh=bn3iJLzlKSMWMJtRrej6vZqzCfJ4v28p5CBRgpdTTFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O2Kif4/NrxGGuTdb3o+FEXFM4Y5m32LTE6C3oZXG04hm19PSDad57dTDHbyT8i5IYhWcZHjq1cXpDWkYmg6iDhnNIhmfAEbzqn8AlIlom7M5T2UAeGZYfhbPEyVREtrW2LAdYY7xq70F6JcIuo4IqTiYbaDM81RdZUncEMpQtdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com; spf=none smtp.mailfrom=hefring.com; dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b=khiFj1hZ; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hefring.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6e9586b82so320632185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:54:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1734360851; x=1734965651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrDI54RrtTH587z61yGqvhuIg5ioNpJ5JcTwNcL7S14=;
-        b=khiFj1hZMQfNWK+ChbH/E99KZuHkO5g4IZLGAdgr4R83qQJjPqDjs6FffVn3Zo1Ll5
-         wk+hvB2UlOlbhckPaUAGiuBBuT6AHhqv8YlDYPXqpmuBImzA3cUBxYa9he4GOXKe2EOX
-         5aHWLX2anL8xlKdEuSnYeBxEJwfX59rDXorKOprZIEaJvOpkkAyvyGiqATgSQu43Fa+C
-         DueWVt1evD4LhcOfyVCz8ETEOoDL6E1vFRQCEGPWB66mWgGvt7ctQoBXkulyc4b81321
-         0zEXD0z6UiH1B2qUbaJR/0SuKpf7o2mf0pknQReTy4i0IimI+BmY39IWhEwAUzsQs0NH
-         5W5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734360851; x=1734965651;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xrDI54RrtTH587z61yGqvhuIg5ioNpJ5JcTwNcL7S14=;
-        b=oaJZiSusY2A5unNb3Ss6fYAU6KifyPCAaWmiYr5bIUkxvdwceVln819XijpGYZ2D3M
-         oeFUSfdN8y7WS8CFlVaRg1rSOp8M1HBEWt+wbUeqP2lrJTJjSr4tZ54X2ObR5WmH7QoR
-         h2rLfZ9OxsQ96fOSdO5oSbV3fKQr82i8mxURZ1fsbKxJTWeVkVCLb/pBSnHEG+7E01Xf
-         4OSNcn9I12tVvzRoN2G/g1mtsQDN45sYCuR9lGVOnawoj08tpvJ/hI0/NL33RH+AiuOe
-         thJQwMG3vfJwEzpfHn7WZlWZ6kIH/T6dlVuOv0SKkY/9ngm4UR/94LqZeBQwCVSEXrJL
-         YSCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUmOlWtR61s3hLqNFGvkB1gamcLhD0P/kzPsJg4CotTUIWOpH+Hz4T0bxj4OjMJw94VNyOLOvs4C9c3Bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHFFtwfZ9FneGffFV2Zv/XRseONtPb0mAKSoq/45Ug32VYH7ZM
-	YNh2jhXFfwv/bE3xfu7mD8TwnwXizvKxoXfo7oaN5z2TrDXa81aT4vDcBof5HnY=
-X-Gm-Gg: ASbGnctnebRzhFpQQZyM4pQ/zNCX2SaqiDbn8RU4gMXSere4lXldPw1wPO9oOst4wTr
-	r7nVD/H1Yd9iDcPGMpEH6d7s+dWhB6OH/vGVdgG1JAJU9SsseseZKuDCOcuFg5VuzF1wLumuZER
-	C4hAleVuhQiQaUkvO3sSyOtphcp772+sPA+KT2YbjQ4MlxuhPGO19RH34TCfD4qcxKfCK6FsZLl
-	UWzpycItSrMQqsFefi+BcP2A6CIH2dmODNuiKXOARezZz1DdcgkPOj9QJUs6wWr2/HJPf8Tba5L
-X-Google-Smtp-Source: AGHT+IEejh93L0FZI+AsvKAjo6R6QN8N65ppACXanwMRaMhjPpRdaO8GmKLrZ1p3hnkSIvCPYIc0vQ==
-X-Received: by 2002:a05:620a:4889:b0:7b6:d939:f958 with SMTP id af79cd13be357-7b6fbee8df9mr2384495685a.25.1734360851084;
-        Mon, 16 Dec 2024 06:54:11 -0800 (PST)
-Received: from localhost.localdomain ([50.212.55.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7047aa633sm230461085a.10.2024.12.16.06.54.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:54:10 -0800 (PST)
-From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Ben Wolsieffer <ben.wolsieffer@hefring.com>
-Subject: [PATCH] serial: stm32: use port lock wrappers for break control
-Date: Mon, 16 Dec 2024 09:53:23 -0500
-Message-ID: <20241216145323.111612-1-ben.wolsieffer@hefring.com>
-X-Mailer: git-send-email 2.46.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B425620328;
+	Mon, 16 Dec 2024 14:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734360839; cv=fail; b=mAP9LZg09QcslpPKO+XhBOkrt3aD4v8tyPOyBShnnK0pgJcB9yT7Hbjem3btVtqEK90+9LWYONFBEgyvusoHSSy+8/0RJ+9IDwQXA5WtJN7ZGgjTg6Ap7DHTRh8lbsSRYZ08uvI4k9oN5K/wT+l6ETvU1Q4MCsAA+w5oyObb2Qg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734360839; c=relaxed/simple;
+	bh=Mw3Q9X3PVGWIFA+AmZ3uIDZVd9+0aQ42Wgph25leaV8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aMFuQHUtxJ7ZJ7Qv4LRW1HHq+ZLv3uu5ZthhNQEteNZW5BrOUF5Sg4mizQ1Mb7R7Wr4pcWNPLTJ6S6if/tQu1ZGT9meMNem3YrBGJotOr/CUqQ/jMs8+FngQ8qlef7FdMTTOlgldSflrjm1UNOv4UiYZ2d8ITEHc7ksNSZXg9Qg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=17K1IZE5; arc=fail smtp.client-ip=40.107.101.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RxpxV8LCFWARjcL8cEuHgnB+1DwNjkoajtZfKQTCyr3IPeFSJHJ4vTKXnDYuw1HN8bqI2kjJFPGohgOB1eM3O04KCd8M/LgWYhVGURPS0r5jTKCkb1APNSR/w6zPBpu78xHgee15/TfXJdHyp6KdwA2npV/xSRUEGrjQYzAs/AQCk6iuG03A4ghBxrvBS+xe4rVOEUbeHEgBFPDRx1FThhAZ3iDuyeQHBY+Ntu6wVWWR/p7wJxDdWN4YIhKAlWUARw5D2raonszVbmVU3gIcUGA2uXBZEI3miLg7bbPGimSYpp+rmxKWfd3qxvVviuBBL39auau2DY9ZsHbkzlIfwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=efOX2hj5+IadwavKdlJNWUuoGvQ6yeBLkVBUBcrowVo=;
+ b=B2/OzE8IoJ6f4S4Bumyz0YQbrDZGwmciOP1qVhwCuNiQabH8mHI9ZBAqUsbp5NATww7AJvGvpFG2CdTMTzPtjQMkW0xCrmY5WyclgudGoSyWWn93zVsUZShd4g8nsgQVwGGjiRcwwCnXDwKSplHlWZHf2p1XGZ2oGe2y9a20vZuNlEtGvRyMBAksmzN/aNdqWLpQDWnqUs7VPZ69mVkqe3nATusO2UbmvJgS+kJFs5iyFmqPoBL+ngVLPXW10zh9Z3Ba26lvIvV/Ouyi2YEVJbo/DsMhTyUy6RXZIUe9ZMPB4NnXrQEg61WE4F473B4I3LZzVnDZU4g58DvvxXe2nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=efOX2hj5+IadwavKdlJNWUuoGvQ6yeBLkVBUBcrowVo=;
+ b=17K1IZE5rMKKTgg07p9SRcKZQvteroA+tmwRIhzDKH2JJH4Fw/16XDJ92HymPzo1j7bTePviGiOKMXyM69HdWCAMKfB2HFmCsNsJwmYaZ5MqRiCepQBT0UzJlkcp/4zKOwj9xghWaVD3R0vBdLreaGNoHVSu38msRKtTJiAexJM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by BL4PR12MB9481.namprd12.prod.outlook.com (2603:10b6:208:591::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Mon, 16 Dec
+ 2024 14:53:54 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 14:53:54 +0000
+Message-ID: <fc8e80dd-bcea-4515-b446-158649719569@amd.com>
+Date: Mon, 16 Dec 2024 09:53:45 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/10] drm/amd/display: use eld_mutex to protect access
+ to connector->eld
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org
+References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+ <20241206-drm-connector-eld-mutex-v2-4-c9bce1ee8bea@linaro.org>
+ <pgi7p3aemxm3db2k27vi5euh6q6ppayrw6y7tcfeq4g5z23hzr@xousag2qhobp>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <pgi7p3aemxm3db2k27vi5euh6q6ppayrw6y7tcfeq4g5z23hzr@xousag2qhobp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0064.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::41) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|BL4PR12MB9481:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bb534d8-e025-40a9-6d52-08dd1de1760e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VzlyMUExeTRFa09vclUveVZ6WTVBQk1JaE8vSGVPR2c4N1Q1Nk5Qak5KMDl2?=
+ =?utf-8?B?bENnNWtNRlRpMVJrZUFMSE13T0Q5RENpRUpFS1h2Y2Q2Y1F6RDBJWVZCYk01?=
+ =?utf-8?B?cW9rcXpzNnpZM1NtMkJpYmtKQ0F2M0JqaElITVpJeUlQVmxuZzZ5WUNDT3hx?=
+ =?utf-8?B?U3JNNE13RWdKTGJNTnBPblMvMEZrKzU0d09CYTBNV01LTDg5VFdMWjVHcWNm?=
+ =?utf-8?B?S0trSys2TUsyMy9Jc3IzRER2bk03dE5GOENsamt2MHBlM0lja0lNMFphYkFF?=
+ =?utf-8?B?SVJrSWFhV0VxZXZVOTdSSE5uK054ajIrcWVDTlpSM2R6cUZTYXQra3RBS1kz?=
+ =?utf-8?B?OXlXR1FBczFPS1JKc3dJcEIzWGliYlNscDdVOW5wRzNoMnZpbkx4SFVPNHlQ?=
+ =?utf-8?B?dWRRcVpKZDBxdk4zWGlNVzQ5QWYwM2RuYUdSMHVmUy8rVDFyZnpwT3FmQTU5?=
+ =?utf-8?B?cDNJOS9oaGp4MkdqRklkRTAyWVFwR2ZDTjF5UTIyWGNSM1lrZHZSWngrQzM1?=
+ =?utf-8?B?Slhtb0t6cGIxc3E0eVhxZlhjYlJnamlKYmpqdFp2a3o1NU1yMmRuYXdLT0lG?=
+ =?utf-8?B?akErQXh3TVpxaW1lUEF4cTF5eDczTEFSZm1BYjVpamRZdjlRN2gxRGRBQm5N?=
+ =?utf-8?B?WThSNkRpalFvNjEwSzdHTUdFUjJiMm1uVi9YaTJhTklzUGI2NTlmSVBkNVVP?=
+ =?utf-8?B?RnhhTWsycTlpVEs3aGFkWWxCVjNYcnBPL2U1SW40ZGh6S3ZxZlRGQnZSVjgr?=
+ =?utf-8?B?VFMrb0RpV0VmZzMzTTZDbUZrQWF6NTNPNlFIRUt5WWRhNkN1K3BqZGxSZ2Jk?=
+ =?utf-8?B?YkQ0L21YeW9vS0swMTQvUng4RDNzR2txVWpmMU5NSHc5UVhGaHR6N3BNdkZn?=
+ =?utf-8?B?bnBQZG5iNFVURnhlWmZuRFBqbGRrRmFKdmZjbUdDNDhKNHJiU2d6T01kZGkr?=
+ =?utf-8?B?Qmd6MUU2NmdpWTNSR1krQlpqZ0NwTDZvTzZyRkQ1MGlURjA1eE9hMlQ1aUZY?=
+ =?utf-8?B?NTlOOFJ3K0NOL3N3dWU4VWRUYjcxWnQ1Ky90VTZpb29jdmVxdXVIS09MQ3JS?=
+ =?utf-8?B?R2FyTWNkYnIrYzJBeWRXa3hSblhORUE5dWN5Yk1Qbms1VVNucWs5Ly94OGw3?=
+ =?utf-8?B?Qk9Sd1Y3WTJJaEIxRmM0NzJweGY2enNIWnJ5UnJrVVV1WHA0bHpaY0ZHSG9P?=
+ =?utf-8?B?d3lwZXV0dDlrc2trVDNTeEhXc0ZSTFV1NnNleTRkNWdEckFlTXNCVFZseS9X?=
+ =?utf-8?B?dTBjd2EyVmZzdHM2dGVJWWV3akZEcVZIc2hYYjRzK0kxQmFwdGx1YnZWa2lk?=
+ =?utf-8?B?c01HZVVsc1djS1MzSlc3YjlwbzRrYVBPeWZRdkFqRG85WlJtd2R2cWViUkZ5?=
+ =?utf-8?B?TTMvYVZ3VFVvY0NQaW41alpGZXgyZ2duRzFqbEdiaCsrNVlCZ3hQZjJLSnIv?=
+ =?utf-8?B?Y3hBMytNcy91WERnNWwxT1BIM2VHdDR5RmxGdUp1aUp4SWIrcHJwYktrQ3h0?=
+ =?utf-8?B?NjdaZG90R1lhT0YvSzB1VUNEOTdXNlpUaWRNb09pUkhHQTVQWWJHUmtYZHRn?=
+ =?utf-8?B?cExUYUgvS21UL2JmSW43aHNobVluaWNKZjFsMnZzL1BUaXVTMkx5VS9ON0Zu?=
+ =?utf-8?B?azBwdmNiRk9kNnRNZHNLNkdsZVF5cG9TWldFMHM4M0dPaUVJR3VWN2orNXEy?=
+ =?utf-8?B?VTdFQmUrV0V1TXhMMU5mdExleUhvYS9EZWc5REk2cjF3c2ZhdFAvMXVwMXZC?=
+ =?utf-8?B?VjU5aGdHMnZvcFZCczFWOTVsNU1VWXZGb0ZEUEd4YW1Ea0dpVDh5RFdTSVcx?=
+ =?utf-8?B?K2dCVGpYeU5HUEwvVmdqbnNqMmwxL0U1MEMxeE5SMjRvSGxpU0tscW5iRXR1?=
+ =?utf-8?B?ZzdpdlczNVZWN25CTmRhNlNBQkFBaTFUSXVqNElCK3RRWEJwTytzVGlkWVNY?=
+ =?utf-8?Q?Zre4FTPbLZk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YnJkeFhUTDY2QjdveDRuM094dGVkYk1SRUhyTldiMzdTTWI2U3NGYzBiQTNN?=
+ =?utf-8?B?emYyOG5PdzlFSlFNRTR6QVcyR2prY1V3NmxHTmc3clNOaGVUUG5iTEpTajBn?=
+ =?utf-8?B?QzkzNWxkM2hxZ255N0tidGoxTDZicjNMRkNVM1ZkUkh6SGFlS2J1Y2o4ZFoy?=
+ =?utf-8?B?RmJvdW9qYWNNaWppWkVzQzJVa0JqWlBULzVxN0ZEc0x1Z3ZYR1J0eityVFZL?=
+ =?utf-8?B?K0tzK2hiajRycWVGa0RPNmNqVEszM1dVVzdITk1qQWJrelhmNnJQT3NTOStM?=
+ =?utf-8?B?cFhNeWk2YlM0VVQ0VWxGcU96SE1kRVJPaE8wQXZOYXBjVG80RlRiNVFhK2lO?=
+ =?utf-8?B?ZUJtWDVrYjZseDZ0cHp6dDNZLzhYWTVyRTBCdVRaaEszencrOVpKa2hGNGZL?=
+ =?utf-8?B?dXBlOU5LdFpGWEErUkR3UktlRm1JMjJKNlNOTXBaajNab3dtRVFIZEVXb0pJ?=
+ =?utf-8?B?ZXpnNkFaeEFwUHdXb2ozWFVwUGhRSTFHYmZVRHVDc29EWDNhOFdHWWVQUDR0?=
+ =?utf-8?B?UkJ6ZXFtNnRBQWhqV1dTSjI3NGpwUlRPV1pqZ3BYQ1FlbUFVWTdBL3BsbFJI?=
+ =?utf-8?B?cVJBcm5sTDVTRldPWjZjNU9BR05YSmNydlBqRk1qUEtLdEtyVGdGTHFpRHEw?=
+ =?utf-8?B?bEsxb0ZQMk02TmtIY3dpN0xncUp2TnNGTzRFbytPOXYvMkYxUlVNaFJ1TXlV?=
+ =?utf-8?B?amR1MDRhN2lPb2daT3Y0NW91TE5GNmNuNnY1UjIyaUhtYUZ0S1laTFdHdi85?=
+ =?utf-8?B?Uy9QemtHbSt0VTR0VXBKWndxMFU1NzVuaDRWOGtyZ0VQaTdrZS9TQ0lpa1ZF?=
+ =?utf-8?B?czc2WEZFOFR4Nkl2T2YzbWxJbU9PbXFGbHh2cEVEQUcvNkV3SExwT2J4OVIv?=
+ =?utf-8?B?OVdpNTcxOUNkU3NPL0J5bFNJNE9rWmVyRkNjcVpleUhDNXFSb203bFRYRFN4?=
+ =?utf-8?B?eldQR3ZiVjBuc1JMRXhGQ1M4MnpGa2YxOWVmejRIS0E0K0pQNEQ0bmdqenNo?=
+ =?utf-8?B?UlhBc3FRbnNOanVOY2REd1ViSmFkbEloUUlsbHY0TDEza2F4QzIxK2ZWVEsz?=
+ =?utf-8?B?eFlEWU1XemttSHVFR2RacFpkREZuVmZ3N05wWW9NbEg5S292eUszT09aTW05?=
+ =?utf-8?B?aEdVeWRsdEQvVTRWaWx5TmZlRmY5U3hlcHBVMTdhcE5TcXBqSjI4ak5JaWpN?=
+ =?utf-8?B?TmNXQkdpUDYyUXFCWlhmR3o3R3oxTzM4M3RzNTZBOGdvS0Nua0l0WGZjcGlQ?=
+ =?utf-8?B?aGROa1JEeFBJZ1lJUmNHSDVFYzNLd1BhaktkS3VPdnJmdkp4K3loSGs1RnBs?=
+ =?utf-8?B?TExpYWQvclpaSkdjNHRwVUdVS0RVOXF4VVBNOWVOWVFiUjhYMndMbnl1RTds?=
+ =?utf-8?B?U0wwU1hFTjhST2NpdEQyaFdpSG96Y2x0c2ZkR2VpcXJrS3lkSGZEdWVWYVo2?=
+ =?utf-8?B?UlVsc1hZU3E1WUxpZ0djUVZKTVk2ak5PNUZ3MUU1cGt6azBROWhSekg1TDJa?=
+ =?utf-8?B?WkpOS2NyRzlLM0RnbzNIbnhFMWVRdEgvRFlhTVFJYjAwaXVRN2NlU1REMDhh?=
+ =?utf-8?B?UUdwSzJabzVWTWdEek1QOFJUQmJvTmtUMGZscHVXSkgyMnhyakZaVVhuRzJZ?=
+ =?utf-8?B?WFgvcnpuVWVUZVF0ZTNTZ1pFcms1eHJQaDBRdnNabTNOOG03NkkyTG5LeTRS?=
+ =?utf-8?B?R3pjc0ZzemFZV0JRbUVIRHdxd1pOMmVNeFhOWTQ5OEttblo3VDVNYzFOaWZJ?=
+ =?utf-8?B?Z3dZWnhWV1F1TkFVLzVndi9lNFJpNDBjd2ppK1ZpTk1SNmtBRDlvTkoyWWZI?=
+ =?utf-8?B?NCtnbi8rWGx1VHprVjU4RGxKbDBRZkhOeXlSVk9yLzVjVFI3MzlOTEIwTmY4?=
+ =?utf-8?B?UFF4QzRNeWZ6SmpoeWZTckhNRGdnRGxjRTdVT3M5Tm9RUVRwdkJWa1FvUkNi?=
+ =?utf-8?B?QmhkRFRKaXhoL3JHem9iVU9QcThzS0Z6NWhZSHFGMjh5T1ZFQ05TMFdkRElM?=
+ =?utf-8?B?ZVo4TWxlMW9iNWYybkUwbDdSalNwUm96VldEZjdId1ZpYWZiNVAxd1dRUFM5?=
+ =?utf-8?B?UHA1d3U4aS85UWt2UFptcTJhaUUrSlF4UTh4YlZrdlA2VXJ5Wkk2UUZIaGJU?=
+ =?utf-8?Q?p17bkx4S4zhNI9Q3zKLGKRN2s?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb534d8-e025-40a9-6d52-08dd1de1760e
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 14:53:54.4306
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SMeQE2x+wts60pAxW9MVbs7R1pOcxynEoBalbMt5BArWHs2DPBLcgZuQkIm3hTbxjpdS9CgU/xrCuQxCNVInew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9481
 
-Commit 30e945861f3b ("serial: stm32: add support for break control")
-added another usage of the port lock, but was merged on the same day as
-c5d06662551c ("serial: stm32: Use port lock wrappers"), therefore the
-latter did not update this usage to use the port lock wrappers.
 
-Fixes: c5d06662551c ("serial: stm32: Use port lock wrappers")
-Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
----
- drivers/tty/serial/stm32-usart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index 7dc254546075..1ec5d8c3aef8 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -1051,14 +1051,14 @@ static void stm32_usart_break_ctl(struct uart_port *port, int break_state)
- 	const struct stm32_usart_offsets *ofs = &stm32_port->info->ofs;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&port->lock, flags);
-+	uart_port_lock_irqsave(port, &flags);
- 
- 	if (break_state)
- 		stm32_usart_set_bits(port, ofs->rqr, USART_RQR_SBKRQ);
- 	else
- 		stm32_usart_clr_bits(port, ofs->rqr, USART_RQR_SBKRQ);
- 
--	spin_unlock_irqrestore(&port->lock, flags);
-+	uart_port_unlock_irqrestore(port, flags);
- }
- 
- static int stm32_usart_startup(struct uart_port *port)
--- 
-2.46.1
+On 2024-12-10 16:20, Dmitry Baryshkov wrote:
+> On Fri, Dec 06, 2024 at 11:43:07AM +0200, Dmitry Baryshkov wrote:
+>> Reading access to connector->eld can happen at the same time the
+>> drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+>> order to protect connector->eld from concurrent access.
+>>
+>> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+> 
+> Harry, Leo, Rodrigo, Alex, Christian, Xinhui, any response to this one
+> and to the radeon patches? I'd like to be able to pick the series for
+> drm-misc and these two are not reviewed by you.
+> 
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> index 19a58630e774029767bf2a27eb4ddf17e3c21129..04c68c320252b5ce9647f0606fb86fe57f347639 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> @@ -1037,8 +1037,10 @@ static int amdgpu_dm_audio_component_get_eld(struct device *kdev, int port,
+>>  			continue;
+>>  
+>>  		*enabled = true;
+>> +		mutex_lock(&connector->eld_mutex);
+>>  		ret = drm_eld_size(connector->eld);
+>>  		memcpy(buf, connector->eld, min(max_bytes, ret));
+>> +		mutex_unlock(&connector->eld_mutex);
+
+All of this is wrapped by the adev->dm.audio_lock mutex. It might
+be safer to modify the audio_lock mutex so it only guards the
+aconnector->audio_inst access.
+
+But I don't see any way these mutexes would otherwise interact,
+so this change should be good as-is.
+
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+
+Harry
+
+>>  
+>>  		break;
+>>  	}
+>>
+>> -- 
+>> 2.39.5
+>>
+> 
 
 
