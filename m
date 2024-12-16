@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-447209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF07C9F2EEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:15:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14DD9F2EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:18:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D977A2204
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:14:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0F67A1B64
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EC2040BA;
-	Mon, 16 Dec 2024 11:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6942040B6;
+	Mon, 16 Dec 2024 11:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cb7piB5+"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+c+WaX/"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24956203D4C;
-	Mon, 16 Dec 2024 11:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CE20100C;
+	Mon, 16 Dec 2024 11:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734347692; cv=none; b=GW0sgNReHaIaEmhrR0GBVFGfJTZ983HNVVQzWiqtTiVhy9YDPS97b+kMak5FgWoRx8vJFw1j2pK8g27F107ck6S2K4byIzPdQfFJ7WrG0co79OPwO/5Ft/enHvqoyQzlLoe5X3oE5zCnDwC8jtkHIU6rBzapfgIkmRt/+r6Xgpg=
+	t=1734347882; cv=none; b=urQOQaFZRh6DMgYRuq9ECdrD9fDPkiSYS3oYiYBxWYmxjvg3FzjezidV/owuLowU1TjgCFoVuu0bDxRJ3ZgxrNkagXNtsxI3uk9hfnX755LBD8N3NqVGWDG2p2pQdQosKeO6Ps7TvXF0mUh2utQLcRlHxa1ltZsoGZQVjtYSxvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734347692; c=relaxed/simple;
-	bh=Jw+e3i57CSkuSORIKHnE/C6YFYtdyjbji+9oIZ/8QH4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RUb3SnLC4gXPFXkuMb7M0l1WTcTGelOh2hF7Z2YDYG5+KS1D/ie0chzhNalwEqaQzHKw+569KCtTIpjjaNFkNXXFxIQaOUHH2C9qqHvfH0fKFgS62JiRqA2nqsWKMx6GCwTyweGPnV7mTkcdNvYYR2RkQEGwgDDRu8hX9ffLDFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cb7piB5+; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1734347882; c=relaxed/simple;
+	bh=wKjmhvKYD07EopEeQPjDLUkwhtYq/L/Vck46jr0VYDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g95N5qiwdUdVAJMRFycgRa1l6zK4xmjx7JoNtk+T0urHZc6A8tMBNzMgoyeOahNVe7Lc2codXmtDBhayZSMpuUstvjUTyK41rf6lBHJ1Jm4LNYstUD3HGWoIIT7FpZbomMISiYUIdMpvK0cF9u0v5yUyZHylndf7nHt/E7hEgpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+c+WaX/; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5401c68b89eso4344058e87.0;
-        Mon, 16 Dec 2024 03:14:50 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30229d5b22fso42196251fa.2;
+        Mon, 16 Dec 2024 03:18:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734347689; x=1734952489; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j6cyR+MlTqQdIWJhxPssDFa0/agw/aN1MfdhTEcS8o8=;
-        b=Cb7piB5+cpukFQEQirb7YWJYOgFzIII6UzXpDh/2DWZ/KWOQL4FlbtPreDcMrEZjZm
-         76Gg/l303u2DtJZsOpKkd/+qXjq8M5SXVB8z9Y1vZ7a5RF6Dr887fZzUBu+0oxSoCybT
-         Jh+yao80H9Q8iCJsZhSfFGc4uz+TK09rks39IsMIS51xxmafobCmNfkkd8dILl71VJiP
-         EQZelovdKyXLxWaV8cJTLtfM5iYGb+XGhnSRzPdtC7CkN6nkCyq6+fMjIwTr6aQ4Xv4I
-         ErB15cCODOfIrK8JhvJbTLHSFpDi9sCZYT/1hdrT52JEuf3kRU1QyI7DzgxSOqCmgwjs
-         eqGA==
+        d=gmail.com; s=20230601; t=1734347879; x=1734952679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4uDRPKicjyBVsF4oHmdLO3paC9eyCdN1Hcuw2KWmcs4=;
+        b=B+c+WaX/PdP5aE1hZfSVId5WuK7KUnNcWcvmUzu0B8fhLGEhSYK5AmW+WeJ9vrzG/r
+         TwkZYRSAzUGyxgQiti25mwtZF5Zp1sRIv6Dk1cnLz7l7bHxxOSGOR0o0Ou6+gI0GHb4L
+         4T1yhpEcMOf8uGOIsxucaq4c6azfuGoM+YJmEkWtl4BCWe+w7XMKXSw1RGQPK3BLE/L4
+         tJ6YaCF9RfHVXZ/hS74gmVdiZHU/UWgV150jz89CGWehwSvL1zfd4ijIOQd4lBVTvwbF
+         bNxdZNckniGawjd9RsP0fBf3G0+4XuT9VK3v2tYbSd7Tm0/SAlblJGlfBmikIy2Ln/ZG
+         D0WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734347689; x=1734952489;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j6cyR+MlTqQdIWJhxPssDFa0/agw/aN1MfdhTEcS8o8=;
-        b=qcEEMlSVnjIFq7JOS6V/iWepIaZRQJkIbMZJp+z7vDEOGuVpcN16ch6e6vUFRKxiyG
-         CVYGcbvidGJZU92xbxZLeYX6Yt9MvzbEMSASAycELbnPm2kN/4mOhyZq+BwwNG1wMXP6
-         8gXC4s0rMcQFYdRLMC3JdkTlZe5GZohE7BnxpbVH1zGCXiv6l4Zk2ejfA3xghts9v1b0
-         7ChCELVwvanS5Jx1BZowdPk2ieJKhTb9iLHRUEVrkVQ4WPKXhFvofPw8DeWS8Hnd42gL
-         tXcHcY6yDZ5G1QyC67Ld72Vi1O8DLXeHSSLOQ1vrNnYuq9lKuioGA2M/xRb+JfzEQn7F
-         XRWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVh9j/tQ6eIhgdWCUjmDc2g+VUF0mVfn3B8vKfD685gFIPVsJfQMosGcBsP+X3ahCEBMfz6T1EoNEmgDHAu@vger.kernel.org, AJvYcCVi7aJ3CqF47eyvZ0aSf6zAivFVlWs2ZvTC8aE02EsOd9tEySY/yfq0fBB2Cm/3/vjTRn1+kPftOlNpAw==@vger.kernel.org, AJvYcCVopuEuWToKTdjupNTwI7+T03vKLTLHchasYlQJm25Les+rZKT+spjChQHoLhMhDjYgUfuC9FWeTEsV@vger.kernel.org
-X-Gm-Message-State: AOJu0YywnpgvIq2hmEvL75IUrkDAM1ssc9pqcDnXqCBv+J67eONdDaHv
-	XBKq9QsDr5p1nQWw/nQ90hMl2GRKkH5wb7Gzy3LojDo1VSrna/ER
-X-Gm-Gg: ASbGnctTapbcLz5ylCVwC32rBg1TrzpxDFRyzmPwMSUfALmsvvLsv0Mvpkx3rxdKkOA
-	GN6oPPZk6sh4m+G/Qk6GYno6ddtAQrwbYDlYTYFnbo2Wb5Bg7uxHTiPEaLTlYYubAavwhY68lJY
-	YPyI/g8BKOuiJ59475vRJ5oSVBtQZ7C9WHngkm2pR+Ru8UKQuOONxfCCxyaBBfd2AgnuBMrPLbD
-	VfOzPoNWbBFJD0WwKGgSaW1ZdzFYsmzDXbNgOAWcW4KQEe+64GIvt1fBa0wIBlmh/6hYA==
-X-Google-Smtp-Source: AGHT+IFd/JaEC1I2zR0HAVQ4D1BBdQ51AmhXAWDU8e5jdd/JnIX+N08WoOVOAt+sOlURrAnSpwsBYw==
-X-Received: by 2002:a05:6512:b84:b0:540:1b4a:9177 with SMTP id 2adb3069b0e04-54034271ff2mr4533327e87.22.1734347689124;
-        Mon, 16 Dec 2024 03:14:49 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c20b19sm805071e87.265.2024.12.16.03.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 03:14:48 -0800 (PST)
-Message-ID: <f7c3effb-a7e1-4a24-ac7e-f84e49eefb80@gmail.com>
-Date: Mon, 16 Dec 2024 13:14:47 +0200
+        d=1e100.net; s=20230601; t=1734347879; x=1734952679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4uDRPKicjyBVsF4oHmdLO3paC9eyCdN1Hcuw2KWmcs4=;
+        b=a7wmaNyl5pFSk2SDZ6jqXWsgfrE8x5zzEqD5XzTIZT1LybiPqBSGmFnnXgI3nC1ihS
+         w2Z1K0kqouAB5hkdw69xOpPVm6PWh0TPKnzI376Pd1uU41QoxDP+pIhegGfUgbgBA/w8
+         fFL6Q3Bq+XxDRNkZMe1JulVuQ1gerG30MIOzl5kBBGykxvQjJBz29MvoVXW3CGq5QtNG
+         U+tDt1SorwZglat4LokYO2mKtSVHeDVUQMEhytEue8gxvLB4n6lMa3N31+21cE6nVi7t
+         d0Lb+0WHqN1rd8z4hJmCE1G14XrUxEtDg1swZzxWKOp8H28STKhQ88F75xr8L2YrLPVy
+         xq1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMnDe/5L7liffuZCsV5o+aAhHrmz/m5r9pI8upTK3PwlnTy779tLCKaJeZdBozsaNsHw1F/etC/ZY7@vger.kernel.org, AJvYcCWxfIhzRsQuNSHZm/ilB3E7eN1J+6f45k15zE63kNPjO28QPjuGo7rMwcGuGinvhOw40nfiQbWPVQCCrBw=@vger.kernel.org, AJvYcCXz4a5iwfYVUZqNQrB9xLhDnhr1xxHTF7LgsYvFQSG0t4pjRJ9gum6OYdgs6UeNWDqAfj7Ov8uYoVg5XxJe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVMLZmGQrc6WZzODK0XxToQN/TT8PTiJvrIvFp7hHMs6hb2tXE
+	s+paB1gbHu5e5BTCmyXyP1ObmlzG5TGgJOqKA3CFYyT6RUMubmLld75piwPu9Mo5J/S9JEL4jRR
+	pWgkWiwhcuki9tW7Hbdhr1B1XXHQ=
+X-Gm-Gg: ASbGncuEv4mB2NZsiOYIkIPgFi3l4YctZLUM4QpY54K7bsT2xzg2ifJY63YvzGP83HY
+	2JRBHaVEj4yjGdS+swmWykCcA9oBxCOJOpPvZ5B9+y3UFjV90dL/Ga4/Qf+6rR+J/kAKA
+X-Google-Smtp-Source: AGHT+IHBsS2PddzHPY0JrugNy6kUWAuwhdz0KaOXh0YDC+P4UW91f1Yu31DKnJnF4Ubc4Esc8DSwQoM13m9LUd/UzJE=
+X-Received: by 2002:a05:651c:154a:b0:302:1c90:58f5 with SMTP id
+ 38308e7fff4ca-30254444ae7mr38625311fa.1.1734347878643; Mon, 16 Dec 2024
+ 03:17:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] gpio: omap: save two lines by using
- devm_clk_get_prepared()
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
- "brgl@bgdev.pl" <brgl@bgdev.pl>
-Cc: "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-References: <20241203164143.29852-1-brgl@bgdev.pl>
- <20241203164143.29852-2-brgl@bgdev.pl>
- <a21531a7-13ae-45f5-a60d-dd80b3ef9834@gmail.com>
- <0bf97a477f1c547b960c63607395b82d92986ef3.camel@siemens.com>
- <a175fd56-c21b-46f5-bd0a-ccaa7c0f3efa@gmail.com>
- <828da89cff6dd2c49df9af6131aa3b43675abc87.camel@siemens.com>
- <72c52d8a-b0f2-4767-9e8c-ce869d203d0b@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <72c52d8a-b0f2-4767-9e8c-ce869d203d0b@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241216110341.3707-1-quic_pkumpatl@quicinc.com> <20241216110341.3707-2-quic_pkumpatl@quicinc.com>
+In-Reply-To: <20241216110341.3707-2-quic_pkumpatl@quicinc.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 16 Dec 2024 08:17:46 -0300
+Message-ID: <CAOMZO5A6_8eygyEY-U2WNOKVtUcQTbBiVV56aX9ypkr1AmOW=g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: Add support for master clock frequency
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_mohsquicinc.com@qualcomm.com, kernel@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/12/2024 13:11, Matti Vaittinen wrote:
-> On 16/12/2024 10:57, Sverdlin, Alexander wrote:
-...
+On Mon, Dec 16, 2024 at 8:04=E2=80=AFAM Prasad Kumpatla
+<quic_pkumpatl@quicinc.com> wrote:
+>
+> Introduce a property specifies the frequency of the master clock
 
-> This fixes the boot as you assumed.
-> I suppose this should be baked in the Bartosz's original patch assumed 
-> it was dropped from the GPIO tree.
-> 
-> Furthermore, this seems to be a fix to a hidden problem on original 
-> code.
+"a property that specifies"
 
-Just a minor clarification:
-"Original code" here refers to the code before the
-"gpio: omap: save two lines by using devm_clk_get_prepared()"
+> -    enum: [ 0, 2, 4, 8 ]
+> +    enum: [0, 2, 4, 8]
+>
+>    micbias-voltage-m-volts:
+>      description: The bias voltage to be used in mVolts. The voltage can =
+take
+>        values from 1.25V to 3V by 250mV steps. If this node is not mentio=
+ned
+>        or the value is unknown, then the value is set to 1.25V.
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [ 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000 ]
+> +    enum: [1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000]
+>
+>    lrclk-strength:
+>      description: |
+> @@ -64,7 +64,7 @@ properties:
+>          2 =3D            3.33 mA         5.74 mA         8.03  mA
+>          3 =3D            4.99 mA         8.61 mA         12.05 mA
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [ 0, 1, 2, 3 ]
+> +    enum: [0, 1, 2, 3]
+>
+>    sclk-strength:
+>      description: |
+> @@ -77,12 +77,20 @@ properties:
+>          2 =3D            3.33 mA         5.74 mA         8.03  mA
+>          3 =3D            4.99 mA         8.61 mA         12.05 mA
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [ 0, 1, 2, 3 ]
+> +    enum: [0, 1, 2, 3]
 
-> If the original code failed in the clk_prepare() and then deferred 
-> probe(), this same problem should have appeared, right?
-> 
-> Maybe consider using Fixes - tag even if this and the original change 
-> got squashed. Feel free to add a:
-
-Yours,
-	-- Matti
+All these enum changes are unrelated.
 
