@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-447317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B29F307B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:24:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640B19F307C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA68016478E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A3A1884F77
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969E7204C0A;
-	Mon, 16 Dec 2024 12:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A347204C3C;
+	Mon, 16 Dec 2024 12:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="T5xMC8O7"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="C0zf8WuF"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A798202F97
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293A12046B2
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734351857; cv=none; b=OdxNPh6rUIsdyPBhPRThNa1efP6pxwwXsMSHXQgmLx83F7oWyAR8jX3X+WuzZ343jX86I/LZ8hC6Wl9oVmaGMJXOSfM9tu8KAxLOUWrMBJFjIyDGV0Q71+Ocxsua9dkmUfhDU/cbAEop6LBwDcIItzQb8Or8r16K7cV6lX33eWY=
+	t=1734351865; cv=none; b=WkH59q2RN9VUwWnkE3fw0JVMU9F18XhV+EfdSvzsanoscE3Z9ws5JzsBrIwLPltgx5xO0C7R+hnc9Vc0/ZOeHytkAUq71rMt0hCDjj+MJqoPJSTPsV+k4I90nlrPfrw0njAJYsYLDVCUWzHVpo1nF+Q0vpVsG7htRGC9U3RMtcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734351857; c=relaxed/simple;
-	bh=e3fD9Uu2bHGRHDCL1XRtLVXAadJD6E5B/W0M1rZ54yA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PMXYuYZWXpoEGZQB6Fy9WKPHC5gZP2MyyhzxNEBqeJJfyBSK0ZE86ctuK8lfVsH9SUu2ZM9v5mtu5jtH1PQLxaJcaPhMZjYm/Zp/x54zG5IcP4PwuaqPbYhsiqTH8HEMrreZ2u+9DQPftJtwFktGYpvfKXDV6EFHAn1JcTqiy8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=T5xMC8O7; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1734351865; c=relaxed/simple;
+	bh=7uodcHImsvmbWdzwGJxC39y0Z4LO/fg82j5/Ac+9irA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Xr2gbXOIFgxUqqadR8WukM9ZvKqnFO2uBd5DmMovkXp9SIQ7tCOKoKPn0ZvLKzfPW34oAA3j8Q86Nj2tgG6bhAEzcots6fkNvsycBmj+gCwelY51A95hLComPJ/xiBF/jPmIuwF08w8/xpiOuDL/RRWtT5iPTF7exDcdna8InIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=C0zf8WuF; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21619108a6bso29041605ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:24:15 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2162c0f6a39so44053955ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:24:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1734351855; x=1734956655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXwwiu4jqsqN1IwxG3iPAfNakfVj3D2KirisAa1dDps=;
-        b=T5xMC8O7RlNylOw143Gkyp0E5RpcvFXbOr2SnSOfYXUosgTgxnt1uHWkm6r3nEdbr2
-         var4gOA0z9j2qHEspoWeH03JiOc1FqSU2OY1sflwliI9q8+d/39p+PLVVzb7O8bC9Y3p
-         qOBoHMhWCDLI7Qx/w98R6CR41kh0YKLmt66CqeFBLdOaCoQZdTa5JK5Ocm1+h8X1KAgq
-         ZgS8OohwL6PkUQTeVZG53uG3c3lrZmA2PH4qXrLCnRBs/+f138XTkzJHk3G7XAxKJESO
-         N0TG+vwIFGGDuPE1XQ1+uCSSeHrYqpsJVc9WXT0IvX0/TbHNjwv+bIWJ3Wskze6S1bfx
-         HoNA==
+        d=bytedance.com; s=google; t=1734351863; x=1734956663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=phtcloGBPxbo3bGe+fbvNysMDOLgdZmP6FtnIiSbizc=;
+        b=C0zf8WuFXWYP5Lhxo0p+CcUPiQeaQ/XKpXs8vyT6xukH8UWpadVMh1zMWCzH/J/l+c
+         SAJlZQiAdEupzhVKZwpAR932xbCYew6E29itLck5e1r0A58EGXHIkDWqFfDND4ymlXZL
+         LqpI3haltAQF/du2Yl/6kuHv1wfvozs38CcH9JTL6LGcUQJIi9K1mVHnpXUN9z10y7uO
+         7AlguRR/tb5GlwsxwBapo3lK5IHyexELdsBsdP18wOGuK9lGg7Pj3loyqj6ijvTUMpR2
+         Y205v2vBXnOLZreVgIu7DzCN3/P1hjfmXGrcoUNO40z3zMq/UdSgsr7jYIqEYmkyeFxm
+         GXPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734351855; x=1734956655;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yXwwiu4jqsqN1IwxG3iPAfNakfVj3D2KirisAa1dDps=;
-        b=Kf0RgyworJ41KKkZ8yPnEsZMHWPcjavlvGrdePT8O2Xm0koE7QWPdgddi8o39VCnQk
-         KdI9wjw4EXs3Wor/Wbm/KmiJ2ify+mBKsJJJLZ9WGCpUHDvLKdINmav8aaXjxvybt/OK
-         mJ7E+5kmPceaUWQNO1e773HxjI86njwYqQwfiJjAOFD1BfPwqh4MXeUiZlVyw3XKxQYS
-         4lTgcg1ESLq6FZMxI3+On/iIpmsqtGBPxlhU++2hClsHFmXXerg6DD1RUkx2AV/ufLsI
-         ppWkWY72NdDctLvAKxVr8ZMZ6mMoUFdeBUPyURucAeEP8QKGM9Xbn4YiJGOuJBHxd3nP
-         jbCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ47RfP7gGll0+6S4h7X8yiuTUv89ogLXEPmqOz101SDRgQS3e5LPeaRvOLloIZCO8PgQ1NX02x5unpN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjoLSi7c3l99kF4r6iiFswGf4LcKWQrp5hRjxsSfO9Qn7nY7a+
-	jWVWyz+rXFXElf1C5kq2Mopsx87AVH1l3RZY4LuzCbPuCLZu+u2/28+qWon4kpg=
-X-Gm-Gg: ASbGncs3hO8k2ZZ6PT4GeRDPA5zr8tpYix1a2Rkol54llrmeLAnJ/5A8jYVlASYR/eC
-	Q/eYD+gugBIpPS4bwvkfW3y2Jz/pwf9l25iQ9MKgfL0TlR6RvEXZ2E7K9NiP/zMidQTrqCgvBxS
-	zVLyGKtI6QxJnUTY3N6DpHBE8QMQPQGcGsbVorEtUb33swqdvfbInXAESQ+vaAHXNUTIk4sLrvK
-	Ev3CD4LUFmtbuqNaX3Mqd0HwwhB5lS+gjJYnSvIZdCLRg1kTGDqKiqEdvMT2TjFhfSiBFIj23Aq
-X-Google-Smtp-Source: AGHT+IHG8p306LNcNzHDH+iekhKTZsuWGSQ/aQzSUWAjDa3+M5pGj9h5OpI30iQTb1ZV9ZSMj/AIzA==
-X-Received: by 2002:a17:903:284:b0:216:7cbf:9500 with SMTP id d9443c01a7336-21892982324mr156860775ad.6.1734351854772;
-        Mon, 16 Dec 2024 04:24:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734351863; x=1734956663;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=phtcloGBPxbo3bGe+fbvNysMDOLgdZmP6FtnIiSbizc=;
+        b=CWAkabwTb/TsKbpTN2tdimLxDP4FTw8Gw4WlTo0tPMYhlr1ixMdBax5fOMrt7NFbPD
+         96jwGF96BkyC/I//yCc6hk859xQnNWLG+xNQcVDEVuQBRtl+Y+N9TDeYCxvoAGV1XmzL
+         vqMNEf8FznGEH7ep+9p2f6hzQUWVEcFk4o6xmCn2oAExLrVpNUIOLdxKCgBTWbytDMXV
+         0L6MU+xwY4edNE2wl/nhFdpSRxxEAGR2Gpg6ALYfASulUtt/4MaFQhxyhxiSuG+C/7o/
+         46d0V2CP/dT9KkFwM3Oohhh2IA2piS7plAPkYKW0OEvwJt4MXsC5ahg+GlRodekERZQV
+         S67g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNN6K6/8Y8/jcltJVMbOA//70H6wdpaAi0xvi9PM/f824YVuWvT/FllRJRYmIitOF55ZmTlQzpglc17U4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAFpKglGtHayTyJwWP03jIohNriVU27p+H1aOPGx+j4M9cVhA0
+	5+CTj/RILIqJKuMCiZ4gRoA9uIaw7Lw7e4jr1DtrlFbWHuM2PEgAAozYIVWS2yQ=
+X-Gm-Gg: ASbGncscfIooRxV76Ic3+KDFi7gqfNyAS2EbL1L974nqjIFQq6qbZu0Za0yUb5q0s7U
+	hDQH6ZTBzVjv0mwpA+9PKfyTHzCDLY1jo99qiA3kMnoplQCMLwKTVn5cHucTFCgsVUH1zfs2QFB
+	vs8NtLaaQGo0I9a31zhdSEBDN9k14bVmtOoe2o2z2MtS4vWNka3zP8rbIem59fTG4ezWIuYqkPP
+	MYUBSoQ/ZHCYCPuwlUBWqNX70uuneJQZzn8Y9x+bZNaP6TuviOq4mM8C99kswiNEcYpQOaGE1tg
+X-Google-Smtp-Source: AGHT+IFlbd/fyubQoVxVPUqZLEyg8lZJk176wd7Gvn9IXFj09lK1ksv+/9kyQeDjNjF0XPDerLMtqw==
+X-Received: by 2002:a17:903:184:b0:216:59f1:c7d9 with SMTP id d9443c01a7336-218941e89efmr159696435ad.19.1734351863429;
+        Mon, 16 Dec 2024 04:24:23 -0800 (PST)
 Received: from n37-019-243.byted.org ([180.184.51.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e6d0e4sm41501555ad.261.2024.12.16.04.24.10
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e6d0e4sm41501555ad.261.2024.12.16.04.24.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 04:24:14 -0800 (PST)
+        Mon, 16 Dec 2024 04:24:23 -0800 (PST)
 From: Chuyi Zhou <zhouchuyi@bytedance.com>
 To: mingo@redhat.com,
 	peterz@infradead.org,
@@ -81,10 +83,12 @@ To: mingo@redhat.com,
 Cc: chengming.zhou@linux.dev,
 	linux-kernel@vger.kernel.org,
 	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: [PATCH 0/3] Take the scheduling domain into account in numa balancing
-Date: Mon, 16 Dec 2024 20:23:54 +0800
-Message-Id: <20241216122357.1276382-1-zhouchuyi@bytedance.com>
+Subject: [PATCH 1/3] sched/fair: Remove unused task_numa_migrate return value
+Date: Mon, 16 Dec 2024 20:23:55 +0800
+Message-Id: <20241216122357.1276382-2-zhouchuyi@bytedance.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20241216122357.1276382-1-zhouchuyi@bytedance.com>
+References: <20241216122357.1276382-1-zhouchuyi@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,24 +97,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset tries to adjust the logic of handling isolate cpus in numa balancing.
+The return value of task_numa_migrate is unused, remove it.
 
-patch#1: Clean up for task_numa_migrate().
+Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+---
+ kernel/sched/fair.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-patch#2: Skips the isolate cpus when gathering numa status and finding
-idle cpus in update_numa_stats().
-
-patch#3: Ensure that we do not select an isolated CPU in
-task_numa_find_cpu(), even if it is present in the task's CPU mask.
-
-Chuyi Zhou (3):
-  sched/fair: Remove unused task_numa_migrate return value
-  sched/fair: Ignore isolated cpus in update_numa_stat
-  sched/fair: Ensure select housekeeping cpus in task_numa_find_cpu
-
- kernel/sched/fair.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d5127d9beaea..f544012b9320 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -2486,7 +2486,7 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+ 	}
+ }
+ 
+-static int task_numa_migrate(struct task_struct *p)
++static void task_numa_migrate(struct task_struct *p)
+ {
+ 	struct task_numa_env env = {
+ 		.p = p,
+@@ -2531,7 +2531,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 	 */
+ 	if (unlikely(!sd)) {
+ 		sched_setnuma(p, task_node(p));
+-		return -EINVAL;
++		return;
+ 	}
+ 
+ 	env.dst_nid = p->numa_preferred_nid;
+@@ -2600,7 +2600,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 	/* No better CPU than the current one was found. */
+ 	if (env.best_cpu == -1) {
+ 		trace_sched_stick_numa(p, env.src_cpu, NULL, -1);
+-		return -EAGAIN;
++		return;
+ 	}
+ 
+ 	best_rq = cpu_rq(env.best_cpu);
+@@ -2609,7 +2609,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 		WRITE_ONCE(best_rq->numa_migrate_on, 0);
+ 		if (ret != 0)
+ 			trace_sched_stick_numa(p, env.src_cpu, NULL, env.best_cpu);
+-		return ret;
++		return;
+ 	}
+ 
+ 	ret = migrate_swap(p, env.best_task, env.best_cpu, env.src_cpu);
+@@ -2618,7 +2618,6 @@ static int task_numa_migrate(struct task_struct *p)
+ 	if (ret != 0)
+ 		trace_sched_stick_numa(p, env.src_cpu, env.best_task, env.best_cpu);
+ 	put_task_struct(env.best_task);
+-	return ret;
+ }
+ 
+ /* Attempt to migrate a task to a CPU on the preferred node. */
 -- 
 2.20.1
 
