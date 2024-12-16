@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-447471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E957B9F3301
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:22:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8391E9F330D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5B516B47C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E1516B7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7F6207658;
-	Mon, 16 Dec 2024 14:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA22063F3;
+	Mon, 16 Dec 2024 14:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MBH0k6g4"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="EKTQ5+0I"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C42E206295
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94F52063D2;
+	Mon, 16 Dec 2024 14:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734358660; cv=none; b=rMHicMTHGjXpQPbINGmUYdWBtZDGunD0QEDiNaSY0YrsdcEv67zHFmagwXnqxw9ZDqfY8si1Kh7UdBrykw3ygA/WfdhmvSznrF2CD8iyJJ6z37gRgE1vYr9TiGdAlCWOOwv2B0ui89e9PiEDZ9MYHS+3qB5T1UNhIC4f8lODMPs=
+	t=1734358729; cv=none; b=paWyWYblKZuKIDorOFVUNeX9SPPZ8U/CF3YT6bgWQtKZ9aQsl1nVVSAeQTvqaiVv9l025mUsHbDR4S4Q3NAQn/4V1etESIBbyMuJo89A8B+UX7LAOmq+xS0cWnfYsYlRmmUK+0AE3dl0xdxlgRU5n9idGmRLuU/dZzNBf4CE9oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734358660; c=relaxed/simple;
-	bh=ZKXR6f7M8q7AUD84JUe5se7Ret2cqMIgZJiJtHTUpCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pO40EQJ3CCV5X+dqjfvXpxbC1o10hOUewgOpmtjd+3N9BVmOWnWQZnYdaGfIh+eG5nurs1cPxWqx+RJefPN0LZ+HLqECABQTMaTXXfW3aWVr1RV0aa17NloA85QYN5sIb+kK86QktQw68u5Xei96B9FBk8IH6Fy0lF0isabHmh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MBH0k6g4; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-436341f575fso27789825e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:17:36 -0800 (PST)
+	s=arc-20240116; t=1734358729; c=relaxed/simple;
+	bh=PxrPr/Krj1U8XTgIJLipME3FysDYl/LFJ6QaZJvD214=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCpP4Qfkxs6VkR22oVFWYHSBqX2iTFo3lQ4h0Kv65f1IwvdmuhM1PkUFvCwd0JSE57HnlnqaoMET0KCc0iLxNJ1Pce5+3K57DoSPT/T5XnOQjRfd1MtpJwDWdwBVvFpKi3+BOJBEtvzOAjdfGbhbFJTS3yTQGG2ZjWisRWVEcec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=EKTQ5+0I; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6eff5ad69a1so33083627b3.3;
+        Mon, 16 Dec 2024 06:18:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734358655; x=1734963455; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdwqgpoC+bfLP0GpotgLw/tzkIjreKiDGChJYeu/vdI=;
-        b=MBH0k6g4GU2IR/zOYqN9ueCghHulXbCvDldYD1KR7+SysWtzpkm+X6J1n2qkuVfWDh
-         w65tnq6gqOe5jC+EVxrnhvPWb0396XKlZ84YF7GCGidu/ErYSt4YUz2yzJNN7lgPFCvr
-         FUcCybIN/jzzA/jGAuEgdBpNJoL4WqRXU8r/orWvOZO+fj2795pLuaJYBZLqkzMENDAl
-         aoAt0X3WOcA58f5MA20LazpxMt/TIrzBU6rT2G/rvbLg34VF9/Xfh2glMqg0ef1EymXp
-         U/xbby/ACuFe454NqMSjTUk4SD7aIdsN5gfCfT24KW0Dy1ediFk8ohHXJEdPaUineIFA
-         n/ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734358655; x=1734963455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=googlemail.com; s=20230601; t=1734358727; x=1734963527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZdwqgpoC+bfLP0GpotgLw/tzkIjreKiDGChJYeu/vdI=;
-        b=Hdnr8UI+RIB3FJ9cKgv8y0HAH8IXq6Ca7pTQQjawYq3cPwfzbo2lo8EzclSpgIF75k
-         o8Bt3NQ8VMRZQTAF05DT3Z/9awnj2GOkf0ms+zlfzH3SKpNInz9NKpaWFaUX/i7a9g4L
-         McS4+LY9eAeubmhJ0/wQNDkU/Yp5RiBEqT+GPgyRWbR1hgHbvbLv2ZIOws7hMdrbe50m
-         i6lbV1WhO9ed7ECFMtXCutSK8oX2SU6Ut3BSNEw9PEyV3iXX3kViId+fvOttLcFgeUvi
-         WW7a5XMzvJtiG2rJG8O0RMcYqOD4710EOu0Jue6tQlF0XPf370PHnxGZdSpvDHu7p1Xn
-         S6Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP0+oSDhFNvT3vfB5xhmgRqpvW/p6n8UFKDZKXqszJ/ANGQ4MnDZTZjMNrYe10PJ1gB0Cq0a93fYy9ziE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJFkYOu1JF+pZzdj/7Pmq9xpx9mcLHrqC6buu7Ap+TNau/udQv
-	aSQ/JUEXIZhiIg9eZ+5yM1xsFai//c/xerMGdUtqQ+uDsv6L9CHVBGNUVY9uwO40XYX6eipURDd
-	9
-X-Gm-Gg: ASbGncuguDk76crVz7ff4p2saWhtBADU1aY/YhWRlOIeCWj8uzpyXh7oXEorTL8ivWv
-	ikqCQ9yQ2moas4lmnWH6tT/oUB37DEJUXrnwzRIFUTz+gNXaIyDcOF/kk/a47mkk52INIm3KBlW
-	Z2bZGY7pAzz3ANVZmqMtvtjrcIkUO5YSRqz4s8VwN3ZLxQjlbC+FJ8RADZKMb4cCE+r5cPjc7sE
-	JlMPQyDflOzq3ST/wXKFe/XPs2xFZ7uNM1OeQd4oPRcetf0WXUwEVhBRA==
-X-Google-Smtp-Source: AGHT+IGi7Z+KCftx5o0ei7T4T2tBaC+K1y2WwdyHb0NnxRjwOTiXAiCvSBG2XGhtrNOGocu0Mxo3TA==
-X-Received: by 2002:a05:600c:1da4:b0:434:f753:6012 with SMTP id 5b1f17b1804b1-4362aa509abmr124521275e9.17.1734358654734;
-        Mon, 16 Dec 2024 06:17:34 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436362b6841sm85527045e9.28.2024.12.16.06.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:17:34 -0800 (PST)
-Date: Mon, 16 Dec 2024 15:17:32 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	Rik van Riel <riel@surriel.com>, Omar Sandoval <osandov@meta.com>
-Subject: Re: [PATCH printk v1 2/2] printk: Defer legacy printing when holding
- printk_cpu_sync
-Message-ID: <Z2A2fHJoByYVkogM@pathway.suse.cz>
-References: <20241209111746.192559-1-john.ogness@linutronix.de>
- <20241209111746.192559-3-john.ogness@linutronix.de>
- <Z1mpxhCU-WpaKJIt@pathway.suse.cz>
- <84frmu2mjk.fsf@jogness.linutronix.de>
+        bh=6B6xbMJ3heJG4U9cdD+cnJPtEtdixFqaU+BhqzcXQco=;
+        b=EKTQ5+0IHRyccaa3l9ba2bzBEjTNcqIEokVaId4oJcDFiGjMoWlymDkKDmWINXR9mC
+         MjU57+22USB2aag3efBA8ty7Tl20cZ7uKSmJbcJh7cZLHgNo5x9RpFRTbXgmloA0If66
+         ARifvEFhMn5c2EPNJ8vgVaeGVXHIEJOC34rmiBN7S0+vOzptGVfmo3CzBXcIMSihjoe0
+         9croGRceC6xYEan7FoWMXamHW1JYfQFio4JQdRvoUrURI2jCSHYwvx5NWHkf+Su4hDSw
+         nGfOVWIDowMgu1g44wkL0E7rA+qQWoZJER4mt7ylKeIABf3jiHOv1nI3DiHpPDyotzzJ
+         Akww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734358727; x=1734963527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6B6xbMJ3heJG4U9cdD+cnJPtEtdixFqaU+BhqzcXQco=;
+        b=Z8jA8vMrdhnjlIqzSNyW0DhsCAIeKlTMeGCnAnV+M8fgX5hWGrCSlax4cs/dg1IxEO
+         pRq/4EZ4O1nb/nAxHj4OB1HmjHly8dnffVrHd4FeZeb1wa0ShtwIKuruoT8dC7EQQOlI
+         HkfB/lJ91x+5pIyEQMvrNgqxRkhenRMJS3z6gNGNiy/dw1gb21CaIMe0xHaDqpP8kgoN
+         YuiuRig4GS9l2tyAEU+M+npY2TR4D7QPWlXhgqaar5T0L/e77Wg/6fg5WrcITeU8iu7b
+         0e2LKAkD/B8Or2EbGBJ+vOS4qza377dsplkp2DNqcckdicAnky0Osx6d9lXu+o45gMkw
+         mF9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWFZhIInmm5Jh0jhOCSNQ7ty4QP2GoZElRJyDJ5LXOvaHNp/L8l0+P7Z6aCepdfxheJWXpOb/XQFg==@vger.kernel.org, AJvYcCXKxhAMqoPOxRk+iBhBlK7WBKpSPGTLdQjZo0bfeNLCYm5T83P0R4TbLaMVJL7+EMo/xk3hqLhxptx26+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdSg1o7i8ZX2v8j6ZvGlgjOMXnbiDqQYpKw4jUb0OxJgFhZAO8
+	JC37Y6hvBTDeC8+g9w8TX1J9DTlbu5wQaQWtbzsFMRS3515dSj9ZhSdFJR2ucE9uZmfowk1ZOYx
+	wmhy9HbmhlMYj7XjmggNzqJfPsnI=
+X-Gm-Gg: ASbGnctR/mE7OyJhx6ryUiuJlaDdL5rYSfIozz6gACjZ0ukSFiUE/iIvZLZIGUiYwy7
+	RvLMP9N5L8k12L3PMFlPcvg0bZJlcbm6eyMfA
+X-Google-Smtp-Source: AGHT+IE7O106teXGJgMuGx92iD9nbQNfIz/hXI//hj3qWeavajLtySdJCUp1biONYIUYbr8j2P9w55vT0Z/+jp/sZZo=
+X-Received: by 2002:a05:690c:6113:b0:6ef:a5bf:510b with SMTP id
+ 00721157ae682-6f279ad838bmr109461637b3.1.1734358726938; Mon, 16 Dec 2024
+ 06:18:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84frmu2mjk.fsf@jogness.linutronix.de>
+References: <20241125110646.50799-1-cgoettsche@seltendoof.de>
+ <e43da8418fc54a5eba7cdbb594b24bb9@paul-moore.com> <f7bfbf89d2ac4b929637bbb25f749c96@AcuMS.aculab.com>
+ <CAHk-=wgraNfcOCZ4n_C+ircQkD_AhsPM-=z7snt+eLgE-6otkg@mail.gmail.com> <CAHC9VhSDfn5QgQsF9qq6-k67bQB_M6UZoLODDYs4qkwHcr4-gw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSDfn5QgQsF9qq6-k67bQB_M6UZoLODDYs4qkwHcr4-gw@mail.gmail.com>
+From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date: Mon, 16 Dec 2024 15:18:36 +0100
+Message-ID: <CAJ2a_DdBTwiu5cXzL+eojJzjTCT6CWSKASXiUYRXZSDKqztyXA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: use native iterator types
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 2024-12-11 17:54:31, John Ogness wrote:
-> On 2024-12-11, Petr Mladek <pmladek@suse.com> wrote:
-> > It might be worth adding a reference to the original report
-> > to show that the problem is real.
+On Sat, 14 Dec 2024 at 23:48, Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Sat, Dec 14, 2024 at 4:10=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Sat, 14 Dec 2024 at 13:08, David Laight <David.Laight@aculab.com> wr=
+ote:
+> > >
+> > > Isn't this an example of why -Wsign-compare is entirely stupid and is=
+n't enabled
+> > > in the normal kernel build?
 > >
-> > Reported-by: Rik van Riel <riel@surriel.com>
-> > Closes: https://lore.kernel.org/r/20240715232052.73eb7fb1@imladris.surriel.com
-> 
-> Agreed.
-> 
-> >> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> >> Fixes: 55d6af1d6688 ("lib/nmi_backtrace: explicitly serialize banner and regs")
+> > Yes. Please don't try to "fix" the warnings pointed out by that
+> > completely broken warning.
 > >
-> > Anyway, it looks good.
+> > I don't understand why some people seem to think "more warnings good".
 > >
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> >
-> >     I could add the above mentioned references when pushing.
-> 
-> Great, thanks!
+> > -Wsign-compare is actively detrimental, and causes people to write
+> > worse code (and often causes mindless type conversions that then
+> > result in actual real bugs).
 
-JFYI, the patchset has been committed into printk/linux.git,
-branch for-6.14-cpu_sync-fixup.
+I somehow like compiler warnings since for me they offload some trains
+of thought and let me concentrate more an the overall code structure.
+Also while not building the kernel with this warning, I like to enable
+it in the language server in my editor.
+And sometimes a warning can point at a real issue, see a65d9d1d893b
+("ima: uncover hidden variable in ima_match_rules()").
 
-Best Regards,
-Petr
+> I'm not going to argue the usefulness of '-Wsign-compare' in a general
+> sense, but I will say that in my opinion the changes proposed by
+> Christian in this patch are correct and an improvement which is why I
+> merged the code.  If anyone has an objection to this particular path,
+> especially if you believe this introduces a bug, please let us know.
+>
+> --
+> paul-moore.com
 
