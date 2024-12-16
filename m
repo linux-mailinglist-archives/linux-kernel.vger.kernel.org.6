@@ -1,228 +1,167 @@
-Return-Path: <linux-kernel+bounces-447154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E97D9F2E0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:18:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17749F2E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFFE16249B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EAC1885067
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1586E202F76;
-	Mon, 16 Dec 2024 10:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50712203705;
+	Mon, 16 Dec 2024 10:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UheN/KU9"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9TO6K8X"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1E62010EF;
-	Mon, 16 Dec 2024 10:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD05A202F7E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 10:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344317; cv=none; b=isSsc8fYft95KimqyDIr7EL5NVhIK6801GhoHAjt4C6Rg16dMRXHZFMpAZczUnUQzUMHVl51Bx7rcvGqvFxi/2qGr7CTpHQZmaDJBcfPnIeqQqqY8tHxTePKw5woDYnxSDdRf7E3hH4QMpbCgEsAAd5Vd+gljEkkPdi88N2TZkM=
+	t=1734344464; cv=none; b=a2CPKfJ2SebV5P+IGurNy5WKf2XjMNPFLzTEPGztzjZ71+KkqaFKatzJpkizSFKK+J6Tk5MUlAuebDOPsAFJCjf2wBArxhJ1RtIpagKLzJFLo/eHgf7qVorPTUta1W/ein7/MUeUhAHSyLOC/kG4pcK5caU5K8xiWi6z+Zek5+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344317; c=relaxed/simple;
-	bh=8ZRmIeW76t/I1WIb/QIxH1Qky+u71Mk4Lo1yE3WW+jE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mXqIZXizWnqEeo26MwjOhSwH1ROByy4HCH4h2jEtXsCkZznSVhOnNP+Ey/QJRGk53rwGbqGe7svBqoWnmzq/GILD+B3WXv/O2hPugG51D17NO66ghsvwbVyDr5Xr1u3gm6dSrWhm0mbHAvKSuwEWrG2Akv0QDcKcIG1CPgRIg+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UheN/KU9; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BFNP1bQ021382;
-	Mon, 16 Dec 2024 10:18:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=F9oeZT
-	OvEDkV3gWjPGCTl5Hpqtrf5KHDTXD9gQqxMGs=; b=UheN/KU93Nw6MH+qHOsPTq
-	y15uWaWaCXf1er5qIQnKaMeRXFfSP3wLgxukROsWRJ7Q/qn3v6q9qEi22mYgxH5F
-	tlUGonWdRMvoHs8MxRjUq4oDHNdtlJaI+NOlMfoSnghdI50lvQvLMNFtpi7vTKoF
-	tQgkdDp09rxPJGdi6u3tTVlYvjUx5PPMBpxdSmF5ulxI8ac8GX/PmwTtXf13Ort1
-	r3EjKCHw2S+7tnrfqJOgG1H/naTxb8+zTY77Vp9DQK2J4eNb2yK7ZkXLL2kdrdSo
-	a8OCvfqa321GN5DKCv0kys/lGSYPa1/Xtppt1Zcba1e0YNVZjCPZVe9Pb0+W3RLA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43j0k4bd15-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 10:18:25 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG636sk011260;
-	Mon, 16 Dec 2024 10:18:24 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hpjjw75m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 10:18:24 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGAINxI12059226
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 10:18:23 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3376958053;
-	Mon, 16 Dec 2024 10:18:23 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BFEC58043;
-	Mon, 16 Dec 2024 10:18:20 +0000 (GMT)
-Received: from [9.152.212.155] (unknown [9.152.212.155])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 16 Dec 2024 10:18:20 +0000 (GMT)
-Message-ID: <d2d6c27d12a5d7770952a9c027d290204c4fac6d.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/3] s390/pci: store DMA offset in bus_dma_region
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Matthew Rosato <mjrosato@linux.ibm.com>, joro@8bytes.org, will@kernel.org,
-        robin.murphy@arm.com, gerald.schaefer@linux.ibm.com
-Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        svens@linux.ibm.com, borntraeger@linux.ibm.com, farman@linux.ibm.com,
-        clegoate@redhat.com, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Date: Mon, 16 Dec 2024 11:18:19 +0100
-In-Reply-To: <1a1c9b992a9a957e200d55b0a1330a0c3d75baa0.camel@linux.ibm.com>
-References: <20241213224941.571060-1-mjrosato@linux.ibm.com>
-		 <20241213224941.571060-3-mjrosato@linux.ibm.com>
-	 <1a1c9b992a9a957e200d55b0a1330a0c3d75baa0.camel@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1734344464; c=relaxed/simple;
+	bh=Kp8Cpsdrh0FO7LU26pkeZJ8MZDzZ5HVvD4V5Dq7GQOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L1Ylp7VgNuRDAL767KB12Mlbfh8nuDBkFxNbIZUNjbduJfcIKCXry3FMfZ98xABrdS0ZSKvu0oRhdSHJoeSwwB0aOE6gFsHKI7OMFocwP6xukwx7iH+eSsdPAmGd9i+lgFXmhgctfOZS39E7Rikf5lUyUTHF8Nc0aSXzvsmBC20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q9TO6K8X; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3862a999594so259550f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 02:21:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734344461; x=1734949261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3FOxM7A0OryUQiItH6h8n5bvfCG+uIcFtqBpVtmjo2c=;
+        b=Q9TO6K8XYU/KCA6VKxR1lJPYZCiRjVxnVckPYdoSKrC89H9lplx3i3F1u2SKQMjSVM
+         62wOjDsEaxMFf0hBgOduV0oTm5miDr5+ftYWWtidSN6WnHG/UPLOdCovZPB006ICogLI
+         wV3j2CrDzHpVRZoyWpDrAjMjJGlDONABnMrCiGNHCuzDNe5/6czILShWaWQLda3Fg4x7
+         ec4+GltoPhNRjXObMiMLigsY4mY3EAj7+khCN02AJrwTYsEPlq7pOYQ42dcUDH4dMtrE
+         MRhofFBNrzZHJYOape+nYeOHb4DptVm1jYgLbBlezJV9AgVfYCyk9gH5smNAUexItWpm
+         rAfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734344461; x=1734949261;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3FOxM7A0OryUQiItH6h8n5bvfCG+uIcFtqBpVtmjo2c=;
+        b=DqMTXsjKuctYwH9z0Nq+xz4+XCcuKckT0hMFiocUaJwG31BlJhK1ebQyzP9zctwiBy
+         QaTmJddB9+NlqNOxX8knG8JVXcluOCgNBU0wxmbcFJRvVYLcIzrjxRvvoUN1dvcZtykR
+         cujK0QD10Om7k7W27hLOnr0nBtN6G4yDG+wg12RXFggEXH9pLw6HDJyeznFAsPA8FmqI
+         R7Ttrxohndrge8jTpidSFW10eK1gFDTej5wvIuHCZ13p30rzfPi+S6UQbS7u7TTM8c/E
+         z7rDU5CLAu33R7cOC+iozdQyh1y76j8s9Nwdvf93Tmvqr7bP4gwyB928aYbw0FbQnV9h
+         GPPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtpvwSjj9uUXGzkUyjiO6B3hL7bVb6F/ghAMRheGPztG2OeKSsjD+mnGnNxeOHMhH2vo/znEWtD9NeYyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykG1U3DwWIt/2M2mGqNLNNpaVSK1mXat4FspIkfcHodns6wvqq
+	o9WXj8clUMxKFMApFpiJ7FMQuwdsc2kRdMQozRg3C+UEHYXQV6MxfX2i1nz8EMI=
+X-Gm-Gg: ASbGncspKcnxSjy1IdQj78xNjHntGwjDC657xFKEbPbFeEWoQAwE27C27aiQBjHF6Oe
+	PchbOmSMDsbZIYxUIO+RNf7vlGfsRWMQ9PV850qVnFKnKpR9GwUDCgkv9SR4jabFVTDsmtsZjHg
+	xXKz7s0DS+QiswT8x98j5A0nSjgzmYAo2cMvCxkVkfdg9PSrsPjaIiv8P/fNOAHH3wv5XetD3nh
+	3NjU06XOuvgbTKouuGvn0GhXJuj7jEOetbsO+jDkKX00tL+l+bXZENOt+xg0Mc3EAjxMdcYGFij
+X-Google-Smtp-Source: AGHT+IExf1CzCbAfbTWJaGytGHDMnX7EfCiui2lP6bTir8dC5DD+uN8f7uPtezW1qNoJ4dTszLaYaQ==
+X-Received: by 2002:a5d:5f88:0:b0:376:2e3e:e6d4 with SMTP id ffacd0b85a97d-3888e0acb25mr3540761f8f.5.1734344461131;
+        Mon, 16 Dec 2024 02:21:01 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801637esm7693757f8f.28.2024.12.16.02.20.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 02:21:00 -0800 (PST)
+Message-ID: <7510e38e-fe02-4cd5-a99d-ab3b9cb6ee22@linaro.org>
+Date: Mon, 16 Dec 2024 11:20:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 86-5Kh2tH5bRQvb9PlAxH4F7583fyuWg
-X-Proofpoint-ORIG-GUID: 86-5Kh2tH5bRQvb9PlAxH4F7583fyuWg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- clxscore=1015 suspectscore=0 adultscore=0 phishscore=0 mlxscore=0
- spamscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412160083
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: ufs: qcom: Add UFS Host Controller
+ for QCS615
+To: Xin Liu <quic_liuxin@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ quic_jiegan@quicinc.com, quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com,
+ quic_sayalil@quicinc.com
+References: <20241216095439.531357-1-quic_liuxin@quicinc.com>
+ <20241216095439.531357-2-quic_liuxin@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241216095439.531357-2-quic_liuxin@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-12-16 at 10:29 +0100, Niklas Schnelle wrote:
-> On Fri, 2024-12-13 at 17:49 -0500, Matthew Rosato wrote:
-> > PCI devices on s390 have a DMA offset that is reported via CLP.  In
-> > preparation for allowing identity domains, setup the bus_dma_region
-> > for all PCI devices using the reported CLP value.
-> >=20
-> > Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> > ---
-> >  arch/s390/pci/pci_bus.c | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >=20
-> > diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
-> > index d5ace00d10f0..14527687d0f2 100644
-> > --- a/arch/s390/pci/pci_bus.c
-> > +++ b/arch/s390/pci/pci_bus.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/jump_label.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/printk.h>
-> > +#include <linux/dma-direct.h>
-> > =20
-> >  #include <asm/pci_clp.h>
-> >  #include <asm/pci_dma.h>
-> > @@ -284,10 +285,27 @@ static struct zpci_bus *zpci_bus_alloc(int topo, =
-bool topo_is_tid)
-> >  	return zbus;
-> >  }
-> > =20
-> > +static void pci_dma_range_setup(struct pci_dev *pdev)
-> > +{
-> > +	struct zpci_dev *zdev =3D to_zpci(pdev);
-> > +	struct bus_dma_region *map;
-> > +
-> > +	map =3D kzalloc(sizeof(*map), GFP_KERNEL);
-> > +	if (!map)
-> > +		return;
-> > +
-> > +	map->cpu_start =3D 0;
-> > +	map->dma_start =3D PAGE_ALIGN(zdev->start_dma);
-> > +	map->size =3D (u64)virt_to_phys(high_memory);
->=20
-> I don't think we should restrict the size here to the size of memory.
-> Instead I think it should be zdev->end_dma - zdev->start_dma.
->=20
-> Since we handle the restriction to memory size as reserved regions I
-> think that should be compatible. Also I think otherwise this might
-> break the admittedly odd s390_iommu_aperture=3DX kernel parameter on
-> LPARs.
+On 16/12/2024 10:54, Xin Liu wrote:
+> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+> 
+> Document the Universal Flash Storage(UFS) Host Controller on the Qualcomm
+> QCS615 Platform.
+> 
+> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
 
-Correction, zdev->end_dma - zdev->start_dma + 1 because zdev->end_dma
-is inclusive ;-)
+You just sent it to me three times. Stop.
 
->=20
->=20
-> > +	pdev->dev.dma_range_map =3D map;
-> > +}
-> > +
-> >  void pcibios_bus_add_device(struct pci_dev *pdev)
-> >  {
-> >  	struct zpci_dev *zdev =3D to_zpci(pdev);
-> > =20
-> > +	pci_dma_range_setup(pdev);
-> > +
-> >  	/*
-> >  	 * With pdev->no_vf_scan the common PCI probing code does not
-> >  	 * perform PF/VF linking.
->=20
-
+Best regards,
+Krzysztof
 
