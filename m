@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-448298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5159F3E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 212E49F3E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E70188CF4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19DA188CF80
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCFF1D9A48;
-	Mon, 16 Dec 2024 23:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C98A1D9A48;
+	Mon, 16 Dec 2024 23:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SJWZW4Hy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="QK0jC8Pa"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8515B139CEF;
-	Mon, 16 Dec 2024 23:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8F8139CEF;
+	Mon, 16 Dec 2024 23:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734392196; cv=none; b=T7sZztfGmV03Zs3n7ETy86EZ+1VWutybYw5JotjrkyEoZYv8Na1Tn42ZKm5o3vNyNWpM3dDxvUROdknypIeH2FDv14r8kLrlGQ8yb1KCS1v5DS8JgbLSKlUn/M0xzedXqWB1D7NAXQk6tRsXZS2OsPyVGO/zjHNrmU7VyIWtbfY=
+	t=1734392252; cv=none; b=hj/WGaTkdnNYJsMR60H33MMJdsmn1gsCCHDtO5yojcL+RnqtnwF6Tgz7oP5VLHEljfmT1BAj0LI8ZkJMYRLxLqnO8STqd2hEFD57aoJcIhk1DNlCChrXgHalC7fI9k66CSrXTwMEtIH8c8pnfZsMmd9H10vNhJgLRByJhhJ7n14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734392196; c=relaxed/simple;
-	bh=TyX8OuIzT7LyW9v5fuWxn1XottEalqW82DJqCBSlq3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=laX6jMvpE0WIezvcgoTme9LsyHBwDsBlB2yqQOLaihllJaAbRCr9iV1+bFU3TTyci++zDgRLOHcwTZa5u9UoQ5ckqqJoo2P2hLfddqevhtxsr0ZhA16nTqZ96z0pUZJ9XVs/0BAbnHZRDvENSKvKXXfd8HStrFx4cjykSIfk/qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SJWZW4Hy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKMN1v030630;
-	Mon, 16 Dec 2024 23:36:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kxAcUhRKkdclAnGyeiIV6adWFiwtPqFrf9phhQGTAf8=; b=SJWZW4HyJeyezK/Z
-	pGvEKSXcVZZ/TuZynLdgKTZ3phW7lE6ezszf7lXXTNoA3nWZ/jFtqXJB1lMCWU61
-	xZKQGN1iqGcfR03wXqRLV3qXSqr2GL2RnR52XnbUo5REpjIeJBY6kT7be/V+AQXu
-	Fp1AJzB5poTN7g3qzcsgUU/bjWzG8FsU3wmBVhOPxkxXrLQS7wS1wTJ+kY2N3+bC
-	hvRBX3Tz4+t2+khJR9Yfci3/1qBbAk6oslKOMZZ4ECix2hVbe5JmIOKisTfhjZx7
-	Y8+JcOpDq9qyrFNqGWBdq6+8SBV/Q6o2iyF1sQ/Ol5ifad+ZHdybMYS7LQCjkmoZ
-	/GBT1g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61rbfr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 23:36:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGNaOsq032314
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 23:36:24 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 15:36:23 -0800
-Message-ID: <bea32a76-c6cb-4121-a49f-6159f8c25db0@quicinc.com>
-Date: Mon, 16 Dec 2024 15:36:22 -0800
+	s=arc-20240116; t=1734392252; c=relaxed/simple;
+	bh=2Ujd819ZoH84F+rPTjD8dKjw8d+8/3y2KYQXmyMmTls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jhUM9C8ZvTzO+2Wzw/xY/3MtdGx+8o3RbUrVTHpcACHhRhF8xmU7Q+tMGNNeTkSZK8ou9tHNItidtfnsyW9yqBfeTIb09C+yFea5BHhQ0SiyqgdT6NhQaqsfkmXnx+HJH1xFbUOuIaIC5rWn538RGktBlR4NtnbbH0Czl/Zl7eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=QK0jC8Pa; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [10.6.0.9] (host-88-217-226-44.customer.m-online.net [88.217.226.44])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id E99372FC0055;
+	Tue, 17 Dec 2024 00:37:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1734392245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B5GAYNNOWyNg1bgIK1K5PEC3zhubidO5xanYzMAVJ08=;
+	b=QK0jC8PakttUR1ACoQt6emjJnUrkDzbwcypaZweq4aILhT8JrI3NvlHR/kPqXhTe7SPx+c
+	Mymu/LkucmpasAXHo1KvaqJk52a8fL/MphxmBhwpxpw+6s/NQMF51+M+LFsur2+nAAQbmk
+	yEIvmfX3hntAYxPAeBF/rbSPaH/heZ0=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <2b762f16-fe50-4dec-8f3f-dfe21977d807@tuxedocomputers.com>
+Date: Tue, 17 Dec 2024 00:37:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,83 +55,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] drm/msm/dpu: catalog corrections
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>,
-        Robert Foss <rfoss@kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Richard Acayan
-	<mailingradian@gmail.com>
-CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
+Subject: Re: [PATCH v2] PCI: Avoid putting some root ports into D3 on some
+ Ryzen chips
+To: Richard Hughes <richard@hughsie.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Richard Hughes <hughsient@gmail.com>, ggo@tuxedocomputers.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241209193614.535940-1-wse@tuxedocomputers.com>
+ <215cd12e-6327-4aa6-ac93-eac2388e7dab@amd.com>
+ <23c6140b-946e-4c63-bba4-a7be77211948@tuxedocomputers.com>
+ <823c393d-49f6-402b-ae8b-38ff44aeabc4@amd.com>
+ <2b38ea7b-d50e-4070-80b6-65a66d460152@tuxedocomputers.com>
+ <e0ee3415-4670-4c0c-897a-d5f70e0f65eb@amd.com>
+ <6a809349-016a-42bf-b139-544aeec543aa@tuxedocomputers.com>
+ <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com>
+ <vVLu9MdNWVCG96sN3xqjkmMVQpr_1iu61hX0w0q5dSQtFBi9ERc3b6hSoCjobPSTNgkIp3PBheheyUlayhMeQjShsx62zNqxWnPsrHt-xaM=@hughsie.com>
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RlXC3Gm99tA_mQefnIrBQH4PMCQCSj3H
-X-Proofpoint-ORIG-GUID: RlXC3Gm99tA_mQefnIrBQH4PMCQCSj3H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412160193
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <vVLu9MdNWVCG96sN3xqjkmMVQpr_1iu61hX0w0q5dSQtFBi9ERc3b6hSoCjobPSTNgkIp3PBheheyUlayhMeQjShsx62zNqxWnPsrHt-xaM=@hughsie.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
+Am 13.12.24 um 11:05 schrieb Richard Hughes:
+> On Thursday, 12 December 2024 at 19:01, Mario Limonciello <mario.limonciello@amd.com> wrote:
+>>>>>> Sadly fwupd/LVFS does not support executing arbitrary efi binaries/
+>>>>>> nsh scripts which still is the main form ODMs provide bios updates.
+> Of course fwupd can't do this; it would be a huge security hole as the nsh script isn't signed.
+>
+>> It sounds like some bugs in the implementation of the capsule handler
+>> for this system.
+> I've seen this with AmiFlash + BIOS.ROM, but never from a capsule. I'm pretty sure Aptio builder is more than capable of constructing a capsule file with the correct DMI data.
 
-On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
-> After checking the DSPP units in the catalog vs the vendor devicetrees,
-> link several DSPP units to the corresponding LM units. Each correction
-> is submitted separately in order to be able to track and apply / skip
-> them separately based on the feedback from Qualcomm.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+The DMI data also includes a serial number that cannot be baked into the 
+capsule. And I don't have access to the Aptio builder or other AMI dev tools, 
+just the Afu* flash tools.
 
-All the patches LGTM in this series,
+The command provided by the ODM:
 
-Thanks for the cleanup
+AfuEfix64.efi <bios>.bin /p /b /n /r /x /l /k /capsule
 
-Abhinav
+with <bios>.bin being a capsule and:
 
-> ---
-> Dmitry Baryshkov (8):
->        drm/msm/dpu: link DSPP_2/_3 blocks on SM8150
->        drm/msm/dpu: link DSPP_2/_3 blocks on SC8180X
->        drm/msm/dpu: link DSPP_2/_3 blocks on SM8250
->        drm/msm/dpu: link DSPP_2/_3 blocks on SM8350
->        drm/msm/dpu: link DSPP_2/_3 blocks on SM8550
->        drm/msm/dpu: link DSPP_2/_3 blocks on SM8650
->        drm/msm/dpu: link DSPP_2/_3 blocks on X1E80100
->        drm/msm/dpu: provide DSPP and correct LM config for SDM670
-> 
->   .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    |  2 +
->   .../gpu/drm/msm/disp/dpu1/catalog/dpu_4_1_sdm670.h | 54 +++++++++++++++++++++-
->   .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h |  2 +
->   .../drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h    |  2 +
->   .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h |  2 +
->   .../gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h |  2 +
->   .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |  2 +
->   .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |  2 +
->   8 files changed, 66 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 4172e9bbb583a2af5f1a3db437caf72a90714ad9
-> change-id: 20241216-dpu-fix-catalog-63a3bc0db31e
-> 
-> Best regards,
+/p Program Main BIOS -- With recovery flash this does not include DMI strings, 
+but does with capsule flash. -> Does flash some /k regions in /capsule flash 
+(but not, for example, the logo region).
+/b Program Boot Block
+/n Programm NVRAM
+/r Preserve ALL SMBIOS structure during programming
+/x Don't check ROM ID
+/l Programm all ROM Holes
+/k Programm all non-critical Blocks -- No effect in /capsule flash, does include 
+both the logo and the DMI string region.
+/capsule Flash using the capsule update process (without it the bios is flashed 
+directly by AfuEfix64.efi)
+
+I played around with the command with the conclusion:
+
+- AfuEfix64.efi <bios>.bin /p /capsule -> overwrites DMI strings
+- AfuEfix64.efi <bios>.bin /p /r /capsule -> overwrites nothing
+
+I also flashed with fwupd with the result:
+
+- DMI strings where overwritten
+- Main BIOS was flashed
+- I don't know if Boot Block was flashed
+- I don't know if NVRAM was flashed
+- I don't know if ROM Holes were flashed
+- I don't know if non-critical Blocks were flashed
+
+I tried to explain fwupd and the requirements to our contact at the ODM, but 
+just got the unhelpful reply to use the command above.
+
+Do you know how these AfuEfix64.efi flags are passed over to the capsule flash 
+process? Then it might be possible to implement them in fwupd too.
+
+>
+>> It's not an Insyde problem. I use Insyde capsules regularly myself from
+>> fwupd. I also know several other OEMs that ship capsules to LVFS that
+>> use Insyde.
+> 100% agreed; Insyde firmware makes up more than 20% of the updates on the LVFS now.
+
+Good to know. Sadly the ODM does not care :(.
+
+To be fair all my work I described here is now 2 or 3 years old. I didn't start 
+a second try since.
+
+Kind regards,
+
+Werner
+
+>
+> Richard.
 
