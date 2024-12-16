@@ -1,86 +1,140 @@
-Return-Path: <linux-kernel+bounces-446757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AFD9F28CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:21:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44DC9F28CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60ACE16702E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4C27A1DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC682153BE4;
-	Mon, 16 Dec 2024 03:21:28 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48634153565;
+	Mon, 16 Dec 2024 03:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjuVY9PG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F951322B;
-	Mon, 16 Dec 2024 03:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A832F852
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734319288; cv=none; b=VPViPxWKVGlBA3PaxLS7AXe3RdyNx2D542yR5MyApdTHPzPTQ6Jd5qqN0KxEGFdpDOVUbcoCpmYkP2MA9j+eSA3hPY07DVrDy+HJGswgwmDg9h1/uMNLMTJc0nd7z3tsFZ5HUGbk8g3G5dwplmVIIt0Cgzi2MEdXhYF9UEAFjgc=
+	t=1734319389; cv=none; b=Gx1BA/0Jc8nDACemZUvQ8athy9ttAfBKERCDagzuzm7y+tA+6pyq3+NdIQFKL5wwGZ/Y7oans1F0JmpRAhD0W0Lsj6pN30TvK1FQUKVV25/aoLgfWl/InddN2ZkYi6fm7aPzFoD9GjbI/CXv/kdNmEXQ1+UIBYPNqTCZxOECTwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734319288; c=relaxed/simple;
-	bh=q1M641oKkjUnlUKdKbYD9g6YcEyzXBLg4OOxWUtUTAE=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QPXkjgxHdmIK6pveVh0W59qxg+frokvSvtAjw6wI28tj+acE7SYPRHMrgPIsOd483AT67dRN7XWl+/2oKRC7gmQnHPGjKWgEEBd1REJhwzHMiIKICGMSWVHyEh30WbWCGzn0+zkPga6iAJkvNe4Pr8DO12SRLoTPn5UriDrzzg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4YBQBr4hLDz1T7Fg;
-	Mon, 16 Dec 2024 11:18:44 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 02B9D1A016C;
-	Mon, 16 Dec 2024 11:21:17 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 16 Dec 2024 11:21:15 +0800
-Message-ID: <a6c4d8d4-bbc3-49d2-9d8d-90398c8231e1@huawei.com>
-Date: Mon, 16 Dec 2024 11:21:15 +0800
+	s=arc-20240116; t=1734319389; c=relaxed/simple;
+	bh=V4jM3CVSCQm1TaO1otXw7852w/swq8OZFbl3RxkIYK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XYkSnS1wWGVJpmD/xLSyl0ET7nAU8dFd2VC/76mCts0Vq7bzqtMtkme2Msc3Nauu/RN3bj+l3q6EU2z0nvZ//jVU0Twgfy2cV4LfpvnxoOFD1OT3BkYJmzrQBmOh2urGHyA7uc3ZWTW6ybZY1J7v8uZncXjG/XJ/VVOJRD1cPe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjuVY9PG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48104C4CED0;
+	Mon, 16 Dec 2024 03:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734319389;
+	bh=V4jM3CVSCQm1TaO1otXw7852w/swq8OZFbl3RxkIYK4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kjuVY9PGhDTtrEHi/eH9u8pArsgTdG3NHgqlKH9cBtPvf+LGHxw0mZ/wK/sHWxQPe
+	 H/bZk4C+cC1a4BWJyFCpHnhMz1UM2ybo9yn4gjGYKCQ9phC+s875/LSrqSpGSXBK4n
+	 jBa/ZZzVOwJoGT5ohcQNioboygexWAg2IfcPSt/rOn8xcUWSJtRZk+fcZG9lq7qBsn
+	 vbVngoME1TjByjp6y9CxwGSd9ZOuiguO7DkSRllgLyk2ysrGVdODtjcsoJ+gDPJ4NL
+	 oknWLJRF9DZMt+r7ne2xAcBaeh2uDzGFguujf80RXHPaXA6A6GGSu1gNS5ZhzuIdKx
+	 0fsS87gW9evnw==
+From: guoren@kernel.org
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	guoren@kernel.org,
+	bjorn@rivosinc.com,
+	conor@kernel.org,
+	leobras@redhat.com,
+	alexghiti@rivosinc.com,
+	christoph.muellner@vrull.eu
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	parri.andrea@gmail.com,
+	ajones@ventanamicro.com,
+	ericchancf@google.com,
+	Guo Ren <guoren@linux.alibaba.com>
+Subject: [PATCH] riscv: Implement smp_cond_load8/16() with Zawrs
+Date: Sun, 15 Dec 2024 22:22:53 -0500
+Message-Id: <20241216032253.685728-1-guoren@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<gregkh@linuxfoundation.org>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<hkelam@marvell.com>
-Subject: Re: [PATCH V7 net-next 1/7] net: hibmcge: Add debugfs supported in
- this module
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241212142334.1024136-1-shaojijie@huawei.com>
- <20241212142334.1024136-2-shaojijie@huawei.com>
- <20241215134443.28770bbe@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241215134443.28770bbe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Transfer-Encoding: 8bit
 
+From: Guo Ren <guoren@linux.alibaba.com>
 
-on 2024/12/16 5:44, Jakub Kicinski wrote:
-> On Thu, 12 Dec 2024 22:23:28 +0800 Jijie Shao wrote:
->> +#define str_true_false(state) ((state) ? "true" : "false")
-> Didn't notice until I started applying this..
-> str_true_false() is an existing helper:
-> https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/string_choices.h#L68
+RISC-V code uses the queued spinlock implementation, which calls
+the macros smp_cond_load_acquire for one byte. So, complement the
+implementation of byte and halfword versions.
 
-It seems that this header file provides a lot of useful helpers, I will send v8 to use them.
+Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+Signed-off-by: Guo Ren <guoren@kernel.org>
+---
+ arch/riscv/include/asm/cmpxchg.h | 38 +++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
-Thanks,
-Jijie Shao
-
+diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
+index 4cadc56220fe..2bd42a11ff8f 100644
+--- a/arch/riscv/include/asm/cmpxchg.h
++++ b/arch/riscv/include/asm/cmpxchg.h
+@@ -365,16 +365,48 @@ static __always_inline void __cmpwait(volatile void *ptr,
+ {
+ 	unsigned long tmp;
+ 
++	u32 *__ptr32b;
++	ulong __s, __val, __mask;
++
+ 	asm goto(ALTERNATIVE("j %l[no_zawrs]", "nop",
+ 			     0, RISCV_ISA_EXT_ZAWRS, 1)
+ 		 : : : : no_zawrs);
+ 
+ 	switch (size) {
+ 	case 1:
+-		fallthrough;
++		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
++		__s = ((ulong)(ptr) & 0x3) * BITS_PER_BYTE;
++		__val = val << __s;
++		__mask = 0xf << __s;
++
++		asm volatile(
++		"	lr.w	%0, %1\n"
++		"	and	%0, %0, %3\n"
++		"	xor	%0, %0, %2\n"
++		"	bnez	%0, 1f\n"
++			ZAWRS_WRS_NTO "\n"
++		"1:"
++		: "=&r" (tmp), "+A" (*(__ptr32b))
++		: "r" (__val), "r" (__mask)
++		: "memory");
++		break;
+ 	case 2:
+-		/* RISC-V doesn't have lr instructions on byte and half-word. */
+-		goto no_zawrs;
++		__ptr32b = (u32 *)((ulong)(ptr) & ~0x3);
++		__s = ((ulong)(ptr) & 0x2) * BITS_PER_BYTE;
++		__val = val << __s;
++		__mask = 0xff << __s;
++
++		asm volatile(
++		"	lr.w	%0, %1\n"
++		"	and	%0, %0, %3\n"
++		"	xor	%0, %0, %2\n"
++		"	bnez	%0, 1f\n"
++			ZAWRS_WRS_NTO "\n"
++		"1:"
++		: "=&r" (tmp), "+A" (*(__ptr32b))
++		: "r" (__val), "r" (__mask)
++		: "memory");
++		break;
+ 	case 4:
+ 		asm volatile(
+ 		"	lr.w	%0, %1\n"
+-- 
+2.40.1
 
 
