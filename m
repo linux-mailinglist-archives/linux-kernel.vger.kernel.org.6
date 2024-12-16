@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-447993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FDB49F39A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:19:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF82D9F39A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E317C188FAA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123D916B104
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4CF209F52;
-	Mon, 16 Dec 2024 19:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF0207DF7;
+	Mon, 16 Dec 2024 19:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="iKKecr74"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SSPVYcQ2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C495D207A25;
-	Mon, 16 Dec 2024 19:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0585206287
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734376733; cv=none; b=FQYnKS8ohf4tcS4NTPN9BknWKPWAxbdkF7SW7Ql9AvPK+XgWyLUU6CYEs3wjE+/laRiAQBmvvBRy7zjIUaGMIpsp6O7Xes4jrX5kgpo1dJ13kCqoO9eEZvABTfZ8xIqg6Ng0EdrY0s/OYDnBoGxpcsXOfrTNrpj56YWxshCxilo=
+	t=1734376817; cv=none; b=i08nEdBh6bk9ffqB469FD4ZyRSopO2/HOWP7+pq9ENC6cP1y7s350dNbz07XIY9NtZ6bPvn7DHV/ZR3fQNQPuaZzoV2i9JAxZL7hMfy4OJ65PAhkd8jkJYRr6JBCWxeq96sUHd6xfPoVGrFoOUyMoC9L140UMOwyD/q41fuaLao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734376733; c=relaxed/simple;
-	bh=wcSq+lq6vK8t+Gk6gn7qMQFP+gluOvsTGaZKHwrPdII=;
-	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	 Subject; b=nPIIExNwtHecMTtDWTVlAQkf6sQ/RoqPExfve66YiyGQHglbCZa+nxr7UIZ35e9cSqs2tmBl1LRh7oziuAtetzL9Hah0Joc66sPJ/VLLE6r3EHND+pqRGCcoiNsvel3nKIf3PLm7WCUMgtxDAzFh2GIGWVBrbw7Vzqq2eLcnepQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=iKKecr74; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=LcPZWZ7nEbQi21b+dv55qNCO8wWbzlyxf4/DH86OpqE=; b=iKKecr74hUniSIDv0sTdrxqk+N
-	G6aqoOoFLdge9FJ4dr+gBceCx3Lvv1MCmxCzF8/p934b1MnexZqMlM3J4JSoUKChFDzuFSuKNNV3V
-	60qIEf7FvaY3Fk2gKmfM9u3Y6bqNbUCTEfFsAzG2HhKWn5IoP56X/r2TWcSLotwb0wMg=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:42958 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1tNGc8-0002CS-U5; Mon, 16 Dec 2024 14:18:45 -0500
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jon Ringle <jringle@gridpoint.com>
-Cc: hugo@hugovil.com,
-	hui.wang@canonical.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Date: Mon, 16 Dec 2024 14:18:18 -0500
-Message-Id: <20241216191818.1553557-5-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241216191818.1553557-1-hugo@hugovil.com>
-References: <20241216191818.1553557-1-hugo@hugovil.com>
+	s=arc-20240116; t=1734376817; c=relaxed/simple;
+	bh=hJO7PhFFILWqOSoDZ6qlrrhdx3WwQXrpYMxPRM4LBuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJXleR8wGOj92mIdOhTF3WWhzyleGZpWg+21IK8Laec0a0w/h2/5px2xOoFODYWM0WLbRoysXnndqmF5I6Ig9/Q22RfVoaIFM6QJJuHxM6XwmPZP36BcAFEMyV+IOJcijXpMSVdV1kd2y5KjxAL2peDeo45rmPB8FNyuGfP4YB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SSPVYcQ2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734376814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dAcFp9mawsitE6ltl4OckOZ068h+OrWsoh6QDL7J4Vg=;
+	b=SSPVYcQ2L6rJKW5GftEy5Eabm0VD/q2OwH3SCKpPSCDr9GzRpxQ/UzyKbcHanFuNO70nWU
+	bEzgbGELTs4g9Mlrl8tVNr4Ajp0Q0tuAC4RhONAOjjt4ZsGHJPBLVxB99rWil4U66a5Ch+
+	er+xe+1UCcugYzKTs3Z7cq0YbGUWPtw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-cyoXPWvWObWdX3TmoZTNOA-1; Mon,
+ 16 Dec 2024 14:20:13 -0500
+X-MC-Unique: cyoXPWvWObWdX3TmoZTNOA-1
+X-Mimecast-MFC-AGG-ID: cyoXPWvWObWdX3TmoZTNOA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70D561956089;
+	Mon, 16 Dec 2024 19:20:10 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.224])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5C73419560A2;
+	Mon, 16 Dec 2024 19:20:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 16 Dec 2024 20:19:46 +0100 (CET)
+Date: Mon, 16 Dec 2024 20:19:37 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Lai, Yi" <yi1.lai@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <20241216191937.GC374@redhat.com>
+References: <Zy4OFlxoRK2jM5zo@localhost.localdomain>
+ <20241108190835.GA11231@redhat.com>
+ <Zy6QHHakztIXvudC@pavilion.home>
+ <20241111120857.5cWFpNkJ@linutronix.de>
+ <20241204134826.GA923@redhat.com>
+ <Z1DxqJlGM_I8irVQ@pavilion.home>
+ <20241205092015.GA8673@redhat.com>
+ <Z1F6_cC4bRvcN56T@pavilion.home>
+ <20241205102840.GB8673@redhat.com>
+ <Z1y6vSznjbCwAvn1@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH 4/4] serial: sc16is7xx: fix invalid FIFO access with special register set
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1y6vSznjbCwAvn1@pavilion.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On 12/13, Frederic Weisbecker wrote:
+>
+> So which way do you prefer do solve the initial problem?
 
-When enabling access to the special register set, Receiver time-out and
-RHR interrupts can happen. In this case, the IRQ handler will try to read
-from the FIFO thru the RHR register at address 0x00, but address 0x00 is
-mapped to DLL register, resulting in erroneous FIFO reading.
+Ah. please do what you think/feel is right.
 
-Call graph example:
-    sc16is7xx_startup(): entry
-    sc16is7xx_ms_proc(): entry
-    sc16is7xx_set_termios(): entry
-    sc16is7xx_set_baud(): DLH/DLL = $009C --> access special register set
-    sc16is7xx_port_irq() entry            --> IIR is 0x0C
-    sc16is7xx_handle_rx() entry
-    sc16is7xx_fifo_read(): --> unable to access FIFO (RHR) because it is
-                               mapped to DLL (LCR=LCR_CONF_MODE_A)
-    sc16is7xx_set_baud(): exit --> Restore access to general register set
+I can't suggest a better fix anyway.
 
-Fix the problem by claiming the efr_lock mutex when accessing the Special
-register set.
+> > > > 			do {
+> > > > 	-			next = work->next;
+> > > > 	+			next = READ_ONCE(work->next);
+> > > > 				work->func(work);
+> > > > 				work = next;
+> > > > 				cond_resched();
+> > > >
+> > > > Perhaps it makes sense before the patch from Sebastian even if that patch
+> > > > removes this do/while loop ?
+> > >
+> > > Hmm, can work->next be modified concurrently here?
+> >
+> > work->func(work) can, say, do kfree(work) or do another task_work_add(X,
+> > work).
+>
+> Right but then isn't it serialized program order, from the compiler point of view?
 
-Reworked to fix conflicts when backporting to linux-5.15.y.
+Hmm, indeed, you are right. In this case the compiler can't assume it can
+"defer" work->next. Thanks for correcting me!
 
-Fixes: dfeae619d781 ("serial: sc16is7xx")
-Cc: stable@vger.kernel.org
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Link: https://lore.kernel.org/r/20240723125302.1305372-3-hugo@hugovil.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/serial/sc16is7xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 928c701f0c35a..3b7c238793ef4 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -537,6 +537,8 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
- 			      prescaler == 1 ? 0 : SC16IS7XX_MCR_CLKSEL_BIT);
- 
- 	/* Open the LCR divisors for configuration */
-+	mutex_lock(&one->efr_lock);
-+
- 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG,
- 			     SC16IS7XX_LCR_CONF_MODE_A);
- 
-@@ -549,6 +551,8 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
- 	/* Put LCR back to the normal mode */
- 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, lcr);
- 
-+	mutex_unlock(&one->efr_lock);
-+
- 	return DIV_ROUND_CLOSEST((clk / prescaler) / 16, div);
- }
- 
--- 
-2.39.5
+Oleg.
 
 
