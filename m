@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-447625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BD09F351B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E18C9F351E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9EF161E31
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:57:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD761886BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A485A14B086;
-	Mon, 16 Dec 2024 15:57:41 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5327214B086;
+	Mon, 16 Dec 2024 15:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OINSEsZ3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DEF1494B2;
-	Mon, 16 Dec 2024 15:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2923D1494B2;
+	Mon, 16 Dec 2024 15:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364661; cv=none; b=bdeR0MkONwr2d5OMN4/EW4dVwwiIdyyh6jRre3x74wpjH5iw3gExGSt8ZDYnYW23iTqLyKWLN4SeZfyqDo+JVu7Hc/mnmRiMvKdzPZy6YK+A+bKo6HkXR4S4u1TO46N3rqclT8FLsu1Ml8ZE2HcVtlWeLkEfkge8jiBD3l/dbak=
+	t=1734364679; cv=none; b=YiyZeC0tI7m3RF+fVONOVk/XqOBPs1kTJ/4Ru6ot4a9qromFouEJHGrrdRt/Byi0Q6EfMSMcUXOsynURho7KKW2aphPPQR+SxMR5q2RO4IMJO9mETo1ZvYtIiXpF4ScdcdXFvW9s7/n22+21lu+mCkvostBiFToBIuF2EsZfqkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364661; c=relaxed/simple;
-	bh=fIDYlXvQOJj0MHS6CQWvXG3LDIZ1js9IKKCCACbETp0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AtxXiXEKnXFJbqGrn2v4yWIrv/T+TQXhdB8VivMgcsRRVcoum0ev4hCAqZg8QiWB5/NYf29goBxKCZ3v4SQS+sIp42KpSysjhl5q4YyNu3V2aSquTdXJynOxkNVVfHesrlCPeyJg8vOzKXA2jZUuINFcIlf5shc5ObXbn7muhSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5161d5b8650so1075116e0c.3;
-        Mon, 16 Dec 2024 07:57:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364658; x=1734969458;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gy3oZcWAvWbiJzxXQx6Dl6TjNe+Yb4LhHAJ+hDC4lxs=;
-        b=MYAkB6i4z4nbqyFKByIohMxNtHZLoUsoN9vBco9KDNn1J17fQaO04ezpc4EcmfhFKb
-         B4ndLfbFlgUd5V9kBmN5RFHHkMg5QoWDr2kqRZZqmRzD9PCp+ozEnyNt43vfpfV/76ZW
-         lJk8XuIX/KSiuYHz+nc0gkslThCguGvwXJkbP95mgZ8i8eJI0ZzBvJchk3wQhspltC5s
-         yllK84gAH6wDXK6LZwTJTDwuWPibKaWXQfic8xsv3TQp9B+R2sVaGLo4Tiv3G/UnmfjP
-         cZOital889SmIALT8MB6+EIIXKd8NKx9nr5Pdz20504eHNz9RGTAIysPZwFqajmsQCNo
-         AiRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1LD/bTgD71Lj05MYjMzVuymCSF8DBGS69w+qvbkc8EhtGmiE0PsEYo1CRcbOXj1Ym8pPY86TpHSc=@vger.kernel.org, AJvYcCVAwNSkVJQzK9Ku9T4dkBuxcLnj0K9aBQfEPk7+zEmfkQzjB5yaq0dU+l0UnHeJ8iCSpAxPnmoexDP26lDbqj7pZ0s=@vger.kernel.org, AJvYcCWskA3xVkgRr2QIdehWNPyyLkq16EwV79YRreyU7AzTw6EJIKJy6z2d8XYOrkE9t3Zhq2vCBXUtqnzR5Nou@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjNPcQnqRGxwQAyvKFmhnNboGQNb9YrvwamXHsGCvna0/CqloK
-	tv9W2PAzlLmzjiYDeTSJBvblgcscor0xHbLOZXqj6HsNyEpVckCjb9Sf3VBA
-X-Gm-Gg: ASbGnctM7wKLcXaT2IciKi5TFPkaevznlhnQDUvYLLAXWxcqrR3RHfuZka6z5RTDLFl
-	GXew1fAyTXKJfITTInUrluhVBW1E891OAad5XTK2mk9+SHosVI10bnMjDFJ7KRU76eianmbAX5r
-	wGzQM8qtUQAATCpThgwI1FzbM7Ny6ayws0HjZqQKSWAp/TfHFb9V/AlDrksbByLgGHq4kKKKouX
-	J1q6pA+vJ7M/OSiiy00P2b+oW1j4ZlypDJ87Q0y0+QvIHK4CR3AS6thJlJYmDufxGySd6z3drC1
-	3EY/7I9JQXiZn9NVUGE=
-X-Google-Smtp-Source: AGHT+IFDAvyl4OG75dzz/9/oSOnlRGN3TWwZskVLeZtaOY4ikA75sB0qSPWiLglL/rCFiLpGNub5hg==
-X-Received: by 2002:a05:6122:3c4f:b0:518:865e:d177 with SMTP id 71dfb90a1353d-518ca3079a4mr11071783e0c.9.1734364658055;
-        Mon, 16 Dec 2024 07:57:38 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-519e30e30f9sm646703e0c.11.2024.12.16.07.57.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 07:57:37 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4b11a11a4f0so1165868137.3;
-        Mon, 16 Dec 2024 07:57:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVaeyMsvQ86aVIkDcCN5435xaqCAEPtXWUzwyk9h8Polh7oohiONuIL0bQSLoMTE84UTyby3bTnjjCbiZda@vger.kernel.org, AJvYcCWoCWdIO4kP060R2jEVGsB/WJxVLIqTFUBI4aoBTYpPOipjLy73iMYwwN82yVE4+mwUqHAKkyD0zqA=@vger.kernel.org, AJvYcCXu88HdZqi9WMBKRgAbpI4Lr3rJXRLG7cVumPDOTs3wpm2AsUSRswKWAIPRqn6dpLDhOGB9R/agE4J9ejj90kC80gc=@vger.kernel.org
-X-Received: by 2002:a05:6102:162b:b0:4af:f3bd:51cd with SMTP id
- ada2fe7eead31-4b25d9e30b1mr13015894137.16.1734364657430; Mon, 16 Dec 2024
- 07:57:37 -0800 (PST)
+	s=arc-20240116; t=1734364679; c=relaxed/simple;
+	bh=q15iHX2Lfk8uXnNgAsqcrVlAQRpHKuG10UtywdbepG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBN8y7e6qItOeMh+Ae1+u66N6jM+d1E7g7w3ub8NgiGYgJTkbRpm244vKF8RiZ/5gEPDhrHlyNAJFXuh5ZsB8OsX3vO1x56R5Qq6zg1grqaXJ36tcdanV9dx7DBDEJ5TnnQRKvVoVcu6wB/AxpXj9z2EIucjZ1D+JST3QpGXdaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OINSEsZ3; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734364679; x=1765900679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q15iHX2Lfk8uXnNgAsqcrVlAQRpHKuG10UtywdbepG0=;
+  b=OINSEsZ3RkH3fhR5MatH2q/mCTKZWvLlLWEAVzThDuHs9V1d4Axw2ujl
+   dZ8SunmskIZhwGwJpTDDiefIoI2Si6s5jrWL1bAZi45Oe5d5il5Hp4YhA
+   d4YjPIcdFIvA1OD3Yeo9MrSQ9i7nkoeYmn7trl3kgO1Jf6cbIy67Wzare
+   PfWMXUAKpequtYUpXsq45XDht7pAVZWZtyfrxPxdi2hze6AE64KYuqqb6
+   o5j+80cAC7vgcxA/xoS/OB+8EhdDPCfl0LhSeca108iS3fafnCRdi252C
+   AnsyoLGcu7Q5+vVonGdCASSPfGXcfTi5B5otr0qMVrYGnBNapJdx3eK5D
+   w==;
+X-CSE-ConnectionGUID: ocvkMN8mTmyvVi5ouQvL6A==
+X-CSE-MsgGUID: l7h1joaeQWKIXJcMvE7a2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34901799"
+X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
+   d="scan'208";a="34901799"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 07:57:58 -0800
+X-CSE-ConnectionGUID: hqu0stp2QZaveuPMOkUZfg==
+X-CSE-MsgGUID: Rp0SQjpPQGWDuoTR4dOmrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,239,1728975600"; 
+   d="scan'208";a="97117413"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 07:57:55 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0FAB111FA2A;
+	Mon, 16 Dec 2024 17:57:52 +0200 (EET)
+Date: Mon, 16 Dec 2024 15:57:52 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: Documentation: ipu3: Remove unused footnotes
+Message-ID: <Z2BOAHleNCsuCoHq@kekkonen.localdomain>
+References: <20241216-ipu-doc-v1-1-e07f0b4f9065@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241213175828.909987-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Dec 2024 16:57:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWAnShqxiXvcaavBJ0BAAznFWsg-i5PukZDEsX=AUQQoA@mail.gmail.com>
-Message-ID: <CAMuHMdWAnShqxiXvcaavBJ0BAAznFWsg-i5PukZDEsX=AUQQoA@mail.gmail.com>
-Subject: Re: [PATCH 6/9] i2c: riic: Mark riic_irqs array as const
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216-ipu-doc-v1-1-e07f0b4f9065@chromium.org>
 
-On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The riic_irqs array describes the supported IRQs by the RIIC driver and
-> does not change at runtime.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Ricardo,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Dec 16, 2024 at 03:51:28PM +0000, Ricardo Ribalda wrote:
+> These footnotes are not used, or they are used in a codeblock:
+> Documentation/media/admin-guide/ipu3.rst:592: WARNING: Footnote [#] is not referenced. [ref.footnote]
+> Documentation/media/admin-guide/ipu3.rst:598: WARNING: Footnote [#] is not referenced. [ref.footnote]
+> 
+> Remove them for now.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Gr{oetje,eeting}s,
+You seem to have written the same patch I have. :-)
 
-                        Geert
+I'm about to send a PR soon, however if you can get this merged before
+that, let me know and feel free to add:
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Sakari Ailus
 
