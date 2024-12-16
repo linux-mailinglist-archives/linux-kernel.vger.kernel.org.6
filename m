@@ -1,255 +1,258 @@
-Return-Path: <linux-kernel+bounces-447373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C9A9F314E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:12:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290FC9F3150
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 603D77A180C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA9216408B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DBC2054EF;
-	Mon, 16 Dec 2024 13:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F4B2054F3;
+	Mon, 16 Dec 2024 13:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8V08crD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d8LURqDe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604F1119A;
-	Mon, 16 Dec 2024 13:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354733; cv=none; b=Bs+OJX6vbxasHf0fzCmduJSQS3zcWE6a6a3n6KjTGpjuIJZzcDJ2XDo9n3zvZ0xIvNKZ9RjitmO9Su9LOaBQ5Q3TA984hbEBQmt1Fqh0fWbmkfSRWQCrAj5kUNzr+amPGymdcSGbrFJKHvWHvLr4AoJYn0e2MNIkW/KNqL4I8Q8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354733; c=relaxed/simple;
-	bh=HR5XRJX2uwRRxUgogWrxKcaLUe14YMlruuHhky1uYFo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nbpA0YzScM1PIizjb4ay3svIsJsWh2h1Zf3QdQS1I0/i174QjU92v/XbnNl9iEfG8YkN6CDNTmGCmZepCZtLeTYx7ENu2VwG0yiZzRpA8QfeKZMPMdtcO9vJk1hcleSa747BXQ1TlkimfW5teWh35eU4yn3+IPGYN5xkCyZLMKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8V08crD; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0645B1119A;
+	Mon, 16 Dec 2024 13:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734354801; cv=fail; b=hqA39/Fg+jYmRobQ3dvevlivqkair3q/YRM46Tw1kFfx6Abqk9TyJRVCtVE7c+b4LsooCz4zZkCPdd5/JXynYs6F4x8C81DAhTMAp+KvfovGx8j7KoTFp5z9S4lNcbrhCGCHws+hj6O6LY8P7NZxIft/o54c75jU551J/39059I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734354801; c=relaxed/simple;
+	bh=Ev6usaArfPjNE8L0Sk8x0jJkESwp6BuwoxD5U0THkD4=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=r6v7D8M5gjO7xB8w2mlpFH78J5UcP6eIUXJAS+3vkg3/EnNHmJO8LdGuLY6ejhTKsypkvsQiQEJXhtRE+82BOu0LQIoPGnAo3SBXhpUX1/Sw2rW1/DCu4xhhb443nvNJyZj7GEzWeLvNZGTgqxHEgDtOJn7sJs673QWIPIwrn+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d8LURqDe; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734354732; x=1765890732;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=HR5XRJX2uwRRxUgogWrxKcaLUe14YMlruuHhky1uYFo=;
-  b=W8V08crDXCCGfNYVglkeVkmqYlFLjwbQJ1HERbT0UJOrXQzZYNVr3i+O
-   1amBC+NapaN8E0TL83saIBsPGMvAI1x2MWNqn5bemUKEqbN8xWvqCyM9X
-   4nY0JbCfLjRrtubQt5ZU1uDdOwOgdnUb6gAqd/sAcw1+iI13HYYnYeis7
-   8H5FYHbooM2DTiOnxIXZWyfYuCV1bhYwcv7AS5ZmPFV26m4gjBmPE0m4J
-   7U5z8KOjYjOEhjAGRivwXE8AgeLjL7fuTkwK4quzs6hcjzPKwLDQ/6seT
-   XU80ymznZy1nkRs0SzRzaJ+4CCGfK8n96V04qZ60UmDbpiSu58Vg1pphg
+  t=1734354800; x=1765890800;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Ev6usaArfPjNE8L0Sk8x0jJkESwp6BuwoxD5U0THkD4=;
+  b=d8LURqDe3P3K5E+2G6DxGvmDYPa0k8HcTAAspq85RHxxpJ2OKYixjJqG
+   RVc2Ya9Hvp86g4DOPAJWQlVjqBsbeO9bo4YdRgEoNZAkIEIRGC9LftgB/
+   4KQc4Hv4MYvoljX2/0IlZRavepLzDhmfUTH5tiwO1ILSNlirimBuri8vb
+   ASZfaMWqMpJgq1y1NarWb0jpKdpXqMue05Jd+XPAv56zZ1QPINQ6KHNEe
+   +MceQRb/06o8lKs57mMHArTAg4wyhFe9Kdd3zu6kSLUiuOJbVRbtMsOMc
+   pVnv2u67bJ8QRJZGKREYlKCqNykD9eiYXetC+puhkkq+4PatCAksElIvz
    A==;
-X-CSE-ConnectionGUID: WGidqSR3QvuwRzxatDbl5Q==
-X-CSE-MsgGUID: BVRlAZItT1K6aQ5Mo+bcGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34616793"
+X-CSE-ConnectionGUID: hAgo+QZuSpaahpX60s9liw==
+X-CSE-MsgGUID: CxwhxFAYTeWD+g2lytiqGQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="22322022"
 X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="scan'208";a="34616793"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:12:12 -0800
-X-CSE-ConnectionGUID: yAZR0EbHTOaFFdtAZ+uYXg==
-X-CSE-MsgGUID: 7nvxPvybQfukdarTEuZTCA==
+   d="scan'208";a="22322022"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:13:15 -0800
+X-CSE-ConnectionGUID: wckDO/YcQYiZHFjEQ4pLjQ==
+X-CSE-MsgGUID: y4N/JGP3QfezHT3oSp0QBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="scan'208";a="127997718"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.29])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:12:08 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 16 Dec 2024 15:12:04 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Jian-Hong Pan <jhp@endlessos.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-    Nirmal Patel <nirmal.patel@linux.intel.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org, 
-    "David E. Box" <david.e.box@linux.intel.com>
-Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
- child and parent's L1SS configuration
-In-Reply-To: <20241213182845.GA3423569@bhelgaas>
-Message-ID: <e3318648-b3cb-51c0-f879-0cb005a2ef36@linux.intel.com>
-References: <20241213182845.GA3423569@bhelgaas>
+   d="scan'208";a="97102232"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Dec 2024 05:13:13 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:13:12 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Mon, 16 Dec 2024 05:13:12 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 16 Dec 2024 05:13:12 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rTkrEMAMpFd3iHKJqcsM5MT2/JLh3/lMnHlsAX98UQsHrppWZgxrx2mDuaZplTu5MFfbfOyTJ1DzL05Ko9WjJ6nmVCgLqTC21NolZ+9PAcQofgAC5AHxH7cJFSr8uqjzHqVq9zX6W+BD88BSWy5CMIi2qm4GQMDUwFxmwPh71cyMNqFCGDKTMicjDjIE/MVZ7KC/O6X3x/OFK0Yoo62aUN76orTaOfJj/9oe7dxdjL10JqKVa/l2DICvVITVgwmt4SwwjD9mAoXyxDn8VxOoiRjmdwKDVfZGkvDgvyk7/XEIiXvI5anZVfF4vQIym6JexO/XnSIdcVPXXwe7WZVNdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Eny8d7MQa0glps53YrIjGpgs0fO+OLIc50Eld/D+X38=;
+ b=GpE13snc1OembG5y91I/GLemBgQNn8r1Ld7LJIEbBqDg/mjAayKFZ8GADYeG96URO6QLm9ST55ZWo4Y41BD4LuPxlIdtEcvFu0fMRj0oDGOend4sILgxM/z83ZpU6MU+BoyVujwBqlseQiYE8unOGZf0DTJjZo/7egrAu1BSwMXCXgXblmFib+benEM0dDX+BlZSXL+cEpCwXi0zw9cptGnlqgGe1VZHcw343CAjlmGM1ncQ2FTVmhS99ei/2ZsBTf3vTRvxzNlVrj85r+8XeSfS1oHqoO94CSW+w2I1U/Yyku8D/zhhFrk2CX6CN06C1xEZjNh3H3EXac4nLZLkkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
+ by SA2PR11MB4906.namprd11.prod.outlook.com (2603:10b6:806:fa::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Mon, 16 Dec
+ 2024 13:13:10 +0000
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc%5]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 13:13:10 +0000
+Message-ID: <7d777a2b-f7f0-49c5-86d2-9ac36a351ab9@intel.com>
+Date: Mon, 16 Dec 2024 14:13:03 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 3/6] net: usb: lan78xx: Use action-specific
+ label in lan78xx_mac_reset
+To: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Woojung Huh
+	<woojung.huh@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>
+CC: Andrew Lunn <andrew@lunn.ch>, <kernel@pengutronix.de>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>, Phil Elwell <phil@raspberrypi.org>
+References: <20241216120941.1690908-1-o.rempel@pengutronix.de>
+ <20241216120941.1690908-4-o.rempel@pengutronix.de>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <20241216120941.1690908-4-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0033.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1c::20) To BL1PR11MB5399.namprd11.prod.outlook.com
+ (2603:10b6:208:318::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1224168302-1734354724=:941"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|SA2PR11MB4906:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1ee823a-05c7-4779-26e8-08dd1dd36399
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M0JDZW42WTRRcGpkcnZaTW54azh1aEN5TXRaaUV2ZUh5YXN3QzBmTUdaZTFD?=
+ =?utf-8?B?SlBpdjRTeXhobk1IUVcwSjlxWW4zdFhlRzA3OVBoN29OQzFhd2NhL2FFcUYy?=
+ =?utf-8?B?M29wb1VWR1FnRk01K0tNUkdObTkwL0hQRDRzdWpKa2FCNVFlUG1OSFFRdC8y?=
+ =?utf-8?B?b21LSnBGNXdCQ1hZWWhEaEVLMU5peHFPeGc3cWtiSFJxZnNaS29QWXZGNm9L?=
+ =?utf-8?B?MFdNYW5rNDRaSWNQRmpzb2dvWWZhUkhObmttQ01CVlZFSW5XNkdFcDkvT2V4?=
+ =?utf-8?B?cElWTVBDeXl5cHhBNmNEZ1ZlbTFyRUhqMFpnNmhaME4rdGwzOWxMVk1JZ3li?=
+ =?utf-8?B?eUwzSm9tNzhKc3ZML2ZoRllLMVFqc3JsaytwNGZVekhqODBzT04xNVdsanQr?=
+ =?utf-8?B?VzJwSHo1RE9rTVVPbXlzSTBEelJucmlGK25hR3Q5bDZjVkJ5Vk1tL2Nuc2ox?=
+ =?utf-8?B?cm1GSlFITklYb3ZMV1dvU2V0ZDA1Q2plV2VhOGRoSW04enlWdnhZUFVUQTJN?=
+ =?utf-8?B?RGhoaVJvTGNSeDVlT0JSbmdkYys1VlJKdWJjdVpNM0wyZHN5L01mY3lWUVZC?=
+ =?utf-8?B?c0ZkMkxDdWUyWFk5eTRDMDZRZGZpODJ3RERFYVpDdXN5WlZ2SURkdlp4QUlU?=
+ =?utf-8?B?SmxUSE55bk9mR2lzTDVWR2VVL0tOeU9FL0NFWVVoeFF2TmRNQ1BhaW03Zllp?=
+ =?utf-8?B?TFJVR3Y5SEowMmlEdjJtMlh5bzZtMmFFeDZzeXBLS1BMNlpsRFc1TmNkZXlk?=
+ =?utf-8?B?V0FtaEIrMDBJVFN1elRsZTFJa3lBNHBYTTNleC8yS2Yxc3lDWHluQzkvV0VO?=
+ =?utf-8?B?WEUvUEZBOURGTjdZajRUYUp2RGpHbXk5cXZhQmczc0k2L2hwZ2pzVCs4OG1D?=
+ =?utf-8?B?TFN1UkNLM0Y3Z3VOS2pjdERaYzd4c09UWlNnU3BBUkp0UDg5Qml6eHI3K0xZ?=
+ =?utf-8?B?UXhIcENhbmRKYWNzWkNjcTRibFM3VUgxYkRNUm02aXdncTd2K08yWXhVOFVh?=
+ =?utf-8?B?amxRRnp4VnRqczFEZWNPOU1lRk9xemJkN2VHa2lIdW1BU3grQ0ZkaW9NL1JD?=
+ =?utf-8?B?emtPUlZRbUIvTHkrM0xmckRIcTFubXUxWXRKKytHalNLazdiaWpIdGlSVm9O?=
+ =?utf-8?B?L01aZTZHekJURkYyaytsQkpuTEZ1OExqRWsydm8wV3pVZDZ2bnFObzNjd1Ix?=
+ =?utf-8?B?cS9OS2RMcGxJVERHc2J1QkYyeDhwUjFyRkxmSGRBR1F2ZGp3d1hPa3laVDJH?=
+ =?utf-8?B?U2NJN0JEdDJmaHNlenFoNEgrK21pTFNqSEx0ZUFUZWQvRTNJSWJFdzZmc0ZB?=
+ =?utf-8?B?L210NTlHclpUTVNMWjVNaHc3dUk4c1VaRlRVdWdxdW11bDdrQVlHVHJuMURu?=
+ =?utf-8?B?RjZENTR1a2habXo5VGpPZFV6bzVNclE2Z1d1b3lsKzlHQVhmalA4OHgwaHQr?=
+ =?utf-8?B?T1V6MUhmT0NuVkN0NXAxTDlXVjl1V0pmUFdySDBtR095cHBPcEVhSEhlUC9O?=
+ =?utf-8?B?b293T2x6Q3YwdFNsU0FDQlJKUWZFVzF1R0VaVkUvam0wWVI4dUYzZlNJeFRn?=
+ =?utf-8?B?TU5EdDd0NytZbE9BUXpwc3NDWVNrZVBUM1Zkb3V5VDYxcFdHRDVGdUtGeFUw?=
+ =?utf-8?B?d0V6TUxTSFhKVHMrOWRTQXY1TUpqYkdrVTAvNlMrUS9IamNVRUZFeDBWWDRs?=
+ =?utf-8?B?WUMwMXk3cVhCSEtVOUh0Qmh2WGZFS0pySmRmdlhVKzQ0cU5VbjB5VWxHZVdG?=
+ =?utf-8?B?dHQwaldyN1VnakJ0ODB2RnNVdFRFSC9rMDJ3MFpnSXBJNzlyc2t2MnRWTXNU?=
+ =?utf-8?B?WG1YM1AxOGM0aGkzTlVaWVNVQW85ZnBsOEZUWEVrQnQxREkvM0k3N3BjeEpX?=
+ =?utf-8?Q?thkYoGxMCDNxZ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eTBEV1BtY3FNRE9BcVlWa01iSEVJZVVzSTFJU0hKZEIvNGxBVDBwRlMvT29n?=
+ =?utf-8?B?SmJkdVpqaUtkc1VNaGh1dnlhc05pRHNReE1aS0RyRG1FdXpkZHJ1VFdaRVQ5?=
+ =?utf-8?B?ZU1CdzFOM2Y2bkY3SlhDcFlORDNOSXJmMGp5SFF1WVowbjhjY2d1WWtuNEtj?=
+ =?utf-8?B?VnE5QjRLQ0NBakh5VXJZczNvUXRMcVhxK0ZhQlRXQ3V0ZGtJbzRQanR2UUJT?=
+ =?utf-8?B?ZEJTaE5HUmJKMnRWR3RoN3BrQXYrK1ZvTHJCZkxSUUMxWTlqdk94RDVUKy9X?=
+ =?utf-8?B?bEY0ODlTQ1VyNXd5eENuL1d2NWIzeHlYaXFXeUNiaGFJdzl1N0pONkJDcHRP?=
+ =?utf-8?B?TXZ2OS85YnBZRXlTVGtZZHJ2cVVmWjkyUzhzazFiUThNMTNjbDBQdEhOeXBv?=
+ =?utf-8?B?clQvb2V2UW9DMXNSUzJ2Qm5uckRMMGZ4a1NEcVFGWXloNmdmYm1HUW1zTThQ?=
+ =?utf-8?B?Ni95Yno4YlhBdURtNnFHWXBIVVB6eFlJeXBXYXhMcUNHMVRMQ0V2WFZOb2dO?=
+ =?utf-8?B?VTdtK0VuVTZRQm03QURHNzVPb0F2QU9PRFc4R2xkWHRtUm9BakFZMFQyNHV1?=
+ =?utf-8?B?bS9LOU05RVpuK296bWM5MlJqMWFRRmM3V2xiZ3hVcFZVRzFvN3FpcExJK1Yw?=
+ =?utf-8?B?N3hrYlJhNU1PalZEVEVXSnowQjIrWXFZemczVkgrSjVMcVlUa0kyMEt5LzNE?=
+ =?utf-8?B?YVNhRXIwTGE4ZmprdVBaR20yWHgzNE5Md3IxUElyYU1OWTU0dnRSNk1tbDJm?=
+ =?utf-8?B?SnJiVG0ra0FVdnlMTWNjTFBSeCtNdzFFZzJkYkFTMWlKUVM5VmR4VE1nRXpz?=
+ =?utf-8?B?M09DN0tNUURWZ2I3dnMwZExrQU5KeWVOdWVkQlFmTmtjdmhaVm4zOFEzeWdN?=
+ =?utf-8?B?eEQxd1BYNkNveVpoZXVhNDBod2FGSVF4NFNrYkdEM3BVR3FXcXRRUjVjSVlR?=
+ =?utf-8?B?Nlc4TDRZNDFFendoWGxSOXBGb1BhZHhZaTRmYkxqbzJQRkF0S3lMNjByem91?=
+ =?utf-8?B?cFdKVUNndUJCTmNzT2hlQnB6Z0Z1MmFHc0dOQUc1Ylo5Y3dwQUFobGV1QmMx?=
+ =?utf-8?B?RDBpYzFMbjhUb3A5aTMyaFNrc0tqdUk1TjNIYmJtYlpBMnhRSkZ0UnpZOEtK?=
+ =?utf-8?B?V2tydnRpdFZiZGN0VkRBczg2VUFZbHdIM2haRThqT0xwQVFiUEhuaW5LdnFH?=
+ =?utf-8?B?NzB0NlY1NERPby96eS9FcjJpalpJNVkyd0VuZjc5cWpMTE1lNlh2WkxoMDUy?=
+ =?utf-8?B?VjJRcjFVUForaEp5eEhlMVo0Q0VFUVNoZVZEMUorWGdqSW9yWHQ1aitIQ2lZ?=
+ =?utf-8?B?dUo4cVNCdm9NcWhvNjdnU1V4NVBtVmFDOERDRlBOemVoNjFGYThSSHp1b1Ra?=
+ =?utf-8?B?NHcwWnF3YUFOYzM0bGJnVFhIYWpsZml2Um9meHd6Y2gvelNJSmhKQUdJbGxl?=
+ =?utf-8?B?dGYwQW52dTJLdFkxek1PMlNKYnNLR3FtaitxQmJOSkFUbVl1RW1CWE12Z0tw?=
+ =?utf-8?B?OHJyUk8zRnFDcnc4Vnl4dERpZXI1cnVoOGZtb0RNNEVDZDMzT2YrSXRKeE94?=
+ =?utf-8?B?NHB2NVBpS1E3QnVvUWpkUFVpQkJaQmxuVUhPbXdKa2RIMmF4Ym5URzhteXVM?=
+ =?utf-8?B?cFdHWGptemtYaW01WXRtOUtmc0xqUE1jQWFnWmJRZklUV2M5ZWdVYzVrS2Nm?=
+ =?utf-8?B?R0RUMlZ3b0lhTWI5U1NNTW9jQUhxNWp6aHQ4bDgxQVFDUXJ2MW1tQ2xRTmVE?=
+ =?utf-8?B?TUx3MEYxM250dTFyVE52VUh3bVpac0NUQW54Z2JFdTVwb3FPQ0RiQlNSVlpK?=
+ =?utf-8?B?NjdQM1Uxd3dVQWF2MG5LdVVyc01YWVMrbDFqUnFNTlY4MXdKRmtZNXpBMEwz?=
+ =?utf-8?B?SFI1Z3VYQUxhb05CUmpRNzNtZktTcm84azZGc05uSndhdjNIdHUxc1d1a2ZH?=
+ =?utf-8?B?QzBIOElZQWNSQkNOdTQ2UEU4RHc1Z1h6alhmcHJTUjNPRUpyRXJDZU1oeGg4?=
+ =?utf-8?B?dzBQQXRVWVR1eCtzYzBSUEhRYytvQm5ZQVhZQXRsdTIxMEpFdEsvZ1lZQml4?=
+ =?utf-8?B?MmZ1cWtJelhuM3VNTFJqM2tacENneURiVjlKSmViYTBkVlgzQkFycVBKUnc0?=
+ =?utf-8?B?WmZ0cTJtYW1hcjNwRFJ4TU9mV3JSUGJva1Frc0g4Y1ltQU9Kb2w0S1o0d0pX?=
+ =?utf-8?B?UXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1ee823a-05c7-4779-26e8-08dd1dd36399
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 13:13:10.4595
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 83NpNsg4ZfWrBWbtoXVcbAixwvOa4zRn349AXHGCQ55t8f6cnjmviO7dVJCPgeLjmJrgrAj14rkcGUUy3+glBCYBMSiYH+/RbRQcifJt5x0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4906
+X-OriginatorOrg: intel.com
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-1224168302-1734354724=:941
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Fri, 13 Dec 2024, Bjorn Helgaas wrote:
+On 12/16/2024 1:09 PM, Oleksij Rempel wrote:
 
-> On Fri, Dec 13, 2024 at 12:37:24PM +0800, Jian-Hong Pan wrote:
-> > Bjorn Helgaas <helgaas@kernel.org> =E6=96=BC 2024=E5=B9=B412=E6=9C=8813=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=887:03=E5=AF=AB=E9=81=93=EF=BC=
-=9A
-> > > On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
-> > > > PCI devices' parameters on the VMD bus have been programmed properl=
-y
-> > > > originally. But, cleared after pci_reset_bus() and have not been re=
-stored
-> > > > correctly. This leads the link's L1.2 between PCIe Root Port and ch=
-ild
-> > > > device gets wrong configs.
-> > ...
->=20
-> > > I think the important thing here is that currently
-> > > pci_save_aspm_l1ss_state() saves only the child L1SS state, but
-> > > pci_restore_aspm_l1ss_state() restores both parent and child, and the
-> > > parent state is garbage.
-> > >
-> > > Obviously nothing specific to VMD or NVMe or SATA.
-> > >
-> > > > To avoid pci_restore_aspm_l1ss_state() restore wrong value to the p=
-arent's
-> > > > L1SS config like this example, make pci_save_aspm_l1ss_state() save=
- the
-> > > > parent's L1SS config, if the PCI device has a parent.
-> > >
-> > > I tried to simplify the commit log and the patch so it's a little mor=
-e
-> > > parallel with pci_restore_aspm_l1ss_state().  Please comment and test=
-=2E
-> > >
-> > > Bjorn
-> > >
-> > > commit c93935e3ac92 ("PCI/ASPM: Save parent L1SS config in pci_save_a=
-spm_l1ss_state()")
-> > > Author: Jian-Hong Pan <jhp@endlessos.org>
-> > > Date:   Fri Nov 15 15:22:02 2024 +0800
-> > >
-> > >     PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()
-> > >
-> > >     After 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability fo=
-r
-> > >     suspend/resume"), pci_save_aspm_l1ss_state(dev) saves the L1SS st=
-ate for
-> > >     "dev", and pci_restore_aspm_l1ss_state(dev) restores the state fo=
-r both
-> > >     "dev" and its parent.
-> > >
-> > >     The problem is that unless pci_save_state() has been used in some=
- other
-> > >     path and has already saved the parent L1SS state, we will restore=
- junk to
-> > >     the parent, which means the L1 Substates likely won't work correc=
-tly.
-> > >
-> > >     Save the L1SS config for both the device and its parent in
-> > >     pci_save_aspm_l1ss_state().  When restoring, we need both because=
- L1SS must
-> > >     be enabled at the parent (the Downstream Port) before being enabl=
-ed at the
-> > >     child (the Upstream Port).
-> > >
-> > >     Link: https://lore.kernel.org/r/20241115072200.37509-3-jhp@endles=
-sos.org
-> > >     Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability f=
-or suspend/resume")
-> > >     Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> > >     Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> > >     Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > >     [bhelgaas: parallel save/restore structure, simplify commit log]
-> >=20
-> > Thanks for the simplification!
-> > Tested on my Asus B1400CEAE. Both the "dev" (NVMe) and the parent (PCI
-> > bridge) keep the correct L1SS config.
-> >=20
-> > Tested-by: Jian-Hong Pan <jhp@endlessos.org>
->=20
-> Thanks, I applied this on pci/aspm for v6.14 since this is a pretty
-> old problem, and AFAICT it's a power consumption issue, not something
-> that is functionally broken.  We might be able to make a case for
-> v6.13 if my understanding is incorrect.
->=20
-> Ilpo, David, I dropped your reviewed-by since I changed the patch
-> significantly; let me know if you see any issue or if you want to add
-> your reviewed-by.
+[...]
 
-The updated version seems fine too.
+>   	if (ret < 0)
+> -		goto done;
+> +		goto exit_unlock;
+>   
+>   	ret = lan78xx_read_reg(dev, MAC_CR, &val);
+>   	if (ret < 0)
+> -		goto done;
+> +		goto exit_unlock;
+>   
+>   	val |= MAC_CR_RST_;
+>   	ret = lan78xx_write_reg(dev, MAC_CR, val);
+>   	if (ret < 0)
+> -		goto done;
+> +		goto exit_unlock;
+>   
+>   	/* Wait for the reset to complete before allowing any further
+>   	 * MAC register accesses otherwise the MAC may lock up.
+> @@ -1621,16 +1621,16 @@ static int lan78xx_mac_reset(struct lan78xx_net *dev)
+>   	do {
+>   		ret = lan78xx_read_reg(dev, MAC_CR, &val);
+>   		if (ret < 0)
+> -			goto done;
+> +			goto exit_unlock;
+>   
+>   		if (!(val & MAC_CR_RST_)) {
+>   			ret = 0;
+> -			goto done;
+> +			goto exit_unlock;
+>   		}
+>   	} while (!time_after(jiffies, start_time + HZ));
+>   
+>   	ret = -ETIMEDOUT;
+> -done:
+> +exit_unlock:
+>   	mutex_unlock(&dev->phy_mutex);
+>   
+>   	return ret;
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Nice cleanup, now the label indicates what it does.
 
---
- i.
-
-> > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > > index 28567d457613..e0bc90597dca 100644
-> > > --- a/drivers/pci/pcie/aspm.c
-> > > +++ b/drivers/pci/pcie/aspm.c
-> > > @@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev=
-)
-> > >
-> > >  void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> > >  {
-> > > +       struct pci_dev *parent =3D pdev->bus->self;
-> > >         struct pci_cap_saved_state *save_state;
-> > > -       u16 l1ss =3D pdev->l1ss;
-> > >         u32 *cap;
-> > >
-> > > +       /*
-> > > +        * If this is a Downstream Port, we never restore the L1SS st=
-ate
-> > > +        * directly; we only restore it when we restore the state of =
-the
-> > > +        * Upstream Port below it.
-> > > +        */
-> > > +       if (pcie_downstream_port(pdev) || !parent)
-> > > +               return;
-> > > +
-> > > +       if (!pdev->l1ss || !parent->l1ss)
-> > > +               return;
-> > > +
-> > >         /*
-> > >          * Save L1 substate configuration. The ASPM L0s/L1 configurat=
-ion
-> > >          * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
-> > >          */
-> > > -       if (!l1ss)
-> > > -               return;
-> > > -
-> > >         save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1=
-SS);
-> > >         if (!save_state)
-> > >                 return;
-> > >
-> > >         cap =3D &save_state->cap.data[0];
-> > > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
-> > > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
-> > > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++=
-);
-> > > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++=
-);
-> > > +
-> > > +       if (parent->state_saved)
-> > > +               return;
-> > > +
-> > > +       /*
-> > > +        * Save parent's L1 substate configuration so we have it for
-> > > +        * pci_restore_aspm_l1ss_state(pdev) to restore.
-> > > +        */
-> > > +       save_state =3D pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_=
-L1SS);
-> > > +       if (!save_state)
-> > > +               return;
-> > > +
-> > > +       cap =3D &save_state->cap.data[0];
-> > > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, c=
-ap++);
-> > > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, c=
-ap++);
-> > >  }
-> > >
-> > >  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
->=20
---8323328-1224168302-1734354724=:941--
+Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 
