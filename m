@@ -1,121 +1,186 @@
-Return-Path: <linux-kernel+bounces-446666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD2C9F27C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:24:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDA39F27C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44E916585F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C2318864B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D2EEEDD;
-	Mon, 16 Dec 2024 01:24:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED8717993;
+	Mon, 16 Dec 2024 01:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Yi5iAljf"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7BE4A07
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A816FE56A;
+	Mon, 16 Dec 2024 01:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734312245; cv=none; b=C+/7AaW0JWDlAIav1spBLC+LPVZONvNITo7p9Zt1OIjYai6m4TftXtHjpq3S8kKwK1YriZu2jKeiwsjH36u2l8CHNjnukrViyDNQXasKL11LPPME8NKqzTaU2aTNhIx1Eeb585G6NH5kRzVOdVUKl4L9ds3QU56Ifj/+q+Gqt0Y=
+	t=1734312407; cv=none; b=Kc3wWb4W7rHMQcIvgffZyHfPvo8m2JoMF6RmFn3luwOFKjbQK7Phal/rngxqfNe7fkfvapQWrUADTlwWvhSBzAoFgmQbhh2vNy8wRdMUkC3QyMBJCPFOn58MEN3KlY0Q+g00SqT67P6NUNPeg4kb3KCL9oPDR7eIiaiDhJMaqHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734312245; c=relaxed/simple;
-	bh=vte5OkJhY5bpx5PtUsPwlRiuAq/xUf/KI7qoDqoQ7yM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R9KpWeUcqRKKUBllUVYSCrzw9hS9Bf5cXIHI0QlaMSs4Pdk3r5n/QFjz/YT56BhMCn7is0QLTjYEhA5Sp7SlXcmzb8wFds13Z+zEl5fDasH1jukjMdoYXMJbYb0vaW3dNPM2Dhnk+5+toP6k+K5AdrCnNfFtj1daVxKZv4ZcGKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69041C4CECE;
-	Mon, 16 Dec 2024 01:24:03 +0000 (UTC)
-Date: Sun, 15 Dec 2024 20:24:04 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241215202404.06f7be8f@batman.local.home>
-In-Reply-To: <CAHk-=wh5jE5ARarmYNdL4sja36_e-mnejv3zRMC62Jzn-a3omw@mail.gmail.com>
-References: <20241214182138.4e7984a2@batman.local.home>
-	<CAHk-=wgyWEbWa9k5=z4LxY1hx0Pxqf5TQQC_BKme_+DrzGufKw@mail.gmail.com>
-	<20241214220403.03a8f5d0@gandalf.local.home>
-	<20241214221212.38cc22c3@gandalf.local.home>
-	<CAHk-=wiSdtNvq_wUtq7f3oO7S7BYCeXh7a707HKvK9nVkxR=jQ@mail.gmail.com>
-	<CAHk-=wh3cUC2a=yJv42HTjDLCp6VM+GTky+q65vV_Q33BeoxAg@mail.gmail.com>
-	<20241214233855.46ad80e0@gandalf.local.home>
-	<CAHk-=wh3uOnqnZPpR0PeLZZtyWbZLboZ7cHLCKRWsocvs9Y7hQ@mail.gmail.com>
-	<20241215050517.050e9d83@gandalf.local.home>
-	<CAHk-=wh5jE5ARarmYNdL4sja36_e-mnejv3zRMC62Jzn-a3omw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734312407; c=relaxed/simple;
+	bh=hDsdqkjqR5C1PC+eX1OCSK4L0F7UjCPeuei1VlMplpE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kwkhgIBM36iHShTmV501GOnSJP5Pt2rLtU/tOfMkM0BTUBI1FtWd5XGPE5Su9HkReBgggR4Fldbxpe8WR+rtvTl2E04q27yoy9+FnjGzNEUbshKBv8DxXjPOkTxxhEQEwwT3NMn3fAwbUvu83MaCIyQtqgeIlzFyh1gpvzbi3OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Yi5iAljf; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Ed70Ob2ebRAEalOLLlRfdmXMwXCLAiy2X1HhJXsXAHg=; b=Yi5iAljfykL2hBnN
+	y28RTE/WCxJslH0QtwpiRK/l9do1KIrOHgDNHXs6TFxZYXE/wx2qgGv18k1fXDOCWDch+Fivo5SIn
+	SDu1maS48i3OoaGRgy51De5iyM9Ly59JQBO26GJT9t83kjy0oTmJdGs1wSORMRpGojDhrzsOhKwAU
+	H6Hj+IalvXExvKrC+WQGb861lV8h7e/EBlUjBv8JpXvV21V5FWzYCx1n433LyJQbJQzMy1+hBOMRv
+	jcFCYQPqxx1s9/bMaVJmlK7Jnehj7kE6clYnTcPegEZ3wrCO7Wr1Zh4GaPotp0LmnP45b/aDxKtZ8
+	90dOTGdjjR31WJt2Ug==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tMzsa-005W3X-38;
+	Mon, 16 Dec 2024 01:26:37 +0000
+From: linux@treblig.org
+To: marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] Bluetooth: hci: Remove deadcode
+Date: Mon, 16 Dec 2024 01:26:36 +0000
+Message-ID: <20241216012636.484775-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 15 Dec 2024 09:23:18 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> And dammit, you must have known this code was garbage, because when I
-> do a "git blame", I see your name on that test_can_verify_check()
-> function.
+hci_bdaddr_list_del_with_flags() was added in 2020's
+commit 8baaa4038edb ("Bluetooth: Add bdaddr_list_with_flags for classic
+whitelist")
+but has remained unused.
 
-Yes, that was added in the same commit that added the
-trace_check_vprintk() code.
+hci_remove_ext_adv_instance() was added in 2020's
+commit eca0ae4aea66 ("Bluetooth: Add initial implementation of BIS
+connections")
+but has remained unused.
 
-> 
-> Basically, you are walking the va_list in invalid ways, because you
-> want to use vsnprintf() in invalid ways. As part of that walk, you are
-> (a) fundamentally mis-using va_list and (b) modifying the format
-> string as you go along (both in the sense of actually changing the
-> format string, but also switching that format pointer around).
-> 
-> My issue with this is that (b) was buggy, but it was a bug that came
-> from a much more *fundamental* bug - the misuse of vsnprintf.   Which
-> is why I'm saying "rip it out". Because your fix is fixing symptoms.
-> It's not fixing the fact that you are doing things that are wrong.
+Remove them.
 
-I'm not disagreeing with you. I didn't like the code when I wrote it,
-but I did write it because it was the only way I could stop the "%s"
-bug. Last night, thinking about this, I think I have another solution
-that can be added to the test_event_printk() and flag the fields that
-can be printed via "%s" to make sure that they are correct *before*
-processing the vsnprintf() code. That should give the same warning and
-checks as the trace_check_vprintf().
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/net/bluetooth/hci_core.h |  2 --
+ include/net/bluetooth/hci_sync.h |  1 -
+ net/bluetooth/hci_core.c         | 20 --------------------
+ net/bluetooth/hci_sync.c         | 24 ------------------------
+ 4 files changed, 47 deletions(-)
 
-I would also add a check in the vsnprintf() that uses
-__get_kernel_nofault() like you suggested.
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index ca22ead85dbe..d122f6398879 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -1759,8 +1759,6 @@ int hci_bdaddr_list_add_with_flags(struct list_head *list, bdaddr_t *bdaddr,
+ int hci_bdaddr_list_del(struct list_head *list, bdaddr_t *bdaddr, u8 type);
+ int hci_bdaddr_list_del_with_irk(struct list_head *list, bdaddr_t *bdaddr,
+ 				 u8 type);
+-int hci_bdaddr_list_del_with_flags(struct list_head *list, bdaddr_t *bdaddr,
+-				   u8 type);
+ void hci_bdaddr_list_clear(struct list_head *list);
+ 
+ struct hci_conn_params *hci_conn_params_lookup(struct hci_dev *hdev,
+diff --git a/include/net/bluetooth/hci_sync.h b/include/net/bluetooth/hci_sync.h
+index f3052cb252ef..7e2cf0cca939 100644
+--- a/include/net/bluetooth/hci_sync.h
++++ b/include/net/bluetooth/hci_sync.h
+@@ -140,7 +140,6 @@ int hci_update_scan(struct hci_dev *hdev);
+ int hci_write_le_host_supported_sync(struct hci_dev *hdev, u8 le, u8 simul);
+ int hci_remove_ext_adv_instance_sync(struct hci_dev *hdev, u8 instance,
+ 				     struct sock *sk);
+-int hci_remove_ext_adv_instance(struct hci_dev *hdev, u8 instance);
+ struct sk_buff *hci_read_local_oob_data_sync(struct hci_dev *hdev, bool ext,
+ 					     struct sock *sk);
+ 
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 18ab5628f85a..ba955447b359 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -2181,26 +2181,6 @@ int hci_bdaddr_list_del_with_irk(struct list_head *list, bdaddr_t *bdaddr,
+ 	return 0;
+ }
+ 
+-int hci_bdaddr_list_del_with_flags(struct list_head *list, bdaddr_t *bdaddr,
+-				   u8 type)
+-{
+-	struct bdaddr_list_with_flags *entry;
+-
+-	if (!bacmp(bdaddr, BDADDR_ANY)) {
+-		hci_bdaddr_list_clear(list);
+-		return 0;
+-	}
+-
+-	entry = hci_bdaddr_list_lookup_with_flags(list, bdaddr, type);
+-	if (!entry)
+-		return -ENOENT;
+-
+-	list_del(&entry->list);
+-	kfree(entry);
+-
+-	return 0;
+-}
+-
+ /* This function requires the caller holds hdev->lock */
+ struct hci_conn_params *hci_conn_params_lookup(struct hci_dev *hdev,
+ 					       bdaddr_t *addr, u8 addr_type)
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index c86f4e42e69c..984b72d073d7 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -1785,30 +1785,6 @@ int hci_remove_ext_adv_instance_sync(struct hci_dev *hdev, u8 instance,
+ 					HCI_CMD_TIMEOUT, sk);
+ }
+ 
+-static int remove_ext_adv_sync(struct hci_dev *hdev, void *data)
+-{
+-	struct adv_info *adv = data;
+-	u8 instance = 0;
+-
+-	if (adv)
+-		instance = adv->instance;
+-
+-	return hci_remove_ext_adv_instance_sync(hdev, instance, NULL);
+-}
+-
+-int hci_remove_ext_adv_instance(struct hci_dev *hdev, u8 instance)
+-{
+-	struct adv_info *adv = NULL;
+-
+-	if (instance) {
+-		adv = hci_find_adv_instance(hdev, instance);
+-		if (!adv)
+-			return -EINVAL;
+-	}
+-
+-	return hci_cmd_sync_queue(hdev, remove_ext_adv_sync, adv, NULL);
+-}
+-
+ int hci_le_terminate_big_sync(struct hci_dev *hdev, u8 handle, u8 reason)
+ {
+ 	struct hci_cp_le_term_big cp;
+-- 
+2.47.1
 
-> 
-> Looking up more, I also think the whole "replace "%p" with "%px" is
-> broken and wrong.
-> 
-> Isn't every single case of '%p' in this context from a TP_printk() situation?
-> 
-> IOW, instead of dynamically creating a temporary buffer and adding
-> that 'x' by hand, why wasn't that just a 'sed' script and done
-> statically?
-> 
-> In fact, wouldn't *most* of the sanity checking be possible to just do
-> entirely statically instead of at runtime?
-> 
-> Yeah, yeah, there's more than a few '%p' users, but
-> 
->      git grep 'TP_printk.*%p[^A-Za-z]' | wc
-> 
-> shows that it's manageable. That probably misses some multi-line
-> cases, but still - doing this kind of "rewrite constant string at
-> runtime because we didn't do it statically" seems *wrong*.
-> 
-> And in this case, that wrongness was literally the cause of the bug.
-
-I'm also OK with that. Should that be done for 6.13 or something to be
-added for 6.14?
-
--- Steve
 
