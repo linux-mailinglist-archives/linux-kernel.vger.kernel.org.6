@@ -1,123 +1,251 @@
-Return-Path: <linux-kernel+bounces-446895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B37A9F2AAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:06:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481C39F2AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E337A35F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A138D1681CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017CE1D45FB;
-	Mon, 16 Dec 2024 07:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="io9goq7D"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECC21CEADD;
+	Mon, 16 Dec 2024 07:05:36 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57601BB6BC;
-	Mon, 16 Dec 2024 07:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8981BB6BC;
+	Mon, 16 Dec 2024 07:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734332758; cv=none; b=HFQd3tUZUj4TDGqZAubFG9MQO5kfqgIbAzkmctyzVCr/1qcF++iGTFHRnx2wYDSKwtB1jVg5s/qQDtxQRMTlFc6kBEdyNWbTVVUAHGtIKmH/LWiNrlMUBDQL1E3QhEK/v9bFzTQPXn5gKeJjbaG1VQc46f58FNaaNBQXA+gDmJc=
+	t=1734332736; cv=none; b=eX7zANb+7JuIOyRUzgDv1u202PbkrgWzZNcAeuDqSK6KeR33SW9REw0xIyPfSwaDM5+BCWmbcRkjGmSN0yyFsxag3WFln1wqL2eOwMvXjRBAqTcchAyBBnmcFDmyG6nIVZv1TtWyRv9QqBpcHZkpH/AT3aB28dSChkI0umpKhPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734332758; c=relaxed/simple;
-	bh=issfuf4wRr6bIR63SXq9Ky2iM2b3TrVkX+UiX0Z9ezU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oKB3mZ7mpQF/LQdN0eictcBymZYssgbuRNGvY7zWmnLCBzqOw6y32jvU6wsClinBi3EOOQG3sDIGUbN5NoX0OLTNYJpUe84dSUWnH7OBXTCFN9cXW7O4C4ef3joDhGzZSodxsWNo2ILSIJ59Sx1UAOHrjlsFg0AHQHpRM7/kTT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=io9goq7D; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG6asDe024861;
-	Mon, 16 Dec 2024 07:05:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=hthKk
-	6JFJyBVcNcGhKJGzXok2nU3dn0y9po0Og2V9X8=; b=io9goq7DzD0h81mQlrCHO
-	63wz15BVETnrK3aKOwkT5ty/TFowaW2K1JjHIt+etEofMLfSZhIhEOFUbdENmdCo
-	kgVmV+cpnVS5yVw4F2nLgzW40YWAOIJ6zRmvBAZBJv7guFHnXVb6up5i9mgHu071
-	JhgYyp2mq5wyNcy4QMJgimAvsQKUkxSYbkz5sTjiqvO62S6YvAMpNGp1nvbz1Pdk
-	aCOUSy/yD3+AEdyg4416oD4rmy7TZDoDLaeJLmPhkp9I2WX33dwRFEHpU0515MTa
-	s2hlK0OxqXoPI8j/AD4vzm/RjkodEiFi9ihY6g2+vy8m7o9NEuts57KbHNtrDRJt
-	w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43h2jt2g7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 07:05:39 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG66hBK034862;
-	Mon, 16 Dec 2024 07:05:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43h0f6pnmw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Dec 2024 07:05:38 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BG75Nut002855;
-	Mon, 16 Dec 2024 07:05:37 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43h0f6pnc5-2;
-	Mon, 16 Dec 2024 07:05:37 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH next 2/2] octeontx2-pf: fix error handling of devlink port in rvu_rep_create()
-Date: Sun, 15 Dec 2024 23:05:15 -0800
-Message-ID: <20241216070516.4036749-2-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241216070516.4036749-1-harshit.m.mogalapalli@oracle.com>
-References: <20241216070516.4036749-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1734332736; c=relaxed/simple;
+	bh=cLZo+IZieljrwnvYZwR7i8aX+4qeOLytTkDuH3TQlxg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=n+yaG1ynv9XzLo9qdXs5+r63SMPmkdCfhvC9F9uLkDqDjkdp/Pk13uZdwHpY81PzfTR07xc2dOkjAf5fffBLb/TOaarRT5wIxTMY/iDrfFwWsri258QkBSvR/aFHXPQPszhBjVsgyZbYywBGu6Oov5AycTMu/Xs01B8Z+u0bzvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YBWD52PWLz4f3jdL;
+	Mon, 16 Dec 2024 15:05:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B9A5C1A0197;
+	Mon, 16 Dec 2024 15:05:28 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP4 (Coremail) with SMTP id gCh0CgDHoYU30V9nL9r5Eg--.39298S2;
+	Mon, 16 Dec 2024 15:05:28 +0800 (CST)
+Subject: Re: [PATCH v3 1/5] Xarray: Do not return sibling entries from
+ xas_find_marked()
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ willy@infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-nfs@vger.kernel.org
+References: <20241213122523.12764-1-shikemeng@huaweicloud.com>
+ <20241213122523.12764-2-shikemeng@huaweicloud.com>
+ <1f8b523e-d68f-4382-8b1e-2475eb47ae81@linux.alibaba.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <5d89f26a-8ac9-9768-5fc7-af155473f396@huaweicloud.com>
+Date: Mon, 16 Dec 2024 15:05:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <1f8b523e-d68f-4382-8b1e-2475eb47ae81@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-16_02,2024-12-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 spamscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412160057
-X-Proofpoint-GUID: S6sY--PTTWxkQ-poxcwApZwQKpUzyU6g
-X-Proofpoint-ORIG-GUID: S6sY--PTTWxkQ-poxcwApZwQKpUzyU6g
+X-CM-TRANSID:gCh0CgDHoYU30V9nL9r5Eg--.39298S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFyfJw18CrW3KFW7Zr1kKrg_yoWrKF15pF
+	Z5KryDKry0yr1kJrnrJ3WUXryUG34UXanrJrWrWa42vF15Ar1jgF4jqr1jgF1DJrWkJF4x
+	JF4UA347ZF1UAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Unregister the devlink port when register_netdev() fails.
 
-Fixes: 9ed0343f561e ("octeontx2-pf: Add devlink port support")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is from static analysis, only compile tested.
----
- drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-index 9e3fcbae5dee..04e08e06f30f 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-@@ -690,6 +690,7 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
- 		if (err) {
- 			NL_SET_ERR_MSG_MOD(extack,
- 					   "PFVF representor registration failed");
-+			rvu_rep_devlink_port_unregister(rep);
- 			free_netdev(ndev);
- 			goto exit;
- 		}
--- 
-2.39.3
+on 12/13/2024 2:12 PM, Baolin Wang wrote:
+> 
+> 
+> On 2024/12/13 20:25, Kemeng Shi wrote:
+>> Similar to issue fixed in commit cbc02854331ed ("XArray: Do not return
+>> sibling entries from xa_load()"), we may return sibling entries from
+>> xas_find_marked as following:
+>>      Thread A:               Thread B:
+>>                              xa_store_range(xa, entry, 6, 7, gfp);
+>>                 xa_set_mark(xa, 6, mark)
+>>      XA_STATE(xas, xa, 6);
+>>      xas_find_marked(&xas, 7, mark);
+>>      offset = xas_find_chunk(xas, advance, mark);
+>>      [offset is 6 which points to a valid entry]
+>>                              xa_store_range(xa, entry, 4, 7, gfp);
+>>      entry = xa_entry(xa, node, 6);
+>>      [entry is a sibling of 4]
+>>      if (!xa_is_node(entry))
+>>          return entry;
+>>
+>> Skip sibling entry like xas_find() does to protect caller from seeing
+>> sibling entry from xas_find_marked() or caller may use sibling entry
+>> as a valid entry and crash the kernel.
+>>
+>> Besides, load_race() test is modified to catch mentioned issue and modified
+>> load_race() only passes after this fix is merged.
+>>
+>> Here is an example how this bug could be triggerred in tmpfs which
+>> enables large folio in mapping:
+>> Let's take a look at involved racer:
+>> 1. How pages could be created and dirtied in shmem file.
+>> write
+>>   ksys_write
+>>    vfs_write
+>>     new_sync_write
+>>      shmem_file_write_iter
+>>       generic_perform_write
+>>        shmem_write_begin
+>>         shmem_get_folio
+>>          shmem_allowable_huge_orders
+>>          shmem_alloc_and_add_folios
+>>          shmem_alloc_folio
+>>          __folio_set_locked
+>>          shmem_add_to_page_cache
+>>           XA_STATE_ORDER(..., index, order)
+>>           xax_store()
+>>        shmem_write_end
+>>         folio_mark_dirty()
+>>
+>> 2. How dirty pages could be deleted in shmem file.
+>> ioctl
+>>   do_vfs_ioctl
+>>    file_ioctl
+>>     ioctl_preallocate
+>>      vfs_fallocate
+>>       shmem_fallocate
+>>        shmem_truncate_range
+>>         shmem_undo_range
+>>          truncate_inode_folio
+>>           filemap_remove_folio
+>>            page_cache_delete
+>>             xas_store(&xas, NULL);
+>>
+>> 3. How dirty pages could be lockless searched
+>> sync_file_range
+>>   ksys_sync_file_range
+>>    __filemap_fdatawrite_range
+>>     filemap_fdatawrite_wbc
+> 
+> Seems not a good example, IIUC, tmpfs doesn't support writeback (mapping_can_writeback() will return false), right?
+> 
+Ahhh, right. Thank you for correcting me. Then I would like to use nfs as low-level
+ filesystem in example and the potential crash could be triggered in the same steps.
+
+Invovled racers:
+1. How pages could be created and dirtied in nfs.
+write
+ ksys_write
+  vfs_write
+   new_sync_write
+    nfs_file_write
+     generic_perform_write
+      nfs_write_begin
+	   fgf_set_order
+	   __filemap_get_folio
+      nfs_write_end
+       nfs_update_folio
+	    nfs_writepage_setup
+		 nfs_mark_request_dirty
+		  filemap_dirty_folio
+		   __folio_mark_dirty
+		    __xa_set_mark
+
+2. How dirty pages could be deleted in nfs.
+ioctl
+ do_vfs_ioctl
+  file_ioctl
+   ioctl_preallocate
+    vfs_fallocate
+     nfs42_fallocate
+      nfs42_proc_deallocate
+       truncate_pagecache_range
+        truncate_inode_pages_range
+         truncate_inode_folio
+	  filemap_remove_folio
+	   page_cache_delete
+	    xas_store(&xas, NULL);
+
+
+3. How dirty pages could be lockless searched
+sync_file_range
+ ksys_sync_file_range
+  __filemap_fdatawrite_range
+   filemap_fdatawrite_wbc
+    do_writepages
+     writeback_use_writepage
+      writeback_iter
+       writeback_get_folio
+        filemap_get_folios_tag
+         find_get_entry
+          folio = xas_find_marked()
+          folio_try_get(folio)
+
+Steps to crash kernel:
+1.Create               2.Search             3.Delete
+/* write page 2,3 */
+write
+ ...
+  nfs_write_begin
+   fgf_set_order
+   __filemap_get_folio
+    ...
+     xa_store(&xas, folio)
+  nfs_write_end
+   ...
+    __folio_mark_dirty
+
+                       /* sync page 2 and page 3 */
+                       sync_file_range
+                        ...
+                         find_get_entry
+                          folio = xas_find_marked()
+                          /* offset will be 2 */
+                          offset = xas_find_chunk()
+
+                                             /* delete page 2 and page 3 */
+                                             ioctl
+                                              ...
+                                               xas_store(&xas, NULL);
+
+/* write page 0-3 */
+write
+ ...
+  nfs_write_begin
+   fgf_set_order
+   __filemap_get_folio
+    ...
+     xa_store(&xas, folio)
+  nfs_write_end
+   ...
+    __folio_mark_dirty
+
+                          /* get sibling entry from offset 2 */
+                          entry = xa_entry(.., 2)
+                          /* use sibling entry as folio and crash kernel */
+                          folio_try_get(folio)
 
 
