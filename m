@@ -1,234 +1,202 @@
-Return-Path: <linux-kernel+bounces-447611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDAB9F34DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:44:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7405D9F34E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5DFC188231C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B7F16385A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4341494C9;
-	Mon, 16 Dec 2024 15:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AB21494A3;
+	Mon, 16 Dec 2024 15:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hpXZfWeC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iO6lBNr8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hpXZfWeC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iO6lBNr8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKQP1xrD"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684B360;
-	Mon, 16 Dec 2024 15:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8549845C1C;
+	Mon, 16 Dec 2024 15:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734363885; cv=none; b=Vny9vxj1O8fFhE0HcnbW//L7A7BJbrobqRk0QCPh/b7Xu1vpiMDjYP8+sCqSVyXPprvn5YxX+CkqxafAwHCpgOjI15Z3hKWmpdSWYfwNb9hy650eYfMaPHZhcBfxryVJzoKrO8NLI/mmbeEQfQKb93V9EtNhfn0QFEzKgbvEfe4=
+	t=1734364011; cv=none; b=I8/eJaS+G3rnLQqrEJVSma8kqeCmFUZxJ5urTOkkyGDJNHR3Vu2qcEGEGiq1E8R9y37oYA3xIPiCPJbzoPRvKo3BwzgT4D9wso+bTzvRbIU3U/MdL9riVyZ+0raRUsw9vyU/xRtXffQ0ID24JThYssH2KaMeX5+ZizaN8d9+lPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734363885; c=relaxed/simple;
-	bh=QZc9gfQ7x/baaNRiBlr5VM7wWc4QWcBKNkajvxGDRuQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PvN4LSWiYvraCnIqaOOO3UaXuxL7uTBsz8HNGmEBXfZ0AEeeoytaAndw+h/sw884xEVjz4M2qPqT41Nw7QhpFCwNygK9tttGTAdK5dKpF9fxYhGxv+441L2ca5hfVA5Q7RbsM+EaKvIF4U9HL20xNHEMTErRHs0UO1OBWZOx27I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hpXZfWeC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iO6lBNr8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hpXZfWeC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iO6lBNr8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D91C71F394;
-	Mon, 16 Dec 2024 15:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734363881; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Yexxc3MNi9KxffMrEX5ASfFRQP4BpBq5chcvzoCTnC0=;
-	b=hpXZfWeCcy9AxLbfDU8Xo0BtWgObg082nmytYEuwhFnXVqmbNJDH/+CtSM3X39i0K1iPkK
-	q70vIpPGo0B74ZSLxT3TGdMqJ64547jb04jdftrc3rhGpVRbmDiYoeClm8cuyw6FV1awIU
-	1auRAmhIDAvpeD3ycgZy3VcuSfSZrMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734363881;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Yexxc3MNi9KxffMrEX5ASfFRQP4BpBq5chcvzoCTnC0=;
-	b=iO6lBNr84nFOCSr2jLSzflcaVWjGpLZwliRtpsDyv1+syrKaZeynpedP/eotNMDqe++VWa
-	wyIt76aMEIcHG2Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734363881; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Yexxc3MNi9KxffMrEX5ASfFRQP4BpBq5chcvzoCTnC0=;
-	b=hpXZfWeCcy9AxLbfDU8Xo0BtWgObg082nmytYEuwhFnXVqmbNJDH/+CtSM3X39i0K1iPkK
-	q70vIpPGo0B74ZSLxT3TGdMqJ64547jb04jdftrc3rhGpVRbmDiYoeClm8cuyw6FV1awIU
-	1auRAmhIDAvpeD3ycgZy3VcuSfSZrMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734363881;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Yexxc3MNi9KxffMrEX5ASfFRQP4BpBq5chcvzoCTnC0=;
-	b=iO6lBNr84nFOCSr2jLSzflcaVWjGpLZwliRtpsDyv1+syrKaZeynpedP/eotNMDqe++VWa
-	wyIt76aMEIcHG2Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9D2013418;
-	Mon, 16 Dec 2024 15:44:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y6AJLelKYGcvGwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 16 Dec 2024 15:44:41 +0000
-Message-ID: <6fb206de-0185-4026-a6f5-1d150752d8d0@suse.cz>
-Date: Mon, 16 Dec 2024 16:44:41 +0100
+	s=arc-20240116; t=1734364011; c=relaxed/simple;
+	bh=52p+YxtohD7VXL8b1WzYoec2dWIHx5VGUb3oMtcwsAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HXtFK1PLngn8WCm+mnprQ5G1NJIQm7c5qTdCUBOeDEbPWKWdwR2qeC/1LC2GQE5eoYzqcjpsGege42jqJMlh/Zcpgmvld/9HFqEX7RmT2tvhryOWUPQ9F+uK6DyC5v/BP+ScW0OJOvoYH+3yVkcXc4mpEvCejNZc/lJm7U8qmV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKQP1xrD; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3c8f39cab1so3293104276.0;
+        Mon, 16 Dec 2024 07:46:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734364008; x=1734968808; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4/L24M77KEHgjRD2S/cq3ONFt+aksrwaxpiJzcqZqpE=;
+        b=kKQP1xrDRDmNY19J2ypW1pCPeLN7FwsVISs9cGhNU2Ln6XTaaYOdcXsVqAe8JEVcbM
+         07auoS1z+qV9AW9MHkD1Sqy9fpULPuMj0cZt+q7Xp+7Uhi/pXAk+ULIcRr89/tR55DX8
+         8/leKGVojz/lZ16E34e8GFTDmyq5LpLI3Sdhcp7ZgUa2xV30dj4S26mr+UpZcX1gkBe7
+         d/8XEBJKag0WVdU8fmiD0S6VvoKFXmu8kaN3NH5p4AuSk5zrhUpGUjrNhfvGREPFxgUH
+         /wcWAlnw2C1qd8REOQb3iqhTREVTVsUSRO91hH/2Sb5Ba4vbKAEwQtdWIcCGulaLEeO3
+         zjow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734364008; x=1734968808;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4/L24M77KEHgjRD2S/cq3ONFt+aksrwaxpiJzcqZqpE=;
+        b=cCw21Qlg8/RLL5mRSm77DbXf9G7XUJGufN22j6FfVE/Ls3dBXX9TfUy8ElXZRcfnRU
+         JgBRpNWYxCNdW6+WeUBuLJHqf+2oBGyPFdKNTRCKiK7EdHeeBE4T0IBbDEgExlSBKREX
+         qaVpEeXTUWs9CQWO2/qjAqvgHBU+7vopdC+u+sXnUM8RKB02SHJzDrxM0sZkvQkuXBiX
+         dbbhWiG/3SQKZuDCPn3M8cfxM2CGKY7CmOlk4/e6Eh6n5SzVjWKsl3ipx+5p1zvRAD3v
+         0eNM5AsgQcgk3869fQPOEz0fFhK66bXNMKhZeG/QnI4PQk7csDe1tFQraimlFbptYrui
+         z3sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgq+HyG5rm9HEkVV2snJFWGsUT3jePg6t8JC3lQR/gcjdnQ9Ni8brlVXD8J1p85gUWY2vR6L34kT+LJjgC@vger.kernel.org, AJvYcCWMAb8miOJKtM0jhBGjbI2ZB1MPRMbOm77UX0PKl/lLztvv7sFoBTdhJisvUOHhOU1l8XLHdIk7ycwa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZuWOzomSNrW/VqWTAZIy6Y+Ryl1/GfWdCl05RwkA/sHI5ALY+
+	WTsTM+F56yn184pLquk2Ex7LatSeOr40IHZ3rq22OWevNYnJ3wd1
+X-Gm-Gg: ASbGncvS43FML2Kphk6ZvhdGUw5H+L9T15z3i5vNRNv+1Q/R09jCcm3Ggq5V6kNXP8s
+	sKivgpVsPtq7wR+x0/SfuzoPosA1WXJ06mqtH8ud/ur0pthAKUmNgbM3OVUBgmc6tfUmnmuKXVy
+	GbHnFKmGVTGP9WCKLEhiOwe1Hq8Fh+CcyWOKU4jvRK0hQNnHipxBvw6nJV7aL3vMHW+YDjgFIuh
+	J4aigf+vKj/j1t+PnRTXNxFqiHNMeT0CVpGa6+V93RMGNVVNgVd2XdhMNhOnNAaNHwqTNnKgmZW
+	dxn0EqMuJ+GsCn7NDA==
+X-Google-Smtp-Source: AGHT+IE03JmeV99mfjBTG2bTimbuUBUR2MDJ2a7PMRUxwdPG69gs36EkqipuHIrHqvnQVAvu+4KPpQ==
+X-Received: by 2002:a25:86cf:0:b0:e38:259e:bddb with SMTP id 3f1490d57ef6-e41ecf8143emr11678223276.11.1734364008390;
+        Mon, 16 Dec 2024 07:46:48 -0800 (PST)
+Received: from localhost (fwdproxy-nha-115.fbsv.net. [2a03:2880:25ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e470e54d912sm1404678276.60.2024.12.16.07.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 07:46:47 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: hyeonggon.yoo@sk.com
+Cc: kernel_team@skhynix.com,
+	42.hyeyoo@gmail.com,
+	"gourry@gourry.net" <gourry@gourry.net>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	=?UTF-8?q?=EA=B9=80=ED=99=8D=EA=B7=9C=20System=20SW?= <honggyu.kim@sk.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	=?UTF-8?q?=EA=B9=80=EB=9D=BD=EA=B8=B0=20System=20SW?= <rakie.kim@sk.com>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"horen.chuang@linux.dev" <horen.chuang@linux.dev>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: Re: [External Mail] [RFC PATCH] mm/mempolicy: Weighted interleave auto-tuning
+Date: Mon, 16 Dec 2024 07:46:31 -0800
+Message-ID: <20241216154646.1499268-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <7ed89f33-6ba0-44c7-b4ea-0c72029fa33b@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Move kvfree_rcu() into SLAB (v2)
-Content-Language: en-US
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-mm@kvack.org, "Paul E . McKenney" <paulmck@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, RCU <rcu@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-References: <20241212180208.274813-1-urezki@gmail.com>
- <17476947-d447-4de3-87bb-97d5f3c0497d@suse.cz> <Z2AJCI3cIR9ETFFu@pc636>
- <d352db4f-4bb8-4300-b235-bbd1bdb3aa21@suse.cz> <Z2BKLzOGv_Ki_7fj@pc636>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <Z2BKLzOGv_Ki_7fj@pc636>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kvack.org,kernel.org,linux-foundation.org,vger.kernel.org,linux.com,google.com,lge.com,linux.dev,gmail.com,sony.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On 12/16/24 16:41, Uladzislau Rezki wrote:
-> On Mon, Dec 16, 2024 at 03:20:44PM +0100, Vlastimil Babka wrote:
->> On 12/16/24 12:03, Uladzislau Rezki wrote:
->> > On Sun, Dec 15, 2024 at 06:30:02PM +0100, Vlastimil Babka wrote:
->> >> On 12/12/24 19:02, Uladzislau Rezki (Sony) wrote:
->> >> > Hello!
->> >> > 
->> >> > This is v2. It is based on the Linux 6.13-rc2. The first version is
->> >> > here:
->> >> > 
->> >> > https://lore.kernel.org/linux-mm/20241210164035.3391747-4-urezki@gmail.com/T/
->> >> > 
->> >> > The difference between v1 and v2 is that, the preparation process is
->> >> > done in original place instead and after that there is one final move.
->> >> 
->> >> Looks good, will include in slab/for-next
->> >> 
->> >> I think patch 5 should add more explanation to the commit message - the
->> >> subthread started by Christoph could provide content :) Can you summarize so
->> >> I can amend the commit log?
->> >> 
->> > I will :)
->> > 
->> >> Also how about a followup patch moving the rcu-tiny implementation of
->> >> kvfree_call_rcu()?
->> >> 
->> > As, Paul already noted, it would make sense. Or just remove a tiny
->> > implementation.
->> 
->> AFAICS tiny rcu is for !SMP systems. Do they benefit from the "full"
->> implementation with all the batching etc or would that be unnecessary overhead?
->> 
-> Yes, it is for a really small systems with low amount of memory. I see
-> only one overhead it is about driving objects in pages. For a small
-> system it can be critical because we allocate.
+On Mon, 16 Dec 2024 16:53:47 +0900 Hyeonggon Yoo <hyeonggon.yoo@sk.com> wrote:
 > 
-> From the other hand, for a tiny variant we can modify the normal variant
-> by bypassing batching logic, thus do not consume memory(for Tiny case)
-> i.e. merge it to a normal kvfree_rcu() path.
+> On 2024-12-14 4:57 AM, Joshua Hahn wrote:
+> > On Fri, 13 Dec 2024 15:19:20 +0900 Hyeonggon Yoo <hyeonggon.yoo@sk.com> wrote:
+> > 
+> >> On 2024-12-11 06:54 AM, Joshua Hahn wrote:
 
-Maybe we could change it to use CONFIG_SLUB_TINY as that has similar use
-case (less memory usage on low memory system, tradeoff for worse performance).
+[-----8<-----]
 
-> After that we do not depend on CONFIG_RCU_TINY option. Probably we need
-> also to perform some adaptation of regular kvfree_rcu() for a single CPU
-> system.
+> > Hi Hyeonggon,
+> > 
+> > Thank you for reviewing my patch!
+> 
+> No problem :)
+> 
+> > As Gregory showed in his reply, I think it would be possible to get host bandwidth information
+> > using the ACPI HMAT.
+> 
+> You're right. I was wrong. I checked on our server, and its bandwidth 
+> information was valid for both local memory and CXL memory. Sorry for
+> the noise.
+
+No worries, thank you for verifying from your end as well!
+
+> > [-----8<-----]
+> > 
+> >>> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/max_node_weight
+> >>> +Date:		December 2024
+> >>> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
+> >>> +Description:	Weight limiting / scaling interface
+> >>> +
+> >>> +		The maximum interleave weight for a memory node. When it is
+> >>> +		updated, any previous changes to interleave weights (i.e. via
+> >>> +		the nodeN sysfs interfaces) are ignored, and new weights are
+> >>> +		calculated using ACPI-reported bandwidths and scaled.
+> >>> +
+> >>
+> >> At first this paragraph sounded like "previously stored weights are
+> >> discarded after setting max_node_weight", but I think you mean
+> >> "User can override the default values, but defaults values are
+> >> calculated regardless of the values set by the user". Right?
+> > 
+> > In the implementation, the first way you interpreted is the correct
+> > description. That is, if a user manually changes a ndoe weight,
+> > then updates the max_node_weight, the previous manual change will
+> > be overwritten by the newly scaled values.
+>  >
+> > Does this behavior make sense?
+> 
+> Ok. then current implementation overwrites the node weights
+> previously set by the user.
+> 
+> I think it makes sense to re-scale all nodes and overwrite manually set 
+> node weights, because it's what the knob is meant to do, and the user 
+> still can override the weight by setting node weight after updating
+> max_node_weight.
+
+Thank you for your feedback. There is a slight concern, however, where there
+is a semantic mismatch between the name "max_node_weight" and its value.
+Like the description suggests, it is possible for individual nodes to have
+weights greater than the "max node weight".
+
+However, the alternative would be to re-scale all weights whenever an
+individual node's weight is manually overwritten to be greater than
+the max, which I think makes even less sense since users probably don't
+expect changing one weight to influence other nodes as well.
+ 
+> By the way, could you please explain which part of this patch implements
+> this rule? IIUC it does not invalidate iw_table after updating these
+> default values, which makes get_il_weight() to use manully set node 
+> weights even after updating max_node_weight. (Or probably I just
+> misunderstood the code?)
+
+Ah, I am sorry for this mistake. It seems like I didn't update the
+actual iw table, updating the default instead. Thank you for the catch,
+this will be updated in the v2.
+
+Actually, there are a few more changes that I would like to make in the
+v2, the biggest of which is to lay down the intended behavior more
+explicitly in the documentation so that there is no ambiguity
+from the user perspective, and make sure that the code actually
+does reflect the intention as well. 
+
+> > Have a great day!
+> 
+> Have a great day too :)
 > 
 > --
-> Uladzislau Rezki
+> Hyeonggon
 
+Thank you again for your feedback, happy holidays!
+
+Joshua
 
