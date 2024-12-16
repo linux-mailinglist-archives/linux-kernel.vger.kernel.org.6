@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-447537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAB39F33E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:00:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714859F33E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:01:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A38B1889A16
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8671887F9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57DB77111;
-	Mon, 16 Dec 2024 14:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F3513B7BC;
+	Mon, 16 Dec 2024 15:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUxjsV3U"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YOk37B3k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NGFewVIP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YOk37B3k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NGFewVIP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831AD4D8D1;
-	Mon, 16 Dec 2024 14:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC8E3BBF2;
+	Mon, 16 Dec 2024 15:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361187; cv=none; b=iM9eKImE22zCiiJjEbj3UKSZRtN9saYWVI2JejmMngDCndFWFT0Grfk/12rL6T+0u0ox7FiTpD8HZvHgmd2NTlLkD7MJ1gnUtxlAxZWcVu1oZtocy7Qb9N17XrB52of6wDBntORqcK8Mn8PcMmg/htYoC5/OfH3Z9RWS8mVY71U=
+	t=1734361237; cv=none; b=FRGZcDPyx1I9IpHJrjtvs5GcRpTpcS+hRo9KpcxUrYdSUmKPv1pbHDnqyl8aZPdVezKhe/CcqWmztJxq+qw9TWyAB/3sXge6AHPpSH1atYu5HBcKkemN3l49yD2gcz2QJfcObX7dMBPK1dBUkU7R4BrboYrDs+NxsUNynYZwvGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361187; c=relaxed/simple;
-	bh=9yBMXSvjHyO3OgaQroXVrz9wGXooF5YdM7RdE1sYspE=;
+	s=arc-20240116; t=1734361237; c=relaxed/simple;
+	bh=YEHWqrT+uZYlqdlBk0PzDL3D7jlQ5rNIQO9zbglVyEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaSbSZGXfTUa9NcNbScfS4rpEDVE9ESnyYAkHRex0GlJPAgUiAWcdbNUdZUShVrnJN8dKc+wJg2QVq4jXC6q7i2DhBxP6ernCjgvZUahwyV3ELNLn/Msb1i0K4bqaybIlZx6Z8/W2pv5kD3NTqXOcrseWR/Aqw53OHILY8s9WRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUxjsV3U; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e0d47720so412734f8f.0;
-        Mon, 16 Dec 2024 06:59:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734361184; x=1734965984; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLF4x21xNTyOHzkaSMkcHulKhqRy00jOgWZ/SKyRtZI=;
-        b=kUxjsV3UhnfIpravvC09EInlFVYYogMmPWAIMCn5TgONGTsNOP0HX9N61xLcwO4oy8
-         IibH8fLTotV7fa1a/DMq3p3QhhtxOB3b/0vVxBjNRZBUNR2XgfVxrXuQpveno9wF9b3X
-         pJ9ZJ1m2THWgzQijhME/WWW3+AHc9MJtiUdwz4zacW4nToC21CsL4a71u2KP7ZlJB2mx
-         kyGWlHgKPKVGrE+Q1pV7dh6mI5vfS+n0oAfdjtRit2psR/wOWCfTHgnBc/IeIkEB4i9Y
-         G7aQFGS0Q4tWSyZzRqR3OepHIIts/jwRp393HDUy931SIcQBbAL3+/YedK3roQ9sTwW5
-         EJ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734361184; x=1734965984;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yLF4x21xNTyOHzkaSMkcHulKhqRy00jOgWZ/SKyRtZI=;
-        b=Ww3RYHQes0C18Ec82rYG4pUfk+AOqPtr6J3+djY53ZXveKsJC8hljvboGxuk+JCLzN
-         IAdw6PGSkk09swo3wVl7r1isPBAnLjgD9ynasv80EXo5GE/In07oaEOo2fProhp4LLJk
-         EZyzXEN54Rgui8AZ0n+hletv47J0urZlgUyZ3On8xcWIMc4c2UIqlYuvrYwUXNZZpx9O
-         s6+aEznYwS0RVQYM6Tc2Jl5YSzYqCyLSRZ5VvWOcWpBMwPtjRb47/Iyr206ajUzFB3j5
-         W1T5q+2vDabxp1qdc6fvDqX+6oa0T7YTsgPdxppq1PaDDeWoOxMe1XjkhAuhxTlEOivp
-         qfpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJAsQNZCJIFFiac0o0USM4daGOUIgozpPidBiQyglUclyGbt0tqydcd2Zt+ZOo2uyx3iBTRPTC2xzCn0o=@vger.kernel.org, AJvYcCXE2k/Gjxv6Olu0VUeBSNtEISEf8Nh1Z+ShVU9WVMhrokec0dBLIcJi8nfN52OxpbJwBJ4ycMti@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwvKIKkhp0woPvoQ/5mY1WFVujnnJIzp/+sfY4jJvGkUBYzLyr
-	HC4JDsofG/6NWT4Tg8I8bpjfgjdPQ18QHF5SAhnnZikuOf1tR8il
-X-Gm-Gg: ASbGnctpWgH8X3vGALqG2dbYMr6Re0BHXQWORMIOF7IAsY1lItHiEPqgYccP7Ju0La2
-	RI1WgrwkQ0Z5la81yiNeE9hTBm5OgXEmcf/uqbG8tfB/Dt3FCeA2H+R2XUBZnlrhNwECzqEFuYo
-	FauI4HNnrOMHHjWrPPmq24ilF4uepUN69Jq7q2/YhL/VHs20uTKWnjJY3Ez0cQoDuaYtWSCJHN8
-	nTBSDwCrSZzKxOgiwWmoSyyp2IatpA2aIPu2dqpr67S
-X-Google-Smtp-Source: AGHT+IFO6AzYSfhYUAho4hJ0jVZPEqAxfHWDaVWrIYHb+ZIKH6lObW+sJUZiFg+okWGsIO6hO0Cxfw==
-X-Received: by 2002:a5d:584d:0:b0:385:e16b:72be with SMTP id ffacd0b85a97d-3888e0c249fmr4135436f8f.14.1734361183390;
-        Mon, 16 Dec 2024 06:59:43 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8047089sm8496167f8f.85.2024.12.16.06.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 06:59:42 -0800 (PST)
-Date: Mon, 16 Dec 2024 16:59:40 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mattias Forsblad <mattias.forsblad@gmail.com>
-Subject: Re: [PATCH 0/3] dsa: mv88e6xxx: Add RMU enable/disable ops
-Message-ID: <20241216145940.ybbwiige7dhkpzaa@skbuf>
-References: <20241215-v6-13-rc1-net-next-mv88e6xxx-rmu-ops-v1-0-87671db17a65@lunn.ch>
- <20241215225910.sbiav4umxiymafj2@skbuf>
- <289fa600-c722-48d7-bfb9-80ff31256cb5@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBdYaQvek8TgnEn93LU0ZfiNnffWsuUIY8pKd2U747mc4ZwJf4vgU8026KY0JYDgE4rlE5bul6R/IoouM4xdes8yT1tnsLerbRnW8KOMHjz3ztMW32s9AekVSG4Wa7/MIrvvKxMvbnoRfHOHChjJMNsIPU+PzThTGheYKSuz8xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YOk37B3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NGFewVIP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YOk37B3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NGFewVIP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6BA471F381;
+	Mon, 16 Dec 2024 15:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734361233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqqkGynGnzixM/sZcOFGedWU3EXateIKh7Ij6iuN3jY=;
+	b=YOk37B3koU3/uMTW2liGfH/IC1sJ5pCCf2lknxftFp74f+dvHSst2fZfqQUn4ESpVXOB6+
+	QiyNU/61rJv5OrwpkUm1Hq8SMpSypmBDMfA3r1MgZU0G/8B+9VbHOKCGw+yCGydiVoL/LO
+	s43MjQPFb5zhg3/DjocVQeJ9t75y19U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734361233;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqqkGynGnzixM/sZcOFGedWU3EXateIKh7Ij6iuN3jY=;
+	b=NGFewVIP62spqficD7pTbtRTjF3gLtIPo2xPFyaqWB9boKgk2KvNzlcfk/cNCQkXO4cUIe
+	ruXLd5V9XU4nhQAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734361233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqqkGynGnzixM/sZcOFGedWU3EXateIKh7Ij6iuN3jY=;
+	b=YOk37B3koU3/uMTW2liGfH/IC1sJ5pCCf2lknxftFp74f+dvHSst2fZfqQUn4ESpVXOB6+
+	QiyNU/61rJv5OrwpkUm1Hq8SMpSypmBDMfA3r1MgZU0G/8B+9VbHOKCGw+yCGydiVoL/LO
+	s43MjQPFb5zhg3/DjocVQeJ9t75y19U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734361233;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BqqkGynGnzixM/sZcOFGedWU3EXateIKh7Ij6iuN3jY=;
+	b=NGFewVIP62spqficD7pTbtRTjF3gLtIPo2xPFyaqWB9boKgk2KvNzlcfk/cNCQkXO4cUIe
+	ruXLd5V9XU4nhQAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59481137CF;
+	Mon, 16 Dec 2024 15:00:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KP3GFZFAYGfFdwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 16 Dec 2024 15:00:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 05B83A0935; Mon, 16 Dec 2024 16:00:28 +0100 (CET)
+Date: Mon, 16 Dec 2024 16:00:28 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v4 01/10] ext4: remove writable userspace mappings before
+ truncating page cache
+Message-ID: <20241216150028.xq4qlr7xqjce34ey@quack3>
+References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+ <20241216013915.3392419-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,48 +105,218 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <289fa600-c722-48d7-bfb9-80ff31256cb5@lunn.ch>
+In-Reply-To: <20241216013915.3392419-2-yi.zhang@huaweicloud.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Dec 16, 2024 at 10:50:47AM +0100, Andrew Lunn wrote:
-> > How big is the later patch set? Too big to accept even one more patch?
+On Mon 16-12-24 09:39:06, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> The patchset is 21 patches, if i only support one switch family.
+> When zeroing a range of folios on the filesystem which block size is
+> less than the page size, the file's mapped blocks within one page will
+> be marked as unwritten, we should remove writable userspace mappings to
+> ensure that ext4_page_mkwrite() can be called during subsequent write
+> access to these partial folios. Otherwise, data written by subsequent
+> mmap writes may not be saved to disk.
 > 
-> I can remove a couple of patches, getting statistics via RMU, and
-> timing the RMU vs MDIO and disabling RMU if it is slower.
+>  $mkfs.ext4 -b 1024 /dev/vdb
+>  $mount /dev/vdb /mnt
+>  $xfs_io -t -f -c "pwrite -S 0x58 0 4096" -c "mmap -rw 0 4096" \
+>                -c "mwrite -S 0x5a 2048 2048" -c "fzero 2048 2048" \
+>                -c "mwrite -S 0x59 2048 2048" -c "close" /mnt/foo
 > 
-> The other way i can slice it is split it into two patchsets:
+>  $od -Ax -t x1z /mnt/foo
+>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+>  *
+>  000800 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59 59
+>  *
+>  001000
 > 
-> 1) incremental modifications to qca8k to centralise code
-> 2) implement the mv88e6xxx changes to add RMU to it.
+>  $umount /mnt && mount /dev/vdb /mnt
+>  $od -Ax -t x1z /mnt/foo
+>  000000 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58
+>  *
+>  000800 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  *
+>  001000
 > 
-> I did not really want to slice it like this, because the central API
-> is designed around what both QCA8K and Marvell needs, and hopefully is
-> generic enough for other devices. But there might be questions asked
-> when you can only see the qca8k refactor without the Marvell parts.
+> Fix this by introducing ext4_truncate_page_cache_block_range() to remove
+> writable userspace mappings when truncating a partial folio range.
+> Additionally, move the journal data mode-specific handlers and
+> truncate_pagecache_range() into this function, allowing it to serve as a
+> common helper that correctly manages the page cache in preparation for
+> block range manipulations.
 > 
-> I can maybe squash some of the QCA patches together. Previously i was
-> doing lots of simple changes because i did not have hardware to test
-> on. I do have a QCA8K test system now.
-> 
-> > There is a risk that the RMU effort gets abandoned before it becomes
-> > functional. And in that case, we will have a newly introduced rmu_enable()
-> > operation which does nothing.
-> 
-> True, but i'm more motivated this time, i'm getting paid for the work :-)
-> 
-> And there is one other interested party as well that i know of.
-> 
-> This patch series is fully self contained, so it easy to revert, if
-> this ends up going nowhere.
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-So what's a no-go is introducing code with no user.
+I like the patch. Feel free to add:
 
-Splitting into 2 sets like this should be fine. You could post a link to
-Github with the complete picture when you post the qca8k refactoring, so
-that we know what to expect next and where things are going. Hopefully
-it makes sense on its own and does not leave loose ends hanging.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I don't think that squashing multiple logical changes to fit the 15
-patch limit is a good idea.
+Just one thing occured to me when thinking about this: It seems like a
+nasty catch that truncate_inode_pages_range() does not writeprotect these
+partial pages because practically any filesystem supporting blocksize <
+pagesize and doing anything non-trivial in ->page_mkwrite handler will need
+this. So ultimately I think we might want to fix this in generic code but
+ext4 solution is fine for now.
+
+								Honza
+> ---
+>  fs/ext4/ext4.h    |  2 ++
+>  fs/ext4/extents.c | 19 ++++-----------
+>  fs/ext4/inode.c   | 62 +++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 69 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 74f2071189b2..8843929b46ce 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3016,6 +3016,8 @@ extern int ext4_inode_attach_jinode(struct inode *inode);
+>  extern int ext4_can_truncate(struct inode *inode);
+>  extern int ext4_truncate(struct inode *);
+>  extern int ext4_break_layouts(struct inode *);
+> +extern int ext4_truncate_page_cache_block_range(struct inode *inode,
+> +						loff_t start, loff_t end);
+>  extern int ext4_punch_hole(struct file *file, loff_t offset, loff_t length);
+>  extern void ext4_set_inode_flags(struct inode *, bool init);
+>  extern int ext4_alloc_da_blocks(struct inode *inode);
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index a07a98a4b97a..8dc6b4271b15 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4667,22 +4667,13 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>  			goto out_mutex;
+>  		}
+>  
+> -		/*
+> -		 * For journalled data we need to write (and checkpoint) pages
+> -		 * before discarding page cache to avoid inconsitent data on
+> -		 * disk in case of crash before zeroing trans is committed.
+> -		 */
+> -		if (ext4_should_journal_data(inode)) {
+> -			ret = filemap_write_and_wait_range(mapping, start,
+> -							   end - 1);
+> -			if (ret) {
+> -				filemap_invalidate_unlock(mapping);
+> -				goto out_mutex;
+> -			}
+> +		/* Now release the pages and zero block aligned part of pages */
+> +		ret = ext4_truncate_page_cache_block_range(inode, start, end);
+> +		if (ret) {
+> +			filemap_invalidate_unlock(mapping);
+> +			goto out_mutex;
+>  		}
+>  
+> -		/* Now release the pages and zero block aligned part of pages */
+> -		truncate_pagecache_range(inode, start, end - 1);
+>  		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+>  
+>  		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 89aade6f45f6..c68a8b841148 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/writeback.h>
+>  #include <linux/pagevec.h>
+>  #include <linux/mpage.h>
+> +#include <linux/rmap.h>
+>  #include <linux/namei.h>
+>  #include <linux/uio.h>
+>  #include <linux/bio.h>
+> @@ -3902,6 +3903,67 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+>  
+> +static inline void ext4_truncate_folio(struct inode *inode,
+> +				       loff_t start, loff_t end)
+> +{
+> +	unsigned long blocksize = i_blocksize(inode);
+> +	struct folio *folio;
+> +
+> +	/* Nothing to be done if no complete block needs to be truncated. */
+> +	if (round_up(start, blocksize) >= round_down(end, blocksize))
+> +		return;
+> +
+> +	folio = filemap_lock_folio(inode->i_mapping, start >> PAGE_SHIFT);
+> +	if (IS_ERR(folio))
+> +		return;
+> +
+> +	if (folio_mkclean(folio))
+> +		folio_mark_dirty(folio);
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+> +}
+> +
+> +int ext4_truncate_page_cache_block_range(struct inode *inode,
+> +					 loff_t start, loff_t end)
+> +{
+> +	unsigned long blocksize = i_blocksize(inode);
+> +	int ret;
+> +
+> +	/*
+> +	 * For journalled data we need to write (and checkpoint) pages
+> +	 * before discarding page cache to avoid inconsitent data on disk
+> +	 * in case of crash before freeing or unwritten converting trans
+> +	 * is committed.
+> +	 */
+> +	if (ext4_should_journal_data(inode)) {
+> +		ret = filemap_write_and_wait_range(inode->i_mapping, start,
+> +						   end - 1);
+> +		if (ret)
+> +			return ret;
+> +		goto truncate_pagecache;
+> +	}
+> +
+> +	/*
+> +	 * If the block size is less than the page size, the file's mapped
+> +	 * blocks within one page could be freed or converted to unwritten.
+> +	 * So it's necessary to remove writable userspace mappings, and then
+> +	 * ext4_page_mkwrite() can be called during subsequent write access
+> +	 * to these partial folios.
+> +	 */
+> +	if (blocksize < PAGE_SIZE && start < inode->i_size) {
+> +		loff_t start_boundary = round_up(start, PAGE_SIZE);
+> +
+> +		ext4_truncate_folio(inode, start, min(start_boundary, end));
+> +		if (end > start_boundary)
+> +			ext4_truncate_folio(inode,
+> +					    round_down(end, PAGE_SIZE), end);
+> +	}
+> +
+> +truncate_pagecache:
+> +	truncate_pagecache_range(inode, start, end - 1);
+> +	return 0;
+> +}
+> +
+>  static void ext4_wait_dax_page(struct inode *inode)
+>  {
+>  	filemap_invalidate_unlock(inode->i_mapping);
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
