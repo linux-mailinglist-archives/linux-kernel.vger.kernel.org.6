@@ -1,175 +1,111 @@
-Return-Path: <linux-kernel+bounces-448229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0B79F3D38
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:06:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BD29F3D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46CD16C5C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:06:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5304E188C864
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645EF1D619F;
-	Mon, 16 Dec 2024 22:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2573B1D47AD;
+	Mon, 16 Dec 2024 22:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fN6jiyDz"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sgemc3+g"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1A9BA49;
-	Mon, 16 Dec 2024 22:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6B861FDF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734386795; cv=none; b=g8TyK6Z68KKo1f6cUmocdr6oxy8baslfWa3fFm5YWXqCFgHMJiHjAp21/K0/uL8VNtUjNTiLQogC6BhEaftpKtSLifVbTAjLQ2LvpX9TjKP0ekk+vCd0oCCwsw/vKHNBju8qK1JHwI6/dz84/QVHnzsQDvzKVH5GjZIje0aleDo=
+	t=1734386948; cv=none; b=B0VECWSi5xqnRaGlnJua8sjJE90TrwdAtzTVO0yvfGkcG5v1Y/iGnWMzBTixwKYzYTEViIJDAMpQhFM3BmcIclEVVBXaz4ukgQ2UylKAVSmDq85HN2o7BJC1DZG50M2aRRxIUr+RYMBDV+lGebY+XvxLzdkkhxbcG4ntV9+cFXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734386795; c=relaxed/simple;
-	bh=icMx43hRgyr1P9e7gUKFaT43mFWrxQOOojFprXBGmNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g3/7FMJ7O8TKM049ob3rCmGHDoq8AVXBBF9hX0O8Nnd1wv3/gOwE/UzF+9HUS6B9yPdQ5o31b5r1vX/78v6F8NYAs695/iOGDjcty5d+bCzBEDnCTxbCoWX8TM3ebsT1EM+9mOJkzQorJKu8Dxg/Y9N/13H1WNmEy8J+3NjH4b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fN6jiyDz; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=OhYB5xvUHbZKoooV6q/5gst0XnhfPdQEMwD+Tskq1s8=; b=fN6jiyDzcAhxiDEB
-	MW8IcNSWcO5BCynIAyiG1bnDrAE/TwiKr36rWJMRNf18F+9LPWr4On9Kpp1w+OsvgGPxQSN1rGEJq
-	zE83LVoc6rMbL6P1lRcor6JxIaK2nf6kEQ1avdbEV1m2oydnIWZz9mJGxhVDuC8Doqrsj8Eb3m72B
-	H0k/HNj28TYqsWif/LUqethGPDmVZmVq5U0G5KX7KxvgaUu7GYuzN+67OSHEF6/xh3UdPF0urNaHZ
-	ygv8hCR+WPZs16qOOpXXfait2vV55LmVLvR0AI+Hx6G9h0wUa2G9a/pDGrOkOv3+AZXI0njSDUKQN
-	4DcfL3ADNtXY9mTybA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tNJES-005jOo-2g;
-	Mon, 16 Dec 2024 22:06:28 +0000
-From: linux@treblig.org
-To: stanimir.k.varbanov@gmail.com,
-	quic_vgarodia@quicinc.com,
-	bryan.odonoghue@linaro.org,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: venus: Remove unused hfi_core_ping()
-Date: Mon, 16 Dec 2024 22:06:28 +0000
-Message-ID: <20241216220628.1018633-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734386948; c=relaxed/simple;
+	bh=yQCX6UcMnDUp/ebrXSxVTtMu3+RTnTHd4uQij3XT5Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uyh6JtpISW/8vkA+A7MLRs8/MyZzflczvxd0RTOHrAQ0cPPxXYDXYW8D8IgfDx0MBjof75MXylisdhTuy7lhHr2OKHo5gjwEgb4TQZ+MOkUH7ALNjQD181Me6LUS3O8UfWyrUIq2yyTaq5faXPf6fDxPLSdziFC0MQVQyVe8oMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Sgemc3+g; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2161eb95317so42579975ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734386946; x=1734991746; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yQCX6UcMnDUp/ebrXSxVTtMu3+RTnTHd4uQij3XT5Fw=;
+        b=Sgemc3+gA0yJazRkz8vKVuKLUzrjJrUwxqNkOgsv0kLB4QYSTMAb2ka1ZpT7B2fryV
+         kElwhJATlKlj887EPOxGvLdanJbJ9OEPeDJodGBHY/6+Q8WlUPTZKHD4B5Bb1OjwAY06
+         70GPgy5xD9/Kz685auKakv0kwTSYforOxCO3Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734386946; x=1734991746;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yQCX6UcMnDUp/ebrXSxVTtMu3+RTnTHd4uQij3XT5Fw=;
+        b=TILR0Z+p5Di8nkctlHUer5LsuNRLbIWODkBqZdvVIf2aOHn7Olgfd0sFS847X3YcfJ
+         FpHHpD+OHPMZsHTRoRg/I82GebIzGS9moh+yFd/r+vOpiJLvDWT/IuITuKVDy1XjofaK
+         WywB171X7tYiSz9DLI3FHkDjtFF2bv2o4KvSHVPofZR39mwc89B61JzUEAbd7AoNLWni
+         +Oju607eC/xAKtPaD1zyWh1mVvp64t7KL6I76B2TFyw/Mv81vpA/yPvE/OwxL1VJ+/43
+         zqomhnEWI8PH4CxHHNuzLGmWNx6jeyGYhKNaekN4rAD3H8KVoDUVUy4zQ5VyflasLVvy
+         t3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU60r0Ih+cRXvqc4ewEtdxv6hZEzJJdNoN80HBTtEKe0971zzwaMVW4/kbqFBA+S/7N0FE57lXPhVvdtVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZMPVJT1bVxf71i3b9W1ctlkyEoxsTRn4RfaH78ZvMBSdCXjtZ
+	zoOJSlN4qYETXVczLOIbWLoQu1Q4p8ELuL9NERurQ/yb7SQ6vMqc9AOZs0FyUw==
+X-Gm-Gg: ASbGncte/pUbridankXt4vaR4Z4/nRUzZBVeJH6XBUTDyGdyElsXAAtUt4B2JEbzE/p
+	FD5EoEv3SLOL9bhDoDG+Wp2giQ5aofGG70X6J0lmTVevqSBFuscjidKcsFt5dOvmqlt5sqkDySN
+	lAm9t5vgeHbD1EX78UokbGBKksGYUXKA92z1y9I2siYcZNpE2UkbyPF24LtsEFqdU10bvcK/ucd
+	mIXUA3R1p4W2NCCc2DGS7CkRyXPbfZffikY9ynyZiGyPNAt6SFutQ8xJ0H6qPWc7r5FQSQG5ajl
+	zlG0jyE/TkAOlecfbQ==
+X-Google-Smtp-Source: AGHT+IF0qnHFTodFMN4c/RNBWrM8LsGEcXlK4lpCa1SOJvQ51xusdNhWmW+BhonT5mL6jRMgbb0K1w==
+X-Received: by 2002:a17:902:db05:b0:216:431b:e577 with SMTP id d9443c01a7336-21892a5bd14mr183701945ad.51.1734386946608;
+        Mon, 16 Dec 2024 14:09:06 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:953:5b91:a52c:e817])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-218a1e502c2sm46192815ad.128.2024.12.16.14.09.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 14:09:06 -0800 (PST)
+Date: Mon, 16 Dec 2024 14:09:04 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	Julius Werner <jwerner@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] firmware: google: Constify 'struct bin_attribute'
+Message-ID: <Z2ClAB6qY5LaMuHQ@google.com>
+References: <20241215-sysfs-const-bin_attr-google-v1-0-e5c2808f5833@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241215-sysfs-const-bin_attr-google-v1-0-e5c2808f5833@weissschuh.net>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun, Dec 15, 2024 at 03:49:08PM +0100, Thomas Weißschuh wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
 
-hfi_core_ping() was added by 2017's
-commit 09c2845e8fe4 ("[media] media: venus: hfi: add Host Firmware
-Interface (HFI)")
+I'm not in love with all these "_new" transformations that need a second
+round of cleanup, but I'm not aware of any better way to do it.
 
-but has remained unused.
+For the series:
 
-Remove it.
+Acked-by: Brian Norris <briannorris@chromium.org>
 
-It was the only caller of the ->core_ping member of hfi_ops,
-so remove it, and the venus_core_ping that it pointed to.
+> Please also note the remark at the end of the vpd patch.
 
-Note I've left pky_sys_ping which seems to be the lowest level
-definition of the command.
+I don't have much opinion on the options there. It seems like it's the
+difference between an extra cleanup patch or two if we go with the
+current series, vs. extra work for you with possible conflicts if we go
+with your alternative.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/platform/qcom/venus/hfi.c       | 23 -------------------
- drivers/media/platform/qcom/venus/hfi.h       |  2 --
- drivers/media/platform/qcom/venus/hfi_venus.c | 11 ---------
- 3 files changed, 36 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
-index e00aedb41d16..675e6fd1e9fa 100644
---- a/drivers/media/platform/qcom/venus/hfi.c
-+++ b/drivers/media/platform/qcom/venus/hfi.c
-@@ -138,29 +138,6 @@ int hfi_core_trigger_ssr(struct venus_core *core, u32 type)
- 	return core->ops->core_trigger_ssr(core, type);
- }
- 
--int hfi_core_ping(struct venus_core *core)
--{
--	int ret;
--
--	mutex_lock(&core->lock);
--
--	ret = core->ops->core_ping(core, 0xbeef);
--	if (ret)
--		goto unlock;
--
--	ret = wait_for_completion_timeout(&core->done, TIMEOUT);
--	if (!ret) {
--		ret = -ETIMEDOUT;
--		goto unlock;
--	}
--	ret = 0;
--	if (core->error != HFI_ERR_NONE)
--		ret = -ENODEV;
--unlock:
--	mutex_unlock(&core->lock);
--	return ret;
--}
--
- static int wait_session_msg(struct venus_inst *inst)
- {
- 	int ret;
-diff --git a/drivers/media/platform/qcom/venus/hfi.h b/drivers/media/platform/qcom/venus/hfi.h
-index f25d412d6553..0338841d5992 100644
---- a/drivers/media/platform/qcom/venus/hfi.h
-+++ b/drivers/media/platform/qcom/venus/hfi.h
-@@ -108,7 +108,6 @@ struct hfi_inst_ops {
- struct hfi_ops {
- 	int (*core_init)(struct venus_core *core);
- 	int (*core_deinit)(struct venus_core *core);
--	int (*core_ping)(struct venus_core *core, u32 cookie);
- 	int (*core_trigger_ssr)(struct venus_core *core, u32 trigger_type);
- 
- 	int (*session_init)(struct venus_inst *inst, u32 session_type,
-@@ -152,7 +151,6 @@ int hfi_core_deinit(struct venus_core *core, bool blocking);
- int hfi_core_suspend(struct venus_core *core);
- int hfi_core_resume(struct venus_core *core, bool force);
- int hfi_core_trigger_ssr(struct venus_core *core, u32 type);
--int hfi_core_ping(struct venus_core *core);
- int hfi_session_create(struct venus_inst *inst, const struct hfi_inst_ops *ops);
- void hfi_session_destroy(struct venus_inst *inst);
- int hfi_session_init(struct venus_inst *inst, u32 pixfmt);
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index f9437b6412b9..a9167867063c 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1178,16 +1178,6 @@ static int venus_core_deinit(struct venus_core *core)
- 	return 0;
- }
- 
--static int venus_core_ping(struct venus_core *core, u32 cookie)
--{
--	struct venus_hfi_device *hdev = to_hfi_priv(core);
--	struct hfi_sys_ping_pkt pkt;
--
--	pkt_sys_ping(&pkt, cookie);
--
--	return venus_iface_cmdq_write(hdev, &pkt, false);
--}
--
- static int venus_core_trigger_ssr(struct venus_core *core, u32 trigger_type)
- {
- 	struct venus_hfi_device *hdev = to_hfi_priv(core);
-@@ -1639,7 +1629,6 @@ static int venus_suspend(struct venus_core *core)
- static const struct hfi_ops venus_hfi_ops = {
- 	.core_init			= venus_core_init,
- 	.core_deinit			= venus_core_deinit,
--	.core_ping			= venus_core_ping,
- 	.core_trigger_ssr		= venus_core_trigger_ssr,
- 
- 	.session_init			= venus_session_init,
--- 
-2.47.1
-
+Brian
 
