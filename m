@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-446770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96339F28EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:49:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796F09F28C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0B8188482C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AC916719D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871AE1C5480;
-	Mon, 16 Dec 2024 03:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8631C3C1B;
+	Mon, 16 Dec 2024 03:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="F4cxOSLM"
-Received: from mail-m83156.xmail.ntesmail.com (mail-m83156.xmail.ntesmail.com [156.224.83.156])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jTvhwr/d"
+Received: from mail-m11875.qiye.163.com (mail-m11875.qiye.163.com [115.236.118.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A9B156641;
-	Mon, 16 Dec 2024 03:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4831547EE;
+	Mon, 16 Dec 2024 03:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734320915; cv=none; b=uIrFEdRtk1iDr2hiUiBKysRcpTVNcLIe588D6s01HJBMGk+5SYO4thmaR6jw4RAWWB5auBRgjwpOSOp1B3qFpYklC7zrGEERc70UUR9iceXnUdCDBuNtYf4ZUz66FAnkpLgM88/JRzJ34ubHxzed7fkGqhXCmikQgMRwdOJmOwE=
+	t=1734319107; cv=none; b=K8LwM7xoyHyXH5EMrlTb7XY1U0wbttq1nH7jNr+YrtEY/PSJRmjRNCmSokdeHeJNUX2THe1DyHAJEMzY0Hq9ToxL7HxABNY7H1uu8t0TwZi4jRuiFUmv+cEA2vXOdSGBilAquN8sIaPBhmYt8KhXObUzhaNOrz7cdGlNjhi8Eos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734320915; c=relaxed/simple;
-	bh=PM4yTMtaMUck0TYTcwal4HQsa5jjZWJfFFvIZ5YlQIE=;
+	s=arc-20240116; t=1734319107; c=relaxed/simple;
+	bh=zhr5KpVnaX/rsgIPnA7eMB6zW8mTcMyaFO5D2Ogf+mI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LLftSp6A8NY9WSW48KY2k3+wmbT1hcyH3e8en6WfhaEo49n4bzvn3u5H4YSqSs4yK7wtr4hYYtrwMDCGLzkMdZlwp2Q2DZ/Cn3QLQCjlNoanbNjglnNUUf+9l8bkZrbhl5Gsd4mIm8Xu9rK5oTFlkotAXV0i58ofuCIvrBKHn+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=F4cxOSLM; arc=none smtp.client-ip=156.224.83.156
+	 MIME-Version; b=qWzBBEBu9gv+Un93hfFGXm0TqoExwlDQ9mqU95vvEhnq/rBIdAMxR3fwnS9rTo9+WDjCK+igjSe7kOUT7iKe1CNaMw31pSkO4qxdAeF40rqRMw+JEl/wlyZ2pJQ0pjqirqXYRyTuDcBr2PB12scX3pCUo0jzqyFR5fU+TgeuzT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jTvhwr/d; arc=none smtp.client-ip=115.236.118.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5cf79933;
-	Mon, 16 Dec 2024 11:13:05 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 5cf79939;
+	Mon, 16 Dec 2024 11:13:07 +0800 (GMT+08:00)
 From: Damon Ding <damon.ding@rock-chips.com>
 To: heiko@sntech.de
 Cc: robh@kernel.org,
@@ -54,9 +54,9 @@ Cc: robh@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-phy@lists.infradead.org,
 	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2 09/11] arm64: dts: rockchip: Add eDP0 node for RK3588
-Date: Mon, 16 Dec 2024 11:12:23 +0800
-Message-Id: <20241216031225.3746-10-damon.ding@rock-chips.com>
+Subject: [PATCH v2 10/11] arm64: dts: rockchip: Enable eDP0 display on RK3588S EVB1 board
+Date: Mon, 16 Dec 2024 11:12:24 +0800
+Message-Id: <20241216031225.3746-11-damon.ding@rock-chips.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241216031225.3746-1-damon.ding@rock-chips.com>
 References: <20241216031225.3746-1-damon.ding@rock-chips.com>
@@ -68,66 +68,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGksZHVZNGklLHR0dSkJOTRlWFRQJFh
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk0eHVZNSRoeTU9KTEhOSUxWFRQJFh
 	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
 	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93cd7483d503a3kunm5cf79933
+X-HM-Tid: 0a93cd748a7a03a3kunm5cf79939
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ogg6Nzo6MzIQCCFRMk8ZQhU*
-	ETFPCxdVSlVKTEhPSEpDTENMS0NNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKSENONwY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MS46LDo4MTIXCCEKMk5LQhQR
+	UU8wCRBVSlVKTEhPSEpDTENDTEpMVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJSUJKNwY+
 DKIM-Signature:a=rsa-sha256;
-	b=F4cxOSLMwhE7w8kn8LwmhxNedBlJDMzDzW77KlN7bRWoGWd8KrkNep/TBVLmB8K3Um83oqRHk7O1LNJGpqBOOQM8efoTxgWw9CzvgTaxekt6s7qKJeITwInd04KEPafROuvqaPaD4ARwDbCoW4hafFPyikd/kQbcC5qNTuLX2Aw=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=YkGooVOVJx6yYNNnxIeU/aJeQgP9uUa6dfCqmnhn2Y0=;
+	b=jTvhwr/dbWMj03q5JOCMfVNYvnpN0+EalpNnywo+spSfqLqWhbjioWyfUCAvD5eSz96Ar8hhV3dAB/YAdNUgJP/6Ckr0LvSwzcFbvzWUtwvOdYa2S71uQn6s1zWw1970hZPCzZYjL23E1/PEtIcIdzbo7dkMceXzo+t51USoo8I=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=re+fzhahdRHRVyWuma6tflhkGROthhuZpOI1Cpv+z50=;
 	h=date:mime-version:subject:message-id:from;
 
-Add support for the eDP0 output on RK3588 SoC.
+Add the necessary DT changes to enable eDP0 on RK3588S EVB1 board:
+- Add edp-panel node
+- Set pinctrl of pwm12 for backlight
+- Enable edp0/hdptxphy0/vp2
 
 Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 7e125897b0cd..240b0103c957 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1411,6 +1411,35 @@ hdmi0_out: port@1 {
- 		};
+---
+
+Changes in v2:
+- Remove brightness-levels and default-brightness-level properties in
+  backlight node.
+- Add the detail DT changes to commit message.
+---
+ .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
+index bc4077575beb..5c1ea25b6524 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
+ #include <dt-bindings/usb/pd.h>
+ #include "rk3588s.dtsi"
+ 
+@@ -120,6 +121,18 @@ backlight: backlight {
+ 		pwms = <&pwm12 0 25000 0>;
  	};
  
-+	edp0: edp@fdec0000 {
-+		compatible = "rockchip,rk3588-edp";
-+		reg = <0x0 0xfdec0000 0x0 0x1000>;
-+		clocks = <&cru CLK_EDP0_24M>, <&cru PCLK_EDP0>, <&cru CLK_EDP0_200M>;
-+		clock-names = "dp", "pclk", "spdif";
-+		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH 0>;
-+		phys = <&hdptxphy0>;
-+		phy-names = "dp";
-+		power-domains = <&power RK3588_PD_VO1>;
-+		resets = <&cru SRST_EDP0_24M>, <&cru SRST_P_EDP0>;
-+		reset-names = "dp", "apb";
-+		rockchip,grf = <&vo1_grf>;
-+		#sound-dai-cells = <1>;
-+		status = "disabled";
++	edp_panel: edp-panel {
++		compatible = "lg,lp079qx1-sp0v";
++		backlight = <&backlight>;
++		power-supply = <&vcc3v3_lcd_edp>;
 +
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			edp0_in: port@0 {
-+				reg = <0>;
-+			};
-+
-+			edp0_out: port@1 {
-+				reg = <1>;
++		port {
++			panel_in_edp: endpoint {
++				remote-endpoint = <&edp_out_panel>;
 +			};
 +		};
 +	};
 +
- 	qos_gpu_m0: qos@fdf35000 {
- 		compatible = "rockchip,rk3588-qos", "syscon";
- 		reg = <0x0 0xfdf35000 0x0 0x20>;
+ 	combophy_avdd0v85: regulator-combophy-avdd0v85 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "combophy_avdd0v85";
+@@ -238,6 +251,27 @@ &combphy2_psu {
+ 	status = "okay";
+ };
+ 
++&edp0 {
++	force-hpd;
++	status = "okay";
++};
++
++&edp0_in {
++	edp0_in_vp2: endpoint {
++		remote-endpoint = <&vp2_out_edp0>;
++	};
++};
++
++&edp0_out {
++	edp_out_panel: endpoint {
++		remote-endpoint = <&panel_in_edp>;
++	};
++};
++
++&hdptxphy0 {
++	status = "okay";
++};
++
+ &i2c3 {
+ 	status = "okay";
+ 
+@@ -399,6 +433,7 @@ usbc0_int: usbc0-int {
+ };
+ 
+ &pwm12 {
++	pinctrl-0 = <&pwm12m1_pins>;
+ 	status = "okay";
+ };
+ 
+@@ -1168,3 +1203,18 @@ usbdp_phy0_dp_altmode_mux: endpoint@1 {
+ 		};
+ 	};
+ };
++
++&vop_mmu {
++	status = "okay";
++};
++
++&vop {
++	status = "okay";
++};
++
++&vp2 {
++	vp2_out_edp0: endpoint@ROCKCHIP_VOP2_EP_EDP0 {
++		reg = <ROCKCHIP_VOP2_EP_EDP0>;
++		remote-endpoint = <&edp0_in_vp2>;
++	};
++};
 -- 
 2.34.1
 
