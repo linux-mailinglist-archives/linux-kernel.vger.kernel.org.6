@@ -1,177 +1,119 @@
-Return-Path: <linux-kernel+bounces-448178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD66D9F3C99
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B03DA9F3C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91409188284C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125701891C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5F1D4600;
-	Mon, 16 Dec 2024 21:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5895F1D5150;
+	Mon, 16 Dec 2024 21:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NfAQT7RC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pCHImPtt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C4139CEF;
-	Mon, 16 Dec 2024 21:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BDD1D416E;
+	Mon, 16 Dec 2024 21:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383768; cv=none; b=nrbVNk7Sm85ikU52572PaXYgtxaLqBuo33PvVVNQu47C/kTazE1YsNc7whob2FSTj0bcEKc9tihRtIX0OVgh9Q7uzloIga2hf2VMix096aCBxAmj/dkB9cAZDxo+L/QXggTvgkfdnohK8Q7GBhfeGh3gDVV1M236neVEE8ImFUw=
+	t=1734383741; cv=none; b=mbqaeTjRb6wtj8CscHcIi6gyxFXy740EhYSJi9HG2wdgTdzphp6fS9pDqnF9PZXw0eOzzES95qN3turVQgf+OflR1qQf5h2ghFDo8qum4Mr1nrjGRLclZXACFfyLFmjYMATOz0z8qkUBRX9B5IoMOMhbxsN3eqH4NFcUK3sG38M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383768; c=relaxed/simple;
-	bh=p7TYtotFYa4y5nQEwj4JJYabgdwgE9RHpPtpdDzCv0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMGpR8jgD9Oml56Fb6B3Qt90U/AlQ3u9ZmOzUnfvXbv6RSSfMAaznLmAApkw2DZbvO5lJBnIGHOkjD9kM92S3pCXPUsNqNfvQh3Lwwy6zsgFaK8dpGfSZmdrtdj8+KBhmXzHYTtbjay8hb0VFh7E6wHLSKqLXyvlhIEbMWlQEvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NfAQT7RC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wqNYOv2fOBvrraLi79AJjU9ppSyLY79/galhJe9yCkU=; b=NfAQT7RC312eJHlSA9cGJJbM6k
-	YMsJHVMYQwLfEH/fJ+uQdUatWWB2pmwhcnB+eAE3B3tKIZ5MgKTXOKwNo14ZOfnjRLxRh6HeW3SVX
-	r9oQxU9hjAXWeElN2EwabOa6s+UP3IDHJaZUJNAJLYbk5BxeheDKWBDoJ61Nkp20o0/7d8uX1syvQ
-	tQTSIbhKwrkEq8cpVtuR2nBFUwrZRrME7nIEa0eSNPImDgyJ8H43+Nq7QFe/jHNALSwcOn5hyMF9t
-	MY1MG2pe+AIFxrl2ya7eVRongwJYDCEuLudwQ2fhpowZ4Hn8w5l5wTTY0xO0sPjIuF1pkzZPCEHpc
-	9/G2u0Tw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNIQz-00000004wfB-1VYk;
-	Mon, 16 Dec 2024 21:15:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A1DCF30031E; Mon, 16 Dec 2024 22:15:20 +0100 (CET)
-Date: Mon, 16 Dec 2024 22:15:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
-	hughd@google.com, lokeshgidra@google.com, minchan@google.com,
-	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com,
-	pasha.tatashin@soleen.com, klarasmodin@gmail.com, corbet@lwn.net,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v6 10/16] mm: replace vm_lock and detached flag with a
- reference count
-Message-ID: <20241216211520.GB9803@noisy.programming.kicks-ass.net>
-References: <20241216192419.2970941-1-surenb@google.com>
- <20241216192419.2970941-11-surenb@google.com>
+	s=arc-20240116; t=1734383741; c=relaxed/simple;
+	bh=IpKmOll/QNsF9XiygnPe5Auztbc4T8d7kw/HzwrO1+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=biszH00AkZb2gyahnfo86Myqtw8ZJXSaNfC6VybMgGJFDIyzHy5e7HwVPzXLFW4yVfG/xQfnpMZqKT/2pORkdE1ijmUfHLSONoEhbSGyXqNTVQWRW7D49LDmc81dc2yf/F/c16AwIFnq3fBhQUpjgHeOhFqDlCvSliS6YBty/z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pCHImPtt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKM0rM029608;
+	Mon, 16 Dec 2024 21:15:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	clprTOdweKSyB5KCU1J42DS6+FLGOTa9h866joKNO00=; b=pCHImPttEZ9X/PUu
+	x2UeN11R+1H7dzW1wZj6IpErWMz7tOYwX3ixuJ3bMKPBfL7BNZdQrYBa7+hTKpCx
+	CE69HdSZF2JbEcA1ENBoYX46XEbmzk1cCIYruNYNqiTkPDuB0krLrswLhGH72jgE
+	+HwVBQhOrohYtH22zyZlTO0xIlMZG5V8PwYUPRKhbwbV2QAbWRncY8Vg1LcPuHiN
+	Ap1Y3F5QNSvWVb1MnJUWpK1ioifgI2bp049ycX8IL6qCmHLOpW/HVLTGC3X1HU+1
+	P62O62+fMFPSC0OuuhwwgSw6WsEZDZu6jiUiZpUJqItP37WBCw+7WKDNO7PFEjsI
+	dA2z8g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61r3mr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 21:15:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGLFUkl027467
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 21:15:30 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 13:15:28 -0800
+Message-ID: <552d11df-4af6-4ee3-8f94-10f8305baeb2@quicinc.com>
+Date: Mon, 16 Dec 2024 13:15:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216192419.2970941-11-surenb@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] drm/msm/dpu: link DSPP_2/_3 blocks on SC8180X
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Robert Foss <rfoss@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Richard Acayan
+	<mailingradian@gmail.com>
+CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
+ <20241216-dpu-fix-catalog-v1-2-15bf0807dba1@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-dpu-fix-catalog-v1-2-15bf0807dba1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EPU57_0bqlsOAu1eQvcIhIXHIKjMbY0x
+X-Proofpoint-ORIG-GUID: EPU57_0bqlsOAu1eQvcIhIXHIKjMbY0x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ adultscore=0 mlxlogscore=848 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412160174
 
-On Mon, Dec 16, 2024 at 11:24:13AM -0800, Suren Baghdasaryan wrote:
 
-FWIW, I find the whole VMA_STATE_{A,DE}TATCHED thing awkward. And
-perhaps s/VMA_STATE_LOCKED/VMA_LOCK_OFFSET/ ?
 
-Also, perhaps:
+On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
+> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
+> 
+> Fixes: f5abecfe339e ("drm/msm/dpu: enable DSPP and DSC on sc8180x")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
 
-#define VMA_REF_LIMIT	(VMA_LOCK_OFFSET - 2)
-
-> @@ -699,10 +700,27 @@ static inline void vma_numab_state_free(struct vm_area_struct *vma) {}
->  #ifdef CONFIG_PER_VMA_LOCK
->  static inline void vma_lock_init(struct vm_area_struct *vma)
->  {
-> -	init_rwsem(&vma->vm_lock.lock);
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	static struct lock_class_key lockdep_key;
-> +
-> +	lockdep_init_map(&vma->vmlock_dep_map, "vm_lock", &lockdep_key, 0);
-> +#endif
-> +	refcount_set(&vma->vm_refcnt, VMA_STATE_DETACHED);
->  	vma->vm_lock_seq = UINT_MAX;
-
-Depending on how you do the actual allocation (GFP_ZERO) you might want
-to avoid that vm_refcount store entirely.
-
-Perhaps instead write: VM_WARN_ON(refcount_read(&vma->vm_refcnt));
-
-> @@ -813,25 +849,42 @@ static inline void vma_assert_write_locked(struct vm_area_struct *vma)
->  
->  static inline void vma_assert_locked(struct vm_area_struct *vma)
->  {
-> -	if (!rwsem_is_locked(&vma->vm_lock.lock))
-> +	if (refcount_read(&vma->vm_refcnt) <= VMA_STATE_ATTACHED)
-	if (is_vma_detached(vma))
-
->  		vma_assert_write_locked(vma);
->  }
->  
-> -static inline void vma_mark_attached(struct vm_area_struct *vma)
-> +/*
-> + * WARNING: to avoid racing with vma_mark_attached(), should be called either
-> + * under mmap_write_lock or when the object has been isolated under
-> + * mmap_write_lock, ensuring no competing writers.
-> + */
-> +static inline bool is_vma_detached(struct vm_area_struct *vma)
->  {
-> -	vma->detached = false;
-> +	return refcount_read(&vma->vm_refcnt) == VMA_STATE_DETACHED;
-	return !refcount_read(&vma->vm_refcnt);
->  }
->  
-> -static inline void vma_mark_detached(struct vm_area_struct *vma)
-> +static inline void vma_mark_attached(struct vm_area_struct *vma)
->  {
-> -	/* When detaching vma should be write-locked */
->  	vma_assert_write_locked(vma);
-> -	vma->detached = true;
-> +
-> +	if (is_vma_detached(vma))
-> +		refcount_set(&vma->vm_refcnt, VMA_STATE_ATTACHED);
-
-Urgh, so it would be really good to not call this at all them not 0.
-I've not tried to untangle the mess, but this is really awkward. Surely
-you don't add it to the mas multiple times either.
-
-Also:
-
-	refcount_set(&vma->vm_refcnt, 1);
-
-is so much clearer.
-
-That is, should this not live in vma_iter_store*(), right before
-mas_store_gfp() ?
-
-Also, ISTR having to set vm_lock_seq right before it?
-
->  }
->  
-> -static inline bool is_vma_detached(struct vm_area_struct *vma)
-> +static inline void vma_mark_detached(struct vm_area_struct *vma)
->  {
-> -	return vma->detached;
-> +	vma_assert_write_locked(vma);
-> +
-> +	if (is_vma_detached(vma))
-> +		return;
-
-Again, this just reads like confusion :/ Surely you don't have the same
-with mas_detach?
-
-> +
-> +	/* We are the only writer, so no need to use vma_refcount_put(). */
-> +	if (!refcount_dec_and_test(&vma->vm_refcnt)) {
-> +		/*
-> +		 * Reader must have temporarily raised vm_refcnt but it will
-> +		 * drop it without using the vma since vma is write-locked.
-> +		 */
-> +	}
->  }
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
