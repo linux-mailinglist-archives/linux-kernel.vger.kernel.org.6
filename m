@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-447422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27379F3200
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:53:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082CE9F33BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:54:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BC21884C0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:53:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 743687A39EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A9A205AA1;
-	Mon, 16 Dec 2024 13:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41AA206F25;
+	Mon, 16 Dec 2024 14:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JjgMSo8T"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKecVwFY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF0913DBA0
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B8E206F05;
+	Mon, 16 Dec 2024 14:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734357214; cv=none; b=JGlRvPI6TLsDzlREoS/X0E10rpXI3qwXAla/DUNdsbOonsMspn1YewqgQXTUwAg3B3YWTw0LUHLRjDWTGkUnmbOAaohdKavgwORId4U3JnLYaXzxN+cvE1csH6itgtG99k/RYY8oH9JepbdWsn9OG1ee1Hv2plAHwl+v2KrUBT8=
+	t=1734360681; cv=none; b=cFhKkmhamgyT2+B/hI4MgDjILYTYitOGchkBF6W1XpnEsDmGiH6HhMp+OW6O3M4r3Wj8EWuspcMte8g0iSil3e1Ri3pzYdnL+k5k5bXYNdS9LdYTJSTCXi5ZvGkg4zNpHhV37yTjgcJ3Kakte5yQTM76IuIFEta+9lJo2bNXdZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734357214; c=relaxed/simple;
-	bh=WkY6cDC1QoZ27Av2RSpe3GudAoVlMWZLoLjO5zdPx3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z2a/gzcu4tMlLMsseSRzkoM/5Jhc2irPEXSXW1gLWjWfV8VOQXylbbqtXyHXpeJSDPmW2vgxgo/wHUTP8QiuGxzLE3gv/ssC0LRUaYxAm0cJFnSDy3Jfnnj77uDvsootxwuQ7XxHlRrJPxCagzz/soXtsKByfIjoTVbDW871Sr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JjgMSo8T; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2161eb95317so37439575ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:53:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1734357211; x=1734962011; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x6zMvmG2+uzmRRZ61sFLQ9H0rO9rbqdQZ5p/tJY9Hns=;
-        b=JjgMSo8TBquKg9wWywNFmI8+2S8MwuY4NKBo2ymmbQTqs7+hgyynIW+4AhUAfRjJxQ
-         cfJMzOIL43S+zzb3XFUKdwb6K/sYICpqyXLjH5gPwBN76fc59b29YYM7AgEjNKL7GbA8
-         xJO/walsezNvJeAdueBkX0hEr+Tq2cKhpzCQGqbYMGsSueT4wg5HdbCxAlNdxhOEjTmL
-         mhUSlP4v1KOiZJuFTTVzOHuFad85YZcVElLNJOWgKDwqU5WTkxNey1lv7ziCLWbFLGUs
-         HTLHxJsuleZjLvkiETIiDPp6gmFagyZSvrpP3RR5wihKehFL4c88MLm89oVQ6Nb7Pp0L
-         t1XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734357212; x=1734962012;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x6zMvmG2+uzmRRZ61sFLQ9H0rO9rbqdQZ5p/tJY9Hns=;
-        b=kzRFGqnMvZ4UrbiXJ4cVjJRxEa6uwX1GzjOP9PIEcD+k2Ln47IHIcAj5B8Xn03aW3p
-         3kQtktgYD2PIYj61uOtLx6KKWIQiJ5jSjgp5BCVl6TD1PPTWzn07e/rYnznctZ3XY4Vm
-         hLbiQLcrIa7t7RIqtrkK+/xNcc7KwebIQTN/EjqkalmDw6j8G9RuSsvfN5D0FfuEFe5H
-         rqXZEQqOTxYYePXKCRaIylQJwChsQjEBu280Fz0qWp3oPhG7S5aN3BsYbKVOnPMK/tkF
-         9XJeYc7K+0OJqxBDXbnsD8bcxj4uRDzQpEdY68bNM+doxmixrKFRCbAzM/dMP/xAgbVk
-         By+g==
-X-Forwarded-Encrypted: i=1; AJvYcCW7yLr/gJp40VzP01frRymCu1i7d0E85GPdmvWADqT+yFtXjLsSfLmq6SB8DMBQfEcHZhk92Eid1icWl+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrslFcb0HOThQaKfE81Wg+FWS7+Ey6AZVyqXC2WrEQjdSfgnHU
-	HPcSJ8VF71xELReLG30Gg2qui+MTa4iX2BeDFV4zGS5a75odm6kDIXJ11WuD/so=
-X-Gm-Gg: ASbGnctAfB4t6Lksr86Qsc7dOM6pPJbnLUFBr0mD2qRRN6/AWmhw1xB5cFfT3CGKOrf
-	luxPz8k4Wap53lxPtPk5VNCY9q3VKz6Bfq8lcv91sDVkWU0WmiIosVdzWnVKu6oGQMguK6dC76s
-	Ubw1ldmTpp3zDsfL3igKsKuJML010kcCTJjgFyaLeevOSdkTWU6cpugUrW8TcYYnr8/1e6bmoQv
-	v5hu4dONE0PQqdxCQbRolCeBMUN8wBGdH32IWy6lqFzjsvnWYA0Q65LQ0BUnOxi/xkAwesrDa5+
-	O62iObuXaQom3q+YE47as8wO0wfVmUIG3esUkRLk3YZc1tKhIu0K1QY=
-X-Google-Smtp-Source: AGHT+IHyRpxS8I8LTVX58lZkgV3hcqjzdArgXBTP/oGtQrcmkoT7Zay0fgtIbzpJHrkn13s78Z6EGA==
-X-Received: by 2002:a17:902:f546:b0:212:5786:7bbe with SMTP id d9443c01a7336-218929caae0mr162490085ad.24.1734357211700;
-        Mon, 16 Dec 2024 05:53:31 -0800 (PST)
-Received: from ?IPV6:2409:8a28:f4f:a9a4:7c29:e1c0:98b3:5c62? ([2409:8a28:f4f:a9a4:7c29:e1c0:98b3:5c62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e63896sm42806225ad.223.2024.12.16.05.53.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 05:53:31 -0800 (PST)
-Message-ID: <9c6a4e46-7f98-4809-b4bb-fa83a4461474@bytedance.com>
-Date: Mon, 16 Dec 2024 21:53:24 +0800
+	s=arc-20240116; t=1734360681; c=relaxed/simple;
+	bh=G6rSvWZlkRq/BV2Xt1BzQjLVBDeiRc/FFqaxFjTsrDk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AKqh0zbIxYi3+57p066l4WVMCF1FkQSRHxZM+NR/nJTsm1TRRIumj/5R21t5Rg8KfNjdcxGj9rO5Mnq0vSD7Leuvc0gFuPzLcoy5S0d3JoKtxXPiN9ukhXyBjpylhunTn+YbLCpk42enJgTk4tHF60YPXTpLU1Eud72dGk6UfA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKecVwFY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A849AC4CEDF;
+	Mon, 16 Dec 2024 14:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734360679;
+	bh=G6rSvWZlkRq/BV2Xt1BzQjLVBDeiRc/FFqaxFjTsrDk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=BKecVwFY14JZXcx4RVIDEvqaQrLitthRez+NbSnCmHHEnr656TlNfqnWpI2AssvV9
+	 H7d+v+F3slh6EAaNdkArKKN6IWAy9stlUuHLAVCXx4IWhJxpbP6lbsaTD9NzFSgsca
+	 VlCmb8fOq4rT49bQWIlbZfhBo/UQbnPK+9GD4U+Wov3LNd5SqbJc1VaLRlClOKkWW0
+	 tH79lqXSSZOnWLQbZoQFFuwEE/imx6WqHwi+KUOQFdkFyNm2RuEWMWBrf6UELM0T7c
+	 PCWVh+ltYefoI+axtGP03WS1w9+w4ibMabBAydzRgAzwzIng1RwgKok3UrUFTow+aI
+	 WuKz+JXEIHJ/A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Matthew Wilcox"
+ <willy@infradead.org>,  "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+  "Vlastimil Babka" <vbabka@suse.cz>,  "John Hubbard"
+ <jhubbard@nvidia.com>,  "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+  "Andrew Morton" <akpm@linux-foundation.org>,  "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Arnd Bergmann" <arnd@arndb.de>,
+  "Christian Brauner" <brauner@kernel.org>,  "Jann Horn"
+ <jannh@google.com>,  "Suren Baghdasaryan" <surenb@google.com>,  "Alex
+ Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Trevor Gross" <tmgross@umich.edu>,  <linux-kernel@vger.kernel.org>,
+  <linux-mm@kvack.org>,  <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v11 7/8] rust: miscdevice: add mmap support
+In-Reply-To: <20241211-vma-v11-7-466640428fc3@google.com> (Alice Ryhl's
+	message of "Wed, 11 Dec 2024 10:37:11 +0000")
+References: <20241211-vma-v11-0-466640428fc3@google.com>
+	<ycpHdyG93cH1pBam_CppzFvlm8csS7qz1MiKhj4OS9L1eEw4oXAD95Xk2bDFiiiM_4NDu-XdptH9h3d7YHAFjQ==@protonmail.internalid>
+	<20241211-vma-v11-7-466640428fc3@google.com>
+Date: Mon, 16 Dec 2024 14:53:59 +0100
+Message-ID: <87jzbzag3s.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] mm: pgtable: introduce generic __tlb_remove_table()
-Content-Language: en-US
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, david@redhat.com, jannh@google.com, hughd@google.com,
- yuzhao@google.com, willy@infradead.org, muchun.song@linux.dev,
- vbabka@kernel.org, lorenzo.stoakes@oracle.com, akpm@linux-foundation.org,
- rientjes@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1734164094.git.zhengqi.arch@bytedance.com>
- <271e58cd4ab808c4f402539b76d5916924e2bc6f.1734164094.git.zhengqi.arch@bytedance.com>
- <20241216120043.GA11133@noisy.programming.kicks-ass.net>
- <20241216120313.GE12500@noisy.programming.kicks-ass.net>
- <20241216120526.GF12500@noisy.programming.kicks-ass.net>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20241216120526.GF12500@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+
+"Alice Ryhl" <aliceryhl@google.com> writes:
+
+> Add the ability to write a file_operations->mmap hook in Rust when using
+> the miscdevice abstraction. The `vma` argument to the `mmap` hook uses
+> the `VmAreaNew` type from the previous commit; this type provides the
+> correct set of operations for a file_operations->mmap hook.
+>
+> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/miscdevice.rs | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>
+> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> index 7e2a79b3ae26..e5366f9c6d7f 100644
+> --- a/rust/kernel/miscdevice.rs
+> +++ b/rust/kernel/miscdevice.rs
+> @@ -11,6 +11,8 @@
+>  use crate::{
+>      bindings,
+>      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> +    fs::File,
+> +    mm::virt::VmAreaNew,
+>      prelude::*,
+>      str::CStr,
+>      types::{ForeignOwnable, Opaque},
+> @@ -110,6 +112,15 @@ fn release(device: Self::Ptr) {
+>          drop(device);
+>      }
+>
+> +    /// Handle for mmap.
+> +    fn mmap(
+> +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
+> +        _file: &File,
+> +        _vma: &VmAreaNew,
+> +    ) -> Result {
+> +        kernel::build_error!(VTABLE_DEFAULT_ERROR)
+> +    }
+> +
+>      /// Handler for ioctls.
+>      ///
+>      /// The `cmd` argument is usually manipulated using the utilties in [`kernel::ioctl`].
+> @@ -156,6 +167,7 @@ impl<T: MiscDevice> VtableHelper<T> {
+>          const VTABLE: bindings::file_operations = bindings::file_operations {
+>              open: Some(fops_open::<T>),
+>              release: Some(fops_release::<T>),
+> +            mmap: maybe_fn(T::HAS_MMAP, fops_mmap::<T>),
+>              unlocked_ioctl: maybe_fn(T::HAS_IOCTL, fops_ioctl::<T>),
+>              #[cfg(CONFIG_COMPAT)]
+>              compat_ioctl: if T::HAS_COMPAT_IOCTL {
+> @@ -216,6 +228,31 @@ impl<T: MiscDevice> VtableHelper<T> {
+>      0
+>  }
+>
+> +/// # Safety
+> +///
+> +/// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+> +/// `vma` must be a vma that is currently being mmap'ed with this file.
+> +unsafe extern "C" fn fops_mmap<T: MiscDevice>(
+> +    file: *mut bindings::file,
+> +    vma: *mut bindings::vm_area_struct,
+> +) -> c_int {
+> +    // SAFETY: The mmap call of a file can access the private data.
+> +    let private = unsafe { (*file).private_data };
+> +    // SAFETY: Mmap calls can borrow the private data of the file.
+
+This safety comment seems unrelated to the safety requirements of `ForeignOwnable::borrow`.
 
 
+Best regards,
+Andreas Hindborg
 
-On 2024/12/16 20:05, Peter Zijlstra wrote:
-> On Mon, Dec 16, 2024 at 01:03:13PM +0100, Peter Zijlstra wrote:
->> On Mon, Dec 16, 2024 at 01:00:43PM +0100, Peter Zijlstra wrote:
->>> On Sat, Dec 14, 2024 at 05:02:57PM +0800, Qi Zheng wrote:
->>>
->>>> diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
->>>> index c73b89811a264..3e002dea6278f 100644
->>>> --- a/arch/s390/mm/pgalloc.c
->>>> +++ b/arch/s390/mm/pgalloc.c
->>>> @@ -193,13 +193,6 @@ void page_table_free(struct mm_struct *mm, unsigned long *table)
->>>>   	pagetable_dtor_free(ptdesc);
->>>>   }
->>>>   
->>>> -void __tlb_remove_table(void *table)
->>>> -{
->>>> -	struct ptdesc *ptdesc = virt_to_ptdesc(table);
->>>> -
->>>> -	pagetable_dtor_free(ptdesc);
->>>> -}
->>>> -
->>>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>   static void pte_free_now(struct rcu_head *head)
->>>>   {
->>>
->>>> diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
->>>> index 709830274b756..939a813023d7e 100644
->>>> --- a/include/asm-generic/tlb.h
->>>> +++ b/include/asm-generic/tlb.h
->>>
->>>>   #define MAX_TABLE_BATCH		\
->>>>   	((PAGE_SIZE - sizeof(struct mmu_table_batch)) / sizeof(void *))
->>>>   
->>>> +#ifndef __HAVE_ARCH_TLB_REMOVE_TABLE
->>>> +static inline void __tlb_remove_table(void *_table)
->>>> +{
->>>> +	struct ptdesc *ptdesc = (struct ptdesc *)_table;
->>>> +
->>>> +	pagetable_dtor(ptdesc);
->>>> +	pagetable_free(ptdesc);
->>>> +}
->>>> +#endif
->>>
->>>
->>> Spot the fail...
->>>
->>> That said, all this ptdesc stuff is another giant trainwreck. Let me
->>> clean that up for you.
->>>
->>> ---
->>
->>> -static inline void __tlb_remove_table(void *_table)
->>> +static inline void __tlb_remove_table(void *table)
->>>   {
->>> -	struct ptdesc *ptdesc = (struct ptdesc *)_table;
->>> +	struct ptdesc *ptdesc = page_to_ptdesc(table);
->>>   
->>>   	pagetable_dtor(ptdesc);
->>>   	pagetable_free(ptdesc);
->>
->> And now observe that __tlb_remove_table() is identical to
->> asm-generic/pgalloc.h pte_free(), pmd_free(), __pud_free() and
->> __p4d_free().
->>
->> And I'm sure we don't need 5 copies of this :-), wdyt?
-> 
-> Argh, nearly, it has the whole page vs virt nonsense still going on.
-> Bah.
-
-Yes, maybe it can be unified into struct page parameter, which seems
-to be more convenient for conversion:
-
-static inline void pagtable_dtor_free(struct mm_struct *mm, void *table)
-{
-	struct ptdesc *ptdesc = page_to_ptdesc(table);
-
-	pagetable_dtor(ptdesc);
-	pagetable_free(ptdesc);
-}
 
 
 
