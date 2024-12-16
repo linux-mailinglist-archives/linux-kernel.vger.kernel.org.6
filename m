@@ -1,188 +1,150 @@
-Return-Path: <linux-kernel+bounces-446806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F1B9F2953
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:37:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD099F295A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302781641CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F733165526
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7908194141;
-	Mon, 16 Dec 2024 04:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D311BC08B;
+	Mon, 16 Dec 2024 04:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eUKbPwqq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="nBqrHoJc";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="MaJic+4/";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b="Mb0luOlz"
+Received: from fallback24.i.mail.ru (fallback24.i.mail.ru [79.137.243.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F1DA41;
-	Mon, 16 Dec 2024 04:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD941119A;
+	Mon, 16 Dec 2024 04:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734323861; cv=none; b=Y/bAFZCT5tsuSqGRzFKkx8/amUs2JvYSaILIle7XyedmKRxHASYXPIDeMKhekdKQrMs2XfE8g1bKi5v1D0b42YJtlCM6Vbcm7J7Gv9zn+V7gXMxYslyCvLO8xxmv2dJ4ce7VS0pdSzI5RMSKiqh5RBgd/5mgbBYAQLoGk05MV6A=
+	t=1734324717; cv=none; b=iogACbKmfHRJlrWbCJAFn2HOVCa8Pj5CbQT0upErtZ3ZdWAF6J6AQ2j9n/BOgg4JxUxutL9VK2zrG40bDD7nOua8EkcfLI4oK/jeHAJM7JFCcmqDsDTovLBGO0LU0j0QibuZUVxomB+1Nk3+TDmYZXI7cKPJ6+xYbQyB5kH1KFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734323861; c=relaxed/simple;
-	bh=/ZLxmtpD7i77LgMQtthygKh9darH2+HxDdhqKF+SxZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pw7YjdqbqLivNny1m0y+LeXpL0GPhWp+O2/ap8sLqlPQzfNx3+zFI62KcnPAQ/ZCYJktEG/yWeiuGRNwloaOTU05n48Ul8WC4fdl8+z0Nyn1q5Aiomp2nLi+iw3DmnWmr3fIrtZSK7pMFKwqP5p3Tck8b7588snzB3JjI7hVOzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eUKbPwqq; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734323859; x=1765859859;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/ZLxmtpD7i77LgMQtthygKh9darH2+HxDdhqKF+SxZ4=;
-  b=eUKbPwqqhzuSMmPnu78bak2eKKaWFa3b6Ol8DdJE3WGrblP1wt09p7tG
-   qm5q24Aw/6jnCaKF6Q8Yrt6jGwDMd4ZL5DRS0/ijqNruDp8GpYbM2FD0Q
-   IPz3pM3zGI3+DtoKIkRL1f3sL8PsAFhLqx3T00OPh8Ot6PURPszVgoMWg
-   vmoJ+9E5hDpsGAavIlF5K54bPexvK8eD858bjf3yIGnUx92p2MF34bK6i
-   mTrEWjh02yi2lHaSXJSLbEAiIt0SqWu5u6Ix1jPuQTj0E0PpC5XaiPLvV
-   YU0DKngniyoiOdVGQDD+Wf77UxNZUsKQu/xEg22ATKqY4R5Fqe30rGuqX
-   A==;
-X-CSE-ConnectionGUID: Rd9b3sWeQEiM3EDaIJ9KCw==
-X-CSE-MsgGUID: Z6qkA69gTcSgnJiz56lHgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34732467"
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="34732467"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 20:37:39 -0800
-X-CSE-ConnectionGUID: hB2F3kOKRVK/ZBxkreQCXA==
-X-CSE-MsgGUID: R+AidrljTfqnvygPxOJ+tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="101937650"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 20:37:36 -0800
-Message-ID: <646990e1-cce6-4040-af40-6d80e0cd954a@intel.com>
-Date: Mon, 16 Dec 2024 12:37:32 +0800
+	s=arc-20240116; t=1734324717; c=relaxed/simple;
+	bh=shcYUX5vatJQfnkia/P3R1pz3y5Ht8q6TdvZ6WAQp64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RKwz+g1HqK6Lz4YdjE37EAHAp07iGcpL0/FKgDY6pHBFLlsJ93jCHzdc06QpPRSJfMxvPzTb73fT1sj0cmKGFBZUBRO7ClhLmkDKCPnxyNCRey4vfn/CqL+HuKRWGCXQ1pM7cKCUGCWWu5WtBDQgSueBN7tI4dknBTXozdr8mLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru; spf=pass smtp.mailfrom=inbox.ru; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=nBqrHoJc; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=MaJic+4/; dkim=pass (2048-bit key) header.d=inbox.ru header.i=@inbox.ru header.b=Mb0luOlz; arc=none smtp.client-ip=79.137.243.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inbox.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inbox.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru; s=mail4;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=pO4yI+snYhKbzwmv/rXlMitVU8ULe1kTb375+LWuOG8=;
+	t=1734324711;x=1734414711; 
+	b=nBqrHoJcqb3FKpQAGVaub7v5XuzaudNCPkJ9/3yFFF1mlgdy0l/IZt7Xuq3BGlf64Q62F3yhbpJTVabB7U992FcnCq2zz49qTTlJU0TO3uxwiELWaGtg9p6S5UAWcESYKTOes+NlIUHp7eZAbghlqyX1YyHBCynajzMg6fEUXw5XWYGFhM4QYnTp3M9QzQdJKLYVZb0wIRawI/P/M5TIbFX1dWHj+QSej8zqD5VgWv0ye0SirBScgw7kK+T5dVcSVE+gTbgVfDCKFN7s8dlttzO/uFNA2d1bfO9buNa11PAI4vTx6c+C96J2xvrZcD5UfjHUA6oZwQHmUW2nS/MKzA==;
+Received: from [10.113.163.86] (port=50316 helo=send55.i.mail.ru)
+	by fallback24.i.mail.ru with esmtp (envelope-from <fido_max@inbox.ru>)
+	id 1tN2tN-00Dz87-Rv; Mon, 16 Dec 2024 07:39:38 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
+	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
+	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
+	bh=pO4yI+snYhKbzwmv/rXlMitVU8ULe1kTb375+LWuOG8=; t=1734323977; x=1734413977; 
+	b=MaJic+4/mzqWMe4ZXHuFnQMrKkVnxiz8e0LZ6hXDwLudoOHa1sqynsVacsDBpbVraBBLjeYv+5s
+	0pxL+e5U944hOODkLoCpegKiPpiBWRBDVnhbq5qB4JswgDqMkq/u2Hrsxn0nl+IgCw6xHQ0Yoll9r
+	ErKjlHqlv2vJfEx7szxQxvgkTT5U0Nu4EWkZY8l3ss0JL/4pGt6pPujJ0nm6lhHYMMTOu8Bch81Ur
+	31cHr0VVJpqZe43t2yExmWN3q+b3WUWaNAIOxkfKsXdncCN1XoGY6IwAKu4h8AFWEVcKCqQU5kNjZ
+	7ZU8TR0sKusE/0OLdvJeaBfuDwefpOiompLg==;
+Received: from [10.113.249.94] (port=39006 helo=send197.i.mail.ru)
+	by exim-fallback-5b68796bc4-d4c2d with esmtp (envelope-from <fido_max@inbox.ru>)
+	id 1tN2tF-00000000SF7-44sZ; Mon, 16 Dec 2024 07:39:30 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=inbox.ru;
+	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
+	To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=pO4yI+snYhKbzwmv/rXlMitVU8ULe1kTb375+LWuOG8=; t=1734323969; x=1734413969; 
+	b=Mb0luOlzpxgY/PS2u1QlOgpjoMnm24R2XvljbsW3syI6zlnEZ3G4Zlzv59G9i5mcukf0HBvExcZ
+	iSSwfhiKIeRmKcmLP8HC98t07ZXga1yAoiMlcm7Harm26XnzHoG30M8DX0XgDnZGPq/Ex+txvB+74
+	vUfA1yA+D6xvZsK/nmOgiDZ6q2LHB5IyWcBSmc23fX2dVUuCL0Jxf+hoZhxz34LbCVWjlaBHYNSim
+	3VCJzk3zg+WFfj1r/DfpcouOlUGaMEQUaYNTr60b7nSGi9L1xEWZwqnKTFEZCqy5Rjx+RzPCnQCwx
+	G7/0WU+FGeqbFh6v78IbUjnACqzx8G1lpQfw==;
+Received: by exim-smtp-76d484c77c-sh75f with esmtpa (envelope-from <fido_max@inbox.ru>)
+	id 1tN2sz-00000000GrS-24Cb; Mon, 16 Dec 2024 07:39:13 +0300
+From: Maxim Kochetkov <fido_max@inbox.ru>
+To: linux-sound@vger.kernel.org
+Cc: andy.shevchenko@gmail.com,
+	u.kleine-koenig@pengutronix.de,
+	tiwai@suse.com,
+	perex@perex.cz,
+	broonie@kernel.org,
+	lgirdwood@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Maxim Kochetkov <fido_max@inbox.ru>
+Subject: [PATCH 1/1] ASoC: codecs: nau8824: fix max volume for Speaker output
+Date: Mon, 16 Dec 2024 07:39:10 +0300
+Message-ID: <20241216043910.11875-1-fido_max@inbox.ru>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] KVM: TDX: Add a place holder to handle TDX VM exit
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
- michael.roth@amd.com, linux-kernel@vger.kernel.org
-References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
- <20241201035358.2193078-2-binbin.wu@linux.intel.com>
- <28930ac3-f4af-4d93-a766-11a5fedb321e@intel.com>
- <25a042e8-c39a-443c-a2e4-10f515b1f2af@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <25a042e8-c39a-443c-a2e4-10f515b1f2af@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: B8F34718100C35BD
+X-77F55803: 4F1203BC0FB41BD977EAE61095F37AC56DA83E944C60B7F01FF5E58BE572B7FA182A05F538085040BD0C86E1AD3B7D063DE06ABAFEAF6705D5F0C2CF49B4B19F649E9C764B8BC09689BD80B6B4489A2D
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7BF0A1B3B6C8FCECEEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637835928C62272F24E8638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D814F084CC3E29204B67B90F39F78F66207F9F65796329D85D20879F7C8C5043D14489FFFB0AA5F4BFA417C69337E82CC2CC7F00164DA146DAFE8445B8C89999728AA50765F790063773DCDF0198120BE8389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8062BEEFFB5F8EA3EF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA7E827F84554CEF5019E625A9149C048EE9ECD01F8117BC8BEE2021AF6380DFAD18AA50765F7900637F09814068C508CC822CA9DD8327EE4930A3850AC1BE2E735F43AACC0BCEB2632C4224003CC83647689D4C264860C145E
+X-87b9d050: 1
+X-C1DE0DAB: 0D63561A33F958A5A96BCD13058A94565002B1117B3ED696FDA76B72DE525F0B361FAC1196A180DE823CB91A9FED034534781492E4B8EEAD85CCBA673D36D1A4C79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFA05FE97CB63ACDC69ABF3B9D12608F7DD31D766767CBC9D7D845F9C07C9BEAD9486D6DC23143AA0E0B0B9839AE4C716C9D5EDB214F0EF656FD90C06316E45D4A4921331E214CB506034D55ECCE8C67C6913E6812662D5F2A17D6C1CDD2003EB8E03787203701020945C72C348FB7EED3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojaQ2NfKPcDQOjSG1gZoFBuQ==
+X-Mailru-Sender: 689FA8AB762F739381B31377CF4CA2194A6B45A044EF17C899FEC6F5DCFEC16E0A3D3B0499CDA6B490DE4A6105A3658D481B2AED7BCCC0A49AE3A01A4DD0D55C6C99E19F044156F45FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-Mailru-Src: fallback
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B46EA299E95BC82A782122C14CBA0FEDEC285AF2326562DB2E68F3CF0E9FE49B69C79DC6EF635AF45EBD69C7A33469ECE14F250E37782E405A2040BC5B843AEA0B1EBAC62B62E91FCC
+X-7FA49CB5: 0D63561A33F958A51A978F18596FDABA5002B1117B3ED696B11B950DF3EC314CA92FD30A1C74D94802ED4CEA229C1FA827C277FBC8AE2E8B54F520D093A0DF28
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u6NqYXWMR0/V85CnFjCYTu9APdQH0PvpnP5qz8aO2mjTJzjHGC4ogvVuzB3zfVUBtENeZ6b5av1fnCBE34JUDkWdM6QxE+Ga5d8voMtmXfSpcfWZm7knnmrJdENjvzQK2
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B46EA299E95BC82A7890507F2CB992334917BBBC01B0F98AF368F3CF0E9FE49B69C79DC6EF635AF45EE00D1C991AB71C4A522FCA9EF5D3FCB0AC3C8A24A179AFC5
+X-7FA49CB5: 0D63561A33F958A541589099BEE628C387D2EFFC610A908BA7FA9F57725F2948CACD7DF95DA8FC8BD5E8D9A59859A8B6A096F61ED9298604
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u6NqYXWMR0/V85CnFjCYTu9APdQH0PvpnP5qz8aO2mjTJzjHGC4ogvVuzB3zfVUBtENeZ6b5av1fnCBE34JUDkWdM6QxE+Ga5d8voMtmXfSpcfWZm7knnmgD/ql6jfy+t
+X-Mailru-MI: 20000000000000800
+X-Mras: Ok
 
-On 12/16/2024 8:54 AM, Binbin Wu wrote:
-> 
-> 
-> 
-> On 12/13/2024 4:57 PM, Xiaoyao Li wrote:
->> On 12/1/2024 11:53 AM, Binbin Wu wrote:
-...
->>
->>>   }
->>>     void tdx_load_mmu_pgd(struct kvm_vcpu *vcpu, hpa_t root_hpa, int 
->>> pgd_level)
->>> @@ -1135,6 +1215,88 @@ int tdx_sept_remove_private_spte(struct kvm 
->>> *kvm, gfn_t gfn,
->>>       return tdx_sept_drop_private_spte(kvm, gfn, level, pfn);
->>>   }
->>>   +int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
->>> +{
->>> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
->>> +    u64 vp_enter_ret = tdx->vp_enter_ret;
->>> +    union vmx_exit_reason exit_reason;
->>> +
->>> +    if (fastpath != EXIT_FASTPATH_NONE)
->>> +        return 1;
->>> +
->>> +    /*
->>> +     * Handle TDX SW errors, including TDX_SEAMCALL_UD, 
->>> TDX_SEAMCALL_GP and
->>> +     * TDX_SEAMCALL_VMFAILINVALID.
->>> +     */
->>> +    if (unlikely((vp_enter_ret & TDX_SW_ERROR) == TDX_SW_ERROR)) {
->>> +        KVM_BUG_ON(!kvm_rebooting, vcpu->kvm);
->>> +        goto unhandled_exit;
->>> +    }
->>> +
->>> +    /*
->>> +     * Without off-TD debug enabled, failed_vmentry case must have
->>> +     * TDX_NON_RECOVERABLE set.
->>> +     */
->>
->> This comment is confusing. I'm not sure why it is put here. Below code 
->> does nothing with exit_reason.failed_vmentry.
-> 
-> Because when failed_vmentry occurs, vp_enter_ret will have
-> TDX_NON_RECOVERABLE set, so it will be handled below.
+There is no audio output if Speaker volume is set above 25.
+According to datasheet maximum allowed value for the Speaker
+output is 0b11001 (25).
+So adjust this value with datasheet.
 
-The words somehow is confusing, which to me is implying something like:
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+---
+ sound/soc/codecs/nau8824.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-	WARN_ON(!debug_td() && exit_reason.failed_vmentry &&
-                 !(vp_enter_ret & TDX_NON_RECOVERABLE))
-
-Besides, VMX returns KVM_EXIT_FAIL_ENTRY for vm-entry failure. So the 
-question is why TDX cannot do it same way?
-
->>
->>> +    if (unlikely(vp_enter_ret & (TDX_ERROR | TDX_NON_RECOVERABLE))) {
->>> +        /* Triple fault is non-recoverable. */
->>> +        if (unlikely(tdx_check_exit_reason(vcpu, 
->>> EXIT_REASON_TRIPLE_FAULT)))
->>> +            return tdx_handle_triple_fault(vcpu);
->>> +
->>> +        kvm_pr_unimpl("TD vp_enter_ret 0x%llx, hkid 0x%x hkid pa 
->>> 0x%llx\n",
->>> +                  vp_enter_ret, to_kvm_tdx(vcpu->kvm)->hkid,
->>> +                  set_hkid_to_hpa(0, to_kvm_tdx(vcpu->kvm)->hkid));
->>
->> It indeed needs clarification for the need of "hkid" and "hkid pa". 
->> Especially the "hkdi pa", which is the result of applying HKID of the 
->> current TD to a physical address 0. I cannot think of any reason why 
->> we need such info.
-> Yes, set_hkid_to_hpa(0, to_kvm_tdx(vcpu->kvm)->hkid) should be removed.
-> I didn't notice it.
-
-don't forget to justify why HKID is useful here. To me, HKID can be 
-dropped as well.
-
-> Thanks!
-> 
-> 
->>
->>> +        goto unhandled_exit;
->>> +    }
->>> +
->>> +    /* From now, the seamcall status should be TDX_SUCCESS. */
->>> +    WARN_ON_ONCE((vp_enter_ret & TDX_SEAMCALL_STATUS_MASK) != 
->>> TDX_SUCCESS);
->>
->> Is there any case that TDX_SUCCESS with additional non-zero 
->> information in the lower 32-bits? I thought TDX_SUCCESS is a whole 64- 
->> bit status code.
-> TDX status code uses the upper 32-bits.
-> 
-> When the status code is TDX_SUCCESS and has a valid VMX exit reason, the 
-> lower
-> 32-bit is the VMX exit reason.
-> 
-> You can refer to the TDX module ABI spec or 
-> interface_function_completion_status.json
-> from the intel-tdx-module-1.5-abi-table for details.
-> 
-
-I see. (I asked a silly question that I even missed the normal Exit case)
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 12540397fd4d..5aaf8c496300 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -368,13 +368,13 @@ static const struct snd_kcontrol_new nau8824_snd_controls[] = {
+ 	SOC_ENUM("DAC Oversampling Rate", nau8824_dac_oversampl_enum),
+ 
+ 	SOC_SINGLE_TLV("Speaker Right DACR Volume",
+-		NAU8824_REG_CLASSD_GAIN_1, 8, 0x1f, 0, spk_vol_tlv),
++		NAU8824_REG_CLASSD_GAIN_1, 8, 0x19, 0, spk_vol_tlv),
+ 	SOC_SINGLE_TLV("Speaker Left DACL Volume",
+-		NAU8824_REG_CLASSD_GAIN_2, 0, 0x1f, 0, spk_vol_tlv),
++		NAU8824_REG_CLASSD_GAIN_2, 0, 0x19, 0, spk_vol_tlv),
+ 	SOC_SINGLE_TLV("Speaker Left DACR Volume",
+-		NAU8824_REG_CLASSD_GAIN_1, 0, 0x1f, 0, spk_vol_tlv),
++		NAU8824_REG_CLASSD_GAIN_1, 0, 0x19, 0, spk_vol_tlv),
+ 	SOC_SINGLE_TLV("Speaker Right DACL Volume",
+-		NAU8824_REG_CLASSD_GAIN_2, 8, 0x1f, 0, spk_vol_tlv),
++		NAU8824_REG_CLASSD_GAIN_2, 8, 0x19, 0, spk_vol_tlv),
+ 
+ 	SOC_SINGLE_TLV("Headphone Right DACR Volume",
+ 		NAU8824_REG_ATT_PORT0, 8, 0x1f, 0, hp_vol_tlv),
+-- 
+2.45.2
 
 
