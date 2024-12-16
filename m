@@ -1,229 +1,123 @@
-Return-Path: <linux-kernel+bounces-448149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF859F3C40
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:09:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8039F3C42
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892C71885822
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70EA188E39A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCB01E008A;
-	Mon, 16 Dec 2024 20:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F571D9A51;
+	Mon, 16 Dec 2024 20:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O1R3Tvw6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ITZ+ynrO"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB2A1D9595;
-	Mon, 16 Dec 2024 20:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1831D45EF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734382344; cv=none; b=BnjJpD6hYxzJIkiuAqM4fRIZ3j9xdjeQ77pIMsY8xTWhMdDSmpHzPFlZqU+GEiC2006Cmololu3kN1MxJ7JDIrr04o0LVnHaGUcJix7Zc8SsZ/5v/ezWsWTGXaC1yC11NB1N+dU8u4sVR7cCLvVZwTPb0FFX2ovsl9DP25uAj6w=
+	t=1734382417; cv=none; b=Li98vnoDCnPzXWoWnGdteTbj4UJjtthQNYrMzodZqT4lP8OE9CJ9mC7f8wpgHLop5QgKzQs4zhtO3c/n4mAVX8ygzUBkuoYH6oTPKt06eV/LlyyJFJIc/BujbpTs755yXmaSpGKpo/Zs8L2w+jf/6Ev//kLtI+4TCaeAESwQEXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734382344; c=relaxed/simple;
-	bh=Z8phgwoaNiU7bL15KsnNZNkdYTf7NzvjvDW4bkCnj4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CMA3Nfus/Irk45YWncbFePiQ2fKin3XOhSLCUREEfNIwsZJ2DWxAZ8gR+nXT34khB7c0UzFe1kiJRAHmvwF7+1tDMVGn6lCQfZYUGtXC7zQgU4p6GTyW3KuqjWQ9ojkBKkY7MkfxVrysSL8zUKHdfcQFi4pnBeCfRjU3SOQGdSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O1R3Tvw6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIwdNl010436;
-	Mon, 16 Dec 2024 20:52:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JeHhNvzCpbNEp1a2ew77ggNizxztZaVSKeqIIBHvoYU=; b=O1R3Tvw624bdw5j4
-	xeqVNy11fQ1c3RKDsuinxXFZyE8M5xxTHk2OXQhx9WbdeuMBneJpGseFJs9EcWQj
-	/J9rmRMMqdTIFpy82GacY59jpCQZgR46dlcy0IlHFkJ0ARIBaMaXlXZtQZ9iMFai
-	EKNfMzjgth3ab8Ny7aKtSH9YIThPfaa11U/D+ajMWRFUgAVB79RVxnO1fAo+W9Bl
-	OTfv2uiMzOkH01i63qf4Rfl2UNY8yykDnfNJl3ONAd+A3eEQegjDE9+bTvRwGfsN
-	5w0yYygqRVzGda8P+5zedI4yhGM51ms093+Qg5tHGw8brxT77WdtAw6QMMRbbriE
-	7vb8Pg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsy707ep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 20:52:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGKqCZg011299
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 20:52:12 GMT
-Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 12:52:10 -0800
-Message-ID: <5a3f1bd2-436f-4886-90b5-bec205692fb1@quicinc.com>
-Date: Mon, 16 Dec 2024 12:52:09 -0800
+	s=arc-20240116; t=1734382417; c=relaxed/simple;
+	bh=6EfB6x7eCo3wA6NagtQZ68bboMnD4vJq5kYDbE41ElY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OI6h/yinug3ICd9YbcsdMs4KhZb096LN3b9ALNSS2gzfi3MKEBkiPEjjeahxCezGcPBr5XDcXCFR3+rxWFPvXLedO9gIpLc/tAnFL77mJ4MtbKHUIZdbUP+U/7tpuIbKEo9GKXzY5xIhZffMxq6DVicbb8usikaocfWLF40KFjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ITZ+ynrO; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4679b5c66d0so5551cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734382414; x=1734987214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C652rZDSvgkZ0k1BwpYHR8VjpUkn9It4q/dyT6wjU8g=;
+        b=ITZ+ynrO6ZS0orHyhpHnUugyCvuuO1tmyHgiGpTvQHWf0y1++Nn68XU4uE3SSJlYDH
+         8O3j6/KRdVE8RxdYh8/Thuto0+34MoS2j1Pn5jRaOZqR+wSUdz1X1ZO1I7Ugby7mguzp
+         iBmu3mlB8v3SlL9jy9Vg8RiN38n6lJOOWR288JK9zwMfyeQLLKieh/WkBeDy+Dvevl9s
+         GbVdZ7cZwJXMhg3akLhrfME4Og6Lv1j/iItuH/lxibXSHMo82FnuFdQM/71MPZllwNVl
+         vtXg+Pog8NResws7Sdx8IDgK5fGMyi3Wtid+H2fe378TZhk1PkURgj25+8PU0a6RoZaM
+         eAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734382414; x=1734987214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C652rZDSvgkZ0k1BwpYHR8VjpUkn9It4q/dyT6wjU8g=;
+        b=kFJSMPM34hBwWYMsEPFu3TwO3hfepUAQ87YgF1gdkM/Dl0RhHOlBI6yRUe/DA+gLWA
+         sNvPsnh/HzIus5nZnNQvxfIEUCQ7QO18QpX7EzSPXSNdFUqw9Y5rPsLmkJN+5ujNd5Lj
+         qIbFp+9BmZSEfpHCnrsiwGKEgyFVin2SM1YaNcDzxkYC5te2+gBaz2VaZVwOcGJugrTX
+         hjxhEIM3cL680H1Zz3+VqaepgwgzM+cLcp+/JGCYOYm7CbFwlWMrdKdHOfpCCmVIbXhv
+         1hR8dotANgq2xGz0JNGmZYHcW0aKyYVuqOP51UC3uwLCmQyV1kADqSEMIy/nU8P7RwL2
+         sJjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbsinjbo3t8gTMue7EmXomzIirLQV04Q5INNYdaUIJihWRoxDHZroXFmJUC6F2BatLq0pg3XgxY8D6nog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHlQ5Z9MOpIP4gSlwdNJNuebPi47GeEFOoqjKAlZ+oKOrbamSX
+	qiuRBwB13lFtWiz0AmGnsRsX4YkMlxQUxWnVr4FZDowd4r76PuTg8DGaBW0JK81iJkHCl+LWt7d
+	O/S/tZ+PMKTBFCStJxF0hRtq3wLruXVmFn540
+X-Gm-Gg: ASbGnctnsqryA1DvcXJ21phdI+EDgVchRNurfTQ7eypfZlU9WILXeyJIE2wwS9vA7SS
+	aEnv5qJFXqOkw1DMw2pI+qJUVn1SOE8QUBRAl/Q==
+X-Google-Smtp-Source: AGHT+IECtw4GIes14vwWEzxFvxaCuKJ/1TZUV17FkJlSyJ8bJOD4eX1mf6k4P4SIvfNKoqIwfABSkPrJxR4wiemjLNQ=
+X-Received: by 2002:a05:622a:1a27:b0:463:6f7b:250d with SMTP id
+ d75a77b69052e-468f979beb6mr545991cf.24.1734382414158; Mon, 16 Dec 2024
+ 12:53:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/16] drm/msm/dp: read hw revision only once
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
- <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-fd-dp-audio-fixup-v4-15-f8d1961cf22f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: krWvG6pfq1uq6wWLboM1mtjGHZw6vEom
-X-Proofpoint-GUID: krWvG6pfq1uq6wWLboM1mtjGHZw6vEom
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160172
+References: <20241216192419.2970941-1-surenb@google.com> <20241216192419.2970941-11-surenb@google.com>
+ <20241216204223.GA9803@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241216204223.GA9803@noisy.programming.kicks-ass.net>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 16 Dec 2024 12:53:23 -0800
+Message-ID: <CAJuCfpFeKd8T-HXx+iD3DDPe_k_vMZgDvxeVRiuHDGwwgUTfdA@mail.gmail.com>
+Subject: Re: [PATCH v6 10/16] mm: replace vm_lock and detached flag with a
+ reference count
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	klarasmodin@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 12:42=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Mon, Dec 16, 2024 at 11:24:13AM -0800, Suren Baghdasaryan wrote:
+> > @@ -734,10 +761,12 @@ static inline bool vma_start_read(struct vm_area_=
+struct *vma)
+> >        * after it has been unlocked.
+> >        * This pairs with RELEASE semantics in vma_end_write_all().
+> >        */
+> > +     if (oldcnt & VMA_STATE_LOCKED ||
+> > +         unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&vma->vm_m=
+m->mm_lock_seq))) {
+>
+> You likely want that unlikely to cover both conditions :-)
 
+True. VMA_STATE_LOCKED is set only while the writer is updating the
+vm_lock_seq and that's a narrow window. I'll make that change in the
+next revision. Thanks!
 
-On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
-> There is little point in rereading DP controller revision over and over
-> again. Read it once, after the first software reset and propagate it to
-> the dp_panel module.
-> 
-
-Good idea, can be posted even separately in front of the catalog rework 
-as it fits in nicely even with current model.
-
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_catalog.c | 13 -------------
->   drivers/gpu/drm/msm/dp/dp_catalog.h |  3 ---
->   drivers/gpu/drm/msm/dp/dp_ctrl.c    | 12 +++++++++---
->   drivers/gpu/drm/msm/dp/dp_panel.c   |  3 +--
->   drivers/gpu/drm/msm/dp/dp_panel.h   |  1 +
->   5 files changed, 11 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> index 2992a0df262e9ab167a21a270d1aa8fd1383033d..84adf3a38e4cf0619b15850c31416f1e67049a42 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> @@ -42,19 +42,6 @@ void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_d
->   				    msm_dp_catalog->p0_len, msm_dp_catalog->p0_base, "dp_p0");
->   }
->   
-> -/**
-> - * msm_dp_catalog_hw_revision() - retrieve DP hw revision
-> - *
-> - * @msm_dp_catalog: DP catalog structure
-> - *
-> - * Return: DP controller hw revision
-> - *
-> - */
-> -u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog)
-> -{
-> -	return msm_dp_read_ahb(msm_dp_catalog, REG_DP_HW_VERSION);
-> -}
-> -
->   static void __iomem *msm_dp_ioremap(struct platform_device *pdev, int idx, size_t *len)
->   {
->   	struct resource *res;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index 310319619242df5fa0d91c89fbcc477f16c130ea..ddbae0fcf5fc428b2d37cd1eab1d5860a2f11a50 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> @@ -95,9 +95,6 @@ static inline void msm_dp_write_link(struct msm_dp_catalog *msm_dp_catalog,
->   /* Debug module */
->   void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_disp_state *disp_state);
->   
-> -/* DP Controller APIs */
-> -u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog);
-> -
->   struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
->   
->   #endif /* _DP_CATALOG_H_ */
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> index b15b7ba599e29c4edd746e9c2a8bf2f4a8eedf15..60dbf7eab3fd184bc12035d267abb3758cce9f89 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> @@ -131,6 +131,8 @@ struct msm_dp_ctrl_private {
->   	struct completion psr_op_comp;
->   	struct completion video_comp;
->   
-> +	u32 hw_revision;
-> +
->   	bool core_clks_on;
->   	bool link_clks_on;
->   	bool stream_clks_on;
-> @@ -173,6 +175,11 @@ void msm_dp_ctrl_reset(struct msm_dp_ctrl *msm_dp_ctrl)
->   
->   	sw_reset &= ~DP_SW_RESET;
->   	msm_dp_write_ahb(msm_dp_catalog, REG_DP_SW_RESET, sw_reset);
-> +
-> +	if (!ctrl->hw_revision) {
-> +		ctrl->hw_revision = msm_dp_read_ahb(msm_dp_catalog, REG_DP_HW_VERSION);
-> +		ctrl->panel->hw_revision = ctrl->hw_revision;
-> +	}
->   }
->   
->   static u32 msm_dp_ctrl_get_aux_interrupt(struct msm_dp_ctrl_private *ctrl)
-> @@ -307,12 +314,11 @@ static void msm_dp_ctrl_mainlink_disable(struct msm_dp_ctrl_private *ctrl)
->   static void msm_dp_setup_peripheral_flush(struct msm_dp_ctrl_private *ctrl)
->   {
->   	struct msm_dp_catalog *msm_dp_catalog = ctrl->catalog;
-> -	u32 mainlink_ctrl, hw_revision;
-> +	u32 mainlink_ctrl;
->   
->   	mainlink_ctrl = msm_dp_read_link(msm_dp_catalog, REG_DP_MAINLINK_CTRL);
->   
-> -	hw_revision = msm_dp_catalog_hw_revision(msm_dp_catalog);
-> -	if (hw_revision >= DP_HW_VERSION_1_2)
-> +	if (ctrl->hw_revision >= DP_HW_VERSION_1_2)
->   		mainlink_ctrl |= DP_MAINLINK_FLUSH_MODE_SDE_PERIPH_UPDATE;
->   	else
->   		mainlink_ctrl |= DP_MAINLINK_FLUSH_MODE_UPDATE_SDP;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-> index 3441c28e3ce332bfe932d7adee7f0ecbaa486c2e..969d618c909876fd7a13aeb6e6c9e117071bc682 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-> @@ -380,9 +380,8 @@ static void msm_dp_panel_send_vsc_sdp(struct msm_dp_panel_private *panel, struct
->   
->   static void msm_dp_panel_update_sdp(struct msm_dp_panel_private *panel)
->   {
-> -	u32 hw_revision;
-> +	u32 hw_revision = panel->msm_dp_panel.hw_revision;
->   
-> -	hw_revision = msm_dp_catalog_hw_revision(panel->catalog);
->   	if (hw_revision >= DP_HW_VERSION_1_0 &&
->   	    hw_revision < DP_HW_VERSION_1_2) {
->   		msm_dp_write_link(panel->catalog, MMSS_DP_SDP_CFG3, UPDATE_SDP);
-> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
-> index 8dde55b3a5ab64c0c12d69cb2dd5b5c733c83432..c348417bb07f33efdf1402a73c27ff99e394e5a3 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
-> @@ -38,6 +38,7 @@ struct msm_dp_panel {
->   	struct msm_dp_panel_psr psr_cap;
->   	bool video_test;
->   	bool vsc_sdp_supported;
-> +	u32 hw_revision;
->   
->   	u32 max_dp_lanes;
->   	u32 max_dp_link_rate;
-> 
+>
+> > +             vma_refcount_put(vma);
+> >               return false;
+> >       }
+> > +
+> >       return true;
+> >  }
 
