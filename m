@@ -1,298 +1,173 @@
-Return-Path: <linux-kernel+bounces-447857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD769F3802
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:53:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B719F3806
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8421884800
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B502163D50
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D4D2066F9;
-	Mon, 16 Dec 2024 17:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F8D206F22;
+	Mon, 16 Dec 2024 17:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JiQ2VrgG"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RfWMmxEC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4F2063C4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4112E20627E;
+	Mon, 16 Dec 2024 17:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734371549; cv=none; b=Z2o7el02e72sDO+kjJti9ZM85tdQS/anr5ZJJoEmj4ISULoloMpgtL2PlQIQTYk7cQCnWZVFZNJ3EXhCl7hoezEunG4xI2dPVb5VI5xSlFkeZkEb2ZY08SelJkE57NwBARXr1i87af1xpHV3wGBchMFtimQsVdauTxaXe8KUMDs=
+	t=1734371645; cv=none; b=Zh13jR08wN+fKFkjMwZuogXV5MXB61qcUEo4lA8sUgOST/BK+r4jfQZEQQ3kzLqHziKK2HsNVFyI3k1tTu2KZMYrPgTM7YI45lEIwTdgIOncsTdAugJOjDNANB55DYQj1K7BEVtYtsdyg353R7PJ7qKaOjzMNjDdyp8usCaJ/DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734371549; c=relaxed/simple;
-	bh=iQRgE9Rcu1KUs6xXY8YfJ2nds9R5OXRboroFHyRVbao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTAZdlT/rhsj+K/oPE1fnQIv0Rcos7rvBao8tvq0T2/etAuNXfsHHrmItMfKCTeq+pOsi7p0p05ALpmFCU9TA4RobIGP/4FrNpkiAvHFk+fa4z+pJTbHP0cKY1eK/vdBEfw8Eiwl28TIRZuvdbCH8HJrLvfRmWMbko0hOpgDERk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JiQ2VrgG; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-218c80a97caso1912775ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:52:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734371547; x=1734976347; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AGS1MlFpafeO/WKDSXrB+UcdagNLniFx8svINS1DDrg=;
-        b=JiQ2VrgGhjfu8N+ZKprGnywp2Q+Pmmucifes9BMAOq4+YdXYVVfDX+xNgHneRohy4k
-         IC0TG6fG/DeTCQyjzPnHlQ4B3f7qOF3qW1h/xnqaAjwi5ZspCSnNyYo/bzmVKkiIL/T5
-         z43g4YF8+QLbohb2I3uKjZmNwVZpVLzpT3ZKATthqZAENOscPrhRlBJlHRV8j6RxwRR2
-         eaEY2lThwACcVULG6elxGWsMCf0YE6y0qdV6E8euEattv/8FOehS7ohH/V4SKk9r5wt5
-         dV+YGiAJtgYXfu2HfyvxxxY7U/vZIJNW69+c4C2TPPHP0HcxqxQ/4ZJWwZwQqsBcVtQh
-         Wzmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734371547; x=1734976347;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AGS1MlFpafeO/WKDSXrB+UcdagNLniFx8svINS1DDrg=;
-        b=AxR4WLrTx+uX5FM9aDPDQVYCLYnt6J4RfJJupCFanD3E3CUVmM9/3oQpAf21KSjuEZ
-         +WEQczZEbTjRi/PPMDMeeRAuQ+FTLrLUwGl+oWYCkaIrHotgOnZxK0UvA/cnhgpPOa7Y
-         6YgLjDpjt1y3kQZvvkgu7uMDQ3nZ8nDgTiTVohFVg62Si6YGop7Yk82KlZXSMWnZtloC
-         PyS/KvUKjPXzTwblqf5q8AGyJpE/kQl/KUQ1HeLyv4qbzzzu2EAKx/QZj65X3ngqYq1O
-         o+78wfpfk40PeyFDGQEJBjBpJP+HHxnWyE2/v2uDSoIclJw4V9eJbZbRf1OSMgF9qYxG
-         lGqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEvpoN/NcyQu8EGlpBXhhkXUylVPfkb9OIt6PovwBByJNHg+FIt7x8Z0VdTzxRVE5Sh9JJCPvIIPk4z2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgh+PLXOvPKpS/6m73ygMS47KUpBwvioGz5j0Q0qgK/6wWCDsE
-	ftrO4AM5uIyhGdS+xtLf3rq3Ob/TkFVE4ckbm078nQxJGG0BXmNl3mZmgqI9rw==
-X-Gm-Gg: ASbGnctUptYCe+7v6dmXSrPhGvBDI2uPex5rPpv+grqvA5kVq4CKqHGMpseztEeyWro
-	9f5W915NUMvAHuoHTmzLIKcXX2SY9jkMUj+lSaIfyHB8+Ip33X6JOK9QRDq7upD1cuSnu2cHGQV
-	VzYh8xcSY4+vhZzpK3OVyvtBY7dkkRgyx46c8ZAsF1y0FGjajUQGeOr+O/lFyY/6t24fOJX10pa
-	T9pm8a3gVrDsSW82wj7q5gXmnlFO9gEo6McnXDejxoH2mpCtWmMAq14ByYK0oxQbeCY
-X-Google-Smtp-Source: AGHT+IGvWV6mfCj2/Ercn+vVqs5fNl4+6j1t5Xlmhx+sET9hOWmhhuc1oXLoQDebjet3XKapMZVhsw==
-X-Received: by 2002:a17:902:ec89:b0:215:7421:27c with SMTP id d9443c01a7336-21892a01fddmr196614925ad.29.1734371547288;
-        Mon, 16 Dec 2024 09:52:27 -0800 (PST)
-Received: from thinkpad ([120.56.200.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e50299sm45812965ad.143.2024.12.16.09.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 09:52:26 -0800 (PST)
-Date: Mon, 16 Dec 2024 23:22:10 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org,
-	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241216175210.mnc5kp6646sq7vzm@thinkpad>
-References: <20241209143821.m4dahsaqeydluyf3@thinkpad>
- <20241212055920.GB4825@lst.de>
- <13662231.uLZWGnKmhe@rjwysocki.net>
- <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
- <20241212151354.GA7708@lst.de>
- <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
- <20241214063023.4tdvjbqd2lrylb7o@thinkpad>
- <CAJZ5v0gLMx+tBo+MA3AQZ7qP28Z91d04oVBHVeTNcd-QD=kJZg@mail.gmail.com>
- <20241216171108.6ssulem3276rkycb@thinkpad>
- <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
+	s=arc-20240116; t=1734371645; c=relaxed/simple;
+	bh=hnKY5i2/zljIg4l97AhyOwu0FPsYJY76IY8x1olp0ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mcTCcJb7nZB9EEHhv3Qp/gmkTSWh+bmnktfi0zga1nSDUgHzMb43eyaMjrwZYjATiNC6JX2eXlysl64xNv0KeSGbMT7/iaSm4c+KBLsK/WPG1z8T0gUK7IJGGryzRYnFkoqqLCI3zwdQ/vrmsNhr+igKDqNtTM4UEx7Iw3JMp2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RfWMmxEC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG85ZLx027025;
+	Mon, 16 Dec 2024 17:53:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9U/ilX
+	h/eRoLsnqCHshZWK39IQwc60QO0ixa1oM/5QI=; b=RfWMmxEC0RengRjOBhBROo
+	OAORxdP+bf3+X01t/t/taikTSx7WvA8uuooEP4z9/UpofmssBY1dbhb9CAyWF28B
+	zr3Mx6gfY7e1JI2F1lMjSlqrINo9FwTW3/F5LV2lR0D1iR4DRZxE3fTvDBgn+LYU
+	1IFvbYw84juKAhuUj1xyNpfxs8Q/eauRlIn12MMMIkju+bNKiGDJfDMKeTwegcaH
+	AXpe7VLXb3B0amsAaBtEUwJDvCiuMXdDD/jjxv1AqQVixl0PSZva+WDtjof3Mbdi
+	Ay3TJvS8SgMsyF9PzN/ggm7oThp9Z0FUXBi1CSU66hHG6KYo2UEo0gZkB3UWYAfA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2astr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 17:53:30 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BGHAPDH027554;
+	Mon, 16 Dec 2024 17:53:29 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jgd2astm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 17:53:29 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGHCfSo014344;
+	Mon, 16 Dec 2024 17:53:28 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqxy62j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 17:53:28 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BGHrSKK16450262
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 16 Dec 2024 17:53:28 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CA2F58054;
+	Mon, 16 Dec 2024 17:53:28 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5892C5805C;
+	Mon, 16 Dec 2024 17:53:27 +0000 (GMT)
+Received: from [9.24.12.86] (unknown [9.24.12.86])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 16 Dec 2024 17:53:27 +0000 (GMT)
+Message-ID: <b5f5635a-a807-42ea-a81f-22b80fe4eda0@linux.ibm.com>
+Date: Mon, 16 Dec 2024 11:53:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] hwmon: pmbus-core: Add label for fan and temp
+To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
+        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
+References: <20241212214927.3586509-1-ninad@linux.ibm.com>
+ <20241212214927.3586509-2-ninad@linux.ibm.com>
+ <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
+ <c7717f89-65cc-4668-a3e0-ee042cdcd426@linux.ibm.com>
+ <2713e85d-f88a-49d6-8221-151e8631758c@roeck-us.net>
+Content-Language: en-US
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <2713e85d-f88a-49d6-8221-151e8631758c@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: vyxuOXaWbKmODO8fmrlBccyobF9kgdWW
+X-Proofpoint-GUID: zeKm9EyZZPe56r_CuCPOaDwnvBKsFpAv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ mlxlogscore=689 priorityscore=1501 malwarescore=0 impostorscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160146
 
-On Mon, Dec 16, 2024 at 06:35:52PM +0100, Rafael J. Wysocki wrote:
-> On Mon, Dec 16, 2024 at 6:11 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, Dec 16, 2024 at 05:24:40PM +0100, Rafael J. Wysocki wrote:
-> > > On Sat, Dec 14, 2024 at 7:30 AM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Fri, Dec 13, 2024 at 03:35:15PM +0100, Rafael J. Wysocki wrote:
-> > > > > On Thu, Dec 12, 2024 at 4:14 PM Christoph Hellwig <hch@lst.de> wrote:
-> > > > > >
-> > > > > > On Thu, Dec 12, 2024 at 01:49:15PM +0100, Ulf Hansson wrote:
-> > > > > > > Right. This seems to somewhat work for ACPI types of systems, because
-> > > > > > > ACPI is controlling the low power state for all the devices. Based on
-> > > > > > > the requested system wide low power state, ACPI can then decide to
-> > > > > > > call pm_set_suspend_via_firmware() or not.
-> > > > > > >
-> > > > > > > Still there is a problem with this for ACPI too.
-> > > > > > >
-> > > > > > > How does ACPI know whether it's actually a good idea to keep the NVMe
-> > > > > > > storage powered in s2idle (ACPI calls pm_set_suspend_via_firmware()
-> > > > > > > only for S2R and S2disk!?)? Especially when my laptop only supports
-> > > > > > > s2idle and that's what I will use when I close the lid. In this way,
-> > > > > > > the NMVe storage will certainly contribute to draining the battery,
-> > > > > > > especially when I won't be using my laptop for a couple of days.
-> > > > > > >
-> > > > > > > In my opinion, we need a better approach that is both flexible and
-> > > > > > > that dynamically adjusts based upon the use case.
-> > > > > >
-> > > > > > Agreed.  I'd be happy to work with the PM maintainers to do this,
-> > > > > > but I don't really know enough about the PM core to drive it
-> > > > > > (as the reply from Rafael to my mail makes pretty clear :))
-> > > > >
-> > > > > I'm here to help.
-> > > > >
-> > > > > Let me know what exactly you want to achieve and we'll see how to make it work.
-> > > >
-> > > > I'll try to summarize the requirement here since I started this thread:
-> > > >
-> > > > Problem statement
-> > > > =================
-> > > >
-> > > > We need a PM core API that tells the device drivers when it is safe to powerdown
-> > > > the devices. The usecase here is with PCIe based NVMe devices but the problem is
-> > > > applicable to other devices as well.
-> > > >
-> > > > Drivers are relying on couple of options now:
-> > > >
-> > > > 1. If pm_suspend_via_firmware() returns true, then drivers will shutdown the
-> > > > device assuming that the firmware is going to handle the suspend. But this API
-> > > > is currently used only by ACPI. Even there, ACPI relies on S2R being supported
-> > > > by the platform and it sets pm_set_suspend_via_firmware() only when the suspend
-> > > > is S2R. But if the platform doesn't support S2R (current case of most of the
-> > > > Qcom SoCs), then pm_suspend_via_firmware() will return false and NVMe won't be
-> > > > powered down draining the battery.
-> > >
-> > > So my question here would be why is it not powered down always during
-> > > system-wide suspend?
-> > >
-> > > Why exactly is it necessary to distinguish one case from the other
-> > > (assuming that we are talking about system-wide suspend only)?
-> > >
-> >
-> > To support Android like usecase with firmware that only supports
-> > suspend-to-idle (Qcom platforms). This usecase is not applicable right now, but
-> > one can't just rule out the possibility in the near future.
-> 
-> This doesn't explain anything to me, sorry.
-> 
-> > And the problem is that we need to support both Android and non-Android systems
-> > with same firmware :/
-> 
-> So what technically is the problem?
-> 
+Hi Guenter,
 
-NVMe wear out is the problem.
 
-> > > There are drivers that use pm_suspend_via_firmware() to check whether
-> > > or not something special needs to be done to the device because if
-> > > "false" is returned, the platform firmware is not going to remove
-> > > power from it.
-> > >
-> > > However, you seem to be talking about the opposite, so doing something
-> > > special to the device if "true" is returned.  I'm not sure why this is
-> > > necessary.
-> > >
-> >
-> > Because, since 'false' is returned, drivers like NVMe are assuming that the
-> > platform won't remove power on all DT systems and they just keep the devices in
-> > low power state (not powering them down). But why would I want my NVMe in DT
-> > based laptop to be always powered in system suspend?
-> 
-> Because it causes the system to use less energy when suspended.
-> 
+On 12/13/24 11:08, Guenter Roeck wrote:
+> On 12/13/24 08:12, Ninad Palsule wrote:
+>> Hello Guenter,
+>>
+>> On 12/12/24 16:06, Guenter Roeck wrote:
+>>> On 12/12/24 13:49, Ninad Palsule wrote:
+>>>> Adding label files for fan and temperature sensors in the power 
+>>>> supply.
+>>>> The openbmc application dbus-sensor(psusensor) requires those files to
+>>>> consfigure those sensors.
+>>>> Note that prefix for temp label is temp[A..C] used instead of 
+>>>> temp[1..3]
+>>>> as dbus-sensor(psusensor) application calculate index based on last
+>>>> digit in the name so we do not want to make index double digit after
+>>>> appending page index.
+>>>>
+>>>> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+>>>
+>>> We are not going to fix userspace problems in the kernel.
+>>>
+>>> Guenter
+>>>
+>>
+>> Thanks for the quick review.
+>>
+>> Sorry I am not clear on this. I feel that it is better to support 
+>> labels for temperature
+>>
+>> sensors and fans like other. Are you saying we should not support 
+>> these labels or
+>>
+>> I need update in the patch to support them better?
+>>
+>
+> There should be no such labels. Labels are supposed to have specific 
+> meanings,
+> such as "this is the CPU temperature sensor", not vague meanings such 
+> as "tempA".
+>
+> Guenter
 
-But the NVMe driver would be still operational. Powering it down would cause the
-system to use much less energy. There is also a case where some devices like
-(Laptops made out of Qcom SCX Gen3 SoCs) require all the PCIe devices to be
-powered down in order for the SoC to reach its low power state (CX power
-collapse in Qcom terms). If not, the SoC would continue to draw more power
-leading to battery draining quickly. This platform is supported in upstream and
-we keep the PCIe interconnect voted during suspend as the NVMe driver is
-expecting the device to retain its state during resume. Because of this
-requirement, this platform is not reaching SoC level low power state with
-upstream kernel.
+Thanks for the quick response. I will remove these changes for now and 
+will talk to you later about
 
-> > > > If the platform is using DT, then there is no entity setting
-> > > > pm_set_suspend_via_firmware().
-> > >
-> > > That's true and so the assumption is that in this case the handling of
-> > > all devices will always be the same regardless of which flavor of
-> > > system suspend is chosen by user space.
-> > >
-> >
-> > Right and that's why the above concern is raised.
-> 
-> And it is still unclear to me what the problem with it is.
-> 
-> What exactly can go wrong?
-> 
-> > > > So NVMe will be kept in low power state all the
-> > > > time (still draining the battery).
-> > >
-> > > So what would be the problem with powering it down unconditionally?
-> > >
-> >
-> > I'm not sure how would you do that (by checking dev_of_node()?). Even so, it
-> > will wear out the NVMe devices if used in Android tablets etc...
-> 
-> I understand the wear-out concern.
-> 
-> Is there anything else?
-> 
+better option.
 
-No, that's the only concern.
+Thanks & Regards,
 
-> > > > There were attempts to set this flag from
-> > > > PSCI [1], but there were objections on setting this flag when PSCI_SUSPEND is
-> > > > not supported by the platform (again, the case with Qcom SoCs). Even if this
-> > > > approach succeeds, then there are concerns that if the platform is used in an
-> > > > OS like Android where the S2Idle cycle is far more high, NVMe will wear out
-> > > > very quickly.
-> > >
-> > > I see.
-> > >
-> > > > So this is where the forthcoming API need to "dynamically adjusts
-> > > > based upon the use case" as quoted by Ulf in his previous reply. One way to
-> > > > achieve would be by giving the flexibility to the userspace to choose the
-> > > > suspend state (if platform has options to select). UFS does something similar
-> > > > with 'spm_lvl' [2] sysfs attribute that I believe Android userspace itself makes
-> > > > use of.
-> > >
-> > > Before we're talking about APIs, let's talk about the desired behavior.
-> > >
-> > > It looks like there are cases in which you'd want to turn the device
-> > > off completely (say put it into D3cold in the PCI terminology) and
-> > > there are cases in which you'd want it to stay in a somewhat-powered
-> > > low-power state.
-> > >
-> > > It is unclear to me what they are at this point.
-> > >
-> >
-> > I hope that my above explanation clarifies.
-> 
-> Sorry, but not really.
-> 
-> > Here is the short version of the suspend requirement across platforms:
-> >
-> > 1. D3Cold (power down) - Laptops/Automotive
-> > 2. D3hot (low power) - Android Tablets
-> 
-> Where do the above requirements come from?
-> 
+Ninad Palsule
 
-In my case, it is coming from the SoC vendor, Qcom.
-
-> > FWIW, I did receive feedback from people asking to just ignore the Android
-> > usecase and always power down the devices for DT platforms. But I happen to
-> > disagree with them. Let me know if I was wrong and I should not worry about
-> > Android usecase as it is for the future.
-> 
-> I'm not sure what you mean by the "Android usecase" TBH.  Do you mean
-> the wear-out concern in the Android usage scenario or is there more to
-> it?
-
-No, just the wear out concern in Android usecase.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
