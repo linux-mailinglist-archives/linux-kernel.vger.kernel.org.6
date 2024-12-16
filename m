@@ -1,192 +1,119 @@
-Return-Path: <linux-kernel+bounces-448322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA459F3E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:55:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BF59F3E80
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9519F188D0C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79837188E4E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC321DB52D;
-	Mon, 16 Dec 2024 23:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFD91DA10C;
+	Mon, 16 Dec 2024 23:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yr8B3m0H"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLhAfij6"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5C42A9B;
-	Mon, 16 Dec 2024 23:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC8D1D45F2;
+	Mon, 16 Dec 2024 23:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734393335; cv=none; b=Xi8kjLycrpJvH3yWuK/8Am/bikpjQ1J/tqGNrCSl8sLMCnMVEPIVSANufnOpHkuHbY4pcVn+5kmv96RlMyVpj0mV/Fjq+HWFphh1aBGU4jseTW1jS0YsJLByDctvBCci1tPvjP6GQekWa48dr1D4OJMwaA+qh+Y2h7TV/7Be6Rs=
+	t=1734393334; cv=none; b=mqz8Q0dgXamusCpj+hxYjteMI1EhKmO0M/RyEH5KYhiZjRNS6aeLTn/jXlZrMvKxeewUqH5AJtGf1WRPCQRPEoLWnDqAwzwaSlpG13SXzIjC13xXPAfBlAdgSRSgfRT3tDNuwlu3RGQ8vzpUIdBhkQafJtnMwP/kphynQylEB0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734393335; c=relaxed/simple;
-	bh=yY+H3IZ27kbq70Ic6mEqbgJLSSIcvv7qUvfpK4iVHV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=El1jGnOYVfEsmXUGUm4e/z/z+Q14u17SZAg3EEEay7LKavoc2wJbq2kB9HTmaHUe7IVxyYvIQLd/ufiaST8SE9GXR2rtR3Bdc6lXzgRmSfu8ad0I8Lgn5tgoZIsWuDe+HbqpMl4pSFNisiklLhEVbTlssQgsScNXFzaUT4sCBeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yr8B3m0H; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGI0MZF022402;
-	Mon, 16 Dec 2024 23:55:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w6PlaskUebzUlUBlgTkvIOZxMomq8R/80Ab8NqGyejU=; b=Yr8B3m0HTef0iPcZ
-	LuTQJeAVCQdBXO/4uf9J4GHEdOkrxE+J8PZ0xXYUW0ONv7CGVEgiU4aSn1AMK1eq
-	ul9kwYXn1uekDWVoTSfcK/OWk/JZQ4qTcmpau5Z0wHY5MZLyYfVo9esInKNghyYa
-	RMakNdtNqt5FTusOQMaHVSD3M3cFkl8f8vxe66MdZzSWJ2hYtO4eTtDXIt9BScLU
-	74FIeZx3ZVNO7STwUdD6XJC47IB3xYXBVVadk86Fd84nIqoiD59T8LxwReVsKUnm
-	W7lIvRg6w2oU1YV5Yc5unFaavOue2dzDM+0YTIav1zIRNQ8+M6YtFEeHdY9tBclq
-	v5GSOg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jgrra8w9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 23:55:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGNtQm2016591
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 23:55:26 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 15:55:25 -0800
-Message-ID: <8c5aaa04-3209-40f2-9ba4-a1d6ae00fbf7@quicinc.com>
-Date: Mon, 16 Dec 2024 15:55:24 -0800
+	s=arc-20240116; t=1734393334; c=relaxed/simple;
+	bh=qcHiewX+vr3/Az4ll4cLmuIeb2/zHSNvQ//ODJgqH5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmS/hY7nFl3I0tET346J8k1+iKLpW7xLEe/rJLjZcX0RPhW2NWLax9BZIh7TLGuFqsoly3xGBbMnJ6xMzg9K5VD3zW0D8NqrwnLN4HbBMvW4hFbFuzxVHLKzHBQ+Z4YyE+GORMrXN3Slf3dOC3+ZISsU5KVvpYU8uRj52fsE5Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLhAfij6; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2163b0c09afso41397125ad.0;
+        Mon, 16 Dec 2024 15:55:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734393331; x=1734998131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4wTsNWNRPHTgTo4+QxL64lGOH0MS+Fi8hjHOqgs2z8Y=;
+        b=FLhAfij6uq8+GB689ow4SgFEf14KccKSeJvzg8K/dLKu+ZYcRUeMqInloGh89nd4NL
+         ua9WiEGwKvPet8ova9vNTX6lDsJJILjmZ5YUBiun8gFzIwbrKRsfGf6y9LznhUmuRCWf
+         5q6havdAyNwqkOye09E0OAj4k66g9sjnLzn82kV1Ogm98d+eG9AuWqF74r4Eg9toW9FZ
+         F/tvCqq+3/mF/f0FF5U6Psfs0jNpM1vCmI7g66PUApAgt/NrGpSNPio9J9eORWSYzSOB
+         2zUVk+roIcOE8u2Tbu8vYXgFZoj9zIEr9qDI8sNqNgPASPQD0gnkVDpL3Tr/uFaiWdyr
+         Gk6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734393331; x=1734998131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wTsNWNRPHTgTo4+QxL64lGOH0MS+Fi8hjHOqgs2z8Y=;
+        b=Je2cU74a2wP0k34/AWDbekree72eqiGcn43Zu3rZcQwJXagKEvbP+7KuoJJujO95DG
+         h+P6QJ/HymuEwO3iTqZFpKL7lIU/ad8NgVOYNpJY5kD27rUMWBtld84BewSEI1rbH+Uj
+         DJO8GmacFPf1d7sVr8rKnVDwRUL+H69i0tWeQFJ2dLBZxzDaS/ysuRRnxo8JpaeaLjOz
+         0yThatH2KzfLw7bMaRLY5vUo6EH160P3h3LYYqLJfbuutkE/MVpkRM6Pw7DfQh8z5NV6
+         g+V5tXfMyNqjdlpu9jdpes8+MS0JefUrE5XLhmdpa6nD8W+4QcIDeqLTNZSFqAPLywVV
+         IgNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1dighKFSZzYZPnxCWG1luDP/5nWPMhjx6MkOxxpay+bAl2y2cbwt75oLEloCHhpb5koVpAKXCEUXEdA==@vger.kernel.org, AJvYcCXzUv26n/Jl3GN6OEaIbT4pcrWa6EaXI0jTM4TOIiRI9Zugbozj1yMsxMP5FKo8+PEoOug4QpMD5IgwudNh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhj1m13WRuT/3Rch0EjgWRgDv/8EY/t2apuukE74wLyaXKEaPy
+	Cv7LwYvrv/mNlhgaYJER/ns6VTTRssn8HWJQ+I2aIkkFAptbnoFH
+X-Gm-Gg: ASbGncvsNVSEq92L65WAP9+iNvD49OMQEuN+6S6LwmYCv6BQiQ2QHTfw+bj9MBLBeT5
+	P9tOuiUJtvySrW/ohvbUPAFhbegmhwPHHlWcOiFiHhQPxUDjzQxPt4DQ6N/iri0z9qcGKConJVc
+	kilSFj3FAZSaRmrFSEZwVmOj6KaIO2PrnKWk/2oe6SV24qdT+U9D4VoKovFIRzMxwoOU1sUUeSx
+	Z2r5kkfj+KTVDqfSn/j7kktbM+cUkuw1YwiZoZp+GRSVw7zViO5UB97bG9sXMfB2AYOSQ==
+X-Google-Smtp-Source: AGHT+IE0SpGpDxkCpz81oeAK2UC6rPnNZPTM4DwIHcEMUmU4YwsHkmM7Sq1SYKdjoDDRFEIU2DHKcA==
+X-Received: by 2002:a17:902:f68c:b0:216:48f4:4f1a with SMTP id d9443c01a7336-218929c3556mr180996245ad.16.1734393331014;
+        Mon, 16 Dec 2024 15:55:31 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e5499dsm46766075ad.126.2024.12.16.15.55.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 15:55:30 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 16 Dec 2024 15:55:29 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Murad Masimov <m.masimov@maxima.ru>
+Cc: Eric Tremblay <etremblay@distech-controls.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH 2/3] hwmon: (tmp513) Fix Current Register value
+ interpretation
+Message-ID: <b2168d93-12c1-443b-bb5c-bfe6df71fd8f@roeck-us.net>
+References: <20241216173648.526-1-m.masimov@maxima.ru>
+ <20241216173648.526-3-m.masimov@maxima.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: correct LM pairing for SM6150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Marijn
- Suijten" <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Li Liu <quic_lliu6@quicinc.com>,
-        Fange Zhang
-	<quic_fangez@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-sm6150-v1-1-9fd7ce2ff606@linaro.org>
- <54edef24-b27a-4d79-aff1-672d4e65b5a3@quicinc.com>
- <55dalo6ecncyceb6wmu7nm6hco4vixxox5grelykkdw5q6yjys@tac57c5nowsd>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <55dalo6ecncyceb6wmu7nm6hco4vixxox5grelykkdw5q6yjys@tac57c5nowsd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: byDHheK6OIT6RwUC3YdGiBI52V0FNrcR
-X-Proofpoint-GUID: byDHheK6OIT6RwUC3YdGiBI52V0FNrcR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 adultscore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216173648.526-3-m.masimov@maxima.ru>
 
-
-
-On 12/16/2024 2:23 PM, Dmitry Baryshkov wrote:
-> On Mon, Dec 16, 2024 at 11:26:37AM -0800, Abhinav Kumar wrote:
->>
->>
->> On 12/16/2024 12:20 AM, Dmitry Baryshkov wrote:
->>> According to the vendor devicetree on SM6150 LM_0 is paired with LM_2
->>> rather than LM_1. Correct pairing indices.
->>>
->>> Fixes: cb2f9144693b ("drm/msm/dpu: Add SM6150 support")
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
->>> index 621a2140f675fa28b3a7fcd8573e59b306cd6832..81eb274cc7000a3b70b0f6650088ddcd24648eab 100644
->>> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
->>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
->>> @@ -116,20 +116,20 @@ static const struct dpu_lm_cfg sm6150_lm[] = {
->>>    		.sblk = &sdm845_lm_sblk,
->>>    		.pingpong = PINGPONG_0,
->>>    		.dspp = DSPP_0,
->>> -		.lm_pair = LM_1,
->>> +		.lm_pair = LM_2,
->>>    	}, {
->>>    		.name = "lm_1", .id = LM_1,
->>>    		.base = 0x45000, .len = 0x320,
->>>    		.features = MIXER_QCM2290_MASK,
->>>    		.sblk = &sdm845_lm_sblk,
->>>    		.pingpong = PINGPONG_1,
->>> -		.lm_pair = LM_0,
->>>    	}, {
->>>    		.name = "lm_2", .id = LM_2,
->>>    		.base = 0x46000, .len = 0x320,
->>>    		.features = MIXER_QCM2290_MASK,
->>>    		.sblk = &sdm845_lm_sblk,
->>>    		.pingpong = PINGPONG_2,
->>> +		.lm_pair = LM_0,
->>>    	},
->>>    };
->>
->> Have a basic question here. We check the peer only if we will have more than
->> one LM needed in the topology but sm6150 does not have 3dmux, so the number
->> of LMs will not go beyond one.
->>
->> 318 		/* Valid primary mixer found, find matching peers */
->> 319 		if (lm_count < reqs->topology.num_lm) {
->>
->> It seems like this fix will be unused or does not really matter.
->>
->> Downstream has a different implementation for lm_pair, its used even to
->> decide the LM pair for CWB mux. Upstream has a simpler implementation of
->> just doing that in the code of using ODD LMs for ODD CWB muxes and even LMs
->> for even CWB muxes. So fix is okay but not needed.
+On Mon, Dec 16, 2024 at 08:36:47PM +0300, Murad Masimov wrote:
+> The value returned by the driver after processing the contents of the Current
+> Register does not correspond to the TMP512/TMP513 specifications. A raw
+> register value is converted to a signed integer value by a sign extension in
+> accordance with the algorithm provided in the specification, but due to the
+> off-by-one error in the sign bit index, the result is incorrect. Moreover,
+> negative values will be reported as large positive due to missing sign
+> extension from u32 to long.
 > 
-> So which topology is supposed to work with LM_0 / LM_2 pair?
+> According to the TMP512 and TMP513 datasheets, the Current Register (07h) is a
+> 16-bit two's complement integer value. E.g., if regval = 1000 0011 0000 0000,
+> then the value must be (-32000 * lsb), but the driver will return (33536 * lsb).
 > 
-
-Since there is no 3dmux, none of the LMs can really have a "pair" in 
-this chipset.
-
-This chipset has one DSI, one DP controller (which supports MST). So I 
-think the only possibility is single LM case for DSI and single LM case 
-for DP SST OR single LM case for DSI and 2 stream DP MST (which will use 
-2 LMs - one for each stream) . But even that can only do low resolutions 
-as even the MAX mdp clk is low on these.
-
-> I'd still prefer to land the fix for the sake of catalog having the
-> correct data.
+> Fix off-by-one bug, and also cast data->curr_lsb_ua (which is of type u32) to
+> long to prevent incorrect cast for negative values.
 > 
-
-the lm_pair left over in the downstream DT is for CWB mux because even 
-LMs can goto even CWBs. So only LM_0 and LM_2 can goto CWB_0 and are 
-hence a pair for CWB_0. But this has no relevance to upstream code.
-
-Dropping lm_pair would be more accurate for this chipset since it will 
-always goto single lm case.
-
-         else if (!dpu_kms->catalog->caps->has_3d_merge)
-                 topology.num_lm = 1;
-
->>
->>>
->>> ---
->>> base-commit: a3d570eace66b4016f2692a6f1045742ee70c6b1
->>> change-id: 20241216-dpu-fix-sm6150-17f0739f8fe0
->>>
->>> Best regards,
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
+> Fixes: 59dfa75e5d82 ("hwmon: Add driver for Texas Instruments TMP512/513 sensor chips.")
+> Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+
+Applied, after fixing checkpatch complaints.
+
+Guenter
 
