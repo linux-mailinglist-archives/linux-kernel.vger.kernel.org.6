@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-448262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BF49F3DCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:54:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30BC79F3DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C37188967C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7378D16AC66
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2B51D90A9;
-	Mon, 16 Dec 2024 22:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999101D9A7D;
+	Mon, 16 Dec 2024 22:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W8Kd9QKZ"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Cm/rg9ZA"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580841D5CD1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602511D61B7
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734389687; cv=none; b=UNi7FOXFMg8O9Wy5jhVWoZBbn/Lhp49FOfmjPjecLecrOUY3BFMnAtldShkjIlNLXA8fnL/dxEOD4uFDCWtc+2gr0gJi3sPKK+6l7/dtvpdoUGakXBObVtaauZDKO2qCjf5BAUM1wkedh9LmatRTwgQwLUt9RGi4kPZz0HsIeM4=
+	t=1734389688; cv=none; b=Ukiddf4T6rJCWm/wshImZpygreJEKr+JEC22tA9q0nodGwSmvOnfI/G8b53cBDchAL2DvvXzqfwyN9fdL7fi2MhM+n7Sm5lDopajE/vVqomoeLO5okWZk1aqj+kRUASdH/wRWlV5RxEikjHyeopcUO5A8ihDsKWT1iV0ida2l88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734389687; c=relaxed/simple;
-	bh=8KCcfXAcnrbBrAylr/pecwYM1mZvQEg1BZbBmlSGq7U=;
+	s=arc-20240116; t=1734389688; c=relaxed/simple;
+	bh=3Yv9HXZbZ6qFS04G/TTVkzxJkRaupXuzYL93ruy4RrE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kC5HEWBfyTGcf4U4sM0+oq1XnofOGA8RVQjC7QKwktP+UdkKtmxhHNMDffE+/e3vOrU9pZOsycNMxvn/RtE/5rKoMg039TUVaAv+hul6on6tiP4V3dsMSm/1vx2MOu0hxXZhNNqqbvNfuOwCPoW8TWjAgcLyiJ3hzA58JsMp4/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W8Kd9QKZ; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=ttSXheHkkExBCzmTlk5YY5pu4pJJxf0PLeOn7J0NTNTS3iTT/Ov9rV5k2FKxDCIDCP0CNABB1yH4rOyqE39HDxrRR2JrkiuJjnG4hZs3zfRk23GBdWLAGzuq5uCZPGMphao5s8Cr6R0V7xeBlBVS2bVaux1sbeIp3LBPLAc4ltA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Cm/rg9ZA; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734389683;
-	bh=8KCcfXAcnrbBrAylr/pecwYM1mZvQEg1BZbBmlSGq7U=;
+	s=mail; t=1734389684;
+	bh=3Yv9HXZbZ6qFS04G/TTVkzxJkRaupXuzYL93ruy4RrE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W8Kd9QKZiVWBcdl6rqQn3oscAs6jehydIya4lzzUuEI3EJD8ojlV7cvC8JBvQea2Y
-	 rfeWy/0H9sxpLQDW0RWj2ImgSeEsFTgTp8fxe36rcb+LQaxno5InK1j/uTGB3xa1m3
-	 a9epkpomoIPijzdW2zgeNVC1gOvuiseElfAMSWjmyGc/ZXIPwrwfK0U+8M5YANhCVn
-	 m+rsBqtfCxyZ49/aJ1ys5fqAFE/emcVFnJbxJ7cnqLH2OHYr59stRV5x7oyUkgZggX
-	 8F3Ym0oyWZRm9ryIms4v8u7QjKJZB76ryYweaTxVVK6wNFE3eU6W0eNFtMGL09xlcj
-	 7JkVzhTi0M5qg==
+	b=Cm/rg9ZAzJp+Ba1aPf8zhm6N6tEvrGa7bWdhx82EL9brhfSMaNLqMzq2Gf5m75ZKb
+	 KtIDHWGlU0DSStagLTq9FqzCcb91NnXLb6TRVBUXr25MEsvkFa4D4iLRcg5rtaZmRA
+	 fn2TQEpDbbptzge0WpqiFDX5njooUt7ZplzdoaYvw+GpvPGVfHTwsa3GOrGqCMNiLK
+	 DtpA/ZEe/eplP1iJ0BOn90d3q6AORm+YGfUfL+ojwyO8uzezYlyCmYFqF5Oqzv0aKH
+	 /T8iqlWbamMhK9y3YoJlXkdxe81UzalQt1QH7MDw4zh1bC5WDMd9YGAk+jQLJcwVsV
+	 dFQxiP23D/sGA==
 Received: from localhost (unknown [188.27.48.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6BFD117E3832;
-	Mon, 16 Dec 2024 23:54:43 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 41D1717E3834;
+	Mon, 16 Dec 2024 23:54:44 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 17 Dec 2024 00:54:07 +0200
-Subject: [PATCH v3 1/2] drm/bridge-connector: Prioritize supported_formats
- over ycbcr_420_allowed
+Date: Tue, 17 Dec 2024 00:54:08 +0200
+Subject: [PATCH v3 2/2] drm/connector: hdmi: Validate supported_formats
+ matches ycbcr_420_allowed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-bridge-conn-fmt-prio-v3-1-3ecb3c8fc06f@collabora.com>
+Message-Id: <20241217-bridge-conn-fmt-prio-v3-2-3ecb3c8fc06f@collabora.com>
 References: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
 In-Reply-To: <20241217-bridge-conn-fmt-prio-v3-0-3ecb3c8fc06f@collabora.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -74,77 +74,30 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Bridges having the DRM_BRIDGE_OP_HDMI flag set in drm_bridge->ops are
-supposed to rely on drm_bridge->supported_formats bitmask to advertise
-the supported colorspaces, including HDMI_COLORSPACE_YUV420.  Therefore,
-the newly introduced drm_bridge->ycbcr_420_allowed flag becomes
-redundant in this particular context.
+Ensure HDMI connector initialization fails when the presence of
+HDMI_COLORSPACE_YUV420 in the given supported_formats bitmask doesn't
+match the value of drm_connector->ycbcr_420_allowed.
 
-Moreover, when drm_bridge_connector gets initialised, only
-drm_bridge->ycbcr_420_allowed is considered in the process of adjusting
-the equivalent property of the base drm_connector, which effectively
-discards the formats advertised by the HDMI bridge.
-
-Handle the inconsistency by overwriting drm_bridge->ycbcr_420_allowed
-for HDMI bridges according to drm_bridge->supported_formats, before
-adding them to the global bridge list.
-
-Additionally, ensure the YUV420 related bit is removed from the bitmask
-passed to drmm_connector_hdmi_init() when the final ycbcr_420_allowed
-flag for the connector ends up not being set (i.e. the case of having at
-least one non-HDMI bridge in the pipeline that didn't enable it).
-
-Fixes: 3ced1c687512 ("drm/display: bridge_connector: handle ycbcr_420_allowed")
+Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/gpu/drm/display/drm_bridge_connector.c | 8 ++++++--
- drivers/gpu/drm/drm_bridge.c                   | 4 ++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_connector.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 320c297008aaa8b6ef5b1f4c71928849b202e8ac..3a5a4f92c979accaa2a8f79ca0f15396dd579429 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -459,7 +459,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
- 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index fc35f47e2849ed6786d6223ac9c69e1c359fc648..ca7f43c8d6f1b31ef9d3a1ee05f4df930ecffac4 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -507,6 +507,9 @@ int drmm_connector_hdmi_init(struct drm_device *dev,
+ 	if (!supported_formats || !(supported_formats & BIT(HDMI_COLORSPACE_RGB)))
+ 		return -EINVAL;
  
--	if (bridge_connector->bridge_hdmi)
-+	if (bridge_connector->bridge_hdmi) {
-+		if (!connector->ycbcr_420_allowed)
-+			supported_formats &= ~BIT(HDMI_COLORSPACE_YUV420);
++	if (connector->ycbcr_420_allowed != !!(supported_formats & BIT(HDMI_COLORSPACE_YUV420)))
++		return -EINVAL;
 +
- 		ret = drmm_connector_hdmi_init(drm, connector,
- 					       bridge_connector->bridge_hdmi->vendor,
- 					       bridge_connector->bridge_hdmi->product,
-@@ -468,10 +471,11 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 					       connector_type, ddc,
- 					       supported_formats,
- 					       max_bpc);
--	else
-+	} else {
- 		ret = drmm_connector_init(drm, connector,
- 					  &drm_bridge_connector_funcs,
- 					  connector_type, ddc);
-+	}
- 	if (ret)
- 		return ERR_PTR(ret);
+ 	if (!(max_bpc == 8 || max_bpc == 10 || max_bpc == 12))
+ 		return -EINVAL;
  
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index c6af46dd02bfa9e15b59e4c460debdd7fd84be44..241a384ebce39b4a3db58c208af27960904fc662 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -207,6 +207,10 @@ void drm_bridge_add(struct drm_bridge *bridge)
- {
- 	mutex_init(&bridge->hpd_mutex);
- 
-+	if (bridge->ops & DRM_BRIDGE_OP_HDMI)
-+		bridge->ycbcr_420_allowed = !!(bridge->supported_formats &
-+					       BIT(HDMI_COLORSPACE_YUV420));
-+
- 	mutex_lock(&bridge_lock);
- 	list_add_tail(&bridge->list, &bridge_list);
- 	mutex_unlock(&bridge_lock);
 
 -- 
 2.47.0
