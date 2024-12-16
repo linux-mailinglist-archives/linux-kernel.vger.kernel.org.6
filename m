@@ -1,210 +1,97 @@
-Return-Path: <linux-kernel+bounces-447551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4079F3416
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:10:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658909F3413
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC79718848F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:10:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5018167498
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C39148314;
-	Mon, 16 Dec 2024 15:09:26 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D22146000;
+	Mon, 16 Dec 2024 15:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfS4F8tV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D472214375D
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 15:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2EF137775;
+	Mon, 16 Dec 2024 15:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734361765; cv=none; b=keEELn8oVyKCDt/3Z9NINEGH+UmAZk4j/d8Te2mAsCYZ1NZCcxretuFNwG+MZAcZdYgb1vWIkvhWNCuPeqHB9M4fJvh4EhLMeiEQSBbbTk/b9ccU1iCo+E79e9c7Oxs1RtfSzFUJ1mY82Vg0YBiLewfUlVJ8iDMAbJ87uTgkkT4=
+	t=1734361740; cv=none; b=cGSGyrbxsUnib652pHa/rZ1xS7sr1bxfJmG3ADyVqHXC9vzBXljft6m4HcodUjlRlsMVpnoxgubk6OGL2S4aak2Hfjzb9wN0ZjkapHBZqOijDIlwxWWVKBxr/OLWmrtcS91zH+vOXjJbsCCP9WKkupPvb8TE+hrbU1qRsKM/05g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734361765; c=relaxed/simple;
-	bh=+EZvaRtod53RfYhLjTwH55bjpToAZ++4brtIjAyL2/k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Mm0JIxMUNPxKjhMqwEq+T0+N93NpD7lrhXDqRW1U66IfYsu5KKzkQ4XEv3Vo5AZcFpLfZWu7C4KsP1pJ+Xq/PtjYLWwsI7EAgrNn1iLFCrTzN0fvuXpe0ibdLlyZXSOwLv1bB6vsOh0eSaNIvnVseKgbGXABIsiTqXT2MfMS0r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-186-zBF_QFIGN8iskqJS4NvIGg-1; Mon, 16 Dec 2024 15:09:19 +0000
-X-MC-Unique: zBF_QFIGN8iskqJS4NvIGg-1
-X-Mimecast-MFC-AGG-ID: zBF_QFIGN8iskqJS4NvIGg
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Dec
- 2024 15:08:14 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 16 Dec 2024 15:08:14 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Jiri Olsa' <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, Peter Zijlstra
-	<peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, Song Liu
-	<songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
-	<john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
-	<alan.maguire@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
-	<linux-trace-kernel@vger.kernel.org>
-Subject: RE: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
- uprobes
-Thread-Topic: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
- uprobes
-Thread-Index: AQHbS9GTSF5rwnXysUaDsufIVqYKlLLnNYvQgAFWD+SAAA72QIAAE/UAgAAKdkCAACFInYAAIoEw
-Date: Mon, 16 Dec 2024 15:08:14 +0000
-Message-ID: <e206df95d98d4cbab77824cf7a32a80f@AcuMS.aculab.com>
-References: <20241211133403.208920-1-jolsa@kernel.org>
- <20241211133403.208920-9-jolsa@kernel.org>
- <1521ff93bc0649b0aade9cfc444929ca@AcuMS.aculab.com>
- <20241215141412.GA13580@redhat.com> <Z1_gFymfO3sAwhiY@krava>
- <c5fb22629d3f42798def5b63ce834801@AcuMS.aculab.com>
- <20241216101258.GA374@redhat.com>
- <0916e24539ba4bae9fb729198b033bd7@AcuMS.aculab.com>
- <20241216122204.GB374@redhat.com> <Z2AiFdDsrSjZ_-3-@krava>
-In-Reply-To: <Z2AiFdDsrSjZ_-3-@krava>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1734361740; c=relaxed/simple;
+	bh=X6zUya9s+jpslx9GY5F9E0ZO6Cz3S1RvPAQFQrp7068=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJSrHmj1fWDUY5gcpJf3YK+j0U+PuilS210pz3BycZX/olMee0sIt2exfxkG10vUSqA+f7mNaUIoJXQbASNzYNEduzh6EPTKWrKZ99BbmYnGFAqdLnDvn9r/Z+olst3hnzSUp8BuEqpOXS9o8qJ0qfzgodzONo2K1+tF+sCTLaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfS4F8tV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174E1C4CED0;
+	Mon, 16 Dec 2024 15:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734361740;
+	bh=X6zUya9s+jpslx9GY5F9E0ZO6Cz3S1RvPAQFQrp7068=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NfS4F8tVEJm5MYu2FxSi/SCFs1BhbsRJGqendjItcvBSuUUR9j0i72eVtQ/0zmx3M
+	 TANcgSOTpmJy4LyMuxAKwauxmFdr6dYCGcxT9mZYEjcmDBQcM5B9leso7OrM6CV/di
+	 YKHvyP8yyUU/F34M3rbuKorepSVIsfRm0gC3mVyyk2AhW8Tm1iSzkM2BC/B4rIRQkN
+	 O45Yh59D0AjBJC0AdUjLQir7W8QsDmGxO4NB+7qpNRrNEx1oSSHtjpUKEVpsAJOcid
+	 lerPCJUg1WI+hHHBODG7N3wxVTFOWDt1z8DcaQzVa87lH476sKXDtgD7UXIcoNNstL
+	 t5aBYzIeEWRlA==
+Date: Mon, 16 Dec 2024 15:08:55 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+	ryan.roberts@arm.com, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH V2 03/46] arm64/sysreg: Update register fields for
+ ID_AA64PFR0_EL1
+Message-ID: <b5d96df1-3c02-40a7-833b-6a42183ec972@sirena.org.uk>
+References: <20241210055311.780688-1-anshuman.khandual@arm.com>
+ <20241210055311.780688-4-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: m0zGo3v7YDv_66sjJQzJJCRv8EZWcCLScxvMezbsJcI_1734361758
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8v5qYuuiozRiGBYl"
+Content-Disposition: inline
+In-Reply-To: <20241210055311.780688-4-anshuman.khandual@arm.com>
+X-Cookie: Be different: conform.
 
-From: Jiri Olsa
-> Sent: 16 December 2024 12:50
->=20
-> On Mon, Dec 16, 2024 at 01:22:05PM +0100, Oleg Nesterov wrote:
-> > OK, thanks, I am starting to share your concerns...
-> >
-> > Oleg.
-> >
-> > On 12/16, David Laight wrote:
-> > >
-> > > From: Oleg Nesterov
-> > > > Sent: 16 December 2024 10:13
-> > > >
-> > > > David,
-> > > >
-> > > > let me say first that my understanding of this magic is very limite=
-d,
-> > > > please correct me.
-> > >
-> > > I only (half) understand what the 'magic' has to accomplish and
-> > > some of the pitfalls.
-> > >
-> > > I've copied linux-mm - someone there might know more.
-> > >
-> > > > On 12/16, David Laight wrote:
-> > > > >
-> > > > > It all depends on how hard __replace_page() tries to be atomic.
-> > > > > The page has to change from one backed by the executable to a pri=
-vate
-> > > > > one backed by swap - otherwise you can't write to it.
-> > > >
-> > > > This is what uprobe_write_opcode() does,
-> > >
-> > > And will be enough for single byte changes - they'll be picked up
-> > > at some point after the change.
-> > >
-> > > > > But the problems arise when the instruction prefetch unit has rea=
-d
-> > > > > part of the 5-byte instruction (it might even only read half a ca=
-che
-> > > > > line at a time).
-> > > > > I'm not sure how long the pipeline can sit in that state - but I
-> > > > > can do a memory read of a PCIe address that takes ~3000 clocks.
-> > > > > (And a misaligned AVX-512 read is probably eight 8-byte transfers=
-.)
-> > > > >
-> > > > > So I think you need to force an interrupt while the PTE is invali=
-d.
-> > > > > And that need to be simultaneous on all cpu running that process.
-> > > >
-> > > > __replace_page() does ptep_get_and_clear(old_pte) + flush_tlb_page(=
-).
-> > > >
-> > > > That's not enough?
-> > >
-> > > I doubt it. As I understand it.
-> > > The hardware page tables will be shared by all the threads of a proce=
-ss.
-> > > So unless you hard synchronise all the cpu (and flush the TLB) while =
-the
-> > > PTE is being changed there is always the possibility of a cpu picking=
- up
-> > > the new PTE before the IPI that (I presume) flush_tlb_page() generate=
-s
-> > > is processed.
-> > > If that happens when the instruction you are patching is part-read in=
-to
-> > > the instruction decode buffer then you'll execute a mismatch of the t=
-wo
-> > > instructions.
->=20
-> if 5 byte update would be a problem, I guess we could workaround that thr=
-ough
-> partial updates using int3 like we do in text_poke_bp_batch?
->=20
->   - changing nop5 instruction to 'call xxx'
->   - write int3 to first byte of nop5 instruction
->   - have poke_int3_handler to emulate nop5 if int3 is triggered
->   - write rest of the call instruction to nop5 last 4 bytes
->   - overwrite first byte of nop5 with call opcode
 
-That might work provided there are IPI (to flush the decode pipeline)
-after the write of the 'int3' and one before the write of the 'call'.
-You'll need to ensure the I-cache gets invalidated as well.
+--8v5qYuuiozRiGBYl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-And if the sequence crosses a page boundary....
+On Tue, Dec 10, 2024 at 11:22:28AM +0530, Anshuman Khandual wrote:
+> This updates ID_AA64PFR0_EL1.RAS and ID_AA64PFR0_EL1.RME register fields as
+> per the definitions based on DDI0601 2024-09.
 
-=09David
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
->=20
-> similar update from 'call xxx' -> 'nop5'
->=20
-> thanks,
-> jirka
->=20
-> > >
-> > > I can't remember the outcome of discussions about live-patching kerne=
-l
-> > > code - and I'm sure that was aligned 32bit writes.
-> > >
-> > > >
-> > > > > Stopping the process using ptrace would do it.
-> > > >
-> > > > Not an option :/
-> > >
-> > > Thought you'd say that.
-> > >
-> > > =09David
-> > >
-> > > >
-> > > > Oleg.
-> > >
-> > > -
-> > > Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes,=
- MK1 1PT, UK
-> > > Registration No: 1397386 (Wales)
-> > >
-> >
+--8v5qYuuiozRiGBYl
+Content-Type: application/pgp-signature; name="signature.asc"
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdgQoYACgkQJNaLcl1U
+h9DaIQf/XyfoZhpxuUw+kmbgwoAn0Y0Y7YbIWmIoN7+40pdMnDJLoBqtPp8wkjxe
+ZxPYVrTbIfJNQqSj+sKpLAi0VWREbvEZgCP9tbTT5kNHJVF9naZ1PrBUsUgrHA5M
+vSn0GblRNv5Xu+m0yZc2Pvjup0m5BkF/Oz2EdNbUA+yfWKgPZNEmkR9ZmcJh/eB0
+QPmm4qgs8Khabo1QmeBOXegB6uAwp72aC0OBxngrk4ozRcWOw9aU6xWoKwHPIvwL
+GVPo0ybKZnJ3sy/Jz1tCwLJnrm3sBGzU0f+CyfJuOdca9LnutLA2X7p0RQJ32PQY
+EOlghR1VJAgePl1/tagqqf6JvR25xQ==
+=2hzw
+-----END PGP SIGNATURE-----
+
+--8v5qYuuiozRiGBYl--
 
