@@ -1,190 +1,112 @@
-Return-Path: <linux-kernel+bounces-448139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7089F3C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:05:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C49D9F3B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5FA3188131F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:03:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4415B18879FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E758A1FA156;
-	Mon, 16 Dec 2024 20:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C961D54F2;
+	Mon, 16 Dec 2024 20:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YVn/I0+n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbOM0Wao";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OlYOeBqe"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989A81FA143
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E94D1D47C3
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734381936; cv=none; b=CVNHFwIBO1MiWdLBPc2G0IJKWqYB5lWEx41IuzNEBe43EKjqFn15yDti+r3Ch5jl18OwAZIpmj5I1RLVPG8aWgRVMbp/tjHthfRt89HH1dDV8Pb3XW5D4ZFj6rvuTjlxfdnOYroXCnHXZNWhq6V46lQWcq1/3Ysk7nG8VLOJv+o=
+	t=1734381707; cv=none; b=cbUm/FkQUzF4kTUbZ0SPsBbZBdDY8Ytqh+me0ctcH76tU1MGipPS7BfzwvdBe1LPB84X0qvY4/NJ+Htsl67qnUV7QsvIoP04U/hGxWnDi1x9tpzlr4Ww6RZf20yFnVLy0jlZypW9K5KzOfhhlG2g2VQrJDL4u+7qjUVtOmG66eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734381936; c=relaxed/simple;
-	bh=wMJoA5AMnEpKevidbj50XhKJhvcyxrAG0ZcvzVHwzdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HEvpbOoBxsnemzOXJ4I3o+57sgqK1sUrCnHP5hHHmc8itYuMzw9ZQp4p5E7nTADW2V/mvWcNn9LnnReC1vRE7cFrGL62HNAWBi5tfh1Zs2JhRqNxalYrl8CPwfUYOKz01A7r+ofulUp8O3ek/HUueyDsR8fbkDXngTIMv/05iz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YVn/I0+n; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734381933;
+	s=arc-20240116; t=1734381707; c=relaxed/simple;
+	bh=2Ha288fDiGfbslAuZxDG5H7b6xzxlTEwi3JM5W7nbJo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZMajYdpyT54pafZN8v5cW/BRcCsTMaShID0oZK2gKc1G2Hn6pZMgqh/QQ+2XrY+M7sqksBg7OL6Ci9hoHgCGOA07j5Jx/PxAWw1L2sqfUWJrfTKfoKNDurEtwSGqjly/Wmm0qJvYpPjyKzpT8rzbYjrwbIumEPdzu/+t3voriSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbOM0Wao; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OlYOeBqe; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734381703;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Oo1wq8deJtNt2OQQxJVQAHf3OBjfRH+YniUEyQHkJfs=;
-	b=YVn/I0+n3ZX0a3T89VfPQeznOs2Dn3cSBLxYLr+6Nvr7hVOVnlSSFDabFOpw8S1b5cWFla
-	8MwmSfbfifkHjEy1VN3z7EqDH3FZ+LtHVdQFKnIeQvgjlUirUhhprDHFSkpQT/br0k9YvH
-	DfTPuvbQq1872nGFE9v2XfYZGM27k6Y=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-XuzHjsQvNUyN5PcUdS5A8w-1; Mon,
- 16 Dec 2024 15:45:31 -0500
-X-MC-Unique: XuzHjsQvNUyN5PcUdS5A8w-1
-X-Mimecast-MFC-AGG-ID: XuzHjsQvNUyN5PcUdS5A8w
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8C74195608E;
-	Mon, 16 Dec 2024 20:45:28 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.48])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9BF4B19560A2;
-	Mon, 16 Dec 2024 20:45:22 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com,
-	Chang Yu <marcus.yu.56@gmail.com>
-Subject: [PATCH v5 32/32] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
-Date: Mon, 16 Dec 2024 20:41:22 +0000
-Message-ID: <20241216204124.3752367-33-dhowells@redhat.com>
-In-Reply-To: <20241216204124.3752367-1-dhowells@redhat.com>
-References: <20241216204124.3752367-1-dhowells@redhat.com>
+	bh=xpHqeRSEScLoZvrRCvKzeXjOH12h5YIBSFQ3WbtPRMk=;
+	b=TbOM0WaoHcOCyil33Uodv/hrQLdnFsaGlO/brYDIz0tbIyVU1RcY4NOk2aizvM0QAZj5ZL
+	JoC92tKOfD51+EKO3+9NPOZ3eTnaA6LKsIEgofSo0N6VObulrOz3IIU6z+iHxB73TFq///
+	I+WFiV2sklUNO3oz0kk8D++33xPvk0fNySgU/ZCG7EykF9DAbCWl/tqCLzEd+9SvDmZag8
+	ze3FtOL23A5Sis8MD/MGd7L3Hp9knGoG6TAFvjCXdcsyI0O7QUJlQ4DRY1jFMSRNKNkJKI
+	yI08h/CYypTCKlGS2j/K+xiJ0hD649OniDLKfBdMW/BCw2Q8DL6HhTO91IA+uA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734381703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xpHqeRSEScLoZvrRCvKzeXjOH12h5YIBSFQ3WbtPRMk=;
+	b=OlYOeBqe/AF4ABePZwAWKrkcGt8h0MnzZP2I8vpriPr97JsHog1+I0CJQw24GVdfs7ePKB
+	4IEBL/gdGDqqK3AA==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
+ Long <longman@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [PATCH v5 07/14] futex: Move the retry_private label.
+In-Reply-To: <20241215230642.104118-8-bigeasy@linutronix.de>
+References: <20241215230642.104118-1-bigeasy@linutronix.de>
+ <20241215230642.104118-8-bigeasy@linutronix.de>
+Date: Mon, 16 Dec 2024 21:41:42 +0100
+Message-ID: <87ttb3743d.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain
 
-It seems that it's possible to get to netfs_writeback_unlock_folios() with
-an empty rolling buffer during buffered writes.  This should not be
-possible as the rolling buffer is initialised as the write request is set
-up and thereafter maintains at least one folio_queue struct therein until
-it gets destroyed.  This allows lockless addition and removal of
-folio_queue structs in the buffer because, unlike with a ring buffer, the
-producer and consumer each only need to look at and alter one pointer into
-the buffer.
+On Mon, Dec 16 2024 at 00:00, Sebastian Andrzej Siewior wrote:
+> The label futex_requeue in futex_requeue() and futex_wake_op() is jumped
+> after the lock is dropped in a retry operation.
 
-Now, the rolling buffer is only used for buffered I/O operations as
-netfs_collect_write_results() should only call
-netfs_writeback_unlock_folios() if the request is of origin type
-NETFS_WRITEBACK, NETFS_WRITETHROUGH or NETFS_PGPRIV2_COPY_TO_CACHE.
+The label is jumped? 
 
-So it would seem that one of the following occurred: (1) I/O started before
-the request was fully initialised, (2) the origin got switched mid-flow or
-(3) the request has already been freed and this is a UAF error.  I think
-the last is the most likely.
+> This assumes that the hb does not need to be hashed again. If hb is
+> resized then the hb can change if the reference is dropped.
 
-Make netfs_writeback_unlock_folios() report information about the request
-and subrequests if folioq is seen to be NULL to try and help debug this,
-throw a warning and return.
+Again 'hb' and the confusion of hash bucket (hb) resize.
 
-Note that this does not try to fix the problem.
+> Move the retry_private label before the hashing operation.
 
-Reported-by: syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Chang Yu <marcus.yu.56@gmail.com>
-Link: https://lore.kernel.org/r/ZxshMEW4U7MTgQYa@gmail.com/
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/write_collect.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+The overall explanation is not really comprehensible.
 
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 1b7f53d01b8d..294f67795f79 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -21,6 +21,34 @@
- #define NEED_RETRY		0x10	/* A front op requests retrying */
- #define SAW_FAILURE		0x20	/* One stream or hit a permanent failure */
- 
-+static void netfs_dump_request(const struct netfs_io_request *rreq)
-+{
-+	pr_err("Request R=%08x r=%d fl=%lx or=%x e=%ld\n",
-+	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
-+	       rreq->origin, rreq->error);
-+	pr_err("  st=%llx tsl=%zx/%llx/%llx\n",
-+	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
-+	pr_err("  cci=%llx/%llx/%llx\n",
-+	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued_to));
-+	pr_err("  iw=%pSR\n", rreq->netfs_ops->issue_write);
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		const struct netfs_io_subrequest *sreq;
-+		const struct netfs_io_stream *s = &rreq->io_streams[i];
-+
-+		pr_err("  str[%x] s=%x e=%d acnf=%u,%u,%u,%u\n",
-+		       s->stream_nr, s->source, s->error,
-+		       s->avail, s->active, s->need_retry, s->failed);
-+		pr_err("  str[%x] ct=%llx t=%zx\n",
-+		       s->stream_nr, s->collected_to, s->transferred);
-+		list_for_each_entry(sreq, &s->subrequests, rreq_link) {
-+			pr_err("  sreq[%x:%x] sc=%u s=%llx t=%zx/%zx r=%d f=%lx\n",
-+			       sreq->stream_nr, sreq->debug_index, sreq->source,
-+			       sreq->start, sreq->transferred, sreq->len,
-+			       refcount_read(&sreq->ref), sreq->flags);
-+		}
-+	}
-+}
-+
- /*
-  * Successful completion of write of a folio to the server and/or cache.  Note
-  * that we are not allowed to lock the folio here on pain of deadlocking with
-@@ -87,6 +115,12 @@ static void netfs_writeback_unlock_folios(struct netfs_io_request *wreq,
- 	unsigned long long collected_to = wreq->collected_to;
- 	unsigned int slot = wreq->buffer.first_tail_slot;
- 
-+	if (WARN_ON_ONCE(!folioq)) {
-+		pr_err("[!] Writeback unlock found empty rolling buffer!\n");
-+		netfs_dump_request(wreq);
-+		return;
-+	}
-+
- 	if (wreq->origin == NETFS_PGPRIV2_COPY_TO_CACHE) {
- 		if (netfs_pgpriv2_unlock_copied_folios(wreq))
- 			*notes |= MADE_PROGRESS;
+    futex: Re-evaluate the hash bucket after dropping the lock
 
+     Sebastian Andrzej Siewior wrote:
+
+     In futex_requeue() and futex_wake_op() the hash bucket lock is
+     dropped in the failure paths for handling page faults and other
+     error scenarios. After that the code jumps back to retry_private
+     which relocks the hash bucket[s] under the assumption that the hash
+     bucket pointer which was retrieved via futex_hash() is still valid.
+     
+     With resizable private hash buckets, that assumption is not longer
+     true as the waiters can be moved to a larger hash in the meantime.
+
+     Move the retry_private label above the hashing function to handle
+     this correctly.
+
+Or so.
+
+Thanks,
+
+        tglx
 
