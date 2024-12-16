@@ -1,227 +1,210 @@
-Return-Path: <linux-kernel+bounces-447082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB939F2D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:38:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754B79F2D22
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C047F166226
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5048166469
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1DA20125F;
-	Mon, 16 Dec 2024 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YgmzH13F"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05256201100;
+	Mon, 16 Dec 2024 09:40:39 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6355A1CEE9F
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3AB347B4
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734341910; cv=none; b=ccqVBDtJVXx3w/4y+L0Y0rYRQ+Z9YJdly+UvQgNMy1OHashOOl/ws4sShHufgKy2JIcF/hr2h1cH/xNctxKxtltpmNP2Pj225krRfkWLW4FzDBDcJOZHOemAju3P05Pf2H8UOthBaNeTsRGmGGoaY7ek23N7UlrDsWU5UeGX0sw=
+	t=1734342038; cv=none; b=RAUxAG9NVq1t0SWG7HG9mpuW4r7xKiSqvdpuy8b4fL56Py/BBf7sE5Ae/rL4NXxPFDFV4nj96D/nIQkSk6ORvr+RjnnD7nES8oXEstpzWUBtvpUVEBfDLWpMcGK4g1ZyIFfohReu8+8ZbtTwtsDVjclIa4NN8dvVZDNNDytzszQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734341910; c=relaxed/simple;
-	bh=LxzxYHaYqvSvrKL6pNOeXJJEEowAKzftB8AI0UlNKDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eH1ObCWiynI3HmULq2ro0P+XELpzf+LzQ1XsvVRkynB/N/zizgN2sHLmYp3fGNQ6HJ1x7vZbzR6B/99Oe0Foc++x1r9/c5qriANMtES1gv/stY2oG7QHM9iz7ptssVgoQvs1S5QpZ+0btejV9NMDYyJfSFOa71uWf91fsaDUVJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YgmzH13F; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7feb6871730so2556687a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:38:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734341907; x=1734946707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tH3QBbIq+Oz3UUmj0lw02AcvLXxTPOgWHp9+Xspxbik=;
-        b=YgmzH13FQw2kCdq4Iq7Q5xIgelIEZ/WnMbjxSKDPz+JQYK/E9eziRjkniSiaPL47oy
-         S2IoIFmalQ66xtgcWrz46mtd/KzFdE8AitOaHJaA8Pw2gRzTi1PtzC6VfrjD4YNNeWQw
-         MwGdt4JCEIyfzPnl6DxZFgiJtZQQxTIOfqPTn7rAMkpsfBK4rykPPRKeMkCKDmxWlho6
-         qbIhPgN+urxEY0yTg4dm1FPOXpfo49CiNrlqDDQyJnUBXoQFbo3sjpfPoiSXHodzGNGr
-         dstHkCzHy8efGsFfz2bW5UqX+ick8Lno1c/KDpdrW7BF0hn5e5B56Z44RoUkq0zcpfu/
-         BFgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734341907; x=1734946707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tH3QBbIq+Oz3UUmj0lw02AcvLXxTPOgWHp9+Xspxbik=;
-        b=rCTYEC+jOfTPM40SvdF4ddP8jkNILqULH6IOVghnvqxfh4sY4UFAVm9KeDjIFlghnx
-         /PA8aZycRsZJUwhUoUZft7Ltls/kkRuV594SGOWuPpTUvdZPVCN+ZWnuKShrpLUQJiCi
-         ZqbuJtL0eKUdCNI49gRcwF9DEFZzjkcZ9LRHy/jTLuz+h0Yo1SoUTYIQ+HviB9bxdkTG
-         /wtKZoV+wt6opSQvCx6g2pHtd8d0BTtPFiBphNX9H0UUzEkEDXAyuAopK0efYqAxbIiw
-         lUoL5tANaYsjQsoudOz95jE8Gl7H4KlyjikXd4+yCTyeC0PCqUHHsfUqSaX+HCHh0rNl
-         h83g==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Zf7N4SwEfTQSXI8GdbQRvSo+/cg5khg1/APlYgh30ccrEu0KutPRdEEr3OfExqTq7+k+iOkd+fJlWX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl6hBzzNqyRjtTZbgXGIC8eg+AhN+paeLzkUX7QPB101YtSagz
-	SmOf7ktZmpppKqH7fPstDEduxE7mpVC/g52crMQ2Y2/2wyF3sJ/42+z/iUbEej6dPX8h+HKP2IF
-	P9/nbwgAV5TIUJkjpgtDsOZQeoJvurGCFFhkT
-X-Gm-Gg: ASbGncsMP+xskjlPcPezHxDn5Ap8udus1m57+7+0pzTtSAvszUB6nJEnMpflDvZBi6a
-	9jXuZTLpqMP17zdYiUcnqUTapvut8IAIJxh7+SLA0OZfTOCcmzWZvfDguRBTPqztA+Utd
-X-Google-Smtp-Source: AGHT+IGTB5sJUwQljcH3S5XL+OOeiabxzJ/8JQxqL7sZAHgT5dvELbfZeFL8O7lW9m6UCh29vDeERfH397eAur7NOuQ=
-X-Received: by 2002:a17:90b:3c02:b0:2ee:5958:86d with SMTP id
- 98e67ed59e1d1-2f28fb6764amr17469580a91.9.1734341906491; Mon, 16 Dec 2024
- 01:38:26 -0800 (PST)
+	s=arc-20240116; t=1734342038; c=relaxed/simple;
+	bh=bHpJIiI25LZeZz/ihOtAculOrCMKvYHHdeszr+Hs0oc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k/ryfa3EuzwbUNVumoRadwOlgC3vPFwNm8b3pbxcGdFnXkmGJQ+5+IMARsWD2iFzYRs25BAsqKowaoOldAPSHogJhHTv5E3rN4T9XBqpnDO5LHWLmzYF+UT1y6pXctgAC9JF92U+4O97dr5ycMsFvOCSB3RTFDRKN30oxLXA9Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-287-fTsEXnYoOaqeiluB3YywZw-1; Mon, 16 Dec 2024 09:40:28 +0000
+X-MC-Unique: fTsEXnYoOaqeiluB3YywZw-1
+X-Mimecast-MFC-AGG-ID: fTsEXnYoOaqeiluB3YywZw
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 16 Dec
+ 2024 09:39:24 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 16 Dec 2024 09:39:24 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Yury
+ Norov'" <yury.norov@gmail.com>, 'Rasmus Villemoes' <linux@rasmusvillemoes.dk>
+CC: 'Andrew Morton' <akpm@linux-foundation.org>, 'Masahiro Yamada'
+	<masahiroy@kernel.org>, 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>,
+	'Linus Torvalds' <torvalds@linux-foundation.org>
+Subject: [PATCH v2 next] linux/bits.h: Simplify GENMASK()
+Thread-Topic: [PATCH v2 next] linux/bits.h: Simplify GENMASK()
+Thread-Index: AdtPnhh6INCU27N6T4uBovATuONM6w==
+Date: Mon, 16 Dec 2024 09:39:23 +0000
+Message-ID: <7a1b1534e51342769740985db773d5e1@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <675aa352.050a0220.1ac542.0018.GAE@google.com> <867c80ro2w.wl-maz@kernel.org>
-In-Reply-To: <867c80ro2w.wl-maz@kernel.org>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Mon, 16 Dec 2024 11:38:15 +0200
-Message-ID: <CANp29Y6Eu47CvtuKfS7qKqXVcVf7mvVoP7XQstryb_ooakCpcA@mail.gmail.com>
-Subject: Re: [syzbot] [kvmarm?] BUG: unable to handle kernel paging request in __hwasan_check_x0_ADDR
-To: Marc Zyngier <maz@kernel.org>
-Cc: syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com>, 
-	catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	oliver.upton@linux.dev, suzuki.poulose@arm.com, 
-	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: G0lalmA_GGbq46JAyjt1xxOZ8KX9cOGOdj35DS61kg0_1734342027
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
+Change 95b980d62d52c replaced ~0ul and ~0ull with ~UL(0) and ~ULL(0)
+in the GENMASK() defines as part of a change to allow the bitops
+definitions be used from assembly.
 
-Thanks for looking into the report!
-Let's tell syzbot about the fixing commit you mentioned:
+The definitions have since been moved to a uapi header which
+probably shouldn't require some other header be included first.
 
-#syz fix: KVM: arm64: vgic-v3: Sanitise guest writes to GICR_INVLPIR
+The definition of __GENMASK() is also overcomplicated partially
+due to avoiding overflow warnings from shifting ~0u left.
 
-Syzbot will close the issue once the commit reaches the fuzzed tree.
+Implement GENMASK() using the simpler (1u << hi) * 2 - (1u << lo) formula.
+This doesn't rely on right shifts and doesn't need to know the number
+of bits in the integral type.
+It can be used for different types by just changing the type of the 1u.
+__GENMASK() __GENMASK_ULL() and __GENMASK_U128() can now implemeted
+using a single ___GENMASK(one, hi, lo).
 
+Overflow warnings (from shifting out the MSB) are avoided by subtracting 1
+before the multiply and adding two back in later.
+The complers see straight through the subterfuge when generating code.
 
+Since there are already conditionals for ASSEMBLY in bits.h, for ASSEMBLY
+directly expand GENMASK() and GENMASK_ULL() as ___GENMASK(1, hi, lo)
+rather than through the __GENMASK() and __GENMASK_ULL() uapi defines.
+Remove the UL(x) and ULL(x) from the uapi file.
+
+GENMASK() and GENMASK_ULL() now generate the correct values when
+ASSEMBLY is defined.
+Fortunately they've never been used.
+
+Rename 'h' to 'hi' and 'l' to 'lo' because 'l' looks like '1' in many fonts=
+.
+
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+
+v2: '__uint128' =3D> 'unsigned __int128'
+
+ include/linux/bits.h      | 43 ++++++++++++++++-----------------------
+ include/uapi/linux/bits.h | 15 +++++++-------
+ 2 files changed, 24 insertions(+), 34 deletions(-)
+
+diff --git a/include/linux/bits.h b/include/linux/bits.h
+index 60044b608817..d5cf0ec22e43 100644
+--- a/include/linux/bits.h
++++ b/include/linux/bits.h
+@@ -14,41 +14,32 @@
+ #define BITS_PER_BYTE=09=098
+=20
+ /*
+- * Create a contiguous bitmask starting at bit position @l and ending at
+- * position @h. For example
++ * Create a contiguous bitmask starting at bit position @lo and ending at
++ * position @hi. For example
+  * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+  */
+ #if !defined(__ASSEMBLY__)
+ #include <linux/build_bug.h>
+-#define GENMASK_INPUT_CHECK(h, l) \
++#define GENMASK_INPUT_CHECK(hi, lo) \
+ =09(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+-=09=09__is_constexpr((l) > (h)), (l) > (h), 0)))
+-#else
+-/*
+- * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+- * disable the input check if that is the case.
+- */
+-#define GENMASK_INPUT_CHECK(h, l) 0
+-#endif
++=09=09__is_constexpr((lo) > (hi)), (lo) > (hi), 0)))
+=20
+-#define GENMASK(h, l) \
+-=09(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+-#define GENMASK_ULL(h, l) \
+-=09(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
++#define GENMASK(hi, lo) \
++=09(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK(hi, lo))
++#define GENMASK_ULL(hi, lo) \
++=09(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK_ULL(hi, lo))
+=20
+-#if !defined(__ASSEMBLY__)
++#define GENMASK_U128(hi, lo) \
++=09(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK_U128(hi, lo))
++#else
+ /*
+- * Missing asm support
+- *
+- * __GENMASK_U128() depends on _BIT128() which would not work
+- * in the asm code, as it shifts an 'unsigned __init128' data
+- * type instead of direct representation of 128 bit constants
+- * such as long and unsigned long. The fundamental problem is
+- * that a 128 bit constant will get silently truncated by the
+- * gcc compiler.
++ * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
++ * 128bit exprssions don't work, neither can C 0UL (etc) constants be used=
+.
++ * These definitions only have to work for constants and don't require
++ * that ~0 have any specific number of set bits.
+  */
+-#define GENMASK_U128(h, l) \
+-=09(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
++#define GENMASK(hi, lo) ___GENMASK(1, hi, lo)
++#define GENMASK_ULL(hi, lo) ___GENMASK(1, hi, lo)
+ #endif
+=20
+ #endif=09/* __LINUX_BITS_H */
+diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+index 5ee30f882736..a25d9dfb7072 100644
+--- a/include/uapi/linux/bits.h
++++ b/include/uapi/linux/bits.h
+@@ -4,15 +4,14 @@
+ #ifndef _UAPI_LINUX_BITS_H
+ #define _UAPI_LINUX_BITS_H
+=20
+-#define __GENMASK(h, l) \
+-        (((~_UL(0)) - (_UL(1) << (l)) + 1) & \
+-         (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
++/* Result is '(1u << (hi + 1)) - (1u << lo)' coded to avoid overflow. */
++#define ___GENMASK(one, hi, lo) \
++=09((((one) << (hi)) - 1) * 2 + 1 - (((one) << (lo)) - 1))
+=20
+-#define __GENMASK_ULL(h, l) \
+-        (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+-         (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
++#define __GENMASK(hi, lo) ___GENMASK(1UL, hi, lo)
+=20
+-#define __GENMASK_U128(h, l) \
+-=09((_BIT128((h)) << 1) - (_BIT128(l)))
++#define __GENMASK_ULL(hi, lo) ___GENMASK(1ULL, hi, lo)
++
++#define __GENMASK_U128(hi, lo) ___GENMASK((unsigned __int128)1, hi, lo)
+=20
+ #endif /* _UAPI_LINUX_BITS_H */
 --=20
-Aleksandr
+2.17.1
 
-On Mon, Dec 16, 2024 at 11:09=E2=80=AFAM 'Marc Zyngier' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> On Thu, 12 Dec 2024 08:48:18 +0000,
-> syzbot <syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    5db899a34f75 Merge remote-tracking branch 'kernel/kvmar=
-m/n..
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kv=
-marm.git fuzzme
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D16db78f8580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dfde68ab6d6c=
-8c8ab
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D67a9ec5b1706e=
-0184581
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> > userspace arch: arm64
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets=
-/384ffdcca292/non_bootable_disk-5db899a3.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/4938b757ff4a/vmli=
-nux-5db899a3.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/936938b47987=
-/Image-5db899a3.gz.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+67a9ec5b1706e0184581@syzkaller.appspotmail.com
-> >
-> > Unable to handle kernel paging request at virtual address efff800000000=
-137
-> > KASAN: probably user-memory-access in range [0x0000000000001370-0x00000=
-0000000137f]
-> > Mem abort info:
-> >   ESR =3D 0x0000000096000005
-> >   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> >   SET =3D 0, FnV =3D 0
-> >   EA =3D 0, S1PTW =3D 0
-> >   FSC =3D 0x05: level 1 translation fault
-> > Data abort info:
-> >   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
-> >   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> >   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> > swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000044a53000
-> > [efff800000000137] pgd=3D1000000049992003, p4d=3D1000000049993003, pud=
-=3D0000000000000000
-> > Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 6560 Comm: syz.2.929 Not tainted 6.12.0-rc7-syzkalle=
-r-g5db899a34f75 #0
-> > Hardware name: linux,dummy-virt (DT)
-> > pstate: 80402009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> > pc : __hwasan_check_x0_67043363+0x4/0x30
-> > lr : vgic_get_irq+0x7c/0x3d4 arch/arm64/kvm/vgic/vgic.c:93
-> > sp : ffff80008c597650
-> > x29: ffff80008c597660 x28: 00000000000000e0 x27: 0000000000000004
-> > x26: 0000000000000002 x25: ffff800083a7fe20 x24: 16f0000014accd90
-> > x23: 16f0000014acb9a0 x22: 0000000000000000 x21: a9ff80008c583000
-> > x20: 0000000000000001 x19: efff800000000000 x18: 0000000000000005
-> > x17: 0000000000000000 x16: 0000000000000137 x15: 0000000000000000
-> > x14: 0000000000000002 x13: 0000000000000003 x12: 70f000000a33ba80
-> > x11: 0000000000080000 x10: 0000000000001378 x9 : efff800000000000
-> > x8 : 0000000000000001 x7 : 0000000000000001 x6 : 0000000000000001
-> > x5 : ffff80008c597858 x4 : ffff8000800f2b38 x3 : ffff8000800f7a00
-> > x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000001378
-> > Call trace:
-> >  __hwasan_check_x0_67043363+0x4/0x30
-> >  vgic_mmio_write_invlpi+0xb0/0x174 arch/arm64/kvm/vgic/vgic-mmio-v3.c:5=
-46
-> >  dispatch_mmio_write+0x2a4/0x308
-> >  kvm_iodevice_write include/kvm/iodev.h:54 [inline]
-> >  __kvm_io_bus_write+0x290/0x340 virt/kvm/kvm_main.c:5852
-> >  kvm_io_bus_write+0x100/0x1bc virt/kvm/kvm_main.c:5877
-> >  io_mem_abort+0x4b8/0x7a0 arch/arm64/kvm/mmio.c:204
-> >  kvm_handle_guest_abort+0xb4c/0x1c64 arch/arm64/kvm/mmu.c:1880
-> >  handle_trap_exceptions arch/arm64/kvm/handle_exit.c:351 [inline]
-> >  handle_exit+0x1a0/0x274 arch/arm64/kvm/handle_exit.c:381
-> >  kvm_arch_vcpu_ioctl_run+0xbc0/0x15b0 arch/arm64/kvm/arm.c:1279
-> >  kvm_vcpu_ioctl+0x660/0xf78 virt/kvm/kvm_main.c:4475
-> >  vfs_ioctl fs/ioctl.c:51 [inline]
-> >  __do_sys_ioctl fs/ioctl.c:907 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:893 [inline]
-> >  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
-> >  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-> >  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
-> >  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
-> >  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
-> >  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
-> >  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-> >  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> > Code: a90efbfd d2800441 143a3ed3 9344dc10 (38706930)
->
-> This seems to be something that is already handled by d561491ba927c
-> ("KVM: arm64: vgic-v3: Sanitise guest writes to GICR_INVLPIR"), which
-> made it into 6.13-rc1.
->
-> The branch you are using doesn't seem to contain that particular
-> commit. I have now updated it to -rc3, which should plug that issue.
->
-> Let me know if it keeps appearing.
->
-> Thanks,
->
->         M.
->
-> --
-> Without deviation from the norm, progress is not possible.
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
--bugs/867c80ro2w.wl-maz%40kernel.org.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
