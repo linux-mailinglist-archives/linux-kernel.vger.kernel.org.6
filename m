@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-446741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444589F289C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:12:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEEF9F289D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 04:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9F1165280
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32BD518860A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 03:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2400315359A;
-	Mon, 16 Dec 2024 03:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4A919415D;
+	Mon, 16 Dec 2024 03:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRmO4C6W"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1OWYE1N"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B084189905
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40F719258B
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 03:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734318741; cv=none; b=OEAP7RjOEkwx330Q6IXhqRNokeYBOZFxZ9yFhQ0qxYLI8TJukNUgvW3mXzmZkRnG3MkrSJQtnpFCYWtcYVc/ZmCiJlwbUCTEeiOee1CGIgXS9hv7ktC0pROxq4hRQIkxPleirNG/anyDsLsVp3xw9Xm3qA7jADEf/FPjtb88EuM=
+	t=1734318744; cv=none; b=XKeldMzTNfTdiboF4DidaSF8TlsAO/c//CEL6w/Fb2tc91HCLGNkrTsUnn9wV5Hp4GU9HBHQ2XAe+wHaC6nRbt9XJTFp/0auUSjGZzx79TF4u/XxSSB5IeFU5uKk9iD+OHRT3YtyguI9Gsb4LASwHj1oYirW+ej4bahPf93XVDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734318741; c=relaxed/simple;
-	bh=ARXOQdQSx11dZrIJgooSqC+dLcFILjDmqZ4pffr3ioU=;
+	s=arc-20240116; t=1734318744; c=relaxed/simple;
+	bh=GZDtGSP3knc4XfhDJndoAF3aAtv9DQSb0onbM9mot6Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oEdmSwLLWzZ4DgOYwEm4fb0Z/S7hASCha/9pTdnSr5J7crcoQUC3SeRCT9opSstr4ebv89aslcQ9iVTzL4sJEezIDa7uoxy+Z/ojg3rV2GDMog4ugTOGHeRJOw9bqC304EQj8kmL79on9UGE6/6uGiZZVngVAWiy9CSlY9Qy938=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRmO4C6W; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=hq7cNy4Koz++6d5BpAJecXVn3X7Frd/dPZSNGFazjTRT1kNiD3d0AyZawo47MIafz35NNyM4kwDzz5Gr5Q+pBYREkO8iKU5iTVSMOjuNEXYQYmdm9lQ5OqXhK51l1Qc9DpEacqL83n97FLZbArJcV+pSJVjkRlgX7V7W3d8LKx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1OWYE1N; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ef760a1001so3043339a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 19:12:19 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-728f28744c5so3111724b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 19:12:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734318739; x=1734923539; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734318742; x=1734923542; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZqkOMc7yUSchrOgOACYpXkIQ2LF3oE6mW3dZxc94vO8=;
-        b=bRmO4C6WRZFLHNOieh2ibpIPJwwyUtxW3esW01gFq2JFLtR2cmz3ZBCcgU8Zj/FfHR
-         3C6LBCOWefWFGd3rbCBPxiVcweT2MfsufqhECMmaWlFgZW1D7TjVUXuNy6EE3GFC7kee
-         uVv65gIbYrw4nCoQH8/sx+h/oCPuCATDdvgaRBfcCRSEwVhli711Ik7zGpETQ8JmZZQ+
-         F+0ieqZmpGPLR1zgLyJFJuq7Zmjagi3dNkmMSskoLDyXcny5UscOwEKZ4o/ariXS01/I
-         s8e3dH0JGuUyV2pKOit/uSGwC44Q3byxNtR4d4Cu7pAFMhaG/Yp2PfFBVjLetWfcq2Kd
-         nQwg==
+        bh=3qwdnhpnNZ/kDLebmCqGGOAqoWdsfoXXWVd5XUHDoNY=;
+        b=P1OWYE1N6A6si4wPljkyOY6rSknFQ2XTH4cdMBxqiFINzD2IQt6dVSzDIAB9QHe+F1
+         ePlm0Vx75Xo4IrPdentab8KtPxoYlSfXKx6vDI7z7hQv/Nj3mFKbJNLL9Wfx2qDwmUMy
+         68qO8kYErkXttG+o2eFyxJTY8d0l3dpCiFy09VbS1fPqEl77PcrUEdafe6g/+gT9g973
+         NCYrAedz3ke2jAraas3+FOZ0r6O8hP5QuPC3s4WC3VB9UUS0oAUZGcOlslY2PXG3Atp4
+         I2A4p3pmCYJia+Rao3ovExiGU9GM6CsLK/SZHzU9OePGu4Z6om85C9IQVbNxXvL/bby+
+         j1Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734318739; x=1734923539;
+        d=1e100.net; s=20230601; t=1734318742; x=1734923542;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZqkOMc7yUSchrOgOACYpXkIQ2LF3oE6mW3dZxc94vO8=;
-        b=SHcVBo03V12NLvH6sCUu7pBq+th2wkdGeuJR4BoefUl8RraCyXgh89xXher/ruOX9V
-         /Q3sFFYruYyPFbX2+ILW0/JfMIVuziAiT35QHNFkftwAothhdkgTztp7Nh9CL6WQxU18
-         O/6om1gjrWe4t6yke0V4Xx4kTHecyUJ+Pqfqj/serBdXpqB4UL5ijRQw3DB/qFLElaaJ
-         Kl1dq18LwUwWBgIWH63+RAvfInhgyzfJvPTla3HXp0pyL7YjR6+JfS2pPeD+olGsJzby
-         rI1FKukuWIprKLXaLkLVbDUbS/tvahCs+E7DZfyx2tFAqMyLvw6S8WfGsPXfJsyK9ERJ
-         Zt1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXaFMmQIP5dMTfi0wIVr1Ei3/DK2iMVt8WBjIK/Jn2GgOyGMDEpMVMItLRFT3+q55zxRzvIVGzDGr3GT4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzT06OWJECuNkTJ60hWoWnhZYQ04kd5fTbeXmEsCrTkumVcKw9
-	GmK7R4TFPL8XBBf/TMhEyWaACfgsrAx9cNBwR1bSXOteNH8NpkZ+
-X-Gm-Gg: ASbGncso1Ol7wIRxSuTkjZ4UfDJzAGRpNG9FhmYEBcU+cYT7XzjUppGYWHe+F0L3/eH
-	R9SwLKY06RmXkZ6ghUgbuk7z3eTkmd7FvYRs/IP04NKtyCaYibbJ6xxwHmO0sYZwCSfnfrdy4te
-	QfiTnDg40Ke8mrIWz5NdQOKSNI/pklguA4yfKh0d4pXAW73eTXi/Ug318iulGO5q0E6dkgdO0ch
-	FSS8pTqUlKaNH0CakyuvqpOjJRUj3u0vpGVhZMuyyK1gPMJmDW8qUM5DDYkUfX+QvsyOXAWQwDm
-	R7Rozv6UWEPj
-X-Google-Smtp-Source: AGHT+IFbo6wVuE1OCIlqpI8tH3ydH+JxuXb4lbrcE5BzLgtsPGBhrBLQ4qnmY9ZDoVjIApFmQRsZaw==
-X-Received: by 2002:a17:90b:3c0a:b0:2ee:c9b6:c266 with SMTP id 98e67ed59e1d1-2f28fb67310mr15938915a91.13.1734318738578;
-        Sun, 15 Dec 2024 19:12:18 -0800 (PST)
+        bh=3qwdnhpnNZ/kDLebmCqGGOAqoWdsfoXXWVd5XUHDoNY=;
+        b=U1qN4T5Oszn9TDrgvIY9n7ncb+tx1bOPk0SjeYdJpe1iumKlRHryLeh/02BDF7KWN4
+         jEcOspTOLmsNnRxNb5UCINAKh3aRzNHGgTuMHzrEfhbaHvaH0Jlvy8c2f3YizmUvZ1ha
+         k6m5IYWhZXMJi2MH/YHv4MqwHUa24/t3WC9SApjLI9nwaP/SNW6/Vo+EDW1E3qxgzg0Z
+         pJKC7FNxRl4yEvFSW1vWppRvpMyspj0cjx0Wig57nmxDpS2WEIVg3wUAXeDU4u6rFT24
+         g5iXoCTM9tv5jiX43RF1rujbeV4e04NXHfRGnOfUEFouZShuoWmZgtZ6WZ4LoYpy1twp
+         Cfbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Yh/90kDfPAob42yISLn33F7koi2rpnhhbOVgILhlsTRcLdWsnkXPIR5ZSsuWp00WX0w7mYZu/DO11H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+BvaoAAQsdrF7vrk9sWzKICMSSsf/v17/F1ASo/FPyC3IhySx
+	4TUtb5Emr7jBxRJUYFeE9SyukauoaSDXw8bZ6gSFCyqSAOMqw7lc
+X-Gm-Gg: ASbGnct4zv2ekORKCw7jSHY/wJN6hTpU3x1d5Nr+GzSCFkZD2dehSN2jLeiOKavAo/g
+	SS0gEFcAk3P3M5GnzS6M1hW/lwlK4UWW0ZFS8hP1LLQ3nwA0S2SZCI34U32b9qDA1w/HBXzV5eN
+	cqI7vzWpgiYdzNQOj8to0Louj0qO8T86zEtQVvWr00oWhTX46bMH4YfjS9KaolEJZpf47+ytMD5
+	7jzjcJ2oOgSiTUwQwG+kkykdYZRphjYqEl/88SpuUl6WOhu2jH8H/Cso+U64OQ3+WVwglb8NXra
+	13dyB91LP7gb
+X-Google-Smtp-Source: AGHT+IECXXkjMF2cE+MK1ecDOadXetISrI342qnY5QQmSTp/jMki0OfIC4i3ujBXJzrYC7ApnXLdGg==
+X-Received: by 2002:a05:6a00:188c:b0:725:cfa3:bc6b with SMTP id d2e1a72fcca58-7290c0de7b8mr16346546b3a.3.1734318741945;
+        Sun, 15 Dec 2024 19:12:21 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e503cdsm32715075ad.113.2024.12.15.19.12.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad55dbsm3650518b3a.43.2024.12.15.19.12.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 19:12:18 -0800 (PST)
+        Sun, 15 Dec 2024 19:12:21 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -81,9 +81,9 @@ To: tj@kernel.org,
 Cc: kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org,
 	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH v5 2/6] sched_ext: Implement scx_bpf_now_ns()
-Date: Mon, 16 Dec 2024 12:11:40 +0900
-Message-ID: <20241216031144.98097-3-changwoo@igalia.com>
+Subject: [PATCH v5 3/6] sched_ext: Add scx_bpf_now_ns() for BPF scheduler
+Date: Mon, 16 Dec 2024 12:11:41 +0900
+Message-ID: <20241216031144.98097-4-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241216031144.98097-1-changwoo@igalia.com>
 References: <20241216031144.98097-1-changwoo@igalia.com>
@@ -95,320 +95,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Returns a high-performance monotonically non-decreasing clock for the current
-CPU. The clock returned is in nanoseconds.
-
-It provides the following properties:
-
-1) High performance: Many BPF schedulers call bpf_ktime_get_ns() frequently
- to account for execution time and track tasks' runtime properties.
- Unfortunately, in some hardware platforms, bpf_ktime_get_ns() -- which
- eventually reads a hardware timestamp counter -- is neither performant nor
- scalable. scx_bpf_now_ns() aims to provide a high-performance clock by
- using the rq clock in the scheduler core whenever possible.
-
-2) High enough resolution for the BPF scheduler use cases: In most BPF
- scheduler use cases, the required clock resolution is lower than the most
- accurate hardware clock (e.g., rdtsc in x86). scx_bpf_now_ns() basically
- uses the rq clock in the scheduler core whenever it is valid. It considers
- that the rq clock is valid from the time the rq clock is updated
- (update_rq_clock) until the rq is unlocked (rq_unpin_lock).
-
-3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
- guarantees the clock never goes backward when comparing them in the same
- CPU. On the other hand, when comparing clocks in different CPUs, there
- is no such guarantee -- the clock can go backward. It provides a
- monotonically *non-decreasing* clock so that it would provide the same
- clock values in two different scx_bpf_now_ns() calls in the same CPU
- during the same period of when the rq clock is valid.
-
-An rq clock becomes valid when it is updated using update_rq_clock()
-and invalidated when the rq is unlocked using rq_unpin_lock().
-
-Let's suppose the following timeline in the scheduler core:
-
-   T1. rq_lock(rq)
-   T2. update_rq_clock(rq)
-   T3. a sched_ext BPF operation
-   T4. rq_unlock(rq)
-   T5. a sched_ext BPF operation
-   T6. rq_lock(rq)
-   T7. update_rq_clock(rq)
-
-For [T2, T4), we consider that rq clock is valid (SCX_RQ_CLK_VALID is
-set), so scx_bpf_now_ns() calls during [T2, T4) (including T3) will
-return the rq clock updated at T2. For duration [T4, T7), when a BPF
-scheduler can still call scx_bpf_now_ns() (T5), we consider the rq clock
-is invalid (SCX_RQ_CLK_VALID is unset at T4). So when calling
-scx_bpf_now_ns() at T5, we will return a fresh clock value by calling
-sched_clock_cpu() internally. Also, to prevent getting outdated rq clocks
-from a previous scx scheduler, invalidate all the rq clocks when unloading
-a BPF scheduler.
-
-One example of calling scx_bpf_now_ns(), when the rq clock is invalid
-(like T5), is in scx_central [1]. The scx_central scheduler uses a BPF
-timer for preemptive scheduling. In every msec, the timer callback checks
-if the currently running tasks exceed their timeslice. At the beginning of
-the BPF timer callback (central_timerfn in scx_central.bpf.c), scx_central
-gets the current time. When the BPF timer callback runs, the rq clock could
-be invalid, the same as T5. In this case, scx_bpf_now_ns() returns a fresh
-clock value rather than returning the old one (T2).
-
-[1] https://github.com/sched-ext/scx/blob/main/scheds/c/scx_central.bpf.c
+scx_bpf_now_ns() is added to the header files so the BPF scheduler
+can use it.
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- kernel/sched/core.c  |   6 ++-
- kernel/sched/ext.c   | 121 ++++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/sched.h |  28 +++++++++-
- 3 files changed, 151 insertions(+), 4 deletions(-)
+ tools/sched_ext/include/scx/common.bpf.h | 1 +
+ tools/sched_ext/include/scx/compat.bpf.h | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a519..b0191977d919 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -789,6 +789,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- void update_rq_clock(struct rq *rq)
- {
- 	s64 delta;
-+	u64 clock;
- 
- 	lockdep_assert_rq_held(rq);
- 
-@@ -800,11 +801,14 @@ void update_rq_clock(struct rq *rq)
- 		SCHED_WARN_ON(rq->clock_update_flags & RQCF_UPDATED);
- 	rq->clock_update_flags |= RQCF_UPDATED;
- #endif
-+	clock = sched_clock_cpu(cpu_of(rq));
-+	scx_rq_clock_update(rq, clock, true);
- 
--	delta = sched_clock_cpu(cpu_of(rq)) - rq->clock;
-+	delta = clock - rq->clock;
- 	if (delta < 0)
- 		return;
- 	rq->clock += delta;
-+
- 	update_rq_clock_task(rq, delta);
- }
- 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index afeed9dfeecb..991a86e87187 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4910,7 +4910,7 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
- 	struct task_struct *p;
- 	struct rhashtable_iter rht_iter;
- 	struct scx_dispatch_q *dsq;
--	int i, kind;
-+	int i, kind, cpu;
- 
- 	kind = atomic_read(&scx_exit_kind);
- 	while (true) {
-@@ -4993,6 +4993,15 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
- 	scx_task_iter_stop(&sti);
- 	percpu_up_write(&scx_fork_rwsem);
- 
-+	/*
-+	 * Invalidate all the rq clocks to prevent getting outdated
-+	 * rq clocks from a previous scx scheduler.
-+	 */
-+	for_each_possible_cpu(cpu) {
-+		struct rq *rq = cpu_rq(cpu);
-+		scx_rq_clock_invalidate(rq);
-+	}
-+
- 	/* no task is on scx, turn off all the switches and flush in-progress calls */
- 	static_branch_disable(&__scx_ops_enabled);
- 	for (i = SCX_OPI_BEGIN; i < SCX_OPI_END; i++)
-@@ -7601,6 +7610,115 @@ __bpf_kfunc struct cgroup *scx_bpf_task_cgroup(struct task_struct *p)
- }
- #endif
- 
-+/**
-+ * scx_bpf_now_ns - Returns a high-performance monotonically non-decreasing
-+ * clock for the current CPU. The clock returned is in nanoseconds.
-+ *
-+ * It provides the following properties:
-+ *
-+ * 1) High performance: Many BPF schedulers call bpf_ktime_get_ns() frequently
-+ *  to account for execution time and track tasks' runtime properties.
-+ *  Unfortunately, in some hardware platforms, bpf_ktime_get_ns() -- which
-+ *  eventually reads a hardware timestamp counter -- is neither performant nor
-+ *  scalable. scx_bpf_now_ns() aims to provide a high-performance clock by
-+ *  using the rq clock in the scheduler core whenever possible.
-+ *
-+ * 2) High enough resolution for the BPF scheduler use cases: In most BPF
-+ *  scheduler use cases, the required clock resolution is lower than the most
-+ *  accurate hardware clock (e.g., rdtsc in x86). scx_bpf_now_ns() basically
-+ *  uses the rq clock in the scheduler core whenever it is valid. It considers
-+ *  that the rq clock is valid from the time the rq clock is updated
-+ *  (update_rq_clock) until the rq is unlocked (rq_unpin_lock).
-+ *
-+ * 3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
-+ *  guarantees the clock never goes backward when comparing them in the same
-+ *  CPU. On the other hand, when comparing clocks in different CPUs, there
-+ *  is no such guarantee -- the clock can go backward. It provides a
-+ *  monotonically *non-decreasing* clock so that it would provide the same
-+ *  clock values in two different scx_bpf_now_ns() calls in the same CPU
-+ *  during the same period of when the rq clock is valid.
-+ */
-+__bpf_kfunc u64 scx_bpf_now_ns(void)
-+{
-+	struct rq *rq;
-+	u64 clock;
-+
-+	preempt_disable();
-+
-+	/*
-+	 * If the rq clock is valid, use the cached rq clock
-+	 * whenever the clock does not go backward.
-+	 */
-+	rq = this_rq();
-+	clock = READ_ONCE(rq->scx.clock);
-+
-+	if (!(READ_ONCE(rq->scx.flags) & SCX_RQ_CLK_VALID) ||
-+	    time_after_eq64(READ_ONCE(rq->scx.prev_clock), clock)) {
-+		/*
-+		 * If the rq clock is invalid or goes backward,
-+		 * start a new rq clock period with a fresh sched_clock_cpu().
-+		 *
-+		 * The cached rq clock can go backward because this kfunc can
-+		 * be called from anywhere, including timer interrupts and
-+		 * tracepoints for code running in the IRQ context.
-+		 *
-+		 * For example, suppose a timer interrupt occurred while
-+		 * running scx_bpf_now_ns() *after* reading the rq clock and
-+		 * *before* comparing the if condition.
-+		 *
-+		 * The timer interrupt will eventually call a BPF scheduler's
-+		 * ops.tick(), and the BPF scheduler can call scx_bpf_now_ns().
-+		 * Since the scheduler core updates the rq clock before calling
-+		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
-+		 * clock.
-+		 *
-+		 * After handling the timer interrupt, the interrupted
-+		 * scx_bpf_now_ns() will be resumed, so the if condition will
-+		 * be compared.
-+		 *
-+		 * In this case, the clock read before the timer interrupt
-+		 * will be the same as rq->scx.prev_clock.
-+		 *
-+		 * When such a case is detected (i.e., prev_clock is smaller
-+		 * or equal to the current clock), get a new rq clock with a
-+		 * fresh sched_clock_cpu().
-+		 *
-+		 * The following illustrates the detailed sequence over time:
-+		 *
-+		 * Time| Task                   | Timer interrupt
-+		 * ----+------------------------+------------------------------
-+		 * T1  | call scx_bpf_now_ns()  |
-+		 * T2  | load rq->scx.clock     |
-+		 * T3  | compare rq->scx.flags  |
-+		 * T4  |                        | timer interrupt occured
-+		 * T5  |                        | sched_tick() called
-+		 * T6  |                        | + rq_lock() called
-+		 * T7  |                        | + update_rq_clock() called
-+		 * T8  |                        | + sched_class->task_tick()
-+		 * T9  |                        |  + scx_bpf_now_ns() returns
-+		 *     |                        |    a fresh clock updated at T7.
-+		 * T10 |                        | + rq_unlock() called
-+		 * T11 | resume the execution   |
-+		 * T12 | compare scx.prev_clock |
-+		 *
-+		 * Note that since the scx.prev_clock at T12 was updated at T7,
-+		 * it will be the same as rq->scx.clock at T2.
-+		 */
-+		clock = sched_clock_cpu(cpu_of(rq));
-+
-+		/*
-+		 * The rq clock is updated outside of the rq lock.
-+		 * In this case, keep the updated rq clock invalid so the next
-+		 * kfunc call outside the rq lock gets a fresh rq clock.
-+		 */
-+		scx_rq_clock_update(rq, clock, false);
-+	}
-+
-+	preempt_enable();
-+
-+	return clock;
-+}
-+
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(scx_kfunc_ids_any)
-@@ -7632,6 +7750,7 @@ BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
- #ifdef CONFIG_CGROUP_SCHED
- BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
- #endif
-+BTF_ID_FLAGS(func, scx_bpf_now_ns)
- BTF_KFUNCS_END(scx_kfunc_ids_any)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_any = {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 440ecedf871b..892975543a6d 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -754,6 +754,7 @@ enum scx_rq_flags {
- 	SCX_RQ_BAL_PENDING	= 1 << 2, /* balance hasn't run yet */
- 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
- 	SCX_RQ_BYPASSING	= 1 << 4,
-+	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
- 
- 	SCX_RQ_IN_WAKEUP	= 1 << 16,
- 	SCX_RQ_IN_BALANCE	= 1 << 17,
-@@ -766,9 +767,11 @@ struct scx_rq {
- 	unsigned long		ops_qseq;
- 	u64			extra_enq_flags;	/* see move_task_to_local_dsq() */
- 	u32			nr_running;
--	u32			flags;
- 	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
- 	bool			cpu_released;
-+	u32			flags;
-+	u64			clock;			/* current per-rq clock -- see scx_bpf_now_ns() */
-+	u64			prev_clock;		/* previous per-rq clock -- see scx_bpf_now_ns() */
- 	cpumask_var_t		cpus_to_kick;
- 	cpumask_var_t		cpus_to_kick_if_idle;
- 	cpumask_var_t		cpus_to_preempt;
-@@ -1725,9 +1728,30 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
- 
- #define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
- #define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
-+
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock, bool valid)
-+{
-+	if (!scx_enabled())
-+		return;
-+	WRITE_ONCE(rq->scx.prev_clock, rq->scx.clock);
-+	WRITE_ONCE(rq->scx.clock, clock);
-+	if (valid)
-+		WRITE_ONCE(rq->scx.flags, rq->scx.flags | SCX_RQ_CLK_VALID);
-+}
-+
-+static inline void scx_rq_clock_invalidate(struct rq *rq)
-+{
-+	if (!scx_enabled())
-+		return;
-+	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
-+}
-+
- #else /* !CONFIG_SCHED_CLASS_EXT */
- #define scx_enabled()		false
- #define scx_switched_all()	false
-+
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock, bool valid) {}
-+static inline void scx_rq_clock_invalidate(struct rq *rq) {}
- #endif /* !CONFIG_SCHED_CLASS_EXT */
+diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+index 858ba1f438f6..79f0798a5350 100644
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -76,6 +76,7 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+ s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+ struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
++u64 scx_bpf_now_ns(void) __ksym __weak;
  
  /*
-@@ -1759,7 +1783,7 @@ static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
- 	if (rq->clock_update_flags > RQCF_ACT_SKIP)
- 		rf->clock_update_flags = RQCF_UPDATED;
- #endif
--
-+	scx_rq_clock_invalidate(rq);
- 	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
- }
+  * Use the following as @it__iter when calling scx_bpf_dsq_move[_vtime]() from
+diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
+index d56520100a26..2f16f30ae741 100644
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -125,6 +125,11 @@ bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter,
+ 	false;									\
+ })
  
++#define scx_bpf_now_ns()							\
++	(bpf_ksym_exists(scx_bpf_now_ns) ?					\
++	 scx_bpf_now_ns() :							\
++	 bpf_ktime_get_ns())
++
+ /*
+  * Define sched_ext_ops. This may be expanded to define multiple variants for
+  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
 -- 
 2.47.1
 
