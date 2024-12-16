@@ -1,164 +1,132 @@
-Return-Path: <linux-kernel+bounces-447383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F579F3173
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC419F316D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA60216484E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E92216471E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5308205AC4;
-	Mon, 16 Dec 2024 13:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F100920550E;
+	Mon, 16 Dec 2024 13:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PBSXqYms"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CPW5b/Y/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C420550B;
-	Mon, 16 Dec 2024 13:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8582054EE
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734355494; cv=none; b=QCwJgK0lkJeyk2Ork7WwvJiGaCFjaHFMy79ms48bjVAP9iB3W3n4DRVhSYQdsCr3Nqp/K6z/klqBNZGtuxu8evHFT9qh2i/lpnReRCC381QqhPoyJS+L6uqx7pqjvhSHZyHhVafx4BBB6aNMIe/azKVZ9cZH8Vsi05I5abf4eWM=
+	t=1734355484; cv=none; b=hUd7tiB2srLYtzghj9dlS3IjjNDTb+7OCQydmGdJYerGZ6YfgpFpFl0DoUDMUxMTFKbc8A8oyWbxQnTeK06qcE3ltALV05Fz0vLaHADkTiPbwQ7UyfpH9s+F2jXUPt3sqX0aYXGT81ofmNE9V9SIR5TMeeHoD7rfRSc8xwels78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734355494; c=relaxed/simple;
-	bh=1BG2R38CHTGMQTxvV1ksPFE3kT2GHnsfhJlefq33L/g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdCa/EDIt4OqMRggTSbgonqYIYhubktCRy5/6kR4COePNhWaysCDVEg2TKn38tc3f+KGFH+qezAJCFgto/x+YpHMXdkJ4zMBpJPWPRYbEHQxIVg+L1zVa+oz9qlL+Hu+CJ8W31ZJjJiy+bKgKAqnZEB/PurIEHRUgsJIWlS+pC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PBSXqYms; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1734355492; x=1765891492;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1BG2R38CHTGMQTxvV1ksPFE3kT2GHnsfhJlefq33L/g=;
-  b=PBSXqYmsJ3sOJMAtZ2Hx82WPmPsIrmNHM6pMXgEqA7axw9ct5/wzLRW2
-   5vQtAD/z4wQbD9+f4TPfnaYfM9KlvhQMegGzTkhoeS3ey2laf/2okh2fC
-   qPvEISAtA5sswF34s9H1j0XiLF+WwVjasV8fbDm+YFCc6zJpCG5WfXdcS
-   ILpOcNu1n3ZaMbk+gg1LXG9u1t8Dha4boaN7Ht8WTTxHg7pw/7N6JvWc9
-   jc00+z9sZzJ+kZ9LGRFsgOHd+IHnD6TPaGImIJyupDS+/CF6oQHNwc8Ou
-   q1YWBXjMWGe5g0g9yUqaGbh5huHOPfKIwyQeUa7FlqBTBc9twrlC4mJ5d
-   Q==;
-X-CSE-ConnectionGUID: svcZb2o5RoiaLtrIn94HtA==
-X-CSE-MsgGUID: ZojOdQ4wRxW+2Ve9w0tkPA==
-X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="asc'?scan'208";a="35582583"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Dec 2024 06:24:51 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 16 Dec 2024 06:24:47 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 16 Dec 2024 06:24:46 -0700
-Date: Mon, 16 Dec 2024 13:24:14 +0000
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
-	<torvalds@linux-foundation.org>, <stable@vger.kernel.org>, <lwn@lwn.net>,
-	<jslaby@suse.cz>, Xiangyu Chen <xiangyu.chen@windriver.com>, Zqiang
-	<qiang.zhang1211@gmail.com>
-Subject: Re: Linux 6.1.120
-Message-ID: <20241216-comic-handling-3bcf108cc465@wendy>
-References: <2024121411-multiple-activist-51a1@gregkh>
+	s=arc-20240116; t=1734355484; c=relaxed/simple;
+	bh=bzqmNQfWCCzPErXOsUzKJkneJr987eONxj/xWuXvctc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=heI0yVP3SG5FfZoExFPEgwQwUDyUPPOM5eZLX/YmZkaJjD48jAb2GrWN+809nSNkdaLiSkA0vGogONakh4Vj09txt4STxu57l3NlU3reiq5GaPQ5sj7cp8cadWp1SBpM2UNlM6DPn6Dt/ppMP830AyXMWV5sFjLvvPb6+iqEoTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CPW5b/Y/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGBL4lO025990
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:24:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ddJJvcV6JfmZR8EvhLTE3jz8GYYGpgaSZHvZTGAa840=; b=CPW5b/Y/DTSNOqWs
+	XmRFYsJqRRy2pGwxT4cLmXhW2FS6lj7cQF47Sk2ZY/ZyBn9fXDSJ8YaqyXz4kYny
+	SHcQm84TsiaHUvsXKp1N2Oqnh865vXB0346nvCjBpUCofxQMyUzCw9KWtTcYVLoe
+	YWZPRvsiXHf4ZOW/l1R/LAE1zK9xGUtrWo2pv+dKkemFswpElhkV38wVoAqaYrEm
+	hALn4sOD5dpCyS3fJJWw6jeZ7BVlpJ+sTVCzT/n4uZpZzgxgrOCNBuGJIfxMp6r4
+	NKD+Bl9TtEV2xWpNYml1CTijN94TcVEmp2PXi97O7ljR5hfSPTUc/jaQ4qkq1E9p
+	V+dfhQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jk8grbcn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:24:41 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-46792962c90so6409101cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:24:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734355481; x=1734960281;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ddJJvcV6JfmZR8EvhLTE3jz8GYYGpgaSZHvZTGAa840=;
+        b=tms4C8EuQopeK8rIVxNTm6h0gYHv1vfB9grUYWR+G4BJEt47FZN5VvnUKzDyqYsX5D
+         YE50neT21zbAEHzn2/X4AcLdL85j9cnjdFGDCcrWguWzXPoq2wTo4PgmFh/0BE2RjTM0
+         rqZ6BrMGZjDVHsTK0QJlhJYvVuP4tGa6/S4ONCUjAXtnY1m3pI+yP7/PEAjwoDyuHNGN
+         ld5gP0eOcoJnPSs9dHwBRyyh1akPxfxHHp9IthYJA+0RR6DHJkVgI6GgPTouCMIOu4tJ
+         wBwfTQ1ZtQ3ja/hsXgPqYGGe9HTXg2tM/0Dt024yPtGAqFi3H9UrpQjwYcCJETfH2Ugi
+         FIDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPyHUxfY/oFpswfs1UyRUkMEPbmZ5Bqq1sotUK7PJ88DPHhBgrOqG5R69LsZ9KW6iWGoDSFOt1Ysw5UTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnV0jg2/JistIIqC2+Pq/TgyKe10CZjb76H+9ZofphKcHTcIA2
+	ZnbFtNYGpnQG5SswCHFOB+44ezywFnz7WJI+47PWxMFjXq0poYQA7FHkgvq2wG8bLdH0khyGb7U
+	vlQgVhX0JA3pUDeWU8ZCLrxb/Z6HQXxbZGVAobG8xTnHhrcUKKjrpM9HpUSD0uTU=
+X-Gm-Gg: ASbGnctJnY54CH1G22nu4VJS4RC6WJ/LgF3LiD18nsOgYShDgqfo9rZUPiMn1r7KWEB
+	YB7+j3uSWaIwCAcLjMxWLX403WnbYFYB84SHSrbo1/z7D1VI7tB5zXkNZqkfsAx+LCh1PmyRP9H
+	0vbtL3llS8eRn8MZ0VAOZq3TX67s234opFljpmkZZkPEz5KBded/Sm3IigSY3ayzK2WwBBwBKI/
+	8Mm4GYkjE0FFPqJnENGDb+DS45I8lP6LsIY0JT6tbPi7z9egZmxOQYpRpXHvlHsXDD+fXjcYYlm
+	KnTGzldi3aVPkz8Xy0JvwLAscF3b0g4J5oo=
+X-Received: by 2002:a05:620a:2a16:b0:7b6:6765:4ca2 with SMTP id af79cd13be357-7b6fbf41a43mr826587485a.13.1734355480839;
+        Mon, 16 Dec 2024 05:24:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IETNA10NH7CEL6e1jIBbcYdjpx9fqxYSa/P7akVHgXDcrLHEht2gl2CopgvQyQyU2eyAfemZw==
+X-Received: by 2002:a05:620a:2a16:b0:7b6:6765:4ca2 with SMTP id af79cd13be357-7b6fbf41a43mr826585585a.13.1734355480470;
+        Mon, 16 Dec 2024 05:24:40 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab95d813afsm333044166b.0.2024.12.16.05.24.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 05:24:40 -0800 (PST)
+Message-ID: <04018ad9-f3ee-45bd-9d4a-be3d52f38b51@oss.qualcomm.com>
+Date: Mon, 16 Dec 2024 14:24:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qYEnv7TJdfBvOmAb"
-Content-Disposition: inline
-In-Reply-To: <2024121411-multiple-activist-51a1@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display
+ Port
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
+        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
+References: <20241125105747.6595-1-quic_mukhopad@quicinc.com>
+ <20241125105747.6595-3-quic_mukhopad@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241125105747.6595-3-quic_mukhopad@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: Mxzw_xZLO3dZzaDkZLgiVHiKHAuUhHyB
+X-Proofpoint-ORIG-GUID: Mxzw_xZLO3dZzaDkZLgiVHiKHAuUhHyB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=998 adultscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160113
 
---qYEnv7TJdfBvOmAb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 25.11.2024 11:57 AM, Soutrik Mukhopadhyay wrote:
+> The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
+> for each mdss. edp0 and edp1 correspond to the DP controllers of
+> mdss0, whereas edp2 and edp3 correspond to the DP controllers of
+> mdss1. This change enables only the DP controllers, DPTX0 and DPTX1
+> alongside their corresponding PHYs of mdss0, which have been
+> validated.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
 
-On Sat, Dec 14, 2024 at 09:53:13PM +0100, Greg Kroah-Hartman wrote:
-> I'm announcing the release of the 6.1.120 kernel.
->=20
-> All users of the 6.1 kernel series must upgrade.
->=20
-> The updated 6.1.y git tree can be found at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git li=
-nux-6.1.y
-> and can be browsed at the normal kernel.org git web browser:
-> 	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=
-=3Dsummary
->=20
-> thanks,
->=20
-> greg k-h
->=20
-> ------------
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> Zqiang (1):
->       rcu-tasks: Fix access non-existent percpu rtpcp variable in rcu_tas=
-ks_need_gpcb()
-
-I was AFK last week so I missed reporting this, but on riscv this patch
-causes:
-[    0.145463] BUG: sleeping function called from invalid context at includ=
-e/linux/sched/mm.h:274
-[    0.155273] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1, na=
-me: swapper/0
-[    0.164160] preempt_count: 1, expected: 0
-[    0.168716] RCU nest depth: 0, expected: 0
-[    0.173370] 1 lock held by swapper/0/1:
-[    0.177726]  #0: ffffffff81494d78 (rcu_tasks.cbs_gbl_lock){....}-{2:2}, =
-at: cblist_init_generic+0x2e/0x374
-[    0.188768] irq event stamp: 718
-[    0.192439] hardirqs last  enabled at (717): [<ffffffff8098df90>] _raw_s=
-pin_unlock_irqrestore+0x34/0x5e
-[    0.203098] hardirqs last disabled at (718): [<ffffffff8098de32>] _raw_s=
-pin_lock_irqsave+0x24/0x60
-[    0.213254] softirqs last  enabled at (0): [<ffffffff800105d2>] copy_pro=
-cess+0x50c/0xdac
-[    0.222445] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[    0.229551] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.119-00350-g224=
-fd631c41b #1
-[    0.238330] Hardware name: Microchip PolarFire-SoC Icicle Kit (DT)
-[    0.245329] Call Trace:
-[    0.248113] [<ffffffff8000678c>] show_stack+0x2c/0x38
-[    0.253868] [<ffffffff80984e66>] dump_stack_lvl+0x5e/0x80
-[    0.260022] [<ffffffff80984e9c>] dump_stack+0x14/0x20
-[    0.265768] [<ffffffff800499b0>] __might_resched+0x200/0x20a
-[    0.272217] [<ffffffff80049784>] __might_sleep+0x3c/0x68
-[    0.278258] [<ffffffff802022aa>] __kmem_cache_alloc_node+0x64/0x240
-[    0.285385] [<ffffffff801b1760>] __kmalloc+0xc0/0x180
-[    0.291140] [<ffffffff8008c752>] cblist_init_generic+0x84/0x374
-[    0.297857] [<ffffffff80a0b212>] rcu_spawn_tasks_kthread+0x1c/0x72
-[    0.304888] [<ffffffff80a0b0e8>] rcu_init_tasks_generic+0x20/0x12e
-[    0.311902] [<ffffffff80a00eb8>] kernel_init_freeable+0x56/0xa8
-[    0.318638] [<ffffffff80985c10>] kernel_init+0x1a/0x18e
-[    0.324574] [<ffffffff80004124>] ret_from_exception+0x0/0x1a
-
-Reverting it fixed the problem.
-
-Cheers,
-Conor.
-
---qYEnv7TJdfBvOmAb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2Ap+gAKCRB4tDGHoIJi
-0hqZAP9vytzuouW03UAW50wsdUiu7UWmL0iZGfczix8VqRfDnwD9F1Pp3Bt39Wpb
-baXVGpu/yk67xIFig53m9w561Z6qqwI=
-=U7cW
------END PGP SIGNATURE-----
-
---qYEnv7TJdfBvOmAb--
+Konrad
 
