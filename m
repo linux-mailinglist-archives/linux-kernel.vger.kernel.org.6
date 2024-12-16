@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-448308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E359F3E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5CA9F3E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00781698C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:39:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F8D11619CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B651DF24F;
-	Mon, 16 Dec 2024 23:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF26D1DB37A;
+	Mon, 16 Dec 2024 23:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o6LkWnyX"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m94t7MaE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6561DE88A
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC77139CEF
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734392265; cv=none; b=XatNe7N4OdrrdktyBKQMrsphFxkZHQ34ONaf1hETE02DhSj4mCpzy7ertUE1BtR9XcTu6R2SnihPwgA4N+eVNemIFZzuau/WD0Hqdp3IYykIfjBXUijNdOQ1fV7wmUApTQmUYS+HRIggwQQt6jJ/8XKD5quxqdbyh1u2t9OdL4E=
+	t=1734392258; cv=none; b=id9qc8UaFzVryJ0DSSOzVLAHmJpR4uKcIJiHyboge68J+OEV2wxg0fKG1EzG+4IbMf/gNIzzZHR9UtIgGNDC0c+p/jSScZ1YyGZbVShLRf7lFcIaRoqAjxug6kvG+cUpbdJ8lVC19WOj8AlXlGFBEcETMm5wzEcnK/KX+onuEVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734392265; c=relaxed/simple;
-	bh=VLUVdTyeV0P1JOB4I+p27vLpOo5Zr5seDRRWbSetvcY=;
+	s=arc-20240116; t=1734392258; c=relaxed/simple;
+	bh=pD/iM6D1Uc9Ku+aH6t9jBfBnAst+5WgG7HrJPvYhw58=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oqXMgx1z4CLZ26/buTnea47ccHf1ZSuGA3YYv6sEPUG1GnHKJwPcdUyZ4E/kzD+xODjhIS30EpWvmVi/5j1toDj1UeAOaTJNI96XUU0AGyNREWk5CnjxMHPK7Rt7r9DkWb26w5+o7dxS6x1LKl1djNGbbEfq5aIZ53/RC7q5i6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o6LkWnyX; arc=none smtp.client-ip=90.155.92.199
+	 MIME-Version:Content-Type; b=GfDRTgF+9Uu1SbFaiO7FgQIP7u8TGKJK9SQFXmMfSEdE+ZfLb0CTiacCFNMyfG7sJyyvldyHDivDm+aOIMX3qNq/97odQXkMl4/I4eXp6qtplgQvOjONmBV25we81/8CRuuhGvcXMNGxcfCEz1WFT/MgZT5688h16l5RH68vjo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m94t7MaE; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From:Reply-To:
-	Cc:Content-Type:Content-ID:Content-Description;
-	bh=tC7qQ0TyIBftkKD3qsN4aGjl/EaVH0eOIxBQvILwXpc=; b=o6LkWnyX2Y1FY1IHBX8dWfzjEC
-	Oargtl0xKp3FA9E7/BFmUs5BT4/GpkY4on/TIsvS/USNH3AoUt3RkeogGdJYl6O/l7rtdSKyDJDFd
-	S0cSBYTp6INO+7XPmjwY4wJ5U7YAz11PGTWhYBITeopPfKbNvIw3u9bmsgAGH0stZ6cQ9vBYrem6q
-	MsDSgyJ33S6VURHETBwQmcoNm6NGgX49KAnWOgVLYVXKfQ5djQw5eJuZcOkgAllFo2y1SzZVEV1hw
-	g7Ph+DghE3+WIovQJ4XfLU/KbSAYj8SCD824VOVmna6FREWru7cy3RJU8d/z9vz5GmyXvoVWZthXC
-	AuVzCnag==;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:
+	From:Reply-To:Cc:Content-ID:Content-Description;
+	bh=KF9I8gMwuVGDi5vu6drdRG3X3dHP+mrVfyO8mKUOGvk=; b=m94t7MaEEu9OBNPTDHoiuf70Fq
+	Tp+6Tautcgn9+y4v+iOpPpRA7dlOW5BExNEZlyaWF6c5MembvO9E+FFAn0uqXpg5K1RzSXcq4jav2
+	0bPZNV6y+IFYVMhUtDQZqYbSCItpaxpTV1ihMtfL8DxE6H6VkEvxzqAqu4H8t5WnoBViQ3X5Z1Jra
+	KCkt6QMGdR3bdWpiBS2RER03GULc8H1xzIA+fy/pEXdzwv5vxGdcmVMSrO6KJSnfRCNFZl5s+xqv7
+	W9sQtfqIFJO3Yz2pT5PTiGNtw22ueBKpuEkj9w2CSSaof8josM9C5BZT6ffocA8+uiijHgK8XXaqU
+	YCQ/yO3w==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNKeB-00000004xiP-29zs;
-	Mon, 16 Dec 2024 23:37:08 +0000
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNKeA-000000034nY-2fG0;
+	Mon, 16 Dec 2024 23:37:07 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNKeA-0000000DeWI-0qm5;
+	id 1tNKeA-0000000DeWN-17Kz;
 	Mon, 16 Dec 2024 23:37:06 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -80,9 +80,9 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	bsz@amazon.de,
 	nathan@kernel.org
-Subject: [PATCH 5/9] x86/kexec: Fix location of relocate_kernel with -ffunction-sections
-Date: Mon, 16 Dec 2024 23:24:12 +0000
-Message-ID: <20241216233704.3208607-6-dwmw2@infradead.org>
+Subject: [PATCH 6/9] x86/kexec: Mark machine_kexec() with __nocfi
+Date: Mon, 16 Dec 2024 23:24:13 +0000
+Message-ID: <20241216233704.3208607-7-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241216233704.3208607-1-dwmw2@infradead.org>
 References: <20241216233704.3208607-1-dwmw2@infradead.org>
@@ -92,98 +92,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Nathan Chancellor <nathan@kernel.org>
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-After commit cb33ff9e063c ("x86/kexec: Move relocate_kernel to kernel
-.data section"), kernels configured with an option that uses
--ffunction-sections, such as CONFIG_LTO_CLANG, crash when kexecing
-because the value of relocate_kernel does not match the value of
-__relocate_kernel_start so incorrect code gets copied via
-machine_kexec_prepare().
+A recent commit caused the relocate_kernel() function to be invoked
+through a function pointer, but it does not have CFI information. The
+resulting trap occurs after the IDT and GDT have been invalidated,
+leading to a triple-fault if CONFIG_CFI_CLANG is enabled.
 
-  $ llvm-nm good-vmlinux &| rg relocate_kernel
-  ffffffff83280d41 T __relocate_kernel_end
-  ffffffff83280b00 T __relocate_kernel_start
-  ffffffff83280b00 T relocate_kernel
+Using SYM_TYPED_FUNC_START() to provide the CFI information looks like
+it will require a prolonged battle with objtool. And is fairly pointless
+anyway, as the actual signature comes from a __kcfi_typeid_… symbol
+emitted from the C code based on the function prototype it thinks that
+relocate_kernel has, rendering the check somewhat tautological.
 
-  $ llvm-nm bad-vmlinux &| rg relocate_kernel
-  ffffffff83266100 D __relocate_kernel_end
-  ffffffff83266100 D __relocate_kernel_start
-  ffffffff8120b0d8 T relocate_kernel
+The simple fix is just to mark machine_kexec() with __nocfi.
 
-When -ffunction-sections is enabled, TEXT_MAIN matches on
-'.text.[0-9a-zA-Z_]*' to coalesce the function specific functions back
-into .text during link time after they have been optimized. Due to the
-placement of TEXT_TEXT before KEXEC_RELOCATE_KERNEL in the x86 linker
-script, the .text.relocate_kernel section ends up in .text instead of
-.data.
-
-Use a second dot in the relocate_kernel section name to avoid matching
-on TEXT_MAIN, which matches a similar situation that happened in
-commit 79cd2a11224e ("x86/retpoline,kprobes: Fix position of thunk
-sections with CONFIG_LTO_CLANG"), which allows kexec to function
-properly.
-
-While .data.relocate_kernel still ends up in the .data section via
-DATA_MAIN -> DATA_DATA, ensure it is located with the
-.text.relocate_kernel section as intended by performing the same
-transformation.
-
-Fixes: cb33ff9e063c ("x86/kexec: Move relocate_kernel to kernel .data section")
-Fixes: 8dbec5c77bc3 ("x86/kexec: Add data section to relocate_kernel")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Fixes: eeebbde57113 ("x86/kexec: Invoke copy of relocate_kernel() instead of
+the original")
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- arch/x86/kernel/relocate_kernel_64.S | 6 +++---
- arch/x86/kernel/vmlinux.lds.S        | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kernel/machine_kexec_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index b680f24896b8..1996cea909ff 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -23,11 +23,11 @@
- #define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
- 
- /*
-- * The .text.relocate_kernel and .data.relocate_kernel sections are copied
-+ * The .text..relocate_kernel and .data..relocate_kernel sections are copied
-  * into the control page, and the remainder of the page is used as the stack.
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 9232ad1562c8..1440f792a86d 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -342,7 +342,7 @@ void machine_kexec_cleanup(struct kimage *image)
+  * Do not allocate memory (or fail in any way) in machine_kexec().
+  * We are past the point of no return, committed to rebooting now.
   */
- 
--	.section .data.relocate_kernel,"a";
-+	.section .data..relocate_kernel,"a";
- /* Minimal CPU state */
- SYM_DATA_LOCAL(saved_rsp, .quad 0)
- SYM_DATA_LOCAL(saved_cr0, .quad 0)
-@@ -39,7 +39,7 @@ SYM_DATA(kexec_pa_table_page, .quad 0)
- SYM_DATA(kexec_pa_swap_page, .quad 0)
- SYM_DATA_LOCAL(pa_backup_pages_map, .quad 0)
- 
--	.section .text.relocate_kernel,"ax";
-+	.section .text..relocate_kernel,"ax";
- 	.code64
- SYM_CODE_START_NOALIGN(relocate_kernel)
- 	UNWIND_HINT_END_OF_STACK
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 0c893997f023..63ff60a11be5 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -100,8 +100,8 @@ const_pcpu_hot = pcpu_hot;
- #define KEXEC_RELOCATE_KERNEL					\
- 	. = ALIGN(0x100);					\
- 	__relocate_kernel_start = .;				\
--	*(.text.relocate_kernel);				\
--	*(.data.relocate_kernel);				\
-+	*(.text..relocate_kernel);				\
-+	*(.data..relocate_kernel);				\
- 	__relocate_kernel_end = .;
- 
- ASSERT(__relocate_kernel_end - __relocate_kernel_start <= KEXEC_CONTROL_CODE_MAX_SIZE,
+-void machine_kexec(struct kimage *image)
++void __nocfi machine_kexec(struct kimage *image)
+ {
+ 	unsigned long (*relocate_kernel_ptr)(unsigned long indirection_page,
+ 					     unsigned long pa_control_page,
 -- 
 2.47.0
 
