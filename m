@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-447048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F72F9F2C93
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:06:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534AA9F2C9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 10:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34631660DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F15C161D32
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3547420010B;
-	Mon, 16 Dec 2024 09:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5884C200120;
+	Mon, 16 Dec 2024 09:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZUwF9WV"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gv6KZ5Iq"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9362E628
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E520011D
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 09:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734339970; cv=none; b=NRDCEnoHHY0tQe6+QZna0gA8j8iPX4fKa8hssXvMkW7IIY+v4vZiXyZQ0NAKeD/FF/kpEicNOmR8JFl43y1r9kLS0WYYt9yN5P1f1gKpjenwz/w72M6S78CWv09kQShsJWrL/uNRtW7GJg5DGiLsE/mjsZrGVGwCswOD+b+WFVI=
+	t=1734340146; cv=none; b=U3h8mTFyAELX8NcjlxAxTOgIjW7pD3AFyZJdssxz1ThjwgGuk77ouTQpKiY5irKG3RjeOdeR5ocWNZzmlUBpUB+y4Cd4RKR8/SEppKAfjSZH7sMP6SU6JTc5ijd7jwL40dsV+hn/7dwhHrINl4tvQR1VbdFsq1avVjlZ9g7GvQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734339970; c=relaxed/simple;
-	bh=0gRc+cRlcmXePYNwpe02vLiHnaN3HnXgSYFkCLduIN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLS+CC4wejm4q0t5T9BLPwcKN2d4Y2tpbavyQlxOQgU64nWW1Po04dLVK4RC/lomjcmRIbYGUAwReqjm5/15LxyNzG/ugFXtLfmgNtjXExuuHRYpTSNgAKJ+r5gzOt3/fNgMosLQ3c/iM3icorNXFC5WFsjJvQKU/6jzArHpEi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZUwF9WV; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30036310158so34029881fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:06:08 -0800 (PST)
+	s=arc-20240116; t=1734340146; c=relaxed/simple;
+	bh=M19509IjZMcFyL8kbGcmsLxqS7khHdG+4BTdiY+Cn3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eIX2FTdPUZiaS3naOsrWj+qStTuq4+z/p4MTFPjvZBXUu3rG1UBM0EDJLtXk8lGPGpN8D3uSnByJ1oKHcTrNkP4zRGGUrN+hwKSUWUDD4H0Wh26oej4lYD/Iqn2InZBf7upP0Y0IseefdDLGHVz2IVJbJug4W4YWVNn/n4gXsJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gv6KZ5Iq; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361d5dcf5bso42274515e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 01:09:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734339967; x=1734944767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ybFr+xBF+04SsTx9tZHOi4dPPshGyMog5vNkLi99Q50=;
-        b=MZUwF9WVCpd8j7etf57HXRET7xvwNvKyckLUtVdLbLga8QU3NZle0N7bSMhRsJIaDB
-         OQXhrySG8yAFgTkTB9A3bgtpvq2RKuXViy1i8jjMJXhkU9xKr8AdToIb9bArocIEbZ4a
-         XLyTfVME91kdvPvHcoGouoMhsE1W1Mvn8qZgOaFQh4D6J1x5J5yicYgnDL+frr2Fod5A
-         iEa4t1qd/+n/VABp3TOS9bFxLMNn0KU5dpZ75QZb1AHXZg1F+qN6MUSulFvzAmLrqp6E
-         FO72+ztwkqIZZpY9ARyAmxv/mVPe9Zj4cP70/2Lgt2evE813SlwVVl/QoqDYmC2lEQE+
-         GgPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734339967; x=1734944767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734340143; x=1734944943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ybFr+xBF+04SsTx9tZHOi4dPPshGyMog5vNkLi99Q50=;
-        b=ttalm1O5AFl15tfRwfkRl6pWyptw42lKZpvcYbtjbr92GswYxJitDbSfLMFEv1B00e
-         GD5kvRahAQA1OjLQLLf+CC5kbOAPzYvkpSB+K+YoefB2IA2Ynda+KWg3uM6YganNfe5k
-         ZA+CI0yRuFgGgync4dvCfN9+ZVE+nuorPpSniYUyvoWVm+vIttcX8ojw2EJOCS7D5ahU
-         U7pU3GGCY+vh6XvWJRzofZXA2D5qYJYpQSiCjcJapnsqTz4bH/tSbFpeLh8dMm3ZOSIl
-         e4+hA1vHpiLx5roQK1QSDiH516iIxzBxhnct0G1sRymMvHRyc8fJmovoaXrhfOFbMO5U
-         B6Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNjrdzazjmgFPOZs0ZcX+DM5mtVcmvm/BnrxS39xGppPyr9CVMrfMWYKIbz4E3fN+zItlbwgMyEy7h4Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNlqusUkWBUvNHTt78w3q+yKctB78I/FA4Jay1clunBPZ505rb
-	GlJ52J1QJnM8ly6Ym66w+TlZZczpUrqTJu9ixb8wPfodOtWriVXl0VuLgBvugQE=
-X-Gm-Gg: ASbGncuHY90ZFujVNoWW8wvqo5eSpZB935ChFnWyt/wggqjbpyPt8qxUSE4Tj/WYhtL
-	bfwTVDhyh42IOF/G21ecMrcMUgr9ItRiY0mOaM/Eom454SsvkGTFm0GDPZlxLZwFqVwXCmklPEd
-	XvZHDW9TA17MmB6t6cSrxtyKkCtZG4mu2G1ylTGgUQTf1OgFZTFUVazSoOz+UTQmrUWkNnIawVa
-	ZWw8WGIvGygsft8f49hDWM14koTciMAk2IyoEwNDf9/YY1eklo/cGHLd+9MUjCWlFi+2nGZc3HU
-	bNQzVDvgFI0NVig9Wtt/a/dKeEdf+jo5lCnf
-X-Google-Smtp-Source: AGHT+IE2z+Yrxqh/d+CbdTI/ZEFbpY0tdfpWkjP3iId/t6e4EaPLDgQ5n81rb49OUv0YGO/PEvgPOg==
-X-Received: by 2002:a05:6512:b96:b0:540:2a6e:3882 with SMTP id 2adb3069b0e04-540905616b3mr3205171e87.29.1734339966797;
-        Mon, 16 Dec 2024 01:06:06 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c00166sm768988e87.159.2024.12.16.01.06.04
+        bh=cGBHS4QHf1CsUcSFjaZXRI9YWCCVYzt2h/iHstQ0laA=;
+        b=Gv6KZ5Iqx6fzNhZAU09D/gQSVlFTqh9G8v4OVdBKVEPO4vcVXbBYkJBRG1PecZ3DAg
+         R9cbNo+FTpS6IJvrIjPyPf27QfuykBmjyQX4X17Ra4FzSHrf+6gPQJUSwvtia91rf+Fi
+         4wnGPAmPVX6SMLGhwjBG4GsfuMfTN9FDbQdalQO115lzwl+IUZujiU8+UsJ5B04MXzKX
+         /nw4keWIdfH7xVURQf83yx+eQl6I127uRb7iGTAqX45V6kmtjxEJ7489mD8+c8DSZa12
+         m0JunSnVSkD+A9BsH2k31VqBSIIO0QibCvPscO3IQkbe8DDwuHaxie6pePXC2Vbf6BWM
+         r28A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734340143; x=1734944943;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cGBHS4QHf1CsUcSFjaZXRI9YWCCVYzt2h/iHstQ0laA=;
+        b=D+CXFJ5dDx7szImDSNKuJoeyWkJsKI7s+dpQb9A+ddbZYV/EEXNOm1QwH0E/K0upeh
+         q6eCeKPdDeVPXY/rK+jDcXYZjb5OtizE0iN3+dMiiwE1nzadw7VEN49N5fqi0T/Hz+ri
+         1Vf9z2SIMNsmkW5VJTjCuZrqjRLEqJlpWQvLr4QSXOvEtPmrfh+MNTyLKdMk9IkyF3vq
+         1JilCUX/m6ZDQRUf8sEfzPAUlYgRvf1vTWozEjlEfCVNgEsmVFmlPcbM2Ogqwhn4Pvar
+         3MCZiWr4fsAGeZr1hK8Ldc0xGJFwu06iHGut0Voi/MTwve3DmKbbREv6u8+Lq8Ehd+pe
+         nL7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwczOQGUUxc3D7M4/eru26EBeMnIwAuzdQinYx6+1AIqoTRIKASrQf2JFmWbN2+QzsXA9lUmeXVuKTqIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+YTazETcvjKXR2rzDkcpVvxC9OnP2nUqVxRChEANqwxN06pbU
+	V2NoNUAj2Zher7LmI/+o7rmrbYJU/driZhONx3jRp0BYRknXmzF3UGNiGfi/2c4=
+X-Gm-Gg: ASbGncujQPwBve3qmofuqq8Fzg1fp4eVYEIBRN90EUsuz8MZ7J/u01wsEip7qMbuTHK
+	03r8aAlUwIX09E4SCr3hjJ5/6g91thn/IO44G+8fBlFYCzx69MsAkXPZFd/AJhTf4ptB6mlKJeM
+	MwDRuJ76MJfFoF/AlQN/fAPTFhAj2ryq6jlOhEgcjXBGypotJtwO6sLdXtcZFlqqn4PFQwqqPo5
+	8t6qnwQFMliB2mpoJRqIhRAi+wxODGqctdn4gF0eVxm7DQX83VUACtF
+X-Google-Smtp-Source: AGHT+IH72Dfr5eQ52hfcPTD2JDNeTzGbEvM+MfJLbWyJGQJuX1wyKsEB2Yp2W1KGB/T0MXX4Wu47cg==
+X-Received: by 2002:a05:600c:871b:b0:434:e9ee:c3d with SMTP id 5b1f17b1804b1-4362aa93cb0mr85374005e9.20.1734340143532;
+        Mon, 16 Dec 2024 01:09:03 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ddd7:943f:c7de:9971])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ef45sm133677185e9.26.2024.12.16.01.09.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 01:06:05 -0800 (PST)
-Date: Mon, 16 Dec 2024 11:06:03 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org, 
-	sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com, l.stach@pengutronix.de, 
-	andy.yan@rock-chips.com, hjc@rock-chips.com, algea.cao@rock-chips.com, 
-	kever.yang@rock-chips.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH v2 10/11] arm64: dts: rockchip: Enable eDP0 display on
- RK3588S EVB1 board
-Message-ID: <ay2im4itrj3k4p2ksobgsk77b7m4laaxctkfcpffqxj5ttxenm@mzdizmf3mlcb>
-References: <20241216031225.3746-1-damon.ding@rock-chips.com>
- <20241216031225.3746-11-damon.ding@rock-chips.com>
+        Mon, 16 Dec 2024 01:09:03 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Eric Anholt <eric@anholt.net>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 0/7] drm/vc4: Fixup DT and DT binding issues from recent patchset
+Date: Mon, 16 Dec 2024 10:09:01 +0100
+Message-ID: <173434013318.38429.808413721248542013.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
+References: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216031225.3746-11-damon.ding@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 16, 2024 at 11:12:24AM +0800, Damon Ding wrote:
-> Add the necessary DT changes to enable eDP0 on RK3588S EVB1 board:
-> - Add edp-panel node
-> - Set pinctrl of pwm12 for backlight
-> - Enable edp0/hdptxphy0/vp2
-> 
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Remove brightness-levels and default-brightness-level properties in
->   backlight node.
-> - Add the detail DT changes to commit message.
-> ---
->  .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-> index bc4077575beb..5c1ea25b6524 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-> @@ -9,6 +9,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/pinctrl/rockchip.h>
-> +#include <dt-bindings/soc/rockchip,vop2.h>
->  #include <dt-bindings/usb/pd.h>
->  #include "rk3588s.dtsi"
->  
-> @@ -120,6 +121,18 @@ backlight: backlight {
->  		pwms = <&pwm12 0 25000 0>;
->  	};
->  
-> +	edp_panel: edp-panel {
-> +		compatible = "lg,lp079qx1-sp0v";
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Please use aux-bus and a generic "edp-panel" entry for newer platforms
-instead of declaring the panel on the platform bus. Placing eDP panels
-on the platform bus has been deprecated for quite a while.
 
-> +		backlight = <&backlight>;
-> +		power-supply = <&vcc3v3_lcd_edp>;
-> +
-> +		port {
-> +			panel_in_edp: endpoint {
-> +				remote-endpoint = <&edp_out_panel>;
-> +			};
-> +		};
-> +	};
-> +
->  	combophy_avdd0v85: regulator-combophy-avdd0v85 {
->  		compatible = "regulator-fixed";
->  		regulator-name = "combophy_avdd0v85";
+On Thu, 12 Dec 2024 18:36:27 +0000, Dave Stevenson wrote:
+> I missed the DT errors from the recent patchset[1] (DT patches
+> in linux-next via Florian, DRM bindings patches on dri-misc-next)
+> as Rob's bot report got spam filtered, so this is a fixup set.
+> 
+> Largely it was changes to number of interrupts or clocks in the
+> bindings, so those are now covered.
+> 
+> [...]
 
+Applied, thanks!
+
+[3/7] dt-bindings: gpio: brcmstb: permit gpio-line-names property
+      commit: 83a9752729c455a6bd9b7cf62198506180691931
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
