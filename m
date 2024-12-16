@@ -1,211 +1,255 @@
-Return-Path: <linux-kernel+bounces-447372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7239F3149
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:11:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C9A9F314E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873601883760
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:11:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 603D77A180C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCB020550E;
-	Mon, 16 Dec 2024 13:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DBC2054EF;
+	Mon, 16 Dec 2024 13:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fzXJubo4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8V08crD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA002054FE;
-	Mon, 16 Dec 2024 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734354590; cv=fail; b=SUVbN9qLye7xqC7idSyqyr99OcIW88uGHAG+xdBV8KQYYFluKHvSKVrfDmZx8W7bus8nOHplkAqxaiJzVtHfu9NGIyCBRtRLsfmwT+doWuv4C2aooHIBa2/sMGYrUO8oMwPakC3g3qHp4P515gQKaIBJ2AtyWd6bWjPcwy4WTG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734354590; c=relaxed/simple;
-	bh=57UR0fWG9Q+ErzUnmU1qhqf7Ea3HHoADNbJ5sJ+OxvY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BL128/j0V90q54bi87mx/biww/iKfAt9GP8+4oIjHSNkyHbEeb0fSzZ9AZ2owxVF1nX3l/hVThkqE58ahrJQe4MUgCEnK1DhNHHG+5aTUOPXhAQhM0MQwIP3TnowSnJMFhGAZyo8E2x8ZGNT85pdNpq/PIAeOL93/PFoTt2qVFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fzXJubo4; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604F1119A;
+	Mon, 16 Dec 2024 13:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734354733; cv=none; b=Bs+OJX6vbxasHf0fzCmduJSQS3zcWE6a6a3n6KjTGpjuIJZzcDJ2XDo9n3zvZ0xIvNKZ9RjitmO9Su9LOaBQ5Q3TA984hbEBQmt1Fqh0fWbmkfSRWQCrAj5kUNzr+amPGymdcSGbrFJKHvWHvLr4AoJYn0e2MNIkW/KNqL4I8Q8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734354733; c=relaxed/simple;
+	bh=HR5XRJX2uwRRxUgogWrxKcaLUe14YMlruuHhky1uYFo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nbpA0YzScM1PIizjb4ay3svIsJsWh2h1Zf3QdQS1I0/i174QjU92v/XbnNl9iEfG8YkN6CDNTmGCmZepCZtLeTYx7ENu2VwG0yiZzRpA8QfeKZMPMdtcO9vJk1hcleSa747BXQ1TlkimfW5teWh35eU4yn3+IPGYN5xkCyZLMKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8V08crD; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734354588; x=1765890588;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=57UR0fWG9Q+ErzUnmU1qhqf7Ea3HHoADNbJ5sJ+OxvY=;
-  b=fzXJubo4jEt8kkhqQ12gbK+j22QtaZ4YGJLhc99aULWs2fsSi3KYfLjZ
-   XX09mQe+fSfdtPuUcMNj7b/M2LrergE9a/f29wuzWewnOFeej/52CSBAT
-   itASdjeSBDzxggwGslWD1Lcw6RXS/IsBRUVMZtow8xRg8NY2lf7Zr7vUH
-   7fr6UDvSu3w5zcBd6t4O7SHXKdcN6pc22TskNiQD5IEAS7KdNj5+eVkuG
-   XTwtWfIBlIk14HIOlJqAYFvS/9HULHqS2cNJHAgUGH7XBMre+fHPLRtdB
-   7g6eq9EOdw/FCZ//7tDLcQ2OI5bZ0xE69tDp6Xh3YQ13z6T/8HiwpMFMX
-   Q==;
-X-CSE-ConnectionGUID: vzJ/rd1ESba6yCbrWtZVRg==
-X-CSE-MsgGUID: Ns/W2dOPTQiahtwT73S4Ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="46131118"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="46131118"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:09:48 -0800
-X-CSE-ConnectionGUID: gUmwge+fTfqZGS7Rg7Cl3w==
-X-CSE-MsgGUID: LEc0qDEwQY+aKRnvSyirjA==
+  t=1734354732; x=1765890732;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=HR5XRJX2uwRRxUgogWrxKcaLUe14YMlruuHhky1uYFo=;
+  b=W8V08crDXCCGfNYVglkeVkmqYlFLjwbQJ1HERbT0UJOrXQzZYNVr3i+O
+   1amBC+NapaN8E0TL83saIBsPGMvAI1x2MWNqn5bemUKEqbN8xWvqCyM9X
+   4nY0JbCfLjRrtubQt5ZU1uDdOwOgdnUb6gAqd/sAcw1+iI13HYYnYeis7
+   8H5FYHbooM2DTiOnxIXZWyfYuCV1bhYwcv7AS5ZmPFV26m4gjBmPE0m4J
+   7U5z8KOjYjOEhjAGRivwXE8AgeLjL7fuTkwK4quzs6hcjzPKwLDQ/6seT
+   XU80ymznZy1nkRs0SzRzaJ+4CCGfK8n96V04qZ60UmDbpiSu58Vg1pphg
+   A==;
+X-CSE-ConnectionGUID: WGidqSR3QvuwRzxatDbl5Q==
+X-CSE-MsgGUID: BVRlAZItT1K6aQ5Mo+bcGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34616793"
+X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
+   d="scan'208";a="34616793"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:12:12 -0800
+X-CSE-ConnectionGUID: yAZR0EbHTOaFFdtAZ+uYXg==
+X-CSE-MsgGUID: 7nvxPvybQfukdarTEuZTCA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,238,1728975600"; 
-   d="scan'208";a="102216633"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Dec 2024 05:09:48 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 16 Dec 2024 05:09:47 -0800
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Mon, 16 Dec 2024 05:09:47 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 16 Dec 2024 05:09:47 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WUKbFhRrU8rdrC0KwSQ1mEIHX1FmEhdlmvHh5zMn21aSCjgHXLOVxH3qe2zV++aGfaefeVp6tew/nNGh6JvntKSL7VDf8cMAgp/hVM+W/ph+rhh6tnIbGF7fTvKDYAo5lppJIx/O3bZHwmbYEFMV5FRJq+Q3T3eoa2d0QQPojRMrUUPHVDLfde6l035o/4dZGx5gx9pp//hxQH1idWHYF75fchSLky53jehJYnFmx72ccs8JuDUfkgWhBzOmtC2KzAIofmj4R2ix754sYBxce64sft3S/jBIGEU2nEMVNmaLaLvBr9RFGR3Q3kLpCv/eSZBoonmhmXaB2WA/LKMXJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d6vQm/gV59eMVQbLKxetpUhiY2Ed2xDcrG5MjWH5sYA=;
- b=O1vaqNGTDkog6cZdABA2xBYgqzdz5TGlWLAdxmHPOCcWCVRX1l11qCOYoCfI1ZSFrhH+7PyLklzCUsBvbWaZtmMFGKGEZnH3a6QDF/51ClD2++HRt70WFyrAQeCB7P6WcqrXjGScIaFYwqGgKM1XecH5XgHMi6LrMcIeAC/2oUhC7Vc1zZeG8KdgU4afI8Ul82WCnIthu2oQJqpvyZDYHQihau1ss7btULGZawdYcaUaxETDsnUoQPQBb0nqPylWO2eP3QTASz5yrzazPG9p+bhXd+esX98iycfX+an5PDyUxRDyHcHUJRxRNI+VBh6SOM75phW2rysU2bBmfSWKIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by DS0PR11MB6471.namprd11.prod.outlook.com (2603:10b6:8:c1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
- 2024 13:09:45 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
- 13:09:45 +0000
-Date: Mon, 16 Dec 2024 14:09:39 +0100
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-CC: <shuah@kernel.org>, <fenghua.yu@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
-Subject: Re: [PATCH v7 0/2] selftests/resctrl: SNC kernel support discovery
-Message-ID: <artiz7pangcy2bgfyhbhiv3rag2p4idyf4s56n4chat7cfuxtf@mj2bj3hejgge>
-References: <cover.1733741950.git.maciej.wieczor-retman@intel.com>
- <ca2b665a-79da-40b6-93e1-533fe1c46cda@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca2b665a-79da-40b6-93e1-533fe1c46cda@intel.com>
-X-ClientProxiedBy: DU7P251CA0015.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:551::6) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+   d="scan'208";a="127997718"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.29])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 05:12:08 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 16 Dec 2024 15:12:04 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Jian-Hong Pan <jhp@endlessos.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org, 
+    "David E. Box" <david.e.box@linux.intel.com>
+Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
+ child and parent's L1SS configuration
+In-Reply-To: <20241213182845.GA3423569@bhelgaas>
+Message-ID: <e3318648-b3cb-51c0-f879-0cb005a2ef36@linux.intel.com>
+References: <20241213182845.GA3423569@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|DS0PR11MB6471:EE_
-X-MS-Office365-Filtering-Correlation-Id: 955db382-0cbd-4b8f-4a85-08dd1dd2e91f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?9TktmFPDZKoOLtudhQ3uIiQdS5cvVI8D0stJzm36l9M09e/I87M2XQbYpM?=
- =?iso-8859-1?Q?PpU1aSW8AMOsyxUA+luMQZoSfdwBxa+HPar39VLuf7zmBpTE6f/p7hRDgq?=
- =?iso-8859-1?Q?rUJEXQ/LKXBpPqMeWYda2NTGZtBFKSjq9j+4T/Yn+kd2fbedUdq0ECqara?=
- =?iso-8859-1?Q?F5ixQPoNGLg1jBwPazgI4B+a5gZZlrqsM35GVf9JF8pfQD7agLfU4UU+q2?=
- =?iso-8859-1?Q?gYvJXNk8uwvztSg7sGkK9g1ryxFGm6FyRDXP3ExIY3iNfxXHuAqvGL4255?=
- =?iso-8859-1?Q?X4Qdo4SVqu+3wo+eEDW8VDtU262SwvgwP0vpijEQSnxbmfg6QUSivdVcy9?=
- =?iso-8859-1?Q?AFrlbhl3mv5GVARwC+4BKTNFCF/lKI43h0OFOvV6yev9OLko0wjdIvplxD?=
- =?iso-8859-1?Q?orfkkJsREZ8Ju1hLiFWPy5sxDppy3ojrXnYuPVzb8OynwM7Qd7pbUKcU5S?=
- =?iso-8859-1?Q?qWKVAIS0c3Mh3wOU+oIuJToQU040Pd2XxDqoq3SHrFFhYZWfCUD97PTUqR?=
- =?iso-8859-1?Q?Z8Kta5VQv0vNBUQ6/XhTo+JABp8kbGxSqP++p90163H1RuwLnLYJOqx6NE?=
- =?iso-8859-1?Q?x3a7/xu40sur4AK5W83klE3bUkkif8iFNj8FBuNDraaAtFg/a6YH0lZ5+L?=
- =?iso-8859-1?Q?lohtW6zh0Tl3j1ObqIVMoAVffbP9U67q9reCA7Wg+MDIFfn9o8rDuWCl6C?=
- =?iso-8859-1?Q?2V7q6CFj5kSeWeiKlyai8BpjmsxC4vNli7OiixXOiGE9/v9AgpGdnh3VG6?=
- =?iso-8859-1?Q?WKkbzRGVzf2OO9uDYQP7J5dh5zRext0wCiJgs8c17HIkbEROuGTVPt+VC2?=
- =?iso-8859-1?Q?y1V9F+vCr10qtRQLDpE29Wz+EGS6Qhmuxz1BjCO3IChx+2jx+XRAyIU8fY?=
- =?iso-8859-1?Q?BZSmrviqoacMqS5qGeecEhKiFqTsvLk3R9Yz7ojGPMii9WOlwzaf6O4AXK?=
- =?iso-8859-1?Q?h2wUKc5ZVme4oQZhTG411yDoK2vgdrLKSOLn3H1nlkitfav3HPxzoJuXoi?=
- =?iso-8859-1?Q?6YH9TNntGEvUmN6AF4iMsGxoDrSE/+lDmIK/RWKXSOe8+iEsaedjr7aYAQ?=
- =?iso-8859-1?Q?mYfkZ+qJv7ZJj5JqkA+EOFc6348p4crsbkikhbA2JUTs64WbC1QuimnHIx?=
- =?iso-8859-1?Q?XiwGazATTFWvjwVkPViz2HdFXNCX1cklLyFq3cTBD2kqWPwdLzmO3nKg8A?=
- =?iso-8859-1?Q?3JggYwL55gMNXe/rCmF3rmVQzWT9OQQOQ3SpzR4Jp3Yh/tsOkKBLjuAicv?=
- =?iso-8859-1?Q?yZOyPqTc/AcBpvvWFswIA4PxvPbqCFVWzcJ9JucSGfmTiYH7bXwZ9S+iFd?=
- =?iso-8859-1?Q?2YRf82KzD/sIQfkUe0958lBXUHycgsM3WyHYFZxchLdo3KR5YWfaeq7lii?=
- =?iso-8859-1?Q?iMBGl2UGNNk5VDKCMRNakDqtNqaF66gjib3CyaNIXcDS7qBRqTCDlpvTOz?=
- =?iso-8859-1?Q?J2GVfVsDzfRwA7om?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?OAmZ9Y0KMuByE4AGUcTSYj7Mvj6CFC5CDPi39mReWkPxmKPPCTVwZcqhat?=
- =?iso-8859-1?Q?bAtizUIwNT6rdEaM23KuBbklw96vkEcKpcLM6ejjE6NCiFhyTifNvpHmOT?=
- =?iso-8859-1?Q?qVB4uFIqn+JLlslQXA2PxyKe6n09tMSHBxgfG/eOZgcolMWJUnzXYj1Xqk?=
- =?iso-8859-1?Q?Ek130cNyh0uqDH55ux2LgXsAucAOuJ6VB/Rztxrz8kfMNWoC7ra70NNxV3?=
- =?iso-8859-1?Q?rw/XMHB4h1c3kzMHy/AyaLN6ijP0ZRRWt1jtGwbZE6lhC0c+dO3pWnnRGy?=
- =?iso-8859-1?Q?JLtYTaHdVhnvJcEraOPU9Eyw+MX7TBjv9JbQDamFCdtqPrhVhFg/KnopQw?=
- =?iso-8859-1?Q?Cv1oEE23iJrpB4lg49L7NeM/zZzDOjHe6i3FxXnmfzYOtqY+nqbNEoJGvC?=
- =?iso-8859-1?Q?2+O039o74KfoVAYodkjyB/Wg/bscTRFGnnNV+OUR3GnUNlOgQEBIKAlXgG?=
- =?iso-8859-1?Q?2kEUGiy+q3nbyyaknwWDaENTps8rcOxrzYaWaSJU3K1uCK+b1uKCymGoUw?=
- =?iso-8859-1?Q?IQ9kuLvjAnI+jd4veGear7SsYlx/4Hf6Y6Ldjgx7PHUQRu29HGghbNhjmR?=
- =?iso-8859-1?Q?cPaMnV81gAenL8/qgyMBJLaoarmknR3eU5v3U4mAl84Bq4OPQZWq4VHh5z?=
- =?iso-8859-1?Q?bvPx3YdrDzQ5YCCpUQnr3Lihcb+STf9Pixk2dogOC1a43HOvvCo0of7vxq?=
- =?iso-8859-1?Q?kidsmCL9yR76FYz9z3xhqBe2fXcZ68ueTlSv9r67nlnWJpuiFMomp7ygB8?=
- =?iso-8859-1?Q?V1lMQl/XizxXh7PHnqLsYh+1xVWHlkAmxD44PUuLIECCZalqrdROTIqxRT?=
- =?iso-8859-1?Q?KM9lRxx0tjwjo++HB2Jq8U8HUW/QLz4I4wNZluIlBODYjWwOgcjC50rONM?=
- =?iso-8859-1?Q?SercjiMx6h4mCjWL7Y6ThmxHAnqC5p2Qv+zSQrlf0SBAUjOT4XnhL82Jjb?=
- =?iso-8859-1?Q?G5Q7wmKhb0hyDIVixSOISikjbaqeja9xL2m1KrrjnEEiqOrXITPiwgIvKu?=
- =?iso-8859-1?Q?m3vsE99QCYFz6kUPD4OMDtarpbBDNhGbHJXWyWqq5ygPHX/pbnpQEI+BFm?=
- =?iso-8859-1?Q?/XY7JnYf1Cgh4SmupaTxYKT4RzuejaHyRF7W46H02pK2/gOirj00ukqRJS?=
- =?iso-8859-1?Q?GYK3LtcYKu7d63nQC7TBGW9RGoDTu6Tot6mx94I7WpVD3BTwPyDJ382H0A?=
- =?iso-8859-1?Q?9jbAfBOj1YFYKDuVeuAFZxZrYZOw0ALmQyjC5cLZiH7cLqNaGPOsJhuA3w?=
- =?iso-8859-1?Q?rjucCGXQsBCcx1A5ULadQ6Detbyo1WkGjBMSPEorkpWeegMqi6U8e9mCRM?=
- =?iso-8859-1?Q?NxkuHBOh+J8HVICZ5ZOIqwzE4qYjBbBl7g/tZMUMZVBJGBzvMgClAZdCAv?=
- =?iso-8859-1?Q?ZQDgPPDelTa6NDh3NqDtD22amoV1RSsw4VSN2c/TuVvo/kagtULUhUh/lc?=
- =?iso-8859-1?Q?EgmEXaXbeMM3U1K3eDeqd49Z/bLi+D/VJzc5spk1jObJHUdW83Y4yMlt8w?=
- =?iso-8859-1?Q?s/TZz5pZIIGVBc+IAKN3ixwXKoR6WdDheT5q9BWRsouAmVkimidLV4y/mU?=
- =?iso-8859-1?Q?evu65itUYn7dHVopXxomnjaODd4quPW/yei6KLm3oDHH0C5Axn9iuEOC/l?=
- =?iso-8859-1?Q?w/rICQABxkJKLbcffRBQ/twj30WScraHd9t9WjBTcPMX19l0ceJxbCC0w+?=
- =?iso-8859-1?Q?OqNjlbeRXOGD/mK6fAY=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 955db382-0cbd-4b8f-4a85-08dd1dd2e91f
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 13:09:45.0491
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KFJ1V6mCAioPHYXVXC0cY9pvbZ8L5N6ktgAg8A0Zm1YNClctdXpHdQmptwliPpKwH+NTBdrlggbXQ+SepaOeNEv49cTEwNNgKSDXtL2sxxo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6471
-X-OriginatorOrg: intel.com
+Content-Type: multipart/mixed; boundary="8323328-1224168302-1734354724=:941"
 
-On 2024-12-09 at 11:19:32 -0800, Reinette Chatre wrote:
->Hi Maciej,
->
->On 12/9/24 3:09 AM, Maciej Wieczor-Retman wrote:
->> 
->> Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
->> into multiple NUMA nodes. When enabled, NUMA-aware applications can
->> achieve better performance on bigger server platforms.
->> 
->> SNC support in the kernel was merged into x86/cache [1]. With SNC enabled
->
->Please note that this work has since been merged and can be found in
->kernels starting with v6.11.
->
->Reinette
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks, I'll correct my statement.
+--8323328-1224168302-1734354724=:941
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
--- 
-Kind regards
-Maciej Wieczór-Retman
+On Fri, 13 Dec 2024, Bjorn Helgaas wrote:
+
+> On Fri, Dec 13, 2024 at 12:37:24PM +0800, Jian-Hong Pan wrote:
+> > Bjorn Helgaas <helgaas@kernel.org> =E6=96=BC 2024=E5=B9=B412=E6=9C=8813=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8A=E5=8D=887:03=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> > > On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
+> > > > PCI devices' parameters on the VMD bus have been programmed properl=
+y
+> > > > originally. But, cleared after pci_reset_bus() and have not been re=
+stored
+> > > > correctly. This leads the link's L1.2 between PCIe Root Port and ch=
+ild
+> > > > device gets wrong configs.
+> > ...
+>=20
+> > > I think the important thing here is that currently
+> > > pci_save_aspm_l1ss_state() saves only the child L1SS state, but
+> > > pci_restore_aspm_l1ss_state() restores both parent and child, and the
+> > > parent state is garbage.
+> > >
+> > > Obviously nothing specific to VMD or NVMe or SATA.
+> > >
+> > > > To avoid pci_restore_aspm_l1ss_state() restore wrong value to the p=
+arent's
+> > > > L1SS config like this example, make pci_save_aspm_l1ss_state() save=
+ the
+> > > > parent's L1SS config, if the PCI device has a parent.
+> > >
+> > > I tried to simplify the commit log and the patch so it's a little mor=
+e
+> > > parallel with pci_restore_aspm_l1ss_state().  Please comment and test=
+=2E
+> > >
+> > > Bjorn
+> > >
+> > > commit c93935e3ac92 ("PCI/ASPM: Save parent L1SS config in pci_save_a=
+spm_l1ss_state()")
+> > > Author: Jian-Hong Pan <jhp@endlessos.org>
+> > > Date:   Fri Nov 15 15:22:02 2024 +0800
+> > >
+> > >     PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()
+> > >
+> > >     After 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability fo=
+r
+> > >     suspend/resume"), pci_save_aspm_l1ss_state(dev) saves the L1SS st=
+ate for
+> > >     "dev", and pci_restore_aspm_l1ss_state(dev) restores the state fo=
+r both
+> > >     "dev" and its parent.
+> > >
+> > >     The problem is that unless pci_save_state() has been used in some=
+ other
+> > >     path and has already saved the parent L1SS state, we will restore=
+ junk to
+> > >     the parent, which means the L1 Substates likely won't work correc=
+tly.
+> > >
+> > >     Save the L1SS config for both the device and its parent in
+> > >     pci_save_aspm_l1ss_state().  When restoring, we need both because=
+ L1SS must
+> > >     be enabled at the parent (the Downstream Port) before being enabl=
+ed at the
+> > >     child (the Upstream Port).
+> > >
+> > >     Link: https://lore.kernel.org/r/20241115072200.37509-3-jhp@endles=
+sos.org
+> > >     Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability f=
+or suspend/resume")
+> > >     Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
+> > >     Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > >     Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> > >     [bhelgaas: parallel save/restore structure, simplify commit log]
+> >=20
+> > Thanks for the simplification!
+> > Tested on my Asus B1400CEAE. Both the "dev" (NVMe) and the parent (PCI
+> > bridge) keep the correct L1SS config.
+> >=20
+> > Tested-by: Jian-Hong Pan <jhp@endlessos.org>
+>=20
+> Thanks, I applied this on pci/aspm for v6.14 since this is a pretty
+> old problem, and AFAICT it's a power consumption issue, not something
+> that is functionally broken.  We might be able to make a case for
+> v6.13 if my understanding is incorrect.
+>=20
+> Ilpo, David, I dropped your reviewed-by since I changed the patch
+> significantly; let me know if you see any issue or if you want to add
+> your reviewed-by.
+
+The updated version seems fine too.
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--
+ i.
+
+> > > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > > index 28567d457613..e0bc90597dca 100644
+> > > --- a/drivers/pci/pcie/aspm.c
+> > > +++ b/drivers/pci/pcie/aspm.c
+> > > @@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev=
+)
+> > >
+> > >  void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> > >  {
+> > > +       struct pci_dev *parent =3D pdev->bus->self;
+> > >         struct pci_cap_saved_state *save_state;
+> > > -       u16 l1ss =3D pdev->l1ss;
+> > >         u32 *cap;
+> > >
+> > > +       /*
+> > > +        * If this is a Downstream Port, we never restore the L1SS st=
+ate
+> > > +        * directly; we only restore it when we restore the state of =
+the
+> > > +        * Upstream Port below it.
+> > > +        */
+> > > +       if (pcie_downstream_port(pdev) || !parent)
+> > > +               return;
+> > > +
+> > > +       if (!pdev->l1ss || !parent->l1ss)
+> > > +               return;
+> > > +
+> > >         /*
+> > >          * Save L1 substate configuration. The ASPM L0s/L1 configurat=
+ion
+> > >          * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
+> > >          */
+> > > -       if (!l1ss)
+> > > -               return;
+> > > -
+> > >         save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1=
+SS);
+> > >         if (!save_state)
+> > >                 return;
+> > >
+> > >         cap =3D &save_state->cap.data[0];
+> > > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
+> > > -       pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+> > > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++=
+);
+> > > +       pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++=
+);
+> > > +
+> > > +       if (parent->state_saved)
+> > > +               return;
+> > > +
+> > > +       /*
+> > > +        * Save parent's L1 substate configuration so we have it for
+> > > +        * pci_restore_aspm_l1ss_state(pdev) to restore.
+> > > +        */
+> > > +       save_state =3D pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_=
+L1SS);
+> > > +       if (!save_state)
+> > > +               return;
+> > > +
+> > > +       cap =3D &save_state->cap.data[0];
+> > > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, c=
+ap++);
+> > > +       pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, c=
+ap++);
+> > >  }
+> > >
+> > >  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
+>=20
+--8323328-1224168302-1734354724=:941--
 
