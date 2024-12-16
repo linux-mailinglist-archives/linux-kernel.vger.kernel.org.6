@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-447713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D705E9F3653
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:42:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFCA9F3659
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 17:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92E27A33EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0107188323C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76322066DC;
-	Mon, 16 Dec 2024 16:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7835207677;
+	Mon, 16 Dec 2024 16:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="GmBH3LoD"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="umizmjjA"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712D1193430;
-	Mon, 16 Dec 2024 16:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F3F2066F2;
+	Mon, 16 Dec 2024 16:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734367295; cv=none; b=MoRNEb2Hb5QaPslbmZMtOWE4Sk7JqhUah//VZaiM2V4+1nyrVgV4dUjODFkvMD0cZTiQbnzOVb/6/iEDK/Vz7fT/4pAnXg1GDr18tMdFnIDMitaMf9ZxICi4XJ1w1KhsrZj/nTb8zfND5fS6DbuOd68jDCsFlfhy0PMpF02+Z1w=
+	t=1734367298; cv=none; b=eBoYo79RnPnJjcmytuPudUTjOSWw6OgzQaezILB5VWV9hLp5gj1iMemc1FI6/fDWWlC4sFs1D4KQHmwX5PSPXtUHDgWgB1vnoNDzEylE44SGTwIntZ/jkN1EV3zlIFmOas6Ithzw6SnIKlV9/siRMk2a6Md3ylaE54pJ3lZ/J+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734367295; c=relaxed/simple;
-	bh=LzsFpOls8oXtgcc/LvXjxf3PJjqQkyOjKQSP/0EcyIY=;
+	s=arc-20240116; t=1734367298; c=relaxed/simple;
+	bh=olpjHUpdwoGt/2BDkxgfOZVu99AqVRSIaa/pByLDSPk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KiRxIz+W7OQqD7cd+6DMJRHeduVCmEyKgKSysREEYgcncfLb87WXpmsr4OmVsJ//E1F8107DLhuR1Z4I9Jrj09sl2G69fPWhFt7CJ/PNqUD1FYcwiaeXCbONaMMCmhyY/Oe5mn7ka2jDhu1XmKmLiQhx3lzx7a6ET8ro2LYJy4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=GmBH3LoD; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=SIgpaFw+U+2dN1Ec4HxGNoH8v+mjNEEzC2GGl1O/viIMq7ZkkzyaLQ7syAJX+I7eC7Nq1qZch1moRF62Al0ScnosTbxHqotOlOGcIvRRT8Lpr9+3GavA+YACnlgPUMGHyWFLDI6bfxaCf5HzKJoITuLPjejYbMDpTTppsHoXxyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=umizmjjA; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1734367285;
+	s=2023072701; t=1734367288;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4k4ZF75QAu6g5n+iQVxb/sSwhil14zmDfkFwEEcBxjs=;
-	b=GmBH3LoDTtK/VWa31laPQErpC4e8J3goHHaekNxnEThLfGyr9amANp6lmEbZmY59wuqG+w
-	JbAiSrBwpvZ6hgBSU30OKYLV7PsHAl5RcHlnqBQQj6Sb3SG0t0fZldqjaRVccqe2vZcM97
-	JPhBzLS8yv6qsrCQamP6MMgkuad3EXHKIcL7bBSPm8zmBQMzsgQxOXMagFbO9oPYcsVvr9
-	zhKYdTPnqexlglq+AAc2GgMOi8LZnpVXy2Uf2eA5Qzdb88MXhzCs/x0fPbzwtWMXV+FSDV
-	ZkIwtZb01mmPQaaOlk/mF3jovAiy50TDo5Fb0cVALOluizO2Ad0jt5VOHO/Unw==
+	bh=XExxUJMx2whlaYdcdok2BEmZkUsYJteYCdG7aVNDCGY=;
+	b=umizmjjA3gR+8GD1L1lzuRCJ+t2np4uoKvEDq1kw3iz2BpPIE7lpBYH49gNUYOuKZVAsJR
+	smkPp4nkXCEYccaXuJ8tAvWHhTfbPJqSwSnaWSkTJJlSGgfX6Xum0HMaY1AyuwC/RnDmIg
+	ug9TglHjN+RlAHuKQG1bGcTnLOsNRzU0ab4J3AlaF8pIJBxuaPKj6Ym+RjpBHAiVbh7Xtq
+	BZ6EPqR2Sx7sKDxZYIA3jhdaGAUi3Yoo5PlRRdSA8KJRDKEyl76Ht3XEPcsyU0OiCIA37C
+	R+zT01+mgyGyZpeFhUC2RHfAQ2fPfsYmzCCktLG/OHVgBRSDSfflp/AkH3fzAg==
 To: selinux@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -57,10 +57,14 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [RFC PATCH v2 02/22] selinux: avoid using types indicating user space interaction
-Date: Mon, 16 Dec 2024 17:40:00 +0100
-Message-ID: <20241216164055.96267-2-cgoettsche@seltendoof.de>
+	llvm@lists.linux.dev,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	GUO Zihua <guozihua@huawei.com>
+Subject: [RFC PATCH v2 03/22] selinux: align and constify functions
+Date: Mon, 16 Dec 2024 17:40:01 +0100
+Message-ID: <20241216164055.96267-3-cgoettsche@seltendoof.de>
 In-Reply-To: <20241216164055.96267-1-cgoettsche@seltendoof.de>
 References: <20241216164055.96267-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -75,43 +79,87 @@ Content-Transfer-Encoding: 8bit
 
 From: Christian Göttsche <cgzones@googlemail.com>
 
-Integer types starting with a double underscore, like __u32, are
-intended for usage of variables interacting with user-space.
-
-Just use the plain variant.
+Align the parameter names between declarations and definitions, and
+constify read-only parameters.
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- security/selinux/hooks.c       | 2 +-
- security/selinux/ss/policydb.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ security/selinux/include/conditional.h | 2 +-
+ security/selinux/include/security.h    | 4 ++--
+ security/selinux/ss/avtab.h            | 2 +-
+ security/selinux/ss/services.c         | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 617f54abb640..7b2e2c60f0f4 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3135,7 +3135,7 @@ static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	const struct cred *cred = current_cred();
- 	struct inode *inode = d_backing_inode(dentry);
- 	unsigned int ia_valid = iattr->ia_valid;
--	__u32 av = FILE__WRITE;
-+	u32 av = FILE__WRITE;
+diff --git a/security/selinux/include/conditional.h b/security/selinux/include/conditional.h
+index 5910bb7c2eca..060833e2dba2 100644
+--- a/security/selinux/include/conditional.h
++++ b/security/selinux/include/conditional.h
+@@ -16,7 +16,7 @@
+ int security_get_bools(struct selinux_policy *policy, u32 *len, char ***names,
+ 		       int **values);
  
- 	/* ATTR_FORCE is just used for ATTR_KILL_S[UG]ID. */
- 	if (ia_valid & ATTR_FORCE) {
-diff --git a/security/selinux/ss/policydb.h b/security/selinux/ss/policydb.h
-index 4bba386264a3..5c11069121d3 100644
---- a/security/selinux/ss/policydb.h
-+++ b/security/selinux/ss/policydb.h
-@@ -144,7 +144,7 @@ struct range_trans {
+-int security_set_bools(u32 len, int *values);
++int security_set_bools(u32 len, const int *values);
  
- /* Boolean data type */
- struct cond_bool_datum {
--	__u32 value; /* internal type value */
-+	u32 value; /* internal type value */
- 	int state;
+ int security_get_bool_value(u32 index);
+ 
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 10949df22fa4..1d47850fff45 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -290,7 +290,7 @@ int security_context_to_sid_default(const char *scontext, u32 scontext_len,
+ int security_context_to_sid_force(const char *scontext, u32 scontext_len,
+ 				  u32 *sid);
+ 
+-int security_get_user_sids(u32 callsid, char *username, u32 **sids, u32 *nel);
++int security_get_user_sids(u32 fromsid, const char *username, u32 **sids, u32 *nel);
+ 
+ int security_port_sid(u8 protocol, u16 port, u32 *out_sid);
+ 
+@@ -308,7 +308,7 @@ int security_validate_transition(u32 oldsid, u32 newsid, u32 tasksid,
+ int security_validate_transition_user(u32 oldsid, u32 newsid, u32 tasksid,
+ 				      u16 tclass);
+ 
+-int security_bounded_transition(u32 oldsid, u32 newsid);
++int security_bounded_transition(u32 old_sid, u32 new_sid);
+ 
+ int security_sid_mls_copy(u32 sid, u32 mls_sid, u32 *new_sid);
+ 
+diff --git a/security/selinux/ss/avtab.h b/security/selinux/ss/avtab.h
+index a7cbb80a11eb..32b8335cf93e 100644
+--- a/security/selinux/ss/avtab.h
++++ b/security/selinux/ss/avtab.h
+@@ -89,7 +89,7 @@ struct avtab {
  };
  
+ void avtab_init(struct avtab *h);
+-int avtab_alloc(struct avtab *, u32);
++int avtab_alloc(struct avtab *h, u32 nrules);
+ int avtab_alloc_dup(struct avtab *new, const struct avtab *orig);
+ void avtab_destroy(struct avtab *h);
+ 
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 55fdc7ca232b..1c4ac392df2a 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -2712,7 +2712,7 @@ int security_node_sid(u16 domain,
+  */
+ 
+ int security_get_user_sids(u32 fromsid,
+-			   char *username,
++			   const char *username,
+ 			   u32 **sids,
+ 			   u32 *nel)
+ {
+@@ -3034,7 +3034,7 @@ int security_get_bools(struct selinux_policy *policy,
+ }
+ 
+ 
+-int security_set_bools(u32 len, int *values)
++int security_set_bools(u32 len, const int *values)
+ {
+ 	struct selinux_state *state = &selinux_state;
+ 	struct selinux_policy *newpolicy, *oldpolicy;
 -- 
 2.45.2
 
