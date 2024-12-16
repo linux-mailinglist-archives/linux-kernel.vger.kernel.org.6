@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-448257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D149F3DB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:43:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313B69F3DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 23:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 473207A2047
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:43:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6146B169508
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685F1D8A10;
-	Mon, 16 Dec 2024 22:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D206E1D90A9;
+	Mon, 16 Dec 2024 22:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Km8BpZP8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLYZv18H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9AF1D5AC6;
-	Mon, 16 Dec 2024 22:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1701D1D8E16;
+	Mon, 16 Dec 2024 22:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388989; cv=none; b=HjF+ElpRudUi4wwpDA8S6qq94zVYke45osuJzt1izXwe4fVkW9cOwnv5XvGilpF4OFh4Bj4McWd7+GTjELxi21UOEOeabEGs2vUjpldXiM514Px8Nd+gmAoTNESHW5cmlAUTvbQFfJ7VeWIWW/Qf67wwyMHKWv88wnwvbS8CLvI=
+	t=1734389121; cv=none; b=AXQ2dpetPOB9mYAzpTu0sW5PHEX+YaJ/K71M4IxV3ZP1EDFLCpkHYeJ41V4HZ73i4bhBVUgvjDdyPH0kOuQOqjhdFExAZf2Ul/oqiEvHeaRZfEPrk41s5HcWZ0dlS5Acz/mrso/plZysyaiGsyDKggvKFz3PW1mEyGzq0sjm3uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388989; c=relaxed/simple;
-	bh=lGM80qH8pnV5C/dirqqgdp+OaWvFZgQ1uxawsXFyY1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jmfbegi31xy8GLI00gYjgZpiE9zCypamRuGWZrStha5NXFU/prBYiB9jVQQRiAQUYWlfQ9++VsNGmVaB2v2zA6wadyh7SGIgMoHR6vGWqGb00Y7MjXrIBeVOMsVlGvx0iXcxtLxzF2wCkSikLt8Lys3M78IcZmW+a9cVLK2Klec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Km8BpZP8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGH9U2P016945;
-	Mon, 16 Dec 2024 22:42:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H2L8uVyKd4qvBkJbrYXcMZ2oODeoHo/p2so9JSQLiHU=; b=Km8BpZP87w8cOaeD
-	lKNUocOIKw585GAP3iMvcP0klGWDTepIqVYgedxH475QJbvtarzIVuxCQ2ljimr8
-	kPFlf6eXRKQNCH6ZrvpbEJ5TPIM5dD7CXgm14+fAt7TRO+na6tQqTWzAv6F9t6Nl
-	Fo7fm2wU/WxJovo6wHxPdFmSvNbhwpZsy15mHLXT6cOdEvy0hx6cIu0xB4/oo5aG
-	58zRYlzrcyWjQovBJhLCWu8o0vZ6jPK9yAf8yg2Y0yosnq+lya90tRjhTEzi9qnH
-	174Jsj2tESdNYMjv2cjsEZweeFSqbdfmGyvx9Nna7x/9zXYLpgijP6PYPkn9VCzL
-	kkP3Pg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jrc1rqcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:42:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGMgvIL001796
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 16 Dec 2024 22:42:57 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 14:42:56 -0800
-Message-ID: <dadf64ae-348c-49bf-b5cd-6b37a81ecf20@quicinc.com>
-Date: Mon, 16 Dec 2024 14:42:55 -0800
+	s=arc-20240116; t=1734389121; c=relaxed/simple;
+	bh=e9KQqpj/sEwKdaCNmKMD0QnmSVljvgmzt9ByIs11ScE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IpCgq31mnKXiWyvOBezn/C7HpAWD/yduJQVFDn92vbOUWZijwPgZpeWO82MfpjAOa81WTvkKzMBW68DsNKumy1MLFSXqrcPuPohQNlDgJ2QIex5JiFUzO4JJtxikdoIqkrmp8Paa6jtKzM0LF162JxUpFwOLxxvCoJeWwQ4Ve88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLYZv18H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACD5C4CED0;
+	Mon, 16 Dec 2024 22:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734389120;
+	bh=e9KQqpj/sEwKdaCNmKMD0QnmSVljvgmzt9ByIs11ScE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iLYZv18HqsqQnRBtWClA6oKbzOuu9uvcWwWXgEmVVi/BBtSJtsbrDbjgY9mQ/gEb9
+	 xI2w9J8nb+i40n0xHDVR+vtDFIPEj4xPCckTpxEl9LvIRTtXEio69xpRtQNC4bdmNR
+	 iYuVCI4Q7ovhT5vz8CCH2NTwI3g4UCypBwWzp0H/T6kgESZDiqUH+eLQ12lWaQCDqZ
+	 BOutENXKARpA/WFnv0Ywm6JJCaQigADjQhbvtWvrHJ+lAbGxxsBRiTCaH94y6/REqb
+	 iRlaCVegLS18TYD/JJfZMuI3MgA6u3WGBRItl1g1caGja9hkJGk3tFhF2y6/aLHAvp
+	 N4Z7YWgHKDXKA==
+From: Kees Cook <kees@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Kees Cook <kees@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] inotify: Use strscpy() for event->name copies
+Date: Mon, 16 Dec 2024 14:45:15 -0800
+Message-Id: <20241216224507.work.859-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] drm/msm/dpu: link DSPP_2/_3 blocks on X1E80100
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>,
-        Robert Foss <rfoss@kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Richard Acayan
-	<mailingradian@gmail.com>
-CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
- <20241216-dpu-fix-catalog-v1-7-15bf0807dba1@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-dpu-fix-catalog-v1-7-15bf0807dba1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dK4aoDXc8E2edzBaK6_YWLW8j7Og53v0
-X-Proofpoint-ORIG-GUID: dK4aoDXc8E2edzBaK6_YWLW8j7Og53v0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0
- mlxlogscore=881 mlxscore=0 adultscore=0 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412160186
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1177; i=kees@kernel.org; h=from:subject:message-id; bh=e9KQqpj/sEwKdaCNmKMD0QnmSVljvgmzt9ByIs11ScE=; b=owGbwMvMwCVmps19z/KJym7G02pJDOkJa6seChXKdd7qZjgw1ynxvMylO97NgaVhen9qT255f Oas2xn9jlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIkEXGRkuPrg35zdf68erFHe ojiTb2GXqdOaR9fruZNirG0eticZ/2BkWLT8+WFORt1Z2mknhENeSS1Z8eC2iGvhIr3DLNx9c3P dGAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+Since we have already allocated "len + 1" space for event->name, make sure
+that name->name cannot ever accidentally cause a copy overflow by calling
+strscpy() instead of the unbounded strcpy() routine. This assists in
+the ongoing efforts to remove the unsafe strcpy() API[1] from the kernel.
 
+Link: https://github.com/KSPP/linux/issues/88 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/notify/inotify/inotify_fsnotify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
-> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
-> 
-> Fixes: e3b1f369db5a ("drm/msm/dpu: Add X1E80100 support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 2 ++
->   1 file changed, 2 insertions(+)
-> 
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index 993375f0db67..cd7d11b0eb08 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -121,7 +121,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 	event->sync_cookie = cookie;
+ 	event->name_len = len;
+ 	if (len)
+-		strcpy(event->name, name->name);
++		strscpy(event->name, name->name, event->name_len + 1);
+ 
+ 	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
+ 	if (ret) {
+-- 
+2.34.1
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
