@@ -1,189 +1,205 @@
-Return-Path: <linux-kernel+bounces-447347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F1F9F30F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:53:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3B69F3106
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50A61887C1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F72166EBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2031205AA5;
-	Mon, 16 Dec 2024 12:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E846204C3A;
+	Mon, 16 Dec 2024 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="voJYOEmR"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNMy1FMV"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF7F204F90
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5070E1C54A5
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734353606; cv=none; b=uVeqt5gotLiP2MKuizkmKVe5epLKFNPqrpAkKUh4C5U6xN5omSgw74HdktVkE3uxnwwg7aitKq9+bBHO/CqRHRW/z8LBFUfknnZRHxL80IlEzzw+ocpJVYmSNkAPzlTgD1HzZpPW1xiiCBI66mPEz17eHX9FhAB1Qftrw02xggI=
+	t=1734353947; cv=none; b=rHT8iH1G3hIGBHZP/oZl/Tq9BcPfg0QXBZrnEDYBuCwhTGgku4ViRh6P98GIzNhF+Dg6JUTub/SGXPsEDGZDwGDr+7jSfxYFCF6cHWiB2aD1kmYdOnWYxbkSbhWTJbSjD+b3LRbyRjkJXBTdKGSr5rzcojFVSxTK3P8cwTuhIDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734353606; c=relaxed/simple;
-	bh=rFL0bHQ3T/8sv2jURr5KkxOfCBP/VxW1tY9fq7HeyiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PBnGMVdd+PZPmLMkLQzwztbAJ+HXZEijGiAf5shtPD4IFEitzYG4N/LLxP3XyiObpxUg2Cl4/c7A4BPYuG/yEi24PKzUMX4YUMFO0BTHSbpIM9m5fWwURxIQnDZ4LYQ6RkVb+MgBT2cYddlYyerWfj2XQ4FPPRsNyD7FAwbhRGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=voJYOEmR; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734353600; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=O+t8H2XJafDbltXMzJkoJcKKsEcat/SyJLn+cTobu2c=;
-	b=voJYOEmRTv+/ynCmOhPTnyuYbB1p2swXw2ejXgrDcBMIzhn0sHeUbsYysmhnw7umc8wlRBSydT/PcHpC6MiEViVKmk+YSijmlYmA0C8GtoXgDB7efWQuh1/BiLOJH5iHXOFMhV/0/vpjmJxDbmYF82GlZn+PZ+Jp7pzL9z+vCRo=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLcksMJ_1734353599 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 16 Dec 2024 20:53:20 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Derek McGowan <derek@mcg.dev>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v3 4/4] erofs: use buffered I/O for file-backed mounts by default
-Date: Mon, 16 Dec 2024 20:53:10 +0800
-Message-ID: <20241216125310.930933-4-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241216125310.930933-1-hsiangkao@linux.alibaba.com>
-References: <20241216125310.930933-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1734353947; c=relaxed/simple;
+	bh=Eo5OcVruVIUUvg5qLtVABrzFj3TYkfbbcYirjBylF24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4cq99WDD5crShFIzKdR11Do8RHQ0vNI3Mixc+YwdDseczVPO8B4b0u5PhkjkY6CHBPy++nvMtwhlMMhBN7ZUzgOZZwSzlyP4XHKYVTqCDM1vHjCHyI+AKH9O9jA8+oipILtaS1wrnvT54RswGi7bMmMLWTc7q4Ga4GwsQEDva4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jNMy1FMV; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53e3a37ae07so4468919e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:59:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734353943; x=1734958743; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TVuB3oapyzQ+WabPFqKkBmsN+XaTc6foo/uBq/7dt04=;
+        b=jNMy1FMVkmUTy2MrlA6JcfQIQhTnhsbnWS+rxpc9NVybU7+6t9CPo2uc5KK3YWsp8i
+         Bcs9lkqyu+xqx2dXpQ1K0ogR/dvc09C/EAm8DokvSNgPKttid5kpoRSU/t4LQ+vmhkbD
+         vprwuTVsBEFrt3gZYMMOFEX9rjp8QD7pj0HYe3tK0ormir9teZrqYNgvOPd1r2BrbEtb
+         v4GTESairxqOEqYvvMIhu5Znx2iUFtXEuIt60Ijl/bZHwhRnQSqMPLSV0wXXqtL2Ee/a
+         N4OXQp6Z0h1M5uLAMwOelD084XYGKqtMEmS87+9RlOEpCprhlhGewDR7hJD2NmXSPWmL
+         1ksw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734353943; x=1734958743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TVuB3oapyzQ+WabPFqKkBmsN+XaTc6foo/uBq/7dt04=;
+        b=dy32fLgHujA1EqaMyzAzIoHQEYgfNt3E/bqCcn1IeDAt9livd/tx6oHEpfxz289RFF
+         JWss1bcIN5SkODm509gU4IAh6ZHrUbYaQlOSWFxqZqfZcRX3t/Dtop3VML1npuiW4YqI
+         JzQvyZFBqvntcdx4tx/GHnsldRp1a5NsaFHon1h8XNml9VHpXg/+aIPfgckaXghnB6Vr
+         sgwIa1H5AEnPrdCxZDrPxCcEI6lKdOhNdLioa9kqeMrOnqAKN0eYV2CBmz3Zyyl4UE7R
+         PxU5A0IbNotRyxZH0fWgoPGMiHlEKiqxCq55P43o/C/ZKW7zcBdYITg6i8uu/J8Evr1G
+         42IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvYQj7UWW4Q9r5RwB79FckZaJ6gpBS4vxplmdBAIkE/lpJ6Va0SRI1IiQofO80/Fc/XO+hW+YrwGJxDOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSrPLmX6Euq8+YSZVvN16MMJ4xa1EA78v7J1zLu/B+DU1ntVJO
+	ZN39W5Ijlu3krK+On01cKPHNtq6px/4wBRFft4SCZWpopdiLcMv7aByWr286BHY=
+X-Gm-Gg: ASbGncsuT7gIOjmx5V3E75V3cg6rwLBZemCvjUu6xnlfl4lXpsmf4XjWAmgapX+F4Ag
+	JBHydx37SBVOGBDZYt4VqVAHJ/J/VkID+vfcJSLux8xJpZSwa+FFfg2tQkbp9uUDuVwFrbPx+RP
+	YEXUvLCMqDn1pJIXPzKi4SDSfc8x2rdvjxUsWmWqNSoj675useAcs/xIEQXU9aR+a5RbuzR+AyB
+	o6O9X/eC/1lV6ENuahtqDkBMe8KIS1Tc2hvS+q4XQ0HlF/HIo4h7GGWaVOsrzWE3iyDDSY7QwYt
+	ua730zen02YJa8+m0ZxYfuvapkQNG4STYXmx
+X-Google-Smtp-Source: AGHT+IG3chtNkwEjewlJ7p/muv4mfFjLOsomSWhSVXAb0PK0zkdUgPizAruVdCjqh080agAIFaBnNQ==
+X-Received: by 2002:a05:6512:1191:b0:540:2533:436e with SMTP id 2adb3069b0e04-540905aacb4mr4442478e87.37.1734353943338;
+        Mon, 16 Dec 2024 04:59:03 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303440452a8sm9240921fa.40.2024.12.16.04.59.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 04:59:02 -0800 (PST)
+Date: Mon, 16 Dec 2024 14:58:59 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <2p2rx6zmuph4bdwjork5aqp5n3xkho7cohapvgfijka64vbpop@nse4i55pkyy7>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <Z2ASy3TQ4suupdvd@cassiopeiae>
+ <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
+ <20241216121651.GP32204@pendragon.ideasonboard.com>
+ <Z2AgFHV2BaaZYGTx@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z2AgFHV2BaaZYGTx@cassiopeiae>
 
-For many use cases (e.g. container images are just fetched from remote),
-performance will be impacted if underlay page cache is up-to-date but
-direct i/o flushes dirty pages first.
+On Mon, Dec 16, 2024 at 01:41:56PM +0100, Danilo Krummrich wrote:
+> On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
+> > On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
+> > > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
+> > > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> > > > > The nouveau driver is the only user of the drm_encoder_slave interface.
+> > > > > Demote it from KMS helpers module to the nouveau driver itself, moving
+> > > > > corresponding I2C encoders to be handled by nouveau driver too.
+> > > > 
+> > > > I understand nouveau is the only driver using this interface (and the
+> > > > corresponding i2c encoders).
+> > > > 
+> > > > However, I'm not quite seeing the advantage of folding the interface (including
+> > > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+> > > > the subsystem in any way / does prevent the subsystem from moving forward.
+> > > > 
+> > > > Can't we just keep it as it is?
+> > > 
+> > > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
+> > > take (a little bit) of space on every system. The nouveau situation
+> > > isn't unique, other drivers (i915, ast) also incorporate the code for
+> > > I2C backends. For the further discussion see the thread starting from
+> > > Laurent's email ([1]).
+> > > 
+> > > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
+> 
+> The drm_encoder_slave code it's rather small, but I guess this can be used as
+> argument for both, keeping it where it is and moving it.
+> 
+> If you want to move it to nouveau, I'm not going to object. But please fold the
+> helper code, such that we aren't left with unused functions and unnecessary
+> function pointer indirections through struct drm_encoder_slave_funcs.
 
-Instead, let's use buffered I/O by default to keep in sync with loop
-devices and add a (re)mount option to explicitly give a try to use
-direct I/O if supported by the underlying files.
+This is more or less what I've done. Or would you prefer to keep the
+wrapping functions that just execute the callback? I can change the
+patchset accordingly.
 
-The container startup time is improved as below:
-[workload] docker.io/library/workpress:latest
-                                     unpack        1st run  non-1st runs
-EROFS snapshotter buffered I/O file  4.586404265s  0.308s   0.198s
-EROFS snapshotter direct I/O file    4.581742849s  2.238s   0.222s
-EROFS snapshotter loop               4.596023152s  0.346s   0.201s
-Overlayfs snapshotter                5.382851037s  0.206s   0.214s
+> 
+> > 
+> > It's also a question of whether maintenance of this code based used by
+> > the nouveau driver only should be the responsibility of the drm-misc
+> > community or the nouveau driver maintainers.
+> 
+> Good question. It's common infrastructure; do we expect / require the last user
+> of such infrastructure to take ownership?
 
-Fixes: fb176750266a ("erofs: add file-backed mount support")
-Cc: Derek McGowan <derek@mcg.dev>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/fileio.c   |  7 +++++--
- fs/erofs/internal.h |  1 +
- fs/erofs/super.c    | 23 +++++++++++++++--------
- 3 files changed, 21 insertions(+), 10 deletions(-)
+Unfortunately it's more like 'the only one' :-( In other words, if we
+were expecting other users, there would not be such a move. But
+hopefully all new drivers will use bridges infrastructure.
 
-diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-index a61b8faec651..33f8539dda4a 100644
---- a/fs/erofs/fileio.c
-+++ b/fs/erofs/fileio.c
-@@ -9,6 +9,7 @@ struct erofs_fileio_rq {
- 	struct bio_vec bvecs[BIO_MAX_VECS];
- 	struct bio bio;
- 	struct kiocb iocb;
-+	struct super_block *sb;
- };
- 
- struct erofs_fileio {
-@@ -52,8 +53,9 @@ static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
- 	rq->iocb.ki_pos = rq->bio.bi_iter.bi_sector << SECTOR_SHIFT;
- 	rq->iocb.ki_ioprio = get_current_ioprio();
- 	rq->iocb.ki_complete = erofs_fileio_ki_complete;
--	rq->iocb.ki_flags = (rq->iocb.ki_filp->f_mode & FMODE_CAN_ODIRECT) ?
--				IOCB_DIRECT : 0;
-+	if (test_opt(&EROFS_SB(rq->sb)->opt, DIRECT_IO) &&
-+	    rq->iocb.ki_filp->f_mode & FMODE_CAN_ODIRECT)
-+		rq->iocb.ki_flags = IOCB_DIRECT;
- 	iov_iter_bvec(&iter, ITER_DEST, rq->bvecs, rq->bio.bi_vcnt,
- 		      rq->bio.bi_iter.bi_size);
- 	ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
-@@ -68,6 +70,7 @@ static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
- 
- 	bio_init(&rq->bio, NULL, rq->bvecs, BIO_MAX_VECS, REQ_OP_READ);
- 	rq->iocb.ki_filp = mdev->m_dif->file;
-+	rq->sb = mdev->m_sb;
- 	return rq;
- }
- 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 7cc8e1be04e8..686d835eb533 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -176,6 +176,7 @@ struct erofs_sb_info {
- #define EROFS_MOUNT_POSIX_ACL		0x00000020
- #define EROFS_MOUNT_DAX_ALWAYS		0x00000040
- #define EROFS_MOUNT_DAX_NEVER		0x00000080
-+#define EROFS_MOUNT_DIRECT_IO		0x00000100
- 
- #define clear_opt(opt, option)	((opt)->mount_opt &= ~EROFS_MOUNT_##option)
- #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 9044907354e1..f5956474bfde 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -364,14 +364,8 @@ static void erofs_default_options(struct erofs_sb_info *sbi)
- }
- 
- enum {
--	Opt_user_xattr,
--	Opt_acl,
--	Opt_cache_strategy,
--	Opt_dax,
--	Opt_dax_enum,
--	Opt_device,
--	Opt_fsid,
--	Opt_domain_id,
-+	Opt_user_xattr, Opt_acl, Opt_cache_strategy, Opt_dax, Opt_dax_enum,
-+	Opt_device, Opt_fsid, Opt_domain_id, Opt_directio,
- 	Opt_err
- };
- 
-@@ -398,6 +392,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_string("device",	Opt_device),
- 	fsparam_string("fsid",		Opt_fsid),
- 	fsparam_string("domain_id",	Opt_domain_id),
-+	fsparam_flag_no("directio",	Opt_directio),
- 	{}
- };
- 
-@@ -511,6 +506,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		errorfc(fc, "%s option not supported", erofs_fs_parameters[opt].name);
- 		break;
- #endif
-+	case Opt_directio:
-+#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
-+		if (result.boolean)
-+			set_opt(&sbi->opt, DIRECT_IO);
-+		else
-+			clear_opt(&sbi->opt, DIRECT_IO);
-+#else
-+		errorfc(fc, "%s option not supported", erofs_fs_parameters[opt].name);
-+#endif
-+		break;
- 	default:
- 		return -ENOPARAM;
- 	}
-@@ -948,6 +953,8 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",dax=always");
- 	if (test_opt(opt, DAX_NEVER))
- 		seq_puts(seq, ",dax=never");
-+	if (erofs_is_fileio_mode(sbi) && test_opt(opt, DIRECT_IO))
-+		seq_puts(seq, ",directio");
- #ifdef CONFIG_EROFS_FS_ONDEMAND
- 	if (sbi->fsid)
- 		seq_printf(seq, ",fsid=%s", sbi->fsid);
+> 
+> > 
+> > > > > Ideally those two drivers should be converted to the drm_bridge
+> > > > > interface, but it's unclear if it's worth spending time on that.
+> > > > 
+> > > > Probably not.
+> > > > 
+> > > > > 
+> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > ---
+> > > > > Changes in v2:
+> > > > > - Renamed symbols in defconfig (Laurent)
+> > > > > - Added missing Kbuild file (Laurent, LKP)
+> > > > > - Renamed guarding defines in include files.
+> > > > > - Dropped mentions of two removed functions.
+> > > > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
+> > > > > 
+> > > > > ---
+> > > > > Dmitry Baryshkov (2):
+> > > > >       drm/nouveau: incorporate I2C TV encoder drivers
+> > > > >       drm/nouveau: vendor in drm_encoder_slave API
+> > > > > 
+> > > > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
+> > > > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+> > > > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+> > > > >  drivers/gpu/drm/Makefile                           |   1 -
+> > > > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+> > > > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
+> > > > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+> > > > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+> > > > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+> > > > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+> > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+> > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+> > > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+> > > > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+> > > > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+> > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+> > > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+> > > > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+> > > > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+> > > > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+> > > > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+> > > > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+> > > > >  22 files changed, 172 insertions(+), 232 deletions(-)
+> > > > > ---
+> > > > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+> > > > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
+> > 
+> > -- 
+> > Regards,
+> > 
+> > Laurent Pinchart
+
 -- 
-2.43.5
-
+With best wishes
+Dmitry
 
