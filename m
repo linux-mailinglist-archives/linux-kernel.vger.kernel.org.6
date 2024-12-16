@@ -1,192 +1,253 @@
-Return-Path: <linux-kernel+bounces-448012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F209F39D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:29:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4FD9F39D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9107516CEA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD69188F60F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D21520D511;
-	Mon, 16 Dec 2024 19:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4B320968D;
+	Mon, 16 Dec 2024 19:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sm1OBka0"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ncJqLqOk"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2048.outbound.protection.outlook.com [40.107.22.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C994820DD50
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377098; cv=none; b=mmkYESkYE72AAc4OHg9pA2qG+yYqvgxjD+U0GuVd/EzWfwnVzOG7fwjVy5iXRPp7Zy9P2fOC+BFzUodGqa0GrD9athVFgtBNdZ6UjsqpZCB74T3Sjo2jCeMDSPdzzJMGxFH4AfxRba2QyNzpf+kTcgWJ5MgN6AyXnLx2ydXs7Cw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377098; c=relaxed/simple;
-	bh=GIO0fbE7SQZ1rtlKN8vZekgYlbMsWE+guT+3ZXk1HZ0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oBK01I1/6zh+3O/2kgUxVqKKwDmGthhUUbkWkE+ZP1bneHlS4OaNwQeOTS0b03EBzzVAu/ocWwcUgLaKddqPq7r60H3wgfmptBTICcyDNiKZyU5UlnZ6UWjj/fofpzng3bXCBeNp6kRJazF6/DuuaA7DTrlAUk6ztVrBEEvN0LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sm1OBka0; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-725e2413114so3422811b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 11:24:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734377096; x=1734981896; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HhxNlm5l3oc+a05Upn5SwGTABo4qTWEjrE4UxpsHII=;
-        b=sm1OBka0RuFfJ0uvG3YR4A4+GZf3g+Qj9m0Nb6epgswsUaXXu67w/3SHSoUl1IWsjB
-         qeBIWRCQ6QkTkyGsQSSysazuANWhPKC/32D5DT4YCascQYesg+1r36egRSEL2y1OM1S/
-         hcgygAHUJxMJv9QlNk97fxlXl7OeOgSuieS7R0eFytZ5qA4NVO0PmKOoAITG1fFAz3zQ
-         n6sY2XNea9nP+IjLhJxtFTOSPHxAFvKeXH73+6FzIukFvzMbdb5OYrEXsArVcTVHWiZd
-         lllw+uwZVDoOIRL1QlLDzEXsP+XT6NkfNAFajJbpQ6qTxlcU6s5/SCd6wR/gjJ4WfVTb
-         YAlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734377096; x=1734981896;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HhxNlm5l3oc+a05Upn5SwGTABo4qTWEjrE4UxpsHII=;
-        b=VUk5Ja7a7xr77IVQsNpG+/0SWlq74Y0tvYAtamqmBcz6bVJiVrvpZEeqvdXnABZYON
-         7Fg6hAsb3PDPGKmsbYtLcnP6dIK44FJkOAuEjRee1XA6XhrWDd5HaOcHhabfUSHD+YuG
-         yPB0hOrEuVZH6vfmDvD7hfK2fY6p3QsT9HkcrKnrC0RrsQ/al04pAICE3J6BE2T0lNJI
-         YAjmacz0aL9K7beM47GUCR9aCCRV3DvRdZKYAPQNZ/KQBMwv/mht69J3zmrXwykmb5RL
-         J80KyCrGRXRkMuuZr1E47Mv1ArqXbl/eK3Fgqh4euR5h7SxfecAx/ZwElMSc7lEcItTE
-         0Mqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1jWIfoS0i72ooz+3zbke+0/zktYhvSqVyvVUA+ob3YVOf5iy8LFKJejJLfoc+h2wb5DR0jWZN5613nuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGlbXCsaA9hSH842bj4PFkvt84Ua8tVBzyMWbekTRsbES5xf63
-	6bWp4cUUl/Li49RHgiU3/mW0ONbGSazKJw8DXCTDdgEhqSFxeZPfyJmsMuponrWoyCFedbqMOg0
-	h/w==
-X-Google-Smtp-Source: AGHT+IFCRcSRmnDxCEXNS618C+s8AbCbrJ3sqm2+B/Vq6ZMmO1in0EJV2noWuvjJbPv4qSgauLdf86FSJXo=
-X-Received: from pfbfb35.prod.google.com ([2002:a05:6a00:2da3:b0:728:b8e3:9934])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4b54:b0:729:49a:2db0
- with SMTP id d2e1a72fcca58-7290c273bfemr20412405b3a.25.1734377095966; Mon, 16
- Dec 2024 11:24:55 -0800 (PST)
-Date: Mon, 16 Dec 2024 11:24:19 -0800
-In-Reply-To: <20241216192419.2970941-1-surenb@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52609148314;
+	Mon, 16 Dec 2024 19:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734377136; cv=fail; b=dyHXJBnBRYAmlcHbEMcxGErX0se46YYXWhYd0TfpWfYU2/Fx3nFMw57DwKJ1v5oL3HvHWhz/jmsR97pdYQWX8J7+KwLGsv1SFMIbVU/e/0LZ5JrT0wGgYMijqmByIvcvSwNT29JFgw8Qhp7917MBjoyhVgteeJmZGBY6R7YqItg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734377136; c=relaxed/simple;
+	bh=FA+mp8d3/xe+zk7h71tFobS5nz+9+ZDZ5ujGykeh7mc=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Y5l25gWgSeCHhsX3G3yALeupwmFhn+id8TsRfRjsJTaTX5WLkQA/ZbV68hqLBDuD7kF/La9xJu4PKTYdVuSPzTUvIyN+dZVGTo9qSZQa7kXUN22xGST9aBbUt6y4z+JC7F8EDeuowqHkAgZh0U7n5YCj5FnaHqANUAlyV7aCiow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ncJqLqOk; arc=fail smtp.client-ip=40.107.22.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v0LT+dBWDw9FfHk0ptOlqhF6tjaoGrhPNhxyPoQNDlcuyBs4CgyqjPXtcOTRZqlIzuXsDhgBlaVHgLwZkyQBwxXbzWaaS7CIb3CqpPt3qwSc+lYTkPSYTNNxBh1GdSqffAlMhJfrb8pleF0KdF+tpaPLnvKX2aAQxXUu6AXJFZKcUY7sPzZY4OHJOhgfZmORX0LPjtiZNgvWrtwBWbo7xl/s5EqFh86UCp+zsjHvl5Eopqh7IymSrZP5VmUQgvF2fH+J/ov3GBQjRt57NZv88Ih7B8N7FQ8GQHKmGtRCznqjyQ6fwo9VTLzq+glqzvfiAwma4djPLNfXKLQLuCLWOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k6BmlKCvfUrx+AdoMQ6GKe39EWkpAVfP7iqLOt1CuUY=;
+ b=VoPkmsK7tG43Jf9VEqpfnHuwyb1eqUaYGyU62cc9k51rw+XfJPnRdGV9+YfaOvQUZQEQhQFyJyaNUf6u18lvusTamQW0sINOa+LT/IDs6bCGLeCsIwRA8LnbMw8bl1XvHg/DBXH9SYiNOaGzcnRVKyy6mEkBS0v5MU2bKmQPwxVVQr4xsJK1ttuuyzYOIg4wMByTFXgjA6HLcnmIa8fmbYcxa7fj0I1XfSqauhrHMqI29OhBO2TJgmKns+DYq3Bg6x2dNYG49onNhZl7ieHBh7FZHLuqtQ+/n1hm/dLrXJJqWxoRshzjKTNA8YqtgSSWGSjZTsrbb5StsWpEdcsFfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k6BmlKCvfUrx+AdoMQ6GKe39EWkpAVfP7iqLOt1CuUY=;
+ b=ncJqLqOktQYl4EmH0pKloU0tNsyq+CIDUIAefeHZY3OUpuqtzl7uoMGuv04iOW43OcxEjcbX/nI3tT3Cj7pCm3L6Pi8X4FULUITk2Sf7EKEZTpfLQFrLRL0Suczh8bn2r0UQrXws+aWfa0yU5wDlvodk66gy5BLITdsqlINFI/zLhyWa8ggj0T3thu42Qo0EmjF/eVEjskCQkvz5vm5ydD0Uxahmo95eTQcCWIWsMSJzF6pz9JGedrYYN/nKcDgFK9G1LEBplgUfXIYqnqrSg/Bb5H5XShKkiq9gQo54GXNEGkiTHJ1p4WbYS165IStCAwOyDp3p+DMz8W+9qLI7xQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB10249.eurprd04.prod.outlook.com (2603:10a6:150:1a4::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Mon, 16 Dec
+ 2024 19:25:26 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8251.008; Mon, 16 Dec 2024
+ 19:25:26 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v4 0/2] thermal: imx91: Add support for i.MX91 thermal
+ monitoring unit
+Date: Mon, 16 Dec 2024 14:25:13 -0500
+Message-Id: <20241216-imx91tmu-v4-0-75caef7481b8@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJl+YGcC/23MTQ7CIBCG4as0rMXAAAKuvIdxgUCVRX8CldQ0v
+ bu0GzFx+U3meReUfAw+oXOzoOhzSGHoy+CHBtmn6R8eB1c2AgKcAtE4dLOmU/fCpgUjLeHglEP
+ lfYy+DfOeut7KfoY0DfG9lzPdrn8imWKCpRLaCqZky+iln8ejHTq0JTJUjJKKQWGCMDDGcaeU/
+ 2WsZlAxVpgSXorTHTRn8svWdf0AHfTHxQwBAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Pengfei Li <pengfei.li_1@nxp.com>, 
+ Marco Felsch <m.felsch@pengutronix.de>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734377121; l=2165;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=FA+mp8d3/xe+zk7h71tFobS5nz+9+ZDZ5ujGykeh7mc=;
+ b=ZtNPgZOKpVXo9fXOZXr8tG05LToU9BOI9z+5zt/2lRyRFUqig5cIMtY/2uOP3cSTqpccYek8r
+ cw1gN1AbyKTA+EpPTzP22qNdt1QhQXfT3QfzKmisvjmmSvxYN46ijZG
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR13CA0031.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::6) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241216192419.2970941-1-surenb@google.com>
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241216192419.2970941-17-surenb@google.com>
-Subject: [PATCH v6 16/16] docs/mm: document latest changes to vm_lock
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	lokeshgidra@google.com, minchan@google.com, jannh@google.com, 
-	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	klarasmodin@gmail.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10249:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68bdb845-e9b0-4f2b-c6ea-08dd1e076513
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L1VjRkFERTV5ZDY1VHU4cklkMzBRbTh5KzMxVWJBbDJlMWpjL042RWNIU3R5?=
+ =?utf-8?B?eWdtNVFsY0M3aFRsN1dySGpEZ05FT3dvUDlQQmxicTVvU2plOVhkRU5yL0dk?=
+ =?utf-8?B?Q2JtWHJROVdNa0lGQ3RSbmZ4MHNtQjVZQTdtcFI3M0I0Y3lac0pnbkdCbURz?=
+ =?utf-8?B?RmdVYXZrSU9QTFgrY0lGb3kxNTBPR0czRnc2V0hxc0N5d2syZkNaemFpUjVG?=
+ =?utf-8?B?V0ZqMlNJVG1qcG1WemFoTStTZTBrRmE3elpHZ1BqbG1KV2owNXR4c25YNDlS?=
+ =?utf-8?B?Vzd4SEhaWHBBVmtUMVhrdDJhMTJ5OUk3cWczQnI2RmRMOUFIMTZyNnR1Mm00?=
+ =?utf-8?B?UFgrRjBINDJEeTRPOEMxUGdqYmk1dW5EUDVlZ1BuOHZpZUhuaHRhUXNka1By?=
+ =?utf-8?B?VHM3akVZdDRFQnQ1RXBSeDlNOGlJU2RzUUd0MFA5RWl4U3o2T0JZaXVQTXNn?=
+ =?utf-8?B?bEp1REhSMVpSMnI2SjRSZndlQUVQbFp6cXdHS21ocERucDN5eGtCZGdtWEVs?=
+ =?utf-8?B?UkdYcE44S0lNcUpQQ3NZdXlpc0QvbjhSOERPaXVVTkhIZEtuSmprSGVjOEZG?=
+ =?utf-8?B?dlVzQnh5Z3ljdk5IRmdNRzJIOXluMWxMZGNCSGRybVVXVUF2MTlRVXRYQjNH?=
+ =?utf-8?B?anlPMytYdDVIUjU3SzVVMVFwR215L0JEWDFlM1ZlelFKdEhJeExUcGxQSnNl?=
+ =?utf-8?B?TTVqNXRON1Q3TTVWckIrTmFCSldOWHc0RitGYWhiUUFmMURGR0tHTVR1clg5?=
+ =?utf-8?B?OXh0ZHBuTlBlM05SblJNMjJkYk1GcnpmVFpUd3V2YnRwZ1BnRjdTT1hiaHU0?=
+ =?utf-8?B?U3lLLzkzc1Jqd3UvLy9jR0JaVjdteXc5RlZ1SHNXb0lZQTRwVnVJT201ZEd3?=
+ =?utf-8?B?TEhaUmZ5UWdCY1phL3ord01aN3U2OUhuRzEvWmd2RFJtVU1oam00bTlYSzQ4?=
+ =?utf-8?B?L1FrdXVKWjZ0TUd5NkpQRFB3aW9YeFV2VnJMTzJOb1N2N3lsc29oMWtTQzNa?=
+ =?utf-8?B?dllOSTlTeUFTaW9tcEdWbXEvNzNadmZYc0JoN3dJN1UwYlo4OUxRUW85THo4?=
+ =?utf-8?B?bGNBdm1pMnpkRzRDb2ZoUFVjdU0zT040bHYwUXEwNnBqN2laT0VTSHZHSlVC?=
+ =?utf-8?B?MnJ4QU9RMnRRMU5YZGIxUk43cFIzMjdoRW8wY3I0VWczcmpwUnFKRm1XelNl?=
+ =?utf-8?B?ZTAxQkh2S2paa1VDWGNmRmpkM2lmSGtQQ1hwYVlsakgwakRoRFpiSFp2azhP?=
+ =?utf-8?B?T0EzNW5ValhqUDZGSlkxNHprc0JWVm8vdzhJVkVCemVSV1VSMjYyWkZxZndS?=
+ =?utf-8?B?S0g4OXE0QmNtdUd1d2tXbmhrWVI4QkNLQWhTb05obDlKMUtTL0ZDUy8yWkVp?=
+ =?utf-8?B?elhNVjNXTTlYelFmRDdidUJoSWhodHRRdGtnSXk1amc1N2orNCtMSUMyai9T?=
+ =?utf-8?B?WjRkbjAvc3ZZaURYUURNdnU5UFdIQkJDSHJRMVRRc0pZWFpRdnRmTnNNZE5X?=
+ =?utf-8?B?UEVYTHlVTDllZmJwMVg1czBOUXFvUjErM1dYcFFaQzFNK3JGeFRodldabjRz?=
+ =?utf-8?B?QXJTcTB6WXByWk5hWFg2b2lCZzZzRjJyK0JLamRwUk95L29OM2ZHUHJ6MzdU?=
+ =?utf-8?B?YTQvZ25vdDkyRmZVdEloSTdXcDBaQlpLWFVKdWJUWFA5dTIwZXJvVEdLNXU0?=
+ =?utf-8?B?aUJTU203dVhNejFaUng2bWRwTFJwOWoycEN0VkFEWG1DV1FBTFZEejdDYW85?=
+ =?utf-8?B?alFLRlRtQ2E1a29MZjUzMFBNa3RTRTYyRFpvamZuazdCSTZ3aW1kbjZYem5l?=
+ =?utf-8?B?bTI5WXk2SVBwZGhwdzdWdTVKdDZNQVVUVnBQVU5MQUd1NFUyME04bnRyZmwz?=
+ =?utf-8?B?aVd6RjFtcmZTWFhFUDZmU2kvK1JkRFZHYTZnMExiRThDc2pydE1uZCtHNWpX?=
+ =?utf-8?B?NFh6eFBMMTJrR05XTm9KQTAxYVZobVdyMktaTlpvbFhXZkpPajd6MGNSVWtl?=
+ =?utf-8?B?cVY5VG85c1NnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RXhGcUF4NFRYRDJmbXJQUUhFYkFLb3JIeVRvazFJQjBhTmoyeXhHNjhidk50?=
+ =?utf-8?B?LzhNWEV1dERxRjBISVdFbzlPbVVZUzhidGRaRTdtckV4M3ZYNEkzZk1sUGsr?=
+ =?utf-8?B?cGdVQVdockdnRzBxaWVIbC9JS1MvUEh5RlNGK0pnczFMb3BFOGNlZzc2dFY1?=
+ =?utf-8?B?WjlBa21XOGlSbTR1M3owQjg2NThITmY5Snd6VXVrTmRDRGNZRVVQY0hlOWJB?=
+ =?utf-8?B?QkJDV3BadldHTHg5T1k0dGF6dU05a08rTjFtcTJEdmExNnpNdHNQb2w5WHpY?=
+ =?utf-8?B?MGc1RTJ6bjczaVRvNUtnUHRmL29OVXNQdU1WYmVqNmtsZTZwUTBnNk56Y01Z?=
+ =?utf-8?B?ZXBoU25FajFTSmp1K3pNK0ZydVEyaDJBU1NjUWhJTlFSdnhwNW5zMmwyaHFL?=
+ =?utf-8?B?MmFCUUczSndSTGhXNVZNcEtORkJtY0hpKzRmVlVML0psbnpSRlFjaWc2KzRT?=
+ =?utf-8?B?bXA4TisxZUptcjl4OWxHL0xlTDFWYUJtZVd6QldRMWlRM3BsVEtwQzJLMmh0?=
+ =?utf-8?B?NytFQkxDd2l0alMwU1JDUGJITTlSNGUyR2JPTkxLeHpKTUQ3MXB3azhob0pp?=
+ =?utf-8?B?ZE1mVDV1MUxtM0drdE9KME9jazhnVEo3Y2M2azlReDRNWi93L2pIY090dWNY?=
+ =?utf-8?B?RnJUMnU1WHAyOGdNYlVSaWxtbFhCZlhaQ1JiQ2FQTzliYTVhTEVzUGRKWmpF?=
+ =?utf-8?B?ZnFmb1JXRWNJZTZOL252cUlzVDM2Ujc5UEFad0JWQXE5VW45c29mSmoyY1hB?=
+ =?utf-8?B?Y1V4QjdCUTZML0FTNTVGRTdOTWdsMkJxZ3NWY1M4RFF2OTR6Nmw1T3QyRjEr?=
+ =?utf-8?B?eGxhRERuQmhpbmNuQ25YNTRFREhRd0cwbFRUNHluSFRZdC9XNU5wbEh3MzA5?=
+ =?utf-8?B?STY1TS8wUU1VeFdFWm4vQ2JOQkM5M3U1aDlNMEVxMWpxcXBGT2xkRWdtcVNY?=
+ =?utf-8?B?ZkRJWWRaS3phMmwxS0ZWQVZITjIvYXg5aXNYSzFZR054NWVMU05lZkUrWXJN?=
+ =?utf-8?B?U1F3OWpKT1l1ZjlyZWpOaitnLzRsaVd2ckRROTZUdklpMXppaWlzdmFudVRY?=
+ =?utf-8?B?Vm1MLzdsNzNGZzU0NW5oUitZRHNVMGJ3eUIyMy84dUx0dk4vTW1SYVJyQ0dr?=
+ =?utf-8?B?d1F3QzFsdzBCUTFBK0w5SDdwRUt1czVMa29xUlM5WjdFaVl6TlZ0eVMrcm5j?=
+ =?utf-8?B?TDlJUzFvMXJPYVZBa2kwY2pUZ2FnREF6NTBweXYzNlVCR2lncDB3K0JtT3oz?=
+ =?utf-8?B?N2VKNGFuZDFvNTYyZGYxQnVnaXNHK2N3bnJrMnZCZzZHbG9UTGo2R1FWZkxk?=
+ =?utf-8?B?c0ZrdWxBWmdIbmdjZzRtMFcvQW5menlZZ25icDZ3eCtjc1NtbjlBVTdtV002?=
+ =?utf-8?B?RjZtQ0lQeFhUZTlTVmlCZUxnbXlkZFZvVkNtSUxkemxmZEtkV3pRdkhWM0lo?=
+ =?utf-8?B?Zis2QVNueHkyNmVxcjIwMHNQUG9Gb3VzNlB4a2UwNVBtZndVUEVJSVBYYUts?=
+ =?utf-8?B?dklweTJyK1oxS2tZc1pPTEx3T2Zpc2dReDR6VHI0Qk9XdUdYZ01mVHlXL043?=
+ =?utf-8?B?U3hQOXdBaUpJZ29lVnJFTmxjUjVwZXYwVWgrY3d4RjQ1Zy9oRlVia2lDUXc2?=
+ =?utf-8?B?eVg0N1k4QXBvUEYvbTY0YVllSTNuT1VGNEN1dHRqNGhKOVc3eU9IZTAyZDh1?=
+ =?utf-8?B?Wk5ZUHFwY0syQzJPbG1jK3dzcCtzczJzbFVxSjZVVXMvOVoxRzdLbzRQZTEz?=
+ =?utf-8?B?ZVFaelBzMDMvVmxJM09LcVM4OEpxYStYVU1yZStIMDZzM0RUZkU3Znp4dnJB?=
+ =?utf-8?B?aGpSZkNCYzNoTnZMdUNVZC9rRkV2dG9jTENhTytlQkVkNjh1U0RNd3lDd2hh?=
+ =?utf-8?B?NjBwZ3FaYnN4YnVYVlIycnNzeVduRlBwaWdReVRCd1p5TTB1dExleXh3M09N?=
+ =?utf-8?B?RHBzUzlDVUdBei9ZdUtUTC9lcFA3YmE1Z0tKTFFaRUtuU2VrYlB3L2RvZVh5?=
+ =?utf-8?B?cmJ4T3BmMEgzSmhURG5yYnhSUVU1bGhuTFBqb0xrald4QlZlRmMrRzlZT1JT?=
+ =?utf-8?B?OGZqZUkvWGl0KzBrLytHQWcxTm9rYms5KzdWQmovZFFrUzZoOXBId1EyREtC?=
+ =?utf-8?Q?todVf9S1bP1ClIaHWJNUROkeh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68bdb845-e9b0-4f2b-c6ea-08dd1e076513
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 19:25:26.7176
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yt9vVRBIRGd/hNEv+Mlcw/I4r2C7o2IN+SYcB+c7s5wST/8AHKOa4xq+t4smrME0jC33qlFvXRN5xyzsbza4Rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10249
 
-Change the documentation to reflect that vm_lock is integrated into vma
-and replaced with vm_refcnt.
-Document newly introduced vma_start_read_locked{_nested} functions.
+- Add binding doc
+- Add imx91 thermal driver
+- dts part wait for https://lore.kernel.org/imx/Z04W5chGq5TitB9f@lizhi-Precision-Tower-5810/
+merged, so not in this serial.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- Documentation/mm/process_addrs.rst | 44 ++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 18 deletions(-)
+Changes in v4:
+- Add Kryz's review tag for binding
+- Add Marco's review tag for driver
+- Use devm_add_action()
+- Move pm_runtim_put before thermal_of_zone_register()
+- Link to v3: https://lore.kernel.org/r/20241212-imx91tmu-v3-0-85e756b29437@nxp.com
 
-diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/process_addrs.rst
-index 81417fa2ed20..f573de936b5d 100644
---- a/Documentation/mm/process_addrs.rst
-+++ b/Documentation/mm/process_addrs.rst
-@@ -716,9 +716,14 @@ calls :c:func:`!rcu_read_lock` to ensure that the VMA is looked up in an RCU
- critical section, then attempts to VMA lock it via :c:func:`!vma_start_read`,
- before releasing the RCU lock via :c:func:`!rcu_read_unlock`.
- 
--VMA read locks hold the read lock on the :c:member:`!vma->vm_lock` semaphore for
--their duration and the caller of :c:func:`!lock_vma_under_rcu` must release it
--via :c:func:`!vma_end_read`.
-+In cases when the user already holds mmap read lock, :c:func:`!vma_start_read_locked`
-+and :c:func:`!vma_start_read_locked_nested` can be used. These functions do not
-+fail due to lock contention but the caller should still check their return values
-+in case they fail for other reasons.
-+
-+VMA read locks increment :c:member:`!vma.vm_refcnt` reference counter for their
-+duration and the caller of :c:func:`!lock_vma_under_rcu` must drop it via
-+:c:func:`!vma_end_read`.
- 
- VMA **write** locks are acquired via :c:func:`!vma_start_write` in instances where a
- VMA is about to be modified, unlike :c:func:`!vma_start_read` the lock is always
-@@ -726,9 +731,9 @@ acquired. An mmap write lock **must** be held for the duration of the VMA write
- lock, releasing or downgrading the mmap write lock also releases the VMA write
- lock so there is no :c:func:`!vma_end_write` function.
- 
--Note that a semaphore write lock is not held across a VMA lock. Rather, a
--sequence number is used for serialisation, and the write semaphore is only
--acquired at the point of write lock to update this.
-+Note that when write-locking a VMA lock, the :c:member:`!vma.vm_refcnt` is temporarily
-+modified so that readers can detect the presense of a writer. The reference counter is
-+restored once the vma sequence number used for serialisation is updated.
- 
- This ensures the semantics we require - VMA write locks provide exclusive write
- access to the VMA.
-@@ -738,7 +743,7 @@ Implementation details
- 
- The VMA lock mechanism is designed to be a lightweight means of avoiding the use
- of the heavily contended mmap lock. It is implemented using a combination of a
--read/write semaphore and sequence numbers belonging to the containing
-+reference counter and sequence numbers belonging to the containing
- :c:struct:`!struct mm_struct` and the VMA.
- 
- Read locks are acquired via :c:func:`!vma_start_read`, which is an optimistic
-@@ -779,28 +784,31 @@ release of any VMA locks on its release makes sense, as you would never want to
- keep VMAs locked across entirely separate write operations. It also maintains
- correct lock ordering.
- 
--Each time a VMA read lock is acquired, we acquire a read lock on the
--:c:member:`!vma->vm_lock` read/write semaphore and hold it, while checking that
--the sequence count of the VMA does not match that of the mm.
-+Each time a VMA read lock is acquired, we increment :c:member:`!vma.vm_refcnt`
-+reference counter and check that the sequence count of the VMA does not match
-+that of the mm.
- 
--If it does, the read lock fails. If it does not, we hold the lock, excluding
--writers, but permitting other readers, who will also obtain this lock under RCU.
-+If it does, the read lock fails and :c:member:`!vma.vm_refcnt` is dropped.
-+If it does not, we keep the reference counter raised, excluding writers, but
-+permitting other readers, who can also obtain this lock under RCU.
- 
- Importantly, maple tree operations performed in :c:func:`!lock_vma_under_rcu`
- are also RCU safe, so the whole read lock operation is guaranteed to function
- correctly.
- 
--On the write side, we acquire a write lock on the :c:member:`!vma->vm_lock`
--read/write semaphore, before setting the VMA's sequence number under this lock,
--also simultaneously holding the mmap write lock.
-+On the write side, we set a bit in :c:member:`!vma.vm_refcnt` which can't be
-+modified by readers and wait for all readers to drop their reference count.
-+Once there are no readers, VMA's sequence number is set to match that of the
-+mm. During this entire operation mmap write lock is held.
- 
- This way, if any read locks are in effect, :c:func:`!vma_start_write` will sleep
- until these are finished and mutual exclusion is achieved.
- 
--After setting the VMA's sequence number, the lock is released, avoiding
--complexity with a long-term held write lock.
-+After setting the VMA's sequence number, the bit in :c:member:`!vma.vm_refcnt`
-+indicating a writer is cleared. From this point on, VMA's sequence number will
-+indicate VMA's write-locked state until mmap write lock is dropped or downgraded.
- 
--This clever combination of a read/write semaphore and sequence count allows for
-+This clever combination of a reference counter and sequence count allows for
- fast RCU-based per-VMA lock acquisition (especially on page fault, though
- utilised elsewhere) with minimal complexity around lock ordering.
- 
--- 
-2.47.1.613.gc27f4b7a9f-goog
+Changes in v3:
+- add ref thermal-sensor
+- restrict #thermal-sensor-cells to 0 only
+- Change to unevaluatedProperties
+
+- add IMX91_TMU_ prefix for register define
+- remove unused register define
+- fix missed pm_runtime_put() at error path in imx91_tmu_get_temp()
+- use dev variable in probe function
+- use pm_runtime_set_active() in probe
+- move START to imx91_tmu_get_temp()
+- use DEFINE_RUNTIME_DEV_PM_OPS()
+- keep set reset value because there are not sw "reset" bit in controller,
+  uboot may change and enable tmu.
+
+- Link to v2: https://lore.kernel.org/r/20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com
+
+Changes in v2:
+- use low case for hexvalue
+- combine struct imx91_tmu and tmu_sensor
+- simplify imx91_tmu_start() and imx91_tmu_enable()
+- use s16 for imx91_tmu_get_temp(), which may negative value
+- use reverse christmas tree style
+- use run time pm
+- use oneshot to sample temp
+- register thermal zone after hardware init
+- Link to v1: https://lore.kernel.org/r/20241209-imx91tmu-v1-0-7859c5387f31@nxp.com
+
+---
+Pengfei Li (2):
+      dt-bindings: thermal: fsl,imx91-tmu: add bindings for NXP i.MX91 thermal module
+      thermal: imx91: Add support for i.MX91 thermal monitoring unit
+
+ .../devicetree/bindings/thermal/fsl,imx91-tmu.yaml |  67 ++++++
+ drivers/thermal/Kconfig                            |  10 +
+ drivers/thermal/Makefile                           |   1 +
+ drivers/thermal/imx91_thermal.c                    | 263 +++++++++++++++++++++
+ 4 files changed, 341 insertions(+)
+---
+base-commit: d07c576946b2bc440d6d2073998023e8a0bd7568
+change-id: 20241209-imx91tmu-af2a7c042d8d
+
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
 
 
