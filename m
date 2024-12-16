@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-446671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B722D9F27CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F296A9F2805
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 02:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622991886604
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8F51886B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 01:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9117BD5;
-	Mon, 16 Dec 2024 01:36:06 +0000 (UTC)
-Received: from zg8tmtu5ljy1ljeznc42.icoremail.net (zg8tmtu5ljy1ljeznc42.icoremail.net [159.65.134.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D2A8BE8;
-	Mon, 16 Dec 2024 01:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.65.134.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479471C3308;
+	Mon, 16 Dec 2024 01:42:46 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E057157469;
+	Mon, 16 Dec 2024 01:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734312966; cv=none; b=TvNKZgzUdvf1UY0PuYCzHv8JG7iOmrzM5zErltT60cIvPHHHAlHSGYPSSFFJQixJ0nXLXUFhfMo9ZOF9ys/2bQYrRepmKt3Kmhko7yNgmZrlf7am/E+FJVIyp7yrbnjJfTa804akzHaJ1nD9dA0q0fJyCFQktp2oFpf76LVNgFo=
+	t=1734313365; cv=none; b=PFFzs8Dxffb1kjcg5TQl+bNmQLSnqi2m/8n4Uq2sas52mLv4uNP4LIgfI+X3bHi+VGFl2uw4XAV0cKG8bE2AyS/Aql/7GBbHhq2/2b+ElJUiVUrk8FR7dsoZ2gK1+xVTCRJfslJTTVyHoBOmMyz1YcRPtDbjXPwr3eZCZElrJ6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734312966; c=relaxed/simple;
-	bh=eWgUJAmz47HFCOh4aIEmrxNlaOSMz0Zxku7oakMFQ3E=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=iates0D4nEFstfFD97K8qow7YvAnQEr+rEKXkoPw+lQbM+z1/UFfN8Aqi8zNCT+2hFI1eMIEBoamxomyi+vdc6m66he6HrNRYc8U3WoDK7r+uQgKzARGTQF8FB5GCxX7PHMGyU+A9EMKJBMhfo0EwIYg6qgbcaJaR90OGRgDRTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=159.65.134.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from ubuntu18.eswin.cn (unknown [10.12.192.151])
-	by app1 (Coremail) with SMTP id TAJkCgDXG6Xsg19nlw8DAA--.14605S4;
-	Mon, 16 Dec 2024 09:35:41 +0800 (CST)
-From: zhangdongdong@eswincomputing.com
-To: alex.williamson@redhat.com
-Cc: bhelgaas@google.com,
-	zhangdongdong@eswincomputing.com,
-	yishaih@nvidia.com,
-	avihaih@nvidia.com,
-	yi.l.liu@intel.com,
-	ankita@nvidia.com,
-	kvm@vger.kernel.org,
+	s=arc-20240116; t=1734313365; c=relaxed/simple;
+	bh=mIBk19AdS2D+SOvJqNYJC67SIx3vIcw/biv4HJIz8Jo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dYtHvh8pn73zZLdSX8hVjHf4HhTa+9CxqgBZDKT0FJo/XOMavptmQMYmMdeAzFohhs/NiQL+IX0B6rm1GdP41zfZrYR7EO2O8cznWVMShHa1EnNa8EgDwhmqDKKh15FjkdljmmTK41Df7ngTrgkMbGpkUYwwFT6PI1BFk9JdtJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YBN3T6RnQz4f3jsr;
+	Mon, 16 Dec 2024 09:42:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 508671A0568;
+	Mon, 16 Dec 2024 09:42:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4d5hV9nYi3kEg--.4387S4;
+	Mon, 16 Dec 2024 09:42:32 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v2] PCI: Remove redundant macro
-Date: Mon, 16 Dec 2024 09:35:36 +0800
-Message-Id: <20241216013536.4487-1-zhangdongdong@eswincomputing.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:TAJkCgDXG6Xsg19nlw8DAA--.14605S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1DKFyUJF17uFWUtrWkJFb_yoW8ury8pr
-	s8Ca4xGr45XF4Y9a1qya45A3W5Xa9xAryI93y7u343KFy3tw10vrWFyr42kryagrWxAF45
-	JrsY9r90gF9F93JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw2
-	8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
-	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrw
-	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
-	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
-	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbknY7UUUUU==
-X-CM-SenderInfo: x2kd0wpgrqwvxrqjqvxvzl0uprps33xlqjhudrp/1tbiAgENCmdfBKsMWAABsG
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v4 00/10] ext4: clean up and refactor fallocate
+Date: Mon, 16 Dec 2024 09:39:05 +0800
+Message-ID: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHY4d5hV9nYi3kEg--.4387S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF4Duw48Zr43GrWxtw15XFb_yoW5urWrpF
+	W3WF45Xr1UWwnrCws7Wa1xXF1rK3WrJFW7JryIgw1xur4kuFyIvFsrK3W09FW7JrWrGF12
+	vF40yF1ku3WUAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Dongdong Zhang <zhangdongdong@eswincomputing.com>
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Removed the duplicate macro `PCI_VSEC_HDR` and its related macro
-`PCI_VSEC_HDR_LEN_SHIFT` from `pci_regs.h` to avoid redundancy and
-inconsistencies. Updated VFIO PCI code to use `PCI_VNDR_HEADER` and
-`PCI_VNDR_HEADER_LEN()` for consistent naming and functionality.
+Changes since v3:
+ - In patch 1, rename ext4_truncate_folios_range() and move journalled
+   mode specified handles and truncate_pagecache_range() into this
+   helper.
+ - In patch 3, switch to use ext4_truncate_page_cache_block_range().
+ - In patch 4, use IS_ALIGNED macro to check offset alignments and
+   introduce EXT4_B_TO_LBLK to do the lblk conversion.
+ - In patch 5, keep the first ext4_alloc_file_blocks() call before
+   truncating pagecache.
+ - In patch 9, rename 'out' label to 'out_inode_lock'.
+Changes since v2:
+ - Add Patch 1 to address a newly discovered data loss issue that occurs
+   when using mmap to write after zeroing out a partial page on a
+   filesystem with the block size smaller than the page size.
+ - Do not write all data before punching hole, zeroing out and
+   collapsing range as Jan suggested, also drop current data writeback
+   in ext4_punch_hole().
+ - Since we don't write back all data in these 4 operations, we only
+   writeback data during inserting range,so do not factor out new
+   helpers in the last two patches, just move common components of
+   sub-operations into ext4_fallocate().
+ - Only keep Jan's review tag on patch 2 and 8, other patches contain
+   many code adaptations, so please review them again.
+Changes since v1:
+ - Fix an using uninitialized variable problem in the error out path in
+   ext4_do_fallocate() in patch 08.
 
-These changes aim to streamline header handling while minimizing
-impact, given the niche usage of these macros in userspace.
+v3: https://lore.kernel.org/linux-ext4/20241022111059.2566137-1-yi.zhang@huaweicloud.com/
+    https://lore.kernel.org/linux-ext4/20241010133333.146793-1-yi.zhang@huawei.com/
+v2: https://lore.kernel.org/linux-ext4/20240904062925.716856-1-yi.zhang@huaweicloud.com/
 
-Signed-off-by: Dongdong Zhang <zhangdongdong@eswincomputing.com>
----
- drivers/vfio/pci/vfio_pci_config.c | 5 +++--
- include/uapi/linux/pci_regs.h      | 3 ---
- 2 files changed, 3 insertions(+), 5 deletions(-)
+Thanks,
+Yi.
 
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index ea2745c1ac5e..5572fd99b921 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1389,11 +1389,12 @@ static int vfio_ext_cap_len(struct vfio_pci_core_device *vdev, u16 ecap, u16 epo
- 
- 	switch (ecap) {
- 	case PCI_EXT_CAP_ID_VNDR:
--		ret = pci_read_config_dword(pdev, epos + PCI_VSEC_HDR, &dword);
-+		ret = pci_read_config_dword(pdev, epos + PCI_VNDR_HEADER,
-+					    &dword);
- 		if (ret)
- 			return pcibios_err_to_errno(ret);
- 
--		return dword >> PCI_VSEC_HDR_LEN_SHIFT;
-+		return PCI_VNDR_HEADER_LEN(dword);
- 	case PCI_EXT_CAP_ID_VC:
- 	case PCI_EXT_CAP_ID_VC9:
- 	case PCI_EXT_CAP_ID_MFVC:
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 1601c7ed5fab..bcd44c7ca048 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -1001,9 +1001,6 @@
- #define PCI_ACS_CTRL		0x06	/* ACS Control Register */
- #define PCI_ACS_EGRESS_CTL_V	0x08	/* ACS Egress Control Vector */
- 
--#define PCI_VSEC_HDR		4	/* extended cap - vendor-specific */
--#define  PCI_VSEC_HDR_LEN_SHIFT	20	/* shift for length field */
--
- /* SATA capability */
- #define PCI_SATA_REGS		4	/* SATA REGs specifier */
- #define  PCI_SATA_REGS_MASK	0xF	/* location - BAR#/inline */
+Original Info:
+
+Current ext4 fallocate code is mess with mode checking, locking, input
+parameter checking, position calculation, and having some stale code.
+Almost all five sub-operation share similar preparation steps, so it
+deserves a cleanup now.
+
+This series tries to improve the code by refactoring all operations
+related to fallocate. It unifies variable naming, reduces unnecessary
+position calculations, and factors out common preparation components.
+
+The first patch addresses a potential data loss issue that occurs when
+using mmap to write after zeroing out partial blocks of a page on a
+filesystem where the block size is smaller than the page size.
+Subsequent patches focus on cleanup and refactoring, please see them for
+details. After this series, we will significantly reduce redundant code
+and enhance clarity compared to the previous version.
+
+
+Zhang Yi (10):
+  ext4: remove writable userspace mappings before truncating page cache
+  ext4: don't explicit update times in ext4_fallocate()
+  ext4: don't write back data before punch hole in nojournal mode
+  ext4: refactor ext4_punch_hole()
+  ext4: refactor ext4_zero_range()
+  ext4: refactor ext4_collapse_range()
+  ext4: refactor ext4_insert_range()
+  ext4: factor out ext4_do_fallocate()
+  ext4: move out inode_lock into ext4_fallocate()
+  ext4: move out common parts into ext4_fallocate()
+
+ fs/ext4/ext4.h    |   4 +
+ fs/ext4/extents.c | 527 +++++++++++++++++-----------------------------
+ fs/ext4/inode.c   | 204 ++++++++++--------
+ 3 files changed, 312 insertions(+), 423 deletions(-)
+
 -- 
-2.17.1
+2.46.1
 
 
