@@ -1,145 +1,205 @@
-Return-Path: <linux-kernel+bounces-446837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434A49F29C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:54:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D806B9F29CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 07:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752C116430B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 05:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026631886053
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 06:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5884E1C8FD7;
-	Mon, 16 Dec 2024 05:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0AB1C7B62;
+	Mon, 16 Dec 2024 06:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXRPzalh"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RqlKUML+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD04E1C54B4
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 05:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB11192B70;
+	Mon, 16 Dec 2024 06:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734328447; cv=none; b=U73MuIWnPvVHSLnrctHuCZU5r0dPoq5OHC1PdKg87uye6BUMWxXdudKiz12H2w9RUtqsf+r6LHwYpdlIvILmsD21Kgq30MiTYTMhInPt9bkAj9r8l4TvXOlUNHvIc5dzINtjgtePVwJnf/3JSzQyBuO3NkFifHv1iJlFVz7/2Ug=
+	t=1734329013; cv=none; b=h5qAopoEIIoqNa6xrjhRVs/YMbbWgvntWhzaB4ccM3nu5mgVCyUEAo3rDPhkcX6sHRgGOD6SR5bBOSOV1k7YxDT0AiQHt1j0wnpH+F6Sst52Tb7jP85nMGfJt6SKuncWCX0OqzLgNICO75OYlMhP4Ny/JZhKppOSaQR/vpPlOl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734328447; c=relaxed/simple;
-	bh=ZNP0v3/4BomZoAEvLGEv2cgm7ao+GyUKQDkAYpR1azM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SxfW+8xxmG0cSbIuczQ0AbsICgmgU+k6gxqWFvZbGV4kC/OVLBcwWv6/afhixDn+wbaN3Tt1V56KRnL3CT+4lv6r+iU0PTTDcdsRvuiotPIfwkgUz4Tcc1V/stmSRe7d3C7UgJEoBIyuBDU+mi7cPX/OVxz1V7yHD6updE4fWOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cXRPzalh; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aab9e281bc0so268841366b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2024 21:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734328443; x=1734933243; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+dFO3Ui/sEdU+d4tBQlNTeaAHc3ObDp+PAoFFR+kSQ=;
-        b=cXRPzalhrzVQbg4p208Qo/iCamDAmiRORkhlNuTK2WsdFgrc3WFUxq4sVSQAWfnv12
-         RD5tOMZchdnE6g+9EdRbA3dtOlWRQvtKkEPULAU0/J5uGXjLu3Zy+XBaQNPDRYo+bkMd
-         PC38nJZ8wCnchHRMcg0noF/hFxpVyIJbnAAcYGYnnQA2MKdP/b1NeZVsCxlAbaoPS2jP
-         nsnuC0wCOjH0cONf+HAdfUesp96AIxXrJoqCpE1e5IqAANj1ZGW582oIMqlK3/r+dgjs
-         V4fbugV33XHmQJ6eBw1EP4KDuZUqAJC/RFJZxFT2ZnRDDswnCmQJehVUyWLNiKIyXvoc
-         e7pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734328443; x=1734933243;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w+dFO3Ui/sEdU+d4tBQlNTeaAHc3ObDp+PAoFFR+kSQ=;
-        b=I3uZY2NrjyQz4Af9q0Mm4hhPaZSxyzCIQBasD0Zw6CyFWMv+79V21KUoX9VddRneEr
-         HHulMp2AKnp64gjUjCeWQO8koIK0eYdmG5P9HtwGMJ1dZqmfdjZas7dNfX26xXhgQ0vn
-         c4a8ktmgkWFlNO1YOXjPAfYLeiMnVARI4liOv3DGEFo0i3mVnEjGQPA5DvDmCHhsrMij
-         67BRzsGpZ0BJHfGjMTjH+xv75LUlsmOeLJ9lqsAoJcLkQ0OD1fYzgb9aKlx0VM5wZOC7
-         uwJiw0hjkBAoHS48LZiWg/MsLZ8NW4Z17xe11xiR0WCtWD1pC/PnQTU+GtlQg4TKMDeg
-         GSBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdCO8G487HKWk4vrEOiPS/cDK5j/JxubWhfUJo3cPtEMNVNM90JBC5BsbvE4iNOoyRFdNi2P2FGuw2Aac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS8XlG2pAnZ7WvuX3MNhXZIVzc4/MazcekzwyDTywuHzqGoa2J
-	2X9KWyNsiRj6sWLBz7SZRUA1ygFftz67mPu+mRcKSg33IcBdTxoOacQc200H+YY=
-X-Gm-Gg: ASbGncsMPbQH9Z9gpYAKuDej+x9Xo0VPPqhUat9TJVVjkv/AEHUlcf3qROsrhtpDDLO
-	c5sej7BZ1599Xoq92xXM3zJgz7y73FDEpgnkPezaunocEl3ytBc/Ik/s4L0+2QoQeSPp9f4/bHs
-	Tza7ge3FkoarnbHEJ5Q42DuoDIoG9sDA6gIZimCPmoecBerufFMEnO4DNGbSe/HtCAyWVW74EN3
-	oqOxyXxQDLlAc9B9SVrANtUfaBOL9ubepetjhF3dGsKkjW5duDyqHI8O7wwOQ==
-X-Google-Smtp-Source: AGHT+IFoSvWSFfIldErFNpAMajYw9cB5vCOVjo6HVzQrtAlbPuyC5xoikuxSZeInpDkydeS20+n9Qg==
-X-Received: by 2002:a17:907:7216:b0:aab:76bd:5f8e with SMTP id a640c23a62f3a-aab77ed35d6mr1120600366b.53.1734328443208;
-        Sun, 15 Dec 2024 21:54:03 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96006c2fsm286466466b.9.2024.12.15.21.54.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2024 21:54:02 -0800 (PST)
-Date: Mon, 16 Dec 2024 08:53:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Vitalii Mordan <mordan@ispras.ru>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Vitalii Mordan <mordan@ispras.ru>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: phy-tahvo: fix call balance for tu->ick handling
- routines
-Message-ID: <f60184a1-fe12-4a7f-bbbb-e6191f673df4@stanley.mountain>
+	s=arc-20240116; t=1734329013; c=relaxed/simple;
+	bh=Kp3xyFWz/0v88Gf9lCCF/jg6HhyIQ70bMmDlTQNGy34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FbmB5M6rsgC6RnTrOaOk1fmjl1Mku95n0y6bCpR4c1WpwUtECof44Z+ChbNGHfLUz9G7RsfXYzKJwwiUneW0eR5LdifX+VgwN+o9lQiG9WUIZqoKRJZAMsdloF29nbbpz4HqCM978jcx/yatK7XSlwNTyxoqv/H+6uLyG3VlFUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RqlKUML+; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734329012; x=1765865012;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kp3xyFWz/0v88Gf9lCCF/jg6HhyIQ70bMmDlTQNGy34=;
+  b=RqlKUML+lsxOFE3ed/LJo23RQ7NMJmjOB0VRt7guU3hl4m7rkSqaSUem
+   uaof1AljOVFvWZfOKGkg3fVoIahB09xvPUAsmhNnMtTyW1NRp8MKg/rs2
+   0shIGzqxe3/X3+AubeNJJzFtLRB/kE02JrK3S0V5/Y2qniNC2nRnG63B4
+   ZPsmOXW6s9Ksv3RMjx1nyvMaAKYy7a/0jkQIb++jCczvysf1MsZppv80v
+   80XlYrfrQIxPN8ZI44ulo0SdLZOKygXVYCGk8uhPl1/TDiWekpur8MOb0
+   aKFPzSm+3HpUKKHGNpRXwE++wVTQdIREGUMwz4mx+wAfB1UDEX65Z+LCu
+   Q==;
+X-CSE-ConnectionGUID: 1ESOfbjXR7WLBmKnV3KmJg==
+X-CSE-MsgGUID: KMc6HI3CQOq9tZukTycg7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="34025178"
+X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
+   d="scan'208";a="34025178"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:03:30 -0800
+X-CSE-ConnectionGUID: pzG4dA16RuKsXXmsY274tA==
+X-CSE-MsgGUID: /0V0jTxaShS1V4JayPgpGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96951397"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 22:03:26 -0800
+Message-ID: <edc7f1f3-e498-44cc-aa3c-994d3f290e01@intel.com>
+Date: Mon, 16 Dec 2024 14:03:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209152604.1918882-1-mordan@ispras.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] KVM: TDX: Handle TDG.VP.VMCALL<MapGPA>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ michael.roth@amd.com, linux-kernel@vger.kernel.org
+References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
+ <20241201035358.2193078-5-binbin.wu@linux.intel.com>
+ <d3adecc6-b2b9-42ba-8c0f-bd66407e61f0@intel.com>
+ <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <692aacc1-809f-449d-8f67-8e8e7ede8c8d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Vitalii,
+On 12/16/2024 9:08 AM, Binbin Wu wrote:
+> 
+> 
+> 
+> On 12/13/2024 5:32 PM, Xiaoyao Li wrote:
+>> On 12/1/2024 11:53 AM, Binbin Wu wrote:
+>>
+> [...]
+>>> +
+>>> +static int tdx_map_gpa(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +    struct vcpu_tdx * tdx = to_tdx(vcpu);
+>>> +    u64 gpa = tdvmcall_a0_read(vcpu);
+>>
+>> We can use kvm_r12_read() directly, which is more intuitive. And we 
+>> can drop the MACRO for a0/a1/a2/a3 accessors in patch 022.
+> I am neutral about it.
+> 
 
-kernel test robot noticed the following build warnings:
+a0, a1, a2, a3, are the name convention for KVM's hypercall. It makes 
+sense when serving as the parameters to  __kvm_emulate_hypercall().
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+However, now __kvm_emulate_hypercall() is made to a MACRO and we don't 
+need the temp variable like a0 = kvm_xx_read().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vitalii-Mordan/usb-phy-tahvo-fix-call-balance-for-tu-ick-handling-routines/20241209-232934
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20241209152604.1918882-1-mordan%40ispras.ru
-patch subject: [PATCH] usb: phy-tahvo: fix call balance for tu->ick handling routines
-config: alpha-randconfig-r072-20241215 (https://download.01.org/0day-ci/archive/20241215/202412150530.f03D8q1a-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
+For TDVMCALL leafs other than normal KVM hypercalls, they are all TDX 
+specific and defined in TDX GHCI spec, a0/a1/a2/a3 makes no sense for them.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202412150530.f03D8q1a-lkp@intel.com/
+> 
+>>
+>>> +    u64 size = tdvmcall_a1_read(vcpu);
+>>> +    u64 ret;
+>>> +
+>>> +    /*
+>>> +     * Converting TDVMCALL_MAP_GPA to KVM_HC_MAP_GPA_RANGE requires
+>>> +     * userspace to enable KVM_CAP_EXIT_HYPERCALL with 
+>>> KVM_HC_MAP_GPA_RANGE
+>>> +     * bit set.  If not, the error code is not defined in GHCI for 
+>>> TDX, use
+>>> +     * TDVMCALL_STATUS_INVALID_OPERAND for this case.
+>>> +     */
+>>> +    if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
+>>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
+>>> +        goto error;
+>>> +    }
+>>> +
+>>> +    if (gpa + size <= gpa || !kvm_vcpu_is_legal_gpa(vcpu, gpa) ||
+>>> +        !kvm_vcpu_is_legal_gpa(vcpu, gpa + size -1) ||
+>>> +        (vt_is_tdx_private_gpa(vcpu->kvm, gpa) !=
+>>> +         vt_is_tdx_private_gpa(vcpu->kvm, gpa + size -1))) {
+>>> +        ret = TDVMCALL_STATUS_INVALID_OPERAND;
+>>> +        goto error;
+>>> +    }
+>>> +
+>>> +    if (!PAGE_ALIGNED(gpa) || !PAGE_ALIGNED(size)) {
+>>> +        ret = TDVMCALL_STATUS_ALIGN_ERROR;
+>>> +        goto error;
+>>> +    }
+>>> +
+>>> +    tdx->map_gpa_end = gpa + size;
+>>> +    tdx->map_gpa_next = gpa;
+>>> +
+>>> +    __tdx_map_gpa(tdx);
+>>> +    /* Forward request to userspace. */
+>>> +    return 0;
+>>
+>> Maybe let __tdx_map_gpa() return a int to decide whether it needs to 
+>> return to userspace and
+>>
+>>     return __tdx_map_gpa(tdx);
+>>
+>> ?
+> 
+> To save one line of code and the comment?
 
-smatch warnings:
-drivers/usb/phy/phy-tahvo.c:347 tahvo_usb_probe() warn: passing zero to 'PTR_ERR'
+No. Just I found most of the cases that need to exit to usespace, comes 
+with "return 0" after setting up the run->exit_reason and run->(fields).
 
-vim +/PTR_ERR +347 drivers/usb/phy/phy-tahvo.c
-
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  341  
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  342  	mutex_init(&tu->serialize);
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  343  
-125b175df62ecc Vitalii Mordan  2024-12-09  344  	tu->ick = devm_clk_get_enabled(&pdev->dev, "usb_l4_ick");
-125b175df62ecc Vitalii Mordan  2024-12-09  345  	if (!IS_ERR(tu->ick)) {
-                                                            ^
-This typo breaks the driver.
-
-125b175df62ecc Vitalii Mordan  2024-12-09  346  		dev_err(&pdev->dev, "failed to get and enable clock\n");
-125b175df62ecc Vitalii Mordan  2024-12-09 @347  		return PTR_ERR(tu->ick);
-125b175df62ecc Vitalii Mordan  2024-12-09  348  	}
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  349  
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  350  	/*
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  351  	 * Set initial state, so that we generate kevents only on state changes.
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  352  	 */
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  353  	tu->vbus_state = retu_read(rdev, TAHVO_REG_IDSR) & TAHVO_STAT_VBUS;
-9ba96ae5074c9f Aaro Koskinen   2013-12-06  354  
-860d2686fda7e4 Chanwoo Choi    2015-07-01  355  	tu->extcon = devm_extcon_dev_allocate(&pdev->dev, tahvo_cable);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Because MapGPA always goes to userspace, I don't want to make a function 
+> return
+> a int that is a fixed value.
+> And if the multiple comments bother you, I think the comments can be 
+> removed.
+> 
+>>
+>>
+>>> +
+>>> +error:
+>>> +    tdvmcall_set_return_code(vcpu, ret);
+>>> +    kvm_r11_write(vcpu, gpa);
+>>> +    return 1;
+>>> +}
+>>> +
+>>>   static int handle_tdvmcall(struct kvm_vcpu *vcpu)
+>>>   {
+>>>       if (tdvmcall_exit_type(vcpu))
+>>>           return tdx_emulate_vmcall(vcpu);
+>>>         switch (tdvmcall_leaf(vcpu)) {
+>>> +    case TDVMCALL_MAP_GPA:
+>>> +        return tdx_map_gpa(vcpu);
+>>>       default:
+>>>           break;
+>>>       }
+>>> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+>>> index 1abc94b046a0..bfae70887695 100644
+>>> --- a/arch/x86/kvm/vmx/tdx.h
+>>> +++ b/arch/x86/kvm/vmx/tdx.h
+>>> @@ -71,6 +71,9 @@ struct vcpu_tdx {
+>>>         enum tdx_prepare_switch_state prep_switch_state;
+>>>       u64 msr_host_kernel_gs_base;
+>>> +
+>>> +    u64 map_gpa_next;
+>>> +    u64 map_gpa_end;
+>>>   };
+>>>     void tdh_vp_rd_failed(struct vcpu_tdx *tdx, char *uclass, u32 
+>>> field, u64 err);
+>>
+> 
 
 
