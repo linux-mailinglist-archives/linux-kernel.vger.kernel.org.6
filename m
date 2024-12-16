@@ -1,182 +1,220 @@
-Return-Path: <linux-kernel+bounces-447961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7139F3942
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:49:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF5D9F3945
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFDE1888533
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57108188FF88
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 18:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449B2207DFE;
-	Mon, 16 Dec 2024 18:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA4F20766C;
+	Mon, 16 Dec 2024 18:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCrfdr7V"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1ZPNrm7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04737207658;
-	Mon, 16 Dec 2024 18:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F828204F8B;
+	Mon, 16 Dec 2024 18:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734374899; cv=none; b=Y76GqdNd7XP8hQh48ROirQsEA8t6n2dfqU37Wt7TpJ62PA3FxZUVLt/DJC7VTTmEi+nUouAYALMAvbtJDHk5DNmZvUQU30z4kRcvZaSiwqufwnQmRvFzpojWUNrM1nsA/c71Ya/Odjhosr8s5oO3RvPsoVwPV2/VwbPzVmNpoYM=
+	t=1734374963; cv=none; b=IoOVWt5Ub/BBu3YheP+lGX4RI15SRWSY+PihnHyTENjZzKjRab7UyQHqFq2V/DzNHxNVj72L0KZD6wn+XClJVaFqQVcBZbGPj3nzTkXv1YP+aiNGj/5qQvLClV5GYSqR1a38lg1WC9Wkwmr9Nt0Z6TbTynC5HhCB4/VQ4BO5X50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734374899; c=relaxed/simple;
-	bh=kmEYNF71/7++qPgLBRe0qCZQCXLr12g/b3oiSdt3p/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n0XKNorp77Sly6bvQ3ai7lnhGanc7zf73zjiSZCufPn8uLXp1YjbnGVKinFfCzO+ODiqXMjhnWJWL/lzIlZhc8M6BL2Ne1xTLTRNo31Te/+qV0popT1VtorfWwbCD7GFuxmu1EOMQqsTdGApfmQiebW/N5PjzawCttVnGntGZEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCrfdr7V; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fd17f2312bso3095141a12.0;
-        Mon, 16 Dec 2024 10:48:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734374897; x=1734979697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=GUU/XypxaduzqMjt/wtaQMQLw5fmlBNHttBG958fM88=;
-        b=SCrfdr7VsbNpHdS8t6BSRrPgHN+6H3zWGSAIPdghHyV3Lt5VKA1Q0ElBTy3q+b/+cU
-         PrZY0pt7p74TlJNlMky4vQ+0DNav5uPmwZVIRZ8Q+E9gOTXm9Wj/Mztl3QpcXMOWlTLY
-         VzQDof/yL68yUdEPyxEfILkxtUevWHsU+9hEz5TAgxHbj9RaUG57RIcTo2JNwT8jK7Vl
-         W4aYZL4x5r6jYC9qLyFgYy//6JqajUhGCzS7oitScVwWaDrag9X/541bhNF/B8GyXTfO
-         cAuTZSki6FvoRkqI2j5fT+Sp/IUMT+xGAu21bg8UpE4tvfvCyYXNa0FmOyDMEfUgQX/0
-         PwMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734374897; x=1734979697;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUU/XypxaduzqMjt/wtaQMQLw5fmlBNHttBG958fM88=;
-        b=bpAJgktlXY33h9+KtbadekXWxLByoY6sg81SUdMax4+aDfc3GdCLRyOtYcMTyZIAQ6
-         MZvyzm0oMWzwCpGgF6NzQxaDRl4NeF2AY3NnFrrqKq/Pax3SWLJ5zseYB3XM/ek1ZOgE
-         Gjr9Vg+yDtr3PC+ANkGFccjmhw8S2uzmi22Jed9NAY1WnnGeJJlfmXvI8y+Hz64xTd1n
-         knS5gpbF9FoZzU73yhig+7Jo+2Ke2NJpTvGwMHAeB/6ouZGre6WNdLIHU3O4nsIO5A39
-         vroXG4SQ/Zeu6bJduQbqYF2DH8KVu4/M7d0tK7h+MdN0QkyNXK2cWZxYEtYLUppMRR0E
-         hO9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKvcLH5cVW6t5iAES5CHI9S+LumhDkv2QCmRMDZP9V/DSGFqES9nQo3lw5c++L57MewdR2xNEO497J@vger.kernel.org, AJvYcCUNgwd1uwbDgwQNZ8QKyDkyC+JL33/Z+/+fCxEsvqXWhRyIj0BT7z9nw6gh1mexG2cMLQ+RULe7647XajQ=@vger.kernel.org, AJvYcCV6cgWjIpBr1sP3OANYNYFHkTH6WD8rW5RmhYuPEi82ixecWoQZ1IN3kPhxqjyw/oo8L2x5VIUjjneZ@vger.kernel.org, AJvYcCVuTCeILj/8wHSfhUqkTgk2CdOoO9GlXfo2AChvNM5s8f//i2+wSXxL4Oj2rXmR/3uET93Yo7pSlZkrmC3g@vger.kernel.org, AJvYcCWxz8erpn2RWZk9hyH4YVlmWN3m1o7II/nCqGrwdo4f/bsB5ClNCv3SztPgXooIycWvcuymPuscpGSg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1IwFhwc1uJGgARZ5NZYPC5tKz8MDQxzD5gPrJ8GWkj4PdxdOd
-	ifgvaN80+u8jM9eHs++DMfp7lc3x0N/l9GUt+LWnpPbQm4xEupcP
-X-Gm-Gg: ASbGncsQD9qwRPkEaPQYhTpjphS6ptFT1q/WZQWoQF921Xs9z/VbTbcXP3jgyyqlX7j
-	KcrjHd1PPF61hECO0c1W8MzV8NOgJjaVdhPhtKcfS3xlFnJJb5ppOWGJirL9eF59Iufr9IX8x+E
-	sCQh2d6lH1kd++rHCj53dzqEB6g2Qs3Xkd1Y2kOhkjyg4Qxibn/tsd/5oK52Lz6vHy1VCuXh2cG
-	SSeOCRemYEDLjm4paPrOJtI9TmJzZVO9iRnV+iNz5mQGaBDX0aPCYTPt4ThJPt76UimrdGTJg9J
-	05cYF81c69ZGGGZzBUnFR4+zxBKrlg==
-X-Google-Smtp-Source: AGHT+IFjQgGzXMt3UDx2US4yIi+IDTITId8IwO9BLtbyFBWANvRg/nW81MMDSaOHXQlVmHcHYluZ1w==
-X-Received: by 2002:a17:90b:2e4f:b0:2ee:f687:6ad5 with SMTP id 98e67ed59e1d1-2f2d7d6d692mr891327a91.2.1734374897329;
-        Mon, 16 Dec 2024 10:48:17 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142c2b1f6sm8453029a91.0.2024.12.16.10.48.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 10:48:16 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c64bb634-46d4-486a-8743-699775326058@roeck-us.net>
-Date: Mon, 16 Dec 2024 10:48:14 -0800
+	s=arc-20240116; t=1734374963; c=relaxed/simple;
+	bh=ZeQQScruNqW/bJ/x/lj6Dul84Yp6/f/jX5d+nsFQXP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m97OQSLiCYArpUd/hEgpaWKNAIQ1hFk16ivlt25LvKhlZx4bzA7Z6lBf4DLeoDEnP+pmyRi+T9ncda5YdsUwiznQjKYFC8gcCOQg3Q6jftjlfnKVy9xx3Lxi1BHuEA6oQp5n8vvofoFrt8NpSMhYIeOSv6uj15xuiG6KyNopOoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1ZPNrm7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25A3C4CED0;
+	Mon, 16 Dec 2024 18:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734374963;
+	bh=ZeQQScruNqW/bJ/x/lj6Dul84Yp6/f/jX5d+nsFQXP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V1ZPNrm77Hzb3Yr+VIztPlS4AaSqQZsY4L4YZA9QyjHnf9y9BKoeORsmL5zqgKM5z
+	 zLaNqRq6UgjB77sZjplhEZvkYOwLVcGoCG3dowN1eWsh6i5FORV033E1421uFMGfFD
+	 ikzKblefGpcRe5va/r0VTspaftVOegoMzFiPLys3IV/zW/amTD8r56rT9kmc+udtBt
+	 4QRQxrK5zAnkPf+4VqrMovYSuSx4UGoHBY6wxRrubhkokRlvQdN8/aFhXyhQv60rcM
+	 a4ZHBnq1aW8/33AXSZy4Tfg96sbT4oMedVo3YzFjVgm0J++jU5Ff5gptjzJi3iK5wo
+	 UEUM1dM3cddig==
+Date: Mon, 16 Dec 2024 18:49:17 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/8] dt-bindings: mailbox: Add bindings for RPMI
+ shared memory transport
+Message-ID: <20241216-untrained-scarce-211d99984416@spud>
+References: <20241216084817.373131-1-apatel@ventanamicro.com>
+ <20241216084817.373131-3-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] Add support for Intel CRPS PSU
-To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
- corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
- Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org, peteryin.openbmc@gmail.com,
- noahwang.wang@outlook.com, naresh.solanki@9elements.com, lukas@wunner.de,
- jbrunet@baylibre.com, patrick.rudolph@9elements.com,
- gregkh@linuxfoundation.org, peterz@infradead.org, pbiel7@gmail.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-i2c@vger.kernel.org
-References: <20241216175044.4144442-1-ninad@linux.ibm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241216175044.4144442-1-ninad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DW1/Ea3gbyAW1RUZ"
+Content-Disposition: inline
+In-Reply-To: <20241216084817.373131-3-apatel@ventanamicro.com>
 
-On 12/16/24 09:50, Ninad Palsule wrote:
-> Hello,
-> 
-> Please review the patchset for Intel CRPS185 driver.
-> V2:
+
+--DW1/Ea3gbyAW1RUZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 16, 2024 at 02:18:11PM +0530, Anup Patel wrote:
+> Add device tree bindings for the common RISC-V Platform Management
+> Interface (RPMI) shared memory transport as a mailbox controller.
+>=20
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->    - Incorporated review comments by Guenter Roeck
->    - Incorporated review comments by Krzysztof Kozlowski
-> 
+>  .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 135 ++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-=
+shmem-mbox.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-m=
+box.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.=
+yaml
+> new file mode 100644
+> index 000000000000..8d713ba7ffc7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RISC-V Platform Management Interface (RPMI) shared memory mailbox
+> +
+> +maintainers:
+> +  - Anup Patel <anup@brainfault.org>
+> +
+> +description: |
+> +  The RISC-V Platform Management Interface (RPMI) [1] defines a common s=
+hared
+> +  memory based RPMI transport. This RPMI shared memory transport integra=
+tes as
+> +  mailbox controller in the SBI implementation or supervisor software wh=
+ereas
+> +  each RPMI service group is mailbox client in the SBI implementation and
+> +  supervisor software.
+> +
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +  References
+> +  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +  [1] RISC-V Platform Management Interface (RPMI)
+> +      https://github.com/riscv-non-isa/riscv-rpmi/releases
+> +
+> +properties:
+> +  compatible:
+> +    const: riscv,rpmi-shmem-mbox
+> +
+> +  reg:
+> +    oneOf:
+> +      - items:
+> +        - description: A2P request queue base address
+> +        - description: P2A acknowledgment queue base address
+> +        - description: P2A request queue base address
+> +        - description: A2P acknowledgment queue base address
+> +        - description: A2P doorbell address
+> +      - items:
+> +        - description: A2P request queue base address
+> +        - description: P2A acknowledgment queue base address
+> +        - description: A2P doorbell address
+> +
+> +  reg-names:
+> +    oneOf:
+> +      - items:
+> +        - const: a2p-req
+> +        - const: p2a-ack
+> +        - const: p2a-req
+> +        - const: a2p-ack
+> +        - const: db-reg
+> +      - items:
+> +        - const: a2p-req
+> +        - const: p2a-ack
+> +        - const: db-reg
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 1
+> +    description:
+> +      The RPMI shared memory transport supports wired interrupt specifie=
+d by
+> +      this property as the P2A doorbell.
+> +
+> +  msi-parent:
+> +    description:
+> +      The RPMI shared memory transport supports MSI as P2A doorbell and =
+this
+> +      property specifies the target MSI controller.
+> +
+> +  riscv,slot-size:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 64
+> +    description:
+> +      Power-of-2 RPMI slot size of the RPMI shared memory transport.
+> +
+> +  riscv,db-mask:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Update only the register bits of doorbell defined by the mask (32 =
+bit).
 
-That is not a useful change log. Please describe what you changed, not who
-asked for it.
+For an untested RFC, the bindings here look mostly fine. I'd suggest
+renaming "db" to "doorbell" in properties etc, since we can easily
+afford the extra characters. Please make sure to actually test the
+bindings next time around, looks like all 3 bindings produced warnings.
 
-Guenter
+General comments like not needing to provide minItems: 1 when maxItems
+is also 1, and not needing a | unless you have formatting to preserve.
 
-> Ninad Palsule (4):
->    hwmon: (pmbus/core) Add PMBUS_REVISION in debugfs
->    hwmon: (pmbus/crps) Add Intel CRPS185 power supply
->    dt-bindings: hwmon: intel,crps185: Add to trivial
->    ARM: dts: aspeed: system1: Use crps PSU driver
-> 
->   .../devicetree/bindings/trivial-devices.yaml  |  2 +
->   Documentation/hwmon/crps.rst                  | 97 +++++++++++++++++++
->   Documentation/hwmon/index.rst                 |  1 +
->   MAINTAINERS                                   |  7 ++
->   .../dts/aspeed/aspeed-bmc-ibm-system1.dts     |  8 +-
->   drivers/hwmon/pmbus/Kconfig                   |  9 ++
->   drivers/hwmon/pmbus/Makefile                  |  1 +
->   drivers/hwmon/pmbus/crps.c                    | 79 +++++++++++++++
->   drivers/hwmon/pmbus/pmbus_core.c              | 13 ++-
->   9 files changed, 211 insertions(+), 6 deletions(-)
->   create mode 100644 Documentation/hwmon/crps.rst
->   create mode 100644 drivers/hwmon/pmbus/crps.c
-> 
+> +      If this property is not present then mask is assumed to be 0xfffff=
+fff.
 
+Also, things like this should be handled with a `default: 0xffffffff`,
+rather than describing it in text.
+
+I'll give the !rfc bindings a proper review when they appear, but before
+that I'll give the code here a go too - thanks for sending the patches.
+
+Cheers,
+Conor.
+
+--DW1/Ea3gbyAW1RUZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2B2LQAKCRB4tDGHoIJi
+0oJNAP9JzetQCsrZEN1o9LOtrG9uzZmopAxjlXBU4Ev0ivS0wgD9GrrhOQX2dGfa
+MzxcsO3uL5ROuSy48vQfWsf+RA9CnAA=
+=lG3u
+-----END PGP SIGNATURE-----
+
+--DW1/Ea3gbyAW1RUZ--
 
