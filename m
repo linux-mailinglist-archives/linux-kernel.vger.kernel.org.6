@@ -1,200 +1,86 @@
-Return-Path: <linux-kernel+bounces-447499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B419F336D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:44:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19AD9F3371
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017001887A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1926C162444
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB4F1E493;
-	Mon, 16 Dec 2024 14:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yf9rtZhA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE63206268;
+	Mon, 16 Dec 2024 14:45:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4083205E17;
-	Mon, 16 Dec 2024 14:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52CA205E07
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 14:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734360250; cv=none; b=XnbokgNBVP0nYYuqe59ECVNxlcSZyJo+c/FB3hKBlmBc9ATv27IO/Ryc3+TJmWTMkMCs8d0H2vdL4cLoOUea49DxbvlHfNEMHnuT/fi+hX7TwlNDQRsT1QOVTHU8atK5hyCCvQb4XOJtx/TMMx3U3U0EadS2HW4NzSrYln/xmOg=
+	t=1734360307; cv=none; b=d4w5NKaGhyuAcDuT9mVqg656IPjcpwf0YtR6sQNn9pqmPZdEjCIh6lXgwBdC1IcsArlCgWwX8gRfkJzIw4OGiRp4+1ZbMXhwm0obrjHcwmj0I9ZK36Zrf7BviZk7gJiRbnPv/WCDVxxK1jNdDw7bcipE8KOtsaHgo38R4Z6x9zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734360250; c=relaxed/simple;
-	bh=AJ/WWhVzPaKeE1rHmsubud7EyXr2Qfu3Wp7Xd9V3jfQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ujZnis+UwPWRIbCKUSDN0UaImba2phXI4SoeJyS3Jzu9w59MjrEdZiF30i2/OJ/tsBhNdRxe4Unt64lS7Fd4f869/0Nu5TzFrv6YMYWIFGIXhRjPqLfm7TzfGOL8QqUxjogI8xVK44Sah5CLcm0RFd26mwL4jHf7xE1elj+aNHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yf9rtZhA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B14FC4CED0;
-	Mon, 16 Dec 2024 14:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734360250;
-	bh=AJ/WWhVzPaKeE1rHmsubud7EyXr2Qfu3Wp7Xd9V3jfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yf9rtZhA2oEw1g636fsQEdJ6KiJ7SmFldnYMm5h2qxBZWBpG52AX0ZLLI9djdGwzl
-	 w7DGj87h6/6U4mf5UtiVgFs65B/Z0Q2Q/QB3qM1kIXKVC8ti4L1+1dsWPQS17loNXw
-	 lNOL7MJzdpj7fVWnSKCiCkANXZmyDM+oZIkC2aIWWCkC4ckODEO1wiU0C2eyFjlYGM
-	 kB4T1hku2AqdcGAT/U3UbY3lJmCs1Qll1v7G577nHGzOljuFdIQlXMpZDY0oqntheZ
-	 cF3sXL4lyKRtKyf/u3E4wJknfXJfTZ6pdiWPi3eoo0VaqTshfTuBKQ52jhZXU1mXeS
-	 J8aeqO+00jr/w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tNCKO-004D9u-50;
-	Mon, 16 Dec 2024 14:44:08 +0000
-Date: Mon, 16 Dec 2024 14:44:07 +0000
-Message-ID: <864j33sn60.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Collingbourne <pcc@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/sme: Move storage of reg_smidr to __cpuinfo_store_cpu()
-In-Reply-To: <Z2A502_EpqvLYN8g@J2N7QTR9R3.cambridge.arm.com>
-References: <20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org>
-	<87a5cysfci.wl-maz@kernel.org>
-	<709a0e75-0d0c-4bff-b9fd-3bbb55c97bd5@sirena.org.uk>
-	<Z2Agntn52mY5bSTp@J2N7QTR9R3>
-	<855dbb91-db37-4178-bd0b-511994d3aef7@sirena.org.uk>
-	<Z2A502_EpqvLYN8g@J2N7QTR9R3.cambridge.arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734360307; c=relaxed/simple;
+	bh=MeHEuhQepoxNaqynlADtqkvSSL+SjPmEfOBq6GjP3DE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jqHmQ7WRu6oFy7fy/aKa2fRqY6NWFhDgrDPpti1PGn9ox8yX7GJ33572CpY9MLsYh3dPgjrjQhVyxGk0/bYvOZA7mVP2MZJEPe+8+rE98ZIeshjc9RpV/50xeUT6NMuQr3umh/+uhKINWTjcGkFTjBwa9qTZAfonIHG4ZGy0Jrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7e0d7b804so42301675ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 06:45:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734360305; x=1734965105;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zsTY+6Eei+Wj6dlOGvdUNtY0A/7RtEMnbX2YjoXbN7I=;
+        b=SfZzexex/Fb9WC2zFcI0yDnLuFXVtjH+07GuwmfG6UDrdXfrTtNTzmIL8xjYhaXbfO
+         2tLQm/Tu6ybGVlI2BQhbAJTSgqjdgnfHeTHEMQ/Og+JYjekSLvetBiqLETYW2NgbtNcJ
+         Y0sbPeMCcNieJGtD0/952E7D/nyqykrMmDmIm7am7kCkDd3XR42PBFThWRZHuvTNnUDZ
+         Ngxf7Fo09XHCbdUY8kdBnLYkFYPubuIXSIr3wqo2GVlybO3F4Y5Jh9emaa0W8cGh1RZS
+         Vgluiso0zIKjQcVqfOtfTGbZVQjRAb3/s1jfUwQ9g0K1ZCEXbm/f4jqoJGw88115lRl6
+         66qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuvViN1jUJHKtr8Nfd/6Ufmadj+N67Br87g/5vGCwufO/eafzgVVw3MKvhdqIv8tefOA89uvazsBF7e2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMtTwN7hEbW1FBjWG1/ymaC8xWsqwJUGSoNvdO7HZmpQQWVD+y
+	yVDGiVFE4/V1TwgqK297zp2zBOmSqwd9Rl/5s0z8y4UBi0Mt4AT/0X4+ELiTVw31hTTooeK36fe
+	BoNaPYV0zU4l+uiISyqSvIHyXZSAF/kyjII+1M/nh+P0esbTlEILfmUc=
+X-Google-Smtp-Source: AGHT+IF+UEjDFsp7npLxCsuXN/ec8UhLBIe6e/EQ9T9WYCsDmh6sYALsBrNOF3IeziPj+SKtBLxcPNt/tIA/Wy5xvzAr1mREg27B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: mark.rutland@arm.com, broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, pcc@google.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1d03:b0:3a7:c3aa:a82b with SMTP id
+ e9e14a558f8ab-3aff62132bcmr147523785ab.1.1734360305048; Mon, 16 Dec 2024
+ 06:45:05 -0800 (PST)
+Date: Mon, 16 Dec 2024 06:45:05 -0800
+In-Reply-To: <20241216105219.nV527%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67603cf1.050a0220.37aaf.0133.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Dec 2024 14:31:47 +0000,
-Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> On Mon, Dec 16, 2024 at 01:23:55PM +0000, Mark Brown wrote:
-> > On Mon, Dec 16, 2024 at 12:44:14PM +0000, Mark Rutland wrote:
-> > 
-> > > ... didn't matter either way, and using '&boot_cpu_data' was intended to
-> > > make it clear that the features were based on the boot CPU's info, even
-> > > if you just grepped for that and didn't see the surrounding context.
-> > 
-> > Right, that was my best guess as to what was supposed to be going on
-> > but it wasn't super clear.  The code could use some more comments.
-> > 
-> > > I think the real fix here is to move the reading back into
-> > > __cpuinfo_store_cpu(), but to have an explicit check that SME has been
-> > > disabled on the commandline, with a comment explaining that this is a
-> > > bodge for broken FW which traps the SME ID regs.
-> > 
-> > That should be doable.
-> > 
-> > There's a few other similar ID registers (eg, we already read GMID_EL1
-> > and MPAMIDR_EL1) make me a bit nervous that we might need to generalise
-> > it a bit, but we can deal with that if it comes up.  Even for SME the
-> > disable was added speculatively, the factors that made this come up for
-> > SVE are less likely to be an issue with SME.
-> 
-> FWIW, I had a quick go (with only the SME case), and I think the shape
-> that we want is roughly as below, which I think is easy to generalise to
-> those other cases.
-> 
-> MarcZ, thoughts?
-> 
-> Mark.
-> 
-> ---->8----
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 8b4e5a3cd24c8..f16eb99c10723 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -91,6 +91,16 @@ struct arm64_ftr_override {
->  	u64		mask;
->  };
->  
-> +static inline u64
-> +arm64_ftr_override_apply(const struct arm64_ftr_override *override,
-> +			 u64 val)
-> +{
-> +	val &= ~override->mask;
-> +	val |= override->val & override->mask;
-> +
-> +	return val;
-> +}
-> +
->  /*
->   * @arm64_ftr_reg - Feature register
->   * @strict_mask		Bits which should match across all CPUs for sanity.
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 6ce71f444ed84..faad7d3e4cf5f 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1167,12 +1167,6 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
->  	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
->  		unsigned long cpacr = cpacr_save_enable_kernel_sme();
->  
-> -		/*
-> -		 * We mask out SMPS since even if the hardware
-> -		 * supports priorities the kernel does not at present
-> -		 * and we block access to them.
-> -		 */
-> -		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
->  		vec_init_vq_map(ARM64_VEC_SME);
->  
->  		cpacr_restore(cpacr);
-> @@ -1550,10 +1544,8 @@ u64 __read_sysreg_by_encoding(u32 sys_id)
->  	}
->  
->  	regp  = get_arm64_ftr_reg(sys_id);
-> -	if (regp) {
-> -		val &= ~regp->override->mask;
-> -		val |= (regp->override->val & regp->override->mask);
-> -	}
-> +	if (regp)
-> +		val = arm64_ftr_override_apply(regp->override, val);
->  
->  	return val;
->  }
-> diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-> index d79e88fccdfce..1460e3541132f 100644
-> --- a/arch/arm64/kernel/cpuinfo.c
-> +++ b/arch/arm64/kernel/cpuinfo.c
-> @@ -439,6 +439,24 @@ static void __cpuinfo_store_cpu_32bit(struct cpuinfo_32bit *info)
->  	info->reg_mvfr2 = read_cpuid(MVFR2_EL1);
->  }
->  
-> +static void __cpuinfo_store_cpu_sme(struct cpuinfo_arm64 *info)
-> +{
-> +	/*
-> +	 * TODO: explain that this bodge is to avoid trapping.
-> +	 */
-> +	u64 pfr1 = info->reg_id_aa64pfr1;
-> +	pfr1 = arm64_ftr_override_apply(&id_aa64pfr1_override, pfr1);
-> +	if (!id_aa64pfr1_sme(pfr1))
-> +		return;
+Hello,
 
-I don't think blindly applying the override at this stage is a good
-thing. Specially not the whole register, and definitely not
-non-disabling values.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-It needs to be done on a per feature basis, and only to disable
-things.
+drivers/gpu/drm/i915/gt/intel_rc6.c:139:19: error: static assertion expression is not an integral constant expression
+drivers/gpu/drm/i915/gt/intel_rc6.c:140:12: error: static assertion expression is not an integral constant expression
 
-See the hack I posted for the things I think need checking.
 
-	M.
+Tested on:
 
--- 
-Without deviation from the norm, progress is not possible.
+commit:         e25c8d66 Add linux-next specific files for 20241216
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11bc34f8580000
+
 
