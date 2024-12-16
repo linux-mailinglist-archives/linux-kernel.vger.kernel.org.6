@@ -1,153 +1,151 @@
-Return-Path: <linux-kernel+bounces-447623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA59A9F3510
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:55:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EAA9F3516
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB049188A21B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ACBF162C6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FB1149C57;
-	Mon, 16 Dec 2024 15:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OELftRuS"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0A514A4D4;
+	Mon, 16 Dec 2024 15:56:35 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E72148FF0;
-	Mon, 16 Dec 2024 15:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71C84A5E;
+	Mon, 16 Dec 2024 15:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734364513; cv=none; b=moujv59SjFAz0qVyH16cKAjmwH/qU8AeMkxolrX3vv2G6g3RgFzIp6ZrPHtW6qz7W0n8ufoVzdo0SfmZmkZ+gnaVcAkPHot5QpAYgrtL+l0ZUl5NemWczFjBac3WdFmijPA+zIQsby7T/es5HMynW/Fm+wMXvApAKgcG1paq+Vo=
+	t=1734364594; cv=none; b=ODLL+JD7NImKIIIzImFDxVA9xjP+5saT61OgIYbrsTLSoCeZRNSo68DHTQ4/YYAVjY91oDHqkbyvkLX8HU/gOZZYH5kYW59G4GAz83Snrp3+CRMV6wKdivW8gkIq/1PHuGQl0n7Uqz9hKdGJMe2/3ZHZ4T+uPdX24Ku0x8+fukg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734364513; c=relaxed/simple;
-	bh=0nbYvfl+FMgWZxD4rgk2dorGGAfwN2+YLxXB8iZH/3o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0KGWTrt44p+U0gbqvfTTN6cRsUc+licYecTWVV3FfTHho9/mrSxabVViIRP9ioNSijOSnRLEwL2XPxTmNPVdhLGkXkncpUyOoi5lrvRpc3WkcV9hl+GHlBBQtOEfEyRjrmAjCegU4xvjYa73wShduro6nxaoDOKT95Q6Fl9Gfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OELftRuS; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1734364594; c=relaxed/simple;
+	bh=Ow0c9kPDhT6pNowAlxkI0gHnxRhRQHv5ASQTiv8g124=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fN/qvhXijgxRDQuTboNu7URcEQW9dO7B3/e6xtNIyO5cpuu1Gh3DsYAt+uZEyWCQtj9mlZktSQnbGKoPaj8K20EdyqjD7+yEBsDz6qDSqcC0yQj1yfBKAvcTmPL273UxMnMSy4DyyIvhxVb3ePzCPY51ejvoBxysmwTlwpe/lcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53df80eeeedso4265202e87.2;
-        Mon, 16 Dec 2024 07:55:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734364509; x=1734969309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4MwxGKXkpnGddxZqvozu7EvMBr4y+Sd/gZ/o7FRr8o=;
-        b=OELftRuS15HJxjrVRkHmrivD7n9FGCQaPJ6bSlW9XyODYvT0mleHJbdGHTy1TlJT9j
-         ETE8D7CYMKcDvomj7wGs+T9OqDctP7mm4nYz/Qlcafh0TAzskmlp/+xDOFflB9X6M3A9
-         Sjo4ul1TCAyzBH2Ssy3TZVeZ0nyFi9X1CbolgjQCnGEJ9kZC4uSGMVC+f0WfYDr8KEhe
-         i0wwEWqAe6q5UF2IT09VsJtpAJAqyzlTnX3fhhPIfAqZnD0RsmtMx2rE8rNp01FjUyH/
-         Qf3SrAfqIcMZ5Ta6D5dbAhDhERtRMC6HtJZbrRuLdVOWldubmjti4ZWhgEPWelhkzncm
-         IvNg==
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-518799f2828so2226267e0c.0;
+        Mon, 16 Dec 2024 07:56:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734364509; x=1734969309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4MwxGKXkpnGddxZqvozu7EvMBr4y+Sd/gZ/o7FRr8o=;
-        b=kmOiFPPMP47ReS2DXbOXuEMEWee0p9n8JtoGc+Rixt8+0G2gbAvZvq0Y+nh6MGso0l
-         ho8aIV9eBj3+dM3KRKAip1lN4rkkwWElKdrI+cdC1eJX5KxPhsq75CdQLtGTGrVyOIAM
-         MYfMMxLfA+NFFqYEwJYbMCtWxdhQWbCJwSVbkzPjHmQblWE1zXPVPUVpWDunoTKKAB6s
-         +dHbG3jBf4alxmH2q/k3W3eLvY52KyzLVzRfsAdNTBLKNxmgiw1qzNTda8733tAJkqw5
-         IKzKgmzUI+XrRfx9bNGvC9GM11jzSB+47Q/4nDDdBRbzGPKlDuriILYpgl3H79pnGV0d
-         BzRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUp2QdAK4O+yAD9jhsG4NioKX/vmmOW60X5/sAO+487O4Ic2yVkv2iA7gzYdp2SqpVgobWi8LUchVBZQE=@vger.kernel.org, AJvYcCVXDTkdM8eaOiB5Oe3xYdlzXuBJ19BUrQHABoduh1GfRVFkh4rbMH9l6bwuGvWsDIroi1gM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTpJCDjdQ93TN/Ck/L4Rt+BA4MbczSujPCtL7+JSOyBG01O2MA
-	vgX7DMzme/bdMqWBVtGHog0f9A4plVts4q9cBPLRt2oHXKNUnLYvlLwdgw==
-X-Gm-Gg: ASbGnct2kKln6/GdFitrwnX7qIbrvxd/gejvkGcogrDWoo50vBrXWX32lC9GeUIiDSh
-	mM938bRDdaedSjMs/MAdlQ/gJA7VAnezz07gcpMFjWNhh3wB4PnZGrDaMAPr2dPUB3XxxN4L+zG
-	fdcxZZ/5EmlnaGQqQ3nVQDJk3vuLXcp2iN1bxXwjPUT5uIC5fSeE07Gt4ZVac+bJMGZWjVV8p2d
-	Llx2vl+PQXOaQG60snE5BOk2vuRa2GEDuEQmVZOhiG++qG9jTrGeTpk/JYppAP1oHkdecJkP5j7
-	mRc=
-X-Google-Smtp-Source: AGHT+IHipyXOifaP3+K8iCuvtXiW/zxJYksucwXX40y1wvFiHnYHMPRUzU0JA19SL9iMQXrpedJa8Q==
-X-Received: by 2002:a05:6512:31c6:b0:540:3561:666f with SMTP id 2adb3069b0e04-5409055837amr4569357e87.20.1734364509284;
-        Mon, 16 Dec 2024 07:55:09 -0800 (PST)
-Received: from pc636 (host-95-203-7-38.mobileonline.telia.com. [95.203.7.38])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c005besm910045e87.167.2024.12.16.07.55.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 07:55:08 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 16 Dec 2024 16:55:06 +0100
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2 0/5] Move kvfree_rcu() into SLAB (v2)
-Message-ID: <Z2BNWpkruY6rJv6A@pc636>
-References: <20241212180208.274813-1-urezki@gmail.com>
- <17476947-d447-4de3-87bb-97d5f3c0497d@suse.cz>
- <Z2AJCI3cIR9ETFFu@pc636>
- <d352db4f-4bb8-4300-b235-bbd1bdb3aa21@suse.cz>
- <Z2BKLzOGv_Ki_7fj@pc636>
- <6fb206de-0185-4026-a6f5-1d150752d8d0@suse.cz>
+        d=1e100.net; s=20230601; t=1734364591; x=1734969391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=77zeHGoE8RWx5kfLcJgFkdi/Mfmk+nkTuhojOOqLYzs=;
+        b=au6I1p+Qch6r8ZTlB6lNPmyO33FEEfZ2B3xADroyzTsei2UF7BJZqRIC0+SuRXONFR
+         M5gAFBTTL+Lq+pbS06OoeXZpj9IN47E1w7NxSOrFa9WBs/uFv7MepH18TNKkq69jK54W
+         22E7UUbayFkXJZJwztnlKzXmkSKBZqRnTi4sYT8veoSUvilums1I/S6OjtjJMenkjg0N
+         i3OBwlOBqjB696IZZY8ygnkJiKyjNI227Jqy0lIoONWzwXq/N/Ye2jDHL4R5g/Hn239E
+         8W61Dk5Xh4xyEtPgUa1SKr65eKmBpgo3IY8QgOg2z8Bh+1mSwKKNeKawhSqYrrByJamp
+         9Fqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDd7zo6Xw5xTH2dakodrzAmUCB7tWHNXhyhp96fsbURDTJ2iGWf3e1PetMaXZqYGjIYL9po0t53iE9zJC9prvCYbk=@vger.kernel.org, AJvYcCVPZFLtkw28B1u+1IA/r4UnVrVdaMyQ9mPoxADpgV5382T5ovb1uZa2W8npU0MfHY4il4YJpHmwBRZZhs8G@vger.kernel.org, AJvYcCWyblXSryoyhk/l9RSy8O3+tNk4G0x8cMar0ChWQvhnmL8m9Jv9CxH8yqLmqgBD0wATKeEZyC+zwcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe5fxj9Fjz/3GnOPrS4FioOz4xmOGHRxIfGvOeeJdDHYnBDGfD
+	ZyxoH6btIKYr46dL1HbbaFLNERyTE2ccKsuJ6/984ep0lnqOn6SedtYqmsdj
+X-Gm-Gg: ASbGnctSn3T1/5xy7w79WdpfP31oh/VL858drQ/9aLjZ3Pwx4ce+t64b+pWT1K3G5NA
+	fibbTRVNzyiKyggwcFdLtHuqlOqjDvkxgTAGiRfpAd7MWRWgM3wZH73z4e1638Tnw6sIEDfa0gx
+	tXKsujm4yuiF+ss80GIE1HknvEj8IWLviFuv68xLFY/fadNWs0F85zIgzIYXl/8OHPAf3USaArk
+	hWxYzm/t00h5AAb8oZjUN/qVZEJbQQAAETsj1hb3k447v6wvPZCpfKo8MSg16oSG4TM/ayXW+if
+	oZa2NcKQMy5WDwZ6IXI=
+X-Google-Smtp-Source: AGHT+IHPqLKCzqh+fAr1kH7ptHIYFynyJRRnbQDVT3Tio9GiGtd/3+atYgVNo8sXjVwVgBN+J6yNxw==
+X-Received: by 2002:a05:6122:7c6:b0:518:8753:34b0 with SMTP id 71dfb90a1353d-518cc31166emr9598090e0c.4.1734364591447;
+        Mon, 16 Dec 2024 07:56:31 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-519eb729c25sm671973e0c.50.2024.12.16.07.56.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2024 07:56:30 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-860af3331feso1152458241.1;
+        Mon, 16 Dec 2024 07:56:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV4ulLg5NxdAtC7jwc47wZltEbshh2hS6CBUYq5Ken5wcgUjWOCFyG57ILMQASvUlKURWTWQNHk31yy+STHFeOqzT8=@vger.kernel.org, AJvYcCVHcPAjnEC2m2dR8K1PMWRhCnyBkWyrl/Aliny5tSPnFmVdxRhksyhbrVVzCziD018Ip92cQQaoIGWaI4L/@vger.kernel.org, AJvYcCW6Cuim9RIcoEeexWXmloxqJgy3pnosp/N0Dy3smyRuRRvqfIVShL2l4I6RX2oujJEPQXaBDjDVLIw=@vger.kernel.org
+X-Received: by 2002:a05:6122:6090:b0:515:20e6:7861 with SMTP id
+ 71dfb90a1353d-518c5bd8a1dmr16177528e0c.2.1734364590572; Mon, 16 Dec 2024
+ 07:56:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fb206de-0185-4026-a6f5-1d150752d8d0@suse.cz>
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20241213175828.909987-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241213175828.909987-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Dec 2024 16:56:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXdNyTcwb4Tdg4r-QKkLewEDmHj8qovtL1Z_2_hOr4ZLw@mail.gmail.com>
+Message-ID: <CAMuHMdXdNyTcwb4Tdg4r-QKkLewEDmHj8qovtL1Z_2_hOr4ZLw@mail.gmail.com>
+Subject: Re: [PATCH 5/9] i2c: riic: Make use of devres helper to request
+ deasserted reset line
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Wolfram Sang <wsa@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 04:44:41PM +0100, Vlastimil Babka wrote:
-> On 12/16/24 16:41, Uladzislau Rezki wrote:
-> > On Mon, Dec 16, 2024 at 03:20:44PM +0100, Vlastimil Babka wrote:
-> >> On 12/16/24 12:03, Uladzislau Rezki wrote:
-> >> > On Sun, Dec 15, 2024 at 06:30:02PM +0100, Vlastimil Babka wrote:
-> >> >> On 12/12/24 19:02, Uladzislau Rezki (Sony) wrote:
-> >> >> > Hello!
-> >> >> > 
-> >> >> > This is v2. It is based on the Linux 6.13-rc2. The first version is
-> >> >> > here:
-> >> >> > 
-> >> >> > https://lore.kernel.org/linux-mm/20241210164035.3391747-4-urezki@gmail.com/T/
-> >> >> > 
-> >> >> > The difference between v1 and v2 is that, the preparation process is
-> >> >> > done in original place instead and after that there is one final move.
-> >> >> 
-> >> >> Looks good, will include in slab/for-next
-> >> >> 
-> >> >> I think patch 5 should add more explanation to the commit message - the
-> >> >> subthread started by Christoph could provide content :) Can you summarize so
-> >> >> I can amend the commit log?
-> >> >> 
-> >> > I will :)
-> >> > 
-> >> >> Also how about a followup patch moving the rcu-tiny implementation of
-> >> >> kvfree_call_rcu()?
-> >> >> 
-> >> > As, Paul already noted, it would make sense. Or just remove a tiny
-> >> > implementation.
-> >> 
-> >> AFAICS tiny rcu is for !SMP systems. Do they benefit from the "full"
-> >> implementation with all the batching etc or would that be unnecessary overhead?
-> >> 
-> > Yes, it is for a really small systems with low amount of memory. I see
-> > only one overhead it is about driving objects in pages. For a small
-> > system it can be critical because we allocate.
-> > 
-> > From the other hand, for a tiny variant we can modify the normal variant
-> > by bypassing batching logic, thus do not consume memory(for Tiny case)
-> > i.e. merge it to a normal kvfree_rcu() path.
-> 
-> Maybe we could change it to use CONFIG_SLUB_TINY as that has similar use
-> case (less memory usage on low memory system, tradeoff for worse performance).
-> 
-Yep, i also was thinking about that without saying it :)
+Hi Prabhakar,
 
---
-Uladzislau Rezki
+On Fri, Dec 13, 2024 at 6:58=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Simplify the `riic_i2c_probe()` function by using the
+> `devm_reset_control_get_optional_exclusive_deasserted()` API to request a
+> deasserted reset line. This eliminates the need to manually deassert the
+> reset control and the additional cleanup.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -447,18 +442,10 @@ static int riic_i2c_probe(struct platform_device *p=
+dev)
+>                 return dev_err_probe(dev, PTR_ERR(riic->clk),
+>                                      "missing controller clock");
+>
+> -       riic->rstc =3D devm_reset_control_get_optional_exclusive(dev, NUL=
+L);
+> +       riic->rstc =3D devm_reset_control_get_optional_exclusive_deassert=
+ed(dev, NULL);
+>         if (IS_ERR(riic->rstc))
+>                 return dev_err_probe(dev, PTR_ERR(riic->rstc),
+> -                                    "Error: missing reset ctrl\n");
+> -
+> -       ret =3D reset_control_deassert(riic->rstc);
+> -       if (ret)
+> -               return ret;
+> -
+> -       ret =3D devm_add_action_or_reset(dev, riic_reset_control_assert, =
+riic->rstc);
+> -       if (ret)
+> -               return ret;
+> +                                    "Failed to acquire deasserted reset =
+control\n");
+
+"failed", as all other error messages start with a lower-case character.
+Perhaps drop the " control" from the message?
+
+>
+>         for (i =3D 0; i < ARRAY_SIZE(riic_irqs); i++) {
+>                 ret =3D platform_get_irq(pdev, riic_irqs[i].res_num);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
