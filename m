@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-448024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1A39F39F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:37:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A64F9F39FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABFD8163F4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DB3616CA0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63556208960;
-	Mon, 16 Dec 2024 19:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7AB207DF8;
+	Mon, 16 Dec 2024 19:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="PWHDhwcC"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kKgySrun"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939B42080F1
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 19:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666ED206263;
+	Mon, 16 Dec 2024 19:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734377792; cv=none; b=mZvZa3RnEAeJuY2HinAZ1uM8w8JstxaaDwnsIbul3+PFXGnFeDxNsScYxYTKM/BYJwDQ91QtHDmoH6TwM4NcvBEsk+5kiLpLj1KT1Jis59a8BwtFZ5uRYaOvGs3T5W80JfOOAg1aOqDDSeNb5Ci+RhiSqpYtzbAqQajHyAZmlBg=
+	t=1734377867; cv=none; b=usaqxsByMHk0XMcm1jtFS/uCE5SYcgei7eDh99C5LFWAUINxC9QcLSlyv7eaYoRdBj3yeJufgMAcs4b6f7VNH+rG37oTvN2eF5RuTOIb+TjaPYL8E7dJ0kQHxFZQ2x1+bo0cX877PXfbpgYcoga2gisw9qQLWn20eMV5ADxBgPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734377792; c=relaxed/simple;
-	bh=YZLMeNgthh1VNnTReIeJy7kxf/ahYTPcT/OdYESyZqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rmuGKQ0/Ypg4iuzrd3LCXL7vIdQrs1lkn/P4kvhH6G3nAW0yz3lRET9fVUDfNCxbT4hMY0Oy8h1T71WUgfyESacSc3z4HNmFx0x1TnzESoQKTli9MzeZ/fYqz7h9wf9kK8vFPj8n+utF1oWsfPdcRi2CIWTqYUBsnaYSqI0BPq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=PWHDhwcC; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B09D02C04F5;
-	Tue, 17 Dec 2024 08:36:26 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734377786;
-	bh=oGHd2e5loy7aLsZGhGhSVFEKNjGf7W5e8Wj2P+Hklcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PWHDhwcC9JRgpFtMicBDx1w8jJ5ZOyXKvSUG0MuGEWbFe0EfiLPjNOiQ6hjUS58Yz
-	 7ER4xNBfkBkHy5a0n43RBQ4sCsjP85ijGNHN/47EqC6xBpdi5kYOCsv/ApzI4dcJym
-	 mOPBbu8w+aK693OK8aM6cDUtQy4M5L2UUPPSM9/0tpi1JMvBd4kt8PL3yrTlFgLo8+
-	 4qBNoY+drkfTQsd/YQVJDkYp2i7ngNHdyQ2UkLAIWzJ9v2mmr7GUVw/px5KxGvWER/
-	 gJa76ddOrt0TPbjV98U3QkNB08G1jIJ0hkdT7ImLaZo3TZYh1kE8aTXKF3VZ0G4JFA
-	 ak216dxV1NaaQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6760813a0000>; Tue, 17 Dec 2024 08:36:26 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 8F9FD13ED95;
-	Tue, 17 Dec 2024 08:36:26 +1300 (NZDT)
-Message-ID: <596c86d8-1cb3-434b-88d6-17ffe0fc9df2@alliedtelesis.co.nz>
-Date: Tue, 17 Dec 2024 08:36:26 +1300
+	s=arc-20240116; t=1734377867; c=relaxed/simple;
+	bh=wkngRMiuFU5dS8KBJsgloNT6EOD7A4lL9iheQEXIBIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GC5auGX1kJ5aaIcaGuG+hmVmFuWQuvkPM46jXkRO9B9rM2MZ7J+iFDpjCSvYvqycwIw87Mvnkw6InjhhBj9FvqiXrBSiHRm3cdvyzGBIaYjmoYLvICNDoYPNaelXSQWkcge121j7WtGVBueiMAzZzzvVu/OWyxoaOq46UbBGuzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kKgySrun; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIbpWA010181;
+	Mon, 16 Dec 2024 19:37:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TJ9iUpkHc3Sc4uWLqVwn2KjJnao0NtZDFWgqXUkgadc=; b=kKgySrunL2FC7yw4
+	mQHwM5wGRXMytMmqgKUJx5/kUTcoyLPgdyGu5DkdlIDAnmNYRErQUeXmFaOpwsUU
+	VoBHwCWClm2Bx4AqKZ2fpMtV/ki96IzB4lrWOxBIKYG4JA9w2Xpfkk6tHnmu49jQ
+	XiCiv1Tsy+gsA/ShDsAn6Tv0EbgEx2L9hDDk+4T/iReP3Y6twKd88mTDqPul1NmQ
+	qMbAyVJbQuNAqcgMw7dPXoZmIuLHtmiFYCeG1Xns0YGUzf6OPv/4YzbPu45k/XiC
+	c17x5CKWbfDkuzKnlhQxdHlTn9OGvfLsWaOIHuhp6106pcsxzW7XQzrSOh7NCGGe
+	Il18bQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsn9g47x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:37:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJbcx7024436
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:37:38 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 11:37:34 -0800
+Message-ID: <644fb6bd-f39b-4b84-b3d9-004217eb41a8@quicinc.com>
+Date: Mon, 16 Dec 2024 11:37:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v2 2/4] dt-bindings: mfd: Add MDIO interface to
- rtl9301-switch
-To: Conor Dooley <conor@kernel.org>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
- hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
- <20241216031346.2626805-3-chris.packham@alliedtelesis.co.nz>
- <20241216-neurosis-untagged-86622f8e2163@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/16] drm/msm/dp: drop obsolete audio headers access
+ through catalog
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>
+CC: Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-fd-dp-audio-fixup-v4-0-f8d1961cf22f@linaro.org>
+ <20241216-fd-dp-audio-fixup-v4-3-f8d1961cf22f@linaro.org>
 Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20241216-neurosis-untagged-86622f8e2163@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-fd-dp-audio-fixup-v4-3-f8d1961cf22f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6760813a a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=XYAwZIGsAAAA:8 a=1OZ0I8y61a4uFxY9wqQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=GbR9vSjRXMx6H1Y7X1w4:22 a=E8ToXWR_bxluHZ7gmE-Z:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yXy1dm7pHCjbA4_hP7BhEaVbsNDw6cL2
+X-Proofpoint-ORIG-GUID: yXy1dm7pHCjbA4_hP7BhEaVbsNDw6cL2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 clxscore=1015
+ suspectscore=0 mlxlogscore=836 impostorscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160162
 
 
-On 17/12/2024 07:53, Conor Dooley wrote:
-> On Mon, Dec 16, 2024 at 04:13:44PM +1300, Chris Packham wrote:
->> The MDIO controller is part of the switch on the RTL9300 family of
->> devices. Add a $ref to the mfd binding for these devices.
->>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->> ---
->>
->> Notes:
->>      Changes in v2:
->>      - None
->>
->>   .../bindings/mfd/realtek,rtl9301-switch.yaml      | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
->> index f053303ab1e6..eeb08e7435fa 100644
->> --- a/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/realtek,rtl9301-switch.yaml
->> @@ -41,6 +41,9 @@ patternProperties:
->>     'i2c@[0-9a-f]+$':
->>       $ref: /schemas/i2c/realtek,rtl9301-i2c.yaml#
->>   
->> +  'mdio@[0-9a-f]+$':
->> +    $ref: /schemas/net/realtek,rtl9301-mdio.yaml#
->> +
->>   required:
->>     - compatible
->>     - reg
->> @@ -110,5 +113,17 @@ examples:
->>             };
->>           };
->>         };
->> +
->> +      mdio0: mdio@ca00 {
-> Label here is unused, but that alone isn't worth a respin.
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I'll be re-spinning the series for other reasons so I'll fix this up and 
-add your ack while I'm at it.
+On 12/15/2024 2:44 PM, Dmitry Baryshkov wrote:
+> Drop obsolete functions to access audio packet headers. The dp_audio.c
+> now writes them using msm_dp_write_link() directly.
+> 
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Tested-by: Stephen Boyd <swboyd@chromium.org> # sc7180-trogdor
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_audio.c   |  2 -
+>   drivers/gpu/drm/msm/dp/dp_catalog.c | 76 -------------------------------------
+>   drivers/gpu/drm/msm/dp/dp_catalog.h | 24 ------------
+>   3 files changed, 102 deletions(-)
+> 
 
->
->> +        compatible = "realtek,rtl9301-mdio";
->> +        reg = <0xca00 0x200>;
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        ethernet-phy@0 {
->> +          reg = <0>;
->> +          realtek,smi-address = <0 1>;
->> +        };
->> +      };
->>       };
->>   
->> -- 
->> 2.47.1
->>
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
