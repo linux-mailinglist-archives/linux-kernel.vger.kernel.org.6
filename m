@@ -1,103 +1,243 @@
-Return-Path: <linux-kernel+bounces-448031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FC59F3A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:43:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378A39F3A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 20:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFF718849BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A35916CE4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 19:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DA620B1EA;
-	Mon, 16 Dec 2024 19:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC320B1E0;
+	Mon, 16 Dec 2024 19:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0Rs4OZk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqexwAv7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C6F20A5FD;
-	Mon, 16 Dec 2024 19:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D220897F;
+	Mon, 16 Dec 2024 19:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734378216; cv=none; b=KxMmfzsXpsKtwR2k2pvEansv4S0qC/yHGODU2u94tzQEqpopHcqAGU+EeYVBPmFWweEMqcneLn9UQ4WWKtayyezK7ayvHEQcbMR7UoM9b/FdkTgauhw7sNxsYD3RGdk9Y4m+vAWh6vEW3EkKujta/w+cnH/VZ/tIYQt5v7yn0MY=
+	t=1734378297; cv=none; b=cyWKOivhJc4QXSkvV30fnd2el0+qruW5HnUPsgyTVZE6U1llaHpEegbWXWJ+qQJWpqNh9j/epQmQEHNV66DJWJsFdoY/s77jZgkFC6AwxRIx7PIWvRuW2U474p8GfF4ozZi9OWlLpI0QGDyFe6uU2bh+tXFEOIcZydAYIxKBKxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734378216; c=relaxed/simple;
-	bh=bLCUG42w9Rd2j2ctr/dQMjIHxW6uq1VaCrTcAGQt3vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2sfq9MODD8qcuj1cQ1/I4AReoML4jZXHnyM+ABRzZyOtdXq6Sk/9+A7ipgiZ4oLZrIUnuKvkiHwUft5CeYEWJ8wury/VimeOZfa6nIxLOvX7sb9KDxjTlq1IDnnZtIBo45Hnafzq1fFukO8Y7aR/u9rmzh/Thj3TjLxjNNxw9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0Rs4OZk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DF4C4CED0;
-	Mon, 16 Dec 2024 19:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734378215;
-	bh=bLCUG42w9Rd2j2ctr/dQMjIHxW6uq1VaCrTcAGQt3vQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=R0Rs4OZkNJFFbVLkxGZkocsVxkqWzRWQUbF7JQOf7Ia5kzkKZIBNEyWgaYt0laS02
-	 v6bniI96SOM8buGJQCOS6vEEsLRfDFYfBKQmQoOIpSJGsjEgO6zjMQj7tVbZYfXGND
-	 gED7MAQU1bO1u8uSKJi2VEnV/U9unIpshjn5CHXmHnBB7iIZkB3wIqpgsDuRxb3Xn1
-	 ktzzVZV20cTNjbxORcBPdnepF+e3UT5CP6Yv0UGUh6oIPYbwdOwOcRl3gKHjOsGk8k
-	 GtDA9dkjnif9DXvhiaics/9Xy9KfVGCJxvRT8DRvppRDkvpMEp6s8cQgdR48iGT7OD
-	 aJG2KRR6r1DLQ==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3eb8559b6b0so2471302b6e.1;
-        Mon, 16 Dec 2024 11:43:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUWLvqgPqBepfvXyuhcqqJJWQ43ef9TG7WQwwx0AmN98/AyouYRaA/TjKhj93k2ZIuMTCbhf6rgVGdwKQ=@vger.kernel.org, AJvYcCVtWDR1IYAuqyLgAIkhM/FOL2Ss3BHdw4YyDvRoOrSCawK8Jsp/dnz2/4sxOI7ASBQo6rk088Oeb0BQ@vger.kernel.org, AJvYcCXux2aqM3833boqqyeTMmkbYhS3VuDabMpG5byqzEyec6vJJulzamp4PAWkkxOBKZkt86GJSpNSLcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycfYKbKNsSPedv0jIZWwQkA7kq6Hc0ptp1VBZZ8QWEwFfrbMCN
-	OJqOI8cZNdo0k/UTDbIyRIx+VfOXhfzsAmjNQ8dct8XNEQx1gPH1qpQewSkkq1QowFAZUo+VRZY
-	9EPrj2KjMcbJbrvCv+YKFVyAYBig=
-X-Google-Smtp-Source: AGHT+IHBIkkg9ryeWoXUjvDA+eOStEt8YeUf9CRTqn6A5LAOHY0mQEKE5h0I8dvOns0NI/pgRtXFEf2n3JxCdyuWQY4=
-X-Received: by 2002:a05:6808:2448:b0:3eb:60e9:eae1 with SMTP id
- 5614622812f47-3ebcb33635dmr15143b6e.29.1734378214876; Mon, 16 Dec 2024
- 11:43:34 -0800 (PST)
+	s=arc-20240116; t=1734378297; c=relaxed/simple;
+	bh=rZlMAModRsdgbe5w/zLsoK/sH5kP0/f2DN9f03zSC58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=n++KfaJ/PrIz1+MXPi4GLbdy4iYE9koVIbQEMPKNW2x77Iad/ZRq1PH9r3FYHxGMeS72YfcCTEWkSkgXHdWfJQU7ZvjX525pBiKZd3ow7s0wSpgBV0UvsWa6ZacuT6LIdRpWUQxthOHGHSczEhwXHthdYJSjWMKerWUYErLU0gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqexwAv7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIwdKQ010436;
+	Mon, 16 Dec 2024 19:44:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QoKedy9nYKtdTeo3ZbXuPAijYEnVjQxjDUwben+Uc8A=; b=mqexwAv76Z5Urklf
+	Pp+5j1FIk30/a+184RGWP8p3xYpASLLI3Efz/nTk9ywkbXKNaKDUIMNFJZ2aNg+d
+	e2eeRzvz6dRgOrq2JWhegdx95y5tiXJCRamY2AMudjCXEAJ2iljfAIk2qJFPl2xd
+	eXQL467v4oVTWgqOyCn8QGBxxmJrCgnkPZu+AwkZ+gg5HNZWc/jgHDIfsAXHcZhU
+	JYCz9BEHb9+WkxTsa6UsHFzrVjBQhUpCTvPf683D6ek7biTDFyW7prdNI0WsIwN/
+	39SKj0MgKunZoEgnRBqMd2GBe+Ruhp78MW1ts5WxsXDpCWWOYuouE7/QDoYq191Y
+	2foSzg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsy70389-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:44:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGJifra029261
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 19:44:41 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 11:44:41 -0800
+Message-ID: <42947ffb-5fd0-42dc-9f9e-6c90f0810258@quicinc.com>
+Date: Mon, 16 Dec 2024 11:44:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13662231.uLZWGnKmhe@rjwysocki.net> <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
- <20241212151354.GA7708@lst.de> <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
- <20241214063023.4tdvjbqd2lrylb7o@thinkpad> <CAJZ5v0gLMx+tBo+MA3AQZ7qP28Z91d04oVBHVeTNcd-QD=kJZg@mail.gmail.com>
- <20241216171108.6ssulem3276rkycb@thinkpad> <CAJZ5v0j+4xjSOOy8TYE0pBuqd_GdQa683Qq0GEyJ9WAFad9Z=A@mail.gmail.com>
- <20241216175210.mnc5kp6646sq7vzm@thinkpad> <CAJZ5v0grRdTYaamSnKSF-HyMmCHDEZ4haLo+ziSBxhDg1PbjRQ@mail.gmail.com>
- <Z2CCH5HAbx8ECDin@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <Z2CCH5HAbx8ECDin@kbusch-mbp.dhcp.thefacebook.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 16 Dec 2024 20:43:23 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jfaNjgjNAQPa3QPNdU8BCoocsbo4Vfo5obTxcyTKOUWw@mail.gmail.com>
-Message-ID: <CAJZ5v0jfaNjgjNAQPa3QPNdU8BCoocsbo4Vfo5obTxcyTKOUWw@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
-To: Keith Busch <kbusch@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Christoph Hellwig <hch@lst.de>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Bjorn Helgaas <helgaas@kernel.org>, axboe@kernel.dk, sagi@grimberg.me, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/22] drm: Add valid clones check
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Maxime Ripard
+	<mripard@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark
+	<robdclark@chromium.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
+	<ville.syrjala@linux.intel.com>
+References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
+ <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
+ <20240925-hasty-bald-caribou-eedbf5@houat>
+ <80d08449-71de-4a7f-8b2a-8af565d8d701@quicinc.com>
+ <54188c68-41c7-4a42-9eca-67363b30217a@quicinc.com>
+ <Z2A4uahCHuOz45Fc@phenom.ffwll.local>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <Z2A4uahCHuOz45Fc@phenom.ffwll.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MNXQyAJ-coX4yR_R4aLjrCNCaShb2gUT
+X-Proofpoint-GUID: MNXQyAJ-coX4yR_R4aLjrCNCaShb2gUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412160162
 
-On Mon, Dec 16, 2024 at 8:40=E2=80=AFPM Keith Busch <kbusch@kernel.org> wro=
-te:
->
-> On Mon, Dec 16, 2024 at 08:34:24PM +0100, Rafael J. Wysocki wrote:
-> > However, there is an additional concern that putting an NVMe device
-> > into D3cold every time during system suspend on Android might cause it
-> > to wear out more quickly.
-> >
-> > Is there anything else?
->
-> I recall a previous reason for this behavior was because the resume
-> latency was significantly faster if we don't prepare the device for D3,
-> and the nvme protocol specific power states for some platforms was
-> sufficiently low enough. Apparently this choice hasn't been universally
-> optimal.
 
-Thanks for chiming in!
 
-I'm recalling some other reasons too (mentioned in one of my previous
-messages), but overall this is a driver design choice, it is not done
-to adhere to some general rule.
+On 12/16/2024 6:27 AM, Simona Vetter wrote:
+> On Sun, Dec 15, 2024 at 06:19:08PM -0800, Abhinav Kumar wrote:
+>> Hi Maxime
+>>
+>> Gentle reminder on this one.
+>>
+>> We are looking for some advice on how to go about KUnit for this static
+>> function.
+>>
+>> Please help with our question below.
+>>
+>> Thanks
+>>
+>> Abhinav
+>>
+>> On 12/6/2024 4:48 PM, Jessica Zhang wrote:
+>>>
+>>>
+>>> On 9/25/2024 12:23 AM, Maxime Ripard wrote:
+>>>> On Tue, Sep 24, 2024 at 03:59:18PM GMT, Jessica Zhang wrote:
+>>>>> Check that all encoders attached to a given CRTC are valid
+>>>>> possible_clones of each other.
+>>>>>
+>>>>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>>>>> ---
+>>>>>    drivers/gpu/drm/drm_atomic_helper.c | 23 +++++++++++++++++++++++
+>>>>>    1 file changed, 23 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+>>>>> b/drivers/gpu/drm/drm_atomic_helper.c
+>>>>> index 43cdf39019a4..cc4001804fdc 100644
+>>>>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>>>>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>>>>> @@ -574,6 +574,25 @@ mode_valid(struct drm_atomic_state *state)
+>>>>>        return 0;
+>>>>>    }
+>>>>> +static int drm_atomic_check_valid_clones(struct
+>>>>> drm_atomic_state *state,
+>>>>> +                     struct drm_crtc *crtc)
+>>>>> +{
+>>>>> +    struct drm_encoder *drm_enc;
+>>>>> +    struct drm_crtc_state *crtc_state =
+>>>>> drm_atomic_get_new_crtc_state(state,
+>>>>> +                                      crtc);
+>>>>> +
+>>>>> +    drm_for_each_encoder_mask(drm_enc, crtc->dev,
+>>>>> crtc_state->encoder_mask) {
+>>>>> +        if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
+>>>>> +            crtc_state->encoder_mask) {
+>>>>> +            DRM_DEBUG("crtc%d failed valid clone check for mask
+>>>>> 0x%x\n",
+>>>>> +                  crtc->base.id, crtc_state->encoder_mask);
+>>>>> +            return -EINVAL;
+>>>>> +        }
+>>>>> +    }
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>>    /**
+>>>>>     * drm_atomic_helper_check_modeset - validate state object for
+>>>>> modeset changes
+>>>>>     * @dev: DRM device
+>>>>> @@ -745,6 +764,10 @@ drm_atomic_helper_check_modeset(struct
+>>>>> drm_device *dev,
+>>>>>            ret = drm_atomic_add_affected_planes(state, crtc);
+>>>>>            if (ret != 0)
+>>>>>                return ret;
+>>>>> +
+>>>>> +        ret = drm_atomic_check_valid_clones(state, crtc);
+>>>>> +        if (ret != 0)
+>>>>> +            return ret;
+>>>>>        }
+>>>>
+>>>> Pretty much the same comment, we should have kunit tests for this.
+>>>
+>>> Hey Maxime,
+>>>
+>>> I'm working on the kunit test for this and had a question on the design
+>>> for the unit test:
+>>>
+>>> Since this is a static helper that returns a pretty common error code,
+>>> how would you recommend going about making sure that
+>>> `drm_atomic_check_valid_clones()` specifically is returning the error
+>>> (and not a different part of check_modeset) when testing the
+>>> check_valid_clones() failure path?
+> 
+> So the usual way to test very specific things of a big function is to
+> first setup a driver and atomic request which does pass all checks. And
+> then do a minimal change which does not pass anymore.
+> 
+> So what you could do here is have 3 connectors 1 crtc, but only the first
+> two connectors can be cloned. Then do an atomic request with those two
+> connectors and the crtc. Then the 2nd request is with one of the
+> connectors replaced with the 3rd one (so it's still a clone config, but
+> not an invalid one), then have a failure.
+> 
+> Note: I didn't check all the details, I might be getting something wrong
+> here, but the idea should work.
+
+Hey Sima,
+
+Ack, FWIW this describes something very similar to my planned test cases 
+(my current kunit tests 3 cases -- valid clone, invalid clone, and no 
+clones). Will post the changes later today if there's no major 
+objections to this.
+
+Thanks,
+
+Jessica Zhang
+
+> 
+> Cheers, Sima
+> 
+>>>
+>>> Thanks,
+>>>
+>>> Jessica Zhang
+>>>
+>>>>
+>>>> Maxime
+>>>
+> 
+> -- 
+> Simona Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+
 
