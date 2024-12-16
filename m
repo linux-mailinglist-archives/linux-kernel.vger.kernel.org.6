@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-447564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F8D9F343D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C897D9F3447
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDE2188600F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BB51884747
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 15:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BE714884F;
-	Mon, 16 Dec 2024 15:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2F8JPt7f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A206145FE8;
+	Mon, 16 Dec 2024 15:18:55 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3551474BC;
-	Mon, 16 Dec 2024 15:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58913D89D;
+	Mon, 16 Dec 2024 15:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734362238; cv=none; b=tl1MooauJEVIzQhTQMK8OMZEAG1FwEm/nHH7aEfKOfrkYWMpKnzdK4ZxagXXb5rJj9/8Z04/DDHivuCZ/SXArXUrPUE9n5NQFm7grgf4w5uctgXxzwSkgalZmhLGeAPG3iOZJuRl8/eb7cpARA1El5k9KCZ4CtXr6JPPJ45hjis=
+	t=1734362334; cv=none; b=illX6Bnnwlt5aI7uzbr0JDVQeiWPL9R8ayanK9n7WeNyzP0BwYIcCCeJxTaZVeeRsdKLWkKiSEEu6itj/l3vjtZOfgIOD8wKAWQrMzoNEJDk8mRSUEQu7lTsmWuiopE1/FIoapG3eyPo2pzzFFae929O4R82YWFlfeDVkymlOhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734362238; c=relaxed/simple;
-	bh=2J6q7DT6SA1J7apxj/V7KyOjH8Q6PnQ2ZcAN6brgkkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VC3+UAKKnrGihAJRtPSBdofcNnEyHnDPFxA3Tj4p/N8FAzr4EK5rdNlgItX6L7ztmFzU6Nevt+yWl8sxyOSqaal0RIve5ZLIWyM0tH0D0VZMXDXa+W7BMZoJHHfzUlgWXmkHW3wI2rhIpM1Yqm/g1cGyGiaRkbikIJwLDi304M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2F8JPt7f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AB3C4CEDE;
-	Mon, 16 Dec 2024 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734362237;
-	bh=2J6q7DT6SA1J7apxj/V7KyOjH8Q6PnQ2ZcAN6brgkkk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2F8JPt7fEKeUW1+09qCIpdU6+KQ86X+l0KWxnGRlvnQSA5wzNAx1zDpG4DzFGQjWW
-	 sNBygwV17d12641QG2xXtW6kjBSd3B4hMvkhvkmpggHH2XmOtBEQzEYhII835oOQv0
-	 A9UL+bpd0C84DzAcOscCUNuF8IHagmhRW2KuP1w0=
-Date: Mon, 16 Dec 2024 16:17:15 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Jann Horn <jannh@google.com>,
-	Hanno =?iso-8859-1?Q?B=F6ck?= <hanno@hboeck.de>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-hardening@vger.kernel.org,
-	regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: Permit some TIOCL_SETSEL modes without CAP_SYS_ADMIN
-Message-ID: <2024121653-unblessed-mummified-c630@gregkh>
-References: <2024121418-blazer-valiant-c51a@gregkh>
- <20241216150722.4079213-2-gnoack@google.com>
+	s=arc-20240116; t=1734362334; c=relaxed/simple;
+	bh=IsrKlm+2OUZKcqqVBC8nxFIPZLQYgWNWMK0rbRQBNIo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CvQaG69bsXVJtHxyhYUgB/0SonRWvrjqdRaBIBhkfOxu8NkpSLgBUhECUUiWdaGXqThl21bQ3m3zXn5npZQdMQ0BT9EkqFIz8Con2uXbsJa8DOFwPzRMyFB3h1tA6BFcsjKOMyYklibzdyxf619oVUk3rdKN7KgN7PRzRrJFBpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YBk42236mz6K6jQ;
+	Mon, 16 Dec 2024 23:13:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id DFA751400E3;
+	Mon, 16 Dec 2024 23:18:47 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 16 Dec
+ 2024 16:18:47 +0100
+Date: Mon, 16 Dec 2024 15:18:45 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Tejun Heo <tj@kernel.org>, Josef Bacik
+	<josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, Boris Burkov
+	<boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, <linux-kernel@vger.kernel.org>,
+	<cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v3 4/9] driver core: Move true expression out of if
+ condition in API driver_find_device()
+Message-ID: <20241216151845.000074b1@huawei.com>
+In-Reply-To: <20241212-class_fix-v3-4-04e20c4f0971@quicinc.com>
+References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
+	<20241212-class_fix-v3-4-04e20c4f0971@quicinc.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241216150722.4079213-2-gnoack@google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Dec 16, 2024 at 03:07:23PM +0000, Günther Noack wrote:
-> With this, processes without CAP_SYS_ADMIN are able to use TIOCLINUX with
-> subcode TIOCL_SETSEL, in the selection modes TIOCL_SETPOINTER,
-> TIOCL_SELCLEAR and TIOCL_SELMOUSEREPORT.
+On Thu, 12 Dec 2024 21:38:40 +0800
+Zijun Hu <zijun_hu@icloud.com> wrote:
+
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> TIOCL_SETSEL was previously changed to require CAP_SYS_ADMIN, as this IOCTL
-> let callers change the selection buffer and could be used to simulate
-> keypresses.  These three TIOCL_SETSEL selection modes, however, are safe to
-> use, as they do not modify the selection buffer.
+> For driver_find_device(), get_device() in the if condition always returns
+> true, move it to if body to make the API's logic more clearer.
 > 
-> This fixes a mouse support regression that affected Emacs (invisible mouse
-> cursor).
-> 
-> Link: https://lore.kernel.org/r/ee3ec63269b43b34e1c90dd8c9743bf8@finder.org
-> Fixes: 8d1b43f6a6df ("tty: Restrict access to TIOCLINUX' copy-and-paste subcommands")
-> Signed-off-by: Günther Noack <gnoack@google.com>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Though I think it would have been fine to have all these similar patches
+as a single patch.
+
 > ---
->  drivers/tty/vt/selection.c | 14 ++++++++++++++
->  drivers/tty/vt/vt.c        |  3 +--
->  2 files changed, 15 insertions(+), 2 deletions(-)
+>  drivers/base/driver.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/tty/vt/selection.c b/drivers/tty/vt/selection.c
-> index 564341f1a74f..0bd6544e30a6 100644
-> --- a/drivers/tty/vt/selection.c
-> +++ b/drivers/tty/vt/selection.c
-> @@ -192,6 +192,20 @@ int set_selection_user(const struct tiocl_selection __user *sel,
->  	if (copy_from_user(&v, sel, sizeof(*sel)))
->  		return -EFAULT;
+> diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+> index b4eb5b89c4ee7bc35458fc75730b16a6d1e804d3..6f033a741aa7ce6138d1c61e49e72b2a3eb85e06 100644
+> --- a/drivers/base/driver.c
+> +++ b/drivers/base/driver.c
+> @@ -160,9 +160,12 @@ struct device *driver_find_device(const struct device_driver *drv,
 >  
-> +	/*
-> +	 * TIOCL_SELCLEAR, TIOCL_SELPOINTER and TIOCL_SELMOUSEREPORT are OK to
-> +	 * use without CAP_SYS_ADMIN as they do not modify the selection.
-> +	 */
-> +	switch (v.sel_mode) {
-> +	case TIOCL_SELCLEAR:
-> +	case TIOCL_SELPOINTER:
-> +	case TIOCL_SELMOUSEREPORT:
-> +		break;
-> +	default:
-> +		if (!capable(CAP_SYS_ADMIN))
-> +			return -EPERM;
+>  	klist_iter_init_node(&drv->p->klist_devices, &i,
+>  			     (start ? &start->p->knode_driver : NULL));
+> -	while ((dev = next_device(&i)))
+> -		if (match(dev, data) && get_device(dev))
+> +	while ((dev = next_device(&i))) {
+> +		if (match(dev, data)) {
+> +			get_device(dev);
+>  			break;
+> +		}
 > +	}
-
-Shouldn't you check this _before_ doing the copy_from_user() to emulate
-the previous logic properly?
-
-> +
->  	return set_selection_kernel(&v, tty);
+>  	klist_iter_exit(&i);
+>  	return dev;
 >  }
->  
-> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> index 96842ce817af..ed65b3b80fbd 100644
-> --- a/drivers/tty/vt/vt.c
-> +++ b/drivers/tty/vt/vt.c
-> @@ -3345,8 +3345,7 @@ int tioclinux(struct tty_struct *tty, unsigned long arg)
->  
->  	switch (type) {
->  	case TIOCL_SETSEL:
-> -		if (!capable(CAP_SYS_ADMIN))
-> -			return -EPERM;
-> +		/* CAP_SYS_ADMIN check happens in set_selection_user(). */
+> 
 
-No need to mention this here, it's obvious in the function itself.
-
-thanks,
-
-greg k-h
 
