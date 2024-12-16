@@ -1,206 +1,367 @@
-Return-Path: <linux-kernel+bounces-447411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCE69F31E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:45:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A11809F31E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 14:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEE051672C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FD616846B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB32205E17;
-	Mon, 16 Dec 2024 13:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56419206266;
+	Mon, 16 Dec 2024 13:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="syJ+teu7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hb1upfRo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226292629C;
-	Mon, 16 Dec 2024 13:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750DF205E3E
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 13:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734356593; cv=none; b=n/jfQcXHV6pZaZfKRvsgai+pNh0f3VMduimuJ+LbauxsU0h7/mLYV4UamAc1ygT88CL1nN+4hu43OZNy9FHRYxqxVQHrEoSqZwubV66hd518JAbZ06cGXZJh6p42gqqJEmCGkQBeiyMVeH6sjVSjlsceL+HeW6WFIvM+8o1/YXA=
+	t=1734356599; cv=none; b=lAXX1qtcdTYWj2BFuyDO+fWwuIarhXoeN4xXlizWXOfHcFxdTVpdZfuKVy361nX5TRHa72WsZy7cpCNx7GggMayD4TLnR89ntLpy/yeOVI30ZLXVMzstxUU9v59wG7+WT1ZcSipHtG8hpnFG5P6YKPoEJYG4tU++CnLz1p1uyq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734356593; c=relaxed/simple;
-	bh=KsfvpZTCJpBVQD2IUuylbf8VJ2t4yxIzlzZLMzYXqyQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gA/lH8SnD+Ifcg5r+SipSSkzvLXa2S6blVdtDcJhrDFGgmKO+ZJrvRixp2j/xfRs+8KiZ2eN3SxrBwnihAsEdaTusb7lUZr+BaoFZH8RXxYIwA/ehld2UU5NProaiH9R8YHUJ3FvfM1odc1ez6i6yXaHt7HOuqiMOMxxfR7BwX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=syJ+teu7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KsfvpZTCJpBVQD2IUuylbf8VJ2t4yxIzlzZLMzYXqyQ=; b=syJ+teu7IJo2Df2jFDNzLUkGQV
-	1WJZKiDVL5TEDmw1TaxjfWAFePb3SHpNtJqxroJ8YXc9E8x1Y7mk/11CAi0BBTlhY1b5DoYy4NmZ5
-	vsiy2qqo9L7O5cD05XMok4nCuRbmuTEjfpPhojuExGm0ne1IDvaH46vKqRECkxrcsfP+ZfFH/7Hz+
-	6iQySc6QEZFtWjvx7YC/ToSENzNDgOGcre+m7mhbeS29oMNU0L63Uf8tVIJXeURpyu0rMCWEef3zx
-	lDuKKGryViXC49+XWlj4qnQTiGu/4aSsxyFL0gQvHNBDJsb//oa5+cRHVEFNJUaAWHuHO8g+BVNx0
-	pnP1KDxw==;
-Received: from 54-240-197-235.amazon.com ([54.240.197.235] helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNBNL-0000000Gj1P-22xJ;
-	Mon, 16 Dec 2024 13:43:07 +0000
-Message-ID: <d29738023f117bbd4031579443e0c2f8f1f78592.camel@infradead.org>
-Subject: Re: [PATCH v1] kexec_core: Add and update comments regarding the
- KEXEC_JUMP flow
-From: David Woodhouse <dwmw2@infradead.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Eric Biederman <ebiederm@xmission.com>, Thomas Gleixner
- <tglx@linutronix.de>,  Ming Lei <ming.lei@redhat.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Date: Mon, 16 Dec 2024 13:43:05 +0000
-In-Reply-To: <4968818.GXAFRqVoOG@rjwysocki.net>
-References: <4968818.GXAFRqVoOG@rjwysocki.net>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-G8BjgcA/4cW3+I0pMnq5"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1734356599; c=relaxed/simple;
+	bh=e2opvldajuZelV/o6BcZbkHj/D8nGe5IIPLsT48a3kA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuYQQB8UBI1qFOSxScmU5K/ObedM8cB5LrMApAt0KLRK8FuXLeM6oS84lNNkcZ3W9oFjH2dYjb9tvZ/7dVBpv/Wv5KfscJbHN5Afg0Jm5yKBPw3kIlzeIUK8aphDEJCJS+cjSu61cqctd9hDAapDzdicQcp3esTw13V8PXNSW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hb1upfRo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EC4C4CED0;
+	Mon, 16 Dec 2024 13:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734356599;
+	bh=e2opvldajuZelV/o6BcZbkHj/D8nGe5IIPLsT48a3kA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hb1upfRoPQAyrn/M5Mff3OXQCfmQFPW+gJolS8uBi76DkLLsxPQ1BnLMzDKyG5YJH
+	 k6ynsWFgSIc4pahXCvIZcz6SzWKLqhzBE2+57EzXrCsNjkSvz4WVo8dKs5l+8Fo2lb
+	 hkO+Jq9B69NWbnUs3spA625Wz54Cp7El1Fimapvu0t/bBIUUxBlqUqr2/cF7zvheN3
+	 NR+pNTJ01NC6O3DDEOag6Hm+fJImFM/5RAee0F77oiuxdSb50TpQdBVU6aM1NEIiRH
+	 SQXnNFtNE/MmioHDJinbITT+hXEeX0+1p3ZjXLi6DRiAzi9LbIFrZuyQmPOxTzRSnj
+	 J25rvpJ0PWusA==
+Date: Mon, 16 Dec 2024 14:43:13 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 1/2] drm/nouveau: incorporate I2C TV encoder drivers
+Message-ID: <Z2AucVR_QAWQp27S@cassiopeiae>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <20241215-nouveau-encoder-slave-v2-1-ef7a0e687242@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241215-nouveau-encoder-slave-v2-1-ef7a0e687242@linaro.org>
 
+On Sun, Dec 15, 2024 at 12:19:23PM +0200, Dmitry Baryshkov wrote:
+> Chrontel CH7006 and Silicon Image sil164 drivers use drm_encoder_slave
+> interface which is being used only by the nouveau driver. It doesn't
+> make sense to keep this interface inside the DRM subsystem. In
+> preparation to moving this set of helpers to the nouveau driver, move
+> the only two I2C driver that use that interface to the nouveau driver
+> too.
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  arch/arm/configs/multi_v7_defconfig                  |  4 ++--
+>  arch/parisc/configs/generic-32bit_defconfig          |  4 ++--
+>  arch/parisc/configs/generic-64bit_defconfig          |  4 ++--
+>  drivers/gpu/drm/i2c/Kconfig                          | 18 ------------------
+>  drivers/gpu/drm/i2c/Makefile                         |  6 ------
+>  drivers/gpu/drm/nouveau/Kconfig                      | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/nouveau/dispnv04/Kbuild              |  2 ++
+>  drivers/gpu/drm/nouveau/dispnv04/dfp.c               |  2 +-
+>  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild          |  5 +++++
+>  .../gpu/drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c  |  0
+>  .../gpu/drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c |  0
+>  .../gpu/drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h |  7 ++++---
+>  .../gpu/drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c  |  3 ++-
+>  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c            |  2 +-
+>  .../gpu/drm/nouveau/include}/i2c/ch7006.h            |  4 ++--
+>  .../gpu/drm/nouveau/include}/i2c/sil164.h            |  4 ++--
 
---=-G8BjgcA/4cW3+I0pMnq5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Please move this one (and the one above) to include/dispnv04/i2c/ch7006.h
 
-On Mon, 2024-12-16 at 14:39 +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->=20
-> The KEXEC_JUMP flow is analogous to hibernation flows occurring
-> before
-> and after creating an image and before and after jumping from the
-> restore kernel to the image one, which is why it uses the same device
-> callbacks as those hibernation flows.
->=20
-> Add comments explaining that to the code in question and update an
-> existing comment in it which appears a bit out of context.
->=20
-> No functional changes.
->=20
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>  16 files changed, 45 insertions(+), 40 deletions(-)
+> 
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index 9d4336261e450ce5bf99a1aa53e603bd7c0037bb..7fb24a4fb9f697c0c726204d0ba3754e87000e6a 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -713,10 +713,10 @@ CONFIG_VIDEO_ADV7604_CEC=y
+>  CONFIG_VIDEO_ML86V7667=m
+>  CONFIG_IMX_IPUV3_CORE=m
+>  CONFIG_DRM=y
+> -# CONFIG_DRM_I2C_CH7006 is not set
+> -# CONFIG_DRM_I2C_SIL164 is not set
+>  CONFIG_DRM_I2C_NXP_TDA998X=m
+>  CONFIG_DRM_NOUVEAU=m
+> +# CONFIG_DRM_NOUVEAU_CH7006 is not set
+> +# CONFIG_DRM_NOUVEAU_SIL164 is not set
+>  CONFIG_DRM_EXYNOS=m
+>  CONFIG_DRM_EXYNOS_FIMD=y
+>  CONFIG_DRM_EXYNOS_MIXER=y
+> diff --git a/arch/parisc/configs/generic-32bit_defconfig b/arch/parisc/configs/generic-32bit_defconfig
+> index 5ce258f3fffaf0e3aac5f8f5450dd65bad305879..f5fffc24c3bc5baf0d77b845e3ac77fae49b276e 100644
+> --- a/arch/parisc/configs/generic-32bit_defconfig
+> +++ b/arch/parisc/configs/generic-32bit_defconfig
+> @@ -132,11 +132,11 @@ CONFIG_I2C=y
+>  CONFIG_HWMON=m
+>  CONFIG_DRM=m
+>  CONFIG_DRM_DISPLAY_DP_AUX_CEC=y
+> -# CONFIG_DRM_I2C_CH7006 is not set
+> -# CONFIG_DRM_I2C_SIL164 is not set
+>  CONFIG_DRM_RADEON=m
+>  CONFIG_DRM_NOUVEAU=m
+>  # CONFIG_DRM_NOUVEAU_BACKLIGHT is not set
+> +# CONFIG_DRM_NOUVEAU_CH7006 is not set
+> +# CONFIG_DRM_NOUVEAU_SIL164 is not set
+>  CONFIG_DRM_VGEM=m
+>  CONFIG_DRM_UDL=m
+>  CONFIG_DRM_MGAG200=m
+> diff --git a/arch/parisc/configs/generic-64bit_defconfig b/arch/parisc/configs/generic-64bit_defconfig
+> index 19a804860ed5b355f82396c2314bd0d8f3fb768a..704f68fbf960fb865206c8f8ab1751c9f0db6de3 100644
+> --- a/arch/parisc/configs/generic-64bit_defconfig
+> +++ b/arch/parisc/configs/generic-64bit_defconfig
+> @@ -193,11 +193,11 @@ CONFIG_MEDIA_SUPPORT=m
+>  CONFIG_AGP=y
+>  CONFIG_AGP_PARISC=y
+>  CONFIG_DRM=y
+> -# CONFIG_DRM_I2C_CH7006 is not set
+> -# CONFIG_DRM_I2C_SIL164 is not set
+>  CONFIG_DRM_RADEON=y
+>  CONFIG_DRM_NOUVEAU=m
+>  # CONFIG_DRM_NOUVEAU_BACKLIGHT is not set
+> +# CONFIG_DRM_NOUVEAU_CH7006 is not set
+> +# CONFIG_DRM_NOUVEAU_SIL164 is not set
+>  CONFIG_DRM_MGAG200=m
+>  CONFIG_FB=y
+>  CONFIG_FB_PM2=m
+> diff --git a/drivers/gpu/drm/i2c/Kconfig b/drivers/gpu/drm/i2c/Kconfig
+> index 6f19e1c35e30b0e595c1a60628a6b8cf313fcabc..d5200f67958e68a8ec73401f1d3b79cbe0aa303d 100644
+> --- a/drivers/gpu/drm/i2c/Kconfig
+> +++ b/drivers/gpu/drm/i2c/Kconfig
+> @@ -2,24 +2,6 @@
+>  menu "I2C encoder or helper chips"
+>       depends on DRM && DRM_KMS_HELPER && I2C
+>  
+> -config DRM_I2C_CH7006
+> -	tristate "Chrontel ch7006 TV encoder"
+> -	default m if DRM_NOUVEAU
+> -	help
+> -	  Support for Chrontel ch7006 and similar TV encoders, found
+> -	  on some nVidia video cards.
+> -
+> -	  This driver is currently only useful if you're also using
+> -	  the nouveau driver.
+> -
+> -config DRM_I2C_SIL164
+> -	tristate "Silicon Image sil164 TMDS transmitter"
+> -	default m if DRM_NOUVEAU
+> -	help
+> -	  Support for sil164 and similar single-link (or dual-link
+> -	  when used in pairs) TMDS transmitters, used in some nVidia
+> -	  video cards.
+> -
+>  config DRM_I2C_NXP_TDA998X
+>  	tristate "NXP Semiconductors TDA998X HDMI encoder"
+>  	default m if DRM_TILCDC
+> diff --git a/drivers/gpu/drm/i2c/Makefile b/drivers/gpu/drm/i2c/Makefile
+> index a962f6f085686674ed33010345730db776815ebe..31fd35527d99d7eb23851d290175a3ff0c756772 100644
+> --- a/drivers/gpu/drm/i2c/Makefile
+> +++ b/drivers/gpu/drm/i2c/Makefile
+> @@ -1,10 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ch7006-y := ch7006_drv.o ch7006_mode.o
+> -obj-$(CONFIG_DRM_I2C_CH7006) += ch7006.o
+> -
+> -sil164-y := sil164_drv.o
+> -obj-$(CONFIG_DRM_I2C_SIL164) += sil164.o
+> -
+>  tda998x-y := tda998x_drv.o
+>  obj-$(CONFIG_DRM_I2C_NXP_TDA998X) += tda998x.o
+>  obj-$(CONFIG_DRM_I2C_NXP_TDA9950) += tda9950.o
+> diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+> index ce840300578d8a4011c448b61caf830cef3805bf..4cffac26f90ae6130ef30ba389b2a8c9b732058c 100644
+> --- a/drivers/gpu/drm/nouveau/Kconfig
+> +++ b/drivers/gpu/drm/nouveau/Kconfig
+> @@ -109,3 +109,23 @@ config DRM_NOUVEAU_GSP_DEFAULT
+>  	help
+>  	  Say Y here if you want to use the GSP codepaths by default on
+>  	  Turing and Ampere GPUs.
+> +
+> +config DRM_NOUVEAU_CH7006
+> +	tristate "Chrontel ch7006 TV encoder"
+> +	depends on DRM_NOUVEAU
+> +	default m
+> +	help
+> +	  Support for Chrontel ch7006 and similar TV encoders, found
 
-Thanks. I'll round that up into my kexec-debug tree, which Ingo has
-been taking into tip/x86/boot. Once I'm done fighting with objtool(qv).
+This help text should probably end right after "TV encoders".
 
---=-G8BjgcA/4cW3+I0pMnq5
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+> +	  on some nVidia video cards.
+> +
+> +	  This driver is currently only useful if you're also using
+> +	  the nouveau driver.
+> +
+> +config DRM_NOUVEAU_SIL164
+> +	tristate "Silicon Image sil164 TMDS transmitter"
+> +	depends on DRM_NOUVEAU
+> +	default m
+> +	help
+> +	  Support for sil164 and similar single-link (or dual-link
+> +	  when used in pairs) TMDS transmitters, used in some nVidia
+> +	  video cards.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjE2MTM0MzA1WjAvBgkqhkiG9w0BCQQxIgQgCgptHU8q
-TSJPjAv1sosq0BO5KzK9KM4oE9eJVdp32B4wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBMwsf8MAovULYMinm0JpSbpMSch1lWcm94
-AAPShyHcdyzvXcfw0GEJaDFBWwlbBVREOSbKXxO0Ak4Hd/uN5T3V9NGhTV5EdVIKdPqUdVOXw1rp
-qrF0cU4jVf+6dDTPUkgqtgqwll00q+3rewHVyPGhykZhrNLBbOVgqtGL9gSaiAKXahLSMY060d5d
-baeOKcVc29C5PzwgyEupu7/EB1clYzzyDQ7F6YmogFvkPro/iyuztiL9/WdmSwQo0laJ4Ki3fYtV
-VdgmeB71bRt6Z94SsEumnSb2eUC+eN7xV6Z/FgZaoDAiLsZ5+Fp2FXctZSyeGVSZ/ZiKYJUyuLeh
-mdq0sTaLBJ65W2vWpDw14HvBc2sM5k+V8OrRXzQ1jqY6nsVEYxbeNpsVBrEOWOtQ6j2xh4rWLHUZ
-cyYgxC4cbssLcqEO8Gx5dqBAZaUf0i5EzysiLleZy58ZwA7rFC0FXNVwgiCDaw8nV/+nuG33d+YC
-EIDpgcIj1s4h9DQvSMEyi8+vkkn9aZa1+PZwe4ZnfrP61vKeUklbpe48ZQG5IjJK2yUwKSGoijHL
-GEWVJuTuxgqjeRbbUGMI2f52y2xKr58akAMril/uZu3eSU8k9oBmMvnZoo7jmaddrRjegBNl2yn6
-bresTX8dDc/kWmtBOV9gGkHjRLbbZxjBLdY/pX5+AwAAAAAAAA==
+I think we can remove everything after "TMDS transmitters".
 
-
---=-G8BjgcA/4cW3+I0pMnq5--
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/Kbuild b/drivers/gpu/drm/nouveau/dispnv04/Kbuild
+> index 975c4e2269366d57e928eedbbbc669d24744379f..949802882ebd53c15e124c218a092af9693d36bc 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/Kbuild
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/Kbuild
+> @@ -10,3 +10,5 @@ nouveau-y += dispnv04/overlay.o
+>  nouveau-y += dispnv04/tvmodesnv17.o
+>  nouveau-y += dispnv04/tvnv04.o
+>  nouveau-y += dispnv04/tvnv17.o
+> +
+> +include $(src)/dispnv04/i2c/Kbuild
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/dfp.c b/drivers/gpu/drm/nouveau/dispnv04/dfp.c
+> index 504c421aa176ef3d944592a0109cb72e21fd47b7..28a42ab5cb900ebe8a526e154f9e90598333356c 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/dfp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/dfp.c
+> @@ -35,7 +35,7 @@
+>  #include "hw.h"
+>  #include "nvreg.h"
+>  
+> -#include <drm/i2c/sil164.h>
+> +#include <i2c/sil164.h>
+>  
+>  #include <subdev/i2c.h>
+>  
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild b/drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..3fddfc97bcb399ef3821c6065e5868363883ac74
+> --- /dev/null
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild
+> @@ -0,0 +1,5 @@
+> +ch7006-y := dispnv04/i2c/ch7006_drv.o dispnv04/i2c/ch7006_mode.o
+> +obj-$(CONFIG_DRM_NOUVEAU_CH7006) += ch7006.o
+> +
+> +sil164-y := dispnv04/i2c/sil164_drv.o
+> +obj-$(CONFIG_DRM_NOUVEAU_SIL164) += sil164.o
+> diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c
+> similarity index 100%
+> rename from drivers/gpu/drm/i2c/ch7006_drv.c
+> rename to drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_drv.c
+> diff --git a/drivers/gpu/drm/i2c/ch7006_mode.c b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c
+> similarity index 100%
+> rename from drivers/gpu/drm/i2c/ch7006_mode.c
+> rename to drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_mode.c
+> diff --git a/drivers/gpu/drm/i2c/ch7006_priv.h b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
+> similarity index 99%
+> rename from drivers/gpu/drm/i2c/ch7006_priv.h
+> rename to drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
+> index 052bdc48a339df47073ab305f224f96c8630d66c..8136f8cd8f9b859ccf915e295c783f9fc8321c2e 100644
+> --- a/drivers/gpu/drm/i2c/ch7006_priv.h
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/ch7006_priv.h
+> @@ -24,12 +24,13 @@
+>   *
+>   */
+>  
+> -#ifndef __DRM_I2C_CH7006_PRIV_H__
+> -#define __DRM_I2C_CH7006_PRIV_H__
+> +#ifndef __NOUVEAU_I2C_CH7006_PRIV_H__
+> +#define __NOUVEAU_I2C_CH7006_PRIV_H__
+>  
+>  #include <drm/drm_encoder_slave.h>
+>  #include <drm/drm_probe_helper.h>
+> -#include <drm/i2c/ch7006.h>
+> +
+> +#include <i2c/ch7006.h>
+>  
+>  typedef int64_t fixed;
+>  #define fixed1 (1LL << 32)
+> diff --git a/drivers/gpu/drm/i2c/sil164_drv.c b/drivers/gpu/drm/nouveau/dispnv04/i2c/sil164_drv.c
+> similarity index 99%
+> rename from drivers/gpu/drm/i2c/sil164_drv.c
+> rename to drivers/gpu/drm/nouveau/dispnv04/i2c/sil164_drv.c
+> index ff23422727fce290a188e495d343e32bc2c373ec..74fc961c0d0de06f1fe8dd93d351452cd20cead7 100644
+> --- a/drivers/gpu/drm/i2c/sil164_drv.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/i2c/sil164_drv.c
+> @@ -30,7 +30,8 @@
+>  #include <drm/drm_encoder_slave.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+> -#include <drm/i2c/sil164.h>
+> +
+> +#include <i2c/sil164.h>
+>  
+>  struct sil164_priv {
+>  	struct sil164_encoder_params config;
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv04.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv04.c
+> index d3014027a8122be499b85459b038fdcce5800720..67f3e0ac0e109b223ca8ec4ddc4e688247373b2e 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/tvnv04.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv04.c
+> @@ -32,7 +32,7 @@
+>  #include "hw.h"
+>  #include <drm/drm_modeset_helper_vtables.h>
+>  
+> -#include <drm/i2c/ch7006.h>
+> +#include <i2c/ch7006.h>
+>  
+>  static struct nvkm_i2c_bus_probe nv04_tv_encoder_info[] = {
+>  	{
+> diff --git a/include/drm/i2c/ch7006.h b/drivers/gpu/drm/nouveau/include/i2c/ch7006.h
+> similarity index 97%
+> rename from include/drm/i2c/ch7006.h
+> rename to drivers/gpu/drm/nouveau/include/i2c/ch7006.h
+> index 5305b9797f938626c8f6c464ddc9bf424a39b4a0..1a6fa405f85b2a0d0f9a4d1c786defc527fa1d3b 100644
+> --- a/include/drm/i2c/ch7006.h
+> +++ b/drivers/gpu/drm/nouveau/include/i2c/ch7006.h
+> @@ -24,8 +24,8 @@
+>   *
+>   */
+>  
+> -#ifndef __DRM_I2C_CH7006_H__
+> -#define __DRM_I2C_CH7006_H__
+> +#ifndef __NOUVEAU_I2C_CH7006_H__
+> +#define __NOUVEAU_I2C_CH7006_H__
+>  
+>  /**
+>   * struct ch7006_encoder_params
+> diff --git a/include/drm/i2c/sil164.h b/drivers/gpu/drm/nouveau/include/i2c/sil164.h
+> similarity index 96%
+> rename from include/drm/i2c/sil164.h
+> rename to drivers/gpu/drm/nouveau/include/i2c/sil164.h
+> index ddf248693c8be8809777723c272f82af8d334c99..b86750d7abe1c2e7142eac32898398475fd42531 100644
+> --- a/include/drm/i2c/sil164.h
+> +++ b/drivers/gpu/drm/nouveau/include/i2c/sil164.h
+> @@ -24,8 +24,8 @@
+>   *
+>   */
+>  
+> -#ifndef __DRM_I2C_SIL164_H__
+> -#define __DRM_I2C_SIL164_H__
+> +#ifndef __NOUVEAU_I2C_SIL164_H__
+> +#define __NOUVEAU_I2C_SIL164_H__
+>  
+>  /**
+>   * struct sil164_encoder_params
+> 
+> -- 
+> 2.39.5
+> 
 
