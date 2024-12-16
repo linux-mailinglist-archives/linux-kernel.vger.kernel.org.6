@@ -1,100 +1,151 @@
-Return-Path: <linux-kernel+bounces-448175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388D59F3C71
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3808F9F3C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 22:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75FFC164D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A28E1654E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 21:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4D01D5174;
-	Mon, 16 Dec 2024 21:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075D71D47A2;
+	Mon, 16 Dec 2024 21:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Khyo0naS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q2qzFn5g"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2181D4607;
-	Mon, 16 Dec 2024 21:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F308D1D0F61;
+	Mon, 16 Dec 2024 21:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734383200; cv=none; b=mqbhncTaawA+HglvOOeewRAgU0PBst9wJOji4OViX9Fg+BTvXHCaNmB7GUj75AZgkIbNz0eHs/3WgNn3rSANW+qmn3fLAwnv4P6Zu71g7bg/9jOBgSau4nqo5eT2mzkrdquXnHQsntxAw0FZqMkmZ9Irxmn+h5dyrzHfGEgP2PI=
+	t=1734383513; cv=none; b=o8LX41tix5y0H8uXVvoSD9WVFNIvHnpiraARyDMG/yxdZHyqNRP4FRmNMHMnjavX/q6t+nezi1u1GI/lRETr5o5/0JIv93gMECczPrfw90wQ9LZfQNz7XU4Z7azyWuR6PSDSeTn6y2288oS+0T909/H0AmHwoW5i7Q2eoKC0aPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734383200; c=relaxed/simple;
-	bh=wB7B7edacrirY7tBXvab0TpJ07BUYElgMdzaYxuoGDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbUFqSw7OS504Sbyp73OfNyEk5qa6kOaUi2VCa0NMMx+jXyfUNI40g9YjR5V6aHDg8Bc6jZaF8k+d5/o+Sw/YeGNqcyH/272+0tCiXJDI7o5qehxi1R3yhy/42QizRmkt62TDLD2bcFo4qysMvc/wHnlmS7Pl+m8fyzGnBmcyjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Khyo0naS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C53C4CED0;
-	Mon, 16 Dec 2024 21:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734383199;
-	bh=wB7B7edacrirY7tBXvab0TpJ07BUYElgMdzaYxuoGDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Khyo0naSGi5kIOBIm1pgNWxxXYylxRRhoNQVeL/62lraAJeYDpBvQRZ77mPIK4RGT
-	 JVTWtweAHJ33H8ayZot5mlGSDYVNpSBjecwS22Dv8MvyuI4wclDtOVwuKtgwxvHju8
-	 zKok6OVTkLRmk+sg1dIziRQOTE8t+G3KA7TMRs8qDrSo3bKgq6JIbTKFRfhp5BjZx3
-	 eMmdh8Pk0xgSt2jax2LOIXKrnbdVkPMwGmY8GXNc4OUV6zFpFIrAFUNDGYIjYFpg19
-	 Yi/WM9PBZlODw7jPngbs+1yLbf5eIfrnIOjHa1ZsikIZimVlzdSJIq/H17PCAV/iS4
-	 9BlKRYOX0hVmw==
-Date: Mon, 16 Dec 2024 18:06:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Nick Terrell <terrelln@fb.com>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Guilherme Amadio <amadio@gentoo.org>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] bpftool: Link zstd lib required by libelf
-Message-ID: <Z2CWXKVj87gmWjF3@x1>
-References: <20241215221223.293205-1-leo.yan@arm.com>
- <20241215221223.293205-4-leo.yan@arm.com>
- <fa534569-b3e0-486d-a0f9-25523f404aed@kernel.org>
- <20241216163033.GA700645@e132581.arm.com>
+	s=arc-20240116; t=1734383513; c=relaxed/simple;
+	bh=RhN2PrCBrj10EEwCH8X4NwaJS0QujL1dEwADSZ8UAFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qPMYo0bCw3rAdUkZ0P+/8vOLgUArAV1BrYfRBru4O/Ow2G5IR/XJPo2ihu5GbyLYdtgWDP0xW0r6ydu/EvSGv/sWRxk8QsDpzrA+1DJqEQDyT5v0JD+u30CxtuIzVTugN6BVjDZ6uVl8dCxzogqg9cll8zgytD8r8d7JOUZIURs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q2qzFn5g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKM9xi030386;
+	Mon, 16 Dec 2024 21:11:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FNjGgAqGXlNmhe5qrVq4WK9DY381IBX6xhcAAUzOYPY=; b=Q2qzFn5g49K1pYO8
+	Q0qYigwdc+tF5BAgbd/MRE+38rycj6Wx+nd8L8UxTZiYgk+vcchVGhymy3RwGrXM
+	7AaOhcrK3Ey93gHUyZq732WaJpDmtODZ9HMPBWo8b0BrgCvcKm1UNe4CU/9jz2iI
+	10nqeUCSIZqFj36Y/mq9YB0sVRGf9frh1h7P1tPgaesit8YDqirEEkBR85DOp9rh
+	mIgpmdcL5ZpXAlnX/iqdZu1X1wHmjzSCkumESe+JU1znlYv47oyfd1+KGqn0n76d
+	xDNfiZuEbGOAsS42iLOTH735jfypPZEHWSXL+MSvJQVLfVgZ+FbxC6FCfznhMm6s
+	kWm08g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ju61r3bu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 21:11:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BGLBelK023925
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 16 Dec 2024 21:11:40 GMT
+Received: from [10.110.88.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 13:11:36 -0800
+Message-ID: <d6be6564-ce24-4a27-a014-45aa9ff28d24@quicinc.com>
+Date: Mon, 16 Dec 2024 13:11:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216163033.GA700645@e132581.arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] drm/msm/dpu: link DSPP_2/_3 blocks on SM8150
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Robert Foss <rfoss@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Richard Acayan
+	<mailingradian@gmail.com>
+CC: Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241216-dpu-fix-catalog-v1-0-15bf0807dba1@linaro.org>
+ <20241216-dpu-fix-catalog-v1-1-15bf0807dba1@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241216-dpu-fix-catalog-v1-1-15bf0807dba1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: i21IZFNvATVl5g0kxaN2T_PTciKfGhC5
+X-Proofpoint-ORIG-GUID: i21IZFNvATVl5g0kxaN2T_PTciKfGhC5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ mlxscore=0 spamscore=0 malwarescore=0 clxscore=1011 phishscore=0
+ adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412160174
 
-On Mon, Dec 16, 2024 at 04:30:33PM +0000, Leo Yan wrote:
-> On Mon, Dec 16, 2024 at 11:23:29AM +0000, Quentin Monnet wrote:
-> > 
-> > 2024-12-15 22:12 UTC+0000 ~ Leo Yan <leo.yan@arm.com>
-> > > When the feature libelf-zstd is detected, the zstd lib is required by
-> > > libelf.  Link the zstd lib in this case.
-> > >
-> > > Signed-off-by: Leo Yan <leo.yan@arm.com>
-> > > Tested-by: Namhyung Kim <namhyung@kernel.org>
-> > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > 
-> > Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> > 
-> > Thank you! And thanks for the updated commit description in your first
-> > patch, looks great.
+
+
+On 12/16/2024 12:27 AM, Dmitry Baryshkov wrote:
+> Link DSPP_2 to the LM_2 and DSPP_3 to the LM_3 mixer blocks.
 > 
-> Thank you for continuous review, Quentin!
+> Fixes: 05ae91d960fd ("drm/msm/dpu: enable DSPP support on SM8[12]50")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
 
-Applied locally and test building now, please holler if someone thinks
-this should be processed somewhere else.
+Change looks fine
 
-- Arnaldo
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+
+One question below (not tied to the change but arose due to it):
+
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> index 6ccfde82fecdb4e3612df161814b16f7af40ca5f..421afacb7248039abd9fb66bcb73b756ae0d640a 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h
+> @@ -164,6 +164,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
+>   		.sblk = &sdm845_lm_sblk,
+>   		.lm_pair = LM_3,
+>   		.pingpong = PINGPONG_2,
+> +		.dspp = DSPP_2,
+>   	}, {
+>   		.name = "lm_3", .id = LM_3,
+>   		.base = 0x47000, .len = 0x320,
+> @@ -171,6 +172,7 @@ static const struct dpu_lm_cfg sm8150_lm[] = {
+>   		.sblk = &sdm845_lm_sblk,
+>   		.lm_pair = LM_2,
+>   		.pingpong = PINGPONG_3,
+> +		.dspp = DSPP_3,
+>   	}, {
+>   		.name = "lm_4", .id = LM_4,
+>   		.base = 0x48000, .len = 0x320,
+> 
+
+the consumer of .dspp seems to be in the RM code which is used to map 
+the DSPP to encoder_id but is there really any case where lm_id != 
+dspp_id ... I guess I am missing the context of why DSPP id needs to be 
+tracked as LMs and DSPPs go together. Let me also check this part 
+internally.
 
