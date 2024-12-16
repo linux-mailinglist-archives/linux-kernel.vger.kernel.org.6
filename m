@@ -1,325 +1,214 @@
-Return-Path: <linux-kernel+bounces-447280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255899F2FE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:56:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD789F2FDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3525167088
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:55:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDAB7A1E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 11:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49B1204591;
-	Mon, 16 Dec 2024 11:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB4E204591;
+	Mon, 16 Dec 2024 11:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="loZNMNdq"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071B9204088;
-	Mon, 16 Dec 2024 11:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734350147; cv=none; b=g6zs/GvC6iO5M5PpJIxd/P1tgWlwg/RkPPN7cHwp6sBR2/M616AwDFfCYl0IlzOXJR5dJBkUyeR+kmjtu24Qb3JvMxlCInJUtejRUzfeHyhRbyx5FCwjjqmNj8h/mmW19BdC4lptN3uvvQ0HQ7k5WroAcwO/khm/MztEqzcFqyo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734350147; c=relaxed/simple;
-	bh=G5tUMqKyP1F13z/KdIHU03qX75lbfqEpYVMS8+8jhsY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=YHxRCL5yFU8EI3LN2KdkGNS/dgd4eCt4+MJkcBjQZEh7XF3WJVEJ3E3fh5l0EvX10QesQgMr6UODrqoLIIrJpoit0fICkrcQDItbfqSx2dVgr7GzDRNmDJoEfHIIfOHld8Yl/VzOtz0YwNjxJjSmazGXpd7Jk84MCu6JcjQO6WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=loZNMNdq; arc=none smtp.client-ip=220.197.31.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=UKrvP/Ymp5jq0pAVdR
-	g5jcH+ViqV5yReScKB+YOXh1Q=; b=loZNMNdqCCuwB8aZY3ZLIRV3eaFrX5LFHK
-	lem8vfSFUYH/sSj/nVGDOzzRP1zkBPKbcbEXOxMGXVhZ/dzLgZYrjsrYd0c4jccv
-	f8HpYsMn9TP0Qc6nGUBmfHX6CwolVv5+OhkgWqBF2IzwU4QnryrR2++PP3qg2zxX
-	92s1wQHOs=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDHjwjdFGBnGCMaAg--.3044S2;
-	Mon, 16 Dec 2024 19:54:06 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	21cnbao@gmail.com,
-	david@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	vbabka@suse.cz,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH V5] mm, compaction: don't use ALLOC_CMA in long term GUP flow
-Date: Mon, 16 Dec 2024 19:54:04 +0800
-Message-Id: <1734350044-12928-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDHjwjdFGBnGCMaAg--.3044S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtry8Zr4kJrWUGr4xCr1kuFg_yoWDGr18pF
-	48X3WIy3yrX3W3CrW8JF4vv3WYqw4xGF48AryIgw18Zw13KF92v3Z7KFy7AFy5Wr95AFWY
-	vFWqkrWkGFsxAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zKsj8bUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgW3G2dgFFkEhwABsb
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="hKZ4RkXE"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011049.outbound.protection.outlook.com [52.101.125.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE20B20012C;
+	Mon, 16 Dec 2024 11:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734350073; cv=fail; b=ZAJ2udAdjVLsMCnsCjgABKDLdsNoRU5p2CsOz8svCn6/MydNlKCxB1i8t6D4LXyd7BEtlafjSNKgaEfidJymrlue1ijI4giW0skwPc0UuNJaq2aRO1Awk1dZqnyMaCzZw+3UUURucbUXlL/WULJ0T9/ov/5VvmsrXAjcFEsiyjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734350073; c=relaxed/simple;
+	bh=9nSSpFwc/jgpvNjS/5NuJ+htczUwrcSRnggsM1O/Pmk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZX3ZH+lRF/CpisBLWI0LlqO3xfuvGL9am2PMSdKwJ18PRhw8pZk2sLumHZAGF7Z+1fiCUJ03gTRUevEMWJ4fzcvUpxDpHBW5Ku8S0BFGodTufMlAhmpfaF1zb9GzuKyrSv2EAVBEOHck/S+My91GQcoKDvvfv+E3+sPvisp6STM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=hKZ4RkXE; arc=fail smtp.client-ip=52.101.125.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jKyiKDeQQZp0pYDM+WEzyt5lXjPzns6IToy5jXZlLF4LaEn34YDGG76rmZjIF0QyW5fKiQdi+PpYfkjgS/3XKNDs/25aOhnxR8/IIO/5hsygjeSvwqyZy9Ef6uwgPHJj1zcGPay7pB5F32EDiXblJt09BRbxSAVaUhlVzJp0V96a1rPI5IYJqWA/TmSHfrUSnM925rRJsT1H1Lg9kRUUJbstkN5pZMhnd/KIsvDvKxbBj2wtgqLYwRc+4P+43oCZh7Ncmr64nzZW3esK1dOySnfwoFYNDkWmmS/fmblf8tciszKwAxxyMGycvnrIqtV6CYDX/m3NROSKlYV5J4xWaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+m2M8MdO0004lksXzeL3XpoiA5cnuGumZhJAES/Srdk=;
+ b=UApW3w1+Hj4Lu7hlPzm9zNeLRsXKPq7wAUR/OePawPcPKssO68/TPedtryUNpEUiFoZqmaPTc6k2QvjbFzR76kgJY+yTCvTb9GmsofAEhOSZDRryimz0tYtFdHwHALnv3GJynE0XGWny1mnarrONWOIl5X9pjMdWzRX3K7lNm7ZV8+ndjmfZGTLdPqpCpkGvOdtLdDVhOd+S7PEXFOdlzpTl7GqDR1DjE9gA/vIhGsV+RcLlF7QAGZmtlRd+A913KCPJ0F2alnNZJQUIW3r1sSnaGXfAOctEK7k4SN2aRTEyAS3UCEXFeyZGYsX7mVCqzShf9iO4HdO2C92XjNTqWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+m2M8MdO0004lksXzeL3XpoiA5cnuGumZhJAES/Srdk=;
+ b=hKZ4RkXECwFPTS/1jpv7BaGdWOavyvaZ9ATCR8AYn2xxK4HjsBl2FUSMbAL90GvlPRUvQI768Dg5W1t2+cb1PVYpULLnpKMXY52YQY2WsGuWEneCzi0Oz/gfKrVlfObzCB0okpVQQOGLVrPP6QYkIK5/v7SN+C5oeOwiXYX5VE0=
+Received: from TYCPR01MB11040.jpnprd01.prod.outlook.com (2603:1096:400:3a7::6)
+ by TYAPR01MB5785.jpnprd01.prod.outlook.com (2603:1096:404:8052::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Mon, 16 Dec
+ 2024 11:54:26 +0000
+Received: from TYCPR01MB11040.jpnprd01.prod.outlook.com
+ ([fe80::b183:a30f:c95f:a155]) by TYCPR01MB11040.jpnprd01.prod.outlook.com
+ ([fe80::b183:a30f:c95f:a155%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 11:54:26 +0000
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: nikita.yoush <nikita.yoush@cogentembedded.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Dege
+	<michael.dege@renesas.com>, Christian Mardmoeller
+	<christian.mardmoeller@renesas.com>, Dennis Ostermann
+	<dennis.ostermann@renesas.com>, nikita.yoush
+	<nikita.yoush@cogentembedded.com>
+Subject: RE: [PATCH net-next v2 0/5] mdio support updates
+Thread-Topic: [PATCH net-next v2 0/5] mdio support updates
+Thread-Index: AQHbT4rv4wDaxpNFok24j9ZGFrEo8rLowJ6w
+Date: Mon, 16 Dec 2024 11:54:26 +0000
+Message-ID:
+ <TYCPR01MB110403F3DA55EB4C832BBA55FD83B2@TYCPR01MB11040.jpnprd01.prod.outlook.com>
+References: <20241216071957.2587354-1-nikita.yoush@cogentembedded.com>
+In-Reply-To: <20241216071957.2587354-1-nikita.yoush@cogentembedded.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11040:EE_|TYAPR01MB5785:EE_
+x-ms-office365-filtering-correlation-id: c9f8a375-8a3e-48a3-4c73-08dd1dc86439
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|7416014|366016|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?96RR9feGTx7uD875DUCs6CvMf5X2omf54Yw9oR1Mw1zRGGQ2juPQnYwcz7Uf?=
+ =?us-ascii?Q?0lrpG9L89cYbqYUVQKK+z5nEfwgM/7TewDY1rDPIwibgQfzUDnI9Cs7kseDx?=
+ =?us-ascii?Q?EOh/QJk2Hh1G9i1bS4kOLAovfHgFTUjBx9l4qVr+I6S5L7EpY7oOs7F+3XUW?=
+ =?us-ascii?Q?1dNBwsq8vHqaRrf8D9gLz8dvd7X6wFsMJKVv1rbv0oWlatKw9uuW2/ehVjWO?=
+ =?us-ascii?Q?ST2M6GXBNQ2CZFCFuKDrXoV12zxfCoTOhiV848Tfn0mLHlVR+UNFCmVDB9gw?=
+ =?us-ascii?Q?Mkk2OuMsm35ruIoXz/9dhBPsO8q674rJ0Fip5BPLfSoH7FGw94f9qpZ5ncYN?=
+ =?us-ascii?Q?yZRX0rWf0uRmPwPMLhr7AuSoe+VDA5yEl9MeK3JB81C5CqYFndtq8ILKZpUR?=
+ =?us-ascii?Q?JeJNKT8HPsTz+yM4AMBSZxK1QtRjM8kwN6Lk1ruYhKOeQk4rbkkR8NvfVpya?=
+ =?us-ascii?Q?/44Mf6HeSuWpzmbP6dvfeGVdFThK5gi+bgcGw+dSZVo5rjY/dqpzdeUYF87h?=
+ =?us-ascii?Q?LE5V3/p36aMuX24B8EKoeNHJe4H3MhgcyLwGXct/S//q9JAz5qEkBnccYiZ3?=
+ =?us-ascii?Q?J5h0OvLD1uT3kVwqr8pL7B7ycAs8qk8aTcZBF62QwGazFwd61O6vP6d/EfhR?=
+ =?us-ascii?Q?Oyefg+CTGNGwpIj6Vh2txhEJfdo6CYSikr54S5yVL8dPOxSqtft/C3IMIuuO?=
+ =?us-ascii?Q?D0XVkoh6dRahYbGQYadEfeY0IEO5cTh/wCfy2ZkvyTGFpJqgNqNhINdaMl59?=
+ =?us-ascii?Q?orc5bgiZEdYp9suIeI8fKBl/NQXgfKXsFf5xY2OiZqW3t04seDO2JmoRGE3i?=
+ =?us-ascii?Q?pvIMOWFj2X+ug2fxXcbmxzcdKnrvNz/sX8nzeKxmjHHBY3/5EcGkSyMKnhj0?=
+ =?us-ascii?Q?bdonIk7K4wOwHfT1dX49dw/YLAl/yh2MQUj92I4qk8RF8byPDoRDhuNy6DN0?=
+ =?us-ascii?Q?ssg8OLaEyvgvLbPlNqwIWyoC9VSGPgVkkAwItzB6U83TefF5X6RP7ZjDfpSZ?=
+ =?us-ascii?Q?ZedUw555jZC/4LldFG/3w6RvR8fU/lBAHcOXyeDHV2rhO0auzQJFuEhjz0a+?=
+ =?us-ascii?Q?gO5liv0nukfd5BLGXE6zjz8EcAQUG0tEAdvf2rfB2XCN8CnSbuIGC1kz2UQ6?=
+ =?us-ascii?Q?lY5YB3Mci0l9cuwPWwJkq3zB3THlNNMNDDkezDxML54dHNSQORhBwv6v6+69?=
+ =?us-ascii?Q?RhBUpO5Ynau1As5jfp3BOhz2ATMcHQ38M+jVgCpCtbVFpcd/BWV5cnvXe4gt?=
+ =?us-ascii?Q?/z7f7OF+M5eokr4T6frjHDFh7YNcLbbqylDf4y6O0wfaxZD6/ghbgh12ywaY?=
+ =?us-ascii?Q?Sj+ZO54jL8w5+saywzyEu7CjAafuUz3wBRfxMIL9Xtpw+npS+4gZpGTLyXYz?=
+ =?us-ascii?Q?A130v53S2S/v1/yFai4W2sKSeyugluxrP7jS5D+XrKWX5uRDlc18hZS5vL/c?=
+ =?us-ascii?Q?kNtoh7yu+m96HQ2K9dHDJ7NPuBHm6SGT?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11040.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3W1fOV7shdxbSBhWvozmVhTdIY7vTXYfTpAT/qgdrgXVUb8MbOypSMUVEcDK?=
+ =?us-ascii?Q?dCLF+pQyxgzrl+rvRSq1XdaYLSKtZf0T5NG93J52LSCdB3eswXbiDL1gEwN/?=
+ =?us-ascii?Q?FVJz5BDsnZRJZm1G9Arb0UY7n51EE566sIGpmjTMQbCAKIMqYuHf7ZFjuhJJ?=
+ =?us-ascii?Q?9X26HDrNmF+Bpq84c+/GPh7Q5C1U2763JFUNkZip+VoW4jmPLcc2g3MtRSxq?=
+ =?us-ascii?Q?rYbpIK96tFmKW5rNvEwb5R6+ti7ml7upMyDRMJ5mdqSXv0R4WmblPWSrVJ16?=
+ =?us-ascii?Q?mOhmLg3clRF14ZP4n/6jd57Oc/cECAVpiu7mGgGQn3PtKBOhW4unCDamnJyH?=
+ =?us-ascii?Q?DDnpjLS/fIHHoWZmJCHO1uTaadE5IpqMySuJj4e5B95pOsnT7x82njEWEve0?=
+ =?us-ascii?Q?EmTPZi3TjirG05XiulP5fOjbiBqJGTARNk0l3L2HCiXEhV603o9Dj3R1FFiq?=
+ =?us-ascii?Q?XQ70siyMmbVU637S30mkj4cSGxuDPY4WZaq6iBn3SmpIqhlpxuwAjbypVUc+?=
+ =?us-ascii?Q?6AnEXvaz7d2XZjrRIl9bHUikos23ue5zWHtLUipv6NkQLMvSGDsSzbWqE8iE?=
+ =?us-ascii?Q?NBNI6qvRjlNiEN5XybbfVzo3Pc63dIfKwG+7fSBopKdYwlh1lnLBpB6w+MAs?=
+ =?us-ascii?Q?wAg6slohFwJJ3qgcw2rguRy1fp7my+gf9Yg9o44oM+EyJSLpXYWqonfjU/O/?=
+ =?us-ascii?Q?O+iyUk1OpEQEpCqYXORssbiw8xCekXx6fSAPcaTsUkvXaZw0GDYzqlNtxJi5?=
+ =?us-ascii?Q?8nfAnKJDkW31TCDc3X2E9vxQXI/N72hUhWO0A1+jiOhic/u+gHBiH4Q+Tyq7?=
+ =?us-ascii?Q?5fmDDI8HQeIeZETjUIF3t5Z1ZzHOpMQ3kLtPOwS5vl6ed/lh7pavtloCXuGy?=
+ =?us-ascii?Q?VFL11ICu6oEjo6elZc0vQNdwyFvOPwLe21czb4OPYv+RTyB4W5sM+W33Auei?=
+ =?us-ascii?Q?eS1nWg5BfN0NPUWltF28mBMHsq5C0H6em46P1k0RyCHs7OM4PDKLS3AwzBv3?=
+ =?us-ascii?Q?txSdN4A+k4EelteZUr5mlHJv0hmRH8JIBuLcAUfb7iNpCMPAkrLPXLVZIyBx?=
+ =?us-ascii?Q?q2PPIpFkRVDkhMzsNPFj+W2uYaKvAcwbyZnFc6CMR0P6TcXVYrNBp6xC16UH?=
+ =?us-ascii?Q?Puzqcpf7p/hnkbztzjiwt0hm5hR0ubq1do7MVdkZpBXTA88q/B7BX9mTS2Ya?=
+ =?us-ascii?Q?87LhZ9EUjD8T2uxhDfk6tS/KHFUK4cyeQ30vRrn6bb8Lkx++mP9DQkGVT136?=
+ =?us-ascii?Q?+id0IX1HComwjH4QQwKtvB3+ai4nBglqWfJthb+0BXbh9QGwhxkg17KO0f00?=
+ =?us-ascii?Q?LVeMLJQuOhFPv2mQR6JmF8J4zaemJpCJDj0oENNwS2blCs8eZFeTk4c2WkyQ?=
+ =?us-ascii?Q?fpR4zZ4bKMgxXNNPM7dC24if7Sy5s6npulUHYNwQQpicTiVbGHbCCBIPehaI?=
+ =?us-ascii?Q?u7gZbwrtJ8zXJRAPM7yLAxSCKB2mpr0mIbO0n0L9djesgPlZYTSUYlLQHk8O?=
+ =?us-ascii?Q?ILgTgcd2kJibGfHAw0wqXVW9QGbVisJAw397c/zHHmOdXicMlYWjZiolXjTv?=
+ =?us-ascii?Q?rNt9yrp+bpmCHiJEHtEjFmH535j9iH1ujjy5aNjwlszEWmd49bpuxPTlRKUc?=
+ =?us-ascii?Q?1NgDXDOEFkLxbT0Fyj1aLn+yMQoQDfW/mcOsMgr8CeKojEYS8gyFCM8eXI1A?=
+ =?us-ascii?Q?P1v/yg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11040.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9f8a375-8a3e-48a3-4c73-08dd1dc86439
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2024 11:54:26.8261
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G3VCOjllWW7GH0gX661kS+aqTq97IhoSRiJzaW2mVYcG0QD8TtOPR9cggrIFsum9moUe2OR+GMC4TN4Qno797/Bu5oa6Ul4IVr5iTYVJ+6V8pNGJZBP92s5Vwxs3MUHq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5785
 
-From: yangge <yangge1116@126.com>
+Hello Nikita-san,
 
-Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
-in __compaction_suitable()") allow compaction to proceed when free
-pages required for compaction reside in the CMA pageblocks, it's
-possible that __compaction_suitable() always returns true, and in
-some cases, it's not acceptable.
+> From: Nikita Yushchenko, Sent: Monday, December 16, 2024 4:20 PM
+>=20
+> This series cleans up rswitch mdio support, and adds C22 operations.
+>=20
+> Nikita Yushchenko (5):
+>   net: renesas: rswitch: do not write to MPSM register at init time
+>   net: renesas: rswitch: use FIELD_PREP for remaining MPIC register
+>     fields
+>   net: renesas: rswitch: align mdio C45 operations with datasheet
+>   net: renesas: rswitch: use generic MPSM operation for mdio C45
+>   net: renesas: rswitch: add mdio C22 support
 
-There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
-of memory. I have configured 16GB of CMA memory on each NUMA node,
-and starting a 32GB virtual machine with device passthrough is
-extremely slow, taking almost an hour.
+Thank you for the patches. The patches look good to me. So,
 
-During the start-up of the virtual machine, it will call
-pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
-Long term GUP cannot allocate memory from CMA area, so a maximum
-of 16 GB of no-CMA memory on a NUMA node can be used as virtual
-machine memory. Since there is 16G of free CMA memory on the NUMA
-node, watermark for order-0 always be met for compaction, so
-__compaction_suitable() always returns true, even if the node is
-unable to allocate non-CMA memory for the virtual machine.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-For costly allocations, because __compaction_suitable() always
-returns true, __alloc_pages_slowpath() can't exit at the appropriate
-place, resulting in excessively long virtual machine startup times.
-Call trace:
-__alloc_pages_slowpath
-    if (compact_result == COMPACT_SKIPPED ||
-        compact_result == COMPACT_DEFERRED)
-        goto nopage; // should exit __alloc_pages_slowpath() from here
+And, I tested the patches on my environment (R-Car S4 Spider), and
+it worked without any regression. So,
 
-In order to quickly fall back to remote node, we should remove
-ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
-in long term GUP flow. After this fix, starting a 32GB virtual machine
-with device passthrough takes only a few seconds.
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: yangge <yangge1116@126.com>
----
+Best regards,
+Yoshihiro Shimoda
 
-V5:
-- add 'alloc_flags' parameter for __isolate_free_page()
-- remove 'usa_cma' variable
-
-V4:
-- rich the commit log description
-
-V3:
-- fix build errors
-- add ALLOC_CMA both in should_continue_reclaim() and compaction_ready()
-
-V2:
-- using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
-- rich the commit log description
-
- include/linux/compaction.h |  6 ++++--
- mm/compaction.c            | 20 +++++++++++---------
- mm/internal.h              |  3 ++-
- mm/page_alloc.c            |  6 ++++--
- mm/page_isolation.c        |  3 ++-
- mm/page_reporting.c        |  2 +-
- mm/vmscan.c                |  4 ++--
- 7 files changed, 26 insertions(+), 18 deletions(-)
-
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index e947764..b4c3ac3 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -90,7 +90,8 @@ extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
- 		struct page **page);
- extern void reset_isolation_suitable(pg_data_t *pgdat);
- extern bool compaction_suitable(struct zone *zone, int order,
--					       int highest_zoneidx);
-+					       int highest_zoneidx,
-+					       unsigned int alloc_flags);
- 
- extern void compaction_defer_reset(struct zone *zone, int order,
- 				bool alloc_success);
-@@ -108,7 +109,8 @@ static inline void reset_isolation_suitable(pg_data_t *pgdat)
- }
- 
- static inline bool compaction_suitable(struct zone *zone, int order,
--						      int highest_zoneidx)
-+						      int highest_zoneidx,
-+						      unsigned int alloc_flags)
- {
- 	return false;
- }
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 07bd227..b10d921 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -655,7 +655,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 
- 		/* Found a free page, will break it into order-0 pages */
- 		order = buddy_order(page);
--		isolated = __isolate_free_page(page, order);
-+		isolated = __isolate_free_page(page, order, cc->alloc_flags);
- 		if (!isolated)
- 			break;
- 		set_page_private(page, order);
-@@ -1634,7 +1634,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
- 
- 		/* Isolate the page if available */
- 		if (page) {
--			if (__isolate_free_page(page, order)) {
-+			if (__isolate_free_page(page, order, cc->alloc_flags)) {
- 				set_page_private(page, order);
- 				nr_isolated = 1 << order;
- 				nr_scanned += nr_isolated - 1;
-@@ -2381,6 +2381,7 @@ static enum compact_result compact_finished(struct compact_control *cc)
- 
- static bool __compaction_suitable(struct zone *zone, int order,
- 				  int highest_zoneidx,
-+				  unsigned int alloc_flags,
- 				  unsigned long wmark_target)
- {
- 	unsigned long watermark;
-@@ -2395,25 +2396,26 @@ static bool __compaction_suitable(struct zone *zone, int order,
- 	 * even if compaction succeeds.
- 	 * For costly orders, we require low watermark instead of min for
- 	 * compaction to proceed to increase its chances.
--	 * ALLOC_CMA is used, as pages in CMA pageblocks are considered
--	 * suitable migration targets
-+	 * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
-+	 * CMA pageblocks are considered suitable migration targets
- 	 */
- 	watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
- 				low_wmark_pages(zone) : min_wmark_pages(zone);
- 	watermark += compact_gap(order);
- 	return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
--				   ALLOC_CMA, wmark_target);
-+				   alloc_flags & ALLOC_CMA, wmark_target);
- }
- 
- /*
-  * compaction_suitable: Is this suitable to run compaction on this zone now?
-  */
--bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx)
-+bool compaction_suitable(struct zone *zone, int order, int highest_zoneidx,
-+				   unsigned int alloc_flags)
- {
- 	enum compact_result compact_result;
- 	bool suitable;
- 
--	suitable = __compaction_suitable(zone, order, highest_zoneidx,
-+	suitable = __compaction_suitable(zone, order, highest_zoneidx, alloc_flags,
- 					 zone_page_state(zone, NR_FREE_PAGES));
- 	/*
- 	 * fragmentation index determines if allocation failures are due to
-@@ -2474,7 +2476,7 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
- 		available = zone_reclaimable_pages(zone) / order;
- 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
- 		if (__compaction_suitable(zone, order, ac->highest_zoneidx,
--					  available))
-+					  alloc_flags, available))
- 			return true;
- 	}
- 
-@@ -2499,7 +2501,7 @@ compaction_suit_allocation_order(struct zone *zone, unsigned int order,
- 			      alloc_flags))
- 		return COMPACT_SUCCESS;
- 
--	if (!compaction_suitable(zone, order, highest_zoneidx))
-+	if (!compaction_suitable(zone, order, highest_zoneidx, alloc_flags))
- 		return COMPACT_SKIPPED;
- 
- 	return COMPACT_CONTINUE;
-diff --git a/mm/internal.h b/mm/internal.h
-index 3922788..6d257c8 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -662,7 +662,8 @@ static inline void clear_zone_contiguous(struct zone *zone)
- 	zone->contiguous = false;
- }
- 
--extern int __isolate_free_page(struct page *page, unsigned int order);
-+extern int __isolate_free_page(struct page *page, unsigned int order,
-+				    unsigned int alloc_flags);
- extern void __putback_isolated_page(struct page *page, unsigned int order,
- 				    int mt);
- extern void memblock_free_pages(struct page *page, unsigned long pfn,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index dde19db..ecb2fd7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2809,7 +2809,8 @@ void split_page(struct page *page, unsigned int order)
- }
- EXPORT_SYMBOL_GPL(split_page);
- 
--int __isolate_free_page(struct page *page, unsigned int order)
-+int __isolate_free_page(struct page *page, unsigned int order,
-+				   unsigned int alloc_flags)
- {
- 	struct zone *zone = page_zone(page);
- 	int mt = get_pageblock_migratetype(page);
-@@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 		 * exists.
- 		 */
- 		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
--		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
-+		if (!zone_watermark_ok(zone, 0, watermark, 0,
-+			    alloc_flags & ALLOC_CMA))
- 			return 0;
- 	}
- 
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index c608e9d..a1f2c79 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -229,7 +229,8 @@ static void unset_migratetype_isolate(struct page *page, int migratetype)
- 			buddy = find_buddy_page_pfn(page, page_to_pfn(page),
- 						    order, NULL);
- 			if (buddy && !is_migrate_isolate_page(buddy)) {
--				isolated_page = !!__isolate_free_page(page, order);
-+				isolated_page = !!__isolate_free_page(page, order,
-+						    ALLOC_CMA);
- 				/*
- 				 * Isolating a free page in an isolated pageblock
- 				 * is expected to always work as watermarks don't
-diff --git a/mm/page_reporting.c b/mm/page_reporting.c
-index e4c428e..fd3813b 100644
---- a/mm/page_reporting.c
-+++ b/mm/page_reporting.c
-@@ -198,7 +198,7 @@ page_reporting_cycle(struct page_reporting_dev_info *prdev, struct zone *zone,
- 
- 		/* Attempt to pull page from list and place in scatterlist */
- 		if (*offset) {
--			if (!__isolate_free_page(page, order)) {
-+			if (!__isolate_free_page(page, order, ALLOC_CMA)) {
- 				next = page;
- 				break;
- 			}
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 5e03a61..33f5b46 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -5815,7 +5815,7 @@ static inline bool should_continue_reclaim(struct pglist_data *pgdat,
- 				      sc->reclaim_idx, 0))
- 			return false;
- 
--		if (compaction_suitable(zone, sc->order, sc->reclaim_idx))
-+		if (compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
- 			return false;
- 	}
- 
-@@ -6043,7 +6043,7 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
- 		return true;
- 
- 	/* Compaction cannot yet proceed. Do reclaim. */
--	if (!compaction_suitable(zone, sc->order, sc->reclaim_idx))
-+	if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLOC_CMA))
- 		return false;
- 
- 	/*
--- 
-2.7.4
+> ---
+> v1:
+<snip URL>
+>=20
+> changes since v1:
+> - rebase against net-next/main as of commit 92c932b9946c ("Merge branch
+>   'mptcp-pm-userspace-misc-cleanups'"),
+> - remove no longer used definitions for MMIS1 register bits,
+> - add patch to use FIELD_PREP for MPIC register fields, to keep the same
+>   style as in already merged patch.
+> ---
+>  drivers/net/ethernet/renesas/rswitch.c | 84 ++++++++++++++++----------
+>  drivers/net/ethernet/renesas/rswitch.h | 33 ++++------
+>  2 files changed, 65 insertions(+), 52 deletions(-)
+>=20
+> --
+> 2.39.5
 
 
