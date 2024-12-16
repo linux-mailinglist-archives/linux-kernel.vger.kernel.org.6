@@ -1,154 +1,162 @@
-Return-Path: <linux-kernel+bounces-447335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-447336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A2B9F30BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 054999F30BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 13:42:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 112C2161198
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2360166AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 12:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601E2204F6B;
-	Mon, 16 Dec 2024 12:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2A204F9F;
+	Mon, 16 Dec 2024 12:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ez1YRvOt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJWmWmDd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF031F708E
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5248204F87
+	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734352921; cv=none; b=X9OKvb2g4n68CQFgmyysY7c5vHIlT1pU9sOy2bUYlLdw9SdO4yPlurdnirgyFm4P53lUKZHHpkWmhFv40Lnmlcn921+VCgpAMUClQPHqc0z49NcJ1StuFHH0gJQTSlxWN1axL8z11sZUet2ic2s87zGidiZtvr3Hp4w9RBlRNCM=
+	t=1734352923; cv=none; b=SKBRsLKy+mkn3+PNj3sIcdXSB7i+JPQrwqGRd7J81aDcfK38wEZpcqVAwR7fPMmFu/35MyYjhh7KnOb2ik1BhCLSJzNdeuQnTuskEaZCxdEpWlOGo5VWP4t+ua0FRUTfing2Y+IfSU6kx3eklWtXXtJhrXmwlBEQVMarsPucBA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734352921; c=relaxed/simple;
-	bh=VAccwSQq4fCA/8MfBUF0MhQqTNbAugDW0Ufbw6z78GQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OxRp9ON+E+0itKxYRnQhMksGSjqG2F8i6EfO5SnrVT5+zjMQBCfYQl7TWON7cAa/m8Q7FqEgBXRDDRV+RkeGFwVO/WazyKhK3Vaox4sje+oXcubg1+DuROvLNkyGEASHxZm7AJWu+R8M00AamAE0MrDbUkiDqZobeXgxPTuwlMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ez1YRvOt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BG7T1b9025774
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:41:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D/L6HGdRQ8z7BAUo9cW4Zt4G50i3p3KgBlyrq4NsNIs=; b=ez1YRvOtHlcLli3+
-	Hcp9x6abDRWdeSAxJkOu7Lk35HCFJvFAgPr0p7WyIGH/QPCy/MyCwcqBa9ktH+TG
-	aBsEytjHitW4Qz/fcKbXQNSn6rFrGNwIrfvZRPAle//F+hXyXamsd4pdABQOlUzb
-	Az2fvhNB6XnvWP9hZ1A24/2rkDv9qwzRpp0jcZ+rk6JCmG9ynSCreM4Qmz5TAurj
-	iLrf/sUfqkV1UnngwsPESig+kV96KJir7VKcPgB1w/hh3QcLOHg7fY9s/akM5Rrn
-	tZW0QZXWqaSA2K1Eg53BhvwXTaJ0E5Unca+6vqhWLTC7VFYeV+b70vBVkK8Gfqba
-	BW8f3w==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jfus0ud8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 12:41:58 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d8a3cb9dbfso9456456d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 04:41:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734352917; x=1734957717;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/L6HGdRQ8z7BAUo9cW4Zt4G50i3p3KgBlyrq4NsNIs=;
-        b=qnGIYRf0SntfIUTAP5KfQwlXJFSGjaiv2OPdAqpDlvznr+fihMawb4QWqFyfQKv25z
-         vv0o9oI/+w1FhvDK802fO1Uu5yWmKDedesGd50OK+plnHDS030cDv6AfAbA4x1q2yit9
-         MLyW6xbmSBDjEg3eoInY2p8tng3mVWG9w4u8lMGMDGPIghH9siSiQgTv/nTgvZPHnxIN
-         Nh6eiZvfQOhK4bq0kX8nooqvIesKJYCYoqTS8YZo09fQ2NhMsHzJIAiG+R8wk38z+3Ce
-         RGSsBVgi9KkYSPcBIEJE8PiWV+rLM/PRzIkOGl5YOBEU1yGWa8tFVqAM+8r/8JWs0U6j
-         BH2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtVH1sqGbTDJVoNGW/VEzgQHKQ61676pU1qxH1VAJQKBYuQRArpkAOi9yAKaBnN6yIDkPVGhT1vZBPvpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcGkN5Ky86SJJEl8gFo+rGnoadztNCwdZwWsLrdED6rVlDRdQh
-	TPrAa79MBnyhItYSFcKK3i4DuzGmlOLoRwHEogFlm3rDK4Rljk5UBdE97O7kJsnFI+FQ2XBW8tH
-	CEoLiWHAun5Sms6mOE4Kujz/d9js8/6wqCVZgg1M5A2V3tiY3UBc7QdawBkR3v0w=
-X-Gm-Gg: ASbGnct+Wo7OuVayFvcCP/L3YBGI9btueS2fcnDc52c/1fJnsUn3XMlIod7Oe83TzMz
-	dwywgm9CA+EZXq4KNlzMaJ7HRw5b+W/i1zlOvLECsRJFZl1bHs6d5neEBbdQrPIpeX5cDpBW1EL
-	f/O3vrQqp2jIRFd67BoEEstosIAE4vojbhOGdd4xp5IUzTcunuSaMTrIhTK8stV7Qw4sY8/qrbg
-	cItRzT8ZPhCNvv/ZBoqY5WpDdDKA5NyKVPxif8AGJgbER6s/uEMjt9gakCl5htQeiTBW3Yd0+gH
-	52UELSf32eqkwox950bNUeZzLip3Jx80ZE8=
-X-Received: by 2002:a05:6214:4014:b0:6d8:7d84:a514 with SMTP id 6a1803df08f44-6dc8ca88587mr74213786d6.5.1734352917565;
-        Mon, 16 Dec 2024 04:41:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGWj/Dc/7a9GmowBrhb9GodXJ7OEKyuuWtEeMBro46otsgJAsgLqvKJTKDXcfAyhIOqIl9/zg==
-X-Received: by 2002:a05:6214:4014:b0:6d8:7d84:a514 with SMTP id 6a1803df08f44-6dc8ca88587mr74213676d6.5.1734352917242;
-        Mon, 16 Dec 2024 04:41:57 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9638ec3dsm326507466b.150.2024.12.16.04.41.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 04:41:56 -0800 (PST)
-Message-ID: <2b866563-1328-484a-bfee-f41190ce856c@oss.qualcomm.com>
-Date: Mon, 16 Dec 2024 13:41:55 +0100
+	s=arc-20240116; t=1734352923; c=relaxed/simple;
+	bh=v6bL/smeZNF++oogcyHNFgbpXP30gkHynV4auvO0VeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8QIZ/rs+Zlbkl7Cd+BylTk5EILVBD6PrYICQ4omCDkjfVz4iyxdZAVv8HhQfbGs93du/W5oqyvnFAYCAOvYQssRT3uFfP5Fhi4fSHK6oVdtbR6dItVKtVoddim5bBr17qWPTRTbyZ/DbrsTPHSF4nFedz4s2sXE8XxL3SxFwWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJWmWmDd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE179C4CEE0;
+	Mon, 16 Dec 2024 12:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734352922;
+	bh=v6bL/smeZNF++oogcyHNFgbpXP30gkHynV4auvO0VeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bJWmWmDdDfMI2GOaNXhSzIY33H+b6BHPsMyLEFeqHMuN4/I7EohkIuGs2lSBc+aXM
+	 3R/qkicWrfFuGyZ+7sonLtz3Zg8h06/Zad1QPoh1JsZel7jFkU6JAPp3Q4hB71lDEy
+	 C0AtZRZriKH7uK8zw9Zf4pahGco4GwcaPMZ6rDlfeb/Q8YoriaMh7jWFxL/NhKmFEZ
+	 SoRj/g99ZFCX7PeQUJfAE6yUwXb2J9mjtDF7RDfQjySrzUowWDCJN5qYwzi4cTFj+c
+	 WIIRB1OXGT34BY/JumKoCaIz3qANKkWlO5Vt5ayG46UJ2HwIcum4wD61yINg3VtiCM
+	 ifB5FEqVBnBjA==
+Date: Mon, 16 Dec 2024 13:41:56 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/nouveau: remove drm_encoder_slave interface
+Message-ID: <Z2AgFHV2BaaZYGTx@cassiopeiae>
+References: <20241215-nouveau-encoder-slave-v2-0-ef7a0e687242@linaro.org>
+ <Z2ASy3TQ4suupdvd@cassiopeiae>
+ <fw7i3kusogrrsslb5sjdid27uqnwey5qa5yhyrfa677n4iqqhq@tfh5s6bmqgna>
+ <20241216121651.GP32204@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Remove unused and undocumented
- properties
-To: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        "Rob Herring (Arm)" <robh@kernel.org>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241115193435.3618831-1-robh@kernel.org>
- <68c079b0-defe-4cb0-9f6f-ce9e3645e2ba@oss.qualcomm.com>
- <d3d9dd62-e0cb-4c12-91d1-17ae52688654@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <d3d9dd62-e0cb-4c12-91d1-17ae52688654@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: O2N1NQOlE70TEGhk3qt-d9AzNRhsf76E
-X-Proofpoint-GUID: O2N1NQOlE70TEGhk3qt-d9AzNRhsf76E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 impostorscore=0 adultscore=0
- phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 lowpriorityscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412160107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216121651.GP32204@pendragon.ideasonboard.com>
 
-On 16.12.2024 4:42 AM, Aiqun Yu (Maria) wrote:
-> On 11/16/2024 3:36 AM, Konrad Dybcio wrote:
->> On 15.11.2024 8:34 PM, Rob Herring (Arm) wrote:
->>> Remove properties which are both unused in the kernel and undocumented.
->>> Most likely they are leftovers from downstream.
->>>
->>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->>> ---
->>
->> Funny, the sideinteraction compatible is undocumented and the touchscreen
->> driver is not upstream
+On Mon, Dec 16, 2024 at 02:16:51PM +0200, Laurent Pinchart wrote:
+> On Mon, Dec 16, 2024 at 02:11:41PM +0200, Dmitry Baryshkov wrote:
+> > On Mon, Dec 16, 2024 at 12:45:15PM +0100, Danilo Krummrich wrote:
+> > > On Sun, Dec 15, 2024 at 12:19:22PM +0200, Dmitry Baryshkov wrote:
+> > > > The nouveau driver is the only user of the drm_encoder_slave interface.
+> > > > Demote it from KMS helpers module to the nouveau driver itself, moving
+> > > > corresponding I2C encoders to be handled by nouveau driver too.
+> > > 
+> > > I understand nouveau is the only driver using this interface (and the
+> > > corresponding i2c encoders).
+> > > 
+> > > However, I'm not quite seeing the advantage of folding the interface (including
+> > > the two i2c drivers) into nouveau. I don't think this legacy interface does harm
+> > > the subsystem in any way / does prevent the subsystem from moving forward.
+> > > 
+> > > Can't we just keep it as it is?
+> > 
+> > Well, drm_encoder_slave is a part of the DRM KMS helpers module, so it
+> > take (a little bit) of space on every system. The nouveau situation
+> > isn't unique, other drivers (i915, ast) also incorporate the code for
+> > I2C backends. For the further discussion see the thread starting from
+> > Laurent's email ([1]).
+> > 
+> > [1] https://lore.kernel.org/all/20241117205426.GE12409@pendragon.ideasonboard.com/
+
+The drm_encoder_slave code it's rather small, but I guess this can be used as
+argument for both, keeping it where it is and moving it.
+
+If you want to move it to nouveau, I'm not going to object. But please fold the
+helper code, such that we aren't left with unused functions and unnecessary
+function pointer indirections through struct drm_encoder_slave_funcs.
+
 > 
-> Does the compatible also need to be fixed to "focaltech,ft8719"? Refer
-> to the info from [1].
+> It's also a question of whether maintenance of this code based used by
+> the nouveau driver only should be the responsibility of the drm-misc
+> community or the nouveau driver maintainers.
 
-+Alexander, Caleb - would you like to look into this on axolotl?
+Good question. It's common infrastructure; do we expect / require the last user
+of such infrastructure to take ownership?
 
-> Confirmed, the compatible "focaltech,fts8719" is not even in any merged
-> bindings or drivers. Instead, "focaltech,ft8719" is in the current
-> driver and bindings.
 > 
-> By the way, I am curious about how Rob finds the unused properties.
-> Could you share some steps?
-
-make ARCH=arm64 LLVM=1 -j24 CHECK_DTBS=1 dtbs
-
-returns all kinds of errors, including "undocumented property"
-
-Konrad
-
-> [1]https://lore.kernel.org/all/Zk4tLPn277Azd4XZ@google.com/
+> > > > Ideally those two drivers should be converted to the drm_bridge
+> > > > interface, but it's unclear if it's worth spending time on that.
+> > > 
+> > > Probably not.
+> > > 
+> > > > 
+> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > ---
+> > > > Changes in v2:
+> > > > - Renamed symbols in defconfig (Laurent)
+> > > > - Added missing Kbuild file (Laurent, LKP)
+> > > > - Renamed guarding defines in include files.
+> > > > - Dropped mentions of two removed functions.
+> > > > - Link to v1: https://lore.kernel.org/r/20241214-nouveau-encoder-slave-v1-0-beda767472e3@linaro.org
+> > > > 
+> > > > ---
+> > > > Dmitry Baryshkov (2):
+> > > >       drm/nouveau: incorporate I2C TV encoder drivers
+> > > >       drm/nouveau: vendor in drm_encoder_slave API
+> > > > 
+> > > >  arch/arm/configs/multi_v7_defconfig                |   4 +-
+> > > >  arch/parisc/configs/generic-32bit_defconfig        |   4 +-
+> > > >  arch/parisc/configs/generic-64bit_defconfig        |   4 +-
+> > > >  drivers/gpu/drm/Makefile                           |   1 -
+> > > >  drivers/gpu/drm/i2c/Kconfig                        |  18 ----
+> > > >  drivers/gpu/drm/i2c/Makefile                       |   6 --
+> > > >  drivers/gpu/drm/nouveau/Kconfig                    |  20 ++++
+> > > >  drivers/gpu/drm/nouveau/dispnv04/Kbuild            |   3 +
+> > > >  drivers/gpu/drm/nouveau/dispnv04/dfp.c             |  12 +--
+> > > >  drivers/gpu/drm/nouveau/dispnv04/i2c/Kbuild        |   5 +
+> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_drv.c    |  30 +++---
+> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_mode.c   |   8 +-
+> > > >  .../drm/{ => nouveau/dispnv04}/i2c/ch7006_priv.h   |  11 ++-
+> > > >  .../drm/{ => nouveau/dispnv04}/i2c/sil164_drv.c    |  33 ++++---
+> > > >  .../dispnv04/nouveau_i2c_encoder.c}                |  85 +++++-----------
+> > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv04.c          |  20 ++--
+> > > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c          |   4 +-
+> > > >  .../gpu/drm/nouveau/include}/i2c/ch7006.h          |   4 +-
+> > > >  .../gpu/drm/nouveau/include/i2c/encoder_i2c.h      | 109 ++++++++-------------
+> > > >  .../gpu/drm/nouveau/include}/i2c/sil164.h          |   4 +-
+> > > >  drivers/gpu/drm/nouveau/nouveau_connector.c        |   6 +-
+> > > >  drivers/gpu/drm/nouveau/nouveau_encoder.h          |  13 +--
+> > > >  22 files changed, 172 insertions(+), 232 deletions(-)
+> > > > ---
+> > > > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
+> > > > change-id: 20241214-nouveau-encoder-slave-a6dd422fa4a9
 > 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
