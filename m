@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-446988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-446989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554B39F2BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:20:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B1C9F2BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 09:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E6318859AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35D51885952
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2024 08:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCAB1FFC64;
-	Mon, 16 Dec 2024 08:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FBE1FF7D4;
+	Mon, 16 Dec 2024 08:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wA4ijqrn"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e12vIT85"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0681FF61C
-	for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 08:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD491CEAC3;
+	Mon, 16 Dec 2024 08:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734337243; cv=none; b=tMU2dQzF9gairUKx6ZuyAs3UaBSJWrgYxN4W/99waKNOvyxDXVUgRdeZxftWY3vxCMotYYlMzJ3RWViTlJ+z0+KA88OWkADvx8sBxMe76fTj+pKH5PNaxKtMmP7aa0s/Gq04DfZTtI7bNQ62d9uIQRAdhY4MNHhyRzSbZKNeB9k=
+	t=1734337387; cv=none; b=qGLrICWiWpBkXf+qkuiIjrTx5f4z3E8WQ+/7lDk26f+BEV1ZPYzu09/jG9wX1oVdaSduDLivydUytKTI2Lf2vttPxjPqnJiMnKb/cU0a7Z4MTp90yP8Ke4RaknVvSAU0Tm7cRgUmokqX2E909ar8ugJyTg2pi47nndaJOuZgW8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734337243; c=relaxed/simple;
-	bh=uUJA3/TZsxZSLGQ3iJa9Q98/lgULeCMhq5QBKWADGSU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FDXwWpptsigivTmg2lOxoMjyielUr1Upc7j5v5PZKsG6q/DMiymMfcyVuS6JvETH3hT1C5tYmtWX47eCIDbM4CDnkMgPjzJMaOg2r2n7uhDbvFRy6a9pGZJrn3nT17GTEIll1k83cK9G4DIstnGXOsGXfGI6hcEg+b5zIkhkeJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wA4ijqrn; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54025432becso3867833e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 00:20:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734337240; x=1734942040; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YbfXvKOjtQu6oW6OVlC1iMgsVrQx7zWveYPYCO9K2UI=;
-        b=wA4ijqrnIDYOFDhxWEpBqi4+C8fNH48q0kY1nlSKzHIc2smkP594WO8yhaNWmKyN4l
-         md3KHA7q4m3RIkRiyQINIlkdTrZLL1lhXYtA63Wr9iUCEPkTFUSwkphs119zdxnGi84W
-         jvosWCDM1bHOLkXGf/0GCuLDzqMb2rKO6vGx6bY1OfVsDuFLMJzPt1zChCL+0eED4IUW
-         oxZcg18Bg+1hLjFuUK5J0L91fSfi5APHq/WyaonMS1u3SiwyfwnZaZmxg8tY8TXhaINI
-         U67+Qb5/205pCApembYQETv3/tGGHpD3PzaWntwKxbIEtPi5KexuZQ2tDEb6Qj5kremx
-         GAUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734337240; x=1734942040;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YbfXvKOjtQu6oW6OVlC1iMgsVrQx7zWveYPYCO9K2UI=;
-        b=PzOMxb9L9qv6KaGlxgqXxIwOAJ/aPjed3WXrO3S6J3iQikMDm56SBhEoRd1ZR9CWcN
-         xbeF6IWV6nERc3PJq5zzbB7Sm1jwqPK3P/Q212Ljke4buIRLfIi8G0/hQDWubkfITRkV
-         bvjHm4olXKdoJdoPjHaolvyD+omqIy1LXH6pTeKkPpKRaLjRTIM+J1QuyYUV2OicnX9k
-         Qq6EVym6FpCUULB0deHZJDgSM9fa0VTBCKApJ2+IVIeegGofp+2lfgF4dOhKJTtKuq2p
-         INifjOKTfFIV2LcRIsJgdM97Nn9u4CPawpDHrgSqFelJp7SLiFObmh66Z0k9n7IbSzAF
-         4kjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrUfejOowT0NdrXGnqSXy+gvQeLULWHQ+ncZqVOA9ZwchPF0qW3D7MU1FV9FDzexWMlBwUHzGmqfFaa7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyreW5Va+kmx1/OAB/xsKgcJAXav1DNmFx+hl9IZ9jXGv2GxpFv
-	RSLaHk7xPJIhf5eOwDdFt9XoSkOQ8FKiNC0UI2KEtJmoyFXE2IRWGg+0/GxOSkE=
-X-Gm-Gg: ASbGncsdpe8yXlEF0LaXpNpHZvLhPTVYrTcUOgL+ya1D7b6mweeK+0pfGtsSy/xXzo8
-	Nr+cz7SHUaU2WrmyPzfL45h2O0zm0vU5J9WSIxSYjUN1s50LHXpIVw2stC1/ARChhJjSaK0v+FF
-	CvALVhKQ+QbQk4rSJ90DsM+3NPJXv+JtB+jukvoOh/F6f8LQFKqoDzzRYyiqjJnavHI0SKVaKRI
-	whRbBTtDH+x6oNCURIgSLWwICnsZgJeDfYueuigjBmVULq/N3ADvawey1LIKBAx
-X-Google-Smtp-Source: AGHT+IGzenR2jl87nMf97W1enF+uDtS5ypA2j8yTcUnPoV9iEHOCI2uxIt76PAu02Tox+YY54Iz5kg==
-X-Received: by 2002:a05:6512:3dac:b0:53e:39f0:4bbd with SMTP id 2adb3069b0e04-5409054e4a5mr2594490e87.21.1734337239738;
-        Mon, 16 Dec 2024 00:20:39 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c137e5sm754516e87.184.2024.12.16.00.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 00:20:38 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 16 Dec 2024 10:20:36 +0200
-Subject: [PATCH] drm/msm/dpu: correct LM pairing for SM6150
+	s=arc-20240116; t=1734337387; c=relaxed/simple;
+	bh=vOCQPuexICPOQSuilzYyp/1Ex7qhBODA8YKKaZigSgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3hvVDKUYlB1pYNP8AHzdIgwbgCb71HshApRyt4qzFkwdwFoYHyRe851nGjYexATirg4iPrSmsadkbm5CN2U4fEKd684cjEcKKkrY7HXA4Tzx3XWxwfIQEp+S5s1KazroguBVEuXhnr3/Q9eLz9yc6/BaO8lr5OOsRjgJRrqxOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e12vIT85; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 885F9C4CED0;
+	Mon, 16 Dec 2024 08:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734337385;
+	bh=vOCQPuexICPOQSuilzYyp/1Ex7qhBODA8YKKaZigSgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e12vIT85AtBLi/+MH997JfBhodHyWT+2POvUj+hV7NhjX5rp47oVnm+TTojt52OxH
+	 pDLesVc/gN+RyMtGqQmSryHKsT6vSlC0qsLoSPp6aUVLc3w6OBU5EhYPfdMqlalrU6
+	 /Kf49hNAhfDrI74hj4VeYQzJjnbLHJXBrdTKHoOWVZzEECYbFbjimcvnoaKzqUDrMZ
+	 YAi00a/CZzkrCyFSNXSTkjZP5LFloECGG+ZpeyHDAQnKqmGlAeGDdvN27/AVpcpjPL
+	 39ExDgxY8OYlfVrDW+9tW6rzAHKXi1WyyIwPQ6mIPJ5b78nZNiBrDcZMFlopJF/s74
+	 sYZTnhiVbrsXw==
+Date: Mon, 16 Dec 2024 09:23:03 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mingwei Zheng <zmw12306@gmail.com>
+Cc: fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, thierry.reding@gmail.com, p.zabel@pengutronix.de, 
+	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: Re: [PATCH] pwm: stm32: Add check for clk_enable()
+Message-ID: <24zcihiin4lkfhahxmn4nx4t7v5hlvxhlcjzeyrz2kizcqkaop@b5yq44j4vozj>
+References: <20241215224752.220318-1-zmw12306@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-dpu-fix-sm6150-v1-1-9fd7ce2ff606@linaro.org>
-X-B4-Tracking: v=1; b=H4sIANPiX2cC/x2MywqAIBAAf0X23IJr734lOkSutYcslCKQ/j3pO
- AwzCSIH4QiDShD4liiHz0CFgmWb/cooNjMYbSoy1KA9L3TyYNwbqjVS63Rb9q5zrCFHZ+Bs/+E
- 4ve8H2Rd72WAAAAA=
-X-Change-ID: 20241216-dpu-fix-sm6150-17f0739f8fe0
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Li Liu <quic_lliu6@quicinc.com>, Fange Zhang <quic_fangez@quicinc.com>, 
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1469;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=uUJA3/TZsxZSLGQ3iJa9Q98/lgULeCMhq5QBKWADGSU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnX+LV2CEVo6lAAyY1ot+m4rawCBEiNbmKI0V0H
- +juU3EvY9iJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1/i1QAKCRCLPIo+Aiko
- 1ZGXB/9aO6ZYG+gIxJb5oe7hQ1dXAs82EbfevXvtGTdQVCnxun+PDjw8B1Aui2HOARJcXI++Tvs
- Mrb4cmy3DvJu36eTg8diFOjJAOMa7gEfLZe3RsMsilSkGjVti/XpkQ83zgspXFA0kDwHaIMSppa
- qulF6sCTzWjzG3V75X/ezks+tZjzi2xF1QiGJ1WHFdsohZYOZEaG89/SoORUguCDm0gHKWT8l8j
- Oek+oRlCB/h4b23/7VnSw2zWwZ0lY/5mT830UlmwNbtHQTtPoqiz5k9Ykda4M5rFRX1wWnBlWzR
- j3YvhI65dGIlbxHx83z/SV1ncEyeME5+srWX5L1yhgODf1rB
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nx6agqcxa3ihyuxg"
+Content-Disposition: inline
+In-Reply-To: <20241215224752.220318-1-zmw12306@gmail.com>
 
-According to the vendor devicetree on SM6150 LM_0 is paired with LM_2
-rather than LM_1. Correct pairing indices.
 
-Fixes: cb2f9144693b ("drm/msm/dpu: Add SM6150 support")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--nx6agqcxa3ihyuxg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: stm32: Add check for clk_enable()
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-index 621a2140f675fa28b3a7fcd8573e59b306cd6832..81eb274cc7000a3b70b0f6650088ddcd24648eab 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
-@@ -116,20 +116,20 @@ static const struct dpu_lm_cfg sm6150_lm[] = {
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_0,
- 		.dspp = DSPP_0,
--		.lm_pair = LM_1,
-+		.lm_pair = LM_2,
- 	}, {
- 		.name = "lm_1", .id = LM_1,
- 		.base = 0x45000, .len = 0x320,
- 		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_1,
--		.lm_pair = LM_0,
- 	}, {
- 		.name = "lm_2", .id = LM_2,
- 		.base = 0x46000, .len = 0x320,
- 		.features = MIXER_QCM2290_MASK,
- 		.sblk = &sdm845_lm_sblk,
- 		.pingpong = PINGPONG_2,
-+		.lm_pair = LM_0,
- 	},
- };
- 
+Hello,
 
----
-base-commit: a3d570eace66b4016f2692a6f1045742ee70c6b1
-change-id: 20241216-dpu-fix-sm6150-17f0739f8fe0
+On Sun, Dec 15, 2024 at 05:47:52PM -0500, Mingwei Zheng wrote:
+> Add check for the return value of clk_enable() to catch the potential
+> error.
+>=20
+> Fixes: 19f1016ea960 ("pwm: stm32: Fix enable count for clk in .probe()")
+> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+>  drivers/pwm/pwm-stm32.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+> index b889e64522c3..b94d186e3c0c 100644
+> --- a/drivers/pwm/pwm-stm32.c
+> +++ b/drivers/pwm/pwm-stm32.c
+> @@ -858,8 +858,11 @@ static int stm32_pwm_probe(struct platform_device *p=
+dev)
+>  	chip->ops =3D &stm32pwm_ops;
+> =20
+>  	/* Initialize clock refcount to number of enabled PWM channels. */
+> -	for (i =3D 0; i < num_enabled; i++)
+> -		clk_enable(priv->clk);
+> +	for (i =3D 0; i < num_enabled; i++) {
+> +		ret =3D clk_enable(priv->clk);
+> +		if (ret)
+> +			return ret;
+> +	}
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I wondered for some time if we could still improve more here. If the
+(say) second clk_enable() or devm_pwmchip_add() fails, the clk_enable()
+calls are leaked. However disabling the clk also might have downsides
+(as it might stop a running PWM). OTOH the only expected failure point
+is the first clk_enable() as the following are just software operations
+and devm_pwmchip_add() only fails on memory pressure. So proper cleanup
+doesn't really matter.
 
+So I think the patch is fine as is and I will apply it.
+
+Best regards
+Uwe
+
+--nx6agqcxa3ihyuxg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdf41wACgkQj4D7WH0S
+/k7llwf/UiLvKJ4m+BX9uZ9YkHIcbQ5Y9akNESa58tdAXToIePTuElL94I9wcLtr
+jyU3+IZmgT0FaQ6kfIlkt87oM/owomEUiXSmE9KCZdoNJVb8cx1rPHGocbE3xB6d
+2YSpQyi1yoybKbSl/32eFuKREaZC1K2kd0PA1lu7S4rpMhfUVBF5fa1z+gfV9XYQ
+0l8KoryMUslshBYLYK4Jt8fcWm62JTCC9kHmpmAhUQOYHP7kRu2HTwyBtLwqIL+1
+rGTpleh6Y1MNAeWx9oCFhaL5Cb+T1JFJWbaQpX+hFaIGghLacIh41JhCzDwPiqjs
+Sc298uJWaEPzq1vJv/Oo7qr94cDNZA==
+=NnDg
+-----END PGP SIGNATURE-----
+
+--nx6agqcxa3ihyuxg--
 
