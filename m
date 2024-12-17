@@ -1,281 +1,133 @@
-Return-Path: <linux-kernel+bounces-448853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BCC9F4673
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E4D9F4672
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941831889940
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:49:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2E57A3DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738261DE3A3;
-	Tue, 17 Dec 2024 08:48:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAAF1DAC93;
-	Tue, 17 Dec 2024 08:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4F51714BE;
+	Tue, 17 Dec 2024 08:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RgRSLzpH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C37019B5B4
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425320; cv=none; b=fVhNFww2UJvqxMbLvfTvO2sqsWXnrogGy6D86pUEjL/fM6fE72cRq/6eTMSasCdMShWndglMpJq8Ip4b5cbntL006042IvyOOk/ug4o+BTCE+DHXaJUykOLTftMEzAvB1IzB2TJK6Os4s4NBko5Q2+7NGFaYn+CTp2WL/zFk0cw=
+	t=1734425318; cv=none; b=lBNd/5sRCbCOjimOG04YBaIweAjkxXrgLbfGQHpGsgSfljCBM2M8a62QvFzV+baOqXMvz8/v/9lMrdeTpar28TWlNem3Lw6G7ZD15z23sd5mBibD76stBTECa7RfwfauUsE49xBMQdedhHDnHSIiq37MTtPUMI5XqTTRAPu4HP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425320; c=relaxed/simple;
-	bh=+26mOEZQWL2sesFz1H/XDGXnEAa1Bzahc8q7pZ00C8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o65/GGHKF6xRYZnRV3YzXP4tOlSPk/C2hwv2QDVD5yMnkLLMkNqGgGFUgTpKblz3guiuHsvFaFv9dyuHV4j2uC2FZcIJ7yVB2avzW4WDM8nu3KBh9MkzNKbZBV6436AOWzrHDemebhkufoS64thG6q0491F+taFDxZL7PBXMqJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 305611007;
-	Tue, 17 Dec 2024 00:49:02 -0800 (PST)
-Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D82F3F720;
-	Tue, 17 Dec 2024 00:48:29 -0800 (PST)
-Message-ID: <c64709f7-e1c6-482e-8665-912be50b15bd@arm.com>
-Date: Tue, 17 Dec 2024 14:18:27 +0530
+	s=arc-20240116; t=1734425318; c=relaxed/simple;
+	bh=v7K3LTf7evJOgrKhRDWImRtt3LO0+IhgNWsGfnmegHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyW34bLDvAGtva2oS0BDOvCzLP/skAeyrbptm01wtKRbxybrKQG7cNNBXo/Weh+r7CWvkFrEHAUMUDdNKYcQe///ulj9yK1749fkNCCRqXCbwPBN144xr2LWWG3gM8WTBMfY9CWov3WZ8ns4Ep62+hfQsznaDI8QGzIW5NE5YsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RgRSLzpH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=V2vSXprZooYw8v3cMOSRLXATROv2oqgwW+OHCJ4mSm0=; b=RgRSLzpH95EK9zBV4m0wC1Kvo/
+	fvFxxCS/VWKvQS8B6OPe/wvtPcn14MJd2pZ6l6NzRTJEFqsBFDU6uUA2xSRDJAMl7Xv8kL3I4vrwC
+	y+PNu74lUGsONIbsHukPL356+XLG/Mz9Qv9CTqD0Yc4BzO7hMnoOpOFCgO8WiB/sUtPcpdxXCIeoK
+	+NH6XAqB7CnFcsLog3RRXsyRmsunU0lNTpwGJXM2K3OZhCb1X9adwGLUAuWskwjbbNwVH3G18vq8B
+	GaA6S+pS07Sg+dl8ag5gRKFQ+WhCeRxwd8DH8lIOf+4EI/L9RQy4+LY8RUsQciDduBP16bGEU01th
+	YdKup7yg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNTFl-00000005sDK-3xWK;
+	Tue, 17 Dec 2024 08:48:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6E28C300192; Tue, 17 Dec 2024 09:48:29 +0100 (CET)
+Date: Tue, 17 Dec 2024 09:48:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
+Subject: Re: [RFC][PATCH v14 3/7] sched: Fix runtime accounting w/ split exec
+ & sched contexts
+Message-ID: <20241217084829.GH35539@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-4-jstultz@google.com>
+ <20241213233740.GB17501@noisy.programming.kicks-ass.net>
+ <20241214000951.GA16123@noisy.programming.kicks-ass.net>
+ <CANDhNCoMz9m_U_86utexFp8+QgVr8rEdGwOygBbNEpwtsByxeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 6/7] arm64/boot: Enable EL2 requirements for
- FEAT_Debugv8p9
-To: Rob Herring <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-doc@vger.kernel.org
-References: <20241216040831.2448257-1-anshuman.khandual@arm.com>
- <20241216040831.2448257-7-anshuman.khandual@arm.com>
- <20241216234251.GA629562-robh@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241216234251.GA629562-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCoMz9m_U_86utexFp8+QgVr8rEdGwOygBbNEpwtsByxeA@mail.gmail.com>
 
-On 12/17/24 05:12, Rob Herring wrote:
-> On Mon, Dec 16, 2024 at 09:38:30AM +0530, Anshuman Khandual wrote:
->> Fine grained trap control for MDSELR_EL1 register needs to be configured in
->> HDFGRTR2_EL2, and HDFGWTR2_EL2 registers when kernel enters at EL1, but EL2
->> is also present.
+On Mon, Dec 16, 2024 at 10:09:16PM -0800, John Stultz wrote:
+> On Fri, Dec 13, 2024 at 4:10 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Sat, Dec 14, 2024 at 12:37:40AM +0100, Peter Zijlstra wrote:
+> > > Would it not be *much* clearer if we do it like:
+> > >
+> > > static s64 update_curr_se(struct rq *rq, struct sched_entity *donor,
+> > >                         struct sched_entity *curr)
+> > > {
+> > >       ...
+> > >       donor->exec_start = now;
+> > >       curr->exec_start = now;
+> > >       curr->sum_exec_runtime += delta_exec;
+> > >       ...
+> > > }
+> > >
+> > > and update the callsites like so:
+> > >
+> > > update_curr_common()
+> > >       update_curr_se(rq, &donor->se, &rq->curr.se)
+> > >
+> > > update_curr()
+> > >       update_curr_se(rq, &curr->se, &curr->se);
+> > >
+> > >
+> > > except, now I'm confused about the update_curr() case. That seems to
+> > > always update the execution context, rather than the donor ?
+> >
+> > Ah no, cfs_rq->curr is the donor.
 > 
-> Shouldn't this be "when kernel enters at EL2, and EL3 is also present"?
-
-AFAICT - HDFGRTR2_EL2 and HDFGWTR2_EL2 registers configure traps into EL2 when
-accessed from EL1/EL0, provided all required EL3 trap controls are in place as
-well. These EL2 based trap configs need to be set before the kernel finally
-enters EL1. Although there is an assumption about EL3 based trap configs being
-in place, do we need to mention that in commit message as well. Is not updating 
-booting.rst takes care of all EL3 requirements.
-
-> Though it is really "If EL3 set FGTEn2 and the kernel is entered in 
-> EL2, then FGT2 must be initialized for MDSELR_EL1."
+> Yeah. That is one detail in the current series where the naming can be
+> particularly confusing.
 > 
-> If it was me, I'd just plagarize what was written for prior FGT 
-> commits for this code. :)
+> I can go through and rename cfs_rq->curr to cfs_rq->donor (or some
+> other name) to make it more clear, but it seems like a ton of churn,
+> so I've been hesitant to do so until there was stronger consensus to
+> taking the patch series, but maybe we're at that point now?
 
-There are many commits that changed __init_el2_fgt() with different description
-formats. Do you have particular one in mind which can be followed here ? :)
+Nah, it was just me being confused, lets keep down the curn for now.
 
-> 
->> This adds a new helper __init_el2_fgt2() initializing this
->> new FEAT_FGT2 based fine grained registers.
-> 
-> "This adds" is the same as saying "This patch/commit adds" which is well 
-> documented to avoid. Use imperative "Add a new helper...". Though it is 
-> clear from the diff that is what you are doing...
+> But maybe a simpler and more isolated fix is I could just rework
+> update_curr_se to just take the rq* and we can derive the donor.se and
+> curr.se from that.
 
-Sure, will fix it.
-
-> 
-> 
->> MDCR_EL2.EBWE needs to be enabled for additional (beyond 16) breakpoint and
->> watchpoint exceptions when kernel enters at EL1, but EL2 is also present.
->> This updates __init_el2_debug() as required for FEAT_Debugv8p9.
->>
->> While here, also update booting.rst with MDCR_EL3 and SCR_EL3 requirements.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Marc Zyngier <maz@kernel.org>
->> Cc: Oliver Upton <oliver.upton@linux.dev>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-doc@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: kvmarm@lists.linux.dev
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> Changes in V3:
->>
->> - Dropped MDCR_EL3.TDA boot requirement from documentation (separate series)
->> - Dropped MDCR_EL2_EBWE definition as MDCR_EL2 is now defined in tools sysreg
->>
->> https://lore.kernel.org/all/20241211065425.1106683-1-anshuman.khandual@arm.com/
->>
->>  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
->>  arch/arm64/include/asm/el2_setup.h   | 26 ++++++++++++++++++++++++++
->>  2 files changed, 44 insertions(+)
->>
->> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
->> index 3278fb4bf219..054cfe1cad18 100644
->> --- a/Documentation/arch/arm64/booting.rst
->> +++ b/Documentation/arch/arm64/booting.rst
->> @@ -288,6 +288,12 @@ Before jumping into the kernel, the following conditions must be met:
->>  
->>      - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
->>  
->> +  For CPUs with the Fine Grained Traps (FEAT_FGT2) extension present:
->> +
->> +  - If EL3 is present and the kernel is entered at EL2:
->> +
->> +    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
->> +
->>    For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
->>  
->>    - If EL3 is present and the kernel is entered at EL2:
->> @@ -322,6 +328,18 @@ Before jumping into the kernel, the following conditions must be met:
->>      - ZCR_EL2.LEN must be initialised to the same value for all CPUs the
->>        kernel will execute on.
->>  
->> +  For CPUs with FEAT_Debugv8p9 extension present:
->> +
->> +  - If the kernel is entered at EL1 and EL2 is present:
->> +
->> +    - HDFGRTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
->> +    - HDFGWTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
->> +    - MDCR_EL2.EBWE (bit 43) must be initialized to 0b1
->> +
->> +  - If EL3 is present:
->> +
->> +    - MDCR_EL3.EBWE (bit 43) must be initialized to 0b1
->> +
->>    For CPUs with the Scalable Matrix Extension (FEAT_SME):
->>  
->>    - If EL3 is present:
->> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
->> index 4ef52d7245bb..2fbfe27d38b5 100644
->> --- a/arch/arm64/include/asm/el2_setup.h
->> +++ b/arch/arm64/include/asm/el2_setup.h
->> @@ -105,6 +105,13 @@
->>  						// to own it.
->>  
->>  .Lskip_trace_\@:
->> +	mrs	x1, id_aa64dfr0_el1
->> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
->> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
->> +	b.lt	.Lskip_dbg_v8p9_\@
->> +
->> +	orr	x2, x2, #MDCR_EL2_EBWE
->> +.Lskip_dbg_v8p9_\@:
->>  	msr	mdcr_el2, x2			// Configure debug traps
->>  .endm
->>  
->> @@ -244,6 +251,24 @@
->>  .Lskip_gcs_\@:
->>  .endm
->>  
->> +.macro __init_el2_fgt2
->> +	mrs	x1, id_aa64mmfr0_el1
->> +	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
->> +	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
-> 
-> We already read this field in __init_el2_fgt, shouldn't we leverage that 
-> and move all this there rather than read the feature reg twice.
-
-Should not __init_el2_fgt2() remain separate to contain all future FEAT_FGT2
-related trap enabled/disable checks ? OTOH reading id_aa64mmfr0_el1 register
-should improve some performance as well.
-
-> 
->> +	b.lt	.Lskip_fgt2_\@
->> +
->> +	mrs	x1, id_aa64dfr0_el1
->> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
->> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
->> +	b.lt	.Lskip_dbg_v8p9_\@
->> +
->> +	mov_q   x0, HDFGWTR2_EL2_nMDSELR_EL1
->> +	msr_s	SYS_HDFGWTR2_EL2, x0
->> +	msr_s	SYS_HDFGRTR2_EL2, x0
-> 
-> If Debug v8.9 is not present, but FGT2 is, shouldn't we write 0 to these 
-> registers? That is what we do for FGT.
-
-Just to summerize what's being done in __init_el2_fgt()
-
-.macro __init_el2_fgt
-	...............
-	mov     x0, xzr
-	...............
-.Lskip_spe_fgt_\@:
-        msr_s   SYS_HDFGRTR_EL2, x0
-        msr_s   SYS_HDFGWTR_EL2, x0
-	...............
-.Lset_fgt_\@:
-        msr_s   SYS_HFGRTR_EL2, x0
-        msr_s   SYS_HFGWTR_EL2, x0
-        msr_s   SYS_HFGITR_EL2, xzr
-	...............
-
-If the relevant features are not present and their traps need not be handled,
-all FEAT_FGT based trap control registers (SYS_HDFGRTR_EL2, SYS_HDFGWTR_EL2,
-SYS_HFGRTR_EL2, SYS_HFGWTR_EL2 and SYS_HFGITR_EL2) get cleared. Hence same
-needs to be done for all FEAT_FGT2 register as well. Fair enough, something
-like the following makes sense ?
-
-.macro __init_el2_fgt2
-        mrs     x1, id_aa64mmfr0_el1
-        ubfx    x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
-        cmp     x1, #ID_AA64MMFR0_EL1_FGT_FGT2
-        b.lt    .Lskip_fgt2_\@
-
-        mov     x0, xzr
-        mrs     x1, id_aa64dfr0_el1
-        ubfx    x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
-        cmp     x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
-        b.lt    .Lskip_dbg_v8p9_\@
-
-        orr     x0, x0, #HDFGWTR2_EL2_nMDSELR_EL1
-.Lskip_dbg_v8p9_\@:
-        msr_s   SYS_HDFGWTR2_EL2, x0
-        msr_s   SYS_HDFGRTR2_EL2, x0
-        msr_s   SYS_HFGRTR2_EL2, xzr
-        msr_s   SYS_HFGWTR2_EL2, xzr
-        msr_s   SYS_HFGITR2_EL2, xzr
-.Lskip_fgt2_\@:
-.endm
-
-Just wondering - following the same principle if clearing these FEAT_FGT2 trap
-registers would make sense in itself, even without FEAT_Debugv8p9 enablement ?
-
-Something like the commit
-
-commit 31c00d2aeaa2da89361f5b64a64ca831433be5fc
-Author: Mark Brown <broonie@kernel.org>
-Date:   Thu Apr 1 19:09:40 2021 +0100
-
-    arm64: Disable fine grained traps on boot
-    
-    The arm64 FEAT_FGT extension introduces a set of traps to EL2 for accesses
-    to small sets of registers and instructions from EL1 and EL0.  Currently
-    Linux makes no use of this feature, ensure that it is not active at boot by
-    disabling the traps during EL2 setup.
-
-
-> 
-> 
-> I just realized I forgot to add FGT2 setup for the PMUv3.9 features I 
-> already added in 6.12 and 6.13. So this really needs to land sooner 
-> rather than later to add that. 
-Not sure if I got this correctly. Are you suggesting to carve out __init_el2_fgt2()
-from the series and post separately with PMUv3.9 requirements and fallback clearing
-for all FEAT_FGT2 trap config registers as mentioned above ?
+You can't; rq only has tasks, while cfs_rq is a hierarchy with many se's
+backing a single task :/
 
