@@ -1,125 +1,163 @@
-Return-Path: <linux-kernel+bounces-449477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91609F4F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:34:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C0D9F4F90
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0035188637B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:34:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A08A163C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4141F758C;
-	Tue, 17 Dec 2024 15:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D461F75A7;
+	Tue, 17 Dec 2024 15:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PgxMTbsQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHESXQ42"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE451F63C4;
-	Tue, 17 Dec 2024 15:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D996EAC6;
+	Tue, 17 Dec 2024 15:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734449651; cv=none; b=ctMDSzvrcAfpRlXaluV5S4Z+5xhDt4HjOASDs3LQrwhppcszEVxXQPG0HowjTXHgSzmRT3uYobiavkd28p0sGMTMPLNs0dsIAEIaieGnDSA1+eDz4NN/HwL+wVG1XNRJaOQJKU9pUqj58UY6xpY0AkPJEqAxSSKeaWLWBCYBgB8=
+	t=1734449748; cv=none; b=sGEcmBl6ydc8ArOGOQLEifzdvzvT31ec+YJoz5uCATYhij1FGdgdpkAzQvMQg43czwxjINY8OAI/58mhAkIZkRuU6Tb1eJA7qpm26fzJxI2821ChG7QYg77x6P9DXywZ70eofDPOJtBQRwcqkM46fS9IfhsrgphdzQWC4fnuPx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734449651; c=relaxed/simple;
-	bh=PBoHMl/vjbrkDJJdW06HoXGpU5J3Rsz5cWS1b6kINrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccMX2tgEKSPD13zkM4OE4F1A6dM9uCM5lUm5eV1XksJ2Fmsv2hfrPY9hPqCNkLDGN+7VKtZCwiaLRg7Aa8Py6HqhyjxXLLlwftwLqaYrhFHajNmH1pIuRrYAWYTQpMnslFJ2eVFLed57wISYu8T/TgowiNfVGm+YpkP5A2K4Urk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PgxMTbsQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88250C4CED6;
-	Tue, 17 Dec 2024 15:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734449651;
-	bh=PBoHMl/vjbrkDJJdW06HoXGpU5J3Rsz5cWS1b6kINrg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PgxMTbsQ+h5iOtpVU533vBud9w8343J2e+egHvICld0hUFr7LqxFtVeYlLphnKieJ
-	 N78IZnvUhMe1HsMoT2itUg4Q7eUWthMde7Xa9fG2Tx2SDp3YnYHMNcpXsEYq1zItU+
-	 BrU3612buMIwn28Ei1PSJ4/stU+D7LUZN8ad01wg=
-Date: Tue, 17 Dec 2024 16:34:08 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Brian Geffon <bgeffon@google.com>
-Cc: "# v4 . 10+" <stable@vger.kernel.org>,
-	Xuewen Yan <xuewen.yan@unisoc.com>,
-	Christian Brauner <brauner@kernel.org>, jack@suse.cz,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	cmllamas@google.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-	jing.xia@unisoc.com, xuewen.yan94@gmail.com,
-	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, lizeb@google.com
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <2024121705-unrigged-sanitary-7b19@gregkh>
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com>
- <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
- <ZxAOgj9RWm4NTl9d@google.com>
- <Z1saBPCh_oVzbPQy@google.com>
- <CADyq12y=MGzcvemZTVVGN4yhzr2ihr96OB-Vpg0yvrtrewnFDg@mail.gmail.com>
+	s=arc-20240116; t=1734449748; c=relaxed/simple;
+	bh=FpD5UynaL06QwYdt5J8Ahluf6VvLqe4g4Ov9ExwUZ/Y=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=uR1kchNJLKYJb6CY9idXGKrGk3HClryGNy4v6HfBYD7v/ncdyKm1Qov1MO/MAkskJ1yp3a/C6CThaL4erbcFmsxTQOxsk71dM0Yc1ezwF0m0n+bX4fmhWx+jx47zO5o4EEL1qeKX5JXzg6IfNFOh2/m2IfAfiJXuoUDulTM09nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHESXQ42; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-467a3f1e667so29295971cf.0;
+        Tue, 17 Dec 2024 07:35:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734449745; x=1735054545; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LZqRohsxgDqGeXZWJE1OO5VcgJ9YhttJf/CwCIN3nfg=;
+        b=hHESXQ42QBXUUE6/rQ0rjVDbiHaFwFSP7vUPzIw2JykGFn4SzK1jOjEDFLevhyiQGT
+         wEwEoq3uYUZxzDdoX9+Rrmn2KWHhprhmmT1zzz6ykmAgxrN2yLDEswMqNza0+hy8QjVZ
+         SpyB07pbo+mBT7PzpRcc4CRGrNdPvlS91+mNj/6+VT/9M+IJzB8UuK37QLkIsJdCjM06
+         dczBdQP6IALYJ0GjgKF3K48ZaqpRWeRnv8hI7jAP1hormE9mIkMeGN/70X8EbCMRwKo1
+         ArWWfnzT0wNrM7pJdtGSu5SNcjkwZgvwDtEwn/XgtrqBbBm2KmC/CdNzZ5Lu8x+BqU+p
+         73nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734449745; x=1735054545;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LZqRohsxgDqGeXZWJE1OO5VcgJ9YhttJf/CwCIN3nfg=;
+        b=LZbGcZ7iUvpULimscg+6ekiyXlRVOKdGggYXS9R/IZW+9riUd10m7LklKTsiL4f5kN
+         dqx1YMacgs20erM6sB1lh42if9UZZFOCJK82VDNHvuX/y2rytxTfpxD3hehqbD2tmRni
+         o+yNASoTyUb09uRwh69I2T7CeMvdVL8QRdcqQTFu9QYDHLXZ3L5kTuRYLE/JKcCMKSmg
+         H4oH368YKcu8p8gUS/2pPcWnCps7lXRNPVIiPbo9S2+bfXosQOw8O2+Cm72PQMeGhK61
+         5HfI1R903ynBkkRpKOgE9LYUQiIQ3DLXd7rD8EgkCIF9He6behKPegxSct/dyWKsNXN/
+         qUtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCtsv+qulzEXV124Q5a9D7l4rQUHQTe2bSL4zPXWN1Knbyq5eUUrlKKpBg73kdGUTo9Dx8ctVkGXQSC+OmRs8=@vger.kernel.org, AJvYcCVjqwo/BdQBaJK90gsx7tuGaNMd2QmE1KKwgA04Y7E7USP1XvVl2PmaLovIlqJV1RXizpyD5c6G/U7DyV/w@vger.kernel.org, AJvYcCX/lmd8HWY3VojiNkOxx0hlFq2M5tpJI3UgOyZLGWkKB2zFAu4l8AEXxjkH5+AobcxdNt6K+eX9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIHNjyBxUhs3iDaNnOcdCCtOUNU8js5gXyDJ89qi6iXikoT15P
+	ebKv5bALP4UHUsWtOeyG5PU/utc68QThghCnoYp1PUP7NABb0mv0
+X-Gm-Gg: ASbGncslWptjJzQLo7GqhAkkJree7jA5EB4GXhUwzN8MT6/+dM8cghObVlpvA72gkDe
+	Zn7mJ/jVTuvUKH/lChKF5/z5AOfLuCSRYiRLNtnaUamldusJrrIbUaypg1Vc2najujIoNaAyWkw
+	UQME2GUW04nrHB2HB/Hz7ho1sZOQNz2+DSsiGdA9iyofILR+BU5D4FVFOCmw6yxiM09amHD+08o
+	1vBDtjFXlliWGPKXIWSSYKMJLW7kci6e/8m6dnA/TZywtnuLamN1uxfgGlLh0u9Q3Er19Poz59L
+	zNaQ8uiHMipQ28pFIG8M20GD3P8V23ojJQ==
+X-Google-Smtp-Source: AGHT+IGafvON1jQeIMfI3YBLEkTEeE7VOYrLT9uhcSvM20sGMVMJLGWZF8Rf0bWihbamUSQ4TcGjJw==
+X-Received: by 2002:a05:622a:144:b0:462:fef1:e1f5 with SMTP id d75a77b69052e-467a578bfb4mr293351011cf.26.1734449745250;
+        Tue, 17 Dec 2024 07:35:45 -0800 (PST)
+Received: from localhost (96.206.236.35.bc.googleusercontent.com. [35.236.206.96])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7047aa6f8sm327843685a.25.2024.12.17.07.35.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 07:35:44 -0800 (PST)
+Date: Tue, 17 Dec 2024 10:35:44 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Kees Cook <kees@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <kees@kernel.org>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ Simon Horman <horms@kernel.org>, 
+ David Ahern <dsahern@kernel.org>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Joe Damato <jdamato@fastly.com>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org
+Message-ID: <67619a5029d2c_a046929426@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241217012445.work.979-kees@kernel.org>
+References: <20241217012445.work.979-kees@kernel.org>
+Subject: Re: [PATCH] net: core: dev.c confirmed to use classic sockaddr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADyq12y=MGzcvemZTVVGN4yhzr2ihr96OB-Vpg0yvrtrewnFDg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 17, 2024 at 09:30:51AM -0500, Brian Geffon wrote:
-> On Thu, Dec 12, 2024 at 12:14 PM Brian Geffon <bgeffon@google.com> wrote:
-> >
-> > On Wed, Oct 16, 2024 at 03:05:38PM -0400, Brian Geffon wrote:
-> > > On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> > > > On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > > > > Now, the epoll only use wake_up() interface to wake up task.
-> > > > > However, sometimes, there are epoll users which want to use
-> > > > > the synchronous wakeup flag to hint the scheduler, such as
-> > > > > Android binder driver.
-> > > > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > > > when the sync is true in ep_poll_callback().
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > > > Patches in the vfs.misc branch should appear in linux-next soon.
-> > > >
-> > > > Please report any outstanding bugs that were missed during review in a
-> > > > new review to the original patch series allowing us to drop it.
-> > > >
-> > > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > > > patch has now been applied. If possible patch trailers will be updated.
-> > > >
-> > > > Note that commit hashes shown below are subject to change due to rebase,
-> > > > trailer updates or similar. If in doubt, please check the listed branch.
-> > > >
-> > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > > > branch: vfs.misc
-> > >
-> > > This is a bug that's been present for all of time, so I think we should:
-> > >
-> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > Cc: stable@vger.kernel.org
-> >
-> > This is in as 900bbaae ("epoll: Add synchronous wakeup support for
-> > ep_poll_callback"). How do maintainers feel about:
-> >
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Cc: stable@vger.kernel.org
+Kees Cook wrote:
+> As part of trying to clean up struct sock_addr, add comments about the
+> sockaddr arguments of dev_[gs]et_mac_address() being actual classic "max
+> 14 bytes in sa_data" sockaddr instances and not struct sockaddr_storage.
+
+What is this assertion based on?
+
+I see various non-Ethernet .ndo_set_mac_address implementations, which
+dev_set_mac_address calls. And dev_set_mac_addr_user is called from
+rtnetlink do_setlink. Which kmalloc's sa based on dev->addr_len.
+
 > 
-> Dear stable maintainers, this fixes a bug goes all the way back and
-> beyond Linux 2.6.12-rc2. Can you please add this commit to the stable
-> releases?
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: netdev@vger.kernel.org
+> ---
+>  net/core/dev.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> commit 900bbaae67e980945dec74d36f8afe0de7556d5a upstream.
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 45a8c3dd4a64..5abfd29a35bf 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -9183,7 +9183,8 @@ EXPORT_SYMBOL(dev_pre_changeaddr_notify);
+>  /**
+>   *	dev_set_mac_address - Change Media Access Control Address
+>   *	@dev: device
+> - *	@sa: new address
+> + *	@sa: new address in a classic "struct sockaddr", which will never
+> + *	     have more than 14 bytes in @sa::sa_data
+>   *	@extack: netlink extended ack
+>   *
+>   *	Change the hardware (MAC) address of the device
+> @@ -9217,6 +9218,7 @@ EXPORT_SYMBOL(dev_set_mac_address);
+>  
+>  DECLARE_RWSEM(dev_addr_sem);
+>  
+> +/* "sa" is a classic sockaddr: it will only ever use 14 bytes from sa_data. */
+>  int dev_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
+>  			     struct netlink_ext_ack *extack)
+>  {
+> @@ -9229,6 +9231,7 @@ int dev_set_mac_address_user(struct net_device *dev, struct sockaddr *sa,
+>  }
+>  EXPORT_SYMBOL(dev_set_mac_address_user);
+>  
+> +/* "sa" is a classic sockaddr: it will only ever use 14 bytes from sa_data. */
+>  int dev_get_mac_address(struct sockaddr *sa, struct net *net, char *dev_name)
+>  {
+>  	size_t size = sizeof(sa->sa_data_min);
+> -- 
+> 2.34.1
+> 
 
-How is this a bugfix?  It looks like it is just a new feature being
-added to epoll, what bug does it "fix"?
 
-confused,
-
-greg k-h
 
