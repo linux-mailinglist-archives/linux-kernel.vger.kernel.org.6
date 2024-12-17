@@ -1,109 +1,153 @@
-Return-Path: <linux-kernel+bounces-449684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852979F54A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:44:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381DE9F54AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:45:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816BA188FA0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77382188C44D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947A11F9F5E;
-	Tue, 17 Dec 2024 17:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2981FA25C;
+	Tue, 17 Dec 2024 17:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJbB4Giy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RyhdRXmt"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFDF1F7568;
-	Tue, 17 Dec 2024 17:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A09142E77;
+	Tue, 17 Dec 2024 17:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456876; cv=none; b=f6I0mS4xpmmblCAZKZBLvRL8Zo5Usvm3XbXwKnEmRRPF83Pzb0SBDfjsPhtff0jaCZD63bh63K79f+/7Z2J0N8cx7ujaY+0foOTrz9jt8laFULqooISX9TKc6mM/mVwv7YsN3r68JiVWFpb21PP2OT5AqBS5XBBfBr6nj6UQ1i0=
+	t=1734456986; cv=none; b=QhRyG6oSsUgLgd8bFnE9b2xvBpuQcF7A7U5YQZSrREQ3WRC+uq3hU5ZD4b4Z7VvcPSANw0w/6x8mVB/5xRpt3GCfYzwxiUba1B6ZKm109jIYzmrH93/e+oauzDazVtRxn3AFxm8ZEPgbKrevPCao9RyurW8I9oKUxDJS4uPqKEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456876; c=relaxed/simple;
-	bh=dbq7HRtwAuOWYe5ZaidZLWtsSdiMIrwx4jElfMk2ARE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9hZ/CO0EO4zcJYwTiz7UCxrIF1dh3fsLV9D/nIdSf+s6hA13lKb4bNw+VRdNghpfmLs+pTH5fgnpf4gsdqNdWJ+X4eOX3LjPMEE55WsHHrCR+Zd5o6wSfiTKEPG3hgF31uZLtVIZjNmoF2IIJP6wCZR2JahX4QH0QICoO7hg2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJbB4Giy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B153C4CED3;
-	Tue, 17 Dec 2024 17:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734456875;
-	bh=dbq7HRtwAuOWYe5ZaidZLWtsSdiMIrwx4jElfMk2ARE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJbB4Giyw0ORE0BgfGD0ZHSRO0iXESRcAdMzAJbq1KRFw/D+h6giknSBbW9GdwRso
-	 WxuRcExuLtBeKI4cQVwz+paA5r52feGdpc1dQU48wdmf236bVp9hh9KL+9m5/ftKlc
-	 wkoaVbxCwcFZDqh88tLzPeplCe4+FDMB598RmX9B6varI4UZZxcLynAsFcTSybsohV
-	 rruP1bt9ZfFt9ikxp88w36+P43T9qvYgat6Uf8g+I+hycmDWXTpOuU5lUisSNuZlqj
-	 TfgQufN0v5eVKHYlEVccRN0TvqRjkRMZZfY9357Wt+LKBqFfhPYAzWDfP4lgaiMmnA
-	 mANNfZWT7krlw==
-Date: Tue, 17 Dec 2024 18:34:33 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Maarten Lankhorst <dev@lankhorst.se>, linux-kernel@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-Message-ID: <20241217-marigold-cat-of-influence-64bcfa@houat>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <20241213-proud-kind-uakari-df3a70@houat>
- <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
- <20241213-gentle-glittering-salamander-22addf@houat>
- <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
- <20241217-meek-bullfinch-of-luck-2c3468@houat>
- <a69a3500-be17-4899-bdb9-c6a63bf8dc81@lankhorst.se>
- <Z2GwpOQDVshpv-ml@slm.duckdns.org>
+	s=arc-20240116; t=1734456986; c=relaxed/simple;
+	bh=NWpaq/Cdy/q4UInACNFF0HgHeiwmT+i5v9jil1FxoyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sllm3AloRhA8JsYfNT3q38u0bOjl8L1MB5hb7SDjJZiW7GD2WlrGMQndUuxBdHgr7CC7e7Jh1UChhKjTcraN5pUWrQxfPZJQDoKFwzvnM8MV0jrhGQvatp8TE6JydzYQw0SEdSz9ycPmUKNDZilJGr6lL6znn3wzEN09/wiH1Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RyhdRXmt; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHD0UoA028122;
+	Tue, 17 Dec 2024 17:35:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=3Cze64ZkJ4Cz2gsZweHybIIHWwAMYbRAejZdS1uXH
+	ZQ=; b=RyhdRXmtfU1PxDNu+dAtHsA4dikP/urhvZ1aDjrJ6M7CFpYB/RP/37Qqi
+	Uf9kf46bcPZ1EjYDGPVq8nx6BHqF51PF5RZl4hiQUKp4GO32W9zWn2fWppezczt1
+	A0rexEJSNsd7dSOZlrxIVfmrfXKKdmhSIPmus9MYFupa9UvFs4N7SFwqMH0ktLJf
+	jagbMLWsdZh6MTQa3/2t/3IAopKKCnRnkbyt4ESeQpbvF0Wd9cZVf4ljHF2CC2bE
+	jO27X7mj9hKO1WIIDKV8n+n4ZwkZIs5Hm4PB3Ebz8hPHCNWGCLk7sAg4w624DX/R
+	Uv3cho6gYF1TqkwaqjA/2vV28QQmA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43k9t6heeu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:35:44 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BHHQ0jN028818;
+	Tue, 17 Dec 2024 17:35:43 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43k9t6heeq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:35:43 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHEs3sY029321;
+	Tue, 17 Dec 2024 17:35:42 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hmbsm34m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:35:42 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BHHZfSZ25887300
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 17:35:41 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1747A5805D;
+	Tue, 17 Dec 2024 17:35:41 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B09A45805C;
+	Tue, 17 Dec 2024 17:35:39 +0000 (GMT)
+Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Dec 2024 17:35:39 +0000 (GMT)
+From: Ninad Palsule <ninad@linux.ibm.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        eajames@linux.ibm.com, jdelvare@suse.com, linux@roeck-us.net,
+        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
+        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
+Cc: Ninad Palsule <ninad@linux.ibm.com>
+Subject: [PATCH v4 0/4] Add support for Intel CRPS PSU
+Date: Tue, 17 Dec 2024 11:35:31 -0600
+Message-ID: <20241217173537.192331-1-ninad@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="c6tq2wqscpnuxkrk"
-Content-Disposition: inline
-In-Reply-To: <Z2GwpOQDVshpv-ml@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QWx7H6vTap48emznpRAQAtERyGJSso6k
+X-Proofpoint-ORIG-GUID: AEW_zZyOLNc4vOhz9gVc1LmegMtQ296D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412170134
 
+Hello,
 
---c6tq2wqscpnuxkrk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-MIME-Version: 1.0
+Please review the version 3 of patchset.
 
-On Tue, Dec 17, 2024 at 07:11:00AM -1000, Tejun Heo wrote:
-> On Tue, Dec 17, 2024 at 03:28:50PM +0100, Maarten Lankhorst wrote:
-> > Now that all patches look good, what is needed to merge the series? Wit=
-hout
-> > patch 6/7 as it is a hack for testing.
->=20
-> There were some questions raised about device naming. One thing we want to
-> get right from the beginning is the basic interface.
+V4:
+---
+  - Improved commit message.
 
-We decided on the previous version to use dmem and I believe this
-version has switched to it. Do you have any concern still?
+V3:
+---
+  - Improved documentation as per suggestion.
+  - Fixed issues in the probe function.
+  - Add ACKed string in the commit message
+V2:
+---
+  - Fixed documentation issues.
+  - Added pmbus revision debugfs file in the core
+  - Remove debugfs and read word from crps185
+  - Improved commit messages
 
-Maxime
+Ninad Palsule (4):
+  hwmon: (pmbus/core) Add PMBUS_REVISION in debugfs
+  hwmon: (pmbus/crps) Add Intel CRPS185 power supply
+  dt-bindings: hwmon: intel,crps185: Add to trivial
+  ARM: dts: aspeed: system1: Use crps PSU driver
 
---c6tq2wqscpnuxkrk
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../devicetree/bindings/trivial-devices.yaml  |  2 +
+ Documentation/hwmon/crps.rst                  | 97 +++++++++++++++++++
+ Documentation/hwmon/index.rst                 |  1 +
+ MAINTAINERS                                   |  7 ++
+ .../dts/aspeed/aspeed-bmc-ibm-system1.dts     |  8 +-
+ drivers/hwmon/pmbus/Kconfig                   |  9 ++
+ drivers/hwmon/pmbus/Makefile                  |  1 +
+ drivers/hwmon/pmbus/crps.c                    | 74 ++++++++++++++
+ drivers/hwmon/pmbus/pmbus_core.c              | 13 ++-
+ 9 files changed, 206 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/hwmon/crps.rst
+ create mode 100644 drivers/hwmon/pmbus/crps.c
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.43.0
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2G2KAAKCRAnX84Zoj2+
-dhcUAYDu7JUd06yF9dtpAtSY2xgUUyKiBfittjG2LbIT1/c9CnioooqRQDaKdWa2
-o3i7wn4BgIG6Ni/zuzXo1ifLLIxisPArPduBae8x5MlNmXKB8A3GnNvPKtItE9PR
-FXyNEY9XAg==
-=mI6D
------END PGP SIGNATURE-----
-
---c6tq2wqscpnuxkrk--
 
