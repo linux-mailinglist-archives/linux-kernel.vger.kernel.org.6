@@ -1,105 +1,71 @@
-Return-Path: <linux-kernel+bounces-449076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC029F4965
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 278169F4967
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F30A188495B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7761188B3E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7331E8836;
-	Tue, 17 Dec 2024 10:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BIatcVsz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD781EBA14;
+	Tue, 17 Dec 2024 10:58:39 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32F81DFE0F;
-	Tue, 17 Dec 2024 10:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FA21E0B7D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734433084; cv=none; b=oQzUBFfJgZXSluyUwc5kOT2qJSb4VYcfblBYCAH1mrC5wPc80pDPQQo4+8xRmwLYRZKj1vt1t3Q5ws4HhsXx6f5iip9Y5DF7T05KmvGg7dpZoudKpucCnEWkx1iaJN4cCiLHV55BmlLzvX9VLVtmW66Sy0+7K9/EJDUYRZXSpd0=
+	t=1734433119; cv=none; b=edTe5LQEyhPjJuQI/F4OAzSuECW7TFFc/j3Ef/BxMxOEjoLOcyQl27kF1110R0YAz6yssC/W+wSpgdWPV18lhj5HK0ISiMaE3BubsUTQZiUH75WzWr7BZfgCqrnfOgk5OvU5mGalX9uJcwUoJbOrW1M0t5WFBBc4AVEcJGHdSPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734433084; c=relaxed/simple;
-	bh=Ynn3KEd6VXbperLx0etyV2GIzi+vg12blUgv7h59RDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I98XlxMeAxQlOkAPCIuBvpkWgkkA8YoJr4F4UhNcZS88QMQgd99nFyS8v1G0EIcWHd0PRzT32+BAdlwDmQc3KSvYcyaQ1bkM1SDIu67cRvdFj0sWWOJHiBfS8B/IyEr8wSKxN7gxzYIAxYKUsKiEG8ZC4FIdUkHkM5S1lWIMr+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BIatcVsz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8177A40E0286;
-	Tue, 17 Dec 2024 10:57:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gaNELxTXkS_1; Tue, 17 Dec 2024 10:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734433076; bh=L8mLTUS2CcBsfFYSbVwZzOGQMdLZJ/dkkA/G9b1qC3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BIatcVszqXOxCFQ8HQZw4wbZSRE7rgyeGlcUrFSbg8pYL5foPVJ+zzY/G7WCgdtZi
-	 dO+uOgoFwBA4kr3tq1slmerZfvq9gTRNO/OCVlfO2TvvebuA2IpoNIlfd0umCnb3T4
-	 4hf3tWhvIgJ7RFredNbiq+uWkLRDi5GCGK7vPc0In8MsQMzGl8oqxKv+N1oNiuqa+Z
-	 /uEUcHzNO+rzKBMrl1RD06Znx5wQUVL2Xe/XYJG9ONFI8thJHSnXm6m6XNyHIOclIJ
-	 KecnVQ1jxPWA45jtaO4XeecbkEb4mFBb8km+9zVHqTXjSji0p2XP2rnNwNfS29kY1d
-	 oZg9p0d4HE2IMjC8/OkwyYk/7vY6wbPA2IoRN4To9svpCqQW+qs12xqiBF4S8a4wI4
-	 0pIFjRqY+vpeQv6OCC3eYoM4bxURpIv1ppkvhFTM6ommsLmJzFOhcm9FQqN58uAxD2
-	 xaNdzLpJD4xqdVjOx6EutNq+zYZFQqVzMQHvgO4LKA/Oj/KeTAb5XDM9Sg9NVBaGzs
-	 c1rcJYI7dUMYQ14lusXUQ/7G8UGW7Pa/SVV+RRzxP+q+GjHfDf5p2QxLQueEm18pGq
-	 fym9A38o3vR0JM20aVdyixDyWhYkc5pw8TQoXeZMXNt0EfYVmmZNwuhu/+LDNrqjcl
-	 4TqpakgIeGlqgpkCo34rWT1Q=
-Received: from zn.tnic (p200300ea971f937D329C23FfFEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:937d:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 413BC40E0288;
-	Tue, 17 Dec 2024 10:57:45 +0000 (UTC)
-Date: Tue, 17 Dec 2024 11:57:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v15 06/13] x86/sev: Prevent GUEST_TSC_FREQ MSR
- interception for Secure TSC enabled guests
-Message-ID: <20241217105739.GBZ2FZI0V8pAIy-kZ8@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-7-nikunj@amd.com>
- <20241210121127.GBZ1gv74Q6IRtAS1pl@fat_crate.local>
- <b1d90372-ed95-41ce-976f-3f119735707c@amd.com>
- <20241210171858.GKZ1h4Apb2kWr6KAyL@fat_crate.local>
- <ff7226fa-683f-467b-b777-8a091a83231e@amd.com>
+	s=arc-20240116; t=1734433119; c=relaxed/simple;
+	bh=y8z1kwBJCvbTP4SyoXW87BufV8wvbYIzm1ZCV/6Rj+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WzS3IeG2bVCJ1kCOX+85YR+0mFp9eUs/KzhJVBnPnL1JWFYaa4AkwsMLUEzkcAVPzDUgULly9du5x96lv1b5jv71RKq/Ie14CulFHgicT4UFILb2WlbVcYHiGOl8b8NUQxpT3WKJRR87K0nV4rdC/bwTsNsi3zw4jatTXXDkUFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.172])
+	by sina.com (10.185.250.24) with ESMTP
+	id 6761594D00000F0F; Tue, 17 Dec 2024 18:58:23 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 67580610748259
+X-SMAIL-UIID: 81ED21B85121424D8371BDA0E718E341-20241217-185823-1
+From: Hillf Danton <hdanton@sina.com>
+To: Liju-clr Chen <liju-clr.chen@mediatek.com>,
+	Jerry Wang <ze-yu.wang@mediatek.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 15/25] virt: geniezone: Add memory pin/unpin support
+Date: Tue, 17 Dec 2024 18:58:12 +0800
+Message-ID: <20241217105814.183-1-hdanton@sina.com>
+In-Reply-To: <20241114100802.4116-16-liju-clr.chen@mediatek.com>
+References: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ff7226fa-683f-467b-b777-8a091a83231e@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 10:23:01AM +0530, Nikunj A. Dadhania wrote:
-> @@ -1477,19 +1480,13 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
->  	case MSR_SVSM_CAA:
->  		return __vc_handle_msr_caa(regs, write);
->  	case MSR_IA32_TSC:
-> -		return __vc_handle_msr_tsc(regs, write);
-> +	case MSR_AMD64_GUEST_TSC_FREQ:
-> +		if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
-> +			return __vc_handle_msr_tsc(regs, write);
+On Thu, 14 Nov 2024 18:07:52 +0800
+> From: Jerry Wang <ze-yu.wang@mediatek.com>
+> 
+> +struct gzvm_pinned_page {
+> +	struct rb_node node;
+> +	struct page *page;
+> +	u64 ipa;
+> +};
 
-Now push that conditional inside the function too.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+To avoid inventing wheel behind locked door, feel free to use page cache to
+keep pinned pages in shape.
 
