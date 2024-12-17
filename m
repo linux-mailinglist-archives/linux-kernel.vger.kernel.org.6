@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-449854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1259F56F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:38:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F849F56F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:40:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464F71882FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370071884A3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831BF15E5D4;
-	Tue, 17 Dec 2024 19:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195C81F76C7;
+	Tue, 17 Dec 2024 19:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ETzIqN96"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0YYqwDk+"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E4618A6DB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4087315E5D4
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734464301; cv=none; b=Tww/MMX5nAxfWbny4xHT5VFVIfjTPXJDFOCUby51hOIwdWJs3bpsc/N4KY6AjhuLsMYbNeYy1u6sPbF+5cmQiTyK6PZUuNNy9/MMyV5eTCXlCeZ4qgFxCGCF+eapMcRi3BnJUOqJDgD0F9PCm+GyU9QKxxiwu9yZ1wOGFp+6XKQ=
+	t=1734464414; cv=none; b=hBv9v6z7ySd6zaACodJ5ZQQYp1qZfy1Do88dAHzuHStExz0+zJwrGNwpqD8do32spPpwXQDII6gYcqxcCOSdIvsbXaMBT9oP8qMsRAQhaSxOx8jFSyaj5CmCK7K31RIaUctLyUsh19qkzDRCV4U9ZLYcfO8PMrE0simYZGYLAgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734464301; c=relaxed/simple;
-	bh=BlX5PFVtVorWrjZZejf5sVJZU99ayY7KutQE4SAHvtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXIRX+7H1xgjmjY8poZPmsZGbCi2UDLfEamuDEMI1ZdOjLs69HFHQ1veyjCDZrGJ6loGPy0qmfbcrGhoj3EX3j7Z10jobpTeBvTKccnWfe0CI4t6MmqKrOKR0WlKJjL19H0+iJtRwqgwzeyWXyW1MvGQ4mzyPJ6CmARPtnBrv/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ETzIqN96; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so58446a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734464298; x=1735069098; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GoM1B1YX2SDxMKP/fkuxJP48vkpnRndLUKOmCSwzkQ8=;
-        b=ETzIqN96s1gLC1ysTJgvZg8WRBd2/5+DySlrtTUnbPEXn7kGZLo35MKpkqrjslT8F+
-         PAvPx8Rs03AQRolhwU5/lfRXp1nntmcZbxK6qLnxCe+rDk8wRERx2y3NfFGIfrQx4yII
-         +z+ghfZBjdmQ34sy7KI5w744ouTTtXCKbygVc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734464298; x=1735069098;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GoM1B1YX2SDxMKP/fkuxJP48vkpnRndLUKOmCSwzkQ8=;
-        b=Xk+uFIIyPA8xCIabGqG4v4+DlOoGZM2LTAp5H8A0Z/mzUoEoCZV21hNXQSh0VRv8F/
-         0q/WaQ3NghBukZEr4ALrkzADvANZ9SQTdQoxFKsfB5Tg2DzjREeq/durIhT6BJKVmzJ+
-         2Syf2xfxiXZZQOHgLUfS428Z5QZEPBGNwFEcGZvnpUYpcCaSMO0e/Dq3LU7Uy2eyNV2X
-         xu2Fe2bVH2FFtyMwAgr9zvaimADezpidWF7e/lj3+28IoisAQOADw91Uly9PqmGe7AtM
-         o6+m8sOulZjNsf/MUeaHK7xhFaWiDSq50Cwqi1lxqfywu5iWTaxCSyck4kuNn8Tc9t7E
-         RZ0Q==
-X-Gm-Message-State: AOJu0YwnC5ygC79jLB+NHAiqRoXWz1DotxkLTCP3HAQI3Xg87v0s6/u9
-	yAYBHg47sA2Ki8taFopq6N7Bfu8W4qv+uyxlRBEKQDnTd6iPDf/WxvHJbufpDxS7VCYTFUTOOg9
-	lvSU=
-X-Gm-Gg: ASbGncs0Bvm4vEy+CH5PzHFvNMszZXG2P3JL0ifUMjun06RPlR03sznxE8v9nRQJ4XQ
-	RHaGqwNLg+SeKtVQQ2knoO0oRs93H7h144tmzAr0oW+IjFFzIPHKjR+eHyaI/p+1Ir7vajEXlBX
-	34JQRGHGpzY1OqoDQbalxJZ8/+cM3HgaBYBmAjKuRPIHypzuxloYxPEritI9unSRKdzBb18aOla
-	CdGCh+X0pr48byjmB5Bj3guYFEyFyW1lF9i4NSzpXM1CBv93Q1oUT1oG+y9rgTKK+Ky55BFkm2/
-	t/j3/d/KAHwWvSJ7RY65nRhXxwcv3aY=
-X-Google-Smtp-Source: AGHT+IE8YjYu3kbP5Gx9Idl1DvkSQve8Lh39Q6Uf9lpxrmcGb+LXaAr47pi8hiD+IYGCsRpclDEInQ==
-X-Received: by 2002:a17:906:328d:b0:aa6:50ee:d44c with SMTP id a640c23a62f3a-aabf43b77b1mr2387766b.15.1734464298152;
-        Tue, 17 Dec 2024 11:38:18 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab963b267dsm473772166b.179.2024.12.17.11.38.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 11:38:17 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa692211331so6793566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:38:16 -0800 (PST)
-X-Received: by 2002:a17:907:608c:b0:a9a:6c41:50a8 with SMTP id
- a640c23a62f3a-aabdc8bd564mr467326366b.17.1734464296273; Tue, 17 Dec 2024
- 11:38:16 -0800 (PST)
+	s=arc-20240116; t=1734464414; c=relaxed/simple;
+	bh=+ZsH4UeSBPSyKG8vh5YPM5ov0AXNq2mnAkodnwhopNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BFarrp8wrYOvP6P/7IjiCf5qOeXrVsUxw0wKlCFxCmv35OgtUFGrIFrd3jtdyQOuefBmve/Seev/r4CqFPXhPS8MSv6TPGJf6lPqwXmaaIEIwidEhbH6zIDO7JsLYrAJ+6a1Jvxsi2O9rac4LQdAT9ak0JODuuSGruY4VYZnkTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0YYqwDk+; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 90A2C2C02A5;
+	Wed, 18 Dec 2024 08:40:08 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734464408;
+	bh=b5KDmLExP657TqKNx6vXyelVH528QSvEPPmisl7tMMk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=0YYqwDk+tA79pSTSI8TkrlCe2fvoAeEA0oPUgaw9+VBRFyu5Y3PK+7lBDbPIeTBqO
+	 FMRh4DhG8ijkvW4tl+n5dUaZDujpTi1y+yGG1ya+MMLdtjWuMeBNiwoHZ80E/pyupd
+	 cpRltHrqByT/w/t/bsmGPVcX7g0SsLAsomR+2a06MTrmwn6yp9y0MQkZMCfUkqHO8+
+	 /5E4MXsdRP0B1tc1d4hFHrmqrl4J2KjAj2YUYUN0PUbF1dQxlQXKJK51h5V1472q4S
+	 mmhbu4l0AjuQqI/AMwApFTomQ1l3PJnR6Lr1M6WA2OkUDh/GUUFEYVS1PwiOa4wsHW
+	 0aWWR5OJPcXaQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6761d3980000>; Wed, 18 Dec 2024 08:40:08 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 6A83A13EDC3;
+	Wed, 18 Dec 2024 08:40:08 +1300 (NZDT)
+Message-ID: <c656bd3f-4ad0-4c2b-8d91-1c81f7e41c52@alliedtelesis.co.nz>
+Date: Wed, 18 Dec 2024 08:40:08 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217173237.836878448@goodmis.org> <20241217173520.314190793@goodmis.org>
- <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
- <20241217130454.5bb593e8@gandalf.local.home> <CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
- <20241217133318.06f849c9@gandalf.local.home> <CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
- <20241217140153.22ac28b0@gandalf.local.home>
-In-Reply-To: <20241217140153.22ac28b0@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 17 Dec 2024 11:38:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgpjLhSv9_rnAGS1adekEHMHbjVFvmZEuEmVftuo2sJBw@mail.gmail.com>
-Message-ID: <CAHk-=wgpjLhSv9_rnAGS1adekEHMHbjVFvmZEuEmVftuo2sJBw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: smatch usage (was Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO
+ driver)
+To: Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
+ <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
+ <20241216164814.GH780307@kernel.org>
+ <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
+ <20241217103509.GO780307@kernel.org>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241217103509.GO780307@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761d398 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=NEAV23lmAAAA:8 a=yPCof4ZbAAAA:8 a=07d9gI8wAAAA:8 a=5yFChxMeTJAmNQc2H8MA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=e2CUPOnPG4QKp8I52DXD:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Tue, 17 Dec 2024 at 11:01, Steven Rostedt <rostedt@goodmis.org> wrote:
+(culled the cc list)
+
+On 17/12/2024 23:35, Simon Horman wrote:
+> + Dan Carpenter
 >
-> But instead, I'll replace the text/data_deltas with a kaslr offset (it will
-> only be exported if the trace contains data from a previous kernel so not
-> to export the current kaslr offset).
+> On Tue, Dec 17, 2024 at 10:47:10AM +1300, Chris Packham wrote:
+>> On 17/12/2024 05:48, Simon Horman wrote:
+>>> On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
+>>>> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+>>>> switches with integrated SoC. There are 4 physical SMI interfaces on the
+>>>> RTL9300 but access is done using the switch ports so a single MDIO bus
+>>>> is presented to the rest of the system.
+>>>>
+>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ...
+>
+>>>> +		if (smi_addr[0] > MAX_SMI_BUSSES)
+>>> Hi Chris,
+>>>
+>>> Should this condition be
+>>>
+>>> 		if (smi_addr[0] >= MAX_SMI_BUSSES)
+>> Yes. You are correct.
+>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
+>>>> +					     smi_addr[0]);
+>>>> +
+>>>> +		if (smi_addr[1] > MAX_SMI_ADDR)
+>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
+>>>> +
+>>>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+>>>> +			priv->smi_bus_isc45[smi_addr[0]] = true;
+>>> Otherwise it seems that smi_bus_isc45 may overflow here.
+>>>
+>>> Flagged by Smatch.
+>> Sounds like something I should start looking at for myself. Have you got a
+>> link to share?
+> Hi Chris,
+>
+> Smatch is here: https://github.com/error27/smatch
+> And my usage of it is informed by
+> https://blogs.oracle.com/linux/post/smatch-static-analysis-tool-overview-by-dan-carpenter
 
-Right - never export the KASRL offset for the *current* kernel, but
-the same interface that exports the "previous kernel trace data" can
-certainly export the KASLR for that previous case.
+Thanks, I did find the repo.or.cz mirror and 
+https://lwn.net/Articles/691882/ after I searched a bit.
 
-> Then, on our production systems, we'll save the meta data of the events we
-> enable (this can include module events as well as dynamic events) and after
-> a crash, we'll extract the data along with the saved data stored on disk,
-> and be able to recreate the entire trace.
+>
+> FWIIW, I run it usking kchecker on individual source files.
+>
+> I've also CCed the author, Dan Carpenter, for good measure.
 
-Yes. And if you save the module names and load addresses, you can now
-hopefully sort out things like %s (and %pS) from modules too.
+Odd thing is I can't seem to reproduce any error report on my buggy 
+code. I've tried `make O=build_smatch CHECK="~/src/smatch/smatch 
+-p=kernel" C=1` and `O=build_smatch ~/src/smatch/smatch_scripts/kchecker 
+--spammy drivers/net/mdio/mdio-realtek-rtl.c`
 
-Although maybe they don't happen that often?
-
-            Linus
+> ...
+>
 
