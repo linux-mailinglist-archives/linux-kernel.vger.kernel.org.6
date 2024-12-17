@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-449375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79389F4DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:38:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279ED9F4DF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5292189119B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EFEB1893471
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697CD1F5411;
-	Tue, 17 Dec 2024 14:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUO10q79"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9F1F5426;
+	Tue, 17 Dec 2024 14:37:56 +0000 (UTC)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38FD1F4E36;
-	Tue, 17 Dec 2024 14:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C821F542F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446234; cv=none; b=i3ym8xu9awoxU5mV7SbNs4GFZg/wqR/Sz2555Oe4ySLqylVrN35kZfShPriQMpanW5BDWDAQ5n/IKFbL423UedfdCDzF5MRHVW35jf9ta7tqotlF0L5a6N5oagIERQoTbRmmJ4p62Yr9crOQJkLagqjb6U1AXmFdSqqSKN5cqEs=
+	t=1734446275; cv=none; b=p2GABFRMDLvwFq7kikJUngV3AQ4CM/cyG172L5p8W6jjWsjDmxjA8cdRoGMhD8KEma7CiNeLRRqcOTTk1nywgLsDyu4Hp+3FKa8DpURkOWGtqoBTZiHmLTzIZiMfFO+PGPrBHJn2zMgdhavEEssfAhX0BTFMlcF2LcM4LUwVJbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446234; c=relaxed/simple;
-	bh=GywTV2qAgcFhXk8IHQVEsqe5xeo0ohrZrzfDWYXgVLc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PxN8qQHEFOrfvO/eFtX7JMFMZiB4WShzMhia1dpuvh0Cxa3lDK8oetbzFrcE/b6CIXBogdg3d0JpJZqLJs/uOM/2X/I77ZBmyGQOrT/9EiJv3NjR2Q+N/FwbOcrGdZ0S1E1qmOiD0EYwL5pKBTocCDFEXYv2lGGmp6/r2VPaL1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUO10q79; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B6CAC4CED3;
-	Tue, 17 Dec 2024 14:37:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734446234;
-	bh=GywTV2qAgcFhXk8IHQVEsqe5xeo0ohrZrzfDWYXgVLc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YUO10q79gCZTcc2EJQ94GASBJF9DPpaRA599I8dbdr294Yw9KHs6n5iTkXiutdgaS
-	 FHSQSwg/JmDWBe0ohckQvMbD/UAu0/beGqnLaBf3y5mfIcCBThc0bGbyjGd7dVLwGX
-	 bAYanSx+s8j9TXjK6H4nunikfKpH9QluAWiViBqEaHySjVWCMFpj34Zbt8yQEJnUw+
-	 IqZlq0kdDsQ6bZfHS9tpABlYn6T+edw8mbp1g2WnzROyoIHpW1vXczBUTrlKhjupt8
-	 HnyVEGbrv7BHKjN2dzvR4QW4AUn29ijPXGCcy7FtOBp8aYkZQ9ZZ2ImEebIOqySkrs
-	 pPc3F32LCR1kA==
-From: Leon Romanovsky <leon@kernel.org>
-To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
- zhenwei pi <pizhenwei@bytedance.com>
-Cc: zyjzyj2000@gmail.com, jgg@ziepe.ca
-In-Reply-To: <20241216121953.765331-1-pizhenwei@bytedance.com>
-References: <20241216121953.765331-1-pizhenwei@bytedance.com>
-Subject: Re: [PATCH] RDMA/rxe: Fix mismatched max_msg_sz
-Message-Id: <173444623177.282433.16423484582962298298.b4-ty@kernel.org>
-Date: Tue, 17 Dec 2024 09:37:11 -0500
+	s=arc-20240116; t=1734446275; c=relaxed/simple;
+	bh=uqsbZet3jjyzWXtNmIO9OuuOe2QEQ4lIaSY05B1rLLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L4WpjdKyirkolXh+VHuHDCe6Sm8k+eky0tV4H4r28k8x0dAEiYxD0inZMUFWU5bZye5a/naTO2QVnrzEOSFiP1CzCshOQL/gIHz0qYAzHDYtXxwGSXulOpTbvsuUu17toR/VK1jqFtUPnW66Jno0raOBr2YXbC2SEKzO4NS2eC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:43e0:bbcf:34a4:f7a0])
+	by albert.telenet-ops.be with cmsmtp
+	id pqdh2D00R53u7h606qdhJB; Tue, 17 Dec 2024 15:37:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tNYhd-001XtD-VX;
+	Tue, 17 Dec 2024 15:37:41 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tNYhh-00CHWN-Ao;
+	Tue, 17 Dec 2024 15:37:41 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Mark Brown <broonie@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] firmware: imx: IMX_SCMI_MISC_DRV should depend on ARCH_MXC
+Date: Tue, 17 Dec 2024 15:37:40 +0100
+Message-Id: <28f88e536cab0abd5712787350b012bb0f1eacb5.1734445715.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
 
+The i.MX System Controller Management Interface firmware is only present
+on Freescale i.MX SoCs.  Hence add a dependency on ARCH_MXC, to prevent
+asking the user about this driver when configuring a kernel without
+Freescale i.MX platform support.
 
-On Mon, 16 Dec 2024 20:19:53 +0800, zhenwei pi wrote:
-> User mode queries max_msg_sz as 0x800000 by command 'ibv_devinfo -v',
-> however ibv_post_send/ibv_post_recv has a limit of 2^31. Fix this
-> mismatched information.
-> 
-> 
+Fixes: 514b2262ade48a05 ("firmware: arm_scmi: Fix i.MX build dependency")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/firmware/imx/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks!
-
-[1/1] RDMA/rxe: Fix mismatched max_msg_sz
-      https://git.kernel.org/rdma/rdma/c/db03b70969aab4
-
-Best regards,
+diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+index 907cd149c40a8b5f..c964f4924359fcd3 100644
+--- a/drivers/firmware/imx/Kconfig
++++ b/drivers/firmware/imx/Kconfig
+@@ -25,6 +25,7 @@ config IMX_SCU
+ 
+ config IMX_SCMI_MISC_DRV
+ 	tristate "IMX SCMI MISC Protocol driver"
++	depends on ARCH_MXC || COMPILE_TEST
+ 	default y if ARCH_MXC
+ 	help
+ 	  The System Controller Management Interface firmware (SCMI FW) is
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.34.1
 
 
