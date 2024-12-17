@@ -1,165 +1,173 @@
-Return-Path: <linux-kernel+bounces-449382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1129A9F4E1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:42:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AFD9F4E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB9BD7A5A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1D3188762E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D351F63CA;
-	Tue, 17 Dec 2024 14:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXZIool/"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873C11F543A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407FC1F6674;
+	Tue, 17 Dec 2024 14:45:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B769B1F6666;
+	Tue, 17 Dec 2024 14:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446523; cv=none; b=DvKfWTPoK6JV7pAGrvKw+qpCMQf159NofDazNoFzEvtojXPZSixi0ZRTadazdoYvCQSazhZTjkyjy4uuez34MsMtLQ0rSJSlM1T+S1w51D2OazXiEwYP/wfQMcROBuljToq+2YttVEXeeD7TvY/aIByF94LrPFTkZvBkb7YtbHk=
+	t=1734446736; cv=none; b=mwv68H2vkcy/sXwClqiaJNWMNfP9c+yPArEQ8JdeUj5qXBviG/i84REDpQCao378Pljlf8YCHXvQnKyNwvmXVfd+YIylypakEzQDZ9e8Yhym+By5+TzFTlaUQ6KtgrCckF0UkEYjO6vchGi8NFCrCPlXFem3GNka+cU3LcL4mq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446523; c=relaxed/simple;
-	bh=IduhPnhYDH1MDPrUhaN7y0qRs3lIO/NMag9SCbU6GdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZphSsy23+X/6fcdX6c7Hia5Nxb+1HN0WcS6Pg8VLb2ng2WSCNAxqSbJzV0fXa5PZcEj5s8HF7ycbucFvgmdokmK3zq6aOPCLjHfdGX13TBYzQIkiLVk+bmEFWupwlfe8cdmAOm9Rh6QQ+r2wJdLuafs3ZhB4/O432UwPefpvNRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iXZIool/; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361a50e337so37892375e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:42:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734446520; x=1735051320; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NkDgX86vllpaHSZlaZCU7Cun96tz+XUmIPtYmYXZiuI=;
-        b=iXZIool/DonMLyLPNOTROAiMZLHEuig3f/eck5c6tnJZ7y8jluKd7nS0X97OFTJC35
-         mT1sdSTVkT19YJE+MTdNJQm3hd8npaA2INoLdW5PvlrCFqQY6MY+PPBf3NtstoaHSQUI
-         g/xvpWAjMvE+NX8pEAMKugj7FAlkeI9gfmv9LZizKY5Nqe3Tsj9HVfZKHDe7G1gAebJ+
-         6MnqK9ckNxTbhtawHaVf/9KCVFY2UQ2R8+34Xb1BYdDn5WrnclVFyzVxtHAors7Nzb3s
-         jf4amT8ZKzucOYX6pZ28uevXVwB0it/0Gc6255+Q6WR1hxI46dzHmK37XKIWzVdSBH05
-         vWXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734446520; x=1735051320;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NkDgX86vllpaHSZlaZCU7Cun96tz+XUmIPtYmYXZiuI=;
-        b=Ebtj+PW0FHdWl6n7Szf1dshB4b6C1Qh7s5iasLUEQh3QVbLBFbt6YRhRI2QzAj2b9G
-         PAwbYdmRv/MCz5UUpbf+Bkg1T96iuAPHDHBGYwiVS9Bz5FS0r21xLd4+Wcp5r4KoF0/a
-         K4cv/Gvjvl5bSTyE8MTcKMfoOygtWT2i3R/m7HonTQHMJko4BIjXaRZ31jUnkaz7GPeY
-         flfKXaHdnqQUcHqfsLvFLIy00KlR1UBl1xUCoV2kNMx27KHFf3V3Pn2IhFKLFZTeUT1e
-         0wS7yI5tt0BjTScXXAqgVV2E/ZhSZoaJF50W48guxeLGokYQxMme/R0tlyWGbq3NP2cx
-         eZ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURvfd4Ee2uyOfBk2kWM02TKZ3YtY8A6uqHUJ61Q9P1KI/3cTGfd9O7UfSQoyGf8AL1gIV+xBf6J/cz+qY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6jsIXUhpfshEg3BPUF2u7AD7Vj0xtwvZNZOIUKoiqZlORtKvi
-	lsfsILUj5ip1g3boxBIztEmlJvbw8h0n1NrJvfnzCIQkMDYgrm1ZTzMZb7P3IKE=
-X-Gm-Gg: ASbGncs3yNsn/+vFRepYDMbSV0LyliqLbFqn2+BSWrl6564jqKFZD//XrLAezpmo1kN
-	uuZPeeeMMKSEq1qxjKq4dQmK+BganOJ5uquqM0vVVCc6fmTakGYejSogyUVqmXh9qA1cLd82qvr
-	XsQDpNyjvIIMoQAVwTc78/263pmZsTtbKQY+hxZ/r51uq9zT2fLBdAircrqblvWY9+Oo18NQtVD
-	g+zqkHN71npH+O/4j4iZkXsESeEBd1DCfGEr4owGkzZbcps9GdCgs7EabqYhGRoFog=
-X-Google-Smtp-Source: AGHT+IEzBbDbt3N095GZWA5AkGypzQVy5bfUKzLTwWMXJ09Q7iKoxCNLX0cW+TNl2Iv09tcOh2gpSQ==
-X-Received: by 2002:a05:600c:4e8c:b0:434:f7e3:bfa8 with SMTP id 5b1f17b1804b1-4362aacb94bmr138319775e9.33.1734446519862;
-        Tue, 17 Dec 2024 06:41:59 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.66.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436362c8fbasm119231555e9.44.2024.12.17.06.41.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 06:41:59 -0800 (PST)
-Message-ID: <1cb01bec-d5ad-4081-956e-32ac424b5e5a@linaro.org>
-Date: Tue, 17 Dec 2024 14:41:57 +0000
+	s=arc-20240116; t=1734446736; c=relaxed/simple;
+	bh=IAwqtMs7TqeoxBD46ND3JggXmA/k0dq0HPg7U+aaru4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV7iIL9KBYOT/ZB0ZRYNb8jNTS/7D7PtcDQQEqsPMPRGKqc1YfmE29Tae1UzL/JfRDnj3gRz44fWS8l06467DNNWfEBNsBb3+7GBnYx4P6SfhmA5NciPFpY0BetCRgCF4BfeoGR8AT0WqhPP/SIeaQQN+JecKWVBSeXaWmL6vzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 360D21063;
+	Tue, 17 Dec 2024 06:46:02 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59123F58B;
+	Tue, 17 Dec 2024 06:45:31 -0800 (PST)
+Date: Tue, 17 Dec 2024 14:45:24 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Johan Hovold <johan@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>, andersson@kernel.org,
+	konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <Z2GOLFqnexEalBx_@pluto>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <ZytnRc94iKUfMYH0@hovoldconsulting.com>
+ <ZyvLktLUZOGP-LH5@pluto>
+ <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
+ <8d42682b-0fa7-3962-da12-728cfe64903b@quicinc.com>
+ <Z0BC203BhGEmXcJi@hovoldconsulting.com>
+ <Z1HceQegfMl07qj_@bogus>
+ <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: test: Speed up running brstack test
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20241213231312.2640687-2-robh@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241213231312.2640687-2-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
 
-
-
-On 13/12/2024 11:13 pm, Rob Herring (Arm) wrote:
-> From: James Clark <james.clark@arm.com>
+On Tue, Dec 17, 2024 at 05:55:35PM +0530, Sibi Sankar wrote:
 > 
-> The brstack test runs quite slowly in software models. Part of the reason
-> is "xargs -n1" is quite inefficient in replacing spaces with newlines.
-> While that's not noticeable on normal machines, it is on software models.
-> Use "tr -s ' ' '\n'" instead which can do the same transformation, but is
-> much faster. For comparison on an M1 Macbook Pro:
 > 
-> $ time seq -s ' ' 10000 | xargs -n1 > /dev/null
-> 
-> real    0m2.729s
-> user    0m2.009s
-> sys     0m0.914s
-> $ time seq -s ' ' 10000 | tr -s ' ' '\n' | grep '.' > /dev/null
-> 
-> real    0m0.002s
-> user    0m0.001s
-> sys     0m0.001s
-> 
-> The "grep '.'" is also needed to remove any remaining blank lines.
-> 
-> Signed-off-by: James Clark <james.clark@arm.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> [robh: Drop changing loop iterations on arm64. Squash blank line fix and redo commit msg]
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Originally part of this series[1], but I've dropped any Arm specifics,
-> and it stands on its own. No reason this needs to wait on Arm BRBE
-> support (which I'm working on now). I don't expect to have other changes
-> to this test related to BRBE anymore.
-> 
-> [1] https://lore.kernel.org/all/20240613061731.3109448-8-anshuman.khandual@arm.com/
+> On 12/5/24 22:31, Sudeep Holla wrote:
+> > On Fri, Nov 22, 2024 at 09:37:47AM +0100, Johan Hovold wrote:
+> > > On Thu, Nov 14, 2024 at 09:52:12AM +0530, Sibi Sankar wrote:
+> > > > On 11/8/24 20:44, Johan Hovold wrote:
+> > > 
+> > > > > > On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
+> > > 
+> > > > > > > Second, after loading the protocol and client drivers manually (in that
+> > > > > > > order, shouldn't the client driver pull in the protocol?), I got:
+> > > > > > > 
+> > > > > > > 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
+> > > > > > > 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
+> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
+> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
+> > > > > > > 
+> > > > > > > which seems to suggest that the firmware on my CRD does not support this
+> > > > > > > feature. Is that the way this should be interpreted? And does that mean
+> > > > > > > that non of the commercial laptops supports this either?
+> > > 
+> > > > > Yeah, hopefully Sibi can shed some light on this. I'm using the DT
+> > > > > patch (5/5) from this series, which according to the commit message is
+> > > > > supposed to enable bus scaling on the x1e80100 platform. So I guess
+> > > > > something is missing in my firmware.
+> > > > 
+> > > > Nah, it's probably just because of the algo string used.
+> > > > The past few series used caps MEMLAT string instead of
+> > > > memlat to pass the tuneables, looks like all the laptops
+> > > > havn't really switched to it yet. Will revert back to
+> > > > using to lower case memlat so that all devices are
+> > > > supported. Thanks for trying the series out!
+> > > 
+> > > I have a Lenovo ThinkPad T14s set up now so I gave this series a spin
+> > > there too, and there I do *not* see the above mentioned -EOPNOSUPP error
+> > > and the memlat driver probes successfully.
+> > > 
+> > > On the other hand, this series seems to have no effect on a kernel
+> > > compilation benchmark. Is that expected?
+> > > 
+> > 
+> > Hijacking this thread to rant about state of firmware implementation on
+> > this platform that gives me zero confidence in merging any of these without
+> > examining each of the interface details in depth and at lengths.
+> > 
 > 
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+Hi Sibi,
 
->   tools/perf/tests/shell/test_brstack.sh | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Hey Sudeep,
 > 
-> diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
-> index 5f14d0cb013f..e01df7581393 100755
-> --- a/tools/perf/tests/shell/test_brstack.sh
-> +++ b/tools/perf/tests/shell/test_brstack.sh
-> @@ -30,7 +30,7 @@ test_user_branches() {
->   	echo "Testing user branch stack sampling"
->   
->   	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
-> -	perf script -i $TMPDIR/perf.data --fields brstacksym | xargs -n1 > $TMPDIR/perf.script
-> +	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
->   
->   	# example of branch entries:
->   	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
-> @@ -59,7 +59,7 @@ test_filter() {
->   	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
->   
->   	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
-> -	perf script -i $TMPDIR/perf.data --fields brstack | xargs -n1 > $TMPDIR/perf.script
-> +	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
->   
->   	# fail if we find any branch type that doesn't match any of the expected ones
->   	# also consider UNKNOWN branch types (-)
+> Thanks for taking time to review the series.
+> 
+> > Also I see the standard protocol like PERF seem to have so many issues which
+> > adds to my no confidence. I can't comment on that thread for specific reasons.
+> 
+> ^^ is largely untrue, a lot of finger pointing and a gross
+> misrepresentation of reality :/
+> 
+> The only major problem that X1E perf protocol has is a firmware
+> crash in the LEVEL_GET regular message implementation. This
+> pretty much went unnoticed because of messaging in perf implementation
+> in kernel. Given the fastchannel implementation isn't mandatory
+> according to spec, the kernel clearly says it switches to
+> regular messaging when it clearly doesn't do that and uses
+> stale data structures instead. This ensured that level get regular
+> messaging never got tested.
 
+You claimed this a couple of times here and on IRC, but sincerely,
+looking at the fastchannel implementation in SCMI core and Perf, I could
+not track down where this could have happened in the recent code
+(i.e. with or without your recent, welcomed, patches...)
+
+When FC initialization fails and bailout it says:
+	
+	"Failed to get FC for protocol %X [MSG_ID:%u / RES_ID:%u] - ret:%d. Using regular messaging."
+
+... and it clears any gathered address for that FC, so that in __scmi_perf_level_get()
+you end up skipping the FC machinery and use messaging
+
+	if (dom->fc_info && dom->fc_info[PERF_FC_LEVEL].get_addr) {
+		...
+	}
+
+	return scmi_perf_msg_level_get(ph, dom->id, level, poll);
+
+Now this is done ONLY for the FC that specifically failed
+initialization, i.e. identified by the tuple PROTO_ID/MSG_ID/RES_ID
+(as stated in the noisy message above where MSG_ID is specified) NOT for
+all Fastchannel, so you can have an FC successfully initialized only on
+the GET but failing in the SET, so only the GET FC will be used.
+
+I dont really understand how the Kernel was misbehaving and using
+instead stale data, neither, if this was the case, I can see where this
+issue would have been fixed.
+
+To be clear, I am not really interested in throwing an argument here, but
+I sincerely dont see where the alleged problem was and how was fixed (kernel
+side), so I fear it could be still there, hidden maybe by a change in the
+platform fw.
+
+Apologies if I missed something along the history of this..
+
+Thanks,
+Cristian
 
