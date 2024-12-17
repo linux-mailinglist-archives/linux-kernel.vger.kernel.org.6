@@ -1,159 +1,164 @@
-Return-Path: <linux-kernel+bounces-449743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6B59F5594
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:07:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DB59F558D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD7F171985
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:01:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34AE1896FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6101B145B25;
-	Tue, 17 Dec 2024 17:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561C71FC0EC;
+	Tue, 17 Dec 2024 17:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBd0brOY"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eryzkwDZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B0A1FBEAC;
-	Tue, 17 Dec 2024 17:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9794E1F7570;
+	Tue, 17 Dec 2024 17:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458096; cv=none; b=RaiKJAVl88PYsDoBALDCPAP49uvjJUTVFycG9BDOb/NQMR5z9jIXgQtXi/gb+caU5aOBcYCD3G4MHr14IOXvQhMBXrLwEbA0kAjdsNgc9ORz+Nl91NMQ6MZHXxvCh2HK+A1EvPt0BUNGmdiLih0FYTQ1pbRA0sVLM8YrDExpqOE=
+	t=1734458107; cv=none; b=cHyxb4aZyWGbFyoZWk3i34+s8+XpDFZN7AZw7IsBFWZgO9eUGk3sXWgnUs+CZnibv1ICETBIV7Fa4Ad7NhtuXAnVaTgLKII/hfmEl8ZlWMFi62igGm08zyHJc5xX+AR+QwvO9tUEy1ret8ieAbhMSPuWvuR22DOWtuveemz611Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458096; c=relaxed/simple;
-	bh=5PykxEFIGGCVAhvaitz/8BJOTQ+bEmFMD3w76LQued0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ib4OH/bs4XiWThNLuTRdXO5uMxR8E5vX0PCBnuu4ynEWrmg15sj2Xsyyaq0XQROT9h3EsOhVrAMd1NqjTUOb6lO6Lgd0Ti3q/XheCL1h9zJeBLBD8133UUAqreBO5pRZS/9yp2OQPQlVeV76vTbI7k1B/giP7wIopwIlsfX/CT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBd0brOY; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a766b475so59173805e9.1;
-        Tue, 17 Dec 2024 09:54:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734458093; x=1735062893; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyrmzpRaBGC3KODJNI/AuY5aXSnDASObC2Ra3ok3feg=;
-        b=JBd0brOY1ieWqV9pT5fIUm6AL/7l74X7zwKCkM2OX2X2Q/ApqMpPftr8aAFvgfrNcB
-         1g4+igtYVJAdA6A0AmBoESBvHISasNfqFTCXgby6gTl2foIp5SVsF4onrD7R3F84RdeF
-         zGma2CbRyDDh4OXTu6Z4NIu238FD6aytQ8N7wP5RIIVC6FTYUdIRy45qdG7WKQa5wI5Z
-         9byDYvshaX3g1QAxUerRSKQ9IaKf7JC6/ksF428K1JTD9PS5fP38xbRhqBIWwaa/e09/
-         Eee1VBCFxqq8lwIspTjp9EA7DZYEIgVwuP1+R+v0WkEKxTsDAj15Du/TUnTr+olNraAE
-         oUkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734458093; x=1735062893;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AyrmzpRaBGC3KODJNI/AuY5aXSnDASObC2Ra3ok3feg=;
-        b=PJzx9byympXIWfxAVzKdxxZWRTuB0YgT7u8TGx1tUhZWJBhNPnnwaY/p34xnZYU6se
-         w7IuLWVB4TA5OFEWgoWZSxNS0W45yRPCcwyjAoaAu2IsTidyzjNuoVNg0jqhO45K0gPg
-         C634aT8C0Lnwhzpbn8Js7b5BwQqkwMt8l63J273nGpBPGl7tayy7RfKn770KZ/NWLH9I
-         EQOn7tapN/+eIzBok7BGY466KF42N5smzkBvJLc8zzR/44EO7daVbCOXhr/4lmmrl5VH
-         l0DLCM1/ZX5DhsHWA4TxeWLqwRGlT4r9EwmYxfNf8wxSJy/RJcPZQSr1JAMC0uOENGvE
-         0TuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOwrrpyQ5caJFDu9J0iXuI5fA5QSUXIlNTUXg8HKjKG+gSxYhrpHBvV1KD8n3xjK1jHxto1zKd6bLcjzM=@vger.kernel.org, AJvYcCXWCGsj7uzzEn5aVMF3CXLTISNmyChWuJAm4wK351wixKGMbWi6pJHeD1LquMFrUGMg73X5ukKa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV7QBZq37k4cn3Y3hXtpaIEL5eUHmJforzck++EA8HpZNwEGzA
-	ir6kRQZQMfGhMYF++QtGC8hDwwYtpWb1FY41DxhRyhN0z7EbfWMu
-X-Gm-Gg: ASbGncvcQM0q89QibNlSsp8oRiFs6L3adPcuZnTDbpbFbZHDDaRYPuCfb3G4CKLatOm
-	aerH9HHMp8haGBMLJp7YFvfg1g21EriZnB4ElFw2Tuq3IxtYQaLFIWOhCw+Hbp57Ui+mdgXH4NW
-	Rdyz2LlUfOL6W1rAjxuQvTmNoJtm90Mms0mSrmNdhvqy5gr2d4zFAaCx4CsLZsazHi7leis5yTr
-	UqvbXfb0i80fgv0ptgiX5r/4Ex7lzw6myoz9Bv+NTWHxzUCUOyM
-X-Google-Smtp-Source: AGHT+IECFEtLkTK128lu9CsBumM33qWpYgZlGgNWPCfhtohQpNVOeboAjx2KzumX7eW6XvHOBHMIHQ==
-X-Received: by 2002:a05:600c:3b25:b0:435:9ed3:5698 with SMTP id 5b1f17b1804b1-436530eeefamr2315305e9.24.1734458093037;
-        Tue, 17 Dec 2024 09:54:53 -0800 (PST)
-Received: from debian ([2a00:79c0:674:2500:224:9bff:fe22:6dd6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625553213sm178825245e9.8.2024.12.17.09.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:54:52 -0800 (PST)
-Date: Tue, 17 Dec 2024 18:54:50 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: dp83822: Add support for PHY LEDs on
- DP83822
-Message-ID: <20241217175450.GA716460@debian>
-References: <20241217-dp83822-leds-v1-1-800b24461013@gmail.com>
- <20241217163208.GT780307@kernel.org>
+	s=arc-20240116; t=1734458107; c=relaxed/simple;
+	bh=cD1Gqc3sDcM5ikY3NfphoRIdXqHd+RiYunRrE3R240Y=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Te6PUOO8Bo+hxZe0DpTqy8AhfKJOmsrv/CvOSHLWdCr5lIVePpWatSusmes7rvh3crPX5YAsLaUMXIosZFwOjtjj7bUx7GHzyNp0T/AIxtJXxok+yWRmeadPCtwaSkz2e2r/LY2zXcTmEHNjn0XSB+Ta5uE3ONMTv6AV+mJwCUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eryzkwDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F584C4CED3;
+	Tue, 17 Dec 2024 17:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1734458106;
+	bh=cD1Gqc3sDcM5ikY3NfphoRIdXqHd+RiYunRrE3R240Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eryzkwDZ7Dzu9LsXXzHFBMDpNZ+nIOE2qdhxHFlpqL1aHtDqjuQrNoFDI2kV9PVWU
+	 a7RyYvwc83qSpqMheOU6ADqnueTksHpzZ+WYCwLj67G4dInWo3a/SgCLdrwTjnKtbE
+	 0dG2Dwf2tFidtfAShQCLsPlWX+PKl2uqe+O3jV0s=
+Date: Tue, 17 Dec 2024 09:55:04 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, Alessandro
+ Carminati <alessandro.carminati@gmail.com>, Thomas Weissschuh
+ <thomas.weissschuh@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>,
+ Gabriele Paoloni <gpaoloni@redhat.com>, Eric Chanudet
+ <echanude@redhat.com>, clement.leger@bootlin.com
+Subject: Re: [PATCH v2] mm/kmemleak: Fix sleeping function called from
+ invalid context at print message
+Message-Id: <20241217095504.ea2a3a24564af4df48cf0b19@linux-foundation.org>
+In-Reply-To: <20241217142032.55793-1-acarmina@redhat.com>
+References: <20241217142032.55793-1-acarmina@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217163208.GT780307@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Tue, Dec 17, 2024 at 04:32:08PM +0000 schrieb Simon Horman:
-> On Tue, Dec 17, 2024 at 10:16:03AM +0100, Dimitri Fedrau wrote:
-> > The DP83822 supports up to three configurable Light Emitting Diode (LED)
-> > pins: LED_0, LED_1 (GPIO1), COL (GPIO2) and RX_D3 (GPIO3). Several
-> > functions can be multiplexed onto the LEDs for different modes of
-> > operation. LED_0 and COL (GPIO2) use the MLED function. MLED can be routed
-> > to only one of these two pins at a time. Add minimal LED controller driver
-> > supporting the most common uses with the 'netdev' trigger.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> > ---
-> >  drivers/net/phy/dp83822.c | 271 +++++++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 269 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-> 
-> ...
-> 
-> > +static int dp83822_led_hw_control_set(struct phy_device *phydev, u8 index,
-> > +				      unsigned long rules)
-> > +{
-> > +	int mode;
-> > +
-> > +	mode = dp83822_led_mode(index, rules);
-> > +	if (mode < 0)
-> > +		return mode;
-> > +
-> > +	if (index == DP83822_LED_INDEX_LED_0 || index == DP83822_LED_INDEX_COL_GPIO2)
-> > +		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-> > +				      MII_DP83822_MLEDCR, DP83822_MLEDCR_CFG,
-> > +				      FIELD_PREP(DP83822_MLEDCR_CFG, mode));
-> 
-> ...
-> 
-> > +}
-> > +
-> > +static int dp83822_led_hw_control_get(struct phy_device *phydev, u8 index,
-> > +				      unsigned long *rules)
-> > +{
-> > +	int val;
-> > +
-> > +	if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
-> 
-> Hi Dimitri,
-> 
-> As per the condition near the top of dp83822_led_hw_control_set(), should
-> this be:
-> 
-> 	if (index == DP83822_LED_INDEX_LED_0 ||
-> 	    index == DP83822_LED_INDEX_COL_GPIO2) {
-> 
-> Flagged by W=1 + -Wno-error build with clang-19.
-> 
->  drivers/net/phy/dp83822.c:1029:39: note: use '|' for a bitwise operation
->   1029 |         if (index == DP83822_LED_INDEX_LED_0 || DP83822_LED_INDEX_COL_GPIO2) {
->        |                                              ^~
->        |
-> 
-> ...
-Thanks, will fix it.
+On Tue, 17 Dec 2024 14:20:33 +0000 Alessandro Carminati <acarmina@redhat.com> wrote:
 
-Best regards,
-Dimitri
+> Address a bug in the kernel that triggers a "sleeping function called from
+> invalid context" warning when /sys/kernel/debug/kmemleak is printed under
+> specific conditions:
+> - CONFIG_PREEMPT_RT=y
+> - Set SELinux as the LSM for the system
+> - Set kptr_restrict to 1
+> - kmemleak buffer contains at least one item
+> 
+> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 136, name: cat
+
+-rt is a bit annoying this way.  Things which we expect to work OK are
+no longer doing so.
+
+> preempt_count: 1, expected: 0
+> RCU nest depth: 2, expected: 2
+> 6 locks held by cat/136:
+>  #0: ffff32e64bcbf950 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb8/0xe30
+>  #1: ffffafe6aaa9dea0 (scan_mutex){+.+.}-{3:3}, at: kmemleak_seq_start+0x34/0x128
+>  #3: ffff32e6546b1cd0 (&object->lock){....}-{2:2}, at: kmemleak_seq_show+0x3c/0x1e0
+>  #4: ffffafe6aa8d8560 (rcu_read_lock){....}-{1:2}, at: has_ns_capability_noaudit+0x8/0x1b0
+>  #5: ffffafe6aabbc0f8 (notif_lock){+.+.}-{2:2}, at: avc_compute_av+0xc4/0x3d0
+> irq event stamp: 136660
+> hardirqs last  enabled at (136659): [<ffffafe6a80fd7a0>] _raw_spin_unlock_irqrestore+0xa8/0xd8
+> hardirqs last disabled at (136660): [<ffffafe6a80fd85c>] _raw_spin_lock_irqsave+0x8c/0xb0
+> softirqs last  enabled at (0): [<ffffafe6a5d50b28>] copy_process+0x11d8/0x3df8
+> softirqs last disabled at (0): [<0000000000000000>] 0x0
+> Preemption disabled at:
+> [<ffffafe6a6598a4c>] kmemleak_seq_show+0x3c/0x1e0
+> CPU: 1 UID: 0 PID: 136 Comm: cat Tainted: G            E      6.11.0-rt7+ #34
+> Tainted: [E]=UNSIGNED_MODULE
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  dump_backtrace+0xa0/0x128
+>  show_stack+0x1c/0x30
+>  dump_stack_lvl+0xe8/0x198
+>  dump_stack+0x18/0x20
+>  rt_spin_lock+0x8c/0x1a8
+>  avc_perm_nonode+0xa0/0x150
+>  cred_has_capability.isra.0+0x118/0x218
+>  selinux_capable+0x50/0x80
+>  security_capable+0x7c/0xd0
+>  has_ns_capability_noaudit+0x94/0x1b0
+>  has_capability_noaudit+0x20/0x30
+>  restricted_pointer+0x21c/0x4b0
+>  pointer+0x298/0x760
+>  vsnprintf+0x330/0xf70
+>  seq_printf+0x178/0x218
+>  print_unreferenced+0x1a4/0x2d0
+>  kmemleak_seq_show+0xd0/0x1e0
+>  seq_read_iter+0x354/0xe30
+>  seq_read+0x250/0x378
+>  full_proxy_read+0xd8/0x148
+>  vfs_read+0x190/0x918
+>  ksys_read+0xf0/0x1e0
+>  __arm64_sys_read+0x70/0xa8
+>  invoke_syscall.constprop.0+0xd4/0x1d8
+>  el0_svc+0x50/0x158
+>  el0t_64_sync+0x17c/0x180
+> 
+> %pS and %pK, in the same back trace line, are redundant, and %pS can void
+> %pK service in certain contexts.
+> 
+> %pS alone already provides the necessary information, and if it cannot
+> resolve the symbol, it falls back to printing the raw address voiding
+> the original intent behind the %pK.
+> 
+> Additionally, %pK requires a privilege check CAP_SYSLOG enforced through
+> the LSM, which can trigger a "sleeping function called from invalid
+> context" warning under RT_PREEMPT kernels when the check occurs in an
+> atomic context. This issue may also affect other LSMs.
+> 
+> This change avoids the unnecessary privilege check and resolves the
+> sleeping function warning without any loss of information.
+> 
+> Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
+
+I'm adding
+
+Fixes: 3a6f33d86baa ("mm/kmemleak: use %pK to display kernel pointers in backtrace")
+Cc: <stable@vger.kernel.org>
+
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -373,7 +373,7 @@ static void print_unreferenced(struct seq_file *seq,
+>  
+>  	for (i = 0; i < nr_entries; i++) {
+>  		void *ptr = (void *)entries[i];
+> -		warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
+> +		warn_or_seq_printf(seq, "    %pS\n", ptr);
+>  	}
+>  }
+
+Before 3a6f33d86baa we were still printing the address, with plain old
+%p.  Should we restore that, or is %p always useless?
+
 
