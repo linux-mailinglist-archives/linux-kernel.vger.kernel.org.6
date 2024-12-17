@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-448630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE4E9F432E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:51:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5BE9F4329
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2070616C9F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155EF188A5A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110E3155326;
-	Tue, 17 Dec 2024 05:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF17155393;
+	Tue, 17 Dec 2024 05:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sD4oeyqs"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkOaD+mQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDA883CC7;
-	Tue, 17 Dec 2024 05:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92A183CC7;
+	Tue, 17 Dec 2024 05:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734414663; cv=none; b=llUk7aOLKEO2b9pREyk4RHqnGXbed8HafXz229m/zLIYBx+7ujffMHBi+B5YWYuZ26XajcoZvG7Uy5N/thAhCStHFrEQ6797YcO4gDFv+WQuXSuUItoR4K+NgoAHWaafBf2cRrZx/iSTVCne+jkp9DPUqFqutU3HFPHiDzZsHZU=
+	t=1734414596; cv=none; b=leFZxTIm3i/Feu8BkwHz9QrhnBVwk/w+PDNwC6dtQqozQniHPgSigAhgrsze1UHSI9nfHapD1QwFPjVhoVeCKF2j3XpjkUwq4/ZAd4dKgbBwy4HHqQkKilYZATeo7xHRkra59bjfC0UmgubN8WaLjlinMAMt04dz3FniD4VGeZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734414663; c=relaxed/simple;
-	bh=bPwQShof+vswbSf/CYo+caDqGjI4PPBpNF2MsWMY7Hs=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=XcIiJJf1kUw3yFLynzvN03RSVXbK4G8hLdfS0RcPxTD0hOK3FHWdW3/HiQUpNELCPli/tkdC+aSH3JWWqrRdVFi+NwKP7b5w55LmILjBPyXVXce89wkim2Sg8p8cAofOabIl2rA6S86f/kjKApLX6Ihs+4cYF5IkNnYv7tx46p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sD4oeyqs; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734414656; h=Message-ID:Subject:Date:From:To;
-	bh=k594UHrD4sW4gyFiUBIeQmb6/7gl1rH5o5a9yezmc84=;
-	b=sD4oeyqs21VLo3R90ztoS5EQnBNbjB635VPVuvsWX8Uf+/1grD2DrS96L6sRUL6DDm5fTdq52wdE03ej9Z7DtzcUHEKYjlTZ25KuryMohT3WhvBqLE/WqkGh/kJvhNxmzDVSJ/5wTA+bDRE6X0sYTbG1LDzTfFTIV6gaKqeKbdo=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WLhajSd_1734414655 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 13:50:56 +0800
-Message-ID: <1734414558.011073-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH] virtio: fix reference leak in register_virtio_device()
-Date: Tue, 17 Dec 2024 13:49:18 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Ma Ke <make_ruc2021@163.com>
-Cc: virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Ma Ke <make_ruc2021@163.com>,
- stable@vger.kernel.org,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- arnd@arndb.de,
- viresh.kumar@linaro.org
-References: <20241217035432.2892059-1-make_ruc2021@163.com>
-In-Reply-To: <20241217035432.2892059-1-make_ruc2021@163.com>
+	s=arc-20240116; t=1734414596; c=relaxed/simple;
+	bh=nNTJ+RSKF3nNEr9KviDI+mWYUDxyuqhmE+lCTSJr90M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndd8C7lY55zT1iH+e4EPwNrD2Ee6mUHce3mOQe3tWJ5/eJ0NXcjsF9QlY8A0D/B88xWKR5T+Zg9e0eIGukgooYU5iPanese84mgW32L4kxBIw4GHH7JEUuBhZ/QSxCP6ldHCNLNg0AD0BEhERCAZRF8fYV4eW9dnT/DHfEOAZAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkOaD+mQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B580C4CED3;
+	Tue, 17 Dec 2024 05:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734414595;
+	bh=nNTJ+RSKF3nNEr9KviDI+mWYUDxyuqhmE+lCTSJr90M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IkOaD+mQZumFR6kVGx98rNnXoQRbhQpDBUcM0d1Ml9c9rv/dOwsJu+vM1JmmxUV/t
+	 ntunHvKGKd1aImhUM/iKqWN224vgYTZ2cbU275pZbyEG4ugUDis83N42mJybWRSF/7
+	 bkc46DKLKTHSuemlt5Exa76O7v5nKskPMGM/Go7ORYq7QXUr4aEqCNi6XeTrCtTMeG
+	 7ZX2++mKV4ddURHk6aVk+QNXQxBZyPG4ih6omQeEOrIcil938XuLN+4VEJbVnq9+vq
+	 uX5ueb0QOreybgNI0AcIXE/f2ebTolsS+kvPl2wChgonZNZF2BIXth6Ck7dzaHVoDQ
+	 kWW5ZArTDTz3w==
+Message-ID: <21008f97-d0bd-45bf-8e10-9ec2539ed858@kernel.org>
+Date: Tue, 17 Dec 2024 06:49:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] dt-bindings: hwmon: intel,crps185: Add to trivial
+To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+ linux@roeck-us.net, corbet@lwn.net, joel@jms.id.au,
+ andrew@codeconstruct.com.au, Delphine_CC_Chiu@Wiwynn.com,
+ broonie@kernel.org, peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+ naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+ patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+ peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241217022046.113830-1-ninad@linux.ibm.com>
+ <20241217022046.113830-4-ninad@linux.ibm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241217022046.113830-4-ninad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Dec 2024 11:54:32 +0800, Ma Ke <make_ruc2021@163.com> wrote:
-> When device_add(&dev->dev) failed, calling put_device() to explicitly
-> release dev->dev. Otherwise, it could cause double free problem.
+On 17/12/2024 03:20, Ninad Palsule wrote:
+> Add INTEL Common Redundant Power Supply Versions crps185 bindings as
+> trivial. It is trivial because only compatibility string is required in
+> the device tree to load this driver.
 
-Who frees it doublely?
-If device_add() failed, the put_device is called inside device_add(),
-why we need to call it again?
-
-Maybe you need to say more?
-
-Thanks.
+That's incorrect reason. You should describe the hardware, e.g. the
+hardware does not have any resources, like clocks or supplies.
 
 
->
-> Found by code review.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 694a1116b405 ("virtio: Bind virtio device to device-tree node")
-> Signed-off-by: Ma Ke <make_ruc2021@163.com>
-> ---
->  drivers/virtio/virtio.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> index b9095751e43b..ac721b5597e8 100644
-> --- a/drivers/virtio/virtio.c
-> +++ b/drivers/virtio/virtio.c
-> @@ -503,6 +503,7 @@ int register_virtio_device(struct virtio_device *dev)
->
->  out_of_node_put:
->  	of_node_put(dev->dev.of_node);
-> +	put_device(&dev->dev);
->  out_ida_remove:
->  	ida_free(&virtio_index_ida, dev->index);
->  out:
-> --
-> 2.25.1
->
+
+Best regards,
+Krzysztof
 
