@@ -1,167 +1,173 @@
-Return-Path: <linux-kernel+bounces-450003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752E59F5933
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:02:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9949F592E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A100B189A251
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0741899E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480181FAC4B;
-	Tue, 17 Dec 2024 21:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T6HN/vE+"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1701FA8D0;
+	Tue, 17 Dec 2024 21:47:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D42D1F9AAC
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7D41FA828;
+	Tue, 17 Dec 2024 21:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472057; cv=none; b=JuSBlyfJ4+YgrNPforZ+lYnHA2vSJ80gkNHnW6UciYc4EX1U9/M43nrtWOaGo42JewfwVzzcUoVNtM36fIzJ6noavejRXCx7C4XsMIZRefFL2HPO4DqYLaUmVWzXZGBLNheDuMBISOk/251OHt/yKcYQV0aShlXHKI5Fn16w1no=
+	t=1734472056; cv=none; b=b+hK/lZjQ8/O+uv7u+tB/tPY85Vg36ykkZwttb8tPIGs3KdkXJDFmZ/e+xCGpXpwUj6Pnz+v2UC0zGEtGlrpuAISteMjonLqiF3IL2GspS0yQCjVqqEhb+V0EgArIiQOhA8mrtMdFGzK7ZIMZobqJF8GIv4H4susJyq/xlhWo+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472057; c=relaxed/simple;
-	bh=Ma8HaBPEK9LBfvT3QeN1X7ugzAmaSGzcmCUpk/9AAyw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l9s7eTQTUWMDCk0p3MirFQ4k0v2/dJjXvBigq4PVkz2NjVy/fcNrsf3nW5kXuzkK33ZPmXqSLl5b7/V+X0Tdokvtg0Rur3HiYjeBSjJ4NtKNcam+TJw2QW8M6F1c4Yz288w8CFpREoh2SC/Zy/4xJmhsWh2oqtAGsjhVDx3Os+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T6HN/vE+; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6dcdf23b4edso25780376d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:47:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734472053; x=1735076853; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p2jerrcD1nGClFF+pwwbUr/tdkat4xQ5wJ8skGDMH+c=;
-        b=T6HN/vE+AG1yAlw02+JsgBOjLd6ioFgjFxxMSDre/og/BQY5+DAFhBDM6+h8Lnc0xB
-         pEuEgRZs/HFkLS6k1bBwP4X+NaAEEJB1a/cg2pkHYn1MiYH502QbhoSbIhzFNEHiPyRj
-         4n2/mq+s2v6/l0v5o5GVEG7BBd8pU8lIVp0QkZgQyBq829Z+dziFRQSBDc1BVjywGTZT
-         Ue157lr32GqmhEbOFW+zoN3yL0D4DWApacpUfLvCmWGCWhyymQLOWfzIF8EwTf/Vtasc
-         chdsxy5yIuVaQlcs0wG6Y6cllTpAD9NWrGcP8idoY+HIrnRACKx5k2uA6SbJUs4g27Zm
-         h3Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734472053; x=1735076853;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p2jerrcD1nGClFF+pwwbUr/tdkat4xQ5wJ8skGDMH+c=;
-        b=qn80i5mDICNrPHDIoTwL/ZrL6Sg4IZSUzb/4DrQRXwpFr6jcRQz3Z5S7/P5AHT9Pv7
-         zxfnbbfssfA+bTHAlwJK0YJtH/pky3TR9gSmAWhDLcM12mOZ4Wuxvn9mtAATXA3AICXA
-         sYP4Hw2b/sCl6aMVxh71KqdRguBoFfZ7JBOHV8nIN97heoL+HR29WzSS/M4ViRiO3zdE
-         70AyZz+Si3IWE3lk7hJLKpBenJAXmZWicOfUNxwVlZ0k/Td7VTNp/BN/lhZNL4tCgoYE
-         hzGPYTrg5v+rWb+50ULNDSt1GBAEZ7ym3NT3O+UNyanrX5O5AY23yH20umJwTvRDWPD4
-         6RdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUptUqd52cfTh6uWj/ZDQVeZhh4jbDvf+43jJRfOfyP3tX7QLsF7Qv1URbdUsT59z4+DzY1cdrdFSBGCbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqC+VZW28E8yDPWzcfcSyfWWaWz3yytZENh35COpDU1AbTpCLC
-	Tl4eLhMEISO43mWPf8QrcSjfNwjAPbWhcOjJyZN0+JHYMwf1LwqMIfpF2Knb57iBJ27sOUXCygj
-	J
-X-Gm-Gg: ASbGncuLVJfU25i/YnB85YaeKbZz061O4RNIUKRTL8dbmNbvtWxvhkw5uGG4D06QhiP
-	P/69beSm0QpmZSWRZPFyWJFUwf6CwrED8i03N22k1PlfqvT/cpPUKQjEghmlLTta+SZyxUKds1O
-	1sva8AIIpdOFCXN4rSgbg5tmwa/hQutlkfPD5Iwu7jJwXLvv3NZIA2RK9SvcU+WiZbCqIsN9Q0y
-	Rn2qrsLg49g5xZBUWyl1RznMt2a+WQcjlOVJTWx4lKN2zUcCq8oW44S09Xf0aEIypyJusPB8AtN
-	HbCk8vkncCo+/GnK
-X-Google-Smtp-Source: AGHT+IGfUKqTzhb+KyEvQJ+1fmr9Oi39Z91ue5ioU5B1N5OQfbf8bpjZTFXWHo4XK9ki9DBrVjqWDg==
-X-Received: by 2002:a05:6214:1301:b0:6d8:8667:c6ca with SMTP id 6a1803df08f44-6dd09241f5emr12256036d6.32.1734472053451;
-        Tue, 17 Dec 2024 13:47:33 -0800 (PST)
-Received: from localhost (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd22f0b7sm43260876d6.23.2024.12.17.13.47.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 13:47:33 -0800 (PST)
-From: Trevor Gamblin <tgamblin@baylibre.com>
-Date: Tue, 17 Dec 2024 16:47:29 -0500
-Subject: [PATCH 2/2] doc: iio: ad4695: describe oversampling support
+	s=arc-20240116; t=1734472056; c=relaxed/simple;
+	bh=QPgpFzuiqntC6WW7tJF2pwWWoqjvFPyun5ral253SKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZScPdsvYfjaYsKa5M+9rUht7VDttkal7WCDiaDb4rlDf73u4WrkTFO7unX7jhJQDulzoD8fQ9EpnPIWtkFe7eK1ls+6TnXT8ZfQW/9MAbBUb9Mv5Drc97x0QwDqPd0hHSjGOabxv8Zxy+e9XRfAxLrRXeNi55nHz7mFEAXoAqro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D6BC4CED7;
+	Tue, 17 Dec 2024 21:47:34 +0000 (UTC)
+Date: Tue, 17 Dec 2024 16:48:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: syzbot <syzbot+a1d25e53cd4a10f7f2d3@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [trace?] WARNING in tracepoint_probe_unregister (3)
+Message-ID: <20241217164810.2a9bcb57@gandalf.local.home>
+In-Reply-To: <6761e9b5.050a0220.29fcd0.007b.GAE@google.com>
+References: <6761e9b5.050a0220.29fcd0.007b.GAE@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-ad4695-oversampling-v1-2-0b045d835dac@baylibre.com>
-References: <20241217-ad4695-oversampling-v1-0-0b045d835dac@baylibre.com>
-In-Reply-To: <20241217-ad4695-oversampling-v1-0-0b045d835dac@baylibre.com>
-To: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <jic23@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Trevor Gamblin <tgamblin@baylibre.com>
-X-Mailer: b4 0.14.1
 
-Add a section to the ad4695 documentation describing how to use the
-oversampling feature. Also add some clarification on how the
-oversampling ratio influences effective sample rate in the offload
-section.
+On Tue, 17 Dec 2024 13:14:29 -0800
+syzbot <syzbot+a1d25e53cd4a10f7f2d3@syzkaller.appspotmail.com> wrote:
 
-Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
----
- Documentation/iio/ad4695.rst | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    243f750a2df0 Merge tag 'gpio-fixes-for-v6.13-rc3' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1310a4f8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a1d25e53cd4a10f7f2d3
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/939c742e99e7/disk-243f750a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/76db565b11d6/vmlinux-243f750a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/822230eb0753/bzImage-243f750a.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+a1d25e53cd4a10f7f2d3@syzkaller.appspotmail.com
+> 
 
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-index ead0faadff4b..f40593bcc37d 100644
---- a/Documentation/iio/ad4695.rst
-+++ b/Documentation/iio/ad4695.rst
-@@ -179,12 +179,38 @@ Gain/offset calibration
- System calibration is supported using the channel gain and offset registers via
- the ``calibscale`` and ``calibbias`` attributes respectively.
- 
-+Oversampling
-+------------
-+
-+The chip supports per-channel oversampling when SPI offload is being used, with
-+available oversampling ratios (OSR) of 1 (default), 4, 16, and 64.  Enabling
-+oversampling on a channel raises the effective number of bits of sampled data to
-+17 (OSR == 4), 18 (16), or 19 (64), respectively. This can be set via the
-+``oversampling_ratio`` attribute.
-+
-+Setting the oversampling ratio for a channel also changes the sample rate for
-+that channel, since it requires multiple conversions per 1 sample. Specifically,
-+the new sampling frequency is the PWM sampling frequency divided by the
-+particular OSR. This is set automatically by the driver when setting the
-+``oversampling_ratio`` attribute. For example, if the device's current
-+``sampling_frequency`` is 10000 and an OSR of 4 is set on channel ``voltage0``,
-+the new reported sampling rate for that channel will be 2500 (ignoring PWM API
-+rounding), while all others will remain at 10000.  Subsequently setting the
-+sampling frequency to a higher value on that channel will adjust the CNV trigger
-+period for all channels, e.g. if ``voltage0``'s sampling frequency is adjusted
-+from 2500 (with an OSR of 4) to 10000, the value reported by
-+``in_voltage0_sampling_frequency`` will be 10000, but all other channels will
-+now report 40000.
-+
-+For simplicity, the sampling frequency of the device should be set (considering
-+the highest desired OSR value to be used) first, before configuring oversampling
-+for specific channels.
-+
- Unimplemented features
- ----------------------
- 
- - Additional wiring modes
- - Threshold events
--- Oversampling
- - GPIO support
- - CRC support
- 
-@@ -233,3 +259,11 @@ words, it is the value of the ``in_voltageY_sampling_frequency`` attribute
- divided by the number of enabled channels. So if 4 channels are enabled, with
- the ``in_voltageY_sampling_frequency`` attributes set to 1 MHz, the effective
- sample rate is 250 kHz.
-+
-+With oversampling enabled, the effective sample rate also depends on the OSR
-+assigned to each channel. For example, if one of the 4 channels mentioned in the
-+previous case is configured with an OSR of 4, the effective sample rate for that
-+channel becomes (1 MHz / 4 ) = 250 kHz. The effective sample rate for all
-+four channels is then 1 / ( (3 / 1 MHz) + ( 1 / 250 kHz) ) ~= 142.9 kHz. Note
-+that in this case "sample" refers to one read of all enabled channels (i.e. one
-+full cycle through the auto-sequencer).
+BTW,
 
--- 
-2.39.5
+If you are injecting faults and hitting bugs when you do.
+
+   PLEASE REPORT YOU ARE INJECTING FAULTS!!!
+
+It just happened that I looked at the above console output to know that.
+Without that information, this would never be solved, as the memory
+failures you are injecting are for things that are less than a page and
+would only happen when the system is dangerously low on memory.
+
+Knowing that this was caused after fault injection is critical knowledge!
+
+Without that knowledge, this can be a big waste of time for maintainers who
+will go off on wild goose chases trying to figure out what's wrong with the
+logic, when it really was simply a missed check of something that didn't
+get allocated, that would also never not get allocated unless the system
+was in dire straits.
+
+-- Steve
+
+
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 8817 at kernel/tracepoint.c:358 tracepoint_remove_func kernel/tracepoint.c:358 [inline]
+> WARNING: CPU: 0 PID: 8817 at kernel/tracepoint.c:358 tracepoint_probe_unregister+0x894/0xd70 kernel/tracepoint.c:504
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 8817 Comm: syz.3.789 Not tainted 6.13.0-rc2-syzkaller-00192-g243f750a2df0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+> RIP: 0010:tracepoint_remove_func kernel/tracepoint.c:358 [inline]
+> RIP: 0010:tracepoint_probe_unregister+0x894/0xd70 kernel/tracepoint.c:504
+> Code: 41 5e 41 5f c3 cc cc cc cc e8 68 27 fe ff 48 c7 c6 60 05 9b 81 48 89 df e8 79 52 e5 ff eb 9f bb fe ff ff ff e8 4d 27 fe ff 90 <0f> 0b 90 eb 91 e8 42 27 fe ff 48 89 da 48 b8 00 00 00 00 00 fc ff
+> RSP: 0018:ffffc90003427898 EFLAGS: 00010287
+> RAX: 000000000000951e RBX: 00000000fffffffe RCX: ffffc9000c9ec000
+> RDX: 0000000000080000 RSI: ffffffff819b16a3 RDI: 0000000000000005
+> RBP: ffffffff8ecbb240 R08: 0000000000000005 R09: 0000000000000000
+> R10: 0000000000000001 R11: 0000000000000003 R12: ffffffff81a0da30
+> R13: 0000000000000602 R14: 0000000000000002 R15: ffffffff8de3f8d8
+> FS:  00007fe8b075e6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fe8b075df98 CR3: 000000007a564000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  unregister_trace_sched_switch include/trace/events/sched.h:222 [inline]
+>  tracing_sched_unregister kernel/trace/trace_sched_switch.c:87 [inline]
+>  tracing_stop_sched_switch kernel/trace/trace_sched_switch.c:129 [inline]
+>  tracing_stop_cmdline_record+0x66/0xa0 kernel/trace/trace_sched_switch.c:140
+>  __ftrace_event_enable_disable+0x73f/0x850 kernel/trace/trace_events.c:645
+>  ftrace_event_enable_disable kernel/trace/trace_events.c:730 [inline]
+>  ftrace_clear_events kernel/trace/trace_events.c:739 [inline]
+>  ftrace_event_set_open+0x238/0x2d0 kernel/trace/trace_events.c:2270
+>  do_dentry_open+0xf59/0x1ea0 fs/open.c:945
+>  vfs_open+0x82/0x3f0 fs/open.c:1075
+>  do_open fs/namei.c:3828 [inline]
+>  path_openat+0x1e6a/0x2d60 fs/namei.c:3987
+>  do_filp_open+0x20c/0x470 fs/namei.c:4014
+>  do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
+>  do_sys_open fs/open.c:1417 [inline]
+>  __do_sys_openat fs/open.c:1433 [inline]
+>  __se_sys_openat fs/open.c:1428 [inline]
+>  __x64_sys_openat+0x175/0x210 fs/open.c:1428
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fe8af985d19
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fe8b075e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> RAX: ffffffffffffffda RBX: 00007fe8afb75fa0 RCX: 00007fe8af985d19
+> RDX: 0000000000020201 RSI: 0000000020000100 RDI: ffffffffffffff9c
+> RBP: 00007fe8afa01a20 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007fe8afb75fa0 R15: 00007ffd25015738
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
