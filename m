@@ -1,170 +1,106 @@
-Return-Path: <linux-kernel+bounces-448829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CE29F4625
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8F99F462A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:37:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63265188B835
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA59D188B98E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF9515B543;
-	Tue, 17 Dec 2024 08:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5B31DBB24;
+	Tue, 17 Dec 2024 08:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZcPs4Ep1"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hT7LgFa0"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB7B1DAC95
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577021DAC88
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424549; cv=none; b=p8rS5TUCheq3sNigvpXjAtEhUvNeN4+kp1wR2F0eD01mTThEz649AdvEMFrJNbmSJsan+Zu/ATKjIFx49q3LwhRMglP6ZFeiAOYRvdpFBcvlkI3u2uue8OIFaNpmZB7edVvQiKaiR5Lr1cczOi2jRuvh5qAbgRjpNNN+Wai4XFc=
+	t=1734424641; cv=none; b=i9oVnmxmsEetiWKd5WDtjVph7yvrLUNQb5o5rsUDNpZ8t/Xkgmm+4uMSmsmMLJtplLZ6vDoWZ00sFfCw4vqdb/thXw9RoG/3GwDu0h3wkQZC0yFLCsnETgALljwuVuitRveDQ0zDzkRtLapx9r9V5Mdf2nOIB5mgWHyA88/z5nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424549; c=relaxed/simple;
-	bh=BFOUE/g3KYSfOJ9EcqDME5+uyWf1RjIYI1Lk9QI2s64=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=blkmwEtBaANJCBYSNSxqblAr1QY4gucbegWjuXiCI8yZ1truTlVX1xsNAz951sRL5aC/2uJdRuzzKds0e5jnPu1XcqsjMFEav4b4woH1QLefHgflrar2gpN7eDVvS8Wm4xUSjIJAh4YS7KOAmpdNSFbGzCg5JLJ4vxixJIw2cEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZcPs4Ep1; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a766b475so53018925e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:35:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734424546; x=1735029346; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oGp2naDju3CENf7tcYGJw5g9MBEf4TS9qtH9hPAoTWM=;
-        b=ZcPs4Ep1Vm365e8uPk63MVY7vT5fhLTUL5wMGipDAX/g+gzb5V0+7L5R9Yr4V9qnP/
-         z0ENS/ywoFjgZIPC8GdowG0ZiVjGsAmzMR6EXcooxkPI4Zy4LGBEThAF+pwKj9h5D83B
-         7MOiK0g1C5OQ3S2gl9a9P1kY4tRUoXTjerCFpI+bBdSHgZEe35qXiqemBgA81iMtK/jL
-         hutI5PbPCTwruyyM2/8y2+f2eQJzaSxYZSGE6g5P8ZIeu+v4N1FEq6UgsxYbD1y05mfS
-         NN7/ZB4QltcmP8kzcpaYCpLzGEArFjqCILFqslDMf0MhnR8NnHkHGtzwPyFmwkFHX3ee
-         s6Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734424546; x=1735029346;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGp2naDju3CENf7tcYGJw5g9MBEf4TS9qtH9hPAoTWM=;
-        b=fes2VV3YDsfavA0Tz5w9oRSmreCv6I5n4Zg4LIZK3i8gmOEhBQLlsvlm8c2yzE4KJV
-         Y1Wy0X+i4a6G0+WWII0xNgvvZ8S9v23yKDVwP9QL4FSaX1uf++1Homu94nA0ieNEXTSO
-         y6guJl8ZFXoRrhgzEQLZ1LYBolGGgie5PynhXyyittfalLDFGtF19to5xNe+ejGWBEab
-         UFM/sKfELvPFLpzM5sCfAFXKdVoL83kzRDbgOlCvxy3Y2T3iWxtOSw+XtXJiWaBnC18g
-         RCGAM0SyQekcvVRUjCOTmj1OzTPfyomcsic2lWmFrzCRM7dV15fLbfFEqN0Xq6secDwF
-         M9pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuboLq6a24HD1rEaORiv3+HWheE4TydrBAQjwNkiqX6V3C0TuFGkMI04tzyq45gXE42jssP3nDGSJBhWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwteRXdp30gvByUz1LS/WJ39AyIWIFTeWWBriipKcyo/NzDRfK4
-	lNZvHbdnWFXtP8db/q5ojdxyFxfiLewfvsFIJR2XBh0/PpOS8ADg9E4txt+SJsk=
-X-Gm-Gg: ASbGncs/PTjTWMlsu70Vcnue06tAr4vRh8NXcDVNm9ydn8xbNNnPlMSU4OGB11Zwjr/
-	9eOcX+pyFFyOH+p+4GzxH5BgoNlJP+PyVpSS2voFyLeSJW4ntuHNH4+VZFSgfI2F7W8O9gxJFd8
-	G/qgkRn8qBiOIn9dpd2GW8on77uIjwJcJ6/ksrP+wyCrPY9mUnL+KMWKDescLk00dirUfh7We5S
-	FoUbI0Iuz+x61F3MXMIiqZTzU9NUZV8XSqCmmXG8WhvEMX/iUNhIW2OQDQP
-X-Google-Smtp-Source: AGHT+IHmaVzA+YB5mwrP2DxlfyoFUMTookYYnkdc4IP1vKUVoB3zOMtorvgOX4VjroHrHa2BsMY/HA==
-X-Received: by 2002:a05:6000:156d:b0:385:f16d:48b4 with SMTP id ffacd0b85a97d-3888e0b994fmr12286812f8f.40.1734424546079;
-        Tue, 17 Dec 2024 00:35:46 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8016083sm10393582f8f.31.2024.12.17.00.35.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 00:35:45 -0800 (PST)
-Message-ID: <239cf14ad538285cea2f6ccdf2bd8fbdd2180bbc.camel@linaro.org>
-Subject: Re: [PATCH 4/4] arm64: dts: exynos: gs101-raven: add new board file
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>,
- kernel-team@android.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-Date: Tue, 17 Dec 2024 08:35:44 +0000
-In-Reply-To: <2wyjctwn443oxl633qwxsxmyzqhinssrkoafgqhcc34tqgwnh5@ymrr57jxdnl6>
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
-	 <20241216-gs101-simplefb-v1-4-8ccad1830281@linaro.org>
-	 <2wyjctwn443oxl633qwxsxmyzqhinssrkoafgqhcc34tqgwnh5@ymrr57jxdnl6>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1734424641; c=relaxed/simple;
+	bh=ESTrrh5kzt20pKZzHdS7o//3jddwFObxCrUCgu0xi0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f4Lh56NtgpmFqkE2+42YWNapO2oZf+UbOlD1H3eCCP2WfbEAeoYnp2fYpUx9Kxb2mBdBkkv91ZH799R3ucWSVMh+ke+dT+/lZfnXZ4jN3wzcgWvgosFvJpjl4eIFJEaurwnwcJyL6+UmK98H0bb7Qc/HpXVQy1ULjDXPMmyP/lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hT7LgFa0; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=ESTr
+	rh5kzt20pKZzHdS7o//3jddwFObxCrUCgu0xi0M=; b=hT7LgFa0MT41ymp9iiH1
+	YDM6J+guaFB85z27R3ybw0GkbtYaG+UYEIdPMW4o1YfF++I+Ov1ymvRtbyVapeYy
+	P1vrje7s2Bl1EuWrtZodKkKRNqdbH3js2xNG/4so8GmVu5Jh3x/+fHlniSVb+/XT
+	GL9+fpk9xMFw+hc9JD/Y0Og9nVHYwIV9dQzcGYvo/H60JW16FeoLqyXe9rSFFgmw
+	AnRt/FvGx9szbb2iab5Ohu5TrqUgki2TZQXwskp59sa+V5D1R1XozT5LxB33EeGY
+	PTXUqy6EC4L8/5QrX9vc9sXdFCWUycye/kmNhxV6ZwT9Lw/yGjgUOjGwLsjUo1x0
+	0w==
+Received: (qmail 4001394 invoked from network); 17 Dec 2024 09:37:14 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Dec 2024 09:37:14 +0100
+X-UD-Smtp-Session: l3s3148p1@ZUw6NHMpvL4gAwDPXwAQAA/MfjDm1Sk8
+Date: Tue, 17 Dec 2024 09:37:14 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <Z2E4OuPA7m6yyXxt@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+ <Z2EzKErhR2MomNz+@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3KMw3RMYawymMT9d"
+Content-Disposition: inline
+In-Reply-To: <Z2EzKErhR2MomNz+@visitorckw-System-Product-Name>
 
-On Tue, 2024-12-17 at 08:39 +0100, Krzysztof Kozlowski wrote:
-> On Mon, Dec 16, 2024 at 01:06:29PM +0000, Andr=C3=A9 Draszik wrote:
-> > Raven is Google's code name for Pixel 6 Pro. Similar to Pixel 6
-> > (Oriole), this is also based around its Tensor gs101 SoC.
-> >=20
-> > For now, the relevant difference here is the display resolution:
-> > 1440 x 3120 instead of 1080 x 2400.
-> >=20
-> > Create a new board file to reflect this difference.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> >=20
-> > ---
-> > Note: MAINTAINERS doesn't need updating, it covers this whole directory
-> > ---
-> > =C2=A0arch/arm64/boot/dts/exynos/google/Makefile=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> > =C2=A0arch/arm64/boot/dts/exynos/google/gs101-raven.dts | 27 ++++++++++=
-+++++++++++++
-> > =C2=A02 files changed, 28 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/bo=
-ot/dts/exynos/google/Makefile
-> > index 0a6d5e1fe4ee..7385f82b03c9 100644
-> > --- a/arch/arm64/boot/dts/exynos/google/Makefile
-> > +++ b/arch/arm64/boot/dts/exynos/google/Makefile
-> > @@ -2,3 +2,4 @@
-> > =C2=A0
-> > =C2=A0dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
-> > =C2=A0	gs101-oriole.dtb \
-> > +	gs101-raven.dtb
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts b/arch/a=
-rm64/boot/dts/exynos/google/gs101-raven.dts
-> > new file mode 100644
-> > index 000000000000..75fd34797fa9
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-> > @@ -0,0 +1,27 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Raven Device Tree
-> > + *
-> > + * Copyright 2021-2023 Google LLC
-> > + * Copyright 2023-2024 Linaro Ltd
-> > + */
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "gs101-raviole.dtsi"
-> > +
-> > +/ {
-> > +	model =3D "Raven";
-> > +	compatible =3D "google,gs101-raven", "google,gs101";
-> > +};
-> > +
-> > +&framebuffer0 {
-> > +	reg =3D <0x0 0xfac00000 (1440 * 3120 * 4)>;
-> > +	width =3D <1440>;
-> > +	height =3D <3120>;
-> > +	stride =3D <(1440 * 4)>;
-> > +};
-> > +
-> > +&cont_splash_mem {
->=20
-> Keep overriding/extending nodes ordered by label name.
 
-OK - I had kept the original order (from dtsi), but will change.
+--3KMw3RMYawymMT9d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cheers,
-Andre'
 
+> Compare the results with hweight8(x) & 1 for correctness when x is in
+> the range [0, 255].
+
+Thank you!
+
+
+--3KMw3RMYawymMT9d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdhODYACgkQFA3kzBSg
+KbZ4tA/+N7R9phnBnR6QsFmN0MtUJSJEuv06hEdecSBh+6cFEtl4YAp4h4Qxd2Yv
+ZW5CQvE2UecSONsWYsne9YOaeThGBHq9bZbNhKzhJTQHVAwLqJO1WZGoUta7hEWA
+cIuliLpQQR+O3Nupf9OhTkXz4RT8ieusZLlIofXEr7k21awnmoaJFCMaffkFwBe3
+4piOQC6Ec5blWbbb/BQa3sBkpEuCnJQgbfRbMTO9N3Mo3LG+xi/Oo+BJoZvRdZqH
+aKdk8fJzULVpCPOFup4O82xwNBesAAWDBaLZ4ZM0QLtna1FBUlSBA9eZURs5+cZu
+39wcO53pgFcrvBsCnIbijIty1xbWK9Fu8xqBQ2Tz5rNjuKxtYl74jyoQIMlckIyN
+smuCkhPZbfI2QQak8NySB8rNjSYTp29mVB2UrEMSHSajCKFXgZX8AyCoqXk/783w
+Abf8Rg3bG983lKXHrXDiPxqCoWdKnW5MLUdJ+ZSv4BrFkspc0PCFb4BQyuh1rMNZ
+0c4LSbTBsUiBz299RI1hB9gBl6ZminybZpESiGw7vrAc9ST4uEzrCPryKzXRV2bS
+nLCaTceflhondB4IpmLQpp0YxPOO0Kudt2uV0NadVLMsMesR1DQOrrO8zIsLuqGn
+egz8ZKXjgHV5YIdrTnOoF0tcDSJxuuInQQXsx3o+LxNOyEGyO+k=
+=Phrr
+-----END PGP SIGNATURE-----
+
+--3KMw3RMYawymMT9d--
 
