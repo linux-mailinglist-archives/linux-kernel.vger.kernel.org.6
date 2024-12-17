@@ -1,175 +1,218 @@
-Return-Path: <linux-kernel+bounces-449236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE199F4C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5FA9F4C06
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9E61782DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88E21787E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F491F8AC9;
-	Tue, 17 Dec 2024 13:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430EB1F8AEC;
+	Tue, 17 Dec 2024 13:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jAZYWaZw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5gvWdi56"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVdple0W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CDE1F4263;
-	Tue, 17 Dec 2024 13:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF481F4263;
+	Tue, 17 Dec 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734440999; cv=none; b=F+hqM9sNJ6cTOAUlfA/ax+u9iiOi7FvMSuIWHlFQNRY0Exqnz9rpc3YCDOUB0WW60MNFhaqupzy/mZj0qraoREpZZsHqFMUNhXVtSCoSUGsg8dmqTfb81UossBIrPvFCCHWPKHlDQ14os1aoJrUpGha1nXC7M9AuzL2iiwj0M7Y=
+	t=1734441004; cv=none; b=EpoFFbGYhsBondl89LMdu/v2HGZ9hvn26wnvMtrs8NikW73vMdtSueaZ0W06n5aF9Z5lpszHexKD34LV57PdJa197FmtZgGJGEM7vuQEmtYZ3zj8CDw5s7A5tEcGOTXF904GhZExbbcDDHOd5CSecmZwEKRvnhDqGaBADQtDxT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734440999; c=relaxed/simple;
-	bh=cgvsMxYlUm341r3hrTMydeHDObjyzjEs7Sn9f5zqtVM=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=N5aUwvRuYBjTcQOaxpM6trFVZp0McjjfYNCNg/8iGl6YxAko77Fb+A4H5NxIdeTPUkzQYefnb3QmwXtJSpk0PhAHfh5cmXLygySClz/++2H7xVgnBaMcl8Df6708sVxjjd3MgG+rncqoiCf4BHAG8fftCzoTSEANEZnyRrK3X/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jAZYWaZw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5gvWdi56; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 17 Dec 2024 13:09:54 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734440995;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=41MvN9btwUR5UYatfG2r5w3WpfpcL0bYPrX5w1+/Cg8=;
-	b=jAZYWaZw05/Tz3DUOtxgWTwuTFgELbT72wpVJaHNSVXqR9AazV0+L0+RiM4B1BmwIxgnsN
-	6L/C1CkqkywmfsnMWTuOdhfrQAFA6E4YaC/ASZWY/y0vKKCMMQ7YVb2duTrRQqh6iCbaHY
-	XcJeV1hyyV+u/5Ah4to63PHRjpAj5SwzJAdzPJEHduaFI2xvVPyOaIbPwiAWllMill1706
-	hIZGSOw1LgQk6qNKLyZ7fyoeqXLTe8Io67PSY89UAVCKdY9WrTAx1xfR5b+S8eLrx5j5y6
-	zLevJ+U2b9aVFh14mbj47SjtINnM7kp+0o4CAVXtKrDztTsA6ESJX9Q8mBES4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734440995;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=41MvN9btwUR5UYatfG2r5w3WpfpcL0bYPrX5w1+/Cg8=;
-	b=5gvWdi56txrZueosho1olTWThdRpL2MfDKEKte1kTbFJy2hFtv9eq5lo+3fnGAMHhF2ddU
-	3s+0ZT4XdrraimAw==
-From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
-Cc: "Xin Li (Intel)" <xin@zytor.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1734441004; c=relaxed/simple;
+	bh=kDlu4XK3lP82N0qIPv6jQEmDp0tDUCg6mKlUOzQMyOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=le2ycBk03Zc0fLi/v0JY1DfEQkgJkziuROP6xkTNJ7g+JSs9aCvoIrBd9zqpeWQBzvhanVI5TFoldQGoozrSgqC1xGsKXWw2RR5wU09maXffvyavZDq/6n1AM/rETvfcU5g1orGCQKf2oCCtkB/60StaGFfdFWrkJzoYtyEaYAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVdple0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07FDC4CED3;
+	Tue, 17 Dec 2024 13:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734441004;
+	bh=kDlu4XK3lP82N0qIPv6jQEmDp0tDUCg6mKlUOzQMyOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eVdple0Wsw4aagxBZWjMhm/AcC6DgKyOa4cYXNQKMwHKbSwXMNwDedw00a0o7MNj6
+	 8gW94BorPBTcxgEcMgM+f1jVmqLaOleRmm9hL0awcuQxy8/opixQVdIvDcXYxkYNmt
+	 LTC4yEdiPWplj+yFAf4vlQ4rVJkh/hmI9SgGfGsQ/T+tDy94RGbGSC0aTjpxbvV4zl
+	 xDv7OUZ68T81BdLRU0HkK7Qq96VFqroe/3vuGHOa87zNQYdOBYMcIc61fTNMOIPg9A
+	 x8xW7vdH1MInsxeV79Cy7Ddbigy023dPKZWW2EgxA7xjq5ks27uuCSt1keUYfG2Z3a
+	 MdtN2XR7d+CXw==
+Date: Tue, 17 Dec 2024 07:10:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Chen Wang <unicorn_wang@outlook.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicornxw@gmail.com>,
+	kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, bhelgaas@google.com, guoren@kernel.org,
+	inochiama@outlook.com, lee@kernel.org, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, pbrobinson@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Message-ID: <20241217131002.GA1160167-robh@kernel.org>
+References: <BM1PR01MB4515ECD36D8FC6ECB7D161C5FE3E2@BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM>
+ <20241211192014.GA3302752@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173444099482.7135.8631452864658460320.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241211192014.GA3302752@bhelgaas>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Wed, Dec 11, 2024 at 01:20:14PM -0600, Bjorn Helgaas wrote:
+> [cc->to: Rob, Krzysztof, Conor because I'm not a DT expert and I'd
+> like their thoughts on this idea of describing Root Ports as separate
+> children]
+> 
+> On Wed, Dec 11, 2024 at 05:00:44PM +0800, Chen Wang wrote:
+> > On 2024/12/11 1:33, Bjorn Helgaas wrote:
+> > > On Mon, Dec 09, 2024 at 03:19:38PM +0800, Chen Wang wrote:
+> 
+> > > > +      The Cadence IP has two modes of operation, selected by a strap pin.
+> > > > +
+> > > > +      In the single-link mode, the Cadence PCIe core instance associated
+> > > > +      with Link0 is connected to all the lanes and the Cadence PCIe core
+> > > > +      instance associated with Link1 is inactive.
+> > > > +
+> > > > +      In the dual-link mode, the Cadence PCIe core instance associated
+> > > > +      with Link0 is connected to the lower half of the lanes and the
+> > > > +      Cadence PCIe core instance associated with Link1 is connected to
+> > > > +      the upper half of the lanes.
+> 
+> > > > +      SG2042 contains 2 Cadence IPs and configures the Cores as below:
+> > > > +
+> > > > +                     +-- Core(Link0) <---> pcie_rc0   +-----------------+
+> > > > +                     |                                |                 |
+> > > > +      Cadence IP 1 --+                                | cdns_pcie0_ctrl |
+> > > > +                     |                                |                 |
+> > > > +                     +-- Core(Link1) <---> disabled   +-----------------+
+> > > > +
+> > > > +                     +-- Core(Link0) <---> pcie_rc1   +-----------------+
+> > > > +                     |                                |                 |
+> > > > +      Cadence IP 2 --+                                | cdns_pcie1_ctrl |
+> > > > +                     |                                |                 |
+> > > > +                     +-- Core(Link1) <---> pcie_rc2   +-----------------+
+> > > > +
+> > > > +      pcie_rcX is pcie node ("sophgo,sg2042-pcie-host") defined in DTS.
+> > > > +      cdns_pcie0_ctrl is syscon node ("sophgo,sg2042-pcie-ctrl") defined in DTS
+> > > > +
+> > > > +      cdns_pcieX_ctrl contains some registers shared by pcie_rcX, even two
+> > > > +      RC(Link)s may share different bits of the same register. For example,
+> > > > +      cdns_pcie1_ctrl contains registers shared by link0 & link1 for Cadence IP 2.
+> 
+> > > > +      "sophgo,pcie-port" is defined to flag which core(link) the rc maps to, with
+> > > > +      this we can know what registers(bits) we should use.
+> 
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - reg-names
+> > > > +  - vendor-id
+> > > > +  - device-id
+> > > > +  - sophgo,syscon-pcie-ctrl
+> > > > +  - sophgo,pcie-port
+> > >
+> > > It looks like vendor-id and device-id apply to PCI devices, i.e.,
+> > > things that will show up in lspci, I assume Root Ports in this case.
+> > > Can we make this explicit in the DT, e.g., something like this?
+> > > 
+> > >    pcie@62000000 {
+> > >      compatible = "sophgo,sg2042-pcie-host";
+> > >      port0: pci@0,0 {
+> > >        vendor-id = <0x1f1c>;
+> > >        device-id = <0x2042>;
+> > >      };
+> > 
+> > Sorry, I don't understand your meaning very well.  Referring to the topology
+> > diagram I drew above, is it okay to write DTS as follows?
+> > 
+> > pcie@7060000000 {
+> >     compatible = "sophgo,sg2042-pcie-host";
+> >     ...... // other properties
+> >     pci@0,0 {
+> >       vendor-id = <0x1f1c>;
+> >       device-id = <0x2042>;
+> >     };
+> > }
+> > 
+> > pcie@7062000000 {
+> >     compatible = "sophgo,sg2042-pcie-host";
+> >     ...... // other properties
+> >     pci@0,0 {
+> >       vendor-id = <0x1f1c>;
+> >       device-id = <0x2042>;
+> >     };
+> > }
+> > 
+> > pcie@7062800000 {
+> >     compatible = "sophgo,sg2042-pcie-host";
+> >     ...... // other properties
+> >     pci@1,0 {
+> >       vendor-id = <0x1f1c>;
+> >       device-id = <0x2042>;
+> >     };
+> > 
+> > }
+> 
+> Generally makes sense to me.  I'm suggesting that we should start
+> describing Root Ports as children of the host bridge node instead of 
+> mixing their properties into the host bridge itself.
+> 
+> Some properties apply to the host bridge, e.g., "bus-range" describes
+> the bus number aperture, and "ranges" describes the address
+> translation between the upstream CPU address space and the PCI address
+> space.
+> 
+> Others apply specifically to a Root Port, e.g., "num-lanes",
+> "max-link-speed", "phys", "vendor-id", "device-id".  I think it will
+> help if we can describe these in separate children, especially when
+> there are multiple Root Ports.
 
-Commit-ID:     e8b345babf2ace50f6bf380af77ee8ae415d81f2
-Gitweb:        https://git.kernel.org/tip/e8b345babf2ace50f6bf380af77ee8ae415d81f2
-Author:        Xin Li (Intel) <xin@zytor.com>
-AuthorDate:    Wed, 13 Nov 2024 09:59:34 -08:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Mon, 16 Dec 2024 15:44:19 -08:00
+Agreed.
 
-x86/fred: Clear WFE in missing-ENDBRANCH #CPs
 
-An indirect branch instruction sets the CPU indirect branch tracker
-(IBT) into WAIT_FOR_ENDBRANCH (WFE) state and WFE stays asserted
-across the instruction boundary.  When the decoder finds an
-inappropriate instruction while WFE is set ENDBR, the CPU raises a #CP
-fault.
+> Documentation/devicetree/bindings/pci/pci.txt says a Root Port
+> should include a reg property that contains the bus/device/function
+> number of the RP, e.g.,
+> Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt has
+> this:
+> 
+>   pcie-controller@3000 {
+>      compatible = "nvidia,tegra30-pcie";
+>      pci@1,0 {
+>        reg = <0x000800 0 0 0 0>;
+>      };
+> 
+> where the "0x000800 0 0 0 0" means the "pci@1,0" Root Port is at
+> 00:01.0 (bus 00, device 01, function 0).  I don't know what the "@1,0"
+> part means.
+> 
+> > And with this change, I can drop the “pcie-port”property and use the port
+> > name to figure out the port number, right?
+> 
+> Seems likely to me.
 
-For the "kernel IBT no ENDBR" selftest where #CPs are deliberately
-triggered, the WFE state of the interrupted context needs to be
-cleared to let execution continue.  Otherwise when the CPU resumes
-from the instruction that just caused the previous #CP, another
-missing-ENDBRANCH #CP is raised and the CPU enters a dead loop.
+I don't think device 1 would be the correct address. The RP is almost 
+always device 0.
 
-This is not a problem with IDT because it doesn't preserve WFE and
-IRET doesn't set WFE.  But FRED provides space on the entry stack
-(in an expanded CS area) to save and restore the WFE state, thus the
-WFE state is no longer clobbered, so software must clear it.
+I think instead the 'syscon-pcie-ctrl' should perhaps be modeled as a 
+phy with the phy binding. Then the host bridge node can have 1 or 2 phy 
+entries depending on if the host uses 1 or 2 links. And the 2nd host 
+should have 'status = "disabled";' when it is not used.
 
-Clear WFE to avoid dead looping in ibt_clear_fred_wfe() and the
-!ibt_fatal code path when execution is allowed to continue.
+Or perhaps just 'num-lanes' would be enough.
 
-Clobbering WFE in any other circumstance is a security-relevant bug.
+Rob
 
-[ dhansen: changelog rewording ]
-
-Fixes: a5f6c2ace997 ("x86/shstk: Add user control-protection fault handler")
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/20241113175934.3897541-1-xin%40zytor.com
----
- arch/x86/kernel/cet.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index d2c732a..303bf74 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -81,6 +81,34 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- static __ro_after_init bool ibt_fatal = true;
- 
-+/*
-+ * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
-+ *
-+ * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggered,
-+ * the WFE state of the interrupted context needs to be cleared to let execution
-+ * continue.  Otherwise when the CPU resumes from the instruction that just
-+ * caused the previous #CP, another missing-ENDBRANCH #CP is raised and the CPU
-+ * enters a dead loop.
-+ *
-+ * This is not a problem with IDT because it doesn't preserve WFE and IRET doesn't
-+ * set WFE.  But FRED provides space on the entry stack (in an expanded CS area)
-+ * to save and restore the WFE state, thus the WFE state is no longer clobbered,
-+ * so software must clear it.
-+ */
-+static void ibt_clear_fred_wfe(struct pt_regs *regs)
-+{
-+	/*
-+	 * No need to do any FRED checks.
-+	 *
-+	 * For IDT event delivery, the high-order 48 bits of CS are pushed
-+	 * as 0s into the stack, and later IRET ignores these bits.
-+	 *
-+	 * For FRED, a test to check if fred_cs.wfe is set would be dropped
-+	 * by compilers.
-+	 */
-+	regs->fred_cs.wfe = 0;
-+}
-+
- static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- {
- 	if ((error_code & CP_EC) != CP_ENDBR) {
-@@ -90,6 +118,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 
- 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
- 		regs->ax = 0;
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 
-@@ -97,6 +126,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
- 	if (!ibt_fatal) {
- 		printk(KERN_DEFAULT CUT_HERE);
- 		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
-+		ibt_clear_fred_wfe(regs);
- 		return;
- 	}
- 	BUG();
 
