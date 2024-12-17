@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel+bounces-448449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E0F9F403C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:52:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395589F4043
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A93188C0FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669CA16CDBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C65126BFA;
-	Tue, 17 Dec 2024 01:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En4rEvuM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C5F2595;
-	Tue, 17 Dec 2024 01:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A78284D3E;
+	Tue, 17 Dec 2024 01:54:27 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id D331B2595;
+	Tue, 17 Dec 2024 01:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734400355; cv=none; b=Wzjzbp7spCz7gRoMRXDj5A5Dca/fAlbJ22EU5tZupuULOmsW9DNodb9QLWnaAhKPRK4vWFvVCVVbmcmUIfZrXWWM7UZkRrUyO0oPQt8UWbzUQo/Bw26Dtyoefk1l46Hx3vSxSGR+c5dIHF30w6YHudRIGBhwTNOmC0o0SiygI4k=
+	t=1734400467; cv=none; b=N/1C1RjH3YLHmJhSvRYk1hXSlV78Nn3Wa+PgXCycMBp8vZlxZcKE5gTfLFHuksccGmM7HP/uL26o1yle/0EPeX75nD4O0Fg3AzA0RIScMzK3TrP9Abrscr67NbG/VSTfwNEjaRbyRLIXQa0KbXA1k2C+OF1/ZPcSZ1DRtRMCkGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734400355; c=relaxed/simple;
-	bh=Dc1EjkkP8yZB+Lzy6XaSHxR9gc0cP4smyE+k7epBWYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fp4Z6y7UIkKHAPs4ACtpQ2M2CeaZdm8jcMbup5mmQ4ngjwWBBOYbCJst7waiaE0H8T15ZHAqcpF59ygKHBNt2r0KUryh/l5e7DxGQoHhpdsi8kW/bu2oHZeBjH83T1udL9PJY4YzumNwGNxKsPybvvylHVoV9VlX8PRQq6D6/Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En4rEvuM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81EA5C4CED0;
-	Tue, 17 Dec 2024 01:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734400354;
-	bh=Dc1EjkkP8yZB+Lzy6XaSHxR9gc0cP4smyE+k7epBWYI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=En4rEvuMe51nLY5xz/kceMOCExv7+kEZY7cXWN5c/6QiI9HGhnxe5yoedIHFXYcUR
-	 N89ctvLxT8zoCZjlDb7K5Hs6Yo5FIRuZK/8IYO8ONCueOSHJmYEA+341hEPZL+BIPu
-	 H6dRGYP8a36hMjds0clyaIFwjAMfaWDCz7owtMX606mOEyouucYALd80QYJMr0xdqD
-	 b/uGPj2kCb3DvFTpdZhRWECCGcIiS1g8Ogdt7sY+glbdEurDrqBhAkONDdD5zQkbTG
-	 6VfGH2Du/6usU6rUnx9yQbErU+C2cL6DYfGRfYNrv6pEEwVR+DaMzJjjkAy+T+JbIM
-	 yHH90SE0w/Q+A==
-Date: Mon, 16 Dec 2024 17:52:31 -0800
-From: Kees Cook <kees@kernel.org>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH RFC 3/5] rtnetlink: do_setlink: Use sockaddr_storage
-Message-ID: <202412161749.84F7671F3@keescook>
-References: <20241104221450.work.053-kees@kernel.org>
- <20241104222513.3469025-3-kees@kernel.org>
- <7a2e5da2-5122-4c73-9a94-20e7f21a26f5@gmail.com>
+	s=arc-20240116; t=1734400467; c=relaxed/simple;
+	bh=AKnwrjfurYTExrdozB+/U9GlNZVTFyPpKBCJhqXDLbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=TnMd6nijTmMq0YUIV/ju/tZsw1/rgJUJGDMv6HF/uhyYSqpM08p9rJTJXhRrcqhunrKt+J5ZwYthUcj/lu0P1aCl+ZrpJsoS1bMcGi7Vzfu286ILCCBcUhptmsqKRKSYIUwz0OMUd/oZt6+/7VutpEP5msR88a2k8bYfnhkOUIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [103.163.180.3])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 566BE6017097D;
+	Tue, 17 Dec 2024 09:54:09 +0800 (CST)
+X-MD-Sfrom: zhanxin@nfschina.com
+X-MD-SrcIP: 103.163.180.3
+From: Zhanxin Qi <zhanxin@nfschina.com>
+To: kherbst@redhat.com,
+	lyude@redhat.com,
+	dakr@redhat.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Zhanxin Qi <zhanxin@nfschina.com>,
+	Duanjun Li <duanjun@nfschina.com>
+Subject: [PATCH v2] drm/nouveau: Fix memory leak in nvbios_iccsense_parse
+Date: Tue, 17 Dec 2024 09:53:02 +0800
+Message-Id: <20241217015302.281769-1-zhanxin@nfschina.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <Z2A0CuGRJD-asF3y@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a2e5da2-5122-4c73-9a94-20e7f21a26f5@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 11:59:49AM +0100, Eric Dumazet wrote:
-> 
-> On 11/4/24 11:25 PM, Kees Cook wrote:
-> > Instead of a heap allocation use a stack allocated sockaddr_storage to
-> > support arbitrary length addr_len value (but bounds check it against the
-> > maximum address length).
-> > 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> >   net/core/rtnetlink.c | 12 ++++--------
-> >   1 file changed, 4 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> > index f0a520987085..eddd10b74f06 100644
-> > --- a/net/core/rtnetlink.c
-> > +++ b/net/core/rtnetlink.c
-> > @@ -2839,21 +2839,17 @@ static int do_setlink(const struct sk_buff *skb,
-> >   	}
-> >   	if (tb[IFLA_ADDRESS]) {
-> > -		struct sockaddr *sa;
-> > -		int len;
-> > +		struct sockaddr_storage addr;
-> > +		struct sockaddr *sa = (struct sockaddr *)&addr;
-> 
-> We already use too much stack space.
+The nvbios_iccsense_parse function allocates memory for sensor data
+but fails to free it when the function exits, leading to a memory
+leak. Add proper cleanup to free the allocated memory.
 
-I'm finally coming back to this. I was over-thinking: this only calls
-dev_set_mac_address_user() so it really is a true struct sockaddr.
+Fixes: b71c0892631a ("drm/nouveau/iccsense: implement for ina209, ina219 and ina3221")
 
-> Please move addr into struct rtnl_newlink_tbs ?
+Cc: stable@vger.kernel.org
+Co-developed-by: Duanjun Li <duanjun@nfschina.com>
+Signed-off-by: Zhanxin Qi <zhanxin@nfschina.com>
+---
+ .../include/nvkm/subdev/bios/iccsense.h       |  2 ++
+ .../drm/nouveau/nvkm/subdev/bios/iccsense.c   | 20 +++++++++++++++++++
+ .../drm/nouveau/nvkm/subdev/iccsense/base.c   |  3 +++
+ 3 files changed, 25 insertions(+)
 
-I couldn't figure out how that was meant to work -- I didn't see a
-struct rtnl_newlink_tbs instance near this routine.
-
-Regardless, I can just tweak the length and leave it heap allocated.
-
--Kees
-
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
+index 4c108fd2c805..8bfc28c3f7a7 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/iccsense.h
+@@ -20,4 +20,6 @@ struct nvbios_iccsense {
+ };
+ 
+ int nvbios_iccsense_parse(struct nvkm_bios *, struct nvbios_iccsense *);
++
++void nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense);
+ #endif
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
+index dea444d48f94..ca7c27b92f16 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/iccsense.c
+@@ -56,6 +56,19 @@ nvbios_iccsense_table(struct nvkm_bios *bios, u8 *ver, u8 *hdr, u8 *cnt,
+ 	return 0;
+ }
+ 
++/**
++ * nvbios_iccsense_parse - Parse ICCSENSE table from VBIOS
++ * @bios: VBIOS base pointer
++ * @iccsense: ICCSENSE table structure to fill
++ *
++ * Parses the ICCSENSE table from VBIOS and fills the provided structure.
++ * The caller must invoke nvbios_iccsense_cleanup() after successful parsing
++ * to free the allocated rail resources.
++ *
++ * Returns:
++ *   0        - Success
++ *   -EINVAL  - Table not found
++ */
+ int
+ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
+ {
+@@ -127,3 +140,10 @@ nvbios_iccsense_parse(struct nvkm_bios *bios, struct nvbios_iccsense *iccsense)
+ 
+ 	return 0;
+ }
++
++void
++nvbios_iccsense_cleanup(struct nvbios_iccsense *iccsense)
++{
++	kfree(iccsense->rail);
++	iccsense->rail = NULL;
++}
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
+index 8f0ccd3664eb..4c1759ecce38 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/iccsense/base.c
+@@ -291,6 +291,9 @@ nvkm_iccsense_oneinit(struct nvkm_subdev *subdev)
+ 			list_add_tail(&rail->head, &iccsense->rails);
+ 		}
+ 	}
++
++	nvbios_iccsense_cleanup(&stbl);
++
+ 	return 0;
+ }
+ 
 -- 
-Kees Cook
+2.30.2
+
 
