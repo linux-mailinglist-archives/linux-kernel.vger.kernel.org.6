@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-448543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C95B9F4192
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:12:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6889F419A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B13A16BB2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F98188C442
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB861474A0;
-	Tue, 17 Dec 2024 04:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E311474A0;
+	Tue, 17 Dec 2024 04:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DgP6mLLL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C907C6E6;
-	Tue, 17 Dec 2024 04:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PUSjk9Uy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27220EB;
+	Tue, 17 Dec 2024 04:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734408733; cv=none; b=Y/gCUHlEh/HVXqpYgHQ/sZK23nyF2T/VKRO7h4YDeV6juL5kSTkq6gIR0CGIn8sVr4S32BLa5Xb5rRadpUHdRU220fdaHy7iSgH342ND83mg692ogf2A5MvZrcw0gg/Bwn5ej6/HEztj/JBHPGS5Ucfws1Ii89McJztA/a14xBg=
+	t=1734409037; cv=none; b=uNLeeiXCsCiFSMKhmqKCxUs24T6N5v+Nt8H95rEJWlHz9CprvC+JGU4Yz0UwHYQGnXXYECwcB04+HF0HEbjnM4uvKugKg9B2f1h3iDuFF0rYlnMWJ2xiGrsHjnDN39xfYZ7GxX66rxTC4yR+o3FXkabp3oPHkQV2gWGuNPQIe6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734408733; c=relaxed/simple;
-	bh=xborGa0kFypIH3PZUTiOBQknQmZzTP+YM8juKVCk8aE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZvuMJ4Gt1Yx/HE1K6rTo3B/e2q/JHIacDsST4HFEz9a53A8pG6rD+mgPWqHUxYhvmOAnUYbgBRIu1AKVbVCNrENB2NcCCLjyAFw+G+my95sP3SVfeLOSUImVuElBc+iAKQXvZOmXXqbvG+Fdg9GQIxzPcuaUTUNGkk2ffiJiyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DgP6mLLL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p9e56CrBYZ7LkPiA+QF9fwN93hG/ij/v5BLEYDF9kPk=; b=DgP6mLLL4BOsn5S2o4/0MRN5/k
-	U79B/jKb+/IqVq7PZPvRoXGYoDRN7y0V27Cffg/h91Vr6lVPGOozOKXwFj0BLniwnHcD4tax+9oPY
-	YEbP8mWxPqKfBRhU/xjEbhfVlQfkEDM2dWhYQ9XpU6uptJiqUQ6Gyh+yG+ZSBYgrviSTf2sDj+rch
-	dc3i8HYclxmpUMfT/ItTsfFMUL67KScCBxY3C3/vCwYd28+MZO2da1DEz8VuCDyZLkPwMT4aVKsUB
-	GHN7jmZ0tmUbpL0CJijiCIKlSYjQckgXXx/7GOlgIjo9+jrR4kZyOK+TaVScb45IhlL5dMRdHghAr
-	Drv3CURg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNOwK-00000004k4A-09DI;
-	Tue, 17 Dec 2024 04:12:08 +0000
-Date: Tue, 17 Dec 2024 04:12:07 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] inotify: Use strscpy() for event->name copies
-Message-ID: <Z2D6FzPgomC442vW@casper.infradead.org>
-References: <20241216224507.work.859-kees@kernel.org>
+	s=arc-20240116; t=1734409037; c=relaxed/simple;
+	bh=mv/hJGnHXuS3Iq+PPpUn6L9H1CjyIPwhVsdPxhm7K8s=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=AL4RLoYeWLRFzSIuOwDpnsRFCEs+8/KsbpUfCvcNsaXFvWIDryBtLDtz841NDhFudHDS1QzbIPAKAfT6lDvig0JOMPce97ZQnNYaTh10OVp8JQQhb/sGqC9DgEzFoaXiF7iB3SO4tqYMZOuVFmK4BYxvX7OEhMsXVrbWV7YEjYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PUSjk9Uy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 5B109204720E; Mon, 16 Dec 2024 20:17:15 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B109204720E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734409035;
+	bh=+/ViDxWzfryU9ikDOGTZKHRT/qPhCdKFZa62Pz1646k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PUSjk9UycGclagIquLhKwv37mvmqSAZuxsDBszbf6PbEjh536oRfd50GHeMQzcfKk
+	 MpynYyIN2NCLALG831tr6Emg1nUBWgpN+JGCoJHY9sOVWAy78nXVlSKzbBAnDf2X+r
+	 /kyompQLxRPQsCw0f174h5d1Lb+vBDXTR0Wilztc=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	dmitry.torokhov@gmail.com,
+	linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH v4 0/3] Disable Suspend-to-Idle in Hyper-V and Fix Hibernation Interruptions
+Date: Mon, 16 Dec 2024 20:17:06 -0800
+Message-Id: <1734409029-10419-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216224507.work.859-kees@kernel.org>
 
-On Mon, Dec 16, 2024 at 02:45:15PM -0800, Kees Cook wrote:
-> Since we have already allocated "len + 1" space for event->name, make sure
-> that name->name cannot ever accidentally cause a copy overflow by calling
-> strscpy() instead of the unbounded strcpy() routine. This assists in
-> the ongoing efforts to remove the unsafe strcpy() API[1] from the kernel.
+It has been reported that Hyper-V VM users can unintentionally abort
+hibernation by mouse or keyboard movements. To address this issue,
+we have decided to remove the wakeup events for the Hyper-V keyboard
+and mouse driver. However, this change introduces another problem: 
+Suspend-to-Idle brings the system down with no method to wake it back up.
 
-Since a qstr can't contain a NUL before the length, why not just use
-memcpy()?
+Given that there are no real users of Suspend-to-Idle in Hyper-V,
+we have decided to disable this feature for VMBus. This results in:
 
->  	event->name_len = len;
->  	if (len)
-> -		strcpy(event->name, name->name);
-> +		strscpy(event->name, name->name, event->name_len + 1);
+$echo freeze > /sys/power/state
+> bash: echo: write error: Operation not supported
+
+The keyboard and mouse were previously registered as wakeup sources to
+interrupt the freeze operation in a VM. Since the freeze operation itself
+is no longer supported, we are disabling them as wakeup events.
+
+This patchset ensures that the system remains stable and prevents
+unintended interruptions during hibernation.
+---
+Changes in v4:
+* Make keyboard and mouse wakeup capable by adding 
+  device_set_wakeup_capable but not enabling them as wakeup sources.
+  https://lore.kernel.org/lkml/Zv-j0qtWXsDz4Hah@google.com/
+* Remove device_wakeup_init() call in mousevsc_remove()
+v3:https://lore.kernel.org/lkml/1727685708-3524-1-git-send-email-ernis@linux.microsoft.com/
+
+Changes in v3:
+* Add 'Cc: stable@vger.kernel.org' in sign-off area.
+v2:https://lore.kernel.org/lkml/1727683917-31485-1-git-send-email-ernis@linux.microsoft.com/
+
+Changes in v2:
+* Add "#define vmbus_freeze NULL" when CONFIG_PM_SLEEP is not 
+  enabled.
+* Change commit message to clarify that this change is specifc to
+  Hyper-V based VMs.
+v1:https://lore.kernel.org/lkml/1726176470-13133-1-git-send-email-ernis@linux.microsoft.com/
+---
+
+Erni Sri Satya Vennela (3):
+  Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
+  Input: hyperv-keyboard - disable as wakeup source
+  HID: hyperv: disable as wakeup source
+
+ drivers/hid/hid-hyperv.c              |  3 +--
+ drivers/hv/vmbus_drv.c                | 16 +++++++++++++++-
+ drivers/input/serio/hyperv-keyboard.c |  2 +-
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+-- 
+2.34.1
+
 
