@@ -1,215 +1,370 @@
-Return-Path: <linux-kernel+bounces-448758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9AB9F4523
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:32:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2F99F452D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC7A31681D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93A116E084
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BD3178362;
-	Tue, 17 Dec 2024 07:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3322A18B46E;
+	Tue, 17 Dec 2024 07:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rpVjO5J2"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="h/zPeLn1"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD1D179A7;
-	Tue, 17 Dec 2024 07:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290E2179A7;
+	Tue, 17 Dec 2024 07:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734420710; cv=none; b=JMKqH+fh0HqMkfgNkrDAdlLyKVUoLka/NNH+aNM+NhC4ExC3OA0CFQw54/Z6PaW/jc2eROTPJYywHnhgyO3N+mAkSwMAUuSks+6NDv2skHOVyrZDdE7KFp5vnJhOIAuprX60rtZSKoE2TXGZ4iPsP7sIQCICp+DAoE3gVRWBAGg=
+	t=1734420773; cv=none; b=mGVBRIQX8QEw4KhzktHj+2HPcIAQCLCfGrCm2+inz+iKn+WE7v+tnaHLzaUyZ2WjRBE7PWSJtUht4pmRUpbrkxJJYYv1cJfiZsZb9ws13y/9le+GUixsndE+ftqISVx77GJ/13IjCcyeRvR74Ossy6S/9sejBYgQIQzzeyiPdT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734420710; c=relaxed/simple;
-	bh=yqHi8COCMHDxXc9RpRMrg9Yc48F9LlRQHxz73EXLwdo=;
+	s=arc-20240116; t=1734420773; c=relaxed/simple;
+	bh=KjcyutV+LUKObJJz8kI73mfXjx2M5XMk9HkD+bxSgXQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RKfTRC/gvDhJ1R/PSLt7CBW4o6WoE6ZwKeFqedmBTn7i9LKlk1IQEE97D/kbFjuNVsZ/uclt0OBpR+6iNi+qeMx+IjOHqGMQ9Y2BzoE4hCr07WR35JPeZegtG4+GRpP/qqQ/Y4rPzyyq8W1+fyNN3JTKuWDE0+n2cNi+y9aW2bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rpVjO5J2; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734420698; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=TkosoO+3ONVOSeeI8+WgoAPbCZNq1k7eOucDpvCkMms=;
-	b=rpVjO5J29e6lkeqkdmU8iiu6w6py7L9uT/LzNLiGXA/sKdi9n3KxmcpnDC1R0oG8h8XoMEZmnFY9osvygjktiixSURtDcS+kcTy2v+4APCOA4bNIN5hY/Bns2ZTIdZM1noNXSDM9vssaM/WLIdh/rignu0OAI0mGEcN7N4zaB+U=
-Received: from 30.74.144.132(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WLhprS1_1734420696 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 15:31:37 +0800
-Message-ID: <03d09def-2509-4e87-ad14-cf616ac90908@linux.alibaba.com>
-Date: Tue, 17 Dec 2024 15:31:36 +0800
+	 In-Reply-To:Content-Type; b=pGCtVf/t/nYCyEJ/D3yioidrXqk+sxKrZJqe1wDGh1C0ju2YUdKO+D0dld7uh2CB2LOS4MnXF2pM40to2u7FpVpjHpH1rgzZpoNvrES7vCmXsEKVHUQoqni/rw3LfWLZBkJfD+huaXMyLhYPcTW0v+6+USahqtbal+VOcPcxWZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=h/zPeLn1; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.1.148] (unknown [222.129.38.136])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7684E3FEC1;
+	Tue, 17 Dec 2024 07:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1734420768;
+	bh=WmLuapaBcDLx20vBI443lQHJJcPEXOJ/SfKCg4vPqzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=h/zPeLn1m2LGNQMyi96SrFy6zni++2uPGbGUXWpa4cDy/beqVF0ULcPaIZg3gp4mW
+	 OG5rJGzwon9COpw6Emhx7a0fKRSVlPElj69vN8zr+tpVIV9VWA9R7p23GyNV2NFF4j
+	 DjHgqrT7wGrDHryYsobQFv/5X9FzrCgN8gkOtw+til7ZLlHRjH1lXRyejRlhmJOBu3
+	 KKIj/18SaADpowAdmRO8r0p8TaR6BI8npZ7KIH17Z+JW8xgmMvqzMJ3kuXNvmKzaua
+	 NjrS6bBFdGi83pOIqoNcB8oyVt6axYfLHliJcY7+M0TvvOFgjrpQyLGqo+MYW5com6
+	 cBd/4joHZP2DA==
+Message-ID: <2be37a02-d7aa-4587-a7a3-763840e98888@canonical.com>
+Date: Tue, 17 Dec 2024 15:32:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6] mm, compaction: don't use ALLOC_CMA in long term GUP
- flow
-To: Barry Song <21cnbao@gmail.com>, yangge1116@126.com
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, david@redhat.com,
- vbabka@suse.cz, liuzixing@hygon.cn
-References: <1734406405-25847-1-git-send-email-yangge1116@126.com>
- <CAGsJ_4xSbw7XDe1CWBAfYvMH35n0s1KaSze+wTUDOpwE-VrhfQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAGsJ_4xSbw7XDe1CWBAfYvMH35n0s1KaSze+wTUDOpwE-VrhfQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v3 00/22] Add Intel Touch Host Controller drivers
+To: "Xu, Even" <even.xu@intel.com>, "jikos@kernel.org" <jikos@kernel.org>,
+ "bentiss@kernel.org" <bentiss@kernel.org>, "corbet@lwn.net"
+ <corbet@lwn.net>, "bagasdotme@gmail.com" <bagasdotme@gmail.com>,
+ "rdunlap@infradead.org" <rdunlap@infradead.org>
+Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <20241216014127.3722172-1-even.xu@intel.com>
+ <f529959b-2355-430b-afc1-fb3062cbbe60@canonical.com>
+ <IA1PR11MB6098E6919DB15166C62C016DF4042@IA1PR11MB6098.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Aaron Ma <aaron.ma@canonical.com>
+Autocrypt: addr=aaron.ma@canonical.com; keydata=
+ xsBNBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
+ 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
+ BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
+ MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
+ ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
+ AAHNIUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPsLAdwQTAQgAIQUCV994uQIb
+ AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
+ LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
+ GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
+ 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
+ V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
+ cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrazsBNBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
+ sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
+ +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
+ 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
+ mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
+ Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAHCwF8EGAEIAAkFAlffeLkCGwwACgkQzcQs
+ 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
+ VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
+ NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
+ 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
+ nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
+In-Reply-To: <IA1PR11MB6098E6919DB15166C62C016DF4042@IA1PR11MB6098.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 2024/12/17 14:14, Barry Song wrote:
-> On Tue, Dec 17, 2024 at 4:33 PM <yangge1116@126.com> wrote:
->>
->> From: yangge <yangge1116@126.com>
->>
->> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
->> in __compaction_suitable()") allow compaction to proceed when free
->> pages required for compaction reside in the CMA pageblocks, it's
->> possible that __compaction_suitable() always returns true, and in
->> some cases, it's not acceptable.
->>
->> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
->> of memory. I have configured 16GB of CMA memory on each NUMA node,
->> and starting a 32GB virtual machine with device passthrough is
->> extremely slow, taking almost an hour.
->>
->> During the start-up of the virtual machine, it will call
->> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
->> Long term GUP cannot allocate memory from CMA area, so a maximum
->> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
->> machine memory. Since there is 16G of free CMA memory on the NUMA
+On 12/17/24 2:58 PM, Xu, Even wrote:
+> Hi, Aaron,
 > 
-> Other unmovable allocations, like dma_buf, which can be large in a
-> Linux system, are
-> also unable to allocate memory from CMA. My question is whether the issue you
-> described applies to these allocations as well.
+> Thanks for testing!
 > 
->> node, watermark for order-0 always be met for compaction, so
->> __compaction_suitable() always returns true, even if the node is
->> unable to allocate non-CMA memory for the virtual machine.
->>
->> For costly allocations, because __compaction_suitable() always
->> returns true, __alloc_pages_slowpath() can't exit at the appropriate
->> place, resulting in excessively long virtual machine startup times.
->> Call trace:
->> __alloc_pages_slowpath
->>      if (compact_result == COMPACT_SKIPPED ||
->>          compact_result == COMPACT_DEFERRED)
->>          goto nopage; // should exit __alloc_pages_slowpath() from here
->>
+> It’s not a driver error, it just means driver detected a touch device error (Touch device report an unexpected RESET Response).
 > 
-> Do we face the same issue if we allocate dma-buf while CMA has plenty
-> of free memory, but non-CMA has none?
+> I also met the same issue during test, it usually happens during enumeration flow.
 > 
->> In order to quickly fall back to remote node, we should remove
->> ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
->> in long term GUP flow. After this fix, starting a 32GB virtual machine
->> with device passthrough takes only a few seconds.
->>
->> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: yangge <yangge1116@126.com>
->> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>
->> V6:
->> -- update cc->alloc_flags to keep the original loginc
->>
->> V5:
->> - add 'alloc_flags' parameter for __isolate_free_page()
->> - remove 'usa_cma' variable
->>
->> V4:
->> - rich the commit log description
->>
->> V3:
->> - fix build errors
->> - add ALLOC_CMA both in should_continue_reclaim() and compaction_ready()
->>
->> V2:
->> - using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
->> - rich the commit log description
->>
->>   include/linux/compaction.h |  6 ++++--
->>   mm/compaction.c            | 26 +++++++++++++++-----------
->>   mm/internal.h              |  3 ++-
->>   mm/page_alloc.c            |  7 +++++--
->>   mm/page_isolation.c        |  3 ++-
->>   mm/page_reporting.c        |  2 +-
->>   mm/vmscan.c                |  4 ++--
->>   7 files changed, 31 insertions(+), 20 deletions(-)
->>
->> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
->> index e947764..b4c3ac3 100644
->> --- a/include/linux/compaction.h
->> +++ b/include/linux/compaction.h
->> @@ -90,7 +90,8 @@ extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
->>                  struct page **page);
->>   extern void reset_isolation_suitable(pg_data_t *pgdat);
->>   extern bool compaction_suitable(struct zone *zone, int order,
->> -                                              int highest_zoneidx);
->> +                                              int highest_zoneidx,
->> +                                              unsigned int alloc_flags);
->>
->>   extern void compaction_defer_reset(struct zone *zone, int order,
->>                                  bool alloc_success);
->> @@ -108,7 +109,8 @@ static inline void reset_isolation_suitable(pg_data_t *pgdat)
->>   }
->>
->>   static inline bool compaction_suitable(struct zone *zone, int order,
->> -                                                     int highest_zoneidx)
->> +                                                     int highest_zoneidx,
->> +                                                     unsigned int alloc_flags)
->>   {
->>          return false;
->>   }
->> diff --git a/mm/compaction.c b/mm/compaction.c
->> index 07bd227..d92ba6c 100644
->> --- a/mm/compaction.c
->> +++ b/mm/compaction.c
->> @@ -655,7 +655,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
->>
->>                  /* Found a free page, will break it into order-0 pages */
->>                  order = buddy_order(page);
->> -               isolated = __isolate_free_page(page, order);
->> +               isolated = __isolate_free_page(page, order, cc->alloc_flags);
->>                  if (!isolated)
->>                          break;
->>                  set_page_private(page, order);
->> @@ -1634,7 +1634,7 @@ static void fast_isolate_freepages(struct compact_control *cc)
->>
->>                  /* Isolate the page if available */
->>                  if (page) {
->> -                       if (__isolate_free_page(page, order)) {
->> +                       if (__isolate_free_page(page, order, cc->alloc_flags)) {
->>                                  set_page_private(page, order);
->>                                  nr_isolated = 1 << order;
->>                                  nr_scanned += nr_isolated - 1;
->> @@ -2381,6 +2381,7 @@ static enum compact_result compact_finished(struct compact_control *cc)
->>
->>   static bool __compaction_suitable(struct zone *zone, int order,
->>                                    int highest_zoneidx,
->> +                                 unsigned int alloc_flags,
->>                                    unsigned long wmark_target)
->>   {
->>          unsigned long watermark;
->> @@ -2395,25 +2396,26 @@ static bool __compaction_suitable(struct zone *zone, int order,
->>           * even if compaction succeeds.
->>           * For costly orders, we require low watermark instead of min for
->>           * compaction to proceed to increase its chances.
->> -        * ALLOC_CMA is used, as pages in CMA pageblocks are considered
->> -        * suitable migration targets
->> +        * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
->> +        * CMA pageblocks are considered suitable migration targets
+> If user keep touching the screen before/during driver do device initialization, it will happen.
 > 
-> I'm not sure if this document is correct for cases other than GUP.
 
-Yes, we should update the document for other cases where CMA cannot be 
-used. That's why we use the passed 'alloc_flags' to determine if 
-'ALLOC_CMA' is needed, instead of using 'current->flags & PF_MEMALLOC_PIN'.
+During the booting, no touching.
+It still repeats this error when driver is loading.
+
+After system bootup and in idle, every single touch will report this error.
+
+Aaron
+
+> In general, Touch devices will self recover from this error, it will not impact normal touch function.
+> 
+> Thanks!
+> 
+> Best Regards,
+> 
+> Even Xu
+> 
+> *From:*Aaron Ma <aaron.ma@canonical.com>
+> *Sent:* Tuesday, December 17, 2024 2:47 PM
+> *To:* Xu, Even <even.xu@intel.com>; jikos@kernel.org; bentiss@kernel.org; corbet@lwn.net; bagasdotme@gmail.com; rdunlap@infradead.org
+> *Cc:* linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org
+> *Subject:* Re: [PATCH v3 00/22] Add Intel Touch Host Controller drivers
+> 
+> Hi Even,
+> 
+> Tested on 6.13-rc3, there is an error repeated when using touchscreen:
+> 
+> intel_quicki2c 0000:00:10.0: *unexpected DIR happen*
+> 
+> The device info:
+> [    3.013613] input: quicki2c-hid 27C6:012D Touchscreen as /devices/pci0000:00/0000:00:10.0/000
+> 1:27C6:012D.0001/input/input6
+> [    3.013763] input: quicki2c-hid 27C6:012D as /devices/pci0000:00/0000:00:10.0/0001:27C6:012D.
+> 0001/input/input7
+> [    3.013894] hid-generic 0001:27C6:012D.0001: input,hidraw0: <UNKNOWN> HID v8.65 Device [quick
+> i2c-hid 27C6:012D] on
+> 
+> 
+> Aaron
+> 
+> On 12/16/24 9:41 AM, Even Xu wrote:
+> 
+>     Intel Touch Host Controller (THC) is a new high performance input IP
+> 
+>     which can benefit HID device's data transaction, such as touch screen,
+> 
+>     touch pad, stylus.
+> 
+>     THC IP now evoluates to V4, it can support 3 different modes: IPTS,
+> 
+>     HIDSPI and HIDI2C. Here are upgrade history:
+> 
+>     - THC v1, for TGL/LKF, supports intel private IPTS (Intel Precise Touch
+> 
+>        and Stylus) protocol ( IPTS mode)
+> 
+>     - THC v2, for ADL, add industrial standard HID over SPI protocol support
+> 
+>        (HIDSPI mode)
+> 
+>     - THC v3, for MTL, enhance HID over SPI mode
+> 
+>     - THC v4, for LNL, add inudstrial standard HID over I2C protocol support
+> 
+>        (HIDI2C mode)
+> 
+>     Linux Surface community (https://github.com/linux-surface <https://github.com/linux-surface>) already
+> 
+>     implemented IPTS mode. These patch series provides THC HIDSPI mode and
+> 
+>     THC HIDI2C mode support on Linux.
+> 
+>     These patch series includes:
+> 
+>     1. Document for THC hardware and software introduction.
+> 
+>     2. Intel THC Hardware layer driver which provides control interfaces
+> 
+>         for protocol layer.
+> 
+>     3. Intel QuickSPI (R) driver working as a HIDSPI device driver which
+> 
+>         implements HID over SPI protocol and flow.
+> 
+>     4. Intel QuickI2C (R) driver working as a HIDI2C device driver which
+> 
+>         implements HID over I2C protocol and flow.
+> 
+>     Change logs:
+> 
+>     v3:
+> 
+>     - Change tables in documents from literal block to table format
+> 
+>     - Change symbol namespace to string literal according to patch:
+> 
+>        cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+> 
+>     - Refine Kconfig description
+> 
+>     - Enhance Quickspi and Quicki2c driver by clearing THC hardware interal
+> 
+>        state before doing initialization to avoid BIOS impacts.
+> 
+>     - A fix in Quicki2c driver when does set_report
+> 
+>     v2:
+> 
+>     - Fix document format issues
+> 
+>     - Add THC device IDs for Intel Panther Lake (PTL) platform
+> 
+>     Even Xu (13):
+> 
+>        HID: THC: Add documentation
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC DMA interfaces
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC I2C config interfaces
+> 
+>        HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI driver hid layer
+> 
+>        HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI ACPI interfaces
+> 
+>        HID: intel-thc-hid: intel-quickspi: Add HIDSPI protocol implementation
+> 
+>        HID: intel-thc-hid: intel-quickspi: Add PM implementation
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C driver skeleton
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C driver hid layer
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C ACPI interfaces
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Add HIDI2C protocol implementation
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver
+> 
+>        HID: intel-thc-hid: intel-quicki2c: Add PM implementation
+> 
+>     Xinpeng Sun (9):
+> 
+>        HID: intel-thc-hid: Add basic THC driver skeleton
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC registers definition
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC PIO operation APIs
+> 
+>        HID: intel-thc-hid: intel-thc: Add APIs for interrupt
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC LTR interfaces
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC interrupt handler
+> 
+>        HID: intel-thc-hid: intel-thc: Add THC SPI config interfaces
+> 
+>        HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI driver skeleton
+> 
+>        HID: intel-thc-hid: intel-quickspi: Complete THC QuickSPI driver
+> 
+>       Documentation/hid/index.rst                   |    1 +
+> 
+>       Documentation/hid/intel-thc-hid.rst           |  568 ++++++
+> 
+>       MAINTAINERS                                   |    6 +
+> 
+>       drivers/hid/Kconfig                           |    2 +
+> 
+>       drivers/hid/Makefile                          |    2 +
+> 
+>       drivers/hid/intel-thc-hid/Kconfig             |   42 +
+> 
+>       drivers/hid/intel-thc-hid/Makefile            |   22 +
+> 
+>       .../intel-quicki2c/pci-quicki2c.c             |  966 ++++++++++
+> 
+>       .../intel-quicki2c/quicki2c-dev.h             |  186 ++
+> 
+>       .../intel-quicki2c/quicki2c-hid.c             |  166 ++
+> 
+>       .../intel-quicki2c/quicki2c-hid.h             |   14 +
+> 
+>       .../intel-quicki2c/quicki2c-protocol.c        |  224 +++
+> 
+>       .../intel-quicki2c/quicki2c-protocol.h        |   20 +
+> 
+>       .../intel-quickspi/pci-quickspi.c             |  987 +++++++++++
+> 
+>       .../intel-quickspi/quickspi-dev.h             |  172 ++
+> 
+>       .../intel-quickspi/quickspi-hid.c             |  165 ++
+> 
+>       .../intel-quickspi/quickspi-hid.h             |   14 +
+> 
+>       .../intel-quickspi/quickspi-protocol.c        |  409 +++++
+> 
+>       .../intel-quickspi/quickspi-protocol.h        |   25 +
+> 
+>       .../intel-thc-hid/intel-thc/intel-thc-dev.c   | 1578 +++++++++++++++++
+> 
+>       .../intel-thc-hid/intel-thc/intel-thc-dev.h   |  116 ++
+> 
+>       .../intel-thc-hid/intel-thc/intel-thc-dma.c   |  969 ++++++++++
+> 
+>       .../intel-thc-hid/intel-thc/intel-thc-dma.h   |  146 ++
+> 
+>       .../intel-thc-hid/intel-thc/intel-thc-hw.h    |  881 +++++++++
+> 
+>       include/linux/hid-over-i2c.h                  |  117 ++
+> 
+>       include/linux/hid-over-spi.h                  |  155 ++
+> 
+>       26 files changed, 7953 insertions(+)
+> 
+>       create mode 100644 Documentation/hid/intel-thc-hid.rst
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/Kconfig
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/Makefile
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.h
+> 
+>       create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-hw.h
+> 
+>       create mode 100644 include/linux/hid-over-i2c.h
+> 
+>       create mode 100644 include/linux/hid-over-spi.h
+> 
+
 
