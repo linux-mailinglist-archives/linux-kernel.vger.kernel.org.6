@@ -1,206 +1,122 @@
-Return-Path: <linux-kernel+bounces-448945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279A69F4779
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:28:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0519F4771
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B877B1892BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66ADF16F261
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DADF1DDA36;
-	Tue, 17 Dec 2024 09:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2811DED7C;
+	Tue, 17 Dec 2024 09:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EfhAKjgi"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pynkI9iy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99881D79BB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3212A1DE8B9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734427592; cv=none; b=TOFLr+km9mJpsKsed3GmUX/QhDcBf5qIG3lbpYkpEY//4lez8FIvq7NF0AV/bGR2BO4k9fpyCmpLaOlb/BlSyyLAMb/O4dIR1XtTD/WRix623PGwSxG5NKgUYffEhPssc6pIUB4guKdEAh62S8elAG0/Qa5A7vsV//U+tOONpYg=
+	t=1734427570; cv=none; b=aAw3G2M2hWsBxy/SmV97cZVyc7ULk8nywIJ3IdaZ8CeOwM8wOhDQot7E0gwZzZlqaI8SeISY6t1rZVH/zW4t88wPLbGqKDsOgCds2YoZW64XwueWHKNuliVbc6OZOfVfBLq6zbOk1n5mAyYoeZu3eWh4OXf/Dji7mDFIX4eocHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734427592; c=relaxed/simple;
-	bh=MkCvDfZY2gI+DvSvK0wAZtFbE6IQgsCVp2l2r8TiB8c=;
+	s=arc-20240116; t=1734427570; c=relaxed/simple;
+	bh=hKswbEz7JLeoG28GBCgAedfWMWOBDtGpXbc8u/HHjmI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HmgSBSWyNwHXy0d7Xo3AjXhuhVK2dwZ64jKm4kEP1a95LSO9ey3IbWRNWQlzzVoEbiwO4kbTESL6343VTe6s7CdZtD6cnwMPjnu0Q9MMNiNnNNBVbEbTtWQYl6oB9FVojK5Izk5Oe+UgrjpvBb8wVGyWzfIXE9qCZFysh9BMZgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EfhAKjgi; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43621d2dd4cso40685e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734427589; x=1735032389; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8ZMjen1yJSy70yGnNt9th+OC1qo4iE/tlrHQsp3QRY=;
-        b=EfhAKjgi9dydrpEHE1Igq0Lg6t22z2K5Pd2fUGnNBYXLK5vR8PticijJVO9Ya0dGFe
-         kdRuMHuGE5V4dF91dW//j+qN+erfjGVNFSLoLfH2We1nY+lYP8autDgfeGkyictBDXzK
-         f/g2sb8QqcCH195g2W+vbV56LkcXKuKLFRe8SkSnn4Or18V0o+C7muE4AS9VOjR5ikxW
-         p4GCiINv/B68dxpk4vgY59ZJ/3CeZXG0NRsqG2nRtRxFqk7fl4pLfaP3vmnRIMCXUSQl
-         sXWnWWTJLHvPb3/vpjSwFN9nKPfm+PjV1tbK9h3EzzRR0WGiOmw7bgK/tIg9bOMzFRiX
-         709w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734427589; x=1735032389;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q8ZMjen1yJSy70yGnNt9th+OC1qo4iE/tlrHQsp3QRY=;
-        b=SLQKFld7bup2S386/tULn8bzCW5GXsgqmt8S39HKoT4PLc1YwT8g4SPDmyWcnkS8Ab
-         hLIAjRc1Ka1UhMzJ2NJm8Tg3fSpAJ8reDIRXyAN79ipqL1OUGW7TyatxrCJXl0zkpA7L
-         Ozz2A2ipul+hyhicWoV0Mq9E1sFumrRjDpU96qEqhytPLHQa2ZEvKNe86rIH/PRHkpJ2
-         2sB9znwxG8daMLak6p8SIOsyuj59sgo+ZQNhr2MO7z+q3YVXiQ/3PszrHL2c7Lu1/r+8
-         1ioej2h5evPFVDgZmXYCp31JKqubKta27czWWH17Rpj9oSid9+BO0O1cV9JfyiCFOgpQ
-         Y6NA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrh/7b5hgBPaURKDkjdFgPSlnx+APM+j7RMGYMOonhQwhDzFolEVMmnzyvLjGfUH3rPj5cB2Xutiulrsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb0DOrgaK9SycutBf1UNKzlfDQVLI3yqtrbSeO3RVG2roh9tiH
-	Dz5Cj/ooY6oQ97/s+W17Q4X+v3jd9EuK/fnUDXDta4/D5QjkQwgFj7TS16LAhbFnpFURU5XuIeV
-	YCxiKnyykMpejbLupdO4owXI003Qqgz3x4ZU4
-X-Gm-Gg: ASbGncsgRKndNcdCvx5d18+jtjNRLPBZGH2L66qY/6Rncy+s3hZ4+nVdsDyOqFsg4zv
-	je9mTSZdG1VeWE0UhvmBlGoj2EGd9C7XfFjeqkO6aSYsJtgDurrH53Xx88nCFy6aFlvQ=
-X-Google-Smtp-Source: AGHT+IFF7byMDFVKlnmrBQvmNiNhFFA27+GN/MTPR1DNEbChmzax4aYAFvAEK6reIllga6gOu5vl+393+8r9UxeqysA=
-X-Received: by 2002:a05:600c:3205:b0:436:4e4c:7bae with SMTP id
- 5b1f17b1804b1-4364e4c7d7cmr388185e9.1.1734427589053; Tue, 17 Dec 2024
- 01:26:29 -0800 (PST)
+	 To:Cc:Content-Type; b=IU3P8jInPVgj+OPlkWODg56KJS4xTW8Nz1Tsmbv4drlB8furmiGilD2ghh+i1T2eexLCY9I6K7kPreobh5TyK1ty0ZPPfLssk5b/RATtY62uNwGFxqppZzvTeeK5aBWOSmTkitsxREX8LOxM3jGdQ00e1oofWpoQtsoGxMMrFWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pynkI9iy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7006C4CEEF
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734427569;
+	bh=hKswbEz7JLeoG28GBCgAedfWMWOBDtGpXbc8u/HHjmI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pynkI9iynxvlvConQ/LuLtEUolJVp+hs+KxeHhg3Km+tXwbEEyTGaT4IlhuPrQu9B
+	 X0TF+Fi3DD3IOy5DOIs6tXVY6i6S73DWFccUdg9m2uojo/besO1dGspGAkFDvxt44Q
+	 qlQ9mCnvpggFjeP0VqAFe1v785BEyv9Bunc8Ywy0tIe1XSU4rgSyGg+nrcGHGjFW/Q
+	 1nr1LPw0OWFKbgNBLtOLWtn9kee80FrEck8E51TOI//fhFfGQDjQ8jplvvoeGTK9y2
+	 y5f6mn9QA7RBMxIOrhO39FYHU3+m/Eszf1ijQ6den1z8z24NuOU6RGDKhoBzTWH2TG
+	 O8h1obyjnfDXg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-303489e8775so28960051fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:26:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVv5RDj98MB1h1QMCAYg3nEgDfr78c9/tSc+IodNMjEsG0XR4uFThNaFyr+uQm6m2GF6STxCeSPYn/HOQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkVBAzl/KcU5o6VzUk0T8A5FpEqPJCjEUTIa6t9oJI85Hjnup3
+	2NlVQbHgXWHwWdjMNHgu/7HXJqFgewSJlHc/QOHQ3awDLNOdFMZa7kMie1iMrsBjz8K5IHLfvVq
+	NbLj6Q7H/8rrb3WRRnEuJ+adeSTY=
+X-Google-Smtp-Source: AGHT+IFOqeeegh7YGEN2Cczxvmja0BUcnOwexSzSaJ6JZOxd8rnph2QoXJWaeSHjouivuwLQJdaBHcf90soMs+eA3bY=
+X-Received: by 2002:a05:651c:1508:b0:302:210d:3b5a with SMTP id
+ 38308e7fff4ca-302545b8eadmr56445501fa.39.1734427567726; Tue, 17 Dec 2024
+ 01:26:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216175803.2716565-1-qperret@google.com>
-In-Reply-To: <20241216175803.2716565-1-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 17 Dec 2024 09:25:52 +0000
-Message-ID: <CA+EHjTz7=dRz5X-CjjniJgwd87Q4DQbRdXzi0on4C21urYnhOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] KVM: arm64: Non-protected guest stage-2 support
- for pKVM
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-9-dwmw2@infradead.org>
+ <CAMj1kXEvpPbkeUb-2nt28M0yCNzo6NqauCcCNpj2psoVRH+C=A@mail.gmail.com> <6C7C48A4-4BF6-435F-B40D-D667DDB6F8C1@infradead.org>
+In-Reply-To: <6C7C48A4-4BF6-435F-B40D-D667DDB6F8C1@infradead.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 17 Dec 2024 10:25:56 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXF5C8TF02obuNrd6tZBZg0_Yz_VskGuNMnmoqyjLRAVRg@mail.gmail.com>
+Message-ID: <CAMj1kXF5C8TF02obuNrd6tZBZg0_Yz_VskGuNMnmoqyjLRAVRg@mail.gmail.com>
+Subject: Re: [PATCH 8/9] x86/kexec: Cope with relocate_kernel() not being at
+ the start of the page
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Eric Biederman <ebiederm@xmission.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Sourabh Jain <sourabhjain@linux.ibm.com>, 
+	Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>, 
+	Tao Liu <ltao@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>, Rong Xu <xur@google.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
+	Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
+On Tue, 17 Dec 2024 at 10:17, David Woodhouse <dwmw2@infradead.org> wrote:
 >
-> Hi all,
+> On 17 December 2024 09:47:36 CET, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >On Tue, 17 Dec 2024 at 00:37, David Woodhouse <dwmw2@infradead.org> wrote:
+> >>
+> >> From: David Woodhouse <dwmw@amazon.co.uk>
+> >>
+> >> A few places in the kexec control code page make the assumption that the
+> >> first instruction of relocate_kernel is at the very start of the page.
+> >>
+> >> To allow for Clang CFI information to be added to relocate_kernel(), as
+> >> well as the general principle of removing unwarranted assumptions, fix
+> >> them to use the external __relocate_kernel_start symbol that the linker
+> >> adds. This means using a separate addq and subq for calculating offsets,
+> >> as the assembler can no longer calculate the delta directly for itself
+> >> and relocations aren't that versatile.
+> >>
+> >
+> >You can still avoid the absolute relocations though, ...
+> ...
+> >> +       addq    $identity_mapped, %rsi
+> >> +       subq    $__relocate_kernel_start, %rsi
+> >
+> >... if you turn this into
+> >
+> >0:     addq    $identity_mapped - 0b, %rsi
+> >       subq    $__relocate_kernel_start - 0b, %rsi
 >
-> This is the v3 of the series adding support for non-protected guests
-> stage-2 to pKVM. Please refer to v1 for all the context:
+> Is there any benefit to doing so? Are absolute relocations problematic?
 
-For the series:
+Every absolute relocation produces an entry in the relocation table
+that needs to be applied at every boot when KASLR is in effect. Beyond
+that, it doesn't matter.
 
-Tested-by: Fuad Tabba <tabba@google.com>
-
-Cheers,
-/fuad
-
-
-
->
->   https://lore.kernel.org/kvmarm/20241104133204.85208-1-qperret@google.com/
->
-> The series is organized as follows:
->
->  - Patches 01 to 04 move the host ownership state tracking from the
->    host's stage-2 page-table to the hypervisor's vmemmap. This avoids
->    fragmenting the host stage-2 for shared pages, which is only needed
->    to store an annotation in the SW bits of the corresponding PTE. All
->    pages mapped into non-protected guests are shared from pKVM's PoV,
->    so the cost of stage-2 fragmentation will increase massively as we
->    start tracking that at EL2. Note that these patches also help with
->    the existing sharing for e.g. FF-A, so they could possibly be merged
->    separately from the rest of the series.
->
->  - Patches 05 to 07 implement a minor refactoring of the pgtable code to
->    ease the integration of the pKVM MMU later on.
->
->  - Patches 08 to 16 introduce all the infrastructure needed on the pKVM
->    side for handling guest stage-2 page-tables at EL2.
->
->  - Patches 17 and 18 plumb the newly introduced pKVM support into
->    KVM/arm64.
->
-> Patches based on 6.13-rc3, tested on Pixel 6 and Qemu.
->
-> Changes in v3:
->  - Rebased on 6.13-rc3
->  - Applied Marc's rework of the for_each_mapping_in_range() macro mess
->  - Removed mappings_lock in favor the mmu_lock
->  - Dropped BUG_ON() from pkvm_mkstate()
->  - Renamed range_is_allowed_memory() and clarified the comment inside it
->  - Explicitly bail out when using host_stage2_set_owner_locked() on
->    non-memory regions
->  - Check PKVM_NOPAGE state as an equality rather than a bitwise
->    operator
->  - Reworked __pkvm_host_share_guest() to return -EPERM in case of
->    illegal multi-sharing
->  - Added get_np_pkvm_hyp_vm() to simplify HVC error handling in
->    hyp-main.c
->  - Cosmetic changes and improved coding consitency thoughout the series
->
-> Changes in v2:
->  - Rebased on 6.13-rc1 (small conflicts with 2362506f7cff ("KVM: arm64:
->    Don't mark "struct page" accessed when making SPTE young") in
->    particular)
->  - Fixed kerneldoc breakage for __unmap_stage2_range()
->  - Fixed pkvm_pgtable_test_clear_young() to use correct HVC
->  - Folded guest_get_valid_pte() into __check_host_unshare_guest() for
->    clarity
->
-> Thanks,
-> Quentin
->
-> Marc Zyngier (1):
->   KVM: arm64: Introduce __pkvm_vcpu_{load,put}()
->
-> Quentin Perret (17):
->   KVM: arm64: Change the layout of enum pkvm_page_state
->   KVM: arm64: Move enum pkvm_page_state to memory.h
->   KVM: arm64: Make hyp_page::order a u8
->   KVM: arm64: Move host page ownership tracking to the hyp vmemmap
->   KVM: arm64: Pass walk flags to kvm_pgtable_stage2_mkyoung
->   KVM: arm64: Pass walk flags to kvm_pgtable_stage2_relax_perms
->   KVM: arm64: Make kvm_pgtable_stage2_init() a static inline function
->   KVM: arm64: Add {get,put}_pkvm_hyp_vm() helpers
->   KVM: arm64: Introduce __pkvm_host_share_guest()
->   KVM: arm64: Introduce __pkvm_host_unshare_guest()
->   KVM: arm64: Introduce __pkvm_host_relax_guest_perms()
->   KVM: arm64: Introduce __pkvm_host_wrprotect_guest()
->   KVM: arm64: Introduce __pkvm_host_test_clear_young_guest()
->   KVM: arm64: Introduce __pkvm_host_mkyoung_guest()
->   KVM: arm64: Introduce __pkvm_tlb_flush_vmid()
->   KVM: arm64: Introduce the EL1 pKVM MMU
->   KVM: arm64: Plumb the pKVM MMU in KVM
->
->  arch/arm64/include/asm/kvm_asm.h              |   9 +
->  arch/arm64/include/asm/kvm_host.h             |   4 +
->  arch/arm64/include/asm/kvm_mmu.h              |  16 +
->  arch/arm64/include/asm/kvm_pgtable.h          |  38 ++-
->  arch/arm64/include/asm/kvm_pkvm.h             |  23 ++
->  arch/arm64/kvm/arm.c                          |  23 +-
->  arch/arm64/kvm/hyp/include/nvhe/gfp.h         |   6 +-
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  38 +--
->  arch/arm64/kvm/hyp/include/nvhe/memory.h      |  42 ++-
->  arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |  16 +
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 201 ++++++++++-
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 320 ++++++++++++++++--
->  arch/arm64/kvm/hyp/nvhe/page_alloc.c          |  14 +-
->  arch/arm64/kvm/hyp/nvhe/pkvm.c                |  68 ++++
->  arch/arm64/kvm/hyp/nvhe/setup.c               |   7 +-
->  arch/arm64/kvm/hyp/pgtable.c                  |  13 +-
->  arch/arm64/kvm/mmu.c                          | 113 +++++--
->  arch/arm64/kvm/pkvm.c                         | 198 +++++++++++
->  arch/arm64/kvm/vgic/vgic-v3.c                 |   6 +-
->  19 files changed, 1010 insertions(+), 145 deletions(-)
->
-> --
-> 2.47.1.613.gc27f4b7a9f-goog
->
+I've looked into PIC codegen/PIE linking for the core kernel, which is
+why this caught my eye. If that effort ever advances, I'll need to
+revisit this code as well and apply the change I suggested.
 
