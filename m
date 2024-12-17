@@ -1,178 +1,168 @@
-Return-Path: <linux-kernel+bounces-448423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1619F9F3FE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C53759F3FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D559A188FBE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E486A1882682
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693642837A;
-	Tue, 17 Dec 2024 01:18:24 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D8C26AF5;
+	Tue, 17 Dec 2024 01:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQXnJFij"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D78F77
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8651E8467
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734398304; cv=none; b=eIrb58tMm7/AYw0qWH17xB1NLMxPZ30mJiV7UJ6EVeu9MGQ3U8STc+vz4HRU5J0k8TW9jBwKELLCGwSloKjp3Elf1MIk6n2ptuiOQi8tmW9GkkKPml8otY+ZXfl7v73Tf7u6aGrTQrAN/wp6RreAE4LbU5xT5IOQRxpPZYQvPFQ=
+	t=1734398558; cv=none; b=GJg4wuAUyU7JSLoedp/tRmxYMlPc8ZPum4ud0434JKRgOoyE1yCMRJPh4RuGyzKyAPn3OQGf8Fq5okswokJXTOpPtF2/3zWyjwOLmT/JtMs0co4RhreDy53xJe6hSl+2O5bxYMg9HxdhjEi6DF1nMfsOvEIBp63x5wB5vBmLkPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734398304; c=relaxed/simple;
-	bh=1fssTMV0OBBwwLuFnG66rrOEzAxXvJA/Co1BOUZc90s=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yd6eluv8FcKD7B4pIw394fi0JiplhFjhjFjLCmxMX3DEFezjC1n+BuOuJZFlBB7UrDuhyfvFpIKNRJzY3eTqSyrCl2QLkkaJkx0BknbpUPt1iRgzWg5aDCISLyWvnPLtik2dF1I6qHWrddPFUhWPC2f/YXsq6sMtkYIkoCpS3vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1tNMDs-000000004YP-4BIn;
-	Tue, 17 Dec 2024 01:18:05 +0000
-Date: Tue, 17 Dec 2024 01:18:01 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Justin Green <greenjustin@chromium.org>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	John Crispin <john@phrozen.org>, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] drm/mediatek: only touch DISP_REG_OVL_PITCH_MSB if AFBC
- is supported
-Message-ID: <c7fbd3c3e633c0b7dd6d1cd78ccbdded31e1ca0f.1734397800.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1734398558; c=relaxed/simple;
+	bh=ztbDHdD003AOFmkjJ9AhaS5FsmU905bwNd9pOiS40QQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DKwpsoe4EiDRvJSBNg9PoDsHnZ/sYR0tObLxkniLUhbvy0jXlzA4/oDgwrlyfEpFxJTmvuUkWOiw7z1bI1eNRw4REhZM+reiGT7LvqOEb+gyipgSZlLJ1mgh9vnR2QqMzVHj/h6IPGKGQ+cOmo7VMiDnLfsL/qRdU8Fn0eLJ1UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQXnJFij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008A5C4CED7
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734398558;
+	bh=ztbDHdD003AOFmkjJ9AhaS5FsmU905bwNd9pOiS40QQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bQXnJFijtV5PYaCHuXV+fDuIxmLKmMaASLcShIDiz9au4NTHOgSCymUL1zC7V8OnP
+	 qu+r3Jw+SlabWIdGRWMVSfJDCFn5coaS9H7vWFtEXZ+r8AX9hQlzoY4MUq0+7qyPiY
+	 0fdiyrCcTQjooc0cAP1DToOXzWMo7kPUwzvdeeYri/IDHyd5WcIkX+QK4EdSqNzOJg
+	 laZ1OqAbc3g/HHWTvePXK4G346BIK4lfa7EyUxQwdFRXAWx9EjWe/AlRoFriTiMBoz
+	 EyowMJjlslrOceGMFSc3lE41CQMolxPgh75D5Qf+2stdpWY0updL/nf8q+SGUCPK/A
+	 qhFT4m4Sm+v7w==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d647d5df91so6654264a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:22:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXlF173pF70OiGR1Rl6NDEctE3vQNEo4+AJoDuiSpaYSfiT4yoCr17RMhP/ZhUp4GrK1OgZquciQ4QXlaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtHYIccCnfF6wmmq9a7vC9EM0avf+hOXGtsp9ClfnO0gR0LVGd
+	NFhZHijs2YE9OXWfvXo2XibPbWSkpXRMPzU/on5KgUp7NZIkSx6P5vu7A4yg44yk018I17vzSUX
+	hd9gq0u3IBrEofBU4h6vIxGqCBro=
+X-Google-Smtp-Source: AGHT+IGp8AFySWj1OjXr6Yj19dq7LENEnmWaczQRT6IvNs2FTaqIFLXG8Tco51vkdEVUnOPFQLjGN9K3Olb69FIPR8g=
+X-Received: by 2002:a05:6402:518f:b0:5d2:729f:995b with SMTP id
+ 4fb4d7f45d1cf-5d63c3ad372mr13239770a12.24.1734398556585; Mon, 16 Dec 2024
+ 17:22:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241216032253.685728-1-guoren@kernel.org> <20241216-2d9b35cb1911106971a54356@orel>
+In-Reply-To: <20241216-2d9b35cb1911106971a54356@orel>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 17 Dec 2024 09:22:25 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRGJAKepU1HCaG-aw5WqJdyGftTox-Q+LyOrHPbxxn_nA@mail.gmail.com>
+Message-ID: <CAJF2gTRGJAKepU1HCaG-aw5WqJdyGftTox-Q+LyOrHPbxxn_nA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Implement smp_cond_load8/16() with Zawrs
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com, 
+	conor@kernel.org, leobras@redhat.com, alexghiti@rivosinc.com, 
+	christoph.muellner@vrull.eu, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, parri.andrea@gmail.com, ericchancf@google.com, 
+	Guo Ren <guoren@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Touching DISP_REG_OVL_PITCH_MSB leads to video overlay on MT2701, MT7623N
-and probably other older SoCs being broken.
+On Mon, Dec 16, 2024 at 11:42=E2=80=AFPM Andrew Jones <ajones@ventanamicro.=
+com> wrote:
+>
+> On Sun, Dec 15, 2024 at 10:22:53PM -0500, guoren@kernel.org wrote:
+> > From: Guo Ren <guoren@linux.alibaba.com>
+> >
+> > RISC-V code uses the queued spinlock implementation, which calls
+> > the macros smp_cond_load_acquire for one byte. So, complement the
+> > implementation of byte and halfword versions.
+> >
+> > Signed-off-by: Guo Ren <guoren@linux.alibaba.com>
+> > Signed-off-by: Guo Ren <guoren@kernel.org>
+> > ---
+> >  arch/riscv/include/asm/cmpxchg.h | 38 +++++++++++++++++++++++++++++---
+> >  1 file changed, 35 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/=
+cmpxchg.h
+> > index 4cadc56220fe..2bd42a11ff8f 100644
+> > --- a/arch/riscv/include/asm/cmpxchg.h
+> > +++ b/arch/riscv/include/asm/cmpxchg.h
+> > @@ -365,16 +365,48 @@ static __always_inline void __cmpwait(volatile vo=
+id *ptr,
+> >  {
+> >       unsigned long tmp;
+> >
+> > +     u32 *__ptr32b;
+> > +     ulong __s, __val, __mask;
+> > +
+> >       asm goto(ALTERNATIVE("j %l[no_zawrs]", "nop",
+> >                            0, RISCV_ISA_EXT_ZAWRS, 1)
+> >                : : : : no_zawrs);
+> >
+> >       switch (size) {
+> >       case 1:
+> > -             fallthrough;
+> > +             __ptr32b =3D (u32 *)((ulong)(ptr) & ~0x3);
+> > +             __s =3D ((ulong)(ptr) & 0x3) * BITS_PER_BYTE;
+> > +             __val =3D val << __s;
+> > +             __mask =3D 0xf << __s;
+>
+> This mask should be 0xff and the mask below should be 0xffff.
+Thx for catching it; it's hard to test it out. I will correct it in
+the next version.
 
-Move setting up AFBC layer configuration into a separate function only
-being called on hardware which actually supports AFBC which restores the
-behavior as it was before commit c410fa9b07c3 ("drm/mediatek: Add AFBC
-support to Mediatek DRM driver") on non-AFBC hardware.
+>
+> > +
+> > +             asm volatile(
+> > +             "       lr.w    %0, %1\n"
+> > +             "       and     %0, %0, %3\n"
+> > +             "       xor     %0, %0, %2\n"
+> > +             "       bnez    %0, 1f\n"
+> > +                     ZAWRS_WRS_NTO "\n"
+> > +             "1:"
+> > +             : "=3D&r" (tmp), "+A" (*(__ptr32b))
+> > +             : "r" (__val), "r" (__mask)
+> > +             : "memory");
+> > +             break;
+> >       case 2:
+> > -             /* RISC-V doesn't have lr instructions on byte and half-w=
+ord. */
+> > -             goto no_zawrs;
+> > +             __ptr32b =3D (u32 *)((ulong)(ptr) & ~0x3);
+> > +             __s =3D ((ulong)(ptr) & 0x2) * BITS_PER_BYTE;
+> > +             __val =3D val << __s;
+> > +             __mask =3D 0xff << __s;
+> > +
+> > +             asm volatile(
+> > +             "       lr.w    %0, %1\n"
+> > +             "       and     %0, %0, %3\n"
+> > +             "       xor     %0, %0, %2\n"
+> > +             "       bnez    %0, 1f\n"
+> > +                     ZAWRS_WRS_NTO "\n"
+> > +             "1:"
+> > +             : "=3D&r" (tmp), "+A" (*(__ptr32b))
+> > +             : "r" (__val), "r" (__mask)
+> > +             : "memory");
+> > +             break;
+> >       case 4:
+> >               asm volatile(
+> >               "       lr.w    %0, %1\n"
+> > --
+> > 2.40.1
+> >
+>
+> Thanks,
+> drew
 
-Fixes: c410fa9b07c3 ("drm/mediatek: Add AFBC support to Mediatek DRM driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-v2: move AFBC layer config into a new function
 
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 57 +++++++++++++------------
- 1 file changed, 29 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index f731d4fbe8b6..e0e24f0a6edd 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -460,6 +460,29 @@ static unsigned int mtk_ovl_fmt_convert(struct mtk_disp_ovl *ovl,
- 	}
- }
- 
-+static void mtk_ovl_afbc_layer_config(struct mtk_disp_ovl *ovl,
-+				      unsigned int idx,
-+				      struct mtk_plane_pending_state *pending,
-+				      struct cmdq_pkt *cmdq_pkt)
-+{
-+	unsigned int pitch_msb = pending->pitch >> 16;
-+	unsigned int hdr_pitch = pending->hdr_pitch;
-+	unsigned int hdr_addr = pending->hdr_addr;
-+
-+	if (pending->modifier != DRM_FORMAT_MOD_LINEAR) {
-+		mtk_ddp_write_relaxed(cmdq_pkt, hdr_addr, &ovl->cmdq_reg, ovl->regs,
-+				      DISP_REG_OVL_HDR_ADDR(ovl, idx));
-+		mtk_ddp_write_relaxed(cmdq_pkt,
-+				      OVL_PITCH_MSB_2ND_SUBBUF | pitch_msb,
-+				      &ovl->cmdq_reg, ovl->regs, DISP_REG_OVL_PITCH_MSB(idx));
-+		mtk_ddp_write_relaxed(cmdq_pkt, hdr_pitch, &ovl->cmdq_reg, ovl->regs,
-+				      DISP_REG_OVL_HDR_PITCH(ovl, idx));
-+	} else {
-+		mtk_ddp_write_relaxed(cmdq_pkt, pitch_msb,
-+				      &ovl->cmdq_reg, ovl->regs, DISP_REG_OVL_PITCH_MSB(idx));
-+	}
-+}
-+
- void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 			  struct mtk_plane_state *state,
- 			  struct cmdq_pkt *cmdq_pkt)
-@@ -467,25 +490,13 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 	struct mtk_disp_ovl *ovl = dev_get_drvdata(dev);
- 	struct mtk_plane_pending_state *pending = &state->pending;
- 	unsigned int addr = pending->addr;
--	unsigned int hdr_addr = pending->hdr_addr;
--	unsigned int pitch = pending->pitch;
--	unsigned int hdr_pitch = pending->hdr_pitch;
-+	unsigned int pitch_lsb = pending->pitch & GENMASK(15, 0);
- 	unsigned int fmt = pending->format;
- 	unsigned int offset = (pending->y << 16) | pending->x;
- 	unsigned int src_size = (pending->height << 16) | pending->width;
- 	unsigned int blend_mode = state->base.pixel_blend_mode;
- 	unsigned int ignore_pixel_alpha = 0;
- 	unsigned int con;
--	bool is_afbc = pending->modifier != DRM_FORMAT_MOD_LINEAR;
--	union overlay_pitch {
--		struct split_pitch {
--			u16 lsb;
--			u16 msb;
--		} split_pitch;
--		u32 pitch;
--	} overlay_pitch;
--
--	overlay_pitch.pitch = pitch;
- 
- 	if (!pending->enable) {
- 		mtk_ovl_layer_off(dev, idx, cmdq_pkt);
-@@ -524,11 +535,12 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 	}
- 
- 	if (ovl->data->supports_afbc)
--		mtk_ovl_set_afbc(ovl, cmdq_pkt, idx, is_afbc);
-+		mtk_ovl_set_afbc(ovl, cmdq_pkt, idx,
-+				 pending->modifier != DRM_FORMAT_MOD_LINEAR);
- 
- 	mtk_ddp_write_relaxed(cmdq_pkt, con, &ovl->cmdq_reg, ovl->regs,
- 			      DISP_REG_OVL_CON(idx));
--	mtk_ddp_write_relaxed(cmdq_pkt, overlay_pitch.split_pitch.lsb | ignore_pixel_alpha,
-+	mtk_ddp_write_relaxed(cmdq_pkt, pitch_lsb | ignore_pixel_alpha,
- 			      &ovl->cmdq_reg, ovl->regs, DISP_REG_OVL_PITCH(idx));
- 	mtk_ddp_write_relaxed(cmdq_pkt, src_size, &ovl->cmdq_reg, ovl->regs,
- 			      DISP_REG_OVL_SRC_SIZE(idx));
-@@ -537,19 +549,8 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 	mtk_ddp_write_relaxed(cmdq_pkt, addr, &ovl->cmdq_reg, ovl->regs,
- 			      DISP_REG_OVL_ADDR(ovl, idx));
- 
--	if (is_afbc) {
--		mtk_ddp_write_relaxed(cmdq_pkt, hdr_addr, &ovl->cmdq_reg, ovl->regs,
--				      DISP_REG_OVL_HDR_ADDR(ovl, idx));
--		mtk_ddp_write_relaxed(cmdq_pkt,
--				      OVL_PITCH_MSB_2ND_SUBBUF | overlay_pitch.split_pitch.msb,
--				      &ovl->cmdq_reg, ovl->regs, DISP_REG_OVL_PITCH_MSB(idx));
--		mtk_ddp_write_relaxed(cmdq_pkt, hdr_pitch, &ovl->cmdq_reg, ovl->regs,
--				      DISP_REG_OVL_HDR_PITCH(ovl, idx));
--	} else {
--		mtk_ddp_write_relaxed(cmdq_pkt,
--				      overlay_pitch.split_pitch.msb,
--				      &ovl->cmdq_reg, ovl->regs, DISP_REG_OVL_PITCH_MSB(idx));
--	}
-+	if (ovl->data->supports_afbc)
-+		mtk_ovl_afbc_layer_config(ovl, idx, pending, cmdq_pkt);
- 
- 	mtk_ovl_set_bit_depth(dev, idx, fmt, cmdq_pkt);
- 	mtk_ovl_layer_on(dev, idx, cmdq_pkt);
--- 
-2.47.1
+--=20
+Best Regards
+ Guo Ren
 
