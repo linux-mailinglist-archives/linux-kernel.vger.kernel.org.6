@@ -1,185 +1,209 @@
-Return-Path: <linux-kernel+bounces-449638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6589F522C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:16:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D999F524D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3044F188B516
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3041892793
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06251F8675;
-	Tue, 17 Dec 2024 17:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOzwMCZF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD321F868D;
+	Tue, 17 Dec 2024 17:14:25 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91951F8697;
-	Tue, 17 Dec 2024 17:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00E71F75A6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455611; cv=none; b=OEMZA3hUJTE81BHkkkuUIguvzu2XY/j+HtcJnm5Ah12sF44OPopiK4+pC87TrPlUcwPLaCH19bXVeSCp3jlD3a7oUh9mJDDefR73HU4J30KbVKPcse6kYoxMj3GKIeh7yE27zd13tnszO5DPKjPxOeUwmjvu78iBtjEP65V04+I=
+	t=1734455665; cv=none; b=BjHqVlOjhcItx2gexbFkV9Xh90Nh11wZ3ObO520f919t5vjm0iZtecukRkxFo7TCCsfImBO2ooCHbv1SYFZ+rmRDfMlFj5FxQvHpIjjn3nOhfxnhocARrRRQR2TXTmq5C9Iox8H6TI+vehpnze3BEvecUnZfrWBvukLb2JFVg1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455611; c=relaxed/simple;
-	bh=jLjXGQRuYhHX2FPYDCj3e7QwJ0rtcdIW6eV0G++iz2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoUZGUBAADjZBt0fa/GyzWjGfPJjC0EZ2S/nB9p7TpqkA4spg51/FM9GHwJQr3JQoU/00znMoTBSetS+UBCubIQXMCsJIpadB8WM7HnHNgZQ73F6qnNhcU7aNUaDQcS/ddeGBoIlGTY6zel1bIB2tkX90ZVgW+b5J62SyP2+vlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOzwMCZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E999BC4CED3;
-	Tue, 17 Dec 2024 17:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734455610;
-	bh=jLjXGQRuYhHX2FPYDCj3e7QwJ0rtcdIW6eV0G++iz2s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KOzwMCZFWUA2AqJ1WijKIDZ3FG9jWwCSzdAkuGZZk8CcgC3MyQihVL/tAVIiQAakk
-	 qyHscAgc8d66oucPc5BpPhk/KTUJ71yRFgZoX3tX7UkL4+zbh2hDnsSf/GHyjtNKSW
-	 RjOrc1ydi4UaaLqtcsRPq6vPcccmYLHTyP10s8zr1KbVVEGlKdA1f5DjB+yx2Wj4ei
-	 DfdAyXT08iOVVhOxzzrk7PBP3Jip+7BZAHqv+G3+oyIpMIa08Ye/iSu1kSKJYt840D
-	 i8Igg57Gubrn1nFnXYuUHv2WdInHj9fnqvBVbcvBArEHmirJx3HKuYIClQkXQtu753
-	 6iWHuWgzJcXvg==
-Date: Tue, 17 Dec 2024 18:13:27 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
- get_modes()
-Message-ID: <20241217-curly-mauve-scallop-d84a3d@houat>
-References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
- <20241206-drm-bridge-hdmi-connector-v6-9-50dc145a9c06@linaro.org>
- <20241206-caped-proficient-rattlesnake-c882f3@houat>
- <73xdxb575n4ncmadffkwqzczoewbadq3forpvqt4vp7zfln2nq@o2wmbbbepwgg>
+	s=arc-20240116; t=1734455665; c=relaxed/simple;
+	bh=01r2qqdUKp2I9g8w6F1kmh4dP9m8LHugsXIj2M4NCnw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UoTzcHJQ/FYFSKMmaARphxxrJrOR+hHg0nN1wxlyTE1PDuvoL3gmrUdu/AKnJWjaUbEq6zEQMepnIJ6EuFTuxQKOkZgaRujWZKd4/x1k7x1NbypbNOX1EvENBBFu5Kg+HZEm3mdYyCZgtpcMgGgSAfHpsO8Uea2/bIR+morsFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a817be161bso50377275ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:14:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734455663; x=1735060463;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I/ATdYBM+ycWlNTVFfFExo0UM2gKqufi3AzBJWgLcQs=;
+        b=Hvl7Rg4wB+5S1+cRqScSl88O56YgQyNiBJ4GKug+IzBZcGEdY0KhJ3jGEF2Dz0Mzdg
+         qiuZkzWhWmtpV6OTvYCrwA+umemqzTrU/7Qgj0WZ2OpXj//Duj8POKGOW+2CjLXivkjr
+         uJ4A+iEJz1iMQAiVuQF2uesP5yRI5qoWIGnU/wcIbrk0aQaL1NjKDCWDbWTpTxQvAojh
+         Qd1KoLA4RgKrxRespSPAWwl4Uy2ieInXCHVaADffCLFts94CRM+m5DT1n3pFUW/He1L8
+         0BXnhhX7p+EF7qG3Mdg8Z3Pa77JLorUWi0olVEgN1wb9mhtNeJMrWgx6c0jQFGNizMUb
+         pz0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDXhHAlZU2ZgBCp4qrjMJ2UQNKOpvowjEFHas52zTC+eYM63vIAkxcgEnGE+CIcHaCbvt6IomJY5GWN0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8i1mGx+Wn1JokVV3ckOE1NdwAV6dlDPdsWVV1/2uAoy+oASDo
+	Mq0LhcvY11fFwDutpd1vFrwxogc9KoPHHOx0A6QC42XRbAooLbSFLeNJt0WoOyF4snCNlYeve83
+	5hm9NlxYNTwY4GlKQouP7Vqqf/oy4Sb3BfAzihlO9ypY/5Oyzw+JkoHI=
+X-Google-Smtp-Source: AGHT+IFv4n2oUHz4WOXCEB97Ot8VZ8WIaksuUQyNuB1+pATHZkpUovM37Z6dl2oR6dXqAqUMSlxNo7Gw8J+Xnh81L6LEHyxAJlwh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="tibevjcmq2hqubs4"
-Content-Disposition: inline
-In-Reply-To: <73xdxb575n4ncmadffkwqzczoewbadq3forpvqt4vp7zfln2nq@o2wmbbbepwgg>
+X-Received: by 2002:a05:6e02:8d:b0:3a7:cff5:16d6 with SMTP id
+ e9e14a558f8ab-3bb079e5153mr36959225ab.3.1734455662929; Tue, 17 Dec 2024
+ 09:14:22 -0800 (PST)
+Date: Tue, 17 Dec 2024 09:14:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6761b16e.050a0220.29fcd0.006d.GAE@google.com>
+Subject: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue (2)
+From: syzbot <syzbot+3c2e3cc60665d71de2f7@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    78d4f34e2115 Linux 6.13-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10010b44580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b86955f5c0c7be27
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c2e3cc60665d71de2f7
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d4b4f8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132b9730580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-78d4f34e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e3d545fe5a74/vmlinux-78d4f34e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3c244cffe535/bzImage-78d4f34e.xz
+
+The issue was bisected to:
+
+commit df7a996b4dab03c889fa86d849447b716f07b069
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Tue Nov 5 08:14:54 2024 +0000
+
+    signal: Queue ignored posixtimers on ignore list
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=110727e8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=130727e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=150727e8580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c2e3cc60665d71de2f7@syzkaller.appspotmail.com
+Fixes: df7a996b4dab ("signal: Queue ignored posixtimers on ignore list")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5933 at kernel/signal.c:2050 posixtimer_send_sigqueue+0xba8/0x1020 kernel/signal.c:2050
+Modules linked in:
+CPU: 1 UID: 0 PID: 5933 Comm: syz-executor261 Not tainted 6.13.0-rc3-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:posixtimer_send_sigqueue+0xba8/0x1020 kernel/signal.c:2050
+Code: ff ff 4c 89 e7 e8 98 ff 9d 00 e9 7e f8 ff ff 41 bf 02 00 00 00 e9 87 f8 ff ff 48 89 54 24 10 48 89 44 24 08 e8 59 51 3b 00 90 <0f> 0b 90 48 8d 7b 10 48 8b 44 24 08 48 b9 00 00 00 00 00 fc ff df
+RSP: 0018:ffffc900006b0d50 EFLAGS: 00010046
+RAX: 0000000080010003 RBX: ffff888031d62000 RCX: 1ffff110063ac403
+RDX: ffff888022920000 RSI: ffffffff815ec2e7 RDI: 0000000000000001
+RBP: ffff888029fb2440 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000003 R12: ffff888031d620a4
+R13: 1ffff920000d61af R14: ffff888031d620d8 R15: ffff888031d620c0
+FS:  00007fb777ee36c0(0000) GS:ffff88806a700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020040fe0 CR3: 0000000023c34000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ posix_timer_fn+0x31/0x60 kernel/time/posix-timers.c:323
+ __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
+ __hrtimer_run_queues+0x20a/0xae0 kernel/time/hrtimer.c:1803
+ hrtimer_interrupt+0x392/0x8e0 kernel/time/hrtimer.c:1865
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+ __sysvec_apic_timer_interrupt+0x10f/0x400 arch/x86/kernel/apic/apic.c:1055
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0x9f/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:194
+Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 86 04 4b f6 48 89 df e8 ce 83 4b f6 f7 c5 00 02 00 00 75 23 9c 58 f6 c4 02 75 37 <bf> 01 00 00 00 e8 c5 68 3c f6 65 8b 05 96 23 d8 74 85 c0 74 16 5b
+RSP: 0018:ffffc900028f7d58 EFLAGS: 00000246
+RAX: 0000000000000002 RBX: ffff888031d62030 RCX: 1ffffffff20bdd41
+RDX: 0000000000000000 RSI: ffffffff8b6cd840 RDI: ffffffff8bd1e7e0
+RBP: 0000000000000293 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff905f2c57 R11: 0000000000000002 R12: ffffc900028f7e50
+R13: 0000000000000000 R14: 1ffff9200051efb1 R15: dffffc0000000000
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ unlock_timer kernel/time/posix-timers.c:128 [inline]
+ do_timer_settime+0x315/0x400 kernel/time/posix-timers.c:908
+ __do_sys_timer_settime kernel/time/posix-timers.c:928 [inline]
+ __se_sys_timer_settime kernel/time/posix-timers.c:914 [inline]
+ __x64_sys_timer_settime+0x26a/0x2c0 kernel/time/posix-timers.c:914
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb777f283a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb777ee3228 EFLAGS: 00000246 ORIG_RAX: 00000000000000df
+RAX: ffffffffffffffda RBX: 000000000000001e RCX: 00007fb777f283a9
+RDX: 0000000020040fe0 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007fb777fb2308 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb777fb2300
+R13: 00007fb777fb230c R14: 00007fffae0f2ba0 R15: 00007fffae0f2c88
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	f5                   	cmc
+   1:	53                   	push   %rbx
+   2:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+   7:	48 89 fb             	mov    %rdi,%rbx
+   a:	48 83 c7 18          	add    $0x18,%rdi
+   e:	e8 86 04 4b f6       	call   0xf64b0499
+  13:	48 89 df             	mov    %rbx,%rdi
+  16:	e8 ce 83 4b f6       	call   0xf64b83e9
+  1b:	f7 c5 00 02 00 00    	test   $0x200,%ebp
+  21:	75 23                	jne    0x46
+  23:	9c                   	pushf
+  24:	58                   	pop    %rax
+  25:	f6 c4 02             	test   $0x2,%ah
+  28:	75 37                	jne    0x61
+* 2a:	bf 01 00 00 00       	mov    $0x1,%edi <-- trapping instruction
+  2f:	e8 c5 68 3c f6       	call   0xf63c68f9
+  34:	65 8b 05 96 23 d8 74 	mov    %gs:0x74d82396(%rip),%eax        # 0x74d823d1
+  3b:	85 c0                	test   %eax,%eax
+  3d:	74 16                	je     0x55
+  3f:	5b                   	pop    %rbx
 
 
---tibevjcmq2hqubs4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
- get_modes()
-MIME-Version: 1.0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Sun, Dec 08, 2024 at 01:06:46PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Dec 06, 2024 at 03:34:52PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Dec 06, 2024 at 12:16:03PM +0200, Dmitry Baryshkov wrote:
-> > > The vc4_hdmi_connector_detect_ctx() via vc4_hdmi_handle_hotplug()
-> > > already reads EDID and propagates it to the drm_connector. Stop
-> > > rereading EDID as a part of the .get_modes() callback and just update
-> > > the list of modes. This matches the behaviour of the i915 driver.
-> > >=20
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 21 ---------------------
-> > >  1 file changed, 21 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4=
-_hdmi.c
-> > > index e5ab42f72f618b90f956482db6c9c8074c1e3bf1..3364ef90968dad3074800=
-f02926300ffceb75c69 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > @@ -470,31 +470,10 @@ static int vc4_hdmi_connector_detect_ctx(struct=
- drm_connector *connector,
-> > > =20
-> > >  static int vc4_hdmi_connector_get_modes(struct drm_connector *connec=
-tor)
-> > >  {
-> > > -	struct vc4_hdmi *vc4_hdmi =3D connector_to_vc4_hdmi(connector);
-> > >  	struct vc4_dev *vc4 =3D to_vc4_dev(connector->dev);
-> > > -	const struct drm_edid *drm_edid;
-> > >  	int ret =3D 0;
-> > > =20
-> > > -	/*
-> > > -	 * NOTE: This function should really take vc4_hdmi->mutex, but doin=
-g so
-> > > -	 * results in reentrancy issues since cec_s_phys_addr() might call
-> > > -	 * .adap_enable, which leads to that funtion being called with our =
-mutex
-> > > -	 * held.
-> > > -	 *
-> > > -	 * Concurrency isn't an issue at the moment since we don't share
-> > > -	 * any state with any of the other frameworks so we can ignore
-> > > -	 * the lock for now.
-> > > -	 */
-> > > -
-> > > -	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
-> > > -	drm_edid_connector_update(connector, drm_edid);
-> > > -	cec_s_phys_addr(vc4_hdmi->cec_adap,
-> > > -			connector->display_info.source_physical_address, false);
-> > > -	if (!drm_edid)
-> > > -		return 0;
-> > > -
-> > >  	ret =3D drm_edid_connector_add_modes(connector);
-> > > -	drm_edid_free(drm_edid);
-> >=20
-> > I don't think that works though, for mostly two reasons:
-> >=20
-> >  1) We're not sure we'll even have an hotplug interrupt if the system
-> >     boots with the connector plugged in for example.
-> >=20
-> >  2) afaik, the get_modes ioctl directly calls get_modes too.
->=20
-> I think both paths use .fill_modes, not get_modes.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-The standard fill_modes helper calls get_modes.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> And fill_modes explicitly calls .detect / .detect_ctx. It would be
-> nice if somebody can verify the change on the acual hw. But as I
-> wrote, i915 driver does exactly the same: the EDID is read / updated
-> in .detect_ctx(), while .get_modes() only performs
-> drm_edid_connector_add_modes(). Okay, there is one significant
-> difference which we should probably patch out: the .force() is also
-> implemented to update EDID in the forced case. I should probably do
-> the same for the drivers being handled in this patchset.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Ack. Worst case scenario we can fix it later on.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Maxime
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---tibevjcmq2hqubs4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2GxNwAKCRAnX84Zoj2+
-dkQFAX0SszndvYXwUlXHlEuKUMjRu6IRXcqwYhtGDEU4Pa5CP+DEeeU2aVcCBV57
-8JlgY1EBgJoNXW3bl5jfa7bCf56cHn19NuMdQETCLtTWVjLm+TwQe7iYK5KnDYrP
-uvMZWYlUTg==
-=d8qr
------END PGP SIGNATURE-----
-
---tibevjcmq2hqubs4--
+If you want to undo deduplication, reply with:
+#syz undup
 
