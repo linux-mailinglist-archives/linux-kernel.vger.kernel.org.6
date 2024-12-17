@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-449823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D95E9F569A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:54:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074969F569C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 053BB16F456
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:54:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44C0188162A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9091F8EE4;
-	Tue, 17 Dec 2024 18:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FEB1F8AF0;
+	Tue, 17 Dec 2024 18:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jsrWMYmx"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjFbzyRU"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127A31F8ADF;
-	Tue, 17 Dec 2024 18:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573D1F76AE;
+	Tue, 17 Dec 2024 18:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734461656; cv=none; b=CwX6LvspM7U0uN4di+S7mr13YNnJlCOnubEYRWxJLBF33RpQR3bbSMlqHcAr31ipWkS8dz/li6rCNL7nOCzD28wAVJUbIt16C9w2Ix5zdzq1TTE9fDfU/AdDrj5jeuaTv7vKd733BLmrZrHWITebXbnezGmb5x5DibHI4um1U38=
+	t=1734461686; cv=none; b=k/AK7lKGffB4WYXYfXYkeiXtnbO3o71ctVOA1Aod+Hfl3HkRILxgqouPGE72xPLinp7jw88E7hFUdmZBtt8KTfIu4yER/+iH+hniUF28/Q+aDRYU3bArmRH0Z8TTKq8Z5Do/+JbnnZsFTmYPsSx9MwDDI9TEcaFp+XIz2lrXUeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734461656; c=relaxed/simple;
-	bh=AiaXSAppZt/mMAAT8W2evmJaQ5KeHMjF39PfKx+wRhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDUzEngv8ORMnQISUAZWxUgt/KabQ3xVhy1sc/j0xtiB9RhixwoOSyxIIISN3UUiLAigLX70k9ATJqWFaQKiMvJEtiRojCCQuKapL/zPmpXGUiAf0x7Is03GFBD0mR9wd475eLneumzvo1u68a0E2o7LQWglnhp1lU2hu/IMeIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jsrWMYmx; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734461650;
-	bh=AiaXSAppZt/mMAAT8W2evmJaQ5KeHMjF39PfKx+wRhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsrWMYmxfta24/w2SpHyh/6TblZCH1538sXp9X+MtTYEFLPJ4phHi6f8NBVFf4BLr
-	 On0EDODUk5/84lZ5amsFFoiwfe/ckHjqJx1mH95C5TsXej/FUalQ0O/y4xdfX3a9bF
-	 4wnUKJG+iVv+MLqhuEkJW8YfzaYtcZbt1armsXJk=
-Date: Tue, 17 Dec 2024 19:54:10 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Joshua Grisham <josh@joshuagrisham.com>, ilpo.jarvinen@linux.intel.com, 
-	W_Armin@gmx.de, platform-driver-x86@vger.kernel.org, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] platform/x86: samsung-galaxybook: Add
- samsung-galaxybook driver
-Message-ID: <7e25c789-5840-40a5-b491-b97b24cbebd1@t-8ch.de>
-References: <20241216103855.18457-1-josh@joshuagrisham.com>
- <13184052-baf2-4e7d-b8ef-9ba3f34d475a@t-8ch.de>
- <66897a27-5f81-46fc-898d-682456d7f37f@redhat.com>
+	s=arc-20240116; t=1734461686; c=relaxed/simple;
+	bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tbAZ0ja/tdP+flIrBTGGNWySF0L1EHbzahnIAqnpkcJ/52/QTsY4wO8yFifSlhE+Q1+e7UWjn6JjYK29dy/wrgAvf1/6vhluV7Vf1OomiX73uFO6P1Mcn42TLsBJqJSmlIGxgw2FPeyRm7Z5rarD0IhBlZP4QOr9GZeDjYypVNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QjFbzyRU; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f2ed0b70d6so2477042eaf.3;
+        Tue, 17 Dec 2024 10:54:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734461684; x=1735066484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
+        b=QjFbzyRU/DApO6iDXHdYUvZQMNssZcrlCX3/zXyqcALL6A1XKJanfWYDRyNE0xk2Y2
+         x0iXfknthgthBJBUZ3gU5+rAaW6/4qwTooKTrhlrtoGM9EaCcKlolWnn/oYxeSC0O19P
+         JpVviiHZZocfLTa9xuek9gHyrMfmKREipcfARqMuO6xSRcTT8ccWvQz5NpjiunS5NgqU
+         ZnDkZbUNXLyiGSkxSSeCkTFJEGReO1XK/W5qe0RHJtI5Cf6II/mFclfsy4iggdpVRZG8
+         vS1BC3+Cq5lVuhx/iOENUVf3A+y9nZlmWgxELj5poKW8rQbLzkUiznpf4NiHyDYfvzNR
+         cSbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734461684; x=1735066484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dwEK2V+NwsxoqVLt4qwUPzJuZxjpRpVr3DgeyYIkTus=;
+        b=F3DogWWGhARziGuPcy/URTc+U1XuqOjsTDqezAWAp6Zh4LYhBfD4SwJ/p7IZeYJVui
+         ARGKWXiJikxpvheEvv+sQr8JsW/lBqN+DoTRZz0t6kBjwXeuLxanYRq3TAdT57Kk2opF
+         IWmnN2KgDORzMLsbAMj5IRnaks8m278Fww0hCYm5y2JU8V1ou7oU2EM9k/sw0Yi3GDZA
+         sNGuws48V+QTkIJFjW2P7Cu8xF/OCNIrhki4UsLTH+w+bOIDBDogoZVy5sa7I54JqgNZ
+         GsZCagcXVRh5exNKz9Fc5fwRN+Jm/QQgnwkJVYYtwPDdbgGjPFfulrEE+d8ZC7+l2nh1
+         jLwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU4D2bdYUKJ0hubGYEWSIkREIHBUmQ9Ntl1jaqL0tCKRWyLZ4LGzPQTuUNOcqSgGeyfzkUT/Flxe0lSPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYAWeHqcKcG+Vwz3kYqgXcdYg1k3zYk+eUHv4l0GRzk0ipDXkr
+	dA2VMJJdEnvEjTwB4yLwbrgM6Ma+9yxOfKTErkIvdRD4xSOojSgp0/XzgxhEbMZxPOb+kx1pVi7
+	wGr93tpJCJL2MWEMgsl51k7GzgOM=
+X-Gm-Gg: ASbGncvi0KefeStAxUbdB6sVUu9e7qo2k7va34z1gZxWu0ZGhrASLPxo4LB8d4TP63h
+	Vq8OeOE9CW+M3heLND1/oxkufHMmRdInb3IwQ
+X-Google-Smtp-Source: AGHT+IGQDZLl7mfjaTH/5VIvgXt+Gr4zkRvh4UK8kHCuvd+Y3fLIH5he4Q8ShGTMod9GEHUuUogqecqkAtumrAGeHtE=
+X-Received: by 2002:a05:6870:808a:b0:29e:6211:1262 with SMTP id
+ 586e51a60fabf-2a3abeeb4c0mr10681465fac.0.1734461684277; Tue, 17 Dec 2024
+ 10:54:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66897a27-5f81-46fc-898d-682456d7f37f@redhat.com>
+References: <20241122210346.2848578-1-alexthreed@gmail.com> <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
+In-Reply-To: <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
+From: Alex Shumsky <alexthreed@gmail.com>
+Date: Tue, 17 Dec 2024 21:54:32 +0300
+Message-ID: <CAF4oh-Pbbu-LJ22yyx95Zrw0rgwRHo_tEqhCnrRHRBHqADS8CA@mail.gmail.com>
+Subject: Re: [PATCH] brcmfmac: fix RSSI report in AP mode
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, Alexey Berezhok <a@bayrepo.ru>, 
+	=?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Kalle Valo <kvalo@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, brcm80211-dev-list.pdl@broadcom.com, 
+	brcm80211@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-12-17 15:23:22+0100, Hans de Goede wrote:
-> On 16-Dec-24 5:46 PM, Thomas Weißschuh wrote:
+On Tue, Nov 26, 2024 at 2:13=E2=80=AFPM Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+>
+> On 11/22/2024 10:03 PM, Alex Shumsky wrote:
+> > After commit 9a1590934d9a ("brcmfmac: correctly report average RSSI in
+> > station info") it is required from firmware to provide rx_lastpkt_rssi.
+> > If this field is not provided brcmfmac doesn't report any RSSI at all.
+> > Unfortunately some firmwares doesn't provide it. One example is firmwar=
+e
+> > for BCM43455 found in Raspbberry Pi.
+> > See https://github.com/raspberrypi/linux/issues/4574
+> >
+> > Fix it by falling back to rssi field if rx_lastpkt_rssi is not provided
+> > (like it was before 9a1590934d9a).
+>
+> Sounds like a reasonable approach. However, I would like to learn more
+> about the issue. Maybe it is a per-vendor issue so I am interested what
+> the sta_info version is that we get from firmware. It is printed in
+> brcmf_cfg80211_get_station() with brcmf_dbg(). You can make it a
+> bphy_err() call instead or enable TRACE level debug messages in the drive=
+r.
+>
+> Also would be good to know the firmware version and kernel version of
+> the BCM43455.
+>
+> Regards,
+> Arend
 
-[..]
+Hi Arend,
 
-> >> +Keyboard hotkey actions (i8042 filter)
-> >> +======================================
-> >> +
-> >> +Controlled by parameter: ``i8042_filter``
-> >> +
-> >> +The i8042 filter will swallow the keyboard events for the Fn+F9 hotkey (Multi-
-> >> +level keyboard backlight toggle) and Fn+F10 hotkey (Allow/block recording
-> >> +toggle) and instead execute their actions within the driver itself.
-> >> +
-> >> +Fn+F9 will cycle through the brightness levels of the keyboard backlight. A
-> >> +notification will be sent using ``led_classdev_notify_brightness_hw_changed``
-> >> +so that the userspace can be aware of the change. This mimics the behavior of
-> >> +other existing devices where the brightness level is cycled internally by the
-> >> +embedded controller and then reported via a notification.
-> >> +
-> >> +Fn+F10 will toggle the value of the "Allow recording" setting.
-> > 
-> > Personally I'm not a big fan to implement policy this way in the kernel.
-> > But others may disagree.
-> 
-> The keyboard backlight cycling ws already discussed and handling this in
-> the driver is ok.
-
-Ack.
-
-[..]
-
-> >> +static struct platform_driver galaxybook_platform_driver = {
-> > 
-> > Could this be a 'struct acpi_driver'?
-> 
-> The use of acpi_driver is deprecated. AFAIK the plan it to
-> move the remaining ones to platform-drivers and eventually
-> remove the whole ACPI bus concept turning ACPI companion
-> nodes into "normal" fwnodes like the current software and
-> openfirmware fwnodes.
-
-Thanks for this explanation, I was not aware.
-It explains the comment from Rafael in [0].
-
-[0] https://lore.kernel.org/lkml/CAJZ5v0g0B8UFqYza88ahMfC-1_FzzizeS6QN=Qtt7vGv9+TK1w@mail.gmail.com/
+Is the info I have provided sufficient?
 
