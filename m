@@ -1,165 +1,78 @@
-Return-Path: <linux-kernel+bounces-449660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49259F5373
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:29:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371A29F5365
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8C11891951
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:26:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0029E1892948
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3011F8EF5;
-	Tue, 17 Dec 2024 17:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577621F890C;
+	Tue, 17 Dec 2024 17:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CmgT13Fq"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t99FsCUW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9485A1F75B5
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ABE1F8901
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456315; cv=none; b=B1Bx1ASDi23hMaj6KqZyoIWX8kcRzDOIqsWvFfF6pipKbisiq010ArhKFn0hO/VTeFUUJrh5zJ6pq36BT7E9lGYnlucZ0tB45PWB/EeviabcViClQa0xAUSXi+HB/PPoxvKxo30+mwcl2mIG/uRmtaBzQYo1/nk02AoRsbA3nFM=
+	t=1734456286; cv=none; b=RW2e/H4lIy5pJK2K2WV5OwqHjQtvIfS1hPIw2MTUik8A7IMi/8/D9NtHLUe5SomqopfWV1iF0mQL+EgqUD0Ym89t1KlKMu1XQlCmhCB7ymenPuY9By2t58DwBJY8d+1+I3S69Mg2gVntFkDbMchsXP7OciXQbBu7A9LKwAkhLq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456315; c=relaxed/simple;
-	bh=qtebKg4/588ML/A2XNGyueKXuWay492/kzv5TfXOmiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSoO0YcdmwJ0ko6RRQw4EmixkEHU34cp+6049R1OUm6tjILIT9A6fkDySdx2B8AFrExL8v/tg9YTZUm+VIkTtOjf+rCZh9kQBCMyIZhZav148CAQkS8iY8saUrhlg1SLdhpJMNgYmgRH5jQE8WPYV7pQ1Zhk/zV7KQW7bhKByx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CmgT13Fq; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-728eedfca37so5724827b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:25:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734456313; x=1735061113; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YOPV+rKrhFxhfr/BDT97d+AUMncXtvhCP8Kd1bZ9mu0=;
-        b=CmgT13FqGAlm0J8YffbIYRYnbw5SzOgHxAoO/gMCSxqEWbr8S8Iee7Ut+ll0CtFAib
-         3Yb57Tmm1tskyJ1AuznBZbu9QCzTweVq5PgJl6VU8JUy6VCsqD1tin+ilHTA5lscW8iZ
-         jmfbBJRqkq01G6RqUWhd0j0NS5qkc9NH4ZcG7bhuHp/jZmL7ZEHhaUNR6sFOBvxJBMjo
-         yjQUpK0NHqRB66RIXzGQ9M1iqyD8Gm7kbANf+e05dS7NgC4nfmYwg9CwaOy0MK0yYm/T
-         eRwKgJuGOC8d487wRjgDXYIGtk9qbT7taygJG+GaydpAFeELCBeX3la2vjhfutDH/gGN
-         TQQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734456313; x=1735061113;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YOPV+rKrhFxhfr/BDT97d+AUMncXtvhCP8Kd1bZ9mu0=;
-        b=WcTpFowc5v66N8YFNL950Y2mkQxX9GFaPruTW4Q+3hH8iZgvlxaGuHKtSsUwTj0XSZ
-         pnEiYxAF65rEodceLeZa4gBUkYI1vriTo7gCKyns2HWqfSmhbTD8ndJErZ+nXcznEH88
-         X5ow2fpRNdG5BuuG0TF0e/PCRqrHGmab+30A2XzwZ3jpgl3+6SsKsQdr8xEVr/3h85CV
-         HDLZEDraBwixiCmY4DOa2Z441VXgxwbpdO3ZBcBJ8bpv863LKobQQz9dmELCdEz/t+RL
-         jEGGaTB8olOV++Cn0cPr2hB0HCeSRJm5BWGxDmhTR8WTNjN+fxtnIAB+XtnpknBpeT1v
-         v4ow==
-X-Forwarded-Encrypted: i=1; AJvYcCX7qcDpPMCHnZ2CJIwPk7v26u03YtLQ8mIjHYoQGWM09BjG2p4BLQ6gRZwAj1ZbH5RFD4IlJTxUKyrwzlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpM3YpQMwIa84LXKVW9UEyrSvIkzPJzJ4zzGkUWA0umRiSa3JX
-	M8Mstx/HByRMthsxocdWgMwIaIDSddnCSeQi/GB1IMdjmucm9sqy86KL0P85HQ==
-X-Gm-Gg: ASbGnct+I78NJ++gsoIy1GVaqcke40lOG6b4ZyGPwdvJPEDWIJZm1LWU5Ww8WkjTlHy
-	tItWW3LF4BYpcIc8PCXylXLDdF075J5lt3PmBZdJvVa8fMkIfan/VNHmqUD1hcmxt4aSgTNuAQK
-	sQk0jSiYrwzA6M4y+08ybnLGR64YPQppuYsfmQ1tgYRPhvGnkI+cVvUcyX2jQXk4BzjOFOWaNVm
-	4IgMwphogxMrmMfbRehj9Qzi/Rq4oaTVmOGz8G4/Rk/CSeim/LSlsXCFpOYJmjNi0A/
-X-Google-Smtp-Source: AGHT+IEiyPtAWgyu8zoCPimND9mRn/6YCnmBDMVc1DmVYS+iQJlok+y8D22roOKEWjuOJV17xvafEw==
-X-Received: by 2002:a05:6a00:3d06:b0:725:cfd0:dffa with SMTP id d2e1a72fcca58-7290c0ee463mr28517272b3a.5.1734456312913;
-        Tue, 17 Dec 2024 09:25:12 -0800 (PST)
-Received: from thinkpad ([117.193.214.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bcfecbsm6907193b3a.195.2024.12.17.09.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 09:25:12 -0800 (PST)
-Date: Tue, 17 Dec 2024 22:55:02 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	cassel@kernel.org, quic_schintav@quicinc.com,
-	fabrice.gasnier@foss.st.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
- bindings
-Message-ID: <20241217172502.borj2oy4rpxcteag@thinkpad>
-References: <20241205172022.GA3053765@bhelgaas>
- <d976d74c-80c0-4446-bb9b-960a990c552b@foss.st.com>
+	s=arc-20240116; t=1734456286; c=relaxed/simple;
+	bh=4ziRd2iQOLilowhUX3cp42/nEahcRy6ChBBUEockPuM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OBjHFC2ZP7rQdiUHbThbrlnIuRJEq0om3HzaX4D/TjZ3sQot+1TJB/D2I8UzilAPcnl+ZaQZ5iRleOG9XH3oB/5WytS3T6NtG0/t8kgyHWzlS3erzgiAj92ayk/icOrwHKUXood5kivll2wj64deEvcqxZJ2oOzZ9t7rAPWtu6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t99FsCUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80957C4CEE2;
+	Tue, 17 Dec 2024 17:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734456286;
+	bh=4ziRd2iQOLilowhUX3cp42/nEahcRy6ChBBUEockPuM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=t99FsCUWsAv027HxcBzEBJvmUjcGtF2+JI3YTAYBNUkwPuC7mFvsKFrfTeuojh2zS
+	 TDKdAqpkV5/W+muQ5AFi199fotsr82foyFGHsGx/cCaqTA9TJg3k+xz3OPpAbPbCru
+	 EETpH0Qp41S0paTUcVcVtofbMayYv9QRwRS54gi9pPD3fepFOlRWFfGnQFMTmMigzm
+	 kuzoZjdO5Wy8kUg8+z5YEZUcPXEIvYWZEAgmn6fuJFRrdZ9IYgvMFn/8kqBGZZTCt2
+	 ivCGP+eMs+9aAJ1K6rfwcxGXbfQmKASQ2jbbANk3pcRHg+NL5hILPoCVGwsOyHd+wc
+	 QuAWuQTrv8UEw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFDB3806656;
+	Tue, 17 Dec 2024 17:25:04 +0000 (UTC)
+Subject: Re: [GIT PULL] ftrace: Fixes for v6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241217113921.7254325e@gandalf.local.home>
+References: <20241217113921.7254325e@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241217113921.7254325e@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git ftrace-v6.13-rc3
+X-PR-Tracked-Commit-Id: 166438a432d76c68d3f0da60667248f3c2303d6c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5529876063e110ea49326138149fdf2a28a484dd
+Message-Id: <173445630358.974395.8190501260310878409.pr-tracker-bot@kernel.org>
+Date: Tue, 17 Dec 2024 17:25:03 +0000
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro <viro@ZenIV.linux.org.uk>, Michal Simek <monstr@monstr.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d976d74c-80c0-4446-bb9b-960a990c552b@foss.st.com>
 
-On Tue, Dec 17, 2024 at 04:53:48PM +0100, Christian Bruel wrote:
-> 
-> > Makes sense.  What about phys, resets, etc?  I'm pretty sure a PHY
-> > would be a per-Root Port thing, and some resets and wakeup signals
-> > also.
-> > 
-> > For new drivers, I think we should start adding Root Port stanzas to
-> > specifically associate those things with the Root Port, e.g.,
-> > something like this?
-> > 
-> >    pcie@48400000 {
-> >      compatible = "st,stm32mp25-pcie-rc";
-> > 
-> >      pcie@0,0 {
-> >        reg = <0x0000 0 0 0 0>;
-> >        phys = <&combophy PHY_TYPE_PCIE>;
-> >        phy-names = "pcie-phy";
-> >      };
-> >    };
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml?id=v6.12#n111
-> > is one binding that does this, others include apple,pcie.yaml,
-> > brcm,stb-pcie.yaml, hisilicon,kirin-pcie.yaml.
-> > 
-> 
-> On a second thought, moving the PHY to the root-port part would introduce a
-> discrepancy with the pcie_ep binding, whereas the PHY is required on the
-> pcie_ep node.
-> 
-> Even for the pcie_rc, the PHY is needed to enable the core_clk to access
-> the PCIe core registers,
-> 
+The pull request you sent on Tue, 17 Dec 2024 11:39:21 -0500:
 
-But why that matters? You can still parse the child nodes, enable PHY and
-configure PCIe registers.
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git ftrace-v6.13-rc3
 
-> So that would make 2 different required PHY locations for RC and EP:
-> 
->     pcie_rc: pcie@48400000 {
->       compatible = "st,stm32mp25-pcie-rc";
-> 
->       pcie@0,0 {
->         reg = <0x0000 0 0 0 0>;
->         phys = <&combophy PHY_TYPE_PCIE>;
->         phy-names = "pcie-phy";
->       };
->     };
-> 
->     pcie_ep pcie@48400000 {
->       compatible = "st,stm32mp25-pcie-ep";
->       phys = <&combophy PHY_TYPE_PCIE>;
->       phy-names = "pcie-phy";
->     };
-> 
-> Simplest seems to keep the PHY required for the pcie core regardless of the
-> mode and keep the empty root port to split the design
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5529876063e110ea49326138149fdf2a28a484dd
 
-No please. Try to do the right thing from the start itself.
-
-- Mani
+Thank you!
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
