@@ -1,75 +1,68 @@
-Return-Path: <linux-kernel+bounces-449112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915EB9F4A05
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:38:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28E49F4A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5BB916BBD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:37:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34DC116BC98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EB21EE029;
-	Tue, 17 Dec 2024 11:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559211EF0B1;
+	Tue, 17 Dec 2024 11:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lt1nBuci"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lmQSkdOi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A797442F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325FC1EC4EE;
+	Tue, 17 Dec 2024 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734435474; cv=none; b=V4IYdm6laYLBiu36XbRFCcDgzZTZDVv+hTlt1eeoytzhWC7eFkRV1gLZHsYHfQmLDXN9BDk3VfzY2LmuLaISjj4Dfr5qnvj75iTaR8s+Q5V+Y1hI0kj35S03qlrVdNJjouo6bTLtxV/WD4QzIkBOO0jVq9ovqMIa4ZKPItkCDY4=
+	t=1734435572; cv=none; b=mvIARCHH7xd2xGs60Q+C8xhijbW0yaOKLl2sOQaMWs7lbaIqm9GOlCuekqH7IdM2CyaMXdfNqM7TKEIF4Nu0dThZiY4yvVZ18pN7VIEYOAPxQUsQFiCXsJxg8EFy4Enr7i33ZMNGi3WBHYAxlN/ghyheyVsu5ZhrTSAUWO6D9Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734435474; c=relaxed/simple;
-	bh=9ty8582afXSWd/BOtZ1GC6HtEkTIV6qWwE4tUjiw8Uw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jo+vWteRqnb9FXPaRGcA/WG03XklA6IvSaSTvOA73wAgrOkVjRmoamoAYDKgH1XcTEHNCJ3FVsbpWsnRe1IadE/UXAoR9tIIwAHxonSlWDjoEnU3OYsm+vbt5STxa4gMWr3ZsVK5uXlYYYCOYthxiNPO69GN9631+Vb4L/LD/7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lt1nBuci; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734435471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6s04YPn1lNBo5J95MJd6h2MhVnv9P1D3qpQ6LE+2vHc=;
-	b=Lt1nBuci9cFh9BAOi7qKJ2w8UAlGpVfWZtrXnbdzUzaoWl601V0YAhocJS4cMES6MEJKns
-	7LhxU4ORwJYEA7fbgZ0ohYAeQQI+WsXUQ8mhqLaCgChbB5zRMPrS4P/CPQZsVJZwDXed3Z
-	7e91x0P/YkwfCto0JG9NKCi2flOAoso=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-131-hJ60qpFoPcWtVFWFQ6NqMw-1; Tue,
- 17 Dec 2024 06:37:50 -0500
-X-MC-Unique: hJ60qpFoPcWtVFWFQ6NqMw-1
-X-Mimecast-MFC-AGG-ID: hJ60qpFoPcWtVFWFQ6NqMw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CDDC619560AF;
-	Tue, 17 Dec 2024 11:37:48 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.194.221])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 696761956053;
-	Tue, 17 Dec 2024 11:37:44 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Adrian Moreno <amorenoz@redhat.com>,
-	Yotam Gigi <yotam.gi@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] psample: adjust size if rate_as_probability is set
-Date: Tue, 17 Dec 2024 12:37:39 +0100
-Message-ID: <20241217113739.3929300-1-amorenoz@redhat.com>
+	s=arc-20240116; t=1734435572; c=relaxed/simple;
+	bh=LEVddh7MPIP2VUhPlt4Qmb4JKUlk54HaOac25Ljp1Vw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tNf/TQORo5CSJGbNt/11yh++AE0clyt9Cny6jC2c9tShS9sNm/Zqgfeei0pdU7gpyaQ17SwW4txVoIsPgI97eAtvw6l4f5OZoiBKwJO5aTGUdR04U0FvM4Z83ehI4gHavSTWzRyJnwzi1XSmXuwVsK4JYa7La81u2n4jIf4ufoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lmQSkdOi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH96l9Z010098;
+	Tue, 17 Dec 2024 11:39:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HEhKoPJL1i2oUXPpYoNYT3
+	5TQ/AQk3xfKxaoMLcLFhQ=; b=lmQSkdOilkxSiMiNMRgPN22QaYzYXX/sVMKgZr
+	VKI6tIQVeXz93Y2lGn2QcRKgmQhkGj9U+K84kTyjV6Tpu/XoHjlGC5KAKWPeyZ36
+	z6WQpmUHZ0NKD7T+S/UrSCTIDCGZ8qUfqD8n3pMfnSD4HvmhuPfQmJTTqfR9WVXW
+	fSzVYY+mMJo8R1Qt0RxBx+9+Dl1m07GyZZteMPQ+QmavxA1aATciJHUR1d0pECXr
+	axyWowi+9YcU4stMar462OE9X0eHku/9mxoMy+rzJwwRiaFYCMjbJtqeStTuO716
+	yJnU6lgyWrwFIwmh6VlQLj+rt7U1z2uRVUu5aj+5nEwf+oYA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k6cqgd8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 11:39:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHBdQ1M021521
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 11:39:26 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 17 Dec 2024 03:39:22 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v2 0/2] Remove apss_dbg clock from IPQ5424 gcc driver
+Date: Tue, 17 Dec 2024 17:09:07 +0530
+Message-ID: <20241217113909.3522305-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,47 +70,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9GpQQOVarGDFXOc3rqPL68U4Yabnbesp
+X-Proofpoint-GUID: 9GpQQOVarGDFXOc3rqPL68U4Yabnbesp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=667 phishscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170096
 
-If PSAMPLE_ATTR_SAMPLE_PROBABILITY flag is to be sent, the available
-size for the packet data has to be adjusted accordingly.
+The gcc_apss_dbg clk is access protected by trust zone, and accessing
+it results in a kernel crash. Therefore remove the gcc_apss_dbg_clk
+from gcc driver and dt-bindings.
 
-Also, check the error code returned by nla_put_flag.
+Changes in V2:
+	- Fixed all review comments from Krzysztof Kozlowski.
+	- Patches were re-ordered to ensure each patch is bisectable.
+	- Detailed change logs are added to the respective patches.
 
-Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- net/psample/psample.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+V1 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241205064037.1960323-1-quic_mmanikan@quicinc.com/
 
-diff --git a/net/psample/psample.c b/net/psample/psample.c
-index a0ddae8a65f9..25f92ba0840c 100644
---- a/net/psample/psample.c
-+++ b/net/psample/psample.c
-@@ -393,7 +393,9 @@ void psample_sample_packet(struct psample_group *group,
- 		   nla_total_size_64bit(sizeof(u64)) +	/* timestamp */
- 		   nla_total_size(sizeof(u16)) +	/* protocol */
- 		   (md->user_cookie_len ?
--		    nla_total_size(md->user_cookie_len) : 0); /* user cookie */
-+		    nla_total_size(md->user_cookie_len) : 0) + /* user cookie */
-+		   (md->rate_as_probability ?
-+		    nla_total_size(0) : 0);	/* rate as probability */
- 
- #ifdef CONFIG_INET
- 	tun_info = skb_tunnel_info(skb);
-@@ -498,8 +500,9 @@ void psample_sample_packet(struct psample_group *group,
- 		    md->user_cookie))
- 		goto error;
- 
--	if (md->rate_as_probability)
--		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-+	if (md->rate_as_probability &&
-+	    nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY))
-+		goto error;
- 
- 	genlmsg_end(nl_skb, data);
- 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+Manikanta Mylavarapu (2):
+  clk: qcom: ipq5424: remove apss_dbg clock
+  dt-bindings: clock: qcom: gcc-ipq5424: remove apss_dbg clock macro
+
+ drivers/clk/qcom/gcc-ipq5424.c               | 19 -------------------
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h |  1 -
+ 2 files changed, 20 deletions(-)
+
+
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
 -- 
-2.47.1
+2.34.1
 
 
