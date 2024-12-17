@@ -1,154 +1,142 @@
-Return-Path: <linux-kernel+bounces-449315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AAA9F4D14
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:06:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D1B9F4D17
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B03F16D7D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75520188BBBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E7D1F473F;
-	Tue, 17 Dec 2024 14:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A871F4715;
+	Tue, 17 Dec 2024 14:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="isrVkE50"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prbcWabO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCBE1F4709;
-	Tue, 17 Dec 2024 14:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAE21DFE00;
+	Tue, 17 Dec 2024 14:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734444307; cv=none; b=gis6qUC16u2wH3/rdItSuoNFCXC4xmX6gvRV9n2GZL+0H44+Y+9Afq5AacgY3eYa+GTnoZtAEhhKPomBDzdYJCNoXAuR9dPyRFsf7j+S+nuLObEl2uROehoh6LFfWl5ZHllE9Nxmmj9lPVauhJrMoCB1oJjsLPXVa5EY+C3z9iA=
+	t=1734444378; cv=none; b=JHQgtwvtIe2EKh3mI2imCCz+NfCWoCedi/73BE2isafulM7Fg0R2smRmyNWkrMUwOdvfC69wgK8QuAyNjP9EYJ7bxUWrJgTxfa7mAN0S4eLx5WHYbtvNsbeWmIRVmADk9NcYvgw96pKBCaqDErTkn2wEukKi41obI8vNrgMpNos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734444307; c=relaxed/simple;
-	bh=0IQtuLtlqtIgOJFLrSRa3D7bWW297TOeEPKWROJG688=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nxcTaLgBjt2G8FQ5ZK+NnTU2twdteqUpulz+Nq7e0ceGv4T3nhca+/wxnFnidJim+n/cbU+irLyElOwDYfrD8CMJDt0CLmHsLSeZ60mw4d8+6zkvUT27ovEtGa4u4CFKs5KN4UsJts2I3vWSCx0iqk8jV2366UA+Vt2PtJenF08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=isrVkE50; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734444303;
-	bh=0IQtuLtlqtIgOJFLrSRa3D7bWW297TOeEPKWROJG688=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=isrVkE504BS7T5T9Otgu56L4GWJY0t836YOJ6J9tr4ewwbnmN663FVEH8occ66Ia6
-	 qyo1x+bfsqQYKwJVqN3KbeYL8qsXQYGpxaQ0JpDaE3rQ0++gKP5lT0UgDVLaiTjHwD
-	 Yv+0S9bM6GV0FtfW0UJbgy2H7B4QdkIn1JoEM0n7CaguZAUSk+EJj8M4nQW4rIiZsV
-	 bO8GpuXlM5s+WdpfL+7/0MqNYAf597pWqow3CU1Ti2c/qsmzPNgN/4mD8CblVX3lOu
-	 mT+mkx/lkzMsSfUfAxTnPTVFAM3Ljv+1KRG/g5qX5X7c3aLUeQhdCgwLqdveI2mnmV
-	 hi5/GD/6CJVZw==
-Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5EF9717E376F;
-	Tue, 17 Dec 2024 15:05:02 +0100 (CET)
-Message-ID: <8d39ca4fd9dee36bd5ee1b8184018e8867195bd8.camel@collabora.com>
-Subject: Re: [PATCH v2 3/4] media: chips-media: wave5: Fix hang after seeking
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
-	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
-	nas.chung@chipsnmedia.com
-Date: Tue, 17 Dec 2024 09:05:00 -0500
-In-Reply-To: <20241217045125.58-4-jackson.lee@chipsnmedia.com>
-References: <20241217045125.58-1-jackson.lee@chipsnmedia.com>
-	 <20241217045125.58-4-jackson.lee@chipsnmedia.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1734444378; c=relaxed/simple;
+	bh=sRYFkVqoQ7WVWtIBYz2OuAjeAt/6gkjTXYc/NTa8jnk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QVB5I4TqdNiO81HwPO3XS+6DysoESbgIx4y+TfIYuCebbZOtvxbuzGASQZr+X8aBy9nGnqWPSd1rfwhLrFcj4APGDGtmobqcqBfNZzucBwW4c7QNjel3sONwI0GKLmzc0Ad+Lti25PKu0KSnIu9aU8HSicOAleQ7D8Jq140aMB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prbcWabO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A3EC4CED4;
+	Tue, 17 Dec 2024 14:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734444377;
+	bh=sRYFkVqoQ7WVWtIBYz2OuAjeAt/6gkjTXYc/NTa8jnk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=prbcWabOTuBkNbtMYI66UPlJNIkVKDob7yE4wXS+0mv640w8Mflnrm0MVNz/CrCwx
+	 jzbSn1g5TZ47pfAUdJaSvC4JWoIteeZ1FX2PrDaCMweujLl8tfWqfK/zRO3YPAQMYa
+	 /pvZtZqEl7zp/NFAX8jI6vZBLxHeHQ/dS6GAf7ngKQZBQU4EnLaii64OmE10VEPNMG
+	 Mx1QSxTLouq1iXjiY1rzzc7voVwNAQ2hHz+uqDvwxv+4aqUiOoESgIjb0JD6mTmtVr
+	 E2TgM1hBP4fpvHk9lzYmxj2ANZq52Uc46/La0B/oULauaBxSj8hARLaGKvmVWV1Smb
+	 5iAxg8B00VrRQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNYDH-004ZwV-Rt;
+	Tue, 17 Dec 2024 14:06:15 +0000
+Date: Tue, 17 Dec 2024 14:06:15 +0000
+Message-ID: <86seqmqu94.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce __pkvm_host_unshare_guest()
+In-Reply-To: <Z2F9xb4jrK1zRtNV@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+	<20241216175803.2716565-12-qperret@google.com>
+	<86wmfyr1j4.wl-maz@kernel.org>
+	<Z2F9xb4jrK1zRtNV@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Le mardi 17 décembre 2024 à 13:51 +0900, Jackson.lee a écrit :
-> While seeking, driver calls flush command. Before flush command is sent to
-> VPU, driver should handle display buffer flags and should get all decoded
-> information from VPU if VCORE is running.
+On Tue, 17 Dec 2024 13:33:57 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
-This one too please.
-
-> ---
->  .../platform/chips-media/wave5/wave5-vpu-dec.c  | 17 ++++++++++++++++-
->  .../platform/chips-media/wave5/wave5-vpuapi.c   | 10 ++++++++++
->  2 files changed, 26 insertions(+), 1 deletion(-)
+> On Tuesday 17 Dec 2024 at 11:29:03 (+0000), Marc Zyngier wrote:
+> > > +static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
+> > > +{
+> > > +	enum pkvm_page_state state;
+> > > +	struct hyp_page *page;
+> > > +	kvm_pte_t pte;
+> > > +	u64 phys;
+> > > +	s8 level;
+> > > +	int ret;
+> > > +
+> > > +	ret = kvm_pgtable_get_leaf(&vm->pgt, ipa, &pte, &level);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +	if (level != KVM_PGTABLE_LAST_LEVEL)
+> > 
+> > So there is still a very strong assumption that a guest is only
+> > provided page mappings, and no blocks?
 > 
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-> index d3ff420c52ce..882d5539630f 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
-> @@ -1369,6 +1369,16 @@ static int streamoff_output(struct vb2_queue *q)
->  	struct vb2_v4l2_buffer *buf;
->  	int ret;
->  	dma_addr_t new_rd_ptr;
-> +	struct dec_output_info dec_info;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < v4l2_m2m_num_dst_bufs_ready(m2m_ctx); i++) {
-> +		ret = wave5_vpu_dec_set_disp_flag(inst, i);
-> +		if (ret)
-> +			dev_dbg(inst->dev->dev,
-> +				"%s: Setting display flag of buf index: %u, fail: %d\n",
-> +				__func__, i, ret);
-> +	}
->  
->  	while ((buf = v4l2_m2m_src_buf_remove(m2m_ctx))) {
->  		dev_dbg(inst->dev->dev, "%s: (Multiplanar) buf type %4u | index %4u\n",
-> @@ -1376,6 +1386,11 @@ static int streamoff_output(struct vb2_queue *q)
->  		v4l2_m2m_buf_done(buf, VB2_BUF_STATE_ERROR);
->  	}
->  
-> +	while (wave5_vpu_dec_get_output_info(inst, &dec_info) == 0) {
-> +		if (dec_info.index_frame_display >= 0)
-> +			wave5_vpu_dec_set_disp_flag(inst, dec_info.index_frame_display);
-> +	}
-> +
->  	ret = wave5_vpu_flush_instance(inst);
->  	if (ret)
->  		return ret;
-> @@ -1459,7 +1474,7 @@ static void wave5_vpu_dec_stop_streaming(struct vb2_queue *q)
->  			break;
->  
->  		if (wave5_vpu_dec_get_output_info(inst, &dec_output_info))
-> -			dev_dbg(inst->dev->dev, "Getting decoding results from fw, fail\n");
-> +			dev_dbg(inst->dev->dev, "there is no output info\n");
->  	}
->  
->  	v4l2_m2m_update_stop_streaming_state(m2m_ctx, q);
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> index e16b990041c2..e5e879a13e8b 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
-> @@ -75,6 +75,16 @@ int wave5_vpu_flush_instance(struct vpu_instance *inst)
->  				 inst->type == VPU_INST_TYPE_DEC ? "DECODER" : "ENCODER", inst->id);
->  			mutex_unlock(&inst->dev->hw_lock);
->  			return -ETIMEDOUT;
-> +		} else if (ret == -EBUSY) {
-> +			struct dec_output_info dec_info;
-> +
-> +			mutex_unlock(&inst->dev->hw_lock);
-> +			wave5_vpu_dec_get_output_info(inst, &dec_info);
-> +			ret = mutex_lock_interruptible(&inst->dev->hw_lock);
-> +			if (ret)
-> +				return ret;
-> +			if (dec_info.index_frame_display > 0)
-> +				wave5_vpu_dec_set_disp_flag(inst, dec_info.index_frame_display);
->  		}
->  	} while (ret != 0);
->  	mutex_unlock(&inst->dev->hw_lock);
+> Yep, very much so. It's one of the main limitations of the series as-is
+> (with the absence of support for mapping anything else than memory in
+> guests). Those limitations were mentioned in the cover letter of v1, but
+> I should have kept that mention in later versions, sorry!
+> 
+> The last patch of the series has a tweak to user_mem_abort() to force
+> mappings to PTE level which is trivial to do as we already need to do
+> similar things for dirty logging. And __pkvm_host_share_guest() doesn't
+> take a 'size' parameter in its current form, it assumes it is being
+> passed a single pfn. So all in all this works well, and simplifies the
+> series a lot.
+> 
+> Huge-page support should come as a natural extension to this series, but
+> I was hoping it could be done separately as that should have no
+> *functional* impact observable from userspace. I'm slightly more
+> concerned about the lack of support for mapping MMIO, but that too is
+> going to be some work, and I guess you should just turn pKVM off if
+> you want that for now...
+> 
+> Happy to address either or both of these limitations as part of this
+> series if we think they're strictly required to land this stuff
+> upstream, this is obviously up for debate. But that's going to be quite
+> a few patches on top :-)
 
+No, I just wanted to make sure I did have the correct interpretation
+of what this does. 'd rather have something that works first, and then
+add large mapping support. You can even sell it as a performance
+improvement! :)
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
