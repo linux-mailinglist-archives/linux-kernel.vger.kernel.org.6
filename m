@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-449519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76109F5036
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:04:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEA99F5031
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66878188BD8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B066F16E5BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20551F8902;
-	Tue, 17 Dec 2024 15:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010D31F7579;
+	Tue, 17 Dec 2024 15:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="RLKcZU7N"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4tBmVlf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A121F8686;
-	Tue, 17 Dec 2024 15:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C05B1EC4C3;
+	Tue, 17 Dec 2024 15:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734450390; cv=none; b=Rjis6DCotfkSjQkW+VKibjKAc0FKVqNnC6uLvZ/t9C/5rGkk9M7A24izBoJOHIfk6lHIuA55ur9rNv7O33uv8Yp8ATScRsELZUf5oZsgNv6dbjlYU+QTsqYaVpYCWGlrUSXNsjzcwPhE+jX/F1HlBsbqdotDBrO1JWbvu3/NUvU=
+	t=1734450384; cv=none; b=RRBo3BEB7aq89JajcgjXQexkHvtea6gbseLjCGODjYXdU4wKmE88wRarQ7vzIlik4xtreoX3JqdFw1Jr8qFkvhmYWFo1wOPdCQL9bNrk86B127qSvXz8eYOL6XnY2GIsHNmj4yzRvHk00LZruEE5ilYL/bWtyoW4eszLv6fE8g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734450390; c=relaxed/simple;
-	bh=i3HZyCNbTXfNbrY9ue4rrP2IEcvJUdMDkeKXosjtXgc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OiXObRt4k8xQhqEP+XqxWNvIL8riQ2r0FJSLnCiUU2Jj0bU7oueEBSHagEw6TKrYkrs+K10TQpJGMQSjRMRQ2Z5SEP9yz61XhWbyTCNom7STZURuF6wk7NRqbs0olIprynbQ9i32jpi9g92XtPAtDn6Titg6/pUmKQTnySKhU2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=RLKcZU7N; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YCLl75Pzcz6ClY8q;
-	Tue, 17 Dec 2024 15:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1734450383; x=1737042384; bh=0IS9ZN1KJIudBiEPKF1EIXwM
-	b6EIL7imS4BeeV9L3es=; b=RLKcZU7NAQhKKsOY0C+h/BeP/TLwvAKzIG4GXjy2
-	lBFDE5WalvCTdfdcIFBDHkDwDvb/4EYowsJG5YWu79wj3XgwHZkA6kIyOIfU3ZGr
-	SGk3d2jjEdztiVqV6vIUqRE2vHBjEKNjCB/KmT3zBF/co0lEccN71YODY5TPDDY/
-	0o65cTpXou+EV/pm2dP0F2T76yvln2UMj6ExMw86wNRXVmgFNJTxruzprL30fSKd
-	UqvIOSqr2nqzi6w+SDSytTM1fHhZNTomp53jvnH3hon1WwfL7KLSnmEfJ7xH3U/l
-	PYzttL8LB1CqS55bOynCT3nsUpqbNgiE61m0h2h9tdpCyg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id timUKC8oMTww; Tue, 17 Dec 2024 15:46:23 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YCLky6shnz6ClbJ9;
-	Tue, 17 Dec 2024 15:46:18 +0000 (UTC)
-Message-ID: <65f95b01-8d2d-4e03-88a2-c501379f21ea@acm.org>
-Date: Tue, 17 Dec 2024 07:46:15 -0800
+	s=arc-20240116; t=1734450384; c=relaxed/simple;
+	bh=ru/q+OLGAIOy3QN6Qk2nhuzxbhuGYxQydpgLzzKFXdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luCIj7Og5fYNrjy3Ea7RG3fdc5XR8R14zVdoaqJ95EU4S4J00NNNbv9G4Uz/UsnFsy3LKY1EjQ9S1osrKmCtwhcDqMYRsmHwoY8V3P/UgbdliDGkz2DbHLMw6yU8F232ZH9xUEo5K3VGY2uVdxkDbIL7Fz/aDoDBBiVOFVJP8K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4tBmVlf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F786C4CED3;
+	Tue, 17 Dec 2024 15:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734450383;
+	bh=ru/q+OLGAIOy3QN6Qk2nhuzxbhuGYxQydpgLzzKFXdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D4tBmVlf2a9CV2oWg8wZRHGKdVamvAT4WqSZfWlCDb+hK6/pA+pcZMe3hRlC0q6GG
+	 D4DdkHQRibVHNIXDxlP4HkGR+Tmm7zZKibNYyT3Le0eSR+0zGJLJ6frkbzH6SlUIec
+	 kmohquthw4MuVytZTMmvw3jaC/sJTKbRwROGG9SX5lCBSyXBsfoXkS6/u/oWYcFvo3
+	 vXW2O5DRUG/3HdweNMCM1OYITNF5jjTVPGVnRApRz7jrmtv7JfsX6mcN4lOsWoryUN
+	 yqmx5Gb9cqBNZR3Oa01fB7fx4+xQzuoiRT4e9Gahdol43ZCHcYSIBgcWcEl4Qk6VgI
+	 j9NZZ7Ta+ZIpQ==
+Date: Tue, 17 Dec 2024 16:46:21 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: alexandre.torgue@foss.st.com, linux-pwm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, olivier.moysan@foss.st.com
+Subject: Re: [PATCH] pwm: stm32: fix complementary output in
+ round_waveform_tohw
+Message-ID: <dwwbefhhvjczcakd4nrrunzoq7mhzwrxxpm7gdtabgm6flk4cp@5w4usax4n67h>
+References: <20241217150021.2030213-1-fabrice.gasnier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] scsi: ufs: qcom: Enable UFS Shared ICE Feature
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
- manivannan.sadhasivam@linaro.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>,
- Nitin Rawat <quic_nitirawa@quicinc.com>
-References: <20241217144059.30693-1-quic_rdwivedi@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241217144059.30693-1-quic_rdwivedi@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qbozxwrmepqihx7u"
+Content-Disposition: inline
+In-Reply-To: <20241217150021.2030213-1-fabrice.gasnier@foss.st.com>
 
-On 12/17/24 6:40 AM, Ram Kumar Dwivedi wrote:
-> +	unsigned int val[4] = { NUM_RX_R1W0, NUM_TX_R0W1, NUM_RX_R1W1, NUM_TX_R1W1 };
-> +	unsigned int config;
-> +
-> +	if (!is_ice_config_supported(host))
-> +		return;
-> +
-> +	config = val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
 
-Has it been considered to change the data type of val[] from unsigned 
-int into u8 or uint8_t? That would allow to use get_unaligned_le32() 
-instead of the above bit-shift expression. Additionally, why has 
-'config' been declared as 'int' instead of 'u32'?
+--qbozxwrmepqihx7u
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: stm32: fix complementary output in
+ round_waveform_tohw
+MIME-Version: 1.0
 
-Thanks,
+On Tue, Dec 17, 2024 at 04:00:21PM +0100, Fabrice Gasnier wrote:
+> When the timer supports complementary output, the enable bit is
+> overridden. It should be OR'ed. This makes all PWM channels for
+> such timer not to work.
+>=20
+> Fixes: deaba9cff809 ("pwm: stm32: Implementation of the waveform callback=
+s")
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> ---
+>  drivers/pwm/pwm-stm32.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+> index b889e64522c3..17e591f61efb 100644
+> --- a/drivers/pwm/pwm-stm32.c
+> +++ b/drivers/pwm/pwm-stm32.c
+> @@ -84,7 +84,7 @@ static int stm32_pwm_round_waveform_tohw(struct pwm_chi=
+p *chip,
+> =20
+>  	wfhw->ccer =3D TIM_CCER_CCxE(ch + 1);
+>  	if (priv->have_complementary_output)
+> -		wfhw->ccer =3D TIM_CCER_CCxNE(ch + 1);
+> +		wfhw->ccer |=3D TIM_CCER_CCxNE(ch + 1);
 
-Bart.
+Oh, indeed. Thanks for the fix.
+
+Applied to=20
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/fixes
+and I will send it to Linus later this week.
+
+Best regards
+Uwe
+
+--qbozxwrmepqihx7u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdhnMoACgkQj4D7WH0S
+/k42SAgAukU0izAyfSfEHr+srRGWulhaFMrUOYDLRgBWAa5ELJaS/8gHKrhtj2om
+rFl31JAs/8uiXYgP2w4Wlui1qJma5JH1qWpDjAsYxepnNRJMWENSjjiU/I8lKiiJ
+Mk9cKUV4uZlrG/wWNso9OnNNQgeQgjysqkEvcbWdSTza65lZMKLMjy4ar2aLVCIQ
+wP94l6Fe3WFDvoedqb2jMlGOIbbOYxV3zxeec91jo3AJMIAGXVwFngeU1sKNqSgR
+ReR741ODSY7Alqjm6RpstItWz4nR0J+cdYwnAffA/J7UBQGlKZ+sfK/U8xrfS0YZ
+v0QpIr5tXXha04SFh12DaiQ2aztudg==
+=DF95
+-----END PGP SIGNATURE-----
+
+--qbozxwrmepqihx7u--
 
