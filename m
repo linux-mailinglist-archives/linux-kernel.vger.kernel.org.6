@@ -1,148 +1,252 @@
-Return-Path: <linux-kernel+bounces-449680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795249F5448
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:39:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6FF9F5487
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5E1189645D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53F0173C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9125A1FBEB9;
-	Tue, 17 Dec 2024 17:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15ED61FCF45;
+	Tue, 17 Dec 2024 17:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFpIn5i6"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MTO/Z+o6"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9B1FBCB8;
-	Tue, 17 Dec 2024 17:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6581F8F0F;
+	Tue, 17 Dec 2024 17:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456671; cv=none; b=roGpR3izlfU9F+U9IXIwtQHUtoEKdzaelH9tphC4h3hPt8fbtexFASC87lE6sRB5suQ+DKKzxBDfjpxlkzM9upQ1OIrW5Q86a7f53iiOYRMrzIMOFonlzOqdbDkL+dnYVmLZUQwYEtWoSi0bwpDP7fitkoERZxTHmtltDs2XEMo=
+	t=1734456746; cv=none; b=Ohvf+o0Dt1IVMf19yLHuqy1xGrvOmiUeTk+DYWmOrnBuHu05/NlJpWVYiLuHQ6LqV26SZiYbJNz+NQ1H00rbeeL5Su1eg0qNX4l9bB1f1Yr9t0nprfwmOEc+uiSYY4YTzzQX6ovXQ+8VmTK3IRMAylfOOkiNWG5p63D58N44jH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456671; c=relaxed/simple;
-	bh=0u8GZTE/ATgnlJ77MnJjoFgTTZFTZia0rw7GhwEPga4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diGoIKyQSAZDbEkBEldYbvLP1Dx8SwACQzmwiCQ8lWdo/g3uYOgNAz7ZRBIt39+SnCYZRkNlvb7b9z3joxk3/1A1B8h6kCAJey5wrYV3WL6Pg4SkwuLhZd/FDI5FFTciVxXVpyMLx/3pMx26jIW+7g2LacwfUuK6yjZjdWINwyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFpIn5i6; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9e44654ae3so859772566b.1;
-        Tue, 17 Dec 2024 09:31:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734456668; x=1735061468; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rBBCHmjJ8BfQE5A/y32+aeYDRhAmzBYfai/tB2V6O2c=;
-        b=UFpIn5i6PCFfGw9zSWKPLS+DueuAjZDDOt4ym8muRN07z3eLL9jTF3utNjn7okvl6G
-         myBrzNWn5T498OnLfYoSEYIzQWJa9814blAmR+FAtRFgsODYO9GJbrEaiZAgtAiSRe8R
-         uQsKpCHzBfH+blp/BaTOYuTxYyyPyeAll+bIxFFYDLLLaQWTpW+J0yy9J7Zo0YIgcCFo
-         BkbuwRfjpUwhORrxNd9cbpUC6icWgPda0LsvUed3/LjxeILF32EP9HeBSxRx7V/j9v7+
-         tchyZ4KH0ChXT0atpP0KnqtXI2GAHQIICYFkas8Z8HFLPVm9W9ofhVmDcN2MP4AzYgaU
-         C9KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734456668; x=1735061468;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rBBCHmjJ8BfQE5A/y32+aeYDRhAmzBYfai/tB2V6O2c=;
-        b=vcdHoLIt7uNRQE8iwKKHEMPz0466gyI6HzeUy5BgkahmS6YzvFtD2Ge1brJvyFphvC
-         o/kAF2+x/jHuSosc39HKc2VvoibqwOrGT2CQ0l9VQkreKQ05qn3mx/kSkeAia4p8tpgx
-         A+DL1/ivdGtDSEVgoA5naLiOZM6VWFuek4abYfUEFHNJgwFxS5SMDeQJANKb8KyYfx3r
-         8yRBRmLe0P8F96d4Dqkp3BORVMfE0gWcjqTkfW5TqInqYAcOzMPucNMEdUYk7fD9MQxA
-         ioEVPfFm7x/oJS9Sfv7o56T7GMGX9/XbkVYrcLuS0iFkzZ1NlmYNivvPftcG5yFBcMm/
-         EORg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Ha42f/EJ6qMGLrbVonZmZlAz2z6oXHti3XknLNnqCOHeGlWsgZXoILHDWOOvJFeGD7yuSPn5uXopahZ7k1WfzvI=@vger.kernel.org, AJvYcCV3y7Wkk57oRxz7ol4c1zTpWP0f3EOpBdtwmpymdkWpY2lqDT4JuqDRJa2YI6tK0mhloIuFuf0/2yX7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSXd6I9PgdWLpl/6QvJv9aGn6hg2Gh8DCR2rYeTCI/W6r620KL
-	q22mrHONXQUjCozkMY1uONgrEhBn3LYXPbWBK65ERo2ju4M465+0
-X-Gm-Gg: ASbGnctChDUtvdLcPLYXj8AabrVh5Q2OM3B6QxWpIDeGR84rYDxkhysyEJTS6zHkAfZ
-	JaFzn+zgD3ZmFF/MmU85CS1gqzYznIqTAyjaJClHVHm8Rg89T2PINwzgoP47cPnLa0wyopkWQTh
-	Dw/gFLvvx4wVVv0Eh/no14C5EpVvKFVqfmOMuZj95uIICm2pNjnun2PP/6rOHv1rcMwD5gs1+Lh
-	Xxmmgw4PXcgq0PL9XG4SOxx9ywDsV2s3Y1b43RJjRdKnO7CHiyNuK21QzMTyvhsmFPU
-X-Google-Smtp-Source: AGHT+IET9mrZEHGyCN84q2P3UbSuc+Z8xHdme19p+Tq4s9g/cPQ1ee4Z1KgRDlQkyuj9FtD2I63F3g==
-X-Received: by 2002:a17:907:7811:b0:aa6:8b4a:46a4 with SMTP id a640c23a62f3a-aabf1c85370mr15686266b.44.1734456667314;
-        Tue, 17 Dec 2024 09:31:07 -0800 (PST)
-Received: from [192.168.31.111] ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96067ef1sm461047266b.48.2024.12.17.09.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 09:31:07 -0800 (PST)
-Message-ID: <6b257549-b166-4772-a824-894b4b84e322@gmail.com>
-Date: Tue, 17 Dec 2024 19:31:05 +0200
+	s=arc-20240116; t=1734456746; c=relaxed/simple;
+	bh=JKlAz++6z/npPCcmFNp2Icgaa2lpFJzL0u0j+MIvyH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHHBPnkyyyMdfQLmM/e4wFeskJE/kWmGtHyyXni+8cCeQJQBPmElb3x6vPRxPGf41OZAkWJD1RTcmRfFv/oxRfO4jtPUjDZQSp2c2cAovYtPqxcoP9Lf8e5LpUKvpcZ3TrFwDeDudtnoZa4ungg/IJ8YkYZ5agtRPu9x68YTQ5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MTO/Z+o6; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHE6H87020846;
+	Tue, 17 Dec 2024 17:31:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Qku009jdAu0Sgq06JBD3twBP+vP3Pl
+	e+4ZyDkim0IzU=; b=MTO/Z+o64j+lMdlSt7lwGrgEQppRaLzv9IemetXvJVf+eQ
+	cDcMHOowL34r8UPq4AkzwJy+6AWYi1tChb1UBoo4veqGiPUdkwFr8rpVFiuN71m8
+	4Wx9vkdpH3EtO5Hv3GdirgS69Lcr5+qFtZbefM2/H+mmJp/+ICb8xWKAOli3haFo
+	9qNOCbrE9oWnu8acOVKIDOgwMbAarQxEacZSNkXgLjhk512BYMMs29gN0AV2mmsQ
+	PdhP7cGWESbpvwRlQJc8Ko7koVPBuDV/7R/r8/lqWG+jNl3AtSdaRFKqfO/+GxUQ
+	UlSlIuxSuvNJlTiWhAHsT2md7A5meFzErQ9cQ+1A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43kas4s2rw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:31:23 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHDwPa9014391;
+	Tue, 17 Dec 2024 17:31:22 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hq21kftu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:31:22 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BHHVImO33161492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 17:31:18 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7AC1320040;
+	Tue, 17 Dec 2024 17:31:18 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3AC5E20043;
+	Tue, 17 Dec 2024 17:31:17 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 17 Dec 2024 17:31:17 +0000 (GMT)
+Date: Tue, 17 Dec 2024 18:31:16 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jeroen de Borst <jeroendb@google.com>,
+        Praveen Kaligineedi <pkaligineedi@google.com>,
+        Shailend Chand <shailend@google.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Louis Peens <louis.peens@corigine.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+        linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath11k@lists.infradead.org, linux-mm@kvack.org,
+        linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+        live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+        oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH v3 04/19] s390: kernel: Convert timeouts to use
+ secs_to_jiffies()
+Message-ID: <Z2G1ZPL2cAlQOYlF@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+ <20241210-converge-secs-to-jiffies-v3-4-ddfefd7e9f2a@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
- controller
-To: Markus Elfring <Markus.Elfring@web.de>,
- Maksym Holovach <nergzd@nergzd723.xyz>, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-References: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
- <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
-Content-Language: en-US
-From: Markuss Broks <markuss.broks@gmail.com>
-In-Reply-To: <44419be4-65b3-41eb-a696-cfefae84a423@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210-converge-secs-to-jiffies-v3-4-ddfefd7e9f2a@linux.microsoft.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: FFAKPmsOF7TzSfPGY_r91-e9_TqDPMGg
+X-Proofpoint-GUID: FFAKPmsOF7TzSfPGY_r91-e9_TqDPMGg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1011 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170134
 
-Hi Markus,
+On Tue, Dec 10, 2024 at 10:02:35PM +0000, Easwar Hariharan wrote:
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies(). As the values here are a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+> 
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
+> 
+> @@ constant C; @@
+> 
+> - msecs_to_jiffies(C * 1000)
+> + secs_to_jiffies(C)
+> 
+> @@ constant C; @@
+> 
+> - msecs_to_jiffies(C * MSEC_PER_SEC)
+> + secs_to_jiffies(C)
+> 
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>  arch/s390/kernel/lgr.c      | 2 +-
+>  arch/s390/kernel/time.c     | 4 ++--
+>  arch/s390/kernel/topology.c | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/lgr.c b/arch/s390/kernel/lgr.c
+> index 6652e54cf3db9fbdd8cfb06f8a0dc1d4c05ae7d7..6d1ffca5f798086160112990cb947ec8deed0659 100644
+> --- a/arch/s390/kernel/lgr.c
+> +++ b/arch/s390/kernel/lgr.c
+> @@ -166,7 +166,7 @@ static struct timer_list lgr_timer;
+>   */
+>  static void lgr_timer_set(void)
+>  {
+> -	mod_timer(&lgr_timer, jiffies + msecs_to_jiffies(LGR_TIMER_INTERVAL_SECS * MSEC_PER_SEC));
+> +	mod_timer(&lgr_timer, jiffies + secs_to_jiffies(LGR_TIMER_INTERVAL_SECS));
+>  }
+>  
+>  /*
+> diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
+> index 34a65c141ea076ba97b3238f1f36f077b15961df..e9f47c3a61978a45c72aee23bc44dcb128113c8c 100644
+> --- a/arch/s390/kernel/time.c
+> +++ b/arch/s390/kernel/time.c
+> @@ -662,12 +662,12 @@ static void stp_check_leap(void)
+>  		if (ret < 0)
+>  			pr_err("failed to set leap second flags\n");
+>  		/* arm Timer to clear leap second flags */
+> -		mod_timer(&stp_timer, jiffies + msecs_to_jiffies(14400 * MSEC_PER_SEC));
+> +		mod_timer(&stp_timer, jiffies + secs_to_jiffies(14400));
+>  	} else {
+>  		/* The day the leap second is scheduled for hasn't been reached. Retry
+>  		 * in one hour.
+>  		 */
+> -		mod_timer(&stp_timer, jiffies + msecs_to_jiffies(3600 * MSEC_PER_SEC));
+> +		mod_timer(&stp_timer, jiffies + secs_to_jiffies(3600));
+>  	}
+>  }
+>  
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index 4f9c301a705b63f8dd0e7bc33e7206ad1222e7a7..0fd56a1cadbd4f41a9876a3a3fec7f5dc08ac2db 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -371,7 +371,7 @@ static void set_topology_timer(void)
+>  	if (atomic_add_unless(&topology_poll, -1, 0))
+>  		mod_timer(&topology_timer, jiffies + msecs_to_jiffies(100));
+>  	else
+> -		mod_timer(&topology_timer, jiffies + msecs_to_jiffies(60 * MSEC_PER_SEC));
+> +		mod_timer(&topology_timer, jiffies + secs_to_jiffies(60));
+>  }
+>  
+>  void topology_expect_change(void)
 
-On 12/14/24 4:43 PM, Markus Elfring wrote:
-> …
->> SPEEDY is a proprietary 1 wire serial bus used by Samsung
->> in various devices …
-> You may occasionally put more than 57 characters into text lines
-> of such a change description.
+With this chunk added to the patch:
 
-But does it really matter where I break the line? For me, it just seems 
-ugly no matter where I do it...
-
->
->
-> …
->> +++ b/drivers/soc/samsung/exynos-speedy.c
->> @@ -0,0 +1,457 @@
-> …
->> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 addr, u32 *val)
->> +{
->> +	int ret;
->> +	u32 cmd, int_ctl, int_status;
->> +
->> +	mutex_lock(&speedy->io_lock);
-> …
->> +	ret = speedy_int_clear(speedy);
->> +
->> +	mutex_unlock(&speedy->io_lock);
->> +
->> +	return ret;
->> +}
-> …
->
-> Under which circumstances would you become interested to apply a statement
-> like “guard(mutex)(&speedy->io_lock);”?
-> https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/mutex.h#L201
+diff --git a/arch/s390/mm/cmm.c b/arch/s390/mm/cmm.c
+index d01724a715d0..7bf0f691827b 100644
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -204,7 +204,7 @@ static void cmm_set_timer(void)
+ 			del_timer(&cmm_timer);
+ 		return;
+ 	}
+-	mod_timer(&cmm_timer, jiffies + msecs_to_jiffies(cmm_timeout_seconds * MSEC_PER_SEC));
++	mod_timer(&cmm_timer, jiffies + secs_to_jiffies(cmm_timeout_seconds));
+ }
+ 
+ static void cmm_timer_fn(struct timer_list *unused)
 
 
-I did not know such statement existed, thanks for the tip, it definitely 
-helps and makes it simpler!
-
-
->
-> Regards,
-> Markus
-
-
-- Markuss
-
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
