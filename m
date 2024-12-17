@@ -1,465 +1,173 @@
-Return-Path: <linux-kernel+bounces-449561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8F99F50C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:21:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA719F50D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847AD16CE03
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADDA6172B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9621F9ED8;
-	Tue, 17 Dec 2024 16:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974A61FA262;
+	Tue, 17 Dec 2024 16:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eSVkFso7"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CqxvbKy5"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF3A1F9F6D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734451782; cv=none; b=Qa4v/fW1yKmM694bD+wfCMWb0H5fg58j+S89AlDErpch/h6eLm/VFxTaHtU3NVD/ZzZv9kYN2bxBw7646xe2o64Iv0U/FY2D5y4FJ5HsoW+3ieRYbfONrPzsqX99UynwcmmfIuSGyGUz2SuYXSkt5ZkAnM3AzXobY4hP0DCr4Sg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734451782; c=relaxed/simple;
-	bh=AUHAibl6LmWyGqegZDTu5mmsDmP79nEcSrJZYaTz0OQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LKw/y/m0CGSkQQjuEvT2gnhWvtJIl5ICIf/WRUKz1fq31mjJ934MOIwkBdJARxIEyAtlhVlQndnEUFJIqD/zM13EzbmEXmiNsjmpwKmzWa3b0yuL53CbSAxHsSLKQ/opMZvMoYr3DWK8OYPajIVXzvHojKrqdn4seKxBRK4ru0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eSVkFso7; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-21648c8601cso43807775ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:09:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734451779; x=1735056579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54Sw1Jao5VBLwDPEnZ+6h8TeFzmXdDRfRoFCKhwkt18=;
-        b=eSVkFso7vsqOl4CAegmmZLqIUzcb7em6vGJgq0ftBNaqqnr/B01Eu0qq9R1Xe7e62j
-         bjJLSQS6br9BXW9lPY94X7qV1u3draYLwn5JxwpxmR6VjKBcKnIVGJSp5T0NroO4MFXn
-         4kDU/NNBI9J4UOAeGyPgD+J7T33c1uHsMIId4kvM+WIxWAhSrO1F+xd5FeUTiTyHk3Pd
-         H8wi4LSpW4PKI05a4bCX3jCHWxQtuasOvPmjzsbXx8BlX7i4j2QxCnmoElIDOja2jYoN
-         BVJZyBRfUZjjM4fJyNtpDuNESQOdTBMVkkfUGnU+lrdjpzTzLBnVdfE1t+KG90J5C29U
-         uKVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734451779; x=1735056579;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=54Sw1Jao5VBLwDPEnZ+6h8TeFzmXdDRfRoFCKhwkt18=;
-        b=BYsMIONAixESCSHPvUUyvXgGd/w6noPk8hfeSDUeh+RvQHJ5O2V+L9qB2rNHH1YmJd
-         EW1kovYZWLJtOmuj2U10ozbPCq/dHSoY6osrsHyNXqgKRo6U+LdL25gFKHuOQnZOgKvj
-         N95117tuo1ECm14QYtbcvnlrHN3L938h2ciVh4ocY0NY6htlATpo/TLivQuhFVygIxgt
-         M8/vZ62mwGlx9DxiKA8emWN7kZpBpmXNnWyiKYMTEgO7cd4hFPTfVIfTJg8sWFm1Px9s
-         RLXuANkh5i2aiMa79zKavBJNP9YX53q/4OxjTLnI5xiZP9eZK510Xu160g07YFMSYf5t
-         J/8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVg72CUiw5ySTX+lsQDR+2/0FAKDgVWEe2tLlIb4+n0218KiJwwp1Xb3IbGtIYWVO1aq+/F6xtJxHMEZ38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHg7c7492aKfJeFns+SZzO+GJyJxOb2ie8P5MXfPAL1xeUvC2C
-	bcLdd3IkM1OZ+bZg+UAjSrg7fecuGcZRdk4/7GlyZ0NavtgD2oBq51XVni/u6HZppYN35OermRH
-	ZDg==
-X-Google-Smtp-Source: AGHT+IFGW4xnbT7GEJRsMdRLjBb2HXcUtopADCWfn8m0hBimLFT+2wXmjhaBhFv9imn55YwyXy2b7EBwP5I=
-X-Received: from plbko4.prod.google.com ([2002:a17:903:7c4:b0:216:3858:3176])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d50c:b0:216:2426:7666
- with SMTP id d9443c01a7336-2189298baccmr241898095ad.12.1734451779122; Tue, 17
- Dec 2024 08:09:39 -0800 (PST)
-Date: Tue, 17 Dec 2024 08:09:37 -0800
-In-Reply-To: <a42183ab-a25a-423e-9ef3-947abec20561@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2681F63E8;
+	Tue, 17 Dec 2024 16:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734451967; cv=fail; b=JFnmW7wfwqLR16K1+L6W4Yo/k+upbtHPHbhc/TgI7pMClrHLSU/IrDkOzX/srj0N9H/YU/s8L1pT8GiMeukUm2192fKFX+KhiRBshAsq8FZlQDXNcU4ysKr1ri8zgYfoVfJo95YpwPZh9SzbBO7gM7RQXkONiowXrvkwz+z3vzE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734451967; c=relaxed/simple;
+	bh=3PlvMZ8R7oVB8iI+iK0tRtu0eNWpRtU9l2TQ3FsBhVU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WLAJTr/x0JgUzsgDgCV2fB6mvrU5CRtqTBdMTZoTaNmUJzTRiRq0hx7svCkW5fh7mbdcCKGsK0t36KdbtqB41joCEay8xX6j6O7YC1F8A+/2xUph4AkzCjv7NYvQi9qWB5w55pPRNBPPJVqVocnXGNLPErF44qHRO60rtjlAcUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CqxvbKy5; arc=fail smtp.client-ip=40.107.102.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Hj47r3bH+wbJUnxCGpo1ynBJeOwtVIgOgGHKhzsl6JR6FHahqZo9ODGxDd/EA+iiQBGeW+CwfUT6l4hPhOLfUDMUl1IUXsEgamqhXjz8ib3lYX9AY5mRPOvxjQcRjrM2WEhPHjlZhh+uTNcFhdefFHxiWrX+FiWysWkXy3CWHJAFa242CvQizgYc7ny7KsLokpaJhgea+IaMimFCAoyEFkhtH4kv/nInkF1ajl4c8oDMwu49cgzGEL+MkmR+10yGO2+gQXgdsqXC81TJnwJkojQ84PG6nNviwFnZLOBeXeH38VaS+4PQLOf78OvunYwXmxpi/FeLSU/I7R8H7aUYzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x84DXcfNoq7DpoKanBCWEyajeod8jrXNMC4WggDRHjk=;
+ b=NC7K82B3y35P+V2asLBUu2KBLq8bE3RTQrhkvjBnmAt2G4qE7BpDqtvVkc1jAeajl+fonNU1Cl2OMKNMXWlOMgdhuoAhEmt/2kNZCFtNt/eEdULHpvzOvOoEZpt8XsGgU1udY8ohNZLP9E6fXAvycq8UCJ7Lm0QrBao6jqxkKkkyjT/LHE5eM3c8WK+8Gwq9JBcO6loaqQKfAxsk8IaX1cQznsLZLR8wYr7iUyQXd4bk8NZfzsZ1BkcW/LabwYf+yd7JdIGKI0RMCSEvq2mTRUWvm9SFlPG1LFbcvcPk2i/KpwzdmiqY9b7KPkhAyc2jD+CNWTBbbDef/uTGEgIG+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gondor.apana.org.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x84DXcfNoq7DpoKanBCWEyajeod8jrXNMC4WggDRHjk=;
+ b=CqxvbKy59rDYjc+k0AMG4ozwNqwVG1LLh+v1G0YNp90znG83IDhkgm6QGppFcdput22yzBQzHwn8uW3CdDen/xtepjRAsJnpoxzfphUhklMvGYqrE8LF52q/UEmvN9L5QC6n82dO4nBaUbXw30CUQnBDWUeYHlKYaTGWGx0N9WAoLYOASlipTJpWSFRbMDVNxcU+vxiOOeTSN/knUkIJyYNVteEL9SQiiCN8iOp+3vnMHXAyZQ48nZA7tzH9IeLE4Un7Ta1QL0BZpM3aSRWyRBxP9xvuq7EQw58W6xpZHUB1NZj8Zt39SV7fyi+6pWnpIFXPc83r/MqDvtvkhLf/uw==
+Received: from MN2PR22CA0018.namprd22.prod.outlook.com (2603:10b6:208:238::23)
+ by MN0PR12MB6002.namprd12.prod.outlook.com (2603:10b6:208:37e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
+ 2024 16:12:39 +0000
+Received: from BN1PEPF00004682.namprd03.prod.outlook.com
+ (2603:10b6:208:238:cafe::99) by MN2PR22CA0018.outlook.office365.com
+ (2603:10b6:208:238::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.21 via Frontend Transport; Tue,
+ 17 Dec 2024 16:12:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.15 via Frontend Transport; Tue, 17 Dec 2024 16:12:38 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Dec
+ 2024 08:12:21 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Dec
+ 2024 08:12:20 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 17 Dec 2024 08:12:18 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <akhilrajeev@nvidia.com>
+Subject: [PATCH 0/7] Tegra Security Engine driver improvements
+Date: Tue, 17 Dec 2024 21:42:00 +0530
+Message-ID: <20241217161207.72921-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-5-adrian.hunter@intel.com> <Z0AbZWd/avwcMoyX@intel.com> <a42183ab-a25a-423e-9ef3-947abec20561@intel.com>
-Message-ID: <Z2GiQS_RmYeHU09L@google.com>
-Subject: Re: [PATCH 4/7] KVM: TDX: restore host xsave state when exit from the
- guest TD
-From: Sean Christopherson <seanjc@google.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com, kai.huang@intel.com, 
-	reinette.chatre@intel.com, xiaoyao.li@intel.com, 
-	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
-	isaku.yamahata@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, yan.y.zhao@intel.com, weijiang.yang@intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|MN0PR12MB6002:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab17f4c3-e612-46d8-9ba0-08dd1eb5a070
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uvJCtM3oxpH4/BOtT/l2qNzVsDeXmdD6en+YWsiqGclOfBudoeNm9vl0e486?=
+ =?us-ascii?Q?FRLNoEFWy86TSgI0rNfcii+mwovpRplOZm+JDZ9hLqpqsiAY564Og5Qxv/d+?=
+ =?us-ascii?Q?i1F6N5HbvwPrTSsziH2Jh7Yk88oAvF5PbkVtUpRM3boeDQ3ZQjNq4dZMinPy?=
+ =?us-ascii?Q?3xsMO9tr4FDpjqu5aBkm5pVwF4DsB3E1IQmxTrSoNGxqeyLz+gnpU9emhgu1?=
+ =?us-ascii?Q?YIbEii4GcPaS4wyxMNYO3AaAls9G+nz98gzdL34vP3eY4eOyTbPLSvkF8oSr?=
+ =?us-ascii?Q?/cdbeRv5J6x5HH685etbPaMG5TxWgAiXe6Hbp3hUJLrNxee0NamwQWIkVlEC?=
+ =?us-ascii?Q?y1Gadgfsyf9SK0b3/f1LUPgtTPEV3B+DwjXZM20C2qkVFAim3Ldb8h8O+7I+?=
+ =?us-ascii?Q?HJ+Qqt9o2fS9HMxz1I2/FBvDNI1kRC3FlSxd6eIOcJaTJsizAZSjlW2MOs6z?=
+ =?us-ascii?Q?rarhI0Ucm7AZp6fy5FF2JQE/MR63SPzbN9Voz4bcwurl9Ryq7J7GO4qz5VqW?=
+ =?us-ascii?Q?e8JDKHz04XDz3vhNUD3B1haMkR6nzU06C9pknBViZAaselBLYaAvC0vjNP3x?=
+ =?us-ascii?Q?UESpZrgGMAxcFpw+bEjiXF6X1F+10+RqjFfdaqzMV1uCmtPFpbS51Q3SYh5W?=
+ =?us-ascii?Q?2k09snA4H0OsxBvDAx+avc4ReP6KgfLYS4Wnaegz/iF+mi/cPILkw8ySXPFD?=
+ =?us-ascii?Q?we/CW13YD7qwIpe8Cz1eaiRHSBpyn5SH5hmZWOJDR8yp8MzOMJ1/2vJA1thY?=
+ =?us-ascii?Q?eeoJ9jxdgpt3a3MOymvGVmF13Our7UOyiMoOv9izw0KSmG5vTCihikXDhOXQ?=
+ =?us-ascii?Q?7M5nW4H02WZzPXYzwr/pQUZ4lN2KCXcJ2fKhwmJJZOYDKLJpeLbRX3K0Uf2D?=
+ =?us-ascii?Q?mCu5R3TeCh0YDF8lWGzew7yyBgSbLfrWgwfsk8yc5OZTKyHj4csoG/n7F01v?=
+ =?us-ascii?Q?UZ6yClDLJdSfD64NFrEyaIvz4qcJc9oH2QS1VhunrMAvfjvBBt2QXX0XmTJS?=
+ =?us-ascii?Q?5oGc6ZRstraPRW9K/xb1Sk0yhqEIjTnuQMMzsm7JRkCNdkCsEWnyOKnF4CZd?=
+ =?us-ascii?Q?cFW+n+H1wgWqfiZSz7ZtTs9kAEXA9sSXfE0aT81kNzwjib+794tsdpKJaVcS?=
+ =?us-ascii?Q?MXc7kEMSikQochqGi7FMfrF5AkAk+BKByDMNBWWbGI3d1NuMgf3wblXykZO5?=
+ =?us-ascii?Q?Hg/K4B1Oq7nCDAq73r+1/C3Mc/fj62vJrC+cCs2to0EDrbRY5o3LtqXcFsix?=
+ =?us-ascii?Q?ixPpIpcUv+Lne4H6plwqSyBLGYNlA2GHbQyot/6zz2VYCK240INbWFci5K3E?=
+ =?us-ascii?Q?OTr5BF14/2+Uk+pbEUpg4RRijzzSUdJdQbtMlVKXMKFREv+78WfazbJW+VL6?=
+ =?us-ascii?Q?pRDho0cJ9X0Oc73XGNaoW68CVn32PrcNOZ5x6St2jsnl5SNsUan2F5IUFHIx?=
+ =?us-ascii?Q?x4hJGM1Q5Y849elQ6DdlFiCcjI2i5E0cjS1fdVgg52Ip8siD+91Auw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 16:12:38.4095
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab17f4c3-e612-46d8-9ba0-08dd1eb5a070
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004682.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6002
 
-On Mon, Nov 25, 2024, Adrian Hunter wrote:
-> On 22/11/24 07:49, Chao Gao wrote:
-> >> +static void tdx_restore_host_xsave_state(struct kvm_vcpu *vcpu)
-> >> +{
-> >> +	struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(vcpu->kvm);
-> >> +
-> >> +	if (static_cpu_has(X86_FEATURE_XSAVE) &&
-> >> +	    kvm_host.xcr0 !=3D (kvm_tdx->xfam & kvm_caps.supported_xcr0))
-> >> +		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
-> >> +	if (static_cpu_has(X86_FEATURE_XSAVES) &&
-> >> +	    /* PT can be exposed to TD guest regardless of KVM's XSS support=
- */
-> >> +	    kvm_host.xss !=3D (kvm_tdx->xfam &
-> >> +			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
-> >> +			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)))
-> >=20
-> > Should we drop CET/PT from this series? I think they are worth a new
-> > patch/series.
->=20
-> This is not really about CET/PT
->=20
-> What is happening here is that we are calculating the current
-> MSR_IA32_XSS value based on the TDX Module spec which says the
-> TDX Module sets MSR_IA32_XSS to the XSS bits from XFAM.  The
-> TDX Module does that literally, from TDX Module source code:
->=20
-> 	#define XCR0_SUPERVISOR_BIT_MASK            0x0001FD00
-> and
-> 	ia32_wrmsr(IA32_XSS_MSR_ADDR, xfam & XCR0_SUPERVISOR_BIT_MASK);
->=20
-> For KVM, rather than:
->=20
-> 			kvm_tdx->xfam &
-> 			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
-> 			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)
->=20
-> it would be more direct to define the bits and enforce them
-> via tdx_get_supported_xfam() e.g.
->=20
-> /*=20
->  * Before returning from TDH.VP.ENTER, the TDX Module assigns:
->  *   XCR0 to the TD=E2=80=99s user-mode feature bits of XFAM (bits 7:0, 9=
-)
->  *   IA32_XSS to the TD's supervisor-mode feature bits of XFAM (bits 8, 1=
-6:10)
->  */
-> #define TDX_XFAM_XCR0_MASK	(GENMASK(7, 0) | BIT(9))
-> #define TDX_XFAM_XSS_MASK	(GENMASK(16, 10) | BIT(8))
-> #define TDX_XFAM_MASK		(TDX_XFAM_XCR0_MASK | TDX_XFAM_XSS_MASK)
->=20
-> static u64 tdx_get_supported_xfam(const struct tdx_sys_info_td_conf *td_c=
-onf)
-> {
-> 	u64 val =3D kvm_caps.supported_xcr0 | kvm_caps.supported_xss;
->=20
-> 	/* Ensure features are in the masks */
-> 	val &=3D TDX_XFAM_MASK;
->=20
-> 	if ((val & td_conf->xfam_fixed1) !=3D td_conf->xfam_fixed1)
-> 		return 0;
->=20
-> 	val &=3D td_conf->xfam_fixed0;
->=20
-> 	return val;
-> }
->=20
-> and then:
->=20
-> 	if (static_cpu_has(X86_FEATURE_XSAVE) &&
-> 	    kvm_host.xcr0 !=3D (kvm_tdx->xfam & TDX_XFAM_XCR0_MASK))
-> 		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
-> 	if (static_cpu_has(X86_FEATURE_XSAVES) &&
-> 	    kvm_host.xss !=3D (kvm_tdx->xfam & TDX_XFAM_XSS_MASK))
-> 		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
->=20
-> >=20
-> >> +		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
-> >> +	if (static_cpu_has(X86_FEATURE_PKU) &&
-> >=20
-> > How about using cpu_feature_enabled()? It is used in kvm_load_host_xsav=
-e_state()
-> > It handles the case where CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS is no=
-t
-> > enabled.
+With the CRYPTO_TEST now being run asynchronously unveiled some
+concurrency issues in the the Security Engine driver. These were not
+caught during functional or fuzz testing as all the tests were run
+synchronously.
+This patchset contains the fixes for the concurrency issues and few
+other improvements identified during the stress-ng and cryptsetup tests.
 
-I would rather just use kvm_load_host_xsave_state(), by forcing vcpu->arch.=
-{xcr0,xss}
-to XFAM, with a comment explaining that the TDX module sets XCR0 and XSS pr=
-ior to
-returning from VP.ENTER.  I don't see any justificaton for maintaining a sp=
-ecial
-flow for TDX, it's just more work.  E.g. TDX is missing the optimization to=
- elide
-WRPKRU if the current value is the same as the host value.
+Akhil R (7):
+  crypto: tegra: Use separate buffer for setkey
+  crypto: tegra: Do not use fixed size buffers
+  crypto: tegra: check retrun value for hash do_one_req
+  crypto: tegra: Transfer HASH init function to crypto engine
+  crypto: tegra: Fix HASH intermediate result handling
+  crypto: tegra: Fix CMAC intermediate result handling
+  crypto: tegra: Set IV to NULL explicitly for AES ECB
 
-KVM already disallows emulating a WRMSR to XSS via the tdx_has_emulated_msr=
-()
-check, and AFAICT there's no path for the guest to set KVM's view of XCR0, =
-CR0,
-or CR4, so I'm pretty sure stuffing state at vCPU creation is all that's ne=
-eded.
+ drivers/crypto/tegra/tegra-se-aes.c  | 247 +++++++++++++-----------
+ drivers/crypto/tegra/tegra-se-hash.c | 279 +++++++++++++++++----------
+ drivers/crypto/tegra/tegra-se-key.c  |  10 +-
+ drivers/crypto/tegra/tegra-se-main.c |  16 +-
+ drivers/crypto/tegra/tegra-se.h      |  11 +-
+ 5 files changed, 346 insertions(+), 217 deletions(-)
 
-That said, out of paranoia, KVM should disallow the guest from changing XSS=
- if
-guest state is protected, i.e. in common code, as XSS is a mandatory passth=
-rough
-for SEV-ES+, i.e. XSS is fully guest-owned for both TDX and ES+.
+-- 
+2.43.2
 
-Ditto for CR0 and CR4 (TDX only; SEV-ES+ lets the host see the guest values=
-).
-The current TDX code lets KVM read CR0 and CR4, but KVM will always see the=
- RESET
-values, which are completely wrong for TDX.  KVM can obviously "work" witho=
-ut a
-sane view of guest CR0/CR4, but I think having a sane view will yield code =
-that
-is easier to maintain and understand, because almost all special casing wil=
-l be
-in TDX's initialization flow, not spread out wherever KVM needs to know tha=
-t what
-KVM sees in guest state is a lie.
-
-The guest_state_protected check in kvm_load_host_xsave_state() needs to be =
-moved
-to svm_vcpu_run(), but IMO that's where the checks belong anyways, because =
-not
-restoring host state for protected guests is obviously specific to SEV-ES+ =
-guests,
-not to all protected guests.
-
-Side topic, tdx_cache_reg() is ridiculous.  Just mark the "cached" register=
-s as
-available on exit.  Invoking a callback just to do nothing is a complete wa=
-ste.
-I'm also not convinced letting KVM read garbage for RIP, RSP, CR3, or PDPTR=
-s is
-at all reasonable.  CR3 and PDPTRs should be unreachable, and I gotta imagi=
-ne the
-same holds true for RSP.  Allow reads/writes to RIP is fine, in that it pro=
-bably
-simplifies the overall code.
-
-Something like this (probably won't apply, I have other local hacks as the =
-result
-of suggestions).
-
----
- arch/x86/kvm/svm/svm.c     |  7 ++++--
- arch/x86/kvm/vmx/main.c    |  4 +--
- arch/x86/kvm/vmx/tdx.c     | 50 ++++++++++----------------------------
- arch/x86/kvm/vmx/x86_ops.h |  4 ---
- arch/x86/kvm/x86.c         | 15 +++++++-----
- 5 files changed, 28 insertions(+), 52 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index dd15cc635655..63df43e5dcce 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4251,7 +4251,9 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_=
-vcpu *vcpu,
- 		svm_set_dr6(svm, DR6_ACTIVE_LOW);
-=20
- 	clgi();
--	kvm_load_guest_xsave_state(vcpu);
-+
-+	if (!vcpu->arch.guest_state_protected)
-+		kvm_load_guest_xsave_state(vcpu);
-=20
- 	kvm_wait_lapic_expire(vcpu);
-=20
-@@ -4280,7 +4282,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_=
-vcpu *vcpu,
- 	if (unlikely(svm->vmcb->control.exit_code =3D=3D SVM_EXIT_NMI))
- 		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
-=20
--	kvm_load_host_xsave_state(vcpu);
-+	if (!vcpu->arch.guest_state_protected)
-+		kvm_load_host_xsave_state(vcpu);
- 	stgi();
-=20
- 	/* Any pending NMI will happen here */
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 2742f2af7f55..d2e78e6675b9 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -520,10 +520,8 @@ static void vt_sync_dirty_debug_regs(struct kvm_vcpu *=
-vcpu)
-=20
- static void vt_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
- {
--	if (is_td_vcpu(vcpu)) {
--		tdx_cache_reg(vcpu, reg);
-+	if (WARN_ON_ONCE(is_td_vcpu(vcpu)))
- 		return;
--	}
-=20
- 	vmx_cache_reg(vcpu, reg);
- }
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 7eff717c9d0d..b49dcf32206b 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -636,6 +636,9 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
- 	vcpu->arch.cr0_guest_owned_bits =3D -1ul;
- 	vcpu->arch.cr4_guest_owned_bits =3D -1ul;
-=20
-+	vcpu->arch.cr4 =3D <maximal value>;
-+	vcpu->arch.cr0 =3D <maximal value, give or take>;
-+
- 	vcpu->arch.tsc_offset =3D kvm_tdx->tsc_offset;
- 	vcpu->arch.l1_tsc_offset =3D vcpu->arch.tsc_offset;
- 	/*
-@@ -659,6 +662,14 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
-=20
- 	tdx->state =3D VCPU_TD_STATE_UNINITIALIZED;
-=20
-+	/*
-+	 * On return from VP.ENTER, the TDX Module sets XCR0 and XSS to the
-+	 * maximal values supported by the guest, so from KVM's perspective,
-+	 * those are the guest's values at all times.
-+	 */
-+	vcpu->arch.ia32_xss =3D (kvm_tdx->xfam & XFEATURE_SUPERVISOR_MASK);
-+	vcpu->arch.xcr0 =3D (kvm_tdx->xfam & XFEATURE_USE_MASK);
-+
- 	return 0;
- }
-=20
-@@ -824,24 +835,6 @@ static void tdx_user_return_msr_update_cache(struct kv=
-m_vcpu *vcpu)
- 		kvm_user_return_msr_update_cache(tdx_uret_tsx_ctrl_slot, 0);
- }
-=20
--static void tdx_restore_host_xsave_state(struct kvm_vcpu *vcpu)
--{
--	struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(vcpu->kvm);
--
--	if (static_cpu_has(X86_FEATURE_XSAVE) &&
--	    kvm_host.xcr0 !=3D (kvm_tdx->xfam & kvm_caps.supported_xcr0))
--		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
--	if (static_cpu_has(X86_FEATURE_XSAVES) &&
--	    /* PT can be exposed to TD guest regardless of KVM's XSS support */
--	    kvm_host.xss !=3D (kvm_tdx->xfam &
--			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
--			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)))
--		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
--	if (static_cpu_has(X86_FEATURE_PKU) &&
--	    (kvm_tdx->xfam & XFEATURE_MASK_PKRU))
--		write_pkru(vcpu->arch.host_pkru);
--}
--
- static union vmx_exit_reason tdx_to_vmx_exit_reason(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_tdx *tdx =3D to_tdx(vcpu);
-@@ -941,10 +934,10 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool f=
-orce_immediate_exit)
- 	tdx_vcpu_enter_exit(vcpu);
-=20
- 	tdx_user_return_msr_update_cache(vcpu);
--	tdx_restore_host_xsave_state(vcpu);
-+	kvm_load_host_xsave_state(vcpu);
- 	tdx->host_state_need_restore =3D true;
-=20
--	vcpu->arch.regs_avail &=3D ~VMX_REGS_LAZY_LOAD_SET;
-+	vcpu->arch.regs_avail =3D TDX_REGS_UNSUPPORTED_SET;
-=20
- 	if (unlikely((tdx->vp_enter_ret & TDX_SW_ERROR) =3D=3D TDX_SW_ERROR))
- 		return EXIT_FASTPATH_NONE;
-@@ -1963,23 +1956,6 @@ int tdx_set_msr(struct kvm_vcpu *vcpu, struct msr_da=
-ta *msr)
- 	}
- }
-=20
--void tdx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
--{
--	kvm_register_mark_available(vcpu, reg);
--	switch (reg) {
--	case VCPU_REGS_RSP:
--	case VCPU_REGS_RIP:
--	case VCPU_EXREG_PDPTR:
--	case VCPU_EXREG_CR0:
--	case VCPU_EXREG_CR3:
--	case VCPU_EXREG_CR4:
--		break;
--	default:
--		KVM_BUG_ON(1, vcpu->kvm);
--		break;
--	}
--}
--
- static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
- {
- 	const struct tdx_sys_info_td_conf *td_conf =3D &tdx_sysinfo->td_conf;
-diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-index ef60eb7b1245..efa6723837c6 100644
---- a/arch/x86/kvm/vmx/x86_ops.h
-+++ b/arch/x86/kvm/vmx/x86_ops.h
-@@ -145,8 +145,6 @@ bool tdx_has_emulated_msr(u32 index);
- int tdx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr);
- int tdx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr);
-=20
--void tdx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg);
--
- int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp);
-=20
- int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
-@@ -193,8 +191,6 @@ static inline bool tdx_has_emulated_msr(u32 index) { re=
-turn false; }
- static inline int tdx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)=
- { return 1; }
- static inline int tdx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)=
- { return 1; }
-=20
--static inline void tdx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg) =
-{}
--
- static inline int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)=
- { return -EOPNOTSUPP; }
-=20
- static inline int tdx_sept_link_private_spt(struct kvm *kvm, gfn_t gfn,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4f94b1e24eae..d380837433c6 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1184,11 +1184,9 @@ EXPORT_SYMBOL_GPL(kvm_lmsw);
-=20
- void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
- {
--	if (vcpu->arch.guest_state_protected)
--		return;
-+	WARN_ON_ONCE(vcpu->arch.guest_state_protected);
-=20
- 	if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
--
- 		if (vcpu->arch.xcr0 !=3D kvm_host.xcr0)
- 			xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
-=20
-@@ -1207,9 +1205,6 @@ EXPORT_SYMBOL_GPL(kvm_load_guest_xsave_state);
-=20
- void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu)
- {
--	if (vcpu->arch.guest_state_protected)
--		return;
--
- 	if (cpu_feature_enabled(X86_FEATURE_PKU) &&
- 	    ((vcpu->arch.xcr0 & XFEATURE_MASK_PKRU) ||
- 	     kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE))) {
-@@ -3943,6 +3938,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct=
- msr_data *msr_info)
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
- 			return 1;
-+
-+		if (vcpu->arch.guest_state_protected)
-+			return 1;
-+
- 		/*
- 		 * KVM supports exposing PT to the guest, but does not support
- 		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
-@@ -4402,6 +4401,10 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct=
- msr_data *msr_info)
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
- 			return 1;
-+
-+		if (vcpu->arch.guest_state_protected)
-+			return 1;
-+
- 		msr_info->data =3D vcpu->arch.ia32_xss;
- 		break;
- 	case MSR_K7_CLK_CTL:
-
-base-commit: 0319082fc23089f516618e193d94da18c837e35a
---=20
 
