@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-449473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5A49F4F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:32:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FFB9F4F81
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BCD18827D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:32:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 069097A9AB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC65D1F7096;
-	Tue, 17 Dec 2024 15:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD81F4705;
+	Tue, 17 Dec 2024 15:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTFUHCE0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rws32A+O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DD923DE;
-	Tue, 17 Dec 2024 15:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A3F1F4E34;
+	Tue, 17 Dec 2024 15:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734449528; cv=none; b=Ruq+dTktSrPXJDwhRF+ZncgpZTaXyY01bku3IFeIN9ZzKEgngrOrFW17mgavEtN44q5MLwVqpPonxxlQM5/ftavGfyEEQRKom8YEPcy5fRDZz+kuREIJL+Fwhm7qzlQTmnfIoAotZtSXAjpQmbv6qcK5gZlaGmffsxQUwPGgDMM=
+	t=1734449549; cv=none; b=GdBgRM/f/T7CZ+ehXII6cZ1+6RutG1+aqaEegzW7KyNYhNzG8FUsAfyYAoJARyELvNwZybcOq4fpp8wZGV7k2hbTQ/UTlp8LQQDD2UPBMoQCTIUwHVgpQlHyA7nRT2FrP7ruwiGP2idKaEGQDQ3BUJuMFFkjTmlZ6xMJpItUdIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734449528; c=relaxed/simple;
-	bh=VNdS8C7T+jc6Z+1WXA06O4uZglTbKaiGuklo+JyL5uE=;
+	s=arc-20240116; t=1734449549; c=relaxed/simple;
+	bh=af4QqSgGILbUAg8428/Qr6a223QfoUxIl2tLwgkLpY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1q576Ahoa6+QluCVfhI7QD3owieYNJrJ0DatxV1LYmKw0HPKNaJ34SfDx0hV0l3/v/T8FqrNnIJGDsK+0G5WNpc0u2wDK2ofTqYhoRe2Iwv05WQz8svD27ydFn2cj0QYawlaIjfwZpNWMU+JlILlN+mvND3VNz2YwlvtdkZNqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTFUHCE0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44013C4CED3;
-	Tue, 17 Dec 2024 15:32:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZ0j09oULzckuyEgY10uH2neQRMjGiBDQI+nJK3MBNvBBfb/mdmC+havjn4FF5eLi88xhnj3nSNwc5IEv09NopeRf5pdu5IVLNG56+C2pUsxtalybkEs/mAZor54kuGWZEaS0MdalQiJEIzS+eO/u6AFRQk1Wd9WOjNd0jlJwRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rws32A+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7E4C4CED3;
+	Tue, 17 Dec 2024 15:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734449527;
-	bh=VNdS8C7T+jc6Z+1WXA06O4uZglTbKaiGuklo+JyL5uE=;
+	s=k20201202; t=1734449547;
+	bh=af4QqSgGILbUAg8428/Qr6a223QfoUxIl2tLwgkLpY0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTFUHCE00yur8UAgdzHnNcwi/0X9XdKxFt0CHqCDLlGsCUng1eFvyOunlxGAlCQ+A
-	 NqA7RB5N7CnRA7Xu/QQk/PnexrM+HWhdogWRI1lJw5bW/qZ82Dsu1FTjbLCwRb7ywx
-	 3iQWpCHD6vBoXcrL4gfLmQ3+lhmtlvlx8x6MNTBDTy3OEiumGsN48mrLL4PhhTgk+9
-	 mrKZNK0bGKGn+nBN0EYqOwHkVF8iZ3HmtckIijEee3rkL7LdbCcHyGvLdjsJa9+bRd
-	 l7PkxUXwHK7NQDg59GlClsKFcHjpzs3TlHJn8rGowBvq3ZhoxSLfIr+St0qwtvEBD+
-	 /AX+ZifMZoC5A==
-Date: Tue, 17 Dec 2024 15:32:02 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	maz@kernel.org, ryan.roberts@arm.com,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
-Message-ID: <88f15900-03d2-49f0-bc44-7ded076d9a42@sirena.org.uk>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-19-anshuman.khandual@arm.com>
- <20241216231505.GA601635-robh@kernel.org>
- <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
+	b=rws32A+OLTQQ0rqwZ3tg5Y7mD8EN6ajq7r2isH2tpPHV21AvK8ObylIfn4pRFPG9+
+	 KCQS5xa6v2bR/JB57oMR+3DvofDhfuwZAQXdmFNIiaf/xMMaYlFAZ+FtXMz2bIJS++
+	 7Ov+b6y00YiJVtxDt89Zg8UmaYsxqB/0VtX3lUR1jiXlN4Tc7krhITjTIgJPW9pYt9
+	 s47yTRssIotXXVdgREsxQsewjKj6Lxc3Z25TIpy9mC3oP4mjQ7gEj/TiDuM1rct5E7
+	 htxML8bJDvP3ap2deC7PsHvKTDw6AT/b/Rsk4p79wUR6rEXiYPhdQVQ4ho7wyMlo1d
+	 PApEZEiyEv9ww==
+Date: Tue, 17 Dec 2024 09:32:25 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Iker Pedrosa <ikerpedrosam@gmail.com>
+Cc: javierm@redhat.com, krzk+dt@kernel.org, linux-spi@vger.kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	broonie@kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3] spi: dt-bindings: Document CS active-high
+Message-ID: <173444954482.1831986.10950873767411380900.robh@kernel.org>
+References: <20241216095739.27320-1-ikerpedrosam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Yu3fCeulO66Lix3+"
-Content-Disposition: inline
-In-Reply-To: <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
-X-Cookie: The sum of the Universe is zero.
-
-
---Yu3fCeulO66Lix3+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241216095739.27320-1-ikerpedrosam@gmail.com>
 
-On Tue, Dec 17, 2024 at 10:03:10AM +0530, Anshuman Khandual wrote:
 
-> I am wondering how this did not cause any re-definition warning ?
+On Mon, 16 Dec 2024 10:57:33 +0100, Iker Pedrosa wrote:
+> The current documentation does not clearly explain how to invert the SPI
+> CS signal to make it active-high. This makes it very difficult to
+> understand.
+> 
+> This patch adds a simple explanation on how to set the CS line in
+> active-high and adds an example to make it easier for users who need
+> that setup for their SPI peripherals.
+> 
+> Link: https://forums.raspberrypi.com/viewtopic.php?t=378222
+> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
+> ---
+> 
+> Changes in v3:
+> - Use subject line reflecting the style of the subsystem (Mark Brown)
+> - Change compatible display to an existing one and adapt SPI MAX frequency (Rob
+>   Herring)
+> 
+> Changes in v2:
+> - Include header for GPIO_ACTIVE_HIGH (Rob Herring)
+> 
+>  .../bindings/spi/spi-controller.yaml          | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
 
-If the redefinition is identical to the one that was already there then
-the compiler will usually not warn.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
---Yu3fCeulO66Lix3+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdhmXEACgkQJNaLcl1U
-h9A0MAf/QvtVkjC9zldXDgdlYsDu0STRvGbwDmC7CqmD860xMuOC+z7Gm0jDpIpV
-Zg9WpeVaK51NOo7hzNkN3v00mH2sIZI5+S5h+uPERrS7nxOQO1PhQNBlERxzM93m
-5umg9GSVRm++4ginwxk6BrD70VeNTXXGSMoeVpG/JodFCd1E5vqm+pK2sVM+40HG
-+W0vMnWTDgot0LTwo2382Zq/9Rc+O9zYdgAe0qmB6ZDB0Dw3fZVdD9mHmBGk0TVr
-0X5xc1/NBR4KaP/dRO2sDI4REicFM9gqT5CB/79gNnp0Hm2nXK9B+gIA2DLCR95J
-eGIKCA31D2t52hR1hdN0ghEa7ckxYg==
-=nc2H
------END PGP SIGNATURE-----
-
---Yu3fCeulO66Lix3+--
 
