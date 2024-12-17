@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-449249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B849F4C23
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:27:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FEE9F4C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEABF7A6DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF0D1749A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC71F4276;
-	Tue, 17 Dec 2024 13:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545731D1730;
+	Tue, 17 Dec 2024 13:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8dBlWzz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IRFygNvz"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49DB1D1730;
-	Tue, 17 Dec 2024 13:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233B21E5702
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734441748; cv=none; b=u3oVng2v2kf+MccfJA5819nfC62doYFr3MXdI0vIW4NaKRFwPRnNqros4KWNVlpXzJcW0wW7TR67mZfvAvyk+PGxmW2xDa3/yrC6il9ZbJgf1xSnT2s+Iw6gI5duxAvtXph886PSFhShuMHE+EBFJ3ztiAdbpuLlnzj1mEch96o=
+	t=1734441797; cv=none; b=qhwruULLz4CyeljvZ6MZnrZggTzEZnIinG6koyy8p1hQUtShqjJr+RAW8c1zqmyBm/siF/wBGuUsIM7yIs5V14Dp3lZtVeggjtrTJFAJH3V7dvA3BsqX4U/TA1WGR0OjfBP6g9clvxBP9B21IBZIQH68krOKXZsClpsrdtQATzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734441748; c=relaxed/simple;
-	bh=weqUtistC/j/aUBCf8HRH1GcWzJ9pgObt2tpCXoIBzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cIFTVin98KiLo/IBKfSRMU500kyFXM/0Da0mPUSjx8kzK+3IEecbveVofHWOYdLw/evdbVeTsowAdXcY25UI+CHGxvuAihjG0psKQ/slJT214YVx55oM0l4Nmqzlt4u1hVmQl9UqO8yGcJgfHPkkg+6+wM+ZU6kZslfJjiGD8Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8dBlWzz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8002DC4CED4;
-	Tue, 17 Dec 2024 13:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734441747;
-	bh=weqUtistC/j/aUBCf8HRH1GcWzJ9pgObt2tpCXoIBzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C8dBlWzzU3fl8z0UBorZZGsKSLPdtKmczs5kfCDcNl7HzvRahSRsrJrdLkhU8rr+G
-	 Sup9OwsfraUjuVpFYpbxhyddIFsBZERbepnkHoCYcqEk2ZQUoCcW1eN/iY5NSGXt0O
-	 vC2zxxYN4wO+FRcCCrY4silnU3diePleRkMQsv4hKVLPcvL3bR+d8eaTLK/RQGPbP3
-	 qXklhF/Ztq2s838TVaSar5ZuXSsPAeDO7p88NplEZjbfGxggqVTcSD1PtbuzgLyK4G
-	 JjxpfBtFLBzB4uzrFOQ+g79fBJXN0d756ZAuRRjqBFh7JdcwP0JWug/t3yICfC3Sot
-	 d8eeG8oaozdUQ==
-Date: Tue, 17 Dec 2024 15:22:22 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v3] PCI/sysfs: Change read permissions for VPD attributes
-Message-ID: <20241217132222.GK1245331@unreal>
-References: <18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org>
+	s=arc-20240116; t=1734441797; c=relaxed/simple;
+	bh=zluAZksj0L8x1p9l+OOtyBpDtW4al/9Yh0L5sEpVqUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HShLesh/51KzaJ2JO25Y1Ag9FSgD/+D3U1WkRuQWG7pZer0Hv4/S5eL5aG4GbbivgwrVSKLgtCzTSChNo0xWekfWDYLIFh5DwZNJur8iIsbc8nH1nMTFvHT4JbYdoR3nwdIz3ukS9c+235tBjzFTDYV7XpiD1Dd59ywJYGhATbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IRFygNvz; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43622893c3cso39535e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:23:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734441794; x=1735046594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zluAZksj0L8x1p9l+OOtyBpDtW4al/9Yh0L5sEpVqUs=;
+        b=IRFygNvzckuJ5rHKl3lY4l/RBL6k2DvrIRHpBlmXO3vEkMqKzycRcjv2YOCpuFma9G
+         ak3BFjVKMYaByIRkNggz1Jn4wTf4DwolAQC8MV6l/W4o73Azc8D3plHV18v4dzkycPnH
+         1KTL+FFQIAPy3iqM/6Pi6LosVr4I+YRq4PW/7uPI14qyHEB4A/IuQspCJHWxFIx05S7/
+         pT0+G0OEgflZuwdqh7pG+S5FapipA+GO3shwhG+SOdxjp4SXMFsPAZRgs5h+oh1++jlB
+         1uWWucr1Ab6Ppe29b5tNd/VIFWbGC471S0OD+kCo+7qo5PCmtsej3xZf3TzOeHhkp8VD
+         lbFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734441794; x=1735046594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zluAZksj0L8x1p9l+OOtyBpDtW4al/9Yh0L5sEpVqUs=;
+        b=ftKZkPtP0za+tmDEoGNs23Oj9tsOkdVGdwz1cHO5tUEHkekLSPVZcx0ieG+rfLgpW2
+         A3vGtmh75Gi5o9GOnQVozPLej0ShFGzTAregtOTHhm2ssKD3r6hxZq5RYLe4i3I4ryQY
+         Vpk5MAiPU8SbMX891NPB0baiJT1I7B9AukG48WPP5eNgfLruERLfR0jF4XAIZHO9DC1S
+         rL/G3t+MbpVNn7xOb9LCciCjp7YWYerNwFf0z3HVWiSJfl3bTrF1x8eymY0ixymZe6HY
+         y2hE0OzWrRm7fvJXSpP5tpQ/PiT3elz6/eODElo6em/0iCunLVijzGeMUJsLNaBSC25f
+         LnFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgCFXJtr/D+22GPuB4NeTUqkHcXoxXO0WUbJ0BuX9Ys0O7VgLznqYlbckVcbqnTw3yPNLd3Ef89bFr428=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwppYMaMz1YWVY0mtpNeFANHEUba3RexOVRzUrLdDkKc8rVUJAB
+	ax2e2ZQzxJfovSDHhU+3lbVYRrqCqDceUQHVO+Chu7oEvDMtNCZWRpJ8CTO0wGAD8Bd89Cco16Y
+	SLuMvrChMj7UZ9KQfSwsbbrElFt54/rYQiErD
+X-Gm-Gg: ASbGncuW613JhxAFAnHv4GBjBShU2BMnPYplls5o3Ug1KALBKtA74bhRWVm4NjuOgDK
+	GxSjTh/XKdExr529dNiLSUR+kGc0XQLOufMwTk/hizuvhufIbCG9+psB3pESu6eTL+A8=
+X-Google-Smtp-Source: AGHT+IG5ALWJj0ksNk9sQYWDvuIBxfw/FZ03jE5oquPujoQVSflCn5++EfO42GLq+XkZqgVWsqivlsN1K0ssWL87W0s=
+X-Received: by 2002:a7b:cb19:0:b0:42b:a961:e51 with SMTP id
+ 5b1f17b1804b1-43648ca90ddmr1215695e9.0.1734441794300; Tue, 17 Dec 2024
+ 05:23:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org>
+References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-12-qperret@google.com>
+ <CA+EHjTxRt=XoCZbRLE1UjMg4bzgoLYD9Lh0nzmjvPZ2Q4xQOkg@mail.gmail.com> <Z2F5KboZewSDClKg@google.com>
+In-Reply-To: <Z2F5KboZewSDClKg@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 17 Dec 2024 13:22:37 +0000
+Message-ID: <CA+EHjTzmEonAUNNHM8X__6XHLko0fksjT0_ZVHhKRVsZp0zQCg@mail.gmail.com>
+Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce __pkvm_host_unshare_guest()
+To: Quentin Perret <qperret@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Dec 03, 2024 at 02:15:28PM +0200, Leon Romanovsky wrote:
-> The Vital Product Data (VPD) attribute is not readable by regular
-> user without root permissions. Such restriction is not needed at
-> all for Mellanox devices, as data presented in that VPD is not
-> sensitive and access to the HW is safe and well tested.
-> 
-> This change changes the permissions of the VPD attribute to be accessible
-> for read by all users for Mellanox devices, while write continue to be
-> restricted to root only.
-> 
-> The main use case is to remove need to have root/setuid permissions
-> while using monitoring library [1].
-> 
-> [leonro@vm ~]$ lspci |grep nox
-> 00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
-> 
-> Before:
-> [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> -rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> After:
-> [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
-> -rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
-> 
-> [1] https://developer.nvidia.com/management-library-nvml
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
-> Changelog:
-> v3:
->  * Used | to change file attributes
->  * Remove WARN_ON
-> v2: https://lore.kernel.org/all/61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org
->  * Another implementation to make sure that user is presented with
->    correct permissions without need for driver intervention.
-> v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
->  * Changed implementation from open-read-to-everyone to be opt-in
->  * Removed stable and Fixes tags, as it seems like feature now.
-> v0:
-> https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
-> ---
->  drivers/pci/vpd.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+On Tue, 17 Dec 2024 at 13:14, Quentin Perret <qperret@google.com> wrote:
+>
+> On Tuesday 17 Dec 2024 at 08:53:34 (+0000), Fuad Tabba wrote:
+> > nit: This parameter in this patch, and others, is sometimes hyp_vm, at
+> > others just vm. It would be nicer if it was always the same.
+>
+> Argh, where specifically do you see inconsistencies? All changes to
+> mem_protect.c should use 'vm' consistently in this series now.
+>
+> The code in hyp-main.c does use 'hyp_vm' consistently however, but
+> perhaps that is what you meant? I did that to follow the pattern of the
+> existing code that uses 'hyp_vcpu' in that file.
 
-Bjorn,
+You're right, my bad. I was looking at the code in the patch, not in
+the files. Sorry for the noise.
+/fuad
 
-Kind reminder.
-
-Thanks
+> Thanks!
+> Quentin
 
