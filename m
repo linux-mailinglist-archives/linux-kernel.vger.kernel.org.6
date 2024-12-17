@@ -1,134 +1,184 @@
-Return-Path: <linux-kernel+bounces-449357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91DB9F4DB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:29:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2DF39F4DC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:32:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90656188BA48
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712DC16D412
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343991F5415;
-	Tue, 17 Dec 2024 14:29:03 +0000 (UTC)
-Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E476C1F3D50;
+	Tue, 17 Dec 2024 14:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="smruJOT3"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504F61FF2;
-	Tue, 17 Dec 2024 14:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA83B1F239E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445742; cv=none; b=TOpIxZIS52xrdibqmqpdJw/4o1sXND6qBiGoSPDQ3Me1Od7JyxfU/d1LiNi5q/cqJd7YIyGV9ajVwMvhA49bwBzdqBwmiHCDJaLB5qjEy6JwK2ZuEccBeTHWZulme15my3qujhCEXFW4a57kQsZPvkS3HympvfiUp1qXh9NOtuE=
+	t=1734445891; cv=none; b=j15JepD39JhwrWCH2FUqb03djLBWNPXGIxqQNQ5U3PPBVwi+yaIy8mW/4xPSn/SLzE8m+kNS70dV6Y+oerb1tHiFh5qV92uaL71uzZ6FnET6SJnsM5SNCLH1JipAuY4RapsQRYv4TqnSfOimbgoFrLuC1SRd2GvAui/ZB5N+rVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445742; c=relaxed/simple;
-	bh=H8atj59mU3BGOUZknvtJG3k4fp+kooCZkwZj8ZpmTMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Os3H35L1TgFxUwM5bsvVE8x8AVhjqwN2qOIryb6WBbu/rsPicbP0y13AmdZ3W8fGCT4UP7cYAPzyBD4Vksav+rbW3PQJnACaLFSbbfsWfhSFFHEqhosv4/sTGeE/e/qI8daBEZLDOn7Gb2EmDmef7LB2ilJ/d3pCq8cVHjqR2HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
-Message-ID: <a69a3500-be17-4899-bdb9-c6a63bf8dc81@lankhorst.se>
-Date: Tue, 17 Dec 2024 15:28:50 +0100
+	s=arc-20240116; t=1734445891; c=relaxed/simple;
+	bh=zy50t/hza8/qqnHZ5cqN0yNA8hpNOnCQM+jwlTDCTW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bJ5qSTn/7OvtSDhI6J3Z+TkZ4wyPiZ7Jbr+l9m4XgYEkAiZm13JnXrGt9rotuke88+OW6QgDV95bxdSpaClxGLM6Qb1mMUp7RwBdyFczldU1gzc/B9u8ploih9kthygNAmTOO27VncOABsbnU96G/5CnX42bCxFa9mw0nX+Z1Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=smruJOT3; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2155c25e9a4so116875ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:31:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734445889; x=1735050689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IUKnZ0lzp04EWEQI6yO8xDcmIbMp5DmKbv3o4rFPlE=;
+        b=smruJOT3NugDErNbgpA1Iqyu/zZwXpmen7P2Tmsqf7e3mn3ZixFxHW22iAg5m4CEVO
+         Ez/ilbOKb97OspbpUwAX8j9hMNmO+LxSEDSU4fUqAVPs5CDrHDM0958Ip2WJTtTxjND8
+         Agca2EZmCKwpNYe666IHBquB9BbhKP+Mh04+M5lsfRhJ+JxqHS30+v9oCxdDctb6Dlhs
+         5UWac3JhBVp/ElTMC3jVajjCgVlo5sRO2hi2myJ45FdLjfkIu4RH/2iC8jsYPGUlsuWu
+         5ENr7smAXPYc7/JyGqH5QZVaPrKdK0QgrXtd6CE0TnmAGN+u0Z2Rq5VJ+wYKTcAYRrPV
+         vw4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734445889; x=1735050689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6IUKnZ0lzp04EWEQI6yO8xDcmIbMp5DmKbv3o4rFPlE=;
+        b=Wj+O0LjNotIrNaIOh94AMATnPOc4PATlF3F8M7q5DNjc1YzONaB5sZ5VapPwP9nZnp
+         8wB/tWkw2qhbLxNK4fMxVqtNqhBjnBF24QX6tOTxaW0YmlveKd8kLL4UO6pPtabZvP5B
+         NJvGdqx9VXkfL13R80NyelzUmre3EztCY/5Qf43ocNES9WPKqyvTwsZLJiH+MbSV0bVH
+         6zhTEzFOZznVRGf30fhhzPDDX33emXXFLYo+vz4ukxYjWivZRVHrko74xsUMabqv8hYj
+         YWUWG9enIM2TrhIiCqqV3KCiK6omC++KKKSrHBbZq97F/h17TH68jNGt0isBuz2QrmRM
+         GRzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU+t5CuzFXduJV1phA/fXOdiH1FYIW3lSQq9wqm5FFbzcgsv825YDnZ8pxwxkB+JolfvFoczVW/K0JghQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrRvaFG5XY8FnbMBVbh6PRcK2ZDXMS7s/9bIkzJDIsK2vvqCAQ
+	RqWzvtIG/vY4RKS9heaH3f6gF/W30zYabTbkGYR/6BOg4Zf0nEfRVTt0avGh+vo8UnGxygQwGB4
+	zoINuGAZB9yShQ+lCL7UWGXXu9xd1pNCXfSDN
+X-Gm-Gg: ASbGnctkube3NM8hRyRAtGmlNAIyormAwEoMtg/NHjz5ArP8o7xQtxZL0ohWHL2oVgu
+	3KVEpTS//nalr+DkUqy/EbtYVp1KyzUcf9fWv
+X-Google-Smtp-Source: AGHT+IHbAEaUpJMyIaGlrjcJhGwBko6mxJsWZi6pmCmhJ4SsZtC8iAiesZb8JsVR66lmc8LPi188LgFqCcBX8rJnxzU=
+X-Received: by 2002:a17:903:120e:b0:215:b077:5c21 with SMTP id
+ d9443c01a7336-218c9cd8afcmr2759855ad.26.1734445888799; Tue, 17 Dec 2024
+ 06:31:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-To: Maxime Ripard <mripard@kernel.org>
-Cc: linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <20241213-proud-kind-uakari-df3a70@houat>
- <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
- <20241213-gentle-glittering-salamander-22addf@houat>
- <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
- <20241217-meek-bullfinch-of-luck-2c3468@houat>
-Content-Language: en-US
-From: Maarten Lankhorst <dev@lankhorst.se>
-In-Reply-To: <20241217-meek-bullfinch-of-luck-2c3468@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240426080548.8203-1-xuewen.yan@unisoc.com> <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
+ <ZxAOgj9RWm4NTl9d@google.com> <Z1saBPCh_oVzbPQy@google.com>
+In-Reply-To: <Z1saBPCh_oVzbPQy@google.com>
+From: Brian Geffon <bgeffon@google.com>
+Date: Tue, 17 Dec 2024 09:30:51 -0500
+Message-ID: <CADyq12y=MGzcvemZTVVGN4yhzr2ihr96OB-Vpg0yvrtrewnFDg@mail.gmail.com>
+Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for ep_poll_callback
+To: Greg KH <gregkh@linuxfoundation.org>, "# v4 . 10+" <stable@vger.kernel.org>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, cmllamas@google.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ke.wang@unisoc.com, jing.xia@unisoc.com, xuewen.yan94@gmail.com, 
+	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, lizeb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey,
+On Thu, Dec 12, 2024 at 12:14=E2=80=AFPM Brian Geffon <bgeffon@google.com> =
+wrote:
+>
+> On Wed, Oct 16, 2024 at 03:05:38PM -0400, Brian Geffon wrote:
+> > On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
+> > > On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
+> > > > Now, the epoll only use wake_up() interface to wake up task.
+> > > > However, sometimes, there are epoll users which want to use
+> > > > the synchronous wakeup flag to hint the scheduler, such as
+> > > > Android binder driver.
+> > > > So add a wake_up_sync() define, and use the wake_up_sync()
+> > > > when the sync is true in ep_poll_callback().
+> > > >
+> > > > [...]
+> > >
+> > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> > > Patches in the vfs.misc branch should appear in linux-next soon.
+> > >
+> > > Please report any outstanding bugs that were missed during review in =
+a
+> > > new review to the original patch series allowing us to drop it.
+> > >
+> > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > > patch has now been applied. If possible patch trailers will be update=
+d.
+> > >
+> > > Note that commit hashes shown below are subject to change due to reba=
+se,
+> > > trailer updates or similar. If in doubt, please check the listed bran=
+ch.
+> > >
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > > branch: vfs.misc
+> >
+> > This is a bug that's been present for all of time, so I think we should=
+:
+> >
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Cc: stable@vger.kernel.org
+>
+> This is in as 900bbaae ("epoll: Add synchronous wakeup support for
+> ep_poll_callback"). How do maintainers feel about:
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
 
-Now that all patches look good, what is needed to merge the series? 
-Without patch 6/7 as it is a hack for testing.
+Dear stable maintainers, this fixes a bug goes all the way back and
+beyond Linux 2.6.12-rc2. Can you please add this commit to the stable
+releases?
 
-I've also posted a IGT for verifying read/write works (rule out 
-copy/paste errors) and min, max semantics work as intended.
+commit 900bbaae67e980945dec74d36f8afe0de7556d5a upstream.
 
-https://lists.freedesktop.org/archives/igt-dev/2024-December/083345.html
+>
+> >
+> > I sent a patch which adds a benchmark for nonblocking pipes using epoll=
+:
+> > https://lore.kernel.org/lkml/20241016190009.866615-1-bgeffon@google.com=
+/
+> >
+> > Using this new benchmark I get the following results without this fix
+> > and with this fix:
+> >
+> > $ tools/perf/perf bench sched pipe -n
+> > # Running 'sched/pipe' benchmark:
+> > # Executed 1000000 pipe operations between two processes
+> >
+> >      Total time: 12.194 [sec]
+> >
+> >       12.194376 usecs/op
+> >           82005 ops/sec
+> >
+> >
+> > $ tools/perf/perf bench sched pipe -n
+> > # Running 'sched/pipe' benchmark:
+> > # Executed 1000000 pipe operations between two processes
+> >
+> >      Total time: 9.229 [sec]
+> >
+> >        9.229738 usecs/op
+> >          108345 ops/sec
+> >
+> > >
+> > > [1/1] epoll: Add synchronous wakeup support for ep_poll_callback
+> > >       https://git.kernel.org/vfs/vfs/c/2ce0e17660a7
+>
+> Thanks,
+> Brian
+>
 
-Cheers,
-~Maarten
-
-
-Den 2024-12-17 kl. 08:46, skrev Maxime Ripard:
-> On Fri, Dec 13, 2024 at 05:06:05PM +0100, Maarten Lankhorst wrote:
->> Hey,
->>
->> Den 2024-12-13 kl. 16:21, skrev Maxime Ripard:
->>> On Fri, Dec 13, 2024 at 03:53:13PM +0100, Maarten Lankhorst wrote:
->>>>
->>>>
->>>> Den 2024-12-13 kl. 14:03, skrev Maxime Ripard:
->>>>> Hi,l
->>>>>
->>>>> Thanks for the new update!
->>>>>
->>>>> On Wed, Dec 04, 2024 at 02:44:00PM +0100, Maarten Lankhorst wrote:
->>>>>> New update. Instead of calling it the 'dev' cgroup, it's now the
->>>>>> 'dmem' cgroup.
->>>>>>
->>>>>> Because it only deals with memory regions, the UAPI has been updated
->>>>>> to use dmem.min/low/max/current, and to make the API cleaner, the
->>>>>> names are changed too.
->>>>>
->>>>> The API is much nicer, and fits much better into other frameworks too.
->>>>>
->>>>>> dmem.current could contain a line like:
->>>>>> "drm/0000:03:00.0/vram0 1073741824"
->>>>>>
->>>>>> But I think using "drm/card0/vram0" instead of PCIID would perhaps be
->>>>>> good too. I'm open to changing it to that based on feedback.
->>>>>
->>>>> Do we have any sort of guarantee over the name card0 being stable across
->>>>> reboots?
->>>>>
->>>>> I also wonder if we should have a "total" device that limits the amount
->>>>> of memory we can allocate from any region?
->>>>
->>>> I don't think it is useful. Say your app can use 1 GB of main memory or 2 GB
->>>> of VRAM, it wouldn't make sense to limit the total of those. In a lot of
->>>> cases there is only 1 region, so the total of that would still be the same.
->>>>
->>>> On top, we just separated the management of each region, adding a 'total'
->>>> would require unseparating it again. :-)
->>>
->>> I didn't mean the total for a device, but for the system. It would
->>> definitely not make sense for a VRAM, but for CMA for example, you have
->>> a single, limited, allocator that will be accessible from heaps, v4l2
->>> and DRM devices.
->>>
->>> If an application has to allocate both from v4l2 and DRM buffers, we
->>> should be able to limit its total usage of CMA, not just on a single
->>> device.
->>
->> In this case, I think it makes more sense if CMA creates a region, then use
->> that region in both v4l2 and DRM instead of a separate region for both, with
->> CMA being responsible for lifetime.
-> 
-> Ack, thanks for your feedback :)
-> 
-> Maxime
-
+ Thanks,
+ Brian
 
