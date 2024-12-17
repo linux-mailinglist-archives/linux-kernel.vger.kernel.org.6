@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-449303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E20D9F4CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:00:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161829F4D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20FD16AA55
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:59:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8203B7A4225
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27091F4E46;
-	Tue, 17 Dec 2024 13:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4A31F5401;
+	Tue, 17 Dec 2024 13:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="PCBT5E8z"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="RdNb/jq6"
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506801F4730;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5062C1F472C;
 	Tue, 17 Dec 2024 13:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734443987; cv=none; b=LGJiNdk7YOvFuPshq6SA+p1w+5pedQt+/mvwooK1Nx3L5mC6cae4pIrepvzATJ2N2NQSSivszwppOdgwYNRWX+0u/um4326OF8ej/GHNvm7DSVUYw/kxW00uM3UysZJKTuZIAVNrgaO2h9Ml8TZaD/c2yjIlG9rGRbMfBoImxsg=
+	t=1734443987; cv=none; b=gOMZ6X4mbYTPiAyyEBfxkCLXjsfubrM/FeuBoxZbAc60Pe7ELrSL0ela0eS7LW3DTJrdEIFY64Kxn3YiYvHf8jEhtA+CTYGslzXhWQqiNRUTvQldgTh0tmB+WeZau2pHrDmN+jx+xYbp41zs0BSENa+AwV6L3U0drA2qkqlaolY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734443987; c=relaxed/simple;
-	bh=7j/FYf7383tCwH6Mf4vV315X9ULfYhI7RbBRJN2rrYI=;
+	bh=bYCXv5yKC61M7oQp+mtFhgUfAZw2ETsVra/7uFlfmwY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dIjRf5UN6eZ5T6vyf63CqiGiV4FWrEKrbvFo6rXaqaW2J1wo2Oj9Cz95NI9+B5FwDJ4L35KcqoKc2z+O3dBqKXgfN1z6Mlb8EMc5L/u5brZUlUYeoByKaqys3RwfvitA863RVkxqIX4c4mABMGxWustR04qWbqbtnwVv36+FMuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=PCBT5E8z; arc=none smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=RSzRSi+O7MtoDqF1tIyZNj2DpH698T9ceoWJeE57KKv7eMk6K/SMZMj4Fjqi6K3hGLZuJekxRwMV5xX896WxTPnqW0LHcF0EtIc6OWpocdWshb7PHfbOTAVczo2AVQCq4Z6XR0jMWOBjOJx9VuSNSkO+V4PCkqZGmtOjrRZwhrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=RdNb/jq6; arc=none smtp.client-ip=67.231.152.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH47Fb0011049;
-	Tue, 17 Dec 2024 07:59:24 -0600
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH47Fb2011049;
+	Tue, 17 Dec 2024 07:59:25 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=gvN9p/AizdWPlznoYDKMQvQa9OCYMZHrxyTnfL1ddJY=; b=
-	PCBT5E8zqr+s98WUuO2+1vN0NNPMKjr7v7X7I+UjAvtC3heN8hCN2K0FAqmJm5KX
-	C/lz4bdHmWzF0r6g0MVwSQgBBY5GzBKny7ZqDa6vHgUl72qeiIkDJQzOVM7ExKeq
-	0YEbNoTNE80hMl84mYZIlL4T5aY96kWwKgYAZlnqaI/qv0eBa3iMK9k44v4GKpit
-	9E2myWN/hN20ZkqiAQMSMle0GIv/WLyCb0XpnKCOXeI/6Jrg+BFYhXqHX0dIr93N
-	e3ooOcCAdkeGlmdvrSrQaEMbnGiCflkWBnEkunfFsEvaoEId4EkDuEQe/OUMMKZF
-	ZUoknR5TGOJ92DG/dA8WEw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43h7akbb0p-2
+	PODMain02222019; bh=B2NhyqpnSsex+JDvv9pDFT7w1tA6gR4VXwzEnWWZ4MY=; b=
+	RdNb/jq6BeSPK3zk9YhhfXku1AFSNIXr0RUByG9gLCUlTF2W8Q+uEsHrQA/f8m0t
+	UhFNNch/AcgqIr5M2Ywd5agdLRVzeXI0LuPf+iUE5+Ag31fGgnzh/PcY/B3cEsrZ
+	FiX6bJylxFNYKDONdORCcTTIbITDChuIuO9ih3fdu6HJ/TZPK6nfsaeYAC47W15l
+	t6MWpBG3JJJCKo3ANkdqkr2qRIkqsykbzD/O4BH8kJqY24aimrWz0k6Njahb5D/R
+	hJf143zU1kLJAnjowyUgKVSWglY6f+yxlHLmz1Bvb8PSTs7jHRcNNgKWq0QCyolz
+	1D9B4e04C7EuSJtkCVSA9w==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43h7akbb0q-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 07:59:24 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 17 Dec 2024 07:59:25 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Tue, 17 Dec
  2024 13:59:22 +0000
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
  15.2.1544.13 via Frontend Transport; Tue, 17 Dec 2024 13:59:22 +0000
 Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id D166B822543;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id D65CD822544;
 	Tue, 17 Dec 2024 13:59:21 +0000 (UTC)
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: <broonie@kernel.org>, <vkoul@kernel.org>, <oder_chiou@realtek.com>
@@ -64,9 +64,9 @@ CC: <jack.yu@realtek.com>, <shumingf@realtek.com>, <lgirdwood@gmail.com>,
         <sanyog.r.kale@intel.com>, <pierre-louis.bossart@linux.dev>,
         <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>
-Subject: [PATCH 1/5] soundwire: SDCA: Add additional SDCA address macros
-Date: Tue, 17 Dec 2024 13:59:17 +0000
-Message-ID: <20241217135921.3572496-2-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 2/5] ASoC: SDCA: Update list of entity_0 controls
+Date: Tue, 17 Dec 2024 13:59:18 +0000
+Message-ID: <20241217135921.3572496-3-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241217135921.3572496-1-ckeepax@opensource.cirrus.com>
 References: <20241217135921.3572496-1-ckeepax@opensource.cirrus.com>
@@ -78,71 +78,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: xdhaCCGisR76JCL2U-HJcLLUidE-ZfDl
-X-Proofpoint-ORIG-GUID: xdhaCCGisR76JCL2U-HJcLLUidE-ZfDl
+X-Proofpoint-GUID: odzo_7eD6Cc-xBn_TkTR78yDcx8UdS2o
+X-Proofpoint-ORIG-GUID: odzo_7eD6Cc-xBn_TkTR78yDcx8UdS2o
 X-Proofpoint-Spam-Reason: safe
 
-Compliment the existing macro to construct an SDCA control address
-with macros to extract the constituent parts, and validation of such
-an address. Also update the masks for the original macro to use
-GENMASK to make mental comparisons with the included comment on the
-address format easier.
+Update the list of entity_0 controls to better match version v1.0 of the
+SDCA specification. Remove both INTSTAT_CLEAR and INT_ENABLE as these are
+no longer used, and add some missing controls and bits into the enum. Also
+rename the SDCA_CONTROL prefix to SDCA_CTL because this better matches the
+macros in the sdw_registers.h header, and the names can get quite long so
+saving a few characters is definitely a plus.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- include/linux/soundwire/sdw_registers.h | 30 ++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+ include/sound/sdca_function.h | 33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/soundwire/sdw_registers.h b/include/linux/soundwire/sdw_registers.h
-index 658b10fa5b20..0a5939285583 100644
---- a/include/linux/soundwire/sdw_registers.h
-+++ b/include/linux/soundwire/sdw_registers.h
-@@ -4,6 +4,9 @@
- #ifndef __SDW_REGISTERS_H
- #define __SDW_REGISTERS_H
+diff --git a/include/sound/sdca_function.h b/include/sound/sdca_function.h
+index a01eec86b9a6..9dc5bfec07e5 100644
+--- a/include/sound/sdca_function.h
++++ b/include/sound/sdca_function.h
+@@ -42,14 +42,31 @@ enum sdca_function_type {
+ #define	SDCA_FUNCTION_TYPE_HID_NAME		"HID"
  
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
+ enum sdca_entity0_controls {
+-	SDCA_CONTROL_ENTITY_0_COMMIT_GROUP_MASK		= 0x01,
+-	SDCA_CONTROL_ENTITY_0_INTSTAT_CLEAR		= 0x02,
+-	SDCA_CONTROL_ENTITY_0_INT_ENABLE		= 0x03,
+-	SDCA_CONTROL_ENTITY_0_FUNCTION_SDCA_VERSION	= 0x04,
+-	SDCA_CONTROL_ENTITY_0_FUNCTION_TOPOLOGY		= 0x05,
+-	SDCA_CONTROL_ENTITY_0_FUNCTION_MANUFACTURER_ID	= 0x06,
+-	SDCA_CONTROL_ENTITY_0_FUNCTION_ID		= 0x07,
+-	SDCA_CONTROL_ENTITY_0_FUNCTION_VERSION		= 0x08
++	SDCA_CTL_ENTITY_0_COMMIT_GROUP_MASK		= 0x01,
++	SDCA_CTL_ENTITY_0_FUNCTION_SDCA_VERSION		= 0x04,
++	SDCA_CTL_ENTITY_0_FUNCTION_TYPE			= 0x05,
++	SDCA_CTL_ENTITY_0_FUNCTION_MANUFACTURER_ID	= 0x06,
++	SDCA_CTL_ENTITY_0_FUNCTION_ID			= 0x07,
++	SDCA_CTL_ENTITY_0_FUNCTION_VERSION		= 0x08,
++	SDCA_CTL_ENTITY_0_FUNCTION_EXTENSION_ID		= 0x09,
++	SDCA_CTL_ENTITY_0_FUNCTION_EXTENSION_VERSION	= 0x0A,
++	SDCA_CTL_ENTITY_0_FUNCTION_STATUS		= 0x10,
++	SDCA_CTL_ENTITY_0_FUNCTION_ACTION		= 0x11,
++	SDCA_CTL_ENTITY_0_MATCHING_GUID			= 0x12,
++	SDCA_CTL_ENTITY_0_DEVICE_MANUFACTURER_ID	= 0x2C,
++	SDCA_CTL_ENTITY_0_DEVICE_PART_ID		= 0x2D,
++	SDCA_CTL_ENTITY_0_DEVICE_VERSION		= 0x2E,
++	SDCA_CTL_ENTITY_0_DEVICE_SDCA_VERSION		= 0x2F,
 +
- /*
-  * SDW registers as defined by MIPI 1.2 Spec
-  */
-@@ -329,16 +332,27 @@
-  *	2:0		Control Number[2:0]
-  */
++	/* Function Status Bits */
++	SDCA_CTL_ENTITY_0_DEVICE_NEWLY_ATTACHED		= BIT(0),
++	SDCA_CTL_ENTITY_0_INTS_DISABLED_ABNORMALLY	= BIT(1),
++	SDCA_CTL_ENTITY_0_STREAMING_STOPPED_ABNORMALLY	= BIT(2),
++	SDCA_CTL_ENTITY_0_FUNCTION_FAULT		= BIT(3),
++	SDCA_CTL_ENTITY_0_UMP_SEQUENCE_FAULT		= BIT(4),
++	SDCA_CTL_ENTITY_0_FUNCTION_NEEDS_INITIALIZATION	= BIT(5),
++	SDCA_CTL_ENTITY_0_FUNCTION_HAS_BEEN_RESET	= BIT(6),
++	SDCA_CTL_ENTITY_0_FUNCTION_BUSY			= BIT(7),
+ };
  
--#define SDW_SDCA_CTL(fun, ent, ctl, ch)		(BIT(30) |			\
--						 (((fun) & 0x7) << 22) |	\
--						 (((ent) & 0x40) << 15) |	\
--						 (((ent) & 0x3f) << 7) |	\
--						 (((ctl) & 0x30) << 15) |	\
--						 (((ctl) & 0x0f) << 3) |	\
--						 (((ch) & 0x38) << 12) |	\
--						 ((ch) & 0x07))
-+#define SDW_SDCA_CTL(fun, ent, ctl, ch)		(BIT(30) |				\
-+						 (((fun) & GENMASK(2, 0)) << 22) |	\
-+						 (((ent) & BIT(6)) << 15) |		\
-+						 (((ent) & GENMASK(5, 0)) << 7) |	\
-+						 (((ctl) & GENMASK(5, 4)) << 15) |	\
-+						 (((ctl) & GENMASK(3, 0)) << 3) |	\
-+						 (((ch) & GENMASK(5, 3)) << 12) |	\
-+						 ((ch) & GENMASK(2, 0)))
-+
-+#define SDW_SDCA_CTL_FUNC(reg) FIELD_GET(GENMASK(24, 22), (reg))
-+#define SDW_SDCA_CTL_ENT(reg) ((FIELD_GET(BIT(21), (reg)) << 6) | \
-+				FIELD_GET(GENMASK(12, 7), (reg)))
-+#define SDW_SDCA_CTL_CSEL(reg) ((FIELD_GET(GENMASK(20, 19), (reg)) << 4) | \
-+				 FIELD_GET(GENMASK(6, 3), (reg)))
-+#define SDW_SDCA_CTL_CNUM(reg) ((FIELD_GET(GENMASK(17, 15), (reg)) << 3) | \
-+				 FIELD_GET(GENMASK(2, 0), (reg)))
- 
- #define SDW_SDCA_MBQ_CTL(reg)			((reg) | BIT(13))
- #define SDW_SDCA_NEXT_CTL(reg)			((reg) | BIT(14))
- 
-+/* Check the reserved and fixed bits in address */
-+#define SDW_SDCA_VALID_CTL(reg) (((reg) & (GENMASK(31, 25) | BIT(18) | BIT(13))) == BIT(30))
-+
- #endif /* __SDW_REGISTERS_H */
+ #endif
 -- 
 2.39.5
 
