@@ -1,95 +1,145 @@
-Return-Path: <linux-kernel+bounces-449753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BEBB9F55B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:11:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30769F55B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4ED18836B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1970116848A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02B1F75A6;
-	Tue, 17 Dec 2024 18:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8110C1448DC;
+	Tue, 17 Dec 2024 18:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="dM6IXenf"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfkamHIt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468E913EFF3;
-	Tue, 17 Dec 2024 18:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D5A13EFF3;
+	Tue, 17 Dec 2024 18:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458953; cv=none; b=oFj5SeiFrHVJ5rg6LsmVyniq4mZ7v2Gdu7l6js6K1bL8NAgSZ50c2YghwZJr/Jo1Q8J6KA4GakE0ceu9HrGBlpcjEccr+Fez0bWMF8gEQNn3GbVDq5bzSUebejTpOU1FFkeF43jTfSkM7kpcIhY3MwtcCQEbE4K3OicpV6iCVOk=
+	t=1734458961; cv=none; b=fyO8o2kMYPmaDJLhZDopUOCTAwcXo6C+df7V1r3Z8h0QA11Xfv6cRqQzB3MpBXZgphxxDNkviw3mKZtSLoLNlkUdYlg+rpZh7l7HECQH9zzIC7MOm+BY+bIJQanWT/SONSZD8FxpQcTIltHmt6ClFr4o9gyDbIj/q29ULXRKoJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458953; c=relaxed/simple;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=qYWQMx/YM93yHzS6sRJTff3+urMbdURZNMvkoTu9E2HsE3/UU+xso2XGgf4FVrlBi7FVAy3mkqZxYD2FSJmcj+dZp1rJxTnNhUDlet0l7uKhWAXJgjW8s1DO13pz0l0z/7EyaTrxQP/oSPd2BZOXsxJkS+o9RU2ppVCaUlP9MUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=dM6IXenf; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1734458947; x=1735063747; i=rwarsow@gmx.de;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dM6IXenfbJIntLL33NwDxE6fQOih/BtUqS+bOBeL9u8tA05owX40SKmiEDIzvD0y
-	 8kDtkeEkM/Qg8l0Y7CLQI1WL9JPildz5rzDPv33JFB9MyNj+TGlz07mMlOk8+qBYP
-	 m1oLDWKAoQrCI5dSQmadneoviGA9LFHOO7oh+jy40plizKQnrpHuLOwSaHZII/KwC
-	 0ULFw+ydYsh0gzBWfTaVCYO+UyHWafXMD50ihRXk6KNdhdhckCqBOQeRqErXK+ine
-	 391DZAj6Xgk4lnLRWT5zl5mNdNN0iHzUvl95CL4tA1M/e4O8lWjspOtG5Q18w7tuX
-	 bWb1g17Dvr89UMx2Tg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.232]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mzyya-1tlAVJ2tKo-010nC9; Tue, 17
- Dec 2024 19:09:07 +0100
-Message-ID: <0db22651-d40b-4088-8517-d92b24adea6d@gmx.de>
-Date: Tue, 17 Dec 2024 19:09:07 +0100
+	s=arc-20240116; t=1734458961; c=relaxed/simple;
+	bh=a0hlx5/pHxIzM2xHkTzHsnN+2QIObRRbFkXEgYCKa/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NPXlcHEIwhqmITjm2ASbcejBKa8I2vmhDQ6sgKQs+D16+Qkb0gxz3Z0yWh3z2hxytEdkdLxT/GXvzCClxFMsQIZqlo6nHd4HmBZ0IKNQNYdLLGjW5CgjYECyFQJr0k6LMjhI2Z0XWaFIWpWfrUk46TygrKquC4nkUC+jceOuyns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfkamHIt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4206DC4CEDE;
+	Tue, 17 Dec 2024 18:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734458961;
+	bh=a0hlx5/pHxIzM2xHkTzHsnN+2QIObRRbFkXEgYCKa/Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AfkamHItEv2Kv4B47kjICPEFxA8LMnxFzXGzY0y4a8Vnd2zJFlhZ+6LxpvLezSTCW
+	 mDUEMYFOLLDxU4YpPfRQp6C1qGEy/3FQh3oJhEIIKc4iJvtruQzFrak3vmyW2qPvAG
+	 PQTxSvO+4uHpznpbUGWDObHik+N1dEzLaNNGA7f96nA6A3VKpobqGYQyLIy92zNcir
+	 TJDxIREO975BfCjxJ+krxVVtFwRMxa8TJyOOcEAAfcxhb+Q+b7ZFvoE2DG9ShoZqST
+	 zKDCSTuNxXGdFQwEsE2g29ulogVmG8fsp4ZqQLfTwSmtMfB4jeBLrKWRG0jSPF7usn
+	 bcyd3nXVjeE3A==
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a9caa3726fso18452485ab.1;
+        Tue, 17 Dec 2024 10:09:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgYBmOlfPAuBFyFnawDxVHYMn9PD9KMEkYgHzNX+CgwHpTIxaK4bPAPmQdlC0tx+/vhgZZlZBv3lTIUky+vYgLuUD5eBhB@vger.kernel.org, AJvYcCVH+8+cZlbpPRbsLfct6JOYMTkd6IlpvnOY/U4O+QdxkQppaTIXsHJb8vdU6QHXuaxRD5gmqg8qCAa4ew==@vger.kernel.org, AJvYcCVXL2xVYESaEGmnnEj2lQTkb5UWlL7t0UDYWJbiWTmA5fc5BGVCheyqqXVn3ukv0ney02sQpiPdfqzO76UT@vger.kernel.org, AJvYcCWzPVkjaIkoYoEv5m6lpkJVx1IiNZQqvBQU5IdUbvRW9dx9gNpN5y4j24H13pqOFE4s2IGLm5BSIAMq@vger.kernel.org, AJvYcCXhJvZJJ58ue4xonoDcgyYH7IbFmZGH9G1f/F7EQ2P7axY5PzEcxmDBVKIjkT5UguazzBotd7xo3Agw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/T5Giap+D3tdegWYaKlV7gQPXQa3lMzEqOKkIF/kMJS8f7l7u
+	grBYEhRTrnCBQSHteAYhwqdmZNrBtooZdmlrSX+xRUPbVdAmwqAdHkTcUSrljv8sGX581Ho/n5i
+	GJVS548SU2gdjoOTGnfZZJLnfhaM=
+X-Google-Smtp-Source: AGHT+IH4W+1qLYUv3RvMLLz4Rx3+PmbSk6FECj6Mjc1///iWLUROmvsJBNQ/+N1FqaQqBL2aHE0lswGQnxFBZ28aMoQ=
+X-Received: by 2002:a05:6e02:1a0a:b0:3a7:e956:13fc with SMTP id
+ e9e14a558f8ab-3bb0884d912mr37251375ab.5.1734458960607; Tue, 17 Dec 2024
+ 10:09:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.12 000/172] 6.12.6-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:RILrClbPHugPfhxPCWR1OSpMYZIVSZb/NsumnOGKbUen4iYcATR
- h5zwQEFXXR7dyOTTWpN4Jl0kKECeq6p8s9huNeXttKXJEEuzupiYyrXkf+lHf5nzmFSuKHS
- kkCiO6mbwufg7OlsJlkJVMtwI0AaV8773jLEIuh/n6/FuVfu1P7QgTRY81AV16VxfNwOW8F
- lsNgDbyq26obQQ/1/5mHA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sAIpTvtXFX0=;obpz/8yFEyoaxh4e+IIC/NNk5Yh
- tU5Mq0MZYCAjLSCcLnwV3/MxKTxlC+pFoJkjHzZRpO4heOdljz0tXeBAsuOyvKRRP8Askwwwn
- MG+wNlST3hXtB6AT+jild67uq+h8SWoIgkFqcYvBQRgiz6106BNgqkM9rPcn2kiPnEKhkpDdu
- kRyp9yB2BL5DqGPg7R5mwUX8a4Ctsr0O+EwNKOk25i30529rusJJy2VEROshKKUm9Bs0put9b
- NeyNGkl3XfCa6Y+oN68KdJQenQzHHAwgRwesV43507F84ynr1Qm69lzfYgU7kjpJAxA59DV4y
- /3snL+15I5QJ/3AtDVHSGmLXk3X+EsANCsDmvPU9HVWUlngtoNFUdsPtZWPj88g1AZIpYeiJJ
- CYgRriqIHYzE/1EJrW4eLL7rj0J6TF2ZC/zBVUBQYurhNRC1StbR8zw3kiDmRXG9ohXny46sJ
- V3DAXG6FJDloPTdCt8w+uNeKnk6X2Ds0bDVMo/9koE3PDty+6WA4ls/4dgb1unbom9ckzEE6y
- pYSNC/dNsHI3uaRdVIxtsQ8o/sRtX49+W1gVM/wFfcp+xChn0+e410d1nVviWx83L8+2EK4MQ
- BIbz9Hn04m4v+62hmeFTwGUBTAVZbPORIxgu1+ySklwLEWE4n43gG0xndNP75qwpQt/hotBq7
- N3NQLVmoxRzf3Xqk2pTnhl/e2KcGekzFDN6ZtUkkykbgNy6KPWonbFImXPxiJsw/23yNHb7gR
- KrJz3D/BevaA1P1R3A76EtXr7As8MXFy9kI88PyxGY5NXeB4rVyYGEqp7D3va1PODHNPUM2Rm
- vyL0CLdJz07mTn7hO0MlChY9lfNa7aJUfqtue9dgj8fc8r/0X4ZmJTEdNddHctgosRxKgoPhM
- BrMk1GmL1Di2/ChkIrVIJiHfvVnPk506WPxSd/5AHLfb942BLrFifiza16mlHaDDtXdo0QgAJ
- a7kzp+ZZ35hxEZp9UIpaMfQDz+6z3PviSfCkxpPXVVEmXiI7K24Gc7dbY3rPFdyrgQT3egBqw
- R611xySIV2BfC6l4mlJNENilXlcEvu8k1HEBGPZVeLcgyESCU9ag7tLgueEwY9QhMdDwGPR5g
- qqj0/Q08Vii3cGD7ShKhsM6sCxo1wT
+References: <20241216234308.1326841-1-song@kernel.org> <CAHC9VhSu4gJYWgHqvt7a_C_rr3yaubDdvxtHdw0=3wPdP+QbbA@mail.gmail.com>
+ <CAPhsuW4e8xcmZj_qrONSsC8SDrtNaqjeFgPRo=NE9MDiApQkvw@mail.gmail.com> <CAHC9VhQgS1n5RJxFmVxohng9UL_Wi6x_0MOaPAeiFTFsUxZd0A@mail.gmail.com>
+In-Reply-To: <CAHC9VhQgS1n5RJxFmVxohng9UL_Wi6x_0MOaPAeiFTFsUxZd0A@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 17 Dec 2024 10:09:09 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6h4c-kkXaRYiVuhx20ZVM0z2LC7+x66=mEG-wc8xDugA@mail.gmail.com>
+Message-ID: <CAPhsuW6h4c-kkXaRYiVuhx20ZVM0z2LC7+x66=mEG-wc8xDugA@mail.gmail.com>
+Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	willy@infradead.org, corbet@lwn.net, clm@fb.com, josef@toxicpanda.com, 
+	dsterba@suse.com, brauner@kernel.org, jack@suse.cz, cem@kernel.org, 
+	djwong@kernel.org, jmorris@namei.org, serge@hallyn.com, fdmanana@suse.com, 
+	johannes.thumshirn@wdc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
+On Tue, Dec 17, 2024 at 8:44=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Dec 16, 2024 at 8:24=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> > On Mon, Dec 16, 2024 at 4:22=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > >
+> > > On Mon, Dec 16, 2024 at 6:43=E2=80=AFPM Song Liu <song@kernel.org> wr=
+ote:
+> > > >
+> > > > inode->i_security needes to be freed from RCU callback. A rcu_head =
+was
+> > > > added to i_security to call the RCU callback. However, since struct=
+ inode
+> > > > already has i_rcu, the extra rcu_head is wasteful. Specifically, wh=
+en any
+> > > > LSM uses i_security, a rcu_head (two pointers) is allocated for eac=
+h
+> > > > inode.
+> > > >
+> > > > Add security_inode_free_rcu() to i_callback to free i_security so t=
+hat
+> > > > a rcu_head is saved for each inode. Special care are needed for fil=
+e
+> > > > systems that provide a destroy_inode() callback, but not a free_ino=
+de()
+> > > > callback. Specifically, the following logic are added to handle suc=
+h
+> > > > cases:
+> > > >
+> > > >  - XFS recycles inode after destroy_inode. The inodes are freed fro=
+m
+> > > >    recycle logic. Let xfs_inode_free_callback() and xfs_inode_alloc=
+()
+> > > >    call security_inode_free_rcu() before freeing the inode.
+> > > >  - Let pipe free inode from a RCU callback.
+> > > >  - Let btrfs-test free inode from a RCU callback.
+> > >
+> > > If I recall correctly, historically the vfs devs have pushed back on
+> > > filesystem specific changes such as this, requiring LSM hooks to
+> > > operate at the VFS layer unless there was absolutely no other choice.
+> > >
+> > > From a LSM perspective I'm also a little concerned that this approach
+> > > is too reliant on individual filesystems doing the right thing with
+> > > respect to LSM hooks which I worry will result in some ugly bugs in
+> > > the future.
+> >
+> > Totally agree with the concerns. However, given the savings is quite
+> > significant (saving two pointers per inode), I think the it may justify
+> > the extra effort to maintain the logic. Note that, some LSMs are
+> > enabled in most systems and cannot be easily disabled, so I am
+> > assuming most systems will see the savings.
+>
+> I suggest trying to find a solution that is not as fragile in the face
+> of cross subsystem changes and ideally also limits the number of times
+> the LSM calls must be made in individual filesystems.
 
-*no* regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+There are three (groups of) subsystems here: VFS, file systems, and
+LSM. It is not really possible to do this without crossing subsystem
+boundaries. Specifically, since VFS allow a file system to have
+destroy_inode callback, but not free_inode callback, we will need
+such file systems to handle rcu callback. Does this make sense?
 
-Thanks
+Suggestions on how we can solve this better are always appreciated.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Thanks,
+Song
 
