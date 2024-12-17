@@ -1,214 +1,217 @@
-Return-Path: <linux-kernel+bounces-450022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9859F5973
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:19:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36369F5979
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729E81635D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A58F18851F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE411F8ADD;
-	Tue, 17 Dec 2024 22:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4121F9EDD;
+	Tue, 17 Dec 2024 22:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrhvA2TP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hbrTB9la"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2071.outbound.protection.outlook.com [40.107.241.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E8C1CBE87;
-	Tue, 17 Dec 2024 22:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734473937; cv=none; b=OUInVx+zUIX8EZ/sKZEO9PNOFbNQmPXEGfE0ywl0UHMK59nUugzlzpj9tYRit0N0AoCnNkFcB5Nv4ZpBnMKeHKb1Wy81DYap4NhHNSF1Y1FuhQHeQZibrUW3p627Kng4BudlK9KOC4c60yXq5Cl8rQbK3ucsXSlscsb5Rj1LZwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734473937; c=relaxed/simple;
-	bh=+cDN887R3QTVEjX6KEQYRZ2FEBrq1PPQJHjIoIcdQkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Owg72i1FZNofmErfBRFVg1UF3Bskqj9Est3lh+rYOQd8vwGLtD8EUXaWLTFsO3ZdwT1GU63o8NF3lRo8Y80GA2cSrfSbSBWdL0Rbgy6Qlo6CHXWZVOdw9AU98BDKyP+t85CMd+MgJSjslaJuGNgdxS2HTOfS7XmYpCOh+f2WJsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrhvA2TP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675F1C4CED3;
-	Tue, 17 Dec 2024 22:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734473936;
-	bh=+cDN887R3QTVEjX6KEQYRZ2FEBrq1PPQJHjIoIcdQkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrhvA2TPhEHiyGY1AEBOf7bjQ40LICdGm6WCX/VlYN5Iipffw5mlwiGh5DY4DnTzD
-	 lTB+Iq+8zQz6mmCS9XLoFlWsTvHa/DcUQC/Kkgc8uaNZUNMnOEmid7ouP5lz+tsFoS
-	 1dWUKe4a+LbNzee2vMvGYtegnaYDNAR7mzeuYJNiHMVK02Sw2PJFdFIiGbvGyXOZ/n
-	 2TRQ2AxRP8vHrSG6xUY7IAWVDgVaF6Ic6qP+rDBUaMGR3QyFwmWc6uuII24/BSLGKk
-	 pose5P2JOBVQ4QcFDKoKlbTH4f9P069F0Xa+u+jBXZVk/ZTOz0FVnAA7xEKHVmyvP4
-	 /LmWOy4Vfx2tQ==
-Date: Tue, 17 Dec 2024 14:18:53 -0800
-From: Kees Cook <kees@kernel.org>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com,
-	torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
-	oleg@redhat.com, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	jorgelo@chromium.org, sroettger@google.com, ojeda@kernel.org,
-	adobriyan@gmail.com, anna-maria@linutronix.de, mark.rutland@arm.com,
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
-	rdunlap@infradead.org, davem@davemloft.net, hch@lst.de,
-	peterx@redhat.com, hca@linux.ibm.com, f.fainelli@gmail.com,
-	gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
-	ardb@kernel.org, Liam.Howlett@oracle.com, mhocko@suse.com,
-	42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
-	enh@google.com, rientjes@google.com, groeck@chromium.org,
-	mpe@ellerman.id.au, Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrei Vagin <avagin@gmail.com>,
-	Dmitry Safonov <0x7f454c46@gmail.com>,
-	Mike Rapoport <mike.rapoport@gmail.com>,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Subject: Re: [PATCH v4 1/1] exec: seal system mappings
-Message-ID: <202412171248.409B10D@keescook>
-References: <20241125202021.3684919-1-jeffxu@google.com>
- <20241125202021.3684919-2-jeffxu@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7681DDC3C;
+	Tue, 17 Dec 2024 22:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734474083; cv=fail; b=LV28a+tBuUHrG/U7RQHfzka6MBhK/9zwdMObKwP4qOyLgOVx4N1ZJUFyxPcba0OL6sz7FupIQGHCzZ7iQgMn+yTIos7tbjYPZ2YbpdambA9xNFOAQAxidWoKYS+R8TuAVRnKWZssdOW+jScpmiUw2azbk1YznO0R4zSm5GNCxqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734474083; c=relaxed/simple;
+	bh=WOD76uDKbX3pR/Z4oDNNunwXxefa/pDUAZ2y3pohpNE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=t6TDKr7EvN/op5EhGp4FH5KRZtlGzFgUCJlry1552MBHxPA2g6BCd3k3du+mxqzXVPJuSORp+nIpQrYFPL9KH8YqP5iA9j8hJmGa58R1SlCjZb3In9nfUoZBwnSXjXmQcfEdbQT1f6HLUiFo7WRhmPwf1F/MteIj+5d5l6KwEbg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hbrTB9la; arc=fail smtp.client-ip=40.107.241.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yLictlqJnXWx4GlxgEU04LhQSFUNrrpe9LC+pykhLN2EoIgnVu6CTWix/PG8XaykDkS6gDdjd4xVYLySfbf40nLAS8MfrfG7XlLLREbZK9XUEm0uIxWHI1OoCbTnGQiBG+AXoH3sFx4gZtO5XZOHSgKhOP+s5WW5STNw3Y2cOI8QNnecEh2TMOmsnfY1B61TObZmkGIiobXja1OiTypJnHLhtixG5jvifvIFv5SZhHMvS9+Qpf3r03HrTjLpjbdXXF5xZoZrjBAt0iQCNLFhVGh4dtmBUK/Z39475qWGqdUTzx++jLCL0QWNVmtON96C/MedbTQYLQPkXSt6QzDAzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VqpHgnE19bxYPOlAEs0+K5FPDqvEB3JHtpaUxbKMZaE=;
+ b=ppzlQ7o6xIHq9BuClS3sbjkEu7Irvah+mktaQy8Ts6+9MI8d7I9o8ILe9tqFAmQYQRflgbl82+ovURTVjhPHr1IsXRxcZ9zfUKpLXk4sVsouIZ4i8urqr2+ielbHrkTwiO3ynRf+oYJOkfuiRRINAdSsIzA3yG07BEF0VZuMbAnl91j/9BMjFyobYEFIF1eJN8BinIPMYFGiukEkyM15hahUU3y0j1/w6jATn1JsT8141+bxEhTZQpoJpP2rZzp5EUMm5LRKE0i9/64FV6mximLvnalKazBNkTl64UUtcls78wuIzTgoVPSEd4EOKLcK3/wn3uk2MNfO8lI2D1+glA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VqpHgnE19bxYPOlAEs0+K5FPDqvEB3JHtpaUxbKMZaE=;
+ b=hbrTB9lafHuR//bMMFa/xKuGBnES5XBdshdKhEH0A2AtCoWo1YWX15zjoaVU4fgMo/as17LoeKwHWgVFZpKTNSYz2URaYenSYGZMrw8/t+3MQ3StwvkNOlZLS46KNe0zO2OijcBK7AHUjPNryYod9bFTEEoyP2WhkvyDaNllLEqU+d8qKtW6QecABIshXKSlXvXvRPXXejEIXbKw+EuhtLtXlJxpKy3aWZxSLzab+xABQ/twpLrUGO6idkafd3JXY9rA4ypLOVDa6vLL1mkAAxwBJI4GrrWUylPqSr6UnXzFPEubNRPtTcY0XcM32dGgiKUnFEmOAscjIulA59G/WA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by DBBPR04MB7820.eurprd04.prod.outlook.com (2603:10a6:10:1ec::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
+ 2024 22:21:16 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::50c6:148a:7fad:8e87]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::50c6:148a:7fad:8e87%7]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 22:21:16 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Fugang Duan <B38611@freescale.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Vipul Kumar <vipul_kumar@mentor.com>,
+	Luwei Zhou <b45643@freescale.com>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v3 1/1] input: mma8450: Add chip ID check in probe
+Date: Tue, 17 Dec 2024 17:20:59 -0500
+Message-Id: <20241217222100.376752-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0123.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::8) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125202021.3684919-2-jeffxu@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DBBPR04MB7820:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93461070-4d13-4a5f-5e5a-08dd1ee91fd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5xGBeGjD/9iPTknDu6hGjCng+tGK+/WUtOskxFxk8mOiUWAG6cgJDWdSJ1bi?=
+ =?us-ascii?Q?ehXKpMvdHWqAou+ASke/kGUZK3D4BkzZDZrrIuMQ8U22e8zDU2wTxoQLXXvh?=
+ =?us-ascii?Q?kqK48Jgc1lxxioLsD5alpiy6R+7xczZviptkXrAl2lIp5EdySiHp1zywJ9bB?=
+ =?us-ascii?Q?HQOsnelvnREj/w+eRx6ZBkgM74yam9aGJuH7Io6SOlZdPjdbj3otoJ5GxCId?=
+ =?us-ascii?Q?P7P12TYXmaELs6oS7xYEDMiG1NSdlIbZBns101zKDEE5YEpJ7VOr6KhWrVTx?=
+ =?us-ascii?Q?POpUBsenJjBAFOiz0mHzGldNBH0n4gaQfhWOKwUvvCiG290Es7ydvCj/fN3/?=
+ =?us-ascii?Q?ojNW7qmzKQtuXZo7Z+tHRNm2cULjYwnxQ3uSatkm5weGNIGRv3JyIyYgn/op?=
+ =?us-ascii?Q?bOJXaHEN0rh572PFA1w8Q1LOXHilCh/W98eTUxJDjX4VRwj9mm1VZwyClmqH?=
+ =?us-ascii?Q?d7A+Ty3TVpVdpv4x2gfaLQiJ0Hf8BzoQF5JxaFqaYnfrJhJcK1MPEckG0LGR?=
+ =?us-ascii?Q?IDv7fC2HkdesOvO6XLHscWKsPyAqhATLaVBItXyuvEOPr3iyk2FtYfgnWo1K?=
+ =?us-ascii?Q?xbiZS4Vmr37nwRJ3m1xUl1eKmi//f2GjTIR09wuEkDy3xowgG1Q4QFDxlLj9?=
+ =?us-ascii?Q?RovRfEnm+BekDbOZO2163sM37QNC50i8FUswWFijTnxztGumnpM1fquIWHKl?=
+ =?us-ascii?Q?9MAlgAGZR/XNz7985SZiLUsoyZXidEtVUcNGIUIl3a9XjA88dfJOi9Ito/Ew?=
+ =?us-ascii?Q?gm5fUjMYd4AJhYqHng5z/eBuICn6X71yGYCFC+PePovJAiRIAAVRcoFiZYek?=
+ =?us-ascii?Q?KgINtSSx6PgB8u5m19+Ezq+rzaRG+DfJpqRiLMFcHNtCo1qb0k0YrxxK/h6L?=
+ =?us-ascii?Q?FSv9ku5xW4pZMpBK2wNZK1Jyq1NWv0d9RjbUvHEyQJLLlz1WDzq+c7Rqftbx?=
+ =?us-ascii?Q?0jL1IqATzQPHYcGR+eXTF+jRyvKOrslVU2R8KEr0Qy1xLWkK1DQaoxB4iE5t?=
+ =?us-ascii?Q?ro5+Mdk7M3+kuiscjLq4GrQTUGoQivyj7/fPsRns7kS9FSOFzlsVxlV+VAb1?=
+ =?us-ascii?Q?t1dJQ8Ltw6UH3M+9XlJYUpOWSYF7bimZkjDp/7EB8Vp4LFMhiGdsvnjsLbUW?=
+ =?us-ascii?Q?FX+pnqtptow/t6ngeaVMzdp+b83fToJPOd13F1DCszvtWnu1Pe11ZYTeFeIB?=
+ =?us-ascii?Q?XkhmMqOB/Mdp0StCzyoFcltHF11mzXl3UqVRv8sfje/IM9wMusL2bxbgIhly?=
+ =?us-ascii?Q?cT1rsvtp5QsiAtCoCNv1SrAWe0XUQNv2BbPWN6Csm443HAiWhBxu6OVaXzkZ?=
+ =?us-ascii?Q?5pHKCec0SAyFv78yuP5i9g/gLKYXVFwjrweSUDiEjFvv4l+e3k5sZs0AJnmE?=
+ =?us-ascii?Q?3tQQnvXYNjLIN3wiAmqjxdxZ86X1R/706ggftfC4jXKGPr4ldxobZ8hmCm78?=
+ =?us-ascii?Q?hhs+PkZAxRPW1AT2OChA6hEeWqnyvJm5FBMy45xlpAQDeYXGRl7hrg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WcTw+T17gIcmTX4YZYDsJeG9Usa5yXrBRBBThq4rqhFvheLwjPUUK9RIfRk8?=
+ =?us-ascii?Q?pIInto0yi3cpm9RoUOJsliGd0oRqji0RZxUoClVTjbOEkS9D3EaNGscE/CEv?=
+ =?us-ascii?Q?xuFxGAN0eHOssnhgAv4rhxt2n1h7VHGO7+aMTxHsvgpBBMW1glISCMxonakA?=
+ =?us-ascii?Q?epm4hyaf9CAp5vl8HS1mbhrpaz+jmrHu9sr415oDMJZHLsFVFJLSpvUhEYLR?=
+ =?us-ascii?Q?K5mLAnI4Vi0Ps6SopLjFZ6xcP1gzNSJ2GM14u603aA2mr6qo/+sICzTBVKaS?=
+ =?us-ascii?Q?DkhPgGp3T3BQJjbhPdzmitLRIQ2IMm/2qOUXZbg5jf0bi9Pz7Kyb4lTY43xu?=
+ =?us-ascii?Q?tAACOSzlIgVhSaRWZLx/aFM4qvZD7F4jKw3Rv4tYKvS3a8otG99jmNQdFZnz?=
+ =?us-ascii?Q?FHuJSpK4kQwxMKbwS0UHyFYkAfRThXkBtZJWUlWL7v/Fl0iDKrGWX1IJNRRA?=
+ =?us-ascii?Q?ApRZPqnfKmrYs89faOjgrB5j3IPNOEnWhLB9jwUB6oCFGiS8kCqu+h2BCIgu?=
+ =?us-ascii?Q?NhtiZGhIa6l3Pbk50d+B8YvwjpQNyQYgdojhbyjbiH4N0CI4hx2EYlqG0Roz?=
+ =?us-ascii?Q?WKqjlra0trpc3JTZgjocMxGlZ3rtQedqbsOx5tfeW9Wa8CF9+taeCg/CIMpZ?=
+ =?us-ascii?Q?/pJe27sEg2gFtC6LO5fISBbJWDb03qMyGGDr+AhjH6S9YMlnD5k0hTlVW/2t?=
+ =?us-ascii?Q?QlTJRN2c3M03BgMB1vJmgdnBeY2PE2ngkyf4heOpc7E+W0MyP6d5siOtB5Af?=
+ =?us-ascii?Q?+FWKpFwImLQISF1ZcOHo50uB4vv6qroZMi6bTmht0bdXAPFUtbn9mrMoxpn0?=
+ =?us-ascii?Q?zqIqbOyzrflinVvNYla/7le3rtkP1o270nUUtkD73Hcn+Q9Mykx3/wIREuoU?=
+ =?us-ascii?Q?PlOaVosuLBmwv+BqulOAk2jju+iZWj8OtSWCxcobpS6t5LGMG1CXuk2QWqtp?=
+ =?us-ascii?Q?dgTDO+4g+HDHyrn8OKgq2I9qCRn9djEwSCUMqotFP8WFEFikMqk15t62CAcW?=
+ =?us-ascii?Q?MCVrT70VUGlB5le/eyEriFrcH3mN4lwzQwy4IGWThnj/aEcTdgDvDNs0Jy6A?=
+ =?us-ascii?Q?fdnqPo8wHzCpOY6B6jmeBXztyAcUfaa0isqJdOuBb1ttt44J7ZNcXM30cowi?=
+ =?us-ascii?Q?V7rOk1C+sS/sPGBbyHlV4+qNHESdbNC77jOI/i8E++beb/KGZJl8eZXy23wk?=
+ =?us-ascii?Q?ehRR12OK+pYBj5X/wA4t9uGzMWWTUcMrr3lmu8u3SbsoDnZ7eznu9RdX8XLB?=
+ =?us-ascii?Q?toAhQr/6qxROcjSYGXSLzL1/z6ou9G0Ek3foeBDuRp2Ut4psfYglQHNSzle7?=
+ =?us-ascii?Q?ygCRLvYY6dksXxRyqACUiBdGHCkTsQpWH7efLxycDT+JzS9rvdDdVOFGxXxy?=
+ =?us-ascii?Q?5/MWYMQikLULM8dmy7PAhcxobScKyFmiHqiUS1nGCkN6NOxsazSEQcTmH8Ay?=
+ =?us-ascii?Q?EtWBcccv+7owVG+WVl7rioMjzSgk8yHRv0yD0Ida6BV6/Ybh17dvZS07QTts?=
+ =?us-ascii?Q?LSJP3uRp5sY2ojnm9P4QhFBKDWo/u0iIJbDd5VriruZtLKqDRs0ilZJDrY6F?=
+ =?us-ascii?Q?zSysynZrB5akFZMclAw=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93461070-4d13-4a5f-5e5a-08dd1ee91fd5
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 22:21:16.8219
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LEHu58Xx+C3yG514Wp72eK55E20rhvMwpRXDMj80GTFLSTCPgPgG1ZFBQ2NSZiDXaXPSJkTFOQfHY60iz6kIPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7820
 
-On Mon, Nov 25, 2024 at 08:20:21PM +0000, jeffxu@chromium.org wrote:
-> Seal vdso, vvar, sigpage, uprobes and vsyscall.
-> 
-> Those mappings are readonly or executable only, sealing can protect
-> them from ever changing or unmapped during the life time of the process.
-> For complete descriptions of memory sealing, please see mseal.rst [1].
-> 
-> System mappings such as vdso, vvar, and sigpage (for arm) are
-> generated by the kernel during program initialization, and are
-> sealed after creation.
-> [...]
->  
-> +	exec.seal_system_mappings = [KNL]
-> +			Format: { no | yes }
-> +			Seal system mappings: vdso, vvar, sigpage, vsyscall,
-> +			uprobe.
-> +			- 'no':  do not seal system mappings.
-> +			- 'yes': seal system mappings.
-> +			This overrides CONFIG_SEAL_SYSTEM_MAPPINGS=(y/n)
-> +			If not specified or invalid, default is the value set by
-> +			CONFIG_SEAL_SYSTEM_MAPPINGS.
-> +			This option has no effect if CONFIG_64BIT=n
+From: Luwei Zhou <b45643@freescale.com>
 
-I know there is a v5 coming, but I wanted to give my thoughts to help
-shape it based on the current discussion threads.
+Prevent continuous polling error logs by adding a chip ID check in the
+probe  function. This ensures the driver only proceeds when the mma8450 is
+present, avoiding issues in scenarios like missing add-on cards.
 
-The callers of _install_special_mapping() cover what is mentioned here.
-The vdso is very common (arm, arm64, csky, hexagon, loongarch, mips,
-parisc, powerpc, riscv, s390, sh, sparc, x86, um). For those with vdso,
-some also have vvar (arm, arm64, loongarch, mips, powerpc, riscv, s390,
-sparc, x86). After that, I see a few extra things, in addition to
-sigpage and uprobes as mentioned already in the patch:
+Signed-off-by: Luwei Zhou <b45643@freescale.com>
+Signed-off-by: Fugang Duan <B38611@freescale.com>
+Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change from v2 to v3
+- add if (client_id < 0)
+		return dev_err_probe(&c->dev, client_id, "Failed to read chip ID\n");
 
-arm sigpage
-arm64 compat vectors (what is this for arm?)
-arm64 compat sigreturn (what is this for arm?)
-nios2 kuser helpers
-uprobes
+change from v1 to v2
+- Use  *adapter = c->adapter
+- Use if (!i2c_check_functionality())
+---
+ drivers/input/misc/mma8450.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-As mentioned in the patch, there is also the x86_64 vsyscall mapping which
-eludes a regular grep since it's not using _install_special_mapping() :)
-
-So I guess the question is: can we mseal all of these universally under
-a common knob? Do the different uses mean we need finer granularity of
-knob, and do different architectures need flexibility here too? The
-patch handles the arch question with CONFIG_ARCH_HAS_SEAL_SYSTEM_MAPPINGS
-(which I think will be renamed with s/SEAL/MSEAL/ if I am following the
-threads). This seems a good solution to me. My question is
-about if sigpage, vectors, and sigreturn can also be included? (It seems
-like the answer is "yes", but I didn't see mention of the arm64 compat
-mappings.)
-
-Linus has expressed the desire that security features be available by
-default if they don't break existing userspace and that they be compiled
-in if possible (rather than be behind a CONFIG) so that code paths are
-being exercised to gain the most exposure to finding bugs. To that end,
-it's best to have a kernel command line to control it if it isn't safe
-to have always enabled. This is how we've handled _many_ features so that
-the code is built into the kernel, but that end users (e.g. distro users)
-can enable/disable a feature without rebuilding the entire kernel.
-
-For a "built into the kernel but default disabled unless enabled at boot
-time" example see:
-
-config RANDOMIZE_KSTACK_OFFSET
-        bool "Support for randomizing kernel stack offset on syscall entry" if EXPERT
-        default y
-        depends on HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
-...
-config RANDOMIZE_KSTACK_OFFSET_DEFAULT
-        bool "Default state of kernel stack offset randomization"
-        depends on RANDOMIZE_KSTACK_OFFSET
-...
-#ifdef CONFIG_RANDOMIZE_KSTACK_OFFSET
-DEFINE_STATIC_KEY_MAYBE_RO(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,
-                           randomize_kstack_offset);
-...
-early_param("randomize_kstack_offset", early_randomize_kstack_offset);
-
-
-For an example of the older "not built into the kernel but when built in
-can be turned off at boot time" that predated Linus's recommendation see:
-
-config HARDENED_USERCOPY
-        bool "Harden memory copies between kernel and userspace"
-...
-static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
-...
-__setup("hardened_usercopy=", parse_hardened_usercopy);
-
-(This should arguably be "default y" in the kernel these days, but
-whatever.)
-
-So, if we want to have a CONFIG_MSEAL_SYSTEM_MAPPINGS at all, it should
-be "default y" since we have the ...ARCH_HAS... config already, and then
-add a CONFIG_MSEAL_SYSTEM_MAPPINGS_DEFAULT that is off by default (since
-we expect there may be userspace impact) and tie _that_ to the kernel
-command-line so that end users can use it, or system builders can enable
-CONFIG_MSEAL_SYSTEM_MAPPINGS_DEFAULT.
-
-For the command line name, if a namespace is desired, I'd agree that
-naming this "mseal.special_mappings" is reasonable. It does change process
-behavior, so I'm also not opposed to "process.mseal_special_mappings", and
-it happens at exec, so "exec.mseal_special_mappings" is fine by me too.
-I think the main question would be: will there be other things under the
-proposed "mseal", "process", or "exec" namespace? I'd like to encourage
-things being logically grouped since we have SO MANY already. :)
-
-Also from discussions it sounds like there may need to be even finer-gain
-control, likely via prctl, for dealing with the CRIU case. The proposal
-is to provide an opt-out prctl with CAP_CHECKPOINT_RESTORE? I think this
-is reasonable and lets this all work without a new CONFIG. I imagine it
-would look like:
-
-criu process (which has CAP_CHECKPOINT_RESTORE):
-	- prctl(GET_MSEAL_SYSTEM_MAPPINGS)
-	- if set:
-		- remember we need to mseal mappings
-		- prctl(SET_MSEAL_SYSTEM_MAPPINGS, 0)
-		- re-exec with --mseal-system-mappings (or something)
-	- perform the "fork a tree to restore" work
-	- in each child, move around all the mappings
-		- if we need to mseal mappings:
-			- prctl(SET_MSEAL_SYSTEM_MAPPINGS, 1)
-			- mseal each system mapping
-		- eventually drop CAP_CHECKPOINT_RESTORE
-		- become the restored process
-
-Does that all sound right? If so I think Jeff has all the details needed
-to spin a v5.
-
--Kees
-
+diff --git a/drivers/input/misc/mma8450.c b/drivers/input/misc/mma8450.c
+index 08412239b8e69..5d1455bffbb05 100644
+--- a/drivers/input/misc/mma8450.c
++++ b/drivers/input/misc/mma8450.c
+@@ -38,6 +38,8 @@
+ 
+ #define MMA8450_CTRL_REG1	0x38
+ #define MMA8450_CTRL_REG2	0x39
++#define MMA8450_ID		0xc6
++#define MMA8450_WHO_AM_I	0x0f
+ 
+ static int mma8450_read(struct i2c_client *c, unsigned int off)
+ {
+@@ -148,8 +150,19 @@ static void mma8450_close(struct input_dev *input)
+  */
+ static int mma8450_probe(struct i2c_client *c)
+ {
++	struct i2c_adapter *adapter = c->adapter;
+ 	struct input_dev *input;
+-	int err;
++	int err, client_id;
++
++	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA))
++		return dev_err_probe(&c->dev, -EINVAL, "I2C adapter can't support SMBUS BYTE");
++
++	client_id = i2c_smbus_read_byte_data(c, MMA8450_WHO_AM_I);
++	if (client_id < 0)
++		return dev_err_probe(&c->dev, client_id, "Failed to read chip ID\n");
++	if (client_id != MMA8450_ID)
++		return dev_err_probe(&c->dev, -EINVAL, "Read chip ID 0x%x is not equal to 0x%x!\n",
++				     client_id, MMA8450_ID);
+ 
+ 	input = devm_input_allocate_device(&c->dev);
+ 	if (!input)
 -- 
-Kees Cook
+2.34.1
+
 
