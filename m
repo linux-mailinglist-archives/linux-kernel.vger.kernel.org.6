@@ -1,184 +1,237 @@
-Return-Path: <linux-kernel+bounces-449360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2DF39F4DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:32:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74419F4DC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712DC16D412
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F5F1892F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E476C1F3D50;
-	Tue, 17 Dec 2024 14:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA6A1F4E49;
+	Tue, 17 Dec 2024 14:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="smruJOT3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="FbluKOuK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uANGbWrz"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA83B1F239E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1322AEE0;
+	Tue, 17 Dec 2024 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445891; cv=none; b=j15JepD39JhwrWCH2FUqb03djLBWNPXGIxqQNQ5U3PPBVwi+yaIy8mW/4xPSn/SLzE8m+kNS70dV6Y+oerb1tHiFh5qV92uaL71uzZ6FnET6SJnsM5SNCLH1JipAuY4RapsQRYv4TqnSfOimbgoFrLuC1SRd2GvAui/ZB5N+rVM=
+	t=1734445880; cv=none; b=bT4eMOJoerYDocfK6yvqp9YdeKIol4u4LLDn3gaBl57BIYm5pXwYUIfDXKa/OyiARHOU/P7lVDqwUI7odrqfodt1U+1+OnbJgfAuXjleq34WeaGi8ggmpBc1gCChLWpUuS+JkWJUvy8S8cyso7CLNYy6TQjVA3CYW/cOpfFP/vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445891; c=relaxed/simple;
-	bh=zy50t/hza8/qqnHZ5cqN0yNA8hpNOnCQM+jwlTDCTW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bJ5qSTn/7OvtSDhI6J3Z+TkZ4wyPiZ7Jbr+l9m4XgYEkAiZm13JnXrGt9rotuke88+OW6QgDV95bxdSpaClxGLM6Qb1mMUp7RwBdyFczldU1gzc/B9u8ploih9kthygNAmTOO27VncOABsbnU96G/5CnX42bCxFa9mw0nX+Z1Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=smruJOT3; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2155c25e9a4so116875ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:31:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734445889; x=1735050689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6IUKnZ0lzp04EWEQI6yO8xDcmIbMp5DmKbv3o4rFPlE=;
-        b=smruJOT3NugDErNbgpA1Iqyu/zZwXpmen7P2Tmsqf7e3mn3ZixFxHW22iAg5m4CEVO
-         Ez/ilbOKb97OspbpUwAX8j9hMNmO+LxSEDSU4fUqAVPs5CDrHDM0958Ip2WJTtTxjND8
-         Agca2EZmCKwpNYe666IHBquB9BbhKP+Mh04+M5lsfRhJ+JxqHS30+v9oCxdDctb6Dlhs
-         5UWac3JhBVp/ElTMC3jVajjCgVlo5sRO2hi2myJ45FdLjfkIu4RH/2iC8jsYPGUlsuWu
-         5ENr7smAXPYc7/JyGqH5QZVaPrKdK0QgrXtd6CE0TnmAGN+u0Z2Rq5VJ+wYKTcAYRrPV
-         vw4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734445889; x=1735050689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6IUKnZ0lzp04EWEQI6yO8xDcmIbMp5DmKbv3o4rFPlE=;
-        b=Wj+O0LjNotIrNaIOh94AMATnPOc4PATlF3F8M7q5DNjc1YzONaB5sZ5VapPwP9nZnp
-         8wB/tWkw2qhbLxNK4fMxVqtNqhBjnBF24QX6tOTxaW0YmlveKd8kLL4UO6pPtabZvP5B
-         NJvGdqx9VXkfL13R80NyelzUmre3EztCY/5Qf43ocNES9WPKqyvTwsZLJiH+MbSV0bVH
-         6zhTEzFOZznVRGf30fhhzPDDX33emXXFLYo+vz4ukxYjWivZRVHrko74xsUMabqv8hYj
-         YWUWG9enIM2TrhIiCqqV3KCiK6omC++KKKSrHBbZq97F/h17TH68jNGt0isBuz2QrmRM
-         GRzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU+t5CuzFXduJV1phA/fXOdiH1FYIW3lSQq9wqm5FFbzcgsv825YDnZ8pxwxkB+JolfvFoczVW/K0JghQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrRvaFG5XY8FnbMBVbh6PRcK2ZDXMS7s/9bIkzJDIsK2vvqCAQ
-	RqWzvtIG/vY4RKS9heaH3f6gF/W30zYabTbkGYR/6BOg4Zf0nEfRVTt0avGh+vo8UnGxygQwGB4
-	zoINuGAZB9yShQ+lCL7UWGXXu9xd1pNCXfSDN
-X-Gm-Gg: ASbGnctkube3NM8hRyRAtGmlNAIyormAwEoMtg/NHjz5ArP8o7xQtxZL0ohWHL2oVgu
-	3KVEpTS//nalr+DkUqy/EbtYVp1KyzUcf9fWv
-X-Google-Smtp-Source: AGHT+IHbAEaUpJMyIaGlrjcJhGwBko6mxJsWZi6pmCmhJ4SsZtC8iAiesZb8JsVR66lmc8LPi188LgFqCcBX8rJnxzU=
-X-Received: by 2002:a17:903:120e:b0:215:b077:5c21 with SMTP id
- d9443c01a7336-218c9cd8afcmr2759855ad.26.1734445888799; Tue, 17 Dec 2024
- 06:31:28 -0800 (PST)
+	s=arc-20240116; t=1734445880; c=relaxed/simple;
+	bh=R5AEPOhE5zimeSFXlqP2ApxVlRFcLe3DttjDO3/lbmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGhTlej9ZTJ8skFhd2PTXJN+lyEgN60zG3nIRqDBSm7elp0RKEX9F2UgIUF7Jpe9+7JCLL1wkROUvadJlRILXhywpwmccZyWXrAJ4NFidW0oMjCgiM1viDflT37nl/8VYopWRBjHUGuQHRbQ4M9mHz9AhnRaVJkwyna9cDfdhvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=FbluKOuK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uANGbWrz; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 207751140099;
+	Tue, 17 Dec 2024 09:31:16 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 17 Dec 2024 09:31:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1734445875;
+	 x=1734532275; bh=T2z4S2KdGYMfZ5CZdK1KVnHbTmI/csXLkb+hBPu559g=; b=
+	FbluKOuKFoFROqVNIowWnfHBIBYNueAei5d3Wo7aUbzKPb+ceZR1yGJjTgZviBnO
+	TGeuuzJolBzIuoncn1MP5v2BTJ6U9YGnK07qJa4LbfFLIRwWo5NnYYbsH6mA+pfK
+	Z7YdDkkYQBftKu9cCz5fh8UyJnli0y47Ppqq+cJiJ4x3q2X2mZTpIX7ZGlp49+TI
+	Jj3uwpCxaEkHU1ZfBfgPxuVdhNL4jMd0BOiOetBJzFBbq+7DhwST0sidUrVElMvV
+	H5xMg7cHZTPwhGmVi3spk6vh/GVbwlLlY1XN52jYqE7bnFzRtQN/1LWlPKTiokmD
+	VPpTEz46ieDRHAAzfnpDpA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734445875; x=
+	1734532275; bh=T2z4S2KdGYMfZ5CZdK1KVnHbTmI/csXLkb+hBPu559g=; b=u
+	ANGbWrzcLIrsmFkRwsoFzliT4xWjzv0XtPnzbAPeAr6r0Q1byFK++lsdcUsoAJbZ
+	6jCPaCp7V9hZJFP0Wnc6CVklvDc0e+Xzkpq6K8cVFokMDfV7RwfFn91iUha1mz/w
+	A2WlPQP124IuixqDfUoUilZGGAlK68V1bWYdwnXdmbT8RP5iDK/jUoCtQCyY98RH
+	anteWK803a0p/l2Li6GMigvUCpZEraiTFtIYCk3x7aCNYBiyVGhFFlxRLFS7Ugeq
+	bqB96Po2OhV1pEWggjYkqW4353wvxxBpWZbP4T4PbUkEP3jEX6w9K6lCiBSAUM8B
+	F7fqFV+4AYQRowAv9hnxQ==
+X-ME-Sender: <xms:M4thZ54NMKQljdzx_XpTMq8E46_OKgEJROKqYkfezNNtjFxEC2bBdw>
+    <xme:M4thZ27cT-6TtqlfAPNht4RkLSnC5_RhlgQklveAk0q6_9Tsp9tS8KB2LDUDcoaYc
+    92RoE3z-NabSAe6bNI>
+X-ME-Received: <xmr:M4thZwcH1Mgdmij4EDBmnITiGYeqQ9d2GGlb9OE-D8VUJr6Pecig9aSK-SaINiRQ15JBJ0ea8xzfRykEK4WE6S0n5fExadHtSA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdeiiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
+    hrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedt
+    vddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohgu
+    vghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepkedpmhhoug
+    gvpehsmhhtphhouhhtpdhrtghpthhtoheplhgruhhrvghnthhiuhdrphgrlhgtuhesohhs
+    shdrnhigphdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdp
+    rhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqshhtrghgihhngheslhhishhtshdrlhhinhhugidr
+    uggvvhdprhgtphhtthhopehmtghhvghhrggsodhhuhgrfigviheskhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:M4thZyK07tF8R5Vy4bNCzkbsfDJHrbBAkDbWT0cQo8E2RtPjzkWtCg>
+    <xmx:M4thZ9ICFaA2-DmtvM3MF8UlzIjOxvPO_CFoukHSZXRnwjjHzBHSeQ>
+    <xmx:M4thZ7x7-T9u_u2kIg3eCwKfJ-Dhn-x7U200xl4sO1GWyJyHqa2V5w>
+    <xmx:M4thZ5IoUu4hZEt3lDpXNtEuyg9DIZCYDI2XhNKZhlIC11QZF8h1Gg>
+    <xmx:M4thZ0-_vqxqw9whJDPIs3-d3P3YS8yE2YsNBK_sxmnIR63gzxEPQOtT>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Dec 2024 09:31:14 -0500 (EST)
+Date: Tue, 17 Dec 2024 15:31:12 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: Re: [PATCH v2] staging: media: max96712: fix kernel oops when
+ removing module
+Message-ID: <20241217143112.GL878403@ragnatech.se>
+References: <20241217065151.1281037-1-laurentiu.palcu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com> <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
- <ZxAOgj9RWm4NTl9d@google.com> <Z1saBPCh_oVzbPQy@google.com>
-In-Reply-To: <Z1saBPCh_oVzbPQy@google.com>
-From: Brian Geffon <bgeffon@google.com>
-Date: Tue, 17 Dec 2024 09:30:51 -0500
-Message-ID: <CADyq12y=MGzcvemZTVVGN4yhzr2ihr96OB-Vpg0yvrtrewnFDg@mail.gmail.com>
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for ep_poll_callback
-To: Greg KH <gregkh@linuxfoundation.org>, "# v4 . 10+" <stable@vger.kernel.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, Christian Brauner <brauner@kernel.org>, jack@suse.cz, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, cmllamas@google.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, jing.xia@unisoc.com, xuewen.yan94@gmail.com, 
-	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, lizeb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241217065151.1281037-1-laurentiu.palcu@oss.nxp.com>
 
-On Thu, Dec 12, 2024 at 12:14=E2=80=AFPM Brian Geffon <bgeffon@google.com> =
-wrote:
->
-> On Wed, Oct 16, 2024 at 03:05:38PM -0400, Brian Geffon wrote:
-> > On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> > > On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > > > Now, the epoll only use wake_up() interface to wake up task.
-> > > > However, sometimes, there are epoll users which want to use
-> > > > the synchronous wakeup flag to hint the scheduler, such as
-> > > > Android binder driver.
-> > > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > > when the sync is true in ep_poll_callback().
-> > > >
-> > > > [...]
-> > >
-> > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > > Patches in the vfs.misc branch should appear in linux-next soon.
-> > >
-> > > Please report any outstanding bugs that were missed during review in =
-a
-> > > new review to the original patch series allowing us to drop it.
-> > >
-> > > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > > patch has now been applied. If possible patch trailers will be update=
-d.
-> > >
-> > > Note that commit hashes shown below are subject to change due to reba=
-se,
-> > > trailer updates or similar. If in doubt, please check the listed bran=
-ch.
-> > >
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > > branch: vfs.misc
-> >
-> > This is a bug that's been present for all of time, so I think we should=
-:
-> >
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Cc: stable@vger.kernel.org
->
-> This is in as 900bbaae ("epoll: Add synchronous wakeup support for
-> ep_poll_callback"). How do maintainers feel about:
->
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
+Hello Laurentiu,
 
-Dear stable maintainers, this fixes a bug goes all the way back and
-beyond Linux 2.6.12-rc2. Can you please add this commit to the stable
-releases?
+On 2024-12-17 08:51:50 +0200, Laurentiu Palcu wrote:
+> The following kernel oops is thrown when trying to remove the max96712
+> module:
+> 
+> Unable to handle kernel paging request at virtual address 00007375746174db
+> Mem abort info:
+>   ESR = 0x0000000096000004
+>   EC = 0x25: DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+>   FSC = 0x04: level 0 translation fault
+> Data abort info:
+>   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af89000
+> [00007375746174db] pgd=0000000000000000, p4d=0000000000000000
+> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> Modules linked in: crct10dif_ce polyval_ce mxc_jpeg_encdec flexcan
+>     snd_soc_fsl_sai snd_soc_fsl_asoc_card snd_soc_fsl_micfil dwc_mipi_csi2
+>     imx_csi_formatter polyval_generic v4l2_jpeg imx_pcm_dma can_dev
+>     snd_soc_imx_audmux snd_soc_wm8962 snd_soc_imx_card snd_soc_fsl_utils
+>     max96712(C-) rpmsg_ctrl rpmsg_char pwm_fan fuse
+>     [last unloaded: imx8_isi]
+> CPU: 0 UID: 0 PID: 754 Comm: rmmod
+> 	    Tainted: G         C    6.12.0-rc6-06364-g327fec852c31 #17
+> Tainted: [C]=CRAP
+> Hardware name: NXP i.MX95 19X19 board (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : led_put+0x1c/0x40
+> lr : v4l2_subdev_put_privacy_led+0x48/0x58
+> sp : ffff80008699bbb0
+> x29: ffff80008699bbb0 x28: ffff00008ac233c0 x27: 0000000000000000
+> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+> x23: ffff000080cf1170 x22: ffff00008b53bd00 x21: ffff8000822ad1c8
+> x20: ffff000080ff5c00 x19: ffff00008b53be40 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> x14: 0000000000000004 x13: ffff0000800f8010 x12: 0000000000000000
+> x11: ffff000082acf5c0 x10: ffff000082acf478 x9 : ffff0000800f8010
+> x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : fefefeff6364626d
+> x5 : 8080808000000000 x4 : 0000000000000020 x3 : 00000000553a3dc1
+> x2 : ffff00008ac233c0 x1 : ffff00008ac233c0 x0 : ff00737574617473
+> Call trace:
+>  led_put+0x1c/0x40
+>  v4l2_subdev_put_privacy_led+0x48/0x58
+>  v4l2_async_unregister_subdev+0x2c/0x1a4
+>  max96712_remove+0x1c/0x38 [max96712]
+>  i2c_device_remove+0x2c/0x9c
+>  device_remove+0x4c/0x80
+>  device_release_driver_internal+0x1cc/0x228
+>  driver_detach+0x4c/0x98
+>  bus_remove_driver+0x6c/0xbc
+>  driver_unregister+0x30/0x60
+>  i2c_del_driver+0x54/0x64
+>  max96712_i2c_driver_exit+0x18/0x1d0 [max96712]
+>  __arm64_sys_delete_module+0x1a4/0x290
+>  invoke_syscall+0x48/0x10c
+>  el0_svc_common.constprop.0+0xc0/0xe0
+>  do_el0_svc+0x1c/0x28
+>  el0_svc+0x34/0xd8
+>  el0t_64_sync_handler+0x120/0x12c
+>  el0t_64_sync+0x190/0x194
+> Code: f9000bf3 aa0003f3 f9402800 f9402000 (f9403400)
+> ---[ end trace 0000000000000000 ]---
+> 
+> This happens because in v4l2_i2c_subdev_init(), the i2c_set_cliendata()
+> is called again and the data is overwritten to point to sd, instead of
+> priv. So, in remove(), the wrong pointer is passed to
+> v4l2_async_unregister_subdev(), leading to a crash.
+> 
+> Fixes: 5814f32fef13 ("media: staging: max96712: Add basic support for MAX96712 GMSL2 deserializer")
+> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 
-commit 900bbaae67e980945dec74d36f8afe0de7556d5a upstream.
+Thanks for catching this.
 
->
-> >
-> > I sent a patch which adds a benchmark for nonblocking pipes using epoll=
-:
-> > https://lore.kernel.org/lkml/20241016190009.866615-1-bgeffon@google.com=
-/
-> >
-> > Using this new benchmark I get the following results without this fix
-> > and with this fix:
-> >
-> > $ tools/perf/perf bench sched pipe -n
-> > # Running 'sched/pipe' benchmark:
-> > # Executed 1000000 pipe operations between two processes
-> >
-> >      Total time: 12.194 [sec]
-> >
-> >       12.194376 usecs/op
-> >           82005 ops/sec
-> >
-> >
-> > $ tools/perf/perf bench sched pipe -n
-> > # Running 'sched/pipe' benchmark:
-> > # Executed 1000000 pipe operations between two processes
-> >
-> >      Total time: 9.229 [sec]
-> >
-> >        9.229738 usecs/op
-> >          108345 ops/sec
-> >
-> > >
-> > > [1/1] epoll: Add synchronous wakeup support for ep_poll_callback
-> > >       https://git.kernel.org/vfs/vfs/c/2ce0e17660a7
->
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> Changes in v2:
+>  * removed call to i2c_set_clientdata() in probe;
+>  * cleaned up the trace in commit message as the tmux status line string
+>    sneaked into it;
+> 
 > Thanks,
-> Brian
->
+> Laurentiu
+> 
+>  drivers/staging/media/max96712/max96712.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/max96712/max96712.c b/drivers/staging/media/max96712/max96712.c
+> index ede02e8c891cb..0751b2e048958 100644
+> --- a/drivers/staging/media/max96712/max96712.c
+> +++ b/drivers/staging/media/max96712/max96712.c
+> @@ -418,7 +418,6 @@ static int max96712_probe(struct i2c_client *client)
+>  	priv->info = of_device_get_match_data(&client->dev);
+>  
+>  	priv->client = client;
+> -	i2c_set_clientdata(client, priv);
+>  
+>  	priv->regmap = devm_regmap_init_i2c(client, &max96712_i2c_regmap);
+>  	if (IS_ERR(priv->regmap))
+> @@ -448,7 +447,8 @@ static int max96712_probe(struct i2c_client *client)
+>  
+>  static void max96712_remove(struct i2c_client *client)
+>  {
+> -	struct max96712_priv *priv = i2c_get_clientdata(client);
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct max96712_priv *priv = container_of(sd, struct max96712_priv, sd);
+>  
+>  	v4l2_async_unregister_subdev(&priv->sd);
+>  
+> -- 
+> 2.44.1
+> 
 
- Thanks,
- Brian
+-- 
+Kind Regards,
+Niklas Söderlund
 
