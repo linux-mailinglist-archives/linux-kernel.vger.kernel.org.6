@@ -1,113 +1,164 @@
-Return-Path: <linux-kernel+bounces-448810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E653E9F45C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:13:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5F9F45C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378D316347B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8A9188E205
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD771DAC92;
-	Tue, 17 Dec 2024 08:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQAzpZnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7A11DACBF;
+	Tue, 17 Dec 2024 08:14:47 +0000 (UTC)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AF7335C0;
-	Tue, 17 Dec 2024 08:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5AF335C0;
+	Tue, 17 Dec 2024 08:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423216; cv=none; b=os66MwvENvMDzI749xwKaJWsUKwAL/yXpQSf/74TDRVzBrJmWbg0lLJG1M1TQvMtq1f6EeduV+kjbfYrr6MW9lFp+Ki2xKebOMpq3sWJBmzCt9HgIfPc9Wrmn4qS59zRp8hkaBwQEVMmX5ReTJkhT8j/M2BBKujQ6Eb10g1ILSk=
+	t=1734423286; cv=none; b=S7UHz5+J46FIi8nS7Fd+d+1dpKvcPLr1As5Xq5e49G2j2vnsTJWhSH5QOxSf6suFICFnE9fqtUil1Dh+hXdDnp97nJ03eUXV8YQsFODjylMWOxG9NL4j841yf9g8KyZWIQUQpgU2ESoXqbGIAK8SSbi7p1nLIqz8VKo8BAz5d84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423216; c=relaxed/simple;
-	bh=I3u5U4bheVTsM+/Z+bunDJWrhdwcBf08eBME6KDoixo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xoo6eXoKKdoLXizZjQm3qgjp5z39KoOu3Gh8lmWtEPX6Yypi5X3D4taMw4lV55+zcKR7yHzLIBQ6plyZSVpYaPGqqYqUA2HL6wvt9LkVWncbgxqDkPsnDRFf4muWR+/J+F3z7zWxoKU0cKnYldlc3ZXzdodD5uBxFAGmKc4si8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQAzpZnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385C0C4CED6;
-	Tue, 17 Dec 2024 08:13:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734423216;
-	bh=I3u5U4bheVTsM+/Z+bunDJWrhdwcBf08eBME6KDoixo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PQAzpZnDYB/6DfYy7v15pNBrFGlqwcHsH2nENpMwg11yhdMEQuj43dlri7lgjW/ja
-	 rxD4jBuWNNJnhFzjvFoMcgEFmy2w4W6l7f1s0wRKShNd18hXsdZWctfzb9b7lj/Sgc
-	 ROy+Ei3prl1mT0RQ5/ONFfqJW1tB7FbfbNTokd7UQxtigEN6ddWdruwqBz7Fh9hxYe
-	 XTs6myxcoMSVCFCqwz6ldTLyXy3qjHDco2ZEQlnKgZcdbujBXZjqtlvdZfhRIs5APs
-	 w11TD5/7l4CcJbuyaZrLGwWyo6zWI20A59hzUCo1aeGO5jotNo89/JCxL7hN4cVhG8
-	 t1BXsFe/vhTLg==
-Received: from [82.132.185.145] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tNShx-004TMe-8i;
-	Tue, 17 Dec 2024 08:13:33 +0000
-Date: Tue, 17 Dec 2024 08:13:31 +0000
-Message-ID: <878qsesp5g.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: arm,gic: Correct VGIC interrupt description
-In-Reply-To: <20241217061226.14139-1-krzysztof.kozlowski@linaro.org>
-References: <20241217061226.14139-1-krzysztof.kozlowski@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734423286; c=relaxed/simple;
+	bh=uOwfXU557rop5TIkXrFQReiFQ1xrxUWqWlXUsv4FT6E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lXFIPQJzAtFQNI/BwZdOq+dTvcZFFUacZrwyh+QnHfSP0Oogr3QFf65QbQD87Y8nFQH/w0Ksbybs/f9fimdv6aHmWbbHvGRrPRez9m24QbwlWEu/ifF0i5tWr5rs8aYBSoKNYf9wGaSW6DEYAYomiVfETUMsjdipfv1MxBa4TCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4afde39e360so1284865137.0;
+        Tue, 17 Dec 2024 00:14:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734423281; x=1735028081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BPpiGaA1e5dMiDjkAszyfRMBt3SwUPjlRJm/tlaPvdg=;
+        b=jJZOm7sySrMjd9awcdD7fnQS5AaZKG86b6RvAEb9uV4h5Fany1VycfwVbHwJpio8Pc
+         v0GivPnASO5dRoLt2oAoMQBfs7iT5Yv2+61bhi+YqPMF0r+PDI25ntmwSdz7VotYFdTF
+         gLg7SuPn7hOza1aEzcOmsb/75eWRrwkI0Iiuf3+q0uukFRwFiS2Niftahe49qK0dL7LY
+         pGBCou9jKBKI6UHvBrsYxXwkfzSox5e0+R/cY7yacU8Ua8SOdMxkoIdGQxQQHIi7KAQK
+         GqoHdJ9P3HzuXXlfF9mo8t3IJoLlLxSCE86vw+Uq2BuSRPj7g57qZu6JnIh6LUF0xMto
+         08eA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhAgoir1cdZ7RPKmHnjia5NEXRLcgqCiOEx1qgP1qqH1AtFfBGuQ9SbVEWEBtu0QLZgE3N/27+3yDPm5GvyiOw7WQ=@vger.kernel.org, AJvYcCV2uQBX/nC7A2NEps/QnF28EVmB9XBo1C2ApjMGFrId1ZUI1bJVm4xpw4jUvybNmx1YUye+rlCY7LHp@vger.kernel.org, AJvYcCWu3+b15d3ZUOYgtkquE+qq9qkSJZMo+GBRxKpZ+BOO+lUzBuo1fg4IowR84Kf2dBpRRZqhpklhO89W@vger.kernel.org, AJvYcCXaMxkofjUpfAf6yCS5yB3Y92xETd7VnrJ0uEAu/m693cJcOvtO6klo/WKxa6fI3+wqRqTulld0HjtNK2Rs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFBPKIG606N8oFRSqtwNnz9YK3HidEjngOUXdVqNEcZb3fy0a+
+	rMURY5xuphT5jK7GPQjpW/YcVhAYSuvu6YPTIAQNNZkrLqVK1iUyvktfEoGG
+X-Gm-Gg: ASbGncuQa3d9uRVefWyi46XP7gfc+T0GDq/5jwsvuuDzhXnAvS2Mp4LErU8nYp8hxqU
+	yQZUXt2u91qitIbwhgAt25HBbIdPVSMTojQUxxZCKvI0JGpgL19QnMiS8BUQEpnn9gJnbtZFdBu
+	Nx8E+AvQNiBelusT3VPUSfFqQLmaL3mtZEWATJAJLw5IeYHaVZmB0Y70bpv/XQBTeB/9xFLwfi1
+	4SsVTvx20FD9dUT4OJyOjqGTlCjBp3l+Z47ByEDrkdi04+a5Sn0M2FiNeU26EiKXQKpSDIil7cD
+	b1dDCEa7cvYSb/3Rqflsus0=
+X-Google-Smtp-Source: AGHT+IH8YYpmAEjxSSLUhBwLYDN3zqHh/BRRxfs4q0wqouKF1HTWa4+yU/mImOSOKT1Q7nneuq8TCw==
+X-Received: by 2002:a05:6102:6c8:b0:4b1:3b91:a697 with SMTP id ada2fe7eead31-4b25d9c02f0mr14452346137.15.1734423281240;
+        Tue, 17 Dec 2024 00:14:41 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-860ab5b7cd3sm1125848241.17.2024.12.17.00.14.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 00:14:40 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5162571e761so1400105e0c.2;
+        Tue, 17 Dec 2024 00:14:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU6LaF4FjR5bj5B36WrDL6O0A26AVYkkzY02yRMtpDtoqcQZ5/qSahW7H8QJ3pUQReYw8Nxzkn8tu1q@vger.kernel.org, AJvYcCUVH5bT1Zcpeb1elC0EkZyzbWdjhtCBEZVTGQSqP6OdfCe550DcIEQdXJGPNqihZwW03Na4PUQmuNuf8Ip6@vger.kernel.org, AJvYcCVQJ3ZDUkYczpw2G7c3h6dCpAbH4UIvwkhnDHEs41DrMhX7ywnVRIYnAIFbbru3hJIVoT6hedw72j6d@vger.kernel.org, AJvYcCXyDDrNaGwNKHIg/3yscDGffoOJkLFb2TBB52RAgcF5xn1Rb9t/1KqOC1i0StQPM0yrprWklJnB7CuW0upU1l7rVPY=@vger.kernel.org
+X-Received: by 2002:a05:6122:2a09:b0:518:7777:a61e with SMTP id
+ 71dfb90a1353d-518ca39a80fmr14871103e0c.5.1734423279879; Tue, 17 Dec 2024
+ 00:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.185.145
-X-SA-Exim-Rcpt-To: krzysztof.kozlowski@linaro.org, tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com> <20241217-rcar-gh-dsi-v5-3-e77421093c05@ideasonboard.com>
+In-Reply-To: <20241217-rcar-gh-dsi-v5-3-e77421093c05@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Dec 2024 09:14:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUczNArF7JSfjrb11OTpd8LvHv5-gUFPFCayr+Qezsbbg@mail.gmail.com>
+Message-ID: <CAMuHMdUczNArF7JSfjrb11OTpd8LvHv5-gUFPFCayr+Qezsbbg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/7] dt-bindings: display: renesas,du: Add missing constraints
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Dec 2024 06:12:26 +0000,
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
-> The description of VGIC interrupt referenced obsolete "see below" after
-> converting TXT to DT Schema in commit 66ed144f147a ("dt-bindings:
-> interrupt-controller: Convert ARM GIC to json-schema"), because there is
-> no dedicated "VGIC" chapter anymore below.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/interrupt-controller/arm,gic.yaml     | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-> index a2846e493497..7173c4b5a228 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
-> @@ -110,8 +110,8 @@ properties:
->  
->    interrupts:
->      description: Interrupt source of the parent interrupt controller on
-> -      secondary GICs, or VGIC maintenance interrupt on primary GIC (see
-> -      below).
-> +      secondary GICs, or VGIC maintenance interrupt on primary GIC (see "GICv2
-> +      with virtualization extensions" paragraph in the "reg" property).
->      maxItems: 1
->  
->    cpu-offset:
+Hi Tomi,
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+On Tue, Dec 17, 2024 at 6:32=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>
+> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+> properties. As the amount of cmms or vsps is always a fixed amount, set
+> the maxItems to match the minItems.
+>
+> Also add the minItems and maxItems to the top level properties.
+>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-	M.
+Thanks for your patch!
 
--- 
-Without deviation from the norm, progress is not possible.
+> --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+> @@ -77,6 +77,8 @@ properties:
+>
+>    renesas,cmms:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 1
+> +    maxItems: 4
+>      items:
+>        maxItems: 1
+>      description:
+> @@ -85,6 +87,8 @@ properties:
+>
+>    renesas,vsps:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 1
+> +    maxItems: 4
+>      items:
+>        items:
+>          - description: phandle to VSP instance that serves the DU channe=
+l
+> @@ -489,9 +493,11 @@ allOf:
+>
+>          renesas,cmms:
+>            minItems: 4
+> +          maxItems: 4
+>
+>          renesas,vsps:
+>            minItems: 4
+> +          maxItems: 4
+
+AFAIK these two additions are not needed, as they already match the
+values defined at the top level.
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
