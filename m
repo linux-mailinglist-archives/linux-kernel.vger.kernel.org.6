@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-449860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1D49F570C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:43:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBE49F570E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEE3189018F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:42:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD7697A5672
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6398B1F7569;
-	Tue, 17 Dec 2024 19:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A088C1F8F10;
+	Tue, 17 Dec 2024 19:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MwYA3gww"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/yYQCIM"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9815E5D4
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576571F7569;
+	Tue, 17 Dec 2024 19:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734464531; cv=none; b=pRgKSW5g+kMEA8GMXEeRqwu+F3eFEk97zQ6FaC35/ubDNU/IkHbifXuhcKsFlzSPe6oUrkU4VhZhLLrUSWglTc9yRUKr+984bUY6HgvELjPi3UgQiwg6ciJshummTGo2iBsOST8D0QOG6zrVgZZbXywVT3KcgSCmPOFMwImU8R8=
+	t=1734464573; cv=none; b=iAgMtNKjVHBeLvQuKEOuRvMtSbf1oumIQiINmI4nuYw5aagXp5BMcoIzCVYd/dnmSCqieSlKRcpE020axzFM3XdHV0vOZhI/Ac4nsQtHDb8kxgMjn/v74EBnw54G0eJw8OQerIqquA2DXvHtrBWeSghj6xGeKtpVmODd7ntCUOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734464531; c=relaxed/simple;
-	bh=NIzo64YaVDx5smZlo/FXxBwBFFiPfZlWkvnUK3eFXZY=;
+	s=arc-20240116; t=1734464573; c=relaxed/simple;
+	bh=grpmLojCHp+hPkhQW/oQqd9Z+Et1rtyJoU2nzw+jq8E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQtTSz+ikYhAzPwVsafGziGp2p8+hBfVGSiUJpfz7qMS7I+iMa2E8DHGScThcBex/fPjhCTmub9kw5tfuUb3QA5CtYcDiL+mNFIq29M6n4H2VIr4TElzeP+fZEjfhKOqM/SYQpDf4GDoVtCMzhWVGBOTKEcSmj6gCaQDS8uX/uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MwYA3gww; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3862b364538so20028f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:42:09 -0800 (PST)
+	 In-Reply-To:Content-Type; b=HUz/xvs/mnA77gN4BfZiVxJ7TWtJOCYaxgtVqRYuZEk+IADfokjB60UqT69qwX6J1/sDfMwvlccLynELm1bKCxprH5GZyZoeZUVBJf+NKPYXzQwemLNk7TwGGOhttQsY6IRlMtS8BYmNl0XwgxYXdUddLIBuIkeG51vpXJiUcmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/yYQCIM; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385dece873cso2674901f8f.0;
+        Tue, 17 Dec 2024 11:42:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1734464528; x=1735069328; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734464570; x=1735069370; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZeJxYn4M4casXfZYAzyk000sLKELwjFu6x+Nrq42e8=;
-        b=MwYA3gwwSo/2SF+UzBJhhUxQK9R+dVi8MOOds/SDuUPloipJ8AXfHt5Eh+amM7GQs6
-         BSp6iz8sa1O0XfLKP7iYifAEONObvsY3xZrsgzzb3HEQovkkUwKIiMEBPftm+RT5sCxK
-         3M/PABfAT4VCLS8/hOIaw59hem2VRMkePvnEQ=
+        bh=Xjcy3NvbXADNyBSuuuwaRVLBqtPr7mOCdn9D0nVzhNs=;
+        b=c/yYQCIMslsPS8xmR3VAvHMsBZY0DhKpuRTPthYeS10xLfKIkETYnP/sIXzbFOkbGs
+         6cF/H5vQcAXwk/jL0mtFig1sfUXStpK6DaOBxX3mR8je6Fdsr5zSyIH60NQDh+KL6TJ4
+         hwBXWa5lfWYWiOaxavf6XHiefT652dscU9HoTG1W8YkNeTMpn1i7Y4d7hgDDdyxZqtKf
+         ZydlemgGbXw4RMFJ2IjAaPNdicRIFIxV7r1jjpE/rxHWOdYJ8EpAoVKNW3JXk7xgRSCh
+         WPsRsbaBAbJpc7k7i4yUVeCD2ppj7mf57clAHyP6lxex8jGLIiv1eEYlF506aK4xLXJf
+         gpfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734464528; x=1735069328;
+        d=1e100.net; s=20230601; t=1734464570; x=1735069370;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sZeJxYn4M4casXfZYAzyk000sLKELwjFu6x+Nrq42e8=;
-        b=sXknPgJBHm/h4Rj2s8F1tqg3gxEpZSzB1e0G8ejm9tfURHrf9nHkfOOwHK9BPQoisP
-         RGMuOrPXv6xGxoELftRIj0OOxX5AXJkcwOeI6FTHT5d3Y/0/8CUBFZSL+tNzTm1qe/PC
-         OAOvDtpi1dbR1Sj9U+E+6R7crEwxyhDnvDyHTGCsd7Id1DHl5xgEjHOoVXiisxMy8GsH
-         QQhS4oZ7EsH8VgAjdfhMeAcrG0PmKHG1AuuxYCceohtgmNxF7au8xZQFRifb6KPHwALU
-         X8SL2EYLrSTiTvFQ8jA4OUfFHq+t5IFOYjHc1MNZeV7bnleuDsxCekWnK9sGTOGgpZtJ
-         93VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIbeDhQeCGrDSc8W5nnJv7Fm/rRnjfAivA6s3J8apVHIMCBc94HMm3X/uSfhlP/nVOskW2wwAZ8rI+rkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaUaBmVUkJovwaPOgDcgHgo8o17ZK+7ii8c6B78onRRfBLWrXN
-	0VA+Hm2aZoSbZad2gklS8i8qm8o5Pn9/oXJ9WbppMQK5RfY7V+dPKP/niof3HA==
-X-Gm-Gg: ASbGncuDlNA0S4MasekkSZtfDooShIZhh9mQPKw4aRLxkBc0tluyvpigy/mdVK5Vj4I
-	SBfRXC28HuFOoLosTd9/MO/cm/R2yuUKStebD3wCuJBHOHlaJXMysxcXAm7Y+RaCoxL9xjvkJRt
-	xN976nYeXTkZbBs/4nHZp5IWqlaXsl9gg3uMnoNLL8hP4SZhDKeBxPy4cwb3yRkHf/A607yykEd
-	tTLBL4/P19R1JZ2jbOhaKpkOzxH5/RHPAKIpBt18a34/ui8KEA1A2Q+7mZkyJfqX/Z3t8lXFBrl
-	lwdtS+4GhNkbDst0ofBr
-X-Google-Smtp-Source: AGHT+IG7pit3qrybh+dX6LCCHFauPg+ewGevbEpdjxdDr6DQ7XbMIITH4874VC47Iw9X3OLAW6gEwg==
-X-Received: by 2002:a05:6000:1563:b0:385:ea40:b46b with SMTP id ffacd0b85a97d-388e4e1514cmr38438f8f.4.1734464528392;
-        Tue, 17 Dec 2024 11:42:08 -0800 (PST)
+        bh=Xjcy3NvbXADNyBSuuuwaRVLBqtPr7mOCdn9D0nVzhNs=;
+        b=L4b5gl54LUaigqYtCwGhRN6v0fDAlhxJAa3F9bS6qrSEicdDnPICAm4QQg7V4nyXDu
+         bEeZDlqkBBTGLJ9e+XGKXd1N7lwmS6L4cU8maWdZrxhot06QM0O2oSwKw/OOKDfDo8bE
+         CUl8lcH+i+OKsNCpsBIZM64vafJtlsSfpQVaHIdc6Od1yGiX7g+BAv6MYWHA+hWyUH52
+         EY2NqLGUvKY/8zKCX8z9VE6ZG/BaU0mS6IufvaToaASgWnlNYisHsoXETIFwpxKKGhpf
+         G2F2y79xuZXNQa8wcMVNxMTpjoM++a0X56TPVcbAqk8Shi0wjwQJsxmKc9gYm9x2C6fM
+         7s+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0OOx677qjNtqAjWJg6680vO3aM27+tpPx2vf4MJufA6MEgwJF7wH+PhCMSyMi3Vei8Pcl8KCTggRt/Cc=@vger.kernel.org, AJvYcCVFEVDuV3Ncuqz6FCs121zLVs16p/nzpmRg6u3PhGoGmGuifn3OcXXLChG4uw3tTMz1Lb0JagHy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBRDqjOUzlHyw6IE+67e9XfO0A5OV4wj1wdLwJ6VG6nYQeUhvO
+	IoWiACzrKihfC9SWQo3CvSnVLZswv4C0eFOU4B5j/aQzIxWLs3ht
+X-Gm-Gg: ASbGncsqbUsCEC0+xwoieSR9S1N7On1KH5tsBrv133v+MkDeKcIg0hSb6zPg7cEV33N
+	NkjjzsH6xOXIm6BE1bpIyQ1PKZAUpAx17mwopBtAXSPk4RLdLgoTtc/rvYHGDP+Ye+G+KXfmlpD
+	7ii6Z48yqsQmsMpwa04n/saq3l5rgGhHGX236r7pgNQp+bhu5gbOBgLbaZl0NUzL7rgv+faL4K5
+	0eJ7uu6yDpMVcdPzY6pH15euTGbXMCIDBIJVTtJoU2+TFLX4fdp3GzCI7JDR0IDKYObTC5PXVpp
+	SLKGAQ0e
+X-Google-Smtp-Source: AGHT+IEDvqJIQo75IpCM8BROExyo70sf/3Dzu8LlfDOb2fRkaAhslobAvOkSQes6CQnFNmeFRkNeXw==
+X-Received: by 2002:a5d:5f4a:0:b0:385:e0d6:fb48 with SMTP id ffacd0b85a97d-388e4d2ddb7mr121407f8f.7.1734464569438;
+        Tue, 17 Dec 2024 11:42:49 -0800 (PST)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801ad9asm11843854f8f.58.2024.12.17.11.41.57
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801a487sm12235816f8f.45.2024.12.17.11.42.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 11:42:07 -0800 (PST)
-Message-ID: <9952cc14-72a1-4a56-977d-58177d6c553e@broadcom.com>
-Date: Tue, 17 Dec 2024 11:41:55 -0800
+        Tue, 17 Dec 2024 11:42:48 -0800 (PST)
+Message-ID: <979e05d4-3fd9-4e28-8f9e-67ce2b9ab938@gmail.com>
+Date: Tue, 17 Dec 2024 11:42:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,92 +81,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] drm/vc4: Fixup DT and DT binding issues from
- recent patchset
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Eric Anholt <eric@anholt.net>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>,
- Stefan Wahren <wahrenst@gmx.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
- linux-gpio@vger.kernel.org
-References: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
+Subject: Re: [PATCH 5.15 00/51] 5.15.175-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241217170520.301972474@linuxfoundation.org>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241212-dt-bcm2712-fixes-v3-0-44a7f3390331@raspberrypi.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+In-Reply-To: <20241217170520.301972474@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/12/24 10:36, Dave Stevenson wrote:
-> I missed the DT errors from the recent patchset[1] (DT patches
-> in linux-next via Florian, DRM bindings patches on dri-misc-next)
-> as Rob's bot report got spam filtered, so this is a fixup set.
+On 12/17/24 09:06, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.175 release.
+> There are 51 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Largely it was changes to number of interrupts or clocks in the
-> bindings, so those are now covered.
+> Responses should be made by Thu, 19 Dec 2024 17:05:03 +0000.
+> Anything received after that time might be too late.
 > 
-> I've fixed up the missing "interrupt-controller" flags for 2711
-> and 2712 whilst here.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.175-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
 > 
-> I can't get my head around what is meant to happen with ranges:
-> "soc@107c000000: firmware: 'ranges' is a required property"
-> The meaning seems obvious.
+> thanks,
 > 
-> However if I add it then I get:
-> "firmware: '#address-cells', '#size-cells', 'dma-ranges', 'ranges' do
-> not match any of the regexes: 'pinctrl-[0-9]+'
-> from schema $id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-> 
-> There's obviously some other flag I need to set in the bindings,
-> but I can't work it out. We have similar errors for all the Pi
-> platforms for one or more nodes.
-> Please advise and I'll happily fix them all.
+> greg k-h
 
-Dave, as proposed earlier, I have squashed/fixed up the fixes into their 
-original commit since those were only in linux-next. Thanks!
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
 Florian
 
