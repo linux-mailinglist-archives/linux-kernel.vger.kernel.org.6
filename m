@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-448438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FAE9F401A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:40:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0379F401D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 929EF7A2EE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE0B169C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA378528E;
-	Tue, 17 Dec 2024 01:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4030745BEC;
+	Tue, 17 Dec 2024 01:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NmJk2acJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="X8UoPFqV"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892E51E480;
-	Tue, 17 Dec 2024 01:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EA279CD;
+	Tue, 17 Dec 2024 01:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734399573; cv=none; b=OzjATBSG+cpujNPy2CtxmXpGxRoxUKyZMKpdoxhnz46aK77L3tNCJfr/Y+a2px3G61+B0o8CHpnWYNmBJJPWCb4ee0KpInDvAXKhcxbiM4vrlxPBTalywLnD0sbCESQEsNYegMmeVMw5JJsw0QLnNiWt5/5+OJ92EyKAmTVs1Cg=
+	t=1734399647; cv=none; b=BA/QcPhLQK5BfWQ7jNguNxT84T4pmoIEHWRT//L/8gmca964Um6EEgvxHUirSJQEjNLW0BK5qBvwyMuEC1ajvNfuMGwqZ4JVWRcKJ3W6cG0aYuswpBMwyneqLkhS3Vm8DMxEOgBwUWVgXFNJVxExOnmWV7mfiDgv7B01G30hWJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734399573; c=relaxed/simple;
-	bh=i4qafmwrLFaSOIq1b/yxPkapFf7MgkPyrYU4OdlUvbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FHEHGzq90DJxztoyNBwB2ttoS14tTZWhmZ4/PO3uci2wXnQjAD2tsPoDb6qzL1sDf5JPhqElC+Vli8ZY6uElHMW9eAWMgNtHrhb6pd1qJ/OremAsotaOL7ktEAVXy9hWLaPa97HkJUYzQ/fIViu/A8LXlsnToUqDgjijG+ZazwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NmJk2acJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH02Sga027348;
-	Tue, 17 Dec 2024 01:39:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EeSmEL1eAu+2FwGVKFMhhMKFg7nchA3n0VWF12eik4g=; b=NmJk2acJAMoquG+q
-	QTi5xFhXJf/kPtMfQrM1nddFMkY13qmor84xVlAmGb9UTTF138XbejC27dio7XoL
-	Gn4hUFCb+kl03MuQK5TXp6r20QcxoV5FtMvi9DvQN3fh0tplHhRwCOCmWJPHvb7Z
-	BBd787ZVKlWZmBo7ROpYczUUm6TWrfTxByDCRJf5wtifV600Nd+Qq2zjCq/hXDdV
-	8yukA/21C5zw8kBknCo8cUusq8omvH7hrHQWsbUfGBwOBFgB0CiTKBtQtRcsQ0WJ
-	lKfIXBrgvtgXzmgGo8TAnErE725Jc5VKXCE8iyU5gqjcnjkor7iD+bRk0jH8UsCf
-	AFRncg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jxdm06e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 01:39:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH1dHU0014990
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 01:39:17 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 17:39:16 -0800
-Message-ID: <097a3d10-0992-46a4-8f89-aa54538c9776@quicinc.com>
-Date: Mon, 16 Dec 2024 17:39:15 -0800
+	s=arc-20240116; t=1734399647; c=relaxed/simple;
+	bh=/vyZwwxwTAh84I9YysE3Wx2AoCfBQVkucYWVEhG38K4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ht9XDkaJnxDLO/+AOanNTnb33NZJD/fDfesxWzigHxKWmR8stazNdUFduxxhDun3RK2FeJMfsDt8D2QnSOPY3YCeCbIxC2r+GcjSqgzbtNnC6zHCI0WF9Hqv/AaC0pQVC1fAlQC4yy3EH2cIp/ZV0buZTDNYf3AIe53G3D6Rukg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=X8UoPFqV; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734399636; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kp5bgamgQnxWfuok8ilXwYLyCWVqZ0QAZHqUfBvdgPA=;
+	b=X8UoPFqVcK5Zx6QPBWAfokgOKh+Bcn1XLS2hjg4I3s8UIIWcJZP689gwh1J7wvYINhLC20JgH3j8YP5Oa+Q8vV9mBpJ8okGtahaLlcSXU+k0qn24bIU1c5WJQRkQDZlP/ykuJcc9BVZIterdWwA+rJcAQ4ZyG69IngzEtLuzL2w=
+Received: from 30.246.161.240(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLgi-44_1734399632 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Dec 2024 09:40:34 +0800
+Message-ID: <29d80fff-f33f-4470-a345-3f8f1a46f1af@linux.alibaba.com>
+Date: Tue, 17 Dec 2024 09:40:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,91 +47,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/25] drm/msm/dpu: fill CRTC resources in dpu_crtc.c
-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Simona Vetter <simona@ffwll.ch>,
-        Simona Vetter <simona.vetter@ffwll.ch>
-CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-References: <20241216-concurrent-wb-v4-0-fe220297a7f0@quicinc.com>
- <20241216-concurrent-wb-v4-8-fe220297a7f0@quicinc.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-concurrent-wb-v4-8-fe220297a7f0@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ko__uVmEa7xBH6bgayo2H4Wh3FwXrJaT
-X-Proofpoint-ORIG-GUID: Ko__uVmEa7xBH6bgayo2H4Wh3FwXrJaT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxscore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412170011
+Subject: Re: [PATCH v17 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: jane.chu@oracle.com, yazen.ghannam@amd.com, mark.rutland@arm.com,
+ catalin.marinas@arm.com, mingo@redhat.com, robin.murphy@arm.com,
+ Jonathan.Cameron@Huawei.com, bp@alien8.de, rafael@kernel.org,
+ linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
+ tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
+ linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+ tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
+ jarkko@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20241202030527.20586-1-xueshuai@linux.alibaba.com>
+ <20241202030527.20586-2-xueshuai@linux.alibaba.com>
+ <2fb8b1e5-d606-47be-a79e-a4e37a3b8f7f@oracle.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <2fb8b1e5-d606-47be-a79e-a4e37a3b8f7f@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 12/16/2024 4:43 PM, Jessica Zhang wrote:
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+在 2024/12/17 07:37, jane.chu@oracle.com 写道:
 > 
-> Stop poking into CRTC state from dpu_encoder.c, fill CRTC HW resources
-> from dpu_crtc_assign_resources().
+> On 12/1/2024 7:05 PM, Shuai Xue wrote:
+>> Synchronous error was detected as a result of user-space process accessing
+>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>> memory_failure() work which poisons the related page, unmaps the page, and
+>> then sends a SIGBUS to the process, so that a system wide panic can be
+>> avoided.
+>>
+>> However, no memory_failure() work will be queued when abnormal synchronous
+>> errors occur. These errors can include situations such as invalid PA,
+>> unexpected severity, no memory failure config support, invalid GUID
+>> section, etc. In such case, the user-space process will trigger SEA again.
+>> This loop can potentially exceed the platform firmware threshold or even
+>> trigger a kernel hard lockup, leading to a system reboot.
+>>
+>> Fix it by performing a force kill if no memory_failure() work is queued
+>> for synchronous errors.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+>> ---
+>>   drivers/acpi/apei/ghes.c | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index a2491905f165..106486bdfefc 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -801,6 +801,17 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>           }
+>>       }
+>> +    /*
+>> +     * If no memory failure work is queued for abnormal synchronous
+>> +     * errors, do a force kill.
+>> +     */
+>> +    if (sync && !queued) {
+>> +        dev_err(ghes->dev,
+>> +            HW_ERR GHES_PFX "%s:%d: synchronous unrecoverable error (SIGBUS)\n",
+>> +            current->comm, task_pid_nr(current));
+>> +        force_sig(SIGBUS);
+>> +    }
+>> +
+>>       return queued;
+>>   }
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> [quic_abhinavk@quicinc.com: cleaned up formatting]
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 29 +++++++++++++++++++++++++++++
->   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  4 ++--
->   2 files changed, 31 insertions(+), 2 deletions(-)
+> Looks good.
 > 
-
-<snip>
-
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 2b999a0558b2a016644ed5d25bf54ab45c38d1d9..a895d48fe81ccc71d265e089992786e8b6268b1b 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -1138,7 +1138,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->   	struct dpu_hw_blk *hw_pp[MAX_CHANNELS_PER_ENC];
->   	struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
->   	struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
-> -	int num_ctl, num_pp, num_dsc;
-> +	int num_pp, num_dsc, num_ctl;
->   	unsigned int dsc_mask = 0;
->   	int i;
->   
-> @@ -1166,7 +1166,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
->   		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
->   		ARRAY_SIZE(hw_pp));
->   	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> -		drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-> +			drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
->   
->   	for (i = 0; i < MAX_CHANNELS_PER_ENC; i++)
->   		dpu_enc->hw_pp[i] = i < num_pp ? to_dpu_hw_pingpong(hw_pp[i])
+> Reviewed-by: Jane Chu <jane.chu@oracle.com>
 > 
+> -jane
 
-This chunk of diff is unnecessary. You are just changing the order of 
-defines and fixing alignment. Does not have to be in this change.
+Thanks.
+
+Best Regards,
+Shuai
 
