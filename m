@@ -1,156 +1,230 @@
-Return-Path: <linux-kernel+bounces-449915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0EC9F57EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:40:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F57E9F57EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B6F168F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB031889672
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630581F9A99;
-	Tue, 17 Dec 2024 20:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA061F9AB3;
+	Tue, 17 Dec 2024 20:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="tkSyeXZu"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiG8s1dE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844817BEA2
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB4C4A23;
+	Tue, 17 Dec 2024 20:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467993; cv=none; b=fhtcDWk/G+qd1ZEigOGswPJnhcZ9AYYNslAXQRUCPBZzzMypuqXtcCVt+WRDuY+EPDmjXm40i5rhlj+AEcjlaZ+4swswroVNTxo1NTTH2NZ/Ckn24srrMfmYlUdXVZhWvXLtzyDKeSyBj48H3Cd7atTIETOSqoreyJNgpp/5MsU=
+	t=1734468068; cv=none; b=s1DRnANkCuF/0ei3zvNdhHZU2xqfAAziJdt88spgit4XJUFuwxIRu4RLdvggySL1/K78aMHd1HvFKvg52N0yZgVaJ6d5VX6XaCfWz6GxE9rMq2ZxwMKWcMeg+TKkQaT26VmCUZokGOq6s/8a60TSFsHpnHJ7Q/l3IPkgEmi3ltQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467993; c=relaxed/simple;
-	bh=H27hwbhxPzvbgwC8BOruK3IE+0AY397UDRJuHr7xI3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K4t+czEd01mX+hgoRT8Rq2H6p95Yh/bZ3GjJQSYQfVawDTTJe4VYApYyn0pLViXvxZmH2EwtTvTsTB4Q9dZBr1NR9VakMikr+psa4pw/uaZ2oBHFHs/uBhlfFiTnuauNl4OUUM3NsfD4Z4CRAjqs4bZKjDA9Bk8F7hsj37JB/pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=tkSyeXZu; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7374F2C0861;
-	Wed, 18 Dec 2024 09:39:41 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734467981;
-	bh=fok1y8h90A69YIQrYpLRQu+TATK0uGXoc4Zog7s/xog=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tkSyeXZumlr/z08BBjQnlHrEhc0v0NB8liGX+sUfDin/eeOQW7TUK/aQG57Er6UcO
-	 6RC1KUUvBmHwwMo+UxlOlmli47l4TP0PVJkbsjKTs9uLka3DNtmSQr5hTECBiYkyMk
-	 /2sLnpmarq/tdfwKvirGijk2cR7cjyEwc6nhcY8ROHap+mGyAgmRrBUKP9677lokQ1
-	 dJ5NBuNeOPTG8Juuj3JFoXqgRLNIro5d5rPmAWkjwRHoxoi6X3olXXtzpgrVXoJKmp
-	 LJBcxDzgG4Ijo+/+ceXDXdmWU4GenaS18+7Miny0+nozP++PpkK3Iq2mOCjD4RnoSl
-	 m3g+NpBZ+12vA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6761e18d0000>; Wed, 18 Dec 2024 09:39:41 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 4EF9B13EDC3;
-	Wed, 18 Dec 2024 09:39:41 +1300 (NZDT)
-Message-ID: <0986f65a-ff1c-4ba4-9bae-de3972794bc3@alliedtelesis.co.nz>
-Date: Wed, 18 Dec 2024 09:39:41 +1300
+	s=arc-20240116; t=1734468068; c=relaxed/simple;
+	bh=wmhWeMx+gds3+4ecDMaKGnZvDldM5ni/4Zm1/MDMBrg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r8jWJhjo8kHzCl4yogKjCPrA5m/JRgbRrFT7SqG+ikY2o8lddsLISsE/fziw8TyMEyFcVDy70GMZ67XNpHladZiv+MukVMthQAI1wiloDfgaRcqMlIjVuQPziEi6buhtVZNm8gymq6IvvRyKYUmFUnSME0EGqo52pkkyCAircFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiG8s1dE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793C3C4CED3;
+	Tue, 17 Dec 2024 20:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734468067;
+	bh=wmhWeMx+gds3+4ecDMaKGnZvDldM5ni/4Zm1/MDMBrg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AiG8s1dEaRbb3EGfuyFpaiP+0Z+kT1RFdXb7QslHDjJV6yxqEanjbsCkXXSxxE2LA
+	 +deBCGzY/O1417XVbHwfsNk1Hl9UwF6+uqd62rcfF/UKL1E1hajVfuIMJTo2oX0JpO
+	 f13jj3RBqJbZ81TQQll4Z6g3h7itUHfId00mygAmMLAIOIc8osoR9cuZRly+x0aos/
+	 a3h1W0i3Lnob02kjZwim8SBumyWcszr6+TvvJ4Y+DS8MMWJf+rKFYXwM5qmhGH4g9R
+	 pfFPDGL5+prv+k59XW63p7xjUwZy10de38VpSTZWdwhFqEH94HWVj+BJRXlSI1ZmwD
+	 Ri1FddHmE0YwA==
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3eb9a0a2089so3220633b6e.1;
+        Tue, 17 Dec 2024 12:41:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVOhlevhL/Ed6SSvBb1LTrYR6Ywe0GJZT8uWtVzGqku9M+xhyTWYQKqKdHdCEYGY1xIZ52SDsenjTPLLnU=@vger.kernel.org, AJvYcCXg18kHuParZsMXumXC2tk/L1guI2dSTuTN3dWBs2Kk6/nl5p/dq0m4EDJIuM3ayiqOTP88yt18t94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5AQaCHP3fekynVlaw3rV2Vj9UCkBtGGnMVlRGJUHMXFGFC/HV
+	dvEDfo3dip2xk3Kdlc3hJSoYaZkDvtFfF3QBEXNbs3fPXIGQDVx4VRAAUrTXZDqK9HM0YxDA6Mm
+	bYgr46AoTpepOCtLANVOUOuUiDTg=
+X-Google-Smtp-Source: AGHT+IFOVEpT5HsqFqM4Ll0rAEIKFoyK6uzQUX8dHSgM2ZerqFUh/QCL+YmPaXDPjX62StDgn15y62deYLMSdEkQKCc=
+X-Received: by 2002:a05:6808:1386:b0:3ea:5705:2a2f with SMTP id
+ 5614622812f47-3eccc09db24mr301076b6e.43.1734468066732; Tue, 17 Dec 2024
+ 12:41:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: smatch usage (was Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO
- driver)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
- <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
- <20241216164814.GH780307@kernel.org>
- <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
- <20241217103509.GO780307@kernel.org>
- <c656bd3f-4ad0-4c2b-8d91-1c81f7e41c52@alliedtelesis.co.nz>
- <c5bd368e-bd4b-4001-b612-b5293a8b2c1a@stanley.mountain>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <c5bd368e-bd4b-4001-b612-b5293a8b2c1a@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761e18d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=NEAV23lmAAAA:8 a=yPCof4ZbAAAA:8 a=07d9gI8wAAAA:8 a=dxtpdiMQ9aW_9zQE9TkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=e2CUPOnPG4QKp8I52DXD:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+References: <5861970.DvuYhMxLoT@rjwysocki.net> <3353401.44csPzL39Z@rjwysocki.net>
+ <31c86834-273b-458f-9914-eff76c283cfb@arm.com>
+In-Reply-To: <31c86834-273b-458f-9914-eff76c283cfb@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 17 Dec 2024 21:40:54 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jus4bzeZhUK4WC7uypQkh-_MMuU1M54figsGV3+5OhUg@mail.gmail.com>
+Message-ID: <CAJZ5v0jus4bzeZhUK4WC7uypQkh-_MMuU1M54figsGV3+5OhUg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v021 5/9] PM: EM: Introduce em_dev_expand_perf_domain()
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Morten Rasmussen <morten.rasmussen@arm.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 18/12/2024 09:07, Dan Carpenter wrote:
-> On Wed, Dec 18, 2024 at 08:40:08AM +1300, Chris Packham wrote:
->> (culled the cc list)
->>
->> On 17/12/2024 23:35, Simon Horman wrote:
->>> + Dan Carpenter
->>>
->>> On Tue, Dec 17, 2024 at 10:47:10AM +1300, Chris Packham wrote:
->>>> On 17/12/2024 05:48, Simon Horman wrote:
->>>>> On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
->>>>>> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
->>>>>> switches with integrated SoC. There are 4 physical SMI interfaces on the
->>>>>> RTL9300 but access is done using the switch ports so a single MDIO bus
->>>>>> is presented to the rest of the system.
->>>>>>
->>>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ...
->>>
->>>>>> +		if (smi_addr[0] > MAX_SMI_BUSSES)
->>>>> Hi Chris,
->>>>>
->>>>> Should this condition be
->>>>>
->>>>> 		if (smi_addr[0] >= MAX_SMI_BUSSES)
->>>> Yes. You are correct.
->>>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
->>>>>> +					     smi_addr[0]);
->>>>>> +
->>>>>> +		if (smi_addr[1] > MAX_SMI_ADDR)
->>>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
->>>>>> +
->>>>>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
->>>>>> +			priv->smi_bus_isc45[smi_addr[0]] = true;
->>>>> Otherwise it seems that smi_bus_isc45 may overflow here.
->>>>>
->>>>> Flagged by Smatch.
->>>> Sounds like something I should start looking at for myself. Have you got a
->>>> link to share?
->>> Hi Chris,
->>>
->>> Smatch is here: https://github.com/error27/smatch
->>> And my usage of it is informed by
->>> https://blogs.oracle.com/linux/post/smatch-static-analysis-tool-overview-by-dan-carpenter
->> Thanks, I did find the repo.or.cz mirror and
->> https://lwn.net/Articles/691882/ after I searched a bit.
->>
->>> FWIIW, I run it usking kchecker on individual source files.
->>>
->>> I've also CCed the author, Dan Carpenter, for good measure.
->> Odd thing is I can't seem to reproduce any error report on my buggy code.
->> I've tried `make O=build_smatch CHECK="~/src/smatch/smatch -p=kernel" C=1`
->> and `O=build_smatch ~/src/smatch/smatch_scripts/kchecker --spammy
->> drivers/net/mdio/mdio-realtek-rtl.c`
->>
-> I wasn't able to use O=... with the kchecker script but if I call make
-> directly then it works for me:
+On Tue, Dec 17, 2024 at 10:38=E2=80=AFAM Dietmar Eggemann
+<dietmar.eggemann@arm.com> wrote:
 >
-> make O=/home/dcarpenter/progs/kernel/build/build_smatch/ allyesconfig
-> make O=/home/dcarpenter/progs/kernel/build/build_smatch/ C=2 'CHECK= /home/dcarpenter/progs/smatch/release/smatch_scripts/../smatch --project=kernel --succeed ' drivers/net/mdio/mdio-realtek-rtl.o
+> On 29/11/2024 17:02, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Introduce a helper function for adding a CPU to an existing EM perf
+> > domain.
+> >
+> > Subsequently, this will be used by the intel_pstate driver to add new
+> > CPUs to existing perf domains when those CPUs go online for the first
+> > time after the initialization of the driver.
+> >
+> > No intentional functional impact.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v0.1 -> v0.2: No changes
 >
-> regards,
-> dan carpenter
+> Could you add information why this new EM interface is needed?
 
-Hi Dan,
+There is some of it in the changelog already.
 
-I think the problem was I had libsqilite3-dev installed but not sqlite3. 
-I rebuilt smatch after installing the sqlite3 package and now my 
-original incantation works as well as your one above.
+In fact, it is only needed in a corner case when the system starts
+with some CPUs offline and they only go online later (as a result of
+an explicit request from user space).  That is the only case when a
+new CPU may need to be added to an existing perf domain.
 
-Thanks,
-Chris
+> IIRC, you can't use the existing way (cpufreq_driver::register_em) since
+> it gets called to early (3) for the PD cpumasks to be ready. This issue
+> will be there for any system in which uarch domains are not congruent
+> with clock domains which we hadn't have to deal with Arm's heterogeneous
+> CPUs so far.
 
+Basically, yes.
+
+> __init intel_pstate_init()
+>
+>   intel_pstate_register_driver()
+>
+>     cpufreq_register_driver()
+>
+>       subsys_interface_register()
+>
+>         sif->add_dev() -> cpufreq_add_dev()
+>
+>           cpufreq_online()
+>
+>             if (!new_policy && cpufreq_driver->online)
+>
+>             else
+>
+>               cpufreq_driver->init() -> intel_pstate_cpu_init()
+>
+>                 __intel_pstate_cpu_init()
+>
+>                   intel_pstate_init_cpu()
+>
+>                     intel_pstate_get_cpu_pstates()
+>
+>                       hybrid_add_to_domain()
+>
+>                         em_dev_expand_perf_domain()              <-- (1)
+>
+>                   intel_pstate_init_acpi_perf_limits()
+>
+>                     intel_pstate_set_itmt_prio()                 <-- (2)
+>
+>             if (new_policy)
+>
+>               cpufreq_driver->register_em()                      <-- (3)
+>
+>     hybrid_init_cpu_capacity_scaling()
+>
+>       hybrid_refresh_cpu_capacity_scaling()
+>
+>         __hybrid_refresh_cpu_capacity_scaling()                  <-- (4)
+>
+>         hybrid_register_all_perf_domains()
+>
+>           hybrid_register_perf_domain()
+>
+>             em_dev_register_perf_domain()                        <-- (5)
+>
+>       /* Enable EAS */
+>       sched_clear_itmt_support()                                 <-- (6)
+>
+> Debugging this on a 'nosmt' i7-13700K (online mask =3D
+> [0,2,4,6,8,10,12,14,16-23]
+>
+> (1) Add CPU to existing hybrid PD or create new hybrid PD.
+
+Not exactly.
+
+(1) is just to expand an existing perf domain if the CPU is new (was
+offline all the time previously).
+
+Likewise, the direct hybrid_register_perf_domain() call in
+hybrid_add_to_domain() is to add a new perf domain if the given CPU is
+new (was offline all the time previously) and is the first one of the
+given type (say, the system is starting with all E-cores offline).
+It won't succeed before (4).
+
+For CPUs that are online to start with, hybrid_add_to_domain() assigns
+them to hybrid domains and PDs are created for them in
+hybrid_register_all_perf_domains().
+
+> (2) Triggers sched domain rebuild (+ enabling EAS) already here during
+>     startup ?
+
+This is just to enable ITMT which is the default mechanism for Intel
+hybrid platforms.  It also requires a rebuild of sched domains to be
+enabled.
+
+>     IMHO, reason is that max_highest_perf > min_highest_perf because of
+>     different itmt prio
+
+Yes (which means that the platform is at least not homogenous).
+
+This really has been introduced for the handling of favored cores on
+otherwise non-hybrid platforms (say Tiger Lake).
+
+>     Happens for CPU8 on my machine (after CPU8 is added to hybrid PD
+>     0,2,4,6,8) (itmt prio for CPU8=3D69 (1024) instead of 68 (1009)).
+>     So it looks like EAS is enabled before (6) ?
+
+No, it is ITMT because CPU8 is a favored core.
+
+> (3) ARM's way to do (5)
+> (4) Setting hybrid_max_perf_cpu
+> (5) Register EM here
+> (6) Actual call to initially triggers sched domain rebuild (+ enable
+>     EAS) (done already in (2) on my machine)
+
+This is the second rebuild of sched domains to turn off ITMT and
+enable EAS.  The previous one is to enable ITMT.
+
+The earlier enabling of ITMT could be avoided I think, but that would
+be a complication on platforms that contain favored cores but
+otherwise are not hybrid.
+
+> So (3) is not possible for Intel hybrid since the policy's cpumask(s)
+
+It is possible in principle, but not particularly convenient because
+at that point it is not clear whether or not the platform is really
+hybrid and SMT is off and so whether or not EAS is to be used.
+
+> contain only one CPUs, i.e. CPUs are not sharing clock.
+> And those cpumasks have to be build under (1) to be used in (5)?
+
+They are built by the caller of (1) to be precise, but yes.
 
