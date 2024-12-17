@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-449254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A553A9F4C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:32:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0459F4C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39231895302
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41067A15E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA8C1F4713;
-	Tue, 17 Dec 2024 13:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A6B1F4E49;
+	Tue, 17 Dec 2024 13:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz1Jffin"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzzba+p5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937431F37C6;
-	Tue, 17 Dec 2024 13:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98721F4285;
+	Tue, 17 Dec 2024 13:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442047; cv=none; b=W/JRhWKs1NLqKOIvnCgVKFNfxTxFJEMUhZ7iPxs5ZHfPMTxrMZLaPJBq5Zctn1rDMazoQRL64XdDvUPTPXsN54+M5dl5fWdhBPMLkI9rll77xLeWK+M5fGYzIc2QMZZjQkqG64YVywhDQFAN4lveUDN5VmemmQEm0NHcYZfcRKs=
+	t=1734442056; cv=none; b=S8GWvaOflPtxSllxnB5WXVbXc9SwagmanJqxQbh5PGpO6JqqJTzzgEKE3fmi9WjIeI0de25Nu/nCQUhp8yrPjqFa7HdQrGt6XiMDtJFznSOHb0VT8w2e08qpw+Ij63SXiqU+v53pZnNsntEbD/HD5xbyR/Lmra6mZF8jRvkfK/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442047; c=relaxed/simple;
-	bh=2GaD3sMPebMUphWDx5huB7scIRnQSIGcV+KEy7uN5qg=;
+	s=arc-20240116; t=1734442056; c=relaxed/simple;
+	bh=pvcne/S7h5GxuzsVAtKGGhSARJDAW+nt0TG3iuNsj+g=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KNsUUDxEIG3mY+d39zcyfRo64dRE4eWUULvwlF/vs+9ja1/3oGXGxCz9OaZD7gyPruV8HYDZuQUF6NxDjlLvTcmXxAmxydEvq7hlSGreKv1/6IVAnVqbMp2cSyZLNyIzfaUpiKsH6IF3XyCwdHxHJOWSjCmgJDruqyMOWW49P4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz1Jffin; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF8FC4CED3;
-	Tue, 17 Dec 2024 13:27:24 +0000 (UTC)
+	 MIME-Version:Content-Type; b=gTKcjuaenHZ+fLqHhbUs+ne2iwdcDgQolBKbxpw5KMrTJ3MUrrSy/7vzXVheUkSurpogByhOPj9kZSfvL3m83+GJ/hlIUiailTdr0D7amsyvUHI6La3saopZ02MXai9NotbScc6k+oKa6TNvuotrI02ngAaQ/sLdmeL2m+nxhr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzzba+p5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B085C4CED3;
+	Tue, 17 Dec 2024 13:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734442047;
-	bh=2GaD3sMPebMUphWDx5huB7scIRnQSIGcV+KEy7uN5qg=;
+	s=k20201202; t=1734442056;
+	bh=pvcne/S7h5GxuzsVAtKGGhSARJDAW+nt0TG3iuNsj+g=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bz1Jffinq0ThMU8TkWhB67W4ebfuh2N4+xhVCEFd+zULQpoQGcLqlnjqPaWuNJAZ5
-	 6sqzz2JrL5qdjzOq2fqk73zMAwCC+AoZfHgz7YPvD8l64H3VN1ONQ7kVcEMvrf2EU3
-	 DbVaduFy5jd+3YyHNVoy68lA90uBsJh8+p9Yh1xhFigAxcDo5K3dYnEkBcpQlRDg/v
-	 ZfXeEL2hsnvF3XBwWKbD35ZWFgNI+cThuEsyAr5PTIeShXDtbQNH5jPjthsnSWyUvL
-	 MxKWQSHIv3lHCj97qHE0/v4KlUdMFL0Q132f8gjyYwM8c2yQSnk7++b4eUfwON5Jcc
-	 zu6MUuIN12Wug==
+	b=dzzba+p5x2f9pOP97NAyWQKMZ3yTMna2Ad+pX58avKeU2yFyyQdarWEghTmw8+66h
+	 abU6dXZkGNvlWdBV0iS1sr982UgTK55tTr6Ttf1j/cjJJ6cVaP0uoy7Mrm7W4BE88E
+	 zwyajdVFB0FYkIjC1Bg9CasIMc/+HhA3r2S1VyV8kFb00lN5Ok12faVXxzJxIIuW8i
+	 Ph3Fdc7X+yRLKW0Hx4joeiDV3oHTEf9XGLOhx3VEW8eZeLC2HbwXWLpL4BJQs8ywnC
+	 Ex5oFJedrH5e2Z+y2d595wZlrFJQ/n1uuaPagbTrxpkzEDUeovaIu1Un09AaxuRBVt
+	 PF7q5s6+ezhNQ==
 From: Mark Brown <broonie@kernel.org>
-To: konradybcio@kernel.org, andersson@kernel.org, 
- srinivas.kandagatla@linaro.org, Alexey Klimov <alexey.klimov@linaro.org>
-Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org, 
- krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241205023344.2232529-1-alexey.klimov@linaro.org>
-References: <20241205023344.2232529-1-alexey.klimov@linaro.org>
-Subject: Re: (subset) [PATCH v1 0/3] db845c/rb3: add i2s playback support
-Message-Id: <173444204405.31585.10764828283359007380.b4-ty@kernel.org>
-Date: Tue, 17 Dec 2024 13:27:24 +0000
+To: Jon Lin <jon.lin@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ heiko@sntech.de, linux-arm-kernel@lists.infradead.org, 
+ linux-spi@vger.kernel.org
+In-Reply-To: <20241208130311.1324024-1-jon.lin@rock-chips.com>
+References: <20241208130311.1324024-1-jon.lin@rock-chips.com>
+Subject: Re: [PATCH] spi: rockchip-sfc: Support pm ops
+Message-Id: <173444205510.31817.16108705113990702119.b4-ty@kernel.org>
+Date: Tue, 17 Dec 2024 13:27:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,26 +60,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 05 Dec 2024 02:33:41 +0000, Alexey Klimov wrote:
-> There are i2s signals provided in low-speed connector on such boards
-> as required by 96boards spec. Looks like it is possible to actually
-> playback something via these pins after adding missing parts here
-> and there.
+On Sun, 08 Dec 2024 21:03:11 +0800, Jon Lin wrote:
+> Support system_sleep and runtime_pm ops.
 > 
-> I tested simple widely available cheap DACs like UDA1334 and PCM5102A
-> and they works just fine without need for mclk. I guess any DAC that
-> can handle 48 kHz and 16bit will do.
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[2/3] ASoC: qcom: sdm845: add handling of secondary MI2S clock
-      commit: 8bfb66c75cdace542dabe87841152614fd5b8d91
+[1/1] spi: rockchip-sfc: Support pm ops
+      commit: 8011709906d0d6ff1ba9589de5a906bf6e430782
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
