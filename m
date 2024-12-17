@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-449940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360CE9F5865
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:07:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693A29F5866
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FDB3161FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BC71893552
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556701FA24A;
-	Tue, 17 Dec 2024 21:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD0F1FA175;
+	Tue, 17 Dec 2024 21:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MSDIlEc4"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RSNBeIoU"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1621FA159
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5031FA171
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734469628; cv=none; b=urybt591N5s9pxfkYGHwTkxmVKYAobECgsbWg1GAXwi8VVALXOfTayoYHfRQ44ntsiWP/95+5PVLsjT+X4HNGl4vUXEVLh/vMgLTd9Vt9ws1C+dJbJWKHTKIFsbZUMzMepk+ENVGZXkaNKNU9XS08yJAUrmxTVy+vHr7zOJjT2I=
+	t=1734469629; cv=none; b=ma7cXvnYzz3FPFw+pDWUwWGQteDpX24gPylEQFz5VCD0UiYwNv91oqJ6J0JJn71kiWCKKvTYzDVN6DKD1LZHRjZJdkG8j0F5KEldYcl9PMiXT3tCCGlyWHVjKrNVMaNmy/9sybeEgaAzxjLnhsAsW4LAcoeZV8ma2j5PjQhjev8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734469628; c=relaxed/simple;
-	bh=KWINgD5ata/eDZY7THpzR0BBEKdcMhTmgSkDYYCfiIc=;
+	s=arc-20240116; t=1734469629; c=relaxed/simple;
+	bh=uenJu74j/Lwr2wWBMfStYd5Y0E2jiTk4eE6aU1AVS9g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b18MK5pI2mtrod7bgyf3yMtL6aMwuALopg8+W362Cptwtzu+oXJ4tamwzz4YG/YKxTeZdqt5hbgOJD9sfUQUVC0+sJBURrn/hLRF9izEx6F7pKd2rAJuotknW9hWT0rZLZSCL1GoNqIQhyzxVv8JXSXynBgn7gqH0xfH21CKce8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MSDIlEc4; arc=none smtp.client-ip=209.85.219.54
+	 In-Reply-To:To:Cc; b=TMrsAn40xuzzVZTpRp1PC0NIRfyaUZB7CgI+LrYJJrS6RxGWA8G+FEGh954TdG0LFuDqnJDTO7d20DxXdtm5tKVbD0iTsUVMGvgvzYCY8XISx+k5OOf72l0btSGuFkZBbcdVo9WGG2cjfMEqKp35e20OKclQYP3Iui90F1ztMlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RSNBeIoU; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6d89a727a19so1299466d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:07:05 -0800 (PST)
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6dcd4f1aaccso51562356d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:07:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734469625; x=1735074425; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1734469627; x=1735074427; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tzDVbtPPI6/PR4xHZ+uo8XhKlnVqNLbQOPgmtj8cDpY=;
-        b=MSDIlEc4F3Md47Awgp+ZISXD6fmtw5DnG2qsq7B4Cv3CAJwjQhD12G5GxY1/UUo0O+
-         1FsWGtiMDZn43RR/hDp/lyWQwIVwnr+YqIrXN1WEvuq7VwxMyL6R7yW8FQkIPKSI/X68
-         u5utrH1iE8uyOuKgbYzBMCgM+MCxizgjaLH/k=
+        bh=4X38Eu7mA026YUSiXMDtPdvj4gwf9pxsv7m3KoYh7F0=;
+        b=RSNBeIoUJpiEqSPzD1ut2BbMtwXIjPsJjaDjG3Rztw/gEdhnPfIo6Za65DpKxzQLHA
+         p+4bYopdIR4R/HgNb7dyl6YaLmnkK0rf27v6j+n8Pf0/+fXTs/SxhFHbsoJrSBONMUM6
+         5x+TzPW1mklS9EHW97q/AIxIf/OdN/C9ls6Ic=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734469625; x=1735074425;
+        d=1e100.net; s=20230601; t=1734469627; x=1735074427;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tzDVbtPPI6/PR4xHZ+uo8XhKlnVqNLbQOPgmtj8cDpY=;
-        b=c4xoGpwkXgMLHhc9y9jHxbnBxrk59mHn8YRCuT7Dj2QuNhq+ySW87gcMlc6Lpj+rwx
-         Si8zngsWGzo4yQx+EFwMuJjb6lWt6YRxUXjh6DHbjaWFHyzphAVrm/rUqvhWHEy1rYBp
-         IrZ2JJi5HQKYkYDePHjsBJqTNxF27weqy45bFohB5OmKLO+g8dzzP04YgeYdpJNN8pav
-         FXztH5nxYLRRblDedeWmA42vgZXVTI0kv0RxGjb68FW3i96q0CtKevDZQd5uX2FQ+aj8
-         2tADScf1bQLsVikDYVlJghc1RKKvaQ6Iu8ono97r5ylOQTSl5SW2oaMyZt4WsaRxEzgY
-         jAYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWZnp8Xjw5GtRmysMuyijhXX/vrHtKqA5+bX7Pq9doz4P2A+h6xYI13k+R8kiRLbyFv725xJjKJdCx2BQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3tqRZsyygZgxyE8dMnQE4gY5mF1FuUFWmAdAVT3MwasMfp281
-	1Gia7bP9r1BvtYOg2eeVTzTLSIgIHkhGNvzm9m7n8VXfARTybKsyAOqvbGiwNPubx0JAlgg4i3g
+        bh=4X38Eu7mA026YUSiXMDtPdvj4gwf9pxsv7m3KoYh7F0=;
+        b=ANEG9bWyHPU8OJEdR6Z54AAHjafcTnFbko656PM+IRE9SgTfXDtQyFlJVGPv7w4bgq
+         2lyN7Tam1Bczsb91FyfqW77YfCQaN5Hd4hJMdEfL8bvZz9ADTmNYus6KnornCFavB7Pu
+         nm98wVhQ4zGpp/3/u3NbTrUYvimjxCiHu0Ay1VTuef7e0Hb1D1wKhTKtDuy7VYZOCMaf
+         gw14BmIv2lWJhM+WqWqX/ki7sYb/ZpdGutdnv7JRpaByJ+NKN4ulJ3BBO73zZOOz2Vx+
+         Bgl1OJE1ygFecZ6h9cSYEGJdXWG2+k9isx98fXVqZnB8OgQznT1xMXNB+u2H8P/WxhjK
+         NJxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFaM+GZfkENvmun1ZpDUnzbpqNN43PrrPXuApHtIMCUb/vaRimkMOSIc+x12+xOfdj9rq8YmFdN3Hprk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq4DmajgjT0Q40PX74xWV2K+/3gIXG3u7Q7cOXjELj0Sj/XcdE
+	zkqJkb2vzW7za6bZh42BKa9sU6a8CbSZJD/LXJFUURGe0XLRoXCdgI3hH+htVuSbt9uCyhjOLFo
 	=
-X-Gm-Gg: ASbGncv3uCSf4nyFN2o2ul3LqJci1HdLDHY+WCg2h/iB8KlV0au6hshfDNGkgHcl0ui
-	Gn8jjixr5YzXqNfJ5roVq7xqNdcdQcrI6QtvcOvlpZQvTp1ktM1o73WOzUthGxAB/ZtdJbRLucs
-	N9Uj5OKq8hHRkqE5g5rRiZHPgdq9hgav/62k2UxiEgofovbCQ7oyLpBfOjE8+YA08EFaJfzhYk3
-	dtOs+WAEpYYMs2Oo9hewBxAfHj9Fi/Ywp06x1sPfU9ljZAthlX0wQAAKjnRKIVrFjkZL25q0EZB
-	+qQDbLjtmDLCgJvNxHdGl0/Xdo686Gg=
-X-Google-Smtp-Source: AGHT+IGX8riHqAG53Ns1JT9wSuOCfFOlraoLCjYZFxLDwPTGDlF0oXz/RZNF/7QUyo7aQ+ZSfrGJPA==
-X-Received: by 2002:a05:6214:501a:b0:6d9:fb5:d496 with SMTP id 6a1803df08f44-6dcf4c9e41cmr84982336d6.24.1734469624744;
-        Tue, 17 Dec 2024 13:07:04 -0800 (PST)
+X-Gm-Gg: ASbGncsDRZovNswNTix/ljbUYhooyxq/mxxiMfc6MLLzYmN92FRrNfU+uqfA1bq1/Kf
+	NLA+TxGoDKmFa+IjiZvpaK2Z0JZ94Oww6ghS6f5cYaIDqy/VUAeXAyx7Eesq9c8XjbUSrGu2Hal
+	6BnitCEpB2md45iY3FN1K860bglvM6388POv+hyFQBlV3OuTa1DEU+h917E9y4ouWGbjklhmIVF
+	CP5UCyGKt/VxOZt6OJh8ZJPqQ1N/sxwII6I3LA72NkDK0N6EXwddkS2H3znA/maxC4pMZeI6X2I
+	uwFQzvi0rpYqOXAlAMZ6DOEe87HN7bg=
+X-Google-Smtp-Source: AGHT+IFXaZ4pKbRSE3Q+DHG7qDiGY5XwCpLr9wYWd9bPXYCo700dc7W1WXA/aJz07Xomabvl8yqDxQ==
+X-Received: by 2002:a05:6214:f2e:b0:6d8:899e:c3be with SMTP id 6a1803df08f44-6dd0927b806mr8066266d6.49.1734469626916;
+        Tue, 17 Dec 2024 13:07:06 -0800 (PST)
 Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd22f2a7sm42825276d6.27.2024.12.17.13.07.03
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd22f2a7sm42825276d6.27.2024.12.17.13.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 13:07:03 -0800 (PST)
+        Tue, 17 Dec 2024 13:07:05 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 17 Dec 2024 21:06:58 +0000
-Subject: [PATCH 2/3] media: uvcvideo: Allow changing noparam on the fly
+Date: Tue, 17 Dec 2024 21:06:59 +0000
+Subject: [PATCH 3/3] media: uvcvideo: Announce the user our deprecation
+ intentions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +81,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-uvc-deprecate-v1-2-57d353f68f8f@chromium.org>
+Message-Id: <20241217-uvc-deprecate-v1-3-57d353f68f8f@chromium.org>
 References: <20241217-uvc-deprecate-v1-0-57d353f68f8f@chromium.org>
 In-Reply-To: <20241217-uvc-deprecate-v1-0-57d353f68f8f@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -90,89 +91,48 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Right now the parameter value is read during video_registration and
-cannot be changed afterwards, despite its permissions 0644, that makes
-the user believe that the value can be written.
+If the user sets the nodrop parameter, print a deprecation warning once.
+Hopefully they will come to the mailing list if it is an ABI change.
 
-The parameter only affects the beviour of uvc_queue_buffer_complete(),
-with only one check per buffer.
-
-We can read the value directly from uvc_queue_buffer_complete() and
-therefore allowing changing it with sysfs on the fly.
+Now that we have a callback, take this chance to parse the parameter as
+a boolean.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- drivers/media/usb/uvc/uvc_queue.c  | 6 ++----
- drivers/media/usb/uvc/uvcvideo.h   | 4 +---
- 3 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/media/usb/uvc/uvc_driver.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 091145743872..10812a841587 100644
+index 10812a841587..d8e8675dd2cd 100644
 --- a/drivers/media/usb/uvc/uvc_driver.c
 +++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1995,7 +1995,7 @@ int uvc_register_video_device(struct uvc_device *dev,
- 	int ret;
- 
- 	/* Initialize the video buffers queue. */
--	ret = uvc_queue_init(queue, type, !uvc_no_drop_param);
-+	ret = uvc_queue_init(queue, type);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
-index 26ee85657fc8..ed246d8ff31a 100644
---- a/drivers/media/usb/uvc/uvc_queue.c
-+++ b/drivers/media/usb/uvc/uvc_queue.c
-@@ -208,8 +208,7 @@ static const struct vb2_ops uvc_meta_queue_qops = {
- 	.stop_streaming = uvc_stop_streaming,
- };
- 
--int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type,
--		    int drop_corrupted)
-+int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type)
- {
- 	int ret;
- 
-@@ -239,7 +238,6 @@ int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type,
- 	mutex_init(&queue->mutex);
- 	spin_lock_init(&queue->irqlock);
- 	INIT_LIST_HEAD(&queue->irqqueue);
--	queue->flags = drop_corrupted ? UVC_QUEUE_DROP_CORRUPTED : 0;
- 
- 	return 0;
- }
-@@ -472,7 +470,7 @@ static void uvc_queue_buffer_complete(struct kref *ref)
- 	struct vb2_buffer *vb = &buf->buf.vb2_buf;
- 	struct uvc_video_queue *queue = vb2_get_drv_priv(vb->vb2_queue);
- 
--	if ((queue->flags & UVC_QUEUE_DROP_CORRUPTED) && buf->error) {
-+	if (buf->error && !uvc_no_drop_param) {
- 		uvc_queue_buffer_requeue(queue, buf);
- 		return;
- 	}
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 07f9921d83f2..ebbd8afcf136 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -316,7 +316,6 @@ struct uvc_buffer {
- };
- 
- #define UVC_QUEUE_DISCONNECTED		(1 << 0)
--#define UVC_QUEUE_DROP_CORRUPTED	(1 << 1)
- 
- struct uvc_video_queue {
- 	struct vb2_queue queue;
-@@ -674,8 +673,7 @@ extern struct uvc_driver uvc_driver;
- struct uvc_entity *uvc_entity_by_id(struct uvc_device *dev, int id);
- 
- /* Video buffers queue management. */
--int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type,
--		   int drop_corrupted);
-+int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type);
- void uvc_queue_release(struct uvc_video_queue *queue);
- int uvc_request_buffers(struct uvc_video_queue *queue,
- 			struct v4l2_requestbuffers *rb);
+@@ -2424,8 +2424,25 @@ module_param_call(clock, uvc_clock_param_set, uvc_clock_param_get,
+ MODULE_PARM_DESC(clock, "Video buffers timestamp clock");
+ module_param_named(hwtimestamps, uvc_hw_timestamps_param, uint, 0644);
+ MODULE_PARM_DESC(hwtimestamps, "Use hardware timestamps");
+-module_param_named(nodrop, uvc_no_drop_param, uint, 0644);
++
++static int param_set_nodrop(const char *val, const struct kernel_param *kp)
++{
++	pr_warn_once("uvcvideo: "
++		     DEPRECATED
++		     "nodrop parameter will be eventually removed.\n");
++	return param_set_bool(val, kp);
++}
++
++static const struct kernel_param_ops param_ops_nodrop = {
++	.set = param_set_nodrop,
++	.get = param_get_uint,
++};
++
++param_check_uint(nodrop, &uvc_no_drop_param);
++module_param_cb(nodrop, &param_ops_nodrop, &uvc_no_drop_param, 0644);
++__MODULE_PARM_TYPE(nodrop, "uint");
+ MODULE_PARM_DESC(nodrop, "Don't drop incomplete frames");
++
+ module_param_named(quirks, uvc_quirks_param, uint, 0644);
+ MODULE_PARM_DESC(quirks, "Forced device quirks");
+ module_param_named(trace, uvc_dbg_param, uint, 0644);
 
 -- 
 2.47.1.613.gc27f4b7a9f-goog
