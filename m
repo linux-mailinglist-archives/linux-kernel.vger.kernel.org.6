@@ -1,168 +1,128 @@
-Return-Path: <linux-kernel+bounces-448621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592829F430A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D249F430D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86922168F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276F216BEA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F89C155CBA;
-	Tue, 17 Dec 2024 05:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D7F156222;
+	Tue, 17 Dec 2024 05:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILe50VH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LFNCykbv"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1C51361;
-	Tue, 17 Dec 2024 05:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6A61361;
+	Tue, 17 Dec 2024 05:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413955; cv=none; b=t1ktDfAJg8+1gIEEe6JtuuCtNMADXVOV9DblVD8wu6bbym4erYTd/ELVDgcx9DImrQBZwXTBbAs9p1qXjgJdruM9+XuC4H3CeyChQ571Lo/+AYwBaB5VkLsdH01vaxqeurq+boxhnzJIxOLWGCMmlnUVqM5RWXW3hsJVqhIxQGw=
+	t=1734414009; cv=none; b=hBqOc6JCQhAbTOdZpH1q5QPjQBc9rGxR5Qcj/ANKkKFY5iCTNhqvklxkkz77FnJdD6IR1OCDDzWgaq9PCWNRvgf1Km/K6CZG53jiKBhszGMZtmVAa31DyeirhULJJTb6sdKVw5r5XKpw8YWQJbsrCg6kUfLY5aXT3eGwA4V+lUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413955; c=relaxed/simple;
-	bh=tqu7Z0ImV0mICFkBydV+d50QKxdqZ/2PTdCswVNZgNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K82aaTrV5dF2MRSEsOdisFamqjDAfuZSTlmi4i5q5VWdv7c1pBdukQLhE7s4a/kgUWdiCGxiG6dSNHwLDk7bR6aaILa/g+NBg3LG7bnQSVsiVx3NXdizmebnAhaHY/37hysl5NXszfoQUttzb363xparjExv8fBWCD7RICEQBPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILe50VH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF8CC4CED3;
-	Tue, 17 Dec 2024 05:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734413955;
-	bh=tqu7Z0ImV0mICFkBydV+d50QKxdqZ/2PTdCswVNZgNM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ILe50VH0mKOFqAYZQP08uohC6xn+KEQNLmmdWe/VVRfBJnoZnQV9TUsXtzVccPm/i
-	 na0EmxFBKcUX4w23PawQLcijhr/WHXhYsMgAZL2pA2XPsbmnZr6VCypZ39BDoBiGFr
-	 fFn+/C29gk+RpmLzhEuekGApHA8jkgShHAETTJgmmWVJF8GthXn6P477IrvG37u1vX
-	 ZrdWkItP5pe9J73oWSpAGoeziR8EzsMc8tLvjNDH9CaW/oN34RFt7bWWwSBXKcXX9g
-	 G56sBSaG8f3sRWvCxvda0QU0Pc455lWT90wjwbpltbp8Ddw8U56cEQIEuzl4W7iBxX
-	 peq8bCVTJLvXQ==
-Message-ID: <b7bd87f8-d651-4d27-bfc7-040a5192f285@kernel.org>
-Date: Tue, 17 Dec 2024 06:39:06 +0100
+	s=arc-20240116; t=1734414009; c=relaxed/simple;
+	bh=eAvkA/BKFEuxIJVRuYk60z0Nu1+Awdcch4g0c1+fVrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMRMFd42LqXSsqGyX9T8jNhZvKOWTUEVaTJsz7fZftqbtqm6Inuzlb4c4XIs6cmPJtl6vn0D2sKGOXVT4fd7DOytngUyxzU4MFmyVkZmogCW00UnLmdmrPOgGV/j7UKsTnqIQTlOZChcyPhM49ZOj1df35YPYpd4XzDmfuIK2JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LFNCykbv; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH3qEY0022880;
+	Tue, 17 Dec 2024 05:39:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=plGWMUnKaQnCgXwhn7ZsXHAgo3T1hF
+	qPpSJX1B0fFqI=; b=LFNCykbveeTr3EpmGBKD8y+LSmumtrLOHkep2cAbNIJfgN
+	FYBVqK8n3PpX/3z9taUvjvi2krGMFV5Zz8WTk9zQ5bq7Ql+heVdk55tvS/k49tdD
+	p4AQafOtpq8w75bgANlVKfZxhAD5QU1rQPxTspH8OqDSVoAW9N2nwEMvxPWfp9Pa
+	klnptBLcTzk8QeUK+nk3U1bnb0b66kY6BX3YI/dXkYXhZhQbM0ARa6MBWONauRUv
+	JZ4Sd+f3qDDlLsd91mYPPwnr5AEpQjaVQw+fEqNPAVUcsp/woH1/Ph/XzqY3R4Hk
+	QOIxF7wh48hjAx6a0I6cV0NoaZjo9hlAOK9EJyNw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43k1sb0aqm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 05:39:58 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BH5dwhe007110;
+	Tue, 17 Dec 2024 05:39:58 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43k1sb0aqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 05:39:57 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH3ZutB011267;
+	Tue, 17 Dec 2024 05:39:57 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hpjk15a6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 05:39:57 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BH5dtkK11403754
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 05:39:55 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5602B2004B;
+	Tue, 17 Dec 2024 05:39:55 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6569920040;
+	Tue, 17 Dec 2024 05:39:53 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.215.237])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 17 Dec 2024 05:39:53 +0000 (GMT)
+Date: Tue, 17 Dec 2024 11:09:49 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH 1/3] include/linux.h: use linux/magic.h to get
+ XFS_SUPER_MAGIC
+Message-ID: <Z2EOpTVkTvetGRvh@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1734253505.git.ojaswin@linux.ibm.com>
+ <713c4e61358b95bbdf95daca094abc73a230e52f.1734253505.git.ojaswin@linux.ibm.com>
+ <Z1_kkCNX9dL0hwPf@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] gpu: host1x: Support device monitoring with actmon
-To: Johnny Liu <johnliu@nvidia.com>, thierry.reding@gmail.com,
- jonathanh@nvidia.com, skomatineni@nvidia.com, luca.ceresoli@bootlin.com,
- mperttunen@nvidia.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241210174554.18869-1-johnliu@nvidia.com>
- <20241210174554.18869-4-johnliu@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241210174554.18869-4-johnliu@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1_kkCNX9dL0hwPf@infradead.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: K1yeoxxSm06yBWsbIjKYNrJf3LsfC4pk
+X-Proofpoint-ORIG-GUID: F8scgoH9LzH5Z-BVtrOJvrissbrFpzKr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ suspectscore=0 mlxlogscore=429 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170044
 
-On 10/12/2024 18:45, Johnny Liu wrote:
+On Mon, Dec 16, 2024 at 12:28:00AM -0800, Christoph Hellwig wrote:
+> On Sun, Dec 15, 2024 at 02:47:15PM +0530, Ojaswin Mujoo wrote:
+> > -	return (statfsbuf.f_type == 0x58465342);	/* XFSB */
+> > +	return (statfsbuf.f_type == XFS_SUPER_MAGIC);
+> 
+> Might be worth dropping the superfluous braces here while you're at it.
 
-> +
-> +static int host1x_actmon_sample_period_set(void *data, u64 val)
-> +{
-> +	struct host1x_actmon *actmon = (struct host1x_actmon *)data;
-> +
-> +	actmon->usecs_per_sample = (u32)val;
-> +	host1x_actmon_update_sample_period(actmon);
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_SIMPLE_ATTRIBUTE(host1x_actmon_sample_period_fops,
-> +			host1x_actmon_sample_period_get,
-> +		host1x_actmon_sample_period_set,
-> +		"%lld\n");
-> +
-> +/**
-> + * host1x_actmon_debug_init - Initialize actmon debugfs
+Thanks for the review Christoph, I will fix the braces here.
 
-
-No, debugfs is only for debugging, not for usual interfaces. You now
-added several driver knobs bypassing any ABI documentation.
-
-
-> + * @actmon: the actmon instance being configured
-> + * @name: an unique name of the actmon
-> + *
-> + * There are multiple modules available inside the actmon, and they perform the
-> + * signal sampling at the same rate. The debugfs of an actmon will expose this
-> + * shared configuration, sample_period, via a debugfs node:
-> + * - sample_period:
-> + *   Sampling period in micro-second of modules inside the actmon
-> + */
-> +static void host1x_actmon_debug_init(struct host1x_actmon *actmon, const char *name)
-> +{
-> +	struct host1x *host = dev_get_drvdata(actmon->client->host->parent);
-> +
-> +	if (!host->debugfs) {
-> +		dev_warn(host->dev, "debugfs is unavailable\n");
-> +		return;
-> +	}
-> +
-> +	if (!host->actmon_debugfs)
-> +		host->actmon_debugfs = debugfs_create_dir("actmon", host->debugfs);
-> +
-> +	actmon->debugfs = debugfs_create_dir(name, host->actmon_debugfs);
-> +
-> +	/* R/W files */
-> +	debugfs_create_file("sample_period", 0644, actmon->debugfs, actmon,
-> +			    &host1x_actmon_sample_period_fops);
-> +}
-> +
-Best regards,
-Krzysztof
+regards,
+ojaswin
+> 
+> Otherwise looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
 
