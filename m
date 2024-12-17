@@ -1,169 +1,290 @@
-Return-Path: <linux-kernel+bounces-448618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDC19F42F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:34:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83179F42EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:33:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE49F163CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A989165049
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7399B1D88D0;
-	Tue, 17 Dec 2024 05:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6699188014;
+	Tue, 17 Dec 2024 05:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="loklT8Bm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="leUTkEwJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4599619F13C;
-	Tue, 17 Dec 2024 05:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BCA15CD41;
+	Tue, 17 Dec 2024 05:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413558; cv=none; b=IklFM5hDzIx1QvkXUUmNh0hnfFRbTHF/xPf5kQzQlHCKLYNAFnqaGT3hPEtm/Fvx15dT2rJsS463gqHPnQngmnJXzdgLAlLC0iFBXREQ2N2Xf89rwj1hTFh9qTolYEawc2FCKjWkGlQNJuTsCkRyYdJY8c4PHcYX9bmNSOry+Cs=
+	t=1734413554; cv=none; b=C9/HkYmGejBDbKSjvq59C16HlABrZfN17+jVCgAYv1P0kRWL8qGdO7IUAXR1lnFlxH4AxiI8Ixxg3HNCcAboFKYknxuyhehHtTLXuUzJjR7yzPv4ppb58DeNqaWDhgrWS/gcrJQ4coSj1qM0tuKm2s56/T9mx5r0UUzeJcTJi6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413558; c=relaxed/simple;
-	bh=HJjdaetRXcuLU24F2z7EC0FJKWFygfWcwCkCu8S7T2c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M62PuvKeT7a8D87fFCK9Ykk/K3n6qt3A2hFD3xGMe4yqokVpA3745eoINLlgYOqzEh31aWuhaF3zp0dRrnVANRmzBFkSaASFm0XpiTeNZ8UkPfahnaoH0nepUQ9AUq7MST7TNblbtWoQ9n06iL0E91/z1Tq5SCUmAz1LFiPo9Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=loklT8Bm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1EA943E;
-	Tue, 17 Dec 2024 06:31:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734413518;
-	bh=HJjdaetRXcuLU24F2z7EC0FJKWFygfWcwCkCu8S7T2c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=loklT8Bmkbr5vrFmSLHgyYvLFPE8ywpFlkizhQwZXE4JoBNegYqonjBVbTy2EgmSa
-	 jpLk5ruI75Y0nwBR+JYi0lThr8U4opamq9HVYmJP/TigrgoVqSRaEiOfQip76S/CMG
-	 Czm8aMxoUd5Dt0PuhhyPGluN2BekuN/XsBktAIHI=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 17 Dec 2024 07:31:41 +0200
-Subject: [PATCH v5 7/7] drm/rcar-du: Add support for r8a779h0
+	s=arc-20240116; t=1734413554; c=relaxed/simple;
+	bh=XW8Gtseza8SSscN8pqqeDGmBBJP1e+xvDh1zucD+FJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YlBaKv+4jymGjLbELiCv2zRcj9WPggDbO0qR4hu+a3uwT6Gr5PNRazYbcb4syjaOKrCt6aoXm3zvWHC2VwrttQK4on4jV23YQ4N8vrpsdQEjJ0i3LTGCS/7aWmyOFXhweKXjUhzXvBLlYOBWSIhyG9BJS/nyHxRaF/w8XCyToB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=leUTkEwJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGKt270011894;
+	Tue, 17 Dec 2024 05:32:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ko/YZva7cHyZuDSFXCFLRiqJoa/wOi4lnzRHTAZruuU=; b=leUTkEwJ5WiP2Pec
+	vwZdTmFLjXKGXuvbsyeZ04WVpuN9PwUKYmi8OD9vK5Yh7gP1XLs1xHpILd35NsvX
+	K1d1B/BoZqYErgPB3YoAbD+FCRKwO4q+ClR4o7w3KQ8x3U1cDmqvu/a+EnezBEVY
+	yO4xFXB9maedkug9UumNw4LwxYQ59lNwLFhndz+Uplou1pCG1l6epAcDXiW0vjdl
+	kFHWRjfD7HibAHIjzv4cg4xa6ZQb+MKJ93r6idp7toArHxnZX2wOqx/ZO5YOxxTT
+	p3aUmqNaeI6XOV4T4N42qAOFnWk6PWY2Ec3FhREWZ9S6Ys3gVXt0xpnVGbR7MMAD
+	V4LwPA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43junjgwwb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 05:32:27 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH5WQmh002522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 05:32:26 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 21:32:22 -0800
+Message-ID: <70714bd9-e6a1-4104-b200-38f0019a107b@quicinc.com>
+Date: Tue, 17 Dec 2024 13:32:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-rcar-gh-dsi-v5-7-e77421093c05@ideasonboard.com>
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-In-Reply-To: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2759;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=Bg7AGqZhWjHR0bYNz/CL0hPBvLMMsgBEIiurfa4R0Mk=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQzl8eoRGto9JL+AVYCC5zFu3CUGD91dD+Cgu
- iGgLlgN4JOJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM5QAKCRD6PaqMvJYe
- 9RvGEACcvcYQKfAunbRdVJPmJasDbiOEbOMrAxRytlDykNySOg8/PO2wTV3D27aaePAKk8nUHoC
- DX6xJf40+nfoW0rIXTscLWnCsDqia5fIWb01FdtHG18owtwJf2RAazWnKZzhD6CfmXl9mtaV4QR
- 9v0xVu5acaUEEJq1glIG1ZxCyi2MaKRuvzhwKU2AGaLfLWRBfcJnqBDwWAuzNRMxpzPVBUw6twz
- 1G7b7Z8Kj2pCBc5u7vt7cCC1oNDO94P9z3L8MC2F9n22jdlQmUGJ1tRyLTqK0XlriskF2kWHa8R
- 99/aXOrhCMFuWSNU2tsYgM4DXYtHk+d74PztBuyMI6lFAUUItoCEt8zGwG+e9/dqWfMiiedV7Va
- eFLMJyrc5QqWIzZHt0Dj5IFaWLWXG7cl1LAWe5mhEbyfEE1HJ43K3ZjmEymW5ZnV+a7IAmddvd3
- SZpXVLRGJQW/08SOMRiXEveqAKT9rABMiv6CVDHFn+D1luox8PENHMa6cfUideIHGBWlzCqdT0k
- v/8PYd5wZ2rSPKqQBTifnVSB/M1suOyQ2bO4at/0ToCMMeBjoVvYh7QbVyBjF67wegZ4q2Ti24x
- WhcVCtToVLG6drF846sBWjy+lVlmYuOI1XFb59D9lCTzqJoSuLh3Pr2uQGdmyLEcR7T/kP4oPPA
- xvzvaIuEC1WIWHw==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] media: venus: core: use opp-table for the
+ frequency
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241213-add-venus-for-qcs615-v4-0-7e2c9a72d309@quicinc.com>
+ <20241213-add-venus-for-qcs615-v4-2-7e2c9a72d309@quicinc.com>
+ <Z2BvrfYEaIqFcjwg@hu-bjorande-lv.qualcomm.com>
+Content-Language: en-US
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <Z2BvrfYEaIqFcjwg@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: x1qNujOq4FmitByvM-qVKZfGbAZ4O6GE
+X-Proofpoint-GUID: x1qNujOq4FmitByvM-qVKZfGbAZ4O6GE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170044
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Add support for r8a779h0. It is very similar to r8a779g0, but has only
-one output.
+On 12/17/2024 2:21 AM, Bjorn Andersson wrote:
+> On Fri, Dec 13, 2024 at 03:26:47PM +0530, Renjiang Han wrote:
+>> Get frequency value from the opp-table of devicetree for the v4 core.
+>> For compatibility, if getting data from the opp table fails, the data
+>> in the frequency table will be used.
+>>
+>> The order of variable definitions is adjusted only to keep the reverse
+>> Christmas tree order coding style.
+>>
+> 1) Do the best you can to add your variables while trying to maintain
+> the order, but if it's not possible better leave it than making it hard
+> to parse logical change from shuffling of code.
+OK, thanks for pointing it out.
+>
+> 2) This comment is useful during review, but not necessarily so in the
+> git history, so I'd suggest to keep it below the '---' line.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 18 ++++++++++++++++++
- drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c |  4 +++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+  Do you mean that the message about my code style changes only needs
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-index fb719d9aff10..7858e10839f2 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-@@ -545,6 +545,23 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
- 	.dsi_clk_mask =  BIT(1) | BIT(0),
- };
- 
-+static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
-+	.gen = 4,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_NO_BLENDING,
-+	.channels_mask = BIT(0),
-+	.routes = {
-+		/* R8A779H0 has one MIPI DSI output. */
-+		[RCAR_DU_OUTPUT_DSI0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+	},
-+	.num_rpf = 5,
-+	.dsi_clk_mask = BIT(0),
-+};
-+
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-@@ -571,6 +588,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
- 	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
- 	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
-+	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
- 	{ }
- };
- 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-index 1ec806c8e013..068c106e586c 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-@@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
- 		 */
- 		rcrtc = rcdu->crtcs;
- 		num_crtcs = rcdu->num_crtcs;
--	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
-+	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
-+		   rcdu->info->gen == 4) {
- 		/*
- 		 * On Gen3 dot clocks are setup through per-group registers,
- 		 * only available when the group has two channels.
-+		 * On Gen4 the registers are there for single channel too.
- 		 */
- 		rcrtc = &rcdu->crtcs[rgrp->index * 2];
- 		num_crtcs = rgrp->num_crtcs;
+  to be added to the cover letter?
+>
+>> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+>> ---
+>>   drivers/media/platform/qcom/venus/pm_helpers.c | 67 ++++++++++++++++++--------
+>>   1 file changed, 46 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+>> index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..a5c3f9ad2088d8c80247b52d5c1b8e053f499bfe 100644
+>> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+>> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+>> @@ -40,17 +40,23 @@ static int core_clks_get(struct venus_core *core)
+>>   
+>>   static int core_clks_enable(struct venus_core *core)
+>>   {
+>> -	const struct venus_resources *res = core->res;
+>>   	const struct freq_tbl *freq_tbl = core->res->freq_tbl;
+>>   	unsigned int freq_tbl_size = core->res->freq_tbl_size;
+>> -	unsigned long freq;
+>> +	const struct venus_resources *res = core->res;
+>> +	struct device *dev = core->dev;
+>> +	unsigned long freq = 0;
+> Is it really necessary to initialize this? I'd expect that
+> dev_pm_opp_find_freq_ceil() would either initialize freq or return a
+> failure, in which case you assign freq.
 
+  Thanks for your review. There is really no need to initialize freq.
+
+  The default value of freq is 0 here. dev_pm_opp_find_freq_ceil() will
+
+  query the matching value from the opp table based on this default value.
+>
+> Perhaps the compiler isn't clever enough to see this?
+>
+>> +	struct dev_pm_opp *opp;
+>>   	unsigned int i;
+>>   	int ret;
+>>   
+>> -	if (!freq_tbl)
+>> -		return -EINVAL;
+>> -
+>> -	freq = freq_tbl[freq_tbl_size - 1].freq;
+>> +	opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+>> +	if (IS_ERR(opp)) {
+>> +		if (!freq_tbl)
+>> +			return -EINVAL;
+>> +		freq = freq_tbl[freq_tbl_size - 1].freq;
+>> +	} else {
+>> +		dev_pm_opp_put(opp);
+>> +	}
+>>   
+>>   	for (i = 0; i < res->clks_num; i++) {
+>>   		if (IS_V6(core)) {
+>> @@ -627,12 +633,15 @@ min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load, bool lo
+>>   
+>>   static int decide_core(struct venus_inst *inst)
+>>   {
+>> +	const struct freq_tbl *freq_tbl = inst->core->res->freq_tbl;
+>>   	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
+>> -	struct venus_core *core = inst->core;
+>> -	u32 min_coreid, min_load, cur_inst_load;
+>>   	u32 min_lp_coreid, min_lp_load, cur_inst_lp_load;
+>> +	u32 min_coreid, min_load, cur_inst_load;
+>> +	struct venus_core *core = inst->core;
+>>   	struct hfi_videocores_usage_type cu;
+>> -	unsigned long max_freq;
+>> +	unsigned long max_freq = ULONG_MAX;
+>> +	struct device *dev = core->dev;
+>> +	struct dev_pm_opp *opp;
+> Here the line shuffling makes it hard to determine what is part of the
+> logical change and what is just style changes...
+>
+> Regards,
+> Bjorn
+
+  You mean I only need to add variable definitions basing on the original
+
+  order of variable definitions, and I don't need to modify the order of
+
+  variable definitions specifically for the reverse Christmas tree code
+
+  style. Is that right?
+>
+>>   	int ret = 0;
+>>   
+>>   	if (legacy_binding) {
+>> @@ -655,7 +664,11 @@ static int decide_core(struct venus_inst *inst)
+>>   	cur_inst_lp_load *= inst->clk_data.low_power_freq;
+>>   	/*TODO : divide this inst->load by work_route */
+>>   
+>> -	max_freq = core->res->freq_tbl[0].freq;
+>> +	opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+>> +	if (IS_ERR(opp))
+>> +		max_freq = freq_tbl[0].freq;
+>> +	else
+>> +		dev_pm_opp_put(opp);
+>>   
+>>   	min_loaded_core(inst, &min_coreid, &min_load, false);
+>>   	min_loaded_core(inst, &min_lp_coreid, &min_lp_load, true);
+>> @@ -1073,12 +1086,14 @@ static unsigned long calculate_inst_freq(struct venus_inst *inst,
+>>   
+>>   static int load_scale_v4(struct venus_inst *inst)
+>>   {
+>> +	const struct freq_tbl *table = inst->core->res->freq_tbl;
+>> +	unsigned int num_rows = inst->core->res->freq_tbl_size;
+>> +	unsigned long freq = 0, freq_core1 = 0, freq_core2 = 0;
+>>   	struct venus_core *core = inst->core;
+>> -	const struct freq_tbl *table = core->res->freq_tbl;
+>> -	unsigned int num_rows = core->res->freq_tbl_size;
+>> +	unsigned long max_freq = ULONG_MAX;
+>>   	struct device *dev = core->dev;
+>> -	unsigned long freq = 0, freq_core1 = 0, freq_core2 = 0;
+>>   	unsigned long filled_len = 0;
+>> +	struct dev_pm_opp *opp;
+>>   	int i, ret = 0;
+>>   
+>>   	for (i = 0; i < inst->num_input_bufs; i++)
+>> @@ -1104,19 +1119,29 @@ static int load_scale_v4(struct venus_inst *inst)
+>>   
+>>   	freq = max(freq_core1, freq_core2);
+>>   
+>> -	if (freq > table[0].freq) {
+>> -		dev_dbg(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
+>> -			freq, table[0].freq);
+>> +	opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+>> +	if (IS_ERR(opp))
+>> +		max_freq = table[0].freq;
+>> +	else
+>> +		dev_pm_opp_put(opp);
+>>   
+>> -		freq = table[0].freq;
+>> +	if (freq > max_freq) {
+>> +		dev_dbg(dev, VDBGL "requested clock rate: %lu scaling clock rate : %lu\n",
+>> +			freq, max_freq);
+>> +		freq = max_freq;
+>>   		goto set_freq;
+>>   	}
+>>   
+>> -	for (i = num_rows - 1 ; i >= 0; i--) {
+>> -		if (freq <= table[i].freq) {
+>> -			freq = table[i].freq;
+>> -			break;
+>> +	opp = dev_pm_opp_find_freq_ceil(dev, &freq);
+>> +	if (IS_ERR(opp)) {
+>> +		for (i = num_rows - 1 ; i >= 0; i--) {
+>> +			if (freq <= table[i].freq) {
+>> +				freq = table[i].freq;
+>> +				break;
+>> +			}
+>>   		}
+>> +	} else {
+>> +		dev_pm_opp_put(opp);
+>>   	}
+>>   
+>>   set_freq:
+>>
+>> -- 
+>> 2.34.1
+>>
 -- 
-2.43.0
+Best Regards,
+Renjiang
 
 
