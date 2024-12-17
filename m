@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-449597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995039F5136
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:38:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5999F514D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AD95164CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628871881567
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0D21F3D58;
-	Tue, 17 Dec 2024 16:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2921F3D58;
+	Tue, 17 Dec 2024 16:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHP9KI6L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87D142E77
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CAF13D891;
+	Tue, 17 Dec 2024 16:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453527; cv=none; b=HKA+Enhq7zrP8n+hHt5Wg9fnIe9u1Oi14qBmkZ9vejcL739B8nQBhX2yx3C2Evjr5xHjfbocgYukDBEbOd7atgBMSKmlBr0vknvIS9D6ypEOiQzUrS5KF8RHNbEWERrjHyjjTtQubcqxoBGkFah8iv2KFpILKBk0X1SuruQQtwE=
+	t=1734453725; cv=none; b=A26QNh4qhBXOub+L1Nk6YhbVlLm32+y0qavalHAwg/alQLHES5iN2WWQwpjgBqkl23tErpe4wXiVy5flf3Iidq2bzisMM5gDnG/PlPHgifA18fYPwXwUOKZDzF8pVFzW6GxuJQPyi1vE2/aDvx17B/yYpTMyAamBAYlp3yR5rUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453527; c=relaxed/simple;
-	bh=P9htpVAscVrVAFpbNyfRgxQlx61j79kfcc0I/1Du+l0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gartMqG/z4aocZBwo2dpwKPyf07vtqSOAFLU/j7TUNMVzuVoSAqzFvaNu5AKKDUB6LmDFIIhgpliKp/B8vH4YmUo2jTSWuICL5ypvOmMDqhySPbn8PZMx7Obn8JHemL8D8aHd4ehqpbMhK6APN5GrIMti3PqLpj8nJI/0GsuJ0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0439C4CED3;
-	Tue, 17 Dec 2024 16:38:45 +0000 (UTC)
-Date: Tue, 17 Dec 2024 11:39:21 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
- <viro@ZenIV.linux.org.uk>, Michal Simek <monstr@monstr.eu>
-Subject: [GIT PULL] ftrace: Fixes for v6.13
-Message-ID: <20241217113921.7254325e@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734453725; c=relaxed/simple;
+	bh=ycayqxT/uww/h1706nWav8mJiQl8Tq3uVZR6pHrfhso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQot++EL6R1cqfBQiLJJI8fCJi27Btu3NT7GqFmh2cRhDjkhChTHvELG23JHBXNKBzlx+nylyrPDIjsetuoyMdMZKqImnlS2Bbpv/d/Yt2/SxL5VfQV1aiod5ojfacnvV9jOJM4K6mi4Ubmv6+bTANQlHkfiJzyGy6MV3qLAXRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHP9KI6L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C70B1C4CED3;
+	Tue, 17 Dec 2024 16:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734453724;
+	bh=ycayqxT/uww/h1706nWav8mJiQl8Tq3uVZR6pHrfhso=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=GHP9KI6LAEbNuvInnGHO9+2bBqlip6x04Smj5Xyig6z5UgV0RNUy1Nnl1GKN6weip
+	 MmHCHpwNKZsLk3qLeTSy+G1KdQ1AnrESlDXUiZ6k0+r6QvYzRgmO6rqlpWR2SH5fAE
+	 7ICGk9taBozLY7BHMORj+uRow2GQzVoDntZOseKgDYrhkwFUdmzLJcWo3+vL3+xd4r
+	 Q+JiMhiq5BoueibsyAntDJfdX76xammu3tlQYh/NtaxAX/iQAOdVZUPsKxST1tJYO8
+	 A/XV/awNvsZtbHPBb8C9bid4I6z6nULieLInCyOXvN5rBkV0BFG6kRXoa1KRL7tmOb
+	 jdOLQZFE1ih0w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 71DB4CE09DB; Tue, 17 Dec 2024 08:42:04 -0800 (PST)
+Date: Tue, 17 Dec 2024 08:42:04 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <b854f67c-93c5-41b8-900e-69c78e0ecab7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
+ <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
+ <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
+ <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+ <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
+ <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
+ <6e3fce44-1072-4720-bf91-33bb22ebbd21@paulmck-laptop>
+ <2cd70642-86de-4b26-87c2-94bde7441ce8@paulmck-laptop>
+ <CAP4=nvTqnABSzYXiDfizoaeviqLtC87jG1fnGH4XFV+xQGn-2Q@mail.gmail.com>
+ <a82d8961-153a-4fb8-9c71-3bdf00f2e0f3@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a82d8961-153a-4fb8-9c71-3bdf00f2e0f3@paulmck-laptop>
 
+On Mon, Dec 16, 2024 at 11:36:25AM -0800, Paul E. McKenney wrote:
+> On Mon, Dec 16, 2024 at 03:38:20PM +0100, Tomas Glozar wrote:
+> > ne 15. 12. 2024 v 19:41 odesílatel Paul E. McKenney <paulmck@kernel.org> napsal:
+> > >
+> > > And the fix for the TREE03 too-short grace periods is finally in, at
+> > > least in prototype form:
+> > >
+> > > https://lore.kernel.org/all/da5065c4-79ba-431f-9d7e-1ca314394443@paulmck-laptop/
+> > >
+> > > Or this commit on -rcu:
+> > >
+> > > 22bee20913a1 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+> > >
+> > > This passes more than 30 hours of 400 concurrent instances of rcutorture's
+> > > TREE03 scenario, with modifications that brought the bug reproduction
+> > > rate up to 50 per hour.  I therefore have strong reason to believe that
+> > > this fix is a real fix.
+> > >
+> > > With this fix in place, a 20-hour run of 400 concurrent instances
+> > > of rcutorture's TREE03 scenario resulted in 50 instances of the
+> > > enqueue_dl_entity() splat pair.  One (untrimmed) instance of this pair
+> > > of splats is shown below.
+> > >
+> > > You guys did reproduce this some time back, so unless you tell me
+> > > otherwise, I will assume that you have this in hand.  I would of course
+> > > be quite happy to help, especially with adding carefully chosen debug
+> > > (heisenbug and all that) or testing of alleged fixes.
+> > >
+> > 
+> > The same splat was recently reported to LKML [1] and a patchset was
+> > sent and merged into tip/sched/urgent that fixes a few bugs around
+> > double-enqueue of the deadline server [2]. I'm currently re-running
+> > TREE03 with those patches, hoping they will also fix this issue.
+> 
+> Thank you very much!
+> 
+> An initial four-hour test of 400 instances of an enhanced TREE03 ran
+> error-free.  I would have expected about 10 errors, so this gives me
+> 99.9+% confidence that the patches improved things at least a little
+> bit and 99% confidence that these patches reduced the error rate by at
+> least a factor of two.
+> 
+> I am starting an overnight run.  If that completes without error, this
+> will provide 99% confidence that these patches reduced the error rate
+> by at least an order of magnitude.
 
+And we have that level of confidence!
 
-Linus,
-
-Ftrace fixes for 6.13:
-
-- Always try to initialize the idle functions when graph tracer starts
-
-  A bug was found that when a CPU is offline when graph tracing starts
-  and then comes online, that CPU is not traced. The fix to that was
-  to move the initialization of the idle shadow stack over to the
-  hot plug online logic, which also handle onlined CPUs. The issue was
-  that it removed the initialization of the shadow stack when graph tracing
-  starts, but the callbacks to the hot plug logic do nothing if graph
-  tracing isn't currently running. Although that fix fixed the onlining
-  of a CPU during tracing, it broke the CPUs that were already online.
-
-- Have microblaze not try to get the "true parent" in function tracing
-
-  If function tracing and graph tracing are both enabled at the same time
-  the parent of the functions traced by the function tracer may sometimes
-  be the graph tracing trampoline. The graph tracing hijacks the return
-  pointer of the function to trace it, but that can interfere with the
-  function tracing parent output. This was fixed by using the
-  ftrace_graph_ret_addr() function passing in the kernel stack pointer
-  using the ftrace_regs_get_stack_pointer() function. But Al Viro reported
-  that Microblaze does not implement the kernel_stack_pointer(regs)
-  helper function that ftrace_regs_get_stack_pointer() uses and fails
-  to compile when function graph tracing is enabled.
-
-  It was first thought that this was a microblaze issue, but the real
-  cause is that this only works when an architecture implements
-  HAVE_DYNAMIC_FTRACE_WITH_ARGS, as a requirement for that config
-  is to have ftrace always pass a valid ftrace_regs to the callbacks.
-  That also means that the architecture supports ftrace_regs_get_stack_pointer()
-  Microblaze does not set HAVE_DYNAMIC_FTRACE_WITH_ARGS nor does it
-  implement ftrace_regs_get_stack_pointer() which caused it to fail to
-  build. Only implement the "true parent" logic if an architecture has
-  that config set.
-
-[
-  This does not contain any of the trace_check_printf() code, as that
-  is being handled in a separate topic branch. It didn't belong with
-  the ftrace branch anyway, as this branch is for function attachment
-  code only.
-]
-
-Please pull the latest ftrace-v6.13-rc3 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-ftrace-v6.13-rc3
-
-Tag SHA1: 4f5e6967508d77ae95d08b143892e421c0bdb9fd
-Head SHA1: 166438a432d76c68d3f0da60667248f3c2303d6c
-
-
-Steven Rostedt (2):
-      fgraph: Still initialize idle shadow stacks when starting
-      ftrace: Do not find "true_parent" if HAVE_DYNAMIC_FTRACE_WITH_ARGS is not set
-
-----
- kernel/trace/fgraph.c          | 8 +++++++-
- kernel/trace/trace_functions.c | 3 ++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
----------------------------
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 0bf78517b5d4..ddedcb50917f 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1215,7 +1215,7 @@ void fgraph_update_pid_func(void)
- static int start_graph_tracing(void)
- {
- 	unsigned long **ret_stack_list;
--	int ret;
-+	int ret, cpu;
- 
- 	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
- 				 sizeof(*ret_stack_list), GFP_KERNEL);
-@@ -1223,6 +1223,12 @@ static int start_graph_tracing(void)
- 	if (!ret_stack_list)
- 		return -ENOMEM;
- 
-+	/* The cpu_boot init_task->ret_stack will never be freed */
-+	for_each_online_cpu(cpu) {
-+		if (!idle_task(cpu)->ret_stack)
-+			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
-+	}
-+
- 	do {
- 		ret = alloc_retstack_tasklist(ret_stack_list);
- 	} while (ret == -EAGAIN);
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 74c353164ca1..d358c9935164 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -176,7 +176,8 @@ static void function_trace_start(struct trace_array *tr)
- 	tracing_reset_online_cpus(&tr->array_buffer);
- }
- 
--#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+/* fregs are guaranteed not to be NULL if HAVE_DYNAMIC_FTRACE_WITH_ARGS is set */
-+#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS)
- static __always_inline unsigned long
- function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
- {
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
