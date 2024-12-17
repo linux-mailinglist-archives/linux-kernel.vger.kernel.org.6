@@ -1,99 +1,339 @@
-Return-Path: <linux-kernel+bounces-450038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53F79F59DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:53:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4F39F59E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530091891AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB4016D0B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B871F8EFD;
-	Tue, 17 Dec 2024 22:52:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2101F9415;
+	Tue, 17 Dec 2024 22:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KAPgXgn5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B08v8+NT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE819155CB3;
-	Tue, 17 Dec 2024 22:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593614B08E;
+	Tue, 17 Dec 2024 22:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734475947; cv=none; b=MR6/KdyhBEdzu+TB0U1RYZ+8ZlfdOUWbT+7sWBWoT4BSULdf0CCEkF9uSUcc5VxXVz22S8kZhBCv4QpxrIz9NviolMbIJrnVrNN7DRdWestXASSs+O4uU4npwZnOQ7fr66sKEs98fV6j6WnnCs2z7D5E4jlRHfNLYWbWKaHK0cQ=
+	t=1734476184; cv=none; b=WbRiY0k+sM6t6mQWSSC29lZQll9BWCVS+9pQk4ux3gL/4aLa88ANraFDUrz9dtrPjz8pLV+iF9l5S7u4pCnUM50xK4kpK/lcm2k0GDVVPvZIFulPj3UaqC2T4gPdDzDNrHiNASvscQ/yOpa5TmZpA8vi830WtlBMJGo2p0VeeAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734475947; c=relaxed/simple;
-	bh=Xyb0HXId3pOZNdVW9rcyiCOIr69ico/rvnIB22rWzJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r1jNZTHIseQ4KoTWzK0ueoFCT9bITmmPBaApJ3NSuQm0BklU6gkQCdb/f9+l79C4FL6gofFmIV/KaEYsMlc+W2j2lvkWazIDkh9S0T7rBcqyFbRL8Ihmqcrb2ITioCo5aMluTzaNc2MOVTHLdnD6KwL24Of8JhGfXfzmIXambiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A13BC4CED3;
-	Tue, 17 Dec 2024 22:52:25 +0000 (UTC)
-Date: Tue, 17 Dec 2024 17:53:01 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-Message-ID: <20241217175301.03d25799@gandalf.local.home>
-In-Reply-To: <CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
-References: <20241217173237.836878448@goodmis.org>
-	<20241217173520.314190793@goodmis.org>
-	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
-	<20241217130454.5bb593e8@gandalf.local.home>
-	<CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
-	<20241217133318.06f849c9@gandalf.local.home>
-	<CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
-	<20241217140153.22ac28b0@gandalf.local.home>
-	<CAHk-=wgpjLhSv9_rnAGS1adekEHMHbjVFvmZEuEmVftuo2sJBw@mail.gmail.com>
-	<20241217144411.2165f73b@gandalf.local.home>
-	<CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734476184; c=relaxed/simple;
+	bh=APmnuAqVtmosZCF5vYqDRXyKNNDn48FlDZur8YGudyg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BJTJIJV5WeCmJJ4p7chlwhVDCF63t0YK5JOtH8uyzN7Mod/zDDNge5hZncqDANz7mSraX6YM+duFvUC9diunallJjeX8yBUTQvGxeo4W7kpOFOoBjNGQq/nrK3reS56HFIxiB6nde9AOi0LIW6LygbyCwvS+W/EzyB4ptnB56pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KAPgXgn5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B08v8+NT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734476179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D5js8+VEP7CRYYqILc+dNJA/mdcaQogNcYqwc5JH5i0=;
+	b=KAPgXgn5IDlBZ/hn38oZRvAwHUhITH49umZDTdPMYy2FoSNUVI9Jbs4+HPU0+WRBcqiyJf
+	iQSQ2ygvr6gav+qYZSDupLz439uLKRXffBmVZVioOHvMYLpq6sPpC7jiRzUd1UQN9HDNg6
+	kbjT1janPBJWQrk9CRe832GwUsGqyRw1W/L03MuLKd4q+9juOkhCSW/gDkMVyV4QKj9Y12
+	tgTs33I7j65fyQ6BMdAE7fR+9a0xdsfy+pEKphMEdi/U102i4KdqSKTAOGfBs3cN5p/tct
+	tvD7BPMN6PX3aE3GhnnO6F/TLGShMGPmYigk+R6gNZbm60ZpfQoojfFuF/0lcQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734476179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D5js8+VEP7CRYYqILc+dNJA/mdcaQogNcYqwc5JH5i0=;
+	b=B08v8+NTgmIDCuodRxS19EOhhaTfBHbQ3C+o6KHiBzW3Az4IBhP+6wEpgaYGWBnyOeRrf7
+	E7Udkz5qfHCnORBQ==
+To: Frank Li <Frank.Li@nxp.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+ dlemoal@kernel.org, jdmason@kudzu.us,
+ linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v12 2/9] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+In-Reply-To: <20241211-ep-msi-v12-2-33d4532fa520@nxp.com>
+References: <20241211-ep-msi-v12-0-33d4532fa520@nxp.com>
+ <20241211-ep-msi-v12-2-33d4532fa520@nxp.com>
+Date: Tue, 17 Dec 2024 23:56:18 +0100
+Message-ID: <87o7197wbx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Tue, 17 Dec 2024 14:24:08 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Dec 11 2024 at 15:57, Frank Li wrote:
+> +static int pci_epf_msi_prepare(struct irq_domain *domain, struct device *dev,
+> +			       int nvec, msi_alloc_info_t *arg)
+> +{
+> +	struct pci_epf *epf = to_pci_epf(dev);
+> +	struct msi_domain_info *msi_info;
+> +	struct pci_epc *epc = epf->epc;
+> +
+> +	memset(arg, 0, sizeof(*arg));
+> +	arg->scratchpad[0].ul = of_msi_map_id(epc->dev.parent, NULL,
+> +					      (epf->func_no << 8) | epf->vfunc_no);
+> +
+> +	/*
+> +	 * @domain->msi_domain_info->hwsize contains the size of the device
+> +	 * domain, but vector allocation happens one by one.
+> +	 */
+> +	msi_info = msi_get_domain_info(domain);
+> +	if (msi_info->hwsize > nvec)
+> +		nvec = msi_info->hwsize;
+> +
+> +	/* Allocate at least 32 MSIs, and always as a power of 2 */
+> +	nvec = max_t(int, 32, roundup_pow_of_two(nvec));
+> +
+> +	msi_info = msi_get_domain_info(domain->parent);
+> +	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, arg);
 
-> (Aside: are those binary buffers actually exported to user space (that
-> "u32 *bin_buf, size_t size" thing), or could we fix the binary printf
-> code to really use a whole word for char/short values? The difference
-> between '%hhd' and '%d' should be how it's printed out, not how the
-> data is accessed)
+While I was trying to make sense of the change log of patch [1/9] I
+looked at this function to understand why this needs an override.
 
-libtraceevent is able to parse the raw trace_printk() events:
+This is a copy of its_msi_prepare() except for the scratchpad[0].ul
+part. But that's a GIC-V3 implementation specific detail, which has
+absolutely no business in code which claims to be a generic library for
+PCI endpoints.
 
-  https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/tree/src/event-parse.c#n5155
+Worse you created a GIC-V3 only PCI endpoint library under the
+assumption that the underlying ITS/MSI implementation is immutable. Of
+course there is no safety net either to validate that the underlying
+parent domain is actually GIC-V3-ITS. That's wrong in every aspect.
 
-The format it reads is from /sys/kernel/tracing/events/ftrace/bprint/format:
+So let's take a step back and analyze what is actually required to make
+this a proper generic library.
 
-name: bprint
-ID: 6
-format:
-	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-	field:int common_pid;	offset:4;	size:4;	signed:1;
+The endpoint function device needs its own device ID which is required
+to set up a device specific translation in the interrupt remapping unit.
 
-	field:unsigned long ip;	offset:8;	size:8;	signed:0;
-	field:const char * fmt;	offset:16;	size:8;	signed:0;
-	field:u32 buf[];	offset:24;	size:0;	signed:0;
+Now you decided that this is bound to a DT mapping, which is odd to
+begin with. What's DT specific about this? The cirumstance that your
+hardware is DT based and the endpoint controller ID map needs to be
+retrieved from there? How is this generic in any way? How is this
+supposed to work with ACPI enumerated hardware? Not to ask the question
+how this should work with non GIC-V3-ITS based hardware.
 
-print fmt: "%ps: %s", (void *)REC->ip, REC->fmt
+That's all but generic, it's an ad hoc hack to support your particular
+setup implemented by layering violations.
 
-In this case, the "print fmt" is ignored.
+In fact the mapping ID is composed by the parent mapping ID and the
+function numbers, right?
 
-Where the buf value holds the binary storage from vbin_printf() and written
-in trace_vbprintk(). Yeah, it looks like it does depend on the arguments
-being word aligned.
+The general PCIe convention here is:
 
--- Steve
+    domain:bus:slot.func
+
+That's well defined and if you look at real devices then lspci shows:
+
+0000:3d:00.1 Ethernet controller: Ethernet Connection for 10GBASE-T
+0000:3d:06.0 Ethernet controller: Ethernet Virtual Function
+0000:...
+0000:3d:06.7 Ethernet controller: Ethernet Virtual Function
+0000:3d:07.0 Ethernet controller: Ethernet Virtual Function
+0000:...
+0000:3d:07.7 Ethernet controller: Ethernet Virtual Function
+
+In PCI address representation:
+
+   domain:bus:slot:function
+
+which is usually condensed into a single word based on the range limits
+of function, device and bus:
+
+   function:    bit 0-2         (max. 8)
+   device:      bit 3-7         (max. 32)
+   bus:         bit 8-15        (max. 256)
+   domain:      bit 16-31       (mostly theoretical)
+
+Endpoint devices should follow exactly the same scheme, no?
+
+Now looking at your ID retrieval:
+
+> +	arg->scratchpad[0].ul = of_msi_map_id(epc->dev.parent, NULL,
+> +					      (epf->func_no << 8) | epf->vfunc_no);
+
+I really have to ask why this is making up its own representation
+instead of simply using the standard PCI B/D/F conventions?
+
+Whatever the reason is, fact is that the actual interrupt domain support
+needs to be done differently. There is no way that the endpoint library
+makes assumption about the underlying interrupt domain and copies a
+function just because. This has to be completely agnostic, no if, no
+but.
+
+So the consequence is that the underlying MSI parent domains needs to
+know about the endpoint requirements, which is how all MSI variants are
+modeled, i.e. with a MSI domain bus.
+
+That also solves the problem of immutable MSI messages without any
+further magic. Interrupt domains, which do not provide them, won't
+provide the endpoint MSI domain bus and therefore the lookup of the
+parent MSI domain for the endpoint fails.
+
+The uncompilable mockup below should give you a hint.
+
+Thanks,
+
+        tglx
+---
+ drivers/irqchip/irq-gic-v3-its-msi-parent.c |   50 ++++++++++++++++++++--------
+ drivers/irqchip/irq-msi-lib.c               |    5 ++
+ drivers/irqchip/irq-msi-lib.h               |   12 +++++-
+ include/linux/irqdomain_defs.h              |    2 +
+ 4 files changed, 51 insertions(+), 18 deletions(-)
+
+--- a/drivers/irqchip/irq-gic-v3-its-msi-parent.c
++++ b/drivers/irqchip/irq-gic-v3-its-msi-parent.c
+@@ -126,20 +126,9 @@ int __weak iort_pmsi_get_dev_id(struct d
+ 	return -1;
+ }
+ 
+-static int its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
+-			    int nvec, msi_alloc_info_t *info)
++static int __its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
++			      int nvec, msi_alloc_info_t *info, u32 dev_id)
+ {
+-	struct msi_domain_info *msi_info;
+-	u32 dev_id;
+-	int ret;
+-
+-	if (dev->of_node)
+-		ret = of_pmsi_get_dev_id(domain->parent, dev, &dev_id);
+-	else
+-		ret = iort_pmsi_get_dev_id(dev, &dev_id);
+-	if (ret)
+-		return ret;
+-
+ 	/* ITS specific DeviceID, as the core ITS ignores dev. */
+ 	info->scratchpad[0].ul = dev_id;
+ 
+@@ -159,6 +148,36 @@ static int its_pmsi_prepare(struct irq_d
+ 					  dev, nvec, info);
+ }
+ 
++static int its_pci_ep_msi_prepare(struct irq_domain *domain, struct device *dev,
++				  int nvec, msi_alloc_info_t *info)
++{
++	u32 dev_id = dev_get_pci_ep_id(dev);
++	struct msi_domain_info *msi_info;
++	int ret = -ENOTSUPP;
++
++	if (dev->of_node)
++		ret = do_magic_ep_id_map();
++	if (ret)
++		return ret;
++	return __its_pmsi_prepare(domain, dev, nvec, info, dev_id);
++}
++
++static int its_pmsi_prepare(struct irq_domain *domain, struct device *dev,
++			    int nvec, msi_alloc_info_t *info)
++{
++	struct msi_domain_info *msi_info;
++	u32 dev_id;
++	int ret;
++
++	if (dev->of_node)
++		ret = of_pmsi_get_dev_id(domain->parent, dev, &dev_id);
++	else
++		ret = iort_pmsi_get_dev_id(dev, &dev_id);
++	if (ret)
++		return ret;
++	return __its_pmsi_prepare(domain, dev, nvec, info, dev_id);
++}
++
+ static bool its_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
+ 				  struct irq_domain *real_parent, struct msi_domain_info *info)
+ {
+@@ -183,6 +202,9 @@ static bool its_init_dev_msi_info(struct
+ 		 */
+ 		info->ops->msi_prepare = its_pci_msi_prepare;
+ 		break;
++	case DOMAIN_BUS_PCI_DEVICE_EP_MSI:
++		info->ops->msi_prepare = its_pci_ep_msi_prepare;
++		break;
+ 	case DOMAIN_BUS_DEVICE_MSI:
+ 	case DOMAIN_BUS_WIRED_TO_MSI:
+ 		/*
+@@ -204,7 +226,7 @@ const struct msi_parent_ops gic_v3_its_m
+ 	.supported_flags	= ITS_MSI_FLAGS_SUPPORTED,
+ 	.required_flags		= ITS_MSI_FLAGS_REQUIRED,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+-	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_MSI,
++	.bus_select_mask	= MATCH_PCI_MSI | MATCH_PLATFORM_PCI_EP_MSI | MATCH_PLATFORM_MSI,
+ 	.prefix			= "ITS-",
+ 	.init_dev_msi_info	= its_init_dev_msi_info,
+ };
+--- a/drivers/irqchip/irq-msi-lib.c
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -55,8 +55,11 @@ bool msi_lib_init_dev_msi_info(struct de
+ 	case DOMAIN_BUS_PCI_DEVICE_MSIX:
+ 		if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PCI_MSI)))
+ 			return false;
+-
+ 		break;
++	case DOMAIN_BUS_DEVICE_PCI_EP_MSI:
++		if (WARN_ON_ONCE(!IS_ENABLED(CONFIG_PCI_ENDPOINT)))
++			return false;
++		fallthrough;
+ 	case DOMAIN_BUS_DEVICE_MSI:
+ 		/*
+ 		 * Per device MSI should never have any MSI feature bits
+--- a/drivers/irqchip/irq-msi-lib.h
++++ b/drivers/irqchip/irq-msi-lib.h
+@@ -10,12 +10,18 @@
+ #include <linux/msi.h>
+ 
+ #ifdef CONFIG_PCI_MSI
+-#define MATCH_PCI_MSI		BIT(DOMAIN_BUS_PCI_MSI)
++#define MATCH_PCI_MSI			BIT(DOMAIN_BUS_PCI_MSI)
+ #else
+-#define MATCH_PCI_MSI		(0)
++#define MATCH_PCI_MSI			(0)
+ #endif
+ 
+-#define MATCH_PLATFORM_MSI	BIT(DOMAIN_BUS_PLATFORM_MSI)
++#ifdef CONFIG_PCI_ENDPOINT
++#define MATCH_PLATFORM_PCI_EP_MSI	BIT(DOMAIN_BUS_PLATFORM_PCI_EP_MSI)
++#else
++#define MATCH_PLATFORM_PCI_EP_MSI	(0)
++#endif
++
++#define MATCH_PLATFORM_MSI		BIT(DOMAIN_BUS_PLATFORM_MSI)
+ 
+ int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+ 			      enum irq_domain_bus_token bus_token);
+--- a/include/linux/irqdomain_defs.h
++++ b/include/linux/irqdomain_defs.h
+@@ -15,6 +15,7 @@ enum irq_domain_bus_token {
+ 	DOMAIN_BUS_GENERIC_MSI,
+ 	DOMAIN_BUS_PCI_MSI,
+ 	DOMAIN_BUS_PLATFORM_MSI,
++	DOMAIN_BUS_PLATFORM_PCI_EP_MSI,
+ 	DOMAIN_BUS_NEXUS,
+ 	DOMAIN_BUS_IPI,
+ 	DOMAIN_BUS_FSL_MC_MSI,
+@@ -27,6 +28,7 @@ enum irq_domain_bus_token {
+ 	DOMAIN_BUS_AMDVI,
+ 	DOMAIN_BUS_DEVICE_MSI,
+ 	DOMAIN_BUS_WIRED_TO_MSI,
++	DOMAIN_BUS_DEVICE_PCI_EP_MSI,
+ };
+ 
+ #endif /* _LINUX_IRQDOMAIN_DEFS_H */
 
