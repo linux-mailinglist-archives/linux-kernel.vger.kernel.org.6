@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-449365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8179F4DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:33:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127FF9F4DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CF3716F049
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:33:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A451916EDB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E0E1F6687;
-	Tue, 17 Dec 2024 14:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625251F7580;
+	Tue, 17 Dec 2024 14:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dpgHsKj7"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ImKvhuDn"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC151D5AB6;
-	Tue, 17 Dec 2024 14:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317741F5436;
+	Tue, 17 Dec 2024 14:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445947; cv=none; b=gRR9aqgmIt2F6oNhBBGO5QF5xRKVQ7cW2CxO21Nu7v16S6uCqSPNiz8+HPxx6FvwSu0LmDfEWjyDkdwkVNlYW2TjHGZK+UU6scQZ+j1OZl3Fs3LNIe5sPGFkQelMrCNqVSnTTIEoo1WHn5DbG3RmnGf0Evh2ffpxUfQ5AntwnHY=
+	t=1734445948; cv=none; b=nkmfSIzVKvxrLgByTRxerxwqmgYkB0Y9v8fg3taEKNS//FjYy761ujMw+ahS0cckueDZ13aFn6vqlQFihrwJGguwJFy3OxkL3h96PlZZklOiJQdSW+503HR5awqiLA0M+XZ1hhq44oxXXm7WnWD/jDTVLJcgcx/wnZVGRKZAu8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445947; c=relaxed/simple;
-	bh=OZBbougJFP9Fap9JyniHD8kMKBswJwnsoqZNwwk61ZI=;
+	s=arc-20240116; t=1734445948; c=relaxed/simple;
+	bh=gnF2nWFXUzaKb3LUJagx/pjltPQyV0xRQbJCY4AOqPk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EiCsnVv7sZlHStnuksA9rppL4ZXKBfPX85WtEL8k3NapYd1xBPdmJTN9mqhYL3/lM3VJLhSpVIkmYf0rfWP2JhptCk6o7xRdpqxaxMM6QcZL3o+2uvRKJzw6l/zuqoMvAtyReq0pN0kHVXlW1EgRBVfFLi4PD2KnB86EKmaF1SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dpgHsKj7; arc=none smtp.client-ip=217.70.183.197
+	 MIME-Version; b=p1ZjBDDEIyfZAirrL+TD0zovbQEwp7CPXzO2EyI6lYqtsF2SNxXFnXdPsOUv72cvYJpLeJKSiVNrNB24bPyAPEwa+puzVfYaxG6hwg0MYohTsWyS+c3qeIqtRsNjhRRzq31RCIDFZkENNu7jWtC1wutcDJyHFFxGF8IMl9brFa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ImKvhuDn; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 9FA2C1C000D;
-	Tue, 17 Dec 2024 14:32:21 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 49B4E1C0006;
+	Tue, 17 Dec 2024 14:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734445943;
+	t=1734445944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lb26UgKvvmRlT3knQ9VrHygcTFqrZLYIOsrNHKkSBeA=;
-	b=dpgHsKj76K+QUp6DwXG7isxLkwC6GyXFnKbe4p65fYgbY+lDCzJyUfk+jp5BbhWWkMt4uy
-	FAXLZCyt8S/8ET5PFZhDd7s/cxD2SeUjyxe3YrSZF1NZv4QTA1+e356zFQWhUzeOZEbdSC
-	2K3OoUf1HOlMUGkecG0FyLfrDM+axTyVRjzwUOzy1hdkP/m/2HyCUcXvU4f83xPsmBO/vK
-	EUPjq73Xd1HTJ16kKHp0Arn4LMXoGoxPqtwUHiRrtnGYwuJfK+DzapW2z3dl2W/pbtTS+m
-	c07/7keTq4A/44xW/XZS9+Um8h/bPW4LpEdiCgR6IzdHRsLaWnkM1aLHSv5xtA==
+	bh=rOl01A0J4zS7bD55OnoODRpUmSiylYagae5vOcM5HKw=;
+	b=ImKvhuDnPDoKcXobBysVBrEa9VgE2Nf6ioyie6UIkaxC/XIFP46oYDbB2lvvdNMSs6p4YX
+	4vFvmyXI1ukivifVU/TkscmfGoLsyPBoaEmP9qyGT0kBvbfT8nIHyPIubr+mobE0MHSrhD
+	ffQbpngYAQ0o1Ev2c+D+tS8rasnTB51lVKEeWZ6WWcAADbrRJyBQZ4/OWhKwirJPiaigKX
+	k5g8g6hDqfZOGYsS1OW1g24mL+STytWnzPz2gcrW8BGcQHtLGRrsYt6uSjjj4FqjODUB7/
+	pYuMyQw/P0VbiEIYIjQ8fmEm6nkKXp9Q+H4uC7zoY2mttZAFaHclOS0mDMtQ4g==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -66,12 +66,10 @@ Cc: dri-devel@lists.freedesktop.org,
 	Louis Chauvet <louis.chauvet@bootlin.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 1/3] dt-bindings: display: bridge: sn65dsi83: Add interrupt
-Date: Tue, 17 Dec 2024 15:32:13 +0100
-Message-ID: <20241217143216.658461-2-herve.codina@bootlin.com>
+	Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v2 2/3] drm/atomic-helpers: Introduce drm_atomic_helper_disable_connector()
+Date: Tue, 17 Dec 2024 15:32:14 +0100
+Message-ID: <20241217143216.658461-3-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241217143216.658461-1-herve.codina@bootlin.com>
 References: <20241217143216.658461-1-herve.codina@bootlin.com>
@@ -84,34 +82,107 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Both the TI SN65DSI83 and SN65DSI84 bridges have an IRQ pin to signal
-errors using interrupt.
-
-This interrupt is not documented in the binding.
-
-Add the missing interrupts property.
+drm_atomic_helper_disable_connector() disables a connector taking care
+of disabling the CRTC as well if the disabled connector was the only one
+connector connected to the CRTC.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../devicetree/bindings/display/bridge/ti,sn65dsi83.yaml       | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/drm_atomic_helper.c | 67 +++++++++++++++++++++++++++++
+ include/drm/drm_atomic_helper.h     |  2 +
+ 2 files changed, 69 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-index 48a97bb3e2e0..4505d2d83e0d 100644
---- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-@@ -35,6 +35,9 @@ properties:
-   vcc-supply:
-     description: A 1.8V power supply (see regulator/regulator.yaml).
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 8ed186ddaeaf..1d691cbb047e 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3279,6 +3279,73 @@ int drm_atomic_helper_set_config(struct drm_mode_set *set,
+ }
+ EXPORT_SYMBOL(drm_atomic_helper_set_config);
  
-+  interrupts:
-+    maxItems: 1
++/**
++ * drm_atomic_helper_disable_connector - disable connector
++ * @connector: connector to disable
++ * @ctx: lock acquisition context
++ *
++ * Turn off the given connector by setting its DPMS mode to off.
++ * Also deactivate the CRTC is this connector was the only one connected to the
++ * CRTC.
++ *
++ * Note that if callers haven't already acquired all modeset locks this might
++ * return -EDEADLK, which must be handled by calling drm_modeset_backoff().
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++int drm_atomic_helper_disable_connector(struct drm_connector *connector,
++					struct drm_modeset_acquire_ctx *ctx)
++{
++	struct drm_connector_state *connector_state;
++	struct drm_crtc_state *crtc_state;
++	struct drm_atomic_state *state;
++	struct drm_crtc *crtc;
++	int ret;
 +
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
++	state = drm_atomic_state_alloc(connector->dev);
++	if (!state)
++		return -ENOMEM;
++
++	state->acquire_ctx = ctx;
++
++	connector_state = drm_atomic_get_connector_state(state, connector);
++	if (IS_ERR(connector_state)) {
++		ret = PTR_ERR(connector_state);
++		goto end;
++	}
++
++	crtc = connector_state->crtc;
++
++	ret = drm_atomic_set_crtc_for_connector(connector_state, NULL);
++	if (ret < 0)
++		goto end;
++
++	crtc_state = drm_atomic_get_crtc_state(state, crtc);
++	if (IS_ERR(crtc_state)) {
++		ret = PTR_ERR(crtc_state);
++		goto end;
++	}
++
++	if (!crtc_state->connector_mask) {
++		/*
++		 * The only one connector from the crtc has
++		 * been disabled -> Disable the CRTC too
++		 */
++		ret = drm_atomic_set_mode_prop_for_crtc(crtc_state, NULL);
++		if (ret < 0)
++			goto end;
++
++		crtc_state->active = false;
++	}
++
++	ret = drm_atomic_commit(state);
++end:
++	drm_atomic_state_put(state);
++	return ret;
++}
++EXPORT_SYMBOL(drm_atomic_helper_disable_connector);
++
+ /**
+  * drm_atomic_helper_disable_all - disable all currently active outputs
+  * @dev: DRM device
+diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
+index 9aa0a05aa072..923a354577a3 100644
+--- a/include/drm/drm_atomic_helper.h
++++ b/include/drm/drm_atomic_helper.h
+@@ -137,6 +137,8 @@ int drm_atomic_helper_disable_plane(struct drm_plane *plane,
+ int drm_atomic_helper_set_config(struct drm_mode_set *set,
+ 				 struct drm_modeset_acquire_ctx *ctx);
  
++int drm_atomic_helper_disable_connector(struct drm_connector *connector,
++					struct drm_modeset_acquire_ctx *ctx);
+ int drm_atomic_helper_disable_all(struct drm_device *dev,
+ 				  struct drm_modeset_acquire_ctx *ctx);
+ void drm_atomic_helper_shutdown(struct drm_device *dev);
 -- 
 2.47.0
 
