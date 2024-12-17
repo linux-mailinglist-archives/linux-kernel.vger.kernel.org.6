@@ -1,77 +1,62 @@
-Return-Path: <linux-kernel+bounces-449707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362909F5513
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:53:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7AE9F5526
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B16188AA0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD0B175AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3641FA276;
-	Tue, 17 Dec 2024 17:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB15B1FBCAE;
+	Tue, 17 Dec 2024 17:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7Uiu3M+"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TDmhYCYa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A751F8684;
-	Tue, 17 Dec 2024 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2C61FAC4D;
+	Tue, 17 Dec 2024 17:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457358; cv=none; b=JXwxGQH+k8gE2ethZHaToE48U3MYcLgDnJWLzo3X3MZYU18tdP/qORB1yquunz3e1rq46SC1GjWdiNkcMVa8UkDr5OtILiNvzhChOZttZMHGcvUCK1ICeZ8Wfm5uNLdMngTqu5PzVA3wkFGXUGtTm/YPWDfW32MispiupgLyNGM=
+	t=1734457428; cv=none; b=IrP6VnOv3x1ULamLkdq58mOW2sn3Y9eOYkM26H6scDHIMAMe3rJchV7TLWtQcdsYJscUIwTT35arxGfu9V53QshHIyEChePxKgzsNtZeq4Gtv7N2orqHPPxri31FYX+C/pT1hAasJOvXvTpgJNCKY0cEiM/4kP6kZBoM/AQNDUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457358; c=relaxed/simple;
-	bh=GTNIQUJPRw7t7GatnKHSMlEYz/YyeJ+Ed/C875PamEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XE/dCYSALxC1NQEYyzn/RobfscRqmVMfoziPyzoEflK+LCTetbhE7jIwCW3q/YGBADjyflrxg0UoqHa0TZ0Qq5XhIaHwJTJt/Moz8u6HHvMwRRQcfRBIDZ7OdMy4voFv+KGC9xgkrgABUXJ4OSsxJLtLxvg8KjzQYCYh0fap9j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7Uiu3M+; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso935946666b.3;
-        Tue, 17 Dec 2024 09:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734457355; x=1735062155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RX3Us/R+Ba73C0CkzYR3VNICfGaHFr1lgKKzTrGydJU=;
-        b=k7Uiu3M+JLpB4h8CQj1mYHskMvEpxruU5q2Zxe1XHJvAW24V4IXcEmjaNuVXvW5VZK
-         Eco0SEPMZY4V4W6s+/49hs1SPsIM70S1xxsHOwVKNOlcwFwh0S4AYrP7K8aoUmXJFQsT
-         Wfmk2MTWHdsEsPMqCXekRly+VjgDqushUIRL+wMkj7z4iGbkH1c8btyMJtTkUGM90C2K
-         JL4kiUtvYQS4S5MiQylUb0DDRXRupaYXM2or9is5uZR0U98SrZxM70oVj5vofqiTT7mE
-         iGJipUnz2mwMo9fiYgyxOUAdY4kxwD4oDdDgpy/m9A7KIhz1hx7yuyJ2q0wAwvJdVJyW
-         U9OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734457355; x=1735062155;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RX3Us/R+Ba73C0CkzYR3VNICfGaHFr1lgKKzTrGydJU=;
-        b=sXdDcp09z1bQtX9HFJktlj+MidZDNkmmQRTZBHItadYB0tWVYE5bbHhlmcWlakoSHd
-         xTKzxe4pPpPG8YFlue07PFmA2rw8lMDbb3bO/bljXBQWgregDc+xj3IXh4Vzfa4KrMqf
-         dJlRFfZi8wByONNwvNDKuHKS9JkIGzYCRPfL8KIvnrXhDkW1rPu0PzFGPg4R/j1ykMq4
-         laNnKRK1N1nPNIesx/dU/fs9Vb2L97CjdjriFy7gdfGaTptOAjY5i/QaFfcueAi2/2fB
-         Uffn7gkqQlb8z/54HPl2h7XsRCMdjsE1lwmtUmhDOGuG8oE9tUSf+yrf9fojjehbCmOm
-         drhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUG4absQp3wMzGttd8a7M7j83si+4V2q5M7st+fbyfV20DosAKCvlB6M/nwEfmZMCx783VEWqKGOhByb7VjBgXDD3Y=@vger.kernel.org, AJvYcCVUZzXWgjV34OTs8EfLVhhQaGi2/z38a03J46nLGF1auR4Qj7o4grjZENsl80J6eW1u9Qb0uRZmupjC@vger.kernel.org, AJvYcCWJKdYc8V1uuGYDcDxFpYWxmtByQvbw1n1UOfCJgX2KlpxOfugHeAU1quzU4DHQ+i7RSR3weMJN1cTTX3CP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZqJw6axv/QgL+i3/8jmyU16p2YfgtEJBMeSM2dKRH4Rbj2GT0
-	K4oLmB9r3bXPeK34qsa6AKZp/YT2yMPn0ICGOQX/dGlCeG1hC4oO
-X-Gm-Gg: ASbGncuYlsp6C06F+hjoNE09Y8uSi3Z5HaRuzPWtqCpdBb/zx4LdaXvvJUlMNyJyaFo
-	mclXFnAzY5pQFWCFWirUL2kVPMcckw/BkRYPa4KT2HXCthhDKGjpFzc1PuDuT6n87Ygpg5ZPwH8
-	q47Pxr8wx7LFRZJoE8nPZeUky+dBqsw7GhrpH9BPVV7EDhMbJgzSojR6KyBL752DiCgfEtiFnHV
-	C9pLsgrzWcx6Gd9h3n9sIud5v86gjgpR4cGnhJs860yCPUB2aam8pGfnEgATqLZYtw7
-X-Google-Smtp-Source: AGHT+IFjIUHzuO2MBnqXBKlI2P4aoVJoD6xBmuIZQ/ueNl9n5qqJbUqwItJ883MoEIIeh9jzL5p2ug==
-X-Received: by 2002:a17:906:4fc7:b0:aab:c78c:a7ed with SMTP id a640c23a62f3a-aabf1cf01e1mr22140966b.49.1734457355131;
-        Tue, 17 Dec 2024 09:42:35 -0800 (PST)
-Received: from [192.168.31.111] ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96005f73sm467420566b.4.2024.12.17.09.42.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 09:42:34 -0800 (PST)
-Message-ID: <685eb8ab-2767-43da-80d0-ec77ff779d86@gmail.com>
-Date: Tue, 17 Dec 2024 19:42:32 +0200
+	s=arc-20240116; t=1734457428; c=relaxed/simple;
+	bh=FYuJu3NbEe5lSnrHntXRbXVwdwGRUBBep8WKxjSMvBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HeinAeqUfAryUQVKF2mYt2DOkArKz9wF+G2UfCcGi+hlh0uqMFtqIxbn/xx/onAIk9n2nyIrOX4a4sxc+KNGT2AUHqL1xl0kqmF9meQ63OJ7+TVmVcYkfbo/NRHnBUEOJsiK+hp/fZjV227i7J9UuHMIwd+T6oOBjH4E9piBDn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TDmhYCYa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHAlers025603;
+	Tue, 17 Dec 2024 17:43:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DZQQ8RH8WAsu9/QY/AVjXNavP/iYh1Mq0GWJKtUVRsE=; b=TDmhYCYa1//TzkO9
+	I2WQpUMYsB+gJuPMxLHRXlMUNbDoeX5cSedCb2/3shVvdOAqC2jZY/5BrqPRPBzB
+	55kw30GoDaj0eEM95Io/MpEq4XrNqM5C8Au0AUyNxdgVBy+DeemJW9prGrNKJXVK
+	wZOMnqhqjUlkcOvwvLan53zsw6yie1b+bXwq18wL3GFqlaRO9QfVM9vSALcDeWIR
+	eXGilIo3kFp5ts3B2+3TumzBjiVa2P1liFjeSVDpsrTlvEGgB2Qq1f2+UZtULNO8
+	KKjnLgDGEZG7HdRYtynrr2KMEUVqf88q/SNloHM6KTob27Dm6HtodEN8dIZOqiFp
+	2rqyyQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k7v094cm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:43:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHHhXXU007244
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:43:33 GMT
+Received: from [10.50.34.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
+ 2024 09:43:24 -0800
+Message-ID: <a9f99bdf-1f77-416e-a13b-83338212186d@quicinc.com>
+Date: Tue, 17 Dec 2024 23:13:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,109 +64,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
- samsung,exynos8895-hsi2c compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
- <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
- <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
- <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
- <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
- <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
- <69fd1dbc-a29f-488c-a30f-7e5ea8f01a23@kernel.org>
- <17fbfcdd-8b79-4907-a4c8-798da0ef0526@gmail.com>
- <56c5788a-2d49-4abb-af4b-65a11bdc4094@kernel.org>
+Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
+ sc7280-camss
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <akapatra@quicinc.com>,
+        <hariramp@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
+ <20241217140656.965235-2-quic_vikramsa@quicinc.com>
+ <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
+ <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
+ <fe28a9bc-82ef-4fef-af50-9d9261ed9b39@kernel.org>
+ <a1032d53-6f3e-48f6-a2e9-1315bb1a3232@linaro.org>
 Content-Language: en-US
-From: Markuss Broks <markuss.broks@gmail.com>
-In-Reply-To: <56c5788a-2d49-4abb-af4b-65a11bdc4094@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Vikram Sharma <quic_vikramsa@quicinc.com>
+In-Reply-To: <a1032d53-6f3e-48f6-a2e9-1315bb1a3232@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9EzJcUqCZyXoXPWBvCz3ppG6gkV2rKR0
+X-Proofpoint-ORIG-GUID: 9EzJcUqCZyXoXPWBvCz3ppG6gkV2rKR0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170135
 
-Hi Krzysztof,
 
-On 12/17/24 11:43 AM, Krzysztof Kozlowski wrote:
-> On 17/12/2024 10:31, Ivaylo Ivanov wrote:
->> On 12/17/24 11:26, Krzysztof Kozlowski wrote:
->>> On 17/12/2024 10:08, Ivaylo Ivanov wrote:
->>>>>>>>         - items:
->>>>>>>>             - enum:
->>>>>>>> @@ -94,9 +95,28 @@ allOf:
->>>>>>>>           - clock-names
->>>>>>>>   
->>>>>>>>       else:
->>>>>>>> -      properties:
->>>>>>>> -        clocks:
->>>>>>>> -          maxItems: 1
->>>>>>>> +      if:
->>>>>>>> +        properties:
->>>>>>>> +          compatible:
->>>>>>>> +            contains:
->>>>>>>> +              enum:
->>>>>>>> +                - samsung,exynos8895-hsi2c
->>>>>>>> +
->>>>>>>> +      then:
->>>>>>>> +        properties:
->>>>>>>> +          clocks:
->>>>>>> Missing minItems
->>>>>>>
->>>>>>>> +            maxItems: 2
->>>>>>>> +
->>>>>>>> +          clock-names:
->>>>>>> Ditto
->>>>>>>
->>>>>>>> +            maxItems: 2
->>>>>>>> +
->>>>>>>> +        required:
->>>>>>>> +          - clock-names
->>>>>>> I don't understand why do you need second, same branch in if, basically
->>>>>> Because, as I stated in the commit message, we have HSI2C controllers
->>>>>> both implemented in USIv1 blocks and outside. These that are a part of
->>>>> On Exynos8895? Where? With the same compatible?
->>>> hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
->>>> from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
->>>> they need a different compatible though? It's functionally the same i2c design
->>>> as the one implemented in USIv1 blocks.
->>> If one block is part of USI and other not, they might not be the same
->>> I2C blocks, even if interface is similar. If they were the same or even
->>> functionally the same, they would have the same clock inputs. However
->> I see, so in such case I should make samsung,exynos8895-hsi2c-nonusi or
->> something like that?
+On 12/17/2024 10:00 PM, Bryan O'Donoghue wrote:
+> On 17/12/2024 16:23, Krzysztof Kozlowski wrote:
+>> On 17/12/2024 17:12, Bryan O'Donoghue wrote:
+>>> On 17/12/2024 14:10, Krzysztof Kozlowski wrote:
+>>>> On 17/12/2024 15:06, Vikram Sharma wrote:
+>>>>> This patch change clock names to make it consistent with
+>>>>> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
+>>>>> This also adds gcc_axi_sf and remove gcc_camera_ahb.
+>>>>
+>>>> Don't combine ABI changes with some less important things.
+>>>>
+>>>> You miss here explanation why doing the ABI change in the first place.
+>>>> Without that explanation I find it rather churn. But anyway, reason 
+>>>> for
+>>>> ABI break and impact should be documented in commit msg.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+>>>>> ---
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> This change should be fine since we haven't committed and upstream 
+>>> dtsi,
+>>> so there's no ABI to break yet.
+>>>
+>>> Agree the cover letter should have been explicit in explaining.
 >>
->>> user manual also suggests that there is only one clock, not two (for
->>> both cases), so they could be functionally equivalent but then number of
->>> clocks looks incorrect.
->> That'd be weird. Both according to downstream and upstream clk driver,
->> for the USI-implemented i2cs we have a pclk and an sclk_usi.
-> Something is not precise here, as usually with Samsung clock topology.
+>> So these are recently added bindings (sc7280 is not particularly new)?
+>> If so mention in the commit msg that no users are affected because of 
+>> this.
+>>
+>> Best regards,
+>> Krzysztof
 >
-> First, the non-USI instances have the IPCLK as well, e.g. things like
-> PERIC1_UID_HSI2C_CAM1_IPCLKPORT_iPCLK
+> Agreed.
 >
-> USI have BLK_PERIC0_UID_USI03_IPCLKPORT_i_SCLK_USI, but that's USI
-> clock, not HSI2C in USI. Datasheet mentions this is UART and SPI special
-> clock, but not I2C. The PCLK is used for HSI2C iPCLK.
-
-In USI, USI PCLK is used for the internal AMBA APB bus clock and the 
-IPCLK signal is used for the peripheral controller blocks (i2c/spi/uart).
-
-So perhaps we have it described incorrectly, and the hsi2c controllers 
-(at least on E8895) should take only one clock input (IPCLK), and USI 
-block should take the PCLK input.
-
-
+> The commit log should make clear that the ABI hasn't been cemented yet.
 >
+> 20241217140656.965235-4-quic_vikramsa@quicinc.com <- is still pending
+Thanks Krzysztof and Bryan.
+I will update commit text to explain why ABI is not braking with this 
+change.
 >
-> Best regards,
-> Krzysztof
->
-
-- Markuss
-
+> ---
+> bod
 
