@@ -1,181 +1,155 @@
-Return-Path: <linux-kernel+bounces-449002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8639F4851
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:05:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443929F4852
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C0E188ABD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040F816E47E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06F91DF975;
-	Tue, 17 Dec 2024 10:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwIYUmO6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABA21E1C30;
+	Tue, 17 Dec 2024 10:04:28 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9A189521;
-	Tue, 17 Dec 2024 10:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB91DFDBB
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734429864; cv=none; b=Z3gfqudRwzijTEb2d/QRPLUVup6QsDpyajwGPfyyWfYQ52OblFUkP8Oc5h2faEVzrHQ6e5hr+d3ScC9ZybU7CeDmlaCly/3rTb10/aYcd2AGiJU5LsfdqZJYhmGA7Hmedkeu9AWV27fW8RBBcgHB1SD9BDKYbmjnL1IQyMbFDSo=
+	t=1734429867; cv=none; b=k1CXNLhQTstOCImvY+AqjUTJNVTdSizVe6IAf12NySXI3UVKnXv9z3Qxl6WZ52lpyvSQ3ytf3He+WXE0ko+QCV+NguryKJmWVCuar6A1C+7x9z4eRa+mtmOKDIknB6CB19EcRvIWhRoVCE3LKna60Sxrh46lLySfsTRzfRpYxQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734429864; c=relaxed/simple;
-	bh=Invtadyl/B6DpvSzM33P8HmnrJ1jB0ElzQuvHi1ZYrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+L7cdJnY3i96TZ5zJvfv5wPBq6YhLHKjpElAdz90XTqtAZvbjNVME5xkzbc8eBs7j0/NdlzoeYole37fk9ONZsYDhNhNjYyQDwobz5k4m+ERIuaN2MBzaIj5MoI7baOS2xxHE16YIKm0Yxr5bxJy1/7vXamcDI2H1z2iUYIJXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwIYUmO6; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso53884055e9.2;
-        Tue, 17 Dec 2024 02:04:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734429861; x=1735034661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iYrLrg3M5tgHoTzQrdp8f9Dfp9oiWl/aUFmJid3JjVg=;
-        b=GwIYUmO6Gt0866GfDcu9F7CwN+ryRaxdnfRJAcxGnoXIJKRzQmn75++/E7vWuMMVyP
-         d2Ih8efgwdkTpxLox6cILoQ0Xs4jyAjNadPu/f5Z/+e2jTeCVrQXs5aOgONvmsN5iY5I
-         JKWIFo22BEi03Y9ORH4kphvKapJMDknaFAeGeyBte1BbDFmIIyYQTwzhOc8Ex+LAQEBI
-         MmRf6gSuwvFOrCkmR7Xvj2JLjNCAKM5c0TJzpNMV1JS59PpphzPLxnwUv//oc9d+n9OI
-         niCg2IRU2N0dvg04u9qyYa9TDix1zGdtObpFdpNtJpHijyJ9eGwdQa0LN83mlbsILWzN
-         P0mA==
+	s=arc-20240116; t=1734429867; c=relaxed/simple;
+	bh=u/uFfee2ntB4f4h9jMULT1D5I5y6vNwctt6TJ1YyS8I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=T6KGdQrwK85H2jAtnyeFUQGk4mylSJ4k453NPnlA+nDrray1UN5AFfrWko/MEE1QoxjblJCTYDvnVTWsatCPspZPtwFJrQZyPallbNXDUKo1r8VNMNN2UZtmKfX+ho6Ec0JZkPry7COezj9e2AKtu4KYDo96Rkc0q9vC5Mr6U/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so107670805ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:04:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734429861; x=1735034661;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734429865; x=1735034665;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iYrLrg3M5tgHoTzQrdp8f9Dfp9oiWl/aUFmJid3JjVg=;
-        b=RoQkATQE2nAfKt/YXLhsJdW2kVsaJWeNvQhlNvrekBe8DpE30mpNq/Viem1xUXSaUS
-         QKtZEhK+WcPFRwMFJKgfR4gF876jyA9GRongFFl51sZ1B3DlNQN4pha1WNxEIxgAH+BE
-         CyBjl3cvY3aUl7RSoBPXSEDSGbgKdP+kLTuK+phYXzLSdu2CxfDoW2oAlJGqkh3JSk6i
-         Ut+TO7ixXGqH6KMfFByecRNhrwrBQeub9dbFiyZ+hyjaY6IWe1g+lSY6XYbUc91lrE19
-         GPfIgtLa5yCPJqC7TuEAQpUnihpIxYa61GqI5+lXpdSSer5fuCVNEaB9+HVauVtRk2wM
-         rQMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUumzqyzk0EGTSA2L+im+XbLVrH/mA0oBN9qYt+EduIDPz2ahE/LdhSndCc8BcfosAXF3gYcOmkxvr0@vger.kernel.org, AJvYcCUvC03fVqIjVwVImlkaaPEzF9Xmo2RyrV3SQPVKZoVjOBBfAbT6uLaJYkwf4J4qYa8fOMdI2V3tk0YJejLQvdao1Zo=@vger.kernel.org, AJvYcCVWEbX2T/bvZIn8s2VhZAaGIJF8fHdMWgOwp+EPjlRTf9AHUxuo2/Vb1MO2M7nK+U3f3QuYNC+V7cw8ROfw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyECBPPhLaMt1865Sp16cq/i/063+AXmiKMaihaREH9y/QH8UN7
-	TZWs8aUrxMLBUUkh48jfa4/tD9r9pLw9AQI7tBviQDXve0NsvoYvwp2ryw==
-X-Gm-Gg: ASbGnctoTOWeQGN2XeJTlsULf3KDRC+72Rffo7nm1qpf6Vkk1MR2sypeTdYuAr+tWHy
-	Vn8PY2kh+r7I5bpowaGcY4ytjI8uVtMUD4dTI1C8ScSt0AeLnpiP4PZCTAg5g5IRaIL5YvZ9hjb
-	G3baGvty1Q2yM7tBeERw+apFocGBQp8AgoT+7fgWTeZ/oapvTUw6DKCxzb0191HFH2Ur5CuydMj
-	fVKJ4ITQrPV2Ykx8QyPFxKIr4P7cA/3mgfa/DodAvWEMU9/NtYuhcePtg9W8Uj0THpqxoBMx+Mr
-	wIcMg+9GnF5FSPa7xWVpzA==
-X-Google-Smtp-Source: AGHT+IErqPnymSh1uEMNFLA6EU4DTN3bB21g37HvGXd0a+FwRC+Ivd5Be09XHezjPdYkMyJH1U4RHA==
-X-Received: by 2002:a5d:5f88:0:b0:385:e37a:2a58 with SMTP id ffacd0b85a97d-38880ac2841mr14909475f8f.1.1734429860764;
-        Tue, 17 Dec 2024 02:04:20 -0800 (PST)
-Received: from [172.16.20.173] (62-73-104-42.ip.btc-net.bg. [62.73.104.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046c71sm10530914f8f.65.2024.12.17.02.04.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 02:04:20 -0800 (PST)
-Message-ID: <d8d0a1c8-f2b4-425a-858b-610ae7291ebc@gmail.com>
-Date: Tue, 17 Dec 2024 12:04:08 +0200
+        bh=x/RiBRtj7P3fN4gpoLCAxlF19YFC9iNzYx9lorZws/c=;
+        b=rIhbuvbcxsYiI6NIzlNYHyHmUdS1RK1WowpNKvn0/UTrI7UX3P467pN62m2t4EoNGF
+         Vey9pniQt8s95wZBl5NxzRoxhMyv4rPttH/yZ2tYBzabiK+ad3xGsrBETL1UgmLJJHTF
+         /ybN5bXRrrK/gvv+U6I7qlDvRIcPVibc48b/5BKzpuzmaeA+PGNMpHwb0A3uVKxeI0EX
+         uLm343Lja8IveTdp+3fcNYHp2P6GI4cr5VkEwNP6joUC9scsNlmxa71YBXhvM/vpxd93
+         FNdajxm2v8ckCczX+sRUkJNh678UZNra4qawpktvAIgPHttqePVTmukaoyoRdMQ4ilHX
+         u+pw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1HjWbaLco5AHRaIcKZePNYqmtq8g79Hud2SqNZTO9v2wgbWFp8cBWeZoTP1QBFBG4dphjakBgL/kr8sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTirJbG+n7o/p4NvsSZcXPQX9XpfcSs5PeOLiw5NAKZKSIRYTz
+	fM6f0aqLsvWIfd4Ihndvp7TUEHUbZ98z4sU8IBmXjp6HjKYbpc9PtYhVaQbcu2bCfPBnCVLQyGk
+	YSav2Ct3ZuHG7sziWG5PZz6xECsnf4HUyN4GN802Z51T6P1khH3gddzg=
+X-Google-Smtp-Source: AGHT+IECkkJkFkWOAwA6L9TdB5U20mq6yNiLsl0CDumrdUECtpzRdtA3CBYqNxQT77ByIrpgCd+mdyVsCN8ohxbYfLJ25oy4FLYs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
- samsung,exynos8895-hsi2c compatible
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti
- <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
- <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
- <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
- <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
- <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
- <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
- <69fd1dbc-a29f-488c-a30f-7e5ea8f01a23@kernel.org>
- <17fbfcdd-8b79-4907-a4c8-798da0ef0526@gmail.com>
- <56c5788a-2d49-4abb-af4b-65a11bdc4094@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <56c5788a-2d49-4abb-af4b-65a11bdc4094@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a45:b0:3a7:6f5a:e5c7 with SMTP id
+ e9e14a558f8ab-3aff461ad34mr139327615ab.4.1734429865343; Tue, 17 Dec 2024
+ 02:04:25 -0800 (PST)
+Date: Tue, 17 Dec 2024 02:04:25 -0800
+In-Reply-To: <6729a011.050a0220.2edce.1501.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67614ca9.050a0220.37aaf.0160.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in geneve_udp_encap_recv
+From: syzbot <syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/17/24 11:43, Krzysztof Kozlowski wrote:
-> On 17/12/2024 10:31, Ivaylo Ivanov wrote:
->> On 12/17/24 11:26, Krzysztof Kozlowski wrote:
->>> On 17/12/2024 10:08, Ivaylo Ivanov wrote:
->>>>>>>>        - items:
->>>>>>>>            - enum:
->>>>>>>> @@ -94,9 +95,28 @@ allOf:
->>>>>>>>          - clock-names
->>>>>>>>  
->>>>>>>>      else:
->>>>>>>> -      properties:
->>>>>>>> -        clocks:
->>>>>>>> -          maxItems: 1
->>>>>>>> +      if:
->>>>>>>> +        properties:
->>>>>>>> +          compatible:
->>>>>>>> +            contains:
->>>>>>>> +              enum:
->>>>>>>> +                - samsung,exynos8895-hsi2c
->>>>>>>> +
->>>>>>>> +      then:
->>>>>>>> +        properties:
->>>>>>>> +          clocks:
->>>>>>> Missing minItems
->>>>>>>
->>>>>>>> +            maxItems: 2
->>>>>>>> +
->>>>>>>> +          clock-names:
->>>>>>> Ditto
->>>>>>>
->>>>>>>> +            maxItems: 2
->>>>>>>> +
->>>>>>>> +        required:
->>>>>>>> +          - clock-names
->>>>>>> I don't understand why do you need second, same branch in if, basically
->>>>>> Because, as I stated in the commit message, we have HSI2C controllers
->>>>>> both implemented in USIv1 blocks and outside. These that are a part of
->>>>> On Exynos8895? Where? With the same compatible?
->>>> hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
->>>> from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
->>>> they need a different compatible though? It's functionally the same i2c design
->>>> as the one implemented in USIv1 blocks.
->>> If one block is part of USI and other not, they might not be the same
->>> I2C blocks, even if interface is similar. If they were the same or even
->>> functionally the same, they would have the same clock inputs. However
->> I see, so in such case I should make samsung,exynos8895-hsi2c-nonusi or
->> something like that?
->>
->>> user manual also suggests that there is only one clock, not two (for
->>> both cases), so they could be functionally equivalent but then number of
->>> clocks looks incorrect.
->> That'd be weird. Both according to downstream and upstream clk driver,
->> for the USI-implemented i2cs we have a pclk and an sclk_usi.
-> Something is not precise here, as usually with Samsung clock topology.
->
-> First, the non-USI instances have the IPCLK as well, e.g. things like
-> PERIC1_UID_HSI2C_CAM1_IPCLKPORT_iPCLK
->
-> USI have BLK_PERIC0_UID_USI03_IPCLKPORT_i_SCLK_USI, but that's USI
-> clock, not HSI2C in USI. Datasheet mentions this is UART and SPI special
-> clock, but not I2C.
+syzbot has found a reproducer for the following issue on:
 
-That's weird. Don't we need the clock enabled in order for the
-USIv1's HSI2C to work?
+HEAD commit:    f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e95730580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4f1586bab1323870
+dashboard link: https://syzkaller.appspot.com/bug?extid=c28dd30bc14158282b3b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133e8b44580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fa4744580000
 
-Best regards,
-Ivo
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f44d154d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d57bbc97217e/vmlinux-f44d154d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/345444afe36f/bzImage-f44d154d.xz
 
->  The PCLK is used for HSI2C iPCLK.
->
->
-> Best regards,
-> Krzysztof
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com
 
+memcpy: detected field-spanning write (size 8) of single field "_Generic(info, const struct ip_tunnel_info * : ((const void *)((info) + 1)), struct ip_tunnel_info * : ((void *)((info) + 1)) )" at ./include/net/ip_tunnels.h:662 (size 0)
+WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 ip_tunnel_info_opts_set include/net/ip_tunnels.h:662 [inline]
+WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 geneve_rx drivers/net/geneve.c:244 [inline]
+WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 geneve_udp_encap_recv+0x239e/0x2a20 drivers/net/geneve.c:401
+Modules linked in:
+CPU: 2 UID: 0 PID: 5932 Comm: syz-executor272 Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ip_tunnel_info_opts_set include/net/ip_tunnels.h:662 [inline]
+RIP: 0010:geneve_rx drivers/net/geneve.c:244 [inline]
+RIP: 0010:geneve_udp_encap_recv+0x239e/0x2a20 drivers/net/geneve.c:401
+Code: 2b e9 ff ff e8 d3 37 4d fb c6 05 cb 02 fb 09 01 90 31 c9 48 c7 c2 a0 e7 14 8c 4c 89 e6 48 c7 c7 80 e8 14 8c e8 53 72 0d fb 90 <0f> 0b 90 90 e9 54 ed ff ff e8 a4 37 4d fb e8 4f 30 c5 02 31 ff 41
+RSP: 0018:ffffc900037bf450 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888035210062 RCX: ffffffff815a5079
+RDX: ffff8880232f0000 RSI: ffffffff815a5086 RDI: 0000000000000001
+RBP: ffffc900037bf570 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000003 R12: 0000000000000008
+R13: ffff88802cbfda00 R14: 0000000000000000 R15: ffff888024a2fb80
+FS:  0000555562a2b380(0000) GS:ffff88806a800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200002c0 CR3: 00000000230b2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ udp_queue_rcv_one_skb+0xad5/0x18b0 net/ipv4/udp.c:2316
+ udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2394
+ __udp4_lib_mcast_deliver net/ipv4/udp.c:2486 [inline]
+ __udp4_lib_rcv+0x25c4/0x34e0 net/ipv4/udp.c:2625
+ ip_protocol_deliver_rcu+0x2ff/0x4c0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:447 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_rcv+0x2c3/0x5d0 net/ipv4/ip_input.c:567
+ __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5672
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:5785
+ netif_receive_skb_internal net/core/dev.c:5871 [inline]
+ netif_receive_skb+0x13f/0x7b0 net/core/dev.c:5930
+ tun_rx_batched.isra.0+0x3eb/0x730 drivers/net/tun.c:1574
+ tun_get_user+0x2a16/0x3e40 drivers/net/tun.c:2007
+ tun_chr_write_iter+0xdc/0x210 drivers/net/tun.c:2053
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f293ab4f920
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 81 e7 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffff606d388 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ffff606d410 RCX: 00007f293ab4f920
+RDX: 0000000000000048 RSI: 00000000200001c0 RDI: 00000000000000c8
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
+R13: 00007ffff606d3b0 R14: 00007f293ab9e140 R15: 0000555562a2b338
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
