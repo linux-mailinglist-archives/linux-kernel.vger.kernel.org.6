@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-449663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED8B9F5368
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:28:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21BD9F53BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57E457A6990
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D7C173371
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD9B1F8662;
-	Tue, 17 Dec 2024 17:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C01F8697;
+	Tue, 17 Dec 2024 17:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqmpa3fE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UqhtGsvL"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A281F76C6;
-	Tue, 17 Dec 2024 17:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11131F8910
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456499; cv=none; b=FtZqxwnK+ttwbNkb28qoefv0K3K5vVK4KJTNgyTBghiZwYfOxKI9oHfwMyWqrBwpCN+dtDGNPTt0ojlFyB3iOW6xXKfE/H7zN+6+rGoFgCkb7IUWakIWSLlC2/2kp2oobEZdRFZNaWi+fgOMqIOVF+ENLszzTm6YXzyRB3PbFMc=
+	t=1734456511; cv=none; b=KEWvno4+9XFcMcs26EJXZN5+i6ECnN4GrGDE9ZGRqj23wXI4A1C2MgS9YX+OT5CSI6ojjNSFPe3hWOJVEe8L1HDwuEMW5SqFNpSEDK7ivN7xaAmuO8W0+s8d+eUwAbflJ+K7HN5k6vsSNa5kJxh4cuYa6RobSQC7UiclPiGzwwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456499; c=relaxed/simple;
-	bh=P/KXH1pSlSgGIDmW0SOLRT8l0k0mjwSPqWkZeKUOdFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1W2a7SeIbj+2Kb8YMMZFT/wC9rE3RG6bQkIQy5naBuBFz1lpfX4DCdA7/7QLJNglfoVwPJ06u3+Us3eACojWWADdXpkbjnuKMi0kRpFI3UwtZK6OxJ7xS2tfMJPZ68s49VSNIF98g4hD0C1n+3F7Bs00yO2qzI1caHbnr5vBb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqmpa3fE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA22DC4CED7;
-	Tue, 17 Dec 2024 17:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734456499;
-	bh=P/KXH1pSlSgGIDmW0SOLRT8l0k0mjwSPqWkZeKUOdFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lqmpa3fENx0zrOO023bHko0eiu2JdCGJVjMp+cDsf95+sUdBq873OISdo3k5u0+zJ
-	 SDzXXS1qpc64h4NVMQbsmADKdtQq3SqiOURq10XbW9zep/n/VRNblYp39EXYzbQBt7
-	 ajdUu3epTOHdLTZo7BeQDAXxxCXPjS5kB9cwXcT17Bju8DgdMeu0aQUowzBXyHTBxE
-	 usP3qx1BZy5rwZLo+fIo2hy85kWuTM7NDs0I6N8LsYRGZ2c2qng/3ujgZ96q5FNHAB
-	 E2mf51SdCyXZsmZ8r2lVuaZhtYaYRlGwn+0IZCMgQHZ9ekBX41FrCVG0/ESumtr9t9
-	 LEjJYNSX2u+pw==
-Date: Tue, 17 Dec 2024 18:28:16 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v7 10/10] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_hotplug_edid()
-Message-ID: <20241217-orthodox-jellyfish-from-ganymede-a1d136@houat>
-References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
- <20241217-drm-bridge-hdmi-connector-v7-10-cb9df2b6a515@linaro.org>
+	s=arc-20240116; t=1734456511; c=relaxed/simple;
+	bh=ifVj41hj0jHwMk0KkHdF7buwVYziTcdW95B2SXgLV5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+G6OL3Le9eBsDMaTMrO/L7E9+lEWF6dX9QoW53P5zeE3xzA9Jj9XXmkx4sYbYtPPGRb7Vopjfj1EPM+OZrXxTkSCQU2EGFCe5I5yzCjMrM7kJW/gBOzVdRu5/e2XjqLnE/ThAcotgT0qnvIAHGh6ausJhcfezkZQ2FWMkomM8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UqhtGsvL; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e9a88793so9302699a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734456508; x=1735061308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CAx+NAq8WY91LPbX8Ct1FdJVOOs8fc/ZQiIFCF7xRKY=;
+        b=UqhtGsvLzfeFn2sRgFp+BCSo55AKIxCbN7nPrcU7g9zY+M+iJxKFpP3vI3jR4oTyRf
+         pVDnZr1eUpBUvhv0bqLb5aeslfZOBwbgupmarNopqSYj2W3qgQm+adah5j5ogEwzKLSs
+         Rv7J5YTynsWwoSdm54V409JnvLjai4MiL3jeC05qsbWASIXJPiK76xcXTKUjovLEkyE9
+         K7lTUhLV6AnFfbL4/Lyogzho5QUNqBzA+G032pJ7MCAf+EeL356VkVYdt+mzExZnSwT6
+         PJ6DUxS7n8xiUpq5PQfTlCyLI5/KDDoovpb6DJ/2lNCnnD1mXkhGcUNkfAGiBWpBeD8T
+         zK8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734456508; x=1735061308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CAx+NAq8WY91LPbX8Ct1FdJVOOs8fc/ZQiIFCF7xRKY=;
+        b=G6d4nDRgu5qNUm8EjFcK2syxnB5ExsN156ynOV2Zbzb/hZmY7IrxhxCm8vQl/t0HoA
+         cM0Z37FsjPT6PdIVYprUPLDY8EOWtW5WOhhd6TU6Y1U84nmXMfq3AhbR2UHOmfPG0ny7
+         6UuBKm/Hfzgd5eiYtromf3/zRk41ibVm6lAw1B2VVO3bUmD32P3lhUlHLxhguPsS09AT
+         /yq/NtcAjQLnAcbIY18wlKa07Ow+xPRF0mY7eeB5Itt+dilVyM0bVFXqzb5WBPQnEKXR
+         rxcIkouGxNIMTZiKAzdo67NVWWocqQ/mmc7x8kRUcMH1YlffzdirDRlFl/Gun1pcrett
+         Ua/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVvBDz58Vq4sSypQN7NGx704UWRMaKUKdIGvfOyZLUoXUlwxwBjGn1sKufZbMyeCSq5FCJSoXvNQuxMUwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy99BmTGK6jT8hXhdqj4KtXXEZ+h3tZQeSTFRv6ZfsI7MIbny3M
+	Kq7RgiJEbU/TGpJpKY9m3GeBSn3UIbn9Zx37ERaa6ToSC/87gUQQe+1d0+x+leNla/xi+AxdxNh
+	0xqj1XASWD7eKI6L0dQqY+QSk2qSUzXdpBplPl1gpTU/KHnMDCQDGtac=
+X-Gm-Gg: ASbGncth1qRAfaVWx1oXXxEnhYRrYOsIdND9uqrJa5/1eSubCfT8mg5UfN8kCFeW15U
+	9o3PfnC0PqO1itZxwFqY8pBvV7v2H8MM6MKEUbpf4MmNdarsH3ys7HB8idac4GA91zuoFKF5x
+X-Google-Smtp-Source: AGHT+IGkzEIVOrNt8YvlmESZDjkp+W2oK9qFDxe1kRqJA9t2QYfw71jrZAcbcD93ykRxoMr2IC257zK+/VmaHV/Fpxo=
+X-Received: by 2002:a05:6402:11c7:b0:5d3:f325:2c3 with SMTP id
+ 4fb4d7f45d1cf-5d63c3c2d6fmr15451635a12.33.1734456507919; Tue, 17 Dec 2024
+ 09:28:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="4poat5rh7ip5k2pz"
-Content-Disposition: inline
-In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-10-cb9df2b6a515@linaro.org>
-
-
---4poat5rh7ip5k2pz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241217140323.782346-1-kory.maincent@bootlin.com>
+ <CANn89iJ3sax3eRDPCF+sgk4FQzTn45eFuz+c+tE9sD+gE_f4jA@mail.gmail.com> <20241217181712.049b5524@kmaincent-XPS-13-7390>
+In-Reply-To: <20241217181712.049b5524@kmaincent-XPS-13-7390>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 17 Dec 2024 18:28:16 +0100
+Message-ID: <CANn89iJcQis_1u5PyBn6gPhge1r6SsVicCCywKeVTrjn9o83_g@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ethtool: Fix suspicious rcu_dereference usage
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com, 
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 10/10] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_hotplug_edid()
-MIME-Version: 1.0
 
-On Tue, Dec 17, 2024 at 02:40:32AM +0200, Dmitry Baryshkov wrote:
-> Use the helper function to update the connector's information. This
-> makes sure that HDMI-related events are handled in a generic way.
-> Currently it is limited to the HDMI state reporting to the sound system.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Tue, Dec 17, 2024 at 6:17=E2=80=AFPM Kory Maincent <kory.maincent@bootli=
+n.com> wrote:
+>
+> On Tue, 17 Dec 2024 16:47:07 +0100
+> Eric Dumazet <edumazet@google.com> wrote:
+>
+> > On Tue, Dec 17, 2024 at 3:03=E2=80=AFPM Kory Maincent <kory.maincent@bo=
+otlin.com>
+> > wrote:
+> > >
+> > > The __ethtool_get_ts_info function can be called with or without the
+> > > rtnl lock held. When the rtnl lock is not held, using rtnl_dereferenc=
+e()
+> > > triggers a warning due to improper lock context.
+> > >
+> > > Replace rtnl_dereference() with rcu_dereference_rtnl() to safely
+> > > dereference the RCU pointer in both scenarios, ensuring proper handli=
+ng
+> > > regardless of the rtnl lock state.
+> > >
+> > > Reported-by: syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com
+> > > Closes:
+> > > https://lore.kernel.org/netdev/676147f8.050a0220.37aaf.0154.GAE@googl=
+e.com/
+> > > Fixes: b9e3f7dc9ed9 ("net: ethtool: tsinfo: Enhance tsinfo to support
+> > > several hwtstamp by net topology") Signed-off-by: Kory Maincent
+> > > <kory.maincent@bootlin.com> --- net/ethtool/common.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+> > > index 02f941f667dd..ec6f2e2caaf9 100644
+> > > --- a/net/ethtool/common.c
+> > > +++ b/net/ethtool/common.c
+> > > @@ -870,7 +870,7 @@ int __ethtool_get_ts_info(struct net_device *dev,
+> > >  {
+> > >         struct hwtstamp_provider *hwprov;
+> > >
+> > > -       hwprov =3D rtnl_dereference(dev->hwprov);
+> > > +       hwprov =3D rcu_dereference_rtnl(dev->hwprov);
+> > >         /* No provider specified, use default behavior */
+> > >         if (!hwprov) {
+> > >                 const struct ethtool_ops *ops =3D dev->ethtool_ops;
+> >
+> > I have to ask : Can you tell how this patch has been tested ?
+>
+> Oh, it was not at all sufficiently tested. Sorry!
+> I thought I had spotted the issue but I hadn't.
+>
+> > rcu is not held according to syzbot report.
+> >
+> > If rtnl and rcu are not held, lockdep will still complain.
+>
+> You are totally right.
+> I may be able to see it with the timestamping kselftest. I will try.
 
-drm_atomic_helper_connector_hdmi_hotplug_edid in the commit title doesn't e=
-xist anymore :)
+syzbot has a repro that you can compile and run.
 
-With that fixed, and assuming it's been tested
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Make sure to build and use a kernel with
 
-Maxime
-
---4poat5rh7ip5k2pz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2G0sAAKCRAnX84Zoj2+
-dvgTAYDXWRRNriha0ReNmEhaMolS8cMgKCv2UWzwTM8m3zgibCHDKFgri0Pqm9Wj
-kq7o4DoBgOuYsZCZJQ6vnGSi6pHkFZxYFNADG4GFFiA2JE2JPWZ+/G3BQX8XkCyN
-VYp4weCILg==
-=kZ/S
------END PGP SIGNATURE-----
-
---4poat5rh7ip5k2pz--
+CONFIG_PROVE_LOCKING=3Dy
 
