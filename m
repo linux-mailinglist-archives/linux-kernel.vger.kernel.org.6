@@ -1,241 +1,127 @@
-Return-Path: <linux-kernel+bounces-449844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800AA9F56D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:24:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90A89F56D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C25B7A2356
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3001633CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006BC1F8F04;
-	Tue, 17 Dec 2024 19:24:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3A9158DD1
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C691F943A;
+	Tue, 17 Dec 2024 19:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JmVCOpFA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ol0SJg0K"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F521F9410;
+	Tue, 17 Dec 2024 19:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734463467; cv=none; b=NCMMak61t/HjYJr4+dGNRhrbuLUp45DuprDmx5EQ7G3ExGcsY6pLOo8iGM9DXnO+AmV7QywFAl+Gvg0kZyJdHkYEYdF2WcNEIOQkdyo/k8aCL6m+sMISj+tAOuqqdFZciq94AfnmQEq+ewwKGpm6ctJ9Dgo1qfmQ64Q87369j1k=
+	t=1734463490; cv=none; b=oaT98oa2CPuB6G5+2wp44uVrI1YXWyJPlS33z3RkjD026XGuIOiAtthv5heJviAVemhVhY4MevwMsjA7PwH/Tv24W1Ew2VzemyZoE86tOBMHVMXKKhgiJvBVtYLJ0pcitHe5P8YgSwkjwNTbJwrVGjZAsF+kBM8IaT59mZlAQAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734463467; c=relaxed/simple;
-	bh=rn4mqQdzpjoiqDj74ZC7JkwoIrErxsRjiFHOYrWYDeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TgOfBjnVYwmb6jSXvn+3DLxnXVuGHKAXj+pe6O97BJuZzKpFcATVFJCI2hYs6BblI9Wgw5bQ1a32PEmcEg4pX+D+6owh0CuBC+Eq8o7pPeB3pa76wvGm58U8yopzrnATT75gHaRTjrytrzycS6tcCOx4CpDf28PPMx8IRsJhrxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FA5C339;
-	Tue, 17 Dec 2024 11:24:52 -0800 (PST)
-Received: from [10.57.91.184] (unknown [10.57.91.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDD9E3F528;
-	Tue, 17 Dec 2024 11:24:18 -0800 (PST)
-Message-ID: <097741c8-b2ea-4869-8792-f9663019137c@arm.com>
-Date: Tue, 17 Dec 2024 19:24:17 +0000
+	s=arc-20240116; t=1734463490; c=relaxed/simple;
+	bh=YYiCmxIYKaAHA4tjICmvUHGI9+eNw85lmpRIlH4pHJE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gHiV0qnOuFLPKo3DRDjhuf6+4MjlLEwjlgG9IbB/DxaPJZtgD2ppcYpdI8/6qxadVJ/pXrCUep02wyBe4CvlaZgtok5ORJwuI5b/TpbGxZDk7kkLU/Fnjwm7troXWZTnlIA8ntOePtAABiaG9feqiFOt8l64I3o1CgBzpcIfX1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JmVCOpFA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ol0SJg0K; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 03C9A114015D;
+	Tue, 17 Dec 2024 14:24:45 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 17 Dec 2024 14:24:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734463485;
+	 x=1734549885; bh=EOe6BesmxFnRJHHLU70DJc/y0ejfvE7PEl68vLU8DJs=; b=
+	JmVCOpFA5TV440bkBGpJr36N9b+07RrWfSd2L1KaSuCnCucQSMIHXbChJbV0QhsZ
+	zaq23FbeQfzXtWZS9m3fm5qRL2S1BrIw9zbkYICrrf07tTyODCCOk2r8ea/AD40a
+	x6tgMfz2zEwcVFg3tW1A5FL1XAOQ8EBRJNd1saX1M6pkukmfiyGlzAoRUsalfEA9
+	fAj1Zn9fOhxOsV+IJ5EROEE0XpnaNZo64SYqQCnTU2kyCNPSewYXbj0NyKN0DE5x
+	/cw7dwNmisqb09fQw/wDmBKCKBCWujTAPy5YhpHoRC/0BbljRc3Pw50GrtRBfRtb
+	nKHkAuYXyr7JEQ3Cni20Sg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734463485; x=
+	1734549885; bh=EOe6BesmxFnRJHHLU70DJc/y0ejfvE7PEl68vLU8DJs=; b=o
+	l0SJg0KWvLU24ys+FxQtTJdSVAB0SxFfIM21YNXJ6Atp2YMQS0GdqXgA+X5FzXpH
+	4/0tXnfrGmM41yYe3mrIftpxxxc2jE2tPDtLFUD1xn+OIrOXjRZeYHYWxbW+sLbh
+	BkCopVLOqK26tJgMOu34bPmWeVX886d2V1/R82LOR5Cr3exL0MiIx4ocz0t8PZ/z
+	TVxVvv+WXACnKEiogdOBds2yYvP3zgxP94PyXBjwjQy0lWCkO04mfHFEhC65f6c/
+	P937IsF3YMLIhY/QTCU5BGEeG8RhljaKIwkXD5m3+VgYC8090Tofj66Nc3oO/QDQ
+	CjBB/bM/spxcfOgqJcFLA==
+X-ME-Sender: <xms:_M9hZye8_x8F9LN2xBm99bRe-ZB-7pwHzc4tD0QrmKTq_DocoCvLWQ>
+    <xme:_M9hZ8NC2PC_Hb7CJjEySXCl8NAUMNzV-UXvq_GxRidhV3YTe67mz_0Zc4jBgy5VG
+    4EhdGMqmLoGpDklEAs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdduvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsohhnihgtrgguvhgrnhgtvgduse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvggrlhhmvghiugesihhgrghlihgr
+    rdgtohhmpdhrtghpthhtohepkhgvrhhnvghlqdguvghvsehighgrlhhirgdrtghomhdprh
+    gtphhtthhopeguvhhhrghrthesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehp
+    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehnrghthhgrnheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggv
+    pdhrtghpthhtohepvhhpvghigihothhosehlkhgtrghmphdruggvvhdprhgtphhtthhope
+    hmihhnghhosehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:_M9hZzj3M3UwmjgSWr6Gp0u4WL-K3oALGf_WX9s3lbBd5NJP_AZddg>
+    <xmx:_M9hZ__-v1OpWFJLY_y1aXkYNeFhm1jaE380ircugowLtG7wqKXcdw>
+    <xmx:_M9hZ-twMJmQzUeZ-dOtGax0wDQWfChtzXAr81duPu02MN5m1neD3A>
+    <xmx:_M9hZ2HSnSKPTi4gzhZ3qIDE2ADNlox4f_Kg6-LmGulmarfjtKGQBw>
+    <xmx:_c9hZ2E_QfgM8Vgzv6LhyCD1PES8KaIJCdTUnaNEiJphrGEGvsPWB0Ki>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C89452220072; Tue, 17 Dec 2024 14:24:44 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 08/12] khugepaged: Abstract PMD-THP collapse
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20241216165105.56185-1-dev.jain@arm.com>
- <20241216165105.56185-9-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241216165105.56185-9-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Tue, 17 Dec 2024 20:24:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Darren Hart" <dvhart@infradead.org>, "Davidlohr Bueso" <dave@stgolabs.net>,
+ sonicadvance1@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ linux-api@vger.kernel.org, "Nathan Chancellor" <nathan@kernel.org>,
+ "Vinicius Peixoto" <vpeixoto@lkcamp.dev>
+Message-Id: <94d0e188-10fb-4a4e-b7e0-f308e2f25561@app.fastmail.com>
+In-Reply-To: <20241217174958.477692-4-andrealmeid@igalia.com>
+References: <20241217174958.477692-1-andrealmeid@igalia.com>
+ <20241217174958.477692-4-andrealmeid@igalia.com>
+Subject: Re: [PATCH v3 3/3] futex: Wire up set_robust_list2 syscall
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 16/12/2024 16:51, Dev Jain wrote:
-> Abstract away taking the mmap_lock exclusively, copying page contents, and
-> setting the PMD, into vma_collapse_anon_folio_pmd().
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+On Tue, Dec 17, 2024, at 18:49, Andr=C3=A9 Almeida wrote:
+> Wire up the new set_robust_list2 syscall in all available architecture=
+s.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
->  mm/khugepaged.c | 119 +++++++++++++++++++++++++++---------------------
->  1 file changed, 66 insertions(+), 53 deletions(-)
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 078794aa3335..88beebef773e 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1111,58 +1111,17 @@ static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
->  	return SCAN_SUCCEED;
->  }
->  
-> -static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
-> -			      int referenced, int unmapped, int order,
-> -			      struct collapse_control *cc)
-> +static int vma_collapse_anon_folio_pmd(struct mm_struct *mm, unsigned long address,
-> +		struct vm_area_struct *vma, struct collapse_control *cc, pmd_t *pmd,
-> +		struct folio *folio)
->  {
-> +	struct mmu_notifier_range range;
-> +	spinlock_t *pmd_ptl, *pte_ptl;
->  	LIST_HEAD(compound_pagelist);
-> -	pmd_t *pmd, _pmd;
-> -	pte_t *pte;
->  	pgtable_t pgtable;
-> -	struct folio *folio;
-> -	spinlock_t *pmd_ptl, *pte_ptl;
-> -	int result = SCAN_FAIL;
-> -	struct vm_area_struct *vma;
-> -	struct mmu_notifier_range range;
-> -
-> -	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
-> -
-> -	/*
-> -	 * Before allocating the hugepage, release the mmap_lock read lock.
-> -	 * The allocation can take potentially a long time if it involves
-> -	 * sync compaction, and we do not need to hold the mmap_lock during
-> -	 * that. We will recheck the vma after taking it again in write mode.
-> -	 */
-> -	mmap_read_unlock(mm);
-> -
-> -	result = alloc_charge_folio(&folio, mm, order, cc);
-> -	if (result != SCAN_SUCCEED)
-> -		goto out_nolock;
-> -
-> -	mmap_read_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, order, cc);
-> -	if (result != SCAN_SUCCEED) {
-> -		mmap_read_unlock(mm);
-> -		goto out_nolock;
-> -	}
-> -
-> -	result = find_pmd_or_thp_or_none(mm, address, &pmd);
-> -	if (result != SCAN_SUCCEED) {
-> -		mmap_read_unlock(mm);
-> -		goto out_nolock;
-> -	}
-> -
-> -	if (unmapped) {
-> -		/*
-> -		 * __collapse_huge_page_swapin will return with mmap_lock
-> -		 * released when it fails. So we jump out_nolock directly in
-> -		 * that case.  Continuing to collapse causes inconsistency.
-> -		 */
-> -		result = __collapse_huge_page_swapin(mm, vma, address, pmd,
-> -						     referenced, order);
-> -		if (result != SCAN_SUCCEED)
-> -			goto out_nolock;
-> -	}
-> +	int result;
-> +	pmd_t _pmd;
-> +	pte_t *pte;
->  
->  	mmap_read_unlock(mm);
->  	/*
-> @@ -1174,7 +1133,8 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	 * mmap_lock.
->  	 */
->  	mmap_write_lock(mm);
-> -	result = hugepage_vma_revalidate(mm, address, true, &vma, order, cc);
-> +
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, HPAGE_PMD_ORDER, cc);
->  	if (result != SCAN_SUCCEED)
->  		goto out_up_write;
->  	/* check if the pmd is still valid */
-> @@ -1206,7 +1166,7 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	pte = pte_offset_map_lock(mm, &_pmd, address, &pte_ptl);
->  	if (pte) {
->  		result = __collapse_huge_page_isolate(vma, address, pte, cc,
-> -						      &compound_pagelist, order);
-> +						      &compound_pagelist, HPAGE_PMD_ORDER);
->  		spin_unlock(pte_ptl);
->  	} else {
->  		result = SCAN_PMD_NULL;
-> @@ -1262,11 +1222,64 @@ static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
->  	deferred_split_folio(folio, false);
->  	spin_unlock(pmd_ptl);
->  
-> -	folio = NULL;
-> -
->  	result = SCAN_SUCCEED;
->  out_up_write:
->  	mmap_write_unlock(mm);
-> +	return result;
-> +}
-> +
-> +static int collapse_huge_page(struct mm_struct *mm, unsigned long address,
-> +			      int referenced, int unmapped, int order,
-> +			      struct collapse_control *cc)
-> +{
-> +	struct vm_area_struct *vma;
-> +	int result = SCAN_FAIL;
-> +	struct folio *folio;
-> +	pmd_t *pmd;
-> +
-> +	/*
-> +	 * Before allocating the hugepage, release the mmap_lock read lock.
-> +	 * The allocation can take potentially a long time if it involves
-> +	 * sync compaction, and we do not need to hold the mmap_lock during
-> +	 * that. We will recheck the vma after taking it again in write mode.
-> +	 */
-> +	mmap_read_unlock(mm);
-> +
-> +	result = alloc_charge_folio(&folio, mm, order, cc);
-> +	if (result != SCAN_SUCCEED)
-> +		goto out_nolock;
-> +
-> +	mmap_read_lock(mm);
-> +	result = hugepage_vma_revalidate(mm, address, true, &vma, order, cc);
-> +	if (result != SCAN_SUCCEED) {
-> +		mmap_read_unlock(mm);
-> +		goto out_nolock;
-> +	}
-> +
-> +	result = find_pmd_or_thp_or_none(mm, address, &pmd);
-> +	if (result != SCAN_SUCCEED) {
-> +		mmap_read_unlock(mm);
-> +		goto out_nolock;
-> +	}
-> +
-> +	if (unmapped) {
-> +		/*
-> +		 * __collapse_huge_page_swapin will return with mmap_lock
-> +		 * released when it fails. So we jump out_nolock directly in
-> +		 * that case.  Continuing to collapse causes inconsistency.
-> +		 */
-> +		result = __collapse_huge_page_swapin(mm, vma, address, pmd,
-> +						     referenced, order);
-> +		if (result != SCAN_SUCCEED)
-> +			goto out_nolock;
-> +	}
-> +
-> +	if (order == HPAGE_PMD_ORDER)
-> +		result = vma_collapse_anon_folio_pmd(mm, address, vma, cc, pmd, folio);
+>  arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+>  arch/arm/tools/syscall.tbl                  | 1 +
 
-I think the locking is broken here? collapse_huge_page() used to enter with the
-mmamp read lock and exit without the lock held at all. After the change, this is
-only true for order == HPAGE_PMD_ORDER. For other orders, you exit with the mmap
-read lock still held. Perhaps:
+Please also change arch/arm64/tools/syscall_32.tbl
 
-	else
-		mmap_read_unlock(mm);
-
-> +
-> +	if (result == SCAN_SUCCEED)
-> +		folio = NULL;
-> +
->  out_nolock:
->  	if (folio)
->  		folio_put(folio);
-
+     Arnd
 
