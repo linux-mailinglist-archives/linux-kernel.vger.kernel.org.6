@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-448405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9029F3FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:09:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04FF9F3FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E21E1888639
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:09:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA7AD7A1FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B586154279;
-	Tue, 17 Dec 2024 01:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RjLVyv5g"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487DE54738
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE36445C14;
+	Tue, 17 Dec 2024 01:09:15 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA421EF1D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734397718; cv=none; b=j2NnyN0xT7tNX60kGultcHoJ/2rBsqHnYDN3Lv21QB5PS3Q4gea8foUlhofbecYeK5R650gvkiU9jeLVwkw6VY48OPRdVg+oeiP4wUFZF52tyGqLJWd/97sFVRSLt/Sy289AWVFbWjYkOhtKKJD5wfeNmHKjTtDgfMQtaD93s/E=
+	t=1734397755; cv=none; b=u2UQ/Pl8kCkUg1hQ7ReeXQjbVzAXOqyZK4LyDoASF1DqMVL7hSlBOHDSrGJGNz1K1Kc0Vt5/aqbOuFObj/ZrOsDaxYgncGI7nID8gDzV6TgMHe2F8m91LfoJ4/M/gTff+6l73C5ObJBIG96zfFEag+55kkkLTjtsyRbzTOwUVw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734397718; c=relaxed/simple;
-	bh=5j6iT2zeBprglLkGjsx781QuAZzbfmuFvWgXrzwhfk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nCTP5zwA1hYplMPP4++r53tNNHqwYTDTEYIQeMPcZ4/pYQ0hQqterfqbZVlH0xpT5vNZXLHzUAr6CWLJskg6p0DsbsnjXwRfUG9fCEwx0HzYBOQydX9c9ztNIleTJMGQvghykcqScrrzA+CtxPOaCGmQl/bjHSgLmEqORNWuK5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RjLVyv5g; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so642417666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734397714; x=1735002514; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5HbsH3y11AUtX77RP9ShUJxU46vkQ8YNLD+VoIrduA=;
-        b=RjLVyv5gxiimBNWOsG+jhHfY6PlTvF4Pn+gRgvM875eJrj7+dHDDbiXjP+fiob3BSp
-         SxeWPKe7sXEjDdaZwxggm52gnVQwKxShDzBWdQ4006KLTpbL3/VtouNqO+jyI5RFtTaq
-         rkCpw4zJLANwrZ8duY5Dj3zs6PVNABhRIENyM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734397714; x=1735002514;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x5HbsH3y11AUtX77RP9ShUJxU46vkQ8YNLD+VoIrduA=;
-        b=jSiggr0m97rj30ySc6bJ94M51BjJNnbAiDJ67OffPQFxkKoetZImdZOc67tfig1JAM
-         Rt7zh5v/dS66OA8vHc2dS0m47mDUY3VidpEUsNT2ym21jf0/P3sX+FAb+iygQ6TN9ChB
-         lmdVH3LlBbsd2iiM9SVS7PWQVEPsHQHDiK0Bu59rseiSmJ1YnVdaz2mKUASkssmkgxnK
-         40N7/vCzN3FkA77R/JINGdEhjz+WvUgwBS36NmVdCGcRfQ8r5qpE16qHXfDwvoTd7iG0
-         KA2dn4jMmoPUi7obVPuX6uDTjf+73FfIFA0HOMToXidJZ80eW0N5MB1r5Kor8SJGgd+P
-         g2sg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4xGoI/T6KdjSjsQefKXSfVjkQwgb2KwIxlaalMdOVSl4LUAiYRh7V+X5QWARc7EOAo6t4YPCY1pgbxWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtsDEYpCSuaJOoM3krxf+u/jI+MXuG5DclX39F4+B2tkw6LM03
-	aX9DoWPPqx0uwp+i4TdyXRFfwvXqUSB5Txy29dMnuAOfZJ00Q6FI9Pb1fA4SlqefmYZGeKndyH7
-	+LaM=
-X-Gm-Gg: ASbGncsbxuNPt+SfB+QCSMstF6VcOSXmgUn0CIQ8whi2rODj2Ig9LF2g8aRhdmOEF+J
-	DgYgg7oEv4NjKgCYCGc0IXZRJ74WWYGW7oHAlOvIBgTJ7UdHT6smZ5Yxx/f7ijllFE17QqcemI5
-	AJaEhsdnZ3gHZyBAGsC2ttfm9dKLCeZbPFUGIG7tlJ6Vgawx/nGYc0fr10U8avpGxKrP3rOxfxu
-	k6vtRQf26up0TxzllBxY2sgge+XYstbNXPFYq66b1Gstxwv7dal3mcG1p8Aaxw2U88zqtb9xwFe
-	dae3pbX3C1ElKTMRTL0j1CyhWMIGlqA=
-X-Google-Smtp-Source: AGHT+IFwxEMxQtDPLlue+1J0NmgM7tkIWrqq+67XqX+KlazzwTlhp13uhV0Q7L5gCUAOF5chmyEjCg==
-X-Received: by 2002:a05:6402:5214:b0:5d0:ed92:cdf6 with SMTP id 4fb4d7f45d1cf-5d63c3421f4mr31249642a12.19.1734397714356;
-        Mon, 16 Dec 2024 17:08:34 -0800 (PST)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d7cf1f0f56sm752623a12.20.2024.12.16.17.08.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 17:08:31 -0800 (PST)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so635885766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:08:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVnrS0/QrnOQe+wdW9Woyqx6eD/N9KWpO9wlikIt0/e00uCcpS3PZ7SidN73GsP3qlU2UtkYxbpDWYZgI0=@vger.kernel.org
-X-Received: by 2002:a05:6402:27d4:b0:5d0:d91d:c197 with SMTP id
- 4fb4d7f45d1cf-5d63c3db906mr36599487a12.27.1734397709817; Mon, 16 Dec 2024
- 17:08:29 -0800 (PST)
+	s=arc-20240116; t=1734397755; c=relaxed/simple;
+	bh=ghomW4Asr9nZZDuFvIjfdu8xl+m+xqmzijjXD9V3DHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XZGDfZfEpEykgOELB9KrZnE4pNIj2ZAThxAEHknkxkic7pUo+9WsUyuh3sNDvJ8rQ6cd6Jba8WxbLAByWfJRbRDtSzd9OpSsgWsAg4kiTjnSXjM+lveAwB6VSQD02ojdKw66lUUYZAUy1EPwnF+rG7q/NsNLxVAiyURtsmaXuhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxSOE0z2BnC5dXAA--.39573S3;
+	Tue, 17 Dec 2024 09:09:09 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMDxPEcyz2BnXNeFAA--.16436S2;
+	Tue, 17 Dec 2024 09:09:06 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/9] Add jump table support for objtool on LoongArch
+Date: Tue, 17 Dec 2024 09:08:56 +0800
+Message-ID: <20241217010905.13054-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213054610.55843-1-laoar.shao@gmail.com> <20241213054610.55843-6-laoar.shao@gmail.com>
-In-Reply-To: <20241213054610.55843-6-laoar.shao@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 16 Dec 2024 17:08:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj=W-4Eu=g83QPUDB+thtL=uY=_1OAVRvXJP=zay+K4Qg@mail.gmail.com>
-Message-ID: <CAHk-=wj=W-4Eu=g83QPUDB+thtL=uY=_1OAVRvXJP=zay+K4Qg@mail.gmail.com>
-Subject: Re: [PATCH 5/7] security: Replace get_task_comm() with %pTN
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, x86@kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-wireless@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	ocfs2-devel@lists.linux.dev, Kees Cook <kees@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxPEcyz2BnXNeFAA--.16436S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7ur48Cr4DurW3Wr47KFWxuFX_yoW8ZrWfpF
+	WUCrZ8Kr4rXr97J3srJ34YgFW3Jw4xWr1IqF13Gry5A3yUXw1UJr4fAayDtF1jg3yFgFyI
+	qF4rWa1UGF4qyagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
+	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
+	AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
+	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
+	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
+	UjIFyTuYvjxU2MKZDUUUU
 
-On Thu, 12 Dec 2024 at 21:47, Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> Since task->comm is guaranteed to be NUL-terminated, we can print it
-> directly without the need to copy it into a separate buffer.
+This version is based on tip/tip.git objtool/core branch [1], add some weak
+and arch-specific functions to make the generic code more readable, tested
+with the latest upstream mainline Binutils, GCC and Clang.
 
-So i think we should do the "without copying into a separate buffer"
-part of this series, but I do think we should just accept "%s" and
-"task->comm".
+The first 6 patches are preparation for patch #7 to enable jump table for
+objtool on LoongArch, the last 2 patches are small enough to fix objtool
+warnings "funcA() falls through to next function funcB()", one is under
+arch/loongarch and the other is under drm/amd/display.
 
-IOW - getting rid of get_task_comm() is good.
+v6:
+  -- Add arch_reloc_size() for x86 and ppc.
+  -- Call arch_reloc_size() directly in add_jump_table().
+  -- Refine arch_adjust_offset() for LoongArch.
+  -- Rename arch_adjust_offset() to arch_jump_table_sym_offset(). 
+  -- Get each table size of rodata in time for switch table.
+  -- Update the commit message to make it more clear.
 
-But the "%pTN" pointer format ends up being unnecessary.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=objtool/core
 
-          Linus
+Tiezhu Yang (9):
+  objtool: Handle various symbol types of rodata
+  objtool: Handle different entry size of rodata
+  objtool: Handle PC relative relocation type
+  objtool: Handle unreachable entry of rodata
+  objtool/LoongArch: Add support for switch table
+  objtool/LoongArch: Add support for goto table
+  LoongArch: Enable jump table for objtool
+  LoongArch: Convert unreachable() to BUG()
+  drm/amd/display: Mark dc_fixpt_from_fraction() noinline
+
+ arch/loongarch/Kconfig                        |   3 +
+ arch/loongarch/Makefile                       |   6 +-
+ arch/loongarch/kernel/machine_kexec.c         |   4 +-
+ .../drm/amd/display/dc/basics/fixpt31_32.c    |   2 +-
+ tools/objtool/arch/loongarch/decode.c         |  28 ++-
+ .../objtool/arch/loongarch/include/arch/elf.h |   7 +
+ tools/objtool/arch/loongarch/special.c        | 159 +++++++++++++++++-
+ tools/objtool/arch/powerpc/decode.c           |  15 ++
+ tools/objtool/arch/x86/decode.c               |  13 ++
+ tools/objtool/check.c                         |  28 ++-
+ tools/objtool/include/objtool/arch.h          |   3 +
+ 11 files changed, 251 insertions(+), 17 deletions(-)
+
+-- 
+2.42.0
+
 
