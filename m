@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-448399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766069F3F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4E49F3FA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF34B16436E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:58:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8EA164669
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DF45C14;
-	Tue, 17 Dec 2024 00:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ub2CovJA"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E45224D6;
+	Tue, 17 Dec 2024 01:00:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7953A8D0
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93759749C;
+	Tue, 17 Dec 2024 00:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734397113; cv=none; b=X4VCWH9XtfTo35SiCOXGnvXWj8hEEKcnoAOK8+bdCPQucK82P6480CZttUm6JNym02Db8Ja99N2xcvGSqGWX1nUPXSRGh6C8OfEWt6Gq1j4btEPGLt+caUuBX49aagCHNPh46oz1liOCTmwHHS1o2tkWyGys8lXeQwk4gS7qDOM=
+	t=1734397199; cv=none; b=dIptsCV/bbEAjHO+VTCh2cYt3vXy/NP6f8ipLWSkCCAo1go99Cfa5i2rnGo/H8phDZG5kT3t0cYQ79ckrCvyjD3ViFKG90K3v5bIx0zGAILe7pu6fMXka5adOvo6KYvoYUKgrHNGFXC57LDmVmZ+XSvbPp5fWZ2fA0ZqN19izuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734397113; c=relaxed/simple;
-	bh=9hLxiFcAFu2TwOav6BII2qkjiKd5UnfCseBsehlGuYE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=R54xl0/y88CT7/4AYKcKIc4RG3w8oK7ldTJ6Wkm69LRR7q7ZR17WtCotmVhsyrt7l8KzUu3yhs5llSVs7UgH5OU5R2FJTC7//pnMamPAWgVeX8aMMEONPCxJkjlCltfyhDwYhpJ3eat9DhSi1sXTr71w8CWzHMU8Z47X0IO89/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ub2CovJA; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2eeeb5b7022so4447525a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734397111; x=1735001911; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QtHb+TAzClaiol0zXJv2UBR+65gtWo5dViHfxTkrdAw=;
-        b=ub2CovJAhnyqfCeu3yqRq+Zw7jfPiEF/rlFc/KvFuebFJ4whiLM0fhBrOtM9yCS4I5
-         RwB0EbjGt04nOW/tCC4+NEMEaKEo1mm/xH5JVBDT+Ebm/iGa3ma6/4YHO9D8STw3TI3x
-         4Di9hEfXfr6UYbLFf0HcRnW7OBwoQxUhCwEdOt98/XI7n3Ik2RAf6SiDt3VLe48Nsyaq
-         tF01DPc9MklxR/pg07JrmwqEoxhWjaKKpjSMn7yd0Sq2w51B00Rob5xUJSwRphIruR7j
-         H2c8itjyn1JFTkIheTkLCf4kOOyxc+DHsxWYncxp47foY3N5rTC+KYpxkAXcHPwmaik/
-         JdQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734397111; x=1735001911;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QtHb+TAzClaiol0zXJv2UBR+65gtWo5dViHfxTkrdAw=;
-        b=e+Co8ZWCd0b5fD5jTED74CSfrJhdKslP3OndpgqzRqj1Gs7AR07YCCupVun0FlBLWv
-         fIZ964nhQ9opeZkXz4YALX31n3LyiwCt8Kfsr3QbPYL/7Zc3VkqoLoUA6G1mfbA/G1ts
-         QnKEK9HU4MCW0ISbu4NIhEey+AwwF5KzFOCHz4G2Qr6918LBYKHcUg0lhOVsFYRQ4Pn7
-         4bdnDeNZnbeiZnKTjk7TuHfani6Mo8uV0qeWIeK4y4C3rH0xZG96Gjhn9jzGXZdabPAI
-         h/sxH5psPhVRpL9PUYwscrkoT0mEh1MvcwDKLmQmJZvkXOOijj3k1s2kKF+ZuaZd3vr3
-         da2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVd7EzmtPetsTDUooqj9bQCUGrMIslMBqVfSzWU4PpeyEibBSgqFuUYfLqZzwsorC6eVC7HncqnfeNAmyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLqslo6YOjju5YhHDJJlLg0HnnNqSYCkmfAcpZRwMwkcTot/t3
-	CX5J+GO8+Jz4C4tCHyjISTauF3k2UzAOHfSdRqP+1mFuyq7VMSYSTfqIeQfb1FOww0z6R7Ol5YN
-	rTA==
-X-Google-Smtp-Source: AGHT+IEDvBU9k6Ru9M5gPh97laz5Mo8W2tw1aRDBQ5B2tFJS8jeNlhuSwR6DcjhDTvSWoYi3GDuhfvGoGcw=
-X-Received: from pjbsr5.prod.google.com ([2002:a17:90b:4e85:b0:2ef:8ef8:2701])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1a90:b0:2ee:bbe0:98cd
- with SMTP id 98e67ed59e1d1-2f28fa54ecamr22543216a91.7.1734397111522; Mon, 16
- Dec 2024 16:58:31 -0800 (PST)
-Date: Mon, 16 Dec 2024 16:58:30 -0800
-In-Reply-To: <20241213235821.2270353-1-seanjc@google.com>
+	s=arc-20240116; t=1734397199; c=relaxed/simple;
+	bh=PmN5/GP7ybgzjspT53z+h4EQv3Om4TXSPX7BJllmejs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=D5u95e7dhu1t0IF7uc33ApapQ8DvBKsKibolgbgebWOR4ly2PQ+MsOvp/hAhI59m0TdGQe/jskB12NQDNLxTAOu48WnLygq1USb8393y5f2F5zSuA448q57TUmBL7Jk7av0o2xXZbRW38i1OML3MZA32Wrmouk/JtrC+7073Rgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YBz3t6TxYz4f3jqM;
+	Tue, 17 Dec 2024 08:59:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 53C091A0359;
+	Tue, 17 Dec 2024 08:59:53 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP2 (Coremail) with SMTP id Syh0CgAXd+MHzWBnW3wdEw--.2904S2;
+	Tue, 17 Dec 2024 08:59:53 +0800 (CST)
+Subject: Re: [PATCH v3 1/5] Xarray: Do not return sibling entries from
+ xas_find_marked()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-nfs@vger.kernel.org
+References: <20241213122523.12764-1-shikemeng@huaweicloud.com>
+ <20241213122523.12764-2-shikemeng@huaweicloud.com>
+ <1f8b523e-d68f-4382-8b1e-2475eb47ae81@linux.alibaba.com>
+ <5d89f26a-8ac9-9768-5fc7-af155473f396@huaweicloud.com>
+ <Z2AzgqT7LCcT-BGr@casper.infradead.org>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <3278a51d-32e0-5c89-a5e5-b6f17af8ebde@huaweicloud.com>
+Date: Tue, 17 Dec 2024 08:59:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241213235821.2270353-1-seanjc@google.com>
-Message-ID: <Z2DMtr3jdLK9cg34@google.com>
-Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.12.17 *** On Tuesday the 17th!!! ***
-From: Sean Christopherson <seanjc@google.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+In-Reply-To: <Z2AzgqT7LCcT-BGr@casper.infradead.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAXd+MHzWBnW3wdEw--.2904S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
+	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxv
+	r21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Non-automated reminder, PUCK is on Tuesday this week.
 
-On Fri, Dec 13, 2024, Sean Christopherson wrote:
-> *** LOOK HERE ***
+
+on 12/16/2024 10:04 PM, Matthew Wilcox wrote:
+> On Mon, Dec 16, 2024 at 03:05:26PM +0800, Kemeng Shi wrote:
+>> Ahhh, right. Thank you for correcting me. Then I would like to use nfs as low-level
+>>  filesystem in example and the potential crash could be triggered in the same steps.
 > 
-> Due to holiday schedules, next week's PUCK will be on Tuesday the 17th (regular
-> time), not on Wednesday.
+> Have you actually seen this crash, or do you just think it can happen?
 > 
-> There is no scheduled topic (which is code for "SNP, TDX, and guest_memfd").
-> 
-> Time:     6am PDT
-> Video:    https://meet.google.com/vdb-aeqo-knk
-> Phone:    https://tel.meet/vdb-aeqo-knk?pin=3003112178656
-> 
-> Calendar: https://calendar.google.com/calendar/u/0?cid=Y182MWE1YjFmNjQ0NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
-> Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l986SngGlhPH?resourcekey=0-FDy0ykM3RerZedI8R-zj4A&usp=drive_link
-> 
-> Future Schedule:
-> Dec 17th - No topic
-> Dec 25th - Canceled
-> Jan 1sth - Canceled
+I just think it can happen. Sorry for confusion...
+
 
