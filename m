@@ -1,325 +1,195 @@
-Return-Path: <linux-kernel+bounces-449043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DE49F48F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:33:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA1B9F48F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C6216AA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8014E1624AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9FA1E32B7;
-	Tue, 17 Dec 2024 10:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C6F1E32A0;
+	Tue, 17 Dec 2024 10:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HtlxTy7e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qpahYA3U"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A84E1D5CFD
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734431587; cv=none; b=ZVBt3M7QeG8IVN3DzxJ9Koeayp/5Gw+XZCm1Z7qzL+Ug+6ceHrhwRvwZUYhN9sY33lyWIfOwb4+rzBGPMK5fplZT55VbE1A3Ru51bfXVt+MeaCNxC7wCmM7vjC5PWrqkQuPzvh0pGNUFd/D1xOTURIzTi8LKykyqQrMkL7vJdhM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734431587; c=relaxed/simple;
-	bh=y71j7Wfd6fGZlM4+vtHrAA3OA8C/rrT97uB97nnCyk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TeH15f3LSctjEsyvYTWQjLwVlKhohA8vb0hBXCXLePcqCkAt6HsRNo0WNTg4fSbkPHQ1f+XOatqZBdREqnxpBGKsBZzVJma4Am6SZlg+uIHWbciwMnE914qbOsRQ9SQlEjD1+8oPvDXjnCW/8y9NjyssEAE/nB5q63U+qBP00k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HtlxTy7e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734431584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Hu0ZW6DKfG5MibSTlrGsBUsZ/vzNPiWzbgr/vRIaKD4=;
-	b=HtlxTy7eG61wlqv90Zbj2BjHx8wRHadJAJnzJL7bJe8T5UBHzOSsMsuJeOlIvof42zhN//
-	x03Pv/bP6mDwaRnnNey05IQMaE7c1cLnk8k03PpJMVOL+R3FxwngDQ6EjEOxjZoduGLXJM
-	+N/AV51An5Kd5FmdAQSxj0qZs9X9z+I=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-ZSy6iaa0OL2CMs6ReY2WZg-1; Tue, 17 Dec 2024 05:33:02 -0500
-X-MC-Unique: ZSy6iaa0OL2CMs6ReY2WZg-1
-X-Mimecast-MFC-AGG-ID: ZSy6iaa0OL2CMs6ReY2WZg
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4361efc9dc6so28711425e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:33:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734431582; x=1735036382;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Hu0ZW6DKfG5MibSTlrGsBUsZ/vzNPiWzbgr/vRIaKD4=;
-        b=KGnn/wGUMN8j8dmewgl7o6StasuYmLWjwoeTWFXSl1iV8PNuanZpTA1kDxB26ToUmr
-         YlelGdhZ5wTaX5kSvaDyhmFKxJ2T2D8+E4pq3nA/pF8My4glmkEt9eN8GZDu+2X5x1eJ
-         akYqCqf582xmxRA41XrN/EBvqBcaqAQkEbcjI3BJzj6c7QFyMan5ONBpt/bDninsibDe
-         2uFn2Wjz8pyYJxjjUIPB/svfNvotwWOuXr1aUCbr4ln3R6ikDoTOgG9jAfaS/tt3SU+p
-         OaSpX7UjNXWIaj1Xu3G/TDsH3kpkDVQpKXhT+bbeG56JnXNW2ypg06uB604pj1iR36po
-         lsTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCvaw8riyq3+lCv4SEpmV0Rvze+jSR7lfKX+RYiQHjJmj1SUNUbQseATgbgVlM8oVCpxuh32aGilRrX+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx9PGjBnsKCuNyY3G0EU3qZOJ76sWwHMDKr2GIyFv4JoTHTp7I
-	USMJvsN4dahuUaL7ZveAG5w4dR5q9mjqZT5wqJwgxv9jinKjjjGn/5M8u1xtLc53ApWLGeM7U3g
-	hdeRvy/DbW1n/H/r6dfP/j7Y8Vm1CjxuAIIGNNQD8Teisg8qsz0FRK3eaduQiBA==
-X-Gm-Gg: ASbGnctS6tB6yWLz65UMRZ7MSCj7R+MgLSE9s+yxDujQFrBvL0hEjSJDfUdCYwNDoqB
-	cqQiyaydFVeLbHk5hUf7GsUGsOQICUFyfdibpPHgFjLDGTP96zkcFrsOiN6tbkwNqvjW9MtbhiF
-	59rCSMm1jQyjhmR7eMZ+N9SJnKVct7T+EzhikMd3bjWrADs0P00X3cEbSJfyoTi3Iy90pbz4x1I
-	iBxu8x2JgvzhqurhU+TTtqZkCKDrRS+X43HQPDsesxrQFwn57JVWkhaLT4DOEAGE+iDTuhmlA+9
-	Q/JXT5oTQ1gE7qk=
-X-Received: by 2002:a05:600c:3d0f:b0:434:f609:1afa with SMTP id 5b1f17b1804b1-4362aa34d42mr142981505e9.4.1734431581601;
-        Tue, 17 Dec 2024 02:33:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFp8cxaHK9um9cztBnBI61MwYd+lYt0Z5UGgS6T9YAGVV9UbkL/E0jc3m6rCPGDZki5SgJt3g==
-X-Received: by 2002:a05:600c:3d0f:b0:434:f609:1afa with SMTP id 5b1f17b1804b1-4362aa34d42mr142981235e9.4.1734431581164;
-        Tue, 17 Dec 2024 02:33:01 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4363601574bsm112434495e9.7.2024.12.17.02.32.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 02:33:00 -0800 (PST)
-Message-ID: <0368f4f2-cb0f-4633-a86d-5c3f75839b4e@redhat.com>
-Date: Tue, 17 Dec 2024 11:32:58 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818991DF965;
+	Tue, 17 Dec 2024 10:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734431696; cv=fail; b=b+qnSB5zQKxhvlf9lmoCCoHk+UrwYqrF+bLtzUoGJ+t9qTOatAN89fhRR4swtcVWaYs/8ygKPjd6kplI7iV5VvGAwaMdSU0zNv0Zw0BXQAnIirwQ1FVuuIPY7Bl5OXCA69xkn6YKnVc/hm3AgF/ZucBke/S9GQORgJAfqfMx2TU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734431696; c=relaxed/simple;
+	bh=XNs4tJ/XSTnzkJffoWaIUCx0/o/10SwV0EjIv94Uabg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=utVfzwE1Rkk1AgrrOvkBo7MMwn9mXZ7WSk9TFV/rRZg8L597mS2YF9EGEYnsLmihb/cLTF+c20bZgyhYWPJ29MwQ+HEqbA5kHlWT1d/KWA4GrjRp5pO9G67bMrKoKqWEPCoUufeDwpOgCrFLF+0ytF9iUAf5EUwbmPQ79zhoUYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qpahYA3U; arc=fail smtp.client-ip=40.107.92.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NYPywgD0Ii8yOWdBe+PVazNimlGfZjLVeW4WXnjFubHezfeeww5hLDwpQWryFOT0Qq7eBmKziYS7gSf0BDnmoK8R5LlfRBUe/wNyQhb2wlD8jPbLbockWMgWoerpdpXIjGVTQQqm27CVFiGQ9pvYxA0G6YPhTYfTsu0fBZN3yXyERV/bl5QAHm5iQmBegeRnw8lH/BRR1G3MtwPUJOPNhP+yKa4VBB3HOu623sDXtNY9RlT4fT+eLIDwxm1Wwb+x/oYrAkZB5kkKmF7D9p1lhxFU1B4VuaG7J3a6zwVNx0px0GPZOZEeVl16RzTxpkbIuqI1IcS1Cu7ROwCX7R5+Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ebaSw/e/hJmvfPAIfBvzIXnMg5uZXGxZ83nIquny6EI=;
+ b=T4TvHlkNbW8puChWxsUtjlUu+t6eLElw/p3KN4RUo2NGU/2xMe3NWvKV4+lMdz390kmtKePvVJ+8A51+wB3csVfvbLTKICeKphJvnFWIbK7upX98306kFMmyVNZJSGEDyKudDmZL+g9IHlIixrUwf+J7KKBvFoB5nFOR1JeEDIn3YwY9RFiYCzKTADKPz/5jZ7kaVSSGqH8gpKzpHOBZC+1ezIvAaEOfdNH68WgShgbtmNXIFwf+e8stKMMGd6K4nKwZnhRg1D9IFEhqhOqIch79Ijk51V3ZZdJ7Te8G7ZljeS0EUMxV2XGlNDViwYheA7Y+1oiEN+V9W0JK8kItNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ebaSw/e/hJmvfPAIfBvzIXnMg5uZXGxZ83nIquny6EI=;
+ b=qpahYA3UacZ+GnN/UoClh2EwKyXqIZ4OYZf7IjyMDq4hBO5N29M2KV32YTLqDgOpSLCR358cGex2R8/G5bwnZokA+HiTvAjmEbQGuDL07Jykjcy3Uwskb5dYvSyLU6k9AraNPJKESN/o5zPgA4INXXtKr2JgUsTUS9hov+XpwRY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5951.namprd12.prod.outlook.com (2603:10b6:510:1da::16)
+ by CH3PR12MB9429.namprd12.prod.outlook.com (2603:10b6:610:1c9::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
+ 2024 10:34:50 +0000
+Received: from PH7PR12MB5951.namprd12.prod.outlook.com
+ ([fe80::df88:d99:3cf3:dec0]) by PH7PR12MB5951.namprd12.prod.outlook.com
+ ([fe80::df88:d99:3cf3:dec0%4]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 10:34:49 +0000
+Message-ID: <e5a42dbb-ff8e-486d-ab2c-66798af1fd80@amd.com>
+Date: Tue, 17 Dec 2024 16:04:29 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ASoC: amd: yc: Fix the wrong return value
+Content-Language: en-US
+To: "..." <end.to.start@mail.ru>, Mark Brown <broonie@kernel.org>
+Cc: Vijendar.Mukunda@amd.com, mario.limonciello@amd.com,
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+ syed.sabakareem@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Jiawei Wang <me@jwang.link>,
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+ <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ alsa-devel@alsa-project.org
+References: <20241210091026.996860-1-venkataprasad.potturu@amd.com>
+ <173384228352.64342.12647978237032666087.b4-ty@kernel.org>
+ <1734430927.112015823@f318.i.mail.ru>
+From: potturu venkata prasad <venkataprasad.potturu@amd.com>
+In-Reply-To: <1734430927.112015823@f318.i.mail.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0135.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:bf::6) To PH7PR12MB5951.namprd12.prod.outlook.com
+ (2603:10b6:510:1da::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 09/12] khugepaged: Introduce vma_collapse_anon_folio()
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
- willy@infradead.org, kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
- hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
- peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, jglisse@google.com, surenb@google.com,
- vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
- jhubbard@nvidia.com, 21cnbao@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20241216165105.56185-1-dev.jain@arm.com>
- <20241216165105.56185-10-dev.jain@arm.com>
- <2215dd8e-233a-427b-b15c-a2ffbce8f46d@redhat.com>
- <28013908-65d8-462e-b975-cd0f63d226b1@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <28013908-65d8-462e-b975-cd0f63d226b1@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5951:EE_|CH3PR12MB9429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98f727d7-4150-426f-bf95-08dd1e866ecb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MTdJRUw4V1pnazcrVkt0TTM0U0RrTWsyVzlFWHFBVE9uZG94aFRsbWJMdG9K?=
+ =?utf-8?B?UlJMQVhiZnJ6QWRvYkd2eDRqeUVmR1B1Vk55WFNqbGcySmxKWUgvMy9hd2Yr?=
+ =?utf-8?B?MmxhQWpKSWo4WGJwNWswWXVnMTEyV1pYcHVlRzlqam5nYkNIUmRtWVdNUlY1?=
+ =?utf-8?B?QUN0VWxXeHIxNVZmdkQwMjZLZ28yVi8xcENwNW5wSzBQb2RueEo1R2tYS1c2?=
+ =?utf-8?B?djdSb3B1U2ZkSUpkWmlmalNWSWVzaWlDMFZjbVE5ODhwTHNid3pHSWJUaVRY?=
+ =?utf-8?B?OXg2K2dGekU5bHM1WmoxYWYrR3RmMTV3WGVtVzZ6bC9tM0g3OUF0Um8xekVk?=
+ =?utf-8?B?eXVDQkZaUVU4U2ZaUzJNVHR2L2lzM1U5cWJ5YTBwcFdrN05YM1Ird1VpZlYy?=
+ =?utf-8?B?a2NVVFQwcTB4UVVCaWEvcUl6SmhOUmpXWFN3cFAyU2tRQ2RLYmgzN3JBbTNl?=
+ =?utf-8?B?RU5ybmg4Z0IrL0x5bDVTVlk4WloyTldFOTFqQTZwK0krNUFjR0J3cFFIZjdw?=
+ =?utf-8?B?R3lsUWg3eXg1NDdYK0xITTE2SlNFVmR3dUljaTgvdDkyQlRVbFNCaXdHeWRt?=
+ =?utf-8?B?ZkV2SnNrd3h4THdEdW41ZnNlYjByRHR6YjBGV1BwcDRxWm85dFdWcVRjMSs3?=
+ =?utf-8?B?NWdCa1AzRWZyd29OdGlTeFFyWVovRnhwSis2dEpTV2RGZnZoTWV2R2I0Q0p2?=
+ =?utf-8?B?T2x0WEd1V3FPN1FVL29WRENpVkZDSnNHSnJoSkZ3Rm5Xa0Z4NVQ0dEt0ai9C?=
+ =?utf-8?B?TWJ0R0lTcldINkk2aCtpdldob25hbk90TG11YkJLSVVmOFVMc3lwN3RxNy81?=
+ =?utf-8?B?WnhSaDVUclhwaFVtUEZLdWFSTmRoc3hoKzdib2NwZi95RmtiUWt4WEsxUkZ2?=
+ =?utf-8?B?SHArNlJmdTArM21pa2VTZXNjaStCWmgvYTBDUHhFNVVwR0U0UXhqaG1HcWIx?=
+ =?utf-8?B?NXhuZmg1SXZ0ZDNBVU1TMUI3eWl1clAvWmF2b2RRZTFXWGUyYjNsWitsVU9W?=
+ =?utf-8?B?dVVUTmMvUmVjbThLaHQxbWI3LytNbDcyWW5lR2NVMk1jQkZoaW1oeUhHQVRH?=
+ =?utf-8?B?U0w2VFp5QkFROEh1bEV5YUxPSDBIOXNkWk16dU5CZGNyZEthczBqMHBVOXZh?=
+ =?utf-8?B?blJRMzRNOEROOEdhQzNjQnNQZEVwT1lRNXMyM0F3N1pvRWs1OGVJOHRkVVhV?=
+ =?utf-8?B?d0Y0QUlPL0dYQ2JZV3hrOS9xbDJ6MllmaSs0ZkNFNXI4blB0dHk4VVcxcGsy?=
+ =?utf-8?B?bFloVjVMblBudUQxSTNiR21DZG9OT1ZYZzF1YzluNm9ML3BrWVlUa3p5MXpo?=
+ =?utf-8?B?bjloQnp0WGhZVnNseSttK1pZS3ZrSVI5Z2FUT3E4Mm1wSHRCWDN5QnJSSXFD?=
+ =?utf-8?B?b2cxdEk1RlovNkN2MTlxWXBhdCtZN2tpamZmMzkwME5WWnQ2OExRamhWWWJG?=
+ =?utf-8?B?T1FLNFFodnoxNmV1VTJQRHFkbU1sNTJTaHU2cDRVSVRsRUY2SEt0MUJaM1JG?=
+ =?utf-8?B?RTJnUDE5emVjcG5zcW50cHRNOEt2RVk0NTRRZEZtSkVZMmRxWjFKRzdUM1N6?=
+ =?utf-8?B?RnB0cVdwbUNYZytCSWZzeVBjUzBRQUtCTlVFTkFhU1ozTVpKNEtQUTlUUWN1?=
+ =?utf-8?B?ZHZKTHMxRnpESUgybUFEQjF5WUNEZ3dGNDd4S1VORmJzN3hhdVNlT2xKeDBW?=
+ =?utf-8?B?ajVqL2FjWnRINUF2RzE3NUNWQWNVcXpJTXR0dm1ET0J5cjkxKy8rU1FzOGwv?=
+ =?utf-8?B?WGgvQUxNMkVOak9qSDNPSWlIUGtDS3RRRDRzaUpPcU9wZGx3ckJlZktPR2tr?=
+ =?utf-8?B?OEVoN2hRKytoTEUvNFc3NWI0V3YxaHJjaStsZGxnZytQamhGMDJhNjEwWkFI?=
+ =?utf-8?Q?edGWCZqsuH3cL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5951.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L2UyNEcwa1o2K1cyQUp3K0VaSEc0UjY3R2djNzExL29vVnIza1RvaVd5anBX?=
+ =?utf-8?B?RHZBY0lqUmpHWUFiWE0wUStkdkxuODFhSnBWQ2t5N2pxMWZoQittUm9mM1Qy?=
+ =?utf-8?B?MmFwanNsVnF4bVdvM3QzSE85TVFpaWZVWkw5VitMMnRoeGVFWEl1cisrMEgx?=
+ =?utf-8?B?ZVVQYUdibGF2Z21KSFZLa2lkNERDVldJVDd0WXhYL3FGVGhzZk0vci9xZXlr?=
+ =?utf-8?B?eTdzSzVrSU52SkhMUXIvMS9kTVZNbHdtSG9vY1E1TEpYekpIZHRHT0VJcm1W?=
+ =?utf-8?B?RlR4YUhyVHo5L2ZNT1RTSEhFOTJpVE0zUUUvVStsZUhKQzNFTWxSK2xJaUh0?=
+ =?utf-8?B?N1UwemVHWkEzTXZJSE96NVoxazRqSlE2L1ovOGNlRnpyb2NqcVZwS3JlOW9E?=
+ =?utf-8?B?MjRvWjV6dGROTjJiOVhFaEZmMWluMW1XajRXTDBJMjlNUzRVWEE2cUVuekh5?=
+ =?utf-8?B?OFpIM1hqR3RJZlZyVEMrTDdMUC91MjR3TEsxMmFDR0xPdUZoMmlERUZDZG5P?=
+ =?utf-8?B?eDRiNzVtdTg2ZDdsM3h3NW1FUWJ4cmZzM3UwVkxxZDlialpjSEY2SFcwQmEy?=
+ =?utf-8?B?bWdBT3BPWlp6WkVwdDRxNW5iRXUxL2RRV3NjMDB4T2QvZHZCZk51OUI1dXNa?=
+ =?utf-8?B?MDBZTGtnN001cGFrUFovSk9sdkNHOGlZampNaURHNkpEandRbjBWVUQyb0xh?=
+ =?utf-8?B?bk5xRDgvcUM5dlh2QXZqMFdWa3E4ZEoybFJDS3NqaCt2NWw3c1V2QzVGbGxF?=
+ =?utf-8?B?OXdjTjJVNjlGd2tiZXRmTUVUd3ZQeE1BSE5aa0QzZ1NKYllHWkFDZDhRZkh1?=
+ =?utf-8?B?YmJ3K1pjNnR2ajd2ZHptenhJYTEwbGpCbXFiUXdwK2l3bk5EdTJTdlRvNmVu?=
+ =?utf-8?B?QTVjcWtGZlpYZEVmOG5PbEpSTiswbTh3bHZITTEwSktneEt3R3dRUUdnbWtR?=
+ =?utf-8?B?dGZtZUtJZnR5Yzd5V1NpaWZGZnpHUEFLdEdiVCtaZCt6SGRINnMvUmpwTjlq?=
+ =?utf-8?B?KzA3aGk4T3JremRiMXA4RWxyQXZQd1h3Qk01S29mS21DOHFlUEFnc01OejZ4?=
+ =?utf-8?B?eXZYOW4zWG1MakIxNjEyemU3N1JPdUMzWVZNcVd1WjJnL3lHSGx5WEk4QWdv?=
+ =?utf-8?B?OVZlQzZhQ090RHZmUXd4SEwwaDQzeE9nWU9MeFJTRVlFMHFEdm5Vek00OFUx?=
+ =?utf-8?B?a2k0RGF3MEVVeGdlc2Z4bk5mV3pzMnAzT2FmMmY1RVZLSFVYSzFIYWVKQkZV?=
+ =?utf-8?B?YUR6MGNOMGNuQTIyenIyUEJCZGFRU3puMk1TUEs2N3RSVjlqRGp1QU9hQVU3?=
+ =?utf-8?B?MkJaZVY3Yi9ISXpBdWpGWXBta2NnVVlNN0ZZRTZraXFKbFJXVE1tUTFEUDF2?=
+ =?utf-8?B?ZGtEdHN4MS9Bc0k0OTg1NVBaNG5VNjZFL1BCVklxYUZQZC8vMFZJU1BXWkto?=
+ =?utf-8?B?Y3J0ZEphcTkrbzkrTmhubGhhbnVvVEZYZk5vSVZ1NStyNVJ5UUpDN1ZLQ2la?=
+ =?utf-8?B?VDc0YmxiTVZ5aUc5cUdNODB0WC9JMmtPcTJsZ0xjRUpWa24rUmJkSzAvMFY2?=
+ =?utf-8?B?U2JpenVlVXdGNlphcWwrTldncVNmMXlZd2h3UnlicGpRY0VpVUtWY25oU28y?=
+ =?utf-8?B?cno2QWxRaXd3MHdxSDlqMlFoR2N3ZC93bEtZL0Y3Y2orM1JraFZmL0owTlpE?=
+ =?utf-8?B?Rk9YVS9VYkNmU09GWVA0MFBySXBHVmw1c0NkUnNWMW5TMW9xM1NKZXFMejJ2?=
+ =?utf-8?B?M1diMTFSMk8zcUhvYVBZNklINURmL3dINGY1dmNTRGVZeC9JWWVUTkpkRWN2?=
+ =?utf-8?B?Q1I2YURUSDgxTSs4VGRHdTZrcDNSR1ppb0sxV2RRbW8wbmZPaTFIY2tSZ2Ur?=
+ =?utf-8?B?TlZBM3NxZTlQT25CQVRtVmVyWFo0VklIazN3WXFoNytERWJmUlZCTUk1Q3JG?=
+ =?utf-8?B?WmgwSTNnNCs0WmJnMU5IZGFaZlVIY1RTTEYvcHdJWVhVZ01rQ3kvR25ubitE?=
+ =?utf-8?B?UDQvdkh2QmRjS2V1V3BuOUpUaHVlS2g3RzRHbVBXbENpMzMyK25uMUxhdEc4?=
+ =?utf-8?B?alh2UlpIWVBUR3VEdnJlMTJVS0h3eXZER3VmSDNmRStsc0JrUTBmbTVGZGR4?=
+ =?utf-8?Q?/EpLLt24WCAdvmEUyLsDWc8r0?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98f727d7-4150-426f-bf95-08dd1e866ecb
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5951.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 10:34:49.3807
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gnJEZxSmz0mj63+kcWttmctjk34d5dzt7P5icyxJEWf5SmtecRqwsiLi3CPu1lsAXvZM3UNiVcGR2fCQ8A2LIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9429
 
-On 17.12.24 11:07, Dev Jain wrote:
-> 
-> On 16/12/24 10:36 pm, David Hildenbrand wrote:
->> On 16.12.24 17:51, Dev Jain wrote:
->>> In contrast to PMD-collapse, we do not need to operate on two levels
->>> of pagetable
->>> simultaneously. Therefore, downgrade the mmap lock from write to read
->>> mode. Still
->>> take the anon_vma lock in exclusive mode so as to not waste time in
->>> the rmap path,
->>> which is anyways going to fail since the PTEs are going to be
->>> changed. Under the PTL,
->>> copy page contents, clear the PTEs, remove folio pins, and (try to)
->>> unmap the
->>> old folios. Set the PTEs to the new folio using the set_ptes() API.
->>>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> ---
->>> Note: I have been trying hard to get rid of the locks in here: we
->>> still are
->>> taking the PTL around the page copying; dropping the PTL and taking
->>> it after
->>> the copying should lead to a deadlock, for example:
->>> khugepaged                        madvise(MADV_COLD)
->>> folio_lock()                        lock(ptl)
->>> lock(ptl)                        folio_lock()
->>>
->>> We can create a locked folio list, altogether drop both the locks,
->>> take the PTL,
->>> do everything which __collapse_huge_page_isolate() does *except* the
->>> isolation and
->>> again try locking folios, but then it will reduce efficiency of
->>> khugepaged
->>> and almost looks like a forced solution :)
->>> Please note the following discussion if anyone is interested:
->>> https://lore.kernel.org/all/66bb7496-a445-4ad7-8e56-4f2863465c54@arm.com/
->>>
->>> (Apologies for not CCing the mailing list from the start)
->>>
->>>    mm/khugepaged.c | 108 ++++++++++++++++++++++++++++++++++++++----------
->>>    1 file changed, 87 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>> index 88beebef773e..8040b130e677 100644
->>> --- a/mm/khugepaged.c
->>> +++ b/mm/khugepaged.c
->>> @@ -714,24 +714,28 @@ static void
->>> __collapse_huge_page_copy_succeeded(pte_t *pte,
->>>                            struct vm_area_struct *vma,
->>>                            unsigned long address,
->>>                            spinlock_t *ptl,
->>> -                        struct list_head *compound_pagelist)
->>> +                        struct list_head *compound_pagelist, int order)
->>>    {
->>>        struct folio *src, *tmp;
->>>        pte_t *_pte;
->>>        pte_t pteval;
->>>    -    for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
->>> +    for (_pte = pte; _pte < pte + (1UL << order);
->>>             _pte++, address += PAGE_SIZE) {
->>>            pteval = ptep_get(_pte);
->>>            if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
->>>                add_mm_counter(vma->vm_mm, MM_ANONPAGES, 1);
->>>                if (is_zero_pfn(pte_pfn(pteval))) {
->>> -                /*
->>> -                 * ptl mostly unnecessary.
->>> -                 */
->>> -                spin_lock(ptl);
->>> -                ptep_clear(vma->vm_mm, address, _pte);
->>> -                spin_unlock(ptl);
->>> +                if (order == HPAGE_PMD_ORDER) {
->>> +                    /*
->>> +                    * ptl mostly unnecessary.
->>> +                    */
->>> +                    spin_lock(ptl);
->>> +                    ptep_clear(vma->vm_mm, address, _pte);
->>> +                    spin_unlock(ptl);
->>> +                } else {
->>> +                    ptep_clear(vma->vm_mm, address, _pte);
->>> +                }
->>>                    ksm_might_unmap_zero_page(vma->vm_mm, pteval);
->>>                }
->>>            } else {
->>> @@ -740,15 +744,20 @@ static void
->>> __collapse_huge_page_copy_succeeded(pte_t *pte,
->>>                src = page_folio(src_page);
->>>                if (!folio_test_large(src))
->>>                    release_pte_folio(src);
->>> -            /*
->>> -             * ptl mostly unnecessary, but preempt has to
->>> -             * be disabled to update the per-cpu stats
->>> -             * inside folio_remove_rmap_pte().
->>> -             */
->>> -            spin_lock(ptl);
->>> -            ptep_clear(vma->vm_mm, address, _pte);
->>> -            folio_remove_rmap_pte(src, src_page, vma);
->>> -            spin_unlock(ptl);
->>> +            if (order == HPAGE_PMD_ORDER) {
->>> +                /*
->>> +                * ptl mostly unnecessary, but preempt has to
->>> +                * be disabled to update the per-cpu stats
->>> +                * inside folio_remove_rmap_pte().
->>> +                */
->>> +                spin_lock(ptl);
->>> +                ptep_clear(vma->vm_mm, address, _pte);
->>
->>
->>
->>
->>> + folio_remove_rmap_pte(src, src_page, vma);
->>> +                spin_unlock(ptl);
->>> +            } else {
->>> +                ptep_clear(vma->vm_mm, address, _pte);
->>> +                folio_remove_rmap_pte(src, src_page, vma);
->>> +            }
->>
->> As I've talked to Nico about this code recently ... :)
->>
->> Are you clearing the PTE after the copy succeeded? If so, where is the
->> TLB flush?
->>
->> How do you sync against concurrent write acess + GUP-fast?
->>
->>
->> The sequence really must be: (1) clear PTE/PMD + flush TLB (2) check
->> if there are unexpected page references (e.g., GUP) if so back off (3)
->> copy page content (4) set updated PTE/PMD.
-> 
-> Thanks...we need to ensure GUP-fast does not write when we are copying
-> contents, so (2) will ensure that GUP-fast will see the cleared PTE and
-> back-off.
+Hi,
 
-Yes, and of course, that also the CPU cannot concurrently still modify 
-the page content while/after you copy the page content, but before you 
-unmap+flush.
+On 12/17/24 15:52, ... wrote:
+> the patch that has already been added to the kernel breaks the work of 
+> acp6x and the microphone no longer works, so far I am looking for the 
+> reason in this person's code, but it is obvious that this patch breaks 
+> the work of acp6x.
+We have tested this patch at our end, it's working fine.
+Could you please share the dev_dbg logs.
 
->>
->> To Nico, I suggested doing it simple initially, and still clear the
->> high-level PMD entry + flush under mmap write lock, then re-map the
->> PTE table after modifying the page table. It's not as efficient, but
->> "harder to get wrong".
->>
->> Maybe that's already happening, but I stumbled over this clearing
->> logic in __collapse_huge_page_copy_succeeded(), so I'm curious.
-> 
-> No, I am not even touching the PMD. I guess the sequence you described
-> should work? I just need to reverse the copying and PTE clearing order
-> to implement this sequence.
+With this patch if ACPI method read failure then jump to check dmi 
+entry, if dmi entries also not found then driver won't register sound 
+card it will return -ENODEV.
 
-That would work, but you really have to hold the PTL for the whole 
-period: from when you temporarily clear PTEs +_ flush the TLB, when you 
-copy, until you re-insert the updated ones.
-
-When having to back-off (restore original PTEs), or for copying, you'll 
-likely need access to the original PTEs, which were already cleared. So 
-likely you need a temporary copy of the original PTEs somehow.
-
-That's why temporarily clearing the PMD und mmap write lock is easier to 
-implement, at the cost of requiring the mmap lock in write mode like PMD 
-collapse.
-
--- 
-Cheers,
-
-David / dhildenb
+Could you please share more details on this issue.
 
 
