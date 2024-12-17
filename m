@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-449073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B9C9F495E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:56:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B989F4960
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 223017A1F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2687A278F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E221E5708;
-	Tue, 17 Dec 2024 10:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEBD1E633C;
+	Tue, 17 Dec 2024 10:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRTYVhlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="lo89k2Zs"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8551DDC1E;
-	Tue, 17 Dec 2024 10:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB9F1DE8B9;
+	Tue, 17 Dec 2024 10:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734432961; cv=none; b=Duf4YO00/Y75Ld74VhKVI01eJnUoa8I20ZYBPnFWiP1jsECrHpbxhb37aH8YkkcfwTDcPcVjE/NpcjNLcfXmOIDeS9/Hc1QqM11LA7HkTydanFAiXG/mICSwLPMccXvE/RUtM77c8P46Hgcsc72rwHXdKLy1bUIq3g2SZklklXw=
+	t=1734432992; cv=none; b=mZDwLn9Ux5WkSsiJwax/FhILR29hwYuZDGstujTb2DdDkn9N3T5/HGB3DrFMY1RXkzXsRK+RjiGhUusW7wHJ6B2iUWJhcOcWi+atschTrtLS9amA1zAVomEZDrcXW2PPLCVXrnnCzfapspriSzGQuNTJ/hVtHpNWpvnWqOviRw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734432961; c=relaxed/simple;
-	bh=NS1IvYP+0vQDhKLZQWwGEG18/PVpO+pMPWRt8Qw7xiw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=awLMqvCD1YoeoMldR6o58s8FwFws5dpaqi4IJ/l64Ep7/G1AaJ43HOPBXqLXYGfLFMTCJf072OHeCPSrXvBFsKb/XDpZ4inQJdK4WBMXR8bX5zrD3Upodzp9Wku+Vm31v0Hsn3sRJzB2yC6FPzVCSN7cmpee+/i+D8XpFsaeids=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRTYVhlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C2B4C4CED3;
-	Tue, 17 Dec 2024 10:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734432960;
-	bh=NS1IvYP+0vQDhKLZQWwGEG18/PVpO+pMPWRt8Qw7xiw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WRTYVhlpsxFgoWDpX90PCgXIn+l8vtZtPdS25P4neZY3A3QAvn7TbdqjhL7yPdUH+
-	 qEdutgCjAH2qWQaSl2x9L3W2HVWMdMTz26X/yX7LIbqCCq2zI8aR/aay+lG6jKKPja
-	 ZM2Z+OxqLcQjQza4l9yykfMyR+xyIgWZj+1R9d3GNKUkS0lpRW0idd88Tz0y8HpJr4
-	 jc4bbjGxQIhKwZ0te8QV4HSl9Q4ITa0hjoCR8kmZPq9RiWjgRTGTU7B1xZypR6EvaJ
-	 LiwZI/tCO2B1xduU8uPdXAET5lTQrXwc7kRsW9brTgr69ZV9rLLimIx9WIW/x0pIN2
-	 7Djy4CrR4/jlA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tNVF8-004Wc7-M9;
-	Tue, 17 Dec 2024 10:55:58 +0000
-Date: Tue, 17 Dec 2024 10:55:58 +0000
-Message-ID: <86zfkur329.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Fuad Tabba <tabba@google.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/18] KVM: arm64: Make hyp_page::order a u8
-In-Reply-To: <20241216175803.2716565-4-qperret@google.com>
-References: <20241216175803.2716565-1-qperret@google.com>
-	<20241216175803.2716565-4-qperret@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734432992; c=relaxed/simple;
+	bh=3SISvEwS/XyyCMIkP6zwek3JtvXyWarLQbljS7JywQU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cXesZH6nBEc1v9WOcOPjMNUqORruWGMSp8+yIOdmh1kfvX6aaa6mwVucpZYhRCR2IfMIgBU516xh7SrJEp4/83gBPllKS2egH4eFbBV31LQL7eP1A/4Ojz81INxP6i17x68jhy9YIvb/MQSJBf+2moHYMcRFGwAO+nGBksUyIgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=lo89k2Zs; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH4qHmb011485;
+	Tue, 17 Dec 2024 04:56:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=Xr23EUoPfpAnvTB6
+	vGMJZuM9vVYgdcmO3WlkZHA/4I8=; b=lo89k2ZsQRgJd2/tm1yuUN3Pf+sXkNgE
+	uTS0663lyoMj/TbVq4JJ9P3r950kAbohUDRQJzscwrpXm2CgNH/SGcCv2emsHYV9
+	DGy03+aJ6qSaZzSNGzfLPMJMVs+cchUfsFcT4a1FdoebQ5GkP68dJuBsoa/tRdBu
+	YDpgYFeT1B6nG1iaqoG7+miqDAGc2IafhgDisR0pYtqCCX+H5BU7jYN3WExKwUuH
+	cK09w8b+6RYShS0GigCL/AL+zJ79PIsylXI6+N0wH/ZFEmoUluHLxlNntqoAZPuC
+	JUj4Ob5bXQlEK03QthFf4pJUNMWerAiXBYcjOPh4U1tSkey+u8+NAw==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43h7akb5r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 04:56:26 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Tue, 17 Dec
+ 2024 10:56:25 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.13 via Frontend Transport; Tue, 17 Dec 2024 10:56:25 +0000
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id EBFAF820248;
+	Tue, 17 Dec 2024 10:56:24 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, kernel test robot <lkp@intel.com>
+Subject: [PATCH] firmware: cs_dsp: Fix endianness conversion in cs_dsp_mock_wmfw.c
+Date: Tue, 17 Dec 2024 10:56:24 +0000
+Message-ID: <20241217105624.139479-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Rsj_RlUarXr5OswHE9KH8_JEOX2O9Xil
+X-Proofpoint-ORIG-GUID: Rsj_RlUarXr5OswHE9KH8_JEOX2O9Xil
+X-Proofpoint-Spam-Reason: safe
 
-On Mon, 16 Dec 2024 17:57:48 +0000,
-Quentin Perret <qperret@google.com> wrote:
-> 
-> We don't need 16 bits to store the hyp page order, and we'll need some
-> bits to store page ownership data soon, so let's reduce the order
-> member.
-> 
-> Signed-off-by: Quentin Perret <qperret@google.com>
-> ---
->  arch/arm64/kvm/hyp/include/nvhe/gfp.h    |  6 +++---
->  arch/arm64/kvm/hyp/include/nvhe/memory.h |  5 +++--
->  arch/arm64/kvm/hyp/nvhe/page_alloc.c     | 14 +++++++-------
->  3 files changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/gfp.h b/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> index 97c527ef53c2..f1725bad6331 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/gfp.h
-> @@ -7,7 +7,7 @@
->  #include <nvhe/memory.h>
->  #include <nvhe/spinlock.h>
->  
-> -#define HYP_NO_ORDER	USHRT_MAX
-> +#define HYP_NO_ORDER	0xff
+In cs_dsp_mock_wmfw_add_coeff_desc() the value stored in longstring->len
+needs a cpu_to_le16() conversion.
 
-nit: (u8)(~0)?
+Fixes: 5cf1b7b47180 ("firmware: cs_dsp: Add mock wmfw file generator for KUnit testing")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202412170233.8DnsdtY6-lkp@intel.com/
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ drivers/firmware/cirrus/test/cs_dsp_mock_wmfw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	M.
-
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_mock_wmfw.c b/drivers/firmware/cirrus/test/cs_dsp_mock_wmfw.c
+index d3d84da239a3..5a3ac03ac37f 100644
+--- a/drivers/firmware/cirrus/test/cs_dsp_mock_wmfw.c
++++ b/drivers/firmware/cirrus/test/cs_dsp_mock_wmfw.c
+@@ -334,7 +334,7 @@ void cs_dsp_mock_wmfw_add_coeff_desc(struct cs_dsp_mock_wmfw_builder *builder,
+ 				  sizeof(*ple32)) / sizeof(*ple32);
+ 
+ 		longstring = (__force struct wmfw_long_string *)ple32;
+-		longstring->len = description_len;
++		longstring->len = cpu_to_le16(description_len);
+ 		memcpy(longstring->data, def->description, description_len);
+ 
+ 		/* Round up to next __le32 multiple */
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.5
+
 
