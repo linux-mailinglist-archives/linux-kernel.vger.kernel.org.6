@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-448492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC239F40F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4081B9F40EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072BB16989A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDDB166D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA60A145A09;
-	Tue, 17 Dec 2024 02:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89614036E;
+	Tue, 17 Dec 2024 02:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="wR95ql9q"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="YC8e+IbU"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5A413D891;
-	Tue, 17 Dec 2024 02:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3492595;
+	Tue, 17 Dec 2024 02:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734403366; cv=none; b=Om1oLI3bva8PZUmaHZHU31sjhOmSFQB7dkMp3MCsphlSXUXv+W2AZbkdMwHPt9QhuXT1jRLskqH6uJwqbzjzVcQC3efyW66nMWXwA0lLGdSPJq+xTA8TamDbuoy3qTzhy8mrIX5wD008XRkiVIZQiIGamoy4oMCL1iBIJpXyJv0=
+	t=1734403332; cv=none; b=AgpFaFCr2QApAvMkdzI+J7j3QBldeEwrHegcssm5iMGlrc4Qy5iQzoSjikQRpZ2FPRUudzkrIS8dvIIK8QdQ02kP3XRdi17g0hYR3BOIF/DPzgKwHDYR+jQawrsxNdO6MyRRbG2lBhnfMxVpgVrrGFO30R1KEZTci/gCKzqDaec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734403366; c=relaxed/simple;
-	bh=A102L0fk4A8NCVFDrVauUTQZqLxYnrqSEqC65emxM0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RkaSAQRAWnQ4BqhfBrIkyTucOD6VuMWB0X0k4Vf2tNil6Mxuf1/26T0ZiC+aAJEQqqOQ3uEjJZ0YD3FJp3Ufx8fopuwP1nu97XBhytBZL4bYlbca3Rt9IwYyMF3XsuxOtba1c1vUKWNh+q49KgCixh0RF8SX8S80Tjn2fPowCGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=wR95ql9q; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from newone.lan (99-158-29-91.lightspeed.miamfl.sbcglobal.net [99.158.29.91])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 0CFA7160E15;
-	Tue, 17 Dec 2024 03:42:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1734403360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8KV2xbQSHKJvj/DTKYIg0pZucUjVVxC63u16azmPWVg=;
-	b=wR95ql9qIuXR/kO/Sx2tUoawOYHaahfOaPX575MFHun0NvBiCFGmqMQH75AbY0kSFSdHvC
-	CEmxgwFH8TDmdDbgOjjdzUmYYtpJADqDsp2mQWB0ehn8NaP8izJchk/VNpY8ScRSsv3ZMB
-	d7iB030lOxyfNnvmWPFNFFfmVB5fHdg=
-From: David Heidelberg <david@ixit.cz>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: David Heidelberg <david@ixit.cz>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: media: imx219: Describe sensor address using the reg property
-Date: Mon, 16 Dec 2024 21:41:51 -0500
-Message-ID: <20241217024206.1700170-2-david@ixit.cz>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241217024206.1700170-1-david@ixit.cz>
-References: <20241217024206.1700170-1-david@ixit.cz>
+	s=arc-20240116; t=1734403332; c=relaxed/simple;
+	bh=sxZHwktHLbmobkjo0Mrad2ue1QYN50MUOr5DU5+0mFc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h0Plriq9BWPvHaP7P+NsaU7SumM29OvspHeF/sod+EXcZaiuKl02wR5mvy+kf/InUMKaa6T5qO9xdtcc/DfCKSCtTw6pPf63HmK3bl6LMZRi3n234q08HmRxf4xu81QeaQKoAoELrTPGSba9JgfeNncokdS28D9PqBx/clUqEx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=YC8e+IbU; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1734403333; x=1765939333;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=7u6OT2PYujYQCUkhEoUVtOLDlI0hXd4C0CDZ9AuT7gs=;
+  b=YC8e+IbUWloKA9Ax6yn77qlO9f4CwKpiUIEg7t4ALpy6vAmk10h/ovsY
+   2TP961Su11a0fAksjlUnmwROd4AiAzY/VeWa6C1whrjpgl4DFAz6XI6Bk
+   p9BUMNcY7qiS+IpawKsWR8ML1BpPXgdVNCXj+vitA7KPxm+pgbFt+sQYZ
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.12,240,1728950400"; 
+   d="scan'208";a="783912395"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 02:42:07 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:35891]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.52:2525] with esmtp (Farcaster)
+ id b97cbbc6-b57a-4b3f-b068-55f90e4c1c6a; Tue, 17 Dec 2024 02:42:05 +0000 (UTC)
+X-Farcaster-Flow-ID: b97cbbc6-b57a-4b3f-b068-55f90e4c1c6a
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Tue, 17 Dec 2024 02:42:04 +0000
+Received: from 6c7e67c6786f.amazon.com (10.118.246.225) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Tue, 17 Dec 2024 02:42:00 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <kees@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+	<idosch@nvidia.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <petrm@nvidia.com>
+Subject: Re: [PATCH] rtnetlink: do_setlink: Use true struct sockaddr
+Date: Tue, 17 Dec 2024 11:41:56 +0900
+Message-ID: <20241217024156.43328-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241217020441.work.066-kees@kernel.org>
+References: <20241217020441.work.066-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,39 +75,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D040UWB002.ant.amazon.com (10.13.138.89) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Use the reg property instead of text in the description.
-Drop useless description of reg property.
+From: Kees Cook <kees@kernel.org>
+Date: Mon, 16 Dec 2024 18:04:45 -0800
+> Instead of a heap allocation use a stack allocated struct sockaddr, as
+> dev_set_mac_address_user() is the consumer (which uses a classic
+> struct sockaddr).
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I remember Eric's feedback was to keep using heap instead of stack
+because rtnl_newlink() path already uses too much on stack.
 
-diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
-index 8b23e5fc6a24..066eeb7af5e3 100644
---- ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
-+++ ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
-@@ -12,7 +12,7 @@ maintainers:
- description: |-
-   The Sony imx219 is a 1/4.0-inch CMOS active pixel digital image sensor
-   with an active array size of 3280H x 2464V. It is programmable through
--  I2C interface. The I2C address is fixed to 0x10 as per sensor data sheet.
-+  I2C interface.
-   Image data is sent through MIPI CSI-2, which is configured as either 2 or
-   4 data lanes.
- 
-@@ -21,8 +21,7 @@ properties:
-     const: sony,imx219
- 
-   reg:
--    description: I2C device address
--    maxItems: 1
-+    const: 0x10
- 
-   clocks:
-     maxItems: 1
--- 
-2.45.2
 
+> Cap the copy to the minimum address size between
+> the incoming address and the traditional sa_data field itself.
+> 
+> Putting "sa" on the stack means it will get a reused stack slot since
+> it is smaller than other existing single-scope stack variables (like
+> the vfinfo array).
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Ido Schimmel <idosch@nvidia.com>
+> Cc: Petr Machata <petrm@nvidia.com>
+> Cc: netdev@vger.kernel.org
+> ---
+>  net/core/rtnetlink.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+> 
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index ab5f201bf0ab..6da0edc0870d 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -3048,21 +3048,13 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
+>  	}
+>  
+>  	if (tb[IFLA_ADDRESS]) {
+> -		struct sockaddr *sa;
+> -		int len;
+> -
+> -		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
+> -						  sizeof(*sa));
+> -		sa = kmalloc(len, GFP_KERNEL);
+> -		if (!sa) {
+> -			err = -ENOMEM;
+> -			goto errout;
+> -		}
+> -		sa->sa_family = dev->type;
+> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
+> -		       dev->addr_len);
+> -		err = dev_set_mac_address_user(dev, sa, extack);
+> -		kfree(sa);
+> +		struct sockaddr sa = { };
+> +
+> +		/* dev_set_mac_address_user() uses a true struct sockaddr. */
+> +		sa.sa_family = dev->type;
+> +		memcpy(sa.sa_data, nla_data(tb[IFLA_ADDRESS]),
+> +		       min(dev->addr_len, sizeof(sa.sa_data_min)));
+> +		err = dev_set_mac_address_user(dev, &sa, extack);
+>  		if (err)
+>  			goto errout;
+>  		status |= DO_SETLINK_MODIFIED;
+> -- 
+> 2.34.1
 
