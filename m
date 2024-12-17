@@ -1,176 +1,192 @@
-Return-Path: <linux-kernel+bounces-449138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65309F4A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2459F4A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCE616D8F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:56:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E083116A87D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E6A1F131C;
-	Tue, 17 Dec 2024 11:56:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347931F429B;
+	Tue, 17 Dec 2024 11:56:43 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990701F1308
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A610F1F4270;
+	Tue, 17 Dec 2024 11:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436589; cv=none; b=SNIl/YiM+fu37/tn6GFvK2K1w3tTHAAaApUU9kcSsbI0g2/bTk4+GwkaB2CD/P/FW+LwewqNKTE5zQL7ap+2O37amIZe5EUrF9Ck7QYYBtzBXRl/B4x6KeH9WkCOYz4sLDPJ448z/kf5nkISgcl7gQvI1MCstKJ8WG5qQxJl6D8=
+	t=1734436602; cv=none; b=hFTjh+nvFkOvDS1jcLvMYdG+7M9wAdCYRFhgoEnvpL3ByR/EecMQeA73ELJqBhGpShiNfmTHyK6ijSXk7Ehbb3gZ+a93lB6mAv++LgkhF+ZO42eDJRbUDB/tUBTrJyGDOxqyiFA2xxi8r0tr5N/Q0GijJ5AXe0KFbYEFLcfYR5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436589; c=relaxed/simple;
-	bh=5hZe+P6oo66jzrzq+rFGDC7o7eRsEGDDwl+Pd0KU7jg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bvOjSZT6ii6hVmFLijsnXBQNNZKKAYsMrs+na54MsH563XxLehnN0lky0rMTZNiSh8t8HW0iI3njdKRYCZeP0eh1bF+wJDFMZO76zT2R1TDvzfHTMVNDTkQLmBux5ac7YvvVb3SmxUf7aH9Wu0bVZi3me+ZspoSKqi2azrvxh3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a9cd0b54c1so55244575ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734436586; x=1735041386;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zlkkrQiCZExvjqP+weAj44cHCo/kJFfLp/BEKnWeR9I=;
-        b=mc0A1FGt310PGzIaGjwYaYzfHrkhm1+TpqvLaXPeaeL4WLG+FAkGzpOsn+tu6GO8Cm
-         iNDkapC4vf7ARhITh86BkNoErdIiCeEjdeV2PXnXl8kWh35nbD/IGeAionJCI+oM+TIM
-         Uiw/V1TitFkpPfEkiPegmO0b7eEabJEcQd/Q4p4ZbFn9D3y84M+NB8eqIwwYBs5tEupp
-         rApkNCUOiUE0Bvqwi2WETQtVh2Czu0nlZ8Fpho39bjaMXter0OryK2GxMHP8ra1G6wgr
-         baNNzlKAEes61IqnHsTs80Hqv9M1tPklMo8hFim8VacAbTyGrMqs7FTvWENOmz1y5d6d
-         jBlw==
-X-Gm-Message-State: AOJu0Yx2cNvhhbnptdyZgDIkEY1yxHQ9AuyjxHmfOjD0TN3Mj40Mzof7
-	E6smCuMWOOg2BLP6DvnuD+aFsbyrC+oS9zk5cpqQ7DsSg7VXwRxalFUAwRiduPibkgMVKn8el3m
-	l84oxkQn2poIf9wV4rxJob6gAyQk4xO+U+wcwqCEuEf4PiYRewhhoKwbYbA==
-X-Google-Smtp-Source: AGHT+IEoYsiy3il0PRPN/8uQITzOGRYXbiiXnB+uwNY8qFT+cH6OwCh/YBqSUAH1zHwFVwQhFLCBFrNWIypuvrkmTqyVMoxRj4rZ
+	s=arc-20240116; t=1734436602; c=relaxed/simple;
+	bh=Do2X/IiaJW5oPWMmOezg0YcEX+VrBCjV/aOJ0SrBA0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jLGmMAtVViAlNwjllmj9kY4aw+1T9ARab/iDQjmS+4YJNLq3hkRg8a4cwAu1+3piIMZMLWyJCRFFOy6+Rc4xbsL9FHF1aPn2QsX7XQ8NWOdvdgBN4pqOt2R62NMUYR98IlXUMVpDqGW1D5gko0Z8l2gjmAFmEDjvK0gqrSuFyus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4YCFdy4vqjz9sPd;
+	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 3KXSFH_hy5ma; Tue, 17 Dec 2024 12:56:38 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4YCFdy3s6Tz9rvV;
+	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6CC908B76E;
+	Tue, 17 Dec 2024 12:56:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 0q0Ly6XhAO90; Tue, 17 Dec 2024 12:56:38 +0100 (CET)
+Received: from [192.168.232.97] (unknown [192.168.232.97])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D40788B763;
+	Tue, 17 Dec 2024 12:56:37 +0100 (CET)
+Message-ID: <49844fde-9424-4c81-85a0-c5c26a77321d@csgroup.eu>
+Date: Tue, 17 Dec 2024 12:56:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cf:b0:3a7:6566:1e8f with SMTP id
- e9e14a558f8ab-3aff243f4f3mr146334115ab.16.1734436586706; Tue, 17 Dec 2024
- 03:56:26 -0800 (PST)
-Date: Tue, 17 Dec 2024 03:56:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <676166ea.050a0220.37aaf.0174.GAE@google.com>
-Subject: [syzbot] [trace?] kernel BUG in ring_buffer_map
-From: syzbot <syzbot+b565bf4a6ba3a0fc072c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    78d4f34e2115 Linux 6.13-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10840b44580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9cac7e24ceea492
-dashboard link: https://syzkaller.appspot.com/bug?extid=b565bf4a6ba3a0fc072c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120334f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a19730580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2cc4d7ad894c/disk-78d4f34e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d726c69c5750/vmlinux-78d4f34e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/514b5ee15ec5/bzImage-78d4f34e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b565bf4a6ba3a0fc072c@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at arch/x86/mm/physaddr.c:28!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5838 Comm: syz-executor194 Not tainted 6.13.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:__phys_addr+0xd8/0x150 arch/x86/mm/physaddr.c:28
-Code: 48 d3 e8 48 89 c5 48 89 c6 e8 c4 c7 4e 00 48 85 ed 75 11 e8 4a c5 4e 00 48 89 d8 5b 5d 41 5c c3 cc cc cc cc e8 39 c5 4e 00 90 <0f> 0b e8 31 c5 4e 00 48 c7 c0 10 80 ba 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc90003d77770 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: f8f97078f8f8f8f8 RCX: ffffffff814a8930
-RDX: ffff888079ed9e00 RSI: ffffffff814a89b7 RDI: 0000000000000006
-RBP: f8f8f8f978f8f8f8 R08: 0000000000000006 R09: f8f8f8f978f8f8f8
-R10: f8f97078f8f8f8f8 R11: ffffffff81fb8dda R12: 0000000000000000
-R13: ffff888076006308 R14: 0000000000000003 R15: 0000000000000001
-FS:  00007f203d1b16c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f26faf8bf8 CR3: 00000000324ec000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __rb_map_vma+0x5b3/0xae0 kernel/trace/ring_buffer.c:7058
- ring_buffer_map+0x56e/0x9b0 kernel/trace/ring_buffer.c:7138
- tracing_buffers_mmap+0xa6/0x120 kernel/trace/trace.c:8482
- call_mmap include/linux/fs.h:2183 [inline]
- mmap_file mm/internal.h:124 [inline]
- __mmap_new_file_vma mm/vma.c:2291 [inline]
- __mmap_new_vma mm/vma.c:2355 [inline]
- __mmap_region+0x1786/0x2670 mm/vma.c:2456
- mmap_region+0x127/0x320 mm/mmap.c:1348
- do_mmap+0xc00/0xfc0 mm/mmap.c:496
- vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
- ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f203d1fecb9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f203d1b1228 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007f203d2823c8 RCX: 00007f203d1fecb9
-RDX: 0000000000000001 RSI: 000000000000401f RDI: 0000000020ffc000
-RBP: 00007f203d2823c0 R08: 0000000000000003 R09: 0000000001000000
-R10: 000000000008e051 R11: 0000000000000246 R12: 00007f203d2823cc
-R13: 0000000000000000 R14: 00007ffc95e2dbc0 R15: 00007ffc95e2dca8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__phys_addr+0xd8/0x150 arch/x86/mm/physaddr.c:28
-Code: 48 d3 e8 48 89 c5 48 89 c6 e8 c4 c7 4e 00 48 85 ed 75 11 e8 4a c5 4e 00 48 89 d8 5b 5d 41 5c c3 cc cc cc cc e8 39 c5 4e 00 90 <0f> 0b e8 31 c5 4e 00 48 c7 c0 10 80 ba 8d 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc90003d77770 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: f8f97078f8f8f8f8 RCX: ffffffff814a8930
-RDX: ffff888079ed9e00 RSI: ffffffff814a89b7 RDI: 0000000000000006
-RBP: f8f8f8f978f8f8f8 R08: 0000000000000006 R09: f8f8f8f978f8f8f8
-R10: f8f97078f8f8f8f8 R11: ffffffff81fb8dda R12: 0000000000000000
-R13: ffff888076006308 R14: 0000000000000003 R15: 0000000000000001
-FS:  00007f203d1b16c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f203d24e008 CR3: 00000000324ec000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, "Eric W. Biederman"
+ <ebiederm@xmission.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>,
+ CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
+References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
+ <CANn89iK1+oLktXjHXs0U3Wo4zRZEqimoSgfPVzGGycH7R_HxnA@mail.gmail.com>
+ <49a43774-bf97-4b20-8382-4fb921f34c66@csgroup.eu>
+ <CANn89iLKPx+=gHaM_V77iwUwzqQe_zyUc0Dm1KkPo3GuE40SRw@mail.gmail.com>
+ <8e3c9ebc-e047-4dfd-ad1d-6bbe918aa98b@csgroup.eu>
+ <CANn89iLTGLe2uWz+yCu5ewnDBW2hubqGm8=aRbZVTeXN1Trdaw@mail.gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <CANn89iLTGLe2uWz+yCu5ewnDBW2hubqGm8=aRbZVTeXN1Trdaw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Le 17/12/2024 à 10:52, Eric Dumazet a écrit :
+> On Tue, Dec 17, 2024 at 10:41 AM Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+>>
+>>
+>>
+>> Le 17/12/2024 à 10:20, Eric Dumazet a écrit :
+>>> On Tue, Dec 17, 2024 at 9:59 AM Christophe Leroy
+>>> <christophe.leroy@csgroup.eu> wrote:
+>>>>
+>>>>
+>>>>
+>>>> Le 17/12/2024 à 09:16, Eric Dumazet a écrit :
+>>>>> On Tue, Dec 17, 2024 at 8:18 AM Christophe Leroy
+>>>>> <christophe.leroy@csgroup.eu> wrote:
+>>>>>>
+>>>>>> The following problem is encountered on kernel built with
+>>>>>> CONFIG_PREEMPT. An snmp daemon running with normal priority is
+>>>>>> regularly calling ioctl(SIOCGMIIPHY). Another process running with
+>>>>>> SCHED_FIFO policy is regularly reading /sys/class/net/eth0/carrier.
+>>>>>>
+>>>>>> After some random time, the snmp daemon gets preempted while holding
+>>>>>> the RTNL mutex then the high priority process is busy looping into
+>>>>>> carrier_show which bails out early due to a non-successfull
+>>>>>> rtnl_trylock() which implies restart_syscall(). Because the snmp
+>>>>>> daemon has a lower priority, it never gets the chances to release
+>>>>>> the RTNL mutex and the high-priority task continues to loop forever.
+>>>>>>
+>>>>>> Replace the trylock by lock_interruptible. This will increase the
+>>>>>> priority of the task holding the lock so that it can release it and
+>>>>>> allow the reader of /sys/class/net/eth0/carrier to actually perform
+>>>>>> its read.
+>>>>>>
+>>>>
+>>>> ...
+>>>>
+>>>>>>
+>>>>>> Fixes: 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in sysfs methods.")
+>>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>>>>> ---
+>>>>>
+>>>>> At a first glance, this might resurface the deadlock issue Eric W. Biederman
+>>>>> was trying to fix in 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in
+>>>>> sysfs methods.")
+>>>>
+>>>> Are you talking about the deadlock fixed (incompletely) by 5a5990d3090b
+>>>> ("net: Avoid race between network down and sysfs"), or the complement
+>>>> provided by 336ca57c3b4e ?
+>>>>
+>>>> My understanding is that mutex_lock() will return EINTR only if a signal
+>>>> is pending so there is no need to set signal_pending like it was when
+>>>> using mutex_trylock() which does nothing when the mutex is already locked.
+>>>>
+>>>> And an EINTR return is expected and documented for a read() or a
+>>>> write(), I can't see why we want ERESTARTNOINTR instead of ERSTARTSYS.
+>>>> Isn't it the responsibility of the user app to call again read or write
+>>>> if it has decided to not install the necessary sigaction for an
+>>>> automatic restart ?
+>>>>
+>>>> Do you think I should instead use rtnl_lock_killable() and return
+>>>> ERESTARTNOINTR in case of failure ? In that case, is it still possible
+>>>> to interrupt a blocked 'cat /sys/class/net/eth0/carrier' which CTRL+C ?
+>>>
+>>> Issue is when no signal is pending, we have a typical deadlock situation :
+>>>
+>>> One process A is :
+>>>
+>>> Holding sysfs lock, then attempts to grab rtnl.
+>>>
+>>> Another one (B) is :
+>>>
+>>> Holding rtnl, then attempts to grab sysfs lock.
+>>
+>> Ok, I see.
+>>
+>> But then what can be the solution to avoid busy looping with
+>> mutex_trylock , not giving any chance to the task holding the rtnl to
+>> run and unlock it ?
+> 
+> One idea would be to add a usleep(500, 1000) if the sysfs read/write handler in
+> returns -ERESTARTNOINTR;
+> 
+> Totally untested idea :
+> 
+> diff --git a/fs/seq_file.c b/fs/seq_file.c
+> index 8bbb1ad46335c3b8f50dd35d552f86767e62ead1..276c6d594129a18a7a4c2b1df447b34993398ab4
+> 100644
+> --- a/fs/seq_file.c
+> +++ b/fs/seq_file.c
+> @@ -290,6 +290,8 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct
+> iov_iter *iter)
+>                  m->read_pos += copied;
+>          }
+>          mutex_unlock(&m->lock);
+> +       if (copied == -ERESTARTNOINTR)
+> +               usleep_range(500, 1000);
+>          return copied;
+>   Enomem:
+>          err = -ENOMEM;
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Ok, that may solve the issue, but it looks more like a hack than a real 
+solution, doesn't it ?
+It doesn't guarantee that the task holding the RTNL lock will be given 
+the floor to run and free the lock.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+The real issue is the nest between sysfs lock and RTNL lock. Can't we 
+ensure that they are always held in the same order ?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Christophe
 
