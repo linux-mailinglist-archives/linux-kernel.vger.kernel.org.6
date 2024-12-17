@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-449845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90A89F56D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:25:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376D09F56DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3001633CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8038D16658E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C691F943A;
-	Tue, 17 Dec 2024 19:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3C71F941E;
+	Tue, 17 Dec 2024 19:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JmVCOpFA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ol0SJg0K"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkrZ4zb0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F521F9410;
-	Tue, 17 Dec 2024 19:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3982D158DD1;
+	Tue, 17 Dec 2024 19:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734463490; cv=none; b=oaT98oa2CPuB6G5+2wp44uVrI1YXWyJPlS33z3RkjD026XGuIOiAtthv5heJviAVemhVhY4MevwMsjA7PwH/Tv24W1Ew2VzemyZoE86tOBMHVMXKKhgiJvBVtYLJ0pcitHe5P8YgSwkjwNTbJwrVGjZAsF+kBM8IaT59mZlAQAg=
+	t=1734463635; cv=none; b=nAD1cT/BdKjbRazXW+ZdyQLUmtnMR0SQEXk5mt4uWSEmveSUVmXmIktccCHo15eMLWedvYUC7VbKLY029wpyGnjfy3vp/Atkls6TrgDkPqPNNcEwTmwI/AIUva0o2/aLWt0aUIBRH/kYvYlEfGpgou+lPx5GJZKWuTAyZQUQ6YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734463490; c=relaxed/simple;
-	bh=YYiCmxIYKaAHA4tjICmvUHGI9+eNw85lmpRIlH4pHJE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gHiV0qnOuFLPKo3DRDjhuf6+4MjlLEwjlgG9IbB/DxaPJZtgD2ppcYpdI8/6qxadVJ/pXrCUep02wyBe4CvlaZgtok5ORJwuI5b/TpbGxZDk7kkLU/Fnjwm7troXWZTnlIA8ntOePtAABiaG9feqiFOt8l64I3o1CgBzpcIfX1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JmVCOpFA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ol0SJg0K; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 03C9A114015D;
-	Tue, 17 Dec 2024 14:24:45 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 17 Dec 2024 14:24:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734463485;
-	 x=1734549885; bh=EOe6BesmxFnRJHHLU70DJc/y0ejfvE7PEl68vLU8DJs=; b=
-	JmVCOpFA5TV440bkBGpJr36N9b+07RrWfSd2L1KaSuCnCucQSMIHXbChJbV0QhsZ
-	zaq23FbeQfzXtWZS9m3fm5qRL2S1BrIw9zbkYICrrf07tTyODCCOk2r8ea/AD40a
-	x6tgMfz2zEwcVFg3tW1A5FL1XAOQ8EBRJNd1saX1M6pkukmfiyGlzAoRUsalfEA9
-	fAj1Zn9fOhxOsV+IJ5EROEE0XpnaNZo64SYqQCnTU2kyCNPSewYXbj0NyKN0DE5x
-	/cw7dwNmisqb09fQw/wDmBKCKBCWujTAPy5YhpHoRC/0BbljRc3Pw50GrtRBfRtb
-	nKHkAuYXyr7JEQ3Cni20Sg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734463485; x=
-	1734549885; bh=EOe6BesmxFnRJHHLU70DJc/y0ejfvE7PEl68vLU8DJs=; b=o
-	l0SJg0KWvLU24ys+FxQtTJdSVAB0SxFfIM21YNXJ6Atp2YMQS0GdqXgA+X5FzXpH
-	4/0tXnfrGmM41yYe3mrIftpxxxc2jE2tPDtLFUD1xn+OIrOXjRZeYHYWxbW+sLbh
-	BkCopVLOqK26tJgMOu34bPmWeVX886d2V1/R82LOR5Cr3exL0MiIx4ocz0t8PZ/z
-	TVxVvv+WXACnKEiogdOBds2yYvP3zgxP94PyXBjwjQy0lWCkO04mfHFEhC65f6c/
-	P937IsF3YMLIhY/QTCU5BGEeG8RhljaKIwkXD5m3+VgYC8090Tofj66Nc3oO/QDQ
-	CjBB/bM/spxcfOgqJcFLA==
-X-ME-Sender: <xms:_M9hZye8_x8F9LN2xBm99bRe-ZB-7pwHzc4tD0QrmKTq_DocoCvLWQ>
-    <xme:_M9hZ8NC2PC_Hb7CJjEySXCl8NAUMNzV-UXvq_GxRidhV3YTe67mz_0Zc4jBgy5VG
-    4EhdGMqmLoGpDklEAs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdduvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddv
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsohhnihgtrgguvhgrnhgtvgduse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvggrlhhmvghiugesihhgrghlihgr
-    rdgtohhmpdhrtghpthhtohepkhgvrhhnvghlqdguvghvsehighgrlhhirgdrtghomhdprh
-    gtphhtthhopeguvhhhrghrthesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehp
-    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehnrghthhgrnheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggv
-    pdhrtghpthhtohepvhhpvghigihothhosehlkhgtrghmphdruggvvhdprhgtphhtthhope
-    hmihhnghhosehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:_M9hZzj3M3UwmjgSWr6Gp0u4WL-K3oALGf_WX9s3lbBd5NJP_AZddg>
-    <xmx:_M9hZ__-v1OpWFJLY_y1aXkYNeFhm1jaE380ircugowLtG7wqKXcdw>
-    <xmx:_M9hZ-twMJmQzUeZ-dOtGax0wDQWfChtzXAr81duPu02MN5m1neD3A>
-    <xmx:_M9hZ2HSnSKPTi4gzhZ3qIDE2ADNlox4f_Kg6-LmGulmarfjtKGQBw>
-    <xmx:_c9hZ2E_QfgM8Vgzv6LhyCD1PES8KaIJCdTUnaNEiJphrGEGvsPWB0Ki>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C89452220072; Tue, 17 Dec 2024 14:24:44 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1734463635; c=relaxed/simple;
+	bh=JBmI31rqlVMLbDvulREys4tYlBYIp0qQtjfXqk8ku1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/USjAsOxD89CFribQFv46+JeO8T9Qh2E0pdvS7gn8Qwu+as/IJ4Q39BKW/jY5mEOpuD6EFtt4CNGZcDGBnsfLJNBrNsEjEcVO/H72Ctyykpk1+8X221G6fjs8vxq7QR7SO8WXlrV5kTv3304X4gunQsHQ6H67VvuQyLLmwSlX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkrZ4zb0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D230AC4CED3;
+	Tue, 17 Dec 2024 19:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734463635;
+	bh=JBmI31rqlVMLbDvulREys4tYlBYIp0qQtjfXqk8ku1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hkrZ4zb0RM4hhNA4N6I2S7sbmaLQlC6LZ8mcCWhLcPBdNsaGnhqVg6inYNB/J7l4l
+	 P498ZJugyXk5ODut6SlLEH7d4605EflpBMToAsLkdzkZc/MOPvaZRBDIGmsyUbm1vX
+	 QLHE2dDja+D5klP1OPJ5ullCIrt4DF8SMuz4NcryWdgwQh024LDekZIKFjBJEJ2xcf
+	 blhJ8G9TeHPIIxMxDC/QXDj0xBoklX8fqYrv1hxO312LOFV/Jr5MEMEe2VwcPJHM7H
+	 yDGK6R9x91nay20FdhMAFpVvNI6kWAn9i/z5jfG2EBfapBAOIoDbZo02RvRZRy1z14
+	 zSlzrktic8kGg==
+Date: Tue, 17 Dec 2024 19:27:13 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, jikos@kernel.org, bentiss@kernel.org,
+	dmitry.torokhov@gmail.com, linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Saurabh Sengar <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH v4 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for
+ VMBus
+Message-ID: <Z2HQkTfB18nvZn8a@liuwe-devbox-debian-v2>
+References: <1734409029-10419-1-git-send-email-ernis@linux.microsoft.com>
+ <1734409029-10419-2-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 17 Dec 2024 20:24:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Darren Hart" <dvhart@infradead.org>, "Davidlohr Bueso" <dave@stgolabs.net>,
- sonicadvance1@gmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- linux-api@vger.kernel.org, "Nathan Chancellor" <nathan@kernel.org>,
- "Vinicius Peixoto" <vpeixoto@lkcamp.dev>
-Message-Id: <94d0e188-10fb-4a4e-b7e0-f308e2f25561@app.fastmail.com>
-In-Reply-To: <20241217174958.477692-4-andrealmeid@igalia.com>
-References: <20241217174958.477692-1-andrealmeid@igalia.com>
- <20241217174958.477692-4-andrealmeid@igalia.com>
-Subject: Re: [PATCH v3 3/3] futex: Wire up set_robust_list2 syscall
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1734409029-10419-2-git-send-email-ernis@linux.microsoft.com>
 
-On Tue, Dec 17, 2024, at 18:49, Andr=C3=A9 Almeida wrote:
-> Wire up the new set_robust_list2 syscall in all available architecture=
-s.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+On Mon, Dec 16, 2024 at 08:17:07PM -0800, Erni Sri Satya Vennela wrote:
+> This change is specific to Hyper-V VM user.
+> If the Virtual Machine Connection window is focused,
+> a Hyper-V VM user can unintentionally touch the keyboard/mouse
+> when the VM is hibernating or resuming, and consequently the
+> hibernation or resume operation can be aborted unexpectedly.
+> Fix the issue by no longer registering the keyboard/mouse as
+> wakeup devices (see the other two patches for the
+> changes to drivers/input/serio/hyperv-keyboard.c and
+> drivers/hid/hid-hyperv.c).
+> 
+> The keyboard/mouse were registered as wakeup devices because the
+> VM needs to be woken up from the Suspend-to-Idle state after
+> a user runs "echo freeze > /sys/power/state". It seems like
+> the Suspend-to-Idle feature has no real users in practice, so
+> let's no longer support that by returning -EOPNOTSUPP if a
+> user tries to use that.
+> 
+> Fixes: 1a06d017fb3f ("Drivers: hv: vmbus: Fix Suspend-to-Idle for Generation-2 VM")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>>
 > ---
->  arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
->  arch/arm/tools/syscall.tbl                  | 1 +
+> Changes in v4:
+> * No change
+> 
+> Changes in v3:
+> * Add "Cc: stable@vger.kernel.org" in sign-off area.
+> 
+> Changes in v2:
+> * Add "#define vmbus_freeze NULL" when CONFIG_PM_SLEEP is not 
+>   enabled.
+> ---
+>  drivers/hv/vmbus_drv.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 6d89d37b069a..4df6b12bf6a1 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -900,6 +900,19 @@ static void vmbus_shutdown(struct device *child_device)
+>  }
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> +/*
+> + * vmbus_freeze - Suspend-to-Idle
+> + */
+> +static int vmbus_freeze(struct device *child_device)
+> +{
+> +/*
+> + * Do not support Suspend-to-Idle ("echo freeze > /sys/power/state") as
+> + * that would require registering the Hyper-V synthetic mouse/keyboard
+> + * devices as wakeup devices, which can abort hibernation/resume unexpectedly.
+> + */
 
-Please also change arch/arm64/tools/syscall_32.tbl
+The indentation is off. I can fix it for you if the series gets
+sufficient reviews. Please fix it yourself if you end up posting another
+round.
 
-     Arnd
+Thanks,
+Wei.
+
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  /*
+>   * vmbus_suspend - Suspend a vmbus device
+>   */
+> @@ -938,6 +951,7 @@ static int vmbus_resume(struct device *child_device)
+>  	return drv->resume(dev);
+>  }
+>  #else
+> +#define vmbus_freeze NULL
+>  #define vmbus_suspend NULL
+>  #define vmbus_resume NULL
+>  #endif /* CONFIG_PM_SLEEP */
+> @@ -969,7 +983,7 @@ static void vmbus_device_release(struct device *device)
+>   */
+>  
+>  static const struct dev_pm_ops vmbus_pm = {
+> -	.suspend_noirq	= NULL,
+> +	.suspend_noirq  = vmbus_freeze,
+>  	.resume_noirq	= NULL,
+>  	.freeze_noirq	= vmbus_suspend,
+>  	.thaw_noirq	= vmbus_resume,
+> -- 
+> 2.34.1
+> 
 
