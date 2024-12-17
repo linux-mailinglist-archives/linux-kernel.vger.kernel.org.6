@@ -1,337 +1,306 @@
-Return-Path: <linux-kernel+bounces-448864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091959F468B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7C09F468E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B638188B0BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFB5188AFE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B3A1DDC16;
-	Tue, 17 Dec 2024 08:53:19 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.101])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B881DDA35;
-	Tue, 17 Dec 2024 08:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EE71DD872;
+	Tue, 17 Dec 2024 08:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xe4VSM7C"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDA11DD54C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425599; cv=none; b=HmrJLUjD/PFAMhBzryRbp2Xp8yOymOC3LWjnLImtue0BQ0UHtH6esRX+RDegt4ErT9LilGvQiYnSeHts7dBa9wPZfiBnfBPTcgmNPGrzJpP+PnZeMWE8THtMwAYQXhOBHf6UxWl0OOwcG4rLhr+y3xdBRrU9EVXXQy+imQjWLj8=
+	t=1734425654; cv=none; b=q3jcAyeeCP5kscMJ4Z2u9qYOfbUZkJlYA7QtjL9yjfZhuMml0oUzyHzrR/RGkndGvW2rsC/jVOmRmrekDwNYnGMtC7teSufB9j4gZt5McXnGbl0lWmYLxkng2BDbHchRbuDyApVKZ0Y0sfxKpJRNxnbdG06KEDPU3dW0aIXXqmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425599; c=relaxed/simple;
-	bh=DU06nErLGPyPdtXxQHYLMsJPiB3wYegvSdSZeb1p4Ds=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a6+Z/FCTc3XjT1LxEoQNpQAiCTKOZgUvbPdR0KkGM4As0P58lTYwEjhI9bsQPeNwReocLNWB7xP6q4eufBhGbhXI1faocIg90NmadJIB1159/AQKBJ/hBXf6kJttHg9rp+kF2bayzeeUxKRCZTPPZ/ZyP7bGppzDbwJwFr6Wd64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.242.145:9756.144179633
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-123.150.8.42 (unknown [10.158.242.145])
-	by 189.cn (HERMES) with SMTP id 99ED91001DD;
-	Tue, 17 Dec 2024 16:53:04 +0800 (CST)
-Received: from  ([123.150.8.42])
-	by gateway-153622-dep-5c5f88b874-qw5z2 with ESMTP id b60a3e708c6f4712a9487c7077a287d0 for brgl@bgdev.pl;
-	Tue, 17 Dec 2024 16:53:05 CST
-X-Transaction-ID: b60a3e708c6f4712a9487c7077a287d0
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 123.150.8.42
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-From: Song Chen <chensong_2000@189.cn>
-To: brgl@bgdev.pl,
-	linus.walleij@linaro.org,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Song Chen <chensong_2000@189.cn>
-Subject: [PATCH RFC] drivers:gpio: introduce variants of gpiod_get_array
-Date: Tue, 17 Dec 2024 16:53:02 +0800
-Message-Id: <20241217085302.835165-1-chensong_2000@189.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1734425654; c=relaxed/simple;
+	bh=giwLdFGQ9QlV8fdrB8UsMVez9KDIiCZEOK3inRQmSq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uf7ClbprDzPCAV1eU5Nz56ivz1ZhKsXNUae0jJ56AEt2y6WvZ4ufu400OvksEJZTqnyvgTZIQ6XiHMZng4Et5TqmXoisqD4sDKYB/d8H4ji2tHcjSGsdNQbX4FC6TFHler8FFAgYlfwej8sAPcfY095XM5u3yA0YX1is1TvGXdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xe4VSM7C; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-435b0df5dbdso39475e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:54:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734425651; x=1735030451; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KifjnGKVqQ3XbGB/V/sFyzHQHhRGanZQhXvxaYt/h1o=;
+        b=xe4VSM7Cdx+6BmOqYoI8A2sltf/lAmW8acFMGvQ6qfeL+0uIqL1xhk8KHcZAUzMGuo
+         lhDeW3azYPj8ULKjMyayUoxzprh8UwNqlZgORL5RMzmNqcyum6RBypmvd0zXftwuSAS0
+         qz+S4gvgcJlHrSB+9rB+g5N52EL9S8clLV1ga1Ol8QRdCp5A8B4U1WpR+ek79TKDox85
+         JVwd48AxG2KjGxor4CxiRIHePGjHQo4dzW7ovC8BtA1mzAFkS6Zx/i5lbiuYYxuPpIWq
+         lMdtt9IgV6WvPQs93rVHlHanTH0o6IMk/NY/F99CpxS+pjnrEnerKvWWOstp9QDY9T7t
+         XYYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734425651; x=1735030451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KifjnGKVqQ3XbGB/V/sFyzHQHhRGanZQhXvxaYt/h1o=;
+        b=tBlItHsVb3tFmuWBNQjapB9icen0Ybu4cnIgrw592xlmoYKfhnlA7fGN1WE2jY3K9s
+         WTIew5AJsx8M6MLQGgC2fku3vYtlgmKFydzilQgv0ffUN2ON9uS4XOR+0TpDp/hG7SKH
+         dJRqhzK0/kgK7MoB9aidHIR3qQMZGkZyQFStqzRebkDzh9z5SkbaKRoewkw7SEtkeKoB
+         W0kBgxBw+x74L9ES6mwLn1nB9dLVWQprOLKP73h5GHVswWln9EPZeYVLtWXE3Q690mk/
+         KFWE6IZNSDtvuKKbimE8BTfeTh2lbFQEFvtkrDOS34ppXJ3o2lVovf3MMoQO3F33vR6W
+         UW8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUI5h3Fc2xhhpoeeokWux3UTL2yDm+Lh2k/GA7hUzRLEvgExQarVHo6oQ66SMFRHtSnszk3tqYvFgHPZVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHYG5C7W1RQG6wEPcGr7jt8i3w/mhGYDIz3r2h8ac/H15qbVyD
+	i1yAicK1hKCVBVDCXPe+ygQj+FfE4I1zo5OwQDYnJ0UmQYh9SFf1zHw1Xs2awQK6eXTVyWBr4J9
+	Ga0JS6LLqapP8c/EGFiaZKOMerQBFCZorcRDu
+X-Gm-Gg: ASbGncu4S6PGyDhArNN+F8Hfh95gB3n6C3SH07XG5CZw9CwxNsT95CItfZd80NJNjmN
+	75tKxAvQNWSoMLL/hqoSdpGK8UW3XWJq4LmuK4jCNQ9XUim/LReFCIy5F1XLrAQNrwcM=
+X-Google-Smtp-Source: AGHT+IGO+h+C3q+EgS7FY8mjqUfew8qNlrw1ag/9aHnM+aCXQqiv7j2ErBqu43XDUVsb+Ip/LmfLThnGVSL5NVKFt2s=
+X-Received: by 2002:a05:600c:5707:b0:434:f7fc:1b18 with SMTP id
+ 5b1f17b1804b1-436492cfbfamr901235e9.4.1734425650625; Tue, 17 Dec 2024
+ 00:54:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-12-qperret@google.com>
+In-Reply-To: <20241216175803.2716565-12-qperret@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 17 Dec 2024 08:53:34 +0000
+Message-ID: <CA+EHjTxRt=XoCZbRLE1UjMg4bzgoLYD9Lh0nzmjvPZ2Q4xQOkg@mail.gmail.com>
+Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce __pkvm_host_unshare_guest()
+To: Quentin Perret <qperret@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
+	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-This patch introduces another two variants of gpiod_get_array,
-fwnode_gpiod_get_array and devm_fwnode_gpiod_get_array, to
-return GPIO descriptor array to comsumers.
+On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
+>
+> In preparation for letting the host unmap pages from non-protected
+> guests, introduce a new hypercall implementing the host-unshare-guest
+> transition.
+>
+> Signed-off-by: Quentin Perret <qperret@google.com>
 
-Unlike gpiod_get_array, which calls dev_fwnode(dev) to get
-firmware node in gpiod_get_index, new variants allow consumers
-to pass firmware node by themselves.
+Apart from nit below.
+Reviewed-by: Fuad Tabba <tabba@google.com>
 
-It's applicable to below circumstance:
+Cheers,
+/fuad
 
-fwnode_for_each_child_node(fw_parent, fw_child)
-or for_each_child_of_node
-	struct gpio_descs *array = devm_fwnode_gpiod_get_array(
-				dev, fw_child,...).
-	or fwnode_gpiod_get_array
 
-Signed-off-by: Song Chen <chensong_2000@189.cn>
----
- drivers/gpio/gpiolib-devres.c | 43 ++++++++++++++++
- drivers/gpio/gpiolib.c        | 96 +++++++++++++++++++++++++++++------
- include/linux/gpio/consumer.h | 28 ++++++++++
- 3 files changed, 151 insertions(+), 16 deletions(-)
+> ---
+>  arch/arm64/include/asm/kvm_asm.h              |  1 +
+>  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
+>  arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |  6 ++
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 21 ++++++
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 67 +++++++++++++++++++
+>  arch/arm64/kvm/hyp/nvhe/pkvm.c                | 12 ++++
+>  6 files changed, 108 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index 449337f5b2a3..0b6c4d325134 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -66,6 +66,7 @@ enum __kvm_host_smccc_func {
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_share_hyp,
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_hyp,
+>         __KVM_HOST_SMCCC_FUNC___pkvm_host_share_guest,
+> +       __KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_guest,
+>         __KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
+>         __KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
+>         __KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> index a7976e50f556..e528a42ed60e 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> @@ -40,6 +40,7 @@ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
+>  int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
+> +int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
+>
+>  bool addr_is_memory(phys_addr_t phys);
+>  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> index be52c5b15e21..0cc2a429f1fb 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
+> @@ -64,6 +64,11 @@ static inline bool pkvm_hyp_vcpu_is_protected(struct pkvm_hyp_vcpu *hyp_vcpu)
+>         return vcpu_is_protected(&hyp_vcpu->vcpu);
+>  }
+>
+> +static inline bool pkvm_hyp_vm_is_protected(struct pkvm_hyp_vm *hyp_vm)
+> +{
+> +       return kvm_vm_is_protected(&hyp_vm->kvm);
+> +}
+> +
+>  void pkvm_hyp_vm_table_init(void *tbl);
+>
+>  int __pkvm_init_vm(struct kvm *host_kvm, unsigned long vm_hva,
+> @@ -78,6 +83,7 @@ void pkvm_put_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu);
+>  struct pkvm_hyp_vcpu *pkvm_get_loaded_hyp_vcpu(void);
+>
+>  struct pkvm_hyp_vm *get_pkvm_hyp_vm(pkvm_handle_t handle);
+> +struct pkvm_hyp_vm *get_np_pkvm_hyp_vm(pkvm_handle_t handle);
+>  void put_pkvm_hyp_vm(struct pkvm_hyp_vm *hyp_vm);
+>
+>  #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index d659462fbf5d..3c3a27c985a2 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -244,6 +244,26 @@ static void handle___pkvm_host_share_guest(struct kvm_cpu_context *host_ctxt)
+>         cpu_reg(host_ctxt, 1) =  ret;
+>  }
+>
+> +static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+> +{
+> +       DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
+> +       DECLARE_REG(u64, gfn, host_ctxt, 2);
+> +       struct pkvm_hyp_vm *hyp_vm;
+> +       int ret = -EINVAL;
+> +
+> +       if (!is_protected_kvm_enabled())
+> +               goto out;
+> +
+> +       hyp_vm = get_np_pkvm_hyp_vm(handle);
+> +       if (!hyp_vm)
+> +               goto out;
+> +
+> +       ret = __pkvm_host_unshare_guest(gfn, hyp_vm);
+> +       put_pkvm_hyp_vm(hyp_vm);
+> +out:
+> +       cpu_reg(host_ctxt, 1) =  ret;
+> +}
+> +
+>  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
+>  {
+>         DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
+> @@ -454,6 +474,7 @@ static const hcall_t host_hcall[] = {
+>         HANDLE_FUNC(__pkvm_host_share_hyp),
+>         HANDLE_FUNC(__pkvm_host_unshare_hyp),
+>         HANDLE_FUNC(__pkvm_host_share_guest),
+> +       HANDLE_FUNC(__pkvm_host_unshare_guest),
+>         HANDLE_FUNC(__kvm_adjust_pc),
+>         HANDLE_FUNC(__kvm_vcpu_run),
+>         HANDLE_FUNC(__kvm_flush_vm_context),
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index fb9592e721cf..30243b7922f1 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -1421,3 +1421,70 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu,
+>
+>         return ret;
+>  }
+> +
+> +static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
 
-diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
-index 08205f355ceb..f8b2a3fe02ba 100644
---- a/drivers/gpio/gpiolib-devres.c
-+++ b/drivers/gpio/gpiolib-devres.c
-@@ -192,6 +192,49 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_index);
- 
-+/**
-+ * devm_fwnode_gpiod_get_array - Resource-managed gpiod_get_array_by_fwnode()
-+ * @dev:	GPIO consumer
-+ * @fwnode:	firmware node containing GPIO reference
-+ * @con_id:	function within the GPIO consumer
-+ * @flags:	optional GPIO initialization flags
-+ *
-+ * Managed gpiod_get_array_by_fwnode(). GPIO descriptors returned from this function are
-+ * automatically disposed on driver detach. See gpiod_get_array_by_fwnode() for detailed
-+ * information about behavior and return values.
-+ *
-+ * Returns:
-+ * The GPIO descriptors corresponding to the function @con_id of device
-+ * dev, %-ENOENT if no GPIO has been assigned to the requested function,
-+ * or another IS_ERR() code if an error occurred while trying to acquire
-+ * the GPIOs.
-+ */
-+struct gpio_descs *devm_fwnode_gpiod_get_array(struct device *dev,
-+							 struct fwnode_handle *fwnode,
-+						     const char *con_id,
-+						     enum gpiod_flags flags)
-+{
-+	struct gpio_descs **dr;
-+	struct gpio_descs *descs;
-+
-+	dr = devres_alloc(devm_gpiod_release_array,
-+			  sizeof(struct gpio_descs *), GFP_KERNEL);
-+	if (!dr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	descs = gpiod_get_array_by_fwnode(dev, fwnode, con_id, flags);
-+	if (IS_ERR(descs)) {
-+		devres_free(dr);
-+		return descs;
-+	}
-+
-+	*dr = descs;
-+	devres_add(dev, dr);
-+
-+	return descs;
-+}
-+EXPORT_SYMBOL_GPL(devm_fwnode_gpiod_get_array);
-+
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-  * @dev: GPIO consumer
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 679ed764cb14..dbb39e6bb568 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4469,6 +4469,33 @@ struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
- }
- EXPORT_SYMBOL_GPL(fwnode_gpiod_get_index);
- 
-+/**
-+ * fwnode_gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO function
-+ * @fwnode:	handle of the firmware node
-+ * @con_id:	function within the GPIO consumer
-+ * @flags:	GPIO initialization flags
-+ *
-+ * This function can be used for drivers that get their configuration
-+ * from opaque firmware.
-+ *
-+ * The function properly finds the corresponding GPIOs using whatever is the
-+ * underlying firmware interface and then makes sure that the GPIO
-+ * descriptors are requested before they are returned to the caller.
-+ *
-+ * Returns:
-+ * On successful request the GPIO descriptors are configured in accordance with
-+ * provided @flags.
-+ *
-+ * In case of error an ERR_PTR() is returned.
-+ */
-+struct gpio_descs *fwnode_gpiod_get_array(struct fwnode_handle *fwnode,
-+					 const char *con_id,
-+					 enum gpiod_flags flags)
-+{
-+	return gpiod_get_array_by_fwnode(NULL, fwnode, con_id, flags);
-+}
-+EXPORT_SYMBOL_GPL(fwnode_gpiod_get_array);
-+
- /**
-  * gpiod_count - return the number of GPIOs associated with a device / function
-  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-@@ -4731,21 +4758,8 @@ static void gpiochip_free_hogs(struct gpio_chip *gc)
- 		gpiochip_free_own_desc(desc);
- }
- 
--/**
-- * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO function
-- * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-- * @con_id:	function within the GPIO consumer
-- * @flags:	optional GPIO initialization flags
-- *
-- * This function acquires all the GPIOs defined under a given function.
-- *
-- * Returns:
-- * The GPIO descriptors corresponding to the function @con_id of device
-- * dev, -ENOENT if no GPIO has been assigned to the requested function,
-- * or another IS_ERR() code if an error occurred while trying to acquire
-- * the GPIOs.
-- */
--struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
-+static struct gpio_descs *__gpiod_get_array(struct device *dev,
-+						struct fwnode_handle *fwnode,
- 						const char *con_id,
- 						enum gpiod_flags flags)
- {
-@@ -4766,7 +4780,12 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	for (descs->ndescs = 0; descs->ndescs < count; descs->ndescs++) {
--		desc = gpiod_get_index(dev, con_id, descs->ndescs, flags);
-+		if (fwnode)
-+			desc = gpiod_find_and_request(dev, fwnode, con_id, descs->ndescs,
-+					  flags, NULL, false);
-+		else
-+			desc = gpiod_get_index(dev, con_id, descs->ndescs, flags);
-+
- 		if (IS_ERR(desc)) {
- 			gpiod_put_array(descs);
- 			return ERR_CAST(desc);
-@@ -4858,8 +4877,53 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
- 			*array_info->invert_mask);
- 	return descs;
- }
-+
-+/**
-+ * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO function
-+ * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-+ * @con_id:	function within the GPIO consumer
-+ * @flags:	optional GPIO initialization flags
-+ *
-+ * This function acquires all the GPIOs defined under a given function.
-+ *
-+ * Returns:
-+ * The GPIO descriptors corresponding to the function @con_id of device
-+ * dev, -ENOENT if no GPIO has been assigned to the requested function,
-+ * or another IS_ERR() code if an error occurred while trying to acquire
-+ * the GPIOs.
-+ */
-+struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
-+						const char *con_id,
-+						enum gpiod_flags flags)
-+{
-+	return __gpiod_get_array(dev, NULL, con_id, flags);
-+}
- EXPORT_SYMBOL_GPL(gpiod_get_array);
- 
-+/**
-+ * gpiod_get_array_by_fwnode - obtain multiple GPIOs from a multi-index GPIO function
-+ * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-+ * @fwnode: Firmware node to lookup
-+ * @con_id:	function within the GPIO consumer
-+ * @flags:	optional GPIO initialization flags
-+ *
-+ * This function acquires all the GPIOs defined under a given function.
-+ *
-+ * Returns:
-+ * The GPIO descriptors corresponding to the function @con_id of device
-+ * dev, -ENOENT if no GPIO has been assigned to the requested function,
-+ * or another IS_ERR() code if an error occurred while trying to acquire
-+ * the GPIOs.
-+ */
-+struct gpio_descs *__must_check gpiod_get_array_by_fwnode(struct device *dev,
-+						struct fwnode_handle *fwnode,
-+						const char *con_id,
-+						enum gpiod_flags flags)
-+{
-+	return __gpiod_get_array(dev, fwnode, con_id, flags);
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_array_by_fwnode);
-+
- /**
-  * gpiod_get_array_optional - obtain multiple GPIOs from a multi-index GPIO
-  *                            function
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index db2dfbae8edb..7143bf7045ce 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -80,6 +80,10 @@ struct gpio_descs *__must_check gpiod_get_array(struct device *dev,
- struct gpio_descs *__must_check gpiod_get_array_optional(struct device *dev,
- 							const char *con_id,
- 							enum gpiod_flags flags);
-+struct gpio_descs *__must_check gpiod_get_array_by_fwnode(struct device *dev,
-+						struct fwnode_handle *fwnode,
-+						const char *con_id,
-+						enum gpiod_flags flags);
- void gpiod_put(struct gpio_desc *desc);
- void gpiod_put_array(struct gpio_descs *descs);
- 
-@@ -175,11 +179,18 @@ struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
- 					 const char *con_id, int index,
- 					 enum gpiod_flags flags,
- 					 const char *label);
-+struct gpio_descs *fwnode_gpiod_get_array(struct fwnode_handle *fwnode,
-+					 const char *con_id,
-+					 enum gpiod_flags flags);
- struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 					      struct fwnode_handle *child,
- 					      const char *con_id, int index,
- 					      enum gpiod_flags flags,
- 					      const char *label);
-+struct gpio_descs *devm_fwnode_gpiod_get_array(struct device *dev,
-+					      struct fwnode_handle *fwnode,
-+					      const char *con_id,
-+						  enum gpiod_flags flags);
- 
- #else /* CONFIG_GPIOLIB */
- 
-@@ -548,6 +559,14 @@ struct gpio_desc *fwnode_gpiod_get_index(struct fwnode_handle *fwnode,
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+static inline
-+struct gpio_descs *fwnode_gpiod_get_array(struct fwnode_handle *fwnode,
-+					 const char *con_id,
-+					 enum gpiod_flags flags)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- static inline
- struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 					      struct fwnode_handle *fwnode,
-@@ -558,6 +577,15 @@ struct gpio_desc *devm_fwnode_gpiod_get_index(struct device *dev,
- 	return ERR_PTR(-ENOSYS);
- }
- 
-+static inline
-+struct gpio_descs *devm_fwnode_gpiod_get_array(struct device *dev,
-+					      struct fwnode_handle *fwnode,
-+					      const char *con_id,
-+						  enum gpiod_flags flags)
-+{
-+	return ERR_PTR(-ENOSYS);
-+}
-+
- #endif /* CONFIG_GPIOLIB */
- 
- static inline
--- 
-2.25.1
+nit: This parameter in this patch, and others, is sometimes hyp_vm, at
+others just vm. It would be nicer if it was always the same.
 
+
+> +{
+> +       enum pkvm_page_state state;
+> +       struct hyp_page *page;
+> +       kvm_pte_t pte;
+> +       u64 phys;
+> +       s8 level;
+> +       int ret;
+> +
+> +       ret = kvm_pgtable_get_leaf(&vm->pgt, ipa, &pte, &level);
+> +       if (ret)
+> +               return ret;
+> +       if (level != KVM_PGTABLE_LAST_LEVEL)
+> +               return -E2BIG;
+> +       if (!kvm_pte_valid(pte))
+> +               return -ENOENT;
+> +
+> +       state = guest_get_page_state(pte, ipa);
+> +       if (state != PKVM_PAGE_SHARED_BORROWED)
+> +               return -EPERM;
+> +
+> +       phys = kvm_pte_to_phys(pte);
+> +       ret = check_range_allowed_memory(phys, phys + PAGE_SIZE);
+> +       if (WARN_ON(ret))
+> +               return ret;
+> +
+> +       page = hyp_phys_to_page(phys);
+> +       if (page->host_state != PKVM_PAGE_SHARED_OWNED)
+> +               return -EPERM;
+> +       if (WARN_ON(!page->host_share_guest_count))
+> +               return -EINVAL;
+> +
+> +       *__phys = phys;
+> +
+> +       return 0;
+> +}
+> +
+> +int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *vm)
+> +{
+> +       u64 ipa = hyp_pfn_to_phys(gfn);
+> +       struct hyp_page *page;
+> +       u64 phys;
+> +       int ret;
+> +
+> +       host_lock_component();
+> +       guest_lock_component(vm);
+> +
+> +       ret = __check_host_shared_guest(vm, &phys, ipa);
+> +       if (ret)
+> +               goto unlock;
+> +
+> +       ret = kvm_pgtable_stage2_unmap(&vm->pgt, ipa, PAGE_SIZE);
+> +       if (ret)
+> +               goto unlock;
+> +
+> +       page = hyp_phys_to_page(phys);
+> +       page->host_share_guest_count--;
+> +       if (!page->host_share_guest_count)
+> +               WARN_ON(__host_set_page_state_range(phys, PAGE_SIZE, PKVM_PAGE_OWNED));
+> +
+> +unlock:
+> +       guest_unlock_component(vm);
+> +       host_unlock_component();
+> +
+> +       return ret;
+> +}
+> diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> index f2e363fe6b84..1b0982fa5ba8 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
+> @@ -376,6 +376,18 @@ void put_pkvm_hyp_vm(struct pkvm_hyp_vm *hyp_vm)
+>         hyp_spin_unlock(&vm_table_lock);
+>  }
+>
+> +struct pkvm_hyp_vm *get_np_pkvm_hyp_vm(pkvm_handle_t handle)
+> +{
+> +       struct pkvm_hyp_vm *hyp_vm = get_pkvm_hyp_vm(handle);
+> +
+> +       if (hyp_vm && pkvm_hyp_vm_is_protected(hyp_vm)) {
+> +               put_pkvm_hyp_vm(hyp_vm);
+> +               hyp_vm = NULL;
+> +       }
+> +
+> +       return hyp_vm;
+> +}
+> +
+>  static void pkvm_init_features_from_host(struct pkvm_hyp_vm *hyp_vm, const struct kvm *host_kvm)
+>  {
+>         struct kvm *kvm = &hyp_vm->kvm;
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
+>
 
