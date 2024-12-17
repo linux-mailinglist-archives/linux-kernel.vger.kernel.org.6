@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-448812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C4E9F45CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:15:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C51E9F45D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8867C188D1AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:15:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A200B7A56AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A811DCB3F;
-	Tue, 17 Dec 2024 08:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C84D1DB377;
+	Tue, 17 Dec 2024 08:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="fiNC0Pbx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tlhr1zge"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aa+YHXJQ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF721DB92E;
-	Tue, 17 Dec 2024 08:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CEC1CF2A2;
+	Tue, 17 Dec 2024 08:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423323; cv=none; b=mli5+st2RSenD1+lqJtyo1HveCWaPwm7wB5ZvmKRcQh8fa3IZzYoGvkNr5jQ4ySMyaRs5/joqNHn43VOUWMdQwiLRd60+beq2tftJmgnK28Jj2dGCuKKnPItb1ULUY2+9DNAddKaZo53QQOhYuhwn3b2/ZCioiutM/PUk9pmdYo=
+	t=1734423343; cv=none; b=nF0FBBRNkMMtRdwbPqkEt02xY/ohgXJ9qMPKW+SvYjYSeVaB010GegLm3RCHFljKv3DoQ2mEFQUCcQsabuo7uLEFhaF8qkj5vZzR0Q7zb19VYjjyHx4xukgXpFWPQyBRUREMJrUXcQN7dPGCf6NhP0C01fuMd6oN3uJieotVjIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423323; c=relaxed/simple;
-	bh=RZFjA/9pFaFrpZKI8dauHwC00La1Hwup0bHnM6qCJFI=;
+	s=arc-20240116; t=1734423343; c=relaxed/simple;
+	bh=v2EtpzylHCMVmeaJp2tMr+VfEj8kbz8WIuUYHP9gyx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2QKix18K0eR/SZNaab1qLWBV3vLKY/mxLgE/r0nQXFU9+IHAa8dpw1JXZ73R9K9tAGXGPqcm5KwjzVdR7H+5Ox3XjytfYBWkkaB5rLtpb8aa9ShhnqcHKP6to8f7j9l/rCo/BwS+Bsxj3mXBgOxNmbSBCpTiTm6ciChQzkcLHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=fiNC0Pbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Tlhr1zge; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 09D65114024E;
-	Tue, 17 Dec 2024 03:15:19 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 17 Dec 2024 03:15:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1734423319; x=1734509719; bh=jfv9FlKh9f
-	dbsgM66OV20rMDFf+HbpGSmfPytK2iVvE=; b=fiNC0Pbxby2qIMstus41OQ6MQs
-	9cnH2irYrZ8F4GgOqsXGNFlg4y+kwakmIyYxUQb/vhncvaiQfIz8nJCUOmGZPbvL
-	CUmP32neMSd2nt+AqmBq+IhmG01BalY7wyTGbEjDWLCPyz/MwgAWhANElxZ9eiyu
-	sGO4DUgub4qoltuzTw3DEzbxQq+hNKamp+lyFoyS2PkKX5MrkH5Q0xIa0OiDTelu
-	FyLmDTegU7mD8MLInx3U7D+200lb08aI4T6cIYZ/kmwxUciPTlEqnOYrbpZilSCr
-	XyFDTNjrMXqNTBlkOoEjWsyYOm3A8sjBSf3Qc9rHs40KCNdf9Mx7/6KrZC7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734423319; x=1734509719; bh=jfv9FlKh9fdbsgM66OV20rMDFf+HbpGSmfP
-	ytK2iVvE=; b=Tlhr1zge2i9HkUSRvdN5sZS2xBdEdx311C9Qul3Mf9AZNcXKDmb
-	xmEFH2v/R37zdR96+nds5UF9ueO3UQusg2M8A3bxzNKkB9HDc2wMqiXAQ8sF9eCY
-	PrKogvCjKtqOCgEZ1PiNzvppsc0NVFTFsUaQke71aQBEBzsRbq7IXx+u7oflxDEy
-	qvYU6Or0Q+Fwk9wcV2dG4aXUkgP7lxcuPWx32TWIBdGFfKqRpicNPEksbCwhC7Pp
-	XCVZu2LbTCNaxughcm7MW8EQTI21tFg1y6NvLonjMJhIK5p9ssO0FG6dAMwVbqXb
-	6YCEnTt9kxWxPWvuUq5+njwiaIDML0ZZaqQ==
-X-ME-Sender: <xms:FjNhZzLJLH7BXvYJExOt7Q0M0TwQy5bmRoHVU3bZvKsRVqknhVmpuw>
-    <xme:FjNhZ3Ky4hM_iJg5SUfq303aQNN_UtV7l8-kUXhPZxbD5CDXIGF0CFozQvk3a2fHJ
-    -oLqgB2k-BqWg>
-X-ME-Received: <xmr:FjNhZ7u-UHh4l6jwvwcNCJHVQMfqQnbqeUTwwX-oKyJmEajGUwXTSbsA8VLfwmKfebAZP8KjiUK7BSIuTHgPCxvYAwos0z1xE4_gUQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleeggdduudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
-    hrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgt
-    vghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguh
-    hordhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:FjNhZ8ajBAnK96RBp1LsCbQpiZki3Ovh1XL4JlgFsIhJiKy7_UtixA>
-    <xmx:FjNhZ6Zj6ezdWaLiGsIZOFzUvkyXJepHp18_bh-9OqooXRdtC6Y1Rw>
-    <xmx:FjNhZwAu1eAd69gdFJy9uRzJXojHPHjWEG1xK0_ScP8wzpC9FefrGg>
-    <xmx:FjNhZ4YnthwmGMianFfphna3DZdmvN10L0pb3tbOaja_XEIs8C8WOg>
-    <xmx:FzNhZ2QV84VzG_3RvFSXJV_qAMCkRthMTG1mgxwjplPCl4Tu0XfviYos>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Dec 2024 03:15:17 -0500 (EST)
-Date: Tue, 17 Dec 2024 09:15:15 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Gary Guo <gary@garyguo.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core
- tree
-Message-ID: <2024121706-turbojet-siren-975d@gregkh>
-References: <20241217140939.08167c85@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dI+ZuMmNV2gt2wzjm3GcOSTu1ikgQXnHDNDNfzefzNNtwHF+Py9MpUqE4hPG/0xcDG3j3qFeuB7n9eMSEkyjruda9h3Kqb4K41+Kfkhyx+DfG/Q2YZPmnzUh1hkDMQCTiPMU6/ojWKjkZJRQfwYE5HxPQg9hktIDrvaYgdNLXGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aa+YHXJQ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-725ea1e19f0so4290162b3a.3;
+        Tue, 17 Dec 2024 00:15:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734423341; x=1735028141; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6MRckoNlqZpLBpjip3AWCGgRxNR2zIWh8dpqKI+jRKw=;
+        b=Aa+YHXJQYEWmg2f81gMDfFGKGBXng4HwmopROz5SD1ygP1dQes6Dza+idwxboKjAXb
+         QgR85jfe9cXYDVI9M+Hz9OE7upmxaFdwamtvWqG1zEMOdWuHFRy7asgvbfJ1umNXUpAf
+         mx7V3m9bHxQp3tiVkqNiRot+YkeCgYDefVR+TFLAOx/161oA3TCFZhGqPuilmf+seI7i
+         cY8dlqKFRPzD6RQZQQORpD2FEkVoI2Eb9N5HILX+YwASSmHT7I6AA91cR9hL5yiA2dOg
+         8RShJJLOWeQubmiN7o/pT8YHjr6ApMgpDJ2uiBy+glb5mtKkV6BudlJMq77sZzz+YF76
+         k+jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734423341; x=1735028141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6MRckoNlqZpLBpjip3AWCGgRxNR2zIWh8dpqKI+jRKw=;
+        b=uQvj+710hF0uqHaBicCpowYup1LF+l0hdm0WqkK2V0qbE7fQHLIOI/1VDJnRxQjtDx
+         B+Dt07ajODh0jIPemuU9dczMrx7BIsHa7F9kTZacet8wOYYNiKdi7r1VN9soK+kLtZEt
+         DJC5sys/kxWNGCTxi1KPcwouXV5JDPzg8VeZjH53xg3zVA4pIhza/UpWC++s148mW/1F
+         lE7H3/562BRuRB9z76+Prwb9GImGCI+eFJcZ4/sADdERs97PAsNSLV04DbI/l36Q1UkS
+         quKb52nZmS0LU1/mZyQD+6ZP+7dh1oUkGHnsl3nfj9CQ6SeRWYccozYsHPU9QLyDfxu4
+         ogdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWevLVhO0w9lTzAqQc7CHZAHIGbcxXNsaLl0qtfA4UxnWn7JsGo3kIstsBPhQCOKUpYmEzjlCOrIN7kGBp@vger.kernel.org, AJvYcCXWGwE6p29z/Cg3oQEvG+ufvRCoe3pgCF3qg6AqvnPapbM50Oo1qP15+n4BUl8Ckj16ojNV0RgH+KSVGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySxYGTtUEQQU9GKNv3LaYlNoJPWbqzTcNRDOBW7QnSuAWcqVk3
+	NYchKlqiMW/Diwre2P9GlOwrvHPaUVhmZd/8gGOboHbZRAhWqyRE
+X-Gm-Gg: ASbGncv43jRSmbeLhs8dpT+6Xsr4Ntypgitzk+qI8P/y5MRdYm8lt11XL1uU4eR78N0
+	T4BLt7ObecvKqwF3ItHCpZqrVllQCuAfP/U23kniv7dzaKWUExqBnZ/Rdh3O5dCKxP34stOeXiy
+	B/9m5U4jxNPqmhGVyKdqsZx5ecLTZbErAdoZJRwC76sszdqEYPtX8kkVDnFzi0IjdH+SJeprxPf
+	Td8oWLRHtCnxsafnUaAwbx7D1YiZOX9rDn5P1o+yVv5besddEr4MbHVucRYqKioBL0I5pEQUBlb
+	QqWtJvn1
+X-Google-Smtp-Source: AGHT+IEU9gKtSQDIjfmAL7ioyGt933QTWxeJUGd7RP6VzJhxSMuiT2RaglBNkVWVtrqnk3NJmbnd7Q==
+X-Received: by 2002:a05:6a20:c99a:b0:1db:e3a2:ea47 with SMTP id adf61e73a8af0-1e1dfd1fa49mr24027942637.14.1734423340737;
+        Tue, 17 Dec 2024 00:15:40 -0800 (PST)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918ad5687sm6069722b3a.72.2024.12.17.00.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 00:15:40 -0800 (PST)
+Date: Tue, 17 Dec 2024 16:15:36 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <Z2EzKErhR2MomNz+@visitorckw-System-Product-Name>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,87 +88,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217140939.08167c85@canb.auug.org.au>
+In-Reply-To: <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 
-On Tue, Dec 17, 2024 at 02:09:39PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Sat, Dec 14, 2024 at 09:58:31AM +0100, Wolfram Sang wrote:
+> There are multiple open coded implementations for getting the parity of
+> a byte in the kernel, even using different approaches. Take the pretty
+> efficient version from SPD5118 driver and make it generally available by
+> putting it into the bitops header. As long as there is just one parity
+> calculation helper, the creation of a distinct 'parity.h' header was
+> discarded. Also, the usage of hweight8() for architectures having a
+> popcnt instruction is postponed until a use case within hot paths is
+> desired. The motivation for this patch is the frequent use of odd parity
+> in the I3C specification and to simplify drivers there.
 > 
-> Today's linux-next merge of the rust tree got a conflict in:
+> Changes compared to the original SPD5118 version are the addition of
+> kernel documentation, switching the return type from bool to int, and
+> renaming the argument of the function.
 > 
->   rust/kernel/miscdevice.rs
-> 
-> between commit:
-> 
->   0d8a7c7bf47a ("rust: miscdevice: access file in fops")
-> 
-> from the driver-core tree and commit:
-> 
->   27c7518e7f1c ("rust: finish using custom FFI integer types")
->   1bae8729e50a ("rust: map `long` to `isize` and `char` to `u8`")
-> 
-> from the rust tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc rust/kernel/miscdevice.rs
-> index ebc82e7dfc80,8f88891fb1d2..000000000000
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@@ -10,11 -10,9 +10,12 @@@
->   
->   use crate::{
->       bindings,
->  +    device::Device,
->       error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> +     ffi::{c_int, c_long, c_uint, c_ulong},
->  +    fs::File,
->       prelude::*,
->  +    seq_file::SeqFile,
->       str::CStr,
->       types::{ForeignOwnable, Opaque},
->   };
-> @@@ -274,12 -225,7 +270,12 @@@ unsafe extern "C" fn fops_ioctl<T: Misc
->       // SAFETY: Ioctl calls can borrow the private data of the file.
->       let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
->   
->  -    match T::ioctl(device, cmd, arg) {
->  +    // SAFETY:
->  +    // * The file is valid for the duration of this call.
->  +    // * There is no active fdget_pos region on the file on this thread.
->  +    let file = unsafe { File::from_raw_file(file) };
->  +
-> -     match T::ioctl(device, file, cmd, arg as usize) {
-> ++    match T::ioctl(device, file, cmd, arg) {
->           Ok(ret) => ret as c_long,
->           Err(err) => err.to_errno() as c_long,
->       }
-> @@@ -299,12 -245,7 +295,12 @@@ unsafe extern "C" fn fops_compat_ioctl<
->       // SAFETY: Ioctl calls can borrow the private data of the file.
->       let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
->   
->  -    match T::compat_ioctl(device, cmd, arg) {
->  +    // SAFETY:
->  +    // * The file is valid for the duration of this call.
->  +    // * There is no active fdget_pos region on the file on this thread.
->  +    let file = unsafe { File::from_raw_file(file) };
->  +
-> -     match T::compat_ioctl(device, file, cmd, arg as usize) {
-> ++    match T::compat_ioctl(device, file, cmd, arg) {
->           Ok(ret) => ret as c_long,
->           Err(err) => err.to_errno() as c_long,
->       }
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Compare the results with hweight8(x) & 1 for correctness when x is in
+the range [0, 255].
 
-Looks good to me, thansk!
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Tested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-greg k-h
+Regards,
+Kuan-Wei
 
