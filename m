@@ -1,172 +1,87 @@
-Return-Path: <linux-kernel+bounces-449023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C889F48A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A439F48A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0120E1611D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9568716F4F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5921EE029;
-	Tue, 17 Dec 2024 10:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EFC1E009D;
+	Tue, 17 Dec 2024 10:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EqGD+KxD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b="IV8JmQr/"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80B31DFE29;
-	Tue, 17 Dec 2024 10:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C1E1DF965;
+	Tue, 17 Dec 2024 10:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734430228; cv=none; b=uEV8CsiIS3o61m2VyCXbZAP1GlLb3zUK6jJJONxdug68rXGldapLqnfQST5by/B6rHrvyMNrkszd8iwIWzWetjOC+7IkEEHZentjxNNbbw9jwNAden6L8I/55ZhfU2PcrvPUiTq1RHtE7iR+U1heliSPgHyIprHPRlQ+B8sR13E=
+	t=1734430265; cv=none; b=NGkhL5wCUoNrsjQ/j3ZGgtkmPsfvIkcUj+2+jhPBiQXFLUOgp9MSe636RdZz6QbtJA40zhQJo6uZLuTypJDD0BXNAEV5DeeIKoj1tK9+vwwgEXzmm+MHJNtQjEoF0Kn9PLWy2MFZFM/MdlH68vAu5fX63KF7TjSSEf1mBDnDh5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734430228; c=relaxed/simple;
-	bh=phY7aIS0PtwvIBKMXHpp+93RA9fCsliuh0wJtoYcY4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aVov+ZtRKBY8xMG2lj5VsGCxD5v/9lCaf0kxVjhQLeb3HStPqGJN9n02y8MrsQkwF4d/puFxCIZC4HtmSVG1r/v7lRaJYTEz0eR1ekcM6KcnjvgbBKyaPCNQ33QCTxZhPEeX7TKitBcrjdo8cT9U1vI++oshuH/Az7Uc6Svf4rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EqGD+KxD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGMBMY9019112;
-	Tue, 17 Dec 2024 10:10:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=faLgLjv5NT4
-	Py6ggo/DNiSVGhonh79+UkdWIvRDIacE=; b=EqGD+KxDwl/9L+75ZDlnJdZ+KZy
-	ejcZU2rzpC051Zn6keUezicdzaDYqMA/oFkr90+rQplnixQx2zgOtPzdhZ/y9rnC
-	kMM/Bsx72er+dxuGiprZqpZMGlsmguBwJGtX7/4ryZUoZjUgDxw2l2lrZ3DOjILJ
-	LXBrCJf7baPwntF0+WSjjo3VFSvud5/nQvjHpcAG5sDB9EbZO+ueoDAyQWfHw8Cy
-	7QobCFljVUlpLWvCg6udGwZ5Lq1pldwO4dqamLVGweJGFVDJfFXiiF2hDG2XHeFH
-	wbcVOMq6PTadXejiCLtwwpgkq9emA6qnJbIo1vQ84KudO2jytmV6za60TCw==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jvs81j7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 10:10:23 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHA86sL003814;
-	Tue, 17 Dec 2024 10:10:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 43h33keyuh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 10:10:20 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BHA83j7003796;
-	Tue, 17 Dec 2024 10:10:20 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4BHAAKBL007148
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 10:10:20 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
-	id 2CD181BDB; Tue, 17 Dec 2024 18:10:19 +0800 (CST)
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, bhupesh.sharma@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
-Subject: [PATCH v5 2/2] arm64: dts: qcom: qcs615-ride: enable SDHC1 and SDHC2
-Date: Tue, 17 Dec 2024 18:10:17 +0800
-Message-Id: <20241217101017.2933587-3-quic_yuanjiey@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241217101017.2933587-1-quic_yuanjiey@quicinc.com>
-References: <20241217101017.2933587-1-quic_yuanjiey@quicinc.com>
+	s=arc-20240116; t=1734430265; c=relaxed/simple;
+	bh=/oUlnT65CiHFNt+hOJDtGb+quRODf091Ygv8JBVnF9U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QhQmHzN1dIq6mnOca4oQyE3r7zjanR0ioZZlwXfCNI2cITIoojAG/GeUtr8Ye4hzsis8lPWMoaHLxnsQTEljrC+osL+s1JZ/De5l/kYGd57Tw4/XFC7DI1h+mGH/RIhxaqTrePi4brtEpwwzKwBT3mNcwfl+nlP7olI0EUtzZlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com; spf=pass smtp.mailfrom=hughsie.com; dkim=pass (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b=IV8JmQr/; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hughsie.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hughsie.com;
+	s=protonmail2; t=1734430252; x=1734689452;
+	bh=/oUlnT65CiHFNt+hOJDtGb+quRODf091Ygv8JBVnF9U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=IV8JmQr/SJ/3AgSzwnfQztEw2eLPMwo/EPgCrr83CIIYggiBOQ4ZAdHpB4nO6tZ4x
+	 1mT7ERKaQWFqUeWgE5fIQTuIWYGrQfpZoSK2Q5MhIcnb13afZ/ZnKt2h5PtElkzKX1
+	 yW5767uz0u46Ypu7FsMcJ1ZIrDtGpcUX4oGCUUNUl+w76EyR75qHI2HW2LcQZNkPA3
+	 u+kVoAFzU1U7hcAfhDT1o84kbTSblLULluCyRYUUlwlfs/arzbglwj66bnO+I91q9j
+	 Ha3efU9hvsZZCBHH333bUARJQX6JFBXtacyYXIidaikLoVHRGrcaSmUBrlfKc4fOZ1
+	 96FsmlYV0W9Bg==
+Date: Tue, 17 Dec 2024 10:10:47 +0000
+To: Werner Sembach <wse@tuxedocomputers.com>
+From: Richard Hughes <richard@hughsie.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Richard Hughes <hughsient@gmail.com>, ggo@tuxedocomputers.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: Avoid putting some root ports into D3 on some Ryzen chips
+Message-ID: <C9ewaxwQKbro-b58prMr4pYnBsbGXBokgIk3OMYfT2OTCUPqSKeabS2ED02pN44ukBu88wjq1JCzyc4Rb9KHK5qce8L1WufgA27O3NKmTvA=@hughsie.com>
+In-Reply-To: <2b762f16-fe50-4dec-8f3f-dfe21977d807@tuxedocomputers.com>
+References: <20241209193614.535940-1-wse@tuxedocomputers.com> <215cd12e-6327-4aa6-ac93-eac2388e7dab@amd.com> <23c6140b-946e-4c63-bba4-a7be77211948@tuxedocomputers.com> <823c393d-49f6-402b-ae8b-38ff44aeabc4@amd.com> <2b38ea7b-d50e-4070-80b6-65a66d460152@tuxedocomputers.com> <e0ee3415-4670-4c0c-897a-d5f70e0f65eb@amd.com> <6a809349-016a-42bf-b139-544aeec543aa@tuxedocomputers.com> <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com> <vVLu9MdNWVCG96sN3xqjkmMVQpr_1iu61hX0w0q5dSQtFBi9ERc3b6hSoCjobPSTNgkIp3PBheheyUlayhMeQjShsx62zNqxWnPsrHt-xaM=@hughsie.com> <2b762f16-fe50-4dec-8f3f-dfe21977d807@tuxedocomputers.com>
+Feedback-ID: 110239754:user:proton
+X-Pm-Message-ID: 7e792bc0d1ed839d878d160d47e0a6b701b10039
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GnIpXwZOdDmvJGMdgZU9b7ujoLHwd9Nr
-X-Proofpoint-ORIG-GUID: GnIpXwZOdDmvJGMdgZU9b7ujoLHwd9Nr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=872 adultscore=0 malwarescore=0
- clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170083
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Enable SDHC1 and SDHC2 on the Qualcomm QCS615 Ride platform.
+On Monday, 16 December 2024 at 23:37, Werner Sembach <wse@tuxedocomputers.c=
+om> wrote:
+> - AfuEfix64.efi <bios>.bin /p /r /capsule -> overwrites nothing
+> I tried to explain fwupd and the requirements to our contact at the ODM, =
+but
+> just got the unhelpful reply to use the command above.
 
-Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 37 ++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Can you name the ODM? I think essentially all the ODMs are uploading [valid=
+] capsules to the LVFS now. If it helps, it's the same capsule needed for t=
+he LVFS as for the Microsoft WU (Windows Update) process and all ODMs shoul=
+d be intimately familiar with those requirements.
+=20
+> Do you know how these AfuEfix64.efi flags are passed over to the capsule =
+flash
+> process? Then it might be possible to implement them in fwupd too.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index a25928933e2b..562e4dfd221a 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -5,6 +5,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/gpio/gpio.h>
- #include "qcs615.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
-@@ -12,6 +13,8 @@ / {
- 	chassis-type = "embedded";
- 
- 	aliases {
-+		mmc0 = &sdhc_1;
-+		mmc1 = &sdhc_2;
- 		serial0 = &uart0;
- 	};
- 
-@@ -210,6 +213,40 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&sdhc_1 {
-+	pinctrl-0 = <&sdc1_state_on>;
-+	pinctrl-1 = <&sdc1_state_off>;
-+	pinctrl-names = "default", "sleep";
-+
-+	bus-width = <8>;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	mmc-hs400-enhanced-strobe;
-+	vmmc-supply = <&vreg_l17a>;
-+	vqmmc-supply = <&vreg_s4a>;
-+
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	pinctrl-0 = <&sdc2_state_on>;
-+	pinctrl-1 = <&sdc2_state_off>;
-+	pinctrl-names = "default", "sleep";
-+
-+	bus-width = <4>;
-+	cd-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
-+
-+	vmmc-supply = <&vreg_l10a>;
-+	vqmmc-supply = <&vreg_s4a>;
-+
-+	status = "okay";
-+};
-+
- &uart0 {
- 	status = "okay";
- };
--- 
-2.34.1
+The capsule, as expected by LVFS and WU, is actually a single *signed* bina=
+ry that contains the flasher binary and the payload all wrapped up into one=
+. The only time I've seen AfuEfix64.efi in use is for the system preload, a=
+s done in the factory.
+
+Richard.
 
 
