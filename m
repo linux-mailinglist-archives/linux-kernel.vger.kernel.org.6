@@ -1,217 +1,115 @@
-Return-Path: <linux-kernel+bounces-449735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADDD9F5565
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:03:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFD49F556F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA48188F34C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31888177B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92531F869B;
-	Tue, 17 Dec 2024 17:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1811C1F941C;
+	Tue, 17 Dec 2024 17:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lk+mI58y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uGzB6Hfc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9305A442F;
-	Tue, 17 Dec 2024 17:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3DE1F8AE2;
+	Tue, 17 Dec 2024 17:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457968; cv=none; b=kKZa2PHr6JvGznNd0/6oWbLEEpcwK3nAEZ2CCOfLe0f7JgPa8ylX2K3LH4Lc0F8zaxVMBTx+yzKD690z2c0Wya3oREp6D2H0aHAfm6a2vJCytQkQmQ/34X+O9Q9srUTdfKMmxl6Uo3hB26e5Jz6akSU9ZdeDUmaO/mUzlK/YtB0=
+	t=1734458035; cv=none; b=CYHiCXt6Tb0ZTf2szVn0Hy1C7mcVK11EQt5Te8m7dk3G5lFeL2f/eLgHwvsYbzsAF3zuxlCleoanhjB0UbzFLv3JGi8HofioKGeAT8uXfnRl6w8EnaHtHJyyR2RwLaznNHSZfAbuRmmvcNA0f8lfLqyJEhkszajl1tmGtUCja/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457968; c=relaxed/simple;
-	bh=rxNmGYj0cm7vKEkNLss+ezOoW5pNuuLmVUQeMHt4HNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W1EI3Rncn6FV8p1/B/QR2uxMxWq89blHb9jqyHeikG/XHMflUsZ75BIyzeTIqh9Wolx3Yhtk710ykPR2IGE+b9Hrz+7s6U85KzTtEpTTZaPNv0hJsACcjt4Iwn+KWZQVorJJ4mDAqiQJw5YRdr/Sk64SLhqAthyjjkR2el7Kdfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lk+mI58y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHFlfp1002919;
-	Tue, 17 Dec 2024 17:52:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	X7hlMd/FaZ0PUinVQ7uhLnPJtp3fAZlrCPqFWnHaizs=; b=Lk+mI58yDwLy+t7l
-	u7gmMzXVXCCPuTblH+fCg0iWfBfiA1qCek3IT5mAAxx+OO5qc8oTggOIsNKZi8AM
-	fo0npBnXmp7ba0OULhYXtmjpds9k4trnHTBA0fGu4WaGy85awicX+oWfm79qNds9
-	S9AsxQQXv5KLNA0bzgqBsJkxJFwa45Jn6nqPaJvxzpmOweauzHZdBWDQuhAYGvSX
-	1eg3gAP5zwdtv2CdyQfxnJ1/n1TGFhPA1RWhheeuET+hOooGMjG9HWMuPpE27ZsC
-	ttOtmOz069I2gHaZk0ICQ3pyi2KXhAXpXUPuShxtQU8X5+Qx6Vz3hSEkejgiZqTf
-	mSIAkA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43kc8m8bgg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 17:52:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHHqaNN028967
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 17:52:36 GMT
-Received: from [10.216.20.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
- 2024 09:52:30 -0800
-Message-ID: <44f0bdee-5d85-4544-a91f-23804073237f@quicinc.com>
-Date: Tue, 17 Dec 2024 23:22:27 +0530
+	s=arc-20240116; t=1734458035; c=relaxed/simple;
+	bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Oh9W27oG5kvlZD9kw81jyznRJM/rpFi3R+7cVGASIJQpwriC3B61Kau6gwsQjVhRDZjL2dqD5zd0GxwTKU7jM+ugA8npcexWzaRid0q5ms6SsIEn6RqRPv5vaEFzDfsHD86HLKJzZsDGYbgGvgesLBBhk8bajIb0nk3vV51jYmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uGzB6Hfc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.1.104] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 741DC4C7;
+	Tue, 17 Dec 2024 18:53:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734457994;
+	bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uGzB6HfcX3Sd4249FPHrFLhYI+sgFsedjFLHs66biy22Hzm8qJuvERlzTaXrviLLc
+	 AaS7yd5R9N4iVRfHX1haByBH0IXlKtLRMj4VntPjVX8JT1Irk8DkpPiLhR5ShH+EVS
+	 hAiabM1B8OuBIpZjvoX03IgMTQH6xPAJ5ulGZJd0=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: [PATCH 0/4] renesas: r8a779g0: Enable VSPX on R-Car V4H
+Date: Tue, 17 Dec 2024 18:53:13 +0100
+Message-Id: <20241217-rcar-v4h-vspx-v1-0-de04ea044ed4@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] drm/msm: adreno: dynamically generate GMU bw table
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20241217-topic-sm8x50-gpu-bw-vote-v6-0-1adaf97e7310@linaro.org>
- <20241217-topic-sm8x50-gpu-bw-vote-v6-3-1adaf97e7310@linaro.org>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20241217-topic-sm8x50-gpu-bw-vote-v6-3-1adaf97e7310@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Hf9Xvo-hgUZr1ATiwos_YVRuf9ofXIvW
-X-Proofpoint-GUID: Hf9Xvo-hgUZr1ATiwos_YVRuf9ofXIvW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170137
+X-B4-Tracking: v=1; b=H4sIAIq6YWcC/x3MQQqAIBBA0avIrBtQKayuEi3MppxNxQgihHdPW
+ r7F/y8kEqYEs3pBKHPi+2ownYIQ/XUS8t4MVtveWONQghfMfcScnoJuH/W0OW2CG6A1j9DB5f8
+ ta60fWSiQHV8AAAA=
+X-Change-ID: 20241217-rcar-v4h-vspx-7d809b701c75
+To: Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1056;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=ZRQdhu9Uvb5+CPkrAEN7VMpgQj5MoXeR2uIlG+nUASI=;
+ b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnYbqtmdz5yxWiDiiys7tyVDGNQMTpGk3gwHccA
+ gyqTa5u7WyJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ2G6rQAKCRByNAaPFqFW
+ PDOKD/9T92wiVxvc7qq1gEGj3pmmi12t3Y0r+5b9ARXH+hBfbGi+v5c4PqN42UvHUSrmmw5fSS6
+ 6zuZd+RHwzMaAng5irXm4yupnm2dK4oXeO92PFSG68g0XNZzcq2/6RytVzi7jJwMthLp2xyQLq1
+ LEJpTwhCQvvaQ4F6rKhsK9I/IiCDJGR19NCHomIgPN7MzHE8eIryA5OLewNCT7Q5NW8G/Qxx35b
+ RTLgqcmlsWqnvoOV2VzL7ROnw+3csYbYgLvZt9fKBrHTZy4PhO8EOTKrQ3fMv8fsS3o8DwuNL2B
+ 9ZiPYCzi4i4aXj5+urM+qggo46xjjj+b/mbUwfsGyZLUUWaOgbyeYyQh4hNglT57SmE4kK/3DuQ
+ 4/iMyReVF+ePVfFmlXp4SQmi1xTiRGO4keClDn+Tjn9CuvZI3PobFdFd7m8Z6/8kO7WeEBqzQnY
+ LdqmzQoyB8also5UhecIyijVcZKnyIakXnlsX7y0GxQlS6w9tNTs95iVRtM7dIj4z1nF1UKwLHK
+ OjfRsQs4OomalvQ4e8ZJWSdDPx1Z+ZzTOIIZQrG9ma45hLsgy7j6fHpujfRV0hFr/g794N2QAkK
+ oV8KfccyFzWGWcDjpx8NNVwoXDOoVxqD3tAy7JLy+Zb+WJyOeUqK4IcRLzYfScOM3phu5XIQ6lL
+ qrnsVe0HOgyJD+w==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-On 12/17/2024 8:21 PM, Neil Armstrong wrote:
-> The Adreno GPU Management Unit (GMU) can also scale the ddr
-> bandwidth along the frequency and power domain level, but for
-> now we statically fill the bw_table with values from the
-> downstream driver.
-> 
-> Only the first entry is used, which is a disable vote, so we
-> currently rely on scaling via the linux interconnect paths.
-> 
-> Let's dynamically generate the bw_table with the vote values
-> previously calculated from the OPPs.
-> 
-> Those entries will then be used by the GMU when passing the
-> appropriate bandwidth level while voting for a gpu frequency.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+The series enables the two VSPX instances connected to the R-Car ISP
+on Renesas R-Car V4H. Define clock identifiers based on the MSTPCR id
+for the VSPX instances and defined device nodes in the V4H .dts file.
 
-Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+The VSPX modules interface with extenal memory through dedicated FCP
+instances named FCPVX. Before defining VSPDX, define and enable the
+FXPVX instances as well.
 
--Akhil
+Compile-tested only series.
 
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 48 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 47 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..995526620d678cd05020315f771213e4a6943bec 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> @@ -6,6 +6,7 @@
->  #include <linux/list.h>
->  
->  #include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/tcs.h>
->  
->  #include "a6xx_gmu.h"
->  #include "a6xx_gmu.xml.h"
-> @@ -259,6 +260,48 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
->  		NULL, 0);
->  }
->  
-> +static void a6xx_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
-> +				   struct a6xx_hfi_msg_bw_table *msg)
-> +{
-> +	unsigned int i, j;
-> +
-> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
-> +		if (!info->bcms[i].name)
-> +			break;
-> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
-> +	}
-> +	msg->ddr_cmds_num = i;
-> +
-> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
-> +		for (j = 0; j < msg->ddr_cmds_num; j++)
-> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
-> +	msg->bw_level_num = gmu->nr_gpu_bws;
-> +
-> +	/* Compute the wait bitmask with each BCM having the commit bit */
-> +	msg->ddr_wait_bitmask = 0;
-> +	for (j = 0; j < msg->ddr_cmds_num; j++)
-> +		if (msg->ddr_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
-> +			msg->ddr_wait_bitmask |= BIT(j);
-> +
-> +	/*
-> +	 * These are the CX (CNOC) votes - these are used by the GMU
-> +	 * The 'CN0' BCM is used on all targets, and votes are basically
-> +	 * 'off' and 'on' states with first bit to enable the path.
-> +	 */
-> +
-> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
-> +	msg->cnoc_cmds_num = 1;
-> +
-> +	msg->cnoc_cmds_data[0][0] = BCM_TCS_CMD(true, false, 0, 0);
-> +	msg->cnoc_cmds_data[1][0] = BCM_TCS_CMD(true, true, 0, BIT(0));
-> +
-> +	/* Compute the wait bitmask with each BCM having the commit bit */
-> +	msg->cnoc_wait_bitmask = 0;
-> +	for (j = 0; j < msg->cnoc_cmds_num; j++)
-> +		if (msg->cnoc_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
-> +			msg->cnoc_wait_bitmask |= BIT(j);
-> +}
-> +
->  static void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  {
->  	/* Send a single "off" entry since the 618 GMU doesn't do bus scaling */
-> @@ -664,6 +707,7 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->  	struct a6xx_hfi_msg_bw_table *msg;
->  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
->  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
->  
->  	if (gmu->bw_table)
->  		goto send;
-> @@ -672,7 +716,9 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->  	if (!msg)
->  		return -ENOMEM;
->  
-> -	if (adreno_is_a618(adreno_gpu))
-> +	if (info->bcms && gmu->nr_gpu_bws > 1)
-> +		a6xx_generate_bw_table(info, gmu, msg);
-> +	else if (adreno_is_a618(adreno_gpu))
->  		a618_build_bw_table(msg);
->  	else if (adreno_is_a619(adreno_gpu))
->  		a619_build_bw_table(msg);
-> 
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+---
+Jacopo Mondi (4):
+      clk: renesas: r8a779g0: Add FCPVX clocks
+      arm64: dts: renesas: r8a779g0: Add FCPVX instances
+      clk: renesas: r8a779g0: Add VSPX clocks
+      arm64: dts: renesas: r8a779g0: Add VSPX instances
+
+ arch/arm64/boot/dts/renesas/r8a779g0.dtsi | 40 +++++++++++++++++++++++++++++++
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c   |  4 ++++
+ 2 files changed, 44 insertions(+)
+---
+base-commit: 50d451b19cc58cf374160e30cbf72a5ed5b1b129
+change-id: 20241217-rcar-v4h-vspx-7d809b701c75
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 
