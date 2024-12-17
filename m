@@ -1,69 +1,50 @@
-Return-Path: <linux-kernel+bounces-448748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A59F44F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:19:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6639F4518
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61E8B164F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:19:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D8227A6F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310291DA61B;
-	Tue, 17 Dec 2024 07:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q49rcR8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACF019B5B4;
+	Tue, 17 Dec 2024 07:27:58 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA3E1D5AD9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B8A192D69;
+	Tue, 17 Dec 2024 07:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734419939; cv=none; b=Cu3A6j2L98HqqsMeG8Hj/wJGR2qk6YnqYvjyNiRwRATEuBaE9sLxJpnuH4Vc8gNjo/O7sLBWyE6QWd2nxPrViQJXd3dtfsbYhQ+jO8U64iAA94Njy2vlv9LfDBeFEaXgdro1mdD+OPwLnB7SJBi3SFoQ1He/qPsQIaT8efP0ycc=
+	t=1734420478; cv=none; b=Zswh2uOdghaRwgugCobKuqjzgtGNTEd6xHkSywgaQg9WdgmY/mxA/aXgrO9cjXEG2bVy3Z3Jn5dUM/zKU/U5odeI6C7QPeXe7aKJUfl7yoR8mBUoAM1moHxTuDqpLLjDgr3R4dfwjjjO4AVk448keOADUaxeGBVgvdRqrTKPz2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734419939; c=relaxed/simple;
-	bh=L5T8LbxEketIWtOM1IHY40+VcEiXBuxm2FKTjehvk1s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VnFfbcDKmZwKFidMKkaPldHS6qT51wlzjk/H9q60CRzaGcWeWXg9ny+Oy20/nNAkKz8AmoHUJ6mt7E1sefe2aN0x6ETJUUBEbhB76EPQXBnjqQRW1b4ft73XQ758SWnE9y4PXusURLTGOjw1J83icGLbed9tS876QHPGGZpLgXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q49rcR8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B6EC4CEE1;
-	Tue, 17 Dec 2024 07:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734419938;
-	bh=L5T8LbxEketIWtOM1IHY40+VcEiXBuxm2FKTjehvk1s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Q49rcR8qzY2+ZW2Dn7t0P3mPZD3oxT4iY2ItJtbsdP3NspkKVmlDT3JcmLxlVoP8g
-	 u/9lGxq62lxqQ/i33bvjt/FJ3eaYLK0POsz2JbI6tBqITDYcGfY8/olzofCF+A64s9
-	 /be9FmrpqHF23paiRiabq9iSqOK5kbm3bk0zXNdhcI7nbzeK9JcsYwhNfZFf3Y+Mia
-	 fwgT1cTgHmY+C+HrHInTDetmqdWtRkpXzBiw/X7/E0RrrpK/Yka4GOsh9E4vlB99M4
-	 OOQdH6tPwcs/UaNo5psz7futweq8Z/90h31X8cobwULrZwXEvo6ce5vm88MxqKeS6V
-	 EC0dXFPRTpDTA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Tejas Upadhyay <tejas.upadhyay@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/xe/vsec: enforce CONFIG_INTEL_VSEC dependency
-Date: Tue, 17 Dec 2024 08:18:44 +0100
-Message-Id: <20241217071852.2261858-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734420478; c=relaxed/simple;
+	bh=OdewV4615FId0WACNx+91iHsJ8vh/kQT1TGkcrL/w2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EUXTvwoe+Fp3/6tcnrsmkDk2+REAHPG8dxVMK+A15/9NEVC4Yx2ljpFL0zyoXnqkFrTnHljjs90R3xPVtKSNJPjqxy7wWgttTFfv8uQ5jg/rVsQHjjHNgg8h2qPiz9iyHQb8N4kv03LSjZQPprZlvuhFzFm8tN7th5Mhl/QNmFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YC7c814H8z11Mq2;
+	Tue, 17 Dec 2024 15:24:40 +0800 (CST)
+Received: from kwepemh100007.china.huawei.com (unknown [7.202.181.92])
+	by mail.maildlp.com (Postfix) with ESMTPS id A20C914034D;
+	Tue, 17 Dec 2024 15:27:53 +0800 (CST)
+Received: from huawei.com (10.67.175.69) by kwepemh100007.china.huawei.com
+ (7.202.181.92) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 17 Dec
+ 2024 15:27:53 +0800
+From: Zhang Kunbo <zhangkunbo@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<chris.zjh@huawei.com>, <liaochang1@huawei.com>
+Subject: [PATCH -next] fs/nfs: fix missing declaration of nfs_idmap_cache_timeout
+Date: Tue, 17 Dec 2024 07:19:21 +0000
+Message-ID: <20241217071921.2635013-1-zhangkunbo@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,70 +52,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh100007.china.huawei.com (7.202.181.92)
 
-From: Arnd Bergmann <arnd@arndb.de>
+fs/nfs/super.c should include fs/nfs/nfs4idmap.h for
+declaration of nfs_idmap_cache_timeout. This fixes the sparse warning:
 
-When INTEL_VSEC is in a loadable module, XE cannot be built-in any more:
+fs/nfs/super.c:1397:14: warning: symbol 'nfs_idmap_cache_timeout' was not declared. Should it be static?
 
-x86_64-linux-ld: vmlinux.o: in function `xe_vsec_init':
-(.text+0x19861bf): undefined reference to `intel_vsec_register'
-
-This could be enforced using a 'depends on INTEL_VSEC || !INTEL_VSEC'
-style dependency to allow building with VSEC completely disabled.
-My impression here is that this was not actually intended, and that
-continuing to support that combination would lead to more build bugs.
-
-Instead, make it a hard dependency as all other INTEL_VSEC users are,
-and remove the inline stub alternative. This leads to a dependency
-on CONFIG_X86_PLATFORM_DEVICES, so the 'select' has to be removed
-to avoid a circular dependency.
-
-Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Zhang Kunbo <zhangkunbo@huawei.com>
 ---
- drivers/gpu/drm/xe/Kconfig | 2 +-
- include/linux/intel_vsec.h | 7 -------
- 2 files changed, 1 insertion(+), 8 deletions(-)
+ fs/nfs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index 6c5b665d9384..217b51468497 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -2,6 +2,7 @@
- config DRM_XE
- 	tristate "Intel Xe Graphics"
- 	depends on DRM && PCI && MMU && (m || (y && KUNIT=y))
-+	depends on INTEL_VSEC
- 	select INTERVAL_TREE
- 	# we need shmfs for the swappable backing store, and in particular
- 	# the shmem_readpage() which depends upon tmpfs
-@@ -28,7 +29,6 @@ config DRM_XE
- 	select INPUT if ACPI
- 	select ACPI_VIDEO if X86 && ACPI
- 	select ACPI_BUTTON if ACPI
--	select X86_PLATFORM_DEVICES if X86 && ACPI
- 	select ACPI_WMI if X86 && ACPI
- 	select SYNC_FILE
- 	select IOSF_MBI
-diff --git a/include/linux/intel_vsec.h b/include/linux/intel_vsec.h
-index b94beab64610..f2d55e686476 100644
---- a/include/linux/intel_vsec.h
-+++ b/include/linux/intel_vsec.h
-@@ -138,13 +138,6 @@ static inline struct intel_vsec_device *auxdev_to_ivdev(struct auxiliary_device
- 	return container_of(auxdev, struct intel_vsec_device, auxdev);
- }
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index ae5c5e39afa0..aeb715b4a690 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -73,6 +73,7 @@
+ #include "nfs.h"
+ #include "netns.h"
+ #include "sysfs.h"
++#include "nfs4idmap.h"
  
--#if IS_ENABLED(CONFIG_INTEL_VSEC)
- void intel_vsec_register(struct pci_dev *pdev,
- 			 struct intel_vsec_platform_info *info);
--#else
--static inline void intel_vsec_register(struct pci_dev *pdev,
--				       struct intel_vsec_platform_info *info)
--{
--}
--#endif
- #endif
+ #define NFSDBG_FACILITY		NFSDBG_VFS
+ 
 -- 
-2.39.5
+2.34.1
 
 
