@@ -1,89 +1,155 @@
-Return-Path: <linux-kernel+bounces-449602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980B99F5145
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 995039F5136
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:38:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0766165082
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AD95164CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829A71F8933;
-	Tue, 17 Dec 2024 16:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thL9zEd/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0D21F3D58;
+	Tue, 17 Dec 2024 16:38:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456614A0B9;
-	Tue, 17 Dec 2024 16:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87D142E77
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453543; cv=none; b=bdnX/OFR0dSR1y+XeKKsntGDNWrXeBk4Lu35hx4YLnHhinQ7mayEgfb5py12/mJBCoz6D2aU7PSAOPY5JnL8iJG4AXGXyA/3IrT1zmqFkOl3YcGBPSacdHGS/XB+JRtld8UO0qp58y8yM1PMqdT/6BIQCDVsEH+V7/Hvbyk7PjU=
+	t=1734453527; cv=none; b=HKA+Enhq7zrP8n+hHt5Wg9fnIe9u1Oi14qBmkZ9vejcL739B8nQBhX2yx3C2Evjr5xHjfbocgYukDBEbOd7atgBMSKmlBr0vknvIS9D6ypEOiQzUrS5KF8RHNbEWERrjHyjjTtQubcqxoBGkFah8iv2KFpILKBk0X1SuruQQtwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453543; c=relaxed/simple;
-	bh=ngcVe0U6Ws143zJJ7L2/bPbD19hx+VrgJhnrIbe6sBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6GnjVqPfxnvZ+d2FYHrNhg6y7wW7cWmL7L2knOuq1Zmrw6Sbl4Vj6s+isMoWz9nivseqlCgpfu4dyy6ciNB7KKfLvMm40SxcTa6JLWB7BDm57i0te8u+rnoyAq+DiG7aLmU6eQN+7NW5TLDwve6NtQWpDR5hP/oTO+4JP9BrqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thL9zEd/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F90C4CEE7;
-	Tue, 17 Dec 2024 16:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734453543;
-	bh=ngcVe0U6Ws143zJJ7L2/bPbD19hx+VrgJhnrIbe6sBY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=thL9zEd/Tg15+0A6qhqzRu5x4o3UgUKgT+8ny5NpGCAgBEMn+FN/yzHZdJcqWZna1
-	 W7ZUIgBrIVUzWwy2q1RtwsV0dYmMBJpFgW9Sv8s2DbYwbIABCkoiBGd1cVeWMQoYPJ
-	 NfTA1ERpwWDX/bI4qYjbnIZ9FfPNeej8LomIB1AHTjyZLMKsN4SjSnlMRBWyaxX9Rq
-	 rL3KNQDWq1ABSNh5bikxwyQEu6zGkiJfPFainyCptzAos0movMcRQe1FucjOTdNlqH
-	 zc8VskEZH1gcy1K318uNONDP+N+vz0ZnNS393uaqtA5CHg9ivWHmEqbVP2GN/kT2Vn
-	 27tucpH7xg02g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Johan Hovold <johan@kernel.org>,
-	"Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100-pmics: Enable all SMB2360 separately
-Date: Tue, 17 Dec 2024 10:38:55 -0600
-Message-ID: <173445353300.470882.18010649806339301141.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241210-x1e80100-disable-smb2360-v2-1-2449be2eca29@linaro.org>
-References: <20241210-x1e80100-disable-smb2360-v2-1-2449be2eca29@linaro.org>
+	s=arc-20240116; t=1734453527; c=relaxed/simple;
+	bh=P9htpVAscVrVAFpbNyfRgxQlx61j79kfcc0I/1Du+l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gartMqG/z4aocZBwo2dpwKPyf07vtqSOAFLU/j7TUNMVzuVoSAqzFvaNu5AKKDUB6LmDFIIhgpliKp/B8vH4YmUo2jTSWuICL5ypvOmMDqhySPbn8PZMx7Obn8JHemL8D8aHd4ehqpbMhK6APN5GrIMti3PqLpj8nJI/0GsuJ0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0439C4CED3;
+	Tue, 17 Dec 2024 16:38:45 +0000 (UTC)
+Date: Tue, 17 Dec 2024 11:39:21 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro
+ <viro@ZenIV.linux.org.uk>, Michal Simek <monstr@monstr.eu>
+Subject: [GIT PULL] ftrace: Fixes for v6.13
+Message-ID: <20241217113921.7254325e@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-On Tue, 10 Dec 2024 09:36:01 +0100, Stephan Gerhold wrote:
-> At the moment, x1e80100-pmics.dtsi enables two of the SMB2360 PMICs by
-> default and leaves the other two disabled. The third one was originally
-> also enabled by default, but then disabled in commit a237b8da413c ("arm64:
-> dts: qcom: x1e80100: Disable SMB2360_2 by default"). This is inconsistent
-> and confusing. Some laptops will even need SMB2360_1 disabled by default if
-> they just have a single USB-C port.
-> 
-> [...]
 
-Applied, thanks!
+Linus,
 
-[1/1] arm64: dts: qcom: x1e80100-pmics: Enable all SMB2360 separately
-      commit: d37e2646c8a5cb8acaebd03f4ae33a1bc0d24991
+Ftrace fixes for 6.13:
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+- Always try to initialize the idle functions when graph tracer starts
+
+  A bug was found that when a CPU is offline when graph tracing starts
+  and then comes online, that CPU is not traced. The fix to that was
+  to move the initialization of the idle shadow stack over to the
+  hot plug online logic, which also handle onlined CPUs. The issue was
+  that it removed the initialization of the shadow stack when graph tracing
+  starts, but the callbacks to the hot plug logic do nothing if graph
+  tracing isn't currently running. Although that fix fixed the onlining
+  of a CPU during tracing, it broke the CPUs that were already online.
+
+- Have microblaze not try to get the "true parent" in function tracing
+
+  If function tracing and graph tracing are both enabled at the same time
+  the parent of the functions traced by the function tracer may sometimes
+  be the graph tracing trampoline. The graph tracing hijacks the return
+  pointer of the function to trace it, but that can interfere with the
+  function tracing parent output. This was fixed by using the
+  ftrace_graph_ret_addr() function passing in the kernel stack pointer
+  using the ftrace_regs_get_stack_pointer() function. But Al Viro reported
+  that Microblaze does not implement the kernel_stack_pointer(regs)
+  helper function that ftrace_regs_get_stack_pointer() uses and fails
+  to compile when function graph tracing is enabled.
+
+  It was first thought that this was a microblaze issue, but the real
+  cause is that this only works when an architecture implements
+  HAVE_DYNAMIC_FTRACE_WITH_ARGS, as a requirement for that config
+  is to have ftrace always pass a valid ftrace_regs to the callbacks.
+  That also means that the architecture supports ftrace_regs_get_stack_pointer()
+  Microblaze does not set HAVE_DYNAMIC_FTRACE_WITH_ARGS nor does it
+  implement ftrace_regs_get_stack_pointer() which caused it to fail to
+  build. Only implement the "true parent" logic if an architecture has
+  that config set.
+
+[
+  This does not contain any of the trace_check_printf() code, as that
+  is being handled in a separate topic branch. It didn't belong with
+  the ftrace branch anyway, as this branch is for function attachment
+  code only.
+]
+
+Please pull the latest ftrace-v6.13-rc3 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace-v6.13-rc3
+
+Tag SHA1: 4f5e6967508d77ae95d08b143892e421c0bdb9fd
+Head SHA1: 166438a432d76c68d3f0da60667248f3c2303d6c
+
+
+Steven Rostedt (2):
+      fgraph: Still initialize idle shadow stacks when starting
+      ftrace: Do not find "true_parent" if HAVE_DYNAMIC_FTRACE_WITH_ARGS is not set
+
+----
+ kernel/trace/fgraph.c          | 8 +++++++-
+ kernel/trace/trace_functions.c | 3 ++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+---------------------------
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 0bf78517b5d4..ddedcb50917f 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1215,7 +1215,7 @@ void fgraph_update_pid_func(void)
+ static int start_graph_tracing(void)
+ {
+ 	unsigned long **ret_stack_list;
+-	int ret;
++	int ret, cpu;
+ 
+ 	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
+ 				 sizeof(*ret_stack_list), GFP_KERNEL);
+@@ -1223,6 +1223,12 @@ static int start_graph_tracing(void)
+ 	if (!ret_stack_list)
+ 		return -ENOMEM;
+ 
++	/* The cpu_boot init_task->ret_stack will never be freed */
++	for_each_online_cpu(cpu) {
++		if (!idle_task(cpu)->ret_stack)
++			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
++	}
++
+ 	do {
+ 		ret = alloc_retstack_tasklist(ret_stack_list);
+ 	} while (ret == -EAGAIN);
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 74c353164ca1..d358c9935164 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,7 +176,8 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
+-#ifdef CONFIG_FUNCTION_GRAPH_TRACER
++/* fregs are guaranteed not to be NULL if HAVE_DYNAMIC_FTRACE_WITH_ARGS is set */
++#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && defined(CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS)
+ static __always_inline unsigned long
+ function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
+ {
 
