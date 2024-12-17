@@ -1,179 +1,152 @@
-Return-Path: <linux-kernel+bounces-448976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F50C9F47D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:45:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5509F47DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:45:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E43A7A0869
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A811D165C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AB11DF260;
-	Tue, 17 Dec 2024 09:44:27 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B14B1E0DD8;
+	Tue, 17 Dec 2024 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rY8dfRyy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD96A1DF24F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4301DE4FF;
+	Tue, 17 Dec 2024 09:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428667; cv=none; b=iwArlNn647ErjNpEOShU36C9lRBLo9nZGOpYFczD8t4cwEcrlqIGIJC/JimfKTDctK2Yb8mo8pMZ4OSni7KIRi9RhTwN1zfBkR2ySpRBaSWOCrTUup7ImH2ufKJdcXIGD2N5YBRKstsX6vBPEn69CCkKXmH7PeKKTHjRNqeo6Xw=
+	t=1734428719; cv=none; b=s3ImZHCS3kwdte+/i9qWCztUujRw7/Vr9dwQ90l9g0hHb3xLmBhwYZEC/hmzkYxU8QnYVTujVi1yjNbZJfUrSuYSTEt17eIsXOU5EYGYu3VBkL4JhnrKm5D2t/OjNAez33+ysj0mLYY5GZdCSlLsYg/Wod4N2BRqzC36CHLIPok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734428667; c=relaxed/simple;
-	bh=rqiaN2F9c/eaHztCDQp5l2avXEeH7niQR1KGHJpHAQw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T3cAT1MNdNAL64NQexOPm+63ZcmDY9DNpzVORuD/nAPqWyeumuEUpzv4ATgvFPdP4EB8MdsKYmVhSYnJaRx3qhH6zoQrO1qRKt+B9YJcEhxU+/FyKOtJn3G6t/etUK/rL6saX00RyIJ6I4G/6kpEiMilNvGI5zoyLOWF8KFDELw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-844ec271431so308107739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:44:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734428664; x=1735033464;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v3WQwo4vPQJd6wOU5xmJ0k4GDIgKmqRK46QxlMpvp1w=;
-        b=cIlcGODkdoupdHiHIsBFZEhKy2Lo6tw0Lm/Bns7iMsO2sKL1JvQz+b3Qki22tylKQT
-         /r+amRwfTju/n9GKG91chJeMwIwMSO9mvKF5jetng0rJk6KLWHoOuGxkQtY84Yw6KUmb
-         qyrFYKyEgjZyej0orHDbOPl4IfAsZ2CToh0Ulj3OpcknFy3DJHmJvi3zipbw+0aoV0LU
-         VDneFfpQ85RJUyO+gUZzxsUo2ltxBDfdiaaAm12oCGZI+CNAkFJ93hRsUq06F5hKR4fz
-         s51lCo+RiZ0+fLTkDgas5xmgUnrpw4Wl/r2dL70mSkZFu+9uBrGA0BtWO8akQJwrTJat
-         4a+A==
-X-Forwarded-Encrypted: i=1; AJvYcCU62N8S1UuR3QbGX/IFxABPkG19M/5XJjnmQ4blgJjDclfqWqFKBOdrxT4jsseN++O9TPQ1ErCs8alH7Ic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR3f5MVpBWM4BDQ9dBMjj7AlQcD7H0dtT+rUC7KHVE7Vf5+bmk
-	8YE1d3zrUAWzal2YjOA6cq7cdBLPt+j+QI1TecgLvKjY+V66bv3NWr47x6Bs7ejgbceusKzyQR3
-	80nfraXomAE4mT4b7pIOlpsvg9VEdwU/fbIMVFYWl+6/7m/sG8vXPedk=
-X-Google-Smtp-Source: AGHT+IHQ4sqUrdpVsm0EeJd+/GQRGdlEi6pTpHnTk0w5tBSHkrtmmW+5KhMS1bBFJ7ywzGMogW4nxA/+yfYWfmPT00M2vzWNYUfT
+	s=arc-20240116; t=1734428719; c=relaxed/simple;
+	bh=2eGNr4it5La5zFwKqlI0alnEBzdjh2a45amMsSoLjTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtXCGOkeg/SEyTcxGQUKATf4XbeKFX+o1O+jAden06kjw9sg5k/pAOwHDirbNfTUFbBZ16NIrbtDClMBvu7DFxKH009SPbt9XCYoMsocr3JUGgd0nRycW+OtsL6lqdHE3xTM+fO/0EN/haW3aSRZgEt72R4gkEPksYyYQK9988Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rY8dfRyy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04FE73E;
+	Tue, 17 Dec 2024 10:44:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734428673;
+	bh=2eGNr4it5La5zFwKqlI0alnEBzdjh2a45amMsSoLjTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rY8dfRyyCgdvx1c8RZkwkEeBnkbD2AdLaXHCCD/fdzKpnISry8Pg/KVfPCXlKlzj6
+	 7yCQzh7V5u9oivMMud8WJMJ11Ho49fMscu9aRKqscpryAFbyVQdcQiwHpzRIyAt1co
+	 hVBzlL6c3CxZJdlylFC4n/EXCZ7YjWkQZpXlvHPY=
+Date: Tue, 17 Dec 2024 11:45:08 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: yuji2.ishikawa@toshiba.co.jp, mchehab@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	nobuhiro1.iwamatsu@toshiba.co.jp, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v12 2/8] dt-bindings: media: platform: visconti: Add
+ Toshiba Visconti Video Input Interface
+Message-ID: <20241217094508.GD11445@pendragon.ideasonboard.com>
+References: <20241125092146.1561901-1-yuji2.ishikawa@toshiba.co.jp>
+ <20241125092146.1561901-3-yuji2.ishikawa@toshiba.co.jp>
+ <04a7ebf7-2924-4894-bc53-ba77e2f64fae@kernel.org>
+ <TY3PR01MB99822E6161ED319B4DE855B492042@TY3PR01MB9982.jpnprd01.prod.outlook.com>
+ <d5294015-4790-490e-8136-615039a5c733@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e1:b0:3a7:dec1:de55 with SMTP id
- e9e14a558f8ab-3affb7daecfmr139988155ab.22.1734428664671; Tue, 17 Dec 2024
- 01:44:24 -0800 (PST)
-Date: Tue, 17 Dec 2024 01:44:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <676147f8.050a0220.37aaf.0154.GAE@google.com>
-Subject: [syzbot] [net?] WARNING: suspicious RCU usage in __ethtool_get_ts_info
-From: syzbot <syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com>
-To: aleksander.lobakin@intel.com, almasrymina@google.com, andrew@lunn.ch, 
-	corbet@lwn.net, danieller@nvidia.com, davem@davemloft.net, 
-	donald.hunter@gmail.com, dtatulea@nvidia.com, ecree.xilinx@gmail.com, 
-	edumazet@google.com, hkallweit1@gmail.com, horms@kernel.org, 
-	kory.maincent@bootlin.com, kuba@kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, petrm@nvidia.com, 
-	przemyslaw.kitszel@intel.com, richardcochran@gmail.com, 
-	rrameshbabu@nvidia.com, syzkaller-bugs@googlegroups.com, 
-	vadim.fedorenko@linux.dev, willemb@google.com, wintera@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d5294015-4790-490e-8136-615039a5c733@kernel.org>
 
-Hello,
+On Tue, Dec 17, 2024 at 06:43:22AM +0100, Krzysztof Kozlowski wrote:
+> On 17/12/2024 01:00, yuji2.ishikawa@toshiba.co.jp wrote:
+> > Hello Krzysztof
+> > 
+> > Thank you for your review
+> > 
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzk@kernel.org>
+> >> Sent: Monday, November 25, 2024 7:08 PM
+> >> To: ishikawa yuji(石川 悠司 ○ＲＤＣ□ＡＩＴＣ○ＥＡ開)
+> >> <yuji2.ishikawa@toshiba.co.jp>; Laurent Pinchart
+> >> <laurent.pinchart@ideasonboard.com>; Mauro Carvalho Chehab
+> >> <mchehab@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> >> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Sakari Ailus
+> >> <sakari.ailus@linux.intel.com>; Hans Verkuil <hverkuil-cisco@xs4all.nl>;
+> >> iwamatsu nobuhiro(岩松 信洋 ○ＤＩＴＣ□ＤＩＴ○ＯＳＴ)
+> >> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> >> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+> >> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org
+> >> Subject: Re: [PATCH v12 2/8] dt-bindings: media: platform: visconti: Add
+> >> Toshiba Visconti Video Input Interface
+> >>
+> >> On 25/11/2024 10:21, Yuji Ishikawa wrote:
+> >>> Adds the Device Tree binding documentation that allows to describe the
+> >>> Video Input Interface found in Toshiba Visconti SoCs.
+> >>>
+> >>> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+> >>> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> >>
+> >> Why this tag stayed and other was removed? What was the reason of tag
+> >> removal?
+> >>
+> > 
+> > The stayed tag is due to internal review.
+> 
+> Did the internal review really happened? How is it that immediately new
+> version has internal review without any traces?
+> 
+> I have doubts this review happened in the context of reviewer's
+> statement of oversight.
+> 
+> > The removed tag is due to code's change (split of csi2rx part) after the last review.
+> > If the code is largely changed following the instruction of another reviewer
+> > after obtaining the tags, how should the tags be handled?
+> 
+> Drop all reviews and perform reviews on the list.
+> 
+> Such internal review appearing afterwards is rather a proof it you are
+> adding just the tags to satisfy your process. I have no way to even
+> verify whether that person performed any reasonable review or maybe just
+> acked your patch.
 
-syzbot found the following issue on:
+How do you verify that for public reviews ?
 
-HEAD commit:    bc6a5efe3dcd Merge branch 'net-timestamp-selectable'
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1309c7e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=87a291e9e8ffbb16
-dashboard link: https://syzkaller.appspot.com/bug?extid=a344326c05c98ba19682
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=179802df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125b34f8580000
+> I cannot even verify that that person understands the
+> reviewer's statement of oversight.
+> 
+> 
+> ...
+> 
+> >>>
+> >>> Changelog v11:
+> >>> - no change
+> >>>
+> >>> Changelog v12:
+> >>> - remove property "clock-noncontinuous" as VIIF switches both modes
+> >>> automatically
+> >>> - remove property "link-frequencies" as VIIF does not use the
+> >>> information
+> >>
+> >> Driver does not use or hardware supports only one frequency?
+> > 
+> > My comment was incorrect.
+> > It should be "Driver does not use the information"
+> 
+> Then this is not that helping. Maybe hardware supports only one frequency?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0e3bb05cbd15/disk-bc6a5efe.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/68f124e1efd7/vmlinux-bc6a5efe.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c3e210387375/bzImage-bc6a5efe.xz
+-- 
+Regards,
 
-The issue was bisected to:
-
-commit b9e3f7dc9ed95daeb83cfa45b821cacaa01aa906
-Author: Kory Maincent <kory.maincent@bootlin.com>
-Date:   Thu Dec 12 17:06:44 2024 +0000
-
-    net: ethtool: tsinfo: Enhance tsinfo to support several hwtstamp by net topology
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12885730580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11885730580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16885730580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com
-Fixes: b9e3f7dc9ed9 ("net: ethtool: tsinfo: Enhance tsinfo to support several hwtstamp by net topology")
-
-=============================
-WARNING: suspicious RCU usage
-6.13.0-rc2-syzkaller-00424-gbc6a5efe3dcd #0 Not tainted
------------------------------
-net/ethtool/common.c:873 suspicious rcu_dereference_protected() usage!
-
-other info that might help us debug this:
-
-
-rcu_scheduler_active = 2, debug_locks = 1
-1 lock held by syz-executor164/5836:
- #0: ffff888035ec8258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1617 [inline]
- #0: ffff888035ec8258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: sockopt_lock_sock net/core/sock.c:1126 [inline]
- #0: ffff888035ec8258 (sk_lock-AF_PACKET){+.+.}-{0:0}, at: sk_setsockopt+0xf0f/0x33b0 net/core/sock.c:1285
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5836 Comm: syz-executor164 Not tainted 6.13.0-rc2-syzkaller-00424-gbc6a5efe3dcd #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- lockdep_rcu_suspicious+0x226/0x340 kernel/locking/lockdep.c:6845
- __ethtool_get_ts_info+0x97/0x410 net/ethtool/common.c:873
- ethtool_get_phc_vclocks+0xa1/0x160 net/ethtool/common.c:922
- sock_timestamping_bind_phc net/core/sock.c:873 [inline]
- sock_set_timestamping+0x3e2/0xab0 net/core/sock.c:927
- sk_setsockopt+0x2150/0x33b0 net/core/sock.c:1418
- do_sock_setsockopt+0x2fb/0x720 net/socket.c:2309
- __sys_setsockopt net/socket.c:2338 [inline]
- __do_sys_setsockopt net/socket.c:2344 [inline]
- __se_sys_setsockopt net/socket.c:2341 [inline]
- __x64_sys_setsockopt+0x1ee/0x280 net/socket.c:2341
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7dd7b8f2e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc67b485b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007ffc67b48788 RCX: 00007f7dd7b8f2e9
-RDX: 0000000000000025 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 00007f7dd7c02610 R08: 0000000000000004 R09: 00007ffc67b48788
-R10: 0000000020000040 R11: 0000000000000246 R12: 0000000000000001
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Laurent Pinchart
 
