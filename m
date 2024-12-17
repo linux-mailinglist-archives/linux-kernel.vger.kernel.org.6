@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-448474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04389F40A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:23:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF9D9F40B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C5D188E1FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D150188EC1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48ECC150994;
-	Tue, 17 Dec 2024 02:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDD013D893;
+	Tue, 17 Dec 2024 02:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="coxSEJeB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkCmpGee"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D10413DB9F;
-	Tue, 17 Dec 2024 02:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B6B13B2BB;
+	Tue, 17 Dec 2024 02:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734402097; cv=none; b=MlF8MJpfi+zDNCJPN60chS0FU1wVMM9of9dlHEBRM/C45isyOcKL6A5o5CninPLiQPNjXGRkWEeki6gU5NVVJMT0fi7Zepu4ebGl91I7vHztgxkZltlMEIwWIoxwOmwItqWYTZbK5cIGf9dTK4RdCrmC6PqeRlzrdNKOaXxPIPs=
+	t=1734402289; cv=none; b=PQfdVFVYaeFxbn1mTi26tEAMHOK0zjTVYQNl05Z22dcUhcXUIIMd6g0u/dZWOELScD+qKhN8CQCvr3zNW7GuTlNyLJFgZQvZf19KPDQj4qMgQPJELj7Wc0EYrDSLVZaQVmn65heoSmtVdFtdGn7dMWe1YznMlWXYgt4eZElyw6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734402097; c=relaxed/simple;
-	bh=wU38PfH5w0kByQPjSXCr1vrzHjkvY0x9gfZBz4zjhBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qBHaXHBEGL8u1CAF+3j2nM5WS8dqvf91w+kRWBcZmkx11dDrJGnFBQNBEr2Yj5Imm2cVv0nJEgo0V230Do0wMktmsMOFMr8dM/Ez1/4ndbxCYqozvojxQrCgxVSJTMypypHS9vEcRj94Q1B17R5Hkj+0MRWF/0dln0HMWIAb1Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=coxSEJeB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGNxsEi031039;
-	Tue, 17 Dec 2024 02:21:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=R5+873Ef+Kkj4YNDK
-	n1lh7cr/++D0FfitFuPzZwixKs=; b=coxSEJeBZW+rihxQCTg71FkvkltMawUyZ
-	X8ndzBJQFETaZD5y5TRdxG/OAtIgXZKQZrpNdatP9o4I4vTfZ7f07AY041kQVOlh
-	5dAPynb1ol/vSJVMaC2U7nNAN06XeUjL+gceofoeqZehoak93uo09vtAbRF+1Oq5
-	eXJV7tfmf2cVtA1ybzBDSBKHbBiwP136EaWrvHqPzqNJ05w4H9Mav33PT2+8m1QE
-	EOSgZFxKtsD/KD+EogknuLt+NFdLOINcnh+9h9fddxC0T2HP6b3nE2aQS+sG6RCo
-	khVnibnn6mgfRLJlDFMAZ/I3qvHsUcOz1QZPh0aVvpKI7IgwtcHcg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jxbh0e8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 02:21:04 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BH2L324019106;
-	Tue, 17 Dec 2024 02:21:03 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43jxbh0e8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 02:21:03 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGNZEMa014451;
-	Tue, 17 Dec 2024 02:21:02 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hq21geff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 02:21:02 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BH2L1LJ25100868
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Dec 2024 02:21:01 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0956A5804E;
-	Tue, 17 Dec 2024 02:21:01 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF5DE5803F;
-	Tue, 17 Dec 2024 02:20:58 +0000 (GMT)
-Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Dec 2024 02:20:58 +0000 (GMT)
-From: Ninad Palsule <ninad@linux.ibm.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        eajames@linux.ibm.com, jdelvare@suse.com, linux@roeck-us.net,
-        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
-        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
-        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
-        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
-        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org
-Cc: Ninad Palsule <ninad@linux.ibm.com>
-Subject: [PATCH v3 4/4] ARM: dts: aspeed: system1: Use crps PSU driver
-Date: Mon, 16 Dec 2024 20:20:42 -0600
-Message-ID: <20241217022046.113830-5-ninad@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241217022046.113830-1-ninad@linux.ibm.com>
-References: <20241217022046.113830-1-ninad@linux.ibm.com>
+	s=arc-20240116; t=1734402289; c=relaxed/simple;
+	bh=g78BIc0qeArMDi2X/YRDz2EPjSruhLg4hdT2w8W6HXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIEXq23RVj0IiqvyWvRzYRvni9ohQXRBGFn1WcIPAcdPiw9vPk8hpg72LErSfl8sEGQxJsP8cFV/55d18e9B5ZxSI1rQPMliQqKQ4pNy/5UBHzu5h7qP5nuYLiR6yQJA/nxq2pbye0qQw0KkxjmmYwTuq7Pj66Olrk5S8dvLRxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkCmpGee; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6efea3c9e6eso34571127b3.0;
+        Mon, 16 Dec 2024 18:24:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734402286; x=1735007086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EP5ZynT312ZSNFnjiv1Wwj9DsR/r/HsJlceD3oHAYVs=;
+        b=JkCmpGeelBIJdhPNfxptUWGzqomLjHM04Qyc/WSkZgsw5L3+xJ1vmW2mCFrO96sL5J
+         fkKs6iE1bFMnLpLboIMQRI0q+GUQ6SMFqIje/k83G6aMj5tgcwv/Eo+6ek9xO+dbn2Gc
+         mxuJnrJo4ptYxH2pZxRJ8R8XDdYGFqKHqwlJEc8T60y74tSKYdzAPbwRBwn1BolPP+en
+         ofD+zmrOVGT630n6uS7/F3uGKFaRdkj7k1RBR0s9oX2kMjhW2OD+NL/QIrWJPkskkCTi
+         uWGL9ldjb9uv9q95YT7tnxJR1U/lOlD5BgJLKoJ46mgRGPxePs5TVX1tYiWCUFqLaBIN
+         tUDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734402286; x=1735007086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EP5ZynT312ZSNFnjiv1Wwj9DsR/r/HsJlceD3oHAYVs=;
+        b=oQ+9Jfjp7rgsPohPzqFX8pwdueqMjgU9XnoOnhoWWEYh1YZkhQohjF1ILXJRR26uJf
+         pJhjsesQOTUcTX7NiNJ23urRnbz1A8Dn2F/hCn4kdkKVsirIc38S1FDhyOiro2vxO9cN
+         e0akVRtQbj0OmA908hYe01k2NjxVehF6YGaASkUEFcg32y06Nr8/m/BjC1hCdrBKF1N4
+         ZZErowIix/+wrBeBP/vqFhHytEsMTzsEcw8NrAriE7JOKC6tqVCcDd0J2Gd9aPbiW5gb
+         N/1yyXzF6xE+d7C4Zwx5uNANMBUSdMKXrE2ABV/PBQuWTSD47Jtjn1g4l5jZ5QgTndzW
+         TR6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWe7RXoRTPeDl4xEmTXhW/Z7eZow+TNvbP+66r55PxgtlVprCViHm5WivDxr+O1RPucJBKvCmvbph6dG/v3@vger.kernel.org, AJvYcCXbb7+hwKokM7gqvTAtkPeJBwviRHZpjgumxRiRjuRcR8SSil8eAdBJqEQRYgNBsEH01hI37y4naGC6tA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze7uoIF6kR0dIDS3fVvQXPGzP5qYWHu1RCtfqMSyAl6qBbcQGl
+	gEmATvKzHUugA1xhy+InRcu/1wBFDpdtmfo969Q24ujMy/WPD9/N19Qt9g==
+X-Gm-Gg: ASbGncvZsLgd3Vs8mmqkRKf5KRpT3jwGXWizkAO1faPoKF6qbjzXFS8cUdMTHhsM9/P
+	3pPeSpNeXOR5Vo1ghlmTHExLp0HmkRdKWCn4HT5SlPA0ybIPp4baSqKuSABOmCl4SPAC00/Eck+
+	mqfeuyxJdVA+66OKqtwXEZY+nG4nDqlT1FBnbOR3EWsXHYdtRsL3Ju7qsBosnw7jYOuebM04EJd
+	bQ3Z649GXSBCIf8HoyYN9VpXATIERm4QGSN909zL8R8trcpJ7nyZvSP7W56uASbcmrorA8Q9Av2
+	QpjjDNH226OP7BwL
+X-Google-Smtp-Source: AGHT+IH8+H0qNEjMVGr3aGzEf3aDGSI1L0VYggMEu+ToZG6774zPVL9fENOA68MCpkfiOQd1uTvCqQ==
+X-Received: by 2002:a05:6902:2789:b0:e35:d93a:c9bb with SMTP id 3f1490d57ef6-e52f9632992mr1794156276.10.1734402285854;
+        Mon, 16 Dec 2024 18:24:45 -0800 (PST)
+Received: from localhost (c-24-129-28-254.hsd1.fl.comcast.net. [24.129.28.254])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e470e54d35esm1622919276.54.2024.12.16.18.24.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 18:24:44 -0800 (PST)
+Date: Mon, 16 Dec 2024 18:24:43 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <Z2Dg6ydwN6CfxgTe@yury-ThinkPad>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Hh6hmXv8fYBKd3e_O6u3orwmVtIhLBJp
-X-Proofpoint-ORIG-GUID: n5cTMYJWosxJBRjSSeEGaPy4pf0XyB1Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1015 mlxlogscore=854 spamscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
 
-The system1 uses Intel common redundant (crps185) power supplies so move
-to correct new crps driver.
+On Sat, Dec 14, 2024 at 09:58:31AM +0100, Wolfram Sang wrote:
+> There are multiple open coded implementations for getting the parity of
+> a byte in the kernel, even using different approaches. Take the pretty
+> efficient version from SPD5118 driver and make it generally available by
+> putting it into the bitops header. As long as there is just one parity
+> calculation helper, the creation of a distinct 'parity.h' header was
+> discarded. Also, the usage of hweight8() for architectures having a
+> popcnt instruction is postponed until a use case within hot paths is
+> desired. The motivation for this patch is the frequent use of odd parity
+> in the I3C specification and to simplify drivers there.
+> 
+> Changes compared to the original SPD5118 version are the addition of
+> kernel documentation, switching the return type from bool to int, and
+> renaming the argument of the function.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Acked-by: Yury Norov <yury.norov@gmail.com>
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-index 8f77bc9e860c..360b9ce3c850 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-@@ -681,22 +681,22 @@ &i2c2 {
- 	status = "okay";
- 
- 	power-supply@58 {
--		compatible = "ibm,cffps";
-+		compatible = "intel,crps185";
- 		reg = <0x58>;
- 	};
- 
- 	power-supply@59 {
--		compatible = "ibm,cffps";
-+		compatible = "intel,crps185";
- 		reg = <0x59>;
- 	};
- 
- 	power-supply@5a {
--		compatible = "ibm,cffps";
-+		compatible = "intel,crps185";
- 		reg = <0x5a>;
- 	};
- 
- 	power-supply@5b {
--		compatible = "ibm,cffps";
-+		compatible = "intel,crps185";
- 		reg = <0x5b>;
- 	};
- };
--- 
-2.43.0
+Would you like me to move this patch in bitmap-for-next?
 
+> ---
+>  include/linux/bitops.h | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index ba35bbf07798..4ed430934ffc 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -229,6 +229,37 @@ static inline int get_count_order_long(unsigned long l)
+>  	return (int)fls_long(--l);
+>  }
+>  
+> +/**
+> + * get_parity8 - get the parity of an u8 value
+> + * @value: the value to be examined
+> + *
+> + * Determine the parity of the u8 argument.
+> + *
+> + * Returns:
+> + * 0 for even parity, 1 for odd parity
+> + *
+> + * Note: This function informs you about the current parity. Example to bail
+> + * out when parity is odd:
+> + *
+> + *	if (get_parity8(val) == 1)
+> + *		return -EBADMSG;
+> + *
+> + * If you need to calculate a parity bit, you need to draw the conclusion from
+> + * this result yourself. Example to enforce odd parity, parity bit is bit 7:
+> + *
+> + *	if (get_parity8(val) == 0)
+> + *		val |= BIT(7);
+> + */
+> +static inline int get_parity8(u8 val)
+> +{
+> +	/*
+> +	 * One explanation of this algorithm:
+> +	 * https://funloop.org/codex/problem/parity/README.html
+> +	 */
+> +	val ^= val >> 4;
+> +	return (0x6996 >> (val & 0xf)) & 1;
+> +}
+> +
+>  /**
+>   * __ffs64 - find first set bit in a 64 bit word
+>   * @word: The 64 bit word
+> -- 
+> 2.45.2
 
