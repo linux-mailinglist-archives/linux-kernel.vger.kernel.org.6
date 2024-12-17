@@ -1,74 +1,127 @@
-Return-Path: <linux-kernel+bounces-448484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5539F40BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:28:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D629F40C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D9A188DC32
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BFDA1638D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89E3142E77;
-	Tue, 17 Dec 2024 02:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263EA1DA32;
+	Tue, 17 Dec 2024 02:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnIdWC/b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AmgMalE5"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012A170827;
-	Tue, 17 Dec 2024 02:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13957145335;
+	Tue, 17 Dec 2024 02:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734402505; cv=none; b=FB1TnGZap189vwuscDPYnlISaBVbwJI0eG3dH52TLm1EQyEyF5FT8aIjMQlztm33xpoEEP0CJ4HXO+HbubU4akSqKYSai7dIDO9jOIz1/CJiN9HhQxoFu2XSdUBiXEb07ml2PIPAwxFnGntymbRGT4rRUomNhx/ckYxjKVyctJU=
+	t=1734402611; cv=none; b=TUMpaAN0/R8lapDpQ+X+GXSlXXgi35wq9ytabB7M3os3GoJCEVXhyRnvMGqqo8Dw2VX4UYgXk4vT0KsYX9K9a9RVOEgKjYhI3emKvNigEG8Lly82ZHFYMzstxDzjWFir73hZ3/M1Fs5U28QrMelsBcMkC68nEhkRkaiv44adOkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734402505; c=relaxed/simple;
-	bh=Z0kXIoZ7M8uFKYlucGZUMgaTBP+bzRmnCOsN5JMzWq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jg9bGIL44rfXsKxAmVDRz6mQxV0kKuPFb4bBvKnkrMz1PuxDyX9A56vp5nVCPeqKS4GJt9d2UtDOClgnDYuTH9qRA5cUXLQcoRFlvevVsdf879BQAGFK9PSS/ofbU8/JVIR+51k/GGt8eyTbilKChA8Ie/SnKqS0/9fFR27bkcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnIdWC/b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01797C4CED0;
-	Tue, 17 Dec 2024 02:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734402504;
-	bh=Z0kXIoZ7M8uFKYlucGZUMgaTBP+bzRmnCOsN5JMzWq0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BnIdWC/bT2LrZqZ2Gnmx0o8y2CbCH+1NbYgHTwOmp8WoGPxqmSrjpNQ/8lwsSjTY0
-	 jeKxGbXxtOOyu3EOi2qyO93vALZSqBBWYoqGuXZwq04gEaToTOzvhWIrdYdYt7hLFK
-	 kpJHuCiSEAtPPo5yD+DKkkxs3+L44osb92xcWnm6rMq/fRf/gnx76QXmKHxwZesvQE
-	 Ab41XpM2Xgg6y4i6Q3eTRxDZYjq10aa8hhKhn1KAsXKq4pptvjuVZXKcuGsE1xkqmM
-	 svtQwAaOsR48V+NqfhkSOzcbAxbqy6z5Ktrf0pCeueyRmkQTZCQwEYDmwQuhALTUiF
-	 QZzTzT8DCDpkw==
-Date: Mon, 16 Dec 2024 18:28:23 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: longli@linuxonhyperv.com
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Ajay
- Sharma <sharmaajay@microsoft.com>, Konstantin Taranov
- <kotaranov@microsoft.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Stephen
- Hemminger <stephen@networkplumber.org>, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hyperv@vger.kernel.org, Long Li <longli@microsoft.com>
-Subject: Re: [Patch net-next v2] hv_netvsc: Set device flags for properly
- indicating bonding in Hyper-V
-Message-ID: <20241216182823.03fb6276@kernel.org>
-In-Reply-To: <20241216180300.23a54f27@kernel.org>
-References: <1734120361-26599-1-git-send-email-longli@linuxonhyperv.com>
-	<20241216180300.23a54f27@kernel.org>
+	s=arc-20240116; t=1734402611; c=relaxed/simple;
+	bh=KvSHcgGfj5fVpbu4sV7uw540x5cmriVxQ9T+i6eEZbY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tvVgsJDcnTnn0B20UawDt5BjAiuuA01NyiRKpAV8MzgJjUVC3OTwWhh2S6Y93Hv0A2fJE8algRwbTL5IgIocILMhC5c4OZsera3o7hi5Mv6ddkXWriET4BeJoiVfkyg5thEB9/qDNzbxzxpvrWfvxHboYd25mZrpFBFLo0bamwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AmgMalE5; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734402600; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=QCiwhXfJ2Z0HlTT5Ug0kalY1OtMxy3tJMQ6EtfaFoZg=;
+	b=AmgMalE5QJrV980BE6thr25qt6e+OL7tX64Fxvv7aeMohY22AkRDbBOb02OKJ8NwRdE3sYLqvhUBlQfe7nhvYFz3NpK0iVti1UjvOKxmjbbPzKIR/tBJ+nK9r/ja23V5yrRI8DgB9UXdVoWYqd35R1Ua6Ce7QejM+3Mz7CV2PF4=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WLguG8A_1734402598 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Dec 2024 10:29:59 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: yangge1116@126.com
+Cc: 21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	liuzixing@hygon.cn,
+	stable@vger.kernel.org,
+	vbabka@suse.cz
+Subject: [PATCH] mm: compaction: fix don't use ALLOC_CMA in long term GUP flow
+Date: Tue, 17 Dec 2024 10:29:55 +0800
+Message-Id: <20241217022955.141818-1-baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <1734350044-12928-1-git-send-email-yangge1116@126.com>
+References: <1734350044-12928-1-git-send-email-yangge1116@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Dec 2024 18:03:00 -0800 Jakub Kicinski wrote:
-> > + *	@permanent_bond: device is permanently bonded to another device  
-> 
-> I think we have been taught a definition of the word "permanent"
-                               ^ 
-                               different
+Need update cc->alloc_flags to keep the original logic.
+
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ mm/compaction.c | 6 ++++--
+ mm/page_alloc.c | 1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index b10d921c237b..d92ba6c4708c 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2895,6 +2895,7 @@ static int compact_node(pg_data_t *pgdat, bool proactive)
+ 	struct compact_control cc = {
+ 		.order = -1,
+ 		.mode = proactive ? MIGRATE_SYNC_LIGHT : MIGRATE_SYNC,
++		.alloc_flags = ALLOC_CMA,
+ 		.ignore_skip_hint = true,
+ 		.whole_zone = true,
+ 		.gfp_mask = GFP_KERNEL,
+@@ -3039,7 +3040,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
+ 
+ 		ret = compaction_suit_allocation_order(zone,
+ 				pgdat->kcompactd_max_order,
+-				highest_zoneidx, ALLOC_WMARK_MIN);
++				highest_zoneidx, ALLOC_CMA | ALLOC_WMARK_MIN);
+ 		if (ret == COMPACT_CONTINUE)
+ 			return true;
+ 	}
+@@ -3060,6 +3061,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+ 		.search_order = pgdat->kcompactd_max_order,
+ 		.highest_zoneidx = pgdat->kcompactd_highest_zoneidx,
+ 		.mode = MIGRATE_SYNC_LIGHT,
++		.alloc_flags = ALLOC_CMA | ALLOC_WMARK_MIN,
+ 		.ignore_skip_hint = false,
+ 		.gfp_mask = GFP_KERNEL,
+ 	};
+@@ -3080,7 +3082,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+ 			continue;
+ 
+ 		ret = compaction_suit_allocation_order(zone,
+-				cc.order, zoneid, ALLOC_WMARK_MIN);
++				cc.order, zoneid, cc.alloc_flags);
+ 		if (ret != COMPACT_CONTINUE)
+ 			continue;
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index ecb2fd770387..1bfdca3f47b3 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6456,6 +6456,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
+ 		.order = -1,
+ 		.zone = page_zone(pfn_to_page(start)),
+ 		.mode = MIGRATE_SYNC,
++		.alloc_flags = ALLOC_CMA,
+ 		.ignore_skip_hint = true,
+ 		.no_set_skip_hint = true,
+ 		.alloc_contig = true,
+-- 
+2.39.3
+
 
