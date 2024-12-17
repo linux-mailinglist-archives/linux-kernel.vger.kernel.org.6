@@ -1,131 +1,156 @@
-Return-Path: <linux-kernel+bounces-449330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE579F4D4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:12:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95DF9F4D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A153B16B282
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:12:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7264A1890035
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9681F758C;
-	Tue, 17 Dec 2024 14:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0E11F4E41;
+	Tue, 17 Dec 2024 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nj2/aarl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ud2hNPr5"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836741F7542;
-	Tue, 17 Dec 2024 14:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BFD1E47BA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734444625; cv=none; b=jSYQAHGrDSNYzxBsBYu0w9DGNweIttr3j/rIv9GD/T5rJZvl0GwZwPxZ6wycHQ3FwlJoZ6Xu/ATKbaaDRlw2JFRim/GlBQhTGLNLxLDfKYUuVnfY6yd0DrVy1CrEhWrFQh+K2MiN3NamONGfWl8kC4OyDTvUOXPE3G8yQd45mfA=
+	t=1734444685; cv=none; b=H+E+mEL6qC/QjBAH+LV/arsPXlR1P1vVeW6jaRaFY0QXnHOCD3LdIheZ36Yq4BAY096jjch5beqBxZ5tjOKP+hqnkUr5URxv6BlLqZVUUcPjIXISbxXLjc4gjq6UUAeUy2JoBF1f0cifKWAwmSvsnImjbhKpAkYcgH0QtifRtWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734444625; c=relaxed/simple;
-	bh=C9fsxrj/yC/xYCX1w1nLRgWlDRF3wQiSpEE3jrArh6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQsWauXCgUHyN5fMu8F+ME9nm9N66tQssaQYTM8sTB1cuZB3EHXboByRJC/K+nPV4IxrJN394O5REzy5z6D3GhL5LWsnxtfxDZD7tDHg3h89eD7AoHvz71pBkmj3YCSGORkK/ShC37yJErgRXpRYs2z4gExsjO3Sg3ssKECeSmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nj2/aarl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434D7C4CED3;
-	Tue, 17 Dec 2024 14:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734444625;
-	bh=C9fsxrj/yC/xYCX1w1nLRgWlDRF3wQiSpEE3jrArh6E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nj2/aarlfPOP+kjdNOj8fJzNkkyFeOT/0YkMU1vj80j8miA5cNUdoO9tnMc6OFBTO
-	 ws5+5771ZZoWQIEh6CokqccgWtgH/lRivSmbLBinT2ZQMyCpsWY04CKfuLXgxn0XZX
-	 FN+whl1hmXfcuLpGh5XIWDLrVwzWcdSUtWuqzSBMx9v/TxRBhsopt7bA6wnMnPF72/
-	 xHgfwzY7p7O4NJ9bgnELYtfyeTZ3WnaZb3wifWpcTRMuKeUgGsj1jBL9a56uB/WRAl
-	 ZpUNiIz7le2yV4+V19/KOIfm3LzqkSLJQVDBIsr0lW6jafX0vljfN0/FoCPWPsFlxN
-	 YurHVDxaYXWGg==
-Message-ID: <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
-Date: Tue, 17 Dec 2024 15:10:17 +0100
+	s=arc-20240116; t=1734444685; c=relaxed/simple;
+	bh=8LEMCHKRS+LE1RqUP1A6fftRK+VowhA6EuhQTuy+2Bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MUBMPiwu1AvXH5SPZmN3AUIgb2Sbwrke6FTLrYD8vrfUg1dOu0XcfFuoxh/CH1jhFOQCZ9lLEQrBVBrSh9SlBWb+SN2+8N02I5ETc8N85x3n27loqlVpyx/zMiqVG1dW0MFx2GuimqqWFrVJpmIFohkhiryyw9B37AiXADJjaSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ud2hNPr5; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-540215984f0so6015670e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:11:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734444681; x=1735049481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wAhkRZI/DJr0Mto92qRa3lv3xoIGjVxLYwjI1gESl2o=;
+        b=ud2hNPr593IfYLfae+AirxmVozIu63PrP2mj2oaROzkn7kr0YZZW9B7qGJnAfHrvhV
+         woX7hC3aQKnafZlm2Qku/iQ1rVC5qfkqqHmT+HBAHBLOxHA2D8lizfgyspOtdmHxnD93
+         ChPg60sCJQeJEQE+9GHed0XbgoDUSOJ6oamZ3eYP+Vmc/j4onwDuUn9x1QLrSYc6RjfD
+         FcUK6v7Uep2gSc0upbBTwDPigpm2NebVl+Jb9jpN8taTIrQ3tvIlcZfsp63Jpp3cg3IL
+         x1HaCAEj1NmgijAPbKHGz99f0tQIGkCpne6NusfUyssv4pKjvmfLlPBauyxe8+JtAc8T
+         1XUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734444681; x=1735049481;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wAhkRZI/DJr0Mto92qRa3lv3xoIGjVxLYwjI1gESl2o=;
+        b=gY6UNnmOfPVk9Oej0RXlSkjWuOEqbwCHTa1DtWxqSAyYLHmnb1IVnPH/XETLL20HKg
+         oH2i3VO8/EG1E71Q3uR7vYcaWHLUpGuQEAMe0rv3j6O+ifwlPDvWQbCgsX4TW6XuvdwR
+         Nx3iSctlAr1wOmT+3N1eDXHSSJcK1b9K7hkAK5Jd3QjeTnBhs5i2LbuUmRtt78ixPUFe
+         9Aj7b2dWSosRkoW7xrmprw+vTw6UFPYu4G72uUrsTf7awsHNoFBxJWVvQe9iuGGHw7Vl
+         ZS/KPpzUFibU0T8vrnzro25YEw0nPIyTg3ZMKpI/jtPswaLrkGmb6gMAEsWT7D6yHkOR
+         M2Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Q4aPTveHGb74oN3W7SpVztNji8UAeM9Ll9+tZ14zcRC9ZDoA86n9OujA1+WDvZTP4AsJehSf1MEOD4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykFhV7SNFnlM5nozVJcMzBarllU4oVxNcUD05vKaMFaEC0+dJj
+	KRqev9GWou9m7k9qOTdy/ur01hZQaOtzVHmc75wUqbFvQSip4RG2HM7XFalFOiSRzQ5GJWuXeJQ
+	98KBN8WYuxKOFjllVqaaUg5PiEjtD5/1JhDut0w==
+X-Gm-Gg: ASbGncsxWPt4W2uCcBwYJGgLfuNlUJSjW1tU5dYFd8g50gLYMONWIvQR4sbQa+sqUCy
+	hr/nFvnv1FyWWXk58BNRovfUln2Z2SuYc30ODyg==
+X-Google-Smtp-Source: AGHT+IHlfNzVpuZ2mLV9cI8GhXcm+Cf/+nMgpvHestuuhPJYfxjJ7mzNvXw2jesvGX1QEluGHQQrwnwpLDCfoloHMOQ=
+X-Received: by 2002:a05:6512:10d4:b0:53e:3988:f682 with SMTP id
+ 2adb3069b0e04-5409054c38amr5823134e87.18.1734444681539; Tue, 17 Dec 2024
+ 06:11:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
- sc7280-camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
- <20241217140656.965235-2-quic_vikramsa@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241217140656.965235-2-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241209074659.1442898-1-e.shatokhin@yadro.com>
+In-Reply-To: <20241209074659.1442898-1-e.shatokhin@yadro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 17 Dec 2024 15:11:10 +0100
+Message-ID: <CACRpkda4UGxAjXFOAu5SA9GX=9eNpXcxqUzkabmtA_sCqUG7=Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mcp23s08: Fix sleeping in atomic context due to
+ regmap locking
+To: Evgenii Shatokhin <e.shatokhin@yadro.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nikita Shubin <nikita.shubin@maquefel.me>, linux@yadro.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/12/2024 15:06, Vikram Sharma wrote:
-> This patch change clock names to make it consistent with
-> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
-> This also adds gcc_axi_sf and remove gcc_camera_ahb.
+On Mon, Dec 9, 2024 at 8:47=E2=80=AFAM Evgenii Shatokhin <e.shatokhin@yadro=
+.com> wrote:
 
-Don't combine ABI changes with some less important things.
+> If a device uses MCP23xxx IO expander to receive IRQs, the following
+> bug can happen:
+>
+>   BUG: sleeping function called from invalid context
+>     at kernel/locking/mutex.c:283
+>   in_atomic(): 1, irqs_disabled(): 1, non_block: 0, ...
+>   preempt_count: 1, expected: 0
+>   ...
+>   Call Trace:
+>   ...
+>   __might_resched+0x104/0x10e
+>   __might_sleep+0x3e/0x62
+>   mutex_lock+0x20/0x4c
+>   regmap_lock_mutex+0x10/0x18
+>   regmap_update_bits_base+0x2c/0x66
+>   mcp23s08_irq_set_type+0x1ae/0x1d6
+>   __irq_set_trigger+0x56/0x172
+>   __setup_irq+0x1e6/0x646
+>   request_threaded_irq+0xb6/0x160
+>   ...
+>
+> We observed the problem while experimenting with a touchscreen driver whi=
+ch
+> used MCP23017 IO expander (I2C).
+>
+> The regmap in the pinctrl-mcp23s08 driver uses a mutex for protection fro=
+m
+> concurrent accesses, which is the default for regmaps without .fast_io,
+> .disable_locking, etc.
+>
+> mcp23s08_irq_set_type() calls regmap_update_bits_base(), and the latter
+> locks the mutex.
+>
+> However, __setup_irq() locks desc->lock spinlock before calling these
+> functions. As a result, the system tries to lock the mutex whole holding
+> the spinlock.
+>
+> It seems, the internal regmap locks are not needed in this driver at all.
+> mcp->lock seems to protect the regmap from concurrent accesses already,
+> except, probably, in mcp_pinconf_get/set.
+>
+> mcp23s08_irq_set_type() and mcp23s08_irq_mask/unmask() are called under
+> chip_bus_lock(), which calls mcp23s08_irq_bus_lock(). The latter takes
+> mcp->lock and enables regmap caching, so that the potentially slow I2C
+> accesses are deferred until chip_bus_unlock().
+>
+> The accesses to the regmap from mcp23s08_probe_one() do not need addition=
+al
+> locking.
+>
+> In all remaining places where the regmap is accessed, except
+> mcp_pinconf_get/set(), the driver already takes mcp->lock.
+>
+> This patch adds locking in mcp_pinconf_get/set() and disables internal
+> locking in the regmap config. Among other things, it fixes the sleeping
+> in atomic context described above.
+>
+> Fixes: 8f38910ba4f6 ("pinctrl: mcp23s08: switch to regmap caching")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Evgenii Shatokhin <e.shatokhin@yadro.com>
 
-You miss here explanation why doing the ABI change in the first place.
-Without that explanation I find it rather churn. But anyway, reason for
-ABI break and impact should be documented in commit msg.
+Excellent analysis, patch applied!
 
-> 
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
-
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
 
