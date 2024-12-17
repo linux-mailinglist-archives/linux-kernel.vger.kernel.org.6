@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-448937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31749F4765
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:25:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979729F4768
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73D716E688
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD17F16F498
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72831E260A;
-	Tue, 17 Dec 2024 09:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A021E3791;
+	Tue, 17 Dec 2024 09:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="noWqvvFz"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rw9Jop+Q"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A29018FDAF
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC301DEFCC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734427266; cv=none; b=bmGp08N/3YhJJOPEM4+dOluUUXtxv5xn3QJ126/fQbctTdDzryfnrRlKyLdkHj7mJVVll0GLueWYmje2NMA2TIX6OVzROd/R8L8mikqHXsfHHryif8vB10S4V60arEqbo7wC7u+3D3BxP80xZ2FjIdgeMcSQeIwACry8f337RdQ=
+	t=1734427316; cv=none; b=BAIv54Co0bc5BNzAlaBgEl1iVOrRGCs99oPjSHqjuld1sbyuNk6nXUKCT/qJpVVX/2E0Tlvt7HgyFguIavv/X0vvYWR/yoTUISqMIYG17REsSZsTo1r37mADjf52J6XSH7IbuD/ge0L/5Y7AyIyliKDvX6sNjTc13yPpEGZMnTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734427266; c=relaxed/simple;
-	bh=t95rHfBoG712lhVuvEOKjrG0vkTo2OZG+gOOLtuNzC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MDsxYtyN8uYKLzWShejxWpg4oByeao/Kd4biASwAUbtcItK0Vp6rGEQRTWn73aeqbebxMC7Z/QhkN+F1flw5fsyOZ+WU82xYopIFq1Hg/wbPSsNEuG3xNEzquOOp306aS0RJDuHCFre7XZo0URtgCmY1+gSQGk1gDcxp4xDfqF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=noWqvvFz; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so8314048a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:21:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734427262; x=1735032062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qkfQWZ2A+B+M90RMveSSOud4hRqEbLnpul/TBC9hJ84=;
-        b=noWqvvFzakFO1+dHbGcILEtHcGn/1ru3IQ04FU/Z85ehApRyx1ZTS313P/4O9Ts25Y
-         VZuei4R12UUxww1iw32mOPh6urYSCugMDeR18iGE2pBUW7Lvi074e8nDap0VH16jVn27
-         6uPLQoAB1sr5wG/vOF0r+XGpphRHfvp/amFyCxuPZBdz4jNxoQwsIrOKtAnDJjs1sU5n
-         cWRAw67lxxOqzuV3bHHuaZxsDIfp1lhW8ue3YOgVIZVYDyo1HSxfcYT+okJIRoXH1yv4
-         1yoBPd0pbeizMsaJCdAY31w+YWCbvepUdm1k3iOXNQ2M/pTxdUsPbhUJpp7IM3Zym9YX
-         AjRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734427262; x=1735032062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qkfQWZ2A+B+M90RMveSSOud4hRqEbLnpul/TBC9hJ84=;
-        b=NYFEt2gEmG3v0xABm7CAfDGyd++izVAIc8QPLr4U/+UyUEWZZzn+xUL77USLoC7qWq
-         Y3bpwnWt/LG85ySJnuSykZhvvUe2UuNKikKOCHveIO5AjYwMpCWwJtNYwRJwbwbC4Rcs
-         TIBAIJULM1b4Y0uy0q/Sf3Ixc1ojULUQolgiq+STiClNEbMCLOAe1/g6/0eJjVtNuyNI
-         alrMiczvVXA016iL73hbLn6VEgvDJ73WDcPUiJf2gINLjx25WOjPT81Ohh7KCazLCELe
-         dfp8/09/XPALZ5VhJse/oJrMhbasvQyckxMLuL16RCXxFRUF3lgIQxHcyDUvEEyz37yv
-         CcDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ31MmKH1tz+H5Trx1uwvibuU4V+wzeMwaLTrHcG159jyuc5htUxBrnrAzY9NpDQQkdYNsDhVNF43bBVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjUw/qWcftLd4GSR1GNqTv//4uG05IIDaLlDB/pKyrNTURI3mX
-	RS9pLy0ydlY6XHbhJ316XBvqEpmabIH/y8jRtYL9dOrsBw8l6+mMDTzM2iQIufjInTeAkpkugzR
-	Xp3UVXTKTW4LCLpefRAVb+axQMrS4VZhOKEGS
-X-Gm-Gg: ASbGncuZQNqvRqdvqmWJly4MDWzUmwrHTYnGBPW2jmwEL0Qv5BX0f9BJ3BoW5Z46Z7B
-	/ilDfolx16y6HcV668yPokTmjGqhkdHZB40saRnatQHwZv8QrLOx2iWbARJ9mBN3vW2Z7BTE6
-X-Google-Smtp-Source: AGHT+IF/CdW9ViljvnRf0V0yJni5gZ2km+ucDcJFxsY9gWlL/D2lMY97rfUXFt7mMAncy9aoOyyLlBOnGFKJdekZQ5o=
-X-Received: by 2002:a05:6402:5242:b0:5d0:f904:c23d with SMTP id
- 4fb4d7f45d1cf-5d63c3c16femr13921679a12.28.1734427262393; Tue, 17 Dec 2024
- 01:21:02 -0800 (PST)
+	s=arc-20240116; t=1734427316; c=relaxed/simple;
+	bh=D5NJCkhryfgFYCsAiqwx43jQyGX8vSQnH5+OjbJcr+I=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=JTHn2UZSJunbfbeFN5WPkbhwuAy5BjGG/43P5XfdndJHx06vcTkIpv5zGgpmvRL+xFzFr0Yt9pqu21z2c8xKsiMcHE11OOV7tLYv7bZkeSF/Y/wN/9qbvsbM0bjnaGf3ul5lzy3odf4VlKObk0UiI8uADJKb/IMI0GAcz2G2Tg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rw9Jop+Q; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7RPXbF/pM2DFxuJHQ70/gSefz4yROjbgV7GlObQZDNU=; b=Rw9Jop+QmmVLOFTh6Qvf0fX2QD
+	omZGEoNxeQWlNBpbFh05Qhdh8+hTj1qjPv7GJTtLHP7Xa6gme9v5dkS16ZCdewYwohSG1H2r0QPz2
+	/eyKjeu51EQI4wWwaH9Ug8R+frgg5HIwVx5J8QTZ+QeSPawfqlG03ESfa2UV/Bn0c3otgAigY89wp
+	BWtHb+0h0rGZHsUKffGdb6OPdpndg2c+UuN72535TXM74nDasr4tmQ4yCzmIftHWeGzPybvE3NLMP
+	t8VzDmVN93jfViNaGGn9vHtChZYQbsPAdBlXAzpQz6wcqHb2QBmmIeznxHGVgnvUSDC9+vEBIcPNw
+	Kicp0I2w==;
+Received: from [89.27.170.32] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNTlf-000000053Ae-28dB;
+	Tue, 17 Dec 2024 09:21:28 +0000
+Date: Tue, 17 Dec 2024 10:21:27 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Sourabh Jain <sourabhjain@linux.ibm.com>,
+ Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+ Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
+ Tao Liu <ltao@redhat.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>,
+ Rong Xu <xur@google.com>,
+ =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+ linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+ Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_9/9=5D_x86/kexec=3A_Use_typedef_f?=
+ =?US-ASCII?Q?or_relocate=5Fkernel=5Ffn_function_prototype?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com>
+References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org> <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com>
+Message-ID: <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
- <CANn89iK1+oLktXjHXs0U3Wo4zRZEqimoSgfPVzGGycH7R_HxnA@mail.gmail.com> <49a43774-bf97-4b20-8382-4fb921f34c66@csgroup.eu>
-In-Reply-To: <49a43774-bf97-4b20-8382-4fb921f34c66@csgroup.eu>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 17 Dec 2024 10:20:51 +0100
-Message-ID: <CANn89iLKPx+=gHaM_V77iwUwzqQe_zyUc0Dm1KkPo3GuE40SRw@mail.gmail.com>
-Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>, 
-	CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Dec 17, 2024 at 9:59=E2=80=AFAM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
+On 17 December 2024 09:49:04 CET, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
+>On Tue, 17 Dec 2024 at 00:37, David Woodhouse <dwmw2@infradead=2Eorg> wro=
+te:
+>>
+>> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>>
+>> Both i386 and x86_64 now copy the relocate_kernel function into the con=
+trol
+>> page and execute it from there, using an open-coded function pointer=2E
+>>
+>> Use a typedef for it instead=2E
+>>
+>> Signed-off-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>> ---
+>>  arch/x86/include/asm/kexec=2Eh       | 26 +++++++++++++-------------
+>>  arch/x86/kernel/machine_kexec_32=2Ec |  7 +------
+>>  arch/x86/kernel/machine_kexec_64=2Ec |  6 +-----
+>>  3 files changed, 15 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/kexec=2Eh b/arch/x86/include/asm/kexe=
+c=2Eh
+>> index 48e4f44f794f=2E=2E8ad187462b68 100644
+>> --- a/arch/x86/include/asm/kexec=2Eh
+>> +++ b/arch/x86/include/asm/kexec=2Eh
+>> @@ -111,21 +111,21 @@ static inline void crash_setup_regs(struct pt_reg=
+s *newregs,
+>>  }
+>>
+>>  #ifdef CONFIG_X86_32
+>> -asmlinkage unsigned long
+>> -relocate_kernel(unsigned long indirection_page,
+>> -               unsigned long control_page,
+>> -               unsigned long start_address,
+>> -               unsigned int has_pae,
+>> -               unsigned int preserve_context);
+>> +typedef asmlinkage unsigned long
+>> +relocate_kernel_fn(unsigned long indirection_page,
+>> +                  unsigned long control_page,
+>> +                  unsigned long start_address,
+>> +                  unsigned int has_pae,
+>> +                  unsigned int preserve_context);
 >
->
->
-> Le 17/12/2024 =C3=A0 09:16, Eric Dumazet a =C3=A9crit :
-> > On Tue, Dec 17, 2024 at 8:18=E2=80=AFAM Christophe Leroy
-> > <christophe.leroy@csgroup.eu> wrote:
-> >>
-> >> The following problem is encountered on kernel built with
-> >> CONFIG_PREEMPT. An snmp daemon running with normal priority is
-> >> regularly calling ioctl(SIOCGMIIPHY). Another process running with
-> >> SCHED_FIFO policy is regularly reading /sys/class/net/eth0/carrier.
-> >>
-> >> After some random time, the snmp daemon gets preempted while holding
-> >> the RTNL mutex then the high priority process is busy looping into
-> >> carrier_show which bails out early due to a non-successfull
-> >> rtnl_trylock() which implies restart_syscall(). Because the snmp
-> >> daemon has a lower priority, it never gets the chances to release
-> >> the RTNL mutex and the high-priority task continues to loop forever.
-> >>
-> >> Replace the trylock by lock_interruptible. This will increase the
-> >> priority of the task holding the lock so that it can release it and
-> >> allow the reader of /sys/class/net/eth0/carrier to actually perform
-> >> its read.
-> >>
->
-> ...
->
-> >>
-> >> Fixes: 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in sysfs methods.")
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> >> ---
-> >
-> > At a first glance, this might resurface the deadlock issue Eric W. Bied=
-erman
-> > was trying to fix in 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in
-> > sysfs methods.")
->
-> Are you talking about the deadlock fixed (incompletely) by 5a5990d3090b
-> ("net: Avoid race between network down and sysfs"), or the complement
-> provided by 336ca57c3b4e ?
->
-> My understanding is that mutex_lock() will return EINTR only if a signal
-> is pending so there is no need to set signal_pending like it was when
-> using mutex_trylock() which does nothing when the mutex is already locked=
-.
->
-> And an EINTR return is expected and documented for a read() or a
-> write(), I can't see why we want ERESTARTNOINTR instead of ERSTARTSYS.
-> Isn't it the responsibility of the user app to call again read or write
-> if it has decided to not install the necessary sigaction for an
-> automatic restart ?
->
-> Do you think I should instead use rtnl_lock_killable() and return
-> ERESTARTNOINTR in case of failure ? In that case, is it still possible
-> to interrupt a blocked 'cat /sys/class/net/eth0/carrier' which CTRL+C ?
+>linkage is not part of the type=2E 'asmlinkage' is #define'd to the
+>empty string today, so it doesn't matter, but better to omit it here=2E
 
-Issue is when no signal is pending, we have a typical deadlock situation :
+This is the i386 version=2E I thought ut was something like regparm(3) the=
+re?
 
-One process A is :
-
-Holding sysfs lock, then attempts to grab rtnl.
-
-Another one (B) is :
-
-Holding rtnl, then attempts to grab sysfs lock.
-
-Using rtnl_lock_interruptible()  in A will still block A and B, until
-a CTRL+C is sent by another thread.
+And=2E=2E=2E WTF? How is the calling convention not part of the fundamenta=
+l type of the function? If I have a pointer to such a function, using this =
+typedef to ensure we all share the same prototype, are you telling me all t=
+he users of the typedef have to remember to tag that part on for themselves=
+?
 
