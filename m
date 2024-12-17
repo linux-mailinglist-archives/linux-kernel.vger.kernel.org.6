@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-449717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D819F553A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:58:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11AE9F5535
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7C616E602
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:52:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9901707C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8771F9EBF;
-	Tue, 17 Dec 2024 17:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD06B1F9415;
+	Tue, 17 Dec 2024 17:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3ePxkuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h8D+aXGv"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5321F706E;
-	Tue, 17 Dec 2024 17:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA761F9F53
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457595; cv=none; b=FjQGHGmyqoeX2iYmflFD6q7jH6CHS8hOzpwSWpnuC/2mZWLLYFrz/M6BT+KfA6dBcdBh/C/qj5pPL2etejrEZM5igPvoSX+ym5QNyHRjiuujp+h2BKzpcFbUgMORt2hQ7bVV/H2oIjaKVmWi5wLsx2h4jeGqcz7BArXnLVFMQRc=
+	t=1734457612; cv=none; b=hZG+5CeDAn4PhDNJVy8HQJvluY2JSU+Kg8sZ2b1MVx3iROi7hxWRktPx2w7+zVzUhezNmaLeKpRhcriM7UAsvYfPZtzgeXkES+6xuBV10SKyCL4RSUBLC1iXufik6skg0NYd7DPzc+qO4nxs7vHuxxZvNlnp+3sjbzeBDT9UBT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457595; c=relaxed/simple;
-	bh=OwGheDgt29vkvS8t2F2IuM3VUVlBDeT9j61i23O0ZJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yb71lVlBbtxDKa7w5X2icBCZ2qEdJ2++RZ6Z9ZfG23kibZGbI9a9Qy5VYz7nJBJRorUqcD3Ra4EGHFLJEK3ycoOQsYrjn3DsAI5ed3/1sK9qKeYXcWDvHPTDPjF1Ix44GxFMCAXi94b3OZuXnNrAlt8kaRbpph5my9Z9GlhRITM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3ePxkuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93A0C4CED3;
-	Tue, 17 Dec 2024 17:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734457594;
-	bh=OwGheDgt29vkvS8t2F2IuM3VUVlBDeT9j61i23O0ZJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T3ePxkuPfo70D9lFnDwMhsaSYEGVGBUJICi+5sqC0oLHaXUqtOBToQbKP6tosj15V
-	 +zzrBj9vWgDNqRIbrA5YW5va/cKmoxDs2olkmaBnQ6gNIHfja8tvtIAHePhUWK2nF6
-	 xWLWSQgE7i3ktUlqFZH5yJ5HITbjgtP2dSfQNQpcY/c7QfSRMvD/fnurDON5vNIv+t
-	 UvO1A3uFDeEXqeBO2oWb5n7ICD/DBbcUvnvt00AK0ekDKkB+YKtr1kcbxm8eztoFql
-	 l+8Z/i0hIOzCN8hNio7y4wzf8+j+L/sEBlQigX2X3mT28CvykL+XpOztCb/VaowHi6
-	 HZ8DJAocaVrbw==
-Date: Tue, 17 Dec 2024 10:46:28 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] media: mediatek: vcodec: mark
- vdec_vp9_slice_map_counts_eob_coef noinline
-Message-ID: <20241217174628.GA2654633@ax162>
-References: <20241018151448.3694052-1-arnd@kernel.org>
- <20241118200641.GA768549@thelio-3990X>
- <20241119110226.dbd54clp46klvjl5@basti-XPS-13-9310>
+	s=arc-20240116; t=1734457612; c=relaxed/simple;
+	bh=0XdEASmtmfz9ugCuznpyGWkBxXlxScjrZhwK9HX/gI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmjwPnOn/XvYPOj68vUyZAZvKevcErTlx2WjLIIed06LJV2HlqDea2K/JdaYt3Egr9DHs2EoKRsaBpegdLHTlsRL6PWP5kJnATrKXh5hUDesNHyiG/XSJ5l+IFbCCrfZD6k9GOytS6SPweHY8xWzM/6mv8jEGoymtDnEeInnnm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=h8D+aXGv; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so7790311a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:46:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1734457608; x=1735062408; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oNjkq2KN6DEBaEhuyWIj4iGu8iK40oTJn7fFygqcUbo=;
+        b=h8D+aXGv/l1hkacfTj1q8+LfAiUXTKcVt7GFAKNdfQ/fDNux/9jJ3xi3M5PyYBnBmM
+         XtWI2A/ykiWmljz39CqCW2pc8zhn1e3DadJ4tKDowAkwI7hoaa+2cwGbHm7kbbzyhHpl
+         SXtZWkHE3KXOqU2qPQ4FRi03mXWInXTmuSLFU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734457608; x=1735062408;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oNjkq2KN6DEBaEhuyWIj4iGu8iK40oTJn7fFygqcUbo=;
+        b=Ns4tzn5wznwVQvA+7Wa+ntPv3zkhnJ8U1FqRYQzk1Ud92aFdKalwc19aeYbsaTVFgs
+         eg9Q/QAT0SoKEdx8DeRje5SwrW4x7KtvhxEya6m80OI3Zsi7yPvVR8az2UE0UFialw1S
+         iuYvvpGByybNQlT/SMpNFojBd+HK8V884IGv7MJHSViNBdCYzGd2mTH1wZfdIbwAwmaA
+         ea1MDN478WvHQWCdw0qKg1XELOoy+D5P3Vo957yqHvtNGHIUut5lxU2PvqerwBsPVbdC
+         svQWeN5jig0QcRNPJLHikl48wM430mQNIlhIue5UId1REZFm7YZSJxTugcsOi3NJanHH
+         W9nA==
+X-Gm-Message-State: AOJu0Yz5E7wBOMvnci7OsKNQL/DpvVc9YyZxmpNF3LlFASjza8CmpvdX
+	fQm3Ni0+H5ScT0AWw/s4gV8NSBgO2+jvNwlNB1aemCz9gRAZrCqlNGVwSgADRERnslTcR7SA9D/
+	Pa4Q=
+X-Gm-Gg: ASbGnctjw9GDtq/vJeyz64xo4mDYkBYs1r5ppX3s7/2YuIUm0e2i0v7WJV/1e95NNzu
+	utGg2dMaixQ8OxETRfKZGV08kEuxCKmuKS1vCBFc/cc/Wc546Uobmz2IsQ6FwUYMa2bTjTEqUFE
+	wHhhvXmSqW8IUNm0fb0qu4QhRZoJQ4GPrkX0c+r3UTfXZCoJ3AbQ5Drl3CtHCxMzQC4PN5cVnkq
+	Dmn9xety+dyBE2cdTp2oXdtUo5MWDe068QPgYOKaDu3Pop5yDMFTBa/9TqAuPqfWfmcfQUor3Et
+	XH4lr51DUpuXBMNQ+A31+KXe2wyeafk=
+X-Google-Smtp-Source: AGHT+IESOwWK5+sfgBTiQHPelzqvaLpqUpmjlUxxiw97D3wZqmAS+FVvfHZRgmIOjbUCDY5amxRnsA==
+X-Received: by 2002:a05:6402:5306:b0:5d4:4143:c082 with SMTP id 4fb4d7f45d1cf-5d63c3a91ecmr15234473a12.21.1734457608328;
+        Tue, 17 Dec 2024 09:46:48 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f25cecsm4689654a12.58.2024.12.17.09.46.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 09:46:47 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa684b6d9c7so921016666b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:46:46 -0800 (PST)
+X-Received: by 2002:a17:906:c102:b0:a9e:d4a9:2c28 with SMTP id
+ a640c23a62f3a-aab77ee6592mr1643616666b.53.1734457606608; Tue, 17 Dec 2024
+ 09:46:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119110226.dbd54clp46klvjl5@basti-XPS-13-9310>
+References: <20241217173237.836878448@goodmis.org> <20241217173520.314190793@goodmis.org>
+In-Reply-To: <20241217173520.314190793@goodmis.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 17 Dec 2024 09:46:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+Message-ID: <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
+ persistent ring buffer
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sebastian,
+On Tue, 17 Dec 2024 at 09:34, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> Add uname into the meta data and if the uname in the meta data from the
+> previous boot does not match the uname of the current boot, then clear the
+> buffer and re-initialize it.
 
-On Tue, Nov 19, 2024 at 12:02:26PM +0100, Sebastian Fricke wrote:
-> Hey Nathan,
-> 
-> On 18.11.2024 13:06, Nathan Chancellor wrote:
-> > On Fri, Oct 18, 2024 at 03:14:42PM +0000, Arnd Bergmann wrote:
-> > > From: Arnd Bergmann <arnd@arndb.de>
-> > > 
-> > > With KASAN enabled, clang fails to optimize the inline version of
-> > > vdec_vp9_slice_map_counts_eob_coef() properly, leading to kilobytes
-> > > of temporary values spilled to the stack:
-> > > 
-> > > drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c:1526:12: error: stack frame size (2160) exceeds limit (2048) in 'vdec_vp9_slice_update_prob' [-Werror,-Wframe-larger-than]
-> > > 
-> > > This seems to affect all versions of clang including the latest (clang-20),
-> > > but the degree of stack overhead is different per release.
-> > > 
-> > > Marking the function as noinline_for_stack is harmless here and avoids
-> > > the problem completely.
-> > > 
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > Unfortunately, I have seen no moment on my upstream report and this
-> > warning is breaking allmodconfig builds because of -Werror. Can this be
-> > applied as a workaround for now (preferrably with a Cc: stable on it)?
-> > 
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> 
-> I'll handle it asap, it will be part of 6.13
+This seems broken.
 
-Is there any update here? I don't see this patch applied in -next.
+The problem is not that the previous boot data is wrong.
 
-Cheers,
-Nathan
+The problem is that you printed it *out* wrong by trying to interpret
+pointers in it.
 
-> > > ---
-> > > I have not come to a conclusion on how exactly clang fails to do this
-> > > right, but can provide the .config and/or preprocessed source files
-> > > and command line if we think this should be fixed in clang.
-> > > ---
-> > >  .../mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c         | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> > > index eea709d93820..47c302745c1d 100644
-> > > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> > > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> > > @@ -1188,7 +1188,8 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp9_slice_instance *instance,
-> > >  	return ret;
-> > >  }
-> > > 
-> > > -static
-> > > +/* clang stack usage explodes if this is inlined */
-> > > +static noinline_for_stack
-> > >  void vdec_vp9_slice_map_counts_eob_coef(unsigned int i, unsigned int j, unsigned int k,
-> > >  					struct vdec_vp9_slice_frame_counts *counts,
-> > >  					struct v4l2_vp9_frame_symbol_counts *counts_helper)
-> > > --
-> > > 2.39.5
-> > > 
-> > 
+Now you basically hide that, and make it harder to see any data from a
+bad kernel (since you presumably need to boot into a good kernel to do
+analysis).
+
+The real fix seems to have been your 3/3, which still prints out the
+data, but stops trying to interpret the pointers in it.
+
+Except you should also remove the last_text_delta / last_data_delta
+stuff. That's all about exactly that "trying to interpret bogus
+pointers". Instead you seem to have actually just *added* a case of
+that in your 3/3.
+
+           Linus
 
