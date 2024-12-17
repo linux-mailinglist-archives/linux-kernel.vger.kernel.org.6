@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-449369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C669F4DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:35:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339299F4DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B33F16FC13
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:34:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA7E16F89B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382251F63CB;
-	Tue, 17 Dec 2024 14:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy9ouM1y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4261F543E;
+	Tue, 17 Dec 2024 14:35:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8BF1F3D50;
-	Tue, 17 Dec 2024 14:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F91F4E49
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445999; cv=none; b=WRavWU4ucbhhgbCcX0+DkRgENqAAjjaVdiAObzPemjexckBJCFUZWCjQThHQPM0C2QhjLwJIJGjJpRbDDRtTz15ZoSeXYiJ706fIpzfiRek272tH+0a+EzyfJj1koIIpUcI8CCXxyO+9gUuY+uAnFCYYOOJuYKervxV47H82GOY=
+	t=1734446104; cv=none; b=iST9GM4didY2z7CX7nZIv5L/Z+IavDgiCgPuN5ziPmlg2DAqPojVJ7Iwv1LdjL3qB84rhezjkXM2jdFRKygQ0ywcrBS0FJSaWuZsAlipVL2DouGQS4PVr/sbY/AgKaXO4kXzMzQgkWCLeD1QYuq8i83A5q/vjTmIT8vvl22rYxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445999; c=relaxed/simple;
-	bh=T7qgal3YAgYxvdv4wdowLqbXzjVg1bdGafPFLHnupHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itVqza/z+86rnEFFyJ3dz13V9ajJGV6zxJ56SNJjltcE8NHS2O2Dpf+9RIxpP6WyUlC+lJbpzudddg21RxBDjrVnqfOzgtCvEdsniQJ8YR81wHGw5Q5zXdrAtHGQNSydFJ30GG5Du6jJTLZs47k1qNHBshvZWkSUjJ6YayG0MVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy9ouM1y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF494C4CED3;
-	Tue, 17 Dec 2024 14:33:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734445998;
-	bh=T7qgal3YAgYxvdv4wdowLqbXzjVg1bdGafPFLHnupHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cy9ouM1yGW3hMREEViJa2DLshacyA3d/rjpnnQ+5Aq5n+4VPcfjZUYdl1SsRhinH/
-	 GdUXssSOGHNxDEUOQGH+Sv/HaU1a41bY21qlAl8oIUzTrriBf0+ncRqlzD6OgZ2eUL
-	 +oU4TJMLRvsXoLEvzF6KayvgZuSKGc2vr/ijiinS2gNsIiOVjfL2iBJ5VDRQZXUJ/7
-	 XbXdxk3N8OX1RuQz+6W3HwBqoKfZsp/E0lIlZB6Soy/Y5dEfWi1ggs8bYGUEyrY8e+
-	 EaMw2ctQKVOuF65opBqzJILnk1cjT9WIN5r61d1FSwm4/knZbiJ7KaA6j9VmUPEXY/
-	 8PDsF8vwuPuzg==
-Date: Tue, 17 Dec 2024 08:33:16 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-iio@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	David Jander <david@protonic.nl>
-Subject: Re: [PATCH v6 06/17] spi: dt-bindings: axi-spi-engine: add SPI
- offload properties
-Message-ID: <173444599609.1628708.4430713259293370272.robh@kernel.org>
-References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
- <20241211-dlech-mainline-spi-engine-offload-2-v6-6-88ee574d5d03@baylibre.com>
+	s=arc-20240116; t=1734446104; c=relaxed/simple;
+	bh=pJKKRQMMk6n5IDXs4b/KINw9ATda0wHsIoznO/vkOaw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=APO5sX49zh0rQMGyWLRHe5bgCYJfmJv87noanAPssTpSifF4D2ewfaH9b1hHhRd/7l0pO4hLTq+lYcaRQ/ramFRQACsjWRiKoN+yX/bc9NKnhBoYbphLzqjAYqUHX/uw4lAhWpBxGkamGOdRhnOlpmjawrUjxvsIyC57fng4AXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9d195e6e5so55005325ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:35:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734446102; x=1735050902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NIeMy+hsZP73590GRiY4sQU2LODFp6EkvQJk4gt6eQM=;
+        b=uV539uvbIqin5VWGVQ1NCUclQF/EdueaPNRmoNjl8aIANFT9x2gsRd9+Wr6uggG5EK
+         QsxFzc9m3V0SIjVeBbc4qYyAnK0uEr8UasX1dGEGfY8h7/rbbYBtXAs1vHL9/m2S6oV4
+         nq8EjTC/KNZWqLB+3UHUUB3lJF8SWUaOGLcaDKT5OxDfUIPX50Fscy05c+y1PIXO0hqb
+         fF850CA1eyHv35emxkf97YSiQwlInRY2NkN0lWyL+JeXl2onnB5tX6fsyCUrTULvW3fG
+         MdJ026tRUZrmFF3ddFeL8uk/hf2gt0OMtsCuTbojXD/RfpKaxWxWVuEps0cHjq8Hhf+U
+         PqUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGmc1pHudQovEDW20pPXDGB1q8Bu+WLrbJaR4BYO9c4FSsQr+PwdBloc9nBKQ/9qmSLzxjGppkucSg3vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4KC28hqXQOANOxiJ5cMxLeUT7O4ke+j9WTTQVY6yJMr1VNrKc
+	e06lsNKEqfiEpZIf6UfEFKW4Fo6MJwtGU/+rMpBA9qqGa1ubq6QZpEUk0BuJPKHXqzuAF1rVs/z
+	eTbDY1t1u0dF8aMYjkA7TsQOCOLhfeYoihpRpRXvEkoQPdB9KF2TKEMw=
+X-Google-Smtp-Source: AGHT+IHAEgscXePXWN79iyq6tD6Me7CrUi11jctcqyyCc1dUiPvYRvkB2f+WBDX0ToNEQXQblXMZ/o9M0zvckfQwqrSjgMsnRbcF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-6-88ee574d5d03@baylibre.com>
+X-Received: by 2002:a05:6e02:1c4d:b0:3a7:7a68:44e2 with SMTP id
+ e9e14a558f8ab-3aff243f5acmr153137225ab.15.1734446102117; Tue, 17 Dec 2024
+ 06:35:02 -0800 (PST)
+Date: Tue, 17 Dec 2024 06:35:02 -0800
+In-Reply-To: <6741d52e.050a0220.1cc393.0010.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67618c16.050a0220.37aaf.019c.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] WARNING in __find_get_block (2)
+From: syzbot <syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, brauner@kernel.org, daniel.palmer@sony.com, 
+	hirofumi@mail.parknet.co.jp, jack@suse.com, jack@suse.cz, 
+	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
+	viro@zeniv.linux.org.uk, wataru.aoyama@sony.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
-On Wed, 11 Dec 2024 14:54:43 -0600, David Lechner wrote:
-> The AXI SPI Engine has support for hardware offloading capabilities.
-> This includes a connection to a DMA controller for streaming RX or TX
-> data and a trigger input for starting execution of the SPI message
-> programmed in the offload. It is designed to support up to 32 offload
-> instances.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> v6 changes:
-> * Drop type $ref for trigger-sources property since it is defined
->   elsewhere now
-> * Undo v5 changes that limited the number of offloads to 1
-> 
-> v5 changes:
-> * Also document offload0-tx DMA names since the hardware can support
->   that now.
-> * Limit the number of offloads to 1 for now since it would require
->   significant hardware changes to actually support more than that.
-> 
-> v4 changes:
-> * Dropped #spi-offload-cells property.
-> * Changed subject line.
-> 
-> v3 changes:
-> * Added #spi-offload-cells property.
-> * Added properties for triggers and RX data stream connected to DMA.
-> 
-> v2 changes:
-> * This is basically a new patch. It partially replaces "dt-bindings:
->   iio: offload: add binding for PWM/DMA triggered buffer".
-> * The controller no longer has an offloads object node and the
->   spi-offloads property is now a standard SPI peripheral property.
-> ---
->  .../bindings/spi/adi,axi-spi-engine.yaml           | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Thu Sep 12 08:57:06 2024 +0000
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+    exfat: reduce FAT chain traversal
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=156b5730580000
+start commit:   f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=176b5730580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=136b5730580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1234f097ee657d8b
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c9f079f8fb1d7d331be
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e302df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1265b4f8580000
+
+Reported-by: syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com
+Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
