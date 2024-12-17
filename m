@@ -1,162 +1,154 @@
-Return-Path: <linux-kernel+bounces-449234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B4B9F4C10
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:26:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B721B9F4C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AD01775F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335EB1898FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB7A1F4E24;
-	Tue, 17 Dec 2024 13:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8F1F868D;
+	Tue, 17 Dec 2024 13:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jJ9xYACH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dmyzs601"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b33zhH/h"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845051F868D;
-	Tue, 17 Dec 2024 13:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403EE1F4263
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734440914; cv=none; b=ro3X/IXi7zsiG7eYZPJUOY3Q6EeBcSaOSHEqSJIpgKe0WRjmUrTdjsiKgikaw5F8CxK0VqjZLI1Ey/5kwVUixvJ/JJHPOQYwzdv6qHvFJR5zJQpHjghRQkzNn/VMqtai4BoKyK7z7OebVXOrIvUhY8ngo80ZE5IbFLdFLQcP7n4=
+	t=1734440965; cv=none; b=aYAZMPjW8/8INGE5LdOz0RAIzvQJtnYH1KRwm1Dv1IGprBLyr8KsVd3MGcg3JyBcuLxZpiPDcaAcleWykJqfSe2d0r+S/+igKtYYgIbvRVWuT0Ogj3482dfy/5zY5yqd4XYab/+g4Zb81/HoTXep4I4cxTDTGvhFK7VQScgM42o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734440914; c=relaxed/simple;
-	bh=dGXIbMmmBZgtDVplErt/7CpxLPGtgb3MmIDDevW6Efk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=bNFhlxgEkOZSK9ng3V0jzs07XTTOiFnAamoAHPHTm4H26Sq5sbVhjgtHsSf8gKi0j+vYYGjJhRLtjvzr1Enm9FquFtyWhPM38gDHW4H1k4/hLcmxynnZIA+hvRCsj+7nIR2DK5zXzMfxrtht4lEEUDjhEFy3Nb6nndZgV4x862I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jJ9xYACH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dmyzs601; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 17 Dec 2024 13:08:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734440909;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OJkBce2wFh03Iy3adZzbcFqirjJB5sUIbEJpggojnPE=;
-	b=jJ9xYACHaLBoWdDLSJlR3STGlJRcjLWZuHySQxlr26xu+L+N+Ui2wsLwh2hw8mDJtYBVyu
-	kX/+Lji9ENTQZFVHVSbEXbac215B20HYs8hlPo+SbxvGkZLfwc7t5z2/ut0WL/Zy7q260P
-	EofXdkgGsDENSFKwcvmw74x5IUcsUe9XRQUOLs8Wn07nqyKB58fwORvvzwfoqkbltQvZih
-	t5Ri7K8jlEKGZlImDVZOddu2/kkhXu9A1GgFHRl+vr1BBNgj/G4136ShGZDdboKiKBRFlI
-	0HocOPXvrC0RuGS+Kq4x3Z1mLn1i9qafCsI/R2xDIZcb6M5arsyhGye0tFelbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734440909;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OJkBce2wFh03Iy3adZzbcFqirjJB5sUIbEJpggojnPE=;
-	b=dmyzs6012yLl9BV1W1hiKvOR8QeP4S2SDYCHsf2pdgbHXoV+11B8Fl6E/RWMLB6WXrGkMv
-	MCu/W/o/lTL+cRBQ==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] PCI/MSI: Handle lack of irqdomain gracefully
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <87ed2a8ow5.ffs@tglx>
-References: <87ed2a8ow5.ffs@tglx>
+	s=arc-20240116; t=1734440965; c=relaxed/simple;
+	bh=8ri6RbzWNaTPDTw7kmq71IKYTlN2CuqaBg+QxuJxeOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLgSRcNOShekr2w/Hpt8joXuZGQG8Deqw29Pfi7LeHXAg5L0aOvl0XT54qZeHE+rHy1v9HFAXRr8+PFLFmasBnH0k7pE8wMI9MubXTD0y1WB/1Mu8+AyWlzBCitJT/CEi3o+Pn8zVgs/ioHRXg3oFBcZNXyZk9HD7qxTP+nQtFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b33zhH/h; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d27243ba8bso392038a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734440963; x=1735045763; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gTusGh58VW6+2NSFZii2lA8KCNl1o8/ZwWDL6LUst5g=;
+        b=b33zhH/heFNBQBxLxdmVhNeHiSsJmmeTYurNgQFN+ta4Gac1tKbA4kAIY8dNBKGQiJ
+         53u/CkkBkN9mAQ/GDPwMsRoMDoGTZBDRpzUmllmX0IVcgtqCNCJYtwD2LY9zfxJjgWsF
+         53XUb0ovcV8qhzUj7SJu1dDDJ6XhBK9eBLkypii49A6hfA7X/zrDc93aSV5hqh9mVCug
+         n2bXSirrM30chutUHCkm6uXcXLH7rLUQNQ50STqHW/qRDTNejr1fAeijln2YL3e/FTGD
+         GL6y/UNnyAh5sELKxvfGbdm+4LrjVQAf2ftLkJoJGeY0dn+W1YjCFMp6Y8mQmERrTKya
+         bWQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734440963; x=1735045763;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gTusGh58VW6+2NSFZii2lA8KCNl1o8/ZwWDL6LUst5g=;
+        b=q/q+LhSXIfKd+izObRNXIGc+0Kag+bkaNH7ECrEWvUve2ppnIedG8gmoFsd/m22Wq5
+         pdlnPOODGaL//dcx1iscBrsA5Hy8BNbCESSzRZWdZUoqCRrRhPNgK2wwpiRtnePAQ9Z+
+         y6zhooeor8UTza/08zYKR2ZkTH1GNfbnSxtRgH1gp372Dw/jmmuGIEOzf8zEnu1a3AWG
+         2Pj+H+xA36o/XVPJnUb29/tVTwphgiG3DgGxsaTpc1ktzf8WFCCgu+4k2rqKAa0zypvm
+         fWRF4D6FFQsKqKyGoCfG5i1m6Q4lr817F51OW+bZFGUr5wMAL1zBXd+f9BW3dMM1uZJJ
+         hMBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIYCjE6lwQsMfH3OAmbLGYqRNusG7d+/AdPGKNz+QX1iYJuKhr7q8SRwflHkt69mWZJ0AUbUra4OcHx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvaDLlNfsjOCSBBvtAeAHIGQfnh9T4O++wHNvzCtp/LSYhs4HT
+	VCZXiyaLzy95k4AwLI7XQfi7SjM/sH1PppWiGFQBg+ii/L8bP6BBpx0Fv3CMRw==
+X-Gm-Gg: ASbGncvKouQcSoyUN8OwVdBuhV6+Q2SZ5iGXUdBCswhne5jkmRX6BGJM9//fsZgw2Vy
+	GUvrcJ4ARyyx8M4QeFrorgdmRjwbbdDEkzmbdetxlMvi5dV3h3EO4mIWYErkf5qd7mRpZjuhCAc
+	hvOxNFaJCjUvIOQMMhPNe0Dvt6VvLxXtfh/SysBc0hjF0l9+lKn9Ts5JbWBm1mLkkgjkj803/VY
+	w2BAZCYToWmHYIRKOFPadiO5n0089F3lw3WHltijEoco9Uqa//EyjaCQQnRxwQiFAPlUXoAjk9K
+	RqrjYA5oD7dIdqg=
+X-Google-Smtp-Source: AGHT+IEnhJMVLLV7Owj/1nOGB+GoFuLCOhRtzgitfH4oBA0YabMmvVMaad90R/9EuoBl8AAIk2rV7Q==
+X-Received: by 2002:a05:6402:3890:b0:5d0:cfad:f6c with SMTP id 4fb4d7f45d1cf-5d63c3ad5c6mr13033930a12.21.1734440962482;
+        Tue, 17 Dec 2024 05:09:22 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f271a6sm4443462a12.60.2024.12.17.05.09.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 05:09:22 -0800 (PST)
+Date: Tue, 17 Dec 2024 13:09:19 +0000
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/18] KVM: arm64: Move host page ownership tracking
+ to the hyp vmemmap
+Message-ID: <Z2F3_8rN3NBFZXRX@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+ <20241216175803.2716565-5-qperret@google.com>
+ <86y10er2qb.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173444090844.7135.5807329520776936894.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86y10er2qb.wl-maz@kernel.org>
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Tuesday 17 Dec 2024 at 11:03:08 (+0000), Marc Zyngier wrote:
+> On Mon, 16 Dec 2024 17:57:49 +0000,
+> Quentin Perret <qperret@google.com> wrote:
+> > 
+> > We currently store part of the page-tracking state in PTE software bits
+> > for the host, guests and the hypervisor. This is sub-optimal when e.g.
+> > sharing pages as this forces to break block mappings purely to support
+> > this software tracking. This causes an unnecessarily fragmented stage-2
+> > page-table for the host in particular when it shares pages with Secure,
+> > which can lead to measurable regressions. Moreover, having this state
+> > stored in the page-table forces us to do multiple costly walks on the
+> > page transition path, hence causing overhead.
+> > 
+> > In order to work around these problems, move the host-side page-tracking
+> > logic from SW bits in its stage-2 PTEs to the hypervisor's vmemmap.
+> > 
+> > Signed-off-by: Quentin Perret <qperret@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/include/nvhe/memory.h |   6 +-
+> >  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 100 ++++++++++++++++-------
+> >  arch/arm64/kvm/hyp/nvhe/setup.c          |   7 +-
+> >  3 files changed, 77 insertions(+), 36 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > index 45b8d1840aa4..8bd9a539f260 100644
+> > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > @@ -8,7 +8,7 @@
+> >  #include <linux/types.h>
+> >  
+> >  /*
+> > - * SW bits 0-1 are reserved to track the memory ownership state of each page:
+> > + * Bits 0-1 are reserved to track the memory ownership state of each page:
+> >   *   00: The page is owned exclusively by the page-table owner.
+> >   *   01: The page is owned by the page-table owner, but is shared
+> >   *       with another entity.
+> > @@ -43,7 +43,9 @@ static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
+> >  struct hyp_page {
+> >  	u16 refcount;
+> >  	u8 order;
+> > -	u8 reserved;
+> > +
+> > +	/* Host (non-meta) state. Guarded by the host stage-2 lock. */
+> > +	enum pkvm_page_state host_state : 8;
+> 
+> An enum as a bitfield? Crazy! :)
 
-Commit-ID:     a60b990798eb17433d0283788280422b1bd94b18
-Gitweb:        https://git.kernel.org/tip/a60b990798eb17433d0283788280422b1bd94b18
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Sat, 14 Dec 2024 12:50:18 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 16 Dec 2024 10:59:47 +01:00
+Hehe, it works so why not :)
 
-PCI/MSI: Handle lack of irqdomain gracefully
+> You probably want an assert somewhere that ensures that hyp_page is a
+> 32bit quantity, just to make sure (and avoid hard to track bugs).
 
-Alexandre observed a warning emitted from pci_msi_setup_msi_irqs() on a
-RISCV platform which does not provide PCI/MSI support:
-
- WARNING: CPU: 1 PID: 1 at drivers/pci/msi/msi.h:121 pci_msi_setup_msi_irqs+0x2c/0x32
- __pci_enable_msix_range+0x30c/0x596
- pci_msi_setup_msi_irqs+0x2c/0x32
- pci_alloc_irq_vectors_affinity+0xb8/0xe2
-
-RISCV uses hierarchical interrupt domains and correctly does not implement
-the legacy fallback. The warning triggers from the legacy fallback stub.
-
-That warning is bogus as the PCI/MSI layer knows whether a PCI/MSI parent
-domain is associated with the device or not. There is a check for MSI-X,
-which has a legacy assumption. But that legacy fallback assumption is only
-valid when legacy support is enabled, but otherwise the check should simply
-return -ENOTSUPP.
-
-Loongarch tripped over the same problem and blindly enabled legacy support
-without implementing the legacy fallbacks. There are weak implementations
-which return an error, so the problem was papered over.
-
-Correct pci_msi_domain_supports() to evaluate the legacy mode and add
-the missing supported check into the MSI enable path to complete it.
-
-Fixes: d2a463b29741 ("PCI/MSI: Reject multi-MSI early")
-Reported-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/87ed2a8ow5.ffs@tglx
-
----
- drivers/pci/msi/irqdomain.c | 7 +++++--
- drivers/pci/msi/msi.c       | 4 ++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index 5691257..d7ba879 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -350,8 +350,11 @@ bool pci_msi_domain_supports(struct pci_dev *pdev, unsigned int feature_mask,
- 
- 	domain = dev_get_msi_domain(&pdev->dev);
- 
--	if (!domain || !irq_domain_is_hierarchy(domain))
--		return mode == ALLOW_LEGACY;
-+	if (!domain || !irq_domain_is_hierarchy(domain)) {
-+		if (IS_ENABLED(CONFIG_PCI_MSI_ARCH_FALLBACKS))
-+			return mode == ALLOW_LEGACY;
-+		return false;
-+	}
- 
- 	if (!irq_domain_is_msi_parent(domain)) {
- 		/*
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 3a45879..2f647ca 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -433,6 +433,10 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-+	/* Test for the availability of MSI support */
-+	if (!pci_msi_domain_supports(dev, 0, ALLOW_LEGACY))
-+		return -ENOTSUPP;
-+
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
+Sounds like a good idea, I'll stick a BUILD_BUG_ON() somewhere.
 
