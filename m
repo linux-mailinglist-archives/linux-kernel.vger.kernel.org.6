@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-448610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443AA9F42C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:31:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375C29F42DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C3C1886010
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:31:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50FE67A532D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157D114A0A4;
-	Tue, 17 Dec 2024 05:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4191581E0;
+	Tue, 17 Dec 2024 05:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAUYC4Kf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aWnuJW76"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CE21361;
-	Tue, 17 Dec 2024 05:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECA18F77;
+	Tue, 17 Dec 2024 05:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413490; cv=none; b=XxMVcguLeycsprV/TO0chOtY3E7DnbWH2MBMQiyruMFJ8MDsAjLsu27eyYmjZJ43bMyOY3x/P5b+cSdy7Rvgo+/KyD3d8uz1e3sDSRw/QjjtZEoEslTvsgLcmXsS5ZQnrge+01sFo2G/Iwwf23Ev3vXPC7G94cleN7xK91kXGnU=
+	t=1734413550; cv=none; b=TLRjXA2856IVfHYu4osylN2fY9ZoDcqo1TADYT/O39wL8CwaQYVWQxsCgShbgMAqIiwyuPwKJthcXtR35sPHKye1oA1qx6CEpZweRqp2u49Nr/8NALFbQCCNqS8NjXaw8VWatvObyaZ05YN4ykg9+/em8K+zEzESWRnyDIBExCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413490; c=relaxed/simple;
-	bh=5phnzrZEee5oF6zAdBg+HG/4Gxe4+wwKY0XvxrzXtkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AF0Pqa/Ze7cyuS0j8S+adp3bcezyKorWkATwHzT5SkAG7Z9uz+mN+JDtiODqgCKL043zudm4Qhh2vDWUEReZ+HgD7xPiqr3APY1H2BPZ6C6VxxNTkCLXUnxwNKjLTlWS7b1PbrUIPtZY+NeKZxcIG3KlswbTSpX8YRx6iChoLPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAUYC4Kf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18917C4CED3;
-	Tue, 17 Dec 2024 05:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734413489;
-	bh=5phnzrZEee5oF6zAdBg+HG/4Gxe4+wwKY0XvxrzXtkQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sAUYC4KfrrKgRAxTSLZrN8wkSYNc5r/aEx1cRBMtAiYZLzVdSw2B7kchtJ7yqHTcl
-	 R2O6QGsM1CPV/1AIqokd9IxgoXeGLypeMbRl453+spJ7td59vKbfnG38VNvhHDgEKr
-	 qsADRuJDJ7hH4yCVv2UPXkkL8gUljPTpR7zAWmwlqbtYq0Ld/tymCDSijNRRmwxt9p
-	 u8uxjwDYAbwk9Kgl8l7ZxQ/RHkZTgdlgu26J1pypDMv1BDV0ZC93jKfQXngMhyLXxI
-	 feZOIJEqUdSRCQpSF92cEwV13RVBb0MCJzImhtXmVJaTk3mWShCFeJLoDPlW2eAmMS
-	 uVEVTzqVNKxGQ==
-Message-ID: <4e4e8a02-5fc1-4b90-ad9d-9f9ec5c8bc61@kernel.org>
-Date: Tue, 17 Dec 2024 06:31:23 +0100
+	s=arc-20240116; t=1734413550; c=relaxed/simple;
+	bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GGhEIyC/N+4Vo9Cp2LxGig5clLG8uV5KXt0nPAjITYuSvMXKu/OEXxUMBp6j/01B9+IOU81hsSqYD6ZIoynUZq1Sk9wHI6/JaCPjl7p2EyPZuBtnJvD7V9QpOR5nlgaDdSrY/QlGnfNqsv3SWMSTbAO/qtEX4n8Q5WZ0FxwHjjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aWnuJW76; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2AC03E;
+	Tue, 17 Dec 2024 06:31:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1734413506;
+	bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aWnuJW76Bslpm0CRI9Puy8pOfeOIFU9AICsC1IrjHHiKcd8d9/RG3FZ3LDiS81frU
+	 Uf8WYTSDsGyfUL9iuW8qqfvflrGEIlt3/iSBAXc8torPfMufGjiq8BcP40mPFW+eIP
+	 uKtDBXH1zUCxAMeFB56kzIvJhAByV38SC42NjXkQ=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v5 0/7] drm: Add DSI/DP support for Renesas r8a779h0 V4M
+ and grey-hawk board
+Date: Tue, 17 Dec 2024 07:31:34 +0200
+Message-Id: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
- schema
-To: Charan.Pedumuru@microchip.com
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
- claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
- <dxgqkdo6ulmqfa5vyerwta3vubuy32gzzu2cxfwwtespydfc4b@5wjrno3lgjsp>
- <92579055-5a46-4f20-b579-123188554a03@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <92579055-5a46-4f20-b579-123188554a03@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALcMYWcC/3XPQW7DIBCF4atErEPFjMEmWfUeVRcTGGIWMRFEV
+ ivLdy9xN3YUL/8nzSfNJArnyEWcD5PIPMYS01DDHA/C9TRcWUZfW6BCDUpZmR1lee2lL1GenIJ
+ gPDM5K+rFPXOIP4v29V27j+WR8u+Cj/Bc/x1UzcYZQSrZNZYY6GQ80mf0TCUNl0TZf7h0E09ux
+ DVhtgRWQqPuwBrwwbY7RLMm2i3RVMJ32iG0bSAwO4ReEfDyiK5EsKxBo0HVXd4Q8zz/ARNwzt1
+ 2AQAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-clk@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2782;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=HdtBvsbTGHsxmfWL54oA5X/bE+Zp9SwVPyMQpH8+GGQ=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnYQze8lHfUWPEkg55zHzELzk2Y+Kopngu3clvr
+ BGx5RyS2IWJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ2EM3gAKCRD6PaqMvJYe
+ 9TcvD/9IWDTL0RawT8b8w4CDfMh2GBDFPB6y9Dv0SJZeXO0+Mjg7x43rOKzHK+UdlGyjIXvPzZn
+ LZL4NmlaqIABCQWcA0lo4BZG3GH19FUxLLCTLuDsQ0nn4m9HNYUlm7HPATcblCF91fdD7yU3Khs
+ X7hgvlVOvqc1Ktt5k0IeysjfOp5bBMcrak4+HhYCSJlMiTo4UoFKiXOzdVi4NZyOegOYx6ikM+7
+ PgGUkucTma3HwsaKF+MvHE8Wkvl9LpCoiuB2y58QqO5AgP9J6Dsdhdvspvpd3rY5vOUjuhoH/7m
+ DpGKmMG6AX4tyX3Ol5WRKC555A2o0tHQawcpWT1Hd3+KxpvMgtzG0Hj2GNxds2b9fNrmdx2nqQB
+ w3vGBI1VHL3RBu736tOpg0qrSxCOwBbLXf08Su6dq+Ad0eezYkmeSRcvqvOxuUlL4ocyyyvs9zg
+ CU4sNKb/QKjwxdcUFmQwlqPIT0+JxSL9RAWCvHDxp8/D0BTQmKsbZe8F8gz3w89yeSUKLzDcuCA
+ KOhfWTcMLsktR7X0Ni2jru5BP/FaoHs2Y9ize+lG1tuJG2dWE7qOnEllrTIXdpejetlMTITqX5i
+ w22UmWZB9Uokpc2zNJymaOo8Dwxm0XC/0usNSNwqdH5UKWEzZmFUVXccr5ICn5JNi9sYdHCwNiH
+ WCUj6pI5kLm58VQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 17/12/2024 06:00, Charan.Pedumuru@microchip.com wrote:
->>
->>> +      - items:
->>> +          - enum:
->>> +              - atmel,at91sam9260-matrix
->>> +              - atmel,at91sam9261-matrix
->>> +              - atmel,at91sam9263-matrix
->>> +              - atmel,at91sam9rl-matrix
->>> +              - atmel,at91sam9g45-matrix
->>> +              - atmel,at91sam9n12-matrix
->>> +              - atmel,at91sam9x5-matrix
->>> +              - atmel,sama5d3-matrix
->>> +          - const: syscon
->>> +      - items:
->>> +          - const: microchip,sam9x60-matrix
->>> +          - const: atmel,at91sam9x5-matrix
->>> +          - const: syscon
->>> +      - items:
->>> +          - const: microchip,sam9x7-matrix
->> So that's just enum with previous group.
-> 
-> Yes, as both boards have 2 compatibles one after another, I defined them 
-> as two different groups to resolve dt_check warnings.
+Add everything needed to support the DSI output on Renesas r8a779h0
+(V4M) SoC, and the DP output (via sn65dsi86 DSI to DP bridge) on the
+Renesas grey-hawk board.
 
-My comment stands. I understand your "Yes" means you will fix it.
+Overall the DSI and the board design is almost identical to Renesas
+r8a779g0 and white-hawk board.
 
+Note: the v4 no longer has the dts and the clk patches, as those have
+been merged to renesas-devel.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v5:
+- Add minItems/maxItems to the top level cmms & vsps properties
+- Drop "minItems: 1" when not needed
+- Link to v4: https://lore.kernel.org/r/20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com
+
+Changes in v4:
+- Dropped patches merged to renesas-devel
+- Added new patch "dt-bindings: display: renesas,du: Add missing
+  maxItems" to fix the bindings
+- Add the missing maxItems to "dt-bindings: display: renesas,du: Add
+  r8a779h0"
+- Link to v3: https://lore.kernel.org/r/20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com
+
+Changes in v3:
+- Update "Write DPTSR only if there are more than one crtc" patch to
+  "Write DPTSR only if the second source exists"
+- Add Laurent's Rb
+- Link to v2: https://lore.kernel.org/r/20241205-rcar-gh-dsi-v2-0-42471851df86@ideasonboard.com
+
+Changes in v2:
+- Add the DT binding with a new conditional block, so that we can set
+  only the port@0 as required
+- Drop port@1 from r8a779h0.dtsi (there's no port@1)
+- Add a new patch to write DPTSR only if num_crtcs > 1
+- Drop RCAR_DU_FEATURE_NO_DPTSR (not needed anymore)
+- Add Cc: stable to the fix, and move it as first patch
+- Added the tags from reviews
+- Link to v1: https://lore.kernel.org/r/20241203-rcar-gh-dsi-v1-0-738ae1a95d2a@ideasonboard.com
+
+---
+Tomi Valkeinen (7):
+      drm/rcar-du: dsi: Fix PHY lock bit check
+      drm/rcar-du: Write DPTSR only if the second source exists
+      dt-bindings: display: renesas,du: Add missing constraints
+      dt-bindings: display: renesas,du: Add r8a779h0
+      dt-bindings: display: bridge: renesas,dsi-csi2-tx: Add r8a779h0
+      drm/rcar-du: dsi: Add r8a779h0 support
+      drm/rcar-du: Add support for r8a779h0
+
+ .../display/bridge/renesas,dsi-csi2-tx.yaml        |  1 +
+ .../devicetree/bindings/display/renesas,du.yaml    | 67 ++++++++++++++++++++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c      | 18 ++++++
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c    | 24 ++++++--
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |  4 +-
+ .../gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h   |  1 -
+ 6 files changed, 102 insertions(+), 13 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241008-rcar-gh-dsi-9c01f5deeac8
 
 Best regards,
-Krzysztof
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
