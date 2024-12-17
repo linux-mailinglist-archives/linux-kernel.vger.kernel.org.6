@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-449269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F15E9F4C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:40:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0C49F4C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63ED170872
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CE318834AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69E71F4263;
-	Tue, 17 Dec 2024 13:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46A81E0490;
+	Tue, 17 Dec 2024 13:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRn2ED4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dZV2HDTY"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FA91E485;
-	Tue, 17 Dec 2024 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE39EEED8;
+	Tue, 17 Dec 2024 13:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442477; cv=none; b=noDy8dTKhZwiH4D1u7dW+Xu1XMjnvNh2qvtevWr7yKtk6pjAksLTQWqN2eekQyx7ehjM11epgeGuOLo3H1dxdiZGKkcSVlw2uQ5ayLsntYdITiVSUrNBfZjxPaqiFK3MfG0NB1p01ecx6jHxQUq6mRibcVmSKcYfPUbEf7Z8tnQ=
+	t=1734442634; cv=none; b=meYtL+jBge1uUMt+waEwouvFxewlvC51R3fGiR1j7HmGqKLzrfmgG2eMCN9I80VStL1PWyb1rjMNz/TpndkX+LOxmoFSpmF/WtmfNtB0U17Y1dIjbwjFUVcNXRqwvAfD7bfYjgW/1Ttki64g7JdbO5jC493mYOAO7O71Kw1E4rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442477; c=relaxed/simple;
-	bh=ucFolLl1sZUgzrnDPVtLF6IhpbFiqCmqyONnkRrdE+8=;
+	s=arc-20240116; t=1734442634; c=relaxed/simple;
+	bh=Qz8U7whF8mZJBtM9cuHoqE5mi9QRsDImf2edJO1eQ7Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PngMbH6I/i9732OCjefHn5N2vll1IzoOnvUcXf6430ZtTdPFQVJlboa3pnaQmSQiiMLbufNH1fS4VTA/N11eLsPTD5euY2+Gx7l6QTu/cMZgL01V+RwGRwN8bALlz4G3l8rCxbzY+HDH1pR5CrCrxNUVGBfPe2WbhoVmYUoAbKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRn2ED4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A71C4CED3;
-	Tue, 17 Dec 2024 13:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734442476;
-	bh=ucFolLl1sZUgzrnDPVtLF6IhpbFiqCmqyONnkRrdE+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRn2ED4sh4qILlVU7BHXgxEoozwA/RMbdoaVhGEcKkPN+vNYXDuJxy8qayUloqm/N
-	 RMfcexFMi+wNefOdjR3W8xQkAuCDrIhUlikXhJI+JhsM0X5WYc8IIdGKg35tb7/ZGd
-	 egSD6P8hhcZxGoajETKyIluEC0PfSyNvf2A2e3aL04Z3lA3EjyLTpw2Wk5Wp2uI5tI
-	 IWs8OZ2Vd8fCR7FSHg5TLIDQTa8GGxuOuiTtcOdd5DS2bjKqR90xHwr1mkflpOnBlj
-	 5Pxdcgkz5gmo8xSrIYoLwOVgsd7iphOXzkt3Oe9jqexrQ56kFlAM+bmlfeiYIn+thz
-	 X7az8uCL8R+gg==
-Date: Tue, 17 Dec 2024 07:34:35 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Qiang Yu <quic_qianyu@quicinc.com>, linux-pci@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH 3/4] dt-bindings: vendor-prefixes: Document the
- 'pciclass' prefix
-Message-ID: <173444247437.1427449.10975392578508176366.robh@kernel.org>
-References: <20241210-pci-pwrctrl-slot-v1-0-eae45e488040@linaro.org>
- <20241210-pci-pwrctrl-slot-v1-3-eae45e488040@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVwPck/gKzChbOPq5j5/jFczVFthX1PO3i/QlfmxQwYLgFVXejqOSUJXwGOzqjCBex3cKiYybZkMmRZ1CxWEPM8L2D7X+I3Kx3u/l8UkWs6WkBBpr7TA+iI/oybqGZtRWVeLWXSgHcFru/Bn8rHlQKIoXV2MFFDoV7UNbOLLDww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dZV2HDTY; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pmngiQtyKWtEVigv/m7WJAI71XogMaDStb8A3KF11q4=; b=dZV2HDTYcgqkZsCJBzrkmJWKFB
+	eBPyLvwgy4vVpnEhTuUJ/1cJeFZBvqMEjeoOQyyVxSI4jnzCbNTd/BwXqaBMSnWbp54RLuEu0Qm5i
+	cc8ANnxehGCYK4wvVW03Tjio+Qvw99ZFOGgl1CsGHU9Xu4OOSkPlS2BsswPXirtiiTi1SfDuAmW4/
+	1CkzVCJNbQw12rvnloUuOteg3cxU6ZNMc191qnz6y8TMtxP5fcLLu4AmmQIbRx/j3+n79oTlryov5
+	B8alG3apy6pvXKW++QKzziRjpsQu+fZrTnXlqliHdF5MZWQoFSzb8iJMSYq/4IXiGv9XkpB+xFOQl
+	606gQTUA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNXl5-0000000557V-2sIT;
+	Tue, 17 Dec 2024 13:37:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 40B0330015F; Tue, 17 Dec 2024 14:37:07 +0100 (CET)
+Date: Tue, 17 Dec 2024 14:37:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
+Message-ID: <20241217133707.GB2354@noisy.programming.kicks-ass.net>
+References: <20241216204505.748363-1-kan.liang@linux.intel.com>
+ <20241216204505.748363-4-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,20 +65,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210-pci-pwrctrl-slot-v1-3-eae45e488040@linaro.org>
+In-Reply-To: <20241216204505.748363-4-kan.liang@linux.intel.com>
 
+On Mon, Dec 16, 2024 at 12:45:05PM -0800, kan.liang@linux.intel.com wrote:
 
-On Tue, 10 Dec 2024 15:25:26 +0530, Manivannan Sadhasivam wrote:
-> 'pciclass' is an existing prefix used to identify the PCI bridge devices,
-> but it is not a vendor prefix. So document it in the non-vendor prefix
-> list.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> @@ -2049,6 +2102,40 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+>  		}
+>  	}
+>  
+> +	if (format_group & (PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS)) {
+> +		struct pebs_cntr_header *cntr = next_record;
+> +		int bit;
+> +
+> +		next_record += sizeof(struct pebs_cntr_header);
+> +
+> +		for_each_set_bit(bit, (unsigned long *)&cntr->cntr, INTEL_PMC_MAX_GENERIC) {
+> +			x86_perf_event_update(cpuc->events[bit], (u64 *)next_record);
+> +			next_record += sizeof(u64);
+> +		}
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I still don't much like any of this -- the next_record value might be in
+the past relative to what is already in the event.
 
+Why can't you use something like the below -- that gives you a count
+value matching the pmc value you put in, as long as it is 'near' the
+current value.
+
+---
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 8f218ac0d445..3cf8b4f2b2c1 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -154,6 +154,26 @@ u64 x86_perf_event_update(struct perf_event *event)
+ 	return new_raw_count;
+ }
+ 
++u64 x86_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	int shift = 64 - x86_pmu.cntval_bits;
++	u64 prev_pmc, prev_count;
++	u64 delta;
++
++	do {
++		prev_pmc = local64_read(&hwc->prev_count);
++		barrier();
++		prev_count = local64_read(&event->count);
++		barrier();
++	} while (prev_pmc != local64_read(&hwc->prev_count));
++
++	delta = (pmc << shift) - (prev_pmc << shift);
++	delta >>= shift;
++
++	return prev_count + delta;
++}
++
+ /*
+  * Find and validate any extra registers to set up.
+  */
 
