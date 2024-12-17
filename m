@@ -1,164 +1,189 @@
-Return-Path: <linux-kernel+bounces-448811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5F9F45C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C4E9F45CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8A9188E205
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8867C188D1AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7A11DACBF;
-	Tue, 17 Dec 2024 08:14:47 +0000 (UTC)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A811DCB3F;
+	Tue, 17 Dec 2024 08:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="fiNC0Pbx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tlhr1zge"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5AF335C0;
-	Tue, 17 Dec 2024 08:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF721DB92E;
+	Tue, 17 Dec 2024 08:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734423286; cv=none; b=S7UHz5+J46FIi8nS7Fd+d+1dpKvcPLr1As5Xq5e49G2j2vnsTJWhSH5QOxSf6suFICFnE9fqtUil1Dh+hXdDnp97nJ03eUXV8YQsFODjylMWOxG9NL4j841yf9g8KyZWIQUQpgU2ESoXqbGIAK8SSbi7p1nLIqz8VKo8BAz5d84=
+	t=1734423323; cv=none; b=mli5+st2RSenD1+lqJtyo1HveCWaPwm7wB5ZvmKRcQh8fa3IZzYoGvkNr5jQ4ySMyaRs5/joqNHn43VOUWMdQwiLRd60+beq2tftJmgnK28Jj2dGCuKKnPItb1ULUY2+9DNAddKaZo53QQOhYuhwn3b2/ZCioiutM/PUk9pmdYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734423286; c=relaxed/simple;
-	bh=uOwfXU557rop5TIkXrFQReiFQ1xrxUWqWlXUsv4FT6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXFIPQJzAtFQNI/BwZdOq+dTvcZFFUacZrwyh+QnHfSP0Oogr3QFf65QbQD87Y8nFQH/w0Ksbybs/f9fimdv6aHmWbbHvGRrPRez9m24QbwlWEu/ifF0i5tWr5rs8aYBSoKNYf9wGaSW6DEYAYomiVfETUMsjdipfv1MxBa4TCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4afde39e360so1284865137.0;
-        Tue, 17 Dec 2024 00:14:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734423281; x=1735028081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BPpiGaA1e5dMiDjkAszyfRMBt3SwUPjlRJm/tlaPvdg=;
-        b=jJZOm7sySrMjd9awcdD7fnQS5AaZKG86b6RvAEb9uV4h5Fany1VycfwVbHwJpio8Pc
-         v0GivPnASO5dRoLt2oAoMQBfs7iT5Yv2+61bhi+YqPMF0r+PDI25ntmwSdz7VotYFdTF
-         gLg7SuPn7hOza1aEzcOmsb/75eWRrwkI0Iiuf3+q0uukFRwFiS2Niftahe49qK0dL7LY
-         pGBCou9jKBKI6UHvBrsYxXwkfzSox5e0+R/cY7yacU8Ua8SOdMxkoIdGQxQQHIi7KAQK
-         GqoHdJ9P3HzuXXlfF9mo8t3IJoLlLxSCE86vw+Uq2BuSRPj7g57qZu6JnIh6LUF0xMto
-         08eA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhAgoir1cdZ7RPKmHnjia5NEXRLcgqCiOEx1qgP1qqH1AtFfBGuQ9SbVEWEBtu0QLZgE3N/27+3yDPm5GvyiOw7WQ=@vger.kernel.org, AJvYcCV2uQBX/nC7A2NEps/QnF28EVmB9XBo1C2ApjMGFrId1ZUI1bJVm4xpw4jUvybNmx1YUye+rlCY7LHp@vger.kernel.org, AJvYcCWu3+b15d3ZUOYgtkquE+qq9qkSJZMo+GBRxKpZ+BOO+lUzBuo1fg4IowR84Kf2dBpRRZqhpklhO89W@vger.kernel.org, AJvYcCXaMxkofjUpfAf6yCS5yB3Y92xETd7VnrJ0uEAu/m693cJcOvtO6klo/WKxa6fI3+wqRqTulld0HjtNK2Rs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFBPKIG606N8oFRSqtwNnz9YK3HidEjngOUXdVqNEcZb3fy0a+
-	rMURY5xuphT5jK7GPQjpW/YcVhAYSuvu6YPTIAQNNZkrLqVK1iUyvktfEoGG
-X-Gm-Gg: ASbGncuQa3d9uRVefWyi46XP7gfc+T0GDq/5jwsvuuDzhXnAvS2Mp4LErU8nYp8hxqU
-	yQZUXt2u91qitIbwhgAt25HBbIdPVSMTojQUxxZCKvI0JGpgL19QnMiS8BUQEpnn9gJnbtZFdBu
-	Nx8E+AvQNiBelusT3VPUSfFqQLmaL3mtZEWATJAJLw5IeYHaVZmB0Y70bpv/XQBTeB/9xFLwfi1
-	4SsVTvx20FD9dUT4OJyOjqGTlCjBp3l+Z47ByEDrkdi04+a5Sn0M2FiNeU26EiKXQKpSDIil7cD
-	b1dDCEa7cvYSb/3Rqflsus0=
-X-Google-Smtp-Source: AGHT+IH8YYpmAEjxSSLUhBwLYDN3zqHh/BRRxfs4q0wqouKF1HTWa4+yU/mImOSOKT1Q7nneuq8TCw==
-X-Received: by 2002:a05:6102:6c8:b0:4b1:3b91:a697 with SMTP id ada2fe7eead31-4b25d9c02f0mr14452346137.15.1734423281240;
-        Tue, 17 Dec 2024 00:14:41 -0800 (PST)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-860ab5b7cd3sm1125848241.17.2024.12.17.00.14.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 00:14:40 -0800 (PST)
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5162571e761so1400105e0c.2;
-        Tue, 17 Dec 2024 00:14:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU6LaF4FjR5bj5B36WrDL6O0A26AVYkkzY02yRMtpDtoqcQZ5/qSahW7H8QJ3pUQReYw8Nxzkn8tu1q@vger.kernel.org, AJvYcCUVH5bT1Zcpeb1elC0EkZyzbWdjhtCBEZVTGQSqP6OdfCe550DcIEQdXJGPNqihZwW03Na4PUQmuNuf8Ip6@vger.kernel.org, AJvYcCVQJ3ZDUkYczpw2G7c3h6dCpAbH4UIvwkhnDHEs41DrMhX7ywnVRIYnAIFbbru3hJIVoT6hedw72j6d@vger.kernel.org, AJvYcCXyDDrNaGwNKHIg/3yscDGffoOJkLFb2TBB52RAgcF5xn1Rb9t/1KqOC1i0StQPM0yrprWklJnB7CuW0upU1l7rVPY=@vger.kernel.org
-X-Received: by 2002:a05:6122:2a09:b0:518:7777:a61e with SMTP id
- 71dfb90a1353d-518ca39a80fmr14871103e0c.5.1734423279879; Tue, 17 Dec 2024
- 00:14:39 -0800 (PST)
+	s=arc-20240116; t=1734423323; c=relaxed/simple;
+	bh=RZFjA/9pFaFrpZKI8dauHwC00La1Hwup0bHnM6qCJFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2QKix18K0eR/SZNaab1qLWBV3vLKY/mxLgE/r0nQXFU9+IHAa8dpw1JXZ73R9K9tAGXGPqcm5KwjzVdR7H+5Ox3XjytfYBWkkaB5rLtpb8aa9ShhnqcHKP6to8f7j9l/rCo/BwS+Bsxj3mXBgOxNmbSBCpTiTm6ciChQzkcLHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=fiNC0Pbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Tlhr1zge; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 09D65114024E;
+	Tue, 17 Dec 2024 03:15:19 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Tue, 17 Dec 2024 03:15:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1734423319; x=1734509719; bh=jfv9FlKh9f
+	dbsgM66OV20rMDFf+HbpGSmfPytK2iVvE=; b=fiNC0Pbxby2qIMstus41OQ6MQs
+	9cnH2irYrZ8F4GgOqsXGNFlg4y+kwakmIyYxUQb/vhncvaiQfIz8nJCUOmGZPbvL
+	CUmP32neMSd2nt+AqmBq+IhmG01BalY7wyTGbEjDWLCPyz/MwgAWhANElxZ9eiyu
+	sGO4DUgub4qoltuzTw3DEzbxQq+hNKamp+lyFoyS2PkKX5MrkH5Q0xIa0OiDTelu
+	FyLmDTegU7mD8MLInx3U7D+200lb08aI4T6cIYZ/kmwxUciPTlEqnOYrbpZilSCr
+	XyFDTNjrMXqNTBlkOoEjWsyYOm3A8sjBSf3Qc9rHs40KCNdf9Mx7/6KrZC7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734423319; x=1734509719; bh=jfv9FlKh9fdbsgM66OV20rMDFf+HbpGSmfP
+	ytK2iVvE=; b=Tlhr1zge2i9HkUSRvdN5sZS2xBdEdx311C9Qul3Mf9AZNcXKDmb
+	xmEFH2v/R37zdR96+nds5UF9ueO3UQusg2M8A3bxzNKkB9HDc2wMqiXAQ8sF9eCY
+	PrKogvCjKtqOCgEZ1PiNzvppsc0NVFTFsUaQke71aQBEBzsRbq7IXx+u7oflxDEy
+	qvYU6Or0Q+Fwk9wcV2dG4aXUkgP7lxcuPWx32TWIBdGFfKqRpicNPEksbCwhC7Pp
+	XCVZu2LbTCNaxughcm7MW8EQTI21tFg1y6NvLonjMJhIK5p9ssO0FG6dAMwVbqXb
+	6YCEnTt9kxWxPWvuUq5+njwiaIDML0ZZaqQ==
+X-ME-Sender: <xms:FjNhZzLJLH7BXvYJExOt7Q0M0TwQy5bmRoHVU3bZvKsRVqknhVmpuw>
+    <xme:FjNhZ3Ky4hM_iJg5SUfq303aQNN_UtV7l8-kUXhPZxbD5CDXIGF0CFozQvk3a2fHJ
+    -oLqgB2k-BqWg>
+X-ME-Received: <xmr:FjNhZ7u-UHh4l6jwvwcNCJHVQMfqQnbqeUTwwX-oKyJmEajGUwXTSbsA8VLfwmKfebAZP8KjiUK7BSIuTHgPCxvYAwos0z1xE4_gUQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleeggdduudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
+    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
+    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
+    hrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgt
+    vghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguh
+    hordhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:FjNhZ8ajBAnK96RBp1LsCbQpiZki3Ovh1XL4JlgFsIhJiKy7_UtixA>
+    <xmx:FjNhZ6Zj6ezdWaLiGsIZOFzUvkyXJepHp18_bh-9OqooXRdtC6Y1Rw>
+    <xmx:FjNhZwAu1eAd69gdFJy9uRzJXojHPHjWEG1xK0_ScP8wzpC9FefrGg>
+    <xmx:FjNhZ4YnthwmGMianFfphna3DZdmvN10L0pb3tbOaja_XEIs8C8WOg>
+    <xmx:FzNhZ2QV84VzG_3RvFSXJV_qAMCkRthMTG1mgxwjplPCl4Tu0XfviYos>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Dec 2024 03:15:17 -0500 (EST)
+Date: Tue, 17 Dec 2024 09:15:15 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	Gary Guo <gary@garyguo.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rust tree with the driver-core
+ tree
+Message-ID: <2024121706-turbojet-siren-975d@gregkh>
+References: <20241217140939.08167c85@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com> <20241217-rcar-gh-dsi-v5-3-e77421093c05@ideasonboard.com>
-In-Reply-To: <20241217-rcar-gh-dsi-v5-3-e77421093c05@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Dec 2024 09:14:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUczNArF7JSfjrb11OTpd8LvHv5-gUFPFCayr+Qezsbbg@mail.gmail.com>
-Message-ID: <CAMuHMdUczNArF7JSfjrb11OTpd8LvHv5-gUFPFCayr+Qezsbbg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] dt-bindings: display: renesas,du: Add missing constraints
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
-	Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217140939.08167c85@canb.auug.org.au>
 
-Hi Tomi,
+On Tue, Dec 17, 2024 at 02:09:39PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the rust tree got a conflict in:
+> 
+>   rust/kernel/miscdevice.rs
+> 
+> between commit:
+> 
+>   0d8a7c7bf47a ("rust: miscdevice: access file in fops")
+> 
+> from the driver-core tree and commit:
+> 
+>   27c7518e7f1c ("rust: finish using custom FFI integer types")
+>   1bae8729e50a ("rust: map `long` to `isize` and `char` to `u8`")
+> 
+> from the rust tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc rust/kernel/miscdevice.rs
+> index ebc82e7dfc80,8f88891fb1d2..000000000000
+> --- a/rust/kernel/miscdevice.rs
+> +++ b/rust/kernel/miscdevice.rs
+> @@@ -10,11 -10,9 +10,12 @@@
+>   
+>   use crate::{
+>       bindings,
+>  +    device::Device,
+>       error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> +     ffi::{c_int, c_long, c_uint, c_ulong},
+>  +    fs::File,
+>       prelude::*,
+>  +    seq_file::SeqFile,
+>       str::CStr,
+>       types::{ForeignOwnable, Opaque},
+>   };
+> @@@ -274,12 -225,7 +270,12 @@@ unsafe extern "C" fn fops_ioctl<T: Misc
+>       // SAFETY: Ioctl calls can borrow the private data of the file.
+>       let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+>   
+>  -    match T::ioctl(device, cmd, arg) {
+>  +    // SAFETY:
+>  +    // * The file is valid for the duration of this call.
+>  +    // * There is no active fdget_pos region on the file on this thread.
+>  +    let file = unsafe { File::from_raw_file(file) };
+>  +
+> -     match T::ioctl(device, file, cmd, arg as usize) {
+> ++    match T::ioctl(device, file, cmd, arg) {
+>           Ok(ret) => ret as c_long,
+>           Err(err) => err.to_errno() as c_long,
+>       }
+> @@@ -299,12 -245,7 +295,12 @@@ unsafe extern "C" fn fops_compat_ioctl<
+>       // SAFETY: Ioctl calls can borrow the private data of the file.
+>       let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+>   
+>  -    match T::compat_ioctl(device, cmd, arg) {
+>  +    // SAFETY:
+>  +    // * The file is valid for the duration of this call.
+>  +    // * There is no active fdget_pos region on the file on this thread.
+>  +    let file = unsafe { File::from_raw_file(file) };
+>  +
+> -     match T::compat_ioctl(device, file, cmd, arg as usize) {
+> ++    match T::compat_ioctl(device, file, cmd, arg) {
+>           Ok(ret) => ret as c_long,
+>           Err(err) => err.to_errno() as c_long,
+>       }
 
-On Tue, Dec 17, 2024 at 6:32=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->
-> The binding is missing maxItems for all renesas,cmms and renesas,vsps
-> properties. As the amount of cmms or vsps is always a fixed amount, set
-> the maxItems to match the minItems.
->
-> Also add the minItems and maxItems to the top level properties.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
-Thanks for your patch!
+Looks good to me, thansk!
 
-> --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> @@ -77,6 +77,8 @@ properties:
->
->    renesas,cmms:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    minItems: 1
-> +    maxItems: 4
->      items:
->        maxItems: 1
->      description:
-> @@ -85,6 +87,8 @@ properties:
->
->    renesas,vsps:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    minItems: 1
-> +    maxItems: 4
->      items:
->        items:
->          - description: phandle to VSP instance that serves the DU channe=
-l
-> @@ -489,9 +493,11 @@ allOf:
->
->          renesas,cmms:
->            minItems: 4
-> +          maxItems: 4
->
->          renesas,vsps:
->            minItems: 4
-> +          maxItems: 4
-
-AFAIK these two additions are not needed, as they already match the
-values defined at the top level.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+greg k-h
 
