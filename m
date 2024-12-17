@@ -1,88 +1,133 @@
-Return-Path: <linux-kernel+bounces-448762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6659F4534
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:34:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82319F4536
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9338A1889600
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3D8C168607
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D4519F13C;
-	Tue, 17 Dec 2024 07:34:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1514F18D63A;
+	Tue, 17 Dec 2024 07:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlbGHTxU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4611684B4
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2DD15B0EC;
+	Tue, 17 Dec 2024 07:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734420845; cv=none; b=W6ySLyBtzEF9olmN6OZtZtVqy0QAttF0ZnCeN7s8j6ZChVg/otMJfC66UQGH2WmFb7+VvfHrumrcDs1P63YPc214Fr0idnm3Q67I963KByYeoyZQtz9qZUZBWEJisiF1MAxoT9bJ81/v6pqInx4DahBhewJgv6R4dgAomJ/otF4=
+	t=1734420937; cv=none; b=mQofh3FU2runbdrTvR2TkELL6yEa7e24ADe6x30n7evZBML1DgodtjQrgHE1aeiaYK82eYfY33RMoVnA3y4HAtm8yoB9fVgC6phAKqid0CBKI/wEctNQneOp47A+p7DrrbbfokYlXrQc+K4cRCCmgYuaTDAxXaeAvX9hcUk8BBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734420845; c=relaxed/simple;
-	bh=2qbBA8dB9rghq4JU3RMGDB0GWVpw/hyRn2QQ2R0T4xM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gZwtf6gu/aPZ8bMBYI5kam02AIs+I7btPdZxAjE6c6UH2t8shmemGHhtIkVHsMETCs1n1juwBgsaQCgahhKcmX/JlOEPsfT1Wc/p7deBrcTqzl6W6h0wyduRdKKL26SE/y+33MWWpZUmlCBEl/4epri+xrTUrDqgCMslNjaaCDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9cc5c246bso55289405ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:34:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734420843; x=1735025643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HuLku8nskRpw3kzYQNuILjeVKhjCyFHGbFaT7HP2LrI=;
-        b=mndgHXL1FSA1dA6G1+slpyhcS9PEaTF3B8XKM/tdmtaSKCVUZ5PHkwFxPKxlh1jCo4
-         OKtv9nimQU1U2kn9c4NkIVlA3Zr2fSY6YJmwkBbMB9XjmqgaUCqSPajrk/S4gwrVYgnx
-         dP5GHRrVr/kC0W5XwXxmwPw+sgNl+SLzlYp+Z+HvtNGDXJbb8QMeal3NSPZk/BV5w1un
-         Bazw13stZ5bgwbW8QnxO+5POCNy7+fjeUwkEDvBaQrN3jpGAUAh6VkJmHxCAioYUpHh9
-         U2f8kKPtrn7NG4uAkcXcrbmapQNnRoZmRaobT7svPMCnm+Mim+Mz3/wsxuk9fOZQPTxF
-         Ihig==
-X-Forwarded-Encrypted: i=1; AJvYcCXfGpg0q+O0l1sasTX7BX3iLUTKoj/E1rNPHB09C6v7q4nfOQAGjgdcRLY9Cy9bz2TR6pBK56F+WZ8UmYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyivz7WAIom6bOtVxiwwNrEOnZfKJT1232/82mZ+6AQF1kodmt6
-	xQCEDDPw9nVwjS3h8BUINVi2vPUsQ0AYJ+OnM0C+aC2VLz9gxQ9qdkSHWAjctYS6gytNztiKefm
-	u3jHw//hV5yKES+tqP6fjyOGkOdmY6lWotYe4/N5WsdeRQ3o83GpSPr0=
-X-Google-Smtp-Source: AGHT+IFo/TPCM5xWBSv33m9vYQP8bmdBxGISBsKlat+NgM/LZ8KwcEUmUrH0UbBkstxz0B4kVTnwbnvSX+gQ93bUJ+Fn/RSKeiIg
+	s=arc-20240116; t=1734420937; c=relaxed/simple;
+	bh=1K5QV+y7wRcH+ZVmtbF8u2nfkdUeSDj+QEYMPXGTVzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXQtTEurL82YAKzIQ1CsnCD7p1EcmG5b2JA6Z/Qft1ItdNQDjFgNku0oaf4v+mdnxHG9ul5jOA1ggS0jtluzspbTvHNh0u7t800EqB5oOiJeMOBgkUE9gLhbzHOtdYixevTsB4/qwR7+qADBrfGAlbRNtcC/6ZKSyAmm+o7cqh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlbGHTxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F612C4CED3;
+	Tue, 17 Dec 2024 07:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734420936;
+	bh=1K5QV+y7wRcH+ZVmtbF8u2nfkdUeSDj+QEYMPXGTVzM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jlbGHTxUb2f5V6bK4iOHuK3m/qLEqUaiTERYZyCD9tmFrX76q9+EdtdNH15zUALvr
+	 zGWbFOTPitxdQuPk985D1hiO99DkmLNv8OwVJOLgYqvPmtfMFQ+3R/K/p9o1Y3PnsP
+	 t+zHP1bSNyDLcLTCPtTvx8Li7z2bh3wgFcfEV55MfWyDQkr1Zy92qt19F550bauZKF
+	 r8CfHNPNZYmf5K4UjJq9TMzOOXik8R1x22/qJ4w1t4CRr6Y+2WWJGFE06cFCeoPmXx
+	 t9R0Fbup3nryvDuX36O5B3/4g2+wY0OaJCyXV7n3U2KnCqX4DX9DGdhIEMUJ2mTrLW
+	 ItiRx1jhhXnQw==
+Message-ID: <94e7cbb3-32c5-4366-95c6-3be30cd7e327@kernel.org>
+Date: Tue, 17 Dec 2024 08:35:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2408:b0:3a7:c5a6:9822 with SMTP id
- e9e14a558f8ab-3aff8c9255emr154827615ab.24.1734420842901; Mon, 16 Dec 2024
- 23:34:02 -0800 (PST)
-Date: Mon, 16 Dec 2024 23:34:02 -0800
-In-Reply-To: <tencent_A3A5C98D8F1209DDBF5DFD997FCFD38D8507@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6761296a.050a0220.37aaf.014f.GAE@google.com>
-Subject: Re: [syzbot] [gpio?] general protection fault in gpiolib_seq_stop
-From: syzbot <syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com>
-To: brgl@bgdev.pl, eadavis@qq.com, linus.walleij@linaro.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: connector: Add time property for sender
+ response
+To: joswang <joswang1221@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: gregkh@linuxfoundation.org, amitsd@google.com,
+ dmitry.baryshkov@linaro.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jos Wang <joswang@lenovo.com>
+References: <20241215124627.70525-1-joswang1221@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241215124627.70525-1-joswang1221@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 15/12/2024 13:46, joswang wrote:
+> From: Jos Wang <joswang@lenovo.com>
+> 
+> This commit adds the following properties:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-Reported-by: syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com
-Tested-by: syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com
+>   * pd2-sender-response-time-ms
+>   * pd3-sender-response-time-ms
+> 
+> This is to enable setting of platform/board specific timer values as
+> these timers have a range of acceptable values.
 
-Tested on:
+Some explanation from where do they come would be useful.
 
-commit:         36a3a495 fs/seq_file: Exit the subsequent process when..
-git tree:       https://github.com/ea1davis/linux gpio/syz
-console output: https://syzkaller.appspot.com/x/log.txt?x=160a8b44580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8d97faf7b870c89
-dashboard link: https://syzkaller.appspot.com/bug?extid=b95d0c98f01e7a95da72
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Signed-off-by: Jos Wang <joswang@lenovo.com>
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Your second patch did not make it.
+
+Best regards,
+Krzysztof
 
