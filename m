@@ -1,77 +1,62 @@
-Return-Path: <linux-kernel+bounces-449080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52F09F4974
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:01:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24E49F4980
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A5D163166
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:01:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF50188D404
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907B21EBA07;
-	Tue, 17 Dec 2024 11:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4DA1E633C;
+	Tue, 17 Dec 2024 11:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XuW87E2X"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y75yTFa/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD01D47D9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F941CD215;
+	Tue, 17 Dec 2024 11:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734433278; cv=none; b=cbNfVKGVnq3/VtwkU/ia3eS1laIkPWfJxvy/egYo50Q5E176gI3CxC2vSJX0LIVgTwBWqtclKNasOALWxZ6QsbcJFU8GoM6VvHq+rjStu1Lzu0BodAymfnXm6sFKDGSzxAYTaFC5h81/h0aBVZGLR8BcsYS53m+iM5s8xnmJWOs=
+	t=1734433364; cv=none; b=jzgNZBHxrrbwOfgBLQT4WB3t2zpq3trDma6mg2qCjtsA6EWJQ4/BmxkpPfMRRku1Nj20DZagPUFtCQDcSFCUhso2tXVws/eRoKhPn4ygnOeGA/+NnF06UEQbWQ6vtDMU4I8gi+7ywcO0MxjPwTFXhnAYox9QwxlDzBUEYLhsO48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734433278; c=relaxed/simple;
-	bh=dzPlS4ShwjaasN3bD3BbmPZQWpeBj1znPpLJMJF6C4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiMHffJPqrIm0q4rl+z/ntpNgTxekqzRRlkGWV3k7D03brA3hbo7RZaqBEMk10u3RNGYELLu3Jd0Mwu7j7BR7qbqqyv+TDEMA5kgkvGh2SoZz8khJienNfnoGI43hja/TLRvm1Mm1HRcNb7U6opSfk3Eg2dHVkrfWUKZ6Z9+AaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XuW87E2X; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3862f32a33eso2496121f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:01:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734433275; x=1735038075; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w03D1ux3okaczBtpEnBHqfwxiSrA7LCvMwRhSIk4Nrk=;
-        b=XuW87E2XezKEUY+WFNprN5/dC7F2X4qj2ZhuGUDT4kBUVGkz98BDHSLPUkvvIomqzR
-         WK/Xwy+baAnfPIeauIiJA0JpAeK2c9ujS2he3oDf/NzqPUzMk3r88iDEEXJUpufoqolL
-         JXnaSPjUayHRvoqvu8AmW9e5TiBstW49riZyNwlkXbxxGnyg2682croqnndSYBsBsTVa
-         5Cuh+B2m5bWmN2r0nausRanGAbQKfOS+Hr58u6quho0WoVyZ874AQNejY1j3O6pu4FCt
-         dSeU6d3HLjck4HWc7HG3xDBHPkA1IZ83fSMnKgd7Iq5Ih9MDAQl6J7MHri7eYKEsfwWY
-         YhEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734433275; x=1735038075;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w03D1ux3okaczBtpEnBHqfwxiSrA7LCvMwRhSIk4Nrk=;
-        b=BB/1t0tU+/6ycwOZgbF9xeh/dkmcyOxVIwBmUld6RpFnQIhJAAxdmqDU8y9Sgeyi9v
-         rIPJJg383AxL8jQsLKPgfsR4qzR+5netXZTJiVIgnZ1og9zHnIv2luWJ5y38+CudvLxw
-         cUqQMniXAVqRkvmGxrLv2NVW3+1ildgyUDIG32olndb4nmomJt0vDbu4/oG9fNysCMLM
-         wAfX+P0vUu+vD/6mZ+FXXT93Oq3foH3u9E3DpL3tT/h4JMnSDLWN1ybMZjgBFm1FNEMv
-         didrD8nIdSsSjKBvpClNCvJf0yYdl0yX1l9a53CsNzuTPmfxZCuI3idfSJW9XNLt+bSX
-         P7ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFkUKkuZ3GF50ZdGdIOFU1UBchG4ur/Hy3Nlxb0gcDj1zhb8wiHQt2v4N3IzksAvdBNY6LcdIIlIA0qVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycbYVQlrWQfeiAwBIKYsXVyMkhrua58kWM2TeasxU4m2GGIopC
-	3Xhsjyh9G2CHAJrEW1OJzzlkHRL+XJIUVZH7w/hrCyBRcioZwAbBHoynHHCWvZM=
-X-Gm-Gg: ASbGnct+Sjef4O0Ba+7TcdDP+zeB5pRuM60tSMhBq6FspW/L/9B4ygVnmQTGl0e34Y0
-	ANeie4mRvmXfGTlKm7tqF/DqjRDhfZ02ULYuYGGyPYyAN9NBhZJZQHI0z8iOIuY4Q2iFUyz4dzD
-	k9do0wWMCQVt1m6oybIO/45BhghrbXDAKHL13dxSXQqRzcJYilrTJ+Thg8WNQrt87grjkLfDHUa
-	FNAWEkG77WQ6OG/FhvK5+42PfhhIQ4QXeEw9G+wbe5Lx9/oORbJ0Z3wrOotm+iBbGTz+Q==
-X-Google-Smtp-Source: AGHT+IHN8F/bOTxwVgEj+Ryru3sGmbFULrRGiG+LPfJhyOB7pJk2kTCEvnFKgGCazxS5j/XYxa6EKA==
-X-Received: by 2002:a5d:5f88:0:b0:385:f821:e97e with SMTP id ffacd0b85a97d-38880af11e2mr15512297f8f.9.1734433274696;
-        Tue, 17 Dec 2024 03:01:14 -0800 (PST)
-Received: from [192.168.0.27] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80605d9sm10774311f8f.95.2024.12.17.03.01.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 03:01:14 -0800 (PST)
-Message-ID: <236d41cf-ddc7-46e9-91b2-190c165461b2@linaro.org>
-Date: Tue, 17 Dec 2024 11:01:12 +0000
+	s=arc-20240116; t=1734433364; c=relaxed/simple;
+	bh=k9jRpF1FSyMwNj7gw2vTBuoN2nYoDwzY+sH5IIwClb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gLyDuIeq50HZVx9b8En8DAfDV02adJmGS1o5+qmJwvQhGIMOQw5UeY8Id/zDu2hJshu8VOQsHfdxjjD5E+NCITsl2XP1sFSpD8f6Nk+12k8PZzChgdi9NggnqTGiRyEGieR5sOvWNRaIYpKYekt68wkMEKxDoggTT76mLlswNVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y75yTFa/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH6RaNc002735;
+	Tue, 17 Dec 2024 11:02:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N/UEEKnJSCLAcig2TeX2+ECErL1789cyoyRocGA+Rig=; b=Y75yTFa/dYF1upt/
+	Q0LI/rEHDtjgszW/ZPzllrbj5bE7c958dVxOryT6iCUhAzordd3tiMH+n3ivg7QV
+	cqqMF4krSYLQ3EYicj/TaTSUg6AKbZYWlc2Qd1TUVO8KE2wvMxARt+K8a/JbS5ex
+	AtkXNZs9P43bp/4GTnkgctJvwsref2Zr3I/SpraLNe/3oEHszjneIAYTTVH65ZVc
+	TM+Sw/LHVQN5SLs59ZeCd9tzUp/RcRWIekaCmOSlBzFjEPqVv+oq8QbbwtDkPNV4
+	zFrySocOCE+/ACKExZqQz6uBRi9vq46hHQzrcFjWiuXEt/Q2R5ZKeP9VoQlYV36C
+	tHbmYA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k424gs37-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 11:02:25 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHB2OTI031577
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 11:02:24 GMT
+Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Dec
+ 2024 03:02:17 -0800
+Message-ID: <ba59f164-2ccd-4cf9-9426-9b6a2c199224@quicinc.com>
+Date: Tue, 17 Dec 2024 19:02:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,39 +64,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] arm64: dts: qcom: qcs615: add venus node
-To: Renjiang Han <quic_renjiang@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>
-References: <20241217-add-venus-for-qcs615-v5-0-747395d9e630@quicinc.com>
- <20241217-add-venus-for-qcs615-v5-3-747395d9e630@quicinc.com>
- <83fcb683-d610-4e47-bcce-128453a0afef@linaro.org>
- <3cb0d715-3756-4cef-bcc0-3bb550811c73@quicinc.com>
+Subject: Re: [PATCH v4 5/9] drm/msm/dpu: Add SM6150 support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Krishna
+ Manikandan" <quic_mkrishn@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Liu Li
+	<quic_lliu6@quicinc.com>,
+        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241210-add-display-support-for-qcs615-platform-v4-0-2d875a67602d@quicinc.com>
+ <20241210-add-display-support-for-qcs615-platform-v4-5-2d875a67602d@quicinc.com>
+ <ntffm2jwr44m77z2bvuifv3itkpywco3cemgzkizzdp7e2ekdv@htfktmyyoe3k>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <3cb0d715-3756-4cef-bcc0-3bb550811c73@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: fange zhang <quic_fangez@quicinc.com>
+In-Reply-To: <ntffm2jwr44m77z2bvuifv3itkpywco3cemgzkizzdp7e2ekdv@htfktmyyoe3k>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zhQzBUp5kvAn7wY0sTvHo4kcdgYHBDui
+X-Proofpoint-ORIG-GUID: zhQzBUp5kvAn7wY0sTvHo4kcdgYHBDui
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170091
 
-On 17/12/2024 09:54, Renjiang Han wrote:
+
+
+On 2024/12/17 18:54, Dmitry Baryshkov wrote:
+> On Tue, Dec 10, 2024 at 02:53:56PM +0800, Fange Zhang wrote:
+>> From: Li Liu <quic_lliu6@quicinc.com>
+>>
+>> Add definitions for the display hardware used on the Qualcomm SM6150
+>> platform.
+>>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+>> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
+>> ---
+>>   .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h | 254 +++++++++++++++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+>>   4 files changed, 257 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..621a2140f675fa28b3a7fcd8573e59b306cd6832
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
 > 
->   I think when your change review passes, we only need to remove the
+> [...]
 > 
->   video-decoder and video-encoder nodes in the device tree.
+>> +
+>> +const struct dpu_mdss_cfg dpu_sm6150_cfg = {
+>> +	.mdss_ver = &sm6150_mdss_ver,
+>> +	.caps = &sm6150_dpu_caps,
+>> +	.mdp = &sm6150_mdp,
+>> +	.ctl_count = ARRAY_SIZE(sm6150_ctl),
+>> +	.ctl = sm6150_ctl,
+>> +	.sspp_count = ARRAY_SIZE(sm6150_sspp),
+>> +	.sspp = sm6150_sspp,
+>> +	.mixer_count = ARRAY_SIZE(sm6150_lm),
+>> +	.mixer = sm6150_lm,
+>> +	.dspp_count = ARRAY_SIZE(sm6150_dspp),
+>> +	.dspp = sm6150_dspp,
+>> +	.pingpong_count = ARRAY_SIZE(sm6150_pp),
+>> +	.pingpong = sm6150_pp,
+>> +	.intf_count = ARRAY_SIZE(sm6150_intf),
+>> +	.intf = sm6150_intf,
+>> +	.vbif_count = ARRAY_SIZE(sdm845_vbif),
+>> +	.vbif = sdm845_vbif,
+>> +	.perf = &sm6150_perf_data,
+> 
+> I noticed that the catalog entry doesn't provide writeback configuration
+> although the vendor DTSi specified that there is WB_2 on this platform.
+> Please send a followup patch enabling writeback on this platform.
+ok, will update it in next update
+> 
+>> +};
+>> +
+>> +#endif
+> 
 
-Yes but the _point_ is we shouldn't be adding in driver configuration to 
-dts.
-
-Which means I don't think your patch can be applied until we resolve in 
-impasse in venus.
-
----
-bod
 
