@@ -1,124 +1,113 @@
-Return-Path: <linux-kernel+bounces-449418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0A79F4EC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:05:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010279F4EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895161891FBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:00:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 037B87A2270
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8D81F5421;
-	Tue, 17 Dec 2024 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1627B1F4E3D;
+	Tue, 17 Dec 2024 15:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UgD51Pn3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NUN1FDnT"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16461F666A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4411F6690;
+	Tue, 17 Dec 2024 15:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447643; cv=none; b=Oma4gDFTLW25Vw5m5l8JK5YB/ggsj5IY/rALtV2bcXbo+aDU7K3MY8qeGupwD0taa96cWE65Hv/5G4v8Tjr+qpnjwniYYE/7teTBsLR4e8YX87HqHnI7Au1p+FndlqUBx8oVJMro8QLez+DiIP710HLLtTBYSm5MUn7WiwIvuKs=
+	t=1734447747; cv=none; b=jIRpeRjgwWP1KbRS6NxIkmkzI77nF/yoLsysO8/Dixs2QV7aofFfOpf/+ro7WDMv63JdRPvP4CPEqS40ZrenD6OGc1mLXdy1hAdg9KfuzAVI8xAIv7tyqT8TdT686RNOY7BC549nt/wkUF0UGtuouMNTi288nKuO0xy36+hg0og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447643; c=relaxed/simple;
-	bh=xCX9JZRcJAO6ROqILU4HTVOKOaSuMOPjbIavgtE/AeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flkMFRcyo714MMYFha3/j0qnA2f78x/cI06haOdWyBd2CKHbLUaSiOaMnIHx126eylMnZiVY3ldMAxp/1c/pFVrD08uVoPZcmDWsEqVtgWtm2SJQ0mjJ8lk/oN43KagV6cX3Z6d4iMAphqn9vomknA3RinNUeT4kr3MLR0yb67E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UgD51Pn3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734447639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=am51q3B86pGW9dMKjUb91Q4FUviogWcoOGBjTuBK12Y=;
-	b=UgD51Pn3a2cF5jFEWLDQtyBDMh0AJUIM0JlZsWkrYMJNIbiFYl7/+GhF+iPA+qkDdHbY+/
-	cZkv5eNUCU6CCJmoqzViNNZezdi7+RDVVVgcnqc73Me4VEjgz109+WoqPhJ34alMSD7n00
-	ygfyjitHXcKKi40t01/uf8/HwYMaNLA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-437-lPUsl0mZOIC7szUPRfAp8w-1; Tue,
- 17 Dec 2024 10:00:36 -0500
-X-MC-Unique: lPUsl0mZOIC7szUPRfAp8w-1
-X-Mimecast-MFC-AGG-ID: lPUsl0mZOIC7szUPRfAp8w
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7B3B195394D;
-	Tue, 17 Dec 2024 15:00:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.190])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CCB0D300FAB7;
-	Tue, 17 Dec 2024 15:00:17 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 17 Dec 2024 15:59:58 +0100 (CET)
-Date: Tue, 17 Dec 2024 15:59:52 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dylan Hatch <dylanbhatch@google.com>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/proc: do_task_stat: Fix ESP not readable during
- coredump
-Message-ID: <20241217145923.GA29091@redhat.com>
-References: <cover.1730883229.git.namcao@linutronix.de>
- <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
+	s=arc-20240116; t=1734447747; c=relaxed/simple;
+	bh=Cq0ojv7gA2KWxo8/iShO6NX6ctPHC5kxhWP2lfhE/YE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cWcKN6MvoUOP+MsQxXdFpottJuymBMuG0wEGgc2cXlNDPg8JrA+UNMk4ixj4v3xb7eKsxNypQmERcqSmEu8+qFgU8pPgs1JuY4Zt6xQ7FuQh/jix2spOzchHGAl+g4WCqCHnU8bV2GPZB2HaceCRzLA9ib1nsxjC09AzOXd2qB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NUN1FDnT; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHDCT19020655;
+	Tue, 17 Dec 2024 16:02:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=SykAPbdT9Bxh/XN2cwTtfy
+	OFKxm8MvNOlBJR/xt+HXc=; b=NUN1FDnTHPaBMDjtMJ99rycVqvNClpey4FEnhw
+	21CMwgO38ncdfS5ViO5jG9M5+oPBwvRnSBBPGXoMQLFmTJeQ5AVP2GPOw5XtCcDG
+	7g6qGQOlmYCsY4idVXpoTO3vJ2yK4d93COYCETwRS3dp6iyIPP/j9FTLlu69QmRC
+	GxgjQrYfgR6YFU0hLUsx1IohN+HcZ7xbzPazirZBr+db/hlzrK1st7E/xCON/WX5
+	slMw8vUe6rS5ZAQqz67SxtnrO67cOIk6XNEg+ZNODj3B3+hjEwe9XSOt95yduTUF
+	RYPuijPAV6ugYft7DXJ/pilVNWyK+EKHWLjKRux7+z8MZxHA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43k5dgtaq4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 16:02:05 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4DED440046;
+	Tue, 17 Dec 2024 16:01:16 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1A8AB27C23C;
+	Tue, 17 Dec 2024 16:00:54 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 17 Dec
+ 2024 16:00:53 +0100
+Received: from localhost (10.48.86.222) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 17 Dec
+ 2024 16:00:53 +0100
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+To: <ukleinek@kernel.org>
+CC: <alexandre.torgue@foss.st.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <olivier.moysan@foss.st.com>
+Subject: [PATCH] pwm: stm32: fix complementary output in round_waveform_tohw
+Date: Tue, 17 Dec 2024 16:00:21 +0100
+Message-ID: <20241217150021.2030213-1-fabrice.gasnier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11e1777296b7d06085c9fd341bafc4b9d82e6e4e.1730883229.git.namcao@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 11/06, Nam Cao wrote:
->
-> @@ -534,6 +517,23 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
->  		ppid = task_tgid_nr_ns(task->real_parent, ns);
->  		pgid = task_pgrp_nr_ns(task, ns);
->
-> +		/*
-> +		 * esp and eip are intentionally zeroed out.  There is no
-> +		 * non-racy way to read them without freezing the task.
-> +		 * Programs that need reliable values can use ptrace(2).
+When the timer supports complementary output, the enable bit is
+overridden. It should be OR'ed. This makes all PWM channels for
+such timer not to work.
 
-OK,
+Fixes: deaba9cff809 ("pwm: stm32: Implementation of the waveform callbacks")
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+---
+ drivers/pwm/pwm-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-but then:
-
-> +		 * The only exception is if the task is core dumping because
-> +		 * a program is not able to use ptrace(2) in that case. It is
-> +		 * safe because the task has stopped executing permanently.
-> +		 */
-> +		if (permitted && task->signal->core_state) {
-> +			if (try_get_task_stack(task)) {
-> +				eip = KSTK_EIP(task);
-> +				esp = KSTK_ESP(task);
-> +				put_task_stack(task);
-
-How can the task->signal->core_state check help ?
-
-Suppose we have a task T1 with T1-pid == 100 and you read /proc/100/stat.
-It is possible that the T1's sub-thread T2 starts the coredumping and sets
-signal->core_state != NULL.
-
-But read(/proc/100/stat) can run before T1 gets SIGKILL from T2 and enters
-the kernel mode?
-
-Oleg.
+diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+index b889e64522c3..17e591f61efb 100644
+--- a/drivers/pwm/pwm-stm32.c
++++ b/drivers/pwm/pwm-stm32.c
+@@ -84,7 +84,7 @@ static int stm32_pwm_round_waveform_tohw(struct pwm_chip *chip,
+ 
+ 	wfhw->ccer = TIM_CCER_CCxE(ch + 1);
+ 	if (priv->have_complementary_output)
+-		wfhw->ccer = TIM_CCER_CCxNE(ch + 1);
++		wfhw->ccer |= TIM_CCER_CCxNE(ch + 1);
+ 
+ 	rate = clk_get_rate(priv->clk);
+ 
+-- 
+2.25.1
 
 
