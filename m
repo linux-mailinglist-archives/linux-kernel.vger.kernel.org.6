@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-449054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04349F4925
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:46:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A139F4932
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3851891F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EAE116F8C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899D41DFE0F;
-	Tue, 17 Dec 2024 10:46:01 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F241DDC1E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F5B1EF092;
+	Tue, 17 Dec 2024 10:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bMkPRocn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444451DFE0F;
+	Tue, 17 Dec 2024 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734432361; cv=none; b=LqV0MmQWwAC3KXjNZAw5zbsnSU5YaMJ6pq0fY3EqGwvsDpDbgJkyD/q+Cp4YNp9Ko7Ype+N4JymZHd8DHsLp5pT2Atxo67SSZAaBMImXORHQnlspIG8OMEL3w4mk2oRU+YN7/+qaozzLSlMpB5uzFR0yyl6/6jmA/CV8+G6qZaY=
+	t=1734432411; cv=none; b=ZnKjd9cvBmt3J9Ew+H2Cp22AqP+0u3oIVWnJ3RELM4BZUgUfeHCCPlcaKbCmBzW7eCbB5nzD7OaknvrDGEKZJt8eIb7kUzPZChRGdQq6PC197w/xAVV2bCfetmhU3ouzxvY3niq9oUp2DVqNv3QzRDJM+5rrG5yv431/PFZK2Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734432361; c=relaxed/simple;
-	bh=L6D9ThR9H0ZEoKua9QPgH/pmsr8ctmAzmci9EKf/Ih0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IcWhDb+EtKpqbsv1CKnwUET27n+9kUeSL100cDt7cGLMW8YBiQ+iPW+boBFBMrU9SSm1JSoQfarXkYtKe48qGNktU4VgB6+KY3dGCzYUNQZt7XziVCBeLCfdBpIHuGb+cf0VRc4bL6JgtbW2hUg2M3QSCeDMlyvZwY9nKtppuF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.70.172])
-	by sina.com (10.185.250.24) with ESMTP
-	id 67615656000020A7; Tue, 17 Dec 2024 18:45:48 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8724010748373
-X-SMAIL-UIID: A2F155B4F61B46D7A5ACD1A274243AFE-20241217-184548-1
-From: Hillf Danton <hdanton@sina.com>
-To: Liju-clr Chen <liju-clr.chen@mediatek.com>,
-	Kevenny Hsieh <kevenny.hsieh@mediatek.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 23/25] virt: geniezone: Add support for guest VM CPU idle
-Date: Tue, 17 Dec 2024 18:45:34 +0800
-Message-ID: <20241217104535.167-1-hdanton@sina.com>
-In-Reply-To: <20241114100802.4116-24-liju-clr.chen@mediatek.com>
-References: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
+	s=arc-20240116; t=1734432411; c=relaxed/simple;
+	bh=5lyyw0lWpQi2YgVrgXKcaOUXj4vRl5LPW0uHLdmqiV4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rgrjjSr2rzUWRDDv08rTXc9y5L1Zpyq2EejDSvDR155T+nhkjvUtgA7Yw+g9qKTpSHMR6PoQScwJSCnjJuRgEWKKqqL+L9CO8XejUBPisWhAImfseANpUTxVm3w4/GwsjRBwhJw5QOiH/PZ80GOY3I8Ggc+AFxG4u56uikBNKy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bMkPRocn; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=OlgaT
+	GFYRjVPm1jcUodWnSy0zASPpTDUGrYjZ8ffJgo=; b=bMkPRocnEofr+wf9vkH14
+	ZP/nc5OZHNzK/vDsu+R7uyS1xC7bgU8otV7qI1POPiJfBQChMbJnK7l2jsBu2VSO
+	KZnQvSnWTUO/X+JVf109ClTcuO0pgtZ8WPqk9/JZVqTL+/bMcJhX9H7qR8q0LNoM
+	VXEA/loKjrOhvfdaXP+zPU=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDHz_1vVmFny666BA--.16303S4;
+	Tue, 17 Dec 2024 18:46:16 +0800 (CST)
+From: Ma Ke <make_ruc2021@163.com>
+To: bvanassche@acm.org,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make_ruc2021@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] RDMA/srp: Fix error handling in srp_add_port
+Date: Tue, 17 Dec 2024 18:46:05 +0800
+Message-Id: <20241217104605.2924666-1-make_ruc2021@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,33 +55,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHz_1vVmFny666BA--.16303S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XrWkJFyDGF4xKF1fKFy5twb_yoWkAFg_Kw
+	4jvr92qry8C3Wvywn3Z3ZxZry8KrnFqryrArZIqr9ak39xXF97Zwn7Xrs0yw47Z3W29r15
+	XF13Wr48Jr4rKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRXBMtUUUUUU==
+X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/xtbBFRi4C2dhLpVeiwABsX
 
-On Thu, 14 Nov 2024 18:08:00 +0800
-> +/**
-> + * gzvm_vcpu_wakeup_all - wakes up all vCPUs associated with the specified
-> + * gzvm.
-> + * @gzvm: Pointer to gzvm structure.
-> + */
-> +void gzvm_vcpu_wakeup_all(struct gzvm *gzvm)
-> +{
-> +	for (int i = 0; i < GZVM_MAX_VCPUS; i++) {
-> +		if (gzvm->vcpus[i]) {
-> +			gzvm->vcpus[i]->idle_events.virtio_irq += 1;
-> +			rcuwait_wake_up(&gzvm->vcpus[i]->wait);
-> +		}
-> +	}
-> +}
-> +
->  static enum hrtimer_restart gzvm_vtimer_expire(struct hrtimer *hrt)
->  {
-> +	struct gzvm_vcpu *vcpu;
-> +
-> +	vcpu = container_of(hrt, struct gzvm_vcpu, gzvm_vtimer);
-> +
-> +	gzvm_vcpu_wakeup_all(vcpu->gzvm);
-> +
-Given vcpu, what sense could thunder herd make?
+Once device_add() failed, we should call only put_device() to
+decrement reference count for cleanup. We should not call device_del()
+before put_device().
 
->  	return HRTIMER_NORESTART;
->  }
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
+
+Found by code review.
+Cc: stable@vger.kernel.org
+Fixes: c8e4c2397655 ("RDMA/srp: Rework the srp_add_port() error path")
+Signed-off-by: Ma Ke <make_ruc2021@163.com>
+---
+Changes in v2:
+- modified the bug description as suggestions.
+---
+ drivers/infiniband/ulp/srp/ib_srp.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/infiniband/ulp/srp/ib_srp.c b/drivers/infiniband/ulp/srp/ib_srp.c
+index 2916e77f589b..7289ae0b83ac 100644
+--- a/drivers/infiniband/ulp/srp/ib_srp.c
++++ b/drivers/infiniband/ulp/srp/ib_srp.c
+@@ -3978,7 +3978,6 @@ static struct srp_host *srp_add_port(struct srp_device *device, u32 port)
+ 	return host;
+ 
+ put_host:
+-	device_del(&host->dev);
+ 	put_device(&host->dev);
+ 	return NULL;
+ }
+-- 
+2.25.1
+
 
