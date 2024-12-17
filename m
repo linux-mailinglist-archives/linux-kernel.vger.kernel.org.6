@@ -1,190 +1,123 @@
-Return-Path: <linux-kernel+bounces-448425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71EB9F3FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:23:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE059F3FEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDAB1881CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03D0F16A580
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F699288B1;
-	Tue, 17 Dec 2024 01:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489C53389;
+	Tue, 17 Dec 2024 01:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WmG2Exwe"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aElMHr4s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8778467
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086D171A7;
+	Tue, 17 Dec 2024 01:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734398599; cv=none; b=GWVKr+ez8+gONFxxcZ0R5QU8A29+RBxjWQro6n93JP7IOBZMSd99Psxp877IlFpRyWQqA80D4K+N12mfA7EC92FjnCqpzm5rFQJdpwDYCqJAcoG0Iw7A8V7qaN/c0Nhppf6cEmw9NMstHaI6BCQxqjKzAXaVZoUQ8E5IXdXKsTc=
+	t=1734398643; cv=none; b=hIUtRZoxb1ghcDamTZpNe6Lt34fueT6rKugqrEePu2cKxzB6FHD6Wq7Kk6FPr98lx1Rr1ZJnC14RjCa+5WfRBGpnLM0Lr5yHhIVUtynYaPqdzgdvMMiYGtl5QELfMW339sgZAzvgM2jL7er3XKJwzkIfDOX5bBItjqd+0445HV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734398599; c=relaxed/simple;
-	bh=ANwxoYOx6LaHFFptWf3DC5ruCF6lhH1vDaf1fvdE1e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GemBO1/L0MtlvOCT7m+m5gQ+xiwWDKL37o79CK8BKgPLhvVXoKdHxX6R8rSQbVTidpbowzAzgqQyDYR6Eq8mW4G5yldgAy/Ha5yE4wTo7bRHX/GCxefXHjPte/iMP2RAFVgFftJ9Xtos6aFTGuayAIlvSQDTPLpmYcR3Ia8nCTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WmG2Exwe; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7FA4F3F1ED
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1734398595;
-	bh=e4oykdNzqp3U/ysHZwf9sZj7W3/zqo027MCN1jhVxxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=WmG2ExweBeYc9j4q8ntu/6PTbphV0nK5EgQsO2fvMBX7u8E0fiyvTDOFsJtGAVon9
-	 3pY15wlPq2wcmLwm2uTzxtM3zngF2DNZXujFc3+ceP/eqpQqHaEnE6v5lJL4JILNrU
-	 DKeEJIFzb145enIaXV3v38bBf3m3cw/tkR2jHTTAXcRnmJRUUvRabrn54VXZasmhjL
-	 5x5rttLxctNPxKMym08B9xQU7NCBd17Tw2E84JILTDtC3ZBbN5IRaZo6+WWPambvBA
-	 nE9zjDe6dVcclIqbvhszejXlSVwslCIxV53NK3wtlH2Bsud/PoJxh8oYueoO8OGMpy
-	 e0xBVxOas8CDg==
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b6ef813ed1so658920485a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 17:23:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734398594; x=1735003394;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4oykdNzqp3U/ysHZwf9sZj7W3/zqo027MCN1jhVxxc=;
-        b=Z1i2szElg/DoFa52OG0d0+4AZD2DgxsqLfD8c4faQTN0N+7p4lLPZ5VHpZxaGq7EN3
-         u0xHKu6pgcSRiwjtn58H3BiwgE0TTjK08L4xsP9X5vIuEOxS/DARTh/8m7YU103iVUWq
-         TdYFeGoBY3BcZxeFHwexIOa33RNATMTOYUEoJSrovWHx3ericp3ZQFftPNSKqYTG8FRF
-         TtF+yZbEulcPFa8UG4Dd5Dbtvdvfk2IZ0PJ1Kuy5SJNXgaV2cLoqKVl4NS4hgv/mAThu
-         SxPMRa6GbLS+qmuktpK+kUiFX6OQom3J1IllDTccI6Xf8/weFX9h9msN3+7/yiJaJADT
-         exXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnpig75tfzAlVeAliJ+goJwpmoHjVXgj1qGkmos0V+d1jWFpVuszXP36dUwT970COhhJIHG9R/Co0AZmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ95CLatdC6ojAdJU5wHE0cvh08rigH9+RnyDoxQfRtIH9q3UI
-	6se460VrU9cnQC5peIAAungBeNSPXK4y3VEr9G1VHwchJcZ+FdIxoeuwuX0sVphJ/s+CoV1+Los
-	vMBJf7Otf2m6g1Ppz+NfHZY8JwRVC/zgJhRIOe2d3el7LBz4A5tyJSP6CGM3X42vbXufBlWGDW9
-	Gkbw==
-X-Gm-Gg: ASbGncuNrzH/4EtYDmR50SxIeGRLYeX7FJnQwNe8Jw5pj4/5fhBdegmekC8nXqcKEwg
-	EG26mWC339I0hX6bQT0vZA3mO7oYmleRLXrcnGDcdrd/f8ZLnY72pwkcExueFvePRUm+YWonF+E
-	bNzosKxGVVRkchd6zqDReKgE7/XwHj2wgGQVRTbXzgb9V6k3robASKNbg3Y1XlbE4tGLH+w5sDm
-	R2n/vtBimZRddmyQg5QRKiZvgHa5BU9QSWcGlB6tdb6Np+O+NvPJriJLRofZhSDDumrATFGsEId
-	NZsx9U394Eblues5NcXJQO+UumLzskvMxdU=
-X-Received: by 2002:a05:620a:2945:b0:7b6:cc37:cbf1 with SMTP id af79cd13be357-7b8594a4703mr224590685a.23.1734398594458;
-        Mon, 16 Dec 2024 17:23:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFJTAJ9XJb5Czh3X9+Wfy9QchOyDmnenuxFZ///v6qAtwPn/ytbeNIDSbXJAtA5rR8LFoKaYQ==
-X-Received: by 2002:a05:620a:2945:b0:7b6:cc37:cbf1 with SMTP id af79cd13be357-7b8594a4703mr224588485a.23.1734398594162;
-        Mon, 16 Dec 2024 17:23:14 -0800 (PST)
-Received: from acelan-precision5470 (211-75-139-220.hinet-ip.hinet.net. [211.75.139.220])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7048c9f62sm274358485a.111.2024.12.16.17.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 17:23:12 -0800 (PST)
-Date: Tue, 17 Dec 2024 09:23:05 +0800
-From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vitaly Lifshits <vitaly.lifshits@intel.com>
-Subject: Re: [PATCH] igc: Return early when failing to read EECD register
-Message-ID: <o6u6fr4znqfcznzq47jlqojdf34vdhardfypw3kl5y76pxjk6n@cxcp2mlsv62k>
-Mail-Followup-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Vitaly Lifshits <vitaly.lifshits@intel.com>
-References: <20241216051430.1606770-1-acelan.kao@canonical.com>
- <a1c44976-9e88-4d58-bad8-34fd397ba626@intel.com>
+	s=arc-20240116; t=1734398643; c=relaxed/simple;
+	bh=ofhmVGShGNdwyjd7BpJc1AADRuJkY7WVdcPNtpQBsWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n4Ow6FpTE6x4UfFhjQs2XmbIPtzfPRTMj0+qLUlRvXGW6toGCTWJ2GnEYfvcBmoP3YdRRPT7Llu6qec4r08xzZ9HFXPbgetORXGmPg5BBwFfP94758oKA6OKWzbgz9n3Ml2isXxKw8qSYVNZOWC/niz+AdTmV9t6iZVkLTQMqO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aElMHr4s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C82EC4CED3;
+	Tue, 17 Dec 2024 01:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734398642;
+	bh=ofhmVGShGNdwyjd7BpJc1AADRuJkY7WVdcPNtpQBsWM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aElMHr4sY66+bDiYoy/AjhpShj8J07925VNMdVaBqcx2C1V9HPSD2tVxJdVnRqe/W
+	 LbexSiiVZSL/vLsQ5Vq4hwQmbWBDaOLa3XaUZfK/g32alk3j1uxN5bf6lLartaLd30
+	 BMtFCYtGwPYGuwsKV1MszDuacpOilQJav22ds7SKByubAkN3nx+cVWTQlk07YhuT6k
+	 6rARUR2FTI1plqjeM7MjnfJkwh001dzLzwvSV/+6qrFAjd4lhkA5e1QL3wI3rI6B4R
+	 c9p+wAeqhWGUzlEl0V/aYejzFuU8PQ0lPZFBYHKTp98YdUc0R8Tnk2JUD6SKFBEU3a
+	 at5l6+WifntNA==
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a777958043so16165185ab.2;
+        Mon, 16 Dec 2024 17:24:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUvAdiGyp1VCbjvOW8hE/Kvq0UANlm/XOhsxDBxptmhSLx65xPPX3ldZk0/huGAyREihcW1OtBmINq5WZ6m6i83bKy0wrGp@vger.kernel.org, AJvYcCVHwggLi01lASFCbsPrODnh/KjvmZQk1J2nMQmVxnPHjnnOqbF+E3ZCtL0sBM4JAhN0QkPiqgY8E4SlsA==@vger.kernel.org, AJvYcCVJizqPwP1J0rgDbS4/Ei4VIL6/eiTzw2Qpimd9TVVu9nhMpe8hrPznM8A6NsAQB29hBLtr2/mkBWRChDEk@vger.kernel.org, AJvYcCWSPEzN0N4Wprxhby+H7WM0UXtFk6U08iYs7YjWj/HH+aXulxPDq9O7dpu4SWsa0e8iVNDNCag3bGke@vger.kernel.org, AJvYcCXYcL5qk8uZ9de+Hx4xPxRmvr1uPmnwpgMv7numxQvOTlwJPsW41nhvZEls/P3QJC0Kgkj3K8GKsjLr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxf9vk8sNyQZyrJOdCtKcGfmkLNNnymxWhp1kHWIBq7nuTpDrN
+	nQJQFaKVO5E9S2KEvX6hMmVwXrpRdsCsCIqRSubQbhRnzu4CeF8EGDvavLdTeT8wNGDelK0aKy7
+	Mb9DoK8aOW5IWfkto6rOJntsUtik=
+X-Google-Smtp-Source: AGHT+IEVYYJzLEubyEn453iO5+jgafEiNUZc7w0TILkZMunsWpJLLDZd/j9MTh/hBkZ9WmAQSXrGTKkjbVrDvxzVuyg=
+X-Received: by 2002:a05:6e02:1aaf:b0:3a7:d792:d6ad with SMTP id
+ e9e14a558f8ab-3aff8b9a6d8mr134441725ab.22.1734398641410; Mon, 16 Dec 2024
+ 17:24:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1c44976-9e88-4d58-bad8-34fd397ba626@intel.com>
+References: <20241216234308.1326841-1-song@kernel.org> <CAHC9VhSu4gJYWgHqvt7a_C_rr3yaubDdvxtHdw0=3wPdP+QbbA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSu4gJYWgHqvt7a_C_rr3yaubDdvxtHdw0=3wPdP+QbbA@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 16 Dec 2024 17:23:50 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4e8xcmZj_qrONSsC8SDrtNaqjeFgPRo=NE9MDiApQkvw@mail.gmail.com>
+Message-ID: <CAPhsuW4e8xcmZj_qrONSsC8SDrtNaqjeFgPRo=NE9MDiApQkvw@mail.gmail.com>
+Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	willy@infradead.org, corbet@lwn.net, clm@fb.com, josef@toxicpanda.com, 
+	dsterba@suse.com, brauner@kernel.org, jack@suse.cz, cem@kernel.org, 
+	djwong@kernel.org, jmorris@namei.org, serge@hallyn.com, fdmanana@suse.com, 
+	johannes.thumshirn@wdc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 06:53:10AM +0100, Przemek Kitszel wrote:
-> On 12/16/24 06:14, Chia-Lin Kao (AceLan) wrote:
-> > When booting with a dock connected, the igc driver can get stuck for ~40
-> > seconds if PCIe link is lost during initialization.
-> > 
-> > This happens because the driver access device after EECD register reads
-> > return all F's, indicating failed reads. Consequently, hw->hw_addr is set
-> > to NULL, which impacts subsequent rd32() reads. This leads to the driver
-> > hanging in igc_get_hw_semaphore_i225(), as the invalid hw->hw_addr
-> > prevents retrieving the expected value.
-> 
-> Than you very much for the patch and the analysis!
-> 
-> > 
-> > To address this, a validation check is added for the EECD register read
-> > result. If all F's are returned, indicating PCIe link loss, the driver
-> > will return -ENXIO immediately. This avoids the 40-second hang and
-> 
-> It is not clear from the patch what part of the driver will return
-> -ENXIO, you have put -ENODEV in the patch, but it's ignored anyway.
-I was thinking of using -ENODEV or -ENXIO, and I forgot to generate
-the patch again after I changed it to -ENXIO in the commit message.
-I'll fix this in v2.
-> 
-> > significantly improves boot time when using a dock with an igc NIC.
-> > 
-> > [    0.911913] igc 0000:70:00.0: enabling device (0000 -> 0002)
-> > [    0.912386] igc 0000:70:00.0: PTM enabled, 4ns granularity
-> > [    1.571098] igc 0000:70:00.0 (unnamed net_device) (uninitialized): PCIe link lost, device now detached
-> > [   43.449095] igc_get_hw_semaphore_i225: igc 0000:70:00.0 (unnamed net_device) (uninitialized): Driver can't access device - SMBI bit is set.
-> > [   43.449186] igc 0000:70:00.0: probe with driver igc failed with error -13
-> > [   46.345701] igc 0000:70:00.0: enabling device (0000 -> 0002)
-> > [   46.345777] igc 0000:70:00.0: PTM enabled, 4ns granularity
-> > 
-> 
-> Would be best if you could also attach the sequence after your fix.
-Sure
+Hi Paul,
 
-> Please add a Fixes: tag.
-I'm not sure which commit should I add Fixes to.
+Thanks for your quick review!
 
-> Please make [PATCH iwl-net] as a subject prefix. Please CC Vitaly.
-igc is an ethernet driver, should I also add iwl-net tag?
+On Mon, Dec 16, 2024 at 4:22=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Dec 16, 2024 at 6:43=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> >
+> > inode->i_security needes to be freed from RCU callback. A rcu_head was
+> > added to i_security to call the RCU callback. However, since struct ino=
+de
+> > already has i_rcu, the extra rcu_head is wasteful. Specifically, when a=
+ny
+> > LSM uses i_security, a rcu_head (two pointers) is allocated for each
+> > inode.
+> >
+> > Add security_inode_free_rcu() to i_callback to free i_security so that
+> > a rcu_head is saved for each inode. Special care are needed for file
+> > systems that provide a destroy_inode() callback, but not a free_inode()
+> > callback. Specifically, the following logic are added to handle such
+> > cases:
+> >
+> >  - XFS recycles inode after destroy_inode. The inodes are freed from
+> >    recycle logic. Let xfs_inode_free_callback() and xfs_inode_alloc()
+> >    call security_inode_free_rcu() before freeing the inode.
+> >  - Let pipe free inode from a RCU callback.
+> >  - Let btrfs-test free inode from a RCU callback.
+>
+> If I recall correctly, historically the vfs devs have pushed back on
+> filesystem specific changes such as this, requiring LSM hooks to
+> operate at the VFS layer unless there was absolutely no other choice.
+>
+> From a LSM perspective I'm also a little concerned that this approach
+> is too reliant on individual filesystems doing the right thing with
+> respect to LSM hooks which I worry will result in some ugly bugs in
+> the future.
 
-> (But please also wait a day prior to sending v2 for more feedback).
-> 
-> > Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-> > ---
-> >   drivers/net/ethernet/intel/igc/igc_base.c | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/intel/igc/igc_base.c b/drivers/net/ethernet/intel/igc/igc_base.c
-> > index 9fae8bdec2a7..54ce60280765 100644
-> > --- a/drivers/net/ethernet/intel/igc/igc_base.c
-> > +++ b/drivers/net/ethernet/intel/igc/igc_base.c
-> > @@ -68,6 +68,10 @@ static s32 igc_init_nvm_params_base(struct igc_hw *hw)
-> 
-> This function is used only in igc_get_invariants_base(), which ignores
-> the return value you have added. I would expect it to propagate instead.
-You are right, looks like the patch fixes the issue accidentally.
-Return earlier in igc_get_invariants_base() skipping the rest of the
-settings. The part impacts the behavior is nvm->word_size will be 0.
-And then in igc_get_hw_semaphore_i225() the timeout value will become
-1. So that we won't hang for 40 seconds to wait for the timeout.
+Totally agree with the concerns. However, given the savings is quite
+significant (saving two pointers per inode), I think the it may justify
+the extra effort to maintain the logic. Note that, some LSMs are
+enabled in most systems and cannot be easily disabled, so I am
+assuming most systems will see the savings.
 
-This patch is not perfect, I need to figure out another way to address
-the issue better.
-Please let me know if you got any ideas.
-Thanks.
-> 
-> >   	u32 eecd = rd32(IGC_EECD);
-> >   	u16 size;
-> > +	/* failed to read reg and got all F's */
-> > +	if (!(~eecd))
-> > +		return -ENODEV;
-> > +
-> >   	size = FIELD_GET(IGC_EECD_SIZE_EX_MASK, eecd);
-> >   	/* Added to a constant, "size" becomes the left-shift value
-> 
+Thanks,
+Song
 
