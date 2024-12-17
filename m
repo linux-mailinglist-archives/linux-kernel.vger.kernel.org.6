@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-450007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDAA9F5935
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E409F5952
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228E3162B71
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0DC189484C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5591F9F5D;
-	Tue, 17 Dec 2024 21:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385861F9EC0;
+	Tue, 17 Dec 2024 21:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfWA7FlK"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jg3YNd/8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940A71F7580;
-	Tue, 17 Dec 2024 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F121D5CCC
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472653; cv=none; b=J1MnsjKsf8uwk18zH/82A0kXRwIQrW5hTymAZjXs9sy/2ny8/oCuVD5KbU2Yee9ZKnE2UIeVj576GIuANgeYS9UbZnF6AmrhJjlrIAiOqbe+YZ5N/xK8ok8BAhBLzkwb3mcrzYT4tX6dg9vvFmCBwUKX6WpB4SeVvMuF/o+58LU=
+	t=1734472665; cv=none; b=EYZxDtl1z/0Z6SBigaCycVt/0h9JSh5cWj60ja+HpShmQa3BCksf53R1ojeB0UzbY5B/Rt92PBSsKB1KxYB0i3yNuSbAaUWaWwiB3g4T2MBsx4NGgyQTEGGLEUbIgAy3FbfOh+e3O3AoTdb3McBYjQCfnmhiC5rIl6xMCubsfc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472653; c=relaxed/simple;
-	bh=o2DAxFOLmhH5iI7idz3VqyE+vH3dWm4Ozl4EbPVAHMI=;
+	s=arc-20240116; t=1734472665; c=relaxed/simple;
+	bh=o3XMMgs1n/FWTh4DzzVz/nj9pHNHbY7z/+E/J2CGnP0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaTt3dzX6Y/ZGN2dM5wGDSM3P3EKQwqgBA2wmwfXy+jCocnZzPgUyZicVTR2fKmqofaYZxABQTZjWqIFPqlCl0UzdeQJ+Cq2oercLt5eManTcoHtF3AOyOPBED5xGYbD0blavEj4OgZ9smqFWfgon58Ero6DBhMdyvOXlZ4gpSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfWA7FlK; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2166f1e589cso60566035ad.3;
-        Tue, 17 Dec 2024 13:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734472651; x=1735077451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCAzFFc1CN+L8eKn2uMMGe75BaYA79nLCiwPBO4Wq5Q=;
-        b=VfWA7FlKwC3RJgLUKrbVkrXiVuE6HwLjB33NrSP4pAlzVBuOPOyswT4CzUQN/1U4TD
-         203RTo+b3C6KdYy9mWx9Fm7q999lVi/cTSKuBCtFNMUXlNsD47zeBPA0rwaOL9dMJk89
-         zhn76Q+ywt044uYIKw2KFXyH2VVlEerd/ejBgZpUC3lgc9Nr+LZAN66k1q7ntEDS5/CQ
-         XvI+z2F/3mHbSkiXEe6RhD8vOl/KHDkItv0fvJKaSXtbyo9sGKmcJCMnMifbOgMRyWx6
-         DpVeX/hL5uMhT9cvUCY5b53HHNEbL1SAvws9pTeUL/dWCFWBNbW3yrbvLNeowWUi740N
-         mqVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734472651; x=1735077451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCAzFFc1CN+L8eKn2uMMGe75BaYA79nLCiwPBO4Wq5Q=;
-        b=TXCfRn9lUTGlIx5v15lG3zuX8v/W9yXJ/PRyiAyqlZu3uLR2F69jXg0WzX7ZWkExQD
-         p/n+S5FlGgkiXCTsQIqPb/lPByOAofHvt3qeWu3UFTsTWBC2AAPawx6IPz1M1SmLj7YW
-         S2MslKTqJX1gzf9lUHzoPZ5xGxLDnwFvTZPfZlgpLfNJ1t45gn4Et8JLTb8Fv0GAfQLi
-         vs71ArL98jrjkgcebYpZZ+Al3XirQ2wy0UvDmkmdcZIGH1Ze91r9Q/8ZYDD8mvGbPgPF
-         4X9KBafUuIsh5RWzRMesVoTWj7tZq7icIa9ikaB6+iO+hwGS2NGjmxmLiroRDrt3GPDu
-         lD6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrGOFHswuBiofuZgWILTMTv17oA7xLgRi3Rjo4CtyykYDHaqqDfRqlAT89ivxu/OJsPObIi1m3Xr9yjg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+33QnMsqEQXisMi4280jSXtnTGa4MqpeZEebgrHTItAV+Qrt8
-	XdPL5A3jhKLwE16lYASTioc/6PfiWITHNTVANbYB24sBkNi/UnDe7Bsxmw==
-X-Gm-Gg: ASbGncsBNa8fxmv4VTg+M04c2iISebQgtOgyQU/3IB1ymfwPH9RLgTP8aLM4uKPIKyd
-	Ou6SSPuFIrhmcNnCRSVIVkJXwcEw4Oy4Uezm4ZJ7d8kERU/Qj50rf0r0tWOrooZKiQ8TEO5C9lr
-	sR1i6bZu4eUoJXcVlxZc3+SWdgCJk8SvwuJr1SXuOQ0/8TRpGPHnMCPkwNfSS689F39gaXGun9r
-	lnbafy+uHTwDoeSErwH6GL+BCHg1TJSgZoDgj9ek5ubvpKZUQwighaJuw==
-X-Google-Smtp-Source: AGHT+IEo4rQ8D/MFm1ugZzIutXNwJ8Fv8l1kOVMo59vJ8eesOM+YDl16xIkFCohBGyJ4n/UXlhCl6w==
-X-Received: by 2002:a17:902:9f97:b0:216:5002:7341 with SMTP id d9443c01a7336-218d72622c8mr4872765ad.44.1734472650689;
-        Tue, 17 Dec 2024 13:57:30 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:55e2:6799:5b4f:83ea])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1db7c82sm64409785ad.13.2024.12.17.13.57.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 13:57:30 -0800 (PST)
-Date: Tue, 17 Dec 2024 13:57:27 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH] [RFC] Input: remove evbug driver
-Message-ID: <Z2HzxziYyF9-vxns@google.com>
-References: <8n377s5p-3r9n-ro38-3r2o-p536745552qo@xreary.bet>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YyCKJOje4Mm8jhuIxa9vkZOLMnQYjCoh9SIepqORBphEFhHZnjNBhoS59DoIHXydaKPDlU+Nr4FUILBWpUXLvn2zdrdZWq/kIgQheLy/oSr0707Pt+gjJa/2JPiTe6LioGZ/AaGsTgAScvNyO9hqtbjzb38X9Zyd6RtBv8UD94w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jg3YNd/8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF4FC4CED3;
+	Tue, 17 Dec 2024 21:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734472665;
+	bh=o3XMMgs1n/FWTh4DzzVz/nj9pHNHbY7z/+E/J2CGnP0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jg3YNd/8eWIw14c6hfg4AcrLnrH0GatQL6zqU7+1D6s+xP0T9s4HdXfh7ZBpLxBID
+	 BugqKqXzmOmaOZmLIU9qu3nzp4qGEVINjDYGD7Xyp2nGk0O5EYtv2aQIbGQys8gn1X
+	 8Iw261bLgf/uvyci3jen/luHFQJb0kCEmbIwKh06iaMyyGkeOgMSkoBb5ZPhGGxwO7
+	 /a0qLnO18X1PU4MlX7NStfsNUqeZwIE+iDPsltN/w7mRWLzwr3bEHkpcsEW5ujDs/7
+	 bWU1odZ/XrcmQTjlm4Q+u3Gnchqa5+ChB10vpEsKgWvSQc2QvhrE5n+WnX+Crxx20U
+	 lDsokPhQg3mIQ==
+Date: Tue, 17 Dec 2024 11:57:44 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] sched/topology: introduce for_each_numa_hop_node() /
+ sched_numa_hop_node()
+Message-ID: <Z2Hz2NW-J06BuuHj@slm.duckdns.org>
+References: <20241217094156.577262-1-arighi@nvidia.com>
+ <20241217094156.577262-2-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,38 +66,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8n377s5p-3r9n-ro38-3r2o-p536745552qo@xreary.bet>
+In-Reply-To: <20241217094156.577262-2-arighi@nvidia.com>
 
-On Tue, Dec 17, 2024 at 11:47:39AM +0100, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.com>
-> 
-> I've never heard of anyone having used this driver for debugging at least 
-> in over past decade or so. Since we have tools like evtest, this driver 
-> seems to be rather superficial.
-> 
-> Also, it apparently causes confusion among people who accidentaly enable 
-> CONFIG_INPUT_EVBUG and are annoyed/confused by their kernel log being 
-> spammed by a lot of useless data.
-> 
-> Let's just remove it.
+Hello,
 
-Agree. Applied, thank you.
+On Tue, Dec 17, 2024 at 10:32:26AM +0100, Andrea Righi wrote:
+...
+> +int sched_numa_hop_node(nodemask_t *hop_nodes, int start, unsigned int state)
+> +{
+> +	int dist, n, min_node, min_dist;
+> +
+> +	if (state >= NR_NODE_STATES)
+> +		return NUMA_NO_NODE;
+> +
+> +	min_node = NUMA_NO_NODE;
+> +	min_dist = INT_MAX;
+> +
+> +	for_each_node_state(n, state) {
+> +		if (n == start || node_isset(n, *hop_nodes))
+> +			continue;
+> +		dist = node_distance(start, n);
+> +		if (dist < min_dist) {
+> +			min_dist = dist;
+> +			min_node = n;
+> +		}
+> +	}
+> +	if (min_node != NUMA_NO_NODE)
+> +		node_set(min_node, *hop_nodes);
+> +
+> +	return min_node;
+> +}
 
-Interestingly:
-
-dtor@dtor-ws:~/kernel/next $ git grep -i evbug
-arch/arm/configs/davinci_all_defconfig:CONFIG_INPUT_EVBUG=m
-arch/arm/configs/imx_v6_v7_defconfig:CONFIG_INPUT_EVBUG=m
-arch/arm/configs/moxart_defconfig:CONFIG_INPUT_EVBUG=y
-arch/arm/configs/omap1_defconfig:CONFIG_INPUT_EVBUG=y
-arch/mips/configs/pic32mzda_defconfig:CONFIG_INPUT_EVBUG=m
-arch/sh/configs/sh7785lcr_32bit_defconfig:CONFIG_INPUT_EVBUG=m
-arch/sparc/configs/sparc32_defconfig:CONFIG_INPUT_EVBUG=m
-
-I am curious why moxart and omap1 have it as 'y'. 
+So, this would work but given that there is nothing dynamic about this
+ordering, would it make more sense to build the ordering and store it
+per-node? Then, the iteration just becomes walking that array.
 
 Thanks.
 
 -- 
-Dmitry
+tejun
 
