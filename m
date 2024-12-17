@@ -1,219 +1,208 @@
-Return-Path: <linux-kernel+bounces-448457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA2F9F4056
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:06:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29639F405C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A47188D4BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBA8916D380
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAAB12FF69;
-	Tue, 17 Dec 2024 02:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B7613B2BB;
+	Tue, 17 Dec 2024 02:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hZz8EKB/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFvvBJy/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B082595;
-	Tue, 17 Dec 2024 02:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DEB81728
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734401200; cv=none; b=WQyVIvcSKmoLhsPzI27gVw3WEOHVq37qWQ56VztIOurXnPByx9DznpJ2SD0/zKXhSQT5DLt0dR2WLfIZ7+A5k8PPykQwsItZL4m9CEdJ7w+sxFTyrdr1VmoEpbKZYHQjEVZ7Fe0a6yJ5B5Bw+HG9GJbVflg/Hg9Cot0EIJw7q4w=
+	t=1734401319; cv=none; b=E1v6Z1sT34+lj7FpEpPIwTsvoAZ4l6IYStOSG1UZUE4TGCMdvIFDoS5B6bwqfhT6R1OuU0h1tz6KaMcSmiwuZ3RrmuRHdq36oFE6Sq40KXT8D+0dl7lih1MAzyDcU8lb84pgJc4u0UOyXhT+GGMlP8GqYu1N3OmiQ5ymQJ5RpyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734401200; c=relaxed/simple;
-	bh=Pd7fQ8E88V9TfruKnhmpb6hRA1YJXpFz/xj3UeXAhmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u+55wC6Wql9iOFtephkxp5BK7pshnL7wzqa0u/0bkvgURRnOUaDHFDquFHZOQ6YooAAMSA7R5p8+h9+0Vd9czR2Jt/OLi/lUIRSXW8NOw4PycVaJVo+PYaF2lmE3k/uIvxAPHmuwRsw3Tf3jVf9tUyDDbGuF+LqV3hiDjTXMSck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hZz8EKB/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGMPkbk012227;
-	Tue, 17 Dec 2024 02:06:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ag2sg6/buls7Kg6qyOP9mJOVZzVRlJNPzB9bs1aS+rU=; b=hZz8EKB/XclcAkmJ
-	nB3SscyPSRTxBCZ3Sl7WR8vxCKHYgtc8K9QKACQemHESZJnZsoh7SLOmH8+awoo2
-	NTH6SUkZAUP25eLG6EGzXasUGp8Z/rsRd/Fw4mUqCLhu3WU8aL8YNvLS1FZOAMwa
-	UcC6pZeRIMGuxZQfIGSn2o4+HD0Dax9iMuEf2e+FqLVuTbG4DEpAxcJ5F9DFUYw2
-	24gazPchY1sNm8jihilaDV1+J37kk9PcvR8bcGsByR9V3BEGccxnNEFSgol4xebi
-	CFyvZmMiv6cIdkwF4CmYsR8Lugo8mQjswvaohaPPP+OiNgKekdrOxlCXoQkn0+JX
-	wvfC3g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jw068d96-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 02:06:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH26LNo004726
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 02:06:21 GMT
-Received: from [10.110.119.169] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
- 2024 18:06:20 -0800
-Message-ID: <44fbe707-c4e4-48fe-9a15-16e3c78db5d6@quicinc.com>
-Date: Mon, 16 Dec 2024 18:06:20 -0800
+	s=arc-20240116; t=1734401319; c=relaxed/simple;
+	bh=uPuIiUbsfbaVY8C1ARkHWtTdlRSDUTpdWk9CZsPNLcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dsQSSyRtvphwfzTsatjwtd1scVc6ZVlun9tFLlDKUeHfnuL1SgzJ6ZtemGPKEfL793jNc7rcYZKuwIxanrfosDM9KyayK0SA5n62w2Jg/aIfn9l/oFWd/EtqNO10dr3iMo3AZkBsLzkTRKgfsWA7/LMJhKW0ZMI6286SW7sx+M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFvvBJy/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734401316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BC3XHS0g1+Pm5jNP82Vf/B/xxujhL2pP6iO6VJ0dVao=;
+	b=dFvvBJy/BWEEq7e8hqQ2K5JdYKs7Z6raK5gIzw6698PR1eP/YDUspdih/TreseTEt62Lof
+	wNBG5ixGCmvE6yxV3frE36Xp7WZQapGXz9nJaOLNQvYvHV4EWLDbr03y6AXqN0Rdniogq6
+	AAuxombK/GtK7QtcfJqBU+RlBbzz+eg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-drDZUq6pPPWodBcXWAyYow-1; Mon, 16 Dec 2024 21:08:34 -0500
+X-MC-Unique: drDZUq6pPPWodBcXWAyYow-1
+X-Mimecast-MFC-AGG-ID: drDZUq6pPPWodBcXWAyYow
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2f2a9743093so2341313a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:08:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734401314; x=1735006114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BC3XHS0g1+Pm5jNP82Vf/B/xxujhL2pP6iO6VJ0dVao=;
+        b=IQMlVH/70IilPHEAMXYg3nzviuOSh9v8EIwEge4xnD9v+aeTsLkR6M/9gTWTKo5rHu
+         KZobI2dPtBxQ85vD335J0kzKrrTsHMZaAGu7keYXIEkRCqa8NKKYVbcg4QDB0Pg2C9PZ
+         grKwdcp5KNxk6LydxgvvUNLWasnUyhqznUldoi6P3kykvDAKXzHqNnKWu3teDnoBQ1G0
+         IGqPzmrg9i8TzWfaqEDMMpydJo9RswRvkqUQHMcs8Dxf7T++/JIwaq8lOn/xvNhFUt4y
+         ZpZMhO1bJM4ob4jArT+x5uhxzccRORexnPGoxtLgzBBQOzcJfD/3v5sSaXkJav02kuS8
+         HZVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYnl5IGl0NE2i7nkHChJV8Ib+3SQHyPu0JhclZdjBVg4VncmMZ/0ydTzUZLtlE3XmMCUYOSGbQcqXzDYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXBKTzRiF0kdmzdLXk0RNVeMjG4Npnc7sXAt5CZGxdeHBVLKeB
+	ayOITKcAXBER+t5uq7jq1ZyMWj9gCv9p/V9LI2qW00q7aFnbxLghhyih50ivNDMHPXzd41xhpJi
+	xa6jnWG2jspItmmV5eJOxMsWZ8VdnIfxKXhJdUUvkPQj0x9cPDAwv3PJAl1fK+ZjTk+vfun5MQn
+	TYOx1eu2hLdf0zPhnKxsaeW9RFHBjGGfTq7STT
+X-Gm-Gg: ASbGncuRo6X2RzApoEApkCLhcF00kSHphQbGaeUeCH4q0mo28o2/kArjZD0dlf7QmzQ
+	TdA1u/Y29+Yb5JNc9b2eKB5T2uj4pWzlg9eO8Sts=
+X-Received: by 2002:a17:90b:184f:b0:2ee:964e:67ce with SMTP id 98e67ed59e1d1-2f28fa54f41mr20682460a91.3.1734401313826;
+        Mon, 16 Dec 2024 18:08:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfMpqPFGAQFMOheaP9Yc1CtnnOl4j6a294K7HSySSXs4dpUWZNqPIp6FbuAeM2HZd4FWrBbt/h0vjti8cfQ+U=
+X-Received: by 2002:a17:90b:184f:b0:2ee:964e:67ce with SMTP id
+ 98e67ed59e1d1-2f28fa54f41mr20682422a91.3.1734401313332; Mon, 16 Dec 2024
+ 18:08:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/25] drm/tests: Add test for drm_crtc_in_clone_mode()
-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Simona Vetter <simona@ffwll.ch>,
-        Simona Vetter <simona.vetter@ffwll.ch>
-CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-References: <20241216-concurrent-wb-v4-0-fe220297a7f0@quicinc.com>
- <20241216-concurrent-wb-v4-2-fe220297a7f0@quicinc.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241216-concurrent-wb-v4-2-fe220297a7f0@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xn18HXRWSpSPts8tt2OH4Z0U2XtowoTm
-X-Proofpoint-GUID: xn18HXRWSpSPts8tt2OH4Z0U2XtowoTm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170016
+References: <20241203121424.19887-1-mengferry@linux.alibaba.com>
+ <2d4ad724-f9da-4502-9079-432935f5719d@linux.alibaba.com> <CACGkMEuAgAcCDrCMhNHr7gcRB6NtMPPLdSFAOGdt4dXGoQr4Yg@mail.gmail.com>
+ <60fd6f1a-ddf5-4b53-8353-18dcd8f6f93c@linux.alibaba.com>
+In-Reply-To: <60fd6f1a-ddf5-4b53-8353-18dcd8f6f93c@linux.alibaba.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 17 Dec 2024 10:08:21 +0800
+Message-ID: <CACGkMEu4=nt0R1pmTauuK_vcc_fbObmyWqe0TO0HhuexmZWHJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3][RFC] virtio-blk: add io_uring passthrough support for virtio-blk
+To: Ferry Meng <mengferry@linux.alibaba.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-block@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Dec 16, 2024 at 8:07=E2=80=AFPM Ferry Meng <mengferry@linux.alibaba=
+.com> wrote:
+>
+>
+> On 12/16/24 3:38 PM, Jason Wang wrote:
+> > On Mon, Dec 16, 2024 at 10:01=E2=80=AFAM Ferry Meng <mengferry@linux.al=
+ibaba.com> wrote:
+> >>
+> >> On 12/3/24 8:14 PM, Ferry Meng wrote:
+> >>> We seek to develop a more flexible way to use virtio-blk and bypass t=
+he block
+> >>> layer logic in order to accomplish certain performance optimizations.=
+ As a
+> >>> result, we referred to the implementation of io_uring passthrough in =
+NVMe
+> >>> and implemented it in the virtio-blk driver. This patch series adds i=
+o_uring
+> >>> passthrough support for virtio-blk devices, resulting in lower submit=
+ latency
+> >>> and increased flexibility when utilizing virtio-blk.
+> >>>
+> >>> To test this patch series, I changed fio's code:
+> >>> 1. Added virtio-blk support to engines/io_uring.c.
+> >>> 2. Added virtio-blk support to the t/io_uring.c testing tool.
+> >>> Link: https://github.com/jdmfr/fio
+> >>>
+> >>> Using t/io_uring-vblk, the performance of virtio-blk based on uring-c=
+md
+> >>> scales better than block device access. (such as below, Virtio-Blk wi=
+th QEMU,
+> >>> 1-depth fio)
+> >>> (passthru) read: IOPS=3D17.2k, BW=3D67.4MiB/s (70.6MB/s)
+> >>> slat (nsec): min=3D2907, max=3D43592, avg=3D3981.87, stdev=3D595.10
+> >>> clat (usec): min=3D38, max=3D285,avg=3D53.47, stdev=3D 8.28
+> >>> lat (usec): min=3D44, max=3D288, avg=3D57.45, stdev=3D 8.28
+> >>> (block) read: IOPS=3D15.3k, BW=3D59.8MiB/s (62.7MB/s)
+> >>> slat (nsec): min=3D3408, max=3D35366, avg=3D5102.17, stdev=3D790.79
+> >>> clat (usec): min=3D35, max=3D343, avg=3D59.63, stdev=3D10.26
+> >>> lat (usec): min=3D43, max=3D349, avg=3D64.73, stdev=3D10.21
+> >>>
+> >>> Testing the virtio-blk device with fio using 'engines=3Dio_uring_cmd'
+> >>> and 'engines=3Dio_uring' also demonstrates improvements in submit lat=
+ency.
+> >>> (passthru) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B=
+0 -O0 -n1 -u1 /dev/vdcc0
+> >>> IOPS=3D189.80K, BW=3D741MiB/s, IOS/call=3D4/3
+> >>> IOPS=3D187.68K, BW=3D733MiB/s, IOS/call=3D4/3
+> >>> (block) taskset -c 0 t/io_uring-vblk -b4096 -d8 -c4 -s4 -p0 -F1 -B0 -=
+O0 -n1 -u0 /dev/vdc
+> >>> IOPS=3D101.51K, BW=3D396MiB/s, IOS/call=3D4/3
+> >>> IOPS=3D100.01K, BW=3D390MiB/s, IOS/call=3D4/4
+> >>>
+> >>> The performance overhead of submitting IO can be decreased by 25% ove=
+rall
+> >>> with this patch series. The implementation primarily references 'nvme=
+ io_uring
+> >>> passthrough', supporting io_uring_cmd through a separate character in=
+terface
+> >>> (temporarily named /dev/vdXc0). Since this is an early version, many
+> >>> details need to be taken into account and redesigned, like:
+> >>> =E2=97=8F Currently, it only considers READ/WRITE scenarios, some mor=
+e complex operations
+> >>> not included like discard or zone ops.(Normal sqe64 is sufficient, in=
+ my opinion;
+> >>> following upgrades, sqe128 and cqe32 might not be needed).
+> >>> =E2=97=8F ......
+> >>>
+> >>> I would appreciate any useful recommendations.
+> >>>
+> >>> Ferry Meng (3):
+> >>>     virtio-blk: add virtio-blk chardev support.
+> >>>     virtio-blk: add uring_cmd support for I/O passthru on chardev.
+> >>>     virtio-blk: add uring_cmd iopoll support.
+> >>>
+> >>>    drivers/block/virtio_blk.c      | 325 ++++++++++++++++++++++++++++=
++++-
+> >>>    include/uapi/linux/virtio_blk.h |  16 ++
+> >>>    2 files changed, 336 insertions(+), 5 deletions(-)
+> >> Hi, Micheal & Jason :
+> >>
+> >> What about yours' opinion? As virtio-blk maintainer. Looking forward t=
+o
+> >> your reply.
+> >>
+> >> Thanks
+> > If I understand this correctly, this proposal wants to make io_uring a
+> > transport of the virito-blk command. So the application doesn't need
+> > to worry about compatibility etc. This seems to be fine.
+> >
+> > But I wonder what's the security consideration, for example do we
+> > allow all virtio-blk commands to be passthroughs and why.
+>
+> About 'security consideration', the generic char-dev belongs to root, so
+> only root can use this passthrough path.
 
+This seems like a restriction. A lot of applications want to be run
+without privilege to be safe.
 
-On 12/16/2024 4:43 PM, Jessica Zhang wrote:
-> Add kunit test to validate drm_crtc_in_clone_mode() helper
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->   drivers/gpu/drm/tests/drm_atomic_state_test.c | 62 ++++++++++++++++++++++++++-
->   1 file changed, 61 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-> index be1f780249450ead7fbfd19ea98c96b442a94478..79bc5a9aedbf77aaf4b369a5fe62b6344e6859cf 100644
-> --- a/drivers/gpu/drm/tests/drm_atomic_state_test.c
-> +++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-> @@ -17,6 +17,12 @@
->   
->   #define DRM_TEST_CONN_0 BIT(0)
->   
-> +struct drm_clone_mode_test {
-> +	const char *name;
-> +	u32 encoder_mask;
-> +	int expected_result;
-> +};
-> +
->   static const struct drm_display_mode drm_atomic_test_mode = {
->   	DRM_MODE("1024x768", 0, 65000, 1024, 1048,
->   		 1184, 1344, 0, 768, 771, 777, 806, 0,
-> @@ -227,17 +233,71 @@ static void drm_test_check_connector_changed_modeset(struct kunit *test)
->   	KUNIT_ASSERT_EQ(test, modeset_counter, initial_modeset_count + 1);
->   }
->   
-> +/*
-> + * Test that the drm_crtc_in_clone_mode() helper can detect if a given CRTC
-> + * state is in clone mode
-> + */
-> +static void drm_test_check_in_clone_mode(struct kunit *test)
-> +{
-> +	bool ret;
-> +	const struct drm_clone_mode_test *param = test->param_value;
-> +	struct drm_crtc_state *crtc_state;
-> +
-> +	crtc_state = kunit_kzalloc(test, sizeof(*crtc_state), GFP_KERNEL);
-> +	KUNIT_ASSERT_NOT_NULL(test, crtc_state);
-> +
-> +	crtc_state->encoder_mask = param->encoder_mask;
-> +
-> +	ret = drm_crtc_in_clone_mode(crtc_state);
-> +
-> +	KUNIT_ASSERT_EQ(test, ret, param->expected_result);
-> +}
-> +
-> +static void drm_check_in_clone_mode_desc(const struct drm_clone_mode_test *t,
-> +				      char *desc)
-> +{
-> +	sprintf(desc, "%s", t->name);
-> +}
-> +
-> +static const struct drm_clone_mode_test drm_clone_mode_tests[] = {
-> +	{
-> +		.name = "in_clone_mode",
-> +		.encoder_mask = DRM_TEST_ENC_0 | DRM_TEST_ENC_1,
-> +		.expected_result = true,
-> +	},
-> +	{
-> +		.name = "not_in_clone_mode",
-> +		.encoder_mask = DRM_TEST_ENC_0,
-> +		.expected_result = false,
-> +	},
-> +};
+>
+> On the other hand, to what I know, virtio-blk commands are all related
+> to 'I/O operations', so we can support all those opcodes with bypassing
+> vfs&block layer (if we want). I just realized the most  basic read/write
+> in this RFC patch series, others will be considered later.
+>
+> > Thanks
+> >
+>
 
-I think now, this series also depends on 
-https://patchwork.kernel.org/project/dri-devel/list/?series=916960 for 
-these ENC defines. Please indicate it in the cover letter and if we get 
-an ack to merge it through msm tree, we can absorb in in this series itself.
+Thanks
 
-LGTM otherwise,
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-
-> +
-> +KUNIT_ARRAY_PARAM(drm_check_in_clone_mode, drm_clone_mode_tests,
-> +		  drm_check_in_clone_mode_desc);
-> +
->   static struct kunit_case drm_test_check_modeset_test[] = {
->   	KUNIT_CASE(drm_test_check_connector_changed_modeset),
->   	{}
->   };
->   
-> +static struct kunit_case drm_in_clone_mode_check_test[] = {
-> +	KUNIT_CASE_PARAM(drm_test_check_in_clone_mode,
-> +			 drm_check_in_clone_mode_gen_params),
-> +	{}
-> +};
-> +
->   static struct kunit_suite drm_test_check_modeset_test_suite = {
->   	.name = "drm_validate_modeset",
->   	.test_cases = drm_test_check_modeset_test,
->   };
->   
-> -kunit_test_suite(drm_test_check_modeset_test_suite);
-> +static struct kunit_suite drm_in_clone_mode_check_test_suite = {
-> +	.name = "drm_validate_clone_mode",
-> +	.test_cases = drm_in_clone_mode_check_test,
-> +};
-> +
-> +kunit_test_suites(&drm_in_clone_mode_check_test_suite,
-> +		  &drm_test_check_modeset_test_suite);
->   
->   MODULE_AUTHOR("Jessica Zhang <quic_jesszhan@quicinc.com");
->   MODULE_DESCRIPTION("Test cases for the drm_atomic_helper functions");
-> 
 
