@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-449425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D447F9F4EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:09:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E359F4ECA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212BE1890793
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:05:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55989162A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8761F7558;
-	Tue, 17 Dec 2024 15:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704ED1F706F;
+	Tue, 17 Dec 2024 15:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCtC4/GQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hwNdFvWz"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0471F7088;
-	Tue, 17 Dec 2024 15:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF771F666A;
+	Tue, 17 Dec 2024 15:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447909; cv=none; b=qPVIRbD5FI87Owwy6Lqi6sga9n8kXgUbbW4Tht7ODQtLtH/XLMQwRsGzn/zAbUQFC7rjVK8TgNNNA+g1rz5p21PQm7QHjQ8us7MnfT6nOXB3m6jhfsMgf4agTQ7va7W0jHT7IHDrEg9uA5o1eVW2HMrulDeTUT63KWqg0RM6Ujs=
+	t=1734447958; cv=none; b=lrOI4pLFlUNHwDsZtrZR7NpI99Eh3/RKzCPP67YEBRa1XXh/tPfvOgmVBkiqUophKuwXfjlHZW7+DGelB138jSrLup8geVWUUqYhlRVF9GmGtk7S6XiwOuh8R540mMMuDtXXSF6jUS0qeNfEMsQ5iPRySIe+GQaH3h14FGaJkgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447909; c=relaxed/simple;
-	bh=JYsEFL2qSVAyBytqn2Joh27h4OPGNGBHE0AiV/H3nv8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nCoMCHlDhZOkG5IJzTMLDEbLFS12+p1hcJEePdQJAmHJ9Z6F3BNLMorPNCLHh0ZSXgE+P6knf7CktA/7awKm+fuG3GxoF5TdbowPZBilGskHSE5y0y/yU4HJdNZbBqhVLKZV3ag0MGKkwtH8aAdO64M76w0k5wNC4JXJqaa0b0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCtC4/GQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0E3C4CEDD;
-	Tue, 17 Dec 2024 15:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734447908;
-	bh=JYsEFL2qSVAyBytqn2Joh27h4OPGNGBHE0AiV/H3nv8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mCtC4/GQO4UTdSOu2ik0K/RDRuMN3rlTRUS7UUxqrfOCIMMV87WPNBhEZviuLCU1O
-	 ZKQi6YNO2XX98Rs3EkhqBzP9GYj88Mhy0U4JOudq7gi7NT++s/t5JEfcEXTBtdkAO0
-	 WfUx/FFspKLwHu4DdtPN6zfO2I9Zvhx7rZSYTvx17eFJYsOe+5o3pQh0+f0JdgO36E
-	 Z0wQQnadJbFoej0T52hSLOj0Pll1CO+WoLj2NACWjxL6ngJrvv52xO1zJKPlr7BcnN
-	 ULnikPtb8+9wdEERk1My+0o+imhTxozQRi3fZuBE5SXIJNRFzlDgj2XFUqsj4qdgnt
-	 gIzfi9MhpA/SQ==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Jakob Riepler <jakob+lkml@paranoidlabs.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-In-Reply-To: <20241216213754.18374-2-jakob+lkml@paranoidlabs.org>
-References: <20241216213754.18374-2-jakob+lkml@paranoidlabs.org>
-Subject: Re: (subset) [PATCH v4] leds: pwm-multicolor: Disable PWM when
- going to suspend
-Message-Id: <173444790659.1886613.13367326556110236101.b4-ty@kernel.org>
-Date: Tue, 17 Dec 2024 15:05:06 +0000
+	s=arc-20240116; t=1734447958; c=relaxed/simple;
+	bh=5twiOGTkheyu1dUYg0+/TcffosoK5sVXeM9jMTsr1/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IxTPETea/zuPE07OWDhoik091MKfSPZodNoEvJNXsHaak0WkoIdzgcvpMcOQLs00TDnQupj0wFI5HjAW2qYxbJaqdTxD5KbsddD6tdcTSjoG9TQ4ZZf/3+DM4SKA3Up9FmNnUGEde6PrwJ/DOHsVfLZWIQZGPOf2t1TEj/Q2qvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hwNdFvWz; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+RrieuU4peLUjiUep6KjefwzR3YUiQIS4fAQzKlLyuM=; b=hwNdFvWzKmDccpSOGegMsjad7j
+	lDyetUMfA11ONekRasNA91O0W5ECYmNPXoIU8RZmLhAbNmLTojeE3vnhwAcr9ec7VopQ9KiHZb2qi
+	85XnrtmCiycgZa35gNXbvvXbjpTFIYpAF700mvGPGzEsItyK2sOCO98TQMrDfimut0gQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tNZ8s-000yyW-O5; Tue, 17 Dec 2024 16:05:46 +0100
+Date: Tue, 17 Dec 2024 16:05:46 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	richardcochran@gmail.com, vadim.fedorenko@linux.dev
+Subject: Re: [PATCH net-next v7 1/5] net: phy: microchip_rds_ptp: Add header
+ file for Microchip rds ptp library
+Message-ID: <b0e30631-c1a8-40a5-8a37-816c2809dfcb@lunn.ch>
+References: <20241213121403.29687-1-divya.koppera@microchip.com>
+ <20241213121403.29687-2-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213121403.29687-2-divya.koppera@microchip.com>
 
-On Mon, 16 Dec 2024 22:37:55 +0100, Jakob Riepler wrote:
-> This fixes suspend on platforms like stm32mp1xx, where the PWM consumer
-> has to be disabled for the PWM to enter suspend.
-> Another positive side effect is that active-low LEDs now properly
-> turn off instead of going back to full brightness when they are set to 0.
+On Fri, Dec 13, 2024 at 05:43:59PM +0530, Divya Koppera wrote:
+> This rds ptp header file will cover ptp macros for future phys in
+> Microchip where addresses will be same but base offset and mmd address
+> may changes.
 > 
-> 
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-[1/1] leds: pwm-multicolor: Disable PWM when going to suspend
-      commit: 29df7025cff00dd9fa7cacbec979ede97ee775eb
-
---
-Lee Jones [李琼斯]
-
+    Andrew
 
