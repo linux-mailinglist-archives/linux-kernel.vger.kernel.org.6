@@ -1,151 +1,334 @@
-Return-Path: <linux-kernel+bounces-449664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21BD9F53BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBDF9F53CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D7C173371
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:29:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F53171F6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C01F8697;
-	Tue, 17 Dec 2024 17:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469341F8693;
+	Tue, 17 Dec 2024 17:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UqhtGsvL"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNVN7xZ6"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11131F8910
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A4F1F8662;
+	Tue, 17 Dec 2024 17:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456511; cv=none; b=KEWvno4+9XFcMcs26EJXZN5+i6ECnN4GrGDE9ZGRqj23wXI4A1C2MgS9YX+OT5CSI6ojjNSFPe3hWOJVEe8L1HDwuEMW5SqFNpSEDK7ivN7xaAmuO8W0+s8d+eUwAbflJ+K7HN5k6vsSNa5kJxh4cuYa6RobSQC7UiclPiGzwwY=
+	t=1734456543; cv=none; b=C4HkFEPHwjHQD3boGjCQ3UuvJuoFt5gYL1XGity2WzTHduVCNCg9GiTV1hsGayCx5SDGqlos5FQMIO0xUYsgF1g0LPZamwpcQeIb2wGYZYO/R1RDPz2/JiG4zfH60pGUv2B+FNxXFhvmTuTajSz0u/v5NtES15EEAW4RseoGIYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456511; c=relaxed/simple;
-	bh=ifVj41hj0jHwMk0KkHdF7buwVYziTcdW95B2SXgLV5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+G6OL3Le9eBsDMaTMrO/L7E9+lEWF6dX9QoW53P5zeE3xzA9Jj9XXmkx4sYbYtPPGRb7Vopjfj1EPM+OZrXxTkSCQU2EGFCe5I5yzCjMrM7kJW/gBOzVdRu5/e2XjqLnE/ThAcotgT0qnvIAHGh6ausJhcfezkZQ2FWMkomM8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UqhtGsvL; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e9a88793so9302699a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:28:29 -0800 (PST)
+	s=arc-20240116; t=1734456543; c=relaxed/simple;
+	bh=SDZRwfqqgA3iPR9w6cAxcIntPx8BDYD/29C/D0Eiy+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZM4Wv3/goEUwXDauIiho+neQUU/5B7wvYKo7G8VfrLnYEFtpJGdD050VCIt4ruFxyj1n84auCem395azacygS7gJ1uKUoaBN7MmZ71PZVFsC776pIosFt4knaez3ajyiU7dG1z94OTmCk4EX7vOwYrcWxKZLILEpKQ6Bu9FsORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNVN7xZ6; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so743666066b.3;
+        Tue, 17 Dec 2024 09:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734456508; x=1735061308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CAx+NAq8WY91LPbX8Ct1FdJVOOs8fc/ZQiIFCF7xRKY=;
-        b=UqhtGsvLzfeFn2sRgFp+BCSo55AKIxCbN7nPrcU7g9zY+M+iJxKFpP3vI3jR4oTyRf
-         pVDnZr1eUpBUvhv0bqLb5aeslfZOBwbgupmarNopqSYj2W3qgQm+adah5j5ogEwzKLSs
-         Rv7J5YTynsWwoSdm54V409JnvLjai4MiL3jeC05qsbWASIXJPiK76xcXTKUjovLEkyE9
-         K7lTUhLV6AnFfbL4/Lyogzho5QUNqBzA+G032pJ7MCAf+EeL356VkVYdt+mzExZnSwT6
-         PJ6DUxS7n8xiUpq5PQfTlCyLI5/KDDoovpb6DJ/2lNCnnD1mXkhGcUNkfAGiBWpBeD8T
-         zK8A==
+        d=gmail.com; s=20230601; t=1734456540; x=1735061340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MlT5awTGC4sIGCGXK5OnleS50Xtdr2YFtm48iJlzRFw=;
+        b=cNVN7xZ6DS1lPp0u+OsIe2CdfCfKpozXPxZ1q++M1K2QyLO2YR1ts21A2lCUDhK5Vp
+         GExMhu7X8axHsySilEcXevPy3FY6PgAol2JMmgiGa71IviXyjtLdhqPiOLTvwRuu2JDc
+         bDjsIGlFwIBxNt61TQPq3yeKbn/51SA5wmDG8bXO9CCksITZmdgPD/jVZ8C5EhPjyhyD
+         /6rKSIlWTfb9QJU8eymJKupfkzMeKlLZA3h5EfuHQC3n47W4S0VYtjKQCQnuyC2d85Bl
+         dJZR7oI+fLQXtBBxAIdsPy+dJavaq3BcSP39sFBg8qbM3YCBGy+xu6/43dvTlZhQBz4s
+         HIxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734456508; x=1735061308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CAx+NAq8WY91LPbX8Ct1FdJVOOs8fc/ZQiIFCF7xRKY=;
-        b=G6d4nDRgu5qNUm8EjFcK2syxnB5ExsN156ynOV2Zbzb/hZmY7IrxhxCm8vQl/t0HoA
-         cM0Z37FsjPT6PdIVYprUPLDY8EOWtW5WOhhd6TU6Y1U84nmXMfq3AhbR2UHOmfPG0ny7
-         6UuBKm/Hfzgd5eiYtromf3/zRk41ibVm6lAw1B2VVO3bUmD32P3lhUlHLxhguPsS09AT
-         /yq/NtcAjQLnAcbIY18wlKa07Ow+xPRF0mY7eeB5Itt+dilVyM0bVFXqzb5WBPQnEKXR
-         rxcIkouGxNIMTZiKAzdo67NVWWocqQ/mmc7x8kRUcMH1YlffzdirDRlFl/Gun1pcrett
-         Ua/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVvBDz58Vq4sSypQN7NGx704UWRMaKUKdIGvfOyZLUoXUlwxwBjGn1sKufZbMyeCSq5FCJSoXvNQuxMUwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy99BmTGK6jT8hXhdqj4KtXXEZ+h3tZQeSTFRv6ZfsI7MIbny3M
-	Kq7RgiJEbU/TGpJpKY9m3GeBSn3UIbn9Zx37ERaa6ToSC/87gUQQe+1d0+x+leNla/xi+AxdxNh
-	0xqj1XASWD7eKI6L0dQqY+QSk2qSUzXdpBplPl1gpTU/KHnMDCQDGtac=
-X-Gm-Gg: ASbGncth1qRAfaVWx1oXXxEnhYRrYOsIdND9uqrJa5/1eSubCfT8mg5UfN8kCFeW15U
-	9o3PfnC0PqO1itZxwFqY8pBvV7v2H8MM6MKEUbpf4MmNdarsH3ys7HB8idac4GA91zuoFKF5x
-X-Google-Smtp-Source: AGHT+IGkzEIVOrNt8YvlmESZDjkp+W2oK9qFDxe1kRqJA9t2QYfw71jrZAcbcD93ykRxoMr2IC257zK+/VmaHV/Fpxo=
-X-Received: by 2002:a05:6402:11c7:b0:5d3:f325:2c3 with SMTP id
- 4fb4d7f45d1cf-5d63c3c2d6fmr15451635a12.33.1734456507919; Tue, 17 Dec 2024
- 09:28:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734456540; x=1735061340;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MlT5awTGC4sIGCGXK5OnleS50Xtdr2YFtm48iJlzRFw=;
+        b=u8SxSKz7CbVXw7j2OC+gVju72pQY9jfgS9FVQcCdrIe4EGEmeNcZb9ymFmFgj7wxsb
+         Rr2sNHOU8V7pDbEIy0anCvR+98NOPCsIZ0bZQU2TXXhG2eh4b1Hg6AL/eq7dmWU77Fu/
+         4oKej78mjMhiSYpDlQq8VwFT6E1BPv4nsGvyWBO6BNU7r3iekMrZwrOWdt/lcsLB9cGP
+         TciNstLaRCZCahy2W5CLaIGETMjF8+CJoB3Oqmz2mMQ9elUQZQ+RTgOLYrphTxooFKkv
+         lgcY7Jn8b9vwTPCofdM1FqmqUNgpYh6umyuP1hOwKFbLm/amS2MkR6tYd0nY/rfvnxrK
+         VPKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDFumJTJmBfZK/WaPcckxou5x2yWAPtURwnKfKmU2ph2c760gdwMygppdzku3YnWgakx1mSR4QMqtFLsiL@vger.kernel.org, AJvYcCXyDIY1wn7fD1N6HqRcLvheySbdDmmboiH93ahTrorB8FEXE5y9R1rOV77UaO6lKaYar1C2NxGgcWH8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh9krxU5GsyD2UdMEhWC4Mtywd5ectsXw4MEHRzyAjgNrf/i2C
+	4FLAQyff2ouHujPxPMpc6oLIpD1wFM94ZMij4YTR6JJqaL0+RM/P
+X-Gm-Gg: ASbGncsN2DTKjPjVQrvd7lGQ4R+qsSM14hshLTxcoY0YI73O2CgtmkMfPnSsNClY3bI
+	pV3y5XMm4FUrVuqAHpkKBNpsSQgaFDGoeYMjeLfpftbBn5rb0EVDwGlGZ/+stpxTgPSTIezMGFf
+	L7LafDJMeT7VFlEJlecnUQXAakAaruwq6ehejG46N4bCfpDrysOd6oRBn5VGTiYy02jWnMkRUeS
+	ueE5f/fDoE3YIK7DNG2bmKtFQROzS2TButue9O6ALqrnvj7O/SbpCFprF/te8LzkObR
+X-Google-Smtp-Source: AGHT+IHcp4XwIgo7xvt+0VSkrN3JB/JHOT9tNE7pzGU72V3oIVzWhQPJqUgLapq6hxpKnsF49TOc+A==
+X-Received: by 2002:a05:6402:27d4:b0:5d0:d91d:c197 with SMTP id 4fb4d7f45d1cf-5d63c3db906mr42364362a12.27.1734456539501;
+        Tue, 17 Dec 2024 09:28:59 -0800 (PST)
+Received: from [192.168.31.111] ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96359831sm463073966b.95.2024.12.17.09.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 09:28:59 -0800 (PST)
+Message-ID: <9d7b9ee1-9b45-4892-826b-e2802adff990@gmail.com>
+Date: Tue, 17 Dec 2024 19:28:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217140323.782346-1-kory.maincent@bootlin.com>
- <CANn89iJ3sax3eRDPCF+sgk4FQzTn45eFuz+c+tE9sD+gE_f4jA@mail.gmail.com> <20241217181712.049b5524@kmaincent-XPS-13-7390>
-In-Reply-To: <20241217181712.049b5524@kmaincent-XPS-13-7390>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 17 Dec 2024 18:28:16 +0100
-Message-ID: <CANn89iJcQis_1u5PyBn6gPhge1r6SsVicCCywKeVTrjn9o83_g@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ethtool: Fix suspicious rcu_dereference usage
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com, 
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
+ controller
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
+ <3c067b26-cfe8-4939-afce-5c8753767715@wanadoo.fr>
+Content-Language: en-US
+From: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <3c067b26-cfe8-4939-afce-5c8753767715@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 17, 2024 at 6:17=E2=80=AFPM Kory Maincent <kory.maincent@bootli=
-n.com> wrote:
->
-> On Tue, 17 Dec 2024 16:47:07 +0100
-> Eric Dumazet <edumazet@google.com> wrote:
->
-> > On Tue, Dec 17, 2024 at 3:03=E2=80=AFPM Kory Maincent <kory.maincent@bo=
-otlin.com>
-> > wrote:
-> > >
-> > > The __ethtool_get_ts_info function can be called with or without the
-> > > rtnl lock held. When the rtnl lock is not held, using rtnl_dereferenc=
-e()
-> > > triggers a warning due to improper lock context.
-> > >
-> > > Replace rtnl_dereference() with rcu_dereference_rtnl() to safely
-> > > dereference the RCU pointer in both scenarios, ensuring proper handli=
-ng
-> > > regardless of the rtnl lock state.
-> > >
-> > > Reported-by: syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com
-> > > Closes:
-> > > https://lore.kernel.org/netdev/676147f8.050a0220.37aaf.0154.GAE@googl=
-e.com/
-> > > Fixes: b9e3f7dc9ed9 ("net: ethtool: tsinfo: Enhance tsinfo to support
-> > > several hwtstamp by net topology") Signed-off-by: Kory Maincent
-> > > <kory.maincent@bootlin.com> --- net/ethtool/common.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-> > > index 02f941f667dd..ec6f2e2caaf9 100644
-> > > --- a/net/ethtool/common.c
-> > > +++ b/net/ethtool/common.c
-> > > @@ -870,7 +870,7 @@ int __ethtool_get_ts_info(struct net_device *dev,
-> > >  {
-> > >         struct hwtstamp_provider *hwprov;
-> > >
-> > > -       hwprov =3D rtnl_dereference(dev->hwprov);
-> > > +       hwprov =3D rcu_dereference_rtnl(dev->hwprov);
-> > >         /* No provider specified, use default behavior */
-> > >         if (!hwprov) {
-> > >                 const struct ethtool_ops *ops =3D dev->ethtool_ops;
-> >
-> > I have to ask : Can you tell how this patch has been tested ?
->
-> Oh, it was not at all sufficiently tested. Sorry!
-> I thought I had spotted the issue but I hadn't.
->
-> > rcu is not held according to syzbot report.
-> >
-> > If rtnl and rcu are not held, lockdep will still complain.
->
-> You are totally right.
-> I may be able to see it with the timestamping kselftest. I will try.
+Hi Christophe,
 
-syzbot has a repro that you can compile and run.
+On 12/14/24 5:52 PM, Christophe JAILLET wrote:
+> Le 12/12/2024 à 22:09, Markuss Broks a écrit :
+>> Add a driver for Samsung SPEEDY serial bus host controller.
+>> SPEEDY is a proprietary 1 wire serial bus used by Samsung
+>> in various devices (usually mobile), like Samsung Galaxy
+>> phones. It is usually used for connecting PMIC or various
+>> other peripherals, like audio codecs or RF components.
+>>
+>> This bus can address at most 1MiB (4 bit device address,
+>> 8 bit registers per device, 8 bit wide registers:
+>> 256*256*16 = 1MiB of address space.
+>
+> ...
+>
+>> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, 
+>> u32 addr, u32 *val)
+>> +{
+>> +    int ret;
+>> +    u32 cmd, int_ctl, int_status;
+>> +
+>> +    mutex_lock(&speedy->io_lock);
+>
+> All error handling paths fail to release the mutex.
+> guard(mutex) would help here.
 
-Make sure to build and use a kernel with
+True, I didn't know that such a thing existed, thanks for the tip! :)
 
-CONFIG_PROVE_LOCKING=3Dy
+
+>
+>> +
+>> +    ret = speedy_fifo_reset(speedy);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
+>> +                  SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_READ |
+>> +          SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
+>> +
+>> +    int_ctl = SPEEDY_TRANSFER_DONE_EN | SPEEDY_FIFO_RX_ALMOST_FULL_EN |
+>> +          SPEEDY_RX_FIFO_INT_TRAILER_EN | SPEEDY_RX_MODEBIT_ERR_EN |
+>> +          SPEEDY_RX_GLITCH_ERR_EN | SPEEDY_RX_ENDBIT_ERR_EN |
+>> +          SPEEDY_REMOTE_RESET_REQ_EN;
+>> +
+>> +    ret = speedy_int_clear(speedy);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    /* Wait for xfer done */
+>> +    ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, 
+>> int_status,
+>> +                       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_read(speedy->map, SPEEDY_RX_DATA, val);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = speedy_int_clear(speedy);
+>> +
+>> +    mutex_unlock(&speedy->io_lock);
+>> +
+>> +    return ret;
+>> +}
+>
+> ...
+>
+>> +static int _speedy_write(struct speedy_controller *speedy, u32 reg, 
+>> u32 addr, u32 val)
+>> +{
+>> +    int ret;
+>> +    u32 cmd, int_ctl, int_status;
+>> +
+>> +    mutex_lock(&speedy->io_lock);
+>> +
+>> +    ret = speedy_fifo_reset(speedy);
+>> +    if (ret)
+>> +        return ret;
+>
+> All error handling paths fail to release the mutex.
+> guard(mutex) would help here.
+>
+>> +
+>> +    ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
+>> +                  SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_WRITE |
+>> +          SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
+>> +
+>> +    int_ctl = (SPEEDY_TRANSFER_DONE_EN |
+>> +           SPEEDY_FIFO_TX_ALMOST_EMPTY_EN |
+>> +           SPEEDY_TX_LINE_BUSY_ERR_EN |
+>> +           SPEEDY_TX_STOPBIT_ERR_EN |
+>> +           SPEEDY_REMOTE_RESET_REQ_EN);
+>> +
+>> +    ret = speedy_int_clear(speedy);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = regmap_write(speedy->map, SPEEDY_TX_DATA, val);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    /* Wait for xfer done */
+>> +    ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, 
+>> int_status,
+>> +                       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    speedy_int_clear(speedy);
+>> +
+>> +    mutex_unlock(&speedy->io_lock);
+>> +
+>> +    return 0;
+>> +}
+>
+> ...
+>
+>> +/**
+>> + * speedy_get_by_phandle() - internal get speedy device handle
+>> + * @np:    pointer to OF device node of device
+>> + *
+>> + * Return: 0 on success, -errno otherwise
+>
+> On success, a handle is returned, not 0.
+>
+>> + */
+>> +static const struct speedy_device *speedy_get_device(struct 
+>> device_node *np)
+>> +{
+> ...
+>
+>> +out:
+>> +    of_node_put(speedy_np);
+>> +    return handle;
+>> +}
+>
+> ...
+>
+>> +static int speedy_probe(struct platform_device *pdev)
+>> +{
+>> +    struct device *dev = &pdev->dev;
+>> +    struct speedy_controller *speedy;
+>> +    void __iomem *mem;
+>> +    int ret;
+>> +
+>> +    speedy = devm_kzalloc(dev, sizeof(struct speedy_controller), 
+>> GFP_KERNEL);
+>> +    if (!speedy)
+>> +        return -ENOMEM;
+>> +
+>> +    platform_set_drvdata(pdev, speedy);
+>> +    speedy->pdev = pdev;
+>> +
+>> +    mutex_init(&speedy->io_lock);
+>> +
+>> +    mem = devm_platform_ioremap_resource(pdev, 0);
+>> +    if (IS_ERR(mem))
+>> +        return dev_err_probe(dev, PTR_ERR(mem), "Failed to ioremap 
+>> memory\n");
+>> +
+>> +    speedy->map = devm_regmap_init_mmio(dev, mem, &speedy_map_cfg);
+>> +    if (IS_ERR(speedy->map))
+>> +        return dev_err_probe(dev, PTR_ERR(speedy->map), "Failed to 
+>> init the regmap\n");
+>> +
+>> +    /* Clear any interrupt status remaining */
+>> +    ret = speedy_int_clear(speedy);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    /* Reset the controller */
+>> +    ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_SW_RST);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    msleep(20);
+>> +
+>> +    /* Enable the hw */
+>> +    ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_ENABLE);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    msleep(20);
+>> +
+>> +    /* Probe child devices */
+>> +    ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, dev);
+>> +    if (ret)
+>> +        dev_err(dev, "Failed to populate child devices: %d\n", ret);
+>
+> Could be dev_err_probe() as well, at least for consistency.
+
+
+I agree, will fix in the next revision.
+
+
+>
+>> +
+>> +    return ret;
+>> +}
+>
+> ...
+>
+> CJ
+
+
+- Markuss
+
 
