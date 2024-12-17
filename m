@@ -1,220 +1,272 @@
-Return-Path: <linux-kernel+bounces-448465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291AC9F4075
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:16:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0846E9F4077
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709DE162796
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4896B188696A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638B413AA26;
-	Tue, 17 Dec 2024 02:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9131F84E1C;
+	Tue, 17 Dec 2024 02:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dQOwK9er"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3EZJ2R1"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8F8F9FE;
-	Tue, 17 Dec 2024 02:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734401792; cv=fail; b=bsnQ9oxWpEOTp4C+PZqGxEXw3IZgGEHsuHrw/d1CtyznUh4uMyUJGCoHUUq47PS07rJl219PwmElOw3ec4U9fiQnx6veEVcQjHY/odISRQ0kpe62Tsvo4SIvDgV+Q6zdcrjV9lP3dDH9FYjOck+6QoI1G0r/tCx5y6PeEJcJF/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734401792; c=relaxed/simple;
-	bh=lyxYGj29oSp5iUOOnsWPc2DGsL3t3z9eoUONc9e/lc4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YyMMkdWFSQal3PqmhT90CiXdj6DlLTE+x/nNRUKms283/kgfHtUFgfN3dCjoFKQgSEzzg+t0La5+EbsCZAmmZMzO6U/hxX1ZPczeKrpKNo5w1nBrAQED4AtRGr9pZ0NBGE/H5p3E+7iQcvmqfsCwyE3iVlOFjY7ARtUk/95XqDM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dQOwK9er; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734401790; x=1765937790;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=lyxYGj29oSp5iUOOnsWPc2DGsL3t3z9eoUONc9e/lc4=;
-  b=dQOwK9erdwnBeR1xgzjYfgBIs9O41wI5WdItiZnna4ySJjkgjzMHRJM/
-   Ef+jFR7lnga6GdjqwIXgRv8pLXbWZRTTICfzPwAcRamCmSsuyq5jvBD6+
-   +3QpO80XSWIotwllqXNw6Czpnv45N38vK3EdkIFe4m3QjXrqDWnv9yMr4
-   hbqUFZEu4/Q4XxYUCQd7RtMRYdbpk1pGnwnwSxFQh1oYPWlJ8QDyIFK8v
-   MUlt0nu+3yPLbEzpmub9FgxMll17k4OJpCKrmmSpOlp+tfZHHyDVx+FlQ
-   3laW9pou4PREp2PUaxOQBkohRpshmSOLYPqzf1vdYaP54Yrk8L+l2JOkW
-   w==;
-X-CSE-ConnectionGUID: FIMR1MqSQzSTFEyboeBi3A==
-X-CSE-MsgGUID: tn/16HpxT2OIzZzDRp1PBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34846423"
-X-IronPort-AV: E=Sophos;i="6.12,240,1728975600"; 
-   d="scan'208";a="34846423"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 18:16:30 -0800
-X-CSE-ConnectionGUID: lObyTHGYSdqcUxm6a3EtzQ==
-X-CSE-MsgGUID: J7XhCczNSxCSqb8UYL7Ung==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,240,1728975600"; 
-   d="scan'208";a="102418961"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Dec 2024 18:16:31 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 16 Dec 2024 18:16:29 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Mon, 16 Dec 2024 18:16:29 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 16 Dec 2024 18:16:29 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xz8iBJAcPGDci4r8nSfoF7i9UeRBfEtrnsIYeIeVvFV6N3fadfMa/3yx9Wfjv70GzKM5Uri1LlVvB6Qg8GMHNEk5GerNsBT/j+oUaICN7N7FfPQqfh2cnbq9g44gIoouvx00JYuaPJglC8OsAHUdbM76m0tLMZT1bXc4SyW3Fswy5RXB6zGAF3oVJKUfsQxpEPJ0VtB2kTBySzL379mv+CzfkU42hzoQM6HRsSwy1qGbpwqnBUDldmK8rSEZ5Ox58y/vnFw5rqOeeZMsLftvMpKlt6Pw5DUyP9ni64jOYNojSx7vizKRkco6n6AuMLHgRWSMS+bWYss/NXhOto0gSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lyxYGj29oSp5iUOOnsWPc2DGsL3t3z9eoUONc9e/lc4=;
- b=qJBa1ayhgrtu3zNxpl371kQJ3Z4FXB+JQFU+TOAZw9OnsXYADMNviLDggjCUpk4LsBncBv9qarGX90xZJMgtV1UufbIE/2jwtTEtYZZcpRfpQhnKsVqZHmBQNwj6xFAw5KKjv/QX64mr9TGatMx7Ldv1s633+snBS5T26RHatT69pmbu/f1mq3xk15Stdhgt91D2Eu3/K49SuELULCK/kpYGwLPy456W4mPGnh7Mlmdo9Q1t5HiGkHnrk9wJT34PMWNVh7Wjn28On4iCJmuIZyhqO1sSHe+JqpqvnedrAl2T5JgUDyIiLBrnP3gqWlS3BnU9KdQcz21u2pDuHDj4Fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by SA1PR11MB8255.namprd11.prod.outlook.com (2603:10b6:806:252::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
- 2024 02:16:08 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%3]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 02:16:08 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "seanjc@google.com"
-	<seanjc@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "Zhao, Yan Y" <yan.y.zhao@intel.com>
-Subject: Re: [ANNOUNCE] PUCK Agenda - 2024.12.17 *** On Tuesday the 17th!!!
- ***
-Thread-Topic: [ANNOUNCE] PUCK Agenda - 2024.12.17 *** On Tuesday the 17th!!!
- ***
-Thread-Index: AQHbUCmivvqoYTmb5E+CH8VvRfsE1w==
-Date: Tue, 17 Dec 2024 02:16:08 +0000
-Message-ID: <446cab39966cad7fc4d1824fa81d2ba25b125e69.camel@intel.com>
-References: <20241213235821.2270353-1-seanjc@google.com>
-	 <Z2DMtr3jdLK9cg34@google.com>
-In-Reply-To: <Z2DMtr3jdLK9cg34@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB8255:EE_
-x-ms-office365-filtering-correlation-id: 7f7c80fd-8a70-44d9-18b2-08dd1e40c4bf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?SSs4MWZyemdPUUlTMTJDSm1uSnBtS0FVZHRMaUNLOEZNbDY5U3hBMlE5aitx?=
- =?utf-8?B?WHJGOFFUVkRWdjFoUnVPd0ZjdkFoVFpVL2ZJWFozNi83MWk0R3R1Q3FLMHIz?=
- =?utf-8?B?a2JmWXd1SDRGNWNuQktRQ291dnQyb055d0c2M0kxMEVkRnluM0ZGYnNaTmFD?=
- =?utf-8?B?RkhEM2lNbVFvZXlrNjlSUldYOUFyMXVjVVdZblJlUWtUZ2FsWUxhR0JkcVIv?=
- =?utf-8?B?KzBjMEg5Uzk1T3pqaFhnMXhCWk9Tam9xdSs1WXhHMXNneWtTYytJaU5LeHlK?=
- =?utf-8?B?cmxVZXhLa2ZMOTcxVjN4cGZSVWFtUzZBNVRoTnpTbE1qcEI0eCsyY3NEcjly?=
- =?utf-8?B?ZDJRNXROZC9DbjY1VEdFOWUwZSs3WGZ0QTUzR2ptNkRpYkFvUmp6a3N2WWli?=
- =?utf-8?B?TWtzMkkyc0xWeWk3eDR0RWp1SjlLSkVCNDBJeXF0WTJUbmxHZC9xVzZwQWh6?=
- =?utf-8?B?ckNwUk1BeFd5QUhWcW1xSTdkT0pRMEdlNzZCa1pMMGZKNjYrZVYySmZ0OHRZ?=
- =?utf-8?B?NWVDZko5Sk82YWV0bmxLZ0YzQ0o1QTE0cGZsSUZXV0ZwTWk5MDBJOER2eERC?=
- =?utf-8?B?OXl6aWMzRG1YSnhKeXNWUDkvdnZDVjJEeE43M0JrKzNLbC9oZ3c3Mno3TE9X?=
- =?utf-8?B?YWlCWDJJL1M0Vlc5aEhzckdBNHMyanREaWZ6bUJqKzBuQndmMjVkYnZsTlpF?=
- =?utf-8?B?NGcvcmQwMUNTeDlVRDVkMGdaMlZCMXYrRzYwenNjbEdlR2dyYzVadm1nT01m?=
- =?utf-8?B?YUdNMnY0Y25Yb0hSaC9zU3dyNDhFdUQ4bURtVmdwK09yTzF2QkI4ZkszOTZW?=
- =?utf-8?B?Si96dC9mdnlPMG9mYXZidmFRSFlQUVl2V09xZkRGcGhrSFVNdjNXdE0ycE5N?=
- =?utf-8?B?ZEs1Z0taNjZqVGlTVHlMY20ydjZrcTVGeDRtMGNiQ1Fzc0FPeDRlSGlZNko4?=
- =?utf-8?B?NVMwQ1dFRlRMYUNpT0ZkRW1WS1hsSll1a0l5Q3ZZam01MGJ1ektTRDRKbk5l?=
- =?utf-8?B?TG1ZRFB2M3Nyc3N2ZDFJaGNLU2JwSUU5VkkvOXlMNUNGT0NQR3BDdnFaUUky?=
- =?utf-8?B?ajhLTW80N0piN1p2bTlpTm5BVkhXNXMwa1l3WXNMc3M2c3VwYkVZNFpCRisw?=
- =?utf-8?B?WTZPQWliVi9SanFEQkViYlBtSnF0RGJBWmRGUUxzeUorWFhpRVduZ0V0MVp6?=
- =?utf-8?B?SEhaZGZPUFV0cWJCcDJPd3RVRTVwU3I1NlhTZjJLRVg3QmsxeFRvOWV4RXJi?=
- =?utf-8?B?OGNDMmxEZWxab1ZlWEZCUnBtcFVyNjFXS0xCL05ZQk5UcklXU1E0a001UlRT?=
- =?utf-8?B?RjhBMVEzNWM0d01iOVd3UncrdG9GWUQrNU03RTBDeGRrVEwrRHhDdDM0eVJo?=
- =?utf-8?B?OGwxVWNjNG55L2EyeFFoMUsxV1JkaEtuS0JRcitFbG5BZC82RlF6YkV2TmVJ?=
- =?utf-8?B?OWI3RmlnQlZ1WG02WmFFdXZTTklHZnloTnJ6VkJNdzJrU3pSUkdHQmJoenpp?=
- =?utf-8?B?WkhGMG5LdUdNay81c1I4TFVmNTdnd3VRaWF0UzJvaFUxOGN0allQNmIyTGpr?=
- =?utf-8?B?L0lGTGE5cExHTnhpbXpIc3RpRGZYOFMwa3orWWdsTSt1RzBkUXJPN2Z4ZVF5?=
- =?utf-8?B?Q0JzUEY2UkNYZGc3TVFwMmVGTHpjSGxSRzlCV0g1ZndNUEkwVndOdHloYmhD?=
- =?utf-8?B?NExvMmhodDltTUo4aGtpeWg2NVVFUmlsK2w2cHNnbHdya2w1SnZ0Y3dSMmhR?=
- =?utf-8?B?Q0NtNURHeE5ZdXNWRXBlbUVoVlJXc3pybWkwcTIzckJKS0lWRGpwVjhMOGV0?=
- =?utf-8?B?TjB2SkRmRCtXcWVpV1VtMUIvZUo5eFAzaHNrRlhDaVIyZUg4bStPK1YxOTdj?=
- =?utf-8?B?Um5NZ2pvaTV5Y01DNm1WTFRuT2ZNUnVpdU9lRnJPdnI1Q0YwUE9KZzdqOHk5?=
- =?utf-8?Q?LP0L1S4mzU9KcGdxe0urVc+j/c7y/7bz?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QUkzeVNKSlVMS0gzV2VqNEJOR0hlZ0dCY1FxcjhBK2F4SGNzeHlDZzlWZlhE?=
- =?utf-8?B?MjhQK25yRnJER3l2b2lzdlFMWjEzSG5tT2p0Qmtrc2IyS2IrdXdXcDhmSGhC?=
- =?utf-8?B?V1pqdU01cmpyQVFPVS9iem9LZWNhb01FTWM2UndycHdyamh3eTl5bml2NUln?=
- =?utf-8?B?OHk5Yml4ZC9JREJrYVNiQ1puNkp3Q1VJV3BDV0NtYTBhMFVKZlRLWEtaQTNo?=
- =?utf-8?B?WHZCaTFzN0Uycm5TaFRXK3JqWUVsamZlQ1Qvd21HZFU0NldWVHVPUTFOQWNM?=
- =?utf-8?B?VGlxdzc5OHlvTjVac0o1Q0dwL0FEbDNVNEZ5VEZmbHM0WFFpSjN0elVMUDBv?=
- =?utf-8?B?MVlNbkk5dkRHaFlKRmt4dXZYQnRzK0Q4a0hFditnZnE2MHpnQmNqdVVsQksv?=
- =?utf-8?B?QTdzOWJJZCtZeDNEZGpLb1FMWlVVMitRZ1JqMmdGV0IrdUdzM2dZaFRLSjZo?=
- =?utf-8?B?QmFjcHNHUnVuNjZveE1qa09OUTI1ZWoyb1NOTXFNWlo4VmNZL3J2WjFFeE5M?=
- =?utf-8?B?SHNMblRRYStFNmRUOXRMNC9uZWoxSE1ydmJGUUM2Q3V4R1Qxb1VOVHd3cXY0?=
- =?utf-8?B?ejhjL3RIZFhpM1pZdXBRb0pmNlNTUkNDZG9wbjlMc3A2WU1Fb0FDc1JuVnVE?=
- =?utf-8?B?MzY3ZjlHcjFLL2Jpek9saTg1N0hvRklSQnBFTTQyeUNNR1J2RnZSRlE3WUly?=
- =?utf-8?B?N2t1V3prd0pRWlJTSklYVERGODFMb1c2VGxzNittajB6Q0kvRUc4QXVEZUUv?=
- =?utf-8?B?SmM0R3M2eFljNERLNXZMZHBoZnQ4U1dlVDlPSnRtSWMwS3hPVWJBaGEwWTM2?=
- =?utf-8?B?eXFuOFNlNXlkUkY3NXpRN3AxYnJUT0JFTUptUmNKTC9ranhjM0plR0xyQjBn?=
- =?utf-8?B?YU8rSzV5Ui90dHlseEV5ZnRkNlJLc1MvZ3VvLzl4bWpjVTAxdGhwemROL3dF?=
- =?utf-8?B?cXoyL01EVlZPZjQrbDNvRFRrdXNUNU1pUFNNQk1ueWdWQTRCTENKQlAvU2xp?=
- =?utf-8?B?K1ZtZi9wVHUxTlU1ZC9OTFdFbnRFT09JR0hVWU1Xb21sM3ZYb2JEdEJuL25O?=
- =?utf-8?B?WFpBQmFIWXRoOWJaaVRtRUdvWTdOMnJ0T08xbC80ejlxd1g5QlJ5OGpGTm8r?=
- =?utf-8?B?bVMxNVZZY1R1S3JZUS9WeFJZQk9SakhNNmd6ZFZKUkdxZy92NlRwWUsrcnBo?=
- =?utf-8?B?M0JvbWVMblp4blk0bFYwS2MxRTBXK1ExVHMxSzhPUUNPRGFuM2dVbHZEbmhj?=
- =?utf-8?B?aHB2VTg1VnQrMmRKRUNkQVlJaUhXTE5GSERMMlRIWHN0QzNHaXIwL01ZM3JE?=
- =?utf-8?B?eXBjTFpkQnRPK0tHSnJIWWhPOTMxZDR4U3JWeXV4WnR4T0Jlcnltc1lZMGJt?=
- =?utf-8?B?bUZxL0U5OHV0d3pkenhkMU9yQnpwK0M0VmpQSGNpMHdsKzQ5OWpGb3FCQVph?=
- =?utf-8?B?b2dFN0Q3a2VwK3pkZjhodlpJVHkrVG5oY0RkYnR2QlhwazZvTktXdjYwRGRk?=
- =?utf-8?B?dnRjaFRVcVdDTkNoNkVFTWRKZkRjMVhvQWE2TzNBdXBjci9GQklid1oyTGZQ?=
- =?utf-8?B?MUZVSURSWDE5ZGVmdFVkeTJzZHRCcTc4R3VhbUdKZHB3djZOYTVETGFybmN3?=
- =?utf-8?B?TEhid0dXbkV1YitCU1QzK3JHYllaUzZrMjlOVlYrZ2FzWmZzMUI0dmc4alY0?=
- =?utf-8?B?NXNVc3hyMUlvbldjVjZZOVk0TEhUbTRzZ0lPaGxPSGwwV28zVS9WeFBPL2hR?=
- =?utf-8?B?Q1pHUW04QUtTZk9tdnY5Q1V1cmZvenptL0Q3d0xZSXNnNjFMQ1FlemtlRDRw?=
- =?utf-8?B?eVZRYlkzNUZGNkdzOFRmdjBmM29rU0RiTnd0NzFQQmVxMjVlLzViSWhSSjZL?=
- =?utf-8?B?TWhqUmpTY2U1S2tOSkhwbUR5ZEM0SCtyWUxYM09ZU1dkQTNMZnhveURGZE5u?=
- =?utf-8?B?cmpPSy9kWkVSMGZwTm8yWndFMnFYMUp2YXk0eldEemR3Y3RPa1FMUjBndThv?=
- =?utf-8?B?Z0NLZFA4KzRmMjNJUGlYVHFiTEYreFFpdVhPc2ppYjloMndoSFRtczJnajR5?=
- =?utf-8?B?aUk2bFpEQXYzVHhSNjFqRnBwTytyOHZxWUc5N2czWHdRUjY2eTl0MktTenhZ?=
- =?utf-8?B?MzI0eXBqM0F1ZW9mK204c1BkU2d1cVhpeEpWVEd6TkFvNXF0K3Z3cDZBNnk1?=
- =?utf-8?B?VEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <049D5DEE879C7A46A24C03F3DAA4BE77@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADA620B22
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734401903; cv=none; b=qBsNUzxpuEufN+hs81o74xcGse1W6ilUKhasHq1ySBkuMaQcmZ6RtWnThmkZRM1wswuuA4RdGJGzbMaUR8j5RERACGWH4w09xKVw9n730juUOixu57GfhI5S16S/9rtu0oqscrzjBuAKHCUZWyqBWpw3Zvbc2CfGcXSF2QdeTHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734401903; c=relaxed/simple;
+	bh=BgP9ExKy1JJuDxpQ+rJ+yIQyddU5CjkHTFaOE+adJQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HV348XgDwQAHiXrUdPcTI0YECk7NkaggGiFE2+k2JnIiKlsDhdK+74tquaiGFaTwqr+kTa482gREXOxkzuMj/VBIdVOTI7/VAHwWg5y/KO4uD1qPVVZlrpo+rAf3buMOYi2oOkSjgcNrihfwytJ86b32J7KdJRP/1zfv8yxOI8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3EZJ2R1; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6efe4e3d698so37027417b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 18:18:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734401901; x=1735006701; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3DLmluN411z0hGvp8vy0X1NPB3IpK22SX655VkMUwYA=;
+        b=J3EZJ2R1FuSdAg9XjB+qzC4jNU9Qa5c49m6CWF/QiAeIJBxrlwRb7H68vLqzuuTRp2
+         droIfDeJNOpGw2IQr6hJLiS3F34XVL3yIMZjgT05B/pubVRjIIRNgZCOqc40571Kr/hP
+         NsAOwiGVs26Wh/CSzWaC4+udiuvrT1B9qnNI3fUt7vzzadKrmC8lA2ruhPNqAf54mJzP
+         wUgBvitju5XRzhz54jgspU1jOZ5bHXw2lP+k0bX6mj9yLzH3CyR374FCxOKiG5CZEGLD
+         imXVWStXQSCQJEij2kI7/yhfcfJhUaQBQ4i0dEPMDDDnl1mmeclm0Tk14oN9ZBxGZnUh
+         PPgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734401901; x=1735006701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3DLmluN411z0hGvp8vy0X1NPB3IpK22SX655VkMUwYA=;
+        b=fd/XtLeX5RF+hSjt6BNqVv1NsevnkoPRMwZZdjRziE3kQvmS7Wisws70pcMNO3vc4N
+         tmy0AqBiPZpjb4aXn+pHw9PxTFbPo2JRc5uUZIbjYjDELThZtHeJ82QO3s2bbSP+1Nav
+         F0z2J9Kun1uagw+kDQbmeRq4+papThfdx7FNgCHD2XzU7+yRUtIYc62FsV6jm/gqXNii
+         0d/2tNALfPIbUJyOWcTT7Z2DGB2u1ujKglJJrSO6OBYZIeVUPHIr3ayIZSfT0tPfbf3A
+         tGmSJQR+4bI/gmqpYDaak4tSuXtpMlSfmiraE4xFbuVyjigDo41qZKpQd2fcelLXBncn
+         2iSQ==
+X-Gm-Message-State: AOJu0YwcDGoCSViRuRgGYmAeJf5SvAyy0RiQdeDChfSIRNA9js9ffjFo
+	c7DChv+wGMRmFKEzsFV7I9kQMh4YvXO2TKK0xR0EVvArIXzJphYc
+X-Gm-Gg: ASbGncveuBn26yn+2j6sC++GpAKJy1eOtclcCYo2nrZXYdgNozgDyEK3qmdbffzxW2q
+	O2H+uI88IvuuDVcMZO09w5CIENp87iibc56NW1/FmAI3erjxwLNyQfN23szGVShxeztYZWvjn50
+	+20DznG9+KEY9cxJ1HZVugVw1fDevVQC+exOW294SJDTl1sAAe1Q+3eHoLyT6C4kkTrkCEcCQFB
+	NmvO+wMOuvbKJ4Gxg0E7vgoNKiybmO/3SywlsWokdFzl3bw86iC6qpqxpRF54/+qZeqU6fV2i/e
+	qx+23mqGFlbT0UuX
+X-Google-Smtp-Source: AGHT+IEH9Nu9l8My96O0M6hTx8gsNJUcbJaivRhWlr1a3eg2IUF1w9bwF6hNfhRMDU46vtGTTMXYGw==
+X-Received: by 2002:a05:690c:6105:b0:6ef:5ab8:2c63 with SMTP id 00721157ae682-6f279b145bfmr145271167b3.20.1734401901009;
+        Mon, 16 Dec 2024 18:18:21 -0800 (PST)
+Received: from localhost (c-24-129-28-254.hsd1.fl.comcast.net. [24.129.28.254])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f289031306sm16484407b3.56.2024.12.16.18.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 18:18:20 -0800 (PST)
+Date: Mon, 16 Dec 2024 18:18:19 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: David Laight <David.Laight@aculab.com>
+Cc: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+	'Rasmus Villemoes' <linux@rasmusvillemoes.dk>,
+	'Andrew Morton' <akpm@linux-foundation.org>,
+	'Masahiro Yamada' <masahiroy@kernel.org>,
+	'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>,
+	'Linus Torvalds' <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 next] linux/bits.h: Simplify GENMASK()
+Message-ID: <Z2Dfaw7OTagl47ir@yury-ThinkPad>
+References: <7a1b1534e51342769740985db773d5e1@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f7c80fd-8a70-44d9-18b2-08dd1e40c4bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 02:16:08.3853
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vhPI6S2C+ZTfnb1bMOV/Cz+xxzuyW39u5SrYZodQs0mpOKljr+LEtO3AuXDOtehD3qEpfKq0iEu2z/6jUGjlLjbwfLVcnCjDfpH1exyHuEU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8255
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a1b1534e51342769740985db773d5e1@AcuMS.aculab.com>
 
-T24gTW9uLCAyMDI0LTEyLTE2IGF0IDE2OjU4IC0wODAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiA+IEZ1dHVyZSBTY2hlZHVsZToNCj4gPiBEZWMgMTd0aCAtIE5vIHRvcGljDQoNCklz
-IHByb2JhYmx5IGEgbGl0dGxlIGxhdGUgaWYgbm8gb25lIGhhcyBoYWQgdGhlIGNoYW5jZSB0byBs
-b29rIGF0IGl0IHlldCwgYnV0DQpob3Bpbmcgd2UgY2FuIGRpc2N1c3MgdGhpcyAoW1JGQyBQQVRD
-SCAwLzJdIFNFUFQgU0VBTUNBTEwgcmV0cnkgcHJvcG9zYWwpOg0KaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcva3ZtLzIwMjQxMTIxMTE1MTM5LjI2MzM4LTEteWFuLnkuemhhb0BpbnRlbC5jb20vDQoN
-Cg0K
+On Mon, Dec 16, 2024 at 09:39:23AM +0000, David Laight wrote:
+> Change 95b980d62d52c replaced ~0ul and ~0ull with ~UL(0) and ~ULL(0)
+> in the GENMASK() defines as part of a change to allow the bitops
+> definitions be used from assembly.
+> 
+> The definitions have since been moved to a uapi header which
+> probably shouldn't require some other header be included first.
+
+Sorry, I don't understand that. Are you saying that uapi headers
+should not include one another? What is exactly wrong with that
+for you? Or did you mean something else? 
+
+> The definition of __GENMASK() is also overcomplicated partially
+> due to avoiding overflow warnings from shifting ~0u left.
+>
+> Implement GENMASK() using the simpler (1u << hi) * 2 - (1u << lo) formula.
+
+I don't think that this formula is any simpler than the original one.
+
+> This doesn't rely on right shifts
+
+What is wrong with right shifts? 
+
+> and doesn't need to know the number
+> of bits in the integral type.
+
+What is wrong in BITS_PER_LONG?
+
+
+> It can be used for different types by just changing the type of the 1u.
+> __GENMASK() __GENMASK_ULL() and __GENMASK_U128() can now implemeted
+> using a single ___GENMASK(one, hi, lo).
+
+I like idea of generic implementation or different flavors of GENMASK().
+I even proposed something similar back then for fixed-type genmasks: 
+
+https://lkml.org/lkml/2023/6/21/1734
+
+Both you and I do the same - provide type as a macro parameter. I like
+my way of doing it a bit more because it's more explicit. But now that
+we have _Generic(), we don't need this hack at all.
+
+> 
+> Overflow warnings (from shifting out the MSB) are avoided by subtracting 1
+> before the multiply and adding two back in later.
+> The complers see straight through the subterfuge when generating code.
+
+Ironically... You're trying to simplify a part that silences Woverflow, and
+end up by adding another part that silences Woverflow...
+
+> Since there are already conditionals for ASSEMBLY in bits.h, for ASSEMBLY
+> directly expand GENMASK() and GENMASK_ULL() as ___GENMASK(1, hi, lo)
+> rather than through the __GENMASK() and __GENMASK_ULL() uapi defines.
+> Remove the UL(x) and ULL(x) from the uapi file.
+> 
+> GENMASK() and GENMASK_ULL() now generate the correct values when
+> ASSEMBLY is defined.
+> Fortunately they've never been used.
+
+They were used before. They are not used now - that's true.
+
+Can you explain in details how are those macros are broken for assemblers?
+Can you add a test?
+
+> 
+> Rename 'h' to 'hi' and 'l' to 'lo' because 'l' looks like '1' in many fonts.
+
+No please don't!
+
+This type of changes don't help at all. They effectively wipe all the
+history for absolutely nothing. If your fonts mess characters, please
+use other fonts.
+ 
+> Signed-off-by: David Laight <david.laight@aculab.com>
+> ---
+> 
+> v2: '__uint128' => 'unsigned __int128'
+> 
+>  include/linux/bits.h      | 43 ++++++++++++++++-----------------------
+>  include/uapi/linux/bits.h | 15 +++++++-------
+>  2 files changed, 24 insertions(+), 34 deletions(-)
+> 
+> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> index 60044b608817..d5cf0ec22e43 100644
+> --- a/include/linux/bits.h
+> +++ b/include/linux/bits.h
+> @@ -14,41 +14,32 @@
+>  #define BITS_PER_BYTE		8
+>  
+>  /*
+> - * Create a contiguous bitmask starting at bit position @l and ending at
+> - * position @h. For example
+> + * Create a contiguous bitmask starting at bit position @lo and ending at
+> + * position @hi. For example
+>   * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+>   */
+>  #if !defined(__ASSEMBLY__)
+>  #include <linux/build_bug.h>
+> -#define GENMASK_INPUT_CHECK(h, l) \
+> +#define GENMASK_INPUT_CHECK(hi, lo) \
+>  	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> -		__is_constexpr((l) > (h)), (l) > (h), 0)))
+> -#else
+> -/*
+> - * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+> - * disable the input check if that is the case.
+> - */
+> -#define GENMASK_INPUT_CHECK(h, l) 0
+> -#endif
+> +		__is_constexpr((lo) > (hi)), (lo) > (hi), 0)))
+>  
+> -#define GENMASK(h, l) \
+> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+> -#define GENMASK_ULL(h, l) \
+> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+> +#define GENMASK(hi, lo) \
+> +	(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK(hi, lo))
+> +#define GENMASK_ULL(hi, lo) \
+> +	(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK_ULL(hi, lo))
+>  
+> -#if !defined(__ASSEMBLY__)
+> +#define GENMASK_U128(hi, lo) \
+> +	(GENMASK_INPUT_CHECK(hi, lo) + __GENMASK_U128(hi, lo))
+> +#else
+>  /*
+> - * Missing asm support
+> - *
+> - * __GENMASK_U128() depends on _BIT128() which would not work
+> - * in the asm code, as it shifts an 'unsigned __init128' data
+> - * type instead of direct representation of 128 bit constants
+> - * such as long and unsigned long. The fundamental problem is
+> - * that a 128 bit constant will get silently truncated by the
+> - * gcc compiler.
+> + * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+> + * 128bit exprssions don't work, neither can C 0UL (etc) constants be used.
+> + * These definitions only have to work for constants and don't require
+> + * that ~0 have any specific number of set bits.
+>   */
+> -#define GENMASK_U128(h, l) \
+> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+> +#define GENMASK(hi, lo) ___GENMASK(1, hi, lo)
+> +#define GENMASK_ULL(hi, lo) ___GENMASK(1, hi, lo)
+>  #endif
+>  
+>  #endif	/* __LINUX_BITS_H */
+> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> index 5ee30f882736..a25d9dfb7072 100644
+> --- a/include/uapi/linux/bits.h
+> +++ b/include/uapi/linux/bits.h
+> @@ -4,15 +4,14 @@
+>  #ifndef _UAPI_LINUX_BITS_H
+>  #define _UAPI_LINUX_BITS_H
+>  
+> -#define __GENMASK(h, l) \
+> -        (((~_UL(0)) - (_UL(1) << (l)) + 1) & \
+> -         (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
+> +/* Result is '(1u << (hi + 1)) - (1u << lo)' coded to avoid overflow. */
+> +#define ___GENMASK(one, hi, lo) \
+> +	((((one) << (hi)) - 1) * 2 + 1 - (((one) << (lo)) - 1))
+>  
+> -#define __GENMASK_ULL(h, l) \
+> -        (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+> -         (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+> +#define __GENMASK(hi, lo) ___GENMASK(1UL, hi, lo)
+>  
+> -#define __GENMASK_U128(h, l) \
+> -	((_BIT128((h)) << 1) - (_BIT128(l)))
+> +#define __GENMASK_ULL(hi, lo) ___GENMASK(1ULL, hi, lo)
+> +
+> +#define __GENMASK_U128(hi, lo) ___GENMASK((unsigned __int128)1, hi, lo)
+>  
+>  #endif /* _UAPI_LINUX_BITS_H */
+> -- 
+> 2.17.1
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
