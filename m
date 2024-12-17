@@ -1,218 +1,160 @@
-Return-Path: <linux-kernel+bounces-449237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5FA9F4C06
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:25:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66099F4BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88E21787E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E2577A7A3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430EB1F8AEC;
-	Tue, 17 Dec 2024 13:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE241F8EFA;
+	Tue, 17 Dec 2024 13:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVdple0W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTgZCAZC"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF481F4263;
-	Tue, 17 Dec 2024 13:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FDE1F4263;
+	Tue, 17 Dec 2024 13:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734441004; cv=none; b=EpoFFbGYhsBondl89LMdu/v2HGZ9hvn26wnvMtrs8NikW73vMdtSueaZ0W06n5aF9Z5lpszHexKD34LV57PdJa197FmtZgGJGEM7vuQEmtYZ3zj8CDw5s7A5tEcGOTXF904GhZExbbcDDHOd5CSecmZwEKRvnhDqGaBADQtDxT0=
+	t=1734441011; cv=none; b=oqSgBBw9dDmtdFVvX3fElxdgPEBrE7FIhWH7B+HBrtgxG0gPZ/zCeyHw5gTtjcPj71aQVMTbR27Ii7OpmAZ7qh9ipUhTEYw+Dz+MviiJF+zuTVwnpEQc/xFF1eEWIzmoo8heR3PGsoA+bKzsjNG7CKDs8oJl9OpCJuy0rB+jlvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734441004; c=relaxed/simple;
-	bh=kDlu4XK3lP82N0qIPv6jQEmDp0tDUCg6mKlUOzQMyOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=le2ycBk03Zc0fLi/v0JY1DfEQkgJkziuROP6xkTNJ7g+JSs9aCvoIrBd9zqpeWQBzvhanVI5TFoldQGoozrSgqC1xGsKXWw2RR5wU09maXffvyavZDq/6n1AM/rETvfcU5g1orGCQKf2oCCtkB/60StaGFfdFWrkJzoYtyEaYAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVdple0W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07FDC4CED3;
-	Tue, 17 Dec 2024 13:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734441004;
-	bh=kDlu4XK3lP82N0qIPv6jQEmDp0tDUCg6mKlUOzQMyOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eVdple0Wsw4aagxBZWjMhm/AcC6DgKyOa4cYXNQKMwHKbSwXMNwDedw00a0o7MNj6
-	 8gW94BorPBTcxgEcMgM+f1jVmqLaOleRmm9hL0awcuQxy8/opixQVdIvDcXYxkYNmt
-	 LTC4yEdiPWplj+yFAf4vlQ4rVJkh/hmI9SgGfGsQ/T+tDy94RGbGSC0aTjpxbvV4zl
-	 xDv7OUZ68T81BdLRU0HkK7Qq96VFqroe/3vuGHOa87zNQYdOBYMcIc61fTNMOIPg9A
-	 x8xW7vdH1MInsxeV79Cy7Ddbigy023dPKZWW2EgxA7xjq5ks27uuCSt1keUYfG2Z3a
-	 MdtN2XR7d+CXw==
-Date: Tue, 17 Dec 2024 07:10:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicornxw@gmail.com>,
-	kw@linux.com, u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, bhelgaas@google.com, guoren@kernel.org,
-	inochiama@outlook.com, lee@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, pbrobinson@gmail.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com,
-	fengchun.li@sophgo.com
-Subject: Re: [PATCH v2 1/5] dt-bindings: pci: Add Sophgo SG2042 PCIe host
-Message-ID: <20241217131002.GA1160167-robh@kernel.org>
-References: <BM1PR01MB4515ECD36D8FC6ECB7D161C5FE3E2@BM1PR01MB4515.INDPRD01.PROD.OUTLOOK.COM>
- <20241211192014.GA3302752@bhelgaas>
+	s=arc-20240116; t=1734441011; c=relaxed/simple;
+	bh=paE04F04/cMXXu+dIHzXBrCj5yuwcBZ9KEXGEcHwLQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fvZf0T+O/0dTvukWGIfkHq+mbanqThyX0cnTz51TDsttshCnB7GffDrMagYh0dDFzOfm6Saqvelb3y4DyhgVFX7I67vLGe4L2N5T+joAbH2BlwNr70BhrVg7uXSac3ZDuwob2s09sAD/SOE10JzNGyHo1oBh9fQUL1LLGPDmTbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTgZCAZC; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fd51285746so3071436a12.3;
+        Tue, 17 Dec 2024 05:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734441009; x=1735045809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=vuwM37PGyW3dpn6f1I1xO5BjNXaZCo2RQ40ZeUDh/Lk=;
+        b=kTgZCAZCPPdhMwbSDMjiiBJt2Q66RMZFYiGCuqXjyvialH2KP0UD/fWdL4mwlJZleJ
+         icNbTI3yuagBOHEJvVWrM3Sh5Yd4/lKFWKzZEc0aMMUNoTCZTN70PmIZPl5VdjJ3GBSs
+         DvdkMjCc2NBs9ovk1qDLWuNUd1lEoNpfleKinrBYa8N9hbdnKFPguBivk6Hveo/0etiz
+         T8BdMAHA5yb+POAyaosyD9eRae7ajZIbmVCjaEHt5PgH2bm1RSR7BFd0Rd4vK9ygsBdP
+         OUR3IwB0B+IOdIvBxxvewUV1qzJaYg3Ft+Z/A+bf3ksv58ChekAhRwE03GdfBVhlvjj0
+         c9Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734441009; x=1735045809;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vuwM37PGyW3dpn6f1I1xO5BjNXaZCo2RQ40ZeUDh/Lk=;
+        b=ECJkYu4B0wvXqm7jVaibpnoFmSYR7chQynek6V9NxVW20dphrdssAZMSTn5z/KRwpX
+         e927c+RFFPnwKCwigPgg52E529ovctQe3oFN3F2VoiXRC81kXxBN2K8I7ev9c3UbDI1t
+         62LmMUO8pXSkpOaTLzygfiEnREa3jX+Vf9Xi7g35vWpCZx2+O7tB9RFDtBhBMhE126ED
+         syzGjfg+wdRrvH10cmqnqSQqhj/DXhUtfZhzVScqXuNWdQZXKj1n+GtzeL6a0pMvdhjQ
+         SiTbb7tvWcYBLL/MmAXSh25EBBnEHqXdJGpJfGFMWemY3Jdnfk3Q8UBTQ4oNsW0WiKhg
+         6xkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUcDfybrCtOEn2rNYf5zZv8BaQAQ6YzLF6QOg4xcxq0smGu1gTCw/B1Ul+zY0cyI8OkAl5K5ZRt91QNwhryKtZsdc=@vger.kernel.org, AJvYcCW0xtqu6oW3Y/D0pLR2Cw27a/aDff7EGhMJXPcKTxAeythDJYSGPbnEeg6gDFwmW/uuT4r/Lka2thOKsPxE@vger.kernel.org, AJvYcCWHYkA1ia5/ihmEZ4gQ92I9X/0064knh2LmCGYmyUJIZZYQDKCcLBL+G0LGsmLrORRCXYiD0DvlKZIJ+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9ETslbInnZ2j/uHUMV/S/nuMiImvmsx1MZx1YWl9d6BxsgJP5
+	eSx+grmpFYBlviUG7mb1MmK/w72FYCDklE9PalLQ7naTKgv6pwom
+X-Gm-Gg: ASbGncvqhJtamhE07iEcj+5NC9aF7nudIiuliTmcz7ddX/ztaJkNqCv5FPPbdWYfOqW
+	w/fsZoK/pKHv5+zDqE5Ujp92I6NWnQKpOMXMx2CaSOh8hINaQIMg6WkLzU6st2jc3Vt5ScBA8fu
+	iYmKsTbTtazDjIh+hoc8ycnG68vto6teQY+cZ9ML7P6kL66nPgHuq+FXV4/cf3yNyQ/OBjT7uMb
+	Og638mL0krudJ2jP2oDne57og9s+hj5iPQGgLIv4mBKEiBSiJxBKg/TTv5TH2KMx8/YZitUkOKE
+	gPaYLcJptVgy2gnWJ+KVsF8eng+S/A==
+X-Google-Smtp-Source: AGHT+IFs7iYnpHzhII7DyXtM+SJa+uo+d2nGrCyzNzEbqGFI8j/3acCSCuj+Ep+1f2tP3gAnoSiJNg==
+X-Received: by 2002:a17:90b:1810:b0:2ee:d9f5:cfb4 with SMTP id 98e67ed59e1d1-2f2901b2674mr20378325a91.36.1734441008555;
+        Tue, 17 Dec 2024 05:10:08 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fa1cd5sm9898118a91.34.2024.12.17.05.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 05:10:07 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f9d4aeab-56a4-4935-96a3-50b9b3b5a1cc@roeck-us.net>
+Date: Tue, 17 Dec 2024 05:10:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241211192014.GA3302752@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Yury Norov <yury.norov@gmail.com>, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+ <Z2Dg6ydwN6CfxgTe@yury-ThinkPad> <Z2ESttIzF4kX7JA-@shikoro>
+ <Z2E5H3-vNIi2_6oT@shikoro>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Z2E5H3-vNIi2_6oT@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 01:20:14PM -0600, Bjorn Helgaas wrote:
-> [cc->to: Rob, Krzysztof, Conor because I'm not a DT expert and I'd
-> like their thoughts on this idea of describing Root Ports as separate
-> children]
+On 12/17/24 00:41, Wolfram Sang wrote:
 > 
-> On Wed, Dec 11, 2024 at 05:00:44PM +0800, Chen Wang wrote:
-> > On 2024/12/11 1:33, Bjorn Helgaas wrote:
-> > > On Mon, Dec 09, 2024 at 03:19:38PM +0800, Chen Wang wrote:
+>> I hope that both patches can be applied in one go to avoid a dependency.
+>> I'd think the hwmon-tree is a tad more suitable, but I am also fine with
+>> bitmap as long as both patches go in. What do you maintainers thing?
 > 
-> > > > +      The Cadence IP has two modes of operation, selected by a strap pin.
-> > > > +
-> > > > +      In the single-link mode, the Cadence PCIe core instance associated
-> > > > +      with Link0 is connected to all the lanes and the Cadence PCIe core
-> > > > +      instance associated with Link1 is inactive.
-> > > > +
-> > > > +      In the dual-link mode, the Cadence PCIe core instance associated
-> > > > +      with Link0 is connected to the lower half of the lanes and the
-> > > > +      Cadence PCIe core instance associated with Link1 is connected to
-> > > > +      the upper half of the lanes.
+> Second thought, we can ask I3C to take it. Together with the cleanups
+> for the I3C drivers I would add then.
 > 
-> > > > +      SG2042 contains 2 Cadence IPs and configures the Cores as below:
-> > > > +
-> > > > +                     +-- Core(Link0) <---> pcie_rc0   +-----------------+
-> > > > +                     |                                |                 |
-> > > > +      Cadence IP 1 --+                                | cdns_pcie0_ctrl |
-> > > > +                     |                                |                 |
-> > > > +                     +-- Core(Link1) <---> disabled   +-----------------+
-> > > > +
-> > > > +                     +-- Core(Link0) <---> pcie_rc1   +-----------------+
-> > > > +                     |                                |                 |
-> > > > +      Cadence IP 2 --+                                | cdns_pcie1_ctrl |
-> > > > +                     |                                |                 |
-> > > > +                     +-- Core(Link1) <---> pcie_rc2   +-----------------+
-> > > > +
-> > > > +      pcie_rcX is pcie node ("sophgo,sg2042-pcie-host") defined in DTS.
-> > > > +      cdns_pcie0_ctrl is syscon node ("sophgo,sg2042-pcie-ctrl") defined in DTS
-> > > > +
-> > > > +      cdns_pcieX_ctrl contains some registers shared by pcie_rcX, even two
-> > > > +      RC(Link)s may share different bits of the same register. For example,
-> > > > +      cdns_pcie1_ctrl contains registers shared by link0 & link1 for Cadence IP 2.
+> If this is not to your likings, then an immutable branch for I3C to pull
+> in would be helpful, though.
 > 
-> > > > +      "sophgo,pcie-port" is defined to flag which core(link) the rc maps to, with
-> > > > +      this we can know what registers(bits) we should use.
-> 
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - reg-names
-> > > > +  - vendor-id
-> > > > +  - device-id
-> > > > +  - sophgo,syscon-pcie-ctrl
-> > > > +  - sophgo,pcie-port
-> > >
-> > > It looks like vendor-id and device-id apply to PCI devices, i.e.,
-> > > things that will show up in lspci, I assume Root Ports in this case.
-> > > Can we make this explicit in the DT, e.g., something like this?
-> > > 
-> > >    pcie@62000000 {
-> > >      compatible = "sophgo,sg2042-pcie-host";
-> > >      port0: pci@0,0 {
-> > >        vendor-id = <0x1f1c>;
-> > >        device-id = <0x2042>;
-> > >      };
-> > 
-> > Sorry, I don't understand your meaning very well.  Referring to the topology
-> > diagram I drew above, is it okay to write DTS as follows?
-> > 
-> > pcie@7060000000 {
-> >     compatible = "sophgo,sg2042-pcie-host";
-> >     ...... // other properties
-> >     pci@0,0 {
-> >       vendor-id = <0x1f1c>;
-> >       device-id = <0x2042>;
-> >     };
-> > }
-> > 
-> > pcie@7062000000 {
-> >     compatible = "sophgo,sg2042-pcie-host";
-> >     ...... // other properties
-> >     pci@0,0 {
-> >       vendor-id = <0x1f1c>;
-> >       device-id = <0x2042>;
-> >     };
-> > }
-> > 
-> > pcie@7062800000 {
-> >     compatible = "sophgo,sg2042-pcie-host";
-> >     ...... // other properties
-> >     pci@1,0 {
-> >       vendor-id = <0x1f1c>;
-> >       device-id = <0x2042>;
-> >     };
-> > 
-> > }
-> 
-> Generally makes sense to me.  I'm suggesting that we should start
-> describing Root Ports as children of the host bridge node instead of 
-> mixing their properties into the host bridge itself.
-> 
-> Some properties apply to the host bridge, e.g., "bus-range" describes
-> the bus number aperture, and "ranges" describes the address
-> translation between the upstream CPU address space and the PCI address
-> space.
-> 
-> Others apply specifically to a Root Port, e.g., "num-lanes",
-> "max-link-speed", "phys", "vendor-id", "device-id".  I think it will
-> help if we can describe these in separate children, especially when
-> there are multiple Root Ports.
 
-Agreed.
+Anything is fine with me. No need for an immutable branch from my perspective.
 
-
-> Documentation/devicetree/bindings/pci/pci.txt says a Root Port
-> should include a reg property that contains the bus/device/function
-> number of the RP, e.g.,
-> Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt has
-> this:
-> 
->   pcie-controller@3000 {
->      compatible = "nvidia,tegra30-pcie";
->      pci@1,0 {
->        reg = <0x000800 0 0 0 0>;
->      };
-> 
-> where the "0x000800 0 0 0 0" means the "pci@1,0" Root Port is at
-> 00:01.0 (bus 00, device 01, function 0).  I don't know what the "@1,0"
-> part means.
-> 
-> > And with this change, I can drop the “pcie-port”property and use the port
-> > name to figure out the port number, right?
-> 
-> Seems likely to me.
-
-I don't think device 1 would be the correct address. The RP is almost 
-always device 0.
-
-I think instead the 'syscon-pcie-ctrl' should perhaps be modeled as a 
-phy with the phy binding. Then the host bridge node can have 1 or 2 phy 
-entries depending on if the host uses 1 or 2 links. And the 2nd host 
-should have 'status = "disabled";' when it is not used.
-
-Or perhaps just 'num-lanes' would be enough.
-
-Rob
+Guenter
 
 
