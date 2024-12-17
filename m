@@ -1,179 +1,103 @@
-Return-Path: <linux-kernel+bounces-450020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3959F5969
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:14:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61739F5975
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4561B162DBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485CD188248D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01E21E2858;
-	Tue, 17 Dec 2024 22:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692ED1E0DED;
+	Tue, 17 Dec 2024 22:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCHkY8KM"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jL2uieR8"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86EB7C6E6;
-	Tue, 17 Dec 2024 22:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B07C6E6;
+	Tue, 17 Dec 2024 22:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734473620; cv=none; b=Swz7oRAltIeLK5teyW1YjtPYF8xf3SONNV1dpRSpSxLQOP4lNaidocTZnQxFtdrVkm/XRAMSnkqt7i/9ZYl4e00zCRj5YN4tzh2LubqcyfpyeZQN0KN5jPuBPogkwx8s6KQQlWocX5aBbtZ1FWdC4L807Jq/Y482toAKmANJTvQ=
+	t=1734473596; cv=none; b=Q/BEy/UdNUqg2O/oRHFe7TMc+/lH906CLn893McBDl7Q1tS8ESA6/ibXreiLbRpm3blN73CsnoWZfdWKMKXneJHTbJav6D1guepifGkHx0+oHM2pxbsOopC08cfe6eu6dWWtvHkAql773+DEaAhNGrFuDVlEc8ubw+XC0bMaueU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734473620; c=relaxed/simple;
-	bh=DITnIQxNjJGVwuWIq3JaG5pspxw+ruBZ/g44geDsBws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R16B79zwoPml8hJ5/LOiZPykwwqz1yEPer0A7mTv/+ucVMGgkr8r8i+w172DOwBk9sZBgEkk8H/NBjNl6KFFwPCPQodw2hbSj5DzMjtPKYc1925uLLBcXsfxC3k7L3yCQpWsGn24YugnPD/M6XDalgYfWskFpMUFTQSnlYrPAhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCHkY8KM; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3eb9ba53f90so1630219b6e.1;
-        Tue, 17 Dec 2024 14:13:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734473616; x=1735078416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u9QuBOniyMYck+y8PUbC//+oM4oKOj8t9nBe0JYSFFE=;
-        b=XCHkY8KMKnc6AGjfS1r9jafSIm3cH30h+bx0P6UgQUgSqUxuscVGemHYAnxGVqN2ct
-         IQ5ia+1z82ycCCZeB/uZPIDvzKqReN4N/PhW7QScahEUIpouHvctDIkEhTwR9nnVJJnL
-         hkvdTcJyV1CCJat1kGISdj+QchpPV++N7BGxNS+2Udd7Kh4IM9r0r6IyeZ+H1noLBDvm
-         icdYoFvbaSW1i23WyinNk53BV2XhwDb++GM83r2or/FhWkHy9HNgaWRsMP1z5TxX1Tnk
-         eg3PxcNFKDM2rr4B/lsCiywyl8kEGim5Gb6bLEpINkXs61e3KaV+ES3azKyU4tJ9Inh6
-         Vqbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734473616; x=1735078416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u9QuBOniyMYck+y8PUbC//+oM4oKOj8t9nBe0JYSFFE=;
-        b=wm/zzHrpYwbOkIWvBJ8gkEDPLWPqcQ93HILqIRKol9/reTXR6oD6duciMOdts2yf1l
-         WcM6ANFMa9tIbCAlmGRFWMbH05VkAldyCpgAwN0i7awH2R08+vOIW79K2oLFn7tSB8ko
-         +NhmMmv845YEUpHLkmDnGSshd2HAA9xP4JZeh9bDD/simFXEL9OiX84Sq5F0WFafLaVU
-         ojm3xoYwLc2t1WQsrKdRhqi0MPvBmXUA7JlkLWgnvH9j2UFaQhyjBHCaWRJgjFwsC4CK
-         02JXLcyPn5OI2Nief7l56l7hu45iQRfkiN8VyXVLZa32HDpwK6u6R9xadl/zNNaTrj5s
-         PCUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVobFcapeXUH79A7DTKpO/jx923fZ/ge8CAYpliWN7pW6rRXdSQXMBLXKlALAreI5+o/lLC0YGM@vger.kernel.org, AJvYcCVxmbFOlB5oh8tzfEZTrKxViqOZHo328sXZ6Z8Xi1KreYxXW68C47IiJV/W/pxBpIBbneHYpmXbtRIn5OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylQf/D/0ZCltI5K/TLIMd0iTGvGTdmQ1MngpmmVSKmOq/5OT+E
-	Fy1pKQWLbXVkmn8crUkWnFtrQqYwMCxwx1JD/JBHgRxWcArDKGxGwYz6YQeDp+iXkLbUDY3xNX/
-	WxDpyrz9dGnogQLL3wa5EDjkXBx4=
-X-Gm-Gg: ASbGncsmpGGJSTXMcFoGxzhDsS0A1qcc6yz2HdHgLZ7dMHBNLs1U43xNb9hTw0paCP5
-	1y8jb2e7HxbMXn2YshVzPATo1hrLSHgvhSzDh9Uc=
-X-Google-Smtp-Source: AGHT+IF/zHxTNCbH+0IG4qfG4nasiicCiiEwLg7lIZarUEHvAnsCaIkPrT1dguYfLdST8cwE0omtiGPoDFTN/CE+GSQ=
-X-Received: by 2002:a05:6808:3c4d:b0:3ea:4595:13fc with SMTP id
- 5614622812f47-3eccc09aebcmr459934b6e.16.1734473616594; Tue, 17 Dec 2024
- 14:13:36 -0800 (PST)
+	s=arc-20240116; t=1734473596; c=relaxed/simple;
+	bh=HdgySUBqHDMEKBAL34kG+ckzp8P2uGyJViCY8YaVJ4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcS/pwa0OJEfqnRzsB7Bhnacf/Y3E/Aa4Fhe268XsX03hZlVCfPM3HKB7vKltdDAWDgeeq/8UCFROWv9yDWG/QqC9lHtfGO5dzCBbLQ6OJ48TXLm+hk7soBN+Eob4v9rOc7Pp2ypnBJ5X9eWrG6xJP1+1nB/Tsa9j4CJG9IDCJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jL2uieR8; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4YCWKQ3NwTzlff0H;
+	Tue, 17 Dec 2024 22:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1734473589; x=1737065590; bh=M+/x75l0vOkbX9v5AzXNizw7
+	y0RN86h2Pymz9kvPMHE=; b=jL2uieR8Az8AZoXtMs06Q+vFUJOH5YyF02tqognH
+	HnXv/SiwmHha0XjB93OWXYkTfzalV8E/PBF46TwS1NPEEe5xipxT1eKmxzq24weO
+	eqabu82r1jyoChwZ1iBARHX+o7gexMzJj/lelLhw1/oYnK+epirx9+qtALOFP3Pz
+	pxLhLG8YpAM1UHNvsYgjCqnrSqZTyLw5V+6sdSYcLuiDmR4V4qfiT9drx5KYwxn7
+	fobnga+LePbtS+htfHKkbGx234GY/Ke0ejuyqZyKnwO3LVAq1r2Ax6CC7Ua+6xWQ
+	tFczQ4/RCIxMRpHJ96n3GRJxMfQraYqIpZJgXk+zhAAY3g==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id eKTlfz2Odg6k; Tue, 17 Dec 2024 22:13:09 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4YCWKH28WKzlfflB;
+	Tue, 17 Dec 2024 22:13:06 +0000 (UTC)
+Message-ID: <da924dc3-a2e5-4bfe-afb6-5fbc55bc25a3@acm.org>
+Date: Tue, 17 Dec 2024 14:13:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216234850.494198-1-jmaxwell37@gmail.com> <aa49d578-dee4-4ee8-b17b-b6e941d9126c@intel.com>
-In-Reply-To: <aa49d578-dee4-4ee8-b17b-b6e941d9126c@intel.com>
-From: Jonathan Maxwell <jmaxwell37@gmail.com>
-Date: Wed, 18 Dec 2024 09:13:00 +1100
-Message-ID: <CAGHK07COaxjj4WJvDKFLj=ev9j-jRxuw5bXh_zCZtL75Twu7rQ@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [net-next] ice: expose non_eop_descs to ethtool
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 4/4] block/mq-deadline: introduce min_async_depth
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+ akpm@linux-foundation.org, ming.lei@redhat.com, yang.yang@vivo.com,
+ osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
+ <20241217024047.1091893-5-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241217024047.1091893-5-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 18, 2024 at 1:49=E2=80=AFAM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
->
-> From: Jon Maxwell <jmaxwell37@gmail.com>
-> Date: Tue, 17 Dec 2024 10:48:50 +1100
->
-> > The ixgbe driver exposes non_eop_descs to ethtool. Do the same for ice.
->
-> Only due to that?
-> Why would we need it in the first place?
->
+On 12/16/24 6:40 PM, Yu Kuai wrote:
+> +static unsigned int min_async_depth = 64;
+> +module_param(min_async_depth, int, 0444);
+> +MODULE_PARM_DESC(min_async_depth, "The minimal number of tags available for asynchronous requests");
 
-Not just that. We had a critical ice bug we were diagnosing and saw this
-counter in the Vmcore. When we set up a reproducer we needed to check that
-counter was incrementing. I added this patch to do that and thought that
-it may aid trouble-shooting in the future as well so I sent it upstream.
+Users may not like it that this parameter is read-only.
 
-Regards
+> @@ -513,9 +523,12 @@ static void dd_depth_updated(struct blk_mq_hw_ctx *hctx)
+>   	struct deadline_data *dd = q->elevator->elevator_data;
+>   	struct blk_mq_tags *tags = hctx->sched_tags;
+>   
+> -	dd->async_depth = max(1UL, 3 * q->nr_requests / 4);
 
-Jon
+Shouldn't this assignment be retained instead of removing it? 
+Additionally, some time ago a user requested to initialize 
+dd->async_depth to q->nr_requests instead of 3/4 of that value because
+the lower value introduced a performance regression.
 
-> >
-> > With this patch:
-> >
-> > ethtool -S ens2f0np0 | grep non_eop_descs
-> >      non_eop_descs: 956719320
-> >
-> > Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
-> > ---
-> >  drivers/net/ethernet/intel/ice/ice.h         | 1 +
-> >  drivers/net/ethernet/intel/ice/ice_ethtool.c | 1 +
-> >  drivers/net/ethernet/intel/ice/ice_main.c    | 2 ++
-> >  3 files changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/etherne=
-t/intel/ice/ice.h
-> > index 2f5d6f974185..8ff94400864e 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice.h
-> > +++ b/drivers/net/ethernet/intel/ice/ice.h
-> > @@ -345,6 +345,7 @@ struct ice_vsi {
-> >       u32 rx_buf_failed;
-> >       u32 rx_page_failed;
-> >       u16 num_q_vectors;
-> > +     u64 non_eop_descs;
-> >       /* tell if only dynamic irq allocation is allowed */
-> >       bool irq_dyn_alloc;
-> >
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net=
-/ethernet/intel/ice/ice_ethtool.c
-> > index 3072634bf049..e85b664fa647 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
-> > @@ -65,6 +65,7 @@ static const struct ice_stats ice_gstrings_vsi_stats[=
-] =3D {
-> >       ICE_VSI_STAT("tx_linearize", tx_linearize),
-> >       ICE_VSI_STAT("tx_busy", tx_busy),
-> >       ICE_VSI_STAT("tx_restart", tx_restart),
-> > +     ICE_VSI_STAT("non_eop_descs", non_eop_descs),
-> >  };
-> >
-> >  enum ice_ethtool_test_id {
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/et=
-hernet/intel/ice/ice_main.c
-> > index 0ab35607e5d5..948c38c0770b 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_main.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_main.c
-> > @@ -6896,6 +6896,7 @@ static void ice_update_vsi_ring_stats(struct ice_=
-vsi *vsi)
-> >       vsi->tx_linearize =3D 0;
-> >       vsi->rx_buf_failed =3D 0;
-> >       vsi->rx_page_failed =3D 0;
-> > +     vsi->non_eop_descs =3D 0;
-> >
-> >       rcu_read_lock();
-> >
-> > @@ -6916,6 +6917,7 @@ static void ice_update_vsi_ring_stats(struct ice_=
-vsi *vsi)
-> >               vsi_stats->rx_bytes +=3D bytes;
-> >               vsi->rx_buf_failed +=3D ring_stats->rx_stats.alloc_buf_fa=
-iled;
-> >               vsi->rx_page_failed +=3D ring_stats->rx_stats.alloc_page_=
-failed;
-> > +             vsi->non_eop_descs +=3D ring_stats->rx_stats.non_eop_desc=
-s;
-> >       }
-> >
-> >       /* update XDP Tx rings counters */
->
-> Thanks,
-> Olek
+Thanks,
+
+Bart.
+
 
