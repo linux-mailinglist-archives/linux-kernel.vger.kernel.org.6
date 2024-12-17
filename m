@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-449141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A196B9F4A68
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:58:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E736F9F4A6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE59E16F593
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:57:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E698A16F6C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE721F427A;
-	Tue, 17 Dec 2024 11:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959651F12F9;
+	Tue, 17 Dec 2024 11:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CPC/ActJ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmrD2b/b"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43651F3D59
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911311F426B
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436600; cv=none; b=L4bKHsb2fdi1fZnhPt11c2pBiuOZoR1+evgBJHRG7eGSYU4SITibv434eWtJC6lzrXFPLlCn9BuTT2kIoT0Ie8ygACkGRmALNaBiEzxwBHLfND+QGeHATXHgDuZw0hzpDj2hT0SpYQA7qRN2mbnEsMEkmOWIyjW6TkfLCUt13H4=
+	t=1734436605; cv=none; b=uT3C6yYEO9UOFuXxq+HySHaW4thatAYEgxB9rSA2NPEVhK8iL06iOKgc8OEJPbUtycg40lZgzEr1j3J1scUgvppZ5PvrUpXI4j68asEFkz0OZyNHpkrWhghrof5DgxRAkgEhSb5bz9SvShu1x0Dtq5OLmXM1SNRevq5/JrsXngQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436600; c=relaxed/simple;
-	bh=uz/cOheGCgnwGt6ic1N6Vuscq6Gm3oMspfGnxKGBRG0=;
+	s=arc-20240116; t=1734436605; c=relaxed/simple;
+	bh=fyI0/dhbkFxqKd8iWh2Jzy9mpwkSrgNFZ+i9alPd06w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uVnOPI50Q6tJkpCkPt0tk1TZ3TTv5EAK77Gt7bvrknDuTe6RcJ6o1C3WM6AnlsyRLU7f1KRilg7Tt2nBb/SUgZX63c3NU7jws3kMirMiRl+LNz0RY0qzD5voP9/Tr/OzuFLJmXGD8+5C3KzsP/RlShqXh3F8eYeoSbOtme6LkkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CPC/ActJ; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=frMiR+vOgpnpLxR2XHv7tAVbwoC7AN9uCva7ZISBDJ0La0GbauAWMfHUdRJQtjshVcH6XvER7nXK7JFK9SRPTgylhC048lSdHKMx7nNRXNzVE9i6eYBELGCAQtmdf/j7h6RX0PoHZ15mBCtMn6gsD2rXY64showWYoynEIX/Ops=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmrD2b/b; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso32288395e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:38 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43635796b48so20317625e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:56:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734436597; x=1735041397; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734436601; x=1735041401; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jwqWh99mkwgFG4i731gC0ut6m4bysgrlep8nFs6msoA=;
-        b=CPC/ActJOpYZ+JDgY+WdKiEYlPAtj6pCGNhMRC9v4rm+p9UUs63iqwTgy9cYRJb46j
-         dELYdiQJo0rnQNy0RnJU/GuFbWaCuViGAAOdptsjVUwZCaI4JytuT5QuL56d3/hTBUXE
-         qWFKB3p03f9Atcp3UuJ0h9GQ/5n69xUei8cKJOk+ktsZv6f897UyxBK5LvYgljqmwsbu
-         OBLziQ3VukHKvtTb86VCr4rh7ui8bHIQ7/nSUeRewkmbkwyOFUr8wTOR8eJp5azI0M2I
-         erfte0MFWU/Ic7OAsukuADoNRXIbpciuZ7Dr1QnqEDUaENpLyxstnFg29TOCnzL6yxTX
-         gSFw==
+        bh=bFM1q7jsB7Su3lAVmgr0rlaLhCHhfoFOEst7jXnFLG4=;
+        b=WmrD2b/ble34C9MwCDKzGxVg0vFLBUyrDuJVfLLw1rqm1qyUXqWiR4eOZbNAk1BNVb
+         w4Jfgt14YAEDSRgePSBFuicKaAgUGvmJ9KwAjmlzoZcAyaMCeTIcWsakq8DZKghJYTTH
+         RdTK+wh+fy0FLBLE1CNgxbjk/MuMoXFuOBFn+mGQMYKWiW1kkYesLDjNUohiIRRv42L3
+         tEBnBEcZhdBHqtYPB2CqdsAuXKhNiySB36/XPUBHQ89xX+TnS84awpFdq5CEcJlr6M+X
+         jGSfOJdqpWl7+gNYy60d/+FvDsWF+ezjMtjKNRe8YzoCgnw5JWBID5d1O+20jG16Uw+B
+         YZQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734436597; x=1735041397;
+        d=1e100.net; s=20230601; t=1734436601; x=1735041401;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jwqWh99mkwgFG4i731gC0ut6m4bysgrlep8nFs6msoA=;
-        b=KST8xBPL0NKjo/Oj93JHn7OcXjRFlZjT8sANuGYjA+Gik64NDFHYSfB3aLm1rC5OV9
-         j3LCZPGJybJ/kWeW0zDBl13wcipcJdLOjJ27aabMTD0JthkgQQSb85MQfAEcNAVhNfz9
-         aWionJloLWtTGsQj0id6Tld7Jqn+xV/KdrMs76QVGFy9qDdYFte6syT7uyQrvfPF38HQ
-         I+1HYw89H6mBYVL0mq30rqyamIcue3ev6Dz4632H0GvWBBZimAQZz9pKt8x9P9BSmzY6
-         XCwZaGTyQFKRDMYNegxgLRx0fc0jpjiOa6lmPnzzRIrKte0WQSMOYITkOUsUyAjVetri
-         z0uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlr3a2tDInbgoClxTtWqFxCmzU54V8rHQgtmHHJh+wP8eoEsAvJkurcO9/jKZUixsnOdFkmj9BMm1lPl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr0lq7qthu092UZnaXrNrqeZjFAe68y+ILiRfWQ0fwZ8SHZ2xu
-	XinyMG5eCc7Jqbo1VcvGK6OD36zb5bG9U2LrCugLRdbN6Gwk5J46KoY78y/PpYI=
-X-Gm-Gg: ASbGnctDbYCgNUn5H1DrHF/QpRq76fM5M0/qspckW/CjwHkmbbh4JxUO6pJk9/AM+w+
-	idc9k4nAd/eMQzHaW3nqjcc2EPCF0dizakweAPcrVocNyLyB92tsLP+FbbL54NGBuRgEPC6LB76
-	5aEpMvuOcxY+cFLuQKrzXoHDoksjcdxmqyd1wbS/RiXwU06HnSd/tVcHbU49h8NMooVr6jLlyRr
-	1XlQnsW5uumsiTTv6J40EnS2RTQVNo2pGAVp6tafDQt3i3f+3vod9l8
-X-Google-Smtp-Source: AGHT+IGwdSY4bxXI25oDz+FWewMmRHe9+KuuRiSPfZFzGZSjSm8Hi3QlFSfDLHoAEpYFbRs2avKTiw==
-X-Received: by 2002:a05:600c:3b22:b0:434:fa73:a906 with SMTP id 5b1f17b1804b1-4364814eefdmr23438715e9.4.1734436597154;
-        Tue, 17 Dec 2024 03:56:37 -0800 (PST)
+        bh=bFM1q7jsB7Su3lAVmgr0rlaLhCHhfoFOEst7jXnFLG4=;
+        b=ofzQInw1PzhM/Df+NJLFb/hxeaE83VtfR0g4w8wLXx2u5CjZfXtkYjNkae5IKL+QUs
+         6sR/peh8Xsrot+bYpYv2BjKy8A/Gb3aJQj5YmFrMYnHePe5QCXhNA2cc42UW0uzaejbH
+         lEcISrurBt+pdPltNblOuO8XXBrCreD6OmYn0V8gS9iMdimOyoV4jaQ8Bb20sflgt6CO
+         7qx2bVbiZE8oY5+coSqr1g18V2ZCoJWXs7TVrAD4GOxfqDKcgxbnU33ld+/o7DOz7WQS
+         G9hv2QZRVuJma6A7/U6KmPM5v6GVNCSrvrfXAyZIBj9FCAFCNYPp8VBkDmPPgumdM4fv
+         Arlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSDNtn+du9B7krGbhWhRE1+Vo6XQQ3k636hyCw5oI0iwIg7JsfyNiJIOWe2/+sF4h8ogejnfco9uOq5ps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnE2/xcAIoot1qG76Z58kJNz26qEoFQlkR9EQ23QxoWXa6Di3a
+	CwSXamjulNd0JLe7Ob4qAWNIxKIX02kz+Y0zrhBID3ydckqrBr/q1nbOujWkztU=
+X-Gm-Gg: ASbGncu8crfrZAhhlFAkRum0xeX/DducBm3faF8xwr3rVNC+wg09GA9ucy/8mvObEUu
+	oHEiKVEaxV3/8L0+T66qTu7s6dgWKvN5hd7KhVcZHpGpYIt2ctLzznXRKzaCytiwOKRTsVSOOtN
+	oFpiv1bOL22acbC786OrO1i/AkKGqOvbhHEP83nfNV2rOUpL0mZUSqlX0l2jlm4vHWQtKGW9iLy
+	FYpQW4ktfXy08CizukvBP8DCqTjoZ5uxve48LcaFuw3U98tFGj9V1in
+X-Google-Smtp-Source: AGHT+IGHK04q5y+mpaaNrdicK1T9ozCfgAnXqS1cmz3u3H1E5qAKa1r9yR6aB/fLQM8NPU3JxtkxJw==
+X-Received: by 2002:a05:600c:3516:b0:436:1b77:b5aa with SMTP id 5b1f17b1804b1-4364815c7d6mr27745645e9.8.1734436601097;
+        Tue, 17 Dec 2024 03:56:41 -0800 (PST)
 Received: from pop-os.. ([145.224.66.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436360159aasm114935825e9.6.2024.12.17.03.56.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436360159aasm114935825e9.6.2024.12.17.03.56.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 03:56:36 -0800 (PST)
+        Tue, 17 Dec 2024 03:56:40 -0800 (PST)
 From: James Clark <james.clark@linaro.org>
 To: linux-arm-kernel@lists.infradead.org,
 	linux-perf-users@vger.kernel.org
@@ -91,9 +91,9 @@ Cc: James Clark <james.clark@linaro.org>,
 	Graham Woodward <graham.woodward@arm.com>,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org
-Subject: [PATCH 4/5] perf test: arm_spe: Add test for discard mode
-Date: Tue, 17 Dec 2024 11:56:07 +0000
-Message-Id: <20241217115610.371755-5-james.clark@linaro.org>
+Subject: [PATCH 5/5] perf docs: arm_spe: Document new discard mode
+Date: Tue, 17 Dec 2024 11:56:08 +0000
+Message-Id: <20241217115610.371755-6-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241217115610.371755-1-james.clark@linaro.org>
 References: <20241217115610.371755-1-james.clark@linaro.org>
@@ -105,56 +105,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a test that checks that there were no AUX or AUXTRACE events
-recorded when discard mode is used.
+Document the flag, hint what it's used for and give an example with
+other useful options to get minimal output.
 
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/tests/shell/test_arm_spe.sh | 30 ++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ tools/perf/Documentation/perf-arm-spe.txt | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/perf/tests/shell/test_arm_spe.sh b/tools/perf/tests/shell/test_arm_spe.sh
-index 3258368634f7..a69aab70dd8a 100755
---- a/tools/perf/tests/shell/test_arm_spe.sh
-+++ b/tools/perf/tests/shell/test_arm_spe.sh
-@@ -107,7 +107,37 @@ arm_spe_system_wide_test() {
- 	arm_spe_report "SPE system-wide testing" $err
- }
+diff --git a/tools/perf/Documentation/perf-arm-spe.txt b/tools/perf/Documentation/perf-arm-spe.txt
+index de2b0b479249..588eead438bc 100644
+--- a/tools/perf/Documentation/perf-arm-spe.txt
++++ b/tools/perf/Documentation/perf-arm-spe.txt
+@@ -150,6 +150,7 @@ arm_spe/load_filter=1,min_latency=10/'
+   pct_enable=1        - collect physical timestamp instead of virtual timestamp (PMSCR.PCT) - requires privilege
+   store_filter=1      - collect stores only (PMSFCR.ST)
+   ts_enable=1         - enable timestamping with value of generic timer (PMSCR.TS)
++  discard=1           - enable SPE PMU events but don't collect sample data - see 'Discard mode' (PMBLIMITR.FM = DISCARD)
  
-+arm_spe_discard_test() {
-+	echo "SPE discard mode"
-+
-+	for f in /sys/bus/event_source/devices/arm_spe_*; do
-+		if [ -e "$f/format/discard" ]; then
-+			cpu=$(cut -c -1 "$f/cpumask")
-+			break
-+		fi
-+	done
-+
-+	if [ -z $cpu ]; then
-+		arm_spe_report "SPE discard mode not present" 2
-+		return
-+	fi
-+
-+	# Test can use wildcard SPE instance and Perf will only open the event
-+	# on instances that have that format flag. But make sure the target
-+	# runs on an instance with discard mode otherwise we're not testing
-+	# anything.
-+	perf record -o ${perfdata} -e arm_spe/discard/ -N -B --no-bpf-event \
-+		-- taskset --cpu-list $cpu true
-+
-+	if perf report -i ${perfdata} --stats | grep 'AUX events\|AUXTRACE events'; then
-+		arm_spe_report "SPE discard mode found unexpected data" 1
-+	else
-+		arm_spe_report "SPE discard mode" 0
-+	fi
-+}
-+
- arm_spe_snapshot_test
- arm_spe_system_wide_test
-+arm_spe_discard_test
+ +++*+++ Latency is the total latency from the point at which sampling started on that instruction, rather
+ than only the execution latency.
+@@ -220,6 +221,16 @@ Common errors
  
- exit $glb_err
+    Increase sampling interval (see above)
+ 
++Discard mode
++~~~~~~~~~~~~
++
++SPE PMU events can be used without the overhead of collecting sample data if
++discard mode is supported (optional from Armv8.6). First run a system wide SPE
++session (or on the core of interest) using options to minimize output. Then run
++perf stat:
++
++  perf record -e arm_spe/discard/ -a -N -B --no-bpf-event -o - > /dev/null &
++  perf stat -e SAMPLE_FEED_LD
+ 
+ SEE ALSO
+ --------
 -- 
 2.34.1
 
