@@ -1,162 +1,214 @@
-Return-Path: <linux-kernel+bounces-449881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230C89F5755
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:07:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901429F5788
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:19:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E33516E276
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7277A18923D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F48C1D9A63;
-	Tue, 17 Dec 2024 20:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8198C1F9EA4;
+	Tue, 17 Dec 2024 20:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6YNXq9V"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lodewillems.com header.i=@lodewillems.com header.b="Sn5ZiSyN"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53717BEA2
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772A31F9431;
+	Tue, 17 Dec 2024 20:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734466060; cv=none; b=UuLz5A5kI5WdlRrD4SHgNzXU+zDUlo/naTsJ+uQLMW7jS0xzIxEFLoedBj1Ke25PyQC+sp7vDe0apB8upB5g/aFW0JvHg7ONrVVGzvpM8N3fYdekZJHr5L6ui6acBNrl9r9H/xiGmBqVtnBcjtPu+19EYEV+EvwT7flzrG8plP0=
+	t=1734466701; cv=none; b=GF+D6MeTJK1eVkzYE/TS8WvjWS4mWstEbFMmSstikF4RIdyEPsHRK+dxDMsv7NWISwNIx4W2UXZalPBn2luc1nIxQqwznszOk0g3vtaNtRve6THIjMIzOr6TnfxExl1n5ZeDIRBql0CsASDbG38QNC2gWn4SkycaLpItV951GEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734466060; c=relaxed/simple;
-	bh=vEc1kt6QDRRXv4GZYdj6Sm4aviyn9+KMpza9z/OtbdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FzXkzkMmz2YiuOhlmERp25uhVuwxU6EVKRSgr/JUs3yi2k1ppnC9cF7aWAiI4ggw//5YvnoxdFFsem4U9hDt/Eb7dgsqe4uDEz71WWD8dAT9iSjoc33OFEETaPCQ1KjpYMibodqDbp7vvu7e5eTFAb65QgyT7WQHiGxnFu2ZAC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6YNXq9V; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d3e9a88793so9534804a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734466057; x=1735070857; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1QDxIqoOVZBeBoBYUpdpckR5+V8/ZMoPY75T4kvZXjg=;
-        b=N6YNXq9VCpaGeeWdg4opOCf8Uue+3vsQX06aKkQIwMCyZsHpZAcpUZIjAG6cA1KCHz
-         bo8SaY7ULVggZg1qeYAV1zn/raaD8bOwX7C3dmo614A1fERRFIdevcBGHP3FF0YvaviC
-         SLS7uvwSzDkFP2gOEWYJx7d1ZDgsxuAM5S+4jSN9sTD1KgMClPgIZ3HEjkfOh+y3Do+N
-         BfbidBbkeYWCuISdnrLZB5SeJluDZTWNHV8rqenZEiILj1/FUbp4JRoNpvFUU/S6kzIr
-         jylyw9vuTcI5WeW5SBh/qn6DacAmKxzKfcaRm4S1fJjEjzGmqbXk0sEMFrr6GysDVW6I
-         4oiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734466057; x=1735070857;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1QDxIqoOVZBeBoBYUpdpckR5+V8/ZMoPY75T4kvZXjg=;
-        b=hA2M7SN4NJTBIGZmJJcGs+J2TLvsEo8n3D6AV7DEkzyDqr3FygWZQ+IpQcuFq7Nsdc
-         juYjdGrsIRqYpBj4b0Zs4BdepCQMJoJ/w8SpU/DpWimivhjhsEjzaI97ZiPJ35jMfEej
-         1DTPGAL31GlfUk9RAJjCiGjUWva3jzDrhrwwO+IebVsRjJ680bOjqEIh1jqYz8XIUF+m
-         Q1tyxb1iCHW7YTP9rPNDSwgnlRtvVmuPe3wWEm+sQ1q+HCEFG5xSGeBjcZnWsmNsGVkN
-         o31arU+i3JjHj4cACEaJnzC4yi44rKd+i95/aVoSaVXQ+lNFZ74m9ZCgbn2j3QmwOWwq
-         vU9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXspBJm2ElQfc2UJiphcSlZj8aRm32Xa3E69G1LEUEUxjj3a7bzwQzPfzxEA+WX1Xz/LLDRz+bumNWTupA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZBe7SnYeYHAQl0Xt5+7UPLIKcO0fXoexbmtrTUeQZAtVDH0qz
-	+1jBUVhGkWKZvH12q0jT8XgzGG3sf6X+4UsggJjLytGJ+w/5S+tfVEKnQiaHifxIrfLKtisBMEr
-	N
-X-Gm-Gg: ASbGncuNVF0y6aDf7J1hYSJaRTzyG6SCq9xqem7ESwjxFZ0NOIdrPLa/0Eggbs0gVSL
-	pYjJNgI7etMZhSHmUaMNFFtGib87q1+J8U79az+TN209aiY+7rTv//k5RFMBlKKRduuh825SEAR
-	csPBsqn4YERWv6gFabZFbCyl+7d2eCrUDuM31gfBHtxjixbPNsrvYlWFxpt/PWZvGf8p1TiHeAz
-	GqwqKwAC0iBZ0pN6k4IryeK3BmZuMPy94qbryjS4Xdiz9j/EpWSOFIQZphVGg==
-X-Google-Smtp-Source: AGHT+IF0ctSU7tlRy9ZkNJBTwZZVTMJOgOzLKCAl5fTg6inVF6J1UBzDEgqo98gERo5xi6Qqj3Z6OA==
-X-Received: by 2002:a05:6402:13d4:b0:5d0:bcdd:ffa1 with SMTP id 4fb4d7f45d1cf-5d7ee390546mr302236a12.2.1734466056757;
-        Tue, 17 Dec 2024 12:07:36 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f25a39sm4619633a12.69.2024.12.17.12.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 12:07:36 -0800 (PST)
-Date: Tue, 17 Dec 2024 23:07:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: smatch usage (was Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO
- driver)
-Message-ID: <c5bd368e-bd4b-4001-b612-b5293a8b2c1a@stanley.mountain>
-References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
- <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
- <20241216164814.GH780307@kernel.org>
- <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
- <20241217103509.GO780307@kernel.org>
- <c656bd3f-4ad0-4c2b-8d91-1c81f7e41c52@alliedtelesis.co.nz>
+	s=arc-20240116; t=1734466701; c=relaxed/simple;
+	bh=HBUUvIWBwQLqxhwKfqHNDEhxwxvTBxU5fqmMxkAoJ70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SdZBV/3j7xlp55lcI/pkwszE+JnH4MxxdOq5vWjgRqPowDCzrS5PzkrtlhMsIfGAh1JQxqE19xf8gB4r0qRttBd7gYKJU69/YmSmM8FvNwmp3pjnb90AYszULdWk+4LooMUeqTMDzKSAZoq9Glnx9i+O0dXaqpltr3IcjaCJT0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lodewillems.com; spf=pass smtp.mailfrom=lodewillems.com; dkim=pass (2048-bit key) header.d=lodewillems.com header.i=@lodewillems.com header.b=Sn5ZiSyN; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lodewillems.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lodewillems.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4YCSYP1Gp8z9sWp;
+	Tue, 17 Dec 2024 21:08:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lodewillems.com;
+	s=MBO0001; t=1734466105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vik/uoCAr+mic177P1g8olkmGxdxWNqod5BOEEyu/8s=;
+	b=Sn5ZiSyNmXySkI2niORPKMHdKHEahMX4HNzFSRzhI6/V3IPsY+dduZ68TBKJqidgGeNAyY
+	S4t0a6UAAZhq9QTcYwaf31S69wCjTe9ksgWJR/CR+fk4Cl0pLn2wpsmgdlYKIUZG5uW41p
+	z3kPGpNnq9t6aduhFGLwDH6gt7IqxkbyX6M74GfigJCLX8lRcDUsf/qhOTylz/lZfInyg4
+	avYz3mdVihastBurB7qbOV92R1TvXNyBPtCfSEXZ57o7URKJ95Rg3z/q6tk3L5BiO754Y6
+	akEAd7ZloLYwpJt/8L5FLN89+anS3TRPQi9JK4RqLVVQvYz8psCrvip343et0g==
+Message-ID: <55c078d2-80de-4eaf-afc3-d470a712bd49@lodewillems.com>
+Date: Tue, 17 Dec 2024 21:08:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c656bd3f-4ad0-4c2b-8d91-1c81f7e41c52@alliedtelesis.co.nz>
+Subject: Re: [PATCH RESEND] USB: serial: CH341: add hardware flow control
+ RTS/CTS
+To: Johan Hovold <johan@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241113180930.3741-1-me@lodewillems.com>
+ <Z12-hZKS83WQ5bYd@hovoldconsulting.com>
+Content-Language: en-US
+From: Lode Willems <me@lodewillems.com>
+In-Reply-To: <Z12-hZKS83WQ5bYd@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4YCSYP1Gp8z9sWp
 
-On Wed, Dec 18, 2024 at 08:40:08AM +1300, Chris Packham wrote:
-> (culled the cc list)
+On 14/12/2024 18:21, Johan Hovold wrote:
+> On Wed, Nov 13, 2024 at 07:08:27PM +0100, Lode Willems wrote:
+>> This adds support for enabling and disabling
+>> RTS/CTS hardware flow control.
+>> Tested using a CH340E in combination with a CP2102.
+>>
+>> Fixes part of the following bug report:
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=197109
+>>
+>> Signed-off-by: Lode Willems <me@lodewillems.com>
 > 
-> On 17/12/2024 23:35, Simon Horman wrote:
-> > + Dan Carpenter
-> > 
-> > On Tue, Dec 17, 2024 at 10:47:10AM +1300, Chris Packham wrote:
-> > > On 17/12/2024 05:48, Simon Horman wrote:
-> > > > On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
-> > > > > Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-> > > > > switches with integrated SoC. There are 4 physical SMI interfaces on the
-> > > > > RTL9300 but access is done using the switch ports so a single MDIO bus
-> > > > > is presented to the rest of the system.
-> > > > > 
-> > > > > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > ...
-> > 
-> > > > > +		if (smi_addr[0] > MAX_SMI_BUSSES)
-> > > > Hi Chris,
-> > > > 
-> > > > Should this condition be
-> > > > 
-> > > > 		if (smi_addr[0] >= MAX_SMI_BUSSES)
-> > > Yes. You are correct.
-> > > > > +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
-> > > > > +					     smi_addr[0]);
-> > > > > +
-> > > > > +		if (smi_addr[1] > MAX_SMI_ADDR)
-> > > > > +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
-> > > > > +
-> > > > > +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
-> > > > > +			priv->smi_bus_isc45[smi_addr[0]] = true;
-> > > > Otherwise it seems that smi_bus_isc45 may overflow here.
-> > > > 
-> > > > Flagged by Smatch.
-> > > Sounds like something I should start looking at for myself. Have you got a
-> > > link to share?
-> > Hi Chris,
-> > 
-> > Smatch is here: https://github.com/error27/smatch
-> > And my usage of it is informed by
-> > https://blogs.oracle.com/linux/post/smatch-static-analysis-tool-overview-by-dan-carpenter
+> Thanks for the patch and sorry about the late feedback on this one. I
+> wanted to give it a spin with the devices I have here (ch340g and
+> ch341a).
+
+Thanks for the review. Sorry in advance if this e-mail is formatted
+incorrectly, this is my first time replaying to a review.
+
 > 
-> Thanks, I did find the repo.or.cz mirror and
-> https://lwn.net/Articles/691882/ after I searched a bit.
-> 
-> > 
-> > FWIIW, I run it usking kchecker on individual source files.
-> > 
-> > I've also CCed the author, Dan Carpenter, for good measure.
-> 
-> Odd thing is I can't seem to reproduce any error report on my buggy code.
-> I've tried `make O=build_smatch CHECK="~/src/smatch/smatch -p=kernel" C=1`
-> and `O=build_smatch ~/src/smatch/smatch_scripts/kchecker --spammy
-> drivers/net/mdio/mdio-realtek-rtl.c`
+> Appears to the modem control lines are not wired up on the ch341a
+> evaluation board I have, but the device accepts the request and stops
+> transmitting with hardware flow control enabled.
 > 
 
-I wasn't able to use O=... with the kchecker script but if I call make
-directly then it works for me:
+Since creating this patch I've acquired a ch341a breakout board and can
+confirm that it transmits with hardware flow control enabled and CTS
+asserted.
 
-make O=/home/dcarpenter/progs/kernel/build/build_smatch/ allyesconfig
-make O=/home/dcarpenter/progs/kernel/build/build_smatch/ C=2 'CHECK= /home/dcarpenter/progs/smatch/release/smatch_scripts/../smatch --project=kernel --succeed ' drivers/net/mdio/mdio-realtek-rtl.o
+> With ch340g in loopback, I also see it refuse to transmit unless cts is
+> asserted. I was not able to get the device to deassert rts when
+> attempting to fill its receive buffers, however. Perhaps the hardware
+> does not support this, but is this something you tried?
+> 
 
-regards,
-dan carpenter
+I didn't try this before. Just trying a couple of things now I also
+couldn't seem to make it deassert RTS, but this may be a failure of
+how I'm testing this.
 
+>> ---
+>>  drivers/usb/serial/ch341.c | 41 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 41 insertions(+)
+>>
+>> diff --git a/drivers/usb/serial/ch341.c b/drivers/usb/serial/ch341.c
+>> index d10e4c4848a0..62237f657320 100644
+>> --- a/drivers/usb/serial/ch341.c
+>> +++ b/drivers/usb/serial/ch341.c
+>> @@ -63,6 +63,7 @@
+>>  #define CH341_REG_DIVISOR      0x13
+>>  #define CH341_REG_LCR          0x18
+>>  #define CH341_REG_LCR2         0x25
+>> +#define CH341_REG_FLOW_CTL     0x27
+>>  
+>>  #define CH341_NBREAK_BITS      0x01
+>>  
+>> @@ -77,6 +78,9 @@
+>>  #define CH341_LCR_CS6          0x01
+>>  #define CH341_LCR_CS5          0x00
+>>  
+>> +#define CH341_FLOW_CTL_NONE    0x000
+>> +#define CH341_FLOW_CTL_RTSCTS  0x101
+> 
+> The registers are eight bits wide, but the driver writes two at a time.
+> So this should just be 0x00 and 0x01.
+
+Ok. I'm guessing I don't have to send the same request twice and can
+just leave the top eight bits of the value and index empty?
+It seems to work in the quick testing I've done.
+
+> 
+>> +
+>>  #define CH341_QUIRK_LIMITED_PRESCALER	BIT(0)
+>>  #define CH341_QUIRK_SIMULATE_BREAK	BIT(1)
+>>  
+>> @@ -478,6 +482,41 @@ static int ch341_open(struct tty_struct *tty, struct usb_serial_port *port)
+>>  	return r;
+>>  }
+>>  
+>> +static void ch341_set_flow_control(struct tty_struct *tty,
+>> +				   struct usb_serial_port *port,
+>> +				   const struct ktermios *old_termios)
+>> +{
+>> +	int r;
+>> +
+>> +	if (old_termios &&
+>> +	    C_CRTSCTS(tty) == (old_termios->c_cflag & CRTSCTS))
+>> +		return;
+> 
+> Just drop this and set the requested setting unconditionally.
+
+Ok
+
+> 
+>> +
+>> +	if (C_CRTSCTS(tty)) {
+>> +		r = ch341_control_out(port->serial->dev, CH341_REQ_WRITE_REG,
+>> +				      CH341_REG_FLOW_CTL |
+>> +				      ((u16)CH341_REG_FLOW_CTL << 8),
+>> +				      CH341_FLOW_CTL_RTSCTS);
+>> +		if (r < 0) {
+>> +			dev_err(&port->dev,
+>> +				"%s - failed to enable flow control: %d\n",
+>> +				__func__, r);
+>> +			tty->termios.c_cflag &= ~CRTSCTS;
+>> +		}
+>> +	} else {
+>> +		r = ch341_control_out(port->serial->dev, CH341_REQ_WRITE_REG,
+>> +				      CH341_REG_FLOW_CTL |
+>> +				      ((u16)CH341_REG_FLOW_CTL << 8),
+>> +				      CH341_FLOW_CTL_NONE);
+>> +		if (r < 0) {
+>> +			dev_err(&port->dev,
+>> +				"%s - failed to disable flow control: %d\n",
+>> +				__func__, r);
+>> +			tty->termios.c_cflag |= CRTSCTS;
+>> +		}
+>> +	}
+> 
+> Please rewrite this so that you prepare the value and index parameters
+> based on the termios settings and then do one control request. If it
+> fails you can restore the old setting (if old_termios is non-NULL).
+
+Ok, I haven't seen any other driver restore the old setting on request
+failure, now I'm questioning if it's actually necessary?
+If it is, I'll change it to the following:
+	tty->termios.c_cflag = (tty->termios.c_cflag & !CRTSCTS)
+		| (old_termios->c_cflag & CRTSCTS);
+
+> 
+> And please drop the redundant __func__ from the error message (even if
+> the driver still uses it in some other functions still).
+
+Ok. Looking at the code again, the error already gets logged in
+ch341_control_out on failure. Maybe this log line shouldn't be added?
+
+> 
+>> +}
+>> +
+> 
+> Johan
+
+Lode
 
