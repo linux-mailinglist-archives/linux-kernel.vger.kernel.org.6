@@ -1,75 +1,164 @@
-Return-Path: <linux-kernel+bounces-449437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1238E9F4EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:11:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3C59F4EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 008687A6D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0886B16B2DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4AA1F7090;
-	Tue, 17 Dec 2024 15:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340781F758A;
+	Tue, 17 Dec 2024 15:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TBhCCGaV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="C7mNXYFb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="gumdJh9x"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8196D1F4E46;
-	Tue, 17 Dec 2024 15:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337711F707B;
+	Tue, 17 Dec 2024 15:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734448276; cv=none; b=oQhezV8NzbCzY/m7EnEKLauzKr45pOnqtK53VUJe8+GokGfbbn55Eoy1DTkKwRWT1nGV+M9Qe5CuYg7v4yuGB1tOeubs1f1W3GVQKQgkygRUkoroBV62w6Rg4465dW18SwoqfANHPkDcD9vYaUiDIG5Fy2eIcni+iOxtLjkXBiE=
+	t=1734448300; cv=none; b=NErd4h22sXXXrNYdOuJwPzpWd5wQ1yNWad50KvI6Ren3j64W2c8wl+Q23Cu1kRLfxjqVFbktJZO3nHBvMvR+W+bCNSEYFr0m3K9oKsJx9Tj3N65Dg6y1koz6dkl6rjeHvBrWKfHO+sGVtPZNDzLH+TsxQHFIzLgFJaiCYH+TdC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734448276; c=relaxed/simple;
-	bh=iIxj60BpwGbbLJ0CF9MIoq3xCALMe+nrXv3lmpkl9/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adQIvWrk3OD4/uXhG/vvaWdy/Lh6+tzhORYgtpl6GDWXpAAPpDTcHXFalpgrQc1wjAwMOZhoIJ+BlUBOwD3VnZpHHQjzRVah4BOXuo1jzCIv9zXNKqpYULK63IUK8TWC2A27T+4Re0ZKnxD2W7Ol83kzKH4RX0bOw4r9gGgMWGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TBhCCGaV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=EibVegeAU8u3QVeD4V32NwkFOPCcH2a2IW1x32pLl7Q=; b=TBhCCGaVs6LNtQkkyrPTMtNDfP
-	0ovU5iENa5n7TXyg4QWXgIkwdevkgyjoaFvQ2VAiXXU6kx1iahc0+2tOu6i+yHfR/e1bBCrP3tqB9
-	24cdlr24833fu+fK5FmuIjme8YJx4GIP1rueepoZt0zjBX3tgkMO4VRWbkSrtCf0vcXA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tNZE2-000z5b-Rn; Tue, 17 Dec 2024 16:11:06 +0100
-Date: Tue, 17 Dec 2024 16:11:06 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Divya Koppera <divya.koppera@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	richardcochran@gmail.com, vadim.fedorenko@linux.dev
-Subject: Re: [PATCH net-next v7 5/5] net: phy: microchip_t1 : Add
- initialization of ptp for lan887x
-Message-ID: <44fd803e-f3b2-419a-878a-67ca8b67325f@lunn.ch>
-References: <20241213121403.29687-1-divya.koppera@microchip.com>
- <20241213121403.29687-6-divya.koppera@microchip.com>
+	s=arc-20240116; t=1734448300; c=relaxed/simple;
+	bh=HgWFrRThS1EJjsYl2+VhctLbx1TCjQPBSmVxEhg+yuo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hR65BOjygDetcKjfx2Kyk8tHpgFDFC6+imaC0w3uDxh3u1hBDBjvckezhRl+BkPbefZN3X7/TQ6gr/KDGo4LORQnM67uqeMXZOasDBWSLlXnc1AroaBwAD/r0m2Q1v0zkoDK6TPABYOhzybs9g6DPajpyclrQnXt6WSRBIOVcTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=C7mNXYFb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=gumdJh9x reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1734448295; x=1765984295;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=yNfaGYFnv6BIlTzP4HCPWJdc/LG9GV/wGm5yHHoCOt0=;
+  b=C7mNXYFbkjTtghhG2tD4Bbt1JPRR85eQ003FA9Ci9iW1/UHWWAb6LWNW
+   aZ4GuD9p5epqG56rnS7U08eACQoIXO6gEEwP+plawcJm12p5FUhNlvqnR
+   KD/GOGC/0NiA/cgc9OADoB0i1EGBFklfcNEZF1pVRHhBrrU5HHfIKY5RC
+   tc6GFn0f92VC7B0Cr9xfWPnSgjMHjg21qZH/dkW5+D9SY50K8/FPD8yOZ
+   QFfL4wGxDWfkxuTslC0kykv6jnBDGLlUkW2ZlhA6K7LyuoRZCN47b09/j
+   Up6hYW2Ewy1yVFiHX9JR8EEnt1JOt+Gj7IcIrg/M/n49/GvkQWwV5nX0L
+   w==;
+X-CSE-ConnectionGUID: vbbCW5BFR7GHBUPNvsDHPw==
+X-CSE-MsgGUID: 4dFVnO89THuyr+Ves4oyqw==
+X-IronPort-AV: E=Sophos;i="6.12,242,1728943200"; 
+   d="scan'208";a="40657413"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 17 Dec 2024 16:11:32 +0100
+X-CheckPoint: {676194A4-B-3E9838BF-EEE9C5D3}
+X-MAIL-CPID: 49A65E50A1FDA9A12C6C60518638081D_1
+X-Control-Analysis: str=0001.0A682F28.676194A4.00D3,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F0CF1177ABF;
+	Tue, 17 Dec 2024 16:11:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1734448288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yNfaGYFnv6BIlTzP4HCPWJdc/LG9GV/wGm5yHHoCOt0=;
+	b=gumdJh9x5azXLE6W/iNBrqSAS5r88ULF+7UAKxaXvhbHopztoQadbPuNks4w48v/fLYofA
+	d2GpELgz2WBTi0fTP6oSD0I8GG6DedbhLnKAJD8PpQydc13EThuZpRDU0bhhUlMnKMoQir
+	8f/8LOBnqmyzlx4oXKpyp8ZqwCxon+lYnBX183xrNv+ajphrfP3+/NFWQzdJCpaLsSVkEa
+	ABoRs8xGoIsm2mN2+qyN32/NDpmdb1wfQ3nC7HuCUaogZsnjrb5cBWJz2h59h6XnDG+gMq
+	LgeMp1vISVzTqsjeiOwJMreNYbuMQ1+BhCGsSGIcYnPVJbkkd6D6YuQAY5DHUQ==
+Message-ID: <dc83bbd1cd960f8a5daa7ad687f419609f5e14b9.camel@ew.tq-group.com>
+Subject: Re: [PATCH 3/4] gpio: tqmx86: introduce tqmx86_gpio_clrsetbits()
+ helper
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux@ew.tq-group.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 17 Dec 2024 16:11:27 +0100
+In-Reply-To: <CACRpkdbRdT1=30DNyn_=7rfqsnppfbdBr5QXCfWyM0f+FzLjgw@mail.gmail.com>
+References: <cover.1733739697.git.matthias.schiffer@ew.tq-group.com>
+	 <a7b98f12da735f735b33200f6324360fc380e6d0.1733739697.git.matthias.schiffer@ew.tq-group.com>
+	 <CACRpkdbRdT1=30DNyn_=7rfqsnppfbdBr5QXCfWyM0f+FzLjgw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213121403.29687-6-divya.koppera@microchip.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Dec 13, 2024 at 05:44:03PM +0530, Divya Koppera wrote:
-> Add initialization of ptp for lan887x.
-> 
-> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+On Tue, 2024-12-17 at 15:16 +0100, Linus Walleij wrote:
+>=20
+> On Mon, Dec 9, 2024 at 11:36=E2=80=AFAM Matthias Schiffer
+> <matthias.schiffer@ew.tq-group.com> wrote:
+>=20
+> > +static void tqmx86_gpio_clrsetbits(struct tqmx86_gpio_data *gpio,
+> > +                                   u8 clr, u8 set, unsigned int reg)
+> > +       __must_hold(&gpio->spinlock)
+> > +{
+> > +       u8 val =3D tqmx86_gpio_read(gpio, reg);
+> > +
+> > +       val &=3D ~clr;
+> > +       val |=3D set;
+> > +
+> > +       tqmx86_gpio_write(gpio, val, reg);
+> > +}
+>=20
+> Maybe a question that has been asked before but why are we rolling
+> a set of tqmx86_* wrappers that start to look like regmap-mmio
+> instead of just using regmap-mmio?
+>=20
+> tqmx86_gpio_[read|write|get|set] and now clrsetbits can all
+> be handled by corresponding regmap_* calls (in this case
+> regmap_update_bits().
+>=20
+> Sure, this driver is using a raq spinlock but regmap-mmio supports
+> raw spinlocks too.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+A while ago I did have a WIP version of my patches that used a regmap, but =
+it
+only added another layer of abstraction without simplifying anything:
 
-    Andrew
+- I introduced a tqmx86_gpio_read() wrapper around regmap_read() to avoid
+  dealing with the indirect value argument all the time for an operation th=
+at
+  can't actually fail
+- I also kept the tqmx86_gpio_write() for symmetry (just wrapping regmap_wr=
+ite)
+- I introduced a tqmx86_gpio_clrsetbits() wrapper around regmap_update_bits=
+()
+  (having arguments for set and clear was more convenient than mask and val=
+ue
+   in a few places)
+- I was still handling locking outside of regmap because we sometimes want =
+to
+  protect a whole sequence of accesses or other driver state
+- The TQMx86 GPIO controller has a write-only and a read-only register at t=
+he=C2=A0
+  same address, which I understand not to be supported well by regmap (at l=
+east
+  if you also want=C2=A0to use a regcache)
+
+So I abandoned the regmap approach. If you think it's still a good idea, I =
+can
+of course work it into the next set of patches again.
+
+Best regards,
+Matthias
+
+
+>=20
+> Yours,
+> Linus Walleij
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
