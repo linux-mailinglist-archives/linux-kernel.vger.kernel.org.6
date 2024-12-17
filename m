@@ -1,231 +1,159 @@
-Return-Path: <linux-kernel+bounces-449619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37AE9F5188
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC1A9F5191
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5ECE16932F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B4B188A1B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAEC1F76C4;
-	Tue, 17 Dec 2024 17:03:24 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5621F75BC;
+	Tue, 17 Dec 2024 17:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QUVwDYtb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627AE1F758C
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 17:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565804D8CE;
+	Tue, 17 Dec 2024 17:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734455004; cv=none; b=ckj2W6f448uO95JuP/2lPS2Z0wyrD9U1v/yRDRUm1whlCgIonutsjd9TIrf32hFViJjQ4tTdI31RYwHlDGdaniTMD4ZgyNMR0KZjjxXZ8w/GJH1gkYY2w4r058T33iD2w0P/A4ZE5yv94U9//umasNr6npMWL6c6EihU5YPaMxc=
+	t=1734455092; cv=none; b=sw3W2w40etI+MWzPNzkKk03UauPJ1qb0bjD4+AqgsUBdx0Kxa+g0yJbFy9X5XmOWbqHNFStOaABzJF8NOwu9UnTb+tuNeZ6DcBWPfDlKlHHOGvh/YachuM2mcYIlfTZhTRD7zSpOdU2E1+bP8N0bgiYEn7WdYaB3/Uvc8gAM96o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734455004; c=relaxed/simple;
-	bh=PmCO1saefPNelwgYlhiOYl4s9nWwvTyuZ8toAOOnN3k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cWZrp0j9w5L9Bz1V+6B9bDhgQlaEWWAVBj+zygaH4KD8rA3Geudo/4iIo929YDv163h367laYC/8TI9Dqjwt3l9u25Tqr3iNXItuPsEFM8yk//+VKOsiQmhLHclj8PWEF8rKuBhBJx8oflNiFY569c9z2G/k4Fq5FzWTjazVIVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-844e344b0b5so458516639f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:03:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734455001; x=1735059801;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M1i8N8MltEGs/Cs4l8HSYYVKaEokhBJdoFZb2Lqw43E=;
-        b=PunKw/3B/7n23ZH680IthTcAJd9c/plmrGKD8A9oxF4GdkIxVayQkeemFLFUHUeb0b
-         vtP3dKAylU3mBpWowLASTVLjF2ibCAUU6cWAOGLIwzIBO94/DvBmVvDrkNIG3JcGLOVG
-         N3k1/gauia5ilOrZK/T/dAJLee+pd4bZQ9Ofp+IFux591nMr3KlH4RRyq4RcbFT7QdLr
-         SM/+4c8Q+bO3XtVrx0GGnrpNJEcT1eUbRGGOWCnKnAuU1bvTJ1OU5BWQN7yrGwhPafdn
-         E09AX+viAY0y3Xy5UrvxGoAAcktdE63pJg31LKKIfqWHqPEGd5s/9aQXNlndM+HT+nnX
-         wyAg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Atv7JSfKmpDlDkXx9t+DHY0zFVlO1mfvDtrCHs4aJfzJnhHXhMHkMsxsHcuzLs2Te6GnbhXXFn7J2SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ9G/7sHhmeRBj7Vz674O1cYVo9ykmeedA7QYP9x3T2j7++F1M
-	Dr93xVSEnYpOW0b2eNgyhczV0/ee/WyLkqh087kHzZ09stze/tURXi/jXp/bkg35JIAPwE73FJT
-	7gGNKT+fZvrQkp73CpHV1jLDSF/XKGRTspHJkmVuUZfY2uDiBid7fiqU=
-X-Google-Smtp-Source: AGHT+IFakiee4ROgWbDu9hm0AJP7nzqSk50fk1gsjGPP11/LRufNAksPaNyEp8UxBsOKCOAve9/1jRbKaN6FiA3QmqzqbgcyJeBd
+	s=arc-20240116; t=1734455092; c=relaxed/simple;
+	bh=E+1ujD5igwq6Zi3uBtapt3VtTyvQs/BYZGrXkYeTHMw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OXhSWnpqKyGvdab3uapSOT0Dl/8ErD+uvlh8cUwQnTNW4p0IGfWTlcq9ZpEOlbDy5ThEvnCiLBNxVMXuROoc9NTZ/erJ9Yxr1yJf0kQcQzJtKWxt+moLjBFMokBnGa4qJEXCFaimlStJK8bjETgxJdTMNU9vWjOXUYwGzYgc8jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QUVwDYtb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHAFs1C002391;
+	Tue, 17 Dec 2024 17:04:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=we4B4jYqo4Ge6cAdc577dzC/9pZbE67WdClCWa4ghfY=; b=QU
+	VwDYtb2RhgC9+JzaARk5gbtcnlPlRUwXwtetbDTIX/n32AMzT+1iyd95XMW3xNG7
+	OSuyw93dFkFya/5Flfgy1R/ZliRvWlOZ3exGsiWgfJX/jzATfzWtp9YfxCtzKb2l
+	T8tdpN3Av6TgkZrlNseEDkiGoutkKg/6XbE7rSLrJEti9rzrYuRtDyFwqEifcGm2
+	q8DA1Pu1nmUploPTWIGwgLQbPrJqC2M7+LYEIAL7FmEa4HGYnhkE1Dp1MbNhZq1+
+	bZH0qbu4hsdNxu0qdM0+XygQyVMDnkNKz4FlFA9LnAqB9b0DyBgGMeGIyWLB7f0G
+	/ZWBn9GdobU6QywUVvPA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k7d2933j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:04:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHH4gI9014584
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 17:04:42 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 17 Dec 2024 09:04:38 -0800
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        "Sumit
+ Semwal" <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?=
+	<christian.koenig@amd.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+Subject: [PATCH v4 0/2] Add Block event interrupt support for I2C protocol
+Date: Tue, 17 Dec 2024 22:34:22 +0530
+Message-ID: <20241217170424.14703-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d81:b0:3a7:a738:d9c8 with SMTP id
- e9e14a558f8ab-3afee9a3aafmr138714295ab.2.1734455001355; Tue, 17 Dec 2024
- 09:03:21 -0800 (PST)
-Date: Tue, 17 Dec 2024 09:03:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6761aed9.050a0220.29fcd0.006b.GAE@google.com>
-Subject: [syzbot] [net?] general protection fault in put_page (4)
-From: syzbot <syzbot+38a095a81f30d82884c1@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	martineau@kernel.org, matttbe@kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ANa2GwEQbNPJLYjdoV2XIo9D4R5EPuuP
+X-Proofpoint-ORIG-GUID: ANa2GwEQbNPJLYjdoV2XIo9D4R5EPuuP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170131
 
-Hello,
+The I2C driver gets an interrupt upon transfer completion.
+When handling multiple messages in a single transfer, this
+results in N interrupts for N messages, leading to significant
+software interrupt latency.
 
-syzbot found the following issue on:
+To mitigate this latency, utilize Block Event Interrupt (BEI)
+mechanism. Enabling BEI instructs the hardware to prevent interrupt
+generation and BEI is disabled when an interrupt is necessary.
 
-HEAD commit:    78d4f34e2115 Linux 6.13-rc3
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16445730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c532525a32eb57d
-dashboard link: https://syzkaller.appspot.com/bug?extid=38a095a81f30d82884c1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169b0b44580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f502df980000
+Large I2C transfer can be divided into chunks of 8 messages internally.
+Interrupts are not expected for the first 7 message completions, only
+the last message triggers an interrupt, indicating the completion of
+8 messages. This BEI mechanism enhances overall transfer efficiency.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7129ee07f8aa/disk-78d4f34e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c23c0af59a16/vmlinux-78d4f34e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/031aecf04ea7/bzImage-78d4f34e.xz
+This optimization reduces transfer time from 168 ms to 48 ms for a
+series of 200 I2C write messages in a single transfer, with a
+clock frequency support of 100 kHz.
 
-The issue was bisected to:
+BEI optimizations are currently implemented for I2C write transfers only,
+as there is no use case for multiple I2C read messages in a single transfer
+at this time.
 
-commit b83fbca1b4c9c45628aa55d582c14825b0e71c2b
-Author: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Date:   Mon Sep 2 10:45:53 2024 +0000
+v3 -> v4:
+  - API's added for Block event interrupt with multi descriptor support is 
+    moved from qcom-gpi-dma.h file to I2C geni qcom driver file.
+  - gpi_multi_xfer_timeout_handler function is moved from GPI driver to
+    I2C driver.
+  - geni_i2c_gpi_multi_desc_xfer structure is added as a member of
+    struct geni_i2c_dev.
+  - Removed the changes of making I2C driver is dependent on GPI driver.
 
-    mptcp: pm: reduce entries iterations on connect
+v2 -> v3:
+  - Updated commit description
+  - In I2C GENI driver, for i2c_gpi_cb_result moved the logic of
+    "!is_tx_multi_xfer" to else part.
+  - MIN_NUM_OF_MSGS_MULTI_DESC changed from 4 to 2
+  - Changes of I2C GENI driver to depend on the GPI driver moved
+    to patch3.
+  - Renamed gpi_multi_desc_process to gpi_multi_xfer_timeout_handler
+  - Added description for newly added changes in "qcom-gpi-dma.h" file.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=163682df980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=153682df980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=113682df980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+38a095a81f30d82884c1@syzkaller.appspotmail.com
-Fixes: b83fbca1b4c9 ("mptcp: pm: reduce entries iterations on connect")
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 UID: 0 PID: 5836 Comm: sshd Not tainted 6.13.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
-RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
-Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 f8 5e 12 f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 8f c7 78 f8 48 8b 1b 48 89 de 48 83
-RSP: 0000:ffffc90003916c90 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff888030458000
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff898ca81d R09: 1ffff110054414ac
-R10: dffffc0000000000 R11: ffffed10054414ad R12: 0000000000000007
-R13: ffff88802a20a542 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f34f496e800(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9d6ec9ec28 CR3: 000000004d260000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- skb_page_unref include/linux/skbuff_ref.h:43 [inline]
- __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
- skb_release_data+0x483/0x8a0 net/core/skbuff.c:1119
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb+0x55/0x70 net/core/skbuff.c:1204
- tcp_clean_rtx_queue net/ipv4/tcp_input.c:3436 [inline]
- tcp_ack+0x2442/0x6bc0 net/ipv4/tcp_input.c:4032
- tcp_rcv_state_process+0x8eb/0x44e0 net/ipv4/tcp_input.c:6805
- tcp_v4_do_rcv+0x77d/0xc70 net/ipv4/tcp_ipv4.c:1939
- tcp_v4_rcv+0x2dc0/0x37f0 net/ipv4/tcp_ipv4.c:2351
- ip_protocol_deliver_rcu+0x22e/0x440 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x341/0x5f0 net/ipv4/ip_input.c:233
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5672 [inline]
- __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5785
- process_backlog+0x662/0x15b0 net/core/dev.c:6117
- __napi_poll+0xcb/0x490 net/core/dev.c:6883
- napi_poll net/core/dev.c:6952 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:7074
- handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
- __do_softirq kernel/softirq.c:595 [inline]
- invoke_softirq kernel/softirq.c:435 [inline]
- __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0x57/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0033:0x7f34f4519ad5
-Code: 85 d2 74 0d 0f 10 02 48 8d 54 24 20 0f 11 44 24 20 64 8b 04 25 18 00 00 00 85 c0 75 27 41 b8 08 00 00 00 b8 0f 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 75 48 8b 15 24 73 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffec5b32ce0 EFLAGS: 00000246
-RAX: 0000000000000001 RBX: 00000000000668a0 RCX: 00007f34f4519ad5
-RDX: 00007ffec5b32d00 RSI: 0000000000000004 RDI: 0000564f4bc6cae0
-RBP: 0000564f4bc6b5a0 R08: 0000000000000008 R09: 0000000000000000
-R10: 00007ffec5b32de8 R11: 0000000000000246 R12: 0000564f48ea8aa4
-R13: 0000000000000001 R14: 0000564f48ea93e8 R15: 00007ffec5b32d68
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:_compound_head include/linux/page-flags.h:242 [inline]
-RIP: 0010:put_page+0x23/0x260 include/linux/mm.h:1552
-Code: 90 90 90 90 90 90 90 55 41 57 41 56 53 49 89 fe 48 bd 00 00 00 00 00 fc ff df e8 f8 5e 12 f8 49 8d 5e 08 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 8f c7 78 f8 48 8b 1b 48 89 de 48 83
-RSP: 0000:ffffc90003916c90 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: ffff888030458000
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff898ca81d R09: 1ffff110054414ac
-R10: dffffc0000000000 R11: ffffed10054414ad R12: 0000000000000007
-R13: ffff88802a20a542 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f34f496e800(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9d6ec9ec28 CR3: 000000004d260000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	55                   	push   %rbp
-   8:	41 57                	push   %r15
-   a:	41 56                	push   %r14
-   c:	53                   	push   %rbx
-   d:	49 89 fe             	mov    %rdi,%r14
-  10:	48 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbp
-  17:	fc ff df
-  1a:	e8 f8 5e 12 f8       	call   0xf8125f17
-  1f:	49 8d 5e 08          	lea    0x8(%r14),%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 8f c7 78 f8       	call   0xf878c7c7
-  38:	48 8b 1b             	mov    (%rbx),%rbx
-  3b:	48 89 de             	mov    %rbx,%rsi
-  3e:	48                   	rex.W
-  3f:	83                   	.byte 0x83
+v1 -> v2:
+  - DT changes are reverted for adding dma channel size as a new arg of
+    dma-cells property.
+  - DT binding change reveted for dma channel size as a new arg of
+    dma-cells property.
+  - In GPI driver, reverted the changes to parse the channel TRE size
+    from device tree.
+  - Made the changes in QCOM I2C geni driver to support the BEI
+    functionality with the existing TRE size of 64.
+  - Made changes in QCOM I2C geni driver as per the review comments.
+  - Fixed Kernel test robot reported compiltion issues.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Jyothi Kumar Seerapu (2):
+  dmaengine: qcom: gpi: Add GPI Block event interrupt support
+  i2c: i2c-qcom-geni: Add Block event interrupt support
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ drivers/dma/qcom/gpi.c             |   3 +
+ drivers/i2c/busses/i2c-qcom-geni.c | 275 ++++++++++++++++++++++++++---
+ include/linux/dma/qcom-gpi-dma.h   |   9 +
+ 3 files changed, 262 insertions(+), 25 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.17.1
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
