@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-448898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA6F9F46F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:13:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC5D9F46FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFDB7A5E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:13:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55327188262A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBBF1DEFF5;
-	Tue, 17 Dec 2024 09:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816651DF75B;
+	Tue, 17 Dec 2024 09:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="uAoMkGyD"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="VS9J/JEt"
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C011DA313;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D661DE4C0;
 	Tue, 17 Dec 2024 09:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734426776; cv=none; b=puIB3n+RMo9qo/kAIIkyj6ywLa+A6pyH4hCWZK/QZWAJGov/xzRHai0w1l3tvWNxF0mnmYRaRFEoQDmqwfLNlXHGcoVB6okM0O7v5cdEqQANddbG1ETU96yANTkbs7OaElffta7PnMTR9ptqoQjgTpTujl0uAhm42nu2AJDmA+8=
+	t=1734426776; cv=none; b=JAm+9rdyZ+eEyPuNPbzgrjEF5YKps8OTHY9T7CTKqjaaKMT2zmW26BSk4UhRits3dW2TVlLvpCpoEpci12dL/oF57WGQWuv2Iht/UGAQUF1AqPn7LfdfKhqBsLRekilMHN+89jTR6ddl7tmRxqjE8/qu+TY1JFy9BzT5UKFzcDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734426776; c=relaxed/simple;
-	bh=ZYvpPAf5lHbPcg1FKu60esArmAD+RGbTVdTeus6+a4o=;
+	bh=J/Ok67694WolYJtyO/LV8NrgWXhPPWR4XAvF7Agyp/M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EV2qWbG9wIwTVx5HxVCsNYMy1uk5d/TBx9Zew/nDKQi4DTBO4+PXSl3/2qMgyWc1DN5AC7jVqircs3B1GnD+b7yPaizVdqWgEpPafMpCEM8S7NSClw1aidfZtopzaa3Gsi4SxXFUz4C3ouZKHpD3DMHJ5MMvW1bBV2Hf0GMFh/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=uAoMkGyD; arc=none smtp.client-ip=134.0.28.8
+	 MIME-Version; b=AD8f4DeQF1mRjZdC8BWLHndNLqk1nIB6mMER5V832jSMzWkH+bdGpvR5pEdOf1GNGCuT40JQEFvEBwlGkAekRHnXMj0JomoIQpKJxVQKQCe8VqJYJNfMhdp50KtIyBc5YJivL1B9f7Ir9a5tgNPj9jGdmepoWUvMjuM4EEeW6ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=VS9J/JEt; arc=none smtp.client-ip=134.0.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout3.routing.net (Postfix) with ESMTP id B2A2E605E7;
-	Tue, 17 Dec 2024 09:12:52 +0000 (UTC)
+	by mxout1.routing.net (Postfix) with ESMTP id 92111400A0;
+	Tue, 17 Dec 2024 09:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1734426772;
+	s=20200217; t=1734426773;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KUEAFCp2Wzi8jJe2P1mNwYjNIpgHRora1oxoIn5t8xQ=;
-	b=uAoMkGyD27GQXqL7q2uxHgUXv63dcESbqjveLmRFNLKS4KDRSi88l6Vk3HepERMtI/cfPQ
-	kh9LjTyX5+WcVD2WpsEQ3yAge01WnT4IlW5b+96CuBJTFMHT1creCYOTFLXVOU84cGAqbe
-	jdZoOqtSQ9F0GmbuTwSDE06Y6W2kum4=
+	bh=AKT1M91ddMZkJh+hl+wihKn8ah5Ysi2eDg8Vtkt0E8E=;
+	b=VS9J/JEtC6tVYWnvC7cff+95VmLkGYb6x4Mf8fk3wV42r1dxGYLyo9Mlh3b5Qi+2EUkUKI
+	pipf6M8QpEnIehVKHB8hNXVNh2B4teI4DnAqK5C2TFsb4ioVGoy0rOVKHVe+uJC5jjo/4a
+	eimK8e5kuszJt1INcHlgZlA77tFoGbE=
 Received: from frank-u24.. (fttx-pool-217.61.150.187.bambit.de [217.61.150.187])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id D539F1004DD;
-	Tue, 17 Dec 2024 09:12:51 +0000 (UTC)
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id B2BEF100532;
+	Tue, 17 Dec 2024 09:12:52 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 02/22] arm64: dts: mediatek: mt7988: Add mmc support
-Date: Tue, 17 Dec 2024 10:12:16 +0100
-Message-ID: <20241217091238.16032-3-linux@fw-web.de>
+Subject: [PATCH v3 03/22] arm64: dts: mediatek: mt7988: Add lvts node
+Date: Tue, 17 Dec 2024 10:12:17 +0100
+Message-ID: <20241217091238.16032-4-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241217091238.16032-1-linux@fw-web.de>
 References: <20241217091238.16032-1-linux@fw-web.de>
@@ -70,63 +70,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: c1cff4fa-b88e-4d2f-9890-b549ef8f6afe
+X-Mail-ID: 0a756bc7-4119-4eb9-99e2-18ce86cd1f9d
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Add devicetree node for MMC controller.
+Add Low Voltage Thermal Sensor (LVTS) node for mt7988 SoC.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
 changes:
 v3:
-move clocks in one line
+dropped efuse label
 v2:
-squash "add missing label for apmixedsys"
+squash
+- "arm64: dts: mediatek: mt7988: add label for efuse"
+- "arm64: dts: mediatek: mt7988: extend efuse node" (drop other efuse subnodes)
 ---
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index d205717ac78b..2e224d0d0168 100644
+index 2e224d0d0168..32bb04ce21b3 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -112,7 +112,7 @@ watchdog: watchdog@1001c000 {
- 			#reset-cells = <1>;
- 		};
+@@ -4,6 +4,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/phy/phy.h>
+ #include <dt-bindings/pinctrl/mt65xx.h>
++#include <dt-bindings/reset/mediatek,mt7988-resets.h>
  
--		clock-controller@1001e000 {
-+		apmixedsys: clock-controller@1001e000 {
- 			compatible = "mediatek,mt7988-apmixedsys";
- 			reg = <0 0x1001e000 0 0x1000>;
+ / {
+ 	compatible = "mediatek,mt7988a";
+@@ -97,6 +98,7 @@ infracfg: clock-controller@10001000 {
+ 			compatible = "mediatek,mt7988-infracfg", "syscon";
+ 			reg = <0 0x10001000 0 0x1000>;
  			#clock-cells = <1>;
-@@ -290,6 +290,25 @@ usb@11200000 {
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
++			#reset-cells = <1>;
  		};
  
-+		mmc0: mmc@11230000 {
-+			compatible = "mediatek,mt7988-mmc";
-+			reg = <0 0x11230000 0 0x1000>,
-+			      <0 0x11D60000 0 0x1000>;
-+			interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&infracfg CLK_INFRA_MSDC400>,
-+				 <&infracfg CLK_INFRA_MSDC2_HCK>,
-+				 <&infracfg CLK_INFRA_66M_MSDC_0_HCK>,
-+				 <&infracfg CLK_INFRA_133M_MSDC_0_HCK>;
-+			assigned-clocks = <&topckgen CLK_TOP_EMMC_250M_SEL>,
-+					  <&topckgen CLK_TOP_EMMC_400M_SEL>;
-+			assigned-clock-parents = <&topckgen CLK_TOP_NET1PLL_D5_D2>,
-+						 <&apmixedsys CLK_APMIXED_MSDCPLL>;
-+			clock-names = "source", "hclk", "axi_cg", "ahb_cg";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
+ 		topckgen: clock-controller@1001b000 {
+@@ -262,6 +264,17 @@ i2c@11005000 {
+ 			status = "disabled";
+ 		};
+ 
++		lvts: lvts@1100a000 {
++			compatible = "mediatek,mt7988-lvts-ap";
++			#thermal-sensor-cells = <1>;
++			reg = <0 0x1100a000 0 0x1000>;
++			clocks = <&infracfg CLK_INFRA_26M_THERM_SYSTEM>;
++			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			resets = <&infracfg MT7988_INFRA_RST1_THERM_CTRL_SWRST>;
++			nvmem-cells = <&lvts_calibration>;
++			nvmem-cell-names = "lvts-calib-data-1";
 +		};
 +
- 		clock-controller@11f40000 {
- 			compatible = "mediatek,mt7988-xfi-pll";
- 			reg = <0 0x11f40000 0 0x1000>;
+ 		usb@11190000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11190000 0 0x2e00>,
+@@ -321,6 +334,10 @@ efuse@11f50000 {
+ 			reg = <0 0x11f50000 0 0x1000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
++
++			lvts_calibration: calib@918 {
++				reg = <0x918 0x28>;
++			};
+ 		};
+ 
+ 		clock-controller@15000000 {
 -- 
 2.43.0
 
