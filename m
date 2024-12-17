@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-449180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D209F4B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:36:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1509F4B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026BF188D5CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B6416C92C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366321F131B;
-	Tue, 17 Dec 2024 12:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34841EB9E3;
+	Tue, 17 Dec 2024 12:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TwAE3ji0"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="WrnXm66o"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E22A1F12FA
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819A61D47D9
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734438958; cv=none; b=TGJJP1EDaUKPuev+C/9+MgUO3b6ZOr0jECvZMT95X6M5vvcLXh0SVWMkLNBA/uzwnxtuDJpUmasf9lHmiuA4dVTMQC2UK7xJDJwLWF0K32JhmYJQ02KynIUrHarXKsrqkRtZL3EzqyoorDoWIw33V03nJj2zJ+GatPpqh5nVEoI=
+	t=1734439008; cv=none; b=gZLgkpyOkvuaNSaTgjjDpDUVkB4DtuHTk0mQPksVDfo4QqjL9e7+GHf6Hmzt7BzPzqAEnnde6QMCiP3TogyhTMVA3QpNc0mH4h0mTpd46JW99j/eTKHeaRs5jvHudfMUf1i/z6j26lB2VKY7LusCkm3pv+Ep50+/EIprQ1jG5Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734438958; c=relaxed/simple;
-	bh=sqKkRZksVUeZVFhDKfPmfafbSD6yBYhW5Q/1vVAv5CI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ToHRyrA0lHVPkx1MTy7mOf94la97DUbytfQ7SbRKD9GcsB+C76FkFuBdVE5ihaixrqmEidOeqe1CwTkx2ttgLew93tNJZWQwmQibNF2jiRFy7MzVwpR7tWOlCeNYIjKrXmQjAP5zanq4nZ2kbRy2THtGEkbqTw4IAcnXMeE8/aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TwAE3ji0; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734438946; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=cxpXJZRKPdL3JtCadcEw4asuX7c+VcjU2sev26XlNqA=;
-	b=TwAE3ji0lApqbi2Uk7tvhFQ0nf1EA0chyd1hPQyoOi1VR5bPlkBXzs8Up5xDZyjWP2zAqMFvB5zKf/P258c4FsoBzR4suvykKNALgxdCqwS+63xnUN/FIcMa40r7pLccY2ZGnFdorOrFAg86zNU5ZOV6mdxmZd9vdqwqBxN06lA=
-Received: from 30.221.145.236(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WLjD.Zq_1734438945 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 20:35:46 +0800
-Message-ID: <ac900a5e-9a3d-4e6e-8218-fc56bef8142e@linux.alibaba.com>
-Date: Tue, 17 Dec 2024 20:35:44 +0800
+	s=arc-20240116; t=1734439008; c=relaxed/simple;
+	bh=u6/Zz6ooEvuBsj6bZZEiSmQSxQQ5qYP/79uPENuplMM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=bFjEp7XxPQmhBsWr4RjzdGW7H1kWilLOxkun0jPUqfI1wmdfvxhvujcptkWmR4FpZ3AHwkao0y2em1F5GVsQ6XqWJ0pO01N90JrasPr+XIulTAAipJ0IXBYCdBvXFEVc9sKpuy1CRa2AxnHdtEKEM5DoMya2HYpYyGLJ9yDGb9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=WrnXm66o; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: fix slab-use-after-free due to dangling pointer
- dqi_priv
-To: Dennis Lam <dennis.lamerice@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
-References: <20241215035828.106936-2-dennis.lamerice@gmail.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20241215035828.106936-2-dennis.lamerice@gmail.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1734439003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RolKsme1G9Rjox6sw68grNTuofAMfeweMCbeaFaOjdE=;
+	b=WrnXm66oWyjzl5/KX5EDjjmy8k7gwxzTP0hDuvZDpj1vGd/1V7BBy61LdZaM5wSNYAjoXj
+	FnPekO+HSxOYXxOIIoW+7HgnRyQlCdmWs3uMcVxDzMYbEns3wmGenx0D2dzkfH6HdiiTxV
+	QtU7idQ6FjTQmrXHPWjFWO9yfp7MCANXq3Svn8ytWYeGIeiCMf3GYKb+i+J6nOqVHRgP/+
+	XIa2cUnJ8EppY4xpTSJQTwcrVpDLqGmSQHRChEs0mQvjWib/fprlCbFw7GlXcE1cLBKvId
+	84zo5MHicnENQIC+c1VQLKfyj2A0lXBQXWzen4IfKjBWGQMtbqrepa8h8eDALg==
+Content-Type: multipart/signed;
+ boundary=213d8d12555ec1eb5ee8f786b8c3bbdacf37d77fd939badb04e2ddb33646;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Tue, 17 Dec 2024 13:36:29 +0100
+Message-Id: <D6DZB443IQ7A.3P1135M6DMF2S@cknow.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Jaroslav Kysela"
+ <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Phong LE"
+ <ple@baylibre.com>, "Inki Dae" <inki.dae@samsung.com>, "Seung-Woo Kim"
+ <sw0312.kim@samsung.com>, "Kyungmin Park" <kyungmin.park@samsung.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>, "Alim Akhtar"
+ <alim.akhtar@samsung.com>, "Russell King" <linux@armlinux.org.uk>,
+ "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Sandy Huang" <hjc@rock-chips.com>, =?utf-8?q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, "Andy Yan" <andy.yan@rock-chips.com>, "Alain Volmat"
+ <alain.volmat@foss.st.com>, "Raphael Gallais-Pou" <rgallaispou@gmail.com>,
+ "Dave Stevenson" <dave.stevenson@raspberrypi.com>,
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, "Raspberry Pi Kernel
+ Maintenance" <kernel-list@raspberrypi.com>
+Cc: "Jani Nikula" <jani.nikula@linux.intel.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
+In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
+X-Migadu-Flow: FLOW_OUT
+
+--213d8d12555ec1eb5ee8f786b8c3bbdacf37d77fd939badb04e2ddb33646
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Tue Dec 17, 2024 at 1:40 AM CET, Dmitry Baryshkov wrote:
+> This series depends on the ELD mutex series [1]
+>
+> [1] https://lore.kernel.org/r/20241201-drm-connector-eld-mutex-v1-0-ba56a=
+6545c03@linaro.org
 
+There's a v2 of that patch series here:
+https://lore.kernel.org/all/20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8=
+bea@linaro.org/
 
-On 2024/12/15 11:58, Dennis Lam wrote:
-> When mounting ocfs2 and then remounting it as read-only, a
-> slab-use-after-free occurs after the user uses a syscall to
-> quota_getnextquota. Specifically, sb_dqinfo(sb, type)->dqi_priv is the
-> dangling pointer.
-> 
-> During the remounting process, the pointer dqi_priv is freed but is
-> never set as null leaving it to to be accessed. Additionally, the
-> read-only option for remounting sets the DQUOT_SUSPENDED flag instead of
-> setting the DQUOT_USAGE_ENABLED flags. Moreover, later in the process of
-> getting the next quota, the function ocfs2_get_next_id is called and
-> only checks the quota usage flags and not the quota suspended flags.
-> 
-> To fix this, I set dqi_priv to null when it is freed after remounting
-> with read-only and put a check for DQUOT_SUSPENDED in ocfs2_get_next_id.
-> 
-> Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
-> Reported-by: syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/6731d26f.050a0220.1fb99c.014b.GAE@google.com/T/
-> ---
->  fs/ocfs2/quota_global.c | 3 ++-
->  fs/ocfs2/quota_local.c  | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/quota_global.c b/fs/ocfs2/quota_global.c
-> index 2b0daced98eb..c6d38340d6d4 100644
-> --- a/fs/ocfs2/quota_global.c
-> +++ b/fs/ocfs2/quota_global.c
-> @@ -893,7 +893,8 @@ static int ocfs2_get_next_id(struct super_block *sb, struct kqid *qid)
->  	int status = 0;
->  
->  	trace_ocfs2_get_next_id(from_kqid(&init_user_ns, *qid), type);
-> -	if (!sb_has_quota_loaded(sb, type)) {
-> +	if (!sb_has_quota_loaded(sb, type) ||
-> +			sb_dqopt(sb)->flags & DQUOT_SUSPENDED) {
+HTH,
+  Diederik
 
-Looks reasonable.
-We can just use !sb_has_quota_active() instead.
+--213d8d12555ec1eb5ee8f786b8c3bbdacf37d77fd939badb04e2ddb33646
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Joseph
+-----BEGIN PGP SIGNATURE-----
 
->  		status = -ESRCH;
->  		goto out;
->  	}
-> diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-> index 73d3367c533b..2956d888c131 100644
-> --- a/fs/ocfs2/quota_local.c
-> +++ b/fs/ocfs2/quota_local.c
-> @@ -867,6 +867,7 @@ static int ocfs2_local_free_info(struct super_block *sb, int type)
->  	brelse(oinfo->dqi_libh);
->  	brelse(oinfo->dqi_lqi_bh);
->  	kfree(oinfo);
-> +	info->dqi_priv = NULL;
->  	return status;
->  }
->  
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ2FwVAAKCRDXblvOeH7b
+btcgAQCrCEekrUY/E2pSYqYaHT6HKwkoEGuruBblZdydAr68eAEAsy2oRKKCWk/8
+hitjosySt34ZoKPme2E/QoeOAZUr1gA=
+=oJtw
+-----END PGP SIGNATURE-----
 
+--213d8d12555ec1eb5ee8f786b8c3bbdacf37d77fd939badb04e2ddb33646--
 
