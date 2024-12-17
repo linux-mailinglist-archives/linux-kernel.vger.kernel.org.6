@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-450047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D34B9F5A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:08:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20F39F5A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E800516AB05
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDDDF16D399
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F61F9ED8;
-	Tue, 17 Dec 2024 23:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55C61F9F77;
+	Tue, 17 Dec 2024 23:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QwwCpPxr"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f24lHLjk"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3329718B46E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 23:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B2E1F869B;
+	Tue, 17 Dec 2024 23:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734476804; cv=none; b=bzrOVN3E8RgLiv0pPaqnuU7wdxfcKIWPClNxvvFG6+5xdwIo5Ym+kOk60zfscSMQGdw6Ed8cxDIH+E9WO+gHdaDdkSJBNtztdhd1Zk+hIFgjOB/51mfwSbq282nJdHJdWUoEp5ywG1ghHPdxPPkVuAjL7GJ30gWzWg4x92tFtlk=
+	t=1734476813; cv=none; b=sNJeufZaKKvZLfBel9gG/FefNCSbZh6T/R7eqkmMOekFI7Tq7gpQZ+4iCidOw6I4SphvZ0hmIumsuv+Qag8sP/vI+emYTrnK6nTYlfSqWuKxau4Zm1mweGuBofHMnJKilBapx6ayBzmJge4Af6jSj4UYroylOviXCFxTx8TAr64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734476804; c=relaxed/simple;
-	bh=cR99iEt2Ag614J04071UramutW5hM1LKb9eLRFtmkOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bx8GWcB1SmKuqlVcMVIRlqhWt+jJse7iU9lKWQkvyawySa0WpPCs4qPFCvG0TnUsyfE/AaK0f9IJ1zKAKnWQ53suj0NewAHSALy7Ok5ozA7cAxL6NsK/0YwRIloLEtTIfMvSiORENlemUSAsZ7J9n1GxKUYiyj0cY1cjpTo3Hd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QwwCpPxr; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844e7bc6d84so7628039f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:06:43 -0800 (PST)
+	s=arc-20240116; t=1734476813; c=relaxed/simple;
+	bh=+cUdF4VZjQdMulNbD5JiXungrYErRr8AvXdUYS54UQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j1cTxH0z/hJ9fN9djMJBVu6NqPp4Fh5gflQtjn3qiyc/Kqhypq1+gf5P8QE/5s+AMus5gHYeY/L3I78qGulitL6H37m639omeCK9PJTwfIUJRhCEATNpCHvmjm7Ra262Fkl+OlFB3KrmeBs+PCpO1b0ymrn3SUNr5A8lpJceGk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f24lHLjk; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2166f1e589cso61042305ad.3;
+        Tue, 17 Dec 2024 15:06:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1734476802; x=1735081602; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NXfHXyPVex2Nr1hfyjAUCuTtuBcvIXAg/0lIIloW4A4=;
-        b=QwwCpPxr+4gyl083rU6OoLHVvhuqMw7SbIl1nofJeywsAwkP50hEKS5FHLFVFdp2ZT
-         SC0I7kL+PybGAEFioe8GhoZoia3aA5c2zTXLkCC3ppUE4iEvgDhYsaTv5kT54h+LxCqP
-         BhkY4qRVpq2FCtAx3QYdcUoKgDkchnh5lTsvg=
+        d=gmail.com; s=20230601; t=1734476811; x=1735081611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GLHrYooVAsN5numrmbqy6VBSKz/Pcqg/+vPoU0gAXTY=;
+        b=f24lHLjkt3fP+pwkW3m2smTKcbb/Xsc6UduQU2PZArtkipnq0Sy9M8fE0YBkaJ9s4B
+         9jIWf6BpMQnNt9ANLFnYTiumi6ju0PUGoS+yR1OR4arCwfAH6Zz7bbOu7PuJBHgbcyEC
+         polv+sSRwgh5CEcZytMvM+1Hnn8Et9UD0w5KjjeS8RQphgSgFJY76Q5QKt1c6aF+KFm6
+         pdS8Fb75Lffv+aiRNjmjrbxxqo3QqTcFJKBG5wb6vfqsNRgv7FHsAGB7DlD+k5y6l+eu
+         a28kJcNzAAd7abxLPIfpyinCS9Hv43z7/yQBXskWbkmAzxBSjO226mEPfSFWQKkZeBG1
+         yirw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734476802; x=1735081602;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NXfHXyPVex2Nr1hfyjAUCuTtuBcvIXAg/0lIIloW4A4=;
-        b=AfwpmMBmi28Q7VHSQas3a5M8njJC8/Rfh+jdpgI7bYLGLvxCBbHJXprAoXG94wsXx0
-         +ibi8HwuBiluTTMS7yjp967dy5Drbh8z2rvbSIaI0H5+uF0H0J7nzTBLSCt5r9GoW4jp
-         owucRGrhQnCgmlNw+i4Q43gE27RKwtF8w4aIng5pR7iL0iIQ12ldRNJPDJz1izYtBjqp
-         4bivYgYGv6jL0L9QVXMcqonOJDRwhZjPeq7SYqCyrsEkEmUAxhr+3i85bXgECbY8oCMC
-         YqHsgX6MVD9sQ5o7HeRVrwgGQef6S1H2vwQiGoKW47sKqS8XyGXFajAZwFkde9IbgxBH
-         e3iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdTDprjhvSQMfaQvJa4vxpXSi4mLyX+5n+23Hc9PldpwtqBW5F/5BTZqxmw5BFue+WvCZm6drp4iTvfRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc2H0zv5JWv6Eck+MZVLMAJx7uqo/GT5sxpV57nVEbW/DI8wzF
-	GPpQ/jZor+qGbK/n0oJ6lkmQapOZmMUid2oUcP+LzaGc18rbC4/3JP7PgMvi1To=
-X-Gm-Gg: ASbGnctSKKMGRr8DJ+lOAHydSCVndgY32EL0PC290stqg9tZphNC1eL5hu+/VXfFSOz
-	XEQ2gXtleVrmiG2VisSMLdDgXwgMxOMWuO5wGE6tlqNKFSAnIuRgylMYHWs4BxAaf+AJxBnwxok
-	IxrnMoJ2Kxtk5KzPaGVXIqgH/GqMdom8JZwGhgQvp3gELrijEz6GvdjYsygy3v01rshjUkA5jsw
-	bybKLh5GHoM0J7h0+4a0KZBy+EwTKrkiLPSk0bfMBRU1nx61hl0t5pbtfC6d4ovj67D
-X-Google-Smtp-Source: AGHT+IFyxmU7yFCGp/RCq0l8NrfmfKgDtm6oDQd4bDB4w1nxhIj0cu9yqlIx/+d/pL4cpNwTFaiSzw==
-X-Received: by 2002:a5d:93cc:0:b0:82c:ec0f:a081 with SMTP id ca18e2360f4ac-84747e081c2mr438079339f.4.1734476802401;
-        Tue, 17 Dec 2024 15:06:42 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-844f6239971sm188469139f.10.2024.12.17.15.06.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 15:06:41 -0800 (PST)
-Message-ID: <644fc4d1-9438-4f0a-92ba-d1e4f60e6b84@linuxfoundation.org>
-Date: Tue, 17 Dec 2024 16:06:40 -0700
+        d=1e100.net; s=20230601; t=1734476811; x=1735081611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GLHrYooVAsN5numrmbqy6VBSKz/Pcqg/+vPoU0gAXTY=;
+        b=CmEDf0ZdVojcEtHCNch9yD48R+vIHq+k8agzKowf/NuSmbc4gG5AMqG8ZUxo8Vehne
+         mbWvtD3N/TGUDB5eWSC29OeUWRd7ZnDJL0VqgQCVXFP5E7qna3VJLabwb58B5LKd3dWn
+         O1Y+JnPUFc3a6jvGNZHIXevqW3uAvuvVRKAQBn8pfqbCR0pkBTcMMFRJlgjjSqitUwja
+         qX+vFLiVIX9lKth5LCHZziNHdTVcCWa301f8BvC9G07eVcnzs7bCaTpRxBFH5pwTLcyt
+         x4FdNWG7232xmf/yiYKTYMOynCn60NK3vjcMNgBVz4LSVIbihJvfh/QuX7EOOSyCHUON
+         5PIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVC0EzEZT0+Q5yYkvCok/MLMn2oho2mukrVOY0jgrUQ/W0yWVLmg2kEed0vc+/q5OVMFHG7WtSmuVYbAz1Z@vger.kernel.org, AJvYcCVVcFathApeLlqUub4+3BHqhs12SKiMFQ9MxIS0z19M1mFFd6XO/QBQNXV6OqROaStoP3VgkzvRFYzCaPxI0Pk+/FWb4g==@vger.kernel.org, AJvYcCViHiaAt/uJVDpho7skAVC81rK4oC9lMWh/ZIzgpkEV8B3pYlg3wyKS53mBjy9Hme4P7LSd6we91Uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0VFsmLbhWBbeePfR1Ih2l0fW0OWaGzQiA6MasV2b4NOMcChiJ
+	oNt4BXK/d6uRZQa+Ib3dhlwu+HFIuv5+3LlDw1y+y76IoVEkHMse
+X-Gm-Gg: ASbGncuJCk2sumdDwwG1O1rV7f/9vALAfnxEKzfIQS3liJM14OXPMX69xF50l2Se+C9
+	rD7w0QrzudjCjV4nzGv6O2ZqfINxwAw/I6eDdKFcBNCvGd5LFimSd0EwVQJseeXHw0fwtKaDgXc
+	fSFTyCKWk1GcGfXHqvit7FwMPOatc11wGuQ0KO4HyfdpSFxJ5m7PWBY/cqBkOGMe/PPAV4o/11X
+	iVt1iP89A2Sn6p4WAjpiAW/X6IB1Z2TnOLjcg93KKnA5AbeCTtnV5Wwn8HyBYz0tK5Ex2anDkYp
+	ZLQ5VqVYSm33j7TTV4n+FKCK2mHewU3LcQJLMiBwjMYsozLNJhSNd58=
+X-Google-Smtp-Source: AGHT+IGQhQ8MCrpvqthZB4yeso+hSopb/9FK4blCtwu6dsUxI3TUsJSYDD9JS2Lxo+vc4ubgSHO1Nw==
+X-Received: by 2002:a17:903:41cf:b0:215:63a0:b58c with SMTP id d9443c01a7336-218d725f629mr6737215ad.46.1734476810881;
+        Tue, 17 Dec 2024 15:06:50 -0800 (PST)
+Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1db58cdsm64536765ad.38.2024.12.17.15.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 15:06:50 -0800 (PST)
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mario Limonciello <superm1@kernel.org>,
+	Luke Jones <luke@ljones.dev>,
+	Xino Ni <nijs1@lenovo.com>,
+	Zhixin Zhang <zhangzx36@lenovo.com>,
+	Mia Shao <shaohz1@lenovo.com>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] platform/x86: Add Lenovo Legion WMI Drivers
+Date: Tue, 17 Dec 2024 15:06:44 -0800
+Message-ID: <20241217230645.15027-1-derekjohn.clark@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/51] 5.15.175-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241217170520.301972474@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241217170520.301972474@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/17/24 10:06, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.175 release.
-> There are 51 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 19 Dec 2024 17:05:03 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.175-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Adds support for the Lenovo Legion series of laptop hardware to use WMI
+interfaces that control various power settings. There are multiple WMI
+interfaces that work in concert to provide getting and setting values as
+well as validation of input. Currently only the "GameZone", "Other
+Method", and "LENOVO_CAPABILITY_DATA_01" interfaces are implemented, but
+I attempted to structure the driver so that adding the "Custom Mode",
+"Lighting", and the other CAPABILITY_DATA interfaces would be trivial if
+desired in a later patch.
 
-Compiled and booted on my test system. No dmesg regressions.
+This driver is distinct from, but should be considered a replacement for
+this patch:
+https://lore.kernel.org/all/20241118100503.14228-1-jonmail@163.com/
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+This driver attempts to standardize the exposed sysfs by mirroring the
+asus-armoury driver currently under review. As such, a lot of
+inspiration has been drawn from that driver.
+https://lore.kernel.org/all/20240930000046.51388-1-luke@ljones.dev/
 
-thanks,
--- Shuah
+The driver has been tested by me on the Lenovo Legion Go.
+
+Suggested-by: Mario Limonciello <superm1@kernel.org>
+Reviewed-by: Luke Jones <luke@ljones.dev>
+Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+
+Derek J. Clark (1):
+  Add lenovo-legion-wmi drivers
+
+ .../wmi/devices/lenovo-legion-wmi.rst         |  79 ++++
+ MAINTAINERS                                   |   9 +
+ drivers/platform/x86/Kconfig                  |  35 ++
+ drivers/platform/x86/Makefile                 |  21 +-
+ .../x86/lenovo-legion-wmi-capdata01.c         | 103 +++++
+ .../platform/x86/lenovo-legion-wmi-gamezone.c | 233 +++++++++++
+ .../platform/x86/lenovo-legion-wmi-other.c    | 377 ++++++++++++++++++
+ drivers/platform/x86/lenovo-legion-wmi.h      | 271 +++++++++++++
+ 8 files changed, 1119 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/wmi/devices/lenovo-legion-wmi.rst
+ create mode 100644 drivers/platform/x86/lenovo-legion-wmi-capdata01.c
+ create mode 100644 drivers/platform/x86/lenovo-legion-wmi-gamezone.c
+ create mode 100644 drivers/platform/x86/lenovo-legion-wmi-other.c
+ create mode 100644 drivers/platform/x86/lenovo-legion-wmi.h
+
+-- 
+2.47.0
+
 
