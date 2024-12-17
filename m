@@ -1,60 +1,49 @@
-Return-Path: <linux-kernel+bounces-448485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D629F40C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:30:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B829F40C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BFDA1638D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA67C1634A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263EA1DA32;
-	Tue, 17 Dec 2024 02:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACDF1487C5;
+	Tue, 17 Dec 2024 02:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AmgMalE5"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrMJyYbz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13957145335;
-	Tue, 17 Dec 2024 02:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3F9145FE0;
+	Tue, 17 Dec 2024 02:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734402611; cv=none; b=TUMpaAN0/R8lapDpQ+X+GXSlXXgi35wq9ytabB7M3os3GoJCEVXhyRnvMGqqo8Dw2VX4UYgXk4vT0KsYX9K9a9RVOEgKjYhI3emKvNigEG8Lly82ZHFYMzstxDzjWFir73hZ3/M1Fs5U28QrMelsBcMkC68nEhkRkaiv44adOkQ=
+	t=1734402613; cv=none; b=XvYuEp9gLGPTKUwd2d2wDkbaOtEah6Rt6rUsu9JlabZt9NyCJe2yu3Jv8y0dbjP55jGlOnoCmxMxix7UfT8ZsvrzQVBB/O6rGuTnczm63dK3J8aKMGhLA3At/PGheqGPmESp9OY7P483mwMu0j3KAFZIWp/uDO0Gc6V/HwaavO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734402611; c=relaxed/simple;
-	bh=KvSHcgGfj5fVpbu4sV7uw540x5cmriVxQ9T+i6eEZbY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tvVgsJDcnTnn0B20UawDt5BjAiuuA01NyiRKpAV8MzgJjUVC3OTwWhh2S6Y93Hv0A2fJE8algRwbTL5IgIocILMhC5c4OZsera3o7hi5Mv6ddkXWriET4BeJoiVfkyg5thEB9/qDNzbxzxpvrWfvxHboYd25mZrpFBFLo0bamwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AmgMalE5; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734402600; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=QCiwhXfJ2Z0HlTT5Ug0kalY1OtMxy3tJMQ6EtfaFoZg=;
-	b=AmgMalE5QJrV980BE6thr25qt6e+OL7tX64Fxvv7aeMohY22AkRDbBOb02OKJ8NwRdE3sYLqvhUBlQfe7nhvYFz3NpK0iVti1UjvOKxmjbbPzKIR/tBJ+nK9r/ja23V5yrRI8DgB9UXdVoWYqd35R1Ua6Ce7QejM+3Mz7CV2PF4=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WLguG8A_1734402598 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 10:29:59 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: yangge1116@126.com
-Cc: 21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	baolin.wang@linux.alibaba.com,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	liuzixing@hygon.cn,
-	stable@vger.kernel.org,
-	vbabka@suse.cz
-Subject: [PATCH] mm: compaction: fix don't use ALLOC_CMA in long term GUP flow
-Date: Tue, 17 Dec 2024 10:29:55 +0800
-Message-Id: <20241217022955.141818-1-baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <1734350044-12928-1-git-send-email-yangge1116@126.com>
-References: <1734350044-12928-1-git-send-email-yangge1116@126.com>
+	s=arc-20240116; t=1734402613; c=relaxed/simple;
+	bh=YFVs1GSeMboi50d9wwhk1qZytEoVY03tfo4cZz3xYv4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=mx3VkTIlj33aZixRShue4J6RcY+0ITkhyxgNbMXjJufEWf8Y5B2xgHOgVypWdAb4gne4pPOux/NhCDF/gtMhMlUiiwI1/DYL1as39VMT4WrJ8vBFT/vehU3Uh9D/Hte/3yucVXwvhULrFqcztspUv8m+Pxlx7Jd4rFPGwFmmt/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrMJyYbz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9283C4CED7;
+	Tue, 17 Dec 2024 02:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734402612;
+	bh=YFVs1GSeMboi50d9wwhk1qZytEoVY03tfo4cZz3xYv4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=PrMJyYbz5ueWHY9srQaOXCnR1jWeOMjv7t3sw8QqyEP8hwba8XUqyha1Z39HqTu1s
+	 bCAFjfZX4Omr9aydAEMnw2ewGz6mxq+3ZNc4shp+r9Symrej3PaztVodXypf7ZjQzc
+	 Wae2sQrhC/m1jPRyTMKkeJhNtlOJCPgWC3XwScA3DcJuscxpkoOufJO3tGCt6IQ4Ri
+	 g1e7vBLpOYmpnBwHEszF5jqmbFej8jVZ4EK2S5wBL+i+XjqNVNNZOZVutxTq2tEETp
+	 NhkvmvkFEmttJlr9+bmuxvzsGPaMSba6R9ZuXPocX6cH4hzyKNF3KMqsZU9RVrrW6Z
+	 SD8whiwO8EJRw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343EF3806656;
+	Tue, 17 Dec 2024 02:30:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,66 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: hinic: Fix cleanup in create_rxqs/txqs()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173440263001.420431.12522081889821148366.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Dec 2024 02:30:30 +0000
+References: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
+In-Reply-To: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: aviad.krawczyk@huawei.com, cai.huoqing@linux.dev, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ zhaochen6@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-Need update cc->alloc_flags to keep the original logic.
+Hello:
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/compaction.c | 6 ++++--
- mm/page_alloc.c | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index b10d921c237b..d92ba6c4708c 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2895,6 +2895,7 @@ static int compact_node(pg_data_t *pgdat, bool proactive)
- 	struct compact_control cc = {
- 		.order = -1,
- 		.mode = proactive ? MIGRATE_SYNC_LIGHT : MIGRATE_SYNC,
-+		.alloc_flags = ALLOC_CMA,
- 		.ignore_skip_hint = true,
- 		.whole_zone = true,
- 		.gfp_mask = GFP_KERNEL,
-@@ -3039,7 +3040,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
- 
- 		ret = compaction_suit_allocation_order(zone,
- 				pgdat->kcompactd_max_order,
--				highest_zoneidx, ALLOC_WMARK_MIN);
-+				highest_zoneidx, ALLOC_CMA | ALLOC_WMARK_MIN);
- 		if (ret == COMPACT_CONTINUE)
- 			return true;
- 	}
-@@ -3060,6 +3061,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 		.search_order = pgdat->kcompactd_max_order,
- 		.highest_zoneidx = pgdat->kcompactd_highest_zoneidx,
- 		.mode = MIGRATE_SYNC_LIGHT,
-+		.alloc_flags = ALLOC_CMA | ALLOC_WMARK_MIN,
- 		.ignore_skip_hint = false,
- 		.gfp_mask = GFP_KERNEL,
- 	};
-@@ -3080,7 +3082,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 			continue;
- 
- 		ret = compaction_suit_allocation_order(zone,
--				cc.order, zoneid, ALLOC_WMARK_MIN);
-+				cc.order, zoneid, cc.alloc_flags);
- 		if (ret != COMPACT_CONTINUE)
- 			continue;
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ecb2fd770387..1bfdca3f47b3 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6456,6 +6456,7 @@ int alloc_contig_range_noprof(unsigned long start, unsigned long end,
- 		.order = -1,
- 		.zone = page_zone(pfn_to_page(start)),
- 		.mode = MIGRATE_SYNC,
-+		.alloc_flags = ALLOC_CMA,
- 		.ignore_skip_hint = true,
- 		.no_set_skip_hint = true,
- 		.alloc_contig = true,
+On Fri, 13 Dec 2024 17:28:11 +0300 you wrote:
+> There is a check for NULL at the start of create_txqs() and
+> create_rxqs() which tess if "nic_dev->txqs" is non-NULL.  The
+> intention is that if the device is already open and the queues
+> are already created then we don't create them a second time.
+> 
+> However, the bug is that if we have an error in the create_txqs()
+> then the pointer doesn't get set back to NULL.  The NULL check
+> at the start of the function will say that it's already open when
+> it's not and the device can't be used.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: hinic: Fix cleanup in create_rxqs/txqs()
+    https://git.kernel.org/netdev/net/c/7203d10e93b6
+
+You are awesome, thank you!
 -- 
-2.39.3
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
