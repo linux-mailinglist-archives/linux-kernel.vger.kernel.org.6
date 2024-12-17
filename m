@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-449748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4C19F55A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BD09F55A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A554F17724B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D5D1702EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0971F8AF0;
-	Tue, 17 Dec 2024 17:59:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D01F890F;
-	Tue, 17 Dec 2024 17:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BAD1F941A;
+	Tue, 17 Dec 2024 18:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o1alYDL5"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8711F8ADE
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458398; cv=none; b=gjcXioMC+/9iHmuqjGJKcqxP5c6R/ePi3I7RaT9HGg1HwFsXTBeBKFm1P+2RKbPoMtRS9e/TwA++p7/jCgd6WkjdiD6rNdMGAxRy7AGQwOt1dD6W06nfdlQtoUZLOsDGYXRhzkn1vy6CiJJwi+5PW8ZENWAGnZYTO+D4pTYDr+Y=
+	t=1734458462; cv=none; b=AXPmYXwUxLr+OmAfJrteJcZ1/W1wrd9fRbkV9w26yDaM8OzK/PlrCf7qNPnw4BwGssA9Nd/Q3kSrPeNo0J4Ow6TRHi4TRtv1kDEW7pczX5DkM75CipGzW/2/WQwU8bYJZv0IXrV8ddL9G/6g4UqHYSPQUNv9KzdPZtgGSKLyr+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458398; c=relaxed/simple;
-	bh=q1wnIV+XUCsIOA06WG9udBt0E7fj0Mo8pgtgHjlTPKs=;
+	s=arc-20240116; t=1734458462; c=relaxed/simple;
+	bh=jqkqto/wE4TTKCgi/7/Xdmt2B/vG2gmyRNK4LWWebrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGIA8AS1Paf+MVvsZH+Szrhw64ttoSxE2loCoaOSNuCUv9JjfgctT+los13pREgHokzFp0nDjnHBdunpmpXzBOR47TWAoNCux7ftzrEgdzulHY5hdXrodFOgFFKVzguq2F6WWWbiUSI646VjjZEm1X8t4Ewxb0uCOSBKxm1JKbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0A4BFEC;
-	Tue, 17 Dec 2024 10:00:22 -0800 (PST)
-Received: from bogus (unknown [10.57.92.83])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A6C13F7B4;
-	Tue, 17 Dec 2024 09:59:50 -0800 (PST)
-Date: Tue, 17 Dec 2024 17:59:34 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>, andersson@kernel.org,
-	konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-Message-ID: <20241217175934.GC2016149@bogus>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <ZytnRc94iKUfMYH0@hovoldconsulting.com>
- <ZyvLktLUZOGP-LH5@pluto>
- <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
- <8d42682b-0fa7-3962-da12-728cfe64903b@quicinc.com>
- <Z0BC203BhGEmXcJi@hovoldconsulting.com>
- <Z1HceQegfMl07qj_@bogus>
- <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaCJ1ZQ/iK91wUemN/4C8NsrT7KmZtPXVEe2W8K9TOfVJ5hzcMvQfI/alfJvpny6CrQGT8H8KhZ7GykL52WEEuidOzEau1FcP+V8D7s5ppvfCtPk/uqYsA0LQ24T9vZe4ypblSWaBlh4OuwcJTjHgTNq5jUuZP8omEEQ5ltPEQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o1alYDL5; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 17 Dec 2024 10:00:44 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734458457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PkRrOqmYm8mFGf6ZziFnsHC8gAVb4/Jvhm1aIGMdXpg=;
+	b=o1alYDL5oQ4U8aVIN4LJhtvgi4JR5Ey49e8Jt93GpKesUTx0JkYkIFh8FnbUMROwIWNZg6
+	lZMsN6urvrxNfEWq3T+ly+eCv55DhHRMSKihuA66VsYN0xym5XSDu1/PWs39zrbZDmKbEN
+	P8Tu9j/uueBx7LvvaEsb2L1rCH8Fhq0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS
+ becoming unwritable
+Message-ID: <Z2G8TFw4wg7bnwzB@linux.dev>
+References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+ <875xnisocy.wl-maz@kernel.org>
+ <53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
+ <86v7viqusg.wl-maz@kernel.org>
+ <b13b14df-00ee-4bee-8f65-d2cb7a9bfa6b@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,123 +67,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
+In-Reply-To: <b13b14df-00ee-4bee-8f65-d2cb7a9bfa6b@sirena.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Dec 17, 2024 at 05:55:35PM +0530, Sibi Sankar wrote:
+On Tue, Dec 17, 2024 at 03:10:28PM +0000, Mark Brown wrote:
+> On Tue, Dec 17, 2024 at 01:54:39PM +0000, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
 > 
+> > > The selftests are shipped as part of the kernel source and frequently
+> > > used for testing the kernel, it's all one source base and we want to
+> > > ensure that for example the test fix gets backported if the relevant
+> > > kernel patch does.
 > 
-> On 12/5/24 22:31, Sudeep Holla wrote:
-> > On Fri, Nov 22, 2024 at 09:37:47AM +0100, Johan Hovold wrote:
-> > > On Thu, Nov 14, 2024 at 09:52:12AM +0530, Sibi Sankar wrote:
-> > > > On 11/8/24 20:44, Johan Hovold wrote:
-> > > 
-> > > > > > On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
-> > > 
-> > > > > > > Second, after loading the protocol and client drivers manually (in that
-> > > > > > > order, shouldn't the client driver pull in the protocol?), I got:
-> > > > > > > 
-> > > > > > > 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
-> > > > > > > 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
-> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
-> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
-> > > > > > > 
-> > > > > > > which seems to suggest that the firmware on my CRD does not support this
-> > > > > > > feature. Is that the way this should be interpreted? And does that mean
-> > > > > > > that non of the commercial laptops supports this either?
-> > > 
-> > > > > Yeah, hopefully Sibi can shed some light on this. I'm using the DT
-> > > > > patch (5/5) from this series, which according to the commit message is
-> > > > > supposed to enable bus scaling on the x1e80100 platform. So I guess
-> > > > > something is missing in my firmware.
-> > > > 
-> > > > Nah, it's probably just because of the algo string used.
-> > > > The past few series used caps MEMLAT string instead of
-> > > > memlat to pass the tuneables, looks like all the laptops
-> > > > havn't really switched to it yet. Will revert back to
-> > > > using to lower case memlat so that all devices are
-> > > > supported. Thanks for trying the series out!
-> > > 
-> > > I have a Lenovo ThinkPad T14s set up now so I gave this series a spin
-> > > there too, and there I do *not* see the above mentioned -EOPNOSUPP error
-> > > and the memlat driver probes successfully.
-> > > 
-> > > On the other hand, this series seems to have no effect on a kernel
-> > > compilation benchmark. Is that expected?
-> > > 
-> > 
-> > Hijacking this thread to rant about state of firmware implementation on
-> > this platform that gives me zero confidence in merging any of these without
-> > examining each of the interface details in depth and at lengths.
-> > 
+> > That's not what Fixes: describes. If you want to invent a new tag that
+> > expresses a dependency, do that. Don't use these tags to misrepresent
+> > what the patches does.
 > 
-> Hey Sudeep,
-> 
-> Thanks for taking time to review the series.
-> 
-> > Also I see the standard protocol like PERF seem to have so many issues which
-> > adds to my no confidence. I can't comment on that thread for specific reasons.
-> 
-> ^^ is largely untrue, a lot of finger pointing and a gross
-> misrepresentation of reality :/
->
+> No, this isn't a new use - a Fixes: tag indicates that the referenced
+> commit introduced the problem being fixed and that is exactly what's
+> going on here.  Like I say the selftests are not a completely separate
+> project, they are a part of the same source release as the rest of the
+> kernel and it is helpful to track information like this.
 
-Sorry if I was not clear, I just said I don't have confidence yet and if
-the firmware is stable, then it is just the impression I have arrived based
-on the discussions.
+A Fixes tag suggests a bug in the referenced commit, which isn't the
+case here.
 
-> crash in the LEVEL_GET regular message implementation. This
-> pretty much went unnoticed because of messaging in perf implementation
-> in kernel.
+I agree that having some relation between the two is useful for
+determining the scope of a backport, but conveniently in this case the
+test failure was introduced in 6.13.
 
-OK, is there any scope to improve in your opinion ? Please suggest and
-discuss or post a patch to have separate discussion.
-
-> Given the fastchannel implementation isn't mandatory
-> according to spec, the kernel clearly says it switches to
-> regular messaging when it clearly doesn't do that and uses
-> stale data structures instead.
-
-Interesting, it sounds like a bug. Please provide details or patch to
-fix the bug. That would probably fix it on whatever platform we are
-concerned here.
-
-> This ensured that level get regular messaging never got tested.
->
-
-You seem to point at this bug several time now, we need to get it fixed,
-but we need to understand it first if you want us to fix it or as mentioned
-before you can as well post the patch.
-
-> We pretty much have been good upstream citizens, finding bugs and
-> sending fixes wherever we can. We clearly don't deserve such a hostile
-> stance.
->
-
-Not sure what made you think we are hostile towards your contributions.
-We just need a maintainable solution merged upstream and we are working
-towards the same. The documents written as part of this series is not
-there yet to help me understand the protocol yet. I have asked questions
-and answer to those can be made part of the next version to improve it
-IMO.
-
-> > I will briefly mention my suspicion here. This Lenovo ThinkPad T14s being
-> > primarily targeting other OS using ACPI might have just implemented what is
-> > required for ACPI CPPC which conveniently doesn't have to discover lot of
-> > fastchannel details since they are supplied in the tables straight away.
-> > But that also would mean it could be not fully compliant to SCMI spec.
->
-> Not fully compliant to the spec? I am pretty sure this series would
-> have been shot down completely and NAKd on the list by you if that
-> was the case lol.
->
-
-Honestly I am still trying to make any sense out of this vendor protocols.
-The documents produced as part of this series doesn't help me understand
-the same and that is my main feedback so far on this thread. I haven't
-looked at the code yet so I can't comment on the same as I first need
-to understand the vendor protocol document/specification.
+I've taken the fix for 6.13, w/ the tag dropped.
 
 -- 
-Regards,
-Sudeep
+Thanks,
+Oliver
 
