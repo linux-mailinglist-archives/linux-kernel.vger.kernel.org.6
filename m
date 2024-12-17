@@ -1,328 +1,175 @@
-Return-Path: <linux-kernel+bounces-448861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C262F9F4683
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:52:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713209F4684
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 060A016AF76
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E543188A559
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780D51DD0C7;
-	Tue, 17 Dec 2024 08:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5055F1DC745;
+	Tue, 17 Dec 2024 08:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UaLcEGgF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HIDvKdp2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAF31CF2A2
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17121126C08
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425527; cv=none; b=BYSuO9sSV2r9cJTd0GbuZA8WmgCw/lDZKxmIazc1XdhoFg0yEMdaPB5DDXMv/5thVE5OyoAXq2gvLYJ6rLbCTzAWHgj8q6ubrhfT4vei87tEJvHkF/fj92X40169dr8D3lsDnEgVqgMEPSa0IkLP+Cl/+/NgAcxT7W1IFBgnCsw=
+	t=1734425573; cv=none; b=SGlVx33XqzBmqZ+HGUhj75K7wCMa1flAdyjGt851eHeDvf2ABZZgj+b3T9FqTe9ZTxNbX/EU7Q0laR6cygcT4jaxoTl/8ym8PV1ewo2Q+iDc3958PKyB3P1XhPM4NvYlfB4qA/seCA4TtukPsNSXaN/GzRrlNSf5TS2UpeGgPMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425527; c=relaxed/simple;
-	bh=8W0AOFA3uX4AnxAjH+vtoBESwUXW8Fvc30u6Fti0J5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tQfQO3Sx3930jxR/Q3TtQZZ2siWhu7J8wTeOIvxsZV1N93Pd7BVRvKtnWZWxrDMKJwTAXJPKOHdpe2EraHpBqUUPDB0pLzgfxbk4Mh+KsGvrrlzokwrq96u4kbGbPPWX6NhtmZ70dapyKDdc+RPcOLYP7w/epFIwJCrxQ1RiYEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UaLcEGgF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43621d2dd4cso38895e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734425524; x=1735030324; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8VfnCtkNw4jCGOBfbSUZBMbz7UB1Wp2d0C172FE8Ags=;
-        b=UaLcEGgFSyCuEa4DLP9Z1B4BCjBOopXSJM7ik9Ek1S+PShRsQ+soKMReGiAp2E0s7E
-         MtKdAotMXac9JOBsmPpl/BJyy8mGM5YrZDCsVvtFO8gK5rxL6f2yqNJViEeAMkNRL8Tc
-         J+UqbMbHn4JR3ndqn+CE8MMoADhRYsqCNFWay9ke2N4r7SK6YNSFSGZz18fulbpekZE6
-         m+7/qb4ZBl2AVT5Yu9yWKLKV+WlTeUfIZM4v8RDDMSTCha73RuPH9HWvPJsPHN0QKXI0
-         wKU3VIUvh3pNtGd44J5WFyIW/e7xYrgrB1g/CeHbdrRrMLswPU1ysbYUc79zvArI0DZj
-         obvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425524; x=1735030324;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8VfnCtkNw4jCGOBfbSUZBMbz7UB1Wp2d0C172FE8Ags=;
-        b=U5E6ABg9hYAwNuVs/zvNZOEoePYHZQsPNh9brRdoKpw8FufwxiIXhfypngwF3Vpu67
-         kM0L1p1+ds1FWFKGjX6Majb+HOXiaH543PolaTgR2P99/oYXL74hSsFNErYlnjsdRLLs
-         h3XUHL3vATPC6qBC86D+vHnYRqVDpvlqF17VHyn6//8UqPwYgIGOZT+Cha+jQCJIyRQc
-         9sRfAWXOKXRkEzAETnGWH9LG4sczZsV+xD/G/f+WTIhRH8klMAWrgZFwu2hfYLDZBBE/
-         RsoHbzxrIRbTS7aGg/Icgt1ycIo2og85Ovyc7oL3Pg5XKyO09Jc5dy/eJlZgDoYZzkar
-         H5PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWT8lH5FwO5J5F8aunYmglDBqS9r4ToGLnTOOii9GxdgI6Az+B3I26ltF+wwyZxmAyv5R/bKv3J5lRyIeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZrdu+7YEGhG7dif4jNxvhTWfKhVzs6OJf/048jVwOl53LQz+e
-	ByYXjHkN9enxEZWUdNnHsKdkhvZgEY9oiFVtDEO0hq6iCR2hqAe+kzSvqfNYk6CHmMDrAAeFBuR
-	Ow5bX9nS0wQ4s7AHIXiw+Gpx/U2xdS3FCNheh
-X-Gm-Gg: ASbGnctbZu/M07nJXpz4QpB2wvX2H7xOfpJ9pJfhbEcfMptMQGIemNGyevryb/D8c6i
-	IGDQQeRxQOUmsbxEE/dPXmCx244U4qzAO8R/Wl9hW2Dgztc6P+nT8nsBXNv+OKR+1BHM=
-X-Google-Smtp-Source: AGHT+IHQxcS2WDDQcqjQEb1uNK3uxjhDayYSkTEA5itU8N7dHvtpoKjI7ssPmQyDY4qKzGBHei1EI2b2iGBr8rLpiT0=
-X-Received: by 2002:a05:600c:5741:b0:436:1811:a79c with SMTP id
- 5b1f17b1804b1-4364ad4db33mr740075e9.5.1734425523885; Tue, 17 Dec 2024
- 00:52:03 -0800 (PST)
+	s=arc-20240116; t=1734425573; c=relaxed/simple;
+	bh=A3o+UlHWraOY4K2CE/YvM5CDsQmxGDMQ1d5dkZ9NoAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1cVVGaIWUf2dzOM41e0EfJ8oQ+nZaUKwONs/YyjQiEzUqAuJll4ReA1b1R7WamfdLfzpKHR5TIqnuiRwggSHW6ISF9W1kfOT6dX89iCxnase8Z4/T2TD1pi+XHwtJOGW39bu9HCpvDzEiRUwE2sw0W1jLa8282PAUfPlJKWDfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HIDvKdp2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=aypXfkBlQH9z+E33uDRENlhfda0ApLGXn+W6C302NpQ=; b=HIDvKdp28duzDC6tJNS5L/B1vK
+	D3rkd9DwMwwXtZ9LUMLrL7xB5ewwaR/+tePbEl5m88MiqMSiG7xMp5IA2wfgVe2oluGVhsc3sFUlB
+	EaM27VPcZuKifTN3k8S5GklgZomiMYKNr0oceC9tz69O9015rIHjAnDIBhPjesQW4ePmgc9L1ijP0
+	8yBStgh6/LOEFYiNUmu+r+J1oKRUTtzTDN0ytUEOo0pITQ623iod30kE+8qs2bjxiZ4LlaTtFRZcv
+	n4a8L7IebHL69zHTsgKiAAv0JqxxDC1uHNjCE38adey88HH68VziX3QMG/+roiGzUWsrpBwd7ALU3
+	3g1dJ2uA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNTJs-00000005tKO-1oxR;
+	Tue, 17 Dec 2024 08:52:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F1181300192; Tue, 17 Dec 2024 09:52:43 +0100 (CET)
+Date: Tue, 17 Dec 2024 09:52:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
+Subject: Re: [RFC][PATCH v14 5/7] sched: Add an initial sketch of the
+ find_proxy_task() function
+Message-ID: <20241217085243.GI35539@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-6-jstultz@google.com>
+ <20241214000559.GC17501@noisy.programming.kicks-ass.net>
+ <CANDhNCpYgQ6KspsykWhewNAm1N1mPSh=hthx2OnisX3c+7M0ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-11-qperret@google.com>
-In-Reply-To: <20241216175803.2716565-11-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 17 Dec 2024 08:51:27 +0000
-Message-ID: <CA+EHjTz6W8YDKmk2Ga84CEYk46fyVXDPizXWbGqqq2Jn8JV0uQ@mail.gmail.com>
-Subject: Re: [PATCH v3 10/18] KVM: arm64: Introduce __pkvm_host_share_guest()
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCpYgQ6KspsykWhewNAm1N1mPSh=hthx2OnisX3c+7M0ng@mail.gmail.com>
 
-On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
->
-> In preparation for handling guest stage-2 mappings at EL2, introduce a
-> new pKVM hypercall allowing to share pages with non-protected guests.
->
-> Signed-off-by: Quentin Perret <qperret@google.com>
+On Mon, Dec 16, 2024 at 09:42:31PM -0800, John Stultz wrote:
+> On Fri, Dec 13, 2024 at 4:06 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Mon, Nov 25, 2024 at 11:51:59AM -0800, John Stultz wrote:
+> >
+> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > > index f8714050b6d0d..b492506d33415 100644
+> > > --- a/kernel/sched/core.c
+> > > +++ b/kernel/sched/core.c
+> > > @@ -5052,6 +5052,34 @@ static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
+> > >       }
+> > >  }
+> > >
+> > > +/*
+> > > + * Only called from __schedule context
+> > > + *
+> > > + * There are some cases where we are going to re-do the action
+> > > + * that added the balance callbacks. We may not be in a state
+> > > + * where we can run them, so just zap them so they can be
+> > > + * properly re-added on the next time around. This is similar
+> > > + * handling to running the callbacks, except we just don't call
+> > > + * them.
+> > > + */
+> >
+> > Which specific callbacks are this? sched_core_balance()?
+> >
+> > In general, shooting down all callbacks like this makes me feel somewhat
+> > uncomfortable.
+> 
+> So, if we originally picked a RT task, I believe it would setup the
+> push_rt_tasks callback, but if it got migrated and if we needed to
+> pick again,  we'd end up tripping on
+> `SCHED_WARN_ON(rq->balance_callback && rq->balance_callback !=
+> &balance_push_callback);`
+> 
+> For a while I tried to unpin and run the balance callbacks before
+> calling pick_again, if find_proxy_task() failed, but that was running
+> into troubles with tasks getting unintentionally added to the rt
+> pushable list (this was back in ~feb, so my memory is a little fuzzy).
+> 
+> So that's when I figured zaping the callbacks would be best, with the
+> idea being that we are starting selection over, so we effectively have
+> to undo any of the state that was set by pick_next_task() before
+> calling it again.
+> 
+> Let me know if you have concerns with this, or suggestions for other approaches.
 
-(Apart from a nit below)
+For now, lets stick a coherent comment on, explaining exactly which
+callbacks and why.
 
-Reviewed-by: Fuad Tabba <tabba@google.com>
+> > > +/*
+> > > + * Initial simple proxy that just returns the task if it's waking
+> > > + * or deactivates the blocked task so we can pick something that
+> > > + * isn't blocked.
+> > > + */
+> > > +static struct task_struct *
+> > > +find_proxy_task(struct rq *rq, struct task_struct *donor, struct rq_flags *rf)
+> > > +{
+> > > +     struct task_struct *p = donor;
+> > > +     struct mutex *mutex;
+> > > +
+> > > +     mutex = p->blocked_on;
+> > > +     /* Something changed in the chain, so pick again */
+> > > +     if (!mutex)
+> > > +             return NULL;
+> > > +     /*
+> > > +      * By taking mutex->wait_lock we hold off concurrent mutex_unlock()
+> > > +      * and ensure @owner sticks around.
+> > > +      */
+> > > +     raw_spin_lock(&mutex->wait_lock);
+> > > +     raw_spin_lock(&p->blocked_lock);
+> >
+> > I'm still wondering what this blocked_lock does, that previous patch had
+> > it mirror wait_mutex too, so far I don't see the point.
+> 
+> Yeah, early on in the series it's maybe not as useful, but as we start
+> dealing with sleeping owner enqueuing, its doing more:
+>   https://github.com/johnstultz-work/linux-dev/commit/d594ca8df88645aa3b2b9daa105664893818bdb7
+> 
+> But it is possible it is more of a crutch for me to keep straight the
+> locking rules as it's simpler to keep in my head. :)
+> Happy to think a bit more on if it can be folded together with another lock.
 
-Cheers,
-/fuad
+I'm a big believer in only introducing state when we actually need it --
+and I don't believe we actually need blocked_lock until we go SMP.
 
-
-> ---
->  arch/arm64/include/asm/kvm_asm.h              |  1 +
->  arch/arm64/include/asm/kvm_host.h             |  3 +
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
->  arch/arm64/kvm/hyp/include/nvhe/memory.h      |  2 +
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 34 +++++++++
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 72 +++++++++++++++++++
->  arch/arm64/kvm/hyp/nvhe/pkvm.c                |  7 ++
->  7 files changed, 120 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index 89c0fac69551..449337f5b2a3 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -65,6 +65,7 @@ enum __kvm_host_smccc_func {
->         /* Hypercalls available after pKVM finalisation */
->         __KVM_HOST_SMCCC_FUNC___pkvm_host_share_hyp,
->         __KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_hyp,
-> +       __KVM_HOST_SMCCC_FUNC___pkvm_host_share_guest,
->         __KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
->         __KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
->         __KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index e18e9244d17a..1246f1d01dbf 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -771,6 +771,9 @@ struct kvm_vcpu_arch {
->         /* Cache some mmu pages needed inside spinlock regions */
->         struct kvm_mmu_memory_cache mmu_page_cache;
->
-> +       /* Pages to top-up the pKVM/EL2 guest pool */
-> +       struct kvm_hyp_memcache pkvm_memcache;
-> +
->         /* Virtual SError ESR to restore when HCR_EL2.VSE is set */
->         u64 vsesr_el2;
->
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index 25038ac705d8..a7976e50f556 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -39,6 +39,7 @@ int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
->  int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
->  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
->  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
-> +int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
->
->  bool addr_is_memory(phys_addr_t phys);
->  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> index 8bd9a539f260..cc431820c6ce 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
-> @@ -46,6 +46,8 @@ struct hyp_page {
->
->         /* Host (non-meta) state. Guarded by the host stage-2 lock. */
->         enum pkvm_page_state host_state : 8;
-> +
-> +       u32 host_share_guest_count;
->  };
->
->  extern u64 __hyp_vmemmap;
-> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> index 95d78db315b3..d659462fbf5d 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> @@ -211,6 +211,39 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
->         cpu_reg(host_ctxt, 1) =  ret;
->  }
->
-> +static int pkvm_refill_memcache(struct pkvm_hyp_vcpu *hyp_vcpu)
-> +{
-> +       struct kvm_vcpu *host_vcpu = hyp_vcpu->host_vcpu;
-> +
-> +       return refill_memcache(&hyp_vcpu->vcpu.arch.pkvm_memcache,
-> +                              host_vcpu->arch.pkvm_memcache.nr_pages,
-> +                              &host_vcpu->arch.pkvm_memcache);
-> +}
-> +
-> +static void handle___pkvm_host_share_guest(struct kvm_cpu_context *host_ctxt)
-> +{
-> +       DECLARE_REG(u64, pfn, host_ctxt, 1);
-> +       DECLARE_REG(u64, gfn, host_ctxt, 2);
-> +       DECLARE_REG(enum kvm_pgtable_prot, prot, host_ctxt, 3);
-> +       struct pkvm_hyp_vcpu *hyp_vcpu;
-> +       int ret = -EINVAL;
-> +
-> +       if (!is_protected_kvm_enabled())
-> +               goto out;
-> +
-> +       hyp_vcpu = pkvm_get_loaded_hyp_vcpu();
-> +       if (!hyp_vcpu || pkvm_hyp_vcpu_is_protected(hyp_vcpu))
-> +               goto out;
-> +
-> +       ret = pkvm_refill_memcache(hyp_vcpu);
-> +       if (ret)
-> +               goto out;
-> +
-> +       ret = __pkvm_host_share_guest(pfn, gfn, hyp_vcpu, prot);
-> +out:
-> +       cpu_reg(host_ctxt, 1) =  ret;
-> +}
-> +
->  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
->  {
->         DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
-> @@ -420,6 +453,7 @@ static const hcall_t host_hcall[] = {
->
->         HANDLE_FUNC(__pkvm_host_share_hyp),
->         HANDLE_FUNC(__pkvm_host_unshare_hyp),
-> +       HANDLE_FUNC(__pkvm_host_share_guest),
->         HANDLE_FUNC(__kvm_adjust_pc),
->         HANDLE_FUNC(__kvm_vcpu_run),
->         HANDLE_FUNC(__kvm_flush_vm_context),
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 12bb5445fe47..fb9592e721cf 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -867,6 +867,27 @@ static int hyp_complete_donation(u64 addr,
->         return pkvm_create_mappings_locked(start, end, prot);
->  }
->
-> +static enum pkvm_page_state guest_get_page_state(kvm_pte_t pte, u64 addr)
-> +{
-> +       if (!kvm_pte_valid(pte))
-> +               return PKVM_NOPAGE;
-> +
-> +       return pkvm_getstate(kvm_pgtable_stage2_pte_prot(pte));
-> +}
-> +
-> +static int __guest_check_page_state_range(struct pkvm_hyp_vcpu *vcpu, u64 addr,
-> +                                         u64 size, enum pkvm_page_state state)
-> +{
-> +       struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
-> +       struct check_walk_data d = {
-> +               .desired        = state,
-> +               .get_page_state = guest_get_page_state,
-> +       };
-> +
-> +       hyp_assert_lock_held(&vm->lock);
-> +       return check_page_state_range(&vm->pgt, addr, size, &d);
-> +}
-> +
->  static int check_share(struct pkvm_mem_share *share)
->  {
->         const struct pkvm_mem_transition *tx = &share->tx;
-> @@ -1349,3 +1370,54 @@ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages)
->
->         return ret;
->  }
-> +
-> +int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu,
-> +                           enum kvm_pgtable_prot prot)
-> +{
-> +       struct pkvm_hyp_vm *vm = pkvm_hyp_vcpu_to_hyp_vm(vcpu);
-> +       u64 phys = hyp_pfn_to_phys(pfn);
-> +       u64 ipa = hyp_pfn_to_phys(gfn);
-> +       struct hyp_page *page;
-> +       int ret;
-> +
-> +       if (prot & ~KVM_PGTABLE_PROT_RWX)
-> +               return -EINVAL;
-> +
-> +       ret = check_range_allowed_memory(phys, phys + PAGE_SIZE);
-> +       if (ret)
-> +               return ret;
-> +
-> +       host_lock_component();
-> +       guest_lock_component(vm);
-> +
-> +       ret = __guest_check_page_state_range(vcpu, ipa, PAGE_SIZE, PKVM_NOPAGE);
-> +       if (ret)
-> +               goto unlock;
-> +
-> +       page = hyp_phys_to_page(phys);
-> +       switch (page->host_state) {
-> +       case PKVM_PAGE_OWNED:
-> +               WARN_ON(__host_set_page_state_range(phys, PAGE_SIZE, PKVM_PAGE_SHARED_OWNED));
-> +               break;
-> +       case PKVM_PAGE_SHARED_OWNED:
-> +               if (page->host_share_guest_count)
-> +                       break;
-> +               /* Only host to np-guest multi-sharing is tolerated */
-> +               WARN_ON(1);
-> +               fallthrough;
-> +       default:
-> +               ret = -EPERM;
-> +               goto unlock;
-> +       }
-> +
-> +       WARN_ON(kvm_pgtable_stage2_map(&vm->pgt, ipa, PAGE_SIZE, phys,
-> +                                      pkvm_mkstate(prot, PKVM_PAGE_SHARED_BORROWED),
-> +                                      &vcpu->vcpu.arch.pkvm_memcache, 0));
-> +       page->host_share_guest_count++;
-> +
-> +unlock:
-> +       guest_unlock_component(vm);
-> +       host_unlock_component();
-> +
-> +       return ret;
-> +}
-> diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> index 496d186efb03..f2e363fe6b84 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> @@ -795,6 +795,13 @@ int __pkvm_teardown_vm(pkvm_handle_t handle)
->         /* Push the metadata pages to the teardown memcache */
->         for (idx = 0; idx < hyp_vm->nr_vcpus; ++idx) {
->                 struct pkvm_hyp_vcpu *hyp_vcpu = hyp_vm->vcpus[idx];
-> +               struct kvm_hyp_memcache *vcpu_mc = &hyp_vcpu->vcpu.arch.pkvm_memcache;
-> +
-> +               while (vcpu_mc->nr_pages) {
-> +                       void *addr = pop_hyp_memcache(vcpu_mc, hyp_phys_to_virt);
-
-nit: newline
-
-> +                       push_hyp_memcache(mc, addr, hyp_virt_to_phys);
-> +                       unmap_donated_memory_noclear(addr, PAGE_SIZE);
-> +               }
->
->                 teardown_donated_memory(mc, hyp_vcpu, sizeof(*hyp_vcpu));
->         }
-> --
-> 2.47.1.613.gc27f4b7a9f-goog
->
+Anyway, I have since figured out the why of blocked_lock again; but
+yeah, comments, because I'm sure to forget it again at some point.
 
