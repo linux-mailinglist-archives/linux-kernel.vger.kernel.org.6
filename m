@@ -1,70 +1,202 @@
-Return-Path: <linux-kernel+bounces-448568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244299F41D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:55:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71439F41DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1FD164C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C7E1886F66
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A17314F11E;
-	Tue, 17 Dec 2024 04:55:35 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC37514D70E;
+	Tue, 17 Dec 2024 04:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LIiIl06d"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5629613777E;
-	Tue, 17 Dec 2024 04:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BDC1482ED
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734411335; cv=none; b=QeyDi4flzxygmzrZbMRsw1eO6JBdfCDzoVusPCFv5tSnAFhFLFe/V4sgO90qGmOJ39bZI67T009x47pjPTbU+kOWYubt2xTp4XvXZ5sW26luqbmUU63n51JpP+UDL8Xh3rWfrdcR8WmdGwgfSCbrobLYfpL6WuvVV3g6pt0O+5Y=
+	t=1734411455; cv=none; b=DlTKTfIyrPYiiGJt9GP6ua1AL9elcurlvaCJiS9OhTemhA1CVP5B4TuswkwITPBENxX0j+zHiglyDd95rQkjTgr34wiiL+BTXYa9tHFXY6ghBnEU/WI6gIYaAQdiEWm7rxF+0FbU591O3TIHT3q65WynTHV0PA0U5PRoE7ocBg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734411335; c=relaxed/simple;
-	bh=738IlYxdBPF9gCox1lkth0MSWywe9FmjspwmBXnR8FY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVSLqovUcGulNyF4shYgpyPtZYJXUeqn3t5mJJhykHA+83gsdH5/zRNO2scCjGX/4g5AgyVTFYoBgnQCL0tMUUIGpLmFopTacaQpDVv/PKjBGS5OB1y5u09yiT9jBgpRxsHie8g/Gd+8Sdv8WQG5TWgg5nEAQ8oJ6gOh7R/6YeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6443968BEB; Tue, 17 Dec 2024 05:55:28 +0100 (CET)
-Date: Tue, 17 Dec 2024 05:55:28 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>, oe-lkp@lists.linux.dev, lkp@intel.com,
-	linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-nvme@lists.infradead.org
-Subject: Re: [linus:master] [block]  e70c301fae: stress-ng.aiol.ops_per_sec
- 49.6% regression
-Message-ID: <20241217045527.GA16091@lst.de>
-References: <202412122112.ca47bcec-lkp@intel.com> <20241213143224.GA16111@lst.de>
+	s=arc-20240116; t=1734411455; c=relaxed/simple;
+	bh=fAZh6YN7BDxWYSlX0Fp1Tgj9S+0JUp7/sHCKRiQuiUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rkWIQ2VJyFGWcVlr96Iz5OotsPqYLCyIhxQSjGM8BWOmjY1IhUBrekx4ishH810sev+IJ87TmCLPbuxRsHwMM8qNXQqcmMfJJU1l6X/dm+aohniplfGewNBSaGTPV7ibsHxmKj6jtjgA9jkD9q376JW5nqXwr8hji5E+T0C4c00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LIiIl06d; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso61305ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 20:57:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734411452; x=1735016252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=362/6wPaNoggwJpGGOdG6RgZlj612Z1MukeYbnnzsUo=;
+        b=LIiIl06dWR6lg0bJDxXMf0QxMv6IEm6+lKoJUB6Xs4TcTmqzDGu89+bgKhz5CBR3zy
+         TGu1U7Y5LzgRGTnguXltIq9dILKNum/+/p5FhlYdE2Z36bnr5fj2WPjuDR2FQRVxIwAd
+         tSBquImO50nGkfkXwXGdxE7NGvq6ZJlEuwZxd8xmvgkkp1fHhELH13tyTFhNmc0ckB8P
+         Hso9ZVxNryXJcnlppwRxGXWh8h5/r2N8DshePIUxLiZyUw0ybfjc2B8ehBf9/0xHvODI
+         p8++Q2QcgMBik3XHirRr3jdJL5lR8iYKO0oz9G2LbTJj/1EIY/HAlfCWiBqu3S2Zxc/5
+         YZQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734411452; x=1735016252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=362/6wPaNoggwJpGGOdG6RgZlj612Z1MukeYbnnzsUo=;
+        b=JEAxXZ2s9CWyd7eCJr2LMbTlGLWCHz31fZjH6dtB21VApbtEYG7DCJ9y9ecpD8NhnD
+         mcIOf+FdXSaJvK4JO0VqLKGI/UgPVco1+li8rCxJayY4Ffz8CPq6t8c4kovpBYryO1+z
+         ij6GQBaIxFS7YYYwREWxhvxZ/AMKrOMCEgkEnzIarr/eX9kUC1YkGoLfFO1rq/75df0M
+         xct67d++WWmftAd+rRozkhVVgPGQTpaFj4RvaMaDisgEAwLXiUzCEUCVDlyIKSWARADx
+         xNRLN+ukwNA9ecx45acQMIwqFyAN/PbAuQr6N5K9I0iBtZ/E0Vdna5iRvAn2PnnJwFNa
+         bJxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJFgraiPSXHgcHoNpaQJQ+3i8m0o64rY6eVSU7TCGg5fYSO7SQfyrHP+Yy9BaJhNqewcDE5bafisGPLL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYiQliRdYsGjO7keBgy6yXEuH3rTJoIaztqnfqw9WxWMZ8GRhG
+	dW4WHfEqMDnObsbFWVSGGu2nTbIHU4BXrs+l2FgQ6pNeaKXsC5V3rF8l0m2tiuNKzPViuuPJWoB
+	mom4APEPm3geplFBOTMhEC3wNxxHIT7OcfGHG
+X-Gm-Gg: ASbGncuV6uU09/Wyq5SW69dNMyp4fU1FhZrMdd1AzjdyVydfbqo16u0BAiO4FPid4mh
+	GxoWyksZf/33Z/V+QhvTi8wEB0zOffg4H5/488W8=
+X-Google-Smtp-Source: AGHT+IEon0H5P/SgKkxsKeFtvxthHZIZFm7pK/6IZOgc7rOanq4HBnSG1t4asn1594qBhXnfuxhIF4Hwq5/vBKcKGhQ=
+X-Received: by 2002:a92:ccc4:0:b0:3a7:ddbb:1b19 with SMTP id
+ e9e14a558f8ab-3bb8430e0d7mr995405ab.27.1734411452091; Mon, 16 Dec 2024
+ 20:57:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213143224.GA16111@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
+ <20241216-perf_fix_riscv_obj_reading-v1-2-b75962660a9b@rivosinc.com>
+In-Reply-To: <20241216-perf_fix_riscv_obj_reading-v1-2-b75962660a9b@rivosinc.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 16 Dec 2024 20:57:20 -0800
+Message-ID: <CAP-5=fVvLv-OtkK57ri1EpM_v=PQZDZijYBpGv_9Smyz8EOm2g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] tools: perf: tests: Fix code reading for riscv
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Nelson Chu <nelson@rivosinc.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	llvm@lists.linux.dev, linux-perf-users@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 03:32:24PM +0100, Christoph Hellwig wrote:
-> On Thu, Dec 12, 2024 at 09:51:45PM +0800, kernel test robot wrote:
-> > 
-> > 
-> > Hello,
-> > 
-> > kernel test robot noticed a 49.6% regression of stress-ng.aiol.ops_per_sec on:
-> 
-> This sounds like there is some other I/O path that still reorders,
-> which got messed up.  What storage driver is this using?  The repro
-> material talks about an ata disk, but I'm still curious if it's ahci
-> or some other driver, or a SAS HBA?
+On Mon, Dec 16, 2024 at 3:13=E2=80=AFPM Charlie Jenkins <charlie@rivosinc.c=
+om> wrote:
+>
+> After binutils commit e43d876 which was first included in binutils 2.41,
+> riscv no longer supports dumping in the middle of instructions. Increase
+> the objdump window by 2-bytes to ensure that any instruction that sits
+> on the boundary of the specified stop-address is not cut in half.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  arch/riscv/Kconfig              |  5 +++++
+>  tools/perf/tests/code-reading.c | 17 ++++++++++++++++-
 
-Do you have the information on what hardware is used for this test?
+Files under tools use a different Build system than the kernel. The
+Kconfig value won't have an effect. Check out Makefile.config:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/Makefile.config?h=3Dperf-tools-next
+which is included into the build here:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/Makefile.perf?h=3Dperf-tools-next#n313
 
+>  2 files changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index d4a7ca0388c071b536df59c0eb11d55f9080c7cd..f164047471267936bc62389b7=
+d7d9a7cbdca8f97 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -229,6 +229,11 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
+>         def_bool CC_IS_GCC
+>         depends on $(cc-option,-fpatchable-function-entry=3D8)
+>
+> +config RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION
+> +       # Some versions of objdump do not support dumping partial instruc=
+tions
+> +       def_bool y
+> +       depends on !(OBJDUMP_IS_GNU && OBJDUMP_VERSION > 24100)
+> +
+>  config HAVE_SHADOW_CALL_STACK
+>         def_bool $(cc-option,-fsanitize=3Dshadow-call-stack)
+>         # https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a48=
+4e843e6eeb51f0cb7b8819e50da6d2444d769
+> diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-read=
+ing.c
+> index 27c82cfb7e7de42284bf5af9cf7594a3a963052e..605f4a8e1dbc00d8a572503f4=
+5053c2f30ad19e3 100644
+> --- a/tools/perf/tests/code-reading.c
+> +++ b/tools/perf/tests/code-reading.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <errno.h>
+> +#include <linux/kconfig.h>
+>  #include <linux/kernel.h>
+>  #include <linux/types.h>
+>  #include <inttypes.h>
+> @@ -183,9 +184,23 @@ static int read_via_objdump(const char *filename, u6=
+4 addr, void *buf,
+>         const char *fmt;
+>         FILE *f;
+>         int ret;
+> +       u64 stop_address =3D addr + len;
+> +
+> +       if (IS_ENABLED(__riscv) && !IS_ENABLED(CONFIG_RISCV_OBJDUMP_SUPPO=
+RTS_SPLIT_INSTRUCTION)) {
+
+It would be nice if this could be a runtime rather than build time detected=
+.
+
+Thanks,
+Ian
+
+> +               /*
+> +                * On some versions of riscv objdump, dumping in the midd=
+le of
+> +                * instructions is not supported. riscv instructions are =
+aligned along
+> +                * 2-byte intervals and can be either 2-bytes or 4-bytes.=
+ This makes it
+> +                * possible that the stop-address lands in the middle of =
+a 4-byte
+> +                * instruction. Increase the stop_address by two to ensur=
+e an
+> +                * instruction is not cut in half, but leave the len as-i=
+s so only the
+> +                * expected number of bytes are collected.
+> +                */
+> +               stop_address +=3D 2;
+> +       }
+>
+>         fmt =3D "%s -z -d --start-address=3D0x%"PRIx64" --stop-address=3D=
+0x%"PRIx64" %s";
+> -       ret =3D snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, =
+addr + len,
+> +       ret =3D snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, =
+stop_address,
+>                        filename);
+>         if (ret <=3D 0 || (size_t)ret >=3D sizeof(cmd))
+>                 return -1;
+>
+> --
+> 2.34.1
+>
 
