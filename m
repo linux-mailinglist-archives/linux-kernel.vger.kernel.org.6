@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-449371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 339299F4DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:36:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93879F4DE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA7E16F89B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:35:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC337A5050
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4261F543E;
-	Tue, 17 Dec 2024 14:35:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66561F63C8;
+	Tue, 17 Dec 2024 14:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfrBGFNT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F91F4E49
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2141F542F;
+	Tue, 17 Dec 2024 14:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446104; cv=none; b=iST9GM4didY2z7CX7nZIv5L/Z+IavDgiCgPuN5ziPmlg2DAqPojVJ7Iwv1LdjL3qB84rhezjkXM2jdFRKygQ0ywcrBS0FJSaWuZsAlipVL2DouGQS4PVr/sbY/AgKaXO4kXzMzQgkWCLeD1QYuq8i83A5q/vjTmIT8vvl22rYxQ=
+	t=1734446179; cv=none; b=EBcFezhPfToEb9L1Xyb1ymR3cePFFTxjE2qp7J3FqtjIozyYSoIVog3Ug/eH3s6llOwO2koSvsCoF1VZBlBPxDU98ZwxmiMXZ7IRwJY1h7GBsTNMGaEXwWMvqp1L8fTXo8+km0YAttViWwZ2fudIrtMRuwhqnc4Oh66eXHVVE9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446104; c=relaxed/simple;
-	bh=pJKKRQMMk6n5IDXs4b/KINw9ATda0wHsIoznO/vkOaw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=APO5sX49zh0rQMGyWLRHe5bgCYJfmJv87noanAPssTpSifF4D2ewfaH9b1hHhRd/7l0pO4hLTq+lYcaRQ/ramFRQACsjWRiKoN+yX/bc9NKnhBoYbphLzqjAYqUHX/uw4lAhWpBxGkamGOdRhnOlpmjawrUjxvsIyC57fng4AXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9d195e6e5so55005325ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:35:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734446102; x=1735050902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIeMy+hsZP73590GRiY4sQU2LODFp6EkvQJk4gt6eQM=;
-        b=uV539uvbIqin5VWGVQ1NCUclQF/EdueaPNRmoNjl8aIANFT9x2gsRd9+Wr6uggG5EK
-         QsxFzc9m3V0SIjVeBbc4qYyAnK0uEr8UasX1dGEGfY8h7/rbbYBtXAs1vHL9/m2S6oV4
-         nq8EjTC/KNZWqLB+3UHUUB3lJF8SWUaOGLcaDKT5OxDfUIPX50Fscy05c+y1PIXO0hqb
-         fF850CA1eyHv35emxkf97YSiQwlInRY2NkN0lWyL+JeXl2onnB5tX6fsyCUrTULvW3fG
-         MdJ026tRUZrmFF3ddFeL8uk/hf2gt0OMtsCuTbojXD/RfpKaxWxWVuEps0cHjq8Hhf+U
-         PqUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGmc1pHudQovEDW20pPXDGB1q8Bu+WLrbJaR4BYO9c4FSsQr+PwdBloc9nBKQ/9qmSLzxjGppkucSg3vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4KC28hqXQOANOxiJ5cMxLeUT7O4ke+j9WTTQVY6yJMr1VNrKc
-	e06lsNKEqfiEpZIf6UfEFKW4Fo6MJwtGU/+rMpBA9qqGa1ubq6QZpEUk0BuJPKHXqzuAF1rVs/z
-	eTbDY1t1u0dF8aMYjkA7TsQOCOLhfeYoihpRpRXvEkoQPdB9KF2TKEMw=
-X-Google-Smtp-Source: AGHT+IHAEgscXePXWN79iyq6tD6Me7CrUi11jctcqyyCc1dUiPvYRvkB2f+WBDX0ToNEQXQblXMZ/o9M0zvckfQwqrSjgMsnRbcF
+	s=arc-20240116; t=1734446179; c=relaxed/simple;
+	bh=my1aBRiQT5KWc3R/Bcupw6GBuTFoXt2/EVVHhbq+P/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0xpQW27bM6I9kcvBdZ9oXS72NGadDe7xHj5Aav/X9l74KuE7DOHML+LwctphuoPayCkO+AOUuDqVi7aa6t9FzyG4aLP9zsbXPuaX/8/7IYBT1hLr2fd1VVmYfQA7WxaUafT8EjUsF7pgqQGDlBPZfOREIluukFIL9xB8vlONxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfrBGFNT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3C0C4CED4;
+	Tue, 17 Dec 2024 14:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734446178;
+	bh=my1aBRiQT5KWc3R/Bcupw6GBuTFoXt2/EVVHhbq+P/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PfrBGFNTPV2iWfhaTeGmkkyk+aa6qsklKNNPcSDENDrdfKsnyMcivlnfyYVqRADrf
+	 1NX40g4aAYd+CKiR9fmtCfc4S4+IxpoGnnDrI2g4rNzvGxvDA+JV+3wOAK6u1cF7ie
+	 pwkWMSKkdaZGHtdM66iV8FufGULLLKDhhd1hGnpXl78lkKZe+6B5hBWBIME295NXGD
+	 75GwBUHyy5z3wTmv/7rBergL7oVx7zAVO2hAG6NwglMx6qadFtk+L7v852IamGmia9
+	 2RDlvrtkPbAxCB+JndspipOe19IwMR3pEjqn5CCcngMjxSOQJHCBuhGOTB/GiyYHFf
+	 uKKgJ6LTwAD3w==
+Date: Tue, 17 Dec 2024 08:36:17 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-pwm@vger.kernel.org,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	linux-iio@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
+	David Jander <david@protonic.nl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Michael Hennerich <Michael.Hennerich@analog.com>
+Subject: Re: [PATCH v6 13/17] dt-bindings: iio: adc: adi,ad4695: add SPI
+ offload properties
+Message-ID: <173444617666.1633026.7697525623383978911.robh@kernel.org>
+References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+ <20241211-dlech-mainline-spi-engine-offload-2-v6-13-88ee574d5d03@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4d:b0:3a7:7a68:44e2 with SMTP id
- e9e14a558f8ab-3aff243f5acmr153137225ab.15.1734446102117; Tue, 17 Dec 2024
- 06:35:02 -0800 (PST)
-Date: Tue, 17 Dec 2024 06:35:02 -0800
-In-Reply-To: <6741d52e.050a0220.1cc393.0010.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67618c16.050a0220.37aaf.019c.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in __find_get_block (2)
-From: syzbot <syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com>
-To: Yuezhang.Mo@sony.com, brauner@kernel.org, daniel.palmer@sony.com, 
-	hirofumi@mail.parknet.co.jp, jack@suse.com, jack@suse.cz, 
-	linkinjeon@kernel.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	viro@zeniv.linux.org.uk, wataru.aoyama@sony.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-13-88ee574d5d03@baylibre.com>
 
-syzbot has bisected this issue to:
 
-commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
-Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Date:   Thu Sep 12 08:57:06 2024 +0000
+On Wed, 11 Dec 2024 14:54:50 -0600, David Lechner wrote:
+> Add a pwms property to the adi,ad4695 binding to specify an optional PWM
+> output connected to the CNV pin on the ADC.
+> 
+> Also add #trigger-source-cells property to allow the BUSY output to be
+> used as a SPI offload trigger source to indicate when a sample is ready
+> to be read.
+> 
+> Macros are added to adi,ad4695.h for the cell values to help with
+> readability since they are arbitrary values.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> 
+> v6 changes:
+> * Drop $ref to trigger-source.yaml
+> * Add maxItems to pwms property
+> 
+> v5 changes:
+> * Added macros for cell values
+> 
+> v4 changes: new patch in v4
+> ---
+>  Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 13 +++++++++++++
+>  include/dt-bindings/iio/adc/adi,ad4695.h                  |  7 +++++++
+>  2 files changed, 20 insertions(+)
+> 
 
-    exfat: reduce FAT chain traversal
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=156b5730580000
-start commit:   f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=176b5730580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=136b5730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1234f097ee657d8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c9f079f8fb1d7d331be
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e302df980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1265b4f8580000
-
-Reported-by: syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com
-Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
