@@ -1,157 +1,111 @@
-Return-Path: <linux-kernel+bounces-449861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBE49F570E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:44:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F399F5710
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD7697A5672
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:43:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3532B164646
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A088C1F8F10;
-	Tue, 17 Dec 2024 19:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0461F8EE9;
+	Tue, 17 Dec 2024 19:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/yYQCIM"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dalTBy76"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576571F7569;
-	Tue, 17 Dec 2024 19:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD412C475
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734464573; cv=none; b=iAgMtNKjVHBeLvQuKEOuRvMtSbf1oumIQiINmI4nuYw5aagXp5BMcoIzCVYd/dnmSCqieSlKRcpE020axzFM3XdHV0vOZhI/Ac4nsQtHDb8kxgMjn/v74EBnw54G0eJw8OQerIqquA2DXvHtrBWeSghj6xGeKtpVmODd7ntCUOk=
+	t=1734464663; cv=none; b=DQ/LZBEXDuVSnuYzCeXuZbrgXw4Ko8OqBvfgSr2eKO0dkca6zLu5wkNwh5U3u/avbqabGWNSJh+p12FGPDijP5/5WBQOH7x3QbbrIOH6qaVRmGfO1u7acraWIj2Ds1cnhSbrhKxVhBGPYLvUSWc21NEU0Jjw+LT1oicM7q6ssoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734464573; c=relaxed/simple;
-	bh=grpmLojCHp+hPkhQW/oQqd9Z+Et1rtyJoU2nzw+jq8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HUz/xvs/mnA77gN4BfZiVxJ7TWtJOCYaxgtVqRYuZEk+IADfokjB60UqT69qwX6J1/sDfMwvlccLynELm1bKCxprH5GZyZoeZUVBJf+NKPYXzQwemLNk7TwGGOhttQsY6IRlMtS8BYmNl0XwgxYXdUddLIBuIkeG51vpXJiUcmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/yYQCIM; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385dece873cso2674901f8f.0;
-        Tue, 17 Dec 2024 11:42:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734464570; x=1735069370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xjcy3NvbXADNyBSuuuwaRVLBqtPr7mOCdn9D0nVzhNs=;
-        b=c/yYQCIMslsPS8xmR3VAvHMsBZY0DhKpuRTPthYeS10xLfKIkETYnP/sIXzbFOkbGs
-         6cF/H5vQcAXwk/jL0mtFig1sfUXStpK6DaOBxX3mR8je6Fdsr5zSyIH60NQDh+KL6TJ4
-         hwBXWa5lfWYWiOaxavf6XHiefT652dscU9HoTG1W8YkNeTMpn1i7Y4d7hgDDdyxZqtKf
-         ZydlemgGbXw4RMFJ2IjAaPNdicRIFIxV7r1jjpE/rxHWOdYJ8EpAoVKNW3JXk7xgRSCh
-         WPsRsbaBAbJpc7k7i4yUVeCD2ppj7mf57clAHyP6lxex8jGLIiv1eEYlF506aK4xLXJf
-         gpfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734464570; x=1735069370;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xjcy3NvbXADNyBSuuuwaRVLBqtPr7mOCdn9D0nVzhNs=;
-        b=L4b5gl54LUaigqYtCwGhRN6v0fDAlhxJAa3F9bS6qrSEicdDnPICAm4QQg7V4nyXDu
-         bEeZDlqkBBTGLJ9e+XGKXd1N7lwmS6L4cU8maWdZrxhot06QM0O2oSwKw/OOKDfDo8bE
-         CUl8lcH+i+OKsNCpsBIZM64vafJtlsSfpQVaHIdc6Od1yGiX7g+BAv6MYWHA+hWyUH52
-         EY2NqLGUvKY/8zKCX8z9VE6ZG/BaU0mS6IufvaToaASgWnlNYisHsoXETIFwpxKKGhpf
-         G2F2y79xuZXNQa8wcMVNxMTpjoM++a0X56TPVcbAqk8Shi0wjwQJsxmKc9gYm9x2C6fM
-         7s+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0OOx677qjNtqAjWJg6680vO3aM27+tpPx2vf4MJufA6MEgwJF7wH+PhCMSyMi3Vei8Pcl8KCTggRt/Cc=@vger.kernel.org, AJvYcCVFEVDuV3Ncuqz6FCs121zLVs16p/nzpmRg6u3PhGoGmGuifn3OcXXLChG4uw3tTMz1Lb0JagHy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBRDqjOUzlHyw6IE+67e9XfO0A5OV4wj1wdLwJ6VG6nYQeUhvO
-	IoWiACzrKihfC9SWQo3CvSnVLZswv4C0eFOU4B5j/aQzIxWLs3ht
-X-Gm-Gg: ASbGncsqbUsCEC0+xwoieSR9S1N7On1KH5tsBrv133v+MkDeKcIg0hSb6zPg7cEV33N
-	NkjjzsH6xOXIm6BE1bpIyQ1PKZAUpAx17mwopBtAXSPk4RLdLgoTtc/rvYHGDP+Ye+G+KXfmlpD
-	7ii6Z48yqsQmsMpwa04n/saq3l5rgGhHGX236r7pgNQp+bhu5gbOBgLbaZl0NUzL7rgv+faL4K5
-	0eJ7uu6yDpMVcdPzY6pH15euTGbXMCIDBIJVTtJoU2+TFLX4fdp3GzCI7JDR0IDKYObTC5PXVpp
-	SLKGAQ0e
-X-Google-Smtp-Source: AGHT+IEDvqJIQo75IpCM8BROExyo70sf/3Dzu8LlfDOb2fRkaAhslobAvOkSQes6CQnFNmeFRkNeXw==
-X-Received: by 2002:a5d:5f4a:0:b0:385:e0d6:fb48 with SMTP id ffacd0b85a97d-388e4d2ddb7mr121407f8f.7.1734464569438;
-        Tue, 17 Dec 2024 11:42:49 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801a487sm12235816f8f.45.2024.12.17.11.42.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 11:42:48 -0800 (PST)
-Message-ID: <979e05d4-3fd9-4e28-8f9e-67ce2b9ab938@gmail.com>
-Date: Tue, 17 Dec 2024 11:42:40 -0800
+	s=arc-20240116; t=1734464663; c=relaxed/simple;
+	bh=Az8uxBeT61U6nsnwrYrNlGS2RuUvH7emt/TmZMO07mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=W13IVHXEh/GHV484BAB9cHYt+FrkyipTfdwIEsJ2pOXp5atGUU/qi9T2l5bG+IbpB+Iu0Nvk1xZUO72cP6w8jQ7Fkow43CV4IfyzdxU8+5Lz549nfKS6Eqen5bxEkCKxVkKkqQFJ4qyiVhMRc5/6F6JHbUam+6UsEHNY5dtYt9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dalTBy76; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734464661; x=1766000661;
+  h=date:from:to:cc:subject:message-id;
+  bh=Az8uxBeT61U6nsnwrYrNlGS2RuUvH7emt/TmZMO07mQ=;
+  b=dalTBy76lz21VWZBLp2+iaRwvl/3FyZcIILdFfbi4wtLI5I7wQ5xtl0Y
+   M18xc9RTiAu7Z0xkiI8sas6DgmczCXRIV+6KfNx3zhNuNR0O62oPkglC4
+   uHSgx4vZyrS/NqkUUze4s3mXkmSCSghJRLxoGkclrcDLd5vFJl/btW880
+   lcEgeYoiePBtKFcspA+owNJO4JyibGFaFHmjk+NBXzSrubDeGhYs5+Be9
+   U8pULTId3xZSssQEroFO0eupVKYj3dNB7jEwQ/3crwtBMfwMG5yUfrsWG
+   f29a4G5bIbb3a9TmRfRXdyaltxpluMfXjUun+8AXX04rxjdzEmf7HNb56
+   Q==;
+X-CSE-ConnectionGUID: Tz3++73pTd28gJymPtkqGQ==
+X-CSE-MsgGUID: YfBTUjqbTzWvzMH36QfXcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11289"; a="22496920"
+X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
+   d="scan'208";a="22496920"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 11:44:20 -0800
+X-CSE-ConnectionGUID: nMx1HyblRsG7/v4J4udMpA==
+X-CSE-MsgGUID: S91XKOlyRmqKDcqAQOL1AQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
+   d="scan'208";a="98209826"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 17 Dec 2024 11:44:20 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tNdUQ-000Fl8-01;
+	Tue, 17 Dec 2024 19:44:18 +0000
+Date: Wed, 18 Dec 2024 03:44:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ e8b345babf2ace50f6bf380af77ee8ae415d81f2
+Message-ID: <202412180355.77fEAIAu-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/51] 5.15.175-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241217170520.301972474@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241217170520.301972474@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 12/17/24 09:06, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.175 release.
-> There are 51 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 19 Dec 2024 17:05:03 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.175-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: e8b345babf2ace50f6bf380af77ee8ae415d81f2  x86/fred: Clear WFE in missing-ENDBRANCH #CPs
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+elapsed time: 1130m
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+configs tested: 19
+configs skipped: 138
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20241217    clang-19
+i386    buildonly-randconfig-002-20241217    gcc-12
+i386    buildonly-randconfig-003-20241217    gcc-12
+i386    buildonly-randconfig-004-20241217    clang-19
+i386    buildonly-randconfig-005-20241217    clang-19
+i386    buildonly-randconfig-006-20241217    gcc-11
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20241217    clang-19
+x86_64  buildonly-randconfig-002-20241217    gcc-12
+x86_64  buildonly-randconfig-003-20241217    gcc-12
+x86_64  buildonly-randconfig-004-20241217    clang-19
+x86_64  buildonly-randconfig-005-20241217    gcc-12
+x86_64  buildonly-randconfig-006-20241217    clang-19
+x86_64                          defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
