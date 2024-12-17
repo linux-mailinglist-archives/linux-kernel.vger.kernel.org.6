@@ -1,146 +1,158 @@
-Return-Path: <linux-kernel+bounces-448964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFB09F47C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:41:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB0D9F47CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E391883D96
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:41:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CCAB16E3EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9531DFE0B;
-	Tue, 17 Dec 2024 09:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tjtpFszZ"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DBD1DF274;
+	Tue, 17 Dec 2024 09:41:53 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BC51DED7B
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E811DC19F;
+	Tue, 17 Dec 2024 09:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428452; cv=none; b=YmChTHXbPIJzQ3iXY3sbgM1Bz1Kdchm6ETCmEXVRN0aP/bRTTX5yfHP3tpRySx6AHuGuA++4ufPDgiSD90h0U4cNQsrT4sPrg/6EvrpAEACnenSUdw+Tn6XNZ/l1hXQgB+OwvibkFr2h560eVhdZPPvzOfHdR79+csUKo1UiqE4=
+	t=1734428513; cv=none; b=rSNvRP4vBs/wINkqOPV0m5/p2mEAW9yFz2Hz79UzifL7XayCGM6Sa6YYPfUzX2KDIr+Kyfrqx2KgJDx/+x+kyPZ82C2f1DwbpQZ+sTuwQg41Czr6DMUYMFycu/SmbtNL5JQwD18n5mjAT04EIpVgi5ZGpwEUWz+zU2blMhMwzmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734428452; c=relaxed/simple;
-	bh=9mXBYawofpPepE2BF91P/arRig7nezklsaAdla8ShbI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Io7tjlNlumGrUmgBuzUlq+pDWXigKt0fjnVMv5H9yfy8qcKLVVc5uhXg9TgXbdmA/ESZO6zJBt51DP6xdMOycD3iWmtFUr8SY2BW6m6pLcCiAv2cCl/A0JVxL6ZX7SY1uvFiflQEQjNaKRe7KBu49kL/2aRTo2zgvFyVfOzz160=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tjtpFszZ; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361c705434so36403735e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:40:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734428448; x=1735033248; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1rzC8vvycH/Cp0hUw6Wfj4qRoaSuoHKIpGfYrmHMjP8=;
-        b=tjtpFszZBqyEWbGzafu9eK0SUpTkJSX3dM2pIUF6obToLzLDDqttBgCpOOwvKRwk34
-         8g1xd6Tf3hY77JRmUguI0+PvKA+nvGfXZGhn3TsQ47ttT3qsJzuO23JJxDGN/BfJazW2
-         rev1is6gfjvMCZ1jK8cWbiTWs+UPCJWmx/NQlspo9yeDOyfihG+k8hGGrg92hgGhUb8P
-         xejFm3xFgMuOpkiL2ZGDOW750hmSZOiDlW1RiHzQmvCWxKJUrZBrEio2E0jcpnSSD0ri
-         l/Avs/5DhVJ76I4jYYpONbUDuFUGLH/6SpaX/yZSEG0dDeanwJbg7VweXrRLuJW3HUvL
-         ylcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734428448; x=1735033248;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1rzC8vvycH/Cp0hUw6Wfj4qRoaSuoHKIpGfYrmHMjP8=;
-        b=MkphsZR8HjJPbrrd9hgnlYhnlDTcDWRvi5qxNRA8zgDtml+J17s97J3AO6octHJiU+
-         dwbltbZV0xWF50dPxE6oqCb7hvienAYHo8clE5TsOYxWY3KoRfNtnmICq4TOcF/3ujsS
-         uinPvSk2Uqe+ATNwchyVWQ2k/Etjn5LojfNEt2yhokmDzaenWts6g2E0ko1+BJBDA10h
-         DGZ1An9xMX/Z1xoTYsRolPi7H+aDobO8oAvOjLrYaYB2qH4icvSduOfLlkZLfmHk58xm
-         XsMP8b1r/BR3aImQDPLtBgYLXFSAY90t2QwvSQ49KnoiRvEwCdKSrZqLoliOLrK/kL1r
-         WN5w==
-X-Gm-Message-State: AOJu0YzFqQw0XapylZMdmjxUR7j7HZu/LFNpdet4GsmPgjeu5fzXKPLo
-	0f14SfqoJN7RQujEUnv9PX0mb/amAAkNZO9yZjQwtH0PkwtGuaPaCeNfSIl05oY=
-X-Gm-Gg: ASbGncttDvl9kTzupA9kk7ehfzoyME+1Uzry/ulshhRcmbMz4EUvQhAXmR5WnBbJJhN
-	3GDrmV8YMpQGRNDlpfJfNvWkkVg8V3T7OVIlqDbGknR2dpEwPX2sbm9Gk3uNzI3uE3bVB3s7GYF
-	nSof+CsrfacBUJa/PTQvz+3CW8FcCGF2IsI2Ksax2lhco7mvCNjTbia7y29wErjUduRQGigoxyB
-	h08HEoVfY+Bxvt7JDpKMLfSYjT8RkUtwr+Xr7eZF+5Zyp+q5FDVinSNWhEeUzNf5M0Q9UoUSB2I
-	oxPe9F9+z3tnk617ps7jMDKLiOZWEjX8eQ==
-X-Google-Smtp-Source: AGHT+IGdL77URRUUDel/620o0E15cA6VUq4GPfffaHhqeuBMk65coFdHp1nDn5rm38NPj5m5jvSG6g==
-X-Received: by 2002:a05:600c:1d1f:b0:434:f0df:9f6 with SMTP id 5b1f17b1804b1-4364767f087mr28742535e9.3.1734428448580;
-        Tue, 17 Dec 2024 01:40:48 -0800 (PST)
-Received: from ta2.c.googlers.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ec46sm167475755e9.20.2024.12.17.01.40.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 01:40:48 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Tue, 17 Dec 2024 09:40:22 +0000
-Subject: [PATCH v5 3/3] MAINTAINERS: add entry for Samsung Exynos mailbox
- driver
+	s=arc-20240116; t=1734428513; c=relaxed/simple;
+	bh=zvXi+zpQ2PSb79YnO5gx+w5GkO569/pAtSaHL7iDBP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyLOQsdfgRSvsIHlOw82WACYFdEyKiLReXphaLZvFKObpG34/FBlhkgK+p2eaWxMndn1Bfpc9bUbJSVpQC4dp4UV2kroNOWUbL1pSu+UUBtA4xrBUN0/W8Q8N5we+SKLDFyWxYqdREEnnzFzFYJ62uTTIqArcABoT0omWWV2JZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4YCBfP4lvTz9sPd;
+	Tue, 17 Dec 2024 10:41:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id hHsnCo-8gqUl; Tue, 17 Dec 2024 10:41:49 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4YCBfP3mYqz9rvV;
+	Tue, 17 Dec 2024 10:41:49 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6DB388B76D;
+	Tue, 17 Dec 2024 10:41:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id IQiCAtiPD4Ue; Tue, 17 Dec 2024 10:41:49 +0100 (CET)
+Received: from [192.168.232.97] (unknown [192.168.232.97])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D28938B763;
+	Tue, 17 Dec 2024 10:41:48 +0100 (CET)
+Message-ID: <8e3c9ebc-e047-4dfd-ad1d-6bbe918aa98b@csgroup.eu>
+Date: Tue, 17 Dec 2024 10:41:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-acpm-v4-upstream-mbox-v5-3-cd1d3951fe84@linaro.org>
-References: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org>
-In-Reply-To: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
- willmcvicker@google.com, daniel.lezcano@linaro.org, 
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734428445; l=1216;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=9mXBYawofpPepE2BF91P/arRig7nezklsaAdla8ShbI=;
- b=Z0AXVvEDLX3dGQQUU6S7FG2YiVuEm8f4RKNyhHzyRa5O41uaawalfgmZW9iW5t8kzyPwvDlhN
- g3py0lZDyAoDARc+CygZuhG7TGX1DhEtmkfDDEsBIZmbJzbmsW3NitI
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: sysfs: Fix deadlock situation in sysfs accesses
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, "Eric W. Biederman"
+ <ebiederm@xmission.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>,
+ CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>
+References: <d416a14ec38c7ba463341b83a7a9ec6ccc435246.1734419614.git.christophe.leroy@csgroup.eu>
+ <CANn89iK1+oLktXjHXs0U3Wo4zRZEqimoSgfPVzGGycH7R_HxnA@mail.gmail.com>
+ <49a43774-bf97-4b20-8382-4fb921f34c66@csgroup.eu>
+ <CANn89iLKPx+=gHaM_V77iwUwzqQe_zyUc0Dm1KkPo3GuE40SRw@mail.gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <CANn89iLKPx+=gHaM_V77iwUwzqQe_zyUc0Dm1KkPo3GuE40SRw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add entry for the Samsung Exynos mailbox driver.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index baf0eeb9a355..6bef5fc5e4ee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3023,6 +3023,7 @@ F:	drivers/*/*s3c24*
- F:	drivers/*/*s3c64xx*
- F:	drivers/*/*s5pv210*
- F:	drivers/clocksource/samsung_pwm_timer.c
-+F:	drivers/mailbox/exynos-mailbox.c
- F:	drivers/memory/samsung/
- F:	drivers/pwm/pwm-samsung.c
- F:	drivers/soc/samsung/
-@@ -20717,6 +20718,15 @@ F:	arch/arm64/boot/dts/exynos/exynos850*
- F:	drivers/clk/samsung/clk-exynos850.c
- F:	include/dt-bindings/clock/exynos850.h
- 
-+SAMSUNG EXYNOS MAILBOX DRIVER
-+M:	Tudor Ambarus <tudor.ambarus@linaro.org>
-+L:	linux-kernel@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-+F:	drivers/mailbox/exynos-mailbox.c
-+F:	include/dt-bindings/mailbox/google,gs101.h
-+
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-crypto@vger.kernel.org
+Le 17/12/2024 à 10:20, Eric Dumazet a écrit :
+> On Tue, Dec 17, 2024 at 9:59 AM Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+>>
+>>
+>>
+>> Le 17/12/2024 à 09:16, Eric Dumazet a écrit :
+>>> On Tue, Dec 17, 2024 at 8:18 AM Christophe Leroy
+>>> <christophe.leroy@csgroup.eu> wrote:
+>>>>
+>>>> The following problem is encountered on kernel built with
+>>>> CONFIG_PREEMPT. An snmp daemon running with normal priority is
+>>>> regularly calling ioctl(SIOCGMIIPHY). Another process running with
+>>>> SCHED_FIFO policy is regularly reading /sys/class/net/eth0/carrier.
+>>>>
+>>>> After some random time, the snmp daemon gets preempted while holding
+>>>> the RTNL mutex then the high priority process is busy looping into
+>>>> carrier_show which bails out early due to a non-successfull
+>>>> rtnl_trylock() which implies restart_syscall(). Because the snmp
+>>>> daemon has a lower priority, it never gets the chances to release
+>>>> the RTNL mutex and the high-priority task continues to loop forever.
+>>>>
+>>>> Replace the trylock by lock_interruptible. This will increase the
+>>>> priority of the task holding the lock so that it can release it and
+>>>> allow the reader of /sys/class/net/eth0/carrier to actually perform
+>>>> its read.
+>>>>
+>>
+>> ...
+>>
+>>>>
+>>>> Fixes: 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in sysfs methods.")
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>>>> ---
+>>>
+>>> At a first glance, this might resurface the deadlock issue Eric W. Biederman
+>>> was trying to fix in 336ca57c3b4e ("net-sysfs: Use rtnl_trylock in
+>>> sysfs methods.")
+>>
+>> Are you talking about the deadlock fixed (incompletely) by 5a5990d3090b
+>> ("net: Avoid race between network down and sysfs"), or the complement
+>> provided by 336ca57c3b4e ?
+>>
+>> My understanding is that mutex_lock() will return EINTR only if a signal
+>> is pending so there is no need to set signal_pending like it was when
+>> using mutex_trylock() which does nothing when the mutex is already locked.
+>>
+>> And an EINTR return is expected and documented for a read() or a
+>> write(), I can't see why we want ERESTARTNOINTR instead of ERSTARTSYS.
+>> Isn't it the responsibility of the user app to call again read or write
+>> if it has decided to not install the necessary sigaction for an
+>> automatic restart ?
+>>
+>> Do you think I should instead use rtnl_lock_killable() and return
+>> ERESTARTNOINTR in case of failure ? In that case, is it still possible
+>> to interrupt a blocked 'cat /sys/class/net/eth0/carrier' which CTRL+C ?
+> 
+> Issue is when no signal is pending, we have a typical deadlock situation :
+> 
+> One process A is :
+> 
+> Holding sysfs lock, then attempts to grab rtnl.
+> 
+> Another one (B) is :
+> 
+> Holding rtnl, then attempts to grab sysfs lock.
 
--- 
-2.47.1.613.gc27f4b7a9f-goog
+Ok, I see.
+
+But then what can be the solution to avoid busy looping with 
+mutex_trylock , not giving any chance to the task holding the rtnl to 
+run and unlock it ?
+
+> 
+> Using rtnl_lock_interruptible()  in A will still block A and B, until
+> a CTRL+C is sent by another thread.
 
 
