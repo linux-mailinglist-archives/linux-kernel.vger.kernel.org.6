@@ -1,268 +1,165 @@
-Return-Path: <linux-kernel+bounces-449381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4636A9F4E16
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:42:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1129A9F4E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB77169FC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB9BD7A5A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB3F1F7065;
-	Tue, 17 Dec 2024 14:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D351F63CA;
+	Tue, 17 Dec 2024 14:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPBBvYfE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXZIool/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72151F6667;
-	Tue, 17 Dec 2024 14:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873C11F543A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446497; cv=none; b=JdSyUvz+R5P39uDk4EjglJ17O0ZEk3GAgfjowZpdLL+bMWGCwpB+UXlf64rihNqXoqIf4YzfdjiqspSl84M01cmPog4QmDoVvvg0wj9s8Nae0cfB4dugCGi6xytKSdQSUREDd6O0T+Jwy/jbz/5tpZhfdqJja/VgvSquC5alEBQ=
+	t=1734446523; cv=none; b=DvKfWTPoK6JV7pAGrvKw+qpCMQf159NofDazNoFzEvtojXPZSixi0ZRTadazdoYvCQSazhZTjkyjy4uuez34MsMtLQ0rSJSlM1T+S1w51D2OazXiEwYP/wfQMcROBuljToq+2YttVEXeeD7TvY/aIByF94LrPFTkZvBkb7YtbHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446497; c=relaxed/simple;
-	bh=+m/8Fr5fZ5//R02G7uIa0aNtQI8MEh+z3EFaN5lwOxo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uZ+HyRoh5sZuWf3gxbzkCmmZE/8bHtwwAN6uxhFWYRPjbjSdGbH5KDpjT0uLOwdv0+LNQeQBhsf2a16HgYBJ4kRkjCRi1VRq2nW7Vk7flyM9yXCkW/Mgjvp1jZsHJv7el2DtTqVN6n8rrMZfnh5dxACnulq8zILmfxSVBCU5Mto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPBBvYfE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH7sq8F003197;
-	Tue, 17 Dec 2024 14:41:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=RbAetlWVKEkBn1pzHug7Ej
-	z3qNj28XlZjoBvIavHL7w=; b=gPBBvYfEhNVtjeKzDplwvhMKg4x+W6oMO4xGaw
-	xeEpqFrdjjmIaLTYEc7HZjA6ZvIarxW59cVxnmTagv9kwuys0sXxnZ6sMHlNhDtH
-	3wh5cDZBr714cohfwq4MYiDldOHX0xjqEfCLlkb5JajUwZAjnSXXnz8No8YCfn/k
-	yDJOQ+6/g1uXQwMr/G1GRzo/PhV2FyRIuKXt42uYw0yWKZrzgAfYaQQxQq2Igp0D
-	iIKjhW1ZztNGpX6D81I8wmT/GePx0YsevPUZyRpPSP08W1Z0y1vC/IQA36IDr+WH
-	cGA93A5hqPo8Bdn1HX4XdPriwFqtYzdKjv6mGwNG6nK4YrYg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k5aw928x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 14:41:27 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHEfMHV023030
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 14:41:22 GMT
-Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 17 Dec 2024 06:41:19 -0800
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-To: <manivannan.sadhasivam@linaro.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-        <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Naveen Kumar Goud Arepalli
-	<quic_narepall@quicinc.com>,
-        Nitin Rawat <quic_nitirawa@quicinc.com>
-Subject: [PATCH V3] scsi: ufs: qcom: Enable UFS Shared ICE Feature
-Date: Tue, 17 Dec 2024 20:10:59 +0530
-Message-ID: <20241217144059.30693-1-quic_rdwivedi@quicinc.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734446523; c=relaxed/simple;
+	bh=IduhPnhYDH1MDPrUhaN7y0qRs3lIO/NMag9SCbU6GdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZphSsy23+X/6fcdX6c7Hia5Nxb+1HN0WcS6Pg8VLb2ng2WSCNAxqSbJzV0fXa5PZcEj5s8HF7ycbucFvgmdokmK3zq6aOPCLjHfdGX13TBYzQIkiLVk+bmEFWupwlfe8cdmAOm9Rh6QQ+r2wJdLuafs3ZhB4/O432UwPefpvNRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iXZIool/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361a50e337so37892375e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734446520; x=1735051320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NkDgX86vllpaHSZlaZCU7Cun96tz+XUmIPtYmYXZiuI=;
+        b=iXZIool/DonMLyLPNOTROAiMZLHEuig3f/eck5c6tnJZ7y8jluKd7nS0X97OFTJC35
+         mT1sdSTVkT19YJE+MTdNJQm3hd8npaA2INoLdW5PvlrCFqQY6MY+PPBf3NtstoaHSQUI
+         g/xvpWAjMvE+NX8pEAMKugj7FAlkeI9gfmv9LZizKY5Nqe3Tsj9HVfZKHDe7G1gAebJ+
+         6MnqK9ckNxTbhtawHaVf/9KCVFY2UQ2R8+34Xb1BYdDn5WrnclVFyzVxtHAors7Nzb3s
+         jf4amT8ZKzucOYX6pZ28uevXVwB0it/0Gc6255+Q6WR1hxI46dzHmK37XKIWzVdSBH05
+         vWXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734446520; x=1735051320;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NkDgX86vllpaHSZlaZCU7Cun96tz+XUmIPtYmYXZiuI=;
+        b=Ebtj+PW0FHdWl6n7Szf1dshB4b6C1Qh7s5iasLUEQh3QVbLBFbt6YRhRI2QzAj2b9G
+         PAwbYdmRv/MCz5UUpbf+Bkg1T96iuAPHDHBGYwiVS9Bz5FS0r21xLd4+Wcp5r4KoF0/a
+         K4cv/Gvjvl5bSTyE8MTcKMfoOygtWT2i3R/m7HonTQHMJko4BIjXaRZ31jUnkaz7GPeY
+         flfKXaHdnqQUcHqfsLvFLIy00KlR1UBl1xUCoV2kNMx27KHFf3V3Pn2IhFKLFZTeUT1e
+         0wS7yI5tt0BjTScXXAqgVV2E/ZhSZoaJF50W48guxeLGokYQxMme/R0tlyWGbq3NP2cx
+         eZ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURvfd4Ee2uyOfBk2kWM02TKZ3YtY8A6uqHUJ61Q9P1KI/3cTGfd9O7UfSQoyGf8AL1gIV+xBf6J/cz+qY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6jsIXUhpfshEg3BPUF2u7AD7Vj0xtwvZNZOIUKoiqZlORtKvi
+	lsfsILUj5ip1g3boxBIztEmlJvbw8h0n1NrJvfnzCIQkMDYgrm1ZTzMZb7P3IKE=
+X-Gm-Gg: ASbGncs3yNsn/+vFRepYDMbSV0LyliqLbFqn2+BSWrl6564jqKFZD//XrLAezpmo1kN
+	uuZPeeeMMKSEq1qxjKq4dQmK+BganOJ5uquqM0vVVCc6fmTakGYejSogyUVqmXh9qA1cLd82qvr
+	XsQDpNyjvIIMoQAVwTc78/263pmZsTtbKQY+hxZ/r51uq9zT2fLBdAircrqblvWY9+Oo18NQtVD
+	g+zqkHN71npH+O/4j4iZkXsESeEBd1DCfGEr4owGkzZbcps9GdCgs7EabqYhGRoFog=
+X-Google-Smtp-Source: AGHT+IEzBbDbt3N095GZWA5AkGypzQVy5bfUKzLTwWMXJ09Q7iKoxCNLX0cW+TNl2Iv09tcOh2gpSQ==
+X-Received: by 2002:a05:600c:4e8c:b0:434:f7e3:bfa8 with SMTP id 5b1f17b1804b1-4362aacb94bmr138319775e9.33.1734446519862;
+        Tue, 17 Dec 2024 06:41:59 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.66.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436362c8fbasm119231555e9.44.2024.12.17.06.41.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 06:41:59 -0800 (PST)
+Message-ID: <1cb01bec-d5ad-4081-956e-32ac424b5e5a@linaro.org>
+Date: Tue, 17 Dec 2024 14:41:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mB8F4S1UlNlRQ9ek6vGxkQyDMK2Ygj2B
-X-Proofpoint-GUID: mB8F4S1UlNlRQ9ek6vGxkQyDMK2Ygj2B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170116
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: test: Speed up running brstack test
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20241213231312.2640687-2-robh@kernel.org>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241213231312.2640687-2-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-By default, the UFS controller allocates a fixed number of RX
-and TX engines statically. Consequently, when UFS reads are in
-progress, the TX ICE engines remain idle, and vice versa.
-This leads to inefficient utilization of RX and TX engines.
 
-To address this limitation, enable the UFS shared ICE feature for
-Qualcomm UFS V5.0 and above. This feature utilizes a pool of crypto
-cores for both TX streams (UFS Write – Encryption) and RX streams
-(UFS Read – Decryption). With this approach, crypto cores are
-dynamically allocated to either the RX or TX stream as needed.
 
-Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
----
-Changes from v2:
-1. Refactored the code to have a single algorithm in the code and
-enabled by default.
-2. Revised the commit message to incorporate the refactored change.
-3. Qcom host capabilities are now enabled in a separate function.
+On 13/12/2024 11:13 pm, Rob Herring (Arm) wrote:
+> From: James Clark <james.clark@arm.com>
+> 
+> The brstack test runs quite slowly in software models. Part of the reason
+> is "xargs -n1" is quite inefficient in replacing spaces with newlines.
+> While that's not noticeable on normal machines, it is on software models.
+> Use "tr -s ' ' '\n'" instead which can do the same transformation, but is
+> much faster. For comparison on an M1 Macbook Pro:
+> 
+> $ time seq -s ' ' 10000 | xargs -n1 > /dev/null
+> 
+> real    0m2.729s
+> user    0m2.009s
+> sys     0m0.914s
+> $ time seq -s ' ' 10000 | tr -s ' ' '\n' | grep '.' > /dev/null
+> 
+> real    0m0.002s
+> user    0m0.001s
+> sys     0m0.001s
+> 
+> The "grep '.'" is also needed to remove any remaining blank lines.
+> 
+> Signed-off-by: James Clark <james.clark@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> [robh: Drop changing loop iterations on arm64. Squash blank line fix and redo commit msg]
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Originally part of this series[1], but I've dropped any Arm specifics,
+> and it stands on its own. No reason this needs to wait on Arm BRBE
+> support (which I'm working on now). I don't expect to have other changes
+> to this test related to BRBE anymore.
+> 
+> [1] https://lore.kernel.org/all/20240613061731.3109448-8-anshuman.khandual@arm.com/
+> 
 
-Changes from v1: 
-1. Addressed Rob's and Krzysztof's comment to fix dt binding compilation 
-   issue.
-2. Addressed Rob's comment to enable the nodes in example.
-3. Addressed Eric's comment to rephrase patch commit description.
-   Used terminology as ICE allocator instead of ICE algorithm.
-4. Addressed Christophe's comment to align the comment as per kernel doc.
----
- drivers/ufs/host/ufs-qcom.c | 36 +++++++++++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h | 45 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 80 insertions(+), 1 deletion(-)
+Reviewed-by: James Clark <james.clark@linaro.org>
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 68040b2ab5f8..22985ea22e15 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -105,6 +105,25 @@ static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
- }
- 
- #ifdef CONFIG_SCSI_UFS_CRYPTO
-+/**
-+ * ufs_qcom_config_ice_allocator() - ICE core allocator configuration
-+ *
-+ * @host: pointer to qcom specific variant structure.
-+ */
-+static void ufs_qcom_config_ice_allocator(struct ufs_qcom_host *host)
-+{
-+	struct ufs_hba *hba = host->hba;
-+	unsigned int val[4] = { NUM_RX_R1W0, NUM_TX_R0W1, NUM_RX_R1W1, NUM_TX_R1W1 };
-+	unsigned int config;
-+
-+	if (!is_ice_config_supported(host))
-+		return;
-+
-+	config = val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
-+
-+	ufshcd_writel(hba, ICE_ALLOCATOR_TYPE, REG_UFS_MEM_ICE_CONFIG);
-+	ufshcd_writel(hba, config, REG_UFS_MEM_ICE_NUM_CORE);
-+}
- 
- static inline void ufs_qcom_ice_enable(struct ufs_qcom_host *host)
- {
-@@ -196,6 +215,11 @@ static inline int ufs_qcom_ice_suspend(struct ufs_qcom_host *host)
- {
- 	return 0;
- }
-+
-+static void ufs_qcom_config_ice_allocator(struct ufs_qcom_host *host)
-+{
-+}
-+
- #endif
- 
- static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
-@@ -435,6 +459,8 @@ static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
- 		err = ufs_qcom_enable_lane_clks(host);
- 		break;
- 	case POST_CHANGE:
-+		ufs_qcom_config_ice_allocator(host);
-+
- 		/* check if UFS PHY moved from DISABLED to HIBERN8 */
- 		err = ufs_qcom_check_hibern8(hba);
- 		ufs_qcom_enable_hw_clk_gating(hba);
-@@ -932,6 +958,14 @@ static void ufs_qcom_set_host_params(struct ufs_hba *hba)
- 	host_params->hs_tx_gear = host_params->hs_rx_gear = ufs_qcom_get_hs_gear(hba);
- }
- 
-+static void ufs_qcom_set_host_caps(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	if (host->hw_ver.major >= 0x5)
-+		host->caps |= UFS_QCOM_CAP_ICE_CONFIG;
-+}
-+
- static void ufs_qcom_set_caps(struct ufs_hba *hba)
- {
- 	hba->caps |= UFSHCD_CAP_CLK_GATING | UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
-@@ -940,6 +974,8 @@ static void ufs_qcom_set_caps(struct ufs_hba *hba)
- 	hba->caps |= UFSHCD_CAP_WB_EN;
- 	hba->caps |= UFSHCD_CAP_AGGR_POWER_COLLAPSE;
- 	hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
-+
-+	ufs_qcom_set_host_caps(hba);
- }
- 
- /**
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index b9de170983c9..b59d18bebd00 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -196,7 +196,8 @@ struct ufs_qcom_host {
- #ifdef CONFIG_SCSI_UFS_CRYPTO
- 	struct qcom_ice *ice;
- #endif
--
-+	#define UFS_QCOM_CAP_ICE_CONFIG BIT(0)
-+	u32 caps;
- 	void __iomem *dev_ref_clk_ctrl_mmio;
- 	bool is_dev_ref_clk_enabled;
- 	struct ufs_hw_version hw_ver;
-@@ -226,6 +227,48 @@ ufs_qcom_get_debug_reg_offset(struct ufs_qcom_host *host, u32 reg)
- 	return UFS_CNTLR_3_x_x_VEN_REGS_OFFSET(reg);
- };
- 
-+#ifdef CONFIG_SCSI_UFS_CRYPTO
-+static inline bool is_ice_config_supported(struct ufs_qcom_host *host)
-+{
-+	return (host->caps & UFS_QCOM_CAP_ICE_CONFIG);
-+}
-+
-+/* ICE configuration to share AES engines among TX stream and RX stream */
-+#define ICE_ALLOCATOR_TYPE 2
-+#define REG_UFS_MEM_ICE_CONFIG 0x260C
-+#define REG_UFS_MEM_ICE_NUM_CORE  0x2664
-+
-+
-+/*
-+ * Number of cores allocated for RX stream when Read data block received and
-+ * Write data block is not in progress
-+ */
-+#define NUM_RX_R1W0 28
-+
-+/*
-+ * Number of cores allocated for TX stream when Device asked to send write
-+ * data block and Read data block is not in progress
-+ */
-+#define NUM_TX_R0W1 28
-+
-+/*
-+ * Number of cores allocated for RX stream when Read data block received and
-+ * Write data block is in progress
-+ * OR
-+ * Device asked to send write data block and Read data block is in progress
-+ */
-+#define NUM_RX_R1W1 15
-+
-+/*
-+ * Number of cores allocated for TX stream (UFS write) when Read data block
-+ * received and Write data block is in progress
-+ * OR
-+ * Device asked to send write data block and Read data block is in progress
-+ */
-+#define NUM_TX_R1W1 13
-+
-+#endif /* UFS_CRYPTO */
-+
- #define ufs_qcom_is_link_off(hba) ufshcd_is_link_off(hba)
- #define ufs_qcom_is_link_active(hba) ufshcd_is_link_active(hba)
- #define ufs_qcom_is_link_hibern8(hba) ufshcd_is_link_hibern8(hba)
--- 
-2.47.1
+>   tools/perf/tests/shell/test_brstack.sh | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/tests/shell/test_brstack.sh b/tools/perf/tests/shell/test_brstack.sh
+> index 5f14d0cb013f..e01df7581393 100755
+> --- a/tools/perf/tests/shell/test_brstack.sh
+> +++ b/tools/perf/tests/shell/test_brstack.sh
+> @@ -30,7 +30,7 @@ test_user_branches() {
+>   	echo "Testing user branch stack sampling"
+>   
+>   	perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+> -	perf script -i $TMPDIR/perf.data --fields brstacksym | xargs -n1 > $TMPDIR/perf.script
+> +	perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' '\n' > $TMPDIR/perf.script
+>   
+>   	# example of branch entries:
+>   	# 	brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
+> @@ -59,7 +59,7 @@ test_filter() {
+>   	echo "Testing branch stack filtering permutation ($test_filter_filter,$test_filter_expect)"
+>   
+>   	perf record -o $TMPDIR/perf.data --branch-filter $test_filter_filter,save_type,u -- ${TESTPROG} > /dev/null 2>&1
+> -	perf script -i $TMPDIR/perf.data --fields brstack | xargs -n1 > $TMPDIR/perf.script
+> +	perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' | grep '.' > $TMPDIR/perf.script
+>   
+>   	# fail if we find any branch type that doesn't match any of the expected ones
+>   	# also consider UNKNOWN branch types (-)
 
 
