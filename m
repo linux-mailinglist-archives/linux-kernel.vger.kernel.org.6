@@ -1,130 +1,172 @@
-Return-Path: <linux-kernel+bounces-450005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CB49F5939
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:03:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A01909F5932
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C21018936F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B24166088
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4DB1F9F5F;
-	Tue, 17 Dec 2024 21:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCAF1F9F5F;
+	Tue, 17 Dec 2024 21:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="O0BM4jrG"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nspWSNxq"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2045.outbound.protection.outlook.com [40.107.237.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0696C14A0A3;
-	Tue, 17 Dec 2024 21:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472251; cv=none; b=dtSnZl5JNUw+Gy/lwavqnrTGkDYnedXSDC5u1AmNi8JqNw6NwHUzkbdKevnSkaRba3ylHBxzISJ1zOmgUOOADZYmi7hZnHmdBLeywaK0eUL0iCTx4SJmmciY/I20mVEZvP4MZle3RbTArlC2Y4MbqYXrVq4UFXIKYfvof+GkQYo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472251; c=relaxed/simple;
-	bh=OAwBai08oY+i441nEsQbvRWLwiRlDITvNm7ygS2fNxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SHqjEApCuwx6AYPzxMVhRF+xzFrqSapRKF71vXHEJVZEVEvRPwfOvb7GPO6SFcfmhKf9yzc7v8dWcq8900C+JyKaBCCH59UEpt3rAOsKhCzpQrE9brTBx/FdJ6tWZE2Lg1AmVrUTF+0iJxO6xw4/LG7f/ObUFmFLmz8xOJ+hzCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=O0BM4jrG; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YCVqY39cGz6Cnk9B;
-	Tue, 17 Dec 2024 21:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1734472242; x=1737064243; bh=vGKreOiMrmkyHbfnHTG/lPe2
-	VUgGkuWqkgHuBPeS/4w=; b=O0BM4jrG2cDVDSzLsi8pgP3mIM3FaYhVJh4eeRKP
-	cfr4vpAWzV8Up1rRtzZCi+H1ZtmRSK2mgmzssF+bw+oLSmPNKOJih679ho28kFYQ
-	Y1gqgw9Y8yWuBO9LnErOplxP193bQQ+7+B47rkZoxTcjyXRNGJUzylRnyH4Pvzc3
-	/2FPmGPk4t57QWCOKIwBGnAFqof0rzERaG/5QyqEDMcPMLnCxITgcnBFAZz75c1B
-	d75nRNScMFIbJ3LqI1Q0w5RuO2lD2p+xpGIXKG4xnCiYlHU64i6TVoHgQO1igW/o
-	ZxKXjOWUrv8bFuDjFUe5pV/B1uEDTCxVoSa35CotMd1RUA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id IY2qz15OeoDP; Tue, 17 Dec 2024 21:50:42 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YCVqM72Lhz6ClY9C;
-	Tue, 17 Dec 2024 21:50:39 +0000 (UTC)
-Message-ID: <ac5aa72f-9944-4436-bed3-43e4e4e97f5e@acm.org>
-Date: Tue, 17 Dec 2024 13:50:39 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF6155CB3;
+	Tue, 17 Dec 2024 21:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734472562; cv=fail; b=T5EakFxMXXtAm70AtWGvyV3pUorimd5VAplhUXtaBqYcc8Rmr5WLyfRDMj6FRDRzFiLse+opMX6KmNskQU6bcLDoUQEpnzTboea1tO1I+Up57JrtVsKarWJoZbbc7V6Z7PgK2IWUsteC8ZNLkABvPk+2H46N53OSevMbaMZyLfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734472562; c=relaxed/simple;
+	bh=tXdhgnYROlqS20GBSzCvPUF/aBO1pkT8BYkFUeGRi9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oVa5nexub9TIUfLR4MKpHozK9AseYwfOXsnwwflIzpPu+UkJFwKdFl6XWIZU5sy3txFreMzmfoRn8r8PkzzjqxNfpKZsvbWg3rmHWT4wBodhPry8jhsRoBwt1r435R8smNtsYKcW6lIdm4j36Pn2tySx8hOFH9qVsW4lbTWOQdo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=fail (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nspWSNxq reason="signature verification failed"; arc=fail smtp.client-ip=40.107.237.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RIJSfi9xmaGewhr1QBELSsnAIGWNIqRcn1qrZLlBaXgjQkR3+nTs58FL8007n2XRl0UpoBVaolf5vFdK3njd/Zqr7IFcSs6uuneUfluniM2gpDDm3VpfLQKCoDhSJIHCRTYZH6Tz5xYk6Sq7E7bSqN8NdgZdRyVOGUKHExVpcy/rvENCb+dpwhhjg1S/P/J1tITMQ/xfYgbAGmbYoaR2OqD/d6ILSy9ZBLPB8gleNeyX2YtqBru33wRs/V2JLer3VVz+IMD/LMv3uhxn12PRAAHemI4cbnucu9j3D7JpHQVXWYcuugZJ24M3QdRurVuhShsrNYnOGsxJs3M+MS2KVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4+zsjqvRlZ7iyeb7DHhPqi9LKtIQBmr+vwJI2/Edufc=;
+ b=CcwTCJROLQrou86qDDWEzuFLKTKcM/4gI6GaOQYGr9UonA2p/zSievzWanziXt6AdFrQ2T97LIPl9wdO8w65HXSWbwiPZyFcpG9tE4RkCtUTF0Zdz2LPeJX/IDNmKYEaYEpTCfe/NUaYu8U96zLIt5pltet8TT30IPRMT0yDyGKwvAF29W6dQokzW2ZuVThmk4MVNkBHCh9X618TrF5Kd40U2SqzKPkZmKEu9W23UsVEjnk9t28ab/FktDcNGKRWYchLUPHlfexZK3s8kNBSvyipxhvEC97QptZHizTOUvRR6kiCXJ1kO80GIVM4V5YuhOU9Rpj1YmTjgrddhU3dQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4+zsjqvRlZ7iyeb7DHhPqi9LKtIQBmr+vwJI2/Edufc=;
+ b=nspWSNxqtzXt/UOA5tfbJgV5nL1cGe+SmtXqkHksb8QNXtI4vGJeTVEe/ArxOOscKL7iEgwKQxjgw08HXHyhsea8iLIRTCkNe5YPoCk0T26XzBhR1wGTTtte3kIzfoUuSTZj1U9My+Uv6PIwno0fq2A20wYjmsgphyIivJ1eklI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DS0PR12MB8344.namprd12.prod.outlook.com (2603:10b6:8:fe::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.21; Tue, 17 Dec 2024 21:55:57 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 21:55:57 +0000
+Date: Tue, 17 Dec 2024 16:55:45 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 8/8] PCI/AER: Add prefixes to printouts
+Message-ID: <20241217215545.GB1121691@yaz-khff2.amd.com>
+References: <20241217135358.9345-1-ilpo.jarvinen@linux.intel.com>
+ <20241217135358.9345-9-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241217135358.9345-9-ilpo.jarvinen@linux.intel.com>
+X-ClientProxiedBy: BN0PR03CA0012.namprd03.prod.outlook.com
+ (2603:10b6:408:e6::17) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] block/elevator: choose none elevator for high IO
- concurrency ability disk
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
- akpm@linux-foundation.org, ming.lei@redhat.com, yang.yang@vivo.com,
- osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
- <20241217024047.1091893-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241217024047.1091893-4-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS0PR12MB8344:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e87cf06-dec8-45dd-2b5b-08dd1ee59616
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?KtpOH48EICNIn4mbpZTDdRf+IPfl13vrFQvoQTCC+VTZDF2CMYm6QzqVRQ?=
+ =?iso-8859-1?Q?Kn3c26zoPBLSHCwx1e1h/qD2YhDi7Blrxr7fUrgrhLb43q/SfQdSovwaHd?=
+ =?iso-8859-1?Q?2c78NmDltN+Om9WDz32aNxTpa0dGdrbYzKZjDHIgJQjNPOP+xjZymSVJTS?=
+ =?iso-8859-1?Q?RswJo9Zc3ZQETp+jCHpAZjn+LU3Dxe65ALdbTXmDvDAnDi7oAzyEaYqXHT?=
+ =?iso-8859-1?Q?NTluRtm1kS+bPNXg11CF0xHRVJh1HLg9Pbx65hQFPRSJr2uYrY/fvwR8wQ?=
+ =?iso-8859-1?Q?JWwvj9gLFOjQHzWE59+O733pTMOJXpmgJFV7UmvvtF21MAN3MVxXmRP/L3?=
+ =?iso-8859-1?Q?xY/tTYq9hBCF8vnMcH4llGNvMQhsS2R1XJoURyNplcyxZiXh3319kJgRX9?=
+ =?iso-8859-1?Q?pkYzO7Qi/3GY/WNEcbW6oe8z4G9HhvMcU3xw327xdxErds3vIG/dof4maX?=
+ =?iso-8859-1?Q?+sKXyClQpW2N2cnTGowjjypeR5PoCl4TJ4kU8RYiHa4YT40S6r0wuNFGiI?=
+ =?iso-8859-1?Q?LzpbyCJD9+eF9zfvMqi816RZWvc15jg2PQOvuDiSbu/H4WYT9ct2hlC5ma?=
+ =?iso-8859-1?Q?ojP0iECnKGuAetWk0QffuB7s2RGmAojzRyvZoxFieTTvHbE6ZySdAOM1q8?=
+ =?iso-8859-1?Q?XZG0XpqB2HI33n052CRHN0exvXPplVPFsd/5UuVG1FhKsRIvW0jVfn1yzR?=
+ =?iso-8859-1?Q?87ZmoGayQHY+d0CnKYWuVrx7sRrBZCUJCoTLNuxKog3qpmupGdOkaOr9ox?=
+ =?iso-8859-1?Q?nn8u54rz1Ip3Q3ChLDnYTDLTX+GSp2qifZZEV5ozWIgRkZ0PQyMAzscJB0?=
+ =?iso-8859-1?Q?XYk6mGyMrDoLrZF3dW0Xa8e0EbxZ1LaVc07NMEVy9uVGdNeW4qYN+4hOoz?=
+ =?iso-8859-1?Q?NkU+mE503K4pFoLWN/CrRta6vN4guaQ3LmPmWGqj6rBYzpPokCQkBzo6J4?=
+ =?iso-8859-1?Q?D8PANoJbTgptNdFhTZejRCZuY/peRtAM1YJlGB3lVmwWyEby6+yB4JdtV0?=
+ =?iso-8859-1?Q?eAtO9xob28vcGCrq3YfhUUV6NHNYmWJRRRvS7Wsl2xFKQ/FefvJ5Qf08EJ?=
+ =?iso-8859-1?Q?lbFphQrNAQQQduzo18hjq6y17mUT7eAZWP77ysWAf3RBv5qynYWaq1fgub?=
+ =?iso-8859-1?Q?VWcZkAdtDJRC2rEtSiSLKMoYU+WOYJYEVjKkIwKV0+1YleKWvFBAYHanDb?=
+ =?iso-8859-1?Q?B4mnORdWTm3QM3zNt3jvFW63h0t0+442znjhrplePjRAfaCOe31t8FMpIU?=
+ =?iso-8859-1?Q?fxsYURPUyYFMomgfzYCCmnWMcKOYNP7H5/Br/oJb51oPr8BZfvEboJl8Gs?=
+ =?iso-8859-1?Q?uA9kSw5jDglhwAyT2uYF3bBGwkpLP1PpTSwZOFDYvFzLijRcdGZZXw6fJ1?=
+ =?iso-8859-1?Q?GxgJUcAPpuV2VGv4GuQlS/dFxBviB6Nh9ClcCmQVN0JM42lbzmJYYTf/Vd?=
+ =?iso-8859-1?Q?0/od8tCdSbkQDu/w?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?fntDj+3qtj7/0tMGWcwvEW9ZL+1wf+CydDViKYGUzu6N1fQWGlM7ipho3c?=
+ =?iso-8859-1?Q?1BIqsP0QHS8pfiB4IBiaL1C+Ic6VJFWtDtDJPIKamKLtAJZuqs68w2Q+0Z?=
+ =?iso-8859-1?Q?VCD72RLLJ+mBjKHDjbhCz3Vf3IG19v8x3SZRSGgO2K+otNECP3kX3PM+nb?=
+ =?iso-8859-1?Q?JXwVUwoCHB4RcWw2Wf+K3xcJSNxUCnUFGuHkrsRwNQ5eywrGyv0cFTw9FW?=
+ =?iso-8859-1?Q?nb7W6yLhf6Wj1EONOnWnZyd7nEj7hDkk2ALEZH/fxWV6Y2cYke4o4FqU9A?=
+ =?iso-8859-1?Q?wwSFfv8bF6DeRQ6Gtn/mgsfWI3k3oQSGSWr+nXhIZzBAL7tSnHM72/uoI4?=
+ =?iso-8859-1?Q?5SBDlAbc9ts0F7Ss/W4sapBib8kpag6MbDM1AnmP0n3pLPapCSWVW+XvrR?=
+ =?iso-8859-1?Q?/KMQIs0zX73R70cYaVgWsshoCsX5KzS3DHTETbYSssSfG3ScSHEfWQIt2R?=
+ =?iso-8859-1?Q?kfHcT08fQzRo3sVewtcJLIcHzybiHXEOb7u+JjbO8VdUEajtXGa4htK+EC?=
+ =?iso-8859-1?Q?wilgEVQwRAbe04Ehx876ZvhcTjkRkkAI8XE6G1oR9geFRUEgYj6fBV2/qW?=
+ =?iso-8859-1?Q?F+YhPamatNJxzBKWiUNEZbR4R+z+d1uYmjm0r/tOnek1m1k7m6A3QGwS5R?=
+ =?iso-8859-1?Q?ff1U8dHmz90x0TQpfeRx+bsEcBcgXKTbo25xJVZjNYmkkOYWD3rruqkeBH?=
+ =?iso-8859-1?Q?O6AWZ85+1C4EUCrEEKGOTCF0LCRK1s1Ztg4FWfXfXl+7nAuO06oTKhdSAk?=
+ =?iso-8859-1?Q?UcgH2zP1Pc87yyCrVwGy2xGskRBlItvHVHHKwUsaDGsLmRqZGPwMEkR4CQ?=
+ =?iso-8859-1?Q?RBxA3jvdx1vOBHkMXtHW7EqbLOVXZIq1U7J8vrWfajDkxZDfDIlyi8hDBq?=
+ =?iso-8859-1?Q?FUwT+t3tCPBLwgEaNcKyhdgOyMRlFrYa6lLdlhVAtn9apOjhawaC8TiN9i?=
+ =?iso-8859-1?Q?6ZmIzSLb2rD6S64RpfJipmu74jn1hvR5p3+QrWNqXphzW2z4wgAYXXpnXN?=
+ =?iso-8859-1?Q?v+pgpusekzJrIR3z7RO59xAN/bJCsGlyryVJnO10MjOBgnjhdVoMtR/dMf?=
+ =?iso-8859-1?Q?Jm/+GY2Zhh85tLGlAe/QwQQAn5YbzL17hnslIZBOfVYGvQOfYLhT9N20un?=
+ =?iso-8859-1?Q?zJhzBXtSIEoTsygnHU66uVdunB9bhvyRuCLVVkXZ1JWyUspyaHje5uA7yB?=
+ =?iso-8859-1?Q?AXQ+d6wC2sEYpXLi7m4rlg4wyH8qPWVUhoO+idA5VaA2iHP1tiVYtpcgfC?=
+ =?iso-8859-1?Q?QkriSFiGl0A7Uiro15oc68WhbH1qS8DZGZ4KarSy3DJJ+JrTbsoLKJRRnn?=
+ =?iso-8859-1?Q?s/C/xpDHFVwqyrzmgj30hjA4l2KDo9a9vnqKX/OlpYgo+R2c0vhoHKxfkM?=
+ =?iso-8859-1?Q?LRIb5L7AAIrg1/GzhXEBm+EVEkBfUpYZ1ln2zV6czMt4j7GSrcG7nT+VRS?=
+ =?iso-8859-1?Q?tuAnnWN3oF6jx7kY21l+jT9enrL3arP8qvxOPaFXgqq05q+KhgN0iXXtbb?=
+ =?iso-8859-1?Q?sV+F5qXtYHP51BCAfr+UvPq2cskdNbD50GIqpg0B7ArADPJ5QU2rk0IcVv?=
+ =?iso-8859-1?Q?43W/MgfXCTpTPzsXsqCkq2SSIBHr15slL9Pz2EXWLjoq9mDV1AmAKxqr2y?=
+ =?iso-8859-1?Q?Lgf/cU2YzqPcFex4h+KiX650kYpVq8HSee?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e87cf06-dec8-45dd-2b5b-08dd1ee59616
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 21:55:57.2737
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wzH7FYYQNBcuuhIDzntGZ5IcmwhA1a0AJleIZhTIKFOB+BzYZM9EADERgZxKTVK6+LG8CC0JOlRnXeZVlkRV4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8344
 
-On 12/16/24 6:40 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Tue, Dec 17, 2024 at 03:53:58PM +0200, Ilpo Järvinen wrote:
+> Only part of the AER diagnostic printouts use "AER:" prefix because
+> they use low-level pci_printk() directly to allow selecting level.
 > 
-> The maximal default nr_requests is 256, and if disk can handle more than
-> 256 requests concurrently, use elevator in this case is useless, on the
-> one hand it limits the number of requests to 256, on the other hand,
-> it can't merge or sort IO because requests are dispatched to disk
-> immediately and the elevator is just empty.
+> Add "AER:" prefix to lines that are printed with pci_printk().
 > 
-> For example, for nvme megaraid with 512 queue_depth by default, we have
-> to change default elevator to none, otherwise deadline will lose a lot of
-> performance.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   block/elevator.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/block/elevator.c b/block/elevator.c
-> index 7c3ba80e5ff4..4cce1e7c47d5 100644
-> --- a/block/elevator.c
-> +++ b/block/elevator.c
-> @@ -568,6 +568,17 @@ static struct elevator_type *elevator_get_default(struct request_queue *q)
->   	    !blk_mq_is_shared_tags(q->tag_set->flags))
->   		return NULL;
->   
-> +	/*
-> +	 * If nr_queues will be less than disk ability, requests will be
-> +	 * dispatched to disk immediately, it's useless to use elevator. User
-> +	 * should set a bigger nr_requests or limit disk ability manually if
-> +	 * they really want to use elevator.
-> +	 */
-> +	if (q->queue_depth && q->queue_depth >= BLKDEV_DEFAULT_RQ * 2)
-> +		return NULL;
-> +	if (!q->queue_depth && q->tag_set->queue_depth >= BLKDEV_DEFAULT_RQ * 2)
-> +		return NULL;
-> +
->   	return elevator_find_get("mq-deadline");
->   }
 
-Shouldn't this patch be submitted separately since it is independent of
-the rest of the patches in this series?
+Can we please include the "HW_ERR" prefix also? IMO, it would make the
+kernel messages more consistent if all hardware error info had it.
 
 Thanks,
-
-Bart.
-
-
+Yazen
 
