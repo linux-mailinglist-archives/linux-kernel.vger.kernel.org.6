@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-449241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F369F4C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0ABC9F4C48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B4D18958AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35E6173053
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536791F5412;
-	Tue, 17 Dec 2024 13:14:40 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699561F63DB;
+	Tue, 17 Dec 2024 13:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="idBqgFdV"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96881F1917;
-	Tue, 17 Dec 2024 13:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE51D1730;
+	Tue, 17 Dec 2024 13:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734441279; cv=none; b=u7CNAGEIwXWY68Nkspel4E95flDDNJedlrdabI/E2FxP/Lo1jWYaCi9KrhNvXpelQdzML32/bGfdkIlocdpMLdurzRcW28MOhja7NSnEdQ+UeUO9GyHe5g7oxEfBB6V//Ur+EhKzmEj6SBSSFaaNbCRyiV66KY3o4oPiQ/x8SOo=
+	t=1734441359; cv=none; b=cV8XeJ0GVeZR1DHPMUxzsSRLa2SoC9l0clvDnNFx7Rnc1EiEHKBaneaZdwmYaLFP55r4vhFCAbn9G7JktpMvs2S9TTRM/5fsJPVzemL0tdADDcrjdXL2O6MvFQy7dn8yP4hZ+8rTKZe7sViV1kkbVU2UMrqW3fPLzgvEpsMrjFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734441279; c=relaxed/simple;
-	bh=Cjpr9CcVpVM25bPTQuttBnuv0tom7ghF6pk8/NpXFdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLxys4Qadkdb1UVy4t+A+hJzc+1ZunG7oPtQeEEDtgtEz34zRtw6r06Z9tX3mfBWzLd7Pe0idJhab3UVdwJ9iuowZiEcIhYapQzV4OnbM0gVbluRjSD3O1JtQzRYgY49aEVsRFcb18cJNp5FiJ8+c8QSTvBBgnlSL8NqbQKLFDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 7D7A82800B4B5;
-	Tue, 17 Dec 2024 14:14:34 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 67A895FFC39; Tue, 17 Dec 2024 14:14:34 +0100 (CET)
-Date: Tue, 17 Dec 2024 14:14:34 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Qiang Yu <quic_qianyu@quicinc.com>
-Subject: Re: [PATCH 1/4] PCI/pwrctrl: Move creation of pwrctrl devices to
- pci_scan_device()
-Message-ID: <Z2F5Oph2o8o_LiZc@wunner.de>
-References: <20241210-pci-pwrctrl-slot-v1-0-eae45e488040@linaro.org>
- <20241210-pci-pwrctrl-slot-v1-1-eae45e488040@linaro.org>
- <Z18Pmq7_rK3pvuT4@wunner.de>
- <20241216051521.riyy5radru6rxqhg@thinkpad>
+	s=arc-20240116; t=1734441359; c=relaxed/simple;
+	bh=0sCzv0yCEB30e+kBHiFoMn6tSSyhTb3x4pYNc6DoRzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=roBvi7t0tnpsEUL6nRwypg7iAvIScZ7LK++X82KMZl7h9NqDG7zQmITeCziVzQDpFst9XA0REb9Xrj50X9fNPyYakSmnDv58kggoFt7AFILPLssuH/udCMDx48vzCh9jz4gl2ViF1WomZzgyl3JivrAyoKpOUBXbBMHmbf4n04k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=idBqgFdV; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 416AE240004;
+	Tue, 17 Dec 2024 13:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734441350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bj+ACVgblctd82Lp3dspwycdphb6HP2RNNRGhMPntpQ=;
+	b=idBqgFdV0mScu6bL3/tWYXiGeBR7mWbY3IzrqYH/Fc+6vloVBOEIQO6g6CIJKoNV8hnM/q
+	SJkhzwivV3nXMDSugkw9gWMTzzbNSsrWyEwZB+cVUhK3Lfa45fzMMwlQyuln346jNXaclw
+	jqG5gDuFw8QJyBb/p5rovRr2UxN7ytfSpyeN37O3Q0SHW/W2coj8kHg7Cmpiy5sFn0S3NB
+	St+50ISmlf8N2fr/xzRIqjxyrRezlo87QQwC5ZgrymkEdK8y3sZrlFwi1mZOdv6+JqoKzo
+	asgs9IoEIedxxYscVI/i4OaSEZgeJWLXLB4DhMiolyLWDBKHCyv6EpVN7Em4XA==
+Date: Tue, 17 Dec 2024 14:15:47 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
+ <alexis.lothore@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/5] net: pcs: mtk-lynxi: fill in PCS
+ supported_interfaces
+Message-ID: <20241217141547.7748b3d3@fedora.home>
+In-Reply-To: <E1tMBRF-006vae-WC@rmk-PC.armlinux.org.uk>
+References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+	<E1tMBRF-006vae-WC@rmk-PC.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216051521.riyy5radru6rxqhg@thinkpad>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Mon, Dec 16, 2024 at 10:45:21AM +0530, Manivannan Sadhasivam wrote:
-> On Sun, Dec 15, 2024 at 06:19:22PM +0100, Lukas Wunner wrote:
-> > On Tue, Dec 10, 2024 at 03:25:24PM +0530, Manivannan Sadhasivam wrote:
-> > > diff --git a/drivers/pci/pwrctrl/core.c b/drivers/pci/pwrctrl/core.c
-> > > index 2fb174db91e5..9cc7e2b7f2b5 100644
-> > > --- a/drivers/pci/pwrctrl/core.c
-> > > +++ b/drivers/pci/pwrctrl/core.c
-> > > @@ -44,7 +44,7 @@ static void rescan_work_func(struct work_struct *work)
-> > >  						   struct pci_pwrctrl, work);
-> > >  
-> > >  	pci_lock_rescan_remove();
-> > > -	pci_rescan_bus(to_pci_dev(pwrctrl->dev->parent)->bus);
-> > > +	pci_rescan_bus(to_pci_host_bridge(pwrctrl->dev->parent)->bus);
-> > >  	pci_unlock_rescan_remove();
-> > >  }
-> > 
-> > Remind me, what's the purpose of this?  I'm guessing that it
-> > recursively creates the platform devices below the newly
-> > powered up device, is that correct?  If so, is it still
-> > necessary?  Doesn't the new approach automatically create
-> > those devices upon their enumeration?
+Hi Russell,
+
+On Fri, 13 Dec 2024 19:35:01 +0000
+"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk> wrote:
+
+> Fill in the new PCS supported_interfaces member with the interfaces
+> that the Mediatek LynxI supports.
 > 
-> If the pwrctrl driver is available at the time of platform device creation,
-> this is not needed. But if the driver is not available at that time and
-> probed later, then we need to rescan the bus to enumerate the devices.
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> ---
+>  drivers/net/pcs/pcs-mtk-lynxi.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/net/pcs/pcs-mtk-lynxi.c b/drivers/net/pcs/pcs-mtk-lynxi.c
+> index 7de804535229..1377fb78eaa1 100644
+> --- a/drivers/net/pcs/pcs-mtk-lynxi.c
+> +++ b/drivers/net/pcs/pcs-mtk-lynxi.c
+> @@ -306,6 +306,11 @@ struct phylink_pcs *mtk_pcs_lynxi_create(struct device *dev,
+>  	mpcs->pcs.poll = true;
+>  	mpcs->interface = PHY_INTERFACE_MODE_NA;
+>  
+> +	__set_bit(PHY_INTERFACE_MODE_SGMII, mpcs->pcs.supported_interfaces);
+> +	__set_bit(PHY_INTERFACE_MODE_QSGMII, mpcs->pcs.supported_interfaces);
 
-I see.  Sounds like this can be made conditional on the caller
-being a module.  I think you could achieve this with the following
-in pci_pwrctl_device_set_ready():
+I'm sorry if I missed something, but I don't find where the QSGMII
+support comes from based on the current codebase :/
 
--	schedule_work(&pwrctl->work);
-+	if (is_module_address(_RET_IP_))
-+		schedule_work(&pwrctl->work);
+I didn't spot that in the inband_caps commit, sorry :(
 
-Though you'd also have to declare pci_pwrctl_device_set_ready()
-"__attribute__((always_inline))" so that it gets inlined into
-devm_pci_pwrctl_device_set_ready() and the condition works there
-as well.
-
-I'm wondering whether the bus notifier is still necessary with
-the new scheme.  Since the power control device is instantiated
-and destroyed in unison with the pci_dev, can't the device link
-always be created on instantiation of the power control device?
+> +	__set_bit(PHY_INTERFACE_MODE_1000BASEX, mpcs->pcs.supported_interfaces);
+> +	__set_bit(PHY_INTERFACE_MODE_2500BASEX, mpcs->pcs.supported_interfaces);
 
 Thanks,
 
-Lukas
+Maxime
+
 
