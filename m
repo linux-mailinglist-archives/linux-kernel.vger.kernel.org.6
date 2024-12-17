@@ -1,74 +1,85 @@
-Return-Path: <linux-kernel+bounces-448776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F439F4552
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 741829F4554
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5DC97A54FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8071C7A5F9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F121D63DB;
-	Tue, 17 Dec 2024 07:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B641B9831;
+	Tue, 17 Dec 2024 07:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZbxekWgh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqiyWHzU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A04E13D244;
-	Tue, 17 Dec 2024 07:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6FA152514;
+	Tue, 17 Dec 2024 07:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421264; cv=none; b=BeL9JMwwQXtOwlrHo8E/vysiSgX2jOkOXuRMvRH02tuHeGhmoQPVHkH+TTM/zJNckw0gRVQDdX5kvWgxXvz8P/qFN2MMM7QmRTmUxIT/vAtyZ7aK470I1JBi3QNobrkUaF8WHT5NnxC60SGiNth8MsKYj6V3NfTn+r/5lRpjqtc=
+	t=1734421296; cv=none; b=WsPhvc9zLrOA7UDzs+1Xa1Wn33XHt0f6m3kp07A+GGZPZHKWq3J5IUPRrX5L1aSESpks+ZneRvsrRf1AS16ScJUwrmor02UNIaHeNE2p0nq1Tto2xbkdA7cJku2C14wgtrC20NESy4btYW6PNObTBpMEz2Smwtx24KDOrEdhKmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421264; c=relaxed/simple;
-	bh=RX9k1VmegBCx5K+I/yb/Brg71gytyPPuM70sMeD07I4=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=KTGAECgZK6MlubR9NcXHKmSBbyEWt1zp2NPv5giHigXhBtMn5lNw8yTh7XsRKe6WliFQBfxG6TgLo0GZ+lMOQGSVKUDLxoTgyVPIwX0PeA6nopN0CgFQ8JSnS7CL0MCFEnRgMU3sPurcsvSyHLTchUJLEYq8MhNrmBWCODq8kiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZbxekWgh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF942C4CED3;
-	Tue, 17 Dec 2024 07:41:03 +0000 (UTC)
+	s=arc-20240116; t=1734421296; c=relaxed/simple;
+	bh=70sywZhuH7sYVF1lNVXtKGVYFA8RCgLd1FOFxBqxk+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NlXJ6jTHLdL4Mjrxl2Blsw2UuwkosQGdUOu1oXpyJr2Mncf2+01HlrbrAQOVcvXL4odJFaPNNi24lPpiMnY41szmxmkfmDx5h3kENgBJ6ohPLFYkiZZ+4KRJsVNCIe9j2qnlJIKsNzyQQKj/XPdgbChXPq4tYqgqne8UwB5aCp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqiyWHzU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A40B1C4CED3;
+	Tue, 17 Dec 2024 07:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421264;
-	bh=RX9k1VmegBCx5K+I/yb/Brg71gytyPPuM70sMeD07I4=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=ZbxekWgh/0GWDXFIXpU1Vmpz713NEebbw6dPS9jcFBWYoVoCezr6bYKI8eFqkJUit
-	 /C3KqHtmYib/a9z3Kkam5Vn9iauekzVv3OovbrZaCXmwKOD/iaZVY0NN/4lfwqbg3S
-	 kNENzTUTxGxcAkqTSDVd/FaAD4QTkgHGea6ByHPXmixy1VRxKs5muouphn0AFYXcEs
-	 7nYefIbJ8y7SJoMtLCg4dy2dzDnsvDitUXKKKgzc2wgms5hM+QVIXoI1NBijrL5Wi/
-	 f3CmButgU9BLUJ8fsIuAstEUWktpVp8R0jOsGbi4hnr3qLzQSboLcwHUG0ROCIuPfg
-	 73rJgbn+sbW9Q==
-Message-ID: <17fbc356583050369235d1a23456eb2e@kernel.org>
-Date: Tue, 17 Dec 2024 07:41:01 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Brian Norris" <briannorris@chromium.org>
-Subject: Re: [PATCH v3 2/3] drivers: base: test: Enable device model tests
- with KUNIT_ALL_TESTS
-In-Reply-To: <20241216201148.535115-3-briannorris@chromium.org>
-References: <20241216201148.535115-3-briannorris@chromium.org>
-Cc: kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, "David
- Gow" <davidgow@google.com>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Maxime
- Ripard" <mripard@kernel.org>, "Rae Moar" <rmoar@google.com>, "\"Rafael J. Wysocki\"" <rafael@kernel.org>, "Rob
- Herring" <robh@kernel.org>
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1734421295;
+	bh=70sywZhuH7sYVF1lNVXtKGVYFA8RCgLd1FOFxBqxk+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CqiyWHzUomXM3/5gl/IVae86Kkcdq9OOSNj+LbSzUWHn9mjxmoOBz7UyqM23lb3Ha
+	 /ODBX4MFCO68B+7ktSp2EIlj3m1Wlk72ghRAUsbVX5VJeBA6Dr4H9Ir9St1h21KBs+
+	 h91hdjPmctW4gDBFoi2ARe0gDwLbwgh2XIC9kjnE46tV14jZZms/5M4pkfH7Eh10ik
+	 /j0ASlr5YmHkaDpcOWC/PJk+gqqWHXqU5BCEze4tz+0wCE4QgNmPNMjynWcr2a95mD
+	 rt3JkFtxHtUFhVo7N9FF2JipscsSivQ2LtXkbFsfq1JErEiR+WkSk6OBkmvd1v+Jtl
+	 BOEBnHcPRknbA==
+Date: Tue, 17 Dec 2024 08:41:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Umang Jain <umang.jain@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: media: imx283: Describe sensor address
+ using the reg property
+Message-ID: <z7nkfmqubqabfxjpffhl4gaztec67xrfaulzd5d43bsyf2ukeb@ebak7s2bmm7j>
+References: <20241217032821.1712916-1-david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241217032821.1712916-1-david@ixit.cz>
 
-On Mon, 16 Dec 2024 12:11:43 -0800, Brian Norris wrote:
-> Per commit bebe94b53eb7 ("drivers: base: default KUNIT_* fragments to
-> KUNIT_ALL_TESTS"), it seems like we should default to KUNIT_ALL_TESTS.
+On Mon, Dec 16, 2024 at 10:28:17PM -0500, David Heidelberg wrote:
+> Use the reg property instead of text in the description.
 > 
-> This enables these platform_device tests for common configurations, such
-> as with:
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  .../devicetree/bindings/media/i2c/sony,imx283.yaml         | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> [ ... ]
+> diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx283.yaml
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Same problems.
 
-Thanks!
-Maxime
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
