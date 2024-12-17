@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-449972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D247D9F58DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:41:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1389F58C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B0D518892C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60735171A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832561FA173;
-	Tue, 17 Dec 2024 21:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568F41FBC8D;
+	Tue, 17 Dec 2024 21:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CgvLXXFj"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DuIwr+s4"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCA81F9ED9
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DA41FA174
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 21:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734470611; cv=none; b=XPMCD6iIyRBe9mSFgPx4XXCDCLAgFnc7zmE3fO2LbuOUV611mqsf7C73PkMeWXOrQU6NANORF69enUjnbnbNsSyFsi7meBsz7BB6DqW45omL4nmd8uMZCjTJif/dUUeBhML9DNcD+VVf0bCmxSz2R62Ie9ScxsoYJOpem5BE/xM=
+	t=1734470631; cv=none; b=A4yrZxOqNCaZnXQYGmQqUSfk1ibix7OUs0I5cV/gNEyaWq0rJMJLekoB+jQI3P4Ot4uXnogO8Q+fVYUT2MxERcaSHa6dfm9+jJfCxzdm7zdgZyMa9541yFpI0Aj/MMxJm2gl1sCTDF+sc2kffgLly1S1IVsTG89HkKObASa2/ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734470611; c=relaxed/simple;
-	bh=NXA6117OUd87ryCkftHmcO053FxG/qFwi2EquP39vVc=;
+	s=arc-20240116; t=1734470631; c=relaxed/simple;
+	bh=JEH6VIxMNbo7NmfZIs+BIaWAf0jjuH4Dh0marg2vFM8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tsFC062IDjhaAiYm2FxvoVXB4GDHaWnGMRg2J2kH7A6QBV15bA5XNjdhdV5Q1vpRbs5S4onsUJNwZu28/u7XQRZPqZdyxDAFSUSDtAGyv0l4EXwyoqvk3hCaVlpojyu9rp1wsrlS2Qh++35qKskF+CxA1EKmJ0daaAkcHE0MDJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CgvLXXFj; arc=none smtp.client-ip=91.218.175.185
+	 MIME-Version; b=GwUcT4clqPEMZcM2D9QsxhLsssPF2xznN4Tc9Knis3IOZw94M4hNdYeb49OeB3L9rBSwTUcjxcz1OXsWZbStq09s4l1mvNxbZP0LBz1KNCpLkAzGRhF61+8DLqbp5+pyOWWYr+aqUmtPWzbVdU5NLYQ/BTCvDeCxRy6MgbH8rok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DuIwr+s4; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734470606;
+	t=1734470627;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EcEmfpLqIW1Z12OpNFspMutcu+Tk1OvNr+7PPdfsRyo=;
-	b=CgvLXXFjpqwY4rgZR3L02QL3zorf4YPkRDogp1MKm22ZPwwiUXNTZpFp/WBFpwTGZ6ocZz
-	UqPADVEshmMdxJWGcW8djppmX9chkojkFiT//UtaPdOv2Gk85GUqHjpv+bb4LgSmwNLHPa
-	8rZoYmUOgXe0VOcQCp5vpLsxfGsGdbU=
+	bh=7YI2KAoE2SX7+W8a4D1T/xctArnLAfC10Qu1P05UgNA=;
+	b=DuIwr+s4NNh44T42eneXEcnCmnXGAZNrlC/kyuTskZtvRC7BXsxCXIikgCW0helwT7ElDx
+	3VnwDicLKGH4aCkqNZc7f8jAlVXCoSoJIFOO7hXKdiP1cj1ILHFFN2U78WOdIEGmaEDQqc
+	E8JAfD6lURoYaBUQnJVIaZEVR5VR5SU=
 From: Oliver Upton <oliver.upton@linux.dev>
 To: kvmarm@lists.linux.dev
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -56,9 +56,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Oliver Upton <oliver.upton@linux.dev>
-Subject: [RFC PATCH 16/18] drivers/perf: apple_m1: Map a few more PMUv3 events
-Date: Tue, 17 Dec 2024 13:23:17 -0800
-Message-Id: <20241217212317.3709478-1-oliver.upton@linux.dev>
+Subject: [RFC PATCH 17/18] KVM: arm64: Provide 1 event counter on IMPDEF hardware
+Date: Tue, 17 Dec 2024 13:23:38 -0800
+Message-Id: <20241217212338.3709556-1-oliver.upton@linux.dev>
 In-Reply-To: <20241217212048.3709204-1-oliver.upton@linux.dev>
 References: <20241217212048.3709204-1-oliver.upton@linux.dev>
 Precedence: bulk
@@ -70,29 +70,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Map some more PMUv3 events onto hardware so 'perf stat' in a KVM VM can
-show some useful information (e.g. IPC, branch prediction rate).
+PMUv3 requires that all programmable event counters are capable of
+counting any event. The Apple M* PMU is quite a bit different, and
+events have affinities for particular PMCs.
+
+Expose 1 event counter on IMPDEF hardware, allowing the guest to do
+something useful with its PMU while also upholding the requirements of
+the architecture.
 
 Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- drivers/perf/apple_m1_cpu_pmu.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/perf/apple_m1_cpu_pmu.c b/drivers/perf/apple_m1_cpu_pmu.c
-index b4fe247543a6..0e54d3f900a7 100644
---- a/drivers/perf/apple_m1_cpu_pmu.c
-+++ b/drivers/perf/apple_m1_cpu_pmu.c
-@@ -180,7 +180,10 @@ static const unsigned m1_pmu_perf_map[PERF_COUNT_HW_MAX] = {
+Jury is still out on whether we want to do this, which is why this patch
+is RFC.
+
+ arch/arm64/kvm/pmu-emul.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+index 3803737cbf7c..8f96a34d3da5 100644
+--- a/arch/arm64/kvm/pmu-emul.c
++++ b/arch/arm64/kvm/pmu-emul.c
+@@ -1046,8 +1046,12 @@ u8 kvm_arm_pmu_get_max_counters(struct kvm *kvm)
+ {
+ 	struct arm_pmu *arm_pmu = kvm->arch.arm_pmu;
  
- static const unsigned int m1_pmu_pmceid_map[ARMV8_PMUV3_MAX_COMMON_EVENTS] = {
- 	[0 ... ARMV8_PMUV3_MAX_COMMON_EVENTS - 1]	= HW_OP_UNSUPPORTED,
-+	M1_PMUV3_EVENT_MAP(INST_RETIRED,	INST_ALL),
- 	M1_PMUV3_EVENT_MAP(CPU_CYCLES,		CORE_ACTIVE_CYCLE),
-+	M1_PMUV3_EVENT_MAP(BR_RETIRED,		INST_BRANCH),
-+	M1_PMUV3_EVENT_MAP(BR_MIS_PRED_RETIRED,	BRANCH_MISPRED_NONSPEC),
- };
++	/*
++	 * PMUv3 requires that all event counters are capable of counting any
++	 * event, though the same may not be true of non-PMUv3 hardware.
++	 */
+ 	if (cpus_have_final_cap(ARM64_WORKAROUND_PMUV3_IMPDEF_TRAPS))
+-		return 0;
++		return 1;
  
- /* sysfs definitions */
+ 	/*
+ 	 * The arm_pmu->cntr_mask considers the fixed counter(s) as well.
 -- 
 2.39.5
 
