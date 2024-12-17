@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-449431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E259F4EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1A9F4EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA15C18820ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6ED1883CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B981F707C;
-	Tue, 17 Dec 2024 15:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2DA1F7074;
+	Tue, 17 Dec 2024 15:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S5qLMCar"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="slaz++ay"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378FF1F7089
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76799148850
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734448104; cv=none; b=urHqmmDf/TVEEg7ZPDvOJwMYlBk4ZQAottdD/vSjQzutJoaDiXJDCiK0HpXvW1ofXMjqfFEH/EBwdyOJReAsHPMMJbgxGV2ZsX2aTacTEr3/s2aWEacaP/FHi7Lt4pCxmsONMcF9MKs3p+5cKge8l0Wcbovs5Ra2+4flXphy/x8=
+	t=1734448159; cv=none; b=lclSGDSu+nz8yTZPsTPJoxia2B/UqbVkMdbhm6fZQiE9tlr2lZRTjd96oaVd6N9k5oa7a7/DG/RtcF8FuLvKQDu/T82tn3COMfrKewwiELWr5ZeIZiBsAXzRTKuCj4ryO03KcWpWb4AUW520JpcmFJOvgTdtIVR+If+vu7Qq8w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734448104; c=relaxed/simple;
-	bh=EnOLx/nHKpZaAJE5Zlhn7nWmQRH3Q2HYlAAYXXmpiJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KY462TPmh2NLjmJGZu4B5aHzWDyq1ChO9g2aDQwup8BbHoBHshb4pylfB5NAxYwW0LlhFpfCbN5eSTsAsxh23gUw3XU5+cxP1EOL7CWkmbdJy5/S/tzzinViL1gQXP6aRelf4K+tmeMG7v3c8+a041u+FNgh3Tm9NLbOeUqt1jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S5qLMCar; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734448099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D7ABiOnpBEGx89PJw5n4fgFhL0VnSY3UoS2smPvphwQ=;
-	b=S5qLMCaroKOv72Ui+nrTCrRXB60mhldBWu99hVNLarud+aJgpkhGUGD4cW1yI5j7DBY0TO
-	BXPgevqoWyepubYSu6DUXF+pQRrMvH92KpX/vHJ7t8dw9fpIL6hZtuC6BCC7zZcAweIRfb
-	6xqT1YYic5rg05fVv8liCtunZWyq3pM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-qNSA0vQRMAmyBOsRM_82hA-1; Tue, 17 Dec 2024 10:08:18 -0500
-X-MC-Unique: qNSA0vQRMAmyBOsRM_82hA-1
-X-Mimecast-MFC-AGG-ID: qNSA0vQRMAmyBOsRM_82hA
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa6a1595fdaso431235066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:08:17 -0800 (PST)
+	s=arc-20240116; t=1734448159; c=relaxed/simple;
+	bh=t8Vs683urZA2aCYmnDvsgfI9tVP0SgQmznGh5Uf5YEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u37D5qUWGrKzrq/d6n4IoqNK/u0jLeCS4PGWeYp4+QB6uQTdWx5D2qm/Wr8LRkZLmyBkIP6YqGe/rS7dCuP6wLNb6ASChJnIU9BT7jc06m8qMil9LbZlDAO39yJTvEvskaniNN2MSrYsc1RbUdmhhAXNB6XQAz7tc6HeUDR92/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=slaz++ay; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3035210e2d1so20040671fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734448155; x=1735052955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xJMaV7UmSOqQnJmmYNC2YNSOGH/6QVrTZ9CiZALJymE=;
+        b=slaz++ayrsGcyEiTL4WDQ/UWJcxdZTl3koP06SBN5QQraatDdb9TxYRXhb0oPSYOiE
+         8+3WkAdxdX0EARKx9UC4Q5h9HQLNB9fIZMIOD1RFPNhT6RSXOVbWonYPSsaa4Np6YgDh
+         t19bYLOSZ5wGJhKB0TCQ4NfOqv1BGCp5Z/S9fu9ss+ieXFK3wRXZ4CcEnTAALCCwzJ/p
+         rUUFSouV4IEW/QJIdep/dbbsIQ9dzcuxxSSwmPbA5NYAezi3SI2GOm+Dl15/x60jexYt
+         v9KLZwdIvEqbwoHWfpm4LEZ74LGcP8pkto2kkmLvsAahUPBh6xotJgkiOIJ7Fps69xt6
+         rCug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734448097; x=1735052897;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D7ABiOnpBEGx89PJw5n4fgFhL0VnSY3UoS2smPvphwQ=;
-        b=k0eaC5WB5n9PNCYMV6kdgNPRVlhfIfaxtJLQ63KxhRAJJkHY+6fGY0wq+RYGQ7w5cJ
-         7tByyUG1LIbwH5VoctAMmKO8hc1v8dQ0mqinzS5wGrsBOtAxuQXPZKewvzgJWkNDdV+H
-         5Cm1Llmi79c7rQwXiI6WpeMLcRbX39941A/MN8y/W2FR6SYCAXBPMKyfyeph8Y++JQop
-         LWWE9GBJT/31ct04i+yYg2iKgF2kgVUZFiu+wXtYRjrbHZN7doGbP9qMNsf7AliGitNb
-         apwarNEmLaPGEl1gLmbHAkX4uqqo4XL3D56MfaF3/+esE93iuZ3/aeYdl7z7JWAbwX3O
-         7rSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg9/BpmGabzYPHLGaBWq45EzXPFKkyhRcKXjj8YENp/TkxrNXKS5hdAHdwcJQUpt+nxJcA7vG4IO8bRtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc1vHTFJQ1QYEl8ykpj3+uusK4rKkwDqiUHRbIr32vjGjmx68K
-	7rk2ygXhxaQMOIW0KTd5xB28gRz9/nyJgxuM1fnZOigH1w6/NaDkUPqlNjGzlWHr3O1JmNQJ3KS
-	ScG6MtqUln63ht95H52tIBsUfD/1Hxjsk60THeEFPsYkgZ43uSKjImpzgp+1KOg==
-X-Gm-Gg: ASbGncsqBlHzHaNefgAHgxtGTF9RWUxdGeFsrPs2tsnhTbuqsJq5sYc7amZM3/O/V3o
-	9uwvSsmC0o+2ngoTM0MQEHlmRjRbvZmwmRbNAUBLvHRmsEhDrZML30+dEPucnnpKgW7LhK5JksS
-	MuB5SUiaeodqGHTFP3ZGCl7p9RyRLVN/O1etzpdu9mcspuihGO9Vbfwi3igZP4buChAHCcXINif
-	CitMxhaW6wl504ftrSUvpPmP3Ho8mNpWUP8JXuMIvLYEqSkggGqb/70vEpbXRLS
-X-Received: by 2002:a17:907:2d26:b0:aa6:691f:20a9 with SMTP id a640c23a62f3a-aab778d9db3mr1484536266b.4.1734448096629;
-        Tue, 17 Dec 2024 07:08:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFDWHkMPveAxZ0xKYxQGkeagwKHAxrWPUWCyDh6esu0iO6udkUJ+rwK5j9MucJziPskb6Bquw==
-X-Received: by 2002:a17:907:2d26:b0:aa6:691f:20a9 with SMTP id a640c23a62f3a-aab778d9db3mr1484531766b.4.1734448096173;
-        Tue, 17 Dec 2024 07:08:16 -0800 (PST)
-Received: from [192.168.162.203] ([109.36.231.174])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab9639363asm452932366b.169.2024.12.17.07.07.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 07:08:15 -0800 (PST)
-Message-ID: <1aecf86b-6e3b-4755-8f1f-d3dbc8d13644@redhat.com>
-Date: Tue, 17 Dec 2024 16:07:49 +0100
+        d=1e100.net; s=20230601; t=1734448155; x=1735052955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xJMaV7UmSOqQnJmmYNC2YNSOGH/6QVrTZ9CiZALJymE=;
+        b=gP3xuPnAB7py3sM5Mt3Fk73Di59eOOajfLfVcST3Lyv7b+AId6Usr/kqbg7XFdK7oU
+         pXGJQGKUEPvo/Jmp5HDlmqtEUauPjcB2Wa+3Mu2uZ+qWUM2k6b7Ib2Cvhb6PuiZ/XZKd
+         E0QFohpfMHvLjOA0w4VW/D4sV8qgLdbCWtSma3NYSoG/NxOjvP4lPzQ9Ac0gEfCTgSH6
+         GzW/XIQ1EZiPFcbi+Q5ZO1/22Smhx6o2WTkYbq118xIikAmtkVZiMz9+s7KN27OqIat3
+         W8al3oPFAd39+57U+/O8ecmWhSM4cjTGYal5fiv1BrZM7JCgv/kNfkmPCxUN/X6CJEhQ
+         8nbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFYcj8vvK0a3hYnPB0Z1bJvFrqXXL1BRzhIgofqT1rPOWUUTFNcQ7Qv0h5c0xtwaKEyN3Js+hyaeBM94o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiH3SNXqP4+N7kBckswtWxwLaClm9/7vp2gAE9ZlvMBnd+4Ja0
+	K0sErsAzryhJXQWWZZ46ZBUrCBQcpgnFYYnAXYJLIkeqzLhQBS+bu/FSPDKppkj7SICWLKPZPPl
+	Di5cgsYywnDJZFAfx6MoE4nwH/n7LmvFrsKmkOg==
+X-Gm-Gg: ASbGncuBera8olg/E8ib4nZcL95sT81QXsH3tIgtn0aIQqoxI9vtIpiwYQ0RENzSb+E
+	rszZ5c2bb7jxwnGraKd0ASieLWzkT8AZuaYlrWB3XmTK3aLZiiokz+4zOqVkTrCVHMAItfw==
+X-Google-Smtp-Source: AGHT+IHn2z+8xFDM1ych7/SJHm2I1uCOb9OrGIC/DxV/OB5hK1sRyL/vbFsj0eFSDsONM3UlyR1ROcXDvtoGtKLL2Z8=
+X-Received: by 2002:a2e:bc12:0:b0:300:1f12:bbc9 with SMTP id
+ 38308e7fff4ca-302544cbdb2mr63979171fa.34.1734448155392; Tue, 17 Dec 2024
+ 07:09:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: samsung-galaxybook: Add samsung-galaxybook
- driver
-To: Armin Wolf <W_Armin@gmx.de>, Joshua Grisham <josh@joshuagrisham.com>
-Cc: ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
- corbet@lwn.net, linux-doc@vger.kernel.org, jdelvare@suse.com,
- linux@roeck-us.net, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241209163720.17597-1-josh@joshuagrisham.com>
- <53c5075b-1967-45d0-937f-463912dd966d@gmx.de>
- <CAMF+KebYQyN+gkHayAdZZHPU7DbghwpmVQaLFaf0TiBb-CVp7A@mail.gmail.com>
- <44cd9966-e24a-4386-a0cb-20b1022adcee@gmx.de>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <44cd9966-e24a-4386-a0cb-20b1022adcee@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241217130714.51406-1-brgl@bgdev.pl> <20241217140325.qgm6m7qf2fdj35j2@thinkpad>
+In-Reply-To: <20241217140325.qgm6m7qf2fdj35j2@thinkpad>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 17 Dec 2024 16:09:04 +0100
+Message-ID: <CAMRc=Mf7bcfD3+vu9veWrd44hqiHZZnSgiiaObeMUfajLRqPmQ@mail.gmail.com>
+Subject: Re: [PATCH] power: sequencing: qcom-wcn: explain why we need the
+ WLAN_EN GPIO hack
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Dec 17, 2024 at 3:03=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Tue, Dec 17, 2024 at 02:07:14PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > With the recent rework of the PCI power control code, the workaround fo=
+r
+> > the wlan-enable GPIO - where we don't set a default (low) state in the
+> > power sequencing driver, but instead request the pin as-is - should no
+> > longer be needed but some platforms still fail to probe the WLAN
+> > controller. This is caused by the Qcom PCIe controller and needs a
+> > workaround in the controller driver so add a FIXME to eventually remove
+> > the hack from this driver once this is done.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  drivers/power/sequencing/pwrseq-qcom-wcn.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/power/sequencing/pwrseq-qcom-wcn.c b/drivers/power=
+/sequencing/pwrseq-qcom-wcn.c
+> > index cc03b5aaa8f2..9d6a68ac719f 100644
+> > --- a/drivers/power/sequencing/pwrseq-qcom-wcn.c
+> > +++ b/drivers/power/sequencing/pwrseq-qcom-wcn.c
+> > @@ -396,6 +396,14 @@ static int pwrseq_qcom_wcn_probe(struct platform_d=
+evice *pdev)
+> >               return dev_err_probe(dev, PTR_ERR(ctx->bt_gpio),
+> >                                    "Failed to get the Bluetooth enable =
+GPIO\n");
+> >
+> > +     /*
+> > +      * FIXME: This should actually be GPIOD_OUT_LOW. The driver model=
+ can
+> > +      * correctly handle provider <-> consumer dependencies but there =
+is a
+> > +      * known issue with Qcom PCIe controllers where, if the device is
+> > +      * powered off abrubtly (without controller driver noticing), the=
+ PCIe
+> > +      * link moves to link down state. Until the link-down handling is
+> > +      * addressed in the controller driver, we need to keep this worka=
+round.
+>
+> Maybe we should add some info on how GPIOD_OUT_LOW causes link down. Like=
+,
+>
 
-On 17-Dec-24 2:41 AM, Armin Wolf wrote:
+Sure.
 
-<snip>
+>         /*
+>          * FIXME: This should actually be GPIOD_OUT_LOW. But doing so wou=
+ld
+>          * cause the WLAN power to be toggled, resulting in PCIe link dow=
+n.
+>          * Since the PCIe controller driver is not handling link down cur=
+rently,
+>          * the device becomes unusable. So we need to keep this workaroun=
+d until
+>          * the link down handling is implemented in the controller driver=
+.
+>          */
+>
+> But the comment applies to gpiod_direction_output() call as well, right?
+>
 
->> Regarding the keycode do you mean that this should send something to
->> the input device via the sparse keymap or that the i8042 filter should
->> emit a key event, or? And/or that it could be handled with a hwdb
->> update in systemd so that this key gets mapped to the right event?
-> 
-> Please send the input event through the input device with the sparse keymap.
-> 
->>
->> Regarding the specific keycode I assume that maybe the appropriate one
->> would be KEY_CAMERA_ACCESS_TOGGLE ? (though I have not seen any OSD
->> notification with this keycode but maybe it was only with older
->> versions of userspace tools I was originally testing this with..).
-> 
-> Depends, that will happen if recording gets disabled?
+Yes, but there is already a comment above it.
 
-Since the driver handles the toggling of recording on/off itself
-KEY_CAMERA_ACCESS_TOGGLE should not be used. As mentioned in my
-reply to the v3 posting:
-
-"It would be good to report the camera state to userspace using
-a separate input/evdev device which reports SW_CAMERA_LENS_COVER
-as discussed here:
-
-https://lore.kernel.org/linux-media/CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com/
-
-the plan is to make that the canonical API to reported "muted"
-cameras."
-
-Regards,
-
-Hans
-
-
-
+Bartosz
 
