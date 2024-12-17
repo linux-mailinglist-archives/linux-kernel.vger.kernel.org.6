@@ -1,152 +1,95 @@
-Return-Path: <linux-kernel+bounces-449752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27269F55AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:09:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEBB9F55B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA28C16F8B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4ED18836B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A2026296;
-	Tue, 17 Dec 2024 18:04:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02B1F75A6;
+	Tue, 17 Dec 2024 18:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="dM6IXenf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345113EFF3;
-	Tue, 17 Dec 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468E913EFF3;
+	Tue, 17 Dec 2024 18:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458662; cv=none; b=Bkx80MMuCNL5RzrHHjMTa7fN5RhuJ2oyZFXF8AUWzcExJdHV6JP9TpfuPjm9AzFtDCkutAcC4hafG3uLhVxH1GXwcqUWqzJ+SEBjH1IbvttNtiKEvvfP8rPh7bwZCH6Ah48quO56mvpq4LaEqjmQPJ6PxraBu0C9Al1Wiy8zmck=
+	t=1734458953; cv=none; b=oFj5SeiFrHVJ5rg6LsmVyniq4mZ7v2Gdu7l6js6K1bL8NAgSZ50c2YghwZJr/Jo1Q8J6KA4GakE0ceu9HrGBlpcjEccr+Fez0bWMF8gEQNn3GbVDq5bzSUebejTpOU1FFkeF43jTfSkM7kpcIhY3MwtcCQEbE4K3OicpV6iCVOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458662; c=relaxed/simple;
-	bh=8sEJY4egU/hmBp5Z8itqEWIHD6TLmWip41RonSTwJks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eyj9XrBY+WsA3cPEurvYVNVxaLXkiJc+ifMkIjInIlmYbF9HhIvCq8yK0i0rZMI5brl5YdjEv7PuPZTO40ImeH08VvpjBAr8EyYjtwn7qaMdWCf8t+Z57sn0EDa4YKQ73rU/mXy0k70Xa3r2382BS4fqMDgl/DuGsACBb7t/OSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F272C4CEDD;
-	Tue, 17 Dec 2024 18:04:18 +0000 (UTC)
-Date: Tue, 17 Dec 2024 13:04:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-Message-ID: <20241217130454.5bb593e8@gandalf.local.home>
-In-Reply-To: <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
-References: <20241217173237.836878448@goodmis.org>
-	<20241217173520.314190793@goodmis.org>
-	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734458953; c=relaxed/simple;
+	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=qYWQMx/YM93yHzS6sRJTff3+urMbdURZNMvkoTu9E2HsE3/UU+xso2XGgf4FVrlBi7FVAy3mkqZxYD2FSJmcj+dZp1rJxTnNhUDlet0l7uKhWAXJgjW8s1DO13pz0l0z/7EyaTrxQP/oSPd2BZOXsxJkS+o9RU2ppVCaUlP9MUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=dM6IXenf; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1734458947; x=1735063747; i=rwarsow@gmx.de;
+	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=dM6IXenfbJIntLL33NwDxE6fQOih/BtUqS+bOBeL9u8tA05owX40SKmiEDIzvD0y
+	 8kDtkeEkM/Qg8l0Y7CLQI1WL9JPildz5rzDPv33JFB9MyNj+TGlz07mMlOk8+qBYP
+	 m1oLDWKAoQrCI5dSQmadneoviGA9LFHOO7oh+jy40plizKQnrpHuLOwSaHZII/KwC
+	 0ULFw+ydYsh0gzBWfTaVCYO+UyHWafXMD50ihRXk6KNdhdhckCqBOQeRqErXK+ine
+	 391DZAj6Xgk4lnLRWT5zl5mNdNN0iHzUvl95CL4tA1M/e4O8lWjspOtG5Q18w7tuX
+	 bWb1g17Dvr89UMx2Tg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.33.232]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mzyya-1tlAVJ2tKo-010nC9; Tue, 17
+ Dec 2024 19:09:07 +0100
+Message-ID: <0db22651-d40b-4088-8517-d92b24adea6d@gmx.de>
+Date: Tue, 17 Dec 2024 19:09:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.12 000/172] 6.12.6-rc1 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:RILrClbPHugPfhxPCWR1OSpMYZIVSZb/NsumnOGKbUen4iYcATR
+ h5zwQEFXXR7dyOTTWpN4Jl0kKECeq6p8s9huNeXttKXJEEuzupiYyrXkf+lHf5nzmFSuKHS
+ kkCiO6mbwufg7OlsJlkJVMtwI0AaV8773jLEIuh/n6/FuVfu1P7QgTRY81AV16VxfNwOW8F
+ lsNgDbyq26obQQ/1/5mHA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sAIpTvtXFX0=;obpz/8yFEyoaxh4e+IIC/NNk5Yh
+ tU5Mq0MZYCAjLSCcLnwV3/MxKTxlC+pFoJkjHzZRpO4heOdljz0tXeBAsuOyvKRRP8Askwwwn
+ MG+wNlST3hXtB6AT+jild67uq+h8SWoIgkFqcYvBQRgiz6106BNgqkM9rPcn2kiPnEKhkpDdu
+ kRyp9yB2BL5DqGPg7R5mwUX8a4Ctsr0O+EwNKOk25i30529rusJJy2VEROshKKUm9Bs0put9b
+ NeyNGkl3XfCa6Y+oN68KdJQenQzHHAwgRwesV43507F84ynr1Qm69lzfYgU7kjpJAxA59DV4y
+ /3snL+15I5QJ/3AtDVHSGmLXk3X+EsANCsDmvPU9HVWUlngtoNFUdsPtZWPj88g1AZIpYeiJJ
+ CYgRriqIHYzE/1EJrW4eLL7rj0J6TF2ZC/zBVUBQYurhNRC1StbR8zw3kiDmRXG9ohXny46sJ
+ V3DAXG6FJDloPTdCt8w+uNeKnk6X2Ds0bDVMo/9koE3PDty+6WA4ls/4dgb1unbom9ckzEE6y
+ pYSNC/dNsHI3uaRdVIxtsQ8o/sRtX49+W1gVM/wFfcp+xChn0+e410d1nVviWx83L8+2EK4MQ
+ BIbz9Hn04m4v+62hmeFTwGUBTAVZbPORIxgu1+ySklwLEWE4n43gG0xndNP75qwpQt/hotBq7
+ N3NQLVmoxRzf3Xqk2pTnhl/e2KcGekzFDN6ZtUkkykbgNy6KPWonbFImXPxiJsw/23yNHb7gR
+ KrJz3D/BevaA1P1R3A76EtXr7As8MXFy9kI88PyxGY5NXeB4rVyYGEqp7D3va1PODHNPUM2Rm
+ vyL0CLdJz07mTn7hO0MlChY9lfNa7aJUfqtue9dgj8fc8r/0X4ZmJTEdNddHctgosRxKgoPhM
+ BrMk1GmL1Di2/ChkIrVIJiHfvVnPk506WPxSd/5AHLfb942BLrFifiza16mlHaDDtXdo0QgAJ
+ a7kzp+ZZ35hxEZp9UIpaMfQDz+6z3PviSfCkxpPXVVEmXiI7K24Gc7dbY3rPFdyrgQT3egBqw
+ R611xySIV2BfC6l4mlJNENilXlcEvu8k1HEBGPZVeLcgyESCU9ag7tLgueEwY9QhMdDwGPR5g
+ qqj0/Q08Vii3cGD7ShKhsM6sCxo1wT
 
-On Tue, 17 Dec 2024 09:46:30 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi Greg
 
-> On Tue, 17 Dec 2024 at 09:34, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > Add uname into the meta data and if the uname in the meta data from the
-> > previous boot does not match the uname of the current boot, then clear the
-> > buffer and re-initialize it.  
-> 
-> This seems broken.
+*no* regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-BTW, this isn't the fix for the trace_check_vprintf(). That is here:
+Thanks
 
-  https://lore.kernel.org/linux-trace-kernel/20241217024118.587584221@goodmis.org/
-
-Where the I completely remove that function.
-
-> 
-> The problem is not that the previous boot data is wrong.
-> 
-> The problem is that you printed it *out* wrong by trying to interpret
-> pointers in it.
-> 
-> Now you basically hide that, and make it harder to see any data from a
-> bad kernel (since you presumably need to boot into a good kernel to do
-> analysis).
-> 
-> The real fix seems to have been your 3/3, which still prints out the
-> data, but stops trying to interpret the pointers in it.
-> 
-> Except you should also remove the last_text_delta / last_data_delta
-> stuff. That's all about exactly that "trying to interpret bogus
-> pointers". Instead you seem to have actually just *added* a case of
-> that in your 3/3.
-
-I'm not sure what you mean. If the kernels are the same, then the pointers
-should also be the same, as KASLR just shifts them. This no longer uses
-module code. It only traces core kernel code which should always have the
-same offsets.
-
-With the last_text_delta (and last_data_delta is always the same, but I
-added it in the case that ever changes), the shifts have always been
-accurate. For example, for RCU event strings.
-
-With the pointer update to print_fields() I get:
-
-           <...>-912     [001] d..1.   304.817710: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-           <...>-912     [001] d..1.   304.817713: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-          <idle>-0       [002] dN.1.   304.817769: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-          <idle>-0       [002] dN.1.   304.817772: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-           <...>-19      [002] d..1.   304.817805: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-           <...>-19      [002] d..1.   304.817806: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-          <idle>-0       [006] dN.1.   304.817819: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-          <idle>-0       [006] dN.1.   304.817821: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-           <...>-902     [006] d.h1.   304.817901: rcu_utilization: s=(0xffffffff9c488fdd:Start scheduler-tick)
-           <...>-902     [006] d.h1.   304.817903: rcu_utilization: s=(0xffffffff9c426d45:End scheduler-tick)
-          <idle>-0       [007] dN.1.   304.817913: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-          <idle>-0       [007] dN.1.   304.817915: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-           <...>-18      [007] d..1.   304.817931: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-           <...>-18      [007] d..1.   304.817931: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-           <...>-902     [006] ..s1.   304.817941: rcu_utilization: s=(0xffffffff9c470f20:Start RCU core)
-           <...>-902     [006] ..s1.   304.817958: rcu_utilization: s=(0xffffffff9c419bb8:End RCU core)
-          <idle>-0       [002] dN.1.   304.818003: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
-          <idle>-0       [002] dN.1.   304.818003: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
-
-Without that calculation, all I get is garbage and completely useless:
-
-           <...>-903     [000] d..1.    24.712788: rcu_utilization: s=(0xffffffff970026af)
-           <...>-903     [000] d..1.    24.712791: rcu_utilization: s=(0xffffffff970ca75b)
-          <idle>-0       [004] dN.1.    24.712796: rcu_utilization: s=(0xffffffff970026af)
-          <idle>-0       [004] dN.1.    24.712799: rcu_utilization: s=(0xffffffff970ca75b)
-           <...>-19      [004] d..1.    24.712825: rcu_utilization: s=(0xffffffff970026af)
-           <...>-19      [004] d..1.    24.712825: rcu_utilization: s=(0xffffffff970ca75b)
-           <...>-18      [004] d..1.    24.712838: rcu_utilization: s=(0xffffffff970026af)
-           <...>-18      [004] d..1.    24.712839: rcu_utilization: s=(0xffffffff970ca75b)
-          <idle>-0       [005] dN.1.    24.712881: rcu_utilization: s=(0xffffffff970026af)
-          <idle>-0       [005] dN.1.    24.712883: rcu_utilization: s=(0xffffffff970ca75b)
-           <...>-893     [005] d.h1.    24.712911: rcu_utilization: s=(0xffffffff97088feb)
-           <...>-893     [005] d.h1.    24.712912: rcu_utilization: s=(0xffffffff97026d3f)
-           <...>-893     [005] ..s1.    24.712942: rcu_utilization: s=(0xffffffff97070f2e)
-           <...>-893     [005] ..s1.    24.712944: rcu_utilization: s=(0xffffffff97019bb2)
-           <...>-893     [005] dN.1.    24.713412: rcu_utilization: s=(0xffffffff970026af)
-           <...>-893     [005] dN.1.    24.713412: rcu_utilization: s=(0xffffffff970ca75b)
-
-The delta calculations are done by saving an address of a symbol into the
-meta data, and when the meta data is considered a match, it calculates the
-delta between what was saved in the meta data to the same symbol in the
-current kernel.
-
-This works across several reboots too. That is, I can save the boot mapped
-data, reboot several times, and still see the correct data in the ring
-buffer, as the delta is calculated at each boot. It's only saved when
-tracing starts and the ring buffer is re-initialized.
-
-So what exactly are you saying is broken?
-
--- Steve
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
