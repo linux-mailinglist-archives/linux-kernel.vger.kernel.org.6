@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-449831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36959F56AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341E39F56C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640EC7A2BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06B418863D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C9E1F8EF4;
-	Tue, 17 Dec 2024 19:07:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508351F8EFD;
+	Tue, 17 Dec 2024 19:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ifm.com header.i=@ifm.com header.b="xxJGzqby"
+Received: from pp2023.ppsmtp.net (pp2023.ppsmtp.net [132.145.231.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB4813EFF3;
-	Tue, 17 Dec 2024 19:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF5D18A6A8;
+	Tue, 17 Dec 2024 19:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=132.145.231.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734462436; cv=none; b=IaePuqJBykNDeJpkQoLqkhi8nGbvUKcJ4aXuTFU2WFiwd9NAtKBUt6gtWcGoolEcD/J7mPfU2NrjpIStRM08Qy4fwMFwTt5Bhc+j2yG6fgDmxTdohJyDcRqPJXILHlsdAJv0obZ5UDMOCEIhsfMSzKt5Lo3okqiyPUwKfb5RWjc=
+	t=1734463161; cv=none; b=SGU2jo2+kTKokt/uXXuOaZnQkpKrXxKTEowYLr0BLOW+80xfldiiCp3Xfk+yDIfyfOjFYmdH+k2DNbiqxdCTV6mN5i8M639ooqmd+LqKKg9vV1Memmzb2i8JfPiPQImVLHzREr8twy3molIS09XazJWy7QY0xE9kisnsn8samC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734462436; c=relaxed/simple;
-	bh=nwUc8PRvDlPDZ/wjrfTuqf6oRv/lHr4t2YSfVdA1iKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WLcTHElj7SaIa3hverWapV5k24reL73q6uogNdGa9POx8D09FmnF7ruL+ajX/au79TM0KOz1lPVTvnYkyxC5m6BTEUUggftLSSlJGRaOq/kxKzDTnje9eo+6agb/8hWWruoXY6rOFpSqNoizUtI5ZSh3wgjpW5PAHtZYiz/ydMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B49AC4CED7;
-	Tue, 17 Dec 2024 19:07:15 +0000 (UTC)
-Date: Tue, 17 Dec 2024 14:07:50 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-Message-ID: <20241217140750.43a65a01@gandalf.local.home>
-In-Reply-To: <CAHk-=whV+=eymQ_eU8mj4fFw643nkvqZfeFM9gdGYavD44rB9w@mail.gmail.com>
-References: <20241217173237.836878448@goodmis.org>
-	<20241217173520.314190793@goodmis.org>
-	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
-	<20241217130454.5bb593e8@gandalf.local.home>
-	<CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
-	<20241217133318.06f849c9@gandalf.local.home>
-	<CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
-	<CAHk-=whV+=eymQ_eU8mj4fFw643nkvqZfeFM9gdGYavD44rB9w@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734463161; c=relaxed/simple;
+	bh=w9dbGeFnL3k1D3m7XCUxkyb4ID+a3FLTsx0p3/iB8SI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zx2qF9jBCx7nmUltJn44yVPjE1FEHpBujgr9EsO3ZRHOrXOqIKmQ7DN2w2Nunt8pVsfyrhLVyaEAVM3B0HfQnm4YUFbqx1dLKmJQpa7+d4RUrrYAogmOzxZWV83AheNfppsYv0UBOdDRrXfr3DR0tKc8kaUgpPRDIBJDlLQvHbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ifm.com; spf=pass smtp.mailfrom=ifm.com; dkim=pass (2048-bit key) header.d=ifm.com header.i=@ifm.com header.b=xxJGzqby; arc=none smtp.client-ip=132.145.231.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ifm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ifm.com
+Received: from pps.filterd (pp2023.ppsmtp.internal [127.0.0.1])
+	by pp2023.ppsmtp.internal (8.18.1.2/8.18.1.2) with ESMTP id 4BHIgXfb000336;
+	Tue, 17 Dec 2024 19:57:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ifm.com; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pps;
+ bh=ZKj965WpvLbeTmB6JP+uoy/NU2h11IUjRbuu3J1Q8V8=;
+ b=xxJGzqbyu2cIWCAG2dyrJiTv2PUuuCrYulLWwp6It8ZKDQodAKqivZjUa1Vqz42lGQbw
+ 28M0yVYleDD7luKchuholS21b/k8/aMRQfETODX07COtAmJxllz74bw/UF6My/yBQE0p
+ 8U4ya9S+IyDZU6hyjl6ogKKaSXTn/a52n6mC+JYt1Q81d8YgYswH98gpODN23K5Q2UMM
+ Q28WwLUCSqVi9qqfFH1B2hTDL3ahq5FD5gb+fmfJHfWjJ72bt2xruHkO4WVkZWBm8j05
+ wP7E2UjWnd3grwXudn6+JMCucnILdgMM+Xke6JiKVBK/mnYj+VU//sR8PJy45+wZAzbU Rw== 
+From: <fedor.ross@ifm.com>
+To: <andrew@lunn.ch>
+CC: <UNGLinuxDriver@microchip.com>, <conor+dt@kernel.org>,
+        <davem@davemloft.net>, <devicetree@vger.kernel.org>,
+        <edumazet@google.com>, <fedor.ross@ifm.com>, <krzk+dt@kernel.org>,
+        <kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <marex@denx.de>,
+        <netdev@vger.kernel.org>, <olteanv@gmail.com>, <pabeni@redhat.com>,
+        <robh@kernel.org>, <tristram.ha@microchip.com>,
+        <woojung.huh@microchip.com>
+Subject: Re: [PATCH net-next 0/2] net: dsa: microchip: Add of config for LED mode for ksz87xx and ksz88x3
+Date: Tue, 17 Dec 2024 19:57:18 +0100
+Message-ID: <20241217185718.189989-1-fedor.ross@ifm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <c934f10d-1a75-4ca8-bd0b-f08544c7d333@lunn.ch>
+References: <c934f10d-1a75-4ca8-bd0b-f08544c7d333@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: DEESEX10.intra.ifm (172.26.140.25) To DEESEX10.intra.ifm
+ (172.26.140.25)
+X-Proofpoint-ID: SID=43hk4kpya9 QID=43hk4kpya9-1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-17_10,2024-12-17_03,2024-11-22_01
 
-On Tue, 17 Dec 2024 11:03:28 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Tue, 17 Dec 2024 at 10:42, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > My initial suggestion was to just fix up the boot time array.
-> >
-> > I think that's actually wrong. Just print the raw data and analyze it
-> > in user space.  
+On 12/9/24 7:22 PM, Andrew Lunn wrote:
+> On Mon, Dec 09, 2024 at 06:58:50PM +0100, Fedor Ross wrote:
+> > Add support for the led-mode property for the following PHYs which have
+> > a single LED mode configuration value.
+> > 
+> > KSZ8765, KSZ8794 and KSZ8795 use register 0x0b bits 5,4 to control the
+> > LED configuration.
+> > 
+> > KSZ8863 and KSZ8873 use register 0xc3 bits 5,4 to control the LED
+> > configuration.
 > 
-> .. I still think it's not the optimal solution, but fixing up the
-> event data from the previous boot (*before* printing it, and entirely
-> independently of vsnprintf()) would at least avoid the whole "mess
-> with vsnprintf and switch the format string around as you are trying
-> to walk the va_list in sync".
-> 
-> Because that was really a non-starter. Both the format string hackery
-> and the va_list hackery was just fundamentally bogus.
-> 
-> If you massage the data before printing - and independently of it -
-> those two issues should at least go away.
+> PHY and MAC LEDs should be configured via /sys/class/leds. Please take
+> a look at how the Marvell PHY and DSA driver, qca8k driver etc do
+> LEDs.
 
-But I can't massage the data without the deltas. That takes us back to
-having to have the same kernel and only processing kernel core data and
-ignoring modules.
+I'll take a look at it. Thanks for your input.
 
--- Steve
-
+Best regards,
+Fedor
 
