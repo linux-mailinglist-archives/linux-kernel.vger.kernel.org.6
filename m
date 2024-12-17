@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-448833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF91F9F4631
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:40:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5173B9F4633
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4679167481
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11483188BCFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85481DCB24;
-	Tue, 17 Dec 2024 08:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3131DD54C;
+	Tue, 17 Dec 2024 08:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RFbqfDqz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KHgViOQJ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A718035
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22E71D88C4
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424801; cv=none; b=Nretr7Vr4iZBuoLjrsZXYG/LpiBNlcYw0LI2YnSNMEHrysDqoQ8L1GM3LUU1X1LgVzAYKEngGg2ZqTYNcMmUD/nySnoAsvtzXROReuyPITfeycNwB0jkCeSGMcFmiGEX7fbetdm4t35L1RTrQihXY71GZNLO7iNgSVraK/c+myI=
+	t=1734424868; cv=none; b=afi31cGoCIg7UFkcuv9o851qX9x8rIlX1OvoXVoiHxpUyS9jkSIqLiAoV379JnCurILWzJnFxZx8EVZV7NEokBuUCNsWJKwQ6VyqWFCfuDcdATC2/h6ElTCSdYtEilH6UH0h9Sc3ZnSSv3W+w5bxnhyQkHcRw3pZjFl5KUYRLTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424801; c=relaxed/simple;
-	bh=ls/AmNG93LU9ayn/71FsfGrw4+Ni4nHAglsLHh2S6aE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSxC7ZZjEjG/C/UJqRT2MFLj6r4tAoUTBrrZ6Ac2cnKidJAx5i7HQbH7JX0TvRvCehfawVnxVk3STgZmpG5MGWbsouYJZ0Z8ExoMFfCaGKZi0IlhgcmmPKNPWpKlGfrXLcRbpIr781nW5eumLwG9MD/HexI5Ag6HjZ7SxjmVNuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RFbqfDqz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=zHKSQ9Na+RcR019nXxbqF8cNu/t1XZ8eXhmHmP+Ovf0=; b=RFbqfDqz7m7V3l3Trt00C8orAY
-	C7XQPDYBkR8DcF1sWU6/Wv3RK1cG/70XUP5jwJwTfxjMeJrEs//69GCUwmdO1UxFchyhXzd1qlS2h
-	F4UoelRJrag+4OFNLkxdhRQxeShWKBPg3WDCEnCyFtyUqn3WHS+0/3yeOiaxQaPFLiz3+Yk5JVQVV
-	CRAJELFss3fNk7eMXQA2KcGpecbecOO2jSQ/9g+R4pi2keWiaGnVl8gxGwUZOeTrdsa4r2Hb7tiQh
-	wksqB0CnLpTSUgjxXCOdgF2eK3sYhO95X0g949AMg01U6+m9OX3SDrCGtG+zrBHKfrtF6KCQDZPPL
-	xTXjt21A==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNT7L-00000005q8b-3AUz;
-	Tue, 17 Dec 2024 08:39:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C7AE9300192; Tue, 17 Dec 2024 09:39:46 +0100 (CET)
-Date: Tue, 17 Dec 2024 09:39:46 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
- task_struct::blocked_on
-Message-ID: <20241217083946.GF35539@noisy.programming.kicks-ass.net>
-References: <20241125195204.2374458-1-jstultz@google.com>
- <20241125195204.2374458-3-jstultz@google.com>
- <20241213232214.GA17501@noisy.programming.kicks-ass.net>
- <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
- <20241216165419.GE35539@noisy.programming.kicks-ass.net>
- <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
+	s=arc-20240116; t=1734424868; c=relaxed/simple;
+	bh=UrR/l/IxrSGWrivOqJJaqgB0lQOL9KBgnigWIF5L9DY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rD/oZxIkQrZgugVz1YK1/yMc3rkqGsRgC4UOyKPeremdLxayBO0h2zKq9XbZDog49HZ2i/9Q3lCp3nndncqktz5Cm3BHizUR/oJ73gmxvoZvR5NGUDXbs2NlmphMucy8fHZA336Eg7MtdBud1qbl3GT8Yo4KtRh8jDY39Oydebg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KHgViOQJ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=UrR/
+	l/IxrSGWrivOqJJaqgB0lQOL9KBgnigWIF5L9DY=; b=KHgViOQJQWi6jFplALXj
+	o4JjbChY0vYzO5430yYjcgOx9AG4TpjExoATSYlgZy8+IA8w5Vz3f7QlFyl1v/xt
+	koi+RWbGXbGHF9CJ39d9xSk6zRAWnLXL/ZU9joHzlTDNZHuY7i4OpCcVR5YcqRAk
+	Xf3sMqr0AQAeWRdAwC3iNN6GU5H7zhxCqTeX5DcMXoPtbetLmnnjNh54Fo2Bcmw7
+	K5RAAojkmnhxFTjDufQP/iXzoJrINd9kk0IzE/VTPwLAQQ+rWm9KIHrlskM9B3+w
+	mfpx7lbZhPJb8zRbGHI02iHb8l+FWs9CHzfElJfM5LrgqZsG8qANkrOHu4YRzBbo
+	zw==
+Received: (qmail 4002372 invoked from network); 17 Dec 2024 09:41:04 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Dec 2024 09:41:04 +0100
+X-UD-Smtp-Session: l3s3148p1@1HTkQXMppOkgAwDPXwAQAA/MfjDm1Sk8
+Date: Tue, 17 Dec 2024 09:41:03 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Yury Norov <yury.norov@gmail.com>, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [RFC PATCH 1/2] bitops: add generic parity calculation for u8
+Message-ID: <Z2E5H3-vNIi2_6oT@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20241214085833.8695-1-wsa+renesas@sang-engineering.com>
+ <20241214085833.8695-2-wsa+renesas@sang-engineering.com>
+ <Z2Dg6ydwN6CfxgTe@yury-ThinkPad>
+ <Z2ESttIzF4kX7JA-@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0kKQvGYxLpX4xztM"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
+In-Reply-To: <Z2ESttIzF4kX7JA-@shikoro>
 
-On Mon, Dec 16, 2024 at 09:01:24PM -0800, John Stultz wrote:
-> On Mon, Dec 16, 2024 at 8:54 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Fri, Dec 13, 2024 at 07:39:57PM -0800, John Stultz wrote:
-> > > On Fri, Dec 13, 2024 at 3:22 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > On Mon, Nov 25, 2024 at 11:51:56AM -0800, John Stultz wrote:
-> > > So yes, the description can use improvement here. I at one time had
-> > > 3-4 separate very fine grained patches (see the top 4 patches here:
-> > > https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v7-6.7-rc6-fine-grained/?after=c4cad6e353c00254a2dfbb227ef81d8c3827427d+35)
-> > > that I rolled into one when sending out(mostly to avoid overwhelming
-> > > folks), but the squished commit description isn't as clear.
-> > > So if it's helpful I can split this back out?
-> > >
-> > > I'll also add some better comments as well.
-> >
-> > Not sure yet about splitting back out -- let me try and figure out what
-> > all is actually done / needed.
-> >
-> > So blocked_lock started out as another lock around ttwu(), in order to
-> > serialize the task wakeup vs reading a remote ->blocked_on relation.
-> 
-> I think of it primarily to serialize the task->blocked* state (there
-> gets to be quite a bit by the end of the proxy series).
-> 
-> > Since we do this with rq->lock held, it can't be ->pi_lock, and hence
-> > ->blocked_lock was born.
-> 
-> Yeah, we needed to use something other than the task->pi_lock to
-> serialize it as it has to nest under the mutex->wait_lock.
 
-No, the critical bit is nesting under rq->lock -- we need to be able to
-walk the blocked relation in the middle of schedule(). You can equally
-wrap blocked_lock outside of wait_lock, that doesn't really matter much.
+--0kKQvGYxLpX4xztM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > Later patches appear to have moved it into mutex, mirroring the
-> > ->wait_lock -- this is probably better.
-> >
-> > /me goes chase that state thing for a bit..
-> 
-> ? I'm not sure I followed this.  The blocked_lock continues to
-> serialize the task->blocked* state through the patch series.
 
-Well, there was only ->blocked_on, and on UP you don't need
-serialization beyond disabling preemption.
+> I hope that both patches can be applied in one go to avoid a dependency.
+> I'd think the hwmon-tree is a tad more suitable, but I am also fine with
+> bitmap as long as both patches go in. What do you maintainers thing?
 
-The tricky bit is SMP, then you need something to stabilize the blocked
-relation.
+Second thought, we can ask I3C to take it. Together with the cleanups
+for the I3C drivers I would add then.
+
+If this is not to your likings, then an immutable branch for I3C to pull
+in would be helpful, though.
+
+
+--0kKQvGYxLpX4xztM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdhOR8ACgkQFA3kzBSg
+KbaEVg/+NcuHBoZdEsMUjVPjfUFpcSdDlT89Ucwt6kpb3ZWnHz4pBVWEoJE08VML
+yPWZKTXIbLf6Snx3OYjgSDHVYBtEjJDEcD3iAzXgvJgxZQ3YMjc8cjFRkRfYQokr
+F2Ep3T7Rdx0KZOlLJ/QitI/QHIYekLizCnEJHDddkYxt7BDQDXzUSBmbbdCvedb7
+1b/HwUrltxrN0e6L2CyacDig7KahUDjYTzgE2Img9ukZi8RoNXxLZb2f+FAg1fow
+jPkf8onH/6peC9hfuFlOV4CoSMy0le04Vsnpam1G/BpY0zWWGQpQ9QV7xnjl4XaU
+ua4M/tqYQBAEAr7fwFNX1YfqLFDg58XLD/ZIL6ZYu+gcw4r7TsHE4D1QZxaQIZah
+hM7mL4N1jDu8C8jXDnBBSJETZ+tbpV3Iecr2qa8jfOj3Lr2ktz/D3najpoZSrOYd
+hBiwLxQ3pLktPzV6kSs+Iz7q3uhLk49Ym1HziY0gtkTdeqbGXM7UZbzMgMK5Isqn
+4ISJHc9dPO2XJdCfXw5zPaauEyQenXZ6CkHfwSr3PASD2oftzyrOXrCEGr1AlCnh
+mq/Ex6iF8EGPDqIxDGNBSHewcFb9eMm69zPC2MgK36uqreGIOKhhnoeFdAA/vfZT
+TldDK2iejR+7F8DK/RdwBErxhqZlmQTdNeZyhUhJJULJEyKmaN8=
+=X4Fk
+-----END PGP SIGNATURE-----
+
+--0kKQvGYxLpX4xztM--
 
