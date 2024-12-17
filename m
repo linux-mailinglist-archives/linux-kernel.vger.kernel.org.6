@@ -1,190 +1,126 @@
-Return-Path: <linux-kernel+bounces-450012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CCF9F5949
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:07:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E92B9F595E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08D4164147
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CBEE1896EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D689E1F943F;
-	Tue, 17 Dec 2024 22:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76CE1FAC33;
+	Tue, 17 Dec 2024 22:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AU6wpPWT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Dt3B9Gv7"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FCE188014;
-	Tue, 17 Dec 2024 22:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F91FA8E5
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734472834; cv=none; b=TXCrv8o0s/5OyZT2gBGcKtN1h9cuJo+12IEg2aPoSjzim1FgS1t5pOLFqvSgXf9wJIrSTr63iA17bJ+DCmAuJ+EFs7DByxzJ1ytkhzTyi1+vxJsbROzUX6/05jhdHgJKK35OGSzX3RontDFCfsxLxk5fa4h9U+lZthJKUFIghe8=
+	t=1734472805; cv=none; b=iIgCstyl10IWaVPDfMV91zL2/2CWN5Xsu21fJ3WBQmKuA2VFG+92FkVQf+avsBAOECwM5E4A6QXW5+zxvZDhvhmGCqGxWiUQsU9Jxpbh6nFwAWw/rl+TzArTxG3CmErge6UxXFtQbSUTsJh+w1oRLCkfVd5vklD2L6ebDSxTflk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734472834; c=relaxed/simple;
-	bh=UdvwEKCif7SL13UWTKxZEOkRyDKodoLCPs1kFcwO9ik=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V/Iq3fWy0rs1ZrEoHBxDVIauc4fmuVQYOGBO33Y4e9FJgjVlaV9YgxWPvkqCdnz2RO+kaNy40TrGGvw58Ydw9QoKC6XrIRv+cUI7FmZLJil2EVz86NzXdJ/XvAqN2Tx11Bg4/CBWY8Bse/uQROLyjNPg4QPkz0FFGh9585X0FP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AU6wpPWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0B76C4CED3;
-	Tue, 17 Dec 2024 22:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734472833;
-	bh=UdvwEKCif7SL13UWTKxZEOkRyDKodoLCPs1kFcwO9ik=;
-	h=From:Date:Subject:To:Cc:From;
-	b=AU6wpPWTpHjHUMi92kiJloIuVM7EgEVAzyuXekOtRMvIXED5z7QiizAUOJZ//s2wv
-	 iCqe3bKyXqR1uKRRaZd+QIzshlaG4xnc47ZkJTfatHDwS4zUY1K39FI+e0ZHPXPNcb
-	 y8ESFNmq7v0ckOlcseK94Mh4B/11t2sAkPcM8esW6OJ/fol4MwpOeSycMu2XoRoXkc
-	 XUJrwRBlFGR543kBhGTeuE4qfNyhaWF3XZukS/t6QTVTETTv5rS5UFnsckTPnAj7uI
-	 lBinPqWMowrXPn+l1o6NJW3yb7HC/CanBkgZEJYqvA4/SIzadzKWA99vhyxdfIdP3x
-	 d9aM2UOBD/RuQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 17 Dec 2024 21:59:48 +0000
-Subject: [PATCH v3] arm64/sme: Move storage of reg_smidr to
- __cpuinfo_store_cpu()
+	s=arc-20240116; t=1734472805; c=relaxed/simple;
+	bh=RX/zhaiq0L9l8ly9a3z2OFOaSe+5bBHH/nUVnvYlvXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HU7CWL1YMmrlgtvGTBGl2b4gJQbu87C1aoK3ipmnp2ogbNXBTAMD5nzEzfpHWlEMAHsfeqJGxtZvfLyAAnkviaylfua5mQ+UZZgbZx2pjgmny6yZzm9uN28YL/NPO/vZdQquL0eaLO8sVT5DxWxwz3lG01bPffhaFvZ5LqNow50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Dt3B9Gv7; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e3c9ec344efso4031690276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1734472802; x=1735077602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
+        b=Dt3B9Gv7TgfxnTpwvvWDpvMtVKgCNSQXIdGn2cDp+WAZiKRU1+Sl/btlbAFtGJkDUO
+         7ftqo0GX7GV56dIB5CAnJpTKDklKfL+QMPnD9LTGlnSegpXwB/SCiJTFFrGEfBUV40Z7
+         DdaTSkT0YtYdhuzZrNmdGfw5C+JSoxdJNeaXdP/Et2vZENVZBahV+7cllhWFoupSHCPn
+         aibJhEsPsPcWRs4yMiS060XWLD25cfNreE9Y4eU46v9cCgKS1inNqsjwXYkSIrMrCUt7
+         TFOzRLfz5qVudqD4DUme7zAI96PPs1eTO5ZFOn/mwyaUzitABONMhcZyvqkOt4A4SEvP
+         afBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734472802; x=1735077602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftdzShgtX/tEAx6aAhp++i3l0eubtYOM8tBAmWgBMfE=;
+        b=wD8YWUDkLzhA69uTbuG7kvGn7Tk8FdEXc2znursDDswo68n+slc5UM5CMLxn5jucHi
+         2iEeybvqkOAJPsd5CAsD53SNhqBa3KupScNIOhzXtXmobwAZW6SDUCuFRVVa7gee5z4R
+         2XgI6JURqA7FkDQmNWNH3H9EI5rHVFAyLHLX7qZSClcOBsqBdrCyLLv49wpk7jUEQTxA
+         stq2AKIuZ5r9lbpsFyNd+vaEcuhzQoPcgzLKSVIc8s2aQ0YR+uAqZdM8HaaSM53KBl6I
+         qIiMrOtYUJA4kUroXaZISmO1MVbsJKmnUX6GKRjRQ6DJ4NFwvhqSjlQyjwBJqJht/Mft
+         DMdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKJaDTdso27H0wUNa/KfaakrK1A7jVcWUdVBkjHsJuaFbmsI3+M+TDe8HJI1Ql6NV3C23GT765aboKrdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIvqo6+HmGDA42s0WJqDyrviXmeA+XbUDxQAfa7cK8H/i8N6oB
+	2ljCziifhK6nyYlzvBbjCrgu+e8Jcq/yMUe+jzMnKJa/izG/sYPwLki5lX05wwnAkr0BsVgLNAu
+	sAhf+Neq/nnRyyHKSlym8cyL2Zmd1sfKN17El
+X-Gm-Gg: ASbGncvc35cMw1rjN9o8/GXUpivycIyXqznNPx4uPTdxzo7SUeYIqYfx8rnlE/aQkr0
+	r03r5o7cI3L29rhV8iFIp+3NaaiQjW5z52MnP
+X-Google-Smtp-Source: AGHT+IEU7ZqkpQLdLUs+NmpFyHzcV/krv50XAmUj5bf5ADbtRq+UVr88p+tUmkW66IRG+xuXXznG0o19SeGqPqHFkkQ=
+X-Received: by 2002:a05:6902:2204:b0:e2e:440e:d29f with SMTP id
+ 3f1490d57ef6-e5362122e49mr679348276.20.1734472802619; Tue, 17 Dec 2024
+ 14:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-arm64-fix-boot-cpu-smidr-v3-1-7be278a85623@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFT0YWcC/33NwQ6CMAyA4VchO1vDusnAk+9hPDA2YFEY6ZBoC
- O/uIDHRgx7/pv06s2DJ2cCOyczITi4438cQu4RVbdk3FpyJzTBFyZELKKnLJNTuAdr7EarhDqF
- zhkDkmc6NxgI1sng+kI1bG32+xG5dGD09t08TX6dvVP5GJw4cUiUPlUyVQmNOV0u9ve09NWxVJ
- /yUsj8SRqksirrWJVZC1V/SsiwvBFSiVgsBAAA=
-X-Change-ID: 20241213-arm64-fix-boot-cpu-smidr-386b8db292b2
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- Peter Collingbourne <pcc@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4781; i=broonie@kernel.org;
- h=from:subject:message-id; bh=UdvwEKCif7SL13UWTKxZEOkRyDKodoLCPs1kFcwO9ik=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnYfR+z0ttVHBHgHuta4bowAhzuy6x8DgqTDQWKRxy
- 8lziSdmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ2H0fgAKCRAk1otyXVSH0F9BB/
- wOFcy89llIBoJPEAQcioqnU8ppbKLYEVimCcjrsFnInq+ExM9mp4iPaThprBKSZuhcVbosteIr7Gf1
- J8Nmc+hBJqhjdBwF6zX5dRHMzuE4bnb+Q8faH7rSHu0rrtFhqnsnFIpNAAcxA/XUUMjWHZL7KLxmxj
- Myhe1uWXLARisurkHD7oU63fz8YF/aZqZfh5u0rnc3OaxypQLeNX11mNv5mJF1hovWIgJn+GaxK8np
- cD4FtHuLMBzQKtUK9DolIsGr9Xou72Atl7NbDsqjZvsj32DShuN/5zQePH8O1O1BpCD2RkBIeM/6XJ
- th3oSl+tKb13L99sEz7I4PgBtXGSku
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20241217202525.1802109-1-song@kernel.org> <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+In-Reply-To: <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Dec 2024 16:59:51 -0500
+Message-ID: <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
+Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, roberto.sassu@huawei.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	serge@hallyn.com, kernel-team@meta.com, brauner@kernel.org, jack@suse.cz, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In commit 892f7237b3ff ("arm64: Delay initialisation of
-cpuinfo_arm64::reg_{zcr,smcr}") we moved access to ZCR, SMCR and SMIDR
-later in the boot process in order to ensure that we don't attempt to
-interact with them if SVE or SME is disabled on the command line.
-Unfortunately when initialising the boot CPU in init_cpu_features() we work
-on a copy of the struct cpuinfo_arm64 for the boot CPU used only during
-boot, not the percpu copy used by the sysfs code. The expectation of the
-feature identification code was that the ID registers would be read in
-__cpuinfo_store_cpu() and the values not modified by init_cpu_features().
+On Tue, Dec 17, 2024 at 4:29=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 12/17/2024 12:25 PM, Song Liu wrote:
+> > While reading and testing LSM code, I found IMA/EVM consume per inode
+> > storage even when they are not in use. Add options to diable them in
+> > kernel command line. The logic and syntax is mostly borrowed from an
+> > old serious [1].
+>
+> Why not omit ima and evm from the lsm=3D parameter?
 
-The main reason for the original change was to avoid early accesses to
-ZCR on practical systems that were seen shipping with SVE reported in ID
-registers but traps enabled at EL3 and handled as fatal errors, SME was
-rolled in due to the similarity with SVE. Since then we have removed the
-early accesses to ZCR and SMCR in commits:
+Exactly.  Here is a link to the kernel documentation if anyone is
+interested (search for "lsm"):
 
-  abef0695f9665c3d ("arm64/sve: Remove ZCR pseudo register from cpufeature code")
-  391208485c3ad50f ("arm64/sve: Remove SMCR pseudo register from cpufeature code")
+https://docs.kernel.org/admin-guide/kernel-parameters.html
 
-so only the SMIDR_EL1 part of the change remains. Since SMIDR_EL1 is
-only trapped via FEAT_IDST and not the SME trap it is less likely to be
-affected by similar issues, and the factors that lead to issues with SVE
-are less likely to apply to SME.
+It is worth mentioning that this works for all the LSMs.
 
-Since we have not yet seen practical SME systems that need to use a
-command line override (and are only just beginning to see SME systems at
-all) and the ID register read is much more likely to be safe let's just
-store SMIDR_EL1 along with all the other ID register reads in
-__cpuinfo_store_cpu().
+> > [1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsun=
+g.com/
+> >
+> > Song Liu (2):
+> >   ima: Add kernel parameter to disable IMA
+> >   evm: Add kernel parameter to disable EVM
+> >
+> >  security/integrity/evm/evm.h       |  6 ++++++
+> >  security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
+> >  security/integrity/evm/evm_secfs.c |  3 ++-
+> >  security/integrity/ima/ima_main.c  | 13 +++++++++++++
+> >  4 files changed, 35 insertions(+), 9 deletions(-)
+> >
+> > --
+> > 2.43.5
 
-This issue wasn't apparent when testing on emulated platforms that do not
-report values in SMIDR_EL1.
-
-Fixes: 892f7237b3ff ("arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}")
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
-Changes in v3:
-- Leave the override in place.
-- Link to v2: https://lore.kernel.org/r/20241216-arm64-fix-boot-cpu-smidr-v2-1-a99ffba2c37f@kernel.org
-
-Changes in v2:
-- Move the ID register read back to __cpuinfo_store_cpu().
-- Remove the command line option for SME ID register override.
-- Link to v1: https://lore.kernel.org/r/20241214-arm64-fix-boot-cpu-smidr-v1-1-0745c40772dd@kernel.org
----
- arch/arm64/kernel/cpufeature.c | 13 -------------
- arch/arm64/kernel/cpuinfo.c    | 10 ++++++++++
- 2 files changed, 10 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 6ce71f444ed84f9056196bb21bbfac61c9687e30..818aca922ca6066eb4bdf79e153cccb24246c61b 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1167,12 +1167,6 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
- 		unsigned long cpacr = cpacr_save_enable_kernel_sme();
- 
--		/*
--		 * We mask out SMPS since even if the hardware
--		 * supports priorities the kernel does not at present
--		 * and we block access to them.
--		 */
--		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
- 		vec_init_vq_map(ARM64_VEC_SME);
- 
- 		cpacr_restore(cpacr);
-@@ -1423,13 +1417,6 @@ void update_cpu_features(int cpu,
- 	    id_aa64pfr1_sme(read_sanitised_ftr_reg(SYS_ID_AA64PFR1_EL1))) {
- 		unsigned long cpacr = cpacr_save_enable_kernel_sme();
- 
--		/*
--		 * We mask out SMPS since even if the hardware
--		 * supports priorities the kernel does not at present
--		 * and we block access to them.
--		 */
--		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
--
- 		/* Probe vector lengths */
- 		if (!system_capabilities_finalized())
- 			vec_update_vq_map(ARM64_VEC_SME);
-diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-index d79e88fccdfce427507e7a34c5959ce6309cbd12..c45633b5ae233fe78607fce3d623efb28a9f341a 100644
---- a/arch/arm64/kernel/cpuinfo.c
-+++ b/arch/arm64/kernel/cpuinfo.c
-@@ -482,6 +482,16 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
- 	if (id_aa64pfr0_mpam(info->reg_id_aa64pfr0))
- 		info->reg_mpamidr = read_cpuid(MPAMIDR_EL1);
- 
-+	if (IS_ENABLED(CONFIG_ARM64_SME) &&
-+	    id_aa64pfr1_sme(info->reg_id_aa64pfr1)) {
-+		/*
-+		 * We mask out SMPS since even if the hardware
-+		 * supports priorities the kernel does not at present
-+		 * and we block access to them.
-+		 */
-+		info->reg_smidr = read_cpuid(SMIDR_EL1) & ~SMIDR_EL1_SMPS;
-+	}
-+
- 	cpuinfo_detect_icache_policy(info);
- }
- 
-
----
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-change-id: 20241213-arm64-fix-boot-cpu-smidr-386b8db292b2
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+--=20
+paul-moore.com
 
