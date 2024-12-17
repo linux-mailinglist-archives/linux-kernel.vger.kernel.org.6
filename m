@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-449428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19309F4ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0439F4EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE6E164C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA396162F54
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94BD1F706C;
-	Tue, 17 Dec 2024 15:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C201F7566;
+	Tue, 17 Dec 2024 15:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X9N4AyXO"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YVth3anL"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07DA1DB52D;
-	Tue, 17 Dec 2024 15:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6829B1F668D;
+	Tue, 17 Dec 2024 15:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447995; cv=none; b=hHtR8YgmKFC3ekglZ2qie0r28ePkwpurgseLxt6w4XcbZ2GrHyDrym2bdvIDvgAZtbLsJGGeOENhGRh5Z614CeQZcABrWSzhOB/zTxF6QDjXXwZpwio5DhNQALgE+c9+1S+Q9IRYhyHblPXHGuDekYI5pB1ILTq5eGeitOUrVpU=
+	t=1734448169; cv=none; b=UZ3q0AJO4fTkSpl5ONYZXJALKpymN+A1YdF+CVsLtBRGJ3k1p0QJHjaE+iw5Gcmo4PP3L8ymcP4SgzlPADh9QNnJJBT7jvD/S5o+KSkUEl/zCqFB1CHkIDc3Rk26DtFPZSS6WMjOmi0091nC3Oo7Z+u3PuUvHOcJykwKGobE2f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447995; c=relaxed/simple;
-	bh=cGIa/uaO+1uTfdWbfiKTpdFm+uA2N8ZZqrPAqEBij8E=;
+	s=arc-20240116; t=1734448169; c=relaxed/simple;
+	bh=w8hwC3U5jEWNrrqusUKhOAOj0b0suERE4RAZJLKNe6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVmGxTZpIISHyY1ogHxDlXdhLs40KtdE0WSruD4995f1TczDW4jCP8OpuY1EBrlQ0nC3EYMjchSk2IhDGU2l3ELbaUkVAbVtg0cYeYRBPNj96Tq6xsmzAzW/XXyVt6Bp/AiI8AvsJyFKPZIWkXSqlEfTyVDPn8TLcU8AdYXk6CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X9N4AyXO; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZNUyDGfhn/SIPNAArhtAzZ372TE/ZM81V00FcVH4LV0mh2oUGT1KUnkUsbe5dXxsUzJTPO9y00x1hNy2dH177SMUitHHUQfQRHkWM4l8RDgsJxBgWUoVZkP68n+8w7gfWMikwUn/4+u7UFsTDeFdc/vC4AChdyHVxw+fcxnABk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YVth3anL; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1FaxqYCFDz18EKz3H2SAvhpcfz8v5Vr7flOtujTRhRA=; b=X9N4AyXO0YHk5KJCxqVWSCAfR3
-	kQVSh3mrS4iJZmJlFBKAW00BAR415ZF/H9E8bwGJG1yBdO0a+qe5x/Z6kqOWrAwq+i3Nxfjk+MSXV
-	fDJH8xSW/Nzy0esRK/kVhAF/lVQeJmwDsupekkTzjcwBGevskcubWRFRbPeN/ug5sWUI=;
+	bh=cJ1C8zxr1Pd/IF0oEXnzTSz2bWW66ZYhVUTgfnPs34s=; b=YVth3anLtSOEB/LoxI7i9gA8Ox
+	OhzSCNCf/ZNbRwYwz6+fhbJw/DJttAf1C91sBC5s13Imzaptc82njZmWmHPE2Gg2lBhBAyr21oPkv
+	3nlTPe7uYNBg5gFZ82QvHCTJjI5XjAONzl86jLQApiDzXR3t70f3QGj05hIrVsc6dWXA=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tNZ9V-000yzV-2Z; Tue, 17 Dec 2024 16:06:25 +0100
-Date: Tue, 17 Dec 2024 16:06:25 +0100
+	id 1tNZCJ-000z3f-GZ; Tue, 17 Dec 2024 16:09:19 +0100
+Date: Tue, 17 Dec 2024 16:09:19 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Divya Koppera <divya.koppera@microchip.com>
 Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
@@ -49,11 +49,11 @@ Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
 	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
 	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	richardcochran@gmail.com, vadim.fedorenko@linux.dev
-Subject: Re: [PATCH net-next v7 3/5] net: phy: Kconfig: Add rds ptp library
- support and 1588 optional flag in Microchip phys
-Message-ID: <131df3f0-eb87-4fe8-9fd6-098102fe7d42@lunn.ch>
+Subject: Re: [PATCH net-next v7 4/5] net: phy: Makefile: Add makefile support
+ for rds ptp in Microchip phys
+Message-ID: <bac2f8b7-d224-42c8-aaa3-ed6f55fe67df@lunn.ch>
 References: <20241213121403.29687-1-divya.koppera@microchip.com>
- <20241213121403.29687-4-divya.koppera@microchip.com>
+ <20241213121403.29687-5-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,15 +62,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241213121403.29687-4-divya.koppera@microchip.com>
+In-Reply-To: <20241213121403.29687-5-divya.koppera@microchip.com>
 
-On Fri, Dec 13, 2024 at 05:44:01PM +0530, Divya Koppera wrote:
-> Add ptp library support in Kconfig
-> As some of Microchip T1 phys support ptp, add dependency
-> of 1588 optional flag in Kconfig
-> 
-> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> @@ -80,6 +80,7 @@ obj-$(CONFIG_MICREL_KS8995MA)	+= spi_ks8995.o
+>  obj-$(CONFIG_MICREL_PHY)	+= micrel.o
+>  obj-$(CONFIG_MICROCHIP_PHY)	+= microchip.o
+>  obj-$(CONFIG_MICROCHIP_T1_PHY)	+= microchip_t1.o
+> +obj-$(CONFIG_MICROCHIP_PHY_RDS_PTP)	+= microchip_rds_ptp.o
+>  obj-$(CONFIG_MICROCHIP_T1S_PHY) += microchip_t1s.o
+>  obj-$(CONFIG_MICROSEMI_PHY)	+= mscc/
+>  obj-$(CONFIG_MOTORCOMM_PHY)	+= motorcomm.o
+
+If you need to respin, please insert this library in alphabetic
+order. But it is O.k. as is if there is no need to respin.
 
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
