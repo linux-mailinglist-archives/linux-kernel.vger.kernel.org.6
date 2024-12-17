@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-448822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B539F460D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:28:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2989F4616
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC8A7A2B7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:28:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A2B97A4C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428311DB522;
-	Tue, 17 Dec 2024 08:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1E91DD87C;
+	Tue, 17 Dec 2024 08:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q4OeeuwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X12dvhtf"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1471DA113;
-	Tue, 17 Dec 2024 08:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C0F1DD872
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424102; cv=none; b=LcrfOloZLbNK1zVwmTbY45+CtDNX8ezS9e2K7y0H2xXlngyPat0gFXpeP+1lwnxuNLbtfFFfqvuB9mtJiSQ2GRbwnbKitopDVyA+u6YQcb1UJB8jqh2MbXL2N6HoZZy99NuzztIJ3PBN1GvkEYN9y30xV1bseBKC7Ys1K/1IJ0U=
+	t=1734424263; cv=none; b=qPL3NPtg4oA17iMwKhnninpK6Y4UqCULdy1G6CwKrgCqf57/02DINg2yeOBMhqTD2iCH49VBdb2qonmxXaZyfawo7BAL3mqyPBGLH96FVy7+alenJx2Ij6MJThMERIXj7I2YpKCNPjYd4FqhtcLzJ6IDhsJu6AqTcWV6unKYI3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424102; c=relaxed/simple;
-	bh=SPmFEcKXpyPmdcnzipJn8Q/yWwafSU6dklD5P69XHH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2R49dFbuOMpmUtgK+grNr3JllaOqMoQRrdUZVsv0KPFvpcMf+uAbe6v1eyYxOukF5rqAjZtYlB8EiorVNq4dVcj+vO/qRML0m6djMaixBgouCelskqtPJAFiM1YsHR6WMVLN7XBRfL596CX1Wje1+W4d2dVaC+ged/Aqe6DIeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q4OeeuwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E06C4CED3;
-	Tue, 17 Dec 2024 08:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734424102;
-	bh=SPmFEcKXpyPmdcnzipJn8Q/yWwafSU6dklD5P69XHH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q4OeeuwGPzt5YMsCKvfDS+YbGt4LObn0W/QRHrkohzHbbyKstrMv0Czhyia2s7Xea
-	 nKjrnsN0lw1pC/VQOoNq5+iaPsHB0VwKRcOjaNnKoBd+yJgGnfWqMLVIvkLzL/JyNZ
-	 Cy1WASjCDMZVwIEd4pP1XwwC4GfhtLDYk/ijqRUg=
-Date: Tue, 17 Dec 2024 09:28:18 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Z qiang <qiang.zhang1211@gmail.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Xiangyu Chen <xiangyu.chen@windriver.com>,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
-	jslaby@suse.cz, rcu <rcu@vger.kernel.org>
-Subject: Re: Linux 6.1.120
-Message-ID: <2024121703-bobbed-paced-99a5@gregkh>
-References: <2024121411-multiple-activist-51a1@gregkh>
- <20241216-comic-handling-3bcf108cc465@wendy>
- <CALm+0cVd=yhCTXm4j+OcqiBQwwC=bf2ja7iQ87ypBb7KD2qbjA@mail.gmail.com>
+	s=arc-20240116; t=1734424263; c=relaxed/simple;
+	bh=abvY1+wffYOIG9PpDbyRle3MZ/J0u8mmXSBkIQOkRV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uo2/g8e5etkUCt8Wo5Ckew5Ao7DUWXFe5KfRw92lczpL5JD1TSxCcVuUCsYN3EGZEqJ8obqtUgiu8FFQ15GGIf/4TN15EMddwgKe1OZNpTnfHzy3L0zQ5wn1zzdeVMzFGWXLESDAnr7x7RTvrq+VDcJUk7ZLhREmhkWhpGnzKL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X12dvhtf; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2eec9b3a1bbso3440913a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:31:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734424261; x=1735029061; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=saEqunEX3TYOKQAwnsF0CjMAlS0gmeVDyn1k5hQP5xQ=;
+        b=X12dvhtfePzbbS5Pbm3wVN79S672q3ra1lXvZPo1w3RpW/3wqpBz0/V3H50ZZsjM4H
+         duKepskAA2R9LI97W9Zsmvtb4ZdQQihzVGwrZhzSErjoi9b787Vq41MD2pJnZNLjdXUu
+         InEpZjmm22iLF1haK71F8/gSt+yAF3mHEt7KkK5NgesvNRe302P8Ndut+S8b82czJD1O
+         BftshBffl533vQT/5MRoXXvvW0GGYbaDxI5KitNVujoGyxaYL2Wj3vc5yAfBm7UYIuuD
+         OKEZcmpzTSuzyrv9PHgbR6t67rba7IjbcS4RgZvUHT4c1+BmRqxKuA1aBArolm43qIpp
+         e5ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734424261; x=1735029061;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=saEqunEX3TYOKQAwnsF0CjMAlS0gmeVDyn1k5hQP5xQ=;
+        b=cHEcWqfD22j1vMBsZZRQ9siQlUbV05ag8EY+bmxM7FvkqzWvpZwfPlWol4jfIGGn0L
+         neId4iiQCpukviL40woIQ4Ts6SbNOmfrcNBvPc6jorj1YqjjKcnOWaKOuvDiltqrNpPl
+         X6E86Oo2Zy5w+9roHWHOmgaOr7FEbY2uUXrtvjzuaangsTiAtV1KfmbHg9FraYRM4t94
+         aJPZaRvVABEZMXx8dpVokCg5yBQioRdtpKQgAsV02dCvR2zZlwHsrU4/rp56Z6fCW2wm
+         GUbD1Ra4AYLh0mdfiVzRVivCL7p9/26FqS9EZLFGmXCb2hJrjJuNFeVFFykdFRvXqdE/
+         CuyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhAIUv9FH1wUcVkb9T2H3PUo1jpUmGEeOkTPG9bfNm1O16Z3yYfR25uIZ4GNrN3N/vOB+oZMgqD7uyX/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNKX4kxRQCp0CNaYTYBS4ZstWe2GumKz00SuCt0GK7345tOuTF
+	NN+nlhFXmSkXtXzfHPAnCOMLoo6oNNZo2Qy1revx4xQEJH/EC+tKnyouIxVbRqLuFPEeLmv4c0A
+	lex4ldjJ7sDPtMs8oNWTQRaJRQOwPiaPLzkZGIOP1OESNTN3cyVPodNg=
+X-Gm-Gg: ASbGncsrCR9pt/p/bZeDDGyUeoWXPqq++qSVaoGNJ0SCYJNwVieH0QxfwuSEKFFOxnA
+	Wsz4f0XCTm5kBPBUVAD6jkcrBo9lAs5q0aR8fYYuZ6OhhEekNx04MlvqFn7NkiWUFaHVIfA==
+X-Google-Smtp-Source: AGHT+IGtjTwFhGJnFNLMLDet8Jpesm1DRqM/0SxZjPBi8thpDlxfIJBVXo2+YlA14mzTB1n9zfVP9EF4kPfA3J/EBNY=
+X-Received: by 2002:a17:90b:6cc:b0:2ee:a76a:830 with SMTP id
+ 98e67ed59e1d1-2f290d9876bmr24674940a91.24.1734424260980; Tue, 17 Dec 2024
+ 00:31:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALm+0cVd=yhCTXm4j+OcqiBQwwC=bf2ja7iQ87ypBb7KD2qbjA@mail.gmail.com>
+References: <20241217071814.2261620-1-arnd@kernel.org>
+In-Reply-To: <20241217071814.2261620-1-arnd@kernel.org>
+From: Marco Elver <elver@google.com>
+Date: Tue, 17 Dec 2024 09:30:24 +0100
+Message-ID: <CANpmjNOjY-XaJqGzQW7=EDWPuEfOSyGCSLUKLj++WAKRS2EmAQ@mail.gmail.com>
+Subject: Re: [PATCH] kcov: mark in_softirq_really() as __always_inline
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dmitry Vyukov <dvyukov@google.com>, Aleksandr Nogikh <nogikh@google.com>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Dec 17, 2024 at 04:11:21PM +0800, Z qiang wrote:
-> >
-> > On Sat, Dec 14, 2024 at 09:53:13PM +0100, Greg Kroah-Hartman wrote:
-> > > I'm announcing the release of the 6.1.120 kernel.
-> > >
-> > > All users of the 6.1 kernel series must upgrade.
-> > >
-> > > The updated 6.1.y git tree can be found at:
-> > >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.1.y
-> > > and can be browsed at the normal kernel.org git web browser:
-> > >       https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > >
-> > > ------------
-> >
-> > > Zqiang (1):
-> > >       rcu-tasks: Fix access non-existent percpu rtpcp variable in rcu_tasks_need_gpcb()
-> >
-> > I was AFK last week so I missed reporting this, but on riscv this patch
-> > causes:
-> > [    0.145463] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:274
-> > [    0.155273] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1, name: swapper/0
-> > [    0.164160] preempt_count: 1, expected: 0
-> > [    0.168716] RCU nest depth: 0, expected: 0
-> > [    0.173370] 1 lock held by swapper/0/1:
-> > [    0.177726]  #0: ffffffff81494d78 (rcu_tasks.cbs_gbl_lock){....}-{2:2}, at: cblist_init_generic+0x2e/0x374
-> > [    0.188768] irq event stamp: 718
-> > [    0.192439] hardirqs last  enabled at (717): [<ffffffff8098df90>] _raw_spin_unlock_irqrestore+0x34/0x5e
-> > [    0.203098] hardirqs last disabled at (718): [<ffffffff8098de32>] _raw_spin_lock_irqsave+0x24/0x60
-> > [    0.213254] softirqs last  enabled at (0): [<ffffffff800105d2>] copy_process+0x50c/0xdac
-> > [    0.222445] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> > [    0.229551] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.119-00350-g224fd631c41b #1
-> > [    0.238330] Hardware name: Microchip PolarFire-SoC Icicle Kit (DT)
-> > [    0.245329] Call Trace:
-> > [    0.248113] [<ffffffff8000678c>] show_stack+0x2c/0x38
-> > [    0.253868] [<ffffffff80984e66>] dump_stack_lvl+0x5e/0x80
-> > [    0.260022] [<ffffffff80984e9c>] dump_stack+0x14/0x20
-> > [    0.265768] [<ffffffff800499b0>] __might_resched+0x200/0x20a
-> > [    0.272217] [<ffffffff80049784>] __might_sleep+0x3c/0x68
-> > [    0.278258] [<ffffffff802022aa>] __kmem_cache_alloc_node+0x64/0x240
-> > [    0.285385] [<ffffffff801b1760>] __kmalloc+0xc0/0x180
-> > [    0.291140] [<ffffffff8008c752>] cblist_init_generic+0x84/0x374
-> > [    0.297857] [<ffffffff80a0b212>] rcu_spawn_tasks_kthread+0x1c/0x72
-> > [    0.304888] [<ffffffff80a0b0e8>] rcu_init_tasks_generic+0x20/0x12e
-> > [    0.311902] [<ffffffff80a00eb8>] kernel_init_freeable+0x56/0xa8
-> > [    0.318638] [<ffffffff80985c10>] kernel_init+0x1a/0x18e
-> > [    0.324574] [<ffffffff80004124>] ret_from_exception+0x0/0x1a
-> >
-> 
-> Hello, Xiangyu
-> 
-> For v6.1.x kernels, the cblist_init_generic() is invoke in init task context,
-> rtp->rtpcp_array is allocated use GFP_KERENL and in the critical section
-> holding rcu_tasks.cbs_gbl_lock spinlock.  so might_resched() trigger warnings.
-> You should perform the operation of allocating rtpcp_array memory outside
-> the spinlock.
-> Are you willing to resend the patch?
+On Tue, 17 Dec 2024 at 08:18, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> If gcc decides not to inline in_softirq_really(), objtool warns about
+> a function call with UACCESS enabled:
+>
+> kernel/kcov.o: warning: objtool: __sanitizer_cov_trace_pc+0x1e: call to in_softirq_really() with UACCESS enabled
+> kernel/kcov.o: warning: objtool: check_kcov_mode+0x11: call to in_softirq_really() with UACCESS enabled
+>
+> Mark this as __always_inline to avoid the problem.
+>
+> Fixes: 7d4df2dad312 ("kcov: properly check for softirq context")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-So should I revert this, or do you have a fixup patch somewhere?
+__always_inline is the usual approach for code that can be
+instrumented - but I thought we explicitly never instrument
+kernel/kcov.c with anything. So I'm rather puzzled why gcc would not
+inline this function. In any case "inline" guarantees nothing, so:
 
-confused,
+Reviewed-by: Marco Elver <elver@google.com>
 
-greg k-h
+> ---
+>  kernel/kcov.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 28a6be6e64fd..187ba1b80bda 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -166,7 +166,7 @@ static void kcov_remote_area_put(struct kcov_remote_area *area,
+>   * Unlike in_serving_softirq(), this function returns false when called during
+>   * a hardirq or an NMI that happened in the softirq context.
+>   */
+> -static inline bool in_softirq_really(void)
+> +static __always_inline bool in_softirq_really(void)
+>  {
+>         return in_serving_softirq() && !in_hardirq() && !in_nmi();
+>  }
+> --
+> 2.39.5
+>
 
