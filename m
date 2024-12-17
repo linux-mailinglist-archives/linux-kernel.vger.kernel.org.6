@@ -1,127 +1,144 @@
-Return-Path: <linux-kernel+bounces-449184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F4E9F4B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:39:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE1E9F4B1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F4C1888AA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:39:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8365316EF9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2031F37C9;
-	Tue, 17 Dec 2024 12:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B421F3D40;
+	Tue, 17 Dec 2024 12:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KoYWFBPN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7v/dRQU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547B1F2C23
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697CA1D47D9;
+	Tue, 17 Dec 2024 12:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734439169; cv=none; b=Uq1DvO697MTNPIrnWVIFihyA26QcPNqaLE6Dn6vmbDjAVIYyN4C2BzRpHBCdaWIZeCFCeqg2AI7CTYN+vjxymR7hAGmX2GghOnn9erM4TXVdadi/HNwOzuG/4JAA4J86e/sswEBbVUlr9R/9z3dvstagIU16EeTbJonvBGmxyF4=
+	t=1734439219; cv=none; b=gTS6Tq73RwbeFIgxsez96sJwVzr6LcMY/3UUr3iCRLwpgWekOeZTZphW2RLuyaM964jb+Szv6Zk98wd4iImRHtVfpxwWUJJsHl72GpIsFzFtbSAQ5zdVDZWKkD1y+NZXrzzoOCrAJ/xpEClrISlaneJWNpSfyt28REKuDCtFlMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734439169; c=relaxed/simple;
-	bh=Hmju1iOLKKopVgXqpmGGz1rnfVBjAnp4yWxkW52/q7A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=iLqEYVO6EVX6CR5cB3SOAMIqkzf48J07eQBlFNuoviCncI4thvUpnc3c5NQB/xsY3ANp+ZefYszQI4S2Ts3sisSpFGFmZZNwk6jFBQmPBveA/pZdlbDRqHCkIM//7fRAXJnDDWF8Q7depm+s7nJMOwesnJpayEPyUqfbJ95ii8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KoYWFBPN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Hmju1iOLKKopVgXqpmGGz1rnfVBjAnp4yWxkW52/q7A=; b=KoYWFBPNKhf9S+KxTOkzRGkST2
-	KfkIqDW5feg+r6JZDH7KRqzjKyOpLD6o+kKPCiRjQZgLkW7NKessOFMr4OmNg3zHW01CGwnAEzjBT
-	F0OzBqcvKVMAh8CFxrWzB8S+W+HVtaAkV7kEw3yP9l3TvXtZxPO4X0eiaxLmCynuG0ePVrfj++hgB
-	t3aDmtY2RvOOywtH0ocUupjUoNTt1pApDfD1GbQw5pY/O4jKFIWpUDTu4OGuY37/fGg9UGaATNJWV
-	HC6FtZCWf8E9mH+D4KQMqli6rhdfzoPTgXMPW7kmg9X/l3cSHA5Tu4HjzhSOScqQybHRm6Pn1eycF
-	dHHBiQng==;
-Received: from [89.27.170.32] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNWqr-000000054da-32wx;
-	Tue, 17 Dec 2024 12:39:01 +0000
-Date: Tue, 17 Dec 2024 13:39:01 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Sourabh Jain <sourabhjain@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
- Tao Liu <ltao@redhat.com>, Kai Huang <kai.huang@intel.com>,
- Ard Biesheuvel <ardb@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>,
- Rong Xu <xur@google.com>,
- =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_1/9=5D_x86/kexec=3A_Disable_glob?=
- =?US-ASCII?Q?al_pages_before_writing_to_control_page?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <tksesvqt266x6a6mnoi5aqa3fhsoyo7mbp277elrrft5eieoba@7ospdizq22y6>
-References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-2-dwmw2@infradead.org> <tksesvqt266x6a6mnoi5aqa3fhsoyo7mbp277elrrft5eieoba@7ospdizq22y6>
-Message-ID: <D5246E62-F850-4869-8365-0399E0C1C82A@infradead.org>
+	s=arc-20240116; t=1734439219; c=relaxed/simple;
+	bh=c+2nN11SpmwykfvNiTZxUP+tdaucBAgLnhj7stWOeYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u867xxEN4B/wBFMqZSdHAdoPh4/c2gD9LoaFJ8SMlBN8T4hykYtTH5NkSu6SlkpWgzqrjdz2WcqVdVyPmi+Dc2cFU9k2jEyl+ZQqqAJbZeECyLlELwfJl1XNehcCiE7bRiCb04cxyxlX09kEyZctYzbKhK6YOm3OMhH6n/elWn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7v/dRQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E930DC4CED3;
+	Tue, 17 Dec 2024 12:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734439219;
+	bh=c+2nN11SpmwykfvNiTZxUP+tdaucBAgLnhj7stWOeYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u7v/dRQUutWCPYwwMw0y475GC80aZsD9ByturV+TE4FIIR+vl6uJYkrbmctSSYPK3
+	 pKC1hQnxmJrucXGVV0ZCRQv3eJXEJOqgfAKUeCrmcYHBeomPL7jRNXJIDWb6AmKTVL
+	 5oPBAle1eTelk7cg/PJRDfKkCM4wwAXH+4D0KPRts5c0qIluutpnJLDoYYOI6zw/wc
+	 tU5P1QfDNGWkZmzy1PUTNMHea6rNykM/Crj+g7JfEhyoby0pO3EohWzRV7GTkrmEaW
+	 5QPuo1p/BB5aMkNpEZvExRNrdGvePZt0LYwlJRWa0xzkhaOM5NoLNU6Uim6zVpjlr8
+	 H5rtxRAsvCJIA==
+Message-ID: <aa4400bd-b838-42d6-a58e-1eb1c99af218@kernel.org>
+Date: Tue, 17 Dec 2024 13:40:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindings: media: add support for video hardware
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>
+References: <20241217-add-venus-for-qcs615-v5-0-747395d9e630@quicinc.com>
+ <20241217-add-venus-for-qcs615-v5-1-747395d9e630@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241217-add-venus-for-qcs615-v5-1-747395d9e630@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 17 December 2024 13:25:48 CET, "Kirill A=2E Shutemov" <kirill=2Eshutemov=
-@linux=2Eintel=2Ecom> wrote:
->On Mon, Dec 16, 2024 at 11:24:08PM +0000, David Woodhouse wrote:
->> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->>=20
->> The kernel switches to a new set of page tables during kexec=2E The glo=
-bal
->> mappings (_PAGE_GLOBAL=3D=3D1) can remain in the TLB after this switch=
-=2E This
->> is generally not a problem because the new page tables use a different
->> portion of the virtual address space than the normal kernel mappings=2E
->>=20
->> The critical exception to that generalisation (and the only mapping
->> which isn't an identity mapping) is the kexec control page itself =E2=
-=80=94
->> which was ROX in the original kernel mapping, but should be RWX in the
->> new page tables=2E If there is a global TLB entry for that in its prior
->> read-only state, it definitely needs to be flushed before attempting to
->> write through that virtual mapping=2E
->>=20
->> It would be possible to just avoid writing to the virtual address of th=
-e
->> page and defer all writes until they can be done through the identity
->> mapping=2E But there's no good reason to keep the old TLB entries aroun=
-d,
->> as they can cause nothing but trouble=2E
->>=20
->> Clear the PGE bit in %cr4 early, before storing data in the control pag=
-e=2E
->
->It worth noting that flipping CR4=2EPGE triggers TLB flush=2E I was not s=
-ure
->if CR3 write is required to make it happen=2E
+On 17/12/2024 10:17, Renjiang Han wrote:
+> Add qcom,qcs615-venus compatible into qcom,sc7180-venus.yaml for the
+> video, and let qcom,qcs615-venus fallback to qcom,sc7180-venus on
+> QCS615 platform.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+Read that message fully.
 
+<form letter>
+This is a friendly reminder during the review process.
 
-Well, until we flip to the new CR3 the read-only PTE can just get reloaded=
-=2E But after CR4=2EPGE is cleared, of course they won't be global any more=
-=2E So they will get flushed (again) when CR3 is reloaded=2E
+It looks like you received a tag and forgot to add it.
 
-Maybe it could run a tiny bit faster if we change CR3 before CR4? I don't =
-know that we care about microbenchmarking kexec to that degree, but I may t=
-ake a look=2E=2E=2E
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
