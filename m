@@ -1,89 +1,100 @@
-Return-Path: <linux-kernel+bounces-448733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452049F44CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:08:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9568C9F44CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303DE1618AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5088D160F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36316EB7C;
-	Tue, 17 Dec 2024 07:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhEJSAO0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A1D171092;
+	Tue, 17 Dec 2024 07:08:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73FA653;
-	Tue, 17 Dec 2024 07:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69161714BE
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734419262; cv=none; b=mcprLTk+BAKUZQXgguxRHRlapgoKMuEvLK+HkWSf2nj/XIITTaYC4HfzHMMjvWUzKfvsEQYxlrCBLtZTi3Xjpx/BqtLKrmGoY0epXAUp/fAMtC6LbdstFnJtVyTOvWM4xIWt4V3bQFwz18H/rBXtzq9zYlXcrVNG4ursyyVoaTA=
+	t=1734419286; cv=none; b=bc8Px5Dcm9kitCngc07n/s73IzH5WVrXHI4sPJz97KU/fSw1cUfpuVfEEfSQCSFBbP9jRtQVUU+WgB24iisBc1s853lfmeHlZyp3vJJmmpZiCAwrabGglc4OuMqgtJcKwb+Gzx+47nwvStrZq0HXgmjEOmLwjVOZH70SUQgt1vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734419262; c=relaxed/simple;
-	bh=5pNv1T3alykB+CBmVUBDGGead9uQSVHWIwqxJDAEdLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H74p138l5uYL442K6g0L43ayHVFjKKgiWn1tnLLsxCGBGZU6UREWB0RyVQu5arftGp4RKvYnN1uinP6gg9PL1jABMS8+zci8ZitAnbacbcZ/BHHlj4B4Whc9B1NCNRgAP5P6OizGMjtHptF4EuOpawnrxrpgPLx7teYfgMu+P04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhEJSAO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A640C4CED3;
-	Tue, 17 Dec 2024 07:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734419262;
-	bh=5pNv1T3alykB+CBmVUBDGGead9uQSVHWIwqxJDAEdLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhEJSAO0xDkczEnGSQrwYr7gbOUFKz1QFvbhU76Go4rxPIe041b/qSWNgT1X9JSqO
-	 PM8N+tB3axhHT9yiVuY5pMhI5cPypp1z+8ttpGvyJt/rczfRQdNo+zA50tGMUZ0X+6
-	 0mN/HCFStdqOYetFZzIHcrX4X024iwAOp/zEra9xq6Ll+zjVqnEWz/8HqNv3yIzrfW
-	 bTYQVdEt23cxKHM+YYw/VpQv0Wld8VsgtYzYrqAP8ZZJFPm32yJA7ZOcysL7Cc/JPZ
-	 K+pWKdUbbIxRE3YeXwWqr9DAEfBW0S+d6UPGbvW10OfxN98r9BWQds/1uLnav6XRCD
-	 As3upYwGDgnjA==
-Date: Tue, 17 Dec 2024 08:07:38 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takashi Iwai <tiwai@suse.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Frank Li <Frank.li@nxp.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] ASoC: dt-bindings: audio-graph-card2: add widgets
- and hp-det-gpios support
-Message-ID: <nxcoukgiwtcsowi2uxytxa32mdp5dhl4tvnetpd2spti7oiiu3@mpqbv43ivznc>
-References: <20241216145039.3074-1-laurentiumihalcea111@gmail.com>
- <20241216145039.3074-4-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1734419286; c=relaxed/simple;
+	bh=0cYUGOJCMk9hzrUYNGZJvUmOELe0ky4OpSutraZO9xY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tCUSDy1i4q0JMWdv7LZzDAOf5lvUH/Dc1LYDVVsdZrS4J98V2VBbIsWzXf+sOuZKR40Ob0kgxZrNO6G/sBSpROXdOZzZFwVDhgXygHhpUzp67rIge+n+zvvMOY4+L0WxkbzM6qvvBU6JBSMyBB/Ar+cHjbftKXVaoA4iTpasz/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a9c9b37244so103692075ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 23:08:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734419284; x=1735024084;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRDwN1zpEWcBzT1VaG16wQzKWgPiascUQWIG+YKo2t8=;
+        b=fqCtgZcadREx2qcYvG3dTIHPUUx/D/pi2DLqNP3LmzlIbljflqlHOHgaibYGIUcQ4Q
+         zSCoWGDv3V+Jsued9gbTyiXxrOoOj1+H6UCBn9MqXYMORV0PYc93656vA7lX3pVUSJii
+         p4FtFqyk73nMhIcJcXeN/kGgH+VxMnvdOMqnioLq9YhO6ABztKWmNa/tGn1NwZAqhzns
+         ZjCOLI2QiYbOyupNF7D1zNj2XebeA6TKnGVjyIpzXTtrrdVd4GCiddUi9/uM/YagaVf0
+         iX3b6Hi34Mwq4vf/Q4092KEBWvkn+20erPcShPziQzGaO7n0F/Uy1i5Ad69UA1xFlrbB
+         JWyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj+kObxFfdZyp0qExfflNzO8zDq5DeAo8ORO3FXAgX0Yna8lWHqRMrn+gGHScngZGb42XTG6JeeKDmA8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0vkB1ghdZmjgN4gwVgU0ljXTF4Q7cPYDPN66NeyfSH50WA/ZZ
+	bIreYuBMho7XJq+0YZvi4y9RQxXtLzbUBqiGWaQfvD1OXV7wKofKynENe18hjYF6/aok26QhN8w
+	HY5YUj7sFOz8Txr2vRUcqM+ySmQVhbqT3GTbE4NqHdzlZA/NLtz2Umnk=
+X-Google-Smtp-Source: AGHT+IH3TVKzgzi+hMwYzO8I6JCvRep3STNawVlhYQTcJYYxYeDO/5IrYAcVZ0f3Eq89idW5DxD31qNagFQCCAtYbUD/FBjFNorF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241216145039.3074-4-laurentiumihalcea111@gmail.com>
+X-Received: by 2002:a05:6e02:3b89:b0:3a7:dd62:e954 with SMTP id
+ e9e14a558f8ab-3baccadd1edmr32269245ab.0.1734419284013; Mon, 16 Dec 2024
+ 23:08:04 -0800 (PST)
+Date: Mon, 16 Dec 2024 23:08:03 -0800
+In-Reply-To: <tencent_A2CD92F8865949AE6ED1AED2CC9327C50606@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67612353.050a0220.37aaf.014c.GAE@google.com>
+Subject: Re: [syzbot] [gpio?] general protection fault in gpiolib_seq_stop
+From: syzbot <syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com>
+To: brgl@bgdev.pl, eadavis@qq.com, linus.walleij@linaro.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 16, 2024 at 09:50:37AM -0500, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> Introduce the 'widgets' property, allowing the creation of widgets from
-> 4 template widgets: Microphone, Line, Headphone, and Speaker. Also
-> introduce the 'hp-det-gpios' property, which allows using headphone
-> detection using the specified GPIO.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../devicetree/bindings/sound/audio-graph-card2.yaml          | 4 ++++
+Hello,
 
-I have impression you are duplicating audio graph properties instead of
-referencing proper schema, but considering that the bindings
-audio-graph-card and audio-graph-card2 differ only by number "2" without
-any description, not sure what is correct here.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: lock held when returning to user space in gpiolib_seq_start
 
-Best regards,
-Krzysztof
+RBP: 00007fe66f38b090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000005 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007fe66e775fa0 R15: 00007ffe92372dd8
+ </TASK>
+================================================
+WARNING: lock held when returning to user space!
+6.12.0-syzkaller-10299-gc1f7eb90d8d5 #0 Not tainted
+------------------------------------------------
+syz.0.18/6685 is leaving the kernel with locks still held!
+1 lock held by syz.0.18/6685:
+ #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
+ #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
+ #0: ffffffff8e96d590 (gpio_devices_srcu){.+.+}-{0:0}, at: gpiolib_seq_start+0x13e/0x270 drivers/gpio/gpiolib.c:5039
 
+
+Tested on:
+
+commit:         c1f7eb90 fs/seq_file: Exit the subsequent process when..
+git tree:       https://github.com/ea1davis/linux gpio/syz
+console output: https://syzkaller.appspot.com/x/log.txt?x=12dfb4f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8d97faf7b870c89
+dashboard link: https://syzkaller.appspot.com/bug?extid=b95d0c98f01e7a95da72
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
