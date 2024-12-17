@@ -1,173 +1,170 @@
-Return-Path: <linux-kernel+bounces-449383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AFD9F4E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:45:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F3D9F4E29
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1D3188762E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F20C1887C1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407FC1F6674;
-	Tue, 17 Dec 2024 14:45:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B769B1F6666;
-	Tue, 17 Dec 2024 14:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF7D1F63CB;
+	Tue, 17 Dec 2024 14:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ls2Pg/iE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606B61F2391
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734446736; cv=none; b=mwv68H2vkcy/sXwClqiaJNWMNfP9c+yPArEQ8JdeUj5qXBviG/i84REDpQCao378Pljlf8YCHXvQnKyNwvmXVfd+YIylypakEzQDZ9e8Yhym+By5+TzFTlaUQ6KtgrCckF0UkEYjO6vchGi8NFCrCPlXFem3GNka+cU3LcL4mq8=
+	t=1734446781; cv=none; b=fpde6ZEVJ7A+Bvw2xQC9Zd7y15ycAxiwgyFWW+OWL7wSoVltcOaS8lgqlZ1FJ6dnTRcpoSEZRmsN+F6FrouH6DEbxE8fAo4qHEdP68lTT8p5ewTAl/BgmBocFEUQuuQn0azKNI8jNmTnxtimNgpVvpvNtwJ3PWA6glfiZc+OPPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734446736; c=relaxed/simple;
-	bh=IAwqtMs7TqeoxBD46ND3JggXmA/k0dq0HPg7U+aaru4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV7iIL9KBYOT/ZB0ZRYNb8jNTS/7D7PtcDQQEqsPMPRGKqc1YfmE29Tae1UzL/JfRDnj3gRz44fWS8l06467DNNWfEBNsBb3+7GBnYx4P6SfhmA5NciPFpY0BetCRgCF4BfeoGR8AT0WqhPP/SIeaQQN+JecKWVBSeXaWmL6vzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 360D21063;
-	Tue, 17 Dec 2024 06:46:02 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59123F58B;
-	Tue, 17 Dec 2024 06:45:31 -0800 (PST)
-Date: Tue, 17 Dec 2024 14:45:24 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Johan Hovold <johan@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>, andersson@kernel.org,
-	konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-Message-ID: <Z2GOLFqnexEalBx_@pluto>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <ZytnRc94iKUfMYH0@hovoldconsulting.com>
- <ZyvLktLUZOGP-LH5@pluto>
- <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
- <8d42682b-0fa7-3962-da12-728cfe64903b@quicinc.com>
- <Z0BC203BhGEmXcJi@hovoldconsulting.com>
- <Z1HceQegfMl07qj_@bogus>
- <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
+	s=arc-20240116; t=1734446781; c=relaxed/simple;
+	bh=ZYWFGeyXQ1mkGQsqFz5HmlmiGpfux1ORE5YnV17FwwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nB6tmRYxG0cuCKWCYBOaqBDlZcGByke3C4xydVTPXwqA8Hgew1nIY8bUJSZUasSgOTA0MH3jh8AV/X5KTsgJXPgX9sdgVlHh+W67FRwPSiPp53H0BH6a28ctxXd8210mCIF2i9Vjr7Ar7qsrZrL8qXr3Qywd7ublYIhvC5gAE/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ls2Pg/iE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734446777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eDQnbhzbULoS+W3TBQiABSNsadwzS0IORV98NaKZMJE=;
+	b=Ls2Pg/iE5UIG1QQYytx0FdeygeOk1hNRQlE/HVvnOh/d7JYJ4hne2zpfvgRbtS0pJYNkYd
+	pgfgmA4l/Pifv4LDXFA6t9pa+AHEWPqR5LUrJj6qwTrq8r1aGNQIvYLHJNSSC8NNBDHYEh
+	bqPFrE7XiSKkCR5m2xmtsaykHeOs+lA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-b4bYC-uOP-G4Xzu2nGsNmA-1; Tue, 17 Dec 2024 09:46:16 -0500
+X-MC-Unique: b4bYC-uOP-G4Xzu2nGsNmA-1
+X-Mimecast-MFC-AGG-ID: b4bYC-uOP-G4Xzu2nGsNmA
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4362552ce62so29976175e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:46:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734446775; x=1735051575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDQnbhzbULoS+W3TBQiABSNsadwzS0IORV98NaKZMJE=;
+        b=HG1DLy74/zHw7KjFkFXzzCs5vh5Or3nbkApScgFGtJG+k3l7z7eydtuJpWQ/KTiMm1
+         he6dKs8CYquXRV71u3L3Z9hzcVjDdRlk2i7AH53SKtJ8JYzjxIl9KmBJeozgAamEX6A2
+         R7ptfDxYloRQCGHiezKA0QhtQP0ksw5rClbuUzQD/pYv2hInlsuahGdJMTenWnHjXrJE
+         oHtPSk2Ff6xyVDdTFqAwULx1ajDiYmxdXt7JeEgTjDijbO22mOrw+hOaM2ink8HIt1J2
+         c+GpYALYWQiDHhsOH7OJx5zK4JQnwrZtnInB7Mg0534RFb4y/eEHidcRWSVrHG19NStX
+         SRHw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2aOUm99+0OwK2sYzP+a7Z6Sq8MhhVc1Ftx4/OcXTKtr/00WRK3HNAzhyMOeGnpoN3DVwB+IYCgmky6Tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp0xtG/VAVaT49XraFVrIKiA1aRBpQ2oHFszPPDHZ+s/FnKtSt
+	AnwKmPW33T2VhYoplICzrpVNFzGqmDT30Xo2fyZMI9t0gNCqthbde5qsgqBG6TA62BsG+XsDBDc
+	+5lDgDyYc1tFrda2Ruw4VUnOEqackF8kQct4OGQM8aW+EDUeZw293dI+Ykxgk8Q==
+X-Gm-Gg: ASbGncsi1rdAI4bqYVXdBhA/f99kA5RHosezwU0giMe3HFWJhc3t+FKEd0x1oS9j2Hv
+	BPckvXG5E5v2kRbjWbMQ+zTsy4MIIZO+BfbgFg549hLoixEjqHrAGe0CG3mEzkL9ooe1HyU59mU
+	lID0khmGNucqr7zMmh4gB1d2ArahExP09XTUqEElcGSqpkLfjFNK3KxjGy7q1CPkNEQ339lXgxz
+	lFm1XkUBrvr4YGp3XNlpGsfbUlAlTnkrsQnruRhRnPu8r8H6h23Dfr4lb5PxbKXEMgmd2h51HZz
+	9sgewPids+EVjqgDpkVn
+X-Received: by 2002:a05:600c:4e88:b0:434:a929:42bb with SMTP id 5b1f17b1804b1-4364769b321mr39642475e9.18.1734446775079;
+        Tue, 17 Dec 2024 06:46:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEb7FOvU3aK3NlCVSo7lhvRfjnfY6sZdz6YbmqcryV9O2xsfMlBv61Xb0L2X14JUy9wFlLD9Q==
+X-Received: by 2002:a05:600c:4e88:b0:434:a929:42bb with SMTP id 5b1f17b1804b1-4364769b321mr39642125e9.18.1734446774667;
+        Tue, 17 Dec 2024 06:46:14 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8012249sm11244064f8f.10.2024.12.17.06.46.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2024 06:46:14 -0800 (PST)
+Message-ID: <301714d8-0723-4881-83e8-24523c121bfe@redhat.com>
+Date: Tue, 17 Dec 2024 15:46:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d313e40b-fa8f-a534-5037-98536ee25044@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/6] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ John Ogness <john.ogness@linutronix.de>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
+ Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20241204160014.1171469-1-jfalempe@redhat.com>
+ <CAMuHMdU925NiJDy4fOcQhA=jp8=79rZ3h5-TYxCjzkGwqQdKOg@mail.gmail.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <CAMuHMdU925NiJDy4fOcQhA=jp8=79rZ3h5-TYxCjzkGwqQdKOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 17, 2024 at 05:55:35PM +0530, Sibi Sankar wrote:
+On 17/12/2024 15:19, Geert Uytterhoeven wrote:
+> Hi Jocelyn,
 > 
+> On Wed, Dec 4, 2024 at 6:41 PM Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>> drm_log is a simple logger that uses the drm_client API to print the kmsg boot log on the screen.
+>> This is not a full replacement to fbcon, as it will only print the kmsg.
+>> It will never handle user input, or a terminal because this is better done in userspace.
+>>
+>> If you're curious on how it looks like, I've put a small demo here:
+>> https://people.redhat.com/jfalempe/drm_log/drm_log_draft_boot_v2.mp4
+>>
+>> Design decisions:
+>>    * It uses the drm_client API, so it should work on all drm drivers from the start.
+>>    * It doesn't scroll the message, that way it doesn't need to redraw the whole screen for each new message.
+>>      It also means it doesn't have to keep drawn messages in memory, to redraw them when scrolling.
+>>    * It uses the new non-blocking console API, so it should work well with PREEMPT_RT
 > 
-> On 12/5/24 22:31, Sudeep Holla wrote:
-> > On Fri, Nov 22, 2024 at 09:37:47AM +0100, Johan Hovold wrote:
-> > > On Thu, Nov 14, 2024 at 09:52:12AM +0530, Sibi Sankar wrote:
-> > > > On 11/8/24 20:44, Johan Hovold wrote:
-> > > 
-> > > > > > On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
-> > > 
-> > > > > > > Second, after loading the protocol and client drivers manually (in that
-> > > > > > > order, shouldn't the client driver pull in the protocol?), I got:
-> > > > > > > 
-> > > > > > > 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
-> > > > > > > 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
-> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
-> > > > > > > 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
-> > > > > > > 
-> > > > > > > which seems to suggest that the firmware on my CRD does not support this
-> > > > > > > feature. Is that the way this should be interpreted? And does that mean
-> > > > > > > that non of the commercial laptops supports this either?
-> > > 
-> > > > > Yeah, hopefully Sibi can shed some light on this. I'm using the DT
-> > > > > patch (5/5) from this series, which according to the commit message is
-> > > > > supposed to enable bus scaling on the x1e80100 platform. So I guess
-> > > > > something is missing in my firmware.
-> > > > 
-> > > > Nah, it's probably just because of the algo string used.
-> > > > The past few series used caps MEMLAT string instead of
-> > > > memlat to pass the tuneables, looks like all the laptops
-> > > > havn't really switched to it yet. Will revert back to
-> > > > using to lower case memlat so that all devices are
-> > > > supported. Thanks for trying the series out!
-> > > 
-> > > I have a Lenovo ThinkPad T14s set up now so I gave this series a spin
-> > > there too, and there I do *not* see the above mentioned -EOPNOSUPP error
-> > > and the memlat driver probes successfully.
-> > > 
-> > > On the other hand, this series seems to have no effect on a kernel
-> > > compilation benchmark. Is that expected?
-> > > 
-> > 
-> > Hijacking this thread to rant about state of firmware implementation on
-> > this platform that gives me zero confidence in merging any of these without
-> > examining each of the interface details in depth and at lengths.
-> > 
+> I gave this a try on Koelsch (R-Car M2-W), using rcar-du.
+> Unfortunately I don't see any kernel messages, and my monitor complains
+> about no signal. Does this require special support from the driver?
+
+It doesn't require a special support from the driver. But as it is the 
+first drm client other than fbdev emulation, I'm not surprised it's 
+broken on some driver.
+I know it works on virtio-gpu, nouveau, amdgpu, and even on a OnePlus 6 
+(Qualcomm SDM845/freedreno), without requiring driver changes.
+
+Do you have a serial console on this device, to check if there is 
+something in kmsg?
+
+Best regards,
+
+-- 
+
+Jocelyn
+
+> 
+>      CONFIG_DRM_CLIENT=y
+>      CONFIG_DRM_CLIENT_LIB=y
+>      CONFIG_DRM_CLIENT_SELECTION=y
+>      CONFIG_DRM_CLIENT_SETUP=y
+>      CONFIG_DRM_CLIENT_LOG=y
+>      # CONFIG_DRM_CLIENT_DEFAULT_FBDEV is not set
+>      CONFIG_DRM_CLIENT_DEFAULT_LOG=y
+>      CONFIG_DRM_CLIENT_DEFAULT="log"
+> 
+> Switching to fbdev gives a working display, as before:
+> 
+>      CONFIG_DRM_CLIENT_DEFAULT_FBDEV=y
+>      # CONFIG_DRM_CLIENT_DEFAULT_LOG is not set
+>      CONFIG_DRM_CLIENT_DEFAULT="fbdev"
+> 
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 > 
 
-Hi Sibi,
-
-> Hey Sudeep,
-> 
-> Thanks for taking time to review the series.
-> 
-> > Also I see the standard protocol like PERF seem to have so many issues which
-> > adds to my no confidence. I can't comment on that thread for specific reasons.
-> 
-> ^^ is largely untrue, a lot of finger pointing and a gross
-> misrepresentation of reality :/
-> 
-> The only major problem that X1E perf protocol has is a firmware
-> crash in the LEVEL_GET regular message implementation. This
-> pretty much went unnoticed because of messaging in perf implementation
-> in kernel. Given the fastchannel implementation isn't mandatory
-> according to spec, the kernel clearly says it switches to
-> regular messaging when it clearly doesn't do that and uses
-> stale data structures instead. This ensured that level get regular
-> messaging never got tested.
-
-You claimed this a couple of times here and on IRC, but sincerely,
-looking at the fastchannel implementation in SCMI core and Perf, I could
-not track down where this could have happened in the recent code
-(i.e. with or without your recent, welcomed, patches...)
-
-When FC initialization fails and bailout it says:
-	
-	"Failed to get FC for protocol %X [MSG_ID:%u / RES_ID:%u] - ret:%d. Using regular messaging."
-
-... and it clears any gathered address for that FC, so that in __scmi_perf_level_get()
-you end up skipping the FC machinery and use messaging
-
-	if (dom->fc_info && dom->fc_info[PERF_FC_LEVEL].get_addr) {
-		...
-	}
-
-	return scmi_perf_msg_level_get(ph, dom->id, level, poll);
-
-Now this is done ONLY for the FC that specifically failed
-initialization, i.e. identified by the tuple PROTO_ID/MSG_ID/RES_ID
-(as stated in the noisy message above where MSG_ID is specified) NOT for
-all Fastchannel, so you can have an FC successfully initialized only on
-the GET but failing in the SET, so only the GET FC will be used.
-
-I dont really understand how the Kernel was misbehaving and using
-instead stale data, neither, if this was the case, I can see where this
-issue would have been fixed.
-
-To be clear, I am not really interested in throwing an argument here, but
-I sincerely dont see where the alleged problem was and how was fixed (kernel
-side), so I fear it could be still there, hidden maybe by a change in the
-platform fw.
-
-Apologies if I missed something along the history of this..
-
-Thanks,
-Cristian
 
