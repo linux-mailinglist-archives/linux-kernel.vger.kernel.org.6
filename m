@@ -1,141 +1,302 @@
-Return-Path: <linux-kernel+bounces-450024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1EE9F597A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:24:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BC59F5981
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC27A1636E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:24:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2845169E10
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C881F8ADD;
-	Tue, 17 Dec 2024 22:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D611F9411;
+	Tue, 17 Dec 2024 22:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hKrjvHQJ"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AIt9gr5v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9372E1D9A63
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5F71F8ADD
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 22:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734474270; cv=none; b=gjMrPXZdoiWkjca68eQ7BSqlPVjutYg54hSHLXvUsa0JgmCvIP5U53pPG4Z38PeDH+UFOaH0drmwljL2nxko7OG4HVlylu4VTWRVAdAPKNyVs/sq12VAtT91/sczCX5TUKEiWjcJLgBvvqh8718hSn1jgbpvs6wzoleFTwYKk+s=
+	t=1734474443; cv=none; b=IbyC358kNSiRcctkEv2q4rQmB6GQ2p0uYT1l/1SUlkztln6tsfbBcMKzv15GFX2q38PSIRaF1JWN70aTiDAZv8ZjhWRBvsjTpxbkBbZgz+OuQpvRrBrVYiWvBRkQKmZ0FhPCs4kID1aQdurBXz+kuQxeVmVdEh9c6eILriqEf9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734474270; c=relaxed/simple;
-	bh=tBC+aTX5XAIGgGHuDRt0Rt7ji1vMfYTw+73UoqI64Gg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PabCboekxbk/ACnxuy7QQJ3m6azizyGO6fQ/g2gV4JGoZKejanoMDJ+XgSp77FbzlucLyThDXw3MT7QecWqjyVzL0rHDt2QwFRzW95+z02R/X57xsXwrCwKpjYKf+1TYH5c/lO85z+QI4RQdI2VuUkOQXgDdJu2duFIcNvdjIiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hKrjvHQJ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa696d3901bso1120661666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1734474267; x=1735079067; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CR25to9Z7LCRWh3Dep4GmmASyUYDd1JTk1/fy6GdpKA=;
-        b=hKrjvHQJZ+4+FUBJpcN6qnuDBeJSczunP/1PeF3/k10kFxieOcRwaIF0Tmum+cs9Cj
-         5Ase2V6dxp7997eXWN0b4yKM+vOunLCWWLehnl1T7jD3kf0EchoAFwLNDb5jP9DOOdyH
-         bdwFDpMHh9Skv4lv4LYoNsTJB17p3wQJR2KwQ=
+	s=arc-20240116; t=1734474443; c=relaxed/simple;
+	bh=06H2slDRygKzCmfmRsSPr7vcLYgfuymJUB01BSzf1yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mHmuoIkc+vchhlnPI9af3eN4DbxFjRCIcio+RfnnreS4t41lQK1BOMdiLaqUl51aNriz5lIjaxy7IH3k2U3gbemg4oplzxbHpyBZQDLEzNfXqYO9qulzRrY65EW8huvZQ5GARM78pSaETHBpOMOdtPrTb7METTSvmZNbVc+q3k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AIt9gr5v; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734474440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4/O76bQ9DP7a5739+a84uc4ET8V42KerklZL0T+JTZM=;
+	b=AIt9gr5vCwXoB+yFGFqtQPZo4jsLV0RKFfV6eG22j3nVMSMpaIiQ+zjCPtXM8ytOe/bV9X
+	wK5MysxToXluTOLQyZGUhIn3T6vc+gXuaagqk8UXyimSgcs8X7dfudWgMsg6pW+dVS7APu
+	52yi+l8lVQDwu8SqGS6Z6jZJ8OsfBVU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-F9Rt9jJ8PZqIZoNKezwC5w-1; Tue, 17 Dec 2024 17:27:19 -0500
+X-MC-Unique: F9Rt9jJ8PZqIZoNKezwC5w-1
+X-Mimecast-MFC-AGG-ID: F9Rt9jJ8PZqIZoNKezwC5w
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43582d49dacso17817945e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:27:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734474267; x=1735079067;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CR25to9Z7LCRWh3Dep4GmmASyUYDd1JTk1/fy6GdpKA=;
-        b=f0iVc21FRQUy/Uzw4yggMPMifGLUjDUCDgiRpxt91oCJNjTYe47ZyAhyL3w2EunnD5
-         b2dHJm/bIazYu0elJhJyhv1xLSX27rcx7ifm/Mpif/YAKO78eEuHkQHqCRxrEgaHTvkb
-         keePmoQhgLwcw4eIGNlShj9oO1UYL0dhv+a1Aq11jTI2bF5vZ+WdyX2nm+iF0J0r0c5k
-         bt8pfUgURF9SiqkSejtJp+8fyve2RhM0hFNEVkO3UgUkl/IWgEyC37VduOVu4dXW6h+V
-         tRy78ZqBwgoCIBQJEqO8bZnfneoWHdP0phEBPNskHnoCLnSMJ25LFasfpeQ/Q6wxMVjM
-         1eWg==
-X-Gm-Message-State: AOJu0YzyDPawqnLo4kYXg/1j62xEBiDa+o9YRvuWiKQLjoYy0vmmDDSw
-	VxTl9u0aNJVoPjGe5IueIycpMPaWgeO+lqitWJlspBrVq1hyKtJovS8CSLEvM/Soltw417D6xsj
-	x+4U=
-X-Gm-Gg: ASbGnctQ5jFP/oTsHR2dMT+QSo2uiUfGD01moO5/Tz/9r8V0pdZLoulY8uOyql6Mwcm
-	im7O3LXeFAOtbLpdCWwggX2jnv+HPbvLCa5+fJwz8pvKQhDzkmocz7Elu9aNMuV4N6/iAGDzC0W
-	ZIJGXsCffdgVQS4W1gul20NgJSWf/wZkMfXlSrKgck/1+2JlYX4p3Xi2IWOPDoGpAAlOSGoqNKM
-	xw4iHMnUpdiJXh4zXbX+eZ0elq3+P8oDdujS8USmEZsmGOlMShmOVVK5n5JIopKwpZEb2PwIk2U
-	LvE4ysGHt7zEp7q19tE/qBnLft2esKw=
-X-Google-Smtp-Source: AGHT+IGJ3qREkMQv4oA4Zg2ca/Cm3aOZXwTJCheXXk3cCqSWoVXKoSoXP30iLOKMumz/X8amYWjvOw==
-X-Received: by 2002:a17:906:3151:b0:aa6:a572:49fd with SMTP id a640c23a62f3a-aabf49079damr32009666b.54.1734474266715;
-        Tue, 17 Dec 2024 14:24:26 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96391366sm488919166b.167.2024.12.17.14.24.25
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1734474438; x=1735079238;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4/O76bQ9DP7a5739+a84uc4ET8V42KerklZL0T+JTZM=;
+        b=KtBYfEVHAOeC1JCK+PNdpkO10UvRz+PiijpqJxteOi5r4VNWdIthfpkbovN6FL3jzV
+         fHcEG3FRQy+pQYw3ikjaKaBpqutTAdFc2Zvf3TWhgZwk8jrYjkx+am8J0U+zW6pTNXPR
+         drWRZrqg8mmo3GoC1xqr6mSU5MdmJ+PEOJAUM8Cem8Vep0WhYzygnYLq54ogBbPy/w2+
+         pLBrPK1wrdX3AtMwSysyLb4HMqPAOPbx+NELIh0+qJf8iLvXD7pvBiRhEnMb/wesmU9o
+         ZaMN37e87y4OxYeFckyNVAAnhc+RqquT4RFlY3XbLxciI1VwUOEYSsLZ4qW8UlfBsGtQ
+         fQXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlUKQfkrSDqHjDSBD1SZSgAg2iPD53e23tV4tCwtqPv7mYsYmul/CoEerb/M0WJ+t0vY2QCsJp4M/jdis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy67kIZTgkVLw8BH/rigViRpJFarxxZ+vrhxFZVQ+wxp0MO57Dl
+	XhIiIojIlV1bLq2Nz0MV/aJxrTRP761abYOiBFNGUO5KHq0u2ltfj7cMJeXs/iSf1vkfN/loV1s
+	zkZ8Q2w+yHRLa7IzqhhP72DmU6q5aN3IapGUFolyZbVQ8R+5Y6MHv0mKJDk7hrkPrXygRog==
+X-Gm-Gg: ASbGncsMBZ3K6aRsP5eEBEitoKjDZ8t2i4s/GT1H002oHkVxFLg9AjfUVLgQ793+viC
+	TOKGEZcKjvlseqzE3dWbVDGvdGLLhapI6G1JQxAEekmMspJeBWQKA5YrS4m1pF1fldyBCZB4zet
+	gkkFcoKRDGud4YuaUSw+8jQySkZKR7/R2NzQ3jH3Cv1T9bCp38daDD2eKagDcv/pl7KEQH4dyn0
+	yyWqaoBxumCWcWnZu+ZZlKLvxCOaqregV+DqxIQZzqZQUsIbkfm3UlLlgUPR9JL7aH2pxWmfK2u
+	jr04sU5sIzPPuTUFwn9Yly9AoUIO7kEcaYHARNos2Q/9pwYzRh6dd2Ir8ICtda3Kyvv/Cij9rvU
+	qCKiie/8C
+X-Received: by 2002:a05:6000:1867:b0:385:fd07:85f4 with SMTP id ffacd0b85a97d-388e4d64711mr382465f8f.31.1734474437969;
+        Tue, 17 Dec 2024 14:27:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHXkMWceKB4Pft4A5vtCS2fSCh+immbhibtyL2+AscRjp+IT+w8chlwsiKadTxAFDThwCk24Q==
+X-Received: by 2002:a05:6000:1867:b0:385:fd07:85f4 with SMTP id ffacd0b85a97d-388e4d64711mr382442f8f.31.1734474437093;
+        Tue, 17 Dec 2024 14:27:17 -0800 (PST)
+Received: from ?IPV6:2003:cb:c73b:5600:c716:d8e0:609d:ae92? (p200300cbc73b5600c716d8e0609dae92.dip0.t-ipconnect.de. [2003:cb:c73b:5600:c716:d8e0:609d:ae92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060905sm12357212f8f.99.2024.12.17.14.27.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 14:24:25 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa670ffe302so1077608866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:24:25 -0800 (PST)
-X-Received: by 2002:a17:907:7f92:b0:aa6:bcc2:4da1 with SMTP id
- a640c23a62f3a-aabf46ff26emr33780366b.7.1734474265031; Tue, 17 Dec 2024
- 14:24:25 -0800 (PST)
+        Tue, 17 Dec 2024 14:27:15 -0800 (PST)
+Message-ID: <4b5768b7-96e0-4864-9dbe-88fd1f0e87b8@redhat.com>
+Date: Tue, 17 Dec 2024 23:27:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217173237.836878448@goodmis.org> <20241217173520.314190793@goodmis.org>
- <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
- <20241217130454.5bb593e8@gandalf.local.home> <CAHk-=whLJW1SWvJTHYmdVAL2yL=dh4RzMuxgT7rnksSpkfUVaA@mail.gmail.com>
- <20241217133318.06f849c9@gandalf.local.home> <CAHk-=wgi1z85Cs4VmxTqFiG75qzoS_h_nszg6qP1ennEpdokkw@mail.gmail.com>
- <20241217140153.22ac28b0@gandalf.local.home> <CAHk-=wgpjLhSv9_rnAGS1adekEHMHbjVFvmZEuEmVftuo2sJBw@mail.gmail.com>
- <20241217144411.2165f73b@gandalf.local.home>
-In-Reply-To: <20241217144411.2165f73b@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 17 Dec 2024 14:24:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
-Message-ID: <CAHk-=whWfmZbwRmySSpOyYEZJgcKG3d-qheYidnwu+b+rk6THg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
- persistent ring buffer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 14/25] rmap: Add support for PUD sized mappings to rmap
+To: Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org,
+ dan.j.williams@intel.com, linux-mm@kvack.org
+Cc: lina@asahilina.net, zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+ bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+ will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+ dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
+ djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ david@fromorbit.com
+References: <cover.18cbcff3638c6aacc051c44533ebc6c002bf2bd9.1734407924.git-series.apopple@nvidia.com>
+ <7f739c9e9f0a25cafb76a482e31e632c8f72102e.1734407924.git-series.apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <7f739c9e9f0a25cafb76a482e31e632c8f72102e.1734407924.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Dec 2024 at 11:43, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> But this will be future work and not something for this merge window, as
-> it's more of a feature. The only fix is to add that print_field() code, and
-> the patch series that removes trace_check_vprintf() (which fixes a
-> different bug).
+On 17.12.24 06:12, Alistair Popple wrote:
+> The rmap doesn't currently support adding a PUD mapping of a
+> folio. This patch adds support for entire PUD mappings of folios,
+> primarily to allow for more standard refcounting of device DAX
+> folios. Currently DAX is the only user of this and it doesn't require
+> support for partially mapped PUD-sized folios so we don't support for
+> that for now.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> 
+> ---
+> 
+> David - Thanks for your previous comments, I'm less familiar with the
+> rmap code so I would appreciate you taking another look. In particular
+> I haven't added a stat for PUD mapped folios as it seemed like
+> overkill for just the device DAX case but let me know if you think
+> otherwise.
+> 
+> Changes for v4:
+> 
+>   - New for v4, split out rmap changes as suggested by David.
+> ---
+>   include/linux/rmap.h | 15 ++++++++++++-
+>   mm/rmap.c            | 56 +++++++++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 71 insertions(+)
+> 
+> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> index 683a040..7043914 100644
+> --- a/include/linux/rmap.h
+> +++ b/include/linux/rmap.h
+> @@ -192,6 +192,7 @@ typedef int __bitwise rmap_t;
+>   enum rmap_level {
+>   	RMAP_LEVEL_PTE = 0,
+>   	RMAP_LEVEL_PMD,
+> +	RMAP_LEVEL_PUD,
+>   };
+>   
+>   static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+> @@ -228,6 +229,14 @@ static inline void __folio_rmap_sanity_checks(const struct folio *folio,
+>   		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PMD_NR, folio);
+>   		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PMD_NR, folio);
+>   		break;
+> +	case RMAP_LEVEL_PUD:
+> +		/*
+> +		 * Assume that we are creating * a single "entire" mapping of the
+> +		 * folio.
+> +		 */
+> +		VM_WARN_ON_FOLIO(folio_nr_pages(folio) != HPAGE_PUD_NR, folio);
+> +		VM_WARN_ON_FOLIO(nr_pages != HPAGE_PUD_NR, folio);
+> +		break;
+>   	default:
+>   		VM_WARN_ON_ONCE(true);
+>   	}
+> @@ -251,12 +260,16 @@ void folio_add_file_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>   	folio_add_file_rmap_ptes(folio, page, 1, vma)
+>   void folio_add_file_rmap_pmd(struct folio *, struct page *,
+>   		struct vm_area_struct *);
+> +void folio_add_file_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>   void folio_remove_rmap_ptes(struct folio *, struct page *, int nr_pages,
+>   		struct vm_area_struct *);
+>   #define folio_remove_rmap_pte(folio, page, vma) \
+>   	folio_remove_rmap_ptes(folio, page, 1, vma)
+>   void folio_remove_rmap_pmd(struct folio *, struct page *,
+>   		struct vm_area_struct *);
+> +void folio_remove_rmap_pud(struct folio *, struct page *,
+> +		struct vm_area_struct *);
+>   
+>   void hugetlb_add_anon_rmap(struct folio *, struct vm_area_struct *,
+>   		unsigned long address, rmap_t flags);
+> @@ -341,6 +354,7 @@ static __always_inline void __folio_dup_file_rmap(struct folio *folio,
+>   		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>   		break;
+>   	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>   		atomic_inc(&folio->_entire_mapcount);
+>   		atomic_inc(&folio->_large_mapcount);
+>   		break;
+> @@ -437,6 +451,7 @@ static __always_inline int __folio_try_dup_anon_rmap(struct folio *folio,
+>   		atomic_add(orig_nr_pages, &folio->_large_mapcount);
+>   		break;
+>   	case RMAP_LEVEL_PMD:
+> +	case RMAP_LEVEL_PUD:
+>   		if (PageAnonExclusive(page)) {
+>   			if (unlikely(maybe_pinned))
+>   				return -EBUSY;
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index c6c4d4e..39d0439 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1203,6 +1203,11 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
+>   		}
+>   		atomic_inc(&folio->_large_mapcount);
+>   		break;
+> +	case RMAP_LEVEL_PUD:
+> +		/* We only support entire mappings of PUD sized folios in rmap */
+> +		atomic_inc(&folio->_entire_mapcount);
+> +		atomic_inc(&folio->_large_mapcount);
+> +		break;
 
-Side note: I've also been looking at the core vsnprintf() code to see
-if it could be cleanly extended to have callers give more control over
-it. Some kind of callback mechanism for the pointer handling so that
-there is *not* any need for crazy hackery.
 
-That needs some basic cleanups I want to do and that I'm playing with,
-but even with some of that code cleaned up it looks a bit nasty.
+This way you don't account the pages at all as mapped, whereby PTE-mapping it
+would? And IIRC, these PUD-sized pages can be either mapped using PTEs or
+using a single PUD.
 
-I really don't want to expose too much of the internals to the
-outside, and vsnprintf() is actually fairly performance-critical, and
-indirect calls have become so expensive that I really don't want to
-introduce function pointers in there.
+I suspect what you want is to
 
-But I'll try to see if some more cleanups would make it at least
-possible to have a separate version. That said, we already have the
-disgusting "binary printf" code, used by bpf and tracing, and I'd hate
-to introduce a *third* interface, particularly since the binary printf
-code is already doing things wrong (it puts things into a "word
-array", but instead of using a single word for char/short like the
-normal C varargs code does, it packs them at actual byte/word
-boundaries and adds padding etc).
+diff --git a/mm/rmap.c b/mm/rmap.c
+index c6c4d4ea29a7e..1477028d3a176 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1187,12 +1187,19 @@ static __always_inline unsigned int __folio_add_rmap(struct folio *folio,
+                 atomic_add(orig_nr_pages, &folio->_large_mapcount);
+                 break;
+         case RMAP_LEVEL_PMD:
++       case RMAP_LEVEL_PUD:
+                 first = atomic_inc_and_test(&folio->_entire_mapcount);
+                 if (first) {
+                         nr = atomic_add_return_relaxed(ENTIRELY_MAPPED, mapped);
+                         if (likely(nr < ENTIRELY_MAPPED + ENTIRELY_MAPPED)) {
+-                               *nr_pmdmapped = folio_nr_pages(folio);
+-                               nr = *nr_pmdmapped - (nr & FOLIO_PAGES_MAPPED);
++                               nr_pages = folio_nr_pages(folio);
++                               /*
++                                * We only track PMD mappings of PMD-sized
++                                * folios separately.
++                                */
++                               if (level == RMAP_LEVEL_PMD)
++                                       *nr_pmdmapped = nr_pages;
++                               nr = nr_pages - (nr & FOLIO_PAGES_MAPPED);
+                                 /* Raced ahead of a remove and another add? */
+                                 if (unlikely(nr < 0))
+                                         nr = 0;
 
-So just looking at that code, I'm not hugely excited about adding yet
-more copies of this and new interfaces in this area.
+Similar on the removal path.
 
-(Aside: are those binary buffers actually exported to user space (that
-"u32 *bin_buf, size_t size" thing), or could we fix the binary printf
-code to really use a whole word for char/short values? The difference
-between '%hhd' and '%d' should be how it's printed out, not how the
-data is accessed)
 
-               Linus
+-- 
+Cheers,
+
+David / dhildenb
+
 
