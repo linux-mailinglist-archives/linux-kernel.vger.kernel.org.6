@@ -1,354 +1,165 @@
-Return-Path: <linux-kernel+bounces-448947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD289F477C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:29:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909829F4772
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18AC01890CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:27:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E317A31D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCA41DED49;
-	Tue, 17 Dec 2024 09:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700861DEFEB;
+	Tue, 17 Dec 2024 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kQKHj0U2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EebKne8L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E36189521;
-	Tue, 17 Dec 2024 09:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94821D63F6;
+	Tue, 17 Dec 2024 09:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734427627; cv=none; b=dVCdQ2hDlOxOnLvMa6lDO6tnU2330/D/0zjAnRlcrHiGkE6ijAZMj6dUwSosambb1MqoFLtBLSuCtZK2sBxFcKYGlIiZxKhAwJm9EHr2nGYSDQY7z8j+r3wqakFaKT8jK5lpRLYo4N9ivqQou5C4Ct254SW3nQJq+EsFZmypG+Y=
+	t=1734427607; cv=none; b=jDlqoxAMRY+eWFsdO6faNHgZg2sU5/dvAslXrUDjKPg7A74lGeQ7Eh53645MD+tLplNPjDxlCDTSplmji7wPPrq8K7iyp7bgKIPDj7EulVHxeWKgFKrojaYzPrK4eI8szOoWip2Sv3YxNvDrUIEtbtSZ6YqIkrBfvvmOmjztCBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734427627; c=relaxed/simple;
-	bh=+ErJMFyScc31yTp7m7R0FUqr9+C6mLujufdbAhR8I6M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eon5Y3pYOLPl6YMsRk15DGYccCSbnr81PvQuvj0ylzDEph/CF2zaDYJeFweGayITeR83jJk1AnD6WBvU3VEMShbiUxOeFLJ3pVpBL7i47XYkrJ9aF4mzifTQaWr683xeveJqGwb+A5MC7xd6FQnlTgjeE1GnL5uF62qQRIiqVlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kQKHj0U2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH7sYUG002145;
-	Tue, 17 Dec 2024 09:27:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=jKM6U37wH1GcJ01U6tDAGB4bjhfHH5Jt/zXb1HxK3+s=; b=kQ
-	KHj0U2oYsyI/+r2U9yhbojCJls+pXl/5fQXye+qDGDGfTlkM6fOIiho2VQyjKyGW
-	6KsRMeFj3U6T8DQdXAy81rmeo2rjZzBNPVOuuHNgrhMuyExfks8dJ95DB7bdo1As
-	uGnVOZCy15vTKvZFqQ1+xk2r4fa1g7sau9yZKf6hPS/NHrumxWp9rUXgczParcds
-	FPJ02BWvJUAmjXcbai5SFBFTBxnKWieTIfuf4f9qkZOKiSmnr5bZNJswvk4JVUNW
-	iw9JOtUHifdOVIlgK7QStphvjDWjCJda96jUk0r7aAIRbYIhKrIO4wo+ZCBFNF4f
-	DVEYFElwL2JzoUPuC+4Q==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k5aw87sc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 09:27:02 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH9R2hw015178
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 09:27:02 GMT
-Received: from hu-pbrahma-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 17 Dec 2024 01:26:59 -0800
-From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-To: <andersson@kernel.org>
-CC: <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Pratyush Brahma
-	<quic_pbrahma@quicinc.com>
-Subject: [PATCH] arm64: dts: qcom: qcs8300: Update memory map
-Date: Tue, 17 Dec 2024 14:56:36 +0530
-Message-ID: <20241217092636.17482-1-quic_pbrahma@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1734427607; c=relaxed/simple;
+	bh=hH+aXQtRv0LkIufCC2+NDXYdogSlCDjYzhV7jhPovxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kFAtslIBxH9i3oWpidRKNfEnRawp+EWzb2IU+5J3zOPZAl2DxZancjxzrjXerwv8p9RXXvqg0nZG0Hq6dQGgr3iG+DiVQWyyKHzOcmT4WeVibIDT/atTD3UvKuaTVTmiqb+BNGRdGVwWXDJLaOoj00bgv35hScEnzVGHLsn0McI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EebKne8L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C5BC4CED3;
+	Tue, 17 Dec 2024 09:26:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734427607;
+	bh=hH+aXQtRv0LkIufCC2+NDXYdogSlCDjYzhV7jhPovxo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EebKne8LQEylRxUK5CD0+WlXZ8S9OBHOWvJxCv+DHguqsHTP0cLHPSLM3278+gikD
+	 HGYAvLyJcnfK//ljZlyF4e8Lio3k0uwDxOSDqJWFnatskJPuc4DPrXBdF2kt4x7w81
+	 aox4nSuc7Q3bD1GyJxOAo/f+fVB6ZU/wo+rOtwOQp7JZ1G5POuUcMAuSaPOCU9Nanc
+	 3eYY98aviZgT4iME5ZRHHgeyiLbHjlpCTBOWV5+39v2HCFLvtTxPwe7qID25RGCsAJ
+	 wAQMgtDyCtmLnw4GGDU/tesrQxfwmcX+CGcZTBxf5YMrxkr2A2voczQNZ7WuPifykL
+	 xI2zDpuWlOfPQ==
+Message-ID: <69fd1dbc-a29f-488c-a30f-7e5ea8f01a23@kernel.org>
+Date: Tue, 17 Dec 2024 10:26:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iGjmF1nsVK5BsFrDC__8QrbIN4gYAgrz
-X-Proofpoint-GUID: iGjmF1nsVK5BsFrDC__8QrbIN4gYAgrz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- adultscore=0 clxscore=1011 suspectscore=0 malwarescore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170077
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
+ samsung,exynos8895-hsi2c compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
+ <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+ <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
+ <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
+ <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is based on Jingyi Wang's patches [1] to introduce the
-initial dtsi for QCS8300 SOC.
+On 17/12/2024 10:08, Ivaylo Ivanov wrote:
+>>>>>        - items:
+>>>>>            - enum:
+>>>>> @@ -94,9 +95,28 @@ allOf:
+>>>>>          - clock-names
+>>>>>  
+>>>>>      else:
+>>>>> -      properties:
+>>>>> -        clocks:
+>>>>> -          maxItems: 1
+>>>>> +      if:
+>>>>> +        properties:
+>>>>> +          compatible:
+>>>>> +            contains:
+>>>>> +              enum:
+>>>>> +                - samsung,exynos8895-hsi2c
+>>>>> +
+>>>>> +      then:
+>>>>> +        properties:
+>>>>> +          clocks:
+>>>> Missing minItems
+>>>>
+>>>>> +            maxItems: 2
+>>>>> +
+>>>>> +          clock-names:
+>>>> Ditto
+>>>>
+>>>>> +            maxItems: 2
+>>>>> +
+>>>>> +        required:
+>>>>> +          - clock-names
+>>>> I don't understand why do you need second, same branch in if, basically
+>>> Because, as I stated in the commit message, we have HSI2C controllers
+>>> both implemented in USIv1 blocks and outside. These that are a part of
+>> On Exynos8895? Where? With the same compatible?
+> 
+> hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
+> from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
+> they need a different compatible though? It's functionally the same i2c design
+> as the one implemented in USIv1 blocks.
+If one block is part of USI and other not, they might not be the same
+I2C blocks, even if interface is similar. If they were the same or even
+functionally the same, they would have the same clock inputs. However
+user manual also suggests that there is only one clock, not two (for
+both cases), so they could be functionally equivalent but then number of
+clocks looks incorrect.
 
-New updates to the memory map of qcs8300 have brought in some
-new carveouts (viz. sail_ss, firmware memory, tz memory, etc.) and
-also the base addresses of some of the pil carveouts (q6_cdsp_dtb_mem 
-and cdsp_mem) have changed.
-
-Incorporate these changes in the new memory map for qcs8300. Also
-modify the labels of some of the carveouts to indicate pil carveouts.
-
-[1] https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-3-494c40fa2a42@quicinc.com/
-
-Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300.dtsi | 180 ++++++++++++++++++++++++--
- 1 file changed, 170 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-index 2c35f96c3f28..e16d11c05515 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-@@ -377,6 +377,21 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		sail_ss_mem: sail-ss-region@80000000 {
-+			reg = <0x0 0x80000000 0x0 0x10000000>;
-+			no-map;
-+		};
-+
-+		hyp_mem: hyp-region@90000000 {
-+			reg = <0x0 0x90000000 0x0 0x600000>;
-+			no-map;
-+		};
-+
-+		xbl_boot_mem: xbl-boot-region@90600000 {
-+			reg = <0x0 0x90600000 0x0 0x200000>;
-+			no-map;
-+		};
-+
- 		aop_image_mem: aop-image-region@90800000 {
- 			reg = <0x0 0x90800000 0x0 0x60000>;
- 			no-map;
-@@ -388,6 +403,26 @@
- 			no-map;
- 		};
- 
-+		uefi_logs_mem: uefi-logs-region@908b0000 {
-+			reg = <0x0 0x908b0000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		ddr_training_checksum_data_mem: ddr-training-checksum-data-region@908c0000 {
-+			reg = <0x0 0x908c0000 0x0 0x1000>;
-+			no-map;
-+		};
-+
-+		reserved_mem: reserved-region@908f0000 {
-+			reg = <0x0 0x908f0000 0x0 0xe000>;
-+			no-map;
-+		};
-+
-+		secdata_apps_mem: secdata-apps-region@908fe000 {
-+			reg = <0x0 0x908fe000 0x0 0x2000>;
-+			no-map;
-+		};
-+
- 		smem_mem: smem@90900000 {
- 			compatible = "qcom,smem";
- 			reg = <0x0 0x90900000 0x0 0x200000>;
-@@ -395,6 +430,61 @@
- 			hwlocks = <&tcsr_mutex 3>;
- 		};
- 
-+		tz_sail_mailbox_mem: tz-sail-mailbox-region@90c00000 {
-+			reg = <0x0 0x90c00000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		sail_mailbox_mem: sail-mailbox-region@90d00000 {
-+			reg = <0x0 0x90d00000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		sail_ota_mem: sail-ota-region@90e00000 {
-+			reg = <0x0 0x90e00000 0x0 0x300000>;
-+			no-map;
-+		};
-+
-+		xbl_dtlog_mem: xbl-dtlog-region@91a40000 {
-+			reg = <0x0 0x91a40000 0x0 0x40000>;
-+			no-map;
-+		};
-+
-+		gunyah_md_mem: gunyah-md-region@91a80000 {
-+			reg = <0x0 0x91a80000 0x0 0x80000>;
-+			no-map;
-+		};
-+
-+		aoss_backup_mem: aoss-backup-region@91b00000 {
-+			reg = <0x0 0x91b00000 0x0 0x40000>;
-+			no-map;
-+		};
-+
-+		cpucp_backup_mem: cpucp-backup-region@91b40000 {
-+			reg = <0x0 0x91b40000 0x0 0x40000>;
-+			no-map;
-+		};
-+
-+		tz_config_backup_mem: tz-config-backup-region@91b80000 {
-+			reg = <0x0 0x91b80000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		ddr_training_data_mem: ddr-training-data-region@91b90000 {
-+			reg = <0x0 0x91b90000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		cdt_data_backup_mem: cdt-data-backup-region@91ba0000 {
-+			reg = <0x0 0x91ba0000 0x0 0x1000>;
-+			no-map;
-+		};
-+
-+		tzffi_mem: tzffi-region@91c00000 {
-+			reg = <0x0 0x91c00000 0x0 0x1400000>;
-+			no-map;
-+		};
-+
- 		lpass_machine_learning_mem: lpass-machine-learning-region@93b00000 {
- 			reg = <0x0 0x93b00000 0x0 0xf00000>;
- 			no-map;
-@@ -405,12 +495,12 @@
- 			no-map;
- 		};
- 
--		camera_mem: camera-region@95200000 {
-+		camera_mem: pil-camera-region@95200000 {
- 			reg = <0x0 0x95200000 0x0 0x500000>;
- 			no-map;
- 		};
- 
--		adsp_mem: adsp-region@95c00000 {
-+		adsp_mem: pil-adsp-region@95c00000 {
- 			no-map;
- 			reg = <0x0 0x95c00000 0x0 0x1e00000>;
- 		};
-@@ -425,35 +515,105 @@
- 			no-map;
- 		};
- 
--		gpdsp_mem: gpdsp-region@97b00000 {
-+		gpdsp_mem: pil-gpdsp-region@97b00000 {
- 			reg = <0x0 0x97b00000 0x0 0x1e00000>;
- 			no-map;
- 		};
- 
--		q6_cdsp_dtb_mem: q6-cdsp-dtb-region@99900000 {
--			reg = <0x0 0x99900000 0x0 0x80000>;
-+		q6_cdsp_dtb_mem: q6-cdsp-dtb-region@9b700000 {
-+			reg = <0x0 0x9b700000 0x0 0x80000>;
- 			no-map;
- 		};
- 
--		cdsp_mem: cdsp-region@99980000 {
--			reg = <0x0 0x99980000 0x0 0x1e00000>;
-+		cdsp_mem: pil-cdsp-region@99900000 {
-+			reg = <0x0 0x99900000 0x0 0x1e00000>;
- 			no-map;
- 		};
- 
--		gpu_microcode_mem: gpu-microcode-region@9b780000 {
-+		gpu_microcode_mem: pil-gpu-region@9b780000 {
- 			reg = <0x0 0x9b780000 0x0 0x2000>;
- 			no-map;
- 		};
- 
--		cvp_mem: cvp-region@9b782000 {
-+		cvp_mem: pil-cvp-region@9b782000 {
- 			reg = <0x0 0x9b782000 0x0 0x700000>;
- 			no-map;
- 		};
- 
--		video_mem: video-region@9be82000 {
-+		video_mem: pil-video-region@9be82000 {
- 			reg = <0x0 0x9be82000 0x0 0x700000>;
- 			no-map;
- 		};
-+
-+		audio_mdf_mem: audio-mdf-region@ae000000 {
-+			reg = <0x0 0xae000000 0x0 0x1000000>;
-+			no-map;
-+		};
-+
-+		firmware_mem: firmware-region@b0000000 {
-+			reg = <0x0 0xb0000000 0x0 0x800000>;
-+			no-map;
-+		};
-+
-+		hyptz_reserved_mem: hyptz-reserved@beb00000 {
-+			reg = <0x0 0xbeb00000 0x0 0x11500000>;
-+			no-map;
-+		};
-+
-+		firmware_scmi_mem: scmi-region@d0000000 {
-+			reg = <0x0 0xd0000000 0x0 0x40000>;
-+			no-map;
-+		};
-+
-+		firmware_logs_mem: firmware-logs-region@d0040000 {
-+			reg = <0x0 0xd0040000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		firmware_audio_mem: firmware-audio-region@d0050000 {
-+			reg = <0x0 0xd0050000 0x0 0x4000>;
-+			no-map;
-+		};
-+
-+		firmware_reserved_mem: firmware-reserved-region@d0054000 {
-+			reg = <0x0 0xd0054000 0x0 0x9c000>;
-+			no-map;
-+		};
-+
-+		firmwarequantum_test_mem: firmwarequantum-test-region@d00f0000 {
-+			reg = <0x0 0xd00f0000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		tags_mem: tags-region@d0100000 {
-+			reg = <0x0 0xd0100000 0x0 0x800000>;
-+			no-map;
-+		};
-+
-+		qtee_mem: qtee-region@d1300000 {
-+			reg = <0x0 0xd1300000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		deep_sleep_back_up_mem: deep-sleep-back-up-region@d1800000 {
-+			reg = <0x0 0xd1800000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		trusted_apps_mem: trusted-apps-region@d1900000 {
-+			reg = <0x0 0xd1900000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		tz_stat_mem: tz-stat-region@db100000 {
-+			reg = <0x0 0xdb100000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		cpucp_fw_mem: cpucp-fw-region@db200000 {
-+			reg = <0x0 0xdb200000 0x0 0x100000>;
-+			no-map;
-+		};
- 	};
- 
- 	smp2p-adsp {
--- 
-2.17.1
-
+Best regards,
+Krzysztof
 
