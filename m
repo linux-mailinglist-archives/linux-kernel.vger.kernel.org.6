@@ -1,82 +1,115 @@
-Return-Path: <linux-kernel+bounces-449370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451879F4DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:35:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C669F4DE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F038168009
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B33F16FC13
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C2D1F63D9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382251F63CB;
 	Tue, 17 Dec 2024 14:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4kpEBsO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy9ouM1y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B544D1F4E3D;
-	Tue, 17 Dec 2024 14:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8BF1F3D50;
+	Tue, 17 Dec 2024 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445999; cv=none; b=RhGzppAOd6cSZiPNyHpoMtYTiHfSqbDHt+4NO0L0PRLqyT4WsYnu0TV8a5spMHlB0OhsBfsppNu7AH+PTIDqn3ovCEmobPxsDfJ7wizNz5wtzsCEopxFE14LDzTmYbNVrNrcEV7UqknjfLClwhrpa0gu37TTZqru2E6mAgvtwUM=
+	t=1734445999; cv=none; b=WRavWU4ucbhhgbCcX0+DkRgENqAAjjaVdiAObzPemjexckBJCFUZWCjQThHQPM0C2QhjLwJIJGjJpRbDDRtTz15ZoSeXYiJ706fIpzfiRek272tH+0a+EzyfJj1koIIpUcI8CCXxyO+9gUuY+uAnFCYYOOJuYKervxV47H82GOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734445999; c=relaxed/simple;
-	bh=PDwXOO3+Fr11L4z8efx2z/FjDlxsLzh4w4zld1r+Ql8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hMp+HtBHUOuwvAuQC35hnXNVnviqlVi7WFtel8729WryCcoQvA1wDrjYDtk7ahzjLWp9zanUx3iFo7oZX6G8YbhfDF+qmwVjzPVifSOaOvl6wScl7pe4dhk+bIj3IX3ii0baQ3ErWfhu6ixlnWIoaU4S66FNeQk+dljEntKWaoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4kpEBsO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3E1C4CED4;
-	Tue, 17 Dec 2024 14:33:18 +0000 (UTC)
+	bh=T7qgal3YAgYxvdv4wdowLqbXzjVg1bdGafPFLHnupHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=itVqza/z+86rnEFFyJ3dz13V9ajJGV6zxJ56SNJjltcE8NHS2O2Dpf+9RIxpP6WyUlC+lJbpzudddg21RxBDjrVnqfOzgtCvEdsniQJ8YR81wHGw5Q5zXdrAtHGQNSydFJ30GG5Du6jJTLZs47k1qNHBshvZWkSUjJ6YayG0MVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy9ouM1y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF494C4CED3;
+	Tue, 17 Dec 2024 14:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734445999;
-	bh=PDwXOO3+Fr11L4z8efx2z/FjDlxsLzh4w4zld1r+Ql8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=G4kpEBsOnr22gq45BpH+OZnghY8GVLRPtH1jOS88Ht1eSETPjud1VLTj6jpBVEGja
-	 C1YNYcuMRaidE5s7de7k4cRs5Gq1TwJi2QwJqKkzZ1GkjO+J37xk5JTa/rWZfrRjNq
-	 A3uK5oyMGPJKSIh//LftP6E9l10eiiCblzShE2wEBT7ouJuIf9Uck2Bt53Xn7IkCU7
-	 TEe30dg82Ww6QsQIN636gtyWiHADGU0361HraX35O9NlLXtfMYrBPV7zNsQcpPoBfH
-	 ZBxSAfW/jRbl7m4bxvf3UNW1sHWJkPGTTP2HSum2qPACFubzT7d6gZHHvcWcU39b+n
-	 dAttGQ8NRIrqw==
-From: Leon Romanovsky <leon@kernel.org>
-To: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca, 
- linux@treblig.org
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241216211914.745111-1-linux@treblig.org>
-References: <20241216211914.745111-1-linux@treblig.org>
-Subject: Re: [PATCH] IB/hfi1: Remove unused hfi1_format_hwerrors
-Message-Id: <173444599565.281955.1289295602203698100.b4-ty@kernel.org>
-Date: Tue, 17 Dec 2024 09:33:15 -0500
+	s=k20201202; t=1734445998;
+	bh=T7qgal3YAgYxvdv4wdowLqbXzjVg1bdGafPFLHnupHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cy9ouM1yGW3hMREEViJa2DLshacyA3d/rjpnnQ+5Aq5n+4VPcfjZUYdl1SsRhinH/
+	 GdUXssSOGHNxDEUOQGH+Sv/HaU1a41bY21qlAl8oIUzTrriBf0+ncRqlzD6OgZ2eUL
+	 +oU4TJMLRvsXoLEvzF6KayvgZuSKGc2vr/ijiinS2gNsIiOVjfL2iBJ5VDRQZXUJ/7
+	 XbXdxk3N8OX1RuQz+6W3HwBqoKfZsp/E0lIlZB6Soy/Y5dEfWi1ggs8bYGUEyrY8e+
+	 EaMw2ctQKVOuF65opBqzJILnk1cjT9WIN5r61d1FSwm4/knZbiJ7KaA6j9VmUPEXY/
+	 8PDsF8vwuPuzg==
+Date: Tue, 17 Dec 2024 08:33:16 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-iio@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	David Jander <david@protonic.nl>
+Subject: Re: [PATCH v6 06/17] spi: dt-bindings: axi-spi-engine: add SPI
+ offload properties
+Message-ID: <173444599609.1628708.4430713259293370272.robh@kernel.org>
+References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+ <20241211-dlech-mainline-spi-engine-offload-2-v6-6-88ee574d5d03@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-6-88ee574d5d03@baylibre.com>
 
 
-On Mon, 16 Dec 2024 21:19:14 +0000, linux@treblig.org wrote:
-> hfi1_format_hwerrors() was added in 2015 by
-> commit 7724105686e7 ("IB/hfi1: add driver files")
-> but never used.
+On Wed, 11 Dec 2024 14:54:43 -0600, David Lechner wrote:
+> The AXI SPI Engine has support for hardware offloading capabilities.
+> This includes a connection to a DMA controller for streaming RX or TX
+> data and a trigger input for starting execution of the SPI message
+> programmed in the offload. It is designed to support up to 32 offload
+> instances.
 > 
-> Remove it.
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 > 
+> v6 changes:
+> * Drop type $ref for trigger-sources property since it is defined
+>   elsewhere now
+> * Undo v5 changes that limited the number of offloads to 1
 > 
-> [...]
+> v5 changes:
+> * Also document offload0-tx DMA names since the hardware can support
+>   that now.
+> * Limit the number of offloads to 1 for now since it would require
+>   significant hardware changes to actually support more than that.
+> 
+> v4 changes:
+> * Dropped #spi-offload-cells property.
+> * Changed subject line.
+> 
+> v3 changes:
+> * Added #spi-offload-cells property.
+> * Added properties for triggers and RX data stream connected to DMA.
+> 
+> v2 changes:
+> * This is basically a new patch. It partially replaces "dt-bindings:
+>   iio: offload: add binding for PWM/DMA triggered buffer".
+> * The controller no longer has an offloads object node and the
+>   spi-offloads property is now a standard SPI peripheral property.
+> ---
+>  .../bindings/spi/adi,axi-spi-engine.yaml           | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
 
-Applied, thanks!
-
-[1/1] IB/hfi1: Remove unused hfi1_format_hwerrors
-      https://git.kernel.org/rdma/rdma/c/2dab32d1c79c4f
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
