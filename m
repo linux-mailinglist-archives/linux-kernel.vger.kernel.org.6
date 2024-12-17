@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-448752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AAA9F4505
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:23:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C2B9F4547
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844A71889D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35FD1696B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832E1189B83;
-	Tue, 17 Dec 2024 07:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80221D434F;
+	Tue, 17 Dec 2024 07:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQTMtHIn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="le6+j9Up"
+Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7A618DF62;
-	Tue, 17 Dec 2024 07:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126481714B2;
+	Tue, 17 Dec 2024 07:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734420224; cv=none; b=S+nNvgS+TcXeW0+V30sJ/Ymqwl+g9NY1OiuXvAGqR3dxo0zQjY3fsbxAso/PK8s/EjQeDYT7mm8E6ccwjXf0P6FAQIRuaMGm9tdJOxiH/SyRbuhUsoZowa6NEqOkEHdz+9tMJOW3DTLw3v/xjBaOwajAMbaAXituF7UKSkdDSQk=
+	t=1734421177; cv=none; b=X8HHajTHupvRbRbFikmnYbSOjnj+Dq8FsC14ltc5RI7XFJoJauFIy9jjr9peoWQrD/x4oQn/k9LRxyXKFi9Mit+JvZmblhSW6y10eMum0HQjtBrwvJkDv+iOV5xJVwBmRGhvaKzljgEp4BBuks1ga0pq8rj1nJ06Q/PkkRMJvHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734420224; c=relaxed/simple;
-	bh=dzw0Qz/CRN0PqPZK4GaTrVRJ3D3wdhp/qpqu6zM8BjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=poGqXTC24r2Wjmhy4klC28PoxcxeyQdvmqMcfXMdX5/0bWgpjac6DrhGHuDUYIDmNg3tYIjm8ZV+crF3VS4ZqbUqYysLIzhA8riSWFIfBRkRA6YRK5RXTenzLRqXN7+bAmZDPUuNFxklCRkULLbz/qToDDFCHzHIPIlRy1Eb9Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQTMtHIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C22C4CED3;
-	Tue, 17 Dec 2024 07:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734420223;
-	bh=dzw0Qz/CRN0PqPZK4GaTrVRJ3D3wdhp/qpqu6zM8BjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aQTMtHInjjzJekW+YadyNvS4jQkGkqV7h2x+QkNNZEm4mGrVlPVf18N2MpQByzGUB
-	 i/HLusx0LlTfXD3Mv838GyP3MDACR2kC5tX4/N4+NhDQ771OtrZeoh1JDzuw1GneZF
-	 JBm16gGYH26tA677MV7ecMEXtZRLICeCxuIbhWL6s0Mq3jto6kSQoqu1Yjca8Cq9TL
-	 Isw4vFpV+jPgLgOL5VJ0NMJf4OmwHyYpxO1HyHPZ18UzyEU/YyI9X/MUAhtJBIHsGC
-	 SxQz5FITdd1Cb++qXTe5IapG3GlmSH43R3CcwhsB1Sf6Mubbm68FfzxToNen2xAMyN
-	 iyaKWCqgVenZA==
-Date: Tue, 17 Dec 2024 08:23:40 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Darius Berghe <darius.berghe@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, corbet@lwn.net, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] dt-bindings: iio: adxl367: add support for adxl366
-Message-ID: <lcwhomnejblm44f7jqcy3slrzu4vmcgyx6weocziqge2swkfia@qhqwam2uhqxl>
-References: <20241213095201.1218145-1-darius.berghe@analog.com>
- <20241213095201.1218145-3-darius.berghe@analog.com>
+	s=arc-20240116; t=1734421177; c=relaxed/simple;
+	bh=pVC0kP6bkVarlPNOUGz5sO5BZZlWGZkSrWcUehVaBig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jRZYRcH/GdaHZ4OQaEN5t3aprpC57sF3Kdg4xpZ9BMyrCk8qXq3A1j7v5/aHjP0pUzL15/qHxKhxnQ+f0qqLko/GqIKPM2r8/lwEUVuU8RKab2IdCIBF28Kic8CbOrsgSV5lsn8Hju1uR5Z+j376X81V4tR8K/7ez+/NPfnnJ8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=le6+j9Up; arc=none smtp.client-ip=91.232.154.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tD0w9hGE0HHz3hp3Nt0ft5ye3qwggV6ir0MMxdx6g+8=; b=le6+j9UpKB5XBjVYLVyHZ4HtRB
+	tMarVuf71hL0pP/kLHxvv4c+Y1/+2dpKIps9GKlI88Gm3odi1Bas3kIEz/kXw1GAE1bzvI+jTBeAu
+	7eST2E3guutYIJL3tQe/Z2JlaLhgwxx7aIGxY3VTHBNXBoaOUsbaV1VJ5NYCUA//itPnhVaEgOTqs
+	lSgm1nAX3m/P9sJRIY90bOShfPVUws/4+aRgg6G2pZAK6a7kveGqAOs1UTbgst6cio1LIMZ4movPE
+	6VuGrBl7/4OfRA7PecPBcz3d9NTmceelHNZeo6QOY7YbPRF8SqyyrjPKyNCMbv/CRJ/mrkgwVAjml
+	8luSOoiw==;
+Received: from [2404:7a80:b960:1a00:1b57:df18:efe3:20c1]
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1tNRtb-009eYK-1I;
+	Tue, 17 Dec 2024 09:21:32 +0200
+Message-ID: <0036ecec-8476-4617-ac40-8ff90fb33c07@kapsi.fi>
+Date: Tue, 17 Dec 2024 16:24:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241213095201.1218145-3-darius.berghe@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
+To: linux@treblig.org, thierry.reding@gmail.com, mperttunen@nvidia.com,
+ linux-tegra@vger.kernel.org
+Cc: airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241215214750.448209-1-linux@treblig.org>
+Content-Language: en-US
+From: Mikko Perttunen <cyndis@kapsi.fi>
+In-Reply-To: <20241215214750.448209-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:1b57:df18:efe3:20c1
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-On Fri, Dec 13, 2024 at 11:52:01AM +0200, Darius Berghe wrote:
-> Add support for adxl366 Micropower, 3-Axis, +-/2g, +/-4g, +/-8g
-> Digital Output MEMS Accelerometer into the existing adxl367 iio
-> subsystem driver.
-
-
-Bindings are before users.
-
+On 12/16/24 6:47 AM, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> adxl366 supports all the features of adxl367 but has a few
-> additional features for which support is added in this patch:
+> host1x_debug_dump_syncpts() has been unused since
+> commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
+> fences")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   drivers/gpu/host1x/debug.c | 9 ---------
+>   drivers/gpu/host1x/debug.h | 1 -
+>   2 files changed, 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+> index a18cc8d8caf5..6433c00d5d7e 100644
+> --- a/drivers/gpu/host1x/debug.c
+> +++ b/drivers/gpu/host1x/debug.c
+> @@ -216,12 +216,3 @@ void host1x_debug_dump(struct host1x *host1x)
+>   
+>   	show_all(host1x, &o, true);
+>   }
+> -
+> -void host1x_debug_dump_syncpts(struct host1x *host1x)
+> -{
+> -	struct output o = {
+> -		.fn = write_to_printk
+> -	};
+> -
+> -	show_syncpts(host1x, &o, false);
+> -}
+> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+> index 62bd8a091fa7..c43c61d876a9 100644
+> --- a/drivers/gpu/host1x/debug.h
+> +++ b/drivers/gpu/host1x/debug.h
+> @@ -41,6 +41,5 @@ extern unsigned int host1x_debug_trace_cmdbuf;
+>   void host1x_debug_init(struct host1x *host1x);
+>   void host1x_debug_deinit(struct host1x *host1x);
+>   void host1x_debug_dump(struct host1x *host1x);
+> -void host1x_debug_dump_syncpts(struct host1x *host1x);
+>   
+>   #endif
 
-Where do you add these features in the binding? I cannot find them, so
-maybe you reference something else.
-
->  - built-in step counting (pedometer)
->  - non-linearity compensation for Z axis
-
-Are the devices compatible?
-
-Best regards,
-Krzysztof
-
+Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
 
