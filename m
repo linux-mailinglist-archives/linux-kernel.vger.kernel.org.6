@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-448773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4209F4548
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:40:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BF39F454E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE3A188AB85
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF46188A632
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6691D86F6;
-	Tue, 17 Dec 2024 07:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBC1D5178;
+	Tue, 17 Dec 2024 07:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzSxKRGu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzaWEVm1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623441CD214;
-	Tue, 17 Dec 2024 07:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6B13D244;
+	Tue, 17 Dec 2024 07:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421194; cv=none; b=sNTvJU7zK3bSZicnB7UnYtnDvUn+4r2CN3kmzBpcqmt5BcCpF/cR/tiyPkBBfaxomM9NS/EnCM396hwjMC94Xu3Y+Y4bfcXS75cLxBKAvQt8YFeqmGGmc+6b4e/ZvsT3FxzQVHMdz6702O0SsrrRB48HH/Vj8m4YD3HO0LbYBak=
+	t=1734421257; cv=none; b=jGBXqiHknY7S0LQkIm2KC2vZaNFzDi4RVJ5/+L4zoms1B+6hCP+06NBnypmdOu5xj62oN9zjXi+YHAJIODgp8kbXd6o2bVBKcKlodVPg1xAAhgVVaHBDp4MHDRG1eOw9BcXTTrT1BJTtiGexZD6JBFwGyoR7hzZw36wXpjOyc5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421194; c=relaxed/simple;
-	bh=f7Df3D2mYSw4EuQDLRDjYSEZXbF66N6eFGfuaboyFb8=;
+	s=arc-20240116; t=1734421257; c=relaxed/simple;
+	bh=qh5Rv3ZXcyqgzSC7cezcMXk4bK1CN2n8Om3V6cn9Eqk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYQPdLEn1StVF8EW4PK7iWYaNjeG/NtqtWxfmZoU2HXUtq6i8zI2jYyzhhthWixvWU0tFLP1FXOjxi3AZPEpjBF4uzOpvyKXUjt9n/cH5KdzX7KiqVTl/uwGG2IsgJjtvF6VOB47uJgA1Mmtphw5v7G3NCMnKOK/0phQ/3BEl4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzSxKRGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D862C4CED3;
-	Tue, 17 Dec 2024 07:39:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CprsFjxsa8W+43oYrB83WPBsSmkPZpi8rtHuTLn7yOGFHWRnmmGOeMX8zbAXJ69t87lvgeheOF/rqG8/0TnQPCCgK6kuC4Hu/jl2MCwGbYeD5bDESL3c7e2FKS6D3Aiperye2lmmNGh9nsR4VNs0h4yT8jVK9YP8PDZgVO5MCjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzaWEVm1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8690DC4CED3;
+	Tue, 17 Dec 2024 07:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421193;
-	bh=f7Df3D2mYSw4EuQDLRDjYSEZXbF66N6eFGfuaboyFb8=;
+	s=k20201202; t=1734421256;
+	bh=qh5Rv3ZXcyqgzSC7cezcMXk4bK1CN2n8Om3V6cn9Eqk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzSxKRGumOzngVx8WU5ajJQJw3ytC8wVC5afCVitEYN1FSmnlzVvAp4Zy+67Kc/63
-	 nPYBgpKCpHytRPZbb4naVy4pGsyTBAUGhoUQ6Q1XwAOrbBNtXYSrTpLvYWyTAhOyaT
-	 gEA1mPKGnHzFpGcVlLpFvozjDhd8jRqNVXjN9n1q4s59+gBtO8tFqY/mEVjDs3m0h6
-	 K6Oxyg3oPABTAUKfktuJug8D+GfWa7Ps0Jh2y0IIB6niDEPPPCEoNRqF/3H56Cn3je
-	 Kr2bTYvyd3RS6rdUrlahRFTZHBjcX8qeSqJLaWI6nEVRKboRUl4V8EMz/fBQp5HA0D
-	 lW2/QDGYI91cg==
-Date: Tue, 17 Dec 2024 08:39:50 +0100
+	b=XzaWEVm17jBCCgA6EawOmJaL13vCmwwYoDM8LchPQZRPjXJsEdki1DPL0LaVTOKOL
+	 33lDiZl1cKjx/bvh8FTAuDG3IeAeyGJRXBP3HQYavNdwioH3e3/WwbNSfAKqerMer9
+	 4AIbhD7o5TdQu3Ks7hBxOILpteYBgK3bufnSVx+xpQtef8O3vn0tl7PrbGL01CsReQ
+	 /myqOsnKL2oIsxlKamz1YdFgT0g7dh9naLeA0wssLMpuQqS/2PmbV/qY483BZTLk9/
+	 V06T6WZPxiVtU6WwGQY4tNzpw+JY/0bt5UnEb5pwhiCBeSXYr+OwVimrckSE4YkyT4
+	 S5eInycqMSSig==
+Date: Tue, 17 Dec 2024 08:40:52 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
+To: David Heidelberg <david@ixit.cz>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64: dts: exynos: gs101-raven: add new board file
-Message-ID: <2wyjctwn443oxl633qwxsxmyzqhinssrkoafgqhcc34tqgwnh5@ymrr57jxdnl6>
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
- <20241216-gs101-simplefb-v1-4-8ccad1830281@linaro.org>
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: media: imx219: Describe sensor address
+ using the reg property
+Message-ID: <6djxfcuroxlth2th3tpuesauhdnowatzgnyhesewjfz32v6gbz@q2dj7jsxiqlw>
+References: <20241217024206.1700170-1-david@ixit.cz>
+ <20241217024206.1700170-2-david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,72 +63,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241216-gs101-simplefb-v1-4-8ccad1830281@linaro.org>
+In-Reply-To: <20241217024206.1700170-2-david@ixit.cz>
 
-On Mon, Dec 16, 2024 at 01:06:29PM +0000, Andr=C3=A9 Draszik wrote:
-> Raven is Google's code name for Pixel 6 Pro. Similar to Pixel 6
-> (Oriole), this is also based around its Tensor gs101 SoC.
->=20
-> For now, the relevant difference here is the display resolution:
-> 1440 x 3120 instead of 1080 x 2400.
->=20
-> Create a new board file to reflect this difference.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
+On Mon, Dec 16, 2024 at 09:41:51PM -0500, David Heidelberg wrote:
+> Use the reg property instead of text in the description.
+> Drop useless description of reg property.
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
-> Note: MAINTAINERS doesn't need updating, it covers this whole directory
-> ---
->  arch/arm64/boot/dts/exynos/google/Makefile        |  1 +
->  arch/arm64/boot/dts/exynos/google/gs101-raven.dts | 27 +++++++++++++++++=
-++++++
->  2 files changed, 28 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot=
-/dts/exynos/google/Makefile
-> index 0a6d5e1fe4ee..7385f82b03c9 100644
-> --- a/arch/arm64/boot/dts/exynos/google/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/google/Makefile
-> @@ -2,3 +2,4 @@
-> =20
->  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
->  	gs101-oriole.dtb \
-> +	gs101-raven.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts b/arch/arm=
-64/boot/dts/exynos/google/gs101-raven.dts
-> new file mode 100644
-> index 000000000000..75fd34797fa9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Raven Device Tree
-> + *
-> + * Copyright 2021-2023 Google LLC
-> + * Copyright 2023-2024 Linaro Ltd
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "gs101-raviole.dtsi"
-> +
-> +/ {
-> +	model =3D "Raven";
-> +	compatible =3D "google,gs101-raven", "google,gs101";
-> +};
-> +
-> +&framebuffer0 {
-> +	reg =3D <0x0 0xfac00000 (1440 * 3120 * 4)>;
-> +	width =3D <1440>;
-> +	height =3D <3120>;
-> +	stride =3D <(1440 * 4)>;
-> +};
-> +
-> +&cont_splash_mem {
+>  Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml ./Documentation/devicetree/bindings/media/i2c/sony,imx219.yaml
 
-Keep overriding/extending nodes ordered by label name.
+You are using non-standard tools to generate patches. See checkpatch
+warnings.
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
