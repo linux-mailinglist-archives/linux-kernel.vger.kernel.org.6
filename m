@@ -1,496 +1,260 @@
-Return-Path: <linux-kernel+bounces-448654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D499F43B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:31:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4A79F43F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4397116D19E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7134A16A597
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDA2156C69;
-	Tue, 17 Dec 2024 06:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A9E1DDC1E;
+	Tue, 17 Dec 2024 06:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zcy5FjdP"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mHhUr5DM"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB5514C5AF;
-	Tue, 17 Dec 2024 06:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF711DD88E
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734417085; cv=none; b=G4NbGXxmMtbiT/brsw3LCtWDdOegUauydhuRBygJO1JzNk4G+wI+dnpoOeioeS5hp8YequuLQtqDlY59Lyvqs+UsFVUcmh5teiVqH7eG/QkzEQxDjydDiMa9LkK3uZbIIogtZTNbavt/ZdwIxXfU9x3F5SQBX5kjSHYXUrvqHuw=
+	t=1734417559; cv=none; b=GtZoDwh7Rvhp6OHxx6HYQAjR/3h5dC6b63X32nj/O+y/FxVN3P5WbSBk/ptqw5Rom3935FBd/bdLg+e3jjZM9+QFHnktM4GrzngAnxxSI5g8bF5fZ/DYvpLGK+iClXpi89av3JzUWHrgVCuVtAIEKY7BoJLx79gYW4tjRr4OQNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734417085; c=relaxed/simple;
-	bh=QIDdj1nT9kqB545uGMG+wjDSxqWfhaRe6OwGDdLXgq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIDccFqXnAC1gDdia0DTRtUbCMfWAUtdVgf5xuPRBYZAyridNQEPI9wZdZlro2jX3bPYXNrVIgez3VRQvHGfCLnk+kPL0jf6nDHwX1HtPiQgA7N6/3vNkNH74KGNaZlQrnlwHzS9douGz6dI4JJa4xIH3BmS3PCQbVHYs22Lr+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zcy5FjdP; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-85bc5d0509bso941715241.1;
-        Mon, 16 Dec 2024 22:31:23 -0800 (PST)
+	s=arc-20240116; t=1734417559; c=relaxed/simple;
+	bh=CSbFNbbtJpMGr7r+QYmbHb79wr/WkObTrKseW/OIITk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V4Tgegx1ntzvtUDtDLIAb73y7PLCxRLhPGXiLA6a7JPsJs8DL3TCd/P75aelkvs4411G2mM2fJXpVWb2WESVhvlIPXSN+qVGIpr/3c89HjtdrkZGmyBq+CAe3hvPfkU8g/CWfJYDy1LwIWDePehCoH+fGOB90n4NxejAs/frmCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mHhUr5DM; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so3735998a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:39:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734417082; x=1735021882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eoCTw3yoTAAXZkQxzJABZOy7K2Bqpin/AmsPBfgbh/o=;
-        b=Zcy5FjdPMYiT/uD4b7BRxOa8BOW+BuLU+Ju66h2YDdxAw2hP9c4BulR5WbgWGipZsw
-         NXySftEdcWzr6gGZaOWUIsKkl+gmWAOU7gO0v2wGABdp1CZzfrDD9Ggue5U7uvk2k9hh
-         WQDHiX8wG8d/lwEiuSY6/3HW7EIJcDMeIK2LcZ2dmZvIy9Ps/Xdairg8Ip1J88UWPrrW
-         f57eHEY/GpZSn88En/AOIKNmj98WLW/xVI+kKYcBTdzfsCSjEqb57Gp4UKO9Xz1PygYb
-         u2ruA3Mg1DT+FVkko/x3KnVovcmz2uIUlLB6BS+fUgU7arDiCe9X2E9jiDEnKOVV8tT6
-         cy5Q==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734417556; x=1735022356; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GKwKdXwSXZuL2D8cviPm/qFzDIAQPtFdeTjDmUaPXg=;
+        b=mHhUr5DMQmEK4dx0zoKVThyUihEY3YYER7W4uz85+/FHYFuWTNmTseYQIUspVRtB8n
+         WR42naUNsAEVBEaUZao3PWTQ1oppVH4u1GMG8dkn8+UXFMBY1PSJF33yFaa/MArtL4ki
+         Iq9Noxp3t687KmwD5pkpGKJ9rEI37raji4aJe5YeVT41wmv7TyFae69KLYTgj1YcRCma
+         +KG6aLawPNGquasDTZEv29WPP8i4uAgIrgPyMJW8p2ELgzduEQpx86TZo+UyrJFkmW4/
+         Ke2vsX7k3tnjXFKMJ4eJd1BmjLpIiypQZ37ZQQ8eDYiIE4xe7NIKcaBKVZhpcArKgyLv
+         yX0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734417082; x=1735021882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eoCTw3yoTAAXZkQxzJABZOy7K2Bqpin/AmsPBfgbh/o=;
-        b=rZzGHLf6mQ7c6dXdrw5TWaOlE/DzQx4PkqPrC/1YDiA38xGEzvt7ydwGhjpbSE+0l/
-         n716tkonScN1FgmtB1yyRA/JXK4L+rrREGgaHmaWWrwgo0ntt7KQCfpmzI5aZvB/KZcg
-         02YDBkqBhItay4qfrp3tEAcQosIa5ANerW93aIB8UmzQHet80YUJbk1B2L1pksJzumtA
-         sptxtmizRKoN+T0Vnynf0IquJs4gSxlFeSAKC7HNVXbL3Ew+bxt9oXsWDZCPuagqzFQr
-         W6BoytrfwXHuuqQdMjXhDMItos2yxMS59AS8eK0kFwcQl16S+lE6DHi1pSZg4KbdwjFj
-         Kg7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUi2UWiKWnWEk/QiZbK+e+6cZu4YDE+97NJshGR/TIKV+DZ1ylx3VpF5uJUzlCnIUw34gPWwfk5@vger.kernel.org, AJvYcCXeNmJywg+Qe5YZTmW1MAGbG7gOwdjEjJpGvuOo02NPzZk/MwsSjGoI0AD8G6flepE9R7Z/NXn2tzmyMCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3O5m0r94sxtYr+WG81gb1Y9FQvusBg/0Idn13o4APd1JZVVJC
-	fsnk/75YlXM5ZWseNWlxapfrZj7By6F6HSFTrMqJOkRpHMDFgAM1p7veBAi6/rl/JFnc/fagx6e
-	JagzF7JSK6JCYQ8T6D0MbFiK75Ck=
-X-Gm-Gg: ASbGnctMFLDTak8Mw/SyjKdA4AqKKq4CVFDLwpJRZzq0wgmKk0MOnitoFfqkDTYBFty
-	AjF2x2B6q7iE3CkMs8bnkQEGf0wabMgS+oN9pXd42tmYGeRfa62pF2gozAxmTV4ST9hphQpR6
-X-Google-Smtp-Source: AGHT+IGAl8tplULeypePPjHpmYvjC519UM2O8ZbyPQCSK24sAFmGyUqANglZYGkF2rx/sAhGaOa+sl/d7GyQLL5aOD0=
-X-Received: by 2002:a05:6102:4425:b0:4b2:48cc:74f3 with SMTP id
- ada2fe7eead31-4b25d9b2410mr14965754137.12.1734417082206; Mon, 16 Dec 2024
- 22:31:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734417556; x=1735022356;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5GKwKdXwSXZuL2D8cviPm/qFzDIAQPtFdeTjDmUaPXg=;
+        b=Q2B+O7Vbz8g81UfiIzsJkKbSrp63OES6ek1lpcONwOvu5d2LcCL6z8vzo+tNIsDHHR
+         r4tsS7nYgZam7x9IfjTIL9Xl8lXW+wKG1QqFscHcD/y+TZiY4UFIdeWXUuaevk4rhg+P
+         Jzi9QmBlADLLwiMdbgEOyVSiWsXBzKMernIp4JGoNFRFXR4AicQ2AboaTY1OoMYf+BJU
+         vsXJ9w91+OSPapKJXLqpiegND2Urw7tUICKzjH21YMD3N8+I/LWb3AmQIdXWCGtPvYN9
+         9GTCGf1nfYwJyxYAFvRb1TRGXEDq1crZvVJIAGIT/MXZCrbDMNnKbrCBkpIsk+kMVtsE
+         PoDw==
+X-Gm-Message-State: AOJu0YyCTa8fDWf3Zjd8sW3sez851vjuqQhdgzJGAQ+3XYLpCBWH4d4w
+	EkyhBgEMQ+KjSPBa6GX/h2pTbrQVzf3Tuycz+SQMtPO1VLgJCqWa7cY+iUj4Wc0=
+X-Gm-Gg: ASbGnctCwMsxoZ15vBzskVAug8cd+ZzRrT//k0AdVJAcg4rdBCY8wWGjQAYffDDNv23
+	bNbHLxYmx2XDjBfoyRt98A0DaiOYYFn+kG7xhI9thE3YDBm7YWM3tm/eQF/N11M/H6e41JBEk1g
+	At2976tCDKZ39snYQiYxLcUzk00g7bjM1iKwci+h8ib7HF4meIjT4qT5VnWxNtpIELZ9ulm77PA
+	o4xP74ECqm3wgdbNHZbDeWprGCJDrGcqfZ/dBcLyJ/FRv5/m946i7fLRkiNlDDOhNvCK67Y
+X-Google-Smtp-Source: AGHT+IG8wAmIpqIQU+QN9wyuY7FpuGBEpM1hsVQvRU88nFGSgia4kFPf1I/7uxrw0bEBGiqVKBh0gg==
+X-Received: by 2002:a17:90b:2807:b0:2ee:6263:cc0c with SMTP id 98e67ed59e1d1-2f2901b7d57mr23118004a91.37.1734417556372;
+        Mon, 16 Dec 2024 22:39:16 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142d90d6bsm9179551a91.2.2024.12.16.22.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 22:39:15 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v3 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Date: Mon, 16 Dec 2024 22:32:45 -0800
+Message-Id: <20241216-perf_syscalltbl-v3-0-239f032481d5@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1734406405-25847-1-git-send-email-yangge1116@126.com> <CAGsJ_4xSbw7XDe1CWBAfYvMH35n0s1KaSze+wTUDOpwE-VrhfQ@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xSbw7XDe1CWBAfYvMH35n0s1KaSze+wTUDOpwE-VrhfQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 17 Dec 2024 19:31:11 +1300
-Message-ID: <CAGsJ_4zW9wmtGtTNZ4HowvL=suZAf-yAeqLBuKW_soOAEjmo3Q@mail.gmail.com>
-Subject: Re: [PATCH V6] mm, compaction: don't use ALLOC_CMA in long term GUP flow
-To: yangge1116@126.com
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, david@redhat.com, 
-	baolin.wang@linux.alibaba.com, vbabka@suse.cz, liuzixing@hygon.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA0bYWcC/2XN0QqCMBTG8VeJXbfY5jTXVe8REet4Tg7MySYjE
+ d+96U2Ql/8Pzu/MLGJwGNnlMLOAyUXn+xzF8cCgtf0LuWtyMyWUFkYWfMBAjzhFsF03Pjtekak
+ bJICKSpavhoDkPpt4u+duXRx9mLYHSa7rZkkp9M5KkgtubGOxhHMlka7BJR9dDyfwb7ZySf0IJ
+ dWeUJmgGqypNRFq8Ucsy/IFLsr3rfQAAAA=
+X-Change-ID: 20240913-perf_syscalltbl-6f98defcc6f5
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+ Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-csky@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7757; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=CSbFNbbtJpMGr7r+QYmbHb79wr/WkObTrKseW/OIITk=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qi9Id/khryJidfsGr8eLdIPP7ResdrS8RPiqu2VF1+4
+ ubhtEyvo5SFQYyDQVZMkYXnWgNz6x39sqOiZRNg5rAygQxh4OIUgInI3Wdk6KrVM56s6MG5qlrt
+ RXzglZpl92OKLtef41ygIBE7jXOfEsMfrkWRr9U3fVrUJNjmZ2myVKXzt5fwEc2YE2LcjYev7vz
+ HDgA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On Tue, Dec 17, 2024 at 7:14=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Tue, Dec 17, 2024 at 4:33=E2=80=AFPM <yangge1116@126.com> wrote:
-> >
-> > From: yangge <yangge1116@126.com>
-> >
-> > Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
-> > in __compaction_suitable()") allow compaction to proceed when free
-> > pages required for compaction reside in the CMA pageblocks, it's
-> > possible that __compaction_suitable() always returns true, and in
-> > some cases, it's not acceptable.
-> >
-> > There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
-> > of memory. I have configured 16GB of CMA memory on each NUMA node,
-> > and starting a 32GB virtual machine with device passthrough is
-> > extremely slow, taking almost an hour.
-> >
-> > During the start-up of the virtual machine, it will call
-> > pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
-> > Long term GUP cannot allocate memory from CMA area, so a maximum
-> > of 16 GB of no-CMA memory on a NUMA node can be used as virtual
-> > machine memory. Since there is 16G of free CMA memory on the NUMA
->
-> Other unmovable allocations, like dma_buf, which can be large in a
-> Linux system, are
-> also unable to allocate memory from CMA. My question is whether the issue=
- you
-> described applies to these allocations as well.
->
-> > node, watermark for order-0 always be met for compaction, so
-> > __compaction_suitable() always returns true, even if the node is
-> > unable to allocate non-CMA memory for the virtual machine.
-> >
-> > For costly allocations, because __compaction_suitable() always
-> > returns true, __alloc_pages_slowpath() can't exit at the appropriate
-> > place, resulting in excessively long virtual machine startup times.
-> > Call trace:
-> > __alloc_pages_slowpath
-> >     if (compact_result =3D=3D COMPACT_SKIPPED ||
-> >         compact_result =3D=3D COMPACT_DEFERRED)
-> >         goto nopage; // should exit __alloc_pages_slowpath() from here
-> >
->
-> Do we face the same issue if we allocate dma-buf while CMA has plenty
-> of free memory, but non-CMA has none?
->
-> > In order to quickly fall back to remote node, we should remove
-> > ALLOC_CMA both in __compaction_suitable() and __isolate_free_page()
-> > in long term GUP flow. After this fix, starting a 32GB virtual machine
-> > with device passthrough takes only a few seconds.
-> >
-> > Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compa=
-ction_suitable()")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: yangge <yangge1116@126.com>
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > ---
-> >
-> > V6:
-> > -- update cc->alloc_flags to keep the original loginc
-> >
-> > V5:
-> > - add 'alloc_flags' parameter for __isolate_free_page()
-> > - remove 'usa_cma' variable
-> >
-> > V4:
-> > - rich the commit log description
-> >
-> > V3:
-> > - fix build errors
-> > - add ALLOC_CMA both in should_continue_reclaim() and compaction_ready(=
-)
-> >
-> > V2:
-> > - using the 'cc->alloc_flags' to determin if 'ALLOC_CMA' is needed
-> > - rich the commit log description
-> >
-> >  include/linux/compaction.h |  6 ++++--
-> >  mm/compaction.c            | 26 +++++++++++++++-----------
-> >  mm/internal.h              |  3 ++-
-> >  mm/page_alloc.c            |  7 +++++--
-> >  mm/page_isolation.c        |  3 ++-
-> >  mm/page_reporting.c        |  2 +-
-> >  mm/vmscan.c                |  4 ++--
-> >  7 files changed, 31 insertions(+), 20 deletions(-)
-> >
-> > diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-> > index e947764..b4c3ac3 100644
-> > --- a/include/linux/compaction.h
-> > +++ b/include/linux/compaction.h
-> > @@ -90,7 +90,8 @@ extern enum compact_result try_to_compact_pages(gfp_t=
- gfp_mask,
-> >                 struct page **page);
-> >  extern void reset_isolation_suitable(pg_data_t *pgdat);
-> >  extern bool compaction_suitable(struct zone *zone, int order,
-> > -                                              int highest_zoneidx);
-> > +                                              int highest_zoneidx,
-> > +                                              unsigned int alloc_flags=
-);
-> >
-> >  extern void compaction_defer_reset(struct zone *zone, int order,
-> >                                 bool alloc_success);
-> > @@ -108,7 +109,8 @@ static inline void reset_isolation_suitable(pg_data=
-_t *pgdat)
-> >  }
-> >
-> >  static inline bool compaction_suitable(struct zone *zone, int order,
-> > -                                                     int highest_zonei=
-dx)
-> > +                                                     int highest_zonei=
-dx,
-> > +                                                     unsigned int allo=
-c_flags)
-> >  {
-> >         return false;
-> >  }
-> > diff --git a/mm/compaction.c b/mm/compaction.c
-> > index 07bd227..d92ba6c 100644
-> > --- a/mm/compaction.c
-> > +++ b/mm/compaction.c
-> > @@ -655,7 +655,7 @@ static unsigned long isolate_freepages_block(struct=
- compact_control *cc,
-> >
-> >                 /* Found a free page, will break it into order-0 pages =
-*/
-> >                 order =3D buddy_order(page);
-> > -               isolated =3D __isolate_free_page(page, order);
-> > +               isolated =3D __isolate_free_page(page, order, cc->alloc=
-_flags);
-> >                 if (!isolated)
-> >                         break;
-> >                 set_page_private(page, order);
-> > @@ -1634,7 +1634,7 @@ static void fast_isolate_freepages(struct compact=
-_control *cc)
-> >
-> >                 /* Isolate the page if available */
-> >                 if (page) {
-> > -                       if (__isolate_free_page(page, order)) {
-> > +                       if (__isolate_free_page(page, order, cc->alloc_=
-flags)) {
-> >                                 set_page_private(page, order);
-> >                                 nr_isolated =3D 1 << order;
-> >                                 nr_scanned +=3D nr_isolated - 1;
-> > @@ -2381,6 +2381,7 @@ static enum compact_result compact_finished(struc=
-t compact_control *cc)
-> >
-> >  static bool __compaction_suitable(struct zone *zone, int order,
-> >                                   int highest_zoneidx,
-> > +                                 unsigned int alloc_flags,
-> >                                   unsigned long wmark_target)
-> >  {
-> >         unsigned long watermark;
-> > @@ -2395,25 +2396,26 @@ static bool __compaction_suitable(struct zone *=
-zone, int order,
-> >          * even if compaction succeeds.
-> >          * For costly orders, we require low watermark instead of min f=
-or
-> >          * compaction to proceed to increase its chances.
-> > -        * ALLOC_CMA is used, as pages in CMA pageblocks are considered
-> > -        * suitable migration targets
-> > +        * In addition to long term GUP flow, ALLOC_CMA is used, as pag=
-es in
-> > +        * CMA pageblocks are considered suitable migration targets
->
-> I'm not sure if this document is correct for cases other than GUP.
+Standardize the generation of syscall headers around syscall tables.
+Previously each architecture independently selected how syscall headers
+would be generated, or would not define a way and fallback onto
+libaudit. Convert all architectures to use a standard syscall header
+generation script and allow each architecture to override the syscall
+table to use if they do not use the generic table.
 
-Hi yangge,
+As a result of these changes, no architecture will require libaudit, and
+so the fallback case of using libaudit is removed by this series.
 
-Could we please run the same test using dma-buf? The simplest approach is
-to use system_heap from drivers/dma-buf/heaps/system_heap.c.
+Testing:
 
-Userspace programming it is quite straightforward:
-https://static.linaro.org/connect/lvc21/presentations/lvc21-120.pdf
+I have tested that the syscall mappings of id to name generation works
+as expected for every architecture, but I have only validated that perf
+trace compiles and runs as expected on riscv, arm64, and x86_64.
 
-struct dma_heap_allocation_data heap_data =3D { .len =3D 1048576,  // 1meg
-    .fd_flags =3D O_RDWR | O_CLOEXEC, };
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+Changes in v3:
+- Fix compiliation when OUTPUT is empty
+- Correct unused headers to be .h instead of .c  (Namhyung)
+- Make variable definition of supported archs (Namhyung)
+- Convert += into := for syscalls headers (Namhyung)
+- Link to v2: https://lore.kernel.org/r/20241212-perf_syscalltbl-v2-0-f8ca984ffe40@rivosinc.com
 
-fd =3D open(=E2=80=9C/dev/dma_heap/system=E2=80=9D, O_RDONLY | O_CLOEXEC);
-if (fd < 0)
-      return fd;
-ret =3D ioctl(fd, DMA_HEAP_IOCTL_ALLOC, &heap_data);
+Changes in v2:
+- Rebase onto 6.13-rc2
+- Fix output path so it generates to /tools/perf/arch properly
+- Link to v1: https://lore.kernel.org/r/20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com
 
-There are two objectives:
-1. Whether we should fix the changelog and code documentation, then send
-another version.
-2. If there are issues elsewhere, we need to port the patch into the Androi=
-d
-common kernel, which heavily uses dma-buf.
+---
+Charlie Jenkins (16):
+      perf tools: Create generic syscall table support
+      perf tools: arc: Support generic syscall headers
+      perf tools: csky: Support generic syscall headers
+      perf tools: arm: Support syscall headers
+      perf tools: sh: Support syscall headers
+      perf tools: sparc: Support syscall headers
+      perf tools: xtensa: Support syscall header
+      perf tools: x86: Use generic syscall scripts
+      perf tools: alpha: Support syscall header
+      perf tools: parisc: Support syscall header
+      perf tools: arm64: Use syscall table
+      perf tools: loongarch: Use syscall table
+      perf tools: mips: Use generic syscall scripts
+      perf tools: powerpc: Use generic syscall table scripts
+      perf tools: s390: Use generic syscall table scripts
+      perf tools: Remove dependency on libaudit
 
->
-> >          */
-> >         watermark =3D (order > PAGE_ALLOC_COSTLY_ORDER) ?
-> >                                 low_wmark_pages(zone) : min_wmark_pages=
-(zone);
-> >         watermark +=3D compact_gap(order);
-> >         return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
-> > -                                  ALLOC_CMA, wmark_target);
-> > +                                  alloc_flags & ALLOC_CMA, wmark_targe=
-t);
-> >  }
-> >
-> >  /*
-> >   * compaction_suitable: Is this suitable to run compaction on this zon=
-e now?
-> >   */
-> > -bool compaction_suitable(struct zone *zone, int order, int highest_zon=
-eidx)
-> > +bool compaction_suitable(struct zone *zone, int order, int highest_zon=
-eidx,
-> > +                                  unsigned int alloc_flags)
-> >  {
-> >         enum compact_result compact_result;
-> >         bool suitable;
-> >
-> > -       suitable =3D __compaction_suitable(zone, order, highest_zoneidx=
-,
-> > +       suitable =3D __compaction_suitable(zone, order, highest_zoneidx=
-, alloc_flags,
-> >                                          zone_page_state(zone, NR_FREE_=
-PAGES));
-> >         /*
-> >          * fragmentation index determines if allocation failures are du=
-e to
-> > @@ -2474,7 +2476,7 @@ bool compaction_zonelist_suitable(struct alloc_co=
-ntext *ac, int order,
-> >                 available =3D zone_reclaimable_pages(zone) / order;
-> >                 available +=3D zone_page_state_snapshot(zone, NR_FREE_P=
-AGES);
-> >                 if (__compaction_suitable(zone, order, ac->highest_zone=
-idx,
-> > -                                         available))
-> > +                                         alloc_flags, available))
-> >                         return true;
-> >         }
-> >
-> > @@ -2499,7 +2501,7 @@ compaction_suit_allocation_order(struct zone *zon=
-e, unsigned int order,
-> >                               alloc_flags))
-> >                 return COMPACT_SUCCESS;
-> >
-> > -       if (!compaction_suitable(zone, order, highest_zoneidx))
-> > +       if (!compaction_suitable(zone, order, highest_zoneidx, alloc_fl=
-ags))
-> >                 return COMPACT_SKIPPED;
-> >
-> >         return COMPACT_CONTINUE;
-> > @@ -2893,6 +2895,7 @@ static int compact_node(pg_data_t *pgdat, bool pr=
-oactive)
-> >         struct compact_control cc =3D {
-> >                 .order =3D -1,
-> >                 .mode =3D proactive ? MIGRATE_SYNC_LIGHT : MIGRATE_SYNC=
-,
-> > +               .alloc_flags =3D ALLOC_CMA,
-> >                 .ignore_skip_hint =3D true,
-> >                 .whole_zone =3D true,
-> >                 .gfp_mask =3D GFP_KERNEL,
-> > @@ -3037,7 +3040,7 @@ static bool kcompactd_node_suitable(pg_data_t *pg=
-dat)
-> >
-> >                 ret =3D compaction_suit_allocation_order(zone,
-> >                                 pgdat->kcompactd_max_order,
-> > -                               highest_zoneidx, ALLOC_WMARK_MIN);
-> > +                               highest_zoneidx, ALLOC_CMA | ALLOC_WMAR=
-K_MIN);
-> >                 if (ret =3D=3D COMPACT_CONTINUE)
-> >                         return true;
-> >         }
-> > @@ -3058,6 +3061,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
-> >                 .search_order =3D pgdat->kcompactd_max_order,
-> >                 .highest_zoneidx =3D pgdat->kcompactd_highest_zoneidx,
-> >                 .mode =3D MIGRATE_SYNC_LIGHT,
-> > +               .alloc_flags =3D ALLOC_CMA | ALLOC_WMARK_MIN,
-> >                 .ignore_skip_hint =3D false,
-> >                 .gfp_mask =3D GFP_KERNEL,
-> >         };
-> > @@ -3078,7 +3082,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
-> >                         continue;
-> >
-> >                 ret =3D compaction_suit_allocation_order(zone,
-> > -                               cc.order, zoneid, ALLOC_WMARK_MIN);
-> > +                               cc.order, zoneid, cc.alloc_flags);
-> >                 if (ret !=3D COMPACT_CONTINUE)
-> >                         continue;
-> >
-> > diff --git a/mm/internal.h b/mm/internal.h
-> > index 3922788..6d257c8 100644
-> > --- a/mm/internal.h
-> > +++ b/mm/internal.h
-> > @@ -662,7 +662,8 @@ static inline void clear_zone_contiguous(struct zon=
-e *zone)
-> >         zone->contiguous =3D false;
-> >  }
-> >
-> > -extern int __isolate_free_page(struct page *page, unsigned int order);
-> > +extern int __isolate_free_page(struct page *page, unsigned int order,
-> > +                                   unsigned int alloc_flags);
-> >  extern void __putback_isolated_page(struct page *page, unsigned int or=
-der,
-> >                                     int mt);
-> >  extern void memblock_free_pages(struct page *page, unsigned long pfn,
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index dde19db..1bfdca3 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -2809,7 +2809,8 @@ void split_page(struct page *page, unsigned int o=
-rder)
-> >  }
-> >  EXPORT_SYMBOL_GPL(split_page);
-> >
-> > -int __isolate_free_page(struct page *page, unsigned int order)
-> > +int __isolate_free_page(struct page *page, unsigned int order,
-> > +                                  unsigned int alloc_flags)
-> >  {
-> >         struct zone *zone =3D page_zone(page);
-> >         int mt =3D get_pageblock_migratetype(page);
-> > @@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsign=
-ed int order)
-> >                  * exists.
-> >                  */
-> >                 watermark =3D zone->_watermark[WMARK_MIN] + (1UL << ord=
-er);
-> > -               if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA=
-))
-> > +               if (!zone_watermark_ok(zone, 0, watermark, 0,
-> > +                           alloc_flags & ALLOC_CMA))
-> >                         return 0;
-> >         }
-> >
-> > @@ -6454,6 +6456,7 @@ int alloc_contig_range_noprof(unsigned long start=
-, unsigned long end,
-> >                 .order =3D -1,
-> >                 .zone =3D page_zone(pfn_to_page(start)),
-> >                 .mode =3D MIGRATE_SYNC,
-> > +               .alloc_flags =3D ALLOC_CMA,
-> >                 .ignore_skip_hint =3D true,
-> >                 .no_set_skip_hint =3D true,
-> >                 .alloc_contig =3D true,
-> > diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> > index c608e9d..a1f2c79 100644
-> > --- a/mm/page_isolation.c
-> > +++ b/mm/page_isolation.c
-> > @@ -229,7 +229,8 @@ static void unset_migratetype_isolate(struct page *=
-page, int migratetype)
-> >                         buddy =3D find_buddy_page_pfn(page, page_to_pfn=
-(page),
-> >                                                     order, NULL);
-> >                         if (buddy && !is_migrate_isolate_page(buddy)) {
-> > -                               isolated_page =3D !!__isolate_free_page=
-(page, order);
-> > +                               isolated_page =3D !!__isolate_free_page=
-(page, order,
-> > +                                                   ALLOC_CMA);
-> >                                 /*
-> >                                  * Isolating a free page in an isolated=
- pageblock
-> >                                  * is expected to always work as waterm=
-arks don't
-> > diff --git a/mm/page_reporting.c b/mm/page_reporting.c
-> > index e4c428e..fd3813b 100644
-> > --- a/mm/page_reporting.c
-> > +++ b/mm/page_reporting.c
-> > @@ -198,7 +198,7 @@ page_reporting_cycle(struct page_reporting_dev_info=
- *prdev, struct zone *zone,
-> >
-> >                 /* Attempt to pull page from list and place in scatterl=
-ist */
-> >                 if (*offset) {
-> > -                       if (!__isolate_free_page(page, order)) {
-> > +                       if (!__isolate_free_page(page, order, ALLOC_CMA=
-)) {
-> >                                 next =3D page;
-> >                                 break;
-> >                         }
-> > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> > index 5e03a61..33f5b46 100644
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
-> > @@ -5815,7 +5815,7 @@ static inline bool should_continue_reclaim(struct=
- pglist_data *pgdat,
-> >                                       sc->reclaim_idx, 0))
-> >                         return false;
-> >
-> > -               if (compaction_suitable(zone, sc->order, sc->reclaim_id=
-x))
-> > +               if (compaction_suitable(zone, sc->order, sc->reclaim_id=
-x, ALLOC_CMA))
-> >                         return false;
-> >         }
-> >
-> > @@ -6043,7 +6043,7 @@ static inline bool compaction_ready(struct zone *=
-zone, struct scan_control *sc)
-> >                 return true;
-> >
-> >         /* Compaction cannot yet proceed. Do reclaim. */
-> > -       if (!compaction_suitable(zone, sc->order, sc->reclaim_idx))
-> > +       if (!compaction_suitable(zone, sc->order, sc->reclaim_idx, ALLO=
-C_CMA))
-> >                 return false;
-> >
-> >         /*
-> > --
-> > 2.7.4
-> >
-> >
->
-Thanks
-Barry
+ Documentation/admin-guide/workload-tracing.rst     |   2 +-
+ tools/build/feature/Makefile                       |   4 -
+ tools/build/feature/test-libaudit.c                |  11 -
+ tools/perf/Documentation/perf-check.txt            |   1 -
+ tools/perf/Makefile.config                         |  39 +-
+ tools/perf/Makefile.perf                           |  12 +-
+ tools/perf/arch/alpha/entry/syscalls/Kbuild        |   2 +
+ .../arch/alpha/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/alpha/entry/syscalls/syscall.tbl   | 504 ++++++++++++++++++++
+ tools/perf/arch/alpha/include/syscall_table.h      |   2 +
+ tools/perf/arch/arc/entry/syscalls/Kbuild          |   2 +
+ .../perf/arch/arc/entry/syscalls/Makefile.syscalls |   3 +
+ tools/perf/arch/arc/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm/entry/syscalls/Kbuild          |   4 +
+ .../perf/arch/arm/entry/syscalls/Makefile.syscalls |   2 +
+ tools/perf/arch/arm/entry/syscalls/syscall.tbl     | 483 +++++++++++++++++++
+ tools/perf/arch/arm/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm64/Makefile                     |  22 -
+ tools/perf/arch/arm64/entry/syscalls/Kbuild        |   3 +
+ .../arch/arm64/entry/syscalls/Makefile.syscalls    |   6 +
+ tools/perf/arch/arm64/entry/syscalls/mksyscalltbl  |  46 --
+ .../perf/arch/arm64/entry/syscalls/syscall_32.tbl  | 476 +++++++++++++++++++
+ .../perf/arch/arm64/entry/syscalls/syscall_64.tbl  |   1 +
+ tools/perf/arch/arm64/include/syscall_table.h      |   8 +
+ tools/perf/arch/csky/entry/syscalls/Kbuild         |   2 +
+ .../arch/csky/entry/syscalls/Makefile.syscalls     |   3 +
+ tools/perf/arch/csky/include/syscall_table.h       |   2 +
+ tools/perf/arch/loongarch/Makefile                 |  22 -
+ tools/perf/arch/loongarch/entry/syscalls/Kbuild    |   2 +
+ .../loongarch/entry/syscalls/Makefile.syscalls     |   3 +
+ .../arch/loongarch/entry/syscalls/mksyscalltbl     |  45 --
+ tools/perf/arch/loongarch/include/syscall_table.h  |   2 +
+ tools/perf/arch/mips/entry/syscalls/Kbuild         |   2 +
+ .../arch/mips/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/mips/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/mips/include/syscall_table.h       |   2 +
+ tools/perf/arch/parisc/entry/syscalls/Kbuild       |   3 +
+ .../arch/parisc/entry/syscalls/Makefile.syscalls   |   6 +
+ tools/perf/arch/parisc/entry/syscalls/syscall.tbl  | 463 +++++++++++++++++++
+ tools/perf/arch/parisc/include/syscall_table.h     |   8 +
+ tools/perf/arch/powerpc/Makefile                   |  25 -
+ tools/perf/arch/powerpc/entry/syscalls/Kbuild      |   3 +
+ .../arch/powerpc/entry/syscalls/Makefile.syscalls  |   6 +
+ .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  |  39 --
+ tools/perf/arch/powerpc/include/syscall_table.h    |   8 +
+ tools/perf/arch/riscv/Makefile                     |  22 -
+ tools/perf/arch/riscv/entry/syscalls/Kbuild        |   2 +
+ .../arch/riscv/entry/syscalls/Makefile.syscalls    |   4 +
+ tools/perf/arch/riscv/entry/syscalls/mksyscalltbl  |  47 --
+ tools/perf/arch/riscv/include/syscall_table.h      |   8 +
+ tools/perf/arch/s390/Makefile                      |  21 -
+ tools/perf/arch/s390/entry/syscalls/Kbuild         |   2 +
+ .../arch/s390/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/s390/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/s390/include/syscall_table.h       |   2 +
+ tools/perf/arch/sh/entry/syscalls/Kbuild           |   2 +
+ .../perf/arch/sh/entry/syscalls/Makefile.syscalls  |   4 +
+ tools/perf/arch/sh/entry/syscalls/syscall.tbl      | 472 +++++++++++++++++++
+ tools/perf/arch/sh/include/syscall_table.h         |   2 +
+ tools/perf/arch/sparc/entry/syscalls/Kbuild        |   3 +
+ .../arch/sparc/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/sparc/entry/syscalls/syscall.tbl   | 514 +++++++++++++++++++++
+ tools/perf/arch/sparc/include/syscall_table.h      |   8 +
+ tools/perf/arch/x86/Build                          |   1 -
+ tools/perf/arch/x86/Makefile                       |  25 -
+ tools/perf/arch/x86/entry/syscalls/Kbuild          |   3 +
+ .../perf/arch/x86/entry/syscalls/Makefile.syscalls |   6 +
+ tools/perf/arch/x86/entry/syscalls/syscalltbl.sh   |  42 --
+ tools/perf/arch/x86/include/syscall_table.h        |   8 +
+ tools/perf/arch/xtensa/entry/syscalls/Kbuild       |   2 +
+ .../arch/xtensa/entry/syscalls/Makefile.syscalls   |   4 +
+ tools/perf/arch/xtensa/entry/syscalls/syscall.tbl  | 439 ++++++++++++++++++
+ tools/perf/arch/xtensa/include/syscall_table.h     |   2 +
+ tools/perf/builtin-check.c                         |   1 -
+ tools/perf/builtin-help.c                          |   2 -
+ tools/perf/builtin-trace.c                         |  30 --
+ tools/perf/check-headers.sh                        |   9 +
+ tools/perf/perf.c                                  |   6 +-
+ tools/perf/scripts/Makefile.syscalls               |  61 +++
+ tools/perf/scripts/syscalltbl.sh                   |  86 ++++
+ tools/perf/tests/make                              |   7 +-
+ tools/perf/util/env.c                              |   4 +-
+ tools/perf/util/generate-cmdlist.sh                |   4 +-
+ tools/perf/util/syscalltbl.c                       |  90 +---
+ tools/scripts/syscall.tbl                          | 409 ++++++++++++++++
+ 85 files changed, 4102 insertions(+), 619 deletions(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20240913-perf_syscalltbl-6f98defcc6f5
+-- 
+- Charlie
+
 
