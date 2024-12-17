@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-449990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DDC9F5917
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:53:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BED9F58F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6582189712E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:43:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46567A65AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503431FD782;
-	Tue, 17 Dec 2024 21:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02051FA166;
+	Tue, 17 Dec 2024 21:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYzuAkxr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="vSVfanhk"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2727E1FA25F;
-	Tue, 17 Dec 2024 21:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE971F9F6E;
+	Tue, 17 Dec 2024 21:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734471564; cv=none; b=okwo/sQBWZSffsHDNZSVobeEUUkWTih0+8M5iazqURPdZhrM360bjmyvG/paVMr1NzwoBk8PflSw0tnwF9J8ufwxY5HoSvSrNXAUcG8egY7u1HGURU4WaUHi/c2RGKnk2SMBOfCqOGIaTfNNJxltrE5vrbi3BbQsHzaIv65lyVM=
+	t=1734471596; cv=none; b=ROyVBVuk025zweZk8TjgoMyYz2il+VIC4THtgOXwA+4trH0lFZqAtY9K3G6GjcT6sI5qQSUzuD3XVelBZ57m05+mkhfN8G2dPOnr6g4clUftbE7lgLxE5R306DtzalAd8Yl8iQEgo+JBbtuSZPYpCGsHn2d2bC3Y0h3LTwOwR6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734471564; c=relaxed/simple;
-	bh=YErCTUhQ/G7sCBOzYDhoT3G1Z1y0MkXWxHYYmk+C8lg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=afuQ1+8HJEPN/NDwv+mCsxs4Q7MZs1zqCslbtykkT5j9M2gRqrlv2n7hmbG8ulF7DMG7dW7W3X42L7w0xTmsjjd3K4/rRAqqKwpusZlVR0hvKQYYoeEq5C3RQwHoxrt2UeyMfkBX9uR2j2jSAUKwivshAb758JceIErbJ4RxtcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYzuAkxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 02917C4CEFB;
-	Tue, 17 Dec 2024 21:39:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734471564;
-	bh=YErCTUhQ/G7sCBOzYDhoT3G1Z1y0MkXWxHYYmk+C8lg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CYzuAkxruak4SeqaBYzDphn+etOS1xsvcbEp8tTBPidFM8qzsR4Hqwey1nOvAOZcI
-	 ivVTbPrF+sf+LEVBguUsZ1cAXP4pxQSGAwcK5gDu+S0KiO2AoVd7bnh9yZ5GLogwmO
-	 /qkxmgPpr7Q30/UiyxFVL+ohud5EMBsWwnxgMJU9XayAIaxct1izFdzXSHgnOeTdhl
-	 G4ej3Ga+9ODeb+lFqlTKYTBGelOfwTFLAb8FT3DkmupBmeIiZDMBI91tQ676nTbNlU
-	 kDeekjpfMW4PFTziPpeTffg/VyXSYL1O3LevF6wdEo/NF0DeM4t3a2bI21p54OCKgM
-	 AWqdhPQmIvv4A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4239E7718A;
-	Tue, 17 Dec 2024 21:39:23 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Tue, 17 Dec 2024 22:39:25 +0100
-Subject: [PATCH v5 13/13] media: i2c: imx214: Fix link frequency validation
+	s=arc-20240116; t=1734471596; c=relaxed/simple;
+	bh=waPL8MSo91BSCASabGJTRyFGziNHSYJPmgybZVAEl5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nRW1j5Ckym4rjkt0pUlYEDMUri2wjz7HHq1hg+PzDxxkhTvdNBHwft4FeX03oBJkM4SiYb7P+8Nh5MgXnSzs8Fz8uiY9xK9P8GB2mqEQqzwAWZ2yMclzJppLgljcnpXKt8mQL4Bd9unDuq+SgfSBu15/FpjJmYn2ejWXX1Sru9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=vSVfanhk; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YCVZx5Hcsz6ClY9C;
+	Tue, 17 Dec 2024 21:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1734471585; x=1737063586; bh=w2NSjeBFnnChdL8x6+UsuaJO
+	wEIF50BKYw1sXCgw0Sw=; b=vSVfanhkNJhsLrav09l0gN7u92Idr8Z1C2isEXyg
+	AlpYxUIbfKXvS7Nfgck9ao7UuT714+CpLfdrwAizYz2P3ZFl8vX48c45wAgl353Y
+	BqvVxCet7YROPOJ1xRyq26cqYEG6Aet8S2iejLt/QSaqPOD+tk7NVYNoPvY1a09o
+	Ks/I7AmSWLK2E54xi2KpSbOhNAqVNjrf+lzDCvoq8XozfCRNkI7Ps0M8bB6g9QnZ
+	jQmmsNYsz6QuCfH8VApUYnVhpWVLOEeQZep61g8y8xH8IUBjZG4MErEPnPLzZTsy
+	fegglZTQkwVkF8B1gKF/f8SQFCMHtwjSvAX+OZxskXcZ5w==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id abOatshre1vv; Tue, 17 Dec 2024 21:39:45 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YCVZk2xngz6ClY9B;
+	Tue, 17 Dec 2024 21:39:41 +0000 (UTC)
+Message-ID: <7e26bf70-3ff3-4cf0-870e-9d0d9c35491b@acm.org>
+Date: Tue, 17 Dec 2024 13:39:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241217-imx214-v5-13-387f52adef4d@apitzsch.eu>
-References: <20241217-imx214-v5-0-387f52adef4d@apitzsch.eu>
-In-Reply-To: <20241217-imx214-v5-0-387f52adef4d@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Vincent Knecht <vincent.knecht@mailoo.org>, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734471561; l=2951;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=IaHeW2kn0+BFS3UpeRipHSvLaInVm6GgixkZfvH8Zn8=;
- b=iceWVJ/p6O7NHmC2GG6/G00Ue3fCNEOdq+Km0itSPUrZBIifHQiuWcE0/Oj+cpofhaS6rS9Vn
- LWct7FTWZXDAHSf4LXuhe47H7G4pQFDB2/HyHCDpBd3sHdmwCmtzkMR
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/4] block/mq-deadline: Revert "block/mq-deadline:
+ Fix the tag reservation code"
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+ akpm@linux-foundation.org, ming.lei@redhat.com, yang.yang@vivo.com,
+ osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
+ <20241217024047.1091893-2-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241217024047.1091893-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: André Apitzsch <git@apitzsch.eu>
+On 12/16/24 6:40 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> This reverts commit 39823b47bbd40502632ffba90ebb34fff7c8b5e8.
+> 
+> 1) Set min_shallow_depth to 1 will end up setting wake_batch to 1,
+>     and this will cause performance degradation in some high concurrency
+>     test, for both IO bandwidth and cpu usage.
+> 
+>     async_depth can be changed by sysfs, and the minimal value is 1. This
+>     is why min_shallow_depth is set to 1 at initialization to make sure
+>     functional is correct if async_depth is set to 1. However, sacrifice
+>     performance in the default scenario is not acceptable.
+> 
+> 2) dd_to_word_depth() is supposed to scale down async_depth, however, user
+>     can set low nr_requests and sb->depth can be less than 1 << sb->shift,
+>     then dd_to_word_depth() will end up scale up async_depth.
 
-The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
-IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
-which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
+Although this patch fixes a performance regression, it breaks the
+async_depth functionality. If we are going to break that functionality
+temporarily, I propose to do something like this:
 
-Parsing the PLL registers with the defined 24MHz input. We're in single
-PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
-up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
-"Frame rate calculation formula" says "Pixel rate
-[pixels/s] = VTPXCK [MHz] * 4", so 120 * 4 = 480MPix/s, which basically
-agrees with my number above.
+diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+index 20a8a3afb88b..4cc7b5db4669 100644
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -487,37 +487,12 @@ static struct request *dd_dispatch_request(struct 
+blk_mq_hw_ctx *hctx)
+  	return rq;
+  }
 
-3.1.4. MIPI global timing setting says "Output bitrate = OPPXCK * reg
-0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
-frequency of 600MHz due to DDR.
-That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
-
-Keep the previous link frequency for backward compatibility.
-
-Acked-by: Ricardo Ribalda <ribalda@chromium.org>
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index e8d35f8b0f8b57d64f03ff6f5ed9eac51a671e8e..6a05094bbd4e94bb1a436a602745c3b5b2fdfbe2 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -31,7 +31,9 @@
- #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
- 
- #define IMX214_DEFAULT_CLK_FREQ	24000000
--#define IMX214_DEFAULT_LINK_FREQ 480000000
-+#define IMX214_DEFAULT_LINK_FREQ	600000000
-+/* Keep wrong link frequency for backward compatibility */
-+#define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
- #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10)
- #define IMX214_FPS 30
- 
-@@ -1225,18 +1227,26 @@ static int imx214_parse_fwnode(struct device *dev)
- 		goto done;
- 	}
- 
--	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++)
-+	if (bus_cfg.nr_of_link_frequencies != 1)
-+		dev_warn(dev, "Only one link-frequency supported, please review your DT. Continuing anyway\n");
-+
-+	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++) {
- 		if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ)
- 			break;
+-/*
+- * 'depth' is a number in the range 1..INT_MAX representing a number of
+- * requests. Scale it with a factor (1 << bt->sb.shift) / 
+q->nr_requests since
+- * 1..(1 << bt->sb.shift) is the range expected by sbitmap_get_shallow().
+- * Values larger than q->nr_requests have the same effect as 
+q->nr_requests.
+- */
+-static int dd_to_word_depth(struct blk_mq_hw_ctx *hctx, unsigned int 
+qdepth)
+-{
+-	struct sbitmap_queue *bt = &hctx->sched_tags->bitmap_tags;
+-	const unsigned int nrr = hctx->queue->nr_requests;
 -
--	if (i == bus_cfg.nr_of_link_frequencies) {
--		dev_err_probe(dev, -EINVAL,
--			      "link-frequencies %d not supported, Please review your DT\n",
--			      IMX214_DEFAULT_LINK_FREQ);
--		ret = -EINVAL;
--		goto done;
-+		if (bus_cfg.link_frequencies[i] ==
-+		    IMX214_DEFAULT_LINK_FREQ_LEGACY) {
-+			dev_warn(dev,
-+				 "link-frequencies %d not supported, please review your DT. Continuing anyway\n",
-+				 IMX214_DEFAULT_LINK_FREQ);
-+			break;
-+		}
- 	}
- 
-+	if (i == bus_cfg.nr_of_link_frequencies)
-+		ret = dev_err_probe(dev, -EINVAL,
-+				    "link-frequencies %d not supported, please review your DT\n",
-+				    IMX214_DEFAULT_LINK_FREQ);
-+
- done:
- 	v4l2_fwnode_endpoint_free(&bus_cfg);
- 	fwnode_handle_put(endpoint);
+-	return ((qdepth << bt->sb.shift) + nrr - 1) / nrr;
+-}
+-
+  /*
+   * Called by __blk_mq_alloc_request(). The shallow_depth value set by this
+   * function is used by __blk_mq_get_tag().
+   */
+  static void dd_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+  {
+-	struct deadline_data *dd = data->q->elevator->elevator_data;
+-
+-	/* Do not throttle synchronous reads. */
+-	if (op_is_sync(opf) && !op_is_write(opf))
+-		return;
+-
+-	/*
+-	 * Throttle asynchronous requests and writes such that these requests
+-	 * do not block the allocation of synchronous requests.
+-	 */
+-	data->shallow_depth = dd_to_word_depth(data->hctx, dd->async_depth);
+  }
 
--- 
-2.47.1
+  /* Called by blk_mq_update_nr_requests(). */
+@@ -525,11 +500,8 @@ static void dd_depth_updated(struct blk_mq_hw_ctx 
+*hctx)
+  {
+  	struct request_queue *q = hctx->queue;
+  	struct deadline_data *dd = q->elevator->elevator_data;
+-	struct blk_mq_tags *tags = hctx->sched_tags;
 
+  	dd->async_depth = q->nr_requests;
+-
+-	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, 1);
+  }
+
+  /* Called by blk_mq_init_hctx() and blk_mq_init_sched(). */
 
 
