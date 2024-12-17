@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-449021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0847F9F4898
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:11:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E069F48A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FBC188E435
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:11:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC37165327
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFAE1DFD9C;
-	Tue, 17 Dec 2024 10:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E7F1EF085;
+	Tue, 17 Dec 2024 10:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b="rXQjLCcN"
-Received: from eggs.gnu.org (eggs.gnu.org [209.51.188.92])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XCMpa8tG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C0A1DF97E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.51.188.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3F1DFE0C;
+	Tue, 17 Dec 2024 10:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734430213; cv=none; b=dGFqomqPN91Ze2bD2TCeIP1Cb5FW3zHgTYwSTSvDTmlvT67ROgtCMnDlQpvMM8Eq9qFO12Q0tL6rP9+qQkKIzNfJKSanFVJGGALTFypwGPs7E3DDQU1VVTbcInP9VF5jvypBePfS6F4TYOTO1PAlg5TLqmI8EWSWCq4uMGA5/Nc=
+	t=1734430228; cv=none; b=SytykZQD4g3bLuYRfFa11usAiqNjmelRiprMQlOnHiEnfz09olxjLm5x2s7+phm7LqUZlJ//oQQWxKw+6qswpw247pfKoavDCNGUWpDqQovgCNF0ECWu0k1v5WCW3LDx7TrAuD+clQ4hAuHaofNYRmDiY6hq9vXY5HvfhXdLf10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734430213; c=relaxed/simple;
-	bh=2OTn+7Wtp1+ju4Om8/5R483LdSHxnVmt9UZu06mmsPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hiwPqR22cvVqUSzQEsuzOLrrkxIlsJz4yA6IEHLB8vZzKXvYICgo06fLuSstCqHEbWQH0FA4fYJHImBcDO8RIJFW0u7AJ3yGM7zMA7l307E2bdae1aqFw4yZUsGt4C5H4mmObfBjCckWCsO6K/Dukum62vALxkQaA87YOKATNzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org; spf=pass smtp.mailfrom=gnu.org; dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b=rXQjLCcN; arc=none smtp.client-ip=209.51.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnu.org
-Received: from fencepost.gnu.org ([2001:470:142:3::e])
-	by eggs.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.90_1)
-	(envelope-from <othacehe@gnu.org>)
-	id 1tNUWk-0002bZ-V7; Tue, 17 Dec 2024 05:10:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gnu.org;
-	s=fencepost-gnu-org; h=MIME-Version:Date:Subject:To:From:in-reply-to:
-	references; bh=nSo/QZCeasOzIOtIpeJAWWOjM0xxfzS+7FbMLI2RyOQ=; b=rXQjLCcN+JJUCR
-	CDxGA+/lqcyMLXbScyEC/r1KxH39vf6lhuAVs0aeqdR6KlQDAzc0yrUGLikHhzZ/17OWXN6+gB0bp
-	J6yUz2PrrO0pvcJjRsDncQoimLuthDXASFAKhtII+3H+h32ST3XgogXrVO+/7+MZxtC+YstB0xn8l
-	9wOboKled94JuMkmfC0mkUxrHPRlQMNn8Gbhc3V2aDCkYoTnwsoFSrXyKJ/60UnJIphmEQ7XeVUec
-	iBS7kCUBvGgzt77zasp+WJ+NcyE/QPvUGFSQxr5T+6B00TLk8Av6MXPEUL6J3ob3XCVkCfV65lOno
-	78LceGQaB7AsZqpYx4CA==;
-From: Mathieu Othacehe <othacehe@gnu.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alex Elder <elder@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Mathieu Othacehe <othacehe@gnu.org>,
-	Quentin Monnet <qmo@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] mailmap: modify the entry for Mathieu Othacehe
-Date: Tue, 17 Dec 2024 11:09:21 +0100
-Message-ID: <20241217100924.7821-1-othacehe@gnu.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1734430228; c=relaxed/simple;
+	bh=ocekj8AcIupubp/kNi52PIPWHl/ZjToQeSGdwPwbdJI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FxOoJ+R4IqPaU4pnxXDX4c7FrfBIywuXWkQNhVQ6f9KVzflHVZdxYVu8mGthrK+vtZI923Mcecy3QliuX5+kdGxIG481w+W8P8nYOQ5v36vR0421RZeumzA8MqKhk+aa8vzPMsDa9LJNyiopRwNHjFa32PiV1STwD7VHxbAwYvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XCMpa8tG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH96rMI010375;
+	Tue, 17 Dec 2024 10:10:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=GJ4I1ag4ARUduIBcACW7ETkrGXK/iWpgJHG
+	CDXbBNYw=; b=XCMpa8tGqhlCPUXJqCdUmhOcgARyBF78DwqYlji9G6u6QsYSPeN
+	NwUt0vtj+dH3rA4pUAfb0n8g5vaHDSrxHXN4ePJegsycTi80VT7+CtlstBvJbljN
+	cy/3dcNoW8h8xL4GN25eNiG/3wlZv1oeV+JYSJ4Yv+fWN4uX8j3Ak4ht06tP9kMl
+	vVxm+pEChmoe2/Jci2yGR3gyAeVyM58dmP9tlZDpvM7DJpru8WWqO12DLgEh1RuS
+	dv4XV8czVLBgETA+5u/KsF4zu/er3UPEulvDU2oKqCRgC/Uh8OXKtzxD6juYdrL8
+	5YACSv69qE6zJ0IO/GHq1zN9JyaLCaIPVJw==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k6cqg637-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 10:10:23 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHAALje016475;
+	Tue, 17 Dec 2024 10:10:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 43h33kevdd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 10:10:21 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BHAALOR016467;
+	Tue, 17 Dec 2024 10:10:21 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4BHAALbC016465
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 10:10:21 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
+	id 26F171BD7; Tue, 17 Dec 2024 18:10:19 +0800 (CST)
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, bhupesh.sharma@linaro.org, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
+Subject: [PATCH v5 0/2] Enable SDHC1 and SDHC2 on QCS615
+Date: Tue, 17 Dec 2024 18:10:15 +0800
+Message-Id: <20241217101017.2933587-1-quic_yuanjiey@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,28 +79,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZrAmx5clM0LPcLlKgrlvpYB89jDQNhQ0
+X-Proofpoint-GUID: ZrAmx5clM0LPcLlKgrlvpYB89jDQNhQ0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170083
 
-Set my gnu address as the main one.
+Add SDHC1 and SDHC2 support to the QCS615 Ride platform. The
+SDHC1 and SDHC2 of QCS615 are derived from SM6115. Include
+the configuration of SDHC1-related and SDHC2-related opp,
+power, and interconnect settings in the device tree.
 
-Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
+Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+
 ---
- .mailmap | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series depends on below patch series:
+- gcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
 
-diff --git a/.mailmap b/.mailmap
-index 7efe43237ca8e..f5f97f9470209 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -435,7 +435,7 @@ Martin Kepplinger <martink@posteo.de> <martin.kepplinger@ginzinger.com>
- Martin Kepplinger <martink@posteo.de> <martin.kepplinger@puri.sm>
- Martin Kepplinger <martink@posteo.de> <martin.kepplinger@theobroma-systems.com>
- Martyna Szapar-Mudlaw <martyna.szapar-mudlaw@linux.intel.com> <martyna.szapar-mudlaw@intel.com>
--Mathieu Othacehe <m.othacehe@gmail.com> <othacehe@gnu.org>
-+Mathieu Othacehe <othacehe@gnu.org> <m.othacehe@gmail.com>
- Mat Martineau <martineau@kernel.org> <mathew.j.martineau@linux.intel.com>
- Mat Martineau <martineau@kernel.org> <mathewm@codeaurora.org>
- Matthew Wilcox <willy@infradead.org> <matthew.r.wilcox@intel.com>
+Changes in v5:
+- Modify SDHC1 and SDHC2 interconnects, for the cpu path, use
+QCOM_ICC_TAG_ACTIVE_ONLY to replace QCOM_ICC_TAG_ALWAYS
+- For SDHC1 and SDHC2, Add a newline before status
+- Rebase Change on tag: next-20241217
+- Modify dependency changes
+- Link to v4: https://lore.kernel.org/all/20241206023711.2541716-1-quic_yuanjiey@quicinc.com/
+
+Changes in v4:
+- Move properties which are not properties of the SoC to board DTS
+- Add ice region to SDHC1 Node reg
+- Add 50Mhz 200Mhz to SDHC1 opp table, add 50Mhz to SDHC2 opp table 
+- fix SDHC2 Node compatible space
+- Link to v3: https://lore.kernel.org/all/20241122065101.1918470-1-quic_yuanjiey@quicinc.com/
+
+Changes in v3:
+- Improve the commit messages and cover letter
+- Link to v2: https://lore.kernel.org/all/20241106072343.2070933-1-quic_yuanjiey@quicinc.com/
+
+Changes in v2:
+- Improve the commit messages and cover letter
+- Remove applied patches 1
+- Pad sdhc_1 node and sdhc_2 node register addresses to 8 hex digits
+- Adjust sdhc_1 node and sdhc_2 node register addresses to hexadecimal
+- Modify sdhc_2 vqmmc-supply incorrect power configuration
+- Link to v1: https://lore.kernel.org/all/20241023092708.604195-1-quic_yuanjiey@quicinc.com/
+
+---
+
+Yuanjie Yang (2):
+  arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+  arm64: dts: qcom: qcs615-ride: enable SDHC1 and SDHC2
+
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts |  37 ++++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi     | 211 +++++++++++++++++++++++
+ 2 files changed, 248 insertions(+)
+
 -- 
-2.46.0
+2.34.1
 
 
