@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-448392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0FC9F3F89
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:53:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 730C79F3F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B51637EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B748E164352
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215842A87;
-	Tue, 17 Dec 2024 00:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hyZj3CFW"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B0D1EA90;
+	Tue, 17 Dec 2024 00:58:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED09250F8;
-	Tue, 17 Dec 2024 00:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52907749C;
+	Tue, 17 Dec 2024 00:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396477; cv=none; b=AxRqWfSeBVJSiM/GhjZmtSIuh4DB/u3uS7IEVRzuVnsnKoXzavKltRodb5V2RU2k1I+07gI5cY9PyK2oxSUnV5HNz7nBGQf3h4GMuIAvnZIPjBfGZmTlnjW3AdywZuY+P1MaHy1qgumYkCq4qG/CZM420TjC/CJ/XDynky3PrwQ=
+	t=1734397103; cv=none; b=OIryqKoNrZyCpTHZJ7JUDHgfjSmOo4kzz39YJ8cY1Vmw372Z6xkmWegHVATSqPrhFVB7+TTLT0RZrW1OS+Xa5l3PLqDDq99F2otWjHQYCLeX5Zf9Jd9U+DEqX6w28O1RqdcY4CVlbrlJgwNWfjVTJoxNfaTcSiIFnD6Icavdkgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734396477; c=relaxed/simple;
-	bh=RlsgdpLC522Yj0W1svIUqZZURGBN1oFBIzQeZa9+3t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgxD5ifQZzRdUyNr096hK2QVxFbzbY9rdE9BFIVNxTsQVXitmn2lSJ8WWe6lkdn6ehydydOvoZxmWP63WTSNALek0Q1SvNuXAwrVgwTOpo0Pn4DpFetQ1NZslsrR2Qqfo/18unsJ/6LVku6Mrzhj+QMVwjuK17owhwrfNmyjv8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hyZj3CFW; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46772a0f8fbso42388551cf.3;
-        Mon, 16 Dec 2024 16:47:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734396475; x=1735001275; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RrUU1sA/PquF8Kcvm4irBd461MDD9nPT0JTqTCo4L28=;
-        b=hyZj3CFW9QUs/uK+kQepy5OeABzPEe06/jqhdsLrldFSo9Qer3L1JzDFE8WlSIw1q0
-         zsxv+q8bze5MccKByBdVB4nQBJX3tqq3zc+wZfkgA9iSmrt7t9Z4hhMyZmqLELr26ESJ
-         r2oDUuB9+ZeqPWbCk03Q0xwdVHGr1d0kvYxbaXC9orfoiGsK8eKo3WGxkqSihsV6cjM9
-         7sdlQz5Gq/zE+ANFCmyfJAvtGaCSAkCPRW4DtAVoTHvilvaOh3OhJuK7C9xs9HAKOCqD
-         1RsUdc0uUMUwfs8FpPj+OYRwStf1DdIm5MY2S9z6j9d2TcGjSf72X/BPDcKc88ZI/2GH
-         Y+PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734396475; x=1735001275;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RrUU1sA/PquF8Kcvm4irBd461MDD9nPT0JTqTCo4L28=;
-        b=XrNsZ7uf8kA5Cgg2U2KloLyHGDitW4J9J3NTK2dRmLMQygPBQDrmkJrLBklmtrHi5Q
-         EQ8xQW1TT0jP6GVhc5JEurI3X1qdJcIvL9+Fi3Pe2FT8S8TRlgcqoJ8y7DvejUJ8EZYM
-         rKREpzfVxdfTNjVlz/87CaczRF6I4oqnQin2/oPnyqdhXut0jQ7K25SS8iykZACUt20u
-         AOBnwOAdfkybMROcbm0sQjibLTBOZ4nEd0D0J4it9tss9Jj8QzDAEdG8ooKnC8/9lhCq
-         r0Q2KSn16rzySgoPCQpDYj3Vb+RFBMa9AcOoFFTXxxq2dZyI80p8hMuRYu/38nGqUEA+
-         4j0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFNURlbBKCKtl0VPjJWxQaYh8kXA/7OzcJRhK/24Yr9Ey2zjBdmMU/Zy7Cu2RviX68ULBj0k3+hwEq@vger.kernel.org, AJvYcCUpudS6Oi047TvJcOYXuEFIl0scxxL35FjhJbCh8hwzkxEgpCzTphckoHL/4piWZKs3uQkLz6Mv@vger.kernel.org, AJvYcCV64saUQogMlSf1gW2Rw22RyBQMnCfp9gaC5gtOhw4rKJsysOekcWC5zWGdJvYBIMiXZ1ArLShVAHiUnGTN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuhm11IT0sDNPlJwmpcRr6nlwYsTJ/S//Bhk1aGNXKHMhrED1p
-	0Y80AAYOxvLn5bGV5u4LbGeKBkP6Z4CYS+UJ/xfMLgp7uk7yQsKW
-X-Gm-Gg: ASbGnctTM4J4oFI1oEllU/MQTvfL65CikdNdWbyVOJIXATAz2b3eWfEK1nrzrGq7RtV
-	0PlXnsWpHNDYkT663zWts889ktyLGsl0pZ5/ZtGOnXwsdTumeADn/xsQu8QoYaUONJjOQ5l924+
-	AWvZiG7yhcIv+lsIPBnCPL6KSNkjXEaukswei/KKaiyfqU0pPnwoavyWjBmev+Puhls3sfVWM8q
-	EwlvZYV83fZMTXlV5tZdYPeFNsg3BX3
-X-Google-Smtp-Source: AGHT+IHkNqEBTJEhiLtyWa2CGVz+1od1KR/2tzYm9ObLc/fC9+AGP2+40XW+DImZ8NXvMV8LHBW42w==
-X-Received: by 2002:a05:6214:19c3:b0:6d4:36ff:4356 with SMTP id 6a1803df08f44-6dc8ca74ec1mr289693926d6.19.1734396474867;
-        Mon, 16 Dec 2024 16:47:54 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dccd38078fsm32822106d6.119.2024.12.16.16.47.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:47:54 -0800 (PST)
-Date: Tue, 17 Dec 2024 08:47:36 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH RFC net-next 0/3] riscv: sophgo: Add ethernet support for
- SG2044
-Message-ID: <puld3vngm4rti74aecpeoro3tatifgasrq6sxg4huufuptmjtk@njfskna3k7ds>
-References: <20241101014327.513732-1-inochiama@gmail.com>
+	s=arc-20240116; t=1734397103; c=relaxed/simple;
+	bh=qT/UZgV5uilF1h6OVr58ul+CZmCxnbiFZ3XQS3tJc7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ObKMEnWCT7LuSJ+kIuE5Jyjq7LWRagjaSGDAbvKWw+ihuqSL0bnfsxxvp6bb7VaHGejI4swkkmkffYtSVkGdGPsolovZ2toa27G/jV/HIAACVDWwQxWFD0cIvFk6+34e/28i82TWQtvwxs0oSz3ArLWqfrciqtRZpXjtgvRJa4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YBz1v5Wkjz4f3jdR;
+	Tue, 17 Dec 2024 08:57:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 3A8591A07B6;
+	Tue, 17 Dec 2024 08:58:15 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP3 (Coremail) with SMTP id _Ch0CgC3lcKczGBnu+eyEg--.38899S2;
+	Tue, 17 Dec 2024 08:58:14 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	tj@kernel.org,
+	mkoutny@suse.com,
+	roman.gushchin@linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	chenridong@huawei.com,
+	wangweiyang2@huawei.com
+Subject: [PATCH v3] freezer, sched: report the frozen task stat as 'D'
+Date: Tue, 17 Dec 2024 00:48:18 +0000
+Message-Id: <20241217004818.3200515-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101014327.513732-1-inochiama@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgC3lcKczGBnu+eyEg--.38899S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy7Zw4UKFy3Zry8ur4rKrg_yoW8Ww17pa
+	9xur47GFyIkFyjkFnFy3W7Wa48Wanrtr12kFZ0gF47AFy3J3WY9rn2v3s8Kr4UArWFyFW7
+	Aan8KrZ7C3yDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Fri, Nov 01, 2024 at 09:43:24AM +0800, Inochi Amaoto wrote:
-> The ethernet controller of SG2044 is Synopsys DesignWare IP with
-> custom clock. Add glue layer for it.
-> 
-> Since v2, these patch depends on that following patch that provides
-> helper function to compute rgmii clock, and this patch are marked as RFC:
-> https://lore.kernel.org/netdev/20241028-upstream_s32cc_gmac-v4-4-03618f10e3e2@oss.nxp.com/
-> 
+From: Chen Ridong <chenridong@huawei.com>
 
-Hi,
+Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
+logic"), the frozen task stat was reported as 'D' in cgroup v1.
+However, after rewriting core freezer logic, the frozen task stat is
+reported as 'R'. This is confusing, especially when a task with stat of
+'S' is frozen.
 
-I have seen the dependency has been merged, is it possible to 
-resend a normal version of this patch?
+This can be reproduced as bellow step:
+cd /sys/fs/cgroup/freezer/
+mkdir test
+sleep 1000 &
+[1] 739         // task whose stat is 'S'
+echo 739 > test/cgroup.procs
+echo FROZEN > test/freezer.state
+ps -aux | grep 739
+root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
 
-https://lore.kernel.org/netdev/173380743727.355055.17303486442146316315.git-patchwork-notify@kernel.org/
+As shown above, a task whose stat is 'S' was changed to 'R' when it was
+frozen. To solve this issue, simply maintain the same reported state as
+before the rewrite.
 
-Regards,
-Inochi
+Fixes: f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+---
+ include/linux/sched.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index d380bffee2ef..fdcb7c75386c 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1630,8 +1630,9 @@ static inline unsigned int __task_state_index(unsigned int tsk_state,
+ 	 * We're lying here, but rather than expose a completely new task state
+ 	 * to userspace, we can make this appear as if the task has gone through
+ 	 * a regular rt_mutex_lock() call.
++	 * Report the frozen task uninterruptible.
+ 	 */
+-	if (tsk_state & TASK_RTLOCK_WAIT)
++	if ((tsk_state & TASK_RTLOCK_WAIT) || (tsk_state & TASK_FROZEN))
+ 		state = TASK_UNINTERRUPTIBLE;
+ 
+ 	return fls(state);
+-- 
+2.34.1
+
 
