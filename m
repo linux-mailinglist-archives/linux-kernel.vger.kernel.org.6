@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-450050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-450051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73479F5A28
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:10:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD13B9F5A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2024 00:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB212171AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E2D1891F23
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 23:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83301FA174;
-	Tue, 17 Dec 2024 23:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D96D1FA14D;
+	Tue, 17 Dec 2024 23:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gOpU/Raj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="N9usoOIV"
+Received: from sonic303-28.consmr.mail.ne1.yahoo.com (sonic303-28.consmr.mail.ne1.yahoo.com [66.163.188.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84DB1FA15E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 23:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3571F8ACD
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 23:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734476893; cv=none; b=Y+HpohRBRunFoa0c2O+aCz1HcMVTSH8Z8yLGd7X+KyBYOcUMzPd6SYvNrcM9BaZ+Jjh5h7ARvZ4+y5kPb0UVG41PsMu2ElK85qE1sJ6W8dYUSDryeTmvkRAO/NY11KSqa3+WtiB9nmEZqryy31ACjR8JmwXCIaBAaYdNNoGBv+g=
+	t=1734476944; cv=none; b=XOPtg522A4fQmUdv1hJrXs6rdKdFuR802UqjwFK679T23rNj3/Y8IgGyp6RDnu9PLKb0/tOxTRoO07H0L3q4e4APzbt3yQVPZvjTHLlu4xXOS5NDBeTrgv0bOYCyyh5JEtn/VMeMueRssXmR/9jRU/HPG97wLNdH0Xxz1K/TFIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734476893; c=relaxed/simple;
-	bh=Q+PfKU23sKIq6E3iPys14d3vTNR8xp9ewlWy2vem6fs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G1EjhrftDB8834kFQBXkggShrPWNK4X0KPGX43Wy5CoSVZ5JT/nSZXs7q50Fra4yQUC/Uo/c6mk4LQQtRW4FRKFEQuSTpbueDCi1wQ5UPKPT3V5/h2FTSi3lt+cA5q8ddNpSZrlbtEnMo7tARs3dF9exWfs+m9s5E1ys+mAx1gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gOpU/Raj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734476890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=YF1Vr7mO0xryeYQAOtEkhYalKlih/mse5aMf7DZQalc=;
-	b=gOpU/RajNl/rcpzEBdrnXg6RxsfZnae5BRagtSW0n66fBPtNFh4NAhgIik5OLiId4E0BUd
-	LsgxhCvQctYWFOu9RHG3zMhJmiv+j1YnJLP8GQ6DhHAWXfpsFcw3ymLGJ98yeJuUR8qQa3
-	xrRnspK1aYnEPQW1P+DLa9NABR6cifI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-331-wcnwE_STP1a_k--huHxV5A-1; Tue,
- 17 Dec 2024 18:08:07 -0500
-X-MC-Unique: wcnwE_STP1a_k--huHxV5A-1
-X-Mimecast-MFC-AGG-ID: wcnwE_STP1a_k--huHxV5A
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FF0419560AB;
-	Tue, 17 Dec 2024 23:08:05 +0000 (UTC)
-Received: from localhost (unknown [10.22.88.74])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EAA721955F41;
-	Tue, 17 Dec 2024 23:08:03 +0000 (UTC)
-Date: Tue, 17 Dec 2024 20:08:02 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.231-rt123
-Message-ID: <Z2IEUkxl9jEgBVyh@uudg.org>
+	s=arc-20240116; t=1734476944; c=relaxed/simple;
+	bh=P9txNihx61dQc3GsRMOxHA8GYlUJFQzSrOaA/iizhpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=YVaThVGgyn6rLsqo7Z9IIhJmO/A7VVl00a6Oe2JIPtWBKrAlPuqeYzJPsq4ALG1nGyHLZ4bYwGQqgwLFbyIkAr3X5m+9/aK3NTsLdczOgyEEMNgjEcsdjoW7mAZRqYApc9RnEKyXj1fVVLb9lG0yQaeAhbWoLq8LCsaweNbSi+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=N9usoOIV; arc=none smtp.client-ip=66.163.188.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734476942; bh=z7NJ8/1znUx68XlhXMBSprJ7aIfiQiyXZZpZcn2yhqY=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=N9usoOIVKPuDLHyx1gmjWV+BwrW8ZTQIqA9B9JTi7M78r97h5F9wKouaLLxwxVy7nOtTe2GvcnfdU5UcmBB2Xqdw/fiUx7BX0yHuNH5/dOsPHJdCbuXym2uMVgRBw5vhoxfVYmSfM6eo3d2iQtIzZr+La3qkCraDFlLZ6NnorckpJjifjRVYn4CeHdySQ0mfdpRGc24xzjwXtYPsKnOKlq1Z0E6r+d/JsXDOdvCKpyOWRqa/N7ukcN4VjY07foZ10Wq5QkHv3l7Z6i80Gi+3qLheKrwaXRMMrRpWfys4C7iWu5oPr3Lmtn97nppDD5M+VwEOm2b0Pb9T/VWoaF522w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734476942; bh=P0tV8DVS57G4tLJIVKtMmm9mZcNntBZv52s47TwDbmp=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=lzrBQbaXbfmF7w+smNlnY+qsthMRg//myVEg9F9DHrID0WCQms4qjrTdzCtKdZKx2sNNXfqfMhMXWszbJylSBKdo5a2SnsVaFIIXrtIWwUR30/+ZLVn2QT9y5dYevaBEKoc21v/j9Emxp68gjS1ewHzEteUOZx8Zfd66KekopNRYtsOkJhUQcT31tJpRurG4XnODjNX3lU9GQXSU6nPsXBuvcrMpfdTP709gYFSYO/jHmyoieCBLAV3bjItRchx9Ah3508g+qJjXvDwjzd6Uxq6mEH/LXmSu2UZ6PR/wzLCzyJptEGE7md2v9n2Fvljnf0WjjmIWqE4LtlzCf98MfA==
+X-YMail-OSG: kBPFPMEVM1mxNYaE58FKnaqzLaskGTtta7M3eBjcDMIp4R1iHc7LAKLrDJJWxiG
+ 8tHwWyeDj_8fjawP6qmWHrgrLwVFrao3rbCdf5DyzX2fTSt10VZjAUz6m2SoGW6zTD5rfSwGqfDm
+ Nam1oCQcZeggkrGhquKZO5MavSqGyS9m.WLToVbDKYYZ9f_Ql6TYgZYEJNl0I8qd0kiu5tkq8x1s
+ WzcpSXRIGHj8o5RNg.eULndmE77Lr6aGOAiSD5SUkEkkgUcp5tNMV4AzAgFx03l_MGzmH9V146M9
+ XUCe6tNETPwJOzx1ZkVKzZZJu4Z.qou0shOVGoOkc1YK_F2xniy9w6pb6c9dsWhHjJwUVCs79AQM
+ H_PJJaZb6jGiPwdInuWViAw_9u_tEeSNb1gQ2PdG71QrEHrJ5hOyCdERgNw7QQTz5b8NyOGs8uT.
+ 1WE8meUv11MNr1.AX.Rrt2LTamQHasd0Oivvupuo7NKqq5v4y7foqtN9RocpZlhvyp9NaixvPB4C
+ PGSo8umSRVTWh.4XWm4IXb8Tkvpur3NuJBXd.YzEv9765p.ChXxZ90OZIBCfWLNuqlZdY5UH8PHi
+ xLnGOmShCFNlQYMD12KeuXzu2P5IsHHGXjQnACD.lpE5xUrCH2vvDpqFu72lg35usc5BijtyjfWV
+ dMzD1QGtKZ8s4Hj8cqCjspNDUo96th2W1M6aid9UNoEEfCsDGCDyTmluUlcdhHl6dEIor3xhkPLc
+ GoPcNYYBP_eGxfCA97qZtKjmMkPrPmpTAA8gucUIhXGaEdgMRZrN_2FXva_C9ip25nPcs68aKZKx
+ Qy0Z4iLrZvGAJ3CKBOedIgTjZVWEX7UeBDyjStoZA2h6YYfWQ.KBL03g.9Nv91EHBs.ryiSd5naN
+ gdoiNMvUjQhvqvs0JphZzD8veSndODC6HLGJBjCfc6cgN.uIbCMSeS_4oS_Q2tUgYlIGUwAv.8M3
+ o7rZx9b2pnES1E_aKBCZ2f110SFticEgvb2vvr_Y2e_lvKG4gb9CFFqr_6QRKUVr_9IMR0ng7p_d
+ d8TQi0mYbTtpmgtD_NshEqztoxo0EU9mgpsehyV5ot9arRT3RmbLgsBJ92qXFpeqoqWEcd6aRQl0
+ ABGFvf80u9CnLNx9b9y5biGdrpj1eqpsHgy04pikHV6178oM2l.PJx3cg41E9PZRpW8yp2YfwSgP
+ BvaAB6C6JYn4nO7ZMx2MLdUfKcjMlZO185ujH8hoIl63J7zqBKiV5Om7zNnKosJuKdPHVoZnVlDT
+ ehGKoSjRIFwiIXcxU_DwnLn7ManDE87QbVz3_26EaJXfCERgVNFlrtCWxVzCgodld7FqVWXlU7ka
+ Gl5rLApqqTnVBdooJuzu9onCXi5upSZKMFxfS3xztiFn32XVJr7D8dZ6zVhldUnVWU9QYdGHPjUL
+ JNkZOnGb8YnxpCep7Y2OmSrCPwMHJTsPK8AsHH_JVYs_gk7g_Gn3oV6IhD.4U_I7_gaueTXQkbUb
+ dKiRsEvHWMkuPvAzV9St3WX9vZMOXEjYWibr1MMfDNHnaUiq6K_MuN5pGN.3NzF.Z6CPIOhvlycj
+ sW1U3KHFw0nCuMVaRZUgeM8UKIQTyjVqZFrdmEj4c.tDs_2tt7nT7UmdRPtEdfNhcHtBOexWmp6c
+ tNlI.WAWr7LiIudGR7gqckAqXXrDR7jo7zKc.5pyA9M8277Py6MudjZdQo_2H1.qYybSJzZsw9wM
+ Vnt6JN2i60VQhqxPL3c2NmNTQJ84IwuDqTw_tdSzRO6PXvF.Xhmrn3UvQlu_hOEnH1xTa72VZkl.
+ VplvMF.YzYuKwX7b.Q5MyKQF.BON_Y2T.P.6mTm5lHTaSHI90t9Tej_WCxFg6vsCnQSGQ6HN1.Xf
+ UP3nZDxKvn2.dasEXW6VzK5tlhwr27RuUcL_cStsAxGz4MSOvGfTGvsAbIY8AgN0M1bSjC1kVVd_
+ 34iFnbEJBb3jzOzCJX5i0haoSV8uHAN0osi4O_TluT0ZujbAMtnDXPMZmRnKo7h6SJ8E7wNK2Hxl
+ gZy_daZUSWElC99IvzQP37pA2_m9xmHG7ZmA4DHCn9g0kP16cKpc4IwhCOiVIRcEAnKtKfdE9e3u
+ 5FoUEh_rk_J_3SliLIrWurX9tb7__CigFExETN4RC4Nmbec5s2zVzyD_UxnubVMcSmfhWVHAg_i.
+ pBR4lQaeZuxGy75.E56zLvo4ljLqT6ip1hIJTZKUAOI1svXXegoNDmVzXfZW8yYbETFBJD9NGpBO
+ 1e9T7phs9BnQHY6SvswsgnkgeOa82yPPJfbQj9Z527XyFYId_2taVW01e9dPxFP2UZWb9y3aivcN
+ QWuFexFRlN3H3m12k83ajcxQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 8c920e8a-2f43-4971-a2a5-25c6ba293a10
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 17 Dec 2024 23:09:02 +0000
+Received: by hermes--production-gq1-5dd4b47f46-sx6k2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 617dfd7e8dbc08c7e277f225736da47f;
+          Tue, 17 Dec 2024 23:08:58 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH 0/6] Audit: Records for multiple security contexts
+Date: Tue, 17 Dec 2024 15:08:48 -0800
+Message-ID: <20241217230854.6588-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
+References: <20241217230854.6588-1-casey.ref@schaufler-ca.com>
 
-Hello RT-list!
+The Linux audit system includes LSM based security "context" information
+in its events. Historically, only one LSM that uses security contexts can
+be active on a system. One of the few obsticles to allowing multiple LSM
+support is the inability to report more than one security context in an
+audit event. This patchset provides a mechanism to provide supplimental
+records containing more than one security context for subjects and
+objects.
 
-I'm pleased to announce the 5.10.231-rt123 stable release.
+The mechanism for reporting multiple security contexts inspired
+considerable discussion. It would have been possible to add multiple
+contexts to existing records using sophisticated formatting. This would
+have significant backward compatibility issues, and require additional
+parsing in user space code. Adding new records for an event that contain
+the contexts is more in keeping with the way audit events have been
+constructed in the past.
 
-This release is just an update to the new stable 5.10.231 version
-and no RT specific changes have been made.
+Only audit events associated with system calls have required multiple
+records prior to this. Mechanism has been added allowing any event
+to be composed of multiple records. This should make it easier to
+add information to existing audit events without breaking backward
+compatability.
 
-You can get this release via the git tree at:
+https://github.com/cschaufler/lsm-stacking#audit-record-6.13-rc1-v1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Casey Schaufler (6):
+  Audit: Create audit_stamp structure
+  Audit: Allow multiple records in an audit_buffer
+  LSM: security_lsmblob_to_secctx module selection
+  Audit: Add record for multiple task security contexts
+  Audit: multiple subject lsm values for netlabel
+  Audit: Add record for multiple object contexts
 
-  branch: v5.10-rt
-  Head SHA1: d22f070041ab4370938ab8b420d81ef987e84128
+ include/linux/audit.h        |  13 ++
+ include/linux/lsm_hooks.h    |   1 +
+ include/linux/security.h     |   7 +-
+ include/uapi/linux/audit.h   |   2 +
+ kernel/audit.c               | 233 +++++++++++++++++++++++++++++------
+ kernel/audit.h               |  13 +-
+ kernel/auditsc.c             | 105 ++++++----------
+ net/netlabel/netlabel_user.c |   8 +-
+ security/apparmor/lsm.c      |   1 +
+ security/bpf/hooks.c         |   1 +
+ security/security.c          |  16 ++-
+ security/selinux/hooks.c     |   1 +
+ security/smack/smack_lsm.c   |   1 +
+ 13 files changed, 278 insertions(+), 124 deletions(-)
 
-Or to build 5.10.231-rt123 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.231.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.231-rt123.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
+-- 
+2.47.0
 
 
