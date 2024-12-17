@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-449176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B0A9F4AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:32:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0297F9F4AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A5A188AB1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2EF4188B638
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC5F1F1312;
-	Tue, 17 Dec 2024 12:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DD71F2C46;
+	Tue, 17 Dec 2024 12:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XkG+fhJl"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qul2Xkte"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD01E282D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F81EB9E3
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734438714; cv=none; b=Tt7T8BOFIhHVgb41wsFmTqwDNu3V6me9aiUIbKlGM/ycvVlGULdaiEmlF2tJZRZ4wP7EyAgeaLwIAMVQo9qllnRHKqMcGFLKuXWmhFiHP1w8RWYU4Pu5prCdmQMZQufNwUjbfIpjbOMkk5y24b9Un1tWganQIaol2PujRCcQJXs=
+	t=1734438758; cv=none; b=tprOnMpKT0zIxjDE5cUN1iwNRcTqAB/pgAFpR70yclgf0DWFG6e9KcgX4LKkcGh5U/4xZxSKcE62zTci8Gvvqh8yPcwpy8031ALWckWxK45BS8I5qy2i8X+OtAbwxSjzLyO3unFjJ4qd57k5Si1+ggA1lJgLIOikd4Wbx/QORAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734438714; c=relaxed/simple;
-	bh=7N9XWsRRznkPFIWEExuMVt17UZ3nd7QjBaGJxD0x96k=;
+	s=arc-20240116; t=1734438758; c=relaxed/simple;
+	bh=YbfDs8LoY5asKM7zZM/qu8gLr3JGUTt7arQC8J9od4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BI6wKgCRegIQdOC2bvHRgCkbTOHtLqwKVdwGZp+gNuZELPppXiiWtDHFwXLSwznCoF8ZqatFPR/4va1WRjnagUrbQtOaPxXqV6O5J1kH0N47M26HvQvN5ePKu4GH6THE0gKfANHJtbF9A8VFTd8DaT2GAStHV6wr8C3i7iEOvMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XkG+fhJl; arc=none smtp.client-ip=209.85.167.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=px0SaBXtkv0JXKR3etqx4aF0aC+JcBvAWT+fSDrzxbvFUuQ6+vzyMsyXB0beZxnTvJSAkr+Q4kdKJTspGrFxj7r/eJHENEfGMaaVBEHp7ip0APOFf8rh1E9hSG4sVwdFjs2YLCdqYMXq17XA6VMzo5meO8TPdjlGO58k0xLzMoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qul2Xkte; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5401c68b89eso5687694e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:31:52 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so2114269a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:32:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734438711; x=1735043511; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734438755; x=1735043555; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OD2airYmXEIM5XCQfXb6/TEVO/ZX203WR6AY+SunHbs=;
-        b=XkG+fhJl+eUSXWdZkTmsAlBgluEsHe0alVEhyTB74yQcx59zfSDfyQl+a908jfGkAO
-         ydDfBpbfYtMjDbiwzzYflqlKfaaCc5zb/WuOYS1Zf/KGGa/cQ1NPTk4NnrY0uaoWUCc2
-         +T4gFEB5Kvn8sJg0RYG8gnwULLKhniANWcMu9tgTDZg2AeO9iLGSsx47Ccv3u0O+OPTF
-         JXAhG5ttfjigvwNloQEnMf6shTMubp5LWGfjh8YOfAC8QLV6EnCa3FYDdwvz7FhswMxC
-         Ze7YRIT8EUhYEW6jlzPcdfKuQI0zSvhBlKxim65mwiXqFipPjSK7w6l6ltNErBteAsUD
-         RTZg==
+        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
+        b=Qul2XkteNGKGuQGn2HWKJC0pzrkQhXq4k9nAgHHAhL1CeOEoBx5Wr3FfWpsXjffc4r
+         t8MqNdhX3kjOpCrCCyY8MZ8txcn3F4Bry7Ibbb6vQ5osDMq3qOigAaxpPJCn28UxiyQD
+         aibyBkIntJZr9HIbTgGVWHm6pcWTGq+usDYHh8kf01Z0GXKCOaa6DFmh4vF2DvQwikbw
+         N+42qhZothYnYNppq60Y5ASH8oMBKwsNazRXdyBaRzW8xk4HvtWvGqIQFBM/iOI+IpHa
+         tUYkhUIgwcb2faqdMZKBjIZP04rnBQLh1qpiIglkGQReTgfbNmM3IUh2p1mHQit0qYPi
+         qflw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734438711; x=1735043511;
+        d=1e100.net; s=20230601; t=1734438755; x=1735043555;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OD2airYmXEIM5XCQfXb6/TEVO/ZX203WR6AY+SunHbs=;
-        b=dBkCWwPehzX1XR9HSEBW59PxnqnOYwx/fwzbolD9jeFAEL6PWw7KZmXw6hBYJu+BQB
-         RbRdXg2hRIrdopM8h8KsG+qG1cIJtGhBey/DQjYJi9/LLe4/ww9J/xK+1l8U/k/bvCmC
-         xtlL/4EqGWM9ypEP7iahGUjOIiAoR178YkafkxowCgiHcZMm8rmDi71fS3IcjgMEXKQw
-         iNHghRh4/W4S+pVAHaw0AwIs3bFeFKDEq5DbrHRqoF1JvliZtUEE4um3QoLJFVhVJUNH
-         2DO/tBoo2a1seypVPIbkCaW+2YOEfnE6dINwD6KeTQ0gE7y9/vf2Nc9m2p1b11UTLGnN
-         3JAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz9hZCGBDkUeUsIY7TdvsVMpnO08MRgxj685ETUJpNEXk1Cns1d97kGszmp0Xqo2CjToTHzyadW3LcHYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCp8Ozilz6sY+vJATE5I66077DL6FiFdEW3o+onIqq1A58U0f0
-	Gg8CktGXodik2ifX9vcA39tBIJwA93qdwx/zIEn3+A11cDqTvMRyUhxa2CyKOEU=
-X-Gm-Gg: ASbGncuY5qCkzbslYhfdhydeqbx1PHoAsMq3muu2RKCI6hRsOj1P7+O5IODYa3dCJyR
-	f2z0gZ94dL9/LcqS6KoyvXvysNqSGuSqD7DsAgN1O0TwhGRInMNPH6VgoFaDwO/phX2AMYRnWdj
-	+QZnrg9EgJ+k2oLuZhRTJwpRqRkxBUQBIRgy56XhMcrzbX9qzg+nRDivXm5yNIrih9RuJY9RpaY
-	zXgxOelvOr8RZka75f2yorQoENfilqQ07BXwiOfYAmvi5NxKhM+j3Bk00l3iJfT3Sn0dcAInhrR
-	jiJq5qD2l9seHHKF6Z2srWrP8gbWDU+7JN9+
-X-Google-Smtp-Source: AGHT+IGLqNfuo6dVnZwB0IG9CYkUL75QpM9W/HERVzyQaVYoG4TeHcNOZSSbW2843k7yE5uyrSEtJA==
-X-Received: by 2002:a05:6512:3e0c:b0:540:1fec:f331 with SMTP id 2adb3069b0e04-541315ac7a5mr947299e87.27.1734438711130;
-        Tue, 17 Dec 2024 04:31:51 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120b9f3d0sm1145293e87.30.2024.12.17.04.31.48
+        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
+        b=s6ygX7cPeXyIc28E5Ub1Wrz4/DJ0BCEtdDh+5PEYGRCqJjnMUmvN/A//Z2kTTdmrTV
+         +iVG1zn1VUEn3xGtaVkqsURCl47P2tui7HAIDQaYltQVnoCCx1IasP5F2MiT3QSZ4SmK
+         Y6BVx/mNFvY2tiqMmQtsY7uifbx6R7OoQfR4ToHl1fGNVjbFLbf+b0Pr1WlLqkHJB41t
+         Wj4z5flN+uu2khd6fDyx7bwUhS+P239VeXFDlmQAovm0OcAvpq1E78DRIK2TVkFgMgt7
+         wSulOc8CXZzHbc0r/EfVBOxiDM3eYXpjZnUXD6eM+bSFma1C7efB9LUdZ+d2CWY6tOq6
+         aqLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeo5R9gb97m5LPL4eWd+TNho/eC0ouy/xipOye2wCA7jPk/KjThlYToIwPjR4Of52hIrbTNF0mT5sHDzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwazmBlAYiVAy8iHLrY4O99Vd3W/RJt1LW63dX/scCaoIzYkmBB
+	CPn85aDM1LT5/CeGDsrJfcu7jjnrHuWXI0hM1h5vs9YtWDcyyM4Z+pOXB2bX/40=
+X-Gm-Gg: ASbGnctEM7t8JD8dnAevJfcVu5YD2Uw9U35K4DoTc6CgxTwTWgtzZd3eDcRUCTq5KUU
+	rVWTrEYtOJicDtZy/1FhJF+7T8Zk1PM3oPKFx5o+aDwHLBsjDZ9juVJZTyhIDVOmvODDky8i7dn
+	Su2LyU5rEB2+g3KJXIdoHsex5hcokTbdL9suLwoXhQvPAeGcaMRm2GSjliD54tjxsxcJieGjfrO
+	ockjl4d7D6KdQfEKQWDtoZkjm1OdJXCx2yV03Wr6ols14QuyVK1rzdzQeLnjw==
+X-Google-Smtp-Source: AGHT+IHQ03iEFjc/Teha21bLrHNLnNIrRs6fDpiX/v4CZTbwJmuV1NtVhgiSm8VrPkB6aW1UmvcDog==
+X-Received: by 2002:a05:6402:5288:b0:5d3:e8d1:a46 with SMTP id 4fb4d7f45d1cf-5d63c3bf48dmr17438136a12.30.1734438755313;
+        Tue, 17 Dec 2024 04:32:35 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f271a6sm4407073a12.60.2024.12.17.04.32.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 04:31:49 -0800 (PST)
-Date: Tue, 17 Dec 2024 14:31:47 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
- helpers
-Message-ID: <buem3nnscnyh7latovvnsbhp2ci6pbjpckfmrft2267afzwdwq@2roahluiow7t>
-References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
- <20241206-drm-bridge-hdmi-connector-v6-3-50dc145a9c06@linaro.org>
- <20241216-heretic-mackerel-of-wholeness-fcfed7@houat>
- <exocd3b65cy6cy5w47cwx3ykn54ncf34hwyj7ffihs5jjzean5@y677uywnlah2>
- <20241217-heretic-hopeful-jaguar-aeabec@houat>
+        Tue, 17 Dec 2024 04:32:34 -0800 (PST)
+Date: Tue, 17 Dec 2024 15:32:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] xfrm: prevent some integer overflows in verify_
+ functions
+Message-ID: <053456e5-56e7-478b-b73e-96b7c2098d07@stanley.mountain>
+References: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
+ <Z2FompbNt6NBEoln@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,63 +91,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217-heretic-hopeful-jaguar-aeabec@houat>
+In-Reply-To: <Z2FompbNt6NBEoln@gondor.apana.org.au>
 
-On Tue, Dec 17, 2024 at 08:43:10AM +0100, Maxime Ripard wrote:
-> Hi,
+On Tue, Dec 17, 2024 at 08:03:38PM +0800, Herbert Xu wrote:
+> On Tue, Dec 17, 2024 at 11:42:31AM +0300, Dan Carpenter wrote:
+> >
+> > +	if (algp->alg_key_len > INT_MAX) {
 > 
-> On Mon, Dec 16, 2024 at 07:47:32PM +0200, Dmitry Baryshkov wrote:
-> > On Mon, Dec 16, 2024 at 06:04:41PM +0100, Maxime Ripard wrote:
-> > > > +struct drm_connector_hdmi_codec_funcs {
-> > > > +	/**
-> > > > +	 * @audio_startup:
-> > > > +	 *
-> > > > +	 * Called when ASoC starts an audio stream setup. The
-> > > > +	 * @hdmi_audio_startup is optional.
-> > > > +	 *
-> > > > +	 * Returns:
-> > > > +	 * 0 on success, a negative error code otherwise
-> > > > +	 */
-> > > > +	int (*audio_startup)(struct drm_connector *connector);
-> > > > +
-> > > > +	/**
-> > > > +	 * @prepare:
-> > > > +	 * Configures HDMI-encoder for audio stream. Can be called
-> > > > +	 * multiple times for each setup. Mandatory.
-> > > > +	 *
-> > > > +	 * Returns:
-> > > > +	 * 0 on success, a negative error code otherwise
-> > > > +	 */
-> > > > +	int (*prepare)(struct drm_connector *connector,
-> > > > +		       struct hdmi_codec_daifmt *fmt,
-> > > > +		       struct hdmi_codec_params *hparms);
-> > > 
-> > > Missing newline
-> > > 
-> > > > +	/**
-> > > > +	 * @audio_shutdown:
-> > > > +	 *
-> > > > +	 * Shut down the audio stream. Mandatory.
-> > > > +	 *
-> > > > +	 * Returns:
-> > > > +	 * 0 on success, a negative error code otherwise
-> > > > +	 */
-> > > > +	void (*audio_shutdown)(struct drm_connector *connector);
-> > > 
-> > > And thus we can probably just call that one shutdown?
-> > 
-> > It should be called automatically by the sound system. I'd rather not
-> > call items directly that we are not supposed to call.
+> Why not check for UINT_MAX - 7? INT_MAX seems a bit arbitrary.
 > 
-> I meant that with my suggestion to call the function
-> drm_connector_hdmi_audio_init, that structure would be called
-> drm_connector_hdmi_audio_funcs, and thus the audio prefix in
-> audio_shutdown is redundant.
 
-I see. I posted the next iteration already, but I'll try to remember
-this change for the next iteration.
+That seems like basic algebra but we have a long history of getting
+integer overflow checks wrong so these days I like to just use
+INT_MAX where ever I can.  I wanted to use USHRT_MAX. We aren't allowed
+to use more than USHRT_MAX bytes, but maybe we're allowed USHRT_MAX
+bits, so I didn't do that.
 
--- 
-With best wishes
-Dmitry
+regards,
+dan carpenter
+
 
