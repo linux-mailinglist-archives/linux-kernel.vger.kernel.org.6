@@ -1,155 +1,247 @@
-Return-Path: <linux-kernel+bounces-449003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443929F4852
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:05:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1E39F483E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040F816E47E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CF616B213
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABA21E1C30;
-	Tue, 17 Dec 2024 10:04:28 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCC41DE3D9;
+	Tue, 17 Dec 2024 10:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUxwuvbo"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB91DFDBB
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDFC1D1E74;
+	Tue, 17 Dec 2024 10:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734429867; cv=none; b=k1CXNLhQTstOCImvY+AqjUTJNVTdSizVe6IAf12NySXI3UVKnXv9z3Qxl6WZ52lpyvSQ3ytf3He+WXE0ko+QCV+NguryKJmWVCuar6A1C+7x9z4eRa+mtmOKDIknB6CB19EcRvIWhRoVCE3LKna60Sxrh46lLySfsTRzfRpYxQE=
+	t=1734429671; cv=none; b=hMAfelJUth7IcDCX7v/eJLF5yKgsS68iBsg5GSI11JK0/s24CQvVpOyUttAjojPSg5sJ7xBRUB1ZqDL5WFBALvq0S3g4KfPXaSmUIKSdwtkcTKnU7slMV1eN9/rd9Bc/Z67b1RT4+lVm0Sgg8SNSek5KejP58/OCDT0atan+dKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734429867; c=relaxed/simple;
-	bh=u/uFfee2ntB4f4h9jMULT1D5I5y6vNwctt6TJ1YyS8I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=T6KGdQrwK85H2jAtnyeFUQGk4mylSJ4k453NPnlA+nDrray1UN5AFfrWko/MEE1QoxjblJCTYDvnVTWsatCPspZPtwFJrQZyPallbNXDUKo1r8VNMNN2UZtmKfX+ho6Ec0JZkPry7COezj9e2AKtu4KYDo96Rkc0q9vC5Mr6U/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so107670805ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:04:25 -0800 (PST)
+	s=arc-20240116; t=1734429671; c=relaxed/simple;
+	bh=Y26ngMJwmzLrecKXox6zLaQNcWVmYecAcG5gSb/BW3o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jaL7b/AMj8stpYuwH9hpcRYUkZ0NUNJJtvmbUDsniVwGFZUQZPe/EluwNMBKJkvo2y3inQ4B2v+fuJnqOn+QBEH39tcDJkIG+xL2LO+KgPKLMUusWwLK1BK7FibsrlDpgckT0JvYljHqfhqY2+vdfiBnZmMBR2InoNnqB2vcG9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUxwuvbo; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa5f1909d6fso857460566b.3;
+        Tue, 17 Dec 2024 02:01:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734429668; x=1735034468; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T/KooR6IQJjeTGPNoTWcPk0AI9wdR/UJG41mcu5SvWU=;
+        b=VUxwuvbod1Nun2iG3bouDNc1UQeoLEmqktvc2YzGm5xqDLVwavk7+puSJ9XWoPFSyp
+         Ym6wKzjZFEGBEtzJ/lcifCJXYqNLJeT4v5ixXMHA53TBy+GaaolEGtcZpP5sNPXIb3DS
+         APz0KBn5v6GiK98pKsiN7XQKNPqFQVty+YKBctirPOGtga6bNJbCEBDja7FqAqp0VuLG
+         qwKP3Cna0rznUV2m9MNAMlze4gSqLUXwXs+BVHQ/UGwt2L2ipRiH+RSgyrI/c6ARUbtg
+         4/vbmHZZBs8WtZfduYcwSLjzXQKRuUD5kGxYc2Xe1QoLmJNyH/5alKTcfgNhj4HlTXu1
+         JE0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734429865; x=1735034665;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/RiBRtj7P3fN4gpoLCAxlF19YFC9iNzYx9lorZws/c=;
-        b=rIhbuvbcxsYiI6NIzlNYHyHmUdS1RK1WowpNKvn0/UTrI7UX3P467pN62m2t4EoNGF
-         Vey9pniQt8s95wZBl5NxzRoxhMyv4rPttH/yZ2tYBzabiK+ad3xGsrBETL1UgmLJJHTF
-         /ybN5bXRrrK/gvv+U6I7qlDvRIcPVibc48b/5BKzpuzmaeA+PGNMpHwb0A3uVKxeI0EX
-         uLm343Lja8IveTdp+3fcNYHp2P6GI4cr5VkEwNP6joUC9scsNlmxa71YBXhvM/vpxd93
-         FNdajxm2v8ckCczX+sRUkJNh678UZNra4qawpktvAIgPHttqePVTmukaoyoRdMQ4ilHX
-         u+pw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1HjWbaLco5AHRaIcKZePNYqmtq8g79Hud2SqNZTO9v2wgbWFp8cBWeZoTP1QBFBG4dphjakBgL/kr8sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTirJbG+n7o/p4NvsSZcXPQX9XpfcSs5PeOLiw5NAKZKSIRYTz
-	fM6f0aqLsvWIfd4Ihndvp7TUEHUbZ98z4sU8IBmXjp6HjKYbpc9PtYhVaQbcu2bCfPBnCVLQyGk
-	YSav2Ct3ZuHG7sziWG5PZz6xECsnf4HUyN4GN802Z51T6P1khH3gddzg=
-X-Google-Smtp-Source: AGHT+IECkkJkFkWOAwA6L9TdB5U20mq6yNiLsl0CDumrdUECtpzRdtA3CBYqNxQT77ByIrpgCd+mdyVsCN8ohxbYfLJ25oy4FLYs
+        d=1e100.net; s=20230601; t=1734429668; x=1735034468;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T/KooR6IQJjeTGPNoTWcPk0AI9wdR/UJG41mcu5SvWU=;
+        b=vHMmfCfc3XuxYQFk+8BRAXqvTZoAijLxGkUeO5tckKUeyCOQ2ixbxfd73hS5TSwJH0
+         XaJvTXstzi+YLYqMi9uYmnBv0WMNi4MaA3pFcBcWks+SDN5W8Yeif86o+WDNnxX306T8
+         EeV9z/olCzOLsWbkRKVAz3hGKhNccb3FwQwcE3w1crsfad05tz3aOauLI2so+/fPkUFq
+         rAbcEfB2fHdEcHD+SZkdvTm0af+h5vtffThFVso8EodbkZEztFoKW5J/edldW3zdo952
+         qlAIjTsiSW4fZ03UoDk6iboRUOB6m2iPbHehD3J9OIGYdyQonldxf99cCb49fKVarG8D
+         6PmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0V+AKUELAXjJAUMD2NX9OwW+ltcl4MaxBzcrZJJpITizo/QgCylC64MK8aZW0nbbmZIsKfCSDGABiYTEZ@vger.kernel.org, AJvYcCWTENqHcIjCSNbnEz2E1POY5aCT+8ghspXl1KeUD55ISPR9ILIIN5ldS7UWwRng8FVxT7rt5IZxaAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZwl4AFIj3Ep9zCC+2n8c6Vt/57DwElNxmRApT4UayUqsHoVf+
+	sDALFuVeWmUuWmIGEtcAlNP1YqRpGSWm9kKIJ/N4s4P/18g2Bl33
+X-Gm-Gg: ASbGnctoTHVZHhqyobJPS3AYIL6PIZGs06yj0A3hkdaU2YJUGTFGpHNt8HV7+7lVjKR
+	If60LSqhlGaR+OYa+1/iH3RVr03ddrX+htdjbxcDJh82IieSJMnYcfvMw6mRyXksKIzi88zSkY5
+	eGD+0RfKoqLKzPAw9lM4r4o6hZmSTFaKHXwPQHg0nWXwm+LM/HoDGjT6kMztJfe1Aodxyd2Zy0S
+	/0ADQkE3N07VyM3stup0jFMXluDVRDDjEZtWG9uW0YNxIQaLadIONrxw3FqI13PNzdqZLPtAg1Q
+	/H+pyULD1cQ5PBebEorD61n2eaoYkcRS12YCP1nWE4tFobzOigvrX0b7JuBb93EVhmqDE+Ko9fb
+	wC127dhKFYQ371Q==
+X-Google-Smtp-Source: AGHT+IFzYJKhIqYUcWAJCCoFgQwgCGkoZ5FkRNxYWL4g0lWYIy/cSB5K0Fn22tTr1JWlMgO5CmKtlA==
+X-Received: by 2002:a17:906:6bd4:b0:aab:9268:2626 with SMTP id a640c23a62f3a-aab92682666mr1148960166b.25.1734429667673;
+        Tue, 17 Dec 2024 02:01:07 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aabbe35c629sm249217166b.175.2024.12.17.02.01.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 02:01:07 -0800 (PST)
+Message-ID: <f24abf927dcd21866bdb335d5ed27f3be4d94705.camel@gmail.com>
+Subject: Re: [PATCH v2] iio: dac: ad7293: enable power before reset
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Liam Girdwood	
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Antoniu Miclaus	
+ <antoniu.miclaus@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, 	linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 17 Dec 2024 11:05:38 +0100
+In-Reply-To: <20241216-iio-regulator-cleanup-round-6-v2-1-9482164b68cb@baylibre.com>
+References: 
+	<20241216-iio-regulator-cleanup-round-6-v2-1-9482164b68cb@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a45:b0:3a7:6f5a:e5c7 with SMTP id
- e9e14a558f8ab-3aff461ad34mr139327615ab.4.1734429865343; Tue, 17 Dec 2024
- 02:04:25 -0800 (PST)
-Date: Tue, 17 Dec 2024 02:04:25 -0800
-In-Reply-To: <6729a011.050a0220.2edce.1501.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67614ca9.050a0220.37aaf.0160.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in geneve_udp_encap_recv
-From: syzbot <syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+On Mon, 2024-12-16 at 15:44 -0600, David Lechner wrote:
+> Change the order of regulator enable and reset so that power supplies
+> are turned on before touching the reset line. Generally, chips should
+> have the VDRIVE supply enabled before applying voltage on any pins.
+>=20
+> While we are at it, remove the voltage level checks. If the power
+> supplies are not supplying the correct voltage, this is a hardware
+> design problem, not a software problem.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-HEAD commit:    f44d154d6e3d Merge tag 'soc-fixes-6.13' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e95730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4f1586bab1323870
-dashboard link: https://syzkaller.appspot.com/bug?extid=c28dd30bc14158282b3b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133e8b44580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10fa4744580000
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f44d154d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d57bbc97217e/vmlinux-f44d154d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/345444afe36f/bzImage-f44d154d.xz
+> Changes in v2:
+> - Dropped patches from "iio: use devm_regulator_get_enable_read_voltage
+> =C2=A0 round 6" that have already been applied.
+> - New patch for ad7293 that just enables power supplies and no longer
+> =C2=A0 reads the voltage.
+> - Link to v1:
+> https://lore.kernel.org/r/20241120-iio-regulator-cleanup-round-6-v1-0-d5a=
+5360f7ec3@baylibre.com
+> ---
+> =C2=A0drivers/iio/dac/ad7293.c | 68 +++++++------------------------------=
+----------
+> -
+> =C2=A01 file changed, 9 insertions(+), 59 deletions(-)
+>=20
+> diff --git a/drivers/iio/dac/ad7293.c b/drivers/iio/dac/ad7293.c
+> index
+> 1d403267048240be1bf3d8b2a59685409b9087fd..d3f49b5337d2f512363d50b434d99d4=
+e9b95
+> 059f 100644
+> --- a/drivers/iio/dac/ad7293.c
+> +++ b/drivers/iio/dac/ad7293.c
+> @@ -141,8 +141,6 @@ struct ad7293_state {
+> =C2=A0	/* Protect against concurrent accesses to the device, page selecti=
+on
+> and data content */
+> =C2=A0	struct mutex lock;
+> =C2=A0	struct gpio_desc *gpio_reset;
+> -	struct regulator *reg_avdd;
+> -	struct regulator *reg_vdrive;
+> =C2=A0	u8 page_select;
+> =C2=A0	u8 data[3] __aligned(IIO_DMA_MINALIGN);
+> =C2=A0};
+> @@ -777,6 +775,15 @@ static int ad7293_reset(struct ad7293_state *st)
+> =C2=A0static int ad7293_properties_parse(struct ad7293_state *st)
+> =C2=A0{
+> =C2=A0	struct spi_device *spi =3D st->spi;
+> +	int ret;
+> +
+> +	ret =3D devm_regulator_get_enable(&spi->dev, "avdd");
+> +	if (ret)
+> +		return dev_err_probe(&spi->dev, ret, "failed to enable
+> AVDD\n");
+> +
+> +	ret =3D devm_regulator_get_enable(&spi->dev, "vdrive");
+> +	if (ret)
+> +		return dev_err_probe(&spi->dev, ret, "failed to enable
+> VDRIVE\n");
+> =C2=A0
+> =C2=A0	st->gpio_reset =3D devm_gpiod_get_optional(&st->spi->dev, "reset",
+> =C2=A0						 GPIOD_OUT_HIGH);
+> @@ -784,24 +791,9 @@ static int ad7293_properties_parse(struct ad7293_sta=
+te
+> *st)
+> =C2=A0		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_reset),
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the reset GPIO\n");
+> =C2=A0
+> -	st->reg_avdd =3D devm_regulator_get(&spi->dev, "avdd");
+> -	if (IS_ERR(st->reg_avdd))
+> -		return dev_err_probe(&spi->dev, PTR_ERR(st->reg_avdd),
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the AVDD voltage\n");
+> -
+> -	st->reg_vdrive =3D devm_regulator_get(&spi->dev, "vdrive");
+> -	if (IS_ERR(st->reg_vdrive))
+> -		return dev_err_probe(&spi->dev, PTR_ERR(st->reg_vdrive),
+> -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get the VDRIVE voltage\n");
+> -
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -static void ad7293_reg_disable(void *data)
+> -{
+> -	regulator_disable(data);
+> -}
+> -
+> =C2=A0static int ad7293_init(struct ad7293_state *st)
+> =C2=A0{
+> =C2=A0	int ret;
+> @@ -816,48 +808,6 @@ static int ad7293_init(struct ad7293_state *st)
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	ret =3D regulator_enable(st->reg_avdd);
+> -	if (ret) {
+> -		dev_err(&spi->dev,
+> -			"Failed to enable specified AVDD Voltage!\n");
+> -		return ret;
+> -	}
+> -
+> -	ret =3D devm_add_action_or_reset(&spi->dev, ad7293_reg_disable,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->reg_avdd);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D regulator_enable(st->reg_vdrive);
+> -	if (ret) {
+> -		dev_err(&spi->dev,
+> -			"Failed to enable specified VDRIVE Voltage!\n");
+> -		return ret;
+> -	}
+> -
+> -	ret =3D devm_add_action_or_reset(&spi->dev, ad7293_reg_disable,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->reg_vdrive);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D regulator_get_voltage(st->reg_avdd);
+> -	if (ret < 0) {
+> -		dev_err(&spi->dev, "Failed to read avdd regulator: %d\n",
+> ret);
+> -		return ret;
+> -	}
+> -
+> -	if (ret > 5500000 || ret < 4500000)
+> -		return -EINVAL;
+> -
+> -	ret =3D regulator_get_voltage(st->reg_vdrive);
+> -	if (ret < 0) {
+> -		dev_err(&spi->dev,
+> -			"Failed to read vdrive regulator: %d\n", ret);
+> -		return ret;
+> -	}
+> -	if (ret > 5500000 || ret < 1700000)
+> -		return -EINVAL;
+> -
+> =C2=A0	/* Check Chip ID */
+> =C2=A0	ret =3D __ad7293_spi_read(st, AD7293_REG_DEVICE_ID, &chip_id);
+> =C2=A0	if (ret)
+>=20
+> ---
+> base-commit: 01958cb8a00d9721ae56ad1eef9cd7b22b5a34bb
+> change-id: 20241120-iio-regulator-cleanup-round-6-78b05be06718
+>=20
+> Best regards,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com
-
-memcpy: detected field-spanning write (size 8) of single field "_Generic(info, const struct ip_tunnel_info * : ((const void *)((info) + 1)), struct ip_tunnel_info * : ((void *)((info) + 1)) )" at ./include/net/ip_tunnels.h:662 (size 0)
-WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 ip_tunnel_info_opts_set include/net/ip_tunnels.h:662 [inline]
-WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 geneve_rx drivers/net/geneve.c:244 [inline]
-WARNING: CPU: 2 PID: 5932 at ./include/net/ip_tunnels.h:662 geneve_udp_encap_recv+0x239e/0x2a20 drivers/net/geneve.c:401
-Modules linked in:
-CPU: 2 UID: 0 PID: 5932 Comm: syz-executor272 Not tainted 6.13.0-rc3-syzkaller-00017-gf44d154d6e3d #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ip_tunnel_info_opts_set include/net/ip_tunnels.h:662 [inline]
-RIP: 0010:geneve_rx drivers/net/geneve.c:244 [inline]
-RIP: 0010:geneve_udp_encap_recv+0x239e/0x2a20 drivers/net/geneve.c:401
-Code: 2b e9 ff ff e8 d3 37 4d fb c6 05 cb 02 fb 09 01 90 31 c9 48 c7 c2 a0 e7 14 8c 4c 89 e6 48 c7 c7 80 e8 14 8c e8 53 72 0d fb 90 <0f> 0b 90 90 e9 54 ed ff ff e8 a4 37 4d fb e8 4f 30 c5 02 31 ff 41
-RSP: 0018:ffffc900037bf450 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff888035210062 RCX: ffffffff815a5079
-RDX: ffff8880232f0000 RSI: ffffffff815a5086 RDI: 0000000000000001
-RBP: ffffc900037bf570 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000003 R12: 0000000000000008
-R13: ffff88802cbfda00 R14: 0000000000000000 R15: ffff888024a2fb80
-FS:  0000555562a2b380(0000) GS:ffff88806a800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200002c0 CR3: 00000000230b2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- udp_queue_rcv_one_skb+0xad5/0x18b0 net/ipv4/udp.c:2316
- udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2394
- __udp4_lib_mcast_deliver net/ipv4/udp.c:2486 [inline]
- __udp4_lib_rcv+0x25c4/0x34e0 net/ipv4/udp.c:2625
- ip_protocol_deliver_rcu+0x2ff/0x4c0 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
- dst_input include/net/dst.h:460 [inline]
- ip_rcv_finish net/ipv4/ip_input.c:447 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_rcv+0x2c3/0x5d0 net/ipv4/ip_input.c:567
- __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5672
- __netif_receive_skb+0x1d/0x160 net/core/dev.c:5785
- netif_receive_skb_internal net/core/dev.c:5871 [inline]
- netif_receive_skb+0x13f/0x7b0 net/core/dev.c:5930
- tun_rx_batched.isra.0+0x3eb/0x730 drivers/net/tun.c:1574
- tun_get_user+0x2a16/0x3e40 drivers/net/tun.c:2007
- tun_chr_write_iter+0xdc/0x210 drivers/net/tun.c:2053
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f293ab4f920
-Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 81 e7 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
-RSP: 002b:00007ffff606d388 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007ffff606d410 RCX: 00007f293ab4f920
-RDX: 0000000000000048 RSI: 00000000200001c0 RDI: 00000000000000c8
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 00007ffff606d3b0 R14: 00007f293ab9e140 R15: 0000555562a2b338
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
