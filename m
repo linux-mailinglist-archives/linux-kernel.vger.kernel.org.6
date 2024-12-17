@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-449413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637C19F4E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:58:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D3B9F4EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC9916387E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D843E161F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB681F707D;
-	Tue, 17 Dec 2024 14:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BBF1F6674;
+	Tue, 17 Dec 2024 14:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/KRZSxP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hdLIQrZs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iDI1rS+f"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830571F3D55;
-	Tue, 17 Dec 2024 14:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6911F63E8
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734447376; cv=none; b=SXkZvr0oF6U5gpPhejtWheg8N9Wt9QpFwJHjYjgrGfZs87pCE7FhjrbJvW5RziLGym95LfbZRPbLxmFe4k4fr7lRsy6+YI1KUM3MrviJ4WLerSqxEk+EEK11auMC4MXil0YMaZxpFbNp+pD64ZW/rnSJjUI2NFK/ncBaJLo8HvQ=
+	t=1734447502; cv=none; b=p86bN+sE+Ebm4BH1/WTnbju+m/TNAUmrSi/pscMWdon+x3e2xFpKGatuoUIGQkVpG0ioh2VGAWCaVJk93+RES7K6rwuYy2zwf6ZR2YqDlj0//FYdXSTrvCF/sUNbROhLf7YQIs+2RLehvwSZoH/vgKfck00s2w9GuKYOR/l+adk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734447376; c=relaxed/simple;
-	bh=+1b0giH4mQ1kvRKRXAuU3ppu2XOaN20hSE8ekmup+Qc=;
+	s=arc-20240116; t=1734447502; c=relaxed/simple;
+	bh=RrFrT81NXNarfEyD9+e9+QlKEN3HnKOgqjkoMO237GQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVezM7cyjI5svcT3DD4WgkdDHa+hunApwXTMCbB9IZc6UQ11WrMacKNr90Hfr7SThX7XUDVCi2l54oYPDa7/N8+FUV+cSPJ3eSjyL2Mg9x9njgZCHC7XvBmdTf95Q2sSPZc2U4YnyzGv8u2ktrfdb2DmhJUyzNKR7u176E2lXUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/KRZSxP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA06C4CED3;
-	Tue, 17 Dec 2024 14:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734447374;
-	bh=+1b0giH4mQ1kvRKRXAuU3ppu2XOaN20hSE8ekmup+Qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/KRZSxPyJd5lkQr5mOFplcvFFPr18dYSP+hoYVVE+U7Kgp0/Gv28d7TRTF6geQyD
-	 uQaPkk52VHV1Bdh5wrqW7TE0Ra+v3iZ63LlDl6fOF6e//Ks9bokRixdXzJD3xQ1KL1
-	 XQYTwxbdFl6/42Yqm0d5SQad/j7b5YZmCWxFYeoOQH9QFajt5xhxKLk+84Gs3W4bmL
-	 KvHI3n5c2AbGe7XB/u4eFjYPdyriWuBsMhWp0H9qmdoIhdGjwcwZasM1ZglIdd/bxx
-	 YQer23792ncULPt6A3LqtGwBYjJCWvJzBrisfAR1jVVn917ajRVNZ/q8AKbJUZhuia
-	 1Z2Ve2ZErSFsg==
-Date: Tue, 17 Dec 2024 08:56:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: usb: usb-device: Add panel-location
-Message-ID: <20241217145612.GA1652259-robh@kernel.org>
-References: <20241212-usb-orientation-v1-1-0b69adf05f37@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKkYbescs4CgYwlmu3s+r9LT5a0NTW652ZsY4y27VhRgdr7XJFgg4CcIhW6b92tfEnjdQOPuIzeEyq4vpdvGoO3U3QpjvMMGdcuPF25y//OIDdPJyHV7QhUE6Nu+lIOG2/VogY2I5UaFK7yEJnl4Nb381r76ZiTGgUDl2lYEXGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hdLIQrZs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iDI1rS+f; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 17 Dec 2024 15:58:14 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734447495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sIIygnIcqxKtlEfOZFumwcF+6lF+hsGXHKJryMU8bJI=;
+	b=hdLIQrZsY4/sOQ5PTC3ts5qz5CeEL/m2Ll1GTeyW4XPnGX64IRzHq33F/pIbBFZwlFLHtP
+	YkFiH2d4uBfTzNWHt98Q1ZXCo8DdXLSyQzKv625C4FHE5RTL1B+yl1Oi09Au6ENOANy2Je
+	7qdBNsuPCHyMrHb3/FN76IJfVfMDMkRI7BWXyQALK1ihI1nUMePoPxBF5hsSUE2ZzD7XmT
+	sb2N93TktowgJSMoeCLWbSA+ISkHYf8X6pI+fZ5Bv31UdQjlSqS54z/ALDK3HDwgZ4HBaK
+	V+2epO79yFDUIZPCdwdoEeP3wdEBAiYM2ST5hIkjM0SPQ1vnNbkcB1G+JY2Y4w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734447495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sIIygnIcqxKtlEfOZFumwcF+6lF+hsGXHKJryMU8bJI=;
+	b=iDI1rS+fBzXIzx+XMvuRLypzXso7xtDJTaqPtFZWDL6iH87Dtlkk3YJtBg25tWYAWkWcWk
+	RvEoxSmwx3aZnnBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v5 09/14] futex: Allow to re-allocate the private hash
+ bucket.
+Message-ID: <20241217145814.euTL-GEf@linutronix.de>
+References: <20241215230642.104118-1-bigeasy@linutronix.de>
+ <20241215230642.104118-10-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241212-usb-orientation-v1-1-0b69adf05f37@chromium.org>
+In-Reply-To: <20241215230642.104118-10-bigeasy@linutronix.de>
 
-On Thu, Dec 12, 2024 at 09:44:37PM +0000, Ricardo Ribalda wrote:
-> For some devices like cameras the system needs to know where they are
-> mounted.
-
-Why do you need this and why only this property and not the dozens 
-others ACPI has?
-
-> 
-> ACPI has a property for this purpose, which is parsed by
-> acpi_get_physical_device_location():
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Device_Configuration.html#pld-physical-location-of-device
-> 
-> In DT we have similar property for video-interface-devices called
-> orientation, but it is limited to the requirements of video devices:
-> Documentation/devicetree/bindings/media/video-interface-devices.yaml
-> 
-> Add a new property for usb-devices that matches the behavior of
-> ACPI's _PLD.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  Documentation/devicetree/bindings/usb/usb-device.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/usb-device.yaml b/Documentation/devicetree/bindings/usb/usb-device.yaml
-> index da890ee60ce6..1ce79c1c3b31 100644
-> --- a/Documentation/devicetree/bindings/usb/usb-device.yaml
-> +++ b/Documentation/devicetree/bindings/usb/usb-device.yaml
-> @@ -42,6 +42,20 @@ properties:
->        port to which this device is attached. The range is 1-255.
->      maxItems: 1
+On 2024-12-16 00:00:13 [+0100], To linux-kernel@vger.kernel.org wrote:
+> @@ -154,6 +303,17 @@ struct futex_hash_bucket *futex_hash(union futex_key *key)
 >  
-> +  panel-location:
-> +    description: Describes which panel surface of the system's housing the USB
-> +      device resides on. It has the same meaning as the `ACPI`'s `_PLD` Panel
-> +      object.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # Top.
-> +      - 1 # Bottom.
-> +      - 2 # Left.
-> +      - 3 # Right.
-> +      - 4 # Front (aka as User Facing).
-> +      - 5 # Back (aka as World Facing).
-> +      - 6 # Unknown.
+>  void futex_hash_put(struct futex_hash_bucket *hb)
+>  {
+> +	struct futex_hash_bucket_private *hb_p;
 > +
->    "#address-cells":
->      description: should be 1 for hub nodes with device nodes,
->        should be 2 for device nodes with interface nodes.
-> 
-> ---
-> base-commit: eefa7a9c069908412f8f5d15833901d1b46ae1b2
-> change-id: 20241212-usb-orientation-8e3717ebb02a
-> 
-> Best regards,
-> -- 
-> Ricardo Ribalda <ribalda@chromium.org>
-> 
+> +	if (hb->hb_slot == 0)
+> +		return;
+> +	hb_p = container_of(hb, struct futex_hash_bucket_private,
+> +			    queues[hb->hb_slot - 1]);
+> +
+> +	if (!rcuref_put(&hb_p->users))
+> +		return;
+> +
+> +	futex_assign_new_hb(NULL);
+
+I have reworked two things:
+- I have to remove futex_assign_new_hb() here and let the next
+  rcuref_get() perform the assignment instead. The reason is that the
+  caller can change its task state (futex_wait_queue()) and blocking on
+  the mutex will reset it. Instead of delaying it after the schedule()
+  it looks simpler to delay it to the next rcuref_get() where it has to
+  be handled anyway.
+
+- The logic in __futex_assign_new_hb() didn't deal properly with delayed
+  assigns.
+
+>  }
+
+Sebastian
 
