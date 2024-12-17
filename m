@@ -1,215 +1,138 @@
-Return-Path: <linux-kernel+bounces-449128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D8C9F4A47
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:48:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D379F4A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237B0165BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D76E16881B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A051F03DF;
-	Tue, 17 Dec 2024 11:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15E1F03E8;
+	Tue, 17 Dec 2024 11:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFKSWLf0"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCkaIVnc"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2090E1DD87D;
-	Tue, 17 Dec 2024 11:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2A11EE002;
+	Tue, 17 Dec 2024 11:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734436088; cv=none; b=RgqCaJdRl4/DP2gl1h9UPCCuDAPe9hILXixoSIA/u1cjmaAT65ZyL7TeGJ49ie9v8CSYLH4bG4ri+QaQYehokrqJhe7p9rh6WKkUNGHdpqQJ6EMxGCLy0SiEdThYnmxuqCUMJV/YoSrhwzDQw1fnrIc936uwkEeu6TKrp4fZ1zQ=
+	t=1734436507; cv=none; b=f/NVK2P8xQbYEhLdgmNPWLb2hwcziwQHzvPHGI0dJtGeaOQ8ILy5BOA2i10e48/tNb1FFeRKGXESS018qbu6V/8SRriMId1j5A8WwTNTaj9sX/vy1UcbLSEjll+KNZz7OE1+z2OA9pgWt2ILsEkzxTSjGzKhS0fzp9ltuBygGKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734436088; c=relaxed/simple;
-	bh=8cUwwjxrd3gHpInQY9WHjrJke/ysO12iYLDp0ATqas4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DxyFXfBgRd54f08+0b90fgHOzam3Xku5KwPFQSB2/F4x43k5I8CLsZnrOzufIeUwS1OZzkvWRYyzwyXUDBLa6UZafoA5JfTm8Fnrx8NHgKop75Nyb6XZFO4OhB1/AqGruKwz7poLrm1hnwE8Bgc/rg4phLQL05F7DK8AbmaC1EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFKSWLf0; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1734436507; c=relaxed/simple;
+	bh=EYsHKINsZ9zML7ekiItTfl5biYxh4x+VwUfpilzpOws=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qfOlCe2hxIOtF5abZKZWcN0fjW9arwxY8zVEU61euEW5po+RH/jbm5sq3KmxjSpX3lz1LH87eHqXtMPYyLi4g7F+SiLphimFlhQMyz200JbcY35blA4X+SphloHikpV4fxHg5pYAuc+bYqI2qeOkFqW21HAlicsvNGw0kXnSVN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCkaIVnc; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so700171366b.3;
-        Tue, 17 Dec 2024 03:48:05 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ef70c7efa5so3587152a91.2;
+        Tue, 17 Dec 2024 03:55:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734436084; x=1735040884; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TgPLNt6L5dfACZwwNJeFif8N+XzazwpAPkZQoHYaBOE=;
-        b=jFKSWLf0K3d/+8/S8GRIpmJpSc7XR0LqPrhpKI8a+VQn1qfhfGe8CmoK5/gED2df2O
-         JWvrkUwxAkyXrovVu4Z1CY4CMt5yQyWgWa5AWSuZXV5D7gy+AYg49Y7ulT5plzagAjKE
-         bVEEa3Aw0sy2Rklr1qaBJyvf1lDTJd8Sy42J8nHcBoSkoeSco9n1BRE1J+BK33rQx3It
-         VY2T4f907zWxe6TyZWD5fymkc2XM1UmO0TxNBZnSW8W3vYTRKOUHThP+BK5y8GE+a3Rc
-         FKZtyfubVyfdDhP69wb32i9kDqeEMJH0Ctz3ayTNMbV3P+olELNU1cwPi0OP4rP52HJM
-         6tZA==
+        d=gmail.com; s=20230601; t=1734436506; x=1735041306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3KbDpu+5dgXCRMaHlMudK/PfUogFA3io0WjXBUI+vpI=;
+        b=gCkaIVnc+Yb64+J8xyombW5XzLRyePJbnEzFvT0D+HrVIeRw6cjl16VSbjM9h5t35S
+         68hd5pwwiBkDIQt37zuF5ylTN1/wuJiVkW3KhvnyjKa2jQ7G49E7bV3QWbBJF6ms2HG2
+         f3Fhyk2y3A/vu6Mezy/1QTYaNiiEiNqU20PycdQSI1cKZXsUXz3e76HXCoNl8K7ySpqW
+         d0ZpluYXKIGAGQlmWLlA2ieeqyQUNyDVZbmQjsxGcyl/ePXyvnJr0dbT4NCIAZ6n/c02
+         1IotdijsjkzcqednCCEwPidxIKOsGckZkiIOHXtXWbx0ALpCIyaieK52NQmv3EcWKB82
+         RGlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734436084; x=1735040884;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TgPLNt6L5dfACZwwNJeFif8N+XzazwpAPkZQoHYaBOE=;
-        b=awWiSyRAsnJG5WZMrUZUPdmJAXOm4at7H7DR4LNLmdjsAGckYCMvuIRSdWe8gV/U6S
-         6I0Vk9WYsu4+5T2g5fSg2sRVnWdzyT9vIiWLdNmQbfYGPIR9QrKdWUM3iKLawCjzsSt/
-         /OXwGSDPZiFE6xiPPpXauCGKYt+XeeI9V+MGN6qACD7WN30QXOPhJ94hpVkWV2MfazDC
-         gh5BJcarHPIicoYb+pKshy/CCqhf0Zx43lfXW3qWRP3YMRKBFP9PzJmBW3B+Fvf9cW+0
-         SNNsazTvBJCnqIK/wWLG7rXaBWcQFrBGJulU7KdUVKct9KvcySeoBTPBveF/Ee8cEn7l
-         4bBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdA8t8SStS6WsdQc+7MtnaXrJ8ytWBvQb6Dv9ypUm2sV0/Pv6osKoTCNMEdAR3Wzc3lOmaferXF/Y0@vger.kernel.org, AJvYcCV5Nb5M78UUuT170ZWBFbslJIbh19SnY/2VLUNXj6uvoQABv8QgUw/xSq0+1CCnx7rwe5nD2ywfGoO4@vger.kernel.org, AJvYcCVDTqJDh44D40yd+P05BuCGfTlobiuU8MwLeC/ORIniSv/E/ODOUN3abBNxRRxhD9LUGjXs9zdDQj4X@vger.kernel.org, AJvYcCVpTIcuGzvclX+uopMez+2RmWPwJZDkCUuj9MhonE/ZLn8yMGLdO/3/8Wk9dJ78tyjhdOCP3Rh4U/6r@vger.kernel.org, AJvYcCXd1OLlO8Urce1TXN9r6WgBmgZiAqGBcuJUOUwe/yY+br0Pxs7RfcPt5uVfHPKsFhLVYdyh9qmiuKt/6ZbY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuRQlgVk36RZd84pTPQqKJwtfAIDRI+WHrrMfuu6GB19yf43DV
-	gvrmi5Ug2w14SH+G9m69P1StswGWLdARD7MPRvslAB7WzGawtLlO
-X-Gm-Gg: ASbGncs/bYOcglOwiQmZMVLg90J1I4o6JRrMbb4Ny4p5KALqYuOa+nOVsKwg8ZN9Eaj
-	zNClE8Mkr6Y/yX6nBOk9lZS3cDZCA419J54ih9mnIOxrc/FYSCgDcLIgxQoIKH9Jy8d/JQPxq44
-	oxVdnWn3vm7Hpt9Rfch6lapV6wQF+N06BGhor1E64jiRHOEr/P2K7zvM4o2VAj9mlM5YVsbTc9A
-	rLqMmCjlRpybCzOWfHQbEhBjtv0k5lThR23TzkPswI82nJO4jaWVdN/ocij8iXRKFzQaDk9/Z1w
-	6Y1+FtUeK7AFsASEmTM4gYwZ+AnlQ7sPXE0DbYJrsFSi/xcicMn8YVc1n2NaMgUPTcaJjVzclvq
-	srvYMCmigT0kssg==
-X-Google-Smtp-Source: AGHT+IEF6QcpZ2p7ADD57VCyJYUSCW81QUwTkzveHe8ErRkCWfSDWm1pGsP1JcA21NSgaDSm0tur6A==
-X-Received: by 2002:a05:6402:5214:b0:5d0:ed92:cdf6 with SMTP id 4fb4d7f45d1cf-5d63c3421f4mr34893683a12.19.1734436084354;
-        Tue, 17 Dec 2024 03:48:04 -0800 (PST)
-Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ad17d7sm4193524a12.25.2024.12.17.03.48.03
+        d=1e100.net; s=20230601; t=1734436506; x=1735041306;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3KbDpu+5dgXCRMaHlMudK/PfUogFA3io0WjXBUI+vpI=;
+        b=i9WCa2yvXeT0YJVk5RWft9RZTjrvZPPzJAqor90WgI44Ri6luLSH5n6ajtKwPd91Tv
+         9hYF6v7uty8EbWTAOw6enUgosoTaY5V9lD0Ynnq5RYT9NXSj5/JhJuDWUm3/hPn8Ekig
+         mFOeOg/viiCO+S8HyhxfWVgdGlcOYfhALlCbvAKSVo2YsCVIAKsbEgxrmJc4z5+G6e+5
+         qR2LH8cZEiStaYnf8Y2dkHdqI+xZhxF9fb24Ke8HAockCcSCi68VfdImCOLLXSP73HKM
+         SWyLOlX66ZC/+l4Yr+1X9OYts1SJ3ULqgQcI0X50li/dWIBMNYbXgGoKdc8NNfMw1FmG
+         2G1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFUjSbhmzec9e2h+zQVb5PZ7bCP5q5TzmOwpDbQM+bM28qZjbqBTiR3Vo2UzCOh0M4aW3jq4RkHZPeLKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3jds8oE5DI1qWyYvgE/fmbxZOcF8r31ixnfS4GecPG+nLsttQ
+	AY4t46N03cIDRPFJUAd1DadgmJIBlECRICy4sx2vBP+0phUrMoEY
+X-Gm-Gg: ASbGncvn7ckU14lMzdyLGqKFp8Q+nwsWZQPizI94XVcSx0Tvk63suOuPBvmp1KBkyxK
+	OcuKT0r385ebf0+p8OEhH0slyGmKwmQqt56UMWScZlhO+ymy8pLRgGvLIB69xjMW5ehW2pGEcgm
+	hTKKmdsVkCXOiMYb+ggD2mVmV9wnL+CuC+rWF3twtS3Bph+XNya4mFq+1tT8Dl8kOi3wW+FYckB
+	pm/2cZcw6loJDld0u3vquuyP7xTsHwzt4+lYPl5mKQ+CBtTPAjsIQ==
+X-Google-Smtp-Source: AGHT+IHngxmcUWV4lDNQlA0QXiov5JsCMkpOQ73Ck+LNIruRGkRdnCgPCkMNUjWYyHkKOes0d7ocDQ==
+X-Received: by 2002:a17:90b:1810:b0:2ee:94d1:7a9d with SMTP id 98e67ed59e1d1-2f2901b3bb3mr21024098a91.32.1734436505718;
+        Tue, 17 Dec 2024 03:55:05 -0800 (PST)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a1ebba00sm7161517a91.26.2024.12.17.03.55.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 03:48:04 -0800 (PST)
-Message-ID: <27a8b987881eedc538afb6eaf300bc7909fb85b9.camel@gmail.com>
-Subject: Re: [PATCH v6 10/17] iio: adc: ad7944: don't use storagebits for
- sizing
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>
-Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, David Jander	 <david@protonic.nl>, Martin Sperl
- <kernel@martin.sperl.org>, 	linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, 	linux-pwm@vger.kernel.org
-Date: Tue, 17 Dec 2024 12:52:35 +0100
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
-References: 
-	<20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
-	 <20241211-dlech-mainline-spi-engine-offload-2-v6-10-88ee574d5d03@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+        Tue, 17 Dec 2024 03:55:05 -0800 (PST)
+Date: Tue, 17 Dec 2024 19:54:54 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ xfr@outlook.com
+Subject: Re: [PATCH net-next v1] net: stmmac: TSO: Simplify the code flow of
+ DMA descriptor allocations
+Message-ID: <20241217195454.000016ce@gmail.com>
+In-Reply-To: <9d0722fe-1547-4b44-8a4a-69a8756bdb39@redhat.com>
+References: <20241213030006.337695-1-0x1207@gmail.com>
+	<9d0722fe-1547-4b44-8a4a-69a8756bdb39@redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-12-11 at 14:54 -0600, David Lechner wrote:
-> Replace use of storagebits with realbits for determining the number of
-> bytes needed for SPI transfers.
->=20
-> When adding SPI offload support, storagebits will no longer be
-> guaranteed to be the "best fit" for 16-bit chips so we can no longer
-> rely on storagebits being the correct size expected by the SPI
-> framework. Instead, derive the correct size from realbits since it will
-> always be correct even when SPI offloads are used.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+On Tue, 17 Dec 2024 10:30:24 +0100, Paolo Abeni <pabeni@redhat.com> wrote:
 
-Reviewed-vy: Nuno Sa <nuno.sa@analog.com>
+> On 12/13/24 04:00, Furong Xu wrote:
+> > The DMA AXI address width of DWMAC cores can be configured to
+> > 32-bit/40-bit/48-bit, then the format of DMA transmit descriptors
+> > get a little different between 32-bit and 40-bit/48-bit.
+> > Current driver code checks priv->dma_cap.addr64 to use certain format
+> > with certain configuration.
+> > 
+> > This patch converts the format of DMA transmit descriptors on platforms
+> > that the DMA AXI address width is configured to 32-bit (as described by
+> > function comments of stmmac_tso_xmit() in current code) to a more generic
+> > format (see the updated function comments after this patch) which is
+> > actually already used on 40-bit/48-bit platforms to provide better
+> > compatibility and make code flow cleaner.
+> > 
+> > Tested and verified on:
+> > DWMAC CORE 5.10a with 32-bit DMA AXI address width
+> > DWXGMAC CORE 3.20a with 40-bit DMA AXI address width
+> > 
+> > Signed-off-by: Furong Xu <0x1207@gmail.com>  
+> 
+> Makes sense to me.
+> 
+> Since this could potentially impact multiple versions, it would be great
+> if we could have a little more 3rd parties testing.
 
-> v6 changes: none
->=20
-> v5 changes: none
->=20
-> v4 changes: new patch in v4
-> ---
-> =C2=A0drivers/iio/adc/ad7944.c | 16 +++++++++-------
-> =C2=A01 file changed, 9 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-> index
-> a5aea4e9f1a7bdd8ca10f9f4580ad3216ddcdfcb..6d1202bd55a013b092ff803f2065fd1=
-28dfa
-> 9bdd 100644
-> --- a/drivers/iio/adc/ad7944.c
-> +++ b/drivers/iio/adc/ad7944.c
-> @@ -98,6 +98,9 @@ struct ad7944_chip_info {
-> =C2=A0	const struct iio_chan_spec channels[2];
-> =C2=A0};
-> =C2=A0
-> +/* get number of bytes for SPI xfer */
-> +#define AD7944_SPI_BYTES(scan_type) ((scan_type).realbits > 16 ? 4 : 2)
-> +
-> =C2=A0/*
-> =C2=A0 * AD7944_DEFINE_CHIP_INFO - Define a chip info structure for a spe=
-cific chip
-> =C2=A0 * @_name: The name of the chip
-> @@ -164,7 +167,7 @@ static int ad7944_3wire_cs_mode_init_msg(struct devic=
-e
-> *dev, struct ad7944_adc *
-> =C2=A0
-> =C2=A0	/* Then we can read the data during the acquisition phase */
-> =C2=A0	xfers[2].rx_buf =3D &adc->sample.raw;
-> -	xfers[2].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
-> +	xfers[2].len =3D AD7944_SPI_BYTES(chan->scan_type);
-> =C2=A0	xfers[2].bits_per_word =3D chan->scan_type.realbits;
-> =C2=A0
-> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 3);
-> @@ -193,7 +196,7 @@ static int ad7944_4wire_mode_init_msg(struct device *=
-dev,
-> struct ad7944_adc *adc
-> =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> =C2=A0
-> =C2=A0	xfers[1].rx_buf =3D &adc->sample.raw;
-> -	xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
-> +	xfers[1].len =3D AD7944_SPI_BYTES(chan->scan_type);
-> =C2=A0	xfers[1].bits_per_word =3D chan->scan_type.realbits;
-> =C2=A0
-> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 2);
-> @@ -228,7 +231,7 @@ static int ad7944_chain_mode_init_msg(struct device *=
-dev,
-> struct ad7944_adc *adc
-> =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> =C2=A0
-> =C2=A0	xfers[1].rx_buf =3D adc->chain_mode_buf;
-> -	xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits) *
-> n_chain_dev;
-> +	xfers[1].len =3D AD7944_SPI_BYTES(chan->scan_type) * n_chain_dev;
-> =C2=A0	xfers[1].bits_per_word =3D chan->scan_type.realbits;
-> =C2=A0
-> =C2=A0	spi_message_init_with_transfers(&adc->msg, xfers, 2);
-> @@ -274,12 +277,12 @@ static int ad7944_single_conversion(struct ad7944_a=
-dc
-> *adc,
-> =C2=A0		return ret;
-> =C2=A0
-> =C2=A0	if (adc->spi_mode =3D=3D AD7944_SPI_MODE_CHAIN) {
-> -		if (chan->scan_type.storagebits > 16)
-> +		if (chan->scan_type.realbits > 16)
-> =C2=A0			*val =3D ((u32 *)adc->chain_mode_buf)[chan-
-> >scan_index];
-> =C2=A0		else
-> =C2=A0			*val =3D ((u16 *)adc->chain_mode_buf)[chan-
-> >scan_index];
-> =C2=A0	} else {
-> -		if (chan->scan_type.storagebits > 16)
-> +		if (chan->scan_type.realbits > 16)
-> =C2=A0			*val =3D adc->sample.raw.u32;
-> =C2=A0		else
-> =C2=A0			*val =3D adc->sample.raw.u16;
-> @@ -409,8 +412,7 @@ static int ad7944_chain_mode_alloc(struct device *dev=
-,
-> =C2=A0	/* 1 word for each voltage channel + aligned u64 for timestamp */
-> =C2=A0
-> =C2=A0	chain_mode_buf_size =3D ALIGN(n_chain_dev *
-> -		BITS_TO_BYTES(chan[0].scan_type.storagebits), sizeof(u64))
-> -		+ sizeof(u64);
-> +		AD7944_SPI_BYTES(chan[0].scan_type), sizeof(u64)) +
-> sizeof(u64);
-> =C2=A0	buf =3D devm_kzalloc(dev, chain_mode_buf_size, GFP_KERNEL);
-> =C2=A0	if (!buf)
-> =C2=A0		return -ENOMEM;
->=20
+Totally agree.
 
+Multiple devices with multiple versions of DWMAC core which is
+configured to 32-bit DMA AXI address width seem to very hard to find
+and test this patch :(
+
+Jon Hunter @ NVIDIA has two versions of DWMAC cores different from mine,
+Tegra186 Jetson TX2 (DWMAC CORE 4.10) and
+Tegra194 Jetson AGX Xavier (DWMAC CORE 5.00),
+but both of them are configured to 40-bit DMA AXI address width, this does
+not match the case that this patch tries to convert. So I decided not to
+request him to provide help.
 
