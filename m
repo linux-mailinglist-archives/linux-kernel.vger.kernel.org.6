@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-449914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9A99F57E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:39:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0EC9F57EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6260A7A2556
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B6F168F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC3B1F9A81;
-	Tue, 17 Dec 2024 20:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630581F9A99;
+	Tue, 17 Dec 2024 20:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PG/yu+KT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3S/Q4XAN"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="tkSyeXZu"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE334A23
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844817BEA2
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467979; cv=none; b=pIBHBj/1pUR8FHTDDORo9QCiT/HRZCWZNlCU4ywDs/62tGQ+Ckk+kW0u/QBn1TxtPEBpY17GYZpzs5nJaXDXHm3A9z11cxDQ0pf9r7IpuDQvLrcLGAdlhFk98TDrMa31cD/ygFOo7tTy80xypnNl6i8SQqh/w++1GJ5CpyTcd+Y=
+	t=1734467993; cv=none; b=fhtcDWk/G+qd1ZEigOGswPJnhcZ9AYYNslAXQRUCPBZzzMypuqXtcCVt+WRDuY+EPDmjXm40i5rhlj+AEcjlaZ+4swswroVNTxo1NTTH2NZ/Ckn24srrMfmYlUdXVZhWvXLtzyDKeSyBj48H3Cd7atTIETOSqoreyJNgpp/5MsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467979; c=relaxed/simple;
-	bh=+xQB6ejCu0Q5iARvbw7US+nwOS1VKl5oFX9hJTTsVkA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=SckT7aAu9410fn8BnzvhFSQk1dk0Gj+a+TLGFovOCfWutPFCa+prudbZt2TZK+Q+3Faql6RB8suJMKerhKDauAgj9Afc8NP6piwvkrAbJi75FDbON/fQKtH45GFWHrSaPG7k19S15Fy8gdkeGYXwtpdp7LtEuOs0+JjFjsDTeM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PG/yu+KT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3S/Q4XAN; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id A19D21140119;
-	Tue, 17 Dec 2024 15:39:35 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 17 Dec 2024 15:39:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734467975;
-	 x=1734554375; bh=aNNu1aV97H2ywQy9HYkfKUll79gVGt2TM223JqGvvs0=; b=
-	PG/yu+KTPMi3QOwd5YeCYAtnAO6GxkyhDpWZ2jHJ9e01an0XFJbkp6HpHakcJYwH
-	tRvpllFJCZJEtzW+eDTT4tuEmQZhrLjq/qux+HIuPGTVUwWQBXbSxA6iBLTO7Hkf
-	MpLc7cqCb7wx5yNEc4nw7drIyKRc/cgwY79sWTGjR1Xxs858JDD15mRe5sSccrrX
-	EMbyRqQ7sef7mhuGx0x0M2zvTrmM8TEgeHpHLXv3Ewy3AR5AWkpjiRdpITbAgUOO
-	q/fsqvtmv+oVx6r1QotMq+8TFGjNjmpm4qI2TORKNxt7h6xbuNNnfLoHSdcav+qt
-	dmVfNU8x3ojd3tvGHdeieA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734467975; x=
-	1734554375; bh=aNNu1aV97H2ywQy9HYkfKUll79gVGt2TM223JqGvvs0=; b=3
-	S/Q4XANwWKlgrl/i7TYzGY72PYpt+m85aWZjas1aIUZApsDV7Ny1s9IqKQrf/i+k
-	hS8by/eS8C15wL6wU4envoksEiT7CtDWeSQfSZr6p9BP96ZP1m8JIwyqBP9nwwm5
-	kjAZnbVGhXnHc1Ew4wEoZ94uiZlLga0PIOYPnViDQU/6RdnD9He2ZFwU2hiPblzG
-	DZ+BMPtSxQC4h5jhaokMx6YeGI9fmZYbe/tbofqeMdvqr107T3Da4JZmTaYywoRw
-	I50EJeO6H2gDnvsspkEY7IkgOZm5jWxbRzYWOl8jNocebskev8K9PDCoaKEqoztX
-	8Jn04avWDmRKyM47ktPkQ==
-X-ME-Sender: <xms:huFhZ8nWOvZQNR5YlOk6sqCGUb3c9SzKtqUS_QjIHE02A0aYRy8VNA>
-    <xme:huFhZ70lSEuLQlyy9Fyi9y0Ps7EbgMQXXcPKM5aQnwxD5DACV3x7GaFh9MXGChrxn
-    Sdbs6MqGwJtbVEL0Lk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgddugeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtg
-    hhpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgt
-    phhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgrnhhird
-    hnihhkuhhlrgesihhnthgvlhdrtghomhdprhgtphhtthhopehluhgtrghsrdguvghmrghr
-    tghhihesihhnthgvlhdrtghomhdprhgtphhtthhopehmihgthhgrvghlrdhjrdhruhhhlh
-    esihhnthgvlhdrtghomhdprhgtphhtthhopehrohgurhhighhordhvihhvihesihhnthgv
-    lhdrtghomhdprhgtphhtthhopehtvghjrghsrdhuphgrughhhigrhiesihhnthgvlhdrtg
-    homhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:huFhZ6o3PIeEpGurKiZPOHW9JFqxqE_8LZVNdJFg49vroloUkSsc-w>
-    <xmx:huFhZ4nbQbB4TglMJFBGU3_7GtoavkYQXDV_gyg9BA0FrC_VG8xqOA>
-    <xmx:huFhZ61T16NpWd6YgawPOxTa4xrYnj_oTK6kcwFZ2ZUFqOAJtEhLOA>
-    <xmx:huFhZ_uqPuI3czVIk9bfMBNBoonyUDRaFxnKODpiVrt9Uq2WqGv-7A>
-    <xmx:h-FhZz74-Q_kyHp3KUj066zcjlIn67let4IegfEblM4E4ih3i-teIKBy>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 88DA52220072; Tue, 17 Dec 2024 15:39:34 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1734467993; c=relaxed/simple;
+	bh=H27hwbhxPzvbgwC8BOruK3IE+0AY397UDRJuHr7xI3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K4t+czEd01mX+hgoRT8Rq2H6p95Yh/bZ3GjJQSYQfVawDTTJe4VYApYyn0pLViXvxZmH2EwtTvTsTB4Q9dZBr1NR9VakMikr+psa4pw/uaZ2oBHFHs/uBhlfFiTnuauNl4OUUM3NsfD4Z4CRAjqs4bZKjDA9Bk8F7hsj37JB/pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=tkSyeXZu; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7374F2C0861;
+	Wed, 18 Dec 2024 09:39:41 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734467981;
+	bh=fok1y8h90A69YIQrYpLRQu+TATK0uGXoc4Zog7s/xog=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tkSyeXZumlr/z08BBjQnlHrEhc0v0NB8liGX+sUfDin/eeOQW7TUK/aQG57Er6UcO
+	 6RC1KUUvBmHwwMo+UxlOlmli47l4TP0PVJkbsjKTs9uLka3DNtmSQr5hTECBiYkyMk
+	 /2sLnpmarq/tdfwKvirGijk2cR7cjyEwc6nhcY8ROHap+mGyAgmRrBUKP9677lokQ1
+	 dJ5NBuNeOPTG8Juuj3JFoXqgRLNIro5d5rPmAWkjwRHoxoi6X3olXXtzpgrVXoJKmp
+	 LJBcxDzgG4Ijo+/+ceXDXdmWU4GenaS18+7Miny0+nozP++PpkK3Iq2mOCjD4RnoSl
+	 m3g+NpBZ+12vA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6761e18d0000>; Wed, 18 Dec 2024 09:39:41 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 4EF9B13EDC3;
+	Wed, 18 Dec 2024 09:39:41 +1300 (NZDT)
+Message-ID: <0986f65a-ff1c-4ba4-9bae-de3972794bc3@alliedtelesis.co.nz>
+Date: Wed, 18 Dec 2024 09:39:41 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 17 Dec 2024 21:39:13 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lucas De Marchi" <lucas.demarchi@intel.com>
-Cc: "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>, michael.j.ruhl@intel.com,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>,
- "David E. Box" <david.e.box@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Jani Nikula" <jani.nikula@intel.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Tejas Upadhyay" <tejas.upadhyay@intel.com>,
- "Hans de Goede" <hdegoede@redhat.com>, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-Id: <640211a8-9516-4574-99a6-e61354d613ff@app.fastmail.com>
-In-Reply-To: 
- <fjforguil5lcij77tgmjk5sw5bzuwg7m34nsdmrzbinnmt2xte@moz3kbsg6tgi>
-References: <20241217071852.2261858-1-arnd@kernel.org>
- <Z2HIW4c-S_IA9bWb@intel.com>
- <36bae0e6-9153-4cb4-9c85-8a582a47044b@app.fastmail.com>
- <fjforguil5lcij77tgmjk5sw5bzuwg7m34nsdmrzbinnmt2xte@moz3kbsg6tgi>
-Subject: Re: [PATCH] drm/xe/vsec: enforce CONFIG_INTEL_VSEC dependency
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: smatch usage (was Re: [PATCH v2 4/4] net: mdio: Add RTL9300 MDIO
+ driver)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
+References: <20241216031346.2626805-1-chris.packham@alliedtelesis.co.nz>
+ <20241216031346.2626805-5-chris.packham@alliedtelesis.co.nz>
+ <20241216164814.GH780307@kernel.org>
+ <cf77f08d-0516-4adf-a701-9589f0d99eb5@alliedtelesis.co.nz>
+ <20241217103509.GO780307@kernel.org>
+ <c656bd3f-4ad0-4c2b-8d91-1c81f7e41c52@alliedtelesis.co.nz>
+ <c5bd368e-bd4b-4001-b612-b5293a8b2c1a@stanley.mountain>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <c5bd368e-bd4b-4001-b612-b5293a8b2c1a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761e18d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=NEAV23lmAAAA:8 a=yPCof4ZbAAAA:8 a=07d9gI8wAAAA:8 a=dxtpdiMQ9aW_9zQE9TkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=e2CUPOnPG4QKp8I52DXD:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Tue, Dec 17, 2024, at 21:14, Lucas De Marchi wrote:
-> On Tue, Dec 17, 2024 at 08:28:59PM +0100, Arnd Bergmann wrote:
->>On Tue, Dec 17, 2024, at 19:52, Rodrigo Vivi wrote:
->>> On Tue, Dec 17, 2024 at 08:18:44AM +0100, Arnd Bergmann wrote:
->>>> From: Arnd Bergmann <arnd@arndb.de>
->>>>
->>>> When INTEL_VSEC is in a loadable module, XE cannot be built-in any more:
->>>>
->>>> x86_64-linux-ld: vmlinux.o: in function `xe_vsec_init':
->>>> (.text+0x19861bf): undefined reference to `intel_vsec_register'
->>>>
->>>> This could be enforced using a 'depends on INTEL_VSEC || !INTEL_VSEC'
->>>> style dependency to allow building with VSEC completely disabled.
->>>> My impression here is that this was not actually intended, and that
->>>> continuing to support that combination would lead to more build bugs.
+
+On 18/12/2024 09:07, Dan Carpenter wrote:
+> On Wed, Dec 18, 2024 at 08:40:08AM +1300, Chris Packham wrote:
+>> (culled the cc list)
+>>
+>> On 17/12/2024 23:35, Simon Horman wrote:
+>>> + Dan Carpenter
+>>>
+>>> On Tue, Dec 17, 2024 at 10:47:10AM +1300, Chris Packham wrote:
+>>>> On 17/12/2024 05:48, Simon Horman wrote:
+>>>>> On Mon, Dec 16, 2024 at 04:13:46PM +1300, Chris Packham wrote:
+>>>>>> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+>>>>>> switches with integrated SoC. There are 4 physical SMI interfaces on the
+>>>>>> RTL9300 but access is done using the switch ports so a single MDIO bus
+>>>>>> is presented to the rest of the system.
+>>>>>>
+>>>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> ...
+>>>
+>>>>>> +		if (smi_addr[0] > MAX_SMI_BUSSES)
+>>>>> Hi Chris,
+>>>>>
+>>>>> Should this condition be
+>>>>>
+>>>>> 		if (smi_addr[0] >= MAX_SMI_BUSSES)
+>>>> Yes. You are correct.
+>>>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi bus number %d\n",
+>>>>>> +					     smi_addr[0]);
+>>>>>> +
+>>>>>> +		if (smi_addr[1] > MAX_SMI_ADDR)
+>>>>>> +			return dev_err_probe(dev, -EINVAL, "illegal smi addr %d\n", smi_addr[1]);
+>>>>>> +
+>>>>>> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+>>>>>> +			priv->smi_bus_isc45[smi_addr[0]] = true;
+>>>>> Otherwise it seems that smi_bus_isc45 may overflow here.
+>>>>>
+>>>>> Flagged by Smatch.
+>>>> Sounds like something I should start looking at for myself. Have you got a
+>>>> link to share?
+>>> Hi Chris,
+>>>
+>>> Smatch is here: https://github.com/error27/smatch
+>>> And my usage of it is informed by
+>>> https://blogs.oracle.com/linux/post/smatch-static-analysis-tool-overview-by-dan-carpenter
+>> Thanks, I did find the repo.or.cz mirror and
+>> https://lwn.net/Articles/691882/ after I searched a bit.
+>>
+>>> FWIIW, I run it usking kchecker on individual source files.
+>>>
+>>> I've also CCed the author, Dan Carpenter, for good measure.
+>> Odd thing is I can't seem to reproduce any error report on my buggy code.
+>> I've tried `make O=build_smatch CHECK="~/src/smatch/smatch -p=kernel" C=1`
+>> and `O=build_smatch ~/src/smatch/smatch_scripts/kchecker --spammy
+>> drivers/net/mdio/mdio-realtek-rtl.c`
+>>
+> I wasn't able to use O=... with the kchecker script but if I call make
+> directly then it works for me:
 >
-> why? if xe is built-in, vsec needs to be built-in as well. If xe is a
-> module, vsec can be either built-in or a module.
+> make O=/home/dcarpenter/progs/kernel/build/build_smatch/ allyesconfig
+> make O=/home/dcarpenter/progs/kernel/build/build_smatch/ C=2 'CHECK= /home/dcarpenter/progs/smatch/release/smatch_scripts/../smatch --project=kernel --succeed ' drivers/net/mdio/mdio-realtek-rtl.o
+>
+> regards,
+> dan carpenter
 
-"depends on INTEL_VSEC" enforces that hard dependency. The difference
-with "depends on INTEL_VSEC || !INTEL_VSEC" is that it also allows
-XE to be either built-in or a module if INTEL_VSEC is turned off,
-as it would be the case on non-x86.
+Hi Dan,
 
-       Arnd
+I think the problem was I had libsqilite3-dev installed but not sqlite3. 
+I rebuilt smatch after installing the sqlite3 package and now my 
+original incantation works as well as your one above.
+
+Thanks,
+Chris
+
 
