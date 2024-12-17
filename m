@@ -1,144 +1,203 @@
-Return-Path: <linux-kernel+bounces-448512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF0A9F4120
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:05:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325099F4122
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1183916BD1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE8D188CB6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CD013AD03;
-	Tue, 17 Dec 2024 03:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21B913D891;
+	Tue, 17 Dec 2024 03:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PH0/0c/O"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="HGwOZq2B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iWoXXXzh"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87027182CD;
-	Tue, 17 Dec 2024 03:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CFA288B1;
+	Tue, 17 Dec 2024 03:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734404727; cv=none; b=D8VD8FjSb009TrBpbenexAAnPVGG/k0cW0cohbzMDTys3cQ52IKT7a/ZJcRu9MuBXhcCJbIvLB2mZYms6ApL9Dlu+fKyCRHZPfmq/DRcuq5hhD5iapXQ0T8cjMX2+fN0Bkb8qJI9Bnv9rHBkqXX9f4SbqpQNzIR3CifSogtQo0c=
+	t=1734404945; cv=none; b=rKRfanZecYMWfsvdRDuC2Ozx1tG7ZX9lDluo1rKWkTCnqPqRLZCgsASZ1mfQu6u5EEla3pJQ3aMQB6TRl9Vev/vJ8fUOszWXmoz72J4+2JWy3557oPDZzEU+NdeP2MVhVhjYBf5AFx8t/10hPGQq/sX4S8zuZDf9Rn8Iv13s6XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734404727; c=relaxed/simple;
-	bh=/IhZ886Fl+MVJYlsp68aj9MUHIJ+gquw8xBlKwpHNT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jLJ2npDRTSH8fzETC4fHsgec93dbHBrhMVZ/JGmTTTLEQJNgifi2R6kY7ZDmqg77TEnaN9m3r1fiTtwjcvaG3ArLyRWQxIDWQBz2XUY1ARaUoOxp6XbJiV95NF+g2F5JkAQOTHGCoA85nZMRX5O9zDx7CQvB5XL0fUHmMIkpZpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PH0/0c/O; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734404715; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=JYaV8tUHY5DY/QNPB9vrWmARi1TH7zIIIk5o2rlYGdA=;
-	b=PH0/0c/OtyMeIukeEL7h1vhk9BKDpn+ZIVdSD18qd15tHEa76qiPQCsamM8cUPGt5kv58LchXUuWvEF/JlrLa1xRwvLvR6Lq1817LQfPeY1C5BYXm5pSxEj6qRkuIGTg6eYR47mYBbDM6ekhsT99gftVJePZyaX87WjpI7orccQ=
-Received: from 30.246.161.240(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLh6bXS_1734404711 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 11:05:13 +0800
-Message-ID: <1e0a0f9b-7c58-4f70-b2d4-6b3c2c4143de@linux.alibaba.com>
-Date: Tue, 17 Dec 2024 11:05:11 +0800
+	s=arc-20240116; t=1734404945; c=relaxed/simple;
+	bh=RIDos4l/17u//yQ878YYYZi94Fi7AB2Btn2RXy+v5vg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8By3B3iwpLvQQ3Yr1q3GfqJ70OvxAdoCaF8hQ3dJWXJnF8nqgm2hDyPF/x4TaGwo0nmjhTiSpw/ZpCTca0GEZ4+Wg2nnWFdQwNRQMnBM2UkZhKsnGH5xI5LAq01/WgeLT82xpxYAdYBVwEwwbSg0SueC8HJ14oAdrPmRDQbF24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=HGwOZq2B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iWoXXXzh; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0B903114012E;
+	Mon, 16 Dec 2024 22:09:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 16 Dec 2024 22:09:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1734404940; x=1734491340; bh=YMYmGjTpbD1LWBNys/n4b
+	6hDesh8RNR2ZQpLI4bG7f8=; b=HGwOZq2BhikAoANui6l0/g3C3Waxt56Sj7jOy
+	EMS34iaBwA6gcmlG6n2vHemYx6LYA1SqukkKe8VkkdLElpcYogq595WLkhY9LxjU
+	KxMqGSEXWxBq2SG9sovWyH3Raj5HxwCRFg+A70k7wwMjYzOAp+CtcXhDWOgguBXX
+	0Fc8xeYO0itGZYkyTkaxAepHvMfUWXisSu0VSgFU/TL4S6Sm6uQKBNMj3+g/lN2o
+	OcGes6BFgTBsY5Bpac4QMtl4UHTs0xeAoe1ljg8QkNwlIhk+gU3jrQsAqUQR46Sw
+	QDuOzFTDBzOQRfIfN0pZNFBaG/UeX4hLVAot+BJE6c+7WuSig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734404940; x=1734491340; bh=YMYmGjTpbD1LWBNys/n4b6hDesh8RNR2ZQp
+	LI4bG7f8=; b=iWoXXXzh7NGLz4qlvJzzCBmVnNDEp8VwAGNsTZ8oRw1H8DlV+Ty
+	fC/fvI9MFLaq8fbZZbMKipqUwkls5U5w2KXA+XasOaPjRLkYJOF3lWGvFjGgiVxT
+	37EEYNzDQb2CQVy9GWsIN0xPPEjG6zE6RS0ctAhtqnanA72pmQtssffF7QSQe0Xb
+	PlDSP0H0Yt9dV8vkAbooJ6dUtrJi22Cv5MTizafzHRkJA5iJKGK/y1GNxH9SoZRe
+	VwMwmcuGlquE+kmvDaFx4N4FOdc108cA4h2GD0yIZZJui50j3Q1A/xPPZDrmyaDl
+	Mg2Z7MB1qaXkDPmkRCYA+COQIca4Vx6hlfg==
+X-ME-Sender: <xms:TOtgZ67XcdiK2KE0OYIXpLfNcI5ka0W6KVl_iuz9J4FCycX9dO3FOQ>
+    <xme:TOtgZz5FnXC98oDVUk-L7zpscrH2nq8oO8N6KMnxV5lc3d56RbgbKX1K5qENDsErm
+    HFSIi17iHRxpQsOodY>
+X-ME-Received: <xmr:TOtgZ5eHtM8z1rv4i9C-pQfiqBDWxixbYTodZ_ysgxVRcEHnWL2kgPd5HQ8bhh8GQ5ynZYddsiEa>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleeggdehhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
+    fkofgggfestdekredtredttdenucfhrhhomhepofgriihinhcutehlucfjrgguuggrugcu
+    oehmrgiiihhnsehgvghtshhtrghtvgdruggvvheqnecuggftrfgrthhtvghrnheptddvgf
+    fgjeduueduiefghedvtdetfeehffevjedtfffgtdfhkefhueehvdfgvddvnecuffhomhgr
+    ihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgriihinhesghgvthhsthgrthgv
+    rdguvghvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgrhhgv
+    rhhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglh
+    gvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepmhgriihinhesghgvthhsthgrthgvrdguvghv
+X-ME-Proxy: <xmx:TOtgZ3LRxte4OhTIJJcD-8w2lNEfaP_RMVjXiTIWmBa-iTq8ln2NEA>
+    <xmx:TOtgZ-JdL635TaBnMOOqe3iKZOy-jRhuzyz3OlgejR3xWm5lI1u-Vg>
+    <xmx:TOtgZ4yhwlTS28-4f_znHf67UMZoQ9oKQxI50wrKX-setwVxB7BZCA>
+    <xmx:TOtgZyIisLsSzh6GAIfJ2H5kaj30JdpnK21nB-jBBm9G0plbj0F4Jw>
+    <xmx:TOtgZ7AskTLnWn9dE7zrYIBFSRB6Ps_vCZx7KguGHEoLip3NkflSiZ7S>
+Feedback-ID: i0ed1493d:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 16 Dec 2024 22:08:57 -0500 (EST)
+From: Mazin Al Haddad <mazin@getstate.dev>
+To: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mazin Al Haddad <mazin@getstate.dev>,
+	syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+Subject: [PATCH] ip6_tunnel: Fix uninit-value in ip6_tnl_xmit
+Date: Tue, 17 Dec 2024 06:07:51 +0300
+Message-ID: <20241217030751.11226-1-mazin@getstate.dev>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 2/3] mm: memory-failure: move return value
- documentation to function declaration
-To: jane.chu@oracle.com, yazen.ghannam@amd.com, mark.rutland@arm.com,
- catalin.marinas@arm.com, mingo@redhat.com, robin.murphy@arm.com,
- Jonathan.Cameron@Huawei.com, bp@alien8.de, rafael@kernel.org,
- linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
- tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
- linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
- tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
- jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20241202030527.20586-1-xueshuai@linux.alibaba.com>
- <20241202030527.20586-3-xueshuai@linux.alibaba.com>
- <51d231c2-3659-461a-b6c3-d0e7f9fddfc1@oracle.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <51d231c2-3659-461a-b6c3-d0e7f9fddfc1@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+When taking the branch with skb_realloc_headroom, pskb_expand_head is
+called, as such, pointers referencing content within the new skb's header
+are invalid. Currently, the assignment of hop_limit accesses the now
+invalid pointer in the network header of this "new" skb. Fix this by
+moving the logic to assign hop_limit earlier so that the assignment
+references the original un-resized skb instead.
 
+uninit-value in ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
+ ip6t_mangle_out net/ipv6/netfilter/ip6table_mangle.c:56 [inline]
+ ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
+ nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
+ nf_hook_slow+0xf4/0x400 net/netfilter/core.c:626
+ nf_hook include/linux/netfilter.h:269 [inline]
+ __ip6_local_out+0x5ac/0x640 net/ipv6/output_core.c:143
+ ip6_local_out+0x4c/0x210 net/ipv6/output_core.c:153
+ ip6tunnel_xmit+0x129/0x460 include/net/ip6_tunnel.h:161
+ ip6_tnl_xmit+0x341a/0x3860 net/ipv6/ip6_tunnel.c:1281
 
-在 2024/12/17 07:37, jane.chu@oracle.com 写道:
-> 
-> On 12/1/2024 7:05 PM, Shuai Xue wrote:
->> Part of return value comments for memory_failure() were originally
->> documented at the call site. Move those comments to the function
->> declaration to improve code readability and to provide developers with
->> immediate access to function usage and return information.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
->> ---
->>   arch/x86/kernel/cpu/mce/core.c |  7 -------
->>   mm/memory-failure.c            | 10 +++++++---
->>   2 files changed, 7 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
->> index 7fb5556a0b53..d1dd7f892514 100644
->> --- a/arch/x86/kernel/cpu/mce/core.c
->> +++ b/arch/x86/kernel/cpu/mce/core.c
->> @@ -1398,13 +1398,6 @@ static void kill_me_maybe(struct callback_head *cb)
->>           return;
->>       }
->> -    /*
->> -     * -EHWPOISON from memory_failure() means that it already sent SIGBUS
->> -     * to the current process with the proper error info,
->> -     * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
->> -     *
->> -     * In both cases, no further processing is required.
->> -     */
->>       if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
->>           return;
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index a7b8ccd29b6f..14c316d7d38d 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -2211,9 +2211,13 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->>    * Must run in process context (e.g. a work queue) with interrupts
->>    * enabled and no spinlocks held.
->>    *
->> - * Return: 0 for successfully handled the memory error,
->> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
->> - *         < 0(except -EOPNOTSUPP) on failure.
->> + * Return:
->> + *   0             - success,
->> + *   -ENXIO        - memory not managed by the kernel
->> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
->> + *   -EHWPOISON    - the page was already poisoned, potentially
->> + *                   kill process,
->> + *   other negative values - failure.
->>    */
->>   int memory_failure(unsigned long pfn, int flags)
->>   {
-> 
-> Looks good.
-> 
-> Reviewed-by: Jane Chu <jane.chu@oracle.com>
-> 
-> -jane
+Uninit was stored to memory at:
+ ip6_tnl_xmit+0x34f7/0x3860 net/ipv6/ip6_tunnel.c:1277
+ __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
+ ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
+ ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
 
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x6c7/0xf90 mm/slub.c:4283
+ kmalloc_reserve+0x23e/0x4a0 net/core/skbuff.c:609
+ pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
+ skb_realloc_headroom+0x140/0x2b0 net/core/skbuff.c:2355
+ ip6_tnl_xmit+0x2106/0x3860 net/ipv6/ip6_tunnel.c:1227
+ __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
+ ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
+ ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
 
-Thanks.
+Reported-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6023ea32e206eef7920a
+Signed-off-by: Mazin Al Haddad <mazin@getstate.dev>
+---
+ net/ipv6/ip6_tunnel.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Best Regards,
-Shuai
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 48fd53b98972..62a51f03360d 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1098,7 +1098,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 	unsigned int max_headroom = psh_hlen;
+ 	__be16 payload_protocol;
+ 	bool use_cache = false;
+-	u8 hop_limit;
++	u8 hop_limit = 0;
+ 	int err = -1;
+ 
+ 	payload_protocol = skb_protocol(skb, true);
+@@ -1215,6 +1215,15 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 
+ 	skb_scrub_packet(skb, !net_eq(t->net, dev_net(dev)));
+ 
++	if (hop_limit == 0) {
++		if (payload_protocol == htons(ETH_P_IP))
++			hop_limit = ip_hdr(skb)->ttl;
++		else if (payload_protocol == htons(ETH_P_IPV6))
++			hop_limit = ipv6_hdr(skb)->hop_limit;
++		else
++			hop_limit = ip6_dst_hoplimit(dst);
++	}
++
+ 	/*
+ 	 * Okay, now see if we can stuff it in the buffer as-is.
+ 	 */
+@@ -1243,15 +1252,6 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 	}
+ 	skb_dst_set(skb, dst);
+ 
+-	if (hop_limit == 0) {
+-		if (payload_protocol == htons(ETH_P_IP))
+-			hop_limit = ip_hdr(skb)->ttl;
+-		else if (payload_protocol == htons(ETH_P_IPV6))
+-			hop_limit = ipv6_hdr(skb)->hop_limit;
+-		else
+-			hop_limit = ip6_dst_hoplimit(dst);
+-	}
+-
+ 	/* Calculate max headroom for all the headers and adjust
+ 	 * needed_headroom if necessary.
+ 	 */
+-- 
+2.46.0
+
 
