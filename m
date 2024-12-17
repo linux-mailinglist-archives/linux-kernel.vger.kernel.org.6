@@ -1,206 +1,144 @@
-Return-Path: <linux-kernel+bounces-449117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31609F4A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:41:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D989F4A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EADE16BDAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3C416D440
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F221EF080;
-	Tue, 17 Dec 2024 11:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlquAj4t"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5EA1EF080;
+	Tue, 17 Dec 2024 11:41:45 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF621DDA35
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE951EE029
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734435684; cv=none; b=RoEO0RglDInCpT3HphJOPSuPPf+t6LptkDM6DPwm6B8Zr9b6YkaX/CxzrlrP3pdGm4+yp0UuNQzUZtAeG40PTksPf6EQocIBoLHI0UTqrrsXAqAv1WMDiVFnbHB6C9AcikejiiC0hJ/nLcsWprdK5NiROM+O9jyxjbaOtmEwJMI=
+	t=1734435705; cv=none; b=Jtn2gsN3cToSjW1vrB2aiWw/IcuAo9PnwRKWs8hb6AqIqhoSAtLKq4aPL3/xYYsiTNq3YLgFvZSvkDqCguWX3pwgL4kO0UN+LQt0kWIRKcCuPbpLol7ZXO2LWXc/YrYV56egtmKkaZdhgeOh+MwDJin56qie5/aN0k0mbUrAmhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734435684; c=relaxed/simple;
-	bh=kPUdKaQO5uNQFQG6V0ETQ3Cz/bW8IbNQNYsjq9ssp7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgnkD68NjVWAISZadTn7OWd0X/RoWNq7x+necrTdwyzcqRRrAviOn7pTpy0EdcQMhpmB2YWUinsu7hCOX/HPvZjIC5k7a4C5ZZe8jMip6Qo0h4J/lv1mqlOcP9cIIKNnqsunJbKf5Y8W0OiO+aiPLOc7N5igSudSNR06U8obPjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlquAj4t; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21644aca3a0so60853715ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734435681; x=1735040481; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0EZW6LlfowWIgAwJtFx9CvahXq/dyYnxzkbI6o/02Q=;
-        b=FlquAj4tXLDX9cZmCYCMaOvaS1LWnWXeQ6eMfF9gri5J5LRcF1pYOSGaRU1xcnlFh+
-         U0whzpxO+ZG162AIN+ZPwQnwxkXXETSULYc+8l0GsyEL5RF2ShXdjpOnJKJz25slwumA
-         yy0B075kE+UjVF5bVaRbyYv6VpdLGfnd4KSVPO2pAjPPOkKEczXmpRXgpqxIW9FzcRSS
-         EhR9584nRV4sS7g/LmyVfIpohC6RuL1GL7B1aXgC95Q/8swRPW1SwaNlmbCx5tmr4Znb
-         ahSZwZ8UFR3geiO/MRNoi47NNHwsSYKPN0wyMBIh0a/hVYDwNanIchT6WJIdjRL6Enmy
-         YYKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734435681; x=1735040481;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b0EZW6LlfowWIgAwJtFx9CvahXq/dyYnxzkbI6o/02Q=;
-        b=vMczhXAx3tamAMcCWxYRfTrK0iYjL9xIqT2hgiqUSL5inQjOSsaX9JaMNORe/QaKRo
-         Z7GAy2rsAEI0Tpb/Yi8PGhLubXkgwbUL+mYfOr3BCwlvMnzxvWfXzq7ViCeDhkblbwpq
-         2oj/oDxFEsskIe9QYDdvkK40XpO597LzFkYCfL6DO13uIwaq5KGN7/MKUVr/t6pwUzb/
-         cmb5z+q3JJS1Pu1cICPvlsL77q89oNJq2vblQqJONwoZBzYwbInY4PbUQ1yCQA+Jps77
-         GCheO3+pXyo8xjd/gOjRLaf3lJzw+jiCwNLwxroAKRquZI/9w1UWFW+IqrCIKany6Qw4
-         UPhw==
-X-Gm-Message-State: AOJu0YxDwRVRH14BM0k5vVI6RTbi8jc66+nWx9DXdhRCMVmVsONQvuxn
-	qMRBypk7m4U76puv9o9J9r7av7A5wUvpOig7UGQT6b7W0BKCJhKpdO/X4fQ13GttARDmR2t2wUI
-	oWKeKQfVU5MMvIqMOArQ1Tj/R7eipTWN3n7O/D2zP2B8G1zFZ
-X-Gm-Gg: ASbGncvSfLqpkylXl3D2sSs7Myr7wvTBQmImgfQ8NmLoarsLIzb3eejz+0M8TAwWkfT
-	MbIGwL45KcdsSt9XpKx/3u2m33TadhF7BM8+lQ5A=
-X-Google-Smtp-Source: AGHT+IGIDfrYNaywRoWFo3CQSbMxXhWSle7L1Jb4vz79u1YZalyqFK7FlUJMk0NlWFVnhyTGxjaH1yzDfdnlavipwTg=
-X-Received: by 2002:a17:90b:4b06:b0:2ee:9b2c:3253 with SMTP id
- 98e67ed59e1d1-2f2901a2a67mr23276889a91.30.1734435681520; Tue, 17 Dec 2024
- 03:41:21 -0800 (PST)
+	s=arc-20240116; t=1734435705; c=relaxed/simple;
+	bh=phVQujIZYl4Zo0ld1HH7fkPYGd81HBE5BOQlKLA1z4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C4OYIYFLIpOPn+5uYzo21BExXwF9h6kcq82EqrxdOHrqYzym7PMGOwxjvPRzATEubb+SOD09IpM7/DwoHWl0MdF8jD8+1QanfokT1AcgI8ZoGfypZ/XWho2catRePPGxCwCqzQb/YyqEdqHTW8ua7QcJyuR6FJgVV37bOfG/QMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YCFJF4rB9z4f3lDK
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:41:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3139E1A018D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 19:41:38 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgB3noJwY2FnmB9tEw--.54003S3;
+	Tue, 17 Dec 2024 19:41:37 +0800 (CST)
+Message-ID: <0737acaa-ba88-764c-d8ad-376b28b988e3@huaweicloud.com>
+Date: Tue, 17 Dec 2024 19:41:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213144919.110642-1-mike.leach@linaro.org>
- <20241213144919.110642-3-mike.leach@linaro.org> <9094b068-ed3a-444d-b790-e43a652ab6e9@arm.com>
-In-Reply-To: <9094b068-ed3a-444d-b790-e43a652ab6e9@arm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 17 Dec 2024 11:41:11 +0000
-Message-ID: <CAJ9a7VjCK+FGB+EMbcgaRfkv13TYYgBNHTG+AGp=52dZ7EfQAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] coresight: tmc: Update error logging in tmc common functions
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	coresight@lists.linaro.org, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Suzuki,
-
-On Mon, 16 Dec 2024 at 09:33, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> On 13/12/2024 14:49, Mike Leach wrote:
-> > Enhance the error logging in the tmc_wait_for_tmcready() and
-> > tmc_flush_and_stop() to print key tmc  register values on error
-> > conditions to improve hardware debug information.
-> >
-> > Signed-off-by: Mike Leach <mike.leach@linaro.org>
-> > ---
-> >   .../hwtracing/coresight/coresight-tmc-core.c  | 37 +++++++++++++++----
-> >   drivers/hwtracing/coresight/coresight-tmc.h   |  2 +-
-> >   2 files changed, 30 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > index e9876252a789..1a9299adae93 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > @@ -34,25 +34,36 @@ DEFINE_CORESIGHT_DEVLIST(etb_devs, "tmc_etb");
-> >   DEFINE_CORESIGHT_DEVLIST(etf_devs, "tmc_etf");
-> >   DEFINE_CORESIGHT_DEVLIST(etr_devs, "tmc_etr");
-> >
-> > +#define TMC_WAIT_READY_FMT_STR "timeout while waiting for TMC to be Ready [STS=0x%04x]\n"
-> > +
-> >   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata)
-> >   {
-> >       struct coresight_device *csdev = drvdata->csdev;
-> >       struct csdev_access *csa = &csdev->access;
-> > +     u32 tmc_sts = 0;
-> >
-> >       /* Ensure formatter, unformatter and hardware fifo are empty */
-> > -     if (coresight_timeout(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
-> > -             dev_err(&csdev->dev,
-> > -                     "timeout while waiting for TMC to be Ready\n");
-> > +     if (coresight_timeout_retval(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1,
-> > +                                  &tmc_sts)) {
-> > +             dev_err(&csdev->dev, TMC_WAIT_READY_FMT_STR, tmc_sts);
-> >               return -EBUSY;
-> >       }
-> >       return 0;
-> >   }
-> >
-> > -void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
-> > +int tmc_flush_and_stop(struct tmc_drvdata *drvdata)
-> >   {
-> >       struct coresight_device *csdev = drvdata->csdev;
-> >       struct csdev_access *csa = &csdev->access;
-> > -     u32 ffcr;
-> > +     u32 ffcr, ffsr, tmc_sts;
-> > +     int rc = 0;
-> > +
-> > +     /* note any MemErr present when stopping TMC */
-> > +     tmc_sts = readl_relaxed(drvdata->base + TMC_STS);
-> > +     if (tmc_sts & TMC_STS_MEMERR)
-> > +             dev_err(&csdev->dev,
-> > +                     "MemErr detected before Manual Flush; STS[0x%02x]\n",
-> > +                     tmc_sts);
-> >
-> >       ffcr = readl_relaxed(drvdata->base + TMC_FFCR);
-> >       ffcr |= TMC_FFCR_STOP_ON_FLUSH;
-> > @@ -60,12 +71,22 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
-> >       ffcr |= BIT(TMC_FFCR_FLUSHMAN_BIT);
-> >       writel_relaxed(ffcr, drvdata->base + TMC_FFCR);
-> >       /* Ensure flush completes */
-> > -     if (coresight_timeout(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
-> > +     if (coresight_timeout_retval(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0,
-> > +                                  &ffcr)) {
-> > +             ffsr = readl_relaxed(drvdata->base + TMC_FFSR);
-> >               dev_err(&csdev->dev,
-> > -             "timeout while waiting for completion of Manual Flush\n");
-> > +                     "timeout while waiting for completion of Manual Flush\n");
-> > +             dev_err(&csdev->dev,
-> > +                     "regs: FFCR[0x%02x] FFSR[0x%02x] STS[0x%02x]\n",
-> > +                     ffcr, ffsr, tmc_sts);
-> > +             rc = -EBUSY;
-> >       }
-> >
-> > -     tmc_wait_for_tmcready(drvdata);
-> > +     if (tmc_wait_for_tmcready(drvdata)) {
-> > +             dev_err(&csdev->dev, "TMC ready error after Manual flush\n");
-> > +             rc = -EBUSY;
-> > +     }
-> > +     return rc;
-> >   }
->
-> All of this looks good to me. Do we need to move the MemErr check post
-> the flush ? There is a potential chance of hitting a MemERR on flushing
-> and we could miss reproting those ones ?
->
-
-We need the one before - if there is already a Memerr then this will
-affect the flush operation - on Memerr the formatter will have stopped
-etc. But no harm in putting another check afterwards.
-
-Mike
-
-> Suzuki
->
-> >   void tmc_enable_hw(struct tmc_drvdata *drvdata)
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> > index 2671926be62a..34513f07c3aa 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> > @@ -259,7 +259,7 @@ struct tmc_sg_table {
-> >
-> >   /* Generic functions */
-> >   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata);
-> > -void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
-> > +int tmc_flush_and_stop(struct tmc_drvdata *drvdata);
-> >   void tmc_enable_hw(struct tmc_drvdata *drvdata);
-> >   void tmc_disable_hw(struct tmc_drvdata *drvdata);
-> >   u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata);
->
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 2/2] test_maple_tree: Test exhausted upper limit of
+ mtree_alloc_cyclic()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, chuck.lever@oracle.com, brauner@kernel.org
+References: <20241216190113.1226145-1-Liam.Howlett@oracle.com>
+ <20241216190113.1226145-3-Liam.Howlett@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <20241216190113.1226145-3-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3noJwY2FnmB9tEw--.54003S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KrWDXFWUJrWrWr47GFyDWrg_yoW8tF4Dpa
+	9rXr43KFy7AryxWrZxXanFgFy5Wa1rCr17Xws2vr4Fv3sxAF1Iqrn8Ca43ur4xG3yUWa1Y
+	vr1aqa1kCFy8ZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07Upyx
+	iUUUUU=
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
 
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+
+在 2024/12/17 3:01, Liam R. Howlett 写道:
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+> 
+> When the upper bound of the search is exhausted, the maple state may be
+> returned in an error state of -EBUSY.  This means maple state needs to
+> be reset before the second search in mas_alloc_cylic() to ensure the
+> search happens.  This test ensures the issue is not recreated.
+> 
+> Cc: Yang Erkun <yangerkun@huaweicloud.com>
+> Cc: chuck.lever@oracle.com
+> Cc: brauner@kernel.org
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> ---
+>   lib/test_maple_tree.c | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+> 
+
+Thanks for the testcase!
+
+Reviewed-by: Yang Erkun <yangerkun@huawei.com>
+
+> diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
+> index 72bda304b5952..13e2a10d7554d 100644
+> --- a/lib/test_maple_tree.c
+> +++ b/lib/test_maple_tree.c
+> @@ -3738,6 +3738,34 @@ static noinline void __init alloc_cyclic_testing(struct maple_tree *mt)
+>   	}
+>   
+>   	mtree_destroy(mt);
+> +
+> +	/*
+> +	 * Issue with reverse search was discovered
+> +	 * https://lore.kernel.org/all/20241216060600.287B4C4CED0@smtp.kernel.org/
+> +	 * Exhausting the allocation area and forcing the search to wrap needs a
+> +	 * mas_reset() in mas_alloc_cyclic().
+> +	 */
+> +	next = 0;
+> +	mt_init_flags(mt, MT_FLAGS_ALLOC_RANGE);
+> +	for (int i = 0; i < 1023; i++) {
+> +		mtree_alloc_cyclic(mt, &location, mt, 2, 1024, &next, GFP_KERNEL);
+> +		MT_BUG_ON(mt, i != location - 2);
+> +		MT_BUG_ON(mt, i != next - 3);
+> +		MT_BUG_ON(mt, mtree_load(mt, location) != mt);
+> +	}
+> +	mtree_erase(mt, 123);
+> +	MT_BUG_ON(mt, mtree_load(mt, 123) != NULL);
+> +	mtree_alloc_cyclic(mt, &location, mt, 2, 1024, &next, GFP_KERNEL);
+> +	MT_BUG_ON(mt, 123 != location);
+> +	MT_BUG_ON(mt, 124 != next);
+> +	MT_BUG_ON(mt, mtree_load(mt, location) != mt);
+> +	mtree_erase(mt, 100);
+> +	mtree_alloc_cyclic(mt, &location, mt, 2, 1024, &next, GFP_KERNEL);
+> +	MT_BUG_ON(mt, 100 != location);
+> +	MT_BUG_ON(mt, 101 != next);
+> +	MT_BUG_ON(mt, mtree_load(mt, location) != mt);
+> +	mtree_destroy(mt);
+> +
+>   	/* Overflow test */
+>   	next = ULONG_MAX - 1;
+>   	ret = mtree_alloc_cyclic(mt, &location, mt, 2, ULONG_MAX, &next, GFP_KERNEL);
+
 
