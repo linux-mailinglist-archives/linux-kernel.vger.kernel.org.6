@@ -1,80 +1,152 @@
-Return-Path: <linux-kernel+bounces-449751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F2F9F55AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:10:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27269F55AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD5F171CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:04:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA28C16F8B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0489A1F9ED4;
-	Tue, 17 Dec 2024 18:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XaLbt1WB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A2026296;
+	Tue, 17 Dec 2024 18:04:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BB81448DC;
-	Tue, 17 Dec 2024 18:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0345113EFF3;
+	Tue, 17 Dec 2024 18:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458564; cv=none; b=KXs48pvPqF8jKYoHetGCzNMNdhkU6ZOHs+5069U9JHxFITdOVFoXyQ+R/lYCm57rT8II6+mGvFUh68jaq+kiqevlXGNqziFqvG3odnbwyG/Q3XeVfNaWl6MqQPqhdgmRp03bcUFo9lE9FJa1rakU1YPoNgIiIsPji4JoQ4IyK68=
+	t=1734458662; cv=none; b=Bkx80MMuCNL5RzrHHjMTa7fN5RhuJ2oyZFXF8AUWzcExJdHV6JP9TpfuPjm9AzFtDCkutAcC4hafG3uLhVxH1GXwcqUWqzJ+SEBjH1IbvttNtiKEvvfP8rPh7bwZCH6Ah48quO56mvpq4LaEqjmQPJ6PxraBu0C9Al1Wiy8zmck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458564; c=relaxed/simple;
-	bh=rxdmUBOotCc97F/sywPxRvq/rC606PWTnDBPsk2dZqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuKs9KB1Rmaxw9Bbx0lFThFTLsXW2WFeHS+UmXiP8Mc6tDYS/caG1Pq1AMHynAx6gyDiLNZLajVyMTZ/yQ/SW5hfpEQAAUttqOyKM+KEWAB9J/5WZC/ORJdhoA0b++3GPxFGgnffKrEfnuJFSypotWG4rNB20TDVh6uZlByv9To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XaLbt1WB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MGW37u9d8e7OVh/1zCm9OZP2qtE7ni2RcorG5BSsV8c=; b=XaLbt1WBItmHGn8P4d9pwxjJlr
-	+8dc3SrtoyCsbtrKyEOv8Lcx00qMu1kFTdstkuOPn05/a3omQQLEz88BpljL01PbT7BG1R+ysvqw+
-	Z3Cqq0fWGIrG3b4tYd+fVdlumT1ac6QY5ZFbG/XEUOkbrDbQsl/szIdqUSD0So0Ximh3WFtgOqC0y
-	+ee6RyVmoBoh3Xr8VNLk+PXpC7t/DNCah+UAEXGwGwbxpySwkK9K2Ti319LGEmo1VLx8zTv6wZv8r
-	PctyPLtqaBmPhUBhtDHPZCQ4Pd7OkoLbrHrKyIm2vdbviqB5v/BrockHE/Fyxi6QFgvYd5uF3/tfm
-	lga/EMJg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNbty-00000008ZYA-3E1b;
-	Tue, 17 Dec 2024 18:02:34 +0000
-Date: Tue, 17 Dec 2024 18:02:34 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
-	dennis.lamerice@gmail.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 2/3] jbd2: remove unused transaction->t_private_list
-Message-ID: <Z2G8ujYUUDGSpbGl@casper.infradead.org>
-References: <20241217120356.1399443-1-shikemeng@huaweicloud.com>
- <20241217120356.1399443-3-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1734458662; c=relaxed/simple;
+	bh=8sEJY4egU/hmBp5Z8itqEWIHD6TLmWip41RonSTwJks=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eyj9XrBY+WsA3cPEurvYVNVxaLXkiJc+ifMkIjInIlmYbF9HhIvCq8yK0i0rZMI5brl5YdjEv7PuPZTO40ImeH08VvpjBAr8EyYjtwn7qaMdWCf8t+Z57sn0EDa4YKQ73rU/mXy0k70Xa3r2382BS4fqMDgl/DuGsACBb7t/OSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F272C4CEDD;
+	Tue, 17 Dec 2024 18:04:18 +0000 (UTC)
+Date: Tue, 17 Dec 2024 13:04:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] ring-buffer: Add uname to match criteria for
+ persistent ring buffer
+Message-ID: <20241217130454.5bb593e8@gandalf.local.home>
+In-Reply-To: <CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+References: <20241217173237.836878448@goodmis.org>
+	<20241217173520.314190793@goodmis.org>
+	<CAHk-=wg5Kcr=sBuZcWs90CSGbJuKy0QsLaCC5oD15gS+Hk8j1A@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217120356.1399443-3-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 17, 2024 at 08:03:55PM +0800, Kemeng Shi wrote:
-> +++ b/Documentation/filesystems/journalling.rst
-> @@ -112,8 +112,6 @@ so that you can do some of your own management. You ask the journalling
->  layer for calling the callback by simply setting
->  ``journal->j_commit_callback`` function pointer and that function is
->  called after each transaction commit. You can also use
-> -``transaction->t_private_list`` for attaching entries to a transaction
-> -that need processing when the transaction commits.
+On Tue, 17 Dec 2024 09:46:30 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-I think this also needs:
+> On Tue, 17 Dec 2024 at 09:34, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > Add uname into the meta data and if the uname in the meta data from the
+> > previous boot does not match the uname of the current boot, then clear the
+> > buffer and re-initialize it.  
+> 
+> This seems broken.
 
--called after each transaction commit. You can also use
-+called after each transaction commit.
+BTW, this isn't the fix for the trace_check_vprintf(). That is here:
 
+  https://lore.kernel.org/linux-trace-kernel/20241217024118.587584221@goodmis.org/
+
+Where the I completely remove that function.
+
+> 
+> The problem is not that the previous boot data is wrong.
+> 
+> The problem is that you printed it *out* wrong by trying to interpret
+> pointers in it.
+> 
+> Now you basically hide that, and make it harder to see any data from a
+> bad kernel (since you presumably need to boot into a good kernel to do
+> analysis).
+> 
+> The real fix seems to have been your 3/3, which still prints out the
+> data, but stops trying to interpret the pointers in it.
+> 
+> Except you should also remove the last_text_delta / last_data_delta
+> stuff. That's all about exactly that "trying to interpret bogus
+> pointers". Instead you seem to have actually just *added* a case of
+> that in your 3/3.
+
+I'm not sure what you mean. If the kernels are the same, then the pointers
+should also be the same, as KASLR just shifts them. This no longer uses
+module code. It only traces core kernel code which should always have the
+same offsets.
+
+With the last_text_delta (and last_data_delta is always the same, but I
+added it in the case that ever changes), the shifts have always been
+accurate. For example, for RCU event strings.
+
+With the pointer update to print_fields() I get:
+
+           <...>-912     [001] d..1.   304.817710: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+           <...>-912     [001] d..1.   304.817713: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+          <idle>-0       [002] dN.1.   304.817769: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+          <idle>-0       [002] dN.1.   304.817772: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+           <...>-19      [002] d..1.   304.817805: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+           <...>-19      [002] d..1.   304.817806: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+          <idle>-0       [006] dN.1.   304.817819: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+          <idle>-0       [006] dN.1.   304.817821: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+           <...>-902     [006] d.h1.   304.817901: rcu_utilization: s=(0xffffffff9c488fdd:Start scheduler-tick)
+           <...>-902     [006] d.h1.   304.817903: rcu_utilization: s=(0xffffffff9c426d45:End scheduler-tick)
+          <idle>-0       [007] dN.1.   304.817913: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+          <idle>-0       [007] dN.1.   304.817915: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+           <...>-18      [007] d..1.   304.817931: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+           <...>-18      [007] d..1.   304.817931: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+           <...>-902     [006] ..s1.   304.817941: rcu_utilization: s=(0xffffffff9c470f20:Start RCU core)
+           <...>-902     [006] ..s1.   304.817958: rcu_utilization: s=(0xffffffff9c419bb8:End RCU core)
+          <idle>-0       [002] dN.1.   304.818003: rcu_utilization: s=(0xffffffff9c4026b5:Start context switch)
+          <idle>-0       [002] dN.1.   304.818003: rcu_utilization: s=(0xffffffff9c4ca779:End context switch)
+
+Without that calculation, all I get is garbage and completely useless:
+
+           <...>-903     [000] d..1.    24.712788: rcu_utilization: s=(0xffffffff970026af)
+           <...>-903     [000] d..1.    24.712791: rcu_utilization: s=(0xffffffff970ca75b)
+          <idle>-0       [004] dN.1.    24.712796: rcu_utilization: s=(0xffffffff970026af)
+          <idle>-0       [004] dN.1.    24.712799: rcu_utilization: s=(0xffffffff970ca75b)
+           <...>-19      [004] d..1.    24.712825: rcu_utilization: s=(0xffffffff970026af)
+           <...>-19      [004] d..1.    24.712825: rcu_utilization: s=(0xffffffff970ca75b)
+           <...>-18      [004] d..1.    24.712838: rcu_utilization: s=(0xffffffff970026af)
+           <...>-18      [004] d..1.    24.712839: rcu_utilization: s=(0xffffffff970ca75b)
+          <idle>-0       [005] dN.1.    24.712881: rcu_utilization: s=(0xffffffff970026af)
+          <idle>-0       [005] dN.1.    24.712883: rcu_utilization: s=(0xffffffff970ca75b)
+           <...>-893     [005] d.h1.    24.712911: rcu_utilization: s=(0xffffffff97088feb)
+           <...>-893     [005] d.h1.    24.712912: rcu_utilization: s=(0xffffffff97026d3f)
+           <...>-893     [005] ..s1.    24.712942: rcu_utilization: s=(0xffffffff97070f2e)
+           <...>-893     [005] ..s1.    24.712944: rcu_utilization: s=(0xffffffff97019bb2)
+           <...>-893     [005] dN.1.    24.713412: rcu_utilization: s=(0xffffffff970026af)
+           <...>-893     [005] dN.1.    24.713412: rcu_utilization: s=(0xffffffff970ca75b)
+
+The delta calculations are done by saving an address of a symbol into the
+meta data, and when the meta data is considered a match, it calculates the
+delta between what was saved in the meta data to the same symbol in the
+current kernel.
+
+This works across several reboots too. That is, I can save the boot mapped
+data, reboot several times, and still see the correct data in the ring
+buffer, as the delta is calculated at each boot. It's only saved when
+tracing starts and the ring buffer is re-initialized.
+
+So what exactly are you saying is broken?
+
+-- Steve
 
