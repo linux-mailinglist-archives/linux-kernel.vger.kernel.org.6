@@ -1,366 +1,185 @@
-Return-Path: <linux-kernel+bounces-448856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27D99F4678
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB91E9F4679
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703DE16871A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0601C16E74A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04351DD872;
-	Tue, 17 Dec 2024 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCA81DE3AA;
+	Tue, 17 Dec 2024 08:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3gRde4i"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRbvok7y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165041714BE
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175831DD87D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734425358; cv=none; b=CdS7riLIYS5spGtAxdlo7WE5JRV8t9WEHDEboc9B+JYe+qNXwNdg/NKaX317OpGY4K6TCjZxjtvBqvTb98OIIaev2u5UVHmRpfOkcRxQB7Wz3yuPvIPPeZIT6rw5oNzfoTZ2PVGCA9vvByVL8JncDcDH+n8QN+7YTjODkjkUBe0=
+	t=1734425359; cv=none; b=RxB6Bt1PlgyTKLzceviAg4GlGZp3TJWL53bGU7cW/VUlhlMvvxahFcltYTXql/1QmHjik/vL4moobSXQfwhAIA6lFoB6pvKor+4CmvfOyB0HJ2hK6mTzvxY/4X50WQ0aUZfTmrNbpP527ZPhrpTtd0cuGprbDiWp+fjYGwspYOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734425358; c=relaxed/simple;
-	bh=qnyJI2CV7nFoLCZEwEiK8T4hfhzDcQMFnniWR1YR5OY=;
+	s=arc-20240116; t=1734425359; c=relaxed/simple;
+	bh=EErrP47AKhS8f7AjLXgBxHV+WLf76MKb91A85DuCJKc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oYFGvEDTEWMisgKdascC8rbZNXA9pknG2i4M3kNA9bRILb7+mawM23M4suKAaALlo66Qj/ND2u2iixKyXhCxL2Vltw7XuxfQ+cdgdWGf8C8HCyOfzmicVoK5XiGyyHRzdotIx7pvFFeuIu55Eid14FCtMXPFs/XXB2jTC8UV5bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X3gRde4i; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43621d2dd4cso38765e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:49:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734425354; x=1735030154; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QMj2MTphaNhvmvfco+RU0jx/OostWtK52BEcvWTxpsk=;
-        b=X3gRde4ieMX4KkesC7VlfhAuefg/iZplHOZwC6TuJcpcWlLaBy3ED0OGkwBoxllZ/y
-         FEbuhsui+mTyBqZjjSmmZOjkVR9A6DG87yJEuY4Y9XTB5dRqkeCFkhTAguLBTELxdZ15
-         1WvEaPHGhawgL7TRtHuua8fhlqnIMRfskzB6pZ+vO3ZC5X3dAdEdrAKkiwYKJsOVVNIv
-         P+GLd8DGf2N/6ru5aBTPhASUuSWA/B2yZIgsBkDv+JN3S+bSAhWohGHPsme9GZSXoaqJ
-         +dTmjBBjRq0CIvTmdmIOQPGUA9BKpHILdTQinotmJrz0t8fs0X8XdSWDeqpMDkG3qK/5
-         HcUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734425354; x=1735030154;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QMj2MTphaNhvmvfco+RU0jx/OostWtK52BEcvWTxpsk=;
-        b=o3m3bV1ORrwdOB51x/MEwSguny8mF7DKdfDvUkbkcmrHF7XoV2Sff80mnT3KGwRf1i
-         +sIzHUCnBZESrQolcv/a2bVySnloCBG2UGEc9pxrZBwjBlksXzqQpNPwSnKA14e9C9WR
-         mwMZtLXFIrItx56N9OT3V4PfO7L4+OPjfxRtCPDyUXPKBKsITTbJNqUDRLDwrLoXfNsk
-         gySiaY0OTkv8CyKW5pyxtbLRmEKAX1FnpB0O20cEGaPAkLm0GwJxEnlZ3kTssNd4L+ZE
-         ahSQSjmQgNMUtx8Z2NqN5Qa5XeXX21StMPOD4dVID//wR7jzbNc/b1QC9ZEVsJmASVNe
-         teCA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0O6qqAbugWkqBOMJXDhBAqxy/K01AA3NjkUsqfUdgBxVXT1Mf+bzwI4c++RnVdbLGJJK5vN/RiWwi5OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLVLBSKweHxh5132RWoK2JB16nBY8XBn45L/PFh9OW9kcdT7V+
-	dgTHop6kn0jAjn+7JRbYS0MUJaDq4J1CtBY7TFEQs11qPmc4qdlb8+fVk5q6g8xCmYO6qFmUVVu
-	NUNZr8sWCMU3Pdq4CvH0AbqB/AjbXKXmI9/4F
-X-Gm-Gg: ASbGncuytkq1d30WvgdhJiOchppswIgiq0krOSTLQDzdaL90JHE2rL8QiUsD/h3K25n
-	weZuaSIEI9FN3NCzL+CTPfS6OnYx0kbbyj7IIX+tPZy+HkITVgncA1AErYxLpf3V8wto=
-X-Google-Smtp-Source: AGHT+IHOqDBvsuCRwVSdzFIxc4m1v0LDPBTHgkxWdnJjCe9PWB8vWCwUxFKGVT5eyDUf8rbIIEvX6JFaEaD3ig31yzY=
-X-Received: by 2002:a05:600c:5690:b0:434:9e1d:44ef with SMTP id
- 5b1f17b1804b1-4364ad4d797mr745545e9.7.1734425354203; Tue, 17 Dec 2024
- 00:49:14 -0800 (PST)
+	 To:Cc:Content-Type; b=gCXrkw3lLwKy4eZUKWBwbJqQ61gRIxrpUzyTn6dAKFfWqBELgW1ijR+sPjlocx4bI92YaSz645Scb4VyFIPcrXNkHjsU3ZeQI4vRR6huT9Gu35rJWnLcXhUUgpeX5IrO+MQiZTB9NN1u+HURgDuES8LELsMDpMzYJ6pwy6urEG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRbvok7y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D59C4CEE6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734425357;
+	bh=EErrP47AKhS8f7AjLXgBxHV+WLf76MKb91A85DuCJKc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fRbvok7ySXjY/TJUtvxiwAW5Du3n4qSs8LjFfMzbcaK+91jsrT8vl+Au8vM36KrK5
+	 KAatRxwRWkN9qQKo03zyrunjAncvP2K7dx8bGgInLEXX/Ptp69nrEnUK5L7TJH7QYU
+	 HcQIFdgQnSHg2wxSv5jYJ/cFEYHg6Ae++6hWlGo3WeKWakSOkVgzlwkkOTv9aJT4pR
+	 PM/T1XqO1jbetJXTShwm89ooNXjsn12zX3tAJWXLqxeUmnLn5czEB4sDpwmSi+7/Ae
+	 +KR0Y4MdIYktuZpgdTfpoAOP9AYDS9SJXUyea6TcpZFHhz1VV/5iIBJ7d/Wfczgnpa
+	 4d35zz5Rbk80A==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30033e07ef3so56489021fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:49:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZpSkaYZ27S+hFnt93/q/fcuScFp8r+M8MChJXAspWc/euR7sYDnONxZIhRbH3Pwc44lK31lnosZtSs6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcEdou1mPlDHjIrNkdLsH8H+BEi+YeQiBKNbQ67S2Ag4v35nL5
+	wfRcD2xuTTbq3O/b4M3x8EMGghkXJwcQfsQq1LtgLWwNefSYW8iKQktbcsMNMnytwRNhLvhmuXd
+	z3WfGykR8goENlgg2siEc80OhoA8=
+X-Google-Smtp-Source: AGHT+IFnAnJtxYtjTtahPb7C+dKFRSW0ndAI5UXpgRjmr+JoD9B+dlO+0+pXgTe1pqCX7ONfgosejeansQpwgUUl6PU=
+X-Received: by 2002:a05:651c:508:b0:2ff:df01:2b4c with SMTP id
+ 38308e7fff4ca-304442d51ecmr8228111fa.4.1734425355877; Tue, 17 Dec 2024
+ 00:49:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216175803.2716565-1-qperret@google.com> <20241216175803.2716565-10-qperret@google.com>
-In-Reply-To: <20241216175803.2716565-10-qperret@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 17 Dec 2024 08:48:37 +0000
-Message-ID: <CA+EHjTyTtQrG+8ONNg8hLiCMwcPfsuf+O-Xh0TOm+RzjW5=MWw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/18] KVM: arm64: Introduce __pkvm_vcpu_{load,put}()
-To: Quentin Perret <qperret@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Vincent Donnefort <vdonnefort@google.com>, 
-	Sebastian Ene <sebastianene@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org>
+In-Reply-To: <20241216233704.3208607-10-dwmw2@infradead.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 17 Dec 2024 09:49:04 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com>
+Message-ID: <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com>
+Subject: Re: [PATCH 9/9] x86/kexec: Use typedef for relocate_kernel_fn
+ function prototype
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Eric Biederman <ebiederm@xmission.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Sourabh Jain <sourabhjain@linux.ibm.com>, 
+	Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>, 
+	Tao Liu <ltao@redhat.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>, Rong Xu <xur@google.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
+	Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Dec 2024 at 17:58, Quentin Perret <qperret@google.com> wrote:
+On Tue, 17 Dec 2024 at 00:37, David Woodhouse <dwmw2@infradead.org> wrote:
 >
-> From: Marc Zyngier <maz@kernel.org>
+> From: David Woodhouse <dwmw@amazon.co.uk>
 >
-> Rather than look-up the hyp vCPU on every run hypercall at EL2,
-> introduce a per-CPU 'loaded_hyp_vcpu' tracking variable which is updated
-> by a pair of load/put hypercalls called directly from
-> kvm_arch_vcpu_{load,put}() when pKVM is enabled.
+> Both i386 and x86_64 now copy the relocate_kernel function into the control
+> page and execute it from there, using an open-coded function pointer.
 >
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Quentin Perret <qperret@google.com>
-
-Reviewed-by: Fuad Tabba <tabba@google.com>
-
-Cheers,
-/fuad
-
+> Use a typedef for it instead.
+>
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 > ---
->  arch/arm64/include/asm/kvm_asm.h       |  2 ++
->  arch/arm64/kvm/arm.c                   | 14 ++++++++
->  arch/arm64/kvm/hyp/include/nvhe/pkvm.h |  7 ++++
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c     | 47 ++++++++++++++++++++------
->  arch/arm64/kvm/hyp/nvhe/pkvm.c         | 29 ++++++++++++++++
->  arch/arm64/kvm/vgic/vgic-v3.c          |  6 ++--
->  6 files changed, 93 insertions(+), 12 deletions(-)
+>  arch/x86/include/asm/kexec.h       | 26 +++++++++++++-------------
+>  arch/x86/kernel/machine_kexec_32.c |  7 +------
+>  arch/x86/kernel/machine_kexec_64.c |  6 +-----
+>  3 files changed, 15 insertions(+), 24 deletions(-)
 >
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index ca2590344313..89c0fac69551 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -79,6 +79,8 @@ enum __kvm_host_smccc_func {
->         __KVM_HOST_SMCCC_FUNC___pkvm_init_vm,
->         __KVM_HOST_SMCCC_FUNC___pkvm_init_vcpu,
->         __KVM_HOST_SMCCC_FUNC___pkvm_teardown_vm,
-> +       __KVM_HOST_SMCCC_FUNC___pkvm_vcpu_load,
-> +       __KVM_HOST_SMCCC_FUNC___pkvm_vcpu_put,
->  };
->
->  #define DECLARE_KVM_VHE_SYM(sym)       extern char sym[]
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index a102c3aebdbc..55cc62b2f469 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -619,12 +619,26 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
->
->         kvm_arch_vcpu_load_debug_state_flags(vcpu);
->
-> +       if (is_protected_kvm_enabled()) {
-> +               kvm_call_hyp_nvhe(__pkvm_vcpu_load,
-> +                                 vcpu->kvm->arch.pkvm.handle,
-> +                                 vcpu->vcpu_idx, vcpu->arch.hcr_el2);
-> +               kvm_call_hyp(__vgic_v3_restore_vmcr_aprs,
-> +                            &vcpu->arch.vgic_cpu.vgic_v3);
-> +       }
-> +
->         if (!cpumask_test_cpu(cpu, vcpu->kvm->arch.supported_cpus))
->                 vcpu_set_on_unsupported_cpu(vcpu);
+> diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+> index 48e4f44f794f..8ad187462b68 100644
+> --- a/arch/x86/include/asm/kexec.h
+> +++ b/arch/x86/include/asm/kexec.h
+> @@ -111,21 +111,21 @@ static inline void crash_setup_regs(struct pt_regs *newregs,
 >  }
 >
->  void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
->  {
-> +       if (is_protected_kvm_enabled()) {
-> +               kvm_call_hyp(__vgic_v3_save_vmcr_aprs,
-> +                            &vcpu->arch.vgic_cpu.vgic_v3);
-> +               kvm_call_hyp_nvhe(__pkvm_vcpu_put);
-> +       }
-> +
->         kvm_arch_vcpu_put_debug_state_flags(vcpu);
->         kvm_arch_vcpu_put_fp(vcpu);
->         if (has_vhe())
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> index f361d8b91930..be52c5b15e21 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> @@ -20,6 +20,12 @@ struct pkvm_hyp_vcpu {
->
->         /* Backpointer to the host's (untrusted) vCPU instance. */
->         struct kvm_vcpu *host_vcpu;
-> +
-> +       /*
-> +        * If this hyp vCPU is loaded, then this is a backpointer to the
-> +        * per-cpu pointer tracking us. Otherwise, NULL if not loaded.
-> +        */
-> +       struct pkvm_hyp_vcpu **loaded_hyp_vcpu;
->  };
->
->  /*
-> @@ -69,6 +75,7 @@ int __pkvm_teardown_vm(pkvm_handle_t handle);
->  struct pkvm_hyp_vcpu *pkvm_load_hyp_vcpu(pkvm_handle_t handle,
->                                          unsigned int vcpu_idx);
->  void pkvm_put_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu);
-> +struct pkvm_hyp_vcpu *pkvm_get_loaded_hyp_vcpu(void);
->
->  struct pkvm_hyp_vm *get_pkvm_hyp_vm(pkvm_handle_t handle);
->  void put_pkvm_hyp_vm(struct pkvm_hyp_vm *hyp_vm);
-> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> index 6aa0b13d86e5..95d78db315b3 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> @@ -141,16 +141,46 @@ static void sync_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
->                 host_cpu_if->vgic_lr[i] = hyp_cpu_if->vgic_lr[i];
->  }
->
-> +static void handle___pkvm_vcpu_load(struct kvm_cpu_context *host_ctxt)
-> +{
-> +       DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
-> +       DECLARE_REG(unsigned int, vcpu_idx, host_ctxt, 2);
-> +       DECLARE_REG(u64, hcr_el2, host_ctxt, 3);
-> +       struct pkvm_hyp_vcpu *hyp_vcpu;
-> +
-> +       if (!is_protected_kvm_enabled())
-> +               return;
-> +
-> +       hyp_vcpu = pkvm_load_hyp_vcpu(handle, vcpu_idx);
-> +       if (!hyp_vcpu)
-> +               return;
-> +
-> +       if (pkvm_hyp_vcpu_is_protected(hyp_vcpu)) {
-> +               /* Propagate WFx trapping flags */
-> +               hyp_vcpu->vcpu.arch.hcr_el2 &= ~(HCR_TWE | HCR_TWI);
-> +               hyp_vcpu->vcpu.arch.hcr_el2 |= hcr_el2 & (HCR_TWE | HCR_TWI);
-> +       }
-> +}
-> +
-> +static void handle___pkvm_vcpu_put(struct kvm_cpu_context *host_ctxt)
-> +{
-> +       struct pkvm_hyp_vcpu *hyp_vcpu;
-> +
-> +       if (!is_protected_kvm_enabled())
-> +               return;
-> +
-> +       hyp_vcpu = pkvm_get_loaded_hyp_vcpu();
-> +       if (hyp_vcpu)
-> +               pkvm_put_hyp_vcpu(hyp_vcpu);
-> +}
-> +
->  static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
->  {
->         DECLARE_REG(struct kvm_vcpu *, host_vcpu, host_ctxt, 1);
->         int ret;
->
-> -       host_vcpu = kern_hyp_va(host_vcpu);
+>  #ifdef CONFIG_X86_32
+> -asmlinkage unsigned long
+> -relocate_kernel(unsigned long indirection_page,
+> -               unsigned long control_page,
+> -               unsigned long start_address,
+> -               unsigned int has_pae,
+> -               unsigned int preserve_context);
+> +typedef asmlinkage unsigned long
+> +relocate_kernel_fn(unsigned long indirection_page,
+> +                  unsigned long control_page,
+> +                  unsigned long start_address,
+> +                  unsigned int has_pae,
+> +                  unsigned int preserve_context);
+
+linkage is not part of the type. 'asmlinkage' is #define'd to the
+empty string today, so it doesn't matter, but better to omit it here.
+
+>  #else
+> -unsigned long
+> -relocate_kernel(unsigned long indirection_page,
+> -               unsigned long pa_control_page,
+> -               unsigned long start_address,
+> -               unsigned int preserve_context,
+> -               unsigned int host_mem_enc_active);
+> +typedef unsigned long
+> +relocate_kernel_fn(unsigned long indirection_page,
+> +                  unsigned long pa_control_page,
+> +                  unsigned long start_address,
+> +                  unsigned int preserve_context,
+> +                  unsigned int host_mem_enc_active);
+>  #endif
 > -
->         if (unlikely(is_protected_kvm_enabled())) {
-> -               struct pkvm_hyp_vcpu *hyp_vcpu;
-> -               struct kvm *host_kvm;
-> +               struct pkvm_hyp_vcpu *hyp_vcpu = pkvm_get_loaded_hyp_vcpu();
+> +extern relocate_kernel_fn relocate_kernel;
+>  #define ARCH_HAS_KIMAGE_ARCH
 >
->                 /*
->                  * KVM (and pKVM) doesn't support SME guests for now, and
-> @@ -163,9 +193,6 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
->                         goto out;
->                 }
->
-> -               host_kvm = kern_hyp_va(host_vcpu->kvm);
-> -               hyp_vcpu = pkvm_load_hyp_vcpu(host_kvm->arch.pkvm.handle,
-> -                                             host_vcpu->vcpu_idx);
->                 if (!hyp_vcpu) {
->                         ret = -EINVAL;
->                         goto out;
-> @@ -176,12 +203,10 @@ static void handle___kvm_vcpu_run(struct kvm_cpu_context *host_ctxt)
->                 ret = __kvm_vcpu_run(&hyp_vcpu->vcpu);
->
->                 sync_hyp_vcpu(hyp_vcpu);
-> -               pkvm_put_hyp_vcpu(hyp_vcpu);
->         } else {
->                 /* The host is fully trusted, run its vCPU directly. */
-> -               ret = __kvm_vcpu_run(host_vcpu);
-> +               ret = __kvm_vcpu_run(kern_hyp_va(host_vcpu));
->         }
-> -
->  out:
->         cpu_reg(host_ctxt, 1) =  ret;
->  }
-> @@ -409,6 +434,8 @@ static const hcall_t host_hcall[] = {
->         HANDLE_FUNC(__pkvm_init_vm),
->         HANDLE_FUNC(__pkvm_init_vcpu),
->         HANDLE_FUNC(__pkvm_teardown_vm),
-> +       HANDLE_FUNC(__pkvm_vcpu_load),
-> +       HANDLE_FUNC(__pkvm_vcpu_put),
->  };
->
->  static void handle_host_hcall(struct kvm_cpu_context *host_ctxt)
-> diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> index d46a02e24e4a..496d186efb03 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-> @@ -23,6 +23,12 @@ unsigned int kvm_arm_vmid_bits;
->
->  unsigned int kvm_host_sve_max_vl;
->
-> +/*
-> + * The currently loaded hyp vCPU for each physical CPU. Used only when
-> + * protected KVM is enabled, but for both protected and non-protected VMs.
-> + */
-> +static DEFINE_PER_CPU(struct pkvm_hyp_vcpu *, loaded_hyp_vcpu);
-> +
->  /*
->   * Set trap register values based on features in ID_AA64PFR0.
+>  #ifdef CONFIG_X86_32
+> diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+> index 1b373d79cedc..80265162aeff 100644
+> --- a/arch/x86/kernel/machine_kexec_32.c
+> +++ b/arch/x86/kernel/machine_kexec_32.c
+> @@ -160,15 +160,10 @@ void machine_kexec_cleanup(struct kimage *image)
 >   */
-> @@ -306,15 +312,30 @@ struct pkvm_hyp_vcpu *pkvm_load_hyp_vcpu(pkvm_handle_t handle,
->         struct pkvm_hyp_vcpu *hyp_vcpu = NULL;
->         struct pkvm_hyp_vm *hyp_vm;
->
-> +       /* Cannot load a new vcpu without putting the old one first. */
-> +       if (__this_cpu_read(loaded_hyp_vcpu))
-> +               return NULL;
-> +
->         hyp_spin_lock(&vm_table_lock);
->         hyp_vm = get_vm_by_handle(handle);
->         if (!hyp_vm || hyp_vm->nr_vcpus <= vcpu_idx)
->                 goto unlock;
->
->         hyp_vcpu = hyp_vm->vcpus[vcpu_idx];
-> +
-> +       /* Ensure vcpu isn't loaded on more than one cpu simultaneously. */
-> +       if (unlikely(hyp_vcpu->loaded_hyp_vcpu)) {
-> +               hyp_vcpu = NULL;
-> +               goto unlock;
-> +       }
-> +
-> +       hyp_vcpu->loaded_hyp_vcpu = this_cpu_ptr(&loaded_hyp_vcpu);
->         hyp_page_ref_inc(hyp_virt_to_page(hyp_vm));
->  unlock:
->         hyp_spin_unlock(&vm_table_lock);
-> +
-> +       if (hyp_vcpu)
-> +               __this_cpu_write(loaded_hyp_vcpu, hyp_vcpu);
->         return hyp_vcpu;
->  }
->
-> @@ -323,10 +344,18 @@ void pkvm_put_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
->         struct pkvm_hyp_vm *hyp_vm = pkvm_hyp_vcpu_to_hyp_vm(hyp_vcpu);
->
->         hyp_spin_lock(&vm_table_lock);
-> +       hyp_vcpu->loaded_hyp_vcpu = NULL;
-> +       __this_cpu_write(loaded_hyp_vcpu, NULL);
->         hyp_page_ref_dec(hyp_virt_to_page(hyp_vm));
->         hyp_spin_unlock(&vm_table_lock);
->  }
->
-> +struct pkvm_hyp_vcpu *pkvm_get_loaded_hyp_vcpu(void)
-> +{
-> +       return __this_cpu_read(loaded_hyp_vcpu);
-> +
-> +}
-> +
->  struct pkvm_hyp_vm *get_pkvm_hyp_vm(pkvm_handle_t handle)
+>  void machine_kexec(struct kimage *image)
 >  {
->         struct pkvm_hyp_vm *hyp_vm;
-> diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
-> index f267bc2486a1..c2ef41fff079 100644
-> --- a/arch/arm64/kvm/vgic/vgic-v3.c
-> +++ b/arch/arm64/kvm/vgic/vgic-v3.c
-> @@ -734,7 +734,8 @@ void vgic_v3_load(struct kvm_vcpu *vcpu)
+> +       relocate_kernel_fn *relocate_kernel_ptr;
+>         unsigned long page_list[PAGES_NR];
+>         void *control_page;
+>         int save_ftrace_enabled;
+> -       asmlinkage unsigned long
+> -               (*relocate_kernel_ptr)(unsigned long indirection_page,
+> -                                      unsigned long control_page,
+> -                                      unsigned long start_address,
+> -                                      unsigned int has_pae,
+> -                                      unsigned int preserve_context);
+>
+>  #ifdef CONFIG_KEXEC_JUMP
+>         if (image->preserve_context)
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 1440f792a86d..dd75a51463a2 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -344,12 +344,8 @@ void machine_kexec_cleanup(struct kimage *image)
+>   */
+>  void __nocfi machine_kexec(struct kimage *image)
 >  {
->         struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
->
-> -       kvm_call_hyp(__vgic_v3_restore_vmcr_aprs, cpu_if);
-> +       if (likely(!is_protected_kvm_enabled()))
-> +               kvm_call_hyp(__vgic_v3_restore_vmcr_aprs, cpu_if);
->
->         if (has_vhe())
->                 __vgic_v3_activate_traps(cpu_if);
-> @@ -746,7 +747,8 @@ void vgic_v3_put(struct kvm_vcpu *vcpu)
->  {
->         struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
->
-> -       kvm_call_hyp(__vgic_v3_save_vmcr_aprs, cpu_if);
-> +       if (likely(!is_protected_kvm_enabled()))
-> +               kvm_call_hyp(__vgic_v3_save_vmcr_aprs, cpu_if);
->         WARN_ON(vgic_v4_put(vcpu));
->
->         if (has_vhe())
+> -       unsigned long (*relocate_kernel_ptr)(unsigned long indirection_page,
+> -                                            unsigned long pa_control_page,
+> -                                            unsigned long start_address,
+> -                                            unsigned int preserve_context,
+> -                                            unsigned int host_mem_enc_active);
+>         unsigned long reloc_start = (unsigned long)__relocate_kernel_start;
+> +       relocate_kernel_fn *relocate_kernel_ptr;
+>         unsigned int host_mem_enc_active;
+>         int save_ftrace_enabled;
+>         void *control_page;
 > --
-> 2.47.1.613.gc27f4b7a9f-goog
+> 2.47.0
 >
 
