@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-449998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F229F5916
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:53:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F7F9F5908
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF6B17191C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9F37A462A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CAE1F9F62;
-	Tue, 17 Dec 2024 21:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558691F9F60;
+	Tue, 17 Dec 2024 21:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A9VWstEz"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YWoIsZoe"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBD414A0A3;
-	Tue, 17 Dec 2024 21:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A4E1DD54C;
+	Tue, 17 Dec 2024 21:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734471985; cv=none; b=gsxg48kfO710PAVfHcIx13UkRrHO6a72VwogGNQRE5lxbZaM4slcJR6inu+J96C6zw362yv7KOiVPkY7Y2Cw69V9vG5G9kz4mlYJ1rMMjqrCBbr0mJllTLbInrJh8YF9sqB5aMNAZCVM9fPZeP8t4BW/z215faj3d3QCOgaL/HI=
+	t=1734472047; cv=none; b=heBUdPreVPux+2hYER60Z73Q3eQm5UoEmGKBwZyT0C79iJoFgKrGt+GTT7IZ+ai+b0Gel3qwDwOqh8ZcG44/f5BpjG5S1hwL4IctSyhl/BlEgItue/IgZLvgCbXmjRGF2QRsm9pMovwpR3oW+vAmaqApslr7U2XwFbk5MOl3GOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734471985; c=relaxed/simple;
-	bh=9/SlMqJheV6UBlMdYFEbz4fj4zpzDrak/dbk5Hz2i7E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Wv9eU97PqZTCYKF/GPaMz/0zsR3yVcnNZejSEIGcERIkCuGWBk8wBUJVwwpu5BtZgrVhu7bNCvJHBxD6dJVL67VbnuX+hR0Cm4dMBS+eYK0T7q/iXr/6HXtlUH5Q0AL/uSbmWa4D9SV9YCNoKvl3XxX05UMHX7EMYk1I1ONJkCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A9VWstEz; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734471982;
-	bh=9/SlMqJheV6UBlMdYFEbz4fj4zpzDrak/dbk5Hz2i7E=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=A9VWstEzPcXQiWHL0C4j6BVCWeKwPoOtm1T/XMCWve83tkNjkNOyZlAWQSNPm1P30
-	 MfQuPMdoNnBDLUZr5DKsIsUnxhmN0UAA89kTnyOB3QCLd7iJ6KVD3AC95iuab7Yn7G
-	 Eifiv1gvsW7mBze0HKR+KCIrEnrEfyDHifr+veNHpJrdqbEHf6lz0O6amCY69buCtu
-	 Hf7J7YXPCb0WKByKoe9Co8sseE6kTC/wBJjYuZNXfeOuJm9YyYCrvyJEQ8lS2Mr7be
-	 b1Mip2WCQ63TvMiqtG1SbGeHOtP3Y7alg3oxNuebUvDeJXuhEbiYCHoZWf+P3Ovq+4
-	 ZUPbX6RdIoBWA==
-Received: from [192.168.1.90] (unknown [84.232.140.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1734472047; c=relaxed/simple;
+	bh=pYyX1T/5vK2+5pV8VU/rJ/K/+cNIGuO1HaL7v0uBAfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kBqkqZUdWFSqUqsLFeM9QznUMZcKXf5Hom5z6NQ0VZrvNQ6DZPD8O7Y9/kQHquCwtYhKBtrcvSQ0wcpvrbFbPZncsxWamf8YdkyGa1POQVZmSedwLcRKlOTB9vVlG68lX1QIa2IjcNjznq/I9lRLJ0RzGVm/e3AogiUhO3a1nmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YWoIsZoe; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YCVld3CRCz6ClY9C;
+	Tue, 17 Dec 2024 21:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1734472036; x=1737064037; bh=oKc3I7/BFaJjoh8h/Omv70y7
+	8k6J2IuKTo+Wlw0Dg8E=; b=YWoIsZoeUpFXDc6cTr2oX4nSRWQYxxJ8eNk3ZPZX
+	GTKEUOqfY9bLa2s06i9EiFmhKdc8tzD4AFXdsHmUOMj/zZxo7haxGXVSwuHHmmq+
+	XzuFNXqjuftS92EddbPzTeB3YeDcI3uf0H8RaPu25IE/DZZ1hlFZK/LyV+ETtl0f
+	BGGFMOEuk2bOw55GKXrfiJ2TozD39lMmncYptbLI0GOcrnezzQ0oTDtRnjhXRSy4
+	lLetMaff7cqcoRrYCpouCoDe+RW2PJD+oYrM8AqIFcHFoayixhWtK/GHr+J6lYDh
+	hZL+JyVoo+nQ37hGOhoHi9G9qVAcp6xXu4cpaoAn7Lcyhg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id XX7dlaQA97iz; Tue, 17 Dec 2024 21:47:16 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 223D817E381B;
-	Tue, 17 Dec 2024 22:46:21 +0100 (CET)
-Message-ID: <b13cbeda-79b6-4700-a2e7-083a50541c80@collabora.com>
-Date: Tue, 17 Dec 2024 23:46:19 +0200
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YCVlP1X5qz6ClY94;
+	Tue, 17 Dec 2024 21:47:12 +0000 (UTC)
+Message-ID: <698a01e6-cb03-43a2-a0f1-5c8555dea8c1@acm.org>
+Date: Tue, 17 Dec 2024 13:47:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,68 +64,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Provide devm_clk_bulk_get_all_enabled() helper
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
+Subject: Re: [PATCH v2 RFC 2/4] lib/sbitmap: fix shallow_depth tag allocation
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+ akpm@linux-foundation.org, ming.lei@redhat.com, yang.yang@vivo.com,
+ osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
+ <20241217024047.1091893-3-yukuai1@huaweicloud.com>
 Content-Language: en-US
-In-Reply-To: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241217024047.1091893-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/17/24 11:41 PM, Cristian Ciocaltea wrote:
-> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-> return the number of clocks stored in the clk_bulk_data table referenced
-> by the clks argument.
+On 12/16/24 6:40 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> That is required in case there is a need to iterate these clocks later,
-> therefore I couldn't see any use case of this parameter and should have
-> been simply removed from the function declaration.
-> 
-> The first patch in the series provides devm_clk_bulk_get_all_enabled()
-> variant, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->  > 0 if one or more clocks have been stored
->  = 0 if there are no clocks
->  < 0 if an error occurred
-> 
-> Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
-> the past form of 'enable'.
-> 
-> The next two patches switch existing users of devm_clk_get_enable() to
-> the new helper - there were only two, as of next-20240913.
-> 
-> The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
-> helper.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Changes in v5:
-> - Rebased series onto next-20241217
-> - Removed the patch introducing the new helper - merged in v6.13-rc1
-> - Updated last patch to fix a rebase conflict
-> - Link to v4: https://lore.kernel.org/r/20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com
+> Currently, shallow_depth is used by bfq, kyber and mq-deadline, they both
 
-@Angelo, Matthias, Bjorn:
+both -> all
 
-Could you please provide an ack for the first two patches so that
-Stephen can apply them to the clk tree along with the last one removing
-the obsolete helper - there are no other users of it as of next-20241217.
+> pass in the value for the whole sbitmap, while sbitmap treats the value
+
+treats for -> applies to
+
+> for just one word. Which means, shallow_depth never work as expected,
+
+work -> works
+
+> and there really is no such functional tests to covert it.
+
+is ... tests -> is ... test or are ... tests
+
+covert -> cover
+
+> Consider that callers doesn't know which word will be used, and it's
+
+Consider -> Considering
+doesn't -> don't
+
+> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+> index 189140bf11fc..92e77bc13cf6 100644
+> --- a/include/linux/sbitmap.h
+> +++ b/include/linux/sbitmap.h
+> @@ -213,12 +213,12 @@ int sbitmap_get(struct sbitmap *sb);
+>    * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
+>    * limiting the depth used from each word.
+>    * @sb: Bitmap to allocate from.
+> - * @shallow_depth: The maximum number of bits to allocate from a single word.
+> + * @shallow_depth: The maximum number of bits to allocate from the bitmap.
+>    *
+>    * This rather specific operation allows for having multiple users with
+>    * different allocation limits. E.g., there can be a high-priority class that
+>    * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
+> - * with a @shallow_depth of (1 << (@sb->shift - 1)). Then, the low-priority
+> + * with a @shallow_depth of (sb->depth << 1). Then, the low-priority
+
+(sb->depth << 1) -> (sb->depth >> 1)
+
+> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> index d3412984170c..6b8b909614a5 100644
+> --- a/lib/sbitmap.c
+> +++ b/lib/sbitmap.c
+> @@ -208,8 +208,27 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
+>   	return nr;
+>   }
+>   
+> +static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
+> +					     int index,
+> +					     unsigned int shallow_depth)
+> +{
+> +	unsigned int pre_word_bits = 0;
+> +
+> +	if (shallow_depth >= sb->depth)
+> +		return __map_depth(sb, index);
+> +
+> +	if (index > 0)
+> +		pre_word_bits += (index - 1) << sb->shift;
+
+Why "index - 1" instead of "index"?
+
+> +
+> +	if (shallow_depth <= pre_word_bits)
+> +		return 0;
+> +
+> +	return min_t(unsigned int, __map_depth(sb, index),
+> +				   shallow_depth - pre_word_bits);
+> +}
+
+How about renaming pre_word_bits into lower_bound?
+
+Otherwise this patch looks good to me.
 
 Thanks,
-Cristian
+
+Bart.
 
