@@ -1,123 +1,206 @@
-Return-Path: <linux-kernel+bounces-449116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA3C9F4A15
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:40:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E31609F4A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017B116BD7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EADE16BDAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1A91F1900;
-	Tue, 17 Dec 2024 11:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F221EF080;
+	Tue, 17 Dec 2024 11:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hDJsCN9a"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlquAj4t"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47D71F12FE;
-	Tue, 17 Dec 2024 11:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF621DDA35
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734435581; cv=none; b=Sa1RCu0hxFKa8k9HVSIA/l1UqS6GpliOLL3t3LM9JxvoyX3I1fAc2wWd47RnNBKkZkCW24DYDYnNhnI7ctbXvRLMAKFKDtnvbEaAL1uNsJa8FBxOzQZmnJcO4o0IISK/pBMWntkblYr2DxyZPxWRjGDdOpLFY4eP5lIp254837E=
+	t=1734435684; cv=none; b=RoEO0RglDInCpT3HphJOPSuPPf+t6LptkDM6DPwm6B8Zr9b6YkaX/CxzrlrP3pdGm4+yp0UuNQzUZtAeG40PTksPf6EQocIBoLHI0UTqrrsXAqAv1WMDiVFnbHB6C9AcikejiiC0hJ/nLcsWprdK5NiROM+O9jyxjbaOtmEwJMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734435581; c=relaxed/simple;
-	bh=UIkY2UhnbvwHnMmCGeW/C0EwLnP8uo7nIwvagSY1I+w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/Zy0gqivfNfqeFe1XliSQCIjg8/Hkv21s5ZXUEPZxsJ05F9gL7nkrHSkaDPLcghi0pThzuMIp4N2z/8tWMGPmctoy2+wy6Rw0hU1vdwD4ETGkk63ana2iRyCehYcuEVvb9co67gDdU6lQQDQIEyoJdDsqQRwmsdgXN3rtnJzeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hDJsCN9a; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH6RaRj002735;
-	Tue, 17 Dec 2024 11:39:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zGBtT2gX9hHQA7lfV0Zin+SsHMSdMq+rY2wR6aogZ/E=; b=hDJsCN9almNIziFP
-	JKyWqGREdq64Vz53cHpuG21XrL+o05ZQoss4OXy6T2yMN74FTcRBgwR6ntG/7JTq
-	v5oUeCOIdzooKDVKxUPzN68qrleFBhXIlQPpwziEquvFtWki6H422ggOEk1KNaT2
-	lZAJV4is3bAjgFWf66PgfPhMJoZStirsU524q0gSrRQIjLHGaSfpge1PSiNl/VrF
-	BWS719fr3rcl570iqlIKwQqJMmbomRvSGbNYSPN4CihAaeC0ZFJun3qvDzrpXghY
-	zojQRLbd5I3yby6Qu5T2XyRMhUL1WRB/RF8evZhlbnkceeL4V00hlZfQshBwGDIU
-	0fpNtg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k424gvdr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 11:39:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHBdYvw005430
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 11:39:34 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 17 Dec 2024 03:39:30 -0800
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH v2 2/2] dt-bindings: clock: qcom: gcc-ipq5424: remove apss_dbg clock macro
-Date: Tue, 17 Dec 2024 17:09:09 +0530
-Message-ID: <20241217113909.3522305-3-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241217113909.3522305-1-quic_mmanikan@quicinc.com>
-References: <20241217113909.3522305-1-quic_mmanikan@quicinc.com>
+	s=arc-20240116; t=1734435684; c=relaxed/simple;
+	bh=kPUdKaQO5uNQFQG6V0ETQ3Cz/bW8IbNQNYsjq9ssp7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YgnkD68NjVWAISZadTn7OWd0X/RoWNq7x+necrTdwyzcqRRrAviOn7pTpy0EdcQMhpmB2YWUinsu7hCOX/HPvZjIC5k7a4C5ZZe8jMip6Qo0h4J/lv1mqlOcP9cIIKNnqsunJbKf5Y8W0OiO+aiPLOc7N5igSudSNR06U8obPjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlquAj4t; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21644aca3a0so60853715ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 03:41:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734435681; x=1735040481; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b0EZW6LlfowWIgAwJtFx9CvahXq/dyYnxzkbI6o/02Q=;
+        b=FlquAj4tXLDX9cZmCYCMaOvaS1LWnWXeQ6eMfF9gri5J5LRcF1pYOSGaRU1xcnlFh+
+         U0whzpxO+ZG162AIN+ZPwQnwxkXXETSULYc+8l0GsyEL5RF2ShXdjpOnJKJz25slwumA
+         yy0B075kE+UjVF5bVaRbyYv6VpdLGfnd4KSVPO2pAjPPOkKEczXmpRXgpqxIW9FzcRSS
+         EhR9584nRV4sS7g/LmyVfIpohC6RuL1GL7B1aXgC95Q/8swRPW1SwaNlmbCx5tmr4Znb
+         ahSZwZ8UFR3geiO/MRNoi47NNHwsSYKPN0wyMBIh0a/hVYDwNanIchT6WJIdjRL6Enmy
+         YYKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734435681; x=1735040481;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b0EZW6LlfowWIgAwJtFx9CvahXq/dyYnxzkbI6o/02Q=;
+        b=vMczhXAx3tamAMcCWxYRfTrK0iYjL9xIqT2hgiqUSL5inQjOSsaX9JaMNORe/QaKRo
+         Z7GAy2rsAEI0Tpb/Yi8PGhLubXkgwbUL+mYfOr3BCwlvMnzxvWfXzq7ViCeDhkblbwpq
+         2oj/oDxFEsskIe9QYDdvkK40XpO597LzFkYCfL6DO13uIwaq5KGN7/MKUVr/t6pwUzb/
+         cmb5z+q3JJS1Pu1cICPvlsL77q89oNJq2vblQqJONwoZBzYwbInY4PbUQ1yCQA+Jps77
+         GCheO3+pXyo8xjd/gOjRLaf3lJzw+jiCwNLwxroAKRquZI/9w1UWFW+IqrCIKany6Qw4
+         UPhw==
+X-Gm-Message-State: AOJu0YxDwRVRH14BM0k5vVI6RTbi8jc66+nWx9DXdhRCMVmVsONQvuxn
+	qMRBypk7m4U76puv9o9J9r7av7A5wUvpOig7UGQT6b7W0BKCJhKpdO/X4fQ13GttARDmR2t2wUI
+	oWKeKQfVU5MMvIqMOArQ1Tj/R7eipTWN3n7O/D2zP2B8G1zFZ
+X-Gm-Gg: ASbGncvSfLqpkylXl3D2sSs7Myr7wvTBQmImgfQ8NmLoarsLIzb3eejz+0M8TAwWkfT
+	MbIGwL45KcdsSt9XpKx/3u2m33TadhF7BM8+lQ5A=
+X-Google-Smtp-Source: AGHT+IGIDfrYNaywRoWFo3CQSbMxXhWSle7L1Jb4vz79u1YZalyqFK7FlUJMk0NlWFVnhyTGxjaH1yzDfdnlavipwTg=
+X-Received: by 2002:a17:90b:4b06:b0:2ee:9b2c:3253 with SMTP id
+ 98e67ed59e1d1-2f2901a2a67mr23276889a91.30.1734435681520; Tue, 17 Dec 2024
+ 03:41:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WTy2Y4-6Kixwy6nnWW_IwfHN2SKf9w70
-X-Proofpoint-ORIG-GUID: WTy2Y4-6Kixwy6nnWW_IwfHN2SKf9w70
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 clxscore=1015 adultscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170096
+References: <20241213144919.110642-1-mike.leach@linaro.org>
+ <20241213144919.110642-3-mike.leach@linaro.org> <9094b068-ed3a-444d-b790-e43a652ab6e9@arm.com>
+In-Reply-To: <9094b068-ed3a-444d-b790-e43a652ab6e9@arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Tue, 17 Dec 2024 11:41:11 +0000
+Message-ID: <CAJ9a7VjCK+FGB+EMbcgaRfkv13TYYgBNHTG+AGp=52dZ7EfQAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] coresight: tmc: Update error logging in tmc common functions
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	coresight@lists.linaro.org, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-The gcc_apss_dbg clk is access protected by trust zone, and accessing
-it results in a kernel crash. Therefore remove the gcc_apss_dbg_clk macro.
+Hi Suzuki,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
-Changes in V2:
-	- Pick up A-b tag.
-	- Updated commit message.
-	- Patch #1 from V1 has been moved to Patch #2 in V2 to enusre
-	  it is bisecatble.
+On Mon, 16 Dec 2024 at 09:33, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>
+> On 13/12/2024 14:49, Mike Leach wrote:
+> > Enhance the error logging in the tmc_wait_for_tmcready() and
+> > tmc_flush_and_stop() to print key tmc  register values on error
+> > conditions to improve hardware debug information.
+> >
+> > Signed-off-by: Mike Leach <mike.leach@linaro.org>
+> > ---
+> >   .../hwtracing/coresight/coresight-tmc-core.c  | 37 +++++++++++++++----
+> >   drivers/hwtracing/coresight/coresight-tmc.h   |  2 +-
+> >   2 files changed, 30 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > index e9876252a789..1a9299adae93 100644
+> > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > @@ -34,25 +34,36 @@ DEFINE_CORESIGHT_DEVLIST(etb_devs, "tmc_etb");
+> >   DEFINE_CORESIGHT_DEVLIST(etf_devs, "tmc_etf");
+> >   DEFINE_CORESIGHT_DEVLIST(etr_devs, "tmc_etr");
+> >
+> > +#define TMC_WAIT_READY_FMT_STR "timeout while waiting for TMC to be Ready [STS=0x%04x]\n"
+> > +
+> >   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata)
+> >   {
+> >       struct coresight_device *csdev = drvdata->csdev;
+> >       struct csdev_access *csa = &csdev->access;
+> > +     u32 tmc_sts = 0;
+> >
+> >       /* Ensure formatter, unformatter and hardware fifo are empty */
+> > -     if (coresight_timeout(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
+> > -             dev_err(&csdev->dev,
+> > -                     "timeout while waiting for TMC to be Ready\n");
+> > +     if (coresight_timeout_retval(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1,
+> > +                                  &tmc_sts)) {
+> > +             dev_err(&csdev->dev, TMC_WAIT_READY_FMT_STR, tmc_sts);
+> >               return -EBUSY;
+> >       }
+> >       return 0;
+> >   }
+> >
+> > -void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
+> > +int tmc_flush_and_stop(struct tmc_drvdata *drvdata)
+> >   {
+> >       struct coresight_device *csdev = drvdata->csdev;
+> >       struct csdev_access *csa = &csdev->access;
+> > -     u32 ffcr;
+> > +     u32 ffcr, ffsr, tmc_sts;
+> > +     int rc = 0;
+> > +
+> > +     /* note any MemErr present when stopping TMC */
+> > +     tmc_sts = readl_relaxed(drvdata->base + TMC_STS);
+> > +     if (tmc_sts & TMC_STS_MEMERR)
+> > +             dev_err(&csdev->dev,
+> > +                     "MemErr detected before Manual Flush; STS[0x%02x]\n",
+> > +                     tmc_sts);
+> >
+> >       ffcr = readl_relaxed(drvdata->base + TMC_FFCR);
+> >       ffcr |= TMC_FFCR_STOP_ON_FLUSH;
+> > @@ -60,12 +71,22 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
+> >       ffcr |= BIT(TMC_FFCR_FLUSHMAN_BIT);
+> >       writel_relaxed(ffcr, drvdata->base + TMC_FFCR);
+> >       /* Ensure flush completes */
+> > -     if (coresight_timeout(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
+> > +     if (coresight_timeout_retval(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0,
+> > +                                  &ffcr)) {
+> > +             ffsr = readl_relaxed(drvdata->base + TMC_FFSR);
+> >               dev_err(&csdev->dev,
+> > -             "timeout while waiting for completion of Manual Flush\n");
+> > +                     "timeout while waiting for completion of Manual Flush\n");
+> > +             dev_err(&csdev->dev,
+> > +                     "regs: FFCR[0x%02x] FFSR[0x%02x] STS[0x%02x]\n",
+> > +                     ffcr, ffsr, tmc_sts);
+> > +             rc = -EBUSY;
+> >       }
+> >
+> > -     tmc_wait_for_tmcready(drvdata);
+> > +     if (tmc_wait_for_tmcready(drvdata)) {
+> > +             dev_err(&csdev->dev, "TMC ready error after Manual flush\n");
+> > +             rc = -EBUSY;
+> > +     }
+> > +     return rc;
+> >   }
+>
+> All of this looks good to me. Do we need to move the MemErr check post
+> the flush ? There is a potential chance of hitting a MemERR on flushing
+> and we could miss reproting those ones ?
+>
 
- include/dt-bindings/clock/qcom,ipq5424-gcc.h | 1 -
- 1 file changed, 1 deletion(-)
+We need the one before - if there is already a Memerr then this will
+affect the flush operation - on Memerr the formatter will have stopped
+etc. But no harm in putting another check afterwards.
 
-diff --git a/include/dt-bindings/clock/qcom,ipq5424-gcc.h b/include/dt-bindings/clock/qcom,ipq5424-gcc.h
-index 755ce7a71c7c..9f14680052a0 100644
---- a/include/dt-bindings/clock/qcom,ipq5424-gcc.h
-+++ b/include/dt-bindings/clock/qcom,ipq5424-gcc.h
-@@ -12,7 +12,6 @@
- #define GPLL2					2
- #define GPLL2_OUT_MAIN                          3
- #define GCC_SLEEP_CLK_SRC			4
--#define GCC_APSS_DBG_CLK                        5
- #define GCC_USB0_EUD_AT_CLK			6
- #define GCC_PCIE0_AXI_M_CLK_SRC			7
- #define GCC_PCIE0_AXI_M_CLK			8
+Mike
+
+> Suzuki
+>
+> >   void tmc_enable_hw(struct tmc_drvdata *drvdata)
+> > diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> > index 2671926be62a..34513f07c3aa 100644
+> > --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> > +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> > @@ -259,7 +259,7 @@ struct tmc_sg_table {
+> >
+> >   /* Generic functions */
+> >   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata);
+> > -void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
+> > +int tmc_flush_and_stop(struct tmc_drvdata *drvdata);
+> >   void tmc_enable_hw(struct tmc_drvdata *drvdata);
+> >   void tmc_disable_hw(struct tmc_drvdata *drvdata);
+> >   u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata);
+>
+
+
 -- 
-2.34.1
-
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
