@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-449444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4C99F4F3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 806039F4F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747C31885D14
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:18:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249591881B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B76C1F4E3D;
-	Tue, 17 Dec 2024 15:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9261F7572;
+	Tue, 17 Dec 2024 15:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJMpVIRp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFFE1F7073;
-	Tue, 17 Dec 2024 15:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3564174A;
+	Tue, 17 Dec 2024 15:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734448710; cv=none; b=WTMz+16UInWXct4c1dcCjkv9fVEdp0+MzdKWTHiBja7Fz0NuJBj3zIT/SI7tvjIVX5HnWQYE5iLGi92K9EmkUI9AjYDfkZY2GWp+SsdQVhzjt+g0MuOr663BzIXS7rbOHwA9bZGFlnl6JZhNzylVnSBL8oJXP5amVAHBDdpF7dM=
+	t=1734449015; cv=none; b=kNyNQisM5rfdHR67OYCyn5YzPzBwjrMPBkg0QVXFsfKEbeldG7ld5UEMGmjSAJxgcvtdaLSLqNqorUVim8oskh5otj9kX0TAvHVFpADqvdQOvlRj9kCwMcmHQFLjpP38mWQKry4NWSOSHlAy2NNAF88MXbuBCoWhi+d8MtVGYas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734448710; c=relaxed/simple;
-	bh=7MBMiE/oizu7qjst5QPV5DHgtwVbZGV41mHe79c8yXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XcTrduKYOuPlaAvj3DtJITpYn+VXIyvrZj8T/W1ny0mYjih5f70UjvdRCkOJpNx07xLavOOU4Wddjz05BrrE32qAgljnRIRyXqoelLT7O7V20WJ9XJf+rPm3PQhmGa0HqHtlGryA2Adc6y5mIXiAfqzVcTb/4j18ykTWzhEySGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17FAC4CED6;
-	Tue, 17 Dec 2024 15:18:28 +0000 (UTC)
-Date: Tue, 17 Dec 2024 10:19:04 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-staging@lists.linux.dev
-Cc: Dave Penkler <dpenkler@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: [PATCH] staging: gpib: Fix allyesconfig build failures
-Message-ID: <20241217101904.370bca1a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734449015; c=relaxed/simple;
+	bh=SQM3pWI2fvHAG1Oru52325VVqEwN5LXRnhmqFH7vCfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWq9FmArKkHDJYi2Zwc20XmZ5hubbM/I/MMlFxeejgBYoz1m/gYdA6arYQMeVOZhpeaPwYPN0x8NNDdjUtFavCVflCay5nQ+NG9Qxpv/ERueJvLtrY8qghotR1Vjh5O+BGvZ2ujeLYTMgd5AKd/vDgqHOQbs0tn8N21ZW/8aMZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJMpVIRp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F31C4CED3;
+	Tue, 17 Dec 2024 15:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734449015;
+	bh=SQM3pWI2fvHAG1Oru52325VVqEwN5LXRnhmqFH7vCfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJMpVIRp+pFyUWESTz+5Qipovcww7eaHihkWBbjXzE1BBmc0dOtsKyXSp1d6D+3J+
+	 yvTGRDHYQMoJi9esXzFANIUNxKt2CV2x6HN236W1Gm7oX3PapV/7Xn5Ci54tK9XTZG
+	 ivGa6xztcEmEash9mOtCtSe9LHIBz7JGTUvrSJZjKNqglBR0yNj+kHJqXzoH08w/PA
+	 ivC89WOOp+0bPwdLawQaHC2Aj/c8DPKo+bKudlj1Pn4hkM5wUjsjQJzZdaD/pG/Esx
+	 I7WVp0OyKs6Plx6gga3PVzzVEawc1XYe566sa97rJOBjdrFAvxEIOjCD8BWVJ+luka
+	 dq9aUAHO5Psrg==
+Date: Tue, 17 Dec 2024 15:23:30 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ma Ke <make_ruc2021@163.com>
+Cc: aaro.koskinen@nokia.com, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] spi: fix reference leak in spi_register_controller()
+Message-ID: <a8de1fd5-7eaf-46f8-804a-8b241a3e6448@sirena.org.uk>
+References: <20241217073133.2908052-1-make_ruc2021@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jhA3jEBVEeVKRUv2"
+Content-Disposition: inline
+In-Reply-To: <20241217073133.2908052-1-make_ruc2021@163.com>
+X-Cookie: The sum of the Universe is zero.
 
-From: Steven Rostedt <rostedt@goodmis.org>
 
-My tests run an allyesconfig build and it failed with the following errors:
+--jhA3jEBVEeVKRUv2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  LD [M]  samples/kfifo/dma-example.ko
-ld.lld: error: undefined symbol: nec7210_board_reset
->>> referenced by fmh_gpib.c:1512 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1512)
->>>               vmlinux.o:(fmh_gpib_detach)
->>> referenced by fmh_gpib.c:1637 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1637)
->>>               vmlinux.o:(fmh_gpib_pci_detach)
->>> referenced by fmh_gpib.c:1342 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1342)
->>>               vmlinux.o:(fmh_gpib_init)
+On Tue, Dec 17, 2024 at 03:31:33PM +0800, Ma Ke wrote:
+> Once device_add() failed, we should call put_device() to decrement
+> reference count for cleanup. Or it could cause memory leak.
+>=20
+> Found by code review.
 
-ld.lld: error: undefined symbol: nec7210_read
->>> referenced by fmh_gpib.c:46 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:46)
->>>               vmlinux.o:(fmh_gpib_read)
+This isn't clear to me, spi_register_controller() is analogous to
+device_add() and __spi_alloc_controller() is analogous to (and wraps)
+device_initialize() so I'd expect the _put() to be done by the caller
+calling spi_controller_put() either directly or more usually via devm.
 
-ld.lld: error: undefined symbol: nec7210_write
->>> referenced by fmh_gpib.c:54 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:54)
->>>               vmlinux.o:(fmh_gpib_write)
+--jhA3jEBVEeVKRUv2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It appears that some modules call the function nec7210_board_reset() that
-is defined in nec7210.c. In an allyesconfig build, these other modules are
-built in. But the file that holds nec7210_board_reset() has:
+-----BEGIN PGP SIGNATURE-----
 
-  obj-m += nec7210.o
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdhl3EACgkQJNaLcl1U
+h9D7cAgAhqB7KUEudxUgOs9vV137sCySYAo27XuUHkRqCVxSFiQoN+OcMT4vojPV
+rC7HB1rUMIDRLeTqHbpFWNiFjMebSC0X7dpT5JXGVr1ehGDZ19dkI1jiQjCG3FWd
+YMFU4wIRGq+WLqdUFoxhI0TGTdyzmTu3zkx7DNzr0Z2RnLiRujM9U7EHHRxCuRcN
+IceiBSu33zf7BefltQiuGCfOAe5JPnB6lxgOEQoIhuqaMsx2LhS93fM1m/zFTxx3
+Co3SB6QWe8rORsu3M8JsO5u1NzIwTgwt4CzSpxv6eEfPGGAPwCvPSVB9p8A3m8v0
+gNXP+aDJJUtVdw9pTPx9zMEA3VEv4A==
+=dgEN
+-----END PGP SIGNATURE-----
 
-Where that "-m" means it only gets built as a module. With the other
-modules built in, they have no access to nec7210_board_reset() and the build
-fails.
-
-This isn't the only function. After fixing that one, I hit another:
-
-ld.lld: error: undefined symbol: push_gpib_event
->>> referenced by fmh_gpib.c:1166 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1166)
->>>               vmlinux.o:(fmh_gpib_internal_interrupt)
->>> referenced by nec7210.c:956 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/nec7210/nec7210.c:956)
->>>               vmlinux.o:(nec7210_interrupt_have_status)
->>> referenced by nec7210.c:962 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/nec7210/nec7210.c:962)
->>>               vmlinux.o:(nec7210_interrupt_have_status)
-
-ld.lld: error: undefined symbol: gpib_match_device_path
->>> referenced by fmh_gpib.c:1370 (/work/build/trace/nobackup/linux-test.git/drivers/staging/gpib/fmh_gpib/fmh_gpib.c:1370)
->>>               vmlinux.o:(fmh_gpib_device_match)
-
-Where push_gpib_event() was also used outside of the file it was defined
-in, and that file too only was built as a module.
-
-Since the directory that nec7210.c is only traversed when
-CONFIG_GPIB_NEC7210 is set, and the directory with gpib_common.c is only
-traversed when CONFIG_GPIB_COMMON is set, use those configs as the option to
-build those modules. When it is an allyesconfig, then they will both be
-built in and their functions will be available to the other modules that
-are also built in.
-
-Fixes: 3ba84ac69b53e ("staging: gpib: Add nec7210 GPIB chip driver")
-Fixes: 9dde4559e9395 ("staging: gpib: Add GPIB common core driver")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- drivers/staging/gpib/common/Makefile  | 2 +-
- drivers/staging/gpib/nec7210/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/gpib/common/Makefile b/drivers/staging/gpib/common/Makefile
-index 0c4c77bea75b..460586edb574 100644
---- a/drivers/staging/gpib/common/Makefile
-+++ b/drivers/staging/gpib/common/Makefile
-@@ -1,5 +1,5 @@
- 
--obj-m += gpib_common.o
-+obj-$(CONFIG_GPIB_COMMON) += gpib_common.o
- 
- gpib_common-objs := gpib_os.o iblib.o
- 
-diff --git a/drivers/staging/gpib/nec7210/Makefile b/drivers/staging/gpib/nec7210/Makefile
-index 8d4d90f21109..64330f2e89d1 100644
---- a/drivers/staging/gpib/nec7210/Makefile
-+++ b/drivers/staging/gpib/nec7210/Makefile
-@@ -1,4 +1,4 @@
- 
--obj-m += nec7210.o
-+obj-$(CONFIG_GPIB_NEC7210) += nec7210.o
- 
- 
--- 
-2.45.2
-
+--jhA3jEBVEeVKRUv2--
 
