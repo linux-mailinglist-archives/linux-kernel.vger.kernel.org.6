@@ -1,198 +1,382 @@
-Return-Path: <linux-kernel+bounces-449348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51739F4D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:21:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAE29F4D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFE9188B2DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:21:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9EE516E763
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47A21F12E7;
-	Tue, 17 Dec 2024 14:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DFE1F4E5A;
+	Tue, 17 Dec 2024 14:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="azoNqTfx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EWCGAIp3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FA83398A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 14:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445307; cv=none; b=PaAzaI3brEqJ6Yp363MWfUM7g6ZnGbOJpSIuiQyFoA/EV3hsnPI6XqYpfrHI7hJv6GZArzYmS2NbQEnv2egw5b+LEYsTyBl6ZWeu23pO9M9moDuSafQTguX41Hs+4XZoa04+OBm3foY5Xllcuy+hzk/g7+j4fyBtQ7pjQJ1M+i0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445307; c=relaxed/simple;
-	bh=sWv5g63h/lelG/c0svQYP3qdi2ru2vaye3Lu8aYT+2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-type; b=PVMf7JqOEF5YYsNCKuBKNaGJEmGcsCTFmOLztD3Wypf+MSqzeWdYBwGfVT6YVOiOhc0Jg1DOH5d9wRuu7n5+trKuplbdIM2E02ZDFWHzUkcrvbLH5FC/U6mW9anx4ZTMSp+ltiIbgnQWGQaNxJWLCPWCdgs8Bvn+imFHWV2F0MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=azoNqTfx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734445304;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8Dr2EHbX/y+fl2ClFkwVxyN+xWUTEC0vyjnXgy6CKlY=;
-	b=azoNqTfxNsZgIoFsqYjLE3eImRWjjIak/iUl17WV78gtvdSBQNgISRclwrKO4W9TJ+BkpF
-	gSrqmroF5xqIZxSVNzrLfGqb9tFsSmV13tozbmL5/54O9JxXPu89GxMfozWpnJrC/XLL6o
-	GkArT3fk+EqxNJ5UnSWCehd7Ea+LLEA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-490-JNTNR6fqP6mM5FabTD3yKQ-1; Tue, 17 Dec 2024 09:21:43 -0500
-X-MC-Unique: JNTNR6fqP6mM5FabTD3yKQ-1
-X-Mimecast-MFC-AGG-ID: JNTNR6fqP6mM5FabTD3yKQ
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-385df115288so2240489f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:21:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734445301; x=1735050101;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Dr2EHbX/y+fl2ClFkwVxyN+xWUTEC0vyjnXgy6CKlY=;
-        b=pes4hfSWpFvzq6HvM2DRWkbP/bCrskCtjNC1bUF/yeYTeq872WIYJ6dKNS8EWNY4LJ
-         zugyktOz6YXSPS7wx41ze0p4s3Fk7uzc0ruCHbbVN/840J7dHgYiw4XaNh32x53BkxZA
-         qj3wHiRCl8Qp8NG6iZxDNbjgVsx66lBqcVGuy7PEFcaoismIez1U8EfICdSrmLwn150x
-         HchOdChau3gTuE9NbXMS1+5WuImnc2XaUGMjPE8pNIVMHRqHaPOGh1Ztd8I7pe7rebDU
-         alfgZzAQ9w962/zdtlyKsjDGWWIfkZuNtqQe58m+AYMJn8zNJ3wBVZkKtEPRvYPmgf2f
-         BaZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbOXW3jlLX+qLmoE9b+xTFrTX5AKjWNXqC1kDFjlbz5Wn73gioRucnMT8i3uN1ef4FO2gSi7AMQQ6dLe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSUDcI9RKdTzC5YbIXCGsXGjNptWR2Yi610z8BNfOPfRViE4VV
-	JF8Ccbsorj4M5LD6EAsYA4PqFfpjdfnqqdMQvPYQqg9aG8/oddYiD5O7Jq4/RcsihhTGuZkvQ+f
-	6g76B9B6oohxB7cLH+/HgWmEN0m0OZ4udJXtj+aWgKG3dWpLpndkv4J4hROvdLIM5ef006Ojc
-X-Gm-Gg: ASbGncsWN1Rcqnz80qKKmr5wyjHLvBbpJbYas407J6qmycALHNojzwZ0Wsm02yFPQcX
-	w4Zq8S5H2/KWXg+zGOF1hppamHU0aUDAr/KakjJFfgWqUO+YOvxHYOq6zrl25ekt2DDKWTYpLzs
-	1NqPQ/WXutDnqP27NwTrxekLJVcGKOK1A0qSfYkzTtbpJDvE/K7Rl0zGrVPI6tCW975a1DiBytO
-	8s5O0zDA43UPElDf2EgSlbtHZT8nP4oWpHguICWpPAC/lMmAKL/jcVhXVcgtg==
-X-Received: by 2002:a05:6000:787:b0:385:f114:15bd with SMTP id ffacd0b85a97d-3888e0b8614mr13448728f8f.37.1734445300983;
-        Tue, 17 Dec 2024 06:21:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGuGTV7yX6OAyCGz+mhik59B+KccVwP+GQIMkxCeBkGgKnKosocOSTTeZKg4gnWSMhLmmy2fw==
-X-Received: by 2002:a05:6000:787:b0:385:f114:15bd with SMTP id ffacd0b85a97d-3888e0b8614mr13448709f8f.37.1734445300580;
-        Tue, 17 Dec 2024 06:21:40 -0800 (PST)
-Received: from lab.hqhome163.com ([81.57.75.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4362557c57dsm173106295e9.12.2024.12.17.06.21.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 06:21:39 -0800 (PST)
-From: Alessandro Carminati <acarmina@redhat.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: Alessandro Carminati <alessandro.carminati@gmail.com>,
-	Thomas Weissschuh <thomas.weissschuh@linutronix.de>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Gabriele Paoloni <gpaoloni@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>,
-	Alessandro Carminati <acarmina@redhat.com>
-Subject: [PATCH v2] mm/kmemleak: Fix sleeping function called from invalid context at print message
-Date: Tue, 17 Dec 2024 14:20:33 +0000
-Message-Id: <20241217142032.55793-1-acarmina@redhat.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3727470;
+	Tue, 17 Dec 2024 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734445266; cv=fail; b=mDn82xtOZoRFk16grjUahyd+gAYyuhSFQ67txwMC64Td7Qpf5b6SpNIHu6znlBss+HHHd2efeBTvyoy69M2+oo4ocoD3hDtxoqKUOc8hOCE5uWW7WzDDkwfWXGdm99EINdAQm5XmwVj9VNSLTuBh01S7udQNDsyOcoUITi27M7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734445266; c=relaxed/simple;
+	bh=zRpKGXtjLbdjF22A1aCwBXV/VkmUjJjlhxwcq4myZR8=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=WYyB/B81da65IpIMI8o0+W9M9qKSIntyrQ0eGf00qy0r1seLg2GIZok2TxurhI+xtRjEyGXUUEF9b06Y+M+aFt/usQpBMrORJlD2jRiTlCXbWNg7zvuHVTGl/1sQEQeUidvaLw1AjeVxrB1tvvCyDdZRjNlUx059VmBifIdTeD4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EWCGAIp3; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734445264; x=1765981264;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=zRpKGXtjLbdjF22A1aCwBXV/VkmUjJjlhxwcq4myZR8=;
+  b=EWCGAIp3KXp6BoQOW9I0i5kqkS3ZstlyEDMwECcsF9KQiPNrXj25PAn4
+   Gvu27+MDLnlMS8/gltkw4OagixYpDXDzBh9UG2zyOxMxp3uPYpBxoWO4y
+   Ru+vvJS+XZ6EUP8Wcotj40cmLSSSlK3vee5oh+VPj0mqUHybA09olJCsV
+   kKpC8pyZsJtQQzczKl8a5/w9Jet9jLJ1gBgw5tzJAGnxyLPxe5Kf/TJAM
+   lqyccTKQBUUBnRSBQOOn43z0CIgO6nQawb8aMPlERlGYnQKuvgW4AKeJp
+   p2YnDRBlX5ZLTJoH+jPmHLKUnoFHH3iB9lcxtjBbPVqtux/jczMv3AGmS
+   g==;
+X-CSE-ConnectionGUID: MK3/UScvRTanhWHtSqz3Ew==
+X-CSE-MsgGUID: tA5481MYTUisVq0LRfTyWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="37716372"
+X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
+   d="scan'208";a="37716372"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 06:21:02 -0800
+X-CSE-ConnectionGUID: Qhoj8RwrQgCuv4tkEaKK6Q==
+X-CSE-MsgGUID: migX1B05QJqd8Ps6GGkohw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="134886036"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Dec 2024 06:21:02 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 17 Dec 2024 06:21:01 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 17 Dec 2024 06:21:01 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.177)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 17 Dec 2024 06:21:01 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tEUxebomOqKhIT5jJpdNNKGC0+SCzsNvajI1mNFiN5DtMbS0HM/HzYT4Yx4OUWQfHLLMeaTRcojWzx5Tjh7p2XqUiARRo6NGpbFk/DTTl6BuLAOEKFD95gK7bev4hVc6I2e4GRrDx8f8eR0JHCRY4cl4Ba0G2MmJizDirxR7vMjvZnHCbA9pW2V3YWYGs+gj60f7sOjhcaV17mqOuYZJAK6dDiu4KqCmUB/EdjdYX6GCy0/nP5hm0UE/+IEgXAP/pFdlPrQOXF5ahu0HOgXizSq0Lio2y1f7h6XYewo3Pzshi1g64vrOLwbtdbLcbTBLHki0poFFeUJcP9QeK2mCHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bzhVGxY7ERXLeJ7iNT5wjyGM3b55IaR6ZW5MpF8YfuU=;
+ b=jllv0eCzQLSbRt8zQtcT91jQeZ+wNsx0GqEcDdmOQ5S4WScCBDJu6xtOXui8mVttNqhXOLmoRm9fGESfk3IQpQTCpBd91DcKlgdJHWHGV58Q3KjceKm9yOvd3IfNr6dWuiu+5kN9sbEUaLvsngkCWCD4CO0HIFOIoTBCuJbICNJNGB4WXXuFLxD6+ZyiUR1NLdLGk4BCz1HycKKeTBSZ6+ajTTH/b8BE+p+BmU01VSN+VDvVFGR6c9Oeb65kVzpnPwnWUxM+xOKPw4sFYHi13q49+Rz/zN8UdlOvOT24Fluvd9pSxn3yyzj7TyM+x5i25StcjtOIW34BwHHF3W20QA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH7PR11MB7479.namprd11.prod.outlook.com (2603:10b6:510:27f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
+ 2024 14:20:58 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 14:20:58 +0000
+Date: Tue, 17 Dec 2024 22:20:47 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Ming Lei <ming.lei@redhat.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Reinette Chatre <reinette.chatre@intel.com>,
+	Fenghua Yu <fenghua.yu@intel.com>, Peter Newman <peternewman@google.com>,
+	Babu Moger <babu.moger@amd.com>, Luck Tony <tony.luck@intel.com>,
+	<linux-block@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [blk]  22465bbac5:
+ BUG:KASAN:slab-use-after-free_in__cpuhp_state_add_instance_cpuslocked
+Message-ID: <202412172217.b906db7c-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI2PR06CA0009.apcprd06.prod.outlook.com
+ (2603:1096:4:186::17) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH7PR11MB7479:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cc423a9-2bf5-4917-7aec-08dd1ea606df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?x7Fq4VYk1vIqLxCHM5D96POVQl+CBA3ibvUUAASJ99KjJFOm5HjMCxJ4I8hW?=
+ =?us-ascii?Q?wPGx2xcPg/euTekabmgrqH6iE85gXfYGjAIca7/mbTZR5QBtBGU39OSCnb9D?=
+ =?us-ascii?Q?pIy+bj3Z1fuIOhxCH/tEo3HYo5GYf4W0L6DUwh7MbJRDL8IMs0DOPvcSUY4Z?=
+ =?us-ascii?Q?EDd1R4GtRw4SpfYFScEGygdcGV4mXOVM5JUodVWCDGwj42kCCkQ/03yBj6nR?=
+ =?us-ascii?Q?Q6vixdug18q5r675AW030cLzWGQ0Rw47vR8xgq+ezlnZZwPcYotfHAlsuRjN?=
+ =?us-ascii?Q?9cH1C9K8jFYtmHzU1BlM48c421hkJd/0IoTZeYNG9l6CAeB4XVdWJVkbxjD5?=
+ =?us-ascii?Q?yCgT2EsGqjA4s6Mu64f/otwqPHkKSgUInMLv+VGk/Xd9gmpjtlBQMgvY92LF?=
+ =?us-ascii?Q?pl5883t3Q3T3AwWJau2SQfGye64ZScxFJ2/Xg8jglY+St8CELp81a7pyk+sb?=
+ =?us-ascii?Q?QNtreHRCf1GAhwIrKDDeE/MiTSFTm/h50KJ5StvbKQOmdbpOZNUjlIryxmRo?=
+ =?us-ascii?Q?c4iaOszbRKsklABzSY14+E+Dp/FZXazgqoHiyPpKqv8lq1n2T+k9qMTeNNnK?=
+ =?us-ascii?Q?I3GjzXZiWiKswAGjQEIzrvI9d4otZKlBoYrtNS122w1HaQqd+R5e/Ckf52u+?=
+ =?us-ascii?Q?WM66JCfiXlRBCikXtPTIiLRPCmRvb0hhZYkzOj+QSh5u3nkgCaAtfc8SjbUF?=
+ =?us-ascii?Q?Doyb5VPsNZtSDmtF8wsbipci1wm1ax4gqaTJ8vdVnt8Glq7l3z+xOAT21omp?=
+ =?us-ascii?Q?9EDLgfFUJgxZOSUNz+7MyKDqTfcXUw3/Qx44Fd1EsYyoYydc+1ghQOyv8yLR?=
+ =?us-ascii?Q?vcz+dtaGt6lFDGGsPnOjlDoDUUnT3XL5mlP5NmfYkeHY6295P4FNLAgF9KEZ?=
+ =?us-ascii?Q?mxmVoQGsq0dhCi1zLGxQDd90d1TxWBsAFBudpiJOp7WwBBza2FXcria5+c1L?=
+ =?us-ascii?Q?pnh096QMAITmUTIwZVmHadopHaLdT3V0zb3SgtUbWxpYc0PELsVrvsoeALvo?=
+ =?us-ascii?Q?J9Zcqffc/qF4FNZuIalVBjOHRciPXEkQII2I1r+0LAGSyXZhg09E0sS4kqdG?=
+ =?us-ascii?Q?8shqJuwpJP0Y4K339qILxVPyfi43YJlxBuLq0qnu0+jKjakIk/IO7lCPhZ2M?=
+ =?us-ascii?Q?I+QvFjkDcoGsI1FKXPILoDdy8bjwtpmK7YfKWz2NW+hGODILgfHnZN+TcYzu?=
+ =?us-ascii?Q?Mt91y85savvW99rDq2LApG8LCHEtNzjhTINkz2EwyQLER1zCRH6Y1qmb1/sE?=
+ =?us-ascii?Q?Uq32cu44z5WO8MZzrHUlCHP4gtSKP8fCScclhCLR+l0M6fGsqGW7AW4B2eLB?=
+ =?us-ascii?Q?Ikq7HGdQuiycemQPV8bTsD7SbE1/IwQvKVFZz9x7Ldl+3A=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0s1GF4czDNYM0yWr51XMX4Uoe7I8Jbn6NxRB2A6w3ZnPAFZXaq7ixLoAEE/I?=
+ =?us-ascii?Q?uW7KgNKAMupJ6atrkTmArCihIQT62BC2c5aH3ROCOXHo+xAtHladubWYOD/t?=
+ =?us-ascii?Q?jx/jOSLtxWYTNbWBWeqiCQgrvQzLsrJbnSSqAqgLUw0yJuCq1PkN33cMzGJ0?=
+ =?us-ascii?Q?rNgiKMqLT5WhbsS0ARCR+1SPsfpJGcCUFtVS4kO4RRbpkzPnM9zPgnuJkdwG?=
+ =?us-ascii?Q?UidrEJonCTluzr0S+1dcyl+xgK1F9T72JyD3/Is/4cVDMFhkXNs9C5U0SIbK?=
+ =?us-ascii?Q?VZie696nHc4oKXatSrtxSM+H1GCBTQ5/RHQQ231InuPxd6kktcox71htNZ+2?=
+ =?us-ascii?Q?ZoEOrw+ygsouz1H/AQSyh76a1jZws+ovwfiDlpXRAb1HZQzFLGP4VCJn8d6P?=
+ =?us-ascii?Q?yIeNWL2ym+RKedmKA9VM/cMU6A/Q/ETWL8UXYncAqVjOSrFrhpfqnQwgF0hY?=
+ =?us-ascii?Q?zdTSQYAAFT4wwbcB7qHUB5HPpLqx+HVaEitFOi1pry7sDYF2l6uWaetidspJ?=
+ =?us-ascii?Q?1rSUVfh9NVSascatyorZM8GTr4sFW3156kglhvZUtWEyGi/FEjHE5YP3h4pQ?=
+ =?us-ascii?Q?c+bBv/q5/aXhNYalEtq2/2HtHJIHAAVnhZXvlxnTj30jojDQpScnNvJ2Ndb2?=
+ =?us-ascii?Q?e5x7OF/qrECp/pYfmUY4naH9wBT2MJ5ZlH+qn2TQyU7Spk6OYiPP6A7Vp3Zl?=
+ =?us-ascii?Q?ZiDqVW7anhhCzbUcYxggw6RpAvwph0SY7MDYGu1mCEH0AUCMHSg9IzNtKPPk?=
+ =?us-ascii?Q?93EYM5pY+q8UvX5Sb+5u9GipmeotnyznmPYqOCae5U1koU/iX+RzyWWI7LcI?=
+ =?us-ascii?Q?+3fgPLWIcm9bY+R9cTksEh36yLkn+gxc+Mv20wpZq1gypTiiTOIMRrB6ev4x?=
+ =?us-ascii?Q?NXyOVjaJ9r33ALEKlqPlXRUyEz3noSee5lGvKqRoth1RH6s2CguEgAwVUEwb?=
+ =?us-ascii?Q?yqgjYJfTRZCZMpE51zCFqLtwwoLXWNRlELO1vxKEgxTMrbdrjnEfzEahyudS?=
+ =?us-ascii?Q?nifLzVQDbRquTWdQ6kWI+KnPNL6vNBAJWuEcjYpivt99TA9qfxGTqVWaYMGc?=
+ =?us-ascii?Q?wQgMVOsMlzwa9GXqheM203cEvpIxK1xg0gn+N7Lsfi+ZwU8ZMgbkK5eXDq9X?=
+ =?us-ascii?Q?RUbRE+ZBNqHiVRsUMJpZ9Iw2ZZxGQauxpyMZQXL7FT/2QitQrLta/IvskibH?=
+ =?us-ascii?Q?A5TuqVBSjvLwdKnvatu6qWfhiq5D8BNO6sRDA3t7En7PQTewLCJ060K0LpqP?=
+ =?us-ascii?Q?dAgUWn7pbivX4ZAJSt33MS69vESAtVwjE+KNVFmH3ApgCZnO4wp55Z1bORGF?=
+ =?us-ascii?Q?Up8ZFsJOELhKv4YqRgDV20JdDSrMeY2CqXMkuCm7xUYqWa8fuCRCUT+311m/?=
+ =?us-ascii?Q?xcVHgbs22ukXB0N77dNpkNUclAst5G0sv2x366GxSvZanO98K5GUoinDwRHb?=
+ =?us-ascii?Q?ffPrYr2DvI3Kpuyv7b8DZ8MxgbgvLZJxRBSIXgE2HdDmSzhpLuoPF1NE0Qua?=
+ =?us-ascii?Q?Ee64Rg28KProsklMbLwS+5tfI+V0KS7hIzVkIP0ixwdljRO7GK0Jr5G05yW4?=
+ =?us-ascii?Q?QzPdo5BFugEPhl6HwI3QB1ECf9G422NnKQa2glJXnhYUH4/V2WbO5dFFwU7b?=
+ =?us-ascii?Q?pA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cc423a9-2bf5-4917-7aec-08dd1ea606df
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 14:20:58.7195
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WeFCqW2wNh9yX3EoyqaFxqBJAZE3ofwAD/71zh5qOb0wWuFHQJqi6IzAsu1YGTjt5Xi6VzAcrRyModT/krOVow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7479
+X-OriginatorOrg: intel.com
 
-Address a bug in the kernel that triggers a "sleeping function called from
-invalid context" warning when /sys/kernel/debug/kmemleak is printed under
-specific conditions:
-- CONFIG_PREEMPT_RT=y
-- Set SELinux as the LSM for the system
-- Set kptr_restrict to 1
-- kmemleak buffer contains at least one item
 
-BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 136, name: cat
-preempt_count: 1, expected: 0
-RCU nest depth: 2, expected: 2
-6 locks held by cat/136:
- #0: ffff32e64bcbf950 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb8/0xe30
- #1: ffffafe6aaa9dea0 (scan_mutex){+.+.}-{3:3}, at: kmemleak_seq_start+0x34/0x128
- #3: ffff32e6546b1cd0 (&object->lock){....}-{2:2}, at: kmemleak_seq_show+0x3c/0x1e0
- #4: ffffafe6aa8d8560 (rcu_read_lock){....}-{1:2}, at: has_ns_capability_noaudit+0x8/0x1b0
- #5: ffffafe6aabbc0f8 (notif_lock){+.+.}-{2:2}, at: avc_compute_av+0xc4/0x3d0
-irq event stamp: 136660
-hardirqs last  enabled at (136659): [<ffffafe6a80fd7a0>] _raw_spin_unlock_irqrestore+0xa8/0xd8
-hardirqs last disabled at (136660): [<ffffafe6a80fd85c>] _raw_spin_lock_irqsave+0x8c/0xb0
-softirqs last  enabled at (0): [<ffffafe6a5d50b28>] copy_process+0x11d8/0x3df8
-softirqs last disabled at (0): [<0000000000000000>] 0x0
-Preemption disabled at:
-[<ffffafe6a6598a4c>] kmemleak_seq_show+0x3c/0x1e0
-CPU: 1 UID: 0 PID: 136 Comm: cat Tainted: G            E      6.11.0-rt7+ #34
-Tainted: [E]=UNSIGNED_MODULE
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace+0xa0/0x128
- show_stack+0x1c/0x30
- dump_stack_lvl+0xe8/0x198
- dump_stack+0x18/0x20
- rt_spin_lock+0x8c/0x1a8
- avc_perm_nonode+0xa0/0x150
- cred_has_capability.isra.0+0x118/0x218
- selinux_capable+0x50/0x80
- security_capable+0x7c/0xd0
- has_ns_capability_noaudit+0x94/0x1b0
- has_capability_noaudit+0x20/0x30
- restricted_pointer+0x21c/0x4b0
- pointer+0x298/0x760
- vsnprintf+0x330/0xf70
- seq_printf+0x178/0x218
- print_unreferenced+0x1a4/0x2d0
- kmemleak_seq_show+0xd0/0x1e0
- seq_read_iter+0x354/0xe30
- seq_read+0x250/0x378
- full_proxy_read+0xd8/0x148
- vfs_read+0x190/0x918
- ksys_read+0xf0/0x1e0
- __arm64_sys_read+0x70/0xa8
- invoke_syscall.constprop.0+0xd4/0x1d8
- el0_svc+0x50/0x158
- el0t_64_sync+0x17c/0x180
 
-%pS and %pK, in the same back trace line, are redundant, and %pS can void
-%pK service in certain contexts.
+Hello,
 
-%pS alone already provides the necessary information, and if it cannot
-resolve the symbol, it falls back to printing the raw address voiding
-the original intent behind the %pK.
+kernel test robot noticed "BUG:KASAN:slab-use-after-free_in__cpuhp_state_add_instance_cpuslocked" on:
 
-Additionally, %pK requires a privilege check CAP_SYSLOG enforced through
-the LSM, which can trigger a "sleeping function called from invalid
-context" warning under RT_PREEMPT kernels when the check occurs in an
-atomic context. This issue may also affect other LSMs.
+commit: 22465bbac53c821319089016f268a2437de9b00a ("blk-mq: move cpuhp callback registering out of q->sysfs_lock")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-This change avoids the unnecessary privilege check and resolves the
-sleeping function warning without any loss of information.
+[test failed on linus/master      231825b2e1ff6ba799c5eaf396d3ab2354e37c6b]
+[test failed on linux-next/master 3e42dc9229c5950e84b1ed705f94ed75ed208228]
 
-Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
----
- mm/kmemleak.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+in testcase: blktests
+version: blktests-x86_64-3617edd-1_20241105
+with following parameters:
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 2a945c07ae99..737af23f4f4e 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -373,7 +373,7 @@ static void print_unreferenced(struct seq_file *seq,
- 
- 	for (i = 0; i < nr_entries; i++) {
- 		void *ptr = (void *)entries[i];
--		warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
-+		warn_or_seq_printf(seq, "    %pS\n", ptr);
- 	}
- }
- 
+	disk: 1SSD
+	test: block-group-01
+
+
+
+config: x86_64-rhel-9.4-func
+compiler: gcc-12
+test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake) with 32G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202412172217.b906db7c-lkp@intel.com
+
+
+[ 232.596698][ T3545] BUG: KASAN: slab-use-after-free in __cpuhp_state_add_instance_cpuslocked (include/linux/list.h:1026 kernel/cpu.c:2446)
+[  232.606144][ T3545] Write of size 8 at addr ffff88880ca5d968 by task check/3545
+[  232.613424][ T3545]
+[  232.615602][ T3545] CPU: 3 UID: 0 PID: 3545 Comm: check Not tainted 6.13.0-rc1-00018-g22465bbac53c #1
+[  232.624789][ T3545] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.8.1 12/05/2017
+[  232.632859][ T3545] Call Trace:
+[  232.635994][ T3545]  <TASK>
+[ 232.638783][ T3545] dump_stack_lvl (lib/dump_stack.c:123 (discriminator 1))
+[ 232.643131][ T3545] print_address_description+0x2c/0x3a0
+[ 232.649563][ T3545] ? __cpuhp_state_add_instance_cpuslocked (include/linux/list.h:1026 kernel/cpu.c:2446)
+[ 232.656244][ T3545] print_report (mm/kasan/report.c:490)
+[ 232.660497][ T3545] ? kasan_addr_to_slab (mm/kasan/common.c:37)
+[ 232.665273][ T3545] ? __cpuhp_state_add_instance_cpuslocked (include/linux/list.h:1026 kernel/cpu.c:2446)
+[ 232.671947][ T3545] kasan_report (mm/kasan/report.c:604)
+[ 232.676118][ T3545] ? __cpuhp_state_add_instance_cpuslocked (include/linux/list.h:1026 kernel/cpu.c:2446)
+[ 232.682795][ T3545] __cpuhp_state_add_instance_cpuslocked (include/linux/list.h:1026 kernel/cpu.c:2446)
+[ 232.689297][ T3545] ? __pfx_mutex_lock (kernel/locking/mutex.c:257)
+[ 232.693984][ T3545] __cpuhp_state_add_instance (kernel/cpu.c:2458)
+[ 232.699364][ T3545] blk_mq_realloc_hw_ctxs (include/linux/cpuhotplug.h:402 block/blk-mq.c:3774 block/blk-mq.c:3826 block/blk-mq.c:4497)
+[ 232.704571][ T3545] ? kfree (mm/slub.c:4598 mm/slub.c:4746)
+[ 232.708393][ T3545] ? __pfx_blk_mq_realloc_hw_ctxs (block/blk-mq.c:4453)
+[ 232.714117][ T3545] ? null_map_queues (drivers/block/null_blk/main.c:1502 (discriminator 2)) null_blk
+[ 232.719852][ T3545] __blk_mq_update_nr_hw_queues (block/blk-mq.c:5021)
+[ 232.725578][ T3545] ? __mark_inode_dirty (fs/fs-writeback.c:2619)
+[ 232.730610][ T3545] ? __pfx_rmqueue+0x10/0x10
+[ 232.736092][ T3545] ? kasan_unpoison (mm/kasan/shadow.c:156 mm/kasan/shadow.c:182)
+[ 232.740605][ T3545] ? __kasan_unpoison_pages (mm/kasan/common.c:136)
+[ 232.745810][ T3545] ? post_alloc_hook (mm/page_alloc.c:1539)
+[ 232.750497][ T3545] ? arch_stack_walk (arch/x86/kernel/stacktrace.c:24)
+[ 232.755098][ T3545] ? __pfx___blk_mq_update_nr_hw_queues (block/blk-mq.c:4980)
+[ 232.761344][ T3545] ? mutex_lock (arch/x86/include/asm/atomic64_64.h:101 include/linux/atomic/atomic-arch-fallback.h:4296 include/linux/atomic/atomic-long.h:1482 include/linux/atomic/atomic-instrumented.h:4458 kernel/locking/mutex.c:146 kernel/locking/mutex.c:260)
+[ 232.765512][ T3545] ? __pfx_mutex_lock (kernel/locking/mutex.c:257)
+[ 232.770200][ T3545] blk_mq_update_nr_hw_queues (block/blk-mq.c:5064)
+[ 232.775580][ T3545] nullb_update_nr_hw_queues (drivers/block/null_blk/main.c:406) null_blk
+[ 232.782002][ T3545] nullb_device_submit_queues_store (drivers/block/null_blk/main.c:424 (discriminator 3) drivers/block/null_blk/main.c:443 (discriminator 3)) null_blk
+[ 232.788944][ T3545] ? __pfx_nullb_device_submit_queues_store (drivers/block/null_blk/main.c:443) null_blk
+[ 232.796490][ T3545] ? kmem_cache_free (mm/slub.c:2303 mm/slub.c:4598 mm/slub.c:4700)
+[ 232.801262][ T3545] ? syscall_exit_to_user_mode (include/linux/resume_user_mode.h:50 kernel/entry/common.c:114 include/linux/entry-common.h:329 kernel/entry/common.c:207 kernel/entry/common.c:218)
+[ 232.806900][ T3545] configfs_write_iter (fs/configfs/file.c:207 fs/configfs/file.c:229)
+[ 232.811845][ T3545] ? __pfx_configfs_write_iter (fs/configfs/file.c:221)
+[ 232.817311][ T3545] vfs_write (fs/read_write.c:586 fs/read_write.c:679)
+[ 232.821393][ T3545] ? get_close_on_exec (fs/file.c:1222)
+[ 232.826167][ T3545] ? __pfx_vfs_write (fs/read_write.c:660)
+[ 232.830767][ T3545] ? folio_xchg_last_cpupid (mm/mmzone.c:109 (discriminator 14))
+[ 232.836061][ T3545] ? __pfx_ptep_set_access_flags (arch/x86/mm/pgtable.c:505)
+[ 232.841697][ T3545] ? __pfx_pte_mkwrite (arch/x86/mm/pgtable.c:903)
+[ 232.846472][ T3545] ? fdget_pos (arch/x86/include/asm/atomic64_64.h:15 include/linux/atomic/atomic-arch-fallback.h:2583 include/linux/atomic/atomic-long.h:38 include/linux/atomic/atomic-instrumented.h:3189 include/linux/file_ref.h:171 fs/file.c:1181 fs/file.c:1189)
+[ 232.850726][ T3545] ? do_wp_page (include/linux/vmstat.h:75 mm/memory.c:3277 mm/memory.c:3745)
+[ 232.855156][ T3545] ksys_write (fs/read_write.c:731)
+[ 232.859238][ T3545] ? __pfx_ksys_write (fs/read_write.c:721)
+[ 232.863927][ T3545] ? __pfx_handle_pte_fault (mm/memory.c:5758)
+[ 232.869141][ T3545] ? __pfx_expand_files (fs/file.c:270)
+[ 232.874007][ T3545] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+[ 232.878357][ T3545] ? __handle_mm_fault (mm/memory.c:5944)
+[ 232.883396][ T3545] ? __pfx___handle_mm_fault (mm/memory.c:5853)
+[ 232.888702][ T3545] ? __count_memcg_events (mm/memcontrol.c:583 mm/memcontrol.c:857)
+[ 232.893913][ T3545] ? handle_mm_fault (mm/memory.c:5986 mm/memory.c:6138)
+[ 232.898699][ T3545] ? do_user_addr_fault (include/linux/rcupdate.h:882 include/linux/mm.h:741 arch/x86/mm/fault.c:1340)
+[ 232.903736][ T3545] ? exc_page_fault (arch/x86/include/asm/irqflags.h:37 arch/x86/include/asm/irqflags.h:92 arch/x86/mm/fault.c:1489 arch/x86/mm/fault.c:1539)
+[ 232.908250][ T3545] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[  232.913976][ T3545] RIP: 0033:0x7ffb9ce86240
+[ 232.918232][ T3545] Code: 40 00 48 8b 15 c1 9b 0d 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d a1 23 0e 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+All code
+========
+   0:	40 00 48 8b          	rex add %cl,-0x75(%rax)
+   4:	15 c1 9b 0d 00       	adc    $0xd9bc1,%eax
+   9:	f7 d8                	neg    %eax
+   b:	64 89 02             	mov    %eax,%fs:(%rdx)
+   e:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
+  15:	eb b7                	jmp    0xffffffffffffffce
+  17:	0f 1f 00             	nopl   (%rax)
+  1a:	80 3d a1 23 0e 00 00 	cmpb   $0x0,0xe23a1(%rip)        # 0xe23c2
+  21:	74 17                	je     0x3a
+  23:	b8 01 00 00 00       	mov    $0x1,%eax
+  28:	0f 05                	syscall
+  2a:*	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax		<-- trapping instruction
+  30:	77 58                	ja     0x8a
+  32:	c3                   	ret
+  33:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+  3a:	48 83 ec 28          	sub    $0x28,%rsp
+  3e:	48                   	rex.W
+  3f:	89                   	.byte 0x89
+
+Code starting with the faulting instruction
+===========================================
+   0:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+   6:	77 58                	ja     0x60
+   8:	c3                   	ret
+   9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+  10:	48 83 ec 28          	sub    $0x28,%rsp
+  14:	48                   	rex.W
+  15:	89                   	.byte 0x89
+[  232.937637][ T3545] RSP: 002b:00007fffc21695e8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+[  232.945886][ T3545] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007ffb9ce86240
+[  232.953684][ T3545] RDX: 0000000000000002 RSI: 000055dbf9920c00 RDI: 0000000000000001
+[  232.961480][ T3545] RBP: 000055dbf9920c00 R08: 0000000000000007 R09: 0000000000000073
+[  232.969279][ T3545] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000002
+[  232.977076][ T3545] R13: 00007ffb9cf61760 R14: 0000000000000002 R15: 00007ffb9cf5c9e0
+[  232.984876][ T3545]  </TASK>
+[  232.987746][ T3545]
+[  232.989925][ T3545] Allocated by task 3545:
+[ 232.994092][ T3545] kasan_save_stack (mm/kasan/common.c:48)
+[ 232.998604][ T3545] kasan_save_track (arch/x86/include/asm/current.h:49 mm/kasan/common.c:60 mm/kasan/common.c:69)
+[ 233.003120][ T3545] __kasan_kmalloc (mm/kasan/common.c:377 mm/kasan/common.c:394)
+[ 233.007546][ T3545] blk_mq_alloc_hctx (include/linux/slab.h:924 block/blk-mq.c:3937)
+[ 233.012233][ T3545] blk_mq_alloc_and_init_hctx (block/blk-mq.c:4436)
+[ 233.017782][ T3545] blk_mq_realloc_hw_ctxs (block/blk-mq.c:4469)
+[ 233.022989][ T3545] blk_mq_init_allocated_queue (block/blk-mq.c:4524)
+[ 233.028714][ T3545] blk_mq_alloc_queue (block/blk-mq.c:4345)
+[ 233.033573][ T3545] __blk_mq_alloc_disk (block/blk-mq.c:4388)
+[ 233.038347][ T3545] null_add_dev (drivers/block/null_blk/main.c:1941) null_blk
+[ 233.043731][ T3545] nullb_device_power_store (include/linux/instrumented.h:82 include/asm-generic/bitops/instrumented-atomic.h:41 drivers/block/null_blk/main.c:496) null_blk
+[ 233.050064][ T3545] configfs_write_iter (fs/configfs/file.c:207 fs/configfs/file.c:229)
+[ 233.055010][ T3545] vfs_write (fs/read_write.c:586 fs/read_write.c:679)
+[ 233.059092][ T3545] ksys_write (fs/read_write.c:731)
+[ 233.063172][ T3545] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+[ 233.067513][ T3545] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[  233.073237][ T3545]
+[  233.075414][ T3545] Freed by task 3545:
+[ 233.079234][ T3545] kasan_save_stack (mm/kasan/common.c:48)
+[ 233.083750][ T3545] kasan_save_track (arch/x86/include/asm/current.h:49 mm/kasan/common.c:60 mm/kasan/common.c:69)
+[ 233.088261][ T3545] kasan_save_free_info (mm/kasan/generic.c:585)
+[ 233.093122][ T3545] __kasan_slab_free (mm/kasan/common.c:271)
+[ 233.097721][ T3545] kfree (mm/slub.c:4598 mm/slub.c:4746)
+[ 233.101370][ T3545] kobject_cleanup (lib/kobject.c:689)
+[ 233.105979][ T3545] blk_mq_alloc_and_init_hctx (block/blk-mq.c:4446)
+[ 233.111539][ T3545] blk_mq_realloc_hw_ctxs (block/blk-mq.c:4469)
+[ 233.116754][ T3545] __blk_mq_update_nr_hw_queues (block/blk-mq.c:5021)
+[ 233.122486][ T3545] blk_mq_update_nr_hw_queues (block/blk-mq.c:5064)
+[ 233.127876][ T3545] nullb_update_nr_hw_queues (drivers/block/null_blk/main.c:406) null_blk
+[ 233.134304][ T3545] nullb_device_submit_queues_store (drivers/block/null_blk/main.c:424 (discriminator 3) drivers/block/null_blk/main.c:443 (discriminator 3)) null_blk
+[ 233.141245][ T3545] configfs_write_iter (fs/configfs/file.c:207 fs/configfs/file.c:229)
+[ 233.146194][ T3545] vfs_write (fs/read_write.c:586 fs/read_write.c:679)
+[ 233.150274][ T3545] ksys_write (fs/read_write.c:731)
+[ 233.154355][ T3545] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+[ 233.158708][ T3545] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[  233.164431][ T3545]
+[  233.166607][ T3545] The buggy address belongs to the object at ffff88880ca5d800
+[  233.166607][ T3545]  which belongs to the cache kmalloc-512 of size 512
+[  233.180477][ T3545] The buggy address is located 360 bytes inside of
+[  233.180477][ T3545]  freed 512-byte region [ffff88880ca5d800, ffff88880ca5da00)
+[  233.194071][ T3545]
+[  233.196248][ T3545] The buggy address belongs to the physical page:
+[  233.202492][ T3545] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x80ca5c
+[  233.211156][ T3545] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[  233.219471][ T3545] flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
+[  233.227097][ T3545] page_type: f5(slab)
+[  233.230921][ T3545] raw: 0017ffffc0000040 ffff88810c842c80 ffffea001ffdb900 dead000000000002
+[  233.239324][ T3545] raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+[  233.247742][ T3545] head: 0017ffffc0000040 ffff88810c842c80 ffffea001ffdb900 dead000000000002
+[  233.256233][ T3545] head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241217/202412172217.b906db7c-lkp@intel.com
+
+
+
 -- 
-2.34.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
