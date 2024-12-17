@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-448502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84CDA9F4107
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:46:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E179F40FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF09188E8AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:46:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EB5F7A2C79
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537A15B546;
-	Tue, 17 Dec 2024 02:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WRSzkUcL"
-Received: from mail-m11879.qiye.163.com (mail-m11879.qiye.163.com [115.236.118.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B4114831E;
+	Tue, 17 Dec 2024 02:44:35 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D620A15A85A;
-	Tue, 17 Dec 2024 02:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.118.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406112595;
+	Tue, 17 Dec 2024 02:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734403482; cv=none; b=Og1wsaE3j3RrYoD0LKei37MWMBieedLLSRGeTO0l7ExQZJkrS2nAE2S9XZ/vgb5tDx2Lt6eMPGx3Z4BGkxi1tnQVUGpqO0pj4zDPK3B5zu0/PSoo5fUwYmJO9mvxZuSPItvsbULzmmDjc3AQ0evI3V+8iwCQ0XN+bldOO6simKc=
+	t=1734403475; cv=none; b=J5fOm4rI08uMGdQZ+U5G////WmYeIRW/PAhwJMVv5O13D/wOmz9n9CcQ40abyEaWwuhcY3UCKo0I1DqUcLiFk9rbQ/ypQJCUQGu40jGJ7rrkoRMYOnIWIgOW2GGkaH9U7zS15MNjNejmgM0DcDGtyKtZ6S9I0fZThXHXp01yKN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734403482; c=relaxed/simple;
-	bh=9n/zI/O7haEMeDpiOaVz2plrsy4gpJ2Kt2kHVN/A0qc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tEXwy8k3/rIiSplxpIXLix1hvyl0i+c3AJBQJPVUGgCxk7BTM5bhmJUAmIx7PTj5t6kjIxHrOuaCd/0bfKprRvkU7E5/tUSnGCS9qh3OZ8zGOHjJBDfGXpmv6jhkPzoZBEV5X1AkNlwMW3piGyTC7MkW6biT3ePhNWAq4qZ5vGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WRSzkUcL; arc=none smtp.client-ip=115.236.118.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 5ec156bf;
-	Tue, 17 Dec 2024 10:39:22 +0800 (GMT+08:00)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: zhangqing@rock-chips.com,
-	mkl@pengutronix.de,
-	kernel@pengutronix.de,
-	mailhol.vincent@wanadoo.fr,
-	heiko@sntech.de,
-	cl@rock-chips.com,
-	kever.yang@rock-chips.com
-Cc: linux-can@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1734403475; c=relaxed/simple;
+	bh=FRfUUccdYlSbqR0CKnuQQmf1Ww0JiHGw8NKAGCRzJc0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GcBMmmAVCFzYPKVLLpXzCYaWM0YQbWpTw9clpDghbaTJkjCe/ntx1Aoa3HFVGWL3RAd+zbCUo/h69AxM3bwq8gCWbDM/3tQtSrEnKi3mhulJktN3FKu++/dclHHSSEtsu7Qr8JW+MnY3/NhsA6SraNZEK93tqunVywlcE1ZfxDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4YC1NM3zR0z4f3jXT;
+	Tue, 17 Dec 2024 10:44:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 021681A018C;
+	Tue, 17 Dec 2024 10:44:22 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAHMYWE5WBndhZJEw--.48443S4;
+	Tue, 17 Dec 2024 10:44:22 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	akpm@linux-foundation.org,
+	ming.lei@redhat.com,
+	yang.yang@vivo.com,
+	bvanassche@acm.org,
+	osandov@fb.com,
+	paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: rockchip: rk3576: add can dts nodes
-Date: Tue, 17 Dec 2024 10:39:08 +0800
-Message-Id: <20241217023908.1292999-3-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241217023908.1292999-1-zhangqing@rock-chips.com>
-References: <20241217023908.1292999-1-zhangqing@rock-chips.com>
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC v2 0/4] lib/sbitmap: fix shallow_depth tag allocation
+Date: Tue, 17 Dec 2024 10:40:43 +0800
+Message-Id: <20241217024047.1091893-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,63 +61,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh9JTFYfSkJLTEsfGkpOTUtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93d27c02cf03a3kunm5ec156bf
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ny46Dio5LTILTR84IwoSUT0N
-	DDNPCwFVSlVKTEhPT0tISk1IQklIVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpPQko3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=WRSzkUcLFHUQwjHZ9FgA80+ljrbvUmQfByWfj/cQfxVhXpURm/hQJeGmnGypOut36OH8y8qHTwwEjeLSvTU+CTNOKRmb0jl/cvYNDFZrNHQLgbLkj/dx8SY3bsndragufi3Nr1KyrcOxLCSuVKdBzM4vjLxNjGVwzaC0/WtgM8c=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=mbc4XvnMPoqYWmjqlM+MGD27w/PMpYBtQHdgk1ZuX98=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:gCh0CgAHMYWE5WBndhZJEw--.48443S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7XrykGw18JryxGr13GF1UGFg_yoW3XFg_JF
+	WkAa48Jwn3J3Zxua4UtF15JrWjyr48tr15AF1DtFs3Zr13CF1UArWkAFWUZr1UZF4UAwn5
+	ArykZr4vyr1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+From: Yu Kuai <yukuai3@huawei.com>
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 436232ffe4d1..82fdfd4720ec 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1195,6 +1195,32 @@ dmac2: dma-controller@2abd0000 {
- 			#dma-cells = <1>;
- 		};
- 
-+		can0: can@2ac00000 {
-+			compatible = "rockchip,rk3576-canfd";
-+			reg = <0x0 0x2ac00000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cru CLK_CAN0>, <&cru HCLK_CAN0>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&cru SRST_CAN0>, <&cru SRST_H_CAN0>;
-+			reset-names = "can", "can-apb";
-+			dmas = <&dmac0 20>;
-+			dma-names = "rx";
-+			status = "disabled";
-+		};
-+	
-+		can1: can@2ac10000 {
-+			compatible = "rockchip,rk3576-canfd";
-+			reg = <0x0 0x2ac10000 0x0 0x1000>;
-+			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cru CLK_CAN1>, <&cru HCLK_CAN1>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&cru SRST_CAN1>, <&cru SRST_H_CAN1>;
-+			reset-names = "can", "can-apb";
-+			dmas = <&dmac1 21>;
-+			dma-names = "rx";
-+			status = "disabled";
-+		};
-+
- 		i2c1: i2c@2ac40000 {
- 			compatible = "rockchip,rk3576-i2c", "rockchip,rk3399-i2c";
- 			reg = <0x0 0x2ac40000 0x0 0x1000>;
+Changes in RFC v2:
+ - update commit message for patch 1;
+ - also handle min_shallow_depth in patch 2;
+ - add patch 3 to choose none elevator by default;
+ - add patch 4 to fix default wake_batch;
+
+Yu Kuai (4):
+  block/mq-deadline: Revert "block/mq-deadline: Fix the tag reservation
+    code"
+  lib/sbitmap: fix shallow_depth tag allocation
+  block/elevator: choose none elevator for high IO concurrency ability
+    disk
+  block/mq-deadline: introduce min_async_depth
+
+ block/elevator.c        | 11 +++++++++
+ block/mq-deadline.c     | 35 +++++++++++++-------------
+ include/linux/sbitmap.h |  6 ++---
+ lib/sbitmap.c           | 55 +++++++++++++++++++++--------------------
+ 4 files changed, 59 insertions(+), 48 deletions(-)
+
 -- 
-2.34.1
+2.39.2
 
 
