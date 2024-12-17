@@ -1,162 +1,105 @@
-Return-Path: <linux-kernel+bounces-448558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D855A9F41C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:33:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86729F41C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:39:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D31316D8C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC84A188771E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D759E14831E;
-	Tue, 17 Dec 2024 04:33:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE3413C689
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C5D1474CF;
+	Tue, 17 Dec 2024 04:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="2wJmJ29F"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BED5442F
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734409999; cv=none; b=Hd4Pz+nYMtQiG1S2C3YagvLLFQpxsWO+pR9hCsme+jtCzJ1pfQBUOC8/WdMf9J/SwUpkehloRhg4jCSgRIKaEQUXrHXZK1X0waC1BsDTxue9Dee64JC0I/kkNzMFCVxDbS6LprTjz7+yKOZVrBrMOx4oUh+/YXUgAvGE6Ho/Ac4=
+	t=1734410388; cv=none; b=qYigdl6hJeTg5XAtRE1XP5mhloPr5Av2yo6YZG+27KWwkEc0NG37L1Mvx3L415tRVHURn522tp5NhY1//YtAjHoA8qCwyWFoPDAN47YsZD7Qf9cya9GaiFVDjXZLNhNbvcbAIs4pKAKThBOvh6AGXjeQgmTizuDUgggZqXwLpw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734409999; c=relaxed/simple;
-	bh=sd81yIlf0nBnARe0qAYmvCM77kaaeYj7T2eUfE939ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfN/ruA8KxcN3MfwtY75mYGwBmN3LZlWVWkZGxgnhbg9D3/r24UtJ8V/tS7F2kZcu57VlC+JyLcHZI+UMsr7Iwq0BTyFn4Vkd+DbktUfuH/frweH6H6mt1ELOLvEvkI4e68wNP9t/LyZL8wBbHPgkFgcnn2t7q6MgSCrxMUXPLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E5411063;
-	Mon, 16 Dec 2024 20:33:44 -0800 (PST)
-Received: from [10.162.16.49] (a077893.blr.arm.com [10.162.16.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6F1E3F720;
-	Mon, 16 Dec 2024 20:33:12 -0800 (PST)
-Message-ID: <0b8a055f-eab9-4b44-baac-ad25756dbbfd@arm.com>
-Date: Tue, 17 Dec 2024 10:03:10 +0530
+	s=arc-20240116; t=1734410388; c=relaxed/simple;
+	bh=ONS2xW78R972FPmIIq4og84deIWQueVXVviERl9RP0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2TmFFFURvde209f0QTUYt/t+GDcISitys2WMqP8h9RiBaENeT6QqYFhHL1+UZdqwC1wPcVX4IG86u4FyrpLyUgUEZvXHZimcA4ihT5RBQTzYaVWk9A/vWsWZ2+FNsDQJDV1/WMm/WkOHqtj0Zpz0x0x9oVMaeHFCwtjrkoLIoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=2wJmJ29F; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0E5972C097F;
+	Tue, 17 Dec 2024 17:39:44 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734410384;
+	bh=L2N0j7JelgbHVJvdCA6XmDaiPSFotRbeW9oF1FbdIFI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=2wJmJ29FntYydrsGJLKJ6esH0msg/AUsBNRliWxBqfBG+QCWOmkp7qezYi3GSvE/N
+	 c6BTUYvV2fuMp4sT8tkUzfpyO28NBOyOS96ETdFEnOPvH7SkieH3u+WAp0gMj6YO1O
+	 1nki5KVoe+6SD7PYMIG19c4dJgP30MfMkHc0i1DlJpdfKPXU4EDHB562O0b0IsP0iF
+	 oY7ZPakaklO83hFQoK1wmznL8xP2mh2GlpGSQ1STpzXQmFpP2Zj9Z0jd3tvwl+fm9V
+	 jHQN0vpRrP4aEjbdjDpmwNJb/Mjikb79Go0wgBc3gJNRV1cwQFapMSCcqSAslH6uaZ
+	 UgMwZZ+vPT3+Q==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6761008f0000>; Tue, 17 Dec 2024 17:39:43 +1300
+Received: from elliota2-dl.ws.atlnz.lc (elliota-dl.ws.atlnz.lc [10.33.23.28])
+	by pat.atlnz.lc (Postfix) with ESMTP id 7898113ED95;
+	Tue, 17 Dec 2024 17:39:43 +1300 (NZDT)
+Received: by elliota2-dl.ws.atlnz.lc (Postfix, from userid 1775)
+	id 73B163C0174; Tue, 17 Dec 2024 17:39:43 +1300 (NZDT)
+From: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"Hans J. Schultz" <netdev@kapio-technology.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+Subject: [PATCH net] net: dsa: mv88e6xxx: Fix switchdev error code
+Date: Tue, 17 Dec 2024 17:39:30 +1300
+Message-ID: <20241217043930.260536-1-elliot.ayrey@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 18/46] arm64/sysreg: Add register fields for PMUACR_EL1
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, maz@kernel.org, ryan.roberts@arm.com,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>
-References: <20241210055311.780688-1-anshuman.khandual@arm.com>
- <20241210055311.780688-19-anshuman.khandual@arm.com>
- <20241216231505.GA601635-robh@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241216231505.GA601635-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761008f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=8i6-b8GgAAAA:8 a=N--7mn-ydMt7gBr8E2oA:9 a=3ZKOabzyN94A:10 a=XAGLwFu5sp1jj7jejlXE:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
+Calling a switchdev notifier encodes additional information into the
+return code. Using this value directly makes error messages confusing.
 
+Use notifer_to_errno() to restore the original errno value.
 
-On 12/17/24 04:45, Rob Herring wrote:
-> On Tue, Dec 10, 2024 at 11:22:43AM +0530, Anshuman Khandual wrote:
->> This adds register fields for PMUACR_EL1 as per the definitions based
->> on DDI0601 2024-09.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/tools/sysreg | 37 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 37 insertions(+)
->>
->> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
->> index 214ad6da1dff..462adb8031ca 100644
->> --- a/arch/arm64/tools/sysreg
->> +++ b/arch/arm64/tools/sysreg
->> @@ -2349,6 +2349,43 @@ Res0	63:5
->>  Field	4:0	SEL
->>  EndSysreg
->>  
->> +Sysreg	PMUACR_EL1	3	0	9	14	4
-> 
-> I already added this and various other PMUv3.9 registers you've added 
-> here in v6.12 and v6.13. So are you on an old base or the tool allows 
-> multiple definitions? If the latter, that should be fixed.
+Fixes: 830763b96720 ("net: dsa: mv88e6xxx: mac-auth/MAB implementation")
+Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+---
+ drivers/net/dsa/mv88e6xxx/switchdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series is based on v6.13-rc1 and as you mentioned PMUACR_EL1 has
-already been added into tools sysreg.
-
-Sysreg  PMUACR_EL1      3       0       9       14      4
-Res0    63:33
-Field   32      F0
-Field   31      C
-Field   30:0    P
-EndSysreg
-
-Seems like the tool does allow multiple definitions for a single register.
-The generated header (arch/arm64/include/generated/asm/sysreg-defs.h) does
-include redundant blocks for the following.
-
-#define REG_PMUACR_EL1                                  S3_0_C9_C14_4
-#define SYS_PMUACR_EL1                                  sys_reg(3, 0, 9, 14, 4)
-#define SYS_PMUACR_EL1_Op0                              3
-#define SYS_PMUACR_EL1_Op1                              0
-#define SYS_PMUACR_EL1_CRn                              9
-#define SYS_PMUACR_EL1_CRm                              14
-#define SYS_PMUACR_EL1_Op2                              4
-
-#define PMUACR_EL1_C                                    GENMASK(31, 31)
-#define PMUACR_EL1_C_MASK                               GENMASK(31, 31)
-#define PMUACR_EL1_C_SHIFT                              31
-#define PMUACR_EL1_C_WIDTH                              1
-
-I am wondering how this did not cause any re-definition warning ?
-
-> 
->> +Res0	63:33
->> +Field	32	FM
->> +Field	31	C
->> +Field	30	P30
->> +Field	29	P29
->> +Field	28	P28
->> +Field	27	P27
->> +Field	26	P26
->> +Field	25	P25
->> +Field	24	P24
->> +Field	23	P23
->> +Field	22	P22
->> +Field	21	P21
->> +Field	20	P20
->> +Field	19	P19
->> +Field	18	P18
->> +Field	17	P17
->> +Field	16	P16
->> +Field	15	P15
->> +Field	14	P14
->> +Field	13	P13
->> +Field	12	P12
->> +Field	11	P11
->> +Field	10	P10
->> +Field	9	P9
->> +Field	8	P8
->> +Field	7	P7
->> +Field	6	P6
->> +Field	5	P5
->> +Field	4	P4
->> +Field	3	P3
->> +Field	2	P2
->> +Field	1	P1
->> +Field	0	P0
-> 
-> We're never going to use Pnn defines. This is just useless bloat unless 
-> we're aiming to top amd gpu defines LOC.
-
-Okay, this patch was trying to be cautiously comprehensive. But anyways
-PMUACR_EL1 has already been added and hence this is redundant now.
+diff --git a/drivers/net/dsa/mv88e6xxx/switchdev.c b/drivers/net/dsa/mv88=
+e6xxx/switchdev.c
+index 4c346a884fb2..7c59eca0270d 100644
+--- a/drivers/net/dsa/mv88e6xxx/switchdev.c
++++ b/drivers/net/dsa/mv88e6xxx/switchdev.c
+@@ -79,5 +79,5 @@ int mv88e6xxx_handle_miss_violation(struct mv88e6xxx_ch=
+ip *chip, int port,
+ 				       brport, &info.info, NULL);
+ 	rtnl_unlock();
+=20
+-	return err;
++	return notifier_to_errno(err);
+ }
 
