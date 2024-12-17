@@ -1,113 +1,75 @@
-Return-Path: <linux-kernel+bounces-448736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526419F44D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:09:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8B89F44D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DED01887601
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F194160FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2D315B111;
-	Tue, 17 Dec 2024 07:09:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF9914831E
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A953516F271;
+	Tue, 17 Dec 2024 07:11:11 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDC62BAF7;
+	Tue, 17 Dec 2024 07:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734419389; cv=none; b=C+KBcdeFbsubhSBHi07SB9c6JolIJhaF3QLHXHBG/HuNF+nHZql6jqz2o3TeJ7a0nwvAAwK/hWo5WexVMr/f3FnwF3xTA2xDv8pPlwy33eIvAk4+MaleP9MiL+WWD1L78MaNynNcyTmzw2FdcVsHc0Stv7TAK5Hc9QpZxMNAvqA=
+	t=1734419471; cv=none; b=te6XowLRD82h8HpakBJ4x5WL2x11RVEyg44/nsYq8Mcz78SjGyjhgNrfwH1J+tT4/tmo4w2VMcdNpCgy1204vCAAgNkFKgct9vcDyEMUGQdwfbbuM8npq6uycNhOxVqcffynzk14vSnVJXO/CzAaLlZ9Em8HH3h+rYymy3fYoRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734419389; c=relaxed/simple;
-	bh=ikb3cf7ZPOaIsDFBsU1qPzhbgO2K2/TfCgc3lRoJS98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iTIzztg2Z5B9lArrawb+Ew5xDVDJsAW8xCYEUaG44dG4O03H4VFdjLmHcHl83PvLYlJPGdL0z7IWlzHuTcPFyabX6Ip23HBbwCkZdOlllWDMswkl8gGoQswi3M+alGwRXhlvMWVsh2p3XHCtF3EZTaBthkW18powKW3qf5aPE5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3B2F1007;
-	Mon, 16 Dec 2024 23:10:14 -0800 (PST)
-Received: from [10.57.91.184] (unknown [10.57.91.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3D943F528;
-	Mon, 16 Dec 2024 23:09:41 -0800 (PST)
-Message-ID: <ae19e5ef-82d5-44e1-96fe-18a2a16faac1@arm.com>
-Date: Tue, 17 Dec 2024 07:09:39 +0000
+	s=arc-20240116; t=1734419471; c=relaxed/simple;
+	bh=t8TgbVgXdk/cTIQuqmCe2DwdZlSdU1zys3Q7LifDjbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RI18zxGzrBCnAQ6KJrDUz7ezAscT4nWux3cKrPFcpNgjVkvSAsw/w7cRH3sMhFnYCtb17kpSRHYuRhRiwp/HrARI4by7l43KKLJNbNVeeRtQRWlYW6YkJS3v24eGSLiDlGMjCJHWmSlras/CUvOCKoaHXv0piiizKM0KEUEvue4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 1958D68B05; Tue, 17 Dec 2024 08:11:05 +0100 (CET)
+Date: Tue, 17 Dec 2024 08:11:04 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, brauner@kernel.org, djwong@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, ritesh.list@gmail.com,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
+Subject: Re: [PATCH v2 0/7] large atomic writes for xfs
+Message-ID: <20241217071104.GB19358@lst.de>
+References: <20241210125737.786928-1-john.g.garry@oracle.com> <20241213143841.GC16111@lst.de> <51f5b96e-0a7e-4a88-9ba2-2d67c7477dfb@oracle.com> <20241213172243.GA30046@lst.de> <9e119d74-868e-4f60-9ed7-ed782d5433da@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/12] khugepaged: Generalize alloc_charge_folio()
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com,
- kirill.shutemov@linux.intel.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
- apopple@nvidia.com, dave.hansen@linux.intel.com, will@kernel.org,
- baohua@kernel.org, jack@suse.cz, srivatsa@csail.mit.edu,
- haowenchao22@gmail.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, ziy@nvidia.com, jglisse@google.com,
- surenb@google.com, vishal.moola@gmail.com, zokeefe@google.com,
- zhengqi.arch@bytedance.com, jhubbard@nvidia.com, 21cnbao@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20241216165105.56185-1-dev.jain@arm.com>
- <20241216165105.56185-3-dev.jain@arm.com>
- <Z2D7YctQaFW_iwei@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z2D7YctQaFW_iwei@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e119d74-868e-4f60-9ed7-ed782d5433da@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 17/12/2024 04:17, Matthew Wilcox wrote:
-> On Mon, Dec 16, 2024 at 10:20:55PM +0530, Dev Jain wrote:
->>  static int alloc_charge_folio(struct folio **foliop, struct mm_struct *mm,
->> -			      struct collapse_control *cc)
->> +			      int order, struct collapse_control *cc)
-> 
-> unsigned, surely?
+On Fri, Dec 13, 2024 at 05:43:09PM +0000, John Garry wrote:
+>> So if the redo log uses buffered I/O I can see how that would bloat writes.
+>> But then again using buffered I/O for a REDO log seems pretty silly
+>> to start with.
+>>
+>
+> Yeah, at the low end, it may make sense to do the 512B write via DIO. But 
+> OTOH sync'ing many redo log FS blocks at once at the high end can be more 
+> efficient.
+>
+> From what I have heard, this was attempted before (using DIO) by some 
+> vendor, but did not come to much.
 
-I'm obviously feeling argumentative this morning...
-
-There are plenty of examples of order being signed and unsigned in the code
-base... it's a mess. Certainly the mTHP changes up to now have opted for
-(signed) int. And get_order(), which I would assume to the authority, returns
-(signed) int.
-
-Personally I prefer int for small positive integers; it's more compact. But if
-we're trying to establish a pattern to use unsigned int for all new uses of
-order, that fine too, let's just document it somewhere?
-
-> 
->>  	if (!folio) {
->>  		*foliop = NULL;
->>  		count_vm_event(THP_COLLAPSE_ALLOC_FAILED);
->> +		if (order != HPAGE_PMD_ORDER)
->> +			count_mthp_stat(order, MTHP_STAT_ANON_COLLAPSE_ALLOC_FAILED);
-> 
-> i don't understand why we need new statistics here.  we already have a
-> signal that memory allocation failures are preventing collapse from
-> being successful, why do we care if it's mthp or actual thp?
-
-We previously decided that all existing THP stats would continue to only count
-PMD-sized THP for fear of breaking userspace in subtle ways, and instead would
-introduce new mTHP stats that can count for each order. We already have
-MTHP_STAT_ANON_FAULT_ALLOC and MTHP_STAT_ANON_FAULT_FALLBACK (amongst others) so
-these new stats fit the pattern well, IMHO.
-
-(except for the bug that I called out in the other mail; we should call
-count_mthp_stat() for all orders and call count_vm_event() only for PMD_ORDER).
-
-> 
->>  	count_vm_event(THP_COLLAPSE_ALLOC);
->> +	if (order != HPAGE_PMD_ORDER)
->> +		count_mthp_stat(order, MTHP_STAT_ANON_COLLAPSE_ALLOC);
-> 
-> similar question
-> 
+I can't see how buffered I/O will be fast than an optimized direct I/O
+implementation.  Then again compared to very dumb dio code that doesn't
+replace the caching in the page I can easily see how dio would be
+much worse.  But given that people care about optimizing this workload
+enough to look into changes all over the kernel I/O stack I would
+expected that touching the code to write the redo log should not be
+out of the picture.
 
 
