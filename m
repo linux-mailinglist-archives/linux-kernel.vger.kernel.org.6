@@ -1,192 +1,252 @@
-Return-Path: <linux-kernel+bounces-449548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B9B9F50B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:17:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054AB9F509D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 907117A901D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39CE1891AAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E53F1F866C;
-	Tue, 17 Dec 2024 16:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E361FD787;
+	Tue, 17 Dec 2024 16:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="h09aMngD"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SdrIEnrZ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C427E1FD7AD;
-	Tue, 17 Dec 2024 16:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734451416; cv=none; b=cCfKGcthYTmF3ZERRcLFaBh+onMb/Y+6v+nrE0ns9ezO8NzSeb02uxOIDUrO1ckfZKWGK8sBIZuJSUdN1aUnpWGr9izujGIJFaD+UZCBeDlcTxX7fGvdw/YdNa3LN+m9BR98j/OFT/k7CrfQdmegUi4XB/sQzhdTghFdmyAnlvE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734451416; c=relaxed/simple;
-	bh=3gVW8sJ19x+XhJVhfUINu8KjcT0AJItbbgXL3rS2obg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HdHfEZ/VLmCYXTM5E/1XXrJbJxwJrVLBp4w5SGVt8v0JTTb5Lj6dp8UxEjd/FcmSbT6XDJKpI+RMrBD2FfuACmI5eNTs4LvfIMeHqKaic7z/NiTovWdVMv72nR5IV+EDTGyJQa654L1Iid7hC187BF4iqX8N8vb1UtLW6FyQPzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=h09aMngD; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHG3EES026092
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Dec 2024 10:03:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1734451394;
-	bh=zby8vFaemZ6HefASXb1ZXOjPbI3Ei5fPe0K1T7m5K2E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=h09aMngDbvpNDAXkLd4N6bC5ptokBzjnayDaWZURV3fLeEOBSOh2mi9ZUEcX9DFeE
-	 i84un0JULoAftvrBebW14ov+k1JnYOlDiKJ2EeH0NviamR49wEJQBWtmQJnzsrysQV
-	 GbVfuSLkYwXSOLT8Gi7z4e9Wez8zAPbydGoLs2PA=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHG3EfL090725
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 17 Dec 2024 10:03:14 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
- Dec 2024 10:03:13 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 17 Dec 2024 10:03:13 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BHG3Dca017409;
-	Tue, 17 Dec 2024 10:03:13 -0600
-Message-ID: <5c016c4a-b7f2-4e9a-bb99-f56e0bf86e6f@ti.com>
-Date: Tue, 17 Dec 2024 10:03:13 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B409A1FCCE1;
+	Tue, 17 Dec 2024 16:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734451411; cv=fail; b=DGLSrL170BryXS827LM9BOXbSGcOf2OcsHYKHTpiF8NrZcPeJDwj7r5GdCFYVaFGUcfCW8AYmMctUA554Jr8ok3rmL7wp01CB0YbxXa0nKIDp+amkWVEnzsG6gZnHNG5xM0Ttr6gHP0gUtQvARTan1ywQycJxSQE6wnEVppnsuQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734451411; c=relaxed/simple;
+	bh=q2sqQ/k2NwyZCY9lysd1AT2lFv0H+wo0BeeQYbMyZ9o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b9jAvhxLZKpLBafGWI3dcCfQl/ykTSV8/RBvdLHGlSPJLmIvW4h/q4+xhS7OfXZRaFA/doYJ2j0X44xjlZPJ1t4t6kHodHo7UnMZVr6e1W9ViqotCUdnIWew9ARlTeBColuTNvTHoht/TmengA71kUDOL7J8hIgbQwodM9RHBg0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SdrIEnrZ; arc=fail smtp.client-ip=40.107.223.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RacwwFPF81Iq7GnLvWalfOV5luD1kIJSjfVxeolvf+bb1gQ7OP3X9TDOhUoVISqD0dwhR4pcwW+yOVAnJysFQ0RQAG27x/IbrOgOL8subTH3TVc/Brs8grh1wX1IhvBGRd/ZdEuSKQ+mBQAytU5q7HW1VGZrD9pnlBhk6Nw6v2L5xq5Kj9sKTxhY3p/iE/wm9WWjU6sEjLp2d1wr8PiQtmE4gpuUYHGntJktPdEijCtRjHvxsS5Wa1eo4HjB+6LStWHWWZ5LG1JRjtLh1uaQ4qee/oX3rdkNzhL5Idz66NozQhn24J6cj9G0gOBwYyk6MemuhV0Fj5TImIWNfOtHHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7bxcVbWLogqZHOSYXvkvRlHhrflWiJZoH5UiQprz3eo=;
+ b=E3RqmNFGHTNbo+BYWCw3Cr9VBHTAhlwGLkqWkwoe5HLgYtNOpLcHJtK6WIbypCUZoRqmMT0ims+ipljjl4it20QoDW5DkTIwCsHe34QAjp5Ck4WqU4nmvekZsahqzJpKdNi+gg9D2ZG4Nr1nO66ARX8nsHdQUjohjsHIwbV5JCr7mkXCKiF+AQhF44u0Q5ks75VYHw/lPcRiSVYTtJBM+nkYAP3oceX/s+6O2IJ65jSs8N+AazT1wdSjgTq3y4QQffqkM56/5I8BpdSZaTLDiyW4RBoyDpEcPuexlggI1hkTej96YnrLiFzP3LF1ndzs3UH67KXTAQmSVe0ZqqHE7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7bxcVbWLogqZHOSYXvkvRlHhrflWiJZoH5UiQprz3eo=;
+ b=SdrIEnrZtgxC5Lb1n30WEh/NZy6mB9E+qLmtuwkBj64nlyrHSeiWTf9pWSwzwAx00Ok2Dzro0LLpFT9aLqyaAFgxA1xfPFWCq9JiFevk1tae126oOBZbyYaq1noUlLR8OMuIBwHCE00VaUFE1P0oBgm0tP6H9yxZLJEeinQPnoM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SA0PR12MB4447.namprd12.prod.outlook.com (2603:10b6:806:9b::23)
+ by SA3PR12MB7858.namprd12.prod.outlook.com (2603:10b6:806:306::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
+ 2024 16:03:26 +0000
+Received: from SA0PR12MB4447.namprd12.prod.outlook.com
+ ([fe80::b4ba:6991:ab76:86d2]) by SA0PR12MB4447.namprd12.prod.outlook.com
+ ([fe80::b4ba:6991:ab76:86d2%6]) with mapi id 15.20.8272.005; Tue, 17 Dec 2024
+ 16:03:26 +0000
+Message-ID: <bbda7d0d-48c0-4c05-a107-85a30b5c2987@amd.com>
+Date: Tue, 17 Dec 2024 10:03:24 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] KVM: SVM: Convert plain error code numbers to defines
+To: Sean Christopherson <seanjc@google.com>, Melody Wang <huibo.wang@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>,
+ Dhaval Giani <dhaval.giani@amd.com>,
+ "Paluri, PavanKumar (Pavan Kumar)" <pavankumar.paluri@amd.com>
+References: <20241206221257.7167-1-huibo.wang@amd.com>
+ <20241206221257.7167-2-huibo.wang@amd.com> <Z2DIrxpwg1dUdm3y@google.com>
+Content-Language: en-US
+From: "Paluri, PavanKumar" <papaluri@amd.com>
+In-Reply-To: <Z2DIrxpwg1dUdm3y@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0008.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::13) To SA0PR12MB4447.namprd12.prod.outlook.com
+ (2603:10b6:806:9b::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] remoteproc: k3-r5: Use devm_ioremap_wc() helper
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jan.kiszka@siemens.com>,
-        <christophe.jaillet@wanadoo.fr>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241204111130.2218497-1-b-padhi@ti.com>
- <20241204111130.2218497-5-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20241204111130.2218497-5-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR12MB4447:EE_|SA3PR12MB7858:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8608b78-79aa-4d03-2e26-08dd1eb45744
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a2VQTEUxVE54a2x3RFhZZzBoalJabmdpTm5qTzlYeWQyY0dtL1lXYmgyWUdr?=
+ =?utf-8?B?Mzhic29kTUoyY1hIdlNKMFdNcTZMWTlTaUlybU1mQjZsVGdwcUhlY2E4WDlS?=
+ =?utf-8?B?cWpFNHFBR1kvNUtnZTZqYzhoaFo1Z0JmRVVRcDIxZ25kM0dkUnNrNUdOdnhO?=
+ =?utf-8?B?dG1TT1Uyajg1TmllVjZMZXVySzRsTHBXUUdNMlJZaURxcTIxWTlkcEdlR1h5?=
+ =?utf-8?B?TlJuQzY5TVFpTkw1b0NiSmt5b1lmUU9IQy9neGV1eDNkYXZCTndTamRlOE5w?=
+ =?utf-8?B?STlZeDhaNVJrYjdHeDBQaTdVUmZxMnR6cERhTVRSQmxKN2xtOTNjeVpWdzE1?=
+ =?utf-8?B?dFZOLzNBSVRoK1JzZlJlcDZsOEFmczhSWU0wZm80SnFONmd4TkUwZy8reU5t?=
+ =?utf-8?B?L0NGMk92UUloYzZaZi9PQXhzK3c5WXdqZ2J5SGllc3B2Sm9CN0hEOE0rbXlZ?=
+ =?utf-8?B?MHZwRWM5ZWdHQmtxY003RVluTGlOYWtZZHVMd1Fvb09sSjVKUFZwbExjNzFr?=
+ =?utf-8?B?RjIvV1ltbjZWOW5MTEd4ZTFudXE0NE16ZWtiQkxUUWpqSU8vWTNFZ1dlNFpi?=
+ =?utf-8?B?S0hGTjhvU2JDYmI3YnYzeXhEWGx2eTY5S2h1d1kvUkV5VDdld0M5MVRidHJv?=
+ =?utf-8?B?N1EvSGZuV3ZtY3FEcVRXQWRzbE40d1Fvc0pGZjFzNys2ZkdUcUVKYncyc1VQ?=
+ =?utf-8?B?bnN0SGNkWGNSbEZqcTFTV0hBZVpqcjZIWXJTaXpEcjh1UXhOazlvV1hhaE9M?=
+ =?utf-8?B?YzM4dzUyWVI2L0plWEFjTFk0cWljSTh2bGphek9pUVYwTXBYd2Jld0V6STU5?=
+ =?utf-8?B?SG9KOC9LbUlQNGo0TmFocXlxb3Zqd0xsbk1ETzk5VVlOV0hDbHRCZFBUZURz?=
+ =?utf-8?B?b2p3N0RuaFlpYXZBRWJjbUxLR2QvZE1LRXZXQmNZQjNPWDd0cmd3VHRNRnlO?=
+ =?utf-8?B?Q0F6cFlWbHdWUVJBR1pRSk5IKzBRVkg5ZXpjaEdkbEsxaGpTeTdTbXROU2dC?=
+ =?utf-8?B?TWptM1hQVTZaTlYzcldxYk9kS1hJOWtqY3RIZ0VjallYdWVzM3ZLSnY2Qmc5?=
+ =?utf-8?B?Tk9SM2dzbzJMWGV1alY1MlQ0TnBWMGlEQmJxM3ZYdDU1dENlOEhNVGE3WU5P?=
+ =?utf-8?B?cnhCZWxlRkk1Qy9pSnZ2dVg3cmxHSndBeVovTVh6VGMrM3RhZktjL2hlL2d5?=
+ =?utf-8?B?OGJ1Q3grVVI1LytsNlBZWFI2YXRqR1RUMU01SUpnaGV3TTFMRGE0RmtxZDRC?=
+ =?utf-8?B?OWpHTFdFaHNWMFRySFg3NGFyU3FkZGZpeUM5NG54dWF4VkxHNkY1cmxnZWNP?=
+ =?utf-8?B?c2pHanpabTdYenQyU1R5azRoRGlMSWpQMnU1akpqM3JoM0EySm1YMitUUVRp?=
+ =?utf-8?B?WDV5VVZ0QnprTm1VVUJpVTl1S3pZSUJralJ2REc4VTVPUFNNS2RMeWtRb2Qr?=
+ =?utf-8?B?bkFvU05ndUprZHFDclB5dlgycFo4aFBnMUpPQTM3eE0wSFV0YUo0Q00yUGVv?=
+ =?utf-8?B?d29wdmFDZUljMW8xeEE1aUUwTE1uVVBmUFZFUmQwRCtMUXJhTkQ4L0JiZDlv?=
+ =?utf-8?B?RnE3UktzQmUvekx2bUlDMGExblpERllQTDEwWENNZ0l1UUF2SWphbHpnSFpr?=
+ =?utf-8?B?RmNDMERTbTd3MnZSTHByVzVBWHVSSnEyVEtTVVpLYnB3blFEZDRvM1BIYndM?=
+ =?utf-8?B?cUl6NFk0enNVRjZ3ZnR6aTY0RGZNQVV6ZFhWcHVPNnFySGpSb1ZrWDQ0d0ND?=
+ =?utf-8?B?M3FWYWZzdXZDM2xYYTZvOUg2REFqYmE0OFNoTmQzb21YVFhxM1lWK3hyMTZN?=
+ =?utf-8?B?RDJtYWxiWW1TZE1iajlKWGVqT3FLOFM5aEg4ejBVWEtEZTdGOVk4ZzdTNzdt?=
+ =?utf-8?Q?XRhM9SBVzUIwO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR12MB4447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MUg4RGJadUVrMHJVeHU3OUN0MDVBUjdxZVZzWWRZbHJhU3h1M0R4SmhLako2?=
+ =?utf-8?B?MXZkRjFpaS9zTlVudXJFNU05OWxJa0o1UXdzQU9jTlJxRVJsejd6YzJKUXdH?=
+ =?utf-8?B?bmhxSnppTVQ5VW5wNmptUWZpRFhVKzdsTktlbFFMcHhhMG9lTy85WHBMdXVs?=
+ =?utf-8?B?VWdqUkVBY082RDlRSk04VW5nQkwzd3V1WC9VQi9TTFRZVzFnKzlmbzkremIw?=
+ =?utf-8?B?R3dlcXVTaXRFdGhIbEI5YU1hRTk1VFpaS0Q4VFl2bCtaQ05rUTZLZ1FacDMw?=
+ =?utf-8?B?eWhJMG85OVFNTHRkRHBxODhsU0VVaElxTHgxMittUGR4NERaL2dQQkpxYllE?=
+ =?utf-8?B?Vml4c1NRcnBJWkZnNWtZSUlKeWhCSS9HOENkR1daTnJ0WXRwZzBwTnNaUHc1?=
+ =?utf-8?B?R2RheDY5NVRWYWp2NTVTSDF3Zk52MHlqOUluM3Z2TjdKdTBMQTRGV1FBRzJQ?=
+ =?utf-8?B?bGsrZTR1MnhCRGJ3aUI3NFNOQ3Z5RWZQemtkQ3FZUWZtcTRPM0ZqVWxqdkJp?=
+ =?utf-8?B?a2FTSUdQVlhWUFRDbnN1M1hjUDUwdXJMR1FBYjBLMVEyMTFTY1VYRXFXcXpT?=
+ =?utf-8?B?NGpXdmpORVV2dk5BcER2dnpQRzBrYTZlak40WG5mQ1VSOWQvUmF5QUorb1Rr?=
+ =?utf-8?B?U2xHemgyMmNoaHdZNnA0YXJ6Nkw1MXhTUDdqS2tYRlduZkt2Z3orRmdjU283?=
+ =?utf-8?B?c2pualdHd1NkdVJpTjNWVG0yVE5tYWw4M0Y5ellLdUsxREdTYmpjTXdiQWZ2?=
+ =?utf-8?B?SmVVdG9VVlRSVDRHV3JQRXRLaklvdjAwYW1GT3FRS21IbHBpNlMrWGVyRkJT?=
+ =?utf-8?B?by9rbnpKUVo4M2RMM2RKSkdid2pndGNZb0srTDJKTlZGbHlnS3lDTTJOUUQ1?=
+ =?utf-8?B?Y1pKc0F0M3U3YndtK3VTclluK2JZdGp5UFNpa0dsemdHYUdweEd3K1JHQVJO?=
+ =?utf-8?B?a0N0Rk0yY3JXckFES1lRcnk1T2UwUWd2amlFUkRMSXZZa1dNdTQvMUJyRmph?=
+ =?utf-8?B?M3lmZys5aVZ6QjJPamxyOC84RTBqTUZoU0YxVUM4d2I0eGhONk1nTHVFM05Q?=
+ =?utf-8?B?eFR0cG9QM3BaOHJOWGxDQVkxYVkrOWQ2dW16Vm9OV1FIYkRpQW9CWVJOc3NQ?=
+ =?utf-8?B?cVE5ZnVaMGRkeWJid3VucU5mdFVaSnM5eml4MUlDZUhpTWJxWmhPYzJtcmpT?=
+ =?utf-8?B?WVFiVGtxd1ZvM240Ly96dDF1QWg3M3VNZkw4QlJnTGNnTWswaUdnOWdaeEpH?=
+ =?utf-8?B?enVvZVQzUjcxeE1ia244QTg5MWlOc3JOck9FK3pLOHlWVlNFYzUzQWRhL2dF?=
+ =?utf-8?B?L3hjSm5yOElMYXRQeG40bnFIa3RhREd4Y2JJdFhHbjJXV3hxNGs5NmFEMVlY?=
+ =?utf-8?B?QnhFWEo1VVg4M29JNTZSM05XRC9ZQ0lHLy9iOFQ3c0kvUlFCM0FuVjh4bnIv?=
+ =?utf-8?B?TFZFRWxYYVViZWVoa21UVjV0NjNSVXlpcWFzRjE4Uk1ZbmlxM05yWi9uaVhZ?=
+ =?utf-8?B?cWhkR3VSRUNpYklkSTdrcnBadlhqVkVhNk5XVTJ1UUVXcGw5U2tTb1BqVnQ3?=
+ =?utf-8?B?cmhmV3kxd09kT2ZIN2xuc1MzL25rOFRacHNoU1orc2JUc0lOVmNDL2cxR24y?=
+ =?utf-8?B?WUxqVk9rYXlaa2pJVlZwMTNYQ3BrQlhhS29SY0JTL1BIbzV3TnBsT1QvcE1O?=
+ =?utf-8?B?SDQxdlVuZWowcWh6TEtYQXV5djZSY3dPUlV6alRpODVQbmp0MkpZanViWXJR?=
+ =?utf-8?B?VTFYL3RrVU5wWWhQWWdtcU1oRk12ZmRVUjdwbndIdDMzVTRiSnNVRDM2bm50?=
+ =?utf-8?B?WHFkNHJ3d3NjTmNlNWtiOXZVRmhZK2ZSalQrR3N3MzVheHE0VndxT1hnaWNK?=
+ =?utf-8?B?RXJiRXFFLzZEZlJMUTJySlN0V0RHWFMrYkFKR3VzWDhWcm9PcUFTZVJUVzRC?=
+ =?utf-8?B?Wm1WTXRvZ0FLeVFXaVprVjd2OTZIQlFXUVJBQ2tSajJMck9mOUIwU0JGNUNF?=
+ =?utf-8?B?MVJVRnhXSksyREtROUFQSjgyNi9USnk2ZTBqM05JblZ6bkcwK0h0VUp0ZTlT?=
+ =?utf-8?B?SWJZU1FIZmEwZFdRMjlhOTdxZE9ualFZSHduRlRyK2J3eVpQN0NsMEpXYTlx?=
+ =?utf-8?Q?Npk/rxPXZxLfTHspt8sGuyEmx?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8608b78-79aa-4d03-2e26-08dd1eb45744
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR12MB4447.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 16:03:26.5258
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d9l+BapXAT3C2890cbllYJnYJTkDNd72KN9idi1Z0eWZUPiM/MfC2lz7fJIDr4apt6p8Pe2r2n9bW5DsdlODzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7858
 
-On 12/4/24 5:11 AM, Beleswar Padhi wrote:
-> Use a device lifecycle managed ioremap helper function. This helps
-> prevent mistakes like unmapping out of order in cleanup functions and
-> forgetting to unmap on all error paths.
+Hi Sean,
+
+On 12/16/2024 6:41 PM, Sean Christopherson wrote:
+> On Fri, Dec 06, 2024, Melody Wang wrote:
+>> Convert VMGEXIT SW_EXITINFO1 codes from plain numbers to proper defines.
+>>
+>> No functionality changed.
+>>
+>> Signed-off-by: Melody Wang <huibo.wang@amd.com>
+>> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+>> Reviewed-by: Pavan Kumar Paluri <papaluri@amd.com>
+>> ---
+>>  arch/x86/include/asm/sev-common.h |  8 ++++++++
+>>  arch/x86/kvm/svm/sev.c            | 12 ++++++------
+>>  arch/x86/kvm/svm/svm.c            |  2 +-
+>>  3 files changed, 15 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+>> index 98726c2b04f8..01d4744e880a 100644
+>> --- a/arch/x86/include/asm/sev-common.h
+>> +++ b/arch/x86/include/asm/sev-common.h
+>> @@ -209,6 +209,14 @@ struct snp_psc_desc {
+>>  
+>>  #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+>>  
+>> +/*
+>> + * Error codes of the GHCB SW_EXITINFO1 related to GHCB input that can be
+>> + * communicated back to the guest
+>> + */
+>> +#define GHCB_HV_RESP_SUCCESS		0
 > 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 +++++-------------------
->   1 file changed, 8 insertions(+), 32 deletions(-)
+> Somewhat of a nit, but I don't think "SUCCESS" is appropriate due to the bizarre
+> return codes for Page State Change (PSC) requests.  For unknown reasons (really,
+> why!?!?), PSC requests apparently always get back '0', but then put a bunch of
+> errors into SW_EXITINFO2, including cases that are clearly not "success".
 > 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 2966cb210403..1a7681502f62 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -1004,17 +1004,13 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->   	/* use remaining reserved memory regions for static carveouts */
->   	for (i = 0; i < num_rmems; i++) {
->   		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
-> -		if (!rmem_np) {
-> -			ret = -EINVAL;
-> -			goto unmap_rmem;
-> -		}
-> +		if (!rmem_np)
-> +			return -EINVAL;
->   
->   		rmem = of_reserved_mem_lookup(rmem_np);
->   		of_node_put(rmem_np);
-> -		if (!rmem) {
-> -			ret = -EINVAL;
-> -			goto unmap_rmem;
-> -		}
-> +		if (!rmem)
-> +			return -EINVAL;
->   
->   		kproc->rmem[i].bus_addr = rmem->base;
->   		/*
-> @@ -1029,12 +1025,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->   		 */
->   		kproc->rmem[i].dev_addr = (u32)rmem->base;
->   		kproc->rmem[i].size = rmem->size;
-> -		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
-> +		kproc->rmem[i].cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
->   		if (!kproc->rmem[i].cpu_addr) {
->   			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
->   				i + 1, &rmem->base, &rmem->size);
-> -			ret = -ENOMEM;
-> -			goto unmap_rmem;
-> +			return -ENOMEM;
->   		}
->   
->   		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-> @@ -1045,19 +1040,6 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
->   	kproc->num_rmems = num_rmems;
->   
->   	return 0;
-> -
-> -unmap_rmem:
-> -	for (i--; i >= 0; i--)
-> -		iounmap(kproc->rmem[i].cpu_addr);
-> -	return ret;
-> -}
-> -
-> -static void k3_r5_reserved_mem_exit(struct k3_r5_rproc *kproc)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < kproc->num_rmems; i++)
-> -		iounmap(kproc->rmem[i].cpu_addr);
->   }
->   
->   /*
-> @@ -1285,10 +1267,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   		}
->   
->   		ret = rproc_add(rproc);
-> -		if (ret) {
-> -			dev_err(dev, "rproc_add failed, ret = %d\n", ret);
-> -			goto err_add;
-> -		}
-> +		if (ret)
-> +			dev_err_probe(dev, ret, "rproc_add failed\n");
+> FWIW, "no action" isn't much better, because it too directly conflicts with
+> the documentation for PSC:
+> 
+>   The page state change request was interrupted, retry the request.
+>                                                  ^^^^^^^^^^^^^^^^^
+> I'm all for having svm_vmgexit_success(), but I think the macro needs to be
+> NO_ACTION (even though it too is flawed), because I strongly suspect that patch 2
+> deliberately avoided SUCCESS in snp_handle_guest_req() and snp_complete_psc()
+> specifically because you knew SUCCESS would be misleading.
+> 
+>> +#define GHCB_HV_RESP_ISSUE_EXCEPTION	1
+>> +#define GHCB_HV_RESP_MALFORMED_INPUT	2
+> 
+> Where is '2' actually documented?  I looked all over the GHCB and the only ones
+> I can find are '0' and '1'.
+> 
+>   0x0000
+>     o No action requested by the hypervisor.
+>   0x0001
+>     o The hypervisor has requested an exception be issued
+> 
 
-Did you mean to return the result of dev_err_probe() here? Without that
-now anything between here and where err_add used to be will get run.
-Might be more clear that this is correct by still doing a "goto out;"
+GHCB spec (Pub# 56421, Rev:2.03), section 4.1 Invoking VMGEXIT documents
+0x0002 as well.
 
-Andrew
+0x0002
+ o The hypervisor encountered malformed input for the VMGEXIT.
 
->   
->   		/* create only one rproc in lockstep, single-cpu or
->   		 * single core mode
-> @@ -1333,8 +1313,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->   
->   err_powerup:
->   	rproc_del(rproc);
-> -err_add:
-> -	k3_r5_reserved_mem_exit(kproc);
->   out:
->   	/* undo core0 upon any failures on core1 in split-mode */
->   	if (cluster->mode == CLUSTER_MODE_SPLIT && core == core1) {
-> @@ -1379,8 +1357,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->   		mbox_free_channel(kproc->mbox);
->   
->   		rproc_del(rproc);
-> -
-> -		k3_r5_reserved_mem_exit(kproc);
->   	}
->   }
->   
+Thanks,
+Pavan
+
+> And again, somewhat of a nit, but PSC ruins all the fun once more, because it
+> quite clearly has multiple "malformed input" responses.  So if PSC can get rejected
+> with "bad input", why on earth would it not use GHCB_HV_RESP_MALFORMED_INPUT?
+> 
+>   o SW_EXITINFO2[31:0] == 0x00000001
+>     The page_state_change_header structure is not valid
+> 
+>   o SW_EXITINFO2[31:0] == 0x00000002
+>     The page_state_change_entry structure, identified by
+>     page_state_change_header.cur_entry, is not valid.
+
 
