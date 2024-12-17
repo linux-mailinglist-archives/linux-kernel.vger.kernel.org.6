@@ -1,105 +1,137 @@
-Return-Path: <linux-kernel+bounces-448559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86729F41C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:39:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF879F41C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 05:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC84A188771E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6122E164366
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 04:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C5D1474CF;
-	Tue, 17 Dec 2024 04:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B44145B25;
+	Tue, 17 Dec 2024 04:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="2wJmJ29F"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azAqCnl+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BED5442F
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08A41FAA
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734410388; cv=none; b=qYigdl6hJeTg5XAtRE1XP5mhloPr5Av2yo6YZG+27KWwkEc0NG37L1Mvx3L415tRVHURn522tp5NhY1//YtAjHoA8qCwyWFoPDAN47YsZD7Qf9cya9GaiFVDjXZLNhNbvcbAIs4pKAKThBOvh6AGXjeQgmTizuDUgggZqXwLpw4=
+	t=1734411100; cv=none; b=NXBOFmVbjdN28twDMoY3oeSe7XyPv6j67sGK/pXT03RPf5g+paZ81Vm18nFnuCypZiHuJVHko7kDIp8rj4n0ZCCPQ5kTHJFV1kF3fKaYurZksGyE5onFP/Q2rAM6DijZxTTQVCeNHyZFDQKeQdkKpOfuxZ7zMeLLy7TB0rWku0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734410388; c=relaxed/simple;
-	bh=ONS2xW78R972FPmIIq4og84deIWQueVXVviERl9RP0A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2TmFFFURvde209f0QTUYt/t+GDcISitys2WMqP8h9RiBaENeT6QqYFhHL1+UZdqwC1wPcVX4IG86u4FyrpLyUgUEZvXHZimcA4ihT5RBQTzYaVWk9A/vWsWZ2+FNsDQJDV1/WMm/WkOHqtj0Zpz0x0x9oVMaeHFCwtjrkoLIoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=2wJmJ29F; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0E5972C097F;
-	Tue, 17 Dec 2024 17:39:44 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1734410384;
-	bh=L2N0j7JelgbHVJvdCA6XmDaiPSFotRbeW9oF1FbdIFI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=2wJmJ29FntYydrsGJLKJ6esH0msg/AUsBNRliWxBqfBG+QCWOmkp7qezYi3GSvE/N
-	 c6BTUYvV2fuMp4sT8tkUzfpyO28NBOyOS96ETdFEnOPvH7SkieH3u+WAp0gMj6YO1O
-	 1nki5KVoe+6SD7PYMIG19c4dJgP30MfMkHc0i1DlJpdfKPXU4EDHB562O0b0IsP0iF
-	 oY7ZPakaklO83hFQoK1wmznL8xP2mh2GlpGSQ1STpzXQmFpP2Zj9Z0jd3tvwl+fm9V
-	 jHQN0vpRrP4aEjbdjDpmwNJb/Mjikb79Go0wgBc3gJNRV1cwQFapMSCcqSAslH6uaZ
-	 UgMwZZ+vPT3+Q==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6761008f0000>; Tue, 17 Dec 2024 17:39:43 +1300
-Received: from elliota2-dl.ws.atlnz.lc (elliota-dl.ws.atlnz.lc [10.33.23.28])
-	by pat.atlnz.lc (Postfix) with ESMTP id 7898113ED95;
-	Tue, 17 Dec 2024 17:39:43 +1300 (NZDT)
-Received: by elliota2-dl.ws.atlnz.lc (Postfix, from userid 1775)
-	id 73B163C0174; Tue, 17 Dec 2024 17:39:43 +1300 (NZDT)
-From: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Hans J. Schultz" <netdev@kapio-technology.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
-Subject: [PATCH net] net: dsa: mv88e6xxx: Fix switchdev error code
-Date: Tue, 17 Dec 2024 17:39:30 +1300
-Message-ID: <20241217043930.260536-1-elliot.ayrey@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734411100; c=relaxed/simple;
+	bh=Su8CLPopiskPhrvaiMiBzONLRAfc4TQBbdC4vzs3mZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=S5CKEPI1rQj7aSn6NHFxVtc6A/FCPkLe4i0mXhaynpCrVBpR1M0CRa3FxLTJxU3xdw7eKI91JhJJxLmDhf3pPnGRr62qW9FPbvVd58VJpNdz12St/n+37Xv938skrYe3/F6TNmy6qgNmG+POTTguldKr6Rc5EfUEKYt7LtJSwoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azAqCnl+; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734411097; x=1765947097;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Su8CLPopiskPhrvaiMiBzONLRAfc4TQBbdC4vzs3mZU=;
+  b=azAqCnl+qJw8KoPu7QdCzLXKR2udmIZpcWHnskrv875dl4FbYP9hhzJE
+   mWBzhBGtzOX0xGtMkEHDzaH30iQABU7I4ZfOF0x+kIrK+JGd69pgkL8XW
+   v7zcMOgnY5c9pdUxZR5kQyqXB+GKqp5MxyOCiFfx5bwATK68DHTU5IK15
+   hfSSU/TlrtE+mpRgsNzBUDuTLDemTXySqp8kzz+P239KsN/e9JB0OOW0W
+   y+0tlCpkoAf/h/WpMFSHxrD9vrweiQe7z9kLoRGnRSNOVUdxmhAtFyA7b
+   CwjKgoDIM4/uIuQmFdcC9tE/ZsabPHVnZt8bV/FoUzynaYK85HHGyIHs+
+   A==;
+X-CSE-ConnectionGUID: 8z/5c8t0SFiAVbVyrilCyA==
+X-CSE-MsgGUID: cd53JoZzTJ+AbEFao/jEeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="52343668"
+X-IronPort-AV: E=Sophos;i="6.12,240,1728975600"; 
+   d="scan'208";a="52343668"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 20:51:37 -0800
+X-CSE-ConnectionGUID: D8bwC8YPTy2VBYzZI4Lw5A==
+X-CSE-MsgGUID: VqRaax2MT6uU9ctHxROeqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,240,1728975600"; 
+   d="scan'208";a="128232005"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 16 Dec 2024 20:51:36 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tNPYT-000Eii-1P;
+	Tue, 17 Dec 2024 04:51:33 +0000
+Date: Tue, 17 Dec 2024 12:50:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: sound/soc/renesas/dma-sh7760.c:62:3: sparse: sparse: symbol
+ 'cam_pcm_data' was not declared. Should it be static?
+Message-ID: <202412171210.7a4vH3Ew-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=6761008f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=8i6-b8GgAAAA:8 a=N--7mn-ydMt7gBr8E2oA:9 a=3ZKOabzyN94A:10 a=XAGLwFu5sp1jj7jejlXE:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Calling a switchdev notifier encodes additional information into the
-return code. Using this value directly makes error messages confusing.
+Hi Lad,
 
-Use notifer_to_errno() to restore the original errno value.
+First bad commit (maybe != root cause):
 
-Fixes: 830763b96720 ("net: dsa: mv88e6xxx: mac-auth/MAB implementation")
-Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
----
- drivers/net/dsa/mv88e6xxx/switchdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f44d154d6e3d633d4c49a5d6aed8a0e4684ae25e
+commit: c087a94bea49acf34d651f7308506fe462a937b3 ASoC: Rename "sh" to "renesas"
+date:   7 weeks ago
+config: sh-randconfig-r113-20241217 (https://download.01.org/0day-ci/archive/20241217/202412171210.7a4vH3Ew-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241217/202412171210.7a4vH3Ew-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/dsa/mv88e6xxx/switchdev.c b/drivers/net/dsa/mv88=
-e6xxx/switchdev.c
-index 4c346a884fb2..7c59eca0270d 100644
---- a/drivers/net/dsa/mv88e6xxx/switchdev.c
-+++ b/drivers/net/dsa/mv88e6xxx/switchdev.c
-@@ -79,5 +79,5 @@ int mv88e6xxx_handle_miss_violation(struct mv88e6xxx_ch=
-ip *chip, int port,
- 				       brport, &info.info, NULL);
- 	rtnl_unlock();
-=20
--	return err;
-+	return notifier_to_errno(err);
- }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412171210.7a4vH3Ew-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> sound/soc/renesas/dma-sh7760.c:62:3: sparse: sparse: symbol 'cam_pcm_data' was not declared. Should it be static?
+
+vim +/cam_pcm_data +62 sound/soc/renesas/dma-sh7760.c
+
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  48  
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  49  
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  50  struct camelot_pcm {
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  51  	unsigned long mmio;  /* DMABRG audio channel control reg MMIO */
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  52  	unsigned int txid;    /* ID of first DMABRG IRQ for this unit */
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  53  
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  54  	struct snd_pcm_substream *tx_ss;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  55  	unsigned long tx_period_size;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  56  	unsigned int  tx_period;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  57  
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  58  	struct snd_pcm_substream *rx_ss;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  59  	unsigned long rx_period_size;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  60  	unsigned int  rx_period;
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  61  
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14 @62  } cam_pcm_data[2] = {
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  63  	{
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  64  		.mmio	=	0xFE3C0040,
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  65  		.txid	=	DMABRGIRQ_A0TXF,
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  66  	},
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  67  	{
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  68  		.mmio	=	0xFE3C0060,
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  69  		.txid	=	DMABRGIRQ_A1TXF,
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  70  	},
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  71  };
+aef3b06ac69783 sound/soc/sh/dma-sh7760.c Manuel Lauss 2007-05-14  72  
+
+:::::: The code at line 62 was first introduced by commit
+:::::: aef3b06ac69783d6a6d1e4357c62bab46dd16141 [ALSA] SH7760 ASoC support
+
+:::::: TO: Manuel Lauss <mano@roarinelk.homelinux.net>
+:::::: CC: Jaroslav Kysela <perex@suse.cz>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
