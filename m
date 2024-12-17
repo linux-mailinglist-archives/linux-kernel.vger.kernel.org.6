@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-449907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FB89F57CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:31:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983E69F57BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7FD16C580
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CE21885029
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6576E1FA179;
-	Tue, 17 Dec 2024 20:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EED01F943F;
+	Tue, 17 Dec 2024 20:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="jp5PCoEE"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jb2OFox3"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6911FA141;
-	Tue, 17 Dec 2024 20:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C1742A9B;
+	Tue, 17 Dec 2024 20:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467411; cv=none; b=gG7h5UkfuFrmKpteXLbFRAOETIifzwvxhqYYeuOojCtbdBFpIV+aKdvb4BNJVsRHk9CoYi27TJU+5voR6SAMuKJEpGpS9kvP4GF7t/YLoCndm9v+hXey2A+JtkHIjl5eI1nN0HdS17FU1pFY3DWFKjNbohbrmI06sfiCjIHaz2k=
+	t=1734467374; cv=none; b=ZyzkZm1GCOF5zLyS0NT+QX805CieQ5jELK3ak5p/oFPRINuGYDeX//m7NQpnOO+O7KePMFT5brx5u7hNv/KuPhdw8jGWETKucsJXJK9UakLziS5x0+lPAa8orGvABrckk7auPb2FGA8VJUkJxNFJa+Wiw2Rl/UuZut7Tl8TF0Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467411; c=relaxed/simple;
-	bh=GMDVzuQNflKsXt8Ams72LmA7hrTPf5xwTvnBqM8M5Hc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uzb3M+TuqUEsRTXemu07P/ZONPeXAhCYY7vttLym4zA3xkLu/PK5ZNY6J76TKf1bVO1FzkjvY8+4Ck6TOwt7i0vRlEuCoMyTUgPXP9ZEoik6V+oYJPsmYka3fLRasxenaN1kLffVcSmT0WJx243hAn/D7Z3KP1cb1pn0+GJZHVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=jp5PCoEE; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1734467374; c=relaxed/simple;
+	bh=eWeXh3padBIVZXFXGw3YT3LPGZ55w+pqerK1il1z0tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZpJaxUmx3TM3MJ0Pi6q97Jolri1PX9G/+hPn0550r9auUGFhZgLXvIi2XOqvuxTIkFS4i9MSt0a6aJVjC+F1ZCV3AqUjmFl+5+49dDtHSXl5xbGwIQYzCJDGZQ/8HWkCF+xKTLyV4PJTQXxZR7zBcU/h5FwwNGa8nWm0fJhcUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jb2OFox3; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=2AjmcsgTzx3TIo/NiPZF3pU4weuGY3iYJ3AIwf8Kn/s=;
-	t=1734467409; x=1735677009; b=jp5PCoEEASrMQs9Kkq+XwReFaVtnPpsis17t4DsOKTbQeyq
-	M6iCgj77uui6R6Ek9WO0Syvfcp5P70eFBru8O2Foj+gFbhVwA5WzeK+TEM781bAF2zORvQYlxrSsx
-	NfVjVelGAlmNqS11omBh/ULkoYF8J2i1pORUNZTbEIgLIuICb9auNp5PNA8rk1aiEdMtMGTHeej9i
-	x3Y6xPlNG5HqWeXBP33Cq9d4jRqM4BK4FzEQuzLwKpRBnih5fLzHochRu5dr8V3buZ2aGelt6FGS6
-	flkD4HGcxi2+8VYEGFOZc5Gf4V0jJD38YTCyAv3sSA3EZJTWT1HhLJuXkDTMT6FQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1tNeCk-00000002NwX-3MTY;
-	Tue, 17 Dec 2024 21:30:07 +0100
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: linux-arch@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org,
-	briannorris@chromium.org
-Cc: linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: [PATCH 3/3] x86: avoid copying dynamic FP state from init_task
-Date: Tue, 17 Dec 2024 21:27:45 +0100
-Message-ID: <20241217202745.1402932-4-benjamin@sipsolutions.net>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241217202745.1402932-1-benjamin@sipsolutions.net>
-References: <20241217202745.1402932-1-benjamin@sipsolutions.net>
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9aP9Zr26Vzamj4jtRSpIPXMz4aO8AxXiYD0Uc3A2+XE=; b=jb2OFox3hZo7o9puh+LWtE5Jb3
+	P6Al/CjbtuMEQocNsx6yVFICPnT1E51ZDaylvqpJLqeQ1+CrTLH747PwMhgo1d8z5aOcRRNz4Q8i7
+	23kEnQSqwp6N2YK5Er+D/dn4bfz2Vmb1ar6qLilQ2BWRupaveCy45gF9/fPliUW90N5cjeMODEEzp
+	6/Yfu7hnAbNfEKXN4EHmJlcghpkrg6dPzGfEzTOdqfs68sn93XZUadpLdeib88HN/GqW6ZHaOuduG
+	ju4z2+a0wmm0LK6XVom3+iL3zUSNus7XnodFm1GzI4hEIkrRXiMj2kpKQCUepZtWwhRg1RncEP939
+	2zTT/BVQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNeC1-000000057tn-0ddm;
+	Tue, 17 Dec 2024 20:29:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D92CD3003E1; Tue, 17 Dec 2024 21:29:19 +0100 (CET)
+Date: Tue, 17 Dec 2024 21:29:19 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
+Message-ID: <20241217202919.GG11133@noisy.programming.kicks-ass.net>
+References: <20241216204505.748363-1-kan.liang@linux.intel.com>
+ <20241216204505.748363-4-kan.liang@linux.intel.com>
+ <20241217133707.GB2354@noisy.programming.kicks-ass.net>
+ <96cb859f-8265-4f5a-99bb-44cfdcd25b9e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96cb859f-8265-4f5a-99bb-44cfdcd25b9e@linux.intel.com>
 
-From: Benjamin Berg <benjamin.berg@intel.com>
+On Tue, Dec 17, 2024 at 12:45:56PM -0500, Liang, Kan wrote:
 
-The init_task instance of struct task_struct is statically allocated and
-may not contain the full FP state for userspace. As such, limit the copy
-to the valid area of init_task and fill the rest with zero.
 
-Note that the FP state is only needed for userspace, and as such it is
-entirely reasonable for init_task to not contain parts of it.
+> > Why can't you use something like the below -- that gives you a count
+> > value matching the pmc value you put in, as long as it is 'near' the
+> > current value.
+> > 
+> > ---
+> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> > index 8f218ac0d445..3cf8b4f2b2c1 100644
+> > --- a/arch/x86/events/core.c
+> > +++ b/arch/x86/events/core.c
+> > @@ -154,6 +154,26 @@ u64 x86_perf_event_update(struct perf_event *event)
+> >  	return new_raw_count;
+> >  }
+> >  
+> > +u64 x86_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
+> > +{
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	int shift = 64 - x86_pmu.cntval_bits;
+> > +	u64 prev_pmc, prev_count;
+> > +	u64 delta;
+> > +
+> > +	do {
+> > +		prev_pmc = local64_read(&hwc->prev_count);
+> > +		barrier();
+> > +		prev_count = local64_read(&event->count);
+> > +		barrier();
+> > +	} while (prev_pmc != local64_read(&hwc->prev_count));
+> 
+> Is the "while()" to handle PMI? But there should be no PMI, since the
+> PMU has been disabled when draining the PEBS buffer.
 
-Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-Fixes: 5aaeb5c01c5b ("x86/fpu, sched: Introduce CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT and use it on x86")
----
- arch/x86/kernel/process.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Perhaps not in your case, but this way the function is more widely
+usable.
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index f63f8fd00a91..1be45fe70cad 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -92,7 +92,15 @@ EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
-  */
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- {
--	memcpy(dst, src, arch_task_struct_size);
-+	/* init_task is not dynamically sized (incomplete FPU state) */
-+	if (unlikely(src == &init_task)) {
-+		memcpy(dst, src, sizeof(init_task));
-+		memset((void *)dst + sizeof(init_task), 0,
-+		       arch_task_struct_size - sizeof(init_task));
-+	} else {
-+		memcpy(dst, src, arch_task_struct_size);
-+	}
-+
- #ifdef CONFIG_VM86
- 	dst->thread.vm86 = NULL;
- #endif
--- 
-2.47.1
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index e06ac9a3cdf8..7f0b850f7277 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -1969,6 +1969,23 @@ static void adaptive_pebs_save_regs(struct
+> pt_regs *regs,
+> 
+>  #define PEBS_LATENCY_MASK			0xffff
+> 
+> +void intel_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int shift = 64 - x86_pmu.cntval_bits;
+> +	u64 prev_pmc;
+> +	u64 delta;
+> +
+> +	prev_pmc = local64_read(&hwc->prev_count);
+> +
+> +	delta = (pmc << shift) - (prev_pmc << shift);
+> +	delta >>= shift;
+> +
+> +	local64_add(delta, &event->count);
+> +	local64_sub(delta, &hwc->period_left);
+> +	local64_set(&hwc->prev_count, pmc);
+> +}
+
+This seems very fragile, at least keep the same store order and assert
+you're in NMI/PMI context.
 
 
