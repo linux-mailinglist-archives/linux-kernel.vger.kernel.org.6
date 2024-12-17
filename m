@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-448490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4081B9F40EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:42:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE499F40F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 03:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDDB166D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49AF188AF6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B89614036E;
-	Tue, 17 Dec 2024 02:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3081442F6;
+	Tue, 17 Dec 2024 02:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="YC8e+IbU"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G5L5YT1j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3492595;
-	Tue, 17 Dec 2024 02:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32ABA13DBB6
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734403332; cv=none; b=AgpFaFCr2QApAvMkdzI+J7j3QBldeEwrHegcssm5iMGlrc4Qy5iQzoSjikQRpZ2FPRUudzkrIS8dvIIK8QdQ02kP3XRdi17g0hYR3BOIF/DPzgKwHDYR+jQawrsxNdO6MyRRbG2lBhnfMxVpgVrrGFO30R1KEZTci/gCKzqDaec=
+	t=1734403461; cv=none; b=foW6OzBBgyt/St6wRMSF2rShIEUV93JcJcNQsMpzDGG5uv3SKhXj9gczrh53h2XpzkXWxxr0U+QaibZm/JtTuvjJ3xYtXfHTDGi0Rj9G3uuqSXyW6M0ro7i2TrYoE4r3hZBkM3vg3y5lMIMAdMB6B8Iu8VZF7wSjz7wIt0sNm6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734403332; c=relaxed/simple;
-	bh=sxZHwktHLbmobkjo0Mrad2ue1QYN50MUOr5DU5+0mFc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h0Plriq9BWPvHaP7P+NsaU7SumM29OvspHeF/sod+EXcZaiuKl02wR5mvy+kf/InUMKaa6T5qO9xdtcc/DfCKSCtTw6pPf63HmK3bl6LMZRi3n234q08HmRxf4xu81QeaQKoAoELrTPGSba9JgfeNncokdS28D9PqBx/clUqEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=YC8e+IbU; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1734403333; x=1765939333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7u6OT2PYujYQCUkhEoUVtOLDlI0hXd4C0CDZ9AuT7gs=;
-  b=YC8e+IbUWloKA9Ax6yn77qlO9f4CwKpiUIEg7t4ALpy6vAmk10h/ovsY
-   2TP961Su11a0fAksjlUnmwROd4AiAzY/VeWa6C1whrjpgl4DFAz6XI6Bk
-   p9BUMNcY7qiS+IpawKsWR8ML1BpPXgdVNCXj+vitA7KPxm+pgbFt+sQYZ
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.12,240,1728950400"; 
-   d="scan'208";a="783912395"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 02:42:07 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:35891]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.52:2525] with esmtp (Farcaster)
- id b97cbbc6-b57a-4b3f-b068-55f90e4c1c6a; Tue, 17 Dec 2024 02:42:05 +0000 (UTC)
-X-Farcaster-Flow-ID: b97cbbc6-b57a-4b3f-b068-55f90e4c1c6a
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 17 Dec 2024 02:42:04 +0000
-Received: from 6c7e67c6786f.amazon.com (10.118.246.225) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 17 Dec 2024 02:42:00 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <kees@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-	<idosch@nvidia.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <petrm@nvidia.com>
-Subject: Re: [PATCH] rtnetlink: do_setlink: Use true struct sockaddr
-Date: Tue, 17 Dec 2024 11:41:56 +0900
-Message-ID: <20241217024156.43328-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241217020441.work.066-kees@kernel.org>
-References: <20241217020441.work.066-kees@kernel.org>
+	s=arc-20240116; t=1734403461; c=relaxed/simple;
+	bh=u5zFDydsK6vmCTeSRK+uKNFVLx0ZTjlNSmurdl6V9dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LY5Of5re1VKAmKWN8BTnRd2t91KHXHpvRZPJvZHys8ooqag7MYklIB7y0VdrGFonl6rFRDtTQO65QKKEzwfrTU5XMQ0y/hq0yU0vUDw+6/sUzfmKCP9twxBfvr1y5gSElAr9AzjcqjwSzbJ/sjqmwaUPtkQOCYxVPCuEhgBdKZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G5L5YT1j; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734403460; x=1765939460;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=u5zFDydsK6vmCTeSRK+uKNFVLx0ZTjlNSmurdl6V9dc=;
+  b=G5L5YT1jEV2WDvnr4SioBuC8IxfJ8l3rFG7zMSKdg2NnPZ8A15xJ+NTX
+   AGbN0CIyFBI9ozcddrfXxqKlHwMiqX/ycdcfnaSTL6DKdYP5wHmIEVpPs
+   Km0CBsaFAbWM6NX2NULeaImBrHhm5L/58oQIQmc548ypDEvR61W/NA6aJ
+   pa9EIcEWV6qd1Z2fz4/Z/QCQ4Cz9NQsv8qX70MG8u8GoQOdQ41Y+FOeLD
+   r5LcbxBOEBXS5gxmT0mAhQGu/oRy6IAwFpvQx4cgsUndr1a1AsgqpFh+5
+   UMB8/qF2bvibslmcEVnadMw55O/W70gGcyVo8BKPz0vAin28r20Nc4414
+   w==;
+X-CSE-ConnectionGUID: 7V53Agj6SDG5h6+6P9gwDg==
+X-CSE-MsgGUID: PcQ60oMPRJGtlaI7DuSHlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11288"; a="34848414"
+X-IronPort-AV: E=Sophos;i="6.12,240,1728975600"; 
+   d="scan'208";a="34848414"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2024 18:44:20 -0800
+X-CSE-ConnectionGUID: gj0d1iICTemi6BtiAdqJKQ==
+X-CSE-MsgGUID: 84D7txdWQbKfr09PW8v3wQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="134732443"
+Received: from allen-sbox.sh.intel.com ([10.239.159.30])
+  by orviesa001.jf.intel.com with ESMTP; 16 Dec 2024 18:44:18 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Draining PRQ in sva unbind path when FPD bit set
+Date: Tue, 17 Dec 2024 10:42:40 +0800
+Message-ID: <20241217024240.139615-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,73 +76,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB002.ant.amazon.com (10.13.138.89) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Kees Cook <kees@kernel.org>
-Date: Mon, 16 Dec 2024 18:04:45 -0800
-> Instead of a heap allocation use a stack allocated struct sockaddr, as
-> dev_set_mac_address_user() is the consumer (which uses a classic
-> struct sockaddr).
+When a device uses a PASID for SVA (Shared Virtual Address), it's possible
+that the PASID entry is marked as non-present and FPD bit set before the
+device flushes all ongoing DMA requests and removes the SVA domain. This
+can occur when an exception happens and the process terminates before the
+device driver stops DMA and calls the iommu driver to unbind the PASID.
 
-I remember Eric's feedback was to keep using heap instead of stack
-because rtnl_newlink() path already uses too much on stack.
+There's no need to drain the PRQ in the mm release path. Instead, the PRQ
+will be drained in the SVA unbind path. But in such case,
+intel_pasid_tear_down_entry() only checks the presence of the pasid entry
+and returns directly.
 
+Add the code to clear the FPD bit and drain the PRQ.
 
-> Cap the copy to the minimum address size between
-> the incoming address and the traditional sa_data field itself.
-> 
-> Putting "sa" on the stack means it will get a reused stack slot since
-> it is smaller than other existing single-scope stack variables (like
-> the vfinfo array).
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Ido Schimmel <idosch@nvidia.com>
-> Cc: Petr Machata <petrm@nvidia.com>
-> Cc: netdev@vger.kernel.org
-> ---
->  net/core/rtnetlink.c | 22 +++++++---------------
->  1 file changed, 7 insertions(+), 15 deletions(-)
-> 
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index ab5f201bf0ab..6da0edc0870d 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -3048,21 +3048,13 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
->  	}
->  
->  	if (tb[IFLA_ADDRESS]) {
-> -		struct sockaddr *sa;
-> -		int len;
-> -
-> -		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
-> -						  sizeof(*sa));
-> -		sa = kmalloc(len, GFP_KERNEL);
-> -		if (!sa) {
-> -			err = -ENOMEM;
-> -			goto errout;
-> -		}
-> -		sa->sa_family = dev->type;
-> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
-> -		       dev->addr_len);
-> -		err = dev_set_mac_address_user(dev, sa, extack);
-> -		kfree(sa);
-> +		struct sockaddr sa = { };
-> +
-> +		/* dev_set_mac_address_user() uses a true struct sockaddr. */
-> +		sa.sa_family = dev->type;
-> +		memcpy(sa.sa_data, nla_data(tb[IFLA_ADDRESS]),
-> +		       min(dev->addr_len, sizeof(sa.sa_data_min)));
-> +		err = dev_set_mac_address_user(dev, &sa, extack);
->  		if (err)
->  			goto errout;
->  		status |= DO_SETLINK_MODIFIED;
-> -- 
-> 2.34.1
+Suggested-by: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/pasid.c | 22 +++++++++++++++++++++-
+ drivers/iommu/intel/pasid.h |  6 ++++++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5b7d85f1e143..fb59a7d35958 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -244,11 +244,31 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
+ 
+ 	spin_lock(&iommu->lock);
+ 	pte = intel_pasid_get_entry(dev, pasid);
+-	if (WARN_ON(!pte) || !pasid_pte_is_present(pte)) {
++	if (WARN_ON(!pte)) {
+ 		spin_unlock(&iommu->lock);
+ 		return;
+ 	}
+ 
++	if (!pasid_pte_is_present(pte)) {
++		if (!pasid_pte_is_fault_disabled(pte)) {
++			WARN_ON(READ_ONCE(pte->val[0]) != 0);
++			spin_unlock(&iommu->lock);
++			return;
++		}
++
++		/*
++		 * When a PASID is used for SVA by a device, it's possible
++		 * that the pasid entry is non-present with the Fault
++		 * Processing Disabled bit set. Clear the pasid entry and
++		 * drain the PRQ for the PASID before return.
++		 */
++		pasid_clear_entry(pte);
++		spin_unlock(&iommu->lock);
++		intel_iommu_drain_pasid_prq(dev, pasid);
++
++		return;
++	}
++
+ 	did = pasid_get_domain_id(pte);
+ 	pgtt = pasid_pte_get_pgtt(pte);
+ 	intel_pasid_clear_entry(dev, pasid, fault_ignore);
+diff --git a/drivers/iommu/intel/pasid.h b/drivers/iommu/intel/pasid.h
+index 082f4fe20216..668d8ece6b14 100644
+--- a/drivers/iommu/intel/pasid.h
++++ b/drivers/iommu/intel/pasid.h
+@@ -73,6 +73,12 @@ static inline bool pasid_pte_is_present(struct pasid_entry *pte)
+ 	return READ_ONCE(pte->val[0]) & PASID_PTE_PRESENT;
+ }
+ 
++/* Get FPD(Fault Processing Disable) bit of a PASID table entry */
++static inline bool pasid_pte_is_fault_disabled(struct pasid_entry *pte)
++{
++	return READ_ONCE(pte->val[0]) & PASID_PTE_FPD;
++}
++
+ /* Get PGTT field of a PASID table entry */
+ static inline u16 pasid_pte_get_pgtt(struct pasid_entry *pte)
+ {
+-- 
+2.43.0
+
 
