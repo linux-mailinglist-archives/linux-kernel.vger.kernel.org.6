@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-449014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 201339F4887
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:09:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9349F4888
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE52188CD94
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:09:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D74188B7E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1842D1E3DF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1651E47AE;
 	Tue, 17 Dec 2024 10:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0NBBdzH"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4lMo2N/"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17400EEB2
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8181E260A
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734430107; cv=none; b=IPO5SFuVdjIkNz08gbX0yfSZun0sFXUCP9RHihTDmymqPJqDhJAsTrp2JuuX4xDmQFuGyaLb6lVLL4F4X18ixGEgAkxjQAuoYCOzPJIbEG6lps9rHRGx93pKexdoXUQdWhPrJa+Yk9kebLXttQJ4BB2M/LBC5KeT46qLPfDOEO8=
+	t=1734430108; cv=none; b=iTXYRPgQ42o6R/Rt8vijovJOXKNTZ5K+SV+LjsniGgPaF/AZcYSq9fzgJDPsXiZ3F1FNEXb+Nto5vMvT+2tbaqbwGSOJcoPLkRg6O+FyrqJgtDTojtnZOobQKvgnHOtfTA5l7ZmVeSPms6ECgcygRTV0NczKHFjDDb+WmEYry0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734430107; c=relaxed/simple;
-	bh=lJC9jDNfn3aa3rLEDBl/foFQVRV6BZHcc8qWHVVyQwI=;
+	s=arc-20240116; t=1734430108; c=relaxed/simple;
+	bh=YB2dQ1rBZRLx3aY/9FJdGsn3BIuWnqmUrluD4l+qzqU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=emuKn2aj+K59CJMNkhV847Hb42euV6LiJsZ12cw5EDT7iaieSW/eEDvr0vjDIFTZhMKybbZQtiy4wmkSUdDsC4dxJh/UjLoGDrp5CxFGUHdOD5GglYYe5b+4eh0jJLBMneI9s4RCHr9N7TW+sHxd7C0nTrlh8ExdMO9SLwOjwUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0NBBdzH; arc=none smtp.client-ip=209.85.208.177
+	 MIME-Version; b=nLkRPjfyTcy/a3+EpPCdcLlQdrO+9PFghyBF/IT4oos9N2vUuJ1/H3vElwOOjnTPArQbertp0FxsQgmKhHZ1Kfhu0+QdCsOtSrKdnLKlAWq8wwmvLK5U5nzB2CDAQw0ApC/yCtZZqvDZtu60+GoMmEraz7VZcUjLSx2K/rx4QPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4lMo2N/; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso51156151fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:08:24 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30225b2586cso64077381fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 02:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734430103; x=1735034903; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734430104; x=1735034904; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=p7ETGOapGFNsISnh+eYSnpCtr32coslfUpX8yaTcIeE=;
-        b=S0NBBdzHEflOExxolkEoxacbs8UuCE/MmEqj9caf3f7RB0HQAd5ay4HFM7zix35m9y
-         Yw9Ts5asGVJO+PFZyCvKVlviGHxCEhElMP+DzoRm+f+ZX3Hwgn2x2YSuU7w+gntB+CQe
-         EwjP1kc+QtZPlmp/ZYxWGIQW7DXdx3blnTRVvASvc47d8qR7BFQSgpSQEEQXLwjt1WB7
-         VeFjokUwPTNCZimXgOr5xMh7R0kqfP7ZVVgGGvDtETQQ8/0WhlG+dfShp9+5tUJIJdm7
-         BXIOAau8TLLUmVJSY+e8PS3bSsWFBTMqG5s9muwAP3kvlGeqgYuCrPEyUji/ueaKYLd3
-         6jrg==
+        bh=nSDQWd9UZqV/STl4BJjbppPEGE1hH0ufO/G2aXdmVa4=;
+        b=I4lMo2N/A2FWXC2I1BEihamKxLDFGOym3KiC6KMesIXis7DMhCnbTUnOzULmgvXvoU
+         1vgzn6Ncyr6M5pt4FtX08t/nxUax8lwsUYQB07EItVsytcAQgvuoJSR7xaWTuxmX0Sdn
+         5U7oHAOlyUL987SVD4dGenSwN7ICPPeU4nlXY5Ptp1SwoPBv46iA4sY2lXeflbb4tX9A
+         aoXZ7aN4hOXFw/MEsXdME5tICc+LEb2b0fL6ad9r2oSHFlVUgE3umr4WIUMv72h7YFAg
+         yFsk1hRx97ja+QI4wUV1OzMSLXtnCgGl+ZxpomfFHQwwcJ4rK5U8RQu8aZ66qxrhVUxG
+         UXNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734430103; x=1735034903;
+        d=1e100.net; s=20230601; t=1734430104; x=1735034904;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=p7ETGOapGFNsISnh+eYSnpCtr32coslfUpX8yaTcIeE=;
-        b=cU0uu1YCGW7+MOOQM0Ab+Tqd+e1T98sLXkWj5OrnmOu5ltN6PJosbYJitx9ACQffFY
-         NN3QiKAgp0EJM5GkGfNcramUXANRtwlVSzIUFehS8wSBh3xxq/YOP/fqPs+OIcC2Si2T
-         9XxN/vIJGWgpPzf6LBfTPNjGJp1nLCurRhQyO4QMnCZ/3pMROEpy2Gv5qecPQ5HFd8c6
-         aaJe3tBycGNU39YhE2paRBh9ZGJXgKhZsl0oDTTJnXlPNNHv8W+aAcjFivzHboiL1xd4
-         qderB7cWzbgvITpbsTyuT75k0BHCL8zAbAi/KKY2snowz9MdRT5FBQnRVCzAKq88IFpT
-         IoSg==
-X-Gm-Message-State: AOJu0YxFCGwXM4BQM42HCJH5R91N55SwOcW6lW5jxaJAETwKJegewWZ4
-	EfYdBW+Y9FtOjhnHEXajTXw0rVWjIECyer5uFNIfK5O30BfH+GvQiCUnzx+fjU0vX7f1vXll4XQ
-	m
-X-Gm-Gg: ASbGncsUjAwRgCDzqk8/NyBqyAjuWbPja1MYI8RHlEqQW58AlGYRo+P9ynj4DSJ6sX0
-	NsssShnw9+tvG5+o82fORkZ62+PLdfxUtLTxkqV8PnJNQ3fucPP3dd+wDAbzIr5ONRDxWpiLDDT
-	NZLFIBO3dEfKYTV+GvxkUrJDzOEaf4WAikzot0x5faGkb0VCevHCia4dL0vLhMKfj9WSl92VAhX
-	E4f+rCGnbcmMyIrONRgEEyeUmIk3dZzCI2S42FIWMB2HO6LPfxxSTXTxWzYCg3n0pHXKEcsjmNW
-	rLHseahR4VbxQNpIm6/yeHJ2OCU43ZMpUg==
-X-Google-Smtp-Source: AGHT+IHjLmJ6eeHJOojOR5IXOHdq0QLIZSY/g3tnQfMeijEF4pRD8BUY0Goe/cR7Y0rvfc1FaojF/w==
-X-Received: by 2002:a2e:b8d2:0:b0:300:3bcd:8d05 with SMTP id 38308e7fff4ca-304435016bfmr8783551fa.15.1734430102638;
-        Tue, 17 Dec 2024 02:08:22 -0800 (PST)
+        bh=nSDQWd9UZqV/STl4BJjbppPEGE1hH0ufO/G2aXdmVa4=;
+        b=Deira+uVuGZMP5yGxUFaQZnxvKrTPxb6wnYTvEcdsK7uTmJrNln4lT39uXWks06+C9
+         kpA5onN5HIYv1BC1W4DuEppvMYchgPaVyN7/YAmAm1Eys98UfUwh9a0aY2byAl6homc+
+         MM+uNktlYrGKq0GZneZ6jm77qeVhI+8p/mkfZ5w4CZDIDzGB7K5k9cqv82gZA+Rk+PBM
+         FVlugOnzaAJrvPZvyJPlwR6Qrg4rirT+o/NTPz5BvwYn/OCpbuONjaWOwK+SOwCSq11N
+         rhJbaDdfhYTVouauHnvTKoG3LazQzODsdd2phbpfmhKKYb2oYdc+etA9YvnjUwqOy8ZL
+         0+JQ==
+X-Gm-Message-State: AOJu0Yym0cqyexggXux0rCf8Kw77LqfNjYrhbYWNW1N/aTeMfpg64whu
+	QFJ7X5Ig6eJbmuepPH+MbZPr7SVspA0UCZtiU4WyzIB/lS1WUNM7iVWYNVOlZuAGUGH7aMxgTTQ
+	M
+X-Gm-Gg: ASbGncuj/RTCTm/2L0EfyzGzyj1QpKDAZw8hALRksSNkFE0ecK4pQEh7v0e4VFedq75
+	sbL7f7Dcq9VZcxBMi3mHARf5SwW4yszCx+nKENUQfFxKbrSyaNrJ62LBCp55ckvjD8FQXih/JNv
+	2XGSVQ376+iO78ULjy5XGxtICGaNo2y/5wbdhPraBvDNn8zQ2P2BXfEmCoKUh7AgE240NiCCIi0
+	jDYkue2zt25tvDrOv6LUBszmhnBVrN8GifcQUpo0/TpEX6960Kdh4TQ6kjRQLKvDkrd+9OQNzog
+	rIuWO0z0yWWCxs94yNjhqIpSq5AKZv9B/w==
+X-Google-Smtp-Source: AGHT+IEtjY0/rVmAAmysPZn+RkJB4B5RPeKFpWGw44q2aLAfjDfv8nhbfo/a70jIZEXCvuM/nLZU3w==
+X-Received: by 2002:a05:651c:508:b0:2ff:df01:2b4c with SMTP id 38308e7fff4ca-304442d51ecmr9298431fa.4.1734430104387;
+        Tue, 17 Dec 2024 02:08:24 -0800 (PST)
 Received: from rayden.urgonet (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a69ecsm12122681fa.111.2024.12.17.02.08.19
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441a69ecsm12122681fa.111.2024.12.17.02.08.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 02:08:21 -0800 (PST)
+        Tue, 17 Dec 2024 02:08:23 -0800 (PST)
 From: Jens Wiklander <jens.wiklander@linaro.org>
 To: linux-kernel@vger.kernel.org,
 	linux-media@vger.kernel.org,
@@ -92,9 +92,9 @@ Cc: Olivier Masse <olivier.masse@nxp.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	azarrabi@qti.qualcomm.com,
 	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH v4 2/6] optee: account for direction while converting parameters
-Date: Tue, 17 Dec 2024 11:07:38 +0100
-Message-ID: <20241217100809.3962439-3-jens.wiklander@linaro.org>
+Subject: [PATCH v4 3/6] optee: sync secure world ABI headers
+Date: Tue, 17 Dec 2024 11:07:39 +0100
+Message-ID: <20241217100809.3962439-4-jens.wiklander@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241217100809.3962439-1-jens.wiklander@linaro.org>
 References: <20241217100809.3962439-1-jens.wiklander@linaro.org>
@@ -106,616 +106,288 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The OP-TEE backend driver has two internal function pointers to convert
-between the subsystem type struct tee_param and the OP-TEE type struct
-optee_msg_param.
-
-The conversion is done from one of the types to the other, which is then
-involved in some operation and finally converted back to the original
-type. When converting to prepare the parameters for the operation, all
-fields must be taken into account, but then converting back, it's enough
-to update only out-values and out-sizes. So, an update_out parameter is
-added to the conversion functions to tell if all or only some fields
-must be copied.
-
-This is needed in a later patch where it might get confusing when
-converting back in from_msg_param() callback since an allocated
-restricted SHM can be using the sec_world_id of the used restricted
-memory pool and that doesn't translate back well.
+Update the header files describing the secure world ABI, both with and
+without FF-A. The ABI is extended to deal with restricted memory, but as
+usual backward compatible.
 
 Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 ---
- drivers/tee/optee/call.c          | 10 ++--
- drivers/tee/optee/ffa_abi.c       | 43 +++++++++++++----
- drivers/tee/optee/optee_private.h | 42 +++++++++++------
- drivers/tee/optee/rpc.c           | 31 +++++++++----
- drivers/tee/optee/smc_abi.c       | 76 +++++++++++++++++++++++--------
- 5 files changed, 144 insertions(+), 58 deletions(-)
+ drivers/tee/optee/optee_ffa.h | 27 ++++++++++---
+ drivers/tee/optee/optee_msg.h | 65 ++++++++++++++++++++++++++++++--
+ drivers/tee/optee/optee_smc.h | 71 ++++++++++++++++++++++++++++++++++-
+ 3 files changed, 154 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/tee/optee/call.c b/drivers/tee/optee/call.c
-index 16eb953e14bb..f1533b894726 100644
---- a/drivers/tee/optee/call.c
-+++ b/drivers/tee/optee/call.c
-@@ -400,7 +400,8 @@ int optee_open_session(struct tee_context *ctx,
- 	export_uuid(msg_arg->params[1].u.octets, &client_uuid);
- 
- 	rc = optee->ops->to_msg_param(optee, msg_arg->params + 2,
--				      arg->num_params, param);
-+				      arg->num_params, param,
-+				      false /*!update_out*/);
- 	if (rc)
- 		goto out;
- 
-@@ -427,7 +428,8 @@ int optee_open_session(struct tee_context *ctx,
- 	}
- 
- 	if (optee->ops->from_msg_param(optee, param, arg->num_params,
--				       msg_arg->params + 2)) {
-+				       msg_arg->params + 2,
-+				       true /*update_out*/)) {
- 		arg->ret = TEEC_ERROR_COMMUNICATION;
- 		arg->ret_origin = TEEC_ORIGIN_COMMS;
- 		/* Close session again to avoid leakage */
-@@ -541,7 +543,7 @@ int optee_invoke_func(struct tee_context *ctx, struct tee_ioctl_invoke_arg *arg,
- 	msg_arg->cancel_id = arg->cancel_id;
- 
- 	rc = optee->ops->to_msg_param(optee, msg_arg->params, arg->num_params,
--				      param);
-+				      param, false /*!update_out*/);
- 	if (rc)
- 		goto out;
- 
-@@ -551,7 +553,7 @@ int optee_invoke_func(struct tee_context *ctx, struct tee_ioctl_invoke_arg *arg,
- 	}
- 
- 	if (optee->ops->from_msg_param(optee, param, arg->num_params,
--				       msg_arg->params)) {
-+				       msg_arg->params, true /*update_out*/)) {
- 		msg_arg->ret = TEEC_ERROR_COMMUNICATION;
- 		msg_arg->ret_origin = TEEC_ORIGIN_COMMS;
- 	}
-diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi.c
-index f3af5666bb11..02e6175ac5f0 100644
---- a/drivers/tee/optee/ffa_abi.c
-+++ b/drivers/tee/optee/ffa_abi.c
-@@ -122,15 +122,21 @@ static int optee_shm_rem_ffa_handle(struct optee *optee, u64 global_id)
+diff --git a/drivers/tee/optee/optee_ffa.h b/drivers/tee/optee/optee_ffa.h
+index 257735ae5b56..7bd037200343 100644
+--- a/drivers/tee/optee/optee_ffa.h
++++ b/drivers/tee/optee/optee_ffa.h
+@@ -81,7 +81,7 @@
+  *                   as the second MSG arg struct for
+  *                   OPTEE_FFA_YIELDING_CALL_WITH_ARG.
+  *        Bit[31:8]: Reserved (MBZ)
+- * w5:	  Bitfield of secure world capabilities OPTEE_FFA_SEC_CAP_* below,
++ * w5:	  Bitfield of OP-TEE capabilities OPTEE_FFA_SEC_CAP_*
+  * w6:	  The maximum secure world notification number
+  * w7:	  Not used (MBZ)
   */
+@@ -94,6 +94,8 @@
+ #define OPTEE_FFA_SEC_CAP_ASYNC_NOTIF	BIT(1)
+ /* OP-TEE supports probing for RPMB device if needed */
+ #define OPTEE_FFA_SEC_CAP_RPMB_PROBE	BIT(2)
++/* OP-TEE supports Restricted Memory for secure data path */
++#define OPTEE_FFA_SEC_CAP_RSTMEM	BIT(3)
  
- static void from_msg_param_ffa_mem(struct optee *optee, struct tee_param *p,
--				   u32 attr, const struct optee_msg_param *mp)
-+				   u32 attr, const struct optee_msg_param *mp,
-+				   bool update_out)
- {
- 	struct tee_shm *shm = NULL;
- 	u64 offs_high = 0;
- 	u64 offs_low = 0;
+ #define OPTEE_FFA_EXCHANGE_CAPABILITIES OPTEE_FFA_BLOCKING_CALL(2)
  
-+	if (update_out) {
-+		if (attr == OPTEE_MSG_ATTR_TYPE_FMEM_INPUT)
-+			return;
-+		goto out;
-+	}
-+
- 	p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT +
- 		  attr - OPTEE_MSG_ATTR_TYPE_FMEM_INPUT;
--	p->u.memref.size = mp->u.fmem.size;
- 
- 	if (mp->u.fmem.global_id != OPTEE_MSG_FMEM_INVALID_GLOBAL_ID)
- 		shm = optee_shm_from_ffa_handle(optee, mp->u.fmem.global_id);
-@@ -141,6 +147,8 @@ static void from_msg_param_ffa_mem(struct optee *optee, struct tee_param *p,
- 		offs_high = mp->u.fmem.offs_high;
- 	}
- 	p->u.memref.shm_offs = offs_low | offs_high << 32;
-+out:
-+	p->u.memref.size = mp->u.fmem.size;
- }
- 
- /**
-@@ -150,12 +158,14 @@ static void from_msg_param_ffa_mem(struct optee *optee, struct tee_param *p,
-  * @params:	subsystem internal parameter representation
-  * @num_params:	number of elements in the parameter arrays
-  * @msg_params:	OPTEE_MSG parameters
-+ * @update_out: update parameter for output only
+@@ -108,7 +110,7 @@
   *
-  * Returns 0 on success or <0 on failure
+  * Return register usage:
+  * w3:    Error code, 0 on success
+- * w4-w7: Note used (MBZ)
++ * w4-w7: Not used (MBZ)
   */
- static int optee_ffa_from_msg_param(struct optee *optee,
- 				    struct tee_param *params, size_t num_params,
--				    const struct optee_msg_param *msg_params)
-+				    const struct optee_msg_param *msg_params,
-+				    bool update_out)
- {
- 	size_t n;
+ #define OPTEE_FFA_UNREGISTER_SHM	OPTEE_FFA_BLOCKING_CALL(3)
  
-@@ -166,18 +176,20 @@ static int optee_ffa_from_msg_param(struct optee *optee,
+@@ -119,16 +121,31 @@
+  * Call register usage:
+  * w3:    Service ID, OPTEE_FFA_ENABLE_ASYNC_NOTIF
+  * w4:	  Notification value to request bottom half processing, should be
+- *	  less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE.
++ *	  less than OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE
+  * w5-w7: Not used (MBZ)
+  *
+  * Return register usage:
+  * w3:    Error code, 0 on success
+- * w4-w7: Note used (MBZ)
++ * w4-w7: Not used (MBZ)
+  */
+ #define OPTEE_FFA_ENABLE_ASYNC_NOTIF	OPTEE_FFA_BLOCKING_CALL(5)
  
- 		switch (attr) {
- 		case OPTEE_MSG_ATTR_TYPE_NONE:
-+			if (update_out)
-+				break;
- 			p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_NONE;
- 			memset(&p->u, 0, sizeof(p->u));
- 			break;
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_INPUT:
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_OUTPUT:
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_INOUT:
--			optee_from_msg_param_value(p, attr, mp);
-+			optee_from_msg_param_value(p, attr, mp, update_out);
- 			break;
- 		case OPTEE_MSG_ATTR_TYPE_FMEM_INPUT:
- 		case OPTEE_MSG_ATTR_TYPE_FMEM_OUTPUT:
- 		case OPTEE_MSG_ATTR_TYPE_FMEM_INOUT:
--			from_msg_param_ffa_mem(optee, p, attr, mp);
-+			from_msg_param_ffa_mem(optee, p, attr, mp, update_out);
- 			break;
- 		default:
- 			return -EINVAL;
-@@ -188,10 +200,16 @@ static int optee_ffa_from_msg_param(struct optee *optee,
- }
- 
- static int to_msg_param_ffa_mem(struct optee_msg_param *mp,
--				const struct tee_param *p)
-+				const struct tee_param *p, bool update_out)
- {
- 	struct tee_shm *shm = p->u.memref.shm;
- 
-+	if (update_out) {
-+		if (p->attr == TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT)
-+			return 0;
-+		goto out;
-+	}
+-#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE 64
++#define OPTEE_FFA_MAX_ASYNC_NOTIF_VALUE	64
 +
- 	mp->attr = OPTEE_MSG_ATTR_TYPE_FMEM_INPUT + p->attr -
- 		   TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
++/*
++ * Release Restricted memory
++ *
++ * Call register usage:
++ * w3:    Service ID, OPTEE_FFA_RECLAIM_RSTMEM
++ * w4:    Shared memory handle, lower bits
++ * w5:    Shared memory handle, higher bits
++ * w6-w7: Not used (MBZ)
++ *
++ * Return register usage:
++ * w3:    Error code, 0 on success
++ * w4-w7: Note used (MBZ)
++ */
++#define OPTEE_FFA_RELEASE_RSTMEM	OPTEE_FFA_BLOCKING_CALL(8)
  
-@@ -211,6 +229,7 @@ static int to_msg_param_ffa_mem(struct optee_msg_param *mp,
- 		memset(&mp->u, 0, sizeof(mp->u));
- 		mp->u.fmem.global_id = OPTEE_MSG_FMEM_INVALID_GLOBAL_ID;
- 	}
-+out:
- 	mp->u.fmem.size = p->u.memref.size;
- 
- 	return 0;
-@@ -222,13 +241,15 @@ static int to_msg_param_ffa_mem(struct optee_msg_param *mp,
-  * @optee:	main service struct
-  * @msg_params:	OPTEE_MSG parameters
-  * @num_params:	number of elements in the parameter arrays
-- * @params:	subsystem itnernal parameter representation
-+ * @params:	subsystem internal parameter representation
-+ * @update_out: update parameter for output only
-  * Returns 0 on success or <0 on failure
-  */
- static int optee_ffa_to_msg_param(struct optee *optee,
- 				  struct optee_msg_param *msg_params,
- 				  size_t num_params,
--				  const struct tee_param *params)
-+				  const struct tee_param *params,
-+				  bool update_out)
- {
- 	size_t n;
- 
-@@ -238,18 +259,20 @@ static int optee_ffa_to_msg_param(struct optee *optee,
- 
- 		switch (p->attr) {
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_NONE:
-+			if (update_out)
-+				break;
- 			mp->attr = TEE_IOCTL_PARAM_ATTR_TYPE_NONE;
- 			memset(&mp->u, 0, sizeof(mp->u));
- 			break;
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT:
--			optee_to_msg_param_value(mp, p);
-+			optee_to_msg_param_value(mp, p, update_out);
- 			break;
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
--			if (to_msg_param_ffa_mem(mp, p))
-+			if (to_msg_param_ffa_mem(mp, p, update_out))
- 				return -EINVAL;
- 			break;
- 		default:
-diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
-index dc0f355ef72a..20eda508dbac 100644
---- a/drivers/tee/optee/optee_private.h
-+++ b/drivers/tee/optee/optee_private.h
-@@ -185,10 +185,12 @@ struct optee_ops {
- 				bool system_thread);
- 	int (*to_msg_param)(struct optee *optee,
- 			    struct optee_msg_param *msg_params,
--			    size_t num_params, const struct tee_param *params);
-+			    size_t num_params, const struct tee_param *params,
-+			    bool update_out);
- 	int (*from_msg_param)(struct optee *optee, struct tee_param *params,
- 			      size_t num_params,
--			      const struct optee_msg_param *msg_params);
-+			      const struct optee_msg_param *msg_params,
-+			      bool update_out);
+ /*
+  * Call with struct optee_msg_arg as argument in the supplied shared memory
+diff --git a/drivers/tee/optee/optee_msg.h b/drivers/tee/optee/optee_msg.h
+index e8840a82b983..1b558526e7d9 100644
+--- a/drivers/tee/optee/optee_msg.h
++++ b/drivers/tee/optee/optee_msg.h
+@@ -133,13 +133,13 @@ struct optee_msg_param_rmem {
  };
  
  /**
-@@ -316,23 +318,35 @@ void optee_release(struct tee_context *ctx);
- void optee_release_supp(struct tee_context *ctx);
- 
- static inline void optee_from_msg_param_value(struct tee_param *p, u32 attr,
--					      const struct optee_msg_param *mp)
-+					      const struct optee_msg_param *mp,
-+					      bool update_out)
- {
--	p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT +
--		  attr - OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
--	p->u.value.a = mp->u.value.a;
--	p->u.value.b = mp->u.value.b;
--	p->u.value.c = mp->u.value.c;
-+	if (!update_out)
-+		p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT +
-+			  attr - OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
-+
-+	if (attr == OPTEE_MSG_ATTR_TYPE_VALUE_OUTPUT ||
-+	    attr == OPTEE_MSG_ATTR_TYPE_VALUE_INOUT || !update_out) {
-+		p->u.value.a = mp->u.value.a;
-+		p->u.value.b = mp->u.value.b;
-+		p->u.value.c = mp->u.value.c;
-+	}
- }
- 
- static inline void optee_to_msg_param_value(struct optee_msg_param *mp,
--					    const struct tee_param *p)
-+					    const struct tee_param *p,
-+					    bool update_out)
- {
--	mp->attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT + p->attr -
--		   TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
--	mp->u.value.a = p->u.value.a;
--	mp->u.value.b = p->u.value.b;
--	mp->u.value.c = p->u.value.c;
-+	if (!update_out)
-+		mp->attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT + p->attr -
-+			   TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT;
-+
-+	if (p->attr == TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT ||
-+	    p->attr == TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT || !update_out) {
-+		mp->u.value.a = p->u.value.a;
-+		mp->u.value.b = p->u.value.b;
-+		mp->u.value.c = p->u.value.c;
-+	}
- }
- 
- void optee_cq_init(struct optee_call_queue *cq, int thread_count);
-diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-index ebbbd42b0e3e..580e6b9b0606 100644
---- a/drivers/tee/optee/rpc.c
-+++ b/drivers/tee/optee/rpc.c
-@@ -63,7 +63,7 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
- 	}
- 
- 	if (optee->ops->from_msg_param(optee, params, arg->num_params,
--				       arg->params))
-+				       arg->params, false /*!update_out*/))
- 		goto bad;
- 
- 	for (i = 0; i < arg->num_params; i++) {
-@@ -107,7 +107,8 @@ static void handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
- 	} else {
- 		params[3].u.value.a = msg.len;
- 		if (optee->ops->to_msg_param(optee, arg->params,
--					     arg->num_params, params))
-+					     arg->num_params, params,
-+					     true /*update_out*/))
- 			arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		else
- 			arg->ret = TEEC_SUCCESS;
-@@ -188,6 +189,7 @@ static void handle_rpc_func_cmd_wait(struct optee_msg_arg *arg)
- static void handle_rpc_supp_cmd(struct tee_context *ctx, struct optee *optee,
- 				struct optee_msg_arg *arg)
- {
-+	bool update_out = false;
- 	struct tee_param *params;
- 
- 	arg->ret_origin = TEEC_ORIGIN_COMMS;
-@@ -200,15 +202,21 @@ static void handle_rpc_supp_cmd(struct tee_context *ctx, struct optee *optee,
- 	}
- 
- 	if (optee->ops->from_msg_param(optee, params, arg->num_params,
--				       arg->params)) {
-+				       arg->params, update_out)) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		goto out;
- 	}
- 
- 	arg->ret = optee_supp_thrd_req(ctx, arg->cmd, arg->num_params, params);
- 
-+	/*
-+	 * Special treatment for OPTEE_RPC_CMD_SHM_ALLOC since input is a
-+	 * value type, but the output is a memref type.
-+	 */
-+	if (arg->cmd != OPTEE_RPC_CMD_SHM_ALLOC)
-+		update_out = true;
- 	if (optee->ops->to_msg_param(optee, arg->params, arg->num_params,
--				     params))
-+				     params, update_out))
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- out:
- 	kfree(params);
-@@ -270,7 +278,7 @@ static void handle_rpc_func_rpmb_probe_reset(struct tee_context *ctx,
- 
- 	if (arg->num_params != ARRAY_SIZE(params) ||
- 	    optee->ops->from_msg_param(optee, params, arg->num_params,
--				       arg->params) ||
-+				       arg->params, false /*!update_out*/) ||
- 	    params[0].attr != TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		return;
-@@ -280,7 +288,8 @@ static void handle_rpc_func_rpmb_probe_reset(struct tee_context *ctx,
- 	params[0].u.value.b = 0;
- 	params[0].u.value.c = 0;
- 	if (optee->ops->to_msg_param(optee, arg->params,
--				     arg->num_params, params)) {
-+				     arg->num_params, params,
-+				     true /*update_out*/)) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		return;
- 	}
-@@ -324,7 +333,7 @@ static void handle_rpc_func_rpmb_probe_next(struct tee_context *ctx,
- 
- 	if (arg->num_params != ARRAY_SIZE(params) ||
- 	    optee->ops->from_msg_param(optee, params, arg->num_params,
--				       arg->params) ||
-+				       arg->params, false /*!update_out*/) ||
- 	    params[0].attr != TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT ||
- 	    params[1].attr != TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
-@@ -358,7 +367,8 @@ static void handle_rpc_func_rpmb_probe_next(struct tee_context *ctx,
- 	params[0].u.value.b = rdev->descr.capacity;
- 	params[0].u.value.c = rdev->descr.reliable_wr_count;
- 	if (optee->ops->to_msg_param(optee, arg->params,
--				     arg->num_params, params)) {
-+				     arg->num_params, params,
-+				     true /*update_out*/)) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		return;
- 	}
-@@ -384,7 +394,7 @@ static void handle_rpc_func_rpmb_frames(struct tee_context *ctx,
- 
- 	if (arg->num_params != ARRAY_SIZE(params) ||
- 	    optee->ops->from_msg_param(optee, params, arg->num_params,
--				       arg->params) ||
-+				       arg->params, false /*!update_out*/) ||
- 	    params[0].attr != TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT ||
- 	    params[1].attr != TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
-@@ -401,7 +411,8 @@ static void handle_rpc_func_rpmb_frames(struct tee_context *ctx,
- 		goto out;
- 	}
- 	if (optee->ops->to_msg_param(optee, arg->params,
--				     arg->num_params, params)) {
-+				     arg->num_params, params,
-+				     true /*update_out*/)) {
- 		arg->ret = TEEC_ERROR_BAD_PARAMETERS;
- 		goto out;
- 	}
-diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-index 3e33cf2af73b..788919a473d6 100644
---- a/drivers/tee/optee/smc_abi.c
-+++ b/drivers/tee/optee/smc_abi.c
-@@ -81,20 +81,26 @@ static int optee_cpuhp_disable_pcpu_irq(unsigned int cpu)
+- * struct optee_msg_param_fmem - ffa memory reference parameter
++ * struct optee_msg_param_fmem - FF-A memory reference parameter
+  * @offs_lower:	   Lower bits of offset into shared memory reference
+  * @offs_upper:	   Upper bits of offset into shared memory reference
+  * @internal_offs: Internal offset into the first page of shared memory
+  *		   reference
+  * @size:	   Size of the buffer
+- * @global_id:	   Global identifier of Shared memory
++ * @global_id:	   Global identifier of the shared memory
   */
+ struct optee_msg_param_fmem {
+ 	u32 offs_low;
+@@ -165,7 +165,7 @@ struct optee_msg_param_value {
+  * @attr:	attributes
+  * @tmem:	parameter by temporary memory reference
+  * @rmem:	parameter by registered memory reference
+- * @fmem:	parameter by ffa registered memory reference
++ * @fmem:	parameter by FF-A registered memory reference
+  * @value:	parameter by opaque value
+  * @octets:	parameter by octet string
+  *
+@@ -296,6 +296,18 @@ struct optee_msg_arg {
+  */
+ #define OPTEE_MSG_FUNCID_GET_OS_REVISION	0x0001
  
- static int from_msg_param_tmp_mem(struct tee_param *p, u32 attr,
--				  const struct optee_msg_param *mp)
-+				  const struct optee_msg_param *mp,
-+				  bool update_out)
- {
- 	struct tee_shm *shm;
- 	phys_addr_t pa;
- 	int rc;
- 
-+	if (update_out) {
-+		if (attr == OPTEE_MSG_ATTR_TYPE_TMEM_INPUT)
-+			return 0;
-+		goto out;
-+	}
++/*
++ * Values used in OPTEE_MSG_CMD_LEND_RSTMEM below
++ * OPTEE_MSG_RSTMEM_RESERVED		Reserved
++ * OPTEE_MSG_RSTMEM_SECURE_VIDEO_PLAY	Secure Video Playback
++ * OPTEE_MSG_RSTMEM_TRUSTED_UI		Trused UI
++ * OPTEE_MSG_RSTMEM_SECURE_VIDEO_RECORD	Secure Video Recording
++ */
++#define OPTEE_MSG_RSTMEM_RESERVED		0
++#define OPTEE_MSG_RSTMEM_SECURE_VIDEO_PLAY	1
++#define OPTEE_MSG_RSTMEM_TRUSTED_UI		2
++#define OPTEE_MSG_RSTMEM_SECURE_VIDEO_RECORD	3
 +
- 	p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT +
- 		  attr - OPTEE_MSG_ATTR_TYPE_TMEM_INPUT;
--	p->u.memref.size = mp->u.tmem.size;
- 	shm = (struct tee_shm *)(unsigned long)mp->u.tmem.shm_ref;
- 	if (!shm) {
- 		p->u.memref.shm_offs = 0;
- 		p->u.memref.shm = NULL;
--		return 0;
-+		goto out;
- 	}
+ /*
+  * Do a secure call with struct optee_msg_arg as argument
+  * The OPTEE_MSG_CMD_* below defines what goes in struct optee_msg_arg::cmd
+@@ -337,6 +349,49 @@ struct optee_msg_arg {
+  * OPTEE_MSG_CMD_STOP_ASYNC_NOTIF informs secure world that from now is
+  * normal world unable to process asynchronous notifications. Typically
+  * used when the driver is shut down.
++ *
++ * OPTEE_MSG_CMD_LEND_RSTMEM lends restricted memory. The passed normal
++ * physical memory is restricted from normal world access. The memory
++ * should be unmapped prior to this call since it becomes inaccessible
++ * during the request.
++ * Parameters are passed as:
++ * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
++ * [in] param[0].u.value.a		OPTEE_MSG_RSTMEM_* defined above
++ * [in] param[1].attr			OPTEE_MSG_ATTR_TYPE_TMEM_INPUT
++ * [in] param[1].u.tmem.buf_ptr		physical address
++ * [in] param[1].u.tmem.size		size
++ * [in] param[1].u.tmem.shm_ref		holds restricted memory reference
++ *
++ * OPTEE_MSG_CMD_RECLAIM_RSTMEM reclaims a previously lent restricted
++ * memory reference. The physical memory is accessible by the normal world
++ * after this function has return and can be mapped again. The information
++ * is passed as:
++ * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
++ * [in] param[0].u.value.a		holds restricted memory cookie
++ *
++ * OPTEE_MSG_CMD_GET_RSTMEM_CONFIG get configuration for a specific
++ * restricted memory use case. Parameters are passed as:
++ * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INOUT
++ * [in] param[0].value.a		OPTEE_MSG_RSTMEM_*
++ * [in] param[1].attr			OPTEE_MSG_ATTR_TYPE_{R,F}MEM_OUTPUT
++ * [in] param[1].u.{r,f}mem		Buffer or NULL
++ * [in] param[1].u.{r,f}mem.size	Provided size of buffer or 0 for query
++ * output for the restricted use case:
++ * [out] param[0].value.a		Minimal size of SDP memory
++ * [out] param[0].value.b		Required alignment of size and start of
++ *					restricted memory
++ * [out] param[1].{r,f}mem.size		Size of output data
++ * [out] param[1].{r,f}mem		If non-NULL, contains an array of
++ *					uint16_t holding endpoints that
++ *					must be included when lending
++ *					memory for this use case
++ *
++ * OPTEE_MSG_CMD_ASSIGN_RSTMEM assigns use-case to restricted memory
++ * previously lent using the FFA_LEND framework ABI. Parameters are passed
++ * as:
++ * [in] param[0].attr			OPTEE_MSG_ATTR_TYPE_VALUE_INPUT
++ * [in] param[0].u.value.a		holds restricted memory cookie
++ * [in] param[0].u.value.b		OPTEE_MSG_RSTMEM_* defined above
+  */
+ #define OPTEE_MSG_CMD_OPEN_SESSION	0
+ #define OPTEE_MSG_CMD_INVOKE_COMMAND	1
+@@ -346,6 +401,10 @@ struct optee_msg_arg {
+ #define OPTEE_MSG_CMD_UNREGISTER_SHM	5
+ #define OPTEE_MSG_CMD_DO_BOTTOM_HALF	6
+ #define OPTEE_MSG_CMD_STOP_ASYNC_NOTIF	7
++#define OPTEE_MSG_CMD_LEND_RSTMEM	8
++#define OPTEE_MSG_CMD_RECLAIM_RSTMEM	9
++#define OPTEE_MSG_CMD_GET_RSTMEM_CONFIG	10
++#define OPTEE_MSG_CMD_ASSIGN_RSTMEM	11
+ #define OPTEE_MSG_FUNCID_CALL_WITH_ARG	0x0004
  
- 	rc = tee_shm_get_pa(shm, 0, &pa);
-@@ -103,18 +109,25 @@ static int from_msg_param_tmp_mem(struct tee_param *p, u32 attr,
- 
- 	p->u.memref.shm_offs = mp->u.tmem.buf_ptr - pa;
- 	p->u.memref.shm = shm;
+ #endif /* _OPTEE_MSG_H */
+diff --git a/drivers/tee/optee/optee_smc.h b/drivers/tee/optee/optee_smc.h
+index 879426300821..abc379ce190c 100644
+--- a/drivers/tee/optee/optee_smc.h
++++ b/drivers/tee/optee/optee_smc.h
+@@ -264,7 +264,6 @@ struct optee_smc_get_shm_config_result {
+ #define OPTEE_SMC_SEC_CAP_HAVE_RESERVED_SHM	BIT(0)
+ /* Secure world can communicate via previously unregistered shared memory */
+ #define OPTEE_SMC_SEC_CAP_UNREGISTERED_SHM	BIT(1)
 -
-+out:
-+	p->u.memref.size = mp->u.tmem.size;
- 	return 0;
- }
+ /*
+  * Secure world supports commands "register/unregister shared memory",
+  * secure world accepts command buffers located in any parts of non-secure RAM
+@@ -280,6 +279,10 @@ struct optee_smc_get_shm_config_result {
+ #define OPTEE_SMC_SEC_CAP_RPC_ARG		BIT(6)
+ /* Secure world supports probing for RPMB device if needed */
+ #define OPTEE_SMC_SEC_CAP_RPMB_PROBE		BIT(7)
++/* Secure world supports Secure Data Path */
++#define OPTEE_SMC_SEC_CAP_SDP			BIT(8)
++/* Secure world supports dynamic restricted memory */
++#define OPTEE_SMC_SEC_CAP_DYNAMIC_RSTMEM	BIT(9)
  
- static void from_msg_param_reg_mem(struct tee_param *p, u32 attr,
--				   const struct optee_msg_param *mp)
-+				   const struct optee_msg_param *mp,
-+				   bool update_out)
- {
- 	struct tee_shm *shm;
+ #define OPTEE_SMC_FUNCID_EXCHANGE_CAPABILITIES	9
+ #define OPTEE_SMC_EXCHANGE_CAPABILITIES \
+@@ -451,6 +454,72 @@ struct optee_smc_disable_shm_cache_result {
  
-+	if (update_out) {
-+		if (attr == OPTEE_MSG_ATTR_TYPE_RMEM_INPUT)
-+			return;
-+		goto out;
-+	}
+ /* See OPTEE_SMC_CALL_WITH_REGD_ARG above */
+ #define OPTEE_SMC_FUNCID_CALL_WITH_REGD_ARG	19
++/*
++ * Get Secure Data Path memory config
++ *
++ * Returns the Secure Data Path memory config.
++ *
++ * Call register usage:
++ * a0   SMC Function ID, OPTEE_SMC_GET_SDP_CONFIG
++ * a2-6	Not used, must be zero
++ * a7	Hypervisor Client ID register
++ *
++ * Have config return register usage:
++ * a0	OPTEE_SMC_RETURN_OK
++ * a1	Physical address of start of SDP memory
++ * a2	Size of SDP memory
++ * a3	Not used
++ * a4-7	Preserved
++ *
++ * Not available register usage:
++ * a0	OPTEE_SMC_RETURN_ENOTAVAIL
++ * a1-3 Not used
++ * a4-7	Preserved
++ */
++#define OPTEE_SMC_FUNCID_GET_SDP_CONFIG		20
++#define OPTEE_SMC_GET_SDP_CONFIG \
++	OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_SDP_CONFIG)
 +
- 	p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT +
- 		  attr - OPTEE_MSG_ATTR_TYPE_RMEM_INPUT;
--	p->u.memref.size = mp->u.rmem.size;
- 	shm = (struct tee_shm *)(unsigned long)mp->u.rmem.shm_ref;
- 
- 	if (shm) {
-@@ -124,6 +137,8 @@ static void from_msg_param_reg_mem(struct tee_param *p, u32 attr,
- 		p->u.memref.shm_offs = 0;
- 		p->u.memref.shm = NULL;
- 	}
-+out:
-+	p->u.memref.size = mp->u.rmem.size;
- }
- 
- /**
-@@ -133,11 +148,13 @@ static void from_msg_param_reg_mem(struct tee_param *p, u32 attr,
-  * @params:	subsystem internal parameter representation
-  * @num_params:	number of elements in the parameter arrays
-  * @msg_params:	OPTEE_MSG parameters
-+ * @update_out:	update parameter for output only
-  * Returns 0 on success or <0 on failure
-  */
- static int optee_from_msg_param(struct optee *optee, struct tee_param *params,
- 				size_t num_params,
--				const struct optee_msg_param *msg_params)
-+				const struct optee_msg_param *msg_params,
-+				bool update_out)
- {
- 	int rc;
- 	size_t n;
-@@ -149,25 +166,27 @@ static int optee_from_msg_param(struct optee *optee, struct tee_param *params,
- 
- 		switch (attr) {
- 		case OPTEE_MSG_ATTR_TYPE_NONE:
-+			if (update_out)
-+				break;
- 			p->attr = TEE_IOCTL_PARAM_ATTR_TYPE_NONE;
- 			memset(&p->u, 0, sizeof(p->u));
- 			break;
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_INPUT:
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_OUTPUT:
- 		case OPTEE_MSG_ATTR_TYPE_VALUE_INOUT:
--			optee_from_msg_param_value(p, attr, mp);
-+			optee_from_msg_param_value(p, attr, mp, update_out);
- 			break;
- 		case OPTEE_MSG_ATTR_TYPE_TMEM_INPUT:
- 		case OPTEE_MSG_ATTR_TYPE_TMEM_OUTPUT:
- 		case OPTEE_MSG_ATTR_TYPE_TMEM_INOUT:
--			rc = from_msg_param_tmp_mem(p, attr, mp);
-+			rc = from_msg_param_tmp_mem(p, attr, mp, update_out);
- 			if (rc)
- 				return rc;
- 			break;
- 		case OPTEE_MSG_ATTR_TYPE_RMEM_INPUT:
- 		case OPTEE_MSG_ATTR_TYPE_RMEM_OUTPUT:
- 		case OPTEE_MSG_ATTR_TYPE_RMEM_INOUT:
--			from_msg_param_reg_mem(p, attr, mp);
-+			from_msg_param_reg_mem(p, attr, mp, update_out);
- 			break;
- 
- 		default:
-@@ -178,20 +197,25 @@ static int optee_from_msg_param(struct optee *optee, struct tee_param *params,
- }
- 
- static int to_msg_param_tmp_mem(struct optee_msg_param *mp,
--				const struct tee_param *p)
-+				const struct tee_param *p, bool update_out)
- {
- 	int rc;
- 	phys_addr_t pa;
- 
-+	if (update_out) {
-+		if (p->attr == TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT)
-+			return 0;
-+		goto out;
-+	}
++struct optee_smc_get_sdp_config_result {
++	unsigned long status;
++	unsigned long start;
++	unsigned long size;
++	unsigned long flags;
++};
 +
- 	mp->attr = OPTEE_MSG_ATTR_TYPE_TMEM_INPUT + p->attr -
- 		   TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
- 
- 	mp->u.tmem.shm_ref = (unsigned long)p->u.memref.shm;
--	mp->u.tmem.size = p->u.memref.size;
- 
- 	if (!p->u.memref.shm) {
- 		mp->u.tmem.buf_ptr = 0;
--		return 0;
-+		goto out;
- 	}
- 
- 	rc = tee_shm_get_pa(p->u.memref.shm, p->u.memref.shm_offs, &pa);
-@@ -201,19 +225,27 @@ static int to_msg_param_tmp_mem(struct optee_msg_param *mp,
- 	mp->u.tmem.buf_ptr = pa;
- 	mp->attr |= OPTEE_MSG_ATTR_CACHE_PREDEFINED <<
- 		    OPTEE_MSG_ATTR_CACHE_SHIFT;
--
-+out:
-+	mp->u.tmem.size = p->u.memref.size;
- 	return 0;
- }
- 
- static int to_msg_param_reg_mem(struct optee_msg_param *mp,
--				const struct tee_param *p)
-+				const struct tee_param *p, bool update_out)
- {
-+	if (update_out) {
-+		if (p->attr == TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT)
-+			return 0;
-+		goto out;
-+	}
++/*
++ * Get Secure Data Path dynamic memory config
++ *
++ * Returns the Secure Data Path dynamic memory config.
++ *
++ * Call register usage:
++ * a0	SMC Function ID, OPTEE_SMC_GET_DYN_SHM_CONFIG
++ * a2-6	Not used, must be zero
++ * a7	Hypervisor Client ID register
++ *
++ * Have config return register usage:
++ * a0	OPTEE_SMC_RETURN_OK
++ * a1	Minamal size of SDP memory
++ * a2	Required alignment of size and start of registered SDP memory
++ * a3	Not used
++ * a4-7	Preserved
++ *
++ * Not available register usage:
++ * a0	OPTEE_SMC_RETURN_ENOTAVAIL
++ * a1-3 Not used
++ * a4-7	Preserved
++ */
 +
- 	mp->attr = OPTEE_MSG_ATTR_TYPE_RMEM_INPUT + p->attr -
- 		   TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
++#define OPTEE_SMC_FUNCID_GET_DYN_SDP_CONFIG	21
++#define OPTEE_SMC_GET_DYN_SDP_CONFIG \
++	OPTEE_SMC_FAST_CALL_VAL(OPTEE_SMC_FUNCID_GET_DYN_SDP_CONFIG)
++
++struct optee_smc_get_dyn_sdp_config_result {
++	unsigned long status;
++	unsigned long size;
++	unsigned long align;
++	unsigned long flags;
++};
  
- 	mp->u.rmem.shm_ref = (unsigned long)p->u.memref.shm;
--	mp->u.rmem.size = p->u.memref.size;
- 	mp->u.rmem.offs = p->u.memref.shm_offs;
-+out:
-+	mp->u.rmem.size = p->u.memref.size;
- 	return 0;
- }
- 
-@@ -223,11 +255,13 @@ static int to_msg_param_reg_mem(struct optee_msg_param *mp,
-  * @msg_params:	OPTEE_MSG parameters
-  * @num_params:	number of elements in the parameter arrays
-  * @params:	subsystem itnernal parameter representation
-+ * @update_out:	update parameter for output only
-  * Returns 0 on success or <0 on failure
-  */
- static int optee_to_msg_param(struct optee *optee,
- 			      struct optee_msg_param *msg_params,
--			      size_t num_params, const struct tee_param *params)
-+			      size_t num_params, const struct tee_param *params,
-+			      bool update_out)
- {
- 	int rc;
- 	size_t n;
-@@ -238,21 +272,23 @@ static int optee_to_msg_param(struct optee *optee,
- 
- 		switch (p->attr) {
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_NONE:
-+			if (update_out)
-+				break;
- 			mp->attr = TEE_IOCTL_PARAM_ATTR_TYPE_NONE;
- 			memset(&mp->u, 0, sizeof(mp->u));
- 			break;
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT:
--			optee_to_msg_param_value(mp, p);
-+			optee_to_msg_param_value(mp, p, update_out);
- 			break;
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
- 		case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
- 			if (tee_shm_is_dynamic(p->u.memref.shm))
--				rc = to_msg_param_reg_mem(mp, p);
-+				rc = to_msg_param_reg_mem(mp, p, update_out);
- 			else
--				rc = to_msg_param_tmp_mem(mp, p);
-+				rc = to_msg_param_tmp_mem(mp, p, update_out);
- 			if (rc)
- 				return rc;
- 			break;
+ /*
+  * Resume from RPC (for example after processing a foreign interrupt)
 -- 
 2.43.0
 
