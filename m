@@ -1,237 +1,185 @@
-Return-Path: <linux-kernel+bounces-449359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74419F4DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:31:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5D89F4DCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F5F1892F5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED9616E830
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA6A1F4E49;
-	Tue, 17 Dec 2024 14:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338391F63CE;
+	Tue, 17 Dec 2024 14:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="FbluKOuK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uANGbWrz"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IcCrdJ5d"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1322AEE0;
-	Tue, 17 Dec 2024 14:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F6C1D5AB6;
+	Tue, 17 Dec 2024 14:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445880; cv=none; b=bT4eMOJoerYDocfK6yvqp9YdeKIol4u4LLDn3gaBl57BIYm5pXwYUIfDXKa/OyiARHOU/P7lVDqwUI7odrqfodt1U+1+OnbJgfAuXjleq34WeaGi8ggmpBc1gCChLWpUuS+JkWJUvy8S8cyso7CLNYy6TQjVA3CYW/cOpfFP/vU=
+	t=1734445920; cv=none; b=IjPo1lBguZQP+dsQbuWzfGjYSmtCrBiMNPzRZ1BG9nXaguZ2e+8ay74Be8+0vHsajv6mb+pGRMxD7tKqRPQrUlQKtUDI7g4GEBwOjZ9KUneVvw1ayK5lr4kCCR18bJPnmvjdoq1QiuRccLROa8Ii+fQx8FNysWMndYN855U8JqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445880; c=relaxed/simple;
-	bh=R5AEPOhE5zimeSFXlqP2ApxVlRFcLe3DttjDO3/lbmY=;
+	s=arc-20240116; t=1734445920; c=relaxed/simple;
+	bh=9kge3CIPxqjFmXDmL45ANILnVwjTV+072zHYSO3YAU0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGhTlej9ZTJ8skFhd2PTXJN+lyEgN60zG3nIRqDBSm7elp0RKEX9F2UgIUF7Jpe9+7JCLL1wkROUvadJlRILXhywpwmccZyWXrAJ4NFidW0oMjCgiM1viDflT37nl/8VYopWRBjHUGuQHRbQ4M9mHz9AhnRaVJkwyna9cDfdhvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=FbluKOuK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uANGbWrz; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 207751140099;
-	Tue, 17 Dec 2024 09:31:16 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 17 Dec 2024 09:31:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1734445875;
-	 x=1734532275; bh=T2z4S2KdGYMfZ5CZdK1KVnHbTmI/csXLkb+hBPu559g=; b=
-	FbluKOuKFoFROqVNIowWnfHBIBYNueAei5d3Wo7aUbzKPb+ceZR1yGJjTgZviBnO
-	TGeuuzJolBzIuoncn1MP5v2BTJ6U9YGnK07qJa4LbfFLIRwWo5NnYYbsH6mA+pfK
-	Z7YdDkkYQBftKu9cCz5fh8UyJnli0y47Ppqq+cJiJ4x3q2X2mZTpIX7ZGlp49+TI
-	Jj3uwpCxaEkHU1ZfBfgPxuVdhNL4jMd0BOiOetBJzFBbq+7DhwST0sidUrVElMvV
-	H5xMg7cHZTPwhGmVi3spk6vh/GVbwlLlY1XN52jYqE7bnFzRtQN/1LWlPKTiokmD
-	VPpTEz46ieDRHAAzfnpDpA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734445875; x=
-	1734532275; bh=T2z4S2KdGYMfZ5CZdK1KVnHbTmI/csXLkb+hBPu559g=; b=u
-	ANGbWrzcLIrsmFkRwsoFzliT4xWjzv0XtPnzbAPeAr6r0Q1byFK++lsdcUsoAJbZ
-	6jCPaCp7V9hZJFP0Wnc6CVklvDc0e+Xzkpq6K8cVFokMDfV7RwfFn91iUha1mz/w
-	A2WlPQP124IuixqDfUoUilZGGAlK68V1bWYdwnXdmbT8RP5iDK/jUoCtQCyY98RH
-	anteWK803a0p/l2Li6GMigvUCpZEraiTFtIYCk3x7aCNYBiyVGhFFlxRLFS7Ugeq
-	bqB96Po2OhV1pEWggjYkqW4353wvxxBpWZbP4T4PbUkEP3jEX6w9K6lCiBSAUM8B
-	F7fqFV+4AYQRowAv9hnxQ==
-X-ME-Sender: <xms:M4thZ54NMKQljdzx_XpTMq8E46_OKgEJROKqYkfezNNtjFxEC2bBdw>
-    <xme:M4thZ27cT-6TtqlfAPNht4RkLSnC5_RhlgQklveAk0q6_9Tsp9tS8KB2LDUDcoaYc
-    92RoE3z-NabSAe6bNI>
-X-ME-Received: <xmr:M4thZwcH1Mgdmij4EDBmnITiGYeqQ9d2GGlb9OE-D8VUJr6Pecig9aSK-SaINiRQ15JBJ0ea8xzfRykEK4WE6S0n5fExadHtSA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrleehgdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
-    hrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedt
-    vddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohgu
-    vghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepkedpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtoheplhgruhhrvghnthhiuhdrphgrlhgtuhesohhs
-    shdrnhigphdrtghomhdprhgtphhtthhopehmtghhvghhrggssehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdp
-    rhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvlhdrtghomh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqshhtrghgihhngheslhhishhtshdrlhhinhhugidr
-    uggvvhdprhgtphhtthhopehmtghhvghhrggsodhhuhgrfigviheskhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:M4thZyK07tF8R5Vy4bNCzkbsfDJHrbBAkDbWT0cQo8E2RtPjzkWtCg>
-    <xmx:M4thZ9ICFaA2-DmtvM3MF8UlzIjOxvPO_CFoukHSZXRnwjjHzBHSeQ>
-    <xmx:M4thZ7x7-T9u_u2kIg3eCwKfJ-Dhn-x7U200xl4sO1GWyJyHqa2V5w>
-    <xmx:M4thZ5IoUu4hZEt3lDpXNtEuyg9DIZCYDI2XhNKZhlIC11QZF8h1Gg>
-    <xmx:M4thZ0-_vqxqw9whJDPIs3-d3P3YS8yE2YsNBK_sxmnIR63gzxEPQOtT>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Dec 2024 09:31:14 -0500 (EST)
-Date: Tue, 17 Dec 2024 15:31:12 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v2] staging: media: max96712: fix kernel oops when
- removing module
-Message-ID: <20241217143112.GL878403@ragnatech.se>
-References: <20241217065151.1281037-1-laurentiu.palcu@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wn0rDxPYVtAByzr1DhaiHaGQrDmCQVRFUuvcbwTmiLRy1VJIhMbUFMh7sKzD+KCGiLuNdSydNvKVo+SFJC8CnH4KdPzZLn884iIeR67RP593bRdmDuxMJnFGPP7Q/ojVQYQeMNnfN84rhcXLfgUtGxkeLYrKW5qoZePaZ+j0hGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IcCrdJ5d; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHE6lVJ021945;
+	Tue, 17 Dec 2024 14:31:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=8UzmbUR8Tpe5gsu/QU5QKuGhKMhwp6
+	+6UM2NBTUncCg=; b=IcCrdJ5dJptM/XOoomiayx8kwEv0/3OCAAXqMhcws0nJjS
+	PwRG4ND+/MIp0ERg/Z+EER3bNgzKXB9cMGUec9uDmDLl6HrzhvQ9OPlr58QK//S4
+	ujnq0byo1OdkgsIAfQcP8zHdC/YJnrGPtM+TJ/9RWxOG/IAc+nKgblrKqL4QP6fr
+	XBub5aU499EBKTD8DG6q5AxHuYcQzWpJ9zHd+SWgX3Ns/9VW5fEJl4YyU0W/aum4
+	SufI5FrLEXmmdrg0tvoC66Xp9m4F4bViKHBSJVL+pq+ZRklKaMTC0PbuzrZa6+80
+	te+gvmSizcrV1pfmOFstAvT9Nv/eeT6nEFsGcijg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43kas4r4gc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 14:31:33 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHDwPmZ014391;
+	Tue, 17 Dec 2024 14:31:32 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43hq21jryy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 14:31:32 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BHEVUFb40042780
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 14:31:30 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9B7AD20049;
+	Tue, 17 Dec 2024 14:31:30 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B2B112004B;
+	Tue, 17 Dec 2024 14:31:28 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.215.128])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 17 Dec 2024 14:31:28 +0000 (GMT)
+Date: Tue, 17 Dec 2024 20:01:26 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+        yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v4 03/10] ext4: don't write back data before punch hole
+ in nojournal mode
+Message-ID: <Z2GLPnX24/gvYl98@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241216013915.3392419-1-yi.zhang@huaweicloud.com>
+ <20241216013915.3392419-4-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241217065151.1281037-1-laurentiu.palcu@oss.nxp.com>
+In-Reply-To: <20241216013915.3392419-4-yi.zhang@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: y7jY75OJndxLCD0VC-QbVJGKUvgArs3G
+X-Proofpoint-GUID: y7jY75OJndxLCD0VC-QbVJGKUvgArs3G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1011 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170115
 
-Hello Laurentiu,
-
-On 2024-12-17 08:51:50 +0200, Laurentiu Palcu wrote:
-> The following kernel oops is thrown when trying to remove the max96712
-> module:
+On Mon, Dec 16, 2024 at 09:39:08AM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Unable to handle kernel paging request at virtual address 00007375746174db
-> Mem abort info:
->   ESR = 0x0000000096000004
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x04: level 0 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af89000
-> [00007375746174db] pgd=0000000000000000, p4d=0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in: crct10dif_ce polyval_ce mxc_jpeg_encdec flexcan
->     snd_soc_fsl_sai snd_soc_fsl_asoc_card snd_soc_fsl_micfil dwc_mipi_csi2
->     imx_csi_formatter polyval_generic v4l2_jpeg imx_pcm_dma can_dev
->     snd_soc_imx_audmux snd_soc_wm8962 snd_soc_imx_card snd_soc_fsl_utils
->     max96712(C-) rpmsg_ctrl rpmsg_char pwm_fan fuse
->     [last unloaded: imx8_isi]
-> CPU: 0 UID: 0 PID: 754 Comm: rmmod
-> 	    Tainted: G         C    6.12.0-rc6-06364-g327fec852c31 #17
-> Tainted: [C]=CRAP
-> Hardware name: NXP i.MX95 19X19 board (DT)
-> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : led_put+0x1c/0x40
-> lr : v4l2_subdev_put_privacy_led+0x48/0x58
-> sp : ffff80008699bbb0
-> x29: ffff80008699bbb0 x28: ffff00008ac233c0 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: ffff000080cf1170 x22: ffff00008b53bd00 x21: ffff8000822ad1c8
-> x20: ffff000080ff5c00 x19: ffff00008b53be40 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> x14: 0000000000000004 x13: ffff0000800f8010 x12: 0000000000000000
-> x11: ffff000082acf5c0 x10: ffff000082acf478 x9 : ffff0000800f8010
-> x8 : 0101010101010101 x7 : 7f7f7f7f7f7f7f7f x6 : fefefeff6364626d
-> x5 : 8080808000000000 x4 : 0000000000000020 x3 : 00000000553a3dc1
-> x2 : ffff00008ac233c0 x1 : ffff00008ac233c0 x0 : ff00737574617473
-> Call trace:
->  led_put+0x1c/0x40
->  v4l2_subdev_put_privacy_led+0x48/0x58
->  v4l2_async_unregister_subdev+0x2c/0x1a4
->  max96712_remove+0x1c/0x38 [max96712]
->  i2c_device_remove+0x2c/0x9c
->  device_remove+0x4c/0x80
->  device_release_driver_internal+0x1cc/0x228
->  driver_detach+0x4c/0x98
->  bus_remove_driver+0x6c/0xbc
->  driver_unregister+0x30/0x60
->  i2c_del_driver+0x54/0x64
->  max96712_i2c_driver_exit+0x18/0x1d0 [max96712]
->  __arm64_sys_delete_module+0x1a4/0x290
->  invoke_syscall+0x48/0x10c
->  el0_svc_common.constprop.0+0xc0/0xe0
->  do_el0_svc+0x1c/0x28
->  el0_svc+0x34/0xd8
->  el0t_64_sync_handler+0x120/0x12c
->  el0t_64_sync+0x190/0x194
-> Code: f9000bf3 aa0003f3 f9402800 f9402000 (f9403400)
-> ---[ end trace 0000000000000000 ]---
+> There is no need to write back all data before punching a hole in
+> non-journaled mode since it will be dropped soon after removing space.
+> Therefore, the call to filemap_write_and_wait_range() can be eliminated.
+
+Hi, sorry I'm a bit late to this however following the discussion here
+[1], I believe the initial concern was that we don't in PATCH v1 01/10 
+was that after truncating the pagecache, the ext4_alloc_file_blocks()
+call might fail with errors like EIO, ENOMEM etc leading to inconsistent
+data. 
+
+Is my understanding correct that  we realised that these are very rare
+cases and are not worth the performance penalty of writeback? In which
+case, is it really okay to just let the scope for corruption exist even
+though its rare. There might be some other error cases we might be
+missing which might be more easier to hit. For eg I think we can also
+fail ext4_alloc_file_blocks() with ENOSPC in case there is a written to
+unwritten extent conversion causing an extent split leading to  extent
+tree node allocation. (Maybe can be avoided by using PRE_IO with
+EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT in the first ext4_alloc_file_blocks() call)
+
+So does it make sense to retain the writeback behavior or am I just
+being paranoid :) 
+
+Regards,
+ojaswin
+
+> Besides, similar to ext4_zero_range(), we must address the case of
+> partially punched folios when block size < page size. It is essential to
+> remove writable userspace mappings to ensure that the folio can be
+> faulted again during subsequent mmap write access.
 > 
-> This happens because in v4l2_i2c_subdev_init(), the i2c_set_cliendata()
-> is called again and the data is overwritten to point to sd, instead of
-> priv. So, in remove(), the wrong pointer is passed to
-> v4l2_async_unregister_subdev(), leading to a crash.
+> In journaled mode, we need to write dirty pages out before discarding
+> page cache in case of crash before committing the freeing data
+> transaction, which could expose old, stale data, even if synchronization
+> has been performed.
 > 
-> Fixes: 5814f32fef13 ("media: staging: max96712: Add basic support for MAX96712 GMSL2 deserializer")
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-
-Thanks for catching this.
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
-> Changes in v2:
->  * removed call to i2c_set_clientdata() in probe;
->  * cleaned up the trace in commit message as the tmux status line string
->    sneaked into it;
+>  fs/ext4/inode.c | 18 +++++-------------
+>  1 file changed, 5 insertions(+), 13 deletions(-)
 > 
-> Thanks,
-> Laurentiu
-> 
->  drivers/staging/media/max96712/max96712.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/media/max96712/max96712.c b/drivers/staging/media/max96712/max96712.c
-> index ede02e8c891cb..0751b2e048958 100644
-> --- a/drivers/staging/media/max96712/max96712.c
-> +++ b/drivers/staging/media/max96712/max96712.c
-> @@ -418,7 +418,6 @@ static int max96712_probe(struct i2c_client *client)
->  	priv->info = of_device_get_match_data(&client->dev);
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index bf735d06b621..a5ba2b71d508 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4018,17 +4018,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
 >  
->  	priv->client = client;
-> -	i2c_set_clientdata(client, priv);
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
 >  
->  	priv->regmap = devm_regmap_init_i2c(client, &max96712_i2c_regmap);
->  	if (IS_ERR(priv->regmap))
-> @@ -448,7 +447,8 @@ static int max96712_probe(struct i2c_client *client)
+> -	/*
+> -	 * Write out all dirty pages to avoid race conditions
+> -	 * Then release them.
+> -	 */
+> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+> -		ret = filemap_write_and_wait_range(mapping, offset,
+> -						   offset + length - 1);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	inode_lock(inode);
 >  
->  static void max96712_remove(struct i2c_client *client)
->  {
-> -	struct max96712_priv *priv = i2c_get_clientdata(client);
-> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> +	struct max96712_priv *priv = container_of(sd, struct max96712_priv, sd);
+>  	/* No need to punch hole beyond i_size */
+> @@ -4090,8 +4079,11 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  		ret = ext4_update_disksize_before_punch(inode, offset, length);
+>  		if (ret)
+>  			goto out_dio;
+> -		truncate_pagecache_range(inode, first_block_offset,
+> -					 last_block_offset);
+> +
+> +		ret = ext4_truncate_page_cache_block_range(inode,
+> +				first_block_offset, last_block_offset + 1);
+> +		if (ret)
+> +			goto out_dio;
+>  	}
 >  
->  	v4l2_async_unregister_subdev(&priv->sd);
->  
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
 > -- 
-> 2.44.1
+> 2.46.1
 > 
-
--- 
-Kind Regards,
-Niklas Söderlund
 
