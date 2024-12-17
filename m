@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-448335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1610C9F3EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:15:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B759F3EBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:22:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9902B1889922
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5333E16C723
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE322749A;
-	Tue, 17 Dec 2024 00:14:49 +0000 (UTC)
-Received: from secure.elehost.com (secure.elehost.com [185.209.179.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C34EEB2;
+	Tue, 17 Dec 2024 00:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZUtbvR7P"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10AF4683;
-	Tue, 17 Dec 2024 00:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.209.179.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D589461
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 00:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734394489; cv=none; b=EU1UrHpuUCU1EgdhI0mXBMzOa42quLC2NqPxZsF4EYJkMxC/a5MJIeM1DfCx3I4dc/+WsD3UNSkZfWqtIokMYib67uyj3x+zswvwv8enpsolZb0yTPYLcpK+YugICx9eimCOOhpRVK85nMwIRAO2iGjsNeq5KXm0zc3DIQgxLLs=
+	t=1734394934; cv=none; b=SqxxYLKO9kWOxLLwpF3XKn3Q/s0ibGUC4ffzI7jpuPtspWoDlVxJpFPYPuIVUvU4KNhakbmc5tgG3gq3GDBlarW8ZWYI9JUb75HGbDutw7CWSXP7303JRXIRus4xbaCxU1wLNn98unBFGx11x0TisZbETm7CqYa1ruCecMrJc50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734394489; c=relaxed/simple;
-	bh=MlW0bhXCIfOQ+2BcpaS+4C3WZbmTKrT7okw9Lw1jzpI=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OoWIo9VRxQY2TqeycXD/UA6yIJ0J1zGsJDG+CgA3VMoQw198oyyvBmgRvtlD+PXBQxMHOX1SCj4Cob6eH74rLFu7jE5HxCzT3wrV68+jpCjB00IMFtc5W0jV12xWnrtJpIju7X6cwW/QzBUPwuCo87ZAlkRT0t1TiPL6HwWTTu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com; spf=pass smtp.mailfrom=nexbridge.com; arc=none smtp.client-ip=185.209.179.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nexbridge.com
-X-Virus-Scanned: Debian amavisd-new at secure.elehost.com
-Received: from Mazikeen (pool-99-228-67-183.cpe.net.cable.rogers.com [99.228.67.183])
-	(authenticated bits=0)
-	by secure.elehost.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTPSA id 4BH07TZL1657451
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 00:07:30 GMT
-Reply-To: <rsbecker@nexbridge.com>
-From: <rsbecker@nexbridge.com>
-To: "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
-Cc: "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <xmqqfrmn4hr9.fsf@gitster.g>
-In-Reply-To: <xmqqfrmn4hr9.fsf@gitster.g>
-Subject: RE: [ANNOUNCE] Git v2.48.0-rc0
-Date: Mon, 16 Dec 2024 19:07:25 -0500
-Organization: Nexbridge Inc.
-Message-ID: <00ad01db5017$aa9ce340$ffd6a9c0$@nexbridge.com>
+	s=arc-20240116; t=1734394934; c=relaxed/simple;
+	bh=mZ7KBxRiNIDejZVpUVQ6nlPgNNXf0zptNyEy5l+UnBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMXeGWibxakngw1+6N8bNAAf0gE9ujhUh4tJ8EqqbvTb+2vm12c2LdmSdBM6C1gSSYawA2DWZP9NXzkpZpH5eO8a29RqY5WH+qPaZiCZ/gNdtKG/eD+92oPxD0dqKESZNd7lGxEB+luCNjG7SVBKu83qE/eT78yhiEdvOqIY2i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZUtbvR7P; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3983f8ff40so2844703276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 16:22:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1734394931; x=1734999731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=71UboNKp8PBgSM3OXXE6el32SNwss2VOEFU3BrAALk0=;
+        b=ZUtbvR7POJzs9AMT/ZxyccuYJWBODImPREZFWPi03Z5mV9bDqC6NUA5V/OPUvk+W6t
+         VpAaVnfBDy7rgwHdBoCnK0jjZKH5tRdClFIsdessEWfEgVb7cnDyhbnGU4gTYBf465Mr
+         eKoEQU77hFpzBLRElM9+AKvusZM25SkBpIMLI4Rw+Y+HgjdodPrpxpxb2r2+m/FdjoBp
+         SN7q4j87wN8UmWasJn5aWMrx+TVYKxNX6T4h0TPH09/aLsSvo4LsyOUv1ViF2Zb++/le
+         JJG/adDh1hMN8rauQle9yCgrMHO5yZcTcIcay/gMbn9AMRmWVxTGLRC4zDdrY5zfpFZx
+         +k5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734394931; x=1734999731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=71UboNKp8PBgSM3OXXE6el32SNwss2VOEFU3BrAALk0=;
+        b=t26RpVyrVkRiNSo8+cnmYDbBMEfo3EvlJXNvvnsMz3QdrXkQFbRsy3Ck2lNfUqfmWh
+         fSq0UoQ8f6kHgPqXgKAnS+EpyNxepLeYJdYxWw5EFlHTMcpedhdW73iTqzB/Er1MoLST
+         Yyjmq+6trEptL4XjohWLom0IfNn/F0S4n1OpvK/fVX5nYzLnm3n87i2wSUgK0ELOv0XQ
+         pv6j6saVqGur1jZYkdGyKtDoIuW2VS+kVPsNfEmZUhvxj7JtsMpm6v8+TjcwycawEL34
+         QFRayfz9mb9O53rpDc8Fq12hbNORFZrnxgMv+I+9X015qzPcfKFBdXiUixnUAqGGyAD7
+         6/yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJnS/NJ6P+zbt5cvcmJgBOwJOUsMtfw+NCP8kezlZMxYjzM3LheqfWqxQrYA1Br1hAm8qarPulrP1s8/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpJXHDPPevSbFfKW6GJ1zkjKOqbFlFuKWcVOllkpdjVAHgJ+CE
+	afcilZmTtyQvka/p9s4BrOqBQP+6yK9K9imrazM3OZqc8x0vWenlA0Zznhzg1MHFEceA18jnzXk
+	5K6QsvJ0XHNeXvyr6xyT/5OfQqjYYkr6cU9Cf
+X-Gm-Gg: ASbGnct1frQ//ReR9cAEr3nISSf7b/+nfc5fZWH72DgSfRsNNzI/AcJ3Xl6JzgtCHdh
+	YCtQ+sbkHUX3flAV93PnZ7iJDnk3Z26kV+w3C
+X-Google-Smtp-Source: AGHT+IHf0wZhbh7sOURNOzivfR+3asRXLLCmwV8fbsWRDWFE4TZAL8JlZRQzwQgdHYf9FYWmcVo2zFP8s+2cEpINRbE=
+X-Received: by 2002:a05:6902:2006:b0:e4d:89e9:6a7f with SMTP id
+ 3f1490d57ef6-e4d89e96f63mr5429340276.50.1734394931644; Mon, 16 Dec 2024
+ 16:22:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
+References: <20241216234308.1326841-1-song@kernel.org>
+In-Reply-To: <20241216234308.1326841-1-song@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 16 Dec 2024 19:22:01 -0500
+Message-ID: <CAHC9VhSu4gJYWgHqvt7a_C_rr3yaubDdvxtHdw0=3wPdP+QbbA@mail.gmail.com>
+Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+To: Song Liu <song@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	willy@infradead.org, corbet@lwn.net, clm@fb.com, josef@toxicpanda.com, 
+	dsterba@suse.com, brauner@kernel.org, jack@suse.cz, cem@kernel.org, 
+	djwong@kernel.org, jmorris@namei.org, serge@hallyn.com, fdmanana@suse.com, 
+	johannes.thumshirn@wdc.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFEfEaRNrZ6uu0wI6oVXmgPkoCy2rQXNl5g
-Content-Language: en-ca
 
-On December 16, 2024 1:15 PM, Junio C Hamano wrote:
->An early preview release Git v2.48.0-rc0 is now available for testing =
-at the usual
->places.  It is comprised of 446 non-merge commits since v2.47.0, =
-contributed by 66
->people, 26 of which are new faces [*].
+On Mon, Dec 16, 2024 at 6:43=E2=80=AFPM Song Liu <song@kernel.org> wrote:
 >
->The tarballs are found at:
+> inode->i_security needes to be freed from RCU callback. A rcu_head was
+> added to i_security to call the RCU callback. However, since struct inode
+> already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
+> LSM uses i_security, a rcu_head (two pointers) is allocated for each
+> inode.
 >
->    https://www.kernel.org/pub/software/scm/git/testing/
+> Add security_inode_free_rcu() to i_callback to free i_security so that
+> a rcu_head is saved for each inode. Special care are needed for file
+> systems that provide a destroy_inode() callback, but not a free_inode()
+> callback. Specifically, the following logic are added to handle such
+> cases:
 >
->The following public repositories all have a copy of the 'v2.48.0-rc0' =
-tag and the
->'master' branch that the tag points at:
->
->  url =3D https://git.kernel.org/pub/scm/git/git
->  url =3D https://kernel.googlesource.com/pub/scm/git/git
->  url =3D git://repo.or.cz/alt-git.git
->  url =3D https://github.com/gitster/git
+>  - XFS recycles inode after destroy_inode. The inodes are freed from
+>    recycle logic. Let xfs_inode_free_callback() and xfs_inode_alloc()
+>    call security_inode_free_rcu() before freeing the inode.
+>  - Let pipe free inode from a RCU callback.
+>  - Let btrfs-test free inode from a RCU callback.
 
-Did I miss something about GIT_TEST_DEFAULT_REF_FORMAT=3Dreftable being =
-removed
-from the test suite? That was available under 2.47.0 but if I supply it =
-now, the tests
-crash at git init.
+If I recall correctly, historically the vfs devs have pushed back on
+filesystem specific changes such as this, requiring LSM hooks to
+operate at the VFS layer unless there was absolutely no other choice.
 
-Confused a little
---Randall
+From a LSM perspective I'm also a little concerned that this approach
+is too reliant on individual filesystems doing the right thing with
+respect to LSM hooks which I worry will result in some ugly bugs in
+the future.
 
---
-Brief whoami: NonStop&UNIX developer since approximately
-UNIX(421664400)
-NonStop(211288444200000000)
--- In real life, I talk too much.
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  Documentation/filesystems/vfs.rst |  8 ++++-
+>  fs/btrfs/fs.h                     |  1 +
+>  fs/btrfs/inode.c                  |  4 +++
+>  fs/btrfs/tests/btrfs-tests.c      |  1 +
+>  fs/inode.c                        |  2 ++
+>  fs/pipe.c                         |  1 -
+>  fs/xfs/xfs_icache.c               |  3 ++
+>  include/linux/security.h          |  4 +++
+>  security/security.c               | 49 +++++++++++++++++++------------
+>  9 files changed, 53 insertions(+), 20 deletions(-)
 
-
-
+--=20
+paul-moore.com
 
