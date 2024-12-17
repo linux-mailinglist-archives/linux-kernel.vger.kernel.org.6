@@ -1,104 +1,93 @@
-Return-Path: <linux-kernel+bounces-449921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4329E9F580A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:47:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976CD9F5812
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74ACE7A600A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C282D16C701
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475A71FA15F;
-	Tue, 17 Dec 2024 20:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4451E1F9EC8;
+	Tue, 17 Dec 2024 20:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lW0MCHjP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bJ+wx1r4"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4921F9F79;
-	Tue, 17 Dec 2024 20:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3A150994;
+	Tue, 17 Dec 2024 20:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734468356; cv=none; b=VHh2Or3fKeR2KHbukZN3OBcHDFy9IB6pO/exDyF46zUsJpCiSH+2lZBZikZsGXiu8sswKhuSeJny2HwuRvmlBcgSw+cT/5nTsTdhzdz4XPuz3sTJTxoYkG/ycKvtmCujlKAZmfFl6pLh3+kJm6PKuc5RjPoGI2v8w+p9gvWQAhE=
+	t=1734468506; cv=none; b=llo4vZqS15FuVMaCsz/eHRqSXZYQeiGj+vfV3vyhdvUrmGgMYklBMticQLhdQlnqR/JddZ7wO2HjXr1Ue60KFQiECed9dRYRhDX0G9vaOy1bnB1MpW3bzVo6YQDuaypP5uUbYU7Ddv2gfYnZH2WpETqbOqkFY9IAf58g0BuHpDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734468356; c=relaxed/simple;
-	bh=AfNs+aRaImOqqFmUUmohbMCBZ0wyMR7R2ImxXHGvlLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eapzBSSq8WpQv/V/XHkvG0nL2T2ohx+QZq9df7ZDKVWnjIcn32UeA1kQLciy9hUnMwaO+l+lp5ZnG+QEDOxFmtCNc8dOcU3FG0eczpnG99Cq/Uu1P2ht9V7rZcZo7oshN8Wr21R+5TmEyrefIYHwsM/qz+h/sHACSs0vkWFdAWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lW0MCHjP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B45C4AF09;
-	Tue, 17 Dec 2024 20:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734468356;
-	bh=AfNs+aRaImOqqFmUUmohbMCBZ0wyMR7R2ImxXHGvlLE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lW0MCHjPaX8cg4kiValaSMnigYb6c998+tiRy+NY+3bP511KWoz6Mag7TsArQhkFo
-	 XVV+6YmmOgWF6DkOybDAn6jmNT8o1cd4uvg+M/SeDnQUT6CXCQ4szhG2FMbChQ2syo
-	 SXllpNb2wKd4SIBI66P4GxZDINE/EV0Y9JjEvwtnnLpXwkCMmham7qIwY1I/RPpXjA
-	 twA+8gAmM3m2ZHEe+miz/11e6EZyJpPaj7eHhSPDi9950AfWVXj9wvdlTwBhM0lpyC
-	 GFGJ0pAl+TMLp8Oiq3/fgyJUTkUxWnl3soyO6fhGW+XBfekRmns7bRcbD09NDfqLgB
-	 nNpQpZxKlyy/Q==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3eb7e725aa0so2678074b6e.0;
-        Tue, 17 Dec 2024 12:45:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU+epsR5hrINboheLbw3uDHvhzNFhH40YtveW0sfyflS84W/dF6DLObFQGqM9eaAY2IqwOG7M8mfuVmvF4=@vger.kernel.org, AJvYcCUjJcLrnxfqSEjQ7XuQ9BenPn35ru5rVTk1n5YQFtR1H9HmM9u9W+9H/4FCznnu/tXi1K7ngXJ1ygQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzpv4pIfTr4Tqsrqy97C1Bjtq0QlY7eLm4uaopr0+T/j32dkSK
-	3s0GPSiQhujkJ/+9sj31tnKizfPEJArxEL3JFCKLghokIf1jzTmYUvziMhSNYPfs/Jh0P9+Zt0P
-	bxsk6aqLPdCOR1EV0OiZKEtcZ5Ro=
-X-Google-Smtp-Source: AGHT+IFLSMWjQPcteOW/I2xvn220NQPZSr1gUKmQJePYhYNKLftQ8O7ii7jOEPxDQ65slkY5nL6eUiCd+0E+NPTA2Pk=
-X-Received: by 2002:a05:6808:2110:b0:3e6:19a9:4718 with SMTP id
- 5614622812f47-3eccc0b837dmr325889b6e.40.1734468355555; Tue, 17 Dec 2024
- 12:45:55 -0800 (PST)
+	s=arc-20240116; t=1734468506; c=relaxed/simple;
+	bh=VGwN2IRMnIhPVWCwWW62o4eZYGILo8S5ix6UL4fDIDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YN9+B6I7mV5ZJ/N0i6GnQyigkw/TryYR9q3Nv/dpuhRLUde5DlHdyBgUEUbY6S2lOSW6W1VFFPMggIHZIfym6l4Gddb6GjAG4unr1lhmeyNRu4YYJvhihy+jr9u/sAd6QQzNYzWEwoT5jfAUR7KBbhsjrYEyqU+eY8VyH8TXpe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bJ+wx1r4; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHKltGP055178
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 14:47:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1734468476;
+	bh=LTOIe3GVKsSWdeJG4XQTfvePTsd9cRoeiTuF0rnAvKE=;
+	h=From:To:CC:Subject:Date;
+	b=bJ+wx1r4KCnEnhTmtjrbVat+VCtZBe7FbLLYuZlFlfDCONYCOqCm9neEScmzg1HGR
+	 m9Ubc5NkXTP7hVVzjBtPaznnAI9Ox/FR8rxDYniQJDvgWl2YnoBeolBmgctO2PhKEL
+	 Z/skKR3CxZGYZnDSomMwn32uPwF6fW322PmnR234=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BHKlt7u130150
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 17 Dec 2024 14:47:55 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 17
+ Dec 2024 14:47:55 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 17 Dec 2024 14:47:55 -0600
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.8])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BHKltv6025808;
+	Tue, 17 Dec 2024 14:47:55 -0600
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
+        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>
+Subject: [PATCH v1 0/1] TPS65219 GPIO Driver Cleanup Series
+Date: Tue, 17 Dec 2024 14:47:54 -0600
+Message-ID: <20241217204755.1011731-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241129182232.14987-1-patryk.wlazlyn@linux.intel.com>
- <20241129182232.14987-2-patryk.wlazlyn@linux.intel.com> <CAJZ5v0jhK51+pkf=Amr=qXWzK3e1xC_tdt0iqQXxVfeE4pcFJQ@mail.gmail.com>
- <2320a952-334d-4d52-a15a-669a5670df7d@linux.intel.com>
-In-Reply-To: <2320a952-334d-4d52-a15a-669a5670df7d@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 17 Dec 2024 21:45:44 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i=_wNubB8_yQtBZYLYJ+f==c9OVMpxbtYHfFCJR+nsng@mail.gmail.com>
-Message-ID: <CAJZ5v0i=_wNubB8_yQtBZYLYJ+f==c9OVMpxbtYHfFCJR+nsng@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] x86/smp: Allow calling mwait_play_dead with an
- arbitrary hint
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, peterz@infradead.org, 
-	dave.hansen@linux.intel.com, gautham.shenoy@amd.com, tglx@linutronix.de, 
-	len.brown@intel.com, artem.bityutskiy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Dec 17, 2024 at 9:09=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> > And honestly I'm wondering why adding a parameter to mwait_play_dead()
-> > is better than introducing mwait_play_dead_with_hint(), in analogy
-> > with the existing mwait_idle_with_hints()?
-> >
-> > The latter option would allow you to avoid introducing a function that
-> > is deleted in the same patch series (in patch 4).
->
-> We need to be able to call part of the old mwait_play_dead() code,
-> but without the hint calculation.
->
-> mwait_idle_with_hints() doesn't have the "kexec hack" logic.
+This series is in preparation to add 2 PMIC devices to the TPS65219 driver.
 
-Well, "in analogy" doesn't mean to use mwait_idle_with_hints() instead
-of the new function.
+The changes involve using existing helper macros to simplify code. The 
+intention is to remove unnecessary noise from the new PMIC patches adding 
+support to this driver.
 
-Just the name of the new function could be similar to
-mwait_idle_with_hints() (which is the name of an existing function),
-that is mwait_play_dead_with_hint().
+Shree Ramamoorthy (1):
+  gpio: tps65219: Use existing kernel gpio macros
 
-> We also need to leave the old code working and on top of that introduce
-> the acpi_idle and intel_idle patches that use the new API.
+ drivers/gpio/gpio-tps65219.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Sure.  If the name of the new function is mwait_play_dead_with_hint(),
-that will still work.
+-- 
+2.34.1
+
 
