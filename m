@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-448934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9EA9F4766
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:25:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65B09F475A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADD2188AF5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8B7D7A7A61
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4484A1DF98F;
-	Tue, 17 Dec 2024 09:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362F71E0B7D;
+	Tue, 17 Dec 2024 09:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WHpy04qa"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vghqSsaU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7891DA313
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21591DFE16
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734427166; cv=none; b=QEwSuu/DFBfz0FOZjT0klRMPgbuuzjzo35xjKhqeIUI10/a9UtW4hrzwCHVxuErNrPeZMK81Hzn+9Gm/pozKKVybnNdpp1jEcXPkuZcUBwua5SMXVS+zTo/sm7qb55P/DQrBOYIIlyoFlVwjKy4hcBSiEEhplImCLf5QqcdAONs=
+	t=1734427193; cv=none; b=p08zelS13sERQyvTgaKeuvGehYSh38wHe0by4hNtKnAMVwVt2QJw6jG8KzzqPfaYO7wDo5dtHyOFjpIA+8KLF+7BgEHW9ur3iObR7CXsW1odphB3Dmeoiceb6IjvUJD7bO0CAdTQ1wY4Bdij/grJl1VnVuoRmGVlogIxKD+98Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734427166; c=relaxed/simple;
-	bh=DC965Tfa4EF7QPuS6rd27SkC6ALTk0aHBhziZdPRNNY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GVWs6gnT/IQ21O2gAKOzG7+HWWOPNRPaNsuYP/W+BtL12xmhdH1SUJ+/qrY1kjQIDAZaweZvbhKxF58Be2Bgbnpw0A9k+jgmpiPr2y3ehJOPMGpb8E/Lnso5AhnRosxOWCKtggiYhKecfvxsPcSo3q4TMTACPsimxC9XmjABQQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WHpy04qa; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734427161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZKUG8/7+vJ4CurxMusMNyHDShZvXwj62eE8NC9Ca7Q=;
-	b=WHpy04qaYGREjmB9I2/bNT8q0m7Itc52aKyA9xJajoh+1emO/0eQkVG6ByQGwbulu5cX95
-	DT4W/0kqJw0uaQLyYojOEXXIluGm1OcG12N90rW77922WcYJ2cwf+/t67g4GhM0+N+BsBl
-	1zlMqLY42kC+0W/KVjLCPuXFNif6dKA=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming unwritable
-Date: Tue, 17 Dec 2024 01:19:08 -0800
-Message-Id: <173442713502.3654654.5293442477717772457.b4-ty@linux.dev>
-In-Reply-To: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
-References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
+	s=arc-20240116; t=1734427193; c=relaxed/simple;
+	bh=OUuzywE8CHloqIU0RJfp7qUpRNQcGoQYoHO73/PmFS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrJVOeozL2hkHb/fYeeD4FuBcI7eq7ZncioF4kFvw5deUeAJLp7Ia2QuakpmMzYEMEcGEs37NHFVo8fc8gnnPFMzUHhOARpC5aLgUSnz9RNFfB9F8rq2dGvINGKINPVZND64dy1o6Gdl/m/5RazHe2Mx9XkkoDkmC6SnRmpqYdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vghqSsaU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xCZ8fnFaYFb5nC5ZozgtceveuSSe0JXurTGbtKIVuMw=; b=vghqSsaU0BaSKHkf0SHFYuDCTV
+	7pIkPhlp4HoB3ncG9yiP4eVVeHFlIW6mgO8Tf5pjFgetelmX6BbAMqTjWCctB9PsTkZXYKuNgxJRN
+	uHg6uhPUkPbYMFDce5tJKNc4Lpj/iDiPuoMx6Ow6dcMxy9P2WrjPMu69IxwXitegFFXDwrad/YNPQ
+	MwZKF4HWnrYrqJxzlrFbSVMDVyBDs9D+zBlaaH4mT2OUuo8suox3TRfXZqMD1W2GYR6JERWkGlMxB
+	uj4TacOEtinDVmwGByMpkFn0YRLSDPDQtwYtOvR2bodw7djt7lUkuZZ0SR3NvUy7nYrjjb73q41oB
+	6K8BEkMA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNTk0-000000060g6-0gqq;
+	Tue, 17 Dec 2024 09:19:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A0B1730015F; Tue, 17 Dec 2024 10:19:43 +0100 (CET)
+Date: Tue, 17 Dec 2024 10:19:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [RFC][PATCH v14 2/7] locking/mutex: Rework
+ task_struct::blocked_on
+Message-ID: <20241217091943.GL35539@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-3-jstultz@google.com>
+ <20241213232214.GA17501@noisy.programming.kicks-ass.net>
+ <CANDhNCraMepXyQPs1q-aNa+Gh745WpaFPkngA9Eohi9vXRpe+w@mail.gmail.com>
+ <20241216165419.GE35539@noisy.programming.kicks-ass.net>
+ <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANDhNCpTfZFOkUkB4f4iQwXA3wnsDuUA_1ZLuseGYunnpgO9Rw@mail.gmail.com>
 
-On Mon, 16 Dec 2024 19:28:24 +0000, Mark Brown wrote:
-> In commit 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits
-> to be overridden") we made that bitfield in the ID registers unwritable
-> however the change neglected to make the corresponding update to set_id_regs
-> resulting in it failing:
+On Mon, Dec 16, 2024 at 09:01:24PM -0800, John Stultz wrote:
+> > Specifically, slide 27 talks about a modification to try_to_wake_up() in
+> > order to force the task into ttwu_runnable() such that it then hits
+> > proxy_needs_return(). This latter part I can find, but not the former.
+> >
+> > /me puzzles
 > 
-> # ok 56 ID_AA64MMFR0_EL1_BIGEND
-> # ==== Test Assertion Failure ====
-> #   aarch64/set_id_regs.c:434: masks[idx] & ftr_bits[j].mask == ftr_bits[j].mask
-> #   pid=5566 tid=5566 errno=22 - Invalid argument
-> #      1	0x00000000004034a7: test_vm_ftr_id_regs at set_id_regs.c:434
-> #      2	0x0000000000401b53: main at set_id_regs.c:684
-> #      3	0x0000ffff8e6b7543: ?? ??:0
-> #      4	0x0000ffff8e6b7617: ?? ??:0
-> #      5	0x0000000000401e6f: _start at ??:?
-> #   0 != 0xf0 (masks[idx] & ftr_bits[j].mask != ftr_bits[j].mask)
-> not ok 8 selftests: kvm: set_id_regs # exit=254
-> 
-> [...]
+> So the slides actually have links to the code at that time, which
+> should be the v12 series:
+>   https://github.com/johnstultz-work/linux-dev/commits/proxy-exec-v12-6.11-rc5
 
-Applied to fixes, thanks!
+Oh, no the reason I looked at -v7 is that I thought it was the most
+recent one.
 
-[1/1] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming unwritable
-      https://git.kernel.org/kvmarm/kvmarm/c/212fbabe1dfe
+This github piece of shit lists it as the first 'proxy-exec-v7*' in the
+branch pull down with earlier version below it.
 
---
-Best,
-Oliver
+Only if you scoll down further (which I didn't, because why would I),
+you'll eventually come across 'proxy-exec-v14*'.
+
+I'm looking forward to the day where the web implodes under its own
+incompetence, urgh, web sucks.
 
