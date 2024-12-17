@@ -1,161 +1,135 @@
-Return-Path: <linux-kernel+bounces-448785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338239F4570
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:46:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790679F4573
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E83188A213
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:46:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFA316C4D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778E71CCEF8;
-	Tue, 17 Dec 2024 07:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6424192B66;
+	Tue, 17 Dec 2024 07:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgBBwHHY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KeCt8YlF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF826A29;
-	Tue, 17 Dec 2024 07:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFE8A29;
+	Tue, 17 Dec 2024 07:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421573; cv=none; b=nv2vEvD/cJ0tmzMlq3TLltB0k2mrN+oidltclKPnwI11AzhN6FpFG9dGQwlR6IyGCw8+0wEu+Gsv/FNLg5kiVyofvOOC03KKDePOfzY1WHYbXzpA5kkL74nc8Ch1QI9zldLHYYkuoUykj8eQ6MZg+ZiLOr5Np+gABA79dHy3PpA=
+	t=1734421649; cv=none; b=CeqUCGZ0l8kUQMjx+1ELkM0GR7M0CuY18FHjQaovTpOSpwfiE07tkZ0rGy9QlWKulJ4wBYDZjcRzLYdji0U3SuzdKjmdQYoKbaapYdVgyt2LaI8Cpdw3yeTLsVC10UkZ7GKk6ncBNh7cCNyP7YUAtSNuMbJ84HjVQL8N0BCboyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421573; c=relaxed/simple;
-	bh=+Vm+eC+xSgbsQqva2V7i7wuDgSImt8XYpxOEXdlLywg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdhQdRnhSEx9IdGjdGWM9IxpWJ1cCE3RL7hkqAQIH3coyQyc2s9fSABHJvDhxd6qLKJOrDEpkFJ30SMjt3T9vUJh0UL/9zVQ2iiFDrXTPFXaOvGs+AtcsuoOWsVzNNCsfWEkotsHE4+qpFoQR0LX+we0T3TIe5KOnXqnzcoeS9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgBBwHHY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A37C4CED3;
-	Tue, 17 Dec 2024 07:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421573;
-	bh=+Vm+eC+xSgbsQqva2V7i7wuDgSImt8XYpxOEXdlLywg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FgBBwHHYKZI1UfSFS9QBhn7KVCPW6yXxW25zCAViHTsGX4H2PU6XBB6pcGua9ACFC
-	 lDp1RIf8KYS1ML5amD4Y3t4q5JdEG+aLKWhGuvLt7KRt3/EuY4iuQM5+aNCwiqG0W2
-	 owCVnCyvWHwb6Y06ZOzMpZilfZH2vDPBfzPYVMJRSw/C/LykUeH6ihb4K/+Nw3LppA
-	 P+24b4InOPyMWOE7YuQop6nU29CyJo4mg5t/F1KciT10WDePp35gH4aW0vEYEM2rlx
-	 ElZkOKQhMbFAUFnm8zh9pTDiQZ1npXDIwGLROYYfTnd6aRrl9DJwzQKW24QMs0rdrr
-	 IzZgEnd1p4RYQ==
-Date: Tue, 17 Dec 2024 08:46:10 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Maarten Lankhorst <dev@lankhorst.se>
-Cc: linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-Message-ID: <20241217-meek-bullfinch-of-luck-2c3468@houat>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <20241213-proud-kind-uakari-df3a70@houat>
- <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
- <20241213-gentle-glittering-salamander-22addf@houat>
- <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
+	s=arc-20240116; t=1734421649; c=relaxed/simple;
+	bh=RvUYAbXWRlYm4usEWLpMcWLM34/6FiETEbx7j1IFVjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uk8cuDcSzLIJmVs8gstS4Y+ItgjxGK3nCobXtyVM8x09znB+O9kJbhCBgFvr6RfqCdzBglzrpcVGpk4XTLuwfk81ELvUWza3kGS3XTZNx2MKA9Ugx/7R6WXEZ9SQooQi2sjlnr6aXUBxL2cK7/1sUv0pwb1Aqb/pcsCXRBvKfMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KeCt8YlF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH61s9n005066;
+	Tue, 17 Dec 2024 07:47:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YTo/P7f/upBFio9J5H+90ORp8e2JdLD5o/PbOI6evEI=; b=KeCt8YlFhB2x1rGb
+	27DZOyy2UAFu1DvLwhs4rWGKCrr1BPmofn9DSZIu527upggXVFmpfjJH+sX5TwOv
+	XM6J4MKYa//ayP8dOzPGLce85L8jl5sxh2R9u7WeyK5Th13rFON3xFYyptdsljfr
+	RyxNtm4e33tf7GwfdIUM8lg16q6PXFScfmCmKLEYH4M3hOTINA2ABL93S3D6Ni2m
+	cijymIv5Z3YIyO8EtWeBevaySc0Q9LErcAA95fMPcJy4NZ27z2q1KlosEifvrk/D
+	nqRuWGhbZkKisiarhSaoKnC5L1MBmi1F7yFi6rURpDN9c2xLPdS8d9fs1f44Dv/1
+	ZEQUlg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k3p488ns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 07:47:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH7lAO7003168
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Dec 2024 07:47:10 GMT
+Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 16 Dec
+ 2024 23:47:08 -0800
+Message-ID: <65de323b-ee7f-41cf-a300-1cf883494d1d@quicinc.com>
+Date: Tue, 17 Dec 2024 15:47:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="moaynkbohx6mdcjs"
-Content-Disposition: inline
-In-Reply-To: <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Add support to configure TPDM MCMB subunit
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241105123940.39602-1-quic_jinlmao@quicinc.com>
+Content-Language: en-US
+From: Jinlong Mao <quic_jinlmao@quicinc.com>
+In-Reply-To: <20241105123940.39602-1-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Xojj7zGYs_Wm-DhaeECuX7FKFb8Asblb
+X-Proofpoint-GUID: Xojj7zGYs_Wm-DhaeECuX7FKFb8Asblb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=920 phishscore=0 spamscore=0 clxscore=1015 suspectscore=0
+ mlxscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412170063
 
 
---moaynkbohx6mdcjs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-MIME-Version: 1.0
 
-On Fri, Dec 13, 2024 at 05:06:05PM +0100, Maarten Lankhorst wrote:
-> Hey,
->=20
-> Den 2024-12-13 kl. 16:21, skrev Maxime Ripard:
-> > On Fri, Dec 13, 2024 at 03:53:13PM +0100, Maarten Lankhorst wrote:
-> > >=20
-> > >=20
-> > > Den 2024-12-13 kl. 14:03, skrev Maxime Ripard:
-> > > > Hi,
-> > > >=20
-> > > > Thanks for the new update!
-> > > >=20
-> > > > On Wed, Dec 04, 2024 at 02:44:00PM +0100, Maarten Lankhorst wrote:
-> > > > > New update. Instead of calling it the 'dev' cgroup, it's now the
-> > > > > 'dmem' cgroup.
-> > > > >=20
-> > > > > Because it only deals with memory regions, the UAPI has been upda=
-ted
-> > > > > to use dmem.min/low/max/current, and to make the API cleaner, the
-> > > > > names are changed too.
-> > > >=20
-> > > > The API is much nicer, and fits much better into other frameworks t=
-oo.
-> > > >=20
-> > > > > dmem.current could contain a line like:
-> > > > > "drm/0000:03:00.0/vram0 1073741824"
-> > > > >=20
-> > > > > But I think using "drm/card0/vram0" instead of PCIID would perhap=
-s be
-> > > > > good too. I'm open to changing it to that based on feedback.
-> > > >=20
-> > > > Do we have any sort of guarantee over the name card0 being stable a=
-cross
-> > > > reboots?
-> > > >=20
-> > > > I also wonder if we should have a "total" device that limits the am=
-ount
-> > > > of memory we can allocate from any region?
-> > >=20
-> > > I don't think it is useful. Say your app can use 1 GB of main memory =
-or 2 GB
-> > > of VRAM, it wouldn't make sense to limit the total of those. In a lot=
- of
-> > > cases there is only 1 region, so the total of that would still be the=
- same.
-> > >=20
-> > > On top, we just separated the management of each region, adding a 'to=
-tal'
-> > > would require unseparating it again. :-)
-> >=20
-> > I didn't mean the total for a device, but for the system. It would
-> > definitely not make sense for a VRAM, but for CMA for example, you have
-> > a single, limited, allocator that will be accessible from heaps, v4l2
-> > and DRM devices.
-> >=20
-> > If an application has to allocate both from v4l2 and DRM buffers, we
-> > should be able to limit its total usage of CMA, not just on a single
-> > device.
->
-> In this case, I think it makes more sense if CMA creates a region, then u=
-se
-> that region in both v4l2 and DRM instead of a separate region for both, w=
-ith
-> CMA being responsible for lifetime.
+On 2024/11/5 20:39, Mao Jinlong wrote:
+> Introduction of TPDM MCMB(Multi-lane Continuous Multi Bit) subunit
+> MCMB (Multi-lane CMB) is a special form of CMB dataset type. MCMB
+> subunit has the same number and usage of registers as CMB subunit.
+> Just like the CMB subunit, the MCMB subunit must be configured prior
+> to enablement. This series adds support for TPDM to configure the
+> MCMB subunit.
+> 
+> Once this series patches are applied properly, the new tpdm nodes for
+> should be observed at the tpdm path /sys/bus/coresight/devices/tpdm*
+> which supports MCMB subunit. All sysfs files of CMB subunit TPDM are
+> included in MCMB subunit TPDM. On this basis, MCMB subunit TPDM will
+> have new sysfs files to select and enable the lane.
+> 
+> Changes in V2:
+> 1. Use tdpm_data->cmb instead of (tpdm_has_cmb_dataset(tpdm_data) ||
+> tpdm_has_mcmb_dataset(tpdm_data)) for cmb dataset support.
+> 2. Embed mcmb_dataset struct into cmb struct.
+> 3. Update the date and version in sysfs-bus-coresight-devices-tpdm
+> 
+> Mao Jinlong (1):
+>    coresight-tpdm: Add MCMB dataset support
+> 
+> Tao Zhang (2):
+>    coresight-tpdm: Add support to select lane
+>    coresight-tpdm: Add support to enable the lane for MCMB TPDM
+> 
+>   .../testing/sysfs-bus-coresight-devices-tpdm  |  15 +++
+>   drivers/hwtracing/coresight/coresight-tpda.c  |   7 +-
+>   drivers/hwtracing/coresight/coresight-tpdm.c  | 124 +++++++++++++++++-
+>   drivers/hwtracing/coresight/coresight-tpdm.h  |  33 +++--
+>   4 files changed, 158 insertions(+), 21 deletions(-)
 
-Ack, thanks for your feedback :)
+Gentle reminder for the review.
+> 
 
-Maxime
-
---moaynkbohx6mdcjs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2EsQQAKCRAnX84Zoj2+
-dhn2AYDyBKh4PeDUj5bFOj4p/RKKL9uN/KUtyl6G3J1+sEdZdLohr1MKIZ5CF7Tl
-eUwVXYwBf1HikKKaUe7ZktXkTA34hBlVGvwJz/tHr0CQiuScjRmWjVDwjbQEMBUf
-ubiGLbrddg==
-=2+Ct
------END PGP SIGNATURE-----
-
---moaynkbohx6mdcjs--
 
