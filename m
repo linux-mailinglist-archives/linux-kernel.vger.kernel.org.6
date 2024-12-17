@@ -1,126 +1,180 @@
-Return-Path: <linux-kernel+bounces-449272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0C49F4C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC469F4C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0CE318834AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DCAD1880598
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46A81E0490;
-	Tue, 17 Dec 2024 13:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4931F3D5A;
+	Tue, 17 Dec 2024 13:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dZV2HDTY"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WTTmyvx4"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE39EEED8;
-	Tue, 17 Dec 2024 13:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949ED1F3D2C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 13:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442634; cv=none; b=meYtL+jBge1uUMt+waEwouvFxewlvC51R3fGiR1j7HmGqKLzrfmgG2eMCN9I80VStL1PWyb1rjMNz/TpndkX+LOxmoFSpmF/WtmfNtB0U17Y1dIjbwjFUVcNXRqwvAfD7bfYjgW/1Ttki64g7JdbO5jC493mYOAO7O71Kw1E4rs=
+	t=1734442758; cv=none; b=T9Ehu/J76FpTRJ9nSXdTnND6j8gWuBvo25twbtQFIyVy/+stFrfGlgGUkJGLzB1JaTUI7JC1tdZigCnDiLWdlbX2XOD9Kw/m/FWOcMuKGqmUc0Wkd56bYsQ5UN5MNWheZV25p1Sv2gCc/jrFDQ4KtqtmmlmIFICixK+mtnCjDuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442634; c=relaxed/simple;
-	bh=Qz8U7whF8mZJBtM9cuHoqE5mi9QRsDImf2edJO1eQ7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVwPck/gKzChbOPq5j5/jFczVFthX1PO3i/QlfmxQwYLgFVXejqOSUJXwGOzqjCBex3cKiYybZkMmRZ1CxWEPM8L2D7X+I3Kx3u/l8UkWs6WkBBpr7TA+iI/oybqGZtRWVeLWXSgHcFru/Bn8rHlQKIoXV2MFFDoV7UNbOLLDww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dZV2HDTY; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pmngiQtyKWtEVigv/m7WJAI71XogMaDStb8A3KF11q4=; b=dZV2HDTYcgqkZsCJBzrkmJWKFB
-	eBPyLvwgy4vVpnEhTuUJ/1cJeFZBvqMEjeoOQyyVxSI4jnzCbNTd/BwXqaBMSnWbp54RLuEu0Qm5i
-	cc8ANnxehGCYK4wvVW03Tjio+Qvw99ZFOGgl1CsGHU9Xu4OOSkPlS2BsswPXirtiiTi1SfDuAmW4/
-	1CkzVCJNbQw12rvnloUuOteg3cxU6ZNMc191qnz6y8TMtxP5fcLLu4AmmQIbRx/j3+n79oTlryov5
-	B8alG3apy6pvXKW++QKzziRjpsQu+fZrTnXlqliHdF5MZWQoFSzb8iJMSYq/4IXiGv9XkpB+xFOQl
-	606gQTUA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNXl5-0000000557V-2sIT;
-	Tue, 17 Dec 2024 13:37:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 40B0330015F; Tue, 17 Dec 2024 14:37:07 +0100 (CET)
-Date: Tue, 17 Dec 2024 14:37:07 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, ak@linux.intel.com,
-	eranian@google.com
-Subject: Re: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
-Message-ID: <20241217133707.GB2354@noisy.programming.kicks-ass.net>
-References: <20241216204505.748363-1-kan.liang@linux.intel.com>
- <20241216204505.748363-4-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1734442758; c=relaxed/simple;
+	bh=+BHHgz6jyTf+Pk7wqxnrYIMZ4vqcIxReE5ZMVRAFZY4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vuabs3ybPD9prNpQsQEtQNrafF5eoC2DnezdwmH/3qVu1dmPAAvxCo08BKU7qUuDGxxkyCzLyOanbkpr1tLOqBXQxLYXNh/eG/hAcTI26/0lVaLOurepoUoGezWwxNSZbkBaliQWXBjhx5TFmpcWZN/pN4LvlsVXxTKgmMyxLWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WTTmyvx4; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e3778bffdso5520984e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 05:39:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734442755; x=1735047555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HMjCYKV984QoRr28xf3w0OYwbaOYhzni2D5iyXZ+XqY=;
+        b=WTTmyvx4d4xcEQzsZ/MUKx1cj15YgPutz6oRXrE0aSdAn8Ahhvu2C7bjca6RZr9Qee
+         Ls2mYrIwhY6TMwJ4d5ktDa03MJUFrU5Kzj4AUJQNDq7FNkHuFa5CZdd3yfpInGBLWYcp
+         YUBNMor5qB58XtWJZfxYMhGx5C/YN4zeZhsB1GVwxqrEiHtYNwvAUxrUML9SUvKVgG/x
+         5cwd4i0iYsa8z3Lciqbt31RY3DhTE45DLRZErVCe0qXusms8AODr9tn0J/houjPH9ExK
+         GaQea/rTStCrXMje6ZrUrA2kakgleMEMKQA4S7pPfI7dHlOSr5sJWulampkjAVw50isM
+         S/DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734442755; x=1735047555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HMjCYKV984QoRr28xf3w0OYwbaOYhzni2D5iyXZ+XqY=;
+        b=Stpjfhs3xeZkZMcySZSuPItcm2bZwFqvcTgUbEJZubuD0djliaBBOsFhIQSNS2TdGw
+         T3mYmLnrqp9JKtskCMJs9jyFkbRqCBwAB8WfFDQWVP0aJChw7rGcqIqJUMD6yGUDkwo0
+         87bcp5GLXISPDtom3zvItMyowXu0hjlhc7sVPydL13AU0XPGQV/S2V1A0damJ5S2bYBJ
+         rKrNWTZNIZDV+EBl+CR27FUITE7Wuy0CX0Ho34sf1yd1nFDWiJnxjR0ySckvC7JMMwxQ
+         fFAu9fDCTKlMSZUsbXjlw63awSZUyLpt0TRBMxTlL3PMrUppIp7D5ctpd7os+1nNa/01
+         25PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVB56KGqsUed7Ed2H6dHW+5kwDb9jEy3RbadHOOzoWJq8FYrASqtUbNkcLguc3AEoJ4ML+kcDIIRcSaSpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWj13G/ntyyEgdzIz17vwxQVheidM4xXKCYwkRRLurA46Vdnjn
+	3Bh5lM+Uy/EupTZ6HIfChwhNtCPEKdQuxTRbrpk7MroJKjR5Yoh1ac+i6FR6PKI5yY17CiI1oUm
+	McAJD+Uez1fubMxUDsjNcAcKxFFMnTMZ86IL59g==
+X-Gm-Gg: ASbGncsZfA7YzR7bdVcG8adCKDQ+x7a11Ih70qR2qbDjxpdNP7G0L489+DcTofvzrSP
+	y14n38UODO4h0XynqeySIJdb70jGZHI6URFIgdA==
+X-Google-Smtp-Source: AGHT+IEjrp870JNskf6bHNzYI2aNmKqs1NPMelQxcm9rfeKc8LyEkX5SdkkUq1R1luqQe2P7T5643ul/B1u9O9Mw0vc=
+X-Received: by 2002:a05:6512:1287:b0:540:1ca7:4fe9 with SMTP id
+ 2adb3069b0e04-5409054e4b0mr4948477e87.22.1734442754678; Tue, 17 Dec 2024
+ 05:39:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241216204505.748363-4-kan.liang@linux.intel.com>
+References: <20241119140805.3345412-1-paulk@sys-base.io> <20241119-prudent-jasmine-lizard-195cef@houat>
+ <ZzyoIABRArkGoZBn@collins>
+In-Reply-To: <ZzyoIABRArkGoZBn@collins>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 17 Dec 2024 14:39:03 +0100
+Message-ID: <CACRpkdbqufNVq4Ai6GQpgK2OY0rxLnp1wLQNmRoCv44T0xmFkQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: Maxime Ripard <mripard@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Paul Kocialkowski <contact@paulk.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2024 at 12:45:05PM -0800, kan.liang@linux.intel.com wrote:
+Some discussion here, and some emotions involved.
 
-> @@ -2049,6 +2102,40 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
->  		}
->  	}
->  
-> +	if (format_group & (PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS)) {
-> +		struct pebs_cntr_header *cntr = next_record;
-> +		int bit;
-> +
-> +		next_record += sizeof(struct pebs_cntr_header);
-> +
-> +		for_each_set_bit(bit, (unsigned long *)&cntr->cntr, INTEL_PMC_MAX_GENERIC) {
-> +			x86_perf_event_update(cpuc->events[bit], (u64 *)next_record);
-> +			next_record += sizeof(u64);
-> +		}
+I can't seem to follow the technical matter because of all the
+social matters :/
 
-I still don't much like any of this -- the next_record value might be in
-the past relative to what is already in the event.
+On Tue, Nov 19, 2024 at 4:00=E2=80=AFPM Paul Kocialkowski <paulk@sys-base.i=
+o> wrote:
 
-Why can't you use something like the below -- that gives you a count
-value matching the pmc value you put in, as long as it is 'near' the
-current value.
+> My use-case here was hooking up a sparkfun sensor board by the way,
+> not some very advanced corner-case.
 
----
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 8f218ac0d445..3cf8b4f2b2c1 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -154,6 +154,26 @@ u64 x86_perf_event_update(struct perf_event *event)
- 	return new_raw_count;
- }
- 
-+u64 x86_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
-+	int shift = 64 - x86_pmu.cntval_bits;
-+	u64 prev_pmc, prev_count;
-+	u64 delta;
-+
-+	do {
-+		prev_pmc = local64_read(&hwc->prev_count);
-+		barrier();
-+		prev_count = local64_read(&event->count);
-+		barrier();
-+	} while (prev_pmc != local64_read(&hwc->prev_count));
-+
-+	delta = (pmc << shift) - (prev_pmc << shift);
-+	delta >>= shift;
-+
-+	return prev_count + delta;
-+}
-+
- /*
-  * Find and validate any extra registers to set up.
-  */
+Are you adding this as a DT overlay or by modifying an existing device
+tree? Does this sensor have an established device tree binding?
+
+Are you using that sparkfun sensor by a kernel driver or from userspace
+using the GPIO character device?
+
+I noticed that the sunxi GPIO driver is implementing the
+.set_config() callback calling gpiochip_generic_config,
+which makes it call down to the pin control driver to set up
+the pin config.
+
+which would in turn make it eligible to use
+the gpiod_set_debounce() callback to push down the debounce
+period.
+
+But pinctrl-sunxi.c's sunxi_pconf_set() does *NOT* implement
+support for setting up the debounce, because it is (as I understand
+it) not part of the pin config hardware, but part of the interrupt
+generator hardware, correct?
+
+In that case I think we the gpiochip .set_config() callback should
+be modified something like this (pseudo code):
+
+sunxi_pinctrl_gpio_set_config()
+{
+    if (irq_is_in_use && param_is_debounce) {
+        modify_irq_debounce_according_to_param()
+        return 0;
+    }
+    gpiochip_generic_config()
+}
+
+pctl->chip->set_config =3D sunxi_pinctrl_gpio_set_config()
+
+Maybe the debounce can also be set even if the line is not used
+for IRQ? I'm not sure.
+
+In either case the latter would give the GPIO driver a handle
+on the debounce, which is good because the irqchip
+generally does not.
+
+There is a way it is possible to use the interrupt with desired debounce
+setting by first getting the GPIO descriptor and modify the debounce
+setting and then getting the interrupt from the GPIO descriptor:
+
+struct gpio_desc *g;
+int irq;
+
+g =3D gpiod_get(dev, "dataready", GPIOD_IN);
+gpiod_set_debounce(g, 1);
+irq =3D gpiod_to_irq(g);
+...request irq...
+
+Here I assume the line out from the sensor is named "dataready"
+the actual component likely has a name like that for the line.
+
+This requires changes in the device tree as well, so that a GPIO
+line is assigned to the sensor instead of "just" an interrupt:
+
+sensor {
+  dataready-gpios =3D <&gpio 14>;
+  ...
+};
+
+instead of:
+
+sensor {
+  interrupt-parent =3D <&gpio>;
+  interrupts =3D <14 IRQ_TYPE_EDGE_RISING>;
+};
+
+Unfortunately this is one of the areas where DT bindings are
+a bit ambiguous. Some just assign the GPIO line as an interrupt
+as both APIs are available, sometimes a proper GPIO line is
+preferred for the above reasons.
+
+Yours,
+Linus Walleij
 
