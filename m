@@ -1,169 +1,71 @@
-Return-Path: <linux-kernel+bounces-448799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230299F45A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:04:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8739F45A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5436416D570
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6B4188DA0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 08:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AA81DA0ED;
-	Tue, 17 Dec 2024 08:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135561DA113;
+	Tue, 17 Dec 2024 08:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ox78WzTc"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EtjEdEHp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A915288A2;
-	Tue, 17 Dec 2024 08:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4255E143723;
+	Tue, 17 Dec 2024 08:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734422629; cv=none; b=F/OT71OUFvF8AnjBCD6wx48WZ27IsgIg3RHXwI5X7EpCq2SYI8inYqpp537fJP0yeNZ5afb5kY3o9QAJ3CPQ/pSEmY6P+WiN7hgvCksXOeNG9a32KaVjes7PykqhL8Xy1NHnoKoQ7VORZg4f1M9AXL+FBSo2lGzx1iSER3dmOx0=
+	t=1734422679; cv=none; b=cLRSrXCW0D1Q4DODKzTzWR0CTXMBvelOChhPQFuT+6MSFYMK3XJitCInMChH4iAMuONDnr6azCU4FRDsqrP2aEz3Oh5CQ4GfbUaRJIIHyKYM8xxAcA22vLp/K2befqJnZZCHqt20OBBwefi/mcBDJU/y+xkoK5ORjoCOy+oS6K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734422629; c=relaxed/simple;
-	bh=HBOqlzoNZQCn5KZBuEwkdzSgAUZkRu/FOER7HVP4z1c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cMN2PgvP97crIncuBBoezlFGL6OEfQwycfjSxZu+YEUjBvxHwbvhnmtC4J8a+t4irjK/HvUSHEy+oZ5Lbhlb9UxCrdsMGyWqsC29PuZ+eDviuRAT02K7ThKsczjAVx03jfLH03McuW7ppic6JqRRhpS/S1lb8P4vFugQL21Cmbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ox78WzTc; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1734422627; x=1765958627;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OAqSOfGousZ0wKCZPnMq9ctK4gGgJ8+Vds0fKM2Wsic=;
-  b=ox78WzTcxSKvtk/+bTLI/GgzC3LAiZlAXKXimon7sVgwR2Rl5wdVU+1A
-   ztOTkrs7HqGHjw4hT5guA7PyVBaNZwkhp5Wiu4bVBkFVoMD/yrrUkSYfg
-   5z3V6k/TBC4kF4jbHEzPG9QhC0L+7O+rKlWIsiurvOWdM1jkJ9xT8dLZF
-   M=;
-X-IronPort-AV: E=Sophos;i="6.12,241,1728950400"; 
-   d="scan'208";a="681978134"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 08:03:43 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:23925]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.151:2525] with esmtp (Farcaster)
- id 3b3ba6aa-e300-41b5-a05f-87db24ab3e07; Tue, 17 Dec 2024 08:03:43 +0000 (UTC)
-X-Farcaster-Flow-ID: 3b3ba6aa-e300-41b5-a05f-87db24ab3e07
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 17 Dec 2024 08:03:42 +0000
-Received: from 6c7e67c6786f.amazon.com (10.118.246.225) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Tue, 17 Dec 2024 08:03:38 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <kees@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-	<idosch@nvidia.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <petrm@nvidia.com>
-Subject: Re: [PATCH] rtnetlink: do_setlink: Use true struct sockaddr
-Date: Tue, 17 Dec 2024 17:03:35 +0900
-Message-ID: <20241217080335.85554-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <36C08CAB-1D3A-46CE-BCE2-820605E222CF@kernel.org>
-References: <36C08CAB-1D3A-46CE-BCE2-820605E222CF@kernel.org>
+	s=arc-20240116; t=1734422679; c=relaxed/simple;
+	bh=0WNFZcCRtxdzdcKZD2RUn0ShHxYFlVtMrenesMJ0Ris=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVQUSPx77QqC9FVCn0prgOuhkLdHLBOBNSMDbtYVkE2e33bYO0648wShpLd33dmifiYFqOFy3LJcXLA0+VmHvrqi0CPOddg53JG12tlp3mW95C3m4g92bzsSPKQnwpIJfmooMiF/vesWBJfa9/Nc0Lm8afbbbKuC415r9QcB3Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EtjEdEHp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D4EC4CED3;
+	Tue, 17 Dec 2024 08:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734422678;
+	bh=0WNFZcCRtxdzdcKZD2RUn0ShHxYFlVtMrenesMJ0Ris=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EtjEdEHpqN1dt6vNsb6hCfdIKbUolRK1rw9QWI1BCHT07CbuuFxID8KusPM/qqfyZ
+	 tS0zRaFWWYpypegD/e7Y10HA3bcfNhm10j0z0+opE4UyN83DI6cY5xGdBtU00xzbni
+	 ESx4kKOw8H50Qwhk4V7t//3s8nbNlHbUnZBy97gs=
+Date: Tue, 17 Dec 2024 09:04:34 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make_ruc2021@163.com>
+Cc: bvanassche@acm.org, jgg@ziepe.ca, leon@kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] RDMA/srp: Fix error handling in srp_add_port
+Message-ID: <2024121717-trustful-opulently-c386@gregkh>
+References: <20241217075538.2909996-1-make_ruc2021@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWA003.ant.amazon.com (10.13.139.105) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217075538.2909996-1-make_ruc2021@163.com>
 
-From: Kees Cook <kees@kernel.org>
-Date: Mon, 16 Dec 2024 23:53:46 -0800
-> On December 16, 2024 6:41:56 PM PST, Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
-> >From: Kees Cook <kees@kernel.org>
-> >Date: Mon, 16 Dec 2024 18:04:45 -0800
-> >> Instead of a heap allocation use a stack allocated struct sockaddr, as
-> >> dev_set_mac_address_user() is the consumer (which uses a classic
-> >> struct sockaddr).
-> >
-> >I remember Eric's feedback was to keep using heap instead of stack
-> >because rtnl_newlink() path already uses too much on stack.
-> 
-> See below...
-> 
-> >
-> >
-> >> Cap the copy to the minimum address size between
-> >> the incoming address and the traditional sa_data field itself.
-> >> 
-> >> Putting "sa" on the stack means it will get a reused stack slot since
-> >> it is smaller than other existing single-scope stack variables (like
-> >> the vfinfo array).
-> 
-> That's why I included the rationale above. (I.e. stack usage does not grow with this patch.)
+On Tue, Dec 17, 2024 at 03:55:38PM +0800, Ma Ke wrote:
+> The reference count of the device incremented in device_initialize() is
+> not decremented when device_add() fails. Add a put_device() call before
+> returning from the function to decrement reference count for cleanup.
+> Or it could cause memory leak.
 
-Ah okay, but I think we can't cap the address size to 14
-bytes.  MAX_ADDR_LEN is 32.
+That is not what you did here.  Please be more careful when sending out
+"bugfixes" like this.
 
-Also, dev_set_mac_address_user() still uses dev->addr_len.
+thanks,
 
-
-> 
-> -Kees
-> 
-> >> 
-> >> Signed-off-by: Kees Cook <kees@kernel.org>
-> >> ---
-> >> Cc: Eric Dumazet <edumazet@google.com>
-> >> Cc: "David S. Miller" <davem@davemloft.net>
-> >> Cc: Jakub Kicinski <kuba@kernel.org>
-> >> Cc: Paolo Abeni <pabeni@redhat.com>
-> >> Cc: Ido Schimmel <idosch@nvidia.com>
-> >> Cc: Petr Machata <petrm@nvidia.com>
-> >> Cc: netdev@vger.kernel.org
-> >> ---
-> >>  net/core/rtnetlink.c | 22 +++++++---------------
-> >>  1 file changed, 7 insertions(+), 15 deletions(-)
-> >> 
-> >> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> >> index ab5f201bf0ab..6da0edc0870d 100644
-> >> --- a/net/core/rtnetlink.c
-> >> +++ b/net/core/rtnetlink.c
-> >> @@ -3048,21 +3048,13 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
-> >>  	}
-> >>  
-> >>  	if (tb[IFLA_ADDRESS]) {
-> >> -		struct sockaddr *sa;
-> >> -		int len;
-> >> -
-> >> -		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
-> >> -						  sizeof(*sa));
-> >> -		sa = kmalloc(len, GFP_KERNEL);
-> >> -		if (!sa) {
-> >> -			err = -ENOMEM;
-> >> -			goto errout;
-> >> -		}
-> >> -		sa->sa_family = dev->type;
-> >> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
-> >> -		       dev->addr_len);
-> >> -		err = dev_set_mac_address_user(dev, sa, extack);
-> >> -		kfree(sa);
-> >> +		struct sockaddr sa = { };
-> >> +
-> >> +		/* dev_set_mac_address_user() uses a true struct sockaddr. */
-> >> +		sa.sa_family = dev->type;
-> >> +		memcpy(sa.sa_data, nla_data(tb[IFLA_ADDRESS]),
-> >> +		       min(dev->addr_len, sizeof(sa.sa_data_min)));
-> >> +		err = dev_set_mac_address_user(dev, &sa, extack);
-> >>  		if (err)
-> >>  			goto errout;
-> >>  		status |= DO_SETLINK_MODIFIED;
-> >> -- 
-> >> 2.34.1
-> >
-> 
-> -- 
-> Kees Cook
+greg k-h
 
