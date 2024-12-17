@@ -1,220 +1,320 @@
-Return-Path: <linux-kernel+bounces-449099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325599F49DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:29:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F2C9F49C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCE70188B994
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:29:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9101C1889C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081C1EC4FD;
-	Tue, 17 Dec 2024 11:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8DD1EE017;
+	Tue, 17 Dec 2024 11:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRDb92u8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8BPrwD3"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C94B50276;
-	Tue, 17 Dec 2024 11:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9F50276;
+	Tue, 17 Dec 2024 11:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734434946; cv=none; b=bALP5DDIYdsO6zbgbssVE5ZIjOok2xOq2Nt0sgT1EcO9iV7yaLP4mHx+jL8QrMaBX0ef0bTyB7TRFqXMg+JJ65cOmH7oGG4QQ0vXQOPP0djKTXV7t1aQ0xj75LAYeSAmqmZGeXVxQ/MnTkmKAvq9698juTvkYJpiaySx6XKgWTk=
+	t=1734434770; cv=none; b=BuJL0EjtzeyznV+5vCSwGOMaMOnlFLi59qjPGQ1JX5QTdHq4n84nX97Q3529fh7AXFo8fM0F1bYPIl4OAL64VE8bA3YxMWFm1zQwBbnFTRgNgI9644XPop5ck6AulJgdbzrAeu+kacAQoFA/FHmhEkU4D87peuiWmJLmyw7ELYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734434946; c=relaxed/simple;
-	bh=ZA5XJc1vs+Zrcy5PAhS+ySqSiRH75TTc9k5gF60rrqQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p3rCZ7qWH16OgW9BfjmEF0xD2KNTru2pA4Y4d1f6/HJmUxoIMYJg7eiMbJtOA2Kj7TUd/IThqjA31js4JlqB6/Z5XqNEHjJiOo/2pDrsz/CHwoU/Sj71zA2c32fSjCRZ6EwvjMrjlyNA9KQK2EFi5scYd+dPTpJPGEPjr+Q2TcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRDb92u8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4CBC4CED3;
-	Tue, 17 Dec 2024 11:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734434945;
-	bh=ZA5XJc1vs+Zrcy5PAhS+ySqSiRH75TTc9k5gF60rrqQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iRDb92u8TAdFe2L/MQWADYGyZL8MCBNrpOsboMkeHw0/zWr0gojL+7Mt3c+iwyf91
-	 boA8Cz82WAde/dYj8fUeAybaStJvaLTqOZbHFNwHXpW11XE89HLAMuerU6fKTjMH3w
-	 CwJZPtz85bsnz5hS0rESPLdufXsvlCSCqJqvHZM9E8/rXrvA68SGI4uWdqsRoRFVph
-	 Jy0pwm/pSLruQFXTSYdO/kg2H13Rw9szuIlw12OpG95c4tAKivjnu51Z9ZIg4+l8Wh
-	 nJ/YXO2G965ZdtDOmYQnzkueWm+Xv7H88UZUQGcTJO9CuXLFkdRo0HFifcOYx/59AC
-	 85zgxgcSM+/nA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tNVl9-004X4R-H3;
-	Tue, 17 Dec 2024 11:29:03 +0000
-Date: Tue, 17 Dec 2024 11:29:03 +0000
-Message-ID: <86wmfyr1j4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Fuad Tabba <tabba@google.com>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 11/18] KVM: arm64: Introduce __pkvm_host_unshare_guest()
-In-Reply-To: <20241216175803.2716565-12-qperret@google.com>
-References: <20241216175803.2716565-1-qperret@google.com>
-	<20241216175803.2716565-12-qperret@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734434770; c=relaxed/simple;
+	bh=1EO9YtKGid6Z+Vz3j+sWcAxZquFKHmYAwSTPvy4C9cY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Yj3C9GrioQWXH4hYO+HrZcctiRUPl6/+fPVb7qMmZjrA+hZAHnUkYyOi2YUaFJ5RTNJpW6cp7x5GXVSpP7y+dWCoXryDOpH9QeEGbraieVrqrb5rTWB/c3s2nBxoDxyaEo+auEVuJ/Zh6VRjWQoRvwlnFLrRnA0Remy45Op5ty0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8BPrwD3; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aab6fa3e20eso726520266b.2;
+        Tue, 17 Dec 2024 03:26:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734434767; x=1735039567; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T5Cj0ct81l3Dm35lHnAswcwIvDciNyrYMREfJHBYsrg=;
+        b=N8BPrwD32Se+PhW9s81HxrNEY1X/cvrsfg115pNzwO+E6yn7ToE7kSxeZOo2xzg/4g
+         vNHUffGN9QhhIofCStUBvNYRnfnhpVbz/SzspgkPY4K9PXl+PZ/kvkdvCpi81X4UHkid
+         ThhF9nenZARYiCnBkV0eGIefaFypEVLZfBq2XmuAfCc62jhW+7UYVO7y4a9rxQtE8wCZ
+         Zfaa9of/84z1avoggiWXJeCcD448h5A9al1gcXC7ZHaBsZjwMn3ExjntwGGeSbvHQtrd
+         gNCJO6fpQ0S3L+ClBFuHFk+rfLuxGS5S00niz52dlrPalknwXwBm99baxy8wqfpBNicI
+         11ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734434767; x=1735039567;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T5Cj0ct81l3Dm35lHnAswcwIvDciNyrYMREfJHBYsrg=;
+        b=Eu2JjqsPKZXoEsGMW8y/inzOFOXwTz+Gu9jx4ZdXq/LshEupf0L4zI/3e8vPS65mRt
+         qn1OG2kdiyChY2xr7Q9ipQRMcePSyxntNAeGAQhXJ5mCS7/WZM1K5yO9jusv0iW+Q1So
+         CJ/l3DWkGG6Mo78vcuY0zQhY9PiPZjhxda0P/jtJmHeA3uyqglQNwpydj1Rjr/rhUsvz
+         QXawkBAQZowziKWyMCsUBZ3lGuN4/kZ5NxJ7pM/S+luFbr+9FYlE4fFOs00sq1BWl3+8
+         r4FeVPaxX+zRj6nyQaP8/MP6JnVGcLU7rRsPDtfvrlp2fF4NcUmJLzfVakVOjLukFcG3
+         Fwgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxVmKoXf15bYdupRokI2hUIJtIUgg13Sbjzg+6oHFRefNAxDfnIVD8R1FARWNmo026CkRH5DHg+yfyExR8@vger.kernel.org, AJvYcCVDpV6yP7ai3uOZksSwzlA4aeuvAOJcMxqCJO/tI8BjIHxNlx4Iuo6MlYMYOEbkNmhwu8zTsOX21KXP@vger.kernel.org, AJvYcCVhvamK7LAfxWqD6eEdhlHS0Nj0NHC+t1pGplVt02FwjQwkyu6k5Z/kwyW6Pm2nRFMuyB9KiVfY1vdd@vger.kernel.org, AJvYcCWiFkEbRH0Kiq52ObPfaX6YrzZvkvGCOLN+r4mS3+VL1/owlZHbFReh2Lvt9bjOJAeEY4UWnZjefurS@vger.kernel.org, AJvYcCXhXRib5sx+u1bc46fZ/8FzLCoTMcj7PItFUPPyivJ6G5M6/AluCTsdOzGkLSIvH77mqasAMAZpKPPi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMoYwRQs26bzolU9+hM6L2g/6FfpIEudJnEK31CDarwLpBvH5X
+	t0u+t4xd0xyutNy6uWikUeA4+SPKSZvLvZHd2PjAmo5ETxZuvEFo
+X-Gm-Gg: ASbGncv9HW89y0Ya5G5RAw0cs+vIQ0BHDvGSEgEWNHLSycKP323gXsnAFyn3dd/uVDN
+	l2R2bzbuiY/GwA1u1BL2bAexuOf8S0LVKGZ6OKnPsF0/GL6iRn5gfpTclAtVH5rJ2QJTCRsovq5
+	cpA3vy75WIQMJhlzA/DwjiVBnOE55SzY2kSXYmektNELaHLQk4cJQl9R+lTveHvrH02Z+SgRvzx
+	Lgbdh9GMEQ9Dt9z936UgSFjaDYev+uiwDFMLeqPIkpv6HJonV4p6dNL0w6f9hiz4J4qDORUOM0H
+	dl7GXOIWSZ/wnwbwlQ7HTLewttpcqmAdnQ7f2YMxTcQRduyGMf7+KDrdK0R3ZEMpEYePbbMmnf2
+	c1ZD9b1VCgGlydA==
+X-Google-Smtp-Source: AGHT+IGeJysPicSr5wfxVTnoBXhJZ9XckK3QDyAJM8olyjlPY4MNt76VjZ7vzE5pDV/2/kuwEsR13g==
+X-Received: by 2002:a17:907:2d9f:b0:aa6:81dc:6635 with SMTP id a640c23a62f3a-aab77907995mr1530863366b.18.1734434766710;
+        Tue, 17 Dec 2024 03:26:06 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96391366sm434480666b.167.2024.12.17.03.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 03:26:06 -0800 (PST)
+Message-ID: <225da1bc0f0b9407c3f7b3374cbbbf6cc6b43aa6.camel@gmail.com>
+Subject: Re: [PATCH v6 02/17] spi: offload: add support for hardware triggers
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>
+Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander	 <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, 	linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, 	linux-pwm@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Date: Tue, 17 Dec 2024 12:30:37 +0100
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-2-88ee574d5d03@baylibre.com>
+References: 
+	<20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+	 <20241211-dlech-mainline-spi-engine-offload-2-v6-2-88ee574d5d03@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
 
-On Mon, 16 Dec 2024 17:57:56 +0000,
-Quentin Perret <qperret@google.com> wrote:
-> 
-> In preparation for letting the host unmap pages from non-protected
-> guests, introduce a new hypercall implementing the host-unshare-guest
-> transition.
-> 
-> Signed-off-by: Quentin Perret <qperret@google.com>
+On Wed, 2024-12-11 at 14:54 -0600, David Lechner wrote:
+> Extend SPI offloading to support hardware triggers.
+>=20
+> This allows an arbitrary hardware trigger to be used to start a SPI
+> transfer that was previously set up with spi_optimize_message().
+>=20
+> A new struct spi_offload_trigger is introduced that can be used to
+> configure any type of trigger. It has a type discriminator and a union
+> to allow it to be extended in the future. Two trigger types are defined
+> to start with. One is a trigger that indicates that the SPI peripheral
+> is ready to read or write data. The other is a periodic trigger to
+> repeat a SPI message at a fixed rate.
+>=20
+> There is also a spi_offload_hw_trigger_validate() function that works
+> similar to clk_round_rate(). It basically asks the question of if we
+> enabled the hardware trigger what would the actual parameters be. This
+> can be used to test if the requested trigger type is actually supported
+> by the hardware and for periodic triggers, it can be used to find the
+> actual rate that the hardware is capable of.
+>=20
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 > ---
->  arch/arm64/include/asm/kvm_asm.h              |  1 +
->  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
->  arch/arm64/kvm/hyp/include/nvhe/pkvm.h        |  6 ++
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c            | 21 ++++++
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 67 +++++++++++++++++++
->  arch/arm64/kvm/hyp/nvhe/pkvm.c                | 12 ++++
->  6 files changed, 108 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index 449337f5b2a3..0b6c4d325134 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -66,6 +66,7 @@ enum __kvm_host_smccc_func {
->  	__KVM_HOST_SMCCC_FUNC___pkvm_host_share_hyp,
->  	__KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_hyp,
->  	__KVM_HOST_SMCCC_FUNC___pkvm_host_share_guest,
-> +	__KVM_HOST_SMCCC_FUNC___pkvm_host_unshare_guest,
->  	__KVM_HOST_SMCCC_FUNC___kvm_adjust_pc,
->  	__KVM_HOST_SMCCC_FUNC___kvm_vcpu_run,
->  	__KVM_HOST_SMCCC_FUNC___kvm_flush_vm_context,
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> index a7976e50f556..e528a42ed60e 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> @@ -40,6 +40,7 @@ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
->  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
->  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
->  int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu, enum kvm_pgtable_prot prot);
-> +int __pkvm_host_unshare_guest(u64 gfn, struct pkvm_hyp_vm *hyp_vm);
->  
->  bool addr_is_memory(phys_addr_t phys);
->  int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> index be52c5b15e21..0cc2a429f1fb 100644
-> --- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-> @@ -64,6 +64,11 @@ static inline bool pkvm_hyp_vcpu_is_protected(struct pkvm_hyp_vcpu *hyp_vcpu)
->  	return vcpu_is_protected(&hyp_vcpu->vcpu);
->  }
->  
-> +static inline bool pkvm_hyp_vm_is_protected(struct pkvm_hyp_vm *hyp_vm)
+>=20
+
+One minor comment (and another suggestion) inline...
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+> v6 changes:
+> * Updated for header file split.
+>=20
+> v5 changes:
+> * Use struct kref instead of struct dev for trigger lifetime management.
+> * Don't use __free() for args.fwnode.
+> * Pass *trigger instead of *priv to all callbacks.
+> * Add new *spi_offload_trigger_get_priv() function.
+> * Use ops instead of priv for "provider is gone" flag.
+> * Combine devm_spi_offload_trigger_alloc() and
+> =C2=A0 devm_spi_offload_trigger_register() into one function.
+> * Add kernel-doc comments for public functions.
+>=20
+> v4 changes:
+> * Added new struct spi_offload_trigger that is a generic struct for any
+> =C2=A0 hardware trigger rather than returning a struct clk.
+> * Added new spi_offload_hw_trigger_validate() function.
+> * Dropped extra locking since it was too restrictive.
+>=20
+> v3 changes:
+> * renamed enable/disable functions to spi_offload_hw_trigger_*mode*_...
+> * added spi_offload_hw_trigger_get_clk() function
+> * fixed missing EXPORT_SYMBOL_GPL
+>=20
+> v2 changes:
+> * This is split out from "spi: add core support for controllers with
+> =C2=A0 offload capabilities".
+> * Added locking for offload trigger to claim exclusive use of the SPI
+> =C2=A0 bus.
+> ---
+> =C2=A0drivers/spi/spi-offload.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 281
+> +++++++++++++++++++++++++++++++++++
+> =C2=A0include/linux/spi/offload/consumer.h |=C2=A0 12 ++
+> =C2=A0include/linux/spi/offload/provider.h |=C2=A0 28 ++++
+> =C2=A0include/linux/spi/offload/types.h=C2=A0=C2=A0=C2=A0 |=C2=A0 37 ++++=
++
+> =C2=A04 files changed, 358 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
+> index
+> 3a40ef30debf09c6fd7b2c14526f3e5976e2b21f..43582e50e279c4b1b958765fec556aa=
+a9118
+> 0e55 100644
+> --- a/drivers/spi/spi-offload.c
+> +++ b/drivers/spi/spi-offload.c
+> @@ -19,7 +19,11 @@
+> =C2=A0#include <linux/cleanup.h>
+> =C2=A0#include <linux/device.h>
+> =C2=A0#include <linux/export.h>
+> +#include <linux/kref.h>
+> +#include <linux/list.h>
+> =C2=A0#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/property.h>
+> =C2=A0#include <linux/spi/offload/consumer.h>
+> =C2=A0#include <linux/spi/offload/provider.h>
+> =C2=A0#include <linux/spi/offload/types.h>
+> @@ -31,6 +35,23 @@ struct spi_controller_and_offload {
+> =C2=A0	struct spi_offload *offload;
+> =C2=A0};
+> =C2=A0
+> +struct spi_offload_trigger {
+> +	struct list_head list;
+> +	struct kref ref;
+> +	struct fwnode_handle *fwnode;
+> +	/* synchronizes calling ops and driver registration */
+> +	struct mutex lock;
+> +	/*
+> +	 * If the provider goes away while the consumer still has a
+> reference,
+> +	 * ops and priv will be set to NULL and all calls will fail with -
+> ENODEV.
+> +	 */
+> +	const struct spi_offload_trigger_ops *ops;
+> +	void *priv;
+> +};
+> +
+> +static LIST_HEAD(spi_offload_triggers);
+> +static DEFINE_MUTEX(spi_offload_triggers_lock);
+> +
+> =C2=A0/**
+> =C2=A0 * devm_spi_offload_alloc() - Allocate offload instance
+> =C2=A0 * @dev: Device for devm purposes and assigned to &struct
+> spi_offload.provider_dev
+> @@ -112,3 +133,263 @@ struct spi_offload *devm_spi_offload_get(struct dev=
+ice
+> *dev,
+> =C2=A0	return resource->offload;
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_GPL(devm_spi_offload_get);
+> +
+> +static void spi_offload_trigger_free(struct kref *ref)
 > +{
-> +	return kvm_vm_is_protected(&hyp_vm->kvm);
+> +	struct spi_offload_trigger *trigger =3D
+> +		container_of(ref, struct spi_offload_trigger, ref);
+> +
+> +	mutex_destroy(&trigger->lock);
+> +	fwnode_handle_put(trigger->fwnode);
+> +	kfree(trigger);
 > +}
 > +
->  void pkvm_hyp_vm_table_init(void *tbl);
->  
->  int __pkvm_init_vm(struct kvm *host_kvm, unsigned long vm_hva,
-> @@ -78,6 +83,7 @@ void pkvm_put_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu);
->  struct pkvm_hyp_vcpu *pkvm_get_loaded_hyp_vcpu(void);
->  
->  struct pkvm_hyp_vm *get_pkvm_hyp_vm(pkvm_handle_t handle);
-> +struct pkvm_hyp_vm *get_np_pkvm_hyp_vm(pkvm_handle_t handle);
->  void put_pkvm_hyp_vm(struct pkvm_hyp_vm *hyp_vm);
->  
->  #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
-> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> index d659462fbf5d..3c3a27c985a2 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-> @@ -244,6 +244,26 @@ static void handle___pkvm_host_share_guest(struct kvm_cpu_context *host_ctxt)
->  	cpu_reg(host_ctxt, 1) =  ret;
->  }
->  
-> +static void handle___pkvm_host_unshare_guest(struct kvm_cpu_context *host_ctxt)
+> +static void spi_offload_trigger_put(void *data)
 > +{
-> +	DECLARE_REG(pkvm_handle_t, handle, host_ctxt, 1);
-> +	DECLARE_REG(u64, gfn, host_ctxt, 2);
-> +	struct pkvm_hyp_vm *hyp_vm;
-> +	int ret = -EINVAL;
+> +	struct spi_offload_trigger *trigger =3D data;
 > +
-> +	if (!is_protected_kvm_enabled())
-> +		goto out;
+> +	scoped_guard(mutex, &trigger->lock)
+> +		if (trigger->ops && trigger->ops->release)
+> +			trigger->ops->release(trigger);
 > +
-> +	hyp_vm = get_np_pkvm_hyp_vm(handle);
-> +	if (!hyp_vm)
-> +		goto out;
-> +
-> +	ret = __pkvm_host_unshare_guest(gfn, hyp_vm);
-> +	put_pkvm_hyp_vm(hyp_vm);
-> +out:
-> +	cpu_reg(host_ctxt, 1) =  ret;
+> +	kref_put(&trigger->ref, spi_offload_trigger_free);
 > +}
 > +
->  static void handle___kvm_adjust_pc(struct kvm_cpu_context *host_ctxt)
->  {
->  	DECLARE_REG(struct kvm_vcpu *, vcpu, host_ctxt, 1);
-> @@ -454,6 +474,7 @@ static const hcall_t host_hcall[] = {
->  	HANDLE_FUNC(__pkvm_host_share_hyp),
->  	HANDLE_FUNC(__pkvm_host_unshare_hyp),
->  	HANDLE_FUNC(__pkvm_host_share_guest),
-> +	HANDLE_FUNC(__pkvm_host_unshare_guest),
->  	HANDLE_FUNC(__kvm_adjust_pc),
->  	HANDLE_FUNC(__kvm_vcpu_run),
->  	HANDLE_FUNC(__kvm_flush_vm_context),
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index fb9592e721cf..30243b7922f1 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -1421,3 +1421,70 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu,
->  
->  	return ret;
->  }
-> +
-> +static int __check_host_shared_guest(struct pkvm_hyp_vm *vm, u64 *__phys, u64 ipa)
+> +static struct spi_offload_trigger
+> +*spi_offload_trigger_get(enum spi_offload_trigger_type type,
+> +			 struct fwnode_reference_args *args)
 > +{
-> +	enum pkvm_page_state state;
-> +	struct hyp_page *page;
-> +	kvm_pte_t pte;
-> +	u64 phys;
-> +	s8 level;
+> +	struct spi_offload_trigger *trigger;
+> +	bool match =3D false;
 > +	int ret;
 > +
-> +	ret = kvm_pgtable_get_leaf(&vm->pgt, ipa, &pte, &level);
-> +	if (ret)
-> +		return ret;
-> +	if (level != KVM_PGTABLE_LAST_LEVEL)
+> +	guard(mutex)(&spi_offload_triggers_lock);
+> +
+> +	list_for_each_entry(trigger, &spi_offload_triggers, list) {
+> +		if (trigger->fwnode !=3D args->fwnode)
+> +			continue;
+> +
+> +		match =3D trigger->ops->match(trigger, type, args->args, args-
+> >nargs);
+> +		if (match)
+> +			break;
+> +	}
+> +
+> +	if (!match)
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +
+> +	guard(mutex)(&trigger->lock);
+> +
+> +	if (!trigger->ops)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	if (trigger->ops->request) {
+> +		ret =3D trigger->ops->request(trigger, type, args->args, args-
+> >nargs);
+> +		if (ret)
+> +			return ERR_PTR(ret);
+> +	}
+> +
+> +	kref_get(&trigger->ref);
 
-So there is still a very strong assumption that a guest is only
-provided page mappings, and no blocks?
+maybe try_module_get() would also make sense...
 
-Thanks,
+> +
+> +	return trigger;
+> +}
+> +
+> +/**
+> + * devm_spi_offload_trigger_get() - Get an offload trigger instance
+> + * @dev: Device for devm purposes.
+> + * @offload: Offload instance connected to a trigger.
+> + * @type: Trigger type to get.
+> + *
+> + * Return: Offload trigger instance or error on failure.
+> + */
+> +struct spi_offload_trigger
+> +*devm_spi_offload_trigger_get(struct device *dev,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct spi_offload *offload,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum spi_offload_trigger_type type)
+> +{
+> +	struct spi_offload_trigger *trigger;
+> +	struct fwnode_reference_args args;
+> +	int ret;
+> +
+> +	ret =3D fwnode_property_get_reference_args(dev_fwnode(offload-
+> >provider_dev),
+> +						 "trigger-sources",
+> +						 "#trigger-source-cells", 0,
+> 0,
+> +						 &args);
 
-	M.
+I guess at some point we can add these to fwlinks?
 
--- 
-Without deviation from the norm, progress is not possible.
+- Nuno S=C3=A1
+
+
 
