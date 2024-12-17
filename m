@@ -1,316 +1,409 @@
-Return-Path: <linux-kernel+bounces-449120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53479F4A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:43:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5179F4A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C7E16B9A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:43:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4532A7A4186
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE121EF097;
-	Tue, 17 Dec 2024 11:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79AE1EF093;
+	Tue, 17 Dec 2024 11:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R9ra5zre";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hy6ZSPnb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="R9ra5zre";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hy6ZSPnb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViFIv6EI"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA9D1EE031
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11F11EE7CD;
+	Tue, 17 Dec 2024 11:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734435796; cv=none; b=Ycc9PJJCba8Z1CGay9/XUdPxFilKr9hLt7EbYJiuQ1HTn0JHo0wC9EkzZ+rj9y6y/AC+OnQrFeHTy+VJVyikgyW/Wj8tMynDTAVmZq1Gk9MZM6EHsU4V3Wk6YiuSKzCCtDdvwh+ESWU3cVAu0ZAOdjAcKXojZ20owWakWPVL/j4=
+	t=1734435535; cv=none; b=aWqUgO4SGP+9E9lNyt7fNlIgf8EIJQ5rgnPC/30keNJ4Y/LCdgF0sX0CwLhqEeCS8bxqIf6MSNuo5rao0li+yx/aVuByJWbyu3C+KOzfFJRa643BCdNP0bQVJTF5DwSH3h5JU/KuuIzndaVdpDSzG51uEA0wJxrEyIxKdJ3HWAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734435796; c=relaxed/simple;
-	bh=MW8gDFmSXCyYm+SMhVtlkZrSp3seDn7xHK8vKCD4/as=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ON9IHlQHqnI727LB3bWmvKWmtnWiMqG4BaaxnUcO4hM4Z/1Hv1nGZm0EwBw9d2MgnXzyM+fErprtgFvvgTpis3xhJa1/vrli4EkXujbBTP/5oIcXCBVwBPlM+OPPMmEp+saIezAmhgpVx4Gt//CjdJZIdEYGGho2TD2hFi98EVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R9ra5zre; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hy6ZSPnb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=R9ra5zre; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hy6ZSPnb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2D95921108;
-	Tue, 17 Dec 2024 11:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734435792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1NeDjgNIaRz/ypDh3ro3ChrRyiBzrs4DhsbJbbosa7k=;
-	b=R9ra5zrezNiCmXRUd4E3AA8Th3jQm4lxiv3fdclLrpoK5PxmtmvZJeomJc48X16Nk5gqEt
-	FJA6eJrgo2+ttq7X7tJYRirjtj4uBgVgycOhgSNlbz6Sy624z1p5fUNbEodA/WBl2mSM/J
-	HIKjZyO9kI7NF4Z6Pc4s4YGhogCLWXc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734435792;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1NeDjgNIaRz/ypDh3ro3ChrRyiBzrs4DhsbJbbosa7k=;
-	b=Hy6ZSPnbTRbDzL6WGdWC/QZiugXQID0sfPAXul3E4sWAa8qHEZqZ/oiiSiJMrQwdz8Pzfg
-	kPx4jL/wAfo5evCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=R9ra5zre;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Hy6ZSPnb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734435792; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1NeDjgNIaRz/ypDh3ro3ChrRyiBzrs4DhsbJbbosa7k=;
-	b=R9ra5zrezNiCmXRUd4E3AA8Th3jQm4lxiv3fdclLrpoK5PxmtmvZJeomJc48X16Nk5gqEt
-	FJA6eJrgo2+ttq7X7tJYRirjtj4uBgVgycOhgSNlbz6Sy624z1p5fUNbEodA/WBl2mSM/J
-	HIKjZyO9kI7NF4Z6Pc4s4YGhogCLWXc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734435792;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1NeDjgNIaRz/ypDh3ro3ChrRyiBzrs4DhsbJbbosa7k=;
-	b=Hy6ZSPnbTRbDzL6WGdWC/QZiugXQID0sfPAXul3E4sWAa8qHEZqZ/oiiSiJMrQwdz8Pzfg
-	kPx4jL/wAfo5evCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F37E213A3C;
-	Tue, 17 Dec 2024 11:43:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YdUMOs9jYWcoWgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 17 Dec 2024 11:43:11 +0000
-Message-ID: <30beb4da-50be-4e28-a19e-5d7f9680c7ea@suse.de>
-Date: Tue, 17 Dec 2024 12:43:11 +0100
+	s=arc-20240116; t=1734435535; c=relaxed/simple;
+	bh=KvnTYxI8YUX12FeEY3Y1xj00f/dNNiG+vcVSvSoFUzU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=io1LlzB0xEk0YTT7FFsLfhbonjZOOMe5mGfL74hBWqIyzp0Ck4ILW41uLJXTWpM8kZ3/w2G2g9zQZa6mtCcgi90DGOllWBq+UIHZ3bR1HudPZ/cQjmx2pLB6W4vxQ5RhhJzlReo1GiMQuCBWEr5XpM8v0c+u56GZ7VF//NPgdKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViFIv6EI; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so11647254a12.1;
+        Tue, 17 Dec 2024 03:38:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734435530; x=1735040330; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s9QD7dqpdYUL8soJqVW92nzK/D4CicxOcT6272SeH60=;
+        b=ViFIv6EIdfhpZPEzLwKQcXAIXU/Sh+HXzmv08kiqFA1/yjF3/iaQDqUJbRzLK3gnov
+         XGiF3qq2Unvflcuy1JW23OfRq8DT6hRAwe+S0Xl41TquUO8hCGQBUh1V/clG7XPji7Oh
+         RZ16TMUftD/UJoX3mIp3fTQQj++H2KeSS/g4Arkr0pQTg94rBtpy5TiYJZY53VY6E9RN
+         m8lOHH/Fav2/Z6XceborJxZ2ALHCMhlDaYywT3jPLYWjGTv0Qr53A00qzienAvYlqNvb
+         yTcTEiTR/jqY6KObpUmWVbZ1Vgu1SST8ZaLfvliKIspfzYzu8bK6hzRBXYUR+xAV74e/
+         uW0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734435530; x=1735040330;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s9QD7dqpdYUL8soJqVW92nzK/D4CicxOcT6272SeH60=;
+        b=lh78xqr6uXe3IUo6qBm8gYDMIg4bagncrt8/A7WrgEazRBFBHzv5gWTehlZ0Zk91mI
+         BfsUglGKcpT3ALVNY+ytn9LNWP+Pk5BWsBOPcQB3CG5+/+SvklOYgpB8/AVu1dxdEu+M
+         tIkWg4G7hoHoGfhQM3+0vGy/OHojYkyEsTe+eqryub/RVMA7vqRcihYgcH5bhSFv2xtS
+         J644aXB6ASsWaafIqY0fINRFRKTfwLXqbv5+3XRVy9ZYlk+P7yzDznvUkNiK5IjKTJNr
+         9L6PUhCv/gqE9rdjlyd0XSRv7n6QvH50i9EueSqgzCJ9QwicvyHvZaIjOrCmV9ws2jh1
+         bV8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU88A6XpvTW3BXogWy3Fq986O6JC3Zz6pmyMnUg+vE70OabDoZSO2HxxHo1cdVfo3FDGU90XimJQSP3@vger.kernel.org, AJvYcCVjyQX/PkVMFI6TTWj42zhWmb+D0321G8wdicDhGKdNBvHS9gfXR2/kqcZSsRWUwNpg/P9mD37CNDWg@vger.kernel.org, AJvYcCW9ZKNQUIkTUNATEAaeAdNaPYjB15bF2YtHM8oKLqjNrDtRDYHyDfUez2+GCL+/AmltCqpFBChMGEH6@vger.kernel.org, AJvYcCWm4sPoayMJ2SdwvF4LCQrNZW8YN6T7VqoQbhIrd/6ZJu/C3KB3w1P+s0OcQeWYvtC/+7h9kaF4mAwS@vger.kernel.org, AJvYcCXuKia277XsQ9XlavG8q88Ue+Ok5WFhaMe6F0rD+TekMYQr1uKQzWfjTO0LkZShzITK1MObJrH5IAQPahVV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKY2B/1KSVQ61T5x+2s8S//6WJm2JmDw7FgTMvVauIuz9Kn01a
+	cYudCKIyqHOZY2rjWm+sx4fOmxWsYG6ID6VljveiRs1ic/G31Txa
+X-Gm-Gg: ASbGncvPAu7vYBK0efJ4xNrzhaiFkbaVG+R88Wduzal7esP44+qLH6sUTqOpjMHVUzw
+	lCtGNauYhad4UJKGHfrowUAQtmAbMMoNqYDn2hAx5B3RDB/J73WpyavOtpU4fpq/0PfUH6qqjFU
+	29vFZZ9/srA1Sq5R2M2XnAwrmS+sb4UKO6ahlCaNPBG8zbrA6kgWeQ/bBFFFOHrSzqqjp5qe2lU
+	Co1zXcp4w4E04XHIZhc/erut6mZ/W1FCVdcwqxFgKVLtIR0uk/h/vsdKsbSMXX0yVSMMfbYOhb6
+	sGm1gneyASQ635SKCHba7qoq05l74UjCaxQMiTgMrEouvljxCaN++FlcFC458HvPBI10s3q1mbO
+	HM2Ng4jjvpo5viA==
+X-Google-Smtp-Source: AGHT+IHI2uSoRd4nv38/UiT7z1RDJI76U0j9ufGggNp6XehIwkcjGObzp/kYZGv9uLlqM5HAgwVtGw==
+X-Received: by 2002:a17:907:1c01:b0:aa6:bcc2:3f02 with SMTP id a640c23a62f3a-aabdcb7fddamr248157266b.29.1734435529455;
+        Tue, 17 Dec 2024 03:38:49 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef10:f100:a045:a7a7:11d0:8676? (p200300f6ef10f100a045a7a711d08676.dip0.t-ipconnect.de. [2003:f6:ef10:f100:a045:a7a7:11d0:8676])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96069d06sm435064866b.77.2024.12.17.03.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 03:38:49 -0800 (PST)
+Message-ID: <b5b454acec976a6fe2dece85191cda941d0d0cb3.camel@gmail.com>
+Subject: Re: [PATCH v6 05/17] spi: add offload TX/RX streaming APIs
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>
+Cc: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander	 <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, 	linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, 	linux-pwm@vger.kernel.org
+Date: Tue, 17 Dec 2024 12:43:20 +0100
+In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-5-88ee574d5d03@baylibre.com>
+References: 
+	<20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
+	 <20241211-dlech-mainline-spi-engine-offload-2-v6-5-88ee574d5d03@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: a bochs-drm (?) oops on head
-To: "Dr. David Alan Gilbert" <linux@treblig.org>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: kraxel@redhat.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>
-References: <Z18dbfDAiFadsSdg@gallifrey>
- <b2e2a217-dced-472f-9084-9822f7e6803c@suse.de> <Z2AvS_8xgBhnF4CW@gallifrey>
- <51a183c7-de10-4419-b540-b7c2ab23520a@suse.de> <Z2Bk6-fxzw2dj5Eq@gallifrey>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <Z2Bk6-fxzw2dj5Eq@gallifrey>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2D95921108
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-(cc'ing Hans, who implemented deferred console takeover)
-
-Hi
-
-Am 16.12.24 um 18:35 schrieb Dr. David Alan Gilbert:
-> * Thomas Zimmermann (tzimmermann@suse.de) wrote:
->> Hi
->>
->>
->> Am 16.12.24 um 14:46 schrieb Dr. David Alan Gilbert:
->> [...]
->>>> The attached patch fixes the problem for me. Could you please test and
->>>> report back the results.
->>> That gets me a different oops; this was run with:
->>> qemu-system-x86_64  -M pc -cpu host --enable-kvm -smp 4 -m 2G -kernel /discs/fast/kernel/arch/x86/boot/bzImage -append "console=tty0 console=ttyS0 root=/dev/vdb1 single" -drive if=virtio,file=/discs/more/images/debian12-64scan.qcow2
->>>
->>> It looks to me if it made the mistake of trying to print something in the middle of being removed:
->>  From the stack trace below, I'd say it is the one at [1]. But I fail to
->> reproduce the problem.
->>
->> Could you please send me the complete output of dmesg after the system
->> finished booting?
-> Sure; this is as far as it gets until it hits the vga oops that stops it:
-
-I was able to reproduce it a single time. My setup is
-
-- CONFIG_DEBUG_TEST_DRIVER_REMOVE=y
-- CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER=y
-- startup with vgacon
-- 'quiet' on kernel command line (important!)
-
-and then I got the segfault you report.
-
-With the provided stack trace and log, I think I got some idea what is 
-happened
-
->
-> [    0.000000][    T0] Linux version 6.13.0-rc2+ (dg@dalek) (gcc (GCC) 14.2.1 20240912 (Red Hat 14.2.1-3), GNU ld version 2.43.1-4.fc41) #373 SMP PREEMPT_DYNAMIC Mon Dec 16 13:25:32 GMT 2024
-> [    0.000000][    T0] Command line: console=tty0 console=ttyS0 root=/dev/vdb1 single
-[...]
-> [   74.077481][    T1] SPI driver abt-y030xx067a has no spi_device_id for abt,y030xx067a
-> [   74.088805][    T1] SPI driver panel-ilitek-ili9322 has no spi_device_id for dlink,dir-685-panel
-> [   74.090492][    T1] SPI driver panel-ilitek-ili9322 has no spi_device_id for ilitek,ili9322
-> [   74.094556][    T1] SPI driver panel-innolux-ej030na has no spi_device_id for innolux,ej030na
-> [   74.106367][    T1] SPI driver nt39016 has no spi_device_id for kingdisplay,kd035g6-54nt
-> [   74.116623][    T1] SPI driver s6d27a1-panel has no spi_device_id for samsung,s6d27a1
-> [   74.120701][    T1] SPI driver panel-samsung-s6e63m0 has no spi_device_id for samsung,s6e63m0
-
-> [   74.177273][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
-
-This comes from the first iteration in really_probe() [1]. This is the 
-bochs instance that will be removed. It should install fbcon, but that 
-gets deferred.
-
-[1] https://elixir.bootlin.com/linux/v6.12.5/source/drivers/base/dd.c#L631
-
-> [   74.179388][    T1] [drm] Found bochs VGA, ID 0xb0c5.
-> [   74.180931][    T1] [drm] Framebuffer size 16384 kB @ 0xfd000000, mmio @ 0xfebf0000.
-> [   74.199314][    T1] [drm] Initialized bochs-drm 1.0.0 for 0000:00:02.0 on minor 2
-> [   74.265834][    T1] fbcon: bochs-drmdrmfb (fb1) is primary device
-> [   74.265882][    T1] fbcon: Remapping primary device, fb1, to tty 1-63
-> [   79.736367][    T1] bochs-drm 0000:00:02.0: [drm] fb1: bochs-drmdrmfb frame buffer device
-
-End of first bochs instance here..
-
-> [   79.800872][    T1] bochs-drm 0000:00:02.0: vgaarb: deactivate vga console
-
-The second instance of bochs starts here and tries to deactivate the 
-console a second time. Notice that we didn't have any "Console is " or 
-"Taking over console" messages.
-
-> [   79.802400][    T1] BUG: kernel NULL pointer dereference, address: 000000000000020c
-
-I've not been able to figure out what is a offset 0x20c (524 decimal). 
-None of the structs involved appears to have any fields starting at this 
-offset. The nearest case is vc_hi_font_mask, [2] which is at +520. Could 
-be related to aligned memory access. get_color() would read that field. 
-[3] vc_num at +512 is another candidate.
-
-[2] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/console_struct.h#L124
-[3] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/video/fbdev/core/fbcon.c#L302
-
-> [   79.802448][    T1] #PF: supervisor write access in kernel mode
-> [   79.802498][    T1] #PF: error_code(0x0002) - not-present page
-> [   79.802545][    T1] PGD 0 P4D 0
-> [   79.802622][    T1] Oops: Oops: 0002 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
-> [   79.802669][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W        N 6.13.0-rc2+ #373 5a5c0ce8f09b0b72067981f01985e201a0118bb6
-> [   79.802669][    T1] Tainted: [W]=WARN, [N]=TEST
-> [   79.802669][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
-> [   79.802669][    T1] RIP: 0010:fbcon_cursor+0xa9/0x3c0
-> [   79.802669][    T1] Code: c0 05 00 00 66 89 44 24 06 e8 f3 35 2a fd 0f b7 bb c0 05 00 00 e8 27 b8 e9 fc 49 8d bc 24 0c 02 00 00 49 89 c7 e8 d7 3d 2a fd <45> 89 bc 24 0c 02 00 00 48 8d bd e0 05 00 00 e8 c3 3b 2a fd 44 8b
-> [   79.802669][    T1] RSP: 0018:ffffb70f800136c0 EFLAGS: 00010046
-> [   79.802669][    T1] RAX: 0000000000000000 RBX: ffff9d4fc10a8800 RCX: 0000000000000000
-> [   79.802669][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   79.802669][    T1] RBP: ffff9d4fc54ba800 R08: 0000000000000000 R09: 0000000000000000
-> [   79.802669][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> [   79.802669][    T1] R13: 0000000000000000 R14: ffff9d4fc54bade8 R15: 0000000000000032
-> [   79.802669][    T1] FS:  0000000000000000(0000) GS:ffff9d503d200000(0000) knlGS:0000000000000000
-> [   79.802669][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   79.802669][    T1] CR2: 000000000000020c CR3: 0000000056520000 CR4: 0000000000350ef0
-> [   79.802669][    T1] Call Trace:
-> [   79.802669][    T1]  <TASK>
-> [   79.802669][    T1]  ? __die+0x23/0x80
-> [   79.802669][    T1]  ? page_fault_oops+0x21c/0x240
-> [   79.802669][    T1]  ? do_user_addr_fault+0x893/0x1180
-> [   79.802669][    T1]  ? srso_return_thunk+0x5/0x7f
-> [   79.802669][    T1]  ? exc_page_fault+0x3f/0x180
-> [   79.802669][    T1]  ? exc_page_fault+0x87/0x180
-> [   79.802669][    T1]  ? asm_exc_page_fault+0x26/0x40
-
-> [   79.802669][    T1]  ? fbcon_cursor+0xa9/0x3c0
-> [   79.802669][    T1]  hide_cursor+0x66/0x1c0
-> [   79.802669][    T1]  vt_console_print+0x9b1/0xa40
-
-I think we get here via steps [4] to [8].
-
-[4] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/pci/vgaarb.c#L173
-[5] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/tty/vt/vt.c#L3287
-[6] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/tty/vt/vt.c#L861
-[7] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/tty/vt/vt.c#L846
-[8] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/video/fbdev/core/fbcon.c#L1322
-
-When vt_console_print() invokes the call at [9], it apparently replaces 
-the deferred console implementation (maybe ?) and
-then the next line [5] operates on a NULL pointer somewhere.
-
-[9] 
-https://elixir.bootlin.com/linux/v6.13-rc2/source/drivers/tty/vt/vt.c#L3286
-
-Best regards
-Thomas
+On Wed, 2024-12-11 at 14:54 -0600, David Lechner wrote:
+> Most configuration of SPI offloads is handled opaquely using the offload
+> pointer that is passed to the various offload functions. However, there
+> are some offload features that need to be controlled on a per transfer
+> basis.
+>=20
+> This patch adds a flag field to struct spi_transfer to allow specifying
+> such features. The first feature to be added is the ability to stream
+> data to/from a hardware sink/source rather than using a tx or rx buffer.
+> Additional flags can be added in the future as needed.
+>=20
+> A flags field is also added to the offload struct for providers to
+> indicate which flags are supported. This allows for generic checking of
+> offload capabilities during __spi_validate() so that each offload
+> provider doesn't have to implement their own validation.
+>=20
+> As a first users of this streaming capability, getter functions are
+> added to get a DMA channel that is directly connected to the offload.
+> Peripheral drivers will use this to get a DMA channel and configure it
+> to suit their needs.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Still not sure about releasing the channel. But I guess this might be also =
+a
+problem today with "plain" IIO DMA buffering. So...
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+> v6 changes:
+> * Update for header file split.
+> * Fix wrong kernel-doc comments.
+>=20
+> v5 change:
+> * Remove incorrect comment about caller needing to release DMA channels.
+>=20
+> v4 changes:
+> * DMA API's now automatically release DMA channels instead of leaving
+> =C2=A0 it up to the caller.
+>=20
+> v3 changes:
+> * Added spi_offload_{tx,rx}_stream_get_dma_chan() functions.
+>=20
+> v2 changes:
+> * This is also split out from "spi: add core support for controllers with
+> =C2=A0 offload capabilities".
+> * In the previous version, we were using (void *)-1 as a sentinel value
+> =C2=A0 that could be assigned, e.g. to rx_buf. But this was naive since t=
+here
+> =C2=A0 is core code that would try to dereference this pointer. So instea=
+d,
+> =C2=A0 we've added a new flags field to the spi_transfer structure for th=
+is
+> =C2=A0 sort of thing. This also has the advantage of being able to be use=
+d in
+> =C2=A0 the future for other arbitrary features.
+> ---
+> =C2=A0drivers/spi/spi-offload.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 70
+> ++++++++++++++++++++++++++++++++++++
+> =C2=A0drivers/spi/spi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 +++=
++++
+> =C2=A0include/linux/spi/offload/consumer.h |=C2=A0 5 +++
+> =C2=A0include/linux/spi/offload/types.h=C2=A0=C2=A0=C2=A0 | 19 ++++++++++
+> =C2=A0include/linux/spi/spi.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
+> =C2=A05 files changed, 107 insertions(+)
+>=20
+> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
+> index
+> 43582e50e279c4b1b958765fec556aaa91180e55..df5e963d5ee29d37833559595536a46=
+0c530
+> bc81 100644
+> --- a/drivers/spi/spi-offload.c
+> +++ b/drivers/spi/spi-offload.c
+> @@ -18,6 +18,7 @@
+> =C2=A0
+> =C2=A0#include <linux/cleanup.h>
+> =C2=A0#include <linux/device.h>
+> +#include <linux/dmaengine.h>
+> =C2=A0#include <linux/export.h>
+> =C2=A0#include <linux/kref.h>
+> =C2=A0#include <linux/list.h>
+> @@ -332,6 +333,75 @@ void spi_offload_trigger_disable(struct spi_offload
+> *offload,
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_GPL(spi_offload_trigger_disable);
+> =C2=A0
+> +static void spi_offload_release_dma_chan(void *chan)
+> +{
+> +	dma_release_channel(chan);
+> +}
+> +
+> +/**
+> + * devm_spi_offload_tx_stream_request_dma_chan - Get the DMA channel inf=
+o for
+> the TX stream
+> + * @dev: Device for devm purposes.
+> + * @offload: Offload instance
+> + *
+> + * This is the DMA channel that will provide data to transfers that use =
+the
+> + * %SPI_OFFLOAD_XFER_TX_STREAM offload flag.
+> + *
+> + * Return: Pointer to DMA channel info, or negative error code
+> + */
+> +struct dma_chan
+> +*devm_spi_offload_tx_stream_request_dma_chan(struct device *dev,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 struct spi_offload *offload)
+> +{
+> +	struct dma_chan *chan;
+> +	int ret;
+> +
+> +	if (!offload->ops || !offload->ops->tx_stream_request_dma_chan)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	chan =3D offload->ops->tx_stream_request_dma_chan(offload);
+> +	if (IS_ERR(chan))
+> +		return chan;
+> +
+> +	ret =3D devm_add_action_or_reset(dev, spi_offload_release_dma_chan,
+> chan);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return chan;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_spi_offload_tx_stream_request_dma_chan);
+> +
+> +/**
+> + * devm_spi_offload_rx_stream_request_dma_chan - Get the DMA channel inf=
+o for
+> the RX stream
+> + * @dev: Device for devm purposes.
+> + * @offload: Offload instance
+> + *
+> + * This is the DMA channel that will receive data from transfers that us=
+e the
+> + * %SPI_OFFLOAD_XFER_RX_STREAM offload flag.
+> + *
+> + * Return: Pointer to DMA channel info, or negative error code
+> + */
+> +struct dma_chan
+> +*devm_spi_offload_rx_stream_request_dma_chan(struct device *dev,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 struct spi_offload *offload)
+> +{
+> +	struct dma_chan *chan;
+> +	int ret;
+> +
+> +	if (!offload->ops || !offload->ops->rx_stream_request_dma_chan)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	chan =3D offload->ops->rx_stream_request_dma_chan(offload);
+> +	if (IS_ERR(chan))
+> +		return chan;
+> +
+> +	ret =3D devm_add_action_or_reset(dev, spi_offload_release_dma_chan,
+> chan);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return chan;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_spi_offload_rx_stream_request_dma_chan);
+> +
+> =C2=A0/* Triggers providers */
+> =C2=A0
+> =C2=A0static void spi_offload_trigger_unregister(void *data)
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index
+> ff1add2ecb91f18cf82e6f1e9595584c11adf9d8..4a871db9ee636aba64c866ebdd8bb1d=
+bf82e
+> 0f42 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -31,6 +31,7 @@
+> =C2=A0#include <linux/ptp_clock_kernel.h>
+> =C2=A0#include <linux/sched/rt.h>
+> =C2=A0#include <linux/slab.h>
+> +#include <linux/spi/offload/types.h>
+> =C2=A0#include <linux/spi/spi.h>
+> =C2=A0#include <linux/spi/spi-mem.h>
+> =C2=A0#include <uapi/linux/sched/types.h>
+> @@ -4163,6 +4164,15 @@ static int __spi_validate(struct spi_device *spi,
+> struct spi_message *message)
+> =C2=A0
+> =C2=A0		if (_spi_xfer_word_delay_update(xfer, spi))
+> =C2=A0			return -EINVAL;
+> +
+> +		/* make sure controller supports required offload features */
+> +		if (xfer->offload_flags) {
+> +			if (!message->offload)
+> +				return -EINVAL;
+> +
+> +			if (xfer->offload_flags & ~message->offload-
+> >xfer_flags)
+> +				return -EINVAL;
+> +		}
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	message->status =3D -EINPROGRESS;
+> diff --git a/include/linux/spi/offload/consumer.h
+> b/include/linux/spi/offload/consumer.h
+> index
+> 5a0ec5303d600728959594bcdbd0cb2baeba7c77..cd7d5daa21e69b61c16eba6c10c8553=
+45a4f
+> 3297 100644
+> --- a/include/linux/spi/offload/consumer.h
+> +++ b/include/linux/spi/offload/consumer.h
+> @@ -31,4 +31,9 @@ int spi_offload_trigger_enable(struct spi_offload *offl=
+oad,
+> =C2=A0void spi_offload_trigger_disable(struct spi_offload *offload,
+> =C2=A0				 struct spi_offload_trigger *trigger);
+> =C2=A0
+> +struct dma_chan *devm_spi_offload_tx_stream_request_dma_chan(struct devi=
+ce
+> *dev,
+> +							=C2=A0=C2=A0=C2=A0=C2=A0 struct
+> spi_offload *offload);
+> +struct dma_chan *devm_spi_offload_rx_stream_request_dma_chan(struct devi=
+ce
+> *dev,
+> +							=C2=A0=C2=A0=C2=A0=C2=A0 struct
+> spi_offload *offload);
+> +
+> =C2=A0#endif /* __LINUX_SPI_OFFLOAD_CONSUMER_H */
+> diff --git a/include/linux/spi/offload/types.h
+> b/include/linux/spi/offload/types.h
+> index
+> 7476f2073b02ee0f9edd3ae75e587b075746fa92..86d0e8cb9495bb43e177378b2041067=
+de8ea
+> 8786 100644
+> --- a/include/linux/spi/offload/types.h
+> +++ b/include/linux/spi/offload/types.h
+> @@ -11,6 +11,11 @@
+> =C2=A0
+> =C2=A0struct device;
+> =C2=A0
+> +/* This is write xfer but TX uses external data stream rather than tx_bu=
+f. */
+> +#define SPI_OFFLOAD_XFER_TX_STREAM	BIT(0)
+> +/* This is read xfer but RX uses external data stream rather than rx_buf=
+. */
+> +#define SPI_OFFLOAD_XFER_RX_STREAM	BIT(1)
+> +
+> =C2=A0/* Offload can be triggered by external hardware event. */
+> =C2=A0#define SPI_OFFLOAD_CAP_TRIGGER			BIT(0)
+> =C2=A0/* Offload can record and then play back TX data when triggered. */
+> @@ -40,6 +45,8 @@ struct spi_offload {
+> =C2=A0	void *priv;
+> =C2=A0	/** @ops: callbacks for offload support */
+> =C2=A0	const struct spi_offload_ops *ops;
+> +	/** @xfer_flags: %SPI_OFFLOAD_XFER_* flags supported by provider */
+> +	u32 xfer_flags;
+> =C2=A0};
+> =C2=A0
+> =C2=A0enum spi_offload_trigger_type {
+> @@ -75,6 +82,18 @@ struct spi_offload_ops {
+> =C2=A0	 * given offload instance.
+> =C2=A0	 */
+> =C2=A0	void (*trigger_disable)(struct spi_offload *offload);
+> +	/**
+> +	 * @tx_stream_request_dma_chan: Optional callback for controllers
+> that
+> +	 * have an offload where the TX data stream is connected directly to
+> a
+> +	 * DMA channel.
+> +	 */
+> +	struct dma_chan *(*tx_stream_request_dma_chan)(struct spi_offload
+> *offload);
+> +	/**
+> +	 * @rx_stream_request_dma_chan: Optional callback for controllers
+> that
+> +	 * have an offload where the RX data stream is connected directly to
+> a
+> +	 * DMA channel.
+> +	 */
+> +	struct dma_chan *(*rx_stream_request_dma_chan)(struct spi_offload
+> *offload);
+> =C2=A0};
+> =C2=A0
+> =C2=A0#endif /* __LINUX_SPI_OFFLOAD_TYPES_H */
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index
+> 98bdc8c16c20521c0a94e5f72f5e71c4f6d7d11e..4c087009cf974595f23036b1b7a030a=
+45913
+> 420c 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -1093,6 +1093,9 @@ struct spi_transfer {
+> =C2=A0
+> =C2=A0	u32		effective_speed_hz;
+> =C2=A0
+> +	/* Use %SPI_OFFLOAD_XFER_* from spi-offload.h */
+> +	unsigned int	offload_flags;
+> +
+> =C2=A0	unsigned int	ptp_sts_word_pre;
+> =C2=A0	unsigned int	ptp_sts_word_post;
+> =C2=A0
+>=20
 
 
