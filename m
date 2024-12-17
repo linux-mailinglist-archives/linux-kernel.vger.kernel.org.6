@@ -1,160 +1,93 @@
-Return-Path: <linux-kernel+bounces-449883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF4D9F575A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:11:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E559F575D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3DB1891E98
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70271891D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610B417BEA2;
-	Tue, 17 Dec 2024 20:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SC9ukFpk"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D350B1D9A63
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 20:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DE417BEA2;
+	Tue, 17 Dec 2024 20:11:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F0B14600D;
+	Tue, 17 Dec 2024 20:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734466252; cv=none; b=Awmxbgv8IW2tXZ6/bOz4ByRXy/wgUfqjPdKe7lo3xaQcT9j6IUFq3KjgKwkyA8cuHkmdun1nEvRWmhEoK4lP83YaT3l/MnL2bK5i+jmUU3Hb1mHjtqcjSLu5/VWhvHBkLyArpfHWYy0nJpDRp474Ww6UQxkmGGoUX5HLhoisbss=
+	t=1734466305; cv=none; b=TyXpzWFQPhX5in0fY3cNNq8709D+Q4hQiQeVDGTHx/LwNJSxhk0EYUbHkbpCKrTDKX1NM6W1g/50DSREOKz22+p4TuEBDMbMP5DIQMJPGgWxbC1bsoE+h79lrYw61J9Sex+1ykPvXk3Ux7ih2PAmYoWZXGOK90iR311L5ktffJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734466252; c=relaxed/simple;
-	bh=S9DoO5a3n3vU6X/je+MmroDxVIgCBKe2ddmDuJmV/mo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZoHYfAEXG86WNbB9kW7oPzIHQiyetfwcWB+Xi1cdqfmvPcIT/TxR5BY5mkRc0vSSifCDccjRjG8uZbiVVY1N0zM9kTJRyf+b8fb6pStMk9GDmZ8+Ay5vc9adupNMuATneLuEu0ADtvvbMwuC0mbULpBeQ8PPwxvUtXuTG6F9CwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SC9ukFpk; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3863703258fso31195f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:10:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734466249; x=1735071049; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ptCMEfalScg4HE+s2WF5iyeS7CJ5LoQymYStrG4iRVc=;
-        b=SC9ukFpkLeX3Ab8vupeb/6U3Sa1A4Yipa5Mmdt8mtiVcxh+XXswWzrgJgXeHwePziS
-         WkLJX04TvTtVL/MhOCQm6aoTqLiVxcYXjMl3k5LWGH6dA88qrBu9gUCGrNyfmKCUbfli
-         vSzaWP202LoVtzqRWAu6fgcg+MirDJ3bzoZmcbVu9vMELpftpzrRI9r6OrjZQIDJwQVa
-         ztTMtwqswcWWH6nQxzq+GpVSGFDsEGNNkTYYo5pBZPIdy6IdL5MpaRDcYuoRnJdthoPJ
-         5yCFYmNgcvrebUTMuzfbL8FYmgiPT6br0zOM3IIXw5UklsLbIE25/qe5SK+otRuxwd2v
-         okPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734466249; x=1735071049;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ptCMEfalScg4HE+s2WF5iyeS7CJ5LoQymYStrG4iRVc=;
-        b=pd/dNXqqSDDjkcMxKZb2Y54B7VP/pXNDr2Lq8xMRnhMtCs5qxuqgTkxIB35GS5TmX2
-         rjahjw1jAz3a0q7M6Bs3LYKhUufS2X/R1ePQrHeh28/hs+MuyOXhTgrsUmD4priVGDDg
-         8oGAYW1RuPpB1JIZMzjTMZZ4Paq4j+JHlcpLsXVFDvIqE2XywILSe989sAn+/RIykTAd
-         ITrq57rY/7rRXA1Hs1qBG6BSqjODGU/BsN42k1VRfTavuWchyKcbS+xlLlCMoGTQuVUY
-         eL1o6lI1QvzpVx8H4mo9sEU4Ghmsmggp3zzi6D1xhulk9GmDKit7J/Ji0Xc/pkkokUhf
-         olHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXh6cVGlGHBwz6KKZRDVyeyD9BMOronwPsGg3+dJMUuxKsQgR9v4UamQC7q9vt7xrcYdJ+Fv/SPcGBgbJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNkKnPvtbWuScHvet7m7uRm0F2lIjtXmMRzmzmwLB1rtcrA9Jo
-	7P1DZOHMjt9u8L/O4uqNvH2XIFAGy0GslANMbt7WOVW/PST0qPCQqyKtUQ1sB9LOBrqH+snaHIe
-	bvvIUYK1hOhMAAz/DN2MRBCaIlZvdAUZ55XTpjw==
-X-Gm-Gg: ASbGnctSsnKpKF/7fTyUPQDoNx/1n/cTIPsocC3LdffKrL/xhefow2upUG+Qf5jB/45
-	+HCW/Hu1ezVfqGNNHeMhWAFKsRcboUH8QtZH8hnIgzriOksGM4o359u2TRBbMaUPHh0epug==
-X-Google-Smtp-Source: AGHT+IGKGM3GSJM51xtpyhc2/6RhhD/S1kZ/YygELvpxDkqeIEk+YG5SrrmAjsx+Q88wsvntYUv7XsFnXak8mvmHL9g=
-X-Received: by 2002:a5d:584f:0:b0:386:3958:2ec5 with SMTP id
- ffacd0b85a97d-388db294b60mr4487740f8f.28.1734466249108; Tue, 17 Dec 2024
- 12:10:49 -0800 (PST)
+	s=arc-20240116; t=1734466305; c=relaxed/simple;
+	bh=/opUnMx2K0Pl0/ZfgAIgm53hcedOyWVqswmB7Q4uL38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRYkqbikV/onklqAE2Z83WfgwJ2Jgl5WXwnd65r+BNyuQjUzAK1T6BhidwljpAykAkTnme6pE/mo4M7OyKtuwDzwGSNT1kUmkSN7O7Ck2+84kgtKRZYjYxWKjCPGARaTDhlY6p41XxBrzxcmihTOyZjpY3yunxfxmrmCbDaF8HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 089D4497;
+	Tue, 17 Dec 2024 12:12:09 -0800 (PST)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 825133F528;
+	Tue, 17 Dec 2024 12:11:35 -0800 (PST)
+Date: Tue, 17 Dec 2024 21:10:43 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
+	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
+	rafael@kernel.org, sumitg@nvidia.com, yang@os.amperecomputing.com,
+	vanshikonda@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+Message-ID: <Z2Haw_o8gF-Ce1gx@arm.com>
+References: <20241206135600.4083965-1-beata.michalska@arm.com>
+ <20241206135600.4083965-2-beata.michalska@arm.com>
+ <20241212065100.sjb7lrlmksbm2hdk@vireshk-i7>
+ <Z2CmcelSy89NULtz@arm.com>
+ <20241217042726.isllh5bulpnwql7i@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212163357.35934-1-dakr@kernel.org> <20241212163357.35934-8-dakr@kernel.org>
-In-Reply-To: <20241212163357.35934-8-dakr@kernel.org>
-From: Fabien Parent <fabien.parent@linaro.org>
-Date: Tue, 17 Dec 2024 12:10:38 -0800
-Message-ID: <CAPFo5V+WOWzzXxN=-n+ADrFdkSV7C66Lq-+gitx+TnrsAzYJnw@mail.gmail.com>
-Subject: Re: [PATCH v6 07/16] rust: add `io::{Io, IoRaw}` base types
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, chrisi.schrefl@gmail.com, paulmck@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217042726.isllh5bulpnwql7i@vireshk-i7>
 
-Hi Danilo,
+On Tue, Dec 17, 2024 at 09:57:26AM +0530, Viresh Kumar wrote:
+> On 16-12-24, 23:15, Beata Michalska wrote:
+> > My bad as I must have misinterpreted that message. Although I am not entirely
+> > sure why this might be unacceptable as it is not such uncommon approach to use
+> > signed int space to cover both: expected positive value as well as potential
+> > error code case failure.
+> 
+> This part is fine. The problem is with handling frequency here. Signed int can
+> capture up to 2 GHz of freq, where as unsigned int can capture up to 4 GHz and
+> so we would really like to keep it at 4 GHz..
+Right, though the arch_freq_get_on_cpu operates on kHz values.
 
-> +/// ```no_run
-> +/// # use kernel::{bindings, io::{Io, IoRaw}};
-> +/// # use core::ops::Deref;
-> +///
-> +/// // See also [`pci::Bar`] for a real example.
-> +/// struct IoMem<const SIZE: usize>(IoRaw<SIZE>);
-> +///
-> +/// impl<const SIZE: usize> IoMem<SIZE> {
-> +///     /// # Safety
-> +///     ///
-> +///     /// [`paddr`, `paddr` + `SIZE`) must be a valid MMIO region that is mappable into the CPUs
-> +///     /// virtual address space.
-> +///     unsafe fn new(paddr: usize) -> Result<Self>{
-> +///         // SAFETY: By the safety requirements of this function [`paddr`, `paddr` + `SIZE`) is
-> +///         // valid for `ioremap`.
-> +///         let addr = unsafe { bindings::ioremap(paddr as _, SIZE.try_into().unwrap()) };
-
-This line generates a warning when building the doctests on arm64:
-
-warning: useless conversion to the same type: usize
-    --> rust/doctests_kernel_generated.rs:3601:59
-     |
-3601 |         let addr = unsafe { bindings::ioremap(paddr as _,
-SIZE.try_into().unwrap()) };
-     |                                                           ^^^^^^^^^^^^^^^
-     |
-     = help: consider removing .try_into()
-     = help: for further information visit
-https://rust-lang.github.io/rust-clippy/master/index.html#useless_conversion
-
-Same things happens as well in devres.rs
-
-> +///         if addr.is_null() {
-> +///             return Err(ENOMEM);
-> +///         }
-> +///
-> +///         Ok(IoMem(IoRaw::new(addr as _, SIZE)?))
-> +///     }
-> +/// }
-> +///
-> +/// impl<const SIZE: usize> Drop for IoMem<SIZE> {
-> +///     fn drop(&mut self) {
-> +///         // SAFETY: `self.0.addr()` is guaranteed to be properly mapped by `Self::new`.
-> +///         unsafe { bindings::iounmap(self.0.addr() as _); };
-> +///     }
-> +/// }
-> +///
-> +/// impl<const SIZE: usize> Deref for IoMem<SIZE> {
-> +///    type Target = Io<SIZE>;
-> +///
-> +///    fn deref(&self) -> &Self::Target {
-> +///         // SAFETY: The memory range stored in `self` has been properly mapped in `Self::new`.
-> +///         unsafe { Io::from_raw(&self.0) }
-> +///    }
-> +/// }
-> +///
-> +///# fn no_run() -> Result<(), Error> {
-> +/// // SAFETY: Invalid usage for example purposes.
-> +/// let iomem = unsafe { IoMem::<{ core::mem::size_of::<u32>() }>::new(0xBAAAAAAD)? };
-> +/// iomem.writel(0x42, 0x0);
-> +/// assert!(iomem.try_writel(0x42, 0x0).is_ok());
-> +/// assert!(iomem.try_writel(0x42, 0x4).is_err());
-> +/// # Ok(())
-> +/// # }
-> +/// ```
+---
+BR
+Beata
+> 
+> Maybe we need to move to 64 bits for frequency at some point of time, but at
+> least we should try to not break it for now.
+> 
+> > Enabling the new attribute for all is an option, tough not entirely compelling
+> > one as exposing a feature that is known not to be supported seems bit
+> > counterintuitive. On the other hand using cpufreq driver flags won't help much
+> > as the support for the new attrib is platform-specific, not driver-specific.
+> 
+> -- 
+> viresh
 
