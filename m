@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-449497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7859F4FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:48:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8579F4FF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50DB16BA2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F67316CD98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539451F9F52;
-	Tue, 17 Dec 2024 15:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F731FA145;
+	Tue, 17 Dec 2024 15:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NXb4d80s"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MxADZx2B"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6D1F9EB9;
-	Tue, 17 Dec 2024 15:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6612E1F9ED2;
+	Tue, 17 Dec 2024 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734450252; cv=none; b=bLHEziQDSiwc//+IdHeUufZ+XTkXuW8SjTrWfDo+kd40pCYox7doduuuJelOfcocIjElz5xSCy+iObd/+YK6gpMk8uHj4g3v9SDFoPNqDYGgCOsm2fuU//Yi4u7Jw+lnDcp8paDGD3bzgGvYhqL7ZGU0z3UFPmI2qL/L1y2wswM=
+	t=1734450254; cv=none; b=B7DGa9zr/vMSKQv/TyLdmxAzWHorvCswNUG1RevnBSgzQZ1XnTFPIK6g05rEiVUgc90aI8LOowXeVAWYjbMJQ55N9oq6kDplYaiGTdNLZOheIw+q085Mbh8XwmoYv+hDOuOrnZoVGOAIjzO/kn0M9fY9/1Qsc+Vv+554iOf89Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734450252; c=relaxed/simple;
-	bh=87wdNAj+9TRq1PE+cNYOq+MAsiESQC3aLLnpxNZe5tU=;
+	s=arc-20240116; t=1734450254; c=relaxed/simple;
+	bh=2KjP+ghjdXg/hvaTHLze372DpCPcrSgv1WA4yirFNjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hrYdibp+8GvJznAz+PHNjhmZeyqV2ae3QAeQKnCqnsncIvvpSHMrXjQayITsd2+CQZOhJnvWUojtDylo0Zl5xXrzMqDq/kr3b6hozEq/+ubDx2fXfWcJ8vy7jZMkA2LMzgc4M+zihFqbVHLwEPZ8qryd+Qt21zkErWm0cy0hgGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NXb4d80s; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=VAkKC5yFuiHoW6tbSOI5u0E5G0mTcchmv6fgpEnL2O3QmSGvbQkJ2rPIO5bfDjqJ4daDgA5ybXIB6H0x2Gwg1IUCTXbkS60IZO/BURaUZm0iMgyFxLl7VIXgK6f4TNAIMNTciNIW+KVxqa1LrspeTjiGQH7cyfjz2ShziEbTrSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MxADZx2B; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734450249;
-	bh=87wdNAj+9TRq1PE+cNYOq+MAsiESQC3aLLnpxNZe5tU=;
+	s=mail; t=1734450250;
+	bh=2KjP+ghjdXg/hvaTHLze372DpCPcrSgv1WA4yirFNjs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NXb4d80smfvOGEhpZwnIlJ77eHE/U0fb0hogWtDBPK7YZjoUDPwUE4coiEjAh45Dj
-	 thpmlykLHa9CM++dTNsKmtrSSmVS67PZHrNwWJmU35NUN31W1LWh//lbZKxQ+Ct8qn
-	 OwdAWWcKxU4djwQkPC7oPaJX248hiJvyp9eCt8F9a9TlumgUGt3ffhTsqJ+dKM6IR8
-	 vje6+oO6uVG70eqW39XXm+QoUVsiscimzAFX9Er/GvMBACQCH+4+fFufq6ij/BkSDw
-	 bczAiL+b5NDkmA7jiYAujp6EeZP6nxtKLL3knB/AVCqR5pp9W+55DKYJpzrFIhG114
-	 QEXyQ/aUpJEGw==
+	b=MxADZx2B3gM/Q/9MqbZ77j5z/KYfga95za/X0iEUZU8NKUScYXCyZV/Sry+5bIIKL
+	 pKBYmD3DhugUwHVBxHzjqKcqsCZRF527TKwYk9jgEXCkWpOUXAWzq57OK+jW5jf3Cv
+	 IsOkpvInlHefySKfcyG0hFWdHyfZDJ/3Sme3bgJzjqWzUuz5Up+tFQtRRW4zxE7RDo
+	 0kS71ri8oT/VDuGBzlLnkJ+25B76bxAYjaRJ4xtsywVc1RRMk24VlbOQKfPw8ynYXr
+	 AHF1HdEVbMetXu7mv0xxv76ue69cwjkAgpIlL/ckWQPcsM9eTjOAbZHqqIBeyM3Ohz
+	 Qt5e9/XJs1/vw==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2E49817E37B1;
-	Tue, 17 Dec 2024 16:44:08 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 95DA617E3786;
+	Tue, 17 Dec 2024 16:44:09 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -71,9 +71,9 @@ Cc: p.zabel@pengutronix.de,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
 	dmitry.baryshkov@linaro.org
-Subject: [PATCH v3 13/33] drm/mediatek: mtk_hdmi: Fix typo for aud_sampe_size member
-Date: Tue, 17 Dec 2024 16:43:25 +0100
-Message-ID: <20241217154345.276919-14-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 14/33] drm/mediatek: mtk_hdmi: Move audio params selection to new function
+Date: Tue, 17 Dec 2024 16:43:26 +0100
+Message-ID: <20241217154345.276919-15-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
 References: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
@@ -85,56 +85,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename member aud_sampe_size of struct hdmi_audio_param to
-aud_sample_size to fix a typo and enhance readability.
+In preparation for splitting common bits of this driver, move the
+audio params (codec, sample rate/size, input type, i2s format, etc)
+selection to a new function called mtk_hdmi_audio_params().
 
-This commit brings no functional changes.
-
-Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_hdmi.c | 46 +++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index d84fae1de2b0..d2f1d6286fbc 100644
+index d2f1d6286fbc..8f5ab97a0261 100644
 --- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
 +++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -136,7 +136,7 @@ enum hdmi_aud_channel_swap_type {
+@@ -1479,12 +1479,11 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+  * HDMI audio codec callbacks
+  */
  
- struct hdmi_audio_param {
- 	enum hdmi_audio_coding_type aud_codec;
--	enum hdmi_audio_sample_size aud_sampe_size;
-+	enum hdmi_audio_sample_size aud_sample_size;
- 	enum hdmi_aud_input_type aud_input_type;
- 	enum hdmi_aud_i2s_fmt aud_i2s_fmt;
- 	enum hdmi_aud_mclk aud_mclk;
-@@ -1033,7 +1033,7 @@ static int mtk_hdmi_output_init(struct mtk_hdmi *hdmi)
+-static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+-				    struct hdmi_codec_daifmt *daifmt,
+-				    struct hdmi_codec_params *params)
++static int mtk_hdmi_audio_params(struct mtk_hdmi *hdmi,
++				 struct hdmi_codec_daifmt *daifmt,
++				 struct hdmi_codec_params *params)
+ {
+-	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
+-	struct hdmi_audio_param hdmi_params;
++	struct hdmi_audio_param aud_params = { 0 };
+ 	unsigned int chan = params->cea.channels;
  
- 	hdmi->csp = HDMI_COLORSPACE_RGB;
- 	aud_param->aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
--	aud_param->aud_sampe_size = HDMI_AUDIO_SAMPLE_SIZE_16;
-+	aud_param->aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
- 	aud_param->aud_input_type = HDMI_AUD_INPUT_I2S;
- 	aud_param->aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
- 	aud_param->aud_mclk = HDMI_AUD_MCLK_128FS;
-@@ -1529,14 +1529,14 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
- 	switch (daifmt->fmt) {
- 	case HDMI_I2S:
- 		hdmi_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
--		hdmi_params.aud_sampe_size = HDMI_AUDIO_SAMPLE_SIZE_16;
-+		hdmi_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
- 		hdmi_params.aud_input_type = HDMI_AUD_INPUT_I2S;
- 		hdmi_params.aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
- 		hdmi_params.aud_mclk = HDMI_AUD_MCLK_128FS;
+ 	dev_dbg(hdmi->dev, "%s: %u Hz, %d bit, %d channels\n", __func__,
+@@ -1495,16 +1494,16 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+ 
+ 	switch (chan) {
+ 	case 2:
+-		hdmi_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_2_0;
++		aud_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_2_0;
  		break;
- 	case HDMI_SPDIF:
- 		hdmi_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
--		hdmi_params.aud_sampe_size = HDMI_AUDIO_SAMPLE_SIZE_16;
-+		hdmi_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
- 		hdmi_params.aud_input_type = HDMI_AUD_INPUT_SPDIF;
+ 	case 4:
+-		hdmi_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_4_0;
++		aud_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_4_0;
+ 		break;
+ 	case 6:
+-		hdmi_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_5_1;
++		aud_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_5_1;
+ 		break;
+ 	case 8:
+-		hdmi_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_7_1;
++		aud_params.aud_input_chan_type = HDMI_AUD_CHAN_TYPE_7_1;
  		break;
  	default:
+ 		dev_err(hdmi->dev, "channel[%d] not supported!\n", chan);
+@@ -1528,26 +1527,35 @@ static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
+ 
+ 	switch (daifmt->fmt) {
+ 	case HDMI_I2S:
+-		hdmi_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
+-		hdmi_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
+-		hdmi_params.aud_input_type = HDMI_AUD_INPUT_I2S;
+-		hdmi_params.aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
+-		hdmi_params.aud_mclk = HDMI_AUD_MCLK_128FS;
++		aud_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
++		aud_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
++		aud_params.aud_input_type = HDMI_AUD_INPUT_I2S;
++		aud_params.aud_i2s_fmt = HDMI_I2S_MODE_I2S_24BIT;
++		aud_params.aud_mclk = HDMI_AUD_MCLK_128FS;
+ 		break;
+ 	case HDMI_SPDIF:
+-		hdmi_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
+-		hdmi_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
+-		hdmi_params.aud_input_type = HDMI_AUD_INPUT_SPDIF;
++		aud_params.aud_codec = HDMI_AUDIO_CODING_TYPE_PCM;
++		aud_params.aud_sample_size = HDMI_AUDIO_SAMPLE_SIZE_16;
++		aud_params.aud_input_type = HDMI_AUD_INPUT_SPDIF;
+ 		break;
+ 	default:
+ 		dev_err(hdmi->dev, "%s: Invalid DAI format %d\n", __func__,
+ 			daifmt->fmt);
+ 		return -EINVAL;
+ 	}
++	memcpy(&aud_params.codec_params, params, sizeof(aud_params.codec_params));
++
++	return 0;
++}
+ 
+-	memcpy(&hdmi_params.codec_params, params,
+-	       sizeof(hdmi_params.codec_params));
++static int mtk_hdmi_audio_hw_params(struct device *dev, void *data,
++				    struct hdmi_codec_daifmt *daifmt,
++				    struct hdmi_codec_params *params)
++{
++	struct mtk_hdmi *hdmi = dev_get_drvdata(dev);
++	struct hdmi_audio_param hdmi_params;
+ 
++	mtk_hdmi_audio_params(hdmi, daifmt, params);
+ 	mtk_hdmi_audio_set_param(hdmi, &hdmi_params);
+ 
+ 	return 0;
 -- 
 2.47.0
 
