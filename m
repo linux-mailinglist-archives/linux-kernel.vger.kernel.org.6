@@ -1,209 +1,207 @@
-Return-Path: <linux-kernel+bounces-448690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68F99F4454
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C62869F4457
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B7D2163F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9AA16435E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274111DB37F;
-	Tue, 17 Dec 2024 06:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA2A1DC999;
+	Tue, 17 Dec 2024 06:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="7cZDDi6e"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2074.outbound.protection.outlook.com [40.107.236.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="pPJ8kf2x"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F80175D50;
-	Tue, 17 Dec 2024 06:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734417845; cv=fail; b=RpHKfr9tOp+CEjbECZmlhb8/ZW4Nt7pDfE6KwskgkRtb5yD3DFFd9mHB1EWuqM11YR/koOhpBdEmoU+TBRNycTOCYQoccPkd7boKOEXl7PkT3tk1NrbBlOUkFUB0vmJrj4b5T47B2JZ/U7hmVx1rrmhL7eyAEgtdq8NSxR7zjBE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734417845; c=relaxed/simple;
-	bh=GTXsI8oIU7x/MevhuZbhNgGWMQKgXD/Ho24tfUyqg80=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y6N4HL4WcxicrpRszm78WQhU1Ak6YHpb6uID7gSPz2bW1NyTm4vuQ6vmnSlddqcOSu9aU3pxvl94qHJbJy50CfO7CjxpIZJXnkotRqnTZBuV9Dk19At0l5f22jijacu/X4qO81jA8fTV1SYe/Jin+6aYNJS21xFKmHk44E1bxio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=7cZDDi6e; arc=fail smtp.client-ip=40.107.236.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rj8uHylOdqAN0joLrzZSjkNxevVWSFOH0HMJKdLIZbPLRD7V9hcNaQ+NHlobMEgTgXc11vRQx9SO7UPo+dS1ZpH3D+JE6QdR4oc2ty8el/0gVdCx+j6YxitLqNsaRfo0pruRlw98SLO1Njs+WyVw9Km+AT6NAFYgxxPE5qgw7OvzNgFjl3SKwG15vye3EVwBCgvsDLRvAaOvhxdQnLACvmgTiWDsObZWkavMUhooqTtnvCaajPuLxmmfnamjy3NePScreOkUKs6P3Wt/2TZKZjlZbczS1bm2VCHPuCJoYYbCWgayAiiUbQWs1V0Ak7nxf69/Td8ttmda61liaqu6pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GTXsI8oIU7x/MevhuZbhNgGWMQKgXD/Ho24tfUyqg80=;
- b=Y1cnNlxJdfSV6WEvLaRE18hIKbF4igR5uyj80zRlmey8ydyREFMoN/NIrezyd/W4aqOOObB6025eHhZL6HVKEVCL9GgPc7QI1rSzG+iwdoGPPm40VdcTe7J5aFQ3TijfQrrD33Zaf20xX7dDRjPOmbO3xOENa8lFu4tMgZUU/gWWcxByxCfciGfhg1aD5bSENcOT0sw8Qqg2pCSxFQTysYXQDOC3L1Ghd9FqWulJQIF9TeHF0LuyeS7w2Z4ksBow4jlz7MYD4xhXsnfZ4R6MOdONT2ZJe4fpMOmOonPFUHpV0FofjytW/dfmgMHhC4RSPOdaIKZEEBZBv38nSugFjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GTXsI8oIU7x/MevhuZbhNgGWMQKgXD/Ho24tfUyqg80=;
- b=7cZDDi6egj9CCi8OOb4+3k/8YZWJqE+o3R3MjDt/HWOUvRIYgp79b7BJceBxzk+L3t3Xb6m5r90nTIM9GTe5CkpJLbOk1m3FW0/b/M2id6Ohnt+bOmyHsPx3uFe/B05OA6+UdXSCOZigifSGLdjjVD41InOmEtSbo2AThc3PKjsGw9GlTcRn4uN3ag0FvqwxciqhF5vsX1x7uLweJIJiXqHqbrZfeMyGR3DDgrRnjeqnffiEAOcAGfe0l4W/7Nj9ALNMjz1XYU58KLyfdP/lTQWPriEku/dMBKh/xByCugT9HCBGMIeukvEr8DK3zWfakCirCmXEalyu8fDvZZRzcQ==
-Received: from DS0PR11MB7410.namprd11.prod.outlook.com (2603:10b6:8:151::11)
- by SJ0PR11MB6717.namprd11.prod.outlook.com (2603:10b6:a03:44f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Tue, 17 Dec
- 2024 06:44:00 +0000
-Received: from DS0PR11MB7410.namprd11.prod.outlook.com
- ([fe80::bc90:804:a33d:d710]) by DS0PR11MB7410.namprd11.prod.outlook.com
- ([fe80::bc90:804:a33d:d710%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 06:44:00 +0000
-From: <Charan.Pedumuru@microchip.com>
-To: <krzk@kernel.org>
-CC: <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <Nicolas.Ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
- schema
-Thread-Topic: [PATCH] dt-bindings: mfd: atmel,at91sam9260: Convert to json
- schema
-Thread-Index: AQHbS8APw+ZU4Xjwh0acaGZqn7hy2LLorvwAgAE6oICAAAi1gIAAFEcA
-Date: Tue, 17 Dec 2024 06:44:00 +0000
-Message-ID: <e75e296a-c749-4194-b013-eb3ae0678d3d@microchip.com>
-References: <20241211-matrix-v1-1-5ef0104a3af4@microchip.com>
- <dxgqkdo6ulmqfa5vyerwta3vubuy32gzzu2cxfwwtespydfc4b@5wjrno3lgjsp>
- <92579055-5a46-4f20-b579-123188554a03@microchip.com>
- <4e4e8a02-5fc1-4b90-ad9d-9f9ec5c8bc61@kernel.org>
-In-Reply-To: <4e4e8a02-5fc1-4b90-ad9d-9f9ec5c8bc61@kernel.org>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7410:EE_|SJ0PR11MB6717:EE_
-x-ms-office365-filtering-correlation-id: fe1557ba-7271-43a8-b57e-08dd1e663071
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7410.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Y3lrYlBITkI4RER5Szhvb2FvWmoxY2UyRmdwMEVwRHFvU3pvVzZZTWd2V0ZE?=
- =?utf-8?B?MU1NS3RCYUZ1bEIwbWIyQjdySmQ5STI4Y2pYVVlHOTFrVWRCa0RFbHozMEhT?=
- =?utf-8?B?WVpxTlZDU2JxQ09EQkwzbDF3dmRhOXJmMUdXY2Z1S21taytXcHM4SWJFTGRt?=
- =?utf-8?B?c0dwSXBPQUNTbFBXdi9xa29qcmZSeXdTcWNsV1VSOVJRaFNpRWNPN1pjbnpv?=
- =?utf-8?B?Z2ZMZGlzWVdhQ3BjdUwzd2NYTFAwSFpMYW5BU1laUjRCcGF0WGxUcENKMlFG?=
- =?utf-8?B?WmpsRTJaaFRwNUFpcjM1ZzBDZDVZbmlWcUF4WWIrT1N0Wk04UHM1VmJUUTk3?=
- =?utf-8?B?TW1oMmo4bU5jQ0NUUnFNbHZyd0REV3hVOGl1Vll5L01VM21QSFR2T3F0M2d4?=
- =?utf-8?B?ZlJ5dFNNcW1zbnd5T2hrODRRVEp1NEFhTXpvckwybFRuOFp2aXNQaEo2S2pC?=
- =?utf-8?B?QnMrY1lnczYrMjAwcVVORWFLVEIrY3I0VjM1YlhJekhkSEZ4S2ZnNGQwWlBG?=
- =?utf-8?B?Zy9NMFFLeG9JY2lISTdmalJyck9iNitwemcxUXgyMnRRRTJXMTczUklJNXlx?=
- =?utf-8?B?UU4zeXJPUHp2S0FDWmkxSEdFeFVXbUdSN2RNODBtdTVwYlRhamswZjFlQXd4?=
- =?utf-8?B?eFdKaGtZOE5HM2lya29OQm1hOHlWcU5NSmhEY3haOW5qeVBTR1BWdXU3L296?=
- =?utf-8?B?aEY3K2V3dFRwd0NWVmlENGw3djhGWWorRmZpWk8xSjBtSWljSllsTFh1Y2Jh?=
- =?utf-8?B?Z2RqQ0l0bXlKNDNrNzgwZFdna2g0UmtyT0gzN0ZKMm9naHM3WGY0VG0vbU9I?=
- =?utf-8?B?cUVEYms2anFicnZJa3pMNnMwVEhZL3ZqVmFzeEdnTVVkK2EvQkVIYjVHbkdT?=
- =?utf-8?B?YkhjTTk5c3hIOGgwVC9hcmxYa0pKMURTUlJMNUdPYmxYUDJ6ZmhWSEpISVFq?=
- =?utf-8?B?SVAySVNSY296Rkd1ekVqdW1QQjRLdExRQzJWWTJoazdlaWM5SXVaYm1WSUV1?=
- =?utf-8?B?WFg4b3dRMjlraVlYci9aRFVmVTQvQ1JDelcrYW82ektsQ2dSaG9iNGpnVXNC?=
- =?utf-8?B?Q0hWSU03T3g1Vk1oV05lcmJIanpPSXAvcUtVWUhzdzNxU1ArcWRsaWtUNXR5?=
- =?utf-8?B?QXBKdVZsdks2RU1TMWxxdi8yNEJxYldvd2ZjUUJRQzMzWVdEZGRhQWYzYkd5?=
- =?utf-8?B?ZERsRC9ta3hJR0F3aGt6eWZ6VnlvWnpRdDQyblBsODRQb3UwaWN6M0dtMFI5?=
- =?utf-8?B?QzZieFVqU05VUDd1K2NMMXBhazM5MEhHVllieEpuYzR1dVllTXRxRXJBOXVl?=
- =?utf-8?B?dm9YREViWXFIWUpXREhQWFg4aFVCaTVoOXNlbEZVeG01U1Ruc013bEswZkw5?=
- =?utf-8?B?QTIzdmxtd2NFaUZ2aEdLZTRCVlViWmthdmZqN1pDQUJPOWN4K3hZZExKSWlQ?=
- =?utf-8?B?bFVwT09WVngyNmRJdTBEUkVUbXdsVUNhYmV6ZDgwZVMzMUtvcXZhaVE5dE9W?=
- =?utf-8?B?WkwxRnE2RHNuUmF4eFhESkU4cTgxZmNDQ05LZ2h0RDNCWWhLdTJmd3QvN2N0?=
- =?utf-8?B?aXhzM01NWTR6bTc4a3VaTTlySnErRkVjREtFSG1lT0N0Y0R2Y3pGcmxwMVZN?=
- =?utf-8?B?cm83MVNhK2R2MndzVGQ4ZEF4dU1YN0s3SWpFVVNHbHhhMXUzSnN2OGFocjlU?=
- =?utf-8?B?VFUyYVVVMnAyeFU1YXA2Wkx4TTV6NmZMcnlkelZORGlZTVdDQXVYVFZFTkk1?=
- =?utf-8?B?SWk2NGEwZ0lXRUVxVDhYMU1PMk93YWlVbHY4QkcrdHRhc2NmSUQwdUFtaFA4?=
- =?utf-8?B?emgvajJ5andCbys5VnJGdTJpeTlCMjk5YmtZZ3lPZVZQdVBrWWFOQkdZdEZa?=
- =?utf-8?B?a2ZBejNUeUhWakJ6SlZvR0RUYVRHY2FFUmRTazhaNzZzTEkrUithdFNvUXJK?=
- =?utf-8?Q?A3NpsJrCpDljk87fs+3JBnoveAMaoeiT?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UWZIcURZRWFSL3RvbzVqaStmN0NxcmtDK1BWcjJTVTJKUHE0NmdWcmNGY2R5?=
- =?utf-8?B?ZVlsekp1OW5ORk52QnZJYkR6eDFROWVDdkE3cC9OVXNIclliNy9HOWtHRHhR?=
- =?utf-8?B?NTVRVEU0SktlbGkrWVMzUjdqVCtiVUpqNkIyR3ZUdldNZGNENXlUMmhSNm9q?=
- =?utf-8?B?akNZbWV0bjFZbnZlby9zSWZwTS81STJObTZuSjFoeWNEREViL3BzeXJIWlVD?=
- =?utf-8?B?MWdoWW1EQThqNmR6M0hJazF4MnJ3OHZ3UFowdHl0cUxDeHRnN1l1c3lHbTlP?=
- =?utf-8?B?YkY4TFNKR0UrK3g0NE5Za1JpSlhJZDIwVHY0TkhFdUhBYWVLTVNHalpSQlM0?=
- =?utf-8?B?Q3N5TmxTMUluQ1FvVERDWkhZT0w4K1lTTk8rVm5hekZTaVhZek44VkNQeGlW?=
- =?utf-8?B?YndVdGVJNHd2dlM3bnBKQnkvdlNpejlpM2M4WWYvY1g3c3ViMDNnc3VJdGxB?=
- =?utf-8?B?L3IzR0V1NERmdk5sanNrN21SZWNTMGVLK1hsaTBtcWg0ZE8vb3dDL2pJRm1x?=
- =?utf-8?B?N2lsTVJtdlh6ZnZrNDVpdVRhZWw0ejYzZWR3K3lncHpvM2pjWnQxeU9vWXBy?=
- =?utf-8?B?Qm1JVFRBUTlDOEQyZHJRYmF4SnBqSmhsQTlMRlBMYnREVWc4TFpPN0lxOVpD?=
- =?utf-8?B?dXAvZmJhTXhKUFcxVmcrSnpUWG1kMU0zaGRSNmdzR1F0S1pUVW80QUlPTUxP?=
- =?utf-8?B?dUFBNkFDSzU2T3V2WXA0VXpIN21JMUtmVW9oMFNOOHFSMWkyZjhKamE0UEE5?=
- =?utf-8?B?WXl4Zko0S1hTeU9mSHRlcmdxK3FSV2R2MTYrdnNzTzBoUEQxUG1BMmdFVnYv?=
- =?utf-8?B?ajhVZDhyZ2QyUGx5SDVkUUw3ZXJhRjdndWkycmxTUDZCSVhDNmFXZTBOTFpI?=
- =?utf-8?B?T2pXUHhGNjAzenVHcUFtZjhDTGx0ajdmUCtET3NUWjRBdzdxKzZQb1dLYmRv?=
- =?utf-8?B?dmx6cFgwZ3hHdksySG82ZnRTTnBkd1pwS0Q0ZmVlWGh6bU56RUdXKzFzVjgz?=
- =?utf-8?B?ODR3KzhsUGg2Rk1ZYlBjTjZKQ3dGQkVjKzIzQUYxZTlxUElBNFJZSnhPQ0dI?=
- =?utf-8?B?QXk2d2h2bVhvU1VyUE8wUkk2RFpvY1RBRVR3TFE3ZzJRa1F5Q1N2cXVabExm?=
- =?utf-8?B?c3BKMmZmbStMNERXNWtKYlpKMFc2emRGbzFmVTJ0OG1nUzhidGpKSHhBcmxZ?=
- =?utf-8?B?Um9oOWljeW1XNENaL1ZaMGtsS0RVT2MxZmtscEpUd0k5d0kvMGlZWXRaaHFJ?=
- =?utf-8?B?eWVYQWNNVmdoT2ZISE5MOWpIeGVlMy9XOVlXTDB0QmQxSE1wYkNSbXp2Y1Np?=
- =?utf-8?B?eEVVSGpJNGFmSW94L0E2cDByYi84S24zRk9vK1o4YmdUemk2empnMkZkTEFC?=
- =?utf-8?B?UDBROVlrTzBDYVNZWlR3WE9naWd1SHJFYmtQNHNzZFZQWEtock9Qc2F3eUw1?=
- =?utf-8?B?RGRhRm93bTBhbUFkRmsvdjJ1aEVvZ0xxZzFYWVRJWmZXbS84S1VtR1hBYlMx?=
- =?utf-8?B?OVpsb3hTVlJ0YnJlNmJBVkpQeGtLMUhKcEVtUnFYeTIxYUZldHFLMU9sdTh4?=
- =?utf-8?B?ekVSaDFZdTlrYlNOb3JxWFYzMlZPdFNMTHNBZHNZN0QvcnpTc1ZYSHBJT0NV?=
- =?utf-8?B?Sll6WXhVWkR6TEFvVWt3TUlhLzlDTHZGTFNndmdPUklVYWMrRmozY3E3ZnRI?=
- =?utf-8?B?cHhGLzJPTHBjWTc3RXZtc29lMlBKRlBEU0VzcEtRSG5ZOHhPS3R0VWZwMWIr?=
- =?utf-8?B?YXZaYldoRDN0c2tTRUkvZ2ViODJEOEdkSDRRRmhYTTRNUkd3bEloZ3pXQklZ?=
- =?utf-8?B?RkJ5ODQ1VThpYU5WM3FhT3A2cDI1WmErejFmYnNCSy9IZ3Q4UHppNE9nSGFL?=
- =?utf-8?B?MEJsV1dteU0yTTUzQStOVXR3M0M5ZDdGS2dKODJrbE1uaithOEtlOXZ2eXo0?=
- =?utf-8?B?aTdKcGgydHVUK3BwNDIvOUtnR3l2dDhacWNjUXFGZ3VvUEp4MFhneEdXdmhG?=
- =?utf-8?B?TWtHWW4rbUZLdDFqS2xTbVlPMVhMUEtWbG1OQXMzYnpXdU93dHZ5bWs4Ujcy?=
- =?utf-8?B?cUtiS2pwbVV2RU9NQUJkNzhuWFdyUnkwK1ZNN21jaE1WSGY0Mk1vNGM2MFpY?=
- =?utf-8?B?NDlRaW9uWHozSDEvWjYwNnU4dmZacVJRNnZyS3dlS1lrYW12K3RLNWNycm52?=
- =?utf-8?B?Tmc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <189EF4E74E387B4CB3CC36A04BC5EAC5@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825A21DB933
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734417850; cv=none; b=V9UDeQ53gM7RNqsL2gJ1sJUa2GECMio0UncAhFWJsoxkuwmY1jqOAlPIrUGLx06NJCqxCjyotfV6QTURgdSvQXpt8NN+SZ8HStT6bagB8YHsaSgF9ZwyhYZGFVP/yI96/hsUT9Mqdown6N+A4WwCIU1iOa9jylseLdwnwIjBg14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734417850; c=relaxed/simple;
+	bh=XM6EdApDEzksuMmtbmXfUCRcI+WD33NtLIPMOkhyeDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V97Ds5+nD8gqSpF0IS6BQYmwNtSKnvNSay5j6UmnwkoIGArGAP8pP5HfjTqFF+lqr1bq1XqxkfSR2CUCtedpMnrPBPgTciM6SRwpCi9lBCQDnO/skDYAZzSPq5I+HC/ocz/Gnvgfjb+4LyHsngptuCJ+lB1wMs9ntDyBStbr3nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=pPJ8kf2x; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2166f1e589cso50904415ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734417847; x=1735022647; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sptCrX+fdOk7TfHGeXVf4O4ZKbAw/hvz5tMzXM5QRWU=;
+        b=pPJ8kf2xnBe8hCzY7j+cNwCDDWX/xrw6NTCPVg6r/6fMr/ZyI9sfwuZ+ntElJSdTWZ
+         ZhCeYwVODP25g9JqlF9g69CnE57SuasPlm+ZY0/r9lVUr/enbHje8ZxKfgXgXfXuDmV8
+         mO2Xc+LvvQ0HsnMNRlF7Pnf1Aqb3jpiF8/xw7rCugs6XAuCcSMH+H+Qpi/DSN4HwY/eG
+         CdUxgyMQj3MJFIBo0nAWzVOAyU8BJRN64wR27IGgtc5x8GrjArGUtz3HtHx+PPuIDPUx
+         ifGB69DweiNwetpCZuDy1R4nyKMkBNg26RYNqX5WXwMYx0dgRO7Vl9CDklcds2glDjbC
+         OmyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734417847; x=1735022647;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sptCrX+fdOk7TfHGeXVf4O4ZKbAw/hvz5tMzXM5QRWU=;
+        b=az2MFnX+Wl7bgvDbNjs/xTi+F7rZE2EU6ji4w/suqTvZfRwqA4OgEYtavLstzlHLpV
+         jqDayinOYoV2NeB1A8vEwhs7UF2KVOEboc/YbiuKy8/hXA1VLfEYuIaHll1Yu7APdKfO
+         3drDxkGRV/FYkRRI343ZspEvGsJkiY24A0QxSHafRPdm9DzjE+LXodI4vpKASRaxP2OA
+         mJhTvF4XU9uM3b/sshnZFCErUxJ6c01y1COXViV1E8KI76LnRne+1sQ0TJLKqm+kZ6Jh
+         I5HD+lElyjjUPLzA6Yf/O/VqAhhSOY85iQ9IkY5dfQXY+lZYuQwkLvUXeMcCMhKhzGM4
+         zSlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRGKwZOt+GbM3DIBFXong7MHuZF7FITbkenZVq0YTCXIR3/uVAGxdQKyifnDvULDW2PT02JdUsnvo6kac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYJc0Wb6ebl3tEYEQ4wXo0TqacmVH5GH3iQpXBsLuznL41kQ2V
+	FJy1ftZNy7ktsFWYT9K1asHszJmhiT96ri7t3oz9rlCuFL7HLmrWQED8i8qHq4M=
+X-Gm-Gg: ASbGncsnarG2+5lsyllLo1vs6f3CW1OGw+p5GabUlttHgCX8b922XtBcxBpMCpX2ful
+	DYtG00JlKl7kG4QdOIMDy6x6lNtyJC/i6blFcdtKWptGnuHNLnI57JpNE/Wqfs4N6CnLXviWXrs
+	ZnB2lLwDbtWVZkxpqR2l8okJ0GPP6TniYm5792vLT0pRr4WEGDXu0D9e7Y8gzIVfvjhcNF+oqpY
+	74cpOS1GEbEahL4wfqb/i75cJSpQV+UmclMmZkMuQwYo9C+2j0=
+X-Google-Smtp-Source: AGHT+IFbTJRs0BXv1Y7k1oAF2gI2HiBiChGf9jttH4DB2JoV1zZ1F2nYln3NdWZebP2jJGmxHiY0Vg==
+X-Received: by 2002:a17:902:cec4:b0:216:2e6d:babd with SMTP id d9443c01a7336-21892a0dfc5mr201253875ad.15.1734417846715;
+        Mon, 16 Dec 2024 22:44:06 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:9708:a71e:40e6:860])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e643d5sm53002335ad.235.2024.12.16.22.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 22:44:05 -0800 (PST)
+Date: Mon, 16 Dec 2024 22:44:02 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nelson Chu <nelson@rivosinc.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 2/2] tools: perf: tests: Fix code reading for riscv
+Message-ID: <Z2Edsv2VB7D1hq3n@ghost>
+References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
+ <20241216-perf_fix_riscv_obj_reading-v1-2-b75962660a9b@rivosinc.com>
+ <CAP-5=fVvLv-OtkK57ri1EpM_v=PQZDZijYBpGv_9Smyz8EOm2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7410.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe1557ba-7271-43a8-b57e-08dd1e663071
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 06:44:00.4366
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NcD7mLNzX4fnq71g5AZoiMzRW1uV+on/tCExz9Zd+Unf+t8dNyHXMtfzAVc/Wj/GD6ctX1rwURqfcc6Hcanu0RjvX7FvOvyG9m4A6J2rLTo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6717
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVvLv-OtkK57ri1EpM_v=PQZDZijYBpGv_9Smyz8EOm2g@mail.gmail.com>
 
-T24gMTcvMTIvMjQgMTE6MDEsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+IEVYVEVSTkFM
-IEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
-IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPg0KPiBPbiAxNy8xMi8yMDI0IDA2OjAwLCBDaGFy
-YW4uUGVkdW11cnVAbWljcm9jaGlwLmNvbSB3cm90ZToNCj4+Pj4gKyAgICAgIC0gaXRlbXM6DQo+
-Pj4+ICsgICAgICAgICAgLSBlbnVtOg0KPj4+PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFz
-YW05MjYwLW1hdHJpeA0KPj4+PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFzYW05MjYxLW1h
-dHJpeA0KPj4+PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFzYW05MjYzLW1hdHJpeA0KPj4+
-PiArICAgICAgICAgICAgICAtIGF0bWVsLGF0OTFzYW05cmwtbWF0cml4DQo+Pj4+ICsgICAgICAg
-ICAgICAgIC0gYXRtZWwsYXQ5MXNhbTlnNDUtbWF0cml4DQo+Pj4+ICsgICAgICAgICAgICAgIC0g
-YXRtZWwsYXQ5MXNhbTluMTItbWF0cml4DQo+Pj4+ICsgICAgICAgICAgICAgIC0gYXRtZWwsYXQ5
-MXNhbTl4NS1tYXRyaXgNCj4+Pj4gKyAgICAgICAgICAgICAgLSBhdG1lbCxzYW1hNWQzLW1hdHJp
-eA0KPj4+PiArICAgICAgICAgIC0gY29uc3Q6IHN5c2Nvbg0KPj4+PiArICAgICAgLSBpdGVtczoN
-Cj4+Pj4gKyAgICAgICAgICAtIGNvbnN0OiBtaWNyb2NoaXAsc2FtOXg2MC1tYXRyaXgNCj4+Pj4g
-KyAgICAgICAgICAtIGNvbnN0OiBhdG1lbCxhdDkxc2FtOXg1LW1hdHJpeA0KPj4+PiArICAgICAg
-ICAgIC0gY29uc3Q6IHN5c2Nvbg0KPj4+PiArICAgICAgLSBpdGVtczoNCj4+Pj4gKyAgICAgICAg
-ICAtIGNvbnN0OiBtaWNyb2NoaXAsc2FtOXg3LW1hdHJpeA0KPj4+IFNvIHRoYXQncyBqdXN0IGVu
-dW0gd2l0aCBwcmV2aW91cyBncm91cC4NCj4+IFllcywgYXMgYm90aCBib2FyZHMgaGF2ZSAyIGNv
-bXBhdGlibGVzIG9uZSBhZnRlciBhbm90aGVyLCBJIGRlZmluZWQgdGhlbQ0KPj4gYXMgdHdvIGRp
-ZmZlcmVudCBncm91cHMgdG8gcmVzb2x2ZSBkdF9jaGVjayB3YXJuaW5ncy4NCj4gTXkgY29tbWVu
-dCBzdGFuZHMuIEkgdW5kZXJzdGFuZCB5b3VyICJZZXMiIG1lYW5zIHlvdSB3aWxsIGZpeCBpdC4N
-Cg0KWWVzLCBJIHdpbGwgcmVtb3ZlIHRoZSBvdGhlciBncm91cCBhbmQgZGVmaW5lIGJvdGggDQpg
-bWljcm9jaGlwLHNhbTl4NjAtbWF0cml4YCBhbmQgYG1pY3JvY2hpcCxzYW05eDctbWF0cml4YCBp
-biBlbnVtIHVuZGVyIA0KaXRlbXMgYW5kIGFkZCBjb25zdC4NCg0KPg0KPg0KPiBCZXN0IHJlZ2Fy
-ZHMsDQo+IEtyenlzenRvZg0KDQoNCi0tIA0KQmVzdCBSZWdhcmRzLA0KQ2hhcmFuLg0KDQo=
+On Mon, Dec 16, 2024 at 08:57:20PM -0800, Ian Rogers wrote:
+> On Mon, Dec 16, 2024 at 3:13 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
+> >
+> > After binutils commit e43d876 which was first included in binutils 2.41,
+> > riscv no longer supports dumping in the middle of instructions. Increase
+> > the objdump window by 2-bytes to ensure that any instruction that sits
+> > on the boundary of the specified stop-address is not cut in half.
+> >
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> >  arch/riscv/Kconfig              |  5 +++++
+> >  tools/perf/tests/code-reading.c | 17 ++++++++++++++++-
+> 
+> Files under tools use a different Build system than the kernel. The
+> Kconfig value won't have an effect. Check out Makefile.config:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/Makefile.config?h=perf-tools-next
+> which is included into the build here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/Makefile.perf?h=perf-tools-next#n313
+> 
+
+Ahh okay, thank you. It was properly enabling when I was testing, is
+there some bleeding over?
+
+> >  2 files changed, 21 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index d4a7ca0388c071b536df59c0eb11d55f9080c7cd..f164047471267936bc62389b7d7d9a7cbdca8f97 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -229,6 +229,11 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
+> >         def_bool CC_IS_GCC
+> >         depends on $(cc-option,-fpatchable-function-entry=8)
+> >
+> > +config RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION
+> > +       # Some versions of objdump do not support dumping partial instructions
+> > +       def_bool y
+> > +       depends on !(OBJDUMP_IS_GNU && OBJDUMP_VERSION > 24100)
+> > +
+> >  config HAVE_SHADOW_CALL_STACK
+> >         def_bool $(cc-option,-fsanitize=shadow-call-stack)
+> >         # https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
+> > diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+> > index 27c82cfb7e7de42284bf5af9cf7594a3a963052e..605f4a8e1dbc00d8a572503f45053c2f30ad19e3 100644
+> > --- a/tools/perf/tests/code-reading.c
+> > +++ b/tools/perf/tests/code-reading.c
+> > @@ -1,5 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  #include <errno.h>
+> > +#include <linux/kconfig.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/types.h>
+> >  #include <inttypes.h>
+> > @@ -183,9 +184,23 @@ static int read_via_objdump(const char *filename, u64 addr, void *buf,
+> >         const char *fmt;
+> >         FILE *f;
+> >         int ret;
+> > +       u64 stop_address = addr + len;
+> > +
+> > +       if (IS_ENABLED(__riscv) && !IS_ENABLED(CONFIG_RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION)) {
+> 
+> It would be nice if this could be a runtime rather than build time detected.
+
+Hmm that is a good point. I will change this to check the version at
+runtime.
+
+- Charlie
+
+> 
+> Thanks,
+> Ian
+> 
+> > +               /*
+> > +                * On some versions of riscv objdump, dumping in the middle of
+> > +                * instructions is not supported. riscv instructions are aligned along
+> > +                * 2-byte intervals and can be either 2-bytes or 4-bytes. This makes it
+> > +                * possible that the stop-address lands in the middle of a 4-byte
+> > +                * instruction. Increase the stop_address by two to ensure an
+> > +                * instruction is not cut in half, but leave the len as-is so only the
+> > +                * expected number of bytes are collected.
+> > +                */
+> > +               stop_address += 2;
+> > +       }
+> >
+> >         fmt = "%s -z -d --start-address=0x%"PRIx64" --stop-address=0x%"PRIx64" %s";
+> > -       ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, addr + len,
+> > +       ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, stop_address,
+> >                        filename);
+> >         if (ret <= 0 || (size_t)ret >= sizeof(cmd))
+> >                 return -1;
+> >
+> > --
+> > 2.34.1
+> >
 
