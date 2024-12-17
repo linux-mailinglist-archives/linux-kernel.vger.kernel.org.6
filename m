@@ -1,109 +1,136 @@
-Return-Path: <linux-kernel+bounces-449292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226489F4CDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:55:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B739F4CED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:56:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838951671A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764B9188A84F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792E91F5411;
-	Tue, 17 Dec 2024 13:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74C1F5431;
+	Tue, 17 Dec 2024 13:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt/S1djM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="WjL0D1mv"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16121F4E5A;
-	Tue, 17 Dec 2024 13:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301211F6680;
+	Tue, 17 Dec 2024 13:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734443682; cv=none; b=lk7oWKEPMXq0MnrZ1UDyIdXM2f7+JLxWc79AoTaoPCTBwUx4pmyMfISDRwcFgZvWsqKA0RIqsfcQJXDD3MdUjyvf4RpcE6FTCE11GyCLc8jbHZJkyj+Rufqp4Rd5Tmnxevgjwr1/rrRkymAZS6DD4WurkHUeSxrua7QEHt7G0MA=
+	t=1734443731; cv=none; b=gPDMjcN2SsxTRTwVCdTDxfH6GHIcv4nYGPjmmXzUho93f+vQh6f9dNtojLq1V6ybpaiMVjzZWYpjl+eNEUwQNFXftepcdIXl7MpjWGr9letk9WrrOz4JjTWOe7SfHgH9CN1m+OZGhALZTsNZhqeq3L6hHztee9zz2N9vBE3MNEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734443682; c=relaxed/simple;
-	bh=MJYvanA7h6xElrGbzS7cgU/XuHLjMHmUTjsO1NBkkmQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rpSqg9fGlZ0g0aklP8u96aoriVOrB63BJbCj0WSLX9/2zSqFPqsdbjezMTkR/NgqleQcBYtQe6Uo5s5NnlSvVJfnQPdunwltv4Xaoa6L18DAUu7WUF+HFNSW50q8+PaCmsrWBN4GxrZCuaMJ544sM+RcSFWaCvzd/RmZ3HoTslM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt/S1djM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489E2C4CED3;
-	Tue, 17 Dec 2024 13:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734443682;
-	bh=MJYvanA7h6xElrGbzS7cgU/XuHLjMHmUTjsO1NBkkmQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mt/S1djMQv2WKW+N+6KKkms2IQ1X3PdPdb1FPNA96XVd+FinfPwpeF2uZtKFEKvNN
-	 xE3Lw7ewIK4es9B4N8UXNFLkviXVRiu3QhfTnXpkceyBSDMK/rySiS/PFrKHO1qRwY
-	 pTK63wWPW30a7odQ83dsSr8UV2Awh4eTvcpKoHRft+fY+hK5ZA+oPt6sBv2QuGflNn
-	 4bpPk9wAS+j7VLkBkTMShQ8Ee7MDcvuYFjuOsgrRD86H3B1oaXPtB+I07LueAjxn6j
-	 TytSd/HYGlhQ9ZdZOJtut9HdVs5UWsQcIR24P90fLClRnkfRhxXUJ9Hn0wnMnbfMmN
-	 00fgvv3XahMlQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tNY24-004Zaf-2Z;
-	Tue, 17 Dec 2024 13:54:40 +0000
-Date: Tue, 17 Dec 2024 13:54:39 +0000
-Message-ID: <86v7viqusg.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS becoming unwritable
-In-Reply-To: <53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
-References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
-	<875xnisocy.wl-maz@kernel.org>
-	<53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734443731; c=relaxed/simple;
+	bh=uF8BewMwaD3cn5+1ov5Hqor26jTBT7+OQAF0JaxtUwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wyzi4eeo/o3Ov7vdvUvTGLLUkyeqCXpPrBkhs89Hjjk+TXJRfaykaEFj2/jnopbFVJVvDYjRpQM/vNK9dQOq6IqPWtR0wmKYPYsp1i5oFu6s/hlPCxZ4+/K1AKtsR3MUDLDSx/7AoLxukAvrTV1o8gLzkIdvqLUNct4wY5VZJEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=WjL0D1mv; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1734443724;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=jgM7Zxn8uQMa75Yf9CuxrECzaG36pVrY1WipQDdWu7I=;
+	b=WjL0D1mvI9ucx3WXRO/+5+jzhwnj+OHb7oyhyJ+UZaJKoNOTLqtKJxnzXF2DCfxqJGCCrM
+	GxQW5iZNn6XgGr4iAaBb4zHJ8/sHtzjGIHZdtBF4YF47Trxc0YkDfpCiS2oYMDbk5+70vP
+	ibsRQyF2QSMbsJT6ygfw9/Nr6lfM47vJPKgd0uZf6ayQD4bp2tSDcap6Qae7PQmo2uHlcl
+	N2CRwvCJQrxW9HNNQBs9eNIpcLRS7JmwvnzeTmsjCkf52o6BYEc4OOuoqd6O/f1Q7/4mtO
+	Wdo8/+po1xZIcNjnRIjy6ESPgpw95i1SUtybN9D5JG39q/PkFJLLe8UxkHzr6A==
+To: 
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	GUO Zihua <guozihua@huawei.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	John Johansen <john.johansen@canonical.com>
+Subject: [RFC PATCH] selinux: support wildcard network interface names
+Date: Tue, 17 Dec 2024 14:55:12 +0100
+Message-ID: <20241217135517.534645-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Dec 2024 13:12:12 +0000,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> [1  <text/plain; us-ascii (7bit)>]
-> On Tue, Dec 17, 2024 at 08:30:37AM +0000, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> 
-> > > Fixes: 03c7527e97f7 ("KVM: arm64: Do not allow ID_AA64MMFR0_EL1.ASIDbits to be overridden")
-> 
-> > A patch for a test doesn't fix anything in the kernel.
-> 
-> The selftests are shipped as part of the kernel source and frequently
-> used for testing the kernel, it's all one source base and we want to
-> ensure that for example the test fix gets backported if the relevant
-> kernel patch does.
+From: Christian Göttsche <cgzones@googlemail.com>
 
-That's not what Fixes: describes. If you want to invent a new tag that
-expresses a dependency, do that. Don't use these tags to misrepresent
-what the patches does.
+Add support for wildcard matching of network interface names.  This is
+useful for auto-generated interfaces, for example podman creates network
+interfaces for containers with the naming scheme podman0, podman1,
+podman2, ...
 
-	M.
+Since the wildcard characters '?' and '*' should be very uncommon in
+network interface names, and thus if netifcon definitions, avoid
+introducing a new policy version or capability.
 
+Netifcon definitions are compared against in the order given by the
+policy, so userspace tools should sort them in a reasonable order.
+
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/include/security.h | 2 +-
+ security/selinux/ss/services.c      | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 10949df22fa4..f6e7ba57a1fc 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -298,7 +298,7 @@ int security_ib_pkey_sid(u64 subnet_prefix, u16 pkey_num, u32 *out_sid);
+ 
+ int security_ib_endport_sid(const char *dev_name, u8 port_num, u32 *out_sid);
+ 
+-int security_netif_sid(char *name, u32 *if_sid);
++int security_netif_sid(const char *name, u32 *if_sid);
+ 
+ int security_node_sid(u16 domain, void *addr, u32 addrlen, u32 *out_sid);
+ 
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 55fdc7ca232b..2f878fa99692 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -46,6 +46,7 @@
+ #include <linux/in.h>
+ #include <linux/sched.h>
+ #include <linux/audit.h>
++#include <linux/parser.h>
+ #include <linux/vmalloc.h>
+ #include <linux/lsm_hooks.h>
+ #include <net/netlabel.h>
+@@ -2554,7 +2555,7 @@ int security_ib_endport_sid(const char *dev_name, u8 port_num, u32 *out_sid)
+  * @name: interface name
+  * @if_sid: interface SID
+  */
+-int security_netif_sid(char *name, u32 *if_sid)
++int security_netif_sid(const char *name, u32 *if_sid)
+ {
+ 	struct selinux_policy *policy;
+ 	struct policydb *policydb;
+@@ -2576,7 +2577,7 @@ int security_netif_sid(char *name, u32 *if_sid)
+ 
+ 	c = policydb->ocontexts[OCON_NETIF];
+ 	while (c) {
+-		if (strcmp(name, c->u.name) == 0)
++		if (match_wildcard(c->u.name, name))
+ 			break;
+ 		c = c->next;
+ 	}
 -- 
-Without deviation from the norm, progress is not possible.
+2.45.2
+
 
