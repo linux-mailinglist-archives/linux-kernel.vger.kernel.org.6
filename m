@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-449518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEA99F5031
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:04:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742B29F5039
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B066F16E5BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:03:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84DCE16FD88
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010D31F7579;
-	Tue, 17 Dec 2024 15:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B1B1F8AC0;
+	Tue, 17 Dec 2024 15:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4tBmVlf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mIodXlFg"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C05B1EC4C3;
-	Tue, 17 Dec 2024 15:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF31F8938
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 15:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734450384; cv=none; b=RRBo3BEB7aq89JajcgjXQexkHvtea6gbseLjCGODjYXdU4wKmE88wRarQ7vzIlik4xtreoX3JqdFw1Jr8qFkvhmYWFo1wOPdCQL9bNrk86B127qSvXz8eYOL6XnY2GIsHNmj4yzRvHk00LZruEE5ilYL/bWtyoW4eszLv6fE8g0=
+	t=1734450442; cv=none; b=qRgwalmQdGF9iLopwVl7RR5rpE4jWvEKsi/RVsYd6kMezML2FSg/QKtK/XeeiQB3gQRCDVnAPtradb1CSBlr3A3R7XnhbxnNHJbO2szm/gjvMOxXQRfurQaUdrAVjPiQ5R2WGK3GWnh6rcSu+Y/PLCTfk37QYkak7HDvN8p0SYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734450384; c=relaxed/simple;
-	bh=ru/q+OLGAIOy3QN6Qk2nhuzxbhuGYxQydpgLzzKFXdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luCIj7Og5fYNrjy3Ea7RG3fdc5XR8R14zVdoaqJ95EU4S4J00NNNbv9G4Uz/UsnFsy3LKY1EjQ9S1osrKmCtwhcDqMYRsmHwoY8V3P/UgbdliDGkz2DbHLMw6yU8F232ZH9xUEo5K3VGY2uVdxkDbIL7Fz/aDoDBBiVOFVJP8K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4tBmVlf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F786C4CED3;
-	Tue, 17 Dec 2024 15:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734450383;
-	bh=ru/q+OLGAIOy3QN6Qk2nhuzxbhuGYxQydpgLzzKFXdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D4tBmVlf2a9CV2oWg8wZRHGKdVamvAT4WqSZfWlCDb+hK6/pA+pcZMe3hRlC0q6GG
-	 D4DdkHQRibVHNIXDxlP4HkGR+Tmm7zZKibNYyT3Le0eSR+0zGJLJ6frkbzH6SlUIec
-	 kmohquthw4MuVytZTMmvw3jaC/sJTKbRwROGG9SX5lCBSyXBsfoXkS6/u/oWYcFvo3
-	 vXW2O5DRUG/3HdweNMCM1OYITNF5jjTVPGVnRApRz7jrmtv7JfsX6mcN4lOsWoryUN
-	 yqmx5Gb9cqBNZR3Oa01fB7fx4+xQzuoiRT4e9Gahdol43ZCHcYSIBgcWcEl4Qk6VgI
-	 j9NZZ7Ta+ZIpQ==
-Date: Tue, 17 Dec 2024 16:46:21 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: alexandre.torgue@foss.st.com, linux-pwm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, olivier.moysan@foss.st.com
-Subject: Re: [PATCH] pwm: stm32: fix complementary output in
- round_waveform_tohw
-Message-ID: <dwwbefhhvjczcakd4nrrunzoq7mhzwrxxpm7gdtabgm6flk4cp@5w4usax4n67h>
-References: <20241217150021.2030213-1-fabrice.gasnier@foss.st.com>
+	s=arc-20240116; t=1734450442; c=relaxed/simple;
+	bh=SmsffRxiHrvcbmtv13M6U+b/+RcItZvvBWNEaOjqyKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jfVwX/xQRnqodaW12yqORZr+s8MIFLWGDa3SyTWL6uN6x8Iqwlhj5CVpQUy5JiGsb8PSt2d63yfC1t1qDI/Yhs2E+PlH8Dgen8PLEycRA86+yG2PgmbwA1ItLKqfbzXsTO49YSpA41ym/EvHUa+XaAZGuOsYAIOe6+rzd52VGD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mIodXlFg; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so9183988a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 07:47:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734450439; x=1735055239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TmTBwLz765G6la21hd3l68WxQOcuNECsxaNLvoKan0o=;
+        b=mIodXlFgXePcnpecKH5Y+NckXRqmirTARIsqOgWuENMytDg9QwcwAQ9ROO3xTDGpHx
+         PjiO3Gq8yJyV1MAx+B1wHpxUkOyilMTh1a0lJR9PpBPUFPG/5tjGCZOUiLv0ots68nQA
+         6sXk3LK3/FHYNKiX0ga1zsJ7TmTNXgQY9RfUN9p7yhndmvFOR5wgpH7UddQMQR71L5mz
+         rTH5/k8bq5SwBu5yWCKuh4MfkR1sDuOY3A+DM/3Lflb9LYkcDzaLubOu+8t6rmH55tFT
+         i++68Hrm/0buKChODffGO/chvREMhzL1WSu4uZ+aMF2AbsyDV5YlcYj1tfx6ED/HNLUC
+         oolA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734450439; x=1735055239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TmTBwLz765G6la21hd3l68WxQOcuNECsxaNLvoKan0o=;
+        b=usjY5HeH0OlK/g4IxjNIIX6e6lt+NfuubgvCYhuSJJbboOEtrvOuCJuhvwC33BFor5
+         HRvI7Lxvycm7DHUOwnjcqhU4BsxZSVEt407vDmPYZh3pk9jFarx6mlxVLMFq3qeM6IN7
+         i0V5s1PycmF52Xf+5pxy91RDF90MNXcp4gUkUH9LRKSQzzzzCcC4t71K7NMECkSzyl4Y
+         5LpgT8wvZWSj0xPAImZ+FEKUt7TxSLXp42SlTwYKahFpUdio5lLaMQcMc502CYKdgkta
+         dai9pf/jHFKaduF9nrPsabuMjJp2SoknT2dHiNTGgrcDkpIS7dZRZTlyNWh1WuOcZWU8
+         yCkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrLUAswuztTAJNELW/Rmu/zCuwalbOYfP9eCKUt59tw0YSrWBOZ5wD/U3ha+s+OobnogZ4JWSSFyL3j0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs89lSjFsrpiMuHjd9fnJKa8P6+Ahx75kY2GhvK4wxKQ7fhDlN
+	4qUwHdEJmaCXoKQqOOWnRG1doZidscodiH+2cH/K3kBjxBmTMUopIWu/g/P0cFmLpTWlJYpo3sk
+	udvQI59c8DF7BYzVeZlLaVK0ohOi0I/iry/3V
+X-Gm-Gg: ASbGncsjzx4fPW+z36b5u5syF6qSAM+5uqCdQDEDp53rLlVzs4e/VFXbboPcGs+u12g
+	i3CfKxd+bp7AobKLfZiZczDvD2P3d2mocHlqumxxmozDLnmsodiJk7cwQGzx35ZiIZt7W2avM
+X-Google-Smtp-Source: AGHT+IE+A4Ntq5Co36HwJSOWn+xlmSxN3h9rnUqF/TS4fcTTdHu/vzmGmttm6hfPGlLzDLJlX2V/Il03N+f7M4BkZmg=
+X-Received: by 2002:a05:6402:43c6:b0:5d1:f009:9266 with SMTP id
+ 4fb4d7f45d1cf-5d63c2f8266mr15551047a12.2.1734450438574; Tue, 17 Dec 2024
+ 07:47:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qbozxwrmepqihx7u"
-Content-Disposition: inline
-In-Reply-To: <20241217150021.2030213-1-fabrice.gasnier@foss.st.com>
-
-
---qbozxwrmepqihx7u
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241217140323.782346-1-kory.maincent@bootlin.com>
+In-Reply-To: <20241217140323.782346-1-kory.maincent@bootlin.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 17 Dec 2024 16:47:07 +0100
+Message-ID: <CANn89iJ3sax3eRDPCF+sgk4FQzTn45eFuz+c+tE9sD+gE_f4jA@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ethtool: Fix suspicious rcu_dereference usage
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com, 
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: stm32: fix complementary output in
- round_waveform_tohw
-MIME-Version: 1.0
 
-On Tue, Dec 17, 2024 at 04:00:21PM +0100, Fabrice Gasnier wrote:
-> When the timer supports complementary output, the enable bit is
-> overridden. It should be OR'ed. This makes all PWM channels for
-> such timer not to work.
->=20
-> Fixes: deaba9cff809 ("pwm: stm32: Implementation of the waveform callback=
-s")
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+On Tue, Dec 17, 2024 at 3:03=E2=80=AFPM Kory Maincent <kory.maincent@bootli=
+n.com> wrote:
+>
+> The __ethtool_get_ts_info function can be called with or without the
+> rtnl lock held. When the rtnl lock is not held, using rtnl_dereference()
+> triggers a warning due to improper lock context.
+>
+> Replace rtnl_dereference() with rcu_dereference_rtnl() to safely
+> dereference the RCU pointer in both scenarios, ensuring proper handling
+> regardless of the rtnl lock state.
+>
+> Reported-by: syzbot+a344326c05c98ba19682@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/netdev/676147f8.050a0220.37aaf.0154.GAE@g=
+oogle.com/
+> Fixes: b9e3f7dc9ed9 ("net: ethtool: tsinfo: Enhance tsinfo to support sev=
+eral hwtstamp by net topology")
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->  drivers/pwm/pwm-stm32.c | 2 +-
+>  net/ethtool/common.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-> index b889e64522c3..17e591f61efb 100644
-> --- a/drivers/pwm/pwm-stm32.c
-> +++ b/drivers/pwm/pwm-stm32.c
-> @@ -84,7 +84,7 @@ static int stm32_pwm_round_waveform_tohw(struct pwm_chi=
-p *chip,
-> =20
->  	wfhw->ccer =3D TIM_CCER_CCxE(ch + 1);
->  	if (priv->have_complementary_output)
-> -		wfhw->ccer =3D TIM_CCER_CCxNE(ch + 1);
-> +		wfhw->ccer |=3D TIM_CCER_CCxNE(ch + 1);
+>
+> diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+> index 02f941f667dd..ec6f2e2caaf9 100644
+> --- a/net/ethtool/common.c
+> +++ b/net/ethtool/common.c
+> @@ -870,7 +870,7 @@ int __ethtool_get_ts_info(struct net_device *dev,
+>  {
+>         struct hwtstamp_provider *hwprov;
+>
+> -       hwprov =3D rtnl_dereference(dev->hwprov);
+> +       hwprov =3D rcu_dereference_rtnl(dev->hwprov);
+>         /* No provider specified, use default behavior */
+>         if (!hwprov) {
+>                 const struct ethtool_ops *ops =3D dev->ethtool_ops;
 
-Oh, indeed. Thanks for the fix.
+I have to ask : Can you tell how this patch has been tested ?
 
-Applied to=20
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/fixes
-and I will send it to Linus later this week.
+rcu is not held according to syzbot report.
 
-Best regards
-Uwe
-
---qbozxwrmepqihx7u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdhnMoACgkQj4D7WH0S
-/k42SAgAukU0izAyfSfEHr+srRGWulhaFMrUOYDLRgBWAa5ELJaS/8gHKrhtj2om
-rFl31JAs/8uiXYgP2w4Wlui1qJma5JH1qWpDjAsYxepnNRJMWENSjjiU/I8lKiiJ
-Mk9cKUV4uZlrG/wWNso9OnNNQgeQgjysqkEvcbWdSTza65lZMKLMjy4ar2aLVCIQ
-wP94l6Fe3WFDvoedqb2jMlGOIbbOYxV3zxeec91jo3AJMIAGXVwFngeU1sKNqSgR
-ReR741ODSY7Alqjm6RpstItWz4nR0J+cdYwnAffA/J7UBQGlKZ+sfK/U8xrfS0YZ
-v0QpIr5tXXha04SFh12DaiQ2aztudg==
-=DF95
------END PGP SIGNATURE-----
-
---qbozxwrmepqihx7u--
+If rtnl and rcu are not held, lockdep will still complain.
 
