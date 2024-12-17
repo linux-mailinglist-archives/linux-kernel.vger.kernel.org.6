@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-449089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0E69F499D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:11:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DC59F49AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B072166BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C742188BE24
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04C41EBA07;
-	Tue, 17 Dec 2024 11:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b3QdsmPn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88801DE3A3;
+	Tue, 17 Dec 2024 11:15:31 +0000 (UTC)
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DE31E282D;
-	Tue, 17 Dec 2024 11:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A301EE028
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 11:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734433857; cv=none; b=HfMN7x9QZ0cR5PYKxQVK427dt1eycQmJ7nJkh2+tJRIGF6gIbJTc9jE2a+g2i0Rdt85RLzsbc+ii9KxrH45x3GSNz3RjE3sU2zrCLEt+jagvB0JMhl/GMleQ5jgV6rEZFmyWRxYuZ6J51R8RKvzZzXQzpelkjPiBYoLAeA1CHNo=
+	t=1734434131; cv=none; b=HyMWOfJOKWEY+P0ROG9eD2Sy/oJT3PxrUaMekf17RyfUffVrq5VxdCQ5OpDvKC0dCYX28a4X4K7GjDUTjP3YATjGEXS3V9ZI+Yd3V6bp/qC5ELhFpPrEln6JdrDJi8F5DxeNuqkE6A8xF9xOwaeIBRep33L09MOXMNVVoqmDhqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734433857; c=relaxed/simple;
-	bh=UFU9TrebHQPXzbRwZnK2H/+Y72d5JAdA+lEDvRrucXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iOD17trcdeApcPgeFA3x45ZL1h6h2YaqF5pKCwLz/NdqNff1qltCLS1FFiLGJHzQ7WVhbp/iP/DCb9i0BuJpiY9n8gs8KYmw4PYiLZ+5u3TAFEK7GUZZeErvj0HNsbcQrdCUdIUVZ22dsq6ITiV+WYmQg7dBhxMMp9cGniJqc60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b3QdsmPn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4DFE640E0289;
-	Tue, 17 Dec 2024 11:10:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Nmu7S-YvuCz4; Tue, 17 Dec 2024 11:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734433849; bh=rqxXmKaUJy6MlD2NUlFN1IfjWVJblNFVMMt3ayJPekU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b3QdsmPnzJBLzgHrqvmK/hJb+8rdYTxYGzu6l0nwHq7KJhhm/quXI3tQG9ExA+ZNp
-	 g+Uq6REIrC2/rDVwBTev9Sub+iovYd+A4i3tu2dW0G0cSgMof0sUq0AHaXgD6GAGCu
-	 LUFYWwAUI9NTtYgg1al0x2G0gK77s5D1A91zSxjob6zyP1u/1mjccjZJEjg7Wt2yaX
-	 vTdkkowPKlwqzSrdoJ2eMo4M/4cbx8vHCK0ErT7lf8/z5f/nMze0EG+VR18VTh8GQY
-	 3zJcp8lAudYBbVp9Ly/Rtn2AktdyoyUpC+QkHA3XZrQSqjrABsE8OqyXgLam00vHvg
-	 0VVEJHBwTBmentawV7o2/bywWTft2D5m6hJW4y+8ZSZLossBwEORCgFO/0wkVll3ck
-	 JVMjyewDvkZQokgoJ7zmzWnBRSLSINP3Vvm7u4Ok45sL5h6HQ3FUEZ77Kj9J2jz1fI
-	 OdlX03jiSPlPNPrclXi8o39ELWWpC5V9GiJTqtueZGH3yy7cbzTqoFXgB+E2QvJ9kl
-	 jLbR46owJ4No14L2ui7rFCdDJX5m4aKMdNCYfgTxp9OrAJy4yJf7ujPLo2CLnymlNU
-	 um9c6h1VTs57V6tr2iQkPOAYeWHA3+II5o/CT7S0YjfMboO7+PhL4aeiND4orVzDA2
-	 G3M3N7QcbnIetD+ZE6QyfvK0=
-Received: from zn.tnic (p200300ea971f937D329C23FfFEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:937d:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2DEE840E0277;
-	Tue, 17 Dec 2024 11:10:38 +0000 (UTC)
-Date: Tue, 17 Dec 2024 12:10:32 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v15 08/13] x86/cpu/amd: Do not print FW_BUG for Secure TSC
-Message-ID: <20241217111032.GCZ2FcKI9ANjz3Xb4h@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-9-nikunj@amd.com>
+	s=arc-20240116; t=1734434131; c=relaxed/simple;
+	bh=tGf+d4e1wiEjSi+GxtugJZN7SUrfIYVmQEzlm5NGcBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tWnCrE8Ukz8vZPofwOUbamKSIQfRS6r5vVhAYbt6LNVLECdsutnRvheCqdAtLxeDGW04gjWOWz3Pl+ckNmbKcoXkkFiOQGQDqx0byPz5Xk2eJ1pUqqt5OgRBS0hNu4Uwr0Fk3EIQM8WnEJqwEucwIDRkAjeKI0MTWC6Te9LOS+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.172])
+	by sina.com (10.185.250.22) with ESMTP
+	id 67615D4800003AA1; Tue, 17 Dec 2024 19:15:23 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5090397602670
+X-SMAIL-UIID: A07DFF544C69490CBCEF08E8D25EAF70-20241217-191523-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c2e074db555379260750@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] general protection fault in find_lock_task_mm
+Date: Tue, 17 Dec 2024 19:15:10 +0800
+Message-ID: <20241217111514.207-1-hdanton@sina.com>
+In-Reply-To: <67607c8c.050a0220.37aaf.013a.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203090045.942078-9-nikunj@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 03, 2024 at 02:30:40PM +0530, Nikunj A Dadhania wrote:
-> When Secure TSC is enabled and TscInvariant (bit 8) in CPUID_8000_0007_edx
-> is set, the kernel complains with the below firmware bug:
+On Mon, 16 Dec 2024 11:16:28 -0800
+> syzbot found the following issue on:
 > 
-> [Firmware Bug]: TSC doesn't count with P0 frequency!
+> HEAD commit:    231825b2e1ff Revert "unicode: Don't special case ignorable..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102844f8580000
 
-This happens in a normal guest too:
+#syz test
 
-[    0.000000] [Firmware Bug]: TSC doesn't count with P0 frequency!
-[    0.000000] BIOS-provided physical RAM map:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usable
-...
-[    0.000000] DMI: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2023.11-8 02/21/2024
-...
-
-If anything, this should check X86_FEATURE_HYPERVISOR but this is just a silly
-warning so you don't really need to do anything about it.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--- x/mm/oom_kill.c
++++ y/mm/oom_kill.c
+@@ -137,7 +137,10 @@ struct task_struct *find_lock_task_mm(st
+ 	rcu_read_lock();
+ 
+ 	for_each_thread(p, t) {
++		if (!tryget_task_struct(t))
++			continue;
+ 		task_lock(t);
++		put_task_struct(t);
+ 		if (likely(t->mm))
+ 			goto found;
+ 		task_unlock(t);
+--- x/include/net/neighbour.h
++++ y/include/net/neighbour.h
+@@ -302,8 +302,11 @@ static inline struct neighbour *___neigh
+ 	struct neigh_hash_table *nht = rcu_dereference(tbl->nht);
+ 	struct neighbour *n;
+ 	u32 hash_val;
++	u32 shift = 32 - nht->hash_shift;
+ 
+-	hash_val = hash(pkey, dev, nht->hash_rnd) >> (32 - nht->hash_shift);
++	if (shift > 31)
++		shift = 31;
++	hash_val = hash(pkey, dev, nht->hash_rnd) >> shift;
+ 	neigh_for_each_in_bucket_rcu(n, &nht->hash_heads[hash_val])
+ 		if (n->dev == dev && key_eq(n, pkey))
+ 			return n;
+--
 
