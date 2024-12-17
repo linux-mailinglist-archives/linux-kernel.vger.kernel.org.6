@@ -1,83 +1,75 @@
-Return-Path: <linux-kernel+bounces-449694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B1E9F54D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:48:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F0F9F54CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D824170892
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0A418910C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE5E1F8927;
-	Tue, 17 Dec 2024 17:37:29 +0000 (UTC)
-Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5261F8ADE;
+	Tue, 17 Dec 2024 17:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="e2OoKAAN"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1CB145B16;
-	Tue, 17 Dec 2024 17:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFBF50276;
+	Tue, 17 Dec 2024 17:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734457049; cv=none; b=qMFc94SvXX2NUNOTUnjZarCgjzOOOe6JWxxpHc5QTk97en8G5SuhnOmZBinrWaEzh/udG84KflKJ/FGj5ViKAjzv1D8dFCXGWA1XcjMvlElwLUUBQtKR060gy+X1wS8YEO6+Kw46Quy5EADgVGbLyCGcj9fG8EXFvHTkXuM0eXE=
+	t=1734457099; cv=none; b=q1vH+/eLOrwkAQ2wzgkc4RTE0ZB0QW//Erivb0FyCVK5ItgYvkQTm3ZhyEjwl+6HZ/hf38OMbslrOA9FmoSFzHofGbzy5tLl/0KVz17mJd9BvBgUZMH6Sa3bGOeeMrnJwgPavRzHzoRobqYRt9oOuoqQs18R76Uitr5Eaw4Iwg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734457049; c=relaxed/simple;
-	bh=BuimlMyL1nw6uUan5hk/CM44c/QqaJtkdxw+QNMrsH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mt7pI9Rb4sISXRIfGIQDTNBwEj8VuSumB8Llwi+1tOdNbjsD0HifEaFE7bdTFYa0TbnZZ5r41TLuuV4PjLpNyRnTpRcS2FzCvy/p1EeQkuYSoF7SUR4bnsB7Do7COlmKuPDtrayL2Be/WZNhcQJjTx6hUNiIgtcl8kOGhmPcRiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
-Message-ID: <c0a539e7-0f1b-496a-9848-73a7ada66bfb@lankhorst.se>
-Date: Tue, 17 Dec 2024 18:37:22 +0100
+	s=arc-20240116; t=1734457099; c=relaxed/simple;
+	bh=RqLIxw+h5zWKsViM87nW2arJ/RJf3bT6BWU6QENOfzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/o8otP4OCDLWNfROPy0/mB1NtT18lh2ZTixBiZEfBF/G2AZRPMdwyl78fhK+HebfQHSFFC25rkTw+EnWNaszN8TB+EYNcOCuILAVXn6Xefa6Eud26ic7TmdqIKVQqNetSOCRNMC6+d7UfB63PO1RW1QEw4BgjTWO91a+YC8ncM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=e2OoKAAN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=74iTgQa61eNzx/JtaTIBBgYsuHBgR7rqR7IEHxPvjDc=; b=e2OoKAANYzbM5rSDnwHgsVm69n
+	/9ty0MCz/9Cz+auCMj6veYJCteeLb5HSZx23vKZ/29i1uyR0bZ7ZkNCynFrEN48zECXqncEQ7icM+
+	bok36vLxNgtSlN5Dw7ydil52ab8iICczCFIY7E1IMv9JeGpKbraOeC1QxGj0O9SHYDU/APChRaisF
+	107JeIdJwc8OjQzkllZLveYOfS9FDFH4+OzOdVjC1IDig17S7a5YP87ch/+DsfTCUF7vNKNVxGmBQ
+	YO5ii5UpeWxrebjplxrxtqtgd29jgtzeF8XLedqaT2KcnW31KjbvO9tO7hUx9kpIXK7RQhFfUyOnm
+	Q0hY548w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tNbWJ-00000009FYb-1yC6;
+	Tue, 17 Dec 2024 17:38:07 +0000
+Date: Tue, 17 Dec 2024 17:38:07 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Song Liu <song@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+	willy@infradead.org, corbet@lwn.net, clm@fb.com,
+	josef@toxicpanda.com, dsterba@suse.com, brauner@kernel.org,
+	jack@suse.cz, cem@kernel.org, djwong@kernel.org,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	fdmanana@suse.com, johannes.thumshirn@wdc.com
+Subject: Re: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+Message-ID: <20241217173807.GD1977892@ZenIV>
+References: <20241216234308.1326841-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-To: Tejun Heo <tj@kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <20241213-proud-kind-uakari-df3a70@houat>
- <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
- <20241213-gentle-glittering-salamander-22addf@houat>
- <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
- <20241217-meek-bullfinch-of-luck-2c3468@houat>
- <a69a3500-be17-4899-bdb9-c6a63bf8dc81@lankhorst.se>
- <Z2GwpOQDVshpv-ml@slm.duckdns.org>
-Content-Language: en-US
-From: Maarten Lankhorst <dev@lankhorst.se>
-In-Reply-To: <Z2GwpOQDVshpv-ml@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241216234308.1326841-1-song@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+>  - Let pipe free inode from a RCU callback.
 
-
-Den 2024-12-17 kl. 18:11, skrev Tejun Heo:
-> On Tue, Dec 17, 2024 at 03:28:50PM +0100, Maarten Lankhorst wrote:
->> Now that all patches look good, what is needed to merge the series? Without
->> patch 6/7 as it is a hack for testing.
-> 
-> There were some questions raised about device naming. One thing we want to
-> get right from the beginning is the basic interface.
-> 
-> Thanks.
-> 
-I believe it was solved. The conclusion appears to be that we go with 
-how we defined it in this series. drm/$pciid/$regionname. With the only 
-regions defined now being VRAM. Main memory will be a followup, but 
-requires some discussions on hwo to be prevent double accounting, and 
-what to do with the limited amount of mappable memory.
-
-Cheers,
-~Maarten
+... which hurts the systems with LSM crap disabled.
+NAK.
 
