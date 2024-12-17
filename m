@@ -1,102 +1,82 @@
-Return-Path: <linux-kernel+bounces-449367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71A09F4DDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:35:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451879F4DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CBE1893717
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F038168009
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BFD1F75AD;
-	Tue, 17 Dec 2024 14:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C2D1F63D9;
+	Tue, 17 Dec 2024 14:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhGyRurg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4kpEBsO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8A51F758D;
-	Tue, 17 Dec 2024 14:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B544D1F4E3D;
+	Tue, 17 Dec 2024 14:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445950; cv=none; b=ONHY9sf0T6fead7mI/8OpVDXf/3s8RN+cfHp3kHrmsSJIXhHqNKrvnqIJeqJsdYuwkTHmX+C2m+npExylgROVGSQadduwFPoKqaUbHNX/VjhGr1GcBKHhtMuH/vBtMtNDk9s5C1kNgx/ddc5KGDMNjVxI2NZCTd+heB6IG9eMYQ=
+	t=1734445999; cv=none; b=RhGzppAOd6cSZiPNyHpoMtYTiHfSqbDHt+4NO0L0PRLqyT4WsYnu0TV8a5spMHlB0OhsBfsppNu7AH+PTIDqn3ovCEmobPxsDfJ7wizNz5wtzsCEopxFE14LDzTmYbNVrNrcEV7UqknjfLClwhrpa0gu37TTZqru2E6mAgvtwUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445950; c=relaxed/simple;
-	bh=VFIC1QIxQDmgiC47kHhQBRFZAruUXZmOHT0RGt/bQqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDadQ42XqrRYdrlLJJqI47HuW2BHY21TpkgydcTFL4J1QE9HmuYDsI21bo777MJToz5fWrUpVtzL2ir4jdzhsK1RBuodTUS02wm5mtsZma/KhopDdMLP/kidNBbNAg/iOHXoeJVz4teIqvZxWoZr1HNoIC+RMESdpKde5zSjVa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhGyRurg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B3AC4CED3;
-	Tue, 17 Dec 2024 14:32:29 +0000 (UTC)
+	s=arc-20240116; t=1734445999; c=relaxed/simple;
+	bh=PDwXOO3+Fr11L4z8efx2z/FjDlxsLzh4w4zld1r+Ql8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hMp+HtBHUOuwvAuQC35hnXNVnviqlVi7WFtel8729WryCcoQvA1wDrjYDtk7ahzjLWp9zanUx3iFo7oZX6G8YbhfDF+qmwVjzPVifSOaOvl6wScl7pe4dhk+bIj3IX3ii0baQ3ErWfhu6ixlnWIoaU4S66FNeQk+dljEntKWaoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4kpEBsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3E1C4CED4;
+	Tue, 17 Dec 2024 14:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734445949;
-	bh=VFIC1QIxQDmgiC47kHhQBRFZAruUXZmOHT0RGt/bQqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LhGyRurgxnpaEGzw4ipvApLgF0FKjbqiVV8zz1ZdeEKEFxIkebIdXcawJlln+/QkT
-	 Hfjt8QNX0u7Yk9wmPt/pamZ4RCXm4mlF5LkQtbAAUWVQO+3f17HCQkau98i98wQvpy
-	 GNgotBHS8aGetR6JGXZT/3jIAvl+vJRdlcwb2EL24wVgbhxLNHp7r6MZ50xUgNVy9W
-	 hGFpozkEx+ot78jQRSt+5KmFNAuNAqjN+xDidPYHwpJRZLE7RUqbg4TcY8rHH5NrV5
-	 bjWaUB0zjY5GhhX4QXcjyBK8SI0lfICuSkwINfqTJP4rWmWLp8gDrQ1R/1ldHuqIU5
-	 Cs+0LFQaxJPqQ==
-Date: Tue, 17 Dec 2024 08:32:28 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-spi@vger.kernel.org,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>, linux-iio@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 03/17] dt-bindings: trigger-source: add generic PWM
- trigger source
-Message-ID: <173444594747.1627418.10497892119447871858.robh@kernel.org>
-References: <20241211-dlech-mainline-spi-engine-offload-2-v6-0-88ee574d5d03@baylibre.com>
- <20241211-dlech-mainline-spi-engine-offload-2-v6-3-88ee574d5d03@baylibre.com>
+	s=k20201202; t=1734445999;
+	bh=PDwXOO3+Fr11L4z8efx2z/FjDlxsLzh4w4zld1r+Ql8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=G4kpEBsOnr22gq45BpH+OZnghY8GVLRPtH1jOS88Ht1eSETPjud1VLTj6jpBVEGja
+	 C1YNYcuMRaidE5s7de7k4cRs5Gq1TwJi2QwJqKkzZ1GkjO+J37xk5JTa/rWZfrRjNq
+	 A3uK5oyMGPJKSIh//LftP6E9l10eiiCblzShE2wEBT7ouJuIf9Uck2Bt53Xn7IkCU7
+	 TEe30dg82Ww6QsQIN636gtyWiHADGU0361HraX35O9NlLXtfMYrBPV7zNsQcpPoBfH
+	 ZBxSAfW/jRbl7m4bxvf3UNW1sHWJkPGTTP2HSum2qPACFubzT7d6gZHHvcWcU39b+n
+	 dAttGQ8NRIrqw==
+From: Leon Romanovsky <leon@kernel.org>
+To: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca, 
+ linux@treblig.org
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241216211914.745111-1-linux@treblig.org>
+References: <20241216211914.745111-1-linux@treblig.org>
+Subject: Re: [PATCH] IB/hfi1: Remove unused hfi1_format_hwerrors
+Message-Id: <173444599565.281955.1289295602203698100.b4-ty@kernel.org>
+Date: Tue, 17 Dec 2024 09:33:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-dlech-mainline-spi-engine-offload-2-v6-3-88ee574d5d03@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
 
-On Wed, 11 Dec 2024 14:54:40 -0600, David Lechner wrote:
-> Add a new binding for using a PWM signal as a trigger source.
+On Mon, 16 Dec 2024 21:19:14 +0000, linux@treblig.org wrote:
+> hfi1_format_hwerrors() was added in 2015 by
+> commit 7724105686e7 ("IB/hfi1: add driver files")
+> but never used.
 > 
-> The idea here is similar to e.g. "pwm-clock" to allow a trigger source
-> consumer to use a PWM provider as a trigger source.
+> Remove it.
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
 > 
-> v6 changes:
-> * Moved file from bindings/spi/ to bindings/trigger-source/
-> * Updated description to not mention SPI
-> * Dropped $ref: /schemas/spi/trigger-source.yaml#
-> * Swapped order in name to be consistent with "pwm-clock"
-> 
-> v5 changes:
-> * Add MAINTAINERS entry
-> 
-> v4 changes: new patch in v4
-> ---
->  .../bindings/trigger-source/pwm-trigger.yaml       | 37 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 +++
->  2 files changed, 42 insertions(+)
-> 
+> [...]
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
+
+[1/1] IB/hfi1: Remove unused hfi1_format_hwerrors
+      https://git.kernel.org/rdma/rdma/c/2dab32d1c79c4f
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
 
 
