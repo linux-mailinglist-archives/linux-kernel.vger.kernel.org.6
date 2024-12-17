@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-449899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246979F5796
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:25:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300D79F579B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB894188D4F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE57A16EBBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 20:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7961F9432;
-	Tue, 17 Dec 2024 20:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9DD1F9A91;
+	Tue, 17 Dec 2024 20:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiO/Pjvu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQlxWyv3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31DC14885B;
-	Tue, 17 Dec 2024 20:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEED614885B;
+	Tue, 17 Dec 2024 20:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734467104; cv=none; b=Ci4ysOPb4kaLk928w+O4OhVG+AB3eBpRLB7L/9DRSTBJsHE9iLfqjDXuFJAGxhpLUkvAT7kEUQtvbbnbJtUH1isgeVzoBp+Rbk3/jvj/x8ICE0CiG45Pfdyml2q/kdx6rZD5hbxisFu3DmbyLSfKZrPmW1wLeqsAVZUFNqTVQ/w=
+	t=1734467139; cv=none; b=skN/FzXR6aA5P5e77ADYQtuCnybDA5UILYgrGcwKlZ+Igk76l6QXAm3ZmcN53C4C9f9FfNuYB6Gcqm+udIZuG2enS0fFNydYT+0dfkIyusYNBw2JtHQkzn6ApVMmT8i7p7IlKFsUKj71MT+Sbs5jVRl/754fAsvPJWks8EQsYmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734467104; c=relaxed/simple;
-	bh=Maiyc6QF7xPjVR/GvWmkIlFnB5azzCmzgzErzNX0Odk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAiblktS+mBygjwT8+Ho9gnqCNpMDB83bJQFkcvMCy+HyfzlUmsDsKUVpBp9CxwDsLP7vMOfPBA2/7cWXKmvCjk95F6KDZx6+Q8znmLUv3Yv3ZcUHRnRRLbQMjsoF7yruUC1R3kv/nClk+TaQw4O/h18SoAQmR4RvLCUpIfzejQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiO/Pjvu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3D4C4CED3;
-	Tue, 17 Dec 2024 20:25:04 +0000 (UTC)
+	s=arc-20240116; t=1734467139; c=relaxed/simple;
+	bh=0bmB1SlLSF8LnUIlZba2LBEOXa+e8exkzejO3GYFJ50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YJf4uOX4I7wzNZZR/QCezDbUaxPjp/1ypqr16A2D8Z5azwBhmG4zPfS/3E2eewjyJosRhKcix0Jos5YQWO9sh0o/eILfKp4q6iG7nO+QZCDepBjDX0rJnYgvd7BxXrHjx2QxEsXSshC1dNw6i+NO+BsauEiYPPurINCt4G4NOTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQlxWyv3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340D8C4CED3;
+	Tue, 17 Dec 2024 20:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734467104;
-	bh=Maiyc6QF7xPjVR/GvWmkIlFnB5azzCmzgzErzNX0Odk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NiO/PjvuLZCXCjT+n+Jwff8N7u2Dp9GcRYMMAkR5oopgvUny7vHFlSUcxqLc3RW+P
-	 C5fU8PFL+aUuONctTnIFM1Nhsc7Lc36Ssg7NGIIvdnr2Dpi8rnZ03k/yVGHgb87zqz
-	 RB/pzUXmv7C3mFIL/yFyxszLHf6bc5RrrvNbKkFxB9TIWxOw9hN8pcoxt92hHIsB1w
-	 gBdiAT3EVlI3QVWecR89bLA1qmJVmJudSucSLnIn72JLILBRWMpJbYnjiP0JxWbtx/
-	 Wsqa2a0rtGCQH9d+reLDT01FtqZ1hFVSwh44EdUI88p1abKjsy5k0Fo2TMdiCIE6cs
-	 uMwx/4k6G8gww==
-Date: Tue, 17 Dec 2024 12:25:00 -0800
-From: Kees Cook <kees@kernel.org>
-To: Christopher Ferris <cferris@google.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	netdev@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] UAPI: net/sched: Open-code __struct_group() in flex
- struct tc_u32_sel
-Message-ID: <202412171223.FDDEA0A2@keescook>
-References: <20241217025950.work.601-kees@kernel.org>
- <f4947447-aa66-470c-a48d-06ed77be58da@intel.com>
- <bbed49c7-56c0-4642-afec-e47b14425f76@embeddedor.com>
- <c49d316d-ce8f-43d4-8116-80c760e38a6b@intel.com>
- <ff680866-b81f-48c1-8a59-1107b4ce14ff@embeddedor.com>
- <b9a20b9e-c871-451d-8b16-0704eec27329@intel.com>
- <49add42f-42d9-4f34-b4ad-cff31e473f40@embeddedor.com>
- <CANtHk4nhH9XJi5+9BAu3kFoL14+4YAZTH7t6QApEvEAeMxdXgw@mail.gmail.com>
+	s=k20201202; t=1734467138;
+	bh=0bmB1SlLSF8LnUIlZba2LBEOXa+e8exkzejO3GYFJ50=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UQlxWyv3XpsR7+2SQ3FiR6JKlLAVtzC5Oi5HE2NGF4jXgPIlQ7PDnSKuRlunY19hN
+	 +Al3WPUK466WT1MeR3s9KDSSnOoTFFS2W1vi/+zUebUZRw8JFnm5x5fZkP50c0x2h/
+	 gwp9FtQ3kATKRp8cRaTZ6CD00MMtwgmxNVwdUor6vtIDavqliE3gBbOHj7z215koMu
+	 MDDaQxJej16ovMnvepvgoznfb4+2tfkmZ9jBhjGDFwBiySJQdSzhn7leDolBmlSogL
+	 QBKE0umBPemJjxHO3FLGrV1mFxQA2TwYNpL0IAOacDyF8JTfsgd4XFxrEx1fwzzGDq
+	 fjVHa+36YfUjg==
+From: Song Liu <song@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	kernel-team@meta.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	viro@zeniv.linux.org.uk,
+	Song Liu <song@kernel.org>
+Subject: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
+Date: Tue, 17 Dec 2024 12:25:23 -0800
+Message-ID: <20241217202525.1802109-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANtHk4nhH9XJi5+9BAu3kFoL14+4YAZTH7t6QApEvEAeMxdXgw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 17, 2024 at 11:10:41AM -0800, Christopher Ferris wrote:
-> I verified that this does fix the compilation problem on Android. Thanks
-> for working on this.
+While reading and testing LSM code, I found IMA/EVM consume per inode
+storage even when they are not in use. Add options to diable them in
+kernel command line. The logic and syntax is mostly borrowed from an
+old serious [1].
 
-Thanks! Yeah, let's use Alexander's solution instead of my proposed patch.
+[1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsung.com/
 
-> > [0]
-> > https://github.com/alobakin/linux/commit/2a065c7bae821f5fa85fff6f97fbbd460f4aa0f3
+Song Liu (2):
+  ima: Add kernel parameter to disable IMA
+  evm: Add kernel parameter to disable EVM
 
--Kees
+ security/integrity/evm/evm.h       |  6 ++++++
+ security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
+ security/integrity/evm/evm_secfs.c |  3 ++-
+ security/integrity/ima/ima_main.c  | 13 +++++++++++++
+ 4 files changed, 35 insertions(+), 9 deletions(-)
 
--- 
-Kees Cook
+--
+2.43.5
 
