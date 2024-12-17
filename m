@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-448684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5711E9F4445
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B37669F444A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CC216D0D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E37F167025
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76C41F3D3F;
-	Tue, 17 Dec 2024 06:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25552188014;
+	Tue, 17 Dec 2024 06:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oZXAa4xJ"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xsjW7SYu"
 Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509611F131A
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C671F3D3D
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734417602; cv=none; b=a4FJYOaYE7zqF9+MeqF4FSgWZHv9jmvWYiOkEgwNdLvHkzOsESzUxUjMSsnFa5+EhxlJRF8JwrEbTqZswA4w4LJepuoyfZv7MVmBTnvog31UWWXScKlj6Q2/ClotY1DUaNbrSfVqTQeJW7vTW2S2fOoL0AFCBYNHLQ7VXqgRoPs=
+	t=1734417605; cv=none; b=P/h7Bk1/Ov0D5Syplk6lR6Z/XdKvhPUc3DJp9rm3b8QINjboFrjuqOichcARe6Iz35bJzkbxV+oIf/QqFoYv51YsTbfe3WtMa0V0w8gmqJ0qHInRf00SQo4qvUKN3tbzq/fRY0y7ugym5IkBuwJ1jA9uTNANaPDfVnbCwJMmA6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734417602; c=relaxed/simple;
-	bh=OBRNC6/oLLpxUu9MeNUI/oRW1qvUh9B48fVUa1jZ/ZI=;
+	s=arc-20240116; t=1734417605; c=relaxed/simple;
+	bh=l1Ser96/ogvT5kdgPhN2YrOSJRGf4Opsq+T7mgeD0Bc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vx47IAtdcWZ32Tqg4A+ed8g2g47etKmck/a5rx5NpLc3qTaoZ1p3EG1FiA7Fs3ipe+HF2T+T2XJbdldcGkFXE+pr+6m2ZW+T2dfiUXkrXtQeJBd9oeDCziUSoweVe8LpJfJxC1Eu97M+G7XPrQMvgpE6esGa/Loyb4KGwqA5dDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oZXAa4xJ; arc=none smtp.client-ip=209.85.215.181
+	 In-Reply-To:To:Cc; b=kQLUybIqZbc8MfYt89EXUs6uavPYfFjzhs0mYzvNJXHrMqi3+vQ7a/zlJEZiEOmqfkIf8t8HFhxaTWohrN69pWTJ8OjWb9KM4OcEfHZTToGtCFncOOs4WvP7Rm1na7Nb42rNs9ni2IzqDcU+Hg+l4WFMunmRmg2mroLUEw+czNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xsjW7SYu; arc=none smtp.client-ip=209.85.215.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-801c8164ef9so2574053a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:40:00 -0800 (PST)
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso4640884a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2024 22:40:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734417599; x=1735022399; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734417603; x=1735022403; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=U2phOucwGPBnxQscu/81oXh5LgnSAZwHR9O1qY5EYwA=;
-        b=oZXAa4xJff/oFtwXgu9vW9i8UxbYbrJHVpepZ5u804gmQBsDGaQ4y1mjt0GsVPdVW9
-         fFaEv/h8hCp0YxyLy2zvKLEAfEA7J90YCCpEslkh/lXkmLMpGuk0ZlHYQzz6/PaZQiOi
-         On/cVfhKA6PMidZgXOvDWD9X/Rl1JXvqXlroMcatYdsmWYNE8QDEJMmT4Og9HLJDqA+Y
-         LZCxSYZ39KvE6qIesYOkTPlTRnUpQjUZJMGb4aq41JgjtoiSBqoSpffTl5HfRGlTpUAq
-         Vryfxvfokyj7FYHBbJH7JiS27Dxo+rio6R9j6B7wvSQ03dUsZgtIdwxwjfTpKBivmTRH
-         PHjA==
+        bh=G59fhJUSyOt3cdDcrYeMXQ/KlBe6RYsVLyS5ah9slEc=;
+        b=xsjW7SYuxAMk3qPSm5f9k+L5LMcUp0ah9geEmrId/YYnYOqCdAAviwGV3eo5wLyAWZ
+         z6zz8f5X1KrYPpw9XDL1YH/oZMFDrFGhdzn+bixBjwBn2kyoenRoTlWhIORxGNUyWlcF
+         YNWl9D2m0siGnvWWqDgFzcJ3nXLT/SkfL9VJN1MtmMNULD2byCN4jWJaP4AoVhYkVMWE
+         7z4k0bwfoRoap9H2Z+bAZXypLifJ/ZRnJ8wzBoOTUDTEwxmn6715QUchaYULOFjqK3wD
+         TEQ7UcJl+E8bia3netTm3YcrIQ6m3SZfCuYp5DDk8Kms6aSAruUiCtve/8uEMjzcO21p
+         HjQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734417599; x=1735022399;
+        d=1e100.net; s=20230601; t=1734417603; x=1735022403;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U2phOucwGPBnxQscu/81oXh5LgnSAZwHR9O1qY5EYwA=;
-        b=RpjDKqPxu05kxVskllU26KCEdetBp94d/UhuFAo215kiWTpDywW8sNa2VkCtNAaKJC
-         mko6P9c4V5/RB6O89SdQ032P7x8H1TpNtyZAWFuvcJYUInFgm5/wdgJmh0Y8/Ok34Vzr
-         kPgUzv+1kj3Qfiu8aYMlbmAndBPgNodSEB2iNOLhj+6rfEvRHAmbgCay3gur/9JMc2lS
-         sTZLTduFxqVDdSI1wTJmynOhwUuAADARYXeTV3nvSg7+v2JEF8MGxFO+ag3IvNTms5Gi
-         dclMN/YdgHBObIeqAQgzjoiRq0kAu4bBUJGhybxO23ecUqJwZX+LjdI/6+w64J/w1eW/
-         yU1A==
-X-Gm-Message-State: AOJu0Yzb7iaP5XG/WvoAYRfu/kHea/ebIhlQSVbnuPDPwLEbMhLbntI2
-	zJQ8PFxgkm/rnRUf6dIKjCTJLH2KzZWQRYlUb0kdm7v4dZRubt34BfKJ8Ry/iVU=
-X-Gm-Gg: ASbGncu3tKxt3BQmDKxSIrW9Fdi6ABO4kbJjkD195tFNxvU5yUaLI9zBv3tNUabWTiy
-	o/I6IDMlni5jIH4928DYma1IbG4NBjrrke5zIlJYMNAtN3NsVQiPP+dZMrUlO4oWMp8n39qdUba
-	gDoetxoT9U6P8TgPCDO0+YkZQq/rN29VNmHtOVBWyb83Ohu45TndNGh+NT14E4LiDt65zEV8UmS
-	xtwz9m5pqjHe/FhD1GiIj4J+SLdl+UB+z5jXxjXpKBDbRpMr6qXSX6Q3BWHWhSZYJ4+ewQB
-X-Google-Smtp-Source: AGHT+IG3UOBHSNWzesedeqCBnPruxlq5hWLMIhSxyWspnkqzno35HJXMyFnHKz17o7bDlRIvBHe0rA==
-X-Received: by 2002:a17:90b:1a88:b0:2ea:61c4:a443 with SMTP id 98e67ed59e1d1-2f2d8798991mr3252163a91.4.1734417599613;
-        Mon, 16 Dec 2024 22:39:59 -0800 (PST)
+        bh=G59fhJUSyOt3cdDcrYeMXQ/KlBe6RYsVLyS5ah9slEc=;
+        b=IM1XBMlBpmAYPv2oVGLkZc6H9aHZSk3H+KN00B89KvCEJXCZEvZVMMg82+wcxj4NDU
+         ZOiLxFwfaLeFlY8nWyC+jQJaihdtASnZ60nZoifyjDwCAIljJvw7Ij4O+orAR3fFrbGD
+         e13qQ15VGlzEo9CebGYSmXVxg54QsaXsQ6hprIphxdsIuNMssdovTHRCS1pH8USCIdAy
+         qPK9fRKv9onDsmbcX1zVqJ/8cGsW/pX5OcmMfW35QE4GJ5SRDBBhzBQsIFEJListAOQO
+         vNeYu+irETrGfApIbVvabg+M265p7vneAKvrdnTUu/LhpiE3i4eRomG0GP0pVpmCRcZ0
+         qOSg==
+X-Gm-Message-State: AOJu0YyNrWsygkU757g4UmYPSbpvOHjQywEdZNnnSx5RwDNtiWRs3Pej
+	2tRpah7X6lay/+xoPExHR6+iFRQbHq5EmfWL26hBryp2NdkRRdcNfPghxyGwoOw=
+X-Gm-Gg: ASbGncuq5eafSJMGGbA5GL5F/G5WWCrOVaKpLtkzdEgolAQWJetzhvCa+iLYTTIJE+D
+	aPBS5mf6yeAVNpH41a6hT0siwC5hz2fG3yr5Dm1vBCGpaC776m0Wxaq5nEhECeWwDVBapmpDxFH
+	O47J6cpSgUSAiTYF7u6Z05oSGEPF66PX1cJKp+aBjXGtKDJpePBrFt2R+W1lk2sO3725O3hXXVw
+	my0agC+GzfHGiydbHFcn0BnYRYmm7nkXbGCw+sW3IgJOT66wo1P3BHY/qWGnhhfrupMZ4n8
+X-Google-Smtp-Source: AGHT+IEe2Tqa+z0Q2uyrA2Pwy1HuUYf4jnWYYEnzqRX7eoFc4Vxc7/cfLZKhBqIqyMM+5XmjGo544A==
+X-Received: by 2002:a17:90b:1c84:b0:2ee:d9d4:64a8 with SMTP id 98e67ed59e1d1-2f2d8654b36mr3466202a91.0.1734417602575;
+        Mon, 16 Dec 2024 22:40:02 -0800 (PST)
 Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142d90d6bsm9179551a91.2.2024.12.16.22.39.57
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142d90d6bsm9179551a91.2.2024.12.16.22.39.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 22:39:58 -0800 (PST)
+        Mon, 16 Dec 2024 22:40:01 -0800 (PST)
 From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Mon, 16 Dec 2024 22:33:00 -0800
-Subject: [PATCH v3 15/16] perf tools: s390: Use generic syscall table
- scripts
+Date: Mon, 16 Dec 2024 22:33:01 -0800
+Subject: [PATCH v3 16/16] perf tools: Remove dependency on libaudit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +80,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-perf_syscalltbl-v3-15-239f032481d5@rivosinc.com>
+Message-Id: <20241216-perf_syscalltbl-v3-16-239f032481d5@rivosinc.com>
 References: <20241216-perf_syscalltbl-v3-0-239f032481d5@rivosinc.com>
 In-Reply-To: <20241216-perf_syscalltbl-v3-0-239f032481d5@rivosinc.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -106,178 +105,460 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
  Charlie Jenkins <charlie@rivosinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6102; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=OBRNC6/oLLpxUu9MeNUI/oRW1qvUh9B48fVUa1jZ/ZI=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qizMSbi/Q+C62ovjMptzjYcF+26asziU/+XuntSWzUe
- +HJVuraUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwET2vmBkuHhQWNbw7NROxtqt
- ghLJR67YzpSVsjTUvlm5YO/fnZ3yGYwM3Yc1I6/Z3X9z1VtlBUvhvKq5dZV6nzurZSWuia5t5vn
- ACQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=17722; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=l1Ser96/ogvT5kdgPhN2YrOSJRGf4Opsq+T7mgeD0Bc=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qizETXxYeVrulxSZzRUU81ltk4u0Am8O0TBylR4/mml
+ nfdp2zqKGVhEONgkBVTZOG51sDceke/7Kho2QSYOaxMIEMYuDgFYCI2Lgz/bLbNc1zUyRazOOee
+ ruNOvf1yume87rNwG9VMWajhFDavguF/xvbrl9+y97w9FDpF+JPonSfF0+Nk756a3T1Tnn1ny8z
+ 9vAA=
 X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
  fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-Use the generic scripts to generate headers from the syscall table
-instead of the custom ones for s390.
+All architectures now support HAVE_SYSCALL_TABLE_SUPPORT, so the flag is
+no longer needed. With the removal of the flag, the related
+GENERIC_SYSCALL_TABLE can also be removed. libaudit was only used as a
+fallback for when HAVE_SYSCALL_TABLE_SUPPORT was not defined, so
+libaudit is also no longer needed for any architecture.
 
 Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- tools/perf/Makefile.config                         |  6 +---
- tools/perf/Makefile.perf                           |  2 +-
- tools/perf/arch/s390/Makefile                      | 21 --------------
- tools/perf/arch/s390/entry/syscalls/Kbuild         |  2 ++
- .../arch/s390/entry/syscalls/Makefile.syscalls     |  5 ++++
- tools/perf/arch/s390/entry/syscalls/mksyscalltbl   | 32 ----------------------
- tools/perf/arch/s390/include/syscall_table.h       |  2 ++
- tools/perf/util/syscalltbl.c                       |  6 +---
- 8 files changed, 12 insertions(+), 64 deletions(-)
+ Documentation/admin-guide/workload-tracing.rst |  2 +-
+ tools/build/feature/Makefile                   |  4 --
+ tools/build/feature/test-libaudit.c            | 11 ------
+ tools/perf/Documentation/perf-check.txt        |  1 -
+ tools/perf/Makefile.config                     | 31 +--------------
+ tools/perf/Makefile.perf                       | 15 --------
+ tools/perf/builtin-check.c                     |  1 -
+ tools/perf/builtin-help.c                      |  2 -
+ tools/perf/builtin-trace.c                     | 30 ---------------
+ tools/perf/perf.c                              |  6 +--
+ tools/perf/tests/make                          |  7 +---
+ tools/perf/util/env.c                          |  4 +-
+ tools/perf/util/generate-cmdlist.sh            |  4 +-
+ tools/perf/util/syscalltbl.c                   | 52 --------------------------
+ 14 files changed, 10 insertions(+), 160 deletions(-)
 
+diff --git a/Documentation/admin-guide/workload-tracing.rst b/Documentation/admin-guide/workload-tracing.rst
+index b2e254ec8ee846afe78eede74a825b51c6ab119b..6be38c1b9c5bb4be899fd261c6d2911abcf959dc 100644
+--- a/Documentation/admin-guide/workload-tracing.rst
++++ b/Documentation/admin-guide/workload-tracing.rst
+@@ -83,7 +83,7 @@ scripts/ver_linux is a good way to check if your system already has
+ the necessary tools::
+ 
+   sudo apt-get build-essentials flex bison yacc
+-  sudo apt install libelf-dev systemtap-sdt-dev libaudit-dev libslang2-dev libperl-dev libdw-dev
++  sudo apt install libelf-dev systemtap-sdt-dev libslang2-dev libperl-dev libdw-dev
+ 
+ cscope is a good tool to browse kernel sources. Let's install it now::
+ 
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 043dfd00fce72d8f651ccd9b3265a0183f500e5c..e0b63e9d0251abe6d5eafc6d2f26b940918b16ee 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -13,7 +13,6 @@ FILES=                                          \
+          test-gtk2.bin                          \
+          test-gtk2-infobar.bin                  \
+          test-hello.bin                         \
+-         test-libaudit.bin                      \
+          test-libbfd.bin                        \
+          test-libbfd-buildid.bin		\
+          test-disassembler-four-args.bin        \
+@@ -228,9 +227,6 @@ $(OUTPUT)test-libunwind-debug-frame-arm.bin:
+ $(OUTPUT)test-libunwind-debug-frame-aarch64.bin:
+ 	$(BUILD) -lelf -llzma -lunwind-aarch64
+ 
+-$(OUTPUT)test-libaudit.bin:
+-	$(BUILD) -laudit
+-
+ $(OUTPUT)test-libslang.bin:
+ 	$(BUILD) -lslang
+ 
+diff --git a/tools/build/feature/test-libaudit.c b/tools/build/feature/test-libaudit.c
+deleted file mode 100644
+index f5b0863fa1ec240795339428d8deed98a946d405..0000000000000000000000000000000000000000
+--- a/tools/build/feature/test-libaudit.c
++++ /dev/null
+@@ -1,11 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <libaudit.h>
+-
+-extern int printf(const char *format, ...);
+-
+-int main(void)
+-{
+-	printf("error message: %s\n", audit_errno_to_name(0));
+-
+-	return audit_open();
+-}
+diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
+index 31741499e7867c9b712227f31a2958fd641d474a..e6d2ceeb2ca7de850f41b1baa0375b6f984bb08f 100644
+--- a/tools/perf/Documentation/perf-check.txt
++++ b/tools/perf/Documentation/perf-check.txt
+@@ -51,7 +51,6 @@ feature::
+                 dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
+                 dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
+                 auxtrace                /  HAVE_AUXTRACE_SUPPORT
+-                libaudit                /  HAVE_LIBAUDIT_SUPPORT
+                 libbfd                  /  HAVE_LIBBFD_SUPPORT
+                 libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
+                 libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
 diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index de7cd12a885f60dc182bfb39493672f884adbacb..3f82ba907381049213c055ab10c3fe14d9572073 100644
+index 3f82ba907381049213c055ab10c3fe14d9572073..a57b2364578f57e31476f5041a06a0cd22d8b27e 100644
 --- a/tools/perf/Makefile.config
 +++ b/tools/perf/Makefile.config
-@@ -31,10 +31,6 @@ $(call detected_var,SRCARCH)
- ifneq ($(NO_SYSCALL_TABLE),1)
-   NO_SYSCALL_TABLE := 1
+@@ -28,20 +28,7 @@ include $(srctree)/tools/scripts/Makefile.arch
  
--  ifeq ($(SRCARCH),s390)
+ $(call detected_var,SRCARCH)
+ 
+-ifneq ($(NO_SYSCALL_TABLE),1)
+-  NO_SYSCALL_TABLE := 1
+-
+-  # architectures that use the generic syscall table scripts
+-  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
 -    NO_SYSCALL_TABLE := 0
+-    CFLAGS += -DGENERIC_SYSCALL_TABLE
+-    CFLAGS += -I$(OUTPUT)tools/perf/arch/$(SRCARCH)/include/generated
 -  endif
 -
-   # architectures that use the generic syscall table scripts
-   ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
-     NO_SYSCALL_TABLE := 0
-@@ -78,7 +74,7 @@ ifeq ($(SRCARCH),loongarch)
+-  ifneq ($(NO_SYSCALL_TABLE),1)
+-    CFLAGS += -DHAVE_SYSCALL_TABLE_SUPPORT
+-  endif
+-endif
++CFLAGS += -I$(OUTPUT)tools/perf/arch/$(SRCARCH)/include/generated
+ 
+ # Additional ARCH settings for ppc
+ ifeq ($(SRCARCH),powerpc)
+@@ -755,21 +742,7 @@ ifndef NO_LIBUNWIND
  endif
  
- ifeq ($(ARCH),s390)
--  CFLAGS += -fPIC -I$(OUTPUT)arch/s390/include/generated
-+  CFLAGS += -fPIC
+ ifneq ($(NO_LIBTRACEEVENT),1)
+-  ifeq ($(NO_SYSCALL_TABLE),0)
+-    $(call detected,CONFIG_TRACE)
+-  else
+-    ifndef NO_LIBAUDIT
+-      $(call feature_check,libaudit)
+-      ifneq ($(feature-libaudit), 1)
+-        $(warning No libaudit.h found, disables 'trace' tool, please install audit-libs-devel or libaudit-dev)
+-        NO_LIBAUDIT := 1
+-      else
+-        CFLAGS += -DHAVE_LIBAUDIT_SUPPORT
+-        EXTLIBS += -laudit
+-        $(call detected,CONFIG_TRACE)
+-      endif
+-    endif
+-  endif
++  $(call detected,CONFIG_TRACE)
  endif
  
- ifeq ($(ARCH),mips)
+ ifndef NO_LIBCRYPTO
 diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index f76b23d96fc91aa56807fc581bf820a117c2bda0..2c6a509c800d3037933c9b49e5a7dafbf78fda0c 100644
+index 2c6a509c800d3037933c9b49e5a7dafbf78fda0c..ab2d075ff3a23350a5eea12508cf0376f1d9f4e8 100644
 --- a/tools/perf/Makefile.perf
 +++ b/tools/perf/Makefile.perf
-@@ -311,7 +311,7 @@ FEATURE_TESTS := all
+@@ -59,8 +59,6 @@ include ../scripts/utilities.mak
+ #
+ # Define NO_LIBNUMA if you do not want numa perf benchmark
+ #
+-# Define NO_LIBAUDIT if you do not want libaudit support
+-#
+ # Define NO_LIBBIONIC if you do not want bionic support
+ #
+ # Define NO_LIBCRYPTO if you do not want libcrypto (openssl) support
+@@ -119,10 +117,6 @@ include ../scripts/utilities.mak
+ #
+ # Define LIBBPF_DYNAMIC to enable libbpf dynamic linking.
+ #
+-# Define NO_SYSCALL_TABLE=1 to disable the use of syscall id to/from name tables
+-# generated from the kernel .tbl or unistd.h files and use, if available, libaudit
+-# for doing the conversions to/from strings/id.
+-#
+ # Define NO_LIBPFM4 to disable libpfm4 events extension.
+ #
+ # Define NO_LIBDEBUGINFOD if you do not want support debuginfod
+@@ -310,11 +304,7 @@ ifeq ($(filter feature-dump,$(MAKECMDGOALS)),feature-dump)
+ FEATURE_TESTS := all
  endif
  endif
- # architectures that use the generic syscall table
--generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc
-+generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc s390
- ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
+-# architectures that use the generic syscall table
+-generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc s390
+-ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
  include $(srctree)/tools/perf/scripts/Makefile.syscalls
+-endif
+ include Makefile.config
  endif
-diff --git a/tools/perf/arch/s390/Makefile b/tools/perf/arch/s390/Makefile
-index c431c21b11ef824535c1b9fb6ca4246d666fc97b..0033698a65ce5d5d7ebcc280399957561dd9d2c6 100644
---- a/tools/perf/arch/s390/Makefile
-+++ b/tools/perf/arch/s390/Makefile
-@@ -1,24 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- HAVE_KVM_STAT_SUPPORT := 1
- PERF_HAVE_JITDUMP := 1
+ 
+@@ -1099,11 +1089,6 @@ endif
+ 		$(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
+ 	$(call QUIET_INSTALL, perf-iostat) \
+ 		$(INSTALL) $(OUTPUT)perf-iostat -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
+-ifndef NO_LIBAUDIT
+-	$(call QUIET_INSTALL, strace/groups) \
+-		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(STRACE_GROUPS_INSTDIR_SQ)'; \
+-		$(INSTALL) trace/strace/groups/* -m 644 -t '$(DESTDIR_SQ)$(STRACE_GROUPS_INSTDIR_SQ)'
+-endif
+ ifndef NO_LIBPERL
+ 	$(call QUIET_INSTALL, perl-scripts) \
+ 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/perl/Perf-Trace-Util/lib/Perf/Trace'; \
+diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+index 2346536a5ee14f91ecd10bd130a64676e871e1b2..7aed7b9f4f5270527ee1d36327eb6a01f196a46a 100644
+--- a/tools/perf/builtin-check.c
++++ b/tools/perf/builtin-check.c
+@@ -31,7 +31,6 @@ struct feature_status supported_features[] = {
+ 	FEATURE_STATUS("dwarf_getlocations", HAVE_LIBDW_SUPPORT),
+ 	FEATURE_STATUS("dwarf-unwind", HAVE_DWARF_UNWIND_SUPPORT),
+ 	FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
+-	FEATURE_STATUS("libaudit", HAVE_LIBAUDIT_SUPPORT),
+ 	FEATURE_STATUS("libbfd", HAVE_LIBBFD_SUPPORT),
+ 	FEATURE_STATUS("libcapstone", HAVE_LIBCAPSTONE_SUPPORT),
+ 	FEATURE_STATUS("libcrypto", HAVE_LIBCRYPTO_SUPPORT),
+diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+index 0854d3cd9f6a304cd9cb50ad430d5706d91df0e9..7be6fb6df595923c15ae51747d5bf17d867ae785 100644
+--- a/tools/perf/builtin-help.c
++++ b/tools/perf/builtin-help.c
+@@ -447,9 +447,7 @@ int cmd_help(int argc, const char **argv)
+ #ifdef HAVE_LIBELF_SUPPORT
+ 		"probe",
+ #endif
+-#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)
+ 		"trace",
+-#endif
+ 	NULL };
+ 	const char *builtin_help_usage[] = {
+ 		"perf help [--all] [--man|--web|--info] [command]",
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 6a1a128fe645014d0347ad4ec3e0c9e77ec59aee..0fddf34458db4fe4896d25f427f2ae29cb3aa15f 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2069,30 +2069,11 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	const char *name = syscalltbl__name(trace->sctbl, id);
+ 	int err;
+ 
+-#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ 	if (trace->syscalls.table == NULL) {
+ 		trace->syscalls.table = calloc(trace->sctbl->syscalls.max_id + 1, sizeof(*sc));
+ 		if (trace->syscalls.table == NULL)
+ 			return -ENOMEM;
+ 	}
+-#else
+-	if (id > trace->sctbl->syscalls.max_id || (id == 0 && trace->syscalls.table == NULL)) {
+-		// When using libaudit we don't know beforehand what is the max syscall id
+-		struct syscall *table = realloc(trace->syscalls.table, (id + 1) * sizeof(*sc));
 -
--#
--# Syscall table generation for perf
--#
+-		if (table == NULL)
+-			return -ENOMEM;
 -
--out    := $(OUTPUT)arch/s390/include/generated/asm
--header := $(out)/syscalls_64.c
--sysprf := $(srctree)/tools/perf/arch/s390/entry/syscalls
--sysdef := $(sysprf)/syscall.tbl
--systbl := $(sysprf)/mksyscalltbl
+-		// Need to memset from offset 0 and +1 members if brand new
+-		if (trace->syscalls.table == NULL)
+-			memset(table, 0, (id + 1) * sizeof(*sc));
+-		else
+-			memset(table + trace->sctbl->syscalls.max_id + 1, 0, (id - trace->sctbl->syscalls.max_id) * sizeof(*sc));
 -
--# Create output directory if not already present
--$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
--
--$(header): $(sysdef) $(systbl)
--	$(Q)$(SHELL) '$(systbl)' $(sysdef) > $@
--
--clean::
--	$(call QUIET_CLEAN, s390) $(RM) $(header)
--
--archheaders: $(header)
-diff --git a/tools/perf/arch/s390/entry/syscalls/Kbuild b/tools/perf/arch/s390/entry/syscalls/Kbuild
-new file mode 100644
-index 0000000000000000000000000000000000000000..9a41e3572c3afd4f202321fd9e492714540e8fd3
---- /dev/null
-+++ b/tools/perf/arch/s390/entry/syscalls/Kbuild
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+syscall-y += syscalls_64.h
-diff --git a/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls b/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls
-new file mode 100644
-index 0000000000000000000000000000000000000000..9762d7abf17c3f79a6213e7306a5f7b56e833a78
---- /dev/null
-+++ b/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+syscall_abis_64 += renameat rlimit memfd_secret
-+
-+syscalltbl = $(srctree)/tools/perf/arch/s390/entry/syscalls/syscall.tbl
-diff --git a/tools/perf/arch/s390/entry/syscalls/mksyscalltbl b/tools/perf/arch/s390/entry/syscalls/mksyscalltbl
-deleted file mode 100755
-index 52eb88a77c94727aeb8c15427cdd43dfe5f9f2bd..0000000000000000000000000000000000000000
---- a/tools/perf/arch/s390/entry/syscalls/mksyscalltbl
-+++ /dev/null
-@@ -1,32 +0,0 @@
--#!/bin/sh
--# SPDX-License-Identifier: GPL-2.0
--#
--# Generate system call table for perf
--#
--# Copyright IBM Corp. 2017, 2018
--# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
--#
--
--SYSCALL_TBL=$1
--
--if ! test -r $SYSCALL_TBL; then
--	echo "Could not read input file" >&2
--	exit 1
--fi
--
--create_table()
--{
--	local max_nr nr abi sc discard
--
--	echo 'static const char *const syscalltbl_s390_64[] = {'
--	while read nr abi sc discard; do
--		printf '\t[%d] = "%s",\n' $nr $sc
--		max_nr=$nr
--	done
--	echo '};'
--	echo "#define SYSCALLTBL_S390_64_MAX_ID $max_nr"
--}
--
--grep -E "^[[:digit:]]+[[:space:]]+(common|64)" $SYSCALL_TBL	\
--	|sort -k1 -n					\
--	|create_table
-diff --git a/tools/perf/arch/s390/include/syscall_table.h b/tools/perf/arch/s390/include/syscall_table.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..b53e31c15805319a01719c22d489c4037378b02b
---- /dev/null
-+++ b/tools/perf/arch/s390/include/syscall_table.h
-@@ -0,0 +1,2 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/syscalls_64.h>
+-		trace->syscalls.table	      = table;
+-		trace->sctbl->syscalls.max_id = id;
+-	}
+-#endif
+ 	sc = trace->syscalls.table + id;
+ 	if (sc->nonexistent)
+ 		return -EEXIST;
+@@ -2439,18 +2420,7 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+ 
+ 	err = -EINVAL;
+ 
+-#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ 	if (id > trace->sctbl->syscalls.max_id) {
+-#else
+-	if (id >= trace->sctbl->syscalls.max_id) {
+-		/*
+-		 * With libaudit we don't know beforehand what is the max_id,
+-		 * so we let trace__read_syscall_info() figure that out as we
+-		 * go on reading syscalls.
+-		 */
+-		err = trace__read_syscall_info(trace, id);
+-		if (err)
+-#endif
+ 		goto out_cant_read;
+ 	}
+ 
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index a2987f2cfe1a3958f53239ed1a4eec3f87d7466a..f0617cc41f5fe638986e5d8316a6b3056c2c4bc5 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -84,7 +84,7 @@ static struct cmd_struct commands[] = {
+ #endif
+ 	{ "kvm",	cmd_kvm,	0 },
+ 	{ "test",	cmd_test,	0 },
+-#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT))
++#if defined(HAVE_LIBTRACEEVENT)
+ 	{ "trace",	cmd_trace,	0 },
+ #endif
+ 	{ "inject",	cmd_inject,	0 },
+@@ -514,10 +514,6 @@ int main(int argc, const char **argv)
+ 		fprintf(stderr,
+ 			"trace command not available: missing libtraceevent devel package at build time.\n");
+ 		goto out;
+-#elif !defined(HAVE_LIBAUDIT_SUPPORT) && !defined(HAVE_SYSCALL_TABLE_SUPPORT)
+-		fprintf(stderr,
+-			"trace command not available: missing audit-libs devel package at build time.\n");
+-		goto out;
+ #else
+ 		setup_path();
+ 		argv[0] = "trace";
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index a7fcbd589752a90459815bd21075528c6dfa4d94..0ee94caf9ec19820a94a87dd46a7ccf1cefb844a 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -86,7 +86,6 @@ make_no_libdw_dwarf_unwind := NO_LIBDW_DWARF_UNWIND=1
+ make_no_backtrace   := NO_BACKTRACE=1
+ make_no_libcapstone := NO_CAPSTONE=1
+ make_no_libnuma     := NO_LIBNUMA=1
+-make_no_libaudit    := NO_LIBAUDIT=1
+ make_no_libbionic   := NO_LIBBIONIC=1
+ make_no_auxtrace    := NO_AUXTRACE=1
+ make_no_libbpf	    := NO_LIBBPF=1
+@@ -97,7 +96,6 @@ make_no_libllvm     := NO_LIBLLVM=1
+ make_with_babeltrace:= LIBBABELTRACE=1
+ make_with_coresight := CORESIGHT=1
+ make_no_sdt	    := NO_SDT=1
+-make_no_syscall_tbl := NO_SYSCALL_TABLE=1
+ make_no_libpfm4     := NO_LIBPFM4=1
+ make_with_gtk2      := GTK2=1
+ make_refcnt_check   := EXTRA_CFLAGS="-DREFCNT_CHECKING=1"
+@@ -122,10 +120,10 @@ make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX3
+ # all the NO_* variable combined
+ make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
+ make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
+-make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
++make_minimal        += NO_LIBNUMA=1 NO_LIBBIONIC=1
+ make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
+ make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
+-make_minimal        += NO_LIBCAP=1 NO_SYSCALL_TABLE=1 NO_CAPSTONE=1
++make_minimal        += NO_LIBCAP=1 NO_CAPSTONE=1
+ 
+ # $(run) contains all available tests
+ run := make_pure
+@@ -158,7 +156,6 @@ run += make_no_libdw_dwarf_unwind
+ run += make_no_backtrace
+ run += make_no_libcapstone
+ run += make_no_libnuma
+-run += make_no_libaudit
+ run += make_no_libbionic
+ run += make_no_auxtrace
+ run += make_no_libbpf
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index e2843ca2edd92ea5fa1c020ae92b183c496e975e..e9a694350671910d537de599071dbe7fcc18ced4 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -474,13 +474,13 @@ const char *perf_env__arch(struct perf_env *env)
+ 
+ const char *perf_env__arch_strerrno(struct perf_env *env __maybe_unused, int err __maybe_unused)
+ {
+-#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
++#if defined(HAVE_LIBTRACEEVENT)
+ 	if (env->arch_strerrno == NULL)
+ 		env->arch_strerrno = arch_syscalls__strerrno_function(perf_env__arch(env));
+ 
+ 	return env->arch_strerrno ? env->arch_strerrno(err) : "no arch specific strerrno function";
+ #else
+-	return "!(HAVE_SYSCALL_TABLE_SUPPORT && HAVE_LIBTRACEEVENT)";
++	return "!HAVE_LIBTRACEEVENT";
+ #endif
+ }
+ 
+diff --git a/tools/perf/util/generate-cmdlist.sh b/tools/perf/util/generate-cmdlist.sh
+index 1b5140e5ce9975fac87b2674dc694f9d4e439a5f..6a73c903d69050df69267a8aeaeeac1ed170efe1 100755
+--- a/tools/perf/util/generate-cmdlist.sh
++++ b/tools/perf/util/generate-cmdlist.sh
+@@ -38,7 +38,7 @@ do
+ done
+ echo "#endif /* HAVE_LIBELF_SUPPORT */"
+ 
+-echo "#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT))"
++echo "#if defined(HAVE_LIBTRACEEVENT)"
+ sed -n -e 's/^perf-\([^ 	]*\)[ 	].* audit*/\1/p' command-list.txt |
+ sort |
+ while read cmd
+@@ -51,7 +51,7 @@ do
+ 	    p
+      }' "Documentation/perf-$cmd.txt"
+ done
+-echo "#endif /* HAVE_LIBTRACEEVENT && (HAVE_LIBAUDIT_SUPPORT || HAVE_SYSCALL_TABLE_SUPPORT) */"
++echo "#endif /* HAVE_LIBTRACEEVENT */"
+ 
+ echo "#ifdef HAVE_LIBTRACEEVENT"
+ sed -n -e 's/^perf-\([^ 	]*\)[ 	].* traceevent.*/\1/p' command-list.txt |
 diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 8869fed1a58946c590484816354d8c74aff52ee3..210f61b0a7a264a427ebb602185d3a9da2f426f4 100644
+index 210f61b0a7a264a427ebb602185d3a9da2f426f4..928aca4cd6e9f2f26c5c4fd825b4538c064a4cc3 100644
 --- a/tools/perf/util/syscalltbl.c
 +++ b/tools/perf/util/syscalltbl.c
-@@ -14,11 +14,7 @@
+@@ -10,20 +10,12 @@
+ #include <linux/compiler.h>
+ #include <linux/zalloc.h>
+ 
+-#ifdef HAVE_SYSCALL_TABLE_SUPPORT
  #include <string.h>
  #include "string2.h"
  
--#if defined(__s390x__)
--#include <asm/syscalls_64.c>
--const int syscalltbl_native_max_id = SYSCALLTBL_S390_64_MAX_ID;
--static const char *const *syscalltbl_native = syscalltbl_s390_64;
--#elif defined(GENERIC_SYSCALL_TABLE)
-+#if defined(GENERIC_SYSCALL_TABLE)
+-#if defined(GENERIC_SYSCALL_TABLE)
  #include <syscall_table.h>
  const int syscalltbl_native_max_id = SYSCALLTBL_MAX_ID;
  static const char *const *syscalltbl_native = syscalltbl;
+-#else
+-const int syscalltbl_native_max_id = 0;
+-static const char *const syscalltbl_native[] = {
+-	[0] = "unknown",
+-};
+-#endif
+ 
+ struct syscall {
+ 	int id;
+@@ -131,47 +123,3 @@ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_g
+ 	*idx = -1;
+ 	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+ }
+-
+-#else /* HAVE_SYSCALL_TABLE_SUPPORT */
+-
+-#include <libaudit.h>
+-
+-struct syscalltbl *syscalltbl__new(void)
+-{
+-	struct syscalltbl *tbl = zalloc(sizeof(*tbl));
+-	if (tbl)
+-		tbl->audit_machine = audit_detect_machine();
+-	return tbl;
+-}
+-
+-void syscalltbl__delete(struct syscalltbl *tbl)
+-{
+-	free(tbl);
+-}
+-
+-const char *syscalltbl__name(const struct syscalltbl *tbl, int id)
+-{
+-	return audit_syscall_to_name(id, tbl->audit_machine);
+-}
+-
+-int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+-{
+-	return audit_name_to_syscall(name, tbl->audit_machine);
+-}
+-
+-int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx)
+-{
+-	return idx;
+-}
+-
+-int syscalltbl__strglobmatch_next(struct syscalltbl *tbl __maybe_unused,
+-				  const char *syscall_glob __maybe_unused, int *idx __maybe_unused)
+-{
+-	return -1;
+-}
+-
+-int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_glob, int *idx)
+-{
+-	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+-}
+-#endif /* HAVE_SYSCALL_TABLE_SUPPORT */
 
 -- 
 2.34.1
