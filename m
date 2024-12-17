@@ -1,85 +1,104 @@
-Return-Path: <linux-kernel+bounces-448688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89679F4451
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0547B9F444E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 07:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 077F11881872
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597201890192
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 06:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F1175D47;
-	Tue, 17 Dec 2024 06:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Sm0p4/Od"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB755143C63;
-	Tue, 17 Dec 2024 06:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A4A17277F;
+	Tue, 17 Dec 2024 06:41:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FA2143C63
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 06:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734417734; cv=none; b=jWVeUn1xEzO9y6+6VHvjju18uf9LDnnjVXutCrukOzxBedJ0wyHgB2logoz4bzYIObK+m25yNBLALkocNoKaaKCkur47iH5edwWsD7IbWU1FVIQQXUdlxIk6wWRbcqSv9vRpL7+dVzRjdx6pu4hzrucoxFKb8wqNNsPzho+YKFI=
+	t=1734417719; cv=none; b=dpFYLd7djEQmScl/u/NUj5Hw+uILwPP5QEAAzzIAzp6G1VfhiOt3OSDFLnlbXeZzhMgz7x+hWBdcFS4jireUSQB/3C4AIWTzNNVgr1Lu0bGnt/XpCFff30lK4EPhkXQk/Sz74hBrWcmcR14EmJewaeM3dpRVl4+f4psFKngT0So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734417734; c=relaxed/simple;
-	bh=7i3IQmkYE8FgvIPW4oGiFmwez9Z8UO2Lh0oJ8pXMwTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X8TXiUDKFv1CGmbgaPvPeM6lBPg8V24/RCmqN+AW14GZBipuaNVGJAiCPjMHlCPrwfo45pJnipQprvXYvtAZy+VsYv5ZL5j2ddTbA+owUNEelwbIBo8J31u32ib/dDXnQ3aWCZ0tAhkQsv6AtBsDhMP2m37bf/7ECosXotgmS+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Sm0p4/Od; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA23DC4CED3;
-	Tue, 17 Dec 2024 06:42:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734417733;
-	bh=7i3IQmkYE8FgvIPW4oGiFmwez9Z8UO2Lh0oJ8pXMwTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sm0p4/OdlNdwfbrjzMyVubeGgw57G/F8lLPOOThm4LPvZyW0LqYZ2SAET92qeilzg
-	 DUoi3pBmRJqVBmfGXohsI6mSlJtgXmitEte2JqVEtZsyY/mDT4fNyYbBUpBQl0b09R
-	 Lnb0WsmeQaRbTguaDLDgeIMYFo7XGUamjzqNjCBI=
-Date: Tue, 17 Dec 2024 07:41:32 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: stable@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-	hui.wang@canonical.com, Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Lech Perczak <lech.perczak@camlingroup.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] serial: sc16is7xx: add missing support for rs485
- devicetree properties
-Message-ID: <2024121709-fool-keep-c408@gregkh>
-References: <20241216191818.1553557-1-hugo@hugovil.com>
- <20241216191818.1553557-2-hugo@hugovil.com>
+	s=arc-20240116; t=1734417719; c=relaxed/simple;
+	bh=sj1X3z302B3dUwrzqRaXvIySoO0xcDOiC91wPzq8SY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c8y0UbYvCtlkyDyvQcPziALtlxh+ZBbnlD5lo3+WWSm+x2mv0iRhujG6Wm5ZyjVLTFVdisVxHDr1Dpi5XCYRasJGF23j459PrusbNWaWppZDFVhOoPNvOndlhaSFde9+N9ps4PrZ68BcU2ydhOwpgE69JQ+vJdgmRZc8df6N2z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97BD31007;
+	Mon, 16 Dec 2024 22:42:23 -0800 (PST)
+Received: from [10.162.40.67] (K4MQJ0H1H2.blr.arm.com [10.162.40.67])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF5B53F528;
+	Mon, 16 Dec 2024 22:41:45 -0800 (PST)
+Message-ID: <82c8712b-b7c3-4b58-8b29-dbc436d885be@arm.com>
+Date: Tue, 17 Dec 2024 12:11:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241216191818.1553557-2-hugo@hugovil.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 05/12] khugepaged: Generalize
+ __collapse_huge_page_isolate()
+To: Matthew Wilcox <willy@infradead.org>, g@casper.infradead.org
+Cc: akpm@linux-foundation.org, david@redhat.com,
+ kirill.shutemov@linux.intel.com, ryan.roberts@arm.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ jack@suse.cz, srivatsa@csail.mit.edu, haowenchao22@gmail.com,
+ hughd@google.com, aneesh.kumar@kernel.org, yang@os.amperecomputing.com,
+ peterx@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, jglisse@google.com, surenb@google.com,
+ vishal.moola@gmail.com, zokeefe@google.com, zhengqi.arch@bytedance.com,
+ jhubbard@nvidia.com, 21cnbao@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241216165105.56185-1-dev.jain@arm.com>
+ <20241216165105.56185-6-dev.jain@arm.com>
+ <Z2D-5y65onX_qOLi@casper.infradead.org>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <Z2D-5y65onX_qOLi@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 16, 2024 at 02:18:15PM -0500, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> 
-> Retrieve rs485 devicetree properties on registration of sc16is7xx ports in
-> case they are attached to an rs485 transceiver.
-> 
-> Reworked to fix conflicts when backporting to linux-5.15.y.
-> 
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Lech Perczak <lech.perczak@camlingroup.com>
-> Tested-by: Lech Perczak <lech.perczak@camlingroup.com>
-> Link: https://lore.kernel.org/r/20230807214556.540627-7-hugo@hugovil.com
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I do not see any commit ids on this series matching up with what is in
-Linus's tree.  Please fix up and resend the series.
+On 17/12/24 10:02 am, Matthew Wilcox wrote:
+> On Mon, Dec 16, 2024 at 10:20:58PM +0530, Dev Jain wrote:
+>>   {
+>> -	struct page *page = NULL;
+>> -	struct folio *folio = NULL;
+>> -	pte_t *_pte;
+>> +	unsigned int max_ptes_shared = khugepaged_max_ptes_shared >> (HPAGE_PMD_ORDER - order);
+>> +	unsigned int max_ptes_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - order);
+>>   	int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
+>> +	struct folio *folio = NULL;
+>> +	struct page *page = NULL;
+> why are you moving variables around unnecessarily?
 
-thanks,
+In a previous work, I moved code around and David noted to arrange the declarations
+in reverse Xmas tree order. I guess (?) that was not spoiling git history, so if
+this feels like that, I will revert.
 
-greg k-h
+>
+>>   	bool writable = false;
+>> +	pte_t *_pte;
+>>   
+>> -	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
+>> +
+>> +	for (_pte = pte; _pte < pte + (1UL << order);
+> spurious blank line
+
+My bad
+
+>
+>
+> also you might first want to finish off the page->folio conversion in
+> this function first; we have a vm_normal_folio() now.
+
+I did not add any code before we derive the folio...I'm sorry, I don't get what you mean...
+
 
