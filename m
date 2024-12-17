@@ -1,137 +1,87 @@
-Return-Path: <linux-kernel+bounces-448439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0379F401D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:40:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 148689F4020
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 02:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE0B169C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:40:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581BB169E3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4030745BEC;
-	Tue, 17 Dec 2024 01:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390CF79CD;
+	Tue, 17 Dec 2024 01:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="X8UoPFqV"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvtYlZ6F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EA279CD;
-	Tue, 17 Dec 2024 01:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAD642AA5;
+	Tue, 17 Dec 2024 01:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734399647; cv=none; b=BA/QcPhLQK5BfWQ7jNguNxT84T4pmoIEHWRT//L/8gmca964Um6EEgvxHUirSJQEjNLW0BK5qBvwyMuEC1ajvNfuMGwqZ4JVWRcKJ3W6cG0aYuswpBMwyneqLkhS3Vm8DMxEOgBwUWVgXFNJVxExOnmWV7mfiDgv7B01G30hWJM=
+	t=1734399674; cv=none; b=nLx6Z6bV3J/BBHg/lV7E4PCGEIno2+H8m8abV3q1gDMbkxGV9VBj/ZffT862Zb7GyP2oa7DeTT1Yl/LIxFg6A2y6wdNTqT3/f5UJIWRzWXPg9Edo6PTIdlo/M6f91tjs+vS+efFrTsewEDrG62yHtFUVU7V0XJcfxMdgxeOn6IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734399647; c=relaxed/simple;
-	bh=/vyZwwxwTAh84I9YysE3Wx2AoCfBQVkucYWVEhG38K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ht9XDkaJnxDLO/+AOanNTnb33NZJD/fDfesxWzigHxKWmR8stazNdUFduxxhDun3RK2FeJMfsDt8D2QnSOPY3YCeCbIxC2r+GcjSqgzbtNnC6zHCI0WF9Hqv/AaC0pQVC1fAlQC4yy3EH2cIp/ZV0buZTDNYf3AIe53G3D6Rukg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=X8UoPFqV; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734399636; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kp5bgamgQnxWfuok8ilXwYLyCWVqZ0QAZHqUfBvdgPA=;
-	b=X8UoPFqVcK5Zx6QPBWAfokgOKh+Bcn1XLS2hjg4I3s8UIIWcJZP689gwh1J7wvYINhLC20JgH3j8YP5Oa+Q8vV9mBpJ8okGtahaLlcSXU+k0qn24bIU1c5WJQRkQDZlP/ykuJcc9BVZIterdWwA+rJcAQ4ZyG69IngzEtLuzL2w=
-Received: from 30.246.161.240(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLgi-44_1734399632 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 17 Dec 2024 09:40:34 +0800
-Message-ID: <29d80fff-f33f-4470-a345-3f8f1a46f1af@linux.alibaba.com>
-Date: Tue, 17 Dec 2024 09:40:31 +0800
+	s=arc-20240116; t=1734399674; c=relaxed/simple;
+	bh=Yi5zbiIgkETA3XJDjNczB+71CpdRuklQaY7FOSxagIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l7MnLaZwVbvgrS1/5LPxxPad7NWU9IIaQuTg7OR291UAJdJM4vhu+XnuU0ndpAo0f7ok7qLJyUGk17X9ueIx1rRe5q/cvW6F6VQWUmRbK6tz6hfQvf8HHQzEODKaSiE48pvyIiImacnlobisBuHfqpLXYeXAV3BUhsP963vRe+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvtYlZ6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D2FC4CED0;
+	Tue, 17 Dec 2024 01:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734399672;
+	bh=Yi5zbiIgkETA3XJDjNczB+71CpdRuklQaY7FOSxagIc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fvtYlZ6FZFWFWuMVK8ijDSxnXwZqx6RPgYpMYKIlFtIG7u6ds3fbhPvYiFUobXZFP
+	 uljedpsiGONDh3FbqcR1jBW+aQRGsyO3MDDBdLxHrZ5wbRxnz58iKPvJIUtDA3O63q
+	 fJpgzT4rjINF4XRvaabbUGZfJF7g9Yb0hHgRAges6W0OD+NDF+2JiZ5qdCiuUIe5kW
+	 TEzpuUHoYcDwLy9FlydivNdRUdhtWukHaSipoKVNtn7ubHOiqa/gWWOuqH91t/V7Jo
+	 +Nxn+2dnMlgn1nwZ37TakKiDdAYnSVY/1xKRD0+GKCgl9BC5nvoI80ylZHhfFPDWxr
+	 xh3iCGSCGa1Pw==
+Date: Mon, 16 Dec 2024 17:41:11 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: Carlos Llamas <cmllamas@google.com>, dualli@google.com, corbet@lwn.net,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ donald.hunter@gmail.com, gregkh@linuxfoundation.org, arve@android.com,
+ tkjos@android.com, maco@android.com, joel@joelfernandes.org,
+ brauner@kernel.org, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org,
+ bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com,
+ smoreland@google.com, kernel-team@android.com
+Subject: Re: [PATCH net-next v10 2/2] binder: report txn errors via generic
+ netlink
+Message-ID: <20241216174111.3fdce872@kernel.org>
+In-Reply-To: <CANBPYPhZ-_5=VMRoBxbfVb+AFb_qu49QH_hKOiSjX93E1GQA8A@mail.gmail.com>
+References: <20241212224114.888373-1-dualli@chromium.org>
+	<20241212224114.888373-3-dualli@chromium.org>
+	<Z2BtgqkPUZxE8B83@google.com>
+	<CANBPYPhZ-_5=VMRoBxbfVb+AFb_qu49QH_hKOiSjX93E1GQA8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-To: jane.chu@oracle.com, yazen.ghannam@amd.com, mark.rutland@arm.com,
- catalin.marinas@arm.com, mingo@redhat.com, robin.murphy@arm.com,
- Jonathan.Cameron@Huawei.com, bp@alien8.de, rafael@kernel.org,
- linux-arm-kernel@lists.infradead.org, wangkefeng.wang@huawei.com,
- tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
- linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
- tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
- jarkko@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20241202030527.20586-1-xueshuai@linux.alibaba.com>
- <20241202030527.20586-2-xueshuai@linux.alibaba.com>
- <2fb8b1e5-d606-47be-a79e-a4e37a3b8f7f@oracle.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <2fb8b1e5-d606-47be-a79e-a4e37a3b8f7f@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2024/12/17 07:37, jane.chu@oracle.com 写道:
+On Mon, 16 Dec 2024 10:58:10 -0800 Li Li wrote:
+> > not: There are several places where you have "netlink_nl" which seems
+> > kind of redundant to me. wdyt? IMO you should drop the "nl" in all of
+> > these cases.
+> >  
 > 
-> On 12/1/2024 7:05 PM, Shuai Xue wrote:
->> Synchronous error was detected as a result of user-space process accessing
->> a 2-bit uncorrected error. The CPU will take a synchronous error exception
->> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
->> memory_failure() work which poisons the related page, unmaps the page, and
->> then sends a SIGBUS to the process, so that a system wide panic can be
->> avoided.
->>
->> However, no memory_failure() work will be queued when abnormal synchronous
->> errors occur. These errors can include situations such as invalid PA,
->> unexpected severity, no memory failure config support, invalid GUID
->> section, etc. In such case, the user-space process will trigger SEA again.
->> This loop can potentially exceed the platform firmware threshold or even
->> trigger a kernel hard lockup, leading to a system reboot.
->>
->> Fix it by performing a force kill if no memory_failure() work is queued
->> for synchronous errors.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
->> ---
->>   drivers/acpi/apei/ghes.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index a2491905f165..106486bdfefc 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -801,6 +801,17 @@ static bool ghes_do_proc(struct ghes *ghes,
->>           }
->>       }
->> +    /*
->> +     * If no memory failure work is queued for abnormal synchronous
->> +     * errors, do a force kill.
->> +     */
->> +    if (sync && !queued) {
->> +        dev_err(ghes->dev,
->> +            HW_ERR GHES_PFX "%s:%d: synchronous unrecoverable error (SIGBUS)\n",
->> +            current->comm, task_pid_nr(current));
->> +        force_sig(SIGBUS);
->> +    }
->> +
->>       return queued;
->>   }
-> 
-> Looks good.
-> 
-> Reviewed-by: Jane Chu <jane.chu@oracle.com>
-> 
-> -jane
+> These are automatically generated from the yaml file. So let's just
+> keep them as is.
+> But it's a good suggestion to the owner of yaml parser.
 
-Thanks.
+I think the unusual naming comes from fact that you call your netlink
+family binder_netlink. It's sort of like adding the word sysfs to the
+name of a sysfs file. I mean the user visible name, not code
+references...
 
-Best Regards,
-Shuai
+s/binder_netlink/binder/ will clean this up..
 
