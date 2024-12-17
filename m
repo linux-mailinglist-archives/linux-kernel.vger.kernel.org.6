@@ -1,245 +1,135 @@
-Return-Path: <linux-kernel+bounces-448382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861DB9F3F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:49:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20489F3F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 01:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B873616593D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8CF162CA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 00:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F81DC999;
-	Tue, 17 Dec 2024 00:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D7B1EF1D;
+	Tue, 17 Dec 2024 00:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jmNUMl/c"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ep5AWyDv"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79C414F9F9;
-	Tue, 17 Dec 2024 00:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015D618E1F;
+	Tue, 17 Dec 2024 00:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396228; cv=none; b=bs7tOPNFA7mVu4AbQFScu62rGdobZjq/ThJ89uOeyFB/Ikc5ms1bMN4UeOhBALkkSrhkJuUg51jYfa5iXvhpJw3iyHwHAq4pkLZs4fr3/tAmc9PodcI23e9kiwRrTy9RqYeY97BB6c99aIjp/8BrE5VXdX7oMphIj/cdS1MSyKQ=
+	t=1734396264; cv=none; b=MgSNe2hoHAAyrXP3x4Wy3iBILoSXH6s5SAU1+Iu3OkFTOAFtdAccckNdaSIE8zmTG3bajI2bXSUxs9JarKOU/A3UnY8n9GmpTroyhKwQd9eKmPqa53k+UWFGL3MC3R7JCiH9XJpkyZF6UMBa+3mYOxn9chyQtC59P6J9LLI06VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734396228; c=relaxed/simple;
-	bh=nuOK406UqSmuA7neCol5YBQYAenxAYIT3kSn4RtuQPw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=dyJ7T0KphwzfpembLA21EnB1TscaQmr5ysRYDFvrqSHXz4HnwCDR2xyHrmhNe3jFu/xv/SCrxp9dg4nLjsG5Rz5M48xf+zF8HDiriTh+mTu//C/sDJjpIwnsrNR9Zi2pt8p5+02RYrehO6kuipJxDdXuKcbG5p1Z8Ap7OQ1kpDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jmNUMl/c; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BGIbZtT009488;
-	Tue, 17 Dec 2024 00:43:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lxb8dbPxQHeKki9hVRup9P/8NO0z4B3U140kKlnxuMw=; b=jmNUMl/cs89Mg5fx
-	2n0Ai2H+96pTSbaHtHa3ItS4iDHBtb5NfEDBaOgxCS7ryq6MHZpQvo3mDyCK2cwi
-	DVnfLdc543gjFuky0cDdhe7bZCPCLkOlpnFR9R3ug/RXqyBZV3YlM7worJOHOFef
-	VSupsUXVjy9tUaSUT6fzaoULUICvHZK6FBMADHpjnn4CCWPnSNHHPMBHgIyga3Ot
-	ZWZCX8+iOHpP08MKmbtHKkgR98BD1wuy/YXges/kcVZLnPV32Pll1zHpncTfTBNk
-	3si/O3gpfNs9PKsxX09OV+NuXROQlQTa0pMo1eit0NthX8jUkvh5rTaSZ0X3gfeu
-	Zwmruw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43jsn9gphb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 00:43:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BH0hWI6030683
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 00:43:32 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 16 Dec 2024 16:43:31 -0800
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Mon, 16 Dec 2024 16:43:35 -0800
-Subject: [PATCH v4 24/25] drm/msm/dpu: Reorder encoder kickoff for CWB
+	s=arc-20240116; t=1734396264; c=relaxed/simple;
+	bh=oDYQRvF0p5X6K4YQ2N75tSTFUUvFr3NJNB1u1qSZVmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ItkTxcW9qV/H9Cl3KuUVak3WFcevbkyKfMgal87RmP3lcUNsqHBT8pxGXU4ICKowMuJ21cTEUF34l9ARIh0zZvEjcHCkUpYjw1s5kUCr24X+feEpynp0bYco9twYDZ+LFHv7xB8leIIhmbEFY3MebOIprKsdpC1IG7wYSKEFXMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ep5AWyDv; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1734396224; x=1735001024; i=w_armin@gmx.de;
+	bh=oDYQRvF0p5X6K4YQ2N75tSTFUUvFr3NJNB1u1qSZVmk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ep5AWyDvHXUmXIzTxYmiGHvC2Pm9hHjTLouGmpMI+1ieLPMDkB1J1jSXgl+mNRQb
+	 YP2L/IV0rIiDJGiAWpV2FjccGk+BWI8PJ7UhM4ioPuFXmyVYOES3GQXdewx3OE1Xp
+	 TWKWKMPJNljfKSXJS36NBkNvY8BW73GxSBUsTchSwafv12jEfdcv9RjSmKzyVEfYD
+	 RjvtsnE5xl7au86UUPvSkVm0rz1IgzVw3C1nTzVkNKK+zjJSz7x1oOuMpfKfiVylR
+	 HU3e1V1HbnWMae+rYrbDZWTbY+TN0GhgpX65EqpB8LjpXKhgYjggdQFkP2hpOSZW4
+	 +xW8PZWDYg3H9zU8Xg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtOGa-1tiacz3j4w-012YF8; Tue, 17
+ Dec 2024 01:43:44 +0100
+Message-ID: <07920e80-831e-4e2c-932e-9a5a8fe2bd3f@gmx.de>
+Date: Tue, 17 Dec 2024 01:43:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: i8042 - Add support for platform filter contexts
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: o2g.org.ru@gmail.com, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ corentin.chary@gmail.com, luke@ljones.dev, mjg59@srcf.ucam.org,
+ pali@kernel.org, eric.piel@tremplin-utc.net, jlee@suse.com,
+ kenneth.t.chan@gmail.com, coproscefalo@gmail.com,
+ linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org, josh@joshuagrisham.com
+References: <20241215233628.4500-1-W_Armin@gmx.de>
+ <Z2BhjwkkysKsmhVT@google.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <Z2BhjwkkysKsmhVT@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241216-concurrent-wb-v4-24-fe220297a7f0@quicinc.com>
-References: <20241216-concurrent-wb-v4-0-fe220297a7f0@quicinc.com>
-In-Reply-To: <20241216-concurrent-wb-v4-0-fe220297a7f0@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <quic_abhinavk@quicinc.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Simona Vetter <simona@ffwll.ch>,
-        Simona Vetter <simona.vetter@ffwll.ch>
-CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
-        =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734396205; l=4353;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=nuOK406UqSmuA7neCol5YBQYAenxAYIT3kSn4RtuQPw=;
- b=//88AJcwSqrJ0fldz/x+ecXaxh1mty/3UU7Ieg9e0j99S4L14meA6zdC1dBk7WSBB+MtX6eKs
- WbnBIYXwYs5C3llqm3uf5nHgwKvd7/c3MA8hqR4Se2W0reD8ir8QaY3
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OeQ9oMEz7poGq6q6QMT5Fji2dGAsjfZK
-X-Proofpoint-ORIG-GUID: OeQ9oMEz7poGq6q6QMT5Fji2dGAsjfZK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- suspectscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170004
+X-Provags-ID: V03:K1:XtpKKqthjH2lGPuxWC2Bft842s9ZNeQ2fYfZFWGlcuDLmNWXVti
+ cZ4mUDU+mkBufTHWqMavSbmNoypnF3D1pFDYZaps4nlnSA2M1/2ffFx3cCvqCcyVTG8gM+C
+ mtqbCBhsw/hB13JBjN0DZZDGRgZeSvV1SYC/35fmEUjvn0TeXP+MjsRghucOg8L06ecmZEY
+ bM/9mOvk6cvSrChg/1G+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:93LTMCq2kAA=;AazR4PydoDDSwTxVw/lXRsWPcqn
+ 2MvRvNMdt7abAPDbqqKwv8tTCudW89qdtkBdVxwZbk/eAM1tumfLGN79BJhI6hpOf75JeX8n1
+ uQK7IUOfAext42/Ojgb/Zy+Jbn2hUP/XXH67JokaukIB4b/meKARF/LAdisQ2qA4lI9RrJhVK
+ 9EQMqoNLcc52sbLH02tZL1SgMSxqcm1BfM3nneUCOXvWFhvZNuA7vqPNVmuDxGAUtrF4eHvvr
+ PFUY9w6hCFU75cMOGUOG0DawT6xRXZHg/3Dvx+7YovE41NVibMm5GOPIoZLkJvDMpOQuNXGLQ
+ Nrn1F1Z9zjpUulNZDdUW1HYKKtjdK6dT9iAs9Hqw3lyp3VZOyyscGOlu5X7LT9l31yDDRqZ84
+ awNWPnzcQplA2EoRue/T63WLmaBomVQ6XpoOSeShayEWdywwWlaviaFxJcj6oM/H37PFJaa/G
+ SND2Rs98INH68e2eIG/CIFavFIWuybgkaJVL6fpPuiUCOvIqdT0SauVSkT8lLDQGhTnNt8FFR
+ vPzhAy+0sxL8EKdO1+Rarb2LY38/j7MHizTnCDUacJce3Yw43OPrDt46hiXBVWG6pVCUc6fMh
+ PYGXUN9zOGXGAhP9n1mEI4Gc7A9JjmQ2JbgRYVCb/I6Ojdsj9C8KS15R4AOAfA73hhlORqf4Z
+ bWgziH+lVodygbpbLKslA4Lu8b3N81vhO5NQ3rJI8O6RPeD1qMnMXr3V1A1XdG/jHTHhvlCGG
+ ObepH0ogAhPSresh2nXufhWCM9XSAgHE6SjAWuLNd57qDzv9XKuAGg34RS/obGnY6Ad/TlvO7
+ Ok0jBr7xCouj2NYLsYJTu96kiviPlsBPrT6Eek1cynMt9nB4rSAZKl1LkFjnHoDCsipEkaEbI
+ mecMBayoXXczUdxNO1P/YKcOF8upHScRsJ5mtt8EjpHrxtbyl5sHwTWOLvwgPYT5sYY9LHXZH
+ +f6N7UmpDR4JNfZy5oYDtzI6ALdDSGJXrv9Mrej4mqzkOQyrM3NgF3+SP5cpj1DSkqZFrBOSN
+ 2BF0aTfkYGk8QCCswdtrxv0mpkn6MAEQ6qneJnvL38S7ZTwxZFmUnel0IiMMGk0yhWvfh0u1G
+ 5e57X6736EDhKoOyAjgP1aXHWxZ0Cr
 
-Add a helper that will handle the correct order of the encoder kickoffs
-for concurrent writeback.
+Am 16.12.24 um 18:21 schrieb Dmitry Torokhov:
 
-For concurrent writeback, the realtime encoder must always kickoff last
-as it will call the trigger flush and start.
+> Hi Armin,
+>
+> On Mon, Dec 16, 2024 at 12:36:28AM +0100, Armin Wolf wrote:
+>> Currently the platform filter cannot access any driver-specific state
+>> which forces drivers installing a i8042 filter to have at least some
+>> kind of global pointer for their filter.
+>>
+>> This however might cause issues should such a driver probe multiple
+>> devices. Fix this by allowing callers of i8042_install_filter() to
+>> submit a context pointer which is then passed to the i8042 filter.
+> Right now i8042 supports only one instance of a filter, so the driver
+> probing several devices will have to sort out the ownership of the
+> filter anyways.
+>
+> Unless you plan on supporting multiple filters I do not see the need of
+> storing the context in i8042. And if you decide to add support for
+> multiple filters I would need to better understand the use case.
+>
+> Thanks.
+>
+I am well aware that the i8042 driver currently supports only a single platform filter.
 
-This avoids the following scenario where the writeback encoder
-increments the pending kickoff count after the WB_DONE interrupt is
-fired:
+The reason for introducing a context pointer is that otherwise drivers registering a i8042 filter
+would need to provide such a global pointer for their filter themself, together with the necessary
+locking since those driver can (theoretically) be instantiated multiple times.
 
-If the realtime encoder is kicked off first, the encoder kickoff will
-flush/start the encoder and increment the pending kickoff count. The
-WB_DONE interrupt then fires (before the writeback encoder is kicked
-off). When the writeback encoder enters its kickoff, it will skip the
-flush/start (due to CWB being enabled) and hit a frame done timeout
-as the frame was kicked off (and the WB_DONE interrupt fired) without
-the pending kickoff count being incremented.
+With this patch the i8042 driver takes care of that so those driver can finally get rid of global
+data structures which will break as soon as the driver is instantiated multiple times.
 
-In addition, the writeback timer should only start after the realtime
-encoder is kicked off to ensure that we don't get timeouts when the
-system has a heavy load (ex. when debug logs are enabled)
+Additionally this new API will allow us to add support for multiple handlers later should the need
+arise.
 
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 74 ++++++++++++++++++++++++++------
- 1 file changed, 60 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 05b5f494305c6b44a7093928a3909e3840a94b97..ddf91e727e3d54568b55c1a3bc5ffdb2eaac7233 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -946,6 +946,45 @@ static int _dpu_crtc_wait_for_frame_done(struct drm_crtc *crtc)
- 	return rc;
- }
- 
-+static int dpu_crtc_kickoff_clone_mode(struct drm_crtc *crtc)
-+{
-+	struct drm_encoder *encoder;
-+	struct drm_encoder *rt_encoder = NULL, *wb_encoder;
-+	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
-+
-+	/* Find encoder for real time display */
-+	drm_for_each_encoder_mask(encoder, crtc->dev,
-+				  crtc->state->encoder_mask) {
-+		if (encoder->encoder_type == DRM_MODE_ENCODER_VIRTUAL)
-+			wb_encoder = encoder;
-+		else
-+			rt_encoder = encoder;
-+	}
-+
-+	if (!rt_encoder || !wb_encoder) {
-+		DRM_DEBUG_ATOMIC("real time or wb encoder not found\n");
-+		return -EINVAL;
-+	}
-+
-+	dpu_encoder_prepare_for_kickoff(wb_encoder);
-+	dpu_encoder_prepare_for_kickoff(rt_encoder);
-+
-+	dpu_vbif_clear_errors(dpu_kms);
-+
-+	/*
-+	 * Kickoff real time encoder last as it's the encoder that
-+	 * will do the flush
-+	 */
-+	dpu_encoder_kickoff(wb_encoder);
-+	dpu_encoder_kickoff(rt_encoder);
-+
-+	/* Don't start frame done timers until the kickoffs have finished */
-+	dpu_encoder_start_frame_done_timer(wb_encoder);
-+	dpu_encoder_start_frame_done_timer(rt_encoder);
-+
-+	return 0;
-+}
-+
- /**
-  * dpu_crtc_commit_kickoff - trigger kickoff of the commit for this crtc
-  * @crtc: Pointer to drm crtc object
-@@ -974,13 +1013,27 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 			goto end;
- 		}
- 	}
--	/*
--	 * Encoder will flush/start now, unless it has a tx pending. If so, it
--	 * may delay and flush at an irq event (e.g. ppdone)
--	 */
--	drm_for_each_encoder_mask(encoder, crtc->dev,
--				  crtc->state->encoder_mask)
--		dpu_encoder_prepare_for_kickoff(encoder);
-+
-+	if (drm_crtc_in_clone_mode(crtc->state)) {
-+		if (dpu_crtc_kickoff_clone_mode(crtc))
-+			goto end;
-+	} else {
-+		/*
-+		 * Encoder will flush/start now, unless it has a tx pending.
-+		 * If so, it may delay and flush at an irq event (e.g. ppdone)
-+		 */
-+		drm_for_each_encoder_mask(encoder, crtc->dev,
-+				crtc->state->encoder_mask)
-+			dpu_encoder_prepare_for_kickoff(encoder);
-+
-+		dpu_vbif_clear_errors(dpu_kms);
-+
-+		drm_for_each_encoder_mask(encoder, crtc->dev,
-+				crtc->state->encoder_mask) {
-+			dpu_encoder_kickoff(encoder);
-+			dpu_encoder_start_frame_done_timer(encoder);
-+		}
-+	}
- 
- 	if (atomic_inc_return(&dpu_crtc->frame_pending) == 1) {
- 		/* acquire bandwidth and other resources */
-@@ -990,13 +1043,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 
- 	dpu_crtc->play_count++;
- 
--	dpu_vbif_clear_errors(dpu_kms);
--
--	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask) {
--		dpu_encoder_kickoff(encoder);
--		dpu_encoder_start_frame_done_timer(encoder);
--	}
--
- 	reinit_completion(&dpu_crtc->frame_done_comp);
- 
- end:
-
--- 
-2.34.1
+Thanks,
+Armin Wolf
 
 
