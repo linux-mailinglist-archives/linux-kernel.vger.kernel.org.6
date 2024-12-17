@@ -1,224 +1,134 @@
-Return-Path: <linux-kernel+bounces-449358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FAC9F4DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:29:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91DB9F4DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF221629B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90656188BA48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9921F4E49;
-	Tue, 17 Dec 2024 14:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xIS/VIZj"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013047.outbound.protection.outlook.com [52.101.67.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343991F5415;
+	Tue, 17 Dec 2024 14:29:03 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBAA27470;
-	Tue, 17 Dec 2024 14:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445750; cv=fail; b=CZFV7DcAA8e9y2JS1tqj/peieuC8pcJ61nL0wbZbPkgFYLO8YSHRul1bb14+MJycTygem6NgYM7J4EbctNwjfs9nUxTvtf9cdgw107e7V9OhR9HxpfWoqUjPRVShq1oNv+8LyxdC7S47HLe1LmKnEOlgD+LVUMA6bB++I337D/g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445750; c=relaxed/simple;
-	bh=4vHwRm8bqPS/GR8caszhMxIHaGRs6okzqYUJ64AzVHY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RXlRR4TvzqogAFg0lsbkyUAzeEN2kufcbrUG72HhoCNZKgM0Ko7OzvgvjMVGxWRjbTOV32dAhdwxY+o/0GZXHTry8JkUWH9jzHpKFaf6hiwecO/3+9/ugq8YQYnrMGERUX38wg92S1KUFW0k3F0NiuLiOMZPp/Hc8y4e67r9J0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xIS/VIZj; arc=fail smtp.client-ip=52.101.67.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=usQ0c6Yn18noBfHzEQSflHr7ZBhOF353iBD4o+MSFoFai7VNnja3zl0Ht0UUc2M9YkojjZxhX2ex/RyUUOxCUSNq1BFmhUcbuNgoMHVt7qoWcrqhdp1L50fT1a99GFwsUx1KAZVitSz0w1vWN0T0LshJ8TIMvFSYFBz2vW5uBesOwhbeVANhHPKo+vWg2PQSBi3dxkiHprNiveqRvcy5dT6jrWH4tCFmVkQA+kwRU/9/s15S/+f8lzB3FgP2BvPT1updSI+VjJF03bAZnonH+Tq2E9GJLVGcj+Yq+5g4NgVGkDoWLiZwgPvqyFvKpCNobdfwkgnKkKEYrt8NpwPYBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yspKZkJsF7LkF3cvUUAjeLxqLDNwmDgDd1DQf78qBeU=;
- b=lOXRWhLeB+uyzQDJ5XBWB0sXi3rEz2Xzf90PRWX3R9MZu91JPOoWNIK+Vxi9BnefEdg7DuOzv50j6TcOt/LD2KhbijuuAtqSNGDXJpR3gZa7fFTu3cbnOFDuBaLtMVp795OupKtKG0Kw3UP0rWyMsi7AtNZfX45sZqMvNSHumQegdsHrA8tgAY5O0ZVKtD0J7OqJEnADgl4ZMbDKzm6qbWGm4Ile3vZypD2ZuDIpuVd5RE+XwaCfXjS20v68i7hFl59QYhxMJV2z2GQ5XjMw7jpxZssfz+gwQ9vVWIE61J4jqCOmRJMPJ/7pY7YWgMwW+US7Sy5sUGqlP2dp2IFiwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yspKZkJsF7LkF3cvUUAjeLxqLDNwmDgDd1DQf78qBeU=;
- b=xIS/VIZj7PujZeaf3+KLjx2UUKLHlaCAwP54n5+hKxoBgkevdiFIaJu8+QjG87N5H82hcKmTEaQLNpaydDfUR38lDxzzbK1/slRNe7fgJnMB7fweW31nLCfnKw/UuX174cUv5ImGY0vyMnLvy0LaAE+jVhXKKNZi+TBTW9Ttc0pziUBFVLCo7SgjrUzglTZYiTWOryzCe6aK0uRucz1XE1SnQdYSw+3bym+AdO3wbiRp6MSk3TAV0k7IC2lkj3GLdEifYFkASDy54519qha6KczDwQKGvtbQ5o9F6DeyhizoFrDdg2wW6Fpt8aT/GEQtx9rRgj0E1Zh3kZWj25HHAw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS4PR04MB9550.eurprd04.prod.outlook.com (2603:10a6:20b:4f9::17)
- by AM8PR04MB7235.eurprd04.prod.outlook.com (2603:10a6:20b:1d1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
- 2024 14:29:05 +0000
-Received: from AS4PR04MB9550.eurprd04.prod.outlook.com
- ([fe80::e28d:10f8:289:baf7]) by AS4PR04MB9550.eurprd04.prod.outlook.com
- ([fe80::e28d:10f8:289:baf7%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 14:29:05 +0000
-Message-ID: <e52a6aab-7981-4564-b057-fcaad396f45e@oss.nxp.com>
-Date: Tue, 17 Dec 2024 16:28:48 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dmaengine: fsl-edma: select of_dma_xlate based on the
- dmamuxs presence
-To: Frank Li <Frank.li@nxp.com>
-Cc: dmaengine@vger.kernel.org, imx@lists.linux.dev,
- linux-kernel@vger.kernel.org, s32@nxp.com,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241216075819.2066772-1-larisa.grigore@oss.nxp.com>
- <20241216075819.2066772-2-larisa.grigore@oss.nxp.com>
- <Z2BSYwDpo/CTByfZ@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Larisa Ileana Grigore <larisa.grigore@oss.nxp.com>
-In-Reply-To: <Z2BSYwDpo/CTByfZ@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR02CA0205.eurprd02.prod.outlook.com
- (2603:10a6:20b:28f::12) To AS4PR04MB9550.eurprd04.prod.outlook.com
- (2603:10a6:20b:4f9::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504F61FF2;
+	Tue, 17 Dec 2024 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734445742; cv=none; b=TOpIxZIS52xrdibqmqpdJw/4o1sXND6qBiGoSPDQ3Me1Od7JyxfU/d1LiNi5q/cqJd7YIyGV9ajVwMvhA49bwBzdqBwmiHCDJaLB5qjEy6JwK2ZuEccBeTHWZulme15my3qujhCEXFW4a57kQsZPvkS3HympvfiUp1qXh9NOtuE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734445742; c=relaxed/simple;
+	bh=H8atj59mU3BGOUZknvtJG3k4fp+kooCZkwZj8ZpmTMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Os3H35L1TgFxUwM5bsvVE8x8AVhjqwN2qOIryb6WBbu/rsPicbP0y13AmdZ3W8fGCT4UP7cYAPzyBD4Vksav+rbW3PQJnACaLFSbbfsWfhSFFHEqhosv4/sTGeE/e/qI8daBEZLDOn7Gb2EmDmef7LB2ilJ/d3pCq8cVHjqR2HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
+Message-ID: <a69a3500-be17-4899-bdb9-c6a63bf8dc81@lankhorst.se>
+Date: Tue, 17 Dec 2024 15:28:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9550:EE_|AM8PR04MB7235:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9aa2eb8-dcff-419c-a3ef-08dd1ea72397
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bW5wTFNQdVVLZU5lZkp3ZHI0M01XK3dWMFBVMzZMdDQ5YWRockxmdG9vaTJK?=
- =?utf-8?B?bTdpbnZJSHAxWEZkYWk5UTVnemJ3UnFBMnI3eXdMS0lvMWt3MytUN05TVHV3?=
- =?utf-8?B?MWNzNEl3K1E3b0VISG1sZzJhYjFVSEcwbzdXSDlIL3RlSTdPazAyS0FiWXI3?=
- =?utf-8?B?UlBqSTlURnVuT3UxcitZU04wZWZxS1ovZ241VXhoWFU5M1lkWUVHYTJHbVBL?=
- =?utf-8?B?TkYwQmpvVHlXcndmUFpvb2RkZzhseFVaczVuMU5GclVERGhpN3llY2VRQ2hi?=
- =?utf-8?B?RFhDc1JLZHZEK29RdVZnWVl0N3d2VVk2SndwVFNMN1cxYzM2a3Rxclo5VjNV?=
- =?utf-8?B?TjRKUHZqYVlDMUtCTGRtQjJBL0Fka3RNaDJFbVVmdWg4UHhsenJrdEdjdDBY?=
- =?utf-8?B?MVRLTG9BaURMM2lYUklhUTdISGNCR3d2aCtaUC9QdSs3dGZnRm45RnBwVkhI?=
- =?utf-8?B?N29XalNScXFUTnU1a0pGbEFpNXZzeFZ1eHBYYmVBVmpGRk9KbXFuRzkxVllF?=
- =?utf-8?B?OVZ5TTFkNzFDejF5b0RRVndkakpQM1pyU2tFS0VQWXNEMklkSGp1NkNRalFU?=
- =?utf-8?B?Y1NUTjZmS1FyeXB4MXJBSDZkazl1VjhHRWRzSld5bzZEMjhrdUhnSjJRQzF6?=
- =?utf-8?B?QStFWE45U3dNWG10RVNVUFFzOE5mYlp1VkU1bm41eVI1OVpUOEQ0S0dnMDVE?=
- =?utf-8?B?QmR6VDFvQStoY1Q3NXpibFIvSS9XdGJQSEkzVDkyWnVIRnlsSndzTDJ5WFJM?=
- =?utf-8?B?MzRINk5ieldiNnhDS2VOcHcwQ1hlQ1JvbUFYU25XaVlYQ282ZUxjVGg2L1VZ?=
- =?utf-8?B?S0pDNWFFR2pUUEo0UFlwTjRKTEFEcDhXMzRXVTZLODRkamh1MW9zVTJ3aFpF?=
- =?utf-8?B?QW9iRTZxZlMvR21RSTBENXhubW9FSEE0MlZLeTl5TzZ2MkU2Nlh5cENtSkRm?=
- =?utf-8?B?VTdoaktkZUpBTi9MMjdXUVdKUDZLT0FxN1k3YUxqMkE0SlNFZldwWUpZdWR0?=
- =?utf-8?B?Yk4xc2NrN0VFV3JTN2ZpNGEyMHVic0s3YXJuMDM3U2V6d2pHM29wZnFHY1Qy?=
- =?utf-8?B?K3d0bzJ6T3NPQmdhK1RmYTVVKzkrZDFlTXU1aTZCbUhacC9qbnpwZEFDbUJj?=
- =?utf-8?B?RWNBSU5adTZEekJYLzg3Q0Erck8rUEJiSmJMZ2FGWkt0UjkyZ3YwMGNRaklz?=
- =?utf-8?B?TEc2OUVLSERhdkc2UEhnYWpPbVd5VHVUV2hINTFUa2Ywa2ZuUGJ0VW00MmNL?=
- =?utf-8?B?ait3OFFzSTNpVVk0OVJmNWREcE9xajhFWndjMXJlT1BNR0hwVC9VSlhiSmZM?=
- =?utf-8?B?anRCRWxJbHRlNXZ0L2x3cEp3VktLUk1zQWk4Ym1VZSttbjFxcnFQK3Z2N1VX?=
- =?utf-8?B?ZHZCcVBENmFNK3IyZzhybFZLLy8yNksrTUFQTFEyQ08vbk1qNldFMFBuUVV1?=
- =?utf-8?B?T0lXN21IazRsbEl0bVllQ05GUUc3R056SXpvSmlENUt0UjQva2h0TTlJYUVp?=
- =?utf-8?B?cGJMM05udFJDaHA0UUdrUy9CVkxZMmE2ZHRmdFR3alJzc0l4WjdCQ0F5U1dJ?=
- =?utf-8?B?OXlPeWdTOUF1d2ZDYWFFZWIyWm80anlQYmVPZHFhd1h6K0kyQjh6czQ1Q0VL?=
- =?utf-8?B?bnFyVkFGdWhrSmFNSVY3c0tUc1ZDRHhaUThvT3MraTFiTXBwbG9EQWJDZm5T?=
- =?utf-8?B?YkxnYTNESFphNkcxR3p0TDdqUVFoeXRiRlIwUi85MjJURFQ4TFo4ZU1CZVAv?=
- =?utf-8?B?SlJlWWNRbjdFVitZUGVLQ1dTM0NlaGgyTEc4UEVPL2treldZcjdzVHVaWjdO?=
- =?utf-8?B?L3BYNSsrOXFUU1l1eEYva2I5bW1IdDNqMm5jTXZwbkRQd2NMeUFLVEo1TlQ1?=
- =?utf-8?Q?breEvIBl8hUH5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9550.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2luWTV2TG1HWDZCV3FBNTl5cGIyN1NRaU1NUTEwODRGZTlLUzdBMDhoTnlt?=
- =?utf-8?B?OW4zeS9ZelJlck9iS0M0VFZyWXlZSnVUaWdtK3MrWWh2eGpoVkFtazhXcDg5?=
- =?utf-8?B?V1hsa25TYUh2dHFKTG90cCt3Z1lXSCtDKzdLTkhRUzE0elk3M0FSVlVMUTZL?=
- =?utf-8?B?am40dTRTYTBkOTlxV3dKRjNKZXlGRXRTL3VsUEtDQzVVUFRreGprTVdCcVpr?=
- =?utf-8?B?TE9HTUZqVUxYUVRZeTZDTG9IaXJmYUxaYWs2YlVhNGhJT09PUWx6ZVdleXZZ?=
- =?utf-8?B?VkVQZElxQTJXeEpLV3ljV0hvVnlSTXJRQUd1RHl1SlRiZi9FenoyeGZLQS9K?=
- =?utf-8?B?VzE1b3BYdTI5RnNZb3p2YW9Qb002VWxtRVdaWjEzVndCZEZIZzAyM1VybVlB?=
- =?utf-8?B?eHV6L3EyNk9YZjAyNmNxb0R3cDQrbURLTktpdmFwdkxsY2gvbHJLa01uNDBC?=
- =?utf-8?B?MjA2OVFlalpQUjJLZm9pOXpvMFY2dFk5SmtwaWJKYmFJSy9Rb1pON3VvQmM2?=
- =?utf-8?B?RVlyMk8wK0FDSE11eTdjODFjYkxVcWJvNS8zWXloZ2s0TGIyVlZ1T3lYN2JM?=
- =?utf-8?B?ZTgzbTRBN2l2Q2ZLZzkwOGk4U3I0T0JKdUZ3RnNGb1dSTjBnTmFNOE5WVmJ3?=
- =?utf-8?B?dFdBTDRCdStpK2dZR3JaSDM2cndCSHdpbm4zaTVtY3pyLzdhcWY5L0duMjF2?=
- =?utf-8?B?cDNBU1dORUUzSmpLQkRYeWlwOVA5VXpmV0VBSjcyT3hVazhJN3lSZnFKbWl0?=
- =?utf-8?B?MXVidVIrRXg1emVNVWlVcU5aTVlmN0xmNm1lR2ZrTk4rSVJKajV4aXlyUDBH?=
- =?utf-8?B?cDhsTDNqd2lNSElja1IvcHFmSGw0eFBvaW0wbm0xNWZzUmpyTXNSdHgrbGtU?=
- =?utf-8?B?WkZYR244dVNZMzZWT3ZkN0w4SmQ2OHVtdGI5bWRZc2hRcHVONzBvMjY2blI4?=
- =?utf-8?B?WWpBMjZzdFVOZ2ZlR0tkTGJxSGZWakpabGp3UjFReUlwOTNvWEFmRGVwNkZP?=
- =?utf-8?B?WURhcmRKckZqMWViQ244Skw3TFh2S00yUGhSUjF0bkVSaEJSTkUzcHh5TzVB?=
- =?utf-8?B?QzJxNmFmUG9qU2xlbFA4VTNSanF4QmdSa1hKbEg2OTdoTHArVXVUUmJ1YXkx?=
- =?utf-8?B?clNVUUF2SFdxNDRaUzdCTk84U3VSTzB5UXc5QmorOUlqUkxnWVZiVVBoZVNk?=
- =?utf-8?B?SkNzSjAxcVIrVW9QdVZRaHYzdlNZL3IvbFhqT0d2T0JhcU1KUnVESVpPc1hS?=
- =?utf-8?B?RDJDeU5PMWExZjc0RTA2dGZiQjBVTXA3TUlFdSs1L2oyOTI1LzNqZXpmSHJF?=
- =?utf-8?B?MDF0YkVNdURDS1p0VXA4WDEwNkZtZkd1NHo2eU5BM3R2QnRaLzJmampkR2k0?=
- =?utf-8?B?bmNOZFBLTmZGNXpzWFM3TlQvZ3g2UUN4NytiRUZ3SWc1ZmhOdnhLTVJIUml3?=
- =?utf-8?B?WTY4MGQya2wrempmV0ltZ3NqTWF5OTVaK2Q1SWxYbEQxb0pFNUNXMzc4N1I0?=
- =?utf-8?B?aXg1dTZXNURaYjFDSzRXR2dZWmlBTE82eFlLRXVyYzAzWlVUSW1LS2VYZ3dD?=
- =?utf-8?B?UDVIVGdmU2ZmZEIrRHFMZDBlZEE2aUdpSVB3dVVkSjdOejU3T2Z6ZU81V1pk?=
- =?utf-8?B?VTdEWnh6bGVlQ1V3T1RtY2NtcTAxdm9XVDdmY1VPbEgxNnNLaWhDSDBMb3hO?=
- =?utf-8?B?cjlvTFl5SDBndXRKcGZIdzJRdmtkb2E1MDFTUGdEby9QK1lRQk9hVXliT2pl?=
- =?utf-8?B?d2ZLWnpjWkdWNHliN2hOT2JvaXNMQ3JkZ05vbGcyQ0RzMUJ5RFVaZncreE1W?=
- =?utf-8?B?TDF2UmlJQkZ3ZG41bFlrR25wT1IyUWl3ZURHMmY1QVV4OUVoK0hqTStrcWlr?=
- =?utf-8?B?bS9zclFOWmdxdUY4N1VRbStNODVxWkcvdU1yR1BuSnZZbnBKYkV5SWRmTitl?=
- =?utf-8?B?Qkx1TGNmNTF2TVlqUGtiei9pQlljZFVXdHhmNTVMZGhqQXZzTjJaQVhLN2JX?=
- =?utf-8?B?bW5venN5RjJIWDlqSXExdGkxM2JzSVJFcWdwdS96eXBNeGF6Y2V3d2Y2SmFp?=
- =?utf-8?B?Rk8vVGVRVFhZVVhkV3E5MnJwS3dlTUZSTGRvaXArSng3VXBhQU80emlRd2N6?=
- =?utf-8?B?UmVkSHQvUStzdkRwVVFtellmM3RKaUQzb2k5U2pDWFladHBiV2daMkJzUm5U?=
- =?utf-8?B?ckE9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9aa2eb8-dcff-419c-a3ef-08dd1ea72397
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9550.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 14:29:05.5139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OhZ84F2o29WWH/ZG8nXeVraLAK076QD8zA5wgvEV8Kgy0kQuJ5bxz/JDSdCd5OKkRS1xII6m4RXLMHLkTRD8eQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7235
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
+ cgroup.
+To: Maxime Ripard <mripard@kernel.org>
+Cc: linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <20241204134410.1161769-1-dev@lankhorst.se>
+ <20241213-proud-kind-uakari-df3a70@houat>
+ <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
+ <20241213-gentle-glittering-salamander-22addf@houat>
+ <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
+ <20241217-meek-bullfinch-of-luck-2c3468@houat>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <20241217-meek-bullfinch-of-luck-2c3468@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12/16/2024 6:16 PM, Frank Li wrote:
-> On Mon, Dec 16, 2024 at 09:58:11AM +0200, Larisa Grigore wrote:
->> Select the of_dma_xlate function based on the dmamuxs definition rather
->> than the FSL_EDMA_DRV_SPLIT_REG flag, which pertains to the eDMA3
->> layout.
-> 
-> Nit: Add space line here. Need empty line between paragraphs
-> 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> 
-Thank you Frank! Will be fixed in V2.
+Hey,
 
->> This change is a prerequisite for the S32G platforms, which integrate both
->> eDMAv3 and DMAMUX.
-> 
-> Nit: the same here.
-> 
->> Existing platforms with FSL_EDMA_DRV_SPLIT_REG will not be impacted, as
->> they all have dmamuxs set to zero.
->>
->> Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
->> ---
->>   dcrivers/dma/fsl-edma-main.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
->> index 60de1003193a..2a7d19f51287 100644
->> --- a/drivers/dma/fsl-edma-main.c
->> +++ b/drivers/dma/fsl-edma-main.c
->> @@ -646,7 +646,7 @@ static int fsl_edma_probe(struct platform_device *pdev)
->>   	}
->>
->>   	ret = of_dma_controller_register(np,
->> -			drvdata->flags & FSL_EDMA_DRV_SPLIT_REG ? fsl_edma3_xlate : fsl_edma_xlate,
->> +a			drvdata->dmamuxs ? fsl_edma_xlate : fsl_edma3_xlate,
->>   			fsl_edma);
->>   	if (ret) {
->>   		dev_err(&pdev->dev,
->> --
->> 2.47.0
->>
+Now that all patches look good, what is needed to merge the series? 
+Without patch 6/7 as it is a hack for testing.
 
-Best regards,
-Larisa
+I've also posted a IGT for verifying read/write works (rule out 
+copy/paste errors) and min, max semantics work as intended.
+
+https://lists.freedesktop.org/archives/igt-dev/2024-December/083345.html
+
+Cheers,
+~Maarten
+
+
+Den 2024-12-17 kl. 08:46, skrev Maxime Ripard:
+> On Fri, Dec 13, 2024 at 05:06:05PM +0100, Maarten Lankhorst wrote:
+>> Hey,
+>>
+>> Den 2024-12-13 kl. 16:21, skrev Maxime Ripard:
+>>> On Fri, Dec 13, 2024 at 03:53:13PM +0100, Maarten Lankhorst wrote:
+>>>>
+>>>>
+>>>> Den 2024-12-13 kl. 14:03, skrev Maxime Ripard:
+>>>>> Hi,l
+>>>>>
+>>>>> Thanks for the new update!
+>>>>>
+>>>>> On Wed, Dec 04, 2024 at 02:44:00PM +0100, Maarten Lankhorst wrote:
+>>>>>> New update. Instead of calling it the 'dev' cgroup, it's now the
+>>>>>> 'dmem' cgroup.
+>>>>>>
+>>>>>> Because it only deals with memory regions, the UAPI has been updated
+>>>>>> to use dmem.min/low/max/current, and to make the API cleaner, the
+>>>>>> names are changed too.
+>>>>>
+>>>>> The API is much nicer, and fits much better into other frameworks too.
+>>>>>
+>>>>>> dmem.current could contain a line like:
+>>>>>> "drm/0000:03:00.0/vram0 1073741824"
+>>>>>>
+>>>>>> But I think using "drm/card0/vram0" instead of PCIID would perhaps be
+>>>>>> good too. I'm open to changing it to that based on feedback.
+>>>>>
+>>>>> Do we have any sort of guarantee over the name card0 being stable across
+>>>>> reboots?
+>>>>>
+>>>>> I also wonder if we should have a "total" device that limits the amount
+>>>>> of memory we can allocate from any region?
+>>>>
+>>>> I don't think it is useful. Say your app can use 1 GB of main memory or 2 GB
+>>>> of VRAM, it wouldn't make sense to limit the total of those. In a lot of
+>>>> cases there is only 1 region, so the total of that would still be the same.
+>>>>
+>>>> On top, we just separated the management of each region, adding a 'total'
+>>>> would require unseparating it again. :-)
+>>>
+>>> I didn't mean the total for a device, but for the system. It would
+>>> definitely not make sense for a VRAM, but for CMA for example, you have
+>>> a single, limited, allocator that will be accessible from heaps, v4l2
+>>> and DRM devices.
+>>>
+>>> If an application has to allocate both from v4l2 and DRM buffers, we
+>>> should be able to limit its total usage of CMA, not just on a single
+>>> device.
+>>
+>> In this case, I think it makes more sense if CMA creates a region, then use
+>> that region in both v4l2 and DRM instead of a separate region for both, with
+>> CMA being responsible for lifetime.
+> 
+> Ack, thanks for your feedback :)
+> 
+> Maxime
+
 
