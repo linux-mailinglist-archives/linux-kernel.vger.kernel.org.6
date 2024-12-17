@@ -1,145 +1,512 @@
-Return-Path: <linux-kernel+bounces-449583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405B19F510C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:31:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662419F510E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 17:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80AED164DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E8188C7E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4901F76A7;
-	Tue, 17 Dec 2024 16:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CC9149C4D;
+	Tue, 17 Dec 2024 16:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfuLWT+v"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AWBIUd0E"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A35C1F6674
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD6F1386BF
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 16:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734453042; cv=none; b=WuiXk1Phm3hH+d7NFe2Cnm5q3uekB+5zdsyT3m2Nnt6foopcmYTtNW7fk1/CB6D5pRYhKTAy8rIB97hqKzfClCW6FwTwYoPpplrBKSH2EimyKEVj1XtFAeQHQcVa4vo4rBZMwaW4yDezz/w+62sgi5ZQv/ghYSNMGrx5kh4605Y=
+	t=1734453085; cv=none; b=d5jwirNJTqs89atIquYdtLilKOLQwXe+KGNH/CiNSfpRdBo2M5cHeFhoriSPkV+e7Q4NtDP42In9RQ0GR8VH8IbnA18OxsR1S9Oxce+Mmk8jr3+hU2Gjjs5VQ2gmMsmYzzOyjZD0YwTn8qFmJJ8Cywxo2roQVbSNRcBiWvsb9f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734453042; c=relaxed/simple;
-	bh=3yUGsXykP4CEUVJYDf68Q5yPu96ItmlSIIbvKOIPhgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mnkEsfsVcwMPvHVOLo8wnn4OuxxuIAih+L9iU7/dTGtfzgdEXgiFuexQahirkQU24eF8S5tkCs1ySNCBiES++nmgLOMRXQQFWV4N1jR5l+H3hxyvvWjHuFqg5Er7xscTm5IVmd0C8s6Iheh3tZDw+uCLH1col0y5xJwO1yMGqSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfuLWT+v; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361f796586so61685735e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:30:40 -0800 (PST)
+	s=arc-20240116; t=1734453085; c=relaxed/simple;
+	bh=tgG68cBK7+uJmxPAiGENAFUbHrrGEwFBip6INVDkHjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L9t81dOYyNmR33zgeP+rSwRlthY38Fu8i9oQUN477dqa/V2jr01HNNoC6d2TAawcesnenRetWs3CTyVgqTWbGLNSYejLUMBQjYmjq2ZdmBMRtIQo1U4AjjBQwIkX9yYMM4bPE03Q6jwSmm2ggpV/JmvW3uTl7gBuYB5Q28p43cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AWBIUd0E; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa6a92f863cso1107560766b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 08:31:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734453039; x=1735057839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vo1L5JuECv1Uk0Zo3Q9bH/rFDrzzlC7TTsvCSw2yzfo=;
-        b=sfuLWT+viRJhprl+vmlKyMgOPRKCF3JKrsEBPno5ABjEz7WKDlNU6CXrlOjW2xK9uY
-         PnLIpIYn8UgUgO03g2GqkaoAmirfmW3s6hMZ205m6rbH5kS7ZkRMQY5xtCGJZ1G46SDs
-         4yv91z17ZDZMYTMTReeKhtrgNV2z3qxdRYPP37s5cFgKJtHdhk6vRAC44537s7KWlido
-         mSOH7omt87DMKf5Wi4Lb11HAG7743uJ5/3MZsf6Rj7Zks1XpepPyUa7zrEpmVqhw9jYK
-         EIt1E7Ss35yz/ldjGqqnHJBLkeSVjndDHJqR3YgHSxEjQy5z/PTaJ2tjK7GgixT+s7aD
-         ijpQ==
+        d=google.com; s=20230601; t=1734453082; x=1735057882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O0hIeyAJNqq+rtJUq4ckn2uUYPX/t4hmuN8g9w8c91s=;
+        b=AWBIUd0ESOba1HY4kZHuajC8MPTOksbqEbYq1f8EZNmHzph3Q38HEpcpOBt71nExE0
+         uFYbJ3U0MBzSVGqyqOVApZpCLzLRASWeoiFl7XKYBJ76FzdxE/VTu4Da0ejrnHxw3+fJ
+         ej734T4oJNa4Bjqcp6yUxToWZRD3OTjU/a6GnciluBFHOqbq8Xa8hsP6gjSrUmgTuZw7
+         leRGd7iV5s+cEtmACWfzFW92J4ohOFfAIJA//CSd618f/Qd57CR18Ec6GzkqJMH2ZYhQ
+         rTcgvt/H2wowtYPGu5c1IEgrYvjaU+u648Qn4hMCb28kEPDmBIG/VwLXZxUuFKavoptk
+         +vFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734453039; x=1735057839;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vo1L5JuECv1Uk0Zo3Q9bH/rFDrzzlC7TTsvCSw2yzfo=;
-        b=ACYfPj1IJW3OuRTwQC6K0kz5nFveqZkSP3yvP3FxQKYBsiy48mHZsmPqfjefpXwBfY
-         QaTfaxWu24oLOL3rQaGSsD3ySl9EzXOp2vZKiB1jN9bY6T0tWbfXp1UQiQEavMCuZw4d
-         X/YSfIpfc8lCr6kbXkw8+YY6RIiHYXXMcbcRAJlwLdD8QOJjeTWEL1+fqaGMp8Dy6uhB
-         FMa+27MIoDE/eHxSIxJoX1Z2OKPiR8IkHpiSOpL/p9mEYBq/w7FXPJ4gDVuqpa1tTzEE
-         OM2Q1LMVDjnWBH/FFjQ/mmeNFGle2JSWgVBU5Ehwo8WGzK2Be2l7mkDjQWSBZ9ik+fe/
-         CTlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlp2F1NBB8vYK6zyoxerY/SZAIaV8kwZ0mJFWhEnWK0Jo5y+CbewguW7DIv2Dw1fXqg+wXlfW3sxCqXLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmueA3tz/9zsWthWs2rzIqg2ni9r8tQ/QaGByPCbRBS5ukp9lX
-	Xa0WxSUudQr5aUYTMgqzfAaHW2D7dzD4XNUbTFQsM9ukopXI3/8nyMMOV/ysPNk=
-X-Gm-Gg: ASbGncvQ2vGxP87Ti+3fMdh91Ru10gwPVbERarl8CrcSd1FYPZpqwWV3OVNC6LJbiM1
-	TZ5QYTIqx1Qn+94vckbYAdKN7TRrEbSrpJECw/wnTRMm7oSZI5NYMVOx5UR7DZlvMAwmOUJpU9E
-	xXhQyqYvLcc9Y8xuxjl3CHooJzusuYKm9LqbcZrLCRxwvZ9nhxyFxAHb6beuDTBRrx6XPrXIHLj
-	MCU42h9bnqQCX8qo2sTjKMkJvEikAOlzC3hZJQDxfcOhYpYWbPywzpBtAvcuu3iF3v5CA==
-X-Google-Smtp-Source: AGHT+IHre5NvSx2IdV/8gwVovs+16AluV6QFXnZjAFtO+QYQtO+O8LnhPh+fayg3f36vlzOpV5Blfg==
-X-Received: by 2002:a05:600c:468b:b0:434:a706:c0fb with SMTP id 5b1f17b1804b1-4362aa369ffmr207567515e9.10.1734453038713;
-        Tue, 17 Dec 2024 08:30:38 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362527ecc3sm182435335e9.0.2024.12.17.08.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 08:30:38 -0800 (PST)
-Message-ID: <a1032d53-6f3e-48f6-a2e9-1315bb1a3232@linaro.org>
-Date: Tue, 17 Dec 2024 16:30:37 +0000
+        d=1e100.net; s=20230601; t=1734453082; x=1735057882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O0hIeyAJNqq+rtJUq4ckn2uUYPX/t4hmuN8g9w8c91s=;
+        b=oPuJ/l5uYS8zOxNjjQsxOYZ/X//vk3QNxIyivxEnnfUCkL7w5V70227z5DwJlyrEWF
+         RvUko+MSorJeDeYFNehHWAV5zrjypQGUuAy+9QCOHEox2a9n3J8g1P/Vep5PTzPMalGe
+         HfmK5dpYNbBdI9Oj83K88J70CBvol0e4IsmR1vg1kZcXzaZUt6dSjcxrm2oFkC8fKIa8
+         BHOU5xiS9Kas9LmtYKpIXjy3ZLt4TDIu1nBillJzuqq9boMD73aaT0Vmy4ydwqhH0B0X
+         yCf/z9cZo/+XpEvGVMumABGQ9izGIFOjUtS1ClU3gqEYlsygKZ4PKv+FZ3k/pCD5cOoR
+         GeWw==
+X-Gm-Message-State: AOJu0Yx52CcM47lL2hxJzjCzEZu8ADe8OivU51b3lWNpSAgepWyNjfAu
+	J3q3ntGERfSq6vI/Q+DCM7DEFuXO35QxauDAgUhAGEIi+a6qG4t7Q+zuZqteejYK+BbiFL55M9r
+	sCsGc/DoWmgjFriu9N5zFLB3ywgZfzYjC6TafTK+eFSkuUGc+Bx98
+X-Gm-Gg: ASbGncsFK12D005u6WrKdS9P8aeA10EX2Sjojfrwk7nU4G+lb5WfRHmBXH5TFQKfpsh
+	5kcyivFyHU8zo1Xw8bB9XshhxQIckgrvOG/VULsgcy+gsvO/mcYHyX605B6GoeSHWQXLN
+X-Google-Smtp-Source: AGHT+IGamrDwVw2pSqhdhz6vjxadHHO2fejJ85065eq8s76W+2rjnx0imHLGixBhuxfsI9+gsrhStPaAV+CvSPaaPu8=
+X-Received: by 2002:a17:907:9491:b0:aa6:84c3:70e2 with SMTP id
+ a640c23a62f3a-aab77909e8fmr2020864766b.20.1734453081393; Tue, 17 Dec 2024
+ 08:31:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/4] media: dt-bindings: update clocks for
- sc7280-camss
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241217140656.965235-1-quic_vikramsa@quicinc.com>
- <20241217140656.965235-2-quic_vikramsa@quicinc.com>
- <02da691b-1f5d-41a6-847c-c7e9b8239919@kernel.org>
- <c14493b0-c9d3-4e1c-9f86-991b4cb25c98@linaro.org>
- <fe28a9bc-82ef-4fef-af50-9d9261ed9b39@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <fe28a9bc-82ef-4fef-af50-9d9261ed9b39@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAEkJfYMtSdM5HceNsXUDf5haghD5+o2e7Qv4OcuruL4tPg6OaQ@mail.gmail.com>
+In-Reply-To: <CAEkJfYMtSdM5HceNsXUDf5haghD5+o2e7Qv4OcuruL4tPg6OaQ@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 17 Dec 2024 08:30:43 -0800
+X-Gm-Features: AbW1kvZdYQztkfNn-bosDONTcIXeW8CRVeYIjOeyV6R0kUt3teFm9OxJ98mh19w
+Message-ID: <CAJD7tkbYbACg2TmnfYeuOF0sTLDUXySsW2TBLzUy5gtDRx-UrA@mail.gmail.com>
+Subject: Re: [Bug] KASAN: slab-use-after-free Read in zswap_decompress
+To: Sam Sun <samsun1006219@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, Nhat Pham <nphamcs@gmail.com>, hannes@cmpxchg.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/12/2024 16:23, Krzysztof Kozlowski wrote:
-> On 17/12/2024 17:12, Bryan O'Donoghue wrote:
->> On 17/12/2024 14:10, Krzysztof Kozlowski wrote:
->>> On 17/12/2024 15:06, Vikram Sharma wrote:
->>>> This patch change clock names to make it consistent with
->>>> existing platforms as gcc_cam_hf_axi -> gcc_axi_hf.
->>>> This also adds gcc_axi_sf and remove gcc_camera_ahb.
->>>
->>> Don't combine ABI changes with some less important things.
->>>
->>> You miss here explanation why doing the ABI change in the first place.
->>> Without that explanation I find it rather churn. But anyway, reason for
->>> ABI break and impact should be documented in commit msg.
->>>
->>>>
->>>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
->>>> ---
->>>
->>> Best regards,
->>> Krzysztof
->>
->> This change should be fine since we haven't committed and upstream dtsi,
->> so there's no ABI to break yet.
->>
->> Agree the cover letter should have been explicit in explaining.
-> 
-> So these are recently added bindings (sc7280 is not particularly new)?
-> If so mention in the commit msg that no users are affected because of this.
-> 
-> Best regards,
-> Krzysztof
+On Tue, Dec 17, 2024 at 2:52=E2=80=AFAM Sam Sun <samsun1006219@gmail.com> w=
+rote:
+>
+> Dear developers and maintainers,
+>
+> We encountered a slab-use-after-free bug while using our modified
+> syzkaller. Kernel crash log is listed below.
 
-Agreed.
 
-The commit log should make clear that the ABI hasn't been cemented yet.
+Thanks for reporting this!
 
-20241217140656.965235-4-quic_vikramsa@quicinc.com <- is still pending
+This seems to be the problem that Johannes pointed out in:
+https://lore.kernel.org/lkml/20241113213007.GB1564047@cmpxchg.org/.
 
----
-bod
+Would you be able to check if the following diff fixes the problem?
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 0030ce8fecfc5..089d70dee3246 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -875,6 +875,21 @@ static int zswap_cpu_comp_dead(unsigned int cpu,
+struct hlist_node *node)
+        return 0;
+ }
+
++static void acomp_ctx_get_cpu(struct crypto_acomp_ctx *acomp_ctx)
++{
++       /*
++        * Prevent CPU hotplug from freeing this CPU's acomp_ctx until
++        * acomp_ctx_put_cpu().
++        */
++       cpus_read_lock();
++       return raw_cpu_ptr
++}
++
++static void acomp_ctx_put_cpu(void)
++{
++       cpus_read_unlock();
++}
++
+ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
+ {
+        struct crypto_acomp_ctx *acomp_ctx;
+@@ -887,8 +902,7 @@ static bool zswap_compress(struct folio *folio,
+struct zswap_entry *entry)
+        gfp_t gfp;
+        u8 *dst;
+
+-       acomp_ctx =3D raw_cpu_ptr(entry->pool->acomp_ctx);
+-
++       acomp_ctx =3D acomp_ctx_get_cpu(entry->pool->acomp_ctx);
+        mutex_lock(&acomp_ctx->mutex);
+
+        dst =3D acomp_ctx->buffer;
+@@ -944,6 +958,7 @@ static bool zswap_compress(struct folio *folio,
+struct zswap_entry *entry)
+                zswap_reject_alloc_fail++;
+
+        mutex_unlock(&acomp_ctx->mutex);
++       acomp_ctx_put_cpu();
+        return comp_ret =3D=3D 0 && alloc_ret =3D=3D 0;
+ }
+
+@@ -954,7 +969,7 @@ static void zswap_decompress(struct zswap_entry
+*entry, struct folio *folio)
+        struct crypto_acomp_ctx *acomp_ctx;
+        u8 *src;
+
+-       acomp_ctx =3D raw_cpu_ptr(entry->pool->acomp_ctx);
++       acomp_ctx =3D acompx_ctx_get_cpu(entry->pool->acomp_ctx);
+        mutex_lock(&acomp_ctx->mutex);
+
+        src =3D zpool_map_handle(zpool, entry->handle, ZPOOL_MM_RO);
+@@ -984,6 +999,7 @@ static void zswap_decompress(struct zswap_entry
+*entry, struct folio *folio)
+
+        if (src !=3D acomp_ctx->buffer)
+                zpool_unmap_handle(zpool, entry->handle);
++       acomp_ctx_put_cpu();
+ }
+
+ /*********************************
+
+
+>
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-use-after-free in zswap_decompress+0x7d7/0x810 mm/zswap.=
+c:988
+> Read of size 4 at addr ffff888027874044 by task kswapd0/92
+>
+> CPU: 1 UID: 0 PID: 92 Comm: kswapd0 Not tainted 6.12.0-09435-g2c22dc1ee3a=
+1 #11
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+> rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xc0/0x5e0 mm/kasan/report.c:489
+>  kasan_report+0xbd/0xf0 mm/kasan/report.c:602
+>  zswap_decompress+0x7d7/0x810 mm/zswap.c:988
+>  zswap_writeback_entry+0x1e9/0x860 mm/zswap.c:1058
+>  shrink_memcg_cb+0x213/0x360 mm/zswap.c:1163
+>  __list_lru_walk_one+0x15e/0x490 mm/list_lru.c:301
+>  list_lru_walk_one+0x3e/0x50 mm/list_lru.c:338
+>  list_lru_shrink_walk include/linux/list_lru.h:240 [inline]
+>  zswap_shrinker_scan+0x135/0x220 mm/zswap.c:1197
+>  do_shrink_slab+0x44e/0x1190 mm/shrinker.c:437
+>  shrink_slab_memcg mm/shrinker.c:550 [inline]
+>  shrink_slab+0xb61/0x12a0 mm/shrinker.c:628
+>  shrink_one+0x4ad/0x7c0 mm/vmscan.c:4836
+>  shrink_many mm/vmscan.c:4897 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+>  shrink_node+0x269a/0x3d60 mm/vmscan.c:5956
+>  kswapd_shrink_node mm/vmscan.c:6785 [inline]
+>  balance_pgdat+0xbe5/0x18c0 mm/vmscan.c:6977
+>  kswapd+0x6ff/0xd60 mm/vmscan.c:7246
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+>
+> Allocated by task 1:
+>  kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>  kasan_kmalloc include/linux/kasan.h:260 [inline]
+>  __do_kmalloc_node mm/slub.c:4283 [inline]
+>  __kmalloc_noprof+0x212/0x530 mm/slub.c:4295
+>  kmalloc_noprof include/linux/slab.h:905 [inline]
+>  kzalloc_noprof include/linux/slab.h:1037 [inline]
+>  __acomp_request_alloc_noprof include/crypto/internal/acompress.h:75 [inl=
+ine]
+>  acomp_request_alloc+0x46/0x110 crypto/acompress.c:131
+>  zswap_cpu_comp_prepare+0x1f4/0x470 mm/zswap.c:840
+>  cpuhp_invoke_callback+0x26d/0x9d0 kernel/cpu.c:204
+>  cpuhp_issue_call+0x1c1/0x8d0 kernel/cpu.c:2375
+>  __cpuhp_state_add_instance_cpuslocked+0x26a/0x3c0 kernel/cpu.c:2437
+>  __cpuhp_state_add_instance+0xd7/0x2e0 kernel/cpu.c:2458
+>  cpuhp_state_add_instance include/linux/cpuhotplug.h:386 [inline]
+>  zswap_pool_create+0x2c3/0x5c0 mm/zswap.c:288
+>  __zswap_pool_create_fallback mm/zswap.c:356 [inline]
+>  zswap_setup+0x3a5/0x820 mm/zswap.c:1781
+>  zswap_init+0x2d/0x40 mm/zswap.c:1817
+>  do_one_initcall+0x111/0x6d0 init/main.c:1266
+>  do_initcall_level init/main.c:1328 [inline]
+>  do_initcalls init/main.c:1344 [inline]
+>  do_basic_setup init/main.c:1363 [inline]
+>  kernel_init_freeable+0x5ae/0x8a0 init/main.c:1577
+>  kernel_init+0x1e/0x2d0 init/main.c:1466
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Freed by task 25:
+>  kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
+>  poison_slab_object mm/kasan/common.c:247 [inline]
+>  __kasan_slab_free+0x54/0x70 mm/kasan/common.c:264
+>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>  slab_free_hook mm/slub.c:2338 [inline]
+>  slab_free mm/slub.c:4598 [inline]
+>  kfree+0x14e/0x4d0 mm/slub.c:4746
+>  zswap_cpu_comp_dead+0xe3/0x1c0 mm/zswap.c:874
+>  cpuhp_invoke_callback+0x564/0x9d0 kernel/cpu.c:216
+>  __cpuhp_invoke_callback_range+0x104/0x220 kernel/cpu.c:965
+>  cpuhp_invoke_callback_range kernel/cpu.c:989 [inline]
+>  cpuhp_down_callbacks kernel/cpu.c:1382 [inline]
+>  _cpu_down+0x41d/0xef0 kernel/cpu.c:1443
+>  __cpu_down_maps_locked+0x6f/0x90 kernel/cpu.c:1473
+>  work_for_cpu_fn+0x55/0xa0 kernel/workqueue.c:6719
+>  process_one_work+0x9a2/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3391
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> The buggy address belongs to the object at ffff888027874000
+>  which belongs to the cache kmalloc-96 of size 96
+> The buggy address is located 68 bytes inside of
+>  freed 96-byte region [ffff888027874000, ffff888027874060)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2787=
+4
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff88801b041280 dead000000000100 dead000000000122
+> raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask
+> 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid
+> 1 (swapper/0), ts 20389586985, free_ts 18720773637
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x2e7/0x350 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0xe4e/0x2b20 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x219/0x21f0 mm/page_alloc.c:4751
+>  alloc_pages_mpol_noprof+0x2b6/0x600 mm/mempolicy.c:2265
+>  alloc_slab_page mm/slub.c:2408 [inline]
+>  allocate_slab mm/slub.c:2574 [inline]
+>  new_slab+0x2d5/0x420 mm/slub.c:2627
+>  ___slab_alloc+0xbb7/0x1850 mm/slub.c:3815
+>  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
+>  __slab_alloc_node mm/slub.c:3980 [inline]
+>  slab_alloc_node mm/slub.c:4141 [inline]
+>  __do_kmalloc_node mm/slub.c:4282 [inline]
+>  __kmalloc_noprof+0x2ac/0x530 mm/slub.c:4295
+>  kmalloc_noprof include/linux/slab.h:905 [inline]
+>  kzalloc_noprof include/linux/slab.h:1037 [inline]
+>  __acomp_request_alloc_noprof include/crypto/internal/acompress.h:75 [inl=
+ine]
+>  acomp_request_alloc+0x46/0x110 crypto/acompress.c:131
+>  zswap_cpu_comp_prepare+0x1f4/0x470 mm/zswap.c:840
+>  cpuhp_invoke_callback+0x26d/0x9d0 kernel/cpu.c:204
+>  cpuhp_issue_call+0x1c1/0x8d0 kernel/cpu.c:2375
+>  __cpuhp_state_add_instance_cpuslocked+0x26a/0x3c0 kernel/cpu.c:2437
+>  __cpuhp_state_add_instance+0xd7/0x2e0 kernel/cpu.c:2458
+>  cpuhp_state_add_instance include/linux/cpuhotplug.h:386 [inline]
+>  zswap_pool_create+0x2c3/0x5c0 mm/zswap.c:288
+>  __zswap_pool_create_fallback mm/zswap.c:356 [inline]
+>  zswap_setup+0x3a5/0x820 mm/zswap.c:1781
+> page last free pid 54 tgid 54 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0x714/0x10c0 mm/page_alloc.c:2657
+>  vfree+0x17e/0x890 mm/vmalloc.c:3382
+>  delayed_vfree_work+0x57/0x70 mm/vmalloc.c:3303
+>  process_one_work+0x9a2/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3391
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Memory state around the buggy address:
+>  ffff888027873f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffff888027873f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >ffff888027874000: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>                                            ^
+>  ffff888027874080: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+>  ffff888027874100: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> We also find a similar bug report in function zswap_store(), listed as be=
+low:
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-use-after-free in zswap_compress mm/zswap.c:925 [inline]
+> BUG: KASAN: slab-use-after-free in zswap_store_page mm/zswap.c:1426 [inli=
+ne]
+> BUG: KASAN: slab-use-after-free in zswap_store+0x2307/0x25e0 mm/zswap.c:1=
+533
+> Read of size 4 at addr ffff8880219f6b44 by task kswapd0/88
+>
+> CPU: 1 UID: 0 PID: 88 Comm: kswapd0 Tainted: G     U
+> 6.12.0-09435-g2c22dc1ee3a1 #11
+> Tainted: [U]=3DUSER
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+> rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xc0/0x5e0 mm/kasan/report.c:489
+>  kasan_report+0xbd/0xf0 mm/kasan/report.c:602
+>  zswap_compress mm/zswap.c:925 [inline]
+>  zswap_store_page mm/zswap.c:1426 [inline]
+>  zswap_store+0x2307/0x25e0 mm/zswap.c:1533
+>  swap_writepage+0x3a8/0xe50 mm/page_io.c:279
+>  pageout+0x3b9/0xa90 mm/vmscan.c:689
+>  shrink_folio_list+0x2988/0x4340 mm/vmscan.c:1367
+>  evict_folios+0x72b/0x1a10 mm/vmscan.c:4593
+>  try_to_shrink_lruvec+0x62b/0xa60 mm/vmscan.c:4789
+>  shrink_one+0x417/0x7c0 mm/vmscan.c:4834
+>  shrink_many mm/vmscan.c:4897 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+>  shrink_node+0x269a/0x3d60 mm/vmscan.c:5956
+>  kswapd_shrink_node mm/vmscan.c:6785 [inline]
+>  balance_pgdat+0xbe5/0x18c0 mm/vmscan.c:6977
+>  kswapd+0x6ff/0xd60 mm/vmscan.c:7246
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+>
+> Allocated by task 1:
+>  kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>  kasan_kmalloc include/linux/kasan.h:260 [inline]
+>  __do_kmalloc_node mm/slub.c:4283 [inline]
+>  __kmalloc_noprof+0x212/0x530 mm/slub.c:4295
+>  kmalloc_noprof include/linux/slab.h:905 [inline]
+>  kzalloc_noprof include/linux/slab.h:1037 [inline]
+>  __acomp_request_alloc_noprof include/crypto/internal/acompress.h:75 [inl=
+ine]
+>  acomp_request_alloc+0x46/0x110 crypto/acompress.c:131
+>  zswap_cpu_comp_prepare+0x1f4/0x470 mm/zswap.c:840
+>  cpuhp_invoke_callback+0x26d/0x9d0 kernel/cpu.c:204
+>  cpuhp_issue_call+0x1c1/0x8d0 kernel/cpu.c:2375
+>  __cpuhp_state_add_instance_cpuslocked+0x26a/0x3c0 kernel/cpu.c:2437
+>  __cpuhp_state_add_instance+0xd7/0x2e0 kernel/cpu.c:2458
+>  cpuhp_state_add_instance include/linux/cpuhotplug.h:386 [inline]
+>  zswap_pool_create+0x2c3/0x5c0 mm/zswap.c:288
+>  __zswap_pool_create_fallback mm/zswap.c:356 [inline]
+>  zswap_setup+0x3a5/0x820 mm/zswap.c:1781
+>  zswap_init+0x2d/0x40 mm/zswap.c:1817
+>  do_one_initcall+0x111/0x6d0 init/main.c:1266
+>  do_initcall_level init/main.c:1328 [inline]
+>  do_initcalls init/main.c:1344 [inline]
+>  do_basic_setup init/main.c:1363 [inline]
+>  kernel_init_freeable+0x5ae/0x8a0 init/main.c:1577
+>  kernel_init+0x1e/0x2d0 init/main.c:1466
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Freed by task 901:
+>  kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:582
+>  poison_slab_object mm/kasan/common.c:247 [inline]
+>  __kasan_slab_free+0x54/0x70 mm/kasan/common.c:264
+>  kasan_slab_free include/linux/kasan.h:233 [inline]
+>  slab_free_hook mm/slub.c:2338 [inline]
+>  slab_free mm/slub.c:4598 [inline]
+>  kfree+0x14e/0x4d0 mm/slub.c:4746
+>  zswap_cpu_comp_dead+0xe3/0x1c0 mm/zswap.c:874
+>  cpuhp_invoke_callback+0x564/0x9d0 kernel/cpu.c:216
+>  __cpuhp_invoke_callback_range+0x104/0x220 kernel/cpu.c:965
+>  cpuhp_invoke_callback_range kernel/cpu.c:989 [inline]
+>  cpuhp_down_callbacks kernel/cpu.c:1382 [inline]
+>  _cpu_down+0x41d/0xef0 kernel/cpu.c:1443
+>  __cpu_down_maps_locked+0x6f/0x90 kernel/cpu.c:1473
+>  work_for_cpu_fn+0x55/0xa0 kernel/workqueue.c:6719
+>  process_one_work+0x9a2/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3391
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> The buggy address belongs to the object at ffff8880219f6b00
+>  which belongs to the cache kmalloc-96 of size 96
+> The buggy address is located 68 bytes inside of
+>  freed 96-byte region [ffff8880219f6b00, ffff8880219f6b60)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x219f=
+6
+> anon flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff88801b041280 ffffea0000887d00 dead000000000005
+> raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask
+> 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid
+> 1 (swapper/0), ts 15792736110, free_ts 14433067061
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x2e7/0x350 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0xe4e/0x2b20 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x219/0x21f0 mm/page_alloc.c:4751
+>  alloc_pages_mpol_noprof+0x2b6/0x600 mm/mempolicy.c:2265
+>  alloc_slab_page mm/slub.c:2408 [inline]
+>  allocate_slab mm/slub.c:2574 [inline]
+>  new_slab+0x2d5/0x420 mm/slub.c:2627
+>  ___slab_alloc+0xbb7/0x1850 mm/slub.c:3815
+>  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3905
+>  __slab_alloc_node mm/slub.c:3980 [inline]
+>  slab_alloc_node mm/slub.c:4141 [inline]
+>  __kmalloc_cache_noprof+0x280/0x410 mm/slub.c:4309
+>  kmalloc_noprof include/linux/slab.h:901 [inline]
+>  kzalloc_noprof include/linux/slab.h:1037 [inline]
+>  usb_hub_create_port_device+0xbb/0xde0 drivers/usb/core/port.c:743
+>  hub_configure drivers/usb/core/hub.c:1710 [inline]
+>  hub_probe+0x1ceb/0x2fc0 drivers/usb/core/hub.c:1965
+>  usb_probe_interface+0x314/0x9f0 drivers/usb/core/driver.c:399
+>  call_driver_probe drivers/base/dd.c:579 [inline]
+>  really_probe+0x252/0xa90 drivers/base/dd.c:658
+>  __driver_probe_device+0x1df/0x450 drivers/base/dd.c:800
+>  driver_probe_device+0x4c/0x1a0 drivers/base/dd.c:830
+>  __device_attach_driver+0x1db/0x2f0 drivers/base/dd.c:958
+>  bus_for_each_drv+0x14c/0x1d0 drivers/base/bus.c:459
+> page last free pid 25 tgid 25 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0x714/0x10c0 mm/page_alloc.c:2657
+>  vfree+0x17e/0x890 mm/vmalloc.c:3382
+>  delayed_vfree_work+0x57/0x70 mm/vmalloc.c:3303
+>  process_one_work+0x9a2/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x677/0xe90 kernel/workqueue.c:3391
+>  kthread+0x2ca/0x3b0 kernel/kthread.c:389
+>  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Memory state around the buggy address:
+>  ffff8880219f6a00: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+>  ffff8880219f6a80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+> >ffff8880219f6b00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>                                            ^
+>  ffff8880219f6b80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>  ffff8880219f6c00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> If you have any questions, please contact us.
+>
+> Best Regards,
+> Yue
 
