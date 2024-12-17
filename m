@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-449749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33BD09F55A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:08:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E749F559E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 19:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D5D1702EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7FF1890FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 18:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BAD1F941A;
-	Tue, 17 Dec 2024 18:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7B81F9AAF;
+	Tue, 17 Dec 2024 18:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o1alYDL5"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a183yPZS"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8711F8ADE
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 18:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E681F8F03;
+	Tue, 17 Dec 2024 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734458462; cv=none; b=AXPmYXwUxLr+OmAfJrteJcZ1/W1wrd9fRbkV9w26yDaM8OzK/PlrCf7qNPnw4BwGssA9Nd/Q3kSrPeNo0J4Ow6TRHi4TRtv1kDEW7pczX5DkM75CipGzW/2/WQwU8bYJZv0IXrV8ddL9G/6g4UqHYSPQUNv9KzdPZtgGSKLyr+k=
+	t=1734458473; cv=none; b=Gmeyc79rC4b76pMw9ytlLtRqSQbq5BED9fC/8vRP7h6gPSm2urXu2rw7kcE8DHtIYAWC+vfHHoeqG0aaxaJDTft9+oQHstw5n1btWxilfynUvSDZ9cwsyrB9iR0fsNHPqI71bvPnOGPQAhldr/xTVwtBZHZQ6zVEFXaysFvZNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734458462; c=relaxed/simple;
-	bh=jqkqto/wE4TTKCgi/7/Xdmt2B/vG2gmyRNK4LWWebrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PaCJ1ZQ/iK91wUemN/4C8NsrT7KmZtPXVEe2W8K9TOfVJ5hzcMvQfI/alfJvpny6CrQGT8H8KhZ7GykL52WEEuidOzEau1FcP+V8D7s5ppvfCtPk/uqYsA0LQ24T9vZe4ypblSWaBlh4OuwcJTjHgTNq5jUuZP8omEEQ5ltPEQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o1alYDL5; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 17 Dec 2024 10:00:44 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734458457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PkRrOqmYm8mFGf6ZziFnsHC8gAVb4/Jvhm1aIGMdXpg=;
-	b=o1alYDL5oQ4U8aVIN4LJhtvgi4JR5Ey49e8Jt93GpKesUTx0JkYkIFh8FnbUMROwIWNZg6
-	lZMsN6urvrxNfEWq3T+ly+eCv55DhHRMSKihuA66VsYN0xym5XSDu1/PWs39zrbZDmKbEN
-	P8Tu9j/uueBx7LvvaEsb2L1rCH8Fhq0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Mark Brown <broonie@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Fix set_id_regs selftest for ASIDBITS
- becoming unwritable
-Message-ID: <Z2G8TFw4wg7bnwzB@linux.dev>
-References: <20241216-kvm-arm64-fix-set-id-asidbits-v1-1-8b105b888fc3@kernel.org>
- <875xnisocy.wl-maz@kernel.org>
- <53b40aa8-f51c-4c4e-a4ad-e6a9512e5197@sirena.org.uk>
- <86v7viqusg.wl-maz@kernel.org>
- <b13b14df-00ee-4bee-8f65-d2cb7a9bfa6b@sirena.org.uk>
+	s=arc-20240116; t=1734458473; c=relaxed/simple;
+	bh=QC/c1n5Jks7m2uW84qsP/rNoe34vEW18ChfBNCtXubc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P5ov4lN7fSC5OJzZdWJKwbLkhujz8HAmf9efICQNtqyyrfc9eFf6HrK0q026XWitimrRitcLLzYY8q6pSr/sECpjmLJQrjTV5ksa5KMNSO4bkpUbsxOPRAF3TZE2C4e0+1yS+OLezzE2lBYQ1Ciet0viCWf/LBnWdQXHC4ZE4wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a183yPZS; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f1dfb0b44dso1255501eaf.2;
+        Tue, 17 Dec 2024 10:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734458471; x=1735063271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SiwHnId7iQeGUr8OsM8sKryugiv1jIm1WvtUfh1wJ+Y=;
+        b=a183yPZSNTFegk4wKgQ1DfY5H/zESXErRxmTJRZlnWa1z9xShD3/rMfeYm3QMFSZ/5
+         TO0aFM0Wykf8Bdv5LPDkzbkMLU/ATbgPgKtnuWPwJrVUxIxqal9QkaPIAr2s+8xG+AJK
+         asrELk7i7LC30H1Bpuqiamxpx7rTTR4ITjr7X/ZtETahfRoHp8F2XFdIYWJmjMQv0PV5
+         GUpPLXQ2z2UPvLIN2fN2mfacCYgU3fOijqPZ6wMtgBZ6KOQ/U88yui4pNUy/mZGR60/h
+         lqqbKcJttNAMCK5KSZyYCTncIHQpz4It14en/CQg9arlAURDZLvGx+MFDicW8ac6rWY1
+         ohuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734458471; x=1735063271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SiwHnId7iQeGUr8OsM8sKryugiv1jIm1WvtUfh1wJ+Y=;
+        b=CMplvC78WzydNiXilNzuL06RlzKR9k9TqCiayMJdlsBhm7vdLLSUo9vapHGYWavo1d
+         K6+DgFigWO1c6mIYcBS6TcinhAttvES+CjaVllkTfZe9kgVKpg39Ne2Z/AKy7EFTxhgZ
+         UiFT/Th69/Ep8MhDCfj7q/mGS5/ZnEq0hMfuuwBRCX4nTZSQq24inSnwiRtFgbIKfFIs
+         mCOF8IaFYrEO2hMi4U515QSLGnnyy2AYKSR6Us4AV2oVXwaKJ6ntu2DmFL/0PAOuWH1M
+         Og7rH25DSULEihoZsP+8IAe+LEbgs4tdeVm+/ieaR7ZUCPhIFeMQpldmJR+tmPUYlUKg
+         S1AA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI1ZggJbvZa0PhanvRyUkV68C/9PBM3Qw+Yp7FNbigeSuhfFIkg51JwMV3hhn1y0YKl36Wj8QKbjX71RL1@vger.kernel.org, AJvYcCUbwvbNyw3m/1JsqwX2tQ3FWizr2BkLPizzpei4R3iIg0tfdpDiOeocHyJaFBrj2Ht0GvSNfXATugSz@vger.kernel.org, AJvYcCWcnusQnL03kkMliPeCOOupRkurZBHGJg+pcXKL1lc3C+CMAVDPnrHc9dpdqGEbbMHRu0BsrwKGHLug@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqS1J/UhDLt/HEi0V7Fen+VxZPsttL7o/uWSJgwDGTvytb5V7l
+	uBx/s9gxxH9O7Op3kr8Qa0B3Bxr51YbxWX6cBI5Mgqdlkk6Zua5AlWWcCvhk62MBj3m7DZmW/8c
+	T2el51g3Skm7WcJgot8nKxhiD2XM=
+X-Gm-Gg: ASbGnctisSWtkJ+r+Sl1WkAVD2wm7/rDyN1q2oQdbHDBNoCHWTK9UMfJjsXCQIzQTyt
+	c8QVq+EjDlpRUPj0iV+2p23yey5rwuQtez7LRu7QeMQ9FetlZdoRwU0wqZpZdd3yTEu6xt93e
+X-Google-Smtp-Source: AGHT+IHd+3ZVfpm2NDJm9bWCoeeRHqvP9fk+8IUJThjwea2MK0kqPI6ZhSam/HTj+u/wwVy83PXt4Sd7guaeIDXPgdg=
+X-Received: by 2002:a05:6871:823:b0:29e:2422:49e2 with SMTP id
+ 586e51a60fabf-2a3ac8e1087mr10260963fac.31.1734458471419; Tue, 17 Dec 2024
+ 10:01:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b13b14df-00ee-4bee-8f65-d2cb7a9bfa6b@sirena.org.uk>
-X-Migadu-Flow: FLOW_OUT
+References: <20241215053639.738890-1-anarsoul@gmail.com> <20241215053639.738890-2-anarsoul@gmail.com>
+ <qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+In-Reply-To: <qbtp4jvkx3r5azufe4k3vtapqpfs54dyjiu4cy5v5wkkzumrzx@vy3xzkfplbue>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Tue, 17 Dec 2024 10:00:45 -0800
+Message-ID: <CA+E=qVeQ8uHBCeFtw6_2cY3252-YXc6eWrf5_YdeVgbp5LJo5g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and PLL_MIPI
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 17, 2024 at 03:10:28PM +0000, Mark Brown wrote:
-> On Tue, Dec 17, 2024 at 01:54:39PM +0000, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> 
-> > > The selftests are shipped as part of the kernel source and frequently
-> > > used for testing the kernel, it's all one source base and we want to
-> > > ensure that for example the test fix gets backported if the relevant
-> > > kernel patch does.
-> 
-> > That's not what Fixes: describes. If you want to invent a new tag that
-> > expresses a dependency, do that. Don't use these tags to misrepresent
-> > what the patches does.
-> 
-> No, this isn't a new use - a Fixes: tag indicates that the referenced
-> commit introduced the problem being fixed and that is exactly what's
-> going on here.  Like I say the selftests are not a completely separate
-> project, they are a part of the same source release as the rest of the
-> kernel and it is helpful to track information like this.
+On Mon, Dec 16, 2024 at 11:33=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Sat, Dec 14, 2024 at 09:34:57PM -0800, Vasily Khoruzhick wrote:
+> > These will be used to explicitly select TCON0 clock parent in dts
+> >
+> > Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON=
+0 mux")
+> > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 2 --
+> >  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 +
 
-A Fixes tag suggests a bug in the referenced commit, which isn't the
-case here.
+Hi Krzysztof,
 
-I agree that having some relation between the two is useful for
-determining the scope of a backport, but conveniently in this case the
-test failure was introduced in 6.13.
+> You cannot combine these changes.
 
-I've taken the fix for 6.13, w/ the tag dropped.
+The patch basically moves defines out from ccu-sun50i-a64.h to
+sun50i-a64-ccu.h. How do I split the change without introducing
+compilation failure?
 
--- 
-Thanks,
-Oliver
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+
+Yeah, it is not clear what do you want me to do, assuming the previous
+similar change to sun50i-a64-ccu.h did essentially the same, see
+71b597ef5d46a326fb0d5cbfc1c6ff1d73cdc7f9
+
+Regards,
+Vasily
+
+> Best regards,
+> Krzysztof
+>
 
