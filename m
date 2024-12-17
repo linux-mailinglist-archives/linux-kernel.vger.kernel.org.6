@@ -1,149 +1,115 @@
-Return-Path: <linux-kernel+bounces-449186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFFB9F4B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:41:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B24079F4B26
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070C41889F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A84188A81C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 12:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540CE1F3D29;
-	Tue, 17 Dec 2024 12:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F671F4263;
+	Tue, 17 Dec 2024 12:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8cuT/F6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vHV8utAr"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BBD1D47D9;
-	Tue, 17 Dec 2024 12:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D3A1F37C7
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 12:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734439254; cv=none; b=ukeuEYtRrPwBVeRAUEmiuUQJPMl3n9bExQvbA1YaMvLS+DNjMcKG/LnZQvMOwlRH3EeRRj4XNq68Fr6QTCZY85JXDMe1MybykO2WhfD3694hz8WCR7OwKSOAarm0BUiOhrzqhCV0SwSPhEQMgH4IvUZwbpU8sz7NLtBdNPD8v8Q=
+	t=1734439264; cv=none; b=EYVlmZrMzyZvKPwoJcDP79qyRsyim3ErRoFK/snXWftD0wSFeTazdCiGpPh5xvIEEbYtQxiqoQC5/qzaNehFzkDOsc7x9Ea4/R3tpKK96hh1fwkMahDYnDiSIi8pp0DfAh9ezVvD5KYWm1IeKVEDF3lXTQ7pX/hjloeAd/22aYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734439254; c=relaxed/simple;
-	bh=C6DBk8Bx1ZkvBkjdBwFOR8MukUMLI9VfaOAdqdxA9VM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bRfMc4ULgH4frQY03+5uQcggea2tprKc/imlURaS/BHJzag2inMtk6e0/YPJ1A7TDfRMh/6cJYpZgdjLPNqxHE0pJNsVDlBbBpPQi0KfWWRP+b4cvZcdRYUclMn+d0Otmic66Cx6lgTHYyz/znVtOtmARGX+t97JbpPwcwqJfqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8cuT/F6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C09C4CED3;
-	Tue, 17 Dec 2024 12:40:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734439254;
-	bh=C6DBk8Bx1ZkvBkjdBwFOR8MukUMLI9VfaOAdqdxA9VM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=E8cuT/F6046bLgDwqS8JKRpdJBeLzPHrVzWk/rfp3VvB216v9TaWTCIIVCfX+Xrhd
-	 nWHJFaudkm84uFa+eNkEJaIaaFqpfLmhcmH9GwX04hllv9yRFVJfIzJv145gHmLPmb
-	 qrwtUcgPCuDBEO57h2UAuJF6BdP9OQvlQhJbkdx2VppuXnqT1P2+9y0xz/5dlO2k8q
-	 oKwrf7kBVuT3t7iixeOnEyV8vY5fPC6UjZbEq4LPOXUQRHifnYwfpG6HItlaswWmhy
-	 MTmnkPDSC4PPHT3H9z1O2GRXDDYF4LgsblhqBJfyL9XiNbeR216+NlsbydtsY5u2mi
-	 5KnyFzLGrnNAw==
-Message-ID: <f263bf9b-3227-46ef-b94b-25a7ddec68ca@kernel.org>
-Date: Tue, 17 Dec 2024 13:40:47 +0100
+	s=arc-20240116; t=1734439264; c=relaxed/simple;
+	bh=zktOsVkVxxQOGMhkfdhIaNBA4MeCVA4pyULsaxoa5BU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jg0zIjQ0v7CSPs/35Ccz2tZzUNLqvZYUF4Ni9DVw5JL5addVzZR4+cS+8mgJlUDQNAFZ9NEIEdNEPV/1eUvTl3II+H34aWjVJidGiqHyxQi9lPvXle3MfUq9bIvpOBcBLyshagIL7dRzHS8+5l6KIGYU55SZoseiaIBAVqXYr+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vHV8utAr; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso8424839a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 04:41:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734439260; x=1735044060; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zktOsVkVxxQOGMhkfdhIaNBA4MeCVA4pyULsaxoa5BU=;
+        b=vHV8utAr2ZI75QvSNUfVCuVmaBkEyDqsTYZ7eFQGZpu1w3Peey8HR7g0sk2NLAQavU
+         BPfVX+OHbELO9oF6J/qb66qA4QGhTQZbA3yD4459MwGUC0PSr6XKzFcQXeI40qdi+wpI
+         K62xWySC+dvmtWu7ZiV/7TWw3WtOPe+YSLIXAnoDPChuZQrbE8NIKQ53Ikt3eNP96iCz
+         cGZayxOR0AcMf8CbIyja2Ux8A6mmFi3nsq2PvO9mKEcEt6bGwPoq/nald5Jhw04p3BZh
+         ebhKWNKZR2rD4D5787GBRyrGAxQ4iK8hk8wndIZtVv+lVdcqfN7i3X27pJD63NsiM0rW
+         o1Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734439260; x=1735044060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zktOsVkVxxQOGMhkfdhIaNBA4MeCVA4pyULsaxoa5BU=;
+        b=cwn3BV3rEmWI9kqvwn9nNle3fBO+Dr7aopO4MquhiXr7c3moKluuiKku2WeEaBQVf8
+         xKbKLRqXVxP9kFrPu1GTFCiRTBDpevvokq/5+sQlJHgkWyjMTOr1sxO7KD2vKy8szq6j
+         gHapyOaqV+ICjb/95odlSyGTYPb02LkuVF32xihSPFy6wFj+b1Gv3b5N4l7pRVnUpJzG
+         WyZVYj559bnVsJpYyWq37bXpc1sctciJyLhAC7Bk/bjauABCB8cyZcLC4wogI3csiXOJ
+         qw8iO/PGtXTV+LuWrhrUautuvf8F9QwSJxOLqUqLY2AbbEjOp2PrBy2YsRMUKH0It3Lc
+         RFmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIYbknpCbRbFkmllt6uK9CEdHSEJ/a7JmAMTvHaWRsIKA1oESb2v4ZWUKPv+0klxBCcDp5lR6JJgO9B+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylSd10wz1mEqZo6LWOcaDLKVRYrMMSfI8fdkCSCmr9cIpk77kN
+	B1uJssEL9x1TGx3E3aEkWhaed/OE+YetrBuAhRldWWkz9jibVX+PMAK2ckZpCNuSrHSEd/HlwgK
+	m7qP6KojUdCFUrqPll8Kn/hZ6jAPs6C1Pj0Kr
+X-Gm-Gg: ASbGncvfrkQoZHXZqMBV571SUtyYja0KgIvv8VLDQjX9MZF/+oPPIHPyKkS4Us0C9Mv
+	uD7IMIFvyKoXEyweTbJmV3N+B7qHMyh4ZzeCHU8C9hpvRQ47OowqQkNBHQcmWUCDuIPv4uMlG
+X-Google-Smtp-Source: AGHT+IH3mnMSz1W9u8JOiuZGydso9Cjd9kGw8eKTwmdRl9f7Hcj7+iXrFyrilZSWhlLyhDwpWe8u2Ky8DmHErNw/FlI=
+X-Received: by 2002:a05:6402:34cb:b0:5d2:6993:ad91 with SMTP id
+ 4fb4d7f45d1cf-5d63c3da9a9mr13515477a12.32.1734439259961; Tue, 17 Dec 2024
+ 04:40:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: media: add support for video hardware
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Stanimir Varbanov <stanimir.varbanov@linaro.org>
-References: <20241217-add-venus-for-qcs615-v5-0-747395d9e630@quicinc.com>
- <20241217-add-venus-for-qcs615-v5-1-747395d9e630@quicinc.com>
- <aa4400bd-b838-42d6-a58e-1eb1c99af218@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <aa4400bd-b838-42d6-a58e-1eb1c99af218@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241217110731.2925254-1-make_ruc2021@163.com>
+In-Reply-To: <20241217110731.2925254-1-make_ruc2021@163.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 17 Dec 2024 13:40:49 +0100
+Message-ID: <CANn89iJEE69y=Vi2c_2uE6k2Sb4bM+k+D+4KVfrR4QjMFK-7=A@mail.gmail.com>
+Subject: Re: [PATCH v2] net: ethernet: fix NULL dereference in nixge_recv()
+To: Ma Ke <make_ruc2021@163.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, u.kleine-koenig@baylibre.com, horms@kernel.org, 
+	mdf@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/12/2024 13:40, Krzysztof Kozlowski wrote:
-> On 17/12/2024 10:17, Renjiang Han wrote:
->> Add qcom,qcs615-venus compatible into qcom,sc7180-venus.yaml for the
->> video, and let qcom,qcs615-venus fallback to qcom,sc7180-venus on
->> QCS615 platform.
->>
->> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
->> ---
-> Read that message fully.
+On Tue, Dec 17, 2024 at 12:25=E2=80=AFPM Ma Ke <make_ruc2021@163.com> wrote=
+:
+>
+> Due to the failure of allocating the variable 'priv' in
+> netdev_priv(ndev), this could result in 'priv->rx_bd_v' not being set
+> during the allocation process of netdev_priv(ndev), which could lead
+> to a null pointer dereference.
+>
+> Move while() loop with 'priv->rx_bd_v' dereference after the check
+> for its validity.
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 492caffa8a1a ("net: ethernet: nixge: Add support for National Inst=
+ruments XGE netdev")
+> Signed-off-by: Ma Ke <make_ruc2021@163.com>
+> ---
+> Changes in v2:
+> - modified the bug description as suggestions;
+> - modified the patch as the code style suggested.
 
-I meant, message in our previous discussion.
+I really do not understand this patch.
 
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
-
-Best regards,
-Krzysztof
+if priv->rx_bd_v allocation failed, surely the device is not
+operational, because nixge_hw_dma_bd_init() returns -ENOMEM
 
