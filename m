@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-449931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F13B9F5845
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:00:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42B79F5847
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 22:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B301884D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39FDB1701F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 21:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8091F9F44;
-	Tue, 17 Dec 2024 21:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964531F9AB2;
+	Tue, 17 Dec 2024 21:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9dobPAP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g50/Vin1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1929B1F9ABF;
-	Tue, 17 Dec 2024 21:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0C1208CA;
+	Tue, 17 Dec 2024 21:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734469204; cv=none; b=QIzWwvCk/vWi+alm8VwuVfryS0ZWPjcgVsdjLEIpL3gtxmxqU0dQIVo+2Rw3xpIEvz6I4QlofE42iE3vSD+zry6x9RW+c3mKzyRY17LUWhk52a3sjPaVDGyhDnzOuqb8c/gJ6sy8RI6bBHndID7+oh6BfBYmag/H+FeV7luuspw=
+	t=1734469241; cv=none; b=R6Fvy06eOmxMPVN0ABBGOqkN/b3rfpX0HsvgRl5Cy9lNfkgbVqkloOhcv7OGt77SkeeBVjNfp8WGb7g6PG4/sEt13lstpaY9oZV0QcrScWDUC2hfZ60D0uzV3v4odjDvtRrlASqLJaGOLVe1Otreq7JfXTqaXJNQcSULcRccBDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734469204; c=relaxed/simple;
-	bh=zKNEFVGOxuGdzP+F9oyV1PntBC5pgGexL0iNLZB7VXI=;
+	s=arc-20240116; t=1734469241; c=relaxed/simple;
+	bh=gT7SGZ+RgZjr4sjaS4D5vIpdgF1oyCiZb1851h8AvmI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eANnN+ep1U1j1MZVQp8FYTQ3kL8rNjZATe6+TZD+E8vww3jGIbmt64swJ2142L29UHWtJyGlVkU6yZCthfRKNb9WjSD8QoldpO+mVLQ2UAPOUxaEPu71bfqMmo6YWMfeY6h0KaVHNEoLd1H6cHMHRqAG3i9vv//MDVl64HeP1BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9dobPAP; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734469202; x=1766005202;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zKNEFVGOxuGdzP+F9oyV1PntBC5pgGexL0iNLZB7VXI=;
-  b=U9dobPAPLXSZWGGtCbzQx8X17tubEZFWt1wRyVsuVO5N8q4K5Y8pF2q+
-   GR09+B5QtV+D6/4ux0sodg3BZeCccE2KPUfn0sEkoIAB4xbFbZy9TmYMh
-   UXKHAA3cseCKNtR8Iahwf+U1844Akidah8GdPYDllYA6BlO7c4OEfSTme
-   idU8YPvP18nxCiWXjxeH0xdGHGImL2XH/MIvx+YChByiUXHVeIV2hgR1Y
-   W6GwoTlpbz37yCGI/5qFSPhhZA04JYjlUfLsNU+0vln3H8goZ6wCYZOo+
-   2VJT9yER2EdlnHhQAAJJiOouWo/w5ZeBoz3W7xRD5US9SRphyvLVLRQHj
-   A==;
-X-CSE-ConnectionGUID: eIHyZI4sT1u26wS5PcfpVw==
-X-CSE-MsgGUID: qBTlmVmdRbOf8LGh1sDVnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11289"; a="34819615"
-X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
-   d="scan'208";a="34819615"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 13:00:02 -0800
-X-CSE-ConnectionGUID: iyXHe+NeQqyHsJPGLTDKwA==
-X-CSE-MsgGUID: FmHlH7NYTVGFIkTcHYMYhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,242,1728975600"; 
-   d="scan'208";a="102650610"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2024 13:00:02 -0800
-Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 6CF3920B5713;
-	Tue, 17 Dec 2024 13:00:00 -0800 (PST)
-Message-ID: <6467b30e-26a5-444c-bc20-5be7690e1e4c@linux.intel.com>
-Date: Tue, 17 Dec 2024 15:59:59 -0500
+	 In-Reply-To:Content-Type; b=Kc9D20jExEmWGTbyiCFZss0hhLl38+2Cl6fLei+Wyq0jOPc+hGAJ6nWktAXo0ZJJUQTLLH2SAR7BHTo2GL10jAaET14rUZcGE4s4fBMYRUkmuQdoTxj029Vh5mpJaXRYjhnAG3N8/S5P8aJYEbUcn/gJYuYPyAUl5salPtDPui8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g50/Vin1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 748EAC4CED3;
+	Tue, 17 Dec 2024 21:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734469240;
+	bh=gT7SGZ+RgZjr4sjaS4D5vIpdgF1oyCiZb1851h8AvmI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g50/Vin1NMs21PVMw5jM8YUVvpZ8d1U3+GXgcQKbRuW36vV52pR70iCtjvcVDKDW+
+	 DLidMVudZGsMaHwZXQcYRVQw5r6fX+rRDOQw9xG+mgt8HYsn+s5UrNNywyNwQG3yPv
+	 Vb6IYog2J7Z7S7MsfLGHYn+kc050dFvj2IvP9TVouN31G9DFRT9hWJi65A9Qk7UFDD
+	 LviM9kB/cP704mawxAKgkuT7NDhvMJk7qdlX7hXQ1Cd3+nJ/GnY2a8Pij6TYjGAtdW
+	 KTt4i3kEtN56Lahc/Qmti+FKoEnmwcPkuR1faGn7nr0xQ7MDG9TLoGGk7S+WEaYYc8
+	 pUy8Z9lA8AVtw==
+Message-ID: <ed77988a-ba26-4a71-a8cf-b1e5a6425a2e@kernel.org>
+Date: Tue, 17 Dec 2024 23:00:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,113 +49,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/4] perf/x86/intel: Support PEBS counters snapshotting
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, ak@linux.intel.com, eranian@google.com
-References: <20241216204505.748363-1-kan.liang@linux.intel.com>
- <20241216204505.748363-4-kan.liang@linux.intel.com>
- <20241217133707.GB2354@noisy.programming.kicks-ass.net>
- <96cb859f-8265-4f5a-99bb-44cfdcd25b9e@linux.intel.com>
- <20241217202919.GG11133@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH v6 4/5] xhci: introduce xhci->lost_power flag
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mathias Nyman <mathias.nyman@intel.com>
+Cc: =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-4-28a17f9715a2@bootlin.com>
+ <70aced7f-0311-43b9-96af-c8325c39ff2b@kernel.org>
+ <D6AP7JCNSME9.3FS7XCZJ37GM8@bootlin.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241217202919.GG11133@noisy.programming.kicks-ass.net>
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <D6AP7JCNSME9.3FS7XCZJ37GM8@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2024-12-17 3:29 p.m., Peter Zijlstra wrote:
-> On Tue, Dec 17, 2024 at 12:45:56PM -0500, Liang, Kan wrote:
-> 
-> 
->>> Why can't you use something like the below -- that gives you a count
->>> value matching the pmc value you put in, as long as it is 'near' the
->>> current value.
+On 13/12/2024 18:03, Théo Lebrun wrote:
+> On Thu Dec 12, 2024 at 1:37 PM CET, Roger Quadros wrote:
+>> On 10/12/2024 19:13, Théo Lebrun wrote:
+>>> The XHCI_RESET_ON_RESUME quirk allows wrappers to signal that they
+>>> expect a reset after resume. It is also used by some to enforce a XHCI
+>>> reset on resume (see needs-reset-on-resume DT prop).
 >>>
+>>> Some wrappers are unsure beforehands if they will reset. Add a mechanism
+>>> to signal *at resume* if power has been lost. Parent devices can set
+>>> this flag, that defaults to false.
+>>>
+>>> The XHCI_RESET_ON_RESUME quirk still triggers a runtime_pm_get() on the
+>>> controller. This is required as we do not know if a suspend will
+>>> trigger a reset, so the best guess is to avoid runtime PM.
+>>>
+>>> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 >>> ---
->>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->>> index 8f218ac0d445..3cf8b4f2b2c1 100644
->>> --- a/arch/x86/events/core.c
->>> +++ b/arch/x86/events/core.c
->>> @@ -154,6 +154,26 @@ u64 x86_perf_event_update(struct perf_event *event)
->>>  	return new_raw_count;
->>>  }
+>>>  drivers/usb/host/xhci.c | 3 ++-
+>>>  drivers/usb/host/xhci.h | 6 ++++++
+>>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+>>> index 5ebde8cae4fc44cdb997b0f61314e309bda56c0d..ae2c8daa206a87da24d58a62b0a0485ebf68cdd6 100644
+>>> --- a/drivers/usb/host/xhci.c
+>>> +++ b/drivers/usb/host/xhci.c
+>>> @@ -1017,7 +1017,8 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message_t msg)
 >>>  
->>> +u64 x86_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
->>> +{
->>> +	struct hw_perf_event *hwc = &event->hw;
->>> +	int shift = 64 - x86_pmu.cntval_bits;
->>> +	u64 prev_pmc, prev_count;
->>> +	u64 delta;
->>> +
->>> +	do {
->>> +		prev_pmc = local64_read(&hwc->prev_count);
->>> +		barrier();
->>> +		prev_count = local64_read(&event->count);
->>> +		barrier();
->>> +	} while (prev_pmc != local64_read(&hwc->prev_count));
+>>>  	spin_lock_irq(&xhci->lock);
+>>>  
+>>> -	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken_suspend)
+>>> +	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME ||
+>>> +	    xhci->broken_suspend || xhci->lost_power)
+>>>  		reinit_xhc = true;
+>>>  
+>>>  	if (!reinit_xhc) {
+>>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+>>> index 4914f0a10cff42dbc1448dcf7908534d582c848e..32526df75925989d40cbe7d59a187c945f498a30 100644
+>>> --- a/drivers/usb/host/xhci.h
+>>> +++ b/drivers/usb/host/xhci.h
+>>> @@ -1645,6 +1645,12 @@ struct xhci_hcd {
+>>>  	unsigned		broken_suspend:1;
+>>>  	/* Indicates that omitting hcd is supported if root hub has no ports */
+>>>  	unsigned		allow_single_roothub:1;
+>>> +	/*
+>>> +	 * Signal from upper stacks that we lost power during system-wide
+>>> +	 * suspend. Its default value is based on XHCI_RESET_ON_RESUME, meaning
+>>> +	 * it is safe for wrappers to not modify lost_power at resume.
+>>> +	 */
+>>> +	unsigned                lost_power:1;
 >>
->> Is the "while()" to handle PMI? But there should be no PMI, since the
->> PMU has been disabled when draining the PEBS buffer.
+>> I suppose this is private to XHCI driver and not legitimate to be accessed
+>> by another driver after HCD is instantiated?
 > 
-> Perhaps not in your case, but this way the function is more widely
-> usable.
+> Yes it is private.
 > 
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index e06ac9a3cdf8..7f0b850f7277 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -1969,6 +1969,23 @@ static void adaptive_pebs_save_regs(struct
->> pt_regs *regs,
+>> Doesn't access to xhci_hcd need to be serialized via xhci->lock?
+> 
+> Good question. In theory maybe. In practice I don't see how
+> cdns_host_resume(), called by cdns_resume(), could clash with anything
+> else. I'll add that to be safe.
+> 
+>> Just curious, what happens if you don't include patch 4 and 5?
+>> Is USB functionality still broken for you?
+> 
+> No it works fine. Patches 4+5 are only there to avoid the below warning.
+> Logging "xHC error in resume" is a lie, so I want to avoid it.
+
+How is it a lie?
+The XHCI controller did loose its save/restore state during a PM operation.
+As far as XHCI is concerned this is an error. no?
+
+> 
+>> Doesn't XHCI driver detect that power was lost and issue a reset in any case
+>> via the below code
 >>
->>  #define PEBS_LATENCY_MASK			0xffff
+>>         /* re-initialize the HC on Restore Error, or Host Controller Error */
+>>         if ((temp & (STS_SRE | STS_HCE)) &&
+>>             !(xhci->xhc_state & XHCI_STATE_REMOVING)) {
+>>                 reinit_xhc = true;
+>>                 if (!xhci->broken_suspend)
+>>                         xhci_warn(xhci, "xHC error in resume, USBSTS 0x%x, Reinit\n", temp);
+>>         }
 >>
->> +void intel_perf_event_pmc_to_count(struct perf_event *event, u64 pmc)
->> +{
->> +	struct hw_perf_event *hwc = &event->hw;
->> +	int shift = 64 - x86_pmu.cntval_bits;
->> +	u64 prev_pmc;
->> +	u64 delta;
->> +
->> +	prev_pmc = local64_read(&hwc->prev_count);
->> +
->> +	delta = (pmc << shift) - (prev_pmc << shift);
->> +	delta >>= shift;
->> +
->> +	local64_add(delta, &event->count);
->> +	local64_sub(delta, &hwc->period_left);
->> +	local64_set(&hwc->prev_count, pmc);
->> +}
+>>>  	/* cached extended protocol port capabilities */
+>>>  	struct xhci_port_cap	*port_caps;
+>>>  	unsigned int		num_port_caps;
+>>>
 > 
-> This seems very fragile, at least keep the same store order and assert
-> you're in NMI/PMI context.
+> I'll wait for your opinion on the [PATCH v6 2/5] email thread before
+> sending a new revision.
 
-Sure, I will keep the store order.
-You mean assert when there may be an unexpected NMI for the normal drain
-case, right? I think we can check if the PMU is disabled as below.
+Sorry for the delay. I'm not an expert in PM but will give my opinion there anyways.
 
-@@ -1974,12 +1974,15 @@ static void intel_perf_event_pmc_to_count(struct
-perf_event *event, u64 pmc)
- 	int shift = 64 - x86_pmu.cntval_bits;
- 	u64 delta;
+> 
+> Thanks,
+> 
+> --
+> Théo Lebrun, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
+> 
 
-+	/* Only read update the count when the PMU is disabled */
-+	WARN_ON(this_cpu_read(cpu_hw_events.enabled));
-+	local64_set(&hwc->prev_count, pmc);
-+
- 	delta = (pmc << shift) - (prev_pmc << shift);
- 	delta >>= shift;
-
- 	local64_add(delta, &event->count);
- 	local64_sub(delta, &hwc->period_left);
--	local64_set(&hwc->prev_count, pmc);
- }
-
-Thanks,
-Kan
-
+-- 
+cheers,
+-roger
 
 
