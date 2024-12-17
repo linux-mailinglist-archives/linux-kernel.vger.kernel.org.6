@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-448973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-448974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16409F47D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:45:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFB39F47D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55441188EEC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC01164D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 09:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DB31DEFD8;
-	Tue, 17 Dec 2024 09:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084C21E3DEC;
+	Tue, 17 Dec 2024 09:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ao5xUT3x"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JOWeYSFE"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EFA1DFD9D
-	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1088F1DFD8C
+	for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 09:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734428583; cv=none; b=Jy1FyIgKDCdRjBlHP1eMHQ3jZpHdRpB8aUI7bfaERR4C8tM/49wZ6u1n+yB7LPKpouDIQJHHZ/0U5tViN/XVRZCHIc+9UHv0m4N/PJN7wY/N+YNbVxWkJsd/oLzaadQ0G27adHWJYLzmi34MQIlCu2VJJSs+of+o3wNhagGHID4=
+	t=1734428583; cv=none; b=FfGmaQWenDK2yOoDjoj3RiOjXkHifjuuq0oZd9YUlLGz0gKXLL36A9KPSqR8/Dn4Tyw3iDTkype5IGPu8d5icTkr+AYrBL/0ptMQloiSMq3PXicUnK7q+9e5g29rnjBDYVxwpMCu0yFex9P/EDX5XZw4U5y7Uc9KSLst/WHJZyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734428583; c=relaxed/simple;
-	bh=1oFpVnsn4/C4SXJido+8p29/Hat8gd5tEgI5iHvHFqs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=LDq3QYIE9wAQ2ZHJFFUzXQyrx490GXxck6tZkLV+a8Tg7hwvDQmxQMJeZx4Yi+Mn+w6QHW9jfGh0baHLZMQPd7AIH+knvATLT7BU2x4GMg9PoRP/uMGAlVeHkJlhUHuHh3djOeazGLUnB3UYUehdNPL5J/ius6s6O6qY1VyXEcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ao5xUT3x; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=viJ3SXPD1LnkwtHDPOYKSYf5CUuSn3gFa8laD6bjXwo=; b=Ao5xUT3xNCPmARMm88nQpzByti
-	uogIaRvr0YNYVXLA0aYt27bLQOwbhstDTMM3kNbSpARtQp0+7PNjVG3KQAUnJzu02yYdFCQrmf0Iu
-	w0jQOZYaS4KEwQvJHeNCDbC80IFVGFSJDBXjla95/+hql+Q8sNeqK0orfTFJbJ1brwMEs7tuH1te+
-	8l8YnldAWAsGyLLyKY8eVb+Rwo25QRMvexQ5X7pJlBgtfNNFW92B2bYyZXfC6RN3AsRb5uEJFQ+hX
-	Cm5ZYnOp1YEXlUfKzC6cwAricivYHLS34dXuYAZ6vCv3+vfPBsXRb8wOHQtHIfI9197RQ5kIYlMEc
-	fudb6GUg==;
-Received: from [89.27.170.32] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tNU6D-000000053VD-0SCm;
-	Tue, 17 Dec 2024 09:42:41 +0000
-Date: Tue, 17 Dec 2024 10:42:41 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Eric Biederman <ebiederm@xmission.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Sourabh Jain <sourabhjain@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
- Yuntao Wang <ytcoode@gmail.com>, David Kaplan <david.kaplan@amd.com>,
- Tao Liu <ltao@redhat.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Breno Leitao <leitao@debian.org>, Wei Yang <richard.weiyang@gmail.com>,
- Rong Xu <xur@google.com>,
- =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- Simon Horman <horms@kernel.org>, Dave Young <dyoung@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, bsz@amazon.de, nathan@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_9/9=5D_x86/kexec=3A_Use_typedef_f?=
- =?US-ASCII?Q?or_relocate=5Fkernel=5Ffn_function_prototype?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com>
-References: <20241216233704.3208607-1-dwmw2@infradead.org> <20241216233704.3208607-10-dwmw2@infradead.org> <CAMj1kXE2abZ8v83vSr5sDZ1QNF-WMr4XCMRhZoc9EW=JAwvdCA@mail.gmail.com> <A18A8675-B1FB-496E-9D8F-FAD412A3FF65@infradead.org> <CAMj1kXFiZvT1joU5gOhZTC18aYi4dPOnFbX1nsHgmnXNy6c6Wg@mail.gmail.com>
-Message-ID: <27388506-9BE8-4540-A444-166C49133295@infradead.org>
+	bh=pxyVV4TGOyj6n7ajmdbw+BlYGfszS+y5BbGyHT34lA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVPug2nGdbEFp2A5cLNNbAUrbA4aQJ3b7/HNumnmc0Wy0fonXc+e9nCZ3GyidWVWRlo/AttGASBhQK+DP/6+nXFRxrM6XxfSmZKePg7L7akM1j3QOUUdvoWOgYQSGeTphovSRAIcgadOKgiSX0b17pOQv9Nt876+Gh0Hv0exhv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JOWeYSFE; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38637614567so2277141f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2024 01:43:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1734428579; x=1735033379; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s0zWscc6GEjowz54BGQSGkW1pJRwlpJhMbPNayl4nOs=;
+        b=JOWeYSFEzD2yTDr4UIqZYi1RHu3nfkPrP4Knt1nGwVItRPfsYQnHUWR87cxLpOL0Qw
+         mlY+7PBf1FnjzKWbYtuYwWiyDTTT4gjAmFXvC8G8KhK5HtMh+nvZUaRsvBfQrgLnMELc
+         oO23C/MNc1Bm8refYDb3PnJ2Tese1wP35dwxa8A2+yu7T8PUVtiTx3pbhVLiqjJ2pVOM
+         vPiitIjcHHdW4xGkmif/vnczOtUS+VPM+tIc3dQp9Ef38KN+MNVgQGnqEvRLqfMkBAFv
+         OeeWf4c8s/vuBkKOrg5Lb4uKO4nzR2eBQMWXLybG3j2HWEZ/FyB/sgMS6sf6520PEDLW
+         qN2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734428579; x=1735033379;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s0zWscc6GEjowz54BGQSGkW1pJRwlpJhMbPNayl4nOs=;
+        b=si41LhkC9IF5ukw05dx1s6+vEoX12FErx2oaMIdG2jCj5Fp5VmwqB3kmr4u54QDa3I
+         l4FF9hh/WA8S8R6EN7ZmC8JAJurN5xsk+NDljiexoq9L2Lpijt2z0rYGkdT4lC9GfoIP
+         iKfrovw6j3V5wlcTMkPY7ZteqWlmKeAJLIB8RkPLgy490NVZ6p+zTrv+Qq2zHSyY4SME
+         n2xfELolEY8yESbF4hP0CyT35G/PKxIP+3uqmJoEsl02aoXBhp2JW8srdwlKLj6a+h+Z
+         D/gOuumYodmtkqJV8lnLuLNlnE4MRjsmQbGOMTy7oVlPUYpwDnmXIhhq9N70/hHt0dYm
+         dW/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhPCiIXBOVvtSez6j332g1NW9z39RP5KaBokEqH3BAycVoNSet8A5kAPOs0HcHqyzmD0xzbJ0XSs1RAgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxpj465dqPj/TuqGd9g9oe8HOu7ZVHQ4PcnUVV95lk5USPwemz
+	SmVyu7JtX7vCnhqA3De3tZzNmiRjg1GsKC7l5MpKx+8vJSQP90LmMGTsq0t8uLUyEtxQTBYRRJz
+	P
+X-Gm-Gg: ASbGncurWcVW7AiqK9DVEn3lvjK1NzytnB90UTZ2/MBUeT5L+75KGmbYNYFojmhg4w4
+	XB59bg1Ipdxe110SoMS0BPX7VFuhiIofnwUszJHerYLGIhZ5Hsat4S4UUnMjPrYp+/ZN8afVjVo
+	vjHmR/qDsbYHL9eaqwe1LP9WFwaIC1RjXgFeLmmnbLGBG5WzEVXvtk5VwQr5ahPyDF+BaAZixxF
+	ut+jFZ5r7NoxvgPC9yFXbkf3BNSsQbvfZLrJ7sLeLU=
+X-Google-Smtp-Source: AGHT+IGlCacQMt5157fXg0/qexGu+6hbgZyluOnE3cEPg1UH6883ByoMHDdwDSiQkWiABMZq0skJPQ==
+X-Received: by 2002:a5d:6d8c:0:b0:385:df6b:7ef6 with SMTP id ffacd0b85a97d-388da5b5c27mr2633644f8f.51.1734428579357;
+        Tue, 17 Dec 2024 01:42:59 -0800 (PST)
+Received: from localhost ([177.95.19.124])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dd3ef6sm55936895ad.106.2024.12.17.01.42.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 01:42:58 -0800 (PST)
+Date: Tue, 17 Dec 2024 06:42:55 -0300
+From: "Ricardo B. Marliere" <rbm@suse.com>
+To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] macintosh: declare ctl_table as const
+Message-ID: <7j4sqkjgkj5wd2sraigedoppbojjvnptrajspl5bqehihlvzln@pc2zwgtnzdkm>
+References: <20241216-constify_sysctl_mac_hid-v1-1-f60c0871dc03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241216-constify_sysctl_mac_hid-v1-1-f60c0871dc03@gmail.com>
 
-On 17 December 2024 10:29:21 CET, Ard Biesheuvel <ardb@kernel=2Eorg> wrote:
->On Tue, 17 Dec 2024 at 10:21, David Woodhouse <dwmw2@infradead=2Eorg> wro=
-te:
->>
->> On 17 December 2024 09:49:04 CET, Ard Biesheuvel <ardb@kernel=2Eorg> wr=
-ote:
->> >On Tue, 17 Dec 2024 at 00:37, David Woodhouse <dwmw2@infradead=2Eorg> =
-wrote:
->> >>
->> >> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->> >>
->> >> Both i386 and x86_64 now copy the relocate_kernel function into the =
-control
->> >> page and execute it from there, using an open-coded function pointer=
-=2E
->> >>
->> >> Use a typedef for it instead=2E
->> >>
->> >> Signed-off-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->> >> ---
->> >>  arch/x86/include/asm/kexec=2Eh       | 26 +++++++++++++------------=
--
->> >>  arch/x86/kernel/machine_kexec_32=2Ec |  7 +------
->> >>  arch/x86/kernel/machine_kexec_64=2Ec |  6 +-----
->> >>  3 files changed, 15 insertions(+), 24 deletions(-)
->> >>
->> >> diff --git a/arch/x86/include/asm/kexec=2Eh b/arch/x86/include/asm/k=
-exec=2Eh
->> >> index 48e4f44f794f=2E=2E8ad187462b68 100644
->> >> --- a/arch/x86/include/asm/kexec=2Eh
->> >> +++ b/arch/x86/include/asm/kexec=2Eh
->> >> @@ -111,21 +111,21 @@ static inline void crash_setup_regs(struct pt_=
-regs *newregs,
->> >>  }
->> >>
->> >>  #ifdef CONFIG_X86_32
->> >> -asmlinkage unsigned long
->> >> -relocate_kernel(unsigned long indirection_page,
->> >> -               unsigned long control_page,
->> >> -               unsigned long start_address,
->> >> -               unsigned int has_pae,
->> >> -               unsigned int preserve_context);
->> >> +typedef asmlinkage unsigned long
->> >> +relocate_kernel_fn(unsigned long indirection_page,
->> >> +                  unsigned long control_page,
->> >> +                  unsigned long start_address,
->> >> +                  unsigned int has_pae,
->> >> +                  unsigned int preserve_context);
->> >
->> >linkage is not part of the type=2E 'asmlinkage' is #define'd to the
->> >empty string today, so it doesn't matter, but better to omit it here=
-=2E
->>
->> This is the i386 version=2E I thought ut was something like regparm(3) =
-there?
->>
->> And=2E=2E=2E WTF? How is the calling convention not part of the fundame=
-ntal type of the function? If I have a pointer to such a function, using th=
-is typedef to ensure we all share the same prototype, are you telling me al=
-l the users of the typedef have to remember to tag that part on for themsel=
-ves?
->
->No=2E I am talking about linkage not the calling convention=2E
+Hi!
 
-Hm, I am perfectly happy to believe that my memory is failing me, especial=
-ly when it comes to specifics of i386 assembler code=2E But are you also te=
-lling me that=20
-<https://kernelnewbies=2Eorg/FAQ/asmlinkage> is a lie?
+On 16 Dec 24 22:20, Luis Felipe Hernandez wrote:
+> Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
+> ctl_table"), the sysctl registration API allows struct ctl_table variables
+> to be placed into read-only memory.
+> 
+> mac_hid_files is registered as a sysctl table and should be treated as
+> read-only. By declaring the mac_hid_files structure as const, we ensure
+> that it cannot be accidentally modified at runtime. This change improves
+> safety and aligns with the recommendation from commit 7abc9b53bd51
+> ("sysctl: allow registration of const struct ctl_table").
 
+No need to mention the commit twice :)
+
+> 
+> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> ---
+> Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
+> Suggested-by: Ricardo B. Marliere <rbm@suse.com>
+> ---
+
+What happened here? Signed-off-by should be last and without "---".
+
+With those fixed:
+
+Reviewed-by: Ricardo B. Marliere <rbm@suse.com>
+
+Thank you,
+-	Ricardo.
+
+
+>  drivers/macintosh/mac_hid.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/macintosh/mac_hid.c b/drivers/macintosh/mac_hid.c
+> index b461b1bed25b2df106ecf612b82efaedf69f62b0..369d72f59b3c10869bc914f31e7dcb73e029ef7f 100644
+> --- a/drivers/macintosh/mac_hid.c
+> +++ b/drivers/macintosh/mac_hid.c
+> @@ -215,7 +215,7 @@ static int mac_hid_toggle_emumouse(const struct ctl_table *table, int write,
+>  }
+>  
+>  /* file(s) in /proc/sys/dev/mac_hid */
+> -static struct ctl_table mac_hid_files[] = {
+> +static const struct ctl_table mac_hid_files[] = {
+>  	{
+>  		.procname	= "mouse_button_emulation",
+>  		.data		= &mouse_emulate_buttons,
+> 
+> ---
+> base-commit: e25c8d66f6786300b680866c0e0139981273feba
+> change-id: 20241216-constify_sysctl_mac_hid-55886592c206
+> 
+> Best regards,
+> -- 
+> Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> 
 
