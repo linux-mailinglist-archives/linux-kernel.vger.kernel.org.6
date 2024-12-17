@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-449256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0459F4C30
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CC29F4C32
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41067A15E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:28:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C75537A21BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A6B1F4E49;
-	Tue, 17 Dec 2024 13:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFE31F4288;
+	Tue, 17 Dec 2024 13:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzzba+p5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyi0Dl5b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98721F4285;
-	Tue, 17 Dec 2024 13:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636DB16ABC6;
+	Tue, 17 Dec 2024 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734442056; cv=none; b=S8GWvaOflPtxSllxnB5WXVbXc9SwagmanJqxQbh5PGpO6JqqJTzzgEKE3fmi9WjIeI0de25Nu/nCQUhp8yrPjqFa7HdQrGt6XiMDtJFznSOHb0VT8w2e08qpw+Ij63SXiqU+v53pZnNsntEbD/HD5xbyR/Lmra6mZF8jRvkfK/s=
+	t=1734442114; cv=none; b=q+w/zpcr4suDnlgoBxvCF3Em8TTh0o7S4GNFSWjcHYW1JqaVOOiBh9cfN3pJxwPJNQRqHw5DKzGDFFsILWeXtg4J7qsmX1cG6EHHLYsva2gutqMVMmnleqmDUWpypx4kJgxz7iUWN7PhbFul1/FgHte1DwlBJNzrVbk0cMkUDjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734442056; c=relaxed/simple;
-	bh=pvcne/S7h5GxuzsVAtKGGhSARJDAW+nt0TG3iuNsj+g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gTKcjuaenHZ+fLqHhbUs+ne2iwdcDgQolBKbxpw5KMrTJ3MUrrSy/7vzXVheUkSurpogByhOPj9kZSfvL3m83+GJ/hlIUiailTdr0D7amsyvUHI6La3saopZ02MXai9NotbScc6k+oKa6TNvuotrI02ngAaQ/sLdmeL2m+nxhr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzzba+p5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B085C4CED3;
-	Tue, 17 Dec 2024 13:27:35 +0000 (UTC)
+	s=arc-20240116; t=1734442114; c=relaxed/simple;
+	bh=soBEwUKp/TZ/473ZrdtHyQgtSVUCeX0FYO1MpzpREcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kvimk0uVSqU4rH9U8PZjxe8KVUIiViAgIfCEJkZUHSI/nUqu7KUqy/Vg0jJQoOII/8mYa/tGQURC2GSuCkZtHLS/1QGSDFCVmA9mG9zRZzQIHzVADOaaKeW+KdQwWs7pl2DclzjX44Cmd8Owhej1AmZ8wsgkyEOYviZ5mO6aCVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyi0Dl5b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E987C4CED4;
+	Tue, 17 Dec 2024 13:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734442056;
-	bh=pvcne/S7h5GxuzsVAtKGGhSARJDAW+nt0TG3iuNsj+g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dzzba+p5x2f9pOP97NAyWQKMZ3yTMna2Ad+pX58avKeU2yFyyQdarWEghTmw8+66h
-	 abU6dXZkGNvlWdBV0iS1sr982UgTK55tTr6Ttf1j/cjJJ6cVaP0uoy7Mrm7W4BE88E
-	 zwyajdVFB0FYkIjC1Bg9CasIMc/+HhA3r2S1VyV8kFb00lN5Ok12faVXxzJxIIuW8i
-	 Ph3Fdc7X+yRLKW0Hx4joeiDV3oHTEf9XGLOhx3VEW8eZeLC2HbwXWLpL4BJQs8ywnC
-	 Ex5oFJedrH5e2Z+y2d595wZlrFJQ/n1uuaPagbTrxpkzEDUeovaIu1Un09AaxuRBVt
-	 PF7q5s6+ezhNQ==
-From: Mark Brown <broonie@kernel.org>
-To: Jon Lin <jon.lin@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- heiko@sntech.de, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org
-In-Reply-To: <20241208130311.1324024-1-jon.lin@rock-chips.com>
-References: <20241208130311.1324024-1-jon.lin@rock-chips.com>
-Subject: Re: [PATCH] spi: rockchip-sfc: Support pm ops
-Message-Id: <173444205510.31817.16108705113990702119.b4-ty@kernel.org>
-Date: Tue, 17 Dec 2024 13:27:35 +0000
+	s=k20201202; t=1734442114;
+	bh=soBEwUKp/TZ/473ZrdtHyQgtSVUCeX0FYO1MpzpREcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eyi0Dl5bg4YLGUgPvCnQwA1Obu/Zx5FvkT/OvNER7yr+lDynNdVytwWprQF8YWUVT
+	 t+f+OANp2f1mOniOhEmLvLeT9Z7PDmeSkdZutOTayk6wIM6HNTsCHi3LV/EUDsNsfM
+	 O6dbG/TONO/l5cdwcqVufr/GWPQWxQScnNX8sJubsWGjq41fhswFbtk0wt0XEme5eL
+	 2KFNZFgG17iq4ywH+hDfy9Cx1zVgFnnpV8YoXTjMAVdeEu4T/ICfvWIa08QMROajiK
+	 0vFVWkdINm8BkJO+DaVWgk5tD5RfyLBIuNOp1V+NsMhtc057qd0wwcjVfsw7xEYL4g
+	 acjfey0V6nz9w==
+Date: Tue, 17 Dec 2024 07:28:32 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Lee Jones <lee@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, netdev@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>, upstream@airoha.com,
+	devicetree@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	linux-mediatek@lists.infradead.org,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [net-next PATCH v11 2/9] dt-bindings: net: Document support for
+ Airoha AN8855 Switch Virtual MDIO
+Message-ID: <173444211136.1418557.12469782801691992405.robh@kernel.org>
+References: <20241209134459.27110-1-ansuelsmth@gmail.com>
+ <20241209134459.27110-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209134459.27110-3-ansuelsmth@gmail.com>
 
-On Sun, 08 Dec 2024 21:03:11 +0800, Jon Lin wrote:
-> Support system_sleep and runtime_pm ops.
+
+On Mon, 09 Dec 2024 14:44:19 +0100, Christian Marangi wrote:
+> Document support for Airoha AN8855 Virtual MDIO Passtrough. This is needed
+> as AN8855 require special handling as the same address on the MDIO bus is
+> shared for both Switch and PHY and special handling for the page
+> configuration is needed to switch accessing to Switch address space
+> or PHY.
 > 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/net/airoha,an8855-mdio.yaml      | 56 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
 > 
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: rockchip-sfc: Support pm ops
-      commit: 8011709906d0d6ff1ba9589de5a906bf6e430782
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
