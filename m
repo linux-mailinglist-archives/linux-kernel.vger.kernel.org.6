@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-449487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6479F4FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:45:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736E39F4FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 16:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65CA8188E2A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:45:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EE697A2004
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30A21F8918;
-	Tue, 17 Dec 2024 15:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE80E1F8938;
+	Tue, 17 Dec 2024 15:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ASzU4480"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iYiRBAlk"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64D21F8666;
-	Tue, 17 Dec 2024 15:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FA31F8698;
+	Tue, 17 Dec 2024 15:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734450238; cv=none; b=s1hqTpep9iRzCsyF13ArewqYKBpWZ55Vf4s4NsurcuFNA9XlBiyMBL1/wqibOeK/X343ZGDyOG3jBVjYLbPKWP4YLy1c2c3rnKS+p8iONjNGj8iTdLO2JSkgQRJ4inZmIgof5hhoGbKMn1O61DvuBaEu4CgHcyngkvoSALPWtUU=
+	t=1734450240; cv=none; b=Atk0+/d4ILSEVa6Ta3cfakjr2BX0zqhRSgesofxGF1fvkmjdVOddjo5xWh6qweLkFIu7cwiLP4LCd/9EDHLWjypcxpRtlbejRqEfAG8+lDqKyxPOg3zx4cT6turKhNXStw9OUV6gSzZjP4q3+iznOAxWWAsKnXWcUeZq3MAB9pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734450238; c=relaxed/simple;
-	bh=5ZWR3VrEFEA+tplx7vKCParyR0aAndx665CJ8bDx9Gk=;
+	s=arc-20240116; t=1734450240; c=relaxed/simple;
+	bh=/wkXCQgq780ps7SnGwu3J/11iwt1877SD12VoMHojdk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u9yGcOWmy9EJtjkhEPa5Xe9Wr/txhQSgB8CDgBvK4byKnia7hvpK7pzzEX3hmrelabcH4I1/5Y2xh5VhptEV8Na4pJau0bY01e8GVZ8G6KoTNeKJGrOsNk3+ZqZkPgr4hIws4g8HGgTmhOBpuYHOz5Il2YIYZJV16L0+vj827kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ASzU4480; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=TxBWyU5DYnKGiFYb2vYjb2NvsU/aYgB+CsBKHtEnq7FnPzmB4cj52pe2pk5zQZSS9Z+rUHtm2/+UuqZi6Hr+aYbWbTj55r5V8N+Fp6SDveWCAZ0+7uICYqcnNczWeNvssjp3ZuTH9nb8xKnC5WndgzJErVJqvMhB65/aj8NcA8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iYiRBAlk; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734450235;
-	bh=5ZWR3VrEFEA+tplx7vKCParyR0aAndx665CJ8bDx9Gk=;
+	s=mail; t=1734450236;
+	bh=/wkXCQgq780ps7SnGwu3J/11iwt1877SD12VoMHojdk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ASzU4480u+Zw5tYhDcRdTWKCG5lRyeibzK+tq0OV9LiaLwhjQ5jLKuQsMQT/U2OSs
-	 odn931UG0Pi0IMMgMiqHTETXIZtDXfWwbW1FmLlAXkhtDp9+EHXU7pDbox5/IOmwW9
-	 ETOI65UBfcdl8x6ODRC+W005ulmV2Vy15bVDOb2h6DXf1Qr+rxNqqnyADCeWkshjJy
-	 i9nNSyt+Myj++Uw0ylhN/+40rcy8kARABpfyZcMXS9e4d4zkY92EPOQHX9vmetkogu
-	 PKu3dTC95Zgy1F6TCB9FBFEWI1SQ6VdVYbcjrmXQUZx/nnT4mXPSt9dGU5da/VfHgR
-	 jmTUC91giqz4Q==
+	b=iYiRBAlkoiXdOd0oodHEghe6olE/xiPro8O1c3+NDR8er7nFyCo9yE6guz5+Ngbmn
+	 hBWADSQekqbx0Nkm6MGzUnj4imOHX6Zdpah/MtyyOtk/4KaJYtM06n9CZBn91RH7Xv
+	 UQ8uSjAmatUqPrjjnKGCroW4oNACgOwDHYA65JaTP0LsaBHQA4HwxtvnKkBsMPiVbn
+	 wms0VUy2R6p3G4a97QGRcqI2qMDf6dTaYy4fm5ALGCRPBIEVbqOsqiTzyMXttpMHLm
+	 VqF50WNZ24sa31uA3w1uFPRJr+r5ONtMVPUEP6g9HaingSvp46Bx8NuCwX1GnsUAH7
+	 WhzFcpfkpikeQ==
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C3A5417E37A4;
-	Tue, 17 Dec 2024 16:43:53 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 39F1417E37A7;
+	Tue, 17 Dec 2024 16:43:55 +0100 (CET)
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 To: chunkuang.hu@kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -71,9 +71,9 @@ Cc: p.zabel@pengutronix.de,
 	linux-arm-kernel@lists.infradead.org,
 	kernel@collabora.com,
 	dmitry.baryshkov@linaro.org
-Subject: [PATCH v3 03/33] drm/mediatek: mtk_dpi: Use an array for pixclk factor calculation
-Date: Tue, 17 Dec 2024 16:43:15 +0100
-Message-ID: <20241217154345.276919-4-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v3 04/33] drm/mediatek: mtk_dpi: Move pixel clock setting flow to function
+Date: Tue, 17 Dec 2024 16:43:16 +0100
+Message-ID: <20241217154345.276919-5-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
 References: <20241217154345.276919-1-angelogioacchino.delregno@collabora.com>
@@ -85,227 +85,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Setting the TVD PLL clock requires to multiply the target pixel
-clock by a specific constant factor to achieve the target PLL
-frequency, and this is done to reduce jitter to acceptable levels.
+In preparation for adding support for the DPI IP found in MT8195
+and in MT8188 used for HDMI, move the code flow for calculation
+and setting of the DPI pixel clock to a separate function called
+mtk_dpi_set_pixel_clk().
 
-On all MediaTek SoCs, the factor is not retrieved by any real kind
-of calculation but rather by checking if the target pixel clock
-is less than a specified frequency, hence assigning a function
-pointer for just a bunch of if branches does enlarge the code
-size for little reason.
+This was done because, on those platforms, the DPI instance that
+is used for HDMI will get its pixel clock from the HDMI clock,
+hence it is not necessary, nor desirable, to calculate or set
+the pixel clock in DPI.
 
-Remove all SoC-specific functions, add a structure `mtk_dpi_factor`
-that holds a clock frequency and corresponding PLL factor, and
-declare the constraints for each SoC in form of an array of said
-structure.
-Instead of function pointers, this structure (and its size) is then
-assigned to each SoC's platform data.
-
-The "calculation" is then performed with a new static function
-mtk_dpi_calculate_factor(dpi, mode_clk) that iterates through all
-of the entries of the aforementioned array and returns the right
-factor.
-
-If no factor is found, the lowest possible factor is returned,
-mimicking the same flow as all of the old per-SoC calculation
-functions.
-
-This commit brings no functional change.
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 103 +++++++++++++++--------------
- 1 file changed, 52 insertions(+), 51 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dpi.c | 43 +++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 4194ac328b0b..3bdce932f910 100644
+index 3bdce932f910..f931baf9c3fa 100644
 --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
 +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -117,9 +117,15 @@ struct mtk_dpi_yc_limit {
- 	u16 c_bottom;
- };
- 
-+struct mtk_dpi_factor {
-+	u32 clock;
-+	u8 factor;
-+};
-+
- /**
-  * struct mtk_dpi_conf - Configuration of mediatek dpi.
-- * @cal_factor: Callback function to calculate factor value.
-+ * @dpi_factor: SoC-specific pixel clock PLL factor values.
-+ * @num_dpi_factor: Number of pixel clock PLL factor values.
-  * @reg_h_fre_con: Register address of frequency control.
-  * @max_clock_khz: Max clock frequency supported for this SoCs in khz units.
-  * @edge_sel_en: Enable of edge selection.
-@@ -140,7 +146,8 @@ struct mtk_dpi_yc_limit {
-  * @edge_cfg_in_mmsys: If the edge configuration for DPI's output needs to be set in MMSYS.
-  */
- struct mtk_dpi_conf {
--	unsigned int (*cal_factor)(int clock);
-+	const struct mtk_dpi_factor *dpi_factor;
-+	const u8 num_dpi_factor;
- 	u32 reg_h_fre_con;
- 	u32 max_clock_khz;
- 	bool edge_sel_en;
-@@ -515,6 +522,20 @@ static int mtk_dpi_power_on(struct mtk_dpi *dpi)
- 	return ret;
+@@ -536,26 +536,17 @@ static unsigned int mtk_dpi_calculate_factor(struct mtk_dpi *dpi, int mode_clk)
+ 	return dpi_factor[dpi->conf->num_dpi_factor - 1].factor;
  }
  
-+static unsigned int mtk_dpi_calculate_factor(struct mtk_dpi *dpi, int mode_clk)
-+{
-+	const struct mtk_dpi_factor *dpi_factor = dpi->conf->dpi_factor;
-+	int i;
-+
-+	for (i = 0; i < dpi->conf->num_dpi_factor; i++) {
-+		if (mode_clk <= dpi_factor[i].clock)
-+			return dpi_factor[i].factor;
-+	}
-+
-+	/* If no match try the lowest possible factor */
-+	return dpi_factor[dpi->conf->num_dpi_factor - 1].factor;
-+}
-+
- static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 				    struct drm_display_mode *mode)
+-static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+-				    struct drm_display_mode *mode)
++static void mtk_dpi_set_pixel_clk(struct mtk_dpi *dpi, struct videomode *vm, int mode_clk)
  {
-@@ -529,7 +550,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+-	struct mtk_dpi_polarities dpi_pol;
+-	struct mtk_dpi_sync_param hsync;
+-	struct mtk_dpi_sync_param vsync_lodd = { 0 };
+-	struct mtk_dpi_sync_param vsync_leven = { 0 };
+-	struct mtk_dpi_sync_param vsync_rodd = { 0 };
+-	struct mtk_dpi_sync_param vsync_reven = { 0 };
+-	struct videomode vm = { 0 };
+ 	unsigned long pll_rate;
  	unsigned int factor;
  
  	/* let pll_rate can fix the valid range of tvdpll (1G~2GHz) */
--	factor = dpi->conf->cal_factor(mode->clock);
-+	factor = mtk_dpi_calculate_factor(dpi, mode_clk);
- 	drm_display_mode_to_videomode(mode, &vm);
- 	pll_rate = vm.pixelclock * factor;
+ 	factor = mtk_dpi_calculate_factor(dpi, mode_clk);
+-	drm_display_mode_to_videomode(mode, &vm);
+-	pll_rate = vm.pixelclock * factor;
++	pll_rate = vm->pixelclock * factor;
  
-@@ -964,48 +985,6 @@ static const struct component_ops mtk_dpi_component_ops = {
- 	.unbind = mtk_dpi_unbind,
- };
+ 	dev_dbg(dpi->dev, "Want PLL %lu Hz, pixel clock %lu Hz\n",
+-		pll_rate, vm.pixelclock);
++		pll_rate, vm->pixelclock);
  
--static unsigned int mt8173_calculate_factor(int clock)
--{
--	if (clock <= 27000)
--		return 3 << 4;
--	else if (clock <= 84000)
--		return 3 << 3;
--	else if (clock <= 167000)
--		return 3 << 2;
--	else
--		return 3 << 1;
--}
+ 	clk_set_rate(dpi->tvd_clk, pll_rate);
+ 	pll_rate = clk_get_rate(dpi->tvd_clk);
+@@ -565,20 +556,34 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
+ 	 * pixels for each iteration: divide the clock by this number and
+ 	 * adjust the display porches accordingly.
+ 	 */
+-	vm.pixelclock = pll_rate / factor;
+-	vm.pixelclock /= dpi->conf->pixels_per_iter;
++	vm->pixelclock = pll_rate / factor;
++	vm->pixelclock /= dpi->conf->pixels_per_iter;
+ 
+ 	if ((dpi->output_fmt == MEDIA_BUS_FMT_RGB888_2X12_LE) ||
+ 	    (dpi->output_fmt == MEDIA_BUS_FMT_RGB888_2X12_BE))
+-		clk_set_rate(dpi->pixel_clk, vm.pixelclock * 2);
++		clk_set_rate(dpi->pixel_clk, vm->pixelclock * 2);
+ 	else
+-		clk_set_rate(dpi->pixel_clk, vm.pixelclock);
++		clk_set_rate(dpi->pixel_clk, vm->pixelclock);
+ 
 -
--static unsigned int mt2701_calculate_factor(int clock)
--{
--	if (clock <= 64000)
--		return 4;
--	else if (clock <= 128000)
--		return 2;
--	else
--		return 1;
--}
--
--static unsigned int mt8183_calculate_factor(int clock)
--{
--	if (clock <= 27000)
--		return 8;
--	else if (clock <= 167000)
--		return 4;
--	else
--		return 2;
--}
--
--static unsigned int mt8195_dpintf_calculate_factor(int clock)
--{
--	if (clock < 70000)
--		return 4;
--	else if (clock < 200000)
--		return 2;
--	else
--		return 1;
--}
--
- static const u32 mt8173_output_fmts[] = {
- 	MEDIA_BUS_FMT_RGB888_1X24,
- };
-@@ -1020,8 +999,25 @@ static const u32 mt8195_output_fmts[] = {
- 	MEDIA_BUS_FMT_YUYV8_1X16,
- };
+-	vm.pixelclock = clk_get_rate(dpi->pixel_clk);
++	vm->pixelclock = clk_get_rate(dpi->pixel_clk);
  
-+static const struct mtk_dpi_factor dpi_factor_mt2701[] = {
-+	{ 64000, 4 }, { 128000, 2 }, { U32_MAX, 1 }
-+};
+ 	dev_dbg(dpi->dev, "Got  PLL %lu Hz, pixel clock %lu Hz\n",
+-		pll_rate, vm.pixelclock);
++		pll_rate, vm->pixelclock);
++}
 +
-+static const struct mtk_dpi_factor dpi_factor_mt8173[] = {
-+	{ 27000, 48 }, { 84000, 24 }, { 167000, 12 }, { U32_MAX, 6 }
-+};
++static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
++				    struct drm_display_mode *mode)
++{
++	struct mtk_dpi_polarities dpi_pol;
++	struct mtk_dpi_sync_param hsync;
++	struct mtk_dpi_sync_param vsync_lodd = { 0 };
++	struct mtk_dpi_sync_param vsync_leven = { 0 };
++	struct mtk_dpi_sync_param vsync_rodd = { 0 };
++	struct mtk_dpi_sync_param vsync_reven = { 0 };
++	struct videomode vm = { 0 };
 +
-+static const struct mtk_dpi_factor dpi_factor_mt8183[] = {
-+	{ 27000, 8 }, { 167000, 4 }, { U32_MAX, 2 }
-+};
-+
-+static const struct mtk_dpi_factor dpi_factor_mt8195_dp_intf[] = {
-+	{ 70000 - 1, 4 }, { 200000 - 1, 2 }, { U32_MAX, 1 }
-+};
-+
- static const struct mtk_dpi_conf mt8173_conf = {
--	.cal_factor = mt8173_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8173,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8173),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 300000,
- 	.output_fmts = mt8173_output_fmts,
-@@ -1038,7 +1034,8 @@ static const struct mtk_dpi_conf mt8173_conf = {
- };
++	drm_display_mode_to_videomode(mode, &vm);
++	mtk_dpi_set_pixel_clk(dpi, &vm, mode->clock);
  
- static const struct mtk_dpi_conf mt2701_conf = {
--	.cal_factor = mt2701_calculate_factor,
-+	.dpi_factor = dpi_factor_mt2701,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt2701),
- 	.reg_h_fre_con = 0xb0,
- 	.edge_sel_en = true,
- 	.max_clock_khz = 150000,
-@@ -1056,7 +1053,8 @@ static const struct mtk_dpi_conf mt2701_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8183_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 100000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1073,7 +1071,8 @@ static const struct mtk_dpi_conf mt8183_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8186_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 150000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1091,7 +1090,8 @@ static const struct mtk_dpi_conf mt8186_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8192_conf = {
--	.cal_factor = mt8183_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8183,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8183),
- 	.reg_h_fre_con = 0xe0,
- 	.max_clock_khz = 150000,
- 	.output_fmts = mt8183_output_fmts,
-@@ -1108,7 +1108,8 @@ static const struct mtk_dpi_conf mt8192_conf = {
- };
- 
- static const struct mtk_dpi_conf mt8195_dpintf_conf = {
--	.cal_factor = mt8195_dpintf_calculate_factor,
-+	.dpi_factor = dpi_factor_mt8195_dp_intf,
-+	.num_dpi_factor = ARRAY_SIZE(dpi_factor_mt8195_dp_intf),
- 	.max_clock_khz = 600000,
- 	.output_fmts = mt8195_output_fmts,
- 	.num_output_fmts = ARRAY_SIZE(mt8195_output_fmts),
+ 	dpi_pol.ck_pol = MTK_DPI_POLARITY_FALLING;
+ 	dpi_pol.de_pol = MTK_DPI_POLARITY_RISING;
 -- 
 2.47.0
 
