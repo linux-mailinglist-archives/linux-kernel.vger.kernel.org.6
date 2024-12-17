@@ -1,307 +1,217 @@
-Return-Path: <linux-kernel+bounces-449354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8FE9F4DA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:26:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E58BB9F4DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 15:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF2E188C6E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889E016F7FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876431F756B;
-	Tue, 17 Dec 2024 14:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB621F540D;
+	Tue, 17 Dec 2024 14:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dFC8HO8L"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="U1R0oTKr"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2067.outbound.protection.outlook.com [40.107.22.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208691F755A;
-	Tue, 17 Dec 2024 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734445529; cv=none; b=Fs+PRxJjqND8JeNoaNA/5oeoyPJ5TgHj8QzOIdTTLaofkchDUUo2dQ951FopvPjZaTUWvRA5u1I04kbpY+Qz/w2XuO4SKlJVQDtm8GSER+bUJi9bMoIVOS7Cmvc68Hh06TSwch5NGERaoZFeXhTXqIf9V6hG5r7TLO4G+X74ekI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734445529; c=relaxed/simple;
-	bh=9d9aJHRIyaAmVrjs8r/RhS2SbuGHrNHxM3HgsX8hSO8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e0QR7U2zIcSCA+r9hTKFtzytiRyv9ngVolV1KtVoPnulRGxe+5YYg4Avv5o8js6wd3syaKNyNaJ8IBK17Bejs8ayajP/cKBqiBdyUQ6raaaz9TaMXeXPGIxlPoyWKv5cJYLGmDOqPWozu/f9kNu06EFIr1nEVnZr5O1R7ouED5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dFC8HO8L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHAmBVG026306;
-	Tue, 17 Dec 2024 14:25:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/9eCf6KYt3lZoGL/GM0Fv8UXN1Q287WPBPjpezo8Cs8=; b=dFC8HO8LmVn/xG7Q
-	f3UnwHTGvimCnwe2WYqPKVPoSSMyJ8/kbiKWTy3xOYKOwI5XS5Pcv6ooMUjFACoB
-	65/QUjg8N3Ko7oKQUG5LlxXDWrPmPiJLVgcLXviXyE1hMDM71unNVzOSqjKlJoRe
-	TtPXOPrHD2wMZBHoKm7MsKbgDE+hu9StcZWeAyi21qZDMeN/0sn5DhcOYeVNARKc
-	fXnma5jbwN8PB1tJmdwSHMPgXi5t8B8hSScoOOGIkrS+9laDBSHR75PtLsH66c1b
-	1xRHkIgijOP4/f2rS/XyeA8NXiG1wL/1Aywa7FNxrO0WXbcezW8mcqfYhYxLt8TV
-	SjTr2g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43k7v08j44-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 14:25:20 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BHEPJO1011002
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 14:25:19 GMT
-Received: from chejiang-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 17 Dec 2024 06:25:16 -0800
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_chejiang@quicinc.com>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-Subject: [PATCH v6 3/3] Bluetooth: qca: Expand firmware-name to load specific rampatch
-Date: Tue, 17 Dec 2024 22:24:54 +0800
-Message-ID: <20241217142454.614551-4-quic_chejiang@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241217142454.614551-1-quic_chejiang@quicinc.com>
-References: <20241217142454.614551-1-quic_chejiang@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D397762F7;
+	Tue, 17 Dec 2024 14:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734445593; cv=fail; b=KZac50HgmbA9qm59tguoybu2IHsk2ekzHbY91dg/GVHq2iU4WnhL5U39K1x2NShumGzybHfyXJ+dgUNk1bdTzWIRoE6kMYmlt4RMt287PGIYQekpPv1mHKXMY/Q7e2g3+Vccdoe907gZ1eX68IlA3QtlO8LjuFPvKuzzRUTtKZ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734445593; c=relaxed/simple;
+	bh=kPL4J2Lju3yWUeFlIdvMfmvA2AlokmxBbQrQJ14csaw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UeFpaI5K7QY56weKLmq38UTzGRqJDUhptUTzIXc/PkBP7FiZStda6nN630erQHC1uV01SqQotnI7uEI04TAxnhbbwLzDyjud6endLdX36SwzJy06cGFTuBhbzCo8rdYBIqhxwB61RgikUmS1e6KPinxmcHOH3N418x2fyaSgxSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=U1R0oTKr; arc=fail smtp.client-ip=40.107.22.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VYTpPJT8ecX6J7NglkJ/5fC5aPl5rHTsys2vmO2tKW9SjBUhGccKCXjKuxkimZV6GwIfsvdk2h4PYCnp9/xS6qJtKrJaguXjkKC0piVwIpx1JHfmE0ePyfQTZS/+vqyE04/ZxTzzdRjN2MaG0XwD93I4AgtFMhUJ19f3w8x0zn70SiMkvDdKT696Hk7oGQYCGTwTexXQQN1MGZy0PocRPKnP5Fz2oJX3rEXsvCNuCj49/s8muvZlGdNd7wqlbWnOB+ptbaqu1LytUXJI4AUKT3OzjB+n5cdm4an2Pn3qk5S5h7ZFLCO10C1kmmV0y8ml9NJDbZ6/qHvM416k8KrWhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fb1RP2zoi11ArkA/2rqXrXwlZIP1+Zbeq9yyLoV1lvg=;
+ b=WtHjbnU8avwQ9F2Jt4ysi//7Rdb/8BYnIbUgTVLjH/Q4d2gLX3zHDlZQxMml2OGI2FmMlLHt2gHgIq3//6X54gbHvPGp33SJn/Yu9QptDKNg7rmtoWYqhEUf6DCrDawjcdbwUxMjZrv6m7SiLFOIEp+iUWUNA3GSzJVCD1amPL89BJNcOcRfOkq4WBnTGMrlxgn7lPyZgBFObxEmBOJYDqnQsIP5/rkiKuIPZSyQYm8ppMKiJj9LHlnsn9Ol8bEeubz8pFrktE3eh7UPICqNp45l7FWM6GRd6k+J8W3dJHLyTJ/rBUMCFS6fR5qPyweRtQXxtJu2kNDewjMtWFI/9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fb1RP2zoi11ArkA/2rqXrXwlZIP1+Zbeq9yyLoV1lvg=;
+ b=U1R0oTKr2NWfc2/Kk+djMeB1oksjSjlDufOPKu4oSDo/X7GqvCRpKCd9VWCP47pP8PyN7PYuIf2PyJPZtHKXjEjDXhaI+K25xQOK7vWlyjagArH4V5xR0qqFG4KgFffPLg9IKiklPQIIo6TGkHukF6HesYjHuerbR3bvTqbrpsUnpzQ4uIIfVV6AjrOf/4j8gY9UdGD/bw0zscxNWLcfFeaP/cun+lusR5onYMnRrmS+C7RCX/6AKW8ZfXgkMBybi3GKCb2MSyTVJ7XDFnnTdh5/uuaXy0Pa41atO2sV9LKnPiWUSgXriKjhx8PG21iqid2uVgHGXubUAyHXAh4+Pg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9550.eurprd04.prod.outlook.com (2603:10a6:20b:4f9::17)
+ by DU4PR04MB10669.eurprd04.prod.outlook.com (2603:10a6:10:58e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.22; Tue, 17 Dec
+ 2024 14:26:28 +0000
+Received: from AS4PR04MB9550.eurprd04.prod.outlook.com
+ ([fe80::e28d:10f8:289:baf7]) by AS4PR04MB9550.eurprd04.prod.outlook.com
+ ([fe80::e28d:10f8:289:baf7%6]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
+ 14:26:28 +0000
+Message-ID: <15bb8eb3-9da6-4ee0-afa5-dab523d43005@oss.nxp.com>
+Date: Tue, 17 Dec 2024 16:26:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] dt-bindings: dma: fsl-edma: add nxp,s32g2-edma
+ compatible string
+To: Krzysztof Kozlowski <krzk@kernel.org>, Frank.Li@nxp.com
+Cc: dmaengine@vger.kernel.org, imx@lists.linux.dev,
+ linux-kernel@vger.kernel.org, s32@nxp.com,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20241216075819.2066772-1-larisa.grigore@oss.nxp.com>
+ <20241216075819.2066772-6-larisa.grigore@oss.nxp.com>
+ <0b50fbb0-f32e-4c77-a277-bd64256ca2f7@kernel.org>
+Content-Language: en-US
+From: Larisa Ileana Grigore <larisa.grigore@oss.nxp.com>
+In-Reply-To: <0b50fbb0-f32e-4c77-a277-bd64256ca2f7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR01CA0128.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:168::33) To AS4PR04MB9550.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4f9::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: G1ntttg9qgvR1oHPDj35HAQFgxNDNxDy
-X-Proofpoint-ORIG-GUID: G1ntttg9qgvR1oHPDj35HAQFgxNDNxDy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 bulkscore=0
- impostorscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412170114
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9550:EE_|DU4PR04MB10669:EE_
+X-MS-Office365-Filtering-Correlation-Id: 668a6c91-b6cb-4e69-30fd-08dd1ea6cabd
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aC9lSGNNMS9INGxiY05Id1FlM20rclB1a3dHT3podm1ESU5rSkNBVUVIMGFN?=
+ =?utf-8?B?Wnl1b3BxTWQrT3pqcHM4UzhQVzlOL0J4TXpHS3ExNDlaYVdIejJ6MDFybzlx?=
+ =?utf-8?B?Y0pKejRlcngzZ3NBUVBjTGlTQW1oeTlDZUpGZ2wzVHFhOG41NHF6dTFMVmx1?=
+ =?utf-8?B?bWN2NndpSXBiWng4NmxkSDBOdEFIMi91WXdkajYzc2dCTTlTU3NJNXpBcWhs?=
+ =?utf-8?B?ZWFHOGZLOG1jU1YyalBKNkRnU3pkV2N0RzNLK1FBdzR0VXFGYUZRUFBoY1I0?=
+ =?utf-8?B?T0ZrWUk3aExoQU5GTFJxN3RDMzB6NVdkalI5VmxZQnhIU1puS3ZJV01STnRE?=
+ =?utf-8?B?T1FJS2tqb2liOW5yck9reVNoQW53MzlTUzBxN203Z1drU3k1VG1CM0tucThO?=
+ =?utf-8?B?VHFGdWFqajFMNzVNTW84bWxza29DWXJWc0VSL2g1U29haVd5UmNPcXVuQ1hZ?=
+ =?utf-8?B?WXVDa2lqdFFrMGwyS1crSWxWRlhQaVoxYUV2WUxHSVUzcGdhRWJ3Skdrc1hE?=
+ =?utf-8?B?NTErUGFiSThzSmxYNDJPVTZFblorUkFrVGVYZGUxdG81NkhTc1lPR3QrMmpm?=
+ =?utf-8?B?emMxdDFaODQ2bEo5Wk9JQS81OGYzc0JKNU9RazkzMDN5eVhWcEYvVS82bENi?=
+ =?utf-8?B?WXZFdGoxRlR6cjVZVkE1ODZtbDdNODE4Y0JjbVNRNzd0cDZXZStiS2NvamRt?=
+ =?utf-8?B?aG1id2RwaUxncm8wRzAvTW5lbUc1eGEvakI2QVc1NC90bmJscTFKdHBqWVMv?=
+ =?utf-8?B?OW5rRW1vMGxPRklXaDdoQ0JlWGVrVGpkcjdDSXl2TnAyQnpqSCtnNkY4dXBV?=
+ =?utf-8?B?Sis4MS9nRnc1d0dIb2hRQ2JJekZkL011cXZLSVIwdS92aW11bUxqT2VhbDJx?=
+ =?utf-8?B?dFJiME5SL3VQdlZnZFl5eVJRYzg3YjVtZlk4Wm82YnEwOC9zZFZGampXOFhB?=
+ =?utf-8?B?V2h2S25CZVVpZE5OdXdxa0VtdXRaN1lUN2VyWSs5TndiNHJCKzZkVktMd0lm?=
+ =?utf-8?B?Y3NtWE95M1lPckdXNHk0WW9GYXNBU2dxK3dpUVF0aUxvaUI5V0NHV2RDMHJW?=
+ =?utf-8?B?UGhJTk9CblBNbFBoSHJaczBQbk4wRDVMNWFZQUFRZkoxMVRKNEY1OU90Rk5a?=
+ =?utf-8?B?QWdZaDNHSlo3NEJUVXRvNk1nbnl0S0VpcWlwLys0eFFCelNUMjhlSU9ObkUx?=
+ =?utf-8?B?ZklEbGdIQ25wdTk1VCtDOE5ieHJiZHN4UlRnK3lCS0FWNjQwK1JDMTRjRTZu?=
+ =?utf-8?B?dXplQWpQbVp0Y0N2eEN0Vng2VjFjS2drVUozcHJSVUZNQXpFZVpYUmpoSS9Y?=
+ =?utf-8?B?MTY0Y29ISkFLdXZNbWVLQkNXa1FyS1BSWXo1ZXptbXJPMHdGb2VKVmp3VmM4?=
+ =?utf-8?B?dkNYcTJqMzNoN1JLVWNTTmFFempHcXcrTm9qMTVvNC9CZno4QkJrM2hOeWli?=
+ =?utf-8?B?N2ptbUY4Ui9EeU9UeHVwUmVGNUhGZGNjeEtrdWZJSmVvOU54SUFIY1J1UkJB?=
+ =?utf-8?B?NmdMUGZFRU9PdkpLNFk1YXpVZkZzYVlHbVBsREc2U1RWS2kzTzBVcHRtMDli?=
+ =?utf-8?B?ek5RcVRoNXhoYzRXTUlybWRoakVXcWxwYk9qSlhOZGY2NWUvT21sRGhGY1dB?=
+ =?utf-8?B?VndVN1JRUjZZeVRqcjJKbU5JVGVlNXJMcEhyRC9qUjhBTnNDMmZuNlBGZEFh?=
+ =?utf-8?B?dmU4S2VXZzNNWm8rNjZucXRidHlsNmxNaEtzNmZzMGVWWVFmNVBGRFEwT2FJ?=
+ =?utf-8?B?anpoYTk2b0Jaakk4b2lPZWhPemJLVWxsaU81eVVJRnNlMVdncUV5MmdrRDY3?=
+ =?utf-8?B?SFJOTDVvak01U0RBY1FNbW81bDdyWTFna1BqQk4vV1JwVHhkK1BadERLMGZO?=
+ =?utf-8?Q?3wo+TTGHRH0MW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9550.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S1RjRlhyaTh5V2UrUE1LU29MamEyUHVVa0JuVHdHb3hIckJ6dmtUdjlicDVX?=
+ =?utf-8?B?WEV3WHBRanFOY3BEVmZIdXllUGtxZStTekJubTdCRzE2ak5nYmZDdmFaMVV5?=
+ =?utf-8?B?YVM0c21yanBnUG5DSkkyODBlN2VFcFhBYnZDbitSZFA5dVFFTUNSQjAzT3BO?=
+ =?utf-8?B?RithTTJDcUF3d2s0VVNhekxydTBWdXdnWmY4Q2Y3MHFRTXExc1h2eW55TzNR?=
+ =?utf-8?B?Tms4b0JjQ1JLdGtNWW9KYmorU3NLOG1QbS9maXVzQ0grL24yUlI3enJXZFZH?=
+ =?utf-8?B?NDZHd3d2SkhKNXdTd0cxY0pWMGw0UDQzcytsWGdnOUlRQldWVG1xRG81TWc5?=
+ =?utf-8?B?blgxZ05ybVBqNDhqbGpHN2o3T2N3RGlOTEFVaHczZGJIN3ZwUzdNNktXNGp4?=
+ =?utf-8?B?eExLa3A0OWJKLzZKT3MrNEVWMGgzSjhPWDMrcGMxN2JMeTMxL0NZZmlRdGtk?=
+ =?utf-8?B?Nnd0UVhhTU9XOVJnaFVRcDREeGlTUVA4d3NvZkJhTzFlcDJ4bER3d3ZsVHBt?=
+ =?utf-8?B?eGl5SFVaMGVHS293YXNHNXBkbGNpMVk0ZDJ5K25meUY1MUw3ME1Oc3MwQ0hF?=
+ =?utf-8?B?YUlRMDNNRHlrTEl0YlRXS05vYWxNbjZaMUhTWFFyMmJRYkVScGRSWC92UGdY?=
+ =?utf-8?B?NjFjMWwrZXpTQUNObUZTK3BKdFZJQnREUVl0RXdjMGxNUVFUQmRvdzNUUHZR?=
+ =?utf-8?B?cWpyQ1F4dHRXeU9UQnljRUhPRG5Oa3FXaVlYN29zRnZXT3prcVU2V3pZRlVi?=
+ =?utf-8?B?dmJRMm0zOS8rV1Z1SHNTOWxXWHV0dVZmNnpqdGRJL2xCUExkbFdocVROelND?=
+ =?utf-8?B?clA5Y2tKa0taRklYcVpxUmdXYnJ3Z1AzUWRUUHJwMUlObWZkbkdZaE4wWGhG?=
+ =?utf-8?B?UW1QNEJDUFpTRXdYTTJMWHk5N1lvaW52OXpyNzU1NGlUcEU4K1ZhSjM0VWpP?=
+ =?utf-8?B?MjJwT1RMaWVjMlcza2dKVEVnQm4rUXArTzZPZlpHbE91S29kbzFWVHd0NU0v?=
+ =?utf-8?B?enE1U21WMU83ZC9GRTl5d1lWN2RrZE1nWkIwa3RucDJwZEZ5dklkdDhnOWV5?=
+ =?utf-8?B?SmlFU1pVWVFiL0tzbEdROTdId0lFM0h5QUNubElNK2l1WUNrWVNUWTFsWkcx?=
+ =?utf-8?B?ZHduTFV2OTVJdUNmSENSRk1kaVk1Mko4NWRqVHlMa3JQRjZVY3FqdDVIdzha?=
+ =?utf-8?B?WURyb2JnZEFBMnB0R3Z4eEo2WGsycGVYOUdmZmNnWG93MTlIZ0w4NW1URHdh?=
+ =?utf-8?B?WFZVZFJhbDRxc0gxVnZLUUJKR2hoTVRHNExRMm8wbUNRNGF0dmxjSDFuajJq?=
+ =?utf-8?B?ZndCQ2c4YzN1QW8yZ3RBMGl2YnFOR0JxREpnNG4zWE95TUEwQlBNSklzVXR0?=
+ =?utf-8?B?azVVSEkrWjRPUUJKWURkT0VxOWl5allJaFdVZ004eTQ5ZDJyc2c0ZnhNdUYy?=
+ =?utf-8?B?V1NaWlNZWlRVam5qM2drWERRbWlaemYrUk9rNDZMR0ZKbXdFMkd1RXhMS0x0?=
+ =?utf-8?B?bFc3cDYxdENYNUQ1cmpkRFhxUWV1NUh0OUFyQzNQQ2Z2RU5WQkJoVHpzTjF6?=
+ =?utf-8?B?Q3lhZWp2RGhwSzJZWjh6RWdXS05WLzBzWnJRdjEyaWlhK0MzdXVtcXN1VGQy?=
+ =?utf-8?B?M0VMcmxITFBaUFVTRHRWV0RVazhNMnhYd3hmTHFvZENEMGF3SGZ6cHhVMUFI?=
+ =?utf-8?B?QjM3Mk9QVXNUUVIzYnRwNGJJTEl4QmJUaGdQY1VOaGlHaDZTNFZrRzJrRG44?=
+ =?utf-8?B?TkJJWjRjbVlyaXRlT3c0VnNIS2luQ0x6L0sveDNEYWhRNzRpSUwrQlhlaGh1?=
+ =?utf-8?B?V2llQW91bndZd2hmdzFEUHpGWkJDbmFBVjhBc0M2c0YvTDIyaTJ1VElEMlE4?=
+ =?utf-8?B?VjlEZEx1aTAwam83Z2VESGNzTGZlZ2VKbHV0TGdQbGl0ZlJSQS82aXVMVHl3?=
+ =?utf-8?B?SDIvWXVvOEc0UmZCZ0NrSUpBTG9PVVNSWFdFaHcwd01QcHJnQjN2STdKZ1Jn?=
+ =?utf-8?B?OTZGMHFPbUN2bnB5emZaMmxOSjMweEhrYTNCYURHTWpsa1Q1ZlE4N0VGYms2?=
+ =?utf-8?B?Wk53cm9SWmpHNUtXNS9zS2czbXN1bVp1SHBGUUJMZmw2WEdHbTYxZEZzN3BI?=
+ =?utf-8?B?bTFWTkc4ZytvV295K2E4UDVVZVE2OFBBK0RLeHc1Wk1hcGs0eDhMTWhwRFgv?=
+ =?utf-8?B?TlE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 668a6c91-b6cb-4e69-30fd-08dd1ea6cabd
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9550.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 14:26:27.3987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KEfmEnjQdwgv1LgcC1AOsZ255Yu+9qp5w4c3qegZY2xCH+L4Y+jNwQtVKRqPQrz8mZ7dKp025WML6LXUgnhDLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10669
 
-The firmware-name property has been expanded to specify the names of NVM
-and rampatch firmware for certain chips, such as the QCA6698 Bluetooth
-chip. Although it shares the same IP core as the WCN6855, the QCA6698
-has different RF components and RAM sizes, necessitating new firmware
-files. This change allows for the configuration of NVM and rampatch in
-DT.
+On 12/17/2024 7:26 AM, Krzysztof Kozlowski wrote:
+> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On 16/12/2024 08:58, Larisa Grigore wrote:
+>> Introduce the compatible strings 'nxp,s32g2-edma' and 'nxp,s32g3-edma' to
+>> enable the support for the eDMAv3 present on S32G2/S32G3 platforms.
+>>
+> Not tested.
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
 
-Possible configurations:
-firmware-name = QCA6698/hpnv21.bin, QCA6698/hpbtfw21.tlv;
-firmware-name = QCA6698/hpnv21, QCA6698/hpbtfw21.tlv;
+Thank you Krzysztof! I will fix it in V2.
 
-Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
----
- drivers/bluetooth/btqca.c   | 82 +++++++++++++++++++------------------
- drivers/bluetooth/btqca.h   |  5 ++-
- drivers/bluetooth/hci_qca.c | 22 +++++++---
- 3 files changed, 63 insertions(+), 46 deletions(-)
+> 
+> Best regards,
+> Krzysztof
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 5cb1fd1a0..a6b53d1f2 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -782,7 +782,7 @@ static void qca_get_nvm_name_by_board(char *fwname, size_t max_size,
- 
- int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		   enum qca_btsoc_type soc_type, struct qca_btsoc_version ver,
--		   const char *firmware_name)
-+		   const char *firmware_name, const char *rampatch_name)
- {
- 	struct qca_fw_config config = {};
- 	int err;
-@@ -811,44 +811,48 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 
- 	/* Download rampatch file */
- 	config.type = TLV_TYPE_PATCH;
--	switch (soc_type) {
--	case QCA_WCN3990:
--	case QCA_WCN3991:
--	case QCA_WCN3998:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/crbtfw%02x.tlv", rom_ver);
--		break;
--	case QCA_WCN3988:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/apbtfw%02x.tlv", rom_ver);
--		break;
--	case QCA_QCA2066:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/hpbtfw%02x.tlv", rom_ver);
--		break;
--	case QCA_QCA6390:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/htbtfw%02x.tlv", rom_ver);
--		break;
--	case QCA_WCN6750:
--		/* Choose mbn file by default.If mbn file is not found
--		 * then choose tlv file
--		 */
--		config.type = ELF_TYPE_PATCH;
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/msbtfw%02x.mbn", rom_ver);
--		break;
--	case QCA_WCN6855:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/hpbtfw%02x.tlv", rom_ver);
--		break;
--	case QCA_WCN7850:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/hmtbtfw%02x.tlv", rom_ver);
--		break;
--	default:
--		snprintf(config.fwname, sizeof(config.fwname),
--			 "qca/rampatch_%08x.bin", soc_ver);
-+	if (rampatch_name) {
-+		snprintf(config.fwname, sizeof(config.fwname), "qca/%s", rampatch_name);
-+	} else {
-+		switch (soc_type) {
-+		case QCA_WCN3990:
-+		case QCA_WCN3991:
-+		case QCA_WCN3998:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/crbtfw%02x.tlv", rom_ver);
-+			break;
-+		case QCA_WCN3988:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/apbtfw%02x.tlv", rom_ver);
-+			break;
-+		case QCA_QCA2066:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/hpbtfw%02x.tlv", rom_ver);
-+			break;
-+		case QCA_QCA6390:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/htbtfw%02x.tlv", rom_ver);
-+			break;
-+		case QCA_WCN6750:
-+			/* Choose mbn file by default.If mbn file is not found
-+			 * then choose tlv file
-+			 */
-+			config.type = ELF_TYPE_PATCH;
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/msbtfw%02x.mbn", rom_ver);
-+			break;
-+		case QCA_WCN6855:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/hpbtfw%02x.tlv", rom_ver);
-+			break;
-+		case QCA_WCN7850:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/hmtbtfw%02x.tlv", rom_ver);
-+			break;
-+		default:
-+			snprintf(config.fwname, sizeof(config.fwname),
-+				 "qca/rampatch_%08x.bin", soc_ver);
-+		}
- 	}
- 
- 	err = qca_download_firmware(hdev, &config, soc_type, rom_ver);
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index bb5207d7a..9d28c8800 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -161,7 +161,7 @@ enum qca_btsoc_type {
- int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
- int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 		   enum qca_btsoc_type soc_type, struct qca_btsoc_version ver,
--		   const char *firmware_name);
-+		   const char *firmware_name, const char *rampatch_name);
- int qca_read_soc_version(struct hci_dev *hdev, struct qca_btsoc_version *ver,
- 			 enum qca_btsoc_type);
- int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
-@@ -176,7 +176,8 @@ static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdad
- static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
- 				 enum qca_btsoc_type soc_type,
- 				 struct qca_btsoc_version ver,
--				 const char *firmware_name)
-+				 const char *firmware_name,
-+				 const char *rampatch_name)
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 37129e6cb..5d75087cc 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -228,7 +228,7 @@ struct qca_serdev {
- 	u32 init_speed;
- 	u32 oper_speed;
- 	bool bdaddr_property_broken;
--	const char *firmware_name;
-+	const char *firmware_name[2];
- };
- 
- static int qca_regulator_enable(struct qca_serdev *qcadev);
-@@ -258,7 +258,18 @@ static const char *qca_get_firmware_name(struct hci_uart *hu)
- 	if (hu->serdev) {
- 		struct qca_serdev *qsd = serdev_device_get_drvdata(hu->serdev);
- 
--		return qsd->firmware_name;
-+		return qsd->firmware_name[0];
-+	} else {
-+		return NULL;
-+	}
-+}
-+
-+static const char *qca_get_rampatch_name(struct hci_uart *hu)
-+{
-+	if (hu->serdev) {
-+		struct qca_serdev *qsd = serdev_device_get_drvdata(hu->serdev);
-+
-+		return qsd->firmware_name[1];
- 	} else {
- 		return NULL;
- 	}
-@@ -1855,6 +1866,7 @@ static int qca_setup(struct hci_uart *hu)
- 	unsigned int retries = 0;
- 	enum qca_btsoc_type soc_type = qca_soc_type(hu);
- 	const char *firmware_name = qca_get_firmware_name(hu);
-+	const char *rampatch_name = qca_get_rampatch_name(hu);
- 	int ret;
- 	struct qca_btsoc_version ver;
- 	struct qca_serdev *qcadev;
-@@ -1963,7 +1975,7 @@ static int qca_setup(struct hci_uart *hu)
- 
- 	/* Setup patch / NVM configurations */
- 	ret = qca_uart_setup(hdev, qca_baudrate, soc_type, ver,
--			firmware_name);
-+			firmware_name, rampatch_name);
- 	if (!ret) {
- 		clear_bit(QCA_IBS_DISABLED, &qca->flags);
- 		qca_debugfs_init(hdev);
-@@ -2309,8 +2321,8 @@ static int qca_serdev_probe(struct serdev_device *serdev)
- 	qcadev->serdev_hu.serdev = serdev;
- 	data = device_get_match_data(&serdev->dev);
- 	serdev_device_set_drvdata(serdev, qcadev);
--	device_property_read_string(&serdev->dev, "firmware-name",
--					 &qcadev->firmware_name);
-+	device_property_read_string_array(&serdev->dev, "firmware-name",
-+					 qcadev->firmware_name, ARRAY_SIZE(qcadev->firmware_name));
- 	device_property_read_u32(&serdev->dev, "max-speed",
- 				 &qcadev->oper_speed);
- 	if (!qcadev->oper_speed)
--- 
-2.34.1
-
+Best regards,
+Larisa
 
