@@ -1,136 +1,174 @@
-Return-Path: <linux-kernel+bounces-449298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B739F4CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:56:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861E49F4CF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 14:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764B9188A84F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2528169F54
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 13:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74C1F5431;
-	Tue, 17 Dec 2024 13:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D511F473B;
+	Tue, 17 Dec 2024 13:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="WjL0D1mv"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="cEnRonsj"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301211F6680;
-	Tue, 17 Dec 2024 13:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACF7250F8;
+	Tue, 17 Dec 2024 13:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734443731; cv=none; b=gPDMjcN2SsxTRTwVCdTDxfH6GHIcv4nYGPjmmXzUho93f+vQh6f9dNtojLq1V6ybpaiMVjzZWYpjl+eNEUwQNFXftepcdIXl7MpjWGr9letk9WrrOz4JjTWOe7SfHgH9CN1m+OZGhALZTsNZhqeq3L6hHztee9zz2N9vBE3MNEg=
+	t=1734443884; cv=none; b=e7mx6eAAOoZEzMJPFrmdoKyKo+MiyItz1OidQB3W1czKF8i90qiadubs33ammvzrMyP4A5cO6vvVjZo+s67mNqH97FxR7GGTPFVJWBGGgRMsXQy766jHLFnLi65bTIXz/x3nkqHCStwChEcmbad0byMczRhts+rFYPe9R7Q6whQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734443731; c=relaxed/simple;
-	bh=uF8BewMwaD3cn5+1ov5Hqor26jTBT7+OQAF0JaxtUwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wyzi4eeo/o3Ov7vdvUvTGLLUkyeqCXpPrBkhs89Hjjk+TXJRfaykaEFj2/jnopbFVJVvDYjRpQM/vNK9dQOq6IqPWtR0wmKYPYsp1i5oFu6s/hlPCxZ4+/K1AKtsR3MUDLDSx/7AoLxukAvrTV1o8gLzkIdvqLUNct4wY5VZJEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=WjL0D1mv; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1734443724;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=jgM7Zxn8uQMa75Yf9CuxrECzaG36pVrY1WipQDdWu7I=;
-	b=WjL0D1mvI9ucx3WXRO/+5+jzhwnj+OHb7oyhyJ+UZaJKoNOTLqtKJxnzXF2DCfxqJGCCrM
-	GxQW5iZNn6XgGr4iAaBb4zHJ8/sHtzjGIHZdtBF4YF47Trxc0YkDfpCiS2oYMDbk5+70vP
-	ibsRQyF2QSMbsJT6ygfw9/Nr6lfM47vJPKgd0uZf6ayQD4bp2tSDcap6Qae7PQmo2uHlcl
-	N2CRwvCJQrxW9HNNQBs9eNIpcLRS7JmwvnzeTmsjCkf52o6BYEc4OOuoqd6O/f1Q7/4mtO
-	Wdo8/+po1xZIcNjnRIjy6ESPgpw95i1SUtybN9D5JG39q/PkFJLLe8UxkHzr6A==
-To: 
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
-	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	GUO Zihua <guozihua@huawei.com>,
-	Canfeng Guo <guocanfeng@uniontech.com>,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	John Johansen <john.johansen@canonical.com>
-Subject: [RFC PATCH] selinux: support wildcard network interface names
-Date: Tue, 17 Dec 2024 14:55:12 +0100
-Message-ID: <20241217135517.534645-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1734443884; c=relaxed/simple;
+	bh=XbnnnWB54GCHPVqI50/h5Bxg1+5Ht10BYosJiA+usYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIHxDN8U8evNDra7teM7ShX5Cfy+vjtNlLoIgZxqCjDQAfyqEMPBRpJZ/S520p9pNrnqrbhfE9zilDgFOrVJUaP9S87God6ylhzcS49PHbiGo/HSou2hxNb8clFs4nJoEWbcvEP0BZ3vBUQjGm2l6eGd30INQE5TchwKD1VErbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=cEnRonsj; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D4010E0005;
+	Tue, 17 Dec 2024 13:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1734443873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vp5TDYPPENmQRE2Bn8G4VOZmWwgzqXmCeODjRqgYJLk=;
+	b=cEnRonsj590KJHJuSz5a7nsF9hE3Dxo//7kIS6BvoFo/1y3I3qGYiTmfIvGt7mNn2JVK3v
+	RiEmQSD650bx+SbfZqmcPJwzI8IcNDnqESMkNtFkc7E6CaB10lIBvKv7Ev/aYby12nr8az
+	1fbdIwFst09FjKh0Z8yIklaJcFGzlsNKUgVrsCbb1vQmx2bShIVdUMKT3V3u8bEDXn2z2Q
+	wxly6oQ476Qqn1GztpxynJ272bD5NsD++LZ9GdienqDOVruNSk9xA4q1M4ldtbMFZc8WjN
+	UwbQB1/dbFs51URerIN+w3N8ONr6GdTwr+wzNCP+8vJ9R50LgIjUoX37icHQQA==
+Message-ID: <c3e800d2-0aff-478e-906a-18f8fc6d756a@clip-os.org>
+Date: Tue, 17 Dec 2024 14:57:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] sysctl: Fix underflow value setting risk in
+ vm_table
+To: Joel Granados <joel.granados@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Joel Granados <j.granados@samsung.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Neil Horman <nhorman@tuxdriver.com>, Lin Feng <linf@wangsu.com>,
+ Theodore Ts'o <tytso@mit.edu>
+References: <20241114162638.57392-1-nicolas.bouchinet@clip-os.org>
+ <20241114162638.57392-3-nicolas.bouchinet@clip-os.org>
+ <4ietaibtqwl4xfqluvy6ua6cr3nkymmyzzmoo3a62lf65wtltq@s6imawclrht6>
+Content-Language: en-US
+From: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>
+In-Reply-To: <4ietaibtqwl4xfqluvy6ua6cr3nkymmyzzmoo3a62lf65wtltq@s6imawclrht6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-From: Christian Göttsche <cgzones@googlemail.com>
+Hi Joel,
 
-Add support for wildcard matching of network interface names.  This is
-useful for auto-generated interfaces, for example podman creates network
-interfaces for containers with the naming scheme podman0, podman1,
-podman2, ...
+I've pushed patchset version 3 :
+https://lore.kernel.org/all/20241217132908.38096-1-nicolas.bouchinet@clip-os.org/.
 
-Since the wildcard characters '?' and '*' should be very uncommon in
-network interface names, and thus if netifcon definitions, avoid
-introducing a new policy version or capability.
+On 11/20/24 13:53, Joel Granados wrote:
+> On Thu, Nov 14, 2024 at 05:25:51PM +0100, nicolas.bouchinet@clip-os.org wrote:
+>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>
+>> Commit 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in
+>> vm_table") fixes underflow value setting risk in vm_table but misses
+>> vdso_enabled sysctl.
+>>
+>> vdso_enabled sysctl is initialized with .extra1 value as SYSCTL_ZERO to
+>> avoid negative value writes but the proc_handler is proc_dointvec and not
+>> proc_dointvec_minmax and thus do not uses .extra1 and .extra2.
+>>
+>> The following command thus works :
+>>
+>> `# echo -1 > /proc/sys/vm/vdso_enabled`
+> It would be interesting to know what happens when you do a
+> # echo (INT_MAX + 1) > /proc/sys/vm/vdso_enabled
+>
+> This is the reasons why I'm interested in such a test:
+>
+> 1. Both proc_dointvec and proc_dointvec_minmax (calls proc_dointvec) have a
+>     overflow check where they will return -EINVAL if what is given by the user is
+>     greater than (unsiged long)INT_MAX; this will evaluate can evaluate to true
+>     or false depending on the architecture where we are running.
+>
+> 2. I noticed that vdso_enabled is an unsigned long. And so the expectation is
+>     that the range is 0 to ULONG_MAX, which in some cases (depending on the arch)
+>     would not be the case.
+ From my observations, vdso_enabled is a unsigned int. If one wants to
+convert to an unsigned long, proc_doulongvec_minmax should be used
+instead.
 
-Netifcon definitions are compared against in the order given by the
-policy, so userspace tools should sort them in a reasonable order.
+IMHO, the main issues are that .data variable type can differ from the 
+return
+type of .proc_handler function. This can lead to undefined behaviors and
+eventually vulnerabilities.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- security/selinux/include/security.h | 2 +-
- security/selinux/ss/services.c      | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+.extra1 and .extra2 can also be used with proc_handlers that do not uses 
+them.
+I think sysctl_check_table() could be enhanced to control this behavior.
 
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index 10949df22fa4..f6e7ba57a1fc 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -298,7 +298,7 @@ int security_ib_pkey_sid(u64 subnet_prefix, u16 pkey_num, u32 *out_sid);
- 
- int security_ib_endport_sid(const char *dev_name, u8 port_num, u32 *out_sid);
- 
--int security_netif_sid(char *name, u32 *if_sid);
-+int security_netif_sid(const char *name, u32 *if_sid);
- 
- int security_node_sid(u16 domain, void *addr, u32 addrlen, u32 *out_sid);
- 
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 55fdc7ca232b..2f878fa99692 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -46,6 +46,7 @@
- #include <linux/in.h>
- #include <linux/sched.h>
- #include <linux/audit.h>
-+#include <linux/parser.h>
- #include <linux/vmalloc.h>
- #include <linux/lsm_hooks.h>
- #include <net/netlabel.h>
-@@ -2554,7 +2555,7 @@ int security_ib_endport_sid(const char *dev_name, u8 port_num, u32 *out_sid)
-  * @name: interface name
-  * @if_sid: interface SID
-  */
--int security_netif_sid(char *name, u32 *if_sid)
-+int security_netif_sid(const char *name, u32 *if_sid)
- {
- 	struct selinux_policy *policy;
- 	struct policydb *policydb;
-@@ -2576,7 +2577,7 @@ int security_netif_sid(char *name, u32 *if_sid)
- 
- 	c = policydb->ocontexts[OCON_NETIF];
- 	while (c) {
--		if (strcmp(name, c->u.name) == 0)
-+		if (match_wildcard(c->u.name, name))
- 			break;
- 		c = c->next;
- 	}
--- 
-2.45.2
+>
+> So my question is: What is the expected range for this value? Because you might
+> not be getting the whole range in the cases where int is 32 bit and long is 64
+> bit.
+If proc_dointvec or its derivative is used, as you said, range is bounded
+by checks in do_proc_dointvec_conv ((unsigned long) INT_MAX).
 
+INT_MAX being based on the max value of an int (((int)(~0U >> 1))),
+do_proc_dointvec_conv behavior is thus architecture dependent.
+>
+>> This patch properly sets the proc_handler to proc_dointvec_minmax.
+>>
+>> Fixes: 3b3376f222e3 ("sysctl.c: fix underflow value setting risk in vm_table")
+>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>> ---
+>>   kernel/sysctl.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index 79e6cb1d5c48f..37b1c1a760985 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -2194,7 +2194,7 @@ static struct ctl_table vm_table[] = {
+>>   		.maxlen		= sizeof(vdso_enabled),
+>>   #endif
+>>   		.mode		= 0644,
+>> -		.proc_handler	= proc_dointvec,
+>> +		.proc_handler	= proc_dointvec_minmax,
+>>   		.extra1		= SYSCTL_ZERO,
+> Any reason why extra2 is not defined. I know that it was not defined before, but
+> this does not mean that it will not have an upper limit. The way that I read the
+> situation is that this will be bounded by the overflow check done in
+> proc_dointvec and will have an upper limit of INT_MAX.
+
+I've added an extra2 parameter to restrict vdso_enabled between 0 and 1 
+in patchset v3.
+https://lore.kernel.org/all/20241217132908.38096-3-nicolas.bouchinet@clip-os.org/
+
+>
+> Please correct me if I have read the situation incorrectly.
+>
+> Best
+>
+Thanks again for your review,
+
+Best regards,
+
+Nicolas
 
