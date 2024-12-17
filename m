@@ -1,87 +1,152 @@
-Return-Path: <linux-kernel+bounces-449065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-449064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389AA9F493B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:52:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B789B9F4938
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 11:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 111AF16F4AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D061A16CB98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2024 10:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32AF1EC4C6;
-	Tue, 17 Dec 2024 10:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2961C1E3784;
+	Tue, 17 Dec 2024 10:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CkhRfWme"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVOlyztk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEE11EB9E8;
-	Tue, 17 Dec 2024 10:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857F02E628;
+	Tue, 17 Dec 2024 10:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734432736; cv=none; b=Aqf7F/4hZsMP/Cy80052gaO2mnIBUxswt+cpjR9KMKqghntiWRgQkyTLWHYZ24cPFLoxSDtsjxE8+7kbJsrSgfmDEKA9AhHx8tBzFBHfpx6gRgspf5g/uIWM+dYIb4SpE00z70r/60VmHLe+oLg1zB7isNJgvegacyGcdALeBmo=
+	t=1734432731; cv=none; b=KWJSjQi3Q3tTWhRqUpNub3gjlulE2iMv+5tO6jckDi/h6KxVt+SRO18dzaFUayuvJNxElLaBpqK2o7l1Z1liLlRm0p68tMHLXc27Jx5EphRE/+tJLfNQUraoSHqHW5zG9m7NB/M/nYnTKc/2Ph/GXdNBbssoJqb1lW//bkZ6f+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734432736; c=relaxed/simple;
-	bh=ia3GvqxjT+P91CXaTlnsbjQPa35vnkH4Dgy4Hx/lhdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s22LVExVs7CYmscVL/4++IBdz2yRqNarj5EB9tKNg/wkPo7qvOahUJKtTC6rU0qN9bu/twS+s9/1dvRkDba/LO01DHMwzDRgIY54JeddFX5/ghZZ21Z3NAsqCuWPR6JDEgb6nncMjAGEm2Sykiuq7uYaAzxiNu3ALNSYjsYwY0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CkhRfWme; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pKIaSLMgzRitaeQqeBKxAj8nc5TyrOFd+OEeRdGYXPE=; b=CkhRfWmeWxL/5x2HeV77SFNevT
-	xWGadKHW6ILfP+HFgtZY4mAyhk4hUPYV3TrbmIEorvoe0uU3PvgqsQiQgEfXK+R0yFwly3kMrPR5E
-	8xd8/6tYYfb9dvrA44DbPxuqGO1wIcIeu8R/MOTqh0waxkni6idzCvdtPIlbA49oBMR8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tNVBP-000vL6-UP; Tue, 17 Dec 2024 11:52:07 +0100
-Date: Tue, 17 Dec 2024 11:52:07 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Avri Kehat <avri.kehat@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-	ogabbay@kernel.org, oshpigelman@habana.ai, sgoutham@marvell.com,
-	zyehudai@habana.ai
-Subject: Re: [PATCH 06/15] net: hbl_cn: debugfs support
-Message-ID: <ce20fa38-0949-47fe-8c2f-635f761479f1@lunn.ch>
-References: <b40391d5-66d2-44be-bc83-4ac3b7bcfe08@lunn.ch>
- <20241217100039.79132-1-avri.kehat@intel.com>
+	s=arc-20240116; t=1734432731; c=relaxed/simple;
+	bh=pbhED1WbvB9d+y73Nfhx61ssmrE6bWmVhm/9iC3ocu0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=azR+4jkiscrCEFFIgm1ZoG6BhwUaTjWFd01Bg5/QoK1OVpTHxclitJJQLfdK98zQQHCPZL49wosuUcZXMXXeIeWKyNcoe15Z6IGQ/vWtWHmxtxM4RwC/0vMO/AB5zl5p0bWBP7GJ/PhFVzJmF3X8NGf93B5Z0CRr2KRMdwGx4d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVOlyztk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0698CC4CED3;
+	Tue, 17 Dec 2024 10:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734432731;
+	bh=pbhED1WbvB9d+y73Nfhx61ssmrE6bWmVhm/9iC3ocu0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XVOlyztkQvyaa+I6Xxgm1t/sm7HrLdvCK9q5B5+qKIfOFD70QPSOfuNecJnkyt2I2
+	 Q9RZIt/bdmjTUknNXb74KyBIbTBIyFv3tYN8GrNG62ifYSjq5orFhzWVzvQw+jLuzR
+	 tP9IwheTiZKs0Xj72EAb8kcIrZgfkEKZJJ1JoldTYY6dTsuriadr/ccbXMwbE0KLKo
+	 9Dw+eWYab34nAGaHkODlESVlo/7xSbUEMfOq661DbGJJP/0lMkQIqhy/LiTzsMY9Lo
+	 b/nggm7T11t954G1VK79a5Ewva+8KeMT83tibMH+sFxBCcXPV7drLDB8NrXgKp9jH7
+	 LEfiFBLhWJnbg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tNVBQ-004WXi-OM;
+	Tue, 17 Dec 2024 10:52:08 +0000
+Date: Tue, 17 Dec 2024 10:52:08 +0000
+Message-ID: <861py6sht3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Fuad Tabba <tabba@google.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/18] KVM: arm64: Change the layout of enum pkvm_page_state
+In-Reply-To: <20241216175803.2716565-2-qperret@google.com>
+References: <20241216175803.2716565-1-qperret@google.com>
+	<20241216175803.2716565-2-qperret@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217100039.79132-1-avri.kehat@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, vdonnefort@google.com, sebastianene@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Dec 17, 2024 at 12:00:39PM +0200, Avri Kehat wrote:
-> Revisiting the comments regarding our use of debugfs as an interface for device configurations -
-> A big part of the non-statistics debugfs parameters are HW related debug-only capabilities, and not configurations required by the user.
-> Should these sort of parameters be part of devlink as well?
-> Is there another location where debug related configurations for development can reside in?
+On Mon, 16 Dec 2024 17:57:46 +0000,
+Quentin Perret <qperret@google.com> wrote:
+> 
+> The 'concrete' (a.k.a non-meta) page states are currently encoded using
+> software bits in PTEs. For performance reasons, the abstract
+> pkvm_page_state enum uses the same bits to encode these states as that
+> makes conversions from and to PTEs easy.
+> 
+> In order to prepare the ground for moving the 'concrete' state storage
+> to the hyp vmemmap, re-arrange the enum to use bits 0 and 1 for this
+> purpose.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Quentin Perret <qperret@google.com>
+> ---
+>  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> index 0972faccc2af..8c30362af2b9 100644
+> --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> @@ -24,25 +24,27 @@
+>   */
+>  enum pkvm_page_state {
+>  	PKVM_PAGE_OWNED			= 0ULL,
+> -	PKVM_PAGE_SHARED_OWNED		= KVM_PGTABLE_PROT_SW0,
+> -	PKVM_PAGE_SHARED_BORROWED	= KVM_PGTABLE_PROT_SW1,
+> -	__PKVM_PAGE_RESERVED		= KVM_PGTABLE_PROT_SW0 |
+> -					  KVM_PGTABLE_PROT_SW1,
+> +	PKVM_PAGE_SHARED_OWNED		= BIT(0),
+> +	PKVM_PAGE_SHARED_BORROWED	= BIT(1),
+> +	__PKVM_PAGE_RESERVED		= BIT(0) | BIT(1),
+>  
+>  	/* Meta-states which aren't encoded directly in the PTE's SW bits */
+> -	PKVM_NOPAGE,
+> +	PKVM_NOPAGE			= BIT(2),
+>  };
+> +#define PKVM_PAGE_META_STATES_MASK	(~(BIT(0) | BIT(1)))
 
-There are a few options:
+Shouldn't that be ~__PKVM_PAGE_RESERVED, given that you just defined it?
 
-If the user does not require them, don't even implement them. If the
-user is not using them, who is?
+>  
+>  #define PKVM_PAGE_STATE_PROT_MASK	(KVM_PGTABLE_PROT_SW0 | KVM_PGTABLE_PROT_SW1)
+>  static inline enum kvm_pgtable_prot pkvm_mkstate(enum kvm_pgtable_prot prot,
+>  						 enum pkvm_page_state state)
+>  {
+> -	return (prot & ~PKVM_PAGE_STATE_PROT_MASK) | state;
+> +	prot &= ~PKVM_PAGE_STATE_PROT_MASK;
+> +	prot |= FIELD_PREP(PKVM_PAGE_STATE_PROT_MASK, state);
+> +	return prot;
+>  }
+>  
+>  static inline enum pkvm_page_state pkvm_getstate(enum kvm_pgtable_prot prot)
+>  {
+> -	return prot & PKVM_PAGE_STATE_PROT_MASK;
+> +	return FIELD_GET(PKVM_PAGE_STATE_PROT_MASK, prot);
+>  }
+>  
+>  struct host_mmu {
 
-Implement them in an out of tree patch, which your development team
-can use, since these are not user configuration options.
+Thanks,
 
-devlink is a possibility, but developers complain it is slow to get
-them merged since we want to understand what the configuration option
-does, why would i want to use it, would any other vendor have the same
-need, and should it be made generic etc.
+	M.
 
-You could join those asking for fwctl, which is a contentious subject.
-
-	Andrew
+-- 
+Without deviation from the norm, progress is not possible.
 
